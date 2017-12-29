@@ -9,8 +9,9 @@ const path = require('path');
 const webpack = require('webpack');
 const pkg = require('./package.json');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const Visualizer = require('webpack-visualizer-plugin');
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 const CleanCSS = require('clean-css');
+const SafeUmdPlugin = require('safe-umd-webpack-plugin');
 
 const ENTRY_MAIN = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
@@ -32,7 +33,7 @@ const NAME_SPACE = ['tui', 'Editor'];
 const DIST_DIR_NAME = 'dist';
 const DIST_PATH = path.join(__dirname, DIST_DIR_NAME);
 const DIST_JS_NAME = `tui-editor-[name]${isProduction ? '.min' : ''}.js`;
-const VISUALIZER_FILE_PATH = `../report/webpack/statistics.${pkg.version}.html`;
+const ANALYZER_DIR = '../report/webpack';
 const PUBLIC_PATH = `http://localhost:8080/${DIST_DIR_NAME}/`;
 const BANNER = [
   pkg.name,
@@ -65,7 +66,7 @@ const defaultConfigs = Array(isDevServer ? 1 : 4).fill(0).map(() => {
       {
         test: /\.js$/,
         exclude: /node_modules|lib|dist/,
-        loader: 'babel-loader',
+        loader: 'babel-loader?cacheDirectory',
         options: {
           babelrc: true
         }
@@ -77,7 +78,7 @@ const defaultConfigs = Array(isDevServer ? 1 : 4).fill(0).map(() => {
         raw: false,
         entryOnly: true
       }),
-      new Visualizer({filename: VISUALIZER_FILE_PATH})
+      new SafeUmdPlugin()
     ],
     externals: [{
       'tui-color-picker': {
@@ -186,6 +187,12 @@ if (isDevServer) {
   defaultConfigs[0].output.library = NAME_SPACE;
   defaultConfigs[0].output.libraryTarget = 'umd';
   defaultConfigs[0].plugins.push(new webpack.IgnorePlugin(/viewer$/, /extensions/));
+  if (isProduction) {
+    defaultConfigs[0].plugins.push(new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      reportFilename: `${ANALYZER_DIR}/stats-${pkg.version}-all.html`
+    }));
+  }
 
   // BuildAll Viewer
   defaultConfigs[1].entry = {
@@ -194,6 +201,12 @@ if (isDevServer) {
   defaultConfigs[1].output.library = NAME_SPACE;
   defaultConfigs[1].output.libraryTarget = 'umd';
   defaultConfigs[1].plugins.push(new webpack.IgnorePlugin(/editor$/, /extensions/));
+  if (isProduction) {
+    defaultConfigs[1].plugins.push(new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      reportFilename: `${ANALYZER_DIR}/stats-${pkg.version}-viewer-all.html`
+    }));
+  }
 
   // BuildExt
   defaultConfigs[2].entry = {
@@ -228,6 +241,12 @@ if (isDevServer) {
       callback();
     }
   });
+  if (isProduction) {
+    defaultConfigs[2].plugins.push(new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      reportFilename: `${ANALYZER_DIR}/stats-${pkg.version}-exts.html`
+    }));
+  }
 
   // BuildNormal
   defaultConfigs[3].entry = {
@@ -236,6 +255,12 @@ if (isDevServer) {
   };
   defaultConfigs[3].output.library = NAME_SPACE;
   defaultConfigs[3].output.libraryTarget = 'umd';
+  if (isProduction) {
+    defaultConfigs[3].plugins.push(new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      reportFilename: `${ANALYZER_DIR}/stats-${pkg.version}.html`
+    }));
+  }
 }
 
 module.exports = defaultConfigs;

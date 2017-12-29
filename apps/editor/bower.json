@@ -1,12 +1,28 @@
 {
   "name": "tui-editor",
-  "description": "private",
+  "description": "GFM  Markdown Wysiwyg Editor - Productive and Extensible",
   "authors": ["NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)"],
+  "homepage": "https://github.com/nhnent/tui.editor",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:nhnent/tui.editor.git"
+  },
   "moduleType": [
     "globals",
     "es6",
     "amd",
     "node"
+  ],
+  "keywords": [
+    "toast",
+    "ui",
+    "tui",
+    "markdown",
+    "wysiwyg",
+    "editor",
+    "preview",
+    "gfm",
+    "jquery-plugin"
   ],
   "main": "dist/tui-editor-Editor.js",
   "license": "MIT",
@@ -16,9 +32,10 @@
     "bower_components",
     "lib/",
     "test",
-    "tests"
+    "tests",
+    "api",
+    "report"
   ],
-  "keywords": [],
   "dependencies": {
     "tui-code-snippet": "^1.2.9",
     "codemirror": "^5.32.0",
@@ -28,7 +45,7 @@
     "toMark": "nhnent/toMark#0.0.19",
     "tui-color-picker": "^2.0.1",
     "squire-rte": "neilj/Squire#306230d0df9b38047cd06204476ddc0582569cfd",
-    "plantuml-encoder": "aleung/plantuml-encoder#156729063bfa62da6fa5f577627ebab57ae98c95",
+    "plantuml-encoder": "kyuwoo-choi/plantuml-encoder#156729063bfa62da6fa5f577627ebab57ae98c95",
     "tui-chart": "^2.13.0"
   },
   "resolutions": {
