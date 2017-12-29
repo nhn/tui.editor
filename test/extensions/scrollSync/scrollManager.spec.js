@@ -72,7 +72,7 @@ describe('ScrollManager', () => {
       expect(scrollFactors.sectionRatio).not.toEqual(0);
     });
 
-    xit('if editor scroll to bottom then return isEditorBottom === true ', () => {
+    it('if editor scroll to bottom then return isEditorBottom === true ', () => {
       const cm = ned.getCodeMirror();
       cm.scrollTo(0, cm.heightAtLine(12, 'local'));
 
