@@ -56,8 +56,8 @@ function pasteClipboardEvent(text, html, fileType) {
 
 describe('Clipboard', () => {
   let editor, se;
-  // We can't simulate browser paste. skip IE browsers
-  if (util.browser.msie) {
+  // We can't simulate browser paste. skip IE & Edge browsers
+  if (util.browser.msie || util.browser.edge) {
     pending();
   }
 
