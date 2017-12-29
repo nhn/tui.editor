@@ -1,134 +1,162 @@
+/**
+ * @fileoverview test wysiwyg decrease depth command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+import $ from 'jquery';
+
 import DecreaseDepth from '../../src/js/wysiwygCommands/decreaseDepth';
 import WwTaskManager from '../../src/js/wwTaskManager';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
 describe('DecreaseDepth', () => {
-    let wwe, sq;
+  let wwe, sq, container;
 
-    beforeEach(() => {
-        const $container = $('<div />');
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-        $('body').append($container);
+    wwe = new WysiwygEditor($(container), new EventManager());
+    wwe.init();
 
-        wwe = new WysiwygEditor($container, new EventManager());
+    sq = wwe.getEditor();
+    wwe.componentManager.addManager(WwTaskManager);
+    sq.focus();
 
-        wwe.init();
+    wwe.get$Body().html(`
+            <ul>
+                <li data-te-task class="task-list-item">abcdef</li>
+                <ul>
+                    <li data-te-task class="task-list-item checked">abcde</li>
+                </ul>
+                <li data-te-task class="task-list-item"> </li>
+            </ul>
+        `);
+  });
 
-        sq = wwe.getEditor();
-        wwe.componentManager.addManager(WwTaskManager);
-        sq.focus();
-
-        wwe.get$Body().html([
-            '<ul>',
-            '<li data-te-task class="task-list-item"><div>abcdef</div>',
-            '<ul>',
-            '<li data-te-task class="task-list-item checked"><div>abcde</div></li>',
-            '</ul></li>',
-            '<li data-te-task class="task-list-item"><div> </div></li>',
-            '</ul>'
-        ].join(''));
+  // we need to wait squire input event process
+  afterEach(done => {
+    setTimeout(() => {
+      document.body.removeChild(container);
+      done();
     });
+  });
 
-    //we need to wait squire input event process
-    afterEach(done => {
-        setTimeout(() => {
-            $('body').empty();
-            done();
-        });
+  it('should be able to decrease depth second to first.', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
+
+    range.setStart(wwe.get$Body().find('li')[1].firstChild, 0);
+    range.collapse(true);
+
+    sq.setSelection(range);
+
+    DecreaseDepth.exec(wwe);
+
+    expect(sq.get$Body().find('ul > li').length).toEqual(3);
+    expect(sq.get$Body().find('ul > ul > li').length).toEqual(0);
+    expect(sq.get$Body().find('ul > li').hasClass('task-list-item')).toBe(true);
+    expect(sq.get$Body().find('ul > li').hasClass('checked')).toBe(true);
+  });
+  it('should break out list element and delete input.', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
+
+    range.setStart(wwe.get$Body().find('li')[2].firstChild, 0);
+    range.collapse(true);
+
+    sq.setSelection(range);
+
+    DecreaseDepth.exec(wwe);
+
+    expect(sq.get$Body().find('ul li').length).toEqual(2);
+    expect(sq.get$Body().find('ul ul li').length).toEqual(1);
+    expect(sq.get$Body().find('ul li').hasClass('task-list-item')).toBe(true);
+  });
+  it('should preserve original class(task / non-task)', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
+
+    wwe.get$Body().html(`
+            <ul>
+                <li data-te-task class="task-list-item">abcdef</li>
+                <ul>
+                    <li>abcde</li>
+                </ul>
+                <li data-te-task class="task-list-item"> </li>
+            </ul>
+        `);
+
+    range.setStart(wwe.get$Body().find('ul ul li')[0].firstChild, 0);
+    range.collapse(true);
+
+    sq.setSelection(range);
+
+    DecreaseDepth.exec(wwe);
+
+    const $Body = sq.get$Body();
+
+    expect($Body.find('ul li').length).toEqual(3);
+    expect($Body.find('ul ul li').length).toEqual(0);
+    expect($Body.find('ul li').eq(0).hasClass('task-list-item')).toBe(true);
+    expect($Body.find('ul li').eq(1).hasClass('task-list-item')).toBe(false);
+    expect($Body.find('ul li').eq(2).hasClass('task-list-item')).toBe(true);
+  });
+
+  it('should not decrease if next element is UL/OL (arbitrary list)', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
+
+    wwe.get$Body().html(`
+            <ul>
+                <li>abcdef</li>
+                <ul>
+                    <li id="target">abcde</li>
+                    <ul>
+                        <li>abcde</li>
+                    </ul>
+                </ul>
+            </ul>
+        `);
+
+    range.setStart(wwe.get$Body().find('#target')[0].firstChild, 0);
+    range.collapse(true);
+
+    sq.setSelection(range);
+
+    DecreaseDepth.exec(wwe);
+
+    const $Body = sq.get$Body();
+
+    expect($Body.find('> ul > li').length).toEqual(1);
+    expect($Body.find('> ul > ul > li').length).toEqual(1);
+    expect($Body.find('> ul > ul > ul > li').length).toEqual(1);
+  });
+
+  describe('should decrease depth when cursor', () => {
+    it('at startOffset 0.', () => {
+      const range = wwe.getEditor().getSelection().cloneRange();
+
+      range.setStart(wwe.get$Body().find('li')[1].firstChild, 0);
+      range.collapse(true);
+
+      sq.setSelection(range);
+
+      DecreaseDepth.exec(wwe);
+
+      expect(sq.get$Body().find('ul > li').length).toEqual(3);
+      expect(sq.get$Body().find('ul ul li').length).toEqual(0);
+      expect(sq.get$Body().find('ul > li').hasClass('task-list-item')).toBe(true);
     });
+    it('should decrease depth when cursor at any offset.', () => {
+      const range = wwe.getEditor().getSelection().cloneRange();
 
-    it('should be able to decrease depth second to first.', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+      range.setStart(wwe.get$Body().find('li')[1].firstChild, 2);
+      range.collapse(true);
 
-        range.setStart(wwe.get$Body().find('div')[1].firstChild, 0);
-        range.collapse(true);
+      sq.setSelection(range);
 
-        sq.setSelection(range);
+      DecreaseDepth.exec(wwe);
 
-        DecreaseDepth.exec(wwe);
-
-        expect(sq.get$Body().find('ul li').length).toEqual(3);
-        expect(sq.get$Body().find('ul li ul').length).toEqual(0);
-        expect(sq.get$Body().find('ul li ul li').length).toEqual(0);
-        expect(sq.get$Body().find('ul li').hasClass('task-list-item')).toBe(true);
-        expect(sq.get$Body().find('ul li').hasClass('checked')).toBe(true);
+      expect(sq.get$Body().find('ul > li').length).toEqual(3);
+      expect(sq.get$Body().find('ul ul li').length).toEqual(0);
+      expect(sq.get$Body().find('ul > li').hasClass('task-list-item')).toBe(true);
     });
-    it('should break out list element and delete input.', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
-
-        range.setStart(wwe.get$Body().find('div')[2].firstChild, 0);
-        range.collapse(true);
-
-        sq.setSelection(range);
-
-        DecreaseDepth.exec(wwe);
-
-        expect(sq.get$Body().find('ul li').length).toEqual(2);
-        expect(sq.get$Body().find('ul li ul').length).toEqual(1);
-        expect(sq.get$Body().find('ul li ul li').length).toEqual(1);
-        expect(sq.get$Body().find('ul li').hasClass('task-list-item')).toBe(true);
-    });
-    describe('should guarantee to remove non task`s class attribute', () => {
-        it('when super depth is task and child depth is not', () => {
-            const range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.get$Body().html([
-                '<ul>',
-                '<li data-te-task class="task-list-item"><div>abcdef</div>',
-                '<ul>',
-                '<li><div>abcde</div></li>',
-                '</ul></li>',
-                '<li data-te-task class="task-list-item"><div> </div></li>',
-                '</ul>'
-            ].join(''));
-
-            range.setStart(wwe.get$Body().find('div')[1].firstChild, 0);
-            range.collapse(true);
-
-            sq.setSelection(range);
-
-            DecreaseDepth.exec(wwe);
-
-            const $Body = sq.get$Body();
-
-            expect($Body.find('ul li').length).toEqual(3);
-            expect($Body.find('ul li ul').length).toEqual(0);
-            expect($Body.find('ul li').eq(0).hasClass('task-list-item')).toBe(true);
-            expect($Body.find('ul li').eq(1).hasClass('task-list-item')).toBe(true);
-            expect($Body.find('ul li').eq(2).hasClass('task-list-item')).toBe(true);
-        });
-    });
-    describe('should decrease depth when cursor', () => {
-        it('at startOffset 0.', () => {
-            const range = wwe.getEditor().getSelection().cloneRange();
-
-            range.setStart(wwe.get$Body().find('div')[1].firstChild, 0);
-            range.collapse(true);
-
-            sq.setSelection(range);
-
-            DecreaseDepth.exec(wwe);
-
-            expect(sq.get$Body().find('ul li').length).toEqual(3);
-            expect(sq.get$Body().find('ul li ul').length).toEqual(0);
-            expect(sq.get$Body().find('ul li ul li').length).toEqual(0);
-            expect(sq.get$Body().find('ul li').hasClass('task-list-item')).toBe(true);
-        });
-        it('should decrease depth when cursor at any offset.', () => {
-            const range = wwe.getEditor().getSelection().cloneRange();
-
-            range.setStart(wwe.get$Body().find('div')[1].firstChild, 2);
-            range.collapse(true);
-
-            sq.setSelection(range);
-
-            DecreaseDepth.exec(wwe);
-
-            expect(sq.get$Body().find('ul li').length).toEqual(3);
-            expect(sq.get$Body().find('ul li ul').length).toEqual(0);
-            expect(sq.get$Body().find('ul li ul li').length).toEqual(0);
-            expect(sq.get$Body().find('ul li').hasClass('task-list-item')).toBe(true);
-        });
-    });
+  });
 });

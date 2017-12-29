@@ -1,8 +1,8 @@
 /**
  * @fileoverview Implements incease depth wysiwyg command
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+import $ from 'jquery';
 
 import CommandManager from '../commandManager';
 
@@ -14,41 +14,43 @@ import CommandManager from '../commandManager';
  * @ignore
  */
 const IncreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
-    name: 'IncreaseDepth',
-    /**
-     *  커맨드 핸들러
-     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
-     */
-    exec(wwe) {
-        const range = wwe.getEditor().getSelection();
-        const $node = $(range.startContainer).closest('li');
-        let prevClasses, nodeClasses, nextClasses;
+  name: 'IncreaseDepth',
+  /**
+   * Command Handler
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
+   */
+  exec(wwe) {
+    const listManager = wwe.componentManager.getManager('list');
+    const range = wwe.getEditor().getSelection();
+    const $node = $(range.startContainer).closest('li');
+    let prevClasses, nodeClasses, nextClasses;
 
-        const $prev = $node.prev();
+    const $prev = $node.prev();
 
-        if ($prev.length && $node.length) {
-            const $next = $node.find('li').eq(0);
+    if ($prev.length && $node.length) {
+      const $next = $node.find('li').eq(0);
 
-            wwe.getEditor().saveUndoState();
+      wwe.getEditor().saveUndoState();
 
-            nodeClasses = $node.attr('class');
-            prevClasses = $prev.attr('class');
-            nextClasses = $next.attr('class');
+      nodeClasses = $node.attr('class');
+      prevClasses = $prev.attr('class');
+      nextClasses = $next.attr('class');
 
-            $node.removeAttr('class');
-            $prev.removeAttr('class');
+      $node.removeAttr('class');
+      $prev.removeAttr('class');
 
-            if ($next.length && !$next.children('div').length) {
-                $next.removeAttr('class');
-            }
+      if ($next.length && !$next.children('div').length) {
+        $next.removeAttr('class');
+      }
 
-            wwe.getEditor().increaseListLevel();
+      wwe.getEditor().increaseListLevel();
+      listManager.mergeList($node.get(0));
 
-            $node.attr('class', nodeClasses);
-            $prev.attr('class', prevClasses);
-            $next.attr('class', nextClasses);
-        }
+      $node.attr('class', nodeClasses);
+      $prev.attr('class', prevClasses);
+      $next.attr('class', nextClasses);
     }
+  }
 });
 
-module.exports = IncreaseDepth;
+export default IncreaseDepth;

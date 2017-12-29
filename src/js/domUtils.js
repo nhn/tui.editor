@@ -1,11 +1,11 @@
 /**
- * @fileoverview
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview DOM Utils
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 const FIND_ZWB = /\u200B/g;
-
-const {util} = tui;
 
 /**
  * isTextNode
@@ -15,7 +15,7 @@ const {util} = tui;
  * @ignore
  */
 const isTextNode = function(node) {
-    return node && node.nodeType === Node.TEXT_NODE;
+  return node && node.nodeType === Node.TEXT_NODE;
 };
 
 /**
@@ -26,7 +26,7 @@ const isTextNode = function(node) {
  * @ignore
  */
 const isElemNode = function(node) {
-    return node && node.nodeType === Node.ELEMENT_NODE;
+  return node && node.nodeType === Node.ELEMENT_NODE;
 };
 
 /**
@@ -37,11 +37,11 @@ const isElemNode = function(node) {
  * @ignore
  */
 const getNodeName = function(node) {
-    if (isElemNode(node)) {
-        return node.tagName;
-    }
+  if (isElemNode(node)) {
+    return node.tagName;
+  }
 
-    return 'TEXT';
+  return 'TEXT';
 };
 
 /**
@@ -52,15 +52,15 @@ const getNodeName = function(node) {
  * @ignore
  */
 const getTextLength = function(node) {
-    let len;
+  let len;
 
-    if (isElemNode(node)) {
-        len = node.textContent.replace(FIND_ZWB, '').length;
-    } else if (isTextNode(node)) {
-        len = node.nodeValue.replace(FIND_ZWB, '').length;
-    }
+  if (isElemNode(node)) {
+    len = node.textContent.replace(FIND_ZWB, '').length;
+  } else if (isTextNode(node)) {
+    len = node.nodeValue.replace(FIND_ZWB, '').length;
+  }
 
-    return len;
+  return len;
 };
 
 /**
@@ -71,15 +71,15 @@ const getTextLength = function(node) {
  * @ignore
  */
 const getOffsetLength = function(node) {
-    let len;
+  let len;
 
-    if (isElemNode(node)) {
-        len = node.childNodes.length;
-    } else if (isTextNode(node)) {
-        len = node.nodeValue.replace(FIND_ZWB, '').length;
-    }
+  if (isElemNode(node)) {
+    len = node.childNodes.length;
+  } else if (isTextNode(node)) {
+    len = node.nodeValue.replace(FIND_ZWB, '').length;
+  }
 
-    return len;
+  return len;
 };
 
 /**
@@ -90,17 +90,17 @@ const getOffsetLength = function(node) {
  * @ignore
  */
 const getNodeOffsetOfParent = function(node) {
-    const childNodesOfParent = node.parentNode.childNodes;
-    let i, t, found;
+  const childNodesOfParent = node.parentNode.childNodes;
+  let i, t, found;
 
-    for (i = 0, t = childNodesOfParent.length; i < t; i += 1) {
-        if (childNodesOfParent[i] === node) {
-            found = i;
-            break;
-        }
+  for (i = 0, t = childNodesOfParent.length; i < t; i += 1) {
+    if (childNodesOfParent[i] === node) {
+      found = i;
+      break;
     }
+  }
 
-    return found;
+  return found;
 };
 
 /**
@@ -112,22 +112,20 @@ const getNodeOffsetOfParent = function(node) {
  * @ignore
  */
 const getChildNodeByOffset = function(node, index) {
-    let currentNode;
+  let currentNode;
 
-    if (isTextNode(node)) {
-        currentNode = node;
-    } else if (node.childNodes.length && index >= 0) {
-        currentNode = node.childNodes[index];
-    }
+  if (isTextNode(node)) {
+    currentNode = node;
+  } else if (node.childNodes.length && index >= 0) {
+    currentNode = node.childNodes[index];
+  }
 
-    return currentNode;
+  return currentNode;
 };
 
 /**
  * getNodeWithDirectionUntil
  * find next node from passed node
- * 노드의 다음 노드를 찾는다 sibling노드가 없으면 부모레벨까지 올라가서 찾는다.
- * 부모노드를 따라 올라가며 방향에 맞는 노드를 찾는다.
  * @param {strong} direction previous or next
  * @param {Node} node node
  * @param {string} untilNodeName parent node name to limit
@@ -135,32 +133,31 @@ const getChildNodeByOffset = function(node, index) {
  * @ignore
  */
 const getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
-    const directionKey = `${direction}Sibling`;
-    let nodeName, foundedNode;
+  const directionKey = `${direction}Sibling`;
+  let nodeName, foundedNode;
 
-    while (node && !node[directionKey]) {
-        nodeName = getNodeName(node.parentNode);
+  while (node && !node[directionKey]) {
+    nodeName = getNodeName(node.parentNode);
 
-        if ((nodeName === untilNodeName)
+    if ((nodeName === untilNodeName)
             || nodeName === 'BODY'
-        ) {
-            break;
-        }
-
-        node = node.parentNode;
+    ) {
+      break;
     }
 
-    if (node[directionKey]) {
-        foundedNode = node[directionKey];
-    }
+    node = node.parentNode;
+  }
 
-    return foundedNode;
+  if (node[directionKey]) {
+    foundedNode = node[directionKey];
+  }
+
+  return foundedNode;
 };
 
 /**
  * getPrevOffsetNodeUntil
  * get prev node of childnode pointed with index
- * 인덱스에 해당하는 차일드 노드의 이전 노드를 찾는다.
  * @param {Node} node node
  * @param {number} index offset index
  * @param {string} untilNodeName parent node name to limit
@@ -168,56 +165,54 @@ const getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
  * @ignore
  */
 const getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
-    let prevNode;
+  let prevNode;
 
-    if (index > 0) {
-        prevNode = getChildNodeByOffset(node, index - 1);
-    } else {
-        prevNode = getNodeWithDirectionUntil('previous', node, untilNodeName);
-    }
+  if (index > 0) {
+    prevNode = getChildNodeByOffset(node, index - 1);
+  } else {
+    prevNode = getNodeWithDirectionUntil('previous', node, untilNodeName);
+  }
 
-    return prevNode;
+  return prevNode;
 };
 
 const getParentUntilBy = function(node, condition) {
-    let foundedNode;
+  let foundedNode;
 
-    while (node.parentNode && !condition(node.parentNode)) {
-        node = node.parentNode;
-    }
+  while (node.parentNode && !condition(node.parentNode)) {
+    node = node.parentNode;
+  }
 
-    if (condition(node.parentNode)) {
-        foundedNode = node;
-    }
+  if (condition(node.parentNode)) {
+    foundedNode = node;
+  }
 
-    return foundedNode;
+  return foundedNode;
 };
 
 /**
  * getParentUntil
  * get parent node until paseed node name
- * 특정 노드이전의 부모 노드를 찾는다
  * @param {Node} node node
  * @param {string|HTMLNode} untilNode node name or node to limit
  * @returns {Node} founded node
  * @ignore
  */
 const getParentUntil = function(node, untilNode) {
-    let foundedNode;
+  let foundedNode;
 
-    if (util.isString(untilNode)) {
-        foundedNode = getParentUntilBy(node, targetNode => untilNode === getNodeName(targetNode));
-    } else {
-        foundedNode = getParentUntilBy(node, targetNode => untilNode === targetNode);
-    }
+  if (util.isString(untilNode)) {
+    foundedNode = getParentUntilBy(node, targetNode => untilNode === getNodeName(targetNode));
+  } else {
+    foundedNode = getParentUntilBy(node, targetNode => untilNode === targetNode);
+  }
 
-    return foundedNode;
+  return foundedNode;
 };
 
 /**
  * getNodeWithDirectionUnderParent
- * get node of direction before passed parent
- * 주어진 노드 이전까지 찾아올라가서 방향에 맞는 노드를 찾는다.
+ * get node on the given direction under given parent
  * @param {strong} direction previous or next
  * @param {Node} node node
  * @param {string|Node} underNode parent node name to limit
@@ -225,16 +220,16 @@ const getParentUntil = function(node, untilNode) {
  * @ignore
  */
 const getNodeWithDirectionUnderParent = function(direction, node, underNode) {
-    const directionKey = `${direction}Sibling`;
-    let foundedNode;
+  const directionKey = `${direction}Sibling`;
+  let foundedNode;
 
-    node = getParentUntil(node, underNode);
+  node = getParentUntil(node, underNode);
 
-    if (node && node[directionKey]) {
-        foundedNode = node[directionKey];
-    }
+  if (node && node[directionKey]) {
+    foundedNode = node[directionKey];
+  }
 
-    return foundedNode;
+  return foundedNode;
 };
 
 /**
@@ -246,7 +241,7 @@ const getNodeWithDirectionUnderParent = function(direction, node, underNode) {
  * @ignore
  */
 const getTopPrevNodeUnder = function(node, underNode) {
-    return getNodeWithDirectionUnderParent('previous', node, underNode);
+  return getNodeWithDirectionUnderParent('previous', node, underNode);
 };
 
 /**
@@ -258,7 +253,7 @@ const getTopPrevNodeUnder = function(node, underNode) {
  * @ignore
  */
 const getTopNextNodeUnder = function(node, underNode) {
-    return getNodeWithDirectionUnderParent('next', node, underNode);
+  return getNodeWithDirectionUnderParent('next', node, underNode);
 };
 
 /**
@@ -268,7 +263,7 @@ const getTopNextNodeUnder = function(node, underNode) {
  * @ignore
  */
 const getTopBlockNode = function(node) {
-    return getParentUntil(node, 'BODY');
+  return getParentUntil(node, 'BODY');
 };
 
 /**
@@ -278,25 +273,25 @@ const getTopBlockNode = function(node) {
  * @ignore
  */
 const getPrevTextNode = function(node) {
-    node = node.previousSibling || node.parentNode;
+  node = node.previousSibling || node.parentNode;
 
-    while (!isTextNode(node) && getNodeName(node) !== 'BODY') {
-        if (node.previousSibling) {
-            node = node.previousSibling;
+  while (!isTextNode(node) && getNodeName(node) !== 'BODY') {
+    if (node.previousSibling) {
+      node = node.previousSibling;
 
-            while (node.lastChild) {
-                node = node.lastChild;
-            }
-        } else {
-            node = node.parentNode;
-        }
+      while (node.lastChild) {
+        node = node.lastChild;
+      }
+    } else {
+      node = node.parentNode;
     }
+  }
 
-    if (getNodeName(node) === 'BODY') {
-        node = null;
-    }
+  if (getNodeName(node) === 'BODY') {
+    node = null;
+  }
 
-    return node;
+  return node;
 };
 
 /**
@@ -308,86 +303,85 @@ const getPrevTextNode = function(node) {
  * @ignore
  */
 const findOffsetNode = function(root, offsetList, textNodeFilter) {
-    const result = [];
-    let text = '';
-    let walkerOffset = 0;
-    let newWalkerOffset;
+  const result = [];
+  let text = '';
+  let walkerOffset = 0;
+  let newWalkerOffset;
 
-    if (!offsetList.length) {
-        return result;
-    }
-
-    let offset = offsetList.shift();
-    const walker = document.createTreeWalker(root, 4, null, false);
-
-    while (walker.nextNode()) {
-        text = walker.currentNode.nodeValue || '';
-
-        if (textNodeFilter) {
-            text = textNodeFilter(text);
-        }
-
-        newWalkerOffset = walkerOffset + text.length;
-
-        while (newWalkerOffset >= offset) {
-            result.push({
-                container: walker.currentNode,
-                offsetInContainer: offset - walkerOffset,
-                offset
-            });
-
-            if (!offsetList.length) {
-                return result;
-            }
-            offset = offsetList.shift();
-        }
-        walkerOffset = newWalkerOffset;
-    }
-
-    // 오프셋에 해당하는 컨텐츠가 없는경우 컨텐츠 맨마지막으로 통일
-    // 중간에 return으로 빠져나가지 않고 여기까지 왔다는것은 남은 offset이 있는것임
-    do {
-        result.push({
-            container: walker.currentNode,
-            offsetInContainer: text.length,
-            offset
-        });
-        offset = offsetList.shift();
-    } while (!util.isUndefined(offset));
-
+  if (!offsetList.length) {
     return result;
+  }
+
+  let offset = offsetList.shift();
+  const walker = document.createTreeWalker(root, 4, null, false);
+
+  while (walker.nextNode()) {
+    text = walker.currentNode.nodeValue || '';
+
+    if (textNodeFilter) {
+      text = textNodeFilter(text);
+    }
+
+    newWalkerOffset = walkerOffset + text.length;
+
+    while (newWalkerOffset >= offset) {
+      result.push({
+        container: walker.currentNode,
+        offsetInContainer: offset - walkerOffset,
+        offset
+      });
+
+      if (!offsetList.length) {
+        return result;
+      }
+      offset = offsetList.shift();
+    }
+    walkerOffset = newWalkerOffset;
+  }
+
+  // there should be offset left
+  do {
+    result.push({
+      container: walker.currentNode,
+      offsetInContainer: text.length,
+      offset
+    });
+    offset = offsetList.shift();
+  } while (!util.isUndefined(offset));
+
+  return result;
 };
 
 const getNodeInfo = function(node) {
-    const path = {};
+  const path = {};
 
-    path.tagName = node.nodeName;
+  path.tagName = node.nodeName;
 
-    if (node.id) {
-        path.id = node.id;
-    }
+  if (node.id) {
+    path.id = node.id;
+  }
 
-    const className = node.className.trim();
+  const className = node.className.trim();
 
-    if (className) {
-        path.className = className;
-    }
+  if (className) {
+    path.className = className;
+  }
 
-    return path;
+  return path;
 };
 
 const getPath = function(node, root) {
-    const paths = [];
+  const paths = [];
 
-    while (node && node !== root) {
-        if (isElemNode(node)) {
-            paths.unshift(getNodeInfo(node));
-        }
-
-        node = node.parentNode;
+  while (node && node !== root) {
+    if (isElemNode(node)) {
+      paths.unshift(getNodeInfo(node));
     }
 
-    return paths;
+    node = node.parentNode;
+  }
+
+  return paths;
 };
 
 /**
@@ -398,22 +392,22 @@ const getPath = function(node, root) {
  * @ignore
  */
 const getTableCellByDirection = function(node, direction) {
-    let isForward = true;
-    let targetElement = null;
+  let isForward = true;
+  let targetElement = null;
 
-    if (tui.util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
-        return null;
-    } else if (direction === 'previous') {
-        isForward = false;
-    }
+  if (util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
+    return null;
+  } else if (direction === 'previous') {
+    isForward = false;
+  }
 
-    if (isForward) {
-        targetElement = node.nextElementSibling;
-    } else {
-        targetElement = node.previousElementSibling;
-    }
+  if (isForward) {
+    targetElement = node.nextElementSibling;
+  } else {
+    targetElement = node.previousElementSibling;
+  }
 
-    return targetElement;
+  return targetElement;
 };
 
 /**
@@ -425,68 +419,68 @@ const getTableCellByDirection = function(node, direction) {
  * @ignore
  */
 const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
-    let isForward = true;
-    let tableCellElement = null;
-    let $node, index, $targetRowElement, $currentContainer, $siblingContainer, isSiblingContainerExists;
+  let isForward = true;
+  let tableCellElement = null;
+  let $node, index, $targetRowElement, $currentContainer, $siblingContainer, isSiblingContainerExists;
 
-    if (tui.util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
-        return null;
-    } else if (direction === 'previous') {
-        isForward = false;
-    }
-
-    if (node) {
-        $node = $(node);
-
-        if (isForward) {
-            $targetRowElement = $node.parent().next();
-            $currentContainer = $node.parents('thead');
-            $siblingContainer = $currentContainer[0] && $currentContainer.next();
-            isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
-
-            index = 0;
-        } else {
-            $targetRowElement = $node.parent().prev();
-            $currentContainer = $node.parents('tbody');
-            $siblingContainer = $currentContainer[0] && $currentContainer.prev();
-            isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
-
-            index = node.parentNode.childNodes.length - 1;
-        }
-
-        if (tui.util.isUndefined(needEdgeCell) || !needEdgeCell) {
-            index = getNodeOffsetOfParent(node);
-        }
-
-        if ($targetRowElement[0]) {
-            tableCellElement = $targetRowElement.children('td,th')[index];
-        } else if ($currentContainer[0] && isSiblingContainerExists) {
-            tableCellElement = $siblingContainer.find('td,th')[index];
-        }
-
-        return tableCellElement;
-    }
-
+  if (util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
     return null;
+  } else if (direction === 'previous') {
+    isForward = false;
+  }
+
+  if (node) {
+    $node = $(node);
+
+    if (isForward) {
+      $targetRowElement = $node.parent().next();
+      $currentContainer = $node.parents('thead');
+      $siblingContainer = $currentContainer[0] && $currentContainer.next();
+      isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
+
+      index = 0;
+    } else {
+      $targetRowElement = $node.parent().prev();
+      $currentContainer = $node.parents('tbody');
+      $siblingContainer = $currentContainer[0] && $currentContainer.prev();
+      isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
+
+      index = node.parentNode.childNodes.length - 1;
+    }
+
+    if (util.isUndefined(needEdgeCell) || !needEdgeCell) {
+      index = getNodeOffsetOfParent(node);
+    }
+
+    if ($targetRowElement[0]) {
+      tableCellElement = $targetRowElement.children('td,th')[index];
+    } else if ($currentContainer[0] && isSiblingContainerExists) {
+      tableCellElement = $siblingContainer.find('td,th')[index];
+    }
+
+    return tableCellElement;
+  }
+
+  return null;
 };
 
-module.exports = {
-    getNodeName,
-    isTextNode,
-    isElemNode,
-    getTextLength,
-    getOffsetLength,
-    getPrevOffsetNodeUntil,
-    getNodeOffsetOfParent,
-    getChildNodeByOffset,
-    getTopPrevNodeUnder,
-    getTopNextNodeUnder,
-    getParentUntil,
-    getTopBlockNode,
-    getPrevTextNode,
-    findOffsetNode,
-    getPath,
-    getNodeInfo,
-    getTableCellByDirection,
-    getSiblingRowCellByDirection
+export default {
+  getNodeName,
+  isTextNode,
+  isElemNode,
+  getTextLength,
+  getOffsetLength,
+  getPrevOffsetNodeUntil,
+  getNodeOffsetOfParent,
+  getChildNodeByOffset,
+  getTopPrevNodeUnder,
+  getTopNextNodeUnder,
+  getParentUntil,
+  getTopBlockNode,
+  getPrevTextNode,
+  findOffsetNode,
+  getPath,
+  getNodeInfo,
+  getTableCellByDirection,
+  getSiblingRowCellByDirection
 };

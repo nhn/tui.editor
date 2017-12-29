@@ -1,4 +1,8 @@
 @charset "UTF-8";
+/**
+* @fileoverview style for editor ui
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 
 /* height */
 .auto-height,
@@ -183,28 +187,6 @@
 }
 
 /* Essential element style */
-.tui-editor-contents .task-list-item {
-    border: 0;
-    list-style: none;
-    padding-left: 22px;
-    margin-left: -22px;
-    background-repeat: no-repeat;
-    background-size: 16px 16px;
-    background-position: 0 2px;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAADdJREFUKBVjvHv37n8GMgALSI+SkhJJWu/du8fARJIOJMWjGpECA505GjjoIYLEB6dVUNojFQAA/1MJUFWet/4AAAAASUVORK5CYII=');
-}
-
-.tui-editor-contents .task-list-item.checked {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAMpJREFUKBVjjJ/64D8DGYCJDD1gLbTVyM3OxJDiJMzAxcYIdyALnIWDAdJU7i/OICfCxsDMxMgwc88bwk5F1vTs/W+GFUffwY2H+1FBlI2hLliCQYCbGSyJrqlzwwuGj9//YWoMtRBgUBJnZ6gMEGeQFWaFOw9kE7omkG5GWDyCPF7mJ86gIMbO8P//fwZGRkYGXJpAGuFO/fbrP0PXppcMD179JKgJRSOIA9N8/NZXrM4DqYEBjOgAaYYFOUwRNhruVGyS+MTI1ggAx8NTGcUtFVQAAAAASUVORK5CYII=');
-}
-
-.tui-editor-contents .task-list-item input[type='checkbox'],
-.tui-editor-contents .task-list-item .task-list-item-checkbox {
-    margin-left: -17px;
-    margin-right: 3.8px;
-    margin-top: 3px;
-}
-
 .tui-editor-contents td.te-cell-selected {
     background-color: #d8dfec;
 }
@@ -300,22 +282,22 @@
     margin-right: 0;
 }
 
-.tui-editor-defaultUI-toolbar button.tui-scrollfollow {
+.tui-editor-defaultUI-toolbar button.tui-scrollsync {
     width: auto;
     color: #777777;
     border: 0;
 }
 
-.tui-editor-defaultUI button.tui-scrollfollow:after {
+.tui-editor-defaultUI button.tui-scrollsync:after {
     content: "Scroll off";
 } 
 
-.tui-editor-defaultUI button.tui-scrollfollow.active {
+.tui-editor-defaultUI button.tui-scrollsync.active {
     color: #125de6;
     font-weight: bold;
 }
 
-.tui-editor-defaultUI button.tui-scrollfollow.active:after {
+.tui-editor-defaultUI button.tui-scrollsync.active:after {
     content: "Scroll on";
 }
 
@@ -1112,16 +1094,16 @@
     overflow-y: auto;
 }
 
-.tui-split-scroll button.tui-scrollfollow {
+.tui-split-scroll button.tui-scrollsync {
     top: 10px;
     opacity: 0.2;
 }
 
-.tui-split-scroll button.tui-scrollfollow::after {
+.tui-split-scroll button.tui-scrollsync::after {
     content: "scroll off";
 }
 
-.tui-split-scroll.scroll-sync button.tui-scrollfollow {
+.tui-split-scroll.scroll-sync button.tui-scrollsync {
     opacity: 0.5;
 }
 
@@ -1131,7 +1113,7 @@
     overflow: initial;
 }
 
-.tui-split-scroll.scroll-sync button.tui-scrollfollow::after {
+.tui-split-scroll.scroll-sync button.tui-scrollsync::after {
     content: "scroll on";
 }
 
@@ -1151,7 +1133,7 @@
     display: none;
 }
 
-.tui-split-scroll.single-content button.tui-scrollfollow {
+.tui-split-scroll.single-content button.tui-scrollsync {
     display: none;
 }
 

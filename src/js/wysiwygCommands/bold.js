@@ -1,9 +1,7 @@
 /**
- * @fileoverview Implements WysiwygCommand
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements bold WysiwygCommand
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
 
@@ -15,30 +13,30 @@ import domUtils from '../domUtils';
  * @ignore
  */
 const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
-    name: 'Bold',
-    keyMap: ['CTRL+B', 'META+B'],
-    /**
-     *  커맨드 핸들러
-     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
-     */
-    exec(wwe) {
-        const sq = wwe.getEditor();
-        const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+  name: 'Bold',
+  keyMap: ['CTRL+B', 'META+B'],
+  /**
+   * command handler
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
+   */
+  exec(wwe) {
+    const sq = wwe.getEditor();
+    const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
-        wwe.focus();
+    wwe.focus();
 
-        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-            tableSelectionManager.styleToSelectedCells(styleBold);
-        } else {
-            styleBold(sq);
-        }
-
-        const range = sq.getSelection();
-        if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
-            range.collapse(true);
-            sq.setSelection(range);
-        }
+    if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+      tableSelectionManager.styleToSelectedCells(styleBold);
+    } else {
+      styleBold(sq);
     }
+
+    const range = sq.getSelection();
+    if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
+      range.collapse(true);
+      sq.setSelection(range);
+    }
+  }
 });
 
 /**
@@ -46,15 +44,15 @@ const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
  * @param {object} sq - squire editor instance
  */
 function styleBold(sq) {
-    if (sq.hasFormat('b') || sq.hasFormat('strong')) {
-        sq.changeFormat(null, {tag: 'b'});
-    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-        if (sq.hasFormat('code')) {
-            sq.changeFormat(null, {tag: 'code'});
-        }
-        sq.bold();
+  if (sq.hasFormat('b') || sq.hasFormat('strong')) {
+    sq.changeFormat(null, {tag: 'b'});
+  } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+    if (sq.hasFormat('code')) {
+      sq.changeFormat(null, {tag: 'code'});
     }
+    sq.bold();
+  }
 }
 
-module.exports = Bold;
+export default Bold;
 

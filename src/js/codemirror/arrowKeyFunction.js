@@ -1,9 +1,11 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
-// Modified by Junghwan Park <junghwan.park@nhnent.com>
+/**
+ * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+import CodeMirror from 'codemirror';
 
 /*eslint-disable */
-
 CodeMirror.commands.replaceLineTextToUpper = cm => {
     if (cm.getOption("disableInput")) {
         return CodeMirror.Pass;
@@ -138,4 +140,3 @@ function replaceMultiLine(cm, upper, bottom, lineAdjustment) {
         line: bottom.line + lineAdjustment, ch: bottom.ch
     });
 }
-/*eslint-enable */

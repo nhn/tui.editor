@@ -1,8 +1,9 @@
 /**
- * @fileoverview Implements WysiwygCommand
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements table add column WysiwygCommand
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
@@ -15,28 +16,28 @@ import domUtils from '../domUtils';
  * @ignore
  */
 const TableAddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
-    name: 'AddCol',
-    /**
-     * command handler
-     * @param {WysiwygEditor} wwe WYsiwygEditor instance
-     */
-    exec(wwe) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
-        const numberOfCols = getNumberOfCols(wwe);
-        let $cell;
+  name: 'AddCol',
+  /**
+   * command handler
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
+   */
+  exec(wwe) {
+    const sq = wwe.getEditor();
+    const range = sq.getSelection().cloneRange();
+    const numberOfCols = getNumberOfCols(wwe);
+    let $cell;
 
-        wwe.focus();
+    wwe.focus();
 
-        if (sq.hasFormat('TR')) {
-            sq.saveUndoState(range);
+    if (sq.hasFormat('TR')) {
+      sq.saveUndoState(range);
 
-            $cell = getCellByRange(range);
-            addColToCellAfter($cell, numberOfCols);
+      $cell = getCellByRange(range);
+      addColToCellAfter($cell, numberOfCols);
 
-            focusToNextCell(sq, $cell);
-        }
+      focusToNextCell(sq, $cell);
     }
+  }
 });
 
 /**
@@ -46,16 +47,16 @@ const TableAddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
  * @ignore
  */
 function getNumberOfCols(wwe) {
-    const selectionMgr = wwe.componentManager.getManager('tableSelection');
-    const $selectedCells = selectionMgr.getSelectedCells();
-    let length = 1;
+  const selectionMgr = wwe.componentManager.getManager('tableSelection');
+  const $selectedCells = selectionMgr.getSelectedCells();
+  let length = 1;
 
-    if ($selectedCells.length > 0) {
-        const maxLength = $selectedCells.get(0).parentNode.querySelectorAll('td, th').length;
-        length = Math.min(maxLength, $selectedCells.length);
-    }
+  if ($selectedCells.length > 0) {
+    const maxLength = $selectedCells.get(0).parentNode.querySelectorAll('td, th').length;
+    length = Math.min(maxLength, $selectedCells.length);
+  }
 
-    return length;
+  return length;
 }
 
 /**
@@ -65,15 +66,15 @@ function getNumberOfCols(wwe) {
  * @ignore
  */
 function getCellByRange(range) {
-    let cell = range.startContainer;
+  let cell = range.startContainer;
 
-    if (domUtils.getNodeName(cell) === 'TD' || domUtils.getNodeName(cell) === 'TH') {
-        cell = $(cell);
-    } else {
-        cell = $(cell).parentsUntil('tr');
-    }
+  if (domUtils.getNodeName(cell) === 'TD' || domUtils.getNodeName(cell) === 'TH') {
+    cell = $(cell);
+  } else {
+    cell = $(cell).parentsUntil('tr');
+  }
 
-    return cell;
+  return cell;
 }
 
 /**
@@ -83,25 +84,25 @@ function getCellByRange(range) {
  * @ignore
  */
 function addColToCellAfter($cell, numberOfCols = 1) {
-    const index = $cell.index();
-    let cellToAdd;
+  const index = $cell.index();
+  let cellToAdd;
 
-    $cell.parents('table').find('tr').each((n, tr) => {
-        const isTBody = domUtils.getNodeName(tr.parentNode) === 'TBODY';
-        const isMSIE = tui.util.browser.msie;
-        const cell = tr.children[index];
-        for (let i = 0; i < numberOfCols; i += 1) {
-            if (isTBody) {
-                cellToAdd = document.createElement('td');
-            } else {
-                cellToAdd = document.createElement('th');
-            }
-            if (!isMSIE) {
-                cellToAdd.appendChild(document.createElement('br'));
-            }
-            $(cellToAdd).insertAfter(cell);
-        }
-    });
+  $cell.parents('table').find('tr').each((n, tr) => {
+    const isTBody = domUtils.getNodeName(tr.parentNode) === 'TBODY';
+    const isMSIE = util.browser.msie;
+    const cell = tr.children[index];
+    for (let i = 0; i < numberOfCols; i += 1) {
+      if (isTBody) {
+        cellToAdd = document.createElement('td');
+      } else {
+        cellToAdd = document.createElement('th');
+      }
+      if (!isMSIE) {
+        cellToAdd.appendChild(document.createElement('br'));
+      }
+      $(cellToAdd).insertAfter(cell);
+    }
+  });
 }
 
 /**
@@ -111,12 +112,12 @@ function addColToCellAfter($cell, numberOfCols = 1) {
  * @ignore
  */
 function focusToNextCell(sq, $cell) {
-    const range = sq.getSelection();
+  const range = sq.getSelection();
 
-    range.selectNodeContents($cell.next()[0]);
-    range.collapse(true);
+  range.selectNodeContents($cell.next()[0]);
+  range.collapse(true);
 
-    sq.setSelection(range);
+  sq.setSelection(range);
 }
 
-module.exports = TableAddCol;
+export default TableAddCol;
