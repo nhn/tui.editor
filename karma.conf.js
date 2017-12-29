@@ -66,7 +66,7 @@ configurator.nhnent = function(defaultConfig) {
   if (BROWSER === 'IE11' || !BROWSER) {
     customLaunchers.IE11 = nhnentLauncher('WebDriver', 'internet explorer', '11');
   }
-  if (BROWSER === 'Edge') {
+  if (BROWSER === 'Edge' || !BROWSER) {
     customLaunchers.Edge = nhnentLauncher('WebDriver', 'MicrosoftEdge');
   }
   if (BROWSER === 'Chrome' || !BROWSER) {
@@ -109,11 +109,11 @@ configurator.saucelabs = function(defaultConfig) {
   if (BROWSER === 'IE11' || !BROWSER) {
     customLaunchers.sl_ie_11 = saucelabsLauncher('SauceLabs', 'internet explorer', 'Windows 8.1', '11.0');
   }
-  if (BROWSER === 'Edge') {
+  if (BROWSER === 'Edge' || !BROWSER) {
     customLaunchers.sl_edge_14 = saucelabsLauncher('SauceLabs', 'MicrosoftEdge', 'Windows 10', '15.15063');
   }
-  if (BROWSER === 'Safari') {
-    defaultConfig.customLaunchers.sl_safari = saucelabsLauncher('SauceLabs', 'safari', 'macOS 10.12', '10.0');
+  if (BROWSER === 'Safari' || !BROWSER) {
+    defaultConfig.customLaunchers.sl_safari = saucelabsLauncher('SauceLabs', 'safari', 'macOS 10.13', '11.0');
   }
   defaultConfig.reporters.push('saucelabs');
   defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
@@ -141,7 +141,7 @@ configurator.localhost = function(defaultConfig) {
 
 configurator.noserver = function(defaultConfig) {
   defaultConfig.browsers = [
-    BROWSER || 'Chrome'
+    BROWSER || 'ChromeHeadless'
   ];
   defaultConfig.singleRun = SINGLE_RUN || false;
 };
@@ -160,9 +160,6 @@ module.exports = function(config) {
     // chart is not npm package and it needs global code snippet.
     // remove chart and code snippet from here once chart is on npm
     files: [
-      'node_modules/tui-code-snippet/dist/tui-code-snippet.js',
-      'node_modules/tui-chart/dist/tui-chart.js',
-      'node_modules/tui-chart/dist/tui-chart.css',
       'node_modules/codemirror/lib/codemirror.css',
       'src/css/tui-editor.css',
       'test/fixtures/*.*',
@@ -189,7 +186,7 @@ module.exports = function(config) {
           {
             test: /\.js$/,
             exclude: /node_modules|lib|dist/,
-            loader: 'babel-loader',
+            loader: 'babel-loader?cacheDirectory',
             options: {
               babelrc: true
             }

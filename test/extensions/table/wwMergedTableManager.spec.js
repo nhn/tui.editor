@@ -5,6 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
+import '../../../src/js/extensions/table/langs';
 import WysiwygEditor from '../../../src/js/wysiwygEditor';
 import EventManager from '../../../src/js/eventManager';
 import WwMergedTableManager from '../../../src/js/extensions/table/wwMergedTableManager';
