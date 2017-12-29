@@ -17,10 +17,10 @@ const CLASS_OK_BUTTON = 'te-ok-button';
 const CLASS_CLOSE_BUTTON = 'te-close-button';
 const CLASS_POPUP_CLOSE_BUTTON = 'tui-popup-close-button';
 const TEMPLATE_HEADER_BUTTONS = `
-    <button class="${CLASS_PREFIX}toggle-scroll"></button>
-    <button class="${CLASS_PREFIX}toggle-preview"></button>
-    <button class="${CLASS_PREFIX}toggle-fit"></button>
-    <button class="${CLASS_POPUP_CLOSE_BUTTON}"></button>
+    <button type="button" class="${CLASS_PREFIX}toggle-scroll"></button>
+    <button type="button" class="${CLASS_PREFIX}toggle-preview"></button>
+    <button type="button" class="${CLASS_PREFIX}toggle-fit"></button>
+    <button type="button" class="${CLASS_POPUP_CLOSE_BUTTON}"></button>
 `;
 
 /**

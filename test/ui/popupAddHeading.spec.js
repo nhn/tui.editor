@@ -12,7 +12,7 @@ describe('PopupAddHeading', () => {
     em;
 
   beforeEach(() => {
-    $('body').append('<button class="tui-heading"></button>');
+    $('body').append('<button type="button" class="tui-heading"></button>');
 
     em = new EventManager();
 

@@ -41,7 +41,7 @@ class CodeBlockGadget extends BlockOverlay {
     this.$el.addClass('code-block-header');
     this._$languageLabel = $('<span>text</span>');
     this.$el.append(this._$languageLabel);
-    this._$buttonOpenModalEditor = $(`<button>Editor</button>`);
+    this._$buttonOpenModalEditor = $(`<button type="button">Editor</button>`);
     this.$el.append(this._$buttonOpenModalEditor);
   }
 
