@@ -167,8 +167,8 @@ describe('LayerPopup', () => {
   });
 
   it('should open popup on click element having the class given to openerCssQuery', () => {
-    $('body').append($('<button class="button1 openPopup"></button>'));
-    $('body').append($('<button class="button2 openPopup"></button>'));
+    $('body').append($('<button type="button" class="button1 openPopup"></button>'));
+    $('body').append($('<button type="button" class="button2 openPopup"></button>'));
 
     popup = new LayerPopup({
       openerCssQuery: '.openPopup'
@@ -183,8 +183,8 @@ describe('LayerPopup', () => {
   });
 
   it('should close popup on click element having the class given to closerCssQuery', () => {
-    $('body').append($('<button class="button1 closePopup"></button>'));
-    $('body').append($('<button class="button2 closePopup"></button>'));
+    $('body').append($('<button type="button" class="button1 closePopup"></button>'));
+    $('body').append($('<button type="button" class="button2 closePopup"></button>'));
 
     popup = new LayerPopup({
       closerCssQuery: '.closePopup'
@@ -232,7 +232,7 @@ describe('LayerPopup', () => {
 
   describe('remove()', () => {
     beforeEach(() => {
-      $('body').append($('<button class="button1 openPopup"></button>'));
+      $('body').append($('<button type="button" class="button1 openPopup"></button>'));
 
       popup = new LayerPopup({
         openerCssQuery: '.openPopup'
