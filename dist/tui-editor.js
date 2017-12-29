@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 0.14.2
+ * @version 0.14.3
  * @author Sungho Kim <shirenbeat@gmail.com>
  * @license MIT
  */
@@ -16863,7 +16863,7 @@ var ImportManager = function () {
             var types = cbData.types;
 
 
-            if (blobItems && types && util.inArray('Files', [].slice.call(types)) !== -1) {
+            if (blobItems && types && types.length === 1 && util.inArray('Files', [].slice.call(types)) !== -1) {
                 this._processBlobItems(blobItems, evData);
             }
         }
@@ -29535,7 +29535,7 @@ var CodeBlockGadget = function (_BlockOverlay) {
             this.$el.addClass('code-block-header');
             this._$languageLabel = $('<span>text</span>');
             this.$el.append(this._$languageLabel);
-            this._$buttonOpenModalEditor = $('<button>Editor</button>');
+            this._$buttonOpenModalEditor = $('<button type="button">Editor</button>');
             this.$el.append(this._$buttonOpenModalEditor);
         }
     }, {
@@ -31448,7 +31448,7 @@ var CLASS_PREFIX = 'popup-editor-';
 var CLASS_OK_BUTTON = 'te-ok-button';
 var CLASS_CLOSE_BUTTON = 'te-close-button';
 var CLASS_POPUP_CLOSE_BUTTON = 'tui-popup-close-button';
-var TEMPLATE_HEADER_BUTTONS = '\n    <button class="' + CLASS_PREFIX + 'toggle-scroll"></button>\n    <button class="' + CLASS_PREFIX + 'toggle-preview"></button>\n    <button class="' + CLASS_PREFIX + 'toggle-fit"></button>\n    <button class="' + CLASS_POPUP_CLOSE_BUTTON + '"></button>\n';
+var TEMPLATE_HEADER_BUTTONS = '\n    <button type="button" class="' + CLASS_PREFIX + 'toggle-scroll"></button>\n    <button type="button" class="' + CLASS_PREFIX + 'toggle-preview"></button>\n    <button type="button" class="' + CLASS_PREFIX + 'toggle-fit"></button>\n    <button type="button" class="' + CLASS_POPUP_CLOSE_BUTTON + '"></button>\n';
 
 /**
  * Class popup code block editor
