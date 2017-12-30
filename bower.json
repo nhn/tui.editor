@@ -34,7 +34,12 @@
     "test",
     "tests",
     "api",
-    "report"
+    "report",
+    "src",
+    "webpack.config.js",
+    "karma.conf.js",
+    "jsdoc.conf.js",
+    "ISSUE_TEMPLATE.md"
   ],
   "dependencies": {
     "tui-code-snippet": "^1.2.9",
