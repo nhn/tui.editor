@@ -1,6 +1,6 @@
 {
   "name": "squire-rte",
-  "version": "1.8.10",
+  "version": "1.8.11",
   "description": "Squire is an HTML5 rich text editor, which provides powerful cross-browser normalisation, whilst being supremely lightweight and flexible.",
   "main": "build/squire.js",
   "scripts": {
