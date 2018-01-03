@@ -33,25 +33,25 @@
 
 ### CommonMark + GFM Specifications
 
-Today *CommonMark* is the de-facto *Markdown* standard. And *GFM (GitHub Flavored Markdown)* is another popular specification based on *CommonMark* maintained by *GitHub* which is known as the biggest *Markdown* user.
-**ToastUI Editor** respects [*CommonMark*](http://commonmark.org/) and [*GFM*](https://github.github.com/gfm/) specifications. Write documents with easy and productive tools provided by **ToastUI Editor**. You can open this document wherever the specifications are supported.
+Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Markdown)* is another popular specification based on *CommonMark* - maintained by *GitHub*, which is known as the biggest *Markdown* user.
+**ToastUI Editor** respects both [*CommonMark*](http://commonmark.org/) and [*GFM*](https://github.github.com/gfm/) specifications. Write documents with ease using productive tools provided by **ToastUI Editor**. You can open this document wherever the specifications are supported.
 
 ### Powerful Extensions
-*CommonMark* and *GFM* are great, but we often face requirements beyond the specifications. The **ToastUI Editor** comes with powerful **Extensions** in compliance with the *Markdown* syntax. And it also provides APIs so you can develop your own extensions. Please check [here](https://github.com/nhnent/tui.editor/wiki/Extensions) to learn about **Extensions**.
+*CommonMark* and *GFM* are great, but we often face requirements beyond the specifications. The **ToastUI Editor** comes with powerful **Extensions** in compliance with the *Markdown* syntax, while also providing APIs so you can develop your own extensions.
 
-Here are some of extensions which you can start right on.
+Here are some of the extensions you can start with:
 
 * **Color picker**: [ColorPicker](https://github.com/nhnent/tui.color-picker) provides an easy way to color text with a GUI tool box
 * **Chart code block**: A Code block marked as a 'chart' will render [charts](https://github.com/nhnent/tui.chart)
 * **UML code block**: A Code block marked as an 'uml' will render [UML diagrams](http://plantuml.com/screenshot)
 * **Table merge**: You can merge columns and rows in tables
 
- [Here](https://github.com/nhnent/tui.editor/wiki/Extensions) you can find and more
+ To learn more about **Extensions** check the [Extension Docs](https://github.com/nhnent/tui.editor/wiki/Extensions)
 
 ## 🎨 Features
 **ToastUI Editor** provides **Markdown mode** and **Wysiwyg mode**.
 
-Someone may like the productivity of *Markdown*, but the other can be looking for a way to make it easier to edit. The **ToastUI Editor** can be the coordinator of both. It offers **Markdown mode** and **Wysiwyg mode**, those can be switched at any time during writing content. Work together conveniently in one document.
+Some may like the productivity of *Markdown*, while others may be looking for a way to make it easier to edit. The **ToastUI Editor** can be the coordinator of both. It offers **Markdown mode** and **Wysiwyg mode**, which can be switched at any time during writing content. Both work together conveniently in one document.
 
 ### Productive Markdown mode
 ![markdown image](https://user-images.githubusercontent.com/1215767/34354737-b98a0736-ea73-11e7-8375-d4c83b8894d8.png)
@@ -83,7 +83,7 @@ npm install --save tui-editor
 bower install --save tui-editor
 ```
 
-### from downloading
+### download
 * [Download bundle files from `dist` directory](https://github.com/nhnent/tui.editor/tree/production/dist)
 * [Download all sources for each version from release](https://github.com/nhnent/tui.editor/releases)
 
