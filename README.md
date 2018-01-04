@@ -34,10 +34,10 @@
 ### CommonMark + GFM Specifications
 
 Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Markdown)* is another popular specification based on *CommonMark* - maintained by *GitHub*, which is known as the biggest *Markdown* user.
-**ToastUI Editor** respects both [*CommonMark*](http://commonmark.org/) and [*GFM*](https://github.github.com/gfm/) specifications. Write documents with ease using productive tools provided by **ToastUI Editor**. You can open this document wherever the specifications are supported.
+**TOAST UI Editor** respects both [*CommonMark*](http://commonmark.org/) and [*GFM*](https://github.github.com/gfm/) specifications. Write documents with ease using productive tools provided by **TOAST UI Editor**. You can open this document wherever the specifications are supported.
 
 ### Powerful Extensions
-*CommonMark* and *GFM* are great, but we often face requirements beyond the specifications. The **ToastUI Editor** comes with powerful **Extensions** in compliance with the *Markdown* syntax, while also providing APIs so you can develop your own extensions.
+*CommonMark* and *GFM* are great, but we often face requirements beyond the specifications. The **TOAST UI Editor** comes with powerful **Extensions** in compliance with the *Markdown* syntax, while also providing APIs so you can develop your own extensions.
 
 Here are some of the extensions you can start with:
 
@@ -49,9 +49,9 @@ Here are some of the extensions you can start with:
  To learn more about **Extensions** check the [Extension Docs](https://github.com/nhnent/tui.editor/wiki/Extensions)
 
 ## 🎨 Features
-**ToastUI Editor** provides **Markdown mode** and **Wysiwyg mode**.
+**TOAST UI Editor** provides **Markdown mode** and **Wysiwyg mode**.
 
-Some may like the productivity of *Markdown*, while others may be looking for a way to make it easier to edit. The **ToastUI Editor** can be the coordinator of both. It offers **Markdown mode** and **Wysiwyg mode**, which can be switched at any time during writing content. Both work together conveniently in one document.
+Some may like the productivity of *Markdown*, while others may be looking for a way to make it easier to edit. The **TOAST UI Editor** can be the coordinator of both. It offers **Markdown mode** and **Wysiwyg mode**, which can be switched at any time during writing content. Both work together conveniently in one document.
 
 ### Productive Markdown mode
 ![markdown image](https://user-images.githubusercontent.com/1215767/34354737-b98a0736-ea73-11e7-8375-d4c83b8894d8.png)
@@ -93,7 +93,7 @@ Below codes are for *npm*. If you are using *bower* please see [Getting started 
 ### Editor
 
 #### HTML
-Place a `<div></div>` where you want ToastUI Editor rendered.
+Place a `<div></div>` where you want TOAST UI Editor rendered.
 ```html
 <body>
 ...
@@ -133,7 +133,7 @@ $('#editSection').tuiEditor({
 Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 
 ### Viewer
-**ToastUI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** has much **lighter** than the editor.
+**TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** has much **lighter** than the editor.
 
 ```javascript
 var Viewer = require('tui-editor/dist/tui-editor-Viewer');
@@ -160,7 +160,7 @@ var editor = Editor.factory({
 ...
 ```
 
-**ToastUI Editor** respects *CommonMark* and *GFM*. So any *Markdown* renderer including [markdownit](https://github.com/markdown-it/markdown-it) can handle the content it made. You can use any of those renderer without **Viewer** if you want.
+**TOAST UI Editor** respects *CommonMark* and *GFM*. So any *Markdown* renderer including [markdownit](https://github.com/markdown-it/markdown-it) can handle the content it made. You can use any of those renderer without **Viewer** if you want.
 
 
 ## 📙 Docs
