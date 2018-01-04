@@ -47,7 +47,7 @@ module.exports = {
   },
   'opts': {
     'recurse': true,
-    'name': 'ToastUI Editor',
+    'name': 'TOAST UI Editor',
     'destination': `api/${version}`,
     'template': 'node_modules/tui-jsdoc-template',
     'tutorials': 'examples'

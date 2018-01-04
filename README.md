@@ -33,25 +33,25 @@
 
 ### CommonMark + GFM Specifications
 
-Today *CommonMark* is the de-facto *Markdown* standard. And *GFM (GitHub Flavored Markdown)* is another popular specification based on *CommonMark* maintained by *GitHub* which is known as the biggest *Markdown* user.
-**ToastUI Editor** respects [*CommonMark*](http://commonmark.org/) and [*GFM*](https://github.github.com/gfm/) specifications. Write documents with easy and productive tools provided by **ToastUI Editor**. You can open this document wherever the specifications are supported.
+Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Markdown)* is another popular specification based on *CommonMark* - maintained by *GitHub*, which is known as the biggest *Markdown* user.
+**TOAST UI Editor** respects both [*CommonMark*](http://commonmark.org/) and [*GFM*](https://github.github.com/gfm/) specifications. Write documents with ease using productive tools provided by **TOAST UI Editor**. You can open this document wherever the specifications are supported.
 
 ### Powerful Extensions
-*CommonMark* and *GFM* are great, but we often face requirements beyond the specifications. The **ToastUI Editor** comes with powerful **Extensions** in compliance with the *Markdown* syntax. And it also provides APIs so you can develop your own extensions. Please check [here](https://github.com/nhnent/tui.editor/wiki/Extensions) to learn about **Extensions**.
+*CommonMark* and *GFM* are great, but we often face requirements beyond the specifications. The **TOAST UI Editor** comes with powerful **Extensions** in compliance with the *Markdown* syntax, while also providing APIs so you can develop your own extensions.
 
-Here are some of extensions which you can start right on.
+Here are some of the extensions you can start with:
 
 * **Color picker**: [ColorPicker](https://github.com/nhnent/tui.color-picker) provides an easy way to color text with a GUI tool box
 * **Chart code block**: A Code block marked as a 'chart' will render [charts](https://github.com/nhnent/tui.chart)
 * **UML code block**: A Code block marked as an 'uml' will render [UML diagrams](http://plantuml.com/screenshot)
 * **Table merge**: You can merge columns and rows in tables
 
- [Here](https://github.com/nhnent/tui.editor/wiki/Extensions) you can find and more
+ To learn more about **Extensions** check the [Using Extension](./docs/using-extensions.md)
 
 ## 🎨 Features
-**ToastUI Editor** provides **Markdown mode** and **Wysiwyg mode**.
+**TOAST UI Editor** provides **Markdown mode** and **Wysiwyg mode**.
 
-Someone may like the productivity of *Markdown*, but the other can be looking for a way to make it easier to edit. The **ToastUI Editor** can be the coordinator of both. It offers **Markdown mode** and **Wysiwyg mode**, those can be switched at any time during writing content. Work together conveniently in one document.
+Some may like the productivity of *Markdown*, while others may be looking for a way to make it easier to edit. The **TOAST UI Editor** can be the coordinator of both. It offers **Markdown mode** and **Wysiwyg mode**, which can be switched at any time during writing content. Both work together conveniently in one document.
 
 ### Productive Markdown mode
 ![markdown image](https://user-images.githubusercontent.com/1215767/34354737-b98a0736-ea73-11e7-8375-d4c83b8894d8.png)
@@ -83,17 +83,17 @@ npm install --save tui-editor
 bower install --save tui-editor
 ```
 
-### from downloading
+### download
 * [Download bundle files from `dist` directory](https://github.com/nhnent/tui.editor/tree/production/dist)
 * [Download all sources for each version from release](https://github.com/nhnent/tui.editor/releases)
 
 ## 🔨 Usage
-Below codes are for *npm*. If you are using *bower* please see [Getting started with bower](https://github.com/nhnent/tui.editor/wiki/Getting-started-with-bower).
+Below codes are for *npm*. If you are using *bower* please see [Getting started with bower](./docs/getting-started-with-bower.md).
 
 ### Editor
 
 #### HTML
-Place a `<div></div>` where you want ToastUI Editor rendered.
+Place a `<div></div>` where you want TOAST UI Editor rendered.
 ```html
 <body>
 ...
@@ -133,7 +133,7 @@ $('#editSection').tuiEditor({
 Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 
 ### Viewer
-**ToastUI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** has much **lighter** than the editor.
+**TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** has much **lighter** than the editor.
 
 ```javascript
 var Viewer = require('tui-editor/dist/tui-editor-Viewer');
@@ -160,21 +160,21 @@ var editor = Editor.factory({
 ...
 ```
 
-**ToastUI Editor** respects *CommonMark* and *GFM*. So any *Markdown* renderer including [markdownit](https://github.com/markdown-it/markdown-it) can handle the content it made. You can use any of those renderer without **Viewer** if you want.
+**TOAST UI Editor** respects *CommonMark* and *GFM*. So any *Markdown* renderer including [markdownit](https://github.com/markdown-it/markdown-it) can handle the content it made. You can use any of those renderer without **Viewer** if you want.
 
 
 ## 📙 Docs
-* [Getting Started](https://github.com/nhnent/tui.editor/wiki/Getting-Started)
+* [Getting started](./docs/getting-started.md)
+* [Getting started with bower](./docs/getting-started-with-bower.md)
 * [APIs](https://nhnent.github.io/tui.editor/api/latest/)
-* [Getting started with bower](https://github.com/nhnent/tui.editor/wiki/Getting-started-with-bower)
 
 ## 🐾 Examples
 * [editor basic](https://nhnent.github.io/tui.editor/api/latest/tutorial-example01-basic.html)
 * [viewer basic](https://nhnent.github.io/tui.editor/api/latest/tutorial-example02-viewer-basic.html)
 * [jQuery plugin](https://nhnent.github.io/tui.editor/api/latest/tutorial-example03-jquery.html)
-* [uml plugin](https://nhnent.github.io/tui.editor/api/latest/tutorial-example08-uml.html)
-* [chart plugin](https://nhnent.github.io/tui.editor/api/latest/tutorial-example11-chart.html)
-* [more examples in demo directory](https://nhnent.github.io/tui.editor/api/latest/tutorial-example00-demo.html)
+* [uml extension](https://nhnent.github.io/tui.editor/api/latest/tutorial-example08-uml.html)
+* [chart extension](https://nhnent.github.io/tui.editor/api/latest/tutorial-example11-chart.html)
+* [all extensions](https://nhnent.github.io/tui.editor/api/latest/tutorial-example00-demo.html)
 
 ## 🌏 Browser Support
 |<img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE / Edge" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="IE / Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari |
