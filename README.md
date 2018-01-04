@@ -46,7 +46,7 @@ Here are some of the extensions you can start with:
 * **UML code block**: A Code block marked as an 'uml' will render [UML diagrams](http://plantuml.com/screenshot)
 * **Table merge**: You can merge columns and rows in tables
 
- To learn more about **Extensions** check the [Extension Docs](https://github.com/nhnent/tui.editor/wiki/Extensions)
+ To learn more about **Extensions** check the [Using Extension](./docs/using-extensions.md)
 
 ## 🎨 Features
 **TOAST UI Editor** provides **Markdown mode** and **Wysiwyg mode**.
@@ -88,7 +88,7 @@ bower install --save tui-editor
 * [Download all sources for each version from release](https://github.com/nhnent/tui.editor/releases)
 
 ## 🔨 Usage
-Below codes are for *npm*. If you are using *bower* please see [Getting started with bower](https://github.com/nhnent/tui.editor/wiki/Getting-started-with-bower).
+Below codes are for *npm*. If you are using *bower* please see [Getting started with bower](./docs/getting-started-with-bower.md).
 
 ### Editor
 
@@ -164,17 +164,17 @@ var editor = Editor.factory({
 
 
 ## 📙 Docs
-* [Getting Started](https://github.com/nhnent/tui.editor/wiki/Getting-Started)
+* [Getting started](./docs/getting-started.md)
+* [Getting started with bower](./docs/getting-started-with-bower.md)
 * [APIs](https://nhnent.github.io/tui.editor/api/latest/)
-* [Getting started with bower](https://github.com/nhnent/tui.editor/wiki/Getting-started-with-bower)
 
 ## 🐾 Examples
 * [editor basic](https://nhnent.github.io/tui.editor/api/latest/tutorial-example01-basic.html)
 * [viewer basic](https://nhnent.github.io/tui.editor/api/latest/tutorial-example02-viewer-basic.html)
 * [jQuery plugin](https://nhnent.github.io/tui.editor/api/latest/tutorial-example03-jquery.html)
-* [uml plugin](https://nhnent.github.io/tui.editor/api/latest/tutorial-example08-uml.html)
-* [chart plugin](https://nhnent.github.io/tui.editor/api/latest/tutorial-example11-chart.html)
-* [more examples in demo directory](https://nhnent.github.io/tui.editor/api/latest/tutorial-example00-demo.html)
+* [uml extension](https://nhnent.github.io/tui.editor/api/latest/tutorial-example08-uml.html)
+* [chart extension](https://nhnent.github.io/tui.editor/api/latest/tutorial-example11-chart.html)
+* [all extensions](https://nhnent.github.io/tui.editor/api/latest/tutorial-example00-demo.html)
 
 ## 🌏 Browser Support
 |<img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE / Edge" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="IE / Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari |
