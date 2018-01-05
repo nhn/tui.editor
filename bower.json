@@ -36,7 +36,7 @@
     "tui-component-colorpicker": "~1.0.2",
     "squire-rte": "kyuwoo-choi/Squire#tui-editor-release",
     "plantuml-encoder": "^1.2.4",
-    "tui-chart": "^2.9.4"
+    "tui-chart": "~2.12.1"
   },
   "resolutions": {
     "jquery": "~2.1.4",
