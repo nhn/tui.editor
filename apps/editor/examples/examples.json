@@ -34,5 +34,8 @@
   },
   "example11-chart": {
     "title": "11. Chart"
+  },
+  "example12-writing-extension": {
+    "title": "12. Writing your own extension"
   }
 }
