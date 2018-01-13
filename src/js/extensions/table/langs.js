@@ -34,6 +34,13 @@ if (i18n) {
     'Cannot paste row merged cells into the table header': 'Kan niet plakken rij samengevoegde cellen in de koptekst. '
   });
 
+  i18n.setLanguage(['ru', 'ru_RU'], {
+    'Merge cells': 'Объединить ячейки',
+    'Unmerge cells': 'Разъединить ячейки',
+    'Cannot change part of merged cell': 'Вы не можете изменить часть комбинированной ячейки.',
+    'Cannot paste row merged cells into the table header': 'Вы не можете вставлять объединенные ячейки в заголовок таблицы.'
+  });
+
   i18n.setLanguage(['zh', 'zh_CN'], {
     'Merge cells': '合并单元格',
     'Unmerge cells': '取消合并单元格',
