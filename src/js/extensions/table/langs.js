@@ -20,6 +20,13 @@ if (i18n) {
     'Cannot paste row merged cells into the table header': 'Cannot paste row merged cells into the table header.'
   });
 
+  i18n.setLanguage(['es', 'es_ES'], {
+    'Merge cells': 'Combinar celdas',
+    'Unmerge cells': 'Separar celdas',
+    'Cannot change part of merged cell': 'No se puede cambiar parte de una celda combinada.',
+    'Cannot paste row merged cells into the table header': 'No se pueden pegar celdas combinadas en el encabezado de tabla.'
+  });
+
   i18n.setLanguage(['ja', 'ja_JP'], {
     'Merge cells': 'セルの結合',
     'Unmerge cells': 'セルの結合を解除',
