@@ -141,7 +141,7 @@ $('#editSection').tuiEditor({
 Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 
 ### Viewer
-**TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** has much **lighter** than the editor.
+**TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** has much **lighter** size than the editor.
 
 ```javascript
 var Viewer = require('tui-editor/dist/tui-editor-Viewer');
