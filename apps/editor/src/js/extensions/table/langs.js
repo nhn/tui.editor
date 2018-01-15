@@ -47,4 +47,11 @@ if (i18n) {
     'Cannot change part of merged cell': '无法更改合并单元格的一部分。',
     'Cannot paste row merged cells into the table header': '无法将行合并单元格粘贴到标题中。'
   });
+
+  i18n.setLanguage(['de', 'de_DE'], {
+    'Merge cells': 'Zellen zusammenführen',
+    'Unmerge cells': 'Zusammenführen rückgängig machen',
+    'Cannot change part of merged cell': 'Der Teil der verbundenen Zelle kann nicht geändert werden.',
+    'Cannot paste row merged cells into the table header': 'Die Zeile der verbundenen Zellen kann nicht in die Kopfzeile eingefügt werden.'
+  });
 }
