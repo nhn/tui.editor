@@ -67,7 +67,7 @@ Some may like the productivity of *Markdown*, while others may be looking for a 
 * **Table**: Hate the Markdown table? You can do everything with a mouse
 
 ### And more
-* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian + language you extend.
+* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French + language you extend.
 * **Viewer**: Renders Markdown content with extensions
 
 

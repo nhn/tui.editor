@@ -61,4 +61,11 @@ if (i18n) {
     'Cannot change part of merged cell': 'Вы не можете изменять часть комбинированной ячейки.',
     'Cannot paste row merged cells into the table header': 'Вы не можете вставлять объединенные ячейки в заголовок таблицы.'
   });
+
+  i18n.setLanguage(['fr', 'fr_FR'], {
+    'Merge cells': 'Fusionner les cellules',
+    'Unmerge cells': 'Séparer les cellules',
+    'Cannot change part of merged cell': 'Impossible de modifier une partie de la cellule fusionnée.',
+    'Cannot paste row merged cells into the table header': 'Impossible de coller les cellules fusionnées dans l\'en-tête du tableau.'
+  });
 }
