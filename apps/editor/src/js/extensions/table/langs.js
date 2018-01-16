@@ -54,4 +54,11 @@ if (i18n) {
     'Cannot change part of merged cell': 'Der Teil der verbundenen Zelle kann nicht geändert werden.',
     'Cannot paste row merged cells into the table header': 'Die Zeile der verbundenen Zellen kann nicht in die Kopfzeile eingefügt werden.'
   });
+
+  i18n.setLanguage(['ru', 'ru_RU'], {
+    'Merge cells': 'Объединить ячейки',
+    'Unmerge cells': 'Разъединить ячейки',
+    'Cannot change part of merged cell': 'Вы не можете изменять часть комбинированной ячейки.',
+    'Cannot paste row merged cells into the table header': 'Вы не можете вставлять объединенные ячейки в заголовок таблицы.'
+  });
 }
