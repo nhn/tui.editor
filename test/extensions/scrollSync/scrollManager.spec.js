@@ -22,7 +22,7 @@ describe('ScrollManager', () => {
     ned = new TuiEditor({
       el: container,
       previewStyle: 'vertical',
-      height: '100px',
+      height: '120px',
       initialEditType: 'markdown',
       events: {
         'load': function(editor) {
