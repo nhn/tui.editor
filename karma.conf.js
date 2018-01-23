@@ -113,12 +113,12 @@ configurator.saucelabs = function(defaultConfig) {
     customLaunchers.sl_edge_14 = saucelabsLauncher('SauceLabs', 'MicrosoftEdge', 'Windows 10', '15.15063');
   }
   if (BROWSER === 'Safari' || !BROWSER) {
-    defaultConfig.customLaunchers.sl_safari = saucelabsLauncher('SauceLabs', 'safari', 'macOS 10.13', '11.0');
+    customLaunchers.sl_safari = saucelabsLauncher('SauceLabs', 'safari', 'macOS 10.13', '11.0');
   }
   defaultConfig.reporters.push('saucelabs');
   defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
   defaultConfig.browserNoActivityTimeout = 120000;
-  defaultConfig.concurrency = 5;
+  defaultConfig.concurrency = 1;
 
   // safari & edge browsers can't run TC on localhost. the hostname below should be added to your system too
   // 127.0.0.1    tui.dev
