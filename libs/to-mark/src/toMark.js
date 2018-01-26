@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements toMark
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

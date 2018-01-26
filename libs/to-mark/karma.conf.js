@@ -152,7 +152,7 @@ function setConfig(defaultConfig, server, browser) {
         // https://support.saucelabs.com/hc/en-us/articles/115010079868-Issues-with-Safari-and-Karma-Test-Runner
         defaultConfig.hostname = 'tui.dev';
     } else {
-        browser = browser || 'Chrome';
+        browser = browser || 'ChromeHeadless';
         defaultConfig.browsers = [
             browser
         ];
@@ -189,10 +189,11 @@ module.exports = function(config) {
         webpack: {
             devtool: 'inline-source-map',
             module: {
-                postLoaders: [{
+                rules: [{
                     test: /\.js/,
                     exclude: /\.(spec|bundle)\.js/,
-                    loader: 'istanbul-instrumenter'
+                    loader: 'istanbul-instrumenter-loader',
+                    enforce: 'post'
                 }]
             }
         },

@@ -1,16 +1,14 @@
 {
-  "name": "toMark",
-  "authors": [
-    {
-        "name": "Sungho Kim",
-        "email": "shirenbeat@gmail.com"
-    }
-  ],
+  "name": "to-mark",
+  "authors": ["NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/to-mark/)"],
   "moduleType": [
-      "globals"
+    "globals",
+    "es6",
+    "amd",
+    "node"
   ],
   "main": [
-      "dist/toMark.js"
+      "dist/to-mark.js"
   ],
   "license": "MIT",
   "ignore": [
@@ -19,6 +17,6 @@
     "bower_components",
     "lib/",
     "test",
-    "tests"
+    "src"
   ]
 }

@@ -1,33 +1,38 @@
 'use strict';
 
+var path = require('path');
+
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
-
     webpack = require('webpack'),
     WebpackDevServer = require('webpack-dev-server'),
-
     eslint = require('gulp-eslint'),
     rename = require('gulp-rename'),
     ugilfy = require('gulp-uglify'),
     stripDebug = require('gulp-strip-debug'),
-
     livereload = require('gulp-livereload');
 
 var gulpSync = require('gulp-sync')(gulp);
 
 //Webpack
 var WEBPACK_MAIN_ENTRY = './src/index.js',
-    WEBPACK_DEV_PATH = __dirname + '/build/',
+    WEBPACK_DEV_PATH = path.join(__dirname, 'build/'),
     WEBPACK_DEV_FILE = 'bundle.js',
-    WEBPACK_DIST_PATH = __dirname + '/dist/',
-    WEBPACK_DIST_FILE = 'toMark.js';
+    WEBPACK_DIST_PATH = path.join(__dirname, 'dist/'),
+    WEBPACK_DIST_FILE = 'to-mark.js',
+    WEBPACK_OUT_LIB_TARGET = 'umd',
+    WEBPACK_OUT_LIB = {
+        root: 'toMark',
+        amd: 'to-mark',
+        commonjs: 'to-mark'
+    };
 
 //Production Build
 gulp.task('lint', function lint() {
     return gulp.src(['src/**/*.js'])
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
+        .pipe(eslint())
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError());
 });
 
 gulp.task('bundle', function(callback) {
@@ -39,8 +44,8 @@ gulp.task('bundle', function(callback) {
             path: WEBPACK_DIST_PATH,
             pathinfo: false,
             filename: WEBPACK_DIST_FILE,
-            library: 'toMark',
-            libraryTarget: 'umd'
+            library: WEBPACK_OUT_LIB,
+            libraryTarget: WEBPACK_OUT_LIB_TARGET
         }
     }, function(err, stats) {
         if (err) {
@@ -54,10 +59,10 @@ gulp.task('bundle', function(callback) {
 });
 
 gulp.task('uglify', function() {
-    return gulp.src('./dist/toMark.js')
-    .pipe(ugilfy())
-    .pipe(rename('toMark.min.js'))
-    .pipe(gulp.dest('./dist'));
+    return gulp.src('./dist/to-mark.js')
+        .pipe(ugilfy())
+        .pipe(rename('to-mark.min.js'))
+        .pipe(gulp.dest('./dist'));
 });
 
 //For Development
@@ -75,7 +80,10 @@ gulp.task('develop', function() {
             path: WEBPACK_DEV_PATH,
             publicPath: '/build/',
             pathinfo: true,
-            filename: WEBPACK_DEV_FILE
+            filename: WEBPACK_DEV_FILE,
+            library: WEBPACK_OUT_LIB,
+            libraryTarget: WEBPACK_OUT_LIB_TARGET
+
         },
         devtool: 'eval'
     }), {
@@ -98,7 +106,7 @@ gulp.task('lintwatch', function lint() {
 });
 
 gulp.task('stripDebug', function() {
-    return gulp.src('dist/toMark.js').pipe(stripDebug()).pipe(gulp.dest('./dist'));
+    return gulp.src('dist/to-mark.js').pipe(stripDebug()).pipe(gulp.dest('./dist'));
 });
 
 gulp.task('build', gulpSync.sync(['lint', 'bundle', 'uglify']));
