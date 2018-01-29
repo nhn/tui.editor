@@ -7,7 +7,8 @@ bower install --save tui-editor
 
 ## Editor
 ### Dependencies
-TOAST UI Editor requires jquery, codemirror, squire-rte, markdownit, toMark, highlightjs and tui-code-snippet as dependencies to work.
+TOAST UI Editor requires jquery, codemirror, squire-rte, markdownit, toMark, highlightjs and tui-code-snippet.
+So these dependencies are included beforehand.
 ```html
 <head>
 ...
@@ -28,7 +29,7 @@ TOAST UI Editor requires jquery, codemirror, squire-rte, markdownit, toMark, hig
 ```
 
 ### HTML
-Place a `<div></div>` where you want TOAST UI Editor rendered.
+Place a `<div></div>` where you want TOAST UI Editor to render.
 ```html
 <body>
 ...
@@ -38,7 +39,7 @@ Place a `<div></div>` where you want TOAST UI Editor rendered.
 ```
 
 ### javascript
-Initialize editor with options you want. Find out more options in [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
+Initialize editor with required options. Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 ```javascript
   var editor = new tui.Editor({
     el: document.querySelector('#editSection'),
@@ -47,7 +48,7 @@ Initialize editor with options you want. Find out more options in [here](https:/
     height: '300px'
   });
 ```
-or you can use jquery plugin.
+or you can directly use jquery plugin.
 ```javascript
 $('#editSection').tuiEditor({
   initialEditType: 'markdown',
@@ -65,7 +66,7 @@ $('#editSection').tuiEditor({
 Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 
 ## Viewer
-TOAST UI Editor provides a viewer in case you want to show *markdown* content without loading the editor. The viewer has much lighter than the editor.
+TOAST UI Editor provides a viewer in case you want to show the content of the *markdown* without loading the editor. The viewer is much lighter than the editor.
 
 ```javascript
 var editor = new tui.Editor({
@@ -76,7 +77,8 @@ var editor = new tui.Editor({
 ...
 ```
 
-Be careful not to load both the editor and the viewer. Since the editor already includes the viewer function, you can initialize editor calling [Editor.factory()]() with `viewer` option `true` value to make the editor a viewer. You can also call [getHTML()]() to get rendered HTML.
+Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize editor [Editor.factory()]()(https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) and set the `viewer` option to value `true` in order to make the editor a viewer. You can also call [getHTML()]()(https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to render the HTML.
+
 
 ```javascript
 var editor = tui.Editor.factory({
@@ -88,4 +90,4 @@ var editor = tui.Editor.factory({
 ...
 ```
 
-TOAST UI Editor respects *CommonMark* and *GFM*. So any *markdown* renderer including [markdownit](https://github.com/markdown-it/markdown-it) can handle the content TOAST UI Editor made. You can use any of those renderer beside TOAST UI Editor Viewer if you want.
+**TOAST UI Editor** respects *CommonMark* and *GFM*. So any *Markdown* renderer including [markdownit](https://github.com/markdown-it/markdown-it) can handle the content made using TOAST UI Editor. You can also use any of these renderer in place of TOAST UI Editor **Viewer**.

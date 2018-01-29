@@ -41,11 +41,11 @@
 
 ### CommonMark + GFM Specifications
 
-Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Markdown)* is another popular specification based on *CommonMark* - maintained by *GitHub*, which is known as the biggest *Markdown* user.
-**TOAST UI Editor** respects both [*CommonMark*](http://commonmark.org/) and [*GFM*](https://github.github.com/gfm/) specifications. Write documents with ease using productive tools provided by **TOAST UI Editor**. You can open this document wherever the specifications are supported.
+Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Markdown)* is another popular specification based on *CommonMark* - maintained by *GitHub*, which is the *Markdown* mostly used.
+**TOAST UI Editor** respects both [*CommonMark*](http://commonmark.org/) and [*GFM*](https://github.github.com/gfm/) specifications. Write documents with ease using productive tools provided by **TOAST UI Editor** and you can easily open the produced document wherever the specifications are supported.
 
 ### Powerful Extensions
-*CommonMark* and *GFM* are great, but we often face requirements beyond the specifications. The **TOAST UI Editor** comes with powerful **Extensions** in compliance with the *Markdown* syntax, while also providing APIs so you can develop your own extensions.
+*CommonMark* and *GFM* are great, but we often need more abstraction. The **TOAST UI Editor** comes with powerful **Extensions** in compliance with the *Markdown* syntax. You also get the flexibility to develop your own extensions using simple APIs.
 
 Here are some of the extensions you can start with:
 
@@ -59,7 +59,7 @@ Here are some of the extensions you can start with:
 ## 🎨 Features
 **TOAST UI Editor** provides **Markdown mode** and **WYSIWYG mode**.
 
-Some may like the productivity of *Markdown*, while others may be looking for a way to make it easier to edit. The **TOAST UI Editor** can be the coordinator of both. It offers **Markdown mode** and **WYSIWYG mode**, which can be switched at any time during writing content. Both work together conveniently in one document.
+Depending on the type of use you want like production of *Markdown* or maybe to just edit the *Markdown*. The **TOAST UI Editor** can be helpful for both the usage. It offers **Markdown mode** and **WYSIWYG mode**, which can be switched any point in time.
 
 ### Productive Markdown mode
 ![markdown image](https://user-images.githubusercontent.com/1215767/34354737-b98a0736-ea73-11e7-8375-d4c83b8894d8.png)
@@ -96,7 +96,7 @@ bower install --save tui-editor
 * [Download all sources for each version from release](https://github.com/nhnent/tui.editor/releases)
 
 ## 🔨 Usage
-Below codes are for *npm*. If you are using *bower* please see [Getting started with bower](https://github.com/nhnent/tui.editor/blob/production/docs/getting-started-with-bower.md).
+The code provided underneath is for *npm*. If you are using *bower* please see [Getting started with bower](https://github.com/nhnent/tui.editor/blob/production/docs/getting-started-with-bower.md).
 
 ### Editor
 
@@ -141,7 +141,7 @@ $('#editSection').tuiEditor({
 Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 
 ### Viewer
-**TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** has much **lighter** than the editor.
+**TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** is much **lighter** than the editor.
 
 ```javascript
 var Viewer = require('tui-editor/dist/tui-editor-Viewer');
@@ -154,7 +154,8 @@ var editor = new Viewer({
 ...
 ```
 
-Be careful not to load both the editor and the viewer. Since the editor already includes the viewer function, you can initialize editor by calling [Editor.factory()](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) with `viewer` option `true` value to make the editor a viewer. You can also call [getHTML()](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to get rendered *HTML* string.
+Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize editor [Editor.factory()](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) and set the `viewer` option to value `true` in order to make the editor a viewer. You can also call [getHTML()](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to render the HTML.
+
 
 ```javascript
 var Editor = require('tui-editor');
@@ -168,7 +169,7 @@ var editor = Editor.factory({
 ...
 ```
 
-**TOAST UI Editor** respects *CommonMark* and *GFM*. So any *Markdown* renderer including [markdownit](https://github.com/markdown-it/markdown-it) can handle the content it made. You can use any of those renderer without **Viewer** if you want.
+**TOAST UI Editor** respects *CommonMark* and *GFM*. So any *Markdown* renderer including [markdownit](https://github.com/markdown-it/markdown-it) can handle the content made using TOAST UI Editor. You can also use any of these renderer in place of TOAST UI Editor **Viewer**.
 
 
 ## 📙 Docs
