@@ -21,7 +21,7 @@ Create a `index.html` in a project root directory. Then include dependencies lik
     <script src="./bower_components/codemirror/lib/codemirror.js" ></script>
     <script src="./bower_components/highlightjs/highlight.pack.js" ></script>
     <script src="./bower_components/markdown-it/dist/markdown-it.js" ></script>
-    <script src="./bower_components/toMark/dist/toMark.js" ></script>
+    <script src="./bower_components/to-mark/dist/to-mark.js" ></script>
     <script src="./bower_components/squire-rte/build/squire-raw.js" ></script>
     <script src="./bower_components/tui-editor/dist/tui-editor-Editor.js" ></script>
     <link rel="stylesheet" href="./bower_components/codemirror/lib/codemirror.css" />

@@ -135,10 +135,10 @@ const defaultConfigs = Array(isDevServer ? 1 : 4).fill(0).map(() => {
         amd: 'codemirror',
         root: ['CodeMirror']
       },
-      'toMark': {
-        commonjs: 'toMark',
-        commonjs2: 'toMark',
-        amd: 'toMark',
+      'to-mark': {
+        commonjs: 'to-mark',
+        commonjs2: 'to-mark',
+        amd: 'to-mark',
         root: ['toMark']
       }
     }]
