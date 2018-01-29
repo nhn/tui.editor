@@ -1,19 +1,19 @@
 /*!
  * tui-editor
- * @version 1.0.1
+ * @version 1.0.2
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("toMark"), require("tui-chart"), require("squire-rte"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
+		module.exports = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("to-mark"), require("tui-chart"), require("squire-rte"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "tui-code-snippet", "codemirror", "toMark", "tui-chart", "squire-rte", "markdown-it", "highlight.js", "tui-color-picker", "plantuml-encoder"], factory);
+		define(["jquery", "tui-code-snippet", "codemirror", "to-mark", "tui-chart", "squire-rte", "markdown-it", "highlight.js", "tui-color-picker", "plantuml-encoder"], factory);
 	else if(typeof exports === 'object')
-		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("toMark"), require("tui-chart"), require("squire-rte"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
+		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("to-mark"), require("tui-chart"), require("squire-rte"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["CodeMirror"], root["toMark"], (root["tui"] && root["tui"]["chart"]), root["Squire"], root["markdownit"], root["hljs"], (root["tui"] && root["tui"]["colorPicker"]), root["plantumlEncoder"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_39__, __WEBPACK_EXTERNAL_MODULE_51__, __WEBPACK_EXTERNAL_MODULE_71__, __WEBPACK_EXTERNAL_MODULE_77__, __WEBPACK_EXTERNAL_MODULE_85__, __WEBPACK_EXTERNAL_MODULE_177__, __WEBPACK_EXTERNAL_MODULE_179__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_39__, __WEBPACK_EXTERNAL_MODULE_51__, __WEBPACK_EXTERNAL_MODULE_71__, __WEBPACK_EXTERNAL_MODULE_77__, __WEBPACK_EXTERNAL_MODULE_85__, __WEBPACK_EXTERNAL_MODULE_181__, __WEBPACK_EXTERNAL_MODULE_183__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -832,34 +832,6 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-/**
-* @fileoverview Editor/Viewer proxy for extensions
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-*/
-/* eslint global-require: 0 no-empty: 0 */
-
-var Editor = void 0;
-try {
-  Editor = __webpack_require__(25);
-} catch (e) {}
-if (!Editor) {
-  try {
-    Editor = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../viewer\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-  } catch (e) {}
-}
-
-exports.default = Editor;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 exports.I18n = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
@@ -975,6 +947,34 @@ var I18n = function () {
 
 exports.I18n = I18n;
 exports.default = new I18n();
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/**
+* @fileoverview Editor/Viewer proxy for extensions
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
+/* eslint global-require: 0 no-empty: 0 */
+
+var Editor = void 0;
+try {
+  Editor = __webpack_require__(25);
+} catch (e) {}
+if (!Editor) {
+  try {
+    Editor = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../viewer\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+  } catch (e) {}
+}
+
+exports.default = Editor;
 
 /***/ }),
 /* 6 */
@@ -4150,7 +4150,7 @@ exports.Readable = exports;
 exports.Writable = __webpack_require__(24);
 exports.Duplex = __webpack_require__(11);
 exports.Transform = __webpack_require__(48);
-exports.PassThrough = __webpack_require__(152);
+exports.PassThrough = __webpack_require__(156);
 
 
 /***/ }),
@@ -4230,7 +4230,7 @@ util.inherits = __webpack_require__(12);
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(151)
+  deprecate: __webpack_require__(155)
 };
 /*</replacement>*/
 
@@ -4822,7 +4822,7 @@ Writable.prototype._destroy = function (err, cb) {
   this.end();
   cb(err);
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16), __webpack_require__(149).setImmediate, __webpack_require__(14)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16), __webpack_require__(153).setImmediate, __webpack_require__(14)))
 
 /***/ }),
 /* 25 */
@@ -4902,7 +4902,7 @@ var _viewer = __webpack_require__(86);
 
 var _viewer2 = _interopRequireDefault(_viewer);
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -5087,6 +5087,14 @@ __webpack_require__(141);
 __webpack_require__(142);
 
 __webpack_require__(143);
+
+__webpack_require__(144);
+
+__webpack_require__(145);
+
+__webpack_require__(146);
+
+__webpack_require__(147);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10258,10 +10266,10 @@ var inherits = __webpack_require__(12);
 
 inherits(Stream, EE);
 Stream.Readable = __webpack_require__(23);
-Stream.Writable = __webpack_require__(153);
-Stream.Duplex = __webpack_require__(154);
-Stream.Transform = __webpack_require__(155);
-Stream.PassThrough = __webpack_require__(156);
+Stream.Writable = __webpack_require__(157);
+Stream.Duplex = __webpack_require__(158);
+Stream.Transform = __webpack_require__(159);
+Stream.PassThrough = __webpack_require__(160);
 
 // Backwards-compat with node 0.4.x
 Stream.Stream = Stream;
@@ -10435,7 +10443,7 @@ util.inherits = __webpack_require__(12);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(147);
+var debugUtil = __webpack_require__(151);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -10444,7 +10452,7 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(148);
+var BufferList = __webpack_require__(152);
 var destroyImpl = __webpack_require__(46);
 var StringDecoder;
 
@@ -11406,8 +11414,8 @@ module.exports = __webpack_require__(22).EventEmitter;
 
 
 
-var base64 = __webpack_require__(145)
-var ieee754 = __webpack_require__(146)
+var base64 = __webpack_require__(149)
+var ieee754 = __webpack_require__(150)
 var isArray = __webpack_require__(43)
 
 exports.Buffer = Buffer
@@ -13773,19 +13781,19 @@ function done(stream, er, data) {
 
 __webpack_require__(50);
 
-__webpack_require__(158);
+__webpack_require__(162);
 
-__webpack_require__(161);
+__webpack_require__(165);
 
-__webpack_require__(176);
+__webpack_require__(180);
 
-__webpack_require__(178);
+__webpack_require__(182);
 
 /**
  * @fileoverview entry point for editor with all extension included
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-var Editor = __webpack_require__(180);
+var Editor = __webpack_require__(184);
 
 module.exports = Editor;
 
@@ -13817,11 +13825,11 @@ var _tuiChart = __webpack_require__(51);
 
 var _tuiChart2 = _interopRequireDefault(_tuiChart);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-var _csv = __webpack_require__(144);
+var _csv = __webpack_require__(148);
 
 var _csv2 = _interopRequireDefault(_csv);
 
@@ -18349,7 +18357,7 @@ var _wwPasteContentHelper = __webpack_require__(64);
 
 var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -23492,7 +23500,7 @@ var _popupCodeBlockEditor = __webpack_require__(96);
 
 var _popupCodeBlockEditor2 = _interopRequireDefault(_popupCodeBlockEditor);
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -23833,7 +23841,7 @@ var _button = __webpack_require__(26);
 
 var _button2 = _interopRequireDefault(_button);
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -24109,7 +24117,7 @@ var _uicontroller = __webpack_require__(13);
 
 var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -24238,7 +24246,7 @@ var _layerpopup = __webpack_require__(9);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -24474,7 +24482,7 @@ var _tab = __webpack_require__(40);
 
 var _tab2 = _interopRequireDefault(_tab);
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -24700,7 +24708,7 @@ var _layerpopup = __webpack_require__(9);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -25348,7 +25356,7 @@ var _layerpopup = __webpack_require__(9);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -25805,7 +25813,7 @@ var _codeBlockLanguagesCombo = __webpack_require__(100);
 
 var _codeBlockLanguagesCombo2 = _interopRequireDefault(_codeBlockLanguagesCombo);
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -26797,7 +26805,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -30632,7 +30640,7 @@ exports.default = CodeBlock;
 "use strict";
 
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -30693,7 +30701,7 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -30754,7 +30762,7 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -30815,7 +30823,7 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -30876,7 +30884,7 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(5);
+var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -30932,6 +30940,250 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
 
 /***/ }),
 /* 144 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['es', 'es_ES'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Escribir',
+  'Preview': 'Vista previa',
+  'Headings': 'Encabezados',
+  'Paragraph': 'Párrafo',
+  'Bold': 'Negrita',
+  'Italic': 'Itálica',
+  'Strike': 'Tachado',
+  'Code': 'Código',
+  'Line': 'Línea',
+  'Blockquote': 'Cita',
+  'Unordered list': 'Lista desordenada',
+  'Ordered list': 'Lista ordenada',
+  'Task': 'Tarea',
+  'Insert link': 'Insertar enlace',
+  'Insert CodeBlock': 'Insertar bloque de código',
+  'Insert table': 'Insertar tabla',
+  'Insert image': 'Insertar imagen',
+  'Heading': 'Encabezado',
+  'Image URL': 'URL de la imagen',
+  'Select image file': 'Seleccionar archivo de imagen',
+  'Description': 'Descripción',
+  'OK': 'Aceptar',
+  'Cancel': 'Cancelar',
+  'File': 'Archivo',
+  'URL': 'URL',
+  'Link text': 'Texto del enlace',
+  'Add row': 'Agregar fila',
+  'Add col': 'Agregar columna',
+  'Remove row': 'Eliminar fila',
+  'Remove col': 'Eliminar columna',
+  'Align left': 'Alinear a la izquierda',
+  'Align center': 'Centrar',
+  'Align right': 'Alinear a la derecha',
+  'Remove table': 'Eliminar tabla',
+  'Would you like to paste as table?': '¿Desea pegar como tabla?',
+  'Text color': 'Color del texto',
+  'Auto scroll enabled': 'Desplazamiento automático habilitado',
+  'Auto scroll disabled': 'Desplazamiento automático deshabilitado',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Sólo se pueden pegar tablas en el modo de selección de celdas',
+  'Choose language': 'Elegir idioma'
+}); /**
+    * @fileoverview I18N for Spanish
+    * @author Enrico Lamperti <oss@elamperti.com>
+    */
+
+/***/ }),
+/* 145 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['de', 'de_DE'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Verfassen',
+  'Preview': 'Vorschau',
+  'Headings': 'Überschriften',
+  'Paragraph': 'Text',
+  'Bold': 'Fett',
+  'Italic': 'Kursiv',
+  'Strike': 'Durchgestrichen',
+  'Code': 'Code',
+  'Line': 'Trennlinie',
+  'Blockquote': 'Blocktext',
+  'Unordered list': 'Aufzählung',
+  'Ordered list': 'Nummerierte Aufzählung',
+  'Task': 'Aufgabe',
+  'Insert link': 'Link einfügen',
+  'Insert CodeBlock': 'Codeblock einfügen',
+  'Insert table': 'Tabelle einfügen',
+  'Insert image': 'Grafik einfügen',
+  'Heading': 'Titel',
+  'Image URL': 'Bild URL',
+  'Select image file': 'Grafik auswählen',
+  'Description': 'Beschreibung',
+  'OK': 'OK',
+  'Cancel': 'Abbrechen',
+  'File': 'Datei',
+  'URL': 'URL',
+  'Link text': 'Anzuzeigender Text',
+  'Add row': 'Zeile hinzufügen',
+  'Add col': 'Spalte hinzufügen',
+  'Remove row': 'Zeile entfernen',
+  'Remove col': 'Spalte entfernen',
+  'Align left': 'Links ausrichten',
+  'Align center': 'Zentrieren',
+  'Align right': 'Rechts ausrichten',
+  'Remove table': 'Tabelle entfernen',
+  'Would you like to paste as table?': 'Möchten Sie eine Tabelle einfügen?',
+  'Text color': 'Textfarbe',
+  'Auto scroll enabled': 'Autoscrollen aktiviert',
+  'Auto scroll disabled': 'Autoscrollen deaktiviert',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Im Zellenauswahlstatus können keine anderen Werte als eine Tabelle eingefügt werden',
+  'Choose language': 'Sprache auswählen'
+}); /**
+    * @fileoverview I18N for German
+    * @author Jann-Niklas Kiepert <jannkiepert@vivaldi.net>
+    */
+
+/***/ }),
+/* 146 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['ru', 'ru_RU'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Написать',
+  'Preview': 'Предварительный просмотр',
+  'Headings': 'Заголовки',
+  'Paragraph': 'Абзац',
+  'Bold': 'Жирный',
+  'Italic': 'Курсив',
+  'Strike': 'Зачеркнутый',
+  'Code': 'Встроенный код',
+  'Line': 'Строка',
+  'Blockquote': 'Блок цитирования',
+  'Unordered list': 'Неупорядоченный список',
+  'Ordered list': 'Упорядоченный список',
+  'Task': 'Задача',
+  'Insert link': 'Вставить ссылку',
+  'Insert CodeBlock': 'Вставить код',
+  'Insert table': 'Вставить таблицу',
+  'Insert image': 'Вставить изображение',
+  'Heading': 'Заголовок',
+  'Image URL': 'URL изображения',
+  'Select image file': 'Выбрать файл изображения',
+  'Description': 'Описание',
+  'OK': 'Хорошо',
+  'Cancel': 'Отмена',
+  'File': 'Файл',
+  'URL': 'URL',
+  'Link text': 'Текст ссылки',
+  'Add row': 'Добавить ряд',
+  'Add col': 'Добавить столбец',
+  'Remove row': 'Удалить ряд',
+  'Remove col': 'Удалить столбец',
+  'Align left': 'Выровнять по левому краю',
+  'Align center': 'Выровнять по центру',
+  'Align right': 'Выровнять по правому краю',
+  'Remove table': 'Удалить таблицу',
+  'Would you like to paste as table?': 'Вы хотите вставить в виде таблицы?',
+  'Text color': 'Цвет текста',
+  'Auto scroll enabled': 'Автоматическая прокрутка включена',
+  'Auto scroll disabled': 'Автоматическая прокрутка отключена',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Вы не можете вставлять значения, отличные от таблицы, в состоянии выбора ячейки.',
+  'Choose language': 'Выбрать язык'
+}); /**
+    * @fileoverview I18N for Russian
+    * @author Stepan Samko <stpnsamko@gmail.com>
+    */
+
+/***/ }),
+/* 147 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['fr', 'fr_FR'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Écrire',
+  'Preview': 'Aperçu',
+  'Headings': 'En-têtes',
+  'Paragraph': 'Paragraphe',
+  'Bold': 'Gras',
+  'Italic': 'Italique',
+  'Strike': 'Barré',
+  'Code': 'Code en ligne',
+  'Line': 'Ligne',
+  'Blockquote': 'Citation',
+  'Unordered list': 'Liste non-ordonnée',
+  'Ordered list': 'Liste ordonnée',
+  'Task': 'Tâche',
+  'Insert link': 'Insérer un lien',
+  'Insert CodeBlock': 'Insérer un bloc de code',
+  'Insert table': 'Insérer un tableau',
+  'Insert image': 'Insérer une image',
+  'Heading': 'En-tête',
+  'Image URL': 'URL de l\'image',
+  'Select image file': 'Sélectionnez un fichier image',
+  'Description': 'Description',
+  'OK': 'OK',
+  'Cancel': 'Annuler',
+  'File': 'Fichier',
+  'URL': 'URL',
+  'Link text': 'Texte du lien',
+  'Add row': 'Ajouter une ligne',
+  'Add col': 'Ajouter une colonne',
+  'Remove row': 'Supprimer une ligne',
+  'Remove col': 'Supprimer une colonne',
+  'Align left': 'Aligner à gauche',
+  'Align center': 'Aligner au centre',
+  'Align right': 'Aligner à droite',
+  'Remove table': 'Supprimer le tableau',
+  'Would you like to paste as table?': 'Voulez-vous coller ce contenu en tant que tableau ?',
+  'Text color': 'Couleur du texte',
+  'Auto scroll enabled': 'Défilement automatique activé',
+  'Auto scroll disabled': 'Défilement automatique désactivé',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Impossible de coller autre chose qu\'un tableau dans la sélection de la cellule.',
+  'Choose language': 'Choix de la langue'
+}); /**
+    * @fileoverview I18N for French
+    * @author Stanislas Michalak <stanislas.michalak@gmail.com>
+    */
+
+/***/ }),
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31181,7 +31433,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     CSV.stream.json = function () {
-        var os = __webpack_require__(157);
+        var os = __webpack_require__(161);
         var stream = __webpack_require__(41);
         var s = new streamTransform({ objectMode: true });
         s._transform = function (chunk, encoding, done) {
@@ -31316,7 +31568,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })(undefined);
 
 /***/ }),
-/* 145 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31437,7 +31689,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 146 */
+/* 150 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -31527,13 +31779,13 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 147 */
+/* 151 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 148 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31613,7 +31865,7 @@ module.exports = function () {
 }();
 
 /***/ }),
-/* 149 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var apply = Function.prototype.apply;
@@ -31666,13 +31918,13 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(150);
+__webpack_require__(154);
 exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
 
 /***/ }),
-/* 150 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -31865,7 +32117,7 @@ exports.clearImmediate = clearImmediate;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14), __webpack_require__(16)))
 
 /***/ }),
-/* 151 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -31939,7 +32191,7 @@ function config (name) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
 
 /***/ }),
-/* 152 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31992,35 +32244,35 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 153 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(24);
 
 
 /***/ }),
-/* 154 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(11);
 
 
 /***/ }),
-/* 155 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(23).Transform
 
 
 /***/ }),
-/* 156 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(23).PassThrough
 
 
 /***/ }),
-/* 157 */
+/* 161 */
 /***/ (function(module, exports) {
 
 exports.endianness = function () { return 'LE' };
@@ -32075,7 +32327,7 @@ exports.homedir = function () {
 
 
 /***/ }),
-/* 158 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32089,15 +32341,15 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-var _scrollManager = __webpack_require__(159);
+var _scrollManager = __webpack_require__(163);
 
 var _scrollManager2 = _interopRequireDefault(_scrollManager);
 
-var _sectionManager = __webpack_require__(160);
+var _sectionManager = __webpack_require__(164);
 
 var _sectionManager2 = _interopRequireDefault(_sectionManager);
 
@@ -32219,7 +32471,7 @@ _editorProxy2.default.defineExtension('scrollSync', scrollSyncExtension);
 exports.default = scrollSyncExtension;
 
 /***/ }),
-/* 159 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32656,7 +32908,7 @@ var ScrollManager = function () {
 exports.default = ScrollManager;
 
 /***/ }),
-/* 160 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33169,7 +33421,7 @@ function findElementNodeFilter() {
 exports.default = SectionManager;
 
 /***/ }),
-/* 161 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33179,61 +33431,61 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-__webpack_require__(162);
+__webpack_require__(166);
 
-var _mergedTableCreator = __webpack_require__(163);
+var _mergedTableCreator = __webpack_require__(167);
 
 var _mergedTableCreator2 = _interopRequireDefault(_mergedTableCreator);
 
-var _tableUnmergePreparer = __webpack_require__(164);
+var _tableUnmergePreparer = __webpack_require__(168);
 
 var _tableUnmergePreparer2 = _interopRequireDefault(_tableUnmergePreparer);
 
-var _toMarkRenderer = __webpack_require__(165);
+var _toMarkRenderer = __webpack_require__(169);
 
 var _toMarkRenderer2 = _interopRequireDefault(_toMarkRenderer);
 
-var _wwMergedTableManager = __webpack_require__(166);
+var _wwMergedTableManager = __webpack_require__(170);
 
 var _wwMergedTableManager2 = _interopRequireDefault(_wwMergedTableManager);
 
-var _wwMergedTableSelectionManager = __webpack_require__(167);
+var _wwMergedTableSelectionManager = __webpack_require__(171);
 
 var _wwMergedTableSelectionManager2 = _interopRequireDefault(_wwMergedTableSelectionManager);
 
-var _mergedTableAddRow = __webpack_require__(168);
+var _mergedTableAddRow = __webpack_require__(172);
 
 var _mergedTableAddRow2 = _interopRequireDefault(_mergedTableAddRow);
 
-var _mergedTableAddCol = __webpack_require__(169);
+var _mergedTableAddCol = __webpack_require__(173);
 
 var _mergedTableAddCol2 = _interopRequireDefault(_mergedTableAddCol);
 
-var _mergedTableRemoveRow = __webpack_require__(170);
+var _mergedTableRemoveRow = __webpack_require__(174);
 
 var _mergedTableRemoveRow2 = _interopRequireDefault(_mergedTableRemoveRow);
 
-var _mergedTableRemoveCol = __webpack_require__(171);
+var _mergedTableRemoveCol = __webpack_require__(175);
 
 var _mergedTableRemoveCol2 = _interopRequireDefault(_mergedTableRemoveCol);
 
-var _mergedTableAlignCol = __webpack_require__(172);
+var _mergedTableAlignCol = __webpack_require__(176);
 
 var _mergedTableAlignCol2 = _interopRequireDefault(_mergedTableAlignCol);
 
-var _mergeCell = __webpack_require__(173);
+var _mergeCell = __webpack_require__(177);
 
 var _mergeCell2 = _interopRequireDefault(_mergeCell);
 
-var _unmergeCell = __webpack_require__(174);
+var _unmergeCell = __webpack_require__(178);
 
 var _unmergeCell2 = _interopRequireDefault(_unmergeCell);
 
-var _mergedTableUI = __webpack_require__(175);
+var _mergedTableUI = __webpack_require__(179);
 
 var _mergedTableUI2 = _interopRequireDefault(_mergedTableUI);
 
@@ -33370,13 +33622,13 @@ function _bindEvents(eventManager) {
 _editorProxy2.default.defineExtension('table', tableExtension);
 
 /***/ }),
-/* 162 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -33402,6 +33654,13 @@ if (i18n) {
     'Cannot paste row merged cells into the table header': 'Cannot paste row merged cells into the table header.'
   });
 
+  i18n.setLanguage(['es', 'es_ES'], {
+    'Merge cells': 'Combinar celdas',
+    'Unmerge cells': 'Separar celdas',
+    'Cannot change part of merged cell': 'No se puede cambiar parte de una celda combinada.',
+    'Cannot paste row merged cells into the table header': 'No se pueden pegar celdas combinadas en el encabezado de tabla.'
+  });
+
   i18n.setLanguage(['ja', 'ja_JP'], {
     'Merge cells': 'セルの結合',
     'Unmerge cells': 'セルの結合を解除',
@@ -33422,10 +33681,31 @@ if (i18n) {
     'Cannot change part of merged cell': '无法更改合并单元格的一部分。',
     'Cannot paste row merged cells into the table header': '无法将行合并单元格粘贴到标题中。'
   });
+
+  i18n.setLanguage(['de', 'de_DE'], {
+    'Merge cells': 'Zellen zusammenführen',
+    'Unmerge cells': 'Zusammenführen rückgängig machen',
+    'Cannot change part of merged cell': 'Der Teil der verbundenen Zelle kann nicht geändert werden.',
+    'Cannot paste row merged cells into the table header': 'Die Zeile der verbundenen Zellen kann nicht in die Kopfzeile eingefügt werden.'
+  });
+
+  i18n.setLanguage(['ru', 'ru_RU'], {
+    'Merge cells': 'Объединить ячейки',
+    'Unmerge cells': 'Разъединить ячейки',
+    'Cannot change part of merged cell': 'Вы не можете изменять часть комбинированной ячейки.',
+    'Cannot paste row merged cells into the table header': 'Вы не можете вставлять объединенные ячейки в заголовок таблицы.'
+  });
+
+  i18n.setLanguage(['fr', 'fr_FR'], {
+    'Merge cells': 'Fusionner les cellules',
+    'Unmerge cells': 'Séparer les cellules',
+    'Cannot change part of merged cell': 'Impossible de modifier une partie de la cellule fusionnée.',
+    'Cannot paste row merged cells into the table header': 'Impossible de coller les cellules fusionnées dans l\'en-tête du tableau.'
+  });
 }
 
 /***/ }),
-/* 163 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33656,7 +33936,7 @@ function createMergedTable(tableElement) {
 }
 
 /***/ }),
-/* 164 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33714,7 +33994,7 @@ function prepareTableUnmerge(tableElement) {
 }
 
 /***/ }),
-/* 165 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33761,7 +34041,7 @@ function _createRepeatString(str, count) {
 
 /**
  * Make table head align text.
- * Copy from https://github.com/nhnent/toMark/blob/develop/src/renderer.gfm.js
+ * Copy from https://github.com/nhnent/to-mark/blob/develop/src/renderer.gfm.js
  * @param {HTMLElement} thElement - Table head cell element
  * @returns {string}
  * @private
@@ -33834,7 +34114,7 @@ exports.default = _toMark2.default.Renderer.factory(_toMark2.default.gfmRenderer
 });
 
 /***/ }),
-/* 166 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33854,7 +34134,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -34535,7 +34815,7 @@ function any(arr, contition) {
 exports.default = WwMergedTableManager;
 
 /***/ }),
-/* 167 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34555,7 +34835,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -34736,7 +35016,7 @@ var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
 exports.default = WwMergedTableSelectionManager;
 
 /***/ }),
-/* 168 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34756,7 +35036,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -34913,7 +35193,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = AddRow;
 
 /***/ }),
-/* 169 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34933,7 +35213,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -35114,7 +35394,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = AddCol;
 
 /***/ }),
-/* 170 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35133,7 +35413,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -35301,7 +35581,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = RemoveRow;
 
 /***/ }),
-/* 171 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35320,7 +35600,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -35481,7 +35761,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = RemoveCol;
 
 /***/ }),
-/* 172 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35499,7 +35779,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -35596,7 +35876,7 @@ function _findFocusCell($newTable, $startContainer) {
 exports.default = AlignCol;
 
 /***/ }),
-/* 173 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35615,7 +35895,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -35818,7 +36098,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = MergeCell;
 
 /***/ }),
-/* 174 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35838,7 +36118,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -35998,7 +36278,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = UnmergeCell;
 
 /***/ }),
-/* 175 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36012,7 +36292,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -36100,7 +36380,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 176 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36114,11 +36394,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiColorPicker = __webpack_require__(177);
+var _tuiColorPicker = __webpack_require__(181);
 
 var _tuiColorPicker2 = _interopRequireDefault(_tuiColorPicker);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -36427,13 +36707,13 @@ _editorProxy2.default.defineExtension('colorSyntax', colorSyntaxExtension);
 exports.default = colorSyntaxExtension;
 
 /***/ }),
-/* 177 */
+/* 181 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_177__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_181__;
 
 /***/ }),
-/* 178 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36443,11 +36723,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _plantumlEncoder = __webpack_require__(179);
+var _plantumlEncoder = __webpack_require__(183);
 
 var _plantumlEncoder2 = _interopRequireDefault(_plantumlEncoder);
 
-var _editorProxy = __webpack_require__(4);
+var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -36507,13 +36787,13 @@ _editorProxy2.default.defineExtension('uml', umlExtension);
 exports.default = umlExtension;
 
 /***/ }),
-/* 179 */
+/* 183 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_179__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_183__;
 
 /***/ }),
-/* 180 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

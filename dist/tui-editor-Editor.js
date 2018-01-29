@@ -1,16 +1,16 @@
 /*!
  * tui-editor
- * @version 1.0.1
+ * @version 1.0.2
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("markdown-it"), require("toMark"), require("highlight.js"), require("squire-rte"));
+		module.exports = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("markdown-it"), require("to-mark"), require("highlight.js"), require("squire-rte"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "tui-code-snippet", "codemirror", "markdown-it", "toMark", "highlight.js", "squire-rte"], factory);
+		define(["jquery", "tui-code-snippet", "codemirror", "markdown-it", "to-mark", "highlight.js", "squire-rte"], factory);
 	else if(typeof exports === 'object')
-		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("markdown-it"), require("toMark"), require("highlight.js"), require("squire-rte"));
+		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("markdown-it"), require("to-mark"), require("highlight.js"), require("squire-rte"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["CodeMirror"], root["markdownit"], root["toMark"], root["hljs"], root["Squire"]);
 })(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_19__, __WEBPACK_EXTERNAL_MODULE_20__, __WEBPACK_EXTERNAL_MODULE_28__, __WEBPACK_EXTERNAL_MODULE_58__) {
@@ -8553,6 +8553,14 @@ __webpack_require__(117);
 __webpack_require__(118);
 
 __webpack_require__(119);
+
+__webpack_require__(120);
+
+__webpack_require__(121);
+
+__webpack_require__(122);
+
+__webpack_require__(123);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24387,6 +24395,250 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
 }); /**
     * @fileoverview I18N for Dutch
     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+    */
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['es', 'es_ES'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Escribir',
+  'Preview': 'Vista previa',
+  'Headings': 'Encabezados',
+  'Paragraph': 'Párrafo',
+  'Bold': 'Negrita',
+  'Italic': 'Itálica',
+  'Strike': 'Tachado',
+  'Code': 'Código',
+  'Line': 'Línea',
+  'Blockquote': 'Cita',
+  'Unordered list': 'Lista desordenada',
+  'Ordered list': 'Lista ordenada',
+  'Task': 'Tarea',
+  'Insert link': 'Insertar enlace',
+  'Insert CodeBlock': 'Insertar bloque de código',
+  'Insert table': 'Insertar tabla',
+  'Insert image': 'Insertar imagen',
+  'Heading': 'Encabezado',
+  'Image URL': 'URL de la imagen',
+  'Select image file': 'Seleccionar archivo de imagen',
+  'Description': 'Descripción',
+  'OK': 'Aceptar',
+  'Cancel': 'Cancelar',
+  'File': 'Archivo',
+  'URL': 'URL',
+  'Link text': 'Texto del enlace',
+  'Add row': 'Agregar fila',
+  'Add col': 'Agregar columna',
+  'Remove row': 'Eliminar fila',
+  'Remove col': 'Eliminar columna',
+  'Align left': 'Alinear a la izquierda',
+  'Align center': 'Centrar',
+  'Align right': 'Alinear a la derecha',
+  'Remove table': 'Eliminar tabla',
+  'Would you like to paste as table?': '¿Desea pegar como tabla?',
+  'Text color': 'Color del texto',
+  'Auto scroll enabled': 'Desplazamiento automático habilitado',
+  'Auto scroll disabled': 'Desplazamiento automático deshabilitado',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Sólo se pueden pegar tablas en el modo de selección de celdas',
+  'Choose language': 'Elegir idioma'
+}); /**
+    * @fileoverview I18N for Spanish
+    * @author Enrico Lamperti <oss@elamperti.com>
+    */
+
+/***/ }),
+/* 121 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['de', 'de_DE'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Verfassen',
+  'Preview': 'Vorschau',
+  'Headings': 'Überschriften',
+  'Paragraph': 'Text',
+  'Bold': 'Fett',
+  'Italic': 'Kursiv',
+  'Strike': 'Durchgestrichen',
+  'Code': 'Code',
+  'Line': 'Trennlinie',
+  'Blockquote': 'Blocktext',
+  'Unordered list': 'Aufzählung',
+  'Ordered list': 'Nummerierte Aufzählung',
+  'Task': 'Aufgabe',
+  'Insert link': 'Link einfügen',
+  'Insert CodeBlock': 'Codeblock einfügen',
+  'Insert table': 'Tabelle einfügen',
+  'Insert image': 'Grafik einfügen',
+  'Heading': 'Titel',
+  'Image URL': 'Bild URL',
+  'Select image file': 'Grafik auswählen',
+  'Description': 'Beschreibung',
+  'OK': 'OK',
+  'Cancel': 'Abbrechen',
+  'File': 'Datei',
+  'URL': 'URL',
+  'Link text': 'Anzuzeigender Text',
+  'Add row': 'Zeile hinzufügen',
+  'Add col': 'Spalte hinzufügen',
+  'Remove row': 'Zeile entfernen',
+  'Remove col': 'Spalte entfernen',
+  'Align left': 'Links ausrichten',
+  'Align center': 'Zentrieren',
+  'Align right': 'Rechts ausrichten',
+  'Remove table': 'Tabelle entfernen',
+  'Would you like to paste as table?': 'Möchten Sie eine Tabelle einfügen?',
+  'Text color': 'Textfarbe',
+  'Auto scroll enabled': 'Autoscrollen aktiviert',
+  'Auto scroll disabled': 'Autoscrollen deaktiviert',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Im Zellenauswahlstatus können keine anderen Werte als eine Tabelle eingefügt werden',
+  'Choose language': 'Sprache auswählen'
+}); /**
+    * @fileoverview I18N for German
+    * @author Jann-Niklas Kiepert <jannkiepert@vivaldi.net>
+    */
+
+/***/ }),
+/* 122 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['ru', 'ru_RU'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Написать',
+  'Preview': 'Предварительный просмотр',
+  'Headings': 'Заголовки',
+  'Paragraph': 'Абзац',
+  'Bold': 'Жирный',
+  'Italic': 'Курсив',
+  'Strike': 'Зачеркнутый',
+  'Code': 'Встроенный код',
+  'Line': 'Строка',
+  'Blockquote': 'Блок цитирования',
+  'Unordered list': 'Неупорядоченный список',
+  'Ordered list': 'Упорядоченный список',
+  'Task': 'Задача',
+  'Insert link': 'Вставить ссылку',
+  'Insert CodeBlock': 'Вставить код',
+  'Insert table': 'Вставить таблицу',
+  'Insert image': 'Вставить изображение',
+  'Heading': 'Заголовок',
+  'Image URL': 'URL изображения',
+  'Select image file': 'Выбрать файл изображения',
+  'Description': 'Описание',
+  'OK': 'Хорошо',
+  'Cancel': 'Отмена',
+  'File': 'Файл',
+  'URL': 'URL',
+  'Link text': 'Текст ссылки',
+  'Add row': 'Добавить ряд',
+  'Add col': 'Добавить столбец',
+  'Remove row': 'Удалить ряд',
+  'Remove col': 'Удалить столбец',
+  'Align left': 'Выровнять по левому краю',
+  'Align center': 'Выровнять по центру',
+  'Align right': 'Выровнять по правому краю',
+  'Remove table': 'Удалить таблицу',
+  'Would you like to paste as table?': 'Вы хотите вставить в виде таблицы?',
+  'Text color': 'Цвет текста',
+  'Auto scroll enabled': 'Автоматическая прокрутка включена',
+  'Auto scroll disabled': 'Автоматическая прокрутка отключена',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Вы не можете вставлять значения, отличные от таблицы, в состоянии выбора ячейки.',
+  'Choose language': 'Выбрать язык'
+}); /**
+    * @fileoverview I18N for Russian
+    * @author Stepan Samko <stpnsamko@gmail.com>
+    */
+
+/***/ }),
+/* 123 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['fr', 'fr_FR'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Écrire',
+  'Preview': 'Aperçu',
+  'Headings': 'En-têtes',
+  'Paragraph': 'Paragraphe',
+  'Bold': 'Gras',
+  'Italic': 'Italique',
+  'Strike': 'Barré',
+  'Code': 'Code en ligne',
+  'Line': 'Ligne',
+  'Blockquote': 'Citation',
+  'Unordered list': 'Liste non-ordonnée',
+  'Ordered list': 'Liste ordonnée',
+  'Task': 'Tâche',
+  'Insert link': 'Insérer un lien',
+  'Insert CodeBlock': 'Insérer un bloc de code',
+  'Insert table': 'Insérer un tableau',
+  'Insert image': 'Insérer une image',
+  'Heading': 'En-tête',
+  'Image URL': 'URL de l\'image',
+  'Select image file': 'Sélectionnez un fichier image',
+  'Description': 'Description',
+  'OK': 'OK',
+  'Cancel': 'Annuler',
+  'File': 'Fichier',
+  'URL': 'URL',
+  'Link text': 'Texte du lien',
+  'Add row': 'Ajouter une ligne',
+  'Add col': 'Ajouter une colonne',
+  'Remove row': 'Supprimer une ligne',
+  'Remove col': 'Supprimer une colonne',
+  'Align left': 'Aligner à gauche',
+  'Align center': 'Aligner au centre',
+  'Align right': 'Aligner à droite',
+  'Remove table': 'Supprimer le tableau',
+  'Would you like to paste as table?': 'Voulez-vous coller ce contenu en tant que tableau ?',
+  'Text color': 'Couleur du texte',
+  'Auto scroll enabled': 'Défilement automatique activé',
+  'Auto scroll disabled': 'Défilement automatique désactivé',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Impossible de coller autre chose qu\'un tableau dans la sélection de la cellule.',
+  'Choose language': 'Choix de la langue'
+}); /**
+    * @fileoverview I18N for French
+    * @author Stanislas Michalak <stanislas.michalak@gmail.com>
     */
 
 /***/ })

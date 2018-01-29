@@ -1,16 +1,16 @@
 /*!
  * tui-editor
- * @version 1.0.1
+ * @version 1.0.2
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("tui-code-snippet"), require("toMark"), require("tui-chart"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
+		module.exports = factory(require("jquery"), require("tui-code-snippet"), require("to-mark"), require("tui-chart"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "tui-code-snippet", "toMark", "tui-chart", "markdown-it", "highlight.js", "tui-color-picker", "plantuml-encoder"], factory);
+		define(["jquery", "tui-code-snippet", "to-mark", "tui-chart", "markdown-it", "highlight.js", "tui-color-picker", "plantuml-encoder"], factory);
 	else if(typeof exports === 'object')
-		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("toMark"), require("tui-chart"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
+		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("to-mark"), require("tui-chart"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["toMark"], (root["tui"] && root["tui"]["chart"]), root["markdownit"], root["hljs"], (root["tui"] && root["tui"]["colorPicker"]), root["plantumlEncoder"]);
 })(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_17__, __WEBPACK_EXTERNAL_MODULE_29__, __WEBPACK_EXTERNAL_MODULE_38__, __WEBPACK_EXTERNAL_MODULE_47__, __WEBPACK_EXTERNAL_MODULE_79__, __WEBPACK_EXTERNAL_MODULE_81__) {
@@ -11572,6 +11572,13 @@ if (i18n) {
     'Cannot paste row merged cells into the table header': 'Cannot paste row merged cells into the table header.'
   });
 
+  i18n.setLanguage(['es', 'es_ES'], {
+    'Merge cells': 'Combinar celdas',
+    'Unmerge cells': 'Separar celdas',
+    'Cannot change part of merged cell': 'No se puede cambiar parte de una celda combinada.',
+    'Cannot paste row merged cells into the table header': 'No se pueden pegar celdas combinadas en el encabezado de tabla.'
+  });
+
   i18n.setLanguage(['ja', 'ja_JP'], {
     'Merge cells': 'セルの結合',
     'Unmerge cells': 'セルの結合を解除',
@@ -11591,6 +11598,27 @@ if (i18n) {
     'Unmerge cells': '取消合并单元格',
     'Cannot change part of merged cell': '无法更改合并单元格的一部分。',
     'Cannot paste row merged cells into the table header': '无法将行合并单元格粘贴到标题中。'
+  });
+
+  i18n.setLanguage(['de', 'de_DE'], {
+    'Merge cells': 'Zellen zusammenführen',
+    'Unmerge cells': 'Zusammenführen rückgängig machen',
+    'Cannot change part of merged cell': 'Der Teil der verbundenen Zelle kann nicht geändert werden.',
+    'Cannot paste row merged cells into the table header': 'Die Zeile der verbundenen Zellen kann nicht in die Kopfzeile eingefügt werden.'
+  });
+
+  i18n.setLanguage(['ru', 'ru_RU'], {
+    'Merge cells': 'Объединить ячейки',
+    'Unmerge cells': 'Разъединить ячейки',
+    'Cannot change part of merged cell': 'Вы не можете изменять часть комбинированной ячейки.',
+    'Cannot paste row merged cells into the table header': 'Вы не можете вставлять объединенные ячейки в заголовок таблицы.'
+  });
+
+  i18n.setLanguage(['fr', 'fr_FR'], {
+    'Merge cells': 'Fusionner les cellules',
+    'Unmerge cells': 'Séparer les cellules',
+    'Cannot change part of merged cell': 'Impossible de modifier une partie de la cellule fusionnée.',
+    'Cannot paste row merged cells into the table header': 'Impossible de coller les cellules fusionnées dans l\'en-tête du tableau.'
   });
 }
 
@@ -11931,7 +11959,7 @@ function _createRepeatString(str, count) {
 
 /**
  * Make table head align text.
- * Copy from https://github.com/nhnent/toMark/blob/develop/src/renderer.gfm.js
+ * Copy from https://github.com/nhnent/to-mark/blob/develop/src/renderer.gfm.js
  * @param {HTMLElement} thElement - Table head cell element
  * @returns {string}
  * @private

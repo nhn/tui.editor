@@ -186,6 +186,10 @@
     padding-right: 25px
 }
 
+.tui-editor-defaultUI .CodeMirror-scroll {
+  cursor: text;
+}
+
 /* Essential element style */
 .tui-editor-contents td.te-cell-selected {
     background-color: #d8dfec;
