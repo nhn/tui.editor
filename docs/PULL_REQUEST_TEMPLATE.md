@@ -26,7 +26,6 @@
 -->
 
 ### Please check if the PR fulfills these requirements
-- [ ] It's submitted to right branch according to our branching model
 - [ ] It's right issue type on title
 - [ ] When resolving a specific issue, it's referenced in the PR's title (e.g. `fix #xxx[,#xxx]`, where "xxx" is the issue number)
 - [ ] The commit message follows our guidelines

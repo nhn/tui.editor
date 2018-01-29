@@ -73,6 +73,10 @@ import './langs/ko_KR';
 import './langs/zh_CN';
 import './langs/ja_JP';
 import './langs/nl_NL';
+import './langs/es_ES';
+import './langs/de_DE';
+import './langs/ru_RU';
+import './langs/fr_FR';
 
 const __nedInstance = [];
 

@@ -7,7 +7,7 @@ npm install --save tui-editor
 
 ## Editor
 ### HTML
-Place a `<div></div>` where you want TOAST UI Editor rendered.
+Place a `<div></div>` where you want TOAST UI Editor to render.
 ```html
 <body>
 ...
@@ -47,7 +47,7 @@ $('#editSection').tuiEditor({
 Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 
 ## Viewer
-**TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** has much **lighter** than the editor.
+**TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** is much **lighter** than the editor.
 
 ```javascript
 var Viewer = require('tui-editor/dist/tui-editor-Viewer');
@@ -59,8 +59,7 @@ var editor = new Viewer({
 });
 ...
 ```
-
-Be careful not to load both the editor and the viewer. Since the editor already includes the viewer function, you can initialize editor by calling [Editor.factory()](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) with `viewer` option `true` value to make the editor a viewer. You can also call [getHTML()](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to get rendered *HTML* string.
+Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize editor [Editor.factory()]()(https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) and set the `viewer` option to value `true` in order to make the editor a viewer. You can also call [getHTML()]()(https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to render the HTML.
 
 ```javascript
 var Editor = require('tui-editor');
@@ -74,4 +73,4 @@ var editor = Editor.factory({
 ...
 ```
 
-**TOAST UI Editor** respects *CommonMark* and *GFM*. So any *Markdown* renderer including [markdownit](https://github.com/markdown-it/markdown-it) can handle the content it made. You can use any of those renderer without **Viewer** if you want.
+**TOAST UI Editor** respects *CommonMark* and *GFM*. So any *Markdown* renderer including [markdownit](https://github.com/markdown-it/markdown-it) can handle the content made using TOAST UI Editor. You can also use any of these renderer in place of TOAST UI Editor **Viewer**.
