@@ -1,5 +1,5 @@
 # ![logo](https://cloud.githubusercontent.com/assets/389021/16107646/9729e556-33d8-11e6-933f-5b09fa3a53bb.png)
-> GFM  Markdown Wysiwyg Editor - Productive and Extensible
+> GFM  Markdown WYSIWYG Editor - Productive and Extensible
 
 [![github version](https://img.shields.io/github/release/nhnent/tui.editor.svg)](https://github.com/nhnent/tui.editor/releases/latest) [![npm version](https://img.shields.io/npm/v/tui-editor.svg)](https://www.npmjs.com/package/tui-editor) [![bower version](https://img.shields.io/bower/v/tui-editor.svg)](https://github.com/nhnent/tui.editor/releases/latest) [![license](https://img.shields.io/github/license/nhnent/tui.editor.svg)](https://github.com/nhnent/tui.editor/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.editor/pulls) [![code with hearth by NHN ent.](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Ent.-brightgreen.svg)](https://github.com/nhnent)
 
@@ -12,7 +12,7 @@
     - [Powerful Extensions](#powerful-extensions)
 - [Features](#-features)
     - [Productive Markdown mode](#productive-markdown-mode)
-    - [Easy Wysiwig mode](#easy-wysiwig-mode)
+    - [Easy WYSIWYG mode](#easy-wysiwyg-mode)
     - [And more](#and-more)
 - [Install](#-install)
     - [using npm](#using-npm)
@@ -57,9 +57,9 @@ Here are some of the extensions you can start with:
  To learn more about **Extensions** check the [Using Extension](https://github.com/nhnent/tui.editor/blob/production/docs/using-extensions.md)
 
 ## 🎨 Features
-**TOAST UI Editor** provides **Markdown mode** and **Wysiwyg mode**.
+**TOAST UI Editor** provides **Markdown mode** and **WYSIWYG mode**.
 
-Some may like the productivity of *Markdown*, while others may be looking for a way to make it easier to edit. The **TOAST UI Editor** can be the coordinator of both. It offers **Markdown mode** and **Wysiwyg mode**, which can be switched at any time during writing content. Both work together conveniently in one document.
+Some may like the productivity of *Markdown*, while others may be looking for a way to make it easier to edit. The **TOAST UI Editor** can be the coordinator of both. It offers **Markdown mode** and **WYSIWYG mode**, which can be switched at any time during writing content. Both work together conveniently in one document.
 
 ### Productive Markdown mode
 ![markdown image](https://user-images.githubusercontent.com/1215767/34354737-b98a0736-ea73-11e7-8375-d4c83b8894d8.png)
@@ -68,7 +68,7 @@ Some may like the productivity of *Markdown*, while others may be looking for a 
 * **Auto indent**: The cursor will always be where you want to be
 * **Syntax highlight**: You can check broken Markdown syntax immediately
 
-### Easy Wysiwig mode
+### Easy WYSIWYG mode
 ![wysiwyg image](https://user-images.githubusercontent.com/1215767/34354831-5f04c7e6-ea74-11e7-9664-97f71c4fee6e.png)
 * **Copy and paste**: Paste anything from browser, screenshot, excel, powerpoint etc
 * **Codeblock editor**: Highlight 170+ languages with full size code editor
