@@ -53,8 +53,7 @@ Unsure where to begin contributing to TOAST UI? You can start by looking through
 
 ### Make changes
 #### Checkout a branch
-- **develop**: PR base branch. merge features, updates for next minor or major release
-- **master**: bug fix or document update for next patch release. develop branch will rebase every time master branch update. so keep code change to a minimum.
+- **master**: PR Base branch.
 - **production**: lastest release branch with distribution files. never make a PR on this
 - **gh-pages**: API docs, examples and demo
 
