@@ -82,7 +82,7 @@
     "markdown-it": "^8.4.0",
     "plantuml-encoder": "github:kyuwoo-choi/plantuml-encoder#156729063bfa62da6fa5f577627ebab57ae98c95",
     "squire-rte": "^1.8.11",
-    "toMark": "nhnent/toMark#0.0.19",
+    "to-mark": "^1.0.0",
     "tui-chart": "^2.13.0",
     "tui-code-snippet": "^1.2.9",
     "tui-color-picker": "^2.0.1"
