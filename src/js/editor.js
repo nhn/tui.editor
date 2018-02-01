@@ -77,6 +77,7 @@ import './langs/es_ES';
 import './langs/de_DE';
 import './langs/ru_RU';
 import './langs/fr_FR';
+import './langs/uk_UA';
 
 const __nedInstance = [];
 
