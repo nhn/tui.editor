@@ -56,7 +56,8 @@ class WwCodeBlockManager {
    * @private
    */
   _initKeyHandler() {
-    this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeblockIfNeed.bind(this));
+    this._onKeyEventHandler = this._removeCodeblockIfNeed.bind(this);
+    this.wwe.addKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
   }
 
   /**
@@ -68,11 +69,11 @@ class WwCodeBlockManager {
   _initEvent() {
     const self = this;
 
-    this.eventManager.listen('wysiwygSetValueAfter', () => {
+    this.eventManager.listen('wysiwygSetValueAfter.codeblock', () => {
       self.splitCodeblockToEachLine();
     });
 
-    this.eventManager.listen('wysiwygProcessHTMLText', html => self._mergeCodeblockEachlinesFromHTMLText(html));
+    this.eventManager.listen('wysiwygProcessHTMLText.codeblock', html => self._mergeCodeblockEachlinesFromHTMLText(html));
   }
 
   /**
@@ -293,6 +294,15 @@ class WwCodeBlockManager {
    */
   _isCodeBlock(element) {
     return !!$(element).closest('pre').length;
+  }
+
+  /**
+   * Destroy.
+   */
+  destroy() {
+    this.eventManager.removeEventHandler('wysiwygSetValueAfter.codeblock');
+    this.eventManager.removeEventHandler('wysiwygProcessHTMLText.codeblock');
+    this.wwe.removeKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
   }
 }
 
