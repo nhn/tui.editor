@@ -166,11 +166,11 @@ class ToastUIEditor {
 
     this.changeMode(this.options.initialEditType, true);
 
-    this.setValue(this.options.initialValue, false);
-
     this.minHeight(this.options.minHeight);
 
     this.height(this.options.height);
+
+    this.setValue(this.options.initialValue, false);
 
     extManager.applyExtension(this, this.options.exts);
 
