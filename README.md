@@ -96,7 +96,7 @@ bower install --save tui-editor
 * [Download all sources for each version from release](https://github.com/nhnent/tui.editor/releases)
 
 ## 🔨 Usage
-The code provided underneath is for *npm*. If you are using *bower* please see [Getting started with bower](https://github.com/nhnent/tui.editor/blob/production/docs/getting-started-with-bower.md).
+The code provided underneath is for *npm* + *bundler*. If you are using *bower* please see [Getting started with bower](https://github.com/nhnent/tui.editor/blob/production/docs/getting-started-with-bower.md).
 
 ### Editor
 
@@ -111,8 +111,14 @@ Place a `<div></div>` where you want TOAST UI Editor rendered.
 ```
 
 #### javascript
-Initialize Editor class with given element to make an Editor.
+Add dependencies & initialize Editor class with given element to make an Editor.
 ```javascript
+// deps for editor
+require('codemirror/lib/codemirror.css') // codemirror
+require('tui-editor/dist/tui-editor.css'); // editor ui
+require('tui-editor/dist/tui-editor-contents.css'); // editor content
+require('highlight.js/styles/github.css'); // code block highlight
+
 var Editor = require('tui-editor');
 ...
 var editor = new Editor({
@@ -144,6 +150,10 @@ Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/Toas
 **TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** is much **lighter** than the editor.
 
 ```javascript
+// deps for viewer.
+require('tui-editor/dist/tui-editor-contents.css'); // editor content
+require('highlight.js/styles/github.css'); // code block highlight
+
 var Viewer = require('tui-editor/dist/tui-editor-Viewer');
 ...
 var editor = new Viewer({
