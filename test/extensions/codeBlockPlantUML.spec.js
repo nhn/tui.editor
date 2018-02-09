@@ -30,7 +30,7 @@ describe('colorSyntax', () => {
 
         jasmine.clock().tick(800);
 
-        expect(editor.preview.$el.get(0).querySelector('pre img').getAttribute('src')).toEqual('http://www.plantuml.com/plantuml/png/UDfppCbCJbNGjLDmoa-oKl18pSd9vm80Fq05zG00');
+        expect(editor.preview.$el.get(0).querySelector('pre img').getAttribute('src')).toEqual('http://www.plantuml.com/plantuml/png/Syp9J4vLqBLJSCfFibBmICt9oUS20000');
     });
 
     it('shows code in html in wysiwyg', () => {
