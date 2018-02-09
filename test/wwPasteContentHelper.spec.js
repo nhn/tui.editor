@@ -278,6 +278,16 @@ describe('WwPasteContentHelper', () => {
       expect($container.find('tbody').text()).toEqual('ab');
       expect($container.find('table')[0].className).toEqual('te-content-table-0');
     });
+    it('_tableElementAid should remove colgroup', () => {
+      const $container = $('<div />');
+
+      $container.html('<table><thead><tr><th>1</th><th>2</th></tr></thead><colgroup></colgroup><tbody><tr><td>a</td><td>b</td></tr></tbody></table>');
+
+      pch._tableElementAid($container);
+
+      expect($container.find('table').length).toEqual(1);
+      expect($container.find('colgroup').length).toEqual(0);
+    });
     it('_tableElementAid should update table ID class name', () => {
       const $container = $('<div />');
 

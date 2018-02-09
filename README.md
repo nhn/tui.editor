@@ -1,7 +1,7 @@
 # ![logo](https://cloud.githubusercontent.com/assets/389021/16107646/9729e556-33d8-11e6-933f-5b09fa3a53bb.png)
 > GFM  Markdown WYSIWYG Editor - Productive and Extensible
 
-[![github version](https://img.shields.io/github/release/nhnent/tui.editor.svg)](https://github.com/nhnent/tui.editor/releases/latest) [![npm version](https://img.shields.io/npm/v/tui-editor.svg)](https://www.npmjs.com/package/tui-editor) [![bower version](https://img.shields.io/bower/v/tui-editor.svg)](https://github.com/nhnent/tui.editor/releases/latest) [![license](https://img.shields.io/github/license/nhnent/tui.editor.svg)](https://github.com/nhnent/tui.editor/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.editor/pulls) [![code with hearth by NHN ent.](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Ent.-brightgreen.svg)](https://github.com/nhnent)
+[![github version](https://img.shields.io/github/release/nhnent/tui.editor.svg)](https://github.com/nhnent/tui.editor/releases/latest) [![npm version](https://img.shields.io/npm/v/tui-editor.svg)](https://www.npmjs.com/package/tui-editor) [![bower version](https://img.shields.io/bower/v/tui-editor.svg)](https://github.com/nhnent/tui.editor/releases/latest) [![license](https://img.shields.io/github/license/nhnent/tui.editor.svg)](https://github.com/nhnent/tui.editor/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) [![code with hearth by NHN ent.](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Ent.-brightgreen.svg)](https://github.com/nhnent)
 
 <p align="center"><a href="https://nhnent.github.io/tui.editor/"><img src="https://user-images.githubusercontent.com/1215767/34356204-4c03be8a-ea7f-11e7-9aa9-0d84f9e912ec.gif" /></a></p>
 
@@ -75,7 +75,7 @@ Depending on the type of use you want like production of *Markdown* or maybe to 
 * **Table**: Hate the Markdown table? You can do everything with a mouse
 
 ### And more
-* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French + language you extend.
+* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian + language you extend.
 * **Viewer**: Renders Markdown content with extensions
 
 
@@ -96,7 +96,7 @@ bower install --save tui-editor
 * [Download all sources for each version from release](https://github.com/nhnent/tui.editor/releases)
 
 ## 🔨 Usage
-The code provided underneath is for *npm*. If you are using *bower* please see [Getting started with bower](https://github.com/nhnent/tui.editor/blob/production/docs/getting-started-with-bower.md).
+The code provided underneath is for *npm* + *bundler*. If you are using *bower* please see [Getting started with bower](https://github.com/nhnent/tui.editor/blob/production/docs/getting-started-with-bower.md).
 
 ### Editor
 
@@ -111,8 +111,14 @@ Place a `<div></div>` where you want TOAST UI Editor rendered.
 ```
 
 #### javascript
-Initialize Editor class with given element to make an Editor.
+Add dependencies & initialize Editor class with given element to make an Editor.
 ```javascript
+// deps for editor
+require('codemirror/lib/codemirror.css') // codemirror
+require('tui-editor/dist/tui-editor.css'); // editor ui
+require('tui-editor/dist/tui-editor-contents.css'); // editor content
+require('highlight.js/styles/github.css'); // code block highlight
+
 var Editor = require('tui-editor');
 ...
 var editor = new Editor({
@@ -144,6 +150,10 @@ Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/Toas
 **TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** is much **lighter** than the editor.
 
 ```javascript
+// deps for viewer.
+require('tui-editor/dist/tui-editor-contents.css'); // editor content
+require('highlight.js/styles/github.css'); // code block highlight
+
 var Viewer = require('tui-editor/dist/tui-editor-Viewer');
 ...
 var editor = new Viewer({
