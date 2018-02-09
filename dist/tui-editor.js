@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 0.14.4
+ * @version 0.14.5
  * @author Sungho Kim <shirenbeat@gmail.com>
  * @license MIT
  */
@@ -24474,11 +24474,11 @@ var ToastUIEditor = function () {
 
         this.changeMode(this.options.initialEditType, true);
 
-        this.setValue(this.options.initialValue, false);
-
         this.minHeight(this.options.minHeight);
 
         this.height(this.options.height);
+
+        this.setValue(this.options.initialValue, false);
 
         _extManager2.default.applyExtension(this, this.options.exts);
 
@@ -35168,8 +35168,22 @@ var WwPasteContentHelper = function () {
     }, {
         key: '_tableElementAid',
         value: function _tableElementAid($container) {
+            this._removeColgroup($container);
             this._completeTableIfNeed($container);
             this._updateTableIDClassName($container);
+        }
+
+        /**
+         * Remove colgroup tag
+         * @param {jQuery} $container - clipboard container
+         * @memberof WwPasteContentHelper
+         * @private
+         **/
+
+    }, {
+        key: '_removeColgroup',
+        value: function _removeColgroup($container) {
+            $container.find('colgroup').remove();
         }
 
         /**
@@ -38827,7 +38841,7 @@ var WysiwygEditor = function () {
 
             $(node).css({
                 position: 'absolute',
-                top: pos.top - editorContainerPos.top,
+                top: pos.top - editorContainerPos.top + this.scrollTop(),
                 left: pos.left - editorContainerPos.left
             });
         }
