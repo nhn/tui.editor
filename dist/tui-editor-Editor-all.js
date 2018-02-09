@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.0.2
+ * @version 1.0.3
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("to-mark"), require("tui-chart"), require("squire-rte"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["CodeMirror"], root["toMark"], (root["tui"] && root["tui"]["chart"]), root["Squire"], root["markdownit"], root["hljs"], (root["tui"] && root["tui"]["colorPicker"]), root["plantumlEncoder"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_39__, __WEBPACK_EXTERNAL_MODULE_51__, __WEBPACK_EXTERNAL_MODULE_71__, __WEBPACK_EXTERNAL_MODULE_77__, __WEBPACK_EXTERNAL_MODULE_85__, __WEBPACK_EXTERNAL_MODULE_181__, __WEBPACK_EXTERNAL_MODULE_183__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_39__, __WEBPACK_EXTERNAL_MODULE_51__, __WEBPACK_EXTERNAL_MODULE_71__, __WEBPACK_EXTERNAL_MODULE_77__, __WEBPACK_EXTERNAL_MODULE_85__, __WEBPACK_EXTERNAL_MODULE_182__, __WEBPACK_EXTERNAL_MODULE_184__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -4150,7 +4150,7 @@ exports.Readable = exports;
 exports.Writable = __webpack_require__(24);
 exports.Duplex = __webpack_require__(11);
 exports.Transform = __webpack_require__(48);
-exports.PassThrough = __webpack_require__(156);
+exports.PassThrough = __webpack_require__(157);
 
 
 /***/ }),
@@ -4230,7 +4230,7 @@ util.inherits = __webpack_require__(12);
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(155)
+  deprecate: __webpack_require__(156)
 };
 /*</replacement>*/
 
@@ -4822,7 +4822,7 @@ Writable.prototype._destroy = function (err, cb) {
   this.end();
   cb(err);
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16), __webpack_require__(153).setImmediate, __webpack_require__(14)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16), __webpack_require__(154).setImmediate, __webpack_require__(14)))
 
 /***/ }),
 /* 25 */
@@ -5096,6 +5096,8 @@ __webpack_require__(146);
 
 __webpack_require__(147);
 
+__webpack_require__(148);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -5196,11 +5198,11 @@ var ToastUIEditor = function () {
 
     this.changeMode(this.options.initialEditType, true);
 
-    this.setValue(this.options.initialValue, false);
-
     this.minHeight(this.options.minHeight);
 
     this.height(this.options.height);
+
+    this.setValue(this.options.initialValue, false);
 
     _extManager2.default.applyExtension(this, this.options.exts);
 
@@ -9096,7 +9098,8 @@ var WwCodeBlockManager = function () {
   }, {
     key: '_initKeyHandler',
     value: function _initKeyHandler() {
-      this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeblockIfNeed.bind(this));
+      this._onKeyEventHandler = this._removeCodeblockIfNeed.bind(this);
+      this.wwe.addKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
     }
 
     /**
@@ -9111,11 +9114,11 @@ var WwCodeBlockManager = function () {
     value: function _initEvent() {
       var self = this;
 
-      this.eventManager.listen('wysiwygSetValueAfter', function () {
+      this.eventManager.listen('wysiwygSetValueAfter.codeblock', function () {
         self.splitCodeblockToEachLine();
       });
 
-      this.eventManager.listen('wysiwygProcessHTMLText', function (html) {
+      this.eventManager.listen('wysiwygProcessHTMLText.codeblock', function (html) {
         return self._mergeCodeblockEachlinesFromHTMLText(html);
       });
     }
@@ -9361,6 +9364,18 @@ var WwCodeBlockManager = function () {
     key: '_isCodeBlock',
     value: function _isCodeBlock(element) {
       return !!(0, _jquery2.default)(element).closest('pre').length;
+    }
+
+    /**
+     * Destroy.
+     */
+
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      this.eventManager.removeEventHandler('wysiwygSetValueAfter.codeblock');
+      this.eventManager.removeEventHandler('wysiwygProcessHTMLText.codeblock');
+      this.wwe.removeKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
     }
   }]);
 
@@ -10266,10 +10281,10 @@ var inherits = __webpack_require__(12);
 
 inherits(Stream, EE);
 Stream.Readable = __webpack_require__(23);
-Stream.Writable = __webpack_require__(157);
-Stream.Duplex = __webpack_require__(158);
-Stream.Transform = __webpack_require__(159);
-Stream.PassThrough = __webpack_require__(160);
+Stream.Writable = __webpack_require__(158);
+Stream.Duplex = __webpack_require__(159);
+Stream.Transform = __webpack_require__(160);
+Stream.PassThrough = __webpack_require__(161);
 
 // Backwards-compat with node 0.4.x
 Stream.Stream = Stream;
@@ -10443,7 +10458,7 @@ util.inherits = __webpack_require__(12);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(151);
+var debugUtil = __webpack_require__(152);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -10452,7 +10467,7 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(152);
+var BufferList = __webpack_require__(153);
 var destroyImpl = __webpack_require__(46);
 var StringDecoder;
 
@@ -11414,8 +11429,8 @@ module.exports = __webpack_require__(22).EventEmitter;
 
 
 
-var base64 = __webpack_require__(149)
-var ieee754 = __webpack_require__(150)
+var base64 = __webpack_require__(150)
+var ieee754 = __webpack_require__(151)
 var isArray = __webpack_require__(43)
 
 exports.Buffer = Buffer
@@ -13781,19 +13796,19 @@ function done(stream, er, data) {
 
 __webpack_require__(50);
 
-__webpack_require__(162);
+__webpack_require__(163);
 
-__webpack_require__(165);
+__webpack_require__(166);
 
-__webpack_require__(180);
+__webpack_require__(181);
 
-__webpack_require__(182);
+__webpack_require__(183);
 
 /**
  * @fileoverview entry point for editor with all extension included
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-var Editor = __webpack_require__(184);
+var Editor = __webpack_require__(185);
 
 module.exports = Editor;
 
@@ -13829,7 +13844,7 @@ var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-var _csv = __webpack_require__(148);
+var _csv = __webpack_require__(149);
 
 var _csv2 = _interopRequireDefault(_csv);
 
@@ -18054,7 +18069,7 @@ var WysiwygEditor = function () {
 
       (0, _jquery2.default)(node).css({
         position: 'absolute',
-        top: pos.top - editorContainerPos.top,
+        top: pos.top - editorContainerPos.top + this.scrollTop(),
         left: pos.left - editorContainerPos.left
       });
     }
@@ -19211,8 +19226,22 @@ var WwPasteContentHelper = function () {
   }, {
     key: '_tableElementAid',
     value: function _tableElementAid($container) {
+      this._removeColgroup($container);
       this._completeTableIfNeed($container);
       this._updateTableIDClassName($container);
+    }
+
+    /**
+     * Remove colgroup tag
+     * @param {jQuery} $container - clipboard container
+     * @memberof WwPasteContentHelper
+     * @private
+     **/
+
+  }, {
+    key: '_removeColgroup',
+    value: function _removeColgroup($container) {
+      $container.find('colgroup').remove();
     }
 
     /**
@@ -31189,6 +31218,67 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
 "use strict";
 
 
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['uk', 'uk_UA'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Написати',
+  'Preview': 'Попередній перегляд',
+  'Headings': 'Заголовки',
+  'Paragraph': 'Абзац',
+  'Bold': 'Жирний',
+  'Italic': 'Курсив',
+  'Strike': 'Закреслений',
+  'Code': 'Вбудований код',
+  'Line': 'Лінія',
+  'Blockquote': 'Блок цитування',
+  'Unordered list': 'Невпорядкований список',
+  'Ordered list': 'Упорядкований список',
+  'Task': 'Завдання',
+  'Insert link': 'Вставити посилання',
+  'Insert CodeBlock': 'Вставити код',
+  'Insert table': 'Вставити таблицю',
+  'Insert image': 'Вставити зображення',
+  'Heading': 'Заголовок',
+  'Image URL': 'URL зображення',
+  'Select image file': 'Вибрати файл зображення',
+  'Description': 'Опис',
+  'OK': 'OK',
+  'Cancel': 'Скасувати',
+  'File': 'Файл',
+  'URL': 'URL',
+  'Link text': 'Текст посилання',
+  'Add row': 'Додати ряд',
+  'Add col': 'Додати стовпчик',
+  'Remove row': 'Видалити ряд',
+  'Remove col': 'Видалити стовпчик',
+  'Align left': 'Вирівняти по лівому краю',
+  'Align center': 'Вирівняти по центру',
+  'Align right': 'Вирівняти по правому краю',
+  'Remove table': 'Видалити таблицю',
+  'Would you like to paste as table?': 'Ви хочете вставити у вигляді таблиці?',
+  'Text color': 'Колір тексту',
+  'Auto scroll enabled': 'Автоматична прокрутка включена',
+  'Auto scroll disabled': 'Автоматична прокрутка відключена',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Ви не можете вставляти значення, відмінні від таблиці, в стані вибору комірки.',
+  'Choose language': 'Вибрати мову'
+}); /**
+    * @fileoverview I18N for Ukrainian
+    * @author Nikolya <k_m_i@i.ua>
+    */
+
+/***/ }),
+/* 149 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 /* eslint-disable */
@@ -31433,7 +31523,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     CSV.stream.json = function () {
-        var os = __webpack_require__(161);
+        var os = __webpack_require__(162);
         var stream = __webpack_require__(41);
         var s = new streamTransform({ objectMode: true });
         s._transform = function (chunk, encoding, done) {
@@ -31568,7 +31658,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })(undefined);
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31689,7 +31779,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -31779,13 +31869,13 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31865,7 +31955,7 @@ module.exports = function () {
 }();
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var apply = Function.prototype.apply;
@@ -31918,13 +32008,13 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(154);
+__webpack_require__(155);
 exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -32117,7 +32207,7 @@ exports.clearImmediate = clearImmediate;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14), __webpack_require__(16)))
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -32191,7 +32281,7 @@ function config (name) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32244,35 +32334,35 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(24);
 
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(11);
 
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(23).Transform
 
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(23).PassThrough
 
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports) {
 
 exports.endianness = function () { return 'LE' };
@@ -32327,7 +32417,7 @@ exports.homedir = function () {
 
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32345,11 +32435,11 @@ var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-var _scrollManager = __webpack_require__(163);
+var _scrollManager = __webpack_require__(164);
 
 var _scrollManager2 = _interopRequireDefault(_scrollManager);
 
-var _sectionManager = __webpack_require__(164);
+var _sectionManager = __webpack_require__(165);
 
 var _sectionManager2 = _interopRequireDefault(_sectionManager);
 
@@ -32471,7 +32561,7 @@ _editorProxy2.default.defineExtension('scrollSync', scrollSyncExtension);
 exports.default = scrollSyncExtension;
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32908,7 +32998,7 @@ var ScrollManager = function () {
 exports.default = ScrollManager;
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33421,7 +33511,7 @@ function findElementNodeFilter() {
 exports.default = SectionManager;
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33435,57 +33525,57 @@ var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-__webpack_require__(166);
+__webpack_require__(167);
 
-var _mergedTableCreator = __webpack_require__(167);
+var _mergedTableCreator = __webpack_require__(168);
 
 var _mergedTableCreator2 = _interopRequireDefault(_mergedTableCreator);
 
-var _tableUnmergePreparer = __webpack_require__(168);
+var _tableUnmergePreparer = __webpack_require__(169);
 
 var _tableUnmergePreparer2 = _interopRequireDefault(_tableUnmergePreparer);
 
-var _toMarkRenderer = __webpack_require__(169);
+var _toMarkRenderer = __webpack_require__(170);
 
 var _toMarkRenderer2 = _interopRequireDefault(_toMarkRenderer);
 
-var _wwMergedTableManager = __webpack_require__(170);
+var _wwMergedTableManager = __webpack_require__(171);
 
 var _wwMergedTableManager2 = _interopRequireDefault(_wwMergedTableManager);
 
-var _wwMergedTableSelectionManager = __webpack_require__(171);
+var _wwMergedTableSelectionManager = __webpack_require__(172);
 
 var _wwMergedTableSelectionManager2 = _interopRequireDefault(_wwMergedTableSelectionManager);
 
-var _mergedTableAddRow = __webpack_require__(172);
+var _mergedTableAddRow = __webpack_require__(173);
 
 var _mergedTableAddRow2 = _interopRequireDefault(_mergedTableAddRow);
 
-var _mergedTableAddCol = __webpack_require__(173);
+var _mergedTableAddCol = __webpack_require__(174);
 
 var _mergedTableAddCol2 = _interopRequireDefault(_mergedTableAddCol);
 
-var _mergedTableRemoveRow = __webpack_require__(174);
+var _mergedTableRemoveRow = __webpack_require__(175);
 
 var _mergedTableRemoveRow2 = _interopRequireDefault(_mergedTableRemoveRow);
 
-var _mergedTableRemoveCol = __webpack_require__(175);
+var _mergedTableRemoveCol = __webpack_require__(176);
 
 var _mergedTableRemoveCol2 = _interopRequireDefault(_mergedTableRemoveCol);
 
-var _mergedTableAlignCol = __webpack_require__(176);
+var _mergedTableAlignCol = __webpack_require__(177);
 
 var _mergedTableAlignCol2 = _interopRequireDefault(_mergedTableAlignCol);
 
-var _mergeCell = __webpack_require__(177);
+var _mergeCell = __webpack_require__(178);
 
 var _mergeCell2 = _interopRequireDefault(_mergeCell);
 
-var _unmergeCell = __webpack_require__(178);
+var _unmergeCell = __webpack_require__(179);
 
 var _unmergeCell2 = _interopRequireDefault(_unmergeCell);
 
-var _mergedTableUI = __webpack_require__(179);
+var _mergedTableUI = __webpack_require__(180);
 
 var _mergedTableUI2 = _interopRequireDefault(_mergedTableUI);
 
@@ -33622,7 +33712,7 @@ function _bindEvents(eventManager) {
 _editorProxy2.default.defineExtension('table', tableExtension);
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33702,10 +33792,17 @@ if (i18n) {
     'Cannot change part of merged cell': 'Impossible de modifier une partie de la cellule fusionnée.',
     'Cannot paste row merged cells into the table header': 'Impossible de coller les cellules fusionnées dans l\'en-tête du tableau.'
   });
+
+  i18n.setLanguage(['uk', 'uk_UA'], {
+    'Merge cells': 'Об\'єднати комірки',
+    'Unmerge cells': 'Роз\'єднати комірки',
+    'Cannot change part of merged cell': 'Ви не можете змінювати частину комбінованої комірки.',
+    'Cannot paste row merged cells into the table header': 'Ви не можете вставляти об\'єднані комірки в заголовок таблиці.'
+  });
 }
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33936,7 +34033,7 @@ function createMergedTable(tableElement) {
 }
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33994,7 +34091,7 @@ function prepareTableUnmerge(tableElement) {
 }
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34114,7 +34211,7 @@ exports.default = _toMark2.default.Renderer.factory(_toMark2.default.gfmRenderer
 });
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34815,7 +34912,7 @@ function any(arr, contition) {
 exports.default = WwMergedTableManager;
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35016,7 +35113,7 @@ var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
 exports.default = WwMergedTableSelectionManager;
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35193,7 +35290,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = AddRow;
 
 /***/ }),
-/* 173 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35394,7 +35491,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = AddCol;
 
 /***/ }),
-/* 174 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35581,7 +35678,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = RemoveRow;
 
 /***/ }),
-/* 175 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35761,7 +35858,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = RemoveCol;
 
 /***/ }),
-/* 176 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35876,7 +35973,7 @@ function _findFocusCell($newTable, $startContainer) {
 exports.default = AlignCol;
 
 /***/ }),
-/* 177 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36098,7 +36195,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = MergeCell;
 
 /***/ }),
-/* 178 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36278,7 +36375,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = UnmergeCell;
 
 /***/ }),
-/* 179 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36380,7 +36477,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 180 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36394,7 +36491,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiColorPicker = __webpack_require__(181);
+var _tuiColorPicker = __webpack_require__(182);
 
 var _tuiColorPicker2 = _interopRequireDefault(_tuiColorPicker);
 
@@ -36707,13 +36804,13 @@ _editorProxy2.default.defineExtension('colorSyntax', colorSyntaxExtension);
 exports.default = colorSyntaxExtension;
 
 /***/ }),
-/* 181 */
+/* 182 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_181__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_182__;
 
 /***/ }),
-/* 182 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36723,7 +36820,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _plantumlEncoder = __webpack_require__(183);
+var _plantumlEncoder = __webpack_require__(184);
 
 var _plantumlEncoder2 = _interopRequireDefault(_plantumlEncoder);
 
@@ -36787,13 +36884,13 @@ _editorProxy2.default.defineExtension('uml', umlExtension);
 exports.default = umlExtension;
 
 /***/ }),
-/* 183 */
+/* 184 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_183__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_184__;
 
 /***/ }),
-/* 184 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

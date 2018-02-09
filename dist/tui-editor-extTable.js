@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.0.2
+ * @version 1.0.3
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -1241,6 +1241,13 @@ if (i18n) {
     'Unmerge cells': 'Séparer les cellules',
     'Cannot change part of merged cell': 'Impossible de modifier une partie de la cellule fusionnée.',
     'Cannot paste row merged cells into the table header': 'Impossible de coller les cellules fusionnées dans l\'en-tête du tableau.'
+  });
+
+  i18n.setLanguage(['uk', 'uk_UA'], {
+    'Merge cells': 'Об\'єднати комірки',
+    'Unmerge cells': 'Роз\'єднати комірки',
+    'Cannot change part of merged cell': 'Ви не можете змінювати частину комбінованої комірки.',
+    'Cannot paste row merged cells into the table header': 'Ви не можете вставляти об\'єднані комірки в заголовок таблиці.'
   });
 }
 

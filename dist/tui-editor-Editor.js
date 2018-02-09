@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.0.2
+ * @version 1.0.3
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -7794,7 +7794,8 @@ var WwCodeBlockManager = function () {
   }, {
     key: '_initKeyHandler',
     value: function _initKeyHandler() {
-      this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeblockIfNeed.bind(this));
+      this._onKeyEventHandler = this._removeCodeblockIfNeed.bind(this);
+      this.wwe.addKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
     }
 
     /**
@@ -7809,11 +7810,11 @@ var WwCodeBlockManager = function () {
     value: function _initEvent() {
       var self = this;
 
-      this.eventManager.listen('wysiwygSetValueAfter', function () {
+      this.eventManager.listen('wysiwygSetValueAfter.codeblock', function () {
         self.splitCodeblockToEachLine();
       });
 
-      this.eventManager.listen('wysiwygProcessHTMLText', function (html) {
+      this.eventManager.listen('wysiwygProcessHTMLText.codeblock', function (html) {
         return self._mergeCodeblockEachlinesFromHTMLText(html);
       });
     }
@@ -8059,6 +8060,18 @@ var WwCodeBlockManager = function () {
     key: '_isCodeBlock',
     value: function _isCodeBlock(element) {
       return !!(0, _jquery2.default)(element).closest('pre').length;
+    }
+
+    /**
+     * Destroy.
+     */
+
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      this.eventManager.removeEventHandler('wysiwygSetValueAfter.codeblock');
+      this.eventManager.removeEventHandler('wysiwygProcessHTMLText.codeblock');
+      this.wwe.removeKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
     }
   }]);
 
@@ -8562,6 +8575,8 @@ __webpack_require__(122);
 
 __webpack_require__(123);
 
+__webpack_require__(124);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8662,11 +8677,11 @@ var ToastUIEditor = function () {
 
     this.changeMode(this.options.initialEditType, true);
 
-    this.setValue(this.options.initialValue, false);
-
     this.minHeight(this.options.minHeight);
 
     this.height(this.options.height);
+
+    this.setValue(this.options.initialValue, false);
 
     _extManager2.default.applyExtension(this, this.options.exts);
 
@@ -12986,7 +13001,7 @@ var WysiwygEditor = function () {
 
       (0, _jquery2.default)(node).css({
         position: 'absolute',
-        top: pos.top - editorContainerPos.top,
+        top: pos.top - editorContainerPos.top + this.scrollTop(),
         left: pos.left - editorContainerPos.left
       });
     }
@@ -14143,8 +14158,22 @@ var WwPasteContentHelper = function () {
   }, {
     key: '_tableElementAid',
     value: function _tableElementAid($container) {
+      this._removeColgroup($container);
       this._completeTableIfNeed($container);
       this._updateTableIDClassName($container);
+    }
+
+    /**
+     * Remove colgroup tag
+     * @param {jQuery} $container - clipboard container
+     * @memberof WwPasteContentHelper
+     * @private
+     **/
+
+  }, {
+    key: '_removeColgroup',
+    value: function _removeColgroup($container) {
+      $container.find('colgroup').remove();
     }
 
     /**
@@ -24639,6 +24668,67 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
 }); /**
     * @fileoverview I18N for French
     * @author Stanislas Michalak <stanislas.michalak@gmail.com>
+    */
+
+/***/ }),
+/* 124 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['uk', 'uk_UA'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Написати',
+  'Preview': 'Попередній перегляд',
+  'Headings': 'Заголовки',
+  'Paragraph': 'Абзац',
+  'Bold': 'Жирний',
+  'Italic': 'Курсив',
+  'Strike': 'Закреслений',
+  'Code': 'Вбудований код',
+  'Line': 'Лінія',
+  'Blockquote': 'Блок цитування',
+  'Unordered list': 'Невпорядкований список',
+  'Ordered list': 'Упорядкований список',
+  'Task': 'Завдання',
+  'Insert link': 'Вставити посилання',
+  'Insert CodeBlock': 'Вставити код',
+  'Insert table': 'Вставити таблицю',
+  'Insert image': 'Вставити зображення',
+  'Heading': 'Заголовок',
+  'Image URL': 'URL зображення',
+  'Select image file': 'Вибрати файл зображення',
+  'Description': 'Опис',
+  'OK': 'OK',
+  'Cancel': 'Скасувати',
+  'File': 'Файл',
+  'URL': 'URL',
+  'Link text': 'Текст посилання',
+  'Add row': 'Додати ряд',
+  'Add col': 'Додати стовпчик',
+  'Remove row': 'Видалити ряд',
+  'Remove col': 'Видалити стовпчик',
+  'Align left': 'Вирівняти по лівому краю',
+  'Align center': 'Вирівняти по центру',
+  'Align right': 'Вирівняти по правому краю',
+  'Remove table': 'Видалити таблицю',
+  'Would you like to paste as table?': 'Ви хочете вставити у вигляді таблиці?',
+  'Text color': 'Колір тексту',
+  'Auto scroll enabled': 'Автоматична прокрутка включена',
+  'Auto scroll disabled': 'Автоматична прокрутка відключена',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Ви не можете вставляти значення, відмінні від таблиці, в стані вибору комірки.',
+  'Choose language': 'Вибрати мову'
+}); /**
+    * @fileoverview I18N for Ukrainian
+    * @author Nikolya <k_m_i@i.ua>
     */
 
 /***/ })
