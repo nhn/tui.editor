@@ -916,7 +916,7 @@ class WysiwygEditor {
 
         $(node).css({
             position: 'absolute',
-            top: pos.top - editorContainerPos.top,
+            top: pos.top - editorContainerPos.top + this.scrollTop(),
             left: pos.left - editorContainerPos.left
         });
     }
