@@ -229,5 +229,28 @@ describe('Editor', () => {
         expect(editor.getSelectedText()).toEqual('text');
       });
     });
+
+    describe('xss', () => {
+      it('should sanitize html', () => {
+        const xss = '<script>alert("xss");</script>';
+        editor.setValue(xss);
+        const content = editor.preview.getHTML();
+        expect(content).toBe('');
+      });
+
+      it('should not sanitize html if useDefaultHTMLSanitizer is false', () => {
+        container.parentNode.removeChild(container);
+        container = document.createElement('div');
+        document.body.appendChild(container);
+        const xssEditor = new Editor({
+          el: container,
+          useDefaultHTMLSanitizer: false
+        });
+        const xss = '<script>alert("xss");</script>';
+        xssEditor.setValue(xss);
+        const content = xssEditor.getHtml();
+        expect(content).toBe(xss);
+      });
+    });
   });
 });
