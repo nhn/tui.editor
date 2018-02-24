@@ -229,28 +229,49 @@ describe('Editor', () => {
         expect(editor.getSelectedText()).toEqual('text');
       });
     });
+  });
 
-    describe('xss', () => {
-      it('should sanitize html', () => {
-        const xss = '<script>alert("xss");</script>';
-        editor.setValue(xss);
-        const content = editor.preview.getHTML();
-        expect(content).toBe('');
-      });
+  describe('xss', () => {
+    beforeEach(() => {
+      container = document.createElement('div');
+      document.body.appendChild(container);
+    });
 
-      it('should not sanitize html if useDefaultHTMLSanitizer is false', () => {
+    // we need to wait squire input event process
+    afterEach(done => {
+      setTimeout(() => {
         container.parentNode.removeChild(container);
-        container = document.createElement('div');
-        document.body.appendChild(container);
-        const xssEditor = new Editor({
-          el: container,
-          useDefaultHTMLSanitizer: false
-        });
-        const xss = '<script>alert("xss");</script>';
-        xssEditor.setValue(xss);
-        const content = xssEditor.getHtml();
-        expect(content).toBe(xss);
+        done();
       });
+    });
+
+    it('should sanitize html', () => {
+      editor = new Editor({
+        el: container,
+        height: '300px',
+        initialEditType: 'markdown'
+      });
+
+      const xss = '<script>alert("xss");</script>';
+      editor.setValue(xss);
+
+      const content = editor.preview.getHTML();
+      expect(content).toBe('');
+    });
+
+    it('should not sanitize html if useDefaultHTMLSanitizer is false', () => {
+      editor = new Editor({
+        el: container,
+        height: '300px',
+        initialEditType: 'markdown',
+        useDefaultHTMLSanitizer: false
+      });
+
+      const xss = '<script>alert("xss");</script>';
+      editor.setValue(xss);
+
+      const content = editor.getHtml();
+      expect(content).toBe(xss);
     });
   });
 });
