@@ -34,12 +34,18 @@ class ToastUIEditorViewer {
             * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
     */
   constructor(options) {
-    this.options = options;
+    this.options = $.extend({
+      useDefaultHTMLSanitizer: true
+    }, options);
 
     this.eventManager = new EventManager();
     this.commandManager = new CommandManager(this);
     this.convertor = new Convertor(this.eventManager);
     this.toMarkOptions = null;
+
+    if (this.options.useDefaultHTMLSanitizer) {
+      this.convertor.initHtmlSanitizer();
+    }
 
     if (this.options.hooks) {
       util.forEach(this.options.hooks, (fn, key) => {
