@@ -230,4 +230,48 @@ describe('Editor', () => {
       });
     });
   });
+
+  describe('xss', () => {
+    beforeEach(() => {
+      container = document.createElement('div');
+      document.body.appendChild(container);
+    });
+
+    // we need to wait squire input event process
+    afterEach(done => {
+      setTimeout(() => {
+        container.parentNode.removeChild(container);
+        done();
+      });
+    });
+
+    it('should sanitize html', () => {
+      editor = new Editor({
+        el: container,
+        height: '300px',
+        initialEditType: 'markdown'
+      });
+
+      const xss = '<script>alert("xss");</script>';
+      editor.setValue(xss);
+
+      const content = editor.preview.getHTML();
+      expect(content).toBe('');
+    });
+
+    it('should not sanitize html if useDefaultHTMLSanitizer is false', () => {
+      editor = new Editor({
+        el: container,
+        height: '300px',
+        initialEditType: 'markdown',
+        useDefaultHTMLSanitizer: false
+      });
+
+      const xss = '<script>alert("xss");</script>';
+      editor.setValue(xss);
+
+      const content = editor.getHtml();
+      expect(content).toBe(xss);
+    });
+  });
 });
