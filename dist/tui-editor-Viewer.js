@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.0.3
+ * @version 1.0.4
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -2692,12 +2692,18 @@ var ToastUIEditorViewer = function () {
 
     _classCallCheck(this, ToastUIEditorViewer);
 
-    this.options = options;
+    this.options = _jquery2.default.extend({
+      useDefaultHTMLSanitizer: true
+    }, options);
 
     this.eventManager = new _eventManager2.default();
     this.commandManager = new _commandManager2.default(this);
     this.convertor = new _convertor2.default(this.eventManager);
     this.toMarkOptions = null;
+
+    if (this.options.useDefaultHTMLSanitizer) {
+      this.convertor.initHtmlSanitizer();
+    }
 
     if (this.options.hooks) {
       _tuiCodeSnippet2.default.forEach(this.options.hooks, function (fn, key) {
