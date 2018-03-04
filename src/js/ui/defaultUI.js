@@ -54,7 +54,7 @@ class DefaultUI {
      * @memberof DefaultUI#
      * @type {Toolbar}
      */
-    this.toolbar = null;
+    this._toolbar = null;
 
     /**
      * Toolbar wrapper element
@@ -113,8 +113,8 @@ class DefaultUI {
   }
 
   _initToolbar() {
-    this.toolbar = new Toolbar(this._editor.eventManager);
-    this.$el.find(`.${CLASS_TOOLBAR}`).append(this.toolbar.$el);
+    this._toolbar = new Toolbar(this._editor.eventManager);
+    this.$el.find(`.${CLASS_TOOLBAR}`).append(this._toolbar.$el);
   }
 
   _initModeSwitch() {
@@ -218,6 +218,15 @@ class DefaultUI {
       eventManager: this._editor.eventManager,
       convertor: this._editor.convertor
     });
+  }
+
+  /**
+   * get toolbar instance
+   * @returns {Toolbar} - toolbar instance
+   * @memberof DefaultUI
+   */
+  getToolbar() {
+    return this._toolbar;
   }
 
   /**
