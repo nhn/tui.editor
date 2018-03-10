@@ -165,7 +165,7 @@ function initUI(editor, preset) {
     $target: editor.getUI().$el,
     css: {
       'width': 'auto',
-      'position': 'absolute'
+      'position': 'fixed'
     }
   });
 
@@ -178,10 +178,10 @@ function initUI(editor, preset) {
     if (popup.isShow()) {
       popup.hide();
     } else {
-      const position = $button.position();
+      const offset = $button.offset();
       popup.$el.css({
-        top: position.top + $button.outerHeight(true),
-        left: position.left
+        top: offset.top + $button.outerHeight(),
+        left: offset.left
       });
       popup.show();
       colorPicker.slider.toggle(true);
