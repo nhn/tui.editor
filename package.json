@@ -82,7 +82,7 @@
     "markdown-it": "^8.4.0",
     "plantuml-encoder": "^1.2.5",
     "squire-rte": "^1.8.11",
-    "to-mark": "^1.0.0",
+    "to-mark": "^1.1.0",
     "tui-chart": "^2.13.0",
     "tui-code-snippet": "^1.2.9",
     "tui-color-picker": "^2.0.1"

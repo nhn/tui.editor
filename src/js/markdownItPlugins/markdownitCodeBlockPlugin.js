@@ -14,13 +14,19 @@
 var MarkdownitCodeBlockRenderer = function(markdownit) {
     markdownit.core.ruler.after('block', 'tui-code-block', function(state) {
         var tokens = state.tokens;
-        var currentToken, tokenIndex;
+        var currentToken, tokenIndex, numberOfBackticks;
 
         for (tokenIndex = 0; tokenIndex < tokens.length; tokenIndex += 1) {
             currentToken = tokens[tokenIndex];
 
-            if (isCodeFenceToken(currentToken) && currentToken.info) {
-                setTokenAttribute(currentToken, 'data-language', escape(currentToken.info.replace(' ', ''), true));
+            if (isCodeFenceToken(currentToken)) {
+                numberOfBackticks = currentToken.markup.length;
+                if (numberOfBackticks > 3) {
+                    setTokenAttribute(currentToken, 'data-backticks', numberOfBackticks, true);
+                }
+                if (currentToken.info) {
+                  setTokenAttribute(currentToken, 'data-language', escape(currentToken.info.replace(' ', ''), true));
+                }
             }
         }
     });
