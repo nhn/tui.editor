@@ -22,15 +22,19 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         return '~~' + subContent + '~~';
     },
     'PRE CODE': function(node, subContent) {
+        var backticks;
         var language = '';
+        var numberOfBackticks = node.getAttribute('data-backticks');
 
         if (node.getAttribute('data-language')) {
             language = ' ' + node.getAttribute('data-language');
         }
+        numberOfBackticks = parseInt(numberOfBackticks, 10);
+        backticks = isNaN(numberOfBackticks) ? '```' : Array(numberOfBackticks + 1).join('`');
 
         subContent = subContent.replace(/(\r\n)|(\r)|(\n)/g, this.lineFeedReplacement);
 
-        return '\n\n```' + language + '\n' + subContent + '\n```\n\n';
+        return '\n\n' + backticks + language + '\n' + subContent + '\n' + backticks + '\n\n';
     },
     'PRE': function(node, subContent) {
         return subContent;

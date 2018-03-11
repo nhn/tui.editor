@@ -40,6 +40,10 @@ describe('gfmRenderer', function() {
                          + '    var in=0;' + gfmRenderer.lineFeedReplacement
                          + '}\n```\n\n');
         });
+
+        it('code with data-backtick', function() {
+            expect(getMarkdownText('<pre><code data-backticks="4"></code></pre>', 'code', 2)).toEqual('\n\n````\ncode\n````\n\n');
+        });
     });
 
     describe('li', function() {
