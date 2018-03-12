@@ -276,7 +276,7 @@ describe('Editor', () => {
   });
 
   describe('options', () => {
-    describe('sendHostName', () => {
+    describe('usageStatistics', () => {
       beforeEach(() => {
         container = document.createElement('div');
         document.body.appendChild(container);
@@ -305,7 +305,7 @@ describe('Editor', () => {
       it('should not send request if the option is set to false', () => {
         editor = new Editor({
           el: container,
-          sendHostName: false
+          usageStatistics: false
         });
 
         const request = jasmine.Ajax.requests.mostRecent();

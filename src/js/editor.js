@@ -115,7 +115,7 @@ class ToastUIEditor {
         * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
         * @param {boolean} useDefaultHTMLSanitizer - use default htmlSanitizer
         * @param {string[]} options.codeBlockLanguages - supported code block languages to be listed
-        * @param {boolean} [options.sendHostName=true] - send host name to google analytics
+        * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
     */
   constructor(options) {
     this.options = $.extend({
@@ -127,7 +127,7 @@ class ToastUIEditor {
       useDefaultHTMLSanitizer: true,
       useCommandShortcut: true,
       codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
-      sendHostName: true
+      usageStatistics: true
     }, options);
 
     this.eventManager = new EventManager();
@@ -184,7 +184,7 @@ class ToastUIEditor {
 
     this._addDefaultCommands();
 
-    if (this.options.sendHostName) {
+    if (this.options.usageStatistics) {
       sendHostName();
     }
   }
