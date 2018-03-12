@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.0.4
+ * @version 1.0.5
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -322,7 +322,7 @@ function initUI(editor, preset) {
     $target: editor.getUI().$el,
     css: {
       'width': 'auto',
-      'position': 'absolute'
+      'position': 'fixed'
     }
   });
 
@@ -335,10 +335,10 @@ function initUI(editor, preset) {
     if (popup.isShow()) {
       popup.hide();
     } else {
-      var position = $button.position();
+      var offset = $button.offset();
       popup.$el.css({
-        top: position.top + $button.outerHeight(true),
-        left: position.left
+        top: offset.top + $button.outerHeight(),
+        left: offset.left
       });
       popup.show();
       colorPicker.slider.toggle(true);

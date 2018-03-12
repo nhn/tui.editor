@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.0.4
+ * @version 1.0.5
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -3661,6 +3661,7 @@ var ImportManager = function () {
         _tuiCodeSnippet2.default.forEachArray(items, function (item) {
           if (item.type.indexOf('image') !== -1) {
             evData.preventDefault();
+            evData.stopPropagation();
             evData.codemirrorIgnore = true;
 
             var blob = item.name ? item : item.getAsFile(); // Blob or File
@@ -3905,14 +3906,21 @@ module.exports = MarkdownitTaskRenderer;
  */
 var MarkdownitCodeBlockRenderer = function MarkdownitCodeBlockRenderer(markdownit) {
     markdownit.core.ruler.after('block', 'tui-code-block', function (state) {
+        var DEFAULT_NUMBER_OF_BACKTICKS = 3;
         var tokens = state.tokens;
-        var currentToken, tokenIndex;
+        var currentToken, tokenIndex, numberOfBackticks;
 
         for (tokenIndex = 0; tokenIndex < tokens.length; tokenIndex += 1) {
             currentToken = tokens[tokenIndex];
 
-            if (isCodeFenceToken(currentToken) && currentToken.info) {
-                setTokenAttribute(currentToken, 'data-language', escape(currentToken.info.replace(' ', ''), true));
+            if (isCodeFenceToken(currentToken)) {
+                numberOfBackticks = currentToken.markup.length;
+                if (numberOfBackticks > DEFAULT_NUMBER_OF_BACKTICKS) {
+                    setTokenAttribute(currentToken, 'data-backticks', numberOfBackticks, true);
+                }
+                if (currentToken.info) {
+                    setTokenAttribute(currentToken, 'data-language', escape(currentToken.info.replace(' ', ''), true));
+                }
             }
         }
     });
@@ -7937,6 +7945,7 @@ var WwCodeBlockManager = function () {
       (0, _jquery2.default)(node).find('pre').each(function (index, pre) {
         var $pre = (0, _jquery2.default)(pre);
         var lang = $pre.find('code').attr('data-language');
+        var numberOfBackticks = $pre.find('code').attr('data-backticks');
         var textLines = void 0;
 
         // if this pre can have lines
@@ -7956,6 +7965,9 @@ var WwCodeBlockManager = function () {
         if (lang) {
           $pre.attr('data-language', lang);
           $pre.addClass('lang-' + lang);
+        }
+        if (numberOfBackticks) {
+          $pre.attr('data-backticks', numberOfBackticks);
         }
 
         $pre.empty();
@@ -8563,7 +8575,7 @@ var _codeBlock3 = __webpack_require__(114);
 
 var _codeBlock4 = _interopRequireDefault(_codeBlock3);
 
-__webpack_require__(115);
+var _util = __webpack_require__(115);
 
 __webpack_require__(116);
 
@@ -8582,6 +8594,8 @@ __webpack_require__(122);
 __webpack_require__(123);
 
 __webpack_require__(124);
+
+__webpack_require__(125);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8622,6 +8636,7 @@ var ToastUIEditor = function () {
         * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
         * @param {boolean} useDefaultHTMLSanitizer - use default htmlSanitizer
         * @param {string[]} options.codeBlockLanguages - supported code block languages to be listed
+        * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
     */
   function ToastUIEditor(options) {
     var _this = this;
@@ -8636,7 +8651,8 @@ var ToastUIEditor = function () {
       language: 'en_US',
       useDefaultHTMLSanitizer: true,
       useCommandShortcut: true,
-      codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages()
+      codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages(),
+      usageStatistics: true
     }, options);
 
     this.eventManager = new _eventManager2.default();
@@ -8696,6 +8712,10 @@ var ToastUIEditor = function () {
     __nedInstance.push(this);
 
     this._addDefaultCommands();
+
+    if (this.options.usageStatistics) {
+      (0, _util.sendHostName)();
+    }
   }
 
   /**
@@ -17172,7 +17192,7 @@ var DefaultUI = function () {
         eventManager: this._editor.eventManager,
         $button: this.$el.find('button.tui-table'),
         css: {
-          'position': 'absolute'
+          'position': 'fixed'
         }
       });
     }
@@ -17184,7 +17204,7 @@ var DefaultUI = function () {
         eventManager: this._editor.eventManager,
         $button: this.$el.find('button.tui-heading'),
         css: {
-          'position': 'absolute'
+          'position': 'fixed'
         }
       });
     }
@@ -18519,10 +18539,10 @@ var PopupAddTable = function (_LayerPopup) {
       this._eventManager.listen('openPopupAddTable', function () {
         _this3._eventManager.emit('closeAllPopup');
         var $button = _this3.$button;
-        var position = $button.position();
+        var offset = $button.offset();
         _this3.$el.css({
-          top: position.top + $button.outerHeight(true),
-          left: position.left
+          top: offset.top + $button.outerHeight(),
+          left: offset.left
         });
         _this3.show();
         _this3._selectionOffset = _this3.$el.find('.' + CLASS_TABLE_SELECTION).offset();
@@ -18950,10 +18970,10 @@ var PopupAddHeading = function (_LayerPopup) {
         _this3._eventManager.emit('closeAllPopup');
 
         var $button = _this3._$button;
-        var position = $button.position();
+        var offset = $button.offset();
         _this3.$el.css({
-          top: position.top + $button.outerHeight(true),
-          left: position.left
+          top: offset.top + $button.outerHeight(),
+          left: offset.left
         });
 
         _this3.show();
@@ -24134,6 +24154,44 @@ exports.default = CodeBlock;
 "use strict";
 
 
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * send host name
+ * @ignore
+ */
+function sendHostName() {
+  var trackingID = 'UA-115377265-2';
+  var hitType = 'event';
+  var _location = location,
+      hostname = _location.hostname;
+
+
+  _jquery2.default.post('https://www.google-analytics.com/collect', {
+    v: 1,
+    t: hitType,
+    tid: trackingID,
+    cid: hostname,
+    dp: hostname,
+    dh: hostname
+  });
+}
+
+module.exports = {
+  sendHostName: sendHostName
+};
+
+/***/ }),
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
@@ -24189,7 +24247,7 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
     */
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24250,7 +24308,7 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
     */
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24311,7 +24369,7 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
     */
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24372,7 +24430,7 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
     */
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24433,7 +24491,7 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
     */
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24494,7 +24552,7 @@ _i18n2.default.setLanguage(['es', 'es_ES'], {
     */
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24555,7 +24613,7 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
     */
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24616,7 +24674,7 @@ _i18n2.default.setLanguage(['ru', 'ru_RU'], {
     */
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24677,7 +24735,7 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
     */
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

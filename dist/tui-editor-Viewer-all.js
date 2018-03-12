@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.0.4
+ * @version 1.0.5
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -8841,14 +8841,21 @@ module.exports = MarkdownitTaskRenderer;
  */
 var MarkdownitCodeBlockRenderer = function MarkdownitCodeBlockRenderer(markdownit) {
     markdownit.core.ruler.after('block', 'tui-code-block', function (state) {
+        var DEFAULT_NUMBER_OF_BACKTICKS = 3;
         var tokens = state.tokens;
-        var currentToken, tokenIndex;
+        var currentToken, tokenIndex, numberOfBackticks;
 
         for (tokenIndex = 0; tokenIndex < tokens.length; tokenIndex += 1) {
             currentToken = tokens[tokenIndex];
 
-            if (isCodeFenceToken(currentToken) && currentToken.info) {
-                setTokenAttribute(currentToken, 'data-language', escape(currentToken.info.replace(' ', ''), true));
+            if (isCodeFenceToken(currentToken)) {
+                numberOfBackticks = currentToken.markup.length;
+                if (numberOfBackticks > DEFAULT_NUMBER_OF_BACKTICKS) {
+                    setTokenAttribute(currentToken, 'data-backticks', numberOfBackticks, true);
+                }
+                if (currentToken.info) {
+                    setTokenAttribute(currentToken, 'data-language', escape(currentToken.info.replace(' ', ''), true));
+                }
             }
         }
     });
@@ -14508,7 +14515,7 @@ function initUI(editor, preset) {
     $target: editor.getUI().$el,
     css: {
       'width': 'auto',
-      'position': 'absolute'
+      'position': 'fixed'
     }
   });
 
@@ -14521,10 +14528,10 @@ function initUI(editor, preset) {
     if (popup.isShow()) {
       popup.hide();
     } else {
-      var position = $button.position();
+      var offset = $button.offset();
       popup.$el.css({
-        top: position.top + $button.outerHeight(true),
-        left: position.left
+        top: offset.top + $button.outerHeight(),
+        left: offset.left
       });
       popup.show();
       colorPicker.slider.toggle(true);
