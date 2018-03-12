@@ -173,6 +173,7 @@ class WwCodeBlockManager {
     $(node).find('pre').each((index, pre) => {
       const $pre = $(pre);
       const lang = $pre.find('code').attr('data-language');
+      const numberOfBackticks = $pre.find('code').attr('data-backticks');
       let textLines;
 
       // if this pre can have lines
@@ -194,6 +195,9 @@ class WwCodeBlockManager {
       if (lang) {
         $pre.attr('data-language', lang);
         $pre.addClass(`lang-${lang}`);
+      }
+      if (numberOfBackticks) {
+        $pre.attr('data-backticks', numberOfBackticks);
       }
 
       $pre.empty();

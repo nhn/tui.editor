@@ -231,6 +231,17 @@ describe('WwCodeBlockManager', () => {
       expect(codeblock.attr('data-language')).toEqual('javascript');
       expect(codeblock.attr('data-te-codeblock')).toBeDefined();
     });
+
+    it('update pre tag with data-backticks attributes', () => {
+      const frag = document.createDocumentFragment();
+      $(frag).append('<pre><code data-backticks="4">test</code></pre>');
+
+      mgr.splitCodeblockToEachLine(frag);
+
+      const codeblock = $($(frag).find('pre'));
+      expect(codeblock.attr('data-backticks')).toEqual('4');
+    });
+
     it('trim last linefeeds', () => {
       const frag = document.createDocumentFragment();
 
