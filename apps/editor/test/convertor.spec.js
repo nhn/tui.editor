@@ -53,6 +53,11 @@ describe('Convertor', () => {
       expect(convertor.toHTMLWithCodeHightlight('```code span```').trim()).toEqual('<p><code data-backticks="3">code span</code></p>');
     });
 
+    it('should store number of backticks in codeblock to data-backtics attribute', () => {
+      expect(convertor.toHTML('```\ncode block\n```').replace(/\n/g, '').trim()).toEqual('<pre><code>code block</code></pre>');
+      expect(convertor.toHTML('````\ncode block\n````').replace(/\n/g, '').trim()).toEqual('<pre><code data-backticks="4">code block</code></pre>');
+    });
+
     it('should convert blockquote even if there is a line above it (ref #989)', () => {
       expect(convertor.toHTML('text above\n> quote').replace(/\n/g, '')).toEqual('<p>text above</p><blockquote><p>quote</p></blockquote>');
     });
@@ -96,6 +101,11 @@ describe('Convertor', () => {
     it('should print number of backticks for code according to data-backticks attribute', () => {
       expect(convertor.toMarkdown('<code data-backticks="1">code span</code>').trim()).toEqual('`code span`');
       expect(convertor.toMarkdown('<code data-backticks="3">code span</code>').trim()).toEqual('```code span```');
+    });
+
+    it('should print number of backticks for code block according to data-backticks attribute', () => {
+      expect(convertor.toMarkdown('<pre><code>code block</code></pre>').trim()).toEqual('```\ncode block\n```');
+      expect(convertor.toMarkdown('<pre><code data-backticks="4">code block</code></pre>').trim()).toEqual('````\ncode block\n````');
     });
 
     it('should treat $ special characters', () => {
