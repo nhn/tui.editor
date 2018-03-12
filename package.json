@@ -1,6 +1,6 @@
 {
   "name": "tui-editor",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "GFM  Markdown Wysiwyg Editor - Productive and Extensible",
   "keywords": [
     "toast",
@@ -29,7 +29,7 @@
     "babel-plugin-istanbul": "^4.1.1",
     "babel-preset-es2015": "^6.24.1",
     "clean-css": "^4.1.9",
-    "copy-webpack-plugin": "^4.3.1",
+    "copy-webpack-plugin": "^4.5.1",
     "cross-env": "^5.1.3",
     "eslint": "^4.14.0",
     "eslint-config-tui": "^1.0.1",
@@ -82,7 +82,7 @@
     "markdown-it": "^8.4.0",
     "plantuml-encoder": "^1.2.5",
     "squire-rte": "^1.8.11",
-    "to-mark": "^1.0.0",
+    "to-mark": "^1.1.0",
     "tui-chart": "^2.13.0",
     "tui-code-snippet": "^1.2.9",
     "tui-color-picker": "^2.0.1"

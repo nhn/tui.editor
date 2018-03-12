@@ -29,6 +29,23 @@ function createWWLinkClipboardEvent(anchor) {
   };
 }
 
+function createWWImageClipboardEvent() {
+  return {
+    source: 'wysiwyg',
+    data: {
+      clipboardData: {
+        items: [{
+          type: 'image/png',
+          getAsFile: () => new Blob(['mock image blob'], {type: 'image/png'})
+        }],
+        types: ['Files']
+      },
+      preventDefault: () => {},
+      stopPropagation: () => {}
+    }
+  };
+}
+
 function createWWIEImageClipboardEvent(children) {
   const fragment = document.createDocumentFragment();
   util.forEachArray(children, child => fragment.appendChild(child));
@@ -84,6 +101,20 @@ describe('ImportManager', () => {
 
         em.emit('willPaste', ev);
       });
+    });
+
+    it('should call preventDefault & stopPropagation', done => {
+      const ev = createWWImageClipboardEvent();
+      spyOn(ev.data, 'preventDefault');
+      spyOn(ev.data, 'stopPropagation');
+
+      em.listen('addImageBlobHook', () => {
+        expect(ev.data.preventDefault).toHaveBeenCalled();
+        expect(ev.data.stopPropagation).toHaveBeenCalled();
+        done();
+      });
+
+      em.emit('paste', ev);
     });
   });
 
