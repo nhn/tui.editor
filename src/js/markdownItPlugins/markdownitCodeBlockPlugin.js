@@ -13,6 +13,7 @@
  */
 var MarkdownitCodeBlockRenderer = function(markdownit) {
     markdownit.core.ruler.after('block', 'tui-code-block', function(state) {
+        var DEFAULT_NUMBER_OF_BACKTICKS = 3;
         var tokens = state.tokens;
         var currentToken, tokenIndex, numberOfBackticks;
 
@@ -21,11 +22,11 @@ var MarkdownitCodeBlockRenderer = function(markdownit) {
 
             if (isCodeFenceToken(currentToken)) {
                 numberOfBackticks = currentToken.markup.length;
-                if (numberOfBackticks > 3) {
+                if (numberOfBackticks > DEFAULT_NUMBER_OF_BACKTICKS) {
                     setTokenAttribute(currentToken, 'data-backticks', numberOfBackticks, true);
                 }
                 if (currentToken.info) {
-                  setTokenAttribute(currentToken, 'data-language', escape(currentToken.info.replace(' ', ''), true));
+                    setTokenAttribute(currentToken, 'data-language', escape(currentToken.info.replace(' ', ''), true));
                 }
             }
         }
