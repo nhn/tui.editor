@@ -274,4 +274,43 @@ describe('Editor', () => {
       expect(content).toBe(xss);
     });
   });
+
+  describe('options', () => {
+    describe('usageStatistics', () => {
+      beforeEach(() => {
+        container = document.createElement('div');
+        document.body.appendChild(container);
+        jasmine.Ajax.install();
+      });
+
+      afterEach(done => {
+        setTimeout(() => {
+          jasmine.Ajax.uninstall();
+          editor.remove();
+          container.parentNode.removeChild(container);
+          done();
+        });
+      });
+
+      it('should send request hostname in payload by default', () => {
+        editor = new Editor({
+          el: container
+        });
+
+        const request = jasmine.Ajax.requests.mostRecent();
+        expect(request).toBeTruthy();
+        expect(request.params).toContain(location.hostname);
+      });
+
+      it('should not send request if the option is set to false', () => {
+        editor = new Editor({
+          el: container,
+          usageStatistics: false
+        });
+
+        const request = jasmine.Ajax.requests.mostRecent();
+        expect(request).toBeFalsy();
+      });
+    });
+  });
 });
