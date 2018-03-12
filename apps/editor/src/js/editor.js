@@ -67,6 +67,8 @@ import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
 
+import {sendHostName} from './util';
+
 // langs
 import './langs/en_US';
 import './langs/ko_KR';
@@ -113,6 +115,7 @@ class ToastUIEditor {
         * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
         * @param {boolean} useDefaultHTMLSanitizer - use default htmlSanitizer
         * @param {string[]} options.codeBlockLanguages - supported code block languages to be listed
+        * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
     */
   constructor(options) {
     this.options = $.extend({
@@ -123,7 +126,8 @@ class ToastUIEditor {
       language: 'en_US',
       useDefaultHTMLSanitizer: true,
       useCommandShortcut: true,
-      codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages()
+      codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
+      usageStatistics: true
     }, options);
 
     this.eventManager = new EventManager();
@@ -179,6 +183,10 @@ class ToastUIEditor {
     __nedInstance.push(this);
 
     this._addDefaultCommands();
+
+    if (this.options.usageStatistics) {
+      sendHostName();
+    }
   }
 
   /**

@@ -143,6 +143,7 @@ $('#editSection').tuiEditor({
 * **initialValue**: Initial value. Set Markdown string
 * **initialEditType**: Initial type to show `markdown` | `wysiwyg`
 * **previewType**: Preview style of Markdown mode `tab` | `vertical`
+* **usageStatistics**: Let us know the *hostname*. We want to learn from you how you are using the editor. You are free to disable it. `true` | `false`
 
 Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 
