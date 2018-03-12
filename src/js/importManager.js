@@ -206,6 +206,7 @@ class ImportManager {
       util.forEachArray(items, item => {
         if (item.type.indexOf('image') !== -1) {
           evData.preventDefault();
+          evData.stopPropagation();
           evData.codemirrorIgnore = true;
 
           const blob = item.name ? item : item.getAsFile(); // Blob or File
