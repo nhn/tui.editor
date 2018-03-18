@@ -432,12 +432,15 @@ var keyHandlers = {
         // the link text.
         node = range.endContainer;
         parent = node.parentNode;
-        if ( range.collapsed && parent.nodeName === 'A' &&
-                !node.nextSibling && range.endOffset === getLength( node ) ) {
-            range.setStartAfter( parent );
+        if ( range.collapsed && range.endOffset === getLength( node ) ) {
+            if ( node.nodeName === 'A' ) {
+                range.setStartAfter( node );
+            } else if ( parent.nodeName === 'A' && !node.nextSibling ) {
+                range.setStartAfter( parent );
+            }
         }
         // Delete the selection if not collapsed
-        else if ( !range.collapsed ) {
+        if ( !range.collapsed ) {
             deleteContentsOfRange( range, self._root );
             self._ensureBottomLine();
             self.setSelection( range );
