@@ -1330,7 +1330,7 @@ var onKey = function ( event ) {
 
     if ( this._keyHandlers[ key ] ) {
         this._keyHandlers[ key ]( this, event, range );
-    } else if ( key.length === 1 && !range.collapsed ) {
+    } else if ( !range.collapsed && ( event.key || key ).length === 1 ) {
         // Record undo checkpoint.
         this.saveUndoState( range );
         // Delete the selection
