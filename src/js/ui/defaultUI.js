@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import Toolbar from './toolbar';
+import Toolbar from './defaultToolbar';
 import Tab from './tab';
 import LayerPopup from './layerpopup';
 import ModeSwitch from './modeSwitch';
@@ -227,6 +227,15 @@ class DefaultUI {
    */
   getToolbar() {
     return this._toolbar;
+  }
+
+  /**
+   * set toolbar instance
+   * @param {Toolbar} toolbar - toolbar
+   * @memberof DefaultUI
+   */
+  setToolbar(toolbar) {
+    this._toolbar = toolbar;
   }
 
   /**

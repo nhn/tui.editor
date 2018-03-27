@@ -31,4 +31,20 @@ describe('DeafultUI', () => {
       expect(defaultUI.getToolbar() instanceof Toolbar).toBe(true);
     });
   });
+
+  describe('setToolbar()', () => {
+    it('should set new Toolbar instance and free previous instance', () => {
+      const prevToolbar = defaultUI.getToolbar();
+
+      defaultUI.setToolbar({});
+      expect(defaultUI.getToolbar() !== null).toBe(true);
+      expect(prevToolbar).toBeTruthy();
+    });
+  });
+
+  describe('_initToolbar()', () => {
+    it('should populate default buttons', () => {
+      expect(defaultUI.getToolbar().getItems().length).toBeGreaterThan(0);
+    });
+  });
 });

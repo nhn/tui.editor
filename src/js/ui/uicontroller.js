@@ -160,7 +160,9 @@ class UIController {
    * @memberof UIController
    */
   remove() {
-    this.$el.remove();
+    if (this.$el) {
+      this.$el.remove();
+    }
   }
 
   /**
