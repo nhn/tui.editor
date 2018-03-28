@@ -300,6 +300,17 @@ describe('Toolbar', () => {
     });
   });
 
+  describe('getItem', () => {
+    it('should return toolbar item at given index', () => {
+      const items = [new ToolbarItem(), new ToolbarItem(), new ToolbarItem()];
+      toolbar.setItems(items);
+
+      const item = toolbar.getItem(1);
+
+      expect(item).toBe(items[1]);
+    });
+  });
+
   describe('removeItem', () => {
     it('should remove item at given index from array and destroy', () => {
       const items = [new ToolbarItem(), new ToolbarItem(), new ToolbarItem()];

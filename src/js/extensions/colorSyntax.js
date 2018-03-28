@@ -127,6 +127,7 @@ function colorSyntaxExtension(editor) {
  * @ignore
  */
 function initUI(editor, preset) {
+  const name = 'colorSyntax';
   const className = 'tui-color';
   const i18n = editor.i18n;
   const toolbar = editor.getUI().getToolbar();
@@ -134,11 +135,13 @@ function initUI(editor, preset) {
   editor.eventManager.addEventType('colorButtonClicked');
 
   toolbar.addButton({
+    name,
     className,
     event: 'colorButtonClicked',
     tooltip: i18n.get('Text color')
   }, 4);
-  const $button = toolbar.$el.find(`button.${className}`);
+  const colorSyntaxButtonIndex = toolbar.indexOfItem(name);
+  const $button = toolbar.getItem(colorSyntaxButtonIndex);
 
   const $colorPickerContainer = $('<div />');
 

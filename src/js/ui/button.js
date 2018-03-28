@@ -11,6 +11,14 @@ import tooltip from './tooltip';
  */
 class Button extends ToolbarItem {
   /**
+   * ToolbarItem className
+   * @type {String}
+   * @memberof Button
+   * @static
+   */
+  static className = 'tui-toolbar-icons';
+
+  /**
    * Creates an instance of Button.
    * @param {object} options - button options
    *  @param {string} options.className - button class name
@@ -74,10 +82,6 @@ class Button extends ToolbarItem {
 
   _onOut() {
     tooltip.hide();
-  }
-
-  static get className() {
-    return 'tui-toolbar-icons';
   }
 }
 

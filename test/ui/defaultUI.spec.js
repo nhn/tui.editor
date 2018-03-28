@@ -34,11 +34,14 @@ describe('DeafultUI', () => {
 
   describe('setToolbar()', () => {
     it('should set new Toolbar instance and free previous instance', () => {
+      const newToolbar = new Toolbar(editor.eventManager);
       const prevToolbar = defaultUI.getToolbar();
+      const spy = jasmine.createSpy('destroy');
+      prevToolbar.destroy = spy;
 
-      defaultUI.setToolbar({});
-      expect(defaultUI.getToolbar() !== null).toBe(true);
-      expect(prevToolbar).toBeTruthy();
+      defaultUI.setToolbar(newToolbar);
+      expect(defaultUI.getToolbar()).toBe(newToolbar);
+      expect(spy).toHaveBeenCalled();
     });
   });
 

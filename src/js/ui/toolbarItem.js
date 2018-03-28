@@ -10,6 +10,18 @@ import UIController from './uicontroller';
  * @extends {UIController}
  */
 class ToolbarItem extends UIController {
+  /**
+   * toolbar item class name
+   * @memberof ToolbarItem
+   * @type {String}
+   */
+  static className = 'tui-toolbar-item';
+
+  /**
+   * toolbar item constructor
+   * @memberof ToolbarItem
+   * @param {Object} [options={    name: 'toolbar-item'  }] [description]
+   */
   constructor(options = {
     name: 'toolbar-item'
   }) {
@@ -22,14 +34,11 @@ class ToolbarItem extends UIController {
 
   /**
    * get the name of the toolbar item
+   * @memberof ToolbarItem
    * @returns {string} - the name of the toolbar item
    */
   getName() {
     return this._name;
-  }
-
-  static get className() {
-    return 'tui-toolbar-item';
   }
 }
 
