@@ -37,6 +37,8 @@ function scrollSyncExtension(editor) {
 
   // UI
   if (editor.getUI().name === 'default') {
+    const toolbar = editor.getUI().getToolbar();
+
     // init button
     button = new Button({
       className,
@@ -45,8 +47,8 @@ function scrollSyncExtension(editor) {
       $el: $(`<button class="active ${className}" type="button"></button>`)
     });
 
-    $divider = editor.getUI().toolbar.addDivider();
-    editor.getUI().toolbar.addButton(button);
+    $divider = toolbar.addDivider();
+    toolbar.addButton(button);
 
     changeButtonVisiblityStateIfNeed();
     // hide scroll follow button in wysiwyg

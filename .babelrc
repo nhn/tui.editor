@@ -6,6 +6,8 @@
     "transform-es2015-for-of", {"loose": true}
   ], [
     "transform-es2015-spread", {"loose": true}
+  ], [
+    "transform-class-properties", {"spec": true}
   ]],
   "env": {
     "modules": false,

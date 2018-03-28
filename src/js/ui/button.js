@@ -2,14 +2,22 @@
  * @fileoverview Implements UI Button
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-import UIController from './uicontroller';
+import ToolbarItem from './toolbarItem';
 import tooltip from './tooltip';
 
 /**
  * Class Button UI
- * @extends {UIController}
+ * @extends {ToolbarItem}
  */
-class Button extends UIController {
+class Button extends ToolbarItem {
+  /**
+   * ToolbarItem className
+   * @type {String}
+   * @memberof Button
+   * @static
+   */
+  static className = 'tui-toolbar-icons';
+
   /**
    * Creates an instance of Button.
    * @param {object} options - button options
@@ -24,8 +32,9 @@ class Button extends UIController {
    */
   constructor(options) {
     super({
+      name: options.name,
       tagName: 'button',
-      className: `${options.className} tui-toolbar-icons`,
+      className: `${options.className} ${Button.className}`,
       rootElement: options.$el
     });
 
