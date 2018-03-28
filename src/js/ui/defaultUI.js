@@ -36,48 +36,88 @@ const CONTAINER_TEMPLATE = `
  */
 class DefaultUI {
   /**
+   * UI name
+   * @memberof DefaultUI
+   * @type {string}
+   */
+  name = 'default';
+
+  /**
+   * Toolbar wrapper element
+   * @memberof DefaultUI
+   * @type {jQuery}
+   */
+  $el;
+
+  /**
+   * Toolbar instance
+   * @memberof DefaultUI
+   * @type {Toolbar}
+   * @private
+   */
+  _toolbar;
+
+  /**
+   * @memberof DefaultUI
+   * @type {HTMLElement}
+   * @private
+   */
+  _container;
+
+  /**
+   * editor section element
+   * @memberof DefaultUI
+   * @private
+   * @type {HTMLElement}
+   */
+  _editorSection;
+
+  /**
+   * editor type ww/md
+   * @memberof DefaultUI
+   * @private
+   * @type {string}
+   */
+  _initialEditType;
+
+  /**
+   * editor instance
+   * @memberof DefaultUI
+   * @private
+   * @type {ToastUIEditor}
+   */
+  _editor;
+
+  /**
+   * markdown tab section jQuery element
+   * @memberof DefaultUI
+   * @private
+   * @type {HTMLElement}
+   */
+  _$markdownTabSection;
+
+  /**
+   * markdown tab
+   * @memberof DefaultUI
+   * @private
+   * @type {Tab}
+   */
+  _markdownTab;
+
+  /**
+   * popup instances
+   * @memberof DefaultUI
+   * @private
+   * @type {Array}
+   */
+  _popups = [];
+
+  /**
    * Creates an instance of DefaultUI.
    * @param {ToastUIEditor} editor - editor instance
    * @memberof DefaultUI
    */
   constructor(editor) {
-    /**
-     * UI name
-     * @memberof DefaultUI#
-     * @public
-     * @type {string}
-     */
-    this.name = 'default';
-
-    /**
-     * Toolbar instance
-     * @memberof DefaultUI#
-     * @type {Toolbar}
-     */
-    this._toolbar = null;
-
-    /**
-     * Toolbar wrapper element
-     * @memberof DefaultUI#
-     * @type {jQuery}
-     */
-    this.$el = null;
-
-    /**
-     * @memberof DefaultUI#
-     * @type {HTMLElement}
-     * @private
-     */
-    this._container = null;
-
-    /**
-     * editor section element
-     * @memberof DefaultUI#
-     * @private
-     * @type {HTMLElement}
-     */
-    this._editorSection = null;
-
     this._editor = editor;
     this._initialEditType = editor.options.initialEditType;
 
@@ -118,24 +158,24 @@ class DefaultUI {
   }
 
   _initModeSwitch() {
-    this._modeSwitch = new ModeSwitch(this._initialEditType === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
-    this.$el.find(`.${CLASS_MODE_SWITCH}`).append(this._modeSwitch.$el);
+    const modeSwitch = new ModeSwitch(this._initialEditType === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
+    this.$el.find(`.${CLASS_MODE_SWITCH}`).append(modeSwitch.$el);
 
-    this._modeSwitch.on('modeSwitched', (ev, type) => this._editor.changeMode(type));
+    modeSwitch.on('modeSwitched', (ev, type) => this._editor.changeMode(type));
   }
 
   _initMarkdownTab() {
     const editor = this._editor;
 
-    this.markdownTab = new Tab({
+    this._markdownTab = new Tab({
       initName: i18n.get('Write'),
       items: [i18n.get('Write'), i18n.get('Preview')],
       sections: [editor.layout.getMdEditorContainerEl(), editor.layout.getPreviewEl()]
     });
     this._$markdownTabSection = this.$el.find(`.${CLASS_MARKDOWN_TAB}`);
-    this._$markdownTabSection.append(this.markdownTab.$el);
+    this._$markdownTabSection.append(this._markdownTab.$el);
 
-    this.markdownTab.on('itemClick', (ev, itemText) => {
+    this._markdownTab.on('itemClick', (ev, itemText) => {
       if (itemText === i18n.get('Preview')) {
         editor.eventManager.emit('previewNeedsRefresh');
       } else {
@@ -147,46 +187,46 @@ class DefaultUI {
   _markdownTabControl() {
     if (this._editor.isMarkdownMode() && this._editor.getCurrentPreviewStyle() === 'tab') {
       this._$markdownTabSection.show();
-      this.markdownTab.activate(i18n.get('Write'));
+      this._markdownTab.activate(i18n.get('Write'));
     } else {
       this._$markdownTabSection.hide();
     }
   }
 
   _initPopupAddLink() {
-    this.popupAddLink = new PopupAddLink({
+    this._popups.push(new PopupAddLink({
       $target: this.$el,
       editor: this._editor
-    });
+    }));
   }
 
   _initPopupAddImage() {
-    this.popupAddImage = new PopupAddImage({
+    this._popups.push(new PopupAddImage({
       $target: this.$el,
       eventManager: this._editor.eventManager
-    });
+    }));
   }
 
   _initPopupAddTable() {
-    this.popupAddTable = new PopupAddTable({
+    this._popups.push(new PopupAddTable({
       $target: this.$el,
       eventManager: this._editor.eventManager,
       $button: this.$el.find('button.tui-table'),
       css: {
         'position': 'fixed'
       }
-    });
+    }));
   }
 
   _initPopupAddHeading() {
-    this.popupAddHeading = new PopupAddHeading({
+    this._popups.push(new PopupAddHeading({
       $target: this.$el,
       eventManager: this._editor.eventManager,
       $button: this.$el.find('button.tui-heading'),
       css: {
         'position': 'fixed'
       }
-    });
+    }));
   }
 
   _initPopupTableUtils() {
@@ -197,27 +237,27 @@ class DefaultUI {
       }
     });
 
-    this.popupTableUtils = new PopupTableUtils({
+    this._popups.push(new PopupTableUtils({
       $target: this.$el,
       eventManager: this._editor.eventManager
-    });
+    }));
   }
 
   _initPopupCodeBlockLanguages() {
     const editor = this._editor;
-    this.popupCodeBlockLanguages = new PopupCodeBlockLanguages({
+    this._popups.push(new PopupCodeBlockLanguages({
       $target: this.$el,
       eventManager: editor.eventManager,
       languages: editor.options.codeBlockLanguages
-    });
+    }));
   }
 
   _initPopupCodeBlockEditor() {
-    this.popupCodeBlockEditor = new PopupCodeBlockEditor({
+    this._popups.push(new PopupCodeBlockEditor({
       $target: this.$el,
       eventManager: this._editor.eventManager,
       convertor: this._editor.convertor
-    });
+    }));
   }
 
   /**
@@ -235,6 +275,7 @@ class DefaultUI {
    * @memberof DefaultUI
    */
   setToolbar(toolbar) {
+    this._toolbar.destroy();
     this._toolbar = toolbar;
   }
 

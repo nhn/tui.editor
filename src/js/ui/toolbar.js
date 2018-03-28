@@ -16,6 +16,22 @@ import ToolbarDivider from './toolbarDivider';
  */
 class Toolbar extends UIController {
   /**
+   * UI name
+   * @memberof Toolbar
+   * @private
+   * @type {Array}
+   */
+  _items = [];
+
+  /**
+   * UI name
+   * @memberof Toolbar
+   * @private
+   * @type {EventManager}
+   */
+  _eventManager;
+
+  /**
    * Creates an instance of Toolbar.
    * @param {EventManager} eventManager - event manager
    * @param {ToolbarItem[]} [items=[]] - toolbar items
@@ -27,23 +43,8 @@ class Toolbar extends UIController {
       className: 'tui-editor-defaultUI-toolbar'
     });
 
-    /**
-     * UI name
-     * @memberof Toolbar#
-     * @private
-     * @type {Array}
-     */
-    this._items = [];
-
-    /**
-     * UI name
-     * @memberof Toolbar#
-     * @private
-     * @type {EventManager}
-     */
     this._eventManager = eventManager;
 
-    this._render();
     this.setItems(items);
     this._initEvent(eventManager);
   }
@@ -67,15 +68,6 @@ class Toolbar extends UIController {
   }
 
   /**
-   * render
-   * Render toolbar
-   * @private
-   */
-  _render() {
-    this.$buttonContainer = this.$el;
-  }
-
-  /**
    * get toolbar items
    * @returns {ToolbarItem[]} - toolbar items
    * @memberof Toolbar
@@ -85,15 +77,22 @@ class Toolbar extends UIController {
   }
 
   /**
+   * get toolbar item at given index
+   * @param  {number} index - item index
+   * @returns {ToolbarItem} - toolbar item at the index
+   */
+  getItem(index) {
+    return this._items[index];
+  }
+
+  /**
    * set toolbar items
    * @param {ToolbarItem[]} items - toolbar items
    * @memberof Toolbar
    */
   setItems(items) {
     this.removeAllItems();
-    items.forEach(item => {
-      this.addItem(item);
-    });
+    items.forEach(this.addItem.bind(this));
   }
 
   /**
@@ -135,7 +134,7 @@ class Toolbar extends UIController {
     let index;
     if (item instanceof ToolbarItem) {
       index = this._items.indexOf(item);
-    } else if (typeof item === 'string') {
+    } else if (util.isString(item)) {
       const itemName = item;
       index = this._items.map(itemToTest => itemToTest.getName()).indexOf(itemName);
     }
@@ -150,14 +149,13 @@ class Toolbar extends UIController {
    */
   removeItem(index) {
     const item = this._items.splice(index, 1);
-    if (item.length > 0) {
+    if (item.length) {
       item[0].destroy();
     }
   }
 
   /**
    * remove all toolbar items
-   * @memberof Toolbar
    * @memberof Toolbar
    */
   removeAllItems() {
@@ -209,9 +207,9 @@ class Toolbar extends UIController {
     const $btn = this._setButton(button, index).$el;
 
     if (util.isNumber(index)) {
-      this.$buttonContainer.find(`.${Button.className}`).eq(index - 1).before($btn);
+      this.$el.find(`.${Button.className}`).eq(index - 1).before($btn);
     } else {
-      this.$buttonContainer.append($btn);
+      this.$el.append($btn);
     }
   }
 
@@ -223,7 +221,7 @@ class Toolbar extends UIController {
    */
   addDivider() {
     const $el = $(`<div class="${ToolbarDivider.className}"></div>`);
-    this.$buttonContainer.append($el);
+    this.$el.append($el);
 
     return $el;
   }
