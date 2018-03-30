@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
+import util from 'tui-code-snippet';
 
 import Editor from '../src/js/editor';
 import {CodeBlockManager} from '../src/js/codeBlockManager';
@@ -280,12 +281,10 @@ describe('Editor', () => {
       beforeEach(() => {
         container = document.createElement('div');
         document.body.appendChild(container);
-        jasmine.Ajax.install();
       });
 
       afterEach(done => {
         setTimeout(() => {
-          jasmine.Ajax.uninstall();
           editor.remove();
           container.parentNode.removeChild(container);
           done();
@@ -293,23 +292,24 @@ describe('Editor', () => {
       });
 
       it('should send request hostname in payload by default', () => {
+        spyOn(util, 'imagePing');
+
         editor = new Editor({
           el: container
         });
 
-        const request = jasmine.Ajax.requests.mostRecent();
-        expect(request).toBeTruthy();
-        expect(request.params).toContain(location.hostname);
+        expect(util.imagePing).toHaveBeenCalled();
       });
 
       it('should not send request if the option is set to false', () => {
+        spyOn(util, 'imagePing');
+
         editor = new Editor({
           el: container,
           usageStatistics: false
         });
 
-        const request = jasmine.Ajax.requests.mostRecent();
-        expect(request).toBeFalsy();
+        expect(util.imagePing).not.toHaveBeenCalled();
       });
     });
   });
