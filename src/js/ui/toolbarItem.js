@@ -11,6 +11,14 @@ import UIController from './uicontroller';
  */
 class ToolbarItem extends UIController {
   /**
+   * item name
+   * @memberof ToolbarDivider
+   * @type {String}
+   * @static
+   */
+  static name = 'item';
+
+  /**
    * toolbar item class name
    * @memberof ToolbarItem
    * @type {String}
@@ -20,10 +28,10 @@ class ToolbarItem extends UIController {
   /**
    * toolbar item constructor
    * @memberof ToolbarItem
-   * @param {Object} [options={    name: 'toolbar-item'  }] [description]
+   * @param {Object} [options={name: 'toolbar-item'}] [description]
    */
   constructor(options = {
-    name: 'toolbar-item'
+    name: ToolbarItem.name
   }) {
     super(util.extend({
       className: ToolbarItem.className

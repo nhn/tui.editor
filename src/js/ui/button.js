@@ -8,8 +8,17 @@ import tooltip from './tooltip';
 /**
  * Class Button UI
  * @extends {ToolbarItem}
+ * @deprecated
  */
 class Button extends ToolbarItem {
+  /**
+   * item name
+   * @memberof Button
+   * @type {String}
+   * @static
+   */
+  static name = 'button';
+
   /**
    * ToolbarItem className
    * @type {String}
@@ -30,7 +39,10 @@ class Button extends ToolbarItem {
    *  @param {string} options.state - button state
    * @memberof Button
    */
-  constructor(options) {
+  constructor(options = {
+    tagName: 'button',
+    name: Button.name
+  }) {
     super({
       name: options.name,
       tagName: 'button',
