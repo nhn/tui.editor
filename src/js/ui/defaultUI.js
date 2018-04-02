@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import Toolbar from './defaultToolbar';
+import Toolbar from './toolbar';
 import Tab from './tab';
 import LayerPopup from './layerpopup';
 import ModeSwitch from './modeSwitch';
@@ -121,17 +121,20 @@ class DefaultUI {
     this._editor = editor;
     this._initialEditType = editor.options.initialEditType;
 
-    this._init(editor.options.el);
+    this._init(editor.options);
     this._initEvent();
   }
 
-  _init(container) {
-    this._container = container;
+  _init({
+    el: container,
+    toolbarItems
+  }) {
     this.$el = $(CONTAINER_TEMPLATE).appendTo(container);
+    this._container = container;
     this._editorSection = this.$el.find(`.${CLASS_EDITOR}`).get(0);
     this._editorSection.appendChild(this._editor.layout.getEditorEl().get(0));
 
-    this._initToolbar();
+    this._initToolbar(this._editor.eventManager, toolbarItems);
     this._initModeSwitch();
 
     this._initPopupAddLink();
@@ -152,9 +155,10 @@ class DefaultUI {
     this._editor.eventManager.listen('changePreviewStyle', this._markdownTabControl.bind(this));
   }
 
-  _initToolbar() {
-    this._toolbar = new Toolbar(this._editor.eventManager);
-    this.$el.find(`.${CLASS_TOOLBAR}`).append(this._toolbar.$el);
+  _initToolbar(eventManager, toolbarItems) {
+    const toolbar = new Toolbar(eventManager, toolbarItems);
+    this._toolbar = toolbar;
+    this.$el.find(`.${CLASS_TOOLBAR}`).append(toolbar.$el);
   }
 
   _initModeSwitch() {

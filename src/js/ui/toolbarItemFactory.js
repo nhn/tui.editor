@@ -34,7 +34,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'bold':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'bold',
         className: 'tui-bold',
         command: 'bold',
@@ -43,7 +43,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'italic':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'italic',
         className: 'tui-italic',
         command: 'Italic',
@@ -52,7 +52,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'strike':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'strike',
         className: 'tui-strike',
         command: 'Strike',
@@ -61,7 +61,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'hr':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'hr',
         className: 'tui-hrline',
         command: 'HR',
@@ -69,7 +69,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'quote':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'quote',
         className: 'tui-quote',
         command: 'Blockquote',
@@ -78,7 +78,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'ul':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'ul',
         className: 'tui-ul',
         command: 'UL',
@@ -86,7 +86,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'ol':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'ol',
         className: 'tui-ol',
         command: 'OL',
@@ -94,7 +94,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'task':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'task',
         className: 'tui-task',
         command: 'Task',
@@ -102,7 +102,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'table':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'table',
         className: 'tui-table',
         event: 'openPopupAddTable',
@@ -110,7 +110,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'image':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'image',
         className: 'tui-image',
         event: 'openPopupAddImage',
@@ -119,7 +119,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'link':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'link',
         className: 'tui-link',
         event: 'openPopupAddLink',
@@ -127,7 +127,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'code':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'code',
         className: 'tui-code',
         command: 'Code',
@@ -136,7 +136,7 @@ class ToolbarItemFactory {
       });
       break;
     case 'codeblock':
-      toolbarItem = new ToolbarItem({
+      toolbarItem = new ToolbarButton({
         name: 'codeblock',
         className: 'tui-codeblock',
         command: 'CodeBlock',

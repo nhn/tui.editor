@@ -277,20 +277,20 @@ describe('Editor', () => {
   });
 
   describe('options', () => {
+    beforeEach(() => {
+      container = document.createElement('div');
+      document.body.appendChild(container);
+    });
+
+    afterEach(done => {
+      setTimeout(() => {
+        editor.remove();
+        container.parentNode.removeChild(container);
+        done();
+      });
+    });
+
     describe('usageStatistics', () => {
-      beforeEach(() => {
-        container = document.createElement('div');
-        document.body.appendChild(container);
-      });
-
-      afterEach(done => {
-        setTimeout(() => {
-          editor.remove();
-          container.parentNode.removeChild(container);
-          done();
-        });
-      });
-
       it('should send request hostname in payload by default', () => {
         spyOn(util, 'imagePing');
 
@@ -310,6 +310,61 @@ describe('Editor', () => {
         });
 
         expect(util.imagePing).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('toolbaritems', () => {
+      it('should populate default toolbar items', () => {
+        editor = new Editor({
+          el: container
+        });
+
+        const toolbarItems = editor.getUI().getToolbar().getItems();
+        expect(toolbarItems[0].getName()).toBe('heading');
+        expect(toolbarItems[1].getName()).toBe('bold');
+        expect(toolbarItems[2].getName()).toBe('italic');
+        expect(toolbarItems[3].getName()).toBe('strike');
+        expect(toolbarItems[4].getName()).toBe('divider');
+        expect(toolbarItems[5].getName()).toBe('hr');
+        expect(toolbarItems[6].getName()).toBe('quote');
+        expect(toolbarItems[7].getName()).toBe('ul');
+        expect(toolbarItems[8].getName()).toBe('ol');
+        expect(toolbarItems[9].getName()).toBe('task');
+        expect(toolbarItems[10].getName()).toBe('divider');
+        expect(toolbarItems[11].getName()).toBe('table');
+        expect(toolbarItems[12].getName()).toBe('image');
+        expect(toolbarItems[13].getName()).toBe('link');
+        expect(toolbarItems[14].getName()).toBe('divider');
+        expect(toolbarItems[15].getName()).toBe('code');
+        expect(toolbarItems[16].getName()).toBe('codeblock');
+      });
+
+      it('should populate custom toolbar buttons according to given array', () => {
+        editor = new Editor({
+          el: container,
+          toolbarItems: [
+            'bold',
+            'divider',
+            {
+              type: 'button',
+              options: {
+                name: 'testButton'
+              }
+            },
+            {
+              type: 'item',
+              options: {
+                name: 'testItem'
+              }
+            }
+          ]
+        });
+
+        const toolbarItems = editor.getUI().getToolbar().getItems();
+        expect(toolbarItems[0].getName()).toBe('bold');
+        expect(toolbarItems[1].getName()).toBe('divider');
+        expect(toolbarItems[2].getName()).toBe('testButton');
+        expect(toolbarItems[3].getName()).toBe('testItem');
       });
     });
   });
