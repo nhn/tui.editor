@@ -9,6 +9,7 @@ import UIController from './uicontroller';
 import Button from './button';
 import ToolbarItem from './toolbarItem';
 import ToolbarDivider from './toolbarDivider';
+import ToolbarItemFactory from './toolbarItemFactory';
 
 /**
  * Class Toolbar
@@ -97,7 +98,7 @@ class Toolbar extends UIController {
 
   /**
    * add toolbar item
-   * @param {ToolbarItem} item - toolbar item
+   * @param {ToolbarItem|string|object} item - toolbar item
    * @memberof Toolbar
    */
   addItem(item) {
@@ -107,10 +108,16 @@ class Toolbar extends UIController {
   /**
    * insert toolbar item
    * @param  {number} index - index at given item inserted
-   * @param  {ToolbarItem} item - toolbar item
+   * @param  {ToolbarItem|string|object} item - toolbar item
    * @memberof Toolbar
    */
   insertItem(index, item) {
+    if (util.isString(item)) {
+      item = ToolbarItemFactory.create(item);
+    } else if (util.isString(item.type)) {
+      item = ToolbarItemFactory.create(item.type, item.options);
+    }
+
     const children = this.$el.children();
     if (index >= 0 && index < children.length) {
       item.$el.insertBefore(children.eq(index));

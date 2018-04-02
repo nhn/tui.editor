@@ -6,6 +6,7 @@ import $ from 'jquery';
 
 import Toolbar from '../../src/js/ui/toolbar';
 import ToolbarItem from '../../src/js/ui/toolbarItem';
+import ToolbarButton from '../../src/js/ui/toolbarButton';
 import CommandManager from '../../src/js/commandManager';
 import Command from '../../src/js/command';
 import EventManager from '../../src/js/eventManager';
@@ -195,15 +196,15 @@ describe('Toolbar', () => {
       inputItem.destroy();
     });
 
-    it('should add item', () => {
+    it('should add the item', () => {
       toolbar.addItem(inputItem);
 
-      const outputItem = toolbar.getItems()[0];
+      const outputItem = toolbar.getItem(0);
       expect(outputItem).toBe(inputItem);
       expect(outputItem.$el.parent().get(0)).toBe(toolbar.$el.get(0));
     });
 
-    it('should bind item event', () => {
+    it('should bind the item event', () => {
       const spy = jasmine.createSpy('test');
       em.listen('test', spy);
 
@@ -213,7 +214,7 @@ describe('Toolbar', () => {
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should bind item command', () => {
+    it('should bind the item command', () => {
       const command = new Command('testCommand', Command.TYPE.GB);
       command.setup = function() {};
       command.exec = jasmine.createSpy('exec');
@@ -244,7 +245,7 @@ describe('Toolbar', () => {
       });
     });
 
-    it('should insert item into given index', () => {
+    it('should insert the item into given index', () => {
       toolbar.insertItem(0, inputItems[0]);
       toolbar.insertItem(0, inputItems[1]);
       toolbar.insertItem(0, inputItems[2]);
@@ -267,7 +268,30 @@ describe('Toolbar', () => {
       expect(children.get(2)).toBe(inputItems[4].$el.get(0));
     });
 
-    it('should bind item event', () => {
+    it('should insert the item with given name for pre-defined items', () => {
+      toolbar.insertItem(0, 'heading');
+      toolbar.insertItem(1, 'bold');
+      toolbar.insertItem(2, 'divider');
+
+      expect(toolbar._items[0].getName()).toBe('heading');
+      expect(toolbar._items[1].getName()).toBe('bold');
+      expect(toolbar._items[2].getName()).toBe('divider');
+    });
+
+    it('should insert the button item with given options', () => {
+      toolbar.insertItem(0, {
+        type: 'button',
+        options: {
+          name: 'testButton'
+        }
+      });
+
+      const item = toolbar._items[0];
+      expect(item instanceof ToolbarButton).toBe(true);
+      expect(item.getName()).toBe('testButton');
+    });
+
+    it('should bind the item event', () => {
       const spy = jasmine.createSpy('test');
       em.listen('test', spy);
 
@@ -277,7 +301,7 @@ describe('Toolbar', () => {
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should bind item command', () => {
+    it('should bind the item command', () => {
       const command = new Command('testCommand', Command.TYPE.GB);
       command.setup = function() {};
       command.exec = jasmine.createSpy('exec');
