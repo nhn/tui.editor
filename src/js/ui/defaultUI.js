@@ -36,62 +36,105 @@ const CONTAINER_TEMPLATE = `
  */
 class DefaultUI {
   /**
+   * UI name
+   * @memberof DefaultUI
+   * @type {string}
+   */
+  name = 'default';
+
+  /**
+   * Toolbar wrapper element
+   * @memberof DefaultUI
+   * @type {jQuery}
+   */
+  $el;
+
+  /**
+   * Toolbar instance
+   * @memberof DefaultUI
+   * @type {Toolbar}
+   * @private
+   */
+  _toolbar;
+
+  /**
+   * @memberof DefaultUI
+   * @type {HTMLElement}
+   * @private
+   */
+  _container;
+
+  /**
+   * editor section element
+   * @memberof DefaultUI
+   * @private
+   * @type {HTMLElement}
+   */
+  _editorSection;
+
+  /**
+   * editor type ww/md
+   * @memberof DefaultUI
+   * @private
+   * @type {string}
+   */
+  _initialEditType;
+
+  /**
+   * editor instance
+   * @memberof DefaultUI
+   * @private
+   * @type {ToastUIEditor}
+   */
+  _editor;
+
+  /**
+   * markdown tab section jQuery element
+   * @memberof DefaultUI
+   * @private
+   * @type {HTMLElement}
+   */
+  _$markdownTabSection;
+
+  /**
+   * markdown tab
+   * @memberof DefaultUI
+   * @private
+   * @type {Tab}
+   */
+  _markdownTab;
+
+  /**
+   * popup instances
+   * @memberof DefaultUI
+   * @private
+   * @type {Array}
+   */
+  _popups = [];
+
+  /**
    * Creates an instance of DefaultUI.
    * @param {ToastUIEditor} editor - editor instance
    * @memberof DefaultUI
    */
   constructor(editor) {
-    /**
-     * UI name
-     * @memberof DefaultUI#
-     * @public
-     * @type {string}
-     */
-    this.name = 'default';
-
-    /**
-     * Toolbar instance
-     * @memberof DefaultUI#
-     * @type {Toolbar}
-     */
-    this.toolbar = null;
-
-    /**
-     * Toolbar wrapper element
-     * @memberof DefaultUI#
-     * @type {jQuery}
-     */
-    this.$el = null;
-
-    /**
-     * @memberof DefaultUI#
-     * @type {HTMLElement}
-     * @private
-     */
-    this._container = null;
-
-    /**
-     * editor section element
-     * @memberof DefaultUI#
-     * @private
-     * @type {HTMLElement}
-     */
-    this._editorSection = null;
-
     this._editor = editor;
     this._initialEditType = editor.options.initialEditType;
 
-    this._init(editor.options.el);
+    this._init(editor.options);
     this._initEvent();
   }
 
-  _init(container) {
-    this._container = container;
+  _init({
+    el: container,
+    toolbarItems
+  }) {
     this.$el = $(CONTAINER_TEMPLATE).appendTo(container);
+    this._container = container;
     this._editorSection = this.$el.find(`.${CLASS_EDITOR}`).get(0);
     this._editorSection.appendChild(this._editor.layout.getEditorEl().get(0));
 
-    this._initToolbar();
+    this._initToolbar(this._editor.eventManager, toolbarItems);
     this._initModeSwitch();
 
     this._initPopupAddLink();
@@ -112,30 +155,31 @@ class DefaultUI {
     this._editor.eventManager.listen('changePreviewStyle', this._markdownTabControl.bind(this));
   }
 
-  _initToolbar() {
-    this.toolbar = new Toolbar(this._editor.eventManager);
-    this.$el.find(`.${CLASS_TOOLBAR}`).append(this.toolbar.$el);
+  _initToolbar(eventManager, toolbarItems) {
+    const toolbar = new Toolbar(eventManager, toolbarItems);
+    this._toolbar = toolbar;
+    this.$el.find(`.${CLASS_TOOLBAR}`).append(toolbar.$el);
   }
 
   _initModeSwitch() {
-    this._modeSwitch = new ModeSwitch(this._initialEditType === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
-    this.$el.find(`.${CLASS_MODE_SWITCH}`).append(this._modeSwitch.$el);
+    const modeSwitch = new ModeSwitch(this._initialEditType === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
+    this.$el.find(`.${CLASS_MODE_SWITCH}`).append(modeSwitch.$el);
 
-    this._modeSwitch.on('modeSwitched', (ev, type) => this._editor.changeMode(type));
+    modeSwitch.on('modeSwitched', (ev, type) => this._editor.changeMode(type));
   }
 
   _initMarkdownTab() {
     const editor = this._editor;
 
-    this.markdownTab = new Tab({
+    this._markdownTab = new Tab({
       initName: i18n.get('Write'),
       items: [i18n.get('Write'), i18n.get('Preview')],
       sections: [editor.layout.getMdEditorContainerEl(), editor.layout.getPreviewEl()]
     });
     this._$markdownTabSection = this.$el.find(`.${CLASS_MARKDOWN_TAB}`);
-    this._$markdownTabSection.append(this.markdownTab.$el);
+    this._$markdownTabSection.append(this._markdownTab.$el);
 
-    this.markdownTab.on('itemClick', (ev, itemText) => {
+    this._markdownTab.on('itemClick', (ev, itemText) => {
       if (itemText === i18n.get('Preview')) {
         editor.eventManager.emit('previewNeedsRefresh');
       } else {
@@ -147,46 +191,46 @@ class DefaultUI {
   _markdownTabControl() {
     if (this._editor.isMarkdownMode() && this._editor.getCurrentPreviewStyle() === 'tab') {
       this._$markdownTabSection.show();
-      this.markdownTab.activate(i18n.get('Write'));
+      this._markdownTab.activate(i18n.get('Write'));
     } else {
       this._$markdownTabSection.hide();
     }
   }
 
   _initPopupAddLink() {
-    this.popupAddLink = new PopupAddLink({
+    this._popups.push(new PopupAddLink({
       $target: this.$el,
       editor: this._editor
-    });
+    }));
   }
 
   _initPopupAddImage() {
-    this.popupAddImage = new PopupAddImage({
+    this._popups.push(new PopupAddImage({
       $target: this.$el,
       eventManager: this._editor.eventManager
-    });
+    }));
   }
 
   _initPopupAddTable() {
-    this.popupAddTable = new PopupAddTable({
+    this._popups.push(new PopupAddTable({
       $target: this.$el,
       eventManager: this._editor.eventManager,
       $button: this.$el.find('button.tui-table'),
       css: {
         'position': 'fixed'
       }
-    });
+    }));
   }
 
   _initPopupAddHeading() {
-    this.popupAddHeading = new PopupAddHeading({
+    this._popups.push(new PopupAddHeading({
       $target: this.$el,
       eventManager: this._editor.eventManager,
       $button: this.$el.find('button.tui-heading'),
       css: {
         'position': 'fixed'
       }
-    });
+    }));
   }
 
   _initPopupTableUtils() {
@@ -197,27 +241,46 @@ class DefaultUI {
       }
     });
 
-    this.popupTableUtils = new PopupTableUtils({
+    this._popups.push(new PopupTableUtils({
       $target: this.$el,
       eventManager: this._editor.eventManager
-    });
+    }));
   }
 
   _initPopupCodeBlockLanguages() {
     const editor = this._editor;
-    this.popupCodeBlockLanguages = new PopupCodeBlockLanguages({
+    this._popups.push(new PopupCodeBlockLanguages({
       $target: this.$el,
       eventManager: editor.eventManager,
       languages: editor.options.codeBlockLanguages
-    });
+    }));
   }
 
   _initPopupCodeBlockEditor() {
-    this.popupCodeBlockEditor = new PopupCodeBlockEditor({
+    this._popups.push(new PopupCodeBlockEditor({
       $target: this.$el,
       eventManager: this._editor.eventManager,
       convertor: this._editor.convertor
-    });
+    }));
+  }
+
+  /**
+   * get toolbar instance
+   * @returns {Toolbar} - toolbar instance
+   * @memberof DefaultUI
+   */
+  getToolbar() {
+    return this._toolbar;
+  }
+
+  /**
+   * set toolbar instance
+   * @param {Toolbar} toolbar - toolbar
+   * @memberof DefaultUI
+   */
+  setToolbar(toolbar) {
+    this._toolbar.destroy();
+    this._toolbar = toolbar;
   }
 
   /**

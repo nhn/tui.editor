@@ -6,6 +6,7 @@ import $ from 'jquery';
 import util from 'tui-code-snippet';
 
 let _uiInstanceId = -1;
+
 /**
  * get ui instance id
  * @returns {number} - new instance id
@@ -22,6 +23,35 @@ function makeUIInstanceId() {
  */
 class UIController {
   /**
+   * tag name
+   * @type {string}
+   * @memberof UIController
+   */
+  tagName;
+
+  /**
+   * ui controller class name
+   * @type {string}
+   * @memberof UIController
+   */
+  className;
+
+  /**
+   * UI jQuery element
+   * @type {Object}
+   * @memberof UIController
+   */
+  $el;
+
+  /**
+   * UI Id
+   * @type {number}
+   * @private
+   * @memberof UIController
+   */
+  _id;
+
+  /**
    * Creates an instance of UIController.
    * @param {Object} [options] - options
    * @param {jQuery} [options.rootElement] - root element
@@ -35,20 +65,10 @@ class UIController {
     }, options);
 
     this.tagName = options.tagName;
+
     this.className = options.className;
 
-    /**
-     * ui id
-     * @type {number}
-     * @protected
-     */
     this._id = makeUIInstanceId();
-
-    /**
-     * rootElement
-     * @type {jQuery}
-     */
-    this.$el = null;
 
     this._setRootElement(options.rootElement);
   }
@@ -160,7 +180,9 @@ class UIController {
    * @memberof UIController
    */
   remove() {
-    this.$el.remove();
+    if (this.$el) {
+      this.$el.remove();
+    }
   }
 
   /**
