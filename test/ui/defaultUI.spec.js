@@ -5,6 +5,7 @@
 import ToastUIEditor from '../../src/js/editor';
 import DefaultUI from '../../src/js/ui/defaultUI';
 import Toolbar from '../../src/js/ui/toolbar';
+import ModeSwitch from '../../src/js/ui/modeSwitch';
 
 describe('DeafultUI', () => {
   let container, editor, defaultUI;
@@ -26,13 +27,19 @@ describe('DeafultUI', () => {
     editor.remove();
   });
 
-  describe('getToolbar()', () => {
-    it('should return Toolbar instance', () => {
+  describe('getToolbar', () => {
+    it('should return the Toolbar instance', () => {
       expect(defaultUI.getToolbar() instanceof Toolbar).toBe(true);
     });
   });
 
-  describe('setToolbar()', () => {
+  describe('getModeSwitch', () => {
+    it('should return the ModeSwitch instance', () => {
+      expect(defaultUI.getModeSwitch() instanceof ModeSwitch).toBe(true);
+    });
+  });
+
+  describe('setToolbar', () => {
     it('should set new Toolbar instance and free previous instance', () => {
       const newToolbar = new Toolbar(editor.eventManager);
       const prevToolbar = defaultUI.getToolbar();
@@ -45,7 +52,7 @@ describe('DeafultUI', () => {
     });
   });
 
-  describe('_initToolbar()', () => {
+  describe('_initToolbar', () => {
     it('should populate default buttons', () => {
       expect(defaultUI.getToolbar().getItems().length).toBeGreaterThan(0);
     });
