@@ -273,7 +273,7 @@ The method takes two arguments:
 * **tag**: The tag of the format
 * **attributes**: (optional) Any attributes the format.
 
-Returns `true` if any of the selection is contained within an element with the specified tag and attributes, otherwise returns `false`.
+Returns `true` if the entire selection is contained within an element with the specified tag and attributes, otherwise returns `false`.
 
 ### bold
 
