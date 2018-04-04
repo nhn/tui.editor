@@ -37,6 +37,8 @@ import mdAddLink from './markdownCommands/addLink';
 import mdAddImage from './markdownCommands/addImage';
 import mdUL from './markdownCommands/ul';
 import mdOL from './markdownCommands/ol';
+import mdIndent from './markdownCommands/indent';
+import mdOutdent from './markdownCommands/outdent';
 import mdTable from './markdownCommands/table';
 import mdTask from './markdownCommands/task';
 import mdCode from './markdownCommands/code';
@@ -61,8 +63,8 @@ import wwTableRemoveRow from './wysiwygCommands/tableRemoveRow';
 import wwTableRemoveCol from './wysiwygCommands/tableRemoveCol';
 import wwTableAlignCol from './wysiwygCommands/tableAlignCol';
 import wwTableRemove from './wysiwygCommands/tableRemove';
-import wwIncreaseDepth from './wysiwygCommands/increaseDepth';
-import wwDecreaseDepth from './wysiwygCommands/decreaseDepth';
+import wwIndent from './wysiwygCommands/indent';
+import wwOutdent from './wysiwygCommands/outdent';
 import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
@@ -138,9 +140,12 @@ class ToastUIEditor {
         'divider',
         'hr',
         'quote',
+        'divider',
         'ul',
         'ol',
         'task',
+        'indent',
+        'outdent',
         'divider',
         'table',
         'image',
@@ -247,6 +252,8 @@ class ToastUIEditor {
     this.addCommand(mdAddImage);
     this.addCommand(mdUL);
     this.addCommand(mdOL);
+    this.addCommand(mdIndent);
+    this.addCommand(mdOutdent);
     this.addCommand(mdTable);
     this.addCommand(mdTask);
     this.addCommand(mdCode);
@@ -263,8 +270,8 @@ class ToastUIEditor {
     this.addCommand(wwHR);
     this.addCommand(wwHeading);
     this.addCommand(wwParagraph);
-    this.addCommand(wwIncreaseDepth);
-    this.addCommand(wwDecreaseDepth);
+    this.addCommand(wwIndent);
+    this.addCommand(wwOutdent);
     this.addCommand(wwTask);
     this.addCommand(wwTable);
     this.addCommand(wwTableAddRow);

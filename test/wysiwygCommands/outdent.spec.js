@@ -1,15 +1,15 @@
 /**
- * @fileoverview test wysiwyg decrease depth command
+ * @fileoverview test wysiwyg outdent command
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 
-import DecreaseDepth from '../../src/js/wysiwygCommands/decreaseDepth';
+import Outdent from '../../src/js/wysiwygCommands/outdent';
 import WwTaskManager from '../../src/js/wwTaskManager';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
-describe('DecreaseDepth', () => {
+describe('Outdent', () => {
   let wwe, sq, container;
 
   beforeEach(() => {
@@ -42,7 +42,7 @@ describe('DecreaseDepth', () => {
     });
   });
 
-  it('should be able to decrease depth second to first.', () => {
+  it('should be able to outdent second to first.', () => {
     const range = wwe.getEditor().getSelection().cloneRange();
 
     range.setStart(wwe.get$Body().find('li')[1].firstChild, 0);
@@ -50,7 +50,7 @@ describe('DecreaseDepth', () => {
 
     sq.setSelection(range);
 
-    DecreaseDepth.exec(wwe);
+    Outdent.exec(wwe);
 
     expect(sq.get$Body().find('ul > li').length).toEqual(3);
     expect(sq.get$Body().find('ul > ul > li').length).toEqual(0);
@@ -65,7 +65,7 @@ describe('DecreaseDepth', () => {
 
     sq.setSelection(range);
 
-    DecreaseDepth.exec(wwe);
+    Outdent.exec(wwe);
 
     expect(sq.get$Body().find('ul li').length).toEqual(2);
     expect(sq.get$Body().find('ul ul li').length).toEqual(1);
@@ -89,7 +89,7 @@ describe('DecreaseDepth', () => {
 
     sq.setSelection(range);
 
-    DecreaseDepth.exec(wwe);
+    Outdent.exec(wwe);
 
     const $Body = sq.get$Body();
 
@@ -100,7 +100,7 @@ describe('DecreaseDepth', () => {
     expect($Body.find('ul li').eq(2).hasClass('task-list-item')).toBe(true);
   });
 
-  it('should not decrease if next element is UL/OL (arbitrary list)', () => {
+  it('should not outdent if next element is UL/OL (arbitrary list)', () => {
     const range = wwe.getEditor().getSelection().cloneRange();
 
     wwe.get$Body().html(`
@@ -120,7 +120,7 @@ describe('DecreaseDepth', () => {
 
     sq.setSelection(range);
 
-    DecreaseDepth.exec(wwe);
+    Outdent.exec(wwe);
 
     const $Body = sq.get$Body();
 
@@ -129,7 +129,7 @@ describe('DecreaseDepth', () => {
     expect($Body.find('> ul > ul > ul > li').length).toEqual(1);
   });
 
-  describe('should decrease depth when cursor', () => {
+  describe('should outdent when cursor', () => {
     it('at startOffset 0.', () => {
       const range = wwe.getEditor().getSelection().cloneRange();
 
@@ -138,13 +138,13 @@ describe('DecreaseDepth', () => {
 
       sq.setSelection(range);
 
-      DecreaseDepth.exec(wwe);
+      Outdent.exec(wwe);
 
       expect(sq.get$Body().find('ul > li').length).toEqual(3);
       expect(sq.get$Body().find('ul ul li').length).toEqual(0);
       expect(sq.get$Body().find('ul > li').hasClass('task-list-item')).toBe(true);
     });
-    it('should decrease depth when cursor at any offset.', () => {
+    it('at any offset.', () => {
       const range = wwe.getEditor().getSelection().cloneRange();
 
       range.setStart(wwe.get$Body().find('li')[1].firstChild, 2);
@@ -152,7 +152,7 @@ describe('DecreaseDepth', () => {
 
       sq.setSelection(range);
 
-      DecreaseDepth.exec(wwe);
+      Outdent.exec(wwe);
 
       expect(sq.get$Body().find('ul > li').length).toEqual(3);
       expect(sq.get$Body().find('ul ul li').length).toEqual(0);

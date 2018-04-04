@@ -20,6 +20,8 @@ i18n.setLanguage(['ko', 'ko_KR'], {
   'Unordered list': '글머리 기호',
   'Ordered list': '번호 매기기',
   'Task': '체크박스',
+  'Indent': '들여쓰기',
+  'Outdent': '내어쓰기',
   'Insert link': '링크 삽입',
   'Insert CodeBlock': '코드블럭 삽입',
   'Insert table': '표 삽입',

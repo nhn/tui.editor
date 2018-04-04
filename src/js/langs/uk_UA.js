@@ -20,6 +20,8 @@ i18n.setLanguage(['uk', 'uk_UA'], {
   'Unordered list': 'Невпорядкований список',
   'Ordered list': 'Упорядкований список',
   'Task': 'Завдання',
+  'Indent': 'відступ',
+  'Outdent': 'застарілий',
   'Insert link': 'Вставити посилання',
   'Insert CodeBlock': 'Вставити код',
   'Insert table': 'Вставити таблицю',

@@ -144,6 +144,22 @@ class ToolbarItemFactory {
         state: 'codeBlock'
       });
       break;
+    case 'indent':
+      toolbarItem = new ToolbarButton({
+        name: 'indent',
+        className: 'tui-indent',
+        command: 'Indent',
+        tooltip: i18n.get('Indent')
+      });
+      break;
+    case 'outdent':
+      toolbarItem = new ToolbarButton({
+        name: 'outdent',
+        className: 'tui-outdent',
+        command: 'Outdent',
+        tooltip: i18n.get('Outdent')
+      });
+      break;
     case 'divider':
       toolbarItem = new ToolbarDivider();
       break;

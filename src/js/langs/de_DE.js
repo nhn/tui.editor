@@ -20,6 +20,8 @@ i18n.setLanguage(['de', 'de_DE'], {
   'Unordered list': 'Aufzählung',
   'Ordered list': 'Nummerierte Aufzählung',
   'Task': 'Aufgabe',
+  'Indent': 'inspringen',
+  'Outdent': 'Uithangen',
   'Insert link': 'Link einfügen',
   'Insert CodeBlock': 'Codeblock einfügen',
   'Insert table': 'Tabelle einfügen',
