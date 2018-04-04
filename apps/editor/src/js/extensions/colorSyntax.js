@@ -141,11 +141,11 @@ function initUI(editor, preset) {
     tooltip: i18n.get('Text color')
   }, 4);
   const colorSyntaxButtonIndex = toolbar.indexOfItem(name);
-  const $button = toolbar.getItem(colorSyntaxButtonIndex);
+  const {$el: $button} = toolbar.getItem(colorSyntaxButtonIndex);
 
   const $colorPickerContainer = $('<div />');
 
-  const $buttonBar = $('<button type="button" class="te-apply-button">입력</button>');
+  const $buttonBar = $('<button type="button" class="te-apply-button">OK</button>');
 
   const cpOptions = {
     container: $colorPickerContainer[0]
