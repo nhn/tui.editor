@@ -105,6 +105,14 @@ class DefaultUI {
   _markdownTab;
 
   /**
+   * mode switch instance
+   * @memberof DefaultUI
+   * @private
+   * @type {ModeSwitch}
+   */
+  _modeSwitch;
+
+  /**
    * popup instances
    * @memberof DefaultUI
    * @private
@@ -127,7 +135,8 @@ class DefaultUI {
 
   _init({
     el: container,
-    toolbarItems
+    toolbarItems,
+    hideModeSwitch
   }) {
     this.$el = $(CONTAINER_TEMPLATE).appendTo(container);
     this._container = container;
@@ -135,7 +144,7 @@ class DefaultUI {
     this._editorSection.appendChild(this._editor.layout.getEditorEl().get(0));
 
     this._initToolbar(this._editor.eventManager, toolbarItems);
-    this._initModeSwitch();
+    this._initModeSwitch(hideModeSwitch);
 
     this._initPopupAddLink();
     this._initPopupAddImage();
@@ -161,9 +170,15 @@ class DefaultUI {
     this.$el.find(`.${CLASS_TOOLBAR}`).append(toolbar.$el);
   }
 
-  _initModeSwitch() {
-    const modeSwitch = new ModeSwitch(this._initialEditType === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
-    this.$el.find(`.${CLASS_MODE_SWITCH}`).append(modeSwitch.$el);
+  _initModeSwitch(hideModeSwitch) {
+    const modeSwitchTabBar = this.$el.find(`.${CLASS_MODE_SWITCH}`);
+    const editType = this._initialEditType === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG;
+    const modeSwitch = new ModeSwitch(modeSwitchTabBar, editType);
+    this._modeSwitch = modeSwitch;
+
+    if (hideModeSwitch) {
+      modeSwitch.hide();
+    }
 
     modeSwitch.on('modeSwitched', (ev, type) => this._editor.changeMode(type));
   }
@@ -281,6 +296,15 @@ class DefaultUI {
   setToolbar(toolbar) {
     this._toolbar.destroy();
     this._toolbar = toolbar;
+  }
+
+  /**
+   * get mode switch instance
+   * @memberof DefaultUI
+   * @returns {ModeSwitch} - mode switch instance
+   */
+  getModeSwitch() {
+    return this._modeSwitch;
   }
 
   /**
