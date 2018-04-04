@@ -376,7 +376,7 @@ describe('Editor', () => {
         });
 
         const modeSwitch = editor.getUI().getModeSwitch();
-        expect(modeSwitch.isShowing()).toBe(false);
+        expect(modeSwitch.isShown()).toBe(false);
       });
 
       it('should hide mode switch if the option value is true', () => {
@@ -385,7 +385,7 @@ describe('Editor', () => {
         });
 
         const modeSwitch = editor.getUI().getModeSwitch();
-        expect(modeSwitch.isShowing()).toBe(true);
+        expect(modeSwitch.isShown()).toBe(true);
       });
     });
   });

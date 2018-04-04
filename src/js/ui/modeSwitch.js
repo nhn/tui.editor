@@ -27,7 +27,7 @@ class ModeSwitch extends UIController {
   static TYPE = {
     MARKDOWN,
     WYSIWYG
-  }
+  };
 
   /**
    * mode switch buttons
@@ -43,13 +43,13 @@ class ModeSwitch extends UIController {
    * @type {String}
    * @private
    */
-  _type
+  _type;
 
   /**
    * root element
    * @type {jQuery}
    */
-  _$rootElement
+  _$rootElement;
 
   /**
    * Creates an instance of ModeSwitch.
@@ -68,10 +68,10 @@ class ModeSwitch extends UIController {
   }
 
   /**
-   * is the switch tab bar showing
+   * is the switch tab bar shown
    * @returns {Boolean} - showing status
    */
-  isShowing() {
+  isShown() {
     return this._$rootElement.css('display') === 'block';
   }
 

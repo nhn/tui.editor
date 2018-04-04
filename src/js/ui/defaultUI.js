@@ -172,7 +172,8 @@ class DefaultUI {
 
   _initModeSwitch(hideModeSwitch) {
     const modeSwitchTabBar = this.$el.find(`.${CLASS_MODE_SWITCH}`);
-    const modeSwitch = new ModeSwitch(modeSwitchTabBar, this._initialEditType === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
+    const editType = this._initialEditType === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG;
+    const modeSwitch = new ModeSwitch(modeSwitchTabBar, editType);
     this._modeSwitch = modeSwitch;
 
     if (hideModeSwitch) {

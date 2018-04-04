@@ -56,13 +56,13 @@ describe('ModeSwitch', () => {
     expect($('button.te-switch-button.markdown').text()).toEqual('Markdown');
   });
 
-  describe('isShowing', () => {
+  describe('isShown', () => {
     it('should return is visible status', () => {
       modeSwitch = new ModeSwitch($container);
-      expect(modeSwitch.isShowing()).toBe(true);
+      expect(modeSwitch.isShown()).toBe(true);
 
       modeSwitch._$rootElement.css('display', 'none');
-      expect(modeSwitch.isShowing()).toBe(false);
+      expect(modeSwitch.isShown()).toBe(false);
     });
   });
 
