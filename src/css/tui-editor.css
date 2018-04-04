@@ -799,6 +799,14 @@ only screen and (                min-resolution: 2dppx) {
     background-position: -130px -48px;
 }
 
+.tui-toolbar-icons.tui-indent {
+    background-position: -46px -48px;
+}
+
+.tui-toolbar-icons.tui-outdent {
+    background-position: -46px -70px;
+}
+
 .tui-toolbar-icons.tui-table {
     background-position: -88px -92px;
 }
