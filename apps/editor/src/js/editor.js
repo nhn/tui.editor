@@ -117,6 +117,7 @@ class ToastUIEditor {
         * @param {string[]} options.codeBlockLanguages - supported code block languages to be listed
         * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
         * @param {object[]} [options.toolbarItems] - toolbar items
+        * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
     */
   constructor(options) {
     this.options = $.extend({
@@ -147,7 +148,8 @@ class ToastUIEditor {
         'divider',
         'code',
         'codeblock'
-      ]
+      ],
+      hideModeSwitch: false
     }, options);
 
     this.eventManager = new EventManager();

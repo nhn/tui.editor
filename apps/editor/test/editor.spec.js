@@ -367,5 +367,26 @@ describe('Editor', () => {
         expect(toolbarItems[3].getName()).toBe('testItem');
       });
     });
+
+    describe('hideModeSwitch', () => {
+      it('should hide mode switch if the option value is true', () => {
+        editor = new Editor({
+          el: container,
+          hideModeSwitch: true
+        });
+
+        const modeSwitch = editor.getUI().getModeSwitch();
+        expect(modeSwitch.isShown()).toBe(false);
+      });
+
+      it('should hide mode switch if the option value is true', () => {
+        editor = new Editor({
+          el: container
+        });
+
+        const modeSwitch = editor.getUI().getModeSwitch();
+        expect(modeSwitch.isShown()).toBe(true);
+      });
+    });
   });
 });
