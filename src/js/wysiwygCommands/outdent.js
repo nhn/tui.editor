@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements decrease depth wysiwyg command
+ * @fileoverview Implements Outdent wysiwyg command
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
@@ -7,14 +7,14 @@ import $ from 'jquery';
 import CommandManager from '../commandManager';
 
 /**
- * DecreaseDepth
- * decrease depth of list or task to wysiwyg Editor
+ * Outdent
+ * Outdent list or task to wysiwyg Editor
  * @extends Command
- * @module wysiwygCommands/DecreaseDepth
+ * @module wysiwygCommands/Outdent
  * @ignore
  */
-const DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
-  name: 'DecreaseDepth',
+const Outdent = CommandManager.command('wysiwyg', /** @lends Outdent */{
+  name: 'Outdent',
 
   /**
    * Command Handler
@@ -36,7 +36,7 @@ const DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
 });
 
 /**
- * test if decrease the depth of given list item
+ * test if outdent the given list item
  * arbitrary list allows list item to be in any position
  * while markdown spec does not
  * @param {jQuery} $currentLiNode - jQuery list item element
@@ -59,4 +59,4 @@ function getCurrent$Li(wwe) {
   return $(range.startContainer).closest('li');
 }
 
-export default DecreaseDepth;
+export default Outdent;

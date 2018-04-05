@@ -20,6 +20,8 @@ i18n.setLanguage(['ja', 'ja_JP'], {
   'Unordered list': '番号なしリスト',
   'Ordered list': '順序付きリスト',
   'Task': 'タスク',
+  'Indent': 'インデント',
+  'Outdent': 'アウトデント',
   'Insert link': 'リンク挿入',
   'Insert CodeBlock': 'コードブロック挿入',
   'Insert table': 'テーブル挿入',

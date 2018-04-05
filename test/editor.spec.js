@@ -327,16 +327,19 @@ describe('Editor', () => {
         expect(toolbarItems[4].getName()).toBe('divider');
         expect(toolbarItems[5].getName()).toBe('hr');
         expect(toolbarItems[6].getName()).toBe('quote');
-        expect(toolbarItems[7].getName()).toBe('ul');
-        expect(toolbarItems[8].getName()).toBe('ol');
-        expect(toolbarItems[9].getName()).toBe('task');
-        expect(toolbarItems[10].getName()).toBe('divider');
-        expect(toolbarItems[11].getName()).toBe('table');
-        expect(toolbarItems[12].getName()).toBe('image');
-        expect(toolbarItems[13].getName()).toBe('link');
-        expect(toolbarItems[14].getName()).toBe('divider');
-        expect(toolbarItems[15].getName()).toBe('code');
-        expect(toolbarItems[16].getName()).toBe('codeblock');
+        expect(toolbarItems[7].getName()).toBe('divider');
+        expect(toolbarItems[8].getName()).toBe('ul');
+        expect(toolbarItems[9].getName()).toBe('ol');
+        expect(toolbarItems[10].getName()).toBe('task');
+        expect(toolbarItems[11].getName()).toBe('indent');
+        expect(toolbarItems[12].getName()).toBe('outdent');
+        expect(toolbarItems[13].getName()).toBe('divider');
+        expect(toolbarItems[14].getName()).toBe('table');
+        expect(toolbarItems[15].getName()).toBe('image');
+        expect(toolbarItems[16].getName()).toBe('link');
+        expect(toolbarItems[17].getName()).toBe('divider');
+        expect(toolbarItems[18].getName()).toBe('code');
+        expect(toolbarItems[19].getName()).toBe('codeblock');
       });
 
       it('should populate custom toolbar buttons according to given array', () => {

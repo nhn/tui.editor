@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements incease depth wysiwyg command
+ * @fileoverview Implements Indent wysiwyg command
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
@@ -7,14 +7,14 @@ import $ from 'jquery';
 import CommandManager from '../commandManager';
 
 /**
- * IncreaseDepth
- * increase depth of list or task to wysiwyg Editor
+ * Indent
+ * Indent list or task to wysiwyg Editor
  * @extends Command
- * @module wysiwygCommands/IncreaseDepth
+ * @module wysiwygCommands/indent
  * @ignore
  */
-const IncreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
-  name: 'IncreaseDepth',
+const Indent = CommandManager.command('wysiwyg', /** @lends Indent */{
+  name: 'Indent',
   /**
    * Command Handler
    * @param {WysiwygEditor} wwe wysiwygEditor instance
@@ -53,4 +53,4 @@ const IncreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
   }
 });
 
-export default IncreaseDepth;
+export default Indent;

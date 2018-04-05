@@ -80,7 +80,7 @@ class WwListManager {
       if (range.collapsed) {
         if (this.wwe.getEditor().hasFormat('LI')) {
           ev.preventDefault();
-          this.eventManager.emit('command', 'IncreaseDepth');
+          this.eventManager.emit('command', 'Indent');
 
           isNeedNext = false;
         }
@@ -97,7 +97,7 @@ class WwListManager {
           ev.preventDefault();
           const $ul = $(range.startContainer).closest('li').children(UL_OR_OL);
 
-          this.eventManager.emit('command', 'DecreaseDepth');
+          this.eventManager.emit('command', 'Outdent');
 
           if ($ul.length && !$ul.prev().length) {
             this._removeBranchList($ul);

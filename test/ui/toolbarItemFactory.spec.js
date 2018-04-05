@@ -55,6 +55,8 @@ describe('ToolbarItemFactory', () => {
       expect(ToolbarItemFactory.create('link').getName()).toBe('link');
       expect(ToolbarItemFactory.create('code').getName()).toBe('code');
       expect(ToolbarItemFactory.create('codeblock').getName()).toBe('codeblock');
+      expect(ToolbarItemFactory.create('indent').getName()).toBe('indent');
+      expect(ToolbarItemFactory.create('outdent').getName()).toBe('outdent');
       expect(ToolbarItemFactory.create('item').getName()).toBe('item');
     });
   });

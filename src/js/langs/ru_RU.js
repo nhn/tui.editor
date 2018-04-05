@@ -20,6 +20,8 @@ i18n.setLanguage(['ru', 'ru_RU'], {
   'Unordered list': 'Неупорядоченный список',
   'Ordered list': 'Упорядоченный список',
   'Task': 'Задача',
+  'Indent': 'отступ',
+  'Outdent': 'Выступ',
   'Insert link': 'Вставить ссылку',
   'Insert CodeBlock': 'Вставить код',
   'Insert table': 'Вставить таблицу',
