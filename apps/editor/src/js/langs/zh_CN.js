@@ -20,6 +20,8 @@ i18n.setLanguage(['zh', 'zh_CN'], {
   'Unordered list': '无序列表',
   'Ordered list': '有序列表',
   'Task': '任务',
+  'Indent': '缩进',
+  'Outdent': '减少缩进',
   'Insert link': '插入链接',
   'Insert CodeBlock': '插入代码块',
   'Insert table': '插入表格',

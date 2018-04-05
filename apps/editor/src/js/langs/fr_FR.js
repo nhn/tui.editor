@@ -20,6 +20,8 @@ i18n.setLanguage(['fr', 'fr_FR'], {
   'Unordered list': 'Liste non-ordonnée',
   'Ordered list': 'Liste ordonnée',
   'Task': 'Tâche',
+  'Indent': 'Retrait',
+  'Outdent': 'Sortir',
   'Insert link': 'Insérer un lien',
   'Insert CodeBlock': 'Insérer un bloc de code',
   'Insert table': 'Insérer un tableau',

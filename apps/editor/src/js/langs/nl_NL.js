@@ -20,6 +20,8 @@ i18n.setLanguage(['nl', 'nl_NL'], {
   'Unordered list': 'Opsomming',
   'Ordered list': 'Genummerde opsomming',
   'Task': 'Taak',
+  'Indent': 'Inspringen',
+  'Outdent': 'Outdent',
   'Insert link': 'Link invoegen',
   'Insert CodeBlock': 'Codeblok toevoegen',
   'Insert table': 'Tabel invoegen',
