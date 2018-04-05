@@ -24,6 +24,7 @@ const ENTRY_EXT_SCROLL_SYNC = './src/js/extensions/scrollSync/scrollSync.js';
 const ENTRY_EXT_TABLE = './src/js/extensions/table/table.js';
 const ENTRY_EDITOR_CSS = './src/css/tui-editor.css';
 const ENTRY_CONTENT_CSS = './src/css/tui-editor-contents.css';
+const ENTRY_IMAGE_DIR = './src/image';
 
 const isDevServer = process.argv[1].indexOf('webpack-dev-server') >= 0;
 const isProduction = process.argv.indexOf('-p') >= 0;
@@ -145,6 +146,7 @@ const defaultConfigs = Array(isDevServer ? 1 : 4).fill(0).map(() => {
   };
 });
 
+// Style
 defaultConfigs[0].plugins.push(new CopyWebpackPlugin([{
   from: ENTRY_EDITOR_CSS,
   transform: content => isProduction ? new CleanCSS({compatibility: '*'}).minify(content).styles : content,
@@ -155,7 +157,11 @@ defaultConfigs[0].plugins.push(new CopyWebpackPlugin([{
   to: `tui-editor-contents${isProduction ? '.min' : ''}.css`
 }]));
 
+// Image
+defaultConfigs[0].plugins.push(new CopyWebpackPlugin([ENTRY_IMAGE_DIR]));
+
 if (isDevServer) {
+  // Serve
   defaultConfigs[0].entry = {
     'Editor-all': ENTRY_MAIN_ALL
   };
