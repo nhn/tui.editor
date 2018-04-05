@@ -740,69 +740,91 @@
 }
 
 .tui-toolbar-icons {
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHQAAACKCAYAAAB7Am5OAAAAAXNSR0IArs4c6QAADzVJREFUeAHtnXuMVcUdxy+v5VUqCJb6KGIxsdCIj4aqCdX1QVtqo7GUt8GtpmtblVpTFUoiayPySIxWUFKablbkTbTaxIjVxq1/aK1BqBYCjc+CWOoDW+X96ud7vXNzOHtmz5x77+5d4DfJMDO/md9vfvP9zW/O2TPD3FzOgiFgCBgChoAhYAgYAoaAIWAIGAKGgCFgCBgCJSLQKZRv7NixhxPavgFtwurVq9cm1LVKcvLgzevgyj4m185X7+hpclw7l1ZbrtNDKbrXkMxHpxuj9Cz5zlkaq60A6NevX+9OnTrNoHgm8WHRLZSHwLXXXnsyEpqJ9eVIyuyhbkYzm06i4/9g2J2rVq36QjlKHA28zvPd+H06h7aL8sNzEeXHiDKqwkHie8RniYvo82+kQSGzh0pqfX19Lwz5Y+UPHz78mtLjKYwbN+4pxUqMGWPKI5uJzpgS24U4iHgD8UX6uok0KHQNahVppBm4Y8eOCCW3LFoIzcdnsiv7+NM8w/FVSo6T50uZyPl3CsBuIPsO+jX52pZJ74L8BRMmTFi3YsWKF9NkZfZQAavYs2fPAQhfRJwPiPekdXQs1fOIuRIMvl8w5kzG9hAYDCtljMgRhrXE9yP8n5L/gKilNx8OHTp0u8u3lpb8DJXQKVOm9N+9e/eHZD9Gsf6tdXS01znPZ5x5zCLGdEPbyMviCFavnSK4dq4yLdVL0d69e/UcvcjxNjQ0dN2wYcP3oM3nEdeXiXRCmpzMHuoRuM9DPybJCcbUOId98sknJb/xL1myRB5aS5TH5gMGPYBx/0jhcpbdrhMnTtSq2GrI/Ax10greeW+hrE4zhfiMd2WfEDdrffWOnibHtXNpqFzXXvIJrnhECv26IwgZC+gix2jxNyj0N5hECw4cONA9TWRmgzrAWGoley9Lwapu3boFre9pyli9HwEmS2NNTY2erRYMAUPAEDAEDAFDwBAwBAwBQ8AQMAQMAUPAEDAEDIGOjIA+IbrPiB1ZT9MtAwJm0AxgBTbN9HEeA+hohA6H1fFRXvuf6/loPJvdgDWB/bXaLM3AITsjaTLiCoTIjPO0V5mx/Ja+bkHH4O3JTAZFuIx5F8acT/o6xvwW6e+uv/76YY2NjZl2AhzwSjsyqIwvN3ny5NP2798/j/HWUiye/XF6u7GoLeF98GlmB+qOpUuXbv2cVPK/9XCezeb3mMJ+aaqg4BMLkoTir5DsZCC1KivowNiiRYt2fV469v6VMfft2/d3RnZifHQeg7pmH7PddU4Wo7KB/bWDBw/ezMS5gknxVdJuBWHa/B5Dfy854b40q0FXIOgqOqsfNmzYMnbUD/kEp9HdrEbW3RytaEhrX616NpaXAexE+n8aA9WnGagwAXTqYDRjW87YJoXoTj9jaLeEvnp42mvZ1fIr2d6Qacnt0qXL7cygQXT66MaNGxtQ4n4Mu7AUw2p2w68Tczpk1SANnZGVTwrOI5Lq4rRKyUK/WsmOGtMnW/rJ4Bi1Hq/e4njjusXLhSV9Oe2dR8abBJdTDRpVHmMWBdP5EAoLOMS0gDZFeijozphMkkuLzMdphufzrRFjHsazPwKKGmhfLEDSNktuHG8M+VNoD3fu3PmmlStXZjogFZ0ooZMg3n97lJl4bb7kgsU6xnKGcOS45uPgkT/fU8Dope7duwe/FKV6aBS08ePHX0iHr9Kh1nOFlcSHmUl98qUM/3RkI0aHobdVls/vQButZRSQi9VuDNHJSRtX/7F4XSElPQOvvAqneCHWTs/LW3jDLQqN1bcoBhu0cMpvDR1vKcxa/Zmil4XdLJtPtpCcQnAgIK/4UuRoPlYHoK9e9DQZcd40mYVn4jlJf7bEZRXKpfzZ8hQvT3Fj6mzvjZ4+vORggy5evPgjPPSbeOivMYL+PupHXE/89vLlyzd5e/BUCEj3HKVJg6dZhyAX3mwn+ZRJmxQ+vgj9N5H80ZuVQbN61NE72vbRPNhDK62ODEnIacmttGyTZwgYAoaAIWAIGAKGgCFgCBgChoAhYAgYAoaAIWAIGAKZjqA4uOLfXyvwcdqJ9u6WhPYR160o2JOplFx9wuzRo8d8rirojExdSZMpOL3j+vjoPuEl3YLCdtkZBYHvxhXwdXQs0yPGfI5xPo8RTqrWeEv6OM9RlFopzECalZYS2Glp6tu378/iJwbLnSDl8qeNJUl+Ya9YxjyXuJkTBiXhmtZ3SH1JHWPIWu2UEJtDOklqA+91XNI0gtk8FpA2JrXpqDSOrnZD9zldu3adx6mEAyyzUWNeGnqGti3GV5JBMUatlGHpbVZaRtB1aq9g05swapPkkE+8BCjJM9Q+LfjkOb5S5GLMWfDfxko1mruD9pJ3nlm2MdP0dXr70szPUC4RHIyw04nvcpngO6RlBzw+0YhlC24jAfJMRL/GxB5KeoQxtWnfRt0Gic3soZV4fkY001I7lvM0xSW3FI+JyGuRrbQ8dcCRmw/xpCvIPk+sYaW6TMtsJY7UxPXN6rGZPVTPTwZR1vNT/Mh5RJcdMoCiMUU/WgJ6f8CfKZdhzFpWqm3SG4+dWW39M3topZ6feGVd0uB9MzI+c5N4RfPx+9qHynX8Ufl79uzJk6G56qqnmQwaHQxL79toX9KHiaqP2hQwBAwBQ8AQMAQMAUPAEDAEDAFDwBAwBAwBQ8AQMAQMAUPAEDAEqohA8Md192E+vjvho5c6Jicvzh/vN17vyj5+Vx9PQ+XW1dX12Llz5xy2/a6WDHadnuzdu/e0pqamPQl9buVGk3ouwXg63l9amQMEF7Dx8Ve1Y2vuQrbmXk7jidZn2m2JMh5PeQzWBWPqx1lHYkg39J/v2rVrO4XZjhBJT+MuCt1g8pUILSgL3y1MGl3Bl1Oe5OgyqO4K1I/Auf3RUI/xoVMuv0duHfSRxK14zQ85GPY219eciwf+Kdre9V3w2NOidSF5+L7MhBmLQXUpiVaBRdB+idx/h/CrTVU9FGWHceBqNXrosFgdsUMGAJ4iz2QZvS2yBB5hzLji8GyJ09LK8PyEfj7t1avXSrVlVbhPNLINKoeELAb9LwJPwAhdmDH5O+KUL3SiukwB3joYHiL2ijJCL65pUbqb/VFaUt7Hn9RWtEC5mnBaAv+s1BcifW/FEJnuGIJXV8GJpz+GzN8kpn5Eo+5e9Nzn6zdKz3Km6A0xstyc7gQwYwcX8vk6Rw9JGXCi4UJ4j8U2YKml9kvgO0STTFF50VQXOuZgD0Xo/czQJZxDnceMuVkdMHvmKlWd0iyBZ+YjyNHD3y25efZAj/F2VS6/R7AOsl3MOC8nlb6JwfXNuA6DVaaXItpPxXhrli1b9pYTrjwnCdeoDtpSR28tDTYoLwBLEb4fYb8gbigI/SdKjKduVWud+OoAYCMvRSPK+WVcn+xK0pm4i5F3Mel9/FnxL99LUazPTC9FYHFBjD9fZOJfmUT30YL/DvUJqDRdsztJppv9SXVRmo8/2iaaD5GLTL0rNBNHRnmZzL8C8NlJfVK3hbpB0fbtkQ/y0CSFk5QLASeJr6PTGNdBPiyMin9Y4G3U96jJ9FL0+snnJU7iOC5nv78u1QFTG8SFWrnyCFTSoJXXziQaAoaAIWAIGAKGgCFgCBgChoAhYAgYAoaAIRBHQPcHKMbpVu5YCAR9y5XK7DTMLKjeUEgt6YAItPotN+2jfEf8GJ+mc9wG5Y6BVauJyV6LnMFx2dUot+qhbAHdHVcK5euh62eylsfrjvWye+SwLdbgxipjgkezykn1rl17pa0eQYkofubAgQNnq4zy4nkuUtdeumbqR57nomN0ZaWOFprKWHrsEK/RSUXxuUu4oDWLpjriTGfYUNmVbNeqQQsd7UXJSdu3b29mOfsu+YEYdZ3qKD+hJY4B/KGSSnU0Wc6Y6PUat4hd7i6cdJdwcbSzWTTVqU01jRo0UzHaNRjxURTVzPwfUccrekJ7D9pHpP1JT2XmfwA9KGgiBDUsNAr1qkrLjRtTt4g5valr8fzkd7QHcO5KpwOHg0vxlxcdT1KKnKdEZ9XLHzdJKyfJcLQQD9UhsE0Y7BWYNAH0s8KjoE2GpmfwhEI6ifxxFRh38flZ7sCRdcQETyv7+kv1UGb8P2D+OlG3TuoZejWd6UDTDvKvMqtGMaOehTYALzoPelWD89CoR4fSfIozvvzzk/r8kisv1fOzcPnWj+irSbyleKf4KhlCPHQzHU7nXrtBKD6Hl6Nayo8RT8SIVwgspZTP5fdFzyE95kLhZfBuBjZcy6legKLPTw1YtKxLbVsAleqhSZ1ixAfwzinUPRipn4phF2P0WyO0ds86bwztOOrJaTzyVLWRgcm3eH5G69NktVV9ZoMyE3Wb83sotBIw9L+j8gEg55MZzw2bp/LGp/O7VQltadDogOjnHSZ1M8ati9KrnW/1w0KSchyK1pvYSbyqN0brVWYZurlQ/0S0rj3zWTyuHL3oZ3A5/MZrCBgChoAhYAgYAoaAIWAIGAKGgCFgCBgChoAhYAi0LQKZv+VWSp0333zziP2/NLlDhgypmq5punWk+pDts46kr+mSgkDwx3m2hsaxPXYX8pbzYVo/t5gPPrqrD023bduWe/DBz3fjpk6dmjvllFNCWa1dBIEgD2WraBTGXAHfq3369CnugfroEfnB2bVr1+ZqamryUXkLpSEQZFBE6+KjTpwjuqexsVFncl3w0V19UMq2W279+vW54cOH56PyolUq3HnnnRdPmzbtQ6WVkDl9+vQ7ZsyYcXpUlsqiR2nVyIca9BIpN3To0LdiSvrosWatFzdt2qSLCnMjRozIR+VFq0QA5EvYiH6cFeYGpSpXQO7LTLi1TpZSlZGb6SrUCujRQkSoQfuIc8OGDftjJwJ89BYdtUZwS+zChQtzigqO1hpfWp2AxpCPYcgxc+fOfVKpys4Qafy++tmzZ//FycLrdWgu34foPp72oocatM30+eyzz3KbN2/OjR49Ojdnzpx8VF401ZUZLuAkxTcc0EpVRmbiNWxZ+pIsDPkDDPt7pa6PLDLaom3wW25bdC6Zel4CSO78888vdqH8M888k68bOfKI29iKbUIygDwv3m7WrFnvQmtBj7cLKeP1L9BuQEjb9mpTdQ/V0nrWWWfleHsujll50Sqx7BaFHieZqn19sS9FbTPDqu6hbTMsk2oIGAKGgCFgCBgChoAhYAgYAoaAIWAIGALtgcD/AQy731B00o6fAAAAAElFTkSuQmCC') top left no-repeat;
+    background: url('tui-editor.png');
+    background-size: 218px 188px;
     display: inline-block;
-    width: 34px;
+}
+
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2),
+only screen and (   min--moz-device-pixel-ratio: 2),
+only screen and (     -o-min-device-pixel-ratio: 2/1),
+only screen and (        min-device-pixel-ratio: 2),
+only screen and (                min-resolution: 192dpi),
+only screen and (                min-resolution: 2dppx) {
+  .tui-toolbar-icons {
+    background: url('tui-editor-2x.png');
+    background-size: 218px 188px;
+    display: inline-block;
+  }
+}
+
+.tui-toolbar-icons.tui-heading {
+    background-position: -172px -48px;
 }
 
 .tui-toolbar-icons.tui-bold {
     background-position: -4px -4px;
 }
 
-.tui-toolbar-icons.tui-color {
-    background-position: -92px -70px;
-}
-
 .tui-toolbar-icons.tui-italic {
     background-position: -4px -48px;
+}
+
+.tui-toolbar-icons.tui-color {
+    background-position: -172px -70px;
 }
 
 .tui-toolbar-icons.tui-strike {
     background-position: -4px -26px;
 }
 
+.tui-toolbar-icons.tui-hrline {
+    background-position: -46px -92px;
+}
+
 .tui-toolbar-icons.tui-quote {
     background-position: -4px -114px;
 }
 
-.tui-toolbar-icons.tui-heading {
-    background-position: -92px -48px;
-}
-
-.tui-toolbar-icons.tui-hrline {
-    background-position: -26px -92px;
-}
-
-.tui-toolbar-icons.tui-task {
-    background-position: -70px -48px;
+.tui-toolbar-icons.tui-ul {
+    background-position: -46px -4px;;
 }
 
 .tui-toolbar-icons.tui-ol {
-    background-position: -26px -26px;
+    background-position: -46px -26px;
 }
 
-.tui-toolbar-icons.tui-ul {
-    background-position: -26px -4px;;
+.tui-toolbar-icons.tui-task {
+    background-position: -130px -48px;
+}
+
+.tui-toolbar-icons.tui-indent {
+    background-position: -46px -48px;
+}
+
+.tui-toolbar-icons.tui-outdent {
+    background-position: -46px -70px;
 }
 
 .tui-toolbar-icons.tui-table {
-    background-position: -48px -92px;
-}
-
-.tui-toolbar-icons.tui-code {
-    background-position: -70px -92px;
-}
-
-.tui-toolbar-icons.tui-codeblock {
-    background-position: -70px -70px;
-}
-
-.tui-toolbar-icons.tui-link {
-    background-position: -70px -26px;
+    background-position: -88px -92px;
 }
 
 .tui-toolbar-icons.tui-image {
-    background-position: -70px -4px;
+    background-position: -130px -4px;
+}
+
+.tui-toolbar-icons.tui-link {
+    background-position: -130px -26px;
+}
+
+.tui-toolbar-icons.tui-code {
+    background-position: -130px -92px;
+}
+
+.tui-toolbar-icons.tui-codeblock {
+    background-position: -130px -70px;
 }
 
 .tui-colorpicker-svg-slider {
