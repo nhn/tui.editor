@@ -1,16 +1,16 @@
 /**
- * @fileoverview test wysiwyg increase depth command
+ * @fileoverview test wysiwyg indent command
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 
-import IncreaseDepth from '../../src/js/wysiwygCommands/increaseDepth';
+import Indent from '../../src/js/wysiwygCommands/indent';
 import WwTaskManager from '../../src/js/wwTaskManager';
 import WwListManager from '../../src/js/wwListManager';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
-describe('IncreaseDepth', () => {
+describe('Indent', () => {
   let wwe, sq, container;
 
   beforeEach(() => {
@@ -51,7 +51,7 @@ describe('IncreaseDepth', () => {
 
     sq.setSelection(range);
 
-    IncreaseDepth.exec(wwe);
+    Indent.exec(wwe);
 
     expect(sq.get$Body().find('ul ul li').length).toEqual(1);
     expect(sq.get$Body().find('ul ul li').hasClass('task-list-item')).toBe(true);
@@ -64,11 +64,11 @@ describe('IncreaseDepth', () => {
 
     sq.setSelection(range);
 
-    IncreaseDepth.exec(wwe);
+    Indent.exec(wwe);
 
     expect(sq.get$Body().find('ul ul li').length).toEqual(0);
   });
-  describe('should increase depth when cursor', () => {
+  describe('should indent when cursor', () => {
     it('at startOffset 0.', () => {
       const range = wwe.getEditor().getSelection().cloneRange();
 
@@ -77,7 +77,7 @@ describe('IncreaseDepth', () => {
 
       sq.setSelection(range);
 
-      IncreaseDepth.exec(wwe);
+      Indent.exec(wwe);
 
       expect(sq.get$Body().find('ul ul li').length).toEqual(1);
       expect(sq.get$Body().find('ul ul li').hasClass('task-list-item')).toBe(true);
@@ -90,13 +90,13 @@ describe('IncreaseDepth', () => {
 
       sq.setSelection(range);
 
-      IncreaseDepth.exec(wwe);
+      Indent.exec(wwe);
 
       expect(sq.get$Body().find('ul ul li').length).toEqual(1);
       expect(sq.get$Body().find('ul ul li').hasClass('task-list-item')).toBe(true);
     });
   });
-  it('should increase ordinary list', () => {
+  it('should indent ordinary list', () => {
     const range = wwe.getEditor().getSelection().cloneRange();
 
     wwe.get$Body().html(`
@@ -117,7 +117,7 @@ describe('IncreaseDepth', () => {
 
     sq.setSelection(range);
 
-    IncreaseDepth.exec(wwe);
+    Indent.exec(wwe);
 
     expect(sq.get$Body().find('ul > li').length).toEqual(4);
     expect(sq.get$Body().find('ul > ul > li').length).toEqual(3);
@@ -125,7 +125,7 @@ describe('IncreaseDepth', () => {
     expect(sq.get$Body().find('ul > ul > ul > li').hasClass('task-list-item')).toBe(true);
   });
 
-  it('should merge prev/next list after increase depth', () => {
+  it('should merge prev/next list after outdent', () => {
     const range = wwe.getEditor().getSelection().cloneRange();
 
     wwe.get$Body().html(`
@@ -148,7 +148,7 @@ describe('IncreaseDepth', () => {
 
     sq.setSelection(range);
 
-    IncreaseDepth.exec(wwe);
+    Indent.exec(wwe);
 
     expect(sq.get$Body().find('> ul > li').length).toEqual(1);
     expect(sq.get$Body().find('> ul > ol > li').length).toEqual(5);

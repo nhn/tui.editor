@@ -7,21 +7,27 @@ import $ from 'jquery';
 import ModeSwitch from '../../src/js/ui/modeSwitch';
 
 describe('ModeSwitch', () => {
+  let $container, modeSwitch;
+
+  beforeEach(() => {
+    $container = $('<div>');
+    $('body').append($container);
+  });
+
   afterEach(() => {
-    $('body').empty();
+    modeSwitch.destroy();
+    $container.empty();
   });
 
   it('editorTypeControl should be exist', () => {
-    const modeSwitch = new ModeSwitch();
-    $('body').append(modeSwitch.$el);
+    modeSwitch = new ModeSwitch($container);
 
     expect($('.te-mode-switch').length).toEqual(1);
   });
 
   describe('should apply button type on option', () => {
     it('markdown', () => {
-      const modeSwitch = new ModeSwitch(ModeSwitch.TYPE.MARKDOWN);
-      $('body').append(modeSwitch.$el);
+      modeSwitch = new ModeSwitch($container, ModeSwitch.TYPE.MARKDOWN);
 
       expect($('button.te-switch-button.active').length).toEqual(1);
       expect($('button.te-switch-button.wysiwyg.active').length).toEqual(0);
@@ -29,8 +35,7 @@ describe('ModeSwitch', () => {
       expect($('button.te-switch-button.markdown.active').text()).toEqual('Markdown');
     });
     it('wysiwyg', () => {
-      const modeSwitch = new ModeSwitch(ModeSwitch.TYPE.WYSIWYG);
-      $('body').append(modeSwitch.$el);
+      modeSwitch = new ModeSwitch($container, ModeSwitch.TYPE.WYSIWYG);
 
       expect($('button.te-switch-button.active').length).toEqual(1);
       expect($('button.te-switch-button.markdown.active').length).toEqual(0);
@@ -40,9 +45,7 @@ describe('ModeSwitch', () => {
   });
 
   it('should add `active` class on click button', () => {
-    const modeSwitch = new ModeSwitch();
-
-    $('body').append(modeSwitch.$el);
+    modeSwitch = new ModeSwitch($container);
 
     expect($('button.te-switch-button.wysiwyg').text()).toEqual('WYSIWYG');
     expect($('button.te-switch-button.markdown.active').text()).toEqual('Markdown');
@@ -51,5 +54,27 @@ describe('ModeSwitch', () => {
 
     expect($('button.te-switch-button.wysiwyg.active').text()).toEqual('WYSIWYG');
     expect($('button.te-switch-button.markdown').text()).toEqual('Markdown');
+  });
+
+  describe('isShown', () => {
+    it('should return is visible status', () => {
+      modeSwitch = new ModeSwitch($container);
+      expect(modeSwitch.isShown()).toBe(true);
+
+      modeSwitch._$rootElement.css('display', 'none');
+      expect(modeSwitch.isShown()).toBe(false);
+    });
+  });
+
+  describe('show/hide', () => {
+    it('should show/hide the base element', () => {
+      modeSwitch = new ModeSwitch($container);
+
+      modeSwitch.hide();
+      expect(modeSwitch._$rootElement.css('display')).toBe('none');
+
+      modeSwitch.show();
+      expect(modeSwitch._$rootElement.css('display')).toBe('block');
+    });
   });
 });

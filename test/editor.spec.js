@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
+import util from 'tui-code-snippet';
 
 import Editor from '../src/js/editor';
 import {CodeBlockManager} from '../src/js/codeBlockManager';
@@ -276,40 +277,118 @@ describe('Editor', () => {
   });
 
   describe('options', () => {
+    beforeEach(() => {
+      container = document.createElement('div');
+      document.body.appendChild(container);
+    });
+
+    afterEach(done => {
+      setTimeout(() => {
+        editor.remove();
+        container.parentNode.removeChild(container);
+        done();
+      });
+    });
+
     describe('usageStatistics', () => {
-      beforeEach(() => {
-        container = document.createElement('div');
-        document.body.appendChild(container);
-        jasmine.Ajax.install();
-      });
-
-      afterEach(done => {
-        setTimeout(() => {
-          jasmine.Ajax.uninstall();
-          editor.remove();
-          container.parentNode.removeChild(container);
-          done();
-        });
-      });
-
       it('should send request hostname in payload by default', () => {
+        spyOn(util, 'imagePing');
+
         editor = new Editor({
           el: container
         });
 
-        const request = jasmine.Ajax.requests.mostRecent();
-        expect(request).toBeTruthy();
-        expect(request.params).toContain(location.hostname);
+        expect(util.imagePing).toHaveBeenCalled();
       });
 
       it('should not send request if the option is set to false', () => {
+        spyOn(util, 'imagePing');
+
         editor = new Editor({
           el: container,
           usageStatistics: false
         });
 
-        const request = jasmine.Ajax.requests.mostRecent();
-        expect(request).toBeFalsy();
+        expect(util.imagePing).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('toolbaritems', () => {
+      it('should populate default toolbar items', () => {
+        editor = new Editor({
+          el: container
+        });
+
+        const toolbarItems = editor.getUI().getToolbar().getItems();
+        expect(toolbarItems[0].getName()).toBe('heading');
+        expect(toolbarItems[1].getName()).toBe('bold');
+        expect(toolbarItems[2].getName()).toBe('italic');
+        expect(toolbarItems[3].getName()).toBe('strike');
+        expect(toolbarItems[4].getName()).toBe('divider');
+        expect(toolbarItems[5].getName()).toBe('hr');
+        expect(toolbarItems[6].getName()).toBe('quote');
+        expect(toolbarItems[7].getName()).toBe('divider');
+        expect(toolbarItems[8].getName()).toBe('ul');
+        expect(toolbarItems[9].getName()).toBe('ol');
+        expect(toolbarItems[10].getName()).toBe('task');
+        expect(toolbarItems[11].getName()).toBe('indent');
+        expect(toolbarItems[12].getName()).toBe('outdent');
+        expect(toolbarItems[13].getName()).toBe('divider');
+        expect(toolbarItems[14].getName()).toBe('table');
+        expect(toolbarItems[15].getName()).toBe('image');
+        expect(toolbarItems[16].getName()).toBe('link');
+        expect(toolbarItems[17].getName()).toBe('divider');
+        expect(toolbarItems[18].getName()).toBe('code');
+        expect(toolbarItems[19].getName()).toBe('codeblock');
+      });
+
+      it('should populate custom toolbar buttons according to given array', () => {
+        editor = new Editor({
+          el: container,
+          toolbarItems: [
+            'bold',
+            'divider',
+            {
+              type: 'button',
+              options: {
+                name: 'testButton'
+              }
+            },
+            {
+              type: 'item',
+              options: {
+                name: 'testItem'
+              }
+            }
+          ]
+        });
+
+        const toolbarItems = editor.getUI().getToolbar().getItems();
+        expect(toolbarItems[0].getName()).toBe('bold');
+        expect(toolbarItems[1].getName()).toBe('divider');
+        expect(toolbarItems[2].getName()).toBe('testButton');
+        expect(toolbarItems[3].getName()).toBe('testItem');
+      });
+    });
+
+    describe('hideModeSwitch', () => {
+      it('should hide mode switch if the option value is true', () => {
+        editor = new Editor({
+          el: container,
+          hideModeSwitch: true
+        });
+
+        const modeSwitch = editor.getUI().getModeSwitch();
+        expect(modeSwitch.isShown()).toBe(false);
+      });
+
+      it('should hide mode switch if the option value is true', () => {
+        editor = new Editor({
+          el: container
+        });
+
+        const modeSwitch = editor.getUI().getModeSwitch();
+        expect(modeSwitch.isShown()).toBe(true);
       });
     });
   });

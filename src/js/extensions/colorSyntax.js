@@ -127,21 +127,25 @@ function colorSyntaxExtension(editor) {
  * @ignore
  */
 function initUI(editor, preset) {
+  const name = 'colorSyntax';
   const className = 'tui-color';
   const i18n = editor.i18n;
+  const toolbar = editor.getUI().getToolbar();
 
   editor.eventManager.addEventType('colorButtonClicked');
 
-  editor.getUI().toolbar.addButton({
+  toolbar.addButton({
+    name,
     className,
     event: 'colorButtonClicked',
     tooltip: i18n.get('Text color')
   }, 4);
-  const $button = editor.getUI().toolbar.$el.find(`button.${className}`);
+  const colorSyntaxButtonIndex = toolbar.indexOfItem(name);
+  const {$el: $button} = toolbar.getItem(colorSyntaxButtonIndex);
 
   const $colorPickerContainer = $('<div />');
 
-  const $buttonBar = $('<button type="button" class="te-apply-button">입력</button>');
+  const $buttonBar = $(`<button type="button" class="te-apply-button">${i18n.get('OK')}</button>`);
 
   const cpOptions = {
     container: $colorPickerContainer[0]
