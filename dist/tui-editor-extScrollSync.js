@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.0.6
+ * @version 1.1.0-a
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -195,6 +195,8 @@ function scrollSyncExtension(editor) {
 
   // UI
   if (editor.getUI().name === 'default') {
+    var toolbar = editor.getUI().getToolbar();
+
     // init button
     button = new Button({
       className: className,
@@ -203,8 +205,8 @@ function scrollSyncExtension(editor) {
       $el: (0, _jquery2.default)('<button class="active ' + className + '" type="button"></button>')
     });
 
-    $divider = editor.getUI().toolbar.addDivider();
-    editor.getUI().toolbar.addButton(button);
+    $divider = toolbar.addDivider();
+    toolbar.addButton(button);
 
     changeButtonVisiblityStateIfNeed();
     // hide scroll follow button in wysiwyg

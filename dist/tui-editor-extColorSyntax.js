@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.0.6
+ * @version 1.1.0-a
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -284,21 +284,27 @@ function colorSyntaxExtension(editor) {
  * @ignore
  */
 function initUI(editor, preset) {
+  var name = 'colorSyntax';
   var className = 'tui-color';
   var i18n = editor.i18n;
+  var toolbar = editor.getUI().getToolbar();
 
   editor.eventManager.addEventType('colorButtonClicked');
 
-  editor.getUI().toolbar.addButton({
+  toolbar.addButton({
+    name: name,
     className: className,
     event: 'colorButtonClicked',
     tooltip: i18n.get('Text color')
   }, 4);
-  var $button = editor.getUI().toolbar.$el.find('button.' + className);
+  var colorSyntaxButtonIndex = toolbar.indexOfItem(name);
+
+  var _toolbar$getItem = toolbar.getItem(colorSyntaxButtonIndex),
+      $button = _toolbar$getItem.$el;
 
   var $colorPickerContainer = (0, _jquery2.default)('<div />');
 
-  var $buttonBar = (0, _jquery2.default)('<button type="button" class="te-apply-button">입력</button>');
+  var $buttonBar = (0, _jquery2.default)('<button type="button" class="te-apply-button">' + i18n.get('OK') + '</button>');
 
   var cpOptions = {
     container: $colorPickerContainer[0]

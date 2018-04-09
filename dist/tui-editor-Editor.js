@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.0.6
+ * @version 1.1.0-a
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("markdown-it"), require("to-mark"), require("highlight.js"), require("squire-rte"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["CodeMirror"], root["markdownit"], root["toMark"], root["hljs"], root["Squire"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_19__, __WEBPACK_EXTERNAL_MODULE_20__, __WEBPACK_EXTERNAL_MODULE_28__, __WEBPACK_EXTERNAL_MODULE_58__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_21__, __WEBPACK_EXTERNAL_MODULE_22__, __WEBPACK_EXTERNAL_MODULE_30__, __WEBPACK_EXTERNAL_MODULE_62__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 38);
+/******/ 	return __webpack_require__(__webpack_require__.s = 42);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -116,7 +116,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _command = __webpack_require__(17);
+var _command = __webpack_require__(19);
 
 var _command2 = _interopRequireDefault(_command);
 
@@ -1342,7 +1342,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _highlight = __webpack_require__(28);
+var _highlight = __webpack_require__(30);
 
 var _highlight2 = _interopRequireDefault(_highlight);
 
@@ -1474,6 +1474,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _uiInstanceId = -1;
+
 /**
  * get ui instance id
  * @returns {number} - new instance id
@@ -1490,12 +1491,26 @@ function makeUIInstanceId() {
  */
 
 var UIController = function () {
+
   /**
    * Creates an instance of UIController.
    * @param {Object} [options] - options
    * @param {jQuery} [options.rootElement] - root element
    * @param {string} [options.tagName] - tag name
    * @param {string} [options.className] - class name
+   * @memberof UIController
+   */
+
+
+  /**
+   * UI jQuery element
+   * @type {Object}
+   * @memberof UIController
+   */
+
+  /**
+   * tag name
+   * @type {string}
    * @memberof UIController
    */
   function UIController() {
@@ -1508,20 +1523,10 @@ var UIController = function () {
     }, options);
 
     this.tagName = options.tagName;
+
     this.className = options.className;
 
-    /**
-     * ui id
-     * @type {number}
-     * @protected
-     */
     this._id = makeUIInstanceId();
-
-    /**
-     * rootElement
-     * @type {jQuery}
-     */
-    this.$el = null;
 
     this._setRootElement(options.rootElement);
   }
@@ -1529,6 +1534,21 @@ var UIController = function () {
   /**
    * @param {string|object} aType - event name and selector string
    * @param {function} aFn - event handler
+   * @memberof UIController
+   */
+
+
+  /**
+   * UI Id
+   * @type {number}
+   * @private
+   * @memberof UIController
+   */
+
+
+  /**
+   * ui controller class name
+   * @type {string}
    * @memberof UIController
    */
 
@@ -1665,7 +1685,9 @@ var UIController = function () {
   }, {
     key: 'remove',
     value: function remove() {
-      this.$el.remove();
+      if (this.$el) {
+        this.$el.remove();
+      }
     }
 
     /**
@@ -1704,9 +1726,112 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _tuiCodeSnippet = __webpack_require__(1);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+var _uicontroller = __webpack_require__(8);
+
+var _uicontroller2 = _interopRequireDefault(_uicontroller);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements Toolbar Item
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+/**
+ * Toolbar Item
+ * @extends {UIController}
+ */
+var ToolbarItem = function (_UIController) {
+  _inherits(ToolbarItem, _UIController);
+
+  /**
+   * toolbar item constructor
+   * @memberof ToolbarItem
+   * @param {Object} [options={name: 'toolbar-item'}] [description]
+   */
+
+  /**
+   * item name
+   * @memberof ToolbarDivider
+   * @type {String}
+   * @static
+   */
+  function ToolbarItem() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+      name: ToolbarItem.name
+    };
+
+    _classCallCheck(this, ToolbarItem);
+
+    var _this = _possibleConstructorReturn(this, (ToolbarItem.__proto__ || Object.getPrototypeOf(ToolbarItem)).call(this, _tuiCodeSnippet2.default.extend({
+      className: ToolbarItem.className
+    }, options)));
+
+    _this._name = options.name;
+    return _this;
+  }
+
+  /**
+   * get the name of the toolbar item
+   * @memberof ToolbarItem
+   * @returns {string} - the name of the toolbar item
+   */
+
+
+  /**
+   * toolbar item class name
+   * @memberof ToolbarItem
+   * @type {String}
+   */
+
+
+  _createClass(ToolbarItem, [{
+    key: 'getName',
+    value: function getName() {
+      return this._name;
+    }
+  }]);
+
+  return ToolbarItem;
+}(_uicontroller2.default);
+
+Object.defineProperty(ToolbarItem, 'name', {
+  enumerable: true,
+  writable: true,
+  value: 'item'
+});
+Object.defineProperty(ToolbarItem, 'className', {
+  enumerable: true,
+  writable: true,
+  value: 'tui-toolbar-item'
+});
+exports.default = ToolbarItem;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _preview = __webpack_require__(10);
+var _preview = __webpack_require__(11);
 
 var _preview2 = _interopRequireDefault(_preview);
 
@@ -1801,7 +1926,7 @@ var MarkdownPreview = function (_Preview) {
 exports.default = MarkdownPreview;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1821,7 +1946,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _lazyRunner = __webpack_require__(16);
+var _lazyRunner = __webpack_require__(18);
 
 var _lazyRunner2 = _interopRequireDefault(_lazyRunner);
 
@@ -1965,7 +2090,7 @@ var Preview = function () {
 exports.default = Preview;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2077,7 +2202,7 @@ function finalizeHtml($html, needHtmlText) {
 exports.default = htmlSanitizer;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2101,7 +2226,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh', 'addImageBlobHook', 'setMarkdownAfter', 'contentChangedFromWysiwyg', 'changeFromWysiwyg', 'contentChangedFromMarkdown', 'changeFromMarkdown', 'change', 'changeModeToWysiwyg', 'changeModeToMarkdown', 'changeModeBefore', 'changeMode', 'changePreviewStyle', 'openPopupAddLink', 'openPopupAddImage', 'openPopupAddTable', 'openPopupTableUtils', 'openHeadingSelect', 'openPopupCodeBlockLanguages', 'openPopupCodeBlockEditor', 'closePopupCodeBlockLanguages', 'closePopupCodeBlockEditor', 'closeAllPopup', 'command', 'addCommandBefore', 'htmlUpdate', 'markdownUpdate', 'renderedHtmlUpdated', 'removeEditor', 'convertorAfterMarkdownToHtmlConverted', 'convertorBeforeHtmlToMarkdownConverted', 'convertorAfterHtmlToMarkdownConverted', 'stateChange', 'wysiwygSetValueAfter', 'wysiwygSetValueBefore', 'wysiwygGetValueBefore', 'wysiwygProcessHTMLText', 'wysiwygRangeChangeAfter', 'wysiwygKeyEvent', 'scroll', 'click', 'mousedown', 'mouseover', 'mouseout', 'mouseup', 'contextmenu', 'keydown', 'keyup', 'keyMap', 'load', 'focus', 'blur', 'paste', 'pasteBefore', 'willPaste', 'copy', 'copyBefore', 'copyAfter', 'cut', 'cutAfter', 'drop', 'show', 'hide'];
+var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh', 'addImageBlobHook', 'setMarkdownAfter', 'contentChangedFromWysiwyg', 'changeFromWysiwyg', 'contentChangedFromMarkdown', 'changeFromMarkdown', 'change', 'changeModeToWysiwyg', 'changeModeToMarkdown', 'changeModeBefore', 'changeMode', 'changePreviewStyle', 'openPopupAddLink', 'openPopupAddImage', 'openPopupAddTable', 'openPopupTableUtils', 'openHeadingSelect', 'openPopupCodeBlockLanguages', 'openPopupCodeBlockEditor', 'openDropdownToolbar', 'closePopupCodeBlockLanguages', 'closePopupCodeBlockEditor', 'closeAllPopup', 'command', 'addCommandBefore', 'htmlUpdate', 'markdownUpdate', 'renderedHtmlUpdated', 'removeEditor', 'convertorAfterMarkdownToHtmlConverted', 'convertorBeforeHtmlToMarkdownConverted', 'convertorAfterHtmlToMarkdownConverted', 'stateChange', 'wysiwygSetValueAfter', 'wysiwygSetValueBefore', 'wysiwygGetValueBefore', 'wysiwygProcessHTMLText', 'wysiwygRangeChangeAfter', 'wysiwygKeyEvent', 'scroll', 'click', 'mousedown', 'mouseover', 'mouseout', 'mouseup', 'contextmenu', 'keydown', 'keyup', 'keyMap', 'load', 'focus', 'blur', 'paste', 'pasteBefore', 'willPaste', 'copy', 'copyBefore', 'copyAfter', 'cut', 'cutAfter', 'drop', 'show', 'hide'];
 
 /**
  * Class EventManager
@@ -2340,7 +2465,7 @@ var EventManager = function () {
 exports.default = EventManager;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2429,7 +2554,7 @@ var ExtManager = function () {
 exports.default = new ExtManager();
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2453,43 +2578,43 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _markdownIt = __webpack_require__(19);
+var _markdownIt = __webpack_require__(21);
 
 var _markdownIt2 = _interopRequireDefault(_markdownIt);
 
-var _toMark = __webpack_require__(20);
+var _toMark = __webpack_require__(22);
 
 var _toMark2 = _interopRequireDefault(_toMark);
 
-var _htmlSanitizer = __webpack_require__(11);
+var _htmlSanitizer = __webpack_require__(12);
 
 var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
-var _markdownitTaskPlugin = __webpack_require__(21);
+var _markdownitTaskPlugin = __webpack_require__(23);
 
 var _markdownitTaskPlugin2 = _interopRequireDefault(_markdownitTaskPlugin);
 
-var _markdownitCodeBlockPlugin = __webpack_require__(22);
+var _markdownitCodeBlockPlugin = __webpack_require__(24);
 
 var _markdownitCodeBlockPlugin2 = _interopRequireDefault(_markdownitCodeBlockPlugin);
 
-var _markdownitCodeRenderer = __webpack_require__(23);
+var _markdownitCodeRenderer = __webpack_require__(25);
 
 var _markdownitCodeRenderer2 = _interopRequireDefault(_markdownitCodeRenderer);
 
-var _markdownitBlockQuoteRenderer = __webpack_require__(24);
+var _markdownitBlockQuoteRenderer = __webpack_require__(26);
 
 var _markdownitBlockQuoteRenderer2 = _interopRequireDefault(_markdownitBlockQuoteRenderer);
 
-var _markdownitTableRenderer = __webpack_require__(25);
+var _markdownitTableRenderer = __webpack_require__(27);
 
 var _markdownitTableRenderer2 = _interopRequireDefault(_markdownitTableRenderer);
 
-var _markdownitHtmlBlockRenderer = __webpack_require__(26);
+var _markdownitHtmlBlockRenderer = __webpack_require__(28);
 
 var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockRenderer);
 
-var _markdownitBackticksRenderer = __webpack_require__(27);
+var _markdownitBackticksRenderer = __webpack_require__(29);
 
 var _markdownitBackticksRenderer2 = _interopRequireDefault(_markdownitBackticksRenderer);
 
@@ -2766,7 +2891,159 @@ var Convertor = function () {
 exports.default = Convertor;
 
 /***/ }),
-/* 15 */
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _toolbarItem = __webpack_require__(9);
+
+var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
+
+var _tooltip = __webpack_require__(32);
+
+var _tooltip2 = _interopRequireDefault(_tooltip);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements UI Button
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+/**
+ * Class Button UI
+ * @extends {ToolbarItem}
+ * @deprecated
+ */
+var Button = function (_ToolbarItem) {
+  _inherits(Button, _ToolbarItem);
+
+  /**
+   * Creates an instance of Button.
+   * @param {object} options - button options
+   *  @param {string} options.className - button class name
+   *  @param {string} options.command - command name to execute on click
+   *  @param {string} options.event - event name to trigger on click
+   *  @param {string} options.text - text on button
+   *  @param {string} options.tooltip - text on tooltip
+   *  @param {string} options.style - button style
+   *  @param {string} options.state - button state
+   * @memberof Button
+   */
+
+  /**
+   * item name
+   * @memberof Button
+   * @type {String}
+   * @static
+   */
+  function Button() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+      tagName: 'button',
+      name: Button.name
+    };
+
+    _classCallCheck(this, Button);
+
+    var _this = _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this, {
+      name: options.name,
+      tagName: 'button',
+      className: options.className + ' ' + Button.className,
+      rootElement: options.$el
+    }));
+
+    _this._setOptions(options);
+
+    _this._render();
+    _this.on('click', _this._onClick.bind(_this));
+    if (options.tooltip) {
+      _this.on('mouseover', _this._onOver.bind(_this));
+      _this.on('mouseout', _this._onOut.bind(_this));
+    }
+    return _this;
+  }
+
+  /**
+   * ToolbarItem className
+   * @type {String}
+   * @memberof Button
+   * @static
+   */
+
+
+  _createClass(Button, [{
+    key: '_setOptions',
+    value: function _setOptions(options) {
+      this._command = options.command;
+      this._event = options.event;
+      this._text = options.text;
+      this._tooltip = options.tooltip;
+      this._style = options.style;
+      this._state = options.state;
+    }
+  }, {
+    key: '_render',
+    value: function _render() {
+      this.$el.text(this._text);
+      this.$el.attr('type', 'button');
+
+      if (this._style) {
+        this.$el.attr('style', this._style);
+      }
+    }
+  }, {
+    key: '_onClick',
+    value: function _onClick() {
+      if (this._command) {
+        this.trigger('command', this._command);
+      } else if (this._event) {
+        this.trigger('event', this._event);
+      }
+
+      this.trigger('clicked');
+    }
+  }, {
+    key: '_onOver',
+    value: function _onOver() {
+      _tooltip2.default.show(this.$el, this._tooltip);
+    }
+  }, {
+    key: '_onOut',
+    value: function _onOut() {
+      _tooltip2.default.hide();
+    }
+  }]);
+
+  return Button;
+}(_toolbarItem2.default);
+
+Object.defineProperty(Button, 'name', {
+  enumerable: true,
+  writable: true,
+  value: 'button'
+});
+Object.defineProperty(Button, 'className', {
+  enumerable: true,
+  writable: true,
+  value: 'tui-toolbar-icons'
+});
+exports.default = Button;
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3172,7 +3449,7 @@ var KeyMapper = function () {
 exports.default = KeyMapper;
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3279,7 +3556,7 @@ var LazyRunner = function () {
 exports.default = LazyRunner;
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3452,7 +3729,7 @@ Command.TYPE = {
 exports.default = Command;
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3765,19 +4042,19 @@ function dataURItoBlob(dataURI) {
 exports.default = ImportManager;
 
 /***/ }),
-/* 19 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_19__;
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_20__;
-
-/***/ }),
 /* 21 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_21__;
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_22__;
+
+/***/ }),
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3885,7 +4162,7 @@ function isTaskListItemToken(tokens, index) {
 module.exports = MarkdownitTaskRenderer;
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3968,7 +4245,7 @@ function escape(html, encode) {
 module.exports = MarkdownitCodeBlockRenderer;
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4037,7 +4314,7 @@ module.exports = function code(state, startLine, endLine /*, silent*/) {
 /* eslint-enable */
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4369,7 +4646,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
 };
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4583,7 +4860,7 @@ module.exports = function table(state, startLine, endLine, silent) {
 };
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4680,7 +4957,7 @@ module.exports = function html_block(state, startLine, endLine, silent) {
 /* eslint-enable */
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4752,13 +5029,13 @@ module.exports = function backtick(state, silent) {
 };
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_28__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_30__;
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4778,11 +5055,11 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _mdPreview = __webpack_require__(9);
+var _mdPreview = __webpack_require__(10);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
-var _eventManager = __webpack_require__(12);
+var _eventManager = __webpack_require__(13);
 
 var _eventManager2 = _interopRequireDefault(_eventManager);
 
@@ -4790,11 +5067,11 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _extManager = __webpack_require__(13);
+var _extManager = __webpack_require__(14);
 
 var _extManager2 = _interopRequireDefault(_extManager);
 
-var _convertor = __webpack_require__(14);
+var _convertor = __webpack_require__(15);
 
 var _convertor2 = _interopRequireDefault(_convertor);
 
@@ -5084,127 +5361,7 @@ ToastUIEditorViewer.WwTableSelectionManager = null;
 module.exports = ToastUIEditorViewer;
 
 /***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _uicontroller = __webpack_require__(8);
-
-var _uicontroller2 = _interopRequireDefault(_uicontroller);
-
-var _tooltip = __webpack_require__(31);
-
-var _tooltip2 = _interopRequireDefault(_tooltip);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements UI Button
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
-
-/**
- * Class Button UI
- * @extends {UIController}
- */
-var Button = function (_UIController) {
-  _inherits(Button, _UIController);
-
-  /**
-   * Creates an instance of Button.
-   * @param {object} options - button options
-   *  @param {string} options.className - button class name
-   *  @param {string} options.command - command name to execute on click
-   *  @param {string} options.event - event name to trigger on click
-   *  @param {string} options.text - text on button
-   *  @param {string} options.tooltip - text on tooltip
-   *  @param {string} options.style - button style
-   *  @param {string} options.state - button state
-   * @memberof Button
-   */
-  function Button(options) {
-    _classCallCheck(this, Button);
-
-    var _this = _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this, {
-      tagName: 'button',
-      className: options.className + ' tui-toolbar-icons',
-      rootElement: options.$el
-    }));
-
-    _this._setOptions(options);
-
-    _this._render();
-    _this.on('click', _this._onClick.bind(_this));
-    if (options.tooltip) {
-      _this.on('mouseover', _this._onOver.bind(_this));
-      _this.on('mouseout', _this._onOut.bind(_this));
-    }
-    return _this;
-  }
-
-  _createClass(Button, [{
-    key: '_setOptions',
-    value: function _setOptions(options) {
-      this._command = options.command;
-      this._event = options.event;
-      this._text = options.text;
-      this._tooltip = options.tooltip;
-      this._style = options.style;
-      this._state = options.state;
-    }
-  }, {
-    key: '_render',
-    value: function _render() {
-      this.$el.text(this._text);
-      this.$el.attr('type', 'button');
-
-      if (this._style) {
-        this.$el.attr('style', this._style);
-      }
-    }
-  }, {
-    key: '_onClick',
-    value: function _onClick() {
-      if (this._command) {
-        this.trigger('command', this._command);
-      } else if (this._event) {
-        this.trigger('event', this._event);
-      }
-
-      this.trigger('clicked');
-    }
-  }, {
-    key: '_onOver',
-    value: function _onOver() {
-      _tooltip2.default.show(this.$el, this._tooltip);
-    }
-  }, {
-    key: '_onOut',
-    value: function _onOut() {
-      _tooltip2.default.hide();
-    }
-  }]);
-
-  return Button;
-}(_uicontroller2.default);
-
-exports.default = Button;
-
-/***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5280,7 +5437,7 @@ var Tooltip = function () {
 exports.default = new Tooltip();
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5304,17 +5461,17 @@ var _codemirror = __webpack_require__(6);
 
 var _codemirror2 = _interopRequireDefault(_codemirror);
 
-__webpack_require__(41);
-
-__webpack_require__(42);
-
-__webpack_require__(43);
-
-__webpack_require__(44);
-
 __webpack_require__(45);
 
 __webpack_require__(46);
+
+__webpack_require__(47);
+
+__webpack_require__(48);
+
+__webpack_require__(49);
+
+__webpack_require__(50);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5711,7 +5868,7 @@ var CodeMirrorExt = function () {
 exports.default = CodeMirrorExt;
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5814,7 +5971,7 @@ var ComponentManager = function () {
 exports.default = ComponentManager;
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7227,7 +7384,7 @@ function tableCellGenerator(amount, tagName) {
 exports.default = WwTableManager;
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7717,7 +7874,7 @@ var WwTableSelectionManager = function () {
 exports.default = WwTableSelectionManager;
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8113,7 +8270,701 @@ function sanitizeHtmlCode(code) {
 exports.default = WwCodeBlockManager;
 
 /***/ }),
-/* 37 */
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _tuiCodeSnippet = __webpack_require__(1);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+var _uicontroller = __webpack_require__(8);
+
+var _uicontroller2 = _interopRequireDefault(_uicontroller);
+
+var _button = __webpack_require__(16);
+
+var _button2 = _interopRequireDefault(_button);
+
+var _toolbarItem = __webpack_require__(9);
+
+var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
+
+var _toolbarDivider = __webpack_require__(39);
+
+var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
+
+var _toolbarItemFactory = __webpack_require__(40);
+
+var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements toolbar
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+/**
+ * Class Toolbar
+ * @extends {UIController}
+ */
+var Toolbar = function (_UIController) {
+  _inherits(Toolbar, _UIController);
+
+  /**
+   * Creates an instance of Toolbar.
+   * @param {EventManager} eventManager - event manager
+   * @param {ToolbarItem[]} [items=[]] - toolbar items
+   * @memberof Toolbar
+   */
+
+  /**
+   * items
+   * @memberof Toolbar
+   * @private
+   * @type {Array}
+   */
+  function Toolbar(eventManager) {
+    var items = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+    _classCallCheck(this, Toolbar);
+
+    var _this = _possibleConstructorReturn(this, (Toolbar.__proto__ || Object.getPrototypeOf(Toolbar)).call(this, {
+      tagName: 'div',
+      className: 'tui-editor-defaultUI-toolbar'
+    }));
+
+    Object.defineProperty(_this, '_items', {
+      enumerable: true,
+      writable: true,
+      value: []
+    });
+
+
+    _this._eventManager = eventManager;
+
+    _this.setItems(items);
+    _this._initEvent(eventManager);
+    return _this;
+  }
+
+  /**
+   * init event
+   * @param  {EventManager} eventManager - event manager
+   */
+
+
+  /**
+   * event manager
+   * @memberof Toolbar
+   * @private
+   * @type {EventManager}
+   */
+
+
+  _createClass(Toolbar, [{
+    key: '_initEvent',
+    value: function _initEvent(eventManager) {
+      var _this2 = this;
+
+      eventManager.listen('stateChange', function (ev) {
+        _this2._items.forEach(function (item) {
+          if (item._state) {
+            if (ev[item._state]) {
+              item.$el.addClass('active');
+            } else {
+              item.$el.removeClass('active');
+            }
+          }
+        });
+      });
+    }
+
+    /**
+     * get toolbar items
+     * @returns {ToolbarItem[]} - toolbar items
+     * @memberof Toolbar
+     */
+
+  }, {
+    key: 'getItems',
+    value: function getItems() {
+      return this._items.slice(0);
+    }
+
+    /**
+     * get toolbar item at given index
+     * @param  {number} index - item index
+     * @returns {ToolbarItem} - toolbar item at the index
+     */
+
+  }, {
+    key: 'getItem',
+    value: function getItem(index) {
+      return this._items[index];
+    }
+
+    /**
+     * set toolbar items
+     * @param {ToolbarItem[]} items - toolbar items
+     * @memberof Toolbar
+     */
+
+  }, {
+    key: 'setItems',
+    value: function setItems(items) {
+      this.removeAllItems();
+      items.forEach(this.addItem.bind(this));
+    }
+
+    /**
+     * add toolbar item
+     * @param {ToolbarItem|string|object} item - toolbar item
+     * @memberof Toolbar
+     */
+
+  }, {
+    key: 'addItem',
+    value: function addItem(item) {
+      this.insertItem(this._items.length, item);
+    }
+
+    /**
+     * insert toolbar item
+     * @param  {number} index - index at given item inserted
+     * @param  {ToolbarItem|string|object} item - toolbar item
+     * @memberof Toolbar
+     */
+
+  }, {
+    key: 'insertItem',
+    value: function insertItem(index, item) {
+      var _this3 = this;
+
+      if (_tuiCodeSnippet2.default.isString(item)) {
+        item = _toolbarItemFactory2.default.create(item);
+      } else if (_tuiCodeSnippet2.default.isString(item.type)) {
+        item = _toolbarItemFactory2.default.create(item.type, item.options);
+      }
+
+      var children = this.$el.children();
+      if (index >= 0 && index < children.length) {
+        item.$el.insertBefore(children.eq(index));
+        this._items.splice(index, 0, item);
+      } else {
+        item.$el.appendTo(this.$el);
+        this._items.push(item);
+      }
+
+      item.onCommandHandler = function (e, commandName) {
+        return _this3._eventManager.emit('command', commandName);
+      };
+      item.onEventHandler = function (e, eventName) {
+        return _this3._eventManager.emit(eventName);
+      };
+      item.on('command', item.onCommandHandler);
+      item.on('event', item.onEventHandler);
+    }
+
+    /**
+     * get index of given item
+     * @param  {ToolbarItem} item - toolbar item
+     * @returns {number} - index of given toolbar item
+     * @memberof Toolbar
+     */
+
+  }, {
+    key: 'indexOfItem',
+    value: function indexOfItem(item) {
+      var index = void 0;
+      if (item instanceof _toolbarItem2.default) {
+        index = this._items.indexOf(item);
+      } else if (_tuiCodeSnippet2.default.isString(item)) {
+        var itemName = item;
+        index = this._items.map(function (itemToTest) {
+          return itemToTest.getName();
+        }).indexOf(itemName);
+      }
+
+      return index;
+    }
+
+    /**
+     * remove an item
+     * @param  {ToolbarItem|number} item - an toolbar item or index of the item to remove
+     * @param  {boolean} destroy - destroy item or not
+     * @returns {ToolbarItem|undefined} - removed item
+     * @memberof Toolbar
+     */
+
+  }, {
+    key: 'removeItem',
+    value: function removeItem(item) {
+      var destroy = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+      var index = void 0;
+      var removedItem = void 0;
+
+      if (item instanceof _toolbarItem2.default) {
+        index = this.indexOfItem(item);
+      } else {
+        index = item;
+      }
+
+      if (index >= 0) {
+        removedItem = this._items.splice(index, 1)[0];
+      }
+      if (removedItem) {
+        if (destroy) {
+          removedItem.destroy();
+        } else {
+          removedItem.off('command', removedItem.onCommandHandler);
+          removedItem.off('event', removedItem.onEventHandler);
+          removedItem.$el.detach();
+        }
+      }
+
+      return removedItem;
+    }
+
+    /**
+     * remove all toolbar items
+     * @memberof Toolbar
+     */
+
+  }, {
+    key: 'removeAllItems',
+    value: function removeAllItems() {
+      while (this._items && this._items.length > 0) {
+        this.removeItem(0);
+      }
+    }
+
+    /**
+     * destroy instance
+     * @memberof Toolbar
+     * @override
+     */
+
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      this.removeAllItems();
+      _get(Toolbar.prototype.__proto__ || Object.getPrototypeOf(Toolbar.prototype), 'destroy', this).call(this);
+    }
+
+    /**
+     * add button
+     * @param {Button} button - button instance
+     * @param {Number} [index] - location the button will be placed
+     * @memberof Toolbar
+     * @deprecated
+     */
+
+  }, {
+    key: 'addButton',
+    value: function addButton(button, index) {
+      if (_tuiCodeSnippet2.default.isArray(button)) {
+        var arrayIndex = button.length - 1;
+        for (; arrayIndex >= 0; arrayIndex -= 1) {
+          if (_tuiCodeSnippet2.default.isNumber(index)) {
+            this._addButton(button[arrayIndex], index);
+          } else {
+            this._addButton(button);
+          }
+        }
+      } else {
+        this._addButton(button, index);
+      }
+    }
+
+    /**
+     * _addButton
+     * @param {Button} button - button instance
+     * @param {Number} index - location the button will be placed
+     * @private
+     * @deprecated
+     */
+
+  }, {
+    key: '_addButton',
+    value: function _addButton(button, index) {
+      var $btn = this._setButton(button, index).$el;
+
+      if (_tuiCodeSnippet2.default.isNumber(index)) {
+        this.$el.find('.' + _button2.default.className).eq(index - 1).before($btn);
+      } else {
+        this.$el.append($btn);
+      }
+    }
+
+    /**
+     * add divider
+     * @returns {jQuery} - created divider jquery element
+     * @memberof Toolbar
+     * @deprecated
+     */
+
+  }, {
+    key: 'addDivider',
+    value: function addDivider() {
+      var $el = (0, _jquery2.default)('<div class="' + _toolbarDivider2.default.className + '"></div>');
+      this.$el.append($el);
+
+      return $el;
+    }
+
+    /**
+     * _setButton
+     * @param {Button} button - button instance
+     * @param {Number} index - location the button will be placed
+     * @returns {Button} - button instance
+     * @private
+     * @deprecated
+     */
+
+  }, {
+    key: '_setButton',
+    value: function _setButton(button, index) {
+      var ev = this._eventManager;
+      if (!(button instanceof _button2.default)) {
+        button = new _button2.default(button);
+      }
+
+      button.on('command', function (e, commandName) {
+        return ev.emit('command', commandName);
+      });
+      button.on('event', function (e, eventName) {
+        return ev.emit(eventName);
+      });
+      if (_tuiCodeSnippet2.default.isNumber(index)) {
+        this._items.splice(index, 0, button);
+      } else {
+        this._items.push(button);
+      }
+
+      return button;
+    }
+  }]);
+
+  return Toolbar;
+}(_uicontroller2.default);
+
+exports.default = Toolbar;
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _toolbarItem = __webpack_require__(9);
+
+var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements Toolbar Divider
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+var ToolbarDivider = function (_ToolbarItem) {
+  _inherits(ToolbarDivider, _ToolbarItem);
+
+  /**
+   * toolbar divider constructor
+   * @memberof ToolbarDivider
+   */
+
+  /**
+   * item name
+   * @memberof ToolbarDivider
+   * @type {String}
+   * @static
+   */
+  function ToolbarDivider() {
+    _classCallCheck(this, ToolbarDivider);
+
+    return _possibleConstructorReturn(this, (ToolbarDivider.__proto__ || Object.getPrototypeOf(ToolbarDivider)).call(this, {
+      name: ToolbarDivider.name,
+      tagName: 'div',
+      className: ToolbarDivider.className
+    }));
+  }
+
+  /**
+   * item class name
+   * @memberof ToolbarDivider
+   * @type {String}
+   * @static
+   */
+
+
+  return ToolbarDivider;
+}(_toolbarItem2.default);
+
+Object.defineProperty(ToolbarDivider, 'name', {
+  enumerable: true,
+  writable: true,
+  value: 'divider'
+});
+Object.defineProperty(ToolbarDivider, 'className', {
+  enumerable: true,
+  writable: true,
+  value: 'tui-toolbar-divider'
+});
+exports.default = ToolbarDivider;
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements Toolbar Item Factory
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+var _toolbarItem = __webpack_require__(9);
+
+var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
+
+var _toolbarButton = __webpack_require__(71);
+
+var _toolbarButton2 = _interopRequireDefault(_toolbarButton);
+
+var _toolbarDivider = __webpack_require__(39);
+
+var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
+
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Toolbar Item Factory
+ */
+var ToolbarItemFactory = function () {
+  function ToolbarItemFactory() {
+    _classCallCheck(this, ToolbarItemFactory);
+  }
+
+  _createClass(ToolbarItemFactory, null, [{
+    key: 'create',
+
+    /**
+     * create toolbar item instance
+     * @memberof ToolbarItemFactory
+     * @param {string} name - toolbar item name
+     * @param {object} [options] - options to the constructor
+     * @return {ToolbarItem} - created toolbar item instance
+     * @static
+     */
+    /* eslint-disable complexity */
+    value: function create(name, options) {
+      var toolbarItem = void 0;
+
+      switch (name) {
+        case 'heading':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'heading',
+            className: 'tui-heading',
+            event: 'openHeadingSelect',
+            tooltip: _i18n2.default.get('Headings')
+          });
+          break;
+        case 'bold':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'bold',
+            className: 'tui-bold',
+            command: 'bold',
+            tooltip: _i18n2.default.get('Bold'),
+            state: 'bold'
+          });
+          break;
+        case 'italic':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'italic',
+            className: 'tui-italic',
+            command: 'Italic',
+            tooltip: _i18n2.default.get('Italic'),
+            state: 'italic'
+          });
+          break;
+        case 'strike':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'strike',
+            className: 'tui-strike',
+            command: 'Strike',
+            tooltip: _i18n2.default.get('Strike'),
+            state: 'strike'
+          });
+          break;
+        case 'hr':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'hr',
+            className: 'tui-hrline',
+            command: 'HR',
+            tooltip: _i18n2.default.get('Line')
+          });
+          break;
+        case 'quote':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'quote',
+            className: 'tui-quote',
+            command: 'Blockquote',
+            tooltip: _i18n2.default.get('Blockquote'),
+            state: 'quote'
+          });
+          break;
+        case 'ul':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'ul',
+            className: 'tui-ul',
+            command: 'UL',
+            tooltip: _i18n2.default.get('Unordered list')
+          });
+          break;
+        case 'ol':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'ol',
+            className: 'tui-ol',
+            command: 'OL',
+            tooltip: _i18n2.default.get('Ordered list')
+          });
+          break;
+        case 'task':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'task',
+            className: 'tui-task',
+            command: 'Task',
+            tooltip: _i18n2.default.get('Task')
+          });
+          break;
+        case 'table':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'table',
+            className: 'tui-table',
+            event: 'openPopupAddTable',
+            tooltip: _i18n2.default.get('Insert table')
+          });
+          break;
+        case 'image':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'image',
+            className: 'tui-image',
+            event: 'openPopupAddImage',
+            tooltip: _i18n2.default.get('Insert image'),
+            state: ''
+          });
+          break;
+        case 'link':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'link',
+            className: 'tui-link',
+            event: 'openPopupAddLink',
+            tooltip: _i18n2.default.get('Insert link')
+          });
+          break;
+        case 'code':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'code',
+            className: 'tui-code',
+            command: 'Code',
+            tooltip: _i18n2.default.get('Code'),
+            state: 'code'
+          });
+          break;
+        case 'codeblock':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'codeblock',
+            className: 'tui-codeblock',
+            command: 'CodeBlock',
+            tooltip: _i18n2.default.get('Insert CodeBlock'),
+            state: 'codeBlock'
+          });
+          break;
+        case 'indent':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'indent',
+            className: 'tui-indent',
+            command: 'Indent',
+            tooltip: _i18n2.default.get('Indent')
+          });
+          break;
+        case 'outdent':
+          toolbarItem = new _toolbarButton2.default({
+            name: 'outdent',
+            className: 'tui-outdent',
+            command: 'Outdent',
+            tooltip: _i18n2.default.get('Outdent')
+          });
+          break;
+        case 'divider':
+          toolbarItem = new _toolbarDivider2.default();
+          break;
+        case 'button':
+          toolbarItem = new _toolbarButton2.default(options);
+          break;
+        case 'item':
+        default:
+          toolbarItem = new _toolbarItem2.default(options);
+      }
+
+      return toolbarItem;
+    }
+    /* eslint-enable complexity */
+
+  }]);
+
+  return ToolbarItemFactory;
+}();
+
+exports.default = ToolbarItemFactory;
+
+/***/ }),
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8269,7 +9120,7 @@ var Tab = function (_UIController) {
 exports.default = Tab;
 
 /***/ }),
-/* 38 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8281,7 +9132,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Editor = __webpack_require__(39);
+var Editor = __webpack_require__(43);
 
 // for jquery
 /**
@@ -8322,7 +9173,7 @@ _jquery2.default.fn.tuiEditor = function () {
 module.exports = Editor;
 
 /***/ }),
-/* 39 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8351,27 +9202,27 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _button = __webpack_require__(30);
+var _button = __webpack_require__(16);
 
 var _button2 = _interopRequireDefault(_button);
 
-var _markdownEditor = __webpack_require__(40);
+var _markdownEditor = __webpack_require__(44);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _mdPreview = __webpack_require__(9);
+var _mdPreview = __webpack_require__(10);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
-var _wysiwygEditor = __webpack_require__(49);
+var _wysiwygEditor = __webpack_require__(53);
 
 var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-var _layout = __webpack_require__(62);
+var _layout = __webpack_require__(66);
 
 var _layout2 = _interopRequireDefault(_layout);
 
-var _eventManager = __webpack_require__(12);
+var _eventManager = __webpack_require__(13);
 
 var _eventManager2 = _interopRequireDefault(_eventManager);
 
@@ -8379,23 +9230,23 @@ var _commandManager2 = __webpack_require__(2);
 
 var _commandManager3 = _interopRequireDefault(_commandManager2);
 
-var _extManager = __webpack_require__(13);
+var _extManager = __webpack_require__(14);
 
 var _extManager2 = _interopRequireDefault(_extManager);
 
-var _importManager = __webpack_require__(18);
+var _importManager = __webpack_require__(20);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
-var _wwCodeBlockManager = __webpack_require__(36);
+var _wwCodeBlockManager = __webpack_require__(37);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-var _convertor = __webpack_require__(14);
+var _convertor = __webpack_require__(15);
 
 var _convertor2 = _interopRequireDefault(_convertor);
 
-var _viewer = __webpack_require__(29);
+var _viewer = __webpack_require__(31);
 
 var _viewer2 = _interopRequireDefault(_viewer);
 
@@ -8403,7 +9254,7 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _defaultUI = __webpack_require__(63);
+var _defaultUI = __webpack_require__(67);
 
 var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
@@ -8411,11 +9262,11 @@ var _domUtils = __webpack_require__(3);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwTableManager = __webpack_require__(34);
+var _wwTableManager = __webpack_require__(35);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(35);
+var _wwTableSelectionManager = __webpack_require__(36);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
@@ -8423,179 +9274,187 @@ var _codeBlockManager = __webpack_require__(7);
 
 var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
-var _bold = __webpack_require__(77);
+var _bold = __webpack_require__(85);
 
 var _bold2 = _interopRequireDefault(_bold);
 
-var _italic = __webpack_require__(78);
+var _italic = __webpack_require__(86);
 
 var _italic2 = _interopRequireDefault(_italic);
 
-var _strike = __webpack_require__(79);
+var _strike = __webpack_require__(87);
 
 var _strike2 = _interopRequireDefault(_strike);
 
-var _blockquote = __webpack_require__(80);
+var _blockquote = __webpack_require__(88);
 
 var _blockquote2 = _interopRequireDefault(_blockquote);
 
-var _heading = __webpack_require__(81);
+var _heading = __webpack_require__(89);
 
 var _heading2 = _interopRequireDefault(_heading);
 
-var _paragraph = __webpack_require__(82);
+var _paragraph = __webpack_require__(90);
 
 var _paragraph2 = _interopRequireDefault(_paragraph);
 
-var _hr = __webpack_require__(83);
+var _hr = __webpack_require__(91);
 
 var _hr2 = _interopRequireDefault(_hr);
 
-var _addLink = __webpack_require__(84);
+var _addLink = __webpack_require__(92);
 
 var _addLink2 = _interopRequireDefault(_addLink);
 
-var _addImage = __webpack_require__(85);
+var _addImage = __webpack_require__(93);
 
 var _addImage2 = _interopRequireDefault(_addImage);
 
-var _ul = __webpack_require__(86);
+var _ul = __webpack_require__(94);
 
 var _ul2 = _interopRequireDefault(_ul);
 
-var _ol = __webpack_require__(87);
+var _ol = __webpack_require__(95);
 
 var _ol2 = _interopRequireDefault(_ol);
 
-var _table = __webpack_require__(88);
+var _indent = __webpack_require__(96);
+
+var _indent2 = _interopRequireDefault(_indent);
+
+var _outdent = __webpack_require__(97);
+
+var _outdent2 = _interopRequireDefault(_outdent);
+
+var _table = __webpack_require__(98);
 
 var _table2 = _interopRequireDefault(_table);
 
-var _task = __webpack_require__(89);
+var _task = __webpack_require__(99);
 
 var _task2 = _interopRequireDefault(_task);
 
-var _code = __webpack_require__(90);
+var _code = __webpack_require__(100);
 
 var _code2 = _interopRequireDefault(_code);
 
-var _codeBlock = __webpack_require__(91);
+var _codeBlock = __webpack_require__(101);
 
 var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-var _bold3 = __webpack_require__(92);
+var _bold3 = __webpack_require__(102);
 
 var _bold4 = _interopRequireDefault(_bold3);
 
-var _italic3 = __webpack_require__(93);
+var _italic3 = __webpack_require__(103);
 
 var _italic4 = _interopRequireDefault(_italic3);
 
-var _strike3 = __webpack_require__(94);
+var _strike3 = __webpack_require__(104);
 
 var _strike4 = _interopRequireDefault(_strike3);
 
-var _blockquote3 = __webpack_require__(95);
+var _blockquote3 = __webpack_require__(105);
 
 var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-var _addImage3 = __webpack_require__(96);
+var _addImage3 = __webpack_require__(106);
 
 var _addImage4 = _interopRequireDefault(_addImage3);
 
-var _addLink3 = __webpack_require__(97);
+var _addLink3 = __webpack_require__(107);
 
 var _addLink4 = _interopRequireDefault(_addLink3);
 
-var _hr3 = __webpack_require__(98);
+var _hr3 = __webpack_require__(108);
 
 var _hr4 = _interopRequireDefault(_hr3);
 
-var _heading3 = __webpack_require__(99);
+var _heading3 = __webpack_require__(109);
 
 var _heading4 = _interopRequireDefault(_heading3);
 
-var _paragraph3 = __webpack_require__(100);
+var _paragraph3 = __webpack_require__(110);
 
 var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-var _ul3 = __webpack_require__(101);
+var _ul3 = __webpack_require__(111);
 
 var _ul4 = _interopRequireDefault(_ul3);
 
-var _ol3 = __webpack_require__(102);
+var _ol3 = __webpack_require__(112);
 
 var _ol4 = _interopRequireDefault(_ol3);
 
-var _table3 = __webpack_require__(103);
+var _table3 = __webpack_require__(113);
 
 var _table4 = _interopRequireDefault(_table3);
 
-var _tableAddRow = __webpack_require__(104);
+var _tableAddRow = __webpack_require__(114);
 
 var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-var _tableAddCol = __webpack_require__(105);
+var _tableAddCol = __webpack_require__(115);
 
 var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-var _tableRemoveRow = __webpack_require__(106);
+var _tableRemoveRow = __webpack_require__(116);
 
 var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-var _tableRemoveCol = __webpack_require__(107);
+var _tableRemoveCol = __webpack_require__(117);
 
 var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-var _tableAlignCol = __webpack_require__(108);
+var _tableAlignCol = __webpack_require__(118);
 
 var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-var _tableRemove = __webpack_require__(109);
+var _tableRemove = __webpack_require__(119);
 
 var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-var _increaseDepth = __webpack_require__(110);
+var _indent3 = __webpack_require__(120);
 
-var _increaseDepth2 = _interopRequireDefault(_increaseDepth);
+var _indent4 = _interopRequireDefault(_indent3);
 
-var _decreaseDepth = __webpack_require__(111);
+var _outdent3 = __webpack_require__(121);
 
-var _decreaseDepth2 = _interopRequireDefault(_decreaseDepth);
+var _outdent4 = _interopRequireDefault(_outdent3);
 
-var _task3 = __webpack_require__(112);
+var _task3 = __webpack_require__(122);
 
 var _task4 = _interopRequireDefault(_task3);
 
-var _code3 = __webpack_require__(113);
+var _code3 = __webpack_require__(123);
 
 var _code4 = _interopRequireDefault(_code3);
 
-var _codeBlock3 = __webpack_require__(114);
+var _codeBlock3 = __webpack_require__(124);
 
 var _codeBlock4 = _interopRequireDefault(_codeBlock3);
 
-var _util = __webpack_require__(115);
+var _util = __webpack_require__(125);
 
-__webpack_require__(116);
+__webpack_require__(126);
 
-__webpack_require__(117);
+__webpack_require__(127);
 
-__webpack_require__(118);
+__webpack_require__(128);
 
-__webpack_require__(119);
+__webpack_require__(129);
 
-__webpack_require__(120);
+__webpack_require__(130);
 
-__webpack_require__(121);
+__webpack_require__(131);
 
-__webpack_require__(122);
+__webpack_require__(132);
 
-__webpack_require__(123);
+__webpack_require__(133);
 
-__webpack_require__(124);
+__webpack_require__(134);
 
-__webpack_require__(125);
+__webpack_require__(135);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8637,6 +9496,8 @@ var ToastUIEditor = function () {
         * @param {boolean} useDefaultHTMLSanitizer - use default htmlSanitizer
         * @param {string[]} options.codeBlockLanguages - supported code block languages to be listed
         * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
+        * @param {object[]} [options.toolbarItems] - toolbar items
+        * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
     */
   function ToastUIEditor(options) {
     var _this = this;
@@ -8652,7 +9513,9 @@ var ToastUIEditor = function () {
       useDefaultHTMLSanitizer: true,
       useCommandShortcut: true,
       codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages(),
-      usageStatistics: true
+      usageStatistics: true,
+      toolbarItems: ['heading', 'bold', 'italic', 'strike', 'divider', 'hr', 'quote', 'divider', 'ul', 'ol', 'task', 'indent', 'outdent', 'divider', 'table', 'image', 'link', 'divider', 'code', 'codeblock'],
+      hideModeSwitch: false
     }, options);
 
     this.eventManager = new _eventManager2.default();
@@ -8766,6 +9629,8 @@ var ToastUIEditor = function () {
       this.addCommand(_addImage2.default);
       this.addCommand(_ul2.default);
       this.addCommand(_ol2.default);
+      this.addCommand(_indent2.default);
+      this.addCommand(_outdent2.default);
       this.addCommand(_table2.default);
       this.addCommand(_task2.default);
       this.addCommand(_code2.default);
@@ -8782,8 +9647,8 @@ var ToastUIEditor = function () {
       this.addCommand(_hr4.default);
       this.addCommand(_heading4.default);
       this.addCommand(_paragraph4.default);
-      this.addCommand(_increaseDepth2.default);
-      this.addCommand(_decreaseDepth2.default);
+      this.addCommand(_indent4.default);
+      this.addCommand(_outdent4.default);
       this.addCommand(_task4.default);
       this.addCommand(_table4.default);
       this.addCommand(_tableAddRow2.default);
@@ -9494,7 +10359,7 @@ ToastUIEditor.markdownitHighlight = _convertor2.default.getMarkdownitHighlightRe
 module.exports = ToastUIEditor;
 
 /***/ }),
-/* 40 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9512,23 +10377,23 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _codeMirrorExt = __webpack_require__(32);
+var _codeMirrorExt = __webpack_require__(33);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
-var _keyMapper = __webpack_require__(15);
+var _keyMapper = __webpack_require__(17);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _mdListManager = __webpack_require__(47);
+var _mdListManager = __webpack_require__(51);
 
 var _mdListManager2 = _interopRequireDefault(_mdListManager);
 
-var _componentManager = __webpack_require__(33);
+var _componentManager = __webpack_require__(34);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _mdTextObject = __webpack_require__(48);
+var _mdTextObject = __webpack_require__(52);
 
 var _mdTextObject2 = _interopRequireDefault(_mdTextObject);
 
@@ -9824,7 +10689,7 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 exports.default = MarkdownEditor;
 
 /***/ }),
-/* 41 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9967,7 +10832,7 @@ function findFirstListItem(lineNumber, cm) {
 }
 
 /***/ }),
-/* 42 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10052,7 +10917,7 @@ _codemirror2.default.overlayMode = function (base, overlay, combine) {
  */
 
 /***/ }),
-/* 43 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11024,7 +11889,7 @@ _codemirror2.default.defineMode("markdown", function (cmCfg, modeCfg) {
 _codemirror2.default.defineMIME("text/x-markdown", "markdown");
 
 /***/ }),
-/* 44 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11163,7 +12028,7 @@ _codemirror2.default.defineMode("gfm", function (config, modeConfig) {
 _codemirror2.default.defineMIME("text/x-gfm", "gfm");
 
 /***/ }),
-/* 45 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11274,7 +12139,7 @@ _codemirror2.default.commands.newlineAndIndentContinue = function (cm) {
 };
 
 /***/ }),
-/* 46 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11427,7 +12292,7 @@ function replaceMultiLine(cm, upper, bottom, lineAdjustment) {
 }
 
 /***/ }),
-/* 47 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11719,7 +12584,7 @@ var MdListManager = function () {
 exports.default = MdListManager;
 
 /***/ }),
-/* 48 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11907,7 +12772,7 @@ var mdTextObject = function () {
 exports.default = mdTextObject;
 
 /***/ }),
-/* 49 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11935,59 +12800,59 @@ var _domUtils = __webpack_require__(3);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwClipboardManager = __webpack_require__(50);
+var _wwClipboardManager = __webpack_require__(54);
 
 var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-var _wwListManager = __webpack_require__(52);
+var _wwListManager = __webpack_require__(56);
 
 var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-var _wwTaskManager = __webpack_require__(53);
+var _wwTaskManager = __webpack_require__(57);
 
 var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-var _wwTableManager = __webpack_require__(34);
+var _wwTableManager = __webpack_require__(35);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(35);
+var _wwTableSelectionManager = __webpack_require__(36);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-var _wwHrManager = __webpack_require__(54);
+var _wwHrManager = __webpack_require__(58);
 
 var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-var _wwPManager = __webpack_require__(55);
+var _wwPManager = __webpack_require__(59);
 
 var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-var _wwHeadingManager = __webpack_require__(56);
+var _wwHeadingManager = __webpack_require__(60);
 
 var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-var _wwCodeBlockManager = __webpack_require__(36);
+var _wwCodeBlockManager = __webpack_require__(37);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-var _squireExt = __webpack_require__(57);
+var _squireExt = __webpack_require__(61);
 
 var _squireExt2 = _interopRequireDefault(_squireExt);
 
-var _keyMapper = __webpack_require__(15);
+var _keyMapper = __webpack_require__(17);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _wwTextObject = __webpack_require__(59);
+var _wwTextObject = __webpack_require__(63);
 
 var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
 
-var _componentManager = __webpack_require__(33);
+var _componentManager = __webpack_require__(34);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _codeBlockGadget = __webpack_require__(60);
+var _codeBlockGadget = __webpack_require__(64);
 
 var _codeBlockGadget2 = _interopRequireDefault(_codeBlockGadget);
 
@@ -13298,7 +14163,7 @@ var WysiwygEditor = function () {
 exports.default = WysiwygEditor;
 
 /***/ }),
-/* 50 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13326,7 +14191,7 @@ var _domUtils = __webpack_require__(3);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwPasteContentHelper = __webpack_require__(51);
+var _wwPasteContentHelper = __webpack_require__(55);
 
 var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
@@ -13731,7 +14596,7 @@ var WwClipboardManager = function () {
 exports.default = WwClipboardManager;
 
 /***/ }),
-/* 51 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13759,7 +14624,7 @@ var _domUtils = __webpack_require__(3);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _htmlSanitizer = __webpack_require__(11);
+var _htmlSanitizer = __webpack_require__(12);
 
 var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
@@ -14260,7 +15125,7 @@ var WwPasteContentHelper = function () {
 exports.default = WwPasteContentHelper;
 
 /***/ }),
-/* 52 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14380,7 +15245,7 @@ var WwListManager = function () {
         if (range.collapsed) {
           if (_this2.wwe.getEditor().hasFormat('LI')) {
             ev.preventDefault();
-            _this2.eventManager.emit('command', 'IncreaseDepth');
+            _this2.eventManager.emit('command', 'Indent');
 
             isNeedNext = false;
           }
@@ -14397,7 +15262,7 @@ var WwListManager = function () {
             ev.preventDefault();
             var $ul = (0, _jquery2.default)(range.startContainer).closest('li').children(UL_OR_OL);
 
-            _this2.eventManager.emit('command', 'DecreaseDepth');
+            _this2.eventManager.emit('command', 'Outdent');
 
             if ($ul.length && !$ul.prev().length) {
               _this2._removeBranchList($ul);
@@ -14690,7 +15555,7 @@ var WwListManager = function () {
 exports.default = WwListManager;
 
 /***/ }),
-/* 53 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14912,7 +15777,7 @@ var WwTaskManager = function () {
 exports.default = WwTaskManager;
 
 /***/ }),
-/* 54 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15231,7 +16096,7 @@ function findTextNodeFilter() {
 exports.default = WwHrManager;
 
 /***/ }),
-/* 55 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15397,7 +16262,7 @@ var WwPManager = function () {
 exports.default = WwPManager;
 
 /***/ }),
-/* 56 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15665,7 +16530,7 @@ var WwHeadingManager = function () {
 exports.default = WwHeadingManager;
 
 /***/ }),
-/* 57 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15685,7 +16550,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _squireRte = __webpack_require__(58);
+var _squireRte = __webpack_require__(62);
 
 var _squireRte2 = _interopRequireDefault(_squireRte);
 
@@ -16086,13 +16951,13 @@ var SquireExt = function (_Squire) {
 exports.default = SquireExt;
 
 /***/ }),
-/* 58 */
+/* 62 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_58__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_62__;
 
 /***/ }),
-/* 59 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16299,7 +17164,7 @@ var WwTextObject = function () {
 exports.default = WwTextObject;
 
 /***/ }),
-/* 60 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16317,7 +17182,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _blockOverlay = __webpack_require__(61);
+var _blockOverlay = __webpack_require__(65);
 
 var _blockOverlay2 = _interopRequireDefault(_blockOverlay);
 
@@ -16470,7 +17335,7 @@ var CodeBlockGadget = function (_BlockOverlay) {
 exports.default = CodeBlockGadget;
 
 /***/ }),
-/* 61 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16676,7 +17541,7 @@ var BlockOverlay = function () {
 exports.default = BlockOverlay;
 
 /***/ }),
-/* 62 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16950,7 +17815,7 @@ var Layout = function () {
 exports.default = Layout;
 
 /***/ }),
-/* 63 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16970,11 +17835,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _toolbar = __webpack_require__(64);
+var _defaultToolbar = __webpack_require__(68);
 
-var _toolbar2 = _interopRequireDefault(_toolbar);
+var _defaultToolbar2 = _interopRequireDefault(_defaultToolbar);
 
-var _tab = __webpack_require__(37);
+var _tab = __webpack_require__(41);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -16982,35 +17847,35 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _modeSwitch = __webpack_require__(65);
+var _modeSwitch = __webpack_require__(73);
 
 var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-var _popupAddLink = __webpack_require__(66);
+var _popupAddLink = __webpack_require__(74);
 
 var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-var _popupAddImage = __webpack_require__(67);
+var _popupAddImage = __webpack_require__(75);
 
 var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-var _popupTableUtils = __webpack_require__(68);
+var _popupTableUtils = __webpack_require__(76);
 
 var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-var _popupAddTable = __webpack_require__(69);
+var _popupAddTable = __webpack_require__(77);
 
 var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-var _popupAddHeading = __webpack_require__(70);
+var _popupAddHeading = __webpack_require__(78);
 
 var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
-var _popupCodeBlockLanguages = __webpack_require__(71);
+var _popupCodeBlockLanguages = __webpack_require__(79);
 
 var _popupCodeBlockLanguages2 = _interopRequireDefault(_popupCodeBlockLanguages);
 
-var _popupCodeBlockEditor = __webpack_require__(72);
+var _popupCodeBlockEditor = __webpack_require__(80);
 
 var _popupCodeBlockEditor2 = _interopRequireDefault(_popupCodeBlockEditor);
 
@@ -17018,7 +17883,7 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _tooltip = __webpack_require__(31);
+var _tooltip = __webpack_require__(32);
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -17038,68 +17903,131 @@ var CONTAINER_TEMPLATE = '\n    <div class="tui-editor-defaultUI">\n        <div
  */
 
 var DefaultUI = function () {
+
   /**
    * Creates an instance of DefaultUI.
    * @param {ToastUIEditor} editor - editor instance
    * @memberof DefaultUI
    */
+
+
+  /**
+   * mode switch instance
+   * @memberof DefaultUI
+   * @private
+   * @type {ModeSwitch}
+   */
+
+
+  /**
+   * markdown tab section jQuery element
+   * @memberof DefaultUI
+   * @private
+   * @type {HTMLElement}
+   */
+
+
+  /**
+   * editor type ww/md
+   * @memberof DefaultUI
+   * @private
+   * @type {string}
+   */
+
+
+  /**
+   * @memberof DefaultUI
+   * @type {HTMLElement}
+   * @private
+   */
+
+
+  /**
+   * DefaultToolbar wrapper element
+   * @memberof DefaultUI
+   * @type {jQuery}
+   */
   function DefaultUI(editor) {
     _classCallCheck(this, DefaultUI);
 
-    /**
-     * UI name
-     * @memberof DefaultUI#
-     * @public
-     * @type {string}
-     */
-    this.name = 'default';
-
-    /**
-     * Toolbar instance
-     * @memberof DefaultUI#
-     * @type {Toolbar}
-     */
-    this.toolbar = null;
-
-    /**
-     * Toolbar wrapper element
-     * @memberof DefaultUI#
-     * @type {jQuery}
-     */
-    this.$el = null;
-
-    /**
-     * @memberof DefaultUI#
-     * @type {HTMLElement}
-     * @private
-     */
-    this._container = null;
-
-    /**
-     * editor section element
-     * @memberof DefaultUI#
-     * @private
-     * @type {HTMLElement}
-     */
-    this._editorSection = null;
+    Object.defineProperty(this, 'name', {
+      enumerable: true,
+      writable: true,
+      value: 'default'
+    });
+    Object.defineProperty(this, '_popups', {
+      enumerable: true,
+      writable: true,
+      value: []
+    });
 
     this._editor = editor;
     this._initialEditType = editor.options.initialEditType;
 
-    this._init(editor.options.el);
+    this._init(editor.options);
     this._initEvent();
   }
 
+  /**
+   * popup instances
+   * @memberof DefaultUI
+   * @private
+   * @type {Array}
+   */
+
+
+  /**
+   * markdown tab
+   * @memberof DefaultUI
+   * @private
+   * @type {Tab}
+   */
+
+
+  /**
+   * editor instance
+   * @memberof DefaultUI
+   * @private
+   * @type {ToastUIEditor}
+   */
+
+
+  /**
+   * editor section element
+   * @memberof DefaultUI
+   * @private
+   * @type {HTMLElement}
+   */
+
+
+  /**
+   * DefaultToolbar instance
+   * @memberof DefaultUI
+   * @type {DefaultToolbar}
+   * @private
+   */
+
+  /**
+   * UI name
+   * @memberof DefaultUI
+   * @type {string}
+   */
+
+
   _createClass(DefaultUI, [{
     key: '_init',
-    value: function _init(container) {
-      this._container = container;
+    value: function _init(_ref) {
+      var container = _ref.el,
+          toolbarItems = _ref.toolbarItems,
+          hideModeSwitch = _ref.hideModeSwitch;
+
       this.$el = (0, _jquery2.default)(CONTAINER_TEMPLATE).appendTo(container);
+      this._container = container;
       this._editorSection = this.$el.find('.' + CLASS_EDITOR).get(0);
       this._editorSection.appendChild(this._editor.layout.getEditorEl().get(0));
 
-      this._initToolbar();
-      this._initModeSwitch();
+      this._initToolbar(this._editor.eventManager, toolbarItems);
+      this._initModeSwitch(hideModeSwitch);
 
       this._initPopupAddLink();
       this._initPopupAddImage();
@@ -17121,19 +18049,26 @@ var DefaultUI = function () {
     }
   }, {
     key: '_initToolbar',
-    value: function _initToolbar() {
-      this.toolbar = new _toolbar2.default(this._editor.eventManager);
-      this.$el.find('.' + CLASS_TOOLBAR).append(this.toolbar.$el);
+    value: function _initToolbar(eventManager, toolbarItems) {
+      var toolbar = new _defaultToolbar2.default(eventManager, toolbarItems);
+      this._toolbar = toolbar;
+      this.$el.find('.' + CLASS_TOOLBAR).append(toolbar.$el);
     }
   }, {
     key: '_initModeSwitch',
-    value: function _initModeSwitch() {
+    value: function _initModeSwitch(hideModeSwitch) {
       var _this = this;
 
-      this._modeSwitch = new _modeSwitch2.default(this._initialEditType === 'markdown' ? _modeSwitch2.default.TYPE.MARKDOWN : _modeSwitch2.default.TYPE.WYSIWYG);
-      this.$el.find('.' + CLASS_MODE_SWITCH).append(this._modeSwitch.$el);
+      var modeSwitchTabBar = this.$el.find('.' + CLASS_MODE_SWITCH);
+      var editType = this._initialEditType === 'markdown' ? _modeSwitch2.default.TYPE.MARKDOWN : _modeSwitch2.default.TYPE.WYSIWYG;
+      var modeSwitch = new _modeSwitch2.default(modeSwitchTabBar, editType);
+      this._modeSwitch = modeSwitch;
 
-      this._modeSwitch.on('modeSwitched', function (ev, type) {
+      if (hideModeSwitch) {
+        modeSwitch.hide();
+      }
+
+      modeSwitch.on('modeSwitched', function (ev, type) {
         return _this._editor.changeMode(type);
       });
     }
@@ -17142,15 +18077,15 @@ var DefaultUI = function () {
     value: function _initMarkdownTab() {
       var editor = this._editor;
 
-      this.markdownTab = new _tab2.default({
+      this._markdownTab = new _tab2.default({
         initName: _i18n2.default.get('Write'),
         items: [_i18n2.default.get('Write'), _i18n2.default.get('Preview')],
         sections: [editor.layout.getMdEditorContainerEl(), editor.layout.getPreviewEl()]
       });
       this._$markdownTabSection = this.$el.find('.' + CLASS_MARKDOWN_TAB);
-      this._$markdownTabSection.append(this.markdownTab.$el);
+      this._$markdownTabSection.append(this._markdownTab.$el);
 
-      this.markdownTab.on('itemClick', function (ev, itemText) {
+      this._markdownTab.on('itemClick', function (ev, itemText) {
         if (itemText === _i18n2.default.get('Preview')) {
           editor.eventManager.emit('previewNeedsRefresh');
         } else {
@@ -17163,7 +18098,7 @@ var DefaultUI = function () {
     value: function _markdownTabControl() {
       if (this._editor.isMarkdownMode() && this._editor.getCurrentPreviewStyle() === 'tab') {
         this._$markdownTabSection.show();
-        this.markdownTab.activate(_i18n2.default.get('Write'));
+        this._markdownTab.activate(_i18n2.default.get('Write'));
       } else {
         this._$markdownTabSection.hide();
       }
@@ -17171,42 +18106,42 @@ var DefaultUI = function () {
   }, {
     key: '_initPopupAddLink',
     value: function _initPopupAddLink() {
-      this.popupAddLink = new _popupAddLink2.default({
+      this._popups.push(new _popupAddLink2.default({
         $target: this.$el,
         editor: this._editor
-      });
+      }));
     }
   }, {
     key: '_initPopupAddImage',
     value: function _initPopupAddImage() {
-      this.popupAddImage = new _popupAddImage2.default({
+      this._popups.push(new _popupAddImage2.default({
         $target: this.$el,
         eventManager: this._editor.eventManager
-      });
+      }));
     }
   }, {
     key: '_initPopupAddTable',
     value: function _initPopupAddTable() {
-      this.popupAddTable = new _popupAddTable2.default({
+      this._popups.push(new _popupAddTable2.default({
         $target: this.$el,
         eventManager: this._editor.eventManager,
         $button: this.$el.find('button.tui-table'),
         css: {
           'position': 'fixed'
         }
-      });
+      }));
     }
   }, {
     key: '_initPopupAddHeading',
     value: function _initPopupAddHeading() {
-      this.popupAddHeading = new _popupAddHeading2.default({
+      this._popups.push(new _popupAddHeading2.default({
         $target: this.$el,
         eventManager: this._editor.eventManager,
         $button: this.$el.find('button.tui-heading'),
         css: {
           'position': 'fixed'
         }
-      });
+      }));
     }
   }, {
     key: '_initPopupTableUtils',
@@ -17220,29 +18155,66 @@ var DefaultUI = function () {
         }
       });
 
-      this.popupTableUtils = new _popupTableUtils2.default({
+      this._popups.push(new _popupTableUtils2.default({
         $target: this.$el,
         eventManager: this._editor.eventManager
-      });
+      }));
     }
   }, {
     key: '_initPopupCodeBlockLanguages',
     value: function _initPopupCodeBlockLanguages() {
       var editor = this._editor;
-      this.popupCodeBlockLanguages = new _popupCodeBlockLanguages2.default({
+      this._popups.push(new _popupCodeBlockLanguages2.default({
         $target: this.$el,
         eventManager: editor.eventManager,
         languages: editor.options.codeBlockLanguages
-      });
+      }));
     }
   }, {
     key: '_initPopupCodeBlockEditor',
     value: function _initPopupCodeBlockEditor() {
-      this.popupCodeBlockEditor = new _popupCodeBlockEditor2.default({
+      this._popups.push(new _popupCodeBlockEditor2.default({
         $target: this.$el,
         eventManager: this._editor.eventManager,
         convertor: this._editor.convertor
-      });
+      }));
+    }
+
+    /**
+     * get toolbar instance
+     * @returns {DefaultToolbar} - toolbar instance
+     * @memberof DefaultUI
+     */
+
+  }, {
+    key: 'getToolbar',
+    value: function getToolbar() {
+      return this._toolbar;
+    }
+
+    /**
+     * set toolbar instance
+     * @param {DefaultToolbar} toolbar - toolbar
+     * @memberof DefaultUI
+     */
+
+  }, {
+    key: 'setToolbar',
+    value: function setToolbar(toolbar) {
+      this._toolbar.destroy();
+      this._toolbar = toolbar;
+    }
+
+    /**
+     * get mode switch instance
+     * @memberof DefaultUI
+     * @returns {ModeSwitch} - mode switch instance
+     */
+
+  }, {
+    key: 'getModeSwitch',
+    value: function getModeSwitch() {
+      return this._modeSwitch;
     }
 
     /**
@@ -17327,7 +18299,7 @@ var DefaultUI = function () {
 exports.default = DefaultUI;
 
 /***/ }),
-/* 64 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17339,25 +18311,27 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _jquery = __webpack_require__(0);
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _jquery2 = _interopRequireDefault(_jquery);
+var _resizeObserverPolyfill = __webpack_require__(69);
 
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-var _uicontroller = __webpack_require__(8);
-
-var _uicontroller2 = _interopRequireDefault(_uicontroller);
-
-var _button = __webpack_require__(30);
-
-var _button2 = _interopRequireDefault(_button);
+var _resizeObserverPolyfill2 = _interopRequireDefault(_resizeObserverPolyfill);
 
 var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
+
+var _toolbar = __webpack_require__(38);
+
+var _toolbar2 = _interopRequireDefault(_toolbar);
+
+var _popupDropdownToolbar = __webpack_require__(72);
+
+var _popupDropdownToolbar2 = _interopRequireDefault(_popupDropdownToolbar);
+
+var _toolbarItemFactory = __webpack_require__(40);
+
+var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17366,248 +18340,1527 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements toolbar
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview implements DefaultToolbar
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
-var TOOLBAR_BUTTON_CLASS_NAME = 'tui-toolbar-icons';
-var TOOLBAR_DIVIDER_CLASS_NAME = 'tui-toolbar-divider';
+var MORE_BUTTON_NAME = 'more';
 
 /**
- * Class Toolbar
- * @extends {UIController}
+ * default toolbar
+ * @extends Toolbar
  */
 
-var Toolbar = function (_UIController) {
-  _inherits(Toolbar, _UIController);
+var DefaultToolbar = function (_Toolbar) {
+  _inherits(DefaultToolbar, _Toolbar);
 
   /**
-   * Creates an instance of Toolbar.
-   * @param {EventManager} eventManager - event manager
-   * @memberof Toolbar
+   * popup dropdown toolbar
+   * @memberof DefaultToolbar
+   * @private
+   * @type {PopupDropdownToolbar}
    */
-  function Toolbar(eventManager) {
-    _classCallCheck(this, Toolbar);
+  function DefaultToolbar(eventManager, options) {
+    _classCallCheck(this, DefaultToolbar);
 
-    var _this = _possibleConstructorReturn(this, (Toolbar.__proto__ || Object.getPrototypeOf(Toolbar)).call(this, {
-      tagName: 'div',
-      className: 'tui-editor-defaultUI-toolbar'
-    }));
+    var _this = _possibleConstructorReturn(this, (DefaultToolbar.__proto__ || Object.getPrototypeOf(DefaultToolbar)).call(this, eventManager, options));
 
-    _this.buttons = [];
-
-    _this.eventManager = eventManager;
-
-    _this._render();
-    _this._initButton(['heading', 'bold', 'italic', 'strike', '|', 'hr', 'quote', 'ul', 'ol', 'task', '|', 'table', 'image', 'link', '|', 'code', 'codeBlock']);
-
-    _this.eventManager.listen('stateChange', function (ev) {
-      _tuiCodeSnippet2.default.forEach(_this.buttons, function (button) {
-        if (button._state) {
-          if (ev[button._state]) {
-            button.$el.addClass('active');
-          } else {
-            button.$el.removeClass('active');
-          }
-        }
-      });
-    });
+    _this._init(eventManager);
+    _this._bindWidthChangedEvent();
     return _this;
   }
 
   /**
-   * render
-   * Render toolbar
-   * @private
+   * insert toolbar item
+   * @param  {number} index - index at given item inserted
+   * @param  {ToolbarItem|string|object} item - toolbar item
+   * @memberof Toolbar
    */
 
 
-  _createClass(Toolbar, [{
-    key: '_render',
-    value: function _render() {
-      this.$buttonContainer = this.$el;
-    }
+  /**
+   * resize observer
+   * @memberof DefaultToolbar
+   * @private
+   * @type {ResizeObserver}
+   */
 
-    /**
-     * add button
-     * @param {Button} button - button instance
-     * @param {Number} [index] - location the button will be placed
-     * @memberof Toolbar
-     */
+  /**
+   * more button
+   * @memberof DefaultToolbar
+   * @private
+   * @type {ToolbarButton}
+   */
 
-  }, {
-    key: 'addButton',
-    value: function addButton(button, index) {
-      if (_tuiCodeSnippet2.default.isArray(button)) {
-        var arrayIndex = button.length - 1;
-        for (; arrayIndex >= 0; arrayIndex -= 1) {
-          if (_tuiCodeSnippet2.default.isNumber(index)) {
-            this._addButton(button[arrayIndex], index);
-          } else {
-            this._addButton(button);
-          }
-        }
-      } else {
-        this._addButton(button, index);
-      }
+
+  _createClass(DefaultToolbar, [{
+    key: 'insertItem',
+    value: function insertItem(index, item) {
+      _get(DefaultToolbar.prototype.__proto__ || Object.getPrototypeOf(DefaultToolbar.prototype), 'insertItem', this).call(this, index, item);
+      this._arrangeMoreButton();
     }
   }, {
-    key: '_addButton',
-    value: function _addButton(button, index) {
-      var $btn = this._setButton(button, index).$el;
-
-      if (_tuiCodeSnippet2.default.isNumber(index)) {
-        this.$buttonContainer.find('.' + TOOLBAR_BUTTON_CLASS_NAME).eq(index - 1).before($btn);
-      } else {
-        this.$buttonContainer.append($btn);
-      }
-    }
-
-    /**
-     * add divider
-     * @returns {jQuery} - created divider jquery element
-     * @memberof Toolbar
-     */
-
-  }, {
-    key: 'addDivider',
-    value: function addDivider() {
-      var $el = (0, _jquery2.default)('<div class="' + TOOLBAR_DIVIDER_CLASS_NAME + '"></div>');
-      this.$buttonContainer.append($el);
-
-      return $el;
-    }
-  }, {
-    key: '_setButton',
-    value: function _setButton(button, index) {
-      var ev = this.eventManager;
-      if (!(button instanceof _button2.default)) {
-        button = new _button2.default(button);
-      }
-
-      button.on('command', function (e, commandName) {
-        return ev.emit('command', commandName);
+    key: '_init',
+    value: function _init(eventManager) {
+      var moreButton = _toolbarItemFactory2.default.create('button', {
+        name: MORE_BUTTON_NAME,
+        className: 'tui-more',
+        tooltip: _i18n2.default.get('More'),
+        event: _popupDropdownToolbar2.default.OPEN_EVENT
       });
-      button.on('event', function (e, eventName) {
-        return ev.emit(eventName);
+      this._moreButton = moreButton;
+
+      this._popupDropdownToolbar = new _popupDropdownToolbar2.default({
+        eventManager: eventManager,
+        $target: this.$el,
+        $button: moreButton.$el
       });
-      if (_tuiCodeSnippet2.default.isNumber(index)) {
-        this.buttons.splice(index, 0, button);
-      } else {
-        this.buttons.push(button);
-      }
 
-      return button;
+      this.addItem(moreButton);
     }
-
-    /**
-     * init button
-     * @param {Array} buttonList using button list
-     * @private
-     */
-
   }, {
-    key: '_initButton',
-    value: function _initButton(buttonList) {
+    key: '_bindWidthChangedEvent',
+    value: function _bindWidthChangedEvent() {
       var _this2 = this;
 
-      this.buttonOptions = {
-        heading: {
-          className: 'tui-heading',
-          event: 'openHeadingSelect',
-          tooltip: _i18n2.default.get('Headings')
-        },
-        bold: {
-          className: 'tui-bold',
-          command: 'Bold',
-          tooltip: _i18n2.default.get('Bold'),
-          state: 'bold'
-        },
-        italic: {
-          className: 'tui-italic',
-          command: 'Italic',
-          tooltip: _i18n2.default.get('Italic'),
-          state: 'italic'
-        },
-        strike: {
-          className: 'tui-strike',
-          command: 'Strike',
-          tooltip: _i18n2.default.get('Strike'),
-          state: 'strike'
-        },
-        ul: {
-          className: 'tui-ul',
-          command: 'UL',
-          tooltip: _i18n2.default.get('Unordered list')
-        },
-        ol: {
-          className: 'tui-ol',
-          command: 'OL',
-          tooltip: _i18n2.default.get('Ordered list')
-        },
-        task: {
-          className: 'tui-task',
-          command: 'Task',
-          tooltip: _i18n2.default.get('Task')
-        },
-        hr: {
-          className: 'tui-hrline',
-          command: 'HR',
-          tooltip: _i18n2.default.get('Line')
-        },
-        table: {
-          className: 'tui-table',
-          event: 'openPopupAddTable',
-          tooltip: _i18n2.default.get('Insert table')
-        },
-        image: {
-          className: 'tui-image',
-          event: 'openPopupAddImage',
-          tooltip: _i18n2.default.get('Insert image')
-        },
-        link: {
-          className: 'tui-link',
-          event: 'openPopupAddLink',
-          tooltip: _i18n2.default.get('Insert link')
-        },
-        quote: {
-          className: 'tui-quote',
-          command: 'Blockquote',
-          tooltip: _i18n2.default.get('Blockquote'),
-          state: 'quote'
-        },
-        codeBlock: {
-          className: 'tui-codeblock',
-          command: 'CodeBlock',
-          tooltip: _i18n2.default.get('Insert CodeBlock'),
-          state: 'codeBlock'
-        },
-        code: {
-          className: 'tui-code',
-          command: 'Code',
-          tooltip: _i18n2.default.get('Code'),
-          state: 'code'
-        }
-      };
+      this._observer = new _resizeObserverPolyfill2.default(function () {
+        return _this2._balanceButtons();
+      });
+      this._observer.observe(this.$el.get(0));
+    }
+  }, {
+    key: '_balanceButtons',
+    value: function _balanceButtons() {
+      var _this3 = this;
 
-      _tuiCodeSnippet2.default.forEach(buttonList, function (buttonName) {
-        if (buttonName === '|') {
-          _this2.addDivider();
-        } else if (_this2.buttonOptions[buttonName]) {
-          _this2.addButton(new _button2.default(_this2.buttonOptions[buttonName]));
+      var dropDownToolbarItems = this._popupDropdownToolbar.getItems();
+      dropDownToolbarItems.forEach(function (item) {
+        _this3._popupDropdownToolbar.removeItem(item, false);
+
+        var itemLength = _this3.getItems().length;
+        _get(DefaultToolbar.prototype.__proto__ || Object.getPrototypeOf(DefaultToolbar.prototype), 'insertItem', _this3).call(_this3, itemLength, item);
+      });
+
+      this.removeItem(this._moreButton, false);
+      _get(DefaultToolbar.prototype.__proto__ || Object.getPrototypeOf(DefaultToolbar.prototype), 'insertItem', this).call(this, 0, this._moreButton);
+
+      var toolbarHeight = this.$el.height();
+      var defaultToolbarItems = this.getItems();
+      var overflowItems = defaultToolbarItems.filter(function (item) {
+        return item.$el.position().top > toolbarHeight;
+      });
+
+      overflowItems.forEach(function (item) {
+        _this3.removeItem(item, false);
+        _this3._popupDropdownToolbar.addItem(item);
+      });
+
+      this._arrangeMoreButton();
+    }
+  }, {
+    key: '_arrangeMoreButton',
+    value: function _arrangeMoreButton() {
+      if (!this._popupDropdownToolbar) {
+        return;
+      }
+
+      this.removeItem(this._moreButton, false);
+
+      var hasOverflow = this._popupDropdownToolbar.getItems().length > 0;
+      var itemLength = this.getItems().length;
+      if (hasOverflow) {
+        _get(DefaultToolbar.prototype.__proto__ || Object.getPrototypeOf(DefaultToolbar.prototype), 'insertItem', this).call(this, itemLength, this._moreButton);
+      }
+    }
+
+    /**
+     * destroy
+     * @override
+     */
+
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      if (this._observer) {
+        this._observer.disconnect();
+      }
+    }
+  }]);
+
+  return DefaultToolbar;
+}(_toolbar2.default);
+
+exports.default = DefaultToolbar;
+
+/***/ }),
+/* 69 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* WEBPACK VAR INJECTION */(function(global) {/**
+ * A collection of shims that provide minimal functionality of the ES6 collections.
+ *
+ * These implementations are not meant to be used outside of the ResizeObserver
+ * modules as they cover only a limited range of use cases.
+ */
+/* eslint-disable require-jsdoc, valid-jsdoc */
+var MapShim = (function () {
+    if (typeof Map !== 'undefined') {
+        return Map;
+    }
+
+    /**
+     * Returns index in provided array that matches the specified key.
+     *
+     * @param {Array<Array>} arr
+     * @param {*} key
+     * @returns {number}
+     */
+    function getIndex(arr, key) {
+        var result = -1;
+
+        arr.some(function (entry, index) {
+            if (entry[0] === key) {
+                result = index;
+
+                return true;
+            }
+
+            return false;
+        });
+
+        return result;
+    }
+
+    return (function () {
+        function anonymous() {
+            this.__entries__ = [];
         }
+
+        var prototypeAccessors = { size: { configurable: true } };
+
+        /**
+         * @returns {boolean}
+         */
+        prototypeAccessors.size.get = function () {
+            return this.__entries__.length;
+        };
+
+        /**
+         * @param {*} key
+         * @returns {*}
+         */
+        anonymous.prototype.get = function (key) {
+            var index = getIndex(this.__entries__, key);
+            var entry = this.__entries__[index];
+
+            return entry && entry[1];
+        };
+
+        /**
+         * @param {*} key
+         * @param {*} value
+         * @returns {void}
+         */
+        anonymous.prototype.set = function (key, value) {
+            var index = getIndex(this.__entries__, key);
+
+            if (~index) {
+                this.__entries__[index][1] = value;
+            } else {
+                this.__entries__.push([key, value]);
+            }
+        };
+
+        /**
+         * @param {*} key
+         * @returns {void}
+         */
+        anonymous.prototype.delete = function (key) {
+            var entries = this.__entries__;
+            var index = getIndex(entries, key);
+
+            if (~index) {
+                entries.splice(index, 1);
+            }
+        };
+
+        /**
+         * @param {*} key
+         * @returns {void}
+         */
+        anonymous.prototype.has = function (key) {
+            return !!~getIndex(this.__entries__, key);
+        };
+
+        /**
+         * @returns {void}
+         */
+        anonymous.prototype.clear = function () {
+            this.__entries__.splice(0);
+        };
+
+        /**
+         * @param {Function} callback
+         * @param {*} [ctx=null]
+         * @returns {void}
+         */
+        anonymous.prototype.forEach = function (callback, ctx) {
+            var this$1 = this;
+            if ( ctx === void 0 ) ctx = null;
+
+            for (var i = 0, list = this$1.__entries__; i < list.length; i += 1) {
+                var entry = list[i];
+
+                callback.call(ctx, entry[1], entry[0]);
+            }
+        };
+
+        Object.defineProperties( anonymous.prototype, prototypeAccessors );
+
+        return anonymous;
+    }());
+})();
+
+/**
+ * Detects whether window and document objects are available in current environment.
+ */
+var isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined' && window.document === document;
+
+// Returns global object of a current environment.
+var global$1 = (function () {
+    if (typeof global !== 'undefined' && global.Math === Math) {
+        return global;
+    }
+
+    if (typeof self !== 'undefined' && self.Math === Math) {
+        return self;
+    }
+
+    if (typeof window !== 'undefined' && window.Math === Math) {
+        return window;
+    }
+
+    // eslint-disable-next-line no-new-func
+    return Function('return this')();
+})();
+
+/**
+ * A shim for the requestAnimationFrame which falls back to the setTimeout if
+ * first one is not supported.
+ *
+ * @returns {number} Requests' identifier.
+ */
+var requestAnimationFrame$1 = (function () {
+    if (typeof requestAnimationFrame === 'function') {
+        // It's required to use a bounded function because IE sometimes throws
+        // an "Invalid calling object" error if rAF is invoked without the global
+        // object on the left hand side.
+        return requestAnimationFrame.bind(global$1);
+    }
+
+    return function (callback) { return setTimeout(function () { return callback(Date.now()); }, 1000 / 60); };
+})();
+
+// Defines minimum timeout before adding a trailing call.
+var trailingTimeout = 2;
+
+/**
+ * Creates a wrapper function which ensures that provided callback will be
+ * invoked only once during the specified delay period.
+ *
+ * @param {Function} callback - Function to be invoked after the delay period.
+ * @param {number} delay - Delay after which to invoke callback.
+ * @returns {Function}
+ */
+var throttle = function (callback, delay) {
+    var leadingCall = false,
+        trailingCall = false,
+        lastCallTime = 0;
+
+    /**
+     * Invokes the original callback function and schedules new invocation if
+     * the "proxy" was called during current request.
+     *
+     * @returns {void}
+     */
+    function resolvePending() {
+        if (leadingCall) {
+            leadingCall = false;
+
+            callback();
+        }
+
+        if (trailingCall) {
+            proxy();
+        }
+    }
+
+    /**
+     * Callback invoked after the specified delay. It will further postpone
+     * invocation of the original function delegating it to the
+     * requestAnimationFrame.
+     *
+     * @returns {void}
+     */
+    function timeoutCallback() {
+        requestAnimationFrame$1(resolvePending);
+    }
+
+    /**
+     * Schedules invocation of the original function.
+     *
+     * @returns {void}
+     */
+    function proxy() {
+        var timeStamp = Date.now();
+
+        if (leadingCall) {
+            // Reject immediately following calls.
+            if (timeStamp - lastCallTime < trailingTimeout) {
+                return;
+            }
+
+            // Schedule new call to be in invoked when the pending one is resolved.
+            // This is important for "transitions" which never actually start
+            // immediately so there is a chance that we might miss one if change
+            // happens amids the pending invocation.
+            trailingCall = true;
+        } else {
+            leadingCall = true;
+            trailingCall = false;
+
+            setTimeout(timeoutCallback, delay);
+        }
+
+        lastCallTime = timeStamp;
+    }
+
+    return proxy;
+};
+
+// Minimum delay before invoking the update of observers.
+var REFRESH_DELAY = 20;
+
+// A list of substrings of CSS properties used to find transition events that
+// might affect dimensions of observed elements.
+var transitionKeys = ['top', 'right', 'bottom', 'left', 'width', 'height', 'size', 'weight'];
+
+// Check if MutationObserver is available.
+var mutationObserverSupported = typeof MutationObserver !== 'undefined';
+
+/**
+ * Singleton controller class which handles updates of ResizeObserver instances.
+ */
+var ResizeObserverController = function() {
+    this.connected_ = false;
+    this.mutationEventsAdded_ = false;
+    this.mutationsObserver_ = null;
+    this.observers_ = [];
+
+    this.onTransitionEnd_ = this.onTransitionEnd_.bind(this);
+    this.refresh = throttle(this.refresh.bind(this), REFRESH_DELAY);
+};
+
+/**
+ * Adds observer to observers list.
+ *
+ * @param {ResizeObserverSPI} observer - Observer to be added.
+ * @returns {void}
+ */
+
+
+/**
+ * Holds reference to the controller's instance.
+ *
+ * @private {ResizeObserverController}
+ */
+
+
+/**
+ * Keeps reference to the instance of MutationObserver.
+ *
+ * @private {MutationObserver}
+ */
+
+/**
+ * Indicates whether DOM listeners have been added.
+ *
+ * @private {boolean}
+ */
+ResizeObserverController.prototype.addObserver = function (observer) {
+    if (!~this.observers_.indexOf(observer)) {
+        this.observers_.push(observer);
+    }
+
+    // Add listeners if they haven't been added yet.
+    if (!this.connected_) {
+        this.connect_();
+    }
+};
+
+/**
+ * Removes observer from observers list.
+ *
+ * @param {ResizeObserverSPI} observer - Observer to be removed.
+ * @returns {void}
+ */
+ResizeObserverController.prototype.removeObserver = function (observer) {
+    var observers = this.observers_;
+    var index = observers.indexOf(observer);
+
+    // Remove observer if it's present in registry.
+    if (~index) {
+        observers.splice(index, 1);
+    }
+
+    // Remove listeners if controller has no connected observers.
+    if (!observers.length && this.connected_) {
+        this.disconnect_();
+    }
+};
+
+/**
+ * Invokes the update of observers. It will continue running updates insofar
+ * it detects changes.
+ *
+ * @returns {void}
+ */
+ResizeObserverController.prototype.refresh = function () {
+    var changesDetected = this.updateObservers_();
+
+    // Continue running updates if changes have been detected as there might
+    // be future ones caused by CSS transitions.
+    if (changesDetected) {
+        this.refresh();
+    }
+};
+
+/**
+ * Updates every observer from observers list and notifies them of queued
+ * entries.
+ *
+ * @private
+ * @returns {boolean} Returns "true" if any observer has detected changes in
+ *  dimensions of it's elements.
+ */
+ResizeObserverController.prototype.updateObservers_ = function () {
+    // Collect observers that have active observations.
+    var activeObservers = this.observers_.filter(function (observer) {
+        return observer.gatherActive(), observer.hasActive();
+    });
+
+    // Deliver notifications in a separate cycle in order to avoid any
+    // collisions between observers, e.g. when multiple instances of
+    // ResizeObserver are tracking the same element and the callback of one
+    // of them changes content dimensions of the observed target. Sometimes
+    // this may result in notifications being blocked for the rest of observers.
+    activeObservers.forEach(function (observer) { return observer.broadcastActive(); });
+
+    return activeObservers.length > 0;
+};
+
+/**
+ * Initializes DOM listeners.
+ *
+ * @private
+ * @returns {void}
+ */
+ResizeObserverController.prototype.connect_ = function () {
+    // Do nothing if running in a non-browser environment or if listeners
+    // have been already added.
+    if (!isBrowser || this.connected_) {
+        return;
+    }
+
+    // Subscription to the "Transitionend" event is used as a workaround for
+    // delayed transitions. This way it's possible to capture at least the
+    // final state of an element.
+    document.addEventListener('transitionend', this.onTransitionEnd_);
+
+    window.addEventListener('resize', this.refresh);
+
+    if (mutationObserverSupported) {
+        this.mutationsObserver_ = new MutationObserver(this.refresh);
+
+        this.mutationsObserver_.observe(document, {
+            attributes: true,
+            childList: true,
+            characterData: true,
+            subtree: true
+        });
+    } else {
+        document.addEventListener('DOMSubtreeModified', this.refresh);
+
+        this.mutationEventsAdded_ = true;
+    }
+
+    this.connected_ = true;
+};
+
+/**
+ * Removes DOM listeners.
+ *
+ * @private
+ * @returns {void}
+ */
+ResizeObserverController.prototype.disconnect_ = function () {
+    // Do nothing if running in a non-browser environment or if listeners
+    // have been already removed.
+    if (!isBrowser || !this.connected_) {
+        return;
+    }
+
+    document.removeEventListener('transitionend', this.onTransitionEnd_);
+    window.removeEventListener('resize', this.refresh);
+
+    if (this.mutationsObserver_) {
+        this.mutationsObserver_.disconnect();
+    }
+
+    if (this.mutationEventsAdded_) {
+        document.removeEventListener('DOMSubtreeModified', this.refresh);
+    }
+
+    this.mutationsObserver_ = null;
+    this.mutationEventsAdded_ = false;
+    this.connected_ = false;
+};
+
+/**
+ * "Transitionend" event handler.
+ *
+ * @private
+ * @param {TransitionEvent} event
+ * @returns {void}
+ */
+ResizeObserverController.prototype.onTransitionEnd_ = function (ref) {
+        var propertyName = ref.propertyName; if ( propertyName === void 0 ) propertyName = '';
+
+    // Detect whether transition may affect dimensions of an element.
+    var isReflowProperty = transitionKeys.some(function (key) {
+        return !!~propertyName.indexOf(key);
+    });
+
+    if (isReflowProperty) {
+        this.refresh();
+    }
+};
+
+/**
+ * Returns instance of the ResizeObserverController.
+ *
+ * @returns {ResizeObserverController}
+ */
+ResizeObserverController.getInstance = function () {
+    if (!this.instance_) {
+        this.instance_ = new ResizeObserverController();
+    }
+
+    return this.instance_;
+};
+
+ResizeObserverController.instance_ = null;
+
+/**
+ * Defines non-writable/enumerable properties of the provided target object.
+ *
+ * @param {Object} target - Object for which to define properties.
+ * @param {Object} props - Properties to be defined.
+ * @returns {Object} Target object.
+ */
+var defineConfigurable = (function (target, props) {
+    for (var i = 0, list = Object.keys(props); i < list.length; i += 1) {
+        var key = list[i];
+
+        Object.defineProperty(target, key, {
+            value: props[key],
+            enumerable: false,
+            writable: false,
+            configurable: true
+        });
+    }
+
+    return target;
+});
+
+/**
+ * Returns the global object associated with provided element.
+ *
+ * @param {Object} target
+ * @returns {Object}
+ */
+var getWindowOf = (function (target) {
+    // Assume that the element is an instance of Node, which means that it
+    // has the "ownerDocument" property from which we can retrieve a
+    // corresponding global object.
+    var ownerGlobal = target && target.ownerDocument && target.ownerDocument.defaultView;
+
+    // Return the local global object if it's not possible extract one from
+    // provided element.
+    return ownerGlobal || global$1;
+});
+
+// Placeholder of an empty content rectangle.
+var emptyRect = createRectInit(0, 0, 0, 0);
+
+/**
+ * Converts provided string to a number.
+ *
+ * @param {number|string} value
+ * @returns {number}
+ */
+function toFloat(value) {
+    return parseFloat(value) || 0;
+}
+
+/**
+ * Extracts borders size from provided styles.
+ *
+ * @param {CSSStyleDeclaration} styles
+ * @param {...string} positions - Borders positions (top, right, ...)
+ * @returns {number}
+ */
+function getBordersSize(styles) {
+    var positions = [], len = arguments.length - 1;
+    while ( len-- > 0 ) positions[ len ] = arguments[ len + 1 ];
+
+    return positions.reduce(function (size, position) {
+        var value = styles['border-' + position + '-width'];
+
+        return size + toFloat(value);
+    }, 0);
+}
+
+/**
+ * Extracts paddings sizes from provided styles.
+ *
+ * @param {CSSStyleDeclaration} styles
+ * @returns {Object} Paddings box.
+ */
+function getPaddings(styles) {
+    var positions = ['top', 'right', 'bottom', 'left'];
+    var paddings = {};
+
+    for (var i = 0, list = positions; i < list.length; i += 1) {
+        var position = list[i];
+
+        var value = styles['padding-' + position];
+
+        paddings[position] = toFloat(value);
+    }
+
+    return paddings;
+}
+
+/**
+ * Calculates content rectangle of provided SVG element.
+ *
+ * @param {SVGGraphicsElement} target - Element content rectangle of which needs
+ *      to be calculated.
+ * @returns {DOMRectInit}
+ */
+function getSVGContentRect(target) {
+    var bbox = target.getBBox();
+
+    return createRectInit(0, 0, bbox.width, bbox.height);
+}
+
+/**
+ * Calculates content rectangle of provided HTMLElement.
+ *
+ * @param {HTMLElement} target - Element for which to calculate the content rectangle.
+ * @returns {DOMRectInit}
+ */
+function getHTMLElementContentRect(target) {
+    // Client width & height properties can't be
+    // used exclusively as they provide rounded values.
+    var clientWidth = target.clientWidth;
+    var clientHeight = target.clientHeight;
+
+    // By this condition we can catch all non-replaced inline, hidden and
+    // detached elements. Though elements with width & height properties less
+    // than 0.5 will be discarded as well.
+    //
+    // Without it we would need to implement separate methods for each of
+    // those cases and it's not possible to perform a precise and performance
+    // effective test for hidden elements. E.g. even jQuery's ':visible' filter
+    // gives wrong results for elements with width & height less than 0.5.
+    if (!clientWidth && !clientHeight) {
+        return emptyRect;
+    }
+
+    var styles = getWindowOf(target).getComputedStyle(target);
+    var paddings = getPaddings(styles);
+    var horizPad = paddings.left + paddings.right;
+    var vertPad = paddings.top + paddings.bottom;
+
+    // Computed styles of width & height are being used because they are the
+    // only dimensions available to JS that contain non-rounded values. It could
+    // be possible to utilize the getBoundingClientRect if only it's data wasn't
+    // affected by CSS transformations let alone paddings, borders and scroll bars.
+    var width = toFloat(styles.width),
+        height = toFloat(styles.height);
+
+    // Width & height include paddings and borders when the 'border-box' box
+    // model is applied (except for IE).
+    if (styles.boxSizing === 'border-box') {
+        // Following conditions are required to handle Internet Explorer which
+        // doesn't include paddings and borders to computed CSS dimensions.
+        //
+        // We can say that if CSS dimensions + paddings are equal to the "client"
+        // properties then it's either IE, and thus we don't need to subtract
+        // anything, or an element merely doesn't have paddings/borders styles.
+        if (Math.round(width + horizPad) !== clientWidth) {
+            width -= getBordersSize(styles, 'left', 'right') + horizPad;
+        }
+
+        if (Math.round(height + vertPad) !== clientHeight) {
+            height -= getBordersSize(styles, 'top', 'bottom') + vertPad;
+        }
+    }
+
+    // Following steps can't be applied to the document's root element as its
+    // client[Width/Height] properties represent viewport area of the window.
+    // Besides, it's as well not necessary as the <html> itself neither has
+    // rendered scroll bars nor it can be clipped.
+    if (!isDocumentElement(target)) {
+        // In some browsers (only in Firefox, actually) CSS width & height
+        // include scroll bars size which can be removed at this step as scroll
+        // bars are the only difference between rounded dimensions + paddings
+        // and "client" properties, though that is not always true in Chrome.
+        var vertScrollbar = Math.round(width + horizPad) - clientWidth;
+        var horizScrollbar = Math.round(height + vertPad) - clientHeight;
+
+        // Chrome has a rather weird rounding of "client" properties.
+        // E.g. for an element with content width of 314.2px it sometimes gives
+        // the client width of 315px and for the width of 314.7px it may give
+        // 314px. And it doesn't happen all the time. So just ignore this delta
+        // as a non-relevant.
+        if (Math.abs(vertScrollbar) !== 1) {
+            width -= vertScrollbar;
+        }
+
+        if (Math.abs(horizScrollbar) !== 1) {
+            height -= horizScrollbar;
+        }
+    }
+
+    return createRectInit(paddings.left, paddings.top, width, height);
+}
+
+/**
+ * Checks whether provided element is an instance of the SVGGraphicsElement.
+ *
+ * @param {Element} target - Element to be checked.
+ * @returns {boolean}
+ */
+var isSVGGraphicsElement = (function () {
+    // Some browsers, namely IE and Edge, don't have the SVGGraphicsElement
+    // interface.
+    if (typeof SVGGraphicsElement !== 'undefined') {
+        return function (target) { return target instanceof getWindowOf(target).SVGGraphicsElement; };
+    }
+
+    // If it's so, then check that element is at least an instance of the
+    // SVGElement and that it has the "getBBox" method.
+    // eslint-disable-next-line no-extra-parens
+    return function (target) { return target instanceof getWindowOf(target).SVGElement && typeof target.getBBox === 'function'; };
+})();
+
+/**
+ * Checks whether provided element is a document element (<html>).
+ *
+ * @param {Element} target - Element to be checked.
+ * @returns {boolean}
+ */
+function isDocumentElement(target) {
+    return target === getWindowOf(target).document.documentElement;
+}
+
+/**
+ * Calculates an appropriate content rectangle for provided html or svg element.
+ *
+ * @param {Element} target - Element content rectangle of which needs to be calculated.
+ * @returns {DOMRectInit}
+ */
+function getContentRect(target) {
+    if (!isBrowser) {
+        return emptyRect;
+    }
+
+    if (isSVGGraphicsElement(target)) {
+        return getSVGContentRect(target);
+    }
+
+    return getHTMLElementContentRect(target);
+}
+
+/**
+ * Creates rectangle with an interface of the DOMRectReadOnly.
+ * Spec: https://drafts.fxtf.org/geometry/#domrectreadonly
+ *
+ * @param {DOMRectInit} rectInit - Object with rectangle's x/y coordinates and dimensions.
+ * @returns {DOMRectReadOnly}
+ */
+function createReadOnlyRect(ref) {
+    var x = ref.x;
+    var y = ref.y;
+    var width = ref.width;
+    var height = ref.height;
+
+    // If DOMRectReadOnly is available use it as a prototype for the rectangle.
+    var Constr = typeof DOMRectReadOnly !== 'undefined' ? DOMRectReadOnly : Object;
+    var rect = Object.create(Constr.prototype);
+
+    // Rectangle's properties are not writable and non-enumerable.
+    defineConfigurable(rect, {
+        x: x, y: y, width: width, height: height,
+        top: y,
+        right: x + width,
+        bottom: height + y,
+        left: x
+    });
+
+    return rect;
+}
+
+/**
+ * Creates DOMRectInit object based on the provided dimensions and the x/y coordinates.
+ * Spec: https://drafts.fxtf.org/geometry/#dictdef-domrectinit
+ *
+ * @param {number} x - X coordinate.
+ * @param {number} y - Y coordinate.
+ * @param {number} width - Rectangle's width.
+ * @param {number} height - Rectangle's height.
+ * @returns {DOMRectInit}
+ */
+function createRectInit(x, y, width, height) {
+    return { x: x, y: y, width: width, height: height };
+}
+
+/**
+ * Class that is responsible for computations of the content rectangle of
+ * provided DOM element and for keeping track of it's changes.
+ */
+var ResizeObservation = function(target) {
+    this.broadcastWidth = 0;
+    this.broadcastHeight = 0;
+    this.contentRect_ = createRectInit(0, 0, 0, 0);
+
+    this.target = target;
+};
+
+/**
+ * Updates content rectangle and tells whether it's width or height properties
+ * have changed since the last broadcast.
+ *
+ * @returns {boolean}
+ */
+
+
+/**
+ * Reference to the last observed content rectangle.
+ *
+ * @private {DOMRectInit}
+ */
+
+
+/**
+ * Broadcasted width of content rectangle.
+ *
+ * @type {number}
+ */
+ResizeObservation.prototype.isActive = function () {
+    var rect = getContentRect(this.target);
+
+    this.contentRect_ = rect;
+
+    return rect.width !== this.broadcastWidth || rect.height !== this.broadcastHeight;
+};
+
+/**
+ * Updates 'broadcastWidth' and 'broadcastHeight' properties with a data
+ * from the corresponding properties of the last observed content rectangle.
+ *
+ * @returns {DOMRectInit} Last observed content rectangle.
+ */
+ResizeObservation.prototype.broadcastRect = function () {
+    var rect = this.contentRect_;
+
+    this.broadcastWidth = rect.width;
+    this.broadcastHeight = rect.height;
+
+    return rect;
+};
+
+var ResizeObserverEntry = function(target, rectInit) {
+    var contentRect = createReadOnlyRect(rectInit);
+
+    // According to the specification following properties are not writable
+    // and are also not enumerable in the native implementation.
+    //
+    // Property accessors are not being used as they'd require to define a
+    // private WeakMap storage which may cause memory leaks in browsers that
+    // don't support this type of collections.
+    defineConfigurable(this, { target: target, contentRect: contentRect });
+};
+
+var ResizeObserverSPI = function(callback, controller, callbackCtx) {
+    this.activeObservations_ = [];
+    this.observations_ = new MapShim();
+
+    if (typeof callback !== 'function') {
+        throw new TypeError('The callback provided as parameter 1 is not a function.');
+    }
+
+    this.callback_ = callback;
+    this.controller_ = controller;
+    this.callbackCtx_ = callbackCtx;
+};
+
+/**
+ * Starts observing provided element.
+ *
+ * @param {Element} target - Element to be observed.
+ * @returns {void}
+ */
+
+
+/**
+ * Registry of the ResizeObservation instances.
+ *
+ * @private {Map<Element, ResizeObservation>}
+ */
+
+
+/**
+ * Public ResizeObserver instance which will be passed to the callback
+ * function and used as a value of it's "this" binding.
+ *
+ * @private {ResizeObserver}
+ */
+
+/**
+ * Collection of resize observations that have detected changes in dimensions
+ * of elements.
+ *
+ * @private {Array<ResizeObservation>}
+ */
+ResizeObserverSPI.prototype.observe = function (target) {
+    if (!arguments.length) {
+        throw new TypeError('1 argument required, but only 0 present.');
+    }
+
+    // Do nothing if current environment doesn't have the Element interface.
+    if (typeof Element === 'undefined' || !(Element instanceof Object)) {
+        return;
+    }
+
+    if (!(target instanceof getWindowOf(target).Element)) {
+        throw new TypeError('parameter 1 is not of type "Element".');
+    }
+
+    var observations = this.observations_;
+
+    // Do nothing if element is already being observed.
+    if (observations.has(target)) {
+        return;
+    }
+
+    observations.set(target, new ResizeObservation(target));
+
+    this.controller_.addObserver(this);
+
+    // Force the update of observations.
+    this.controller_.refresh();
+};
+
+/**
+ * Stops observing provided element.
+ *
+ * @param {Element} target - Element to stop observing.
+ * @returns {void}
+ */
+ResizeObserverSPI.prototype.unobserve = function (target) {
+    if (!arguments.length) {
+        throw new TypeError('1 argument required, but only 0 present.');
+    }
+
+    // Do nothing if current environment doesn't have the Element interface.
+    if (typeof Element === 'undefined' || !(Element instanceof Object)) {
+        return;
+    }
+
+    if (!(target instanceof getWindowOf(target).Element)) {
+        throw new TypeError('parameter 1 is not of type "Element".');
+    }
+
+    var observations = this.observations_;
+
+    // Do nothing if element is not being observed.
+    if (!observations.has(target)) {
+        return;
+    }
+
+    observations.delete(target);
+
+    if (!observations.size) {
+        this.controller_.removeObserver(this);
+    }
+};
+
+/**
+ * Stops observing all elements.
+ *
+ * @returns {void}
+ */
+ResizeObserverSPI.prototype.disconnect = function () {
+    this.clearActive();
+    this.observations_.clear();
+    this.controller_.removeObserver(this);
+};
+
+/**
+ * Collects observation instances the associated element of which has changed
+ * it's content rectangle.
+ *
+ * @returns {void}
+ */
+ResizeObserverSPI.prototype.gatherActive = function () {
+        var this$1 = this;
+
+    this.clearActive();
+
+    this.observations_.forEach(function (observation) {
+        if (observation.isActive()) {
+            this$1.activeObservations_.push(observation);
+        }
+    });
+};
+
+/**
+ * Invokes initial callback function with a list of ResizeObserverEntry
+ * instances collected from active resize observations.
+ *
+ * @returns {void}
+ */
+ResizeObserverSPI.prototype.broadcastActive = function () {
+    // Do nothing if observer doesn't have active observations.
+    if (!this.hasActive()) {
+        return;
+    }
+
+    var ctx = this.callbackCtx_;
+
+    // Create ResizeObserverEntry instance for every active observation.
+    var entries = this.activeObservations_.map(function (observation) {
+        return new ResizeObserverEntry(observation.target, observation.broadcastRect());
+    });
+
+    this.callback_.call(ctx, entries, ctx);
+    this.clearActive();
+};
+
+/**
+ * Clears the collection of active observations.
+ *
+ * @returns {void}
+ */
+ResizeObserverSPI.prototype.clearActive = function () {
+    this.activeObservations_.splice(0);
+};
+
+/**
+ * Tells whether observer has active observations.
+ *
+ * @returns {boolean}
+ */
+ResizeObserverSPI.prototype.hasActive = function () {
+    return this.activeObservations_.length > 0;
+};
+
+// Registry of internal observers. If WeakMap is not available use current shim
+// for the Map collection as it has all required methods and because WeakMap
+// can't be fully polyfilled anyway.
+var observers = typeof WeakMap !== 'undefined' ? new WeakMap() : new MapShim();
+
+/**
+ * ResizeObserver API. Encapsulates the ResizeObserver SPI implementation
+ * exposing only those methods and properties that are defined in the spec.
+ */
+var ResizeObserver = function(callback) {
+    if (!(this instanceof ResizeObserver)) {
+        throw new TypeError('Cannot call a class as a function.');
+    }
+    if (!arguments.length) {
+        throw new TypeError('1 argument required, but only 0 present.');
+    }
+
+    var controller = ResizeObserverController.getInstance();
+    var observer = new ResizeObserverSPI(callback, controller, this);
+
+    observers.set(this, observer);
+};
+
+// Expose public methods of ResizeObserver.
+['observe', 'unobserve', 'disconnect'].forEach(function (method) {
+    ResizeObserver.prototype[method] = function () {
+        return (ref = observers.get(this))[method].apply(ref, arguments);
+        var ref;
+    };
+});
+
+var index = (function () {
+    // Export existing implementation if available.
+    if (typeof global$1.ResizeObserver !== 'undefined') {
+        return global$1.ResizeObserver;
+    }
+
+    return ResizeObserver;
+})();
+
+/* harmony default export */ __webpack_exports__["default"] = (index);
+
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(70)))
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _button = __webpack_require__(16);
+
+var _button2 = _interopRequireDefault(_button);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements UI Button
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+/**
+ * Toolbar Button UI
+ * @extends {ToolbarItem}
+ */
+var ToolbarButton = function (_Button) {
+  _inherits(ToolbarButton, _Button);
+
+  function ToolbarButton() {
+    _classCallCheck(this, ToolbarButton);
+
+    return _possibleConstructorReturn(this, (ToolbarButton.__proto__ || Object.getPrototypeOf(ToolbarButton)).apply(this, arguments));
+  }
+
+  return ToolbarButton;
+}(_button2.default);
+
+exports.default = ToolbarButton;
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _tuiCodeSnippet = __webpack_require__(1);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+var _layerpopup = __webpack_require__(5);
+
+var _layerpopup2 = _interopRequireDefault(_layerpopup);
+
+var _toolbar = __webpack_require__(38);
+
+var _toolbar2 = _interopRequireDefault(_toolbar);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview implements DefaultToolbar
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+var PopupDropdownToolbar = function (_LayerPopup) {
+  _inherits(PopupDropdownToolbar, _LayerPopup);
+
+  /**
+   * constructor
+   * @param {object} options - popup options
+   */
+  function PopupDropdownToolbar(options) {
+    _classCallCheck(this, PopupDropdownToolbar);
+
+    options = _tuiCodeSnippet2.default.extend({
+      header: false,
+      className: 'te-dropdown-toolbar'
+    }, options);
+    return _possibleConstructorReturn(this, (PopupDropdownToolbar.__proto__ || Object.getPrototypeOf(PopupDropdownToolbar)).call(this, options));
+  }
+
+  /**
+   * get toolbar instance it contains
+   * @returns {Toolbar} - toolbar instance
+   */
+
+  /**
+   * open event string
+   * @memberof PopupDropdownToolbar
+   * @static
+   * @type {ToolbarButton}
+   */
+
+
+  _createClass(PopupDropdownToolbar, [{
+    key: 'getToolbar',
+    value: function getToolbar() {
+      return this._toolbar;
+    }
+
+    /**
+     * get toolbar items
+     * @returns {ToolbarItem[]} - toolbar items
+     * @memberof PopupDropdownToolbar
+     */
+
+  }, {
+    key: 'getItems',
+    value: function getItems() {
+      return this.getToolbar().getItems();
+    }
+
+    /**
+     * get toolbar item at given index
+     * @param  {number} index - item index
+     * @returns {ToolbarItem} - toolbar item at the index
+     * @memberof PopupDropdownToolbar
+     */
+
+  }, {
+    key: 'getItem',
+    value: function getItem(index) {
+      return this.getToolbar().getItem(index);
+    }
+
+    /**
+     * set toolbar items
+     * @param {ToolbarItem[]} items - toolbar items
+     * @memberof PopupDropdownToolbar
+     */
+
+  }, {
+    key: 'setItems',
+    value: function setItems(items) {
+      this.getToolbar().setItems(items);
+    }
+
+    /**
+     * add toolbar item
+     * @param {ToolbarItem|string|object} item - toolbar item
+     * @memberof PopupDropdownToolbar
+     */
+
+  }, {
+    key: 'addItem',
+    value: function addItem(item) {
+      this.getToolbar().addItem(item);
+    }
+
+    /**
+     * insert toolbar item
+     * @param  {number} index - index at given item inserted
+     * @param  {ToolbarItem|string|object} item - toolbar item
+     * @memberof PopupDropdownToolbar
+     */
+
+  }, {
+    key: 'insertItem',
+    value: function insertItem(index, item) {
+      this.getToolbar().insertItem(index, item);
+    }
+
+    /**
+     * get index of given item
+     * @param  {ToolbarItem} item - toolbar item
+     * @returns {number} - index of given toolbar item
+     * @memberof PopupDropdownToolbar
+     */
+
+  }, {
+    key: 'indexOfItem',
+    value: function indexOfItem(item) {
+      return this.getToolbar().indexOfItem(item);
+    }
+
+    /**
+     * remove an item
+     * @param  {number} index - item index to remove
+     * @param  {boolean} destroy - destroy item or not
+     * @returns {ToolbarItem} - removed item
+     * @memberof PopupDropdownToolbar
+     */
+
+  }, {
+    key: 'removeItem',
+    value: function removeItem(index, destroy) {
+      return this.getToolbar().removeItem(index, destroy);
+    }
+
+    /**
+     * remove all toolbar items
+     * @memberof PopupDropdownToolbar
+     */
+
+  }, {
+    key: 'removeAllItems',
+    value: function removeAllItems() {
+      this.getToolbar().removeAllItems();
+    }
+
+    /**
+     * init instance.
+     * store properties & prepare before initialize DOM
+     * @param {LayerPopupOption} options - layer popup options
+     * @memberof PopupDropdownToolbar
+     * @protected
+     * @override
+     */
+
+  }, {
+    key: '_initInstance',
+    value: function _initInstance(options) {
+      _get(PopupDropdownToolbar.prototype.__proto__ || Object.getPrototypeOf(PopupDropdownToolbar.prototype), '_initInstance', this).call(this, options);
+
+      var $button = options.$button,
+          eventManager = options.eventManager;
+
+
+      this._$button = $button;
+      this._eventManager = eventManager;
+      this._toolbar = new _toolbar2.default(eventManager);
+    }
+
+    /**
+     * initialize DOM, render popup
+     * @memberof PopupDropdownToolbar
+     * @protected
+     */
+
+  }, {
+    key: '_initDOM',
+    value: function _initDOM() {
+      _get(PopupDropdownToolbar.prototype.__proto__ || Object.getPrototypeOf(PopupDropdownToolbar.prototype), '_initDOM', this).call(this);
+
+      this.setContent(this._toolbar.$el);
+    }
+
+    /**
+     * bind editor events
+     * @memberof PopupDropdownToolbar
+     * @protected
+     */
+
+  }, {
+    key: '_initEditorEvent',
+    value: function _initEditorEvent() {
+      var _this2 = this;
+
+      _get(PopupDropdownToolbar.prototype.__proto__ || Object.getPrototypeOf(PopupDropdownToolbar.prototype), '_initEditorEvent', this).call(this);
+
+      this._eventManager.listen('focus', function () {
+        return _this2.hide();
+      });
+      this._eventManager.listen('closeAllPopup', function () {
+        return _this2.hide();
+      });
+      this._eventManager.listen(PopupDropdownToolbar.OPEN_EVENT, function () {
+        _this2._eventManager.emit('closeAllPopup');
+
+        var $button = _this2._$button;
+        var position = $button.position();
+        var buttonOuterHeightWithMargin = $button.outerHeight(true);
+        var buttonMarginBottom = (buttonOuterHeightWithMargin - $button.outerHeight()) / 2;
+        var top = position.top + buttonOuterHeightWithMargin - buttonMarginBottom;
+        var left = position.left + $button.outerWidth(true) - _this2.$el.outerWidth(true);
+
+        _this2.$el.css({
+          top: top,
+          left: left
+        });
+
+        _this2.show();
       });
     }
   }]);
 
-  return Toolbar;
-}(_uicontroller2.default);
+  return PopupDropdownToolbar;
+}(_layerpopup2.default);
 
-exports.default = Toolbar;
+Object.defineProperty(PopupDropdownToolbar, 'OPEN_EVENT', {
+  enumerable: true,
+  writable: true,
+  value: 'openDropdownToolbar'
+});
+exports.default = PopupDropdownToolbar;
 
 /***/ }),
-/* 65 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17661,10 +19914,27 @@ var ModeSwitch = function (_UIController) {
 
   /**
    * Creates an instance of ModeSwitch.
+   * @param {jQuery} $rootElement - root jquery element
    * @param {string} initialType - initial type of editor
    * @memberof ModeSwitch
    */
-  function ModeSwitch(initialType) {
+
+
+  /**
+   * current mode
+   * @memberof ModeSwitch
+   * @type {String}
+   * @private
+   */
+
+  /**
+   * mode switch type
+   * @memberof ModeSwitch
+   * @property {string} MARKDOWN - Markdown
+   * @property {string} WYSIWYG - WYSIWYG
+   * @static
+   */
+  function ModeSwitch($rootElement, initialType) {
     _classCallCheck(this, ModeSwitch);
 
     var _this = _possibleConstructorReturn(this, (ModeSwitch.__proto__ || Object.getPrototypeOf(ModeSwitch)).call(this, {
@@ -17672,22 +19942,82 @@ var ModeSwitch = function (_UIController) {
       className: 'te-mode-switch'
     }));
 
-    _this._render();
+    Object.defineProperty(_this, '_buttons', {
+      enumerable: true,
+      writable: true,
+      value: {}
+    });
+
+
+    _this._render($rootElement);
     _this._switchType(_tuiCodeSnippet2.default.isExisty(initialType) ? initialType : MARKDOWN);
     return _this;
   }
 
+  /**
+   * is the switch tab bar shown
+   * @returns {Boolean} - showing status
+   */
+
+
+  /**
+   * root element
+   * @type {jQuery}
+   */
+
+
+  /**
+   * mode switch buttons
+   * @memberof ModeSwitch
+   * @type {Object}
+   * @private
+   */
+
+
   _createClass(ModeSwitch, [{
+    key: 'isShown',
+    value: function isShown() {
+      return this._$rootElement.css('display') === 'block';
+    }
+
+    /**
+     * show switch tab bar
+     * @memberof ModeSwitch
+     */
+
+  }, {
+    key: 'show',
+    value: function show() {
+      this._$rootElement.css('display', 'block');
+    }
+
+    /**
+     * hide switch tab bar
+     * @memberof ModeSwitch
+     */
+
+  }, {
+    key: 'hide',
+    value: function hide() {
+      this._$rootElement.css('display', 'none');
+    }
+  }, {
     key: '_render',
-    value: function _render() {
-      this.buttons = {};
-      this.buttons.$markdown = (0, _jquery2.default)('<button class="te-switch-button markdown" type="button">' + _i18n2.default.get('Markdown') + '</button>');
-      this.buttons.$wysiwyg = (0, _jquery2.default)('<button class="te-switch-button wysiwyg" type="button">' + _i18n2.default.get('WYSIWYG') + '</button>');
-      this.$el.append(this.buttons.$markdown);
-      this.$el.append(this.buttons.$wysiwyg);
+    value: function _render($rootElement) {
+      this._buttons.$markdown = (0, _jquery2.default)('<button class="te-switch-button markdown" type="button">' + _i18n2.default.get('Markdown') + '</button>');
+      this._buttons.$wysiwyg = (0, _jquery2.default)('<button class="te-switch-button wysiwyg" type="button">' + _i18n2.default.get('WYSIWYG') + '</button>');
+      this.$el.append(this._buttons.$markdown);
+      this.$el.append(this._buttons.$wysiwyg);
+
+      if ($rootElement) {
+        $rootElement.append(this.$el);
+        this._$rootElement = $rootElement;
+      }
 
       this.on('click .markdown', this._changeMarkdown.bind(this));
       this.on('click .wysiwyg', this._changeWysiwyg.bind(this));
+
+      this.show();
     }
   }, {
     key: '_changeMarkdown',
@@ -17702,43 +20032,38 @@ var ModeSwitch = function (_UIController) {
   }, {
     key: '_setActiveButton',
     value: function _setActiveButton(type) {
-      this.buttons.$markdown.removeClass('active');
-      this.buttons.$wysiwyg.removeClass('active');
-      this.buttons['$' + type].addClass('active');
+      this._buttons.$markdown.removeClass('active');
+      this._buttons.$wysiwyg.removeClass('active');
+      this._buttons['$' + type].addClass('active');
     }
   }, {
     key: '_switchType',
     value: function _switchType(type) {
-      if (this.type === type) {
+      if (this._type === type) {
         return;
       }
 
-      this.type = type;
+      this._type = type;
       this._setActiveButton(type);
-      this.trigger('modeSwitched', this.type);
+      this.trigger('modeSwitched', this._type);
     }
   }]);
 
   return ModeSwitch;
 }(_uicontroller2.default);
 
-/**
- * @static
- * @memberof ModeSwitch
- * @property {string} MARKDOWN - markdown
- * @property {string} WYSIWYG - wysiwyg
- */
-
-
-ModeSwitch.TYPE = {
-  MARKDOWN: MARKDOWN,
-  WYSIWYG: WYSIWYG
-};
-
+Object.defineProperty(ModeSwitch, 'TYPE', {
+  enumerable: true,
+  writable: true,
+  value: {
+    MARKDOWN: MARKDOWN,
+    WYSIWYG: WYSIWYG
+  }
+});
 exports.default = ModeSwitch;
 
 /***/ }),
-/* 66 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17970,7 +20295,7 @@ var PopupAddLink = function (_LayerPopup) {
 exports.default = PopupAddLink;
 
 /***/ }),
-/* 67 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17992,7 +20317,7 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _tab = __webpack_require__(37);
+var _tab = __webpack_require__(41);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -18196,7 +20521,7 @@ var PopupAddImage = function (_LayerPopup) {
 exports.default = PopupAddImage;
 
 /***/ }),
-/* 68 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18368,7 +20693,7 @@ var PopupTableUtils = function (_LayerPopup) {
 exports.default = PopupTableUtils;
 
 /***/ }),
-/* 69 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18844,7 +21169,7 @@ PopupAddTable.MIN_COL_SELECTION_INDEX = MIN_COL_SELECTION_INDEX;
 exports.default = PopupAddTable;
 
 /***/ }),
-/* 70 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18987,7 +21312,7 @@ var PopupAddHeading = function (_LayerPopup) {
 exports.default = PopupAddHeading;
 
 /***/ }),
-/* 71 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19285,7 +21610,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 exports.default = PopupCodeBlockLanguages;
 
 /***/ }),
-/* 72 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19311,19 +21636,19 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _scrollSyncSplit = __webpack_require__(73);
+var _scrollSyncSplit = __webpack_require__(81);
 
 var _scrollSyncSplit2 = _interopRequireDefault(_scrollSyncSplit);
 
-var _codeBlockEditor = __webpack_require__(74);
+var _codeBlockEditor = __webpack_require__(82);
 
 var _codeBlockEditor2 = _interopRequireDefault(_codeBlockEditor);
 
-var _codeBlockPreview = __webpack_require__(75);
+var _codeBlockPreview = __webpack_require__(83);
 
 var _codeBlockPreview2 = _interopRequireDefault(_codeBlockPreview);
 
-var _codeBlockLanguagesCombo = __webpack_require__(76);
+var _codeBlockLanguagesCombo = __webpack_require__(84);
 
 var _codeBlockLanguagesCombo2 = _interopRequireDefault(_codeBlockLanguagesCombo);
 
@@ -19658,7 +21983,7 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 exports.default = PopupCodeBlockEditor;
 
 /***/ }),
-/* 73 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19972,7 +22297,7 @@ var ScrollSyncSplit = function () {
 exports.default = ScrollSyncSplit;
 
 /***/ }),
-/* 74 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19988,7 +22313,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _codeMirrorExt = __webpack_require__(32);
+var _codeMirrorExt = __webpack_require__(33);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
@@ -20196,7 +22521,7 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
 exports.default = CodeBlockEditor;
 
 /***/ }),
-/* 75 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20210,7 +22535,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _preview = __webpack_require__(10);
+var _preview = __webpack_require__(11);
 
 var _preview2 = _interopRequireDefault(_preview);
 
@@ -20299,7 +22624,7 @@ var CodeBlockPreview = function (_Preview) {
 exports.default = CodeBlockPreview;
 
 /***/ }),
-/* 76 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20323,7 +22648,7 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _keyMapper = __webpack_require__(15);
+var _keyMapper = __webpack_require__(17);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
@@ -20539,7 +22864,7 @@ var CodeBlockLanguagesCombo = function () {
 exports.default = CodeBlockLanguagesCombo;
 
 /***/ }),
-/* 77 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20675,7 +23000,7 @@ var Bold = _commandManager2.default.command('markdown', /** @lends Bold */{
 exports.default = Bold;
 
 /***/ }),
-/* 78 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20889,7 +23214,7 @@ var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
 exports.default = Italic;
 
 /***/ }),
-/* 79 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20997,7 +23322,7 @@ var Strike = _commandManager2.default.command('markdown', /** @lends Strike */{
 exports.default = Strike;
 
 /***/ }),
-/* 80 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21066,7 +23391,7 @@ var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockqu
 exports.default = Blockquote;
 
 /***/ }),
-/* 81 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21167,7 +23492,7 @@ function getHeadingMarkdown(text, size) {
 exports.default = Heading;
 
 /***/ }),
-/* 82 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21248,7 +23573,7 @@ function getParagraphMarkdown(lineText) {
 exports.default = Paragraph;
 
 /***/ }),
-/* 83 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21319,7 +23644,7 @@ var HR = _commandManager2.default.command('markdown', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 84 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21333,7 +23658,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _importManager = __webpack_require__(18);
+var _importManager = __webpack_require__(20);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -21396,7 +23721,7 @@ var AddLink = _commandManager2.default.command('markdown', /** @lends AddLink */
 exports.default = AddLink;
 
 /***/ }),
-/* 85 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21455,7 +23780,7 @@ var AddImage = _commandManager2.default.command('markdown', /** @lends AddImage 
 exports.default = AddImage;
 
 /***/ }),
-/* 86 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21542,7 +23867,7 @@ function isOlOrTask(line) {
 exports.default = UL;
 
 /***/ }),
-/* 87 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21632,7 +23957,89 @@ function isUlOrTask(line) {
 exports.default = OL;
 
 /***/ }),
-/* 88 */
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _commandManager = __webpack_require__(2);
+
+var _commandManager2 = _interopRequireDefault(_commandManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Indent
+ * Add Indent markdown syntax to markdown editor
+ * @extends Command
+ * @module markdownCommands/inent
+ * @ignore
+ */
+var Indent = _commandManager2.default.command('markdown', /** @lends Indent */{
+  name: 'Indent',
+  /**
+   * Command handler
+   * @param {MarkdownEditor} mde MarkdownEditor instance
+   */
+  exec: function exec(mde) {
+    var cm = mde.getEditor();
+    cm.execCommand('subListIndentTab');
+  }
+}); /**
+     * @fileoverview Implements Indent markdown command
+     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     */
+
+exports.default = Indent;
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _commandManager = __webpack_require__(2);
+
+var _commandManager2 = _interopRequireDefault(_commandManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Outdent
+ * Add Outdent markdown syntax to markdown editor
+ * @extends Command
+ * @module markdownCommands/outdent
+ * @ignore
+ */
+var Outdent = _commandManager2.default.command('markdown', /** @lends Outdent */{
+  name: 'Outdent',
+  /**
+   * Command handler
+   * @param {MarkdownEditor} mde MarkdownEditor instance
+   */
+  exec: function exec(mde) {
+    var cm = mde.getEditor();
+    cm.execCommand('indentLessOrderedList');
+  }
+}); /**
+     * @fileoverview Implements Outdent markdown command
+     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     */
+
+exports.default = Outdent;
+
+/***/ }),
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21753,7 +24160,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 89 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21844,7 +24251,7 @@ function isOlOrUl(line) {
 exports.default = Task;
 
 /***/ }),
-/* 90 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21905,7 +24312,7 @@ var Code = _commandManager2.default.command('markdown', /** @lends Code */{
 exports.default = Code;
 
 /***/ }),
-/* 91 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21963,7 +24370,7 @@ var CodeBlock = _commandManager2.default.command('markdown', /** @lends CodeBloc
 exports.default = CodeBlock;
 
 /***/ }),
-/* 92 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22039,7 +24446,7 @@ function styleBold(sq) {
 exports.default = Bold;
 
 /***/ }),
-/* 93 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22116,7 +24523,7 @@ function styleItalic(sq) {
 exports.default = Italic;
 
 /***/ }),
-/* 94 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22193,7 +24600,7 @@ function styleStrike(sq) {
 exports.default = Strike;
 
 /***/ }),
-/* 95 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22241,7 +24648,7 @@ var Blockquote = _commandManager2.default.command('wysiwyg', /** @lends Blockquo
 exports.default = Blockquote;
 
 /***/ }),
-/* 96 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22287,7 +24694,7 @@ var AddImage = _commandManager2.default.command('wysiwyg', /** @lends AddImage *
 exports.default = AddImage;
 
 /***/ }),
-/* 97 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22305,7 +24712,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _importManager = __webpack_require__(18);
+var _importManager = __webpack_require__(20);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -22360,7 +24767,7 @@ var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
 exports.default = AddLink;
 
 /***/ }),
-/* 98 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22441,7 +24848,7 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 99 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22511,7 +24918,7 @@ var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
 exports.default = Heading;
 
 /***/ }),
-/* 100 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22578,7 +24985,7 @@ var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph
 exports.default = Paragraph;
 
 /***/ }),
-/* 101 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22676,7 +25083,7 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
 exports.default = UL;
 
 /***/ }),
-/* 102 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22775,7 +25182,7 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
 exports.default = OL;
 
 /***/ }),
-/* 103 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22915,7 +25322,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 104 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23040,7 +25447,7 @@ function focusToFirstTd(sq, $tr) {
 exports.default = TableAddRow;
 
 /***/ }),
-/* 105 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23189,7 +25596,7 @@ function focusToNextCell(sq, $cell) {
 exports.default = TableAddCol;
 
 /***/ }),
-/* 106 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23318,7 +25725,7 @@ function getTrs(range, selectionMgr, $table) {
 exports.default = TableRemoveRow;
 
 /***/ }),
-/* 107 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23460,7 +25867,7 @@ function focusToCell(sq, $cell, tableMgr) {
 exports.default = TableRemoveCol;
 
 /***/ }),
-/* 108 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23612,7 +26019,7 @@ function getRangeInformation(range, selectionMgr) {
 exports.default = TableAlignCol;
 
 /***/ }),
-/* 109 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23667,7 +26074,7 @@ var TableRemove = _commandManager2.default.command('wysiwyg', /** @lends RemoveT
 exports.default = TableRemove;
 
 /***/ }),
-/* 110 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23688,18 +26095,18 @@ var _commandManager2 = _interopRequireDefault(_commandManager);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
- * IncreaseDepth
- * increase depth of list or task to wysiwyg Editor
+ * Indent
+ * Indent list or task to wysiwyg Editor
  * @extends Command
- * @module wysiwygCommands/IncreaseDepth
+ * @module wysiwygCommands/indent
  * @ignore
  */
 /**
- * @fileoverview Implements incease depth wysiwyg command
+ * @fileoverview Implements Indent wysiwyg command
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-var IncreaseDepth = _commandManager2.default.command('wysiwyg', /** @lends HR */{
-  name: 'IncreaseDepth',
+var Indent = _commandManager2.default.command('wysiwyg', /** @lends Indent */{
+  name: 'Indent',
   /**
    * Command Handler
    * @param {WysiwygEditor} wwe wysiwygEditor instance
@@ -23740,10 +26147,10 @@ var IncreaseDepth = _commandManager2.default.command('wysiwyg', /** @lends HR */
   }
 });
 
-exports.default = IncreaseDepth;
+exports.default = Indent;
 
 /***/ }),
-/* 111 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23764,18 +26171,18 @@ var _commandManager2 = _interopRequireDefault(_commandManager);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
- * DecreaseDepth
- * decrease depth of list or task to wysiwyg Editor
+ * Outdent
+ * Outdent list or task to wysiwyg Editor
  * @extends Command
- * @module wysiwygCommands/DecreaseDepth
+ * @module wysiwygCommands/Outdent
  * @ignore
  */
 /**
- * @fileoverview Implements decrease depth wysiwyg command
+ * @fileoverview Implements Outdent wysiwyg command
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-var DecreaseDepth = _commandManager2.default.command('wysiwyg', /** @lends HR */{
-  name: 'DecreaseDepth',
+var Outdent = _commandManager2.default.command('wysiwyg', /** @lends Outdent */{
+  name: 'Outdent',
 
   /**
    * Command Handler
@@ -23797,7 +26204,7 @@ var DecreaseDepth = _commandManager2.default.command('wysiwyg', /** @lends HR */
 });
 
 /**
- * test if decrease the depth of given list item
+ * test if outdent the given list item
  * arbitrary list allows list item to be in any position
  * while markdown spec does not
  * @param {jQuery} $currentLiNode - jQuery list item element
@@ -23820,10 +26227,10 @@ function getCurrent$Li(wwe) {
   return (0, _jquery2.default)(range.startContainer).closest('li');
 }
 
-exports.default = DecreaseDepth;
+exports.default = Outdent;
 
 /***/ }),
-/* 112 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23931,7 +26338,7 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
 exports.default = Task;
 
 /***/ }),
-/* 113 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24038,7 +26445,7 @@ function styleCode(editor, sq) {
 exports.default = Code;
 
 /***/ }),
-/* 114 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24148,15 +26555,15 @@ function getCodeBlockBody(range, wwe) {
 exports.default = CodeBlock;
 
 /***/ }),
-/* 115 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _jquery = __webpack_require__(0);
+var _tuiCodeSnippet = __webpack_require__(1);
 
-var _jquery2 = _interopRequireDefault(_jquery);
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24165,19 +26572,20 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @ignore
  */
 function sendHostName() {
-  var trackingID = 'UA-115377265-2';
+  var trackingID = 'UA-115377265-9';
+  var applicationID = 'editor';
   var hitType = 'event';
   var _location = location,
       hostname = _location.hostname;
 
 
-  _jquery2.default.post('https://www.google-analytics.com/collect', {
+  _tuiCodeSnippet2.default.imagePing('https://www.google-analytics.com/collect', {
     v: 1,
     t: hitType,
     tid: trackingID,
     cid: hostname,
     dp: hostname,
-    dh: hostname
+    dh: applicationID
   });
 }
 
@@ -24186,7 +26594,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 116 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24214,6 +26622,8 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
   'Unordered list': 'Unordered list',
   'Ordered list': 'Ordered list',
   'Task': 'Task',
+  'Indent': 'Indent',
+  'Outdent': 'Outdent',
   'Insert link': 'Insert link',
   'Insert CodeBlock': 'Insert codeBlock',
   'Insert table': 'Insert table',
@@ -24223,6 +26633,7 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
   'Select image file': 'Select image file',
   'Description': 'Description',
   'OK': 'OK',
+  'More': 'More',
   'Cancel': 'Cancel',
   'File': 'File',
   'URL': 'URL',
@@ -24247,7 +26658,7 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
     */
 
 /***/ }),
-/* 117 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24275,6 +26686,8 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
   'Unordered list': '글머리 기호',
   'Ordered list': '번호 매기기',
   'Task': '체크박스',
+  'Indent': '들여쓰기',
+  'Outdent': '내어쓰기',
   'Insert link': '링크 삽입',
   'Insert CodeBlock': '코드블럭 삽입',
   'Insert table': '표 삽입',
@@ -24284,6 +26697,7 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
   'Select image file': '이미지 파일을 선택하세요.',
   'Description': '설명',
   'OK': '확인',
+  'More': '더 보기',
   'Cancel': '취소',
   'File': '파일',
   'URL': '주소',
@@ -24308,7 +26722,7 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
     */
 
 /***/ }),
-/* 118 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24336,6 +26750,8 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
   'Unordered list': '无序列表',
   'Ordered list': '有序列表',
   'Task': '任务',
+  'Indent': '缩进',
+  'Outdent': '减少缩进',
   'Insert link': '插入链接',
   'Insert CodeBlock': '插入代码块',
   'Insert table': '插入表格',
@@ -24345,6 +26761,7 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
   'Select image file': '选择映像文件',
   'Description': '说明',
   'OK': '确认',
+  'More': '更多',
   'Cancel': '取消',
   'File': '文件',
   'URL': 'URL',
@@ -24369,7 +26786,7 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
     */
 
 /***/ }),
-/* 119 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24397,6 +26814,8 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
   'Unordered list': '番号なしリスト',
   'Ordered list': '順序付きリスト',
   'Task': 'タスク',
+  'Indent': 'インデント',
+  'Outdent': 'アウトデント',
   'Insert link': 'リンク挿入',
   'Insert CodeBlock': 'コードブロック挿入',
   'Insert table': 'テーブル挿入',
@@ -24406,6 +26825,7 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
   'Select image file': '画像ファイル選択',
   'Description': 'ディスクリプション ',
   'OK': 'はい',
+  'More': 'もっと',
   'Cancel': 'キャンセル',
   'File': 'ファイル',
   'URL': 'URL',
@@ -24430,7 +26850,7 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
     */
 
 /***/ }),
-/* 120 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24458,6 +26878,8 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
   'Unordered list': 'Opsomming',
   'Ordered list': 'Genummerde opsomming',
   'Task': 'Taak',
+  'Indent': 'Inspringen',
+  'Outdent': 'Outdent',
   'Insert link': 'Link invoegen',
   'Insert CodeBlock': 'Codeblok toevoegen',
   'Insert table': 'Tabel invoegen',
@@ -24467,6 +26889,7 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
   'Select image file': 'Selecteer een afbeelding',
   'Description': 'Omschrijving',
   'OK': 'OK',
+  'More': 'verder',
   'Cancel': 'Annuleren',
   'File': 'Bestand',
   'URL': 'URL',
@@ -24491,7 +26914,7 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
     */
 
 /***/ }),
-/* 121 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24519,6 +26942,8 @@ _i18n2.default.setLanguage(['es', 'es_ES'], {
   'Unordered list': 'Lista desordenada',
   'Ordered list': 'Lista ordenada',
   'Task': 'Tarea',
+  'Indent': 'Sangría',
+  'Outdent': 'Saliendo',
   'Insert link': 'Insertar enlace',
   'Insert CodeBlock': 'Insertar bloque de código',
   'Insert table': 'Insertar tabla',
@@ -24528,6 +26953,7 @@ _i18n2.default.setLanguage(['es', 'es_ES'], {
   'Select image file': 'Seleccionar archivo de imagen',
   'Description': 'Descripción',
   'OK': 'Aceptar',
+  'More': 'Más',
   'Cancel': 'Cancelar',
   'File': 'Archivo',
   'URL': 'URL',
@@ -24552,7 +26978,7 @@ _i18n2.default.setLanguage(['es', 'es_ES'], {
     */
 
 /***/ }),
-/* 122 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24580,6 +27006,8 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
   'Unordered list': 'Aufzählung',
   'Ordered list': 'Nummerierte Aufzählung',
   'Task': 'Aufgabe',
+  'Indent': 'inspringen',
+  'Outdent': 'Uithangen',
   'Insert link': 'Link einfügen',
   'Insert CodeBlock': 'Codeblock einfügen',
   'Insert table': 'Tabelle einfügen',
@@ -24589,6 +27017,7 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
   'Select image file': 'Grafik auswählen',
   'Description': 'Beschreibung',
   'OK': 'OK',
+  'More': 'Mehr',
   'Cancel': 'Abbrechen',
   'File': 'Datei',
   'URL': 'URL',
@@ -24613,7 +27042,7 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
     */
 
 /***/ }),
-/* 123 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24641,6 +27070,8 @@ _i18n2.default.setLanguage(['ru', 'ru_RU'], {
   'Unordered list': 'Неупорядоченный список',
   'Ordered list': 'Упорядоченный список',
   'Task': 'Задача',
+  'Indent': 'отступ',
+  'Outdent': 'Выступ',
   'Insert link': 'Вставить ссылку',
   'Insert CodeBlock': 'Вставить код',
   'Insert table': 'Вставить таблицу',
@@ -24650,6 +27081,7 @@ _i18n2.default.setLanguage(['ru', 'ru_RU'], {
   'Select image file': 'Выбрать файл изображения',
   'Description': 'Описание',
   'OK': 'Хорошо',
+  'More': 'еще',
   'Cancel': 'Отмена',
   'File': 'Файл',
   'URL': 'URL',
@@ -24674,7 +27106,7 @@ _i18n2.default.setLanguage(['ru', 'ru_RU'], {
     */
 
 /***/ }),
-/* 124 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24702,6 +27134,8 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
   'Unordered list': 'Liste non-ordonnée',
   'Ordered list': 'Liste ordonnée',
   'Task': 'Tâche',
+  'Indent': 'Retrait',
+  'Outdent': 'Sortir',
   'Insert link': 'Insérer un lien',
   'Insert CodeBlock': 'Insérer un bloc de code',
   'Insert table': 'Insérer un tableau',
@@ -24711,6 +27145,7 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
   'Select image file': 'Sélectionnez un fichier image',
   'Description': 'Description',
   'OK': 'OK',
+  'More': 'de plus',
   'Cancel': 'Annuler',
   'File': 'Fichier',
   'URL': 'URL',
@@ -24735,7 +27170,7 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
     */
 
 /***/ }),
-/* 125 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24763,6 +27198,8 @@ _i18n2.default.setLanguage(['uk', 'uk_UA'], {
   'Unordered list': 'Невпорядкований список',
   'Ordered list': 'Упорядкований список',
   'Task': 'Завдання',
+  'Indent': 'відступ',
+  'Outdent': 'застарілий',
   'Insert link': 'Вставити посилання',
   'Insert CodeBlock': 'Вставити код',
   'Insert table': 'Вставити таблицю',
@@ -24772,6 +27209,7 @@ _i18n2.default.setLanguage(['uk', 'uk_UA'], {
   'Select image file': 'Вибрати файл зображення',
   'Description': 'Опис',
   'OK': 'OK',
+  'More': 'ще',
   'Cancel': 'Скасувати',
   'File': 'Файл',
   'URL': 'URL',
