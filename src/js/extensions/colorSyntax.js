@@ -145,7 +145,7 @@ function initUI(editor, preset) {
 
   const $colorPickerContainer = $('<div />');
 
-  const $buttonBar = $('<button type="button" class="te-apply-button">OK</button>');
+  const $buttonBar = $(`<button type="button" class="te-apply-button">${i18n.get('OK')}</button>`);
 
   const cpOptions = {
     container: $colorPickerContainer[0]

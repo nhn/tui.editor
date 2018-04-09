@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import Toolbar from './toolbar';
+import DefaultToolbar from './defaultToolbar';
 import Tab from './tab';
 import LayerPopup from './layerpopup';
 import ModeSwitch from './modeSwitch';
@@ -43,16 +43,16 @@ class DefaultUI {
   name = 'default';
 
   /**
-   * Toolbar wrapper element
+   * DefaultToolbar wrapper element
    * @memberof DefaultUI
    * @type {jQuery}
    */
   $el;
 
   /**
-   * Toolbar instance
+   * DefaultToolbar instance
    * @memberof DefaultUI
-   * @type {Toolbar}
+   * @type {DefaultToolbar}
    * @private
    */
   _toolbar;
@@ -165,7 +165,7 @@ class DefaultUI {
   }
 
   _initToolbar(eventManager, toolbarItems) {
-    const toolbar = new Toolbar(eventManager, toolbarItems);
+    const toolbar = new DefaultToolbar(eventManager, toolbarItems);
     this._toolbar = toolbar;
     this.$el.find(`.${CLASS_TOOLBAR}`).append(toolbar.$el);
   }
@@ -281,7 +281,7 @@ class DefaultUI {
 
   /**
    * get toolbar instance
-   * @returns {Toolbar} - toolbar instance
+   * @returns {DefaultToolbar} - toolbar instance
    * @memberof DefaultUI
    */
   getToolbar() {
@@ -290,7 +290,7 @@ class DefaultUI {
 
   /**
    * set toolbar instance
-   * @param {Toolbar} toolbar - toolbar
+   * @param {DefaultToolbar} toolbar - toolbar
    * @memberof DefaultUI
    */
   setToolbar(toolbar) {

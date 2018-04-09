@@ -31,6 +31,7 @@ i18n.setLanguage(['ja', 'ja_JP'], {
   'Select image file': '画像ファイル選択',
   'Description': 'ディスクリプション ',
   'OK': 'はい',
+  'More': 'もっと',
   'Cancel': 'キャンセル',
   'File': 'ファイル',
   'URL': 'URL',

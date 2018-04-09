@@ -31,6 +31,7 @@ i18n.setLanguage(['fr', 'fr_FR'], {
   'Select image file': 'Sélectionnez un fichier image',
   'Description': 'Description',
   'OK': 'OK',
+  'More': 'de plus',
   'Cancel': 'Annuler',
   'File': 'Fichier',
   'URL': 'URL',

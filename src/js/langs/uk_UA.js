@@ -31,6 +31,7 @@ i18n.setLanguage(['uk', 'uk_UA'], {
   'Select image file': 'Вибрати файл зображення',
   'Description': 'Опис',
   'OK': 'OK',
+  'More': 'ще',
   'Cancel': 'Скасувати',
   'File': 'Файл',
   'URL': 'URL',

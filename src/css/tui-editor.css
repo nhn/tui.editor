@@ -294,7 +294,7 @@
 
 .tui-editor-defaultUI button.tui-scrollsync:after {
     content: "Scroll off";
-} 
+}
 
 .tui-editor-defaultUI button.tui-scrollsync.active {
     color: #125de6;
@@ -642,11 +642,24 @@
     font-size: 14px;
 }
 
+.te-dropdown-toolbar {
+    position: absolute;
+    width: auto;
+}
+
+.te-dropdown-toolbar .tui-popup-body {
+    padding: 0px;
+}
+
+.te-dropdown-toolbar .tui-toolbar-divider {
+    display: none;
+}
+
 .tui-popup-color {
     padding: 0;
 }
 
-.tui-popup-color .tui-colorpicker-container, 
+.tui-popup-color .tui-colorpicker-container,
 .tui-popup-color .tui-colorpicker-palette-container {
     width: 144px;
 }
@@ -825,6 +838,10 @@ only screen and (                min-resolution: 2dppx) {
 
 .tui-toolbar-icons.tui-codeblock {
     background-position: -130px -70px;
+}
+
+.tui-toolbar-icons.tui-more {
+    background-position: -172px -92px;
 }
 
 .tui-colorpicker-svg-slider {
@@ -1184,5 +1201,9 @@ only screen and (                min-resolution: 2dppx) {
 
     .tui-editor-popup {
         margin-left: -150px;
+    }
+
+    .te-dropdown-toolbar {
+        max-width: none;
     }
 }

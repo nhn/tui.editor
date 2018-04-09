@@ -32,7 +32,7 @@ describe('Toolbar', () => {
 
   describe('addButton()', () => {
     it('add a button on toolbar', () => {
-      const buttons = toolbar.getItems();
+      let buttons = toolbar.getItems();
       const len = buttons.length;
 
       toolbar.addButton(new Button({
@@ -41,11 +41,12 @@ describe('Toolbar', () => {
         text: 'test'
       }));
 
+      buttons = toolbar.getItems();
       expect(buttons.length).toBe(len + 1);
     });
 
     it('if addButton param is not a button make button with props', () => {
-      const buttons = toolbar.getItems();
+      let buttons = toolbar.getItems();
       const len = buttons.length;
 
       toolbar.addButton({
@@ -54,6 +55,7 @@ describe('Toolbar', () => {
         text: 'test'
       });
 
+      buttons = toolbar.getItems();
       expect(buttons.length).toBe(len + 1);
     });
 
@@ -68,7 +70,7 @@ describe('Toolbar', () => {
     });
 
     it('add multiple buttons via array', () => {
-      const buttons = toolbar.getItems();
+      let buttons = toolbar.getItems();
       const len = buttons.length;
 
       toolbar.addButton([{
@@ -81,6 +83,7 @@ describe('Toolbar', () => {
         text: 'test2'
       }]);
 
+      buttons = toolbar.getItems();
       expect(buttons.length).toBe(len + 2);
     });
 
@@ -336,11 +339,21 @@ describe('Toolbar', () => {
   });
 
   describe('removeItem', () => {
-    it('should remove item at given index from array and destroy', () => {
+    it('should remove item at given index', () => {
       const items = [new ToolbarItem(), new ToolbarItem(), new ToolbarItem()];
       toolbar.setItems(items);
 
       toolbar.removeItem(1);
+
+      expect(toolbar._items[0]).toBe(items[0]);
+      expect(toolbar._items[1]).toBe(items[2]);
+    });
+
+    it('should remove given item', () => {
+      const items = [new ToolbarItem(), new ToolbarItem(), new ToolbarItem()];
+      toolbar.setItems(items);
+
+      toolbar.removeItem(items[1]);
 
       expect(toolbar._items[0]).toBe(items[0]);
       expect(toolbar._items[1]).toBe(items[2]);
@@ -355,7 +368,19 @@ describe('Toolbar', () => {
 
       toolbar.removeItem(2);
 
-      expect(spy).toHaveBeenCalled();
+      expect(item.destroy).toHaveBeenCalled();
+    });
+
+    it('should not destroy if destroy param is false', () => {
+      const spy = jasmine.createSpy('destroy');
+      const item = new ToolbarItem();
+      const items = [new ToolbarItem(), new ToolbarItem(), item];
+      item.destroy = spy;
+      toolbar.setItems(items);
+
+      toolbar.removeItem(2, false);
+
+      expect(item.destroy).not.toHaveBeenCalled();
     });
   });
 
