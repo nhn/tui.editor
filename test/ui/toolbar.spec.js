@@ -368,7 +368,7 @@ describe('Toolbar', () => {
 
       toolbar.removeItem(2);
 
-      expect(spy).toHaveBeenCalled();
+      expect(item.destroy).toHaveBeenCalled();
     });
 
     it('should not destroy if destroy param is false', () => {
@@ -380,7 +380,7 @@ describe('Toolbar', () => {
 
       toolbar.removeItem(2, false);
 
-      expect(spy).not.toHaveBeenCalled();
+      expect(item.destroy).not.toHaveBeenCalled();
     });
   });
 

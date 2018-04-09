@@ -31,7 +31,7 @@ i18n.setLanguage(['ru', 'ru_RU'], {
   'Select image file': 'Выбрать файл изображения',
   'Description': 'Описание',
   'OK': 'Хорошо',
-  'More': 'More',
+  'More': 'еще',
   'Cancel': 'Отмена',
   'File': 'Файл',
   'URL': 'URL',

@@ -31,7 +31,7 @@ i18n.setLanguage(['nl', 'nl_NL'], {
   'Select image file': 'Selecteer een afbeelding',
   'Description': 'Omschrijving',
   'OK': 'OK',
-  'More': 'More',
+  'More': 'verder',
   'Cancel': 'Annuleren',
   'File': 'Bestand',
   'URL': 'URL',

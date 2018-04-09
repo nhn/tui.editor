@@ -47,6 +47,17 @@ class DefaultToolbar extends Toolbar {
     this._bindWidthChangedEvent();
   }
 
+  /**
+   * insert toolbar item
+   * @param  {number} index - index at given item inserted
+   * @param  {ToolbarItem|string|object} item - toolbar item
+   * @memberof Toolbar
+   */
+  insertItem(index, item) {
+    super.insertItem(index, item);
+    this._arrangeMoreButton();
+  }
+
   _init(eventManager) {
     const moreButton = ToolbarItemFactory.create('button', {
       name: MORE_BUTTON_NAME,
@@ -55,13 +66,14 @@ class DefaultToolbar extends Toolbar {
       event: PopupDropdownToolbar.OPEN_EVENT
     });
     this._moreButton = moreButton;
-    this.addItem(moreButton);
 
     this._popupDropdownToolbar = new PopupDropdownToolbar({
-      $target: this.$el,
       eventManager,
+      $target: this.$el,
       $button: moreButton.$el
     });
+
+    this.addItem(moreButton);
   }
 
   _bindWidthChangedEvent() {
@@ -73,11 +85,13 @@ class DefaultToolbar extends Toolbar {
     let dropDownToolbarItems = this._popupDropdownToolbar.getItems();
     dropDownToolbarItems.forEach(item => {
       this._popupDropdownToolbar.removeItem(item, false);
-      this.addItem(item);
+
+      const itemLength = this.getItems().length;
+      super.insertItem(itemLength, item);
     });
 
     this.removeItem(this._moreButton, false);
-    this.insertItem(0, this._moreButton);
+    super.insertItem(0, this._moreButton);
 
     const toolbarHeight = this.$el.height();
     const defaultToolbarItems = this.getItems();
@@ -94,11 +108,16 @@ class DefaultToolbar extends Toolbar {
   }
 
   _arrangeMoreButton() {
+    if (!this._popupDropdownToolbar) {
+      return;
+    }
+
     this.removeItem(this._moreButton, false);
 
     const hasOverflow = this._popupDropdownToolbar.getItems().length > 0;
+    const itemLength = this.getItems().length;
     if (hasOverflow) {
-      this.addItem(this._moreButton);
+      super.insertItem(itemLength, this._moreButton);
     }
   }
 

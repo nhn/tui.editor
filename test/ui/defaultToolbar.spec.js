@@ -86,7 +86,7 @@ describe('DefaultToolbar', () => {
         expect(defaultToolbarItems.length < items.length).toBe(true);
         expect(dropdownToolbaritems.length > 0).toBe(true);
         done();
-      });
+      }, 50);
     });
   });
 });

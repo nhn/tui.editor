@@ -155,7 +155,7 @@ class Toolbar extends UIController {
    * remove an item
    * @param  {ToolbarItem|number} item - an toolbar item or index of the item to remove
    * @param  {boolean} destroy - destroy item or not
-   * @returns {ToolbarItem} - removed item
+   * @returns {ToolbarItem|undefined} - removed item
    * @memberof Toolbar
    */
   removeItem(item, destroy = true) {
