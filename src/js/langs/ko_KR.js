@@ -31,6 +31,7 @@ i18n.setLanguage(['ko', 'ko_KR'], {
   'Select image file': '이미지 파일을 선택하세요.',
   'Description': '설명',
   'OK': '확인',
+  'More': 'More',
   'Cancel': '취소',
   'File': '파일',
   'URL': '주소',

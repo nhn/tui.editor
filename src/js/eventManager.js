@@ -27,6 +27,7 @@ const eventList = [
   'openHeadingSelect',
   'openPopupCodeBlockLanguages',
   'openPopupCodeBlockEditor',
+  'openDropdownToolbar',
   'closePopupCodeBlockLanguages',
   'closePopupCodeBlockEditor',
   'closeAllPopup',
