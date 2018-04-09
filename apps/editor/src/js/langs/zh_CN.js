@@ -31,6 +31,7 @@ i18n.setLanguage(['zh', 'zh_CN'], {
   'Select image file': '选择映像文件',
   'Description': '说明',
   'OK': '确认',
+  'More': '更多',
   'Cancel': '取消',
   'File': '文件',
   'URL': 'URL',

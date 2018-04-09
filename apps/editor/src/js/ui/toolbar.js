@@ -17,7 +17,7 @@ import ToolbarItemFactory from './toolbarItemFactory';
  */
 class Toolbar extends UIController {
   /**
-   * UI name
+   * items
    * @memberof Toolbar
    * @private
    * @type {Array}
@@ -25,7 +25,7 @@ class Toolbar extends UIController {
   _items = [];
 
   /**
-   * UI name
+   * event manager
    * @memberof Toolbar
    * @private
    * @type {EventManager}
@@ -74,7 +74,7 @@ class Toolbar extends UIController {
    * @memberof Toolbar
    */
   getItems() {
-    return this._items;
+    return this._items.slice(0);
   }
 
   /**
@@ -127,8 +127,10 @@ class Toolbar extends UIController {
       this._items.push(item);
     }
 
-    item.on('command', (e, commandName) => this._eventManager.emit('command', commandName));
-    item.on('event', (e, eventName) => this._eventManager.emit(eventName));
+    item.onCommandHandler = (e, commandName) => this._eventManager.emit('command', commandName);
+    item.onEventHandler = (e, eventName) => this._eventManager.emit(eventName);
+    item.on('command', item.onCommandHandler);
+    item.on('event', item.onEventHandler);
   }
 
   /**
@@ -151,14 +153,35 @@ class Toolbar extends UIController {
 
   /**
    * remove an item
-   * @param  {number} index - item index to remove
+   * @param  {ToolbarItem|number} item - an toolbar item or index of the item to remove
+   * @param  {boolean} destroy - destroy item or not
+   * @returns {ToolbarItem|undefined} - removed item
    * @memberof Toolbar
    */
-  removeItem(index) {
-    const item = this._items.splice(index, 1);
-    if (item.length) {
-      item[0].destroy();
+  removeItem(item, destroy = true) {
+    let index;
+    let removedItem;
+
+    if (item instanceof ToolbarItem) {
+      index = this.indexOfItem(item);
+    } else {
+      index = item;
     }
+
+    if (index >= 0) {
+      removedItem = this._items.splice(index, 1)[0];
+    }
+    if (removedItem) {
+      if (destroy) {
+        removedItem.destroy();
+      } else {
+        removedItem.off('command', removedItem.onCommandHandler);
+        removedItem.off('event', removedItem.onEventHandler);
+        removedItem.$el.detach();
+      }
+    }
+
+    return removedItem;
   }
 
   /**
