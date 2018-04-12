@@ -98,7 +98,7 @@ TOAST UI products are available over the CDN powered by [TOAST Cloud](https://ww
 You can use the CDN as below.
 
 ```html
-<script src="https://uicdn.toast.com/tui-editor/latest/tui-editor.js"></script>
+<script src="https://uicdn.toast.com/tui-editor/latest/tui-editor-Editor.js"></script>
 ```
 
 If you want to use a specific version, use the tag name instead of `latest` in the url's path.
@@ -108,8 +108,8 @@ The CDN directory has the following structure.
 ```
 tui-editor/
 ├─ latest/
-│  ├─ tui-editor.js
-│  └─ tui-editor.min.js
+│  ├─ tui-editor-Editor.js
+│  └─ tui-editor-Editor.min.js
 ├─ v3.3.0/
 │  ├─ ...
 ```
