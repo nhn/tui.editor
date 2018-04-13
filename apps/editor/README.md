@@ -17,6 +17,7 @@
 - [Install](#-install)
     - [using npm](#using-npm)
     - [using bower](#using-bower)
+    - [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
     - [Download](#download)
 - [Usage](#-usage)
     - [Editor](#editor)
@@ -32,9 +33,9 @@
 - [License](#-license)
 
 ## 🌏 Browser Support
-|<img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE / Edge" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="IE / Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari |
+| <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox |
 | :---------: | :---------: | :---------: | :---------: | :---------: |
-| 10+ | Yes | Yes | Yes | Yes |
+| Yes | 10+ | Yes | Yes | Yes |
 
 ## <img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png" height="18px" /> Standard and Extensible
 ![standard and extensible image](https://user-images.githubusercontent.com/1215767/34353629-95b58da0-ea6c-11e7-859b-df5e990dd157.png)
@@ -89,6 +90,29 @@ npm install --save tui-editor
 ### using bower
 ```sh
 bower install --save tui-editor
+```
+
+### Via Contents Delivery Network (CDN)
+TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
+
+You can use the CDN as below.
+
+```html
+<script src="https://uicdn.toast.com/tui-editor/latest/tui-editor-Editor.js"></script>
+```
+
+If you want to use a specific version, use the tag name instead of `latest` in the url's path.
+
+The CDN directory has the following structure.
+
+```
+tui-editor/
+├─ latest/
+│  ├─ tui-editor-Editor.js
+│  ├─ tui-editor-Editor.min.js
+│  └─ ...
+├─ v1.1.0/
+│  ├─ ...
 ```
 
 ### download
