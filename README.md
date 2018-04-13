@@ -109,8 +109,9 @@ The CDN directory has the following structure.
 tui-editor/
 ├─ latest/
 │  ├─ tui-editor-Editor.js
-│  └─ tui-editor-Editor.min.js
-├─ v3.3.0/
+│  ├─ tui-editor-Editor.min.js
+│  └─ ...
+├─ v1.1.0/
 │  ├─ ...
 ```
 
