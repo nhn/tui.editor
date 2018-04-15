@@ -291,7 +291,7 @@ describe('Editor', () => {
     });
 
     describe('usageStatistics', () => {
-      it('should send request hostname in payload by default', () => {
+      xit('should send request hostname in payload by default', () => {
         spyOn(util, 'imagePing');
 
         editor = new Editor({
@@ -301,7 +301,7 @@ describe('Editor', () => {
         expect(util.imagePing).toHaveBeenCalled();
       });
 
-      it('should not send request if the option is set to false', () => {
+      xit('should not send request if the option is set to false', () => {
         spyOn(util, 'imagePing');
 
         editor = new Editor({
