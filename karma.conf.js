@@ -169,7 +169,7 @@ module.exports = function(config) {
     // list of files to exclude
     exclude: [],
 
-    reporters: ['progress', 'junit', 'coverage', 'remap-coverage'],
+    reporters: ['dots', 'junit', 'coverage', 'remap-coverage'],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
