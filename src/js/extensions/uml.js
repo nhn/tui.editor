@@ -8,7 +8,7 @@ import Editor from './editorProxy';
 
 const {codeBlockManager} = Editor;
 const DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';
-const LANG = 'uml';
+const UML_LANGUAGES = ['uml', 'plantuml'];
 
 /**
  * plant uml plugin
@@ -42,11 +42,13 @@ function umlExtension(editor, options = {}) {
     return renderedHTML;
   }
 
-  const optionLanguages = editor.options.codeBlockLanguages;
-  if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
-    optionLanguages.push(LANG);
-  }
-  codeBlockManager.setReplacer(LANG, plantUMLReplacer);
+  const {codeBlockLanguages} = editor.options;
+  UML_LANGUAGES.forEach(umlLanguage => {
+    if (codeBlockLanguages.indexOf(umlLanguage) < 0) {
+      codeBlockLanguages.push(umlLanguage);
+    }
+    codeBlockManager.setReplacer(umlLanguage, plantUMLReplacer);
+  });
 }
 
 Editor.defineExtension('uml', umlExtension);
