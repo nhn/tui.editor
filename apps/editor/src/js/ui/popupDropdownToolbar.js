@@ -152,8 +152,16 @@ class PopupDropdownToolbar extends LayerPopup {
     this._eventManager.listen('focus', () => this.hide());
     this._eventManager.listen('closeAllPopup', () => this.hide());
     this._eventManager.listen(PopupDropdownToolbar.OPEN_EVENT, () => {
+      const isShown = this.isShow();
       this._eventManager.emit('closeAllPopup');
+      if (!isShown) {
+        this.show();
+      }
 
+      // to give toolbar element enough width before the calculation
+      this.$el.css({
+        left: '-1000px'
+      });
       const $button = this._$button;
       const position = $button.position();
       const buttonOuterHeightWithMargin = $button.outerHeight(true);
@@ -165,8 +173,6 @@ class PopupDropdownToolbar extends LayerPopup {
         top,
         left
       });
-
-      this.show();
     });
   }
 }
