@@ -7,8 +7,6 @@ import Editor from '../editorProxy';
 import ScrollManager from './scrollManager';
 import SectionManager from './sectionManager';
 
-const {Button} = Editor;
-
 /**
  * scrollSync plugin
  * @param {Editor} editor - editor
@@ -39,16 +37,19 @@ function scrollSyncExtension(editor) {
   if (editor.getUI().name === 'default') {
     const toolbar = editor.getUI().getToolbar();
 
-    // init button
-    button = new Button({
-      className,
-      command: 'scrollSyncToggle',
-      tooltip: TOOL_TIP.active,
-      $el: $(`<button class="active ${className}" type="button"></button>`)
+    toolbar.addItem('divider');
+    toolbar.addItem({
+      type: 'button',
+      options: {
+        className,
+        command: 'scrollSyncToggle',
+        tooltip: TOOL_TIP.active,
+        $el: $(`<button class="active ${className}" type="button"></button>`)
+      }
     });
-
-    $divider = toolbar.addDivider();
-    toolbar.addButton(button);
+    const items = toolbar.getItems();
+    $divider = items[items.length - 2].$el;
+    button = items[items.length - 1];
 
     changeButtonVisiblityStateIfNeed();
     // hide scroll follow button in wysiwyg
