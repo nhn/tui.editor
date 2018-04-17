@@ -77,7 +77,10 @@ class DefaultToolbar extends Toolbar {
   }
 
   _bindWidthChangedEvent() {
-    this._observer = new ResizeObserver(() => this._balanceButtons());
+    this._observer = new ResizeObserver(() => {
+      this._popupDropdownToolbar.hide();
+      this._balanceButtons();
+    });
     this._observer.observe(this.$el.get(0));
   }
 
