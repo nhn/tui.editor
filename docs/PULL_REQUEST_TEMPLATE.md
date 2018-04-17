@@ -26,12 +26,12 @@
 -->
 
 ### Please check if the PR fulfills these requirements
-- [ ] It's right issue type on title
+- [ ] It's the right issue type on the title
 - [ ] When resolving a specific issue, it's referenced in the PR's title (e.g. `fix #xxx[,#xxx]`, where "xxx" is the issue number)
 - [ ] The commit message follows our guidelines
 - [ ] Tests for the changes have been added (for bug fixes/features)
 - [ ] Docs have been added/updated (for bug fixes/features)
-- [ ] It does not introduce a breaking change or has description for the breaking change
+- [ ] It does not introduce a breaking change or has a description of the breaking change
 
 ### Description
 

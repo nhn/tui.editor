@@ -59,5 +59,24 @@ describe('ToolbarItemFactory', () => {
       expect(ToolbarItemFactory.create('outdent').getName()).toBe('outdent');
       expect(ToolbarItemFactory.create('item').getName()).toBe('item');
     });
+
+    it('should create items of commands/events', () => {
+      expect(ToolbarItemFactory.create('heading')._event).toBe('openHeadingSelect');
+      expect(ToolbarItemFactory.create('bold')._command).toBe('Bold');
+      expect(ToolbarItemFactory.create('italic')._command).toBe('Italic');
+      expect(ToolbarItemFactory.create('strike')._command).toBe('Strike');
+      expect(ToolbarItemFactory.create('hr')._command).toBe('HR');
+      expect(ToolbarItemFactory.create('quote')._command).toBe('Blockquote');
+      expect(ToolbarItemFactory.create('ul')._command).toBe('UL');
+      expect(ToolbarItemFactory.create('ol')._command).toBe('OL');
+      expect(ToolbarItemFactory.create('task')._command).toBe('Task');
+      expect(ToolbarItemFactory.create('table')._event).toBe('openPopupAddTable');
+      expect(ToolbarItemFactory.create('image')._event).toBe('openPopupAddImage');
+      expect(ToolbarItemFactory.create('link')._event).toBe('openPopupAddLink');
+      expect(ToolbarItemFactory.create('code')._command).toBe('Code');
+      expect(ToolbarItemFactory.create('codeblock')._command).toBe('CodeBlock');
+      expect(ToolbarItemFactory.create('indent')._command).toBe('Indent');
+      expect(ToolbarItemFactory.create('outdent')._command).toBe('Outdent');
+    });
   });
 });
