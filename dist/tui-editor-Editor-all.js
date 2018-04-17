@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.1.0-a
+ * @version 1.1.0
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -5421,12 +5421,12 @@ var ToastUIEditor = function () {
          * @param {object} options.hooks - Hook list
              * @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
              * @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
-        * @param {string} language - language
+        * @param {string} [options.language='en_US'] - language
         * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
-        * @param {boolean} useDefaultHTMLSanitizer - use default htmlSanitizer
-        * @param {string[]} options.codeBlockLanguages - supported code block languages to be listed
+        * @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
+        * @param {string[]} [options.codeBlockLanguages] - supported code block languages to be listed. default is what highlight.js supports
         * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
-        * @param {object[]} [options.toolbarItems] - toolbar items
+        * @param {object[]} [options.toolbarItems] - toolbar items.
         * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
     */
   function ToastUIEditor(options) {
@@ -6253,6 +6253,7 @@ ToastUIEditor.codeBlockManager = _codeBlockManager2.default;
 /**
  * Button class
  * @type {Class.<Button>}
+ * @deprecated
  */
 ToastUIEditor.Button = _button2.default;
 
@@ -10826,7 +10827,7 @@ var ToolbarItemFactory = function () {
           toolbarItem = new _toolbarButton2.default({
             name: 'bold',
             className: 'tui-bold',
-            command: 'bold',
+            command: 'Bold',
             tooltip: _i18n2.default.get('Bold'),
             state: 'bold'
           });
@@ -24966,7 +24967,8 @@ var DefaultToolbar = function (_Toolbar) {
       var _this2 = this;
 
       this._observer = new _resizeObserverPolyfill2.default(function () {
-        return _this2._balanceButtons();
+        _this2._popupDropdownToolbar.hide();
+        _this2._balanceButtons();
       });
       this._observer.observe(this.$el.get(0));
     }
@@ -26344,8 +26346,16 @@ var PopupDropdownToolbar = function (_LayerPopup) {
         return _this2.hide();
       });
       this._eventManager.listen(PopupDropdownToolbar.OPEN_EVENT, function () {
+        var isShown = _this2.isShow();
         _this2._eventManager.emit('closeAllPopup');
+        if (!isShown) {
+          _this2.show();
+        }
 
+        // to give toolbar element enough width before the calculation
+        _this2.$el.css({
+          left: '-1000px'
+        });
         var $button = _this2._$button;
         var position = $button.position();
         var buttonOuterHeightWithMargin = $button.outerHeight(true);
@@ -26357,8 +26367,6 @@ var PopupDropdownToolbar = function (_LayerPopup) {
           top: top,
           left: left
         });
-
-        _this2.show();
       });
     }
   }]);
@@ -33081,11 +33089,18 @@ var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var hostnameSent = false;
+
 /**
  * send host name
  * @ignore
  */
 function sendHostName() {
+  if (hostnameSent) {
+    return;
+  }
+  hostnameSent = true;
+
   var trackingID = 'UA-115377265-9';
   var applicationID = 'editor';
   var hitType = 'event';
@@ -34921,17 +34936,14 @@ var _sectionManager2 = _interopRequireDefault(_sectionManager);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
-* @fileoverview Implements Scroll Sync Extension
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-*/
-var Button = _editorProxy2.default.Button;
-
-/**
  * scrollSync plugin
  * @param {Editor} editor - editor
  * @ignore
  */
-
+/**
+* @fileoverview Implements Scroll Sync Extension
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 function scrollSyncExtension(editor) {
   var className = 'tui-scrollsync';
   var i18n = editor.i18n;
@@ -34957,16 +34969,19 @@ function scrollSyncExtension(editor) {
   if (editor.getUI().name === 'default') {
     var toolbar = editor.getUI().getToolbar();
 
-    // init button
-    button = new Button({
-      className: className,
-      command: 'scrollSyncToggle',
-      tooltip: TOOL_TIP.active,
-      $el: (0, _jquery2.default)('<button class="active ' + className + '" type="button"></button>')
+    toolbar.addItem('divider');
+    toolbar.addItem({
+      type: 'button',
+      options: {
+        className: className,
+        command: 'scrollSyncToggle',
+        tooltip: TOOL_TIP.active,
+        $el: (0, _jquery2.default)('<button class="active ' + className + '" type="button"></button>')
+      }
     });
-
-    $divider = toolbar.addDivider();
-    toolbar.addButton(button);
+    var items = toolbar.getItems();
+    $divider = items[items.length - 2].$el;
+    button = items[items.length - 1];
 
     changeButtonVisiblityStateIfNeed();
     // hide scroll follow button in wysiwyg
@@ -39120,12 +39135,15 @@ function initUI(editor, preset) {
 
   editor.eventManager.addEventType('colorButtonClicked');
 
-  toolbar.addButton({
-    name: name,
-    className: className,
-    event: 'colorButtonClicked',
-    tooltip: i18n.get('Text color')
-  }, 4);
+  toolbar.insertItem(3, {
+    type: 'button',
+    options: {
+      name: name,
+      className: className,
+      event: 'colorButtonClicked',
+      tooltip: i18n.get('Text color')
+    }
+  });
   var colorSyntaxButtonIndex = toolbar.indexOfItem(name);
 
   var _toolbar$getItem = toolbar.getItem(colorSyntaxButtonIndex),
@@ -39320,7 +39338,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var codeBlockManager = _editorProxy2.default.codeBlockManager;
 
 var DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';
-var LANG = 'uml';
+var UML_LANGUAGES = ['uml', 'plantuml'];
 
 /**
  * plant uml plugin
@@ -39355,11 +39373,14 @@ function umlExtension(editor) {
     return renderedHTML;
   }
 
-  var optionLanguages = editor.options.codeBlockLanguages;
-  if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
-    optionLanguages.push(LANG);
-  }
-  codeBlockManager.setReplacer(LANG, plantUMLReplacer);
+  var codeBlockLanguages = editor.options.codeBlockLanguages;
+
+  UML_LANGUAGES.forEach(function (umlLanguage) {
+    if (codeBlockLanguages.indexOf(umlLanguage) < 0) {
+      codeBlockLanguages.push(umlLanguage);
+    }
+    codeBlockManager.setReplacer(umlLanguage, plantUMLReplacer);
+  });
 }
 
 _editorProxy2.default.defineExtension('uml', umlExtension);

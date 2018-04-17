@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.1.0-a
+ * @version 1.1.0
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -145,7 +145,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var codeBlockManager = _editorProxy2.default.codeBlockManager;
 
 var DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';
-var LANG = 'uml';
+var UML_LANGUAGES = ['uml', 'plantuml'];
 
 /**
  * plant uml plugin
@@ -180,11 +180,14 @@ function umlExtension(editor) {
     return renderedHTML;
   }
 
-  var optionLanguages = editor.options.codeBlockLanguages;
-  if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
-    optionLanguages.push(LANG);
-  }
-  codeBlockManager.setReplacer(LANG, plantUMLReplacer);
+  var codeBlockLanguages = editor.options.codeBlockLanguages;
+
+  UML_LANGUAGES.forEach(function (umlLanguage) {
+    if (codeBlockLanguages.indexOf(umlLanguage) < 0) {
+      codeBlockLanguages.push(umlLanguage);
+    }
+    codeBlockManager.setReplacer(umlLanguage, plantUMLReplacer);
+  });
 }
 
 _editorProxy2.default.defineExtension('uml', umlExtension);

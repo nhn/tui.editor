@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.1.0-a
+ * @version 1.1.0
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -161,17 +161,14 @@ var _sectionManager2 = _interopRequireDefault(_sectionManager);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
-* @fileoverview Implements Scroll Sync Extension
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-*/
-var Button = _editorProxy2.default.Button;
-
-/**
  * scrollSync plugin
  * @param {Editor} editor - editor
  * @ignore
  */
-
+/**
+* @fileoverview Implements Scroll Sync Extension
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 function scrollSyncExtension(editor) {
   var className = 'tui-scrollsync';
   var i18n = editor.i18n;
@@ -197,16 +194,19 @@ function scrollSyncExtension(editor) {
   if (editor.getUI().name === 'default') {
     var toolbar = editor.getUI().getToolbar();
 
-    // init button
-    button = new Button({
-      className: className,
-      command: 'scrollSyncToggle',
-      tooltip: TOOL_TIP.active,
-      $el: (0, _jquery2.default)('<button class="active ' + className + '" type="button"></button>')
+    toolbar.addItem('divider');
+    toolbar.addItem({
+      type: 'button',
+      options: {
+        className: className,
+        command: 'scrollSyncToggle',
+        tooltip: TOOL_TIP.active,
+        $el: (0, _jquery2.default)('<button class="active ' + className + '" type="button"></button>')
+      }
     });
-
-    $divider = toolbar.addDivider();
-    toolbar.addButton(button);
+    var items = toolbar.getItems();
+    $divider = items[items.length - 2].$el;
+    button = items[items.length - 1];
 
     changeButtonVisiblityStateIfNeed();
     // hide scroll follow button in wysiwyg
