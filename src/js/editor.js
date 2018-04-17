@@ -816,6 +816,7 @@ ToastUIEditor.codeBlockManager = codeBlockManager;
 /**
  * Button class
  * @type {Class.<Button>}
+ * @deprecated
  */
 ToastUIEditor.Button = Button;
 
