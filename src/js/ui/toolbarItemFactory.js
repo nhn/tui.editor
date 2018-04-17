@@ -37,7 +37,7 @@ class ToolbarItemFactory {
       toolbarItem = new ToolbarButton({
         name: 'bold',
         className: 'tui-bold',
-        command: 'bold',
+        command: 'Bold',
         tooltip: i18n.get('Bold'),
         state: 'bold'
       });
