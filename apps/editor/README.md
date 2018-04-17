@@ -3,7 +3,7 @@
 
 [![github version](https://img.shields.io/github/release/nhnent/tui.editor.svg)](https://github.com/nhnent/tui.editor/releases/latest) [![npm version](https://img.shields.io/npm/v/tui-editor.svg)](https://www.npmjs.com/package/tui-editor) [![bower version](https://img.shields.io/bower/v/tui-editor.svg)](https://github.com/nhnent/tui.editor/releases/latest) [![license](https://img.shields.io/github/license/nhnent/tui.editor.svg)](https://github.com/nhnent/tui.editor/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) [![code with hearth by NHN ent.](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Ent.-brightgreen.svg)](https://github.com/nhnent)
 
-<p align="center"><a href="https://nhnent.github.io/tui.editor/"><img src="https://user-images.githubusercontent.com/1215767/34356204-4c03be8a-ea7f-11e7-9aa9-0d84f9e912ec.gif" /></a></p>
+<p align="center"><a href="https://nhnent.github.io/tui.editor/"><img src="https://uicdn.toast.com/tui-editor/tui-editor-preview-1520325258239.gif" /></a></p>
 
 ## 🚩 Table of Contents
 - [Browser Support](#-browser-support)

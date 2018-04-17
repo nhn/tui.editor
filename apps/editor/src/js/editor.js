@@ -113,12 +113,12 @@ class ToastUIEditor {
          * @param {object} options.hooks - Hook list
              * @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
              * @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
-        * @param {string} language - language
+        * @param {string} [options.language='en_US'] - language
         * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
-        * @param {boolean} useDefaultHTMLSanitizer - use default htmlSanitizer
-        * @param {string[]} options.codeBlockLanguages - supported code block languages to be listed
+        * @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
+        * @param {string[]} [options.codeBlockLanguages] - supported code block languages to be listed. default is what highlight.js supports
         * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
-        * @param {object[]} [options.toolbarItems] - toolbar items
+        * @param {object[]} [options.toolbarItems] - toolbar items.
         * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
     */
   constructor(options) {
