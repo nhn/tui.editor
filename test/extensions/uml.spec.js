@@ -25,6 +25,7 @@ describe('uml extension', () => {
   });
 
   it('create plant uml image in markdown preview', () => {
+    const lang = 'uml';
     editor = new TuiEditor({
       el: wrapper,
       previewStyle: 'vertical',
@@ -33,7 +34,7 @@ describe('uml extension', () => {
       exts: ['uml']
     });
 
-    editor.setValue(`\`\`\`uml\nAlice -> Bob: Hello\n\`\`\``);
+    editor.setValue(`\`\`\`${lang}\nAlice -> Bob: Hello\n\`\`\``);
 
     jasmine.clock().tick(800);
 
@@ -41,6 +42,7 @@ describe('uml extension', () => {
   });
 
   it('create plant uml image for code block language plantuml', () => {
+    const lang = 'plantuml';
     editor = new TuiEditor({
       el: wrapper,
       previewStyle: 'vertical',
@@ -49,7 +51,7 @@ describe('uml extension', () => {
       exts: ['uml']
     });
 
-    editor.setValue(`\`\`\`plantuml\nAlice -> Bob: Hello\n\`\`\``);
+    editor.setValue(`\`\`\`${lang}\nAlice -> Bob: Hello\n\`\`\``);
 
     jasmine.clock().tick(800);
 
