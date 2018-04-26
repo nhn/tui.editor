@@ -81,15 +81,15 @@ class PopupAddHeading extends LayerPopup {
     this._eventManager.listen('focus', this.hide.bind(this));
     this._eventManager.listen('closeAllPopup', this.hide.bind(this));
     this._eventManager.listen('openHeadingSelect', () => {
-      this._eventManager.emit('closeAllPopup');
-
       const $button = this._$button;
       const offset = $button.offset();
+
       this.$el.css({
         top: offset.top + $button.outerHeight(),
         left: offset.left
       });
 
+      this._eventManager.emit('closeAllPopup');
       this.show();
     });
   }
