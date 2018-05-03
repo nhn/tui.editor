@@ -90,14 +90,13 @@ class PopupTableUtils extends LayerPopup {
       const x = event.clientX - offset.left;
       const y = event.clientY - offset.top + $(window).scrollTop();
 
-      this.eventManager.emit('closeAllPopup');
-
       this.$el.css({
         position: 'absolute',
         top: y + 5, // beside mouse pointer
         left: x + 10
       });
 
+      this.eventManager.emit('closeAllPopup');
       this.show();
     });
   }

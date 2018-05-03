@@ -181,18 +181,21 @@ function initUI(editor, preset) {
   });
 
   editor.eventManager.listen('colorButtonClicked', () => {
-    editor.eventManager.emit('closeAllPopup');
     if (popup.isShow()) {
       popup.hide();
-    } else {
-      const offset = $button.offset();
-      popup.$el.css({
-        top: offset.top + $button.outerHeight(),
-        left: offset.left
-      });
-      popup.show();
-      colorPicker.slider.toggle(true);
+
+      return;
     }
+
+    const offset = $button.offset();
+    popup.$el.css({
+      top: offset.top + $button.outerHeight(),
+      left: offset.left
+    });
+    colorPicker.slider.toggle(true);
+
+    editor.eventManager.emit('closeAllPopup');
+    popup.show();
   });
 
   editor.eventManager.listen('closeAllPopup', () => {
