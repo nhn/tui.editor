@@ -1,0 +1,24 @@
+{
+  "name": "toMark",
+  "authors": [
+    {
+        "name": "Sungho Kim",
+        "email": "shirenbeat@gmail.com"
+    }
+  ],
+  "moduleType": [
+      "globals"
+  ],
+  "main": [
+      "dist/toMark.js"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "lib/",
+    "test",
+    "tests"
+  ]
+}

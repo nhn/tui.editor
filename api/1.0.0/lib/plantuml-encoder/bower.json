@@ -1,0 +1,20 @@
+{
+  "name": "plantuml-encoder",
+  "main": "dist/plantuml-encoder.js",
+  "version": "1.2.4",
+  "homepage": "https://github.com/markushedvall/plantuml-encoder",
+  "authors": [
+    "Markus Hedvall <mackanhedvall@gmail.com>"
+  ],
+  "description": "PlantUML encoder, works in browser & node.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "lib",
+    "index.js"
+  ]
+}

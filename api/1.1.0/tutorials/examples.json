@@ -1,0 +1,41 @@
+{
+  "example00-demo": {
+    "title": "0. Demo"
+  },
+  "example01-basic": {
+    "title": "1. Basic"
+  },
+  "example02-viewer-basic": {
+    "title": "2. Viewer basic"
+  },
+  "example03-jquery": {
+    "title": "3. jQuery"
+  },
+  "example04-viewer-jquery": {
+    "title": "4. Viewer jQuery"
+  },
+  "example05-scrollsync": {
+    "title": "5. Scroll Sync"
+  },
+  "example06-colorsyntax": {
+    "title": "6. Color Syntax"
+  },
+  "example07-table": {
+    "title": "7. Table"
+  },
+  "example08-uml": {
+    "title": "8. UML"
+  },
+  "example09-multiple-extensions": {
+    "title": "9. Multiple extensions"
+  },
+  "example10-viewer-multiple-extensions": {
+    "title": "10. Viewer multiple extensions"
+  },
+  "example11-chart": {
+    "title": "11. Chart"
+  },
+  "example12-writing-extension": {
+    "title": "12. Writing your own extension"
+  }
+}
