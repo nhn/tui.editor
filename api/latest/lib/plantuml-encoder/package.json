@@ -1,0 +1,33 @@
+{
+  "name": "plantuml-encoder",
+  "version": "1.2.5",
+  "description": "PlantUML encoder for browsers and Node.js",
+  "author": "Markus Hedvall <mackanhedvall@gmail.com>",
+  "repository": "https://github.com/markushedvall/plantuml-encoder",
+  "main": "index.js",
+  "license": "MIT",
+  "keywords": [
+    "plantuml",
+    "encoder"
+  ],
+  "dependencies": {
+    "pako": "1.0.3",
+    "utf8-bytes": "0.0.1"
+  },
+  "devDependencies": {
+    "browserify": "^13.1.0",
+    "chai": "^3.2.0",
+    "mocha": "^2.2.5",
+    "standard": "^4.5.4",
+    "uglify-js": "^2.7.3"
+  },
+  "scripts": {
+    "test": "standard && mocha",
+    "build": "npm run browserify && npm run uglify",
+    "browserify": "browserify ./index.js --s plantumlEncoder -o dist/plantuml-encoder.js",
+    "uglify": "uglifyjs dist/plantuml-encoder.js -c -m -o dist/plantuml-encoder.min.js"
+  },
+  "standard": {
+    "ignore": "dist/"
+  }
+}

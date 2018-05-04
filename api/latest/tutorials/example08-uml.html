@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title>8. UML</title>
+    <script src="../lib/jquery/dist/jquery.js"></script>
+    <script src="../lib/markdown-it/dist/markdown-it.js"></script>
+    <script src="../lib/to-mark/dist/to-mark.js"></script>
+    <script src="../lib/tui-code-snippet/dist/tui-code-snippet.js"></script>
+    <script src="../lib/codemirror/lib/codemirror.js"></script>
+    <script src="../lib/highlightjs/highlight.pack.js"></script>
+    <script src="../lib/squire-rte/build/squire-raw.js"></script>
+    <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
+    <link rel="stylesheet" href="./explain.css">
+  </head>
+  <body>
+    <div class="explain">
+      Learn more about Extensions in <a target="_blank" href="https://github.com/nhnent/tui.editor/wiki/Extensions">here</a>
+    </div>
+    <div class="explain">
+      See available options in <a target="_blank" href="../ToastUIEditor.html#ToastUIEditor">here</a>
+    </div>
+    <div class="code-html">
+    <script src="../dist/tui-editor-Editor.js"></script>
+    <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
+    <script src="../dist/tui-editor-extUML.js"></script>
+    <link rel="stylesheet" href="../dist/tui-editor.css">
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+
+    <div id="editSection"></div>
+    </div>
+    <script class="code-js">
+      var content = [
+        '```uml',
+        'partition Conductor {',
+        '  (*) --> "Climbs on Platform"',
+        '  --> === S1 ===',
+        '  --> Bows',
+        '}',
+        '',
+        'partition Audience #LightSkyBlue {',
+        '  === S1 === --> Applauds',
+        '}',
+        '',
+        'partition Conductor {',
+        '  Bows --> === S2 ===',
+        '  --> WavesArmes',
+        '  Applauds --> === S2 ===',
+        '}',
+        '',
+        'partition Orchestra #CCCCEE {',
+        '  WavesArmes --> Introduction',
+        '  --> "Play music"',
+        '}',
+        '```'
+      ].join('\n');
+
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        initialValue: content,
+        exts: ['uml']
+      });
+    </script>
+  </body>
+</html>
