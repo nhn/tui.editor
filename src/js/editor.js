@@ -179,6 +179,9 @@ class ToastUIEditor {
       util.forEach(this.options.events, (fn, key) => this.on(key, fn));
     }
 
+    this.initialHtml = this.options.el.innerHTML;
+    this.options.el.innerHTML = '';
+
     this.layout = new Layout(options, this.eventManager);
 
     this.i18n = i18n;
@@ -202,6 +205,8 @@ class ToastUIEditor {
     this.height(this.options.height);
 
     this.setValue(this.options.initialValue, false);
+
+    this.setInitialHtml(this.initialHtml, false);
 
     extManager.applyExtension(this, this.options.exts);
 
@@ -749,6 +754,18 @@ class ToastUIEditor {
     const textObject = this.getTextObject(range);
 
     return textObject.getTextContent() || '';
+  }
+
+  /**
+   * Set initial html text
+   * @param {string} html - initial html syntax text
+   * @param {boolean} [cursorToEnd=true] - move cursor to contents end
+   * @memberof ToastUIEditor
+   */
+  setInitialHtml(html, cursorToEnd = true) {
+    if (html !== '') {
+      this.setHtml(html, cursorToEnd);
+    }
   }
 
   /**
