@@ -371,7 +371,7 @@ proto.removeEventListener = function ( type, fn ) {
 
 // --- Selection and Path ---
 
-proto._createRange =
+proto.createRange =
         function ( range, startOffset, endContainer, endOffset ) {
     if ( range instanceof this._win.Range ) {
         return range.cloneRange();
@@ -409,7 +409,7 @@ proto.getCursorPosition = function ( range ) {
 
 proto._moveCursorTo = function ( toStart ) {
     var root = this._root,
-        range = this._createRange( root, toStart ? 0 : root.childNodes.length );
+        range = this.createRange( root, toStart ? 0 : root.childNodes.length );
     moveRangeBoundariesDownTree( range );
     this.setSelection( range );
     return this;
@@ -491,7 +491,7 @@ proto.getSelection = function () {
         }
     }
     if ( !selection ) {
-        selection = this._createRange( root.firstChild, 0 );
+        selection = this.createRange( root.firstChild, 0 );
     }
     return selection;
 };
@@ -1092,7 +1092,7 @@ proto._addFormat = function ( tag, attributes, range ) {
         }
 
         // Now set the selection to as it was before
-        range = this._createRange(
+        range = this.createRange(
             startContainer, startOffset, endContainer, endOffset );
     }
     return range;
@@ -1717,7 +1717,7 @@ proto.setHTML = function ( html ) {
 
     // Record undo state
     var range = this._getRangeAndRemoveBookmark() ||
-        this._createRange( root.firstChild, 0 );
+        this.createRange( root.firstChild, 0 );
     this.saveUndoState( range );
     // IE will also set focus when selecting text so don't use
     // setSelection. Instead, just store it in lastSelection, so if

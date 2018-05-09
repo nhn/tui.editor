@@ -210,6 +210,15 @@ Returns the path through the DOM tree from the `<body>` element to the current c
 
 Returns an object containing the active font family, size, colour and background colour for the the current cursor position, if any are set. The property names are respectively `family`, `size`, `color` and `backgroundColor`. It looks at style attributes to detect this, so will not detect `<FONT>` tags or non-inline styles. If a selection across multiple elements has been made, it will return an empty object.
 
+### createRange
+
+Creates a range in the document belonging to the editor. Takes 4 arguments, matching the [W3C Range properties](https://developer.mozilla.org/en-US/docs/Web/API/Range) they set:
+
+* **startContainer**
+* **startOffset**
+* **endContainer** (optional; if not collapsed)
+* **endOffset** (optional; if not collapsed)
+
 ### getCursorPosition
 
 Returns a bounding client rect (top/left/right/bottom properties relative to

@@ -292,7 +292,7 @@ var onPaste = function ( event ) {
                 html += pasteArea.innerHTML;
             }
 
-            range = self._createRange(
+            range = self.createRange(
                 startContainer, startOffset, endContainer, endOffset );
             self.setSelection( range );
 
