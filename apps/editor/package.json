@@ -91,6 +91,6 @@
     "to-mark": "^1.1.0",
     "tui-chart": "^3.0.1",
     "tui-code-snippet": "^1.3.0",
-    "tui-color-picker": "^2.0.1"
+    "tui-color-picker": "^2.2.0"
   }
 }
