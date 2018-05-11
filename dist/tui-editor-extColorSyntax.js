@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.1.0
+ * @version 1.1.1
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -279,8 +279,8 @@ function colorSyntaxExtension(editor) {
 
 /**
  * Initialize UI
- * @param {object} editor Editor instance
- * @param {Array.<string>} preset Preset for color palette
+ * @param {object} editor - Editor instance
+ * @param {Array.<string>} preset - Preset for color palette
  * @ignore
  */
 function initUI(editor, preset) {
@@ -288,6 +288,8 @@ function initUI(editor, preset) {
   var className = 'tui-color';
   var i18n = editor.i18n;
   var toolbar = editor.getUI().getToolbar();
+  var usageStatistics = editor.options.usageStatistics;
+
 
   editor.eventManager.addEventType('colorButtonClicked');
 
@@ -310,7 +312,8 @@ function initUI(editor, preset) {
   var $buttonBar = (0, _jquery2.default)('<button type="button" class="te-apply-button">' + i18n.get('OK') + '</button>');
 
   var cpOptions = {
-    container: $colorPickerContainer[0]
+    container: $colorPickerContainer[0],
+    usageStatistics: usageStatistics
   };
 
   if (preset) {
@@ -340,18 +343,21 @@ function initUI(editor, preset) {
   });
 
   editor.eventManager.listen('colorButtonClicked', function () {
-    editor.eventManager.emit('closeAllPopup');
     if (popup.isShow()) {
       popup.hide();
-    } else {
-      var offset = $button.offset();
-      popup.$el.css({
-        top: offset.top + $button.outerHeight(),
-        left: offset.left
-      });
-      popup.show();
-      colorPicker.slider.toggle(true);
+
+      return;
     }
+
+    var offset = $button.offset();
+    popup.$el.css({
+      top: offset.top + $button.outerHeight(),
+      left: offset.left
+    });
+    colorPicker.slider.toggle(true);
+
+    editor.eventManager.emit('closeAllPopup');
+    popup.show();
   });
 
   editor.eventManager.listen('closeAllPopup', function () {

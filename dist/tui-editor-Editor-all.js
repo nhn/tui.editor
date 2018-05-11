@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.1.0
+ * @version 1.1.1
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -27196,14 +27196,13 @@ var PopupTableUtils = function (_LayerPopup) {
         var x = event.clientX - offset.left;
         var y = event.clientY - offset.top + (0, _jquery2.default)(window).scrollTop();
 
-        _this3.eventManager.emit('closeAllPopup');
-
         _this3.$el.css({
           position: 'absolute',
           top: y + 5, // beside mouse pointer
           left: x + 10
         });
 
+        _this3.eventManager.emit('closeAllPopup');
         _this3.show();
       });
     }
@@ -27282,6 +27281,14 @@ var PopupAddTable = function (_LayerPopup) {
    * @param {LayerPopupOption} options - layer popup option
    * @memberof PopupAddTable
    */
+
+  /**
+   * Toolbar Button which the Popup is bound to.
+   *
+   * @memberof PopupAddTable
+   * @type {jQuery}
+   * @private
+   */
   function PopupAddTable(options) {
     _classCallCheck(this, PopupAddTable);
 
@@ -27303,6 +27310,15 @@ var PopupAddTable = function (_LayerPopup) {
    */
 
 
+  /**
+   * EventManager instance
+   *
+   * @memberof PopupAddTabe
+   * @type {EventManager}
+   * @private
+   */
+
+
   _createClass(PopupAddTable, [{
     key: '_initInstance',
     value: function _initInstance(options) {
@@ -27311,7 +27327,7 @@ var PopupAddTable = function (_LayerPopup) {
       this._selectedBound = {};
       this._tableBound = {};
       this._eventManager = options.eventManager;
-      this.$button = options.$button;
+      this._$button = options.$button;
     }
 
     /**
@@ -27384,13 +27400,13 @@ var PopupAddTable = function (_LayerPopup) {
       });
 
       this._eventManager.listen('openPopupAddTable', function () {
-        _this3._eventManager.emit('closeAllPopup');
-        var $button = _this3.$button;
+        var $button = _this3._$button;
         var offset = $button.offset();
         _this3.$el.css({
           top: offset.top + $button.outerHeight(),
           left: offset.left
         });
+        _this3._eventManager.emit('closeAllPopup');
         _this3.show();
         _this3._selectionOffset = _this3.$el.find('.' + CLASS_TABLE_SELECTION).offset();
       });
@@ -27814,15 +27830,15 @@ var PopupAddHeading = function (_LayerPopup) {
       this._eventManager.listen('focus', this.hide.bind(this));
       this._eventManager.listen('closeAllPopup', this.hide.bind(this));
       this._eventManager.listen('openHeadingSelect', function () {
-        _this3._eventManager.emit('closeAllPopup');
-
         var $button = _this3._$button;
         var offset = $button.offset();
+
         _this3.$el.css({
           top: offset.top + $button.outerHeight(),
           left: offset.left
         });
 
+        _this3._eventManager.emit('closeAllPopup');
         _this3.show();
       });
     }
@@ -39123,8 +39139,8 @@ function colorSyntaxExtension(editor) {
 
 /**
  * Initialize UI
- * @param {object} editor Editor instance
- * @param {Array.<string>} preset Preset for color palette
+ * @param {object} editor - Editor instance
+ * @param {Array.<string>} preset - Preset for color palette
  * @ignore
  */
 function initUI(editor, preset) {
@@ -39132,6 +39148,8 @@ function initUI(editor, preset) {
   var className = 'tui-color';
   var i18n = editor.i18n;
   var toolbar = editor.getUI().getToolbar();
+  var usageStatistics = editor.options.usageStatistics;
+
 
   editor.eventManager.addEventType('colorButtonClicked');
 
@@ -39154,7 +39172,8 @@ function initUI(editor, preset) {
   var $buttonBar = (0, _jquery2.default)('<button type="button" class="te-apply-button">' + i18n.get('OK') + '</button>');
 
   var cpOptions = {
-    container: $colorPickerContainer[0]
+    container: $colorPickerContainer[0],
+    usageStatistics: usageStatistics
   };
 
   if (preset) {
@@ -39184,18 +39203,21 @@ function initUI(editor, preset) {
   });
 
   editor.eventManager.listen('colorButtonClicked', function () {
-    editor.eventManager.emit('closeAllPopup');
     if (popup.isShow()) {
       popup.hide();
-    } else {
-      var offset = $button.offset();
-      popup.$el.css({
-        top: offset.top + $button.outerHeight(),
-        left: offset.left
-      });
-      popup.show();
-      colorPicker.slider.toggle(true);
+
+      return;
     }
+
+    var offset = $button.offset();
+    popup.$el.css({
+      top: offset.top + $button.outerHeight(),
+      left: offset.left
+    });
+    colorPicker.slider.toggle(true);
+
+    editor.eventManager.emit('closeAllPopup');
+    popup.show();
   });
 
   editor.eventManager.listen('closeAllPopup', function () {
