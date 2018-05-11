@@ -122,8 +122,8 @@ function colorSyntaxExtension(editor) {
 
 /**
  * Initialize UI
- * @param {object} editor Editor instance
- * @param {Array.<string>} preset Preset for color palette
+ * @param {object} editor - Editor instance
+ * @param {Array.<string>} preset - Preset for color palette
  * @ignore
  */
 function initUI(editor, preset) {
@@ -131,6 +131,7 @@ function initUI(editor, preset) {
   const className = 'tui-color';
   const i18n = editor.i18n;
   const toolbar = editor.getUI().getToolbar();
+  const {usageStatistics} = editor.options;
 
   editor.eventManager.addEventType('colorButtonClicked');
 
@@ -151,7 +152,8 @@ function initUI(editor, preset) {
   const $buttonBar = $(`<button type="button" class="te-apply-button">${i18n.get('OK')}</button>`);
 
   const cpOptions = {
-    container: $colorPickerContainer[0]
+    container: $colorPickerContainer[0],
+    usageStatistics
   };
 
   if (preset) {
@@ -181,18 +183,21 @@ function initUI(editor, preset) {
   });
 
   editor.eventManager.listen('colorButtonClicked', () => {
-    editor.eventManager.emit('closeAllPopup');
     if (popup.isShow()) {
       popup.hide();
-    } else {
-      const offset = $button.offset();
-      popup.$el.css({
-        top: offset.top + $button.outerHeight(),
-        left: offset.left
-      });
-      popup.show();
-      colorPicker.slider.toggle(true);
+
+      return;
     }
+
+    const offset = $button.offset();
+    popup.$el.css({
+      top: offset.top + $button.outerHeight(),
+      left: offset.left
+    });
+    colorPicker.slider.toggle(true);
+
+    editor.eventManager.emit('closeAllPopup');
+    popup.show();
   });
 
   editor.eventManager.listen('closeAllPopup', () => {
