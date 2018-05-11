@@ -162,8 +162,8 @@ module.exports = function(config) {
     files: [
       'node_modules/codemirror/lib/codemirror.css',
       'src/css/tui-editor.css',
-      'test/fixtures/*.*',
-      'test/test.bundle.js'
+      'test/unit/fixtures/*.*',
+      'test/unit/test.bundle.js'
     ],
 
     // list of files to exclude
@@ -176,7 +176,7 @@ module.exports = function(config) {
 
     preprocessors: {
       'src/js/**/*.js': ['webpack', 'sourcemap', 'coverage'],
-      'test/test.bundle.js': ['webpack', 'sourcemap']
+      'test/unit/test.bundle.js': ['webpack', 'sourcemap']
     },
 
     webpack: {
