@@ -2,6 +2,7 @@
  * @fileoverview test color syntax extension
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+import util from 'tui-code-snippet';
 import TuiEditor from '../../../src/js/editor';
 import colorSyntaxExtension from '../../../src/js/extensions/colorSyntax';
 
@@ -188,6 +189,39 @@ describe('colorSyntax', () => {
       const $span = ned.wwEditor.get$Body().find('span');
 
       expect($span.hasClass('colour')).toBe(false);
+    });
+  });
+
+  describe('initializer', () => {
+    xit('should not call imagePing if usageStatistics editor option is false', done => {
+      spyOn(util, 'imagePing');
+
+      ned = new TuiEditor({
+        el: container,
+        exts: ['colorSyntax'],
+        usageStatistics: false
+      });
+
+      setTimeout(() => {
+        expect(util.imagePing).not.toHaveBeenCalled();
+        done();
+      }, 10);
+    });
+
+    xit('should call imagePing if usageStatistics editor option is true', done => {
+      spyOn(util, 'imagePing');
+
+      ned = new TuiEditor({
+        el: container,
+        exts: ['colorSyntax'],
+        usageStatistics: true
+      });
+
+      setTimeout(() => {
+        expect(util.imagePing).toHaveBeenCalled();
+        expect(util.imagePing.calls.count()).toBe(2);
+        done();
+      }, 10);
     });
   });
 });

@@ -50,7 +50,7 @@
     "jquery": "^3.3.1",
     "markdown-it": "^8.4.0",
     "to-mark": "^1.1.0",
-    "tui-color-picker": "^2.0.1",
+    "tui-color-picker": "^2.2.0",
     "squire-rte": "neilj/Squire#306230d0df9b38047cd06204476ddc0582569cfd",
     "plantuml-encoder": "^1.2.5",
     "tui-chart": "^2.13.0"
