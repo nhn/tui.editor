@@ -64,14 +64,14 @@ Depending on the type of use you want like production of *Markdown* or maybe to 
 
 ### Productive Markdown mode
 ![markdown image](https://user-images.githubusercontent.com/1215767/34354737-b98a0736-ea73-11e7-8375-d4c83b8894d8.png)
-* **Live Preview**: Edit Markdown while keeping eye on the rendered HTML. Your edits will be applied immediately
-* **Scrolling Sync**: Synchronous scrolling between Markdown and Preview. You don't need to scroll those separately
-* **Auto indent**: The cursor will always be where you want to be
+* **Live Preview**: Edit Markdown while keeping an eye on the rendered HTML. Your edits will be applied immediately
+* **Scrolling Sync**: Synchronous scrolling between Markdown and Preview. You don't need to scroll through each one separately
+* **Auto indent**: The cursor will always be where you want it to be
 * **Syntax highlight**: You can check broken Markdown syntax immediately
 
 ### Easy WYSIWYG mode
 ![wysiwyg image](https://user-images.githubusercontent.com/1215767/34354831-5f04c7e6-ea74-11e7-9664-97f71c4fee6e.png)
-* **Copy and paste**: Paste anything from browser, screenshot, excel, powerpoint etc
+* **Copy and paste**: Paste anything from browser, screenshot, excel, powerpoint, etc.
 * **Codeblock editor**: Highlight 170+ languages with full size code editor
 * **Table**: Hate the Markdown table? You can do everything with a mouse
 
