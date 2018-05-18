@@ -122,6 +122,9 @@ class ToastUIEditor {
         * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
     */
   constructor(options) {
+    this.initialHtml = options.el.innerHTML;
+    options.el.innerHTML = '';
+
     this.options = $.extend({
       previewStyle: 'tab',
       initialEditType: 'markdown',
@@ -179,8 +182,6 @@ class ToastUIEditor {
       util.forEach(this.options.events, (fn, key) => this.on(key, fn));
     }
 
-    this.initialHtml = this.getInitialHtml();
-
     this.layout = new Layout(options, this.eventManager);
 
     this.i18n = i18n;
@@ -205,7 +206,9 @@ class ToastUIEditor {
 
     this.setValue(this.options.initialValue, false);
 
-    this.setInitialHtml(this.initialHtml);
+    if (!this.options.initialValue) {
+      this.setHtml(this.initialHtml, false);
+    }
 
     extManager.applyExtension(this, this.options.exts);
 
@@ -753,33 +756,6 @@ class ToastUIEditor {
     const textObject = this.getTextObject(range);
 
     return textObject.getTextContent() || '';
-  }
-
-  /**
-   * Get initial html text
-   * @returns {string} html - initial html syntax text
-   * @memberof ToastUIEditor
-   */
-  getInitialHtml() {
-    let html = '';
-
-    if (this.options.el.innerHTML !== '') {
-      html = this.options.el.innerHTML;
-      this.options.el.innerHTML = '';
-    }
-
-    return html;
-  }
-
-  /**
-   * Set initial html text
-   * @param {string} html - initial html syntax text
-   * @memberof ToastUIEditor
-   */
-  setInitialHtml(html) {
-    if (html !== '') {
-      this.setHtml(html, false);
-    }
   }
 
   /**

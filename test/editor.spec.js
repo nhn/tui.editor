@@ -230,22 +230,6 @@ describe('Editor', () => {
         expect(editor.getSelectedText()).toEqual('text');
       });
     });
-
-    describe('getInitialHtml()', () => {
-      it('retrieve initial html text', () => {
-        const initialHtml = '<span>Test</span>';
-        container.innerHTML = initialHtml;
-        expect(editor.getInitialHtml()).toBe(initialHtml);
-      });
-    });
-
-    describe('setInitialHtml()', () => {
-      it('set initial html text throught setHtml', () => {
-        const initialHtml = '<span>Test</span>';
-        editor.setInitialHtml(initialHtml);
-        expect(editor.getValue()).toBe(initialHtml);
-      });
-    });
   });
 
   describe('xss', () => {
