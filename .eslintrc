@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "tui"
-  ],
+  "extends": ["tui"],
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 7,
@@ -13,14 +11,32 @@
       "destructuring": true
     }
   },
-  "env":{
+  "env": {
     "es6": true,
     "amd": true
   },
   "rules": {
     "linebreak-style": 0,
-    "max-len": [2, {"code": 120, "tabWidth": 4, "ignoreStrings": true, "ignoreComments": true, "ignoreRegExpLiterals": true, "ignoreTemplateLiterals": true}],
+    "max-len": [
+      2,
+      {
+        "code": 120,
+        "tabWidth": 4,
+        "ignoreStrings": true,
+        "ignoreComments": true,
+        "ignoreRegExpLiterals": true,
+        "ignoreTemplateLiterals": true
+      }
+    ],
     "no-sync": 0,
-    "indent": ["error", 2]
+    "indent": ["error", 2],
+    "complexity": "off",
+    "object-curly-spacing": "off",
+    "no-undef": "off",
+    "no-unused-expressions": "off",
+    "no-undefined": "off",
+    "no-unused-vars": "off",
+    "new-cap": "off",
+    "space-before-function-paren": "off"
   }
 }
