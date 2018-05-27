@@ -481,8 +481,10 @@ function prettyTableExtension(editor) {
      * Render the editor.
      */
     this.render = function() {
-      const { rows, tables } = this.state;
+      let { rows, tables } = this.state;
+      let hasPretty = false;
       const { originals, prettys } = tables;
+
       this.replaceVarInData();
       this.setColumnInfo();
       this.setDataRows();
@@ -491,9 +493,16 @@ function prettyTableExtension(editor) {
       originals.map((original, i) => {
         const pretty = prettys[i];
         if (original !== pretty) {
-          editor.setMarkdown(rows.replace(original, pretty), false);
+          hasPretty = true;
+          rows = rows.replace(original, pretty);
         }
       });
+
+      if (hasPretty) {
+        setTimeout(() => {
+          editor.setMarkdown(rows, false);
+        }, 3000);
+      }
     };
 
     /**
@@ -514,7 +523,7 @@ function prettyTableExtension(editor) {
   };
 
   editor.on('previewRenderAfter', () => {
-    setTimeout(editor.prettyTable.bind(editor.prettyTable), 3000);
+    editor.prettyTable();
   });
 }
 
