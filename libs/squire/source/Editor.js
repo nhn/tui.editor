@@ -1783,7 +1783,7 @@ proto.insertImage = function ( src, attributes ) {
     return img;
 };
 
-var linkRegExp = /\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))|([\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,}\b)/i;
+var linkRegExp = /\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))|([\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,}\b)(?:(?:\?(?:(?!&|\?)(?:\S))+=(?:(?!&|\?)(?:\S))+)(?:&(?:(?!&|\?)(?:\S))+=(?:(?!&|\?)(?:\S))+)*)?/i;;
 
 var addLinks = function ( frag, root, self ) {
     var doc = frag.ownerDocument,
@@ -1808,7 +1808,7 @@ var addLinks = function ( frag, root, self ) {
                     /^(?:ht|f)tps?:/.test( match[1] ) ?
                         match[1] :
                         'http://' + match[1] :
-                    'mailto:' + match[2]
+                    'mailto:' + match[0]
             }, defaultAttributes, false ));
             child.textContent = data.slice( index, endIndex );
             parent.insertBefore( child, node );

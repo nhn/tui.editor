@@ -361,6 +361,65 @@ describe('Squire RTE', function () {
             editor.insertHTML('<table><tbody><!--StartFragment--><tr><td>text1</td><td>text2</td></tr><!--EndFragment--></tbody></table>');
             expect(editor.getHTML(), 'to contain', '<table><tbody><tr><td>text1<br></td><td>text2<br></td></tr></tbody></table>');
         });
+
+        var LINK_MAP = {
+            "dewdw@fre.fr": "mailto:dewdw@fre.fr",
+            "dew@free.fr?dew=dew": "mailto:dew@free.fr?dew=dew",
+            "dew@free.fr?subject=dew": "mailto:dew@free.fr?subject=dew",
+            "test@example.com?subject=foo&body=bar": "mailto:test@example.com?subject=foo&body=bar",
+            "dew@fre.fr dewdwe @dew": "mailto:dew@fre.fr",
+            "http://free.fr": "http://free.fr",
+            "http://google.com": "http://google.com",
+            "https://google.com": "https://google.com",
+            "https://www.google.com": "https://www.google.com",
+            "https://www.google.com/": "https://www.google.com/",
+            "https://google.com/?": "https://google.com/",
+            "https://google.com?": "https://google.com",
+            "https://google.com?a": "https://google.com/?a",
+            "https://google.com?a=": "https://google.com/?a=",
+            "https://google.com?a=b": "https://google.com/?a=b",
+            "https://google.com?a=b?": "https://google.com/?a=b",
+            "https://google.com?a=b&": "https://google.com/?a=b&",
+            "https://google.com?a=b&c": "https://google.com/?a=b&c",
+            "https://google.com?a=b&c=": "https://google.com/?a=b&c=",
+            "https://google.com?a=b&c=d": "https://google.com/?a=b&c=",
+            "https://google.com?a=b&c=d?": "https://google.com/?a=b&c=d",
+            "https://google.com?a=b&c=d&": "https://google.com/?a=b&c=d&",
+            "https://google.com?a=b&c=d&e=": "https://google.com/?a=b&c=d&e=",
+            "https://google.com?a=b&c=d&e=f": "https://google.com/?a=b&c=d&e=f"
+        };
+
+        Object.keys(LINK_MAP).forEach((input) => {
+            it('should auto convert links to anchor: ' + input, function() {
+                editor.insertHTML(input);
+                var link = editor.getDocument().querySelector('a');
+                expect(link.href, 'to contain', LINK_MAP[input]);
+                editor.setHTML('');
+            });
+        });
+
+        it('should auto convert a part of the link to an anchor', function() {
+            editor.insertHTML(`
+                dew@fre.fr dewdwe @dew
+            `);
+            var link = editor.getDocument().querySelector('a');
+            expect(link.textContent, 'to be', 'dew@fre.fr');
+            expect(link.href, 'to be', 'mailto:dew@fre.fr');
+            editor.setHTML('');
+        });
+
+        it('should not auto convert non links to anchor', function() {
+            editor.insertHTML(`
+                dewdwe @dew
+                deww.de
+                monique.fre
+
+                google.com
+            `);
+            var link = editor.getDocument().querySelector('a');
+            expect(link, 'to be', null);
+            editor.setHTML('');
+        });
     });
 
     afterEach(function () {
