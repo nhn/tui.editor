@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.1.1
+ * @version 1.2.0
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -6529,7 +6529,7 @@ module.exports = EditorViewer;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.detectDelimiter = exports.parseDSV2ChartData = exports.parseCode2ChartOption = exports.parseURL2ChartData = exports.parseCode2DataAndOptions = undefined;
+exports.setDefaultOptions = exports.detectDelimiter = exports.parseDSV2ChartData = exports.parseCode2ChartOption = exports.parseURL2ChartData = exports.parseCode2DataAndOptions = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -6607,6 +6607,12 @@ var DSV_DELIMITERS = [',', '\t', /\s+/];
 var OPTION_DELIMITER = ':';
 var SUPPORTED_CHART_TYPES = ['barChart', 'columnChart', 'lineChart', 'areaChart', 'pieChart'];
 var CATEGORY_CHART_TYPES = ['lineChart', 'areaChart'];
+var DEFAULT_CHART_OPTIONS = {
+  minWidth: 0,
+  maxWidth: Infinity,
+  minHeight: 0,
+  maxHeight: Infinity
+};
 
 /**
  * parse data and options for tui.chart
@@ -6900,22 +6906,28 @@ function isNumeric(str) {
 
 /**
  * set default options
- * @param {Object} options - tui.chart options
+ * @param {Object} chartOptions - tui.chart options
+ * @param {Object} extensionOptions - extension options
  * @param {HTMLElement} chartContainer - chart container
  * @returns {Object} - options
  * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
-function setDefaultOptions(options, chartContainer) {
-  options = _tuiCodeSnippet2.default.extend({
+function setDefaultOptions(chartOptions, extensionOptions, chartContainer) {
+  // chart options scaffolding
+  chartOptions = _tuiCodeSnippet2.default.extend({
     editorChart: {},
     chart: {},
     chartExportMenu: {}
-  }, options);
+  }, chartOptions);
 
-  var _options$chart = options.chart,
-      width = _options$chart.width,
-      height = _options$chart.height;
+  // set default extension options
+  extensionOptions = _tuiCodeSnippet2.default.extend(DEFAULT_CHART_OPTIONS, extensionOptions);
+
+  // determine width, height
+  var _chartOptions$chart = chartOptions.chart,
+      width = _chartOptions$chart.width,
+      height = _chartOptions$chart.height;
 
   var isWidthUndefined = _tuiCodeSnippet2.default.isUndefined(width);
   var isHeightUndefined = _tuiCodeSnippet2.default.isUndefined(height);
@@ -6924,23 +6936,30 @@ function setDefaultOptions(options, chartContainer) {
     var _chartContainer$getBo = chartContainer.getBoundingClientRect(),
         containerWidth = _chartContainer$getBo.width;
 
-    options.chart.width = isWidthUndefined ? containerWidth : width;
-    options.chart.height = isHeightUndefined ? containerWidth : height;
+    width = isWidthUndefined ? containerWidth : width;
+    height = isHeightUndefined ? containerWidth : height;
   }
+  width = Math.min(extensionOptions.maxWidth, width);
+  height = Math.min(extensionOptions.maxHeight, height);
+  chartOptions.chart.width = Math.max(extensionOptions.minWidth, width);
+  chartOptions.chart.height = Math.max(extensionOptions.minHeight, height);
 
-  options.editorChart.type = options.editorChart.type ? options.editorChart.type + 'Chart' : 'columnChart';
-  options.chartExportMenu.visible = options.chartExportMenu.visible || false;
+  // default chart type
+  chartOptions.editorChart.type = chartOptions.editorChart.type ? chartOptions.editorChart.type + 'Chart' : 'columnChart';
+  // default visibility of export menu
+  chartOptions.chartExportMenu.visible = chartOptions.chartExportMenu.visible || false;
 
-  return options;
+  return chartOptions;
 }
 
 /**
  * replace html from chart data
  * @param {string} codeBlockChartDataAndOptions - chart data text
+ * @param {Object} extensionOptions - chart extension options
  * @returns {string} - rendered html
  * @ignore
  */
-function chartReplacer(codeBlockChartDataAndOptions) {
+function chartReplacer(codeBlockChartDataAndOptions, extensionOptions) {
   var randomId = 'chart-' + Math.random().toString(36).substr(2, 10);
   var renderedHTML = '<div id="' + randomId + '" class="chart" />';
 
@@ -6949,17 +6968,17 @@ function chartReplacer(codeBlockChartDataAndOptions) {
     try {
       parseCode2DataAndOptions(codeBlockChartDataAndOptions, function (_ref) {
         var data = _ref.data,
-            options = _ref.options;
+            chartOptions = _ref.chartOptions;
 
-        options = setDefaultOptions(options, chartContainer);
+        chartOptions = setDefaultOptions(chartOptions, extensionOptions, chartContainer);
 
-        var chartType = options.editorChart.type;
+        var chartType = chartOptions.editorChart.type;
         if (SUPPORTED_CHART_TYPES.indexOf(chartType) < 0) {
           chartContainer.innerHTML = 'invalid chart type. type: bar, column, line, area, pie';
         } else if (CATEGORY_CHART_TYPES.indexOf(chartType) > -1 && data.categories.length !== data.series[0].data.length) {
           chartContainer.innerHTML = 'invalid chart data';
         } else {
-          _tuiChart2.default[chartType](chartContainer, data, options);
+          _tuiChart2.default[chartType](chartContainer, data, chartOptions);
         }
       });
     } catch (e) {
@@ -7101,14 +7120,23 @@ function _onMDPasteBefore(cm, _ref2) {
 /**
  * chart plugin
  * @param {Editor} editor - editor
+ * @param {Object} options - chart options
+  * @param {number} options.minWidth - minimum width
+  * @param {number} options.maxWidth - maximum width
+  * @param {number} options.minHeight - minimum height
+  * @param {number} options.maxHeight - maximum height
  * @ignore
  */
 function chartExtension(editor) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   var optionLanguages = editor.options.codeBlockLanguages;
   if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
     optionLanguages.push(LANG);
   }
-  codeBlockManager.setReplacer(LANG, chartReplacer);
+  codeBlockManager.setReplacer(LANG, function (codeBlockChartDataAndOptions) {
+    return chartReplacer(codeBlockChartDataAndOptions, options);
+  });
 
   if (!editor.isViewer()) {
     // treat wysiwyg paste event
@@ -7128,6 +7156,7 @@ exports.parseURL2ChartData = parseURL2ChartData;
 exports.parseCode2ChartOption = parseCode2ChartOption;
 exports.parseDSV2ChartData = parseDSV2ChartData;
 exports.detectDelimiter = detectDelimiter;
+exports.setDefaultOptions = setDefaultOptions;
 
 /***/ }),
 /* 29 */
