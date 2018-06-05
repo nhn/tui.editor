@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.1
+ * @version 1.2.2
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -6611,7 +6611,9 @@ var DEFAULT_CHART_OPTIONS = {
   minWidth: 0,
   maxWidth: Infinity,
   minHeight: 0,
-  maxHeight: Infinity
+  maxHeight: Infinity,
+  height: 'auto',
+  width: 'auto'
 };
 
 /**
@@ -6936,8 +6938,10 @@ function setDefaultOptions(chartOptions, extensionOptions, chartContainer) {
     var _chartContainer$getBo = chartContainer.getBoundingClientRect(),
         containerWidth = _chartContainer$getBo.width;
 
-    width = isWidthUndefined ? containerWidth : width;
-    height = isHeightUndefined ? containerWidth : height;
+    width = isWidthUndefined ? extensionOptions.width : width;
+    height = isHeightUndefined ? extensionOptions.height : height;
+    width = width === 'auto' ? containerWidth : width;
+    height = height === 'auto' ? containerWidth : height;
   }
   width = Math.min(extensionOptions.maxWidth, width);
   height = Math.min(extensionOptions.maxHeight, height);
@@ -7121,10 +7125,12 @@ function _onMDPasteBefore(cm, _ref2) {
  * chart plugin
  * @param {Editor} editor - editor
  * @param {Object} options - chart options
-  * @param {number} options.minWidth - minimum width
-  * @param {number} options.maxWidth - maximum width
-  * @param {number} options.minHeight - minimum height
-  * @param {number} options.maxHeight - maximum height
+  * @param {number} [options.minWidth=0] - minimum width
+  * @param {number} [options.maxWidth=0] - maximum width
+  * @param {number} [options.minHeight=Infinity] - minimum height
+  * @param {number} [options.maxHeight=Infinity] - maximum height
+  * @param {number|string} [options.width='auto'] - default height
+  * @param {number|string} [options.height='auto'] - default height
  * @ignore
  */
 function chartExtension(editor) {
