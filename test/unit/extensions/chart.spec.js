@@ -7,7 +7,8 @@ import {
   parseDSV2ChartData,
   parseURL2ChartData,
   parseCode2DataAndOptions,
-  detectDelimiter
+  detectDelimiter,
+  setDefaultOptions
 } from '../../../src/js/extensions/chart/chart';
 
 describe('CodeBlockChart', () => {
@@ -398,6 +399,52 @@ describe('CodeBlockChart', () => {
           }
         }
       });
+    });
+  });
+
+  describe('setDefaultOptions', () => {
+    let container;
+
+    beforeEach(() => {
+      container = document.createElement('div');
+    });
+
+    it('should respect default min/max width/height', () =>{
+      let chartOptions = setDefaultOptions({
+        chart: {
+          width: -10,
+          height: -10
+        }
+      }, {
+      }, container);
+      expect(chartOptions.chart.width).toBe(0);
+      expect(chartOptions.chart.height).toBe(0);
+    });
+
+    it('should respect min/max width/height', () =>{
+      const extensionOptions = {
+        minWidth: 300,
+        minHeight: 400,
+        maxWidth: 700,
+        maxHeight: 800
+      };
+      let chartOptions = setDefaultOptions({
+        chart: {
+          width: 200,
+          height: 200
+        }
+      }, extensionOptions, container);
+      expect(chartOptions.chart.width).toBe(300);
+      expect(chartOptions.chart.height).toBe(400);
+
+      chartOptions = setDefaultOptions({
+        chart: {
+          width: 1000,
+          height: 1000
+        }
+      }, extensionOptions, container);
+      expect(chartOptions.chart.width).toBe(700);
+      expect(chartOptions.chart.height).toBe(800);
     });
   });
 });
