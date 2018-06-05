@@ -421,6 +421,23 @@ describe('CodeBlockChart', () => {
       expect(chartOptions.chart.height).toBe(0);
     });
 
+    it('should use width/height from codeblock', () =>{
+      const extensionOptions = {
+        minWidth: 300,
+        minHeight: 400,
+        maxWidth: 700,
+        maxHeight: 800
+      };
+      let chartOptions = setDefaultOptions({
+        chart: {
+          width: 500,
+          height: 600
+        }
+      }, extensionOptions, container);
+      expect(chartOptions.chart.width).toBe(500);
+      expect(chartOptions.chart.height).toBe(600);
+    });
+
     it('should respect min/max width/height', () =>{
       const extensionOptions = {
         minWidth: 300,

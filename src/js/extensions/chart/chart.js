@@ -364,7 +364,7 @@ function chartReplacer(codeBlockChartDataAndOptions, extensionOptions) {
   setTimeout(() => {
     const chartContainer = document.querySelector(`#${randomId}`);
     try {
-      parseCode2DataAndOptions(codeBlockChartDataAndOptions, ({data, chartOptions}) => {
+      parseCode2DataAndOptions(codeBlockChartDataAndOptions, ({data, options: chartOptions}) => {
         chartOptions = setDefaultOptions(chartOptions, extensionOptions, chartContainer);
 
         const chartType = chartOptions.editorChart.type;
