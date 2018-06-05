@@ -47,6 +47,12 @@ const DSV_DELIMITERS = [',', '\t', /\s+/];
 const OPTION_DELIMITER = ':';
 const SUPPORTED_CHART_TYPES = ['barChart', 'columnChart', 'lineChart', 'areaChart', 'pieChart'];
 const CATEGORY_CHART_TYPES = ['lineChart', 'areaChart'];
+const DEFAULT_CHART_OPTIONS = {
+  minWidth: 0,
+  maxWidth: Infinity,
+  minHeight: 0,
+  maxHeight: Infinity
+};
 
 /**
  * parse data and options for tui.chart
@@ -301,20 +307,26 @@ function isNumeric(str) {
 
 /**
  * set default options
- * @param {Object} options - tui.chart options
+ * @param {Object} chartOptions - tui.chart options
+ * @param {Object} extensionOptions - extension options
  * @param {HTMLElement} chartContainer - chart container
  * @returns {Object} - options
  * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
-function setDefaultOptions(options, chartContainer) {
-  options = util.extend({
+function setDefaultOptions(chartOptions, extensionOptions, chartContainer) {
+  // chart options scaffolding
+  chartOptions = util.extend({
     editorChart: {},
     chart: {},
     chartExportMenu: {}
-  }, options);
+  }, chartOptions);
 
-  let {width, height} = options.chart;
+  // set default extension options
+  extensionOptions = util.extend(DEFAULT_CHART_OPTIONS, extensionOptions);
+
+  // determine width, height
+  let {width, height} = chartOptions.chart;
   const isWidthUndefined = util.isUndefined(width);
   const isHeightUndefined = util.isUndefined(height);
   if (isWidthUndefined || isHeightUndefined) {
@@ -322,40 +334,47 @@ function setDefaultOptions(options, chartContainer) {
     const {
       width: containerWidth
     } = chartContainer.getBoundingClientRect();
-    options.chart.width = isWidthUndefined ? containerWidth : width;
-    options.chart.height = isHeightUndefined ? containerWidth : height;
+    width = isWidthUndefined ? containerWidth : width;
+    height = isHeightUndefined ? containerWidth : height;
   }
+  width = Math.min(extensionOptions.maxWidth, width);
+  height = Math.min(extensionOptions.maxHeight, height);
+  chartOptions.chart.width = Math.max(extensionOptions.minWidth, width);
+  chartOptions.chart.height = Math.max(extensionOptions.minHeight, height);
 
-  options.editorChart.type = options.editorChart.type ? `${options.editorChart.type}Chart` : 'columnChart';
-  options.chartExportMenu.visible = options.chartExportMenu.visible || false;
+  // default chart type
+  chartOptions.editorChart.type = chartOptions.editorChart.type ? `${chartOptions.editorChart.type}Chart` : 'columnChart';
+  // default visibility of export menu
+  chartOptions.chartExportMenu.visible = chartOptions.chartExportMenu.visible || false;
 
-  return options;
+  return chartOptions;
 }
 
 /**
  * replace html from chart data
  * @param {string} codeBlockChartDataAndOptions - chart data text
+ * @param {Object} extensionOptions - chart extension options
  * @returns {string} - rendered html
  * @ignore
  */
-function chartReplacer(codeBlockChartDataAndOptions) {
+function chartReplacer(codeBlockChartDataAndOptions, extensionOptions) {
   const randomId = `chart-${Math.random().toString(36).substr(2, 10)}`;
   let renderedHTML = `<div id="${randomId}" class="chart" />`;
 
   setTimeout(() => {
     const chartContainer = document.querySelector(`#${randomId}`);
     try {
-      parseCode2DataAndOptions(codeBlockChartDataAndOptions, ({data, options}) => {
-        options = setDefaultOptions(options, chartContainer);
+      parseCode2DataAndOptions(codeBlockChartDataAndOptions, ({data, chartOptions}) => {
+        chartOptions = setDefaultOptions(chartOptions, extensionOptions, chartContainer);
 
-        const chartType = options.editorChart.type;
+        const chartType = chartOptions.editorChart.type;
         if (SUPPORTED_CHART_TYPES.indexOf(chartType) < 0) {
           chartContainer.innerHTML = `invalid chart type. type: bar, column, line, area, pie`;
         } else if (CATEGORY_CHART_TYPES.indexOf(chartType) > -1 &&
                     data.categories.length !== data.series[0].data.length) {
           chartContainer.innerHTML = 'invalid chart data';
         } else {
-          chart[chartType](chartContainer, data, options);
+          chart[chartType](chartContainer, data, chartOptions);
         }
       });
     } catch (e) {
@@ -478,14 +497,21 @@ function _onMDPasteBefore(cm, {source, data: eventData}) {
 /**
  * chart plugin
  * @param {Editor} editor - editor
+ * @param {Object} options - chart options
+  * @param {number} options.minWidth - minimum width
+  * @param {number} options.maxWidth - maximum width
+  * @param {number} options.minHeight - minimum height
+  * @param {number} options.maxHeight - maximum height
  * @ignore
  */
-function chartExtension(editor) {
+function chartExtension(editor, options = {}) {
   const optionLanguages = editor.options.codeBlockLanguages;
   if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
     optionLanguages.push(LANG);
   }
-  codeBlockManager.setReplacer(LANG, chartReplacer);
+  codeBlockManager.setReplacer(LANG, codeBlockChartDataAndOptions => {
+    return chartReplacer(codeBlockChartDataAndOptions, options);
+  });
 
   if (!editor.isViewer()) {
     // treat wysiwyg paste event
@@ -503,5 +529,6 @@ export {
   parseURL2ChartData,
   parseCode2ChartOption,
   parseDSV2ChartData,
-  detectDelimiter
+  detectDelimiter,
+  setDefaultOptions
 };
