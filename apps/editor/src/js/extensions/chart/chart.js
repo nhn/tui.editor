@@ -51,7 +51,9 @@ const DEFAULT_CHART_OPTIONS = {
   minWidth: 0,
   maxWidth: Infinity,
   minHeight: 0,
-  maxHeight: Infinity
+  maxHeight: Infinity,
+  height: 'auto',
+  width: 'auto'
 };
 
 /**
@@ -334,8 +336,11 @@ function setDefaultOptions(chartOptions, extensionOptions, chartContainer) {
     const {
       width: containerWidth
     } = chartContainer.getBoundingClientRect();
-    width = isWidthUndefined ? containerWidth : width;
-    height = isHeightUndefined ? containerWidth : height;
+
+    width = isWidthUndefined ? extensionOptions.width : width;
+    height = isHeightUndefined ? extensionOptions.height : height;
+    width = width === 'auto' ? containerWidth : width;
+    height = height === 'auto' ? containerWidth : height;
   }
   width = Math.min(extensionOptions.maxWidth, width);
   height = Math.min(extensionOptions.maxHeight, height);
@@ -498,10 +503,12 @@ function _onMDPasteBefore(cm, {source, data: eventData}) {
  * chart plugin
  * @param {Editor} editor - editor
  * @param {Object} options - chart options
-  * @param {number} options.minWidth - minimum width
-  * @param {number} options.maxWidth - maximum width
-  * @param {number} options.minHeight - minimum height
-  * @param {number} options.maxHeight - maximum height
+  * @param {number} [options.minWidth=0] - minimum width
+  * @param {number} [options.maxWidth=0] - maximum width
+  * @param {number} [options.minHeight=Infinity] - minimum height
+  * @param {number} [options.maxHeight=Infinity] - maximum height
+  * @param {number|string} [options.width='auto'] - default height
+  * @param {number|string} [options.height='auto'] - default height
  * @ignore
  */
 function chartExtension(editor, options = {}) {
