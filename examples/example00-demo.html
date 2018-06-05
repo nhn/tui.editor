@@ -68,7 +68,8 @@
         'y.title: Month',
         'y.min: 1',
         'y.max: 40',
-        'y.suffix: $'
+        'y.suffix: $',
+        '```'
       ].join('\n');
 
       var editor = new tui.Editor({
@@ -78,7 +79,20 @@
         initialEditType: 'markdown',
         useCommandShortcut: true,
         initialValue: content,
-        exts: ['scrollSync', 'colorSyntax', 'uml', 'chart', 'mark', 'table', 'taskCounter']
+        exts: [
+          {
+            name: 'chart',
+            minWidth: 100,
+            maxWidth: 600,
+            minHeight: 100,
+            maxHeight: 300
+          },
+          'scrollSync',
+          'colorSyntax',
+          'uml',
+          'mark',
+          'table'
+        ]
       });
     </script>
   </body>

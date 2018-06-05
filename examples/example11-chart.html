@@ -45,7 +45,8 @@
         'y.title: Month',
         'y.min: 1',
         'y.max: 40',
-        'y.suffix: $'
+        'y.suffix: $',
+        '```'
       ].join('\n');
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
@@ -53,7 +54,13 @@
         height: '400px',
         initialEditType: 'markdown',
         initialValue: content,
-        exts: ['chart']
+        exts: [{
+          name: 'chart',
+          minWidth: 100,
+          maxWidth: 600,
+          minHeight: 100,
+          maxHeight: 300
+        }]
       });
     </script>
   </body>
