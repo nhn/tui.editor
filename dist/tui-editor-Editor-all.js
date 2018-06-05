@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.0
+ * @version 1.2.1
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -15140,7 +15140,7 @@ function chartReplacer(codeBlockChartDataAndOptions, extensionOptions) {
     try {
       parseCode2DataAndOptions(codeBlockChartDataAndOptions, function (_ref) {
         var data = _ref.data,
-            chartOptions = _ref.chartOptions;
+            chartOptions = _ref.options;
 
         chartOptions = setDefaultOptions(chartOptions, extensionOptions, chartContainer);
 
