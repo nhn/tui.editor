@@ -82,7 +82,10 @@ class PopupAddHeading extends LayerPopup {
     this._eventManager.listen('closeAllPopup', this.hide.bind(this));
     this._eventManager.listen('openHeadingSelect', () => {
       const $button = this._$button;
-      const offset = $button.offset();
+      const offset = {
+        top: $button[0].offsetTop,
+        left: $button[0].offsetLeft,
+      };
 
       this.$el.css({
         top: offset.top + $button.outerHeight(),
