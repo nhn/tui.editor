@@ -64,10 +64,10 @@ function scrollSyncExtension(editor) {
         button._onOut();
         if (isActive) {
           button.$el.addClass('active');
-          button.tooltip = TOOL_TIP.active;
+          button.setTooltip(TOOL_TIP.active);
         } else {
           button.$el.removeClass('active');
-          button.tooltip = TOOL_TIP.inActive;
+          button.setTooltip(TOOL_TIP.inActive);
         }
         button._onOver();
       }

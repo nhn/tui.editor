@@ -60,6 +60,15 @@ class Button extends ToolbarItem {
     }
   }
 
+  /**
+   * set tooltip text
+   * @param {string} text - tooltip text to show
+   * @memberof button
+   */
+  setTooltip(text) {
+    this._tooltip = text;
+  }
+
   _setOptions(options) {
     this._command = options.command;
     this._event = options.event;
