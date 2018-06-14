@@ -87,6 +87,11 @@ class Editor {
 
   popup = new Popup();
 
+  constructor() {
+    this.tooltip = Selector('.tui-tooltip');
+    this.tooltipText = this.tooltip.find('.text');
+  }
+
   async showWysiwyg() {
     await t.click(this.tabbar.wysiwyg);
     await this.fixWysiwygCaret();
