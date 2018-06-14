@@ -232,7 +232,7 @@ class DefaultUI {
       eventManager: this._editor.eventManager,
       $button: this.$el.find('button.tui-table'),
       css: {
-        'position': 'fixed'
+        'position': 'absolute'
       }
     }));
   }
@@ -243,7 +243,7 @@ class DefaultUI {
       eventManager: this._editor.eventManager,
       $button: this.$el.find('button.tui-heading'),
       css: {
-        'position': 'fixed'
+        'position': 'absolute'
       }
     }));
   }
