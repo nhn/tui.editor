@@ -3,11 +3,12 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import CommandManager from '../commandManager';
-
-const FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
-const FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
-const FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
-const FIND_TASK_SYNTAX_RX = /([*-] |[\d]+\. )(\[[ xX]] )/;
+import {
+  FIND_MD_OL_RX,
+  FIND_MD_UL_RX,
+  FIND_MD_TASK_RX,
+  FIND_TASK_SYNTAX_RX
+} from './listRegex';
 
 /**
  * Task

@@ -4,10 +4,11 @@
  */
 
 import CommandManager from '../commandManager';
-
-const FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
-const FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
-const FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
+import {
+  FIND_MD_OL_RX,
+  FIND_MD_UL_RX,
+  FIND_MD_TASK_RX
+} from './listRegex';
 
 /**
  * OL
@@ -44,7 +45,7 @@ const OL = CommandManager.command('markdown', /** @lends OL */{
 
       if (listManager.isListOrParagraph(line)) {
         if (isUlOrTask(line)) {
-          listManager.replaceLineText(doc, i, /[*-] /, `${ordinalNumber}. `);
+          listManager.replaceLineText(doc, i, /([-*]|[\d]+\.)( \[[ xX]])? /, `${ordinalNumber}. `);
         } else if (!line.match(FIND_MD_OL_RX)) {
           doc.replaceRange(`${ordinalNumber}. `, currentLineStart);
         }
