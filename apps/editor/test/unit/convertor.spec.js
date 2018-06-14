@@ -111,6 +111,17 @@ describe('Convertor', () => {
     it('should treat $ special characters', () => {
       expect(convertor.toMarkdown('<span>,;:$&+=</span>').trim()).toEqual('<span>,;:$&+=</span>');
     });
+
+    it('should convert BRs to newline', () => {
+      expect(convertor.toMarkdown('text<br><br>text')).toBe('text\n\ntext');
+      expect(convertor.toMarkdown('<b>text</b><br><br>text')).toBe('**text**\n\ntext');
+      expect(convertor.toMarkdown('<i>text</i><br><br>text')).toBe('_text_\n\ntext');
+      expect(convertor.toMarkdown('<s>text</s><br><br>text')).toBe('~~text~~\n\ntext');
+      expect(convertor.toMarkdown('<code>text</code><br><br>text')).toBe('`text`\n\ntext');
+      expect(convertor.toMarkdown('<a href="some_url">text</a><br><br>text')).toBe('[text](some_url)\n\ntext');
+      expect(convertor.toMarkdown('<span style="color:#ff0000">text</span><br><br>text'))
+        .toBe('<span style="color:#ff0000">text</span>\n\ntext');
+    });
   });
 
   describe('event', () => {
@@ -149,7 +160,8 @@ describe('Convertor', () => {
         'paragraph',
         '',
         '    code',
-        '    block'].join('\n');
+        '    block'
+      ].join('\n');
       const expectedMarkdown = [
         '* codeblock',
         '',
@@ -172,7 +184,8 @@ describe('Convertor', () => {
         '<p>paragraph</p>',
         '<pre><code>code',
         'block</code></pre>',
-        ''].join('\n');
+        ''
+      ].join('\n');
 
       const result = convertor.toHTML(markdown);
 
@@ -188,7 +201,8 @@ describe('Convertor', () => {
         '',
         'paragraph',
         '',
-        '> blockquote'].join('\n');
+        '> blockquote'
+      ].join('\n');
       const html = [
         '<ul>',
         '<li>&gt; blockquote</li>',
@@ -209,7 +223,8 @@ describe('Convertor', () => {
         '',
         'paragraph',
         '',
-        '> blockquote'].join('\n');
+        '> blockquote'
+      ].join('\n');
 
       const result = convertor.toHTML(markdown);
 
@@ -221,16 +236,19 @@ describe('Convertor', () => {
       const markdown = [
         '```',
         '<span>',
-        '```'].join('\n');
+        '```'
+      ].join('\n');
       const html = [
         '<pre><code>&lt;span&gt;',
         '</code></pre>',
-        ''].join('\n');
+        ''
+      ].join('\n');
       const resultMarkdown = [
         '```',
         '<span>',
         '',
-        '```'].join('\n');
+        '```'
+      ].join('\n');
 
       expect(convertor.toHTML(markdown)).toEqual(html);
       expect(convertor.toMarkdown(html)).toEqual(resultMarkdown);
