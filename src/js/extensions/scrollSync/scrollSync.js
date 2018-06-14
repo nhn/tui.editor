@@ -17,7 +17,7 @@ function scrollSyncExtension(editor) {
   const i18n = editor.i18n;
   const TOOL_TIP = {
     active: i18n.get('Auto scroll enabled'),
-    inActive: i18n.get('Auto scroll disabled')
+    inactive: i18n.get('Auto scroll disabled')
   };
 
   if (editor.isViewer()) {
@@ -67,7 +67,7 @@ function scrollSyncExtension(editor) {
           button.setTooltip(TOOL_TIP.active);
         } else {
           button.$el.removeClass('active');
-          button.setTooltip(TOOL_TIP.inActive);
+          button.setTooltip(TOOL_TIP.inactive);
         }
         button._onOver();
       }
