@@ -174,7 +174,7 @@ function initUI(editor, preset) {
     $target: editor.getUI().$el,
     css: {
       'width': 'auto',
-      'position': 'fixed'
+      'position': 'absolute'
     }
   });
 
@@ -189,7 +189,10 @@ function initUI(editor, preset) {
       return;
     }
 
-    const offset = $button.offset();
+    const offset = {
+      top: $button[0].offsetTop,
+      left: $button[0].offsetLeft
+    };
     popup.$el.css({
       top: offset.top + $button.outerHeight(),
       left: offset.left

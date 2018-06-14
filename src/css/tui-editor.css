@@ -700,12 +700,15 @@
     position: absolute;
     bottom: 141px;
     right: 10px;
+    color: rgb(44, 62, 80);
+    padding: 0;
 }
 
 .tui-popup-color .tui-colorpicker-container .tui-colorpicker-palette-hex {
     border: 1px solid #E1E1E1;
-    padding: 3px 14px;
+    padding: 4px;
     margin-left: -1px;
+    height: 19px;
 }
 
 .tui-popup-color .tui-colorpicker-container div.tui-colorpicker-clearfix {
