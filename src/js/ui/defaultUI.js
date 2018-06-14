@@ -228,7 +228,7 @@ class DefaultUI {
 
   _initPopupAddTable() {
     this._popups.push(new PopupAddTable({
-      $target: this.$el,
+      $target: this._toolbar.$el,
       eventManager: this._editor.eventManager,
       $button: this.$el.find('button.tui-table'),
       css: {
@@ -239,7 +239,7 @@ class DefaultUI {
 
   _initPopupAddHeading() {
     this._popups.push(new PopupAddHeading({
-      $target: this.$el,
+      $target: this._toolbar.$el,
       eventManager: this._editor.eventManager,
       $button: this.$el.find('button.tui-heading'),
       css: {
