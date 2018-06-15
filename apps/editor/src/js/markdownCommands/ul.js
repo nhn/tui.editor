@@ -3,10 +3,15 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import CommandManager from '../commandManager';
+import {
+  FIND_MD_OL_RX,
+  FIND_MD_UL_RX,
+  FIND_MD_TASK_RX,
+  FIND_MD_UL_TASK_RX
+} from './listRegex';
 
-const FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
-const FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
-const FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
+const MD_UL_TASK_SYNTAX_RX = /([-*])( \[[ xX]]) /;
+const MD_UL_OR_UL_TASK_SYNTAX_RX = /[\d]+\.( \[[ xX]])? /;
 
 /**
  * UL
@@ -41,8 +46,10 @@ const UL = CommandManager.command('markdown', /** @lends UL */{
       line = doc.getLine(i);
 
       if (listManager.isListOrParagraph(line)) {
-        if (isOlOrTask(line)) {
-          listManager.replaceLineText(doc, i, /[\d]+\. /, '* ');
+        if (isUlTask(line)) {
+          listManager.replaceLineText(doc, i, MD_UL_TASK_SYNTAX_RX, '$1 ');
+        } else if (isOlOrTask(line)) {
+          listManager.replaceLineText(doc, i, MD_UL_OR_UL_TASK_SYNTAX_RX, '* ');
         } else if (!line.match(FIND_MD_UL_RX)) {
           doc.replaceRange('* ', currentLineStart);
         }
@@ -57,6 +64,15 @@ const UL = CommandManager.command('markdown', /** @lends UL */{
     cm.focus();
   }
 });
+
+/**
+ * Return whether the given line is UL TASK
+ * @param {string} line Line text
+ * @returns {boolean}
+ */
+function isUlTask(line) {
+  return !!(line && line.match(FIND_MD_UL_TASK_RX));
+}
 
 /**
  * Return whether passed line is OL or TASK or neither

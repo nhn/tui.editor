@@ -57,6 +57,7 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
   _changeFormatToUnorderedListIfNeed(wwe, target) {
     const sq = wwe.getEditor();
     const range = sq.getSelection();
+    const taskManager = wwe.componentManager.getManager('task');
     let newLI = range.startContainer;
 
     if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
@@ -66,6 +67,7 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
 
       if (sq.hasFormat('LI')) {
         wwe.saveSelection(range);
+        taskManager.unformatTask(range.startContainer);
         sq.replaceParent(range.startContainer, 'ol', 'ul');
         wwe.restoreSavedSelection();
       } else {
@@ -81,4 +83,3 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
 });
 
 export default UL;
-

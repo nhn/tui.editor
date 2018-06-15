@@ -169,7 +169,7 @@ describe('UL', () => {
 
     expect(wwe.get$Body().find('ol').length).toEqual(0);
     expect(wwe.get$Body().find('ul').length).toEqual(1);
-    expect(wwe.get$Body().find('li.task-list-item').length).toEqual(1);
+    expect(wwe.get$Body().find('li.task-list-item').length).toEqual(0);
     expect(wwe.get$Body().find('li').length).toEqual(1);
   });
 
@@ -188,7 +188,7 @@ describe('UL', () => {
     UL.exec(wwe);
 
     expect(wwe.get$Body().find('ul').length).toEqual(1);
-    expect(wwe.get$Body().find('li.task-list-item').length).toEqual(2);
+    expect(wwe.get$Body().find('li.task-list-item').length).toEqual(0);
     expect(wwe.get$Body().find('li').length).toEqual(2);
   });
 
