@@ -59,7 +59,7 @@ describe('OL', () => {
     OL.exec(wwe);
 
     expect(wwe.get$Body().find('ul').length).toEqual(0);
-    expect(wwe.get$Body().find('ol li.task-list-item[data-te-task]').length).toEqual(1);
+    expect(wwe.get$Body().find('ol li.task-list-item[data-te-task]').length).toEqual(0);
     expect(wwe.get$Body().find('ol').length).toEqual(1);
     expect(wwe.get$Body().find('li').length).toEqual(1);
     expect(wwe.get$Body().find('li').text()).toEqual('test');
@@ -187,7 +187,7 @@ describe('OL', () => {
     OL.exec(wwe);
 
     expect(wwe.get$Body().find('ol').length).toEqual(1);
-    expect(wwe.get$Body().find('li.task-list-item').length).toEqual(1);
+    expect(wwe.get$Body().find('li.task-list-item').length).toEqual(0);
     expect(wwe.get$Body().find('li').length).toEqual(1);
   });
 
@@ -206,7 +206,7 @@ describe('OL', () => {
     OL.exec(wwe);
 
     expect(wwe.get$Body().find('ol').length).toEqual(1);
-    expect(wwe.get$Body().find('li.task-list-item').length).toEqual(2);
+    expect(wwe.get$Body().find('li.task-list-item').length).toEqual(0);
     expect(wwe.get$Body().find('li').length).toEqual(2);
   });
 
