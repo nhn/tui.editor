@@ -66,6 +66,33 @@ class Toolbar extends UIController {
         }
       });
     });
+    eventManager.listen('changePreviewTabPreview', () => this.disableAllButton());
+    eventManager.listen('changePreviewTabWrite', () => this.enableAllButton());
+    eventManager.listen('changeMode', () => this.enableAllButton());
+  }
+
+  /**
+   * disable all toolbar button
+   * @memberof Toolbar
+   */
+  disableAllButton() {
+    this._items.forEach(item => {
+      if (item instanceof Button) {
+        item.disable();
+      }
+    });
+  }
+
+  /**
+   * enable all toolbar button
+   * @memberof Toolbar
+   */
+  enableAllButton() {
+    this._items.forEach(item => {
+      if (item instanceof Button) {
+        item.enable();
+      }
+    });
   }
 
   /**
