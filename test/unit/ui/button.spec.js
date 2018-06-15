@@ -9,10 +9,6 @@ import Button from '../../../src/js/ui/button';
 describe('Button', () => {
   let button;
 
-  afterEach(() => {
-    $('body').empty();
-  });
-
   describe('creation', () => {
     it('should make button element', () => {
       button = new Button({});
@@ -76,6 +72,23 @@ describe('Button', () => {
       expect(passedEvent).toEqual('myevent');
     });
 
+    it('should not emmit clicked if disabled', () => {
+      let passedEvent;
+
+      button = new Button({
+        event: 'myevent'
+      });
+      button.disable();
+
+      button.on('event', (e, event) => {
+        passedEvent = event;
+      });
+
+      button.$el.trigger('click');
+
+      expect(passedEvent).toBeFalsy();
+    });
+
     it('should emit only command event prior to event, given event option will be ignored', () => {
       const eventHandler = jasmine.createSpy('eventHandler');
       const commandHandler = jasmine.createSpy('commandHandler');
@@ -92,6 +105,18 @@ describe('Button', () => {
 
       expect(commandHandler).toHaveBeenCalled();
       expect(eventHandler).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('enable/disable', () => {
+    it('should remove/add disabled attr', () => {
+      button = new Button({});
+
+      button.disable();
+      expect(button.$el.attr('disabled')).toBeTruthy();
+
+      button.enable();
+      expect(button.$el.attr('disabled')).toBeFalsy();
     });
   });
 });

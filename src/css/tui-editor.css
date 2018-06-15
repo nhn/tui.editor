@@ -776,74 +776,145 @@ only screen and (                min-resolution: 2dppx) {
     background-position: -172px -48px;
 }
 
+.tui-toolbar-icons.tui-heading:disabled {
+    background-position: -193px -48px;
+}
+
 .tui-toolbar-icons.tui-bold {
     background-position: -4px -4px;
+}
+
+.tui-toolbar-icons.tui-bold:disabled {
+    background-position: -25px -4px;
 }
 
 .tui-toolbar-icons.tui-italic {
     background-position: -4px -48px;
 }
 
+.tui-toolbar-icons.tui-italic:disabled {
+    background-position: -25px -48px;
+}
+
 .tui-toolbar-icons.tui-color {
     background-position: -172px -70px;
+}
+
+.tui-toolbar-icons.tui-color:disabled {
+    background-position: -193px -70px;
 }
 
 .tui-toolbar-icons.tui-strike {
     background-position: -4px -26px;
 }
 
+.tui-toolbar-icons.tui-strike:disabled {
+    background-position: -25px -26px;
+}
+
 .tui-toolbar-icons.tui-hrline {
     background-position: -46px -92px;
+}
+
+.tui-toolbar-icons.tui-hrline:disabled {
+    background-position: -67px -92px;
 }
 
 .tui-toolbar-icons.tui-quote {
     background-position: -4px -114px;
 }
 
+.tui-toolbar-icons.tui-quote:disabled {
+    background-position: -25px -114px;
+}
+
 .tui-toolbar-icons.tui-ul {
     background-position: -46px -4px;;
+}
+
+.tui-toolbar-icons.tui-ul:disabled {
+    background-position: -67px -4px;;
 }
 
 .tui-toolbar-icons.tui-ol {
     background-position: -46px -26px;
 }
 
+.tui-toolbar-icons.tui-ol:disabled {
+    background-position: -67px -26px;
+}
+
 .tui-toolbar-icons.tui-task {
     background-position: -130px -48px;
+}
+
+.tui-toolbar-icons.tui-task:disabled {
+    background-position: -151px -48px;
 }
 
 .tui-toolbar-icons.tui-indent {
     background-position: -46px -48px;
 }
 
+.tui-toolbar-icons.tui-indent:disabled {
+    background-position: -67px -48px;
+}
+
 .tui-toolbar-icons.tui-outdent {
     background-position: -46px -70px;
+}
+
+.tui-toolbar-icons.tui-outdent:disabled {
+    background-position: -67px -70px;
 }
 
 .tui-toolbar-icons.tui-table {
     background-position: -88px -92px;
 }
 
+.tui-toolbar-icons.tui-table:disabled {
+    background-position: -109px -92px;
+}
+
 .tui-toolbar-icons.tui-image {
     background-position: -130px -4px;
+}
+
+.tui-toolbar-icons.tui-image:disabled {
+    background-position: -151px -4px;
 }
 
 .tui-toolbar-icons.tui-link {
     background-position: -130px -26px;
 }
 
+.tui-toolbar-icons.tui-link:disabled {
+    background-position: -151px -26px;
+}
+
 .tui-toolbar-icons.tui-code {
     background-position: -130px -92px;
+}
+
+.tui-toolbar-icons.tui-code:disabled {
+    background-position: -151px -92px;
 }
 
 .tui-toolbar-icons.tui-codeblock {
     background-position: -130px -70px;
 }
 
+.tui-toolbar-icons.tui-codeblock:disabled {
+    background-position: -151px -70px;
+}
+
 .tui-toolbar-icons.tui-more {
     background-position: -172px -92px;
 }
 
+.tui-toolbar-icons.tui-more:disabled {
+    background-position: -193px -92px;
+}
 .tui-colorpicker-svg-slider {
     border: 1px solid #ebebeb;
 }
