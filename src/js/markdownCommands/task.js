@@ -6,9 +6,11 @@ import CommandManager from '../commandManager';
 import {
   FIND_MD_OL_RX,
   FIND_MD_UL_RX,
-  FIND_MD_TASK_RX,
-  FIND_TASK_SYNTAX_RX
+  FIND_MD_TASK_RX
 } from './listRegex';
+
+const MD_UL_OR_OL_SYNTAX_RX = /([*-] |[\d]+\. )/;
+const MD_TASK_SYNTAX_RX = /([*-] |[\d]+\. )(\[[ xX]] )/;
 
 /**
  * Task
@@ -41,13 +43,13 @@ const Task = CommandManager.command('markdown', /** @lends Task */{
 
       line = doc.getLine(i);
 
-      const hasTaskSyntax = !!line.match(FIND_TASK_SYNTAX_RX);
+      const hasTaskSyntax = !!line.match(MD_TASK_SYNTAX_RX);
 
       if (listManager.isListOrParagraph(line)) {
         if (isOlOrUl(line) && hasTaskSyntax) {
-          listManager.replaceLineText(doc, i, FIND_TASK_SYNTAX_RX, '$1');
+          listManager.replaceLineText(doc, i, MD_TASK_SYNTAX_RX, '$1');
         } else if (isOlOrUl(line) && !hasTaskSyntax) {
-          listManager.replaceLineText(doc, i, /([*-] |[\d]+\. )/, '$1[ ] ');
+          listManager.replaceLineText(doc, i, MD_UL_OR_OL_SYNTAX_RX, '$1[ ] ');
         } else if (!line.match(FIND_MD_TASK_RX)) {
           doc.replaceRange('* [ ] ', currentLineStart);
         }

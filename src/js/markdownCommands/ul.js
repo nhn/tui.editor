@@ -10,6 +10,9 @@ import {
   FIND_MD_UL_TASK_RX
 } from './listRegex';
 
+const MD_UL_TASK_SYNTAX_RX = /([-*])( \[[ xX]]) /;
+const MD_UL_OR_UL_TASK_SYNTAX_RX = /[\d]+\.( \[[ xX]])? /;
+
 /**
  * UL
  * Add unordered list markdown syntax to markdown editor
@@ -44,9 +47,9 @@ const UL = CommandManager.command('markdown', /** @lends UL */{
 
       if (listManager.isListOrParagraph(line)) {
         if (isUlTask(line)) {
-          listManager.replaceLineText(doc, i, /([-*])( \[[ xX]]) /, '$1 ');
+          listManager.replaceLineText(doc, i, MD_UL_TASK_SYNTAX_RX, '$1 ');
         } else if (isOlOrTask(line)) {
-          listManager.replaceLineText(doc, i, /[\d]+\.( \[[ xX]])? /, '* ');
+          listManager.replaceLineText(doc, i, MD_UL_OR_UL_TASK_SYNTAX_RX, '* ');
         } else if (!line.match(FIND_MD_UL_RX)) {
           doc.replaceRange('* ', currentLineStart);
         }

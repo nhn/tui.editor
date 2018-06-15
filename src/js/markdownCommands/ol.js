@@ -10,6 +10,8 @@ import {
   FIND_MD_TASK_RX
 } from './listRegex';
 
+const MD_LIST_OR_TASK_SYNTAX_RX = /([-*]|[\d]+\.)( \[[ xX]])? /;
+
 /**
  * OL
  * Add ordered list markdown syntax to markdown editor
@@ -45,7 +47,7 @@ const OL = CommandManager.command('markdown', /** @lends OL */{
 
       if (listManager.isListOrParagraph(line)) {
         if (isUlOrTask(line)) {
-          listManager.replaceLineText(doc, i, /([-*]|[\d]+\.)( \[[ xX]])? /, `${ordinalNumber}. `);
+          listManager.replaceLineText(doc, i, MD_LIST_OR_TASK_SYNTAX_RX, `${ordinalNumber}. `);
         } else if (!line.match(FIND_MD_OL_RX)) {
           doc.replaceRange(`${ordinalNumber}. `, currentLineStart);
         }
