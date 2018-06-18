@@ -74,7 +74,7 @@ var basicRenderer = Renderer.factory({
         }
 
         if (!this.isEmptyText(subContent) && url) {
-            res = '[' + subContent + '](' + url + title + ')';
+            res = '[' + this.escapeTextForLink(subContent) + '](' + url + title + ')';
         }
 
         return res;
@@ -85,7 +85,7 @@ var basicRenderer = Renderer.factory({
             alt = node.alt;
 
         if (src) {
-            res = '![' + alt + '](' + src + ')';
+            res = '![' + this.escapeTextForLink(alt) + '](' + src + ')';
         }
 
         return res;

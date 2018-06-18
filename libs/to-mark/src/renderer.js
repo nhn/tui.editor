@@ -12,7 +12,9 @@ var FIND_LEAD_SPACE_RX = /^\u0020/,
     //find space more than one
     FIND_SPACE_MORE_THAN_ONE_RX = /[\u0020]+/g,
     //find characters that need escape
-    FIND_CHAR_TO_ESCAPE_RX = /[~>()*{}\[\]_`+-.!#|]/g;
+    FIND_CHAR_TO_ESCAPE_RX = /[~>()*{}\[\]_`+-.!#|]/g,
+    // find characters to be escaped in links or images
+    FIND_CHAR_TO_ESCAPE_IN_LINK_RX = /[\[\]\(\)<>]/g;
 
 var TEXT_NODE = 3;
 
@@ -303,11 +305,20 @@ Renderer.prototype.getSpaceCollapsedText = function(text) {
  * @returns {string} processed text
  */
 Renderer.prototype.escapeText = function(text) {
-    text = text.replace(FIND_CHAR_TO_ESCAPE_RX, function(matched) {
+    return text.replace(FIND_CHAR_TO_ESCAPE_RX, function(matched) {
         return '\\' + matched;
     });
+};
 
-    return text;
+/**
+ * Escape given text for link
+ * @param {string} text - text be processed
+ * @returns {string} - processed text
+ */
+Renderer.prototype.escapeTextForLink = function(text) {
+    return text.replace(FIND_CHAR_TO_ESCAPE_IN_LINK_RX, function(matched) {
+        return '\\' + matched;
+    });
 };
 
 /**

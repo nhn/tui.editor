@@ -72,6 +72,10 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<a></a>', 'myText')).toEqual('myText');
         });
 
+        it('link which has characters for markdown link syntax', function() {
+            expect(getMarkdownText('<a href="#head"></a>', 'char []()<> to escape')).toEqual('[char \\[\\]\\(\\)\\<\\> to escape](#head)');
+        });
+
         it('image', function() {
             expect(getMarkdownText('<img src="http://www.nhnent.com" alt="NHNENT" />')).toEqual('![NHNENT](http://www.nhnent.com)');
         });
@@ -82,6 +86,10 @@ describe('basicRenderer', function() {
 
         it('image without src returns empty string', function() {
             expect(getMarkdownText('<img alt="NHNENT" />')).toEqual('');
+        });
+
+        it('image which has characters for markdown image syntax', function() {
+            expect(getMarkdownText('<img src="#head" alt="char []()<> to escape"></a>')).toEqual('![char \\[\\]\\(\\)\\<\\> to escape](#head)');
         });
 
         it('strong, b', function() {
@@ -156,13 +164,13 @@ describe('basicRenderer', function() {
         it('nested list', function() {
             var htmlStr = [
                 '<ul>',
-                    '<li></li>',
-                    '<li>',
-                        '<ul>',
-                            '<li>',
-                            '</li>',
-                        '</ul>',
-                    '</li>',
+                '<li></li>',
+                '<li>',
+                '<ul>',
+                '<li>',
+                '</li>',
+                '</ul>',
+                '</li>',
                 '</ul>'
             ].join('');
 
