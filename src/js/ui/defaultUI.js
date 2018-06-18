@@ -197,8 +197,11 @@ class DefaultUI {
     this._markdownTab.on('itemClick', (ev, itemText) => {
       if (itemText === i18n.get('Preview')) {
         editor.eventManager.emit('previewNeedsRefresh');
+        editor.eventManager.emit('changePreviewTabPreview');
+        editor.eventManager.emit('closeAllPopup');
       } else {
         editor.getCodeMirror().focus();
+        editor.eventManager.emit('changePreviewTabWrite');
       }
     });
   }

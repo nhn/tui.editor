@@ -429,6 +429,74 @@ describe('Toolbar', () => {
     });
   });
 
+  describe('enableAllButton', () => {
+    it('should call the enable of all the button in the toolbar', () => {
+      toolbar.addButton([{
+        className: 'test',
+        command: 'test',
+        text: 'test'
+      }, {
+        className: 'test2',
+        command: 'test2',
+        text: 'test2'
+      }]);
+      const buttons = toolbar.getItems();
+      spyOn(buttons[0], 'enable');
+      spyOn(buttons[1], 'enable');
+
+      toolbar.enableAllButton();
+
+      expect(buttons[0].enable).toHaveBeenCalled();
+      expect(buttons[1].enable).toHaveBeenCalled();
+    });
+
+    it('should be called onchangePreviewTabWrite', () => {
+      spyOn(toolbar, 'enableAllButton');
+
+      em.emit('changePreviewTabWrite');
+
+      expect(toolbar.enableAllButton).toHaveBeenCalled();
+    });
+
+    it('should be called onchangeMode', () => {
+      spyOn(toolbar, 'enableAllButton');
+
+      em.emit('changeMode');
+
+      expect(toolbar.enableAllButton).toHaveBeenCalled();
+    });
+  });
+
+  describe('disableAllButton', () => {
+    it('should call the disable of all the button in the toolbar', () => {
+      toolbar.addButton([{
+        className: 'test',
+        command: 'test',
+        text: 'test'
+      }, {
+        className: 'test2',
+        command: 'test2',
+        text: 'test2'
+      }]);
+      const buttons = toolbar.getItems();
+      spyOn(buttons[0], 'disable');
+      spyOn(buttons[1], 'disable');
+
+      toolbar.disableAllButton();
+
+      expect(buttons[0].disable).toHaveBeenCalled();
+      expect(buttons[1].disable).toHaveBeenCalled();
+    });
+
+    it('should be called changePreviewTabPreview', () => {
+      spyOn(toolbar, 'disableAllButton');
+
+      em.emit('changePreviewTabPreview');
+
+      expect(toolbar.disableAllButton).toHaveBeenCalled();
+    });
+  });
+
   describe('destroy', () => {
     beforeEach(() => {
       $('body').append(toolbar.$el);
