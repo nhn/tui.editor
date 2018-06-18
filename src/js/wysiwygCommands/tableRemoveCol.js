@@ -39,16 +39,16 @@ const TableRemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */
 
       if ($selectedCellsByManager.length < tbodyColLength) {
         sq.saveUndoState(range);
-        let $nextFocus, $cell;
+        let $nextFocus;
 
         if ($selectedCellsByManager.length > 1) {
           const $tailCell = $selectedCellsByManager.last();
           const $headCell = $selectedCellsByManager.first();
-          $nextFocus = $tailCell.next().length > 0 ? $tailCell.next() : $headCell.prev();
+          $nextFocus = $tailCell.next().length ? $tailCell.next() : $headCell.prev();
 
           removeMultipleColsByCells($selectedCellsByManager);
         } else {
-          $cell = getCellByRange(range);
+          let $cell = getCellByRange(range);
           $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
 
           removeColByCell($cell);
