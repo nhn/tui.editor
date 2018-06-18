@@ -77,5 +77,23 @@ describe('AddImage', () => {
       expect(doc.getLine(1)).toEqual(`![${data.altText}](${data.imageUrl})`);
       expect(origin).toEqual('+addImage');
     });
+
+    it('and escape markdown critical characters in alt text', () => {
+      doc.setCursor(1, 0);
+
+      data.altText = 'mytext ()[]<>';
+      AddImage.exec(mde, data);
+
+      expect(doc.getLine(1)).toEqual(`![mytext \\(\\)\\[\\]\\<\\>](${data.imageUrl})`);
+    });
+
+    it('and encode markdown critical characters in image url', () => {
+      doc.setCursor(1, 0);
+
+      data.imageUrl = 'myurl ()[]<>';
+      AddImage.exec(mde, data);
+
+      expect(doc.getLine(1)).toEqual(`![${data.altText}](myurl %28%29%5B%5D%3C%3E)`);
+    });
   });
 });
