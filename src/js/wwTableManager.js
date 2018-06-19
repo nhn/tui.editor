@@ -487,24 +487,25 @@ class WwTableManager {
    */
   _pasteDataIntoTable(fragment) {
     const {startContainer} = this.wwe.getEditor().getSelection();
-    const {parentNode} = startContainer;
     const tableData = this._getTableDataFromTable(fragment);
-    const isTextInTableCell = (parentNode.tagName === 'TD' || parentNode.tagName === 'TH');
     const isTableCell = (startContainer.tagName === 'TD' || startContainer.tagName === 'TH');
-    const isTextNode = startContainer.nodeType === 3;
     const brString = isIE10 ? '' : '<br />';
     let anchorElement, td, tr, tdContent;
 
-    if (isTextNode && isTextInTableCell) {
-      anchorElement = parentNode;
-    } else if (isTableCell) {
+    if (isTableCell) {
       anchorElement = startContainer;
     } else {
-      anchorElement = $(startContainer).find('th,td').get(0);
+      anchorElement = domUtils.getParentUntilBy(startContainer, node => {
+        return node.tagName === 'TD' || node.tagName === 'TH';
+      }, node => {
+        return node.tagName === 'DIV';
+      });
+      anchorElement = anchorElement ? anchorElement.parentNode : null;
     }
 
-    td = anchorElement;
+    anchorElement = anchorElement ? anchorElement : $(startContainer).find('th,td').get(0);
 
+    td = anchorElement;
     while (tableData.length) {
       tr = tableData.shift();
 
