@@ -230,6 +230,7 @@ var editor = Editor.factory({
 ## 🍞 TOAST UI Family
 * [TOAST UI Grid](https://github.com/nhnent/tui.grid)
 * [TOAST UI Chart](https://github.com/nhnent/tui.chart)
+* [TOAST UI Calendar](https://github.com/nhnent/tui.calendar)
 * [TOAST UI Components](https://github.com/nhnent?q=tui)
 
 ## 🚀 Used By
