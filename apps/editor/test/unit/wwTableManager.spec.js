@@ -187,7 +187,30 @@ describe('WwTableManager', () => {
 
       expect($body.find('table').text()).toEqual('abcdef');
     });
+
+    it('_pasteDataIntoTable should paste data into cell containing inline tags ex) a, code ...', () => {
+      const table = '<table>' +
+        '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+        '<tbody><tr><td><a href="">3</a></td><td>4</td></tr>' +
+        '<tr><td>5</td><td>6</td></tr></tbody>' +
+        '</table>';
+      const pastingTable = $('<table>' +
+        '<tbody><tr><td>a</td><td>b</td></tr></tbody>' +
+        '</table>').get(0);
+
+      wwe.getEditor().setHTML(table);
+      const $body = wwe.get$Body();
+      const range = wwe.getEditor().getSelection().cloneRange();
+      range.setStart($body.find('table td a').get(0).firstChild, 0);
+      range.collapse(true);
+      wwe.getEditor().setSelection(range);
+
+      mgr._pasteDataIntoTable(pastingTable);
+
+      expect($body.find('table').text()).toEqual('12ab56');
+    });
   });
+
   describe('remove', () => {
     it('_removeTableContents should remove current selected table text contents', () => {
       const table = '<table>' +
