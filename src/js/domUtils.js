@@ -176,14 +176,18 @@ const getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
   return prevNode;
 };
 
-const getParentUntilBy = function(node, condition) {
+const getParentUntilBy = function(node, matchCondition, stopCondition) {
   let foundedNode;
 
-  while (node.parentNode && !condition(node.parentNode)) {
+  while (node.parentNode && !matchCondition(node.parentNode)) {
     node = node.parentNode;
+
+    if (stopCondition && stopCondition(node.parentNode)) {
+      break;
+    }
   }
 
-  if (condition(node.parentNode)) {
+  if (matchCondition(node.parentNode)) {
     foundedNode = node;
   }
 
@@ -475,6 +479,7 @@ export default {
   getChildNodeByOffset,
   getTopPrevNodeUnder,
   getTopNextNodeUnder,
+  getParentUntilBy,
   getParentUntil,
   getTopBlockNode,
   getPrevTextNode,
