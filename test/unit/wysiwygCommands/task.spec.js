@@ -228,4 +228,31 @@ describe('Task', () => {
     expect(wwe.get$Body().children('pre').length).toEqual(1);
     expect(wwe.get$Body().find('li.task-list-item').length).toEqual(3);
   });
+
+  it('should restore the stored selection', () => {
+    const $body = sq.get$Body();
+    const $div = $('<div>text<em>text</em>longlongtext</div>');
+
+    $body.append($div);
+
+    const rangeContainer = $div.get(0).childNodes[2];
+    let range = sq.getSelection();
+    range.setStart(rangeContainer, 11);
+    range.setEnd(rangeContainer, 11);
+    sq.setSelection(range);
+    let {
+      startContainer,
+      endContainer,
+      startOffset,
+      endOffset
+    } = range;
+
+    Task.exec(wwe);
+
+    range = sq.getSelection();
+    expect(range.startContainer).toBe(startContainer);
+    expect(range.endContainer).toBe(endContainer);
+    expect(range.startOffset).toBe(startOffset);
+    expect(range.endOffset).toBe(endOffset);
+  });
 });

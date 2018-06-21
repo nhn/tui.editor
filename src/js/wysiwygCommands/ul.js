@@ -3,6 +3,7 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import CommandManager from '../commandManager';
+import domUtil from '../domUtils';
 
 /**
  * UL
@@ -40,9 +41,14 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
       newLIs.push(newLI);
     }
 
+    const newStartContainer = domUtil.containsNode(newLIs[0], startContainer)
+      ? startContainer : newLIs[0];
+    const newEndContainer = domUtil.containsNode(newLIs[newLIs.length - 1], endContainer)
+      ? endContainer : newLIs[newLIs.length - 1];
+
     range = sq.getSelection();
-    range.setStart(newLIs[0].firstChild, startOffset);
-    range.setEnd(newLIs[newLIs.length - 1].firstChild, endOffset);
+    range.setStart(newStartContainer, startOffset);
+    range.setEnd(newEndContainer, endOffset);
     sq.setSelection(range);
     sq.saveUndoState(range);
   },
