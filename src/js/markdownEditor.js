@@ -28,8 +28,8 @@ class MarkdownEditor extends CodeMirrorExt {
       dragDrop: true,
       allowDropFileTypes: ['image'],
       extraKeys: {
-        'Enter': 'newlineAndIndentContinue',
-        'Tab': 'subListIndentTab',
+        'Enter': 'newlineAndIndentContinueMarkdownList',
+        'Tab': 'indentOrderedList',
         'Shift-Tab': 'indentLessOrderedList'
       }
     });

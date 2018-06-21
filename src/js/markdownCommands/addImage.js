@@ -3,6 +3,9 @@
 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
 */
 import CommandManager from '../commandManager';
+import ImportManager from '../importManager';
+
+const {decodeURIGraceful, encodeMarkdownCharacters, escapeMarkdownCharacters} = ImportManager;
 
 /**
  * AddImage
@@ -34,7 +37,11 @@ const AddImage = CommandManager.command('markdown', /** @lends AddImage */ {
       ch: range.to.ch
     };
 
-    const replaceText = `![${data.altText}](${data.imageUrl})`;
+    let {altText, imageUrl} = data;
+    altText = decodeURIGraceful(altText);
+    altText = escapeMarkdownCharacters(altText);
+    imageUrl = encodeMarkdownCharacters(imageUrl);
+    const replaceText = `![${altText}](${imageUrl})`;
 
     doc.replaceRange(replaceText, from, to, '+addImage');
 

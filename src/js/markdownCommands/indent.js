@@ -20,7 +20,7 @@ const Indent = CommandManager.command('markdown', /** @lends Indent */{
    */
   exec(mde) {
     const cm = mde.getEditor();
-    cm.execCommand('subListIndentTab');
+    cm.execCommand('indentOrderedList');
   }
 });
 

@@ -245,5 +245,42 @@ describe('OL', () => {
       expect(doc.getLine(5)).toEqual('mytext4');
       expect(doc.getLine(6)).toEqual('# myheading');
     });
+
+    it('should remove task bracket of a line at the caret position', () => {
+      cm.setValue('* [ ] a task');
+
+      doc.setCursor(1, 0);
+      OL.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('1. a task');
+    });
+
+    it('should remove task bracket of a OL task line at the caret position', () => {
+      cm.setValue('1. [ ] a task');
+
+      doc.setCursor(1, 0);
+      OL.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('1. a task');
+    });
+
+    it('should remove task bracket of selected lines', () => {
+      cm.setValue([
+        '1. [ ] a task',
+        '* [ ] another task'
+      ].join('\n'));
+
+      doc.setSelection({
+        line: 0,
+        ch: 0
+      }, {
+        line: 1,
+        ch: 0
+      });
+      OL.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('1. a task');
+      expect(doc.getLine(1)).toEqual('2. another task');
+    });
   });
 });

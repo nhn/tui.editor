@@ -60,6 +60,15 @@ class Button extends ToolbarItem {
     }
   }
 
+  /**
+   * set tooltip text
+   * @param {string} text - tooltip text to show
+   * @memberof button
+   */
+  setTooltip(text) {
+    this._tooltip = text;
+  }
+
   _setOptions(options) {
     this._command = options.command;
     this._event = options.event;
@@ -79,6 +88,10 @@ class Button extends ToolbarItem {
   }
 
   _onClick() {
+    if (!this.isEnabled()) {
+      return;
+    }
+
     if (this._command) {
       this.trigger('command', this._command);
     } else if (this._event) {
@@ -89,11 +102,40 @@ class Button extends ToolbarItem {
   }
 
   _onOver() {
+    if (!this.isEnabled()) {
+      return;
+    }
+
     tooltip.show(this.$el, this._tooltip);
   }
 
   _onOut() {
     tooltip.hide();
+  }
+
+  /**
+   * enable button
+   * @memberof Button
+   */
+  enable() {
+    this.$el.attr('disabled', false);
+  }
+
+  /**
+   * disable button
+   * @memberof Button
+   */
+  disable() {
+    this.$el.attr('disabled', true);
+  }
+
+  /**
+   * check whether this button is enabled
+   * @returns {Boolean} - true for enabled
+   * @memberof Button
+   */
+  isEnabled() {
+    return !(this.$el.attr('disabled'));
   }
 }
 

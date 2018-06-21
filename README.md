@@ -76,7 +76,7 @@ Depending on the type of use you want like production of *Markdown* or maybe to 
 * **Table**: Hate the Markdown table? You can do everything with a mouse
 
 ### And more
-* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian + language you extend.
+* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian, Turkish + language you extend.
 * **Viewer**: Renders Markdown content with extensions
 
 
@@ -230,6 +230,7 @@ var editor = Editor.factory({
 ## 🍞 TOAST UI Family
 * [TOAST UI Grid](https://github.com/nhnent/tui.grid)
 * [TOAST UI Chart](https://github.com/nhnent/tui.chart)
+* [TOAST UI Calendar](https://github.com/nhnent/tui.calendar)
 * [TOAST UI Components](https://github.com/nhnent?q=tui)
 
 ## 🚀 Used By

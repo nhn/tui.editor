@@ -1,0 +1,20 @@
+{
+  "env":{
+    "es6": true,
+    "amd": true,
+    "jasmine": true
+  },
+  "globals": {
+    "test": true,
+    "fixture": true
+  },
+  "rules": {
+    "linebreak-style": 0,
+    "max-len": [2, {"code": 120, "tabWidth": 4, "ignoreStrings": true, "ignoreComments": true, "ignoreRegExpLiterals": true, "ignoreTemplateLiterals": true}],
+    "no-sync": 0,
+    "max-nested-callbacks": 0,
+    "require-jsdoc": 0,
+    "no-unused-expressions": 0,
+    "new-cap": 0
+  }
+}
