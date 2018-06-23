@@ -1805,7 +1805,7 @@ var addLinks = function ( frag, root, self ) {
             }
             child = self.createElement( 'A', mergeObjects({
                 href: match[1] ?
-                    /^(?:ht|f)tps?:/.test( match[1] ) ?
+                    /^(?:ht|f)tps?:/i.test( match[1] ) ?
                         match[1] :
                         'http://' + match[1] :
                     'mailto:' + match[0]
