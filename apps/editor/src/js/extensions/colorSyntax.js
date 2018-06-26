@@ -189,10 +189,13 @@ function initUI(editor, preset) {
       return;
     }
 
-    const offset = $button.offset();
+    const {
+      offsetTop,
+      offsetLeft
+    } = $button.get(0);
     popup.$el.css({
-      top: offset.top + $button.outerHeight(),
-      left: offset.left
+      top: offsetTop + $button.outerHeight(),
+      left: offsetLeft
     });
     colorPicker.slider.toggle(true);
 
