@@ -141,10 +141,13 @@ class PopupAddTable extends LayerPopup {
 
     this._eventManager.listen('openPopupAddTable', () => {
       const $button = this._$button;
-      const offset = $button.offset();
+      const {
+        offsetTop,
+        offsetLeft
+      } = $button.get(0);
       this.$el.css({
-        top: offset.top + $button.outerHeight(),
-        left: offset.left
+        top: offsetTop + $button.outerHeight(),
+        left: offsetLeft
       });
       this._eventManager.emit('closeAllPopup');
       this.show();
