@@ -46,10 +46,7 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
     const newEndContainer = domUtil.containsNode(newLIs[newLIs.length - 1], endContainer)
       ? endContainer : newLIs[newLIs.length - 1];
 
-    range = sq.getSelection();
-    range.setStart(newStartContainer, startOffset);
-    range.setEnd(newEndContainer, endOffset);
-    sq.setSelection(range);
+    range = wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
     sq.saveUndoState(range);
   },
 
