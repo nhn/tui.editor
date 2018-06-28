@@ -299,6 +299,23 @@ const getPrevTextNode = function(node) {
 };
 
 /**
+ * test whether root contains the given node
+ * @param {HTMLNode} root - root node
+ * @param {HTMLNode} node - node to test
+ * @returns {Boolean} true if root contains node
+ */
+const containsNode = function(root, node) {
+  const walker = document.createTreeWalker(root, 4, null, false);
+  let found = root === node;
+
+  while (!found && walker.nextNode()) {
+    found = walker.currentNode === node;
+  }
+
+  return found;
+};
+
+/**
  * find node by offset
  * @param {HTMLElement} root Root element
  * @param {Array.<number>} offsetList offset list
@@ -477,6 +494,7 @@ export default {
   getPrevOffsetNodeUntil,
   getNodeOffsetOfParent,
   getChildNodeByOffset,
+  containsNode,
   getTopPrevNodeUnder,
   getTopNextNodeUnder,
   getParentUntilBy,
