@@ -2,8 +2,6 @@
  * @fileoverview test button
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-import $ from 'jquery';
-
 import Button from '../../../src/js/ui/button';
 
 describe('Button', () => {
