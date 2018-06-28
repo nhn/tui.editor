@@ -7,8 +7,11 @@ import ToolbarItemFactory from '../../../src/js/ui/toolbarItemFactory';
 import ToolbarItem from '../../../src/js/ui/toolbarItem';
 import ToolbarButton from '../../../src/js/ui/toolbarButton';
 import ToolbarDivider from '../../../src/js/ui/toolbarDivider';
+import EventManager from '../../../src/js/eventManager';
 
 describe('ToolbarItemFactory', () => {
+  let eventManager;
+
   describe('createItem', () => {
     it('should create and return a ToolbarItem', () => {
       expect(ToolbarItemFactory.create).toBeTruthy();
@@ -77,6 +80,62 @@ describe('ToolbarItemFactory', () => {
       expect(ToolbarItemFactory.create('codeblock')._command).toBe('CodeBlock');
       expect(ToolbarItemFactory.create('indent')._command).toBe('Indent');
       expect(ToolbarItemFactory.create('outdent')._command).toBe('Outdent');
+    });
+  });
+
+  xdescribe('toggle state', () => {
+    let button;
+
+    beforeEach(() => {
+      eventManager = new EventManager();
+    });
+
+    it('should work according to the given states to consider for indent', () => {
+      button = ToolbarItemFactory.create('indent', null, eventManager);
+
+      eventManager.emit('stateChange', {
+        list: false
+      });
+      expect(button.isEnabled()).toBe(false);
+
+      eventManager.emit('stateChange', {
+        list: true
+      });
+      expect(button.isEnabled()).toBe(true);
+
+      eventManager.emit('stateChange', {
+        task: false
+      });
+      expect(button.isEnabled()).toBe(false);
+
+      eventManager.emit('stateChange', {
+        task: true
+      });
+      expect(button.isEnabled()).toBe(true);
+    });
+
+    it('should work according to the given states to consider for outdent', () => {
+      button = ToolbarItemFactory.create('outdent', null, eventManager);
+
+      eventManager.emit('stateChange', {
+        list: false
+      });
+      expect(button.isEnabled()).toBe(false);
+
+      eventManager.emit('stateChange', {
+        list: true
+      });
+      expect(button.isEnabled()).toBe(true);
+
+      eventManager.emit('stateChange', {
+        task: false
+      });
+      expect(button.isEnabled()).toBe(false);
+
+      eventManager.emit('stateChange', {
+        task: true
+      });
+      expect(button.isEnabled()).toBe(true);
     });
   });
 });

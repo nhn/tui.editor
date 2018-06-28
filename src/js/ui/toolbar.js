@@ -140,9 +140,9 @@ class Toolbar extends UIController {
    */
   insertItem(index, item) {
     if (util.isString(item)) {
-      item = ToolbarItemFactory.create(item);
+      item = ToolbarItemFactory.create(item, null, this._eventManager);
     } else if (util.isString(item.type)) {
-      item = ToolbarItemFactory.create(item.type, item.options);
+      item = ToolbarItemFactory.create(item.type, item.options, this._eventManager);
     }
 
     const children = this.$el.children();

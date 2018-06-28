@@ -17,11 +17,12 @@ class ToolbarItemFactory {
    * @memberof ToolbarItemFactory
    * @param {string} name - toolbar item name
    * @param {object} [options] - options to the constructor
+   * @param {EventManager} [eventManager]] - event manager instance
    * @return {ToolbarItem} - created toolbar item instance
    * @static
    */
   /* eslint-disable complexity */
-  static create(name, options) {
+  static create(name, options, eventManager) {
     let toolbarItem;
 
     switch (name) {
@@ -31,7 +32,7 @@ class ToolbarItemFactory {
         className: 'tui-heading',
         event: 'openHeadingSelect',
         tooltip: i18n.get('Headings')
-      });
+      }, eventManager);
       break;
     case 'bold':
       toolbarItem = new ToolbarButton({
@@ -40,7 +41,7 @@ class ToolbarItemFactory {
         command: 'Bold',
         tooltip: i18n.get('Bold'),
         state: 'bold'
-      });
+      }, eventManager);
       break;
     case 'italic':
       toolbarItem = new ToolbarButton({
@@ -49,7 +50,7 @@ class ToolbarItemFactory {
         command: 'Italic',
         tooltip: i18n.get('Italic'),
         state: 'italic'
-      });
+      }, eventManager);
       break;
     case 'strike':
       toolbarItem = new ToolbarButton({
@@ -58,7 +59,7 @@ class ToolbarItemFactory {
         command: 'Strike',
         tooltip: i18n.get('Strike'),
         state: 'strike'
-      });
+      }, eventManager);
       break;
     case 'hr':
       toolbarItem = new ToolbarButton({
@@ -66,7 +67,7 @@ class ToolbarItemFactory {
         className: 'tui-hrline',
         command: 'HR',
         tooltip: i18n.get('Line')
-      });
+      }, eventManager);
       break;
     case 'quote':
       toolbarItem = new ToolbarButton({
@@ -75,7 +76,7 @@ class ToolbarItemFactory {
         command: 'Blockquote',
         tooltip: i18n.get('Blockquote'),
         state: 'quote'
-      });
+      }, eventManager);
       break;
     case 'ul':
       toolbarItem = new ToolbarButton({
@@ -83,7 +84,7 @@ class ToolbarItemFactory {
         className: 'tui-ul',
         command: 'UL',
         tooltip: i18n.get('Unordered list')
-      });
+      }, eventManager);
       break;
     case 'ol':
       toolbarItem = new ToolbarButton({
@@ -91,7 +92,7 @@ class ToolbarItemFactory {
         className: 'tui-ol',
         command: 'OL',
         tooltip: i18n.get('Ordered list')
-      });
+      }, eventManager);
       break;
     case 'task':
       toolbarItem = new ToolbarButton({
@@ -99,7 +100,8 @@ class ToolbarItemFactory {
         className: 'tui-task',
         command: 'Task',
         tooltip: i18n.get('Task')
-      });
+      }, eventManager);
+
       break;
     case 'table':
       toolbarItem = new ToolbarButton({
@@ -107,7 +109,7 @@ class ToolbarItemFactory {
         className: 'tui-table',
         event: 'openPopupAddTable',
         tooltip: i18n.get('Insert table')
-      });
+      }, eventManager);
       break;
     case 'image':
       toolbarItem = new ToolbarButton({
@@ -116,7 +118,7 @@ class ToolbarItemFactory {
         event: 'openPopupAddImage',
         tooltip: i18n.get('Insert image'),
         state: ''
-      });
+      }, eventManager);
       break;
     case 'link':
       toolbarItem = new ToolbarButton({
@@ -124,7 +126,7 @@ class ToolbarItemFactory {
         className: 'tui-link',
         event: 'openPopupAddLink',
         tooltip: i18n.get('Insert link')
-      });
+      }, eventManager);
       break;
     case 'code':
       toolbarItem = new ToolbarButton({
@@ -133,7 +135,7 @@ class ToolbarItemFactory {
         command: 'Code',
         tooltip: i18n.get('Code'),
         state: 'code'
-      });
+      }, eventManager);
       break;
     case 'codeblock':
       toolbarItem = new ToolbarButton({
@@ -142,7 +144,7 @@ class ToolbarItemFactory {
         command: 'CodeBlock',
         tooltip: i18n.get('Insert CodeBlock'),
         state: 'codeBlock'
-      });
+      }, eventManager);
       break;
     case 'indent':
       toolbarItem = new ToolbarButton({
@@ -150,7 +152,7 @@ class ToolbarItemFactory {
         className: 'tui-indent',
         command: 'Indent',
         tooltip: i18n.get('Indent')
-      });
+      }, eventManager);
       break;
     case 'outdent':
       toolbarItem = new ToolbarButton({
@@ -158,13 +160,13 @@ class ToolbarItemFactory {
         className: 'tui-outdent',
         command: 'Outdent',
         tooltip: i18n.get('Outdent')
-      });
+      }, eventManager);
       break;
     case 'divider':
       toolbarItem = new ToolbarDivider();
       break;
     case 'button':
-      toolbarItem = new ToolbarButton(options);
+      toolbarItem = new ToolbarButton(options, eventManager);
       break;
     case 'item':
     default:

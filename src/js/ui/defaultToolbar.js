@@ -64,7 +64,7 @@ class DefaultToolbar extends Toolbar {
       className: 'tui-more',
       tooltip: i18n.get('More'),
       event: PopupDropdownToolbar.OPEN_EVENT
-    });
+    }, this._eventManager);
     this._moreButton = moreButton;
 
     this._popupDropdownToolbar = new PopupDropdownToolbar({

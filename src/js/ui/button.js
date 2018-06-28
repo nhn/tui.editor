@@ -112,31 +112,6 @@ class Button extends ToolbarItem {
   _onOut() {
     tooltip.hide();
   }
-
-  /**
-   * enable button
-   * @memberof Button
-   */
-  enable() {
-    this.$el.attr('disabled', false);
-  }
-
-  /**
-   * disable button
-   * @memberof Button
-   */
-  disable() {
-    this.$el.attr('disabled', true);
-  }
-
-  /**
-   * check whether this button is enabled
-   * @returns {Boolean} - true for enabled
-   * @memberof Button
-   */
-  isEnabled() {
-    return !(this.$el.attr('disabled'));
-  }
 }
 
 export default Button;

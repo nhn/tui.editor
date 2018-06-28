@@ -105,16 +105,4 @@ describe('Button', () => {
       expect(eventHandler).not.toHaveBeenCalled();
     });
   });
-
-  describe('enable/disable', () => {
-    it('should remove/add disabled attr', () => {
-      button = new Button({});
-
-      button.disable();
-      expect(button.$el.attr('disabled')).toBeTruthy();
-
-      button.enable();
-      expect(button.$el.attr('disabled')).toBeFalsy();
-    });
-  });
 });
