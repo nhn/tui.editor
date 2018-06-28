@@ -5,6 +5,7 @@
 import $ from 'jquery';
 
 import CommandManager from '../commandManager';
+import domUtil from '../domUtils';
 
 /**
  * Task
@@ -43,10 +44,12 @@ const Task = CommandManager.command('wysiwyg', /** @lends Task */{
       newLIs.push(newLI);
     }
 
-    range = sq.getSelection();
-    range.setStart(newLIs[0].firstChild, startOffset);
-    range.setEnd(newLIs[newLIs.length - 1].firstChild, endOffset);
-    sq.setSelection(range);
+    const newStartContainer = domUtil.containsNode(newLIs[0], startContainer)
+      ? startContainer : newLIs[0];
+    const newEndContainer = domUtil.containsNode(newLIs[newLIs.length - 1], endContainer)
+      ? endContainer : newLIs[newLIs.length - 1];
+
+    range = wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
     sq.saveUndoState(range);
   },
 

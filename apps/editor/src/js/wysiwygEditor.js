@@ -109,6 +109,7 @@ class WysiwygEditor {
   _preprocessForInlineElement(html) {
     return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
   }
+
   /**
    * _initEvent
    * Initialize EventManager event handler
@@ -638,6 +639,25 @@ class WysiwygEditor {
     }
 
     this.getEditor()._saveRangeToBookmark(range);
+  }
+
+  /**
+   * set selection by start/end container/offset
+   * @param {HTMLNode} startContainer - start container
+   * @param {Number} startOffset - start offset
+   * @param {HTMLNode} endContainer - end container
+   * @param {Number} endOffset - end offset
+   * @returns {Range} - range instance
+   * @memberof WysiwygEditor
+   */
+  setSelectionByContainerAndOffset(startContainer, startOffset, endContainer, endOffset) {
+    const sq = this.getEditor();
+    const range = sq.getSelection();
+    range.setStart(startContainer, startOffset);
+    range.setEnd(endContainer, endOffset);
+    sq.setSelection(range);
+
+    return range;
   }
 
   /**
