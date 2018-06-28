@@ -85,6 +85,11 @@ describe('gfmRenderer', function() {
                 expect(getMarkdownText('<table><tr><td></td></tr></table>', '', 4)).toEqual('  |');
                 expect(getMarkdownText('<table><tr><th></th></tr></table>', '', 4)).toEqual('  |');
             });
+
+            it('should replace newline', function() {
+                expect(getMarkdownText('<table><tr><td>te\nxt</td></tr></table>', 'text', 4)).toEqual(' text |');
+                expect(getMarkdownText('<table><tr><th>te\nxt</th></tr></table>', 'text', 4)).toEqual(' text |');
+            });
         });
 
         describe('TD BR, TH BR', function() {

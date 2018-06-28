@@ -18,6 +18,20 @@ describe('toMark', function() {
             expect(toMark(htmlStr)).toEqual('| text |');
         });
 
+        it('single td containing newline', function() {
+            var htmlStr = [
+                '<table>',
+                '<tbody>',
+                '<tr>',
+                '<td>te\nxt</td>',
+                '</tr>',
+                '</tbody>',
+                '</table>'
+            ].join('');
+
+            expect(toMark(htmlStr)).toEqual('| text |');
+        });
+
         it('multiple td', function() {
             var htmlStr = [
                 '<table>',

@@ -54,6 +54,8 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         return subContent;
     },
     'TR TD, TR TH': function(node, subContent) {
+        subContent = subContent.replace(/(\r\n)|(\r)|(\n)/g, '');
+
         return ' ' + subContent + ' |';
     },
     'TD BR, TH BR': function() {
