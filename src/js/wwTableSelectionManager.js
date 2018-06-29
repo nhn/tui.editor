@@ -399,10 +399,11 @@ class WwTableSelectionManager {
   /**
      * Style to selected cells.
      * @param {function} onStyle - function for styling
+     * @param {Object} [options] - options to be passed into onStyle
      */
-  styleToSelectedCells(onStyle) {
+  styleToSelectedCells(onStyle, options) {
     this.createRangeBySelectedCells();
-    onStyle(this.wwe.getEditor());
+    onStyle(this.wwe.getEditor(), options);
   }
 
   /**

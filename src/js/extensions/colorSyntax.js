@@ -6,6 +6,7 @@ import $ from 'jquery';
 import ColorPicker from 'tui-color-picker';
 
 import Editor from './editorProxy';
+import domUtils from '../domUtils';
 
 const colorSyntaxRx = /\{color:(.+?)}(.*?)\{color}/g;
 const colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g;
@@ -95,28 +96,46 @@ function colorSyntaxExtension(editor) {
     editor.addCommand('wysiwyg', {
       name: 'color',
       exec(wwe, color) {
-        const sq = wwe.getEditor();
-
         if (!color) {
           return;
         }
 
-        if (!sq.hasFormat('PRE')) {
-          if (color === RESET_COLOR) {
-            sq.changeFormat(null, {
-              class: 'colour',
-              tag: 'span'
-            });
-          } else {
-            sq.setTextColour(color);
-          }
+        const sq = wwe.getEditor();
+        const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+          tableSelectionManager.styleToSelectedCells(styleColor, color);
+        } else {
+          styleColor(sq, color);
         }
 
-        wwe.focus();
+        const range = sq.getSelection();
+        if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
+          range.collapse(true);
+          sq.setSelection(range);
+        }
       }
     });
 
     initUI(editor, preset);
+  }
+}
+
+/**
+ * style color
+ * @param {SquireExt} sq - squire ext instance
+ * @param {string} color - color sting value
+ * @ignore
+ */
+function styleColor(sq, color) {
+  if (!sq.hasFormat('PRE')) {
+    if (color === RESET_COLOR) {
+      sq.changeFormat(null, {
+        class: 'colour',
+        tag: 'span'
+      });
+    } else {
+      sq.setTextColour(color);
+    }
   }
 }
 
