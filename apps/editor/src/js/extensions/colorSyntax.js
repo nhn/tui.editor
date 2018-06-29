@@ -6,7 +6,6 @@ import $ from 'jquery';
 import ColorPicker from 'tui-color-picker';
 
 import Editor from './editorProxy';
-import domUtils from '../domUtils';
 
 const colorSyntaxRx = /\{color:(.+?)}(.*?)\{color}/g;
 const colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g;
@@ -104,14 +103,12 @@ function colorSyntaxExtension(editor) {
         const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
           tableSelectionManager.styleToSelectedCells(styleColor, color);
-        } else {
-          styleColor(sq, color);
-        }
 
-        const range = sq.getSelection();
-        if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
+          const range = sq.getSelection();
           range.collapse(true);
           sq.setSelection(range);
+        } else {
+          styleColor(sq, color);
         }
       }
     });
