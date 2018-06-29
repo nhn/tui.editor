@@ -155,7 +155,8 @@ class ToastUIEditor {
         'code',
         'codeblock'
       ],
-      hideModeSwitch: false
+      hideModeSwitch: false,
+      customConvertor: null
     }, options);
 
     this.eventManager = new EventManager();
@@ -166,7 +167,12 @@ class ToastUIEditor {
       useCommandShortcut: this.options.useCommandShortcut
     });
 
-    this.convertor = new Convertor(this.eventManager);
+    if (this.options.customConvertor) {
+      // eslint-disable-next-line new-cap
+      this.convertor = new this.options.customConvertor(this.eventManager);
+    } else {
+      this.convertor = new Convertor(this.eventManager);
+    }
 
     if (this.options.useDefaultHTMLSanitizer) {
       this.convertor.initHtmlSanitizer();
