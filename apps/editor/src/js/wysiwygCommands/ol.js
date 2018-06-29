@@ -39,16 +39,20 @@ const OL = CommandManager.command('wysiwyg', /** @lends OL */{
     const newLIs = [];
     for (let i = 0; i < lines.length; i += 1) {
       const newLI = this._changeFormatToOrderedListIfNeed(wwe, lines[i]);
-      newLIs.push(newLI);
+      if (newLI) {
+        newLIs.push(newLI);
+      }
     }
 
-    const newStartContainer = domUtil.containsNode(newLIs[0], startContainer)
-      ? startContainer : newLIs[0];
-    const newEndContainer = domUtil.containsNode(newLIs[newLIs.length - 1], endContainer)
-      ? endContainer : newLIs[newLIs.length - 1];
+    if (newLIs.length) {
+      const newStartContainer = domUtil.containsNode(newLIs[0], startContainer)
+        ? startContainer : newLIs[0];
+      const newEndContainer = domUtil.containsNode(newLIs[newLIs.length - 1], endContainer)
+        ? endContainer : newLIs[newLIs.length - 1];
 
-    range = wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
-    sq.saveUndoState(range);
+      range = wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
+      sq.saveUndoState(range);
+    }
   },
 
   /**
@@ -62,7 +66,7 @@ const OL = CommandManager.command('wysiwyg', /** @lends OL */{
     const sq = wwe.getEditor();
     const range = sq.getSelection();
     const taskManager = wwe.componentManager.getManager('task');
-    let newLI = range.startContainer;
+    let newLI;
 
     if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
       range.setStart(target, 0);
