@@ -53,10 +53,10 @@ class Button extends ToolbarItem {
     this._setOptions(options);
 
     this._render();
-    this.on('click', this._onClick.bind(this));
+    this.on('click', () => this._onClick(this));
     if (options.tooltip) {
-      this.on('mouseover', this._onOver.bind(this));
-      this.on('mouseout', this._onOut.bind(this));
+      this.on('mouseover', () => this._onOver());
+      this.on('mouseout', () => this._onOut());
     }
   }
 
@@ -88,10 +88,6 @@ class Button extends ToolbarItem {
   }
 
   _onClick() {
-    if (!this.isEnabled()) {
-      return;
-    }
-
     if (this._command) {
       this.trigger('command', this._command);
     } else if (this._event) {

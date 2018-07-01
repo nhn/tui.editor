@@ -1,5 +1,5 @@
 /**
- * @fileoverview test toolbar button
+ * @fileoverview test toolbar toolbarButton
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import ToolbarButton from '../../../src/js/ui/toolbarButton';
@@ -54,6 +54,23 @@ describe('ToolbarButton', () => {
 
       toolbarButton.enable();
       expect(toolbarButton.$el.attr('disabled')).toBeFalsy();
+    });
+
+    it('should not emmit clicked if disabled', () => {
+      let passedEvent;
+
+      toolbarButton = new ToolbarButton({
+        event: 'myevent'
+      });
+      toolbarButton.disable();
+
+      toolbarButton.on('event', (e, event) => {
+        passedEvent = event;
+      });
+
+      toolbarButton.$el.trigger('click');
+
+      expect(passedEvent).toBeFalsy();
     });
   });
 });

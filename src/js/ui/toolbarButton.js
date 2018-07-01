@@ -64,6 +64,18 @@ class ToolbarButton extends Button {
   }
 
   /**
+   * on click the button
+   * @override
+   */
+  _onClick() {
+    if (!this.isEnabled()) {
+      return;
+    }
+
+    super._onClick();
+  }
+
+  /**
    * enable button
    * @memberof ToolbarButton
    */

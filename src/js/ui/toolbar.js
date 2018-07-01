@@ -6,7 +6,8 @@ import $ from 'jquery';
 import util from 'tui-code-snippet';
 
 import UIController from './uicontroller';
-import Button from './button';
+import Button from './toolbarButton';
+import ToolbarButton from './toolbarButton';
 import ToolbarItem from './toolbarItem';
 import ToolbarDivider from './toolbarDivider';
 import ToolbarItemFactory from './toolbarItemFactory';
@@ -77,7 +78,7 @@ class Toolbar extends UIController {
    */
   disableAllButton() {
     this._items.forEach(item => {
-      if (item instanceof Button) {
+      if (item instanceof ToolbarButton) {
         item.disable();
       }
     });
@@ -89,7 +90,7 @@ class Toolbar extends UIController {
    */
   enableAllButton() {
     this._items.forEach(item => {
-      if (item instanceof Button) {
+      if (item instanceof ToolbarButton) {
         item.enable();
       }
     });
@@ -233,7 +234,7 @@ class Toolbar extends UIController {
 
   /**
    * add button
-   * @param {Button} button - button instance
+   * @param {ToolbarButton} button - button instance
    * @param {Number} [index] - location the button will be placed
    * @memberof Toolbar
    * @deprecated
@@ -255,7 +256,7 @@ class Toolbar extends UIController {
 
   /**
    * _addButton
-   * @param {Button} button - button instance
+   * @param {ToolbarButton} button - button instance
    * @param {Number} index - location the button will be placed
    * @private
    * @deprecated
@@ -264,7 +265,7 @@ class Toolbar extends UIController {
     const $btn = this._setButton(button, index).$el;
 
     if (util.isNumber(index)) {
-      this.$el.find(`.${Button.className}`).eq(index - 1).before($btn);
+      this.$el.find(`.${ToolbarButton.className}`).eq(index - 1).before($btn);
     } else {
       this.$el.append($btn);
     }
@@ -285,16 +286,16 @@ class Toolbar extends UIController {
 
   /**
    * _setButton
-   * @param {Button} button - button instance
+   * @param {ToolbarButton} button - button instance
    * @param {Number} index - location the button will be placed
-   * @returns {Button} - button instance
+   * @returns {ToolbarButton} - button instance
    * @private
    * @deprecated
    */
   _setButton(button, index) {
     const ev = this._eventManager;
     if (!(button instanceof Button)) {
-      button = new Button(button);
+      button = new ToolbarButton(button);
     }
 
     button.on('command', (e, commandName) => ev.emit('command', commandName));
