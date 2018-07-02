@@ -7,6 +7,7 @@ import $ from 'jquery';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 import ListManager from '../../src/js/wwListManager';
+import {isMac} from '../../src/js/util';
 
 describe('WysiwygEditor', () => {
   let $container, em, wwe;
@@ -63,6 +64,20 @@ describe('WysiwygEditor', () => {
         data: {keyCode: 0}
       });
       expect(handler).toHaveBeenCalled();
+    });
+
+    it('should take multiple keymaps as an array', () => {
+      const handler = jasmine.createSpy('keyEventHandler');
+      wwe.addKeyEventHandler(['HOME', 'END'], handler);
+      em.emit('wysiwygKeyEvent', {
+        keyMap: 'HOME',
+        data: {keyCode: 0}
+      });
+      em.emit('wysiwygKeyEvent', {
+        keyMap: 'END',
+        data: {keyCode: 0}
+      });
+      expect(handler.calls.count()).toBe(2);
     });
 
     it('run particular keymap and default', () => {
@@ -532,7 +547,6 @@ describe('WysiwygEditor', () => {
 
   it('should blocks squire default key handlers', () => {
     const sqe = wwe.getEditor();
-    const isMac = /Mac/.test(navigator.platform);
     const meta = isMac ? 'meta' : 'ctrl';
     const spyOriginal = jasmine.createSpy('original');
     const spy = jasmine.createSpy('replace');

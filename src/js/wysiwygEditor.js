@@ -118,7 +118,7 @@ class WysiwygEditor {
    * addKeyEventHandler
    * Add key event handler
    * @memberof WysiwygEditor
-   * @param {string} keyMap keyMap string
+   * @param {string|Array.<string>} keyMap - keyMap string or array of string
    * @param {function} handler handler
    */
   addKeyEventHandler(keyMap, handler) {
@@ -127,11 +127,16 @@ class WysiwygEditor {
       keyMap = 'DEFAULT';
     }
 
-    if (!this._keyEventHandlers[keyMap]) {
-      this._keyEventHandlers[keyMap] = [];
+    if (!util.isArray(keyMap)) {
+      keyMap = [keyMap];
     }
 
-    this._keyEventHandlers[keyMap].push(handler);
+    keyMap.forEach(key => {
+      if (!this._keyEventHandlers[key]) {
+        this._keyEventHandlers[key] = [];
+      }
+      this._keyEventHandlers[key].push(handler);
+    });
   }
 
   /**

@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 
+import {isMac} from './util';
 import domUtils from './domUtils';
 
 const FIND_LI_ELEMENT = /<li/i;
@@ -74,7 +75,9 @@ class WwListManager {
   }
 
   _initKeyHandler() {
-    this.wwe.addKeyEventHandler('TAB', (ev, range) => {
+    const meta = isMac ? 'META' : 'CTRL';
+
+    this.wwe.addKeyEventHandler(['TAB', `${meta}+]`], (ev, range) => {
       let isNeedNext;
 
       if (range.collapsed) {
@@ -89,7 +92,7 @@ class WwListManager {
       return isNeedNext;
     });
 
-    this.wwe.addKeyEventHandler('SHIFT+TAB', (ev, range) => {
+    this.wwe.addKeyEventHandler(['SHIFT+TAB', `${meta}+[`], (ev, range) => {
       let isNeedNext;
 
       if (range.collapsed) {

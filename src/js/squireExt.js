@@ -7,6 +7,7 @@ import util from 'tui-code-snippet';
 import Squire from 'squire-rte';
 
 import domUtils from './domUtils';
+import {isMac} from './util';
 
 const FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
 const isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
@@ -325,7 +326,6 @@ class SquireExt extends Squire {
   }
 
   blockCommandShortcuts() {
-    const isMac = /Mac/.test(navigator.platform);
     const meta = isMac ? 'meta' : 'ctrl';
     const keys = ['b', 'i', 'u', 'shift-7', 'shift-5', 'shift-6', 'shift-8', 'shift-9', '[', ']'];
 
@@ -338,4 +338,3 @@ class SquireExt extends Squire {
 }
 
 export default SquireExt;
-
