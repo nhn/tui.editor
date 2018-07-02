@@ -73,7 +73,7 @@ describe('DefaultToolbar', () => {
       setTimeout(() => {
         expect(toolbar._balanceButtons).toHaveBeenCalled();
         done();
-      }, 50);
+      }, 100);
     });
 
     it('should move overflow buttons to dropdown toolbar', done => {
@@ -86,7 +86,7 @@ describe('DefaultToolbar', () => {
         expect(defaultToolbarItems.length < items.length).toBe(true);
         expect(dropdownToolbaritems.length > 0).toBe(true);
         done();
-      }, 50);
+      }, 100);
     });
   });
 });
