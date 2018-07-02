@@ -31,29 +31,33 @@
 
     <div id="editSection"></div>
     <script class="code-js">
+      var content = `Now it has less item then normal.
+      please check out JS code
+      `;
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
         previewStyle: 'vertical',
         height: '400px',
         initialEditType: 'markdown',
+        initialValue: content,
         toolbarItems: [
           'heading',
           'bold',
           'italic',
-          'strike',
-          'divider',
-          'hr',
-          'quote',
-          'divider',
-          'ul',
-          'ol',
+          // 'strike',
+          // 'divider',
+          // 'hr',
+          // 'quote',
+          // 'divider',
+          // 'ul',
+          // 'ol',
           // 'task',
           // 'indent',
           // 'outdent',
           // 'divider',
           // 'table',
-          'image',
-          'link',
+          // 'image',
+          // 'link',
           // 'divider',
           // 'code',
           // 'codeblock'
