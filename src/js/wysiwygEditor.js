@@ -39,11 +39,9 @@ class WysiwygEditor {
    * Creates an instance of WysiwygEditor.
    * @param {jQuery} $el element to insert editor
    * @param {EventManager} eventManager EventManager instance
-   * @param {object} [options={}] - option object
-   *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
    * @memberof WysiwygEditor
    */
-  constructor($el, eventManager, options = {}) {
+  constructor($el, eventManager) {
     this.componentManager = new ComponentManager(this);
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
@@ -54,10 +52,6 @@ class WysiwygEditor {
 
     this._keyEventHandlers = {};
     this._managers = {};
-
-    this._options = $.extend({
-      'useCommandShortcut': true
-    }, options);
 
     this._initEvent();
     this._initDefaultKeyEventHandler();
@@ -80,9 +74,7 @@ class WysiwygEditor {
         'HR': false
       }
     });
-    if (!this._options.useCommandShortcut) {
-      this.editor.blockCommandShortcuts();
-    }
+    this.editor.blockCommandShortcuts();
 
     this._clipboardManager = new WwClipboardManager(this);
     this._initSquireEvent();

@@ -27,7 +27,7 @@ describe('WysiwygEditor', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      $container.remove();
       done();
     });
   });
@@ -528,5 +528,26 @@ describe('WysiwygEditor', () => {
       expect(wwe._getLastLiString('DIV')).toEqual('');
       expect(wwe._getLastLiString('BLOCKQUOTE>DIV')).toEqual('');
     });
+  });
+
+  it('should blocks squire default key handlers', () => {
+    const sqe = wwe.getEditor();
+    const isMac = /Mac/.test(navigator.platform);
+    const meta = isMac ? 'meta' : 'ctrl';
+    const spyOriginal = jasmine.createSpy('original');
+    const spy = jasmine.createSpy('replace');
+    const keyEvent = {
+      keyCode: 66,
+      preventDefault: spy
+    };
+    keyEvent[`${meta}Key`] = true;
+
+    Object.getPrototypeOf(sqe._keyHandlers)[`${meta}-b`] = spyOriginal;
+    sqe.fireEvent('keydown', keyEvent);
+
+    setTimeout(() => {
+      expect(spy).toHaveBeenCalled();
+      expect(spyOriginal).not.toHaveBeenCalled();
+    }, 1);
   });
 });
