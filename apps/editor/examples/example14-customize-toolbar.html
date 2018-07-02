@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>13. All Extension Blank</title>
+    <title>14. Customize toolbar</title>
     <script src="../lib/jquery/dist/jquery.js"></script>
     <script src="../lib/markdown-it/dist/markdown-it.js"></script>
     <script src="../lib/to-mark/dist/to-mark.js"></script>
@@ -17,7 +17,7 @@
   </head>
   <body>
     <div class="explain">
-      All evetensions are enabled
+      Customize toolbar using `toolbarItems` property
     </div>
     <div class="code-html">
     <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
@@ -31,13 +31,37 @@
 
     <div id="editSection"></div>
     <script class="code-js">
+      var content = `Now it has less item then normal.
+      please check out JS code
+      `;
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
         previewStyle: 'vertical',
         height: '400px',
         initialEditType: 'markdown',
-        useCommandShortcut: true,
-        exts: ['scrollSync', 'colorSyntax', 'uml', 'chart', 'mark', 'table']
+        initialValue: content,
+        toolbarItems: [
+          'heading',
+          'bold',
+          'italic',
+          // 'strike',
+          // 'divider',
+          // 'hr',
+          // 'quote',
+          // 'divider',
+          // 'ul',
+          // 'ol',
+          // 'task',
+          // 'indent',
+          // 'outdent',
+          // 'divider',
+          // 'table',
+          // 'image',
+          // 'link',
+          // 'divider',
+          // 'code',
+          // 'codeblock'
+        ],
       });
     </script>
   </body>
