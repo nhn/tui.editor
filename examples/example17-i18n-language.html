@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>13. All Extension Blank</title>
+    <title>17. i18n-language</title>
     <script src="../lib/jquery/dist/jquery.js"></script>
     <script src="../lib/markdown-it/dist/markdown-it.js"></script>
     <script src="../lib/to-mark/dist/to-mark.js"></script>
@@ -16,9 +16,6 @@
     <link rel="stylesheet" href="./explain.css">
   </head>
   <body>
-    <div class="explain">
-      All evetensions are enabled
-    </div>
     <div class="code-html">
     <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
     <script src="../lib/raphael/raphael.js"></script>
@@ -30,14 +27,21 @@
     <link rel="stylesheet" href="../lib/tui-chart/dist/tui-chart.css">
 
     <div id="editSection"></div>
+
     <script class="code-js">
+      var content = `Hover on item above show different language tooltips
+      Full available language list:
+      https://github.com/nhnent/tui.editor/tree/master/src/js/langs
+      ko, zh, de, en, es, fr (and more)
+      `;
+
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
         previewStyle: 'vertical',
         height: '400px',
         initialEditType: 'markdown',
-        useCommandShortcut: true,
-        exts: ['scrollSync', 'colorSyntax', 'uml', 'chart', 'mark', 'table']
+        language: 'zh',
+        initialValue: content
       });
     </script>
   </body>
