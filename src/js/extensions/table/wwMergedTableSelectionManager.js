@@ -100,8 +100,9 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
   /**
    * Style to selected cells.
    * @param {function} onStyle - function for styling
+   * @param {Object} [options] - options to be passed into onStyle
    */
-  styleToSelectedCells(onStyle) {
+  styleToSelectedCells(onStyle, options) {
     const sq = this.wwe.getEditor();
     const range = sq.getSelection().cloneRange();
     const $table = $(range.startContainer).closest('[contenteditable=true] table');
@@ -118,7 +119,7 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
       range.setStart(firstSelectedCell, 0);
       range.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
       sq.setSelection(range);
-      onStyle(sq);
+      onStyle(sq, options);
     });
   }
 

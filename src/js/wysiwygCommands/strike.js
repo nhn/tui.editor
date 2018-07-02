@@ -4,7 +4,6 @@
  */
 
 import CommandManager from '../commandManager';
-import domUtils from '../domUtils';
 
 /**
  * Strike
@@ -22,20 +21,18 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
    */
   exec(wwe) {
     const sq = wwe.getEditor();
-    const range = sq.getSelection();
     const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
     wwe.focus();
 
     if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
       tableSelectionManager.styleToSelectedCells(styleStrike);
-    } else {
-      styleStrike(sq);
-    }
 
-    if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
+      const range = sq.getSelection();
       range.collapse(true);
       sq.setSelection(range);
+    } else {
+      styleStrike(sq);
     }
   }
 });
@@ -56,4 +53,3 @@ function styleStrike(sq) {
 }
 
 export default Strike;
-

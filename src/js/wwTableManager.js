@@ -498,7 +498,7 @@ class WwTableManager {
       anchorElement = domUtils.getParentUntilBy(startContainer, node => {
         return node.tagName === 'TD' || node.tagName === 'TH';
       }, node => {
-        return node.tagName === 'DIV';
+        return $(node).closest('table').length === 0;
       });
       anchorElement = anchorElement ? anchorElement.parentNode : null;
     }

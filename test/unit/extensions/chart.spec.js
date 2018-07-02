@@ -405,8 +405,14 @@ describe('CodeBlockChart', () => {
   describe('setDefaultOptions', () => {
     let container;
 
-    beforeEach(() => {
+    beforeEach((done) => {
       container = document.createElement('div');
+      document.body.appendChild(container);
+      setTimeout(done, 1);
+    });
+
+    afterEach(() => {
+      container.parentNode.removeChild(container);
     });
 
     it('should respect default min/max width/height', () =>{

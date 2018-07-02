@@ -24,7 +24,6 @@ const Code = CommandManager.command('wysiwyg', /** @lends Code */{
    */
   exec(wwe) {
     const sq = wwe.getEditor();
-    const range = sq.getSelection();
     const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
     const _styleCode = util.bind(styleCode, null, wwe.getEditor());
 
@@ -32,13 +31,12 @@ const Code = CommandManager.command('wysiwyg', /** @lends Code */{
 
     if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
       tableSelectionManager.styleToSelectedCells(_styleCode);
-    } else {
-      _styleCode(sq);
-    }
 
-    if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
+      const range = sq.getSelection();
       range.collapse(true);
       sq.setSelection(range);
+    } else {
+      _styleCode(sq);
     }
   }
 });
@@ -83,4 +81,3 @@ function styleCode(editor, sq) {
 }
 
 export default Code;
-

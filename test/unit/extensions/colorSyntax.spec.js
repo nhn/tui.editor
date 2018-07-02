@@ -190,6 +190,38 @@ describe('colorSyntax', () => {
 
       expect($span.hasClass('colour')).toBe(false);
     });
+
+    it('add color in selected table cell in wysiwyg', () => {
+      ned.changeMode('wysiwyg');
+
+      const wwe = ned.wwEditor;
+      const sq = ned.getSquire();
+
+      sq.setHTML([
+        '<table>',
+        '<thead>',
+        '<tr><th></th><th></th></tr>',
+        '</thead>',
+        '<tbody>',
+        '<tr><td class="te-cell-selected">text 1</td><td class="te-cell-selected">text 2</td></tr>',
+        '</tbody>',
+        '</table>'
+      ].join(''));
+
+      let range = sq.getSelection();
+      range.setStart(wwe.get$Body().find('th')[0], 0);
+      range.collapse(true);
+      sq.setSelection(range);
+
+      ned.exec('color', '#f0f');
+
+      const $span = wwe.get$Body().find('span');
+
+      expect($span.eq(0).hasClass('colour')).toBe(true);
+      expect($span.eq(0).css('color')).toEqual('rgb(255, 0, 255)');
+      expect($span.eq(1).hasClass('colour')).toBe(true);
+      expect($span.eq(1).css('color')).toEqual('rgb(255, 0, 255)');
+    });
   });
 
   describe('initializer', () => {
