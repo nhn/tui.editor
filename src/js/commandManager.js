@@ -6,8 +6,8 @@ import $ from 'jquery';
 import util from 'tui-code-snippet';
 
 import Command from './command';
+import {isMac} from './util';
 
-const isMac = /Mac/.test(navigator.platform);
 const KEYMAP_OS_INDEX = isMac ? 1 : 0;
 
 /**

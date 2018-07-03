@@ -74,7 +74,7 @@ class WwListManager {
   }
 
   _initKeyHandler() {
-    this.wwe.addKeyEventHandler('TAB', (ev, range) => {
+    this.wwe.addKeyEventHandler(['TAB', 'CTRL+]', 'META+]'], (ev, range) => {
       let isNeedNext;
 
       if (range.collapsed) {
@@ -89,7 +89,7 @@ class WwListManager {
       return isNeedNext;
     });
 
-    this.wwe.addKeyEventHandler('SHIFT+TAB', (ev, range) => {
+    this.wwe.addKeyEventHandler(['SHIFT+TAB', 'CTRL+[', 'META+['], (ev, range) => {
       let isNeedNext;
 
       if (range.collapsed) {

@@ -5,6 +5,7 @@
 import $ from 'jquery';
 
 import SquireExt from '../../src/js/squireExt';
+import {isMac} from '../../src/js/util';
 
 describe('SquireExt', () => {
   let sqe;
@@ -294,7 +295,6 @@ describe('SquireExt', () => {
 
   describe('blockCommandShortcut()', () => {
     it('blocks key handlers', () => {
-      const isMac = /Mac/.test(navigator.platform);
       const meta = isMac ? 'meta' : 'ctrl';
       const spyOriginal = jasmine.createSpy('original');
       const spy = jasmine.createSpy('replace');

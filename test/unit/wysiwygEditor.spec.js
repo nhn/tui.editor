@@ -7,6 +7,7 @@ import $ from 'jquery';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 import ListManager from '../../src/js/wwListManager';
+import {isMac} from '../../src/js/util';
 
 describe('WysiwygEditor', () => {
   let $container, em, wwe;
@@ -27,7 +28,7 @@ describe('WysiwygEditor', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      $container.remove();
       done();
     });
   });
@@ -63,6 +64,20 @@ describe('WysiwygEditor', () => {
         data: {keyCode: 0}
       });
       expect(handler).toHaveBeenCalled();
+    });
+
+    it('should take multiple keymaps as an array', () => {
+      const handler = jasmine.createSpy('keyEventHandler');
+      wwe.addKeyEventHandler(['HOME', 'END'], handler);
+      em.emit('wysiwygKeyEvent', {
+        keyMap: 'HOME',
+        data: {keyCode: 0}
+      });
+      em.emit('wysiwygKeyEvent', {
+        keyMap: 'END',
+        data: {keyCode: 0}
+      });
+      expect(handler.calls.count()).toBe(2);
     });
 
     it('run particular keymap and default', () => {
@@ -528,5 +543,25 @@ describe('WysiwygEditor', () => {
       expect(wwe._getLastLiString('DIV')).toEqual('');
       expect(wwe._getLastLiString('BLOCKQUOTE>DIV')).toEqual('');
     });
+  });
+
+  it('should blocks squire default key handlers', () => {
+    const sqe = wwe.getEditor();
+    const meta = isMac ? 'meta' : 'ctrl';
+    const spyOriginal = jasmine.createSpy('original');
+    const spy = jasmine.createSpy('replace');
+    const keyEvent = {
+      keyCode: 66,
+      preventDefault: spy
+    };
+    keyEvent[`${meta}Key`] = true;
+
+    Object.getPrototypeOf(sqe._keyHandlers)[`${meta}-b`] = spyOriginal;
+    sqe.fireEvent('keydown', keyEvent);
+
+    setTimeout(() => {
+      expect(spy).toHaveBeenCalled();
+      expect(spyOriginal).not.toHaveBeenCalled();
+    }, 1);
   });
 });
