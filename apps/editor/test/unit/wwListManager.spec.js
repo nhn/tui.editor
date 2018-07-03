@@ -52,7 +52,8 @@ describe('WwListManager', () => {
         '</ul>',
         '<ol>',
         '<li><div>me too!</div></li>',
-        '</ol>'].join(''));
+        '</ol>'
+      ].join(''));
 
       expect(wwe.get$Body().find('ul').length).toEqual(1);
       expect(wwe.get$Body().find('ol').length).toEqual(1);
@@ -114,7 +115,8 @@ describe('WwListManager', () => {
         '<li><div>t5</div></li>',
         '</ul>',
         '</li>',
-        '</ul>'].join(''));
+        '</ul>'
+      ].join(''));
       mgr._removeBranchListAll();
 
       expect(wwe.get$Body().find('ul').length).toEqual(3);
@@ -136,7 +138,8 @@ describe('WwListManager', () => {
         '</li>',
         '<li><div>t2</div></li>',
         '</ul>',
-        '</div>'].join(''));
+        '</div>'
+      ].join(''));
 
       mgr._removeBranchListAll();
 
@@ -155,7 +158,8 @@ describe('WwListManager', () => {
         '<li><div>t4<br></div></li>',
         '</ul>',
         '</li>',
-        '</ul>'].join(''));
+        '</ul>'
+      ].join(''));
       mgr._removeBranchListAll();
 
       expect(wwe.get$Body().find('ul').length).toEqual(2);
@@ -215,6 +219,26 @@ describe('WwListManager', () => {
 
       expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
       expect(result.indexOf('<br />')).toBe(-1);
+    });
+  });
+
+  describe('_unwrap', () => {
+    it('should unwrap itself and preserve the children', () => {
+      const arbitraryNestingList = $(`
+        <ul id="first">
+          <ul id="second">
+            <li>arbitrary nesting list item</li>
+            <li>arbitrary nesting list item</li>
+          </ul>
+        </ul>`).get(0);
+
+      mgr._unwrap(arbitraryNestingList.querySelector('ul ul'));
+
+      // <ul id="first">
+      //   <li>arbitrary nesting list item</li>
+      //   <li>arbitrary nesting list item</li>
+      // </ul>
+      expect(arbitraryNestingList.querySelector('ul ul')).toBeFalsy();
     });
   });
 
