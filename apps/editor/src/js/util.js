@@ -27,6 +27,9 @@ function sendHostName() {
   });
 }
 
+const isMac = /Mac/.test(navigator.platform);
+
 module.exports = {
-  sendHostName
+  sendHostName,
+  isMac
 };
