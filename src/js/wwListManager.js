@@ -231,16 +231,33 @@ class WwListManager {
     let nestedList = wrapperDiv.querySelector(NESTED_LIST_QUERY);
     while (nestedList !== null) {
       let prevLI = nestedList.previousElementSibling;
-      while (prevLI.tagName !== 'LI') {
+      while (prevLI && prevLI.tagName !== 'LI') {
         prevLI = prevLI.previousElementSibling;
       }
 
-      prevLI.appendChild(nestedList);
+      if (prevLI) {
+        prevLI.appendChild(nestedList);
+      } else {
+        this._unwrap(nestedList);
+      }
 
       nestedList = wrapperDiv.querySelector(NESTED_LIST_QUERY);
     }
 
     return wrapperDiv.innerHTML;
+  }
+
+  /**
+   * unwrap nesting list
+   * @param {Node} nestedList - nested list to unwrap
+   * @private
+   */
+  _unwrap(nestedList) {
+    const fragment = document.createDocumentFragment();
+    while (nestedList.firstChild) {
+      fragment.appendChild(nestedList.firstChild);
+    }
+    nestedList.parentNode.replaceChild(fragment, nestedList);
   }
 
   /**
