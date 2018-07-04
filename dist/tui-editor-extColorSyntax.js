@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.3
+ * @version 1.2.4
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -252,28 +252,44 @@ function colorSyntaxExtension(editor) {
     editor.addCommand('wysiwyg', {
       name: 'color',
       exec: function exec(wwe, color) {
-        var sq = wwe.getEditor();
-
         if (!color) {
           return;
         }
 
-        if (!sq.hasFormat('PRE')) {
-          if (color === RESET_COLOR) {
-            sq.changeFormat(null, {
-              class: 'colour',
-              tag: 'span'
-            });
-          } else {
-            sq.setTextColour(color);
-          }
-        }
+        var sq = wwe.getEditor();
+        var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+          tableSelectionManager.styleToSelectedCells(styleColor, color);
 
-        wwe.focus();
+          var range = sq.getSelection();
+          range.collapse(true);
+          sq.setSelection(range);
+        } else {
+          styleColor(sq, color);
+        }
       }
     });
 
     initUI(editor, preset);
+  }
+}
+
+/**
+ * style color
+ * @param {SquireExt} sq - squire ext instance
+ * @param {string} color - color sting value
+ * @ignore
+ */
+function styleColor(sq, color) {
+  if (!sq.hasFormat('PRE')) {
+    if (color === RESET_COLOR) {
+      sq.changeFormat(null, {
+        class: 'colour',
+        tag: 'span'
+      });
+    } else {
+      sq.setTextColour(color);
+    }
   }
 }
 
@@ -349,10 +365,13 @@ function initUI(editor, preset) {
       return;
     }
 
-    var offset = $button.offset();
+    var _$button$get = $button.get(0),
+        offsetTop = _$button$get.offsetTop,
+        offsetLeft = _$button$get.offsetLeft;
+
     popup.$el.css({
-      top: offset.top + $button.outerHeight(),
-      left: offset.left
+      top: offsetTop + $button.outerHeight(),
+      left: offsetLeft
     });
     colorPicker.slider.toggle(true);
 

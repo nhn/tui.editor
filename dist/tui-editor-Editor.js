@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.3
+ * @version 1.2.4
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("markdown-it"), require("to-mark"), require("highlight.js"), require("squire-rte"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["CodeMirror"], root["markdownit"], root["toMark"], root["hljs"], root["Squire"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_21__, __WEBPACK_EXTERNAL_MODULE_22__, __WEBPACK_EXTERNAL_MODULE_30__, __WEBPACK_EXTERNAL_MODULE_63__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_22__, __WEBPACK_EXTERNAL_MODULE_23__, __WEBPACK_EXTERNAL_MODULE_31__, __WEBPACK_EXTERNAL_MODULE_64__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 43);
+/******/ 	return __webpack_require__(__webpack_require__.s = 44);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -116,16 +116,17 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _command = __webpack_require__(20);
+var _command = __webpack_require__(21);
 
 var _command2 = _interopRequireDefault(_command);
+
+var _util = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var isMac = /Mac/.test(navigator.platform);
-var KEYMAP_OS_INDEX = isMac ? 1 : 0;
+var KEYMAP_OS_INDEX = _util.isMac ? 1 : 0;
 
 /**
  * Class CommandManager
@@ -631,6 +632,23 @@ var getPrevTextNode = function getPrevTextNode(node) {
 };
 
 /**
+ * test whether root contains the given node
+ * @param {HTMLNode} root - root node
+ * @param {HTMLNode} node - node to test
+ * @returns {Boolean} true if root contains node
+ */
+var containsNode = function containsNode(root, node) {
+  var walker = document.createTreeWalker(root, 4, null, false);
+  var found = root === node;
+
+  while (!found && walker.nextNode()) {
+    found = walker.currentNode === node;
+  }
+
+  return found;
+};
+
+/**
  * find node by offset
  * @param {HTMLElement} root Root element
  * @param {Array.<number>} offsetList offset list
@@ -814,6 +832,7 @@ exports.default = {
   getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
   getNodeOffsetOfParent: getNodeOffsetOfParent,
   getChildNodeByOffset: getChildNodeByOffset,
+  containsNode: containsNode,
   getTopPrevNodeUnder: getTopPrevNodeUnder,
   getTopNextNodeUnder: getTopNextNodeUnder,
   getParentUntilBy: getParentUntilBy,
@@ -1347,7 +1366,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _highlight = __webpack_require__(30);
+var _highlight = __webpack_require__(31);
 
 var _highlight2 = _interopRequireDefault(_highlight);
 
@@ -1725,6 +1744,55 @@ exports.default = UIController;
 "use strict";
 
 
+var _tuiCodeSnippet = __webpack_require__(1);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var hostnameSent = false;
+
+/**
+ * send host name
+ * @ignore
+ */
+function sendHostName() {
+  if (hostnameSent) {
+    return;
+  }
+  hostnameSent = true;
+
+  var trackingID = 'UA-115377265-9';
+  var applicationID = 'editor';
+  var hitType = 'event';
+  var _location = location,
+      hostname = _location.hostname;
+
+
+  _tuiCodeSnippet2.default.imagePing('https://www.google-analytics.com/collect', {
+    v: 1,
+    t: hitType,
+    tid: trackingID,
+    cid: hostname,
+    dp: hostname,
+    dh: applicationID
+  });
+}
+
+var isMac = /Mac/.test(navigator.platform);
+
+module.exports = {
+  sendHostName: sendHostName,
+  isMac: isMac
+};
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -2032,7 +2100,7 @@ function dataURItoBlob(dataURI) {
 exports.default = ImportManager;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2135,7 +2203,7 @@ Object.defineProperty(ToolbarItem, 'className', {
 exports.default = ToolbarItem;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2149,7 +2217,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _preview = __webpack_require__(12);
+var _preview = __webpack_require__(13);
 
 var _preview2 = _interopRequireDefault(_preview);
 
@@ -2244,7 +2312,7 @@ var MarkdownPreview = function (_Preview) {
 exports.default = MarkdownPreview;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2264,7 +2332,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _lazyRunner = __webpack_require__(19);
+var _lazyRunner = __webpack_require__(20);
 
 var _lazyRunner2 = _interopRequireDefault(_lazyRunner);
 
@@ -2408,7 +2476,7 @@ var Preview = function () {
 exports.default = Preview;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2520,7 +2588,7 @@ function finalizeHtml($html, needHtmlText) {
 exports.default = htmlSanitizer;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2785,7 +2853,7 @@ var EventManager = function () {
 exports.default = EventManager;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2874,7 +2942,7 @@ var ExtManager = function () {
 exports.default = new ExtManager();
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2898,43 +2966,43 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _markdownIt = __webpack_require__(21);
+var _markdownIt = __webpack_require__(22);
 
 var _markdownIt2 = _interopRequireDefault(_markdownIt);
 
-var _toMark = __webpack_require__(22);
+var _toMark = __webpack_require__(23);
 
 var _toMark2 = _interopRequireDefault(_toMark);
 
-var _htmlSanitizer = __webpack_require__(13);
+var _htmlSanitizer = __webpack_require__(14);
 
 var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
-var _markdownitTaskPlugin = __webpack_require__(23);
+var _markdownitTaskPlugin = __webpack_require__(24);
 
 var _markdownitTaskPlugin2 = _interopRequireDefault(_markdownitTaskPlugin);
 
-var _markdownitCodeBlockPlugin = __webpack_require__(24);
+var _markdownitCodeBlockPlugin = __webpack_require__(25);
 
 var _markdownitCodeBlockPlugin2 = _interopRequireDefault(_markdownitCodeBlockPlugin);
 
-var _markdownitCodeRenderer = __webpack_require__(25);
+var _markdownitCodeRenderer = __webpack_require__(26);
 
 var _markdownitCodeRenderer2 = _interopRequireDefault(_markdownitCodeRenderer);
 
-var _markdownitBlockQuoteRenderer = __webpack_require__(26);
+var _markdownitBlockQuoteRenderer = __webpack_require__(27);
 
 var _markdownitBlockQuoteRenderer2 = _interopRequireDefault(_markdownitBlockQuoteRenderer);
 
-var _markdownitTableRenderer = __webpack_require__(27);
+var _markdownitTableRenderer = __webpack_require__(28);
 
 var _markdownitTableRenderer2 = _interopRequireDefault(_markdownitTableRenderer);
 
-var _markdownitHtmlBlockRenderer = __webpack_require__(28);
+var _markdownitHtmlBlockRenderer = __webpack_require__(29);
 
 var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockRenderer);
 
-var _markdownitBackticksRenderer = __webpack_require__(29);
+var _markdownitBackticksRenderer = __webpack_require__(30);
 
 var _markdownitBackticksRenderer2 = _interopRequireDefault(_markdownitBackticksRenderer);
 
@@ -3211,7 +3279,7 @@ var Convertor = function () {
 exports.default = Convertor;
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3223,11 +3291,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _toolbarItem = __webpack_require__(10);
+var _toolbarItem = __webpack_require__(11);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _tooltip = __webpack_require__(33);
+var _tooltip = __webpack_require__(34);
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -3417,7 +3485,7 @@ Object.defineProperty(Button, 'className', {
 exports.default = Button;
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3823,7 +3891,7 @@ var KeyMapper = function () {
 exports.default = KeyMapper;
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3930,7 +3998,7 @@ var LazyRunner = function () {
 exports.default = LazyRunner;
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4103,12 +4171,6 @@ Command.TYPE = {
 exports.default = Command;
 
 /***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_21__;
-
-/***/ }),
 /* 22 */
 /***/ (function(module, exports) {
 
@@ -4116,6 +4178,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_22__;
 
 /***/ }),
 /* 23 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_23__;
+
+/***/ }),
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4223,7 +4291,7 @@ function isTaskListItemToken(tokens, index) {
 module.exports = MarkdownitTaskRenderer;
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4306,7 +4374,7 @@ function escape(html, encode) {
 module.exports = MarkdownitCodeBlockRenderer;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4375,7 +4443,7 @@ module.exports = function code(state, startLine, endLine /*, silent*/) {
 /* eslint-enable */
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4707,7 +4775,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
 };
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4921,7 +4989,7 @@ module.exports = function table(state, startLine, endLine, silent) {
 };
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5018,7 +5086,7 @@ module.exports = function html_block(state, startLine, endLine, silent) {
 /* eslint-enable */
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5090,13 +5158,13 @@ module.exports = function backtick(state, silent) {
 };
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_30__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_31__;
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5116,11 +5184,11 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _mdPreview = __webpack_require__(11);
+var _mdPreview = __webpack_require__(12);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
-var _eventManager = __webpack_require__(14);
+var _eventManager = __webpack_require__(15);
 
 var _eventManager2 = _interopRequireDefault(_eventManager);
 
@@ -5128,11 +5196,11 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _extManager = __webpack_require__(15);
+var _extManager = __webpack_require__(16);
 
 var _extManager2 = _interopRequireDefault(_extManager);
 
-var _convertor = __webpack_require__(16);
+var _convertor = __webpack_require__(17);
 
 var _convertor2 = _interopRequireDefault(_convertor);
 
@@ -5175,7 +5243,8 @@ var ToastUIEditorViewer = function () {
     _classCallCheck(this, ToastUIEditorViewer);
 
     this.options = _jquery2.default.extend({
-      useDefaultHTMLSanitizer: true
+      useDefaultHTMLSanitizer: true,
+      codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages()
     }, options);
 
     this.eventManager = new _eventManager2.default();
@@ -5422,7 +5491,7 @@ ToastUIEditorViewer.WwTableSelectionManager = null;
 module.exports = ToastUIEditorViewer;
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5437,7 +5506,7 @@ var FIND_MD_TASK_RX = exports.FIND_MD_TASK_RX = /^[ \t]*([*-] |[\d]+\. )(\[[ xX]
 var FIND_MD_UL_TASK_RX = exports.FIND_MD_UL_TASK_RX = /^[ \t]*[*-] (\[[ xX]] ).*/;
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5513,7 +5582,7 @@ var Tooltip = function () {
 exports.default = new Tooltip();
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5537,8 +5606,6 @@ var _codemirror = __webpack_require__(6);
 
 var _codemirror2 = _interopRequireDefault(_codemirror);
 
-__webpack_require__(46);
-
 __webpack_require__(47);
 
 __webpack_require__(48);
@@ -5548,6 +5615,8 @@ __webpack_require__(49);
 __webpack_require__(50);
 
 __webpack_require__(51);
+
+__webpack_require__(52);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5944,7 +6013,7 @@ var CodeMirrorExt = function () {
 exports.default = CodeMirrorExt;
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6047,7 +6116,7 @@ var ComponentManager = function () {
 exports.default = ComponentManager;
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6652,7 +6721,7 @@ var WwTableManager = function () {
         anchorElement = _domUtils2.default.getParentUntilBy(startContainer, function (node) {
           return node.tagName === 'TD' || node.tagName === 'TH';
         }, function (node) {
-          return node.tagName === 'DIV';
+          return (0, _jquery2.default)(node).closest('table').length === 0;
         });
         anchorElement = anchorElement ? anchorElement.parentNode : null;
       }
@@ -7460,7 +7529,7 @@ function tableCellGenerator(amount, tagName) {
 exports.default = WwTableManager;
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7920,13 +7989,14 @@ var WwTableSelectionManager = function () {
     /**
        * Style to selected cells.
        * @param {function} onStyle - function for styling
+       * @param {Object} [options] - options to be passed into onStyle
        */
 
   }, {
     key: 'styleToSelectedCells',
-    value: function styleToSelectedCells(onStyle) {
+    value: function styleToSelectedCells(onStyle, options) {
       this.createRangeBySelectedCells();
-      onStyle(this.wwe.getEditor());
+      onStyle(this.wwe.getEditor(), options);
     }
 
     /**
@@ -7950,7 +8020,7 @@ var WwTableSelectionManager = function () {
 exports.default = WwTableSelectionManager;
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8346,7 +8416,7 @@ function sanitizeHtmlCode(code) {
 exports.default = WwCodeBlockManager;
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8372,19 +8442,19 @@ var _uicontroller = __webpack_require__(8);
 
 var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-var _button = __webpack_require__(17);
+var _button = __webpack_require__(18);
 
 var _button2 = _interopRequireDefault(_button);
 
-var _toolbarItem = __webpack_require__(10);
+var _toolbarItem = __webpack_require__(11);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _toolbarDivider = __webpack_require__(40);
+var _toolbarDivider = __webpack_require__(41);
 
 var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
 
-var _toolbarItemFactory = __webpack_require__(41);
+var _toolbarItemFactory = __webpack_require__(42);
 
 var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
 
@@ -8788,7 +8858,7 @@ var Toolbar = function (_UIController) {
 exports.default = Toolbar;
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8798,7 +8868,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _toolbarItem = __webpack_require__(10);
+var _toolbarItem = __webpack_require__(11);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
@@ -8862,7 +8932,7 @@ Object.defineProperty(ToolbarDivider, 'className', {
 exports.default = ToolbarDivider;
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8877,15 +8947,15 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
-var _toolbarItem = __webpack_require__(10);
+var _toolbarItem = __webpack_require__(11);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _toolbarButton = __webpack_require__(72);
+var _toolbarButton = __webpack_require__(73);
 
 var _toolbarButton2 = _interopRequireDefault(_toolbarButton);
 
-var _toolbarDivider = __webpack_require__(40);
+var _toolbarDivider = __webpack_require__(41);
 
 var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
 
@@ -9079,7 +9149,7 @@ var ToolbarItemFactory = function () {
 exports.default = ToolbarItemFactory;
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9235,7 +9305,7 @@ var Tab = function (_UIController) {
 exports.default = Tab;
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9247,7 +9317,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Editor = __webpack_require__(44);
+var Editor = __webpack_require__(45);
 
 // for jquery
 /**
@@ -9288,7 +9358,7 @@ _jquery2.default.fn.tuiEditor = function () {
 module.exports = Editor;
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9317,27 +9387,27 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _button = __webpack_require__(17);
+var _button = __webpack_require__(18);
 
 var _button2 = _interopRequireDefault(_button);
 
-var _markdownEditor = __webpack_require__(45);
+var _markdownEditor = __webpack_require__(46);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _mdPreview = __webpack_require__(11);
+var _mdPreview = __webpack_require__(12);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
-var _wysiwygEditor = __webpack_require__(54);
+var _wysiwygEditor = __webpack_require__(55);
 
 var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-var _layout = __webpack_require__(67);
+var _layout = __webpack_require__(68);
 
 var _layout2 = _interopRequireDefault(_layout);
 
-var _eventManager = __webpack_require__(14);
+var _eventManager = __webpack_require__(15);
 
 var _eventManager2 = _interopRequireDefault(_eventManager);
 
@@ -9345,23 +9415,23 @@ var _commandManager2 = __webpack_require__(2);
 
 var _commandManager3 = _interopRequireDefault(_commandManager2);
 
-var _extManager = __webpack_require__(15);
+var _extManager = __webpack_require__(16);
 
 var _extManager2 = _interopRequireDefault(_extManager);
 
-var _importManager = __webpack_require__(9);
+var _importManager = __webpack_require__(10);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
-var _wwCodeBlockManager = __webpack_require__(38);
+var _wwCodeBlockManager = __webpack_require__(39);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-var _convertor = __webpack_require__(16);
+var _convertor = __webpack_require__(17);
 
 var _convertor2 = _interopRequireDefault(_convertor);
 
-var _viewer = __webpack_require__(31);
+var _viewer = __webpack_require__(32);
 
 var _viewer2 = _interopRequireDefault(_viewer);
 
@@ -9369,7 +9439,7 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _defaultUI = __webpack_require__(68);
+var _defaultUI = __webpack_require__(69);
 
 var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
@@ -9377,11 +9447,11 @@ var _domUtils = __webpack_require__(3);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwTableManager = __webpack_require__(36);
+var _wwTableManager = __webpack_require__(37);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(37);
+var _wwTableSelectionManager = __webpack_require__(38);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
@@ -9389,167 +9459,167 @@ var _codeBlockManager = __webpack_require__(7);
 
 var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
-var _bold = __webpack_require__(86);
+var _bold = __webpack_require__(87);
 
 var _bold2 = _interopRequireDefault(_bold);
 
-var _italic = __webpack_require__(87);
+var _italic = __webpack_require__(88);
 
 var _italic2 = _interopRequireDefault(_italic);
 
-var _strike = __webpack_require__(88);
+var _strike = __webpack_require__(89);
 
 var _strike2 = _interopRequireDefault(_strike);
 
-var _blockquote = __webpack_require__(89);
+var _blockquote = __webpack_require__(90);
 
 var _blockquote2 = _interopRequireDefault(_blockquote);
 
-var _heading = __webpack_require__(90);
+var _heading = __webpack_require__(91);
 
 var _heading2 = _interopRequireDefault(_heading);
 
-var _paragraph = __webpack_require__(91);
+var _paragraph = __webpack_require__(92);
 
 var _paragraph2 = _interopRequireDefault(_paragraph);
 
-var _hr = __webpack_require__(92);
+var _hr = __webpack_require__(93);
 
 var _hr2 = _interopRequireDefault(_hr);
 
-var _addLink = __webpack_require__(93);
+var _addLink = __webpack_require__(94);
 
 var _addLink2 = _interopRequireDefault(_addLink);
 
-var _addImage = __webpack_require__(94);
+var _addImage = __webpack_require__(95);
 
 var _addImage2 = _interopRequireDefault(_addImage);
 
-var _ul = __webpack_require__(95);
+var _ul = __webpack_require__(96);
 
 var _ul2 = _interopRequireDefault(_ul);
 
-var _ol = __webpack_require__(96);
+var _ol = __webpack_require__(97);
 
 var _ol2 = _interopRequireDefault(_ol);
 
-var _indent = __webpack_require__(97);
+var _indent = __webpack_require__(98);
 
 var _indent2 = _interopRequireDefault(_indent);
 
-var _outdent = __webpack_require__(98);
+var _outdent = __webpack_require__(99);
 
 var _outdent2 = _interopRequireDefault(_outdent);
 
-var _table = __webpack_require__(99);
+var _table = __webpack_require__(100);
 
 var _table2 = _interopRequireDefault(_table);
 
-var _task = __webpack_require__(100);
+var _task = __webpack_require__(101);
 
 var _task2 = _interopRequireDefault(_task);
 
-var _code = __webpack_require__(101);
+var _code = __webpack_require__(102);
 
 var _code2 = _interopRequireDefault(_code);
 
-var _codeBlock = __webpack_require__(102);
+var _codeBlock = __webpack_require__(103);
 
 var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-var _bold3 = __webpack_require__(103);
+var _bold3 = __webpack_require__(104);
 
 var _bold4 = _interopRequireDefault(_bold3);
 
-var _italic3 = __webpack_require__(104);
+var _italic3 = __webpack_require__(105);
 
 var _italic4 = _interopRequireDefault(_italic3);
 
-var _strike3 = __webpack_require__(105);
+var _strike3 = __webpack_require__(106);
 
 var _strike4 = _interopRequireDefault(_strike3);
 
-var _blockquote3 = __webpack_require__(106);
+var _blockquote3 = __webpack_require__(107);
 
 var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-var _addImage3 = __webpack_require__(107);
+var _addImage3 = __webpack_require__(108);
 
 var _addImage4 = _interopRequireDefault(_addImage3);
 
-var _addLink3 = __webpack_require__(108);
+var _addLink3 = __webpack_require__(109);
 
 var _addLink4 = _interopRequireDefault(_addLink3);
 
-var _hr3 = __webpack_require__(109);
+var _hr3 = __webpack_require__(110);
 
 var _hr4 = _interopRequireDefault(_hr3);
 
-var _heading3 = __webpack_require__(110);
+var _heading3 = __webpack_require__(111);
 
 var _heading4 = _interopRequireDefault(_heading3);
 
-var _paragraph3 = __webpack_require__(111);
+var _paragraph3 = __webpack_require__(112);
 
 var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-var _ul3 = __webpack_require__(112);
+var _ul3 = __webpack_require__(113);
 
 var _ul4 = _interopRequireDefault(_ul3);
 
-var _ol3 = __webpack_require__(113);
+var _ol3 = __webpack_require__(114);
 
 var _ol4 = _interopRequireDefault(_ol3);
 
-var _table3 = __webpack_require__(114);
+var _table3 = __webpack_require__(115);
 
 var _table4 = _interopRequireDefault(_table3);
 
-var _tableAddRow = __webpack_require__(115);
+var _tableAddRow = __webpack_require__(116);
 
 var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-var _tableAddCol = __webpack_require__(116);
+var _tableAddCol = __webpack_require__(117);
 
 var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-var _tableRemoveRow = __webpack_require__(117);
+var _tableRemoveRow = __webpack_require__(118);
 
 var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-var _tableRemoveCol = __webpack_require__(118);
+var _tableRemoveCol = __webpack_require__(119);
 
 var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-var _tableAlignCol = __webpack_require__(119);
+var _tableAlignCol = __webpack_require__(120);
 
 var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-var _tableRemove = __webpack_require__(120);
+var _tableRemove = __webpack_require__(121);
 
 var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-var _indent3 = __webpack_require__(121);
+var _indent3 = __webpack_require__(122);
 
 var _indent4 = _interopRequireDefault(_indent3);
 
-var _outdent3 = __webpack_require__(122);
+var _outdent3 = __webpack_require__(123);
 
 var _outdent4 = _interopRequireDefault(_outdent3);
 
-var _task3 = __webpack_require__(123);
+var _task3 = __webpack_require__(124);
 
 var _task4 = _interopRequireDefault(_task3);
 
-var _code3 = __webpack_require__(124);
+var _code3 = __webpack_require__(125);
 
 var _code4 = _interopRequireDefault(_code3);
 
-var _codeBlock3 = __webpack_require__(125);
+var _codeBlock3 = __webpack_require__(126);
 
 var _codeBlock4 = _interopRequireDefault(_codeBlock3);
 
-var _util = __webpack_require__(126);
+var _util = __webpack_require__(9);
 
 __webpack_require__(127);
 
@@ -9670,9 +9740,7 @@ var ToastUIEditor = function () {
 
     this.mdEditor = _markdownEditor2.default.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new _mdPreview2.default(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-    this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
-      useCommandShortcut: this.options.useCommandShortcut
-    });
+    this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
     this.toMarkOptions = null;
 
     this.changePreviewStyle(this.options.previewStyle);
@@ -10477,7 +10545,7 @@ ToastUIEditor.markdownitHighlight = _convertor2.default.getMarkdownitHighlightRe
 module.exports = ToastUIEditor;
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10495,23 +10563,23 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _codeMirrorExt = __webpack_require__(34);
+var _codeMirrorExt = __webpack_require__(35);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
-var _keyMapper = __webpack_require__(18);
+var _keyMapper = __webpack_require__(19);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _mdListManager = __webpack_require__(52);
+var _mdListManager = __webpack_require__(53);
 
 var _mdListManager2 = _interopRequireDefault(_mdListManager);
 
-var _componentManager = __webpack_require__(35);
+var _componentManager = __webpack_require__(36);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _mdTextObject = __webpack_require__(53);
+var _mdTextObject = __webpack_require__(54);
 
 var _mdTextObject2 = _interopRequireDefault(_mdTextObject);
 
@@ -10807,7 +10875,7 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 exports.default = MarkdownEditor;
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10950,7 +11018,7 @@ function findFirstListItem(lineNumber, cm) {
 }
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11035,7 +11103,7 @@ _codemirror2.default.overlayMode = function (base, overlay, combine) {
  */
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12007,7 +12075,7 @@ _codemirror2.default.defineMode("markdown", function (cmCfg, modeCfg) {
 _codemirror2.default.defineMIME("text/x-markdown", "markdown");
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12146,7 +12214,7 @@ _codemirror2.default.defineMode("gfm", function (config, modeConfig) {
 _codemirror2.default.defineMIME("text/x-gfm", "gfm");
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12264,7 +12332,7 @@ function incrementRemainingMarkdownListNumbers(cm, pos) {
 }
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12417,7 +12485,7 @@ function replaceMultiLine(cm, upper, bottom, lineAdjustment) {
 }
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12709,7 +12777,7 @@ var MdListManager = function () {
 exports.default = MdListManager;
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12897,7 +12965,7 @@ var mdTextObject = function () {
 exports.default = mdTextObject;
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12925,59 +12993,59 @@ var _domUtils = __webpack_require__(3);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwClipboardManager = __webpack_require__(55);
+var _wwClipboardManager = __webpack_require__(56);
 
 var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-var _wwListManager = __webpack_require__(57);
+var _wwListManager = __webpack_require__(58);
 
 var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-var _wwTaskManager = __webpack_require__(58);
+var _wwTaskManager = __webpack_require__(59);
 
 var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-var _wwTableManager = __webpack_require__(36);
+var _wwTableManager = __webpack_require__(37);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(37);
+var _wwTableSelectionManager = __webpack_require__(38);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-var _wwHrManager = __webpack_require__(59);
+var _wwHrManager = __webpack_require__(60);
 
 var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-var _wwPManager = __webpack_require__(60);
+var _wwPManager = __webpack_require__(61);
 
 var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-var _wwHeadingManager = __webpack_require__(61);
+var _wwHeadingManager = __webpack_require__(62);
 
 var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-var _wwCodeBlockManager = __webpack_require__(38);
+var _wwCodeBlockManager = __webpack_require__(39);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-var _squireExt = __webpack_require__(62);
+var _squireExt = __webpack_require__(63);
 
 var _squireExt2 = _interopRequireDefault(_squireExt);
 
-var _keyMapper = __webpack_require__(18);
+var _keyMapper = __webpack_require__(19);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _wwTextObject = __webpack_require__(64);
+var _wwTextObject = __webpack_require__(65);
 
 var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
 
-var _componentManager = __webpack_require__(35);
+var _componentManager = __webpack_require__(36);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _codeBlockGadget = __webpack_require__(65);
+var _codeBlockGadget = __webpack_require__(66);
 
 var _codeBlockGadget2 = _interopRequireDefault(_codeBlockGadget);
 
@@ -13004,14 +13072,10 @@ var WysiwygEditor = function () {
    * Creates an instance of WysiwygEditor.
    * @param {jQuery} $el element to insert editor
    * @param {EventManager} eventManager EventManager instance
-   * @param {object} [options={}] - option object
-   *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
    * @memberof WysiwygEditor
    */
   function WysiwygEditor($el, eventManager) {
     var _this = this;
-
-    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     _classCallCheck(this, WysiwygEditor);
 
@@ -13025,10 +13089,6 @@ var WysiwygEditor = function () {
 
     this._keyEventHandlers = {};
     this._managers = {};
-
-    this._options = _jquery2.default.extend({
-      'useCommandShortcut': true
-    }, options);
 
     this._initEvent();
     this._initDefaultKeyEventHandler();
@@ -13057,9 +13117,7 @@ var WysiwygEditor = function () {
           'HR': false
         }
       });
-      if (!this._options.useCommandShortcut) {
-        this.editor.blockCommandShortcuts();
-      }
+      this.editor.blockCommandShortcuts();
 
       this._clipboardManager = new _wwClipboardManager2.default(this);
       this._initSquireEvent();
@@ -13089,6 +13147,7 @@ var WysiwygEditor = function () {
     value: function _preprocessForInlineElement(html) {
       return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
     }
+
     /**
      * _initEvent
      * Initialize EventManager event handler
@@ -13116,23 +13175,30 @@ var WysiwygEditor = function () {
      * addKeyEventHandler
      * Add key event handler
      * @memberof WysiwygEditor
-     * @param {string} keyMap keyMap string
+     * @param {string|Array.<string>} keyMap - keyMap string or array of string
      * @param {function} handler handler
      */
 
   }, {
     key: 'addKeyEventHandler',
     value: function addKeyEventHandler(keyMap, handler) {
+      var _this3 = this;
+
       if (!handler) {
         handler = keyMap;
         keyMap = 'DEFAULT';
       }
 
-      if (!this._keyEventHandlers[keyMap]) {
-        this._keyEventHandlers[keyMap] = [];
+      if (!_tuiCodeSnippet2.default.isArray(keyMap)) {
+        keyMap = [keyMap];
       }
 
-      this._keyEventHandlers[keyMap].push(handler);
+      keyMap.forEach(function (key) {
+        if (!_this3._keyEventHandlers[key]) {
+          _this3._keyEventHandlers[key] = [];
+        }
+        _this3._keyEventHandlers[key].push(handler);
+      });
     }
 
     /**
@@ -13201,22 +13267,22 @@ var WysiwygEditor = function () {
   }, {
     key: '_initSquireEvent',
     value: function _initSquireEvent() {
-      var _this3 = this;
+      var _this4 = this;
 
       var squire = this.getEditor();
       var isNeedFirePostProcessForRangeChange = false;
 
       squire.addEventListener('copy', function (clipboardEvent) {
-        _this3.eventManager.emit('copy', {
+        _this4.eventManager.emit('copy', {
           source: 'wysiwyg',
           data: clipboardEvent
         });
         _tuiCodeSnippet2.default.debounce(function () {
-          if (!_this3.isEditorValid()) {
+          if (!_this4.isEditorValid()) {
             return;
           }
 
-          _this3.eventManager.emit('copyAfter', {
+          _this4.eventManager.emit('copyAfter', {
             source: 'wysiwyg',
             data: clipboardEvent
           });
@@ -13224,16 +13290,16 @@ var WysiwygEditor = function () {
       });
 
       squire.addEventListener(_tuiCodeSnippet2.default.browser.msie ? 'beforecut' : 'cut', function (clipboardEvent) {
-        _this3.eventManager.emit('cut', {
+        _this4.eventManager.emit('cut', {
           source: 'wysiwyg',
           data: clipboardEvent
         });
         _tuiCodeSnippet2.default.debounce(function () {
-          if (!_this3.isEditorValid()) {
+          if (!_this4.isEditorValid()) {
             return;
           }
 
-          _this3.eventManager.emit('cutAfter', {
+          _this4.eventManager.emit('cutAfter', {
             source: 'wysiwyg',
             data: clipboardEvent
           });
@@ -13241,7 +13307,7 @@ var WysiwygEditor = function () {
       });
 
       squire.addEventListener(_tuiCodeSnippet2.default.browser.msie ? 'beforepaste' : 'paste', function (clipboardEvent) {
-        _this3.eventManager.emit('paste', {
+        _this4.eventManager.emit('paste', {
           source: 'wysiwyg',
           data: clipboardEvent
         });
@@ -13256,7 +13322,7 @@ var WysiwygEditor = function () {
       squire.addEventListener('drop', function (ev) {
         ev.preventDefault();
 
-        _this3.eventManager.emit('drop', {
+        _this4.eventManager.emit('drop', {
           source: 'wysiwyg',
           data: ev
         });
@@ -13266,38 +13332,38 @@ var WysiwygEditor = function () {
 
       // change event will fired after range has been updated
       squire.addEventListener('input', _tuiCodeSnippet2.default.debounce(function () {
-        if (!_this3.isEditorValid()) {
+        if (!_this4.isEditorValid()) {
           return;
         }
 
-        if (!_this3._silentChange) {
+        if (!_this4._silentChange) {
           var eventObj = {
             source: 'wysiwyg'
           };
 
-          _this3.eventManager.emit('changeFromWysiwyg', eventObj);
-          _this3.eventManager.emit('change', eventObj);
-          _this3.eventManager.emit('contentChangedFromWysiwyg', _this3);
+          _this4.eventManager.emit('changeFromWysiwyg', eventObj);
+          _this4.eventManager.emit('change', eventObj);
+          _this4.eventManager.emit('contentChangedFromWysiwyg', _this4);
         } else {
-          _this3._silentChange = false;
+          _this4._silentChange = false;
         }
 
-        _this3.getEditor().preserveLastLine();
+        _this4.getEditor().preserveLastLine();
       }, 0));
 
       squire.addEventListener('keydown', function (keyboardEvent) {
-        var range = _this3.getEditor().getSelection();
+        var range = _this4.getEditor().getSelection();
 
         if (!range.collapsed) {
           isNeedFirePostProcessForRangeChange = true;
         }
 
-        _this3.eventManager.emit('keydown', {
+        _this4.eventManager.emit('keydown', {
           source: 'wysiwyg',
           data: keyboardEvent
         });
 
-        _this3._onKeyDown(keyboardEvent);
+        _this4._onKeyDown(keyboardEvent);
       });
 
       if (_tuiCodeSnippet2.default.browser.firefox) {
@@ -13306,24 +13372,24 @@ var WysiwygEditor = function () {
 
 
           if (keyCode === 13 || keyCode === 9) {
-            var range = _this3.getEditor().getSelection();
+            var range = _this4.getEditor().getSelection();
 
             if (!range.collapsed) {
               isNeedFirePostProcessForRangeChange = true;
             }
 
-            _this3.eventManager.emit('keydown', {
+            _this4.eventManager.emit('keydown', {
               source: 'wysiwyg',
               data: keyboardEvent
             });
 
-            _this3._onKeyDown(keyboardEvent);
+            _this4._onKeyDown(keyboardEvent);
           }
         });
 
         // firefox produces shattered text nodes
         squire.addEventListener('keyup', function () {
-          var range = _this3.getRange();
+          var range = _this4.getRange();
 
           if (_domUtils2.default.isTextNode(range.commonAncestorContainer) && _domUtils2.default.isTextNode(range.commonAncestorContainer.previousSibling)) {
             var prevLen = range.commonAncestorContainer.previousSibling.length;
@@ -13336,7 +13402,7 @@ var WysiwygEditor = function () {
 
             curEl.parentNode.removeChild(curEl);
 
-            _this3.setRange(range);
+            _this4.setRange(range);
             range.detach();
           }
         });
@@ -13344,73 +13410,73 @@ var WysiwygEditor = function () {
 
       squire.addEventListener('keyup', function (keyboardEvent) {
         if (isNeedFirePostProcessForRangeChange) {
-          _this3.debouncedPostProcessForChange();
+          _this4.debouncedPostProcessForChange();
           isNeedFirePostProcessForRangeChange = false;
         }
 
-        _this3.eventManager.emit('keyup', {
+        _this4.eventManager.emit('keyup', {
           source: 'wysiwyg',
           data: keyboardEvent
         });
       });
 
       this.$editorContainerEl.on('scroll', function (ev) {
-        _this3.eventManager.emit('scroll', {
+        _this4.eventManager.emit('scroll', {
           source: 'wysiwyg',
           data: ev
         });
       });
 
       squire.addEventListener('click', function (ev) {
-        _this3.eventManager.emit('click', {
+        _this4.eventManager.emit('click', {
           source: 'wysiwyg',
           data: ev
         });
       });
 
       squire.addEventListener('mousedown', function (ev) {
-        _this3.eventManager.emit('mousedown', {
+        _this4.eventManager.emit('mousedown', {
           source: 'wysiwyg',
           data: ev
         });
       });
 
       squire.addEventListener('mouseover', function (ev) {
-        _this3.eventManager.emit('mouseover', {
+        _this4.eventManager.emit('mouseover', {
           source: 'wysiwyg',
           data: ev
         });
       });
 
       squire.addEventListener('mouseout', function (ev) {
-        _this3.eventManager.emit('mouseout', {
+        _this4.eventManager.emit('mouseout', {
           source: 'wysiwyg',
           data: ev
         });
       });
 
       squire.addEventListener('mouseup', function (ev) {
-        _this3.eventManager.emit('mouseup', {
+        _this4.eventManager.emit('mouseup', {
           source: 'wysiwyg',
           data: ev
         });
       });
 
       squire.addEventListener('contextmenu', function (ev) {
-        _this3.eventManager.emit('contextmenu', {
+        _this4.eventManager.emit('contextmenu', {
           source: 'wysiwyg',
           data: ev
         });
       });
 
       squire.addEventListener('focus', function () {
-        _this3.eventManager.emit('focus', {
+        _this4.eventManager.emit('focus', {
           source: 'wysiwyg'
         });
       });
 
       squire.addEventListener('blur', function () {
-        _this3.eventManager.emit('blur', {
+        _this4.eventManager.emit('blur', {
           source: 'wysiwyg'
         });
       });
@@ -13424,16 +13490,16 @@ var WysiwygEditor = function () {
           code: /CODE/.test(data.path),
           codeBlock: /PRE/.test(data.path),
           quote: /BLOCKQUOTE/.test(data.path),
-          list: /LI(?!.task-list-item)/.test(_this3._getLastLiString(data.path)),
-          task: /LI.task-list-item/.test(_this3._getLastLiString(data.path)),
+          list: /LI(?!.task-list-item)/.test(_this4._getLastLiString(data.path)),
+          task: /LI.task-list-item/.test(_this4._getLastLiString(data.path)),
           source: 'wysiwyg'
         };
 
-        _this3.eventManager.emit('stateChange', state);
+        _this4.eventManager.emit('stateChange', state);
       });
 
       squire.addEventListener('willPaste', function (ev) {
-        _this3.eventManager.emit('willPaste', {
+        _this4.eventManager.emit('willPaste', {
           source: 'wysiwyg',
           data: ev
         });
@@ -13499,26 +13565,26 @@ var WysiwygEditor = function () {
   }, {
     key: '_initDefaultKeyEventHandler',
     value: function _initDefaultKeyEventHandler() {
-      var _this4 = this;
+      var _this5 = this;
 
       this.addKeyEventHandler('ENTER', function (ev, range) {
-        if (_this4._isInOrphanText(range)) {
+        if (_this5._isInOrphanText(range)) {
           // We need this cuz input text right after table make orphan text in webkit
-          _this4.defer(function () {
-            _this4._wrapDefaultBlockToOrphanTexts();
-            _this4.breakToNewDefaultBlock(range, 'before');
+          _this5.defer(function () {
+            _this5._wrapDefaultBlockToOrphanTexts();
+            _this5.breakToNewDefaultBlock(range, 'before');
           });
         }
 
-        _this4.defer(function () {
-          _this4._scrollToRangeIfNeed();
+        _this5.defer(function () {
+          _this5._scrollToRangeIfNeed();
         });
       });
 
       this.addKeyEventHandler('TAB', function (ev) {
-        var sq = _this4.getEditor();
+        var sq = _this5.getEditor();
         var range = sq.getSelection();
-        var isAbleToInput4Spaces = range.collapsed && _this4._isCursorNotInRestrictedAreaOfTabAction(sq);
+        var isAbleToInput4Spaces = range.collapsed && _this5._isCursorNotInRestrictedAreaOfTabAction(sq);
         var isTextSelection = !range.collapsed && _domUtils2.default.isTextNode(range.commonAncestorContainer);
 
         ev.preventDefault();
@@ -13680,6 +13746,28 @@ var WysiwygEditor = function () {
     }
 
     /**
+     * set selection by start/end container/offset
+     * @param {HTMLNode} startContainer - start container
+     * @param {Number} startOffset - start offset
+     * @param {HTMLNode} endContainer - end container
+     * @param {Number} endOffset - end offset
+     * @returns {Range} - range instance
+     * @memberof WysiwygEditor
+     */
+
+  }, {
+    key: 'setSelectionByContainerAndOffset',
+    value: function setSelectionByContainerAndOffset(startContainer, startOffset, endContainer, endOffset) {
+      var sq = this.getEditor();
+      var range = sq.getSelection();
+      range.setStart(startContainer, startOffset);
+      range.setEnd(endContainer, endOffset);
+      sq.setSelection(range);
+
+      return range;
+    }
+
+    /**
      * restoreSavedSelection
      * Restore saved selection
      * @memberof WysiwygEditor
@@ -13726,11 +13814,11 @@ var WysiwygEditor = function () {
   }, {
     key: 'makeEmptyBlockCurrentSelection',
     value: function makeEmptyBlockCurrentSelection() {
-      var _this5 = this;
+      var _this6 = this;
 
       this.getEditor().modifyBlocks(function (frag) {
         if (!frag.textContent) {
-          frag = _this5.getEditor().createDefaultBlock();
+          frag = _this6.getEditor().createDefaultBlock();
         }
 
         return frag;
@@ -13914,11 +14002,11 @@ var WysiwygEditor = function () {
   }, {
     key: '_prepareGetHTML',
     value: function _prepareGetHTML() {
-      var _this6 = this;
+      var _this7 = this;
 
       this.getEditor().modifyDocument(function () {
-        _this6._joinSplitedTextNodes();
-        _this6.eventManager.emit('wysiwygGetValueBefore', _this6);
+        _this7._joinSplitedTextNodes();
+        _this7.eventManager.emit('wysiwygGetValueBefore', _this7);
       });
     }
 
@@ -13930,14 +14018,14 @@ var WysiwygEditor = function () {
   }, {
     key: 'postProcessForChange',
     value: function postProcessForChange() {
-      var _this7 = this;
+      var _this8 = this;
 
       if (!this.isEditorValid()) {
         return;
       }
 
       this.getEditor().modifyDocument(function () {
-        _this7.eventManager.emit('wysiwygRangeChangeAfter', _this7);
+        _this8.eventManager.emit('wysiwygRangeChangeAfter', _this8);
       });
     }
 
@@ -14231,13 +14319,13 @@ var WysiwygEditor = function () {
   }, {
     key: 'defer',
     value: function defer(callback, delayOffset) {
-      var _this8 = this;
+      var _this9 = this;
 
       var delay = delayOffset ? delayOffset : 0;
 
       setTimeout(function () {
-        if (_this8.isEditorValid()) {
-          callback(_this8);
+        if (_this9.isEditorValid()) {
+          callback(_this9);
         }
       }, delay);
     }
@@ -14288,7 +14376,7 @@ var WysiwygEditor = function () {
 exports.default = WysiwygEditor;
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14316,7 +14404,7 @@ var _domUtils = __webpack_require__(3);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwPasteContentHelper = __webpack_require__(56);
+var _wwPasteContentHelper = __webpack_require__(57);
 
 var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
@@ -14721,7 +14809,7 @@ var WwClipboardManager = function () {
 exports.default = WwClipboardManager;
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14749,7 +14837,7 @@ var _domUtils = __webpack_require__(3);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _htmlSanitizer = __webpack_require__(13);
+var _htmlSanitizer = __webpack_require__(14);
 
 var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
@@ -15250,7 +15338,7 @@ var WwPasteContentHelper = function () {
 exports.default = WwPasteContentHelper;
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15364,7 +15452,7 @@ var WwListManager = function () {
     value: function _initKeyHandler() {
       var _this2 = this;
 
-      this.wwe.addKeyEventHandler('TAB', function (ev, range) {
+      this.wwe.addKeyEventHandler(['TAB', 'CTRL+]', 'META+]'], function (ev, range) {
         var isNeedNext = void 0;
 
         if (range.collapsed) {
@@ -15379,7 +15467,7 @@ var WwListManager = function () {
         return isNeedNext;
       });
 
-      this.wwe.addKeyEventHandler('SHIFT+TAB', function (ev, range) {
+      this.wwe.addKeyEventHandler(['SHIFT+TAB', 'CTRL+[', 'META+['], function (ev, range) {
         var isNeedNext = void 0;
 
         if (range.collapsed) {
@@ -15538,16 +15626,36 @@ var WwListManager = function () {
       var nestedList = wrapperDiv.querySelector(NESTED_LIST_QUERY);
       while (nestedList !== null) {
         var prevLI = nestedList.previousElementSibling;
-        while (prevLI.tagName !== 'LI') {
+        while (prevLI && prevLI.tagName !== 'LI') {
           prevLI = prevLI.previousElementSibling;
         }
 
-        prevLI.appendChild(nestedList);
+        if (prevLI) {
+          prevLI.appendChild(nestedList);
+        } else {
+          this._unwrap(nestedList);
+        }
 
         nestedList = wrapperDiv.querySelector(NESTED_LIST_QUERY);
       }
 
       return wrapperDiv.innerHTML;
+    }
+
+    /**
+     * unwrap nesting list
+     * @param {Node} nestedList - nested list to unwrap
+     * @private
+     */
+
+  }, {
+    key: '_unwrap',
+    value: function _unwrap(nestedList) {
+      var fragment = document.createDocumentFragment();
+      while (nestedList.firstChild) {
+        fragment.appendChild(nestedList.firstChild);
+      }
+      nestedList.parentNode.replaceChild(fragment, nestedList);
     }
 
     /**
@@ -15680,7 +15788,7 @@ var WwListManager = function () {
 exports.default = WwListManager;
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15902,7 +16010,7 @@ var WwTaskManager = function () {
 exports.default = WwTaskManager;
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16221,7 +16329,7 @@ function findTextNodeFilter() {
 exports.default = WwHrManager;
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16387,7 +16495,7 @@ var WwPManager = function () {
 exports.default = WwPManager;
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16655,7 +16763,7 @@ var WwHeadingManager = function () {
 exports.default = WwHeadingManager;
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16675,13 +16783,15 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _squireRte = __webpack_require__(63);
+var _squireRte = __webpack_require__(64);
 
 var _squireRte2 = _interopRequireDefault(_squireRte);
 
 var _domUtils = __webpack_require__(3);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
+
+var _util = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17058,8 +17168,7 @@ var SquireExt = function (_Squire) {
     value: function blockCommandShortcuts() {
       var _this3 = this;
 
-      var isMac = /Mac/.test(navigator.platform);
-      var meta = isMac ? 'meta' : 'ctrl';
+      var meta = _util.isMac ? 'meta' : 'ctrl';
       var keys = ['b', 'i', 'u', 'shift-7', 'shift-5', 'shift-6', 'shift-8', 'shift-9', '[', ']'];
 
       keys.forEach(function (key) {
@@ -17076,13 +17185,13 @@ var SquireExt = function (_Squire) {
 exports.default = SquireExt;
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_63__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_64__;
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17289,7 +17398,7 @@ var WwTextObject = function () {
 exports.default = WwTextObject;
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17307,7 +17416,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _blockOverlay = __webpack_require__(66);
+var _blockOverlay = __webpack_require__(67);
 
 var _blockOverlay2 = _interopRequireDefault(_blockOverlay);
 
@@ -17460,7 +17569,7 @@ var CodeBlockGadget = function (_BlockOverlay) {
 exports.default = CodeBlockGadget;
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17666,7 +17775,7 @@ var BlockOverlay = function () {
 exports.default = BlockOverlay;
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17940,7 +18049,7 @@ var Layout = function () {
 exports.default = Layout;
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17960,11 +18069,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _defaultToolbar = __webpack_require__(69);
+var _defaultToolbar = __webpack_require__(70);
 
 var _defaultToolbar2 = _interopRequireDefault(_defaultToolbar);
 
-var _tab = __webpack_require__(42);
+var _tab = __webpack_require__(43);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -17972,35 +18081,35 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _modeSwitch = __webpack_require__(74);
+var _modeSwitch = __webpack_require__(75);
 
 var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-var _popupAddLink = __webpack_require__(75);
+var _popupAddLink = __webpack_require__(76);
 
 var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-var _popupAddImage = __webpack_require__(76);
+var _popupAddImage = __webpack_require__(77);
 
 var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-var _popupTableUtils = __webpack_require__(77);
+var _popupTableUtils = __webpack_require__(78);
 
 var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-var _popupAddTable = __webpack_require__(78);
+var _popupAddTable = __webpack_require__(79);
 
 var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-var _popupAddHeading = __webpack_require__(79);
+var _popupAddHeading = __webpack_require__(80);
 
 var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
-var _popupCodeBlockLanguages = __webpack_require__(80);
+var _popupCodeBlockLanguages = __webpack_require__(81);
 
 var _popupCodeBlockLanguages2 = _interopRequireDefault(_popupCodeBlockLanguages);
 
-var _popupCodeBlockEditor = __webpack_require__(81);
+var _popupCodeBlockEditor = __webpack_require__(82);
 
 var _popupCodeBlockEditor2 = _interopRequireDefault(_popupCodeBlockEditor);
 
@@ -18008,7 +18117,7 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _tooltip = __webpack_require__(33);
+var _tooltip = __webpack_require__(34);
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -18251,11 +18360,11 @@ var DefaultUI = function () {
     key: '_initPopupAddTable',
     value: function _initPopupAddTable() {
       this._popups.push(new _popupAddTable2.default({
-        $target: this.$el,
+        $target: this._toolbar.$el,
         eventManager: this._editor.eventManager,
         $button: this.$el.find('button.tui-table'),
         css: {
-          'position': 'fixed'
+          'position': 'absolute'
         }
       }));
     }
@@ -18263,11 +18372,11 @@ var DefaultUI = function () {
     key: '_initPopupAddHeading',
     value: function _initPopupAddHeading() {
       this._popups.push(new _popupAddHeading2.default({
-        $target: this.$el,
+        $target: this._toolbar.$el,
         eventManager: this._editor.eventManager,
         $button: this.$el.find('button.tui-heading'),
         css: {
-          'position': 'fixed'
+          'position': 'absolute'
         }
       }));
     }
@@ -18427,7 +18536,7 @@ var DefaultUI = function () {
 exports.default = DefaultUI;
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18441,7 +18550,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _resizeObserverPolyfill = __webpack_require__(70);
+var _resizeObserverPolyfill = __webpack_require__(71);
 
 var _resizeObserverPolyfill2 = _interopRequireDefault(_resizeObserverPolyfill);
 
@@ -18449,15 +18558,15 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _toolbar = __webpack_require__(39);
+var _toolbar = __webpack_require__(40);
 
 var _toolbar2 = _interopRequireDefault(_toolbar);
 
-var _popupDropdownToolbar = __webpack_require__(73);
+var _popupDropdownToolbar = __webpack_require__(74);
 
 var _popupDropdownToolbar2 = _interopRequireDefault(_popupDropdownToolbar);
 
-var _toolbarItemFactory = __webpack_require__(41);
+var _toolbarItemFactory = __webpack_require__(42);
 
 var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
 
@@ -18623,7 +18732,7 @@ var DefaultToolbar = function (_Toolbar) {
 exports.default = DefaultToolbar;
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19653,10 +19762,10 @@ var index = (function () {
 
 /* harmony default export */ __webpack_exports__["default"] = (index);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(71)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(72)))
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports) {
 
 var g;
@@ -19683,7 +19792,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19693,7 +19802,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _button = __webpack_require__(17);
+var _button = __webpack_require__(18);
 
 var _button2 = _interopRequireDefault(_button);
 
@@ -19728,7 +19837,7 @@ var ToolbarButton = function (_Button) {
 exports.default = ToolbarButton;
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19750,7 +19859,7 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _toolbar = __webpack_require__(39);
+var _toolbar = __webpack_require__(40);
 
 var _toolbar2 = _interopRequireDefault(_toolbar);
 
@@ -19995,7 +20104,7 @@ Object.defineProperty(PopupDropdownToolbar, 'OPEN_EVENT', {
 exports.default = PopupDropdownToolbar;
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20198,7 +20307,7 @@ Object.defineProperty(ModeSwitch, 'TYPE', {
 exports.default = ModeSwitch;
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20430,7 +20539,7 @@ var PopupAddLink = function (_LayerPopup) {
 exports.default = PopupAddLink;
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20452,7 +20561,7 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _tab = __webpack_require__(42);
+var _tab = __webpack_require__(43);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -20656,7 +20765,7 @@ var PopupAddImage = function (_LayerPopup) {
 exports.default = PopupAddImage;
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20827,7 +20936,7 @@ var PopupTableUtils = function (_LayerPopup) {
 exports.default = PopupTableUtils;
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21014,10 +21123,14 @@ var PopupAddTable = function (_LayerPopup) {
 
       this._eventManager.listen('openPopupAddTable', function () {
         var $button = _this3._$button;
-        var offset = $button.offset();
+
+        var _$button$get = $button.get(0),
+            offsetTop = _$button$get.offsetTop,
+            offsetLeft = _$button$get.offsetLeft;
+
         _this3.$el.css({
-          top: offset.top + $button.outerHeight(),
-          left: offset.left
+          top: offsetTop + $button.outerHeight(),
+          left: offsetLeft
         });
         _this3._eventManager.emit('closeAllPopup');
         _this3.show();
@@ -21320,7 +21433,7 @@ PopupAddTable.MIN_COL_SELECTION_INDEX = MIN_COL_SELECTION_INDEX;
 exports.default = PopupAddTable;
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21444,11 +21557,14 @@ var PopupAddHeading = function (_LayerPopup) {
       this._eventManager.listen('closeAllPopup', this.hide.bind(this));
       this._eventManager.listen('openHeadingSelect', function () {
         var $button = _this3._$button;
-        var offset = $button.offset();
+
+        var _$button$get = $button.get(0),
+            offsetTop = _$button$get.offsetTop,
+            offsetLeft = _$button$get.offsetLeft;
 
         _this3.$el.css({
-          top: offset.top + $button.outerHeight(),
-          left: offset.left
+          top: offsetTop + $button.outerHeight(),
+          left: offsetLeft
         });
 
         _this3._eventManager.emit('closeAllPopup');
@@ -21463,7 +21579,7 @@ var PopupAddHeading = function (_LayerPopup) {
 exports.default = PopupAddHeading;
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21761,7 +21877,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 exports.default = PopupCodeBlockLanguages;
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21787,19 +21903,19 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _scrollSyncSplit = __webpack_require__(82);
+var _scrollSyncSplit = __webpack_require__(83);
 
 var _scrollSyncSplit2 = _interopRequireDefault(_scrollSyncSplit);
 
-var _codeBlockEditor = __webpack_require__(83);
+var _codeBlockEditor = __webpack_require__(84);
 
 var _codeBlockEditor2 = _interopRequireDefault(_codeBlockEditor);
 
-var _codeBlockPreview = __webpack_require__(84);
+var _codeBlockPreview = __webpack_require__(85);
 
 var _codeBlockPreview2 = _interopRequireDefault(_codeBlockPreview);
 
-var _codeBlockLanguagesCombo = __webpack_require__(85);
+var _codeBlockLanguagesCombo = __webpack_require__(86);
 
 var _codeBlockLanguagesCombo2 = _interopRequireDefault(_codeBlockLanguagesCombo);
 
@@ -22134,7 +22250,7 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 exports.default = PopupCodeBlockEditor;
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22448,7 +22564,7 @@ var ScrollSyncSplit = function () {
 exports.default = ScrollSyncSplit;
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22464,7 +22580,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _codeMirrorExt = __webpack_require__(34);
+var _codeMirrorExt = __webpack_require__(35);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
@@ -22672,7 +22788,7 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
 exports.default = CodeBlockEditor;
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22686,7 +22802,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _preview = __webpack_require__(12);
+var _preview = __webpack_require__(13);
 
 var _preview2 = _interopRequireDefault(_preview);
 
@@ -22775,7 +22891,7 @@ var CodeBlockPreview = function (_Preview) {
 exports.default = CodeBlockPreview;
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22799,7 +22915,7 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _keyMapper = __webpack_require__(18);
+var _keyMapper = __webpack_require__(19);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
@@ -23015,7 +23131,7 @@ var CodeBlockLanguagesCombo = function () {
 exports.default = CodeBlockLanguagesCombo;
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23031,7 +23147,12 @@ var _commandManager2 = _interopRequireDefault(_commandManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var boldRegex = /^[*_]{2,}[^*_]*[*_]{2,}$/;
+var boldRangeRegex = /^[*_]{2,}[^*_]+[*_]{2,}$/; /**
+                                                 * @fileoverview Implements Bold markdown command
+                                                 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                 */
+
+var boldContentRegex = /[*_]{2,}([^*_]+)[*_]{2,}/g;
 
 /**
  * Bold
@@ -23040,10 +23161,6 @@ var boldRegex = /^[*_]{2,}[^*_]*[*_]{2,}$/;
  * @module markdownCommands/Bold
  * @ignore
  */
-/**
-* @fileoverview Implements Bold markdown command
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-*/
 var Bold = _commandManager2.default.command('markdown', /** @lends Bold */{
   name: 'Bold',
   keyMap: ['CTRL+B', 'META+B'],
@@ -23066,7 +23183,14 @@ var Bold = _commandManager2.default.command('markdown', /** @lends Bold */{
     }
 
     var isRemoved = this.isNeedRemove(selection);
-    var result = isRemoved ? this.remove(selection) : this.append(selection);
+    var result = void 0;
+    if (isRemoved) {
+      result = this.remove(selection);
+      result = this._removeBoldSyntax(result);
+    } else {
+      result = this._removeBoldSyntax(selection);
+      result = this.append(result);
+    }
 
     doc.replaceSelection(result, 'around');
 
@@ -23084,7 +23208,7 @@ var Bold = _commandManager2.default.command('markdown', /** @lends Bold */{
    * @returns {boolean} - true if it has bold
    */
   isNeedRemove: function isNeedRemove(text) {
-    return boldRegex.test(text);
+    return boldRangeRegex.test(text);
   },
 
 
@@ -23145,13 +23269,24 @@ var Bold = _commandManager2.default.command('markdown', /** @lends Bold */{
    */
   setCursorToCenter: function setCursorToCenter(doc, cursor) {
     doc.setCursor(cursor.line, cursor.ch + 2);
+  },
+
+
+  /**
+   * remove bold syntax in the middle of given text
+   * @param {string} text - text selected
+   * @returns {string} - text eliminated all bold in the middle of it's content
+   * @private
+   */
+  _removeBoldSyntax: function _removeBoldSyntax(text) {
+    return text ? text.replace(boldContentRegex, '$1') : '';
   }
 });
 
 exports.default = Bold;
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23167,12 +23302,13 @@ var _commandManager2 = _interopRequireDefault(_commandManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var boldItalicRegex = /^[*_]{3,}[^*_]*[*_]{3,}$/; /**
-                                                   * @fileoverview Implements Italic markdown command
-                                                   * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                                   */
+var boldItalicRangeRegex = /^[*_]{3,}[^*_]+[*_]{3,}$/; /**
+                                                        * @fileoverview Implements Italic markdown command
+                                                        * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                        */
 
-var italicRegex = /^[*_][^*_]*[*_]$/;
+var italicRangeRegex = /^[*_][^*_]+[*_]$/;
+var italicContentRegex = /[*_]([^*_]+)[*_]/g;
 
 /**
  * Italic
@@ -23219,7 +23355,14 @@ var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
     }
 
     var isRemoved = this.isNeedRemove(selection);
-    var result = isRemoved ? this.remove(selection) : this.append(selection);
+    var result = void 0;
+    if (isRemoved) {
+      result = this.remove(selection);
+      result = this._removeItalicSyntax(result);
+    } else {
+      result = this._removeItalicSyntax(selection);
+      result = this.append(result);
+    }
 
     doc.replaceSelection(result, 'around');
 
@@ -23238,7 +23381,7 @@ var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
    * @returns {boolean} - true if it has italic or bold
    */
   isNeedRemove: function isNeedRemove(text) {
-    return italicRegex.test(text) || boldItalicRegex.test(text);
+    return italicRangeRegex.test(text) || boldItalicRangeRegex.test(text);
   },
 
 
@@ -23359,13 +23502,24 @@ var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
   setCursorToCenter: function setCursorToCenter(doc, cursor, isRemoved) {
     var pos = isRemoved ? -1 : 1;
     doc.setCursor(cursor.line, cursor.ch + pos);
+  },
+
+
+  /**
+   * remove italic syntax in the middle of given text
+   * @param {string} text - text selected
+   * @returns {string} - text eliminated all italic in the middle of it's content
+   * @private
+   */
+  _removeItalicSyntax: function _removeItalicSyntax(text) {
+    return text ? text.replace(italicContentRegex, '$1') : '';
   }
 });
 
 exports.default = Italic;
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23381,7 +23535,12 @@ var _commandManager2 = _interopRequireDefault(_commandManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;
+var strikeRangeRegex = /^~~[^~]+~~$/; /**
+                                       * @fileoverview Implements StrikeThrough markdown command
+                                       * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                       */
+
+var strikeContentRegex = /~~([^~]+)~~/g;
 
 /**
  * Strike
@@ -23389,10 +23548,6 @@ var strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;
  * @extends Command
  * @module markdownCommands/Strike
  * @ignore
- */
-/**
- * @fileoverview Implements StrikeThrough markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 var Strike = _commandManager2.default.command('markdown', /** @lends Strike */{
   name: 'Strike',
@@ -23412,15 +23567,15 @@ var Strike = _commandManager2.default.command('markdown', /** @lends Strike */{
 
     if (isNeedToRemove) {
       result = this.remove(selection);
+      result = this._removeStrikeSyntax(result);
     } else {
-      result = this.append(selection);
+      result = this._removeStrikeSyntax(selection);
+      result = this.append(result);
     }
 
     doc.replaceSelection(result, 'around');
 
-    var isEmptySelection = !selection;
-
-    if (isEmptySelection && !isNeedToRemove) {
+    if (!selection && !isNeedToRemove) {
       this.setCursorToCenter(doc, cursor, isNeedToRemove);
     }
 
@@ -23434,7 +23589,7 @@ var Strike = _commandManager2.default.command('markdown', /** @lends Strike */{
    * @returns {boolean} Boolean value of strike syntax removal
    */
   hasStrikeSyntax: function hasStrikeSyntax(text) {
-    return strikeRegex.test(text);
+    return strikeRangeRegex.test(text);
   },
 
 
@@ -23467,13 +23622,24 @@ var Strike = _commandManager2.default.command('markdown', /** @lends Strike */{
   setCursorToCenter: function setCursorToCenter(doc, cursor, isRemoved) {
     var pos = isRemoved ? -2 : 2;
     doc.setCursor(cursor.line, cursor.ch + pos);
+  },
+
+
+  /**
+   * remove strike syntax in the middle of given text
+   * @param {string} text - text selected
+   * @returns {string} - text eliminated all strike in the middle of it's content
+   * @private
+   */
+  _removeStrikeSyntax: function _removeStrikeSyntax(text) {
+    return text ? text.replace(strikeContentRegex, '$1') : '';
   }
 });
 
 exports.default = Strike;
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23542,7 +23708,7 @@ var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockqu
 exports.default = Blockquote;
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23643,7 +23809,7 @@ function getHeadingMarkdown(text, size) {
 exports.default = Heading;
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23724,7 +23890,7 @@ function getParagraphMarkdown(lineText) {
 exports.default = Paragraph;
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23795,7 +23961,7 @@ var HR = _commandManager2.default.command('markdown', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23809,7 +23975,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _importManager = __webpack_require__(9);
+var _importManager = __webpack_require__(10);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -23872,7 +24038,7 @@ var AddLink = _commandManager2.default.command('markdown', /** @lends AddLink */
 exports.default = AddLink;
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23886,7 +24052,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _importManager = __webpack_require__(9);
+var _importManager = __webpack_require__(10);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -23948,7 +24114,7 @@ var AddImage = _commandManager2.default.command('markdown', /** @lends AddImage 
 exports.default = AddImage;
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23962,7 +24128,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _listRegex = __webpack_require__(32);
+var _listRegex = __webpack_require__(33);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24047,7 +24213,7 @@ function isOlOrTask(line) {
 exports.default = UL;
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24061,7 +24227,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _listRegex = __webpack_require__(32);
+var _listRegex = __webpack_require__(33);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24138,7 +24304,7 @@ function isUlOrTask(line) {
 exports.default = OL;
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24179,7 +24345,7 @@ var Indent = _commandManager2.default.command('markdown', /** @lends Indent */{
 exports.default = Indent;
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24220,7 +24386,7 @@ var Outdent = _commandManager2.default.command('markdown', /** @lends Outdent */
 exports.default = Outdent;
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24341,7 +24507,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24355,7 +24521,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _listRegex = __webpack_require__(32);
+var _listRegex = __webpack_require__(33);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24432,7 +24598,7 @@ function isOlOrUl(line) {
 exports.default = Task;
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24447,6 +24613,13 @@ var _commandManager = __webpack_require__(2);
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var codeRangeRegex = /^`([^`]+)`$/; /**
+                                    * @fileoverview Implements Code markdown command
+                                    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                    */
+
+var codeContentRegex = /`([^`]+)`/g;
 
 /**
  * Code
@@ -24465,18 +24638,50 @@ var Code = _commandManager2.default.command('markdown', /** @lends Code */{
   exec: function exec(mde) {
     var cm = mde.getEditor();
     var doc = cm.getDoc();
-
     var selection = doc.getSelection();
-    var range = cm.getCursor();
+    var cursor = cm.getCursor();
+    var hasSyntax = this.hasStrikeSyntax(selection);
 
-    doc.replaceSelection(this.append(selection), 'around');
+    var result = void 0;
+    if (hasSyntax) {
+      result = this.remove(selection);
+      result = this._removeCodeSyntax(result);
+    } else {
+      result = this._removeCodeSyntax(selection);
+      result = this.append(result);
+    }
 
-    if (!selection) {
-      doc.setCursor(range.line, range.ch + 1);
+    doc.replaceSelection(result, 'around');
+
+    if (!selection && !hasSyntax) {
+      this.setCursorToCenter(doc, cursor, hasSyntax);
     }
 
     cm.focus();
   },
+
+
+  /**
+   * set cursor to center
+   * @param {CodeMirror.doc} doc - codemirror document
+   * @param {object} cursor - codemirror cursor
+   * @param {boolean} isRemoved - whether it involes deletion
+   */
+  setCursorToCenter: function setCursorToCenter(doc, cursor, isRemoved) {
+    var pos = isRemoved ? -1 : 1;
+    doc.setCursor(cursor.line, cursor.ch + pos);
+  },
+
+
+  /**
+   * has code syntax
+   * @param {string} text Source text
+   * @returns {boolean} true if the given text has a code syntax
+   */
+  hasStrikeSyntax: function hasStrikeSyntax(text) {
+    return codeRangeRegex.test(text);
+  },
+
 
   /**
    * apply Code
@@ -24485,15 +24690,34 @@ var Code = _commandManager2.default.command('markdown', /** @lends Code */{
    */
   append: function append(text) {
     return '`' + text + '`';
+  },
+
+
+  /**
+   * remove Code
+   * @param {string} text - selected text
+   * @returns {string} - text after code syntax removed
+   */
+  remove: function remove(text) {
+    return text.substr(1, text.length - 2);
+  },
+
+
+  /**
+   * remove bold syntax in the middle of given text
+   * @param {string} text - text selected
+   * @returns {string} - text eliminated all code in the middle of it's content
+   * @private
+   */
+  _removeCodeSyntax: function _removeCodeSyntax(text) {
+    return text ? text.replace(codeContentRegex, '$1') : '';
   }
-}); /**
-    * @fileoverview Implements Code markdown command
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-    */
+});
+
 exports.default = Code;
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24551,7 +24775,7 @@ var CodeBlock = _commandManager2.default.command('markdown', /** @lends CodeBloc
 exports.default = CodeBlock;
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24565,10 +24789,6 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(3);
-
-var _domUtils2 = _interopRequireDefault(_domUtils);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -24577,10 +24797,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @extends Command
  * @module wysiwygCommands/Bold
  * @ignore
- */
-/**
- * @fileoverview Implements bold WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 var Bold = _commandManager2.default.command('wysiwyg', /** @lends Bold */{
   name: 'Bold',
@@ -24597,14 +24813,12 @@ var Bold = _commandManager2.default.command('wysiwyg', /** @lends Bold */{
 
     if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
       tableSelectionManager.styleToSelectedCells(styleBold);
-    } else {
-      styleBold(sq);
-    }
 
-    var range = sq.getSelection();
-    if (sq.hasFormat('table') && !_domUtils2.default.isTextNode(range.commonAncestorContainer)) {
+      var range = sq.getSelection();
       range.collapse(true);
       sq.setSelection(range);
+    } else {
+      styleBold(sq);
     }
   }
 });
@@ -24612,6 +24826,10 @@ var Bold = _commandManager2.default.command('wysiwyg', /** @lends Bold */{
 /**
  * Style bold.
  * @param {object} sq - squire editor instance
+ */
+/**
+ * @fileoverview Implements bold WysiwygCommand
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 function styleBold(sq) {
   if (sq.hasFormat('b') || sq.hasFormat('strong')) {
@@ -24625,83 +24843,6 @@ function styleBold(sq) {
 }
 
 exports.default = Bold;
-
-/***/ }),
-/* 104 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _commandManager = __webpack_require__(2);
-
-var _commandManager2 = _interopRequireDefault(_commandManager);
-
-var _domUtils = __webpack_require__(3);
-
-var _domUtils2 = _interopRequireDefault(_domUtils);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Italic
- * Add Italic to selected wysiwyg editor content
- * @extends Command
- * @module wysiwygCommands/Italic
- * @ignore
- */
-/**
- * @fileoverview Implements italic WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- */
-
-var Italic = _commandManager2.default.command('wysiwyg', /** @lends Italic */{
-  name: 'Italic',
-  keyMap: ['CTRL+I', 'META+I'],
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   */
-  exec: function exec(wwe) {
-    var sq = wwe.getEditor();
-    var range = sq.getSelection();
-    var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
-
-    wwe.focus();
-
-    if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-      tableSelectionManager.styleToSelectedCells(styleItalic);
-    } else {
-      styleItalic(sq);
-    }
-
-    if (sq.hasFormat('table') && !_domUtils2.default.isTextNode(range.commonAncestorContainer)) {
-      range.collapse(true);
-      sq.setSelection(range);
-    }
-  }
-});
-
-/**
- * Style italic.
- * @param {object} sq - squire editor instance
- */
-function styleItalic(sq) {
-  if (sq.hasFormat('i') || sq.hasFormat('em')) {
-    sq.changeFormat(null, { tag: 'i' });
-  } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-    if (sq.hasFormat('code')) {
-      sq.changeFormat(null, { tag: 'code' });
-    }
-    sq.italic();
-  }
-}
-
-exports.default = Italic;
 
 /***/ }),
 /* 105 */
@@ -24718,9 +24859,76 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(3);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _domUtils2 = _interopRequireDefault(_domUtils);
+/**
+ * Italic
+ * Add Italic to selected wysiwyg editor content
+ * @extends Command
+ * @module wysiwygCommands/Italic
+ * @ignore
+ */
+var Italic = _commandManager2.default.command('wysiwyg', /** @lends Italic */{
+  name: 'Italic',
+  keyMap: ['CTRL+I', 'META+I'],
+  /**
+   * command handler
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
+   */
+  exec: function exec(wwe) {
+    var sq = wwe.getEditor();
+    var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+
+    wwe.focus();
+
+    if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+      tableSelectionManager.styleToSelectedCells(styleItalic);
+
+      var range = sq.getSelection();
+      range.collapse(true);
+      sq.setSelection(range);
+    } else {
+      styleItalic(sq);
+    }
+  }
+});
+
+/**
+ * Style italic.
+ * @param {object} sq - squire editor instance
+ */
+/**
+ * @fileoverview Implements italic WysiwygCommand
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+
+function styleItalic(sq) {
+  if (sq.hasFormat('i') || sq.hasFormat('em')) {
+    sq.changeFormat(null, { tag: 'i' });
+  } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+    if (sq.hasFormat('code')) {
+      sq.changeFormat(null, { tag: 'code' });
+    }
+    sq.italic();
+  }
+}
+
+exports.default = Italic;
+
+/***/ }),
+/* 106 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _commandManager = __webpack_require__(2);
+
+var _commandManager2 = _interopRequireDefault(_commandManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24731,11 +24939,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @module wysiwygCommands/Strike
  * @ignore
  */
-/**
- * @fileoverview Implements strike WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- */
-
 var Strike = _commandManager2.default.command('wysiwyg', /** @lends Strike */{
   name: 'Strike',
   keyMap: ['CTRL+S', 'META+S'],
@@ -24745,20 +24948,18 @@ var Strike = _commandManager2.default.command('wysiwyg', /** @lends Strike */{
    */
   exec: function exec(wwe) {
     var sq = wwe.getEditor();
-    var range = sq.getSelection();
     var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
     wwe.focus();
 
     if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
       tableSelectionManager.styleToSelectedCells(styleStrike);
-    } else {
-      styleStrike(sq);
-    }
 
-    if (sq.hasFormat('table') && !_domUtils2.default.isTextNode(range.commonAncestorContainer)) {
+      var range = sq.getSelection();
       range.collapse(true);
       sq.setSelection(range);
+    } else {
+      styleStrike(sq);
     }
   }
 });
@@ -24767,6 +24968,11 @@ var Strike = _commandManager2.default.command('wysiwyg', /** @lends Strike */{
  * Style strike.
  * @param {object} sq - squire editor instance
  */
+/**
+ * @fileoverview Implements strike WysiwygCommand
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+
 function styleStrike(sq) {
   if (sq.hasFormat('S')) {
     sq.changeFormat(null, { tag: 'S' });
@@ -24781,7 +24987,7 @@ function styleStrike(sq) {
 exports.default = Strike;
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24829,7 +25035,7 @@ var Blockquote = _commandManager2.default.command('wysiwyg', /** @lends Blockquo
 exports.default = Blockquote;
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24843,7 +25049,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _importManager = __webpack_require__(9);
+var _importManager = __webpack_require__(10);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -24890,7 +25096,7 @@ var AddImage = _commandManager2.default.command('wysiwyg', /** @lends AddImage *
 exports.default = AddImage;
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24908,7 +25114,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _importManager = __webpack_require__(9);
+var _importManager = __webpack_require__(10);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -24963,7 +25169,7 @@ var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
 exports.default = AddLink;
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25044,7 +25250,7 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25114,7 +25320,7 @@ var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
 exports.default = Heading;
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25181,7 +25387,7 @@ var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph
 exports.default = Paragraph;
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25195,6 +25401,10 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _domUtils = __webpack_require__(3);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -25203,6 +25413,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @extends Command
  * @module wysiwygCommands/UL
  * @ignore
+ */
+/**
+ * @fileoverview Implements ul WysiwygCommand
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
   name: 'UL',
@@ -25215,11 +25429,10 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
     var sq = wwe.getEditor();
     var range = sq.getSelection();
     var listManager = wwe.componentManager.getManager('list');
-    var _range = range,
-        startContainer = _range.startContainer,
-        endContainer = _range.endContainer,
-        startOffset = _range.startOffset,
-        endOffset = _range.endOffset;
+    var startContainer = range.startContainer,
+        endContainer = range.endContainer,
+        startOffset = range.startOffset,
+        endOffset = range.endOffset;
 
 
     wwe.focus();
@@ -25230,14 +25443,17 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
     var newLIs = [];
     for (var i = 0; i < lines.length; i += 1) {
       var newLI = this._changeFormatToUnorderedListIfNeed(wwe, lines[i]);
-      newLIs.push(newLI);
+      if (newLI) {
+        newLIs.push(newLI);
+      }
     }
 
-    range = sq.getSelection();
-    range.setStart(newLIs[0].firstChild, startOffset);
-    range.setEnd(newLIs[newLIs.length - 1].firstChild, endOffset);
-    sq.setSelection(range);
-    sq.saveUndoState(range);
+    if (newLIs.length) {
+      var newStartContainer = _domUtils2.default.containsNode(newLIs[0], startContainer) ? startContainer : newLIs[0];
+      var newEndContainer = _domUtils2.default.containsNode(newLIs[newLIs.length - 1], endContainer) ? endContainer : newLIs[newLIs.length - 1];
+
+      wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
+    }
   },
 
 
@@ -25252,7 +25468,7 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
     var sq = wwe.getEditor();
     var range = sq.getSelection();
     var taskManager = wwe.componentManager.getManager('task');
-    var newLI = range.startContainer;
+    var newLI = void 0;
 
     if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
       range.setStart(target, 0);
@@ -25274,14 +25490,12 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
 
     return newLI;
   }
-}); /**
-     * @fileoverview Implements ul WysiwygCommand
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-     */
+});
+
 exports.default = UL;
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25295,6 +25509,10 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _domUtils = __webpack_require__(3);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -25304,6 +25522,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @module wysiwygCommands/OL
  * @ignore
  */
+/**
+ * @fileoverview Implements ol WysiwygCommand
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+
 var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
   name: 'OL',
   keyMap: ['CTRL+O', 'META+O'],
@@ -25315,11 +25538,10 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
     var sq = wwe.getEditor();
     var range = sq.getSelection();
     var listManager = wwe.componentManager.getManager('list');
-    var _range = range,
-        startContainer = _range.startContainer,
-        startOffset = _range.startOffset,
-        endContainer = _range.endContainer,
-        endOffset = _range.endOffset;
+    var startContainer = range.startContainer,
+        startOffset = range.startOffset,
+        endContainer = range.endContainer,
+        endOffset = range.endOffset;
 
 
     wwe.focus();
@@ -25330,14 +25552,17 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
     var newLIs = [];
     for (var i = 0; i < lines.length; i += 1) {
       var newLI = this._changeFormatToOrderedListIfNeed(wwe, lines[i]);
-      newLIs.push(newLI);
+      if (newLI) {
+        newLIs.push(newLI);
+      }
     }
 
-    range = sq.getSelection();
-    range.setStart(newLIs[0].firstChild, startOffset);
-    range.setEnd(newLIs[newLIs.length - 1].firstChild, endOffset);
-    sq.setSelection(range);
-    sq.saveUndoState(range);
+    if (newLIs.length) {
+      var newStartContainer = _domUtils2.default.containsNode(newLIs[0], startContainer) ? startContainer : newLIs[0];
+      var newEndContainer = _domUtils2.default.containsNode(newLIs[newLIs.length - 1], endContainer) ? endContainer : newLIs[newLIs.length - 1];
+
+      wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
+    }
   },
 
 
@@ -25352,7 +25577,7 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
     var sq = wwe.getEditor();
     var range = sq.getSelection();
     var taskManager = wwe.componentManager.getManager('task');
-    var newLI = range.startContainer;
+    var newLI = void 0;
 
     if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
       range.setStart(target, 0);
@@ -25374,15 +25599,12 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
 
     return newLI;
   }
-}); /**
-     * @fileoverview Implements ol WysiwygCommand
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-     */
+});
 
 exports.default = OL;
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25522,7 +25744,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25647,7 +25869,7 @@ function focusToFirstTd(sq, $tr) {
 exports.default = TableAddRow;
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25796,7 +26018,7 @@ function focusToNextCell(sq, $cell) {
 exports.default = TableAddCol;
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25925,7 +26147,7 @@ function getTrs(range, selectionMgr, $table) {
 exports.default = TableRemoveRow;
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26071,7 +26293,7 @@ function focusToCell(sq, $cell, tableMgr) {
 exports.default = TableRemoveCol;
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26223,7 +26445,7 @@ function getRangeInformation(range, selectionMgr) {
 exports.default = TableAlignCol;
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26278,7 +26500,7 @@ var TableRemove = _commandManager2.default.command('wysiwyg', /** @lends RemoveT
 exports.default = TableRemove;
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26354,7 +26576,7 @@ var Indent = _commandManager2.default.command('wysiwyg', /** @lends Indent */{
 exports.default = Indent;
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26434,7 +26656,7 @@ function getCurrent$Li(wwe) {
 exports.default = Outdent;
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26452,6 +26674,10 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _domUtils = __webpack_require__(3);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -26460,10 +26686,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @extends Command
  * @module wysiwygCommands/Task
  * @ignore
- */
-/**
- * @fileoverview Implements Task WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
   name: 'Task',
@@ -26476,11 +26698,10 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
     var sq = wwe.getEditor();
     var range = sq.getSelection();
     var listManager = wwe.componentManager.getManager('list');
-    var _range = range,
-        startContainer = _range.startContainer,
-        endContainer = _range.endContainer,
-        startOffset = _range.startOffset,
-        endOffset = _range.endOffset;
+    var startContainer = range.startContainer,
+        endContainer = range.endContainer,
+        startOffset = range.startOffset,
+        endOffset = range.endOffset;
 
 
     wwe.focus();
@@ -26492,14 +26713,17 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
     var newLIs = [];
     for (var i = 0; i < lines.length; i += 1) {
       var newLI = this._changeFormatToTaskIfNeed(wwe, lines[i]);
-      newLIs.push(newLI);
+      if (newLI) {
+        newLIs.push(newLI);
+      }
     }
 
-    range = sq.getSelection();
-    range.setStart(newLIs[0].firstChild, startOffset);
-    range.setEnd(newLIs[newLIs.length - 1].firstChild, endOffset);
-    sq.setSelection(range);
-    sq.saveUndoState(range);
+    if (newLIs.length) {
+      var newStartContainer = _domUtils2.default.containsNode(newLIs[0], startContainer) ? startContainer : newLIs[0];
+      var newEndContainer = _domUtils2.default.containsNode(newLIs[newLIs.length - 1], endContainer) ? endContainer : newLIs[newLIs.length - 1];
+
+      wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
+    }
   },
 
 
@@ -26514,7 +26738,7 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
     var sq = wwe.getEditor();
     var range = sq.getSelection();
     var taskManager = wwe.componentManager.getManager('task');
-    var newLI = range.startContainer;
+    var newLI = void 0;
 
     if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
       range.setStart(target, 0);
@@ -26537,12 +26761,14 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
 
     return newLI;
   }
-});
-
+}); /**
+     * @fileoverview Implements Task WysiwygCommand
+     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     */
 exports.default = Task;
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26590,7 +26816,6 @@ var Code = _commandManager2.default.command('wysiwyg', /** @lends Code */{
    */
   exec: function exec(wwe) {
     var sq = wwe.getEditor();
-    var range = sq.getSelection();
     var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
     var _styleCode = _tuiCodeSnippet2.default.bind(styleCode, null, wwe.getEditor());
 
@@ -26598,13 +26823,12 @@ var Code = _commandManager2.default.command('wysiwyg', /** @lends Code */{
 
     if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
       tableSelectionManager.styleToSelectedCells(_styleCode);
-    } else {
-      _styleCode(sq);
-    }
 
-    if (sq.hasFormat('table') && !_domUtils2.default.isTextNode(range.commonAncestorContainer)) {
+      var range = sq.getSelection();
       range.collapse(true);
       sq.setSelection(range);
+    } else {
+      _styleCode(sq);
     }
   }
 });
@@ -26649,7 +26873,7 @@ function styleCode(editor, sq) {
 exports.default = Code;
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26757,52 +26981,6 @@ function getCodeBlockBody(range, wwe) {
 }
 
 exports.default = CodeBlock;
-
-/***/ }),
-/* 126 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var hostnameSent = false;
-
-/**
- * send host name
- * @ignore
- */
-function sendHostName() {
-  if (hostnameSent) {
-    return;
-  }
-  hostnameSent = true;
-
-  var trackingID = 'UA-115377265-9';
-  var applicationID = 'editor';
-  var hitType = 'event';
-  var _location = location,
-      hostname = _location.hostname;
-
-
-  _tuiCodeSnippet2.default.imagePing('https://www.google-analytics.com/collect', {
-    v: 1,
-    t: hitType,
-    tid: trackingID,
-    cid: hostname,
-    dp: hostname,
-    dh: applicationID
-  });
-}
-
-module.exports = {
-  sendHostName: sendHostName
-};
 
 /***/ }),
 /* 127 */
