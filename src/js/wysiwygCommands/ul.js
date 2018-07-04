@@ -3,6 +3,7 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import CommandManager from '../commandManager';
+import domUtil from '../domUtils';
 
 /**
  * UL
@@ -37,14 +38,19 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
     const newLIs = [];
     for (let i = 0; i < lines.length; i += 1) {
       const newLI = this._changeFormatToUnorderedListIfNeed(wwe, lines[i]);
-      newLIs.push(newLI);
+      if (newLI) {
+        newLIs.push(newLI);
+      }
     }
 
-    range = sq.getSelection();
-    range.setStart(newLIs[0].firstChild, startOffset);
-    range.setEnd(newLIs[newLIs.length - 1].firstChild, endOffset);
-    sq.setSelection(range);
-    sq.saveUndoState(range);
+    if (newLIs.length) {
+      const newStartContainer = domUtil.containsNode(newLIs[0], startContainer)
+        ? startContainer : newLIs[0];
+      const newEndContainer = domUtil.containsNode(newLIs[newLIs.length - 1], endContainer)
+        ? endContainer : newLIs[newLIs.length - 1];
+
+      wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
+    }
   },
 
   /**
@@ -58,7 +64,7 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
     const sq = wwe.getEditor();
     const range = sq.getSelection();
     const taskManager = wwe.componentManager.getManager('task');
-    let newLI = range.startContainer;
+    let newLI;
 
     if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
       range.setStart(target, 0);

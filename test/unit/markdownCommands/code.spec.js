@@ -9,10 +9,10 @@ import MarkdownEditor from '../../../src/js/markdownEditor';
 import EventManager from '../../../src/js/eventManager';
 
 describe('Code', () => {
-  let cm, doc, mde;
+  let cm, doc, mde, $container;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    $container = $('<div />');
 
     $('body').append($container);
 
@@ -27,7 +27,7 @@ describe('Code', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    $container.remove();
   });
 
   it('Add code', () => {
@@ -52,5 +52,37 @@ describe('Code', () => {
 
     expect(cm.getValue()).toEqual(['`mytext1`', '', 'mytext2', 'mytext3'].join('\n'));
     expect(cm.getCursor().ch).toEqual(9);
+  });
+
+  it('should remove code for selection', () => {
+    cm.setValue('`mytext1`');
+
+    doc.setSelection({
+      line: 0,
+      ch: 0
+    }, {
+      line: 0,
+      ch: 9
+    });
+
+    Code.exec(mde);
+
+    expect(cm.getValue()).toEqual('mytext1');
+  });
+
+  it('should remove code syntax in the middle of the given range', () => {
+    cm.setValue('my`text`1');
+
+    doc.setSelection({
+      line: 0,
+      ch: 0
+    }, {
+      line: 0,
+      ch: 9
+    });
+
+    Code.exec(mde);
+
+    expect(cm.getValue()).toEqual('`mytext1`');
   });
 });

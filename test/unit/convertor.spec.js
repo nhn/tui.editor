@@ -119,8 +119,8 @@ describe('Convertor', () => {
       expect(convertor.toMarkdown('<s>text</s><br><br>text')).toBe('~~text~~\n\ntext');
       expect(convertor.toMarkdown('<code>text</code><br><br>text')).toBe('`text`\n\ntext');
       expect(convertor.toMarkdown('<a href="some_url">text</a><br><br>text')).toBe('[text](some_url)\n\ntext');
-      expect(convertor.toMarkdown('<span style="color:#ff0000">text</span><br><br>text'))
-        .toBe('<span style="color:#ff0000">text</span>\n\ntext');
+      expect(convertor.toMarkdown('<span>text</span><br><br>text'))
+        .toBe('<span>text</span>\n\ntext');
     });
   });
 

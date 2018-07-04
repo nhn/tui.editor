@@ -95,28 +95,44 @@ function colorSyntaxExtension(editor) {
     editor.addCommand('wysiwyg', {
       name: 'color',
       exec(wwe, color) {
-        const sq = wwe.getEditor();
-
         if (!color) {
           return;
         }
 
-        if (!sq.hasFormat('PRE')) {
-          if (color === RESET_COLOR) {
-            sq.changeFormat(null, {
-              class: 'colour',
-              tag: 'span'
-            });
-          } else {
-            sq.setTextColour(color);
-          }
-        }
+        const sq = wwe.getEditor();
+        const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+          tableSelectionManager.styleToSelectedCells(styleColor, color);
 
-        wwe.focus();
+          const range = sq.getSelection();
+          range.collapse(true);
+          sq.setSelection(range);
+        } else {
+          styleColor(sq, color);
+        }
       }
     });
 
     initUI(editor, preset);
+  }
+}
+
+/**
+ * style color
+ * @param {SquireExt} sq - squire ext instance
+ * @param {string} color - color sting value
+ * @ignore
+ */
+function styleColor(sq, color) {
+  if (!sq.hasFormat('PRE')) {
+    if (color === RESET_COLOR) {
+      sq.changeFormat(null, {
+        class: 'colour',
+        tag: 'span'
+      });
+    } else {
+      sq.setTextColour(color);
+    }
   }
 }
 
@@ -189,10 +205,13 @@ function initUI(editor, preset) {
       return;
     }
 
-    const offset = $button.offset();
+    const {
+      offsetTop,
+      offsetLeft
+    } = $button.get(0);
     popup.$el.css({
-      top: offset.top + $button.outerHeight(),
-      left: offset.left
+      top: offsetTop + $button.outerHeight(),
+      left: offsetLeft
     });
     colorPicker.slider.toggle(true);
 

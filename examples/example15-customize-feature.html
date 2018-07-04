@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>13. All Extension Blank</title>
+    <title>15. Customize Feature</title>
     <script src="../lib/jquery/dist/jquery.js"></script>
     <script src="../lib/markdown-it/dist/markdown-it.js"></script>
     <script src="../lib/to-mark/dist/to-mark.js"></script>
@@ -17,7 +17,7 @@
   </head>
   <body>
     <div class="explain">
-      All evetensions are enabled
+      Click your customize button to get `Bold`
     </div>
     <div class="code-html">
     <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
@@ -28,17 +28,22 @@
     <link rel="stylesheet" href="../dist/tui-editor-contents.css">
     <link rel="stylesheet" href="../lib/tui-color-picker/dist/tui-color-picker.css">
     <link rel="stylesheet" href="../lib/tui-chart/dist/tui-chart.css">
-
+    <button id='my_bold'>Click me to "Bold" text</button>
     <div id="editSection"></div>
     <script class="code-js">
+      var content = `please select this row and click button above`;
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
         previewStyle: 'vertical',
         height: '400px',
         initialEditType: 'markdown',
-        useCommandShortcut: true,
-        exts: ['scrollSync', 'colorSyntax', 'uml', 'chart', 'mark', 'table']
+        initialValue: content
       });
+      var el = document.querySelector('#my_bold');
+
+      el.addEventListener('click', function(){
+        editor.exec('Bold');
+      })
     </script>
   </body>
 </html>

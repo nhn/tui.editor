@@ -11,6 +11,7 @@ import CommandManager from './commandManager';
 import extManager from './extManager';
 import Convertor from './convertor';
 import domUtils from './domUtils';
+import {CodeBlockManager} from './codeBlockManager';
 import codeBlockManager from './codeBlockManager';
 
 const TASK_ATTR_NAME = 'data-te-task';
@@ -35,7 +36,8 @@ class ToastUIEditorViewer {
     */
   constructor(options) {
     this.options = $.extend({
-      useDefaultHTMLSanitizer: true
+      useDefaultHTMLSanitizer: true,
+      codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages()
     }, options);
 
     this.eventManager = new EventManager();

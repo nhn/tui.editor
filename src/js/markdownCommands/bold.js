@@ -4,7 +4,8 @@
 */
 import CommandManager from '../commandManager';
 
-const boldRegex = /^[*_]{2,}[^*_]*[*_]{2,}$/;
+const boldRangeRegex = /^[*_]{2,}[^*_]+[*_]{2,}$/;
+const boldContentRegex = /[*_]{2,}([^*_]+)[*_]{2,}/g;
 
 /**
  * Bold
@@ -35,7 +36,14 @@ const Bold = CommandManager.command('markdown', /** @lends Bold */{
     }
 
     const isRemoved = this.isNeedRemove(selection);
-    const result = isRemoved ? this.remove(selection) : this.append(selection);
+    let result;
+    if (isRemoved) {
+      result = this.remove(selection);
+      result = this._removeBoldSyntax(result);
+    } else {
+      result = this._removeBoldSyntax(selection);
+      result = this.append(result);
+    }
 
     doc.replaceSelection(result, 'around');
 
@@ -52,7 +60,7 @@ const Bold = CommandManager.command('markdown', /** @lends Bold */{
    * @returns {boolean} - true if it has bold
    */
   isNeedRemove(text) {
-    return boldRegex.test(text);
+    return boldRangeRegex.test(text);
   },
 
   /**
@@ -109,6 +117,16 @@ const Bold = CommandManager.command('markdown', /** @lends Bold */{
    */
   setCursorToCenter(doc, cursor) {
     doc.setCursor(cursor.line, cursor.ch + 2);
+  },
+
+  /**
+   * remove bold syntax in the middle of given text
+   * @param {string} text - text selected
+   * @returns {string} - text eliminated all bold in the middle of it's content
+   * @private
+   */
+  _removeBoldSyntax(text) {
+    return text ? text.replace(boldContentRegex, '$1') : '';
   }
 });
 

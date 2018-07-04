@@ -3,7 +3,6 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import CommandManager from '../commandManager';
-import domUtils from '../domUtils';
 
 /**
  * Bold
@@ -27,14 +26,12 @@ const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
 
     if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
       tableSelectionManager.styleToSelectedCells(styleBold);
-    } else {
-      styleBold(sq);
-    }
 
-    const range = sq.getSelection();
-    if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
+      const range = sq.getSelection();
       range.collapse(true);
       sq.setSelection(range);
+    } else {
+      styleBold(sq);
     }
   }
 });
@@ -55,4 +52,3 @@ function styleBold(sq) {
 }
 
 export default Bold;
-

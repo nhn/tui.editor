@@ -4,7 +4,8 @@
  */
 import CommandManager from '../commandManager';
 
-const strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;
+const strikeRangeRegex = /^~~[^~]+~~$/;
+const strikeContentRegex = /~~([^~]+)~~/g;
 
 /**
  * Strike
@@ -31,15 +32,15 @@ const Strike = CommandManager.command('markdown', /** @lends Strike */{
 
     if (isNeedToRemove) {
       result = this.remove(selection);
+      result = this._removeStrikeSyntax(result);
     } else {
-      result = this.append(selection);
+      result = this._removeStrikeSyntax(selection);
+      result = this.append(result);
     }
 
     doc.replaceSelection(result, 'around');
 
-    const isEmptySelection = !selection;
-
-    if (isEmptySelection && !isNeedToRemove) {
+    if (!selection && !isNeedToRemove) {
       this.setCursorToCenter(doc, cursor, isNeedToRemove);
     }
 
@@ -52,7 +53,7 @@ const Strike = CommandManager.command('markdown', /** @lends Strike */{
    * @returns {boolean} Boolean value of strike syntax removal
    */
   hasStrikeSyntax(text) {
-    return strikeRegex.test(text);
+    return strikeRangeRegex.test(text);
   },
 
   /**
@@ -82,6 +83,16 @@ const Strike = CommandManager.command('markdown', /** @lends Strike */{
   setCursorToCenter(doc, cursor, isRemoved) {
     const pos = isRemoved ? -2 : 2;
     doc.setCursor(cursor.line, cursor.ch + pos);
+  },
+
+  /**
+   * remove strike syntax in the middle of given text
+   * @param {string} text - text selected
+   * @returns {string} - text eliminated all strike in the middle of it's content
+   * @private
+   */
+  _removeStrikeSyntax(text) {
+    return text ? text.replace(strikeContentRegex, '$1') : '';
   }
 });
 

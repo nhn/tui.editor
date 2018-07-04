@@ -1,5 +1,3 @@
-import { Selector, ClientFunction } from 'testcafe';
-
 import editor from '../../editorFixture';
 
 fixture`markdown toolbar code`

@@ -9,10 +9,10 @@ import MarkdownEditor from '../../../src/js/markdownEditor';
 import EventManager from '../../../src/js/eventManager';
 
 describe('Strike', () => {
-  let cm, doc, mde;
+  let cm, doc, mde, $container;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    $container = $('<div />');
 
     $('body').append($container);
 
@@ -27,7 +27,7 @@ describe('Strike', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    $container.remove();
   });
 
   describe('add strike', () => {
@@ -59,6 +59,22 @@ describe('Strike', () => {
       Strike.exec(mde);
 
       expect(cm.getValue()).toEqual(['~~mytext1~~', '', 'mytext2', 'mytext3'].join('\n'));
+    });
+
+    it('should remove strike syntax in the middle of the given range', () => {
+      cm.setValue('my~~text~~1');
+
+      doc.setSelection({
+        line: 0,
+        ch: 0
+      }, {
+        line: 0,
+        ch: 11
+      });
+
+      Strike.exec(mde);
+
+      expect(cm.getValue()).toEqual('~~mytext1~~');
     });
   });
 
