@@ -9,10 +9,10 @@ import MarkdownEditor from '../../../src/js/markdownEditor';
 import EventManager from '../../../src/js/eventManager';
 
 describe('Italic', () => {
-  let cm, doc, mde;
+  let cm, doc, mde, $container;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    $container = $('<div />');
 
     $('body').append($container);
 
@@ -27,7 +27,7 @@ describe('Italic', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    $container.remove();
   });
 
   describe('add italic', () => {
@@ -59,6 +59,22 @@ describe('Italic', () => {
       Italic.exec(mde);
 
       expect(cm.getValue()).toEqual(['_mytext1_', '', 'mytext2', 'mytext3'].join('\n'));
+    });
+
+    it('should remove italic syntax in the middle of the given range', () => {
+      cm.setValue('my _text_ 1');
+
+      doc.setSelection({
+        line: 0,
+        ch: 0
+      }, {
+        line: 0,
+        ch: 11
+      });
+
+      Italic.exec(mde);
+
+      expect(cm.getValue()).toEqual('_my text 1_');
     });
   });
 });

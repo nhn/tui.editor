@@ -4,8 +4,9 @@
  */
 import CommandManager from '../commandManager';
 
-const boldItalicRegex = /^[*_]{3,}[^*_]*[*_]{3,}$/;
-const italicRegex = /^[*_][^*_]*[*_]$/;
+const boldItalicRangeRegex = /^[*_]{3,}[^*_]+[*_]{3,}$/;
+const italicRangeRegex = /^[*_][^*_]+[*_]$/;
+const italicContentRegex = /[*_]([^*_]+)[*_]/g;
 
 /**
  * Italic
@@ -52,7 +53,14 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
     }
 
     const isRemoved = this.isNeedRemove(selection);
-    const result = isRemoved ? this.remove(selection) : this.append(selection);
+    let result;
+    if (isRemoved) {
+      result = this.remove(selection);
+      result = this._removeItalicSyntax(result);
+    } else {
+      result = this._removeItalicSyntax(selection);
+      result = this.append(result);
+    }
 
     doc.replaceSelection(result, 'around');
 
@@ -70,7 +78,7 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
    * @returns {boolean} - true if it has italic or bold
    */
   isNeedRemove(text) {
-    return italicRegex.test(text) || boldItalicRegex.test(text);
+    return italicRangeRegex.test(text) || boldItalicRangeRegex.test(text);
   },
 
   /**
@@ -185,6 +193,16 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
   setCursorToCenter(doc, cursor, isRemoved) {
     const pos = isRemoved ? -1 : 1;
     doc.setCursor(cursor.line, cursor.ch + pos);
+  },
+
+  /**
+   * remove italic syntax in the middle of given text
+   * @param {string} text - text selected
+   * @returns {string} - text eliminated all italic in the middle of it's content
+   * @private
+   */
+  _removeItalicSyntax(text) {
+    return text ? text.replace(italicContentRegex, '$1') : '';
   }
 });
 
