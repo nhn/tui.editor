@@ -37,4 +37,9 @@ describe('Viewer', () => {
     const content = xssViewer.preview.getHTML();
     expect(content).toBe(xss);
   });
+
+  it('should have codeBlockLanugages option', () => {
+    const viewer = new ToastUIEditorViewer();
+    expect(viewer.options.codeBlockLanguages.length).toBeTruthy();
+  });
 });
