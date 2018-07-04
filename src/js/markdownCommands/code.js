@@ -87,7 +87,8 @@ const Code = CommandManager.command('markdown', /** @lends Code */{
   /**
    * remove bold syntax in the middle of given text
    * @param {string} text - text selected
-   * @returns {string} - un-bold text
+   * @returns {string} - text eliminated all code in the middle of it's content
+   * @private
    */
   _removeCodeSyntax(text) {
     return text ? text.replace(codeContentRegex, '$1') : '';

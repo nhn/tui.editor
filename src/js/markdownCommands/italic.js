@@ -199,6 +199,7 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
    * remove italic syntax in the middle of given text
    * @param {string} text - text selected
    * @returns {string} - text eliminated all italic in the middle of it's content
+   * @private
    */
   _removeItalicSyntax(text) {
     return text ? text.replace(italicContentRegex, '$1') : '';

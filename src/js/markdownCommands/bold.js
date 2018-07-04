@@ -122,7 +122,8 @@ const Bold = CommandManager.command('markdown', /** @lends Bold */{
   /**
    * remove bold syntax in the middle of given text
    * @param {string} text - text selected
-   * @returns {string} - un-bold text
+   * @returns {string} - text eliminated all bold in the middle of it's content
+   * @private
    */
   _removeBoldSyntax(text) {
     return text ? text.replace(boldContentRegex, '$1') : '';

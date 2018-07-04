@@ -88,7 +88,8 @@ const Strike = CommandManager.command('markdown', /** @lends Strike */{
   /**
    * remove strike syntax in the middle of given text
    * @param {string} text - text selected
-   * @returns {string} - text eliminated all italic in the middle of it's content
+   * @returns {string} - text eliminated all strike in the middle of it's content
+   * @private
    */
   _removeStrikeSyntax(text) {
     return text ? text.replace(strikeContentRegex, '$1') : '';
