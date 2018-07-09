@@ -187,10 +187,10 @@ function initUI(editor, preset) {
     title: false,
     content: $colorPickerContainer,
     className: 'tui-popup-color',
-    $target: editor.getUI().$el,
+    $target: editor.getUI().getToolbar().$el,
     css: {
       'width': 'auto',
-      'position': 'fixed'
+      'position': 'absolute'
     }
   });
 
