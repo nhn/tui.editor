@@ -129,11 +129,11 @@ function isOrContains ( parent, node ) {
     return false;
 }
 
-function getPath ( node, root ) {
+function getPath ( node, root, config ) {
     var path = '';
-    var id, className, classNames, dir;
+    var id, className, classNames, dir, styleNames;
     if ( node && node !== root ) {
-        path = getPath( node.parentNode, root );
+        path = getPath( node.parentNode, root, config );
         if ( node.nodeType === ELEMENT_NODE ) {
             path += ( path ? '>' : '' ) + node.nodeName;
             if ( id = node.id ) {
@@ -149,19 +149,20 @@ function getPath ( node, root ) {
                 path += '[dir=' + dir + ']';
             }
             if ( classNames ) {
-                if ( indexOf.call( classNames, HIGHLIGHT_CLASS ) > -1 ) {
+                styleNames = config.classNames;
+                if ( indexOf.call( classNames, styleNames.highlight ) > -1 ) {
                     path += '[backgroundColor=' +
                         node.style.backgroundColor.replace( / /g,'' ) + ']';
                 }
-                if ( indexOf.call( classNames, COLOUR_CLASS ) > -1 ) {
+                if ( indexOf.call( classNames, styleNames.colour ) > -1 ) {
                     path += '[color=' +
                         node.style.color.replace( / /g,'' ) + ']';
                 }
-                if ( indexOf.call( classNames, FONT_FAMILY_CLASS ) > -1 ) {
+                if ( indexOf.call( classNames, styleNames.fontFamily ) > -1 ) {
                     path += '[fontFamily=' +
                         node.style.fontFamily.replace( / /g,'' ) + ']';
                 }
-                if ( indexOf.call( classNames, FONT_SIZE_CLASS ) > -1 ) {
+                if ( indexOf.call( classNames, styleNames.fontSize ) > -1 ) {
                     path += '[fontSize=' + node.style.fontSize + ']';
                 }
             }

@@ -17,11 +17,6 @@ var START_TO_END = 1;   // Range.START_TO_END
 var END_TO_END = 2;     // Range.END_TO_END
 var END_TO_START = 3;   // Range.END_TO_START
 
-var HIGHLIGHT_CLASS = 'highlight';
-var COLOUR_CLASS = 'colour';
-var FONT_FAMILY_CLASS = 'font';
-var FONT_SIZE_CLASS = 'size';
-
 var ZWS = '\u200B';
 
 var win = doc.defaultView;
@@ -309,11 +304,11 @@ function isOrContains ( parent, node ) {
     return false;
 }
 
-function getPath ( node, root ) {
+function getPath ( node, root, config ) {
     var path = '';
-    var id, className, classNames, dir;
+    var id, className, classNames, dir, styleNames;
     if ( node && node !== root ) {
-        path = getPath( node.parentNode, root );
+        path = getPath( node.parentNode, root, config );
         if ( node.nodeType === ELEMENT_NODE ) {
             path += ( path ? '>' : '' ) + node.nodeName;
             if ( id = node.id ) {
@@ -329,19 +324,20 @@ function getPath ( node, root ) {
                 path += '[dir=' + dir + ']';
             }
             if ( classNames ) {
-                if ( indexOf.call( classNames, HIGHLIGHT_CLASS ) > -1 ) {
+                styleNames = config.classNames;
+                if ( indexOf.call( classNames, styleNames.highlight ) > -1 ) {
                     path += '[backgroundColor=' +
                         node.style.backgroundColor.replace( / /g,'' ) + ']';
                 }
-                if ( indexOf.call( classNames, COLOUR_CLASS ) > -1 ) {
+                if ( indexOf.call( classNames, styleNames.colour ) > -1 ) {
                     path += '[color=' +
                         node.style.color.replace( / /g,'' ) + ']';
                 }
-                if ( indexOf.call( classNames, FONT_FAMILY_CLASS ) > -1 ) {
+                if ( indexOf.call( classNames, styleNames.fontFamily ) > -1 ) {
                     path += '[fontFamily=' +
                         node.style.fontFamily.replace( / /g,'' ) + ']';
                 }
-                if ( indexOf.call( classNames, FONT_SIZE_CLASS ) > -1 ) {
+                if ( indexOf.call( classNames, styleNames.fontSize ) > -1 ) {
                     path += '[fontSize=' + node.style.fontSize + ']';
                 }
             }
@@ -1789,18 +1785,18 @@ var fontSizes = {
 var styleToSemantic = {
     backgroundColor: {
         regexp: notWS,
-        replace: function ( doc, colour ) {
+        replace: function ( doc, classNames, colour ) {
             return createElement( doc, 'SPAN', {
-                'class': HIGHLIGHT_CLASS,
+                'class': classNames.highlight,
                 style: 'background-color:' + colour
             });
         }
     },
     color: {
         regexp: notWS,
-        replace: function ( doc, colour ) {
+        replace: function ( doc, classNames, colour ) {
             return createElement( doc, 'SPAN', {
-                'class': COLOUR_CLASS,
+                'class': classNames.colour,
                 style: 'color:' + colour
             });
         }
@@ -1819,18 +1815,18 @@ var styleToSemantic = {
     },
     fontFamily: {
         regexp: notWS,
-        replace: function ( doc, family ) {
+        replace: function ( doc, classNames, family ) {
             return createElement( doc, 'SPAN', {
-                'class': FONT_FAMILY_CLASS,
+                'class': classNames.fontFamily,
                 style: 'font-family:' + family
             });
         }
     },
     fontSize: {
         regexp: notWS,
-        replace: function ( doc, size ) {
+        replace: function ( doc, classNames, size ) {
             return createElement( doc, 'SPAN', {
-                'class': FONT_SIZE_CLASS,
+                'class': classNames.fontSize,
                 style: 'font-size:' + size
             });
         }
@@ -1852,7 +1848,7 @@ var replaceWithTag = function ( tag ) {
     };
 };
 
-var replaceStyles = function ( node, parent ) {
+var replaceStyles = function ( node, parent, config ) {
     var style = node.style;
     var doc = node.ownerDocument;
     var attr, converter, css, newTreeBottom, newTreeTop, el;
@@ -1861,7 +1857,7 @@ var replaceStyles = function ( node, parent ) {
         converter = styleToSemantic[ attr ];
         css = style[ attr ];
         if ( css && converter.regexp.test( css ) ) {
-            el = converter.replace( doc, css );
+            el = converter.replace( doc, config.classNames, css );
             if ( !newTreeTop ) {
                 newTreeTop = el;
             }
@@ -1892,16 +1888,17 @@ var stylesRewriters = {
     EM: replaceWithTag( 'I' ),
     INS: replaceWithTag( 'U' ),
     STRIKE: replaceWithTag( 'S' ),
-    FONT: function ( node, parent ) {
-        var face = node.face,
-            size = node.size,
-            colour = node.color,
-            doc = node.ownerDocument,
-            fontSpan, sizeSpan, colourSpan,
-            newTreeBottom, newTreeTop;
+    FONT: function ( node, parent, config ) {
+        var face = node.face;
+        var size = node.size;
+        var colour = node.color;
+        var doc = node.ownerDocument;
+        var classNames = config.classNames;
+        var fontSpan, sizeSpan, colourSpan;
+        var newTreeBottom, newTreeTop;
         if ( face ) {
             fontSpan = createElement( doc, 'SPAN', {
-                'class': FONT_FAMILY_CLASS,
+                'class': classNames.fontFamily,
                 style: 'font-family:' + face
             });
             newTreeTop = fontSpan;
@@ -1909,7 +1906,7 @@ var stylesRewriters = {
         }
         if ( size ) {
             sizeSpan = createElement( doc, 'SPAN', {
-                'class': FONT_SIZE_CLASS,
+                'class': classNames.fontSize,
                 style: 'font-size:' + fontSizes[ size ] + 'px'
             });
             if ( !newTreeTop ) {
@@ -1925,7 +1922,7 @@ var stylesRewriters = {
                 colour = '#' + colour;
             }
             colourSpan = createElement( doc, 'SPAN', {
-                'class': COLOUR_CLASS,
+                'class': classNames.colour,
                 style: 'color:' + colour
             });
             if ( !newTreeTop ) {
@@ -1943,9 +1940,9 @@ var stylesRewriters = {
         newTreeBottom.appendChild( empty( node ) );
         return newTreeBottom;
     },
-    TT: function ( node, parent ) {
+    TT: function ( node, parent, config ) {
         var el = createElement( node.ownerDocument, 'SPAN', {
-            'class': FONT_FAMILY_CLASS,
+            'class': config.classNames.fontFamily,
             style: 'font-family:menlo,consolas,"courier new",monospace'
         });
         parent.replaceChild( el, node );
@@ -1969,7 +1966,7 @@ var walker = new TreeWalker( null, SHOW_TEXT|SHOW_ELEMENT, function () {
        and whitespace nodes.
     2. Convert inline tags into our preferred format.
 */
-var cleanTree = function cleanTree ( node, preserveWS ) {
+var cleanTree = function cleanTree ( node, config, preserveWS ) {
     var children = node.childNodes,
         nonInlineParent, i, l, child, nodeName, nodeType, rewriter, childLength,
         startsWithWS, endsWithWS, data, sibling;
@@ -1988,7 +1985,7 @@ var cleanTree = function cleanTree ( node, preserveWS ) {
         if ( nodeType === ELEMENT_NODE ) {
             childLength = child.childNodes.length;
             if ( rewriter ) {
-                child = rewriter( child, node );
+                child = rewriter( child, node, config );
             } else if ( blacklist.test( nodeName ) ) {
                 node.removeChild( child );
                 i -= 1;
@@ -2001,7 +1998,8 @@ var cleanTree = function cleanTree ( node, preserveWS ) {
                 continue;
             }
             if ( childLength ) {
-                cleanTree( child, preserveWS || ( nodeName === 'PRE' ) );
+                cleanTree( child, config,
+                    preserveWS || ( nodeName === 'PRE' ) );
             }
         } else {
             if ( nodeType === TEXT_NODE ) {
@@ -2634,6 +2632,12 @@ proto.setConfig = function ( config ) {
             li: null,
             a: null
         },
+        classNames: {
+            colour: 'colour',
+            fontFamily: 'font',
+            fontSize: 'size',
+            highlight: 'highlight'
+        },
         leafNodeNames: leafNodeNames,
         undo: {
             documentSizeThreshold: -1, // -1 means no threshold
@@ -3078,7 +3082,7 @@ proto._updatePath = function ( range, force ) {
         this._lastAnchorNode = anchor;
         this._lastFocusNode = focus;
         newPath = ( anchor && focus ) ? ( anchor === focus ) ?
-            getPath( focus, this._root ) : '(selection)' : '';
+            getPath( focus, this._root, this._config ) : '(selection)' : '';
         if ( this._path !== newPath ) {
             this._path = newPath;
             this.fireEvent( 'pathChange', { path: newPath } );
@@ -4149,7 +4153,7 @@ proto.setHTML = function ( html ) {
         frag.appendChild( empty( div ) );
     }
 
-    cleanTree( frag );
+    cleanTree( frag, config );
     cleanupBRs( frag, root, false );
 
     fixContainer( frag, root );
@@ -4335,7 +4339,7 @@ proto.insertHTML = function ( html, isPaste ) {
         };
 
         addLinks( frag, frag, this );
-        cleanTree( frag );
+        cleanTree( frag, config );
         cleanupBRs( frag, root, false );
         removeEmptyInlines( frag );
         frag.normalize();
@@ -4472,57 +4476,61 @@ proto.removeLink = function () {
 };
 
 proto.setFontFace = function ( name ) {
+    var className = this._config.classNames.fontFamily;
     this.changeFormat( name ? {
         tag: 'SPAN',
         attributes: {
-            'class': FONT_FAMILY_CLASS,
+            'class': className,
             style: 'font-family: ' + name + ', sans-serif;'
         }
     } : null, {
         tag: 'SPAN',
-        attributes: { 'class': FONT_FAMILY_CLASS }
+        attributes: { 'class': className }
     });
     return this.focus();
 };
 proto.setFontSize = function ( size ) {
+    var className = this._config.classNames.fontSize;
     this.changeFormat( size ? {
         tag: 'SPAN',
         attributes: {
-            'class': FONT_SIZE_CLASS,
+            'class': className,
             style: 'font-size: ' +
                 ( typeof size === 'number' ? size + 'px' : size )
         }
     } : null, {
         tag: 'SPAN',
-        attributes: { 'class': FONT_SIZE_CLASS }
+        attributes: { 'class': className }
     });
     return this.focus();
 };
 
 proto.setTextColour = function ( colour ) {
+    var className = this._config.classNames.colour;
     this.changeFormat( colour ? {
         tag: 'SPAN',
         attributes: {
-            'class': COLOUR_CLASS,
+            'class': className,
             style: 'color:' + colour
         }
     } : null, {
         tag: 'SPAN',
-        attributes: { 'class': COLOUR_CLASS }
+        attributes: { 'class': className }
     });
     return this.focus();
 };
 
 proto.setHighlightColour = function ( colour ) {
+    var className = this._config.classNames.highlight;
     this.changeFormat( colour ? {
         tag: 'SPAN',
         attributes: {
-            'class': HIGHLIGHT_CLASS,
+            'class': className,
             style: 'background-color:' + colour
         }
     } : colour, {
         tag: 'SPAN',
-        attributes: { 'class': HIGHLIGHT_CLASS }
+        attributes: { 'class': className }
     });
     return this.focus();
 };

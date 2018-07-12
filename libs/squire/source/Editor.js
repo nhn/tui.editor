@@ -171,6 +171,12 @@ proto.setConfig = function ( config ) {
             li: null,
             a: null
         },
+        classNames: {
+            colour: 'colour',
+            fontFamily: 'font',
+            fontSize: 'size',
+            highlight: 'highlight'
+        },
         leafNodeNames: leafNodeNames,
         undo: {
             documentSizeThreshold: -1, // -1 means no threshold
@@ -615,7 +621,7 @@ proto._updatePath = function ( range, force ) {
         this._lastAnchorNode = anchor;
         this._lastFocusNode = focus;
         newPath = ( anchor && focus ) ? ( anchor === focus ) ?
-            getPath( focus, this._root ) : '(selection)' : '';
+            getPath( focus, this._root, this._config ) : '(selection)' : '';
         if ( this._path !== newPath ) {
             this._path = newPath;
             this.fireEvent( 'pathChange', { path: newPath } );
@@ -1686,7 +1692,7 @@ proto.setHTML = function ( html ) {
         frag.appendChild( empty( div ) );
     }
 
-    cleanTree( frag );
+    cleanTree( frag, config );
     cleanupBRs( frag, root, false );
 
     fixContainer( frag, root );
@@ -1872,7 +1878,7 @@ proto.insertHTML = function ( html, isPaste ) {
         };
 
         addLinks( frag, frag, this );
-        cleanTree( frag );
+        cleanTree( frag, config );
         cleanupBRs( frag, root, false );
         removeEmptyInlines( frag );
         frag.normalize();
@@ -2009,57 +2015,61 @@ proto.removeLink = function () {
 };
 
 proto.setFontFace = function ( name ) {
+    var className = this._config.classNames.fontFamily;
     this.changeFormat( name ? {
         tag: 'SPAN',
         attributes: {
-            'class': FONT_FAMILY_CLASS,
+            'class': className,
             style: 'font-family: ' + name + ', sans-serif;'
         }
     } : null, {
         tag: 'SPAN',
-        attributes: { 'class': FONT_FAMILY_CLASS }
+        attributes: { 'class': className }
     });
     return this.focus();
 };
 proto.setFontSize = function ( size ) {
+    var className = this._config.classNames.fontSize;
     this.changeFormat( size ? {
         tag: 'SPAN',
         attributes: {
-            'class': FONT_SIZE_CLASS,
+            'class': className,
             style: 'font-size: ' +
                 ( typeof size === 'number' ? size + 'px' : size )
         }
     } : null, {
         tag: 'SPAN',
-        attributes: { 'class': FONT_SIZE_CLASS }
+        attributes: { 'class': className }
     });
     return this.focus();
 };
 
 proto.setTextColour = function ( colour ) {
+    var className = this._config.classNames.colour;
     this.changeFormat( colour ? {
         tag: 'SPAN',
         attributes: {
-            'class': COLOUR_CLASS,
+            'class': className,
             style: 'color:' + colour
         }
     } : null, {
         tag: 'SPAN',
-        attributes: { 'class': COLOUR_CLASS }
+        attributes: { 'class': className }
     });
     return this.focus();
 };
 
 proto.setHighlightColour = function ( colour ) {
+    var className = this._config.classNames.highlight;
     this.changeFormat( colour ? {
         tag: 'SPAN',
         attributes: {
-            'class': HIGHLIGHT_CLASS,
+            'class': className,
             style: 'background-color:' + colour
         }
     } : colour, {
         tag: 'SPAN',
-        attributes: { 'class': HIGHLIGHT_CLASS }
+        attributes: { 'class': className }
     });
     return this.focus();
 };

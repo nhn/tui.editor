@@ -13,18 +13,18 @@ var fontSizes = {
 var styleToSemantic = {
     backgroundColor: {
         regexp: notWS,
-        replace: function ( doc, colour ) {
+        replace: function ( doc, classNames, colour ) {
             return createElement( doc, 'SPAN', {
-                'class': HIGHLIGHT_CLASS,
+                'class': classNames.highlight,
                 style: 'background-color:' + colour
             });
         }
     },
     color: {
         regexp: notWS,
-        replace: function ( doc, colour ) {
+        replace: function ( doc, classNames, colour ) {
             return createElement( doc, 'SPAN', {
-                'class': COLOUR_CLASS,
+                'class': classNames.colour,
                 style: 'color:' + colour
             });
         }
@@ -43,18 +43,18 @@ var styleToSemantic = {
     },
     fontFamily: {
         regexp: notWS,
-        replace: function ( doc, family ) {
+        replace: function ( doc, classNames, family ) {
             return createElement( doc, 'SPAN', {
-                'class': FONT_FAMILY_CLASS,
+                'class': classNames.fontFamily,
                 style: 'font-family:' + family
             });
         }
     },
     fontSize: {
         regexp: notWS,
-        replace: function ( doc, size ) {
+        replace: function ( doc, classNames, size ) {
             return createElement( doc, 'SPAN', {
-                'class': FONT_SIZE_CLASS,
+                'class': classNames.fontSize,
                 style: 'font-size:' + size
             });
         }
@@ -76,7 +76,7 @@ var replaceWithTag = function ( tag ) {
     };
 };
 
-var replaceStyles = function ( node, parent ) {
+var replaceStyles = function ( node, parent, config ) {
     var style = node.style;
     var doc = node.ownerDocument;
     var attr, converter, css, newTreeBottom, newTreeTop, el;
@@ -85,7 +85,7 @@ var replaceStyles = function ( node, parent ) {
         converter = styleToSemantic[ attr ];
         css = style[ attr ];
         if ( css && converter.regexp.test( css ) ) {
-            el = converter.replace( doc, css );
+            el = converter.replace( doc, config.classNames, css );
             if ( !newTreeTop ) {
                 newTreeTop = el;
             }
@@ -116,16 +116,17 @@ var stylesRewriters = {
     EM: replaceWithTag( 'I' ),
     INS: replaceWithTag( 'U' ),
     STRIKE: replaceWithTag( 'S' ),
-    FONT: function ( node, parent ) {
-        var face = node.face,
-            size = node.size,
-            colour = node.color,
-            doc = node.ownerDocument,
-            fontSpan, sizeSpan, colourSpan,
-            newTreeBottom, newTreeTop;
+    FONT: function ( node, parent, config ) {
+        var face = node.face;
+        var size = node.size;
+        var colour = node.color;
+        var doc = node.ownerDocument;
+        var classNames = config.classNames;
+        var fontSpan, sizeSpan, colourSpan;
+        var newTreeBottom, newTreeTop;
         if ( face ) {
             fontSpan = createElement( doc, 'SPAN', {
-                'class': FONT_FAMILY_CLASS,
+                'class': classNames.fontFamily,
                 style: 'font-family:' + face
             });
             newTreeTop = fontSpan;
@@ -133,7 +134,7 @@ var stylesRewriters = {
         }
         if ( size ) {
             sizeSpan = createElement( doc, 'SPAN', {
-                'class': FONT_SIZE_CLASS,
+                'class': classNames.fontSize,
                 style: 'font-size:' + fontSizes[ size ] + 'px'
             });
             if ( !newTreeTop ) {
@@ -149,7 +150,7 @@ var stylesRewriters = {
                 colour = '#' + colour;
             }
             colourSpan = createElement( doc, 'SPAN', {
-                'class': COLOUR_CLASS,
+                'class': classNames.colour,
                 style: 'color:' + colour
             });
             if ( !newTreeTop ) {
@@ -167,9 +168,9 @@ var stylesRewriters = {
         newTreeBottom.appendChild( empty( node ) );
         return newTreeBottom;
     },
-    TT: function ( node, parent ) {
+    TT: function ( node, parent, config ) {
         var el = createElement( node.ownerDocument, 'SPAN', {
-            'class': FONT_FAMILY_CLASS,
+            'class': config.classNames.fontFamily,
             style: 'font-family:menlo,consolas,"courier new",monospace'
         });
         parent.replaceChild( el, node );
@@ -193,7 +194,7 @@ var walker = new TreeWalker( null, SHOW_TEXT|SHOW_ELEMENT, function () {
        and whitespace nodes.
     2. Convert inline tags into our preferred format.
 */
-var cleanTree = function cleanTree ( node, preserveWS ) {
+var cleanTree = function cleanTree ( node, config, preserveWS ) {
     var children = node.childNodes,
         nonInlineParent, i, l, child, nodeName, nodeType, rewriter, childLength,
         startsWithWS, endsWithWS, data, sibling;
@@ -212,7 +213,7 @@ var cleanTree = function cleanTree ( node, preserveWS ) {
         if ( nodeType === ELEMENT_NODE ) {
             childLength = child.childNodes.length;
             if ( rewriter ) {
-                child = rewriter( child, node );
+                child = rewriter( child, node, config );
             } else if ( blacklist.test( nodeName ) ) {
                 node.removeChild( child );
                 i -= 1;
@@ -225,7 +226,8 @@ var cleanTree = function cleanTree ( node, preserveWS ) {
                 continue;
             }
             if ( childLength ) {
-                cleanTree( child, preserveWS || ( nodeName === 'PRE' ) );
+                cleanTree( child, config,
+                    preserveWS || ( nodeName === 'PRE' ) );
             }
         } else {
             if ( nodeType === TEXT_NODE ) {
