@@ -157,7 +157,7 @@ class MarkdownEditor extends CodeMirrorExt {
         codeBlock: !!overlay.codeBlock,
         quote: !!base.quote,
         list: !!base.list,
-        task: !!base.task,
+        task: !!base.taskList,
         source: 'markdown'
       };
 
