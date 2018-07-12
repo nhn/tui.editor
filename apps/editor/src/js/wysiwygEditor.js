@@ -399,6 +399,7 @@ class WysiwygEditor {
     });
 
     squire.addEventListener('blur', () => {
+      this.fixIMERange();
       this.eventManager.emit('blur', {
         source: 'wysiwyg'
       });
@@ -1084,6 +1085,39 @@ class WysiwygEditor {
    */
   getRange() {
     return this.getEditor().getSelection().cloneRange();
+  }
+
+  /**
+   * get IME range
+   * cjk composition causes wrong caret position.
+   * it returns fixed IME composition range
+   * @memberof WysiwygEditor
+   * @returns {Range}
+   */
+  getIMERange() {
+    let range;
+    const selection = getSelection();
+
+    if (selection && selection.rangeCount) {
+      range = selection.getRangeAt(0).cloneRange();
+    }
+
+    return range;
+  }
+
+  /**
+   * get IME range
+   * cjk composition causes wrong caret position.
+   * it sets fixed IME composition range
+   * @memberof WysiwygEditor
+   */
+  fixIMERange() {
+    const range = this.getIMERange();
+
+    // range exists and it's an WYSIWYG editor content
+    if (range && $(range.commonAncestorContainer).closest(this.$editorContainerEl).length) {
+      this.setRange(range);
+    }
   }
 
   /**
