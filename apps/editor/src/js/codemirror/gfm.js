@@ -73,12 +73,12 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
         state.ateSpace = true;
         return null;
       }
+      // Disable GitHub specifics. SHA, Num, Combine links
+      /*
       if (stream.sol() || state.ateSpace) {
         state.ateSpace = false;
-        /*
-        //we dont need this
         if (modeConfig.gitHubSpice !== false) {
-          if(stream.match(/^(?:[a-zA-Z0-9\-_]+\/)?(?:[a-zA-Z0-9\-_]+@)?(?:[a-f0-9]{7,40}\b)/)) {
+          if(stream.match(/^(?:[a-zA-Z0-9\-_]+\/)?(?:[a-zA-Z0-9\-_]+@)?(?=.{0,6}\d)(?:[a-f0-9]{7,40}\b)/)) {
             // User/Project@SHA
             // User@SHA
             // SHA
@@ -102,8 +102,8 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
         // And then limited url schemes to the CommonMark list, so foo:bar isn't matched as a URL
         state.combineTokens = true;
         return "link";
-        */
       }
+      */
       stream.next();
       return null;
     },
@@ -111,10 +111,9 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
   };
 
   var markdownConfig = {
-    underscoresBreakWords: false,
     taskLists: true,
-    fencedCodeBlocks: '```',
-    strikethrough: true
+    strikethrough: true,
+    emoji: true
   };
   for (var attr in modeConfig) {
     markdownConfig[attr] = modeConfig[attr];

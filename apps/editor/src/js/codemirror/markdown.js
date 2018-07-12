@@ -7,12 +7,10 @@
 import CodeMirror from 'codemirror';
 
 /*eslint-disable */
-"use strict";
-
 CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
-  var htmlFound = CodeMirror.modes.hasOwnProperty("xml");
-  var htmlMode = CodeMirror.getMode(cmCfg, htmlFound ? {name: "xml", htmlMode: true} : "text/plain");
+  var htmlMode = CodeMirror.getMode(cmCfg, "text/html");
+  var htmlModeMissing = htmlMode.name == "null"
 
   function getMode(name) {
     if (CodeMirror.findModeByName) {
@@ -33,21 +31,6 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   if (modeCfg.maxBlockquoteDepth === undefined)
     modeCfg.maxBlockquoteDepth = 0;
 
-  // Should underscores in words open/close em/strong?
-  if (modeCfg.underscoresBreakWords === undefined)
-    modeCfg.underscoresBreakWords = true;
-
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-// Use `fencedCodeBlocks` to configure fenced code blocks. false to
-// disable, string to specify a precise regexp that the fence should
-// match, and true to allow three or more backticks or tildes (as
-// per CommonMark).
-  // Turn on fenced code blocks? ("```" to start/end)
-  // if (modeCfg.fencedCodeBlocks === undefined) modeCfg.fencedCodeBlocks = false;
-// TUI.EDITOR MODIFICATION END
-
   // Turn on task lists? ("- [ ] " and "- [x] ")
   if (modeCfg.taskLists === undefined) modeCfg.taskLists = false;
 
@@ -55,41 +38,57 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   if (modeCfg.strikethrough === undefined)
     modeCfg.strikethrough = false;
 
-  var codeDepth = 0;
+  if (modeCfg.emoji === undefined)
+    modeCfg.emoji = false;
 
-  var header   = 'header'
-  ,   code     = 'comment'
-  ,   quote    = 'quote'
-  ,   list1    = 'variable-2'
-  ,   list2    = 'variable-3'
-  ,   list3    = 'keyword'
-  ,   hr       = 'hr'
-  ,   image    = 'tag'
-  ,   formatting = 'formatting'
-  ,   linkinline = 'link'
-  ,   linkemail = 'link'
-  ,   linktext = 'link'
-  ,   linkhref = 'string'
-  ,   em       = 'em'
-  ,   strong   = 'strong'
-  ,   strikethrough = 'strikethrough';
+  if (modeCfg.fencedCodeBlockHighlighting === undefined)
+    modeCfg.fencedCodeBlockHighlighting = true;
+
+  if (modeCfg.xml === undefined)
+    modeCfg.xml = true;
+
+  // Allow token types to be overridden by user-provided token types.
+  if (modeCfg.tokenTypeOverrides === undefined)
+    modeCfg.tokenTypeOverrides = {};
+
+  var tokenTypes = {
+    header: "header",
+    code: "comment",
+    quote: "quote",
+    list1: "variable-2",
+    list2: "variable-3",
+    list3: "keyword",
+    hr: "hr",
+    image: "image",
+    imageAltText: "image-alt-text",
+    imageMarker: "image-marker",
+    formatting: "formatting",
+    linkInline: "link",
+    linkEmail: "link",
+    linkText: "link",
+    linkHref: "string",
+    em: "em",
+    strong: "strong",
+    strikethrough: "strikethrough",
+    emoji: "builtin"
+  };
+
+  for (var tokenType in tokenTypes) {
+    if (tokenTypes.hasOwnProperty(tokenType) && modeCfg.tokenTypeOverrides[tokenType]) {
+      tokenTypes[tokenType] = modeCfg.tokenTypeOverrides[tokenType];
+    }
+  }
 
   var hrRE = /^([*\-_])(?:\s*\1){2,}\s*$/
-  ,   ulRE = /^[*\-+]\s+/
-  ,   olRE = /^[0-9]+([.)])\s+/
-  ,   taskListRE = /^\[(x| )\](?=\s)/ // Must follow ulRE or olRE
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
+  ,   listRE = /^(?:[*\-+]|^[0-9]+([.)]))\s+/
+  ,   taskListRE = /^\[(x| )\](?=\s)/i // Must follow listRE
   ,   atxHeaderRE = modeCfg.allowAtxHeaderWithoutSpace ? /^(#+)/ : /^(#+)(?: |$)/
   ,   setextHeaderRE = /^ *(?:\={1,}|-{1,})\s*$/
-  ,   textRE = /^[^#!\[\]*_\\<>` "'(~]+/
-  ,   fencedCodeRE = new RegExp("^(" + (modeCfg.fencedCodeBlocks === true ? "~~~+|```+" : modeCfg.fencedCodeBlocks) +
-                                ")[ \\t]*([\\w+#]*)");
-  // ,   atxHeaderRE = /^(#+)(?: |$)/
-  // ,   setextHeaderRE = /^ *(?:\={1,}|-{1,})\s*$/
-  // ,   textRE = /^[^#!\[\]*_\\<>` "'(~]+/;
-// TUI.EDITOR MODIFICATION END
+  ,   textRE = /^[^#!\[\]*_\\<>` "'(~:]+/
+  ,   fencedCodeRE = /^(~~~+|```+)[ \t]*([\w+#-]*)[^\n`]*$/
+  ,   linkDefRE = /^\s*\[[^\]]+?\]:.*$/ // naive link-definition
+  ,   punctuation = /[!\"#$%&\'()*+,\-\.\/:;<=>?@\[\\\]^_`{|}~]/
+  ,   expandedTab = "    " // CommonMark specifies tab as 4 spaces
 
   function switchInline(stream, state, f) {
     state.f = state.inline = f;
@@ -101,19 +100,17 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     return f(stream, state);
   }
 
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
   function lineIsEmpty(line) {
     return !line || !/\S/.test(line.string)
   }
-// TUI.EDITOR MODIFICATION END
 
   // Blocks
 
   function blankLine(state) {
     // Reset linkTitle state
     state.linkTitle = false;
+    state.linkHref = false;
+    state.linkText = false;
     // Reset EM state
     state.em = false;
     // Reset STRONG state
@@ -124,150 +121,155 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     state.quote = 0;
     // Reset state.indentedCode
     state.indentedCode = false;
-    if (!htmlFound && state.f == htmlBlock) {
-      state.f = inlineNormal;
-      state.block = blockNormal;
+    if (state.f == htmlBlock) {
+      var exit = htmlModeMissing
+      if (!exit) {
+        var inner = CodeMirror.innerMode(htmlMode, state.htmlState)
+        exit = inner.mode.name == "xml" && inner.state.tagStart === null &&
+          (!inner.state.context && inner.state.tokenize.isInText)
+      }
+      if (exit) {
+        state.f = inlineNormal;
+        state.block = blockNormal;
+        state.htmlState = null;
+      }
     }
     // Reset state.trailingSpace
     state.trailingSpace = 0;
     state.trailingSpaceNewLine = false;
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     // Mark this line as blank
     state.prevLine = state.thisLine
-    state.thisLine = null
-    // state.thisLineHasContent = false;
-// TUI.EDITOR MODIFICATION END
+    state.thisLine = {stream: null}
     return null;
   }
 
   function blockNormal(stream, state) {
-
-    var sol = stream.sol();
-
-    var prevLineIsList = state.list !== false,
-        prevLineIsIndentedCode = state.indentedCode;
+    var firstTokenOnLine = stream.column() === state.indentation;
+    var prevLineLineIsEmpty = lineIsEmpty(state.prevLine.stream);
+    var prevLineIsIndentedCode = state.indentedCode;
+    var prevLineIsHr = state.prevLine.hr;
+    var prevLineIsList = state.list !== false;
+    var maxNonCodeIndentation = (state.listStack[state.listStack.length - 1] || 0) + 3;
 
     state.indentedCode = false;
 
-    if (prevLineIsList) {
-      if (state.indentationDiff >= 0) { // Continued list
-        if (state.indentationDiff < 4) { // Only adjust indentation if *not* a code block
-          state.indentation -= state.indentationDiff;
+    var lineIndentation = state.indentation;
+    // compute once per line (on first token)
+    if (state.indentationDiff === null) {
+      state.indentationDiff = state.indentation;
+      if (prevLineIsList) {
+        // Reset inline styles which shouldn't propagate aross list items
+        state.em = false;
+        state.strong = false;
+        state.code = false;
+        state.strikethrough = false;
+
+        state.list = null;
+        // While this list item's marker's indentation is less than the deepest
+        //  list item's content's indentation,pop the deepest list item
+        //  indentation off the stack, and update block indentation state
+        while (lineIndentation < state.listStack[state.listStack.length - 1]) {
+          state.listStack.pop();
+          if (state.listStack.length) {
+            state.indentation = state.listStack[state.listStack.length - 1];
+          // less than the first list's indent -> the line is no longer a list
+          } else {
+            state.list = false;
+          }
         }
-        state.list = null;
-// TUI.EDITOR MODIFICATION START
-// bug: no highlight in list
-// https://github.nhnent.com/fe/tui.editor/commit/d42c37639942633ccaf755c0c0d20f460c0b2441
-// https://github.nhnent.com/fe/tui.editor/issues/1002
-      }
-      if (state.indentation > 0) {
-        state.list = null;
-        // state.listDepth = Math.floor(state.indentation / 4) + 1;
-      // } else if (state.indentation > 0) {
-      //   state.list = null;
-        state.listDepth = Math.floor(state.indentation / 4);
-// TUI.EDITOR MODIFICATION END
-      } else { // No longer a list
-        state.list = false;
-        state.listDepth = 0;
+        if (state.list !== false) {
+          state.indentationDiff = lineIndentation - state.listStack[state.listStack.length - 1]
+        }
       }
     }
 
+    // not comprehensive (currently only for setext detection purposes)
+    var allowsInlineContinuation = (
+        !prevLineLineIsEmpty && !prevLineIsHr && !state.prevLine.header &&
+        (!prevLineIsList || !prevLineIsIndentedCode) &&
+        !state.prevLine.fencedCodeEnd
+    );
+
+    var isHr = (state.list === false || prevLineIsHr || prevLineLineIsEmpty) &&
+      state.indentation <= maxNonCodeIndentation && stream.match(hrRE);
+
     var match = null;
-    if (state.indentationDiff >= 4) {
+    if (state.indentationDiff >= 4 && (prevLineIsIndentedCode || state.prevLine.fencedCodeEnd ||
+         state.prevLine.header || prevLineLineIsEmpty)) {
       stream.skipToEnd();
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-      if (prevLineIsIndentedCode || lineIsEmpty(state.prevLine)) {
-      // if (prevLineIsIndentedCode || !state.prevLineHasContent) {
-// TUI.EDITOR MODIFICATION END
-        state.indentation -= 4;
-        state.indentedCode = true;
-        return code;
-      } else {
-        return null;
-      }
+      state.indentedCode = true;
+      return tokenTypes.code;
     } else if (stream.eatSpace()) {
       return null;
-    } else if ((match = stream.match(atxHeaderRE)) && match[1].length <= 6) {
+    } else if (firstTokenOnLine && state.indentation <= maxNonCodeIndentation && (match = stream.match(atxHeaderRE)) && match[1].length <= 6) {
+      state.quote = 0;
       state.header = match[1].length;
+      state.thisLine.header = true;
       if (modeCfg.highlightFormatting) state.formatting = "header";
       state.f = state.inline;
       return getType(state);
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-    } else if (!lineIsEmpty(state.prevLine) && !state.quote && !prevLineIsList &&
-               !prevLineIsIndentedCode && (match = stream.match(setextHeaderRE))) {
-    // } else if (state.prevLineHasContent && !state.quote && !prevLineIsList && !prevLineIsIndentedCode && (match = stream.match(setextHeaderRE))) {
-// TUI.EDITOR MODIFICATION END
-      state.header = match[0].charAt(0) == '=' ? 1 : 2;
-      if (modeCfg.highlightFormatting) state.formatting = "header";
-      state.f = state.inline;
-      return getType(state);
-    } else if (stream.eat('>')) {
-      state.quote = sol ? 1 : state.quote + 1;
+    } else if (state.indentation <= maxNonCodeIndentation && stream.eat('>')) {
+      state.quote = firstTokenOnLine ? 1 : state.quote + 1;
       if (modeCfg.highlightFormatting) state.formatting = "quote";
       stream.eatSpace();
       return getType(state);
-    } else if (stream.peek() === '[') {
-      return switchInline(stream, state, footnoteLink);
-    } else if (stream.match(hrRE, true)) {
-      state.hr = true;
-      return hr;
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-    } else if ((lineIsEmpty(state.prevLine) || prevLineIsList) && (stream.match(ulRE, false) || stream.match(olRE, false))) {
-    // } else if ((!state.prevLineHasContent || prevLineIsList) && (stream.match(ulRE, false) || stream.match(olRE, false))) {
-// TUI.EDITOR MODIFICATION END
-      var listType = null;
-      if (stream.match(ulRE, true)) {
-        listType = 'ul';
-      } else {
-        stream.match(olRE, true);
-        listType = 'ol';
-      }
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-// Roll back to original #1002
-// https://github.nhnent.com/fe/tui.editor/issues/1002
-      // state.indentation = stream.column() + stream.current().length;
-      state.indentation += 4;
-// TUI.EDITOR MODIFICATION END
+    } else if (!isHr && !state.setext && firstTokenOnLine && state.indentation <= maxNonCodeIndentation && (match = stream.match(listRE))) {
+      var listType = match[1] ? "ol" : "ul";
+
+      state.indentation = lineIndentation + stream.current().length;
       state.list = true;
-      state.listDepth++;
+      state.quote = 0;
+
+      // Add this list item's content's indentation to the stack
+      state.listStack.push(state.indentation);
+
       if (modeCfg.taskLists && stream.match(taskListRE, false)) {
         state.taskList = true;
-// TUI.EDITOR MODIFICATION START
-// Do not show table format pasting confirm on paste event where in Bloc... (#720)
-// https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
-        state.task = true; // to manage task state
-// TUI.EDITOR MODIFICATION END
       }
       state.f = state.inline;
       if (modeCfg.highlightFormatting) state.formatting = ["list", "list-" + listType];
       return getType(state);
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-    } else if (modeCfg.fencedCodeBlocks && (match = stream.match(fencedCodeRE, true))) {
-      state.fencedChars = match[1]
+    } else if (firstTokenOnLine && state.indentation <= maxNonCodeIndentation && (match = stream.match(fencedCodeRE, true))) {
+      state.quote = 0;
+      state.fencedEndRE = new RegExp(match[1] + "+ *$");
       // try switching mode
-      state.localMode = getMode(match[2]);
-    // } else if (modeCfg.fencedCodeBlocks && stream.match(/^```[ \t]*([\w+#]*)/, true)) {
-    //   // try switching mode
-    //   state.localMode = getMode(RegExp.$1);
-// TUI.EDITOR MODIFICATION END
-      if (state.localMode) state.localState = state.localMode.startState();
+      state.localMode = modeCfg.fencedCodeBlockHighlighting && getMode(match[2]);
+      if (state.localMode) state.localState = CodeMirror.startState(state.localMode);
       state.f = state.block = local;
       if (modeCfg.highlightFormatting) state.formatting = "code-block";
-      state.code = true;
+      state.code = -1
       return getType(state);
+    // SETEXT has lowest block-scope precedence after HR, so check it after
+    //  the others (code, blockquote, list...)
+    } else if (
+      // if setext set, indicates line after ---/===
+      state.setext || (
+        // line before ---/===
+        (!allowsInlineContinuation || !prevLineIsList) && !state.quote && state.list === false &&
+        !state.code && !isHr && !linkDefRE.test(stream.string) &&
+        (match = stream.lookAhead(1)) && (match = match.match(setextHeaderRE))
+      )
+    ) {
+      if ( !state.setext ) {
+        state.header = match[0].charAt(0) == '=' ? 1 : 2;
+        state.setext = state.header;
+      } else {
+        state.header = state.setext;
+        // has no effect on type so we can reset it now
+        state.setext = 0;
+        stream.skipToEnd();
+        if (modeCfg.highlightFormatting) state.formatting = "header";
+      }
+      state.thisLine.header = true;
+      state.f = state.inline;
+      return getType(state);
+    } else if (isHr) {
+      stream.skipToEnd();
+      state.hr = true;
+      state.thisLine.hr = true;
+      return tokenTypes.hr;
+    } else if (stream.peek() === '[') {
+      return switchInline(stream, state, footnoteLink);
     }
 
     return switchInline(stream, state, state.inline);
@@ -275,51 +277,41 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
   function htmlBlock(stream, state) {
     var style = htmlMode.token(stream, state.htmlState);
-    if ((htmlFound && state.htmlState.tagStart === null &&
-         (!state.htmlState.context && state.htmlState.tokenize.isInText)) ||
-        (state.md_inside && stream.current().indexOf(">") > -1)) {
-      state.f = inlineNormal;
-      state.block = blockNormal;
-      state.htmlState = null;
+    if (!htmlModeMissing) {
+      var inner = CodeMirror.innerMode(htmlMode, state.htmlState)
+      if ((inner.mode.name == "xml" && inner.state.tagStart === null &&
+           (!inner.state.context && inner.state.tokenize.isInText)) ||
+          (state.md_inside && stream.current().indexOf(">") > -1)) {
+        state.f = inlineNormal;
+        state.block = blockNormal;
+        state.htmlState = null;
+      }
     }
     return style;
   }
 
   function local(stream, state) {
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-    if (stream.sol() && state.fencedChars && stream.match(state.fencedChars, false)) {
-    // if (stream.sol() && stream.match("```", false)) {
-// TUI.EDITOR MODIFICATION END
+    var currListInd = state.listStack[state.listStack.length - 1] || 0;
+    var hasExitedList = state.indentation < currListInd;
+    var maxFencedEndInd = currListInd + 3;
+    if (state.fencedEndRE && state.indentation <= maxFencedEndInd && (hasExitedList || stream.match(state.fencedEndRE))) {
+      if (modeCfg.highlightFormatting) state.formatting = "code-block";
+      var returnType;
+      if (!hasExitedList) returnType = getType(state)
       state.localMode = state.localState = null;
-      state.f = state.block = leavingLocal;
-      return null;
+      state.block = blockNormal;
+      state.f = inlineNormal;
+      state.fencedEndRE = null;
+      state.code = 0
+      state.thisLine.fencedCodeEnd = true;
+      if (hasExitedList) return switchBlock(stream, state, state.block);
+      return returnType;
     } else if (state.localMode) {
       return state.localMode.token(stream, state.localState);
     } else {
       stream.skipToEnd();
-      return code;
+      return tokenTypes.code;
     }
-  }
-
-  function leavingLocal(stream, state) {
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-    stream.match(state.fencedChars);
-    state.block = blockNormal;
-    state.f = inlineNormal;
-    state.fencedChars = null;
-    // stream.match("```");
-    // state.block = blockNormal;
-    // state.f = inlineNormal;
-// TUI.EDITOR MODIFICATION END
-    if (modeCfg.highlightFormatting) state.formatting = "code-block";
-    state.code = true;
-    var returnType = getType(state);
-    state.code = false;
-    return returnType;
   }
 
   // Inline
@@ -327,22 +319,22 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     var styles = [];
 
     if (state.formatting) {
-      styles.push(formatting);
+      styles.push(tokenTypes.formatting);
 
       if (typeof state.formatting === "string") state.formatting = [state.formatting];
 
       for (var i = 0; i < state.formatting.length; i++) {
-        styles.push(formatting + "-" + state.formatting[i]);
+        styles.push(tokenTypes.formatting + "-" + state.formatting[i]);
 
         if (state.formatting[i] === "header") {
-          styles.push(formatting + "-" + state.formatting[i] + "-" + state.header);
+          styles.push(tokenTypes.formatting + "-" + state.formatting[i] + "-" + state.header);
         }
 
         // Add `formatting-quote` and `formatting-quote-#` for blockquotes
         // Add `error` instead if the maximum blockquote nesting depth is passed
         if (state.formatting[i] === "quote") {
           if (!modeCfg.maxBlockquoteDepth || modeCfg.maxBlockquoteDepth >= state.quote) {
-            styles.push(formatting + "-" + state.formatting[i] + "-" + state.quote);
+            styles.push(tokenTypes.formatting + "-" + state.formatting[i] + "-" + state.quote);
           } else {
             styles.push("error");
           }
@@ -360,38 +352,40 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     }
 
     if (state.linkHref) {
-      styles.push(linkhref, "url");
+      styles.push(tokenTypes.linkHref, "url");
     } else { // Only apply inline styles to non-url text
-      if (state.strong) { styles.push(strong); }
-      if (state.em) { styles.push(em); }
-      if (state.strikethrough) { styles.push(strikethrough); }
-
-      if (state.linkText) { styles.push(linktext); }
-
-      if (state.code) { styles.push(code); }
+      if (state.strong) { styles.push(tokenTypes.strong); }
+      if (state.em) { styles.push(tokenTypes.em); }
+      if (state.strikethrough) { styles.push(tokenTypes.strikethrough); }
+      if (state.emoji) { styles.push(tokenTypes.emoji); }
+      if (state.linkText) { styles.push(tokenTypes.linkText); }
+      if (state.code) { styles.push(tokenTypes.code); }
+      if (state.image) { styles.push(tokenTypes.image); }
+      if (state.imageAltText) { styles.push(tokenTypes.imageAltText, "link"); }
+      if (state.imageMarker) { styles.push(tokenTypes.imageMarker); }
     }
 
-    if (state.header) { styles.push(header); styles.push(header + "-" + state.header); }
+    if (state.header) { styles.push(tokenTypes.header, tokenTypes.header + "-" + state.header); }
 
     if (state.quote) {
-      styles.push(quote);
+      styles.push(tokenTypes.quote);
 
       // Add `quote-#` where the maximum for `#` is modeCfg.maxBlockquoteDepth
       if (!modeCfg.maxBlockquoteDepth || modeCfg.maxBlockquoteDepth >= state.quote) {
-        styles.push(quote + "-" + state.quote);
+        styles.push(tokenTypes.quote + "-" + state.quote);
       } else {
-        styles.push(quote + "-" + modeCfg.maxBlockquoteDepth);
+        styles.push(tokenTypes.quote + "-" + modeCfg.maxBlockquoteDepth);
       }
     }
 
     if (state.list !== false) {
-      var listMod = (state.listDepth - 1) % 3;
+      var listMod = (state.listStack.length - 1) % 3;
       if (!listMod) {
-        styles.push(list1);
+        styles.push(tokenTypes.list1);
       } else if (listMod === 1) {
-        styles.push(list2);
+        styles.push(tokenTypes.list2);
       } else {
-        styles.push(list3);
+        styles.push(tokenTypes.list3);
       }
     }
 
@@ -422,7 +416,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     }
 
     if (state.taskList) {
-      var taskOpen = stream.match(taskListRE, true)[1] !== "x";
+      var taskOpen = stream.match(taskListRE, true)[1] === " ";
       if (taskOpen) state.taskOpen = true;
       else state.taskClosed = true;
       if (modeCfg.highlightFormatting) state.formatting = "task";
@@ -438,18 +432,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return getType(state);
     }
 
-    // Get sol() value now, before character is consumed
-    var sol = stream.sol();
-
     var ch = stream.next();
-
-    if (ch === '\\') {
-      stream.next();
-      if (modeCfg.highlightFormatting) {
-        var type = getType(state);
-        return type ? type + " formatting-escape" : "formatting-escape";
-      }
-    }
 
     // Matches link titles present on next line
     if (state.linkTitle) {
@@ -458,10 +441,10 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       if (ch === '(') {
         matchCh = ')';
       }
-      matchCh = (matchCh+'').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+      matchCh = (matchCh+'').replace(/([.?*+^\[\]\\(){}|-])/g, "\\$1");
       var regex = '^\\s*(?:[^' + matchCh + '\\\\]+|\\\\\\\\|\\\\.)' + matchCh;
       if (stream.match(new RegExp(regex), true)) {
-        return linkhref;
+        return tokenTypes.linkHref;
       }
     }
 
@@ -469,48 +452,67 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     if (ch === '`') {
       var previousFormatting = state.formatting;
       if (modeCfg.highlightFormatting) state.formatting = "code";
-      var t = getType(state);
-      var before = stream.pos;
       stream.eatWhile('`');
-      var difference = 1 + stream.pos - before;
-      if (!state.code) {
-        codeDepth = difference;
-        state.code = true;
-        return getType(state);
+      var count = stream.current().length
+      if (state.code == 0 && (!state.quote || count == 1)) {
+        state.code = count
+        return getType(state)
+      } else if (count == state.code) { // Must be exact
+        var t = getType(state)
+        state.code = 0
+        return t
       } else {
-        if (difference === codeDepth) { // Must be exact
-          state.code = false;
-          return t;
-        }
-        state.formatting = previousFormatting;
-        return getType(state);
+        state.formatting = previousFormatting
+        return getType(state)
       }
     } else if (state.code) {
       return getType(state);
     }
 
-    if (ch === '!' && stream.match(/\[[^\]]*\] ?(?:\(|\[)/, false)) {
-      stream.match(/\[[^\]]*\]/);
-// TUI.EDITOR MODIFICATION START
-// remove image syntax from highlight
-// https://github.nhnent.com/fe/tui.editor/commit/d2160b8c16f392372569dc2a22f12957afd7d9f2
-      // hash string in image link is too long to highligh. exclude image from highlight
-      // state.inline = state.f = linkHref;
-// TUI.EDITOR MODIFICATION END
-      return image;
+    if (ch === '\\') {
+      stream.next();
+      if (modeCfg.highlightFormatting) {
+        var type = getType(state);
+        var formattingEscape = tokenTypes.formatting + "-escape";
+        return type ? type + " " + formattingEscape : formattingEscape;
+      }
     }
 
-    if (ch === '[' && stream.match(/.*\](\(.*\)| ?\[.*\])/, false)) {
+    if (ch === '!' && stream.match(/\[[^\]]*\] ?(?:\(|\[)/, false)) {
+      state.imageMarker = true;
+      state.image = true;
+      if (modeCfg.highlightFormatting) state.formatting = "image";
+      return getType(state);
+    }
+
+    if (ch === '[' && state.imageMarker && stream.match(/[^\]]*\](\(.*?\)| ?\[.*?\])/, false)) {
+      state.imageMarker = false;
+      state.imageAltText = true
+      if (modeCfg.highlightFormatting) state.formatting = "image";
+      return getType(state);
+    }
+
+    if (ch === ']' && state.imageAltText) {
+      if (modeCfg.highlightFormatting) state.formatting = "image";
+      var type = getType(state);
+      state.imageAltText = false;
+      state.image = false;
+      state.inline = state.f = linkHref;
+      return type;
+    }
+
+    if (ch === '[' && !state.image) {
+      if (state.linkText && stream.match(/^.*?\]/)) return getType(state)
       state.linkText = true;
       if (modeCfg.highlightFormatting) state.formatting = "link";
       return getType(state);
     }
 
-    if (ch === ']' && state.linkText && stream.match(/\(.*\)| ?\[.*\]/, false)) {
+    if (ch === ']' && state.linkText) {
       if (modeCfg.highlightFormatting) state.formatting = "link";
       var type = getType(state);
       state.linkText = false;
-      state.inline = state.f = linkHref;
+      state.inline = state.f = stream.match(/\(.*?\)| ?\[.*?\]/, false) ? linkHref : inlineNormal
       return type;
     }
 
@@ -523,7 +525,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       } else {
         type = "";
       }
-      return type + linkinline;
+      return type + tokenTypes.linkInline;
     }
 
     if (ch === '<' && stream.match(/^[^> \\]+@(?:[^\\>]|\\.)+>/, false)) {
@@ -535,14 +537,10 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       } else {
         type = "";
       }
-      return type + linkemail;
+      return type + tokenTypes.linkEmail;
     }
-// TUI.EDITOR MODIFICATION START
-// codemirror markdown mode fix to prevent htmlBlock
-// https://github.nhnent.com/fe/tui.editor/commit/35910adb507646b6129fd4d349c65bbe28832211
-// we dont need html Block it ruin markdown blocks
-/*
-    if (ch === '<' && stream.match(/^(!--|\w)/, false)) {
+
+    if (modeCfg.xml && ch === '<' && stream.match(/^(!--|\?|!\[CDATA\[|[a-z][a-z0-9-]*(?:\s+[a-z_:.\-]+(?:\s*=\s*[^>]+)?)*\s*(?:>|$))/i, false)) {
       var end = stream.string.indexOf(">", stream.pos);
       if (end != -1) {
         var atts = stream.string.substring(stream.start, end);
@@ -553,46 +551,37 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return switchBlock(stream, state, htmlBlock);
     }
 
-    if (ch === '<' && stream.match(/^\/\w*?>/)) {
+    if (modeCfg.xml && ch === '<' && stream.match(/^\/\w*?>/)) {
       state.md_inside = false;
       return "tag";
-    }
-*/
-// TUI.EDITOR MODIFICATION END
-
-    var ignoreUnderscore = false;
-    if (!modeCfg.underscoresBreakWords) {
-      if (ch === '_' && stream.peek() !== '_' && stream.match(/(\w)/, false)) {
-        var prevPos = stream.pos - 2;
-        if (prevPos >= 0) {
-          var prevCh = stream.string.charAt(prevPos);
-          if (prevCh !== '_' && prevCh.match(/(\w)/, false)) {
-            ignoreUnderscore = true;
-          }
-        }
+    } else if (ch === "*" || ch === "_") {
+      var len = 1, before = stream.pos == 1 ? " " : stream.string.charAt(stream.pos - 2)
+      while (len < 3 && stream.eat(ch)) len++
+      var after = stream.peek() || " "
+      // See http://spec.commonmark.org/0.27/#emphasis-and-strong-emphasis
+      var leftFlanking = !/\s/.test(after) && (!punctuation.test(after) || /\s/.test(before) || punctuation.test(before))
+      var rightFlanking = !/\s/.test(before) && (!punctuation.test(before) || /\s/.test(after) || punctuation.test(after))
+      var setEm = null, setStrong = null
+      if (len % 2) { // Em
+        if (!state.em && leftFlanking && (ch === "*" || !rightFlanking || punctuation.test(before)))
+          setEm = true
+        else if (state.em == ch && rightFlanking && (ch === "*" || !leftFlanking || punctuation.test(after)))
+          setEm = false
       }
-    }
-    if (ch === '*' || (ch === '_' && !ignoreUnderscore)) {
-      if (sol && stream.peek() === ' ') {
-        // Do nothing, surrounded by newline and space
-      } else if (state.strong === ch && stream.eat(ch)) { // Remove STRONG
-        if (modeCfg.highlightFormatting) state.formatting = "strong";
-        var t = getType(state);
-        state.strong = false;
-        return t;
-      } else if (!state.strong && stream.eat(ch)) { // Add STRONG
-        state.strong = ch;
-        if (modeCfg.highlightFormatting) state.formatting = "strong";
-        return getType(state);
-      } else if (state.em === ch) { // Remove EM
-        if (modeCfg.highlightFormatting) state.formatting = "em";
-        var t = getType(state);
-        state.em = false;
-        return t;
-      } else if (!state.em) { // Add EM
-        state.em = ch;
-        if (modeCfg.highlightFormatting) state.formatting = "em";
-        return getType(state);
+      if (len > 1) { // Strong
+        if (!state.strong && leftFlanking && (ch === "*" || !rightFlanking || punctuation.test(before)))
+          setStrong = true
+        else if (state.strong == ch && rightFlanking && (ch === "*" || !leftFlanking || punctuation.test(after)))
+          setStrong = false
+      }
+      if (setStrong != null || setEm != null) {
+        if (modeCfg.highlightFormatting) state.formatting = setEm == null ? "strong" : setStrong == null ? "em" : "strong em"
+        if (setEm === true) state.em = ch
+        if (setStrong === true) state.strong = ch
+        var t = getType(state)
+        if (setEm === false) state.em = false
+        if (setStrong === false) state.strong = false
+        return t
       }
     } else if (ch === ' ') {
       if (stream.eat('*') || stream.eat('_')) { // Probably surrounded by spaces
@@ -627,6 +616,14 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       }
     }
 
+    if (modeCfg.emoji && ch === ":" && stream.match(/^[a-z_\d+-]+:/)) {
+      state.emoji = true;
+      if (modeCfg.highlightFormatting) state.formatting = "emoji";
+      var retType = getType(state);
+      state.emoji = false;
+      return retType;
+    }
+
     if (ch === ' ') {
       if (stream.match(/^ +$/, false)) {
         state.trailingSpace++;
@@ -650,12 +647,12 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       } else {
         type = "";
       }
-      return type + linkinline;
+      return type + tokenTypes.linkInline;
     }
 
     stream.match(/^[^>]+/, true);
 
-    return linkinline;
+    return tokenTypes.linkInline;
   }
 
   function linkHref(stream, state) {
@@ -673,6 +670,11 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     return 'error';
   }
 
+  var linkRE = {
+    ")": /^(?:[^\\\(\)]|\\.|\((?:[^\\\(\)]|\\.)*\))*?(?=\))/,
+    "]": /^(?:[^\\\[\]]|\\.|\[(?:[^\\\[\]]|\\.)*\])*?(?=\])/
+  }
+
   function getLinkHrefInside(endChar) {
     return function(stream, state) {
       var ch = stream.next();
@@ -685,17 +687,14 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         return returnState;
       }
 
-      if (stream.match(inlineRE(endChar), true)) {
-        stream.backUp(1);
-      }
-
+      stream.match(linkRE[endChar])
       state.linkHref = true;
       return getType(state);
     };
   }
 
   function footnoteLink(stream, state) {
-    if (stream.match(/^[^\]]*\]:/, false)) {
+    if (stream.match(/^([^\]\\]|\\.)*\]:/, false)) {
       state.f = footnoteLinkInside;
       stream.next(); // Consume [
       if (modeCfg.highlightFormatting) state.formatting = "link";
@@ -714,9 +713,9 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return returnType;
     }
 
-    stream.match(/^[^\]]+/, true);
+    stream.match(/^([^\]\\]|\\.)+/, true);
 
-    return linktext;
+    return tokenTypes.linkText;
   }
 
   function footnoteUrl(stream, state) {
@@ -733,33 +732,16 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       stream.match(/^(?:\s+(?:"(?:[^"\\]|\\\\|\\.)+"|'(?:[^'\\]|\\\\|\\.)+'|\((?:[^)\\]|\\\\|\\.)+\)))?/, true);
     }
     state.f = state.inline = inlineNormal;
-    return linkhref + " url";
-  }
-
-  var savedInlineRE = [];
-  function inlineRE(endChar) {
-    if (!savedInlineRE[endChar]) {
-      // Escape endChar for RegExp (taken from http://stackoverflow.com/a/494122/526741)
-      endChar = (endChar+'').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
-      // Match any non-endChar, escaped character, as well as the closing
-      // endChar.
-      savedInlineRE[endChar] = new RegExp('^(?:[^\\\\]|\\\\.)*?(' + endChar + ')');
-    }
-    return savedInlineRE[endChar];
+    return tokenTypes.linkHref + " url";
   }
 
   var mode = {
     startState: function() {
       return {
         f: blockNormal,
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-        prevLine: null,
-        thisLine: null,
-        // prevLineHasContent: false,
-        // thisLineHasContent: false,
-// TUI.EDITOR MODIFICATION END
+
+        prevLine: {stream: null},
+        thisLine: {stream: null},
 
         block: blockNormal,
         htmlState: null,
@@ -772,27 +754,21 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         linkText: false,
         linkHref: false,
         linkTitle: false,
+        code: 0,
         em: false,
         strong: false,
         header: 0,
+        setext: 0,
         hr: false,
-// TUI.EDITOR MODIFICATION START
-// Do not show table format pasting confirm on paste event where in Bloc... (#720)
-// https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
-        task: false,
-// TUI.EDITOR MODIFICATION END
         taskList: false,
         list: false,
-        listDepth: 0,
+        listStack: [],
         quote: 0,
         trailingSpace: 0,
         trailingSpaceNewLine: false,
         strikethrough: false,
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-        fencedChars: null
-// TUI.EDITOR MODIFICATION END
+        emoji: false,
+        fencedEndRE: null
       };
     },
 
@@ -800,14 +776,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return {
         f: s.f,
 
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         prevLine: s.prevLine,
-        thisLine: s.this,
-        // prevLineHasContent: s.prevLineHasContent,
-        // thisLineHasContent: s.thisLineHasContent,
-// TUI.EDITOR MODIFICATION END
+        thisLine: s.thisLine,
 
         block: s.block,
         htmlState: s.htmlState && CodeMirror.copyState(htmlMode, s.htmlState),
@@ -819,35 +789,26 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         inline: s.inline,
         text: s.text,
         formatting: false,
+        linkText: s.linkText,
         linkTitle: s.linkTitle,
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
+        linkHref: s.linkHref,
         code: s.code,
-// TUI.EDITOR MODIFICATION END
         em: s.em,
         strong: s.strong,
         strikethrough: s.strikethrough,
+        emoji: s.emoji,
         header: s.header,
+        setext: s.setext,
         hr: s.hr,
         taskList: s.taskList,
-// TUI.EDITOR MODIFICATION START
-// Do not show table format pasting confirm on paste event where in Bloc... (#720)
-// https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
-        task: s.task, // to manage task state
-// TUI.EDITOR MODIFICATION END
         list: s.list,
-        listDepth: s.listDepth,
+        listStack: s.listStack.slice(0),
         quote: s.quote,
         indentedCode: s.indentedCode,
         trailingSpace: s.trailingSpace,
         trailingSpaceNewLine: s.trailingSpaceNewLine,
         md_inside: s.md_inside,
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-        fencedChars: s.fencedChars
-// TUI.EDITOR MODIFICATION END
+        fencedEndRE: s.fencedEndRE
       };
     },
 
@@ -856,61 +817,34 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       // Reset state.formatting
       state.formatting = false;
 
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-      if (stream != state.thisLine) {
-        var forceBlankLine = state.header || state.hr;
-      // if (stream.sol()) {
-      //   var forceBlankLine = !!state.header || state.hr;
-// TUI.EDITOR MODIFICATION END
-
-        // Reset state.header and state.hr
+      if (stream != state.thisLine.stream) {
         state.header = 0;
         state.hr = false;
 
-        if (stream.match(/^\s*$/, true) || forceBlankLine) {
-// TUI.EDITOR MODIFICATION START
-// scrollSync prototype
-// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
+        if (stream.match(/^\s*$/, true)) {
           blankLine(state);
-          if (!forceBlankLine) return null
-          state.prevLine = null
+          return null;
         }
 
         state.prevLine = state.thisLine
-        state.thisLine = stream
-        //   state.prevLineHasContent = false;
-        //   blankLine(state);
-        //   return forceBlankLine ? this.token(stream, state) : null;
-        // } else {
-        //   state.prevLineHasContent = state.thisLineHasContent;
-        //   state.thisLineHasContent = true;
-        // }
-// TUI.EDITOR MODIFICATION END
+        state.thisLine = {stream: stream}
 
         // Reset state.taskList
         state.taskList = false;
-// TUI.EDITOR MODIFICATION START
-// Do not show table format pasting confirm on paste event where in Bloc... (#720)
-// https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
-        state.task = false; // to manage task status
-        // Reset state.code
-        // state.code = false;
-// TUI.EDITOR MODIFICATION END
 
         // Reset state.trailingSpace
         state.trailingSpace = 0;
         state.trailingSpaceNewLine = false;
 
-        state.f = state.block;
-        var indentation = stream.match(/^\s*/, true)[0].replace(/\t/g, '    ').length;
-        var difference = Math.floor((indentation - state.indentation) / 4) * 4;
-        if (difference > 4) difference = 4;
-        var adjustedIndentation = state.indentation + difference;
-        state.indentationDiff = adjustedIndentation - state.indentation;
-        state.indentation = adjustedIndentation;
-        if (indentation > 0) return null;
+        if (!state.localState) {
+          state.f = state.block;
+          if (state.f != htmlBlock) {
+            var indentation = stream.match(/^\s*/, true)[0].replace(/\t/g, expandedTab).length;
+            state.indentation = indentation;
+            state.indentationDiff = null;
+            if (indentation > 0) return null;
+          }
+        }
       }
       return state.f(stream, state);
     },
@@ -921,17 +855,22 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return {state: state, mode: mode};
     },
 
+    indent: function(state, textAfter, line) {
+      if (state.block == htmlBlock && htmlMode.indent) return htmlMode.indent(state.htmlState, textAfter, line)
+      if (state.localState && state.localMode.indent) return state.localMode.indent(state.localState, textAfter, line)
+      return CodeMirror.Pass
+    },
+
     blankLine: blankLine,
 
     getType: getType,
-// TUI.EDITOR MODIFICATION START
-// Exclude closing tags highlighting fixes #789 (#801)
-// https://github.nhnent.com/fe/tui.editor/commit/815b271cd426c6939413136a0532846a58cd36ab
+
     closeBrackets: "()[]{}''\"\"``",
-// TUI.EDITOR MODIFICATION END
     fold: "markdown"
   };
   return mode;
 }, "xml");
+
+CodeMirror.defineMIME("text/markdown", "markdown");
 
 CodeMirror.defineMIME("text/x-markdown", "markdown");
