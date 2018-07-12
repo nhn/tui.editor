@@ -3,8 +3,9 @@
 // The (non-standard but supported enough) innerText property is based on the
 // render tree in Firefox and possibly other browsers, so we must insert the
 // DOM node into the document to ensure the text part is correct.
-var setClipboardData = function ( clipboardData, node, root ) {
+var setClipboardData = function ( clipboardData, node, root, config ) {
     var body = node.ownerDocument.body;
+    var willCutCopy = config.willCutCopy;
     var html, text;
 
     // Firefox will add an extra new line for BRs at the end of block when
@@ -17,6 +18,10 @@ var setClipboardData = function ( clipboardData, node, root ) {
     body.appendChild( node );
     html = node.innerHTML;
     text = node.innerText || node.textContent;
+
+    if ( willCutCopy ) {
+        html = willCutCopy( html );
+    }
 
     // Firefox (and others?) returns unix line endings (\n) even on Windows.
     // If on Windows, normalise to \r\n, since Notepad and some other crappy
@@ -72,7 +77,7 @@ var onCut = function ( event ) {
         // Set clipboard data
         node = this.createElement( 'div' );
         node.appendChild( contents );
-        setClipboardData( clipboardData, node, root );
+        setClipboardData( clipboardData, node, root, this._config );
         event.preventDefault();
     } else {
         setTimeout( function () {
@@ -124,7 +129,7 @@ var onCopy = function ( event ) {
         // Set clipboard data
         node = this.createElement( 'div' );
         node.appendChild( contents );
-        setClipboardData( clipboardData, node, root );
+        setClipboardData( clipboardData, node, root, this._config );
         event.preventDefault();
     }
 };
