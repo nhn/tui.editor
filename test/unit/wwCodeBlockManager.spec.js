@@ -30,7 +30,7 @@ describe('WwCodeBlockManager', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      $container.remove();
       done();
     });
   });
@@ -212,6 +212,19 @@ describe('WwCodeBlockManager', () => {
       expect(wwe.getValue()).toEqual([
         '<pre><code class="lang-javascript" data-language="javascript">test1\ntest2</code></pre>',
         '<pre><code class="lang-javascript" data-language="javascript">test3\ntest4</code></pre>'
+      ].join(''));
+    });
+
+    it('should replace br to newline on wysiwygProcessHTMLText', () => {
+      wwe.getEditor().setHTML([
+        '<pre class="lang-javascript" data-language="javascript">',
+        'test1<br>',
+        'test2<br />',
+        '</pre>'
+      ].join(''));
+
+      expect(wwe.getValue()).toEqual([
+        '<pre><code class="lang-javascript" data-language="javascript">test1\ntest2</code></pre>'
       ].join(''));
     });
   });

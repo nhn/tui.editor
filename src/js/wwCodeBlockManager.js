@@ -38,6 +38,7 @@ class WwCodeBlockManager {
 
     this._init();
   }
+
   /**
    * _init
    * Initialize
@@ -147,7 +148,7 @@ class WwCodeBlockManager {
    */
   _mergeCodeblockEachlinesFromHTMLText(html) {
     html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, (match, codeAttr, code) => {
-      code = code.replace(/<br \/>/g, '\n');
+      code = code.replace(/<br\s*\/?>/g, '\n');
       code = code.replace(/<div ?(.*?)>/g, '');
       code = code.replace(/\n$/, '');
 
