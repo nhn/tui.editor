@@ -291,8 +291,9 @@ class SectionManager {
    */
   _isSeTextHeader(lineString, nextLineString) {
     return lineString.replace(FIND_SPACE, '') !== ''
-            && nextLineString
-            && FIND_SETEXT_HEADER_RX.test(nextLineString);
+      && !this._isQuote(lineString)
+      && nextLineString
+      && FIND_SETEXT_HEADER_RX.test(nextLineString);
   }
 
   _isImage(lineString) {
