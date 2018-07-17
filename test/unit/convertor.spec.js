@@ -98,6 +98,11 @@ describe('Convertor', () => {
       expect(convertor.toMarkdown('im &lt;/span attr="value"&gt; text')).toEqual('im </span attr="value"> text');
     });
 
+    it('should escape html and markdown syntax', () => {
+      expect(convertor.toMarkdown('1. &lt;span&gt;a text contains markdown syntax and html tag&lt;/span&gt;'))
+        .toEqual('1\\. \\<span\\>a text contains markdown syntax and html tag\\</span\\>');
+    });
+
     it('should print number of backticks for code according to data-backticks attribute', () => {
       expect(convertor.toMarkdown('<code data-backticks="1">code span</code>').trim()).toEqual('`code span`');
       expect(convertor.toMarkdown('<code data-backticks="3">code span</code>').trim()).toEqual('```code span```');
