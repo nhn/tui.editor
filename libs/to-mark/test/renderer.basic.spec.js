@@ -43,6 +43,15 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('  \n')).toEqual('');
             expect(getMarkdownText('')).toEqual('');
         });
+
+        it('should escape text', function() {
+            expect(getMarkdownText('1. text')).toEqual('1\\. text');
+            expect(getMarkdownText('&lt;text&gt;')).toEqual('\\<text>');
+            // this should result '1\\. \\<text>'
+            // we'll have to deal with #18 to handle this
+            // until then, we tolerate over escaping the > char
+            expect(getMarkdownText('1. &lt;text&gt;')).toEqual('1\\. \\<text\\>');
+        });
     });
 
     describe('inline', function() {
