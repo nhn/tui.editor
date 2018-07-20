@@ -489,9 +489,7 @@ class WysiwygEditor {
         });
       }
 
-      this.defer(() => {
-        this.scrollIntoCursor();
-      });
+      this.defer(() => this.scrollIntoCursor());
     });
 
     this.addKeyEventHandler('TAB', ev => {
@@ -1000,10 +998,18 @@ class WysiwygEditor {
    */
   scrollIntoCursor() {
     const scrollTop = this.scrollTop();
-    const {top: cursorTop, height: cursorHeight} = this.getEditor().getCursorPosition();
-    const {top: editorTop, height: editorHeight} = this.$editorContainerEl.get(0).getBoundingClientRect();
+    const {
+      top: cursorTop,
+      height: cursorHeight
+    } = this.getEditor().getCursorPosition();
+    const {
+      top: editorTop,
+      height: editorHeight
+    } = this.$editorContainerEl.get(0).getBoundingClientRect();
+
     const cursorAboveEditor = cursorTop - editorTop;
     const cursorBelowEditor = (cursorTop + cursorHeight) - (editorTop + editorHeight);
+
     if (cursorAboveEditor < 0) {
       this.scrollTop(scrollTop + cursorAboveEditor);
     } else if (cursorBelowEditor > 0) {
