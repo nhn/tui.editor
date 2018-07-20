@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.5
+ * @version 1.2.6
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -252,7 +252,9 @@ function scrollSyncExtension(editor) {
 
   editor.on('previewRenderAfter', function () {
     sectionManager.sectionMatch();
-    scrollManager.syncPreviewScrollTopToMarkdown();
+    if (isActive) {
+      scrollManager.syncPreviewScrollTopToMarkdown();
+    }
     isScrollable = true;
   });
 
@@ -1074,7 +1076,7 @@ var SectionManager = function () {
   }, {
     key: '_isSeTextHeader',
     value: function _isSeTextHeader(lineString, nextLineString) {
-      return lineString.replace(FIND_SPACE, '') !== '' && nextLineString && FIND_SETEXT_HEADER_RX.test(nextLineString);
+      return lineString.replace(FIND_SPACE, '') !== '' && !this._isQuote(lineString) && nextLineString && FIND_SETEXT_HEADER_RX.test(nextLineString);
     }
   }, {
     key: '_isImage',
