@@ -53,7 +53,8 @@ class CodeMirrorExt {
         'Alt-Up': 'replaceLineTextToUpper',
         'Alt-Down': 'replaceLineTextToLower'
       },
-      indentUnit: 4
+      indentUnit: 4,
+      cursorScrollMargin: 12
     }, options);
 
     this.cm = CodeMirror.fromTextArea(cmTextarea, options);

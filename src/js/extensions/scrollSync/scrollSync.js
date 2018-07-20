@@ -95,7 +95,9 @@ function scrollSyncExtension(editor) {
 
   editor.on('previewRenderAfter', () => {
     sectionManager.sectionMatch();
-    scrollManager.syncPreviewScrollTopToMarkdown();
+    if (isActive) {
+      scrollManager.syncPreviewScrollTopToMarkdown();
+    }
     isScrollable = true;
   });
 

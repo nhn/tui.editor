@@ -331,6 +331,21 @@ describe('sectionManager', () => {
       expect(sectionManager.sectionByLine(99999)).toBe(sectionList[2]);
     });
 
+    it('should not create a section for setext heading with quote', () => {
+      ned.setValue([
+        'text',
+        '> quote',
+        '---'
+      ].join('\n'));
+
+      sectionManager.makeSectionList();
+      const sectionList = sectionManager.getSectionList();
+
+      expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
+      expect(sectionManager.sectionByLine(1)).toBe(sectionList[0]);
+      expect(sectionManager.sectionByLine(99999)).toBe(sectionList[0]);
+    });
+
     it('create new section of image where at root level', () => {
       ned.setValue([
         'paragraph',

@@ -111,7 +111,7 @@ class WysiwygEditor {
   _initEvent() {
     this.eventManager.listen('wysiwygSetValueBefore', html => this._preprocessForInlineElement(html));
     this.eventManager.listen('wysiwygKeyEvent', ev => this._runKeyEventHandlers(ev.data, ev.keyMap));
-    this.eventManager.listen('wysiwygRangeChangeAfter', () => this._scrollToRangeIfNeed());
+    this.eventManager.listen('wysiwygRangeChangeAfter', () => this.scrollIntoCursor());
   }
 
   /**
@@ -399,6 +399,7 @@ class WysiwygEditor {
     });
 
     squire.addEventListener('blur', () => {
+      this.fixIMERange();
       this.eventManager.emit('blur', {
         source: 'wysiwyg'
       });
@@ -488,9 +489,7 @@ class WysiwygEditor {
         });
       }
 
-      this.defer(() => {
-        this._scrollToRangeIfNeed();
-      });
+      this.defer(() => this.scrollIntoCursor());
     });
 
     this.addKeyEventHandler('TAB', ev => {
@@ -520,24 +519,6 @@ class WysiwygEditor {
 
       $(node).wrap('<div />');
     });
-  }
-
-  /**
-   * Scroll editor area to current cursor position if need
-   * @private
-   */
-  _scrollToRangeIfNeed() {
-    const $editorContainerEl = this.$editorContainerEl;
-    const range = this.getRange();
-    const cursorTop = this.getEditor().getCursorPosition(range).top - $editorContainerEl.offset().top;
-
-    if (cursorTop >= $editorContainerEl.height()) {
-      let target = range.endContainer;
-      if (!(target instanceof Element)) {
-        target = target.parentNode;
-      }
-      target.scrollIntoView(false);
-    }
   }
 
   /**
@@ -1009,15 +990,40 @@ class WysiwygEditor {
   }
 
   /**
+   * move scroll to cursor
+   * scrollIntoView browser function may cause scrolling on document.
+   * this function aims to replace scrollIntoView function to prevent that.
+   * it will move the scroll of squire only.
+   * @memberof SquireExt
+   */
+  scrollIntoCursor() {
+    const scrollTop = this.scrollTop();
+    const {
+      top: cursorTop,
+      height: cursorHeight
+    } = this.getEditor().getCursorPosition();
+    const {
+      top: editorTop,
+      height: editorHeight
+    } = this.$editorContainerEl.get(0).getBoundingClientRect();
+
+    const cursorAboveEditor = cursorTop - editorTop;
+    const cursorBelowEditor = (cursorTop + cursorHeight) - (editorTop + editorHeight);
+
+    if (cursorAboveEditor < 0) {
+      this.scrollTop(scrollTop + cursorAboveEditor);
+    } else if (cursorBelowEditor > 0) {
+      this.scrollTop(scrollTop + cursorBelowEditor);
+    }
+  }
+
+  /**
    * Set cursor position to end
    * @memberof WysiwygEditor
    */
   moveCursorToEnd() {
     this.getEditor().moveCursorToEnd();
-    const contentNodes = this.get$Body().get(0).childNodes;
-    if (contentNodes.length > 0) {
-      contentNodes[contentNodes.length - 1].scrollIntoView(false);
-    }
+    this.scrollIntoCursor();
     this._correctRangeAfterMoveCursor('end');
   }
 
@@ -1084,6 +1090,39 @@ class WysiwygEditor {
    */
   getRange() {
     return this.getEditor().getSelection().cloneRange();
+  }
+
+  /**
+   * get IME range
+   * cjk composition causes wrong caret position.
+   * it returns fixed IME composition range
+   * @memberof WysiwygEditor
+   * @returns {Range}
+   */
+  getIMERange() {
+    let range;
+    const selection = getSelection();
+
+    if (selection && selection.rangeCount) {
+      range = selection.getRangeAt(0).cloneRange();
+    }
+
+    return range;
+  }
+
+  /**
+   * get IME range
+   * cjk composition causes wrong caret position.
+   * it sets fixed IME composition range
+   * @memberof WysiwygEditor
+   */
+  fixIMERange() {
+    const range = this.getIMERange();
+
+    // range exists and it's an WYSIWYG editor content
+    if (range && $(range.commonAncestorContainer).closest(this.$editorContainerEl).length) {
+      this.setRange(range);
+    }
   }
 
   /**

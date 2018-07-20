@@ -564,4 +564,38 @@ describe('WysiwygEditor', () => {
       expect(spyOriginal).not.toHaveBeenCalled();
     }, 1);
   });
+
+  describe('scrollIntoCursor', () => {
+    it('should scroll to cursor at the end', () => {
+      wwe.setHeight(50);
+      const sqe = wwe.getEditor();
+      sqe.setHTML('<div>a</div><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div>');
+      sqe.moveCursorToEnd();
+
+      wwe.scrollIntoCursor();
+
+      const {top: cursorTop, height: cursorHeight} = sqe.getCursorPosition();
+      const {top: editorTop, height: editorHeight} = wwe.$editorContainerEl.get(0).getBoundingClientRect();
+      expect(cursorTop >= 0).toBe(true);
+      expect(cursorTop + cursorHeight <= editorTop + editorHeight).toBe(true);
+    });
+
+    it('should scroll to cursor at the first', () => {
+      wwe.setHeight(50);
+      const sqe = wwe.getEditor();
+      sqe.setHTML('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+
+      // scroll to bottom
+      wwe.scrollTop(99999);
+
+      sqe.moveCursorToStart();
+      wwe.scrollIntoCursor();
+
+      const {top: cursorTop, height: cursorHeight} = sqe.getCursorPosition();
+      const {top: editorTop, height: editorHeight} = wwe.$editorContainerEl.get(0).getBoundingClientRect();
+
+      expect(cursorTop - editorTop >= 0).toBe(true);
+      expect(cursorTop + cursorHeight <= editorTop + editorHeight).toBe(true);
+    });
+  });
 });

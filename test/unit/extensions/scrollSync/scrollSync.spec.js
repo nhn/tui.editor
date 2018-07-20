@@ -6,6 +6,7 @@ import $ from 'jquery';
 
 import TuiEditor from '../../../../src/js/editor';
 import '../../../../src/js/extensions/scrollSync/scrollSync';
+import ScrollManager from '../../../../src/js/extensions/scrollSync/scrollManager.js';
 
 describe('scrollSync', () => {
   let ned, container;
@@ -40,7 +41,7 @@ describe('scrollSync', () => {
     });
   });
 
-  describe('disable/enable, build tc later', () => {
+  describe('activate/deactivate', () => {
     beforeEach(() => {
       ned.setValue([
         'paragraph',
@@ -50,10 +51,37 @@ describe('scrollSync', () => {
         '## header2',
         'paragraph'
       ].join('\n'));
+
+      jasmine.clock().install();
     });
 
-    it('disable scrollSync', () => {
-      ned.exec('scrollSync.diasable');
+    afterEach(() => {
+      jasmine.clock().uninstall();
+    });
+
+    it('should call scrollManager\'s syncPreviewScrollTopToMarkdown when activated', () => {
+      const codemirror = ned.mdEditor.cm;
+      const lastLine = codemirror.lastLine();
+
+      spyOn(ScrollManager.prototype, 'syncPreviewScrollTopToMarkdown');
+
+      codemirror.replaceRange('hello!', {line: lastLine});
+      jasmine.clock().tick(1000);
+
+      expect(ScrollManager.prototype.syncPreviewScrollTopToMarkdown).toHaveBeenCalled();
+    });
+
+    it('should not call scrollManager\'s syncPreviewScrollTopToMarkdown when deactivated', () => {
+      const codemirror = ned.mdEditor.cm;
+      const lastLine = codemirror.lastLine();
+
+      spyOn(ScrollManager.prototype, 'syncPreviewScrollTopToMarkdown');
+
+      ned.commandManager.exec('scrollSyncToggle'); // deactivate
+      codemirror.replaceRange('hello!', {line: lastLine});
+      jasmine.clock().tick(1000);
+
+      expect(ScrollManager.prototype.syncPreviewScrollTopToMarkdown).not.toHaveBeenCalled();
     });
   });
 });
