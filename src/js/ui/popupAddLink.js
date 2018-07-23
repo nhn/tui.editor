@@ -2,6 +2,7 @@
  * @fileoverview Implements PopupAddLink
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+import $ from 'jquery';
 import util from 'tui-code-snippet';
 
 import LayerPopup from './layerpopup';
@@ -129,12 +130,12 @@ class PopupAddLink extends LayerPopup {
     this._clearValidationStyle();
 
     if (linkText.length < 1) {
-      this._inputText.classList.add('wrong');
+      $(this._inputText).addClass('wrong');
 
       return;
     }
     if (url.length < 1) {
-      this._inputURL.classList.add('wrong');
+      $(this._inputURL).addClass('wrong');
 
       return;
     }
@@ -157,8 +158,8 @@ class PopupAddLink extends LayerPopup {
   }
 
   _clearValidationStyle() {
-    this._inputURL.classList.remove('wrong');
-    this._inputText.classList.remove('wrong');
+    $(this._inputURL).removeClass('wrong');
+    $(this._inputText).removeClass('wrong');
   }
 
   _resetInputs() {

@@ -121,7 +121,7 @@ class ScrollSyncSplit {
       $(contentElement).off(EVENT_REQUIRE_SCROLL_INTO_VIEW);
       this._contentWrapper.removeChild(contentElement);
     }
-    element.classList.add(CLASS_CONTENT[side]);
+    $(element).addClass(CLASS_CONTENT[side]);
     this._contentWrapper.appendChild(element);
     $(element).on(EVENT_REQUIRE_SCROLL_INTO_VIEW, ev => this._requireScrollIntoView(ev));
     $(element).on(EVENT_REQUIRE_SCROLL_SYNC, () => this.sync());
@@ -160,7 +160,7 @@ class ScrollSyncSplit {
    * @memberof ScrollSyncSplit
    */
   toggleScrollSync() {
-    this._el.classList.toggle(CLASS_SCROLL_SYNC);
+    $(this._el).toggleClass(CLASS_SCROLL_SYNC);
   }
 
   setSplitView(activate) {
@@ -172,7 +172,7 @@ class ScrollSyncSplit {
    * @memberof ScrollSyncSplit
    */
   toggleSplitView() {
-    this._el.classList.toggle(CLASS_SINGLE_CONTENT);
+    $(this._el).toggleClass(CLASS_SINGLE_CONTENT);
   }
 
   /**
@@ -181,7 +181,7 @@ class ScrollSyncSplit {
    * @memberof ScrollSyncSplit
    */
   isScrollSynced() {
-    return this._el.classList.contains(CLASS_SCROLL_SYNC);
+    return $(this._el).hasClass(CLASS_SCROLL_SYNC);
   }
 
   /**
@@ -190,7 +190,7 @@ class ScrollSyncSplit {
    * @memberof ScrollSyncSplit
    */
   isSplitView() {
-    return !this._el.classList.contains(CLASS_SINGLE_CONTENT);
+    return !$(this._el).hasClass(CLASS_SINGLE_CONTENT);
   }
 
   /**

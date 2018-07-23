@@ -131,7 +131,7 @@ describe('PopupAddLink', () => {
       $(okButton).trigger('click');
 
       expect(handler).not.toHaveBeenCalled();
-      expect(urlInput.classList.contains('wrong')).toBe(true);
+      expect($(urlInput).hasClass('wrong')).toBe(true);
     });
 
     it('should not emit AddLink and style input if url not filled', () => {
@@ -141,7 +141,7 @@ describe('PopupAddLink', () => {
       $(okButton).trigger('click');
 
       expect(handler).not.toHaveBeenCalled();
-      expect(linkTextInput.classList.contains('wrong')).toBe(true);
+      expect($(linkTextInput).hasClass('wrong')).toBe(true);
     });
   });
 
