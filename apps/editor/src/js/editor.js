@@ -508,10 +508,10 @@ class ToastUIEditor {
   height(height) {
     if (util.isExisty(height)) {
       if (height === 'auto') {
-        this.options.el.classList.add('auto-height');
+        $(this.options.el).addClass('auto-height');
         this.minHeight(this.minHeight());
       } else {
-        this.options.el.classList.remove('auto-height');
+        $(this.options.el).removeClass('auto-height');
         this.minHeight(height);
       }
       if (util.isNumber(height)) {
