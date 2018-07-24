@@ -65,14 +65,6 @@ class WwHrManager {
   _initKeyHandler() {
     this.wwe.addKeyEventHandler((ev, range) => this._onTypedInHr(range));
 
-    this.wwe.addKeyEventHandler('ENTER', (ev, range) => {
-      if (range.collapsed) {
-        return this._removeHrOnEnter(range, ev);
-      }
-
-      return true;
-    });
-
     this.wwe.addKeyEventHandler('BACK_SPACE', (ev, range) => {
       if (range.collapsed) {
         return this._removeHrOnBackspace(range, ev);
@@ -123,28 +115,6 @@ class WwHrManager {
         wwe.restoreSavedSelection();
       });
     }
-  }
-
-  /**
-   * _removeHrOnEnter
-   * Remove hr if need on enter
-   * @param {Range} range range
-   * @param {Event} ev event
-   * @returns {boolean} return true if hr was removed
-   * @memberof WwHrManager
-   * @private
-   */
-  _removeHrOnEnter(range, ev) {
-    let hrSuspect, blockPosition;
-
-    if (this._isInHr(range)) {
-      hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
-    } else if (this._isNearHr(range)) {
-      hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
-      blockPosition = 'before';
-    }
-
-    return this._changeHrToNewDefaultBlock(hrSuspect, range, ev, blockPosition);
   }
 
   /**
