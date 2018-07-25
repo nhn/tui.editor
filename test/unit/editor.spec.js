@@ -403,7 +403,7 @@ describe('Editor', () => {
 
       it('should use custom convertor if the option value is set', () => {
         const CustomConvertor = class extends Convertor {
-        }
+        };
 
         editor = new Editor({
           el: container,
