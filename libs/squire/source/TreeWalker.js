@@ -26,10 +26,14 @@ var typeToBitArray = {
     11: 1024
 };
 
+var always = function () {
+    return true;
+};
+
 function TreeWalker ( root, nodeType, filter ) {
     this.root = this.currentNode = root;
     this.nodeType = nodeType;
-    this.filter = filter;
+    this.filter = filter || always;
 }
 
 TreeWalker.prototype.nextNode = function () {

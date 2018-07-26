@@ -183,9 +183,7 @@ var allowedBlock = /^(?:A(?:DDRESS|RTICLE|SIDE|UDIO)|BLOCKQUOTE|CAPTION|D(?:[DLT
 
 var blacklist = /^(?:HEAD|META|STYLE)/;
 
-var walker = new TreeWalker( null, SHOW_TEXT|SHOW_ELEMENT, function () {
-    return true;
-});
+var walker = new TreeWalker( null, SHOW_TEXT|SHOW_ELEMENT );
 
 /*
     Two purposes:
