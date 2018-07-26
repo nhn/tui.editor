@@ -1440,7 +1440,7 @@ var keyHandlers = {
 
         // If this is a malformed bit of document or in a table;
         // just play it safe and insert a <br>.
-        if ( !block || /^T[HD]$/.test( block.nodeName ) ) {
+        if ( !block || event.shiftKey || /^T[HD]$/.test( block.nodeName ) ) {
             // If inside an <a>, move focus out
             parent = getNearest( range.endContainer, root, 'A' );
             if ( parent ) {
@@ -1522,6 +1522,11 @@ var keyHandlers = {
         self.setSelection( range );
         self._updatePath( range, true );
     },
+
+    'shift-enter': function ( self, event, range ) {
+        return self._keyHandlers.enter( self, event, range );
+    },
+
     backspace: function ( self, event, range ) {
         var root = self._root;
         self._removeZWS();
