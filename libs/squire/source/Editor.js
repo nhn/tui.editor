@@ -1917,6 +1917,38 @@ var escapeHTMLFragement = function ( text ) {
 };
 
 proto.insertPlainText = function ( plainText, isPaste ) {
+    var range = this.getSelection();
+    if ( range.collapsed &&
+            getNearest( range.startContainer, this._root, 'PRE' ) ) {
+        var node = range.startContainer;
+        var offset = range.startOffset;
+        var text, event;
+        if ( !node || node.nodeType !== TEXT_NODE ) {
+            text = this._doc.createTextNode( '' );
+            node.insertBefore( text, node.childNodes[ offset ] );
+            node = text;
+            offset = 0;
+        }
+        event = {
+            text: plainText,
+            preventDefault: function () {
+                this.defaultPrevented = true;
+            },
+            defaultPrevented: false
+        };
+        if ( isPaste ) {
+            this.fireEvent( 'willPaste', event );
+        }
+
+        if ( !event.defaultPrevented ) {
+            plainText = event.text;
+            node.insertData( offset, plainText );
+            range.setStart( node, offset + plainText.length );
+            range.collapse( true );
+        }
+        this.setSelection( range );
+        return this;
+    }
     var lines = plainText.split( '\n' );
     var config = this._config;
     var tag = config.blockTag;
@@ -2100,6 +2132,126 @@ proto.setTextDirection = function ( direction ) {
     }, true );
     return this.focus();
 };
+
+// ---
+
+var addPre = function ( frag ) {
+    var root = this._root;
+    var document = this._doc;
+    var output = document.createDocumentFragment();
+    var walker = getBlockWalker( frag, root );
+    var node;
+    // 1. Extract inline content; drop all blocks and contains.
+    while (( node = walker.nextNode() )) {
+        // 2. Replace <br> with \n in content
+        var nodes = node.querySelectorAll( 'BR' );
+        var brBreaksLine = [];
+        var l = nodes.length;
+        var i, br;
+
+        // Must calculate whether the <br> breaks a line first, because if we
+        // have two <br>s next to each other, after the first one is converted
+        // to a block split, the second will be at the end of a block and
+        // therefore seem to not be a line break. But in its original context it
+        // was, so we should also convert it to a block split.
+        for ( i = 0; i < l; i += 1 ) {
+            brBreaksLine[i] = isLineBreak( nodes[i], false );
+        }
+        while ( l-- ) {
+            br = nodes[l];
+            if ( !brBreaksLine[l] ) {
+                detach( br );
+            } else {
+                replaceWith( br, document.createTextNode( '\n' ) );
+            }
+        }
+        // 3. Remove <code>; its format clashes with <pre>
+        nodes = node.querySelectorAll( 'CODE' );
+        l = nodes.length;
+        while ( l-- ) {
+            detach( nodes[l] );
+        }
+        if ( output.childNodes.length ) {
+            output.appendChild( document.createTextNode( '\n' ) );
+        }
+        output.appendChild( empty( node ) );
+    }
+    // 4. Replace nbsp with regular sp
+    walker = new TreeWalker( output, SHOW_TEXT );
+    while (( node = walker.nextNode() )) {
+        node.data = node.data.replace( / /g, ' ' ); // nbsp -> sp
+    }
+    output.normalize();
+    return fixCursor( this.createElement( 'PRE',
+        this._config.tagAttributes.pre, [
+            output
+        ]), root );
+};
+
+var removePre = function ( frag ) {
+    var document = this._doc;
+    var root = this._root;
+    var pres = frag.querySelectorAll( 'PRE' );
+    var l = pres.length;
+    var pre, walker, node, value, contents, index;
+    while ( l-- ) {
+        pre = pres[l];
+        walker = new TreeWalker( pre, SHOW_TEXT );
+        while (( node = walker.nextNode() )) {
+            value = node.data;
+            value = value.replace( / (?= )/g, ' ' ); // sp -> nbsp
+            contents = document.createDocumentFragment();
+            while (( index = value.indexOf( '\n' ) ) > -1 ) {
+                contents.appendChild(
+                    document.createTextNode( value.slice( 0, index ) )
+                );
+                contents.appendChild( document.createElement( 'BR' ) );
+                value = value.slice( index + 1 );
+            }
+            node.parentNode.insertBefore( contents, node );
+            node.data = value;
+        }
+        fixContainer( pre, root );
+        replaceWith( pre, empty( pre ) );
+    }
+    return frag;
+};
+
+proto.code = function () {
+    var range = this.getSelection();
+    if ( range.collapsed || isContainer( range.commonAncestorContainer ) ) {
+        this.modifyBlocks( addPre, range );
+    } else {
+        this.changeFormat({
+            tag: 'CODE',
+            attributes: this._config.tagAttributes.code
+        }, null, range );
+    }
+    return this.focus();
+};
+
+proto.removeCode = function () {
+    var range = this.getSelection();
+    var ancestor = range.commonAncestorContainer;
+    var inPre = getNearest( ancestor, this._root, 'PRE' );
+    if ( inPre ) {
+        this.modifyBlocks( removePre, range );
+    } else {
+        this.changeFormat( null, { tag: 'CODE' }, range );
+    }
+    return this.focus();
+};
+
+proto.toggleCode = function () {
+    if ( this.hasFormat( 'PRE' ) || this.hasFormat( 'CODE' ) ) {
+        this.removeCode();
+    } else {
+        this.code();
+    }
+    return this;
+};
+
+// ---
 
 function removeFormatting ( self, root, clean ) {
     var node, next;

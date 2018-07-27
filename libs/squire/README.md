@@ -109,7 +109,7 @@ Attach an event listener to the editor. The handler can be either a function or 
 * **cursor**: The user cleared their selection or moved the cursor to a
   different position.
 * **undoStateChange**: The availability of undo and/or redo has changed. The event object has two boolean properties, `canUndo` and `canRedo` to let you know the new state.
-* **willPaste**: The user is pasting content into the document. The content that will be inserted is available as the `fragment` property on the event object. You can modify this fragment in your event handler to change what will be pasted. You can also call the `preventDefault` on the event object to cancel the paste operation.
+* **willPaste**: The user is pasting content into the document. The content that will be inserted is available as either the `fragment` property on the event object, or the `text` property for plain text being inserted into a `<pre>`. You can modify this text/fragment in your event handler to change what will be pasted. You can also call the `preventDefault` on the event object to cancel the paste operation.
 
 The method takes two arguments:
 
@@ -457,6 +457,24 @@ Returns self (the Squire instance).
 ### decreaseListLevel
 
 Decreases by 1 the nesting level of any at-least-partially selected blocks which are part of a list.
+
+Returns self (the Squire instance).
+
+### code
+
+If no selection, or selection across blocks, converts the block to a `<pre>` to format the text as fixed-width. If a selection within a single block is present, wraps that in `<code>` tags for inline formatting instead.
+
+Returns self (the Squire instance).
+
+### removeCode
+
+If inside a `<pre>`, converts that to the default block type instead. Otherwise, removes any `<code>` tags.
+
+Returns self (the Squire instance).
+
+### toggleCode
+
+If inside a `<pre>` or `<code>`, calls `removeCode()`, otherwise callse `code()`.
 
 Returns self (the Squire instance).
 

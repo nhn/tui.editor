@@ -146,7 +146,7 @@ var afterDelete = function ( self, range ) {
 var keyHandlers = {
     enter: function ( self, event, range ) {
         var root = self._root;
-        var block, parent, nodeAfterSplit;
+        var block, parent, node, offset, nodeAfterSplit;
 
         // We handle this ourselves
         event.preventDefault();
@@ -166,6 +166,54 @@ var keyHandlers = {
         }
 
         block = getStartBlockOfRange( range, root );
+
+        // Inside a PRE, insert literal newline, unless on blank line.
+        if ( block && ( parent = getNearest( block, root, 'PRE' ) ) ) {
+            moveRangeBoundariesDownTree( range );
+            node = range.startContainer;
+            offset = range.startOffset;
+            if ( node.nodeType !== TEXT_NODE ) {
+                node = self._doc.createTextNode( '' );
+                parent.insertBefore( node, parent.firstChild );
+            }
+            // If blank line: split and insert default block
+            if ( !event.shiftKey &&
+                    ( node.data.charAt( offset - 1 ) === '\n' ||
+                        rangeDoesStartAtBlockBoundary( range, root ) ) &&
+                    ( node.data.charAt( offset ) === '\n' ||
+                        rangeDoesEndAtBlockBoundary( range, root ) ) ) {
+                node.deleteData( offset && offset - 1, offset ? 2 : 1 );
+                nodeAfterSplit =
+                    split( node, offset && offset - 1, root, root );
+                node = nodeAfterSplit.previousSibling;
+                if ( !node.textContent ) {
+                    detach( node );
+                }
+                node = self.createDefaultBlock();
+                nodeAfterSplit.parentNode.insertBefore( node, nodeAfterSplit );
+                if ( !nodeAfterSplit.textContent ) {
+                    detach( nodeAfterSplit );
+                }
+                range.setStart( node, 0 );
+            } else {
+                node.insertData( offset, '\n' );
+                fixCursor( parent, root );
+                // Firefox bug: if you set the selection in the text node after
+                // the new line, it draws the cursor before the line break still
+                // but if you set the selection to the equivalent position
+                // in the parent, it works.
+                if ( node.length === offset + 1 ) {
+                    range.setStartAfter( node );
+                } else {
+                    range.setStart( node, offset + 1 );
+                }
+            }
+            range.collapse( true );
+            self.setSelection( range );
+            self._updatePath( range, true );
+            self._docWasChanged();
+            return;
+        }
 
         // If this is a malformed bit of document or in a table;
         // just play it safe and insert a <br>.
@@ -506,6 +554,7 @@ keyHandlers[ ctrlKey + 'shift-8' ] = mapKeyTo( 'makeUnorderedList' );
 keyHandlers[ ctrlKey + 'shift-9' ] = mapKeyTo( 'makeOrderedList' );
 keyHandlers[ ctrlKey + '[' ] = mapKeyTo( 'decreaseQuoteLevel' );
 keyHandlers[ ctrlKey + ']' ] = mapKeyTo( 'increaseQuoteLevel' );
+keyHandlers[ ctrlKey + 'd' ] = mapKeyTo( 'toggleCode' );
 keyHandlers[ ctrlKey + 'y' ] = mapKeyTo( 'redo' );
 keyHandlers[ ctrlKey + 'z' ] = mapKeyTo( 'undo' );
 keyHandlers[ ctrlKey + 'shift-z' ] = mapKeyTo( 'redo' );
