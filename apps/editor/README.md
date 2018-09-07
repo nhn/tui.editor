@@ -138,7 +138,7 @@ Place a `<div></div>` where you want TOAST UI Editor rendered.
 Add dependencies & initialize Editor class with given element to make an Editor.
 ```javascript
 // deps for editor
-require('codemirror/lib/codemirror.css') // codemirror
+require('codemirror/lib/codemirror.css'); // codemirror
 require('tui-editor/dist/tui-editor.css'); // editor ui
 require('tui-editor/dist/tui-editor-contents.css'); // editor content
 require('highlight.js/styles/github.css'); // code block highlight
