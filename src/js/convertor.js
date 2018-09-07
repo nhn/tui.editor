@@ -15,6 +15,7 @@ import blockQuote from './markdownItPlugins/markdownitBlockQuoteRenderer';
 import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
 import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
 import codeBackticks from './markdownItPlugins/markdownitBackticksRenderer';
+import footnotes from './markdownItPlugins/markdownitFootnoteRenderer';
 import codeBlockManager from './codeBlockManager';
 
 const markdownitHighlight = new MarkdownIt({
@@ -47,6 +48,7 @@ markdownitHighlight.block.ruler.at('html_block', htmlBlock, {
 markdownitHighlight.inline.ruler.at('backticks', codeBackticks);
 markdownitHighlight.use(taskList);
 markdownitHighlight.use(codeBlock);
+markdownitHighlight.use(footnotes);
 
 // markdownit
 markdownit.block.ruler.at('code', code);
@@ -62,6 +64,7 @@ markdownit.block.ruler.at('html_block', htmlBlock, {
 markdownit.inline.ruler.at('backticks', codeBackticks);
 markdownit.use(taskList);
 markdownit.use(codeBlock);
+markdownit.use(footnotes);
 
 /**
  * Class Convertor
