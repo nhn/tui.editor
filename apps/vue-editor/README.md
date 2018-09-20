@@ -35,7 +35,7 @@
 ### Using npm
 
 ```sh
-npm install --save vue-tui-editor
+npm install --save @toast-ui/vue-editor
 ```
 
 ### Via Contents Delivery Network (CDN)
@@ -50,7 +50,7 @@ You can use the CDN as below.
 
 ## 🔨 Usage
 
-If you want to more details, see [Tutorials](https://github.nhnent.com/fe/vue-tui-editor/blob/master/docs/getting-started.md) 👀
+If you want to more details, see [Tutorials](https://github.com/nhnent/toast-ui.vue-editor/blob/master/docs/getting-started.md) 👀
 
 ### Load
 
@@ -251,12 +251,12 @@ If it has no error, commit and then push it!
 For more information on PR's step, please see links of Contributing section.
 
 ## 📙 Documents
-* [Getting Started](https://github.nhnent.com/fe/vue-tui-editor/blob/production/docs/getting-started.md)
+* [Getting Started](https://github.com/nhnent/toast-ui.vue-editor/blob/production/docs/getting-started.md)
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.nhnent.com/fe/vue-tui-editor/blob/master/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.nhnent.com/fe/vue-tui-editor/blob/master/CONTRIBUTING.md)
-* [Commit convention](https://github.nhnent.com/fe/vue-tui-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhnent/toast-ui.vue-editor/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhnent/toast-ui.vue-editor/blob/master/CONTRIBUTING.md)
+* [Commit convention](https://github.com/nhnent/toast-ui.vue-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
-This software is licensed under the [MIT](https://github.nhnent.com/fe/vue-tui-editor/blob/master/LICENSE) © [NHN Ent.](https://github.com/nhnent)
+This software is licensed under the [MIT](https://github.com/nhnent/toast-ui.vue-editor/blob/master/LICENSE) © [NHN Ent.](https://github.com/nhnent)

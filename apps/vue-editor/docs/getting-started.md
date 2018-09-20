@@ -22,7 +22,7 @@
 ### Using npm
 
 ```sh
-npm install --save vue-tui-editor
+npm install --save @toast-ui/vue-editor
 ```
 
 ### Via Contents Delivery Network (CDN)
