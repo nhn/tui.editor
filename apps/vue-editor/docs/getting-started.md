@@ -49,20 +49,20 @@ You can use the CDN as below.
     var ToustUI = require('@toast-ui/vue-editor'); // you can use toastui.Editor
     ```
 
-* Using `<script>`
-  
-    If you just add javascript file to your html, you use CDN or `vue-editor.js` downloaded. Insert `<script>` in your html like this:
-
-    ```html
-    <script src="path/to/vue-editor.js"></script>
-    ```
-
 * Using only Vue wrapper component
 
     `vue-eidtor.js` has all of the tui.editor. If you only need vue wrapper component, you can use `@toast-ui/vue-editor/src/index.js` like this:
 
     ```js
     import { Editor } from '@toast-ui/vue-editor/src/index'
+    ```
+
+* Using `<script>`
+
+    If you just add javascript file to your html, you use CDN or `vue-editor.js` downloaded. Insert `<script>` in your html like this:
+
+    ```html
+    <script src="path/to/vue-editor.js"></script>
     ```
 
 ### Implement
@@ -294,16 +294,16 @@ export default {
     var ToustUI = require('@toast-ui/vue-editor'); // you can use toastui.EditorViewer
     ```
 
-* Using `<script>`
-
-    ```html
-    <script src="path/to/vue-editor.js"></script>
-    ```
-
 * Use just Vue wrapper component
 
     ```js
     import { EditorViewer } from '@toast-ui/vue-editor/src/index'
+    ```
+
+* Using `<script>`
+
+    ```html
+    <script src="path/to/vue-editor.js"></script>
     ```
 
 ### Implement

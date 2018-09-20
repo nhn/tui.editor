@@ -1,6 +1,6 @@
 # Vue wrapper for TOAST UI Editor
 
-> This is Vue component wrapping [TOAST UI Editor](https://github.nhnent.com/fe/tui.editor).
+> This is Vue component wrapping [TOAST UI Editor](https://github.com/nhnent/tui.editor).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 [![github version](https://img.shields.io/github/release/nhnent/toast-ui.vue-editor.svg)](https://github.com/nhnent/toast-ui.vue-editor/releases/latest) 
@@ -64,20 +64,20 @@ If you want to more details, see [Tutorials](https://github.com/nhnent/toast-ui.
     var ToustUI = require('@toast-ui/vue-editor'); // you can use toastui.Editor
     ```
 
-* Using `<script>`
-  
-    If you just add javascript file to your html, you use CDN or `vue-editor.js` downloaded. Insert `<script>` in your html like this:
-
-    ```html
-    <script src="path/to/vue-editor.js"></script>
-    ```
-
 * Using only Vue wrapper component
 
     `vue-eidtor.js` has all of the tui.editor. If you only need vue wrapper component, you can use `@toast-ui/vue-editor/src/index.js` like this:
 
     ```js
     import { Editor } from '@toast-ui/vue-editor/src/index'
+    ```
+
+* Using `<script>`
+
+    If you just add javascript file to your html, you use CDN or `vue-editor.js` downloaded. Insert `<script>` in your html like this:
+
+    ```html
+    <script src="path/to/vue-editor.js"></script>
     ```
 
 ### Implement
@@ -251,7 +251,7 @@ If it has no error, commit and then push it!
 For more information on PR's step, please see links of Contributing section.
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhnent/toast-ui.vue-editor/blob/production/docs/getting-started.md)
+* [Getting Started](https://github.com/nhnent/toast-ui.vue-editor/blob/master/docs/getting-started.md)
 
 ## 💬 Contributing
 * [Code of Conduct](https://github.com/nhnent/toast-ui.vue-editor/blob/master/CODE_OF_CONDUCT.md)
