@@ -1,0 +1,14 @@
+{
+    "extends": [
+        "tui",
+        "plugin:vue/base"
+    ],
+    "parserOptions": {
+        "parser": "babel-eslint",
+        "ecmaVersion": 7,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "vue"
+    ]
+}
