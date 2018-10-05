@@ -97,7 +97,7 @@ var extractContentsOfRange = function ( range, common, root ) {
     var endNode = split( endContainer, endOffset, common, root ),
         startNode = split( startContainer, startOffset, common, root ),
         frag = common.ownerDocument.createDocumentFragment(),
-        next, before, after;
+        next, before, after, beforeText, afterText;
 
     // End node will be null if at end of child nodes list.
     while ( startNode !== endNode ) {
@@ -120,7 +120,17 @@ var extractContentsOfRange = function ( range, common, root ) {
             after.nodeType === TEXT_NODE ) {
         startContainer = before;
         startOffset = before.length;
-        before.appendData( after.data );
+        beforeText = before.data;
+        afterText = after.data;
+
+        // If we now have two adjacent spaces, the second one needs to become
+        // a nbsp, otherwise the browser will swallow it due to HTML whitespace
+        // collapsing.
+        if ( beforeText.charAt( beforeText.length - 1 ) === ' ' &&
+                afterText.charAt( 0 ) === ' ' ) {
+            afterText = ' ' + afterText.slice( 1 ); // nbsp
+        }
+        before.appendData( afterText );
         detach( after );
     }
 
