@@ -829,7 +829,7 @@ var extractContentsOfRange = function ( range, common, root ) {
     var endNode = split( endContainer, endOffset, common, root ),
         startNode = split( startContainer, startOffset, common, root ),
         frag = common.ownerDocument.createDocumentFragment(),
-        next, before, after;
+        next, before, after, beforeText, afterText;
 
     // End node will be null if at end of child nodes list.
     while ( startNode !== endNode ) {
@@ -852,7 +852,17 @@ var extractContentsOfRange = function ( range, common, root ) {
             after.nodeType === TEXT_NODE ) {
         startContainer = before;
         startOffset = before.length;
-        before.appendData( after.data );
+        beforeText = before.data;
+        afterText = after.data;
+
+        // If we now have two adjacent spaces, the second one needs to become
+        // a nbsp, otherwise the browser will swallow it due to HTML whitespace
+        // collapsing.
+        if ( beforeText.charAt( beforeText.length - 1 ) === ' ' &&
+                afterText.charAt( 0 ) === ' ' ) {
+            afterText = ' ' + afterText.slice( 1 ); // nbsp
+        }
+        before.appendData( afterText );
         detach( after );
     }
 
@@ -1748,25 +1758,27 @@ var keyHandlers = {
     },
     space: function ( self, _, range ) {
         var node, parent;
+        var root = self._root;
         self._recordUndoState( range );
-        addLinks( range.startContainer, self._root, self );
+        addLinks( range.startContainer, root, self );
         self._getRangeAndRemoveBookmark( range );
 
         // If the cursor is at the end of a link (<a>foo|</a>) then move it
         // outside of the link (<a>foo</a>|) so that the space is not part of
         // the link text.
         node = range.endContainer;
-        parent = node.parentNode;
         if ( range.collapsed && range.endOffset === getLength( node ) ) {
-            if ( node.nodeName === 'A' ) {
-                range.setStartAfter( node );
-            } else if ( parent.nodeName === 'A' && !node.nextSibling ) {
-                range.setStartAfter( parent );
-            }
+            do {
+                if ( node.nodeName === 'A' ) {
+                    range.setStartAfter( node );
+                    break;
+                }
+            } while ( !node.nextSibling &&
+                ( node = node.parentNode ) && node !== root );
         }
         // Delete the selection if not collapsed
         if ( !range.collapsed ) {
-            deleteContentsOfRange( range, self._root );
+            deleteContentsOfRange( range, root );
             self._ensureBottomLine();
             self.setSelection( range );
             self._updatePath( range, true );
