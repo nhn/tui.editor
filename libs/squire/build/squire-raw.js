@@ -4320,20 +4320,23 @@ proto.insertImage = function ( src, attributes ) {
     return img;
 };
 
-var linkRegExp = /\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))|([\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,}\b)(?:\?[^&?\s]+=[^&?\s]+(?:&[^&?\s]+=[^&?\s]+)*)?/i;
+proto.linkRegExp = /\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))|([\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,}\b)(?:\?[^&?\s]+=[^&?\s]+(?:&[^&?\s]+=[^&?\s]+)*)?/i;
 
 var addLinks = function ( frag, root, self ) {
-    var doc = frag.ownerDocument,
-        walker = new TreeWalker( frag, SHOW_TEXT,
-                function ( node ) {
-            return !getNearest( node, root, 'A' );
-        }),
-        defaultAttributes = self._config.tagAttributes.a,
-        node, data, parent, match, index, endIndex, child;
-    while ( node = walker.nextNode() ) {
+    var doc = frag.ownerDocument;
+    var walker = new TreeWalker( frag, SHOW_TEXT, function ( node ) {
+        return !getNearest( node, root, 'A' );
+    });
+    var linkRegExp = self.linkRegExp;
+    var defaultAttributes = self._config.tagAttributes.a;
+    var node, data, parent, match, index, endIndex, child;
+    if ( !linkRegExp ) {
+        return;
+    }
+    while (( node = walker.nextNode() )) {
         data = node.data;
         parent = node.parentNode;
-        while ( match = linkRegExp.exec( data ) ) {
+        while (( match = linkRegExp.exec( data ) )) {
             index = match.index;
             endIndex = index + match[0].length;
             if ( index ) {

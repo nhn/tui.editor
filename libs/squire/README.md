@@ -498,3 +498,9 @@ Change the **inline** formatting of the current selection. This is a high-level 
 Takes in a function that can modify the document without the modifications being treated as input.
 
 This is useful when the document needs to be changed programmatically, but those changes should not raise input events or modify the undo state.
+
+### linkRegExp
+
+This is the regular expression used to automatically mark up links when inserting HTML or after pressing space. You can change it if you want to use a custom regular expression for detecting links, or set to `null` to turn off link detection.
+
+
