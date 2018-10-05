@@ -1,26 +1,17 @@
 Squire
 ======
 
-Squire is an HTML5 rich text editor, which provides powerful cross-browser normalisation, whilst being supremely lightweight and flexible. It is built for the present and the future, and as such does not support truly ancient browsers. It should work fine back to around Opera 12, Firefox 3.5, Safari 5, Chrome 9 and IE9.
+Squire is an HTML5 rich text editor, which provides powerful cross-browser normalisation in a flexible lightweight package (only 16.5KB of JS after minification and gzip, with no dependencies!).
 
-An example UI integration can be tried at http://neilj.github.io/Squire/.
+It was designed to handle email composition for the [FastMail](https://www.fastmail.com) web app. The most important consequence of this (and where Squire differs from most other modern rich text editors) is that it must handle arbitrary HTML, because it may be used to forward or quote emails from third-parties and must be able to preserve their HTML without breaking the formatting. This means that it can't use a more structured (but limited) internal data model (as most other modern HTML editors do) and the HTML remains the source-of-truth. The other consequence is excellent handling of multiple levels of blockquotes.
 
-Unlike other HTML5 rich text editors, Squire was written as a component for writing documents (emails, essays, etc.), not doing wysiwyg websites. If you are looking for support for inserting form controls or flash components or the like, you'll need to look elsewhere. However for many purposes, Squire may be just what you need, providing the power without the bloat. The key features are:
+Squire was designed to be integrated with your own UI framework, and so does not provide its own UI toolbar, widgets or overlays. Instead, you get a component you can insert in place of a `<textarea>` and manipulate programatically, allowing you to integrate seamlessly with the rest of your application and lose the bloat of having two UI toolkits loaded.
 
-### Lightweight ###
+Squire supports all reasonably recent, and even moderately old, browsers (even IE11, although this is not tested much these days).
 
-* Only 11.5KB of JS after minification and gzip (35KB before gzip).
-* Does not include its own XHR wrapper, widget library or lightbox overlays.
-* No dependencies.
-* No UI for a toolbar is supplied, allowing you to integrate seamlessly with the rest of your application and lose the bloat of having two UI toolkits loaded. Instead, you get a component you can insert in place of a `<textarea>` and manipulate programatically.
+In addition to its use at [FastMail](https://www.fastmail.com), is is also currently used in production at [ProtonMail](https://protonmail.com/), [Zoho Mail](https://www.zoho.com/mail/) and [Superhuman](https://superhuman.com/), as well as other non-mail apps (drop me a line if you're using Squire elsewhere, I'm always interested to hear about it!).
 
-### Powerful ###
-
-Squire provides an engine that handles the heavy work for you, making it easy to add extra features. With the `changeFormat` method you can easily add or remove any inline formatting you wish. And the `modifyBlocks` method can be used to make complicated block-level changes in a relatively easy manner.
-
-If you need more commands than in the simple API, I suggest you check out the source code (it's not very long), and see how a lot of the other API methods are implemented in terms of these two methods.
-
-The general philosophy of Squire is to allow the browser to do as much as it can (which unfortunately is not very much), but take control anywhere it deviates from what is required, or there are significant cross-browser differences. As such, the [`document.execCommand`](https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand) method is not used at all; instead all formatting is done via custom functions, and certain keys, such as 'enter' and 'backspace' are handled by the editor.
+An example UI integration can be tried at http://neilj.github.io/Squire/. Please note though, this is an out-of-date version of Squire and a slightly buggy implementation written by an intern many years ago. For a demo of the latest version with a production-level UI integration, [sign up for a free FastMail trial](https://www.fastmail.com/signup/) :). There's also a very bare-bones integration in the repo; just clone it and open `Demo.html`. If you are reporting a bug, please report the steps to reproduce using `Demo.html`, to make sure it's not a bug in your integration.
 
 Installation and usage
 ----------------------
@@ -61,11 +52,17 @@ You can override this by setting properties on the config object (the second arg
 Advanced usage
 --------------
 
+Squire provides an engine that handles the heavy work for you, making it easy to add extra features. With the `changeFormat` method you can easily add or remove any inline formatting you wish. And the `modifyBlocks` method can be used to make complicated block-level changes in a relatively easy manner.
+
 If you load the library into a top-level document (rather than an iframe), or load it in an iframe without the `data-squireinit="true"` attribute on its `<html>` element, it will not turn the page into an editable document, but will instead add a constructor named `Squire` to the global scope.
 
 You can also require the NPM package [squire-rte](https://www.npmjs.com/package/squire-rte) to import `Squire` in a modular program without adding names to the global namespace.
 
 Call `new Squire( document )`, with the `document` from an iframe to instantiate multiple rich text areas on the same page efficiently. Note, for compatibility with all browsers (particularly Firefox), you MUST wait for the iframe's `onload` event to fire before instantiating Squire.
+
+If you need more commands than in the simple API, I suggest you check out the source code (it's not very long), and see how a lot of the other API methods are implemented in terms of these two methods.
+
+The general philosophy of Squire is to allow the browser to do as much as it can (which unfortunately is not very much), but take control anywhere it deviates from what is required, or there are significant cross-browser differences. As such, the [`document.execCommand`](https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand) method is not used at all; instead all formatting is done via custom functions, and certain keys, such as 'enter' and 'backspace' are handled by the editor.
 
 ### Setting the default block style
 
