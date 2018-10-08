@@ -10,6 +10,7 @@
 [![code with hearth by NHN ent.](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Ent.-brightgreen.svg)](https://github.com/nhnent)
 
 ## 🚩 Table of Contents
+* [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
 * [Install](#-install)
     * [Using npm](#using-npm)
     * [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
@@ -28,7 +29,12 @@
 * [Contributing](#-contributing)
 * [License](#-license)
 
+## Collect statistics on the use of open source
 
+Vue Wrapper of TOAST UI Editor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Editor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, include tui-code-snippet.js and then immediately write the options as follows:
+```js
+tui.usageStatistics = false;
+```
 
 ## 💾 Install
 
