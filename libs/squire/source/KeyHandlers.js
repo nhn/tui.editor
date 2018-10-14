@@ -59,7 +59,9 @@ var onKey = function ( event ) {
 
     if ( this._keyHandlers[ key ] ) {
         this._keyHandlers[ key ]( this, event, range );
-    } else if ( !range.collapsed && !event.ctrlKey && !event.metaKey &&
+    // !event.isComposing stops us from blatting Kana-Kanji conversion in Safari
+    } else if ( !range.collapsed && !event.isComposing &&
+            !event.ctrlKey && !event.metaKey &&
             ( event.key || key ).length === 1 ) {
         // Record undo checkpoint.
         this.saveUndoState( range );
