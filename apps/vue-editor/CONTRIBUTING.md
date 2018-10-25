@@ -18,7 +18,7 @@ Explain the problem and include additional details to help maintainers reproduce
 
 ## Suggesting Enhancements
 In case you want to suggest for TOAST UI Editor, please follow this guideline to help maintainers and the community understand your suggestion.
-Before creating suggestions, please check [issue list](https://github.nhnent.com/fe/tui.editor/labels/feature%20request) if there's already a request.
+Before creating suggestions, please check [issue list](https://github.com/nhnent/toast-ui.vue-editor/labels/feature%20request) if there's already a request.
 
 Create an issue and provide the following information:
 
@@ -42,14 +42,13 @@ Unsure where to begin contributing to TOAST UI? You can start by looking through
 ### Development WorkFlow
 - Set up your development environment
 - Make change from a right branch
-- Be sure the code passes `npm run lint`, `npm run test`
+- Be sure the code passes `npm run lint`
 - Make a pull request
 
 ### Development environment
 - Prepare your machine node and it's packages installed.
 - Checkout our repository
-- Install dependencies by `npm install && bower install`
-- Start webpack-dev-server by `npm run serve`
+- Install dependencies by `npm install`
 
 ### Make changes
 #### Checkout a branch
@@ -58,12 +57,7 @@ Unsure where to begin contributing to TOAST UI? You can start by looking through
 - **gh-pages**: API docs, examples and demo
 
 #### Check Code Style
-Run `npm run eslint` and make sure all the tests pass.
-
-#### Test
-Run `npm run test` and verify all the tests pass.
-If you are adding new commands or features, they must include tests.
-If you are changing functionality, update the tests if you need to.
+Run `npm run lint` and make sure all the tests pass.
 
 #### Commit
 Follow our [commit message conventions](./docs/COMMIT_MESSAGE_CONVENTION.md).

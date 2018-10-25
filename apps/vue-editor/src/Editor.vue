@@ -1,11 +1,7 @@
 <template>
     <div ref="tuiEditor"></div>
 </template>
-
 <script>
-import 'tui-editor/dist/tui-editor.css';
-import 'tui-editor/dist/tui-editor-contents.css';
-import 'codemirror/lib/codemirror.css';
 import Editor from 'tui-editor';
 
 const editorEvents = [
@@ -76,7 +72,7 @@ export default {
         },
         options: {
             tpye: Object,
-            default: function() {
+            default() {
                 return editorDefaultOptions;
             }
         },
@@ -95,7 +91,7 @@ export default {
     },
     computed: {
         editorOptions() {
-            let options = Object.assign({}, editorDefaultOptions, this.options);
+            const options = Object.assign({}, editorDefaultOptions, this.options);
             options.initialValue = this.value;
             options.initialEditType = this.mode;
             options.height = this.height;
@@ -105,25 +101,25 @@ export default {
         }
     },
     watch: {
-        previewStyle: function(newValue) {
+        previewStyle(newValue) {
             this.editor.changePreviewStyle(newValue);
         },
-        value: function(newValue, preValue) {
+        value(newValue, preValue) {
             if (newValue !== preValue && newValue !== this.editor.getValue()) {
                 this.editor.setValue(newValue);
             }
         },
-        height: function(newValue) {
+        height(newValue) {
             this.editor.height(newValue);
         },
-        mode: function(newValue) {
+        mode(newValue) {
             this.editor.changeMode(newValue);
         },
-        html: function(newValue) {
+        html(newValue) {
             this.editor.setHtml(newValue);
             this.$emit('input', this.editor.getValue());
         },
-        visible: function(newValue) {
+        visible(newValue) {
             if (newValue) {
                 this.editor.show();
             } else {
@@ -132,14 +128,14 @@ export default {
         }
     },
     mounted() {
-        let eventOption = {};
+        const eventOption = {};
         editorEvents.forEach(event => {
             eventOption[event] = (...args) => {
                 this.$emit(event, ...args);
             };
         });
 
-        let options = Object.assign(this.editorOptions, {
+        const options = Object.assign(this.editorOptions, {
             el: this.$refs.tuiEditor,
             events: eventOption
         });

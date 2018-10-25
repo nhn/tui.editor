@@ -1,4 +1,7 @@
-import Editor from './TuiEditor.vue';
-import EditorViewer from './TuiEditorViewer.vue';
+import Editor from './Editor.vue';
+import Viewer from './Viewer.vue';
 
-export {Editor, EditorViewer};
+export {
+    Editor,
+    Viewer
+};

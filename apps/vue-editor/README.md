@@ -1,4 +1,4 @@
-# Vue wrapper for TOAST UI Editor
+# TOAST UI Editor for Vue
 
 > This is Vue component wrapping [TOAST UI Editor](https://github.com/nhnent/tui.editor).
 
@@ -7,13 +7,12 @@
 [![npm version](https://img.shields.io/npm/v/@toast-ui/vue-editor.svg)](https://www.npmjs.com/package/@toast-ui/vue-editor)
 [![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-editor.svg)](https://github.com/nhnent/toast-ui.vue-editor/blob/master/LICENSE)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.vue-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN ent.](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Ent.-brightgreen.svg)](https://github.com/nhnent)
+[![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
 ## 🚩 Table of Contents
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
 * [Install](#-install)
     * [Using npm](#using-npm)
-    * [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
 * [Usage](#-usage)
     * [Load](#load)
     * [Implement](#implement)
@@ -22,16 +21,23 @@
     * [Event](#event)
     * [Method](#method)
 * [Pull Request Steps](#-pull-request-steps)
-    * [Setup](#setup)
-    * [Develop](#develop)
-    * [Pull Request Steps](#pull-request)
 * [Documents](#-documents)
 * [Contributing](#-contributing)
 * [License](#-license)
 
 ## Collect statistics on the use of open source
 
-Vue Wrapper of TOAST UI Editor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Editor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, include tui-code-snippet.js and then immediately write the options as follows:
+Vue Wrapper of TOAST UI Editor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Editor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` options when declare Vue Wrapper compoent.
+
+```js
+var options = {
+    ...
+    usageStatistics: false
+}
+```
+
+Or, include include `tui-code-snippet.js` (**v1.4.0** or **later**) and then immediately write the options as follows:
+
 ```js
 tui.usageStatistics = false;
 ```
@@ -44,55 +50,55 @@ tui.usageStatistics = false;
 npm install --save @toast-ui/vue-editor
 ```
 
-### Via Contents Delivery Network (CDN)
-
-TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
-
-You can use the CDN as below.
-
-```html
-<script src="https://uicdn.toast.com/toast-ui.vue-editor/latest/vue-editor.js"></script>
-```
-
 ## 🔨 Usage
 
 If you want to more details, see [Tutorials](https://github.com/nhnent/toast-ui.vue-editor/blob/master/docs/getting-started.md) 👀
 
 ### Load
 
-* Using module
+You can use Toast UI Editor for Vue as moudule format or namespace. Also you can use Single File Component (SFC of Vue). When using module format and SFC, you should load `tui-editor.css`, `tui-editor-contents.css` and `codemirror.css` in the script. 
 
-    If you use some kind of bundle loader like `webpack` of `rollup`, you can add the import like this:
+* Using Ecmascript module
+
     ```js
-    // es modules
+    import 'tui-editor/dist/tui-editor.css';
+    import 'tui-editor/dist/tui-editor-contents.css';
+    import 'codemirror/lib/codemirror.css';
     import { Editor } from '@toast-ui/vue-editor'
-    // commonjs require
-    var ToustUI = require('@toast-ui/vue-editor'); // you can use toastui.Editor
     ```
 
-* Using only Vue wrapper component
-
-    `vue-eidtor.js` has all of the tui.editor. If you only need vue wrapper component, you can use `@toast-ui/vue-editor/src/index.js` like this:
+* Using Commonjs module
 
     ```js
-    import { Editor } from '@toast-ui/vue-editor/src/index'
+    require('tui-editor/dist/tui-editor.css');
+    require('tui-editor/dist/tui-editor-contents.css');
+    require('codemirror/lib/codemirror.css');
+    var toastui = require('@toast-ui/vue-editor');
+    var Editor = toastui.Editor;
     ```
 
-* Using `<script>`
+* Using Single File Component
 
-    If you just add javascript file to your html, you use CDN or `vue-editor.js` downloaded. Insert `<script>` in your html like this:
+    ```js
+    import 'tui-editor/dist/tui-editor.css';
+    import 'tui-editor/dist/tui-editor-contents.css';
+    import 'codemirror/lib/codemirror.css';
+    import Editor from '@toast-ui/vue-editor/src/editor.vue'
+    ```
 
-    ```html
-    <script src="path/to/vue-editor.js"></script>
+* Using namespace
+
+    ```js
+    var Editor = toastui.Editor;
     ```
 
 ### Implement
 
-First implement `<tui-editor>` in the template.
+First implement `<editor/>` in the template.
 
 ```html
 <template>
-    <tui-editor/>
+    <editor/>
 </template>
 ```
 
@@ -102,7 +108,7 @@ import { Editor } from '@toast-ui/vue-editor'
 
 export default {
   components: {
-    'tui-editor': Editor
+    'editor': Editor
   }
 }
 ```
@@ -112,7 +118,7 @@ import { Editor } from '@toast-ui/vue-editor'
 new Vue({
     el: '#app',
     components: {
-        'tui-editor': Editor
+        'editor': Editor
     }
 });
 ```
@@ -125,14 +131,14 @@ In the example below, `editorText` is binding to the text of the editor.
 
 ```html
 <template>
-    <tui-editor v-model="editorText"/>
+    <editor v-model="editorText"/>
 </template>
 <script>
 import { Editor } from '@toast-ui/vue-editor'
 
 export default {
   components: {
-    'tui-editor': Editor
+    'editor': Editor
   },
   data() {
       return {
@@ -200,18 +206,18 @@ const defaultOptions = {
 
 If you want to more manipulate the Editor, you can use `invoke` method to call the method of tui.editor. For more information of method, see [method of tui.editor](http://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html).
 
-First, you need to assign `ref` attribute of `<tui-editor/>` and then you can use `invoke` method through `this.$refs` like this:
+First, you need to assign `ref` attribute of `<editor/>` and then you can use `invoke` method through `this.$refs` like this:
 
 ```html
 <template>
-    <tui-editor ref="tuiEditor"/>
+    <editor ref="tuiEditor"/>
 </template>
 <script>
 import { Editor } from '@toast-ui/vue-editor'
 
 export default {
     components: {
-        'tui-editor': Editor
+        'editor': Editor
     },
     methods: {
         scroll() {

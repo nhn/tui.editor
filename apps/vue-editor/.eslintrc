@@ -1,6 +1,6 @@
 {
     "extends": [
-        "tui",
+        "tui/es6",
         "plugin:vue/base"
     ],
     "parserOptions": {

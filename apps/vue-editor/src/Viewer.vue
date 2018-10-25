@@ -1,11 +1,7 @@
 <template>
     <div ref="tuiEditorViewer"></div>
 </template>
-
 <script>
-import 'tui-editor/dist/tui-editor.css';
-import 'tui-editor/dist/tui-editor-contents.css';
-import 'codemirror/lib/codemirror.css';
 import Viewer from 'tui-editor/dist/tui-editor-Viewer';
 
 const editorEvents = [
@@ -34,14 +30,14 @@ export default {
         };
     },
     watch: {
-        value: function(val, preVal) {
+        value(val, preVal) {
             if (val !== preVal) {
                 this.editor.setValue(val);
             }
         }
     },
     mounted() {
-        let eventOption = {};
+        const eventOption = {};
         editorEvents.forEach(event => {
             eventOption[event] = (...args) => {
                 this.$emit(event, ...args);

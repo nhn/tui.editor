@@ -1,8 +1,8 @@
 {
   "name": "@toast-ui/vue-editor",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/vue-editor.js",
+  "version": "1.0.1",
+  "description": "TOAST UI Editor for Vue",
+  "main": "dist/toastui-vue-editor.js",
   "files": [
     "dist",
     "src"
@@ -22,15 +22,12 @@
     "@babel/preset-env": "^7.1.0",
     "babel-eslint": "^9.0.0",
     "babel-loader": "^8.0.2",
-    "css-loader": "^1.0.0",
     "eslint": "^5.5.0",
     "eslint-config-tui": "^1.0.3",
     "eslint-loader": "^2.1.0",
     "eslint-plugin-vue": "^4.7.1",
-    "url-loader": "^1.1.1",
     "vue": "^2.5.17",
     "vue-loader": "^15.4.1",
-    "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.5.17",
     "webpack": "^4.17.2",
     "webpack-cli": "^3.1.0"

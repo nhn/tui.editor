@@ -3,7 +3,6 @@
 ## 🚩 Table of Contents
 * [Install](#-install)
     * [Using npm](#using-npm)
-    * [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
 * [Editor Usage](#-editor-usage)
     * [Load](#load)
     * [Implement](#implement)
@@ -25,53 +24,53 @@
 npm install --save @toast-ui/vue-editor
 ```
 
-### Via Contents Delivery Network (CDN)
-
-TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
-
-You can use the CDN as below.
-
-```html
-<script src="https://uicdn.toast.com/toast-ui.vue-editor/latest/vue-editor.js"></script>
-```
-
 ## 📝 Editor Usage
 
 ### Load
 
-* Using module
+You can use Toast UI Editor for Vue as moudule format or namespace. Also you can use Single File Component (SFC of Vue). When using module format and SFC, you should load `tui-editor.css`, `tui-editor-contents.css` and `codemirror.css` in the script. 
 
-    If you use some kind of bundle loader like `webpack` of `rollup`, you can add the import like this:
+* Using Ecmascript module
+
     ```js
-    // es modules
+    import 'tui-editor/dist/tui-editor.css';
+    import 'tui-editor/dist/tui-editor-contents.css';
+    import 'codemirror/lib/codemirror.css';
     import { Editor } from '@toast-ui/vue-editor'
-    // commonjs require
-    var ToustUI = require('@toast-ui/vue-editor'); // you can use toastui.Editor
     ```
 
-* Using only Vue wrapper component
-
-    `vue-eidtor.js` has all of the tui.editor. If you only need vue wrapper component, you can use `@toast-ui/vue-editor/src/index.js` like this:
+* Using Commonjs module
 
     ```js
-    import { Editor } from '@toast-ui/vue-editor/src/index'
+    require('tui-editor/dist/tui-editor.css');
+    require('tui-editor/dist/tui-editor-contents.css');
+    require('codemirror/lib/codemirror.css');
+    var toastui = require('@toast-ui/vue-editor');
+    var Editor = toastui.Editor;
     ```
 
-* Using `<script>`
+* Using Single File Component
 
-    If you just add javascript file to your html, you use CDN or `vue-editor.js` downloaded. Insert `<script>` in your html like this:
+    ```js
+    import 'tui-editor/dist/tui-editor.css';
+    import 'tui-editor/dist/tui-editor-contents.css';
+    import 'codemirror/lib/codemirror.css';
+    import Editor from '@toast-ui/vue-editor/src/Editor.vue'
+    ```
 
-    ```html
-    <script src="path/to/vue-editor.js"></script>
+* Using namespace
+
+    ```js
+    var Editor = toastui.Editor;
     ```
 
 ### Implement
 
-First implement `<tui-editor>` in the template.
+First implement `<editor/>` in the template.
 
 ```html
 <template>
-    <tui-editor/>
+    <editor/>
 </template>
 ```
 
@@ -81,7 +80,7 @@ import { Editor } from '@toast-ui/vue-editor'
 
 export default {
   components: {
-    'tui-editor': Editor
+    'editor': Editor
   }
 }
 ```
@@ -91,7 +90,7 @@ import { Editor } from '@toast-ui/vue-editor'
 new Vue({
     el: '#app',
     components: {
-        'tui-editor': Editor
+        'editor': Editor
     }
 });
 ```
@@ -104,14 +103,14 @@ In the example below, `editorText` is binding to the text of the editor.
 
 ```html
 <template>
-    <tui-editor v-model="editorText"/>
+    <editor v-model="editorText"/>
 </template>
 <script>
 import { Editor } from '@toast-ui/vue-editor'
 
 export default {
   components: {
-    'tui-editor': Editor
+    'editor': Editor
   },
   data() {
       return {
@@ -170,7 +169,7 @@ Example :
 
 ``` html
 <template>
-    <tui-editor
+    <editor
     :value="editorText"
     :options="editorOptions"
     :html="editorHtml"
@@ -185,7 +184,7 @@ import { Editor } from '@toast-ui/vue-editor'
 
 export default {
     components: {
-        'tui-editor': Editor
+        'editor': Editor
     },
     data() {
         return {
@@ -213,7 +212,7 @@ Example :
 
 ```html
 <template>
-    <tui-editor
+    <editor
     @load="onEditorLoad"
     @focus="onEditorFocus"
     @blur="onEditorBlur"
@@ -226,7 +225,7 @@ import { Editor } from '@toast-ui/vue-editor'
 
 export default {
     components: {
-        'tui-editor': Editor
+        'editor': Editor
     },
     methods: {
         onEditorLoad() {
@@ -253,18 +252,18 @@ export default {
 
 If you want to more manipulate the Editor, you can use `invoke` method to call the method of tui.editor. For more information of method, see [method of tui.editor](http://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html).
 
-First, you need to assign `ref` attribute of `<tui-editor/>` and then you can use `invoke` method through `this.$refs` like this:
+First, you need to assign `ref` attribute of `<editor/>` and then you can use `invoke` method through `this.$refs` like this:
 
 ```html
 <template>
-    <tui-editor ref="tuiEditor"/>
+    <editor ref="tuiEditor"/>
 </template>
 <script>
 import { Editor } from '@toast-ui/vue-editor'
 
 export default {
     components: {
-        'tui-editor': Editor
+        'editor': Editor
     },
     methods: {
         scroll() {
@@ -285,54 +284,64 @@ export default {
 
 ### Load
 
-* Using module
+* Using Ecmascript module
 
     ```js
-    // es modules
-    import { EditorViewer } from '@toast-ui/vue-editor'
-    // commonjs require
-    var ToustUI = require('@toast-ui/vue-editor'); // you can use toastui.EditorViewer
+    import 'tui-editor/dist/tui-editor-contents.css';
+    import 'highlight.js/styles/github.css';
+    import { Viewer } from '@toast-ui/vue-editor'
     ```
 
-* Use just Vue wrapper component
+* Using Commonjs module
 
     ```js
-    import { EditorViewer } from '@toast-ui/vue-editor/src/index'
+    require('tui-editor/dist/tui-editor-contents.css');
+    require('highlight.js/styles/github.css'); 
+    var toastui = require('@toast-ui/vue-editor');
+    var Viewer = toastui.Viewer;
     ```
 
-* Using `<script>`
+* Using Single File Component
 
-    ```html
-    <script src="path/to/vue-editor.js"></script>
+    ```js
+    import 'tui-editor/dist/tui-editor-contents.css';
+    import 'highlight.js/styles/github.css';
+    import Viewer from '@toast-ui/vue-editor/src/Viewer.vue'
+    ```
+
+* Using namespace
+
+    ```js
+    var Viewer = toastui.Viewer;
     ```
 
 ### Implement
 
-First implement `<tui-viewer>` in the template.
+First implement `<viewer/>` in the template.
 
 ```html
 <template>
-    <tui-viewer/>
+    <viewer/>
 </template>
 ```
 
 And then add `EditorViewer` to the `components` in your component or Vue instance like this:
 ```js
-import { EditorViewer } from '@toast-ui/vue-editor'
+import { Viewer } from '@toast-ui/vue-editor'
 
 export default {
   components: {
-    'tui-viewer': EditorViewer
+    'viewer': Viewer
   }
 }
 ```
 or
 ```js
-import { EditorViewer } from '@toast-ui/vue-editor'
+import { Viewer } from '@toast-ui/vue-editor'
 new Vue({
     el: '#app',
     components: {
-        'tui-viewer': EditorViewer
+        'viewer': Viewer
     }
 });
 ```
@@ -348,7 +357,7 @@ Example :
 
 ``` html
 <template>
-    <tui-viewer
+    <viewer
     :value="viewerText"
     height="500px"
     />
@@ -358,7 +367,7 @@ import { Editor } from '@toast-ui/vue-editor'
 
 export default {
     components: {
-        'tui-viewer': EditorViewer
+        'viewer': EditorViewer
     },
     data() {
         return {
@@ -381,7 +390,7 @@ Example :
 
 ```html
 <template>
-    <tui-viewer
+    <viewer
     @load="onEditorLoad"
     @focus="onEditorFocus"
     @blur="onEditorBlur"
@@ -395,7 +404,7 @@ import { EditorViewer } from '@toast-ui/vue-editor'
 
 export default {
     components: {
-        'tui-viewer': EditorViewer
+        'viewer': EditorViewer
     },
     methods: {
         onEditorLoad() {
