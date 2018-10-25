@@ -325,7 +325,7 @@ First implement `<viewer/>` in the template.
 </template>
 ```
 
-And then add `EditorViewer` to the `components` in your component or Vue instance like this:
+And then add `Viewer` to the `components` in your component or Vue instance like this:
 ```js
 import { Viewer } from '@toast-ui/vue-editor'
 
