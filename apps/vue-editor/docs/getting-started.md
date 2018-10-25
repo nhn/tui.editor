@@ -363,11 +363,11 @@ Example :
     />
 </template>
 <script>
-import { Editor } from '@toast-ui/vue-editor'
+import { Viewer } from '@toast-ui/vue-editor'
 
 export default {
     components: {
-        'viewer': EditorViewer
+        'viewer': Viewer
     },
     data() {
         return {
@@ -400,11 +400,11 @@ Example :
 </template>
 
 <script>
-import { EditorViewer } from '@toast-ui/vue-editor'
+import { Viewer } from '@toast-ui/vue-editor'
 
 export default {
     components: {
-        'viewer': EditorViewer
+        'viewer': Viewer
     },
     methods: {
         onEditorLoad() {
