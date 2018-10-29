@@ -4,13 +4,7 @@
 <script>
 import Viewer from 'tui-editor/dist/tui-editor-Viewer';
 
-const editorEvents = [
-    'load',
-    'change',
-    'stateChange',
-    'focus',
-    'blur'
-];
+import editorEvents from './editorEvents';
 
 export default {
     name: 'TuiEditorViewer',

@@ -4,52 +4,9 @@
 <script>
 import Editor from 'tui-editor';
 
-const editorEvents = [
-    'load',
-    'change',
-    'stateChange',
-    'focus',
-    'blur'
-];
-
-const editorDefaultOptions = {
-    minHeight: '200px',
-    language: 'en_US',
-    useCommandShortcut: true,
-    useDefaultHTMLSanitizer: true,
-    usageStatistics: true,
-    hideModeSwitch: false,
-    toolbarItems: [
-        'heading',
-        'bold',
-        'italic',
-        'strike',
-        'divider',
-        'hr',
-        'quote',
-        'divider',
-        'ul',
-        'ol',
-        'task',
-        'indent',
-        'outdent',
-        'divider',
-        'table',
-        'image',
-        'link',
-        'divider',
-        'code',
-        'codeblock'
-    ]
-};
-
-const valueUpdateMethod = [
-    'insertText',
-    'setValue',
-    'setMarkdown',
-    'setHtml',
-    'reset'
-];
+import editorEvents from './editorEvents';
+import editorDefaultOptions from './editorDefaultOptions';
+import valueUpdateMethod from './valueUpdateMethod';
 
 export default {
     name: 'TuiEditor',
