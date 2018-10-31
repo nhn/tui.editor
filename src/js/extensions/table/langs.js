@@ -89,4 +89,10 @@ if (i18n) {
     'Cannot change part of merged cell': 'Yhdistettyjen solujen osaa ei voi muuttaa',
     'Cannot paste row merged cells into the table header': 'Soluja ei voi yhdistää taulukon otsikkoriviin'
   });
+  i18n.setLanguage(['ar', 'ar_AR'], {
+    'Merge cells': 'دمج الوحدات',
+    'Unmerge cells': 'إلغاء دمج الوحدات',
+    'Cannot change part of merged cell': 'لا يمكن تغيير جزء من الخلية المدموجة',
+    'Cannot paste row merged cells into the table header': 'لا يمكن لصق الخلايا المدموجة من صف واحد في رأس الجدول'
+  });
 }
