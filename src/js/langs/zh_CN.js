@@ -45,7 +45,7 @@ i18n.setLanguage(['zh', 'zh_CN'], {
   'Align right': '右对齐',
   'Remove table': '删除表',
   'Would you like to paste as table?': '你想粘贴表吗?',
-  'Text color': '文字色相',
+  'Text color': '文字颜色',
   'Auto scroll enabled': '自动滚动启用',
   'Auto scroll disabled': '自动的滚动作非使用',
   'Cannot paste values ​​other than a table in the cell selection state': '在单元格选择状态下无法粘贴表格以外的值。',
