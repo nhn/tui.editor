@@ -258,11 +258,12 @@ class DefaultUI {
         this._editor.eventManager.emit('openPopupTableUtils', ev.data);
       }
     });
-
-    this._popups.push(new PopupTableUtils({
+    const popupTableUtils = new PopupTableUtils({
       $target: this.$el,
       eventManager: this._editor.eventManager
-    }));
+    });
+    this._popups.push(popupTableUtils);
+    this.popupTableUtils = popupTableUtils;
   }
 
   _initPopupCodeBlockLanguages() {
