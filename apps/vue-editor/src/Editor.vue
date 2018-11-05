@@ -71,7 +71,7 @@ export default {
             defalut: 'markdown'
         },
         options: {
-            tpye: Object,
+            type: Object,
             default() {
                 return editorDefaultOptions;
             }
