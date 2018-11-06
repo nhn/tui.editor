@@ -4,6 +4,8 @@
 */
 import CommandManager from '../commandManager';
 
+const BlockquoteStr = '>';
+
 /**
  * Blockquote
  * Add blockquote markdown syntax to markdown editor
@@ -35,11 +37,13 @@ const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
     };
 
     const textToModify = doc.getRange(from, to);
-    const textLinesToModify = textToModify.split('\n');
-    const lineLength = textLinesToModify.length;
+    let textLinesToModify = textToModify.split('\n');
+    const isNeedToRemove = this.haveBlockquote(textLinesToModify);
 
-    for (let i = 0; i < lineLength; i += 1) {
-      textLinesToModify[i] = `>${textLinesToModify[i]}`;
+    if (isNeedToRemove) {
+      textLinesToModify = this.removeBlockquote(textLinesToModify);
+    } else {
+      textLinesToModify = this.addBlockquote(textLinesToModify);
     }
 
     doc.replaceRange(textLinesToModify.join('\n'), from, to);
@@ -49,6 +53,24 @@ const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
     doc.setCursor(range.to);
 
     cm.focus();
+  },
+
+  haveBlockquote(textArr) {
+    for (let i = 0; i < textArr.length; i += 1) {
+      if (!textArr[i].startsWith(BlockquoteStr)) {
+        return false;
+      }
+    }
+
+    return true;
+  },
+
+  addBlockquote(textArr) {
+    return textArr.map(text => `>${text}`);
+  },
+
+  removeBlockquote(textArr) {
+    return textArr.map(text => text.slice(1, text.length));
   }
 });
 
