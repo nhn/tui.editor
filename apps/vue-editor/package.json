@@ -10,7 +10,8 @@
   "scripts": {
     "lint": "eslint src/**",
     "build": "webpack --mode production",
-    "build:dev": "webpack --mode development"
+    "build:dev": "webpack --mode development",
+    "serve": "vue serve ./example/App.vue"
   },
   "homepage": "https://github.com/nhnent/toast-ui.vue-editor",
   "bugs": "https://github.com/nhnent/toast-ui.vue-editor/issues",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@babel/core": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
+    "@vue/cli": "^3.1.1",
     "babel-eslint": "^9.0.0",
     "babel-loader": "^8.0.2",
     "eslint": "^5.5.0",
