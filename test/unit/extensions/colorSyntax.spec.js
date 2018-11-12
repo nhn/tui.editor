@@ -225,8 +225,8 @@ describe('colorSyntax', () => {
   });
 
   describe('initializer', () => {
-    xit('should not call imagePing if usageStatistics editor option is false', done => {
-      spyOn(util, 'imagePing');
+    xit('should not call sendHostname if usageStatistics editor option is false', done => {
+      spyOn(util, 'sendHostname');
 
       ned = new TuiEditor({
         el: container,
@@ -235,13 +235,13 @@ describe('colorSyntax', () => {
       });
 
       setTimeout(() => {
-        expect(util.imagePing).not.toHaveBeenCalled();
+        expect(util.sendHostname).not.toHaveBeenCalled();
         done();
       }, 10);
     });
 
-    xit('should call imagePing if usageStatistics editor option is true', done => {
-      spyOn(util, 'imagePing');
+    xit('should call sendHostname if usageStatistics editor option is true', done => {
+      spyOn(util, 'sendHostname');
 
       ned = new TuiEditor({
         el: container,
@@ -250,8 +250,8 @@ describe('colorSyntax', () => {
       });
 
       setTimeout(() => {
-        expect(util.imagePing).toHaveBeenCalled();
-        expect(util.imagePing.calls.count()).toBe(2);
+        expect(util.sendHostname).toHaveBeenCalled();
+        expect(util.sendHostname.calls.count()).toBe(2);
         done();
       }, 10);
     });

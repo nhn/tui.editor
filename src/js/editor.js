@@ -69,8 +69,6 @@ import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
 
-import {sendHostName} from './util';
-
 // langs
 import './langs/en_US';
 import './langs/ko_KR';
@@ -212,7 +210,7 @@ class ToastUIEditor {
     this._addDefaultCommands();
 
     if (this.options.usageStatistics) {
-      sendHostName();
+      util.sendHostname('editor');
     }
   }
 
