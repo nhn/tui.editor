@@ -63,4 +63,34 @@ describe('Blockquote', () => {
       expect(cm.getValue()).toEqual(['>mytext1', '>', '>mytext2', 'mytext3'].join('\n'));
     });
   });
+
+  describe('removing quote in one line', () => {
+    it('quote should remove from already existing quote.', () => {
+      const sourceText = ['mytext1', '', '>mytext2', 'mytext3'];
+      cm.setValue(sourceText.join('\n'));
+
+      doc.setCursor(2, 3);
+      Blockquote.exec(mde);
+
+      expect(cm.getValue()).toEqual(['mytext1', '', 'mytext2', 'mytext3'].join('\n'));
+    });
+  });
+
+  describe('removing quote in selected area', () => {
+    it('quote should remove from already existing quote.', () => {
+      const sourceText = ['>mytext1', '>', '>mytext2', 'mytext3'];
+      cm.setValue(sourceText.join('\n'));
+
+      doc.setSelection({
+        line: 0,
+        ch: 3
+      }, {
+        line: 2,
+        ch: 2
+      });
+      Blockquote.exec(mde);
+
+      expect(cm.getValue()).toEqual(['mytext1', '', 'mytext2', 'mytext3'].join('\n'));
+    });
+  });
 });
