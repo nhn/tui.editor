@@ -5,6 +5,7 @@
 import CommandManager from '../commandManager';
 
 const BlockquoteStr = '>';
+const BlockquoteWithSpaceStr = '> ';
 
 /**
  * Blockquote
@@ -37,16 +38,17 @@ const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
     };
 
     const textToModify = doc.getRange(from, to);
-    let textLinesToModify = textToModify.split('\n');
-    const isNeedToRemove = this.haveBlockquote(textLinesToModify);
+    const textLinesToModify = textToModify.split('\n');
+    const isNeedToRemove = this._haveBlockquote(textLinesToModify);
+    let resultText;
 
     if (isNeedToRemove) {
-      textLinesToModify = this.removeBlockquote(textLinesToModify);
+      resultText = this._removeBlockquote(textLinesToModify);
     } else {
-      textLinesToModify = this.addBlockquote(textLinesToModify);
+      resultText = this._addBlockquote(textLinesToModify);
     }
 
-    doc.replaceRange(textLinesToModify.join('\n'), from, to);
+    doc.replaceRange(resultText.join('\n'), from, to);
 
     range.to.ch += 1;
 
@@ -55,7 +57,13 @@ const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
     cm.focus();
   },
 
-  haveBlockquote(textArr) {
+  /**
+   * check all text in textArr starts with '>'
+   * @param {Array} textArr - text array
+   * @returns {boolean} - true if all text in textArr starts with '>'
+   * @private
+   */
+  _haveBlockquote(textArr) {
     for (let i = 0; i < textArr.length; i += 1) {
       if (!textArr[i].startsWith(BlockquoteStr)) {
         return false;
@@ -65,12 +73,30 @@ const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
     return true;
   },
 
-  addBlockquote(textArr) {
-    return textArr.map(text => `>${text}`);
+  /**
+   * add '> ' to all text in textArr
+   * @param {Array} textArr - text array
+   * @returns {Array} - new text array added '> '
+   * @private
+   */
+  _addBlockquote(textArr) {
+    return textArr.map(text => `${BlockquoteWithSpaceStr}${text}`);
   },
 
-  removeBlockquote(textArr) {
-    return textArr.map(text => text.slice(1, text.length));
+  /**
+   * remove '> ' or '>' to all text in textArr
+   * @param {Array} textArr - text array
+   * @returns {Array} - new text array removed '> ' or  '>'
+   * @private
+   */
+  _removeBlockquote(textArr) {
+    return textArr.map(text => {
+      if (text.startsWith(BlockquoteWithSpaceStr)) {
+        return text.slice(2, text.length);
+      }
+
+      return text.slice(1, text.length);
+    });
   }
 });
 
