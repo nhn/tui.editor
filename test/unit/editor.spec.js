@@ -291,7 +291,7 @@ describe('Editor', () => {
     });
 
     describe('usageStatistics', () => {
-      xit('should send request hostname in payload by default', () => {
+      it('should send request hostname in payload by default', () => {
         spyOn(util, 'sendHostname');
 
         editor = new Editor({
@@ -301,7 +301,7 @@ describe('Editor', () => {
         expect(util.sendHostname).toHaveBeenCalled();
       });
 
-      xit('should not send request if the option is set to false', () => {
+      it('should not send request if the option is set to false', () => {
         spyOn(util, 'sendHostname');
 
         editor = new Editor({
