@@ -4,8 +4,7 @@
 */
 import CommandManager from '../commandManager';
 
-const BlockquoteStr = '>';
-const BlockquoteWithSpaceStr = '> ';
+const BlockquoteRegex = /^> ?/;
 
 /**
  * Blockquote
@@ -65,7 +64,7 @@ const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
    */
   _haveBlockquote(textArr) {
     for (let i = 0; i < textArr.length; i += 1) {
-      if (!textArr[i].startsWith(BlockquoteStr)) {
+      if (!BlockquoteRegex.test(textArr[i])) {
         return false;
       }
     }
@@ -80,7 +79,7 @@ const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
    * @private
    */
   _addBlockquote(textArr) {
-    return textArr.map(text => `${BlockquoteWithSpaceStr}${text}`);
+    return textArr.map(text => `> ${text}`);
   },
 
   /**
@@ -90,13 +89,7 @@ const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
    * @private
    */
   _removeBlockquote(textArr) {
-    return textArr.map(text => {
-      if (text.startsWith(BlockquoteWithSpaceStr)) {
-        return text.slice(2, text.length);
-      }
-
-      return text.slice(1, text.length);
-    });
+    return textArr.map(text => text.replace(BlockquoteRegex, ''));
   }
 });
 
