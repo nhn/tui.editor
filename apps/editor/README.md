@@ -258,7 +258,7 @@ var editor = Editor.factory({
 * [TOAST UI Components](https://github.com/nhnent?q=tui)
 
 ## 🚀 Used By
-* [TOAST Dooray! - Collaboration Service (Project, Messenger, Mail)](https://dooray.com)
+* [TOAST Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com)
 
 ## 📜 License
 This software is licensed under the [MIT](https://github.com/nhnent/tui.editor/blob/master/LICENSE) © [NHN Entertainment](https://github.com/nhnent).
