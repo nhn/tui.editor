@@ -321,7 +321,8 @@ function setDefaultOptions(chartOptions, extensionOptions, chartContainer) {
   chartOptions = util.extend({
     editorChart: {},
     chart: {},
-    chartExportMenu: {}
+    chartExportMenu: {},
+    usageStatistics: extensionOptions.usageStatistics
   }, chartOptions);
 
   // set default extension options
@@ -516,6 +517,11 @@ function chartExtension(editor, options = {}) {
   if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
     optionLanguages.push(LANG);
   }
+
+  options = util.extend({
+    usageStatistics: editor.options.usageStatistics
+  }, options);
+
   codeBlockManager.setReplacer(LANG, codeBlockChartDataAndOptions => {
     return chartReplacer(codeBlockChartDataAndOptions, options);
   });

@@ -25,6 +25,40 @@ describe('colorSyntax', () => {
     });
   });
 
+  describe('initializer', () => {
+    it('should not call sendHostname if usageStatistics editor option is false', done => {
+      spyOn(util, 'sendHostname');
+
+      ned = new TuiEditor({
+        el: container,
+        exts: ['colorSyntax'],
+        usageStatistics: false
+      });
+
+      setTimeout(() => {
+        expect(util.sendHostname).not.toHaveBeenCalled();
+        done();
+      }, 10);
+    });
+
+    it('should call sendHostname if usageStatistics editor option is true', done => {
+      spyOn(util, 'sendHostname');
+      spyOn(util, 'imagePing'); // ColorPicker use imagePing
+
+      ned = new TuiEditor({
+        el: container,
+        exts: ['colorSyntax'],
+        usageStatistics: true
+      });
+
+      setTimeout(() => {
+        expect(util.sendHostname).toHaveBeenCalled();
+        expect(util.imagePing).toHaveBeenCalled();
+        done();
+      }, 10);
+    });
+  });
+
   describe('custom syntax conversion', () => {
     let actual, expected;
 
@@ -221,39 +255,6 @@ describe('colorSyntax', () => {
       expect($span.eq(0).css('color')).toEqual('rgb(255, 0, 255)');
       expect($span.eq(1).hasClass('colour')).toBe(true);
       expect($span.eq(1).css('color')).toEqual('rgb(255, 0, 255)');
-    });
-  });
-
-  describe('initializer', () => {
-    xit('should not call imagePing if usageStatistics editor option is false', done => {
-      spyOn(util, 'imagePing');
-
-      ned = new TuiEditor({
-        el: container,
-        exts: ['colorSyntax'],
-        usageStatistics: false
-      });
-
-      setTimeout(() => {
-        expect(util.imagePing).not.toHaveBeenCalled();
-        done();
-      }, 10);
-    });
-
-    xit('should call imagePing if usageStatistics editor option is true', done => {
-      spyOn(util, 'imagePing');
-
-      ned = new TuiEditor({
-        el: container,
-        exts: ['colorSyntax'],
-        usageStatistics: true
-      });
-
-      setTimeout(() => {
-        expect(util.imagePing).toHaveBeenCalled();
-        expect(util.imagePing.calls.count()).toBe(2);
-        done();
-      }, 10);
     });
   });
 });
