@@ -49,7 +49,16 @@ const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
 
     doc.replaceRange(resultText.join('\n'), from, to);
 
-    range.to.ch += 1;
+    if (isNeedToRemove) {
+      const length = textLinesToModify.length;
+      if (this._isBlockquoteWithSpace(textLinesToModify[length - 1])) {
+        range.to.ch -= 2;
+      } else {
+        range.to.ch -= 1;
+      }
+    } else {
+      range.to.ch += 2;
+    }
 
     doc.setCursor(range.to);
 
@@ -90,6 +99,16 @@ const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
    */
   _removeBlockquote(textArr) {
     return textArr.map(text => text.replace(BlockquoteRegex, ''));
+  },
+
+  /**
+   * check text start '> '
+   * @param {string} text - text
+   * @returns {boolean} - if text start '> ', true
+   * @private
+   */
+  _isBlockquoteWithSpace(text) {
+    return /^> /.test(text);
   }
 });
 
