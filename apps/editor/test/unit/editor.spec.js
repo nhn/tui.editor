@@ -291,25 +291,25 @@ describe('Editor', () => {
     });
 
     describe('usageStatistics', () => {
-      xit('should send request hostname in payload by default', () => {
-        spyOn(util, 'imagePing');
+      it('should send request hostname in payload by default', () => {
+        spyOn(util, 'sendHostname');
 
         editor = new Editor({
           el: container
         });
 
-        expect(util.imagePing).toHaveBeenCalled();
+        expect(util.sendHostname).toHaveBeenCalled();
       });
 
-      xit('should not send request if the option is set to false', () => {
-        spyOn(util, 'imagePing');
+      it('should not send request if the option is set to false', () => {
+        spyOn(util, 'sendHostname');
 
         editor = new Editor({
           el: container,
           usageStatistics: false
         });
 
-        expect(util.imagePing).not.toHaveBeenCalled();
+        expect(util.sendHostname).not.toHaveBeenCalled();
       });
     });
 

@@ -90,7 +90,7 @@
     "squire-rte": "github:kyuwoo-choi/Squire#fde64d0bedb524e4495f3121dce518b94ad5852b",
     "to-mark": "^1.1.2",
     "tui-chart": "^3.0.1",
-    "tui-code-snippet": "^1.3.0",
+    "tui-code-snippet": "^1.4.0",
     "tui-color-picker": "^2.2.0"
   }
 }
