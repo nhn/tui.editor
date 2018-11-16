@@ -69,8 +69,6 @@ import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
 
-import {sendHostName} from './util';
-
 // langs
 import './langs/en_US';
 import './langs/ko_KR';
@@ -83,6 +81,7 @@ import './langs/ru_RU';
 import './langs/fr_FR';
 import './langs/uk_UA';
 import './langs/tr_TR';
+import './langs/fi_FI';
 
 const __nedInstance = [];
 
@@ -211,7 +210,7 @@ class ToastUIEditor {
     this._addDefaultCommands();
 
     if (this.options.usageStatistics) {
-      sendHostName();
+      util.sendHostname('editor');
     }
   }
 
@@ -508,10 +507,10 @@ class ToastUIEditor {
   height(height) {
     if (util.isExisty(height)) {
       if (height === 'auto') {
-        this.options.el.classList.add('auto-height');
+        $(this.options.el).addClass('auto-height');
         this.minHeight(this.minHeight());
       } else {
-        this.options.el.classList.remove('auto-height');
+        $(this.options.el).removeClass('auto-height');
         this.minHeight(height);
       }
       if (util.isNumber(height)) {

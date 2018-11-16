@@ -123,7 +123,7 @@ describe('CodeMirrorExt', () => {
     const wrapper = codeMirrorExt.getWrapperElement();
 
     expect(wrapper).toEqual(jasmine.any(HTMLElement));
-    expect(wrapper.classList.contains('CodeMirror'));
+    expect($(wrapper.classList).hasClass('CodeMirror'));
   });
 
   describe('get, set scrollTop', () => {

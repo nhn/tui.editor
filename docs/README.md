@@ -5,6 +5,7 @@
 * [Getting Started](getting-started.md)
 * [Getting Started with Bower(or with downloaded zip files)](getting-started-with-bower.md)
 * [Using Extensions](using-extensions.md)
+* [Writing Your Own Extension](writing-your-own-extension.md)
 
 ## Documents
 * [Code of Conduct](../CODE_OF_CONDUCT.md)
