@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.6
+ * @version 1.2.7
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 138);
+/******/ 	return __webpack_require__(__webpack_require__.s = 139);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -95,7 +95,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
 /***/ }),
 
-/***/ 12:
+/***/ 11:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -109,7 +109,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _preview = __webpack_require__(13);
+var _preview = __webpack_require__(12);
 
 var _preview2 = _interopRequireDefault(_preview);
 
@@ -205,7 +205,7 @@ exports.default = MarkdownPreview;
 
 /***/ }),
 
-/***/ 13:
+/***/ 12:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -370,61 +370,7 @@ exports.default = Preview;
 
 /***/ }),
 
-/***/ 138:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Viewer = __webpack_require__(32);
-
-// for jquery
-/**
- * @fileoverview entry point for viewer
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- */
-_jquery2.default.fn.tuiEditor = function () {
-  var options = void 0,
-      instance = void 0;
-
-  var el = this.get(0);
-
-  if (el) {
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    options = args[0] || {};
-
-    instance = _jquery2.default.data(el, 'tuiEditor');
-
-    if (instance) {
-      if (typeof options === 'string') {
-        var _instance;
-
-        return (_instance = instance)[options].apply(_instance, args.slice(1));
-      }
-    } else {
-      options.el = el;
-      instance = new Viewer(options);
-      _jquery2.default.data(el, 'tuiEditor', instance);
-    }
-  }
-
-  return this;
-};
-
-module.exports = Viewer;
-
-/***/ }),
-
-/***/ 14:
+/***/ 13:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -534,6 +480,74 @@ function finalizeHtml($html, needHtmlText) {
 }
 
 exports.default = htmlSanitizer;
+
+/***/ }),
+
+/***/ 139:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Viewer = __webpack_require__(32);
+
+// for jquery
+/**
+ * @fileoverview entry point for viewer
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+_jquery2.default.fn.tuiEditor = function () {
+  var options = void 0,
+      instance = void 0;
+
+  var el = this.get(0);
+
+  if (el) {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    options = args[0] || {};
+
+    instance = _jquery2.default.data(el, 'tuiEditor');
+
+    if (instance) {
+      if (typeof options === 'string') {
+        var _instance;
+
+        return (_instance = instance)[options].apply(_instance, args.slice(1));
+      }
+    } else {
+      options.el = el;
+      instance = new Viewer(options);
+      _jquery2.default.data(el, 'tuiEditor', instance);
+    }
+  }
+
+  return this;
+};
+
+module.exports = Viewer;
+
+/***/ }),
+
+/***/ 14:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var isMac = /Mac/.test(navigator.platform);
+
+module.exports = {
+  isMac: isMac
+};
 
 /***/ }),
 
@@ -925,7 +939,7 @@ var _toMark = __webpack_require__(23);
 
 var _toMark2 = _interopRequireDefault(_toMark);
 
-var _htmlSanitizer = __webpack_require__(14);
+var _htmlSanitizer = __webpack_require__(13);
 
 var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
@@ -1259,7 +1273,7 @@ var _command = __webpack_require__(21);
 
 var _command2 = _interopRequireDefault(_command);
 
-var _util = __webpack_require__(9);
+var _util = __webpack_require__(14);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2654,7 +2668,415 @@ module.exports = function html_block(state, startLine, endLine, silent) {
 
 /***/ }),
 
-/***/ 3:
+/***/ 30:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
+// Distributed under MIT license: https://github.com/markdown-it/markdown-it/
+/**
+ * @fileoverview Implements markdownitBackticksRenderer
+ * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+/* eslint-disable */
+
+// Parse backticks
+module.exports = function backtick(state, silent) {
+  var start,
+      max,
+      marker,
+      matchStart,
+      matchEnd,
+      token,
+      pos = state.pos,
+      ch = state.src.charCodeAt(pos);
+
+  if (ch !== 0x60 /* ` */) {
+      return false;
+    }
+
+  start = pos;
+  pos++;
+  max = state.posMax;
+
+  while (pos < max && state.src.charCodeAt(pos) === 0x60 /* ` */) {
+    pos++;
+  }
+
+  marker = state.src.slice(start, pos);
+
+  matchStart = matchEnd = pos;
+
+  while ((matchStart = state.src.indexOf('`', matchEnd)) !== -1) {
+    matchEnd = matchStart + 1;
+
+    while (matchEnd < max && state.src.charCodeAt(matchEnd) === 0x60 /* ` */) {
+      matchEnd++;
+    }
+
+    if (matchEnd - matchStart === marker.length) {
+      if (!silent) {
+        token = state.push('code_inline', 'code', 0);
+        token.markup = marker;
+        token.content = state.src.slice(pos, matchStart).replace(/[ \n]+/g, ' ').trim();
+        // TUI.EDITOR MODIFICATION START
+        // store number of backtick in data-backtick
+        // https://github.nhnent.com/fe/tui.editor/pull/981
+        token.attrSet('data-backticks', token.markup.length);
+        // TUI.EDITOR MODIFICATION END
+      }
+      state.pos = matchEnd;
+      return true;
+    }
+  }
+
+  if (!silent) {
+    state.pending += marker;
+  }
+  state.pos += marker.length;
+  return true;
+};
+
+/***/ }),
+
+/***/ 31:
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_31__;
+
+/***/ }),
+
+/***/ 32:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements editor preivew
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _tuiCodeSnippet = __webpack_require__(1);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+var _mdPreview = __webpack_require__(11);
+
+var _mdPreview2 = _interopRequireDefault(_mdPreview);
+
+var _eventManager = __webpack_require__(15);
+
+var _eventManager2 = _interopRequireDefault(_eventManager);
+
+var _commandManager = __webpack_require__(2);
+
+var _commandManager2 = _interopRequireDefault(_commandManager);
+
+var _extManager = __webpack_require__(16);
+
+var _extManager2 = _interopRequireDefault(_extManager);
+
+var _convertor = __webpack_require__(17);
+
+var _convertor2 = _interopRequireDefault(_convertor);
+
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
+var _codeBlockManager = __webpack_require__(7);
+
+var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TASK_ATTR_NAME = 'data-te-task';
+var TASK_CHECKED_CLASS_NAME = 'checked';
+
+/**
+ * Class ToastUIEditorViewer
+ */
+
+var ToastUIEditorViewer = function () {
+  /**
+     * Viewer
+     * @param {object} options Option object
+        * @param {string} options.initialValue Editor's initial value
+        * @param {object} options.events eventlist Event list
+            * @param {function} options.events.load It would be emitted when editor fully load
+            * @param {function} options.events.change It would be emitted when content changed
+            * @param {function} options.events.stateChange It would be emitted when format change by cursor position
+            * @param {function} options.events.focus It would be emitted when editor get focus
+            * @param {function} options.events.blur It would be emitted when editor loose focus
+        * @param {object} options.hooks Hook list
+            * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
+    */
+  function ToastUIEditorViewer(options) {
+    var _this = this;
+
+    _classCallCheck(this, ToastUIEditorViewer);
+
+    this.options = _jquery2.default.extend({
+      useDefaultHTMLSanitizer: true,
+      codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages()
+    }, options);
+
+    this.eventManager = new _eventManager2.default();
+    this.commandManager = new _commandManager2.default(this);
+    this.convertor = new _convertor2.default(this.eventManager);
+    this.toMarkOptions = null;
+
+    if (this.options.useDefaultHTMLSanitizer) {
+      this.convertor.initHtmlSanitizer();
+    }
+
+    if (this.options.hooks) {
+      _tuiCodeSnippet2.default.forEach(this.options.hooks, function (fn, key) {
+        _this.addHook(key, fn);
+      });
+    }
+
+    if (this.options.events) {
+      _tuiCodeSnippet2.default.forEach(this.options.events, function (fn, key) {
+        _this.on(key, fn);
+      });
+    }
+
+    this.preview = new _mdPreview2.default((0, _jquery2.default)(this.options.el), this.eventManager, this.convertor, true);
+
+    this.preview.$el.on('mousedown', _jquery2.default.proxy(this._toggleTask, this));
+
+    _extManager2.default.applyExtension(this, this.options.exts);
+
+    this.setValue(this.options.initialValue);
+
+    this.eventManager.emit('load', this);
+  }
+
+  /**
+   * Toggle task by detecting mousedown event.
+   * @param {MouseEvent} ev - event
+   * @private
+   */
+
+
+  _createClass(ToastUIEditorViewer, [{
+    key: '_toggleTask',
+    value: function _toggleTask(ev) {
+      var isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+
+      if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+        (0, _jquery2.default)(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+        this.eventManager.emit('change', {
+          source: 'viewer',
+          data: ev
+        });
+      }
+    }
+
+    /**
+     * Set content for preview
+     * @memberof ToastUIEditorViewer
+     * @param {string} markdown Markdown text
+     */
+
+  }, {
+    key: 'setMarkdown',
+    value: function setMarkdown(markdown) {
+      this.markdownValue = markdown = markdown || '';
+
+      this.preview.refresh(this.markdownValue);
+      this.eventManager.emit('setMarkdownAfter', this.markdownValue);
+    }
+
+    /**
+     * Set content for preview
+     * @memberof ToastUIEditorViewer
+     * @param {string} markdown Markdown text
+     * @deprecated
+     */
+
+  }, {
+    key: 'setValue',
+    value: function setValue(markdown) {
+      this.setMarkdown(markdown);
+    }
+
+    /**
+     * Bind eventHandler to event type
+     * @memberof ToastUIEditorViewer
+     * @param {string} type Event type
+     * @param {function} handler Event handler
+     */
+
+  }, {
+    key: 'on',
+    value: function on(type, handler) {
+      this.eventManager.listen(type, handler);
+    }
+
+    /**
+     * Unbind eventHandler from event type
+     * @memberof ToastUIEditorViewer
+     * @param {string} type Event type
+     */
+
+  }, {
+    key: 'off',
+    value: function off(type) {
+      this.eventManager.removeEventHandler(type);
+    }
+
+    /**
+     * Remove Viewer preview from document
+     * @memberof ToastUIEditorViewer
+     */
+
+  }, {
+    key: 'remove',
+    value: function remove() {
+      this.eventManager.emit('removeEditor');
+      this.preview.$el.off('mousedown', _jquery2.default.proxy(this._toggleTask, this));
+      this.options = null;
+      this.eventManager = null;
+      this.commandManager = null;
+      this.convertor = null;
+      this.preview = null;
+    }
+
+    /**
+     * Add hook to Viewer preview's event
+     * @memberof ToastUIEditorViewer
+     * @param {string} type Event type
+     * @param {function} handler Event handler
+     */
+
+  }, {
+    key: 'addHook',
+    value: function addHook(type, handler) {
+      this.eventManager.removeEventHandler(type);
+      this.eventManager.listen(type, handler);
+    }
+
+    /**
+     * Return true
+     * @memberof ToastUIEditorViewer
+     * @returns {boolean}
+     */
+
+  }, {
+    key: 'isViewer',
+    value: function isViewer() {
+      return true;
+    }
+
+    /**
+     * Return false
+     * @memberof ToastUIEditorViewer
+     * @returns {boolean}
+     */
+
+  }, {
+    key: 'isMarkdownMode',
+    value: function isMarkdownMode() {
+      return false;
+    }
+
+    /**
+     * Return false
+     * @memberof ToastUIEditorViewer
+     * @returns {boolean}
+     */
+
+  }, {
+    key: 'isWysiwygMode',
+    value: function isWysiwygMode() {
+      return false;
+    }
+
+    /**
+     * Define extension
+     * @memberof ToastUIEditorViewer
+     * @param {string} name Extension name
+     * @param {ExtManager~extension} ext extension
+     */
+
+  }], [{
+    key: 'defineExtension',
+    value: function defineExtension(name, ext) {
+      _extManager2.default.defineExtension(name, ext);
+    }
+  }]);
+
+  return ToastUIEditorViewer;
+}();
+
+/**
+ * check whther is viewer
+ * @type {boolean}
+ */
+
+
+ToastUIEditorViewer.isViewer = true;
+
+/**
+ * domUtil instance
+ * @type {DomUtil}
+ */
+ToastUIEditorViewer.domUtils = _domUtils2.default;
+
+/**
+ * CodeBlockManager instance
+ * @type {CodeBlockManager}
+ */
+ToastUIEditorViewer.codeBlockManager = _codeBlockManager2.default;
+
+/**
+ * MarkdownIt hightlight instance
+ * @type {MarkdownIt}
+ */
+ToastUIEditorViewer.markdownitHighlight = _convertor2.default.getMarkdownitHighlightRenderer();
+
+/**
+ * @ignore
+ */
+ToastUIEditorViewer.i18n = null;
+
+/**
+ * @ignore
+ */
+ToastUIEditorViewer.Button = null;
+
+/**
+ * @ignore
+ */
+ToastUIEditorViewer.WwCodeBlockManager = null;
+
+/**
+ * @ignore
+ */
+ToastUIEditorViewer.WwTableManager = null;
+
+/**
+ * @ignore
+ */
+ToastUIEditorViewer.WwTableSelectionManager = null;
+
+module.exports = ToastUIEditorViewer;
+
+/***/ }),
+
+/***/ 4:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3193,414 +3615,6 @@ exports.default = {
 
 /***/ }),
 
-/***/ 30:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
-// Distributed under MIT license: https://github.com/markdown-it/markdown-it/
-/**
- * @fileoverview Implements markdownitBackticksRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- */
-/* eslint-disable */
-
-// Parse backticks
-module.exports = function backtick(state, silent) {
-  var start,
-      max,
-      marker,
-      matchStart,
-      matchEnd,
-      token,
-      pos = state.pos,
-      ch = state.src.charCodeAt(pos);
-
-  if (ch !== 0x60 /* ` */) {
-      return false;
-    }
-
-  start = pos;
-  pos++;
-  max = state.posMax;
-
-  while (pos < max && state.src.charCodeAt(pos) === 0x60 /* ` */) {
-    pos++;
-  }
-
-  marker = state.src.slice(start, pos);
-
-  matchStart = matchEnd = pos;
-
-  while ((matchStart = state.src.indexOf('`', matchEnd)) !== -1) {
-    matchEnd = matchStart + 1;
-
-    while (matchEnd < max && state.src.charCodeAt(matchEnd) === 0x60 /* ` */) {
-      matchEnd++;
-    }
-
-    if (matchEnd - matchStart === marker.length) {
-      if (!silent) {
-        token = state.push('code_inline', 'code', 0);
-        token.markup = marker;
-        token.content = state.src.slice(pos, matchStart).replace(/[ \n]+/g, ' ').trim();
-        // TUI.EDITOR MODIFICATION START
-        // store number of backtick in data-backtick
-        // https://github.nhnent.com/fe/tui.editor/pull/981
-        token.attrSet('data-backticks', token.markup.length);
-        // TUI.EDITOR MODIFICATION END
-      }
-      state.pos = matchEnd;
-      return true;
-    }
-  }
-
-  if (!silent) {
-    state.pending += marker;
-  }
-  state.pos += marker.length;
-  return true;
-};
-
-/***/ }),
-
-/***/ 31:
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_31__;
-
-/***/ }),
-
-/***/ 32:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements editor preivew
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-var _mdPreview = __webpack_require__(12);
-
-var _mdPreview2 = _interopRequireDefault(_mdPreview);
-
-var _eventManager = __webpack_require__(15);
-
-var _eventManager2 = _interopRequireDefault(_eventManager);
-
-var _commandManager = __webpack_require__(2);
-
-var _commandManager2 = _interopRequireDefault(_commandManager);
-
-var _extManager = __webpack_require__(16);
-
-var _extManager2 = _interopRequireDefault(_extManager);
-
-var _convertor = __webpack_require__(17);
-
-var _convertor2 = _interopRequireDefault(_convertor);
-
-var _domUtils = __webpack_require__(3);
-
-var _domUtils2 = _interopRequireDefault(_domUtils);
-
-var _codeBlockManager = __webpack_require__(7);
-
-var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var TASK_ATTR_NAME = 'data-te-task';
-var TASK_CHECKED_CLASS_NAME = 'checked';
-
-/**
- * Class ToastUIEditorViewer
- */
-
-var ToastUIEditorViewer = function () {
-  /**
-     * Viewer
-     * @param {object} options Option object
-        * @param {string} options.initialValue Editor's initial value
-        * @param {object} options.events eventlist Event list
-            * @param {function} options.events.load It would be emitted when editor fully load
-            * @param {function} options.events.change It would be emitted when content changed
-            * @param {function} options.events.stateChange It would be emitted when format change by cursor position
-            * @param {function} options.events.focus It would be emitted when editor get focus
-            * @param {function} options.events.blur It would be emitted when editor loose focus
-        * @param {object} options.hooks Hook list
-            * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
-    */
-  function ToastUIEditorViewer(options) {
-    var _this = this;
-
-    _classCallCheck(this, ToastUIEditorViewer);
-
-    this.options = _jquery2.default.extend({
-      useDefaultHTMLSanitizer: true,
-      codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages()
-    }, options);
-
-    this.eventManager = new _eventManager2.default();
-    this.commandManager = new _commandManager2.default(this);
-    this.convertor = new _convertor2.default(this.eventManager);
-    this.toMarkOptions = null;
-
-    if (this.options.useDefaultHTMLSanitizer) {
-      this.convertor.initHtmlSanitizer();
-    }
-
-    if (this.options.hooks) {
-      _tuiCodeSnippet2.default.forEach(this.options.hooks, function (fn, key) {
-        _this.addHook(key, fn);
-      });
-    }
-
-    if (this.options.events) {
-      _tuiCodeSnippet2.default.forEach(this.options.events, function (fn, key) {
-        _this.on(key, fn);
-      });
-    }
-
-    this.preview = new _mdPreview2.default((0, _jquery2.default)(this.options.el), this.eventManager, this.convertor, true);
-
-    this.preview.$el.on('mousedown', _jquery2.default.proxy(this._toggleTask, this));
-
-    _extManager2.default.applyExtension(this, this.options.exts);
-
-    this.setValue(this.options.initialValue);
-
-    this.eventManager.emit('load', this);
-  }
-
-  /**
-   * Toggle task by detecting mousedown event.
-   * @param {MouseEvent} ev - event
-   * @private
-   */
-
-
-  _createClass(ToastUIEditorViewer, [{
-    key: '_toggleTask',
-    value: function _toggleTask(ev) {
-      var isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
-
-      if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
-        (0, _jquery2.default)(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
-        this.eventManager.emit('change', {
-          source: 'viewer',
-          data: ev
-        });
-      }
-    }
-
-    /**
-     * Set content for preview
-     * @memberof ToastUIEditorViewer
-     * @param {string} markdown Markdown text
-     */
-
-  }, {
-    key: 'setMarkdown',
-    value: function setMarkdown(markdown) {
-      this.markdownValue = markdown = markdown || '';
-
-      this.preview.refresh(this.markdownValue);
-      this.eventManager.emit('setMarkdownAfter', this.markdownValue);
-    }
-
-    /**
-     * Set content for preview
-     * @memberof ToastUIEditorViewer
-     * @param {string} markdown Markdown text
-     * @deprecated
-     */
-
-  }, {
-    key: 'setValue',
-    value: function setValue(markdown) {
-      this.setMarkdown(markdown);
-    }
-
-    /**
-     * Bind eventHandler to event type
-     * @memberof ToastUIEditorViewer
-     * @param {string} type Event type
-     * @param {function} handler Event handler
-     */
-
-  }, {
-    key: 'on',
-    value: function on(type, handler) {
-      this.eventManager.listen(type, handler);
-    }
-
-    /**
-     * Unbind eventHandler from event type
-     * @memberof ToastUIEditorViewer
-     * @param {string} type Event type
-     */
-
-  }, {
-    key: 'off',
-    value: function off(type) {
-      this.eventManager.removeEventHandler(type);
-    }
-
-    /**
-     * Remove Viewer preview from document
-     * @memberof ToastUIEditorViewer
-     */
-
-  }, {
-    key: 'remove',
-    value: function remove() {
-      this.eventManager.emit('removeEditor');
-      this.preview.$el.off('mousedown', _jquery2.default.proxy(this._toggleTask, this));
-      this.options = null;
-      this.eventManager = null;
-      this.commandManager = null;
-      this.convertor = null;
-      this.preview = null;
-    }
-
-    /**
-     * Add hook to Viewer preview's event
-     * @memberof ToastUIEditorViewer
-     * @param {string} type Event type
-     * @param {function} handler Event handler
-     */
-
-  }, {
-    key: 'addHook',
-    value: function addHook(type, handler) {
-      this.eventManager.removeEventHandler(type);
-      this.eventManager.listen(type, handler);
-    }
-
-    /**
-     * Return true
-     * @memberof ToastUIEditorViewer
-     * @returns {boolean}
-     */
-
-  }, {
-    key: 'isViewer',
-    value: function isViewer() {
-      return true;
-    }
-
-    /**
-     * Return false
-     * @memberof ToastUIEditorViewer
-     * @returns {boolean}
-     */
-
-  }, {
-    key: 'isMarkdownMode',
-    value: function isMarkdownMode() {
-      return false;
-    }
-
-    /**
-     * Return false
-     * @memberof ToastUIEditorViewer
-     * @returns {boolean}
-     */
-
-  }, {
-    key: 'isWysiwygMode',
-    value: function isWysiwygMode() {
-      return false;
-    }
-
-    /**
-     * Define extension
-     * @memberof ToastUIEditorViewer
-     * @param {string} name Extension name
-     * @param {ExtManager~extension} ext extension
-     */
-
-  }], [{
-    key: 'defineExtension',
-    value: function defineExtension(name, ext) {
-      _extManager2.default.defineExtension(name, ext);
-    }
-  }]);
-
-  return ToastUIEditorViewer;
-}();
-
-/**
- * check whther is viewer
- * @type {boolean}
- */
-
-
-ToastUIEditorViewer.isViewer = true;
-
-/**
- * domUtil instance
- * @type {DomUtil}
- */
-ToastUIEditorViewer.domUtils = _domUtils2.default;
-
-/**
- * CodeBlockManager instance
- * @type {CodeBlockManager}
- */
-ToastUIEditorViewer.codeBlockManager = _codeBlockManager2.default;
-
-/**
- * MarkdownIt hightlight instance
- * @type {MarkdownIt}
- */
-ToastUIEditorViewer.markdownitHighlight = _convertor2.default.getMarkdownitHighlightRenderer();
-
-/**
- * @ignore
- */
-ToastUIEditorViewer.i18n = null;
-
-/**
- * @ignore
- */
-ToastUIEditorViewer.Button = null;
-
-/**
- * @ignore
- */
-ToastUIEditorViewer.WwCodeBlockManager = null;
-
-/**
- * @ignore
- */
-ToastUIEditorViewer.WwTableManager = null;
-
-/**
- * @ignore
- */
-ToastUIEditorViewer.WwTableSelectionManager = null;
-
-module.exports = ToastUIEditorViewer;
-
-/***/ }),
-
 /***/ 7:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3719,56 +3733,6 @@ function escape(html, encode) {
 
 exports.CodeBlockManager = CodeBlockManager;
 exports.default = new CodeBlockManager();
-
-/***/ }),
-
-/***/ 9:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var hostnameSent = false;
-
-/**
- * send host name
- * @ignore
- */
-function sendHostName() {
-  if (hostnameSent) {
-    return;
-  }
-  hostnameSent = true;
-
-  var trackingID = 'UA-115377265-9';
-  var applicationID = 'editor';
-  var hitType = 'event';
-  var _location = location,
-      hostname = _location.hostname;
-
-
-  _tuiCodeSnippet2.default.imagePing('https://www.google-analytics.com/collect', {
-    v: 1,
-    t: hitType,
-    tid: trackingID,
-    cid: hostname,
-    dp: hostname,
-    dh: applicationID
-  });
-}
-
-var isMac = /Mac/.test(navigator.platform);
-
-module.exports = {
-  sendHostName: sendHostName,
-  isMac: isMac
-};
 
 /***/ })
 

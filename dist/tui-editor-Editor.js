@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.6
+ * @version 1.2.7
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -120,7 +120,7 @@ var _command = __webpack_require__(21);
 
 var _command2 = _interopRequireDefault(_command);
 
-var _util = __webpack_require__(9);
+var _util = __webpack_require__(14);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -310,6 +310,132 @@ exports.default = CommandManager;
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.I18n = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements i18n
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _tuiCodeSnippet = __webpack_require__(1);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var sharedInstance = void 0;
+
+var DEFAULT_CODE = 'en_US';
+
+/**
+ * Class I18n
+ */
+
+var I18n = function () {
+  /**
+   * Creates an instance of I18n.
+   * @memberof I18n
+   */
+  function I18n() {
+    _classCallCheck(this, I18n);
+
+    this._code = DEFAULT_CODE;
+    this._langs = new _tuiCodeSnippet2.default.Map();
+  }
+
+  /**
+   * Set locale code
+   * @param {string} code locale code
+   */
+
+
+  _createClass(I18n, [{
+    key: 'setCode',
+    value: function setCode(code) {
+      this._code = code;
+    }
+
+    /**
+     * Set language set
+     * @param {string|string[]} codes locale code
+     * @param {object} data language set
+     */
+
+  }, {
+    key: 'setLanguage',
+    value: function setLanguage(codes, data) {
+      var _this = this;
+
+      codes = [].concat(codes);
+
+      codes.forEach(function (code) {
+        if (!_this._langs.has(code)) {
+          _this._langs.set(code, data);
+        } else {
+          var langData = _this._langs.get(code);
+          _this._langs.set(code, _tuiCodeSnippet2.default.extend(langData, data));
+        }
+      });
+    }
+
+    /**
+     * Get text of key
+     * @param {string} key key of text
+     * @param {string} code locale code
+     * @returns {string}
+     */
+
+  }, {
+    key: 'get',
+    value: function get(key, code) {
+      if (!code) {
+        code = this._code;
+      }
+
+      var langSet = this._langs.get(code);
+
+      if (!langSet) {
+        langSet = this._langs.get(DEFAULT_CODE);
+      }
+
+      var text = langSet[key];
+
+      if (!text) {
+        throw new Error('There is no text key "' + key + '" in ' + code);
+      }
+
+      return text;
+    }
+  }], [{
+    key: 'getSharedInstance',
+    value: function getSharedInstance() {
+      if (!sharedInstance) {
+        sharedInstance = new I18n();
+      }
+
+      return sharedInstance;
+    }
+  }]);
+
+  return I18n;
+}();
+
+exports.I18n = I18n;
+exports.default = new I18n();
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -845,132 +971,6 @@ exports.default = {
   getTableCellByDirection: getTableCellByDirection,
   getSiblingRowCellByDirection: getSiblingRowCellByDirection
 };
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.I18n = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements i18n
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var sharedInstance = void 0;
-
-var DEFAULT_CODE = 'en_US';
-
-/**
- * Class I18n
- */
-
-var I18n = function () {
-  /**
-   * Creates an instance of I18n.
-   * @memberof I18n
-   */
-  function I18n() {
-    _classCallCheck(this, I18n);
-
-    this._code = DEFAULT_CODE;
-    this._langs = new _tuiCodeSnippet2.default.Map();
-  }
-
-  /**
-   * Set locale code
-   * @param {string} code locale code
-   */
-
-
-  _createClass(I18n, [{
-    key: 'setCode',
-    value: function setCode(code) {
-      this._code = code;
-    }
-
-    /**
-     * Set language set
-     * @param {string|string[]} codes locale code
-     * @param {object} data language set
-     */
-
-  }, {
-    key: 'setLanguage',
-    value: function setLanguage(codes, data) {
-      var _this = this;
-
-      codes = [].concat(codes);
-
-      codes.forEach(function (code) {
-        if (!_this._langs.has(code)) {
-          _this._langs.set(code, data);
-        } else {
-          var langData = _this._langs.get(code);
-          _this._langs.set(code, _tuiCodeSnippet2.default.extend(langData, data));
-        }
-      });
-    }
-
-    /**
-     * Get text of key
-     * @param {string} key key of text
-     * @param {string} code locale code
-     * @returns {string}
-     */
-
-  }, {
-    key: 'get',
-    value: function get(key, code) {
-      if (!code) {
-        code = this._code;
-      }
-
-      var langSet = this._langs.get(code);
-
-      if (!langSet) {
-        langSet = this._langs.get(DEFAULT_CODE);
-      }
-
-      var text = langSet[key];
-
-      if (!text) {
-        throw new Error('There is no text key "' + key + '" in ' + code);
-      }
-
-      return text;
-    }
-  }], [{
-    key: 'getSharedInstance',
-    value: function getSharedInstance() {
-      if (!sharedInstance) {
-        sharedInstance = new I18n();
-      }
-
-      return sharedInstance;
-    }
-  }]);
-
-  return I18n;
-}();
-
-exports.I18n = I18n;
-exports.default = new I18n();
 
 /***/ }),
 /* 5 */
@@ -1744,55 +1744,6 @@ exports.default = UIController;
 "use strict";
 
 
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var hostnameSent = false;
-
-/**
- * send host name
- * @ignore
- */
-function sendHostName() {
-  if (hostnameSent) {
-    return;
-  }
-  hostnameSent = true;
-
-  var trackingID = 'UA-115377265-9';
-  var applicationID = 'editor';
-  var hitType = 'event';
-  var _location = location,
-      hostname = _location.hostname;
-
-
-  _tuiCodeSnippet2.default.imagePing('https://www.google-analytics.com/collect', {
-    v: 1,
-    t: hitType,
-    tid: trackingID,
-    cid: hostname,
-    dp: hostname,
-    dh: applicationID
-  });
-}
-
-var isMac = /Mac/.test(navigator.platform);
-
-module.exports = {
-  sendHostName: sendHostName,
-  isMac: isMac
-};
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -1827,7 +1778,6 @@ var ImportManager = function () {
     _classCallCheck(this, ImportManager);
 
     this.eventManager = eventManager;
-    this._lastState = null;
 
     this._initEvent();
     this._initDefaultImageImporter();
@@ -1853,10 +1803,6 @@ var ImportManager = function () {
      */
     value: function _initEvent() {
       var _this = this;
-
-      this.eventManager.listen('stateChange', function (ev) {
-        _this._lastState = ev;
-      });
 
       this.eventManager.listen('drop', function (ev) {
         var items = ev.data.dataTransfer && ev.data.dataTransfer.files;
@@ -2009,20 +1955,6 @@ var ImportManager = function () {
         });
       }
     }
-
-    /**
-     * Returns if current cursor state is in block format ex) blockquote, list, task, codeblock
-     * @returns {boolean}
-     * @private
-     */
-
-  }, {
-    key: '_isInBlockFormat',
-    value: function _isInBlockFormat() {
-      var state = this._lastState;
-
-      return state && (state.codeBlock || state.list || state.task || state.code);
-    }
   }], [{
     key: 'decodeURIGraceful',
     value: function decodeURIGraceful(originalURI) {
@@ -2100,7 +2032,7 @@ function dataURItoBlob(dataURI) {
 exports.default = ImportManager;
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2203,7 +2135,7 @@ Object.defineProperty(ToolbarItem, 'className', {
 exports.default = ToolbarItem;
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2217,7 +2149,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _preview = __webpack_require__(13);
+var _preview = __webpack_require__(12);
 
 var _preview2 = _interopRequireDefault(_preview);
 
@@ -2312,7 +2244,7 @@ var MarkdownPreview = function (_Preview) {
 exports.default = MarkdownPreview;
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2476,7 +2408,7 @@ var Preview = function () {
 exports.default = Preview;
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2586,6 +2518,19 @@ function finalizeHtml($html, needHtmlText) {
 }
 
 exports.default = htmlSanitizer;
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var isMac = /Mac/.test(navigator.platform);
+
+module.exports = {
+  isMac: isMac
+};
 
 /***/ }),
 /* 15 */
@@ -2974,7 +2919,7 @@ var _toMark = __webpack_require__(23);
 
 var _toMark2 = _interopRequireDefault(_toMark);
 
-var _htmlSanitizer = __webpack_require__(14);
+var _htmlSanitizer = __webpack_require__(13);
 
 var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
@@ -3291,7 +3236,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _toolbarItem = __webpack_require__(11);
+var _toolbarItem = __webpack_require__(10);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
@@ -5184,7 +5129,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _mdPreview = __webpack_require__(12);
+var _mdPreview = __webpack_require__(11);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
@@ -5204,7 +5149,7 @@ var _convertor = __webpack_require__(17);
 
 var _convertor2 = _interopRequireDefault(_convertor);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -6141,7 +6086,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -7554,7 +7499,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -8045,7 +7990,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -8448,7 +8393,7 @@ var _button = __webpack_require__(18);
 
 var _button2 = _interopRequireDefault(_button);
 
-var _toolbarItem = __webpack_require__(11);
+var _toolbarItem = __webpack_require__(10);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
@@ -8870,7 +8815,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _toolbarItem = __webpack_require__(11);
+var _toolbarItem = __webpack_require__(10);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
@@ -8949,7 +8894,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
-var _toolbarItem = __webpack_require__(11);
+var _toolbarItem = __webpack_require__(10);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
@@ -8961,7 +8906,7 @@ var _toolbarDivider = __webpack_require__(41);
 
 var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -9397,7 +9342,7 @@ var _markdownEditor = __webpack_require__(46);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _mdPreview = __webpack_require__(12);
+var _mdPreview = __webpack_require__(11);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
@@ -9421,7 +9366,7 @@ var _extManager = __webpack_require__(16);
 
 var _extManager2 = _interopRequireDefault(_extManager);
 
-var _importManager = __webpack_require__(10);
+var _importManager = __webpack_require__(9);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -9437,7 +9382,7 @@ var _viewer = __webpack_require__(32);
 
 var _viewer2 = _interopRequireDefault(_viewer);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -9445,7 +9390,7 @@ var _defaultUI = __webpack_require__(69);
 
 var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -9621,8 +9566,6 @@ var _codeBlock3 = __webpack_require__(126);
 
 var _codeBlock4 = _interopRequireDefault(_codeBlock3);
 
-var _util = __webpack_require__(9);
-
 __webpack_require__(127);
 
 __webpack_require__(128);
@@ -9644,6 +9587,8 @@ __webpack_require__(135);
 __webpack_require__(136);
 
 __webpack_require__(137);
+
+__webpack_require__(138);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9764,7 +9709,7 @@ var ToastUIEditor = function () {
     this._addDefaultCommands();
 
     if (this.options.usageStatistics) {
-      (0, _util.sendHostName)();
+      _tuiCodeSnippet2.default.sendHostname('editor');
     }
   }
 
@@ -10140,10 +10085,10 @@ var ToastUIEditor = function () {
     value: function height(_height) {
       if (_tuiCodeSnippet2.default.isExisty(_height)) {
         if (_height === 'auto') {
-          this.options.el.classList.add('auto-height');
+          (0, _jquery2.default)(this.options.el).addClass('auto-height');
           this.minHeight(this.minHeight());
         } else {
-          this.options.el.classList.remove('auto-height');
+          (0, _jquery2.default)(this.options.el).removeClass('auto-height');
           this.minHeight(_height);
         }
         if (_tuiCodeSnippet2.default.isNumber(_height)) {
@@ -10746,18 +10691,14 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 
       this.cm.on('cursorActivity', function () {
         var token = _this2.cm.getTokenAt(_this2.cm.getCursor());
-
-        var _token$state = token.state,
-            base = _token$state.base,
-            overlay = _token$state.overlay;
-
+        var base = token.state.base;
 
         var state = {
           bold: !!base.strong,
           italic: !!base.em,
           strike: !!base.strikethrough,
-          code: !!overlay.code,
-          codeBlock: !!overlay.codeBlock,
+          code: base.code > 0,
+          codeBlock: base.code === -1,
           quote: !!base.quote,
           list: !!base.list,
           task: !!base.taskList,
@@ -12918,7 +12859,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -14376,7 +14317,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -14384,7 +14325,7 @@ var _wwPasteContentHelper = __webpack_require__(57);
 
 var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -14809,11 +14750,11 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _htmlSanitizer = __webpack_require__(14);
+var _htmlSanitizer = __webpack_require__(13);
 
 var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
@@ -15334,7 +15275,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16006,7 +15947,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16091,14 +16032,6 @@ var WwHrManager = function () {
         return _this2._onTypedInHr(range);
       });
 
-      this.wwe.addKeyEventHandler('ENTER', function (ev, range) {
-        if (range.collapsed) {
-          return _this2._removeHrOnEnter(range, ev);
-        }
-
-        return true;
-      });
-
       this.wwe.addKeyEventHandler('BACK_SPACE', function (ev, range) {
         if (range.collapsed) {
           return _this2._removeHrOnBackspace(range, ev);
@@ -16160,32 +16093,6 @@ var WwHrManager = function () {
           wwe.restoreSavedSelection();
         });
       }
-    }
-
-    /**
-     * _removeHrOnEnter
-     * Remove hr if need on enter
-     * @param {Range} range range
-     * @param {Event} ev event
-     * @returns {boolean} return true if hr was removed
-     * @memberof WwHrManager
-     * @private
-     */
-
-  }, {
-    key: '_removeHrOnEnter',
-    value: function _removeHrOnEnter(range, ev) {
-      var hrSuspect = void 0,
-          blockPosition = void 0;
-
-      if (this._isInHr(range)) {
-        hrSuspect = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
-      } else if (this._isNearHr(range)) {
-        hrSuspect = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
-        blockPosition = 'before';
-      }
-
-      return this._changeHrToNewDefaultBlock(hrSuspect, range, ev, blockPosition);
     }
 
     /**
@@ -16491,7 +16398,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16763,11 +16670,11 @@ var _squireRte = __webpack_require__(64);
 
 var _squireRte2 = _interopRequireDefault(_squireRte);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _util = __webpack_require__(9);
+var _util = __webpack_require__(14);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17187,7 +17094,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -18089,7 +17996,7 @@ var _popupCodeBlockEditor = __webpack_require__(82);
 
 var _popupCodeBlockEditor2 = _interopRequireDefault(_popupCodeBlockEditor);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -18530,7 +18437,7 @@ var _resizeObserverPolyfill = __webpack_require__(71);
 
 var _resizeObserverPolyfill2 = _interopRequireDefault(_resizeObserverPolyfill);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -20104,7 +20011,7 @@ var _uicontroller = __webpack_require__(8);
 
 var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -20297,6 +20204,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
 var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
@@ -20305,7 +20216,7 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -20467,12 +20378,12 @@ var PopupAddLink = function (_LayerPopup) {
       this._clearValidationStyle();
 
       if (linkText.length < 1) {
-        this._inputText.classList.add('wrong');
+        (0, _jquery2.default)(this._inputText).addClass('wrong');
 
         return;
       }
       if (url.length < 1) {
-        this._inputURL.classList.add('wrong');
+        (0, _jquery2.default)(this._inputURL).addClass('wrong');
 
         return;
       }
@@ -20497,8 +20408,8 @@ var PopupAddLink = function (_LayerPopup) {
   }, {
     key: '_clearValidationStyle',
     value: function _clearValidationStyle() {
-      this._inputURL.classList.remove('wrong');
-      this._inputText.classList.remove('wrong');
+      (0, _jquery2.default)(this._inputURL).removeClass('wrong');
+      (0, _jquery2.default)(this._inputText).removeClass('wrong');
     }
   }, {
     key: '_resetInputs',
@@ -20541,7 +20452,7 @@ var _tab = __webpack_require__(43);
 
 var _tab2 = _interopRequireDefault(_tab);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -20767,7 +20678,7 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -21435,7 +21346,7 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -21895,7 +21806,7 @@ var _codeBlockLanguagesCombo = __webpack_require__(86);
 
 var _codeBlockLanguagesCombo2 = _interopRequireDefault(_codeBlockLanguagesCombo);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -22064,7 +21975,7 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
     key: '_createCodeBlockEditor',
     value: function _createCodeBlockEditor() {
       var codeMirrorWrapper = document.createElement('div');
-      codeMirrorWrapper.classList.add(CLASS_PREFIX + 'editor-wrapper');
+      codeMirrorWrapper.className = CLASS_PREFIX + 'editor-wrapper';
 
       this._codeBlockEditor = new _codeBlockEditor2.default(codeMirrorWrapper, this.eventManager);
 
@@ -22395,7 +22306,7 @@ var ScrollSyncSplit = function () {
         (0, _jquery2.default)(contentElement).off(EVENT_REQUIRE_SCROLL_INTO_VIEW);
         this._contentWrapper.removeChild(contentElement);
       }
-      element.classList.add(CLASS_CONTENT[side]);
+      (0, _jquery2.default)(element).addClass(CLASS_CONTENT[side]);
       this._contentWrapper.appendChild(element);
       (0, _jquery2.default)(element).on(EVENT_REQUIRE_SCROLL_INTO_VIEW, function (ev) {
         return _this._requireScrollIntoView(ev);
@@ -22448,7 +22359,7 @@ var ScrollSyncSplit = function () {
   }, {
     key: 'toggleScrollSync',
     value: function toggleScrollSync() {
-      this._el.classList.toggle(CLASS_SCROLL_SYNC);
+      (0, _jquery2.default)(this._el).toggleClass(CLASS_SCROLL_SYNC);
     }
   }, {
     key: 'setSplitView',
@@ -22464,7 +22375,7 @@ var ScrollSyncSplit = function () {
   }, {
     key: 'toggleSplitView',
     value: function toggleSplitView() {
-      this._el.classList.toggle(CLASS_SINGLE_CONTENT);
+      (0, _jquery2.default)(this._el).toggleClass(CLASS_SINGLE_CONTENT);
     }
 
     /**
@@ -22476,7 +22387,7 @@ var ScrollSyncSplit = function () {
   }, {
     key: 'isScrollSynced',
     value: function isScrollSynced() {
-      return this._el.classList.contains(CLASS_SCROLL_SYNC);
+      return (0, _jquery2.default)(this._el).hasClass(CLASS_SCROLL_SYNC);
     }
 
     /**
@@ -22488,7 +22399,7 @@ var ScrollSyncSplit = function () {
   }, {
     key: 'isSplitView',
     value: function isSplitView() {
-      return !this._el.classList.contains(CLASS_SINGLE_CONTENT);
+      return !(0, _jquery2.default)(this._el).hasClass(CLASS_SINGLE_CONTENT);
     }
 
     /**
@@ -22778,7 +22689,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _preview = __webpack_require__(13);
+var _preview = __webpack_require__(12);
 
 var _preview2 = _interopRequireDefault(_preview);
 
@@ -22887,7 +22798,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -22959,7 +22870,7 @@ var CodeBlockLanguagesCombo = function () {
       var _this2 = this;
 
       var clientRect = this._inputLanguage.getBoundingClientRect();
-      this._wrapper.classList.toggle('active', true);
+      (0, _jquery2.default)(this._wrapper).toggleClass('active', true);
       this.active = true;
 
       this._popupCodeBlockLanguages = this._eventManager.emitReduce('openPopupCodeBlockLanguages', {
@@ -22982,7 +22893,7 @@ var CodeBlockLanguagesCombo = function () {
     key: '_toggleFocus',
     value: function _toggleFocus() {
       var inputLanguage = this._inputLanguage;
-      if (this._wrapper.classList.contains('active')) {
+      if ((0, _jquery2.default)(this._wrapper).hasClass('active')) {
         inputLanguage.blur();
       } else {
         inputLanguage.focus();
@@ -22991,7 +22902,7 @@ var CodeBlockLanguagesCombo = function () {
   }, {
     key: '_onFocusOut',
     value: function _onFocusOut() {
-      this._wrapper.classList.toggle('active', false);
+      (0, _jquery2.default)(this._wrapper).toggleClass('active', false);
       this._inputLanguage.value = this._prevStoredLanguage;
       this._hidePopupCodeBlockLanguages();
     }
@@ -23631,6 +23542,8 @@ var _commandManager2 = _interopRequireDefault(_commandManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var BlockquoteRegex = /^> ?/;
+
 /**
  * Blockquote
  * Add blockquote markdown syntax to markdown editor
@@ -23638,6 +23551,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @module markdownCommands/Blockquote
  * @ignore
  */
+/**
+* @fileoverview Implements Blockquote markdown command
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockquote */{
   name: 'Blockquote',
   keyMap: ['CTRL+Q', 'META+Q'],
@@ -23663,24 +23580,89 @@ var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockqu
 
     var textToModify = doc.getRange(from, to);
     var textLinesToModify = textToModify.split('\n');
-    var lineLength = textLinesToModify.length;
+    var isNeedToRemove = this._haveBlockquote(textLinesToModify);
+    var resultText = void 0;
 
-    for (var i = 0; i < lineLength; i += 1) {
-      textLinesToModify[i] = '>' + textLinesToModify[i];
+    if (isNeedToRemove) {
+      resultText = this._removeBlockquote(textLinesToModify);
+    } else {
+      resultText = this._addBlockquote(textLinesToModify);
     }
 
-    doc.replaceRange(textLinesToModify.join('\n'), from, to);
+    doc.replaceRange(resultText.join('\n'), from, to);
 
-    range.to.ch += 1;
+    if (isNeedToRemove) {
+      var length = textLinesToModify.length;
+      if (this._isBlockquoteWithSpace(textLinesToModify[length - 1])) {
+        range.to.ch -= 2;
+      } else {
+        range.to.ch -= 1;
+      }
+    } else {
+      range.to.ch += 2;
+    }
 
     doc.setCursor(range.to);
 
     cm.focus();
+  },
+
+
+  /**
+   * check all text in textArr starts with '>'
+   * @param {Array} textArr - text array
+   * @returns {boolean} - true if all text in textArr starts with '>'
+   * @private
+   */
+  _haveBlockquote: function _haveBlockquote(textArr) {
+    for (var i = 0; i < textArr.length; i += 1) {
+      if (!BlockquoteRegex.test(textArr[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  },
+
+
+  /**
+   * add '> ' to all text in textArr
+   * @param {Array} textArr - text array
+   * @returns {Array} - new text array added '> '
+   * @private
+   */
+  _addBlockquote: function _addBlockquote(textArr) {
+    return textArr.map(function (text) {
+      return '> ' + text;
+    });
+  },
+
+
+  /**
+   * remove '> ' or '>' to all text in textArr
+   * @param {Array} textArr - text array
+   * @returns {Array} - new text array removed '> ' or  '>'
+   * @private
+   */
+  _removeBlockquote: function _removeBlockquote(textArr) {
+    return textArr.map(function (text) {
+      return text.replace(BlockquoteRegex, '');
+    });
+  },
+
+
+  /**
+   * check text start '> '
+   * @param {string} text - text
+   * @returns {boolean} - if text start '> ', true
+   * @private
+   */
+  _isBlockquoteWithSpace: function _isBlockquoteWithSpace(text) {
+    return (/^> /.test(text)
+    );
   }
-}); /**
-    * @fileoverview Implements Blockquote markdown command
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-    */
+});
+
 exports.default = Blockquote;
 
 /***/ }),
@@ -23951,7 +23933,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _importManager = __webpack_require__(10);
+var _importManager = __webpack_require__(9);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -24028,7 +24010,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _importManager = __webpack_require__(10);
+var _importManager = __webpack_require__(9);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -24999,8 +24981,12 @@ var Blockquote = _commandManager2.default.command('wysiwyg', /** @lends Blockquo
     wwe.focus();
 
     if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-      wwe.unwrapBlockTag();
-      sq.increaseQuoteLevel();
+      if (sq.hasFormat('BLOCKQUOTE')) {
+        sq.decreaseQuoteLevel();
+      } else {
+        wwe.unwrapBlockTag();
+        sq.increaseQuoteLevel();
+      }
     }
   }
 }); /**
@@ -25025,7 +25011,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _importManager = __webpack_require__(10);
+var _importManager = __webpack_require__(9);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -25090,7 +25076,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _importManager = __webpack_require__(10);
+var _importManager = __webpack_require__(9);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -25159,7 +25145,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -25377,7 +25363,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -25485,7 +25471,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -25867,7 +25853,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -26141,7 +26127,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -26287,7 +26273,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -26650,7 +26636,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -26766,7 +26752,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(3);
+var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -26965,7 +26951,7 @@ exports.default = CodeBlock;
 "use strict";
 
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27029,7 +27015,7 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27093,7 +27079,7 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27157,7 +27143,7 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27221,7 +27207,7 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27285,7 +27271,7 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27349,7 +27335,7 @@ _i18n2.default.setLanguage(['es', 'es_ES'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27371,8 +27357,8 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
   'Unordered list': 'Aufzählung',
   'Ordered list': 'Nummerierte Aufzählung',
   'Task': 'Aufgabe',
-  'Indent': 'inspringen',
-  'Outdent': 'Uithangen',
+  'Indent': 'Einrücken',
+  'Outdent': 'Ausrücken',
   'Insert link': 'Link einfügen',
   'Insert CodeBlock': 'Codeblock einfügen',
   'Insert table': 'Tabelle einfügen',
@@ -27413,7 +27399,7 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27477,7 +27463,7 @@ _i18n2.default.setLanguage(['ru', 'ru_RU'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27541,7 +27527,7 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27605,7 +27591,7 @@ _i18n2.default.setLanguage(['uk', 'uk_UA'], {
 "use strict";
 
 
-var _i18n = __webpack_require__(4);
+var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27660,6 +27646,70 @@ _i18n2.default.setLanguage(['tr', 'tr_TR'], {
 }); /**
     * @fileoverview I18N for Turkish
     * @author Mesut Gölcük <mesutgolcuk@gmail.com>
+    */
+
+/***/ }),
+/* 138 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(3);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['fi', 'fi_FI'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Kirjoita',
+  'Preview': 'Esikatselu',
+  'Headings': 'Otsikot',
+  'Paragraph': 'Kappale',
+  'Bold': 'Lihavointi',
+  'Italic': 'Kursivointi',
+  'Strike': 'Yliviivaus',
+  'Code': 'Koodi',
+  'Line': 'Vaakaviiva',
+  'Blockquote': 'Lainaus',
+  'Unordered list': 'Luettelo',
+  'Ordered list': 'Numeroitu luettelo',
+  'Task': 'Tehtävä',
+  'Indent': 'Suurenna sisennystä',
+  'Outdent': 'Pienennä sisennystä',
+  'Insert link': 'Lisää linkki',
+  'Insert CodeBlock': 'Lisää koodia',
+  'Insert table': 'Lisää taulukko',
+  'Insert image': 'Lisää kuva',
+  'Heading': 'Otsikko',
+  'Image URL': 'Kuvan URL',
+  'Select image file': 'Valitse kuvatiedosto',
+  'Description': 'Kuvaus',
+  'OK': 'OK',
+  'More': 'Lisää',
+  'Cancel': 'Peruuta',
+  'File': 'Tiedosto',
+  'URL': 'URL',
+  'Link text': 'Linkkiteksti',
+  'Add row': 'Lisää rivi',
+  'Add col': 'Lisää sarake',
+  'Remove row': 'Poista rivi',
+  'Remove col': 'Poista sarake',
+  'Align left': 'Tasaus vasemmalle',
+  'Align center': 'Keskitä',
+  'Align right': 'Tasaus oikealle',
+  'Remove table': 'Poista taulukko',
+  'Would you like to paste as table?': 'Haluatko liittää taulukkomuodossa?',
+  'Text color': 'Tekstin väri',
+  'Auto scroll enabled': 'Automaattinen skrollaus käytössä',
+  'Auto scroll disabled': 'Automaattinen skrollaus pois käytöstä',
+  'Cannot paste values other than a table in the cell selection state': 'Vain taulukko voidaan liittää solunvalintatilassa.',
+  'Choose language': 'Valitse kieli'
+}); /**
+    * @fileoverview I18N for Finnish
+    * @author Tomi Mynttinen <pikseli@iki.fi>
     */
 
 /***/ })

@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.6
+ * @version 1.2.7
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -81,7 +81,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
-/***/ 1:
+/***/ 2:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -132,7 +132,7 @@ var _plantumlEncoder = __webpack_require__(43);
 
 var _plantumlEncoder2 = _interopRequireDefault(_plantumlEncoder);
 
-var _editorProxy = __webpack_require__(1);
+var _editorProxy = __webpack_require__(2);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
