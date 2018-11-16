@@ -1,5 +1,5 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: http://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/LICENSE
 
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
@@ -98,7 +98,7 @@
       var pos = this.cm.getCursor(), line = this.cm.getLine(pos.line);
       if (pos.line != this.startPos.line || line.length - pos.ch != this.startLen - this.startPos.ch ||
           pos.ch < this.startPos.ch || this.cm.somethingSelected() ||
-          (pos.ch && this.options.closeCharacters.test(line.charAt(pos.ch - 1)))) {
+          (!pos.ch || this.options.closeCharacters.test(line.charAt(pos.ch - 1)))) {
         this.close();
       } else {
         var self = this;
@@ -200,7 +200,8 @@
     var widget = this, cm = completion.cm;
 
     var hints = this.hints = document.createElement("ul");
-    hints.className = "CodeMirror-hints";
+    var theme = completion.cm.options.theme;
+    hints.className = "CodeMirror-hints " + theme;
     this.selectedHint = data.selectedHint || 0;
 
     var completions = data.list;

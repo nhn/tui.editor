@@ -4,7 +4,9 @@ List of CodeMirror contributors. Updated before every release.
 4r2r
 Aaron Brooks
 Abdelouahab
+Abdussalam Abdurrahman
 Abe Fettig
+Abhishek Gahlot
 Adam Ahmed
 Adam King
 Adam Particka
@@ -19,6 +21,7 @@ Ahmad M. Zawawi
 ahoward
 Akeksandr Motsjonov
 Alasdair Smith
+AlbertHilb
 Alberto González Palomo
 Alberto Pose
 Albert Xing
@@ -83,7 +86,9 @@ AtomicPages LLC
 Atul Bhouraskar
 Aurelian Oancea
 Axel Lewenhaupt
+Baptiste Augrain
 Barret Rennie
+Bartosz Dziewoński
 Basarat Ali Syed
 Bastian Müller
 belhaj
@@ -101,6 +106,7 @@ Bharad
 BigBlueHat
 Billy Moon
 binny
+Bjorn Hansen
 B Krishna Chaitanya
 Blaine G
 blukat29
@@ -152,6 +158,7 @@ coderaiser
 Cole R Lawrence
 ComFreek
 Cristian Prieto
+Curran Kelleher
 Curtis Gagliardi
 dagsta
 daines
@@ -161,6 +168,7 @@ Dan Heberden
 Daniel, Dao Quang Minh
 Daniele Di Sarli
 Daniel Faust
+Daniel Hanggi
 Daniel Huigens
 Daniel Kesler
 Daniel KJ
@@ -171,12 +179,15 @@ Danila Malyutin
 Danny Yoo
 darealshinji
 Darius Roberts
+databricks-david-lewis
 Dave Brondsema
+Dave MacLachlan
 Dave Myers
 David Barnett
 David H. Bronke
 David Mignot
 David Pathakjee
+David Santana
 David Vázquez
 David Whittington
 deebugger
@@ -186,10 +197,12 @@ Devon Carew
 Dick Choi
 dignifiedquire
 Dimage Sapelkin
+dmaclach
 Dmitry Kiselyov
 domagoj412
 Dominator008
 Domizio Demichelis
+Doug Blank
 Doug Wikle
 Drew Bratcher
 Drew Hintz
@@ -221,6 +234,7 @@ ficristo
 Filip Noetzel
 Filip Stollár
 Filype Pereira
+finalfantasia
 flack
 Florian Felten
 ForbesLindesay
@@ -249,7 +263,7 @@ Glenn Jorde
 Glenn Ruehle
 goldsmcb
 Golevka
-Google Inc.
+Google LLC
 Gordon Smith
 Grant Skinner
 greengiant
@@ -262,6 +276,7 @@ guraga
 Gustavo Rodrigues
 Hakan Tunc
 Hans Engel
+Harald Schilly
 Hardest
 Harshvardhan Gupta
 Hasan Karahan
@@ -381,6 +396,7 @@ Kevin Kwok
 Kevin Muret
 Kevin Sawicki
 Kevin Ushey
+Kier Darby
 Klaus Silveira
 Koh Zi Han, Cliff
 komakino
@@ -394,6 +410,7 @@ Kyle Kelley
 KyleMcNutt
 Lanfei
 Lanny
+laobubu
 Laszlo Vidacs
 leaf corcoran
 Lemmon
@@ -407,6 +424,7 @@ Lior Shub
 LloydMilligan
 LM
 lochel
+Lorenzo Simionato
 Lorenzo Stoakes
 Louis Mauchet
 Luca Fabbri
@@ -454,6 +472,7 @@ Matthew Bauer
 Matthew Beale
 matthewhayes
 Matthew Rathbone
+Matthew Suozzo
 Matthias Bussonnier
 Matthias BUSSONNIER
 Matt MacPherson
@@ -486,7 +505,9 @@ Michal Kapiczynski
 Mighty Guava
 Miguel Castillo
 mihailik
+Mika Andrianarijaona
 Mike
+Mike Bostock
 Mike Brevoort
 Mike Diaz
 Mike Ivanov
@@ -529,6 +550,7 @@ Niels van Groningen
 nightwing
 Nikita Beloglazov
 Nikita Vasilyev
+Nikolaj Kappler
 Nikolay Kostov
 nilp0inter
 Nisarg Jhaveri
@@ -566,6 +588,7 @@ Peter Flynn
 peterkroon
 Peter Kroon
 Philipp A
+Philipp Markovics
 Philip Stadermann
 Pi Delport
 Pierre Gerold
@@ -592,6 +615,7 @@ ray ratchup
 Ray Ratchup
 Remi Nyborg
 Renaud Durlin
+Reynold Xin
 Richard Denton
 Richard van der Meer
 Richard Z.H. Wang
@@ -628,6 +652,7 @@ Scott Aikin
 Scott Goodhew
 Sebastian Wilzbach
 Sebastian Zaha
+Seren D
 Sergey Goder
 Sergey Tselovalnikov
 Se-Won Kim

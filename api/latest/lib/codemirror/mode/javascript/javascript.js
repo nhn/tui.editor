@@ -1,5 +1,5 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: http://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/LICENSE
 
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
@@ -344,7 +344,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
   function expect(wanted) {
     function exp(type) {
       if (type == wanted) return cont();
-      else if (wanted == ";") return pass();
+      else if (wanted == ";" || type == "}" || type == ")" || type == "]") return pass();
       else return cont(exp);
     };
     return exp;
@@ -644,7 +644,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     if (isTS && isModifier(value)) { cx.marked = "keyword"; return cont(pattern) }
     if (type == "variable") { register(value); return cont(); }
     if (type == "spread") return cont(pattern);
-    if (type == "[") return contCommasep(pattern, "]");
+    if (type == "[") return contCommasep(eltpattern, "]");
     if (type == "{") return contCommasep(proppattern, "}");
   }
   function proppattern(type, value) {
@@ -656,6 +656,9 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     if (type == "spread") return cont(pattern);
     if (type == "}") return pass();
     return cont(expect(":"), pattern, maybeAssign);
+  }
+  function eltpattern() {
+    return pass(pattern, maybeAssign)
   }
   function maybeAssign(_type, value) {
     if (value == "=") return cont(expressionNoComma);

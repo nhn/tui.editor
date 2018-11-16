@@ -1,5 +1,5 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: http://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/LICENSE
 
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
@@ -34,17 +34,28 @@ CodeMirror.defineMode("julia", function(config, parserConf) {
       /^[_A-Za-z\u00A1-\u2217\u2219-\uFFFF][\w\u00A1-\u2217\u2219-\uFFFF]*!*/;
 
   var chars = wordRegexp([octChar, hexChar, sChar, uChar], "'");
-  var openers = wordRegexp(["begin", "function", "type", "struct", "immutable",
+
+  var commonOpeners = ["begin", "function", "type", "struct", "immutable",
       "let", "macro", "for", "while", "quote", "if", "else", "elseif", "try",
-      "finally", "catch", "do"]);
-  var closers = wordRegexp(["end", "else", "elseif", "catch", "finally"]);
-  var keywords = wordRegexp(["if", "else", "elseif", "while", "for", "begin",
-      "let", "end", "do", "try", "catch", "finally", "return", "break",
-      "continue", "global", "local", "const", "export", "import", "importall",
-      "using", "function", "where", "macro", "module", "baremodule", "struct",
-      "type", "mutable", "immutable", "quote", "typealias", "abstract",
-      "primitive", "bitstype"]);
-  var builtins = wordRegexp(["true", "false", "nothing", "NaN", "Inf"]);
+                       "finally", "catch", "do"];
+
+  var commonClosers = ["end", "else", "elseif", "catch", "finally"];
+
+  var commonKeywords = ["if", "else", "elseif", "while", "for", "begin",
+                        "let", "end", "do", "try", "catch", "finally", "return", "break",
+                        "continue", "global", "local", "const", "export", "import", "importall",
+                        "using", "function", "where", "macro", "module", "baremodule", "struct",
+                        "type", "mutable", "immutable", "quote", "typealias", "abstract",
+                        "primitive", "bitstype"];
+
+  var commonBuiltins = ["true", "false", "nothing", "NaN", "Inf"];
+
+  CodeMirror.registerHelper("hintWords", "julia", commonKeywords.concat(commonBuiltins));
+
+  var openers = wordRegexp(commonOpeners);
+  var closers = wordRegexp(commonClosers);
+  var keywords = wordRegexp(commonKeywords);
+  var builtins = wordRegexp(commonBuiltins);
 
   var macro = /^@[_A-Za-z][\w]*/;
   var symbol = /^:[_A-Za-z\u00A1-\uFFFF][\w\u00A1-\uFFFF]*!*/;
@@ -54,11 +65,13 @@ CodeMirror.defineMode("julia", function(config, parserConf) {
     return inGenerator(state, '[')
   }
 
-  function inGenerator(state, bracket) {
-    var curr = currentScope(state),
-        prev = currentScope(state, 1);
+  function inGenerator(state, bracket, depth) {
     if (typeof(bracket) === "undefined") { bracket = '('; }
-    if (curr === bracket || (prev === bracket && curr === "for")) {
+    if (typeof(depth)   === "undefined") { depth   = 0;   }
+    var scope = currentScope(state, depth);
+    if ((depth == 0 && scope === "if" && inGenerator(state, bracket, depth + 1)) ||
+        (scope === "for" && inGenerator(state, bracket, depth + 1)) ||
+        (scope === bracket)) {
       return true;
     }
     return false;
@@ -119,16 +132,16 @@ CodeMirror.defineMode("julia", function(config, parserConf) {
       state.scopes.push('(');
     }
 
-    var scope = currentScope(state);
-
     if (inArray(state) && ch === ']') {
-      if (scope === "for") { state.scopes.pop(); }
+      if (currentScope(state) === "if") { state.scopes.pop(); }
+      while (currentScope(state) === "for") { state.scopes.pop(); }
       state.scopes.pop();
       state.leavingExpr = true;
     }
 
     if (inGenerator(state) && ch === ')') {
-      if (scope === "for") { state.scopes.pop(); }
+      if (currentScope(state) === "if") { state.scopes.pop(); }
+      while (currentScope(state) === "for") { state.scopes.pop(); }
       state.scopes.pop();
       state.leavingExpr = true;
     }
@@ -143,12 +156,14 @@ CodeMirror.defineMode("julia", function(config, parserConf) {
     }
 
     var match;
-    if (match = stream.match(openers, false)) {
+    if (match = stream.match(openers)) {
       state.scopes.push(match[0]);
+      return "keyword";
     }
 
-    if (stream.match(closers, false)) {
+    if (stream.match(closers)) {
       state.scopes.pop();
+      return "keyword";
     }
 
     // Handle type annotations

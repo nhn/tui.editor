@@ -108,7 +108,8 @@ var basicRenderer = Renderer.factory({
 
         if (this._isNeedEscapeHtml(managedText)) {
             managedText = this.escapeTextHtml(managedText);
-        } else if (this._isNeedEscape(managedText)) {
+        }
+        if (this._isNeedEscape(managedText)) {
             managedText = this.escapeText(managedText);
         }
 
