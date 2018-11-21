@@ -333,6 +333,15 @@ class DefaultUI {
   }
 
   /**
+   * get Table Popup
+   * @returns {PopupTableUtils} - PopupTableUtils
+   * @memberof DefaultUI
+   */
+  getPopupTableUtils() {
+    return this._popups.find(popup => popup instanceof PopupTableUtils);
+  }
+
+  /**
    * hide
    * @memberof DefaultUI
    */

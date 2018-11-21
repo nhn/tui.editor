@@ -19,7 +19,6 @@ import wwAlignCol from './mergedTableAlignCol';
 import wwMergeCell from './mergeCell';
 import wwUnergeCell from './unmergeCell';
 import mergedTableUI from './mergedTableUI';
-import PopupTableUtils from '../../ui/popupTableUtils';
 
 /**
  * table extension
@@ -38,17 +37,10 @@ function tableExtension(editor) {
   }
 
   const wwComponentManager = editor.wwEditor.componentManager;
-  let popupTableUtils = null;
+  const popupTableUtils = editor.getUI().getPopupTableUtils();
 
   _addCommands(editor);
   _changeWysiwygManagers(wwComponentManager);
-
-  for (let popup of editor._ui._popups) {
-    if (popup instanceof PopupTableUtils) {
-      popupTableUtils = popup;
-      break;
-    }
-  }
 
   if (popupTableUtils) {
     mergedTableUI.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
