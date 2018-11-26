@@ -6,6 +6,9 @@ import $ from 'jquery';
 import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
+import WwTablePasteHelper from './wwTablePasteHelper';
+import i18n from './i18n';
+
 const isIE10 = util.browser.msie && util.browser.version === 10;
 const TABLE_CLASS_PREFIX = 'te-content-table-';
 const isIE10And11 = util.browser.msie
@@ -32,7 +35,7 @@ class WwTableManager {
      * @type {string}
      */
     this.name = 'table';
-
+    this.tablePasteHelper = new WwTablePasteHelper(this.wwe, this);
     this._lastCellNode = null;
     this._init();
   }
@@ -139,14 +142,11 @@ class WwTableManager {
   }
 
   /**
-   * Paste clibpard data.
-   * @param {jQuery} $clipboardTable - jQuery table element of clipboard
+   * Paste clibpard data that contains only table.
+   * @param {Node} clipboardTable - table element of clipboard
    */
-  pasteClipboardData($clipboardTable) {
-    if (this.wwe.componentManager.getManager('tableSelection').getSelectedCells().length) {
-      return;
-    }
-
+  pasteTableData(clipboardTable) {
+    const $clipboardTable = $(clipboardTable);
     this._expandTableIfNeed($clipboardTable);
     this._pasteDataIntoTable($clipboardTable);
   }
@@ -158,9 +158,17 @@ class WwTableManager {
    */
   _onPaste(ev) {
     const range = this.wwe.getEditor().getSelection();
-    const isNotPastingIntoTextNode = !domUtils.isTextNode(range.commonAncestorContainer);
-
-    if (this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
+    if (this.isInTable(range)) {
+      const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+      if (tableSelectionManager.getSelectedCells().length) {
+        alert(i18n.get('Cannot paste values other than a table in the cell selection state'));
+      } else {
+        const cbData = ev.clipboardData || window.clipboardData;
+        const items = cbData && cbData.items;
+        if (items) {
+          this.tablePasteHelper.processClipboard(items);
+        }
+      }
       ev.preventDefault();
     }
   }

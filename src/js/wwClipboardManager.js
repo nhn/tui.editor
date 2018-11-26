@@ -7,7 +7,6 @@ import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
-import i18n from './i18n';
 
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
@@ -92,20 +91,13 @@ class WwClipboardManager {
 
   _onWillPaste(pasteData) {
     const $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
-
+    this._preparePaste($clipboardContainer);
     this._setTableBookmark($clipboardContainer);
 
-    if (this._pasteToTable($clipboardContainer)) {
-      pasteData.preventDefault();
-    } else {
-      this._preparePaste($clipboardContainer);
-      this._setTableBookmark($clipboardContainer);
-
-      pasteData.fragment = document.createDocumentFragment();
-      $($clipboardContainer[0].childNodes).each((index, element) => {
-        pasteData.fragment.appendChild(element);
-      });
-    }
+    pasteData.fragment = document.createDocumentFragment();
+    $($clipboardContainer[0].childNodes).each((index, element) => {
+      pasteData.fragment.appendChild(element);
+    });
 
     // @TODO Temporary code : paste to empty code block
     this._pasteToEmptyCodeBlock(pasteData);
@@ -201,36 +193,6 @@ class WwClipboardManager {
         $element.remove();
       }
     });
-  }
-
-  /**
-   * Paste to table.
-   * @param {jQuery} $clipboardContainer - clibpard container
-   * @returns {boolean} whether processed or not
-   * @private
-   */
-  _pasteToTable($clipboardContainer) {
-    const tableManager = this.wwe.componentManager.getManager('table');
-    const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
-    const range = this.wwe.getEditor().getSelection();
-    const pastingToTable = tableManager.isInTable(range);
-    const {childNodes} = $clipboardContainer.get(0);
-    const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
-    let processed = false;
-
-    if (pastingToTable) {
-      if (containsOneTableOnly) {
-        tableManager.pasteClipboardData($clipboardContainer.first());
-        $clipboardContainer.html(''); // drains clipboard data as we've pasted everything here.
-        processed = true;
-      } else if (tableSelectionManager.getSelectedCells().length) {
-        alert(i18n.get('Cannot paste values ​​other than a table in the cell selection state'));
-        $clipboardContainer.html(''); // drains clipboard data
-        processed = true;
-      }
-    }
-
-    return processed;
   }
 
   /**
