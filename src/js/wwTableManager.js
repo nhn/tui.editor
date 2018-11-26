@@ -138,15 +138,127 @@ class WwTableManager {
     }
   }
 
+  _isInlineNode(node) {
+    return /^(SPAN|A|CODE|EM|I|STRONG|B|S|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/ig.test(node.nodeName);
+  }
+
+  _unwrapBlock(node) {
+    const fragment = document.createDocumentFragment();
+    const childNodes = util.toArray(node.childNodes);
+    let child, nodeName;
+    while (childNodes.length) {
+      child = childNodes.shift();
+      nodeName = domUtils.getNodeName(child);
+      if (nodeName === 'DIV' || nodeName === 'UL' || nodeName === 'OL' || nodeName === 'LI') {
+        fragment.append(this._prepareToPaste(child));
+      } else {
+        fragment.append(child);
+      }
+    }
+
+    return fragment;
+  }
+
+  _prepareToPaste(node) {
+    const fragment = document.createDocumentFragment();
+    if (this._isInlineNode(node) || domUtils.isTextNode(node)) {
+      fragment.append(node);
+    } else {
+      fragment.append(this._unwrapBlock(node));
+    }
+
+    return fragment;
+  }
+
+  _getLeafNode(node) {
+    let tempNode = node;
+    while (tempNode.childNodes && tempNode.childNodes.length !== 0) {
+      tempNode = tempNode.childNodes[0];
+    }
+
+    return tempNode;
+  }
+
+  _pasteDataIntoTextNode(container, offset, fragment) {
+    const length = container.textContent.length;
+    const prevText = container.textContent.slice(0, offset);
+    const postText = container.textContent.slice(offset, length);
+    if (prevText === '') {
+      container.parentNode.insertBefore(fragment, container);
+    } else if (postText === '') {
+      container.parentNode.insertBefore(fragment, container.nextSibling);
+    } else if (fragment.childNodes.length === 1 && domUtils.isTextNode(fragment.childNodes[0])) {
+      container.textContent = `${prevText}${fragment.childNodes[0].textContent}${postText}`;
+    } else {
+      const parentNode = container.parentNode;
+      const resultFragment = document.createDocumentFragment();
+      if (parentNode.nodeName === 'TD') {
+        resultFragment.append(prevText);
+        resultFragment.append(fragment);
+        resultFragment.append(postText);
+        parentNode.replaceChild(resultFragment, container);
+      } else {
+        const tempParent = domUtils.getParentUntilBy(container, node => {
+          return node.tagName === 'TD';
+        }, node => {
+          return $(node).closest('table').length === 0;
+        });
+        const prevNode = tempParent.cloneNode(true);
+        const postNode = tempParent.cloneNode(true);
+        this._getLeafNode(prevNode).textContent = prevText;
+        this._getLeafNode(postNode).textContent = postText;
+        resultFragment.append(prevNode);
+        resultFragment.append(fragment);
+        resultFragment.append(postNode);
+        tempParent.parentNode.replaceChild(resultFragment, tempParent);
+      }
+    }
+  }
+
+  _pasteDataIntoCollapse(container, offset, fragment) {
+    if (domUtils.isTextNode(container)) {
+      this._pasteDataIntoTextNode(container, offset, fragment);
+    } else {
+      const endNode = domUtils.getChildNodeByOffset(container, offset);
+      container.insertBefore(fragment, endNode);
+    }
+  }
+
+  _pasteDataIntoNotCollapse() {
+
+  }
+
+  /**
+   * Paste clibpard data.
+   * @param {jQuery} $clipboardContainer - jQuery element of clipboard
+   */
+  pasteClipboardData($clipboardContainer) {
+    const {childNodes} = $clipboardContainer.get(0);
+    const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
+
+    if (containsOneTableOnly) {
+      this.pasteClipboardTableData($clipboardContainer);
+    } else {
+      const range = this.wwe.getEditor().getSelection().cloneRange();
+      const fragment = document.createDocumentFragment();
+      const childNodesArray = util.toArray(childNodes);
+
+      childNodesArray.forEach(child => {
+        fragment.append(this._prepareToPaste(child));
+      });
+      if (range.collapsed) {
+        this._pasteDataIntoCollapse(range.endContainer, range.endOffset, fragment);
+      } else {
+        this._pasteDataIntoNotCollapse();
+      }
+    }
+  }
+
   /**
    * Paste clibpard data.
    * @param {jQuery} $clipboardTable - jQuery table element of clipboard
    */
-  pasteClipboardData($clipboardTable) {
-    if (this.wwe.componentManager.getManager('tableSelection').getSelectedCells().length) {
-      return;
-    }
-
+  pasteClipboardTableData($clipboardTable) {
     this._expandTableIfNeed($clipboardTable);
     this._pasteDataIntoTable($clipboardTable);
   }

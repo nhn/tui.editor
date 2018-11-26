@@ -183,18 +183,16 @@ class WwClipboardManager {
     const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
     const range = this.wwe.getEditor().getSelection();
     const pastingToTable = tableManager.isInTable(range);
-    const {childNodes} = $clipboardContainer.get(0);
-    const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
     let processed = false;
 
     if (pastingToTable) {
-      if (containsOneTableOnly) {
+      if (tableSelectionManager.getSelectedCells().length) {
+        alert(i18n.get('Cannot paste values other than a table in the cell selection state'));
+        $clipboardContainer.html(''); // drains clipboard data
+        processed = true;
+      } else {
         tableManager.pasteClipboardData($clipboardContainer.first());
         $clipboardContainer.html(''); // drains clipboard data as we've pasted everything here.
-        processed = true;
-      } else if (tableSelectionManager.getSelectedCells().length) {
-        alert(i18n.get('Cannot paste values ​​other than a table in the cell selection state'));
-        $clipboardContainer.html(''); // drains clipboard data
         processed = true;
       }
     }
