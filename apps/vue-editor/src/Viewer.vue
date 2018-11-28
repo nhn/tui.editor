@@ -11,11 +11,11 @@ export default {
     props: {
         height: {
             type: String,
-            defalut: '300px'
+            default: '300px'
         },
         value: {
             type: String,
-            defalut: ''
+            default: ''
         }
     },
     data() {

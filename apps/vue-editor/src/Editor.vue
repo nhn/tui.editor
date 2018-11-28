@@ -13,19 +13,19 @@ export default {
     props: {
         previewStyle: {
             type: String,
-            defalut: 'tab'
+            default: 'tab'
         },
         height: {
             type: String,
-            defalut: '300px'
+            default: '300px'
         },
         value: {
             type: String,
-            defalut: ''
+            default: ''
         },
         mode: {
             type: String,
-            defalut: 'markdown'
+            default: 'markdown'
         },
         options: {
             type: Object,
