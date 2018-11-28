@@ -89,4 +89,11 @@ if (i18n) {
     'Cannot change part of merged cell': 'Yhdistettyjen solujen osaa ei voi muuttaa',
     'Cannot paste row merged cells into the table header': 'Soluja ei voi yhdistää taulukon otsikkoriviin'
   });
+
+  i18n.setLanguage(['pl', 'pl_PL'], {
+    'Merge cells': 'Scal komórki',
+    'Unmerge cells': 'Rozłącz komórki',
+    'Cannot change part of merged cell': 'Nie można zmienić części scalonej komórki.',
+    'Cannot paste row merged cells into the table header': 'Nie można wkleić komórek o scalonym rzędzie w nagłówek tabeli.'
+  });
 }
