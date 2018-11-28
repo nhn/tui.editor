@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/vue-editor",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "description": "TOAST UI Editor for Vue",
   "main": "dist/toastui-vue-editor.js",
   "files": [
