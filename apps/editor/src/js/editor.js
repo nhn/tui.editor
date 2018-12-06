@@ -416,7 +416,7 @@ class ToastUIEditor {
    */
   setHtml(html, cursorToEnd = true) {
     html = html || '';
-    this.wwEditor.setValue(html);
+    this.wwEditor.setValue(html, cursorToEnd);
 
     if (this.isMarkdownMode()) {
       const markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
