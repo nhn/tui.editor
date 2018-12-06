@@ -1,6 +1,6 @@
 /*!
  * tui-code-snippet.js
- * @version 1.4.0
+ * @version 1.5.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -1678,23 +1678,46 @@ return /******/ (function(modules) { // webpackBootstrap
 	var object = __webpack_require__(1);
 	var collection = __webpack_require__(4);
 	var type = __webpack_require__(2);
+	var ms7days = 7 * 24 * 60 * 60 * 1000;
+
+	/**
+	 * Check if the date has passed 7 days
+	 * @param {number} date - milliseconds
+	 * @returns {boolean}
+	 * @ignore
+	 */
+	function isExpired(date) {
+	    var now = new Date().getTime();
+
+	    return now - date > ms7days;
+	}
 
 	/**
 	 * Send hostname on DOMContentLoaded.
 	 * To prevent hostname set tui.usageStatistics to false.
-	 * @param {string} applicationId - application id to send
+	 * @param {string} appName - application name
+	 * @param {string} trackingId - GA tracking ID
 	 * @ignore
 	 */
-	function sendHostname(applicationId) {
+	function sendHostname(appName, trackingId) {
 	    var url = 'https://www.google-analytics.com/collect';
 	    var hostname = location.hostname;
 	    var hitType = 'event';
-	    var trackingId = 'UA-115377265-9';
+	    var eventCategory = 'use';
+	    var applicationKeyForStorage = 'TOAST UI ' + appName + ' for ' + hostname + ': Statistics';
+	    var date = window.localStorage.getItem(applicationKeyForStorage);
 
-	    // skip only if the flag is defined and is set to false explicitly
+	    // skip if the flag is defined and is set to false explicitly
 	    if (!type.isUndefined(window.tui) && window.tui.usageStatistics === false) {
 	        return;
 	    }
+
+	    // skip if not pass seven days old
+	    if (date && !isExpired(date)) {
+	        return;
+	    }
+
+	    window.localStorage.setItem(applicationKeyForStorage, new Date().getTime());
 
 	    setTimeout(function() {
 	        if (document.readyState === 'interactive' || document.readyState === 'complete') {
@@ -1704,7 +1727,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                tid: trackingId,
 	                cid: hostname,
 	                dp: hostname,
-	                dh: applicationId
+	                dh: appName,
+	                el: appName,
+	                ec: eventCategory
 	            });
 	        }
 	    }, 1000);
