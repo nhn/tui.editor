@@ -87,6 +87,7 @@ import './langs/ar_AR';
 import './langs/pl_PL';
 
 const __nedInstance = [];
+const gaTrackingId = 'UA-129966929-1';
 
 /**
  * @callback addImageBlobHook
@@ -213,7 +214,7 @@ class ToastUIEditor {
     this._addDefaultCommands();
 
     if (this.options.usageStatistics) {
-      util.sendHostname('editor');
+      util.sendHostname('editor', gaTrackingId);
     }
   }
 
