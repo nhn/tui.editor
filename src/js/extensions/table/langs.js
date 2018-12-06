@@ -82,13 +82,21 @@ if (i18n) {
     'Cannot change part of merged cell': 'Birleştirilmiş hücrelerin bir kısmı değiştirelemez.',
     'Cannot paste row merged cells into the table header': 'Satırda birleştirilmiş hücreler sütun başlığına yapıştırılamaz'
   });
-  
+
   i18n.setLanguage(['fi', 'fi_FI'], {
     'Merge cells': 'Yhdistä solut',
     'Unmerge cells': 'Jaa solut',
     'Cannot change part of merged cell': 'Yhdistettyjen solujen osaa ei voi muuttaa',
     'Cannot paste row merged cells into the table header': 'Soluja ei voi yhdistää taulukon otsikkoriviin'
   });
+
+  i18n.setLanguage(['cs', 'cs_CZ'], {
+    'Merge cells': 'Spojit buňky',
+    'Unmerge cells': 'Rozpojit buňky',
+    'Cannot change part of merged cell': 'Nelze měnit část spojené buňky',
+    'Cannot paste row merged cells into the table header': 'Nelze vkládat spojené buňky do záhlaví tabulky'
+  });
+
   i18n.setLanguage(['ar', 'ar_AR'], {
     'Merge cells': 'دمج الوحدات',
     'Unmerge cells': 'إلغاء دمج الوحدات',

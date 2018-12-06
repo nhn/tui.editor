@@ -25,8 +25,12 @@ const Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
     wwe.focus();
 
     if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-      wwe.unwrapBlockTag();
-      sq.increaseQuoteLevel();
+      if (sq.hasFormat('BLOCKQUOTE')) {
+        sq.decreaseQuoteLevel();
+      } else {
+        wwe.unwrapBlockTag();
+        sq.increaseQuoteLevel();
+      }
     }
   }
 });
