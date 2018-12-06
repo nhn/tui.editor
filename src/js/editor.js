@@ -82,6 +82,8 @@ import './langs/fr_FR';
 import './langs/uk_UA';
 import './langs/tr_TR';
 import './langs/fi_FI';
+import './langs/cs_CZ';
+import './langs/ar_AR';
 import './langs/pl_PL';
 
 const __nedInstance = [];
