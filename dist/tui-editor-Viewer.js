@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.7
+ * @version 1.2.8
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 139);
+/******/ 	return __webpack_require__(__webpack_require__.s = 142);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -483,7 +483,21 @@ exports.default = htmlSanitizer;
 
 /***/ }),
 
-/***/ 139:
+/***/ 14:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var isMac = /Mac/.test(navigator.platform);
+
+module.exports = {
+  isMac: isMac
+};
+
+/***/ }),
+
+/***/ 142:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -534,20 +548,6 @@ _jquery2.default.fn.tuiEditor = function () {
 };
 
 module.exports = Viewer;
-
-/***/ }),
-
-/***/ 14:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var isMac = /Mac/.test(navigator.platform);
-
-module.exports = {
-  isMac: isMac
-};
 
 /***/ }),
 

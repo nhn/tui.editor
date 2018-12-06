@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.7
+ * @version 1.2.8
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -9590,11 +9590,18 @@ __webpack_require__(137);
 
 __webpack_require__(138);
 
+__webpack_require__(139);
+
+__webpack_require__(140);
+
+__webpack_require__(141);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var __nedInstance = [];
+var gaTrackingId = 'UA-129966929-1';
 
 /**
  * @callback addImageBlobHook
@@ -9709,7 +9716,7 @@ var ToastUIEditor = function () {
     this._addDefaultCommands();
 
     if (this.options.usageStatistics) {
-      _tuiCodeSnippet2.default.sendHostname('editor');
+      _tuiCodeSnippet2.default.sendHostname('editor', gaTrackingId);
     }
   }
 
@@ -9968,7 +9975,7 @@ var ToastUIEditor = function () {
       var cursorToEnd = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
       html = html || '';
-      this.wwEditor.setValue(html);
+      this.wwEditor.setValue(html, cursorToEnd);
 
       if (this.isMarkdownMode()) {
         var markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
@@ -18363,6 +18370,20 @@ var DefaultUI = function () {
       var clientRect = this._container.getBoundingClientRect();
 
       return clientRect.bottom - clientRect.top;
+    }
+
+    /**
+     * get Table Popup
+     * @returns {PopupTableUtils} - PopupTableUtils
+     * @memberof DefaultUI
+     */
+
+  }, {
+    key: 'getPopupTableUtils',
+    value: function getPopupTableUtils() {
+      return this._popups.find(function (popup) {
+        return popup instanceof _popupTableUtils2.default;
+      });
     }
 
     /**
@@ -27710,6 +27731,198 @@ _i18n2.default.setLanguage(['fi', 'fi_FI'], {
 }); /**
     * @fileoverview I18N for Finnish
     * @author Tomi Mynttinen <pikseli@iki.fi>
+    */
+
+/***/ }),
+/* 139 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(3);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['cs', 'cs_CZ'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Napsat',
+  'Preview': 'Náhled',
+  'Headings': 'Nadpisy',
+  'Paragraph': 'Odstavec',
+  'Bold': 'Tučné',
+  'Italic': 'Kurzíva',
+  'Strike': 'Přeškrtnuté',
+  'Code': 'Kód',
+  'Line': 'Vodorovná čára',
+  'Blockquote': 'Citace',
+  'Unordered list': 'Seznam s odrážkami',
+  'Ordered list': 'Číslovaný seznam',
+  'Task': 'Úkol',
+  'Indent': 'Zvětšit odsazení',
+  'Outdent': 'Zmenšit odsazení',
+  'Insert link': 'Vložit odkaz',
+  'Insert CodeBlock': 'Vložit blok kódu',
+  'Insert table': 'Vložit tabulku',
+  'Insert image': 'Vložit obrázek',
+  'Heading': 'Nadpis',
+  'Image URL': 'URL obrázku',
+  'Select image file': 'Vybrat obrázek',
+  'Description': 'Popis',
+  'OK': 'OK',
+  'More': 'Více',
+  'Cancel': 'Zrušit',
+  'File': 'Soubor',
+  'URL': 'URL',
+  'Link text': 'Text odkazu',
+  'Add row': 'Přidat řádek',
+  'Add col': 'Přidat sloupec',
+  'Remove row': 'Odebrat řádek',
+  'Remove col': 'Odebrat sloupec',
+  'Align left': 'Zarovnat vlevo',
+  'Align center': 'Zarovnat na střed',
+  'Align right': 'Zarovnat vpravo',
+  'Remove table': 'Odstranit tabulku',
+  'Would you like to paste as table?': 'Chcete vložit jako tabulku?',
+  'Text color': 'Barva textu',
+  'Auto scroll enabled': 'Automatické rolování zapnuto',
+  'Auto scroll disabled': 'Automatické rolování vypnuto',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Nelze vkládat jiné hodnoty než tabulka ve stavu výběru buněk',
+  'Choose language': 'Vybrat jazyk'
+}); /**
+    * @fileoverview I18N for Czech
+    * @author Dmitrij Tkačenko <dmitrij.tkacenko@scalesoft.cz>
+    */
+
+/***/ }),
+/* 140 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(3);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['ar', 'ar_AR'], {
+  'Markdown': 'لغة ترميز',
+  'WYSIWYG': 'ما تراه هو ما تحصل عليه',
+  'Write': 'يكتب',
+  'Preview': 'عرض مسبق',
+  'Headings': 'العناوين',
+  'Paragraph': 'فقرة',
+  'Bold': 'خط عريض',
+  'Italic': 'خط مائل',
+  'Strike': 'إضراب',
+  'Code': 'رمز',
+  'Line': 'خط',
+  'Blockquote': 'فقرة مقتبسة',
+  'Unordered list': 'قائمة غير مرتبة',
+  'Ordered list': 'قائمة مرتبة',
+  'Task': 'مهمة',
+  'Indent': 'المسافة البادئة',
+  'Outdent': 'المسافة الخارجة',
+  'Insert link': 'أدخل الرابط',
+  'Insert CodeBlock': 'أدخل الكود',
+  'Insert table': 'أدخل جدول',
+  'Insert image': 'أدخل صورة',
+  'Heading': 'عنوان',
+  'Image URL': 'رابط الصورة',
+  'Select image file': 'حدد ملف الصورة',
+  'Description': 'وصف',
+  'OK': 'موافقة',
+  'More': 'أكثر',
+  'Cancel': 'إلغاء',
+  'File': 'ملف',
+  'URL': 'رابط',
+  'Link text': 'نص الرابط',
+  'Add row': 'ضف سطر',
+  'Add col': 'ضف عمود',
+  'Remove row': 'حذف سطر',
+  'Remove col': 'حذف عمود',
+  'Align left': 'محاذاة اليسار',
+  'Align center': 'محاذاة الوسط',
+  'Align right': 'محاذاة اليمين',
+  'Remove table': 'حذف الجدول',
+  'Would you like to paste as table?': 'هل تريد اللصق كجدول',
+  'Text color': 'لون النص',
+  'Auto scroll enabled': 'التحريك التلقائي ممكّن',
+  'Auto scroll disabled': 'التحريك التلقائي معطّل',
+  'Cannot paste values ​​other than a table in the cell selection state': 'لا يمكن اللصق في الجدول إلا في وجود خلايا مختارة',
+  'Choose language': 'اختر اللغة'
+}); /**
+    * @fileoverview I18N for Arabic
+    * @author Amira Salah <amira.salah@itworx.com>
+    */
+
+/***/ }),
+/* 141 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(3);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['pl', 'pl_PL'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Napisz',
+  'Preview': 'Podgląd',
+  'Headings': 'Nagłówki',
+  'Paragraph': 'Akapit',
+  'Bold': 'Pogrubienie',
+  'Italic': 'Kursywa',
+  'Strike': 'Przekreślenie',
+  'Code': 'Fragment kodu',
+  'Line': 'Linia',
+  'Blockquote': 'Cytat',
+  'Unordered list': 'Lista nieuporządkowana',
+  'Ordered list': 'Lista uporządkowana',
+  'Task': 'Zadanie',
+  'Indent': 'Utwórz wcięcie',
+  'Outdent': 'Usuń wcięcie',
+  'Insert link': 'Umieść odnośnik',
+  'Insert CodeBlock': 'Umieść blok kodu',
+  'Insert table': 'Umieść tabelę',
+  'Insert image': 'Umieść obraz',
+  'Heading': 'Nagłówek',
+  'Image URL': 'Adres URL obrazu',
+  'Select image file': 'Wybierz plik obrazu',
+  'Description': 'Opis',
+  'OK': 'OK',
+  'More': 'Więcej',
+  'Cancel': 'Anuluj',
+  'File': 'Plik',
+  'URL': 'URL',
+  'Link text': 'Tekst odnośnika',
+  'Add row': 'Dodaj rząd',
+  'Add col': 'Dodaj kolumnę',
+  'Remove row': 'Usuń rząd',
+  'Remove col': 'Usuń kolumnę',
+  'Align left': 'Wyrównaj do lewej',
+  'Align center': 'Wyśrodkuj',
+  'Align right': 'Wyrównaj do prawej',
+  'Remove table': 'Usuń tabelę',
+  'Would you like to paste as table?': 'Czy chcesz wkleić tekst jako tabelę?',
+  'Text color': 'Kolor tekstu',
+  'Auto scroll enabled': 'Włączono automatyczne przewijanie',
+  'Auto scroll disabled': 'Wyłączono automatyczne przewijanie',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Nie można wkleić wartości innej niż tabela w trybie wyboru komórki.',
+  'Choose language': 'Wybierz język'
+}); /**
+    * @fileoverview I18N for Polish
+    * @author Marcin Mikołajczak <me@m4sk.in>
     */
 
 /***/ })

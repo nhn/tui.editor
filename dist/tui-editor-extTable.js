@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.7
+ * @version 1.2.8
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery"), require("tui-code-snippet"), (function webpackLoadOptionalExternalModule() { try { return require("tui-editor"); } catch(e) {} }()), (function webpackLoadOptionalExternalModule() { try { return require("tui-editor/dist/tui-editor-Viewer"); } catch(e) {} }()), require("to-mark")) : factory(root["$"], (root["tui"] && root["tui"]["util"]), (root["tui"] && root["tui"]["Editor"]), (root["tui"] && root["tui"]["Editor"]), root["toMark"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_54__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_54__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -87,12 +87,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -120,6 +114,12 @@ if (!Editor) {
 exports.default = Editor;
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -136,7 +136,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
@@ -693,7 +693,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
@@ -971,7 +971,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -1029,10 +1029,6 @@ var _mergedTableUI = __webpack_require__(64);
 
 var _mergedTableUI2 = _interopRequireDefault(_mergedTableUI);
 
-var _popupTableUtils = __webpack_require__(65);
-
-var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -1040,6 +1036,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @param {Editor} editor - editor instance
  * @ignore
  */
+/**
+* @fileoverview Implements table extension
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 function tableExtension(editor) {
   var eventManager = editor.eventManager;
 
@@ -1053,30 +1053,10 @@ function tableExtension(editor) {
   }
 
   var wwComponentManager = editor.wwEditor.componentManager;
-  var popupTableUtils = null;
+  var popupTableUtils = editor.getUI().getPopupTableUtils();
 
   _addCommands(editor);
   _changeWysiwygManagers(wwComponentManager);
-
-  for (var _iterator = editor._ui._popups, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      _i = _iterator.next();
-      if (_i.done) break;
-      _ref = _i.value;
-    }
-
-    var popup = _ref;
-
-    if (popup instanceof _popupTableUtils2.default) {
-      popupTableUtils = popup;
-      break;
-    }
-  }
 
   if (popupTableUtils) {
     _mergedTableUI2.default.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
@@ -1088,10 +1068,6 @@ function tableExtension(editor) {
  * @param {object} editor - editor instance
  * @private
  */
-/**
-* @fileoverview Implements table extension
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-*/
 function _addCommands(editor) {
   editor.addCommand(_mergeCell2.default);
   editor.addCommand(_unmergeCell2.default);
@@ -1191,7 +1167,7 @@ _editorProxy2.default.defineExtension('table', tableExtension);
 "use strict";
 
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -1286,6 +1262,27 @@ if (i18n) {
     'Cannot change part of merged cell': 'Yhdistettyjen solujen osaa ei voi muuttaa',
     'Cannot paste row merged cells into the table header': 'Soluja ei voi yhdistää taulukon otsikkoriviin'
   });
+
+  i18n.setLanguage(['cs', 'cs_CZ'], {
+    'Merge cells': 'Spojit buňky',
+    'Unmerge cells': 'Rozpojit buňky',
+    'Cannot change part of merged cell': 'Nelze měnit část spojené buňky',
+    'Cannot paste row merged cells into the table header': 'Nelze vkládat spojené buňky do záhlaví tabulky'
+  });
+
+  i18n.setLanguage(['ar', 'ar_AR'], {
+    'Merge cells': 'دمج الوحدات',
+    'Unmerge cells': 'إلغاء دمج الوحدات',
+    'Cannot change part of merged cell': 'لا يمكن تغيير جزء من الخلية المدموجة',
+    'Cannot paste row merged cells into the table header': 'لا يمكن لصق الخلايا المدموجة من صف واحد في رأس الجدول'
+  });
+
+  i18n.setLanguage(['pl', 'pl_PL'], {
+    'Merge cells': 'Scal komórki',
+    'Unmerge cells': 'Rozłącz komórki',
+    'Cannot change part of merged cell': 'Nie można zmienić części scalonej komórki.',
+    'Cannot paste row merged cells into the table header': 'Nie można wkleić komórek o scalonym rzędzie w nagłówek tabeli.'
+  });
 }
 
 /***/ }),
@@ -1311,7 +1308,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
@@ -1594,7 +1591,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
@@ -1720,11 +1717,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -2421,11 +2418,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -2623,11 +2620,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -2800,11 +2797,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -3000,11 +2997,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -3187,11 +3184,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -3366,11 +3363,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -3482,11 +3479,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -3705,11 +3702,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -3883,7 +3880,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
@@ -3969,942 +3966,6 @@ function updateContextMenu(popupTableUtils, eventManager, selectionManager) {
 exports.default = {
   updateContextMenu: updateContextMenu
 };
-
-/***/ }),
-/* 65 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-var _layerpopup = __webpack_require__(66);
-
-var _layerpopup2 = _interopRequireDefault(_layerpopup);
-
-var _i18n = __webpack_require__(68);
-
-var _i18n2 = _interopRequireDefault(_i18n);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements PopupTableUtils
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
-
-/**
- * PopupTableUtils
- * It implements table utils popup
- * @extends {LayerPopup}
- */
-var PopupTableUtils = function (_LayerPopup) {
-  _inherits(PopupTableUtils, _LayerPopup);
-
-  /**
-   * Creates an instance of PopupTableUtils.
-   * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupTableUtils
-   */
-  function PopupTableUtils(options) {
-    _classCallCheck(this, PopupTableUtils);
-
-    var POPUP_CONTENT = '\n            <button type="button" class="te-table-add-row">' + _i18n2.default.get('Add row') + '</button>\n            <button type="button" class="te-table-add-col">' + _i18n2.default.get('Add col') + '</button>\n            <button type="button" class="te-table-remove-row">' + _i18n2.default.get('Remove row') + '</button>\n            <button type="button" class="te-table-remove-col">' + _i18n2.default.get('Remove col') + '</button>\n            <hr/>\n            <button type="button" class="te-table-col-align-left">' + _i18n2.default.get('Align left') + '</button>\n            <button type="button" class="te-table-col-align-center">' + _i18n2.default.get('Align center') + '</button>\n            <button type="button" class="te-table-col-align-right">' + _i18n2.default.get('Align right') + '</button>\n            <hr/>\n            <button type="button" class="te-table-remove">' + _i18n2.default.get('Remove table') + '</button>\n        ';
-    options = _tuiCodeSnippet2.default.extend({
-      header: false,
-      className: 'te-popup-table-utils',
-      content: POPUP_CONTENT
-    }, options);
-    return _possibleConstructorReturn(this, (PopupTableUtils.__proto__ || Object.getPrototypeOf(PopupTableUtils)).call(this, options));
-  }
-
-  /**
-   * init instance.
-   * store properties & prepare before initialize DOM
-   * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupTableUtils
-   * @protected
-   * @override
-   */
-
-
-  _createClass(PopupTableUtils, [{
-    key: '_initInstance',
-    value: function _initInstance(options) {
-      _get(PopupTableUtils.prototype.__proto__ || Object.getPrototypeOf(PopupTableUtils.prototype), '_initInstance', this).call(this, options);
-      this.eventManager = options.eventManager;
-    }
-
-    /**
-     * bind DOM events
-     * @memberof PopupTableUtils
-     * @protected
-     * @override
-     */
-
-  }, {
-    key: '_initDOMEvent',
-    value: function _initDOMEvent() {
-      var _this2 = this;
-
-      _get(PopupTableUtils.prototype.__proto__ || Object.getPrototypeOf(PopupTableUtils.prototype), '_initDOMEvent', this).call(this);
-
-      this.on('click .te-table-add-row', function () {
-        return _this2.eventManager.emit('command', 'AddRow');
-      });
-      this.on('click .te-table-add-col', function () {
-        return _this2.eventManager.emit('command', 'AddCol');
-      });
-      this.on('click .te-table-remove-row', function () {
-        return _this2.eventManager.emit('command', 'RemoveRow');
-      });
-      this.on('click .te-table-col-align-left', function () {
-        return _this2.eventManager.emit('command', 'AlignCol', 'left');
-      });
-      this.on('click .te-table-col-align-center', function () {
-        return _this2.eventManager.emit('command', 'AlignCol', 'center');
-      });
-      this.on('click .te-table-col-align-right', function () {
-        return _this2.eventManager.emit('command', 'AlignCol', 'right');
-      });
-      this.on('click .te-table-remove-col', function () {
-        return _this2.eventManager.emit('command', 'RemoveCol');
-      });
-      this.on('click .te-table-remove', function () {
-        return _this2.eventManager.emit('command', 'RemoveTable');
-      });
-    }
-
-    /**
-     * bind editor events
-     * @memberof PopupTableUtils
-     * @protected
-     * @abstract
-     */
-
-  }, {
-    key: '_initEditorEvent',
-    value: function _initEditorEvent() {
-      var _this3 = this;
-
-      _get(PopupTableUtils.prototype.__proto__ || Object.getPrototypeOf(PopupTableUtils.prototype), '_initEditorEvent', this).call(this);
-
-      this.eventManager.listen('focus', function () {
-        return _this3.hide();
-      });
-      this.eventManager.listen('mousedown', function () {
-        return _this3.hide();
-      });
-      this.eventManager.listen('closeAllPopup', function () {
-        return _this3.hide();
-      });
-
-      this.eventManager.listen('openPopupTableUtils', function (event) {
-        var offset = _this3.$el.parent().offset();
-        var x = event.clientX - offset.left;
-        var y = event.clientY - offset.top + (0, _jquery2.default)(window).scrollTop();
-
-        _this3.$el.css({
-          position: 'absolute',
-          top: y + 5, // beside mouse pointer
-          left: x + 10
-        });
-
-        _this3.eventManager.emit('closeAllPopup');
-        _this3.show();
-      });
-    }
-  }]);
-
-  return PopupTableUtils;
-}(_layerpopup2.default);
-
-exports.default = PopupTableUtils;
-
-/***/ }),
-/* 66 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-var _uicontroller = __webpack_require__(67);
-
-var _uicontroller2 = _interopRequireDefault(_uicontroller);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements LayerPopup
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
-
-var CLASS_PREFIX = 'tui-popup-';
-var CLASS_FIT_WINDOW = 'fit-window';
-
-var LAYOUT_TEMPLATE_MODELESS = '<div class="' + CLASS_PREFIX + 'header">\n        <span class="' + CLASS_PREFIX + 'title"></span>\n        <div class="' + CLASS_PREFIX + 'header-buttons">\n            <button type="button" class="' + CLASS_PREFIX + 'close-button"></button>\n        </div>\n    </div>\n    <div class="' + CLASS_PREFIX + 'body"></div>';
-
-var LAYOUT_TEMPLATE_MODAL = '<div class="' + CLASS_PREFIX + 'wrapper">\n        <div class="' + CLASS_PREFIX + 'header">\n            <span class="' + CLASS_PREFIX + 'title"></span>\n            <div class="' + CLASS_PREFIX + 'header-buttons">\n                <button type="button" class="' + CLASS_PREFIX + 'close-button"></button>\n            </div>\n        </div>\n        <div class="' + CLASS_PREFIX + 'body"></div>\n    </div>';
-
-/**
- * A number, or a string containing a number.
- * @typedef {Object} LayerPopupOption
-    * @property {string[]} openerCssQuery - Css Query list to bind clickevent that open popup
-    * @property {string[]} closerCssQuery - Css Query list to bind clickevent that close popup
-    * @property {jQuery} $el - popup root element
-    * @property {jQuery|string} content - popup content that html string or jQuery element
-    * @property {string} textContent - popup text content
-    * @property {string} title - popup title
-    * @property {boolean} header - whether to draw header
-    * @property {jQuery} $target - element to append popup
-    * @property {boolean} modal - true: modal, false: modeless
-    * @property {string} headerButtons - replace header(close) button
- */
-
-/**
- * Class LayerPopup
- * @extends {UIController}
- */
-
-var LayerPopup = function (_UIController) {
-  _inherits(LayerPopup, _UIController);
-
-  /**
-   * Creates an instance of LayerPopup.
-   * @param {LayerPopupOption} options - popup option
-   * @memberof LayerPopup
-   */
-  function LayerPopup(options) {
-    _classCallCheck(this, LayerPopup);
-
-    options = _tuiCodeSnippet2.default.extend({
-      header: true,
-      $target: (0, _jquery2.default)('body'),
-      textContent: ''
-    }, options);
-
-    var _this = _possibleConstructorReturn(this, (LayerPopup.__proto__ || Object.getPrototypeOf(LayerPopup)).call(this, {
-      tagName: 'div',
-      className: options.modal ? CLASS_PREFIX + 'modal-background' : CLASS_PREFIX + 'wrapper',
-      rootElement: options.$el
-    }));
-
-    _this._initInstance(options);
-    _this._initDOM(options);
-    _this._initDOMEvent(options);
-    _this._initEditorEvent(options);
-    return _this;
-  }
-
-  /**
-   * init instance.
-   * store properties & prepare before initialize DOM
-   * @param {LayerPopupOption} options - layer popup options
-   * @memberof LayerPopup
-   * @protected
-   */
-
-
-  _createClass(LayerPopup, [{
-    key: '_initInstance',
-    value: function _initInstance(options) {
-      this._$target = options.$target;
-
-      if (options.$el) {
-        this.$el = options.$el;
-        this._isExternalHtmlUse = true;
-      }
-
-      if (options.content) {
-        this.$content = (0, _jquery2.default)(options.content);
-      } else {
-        this.$content = options.textContent;
-      }
-
-      this.options = options;
-    }
-
-    /**
-     * initialize DOM, render popup
-     * @memberof LayerPopup
-     * @protected
-     */
-
-  }, {
-    key: '_initDOM',
-    value: function _initDOM() {
-      this._initLayout();
-
-      if (!this._isExternalHtmlUse) {
-        if (_tuiCodeSnippet2.default.isExisty(this.options.title)) {
-          this.setTitle(this.options.title);
-        }
-        this.setContent(this.$content);
-      }
-
-      var buttons = this.options.headerButtons;
-      if (buttons) {
-        this.$el.find('.' + CLASS_PREFIX + 'close-button').remove();
-
-        var $buttonWrapper = this.$el.find('.' + CLASS_PREFIX + 'header-buttons');
-        $buttonWrapper.empty();
-        $buttonWrapper.append((0, _jquery2.default)(buttons));
-      }
-
-      if (this.options.css) {
-        this.$el.css(this.options.css);
-      }
-    }
-
-    /**
-     * bind DOM events
-     * @memberof LayerPopup
-     * @protected
-     */
-
-  }, {
-    key: '_initDOMEvent',
-    value: function _initDOMEvent() {
-      var _this2 = this;
-
-      var _options = this.options,
-          openerCssQuery = _options.openerCssQuery,
-          closerCssQuery = _options.closerCssQuery;
-
-      if (openerCssQuery) {
-        (0, _jquery2.default)(openerCssQuery).on('click.' + this._id, function () {
-          return _this2.show();
-        });
-      }
-      if (closerCssQuery) {
-        (0, _jquery2.default)(closerCssQuery).on('click.' + this._id, function () {
-          return _this2.hide();
-        });
-      }
-
-      this.on('click .' + CLASS_PREFIX + 'close-button', function () {
-        return _this2.hide();
-      });
-    }
-
-    /**
-     * bind editor events
-     * @memberof LayerPopup
-     * @protected
-     * @abstract
-     */
-
-  }, {
-    key: '_initEditorEvent',
-    value: function _initEditorEvent() {}
-  }, {
-    key: '_initLayout',
-    value: function _initLayout() {
-      var options = this.options;
-
-
-      if (!this._isExternalHtmlUse) {
-        var layout = options.modal ? LAYOUT_TEMPLATE_MODAL : LAYOUT_TEMPLATE_MODELESS;
-        this.$el.html(layout);
-        this.$el.addClass(options.className);
-        this.hide();
-        this._$target.append(this.$el);
-        this.$body = this.$el.find('.' + CLASS_PREFIX + 'body');
-
-        if (!options.header) {
-          this.$el.find('.' + CLASS_PREFIX + 'header').remove();
-        }
-      } else {
-        this.hide();
-        this._$target.append(this.$el);
-      }
-    }
-
-    /**
-     * set popup content
-     * @param {jQuery|HTMLElement|string} $content - content
-     * @memberof LayerPopup
-     */
-
-  }, {
-    key: 'setContent',
-    value: function setContent($content) {
-      this.$body.empty();
-      this.$body.append($content);
-    }
-
-    /**
-     * set title
-     * @param {string} title - title text
-     * @memberof LayerPopup
-     */
-
-  }, {
-    key: 'setTitle',
-    value: function setTitle(title) {
-      var $title = this.$el.find('.' + CLASS_PREFIX + 'title');
-
-      $title.empty();
-      $title.append(title);
-    }
-
-    /**
-     * get title element
-     * @memberof LayerPopup
-     * @returns {HTMLElement} - title html element
-     */
-
-  }, {
-    key: 'getTitleElement',
-    value: function getTitleElement() {
-      return this.$el.find('.' + CLASS_PREFIX + 'title').get(0);
-    }
-
-    /**
-     * hide popup
-     * @memberof LayerPopup
-     */
-
-  }, {
-    key: 'hide',
-    value: function hide() {
-      this.$el.css('display', 'none');
-      this._isShow = false;
-      this.trigger('hidden', this);
-    }
-
-    /**
-     * show popup
-     * @memberof LayerPopup
-     */
-
-  }, {
-    key: 'show',
-    value: function show() {
-      this.$el.css('display', 'block');
-      this._isShow = true;
-      this.trigger('shown', this);
-    }
-
-    /**
-     * whether this popup is visible
-     * @returns {boolean} - true: shown, false: hidden
-     * @memberof LayerPopup
-     */
-
-  }, {
-    key: 'isShow',
-    value: function isShow() {
-      return this._isShow;
-    }
-
-    /**
-     * remove popup content
-     * @memberof LayerPopup
-     */
-
-  }, {
-    key: 'remove',
-    value: function remove() {
-      var _options2 = this.options,
-          openerCssQuery = _options2.openerCssQuery,
-          closerCssQuery = _options2.closerCssQuery;
-
-
-      this.trigger('remove', this);
-      this.off();
-
-      if (openerCssQuery) {
-        (0, _jquery2.default)(openerCssQuery).off('.' + this._id);
-      }
-      if (closerCssQuery) {
-        (0, _jquery2.default)(closerCssQuery).off('.' + this._id);
-      }
-
-      this.$el.remove();
-    }
-
-    /**
-     * make popup size fit to window
-     * @param {boolean} fit - true to make popup fit to window
-     * @memberof LayerPopup
-     * @protected
-     */
-
-  }, {
-    key: 'setFitToWindow',
-    value: function setFitToWindow(fit) {
-      this.$el.toggleClass(CLASS_FIT_WINDOW, fit);
-    }
-
-    /**
-     * make popup size fit to window
-     * @memberof LayerPopup
-     * @protected
-     * @returns {boolean} - true for fit to window
-     */
-
-  }, {
-    key: 'isFitToWindow',
-    value: function isFitToWindow() {
-      return this.$el.hasClass(CLASS_FIT_WINDOW);
-    }
-
-    /**
-     * toggle size fit to window
-     * @memberof LayerPopup
-     * @protected
-     * @returns {boolean} - true for fit to window
-     */
-
-  }, {
-    key: 'toggleFitToWindow',
-    value: function toggleFitToWindow() {
-      var fitToWindow = !this.isFitToWindow();
-      this.setFitToWindow(fitToWindow);
-
-      return fitToWindow;
-    }
-  }]);
-
-  return LayerPopup;
-}(_uicontroller2.default);
-
-exports.default = LayerPopup;
-
-/***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements ui controller
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _uiInstanceId = -1;
-
-/**
- * get ui instance id
- * @returns {number} - new instance id
- * @ignore
- */
-function makeUIInstanceId() {
-  _uiInstanceId += 1;
-
-  return _uiInstanceId;
-}
-
-/**
- * Class UIController
- */
-
-var UIController = function () {
-
-  /**
-   * Creates an instance of UIController.
-   * @param {Object} [options] - options
-   * @param {jQuery} [options.rootElement] - root element
-   * @param {string} [options.tagName] - tag name
-   * @param {string} [options.className] - class name
-   * @memberof UIController
-   */
-
-
-  /**
-   * UI jQuery element
-   * @type {Object}
-   * @memberof UIController
-   */
-
-  /**
-   * tag name
-   * @type {string}
-   * @memberof UIController
-   */
-  function UIController() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    _classCallCheck(this, UIController);
-
-    options = _tuiCodeSnippet2.default.extend({
-      tagName: 'div'
-    }, options);
-
-    this.tagName = options.tagName;
-
-    this.className = options.className;
-
-    this._id = makeUIInstanceId();
-
-    this._setRootElement(options.rootElement);
-  }
-
-  /**
-   * @param {string|object} aType - event name and selector string
-   * @param {function} aFn - event handler
-   * @memberof UIController
-   */
-
-
-  /**
-   * UI Id
-   * @type {number}
-   * @private
-   * @memberof UIController
-   */
-
-
-  /**
-   * ui controller class name
-   * @type {string}
-   * @memberof UIController
-   */
-
-
-  _createClass(UIController, [{
-    key: 'on',
-    value: function on(aType, aFn) {
-      var _this = this;
-
-      if (_tuiCodeSnippet2.default.isObject(aType)) {
-        _tuiCodeSnippet2.default.forEach(aType, function (fn, type) {
-          _this._addEvent(type, fn);
-        });
-      } else {
-        this._addEvent(aType, aFn);
-      }
-    }
-
-    /**
-     * bind event
-     * @param {string} type - event name and selector
-     * @param {function} fn - handler function
-     * @memberof UIController
-     * @private
-     */
-
-  }, {
-    key: '_addEvent',
-    value: function _addEvent(type, fn) {
-      var _parseEventType2 = this._parseEventType(type),
-          event = _parseEventType2.event,
-          selector = _parseEventType2.selector;
-
-      if (selector) {
-        this.$el.on(event, selector, fn);
-      } else {
-        this.$el.on(event, fn);
-      }
-    }
-
-    /**
-     * unbind event handler
-     * @param {string} type - event name and selector
-     * @param {function} fn - handler function
-     * @memberof UIController
-     */
-
-  }, {
-    key: 'off',
-    value: function off(type, fn) {
-      if (type) {
-        var _parseEventType3 = this._parseEventType(type),
-            event = _parseEventType3.event,
-            selector = _parseEventType3.selector;
-
-        if (selector) {
-          this.$el.off(event, selector, fn);
-        } else {
-          this.$el.off(event, fn);
-        }
-      } else {
-        this.$el.off();
-      }
-    }
-
-    /**
-     * parse string into event name & selector
-     * 'click td' => ['click', 'td]
-     * @param {string} type - string to be parsed
-     * @returns {Object} event, selector
-     * @private
-     */
-
-  }, {
-    key: '_parseEventType',
-    value: function _parseEventType(type) {
-      var splitType = type.split(' ');
-      var event = splitType.shift();
-      var selector = splitType.join(' ');
-
-      return {
-        event: event,
-        selector: selector
-      };
-    }
-
-    /**
-     * set root element
-     * @param {jQuery} $el - root jQuery element
-     * @private
-     */
-
-  }, {
-    key: '_setRootElement',
-    value: function _setRootElement($el) {
-      var tagName = this.tagName;
-      var className = this.className;
-
-
-      if (!$el) {
-        className = className || 'uic' + this._id;
-        $el = (0, _jquery2.default)('<' + tagName + ' class="' + className + '"/>');
-      }
-      this.$el = $el;
-    }
-
-    /**
-     * trigger event
-     * @param {...object} args - event name & extra params
-     * @memberof UIController
-     */
-
-  }, {
-    key: 'trigger',
-    value: function trigger() {
-      var _$el;
-
-      (_$el = this.$el).trigger.apply(_$el, arguments);
-    }
-  }, {
-    key: '_getEventNameWithNamespace',
-    value: function _getEventNameWithNamespace(event) {
-      var eventSplited = event.split(' ');
-      eventSplited[0] += '.uicEvent' + this._id;
-
-      return eventSplited.join(' ');
-    }
-
-    /**
-     * remove
-     * @memberof UIController
-     */
-
-  }, {
-    key: 'remove',
-    value: function remove() {
-      if (this.$el) {
-        this.$el.remove();
-      }
-    }
-
-    /**
-     * destroy
-     * @memberof UIController
-     */
-
-  }, {
-    key: 'destroy',
-    value: function destroy() {
-      var _this2 = this;
-
-      this.remove();
-
-      _tuiCodeSnippet2.default.forEachOwnProperties(this, function (value, key) {
-        _this2[key] = null;
-      });
-    }
-  }]);
-
-  return UIController;
-}();
-
-exports.default = UIController;
-
-/***/ }),
-/* 68 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.I18n = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements i18n
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var sharedInstance = void 0;
-
-var DEFAULT_CODE = 'en_US';
-
-/**
- * Class I18n
- */
-
-var I18n = function () {
-  /**
-   * Creates an instance of I18n.
-   * @memberof I18n
-   */
-  function I18n() {
-    _classCallCheck(this, I18n);
-
-    this._code = DEFAULT_CODE;
-    this._langs = new _tuiCodeSnippet2.default.Map();
-  }
-
-  /**
-   * Set locale code
-   * @param {string} code locale code
-   */
-
-
-  _createClass(I18n, [{
-    key: 'setCode',
-    value: function setCode(code) {
-      this._code = code;
-    }
-
-    /**
-     * Set language set
-     * @param {string|string[]} codes locale code
-     * @param {object} data language set
-     */
-
-  }, {
-    key: 'setLanguage',
-    value: function setLanguage(codes, data) {
-      var _this = this;
-
-      codes = [].concat(codes);
-
-      codes.forEach(function (code) {
-        if (!_this._langs.has(code)) {
-          _this._langs.set(code, data);
-        } else {
-          var langData = _this._langs.get(code);
-          _this._langs.set(code, _tuiCodeSnippet2.default.extend(langData, data));
-        }
-      });
-    }
-
-    /**
-     * Get text of key
-     * @param {string} key key of text
-     * @param {string} code locale code
-     * @returns {string}
-     */
-
-  }, {
-    key: 'get',
-    value: function get(key, code) {
-      if (!code) {
-        code = this._code;
-      }
-
-      var langSet = this._langs.get(code);
-
-      if (!langSet) {
-        langSet = this._langs.get(DEFAULT_CODE);
-      }
-
-      var text = langSet[key];
-
-      if (!text) {
-        throw new Error('There is no text key "' + key + '" in ' + code);
-      }
-
-      return text;
-    }
-  }], [{
-    key: 'getSharedInstance',
-    value: function getSharedInstance() {
-      if (!sharedInstance) {
-        sharedInstance = new I18n();
-      }
-
-      return sharedInstance;
-    }
-  }]);
-
-  return I18n;
-}();
-
-exports.I18n = I18n;
-exports.default = new I18n();
 
 /***/ })
 /******/ ]);

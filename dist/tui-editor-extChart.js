@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.7
+ * @version 1.2.8
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		var a = typeof exports === 'object' ? factory(require("jquery"), require("tui-code-snippet"), (function webpackLoadOptionalExternalModule() { try { return require("tui-editor"); } catch(e) {} }()), (function webpackLoadOptionalExternalModule() { try { return require("tui-editor/dist/tui-editor-Viewer"); } catch(e) {} }()), require("tui-chart")) : factory(root["$"], (root["tui"] && root["tui"]["util"]), (root["tui"] && root["tui"]["Editor"]), (root["tui"] && root["tui"]["Editor"]), (root["tui"] && root["tui"]["chart"]));
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_27__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_27__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -87,12 +87,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -118,6 +112,12 @@ if (!Editor) {
 }
 
 exports.default = Editor;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ }),
 /* 3 */,
@@ -5295,7 +5295,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiCodeSnippet = __webpack_require__(1);
+var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
@@ -5303,7 +5303,7 @@ var _tuiChart = __webpack_require__(27);
 
 var _tuiChart2 = _interopRequireDefault(_tuiChart);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 

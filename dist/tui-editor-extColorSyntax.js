@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.7
+ * @version 1.2.8
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -88,7 +88,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
 
 /***/ }),
 
-/***/ 2:
+/***/ 1:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -143,7 +143,7 @@ var _tuiColorPicker = __webpack_require__(45);
 
 var _tuiColorPicker2 = _interopRequireDefault(_tuiColorPicker);
 
-var _editorProxy = __webpack_require__(2);
+var _editorProxy = __webpack_require__(1);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
