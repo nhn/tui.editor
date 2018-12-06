@@ -44,7 +44,7 @@
     "ISSUE_TEMPLATE.md"
   ],
   "dependencies": {
-    "tui-code-snippet": "^1.4.0",
+    "tui-code-snippet": "^1.5.0",
     "codemirror": "^5.32.0",
     "highlightjs": "^9.12.0",
     "jquery": "^3.3.1",

@@ -50,6 +50,7 @@ module.exports = {
     'name': 'TOAST UI Editor',
     'destination': `api/${version}`,
     'template': 'node_modules/tui-jsdoc-template',
-    'tutorials': 'examples'
+    'tutorials': 'examples',
+    'package': 'package.json'
   }
 };

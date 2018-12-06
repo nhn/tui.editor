@@ -82,8 +82,12 @@ import './langs/fr_FR';
 import './langs/uk_UA';
 import './langs/tr_TR';
 import './langs/fi_FI';
+import './langs/cs_CZ';
+import './langs/ar_AR';
+import './langs/pl_PL';
 
 const __nedInstance = [];
+const gaTrackingId = 'UA-129966929-1';
 
 /**
  * @callback addImageBlobHook
@@ -210,7 +214,7 @@ class ToastUIEditor {
     this._addDefaultCommands();
 
     if (this.options.usageStatistics) {
-      util.sendHostname('editor');
+      util.sendHostname('editor', gaTrackingId);
     }
   }
 
@@ -413,7 +417,7 @@ class ToastUIEditor {
    */
   setHtml(html, cursorToEnd = true) {
     html = html || '';
-    this.wwEditor.setValue(html);
+    this.wwEditor.setValue(html, cursorToEnd);
 
     if (this.isMarkdownMode()) {
       const markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
