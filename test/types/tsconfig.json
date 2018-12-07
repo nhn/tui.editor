@@ -1,5 +1,4 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
     "noEmit": true,
     "noImplicitAny": false,
@@ -11,3 +10,4 @@
     "./type-tests.ts"
   ]
 }
+s
