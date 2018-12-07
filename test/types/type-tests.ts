@@ -23,16 +23,7 @@ Editor.factory({el: document.querySelector('#editorSectoin')});
 Editor.getInstances().length == 1;
 
 editor.addHook('click', () => { console.log('click Handler!')});
-const selection = {
-  start: {
-    ch: 0,
-    line: 0
-  },
-  end: {
-    ch: 0,
-    line: 0
-  }
-};
+const selection = new Range();
 editor.addWidget(selection, document.querySelector('#editorSectoin'), 'bottom', 20);
 editor.afterAddedCommand();
 editor.blur();

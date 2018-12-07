@@ -1,7 +1,6 @@
 type Button = any;
 type Command = any;
 type CommandManager = any;
-type RangeConfig = any;
 type MarkDownIt = any;
 type WwCodeBlockManager = any;
 type WwTableManager = any;
@@ -21,11 +20,11 @@ interface EditorOptions {
   events?: Array<(...args: Array<any>) => any>;
   hooks?: Array<(...args: Array<any>) => any>;
   language?: string;
-  useCommandShortcut?: string;
+  useCommandShortcut?: boolean;
   useDefaultHTMLSanitizer?: boolean;
   codeBlockLanguages?: Array<string>
   usageStatistics?: Boolean;
-  toolbarItems?: Array<any>;
+  toolbarItems?: Array<string>;
   hideModeSwitch?: Boolean;
   exts?: Array<string>;
 }
@@ -44,8 +43,8 @@ declare class CodeBlockManager {
   static getHighlightJSLanguages(): Array<string>;
 
   createCodeBlockHtml(language: string, codeText: string): string;
-  getReplacer(language: string): (...args: Array<any>) => void;
-  setReplacer(language: string, replacer: (...args: Array<any>) => void):void;
+  getReplacer(language: string): (...args: Array<any>) => any;
+  setReplacer(language: string, replacer: (...args: Array<any>) => any):void;
 }
 
 declare class Editor {
@@ -63,26 +62,26 @@ declare class Editor {
   static WwTableSelectionManager: Constructable<WwTableSelectionManager>;
 
   static defineExtension(name: string, ext: any): void;
-  static factory(options: EditorOptions): Editor;
+  static factory(options: EditorOptions): Editor | Viewer;
   static getInstances(): Array<Editor>;
 
   addHook(type: string, handler: (...args: Array<any>) => any): void;
-  addWidget(selection: RangeConfig, node: Node, style: string, offset?: number): void;
+  addWidget(selection: Range, node: Node, style: string, offset?: number): void;
   afterAddedCommand(): void;
   blur(): void;
-  changeMode(mode: string, isWithoutFocus: boolean): void;
+  changeMode(mode: string, isWithoutFocus?: boolean): void;
   changePreviewStyle(style: string): void;
   exec(): void;
   focus(): void;
   getCodeMirror(): CodeMirror;
-  getCurrentModeEditor(): string;
+  getCurrentModeEditor(): any;
   getCurrentPreviewStyle(): string;
   getHtml(): string;
   getMarkdown(): string;
-  getRange(): object | RangeConfig;
+  getRange(): object | Range;
   getSelectedText(): string;
   getSquire(): SquireExt;
-  getTextObject(range: object | RangeConfig): object;
+  getTextObject(range: object | Range): object;
   getUI(): UI;
   getValue(): string;
   height(height: string): string;
@@ -141,26 +140,6 @@ declare module "tui-editor" {
 }
 
 declare module "tui-editor/dist/tui-editor-Editor-all" {
-  export = Editor;
-}
-
-declare module "tui-editor/dist/tui-editor-extChart" {
-  export = Editor;
-}
-
-declare module "tui-editor/dist/tui-editor-extColorSyntax" {
-  export = Editor;
-}
-
-declare module "tui-editor/dist/tui-editor-extScrollSync" {
-  export = Editor;
-}
-
-declare module "tui-editor/dist/tui-editor-extTable" {
-  export = Editor;
-}
-
-declare module "tui-editor/dist/tui-editor-extUML" {
   export = Editor;
 }
 
