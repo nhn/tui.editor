@@ -11,7 +11,7 @@ type UI = any;
 type SquireExt = any;
 
 interface EditorOptions {
-  el: HTMLElement;
+  el: Element;
   height?: string;
   minHeight?: string;
   initialValue?: string;
@@ -107,7 +107,7 @@ declare class Editor {
 }
 
 interface ViewerOptions {
-  el: HTMLElement;
+  el: Element;
   exts?: Array<string>;
   initialValue?: string;
   events?: Array<(...args: Array<any>) => any>;
