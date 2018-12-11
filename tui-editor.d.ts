@@ -138,15 +138,15 @@ declare class Viewer {
   setValue(markdown: string);
 }
 
-declare module "tui-editor" {
+declare module 'tui-editor' {
   export = Editor;
 }
 
-declare module "tui-editor/dist/tui-editor-Editor-all" {
+declare module 'tui-editor/dist/tui-editor-Editor-all' {
   export = Editor;
 }
 
-declare module "tui-editor/dist/tui-editor-Viewer" {
+declare module 'tui-editor/dist/tui-editor-Viewer' {
   export = Viewer;
 }
 
