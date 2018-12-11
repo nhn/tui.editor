@@ -49,7 +49,7 @@ var options = {
 var editor = new Editor(options);
 ```
 
-Or, include include `tui-code-snippet.js` (**v1.4.0** or **later**) and then immediately write the options as follows:
+Or, include `tui-code-snippet.js` (**v1.4.0** or **later**) and then immediately write the options as follows:
 
 ```js
 tui.usageStatistics = false;
