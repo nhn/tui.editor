@@ -1,4 +1,17 @@
 import Editor from 'tui-editor';
+import tuiEditor from 'tui-editor/dist/tui-editor-Editor-all';
+import Viewer from 'tui-editor/dist/tui-editor-Viewer';
+import tuiViewer from 'tui-editor/dist/tui-editor-Viewer-all';
+
+const editor2 = new tuiEditor({
+  el: document.getElementById('editor'),
+  height: '200px',
+  minHeight: '100px',
+  toolbarItems: ['test', 'test2', 'test3'],
+  useCommandShortcut: true
+});
+
+editor2.changeMode('wysiwyg', true);
 
 const editor:Editor = new Editor({
   el: document.querySelector('#el'),
@@ -85,3 +98,8 @@ viewer.remove();
 viewer.setMarkdown('### I am Viewer!');
 viewer.setValue('### I am setValue method!');
 Editor.getInstances().length == 1;
+
+const viewer2 = new tuiViewer({
+  el: document.querySelector('#el')
+});
+viewer2.isViewer();

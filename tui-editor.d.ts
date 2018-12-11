@@ -1,3 +1,6 @@
+// Type definitions for tui.editor v1.2.8
+// TypeScript Version: 3.2
+
 type Button = any;
 type Command = any;
 type CommandManager = any;
@@ -36,7 +39,7 @@ interface Constructable<T> {
 interface i18n {
   get(key: string, code: string): string;
   setCode(code: string): void;
-  setLanguage(codes: string | Array<string>, data: object): void;
+  setLanguage(codes: string | Array<string>, data: any): void;
 }
 
 declare class CodeBlockManager {
@@ -71,17 +74,17 @@ declare class Editor {
   blur(): void;
   changeMode(mode: string, isWithoutFocus?: boolean): void;
   changePreviewStyle(style: string): void;
-  exec(): void;
+  exec(...args: Array<any>): any;
   focus(): void;
   getCodeMirror(): CodeMirror;
   getCurrentModeEditor(): any;
   getCurrentPreviewStyle(): string;
   getHtml(): string;
   getMarkdown(): string;
-  getRange(): object | Range;
+  getRange(): Range | any;
   getSelectedText(): string;
   getSquire(): SquireExt;
-  getTextObject(range: object | Range): object;
+  getTextObject(range: Range | any): any;
   getUI(): UI;
   getValue(): string;
   height(height: string): string;
