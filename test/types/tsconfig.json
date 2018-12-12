@@ -6,7 +6,7 @@
     "allowSyntheticDefaultImports": true
   },
   "files": [
-    "../../tui-editor.d.ts",
+    "../../index.d.ts",
     "./type-tests.ts"
   ]
 }

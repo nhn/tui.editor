@@ -22,7 +22,6 @@
     "dist"
   ],
   "main": "dist/tui-editor-Editor.js",
-  "types": "./tui-editor.d.ts",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.1.2",
