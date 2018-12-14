@@ -7,7 +7,6 @@ import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
-import i18n from './i18n';
 
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
@@ -92,10 +91,14 @@ class WwClipboardManager {
 
   _onWillPaste(pasteData) {
     const $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
+    const tableManager = this.wwe.componentManager.getManager('table');
+    const range = this.wwe.getEditor().getSelection();
 
     this._setTableBookmark($clipboardContainer);
 
-    if (this._pasteToTable($clipboardContainer)) {
+    if (tableManager.isInTable(range)) {
+      tableManager.pasteClipboardData($clipboardContainer.first());
+      $clipboardContainer.html(''); // drains clipboard data
       pasteData.preventDefault();
     } else {
       this._preparePaste($clipboardContainer);
@@ -170,34 +173,6 @@ class WwClipboardManager {
         $element.remove();
       }
     });
-  }
-
-  /**
-   * Paste to table.
-   * @param {jQuery} $clipboardContainer - clibpard container
-   * @returns {boolean} whether processed or not
-   * @private
-   */
-  _pasteToTable($clipboardContainer) {
-    const tableManager = this.wwe.componentManager.getManager('table');
-    const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
-    const range = this.wwe.getEditor().getSelection();
-    const pastingToTable = tableManager.isInTable(range);
-    let processed = false;
-
-    if (pastingToTable) {
-      if (tableSelectionManager.getSelectedCells().length) {
-        alert(i18n.get('Cannot paste values other than a table in the cell selection state'));
-        $clipboardContainer.html(''); // drains clipboard data
-        processed = true;
-      } else {
-        tableManager.pasteClipboardData($clipboardContainer.first());
-        $clipboardContainer.html(''); // drains clipboard data as we've pasted everything here.
-        processed = true;
-      }
-    }
-
-    return processed;
   }
 
   /**

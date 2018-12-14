@@ -6,6 +6,8 @@ import $ from 'jquery';
 import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
+import i18n from './i18n';
+
 const isIE10 = util.browser.msie && util.browser.version === 10;
 const TABLE_CLASS_PREFIX = 'te-content-table-';
 const isIE10And11 = util.browser.msie
@@ -138,10 +140,13 @@ class WwTableManager {
     }
   }
 
-  _isInlineNode(node) {
-    return /^(SPAN|A|CODE|EM|I|STRONG|B|S|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/ig.test(node.nodeName);
-  }
-
+  /**
+   * unwrap block node
+   * @memberof WwTableManager
+   * @param {Node} node - target node
+   * @returns {DocumentFragment} processed result
+   * @private
+   */
   _unwrapBlock(node) {
     const fragment = document.createDocumentFragment();
     const childNodes = util.toArray(node.childNodes);
@@ -149,6 +154,7 @@ class WwTableManager {
     while (childNodes.length) {
       child = childNodes.shift();
       nodeName = domUtils.getNodeName(child);
+      // TODO consider other block tags
       if (nodeName === 'DIV' || nodeName === 'UL' || nodeName === 'OL' || nodeName === 'LI') {
         fragment.append(this._prepareToPaste(child));
       } else {
@@ -159,26 +165,52 @@ class WwTableManager {
     return fragment;
   }
 
+  /**
+   * processing node for paste to table
+   * @memberof WwTableManager
+   * @param {Node} node - target node
+   * @returns {DocumentFragment} processed result
+   * @private
+   */
   _prepareToPaste(node) {
     const fragment = document.createDocumentFragment();
-    if (this._isInlineNode(node) || domUtils.isTextNode(node)) {
+    // inline and text node could be inserted to table
+    if (domUtils.isInlineNode(node) || domUtils.isTextNode(node)) {
       fragment.append(node);
     } else {
+      // block node should be unwraped
       fragment.append(this._unwrapBlock(node));
     }
 
     return fragment;
   }
 
-  _getLeafNode(node) {
-    let tempNode = node;
-    while (tempNode.childNodes && tempNode.childNodes.length !== 0) {
-      tempNode = tempNode.childNodes[0];
-    }
+  /**
+   * processing clipboard data for paste to table
+   * @memberof WwTableManager
+   * @param {NodeList} nodeList - clipboard node list
+   * @returns {DocumentFragment} processed result
+   * @private
+   */
+  _preparePasteData(nodeList) {
+    const fragment = document.createDocumentFragment();
+    const childNodesArray = util.toArray(nodeList);
 
-    return tempNode;
+    childNodesArray.forEach(child => {
+      fragment.append(this._prepareToPaste(child));
+    });
+
+    return fragment;
   }
 
+  /**
+   * paste fragment to offset of container that is text node
+   * @memberof WwTableManager
+   * @param {Node} container - container is text node
+   * @param {Number} offset - offset
+   * @param {DocumentFragment} fragment - paste data
+   * @private
+   */
   _pasteDataIntoTextNode(container, offset, fragment) {
     const length = container.textContent.length;
     const prevText = container.textContent.slice(0, offset);
@@ -205,8 +237,8 @@ class WwTableManager {
         });
         const prevNode = tempParent.cloneNode(true);
         const postNode = tempParent.cloneNode(true);
-        this._getLeafNode(prevNode).textContent = prevText;
-        this._getLeafNode(postNode).textContent = postText;
+        domUtils.getLeafNode(prevNode).textContent = prevText;
+        domUtils.getLeafNode(postNode).textContent = postText;
         resultFragment.append(prevNode);
         resultFragment.append(fragment);
         resultFragment.append(postNode);
@@ -215,17 +247,127 @@ class WwTableManager {
     }
   }
 
-  _pasteDataIntoCollapse(container, offset, fragment) {
+  /**
+   * paste fragment to offset of container
+   * @memberof WwTableManager
+   * @param {Node} container - container
+   * @param {Number} offset - offset
+   * @param {DocumentFragment} fragment - paste data
+   * @private
+   */
+  _pasteData(container, offset, fragment) {
     if (domUtils.isTextNode(container)) {
       this._pasteDataIntoTextNode(container, offset, fragment);
     } else {
-      const endNode = domUtils.getChildNodeByOffset(container, offset);
-      container.insertBefore(fragment, endNode);
+      const node = domUtils.getChildNodeByOffset(container, offset);
+      container.insertBefore(fragment, node);
     }
   }
 
-  _pasteDataIntoNotCollapse() {
+  /**
+   * remove node 'from'~'to-1' inside parent
+   * @memberof WwTableManager
+   * @param {Node} parent - range is not collapse
+   * @param {Node} from - range is not collapse
+   * @param {Node} to - range is not collapse
+   * @private
+   */
+  _removeChild(parent, from, to) {
+    let child = from;
+    while (child !== to) {
+      const next = child.nextSibling;
+      parent.removeChild(child);
+      child = next;
+    }
+  }
 
+  /**
+   * remove nodes until target inside continer
+   * and remove node or text unt offset inside target
+   * @memberof WwTableManager
+   * @param {Node} container - should be parent of target
+   * @param {Node} target - target
+   * @param {Number} offset - offset inside target
+   * @private
+   */
+  _removeUntilOffset(container, target, offset) {
+    if (domUtils.isTextNode(target)) {
+      const {textContent} = target;
+      target.textContent = textContent.slice(offset);
+    } else {
+      const {childNodes} = target;
+      this._removeChild(target, childNodes[0], childNodes[offset]);
+    }
+
+    if (target !== container) {
+      let block = target.parentNode;
+      while (block !== container) {
+        this._removeChild(block.parentNode, block.parentNode.childNodes[0], block);
+        block = block.parentNode;
+      }
+    }
+  }
+
+  /**
+   * remove nodes after target inside continer
+   * and remove node or text after offset inside target
+   * @memberof WwTableManager
+   * @param {Node} container - range is not collapse
+   * @param {Node} target - range is not collapse
+   * @param {Number} offset - range is not collapse
+   * @private
+   */
+  _removeAfterOffset(container, target, offset) {
+    if (domUtils.isTextNode(target)) {
+      const {textContent} = target;
+      target.textContent = textContent.slice(0, offset);
+    } else {
+      const {childNodes} = target;
+      this._removeChild(target, childNodes[offset], null);
+    }
+
+    if (target !== container) {
+      let block = target.parentNode;
+      while (block !== container) {
+        if (block.nextSibling) {
+          this._removeChild(block.parentNode, block.nextSibling, null);
+        }
+        block = block.parentNode;
+      }
+    }
+  }
+
+  /**
+   * delete contents of range that is not collapse
+   * @memberof WwTableManager
+   * @param {Range} range - range is not collapse
+   * @private
+   */
+  _deleteContentsRange(range) {
+    const {startContainer} = range;
+    const {startOffset} = range;
+
+    if (startContainer === this._pasteRangeEndContainer) {
+      if (domUtils.isTextNode(startContainer)) {
+        const {textContent} = startContainer;
+        const prevText = textContent.slice(0, startOffset);
+        const postText = textContent.slice(this._pasteRangeEndOffset, textContent.length);
+        startContainer.textContent = `${prevText}${postText}`;
+      } else {
+        this._removeChild(startContainer.parentNode, startContainer.nextSibling, this._pasteRangeEndContainer);
+      }
+      range.setStart(startContainer, startOffset);
+      range.collapse(true);
+    } else {
+      const common = range.commonAncestorContainer;
+      const startBlock = domUtils.getParentUntil(startContainer, common);
+      const endBlock = domUtils.getParentUntil(this._pasteRangeEndContainer, common);
+      this._removeAfterOffset(startBlock, startContainer, startOffset);
+      this._removeUntilOffset(endBlock, this._pasteRangeEndContainer, this._pasteRangeEndOffset);
+      this._removeChild(common, startBlock.nextSibling, endBlock);
+      range.setStart(endBlock, 0);
+      range.collapse(true);
+    }
   }
 
   /**
@@ -233,32 +375,33 @@ class WwTableManager {
    * @param {jQuery} $clipboardContainer - jQuery element of clipboard
    */
   pasteClipboardData($clipboardContainer) {
+    const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
     const {childNodes} = $clipboardContainer.get(0);
     const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
 
+    if (tableSelectionManager.getSelectedCells().length) {
+      alert(i18n.get('Cannot paste values other than a table in the cell selection state'));
+
+      return;
+    }
+
     if (containsOneTableOnly) {
-      this.pasteClipboardTableData($clipboardContainer);
+      this.pasteTableData($clipboardContainer);
     } else {
       const range = this.wwe.getEditor().getSelection().cloneRange();
-      const fragment = document.createDocumentFragment();
-      const childNodesArray = util.toArray(childNodes);
-
-      childNodesArray.forEach(child => {
-        fragment.append(this._prepareToPaste(child));
-      });
-      if (range.collapsed) {
-        this._pasteDataIntoCollapse(range.endContainer, range.endOffset, fragment);
-      } else {
-        this._pasteDataIntoNotCollapse();
+      const fragment = this._preparePasteData(childNodes);
+      if (!range.collapsed) {
+        this._deleteContentsRange(range);
       }
+      this._pasteData(range.startContainer, range.startOffset, fragment);
     }
   }
 
   /**
-   * Paste clibpard data.
+   * Paste clibpard data that contains only table.
    * @param {jQuery} $clipboardTable - jQuery table element of clipboard
    */
-  pasteClipboardTableData($clipboardTable) {
+  pasteTableData($clipboardTable) {
     this._expandTableIfNeed($clipboardTable);
     this._pasteDataIntoTable($clipboardTable);
   }
@@ -268,13 +411,13 @@ class WwTableManager {
    * @param {MouseEvent} ev - event
    * @private
    */
-  _onPaste(ev) {
+  _onPaste() {
     const range = this.wwe.getEditor().getSelection();
-    const isNotPastingIntoTextNode = !domUtils.isTextNode(range.commonAncestorContainer);
 
-    if (this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
-      ev.preventDefault();
-    }
+    // End information of range should be cached
+    // because end information of range is wrong when squire fired 'willPaste'
+    this._pasteRangeEndContainer = range.endContainer;
+    this._pasteRangeEndOffset = range.endOffset;
   }
 
   /**

@@ -515,7 +515,7 @@ class WwMergedTableManager extends WwTableManager {
    * Paste clibpard data.
    * @param {jQuery} $clipboardTable - jQuery table element of clipboard
    */
-  pasteClipboardTableData($clipboardTable) {
+  pasteTableData($clipboardTable) {
     const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
     const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
     const $selectedCells = tableSelectionManager.getSelectedCells();

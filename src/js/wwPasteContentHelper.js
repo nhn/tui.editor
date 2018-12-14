@@ -76,11 +76,8 @@ class WwPasteContentHelper {
 
     util.forEachArray(array, node => {
       const isTextNode = node.nodeType === 3;
-      /* eslint-disable max-len */
-      const isInlineNode = /^(SPAN|A|CODE|EM|I|STRONG|B|S|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/ig.test(node.tagName);
-      /* eslint-enable max-len */
 
-      if (isTextNode || isInlineNode) {
+      if (isTextNode || domUtils.isInlineNode(node)) {
         if (!currentDiv) {
           currentDiv = document.createElement('div');
           $tempContainer.append(currentDiv);
