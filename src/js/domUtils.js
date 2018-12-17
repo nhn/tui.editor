@@ -486,28 +486,13 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
 };
 
 /**
- * Find leafNode
- * @param {HTMLNode} node - node
- * @returns {HTMLElement} return leaf node. If not have childnode, return self.
- * @ignore
- */
-const getLeafNode = function(node) {
-  let tempNode = node;
-  while (tempNode.childNodes && tempNode.childNodes.length !== 0) {
-    tempNode = tempNode.childNodes[0];
-  }
-
-  return tempNode;
-};
-
-/**
  * check leafNode
  * @param {HTMLNode} node - node
  * @returns {boolean} when node is inline, return ture
  * @ignore
  */
 const isInlineNode = function(node) {
-  const name = node.nodeName | node.tagName;
+  const name = node.tagName;
 
   return /^(SPAN|A|CODE|EM|I|STRONG|B|S|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/ig.test(name);
 };
@@ -533,6 +518,5 @@ export default {
   getNodeInfo,
   getTableCellByDirection,
   getSiblingRowCellByDirection,
-  getLeafNode,
   isInlineNode
 };

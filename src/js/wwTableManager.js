@@ -224,26 +224,10 @@ class WwTableManager {
     } else {
       const parentNode = container.parentNode;
       const resultFragment = document.createDocumentFragment();
-      if (parentNode.nodeName === 'TD') {
-        resultFragment.append(prevText);
-        resultFragment.append(fragment);
-        resultFragment.append(postText);
-        parentNode.replaceChild(resultFragment, container);
-      } else {
-        const tempParent = domUtils.getParentUntilBy(container, node => {
-          return node.tagName === 'TD';
-        }, node => {
-          return $(node).closest('table').length === 0;
-        });
-        const prevNode = tempParent.cloneNode(true);
-        const postNode = tempParent.cloneNode(true);
-        domUtils.getLeafNode(prevNode).textContent = prevText;
-        domUtils.getLeafNode(postNode).textContent = postText;
-        resultFragment.append(prevNode);
-        resultFragment.append(fragment);
-        resultFragment.append(postNode);
-        tempParent.parentNode.replaceChild(resultFragment, tempParent);
-      }
+      resultFragment.append(prevText);
+      resultFragment.append(fragment);
+      resultFragment.append(postText);
+      parentNode.replaceChild(resultFragment, container);
     }
   }
 
@@ -376,14 +360,15 @@ class WwTableManager {
    */
   pasteClipboardData($clipboardContainer) {
     const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
-    const {childNodes} = $clipboardContainer.get(0);
-    const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
 
     if (tableSelectionManager.getSelectedCells().length) {
       alert(i18n.get('Cannot paste values other than a table in the cell selection state'));
 
       return;
     }
+
+    const {childNodes} = $clipboardContainer.get(0);
+    const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
 
     if (containsOneTableOnly) {
       this.pasteTableData($clipboardContainer);
