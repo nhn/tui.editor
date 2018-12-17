@@ -156,9 +156,9 @@ class WwTableManager {
       nodeName = domUtils.getNodeName(child);
       // TODO consider other block tags
       if (nodeName === 'DIV' || nodeName === 'UL' || nodeName === 'OL' || nodeName === 'LI') {
-        fragment.append(this._prepareToPaste(child));
+        fragment.appendChild(this._prepareToPaste(child));
       } else {
-        fragment.append(child);
+        fragment.appendChild(child);
       }
     }
 
@@ -176,10 +176,10 @@ class WwTableManager {
     const fragment = document.createDocumentFragment();
     // inline and text node could be inserted to table
     if (domUtils.isInlineNode(node) || domUtils.isTextNode(node)) {
-      fragment.append(node);
+      fragment.appendChild(node);
     } else {
       // block node should be unwraped
-      fragment.append(this._unwrapBlock(node));
+      fragment.appendChild(this._unwrapBlock(node));
     }
 
     return fragment;
@@ -197,7 +197,7 @@ class WwTableManager {
     const childNodesArray = util.toArray(nodeList);
 
     childNodesArray.forEach(child => {
-      fragment.append(this._prepareToPaste(child));
+      fragment.appendChild(this._prepareToPaste(child));
     });
 
     return fragment;
@@ -224,9 +224,13 @@ class WwTableManager {
     } else {
       const parentNode = container.parentNode;
       const resultFragment = document.createDocumentFragment();
-      resultFragment.append(prevText);
-      resultFragment.append(fragment);
-      resultFragment.append(postText);
+      const prevNode = document.createDocumentFragment();
+      const postNode = document.createDocumentFragment();
+      prevNode.textContent = prevText;
+      postNode.textContent = postText;
+      resultFragment.appendChild(prevNode);
+      resultFragment.appendChild(fragment);
+      resultFragment.appendChild(postNode);
       parentNode.replaceChild(resultFragment, container);
     }
   }
