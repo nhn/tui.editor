@@ -486,15 +486,23 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
 };
 
 /**
- * check leafNode
- * @param {HTMLNode} node - node
- * @returns {boolean} when node is inline, return ture
+ * Check that the inline node is supported by markdown
+ * @param {Node} node TD element
+ * @returns {boolean} result
  * @ignore
  */
-const isInlineNode = function(node) {
-  const name = node.tagName;
+const isMDSupportInlineNode = function(node) {
+  return /^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/ig.test(node.nodeName);
+};
 
-  return /^(SPAN|A|CODE|EM|I|STRONG|B|S|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/ig.test(name);
+/**
+ * Check that the node is block node
+ * @param {Node} node TD element
+ * @returns {boolean}
+ * @ignore
+ */
+const isBlockNode = function(node) {
+  return /^(ADDRESS|ARTICLE|ASIDE|BLOCKQUOTE|DETAILS|DIALOG|DD|DIV|DL|DT|FIELDSET|FIGCAPTION|FIGURE|FOOTER|FORM|H[\d]|HEADER|HGROUP|HR|LI|MAIN|NAV|OL|P|PRE|SECTION|UL)$/ig.test(node.nodeName);
 };
 
 export default {
@@ -518,5 +526,6 @@ export default {
   getNodeInfo,
   getTableCellByDirection,
   getSiblingRowCellByDirection,
-  isInlineNode
+  isMDSupportInlineNode,
+  isBlockNode
 };

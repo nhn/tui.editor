@@ -91,24 +91,13 @@ class WwClipboardManager {
 
   _onWillPaste(pasteData) {
     const $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
-    const tableManager = this.wwe.componentManager.getManager('table');
-    const range = this.wwe.getEditor().getSelection();
-
+    this._preparePaste($clipboardContainer);
     this._setTableBookmark($clipboardContainer);
 
-    if (tableManager.isInTable(range)) {
-      tableManager.pasteClipboardData($clipboardContainer.first());
-      $clipboardContainer.html(''); // drains clipboard data
-      pasteData.preventDefault();
-    } else {
-      this._preparePaste($clipboardContainer);
-      this._setTableBookmark($clipboardContainer);
-
-      pasteData.fragment = document.createDocumentFragment();
-      $($clipboardContainer[0].childNodes).each((index, element) => {
-        pasteData.fragment.appendChild(element);
-      });
-    }
+    pasteData.fragment = document.createDocumentFragment();
+    $($clipboardContainer[0].childNodes).each((index, element) => {
+      pasteData.fragment.appendChild(element);
+    });
 
     // once right after the squire insertHTML DOM.
     const handler = () => {
