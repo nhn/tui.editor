@@ -505,6 +505,19 @@ const isMDSupportInlineNode = function(node) {
   return /^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/ig.test(node.nodeName);
 };
 
+/**
+ * Make DcoumentFrgment that has text as textContent
+ * @param {string} text - text
+ * @returns {DocumentFragment} textcontent is text
+ * @ignore
+ */
+const getDocFragmentWithText = function(text) {
+  const textNode = document.createDocumentFragment();
+  textNode.textContent = text;
+
+  return textNode;
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -527,5 +540,6 @@ export default {
   getNodeInfo,
   getTableCellByDirection,
   getSiblingRowCellByDirection,
-  isMDSupportInlineNode
+  isMDSupportInlineNode,
+  getDocFragmentWithText
 };
