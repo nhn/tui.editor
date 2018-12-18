@@ -13,12 +13,10 @@ class WwTablePasteHelper {
   /**
    * Creates an instance of WwTablePasteHelper.
    * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @param {WwTableManager} tableManager - WwTableManager or WwMergedTableManager
    * @memberof WwTablePasteHelper
    */
-  constructor(wwe, tableManager) {
+  constructor(wwe) {
     this.wwe = wwe;
-    this.tableManager = tableManager;
   }
 
   /**
@@ -85,7 +83,8 @@ class WwTablePasteHelper {
     const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
 
     if (containsOneTableOnly) {
-      this.tableManager.pasteTableData(clipboardContainer);
+      const tableManager = this.wwe.componentManager.getManager('table');
+      tableManager.pasteTableData(clipboardContainer);
     } else {
       const range = this.wwe.getEditor().getSelection().cloneRange();
       const fragment = this._preparePasteData(childNodes);
