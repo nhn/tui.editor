@@ -505,6 +505,19 @@ const isBlockNode = function(node) {
   return /^(ADDRESS|ARTICLE|ASIDE|BLOCKQUOTE|DETAILS|DIALOG|DD|DIV|DL|DT|FIELDSET|FIGCAPTION|FIGURE|FOOTER|FORM|H[\d]|HEADER|HGROUP|HR|LI|MAIN|NAV|OL|P|PRE|SECTION|UL)$/ig.test(node.nodeName);
 };
 
+/**
+ * Make DcoumentFrgment that has text as textContent
+ * @param {string} text - text
+ * @returns {DocumentFragment} textcontent is text
+ * @ignore
+ */
+const getDocFragmentWithText = function(text) {
+  const textNode = document.createDocumentFragment();
+  textNode.textContent = text;
+
+  return textNode;
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -527,5 +540,6 @@ export default {
   getTableCellByDirection,
   getSiblingRowCellByDirection,
   isMDSupportInlineNode,
-  isBlockNode
+  isBlockNode,
+  getDocFragmentWithText
 };

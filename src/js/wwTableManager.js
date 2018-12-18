@@ -164,10 +164,7 @@ class WwTableManager {
         alert(i18n.get('Cannot paste values other than a table in the cell selection state'));
       } else {
         const cbData = ev.clipboardData || window.clipboardData;
-        const items = cbData && cbData.items;
-        if (items) {
-          this.tablePasteHelper.processClipboard(items);
-        }
+        this.tablePasteHelper.processClipboard(cbData);
       }
       ev.preventDefault();
     }

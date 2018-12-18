@@ -14,7 +14,7 @@ class WwTablePasteHelper {
    * Creates an instance of WwTablePasteHelper.
    * @param {WysiwygEditor} wwe - WysiwygEditor instance
    * @param {WwTableManager} tableManager - WwTableManager or WwMergedTableManager
-   * @memberof WwTableManager
+   * @memberof WwTablePasteHelper
    */
   constructor(wwe, tableManager) {
     this.wwe = wwe;
@@ -22,11 +22,36 @@ class WwTablePasteHelper {
   }
 
   /**
-   * Process items of clipboard data for pasting
-   * @param {DataTransfer.items} items - items of clipboarddata
-   * @memberof WwTableManager
+   * Process clipboard data for pasting
+   * @param {DataTransfer} clipboarddata - clipboarddata
+   * @memberof WwTablePasteHelper
    */
-  processClipboard(items) {
+  processClipboard(clipboarddata) {
+    const items = clipboarddata && clipboarddata.items;
+    if (items) {
+      this._pasteClipboardItem(items);
+    } else {
+      const clipboardContainer = this._getClipboardData(clipboarddata.getData('text'));
+      this._pasteClipboardContainer(clipboardContainer);
+    }
+  }
+
+  _getClipboardData(textData) {
+    const container = document.createDocumentFragment();
+    textData.split(/\r?\n/g).forEach(text => {
+      container.appendChild(domUtils.getDocFragmentWithText(text));
+      container.appendChild(document.createElement('br'));
+    });
+
+    return container;
+  }
+
+  /**
+   * paste items of clipboard data
+   * @param {DataTransfer.items} items - items of clipboarddata
+   * @private
+   */
+  _pasteClipboardItem(items) {
     let textItem = null;
     let htmlItem = null;
     for (let i = 0; i < items.length; i += 1) {
@@ -41,23 +66,21 @@ class WwTablePasteHelper {
       htmlItem.getAsString(html => {
         const htmlData = document.createDocumentFragment();
         htmlData.appendChild(htmlSanitizer(html));
-        this._pasteClipboardData(htmlData);
+        this._pasteClipboardContainer(htmlData);
       });
     } else if (textItem) {
-      const textData = document.createDocumentFragment();
       textItem.getAsString(text => {
-        textData.textContent = text;
-        this._pasteClipboardData(textData);
+        this._pasteClipboardContainer(domUtils.getDocFragmentWithText(text));
       });
     }
   }
 
   /**
-   * Paste clibpard data.
+   * Paste clibpard container.
    * @param {DocumentFragment} clipboardContainer - clipboard
    * @private
    */
-  _pasteClipboardData(clipboardContainer) {
+  _pasteClipboardContainer(clipboardContainer) {
     const {childNodes} = clipboardContainer;
     const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
 
@@ -75,7 +98,7 @@ class WwTablePasteHelper {
 
   /**
    * processing clipboard data for paste to table
-   * @memberof WwTableManager
+   * @memberof WwTablePasteHelper
    * @param {NodeList} nodeList - clipboard node list
    * @returns {DocumentFragment} processed result
    * @private
@@ -93,7 +116,7 @@ class WwTablePasteHelper {
 
   /**
    * processing node for paste to table
-   * @memberof WwTableManagerx
+   * @memberof WwTablePasteHelper
    * @param {Node} node - target node
    * @returns {DocumentFragment} processed result
    * @private
@@ -114,7 +137,7 @@ class WwTablePasteHelper {
 
   /**
    * unwrap block node
-   * @memberof WwTableManager
+   * @memberof WwTablePasteHelper
    * @param {Node} node - target node
    * @returns {DocumentFragment} processed result
    * @private
@@ -139,7 +162,7 @@ class WwTablePasteHelper {
 
   /**
    * paste fragment to offset of container
-   * @memberof WwTableManager
+   * @memberof WwTablePasteHelper
    * @param {Range} range - selection range
    * @param {DocumentFragment} fragment - paste data
    * @private
@@ -161,7 +184,7 @@ class WwTablePasteHelper {
 
   /**
    * paste fragment to offset of container that is text node
-   * @memberof WwTableManager
+   * @memberof WwTablePasteHelper
    * @param {Node} container - container is text node
    * @param {Number} offset - offset
    * @param {DocumentFragment} fragment - paste data
@@ -188,15 +211,12 @@ class WwTablePasteHelper {
     } else {
       const parentNode = container.parentNode;
       const resultFragment = document.createDocumentFragment();
-      const prevNode = document.createDocumentFragment();
-      const postNode = document.createDocumentFragment();
-      prevNode.textContent = prevText;
-      postNode.textContent = postText;
-      resultFragment.appendChild(prevNode);
+      resultFragment.appendChild(domUtils.getDocFragmentWithText(prevText));
       resultFragment.appendChild(fragment);
-      resultFragment.appendChild(postNode);
+      resultFragment.appendChild(domUtils.getDocFragmentWithText(postText));
+      const childNodesArray = util.toArray(parentNode.childNodes);
       let index = 0;
-      parentNode.childNodes.forEach((child, i) => {
+      childNodesArray.forEach((child, i) => {
         if (container === child) {
           index = i;
         }
@@ -211,15 +231,12 @@ class WwTablePasteHelper {
 
   /**
    * delete contents of range that is not collapse
-   * @memberof WwTableManager
+   * @memberof WwTablePasteHelper
    * @param {Range} range - range is not collapse
    * @private
    */
   _deleteContentsRange(range) {
-    const {startContainer} = range;
-    const {startOffset} = range;
-    const {endContainer} = range;
-    const {endOffset} = range;
+    const {startContainer, startOffset, endContainer, endOffset} = range;
     const common = range.commonAncestorContainer;
 
     if (startContainer === endContainer) {
@@ -253,7 +270,7 @@ class WwTablePasteHelper {
 
   /**
    * delete contents from start offset to end offset
-   * @memberof WwTableManager
+   * @memberof WwTablePasteHelper
    * @param {Node} container - container
    * @param {Number} startOffset - start offset
    * @param {Number} endOffset - end offset
@@ -276,7 +293,7 @@ class WwTablePasteHelper {
 
   /**
    * remove node 'from'~'to-1' inside parent
-   * @memberof WwTableManager
+   * @memberof WwTablePasteHelper
    * @param {Node} parent - range is not collapse
    * @param {Node} from - range is not collapse
    * @param {Node} to - range is not collapse
@@ -294,7 +311,7 @@ class WwTablePasteHelper {
   /**
    * remove nodes until target inside continer
    * and remove node or text unt offset inside target
-   * @memberof WwTableManager
+   * @memberof WwTablePasteHelper
    * @param {Node} container - should be parent of target
    * @param {Node} target - target
    * @param {Number} offset - offset inside target
@@ -321,7 +338,7 @@ class WwTablePasteHelper {
   /**
    * remove nodes after target inside continer
    * and remove node or text after offset inside target
-   * @memberof WwTableManager
+   * @memberof WwTablePasteHelper
    * @param {Node} container - should be parent of target
    * @param {Node} target - target
    * @param {Number} offset - offset inside target
