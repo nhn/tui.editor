@@ -88,10 +88,7 @@ class WwTablePasteHelper {
       tableManager.pasteTableData(clipboardContainer);
     } else {
       const range = this.wwe.getEditor().getSelection().cloneRange();
-      let fragment = clipboardContainer;
-      if (childNodes.length) {
-        fragment = this._getPasteDocumentFragment(childNodes);
-      }
+      const fragment = this._getPasteDocumentFragment(clipboardContainer);
       if (!range.collapsed) {
         this._deleteContentsRange(range);
       }
@@ -102,23 +99,27 @@ class WwTablePasteHelper {
   /**
    * processing clipboard data for paste to table
    * @memberof WwTablePasteHelper
-   * @param {NodeList} nodeList - clipboard node list
+   * @param {DocumentFragment} clipboardContainer - clipboard
    * @returns {DocumentFragment} processed result
    * @private
    */
-  _getPasteDocumentFragment(nodeList) {
+  _getPasteDocumentFragment(clipboardContainer) {
+    const {childNodes} = clipboardContainer;
     const fragment = document.createDocumentFragment();
-    const childNodesArray = util.toArray(nodeList);
 
-    childNodesArray.forEach(child => {
-      // inline and text node could be inserted to table
-      if (domUtils.isMDSupportInlineNode(child) || domUtils.isTextNode(child)) {
-        fragment.appendChild(child);
-      } else {
-        // block node should be unwraped
-        fragment.appendChild(this._unwrapBlock(child));
-      }
-    });
+    if (childNodes.length) {
+      const childNodesArray = util.toArray(childNodes);
+      childNodesArray.forEach(child => {
+        if (domUtils.isBlockNode(child)) {
+          fragment.appendChild(this._unwrapBlock(child));
+        } else if (this._isPossibleInsertToTable(child)) {
+          // inline and text node could be inserted to table
+          fragment.appendChild(child);
+        }
+      });
+    } else if (domUtils.isMDSupportInlineNode(clipboardContainer) || domUtils.isTextNode(clipboardContainer)) {
+      fragment.appendChild(clipboardContainer);
+    }
 
     return fragment;
   }
@@ -135,10 +136,12 @@ class WwTablePasteHelper {
     const childNodes = util.toArray(node.childNodes);
     while (childNodes.length) {
       let child = childNodes.shift();
-      if (domUtils.isBlockNode(child)) {
-        fragment.appendChild(this._unwrapBlock(child));
-      } else {
+      if (this._isPossibleInsertToTable(child)) {
+        // inline and text node could be inserted to table
         fragment.appendChild(child);
+      } else {
+        // block node should be unwraped
+        fragment.appendChild(this._unwrapBlock(child));
       }
     }
     fragment.appendChild(document.createElement('br'));
@@ -146,6 +149,18 @@ class WwTablePasteHelper {
     return fragment;
   }
 
+  _isPossibleInsertToTable(node) {
+    let result = false;
+    if (domUtils.isMDSupportInlineNode(node) || domUtils.isTextNode(node)) {
+      result = true;
+    }
+
+    if (node.nodeName === 'CODE' && node.childNodes.length > 1) {
+      result = false;
+    }
+
+    return result;
+  }
   /**
    * paste fragment to offset of container
    * @memberof WwTablePasteHelper
