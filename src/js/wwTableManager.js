@@ -241,8 +241,7 @@ class WwTableManager {
       result = !!$(target).closest('[contenteditable=true] table').length;
     } else {
       target = range.commonAncestorContainer;
-      result = (!!$(target).closest('[contenteditable=true] table').length
-                || !!$(range.cloneContents()).find('table').length);
+      result = !!$(target).closest('[contenteditable=true] table').length;
     }
 
     return result;
