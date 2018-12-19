@@ -158,7 +158,7 @@ class WwTableManager {
    */
   _onPaste(ev) {
     const range = this.wwe.getEditor().getSelection();
-    if (this.isInTable(range)) {
+    if (this.isInTable2(range)) {
       const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
       if (tableSelectionManager.getSelectedCells().length) {
         alert(i18n.get('Cannot paste values other than a table in the cell selection state'));
@@ -224,6 +224,27 @@ class WwTableManager {
     };
 
     util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.addKeyEventHandler(key, handler));
+  }
+
+  /**
+   * isInTable2
+   * Check whether passed range is in table or not
+   * @param {Range} range range
+   * @returns {boolean} result
+   * @memberof WwTableManager
+   */
+  isInTable2(range) {
+    let target, result;
+
+    if (range.collapsed) {
+      target = range.startContainer;
+      result = !!$(target).closest('[contenteditable=true] table').length;
+    } else {
+      target = range.commonAncestorContainer;
+      result = !!$(target).closest('[contenteditable=true] table').length;
+    }
+
+    return result;
   }
 
   /**
