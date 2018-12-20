@@ -43,7 +43,6 @@ describe('colorSyntax', () => {
 
     it('should call sendHostname if usageStatistics editor option is true', done => {
       spyOn(util, 'sendHostname');
-      spyOn(util, 'imagePing'); // ColorPicker use imagePing
 
       ned = new TuiEditor({
         el: container,
@@ -52,8 +51,7 @@ describe('colorSyntax', () => {
       });
 
       setTimeout(() => {
-        expect(util.sendHostname).toHaveBeenCalled();
-        expect(util.imagePing).toHaveBeenCalled();
+        expect(util.sendHostname).toHaveBeenCalledTimes(2);
         done();
       }, 10);
     });
