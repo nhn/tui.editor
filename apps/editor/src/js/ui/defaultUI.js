@@ -338,7 +338,14 @@ class DefaultUI {
    * @memberof DefaultUI
    */
   getPopupTableUtils() {
-    return this._popups.find(popup => popup instanceof PopupTableUtils);
+    let tablePopup;
+    this._popups.forEach(popup => {
+      if (popup instanceof PopupTableUtils) {
+        tablePopup = popup;
+      }
+    });
+
+    return tablePopup;
   }
 
   /**
