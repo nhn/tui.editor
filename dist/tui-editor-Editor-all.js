@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.8
+ * @version 1.2.9
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -5488,29 +5488,31 @@ var gaTrackingId = 'UA-129966929-1';
 
 var ToastUIEditor = function () {
   /**
-     * ToastUI Editor
-     * @param {object} options Option object
-         * @param {string} [options.height='300px'] - Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
-         * @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
-         * @param {string} options.initialValue - Editor's initial value
-         * @param {string} options.previewStyle - Markdown editor's preview style (tab, vertical)
-         * @param {string} options.initialEditType - Initial editor type (markdown, wysiwyg)
-         * @param {object} options.events - eventlist Event list
-             * @param {function} options.events.load - It would be emitted when editor fully load
-             * @param {function} options.events.change - It would be emitted when content changed
-             * @param {function} options.events.stateChange - It would be emitted when format change by cursor position
-             * @param {function} options.events.focus - It would be emitted when editor get focus
-             * @param {function} options.events.blur - It would be emitted when editor loose focus
-         * @param {object} options.hooks - Hook list
-             * @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
-             * @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
-        * @param {string} [options.language='en_US'] - language
-        * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
-        * @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
-        * @param {string[]} [options.codeBlockLanguages] - supported code block languages to be listed. default is what highlight.js supports
-        * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
-        * @param {object[]} [options.toolbarItems] - toolbar items.
-        * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
+   * ToastUI Editor
+   * @param {object} options Option object
+    * @param {HTMLElement} options.el - container element
+    * @param {string} [options.height='300px'] - Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+    * @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
+    * @param {string} [options.initialValue] - Editor's initial value
+    * @param {string} [options.previewStyle] - Markdown editor's preview style (tab, vertical)
+    * @param {string} [options.initialEditType] - Initial editor type (markdown, wysiwyg)
+    * @param {object[]} [options.events] - eventlist Event list
+      * @param {function} options.events.load - It would be emitted when editor fully load
+      * @param {function} options.events.change - It would be emitted when content changed
+      * @param {function} options.events.stateChange - It would be emitted when format change by cursor position
+      * @param {function} options.events.focus - It would be emitted when editor get focus
+      * @param {function} options.events.blur - It would be emitted when editor loose focus
+    * @param {object[]} [options.hooks] - Hook list
+      * @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
+      * @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
+    * @param {string} [options.language='en_US'] - language
+    * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
+    * @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
+    * @param {string[]} [options.codeBlockLanguages] - supported code block languages to be listed. default is what highlight.js supports
+    * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
+    * @param {string[]} [options.toolbarItems] - toolbar items.
+    * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
+    * @param {string[]} [options.exts] - extensions
     */
   function ToastUIEditor(options) {
     var _this = this;
@@ -5611,6 +5613,7 @@ var ToastUIEditor = function () {
     /**
      * call commandManager's exec method
      * @memberof ToastUIEditor
+     * @param {string} style - 'tab'|'vertical'
      */
 
   }, {
@@ -6011,7 +6014,7 @@ var ToastUIEditor = function () {
     /**
      * Get current editor mode name
      * @memberof ToastUIEditor
-     * @returns {string}
+     * @returns {Object} mdEditor or wwEditor
      */
 
   }, {
@@ -6080,7 +6083,7 @@ var ToastUIEditor = function () {
      * Change editor's mode to given mode string
      * @memberof ToastUIEditor
      * @param {string} mode - Editor mode name of want to change
-     * @param {boolean} isWithoutFocus - Change mode without focus
+     * @param {boolean} [isWithoutFocus] - Change mode without focus
      */
 
   }, {
@@ -6284,7 +6287,7 @@ var ToastUIEditor = function () {
      * Factory method for Editor
      * @memberof ToastUIEditor
      * @param {object} options Option for initialize TUIEditor
-     * @returns {ToastUIEditor}
+     * @returns {object} ToastUIEditor or ToastUIEditorViewer
      */
 
   }, {
@@ -21134,6 +21137,14 @@ var WwHrManager = function () {
         return _this2._onTypedInHr(range);
       });
 
+      this.wwe.addKeyEventHandler('ENTER', function (ev, range) {
+        if (range.collapsed) {
+          return _this2._removeHrOnEnter(range, ev);
+        }
+
+        return true;
+      });
+
       this.wwe.addKeyEventHandler('BACK_SPACE', function (ev, range) {
         if (range.collapsed) {
           return _this2._removeHrOnBackspace(range, ev);
@@ -21195,6 +21206,32 @@ var WwHrManager = function () {
           wwe.restoreSavedSelection();
         });
       }
+    }
+
+    /**
+     * _removeHrOnEnter
+     * Remove hr if need on enter
+     * @param {Range} range range
+     * @param {Event} ev event
+     * @returns {boolean} return true if hr was removed
+     * @memberof WwHrManager
+     * @private
+     */
+
+  }, {
+    key: '_removeHrOnEnter',
+    value: function _removeHrOnEnter(range, ev) {
+      var hrSuspect = void 0,
+          blockPosition = void 0;
+
+      if (this._isInHr(range)) {
+        hrSuspect = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
+      } else if (this._isNearHr(range)) {
+        hrSuspect = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
+        blockPosition = 'before';
+      }
+
+      return this._changeHrToNewDefaultBlock(hrSuspect, range, ev, blockPosition);
     }
 
     /**
@@ -24255,17 +24292,19 @@ var TASK_CHECKED_CLASS_NAME = 'checked';
 
 var ToastUIEditorViewer = function () {
   /**
-     * Viewer
-     * @param {object} options Option object
-        * @param {string} options.initialValue Editor's initial value
-        * @param {object} options.events eventlist Event list
-            * @param {function} options.events.load It would be emitted when editor fully load
-            * @param {function} options.events.change It would be emitted when content changed
-            * @param {function} options.events.stateChange It would be emitted when format change by cursor position
-            * @param {function} options.events.focus It would be emitted when editor get focus
-            * @param {function} options.events.blur It would be emitted when editor loose focus
-        * @param {object} options.hooks Hook list
-            * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
+   * Viewer
+   * @param {object} options Option object
+    * @param {HTMLElement} options.el - container element
+    * @param {string} options.initialValue Editor's initial value
+    * @param {object} options.events eventlist Event list
+      * @param {function} options.events.load It would be emitted when editor fully load
+      * @param {function} options.events.change It would be emitted when content changed
+      * @param {function} options.events.stateChange It would be emitted when format change by cursor position
+      * @param {function} options.events.focus It would be emitted when editor get focus
+      * @param {function} options.events.blur It would be emitted when editor loose focus
+    * @param {object} options.hooks Hook list
+      * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
+    * @param {string[]} [options.exts] - extensions
     */
   function ToastUIEditorViewer(options) {
     var _this = this;
@@ -24963,9 +25002,14 @@ var DefaultUI = function () {
   }, {
     key: 'getPopupTableUtils',
     value: function getPopupTableUtils() {
-      return this._popups.find(function (popup) {
-        return popup instanceof _popupTableUtils2.default;
+      var tablePopup = void 0;
+      this._popups.forEach(function (popup) {
+        if (popup instanceof _popupTableUtils2.default) {
+          tablePopup = popup;
+        }
       });
+
+      return tablePopup;
     }
 
     /**
