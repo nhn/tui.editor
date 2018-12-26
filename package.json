@@ -79,7 +79,7 @@
     "e2e": "testcafe chrome 'test/e2e/**/*.spec.js'",
     "e2e:sl": "testcafe \"saucelabs:Chrome@65.0:Windows 10,saucelabs:Firefox@59.0:Windows 10,saucelabs:Safari@10.0:OS X 10.11,saucelabs:Internet Explorer@11.103:Windows 10,saucelabs:MicrosoftEdge@16.16299:Windows 10\" 'test/e2e/**/*.spec.js'",
     "serve": "webpack-dev-server --progress --inline",
-    "build": "cross-env webpack && webpack -p",
+    "build": "cross-env webpack && webpack -p && node tsBannerGenerator.js",
     "note": "tuie --tag=$(git describe --tags)"
   },
   "dependencies": {
