@@ -23,8 +23,8 @@ import CodeBlockGadget from './ui/codeBlockGadget';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
-const FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
-  FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
+const FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi,
+  FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi,
   FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
 
 const EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
