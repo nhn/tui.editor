@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.9
+ * @version 1.2.10
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -12937,8 +12937,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var keyMapper = _keyMapper2.default.getSharedInstance();
 
-var FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
-    FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
+var FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi,
+    FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
 
 var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
@@ -20653,12 +20653,17 @@ var PopupAddImage = function (_LayerPopup) {
         if (imageUrl) {
           _this2._applyImage(imageUrl, altText);
         } else {
-          var imageFile = _this2._$imageFileInput.get(0).files.item(0);
-          var hookCallback = function hookCallback(url, text) {
-            return _this2._applyImage(url, altText || text);
-          };
+          var _$imageFileInput$get = _this2._$imageFileInput.get(0),
+              files = _$imageFileInput$get.files;
 
-          _this2.eventManager.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
+          if (files.length) {
+            var imageFile = files.item(0);
+            var hookCallback = function hookCallback(url, text) {
+              return _this2._applyImage(url, altText || text);
+            };
+
+            _this2.eventManager.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
+          }
         }
 
         _this2.hide();
