@@ -1,6 +1,6 @@
 /*!
  * Toast UI Colorpicker
- * @version 2.2.0
+ * @version 2.2.1
  * @author NHNEnt FE Development Team <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -1983,30 +1983,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Palette = __webpack_require__(16);
 	var Slider = __webpack_require__(18);
 
-	var hostnameSent = false;
-
-	/**
-	 * send hostname
-	 * @ignore
-	 */
-	function sendHostname() {
-	    var hostname = location.hostname;
-
-	    if (hostnameSent) {
-	        return;
-	    }
-	    hostnameSent = true;
-
-	    util.imagePing('https://www.google-analytics.com/collect', {
-	        v: 1,
-	        t: 'event',
-	        tid: 'UA-115377265-9',
-	        cid: hostname,
-	        dp: hostname,
-	        dh: 'color-picker'
-	    });
-	}
-
 	/**
 	 * @constructor
 	 * @mixes CustomEvents
@@ -2082,7 +2058,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.render(options.color);
 
 	    if (options.usageStatistics) {
-	        sendHostname();
+	        util.sendHostname('color-picker', 'UA-129987462-1');
 	    }
 	}
 
