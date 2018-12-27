@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Editor v1.2.9
+// Type definitions for TOAST UI Editor v1.2.10
 // TypeScript Version: 3.2.1
 
 type Button = any;
