@@ -19,10 +19,14 @@
   "repository": "https://github.com/nhnent/tui.editor.git",
   "license": "MIT",
   "files": [
-    "dist"
+    "dist",
+    "index.d.ts"
   ],
   "main": "dist/tui-editor-Editor.js",
   "devDependencies": {
+    "@types/codemirror": "0.0.71",
+    "@types/jquery": "^3.3.29",
+    "@types/markdown-it": "0.0.7",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.1.2",
     "babel-loader": "^7.1.2",
@@ -59,9 +63,10 @@
     "safe-umd-webpack-plugin": "0.0.2",
     "testcafe": "^0.20.3",
     "testcafe-browser-provider-saucelabs": "^1.3.0",
+    "tslint": "^5.12.0",
     "tui-jsdoc-template": "^1.2.2",
     "tui-release-notes": "github:nhnent/tui.release-notes#v1.0.0",
-    "typescript": "^3.2.1",
+    "typescript": "^3.2.2",
     "webpack": "^3.10.0",
     "webpack-bundle-analyzer": "^2.9.1",
     "webpack-dev-server": "^2.9.7"
@@ -80,7 +85,8 @@
     "e2e:sl": "testcafe \"saucelabs:Chrome@65.0:Windows 10,saucelabs:Firefox@59.0:Windows 10,saucelabs:Safari@10.0:OS X 10.11,saucelabs:Internet Explorer@11.103:Windows 10,saucelabs:MicrosoftEdge@16.16299:Windows 10\" 'test/e2e/**/*.spec.js'",
     "serve": "webpack-dev-server --progress --inline",
     "build": "cross-env webpack && webpack -p && node tsBannerGenerator.js",
-    "note": "tuie --tag=$(git describe --tags)"
+    "note": "tuie --tag=$(git describe --tags)",
+    "tslint": "tslint index.d.ts"
   },
   "dependencies": {
     "codemirror": "^5.33.0",
