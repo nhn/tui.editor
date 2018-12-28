@@ -13,13 +13,18 @@
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
 * [Install](#-install)
     * [Using npm](#using-npm)
-* [Usage](#-usage)
+* [Editor Usage](#-editor-usage)
     * [Load](#load)
     * [Implement](#implement)
     * [Using v-model](#using-v-model)
     * [Props](#props)
     * [Event](#event)
     * [Method](#method)
+* [Viewer Usage](#-viewer-usage)
+    * [Load](#load-1)
+    * [Implement](#implement-1)
+    * [Props](#props-1)
+    * [Event](#event-1)
 * [Pull Request Steps](#-pull-request-steps)
 * [Documents](#-documents)
 * [Contributing](#-contributing)
@@ -50,9 +55,7 @@ tui.usageStatistics = false;
 npm install --save @toast-ui/vue-editor
 ```
 
-## 🔨 Usage
-
-If you want to more details, see [Tutorials](https://github.com/nhnent/toast-ui.vue-editor/blob/master/docs/getting-started.md) 👀
+## 📝 Editor Usage
 
 ### Load
 
@@ -83,7 +86,7 @@ You can use Toast UI Editor for Vue as moudule format or namespace. Also you can
     import 'tui-editor/dist/tui-editor.css';
     import 'tui-editor/dist/tui-editor-contents.css';
     import 'codemirror/lib/codemirror.css';
-    import Editor from '@toast-ui/vue-editor/src/editor.vue'
+    import Editor from '@toast-ui/vue-editor/src/Editor.vue'
     ```
 
 * Using namespace
@@ -125,7 +128,7 @@ new Vue({
 
 ### Using v-model
 
-If you use v-model, you have to declare a `data` for binding.
+If you use v-model, you have to declare a `data` for binding. (❗️ When using the editor in `wysiwyg` mode, `v-model` can cause performance degradation.)
 
 In the example below, `editorText` is binding to the text of the editor.
 
@@ -158,7 +161,7 @@ export default {
 | height | String | '300px' | This prop can control the height of the editor. |
 | previewStyle | String | 'tab' | This prop can change preview style of the editor. (`tab` or `vertical`) |
 | mode | String | 'markdown' | This prop can change mode of the editor. (`markdown`or `wysiwyg`) |
-| html | String | - | If you want change content of the editor using html format, use this prop. |
+| html | String | - | If you want to change content of the editor using html format, use this prop. |
 | visible | Boolean | true | This prop can control visible of the eiditor. |
 
 ```js
@@ -193,6 +196,40 @@ const defaultOptions = {
     ]
 };
 ```
+Example :
+
+``` html
+<template>
+    <editor
+    :value="editorText"
+    :options="editorOptions"
+    :html="editorHtml"
+    :visible="editorVisible"
+    previewStyle="vertical"
+    height="500px"
+    mode="wysiwyg"
+    />
+</template>
+<script>
+import { Editor } from '@toast-ui/vue-editor'
+
+export default {
+    components: {
+        'editor': Editor
+    },
+    data() {
+        return {
+            editorText: 'This is initialValue.',
+            editorOptions: {
+                hideModeSwitch: true
+            },
+            editorHtml: '',
+            editorVisible: true
+        };
+    },
+};
+</script>
+```
 
 ### Event
 
@@ -201,6 +238,46 @@ const defaultOptions = {
 * stateChange : It would be emitted when format change by cursor position
 * focus : It would be emitted when editor get focus
 * blur : It would be emitted when editor loose focus
+
+Example :
+
+```html
+<template>
+    <editor
+    @load="onEditorLoad"
+    @focus="onEditorFocus"
+    @blur="onEditorBlur"
+    @change="onEditorChange"
+    @stateChange="onEditorStateChange"
+    />
+</template>
+<script>
+import { Editor } from '@toast-ui/vue-editor'
+
+export default {
+    components: {
+        'editor': Editor
+    },
+    methods: {
+        onEditorLoad() {
+            // implement your code
+        },
+        onEditorFocus() {
+            // implement your code
+        },
+        onEditorBlur() {
+            // implement your code
+        },
+        onEditorChange() {
+            // implement your code
+        },
+        onEditorStateChange() {
+            // implement your code
+        },
+    }
+};
+</script>
+```
 
 ### Method
 
@@ -234,6 +311,152 @@ export default {
 </script>
 ```
 
+## 📃 Viewer Usage
+
+### Load
+
+* Using Ecmascript module
+
+    ```js
+    import 'tui-editor/dist/tui-editor-contents.css';
+    import 'highlight.js/styles/github.css';
+    import { Viewer } from '@toast-ui/vue-editor'
+    ```
+
+* Using Commonjs module
+
+    ```js
+    require('tui-editor/dist/tui-editor-contents.css');
+    require('highlight.js/styles/github.css'); 
+    var toastui = require('@toast-ui/vue-editor');
+    var Viewer = toastui.Viewer;
+    ```
+
+* Using Single File Component
+
+    ```js
+    import 'tui-editor/dist/tui-editor-contents.css';
+    import 'highlight.js/styles/github.css';
+    import Viewer from '@toast-ui/vue-editor/src/Viewer.vue'
+    ```
+
+* Using namespace
+
+    ```js
+    var Viewer = toastui.Viewer;
+    ```
+
+### Implement
+
+First implement `<viewer/>` in the template.
+
+```html
+<template>
+    <viewer/>
+</template>
+```
+
+And then add `Viewer` to the `components` in your component or Vue instance like this:
+```js
+import { Viewer } from '@toast-ui/vue-editor'
+
+export default {
+  components: {
+    'viewer': Viewer
+  }
+}
+```
+or
+```js
+import { Viewer } from '@toast-ui/vue-editor'
+new Vue({
+    el: '#app',
+    components: {
+        'viewer': Viewer
+    }
+});
+```
+
+### Props
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| value | String | '' | This prop can change content of the viewer. |
+| height | String | '300px' | This prop can control the height of the editor. |
+
+Example :
+
+``` html
+<template>
+    <viewer
+    :value="viewerText"
+    height="500px"
+    />
+</template>
+<script>
+import { Viewer } from '@toast-ui/vue-editor'
+
+export default {
+    components: {
+        'viewer': Viewer
+    },
+    data() {
+        return {
+            viewerText: '# This is Viewer.\n Hello World.',
+        };
+    },
+};
+</script>
+```
+
+### Event
+
+* load : It would be emitted when editor fully load
+* change : It would be emitted when content changed
+* stateChange : It would be emitted when format change by cursor position
+* focus : It would be emitted when editor get focus
+* blur : It would be emitted when editor loose focus
+
+Example :
+
+```html
+<template>
+    <viewer
+    @load="onEditorLoad"
+    @focus="onEditorFocus"
+    @blur="onEditorBlur"
+    @change="onEditorChange"
+    @stateChange="onEditorStateChange"
+    />
+</template>
+
+<script>
+import { Viewer } from '@toast-ui/vue-editor'
+
+export default {
+    components: {
+        'viewer': Viewer
+    },
+    methods: {
+        onEditorLoad() {
+            // implement your code
+        },
+        onEditorFocus() {
+            // implement your code
+        },
+        onEditorBlur() {
+            // implement your code
+        },
+        onEditorChange() {
+            // implement your code
+        },
+        onEditorStateChange() {
+            // implement your code
+        },
+    }
+};
+```
+
 ## 🔧 Pull Request Steps
 
 TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
@@ -261,9 +484,6 @@ Before PR, check to test lastly and then check any errors.
 If it has no error, commit and then push it!
 
 For more information on PR's step, please see links of Contributing section.
-
-## 📙 Documents
-* [Getting Started](https://github.com/nhnent/toast-ui.vue-editor/blob/master/docs/getting-started.md)
 
 ## 💬 Contributing
 * [Code of Conduct](https://github.com/nhnent/toast-ui.vue-editor/blob/master/CODE_OF_CONDUCT.md)
