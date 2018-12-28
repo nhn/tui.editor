@@ -19,13 +19,13 @@ const editor:Editor = new Editor({
 });
 
 new Editor.Button({
-  className: 'editor-btn'
+  className: 'editor-btn',
+  element: $('#container')
 });
 Editor.codeBlockManager;
 Editor.codeBlockManager.createCodeBlockHtml('en_US', 'Hello World');
 Editor.codeBlockManager.getReplacer('youtube');
 const cm = new Editor.CommandManager();
-
 const command = cm.addCommand(Editor.CommandManager.command('shift'));
 command.getName();
 command.getType();
