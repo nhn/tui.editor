@@ -33,16 +33,16 @@ const LAYOUT_TEMPLATE_MODAL =
 /**
  * A number, or a string containing a number.
  * @typedef {Object} LayerPopupOption
-    * @property {string[]} openerCssQuery - Css Query list to bind clickevent that open popup
-    * @property {string[]} closerCssQuery - Css Query list to bind clickevent that close popup
+    * @property {string[]} [openerCssQuery] - Css Query list to bind clickevent that open popup
+    * @property {string[]} [closerCssQuery] - Css Query list to bind clickevent that close popup
     * @property {jQuery} $el - popup root element
-    * @property {jQuery|string} content - popup content that html string or jQuery element
-    * @property {string} textContent - popup text content
+    * @property {jQuery|string} [content] - popup content that html string or jQuery element
+    * @property {string} [textContent] - popup text content
     * @property {string} title - popup title
-    * @property {boolean} header - whether to draw header
-    * @property {jQuery} $target - element to append popup
+    * @property {boolean} [header] - whether to draw header
+    * @property {jQuery} [$target] - element to append popup
     * @property {boolean} modal - true: modal, false: modeless
-    * @property {string} headerButtons - replace header(close) button
+    * @property {string} [headerButtons] - replace header(close) button
  */
 
 /**
