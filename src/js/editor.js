@@ -248,7 +248,7 @@ class ToastUIEditor {
   /**
    * call commandManager's exec method
    * @memberof ToastUIEditor
-   * @param {string} style - 'tab'|'vertical'
+   * @param {*} ...args Command argument
    */
   exec(...args) {
     this.commandManager.exec(...args);

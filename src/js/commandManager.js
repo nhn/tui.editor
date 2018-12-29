@@ -110,6 +110,7 @@ class CommandManager {
    * Execute command
    * @memberof CommandManager
    * @param {String} name Command name
+   * @param {*} ...args Command argument
    * @returns {*}
    */
   exec(name, ...args) {
@@ -139,9 +140,9 @@ class CommandManager {
 
 /**
  * Create command by given editor type and property object
- * @memberof ComponentManager
+ * @memberof CommandManager
  * @param {string} type Command type
- * @param {{name: string, keyMap: object}} props Property
+ * @param {{name: string, keyMap: Array}} props Property
  * @returns {*}
  */
 CommandManager.command = function(type, props) {

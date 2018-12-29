@@ -182,7 +182,7 @@ class MarkdownEditor extends CodeMirrorExt {
    * Get text object of current range
    * @memberof MarkdownEditor
    * @param {{start, end}} range Range object of each editor
-   * @returns {object}
+   * @returns {MdTextObject}
    */
   getTextObject(range) {
     return new MdTextObject(this, range);

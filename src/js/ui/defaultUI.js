@@ -284,7 +284,7 @@ class DefaultUI {
 
   /**
    * get toolbar instance
-   * @returns {DefaultToolbar} - toolbar instance
+   * @returns {Toolbar} - toolbar instance
    * @memberof DefaultUI
    */
   getToolbar() {
@@ -293,7 +293,7 @@ class DefaultUI {
 
   /**
    * set toolbar instance
-   * @param {DefaultToolbar} toolbar - toolbar
+   * @param {Toolbar} toolbar - toolbar
    * @memberof DefaultUI
    */
   setToolbar(toolbar) {

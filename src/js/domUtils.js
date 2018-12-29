@@ -408,7 +408,7 @@ const getPath = function(node, root) {
 /**
  * Find next, previous TD or TH element by given TE element
  * @param {HTMLElement} node TD element
- * @param {string} direction Boolean value for direction true is find next cell
+ * @param {string} direction 'next' or 'previous'
  * @returns {HTMLElement|null}
  * @ignore
  */
