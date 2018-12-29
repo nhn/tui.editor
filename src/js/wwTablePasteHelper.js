@@ -21,36 +21,11 @@ class WwTablePasteHelper {
   }
 
   /**
-   * Process clipboard data for pasting
-   * @param {DataTransfer} clipboarddata - clipboarddata
-   * @memberof WwTablePasteHelper
-   */
-  processClipboard(clipboarddata) {
-    const items = clipboarddata && clipboarddata.items;
-    if (items) {
-      this._pasteClipboardItem(items);
-    } else {
-      const clipboardContainer = this._getClipboardData(clipboarddata.getData('text'));
-      this._pasteClipboardContainer(clipboardContainer);
-    }
-  }
-
-  _getClipboardData(textData) {
-    const container = document.createDocumentFragment();
-    textData.split(/\r?\n/g).forEach(text => {
-      container.appendChild(document.createTextNode(text));
-      container.appendChild(document.createElement('br'));
-    });
-
-    return container;
-  }
-
-  /**
    * paste items of clipboard data
    * @param {DataTransfer.items} items - items of clipboarddata
    * @private
    */
-  _pasteClipboardItem(items) {
+  pasteClipboardItem(items) {
     let textItem = null;
     let htmlItem = null;
     for (let i = 0; i < items.length; i += 1) {
@@ -63,15 +38,25 @@ class WwTablePasteHelper {
 
     if (htmlItem) {
       htmlItem.getAsString(html => {
-        const htmlData = document.createDocumentFragment();
-        htmlData.appendChild(htmlSanitizer(html));
-        this._pasteClipboardContainer(htmlData);
+        this.pasteClipboardHtml(html);
       });
     } else if (textItem) {
       textItem.getAsString(text => {
-        this._pasteClipboardContainer(document.createTextNode(text));
+        this.pasteClipboardContainer(document.createTextNode(text));
       });
     }
+  }
+
+  /**
+   * Paste clibpard html
+   * @param {string} html - html
+   * @private
+   */
+  pasteClipboardHtml(html) {
+    const container = document.createDocumentFragment();
+
+    container.appendChild(htmlSanitizer(html));
+    this.pasteClipboardContainer(container);
   }
 
   /**
@@ -79,7 +64,7 @@ class WwTablePasteHelper {
    * @param {DocumentFragment} clipboardContainer - clipboard
    * @private
    */
-  _pasteClipboardContainer(clipboardContainer) {
+  pasteClipboardContainer(clipboardContainer) {
     const {childNodes} = clipboardContainer;
     const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
 

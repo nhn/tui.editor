@@ -6,8 +6,6 @@ import $ from 'jquery';
 import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
-import WwTablePasteHelper from './wwTablePasteHelper';
-import i18n from './i18n';
 
 const isIE10 = util.browser.msie && util.browser.version === 10;
 const TABLE_CLASS_PREFIX = 'te-content-table-';
@@ -35,7 +33,6 @@ class WwTableManager {
      * @type {string}
      */
     this.name = 'table';
-    this.tablePasteHelper = new WwTablePasteHelper(this.wwe, this);
     this._lastCellNode = null;
     this._init();
   }
@@ -95,9 +92,6 @@ class WwTableManager {
 
     this.eventManager.listen('copyBefore.table', ({$clipboardContainer}) =>
       this.updateTableHtmlOfClipboardIfNeed($clipboardContainer));
-
-    this.onBindedPaste = this._onPaste.bind(this);
-    this.wwe.getEditor().addEventListener('paste', this.onBindedPaste);
   }
 
   /**
@@ -149,25 +143,6 @@ class WwTableManager {
     const $clipboardTable = $(clipboardTable);
     this._expandTableIfNeed($clipboardTable);
     this._pasteDataIntoTable($clipboardTable);
-  }
-
-  /**
-   * On paste.
-   * @param {MouseEvent} ev - event
-   * @private
-   */
-  _onPaste(ev) {
-    const range = this.wwe.getEditor().getSelection();
-    if (this.isInTable(range)) {
-      const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
-      if (tableSelectionManager.getSelectedCells().length) {
-        alert(i18n.get('Cannot paste values other than a table in the cell selection state'));
-      } else {
-        const cbData = ev.clipboardData || window.clipboardData;
-        this.tablePasteHelper.processClipboard(cbData);
-      }
-      ev.preventDefault();
-    }
   }
 
   /**
@@ -1195,7 +1170,6 @@ class WwTableManager {
     this.eventManager.removeEventHandler('wysiwygProcessHTMLText.table');
     this.eventManager.removeEventHandler('cut.table');
     this.eventManager.removeEventHandler('copyBefore.table');
-    this.wwe.getEditor().removeEventListener('paste', this.onBindedPaste);
     util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.removeKeyEventHandler(key, handler));
   }
 }
