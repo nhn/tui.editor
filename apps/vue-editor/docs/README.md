@@ -1,6 +1,3 @@
-## Tutorials
-* [Getting Started](getting-started.md)
-
 ## Documents
 * [Code of Conduct](../CODE_OF_CONDUCT.md)
 * [Contributing Guide](../CONTRIBUTING.md)
