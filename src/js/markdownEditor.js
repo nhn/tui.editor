@@ -28,8 +28,8 @@ class MarkdownEditor extends CodeMirrorExt {
       dragDrop: true,
       allowDropFileTypes: ['image'],
       extraKeys: {
-        'Enter': 'newlineAndIndentContinue',
-        'Tab': 'subListIndentTab',
+        'Enter': 'newlineAndIndentContinueMarkdownList',
+        'Tab': 'indentOrderedList',
         'Shift-Tab': 'indentLessOrderedList'
       }
     });
@@ -146,18 +146,16 @@ class MarkdownEditor extends CodeMirrorExt {
 
     this.cm.on('cursorActivity', () => {
       const token = this.cm.getTokenAt(this.cm.getCursor());
-
-      const {base, overlay} = token.state;
-
+      const {base} = token.state;
       const state = {
         bold: !!base.strong,
         italic: !!base.em,
         strike: !!base.strikethrough,
-        code: !!overlay.code,
-        codeBlock: !!overlay.codeBlock,
+        code: base.code > 0,
+        codeBlock: base.code === -1,
         quote: !!base.quote,
         list: !!base.list,
-        task: !!base.task,
+        task: !!base.taskList,
         source: 'markdown'
       };
 

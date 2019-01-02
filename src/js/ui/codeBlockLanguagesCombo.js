@@ -49,7 +49,7 @@ class CodeBlockLanguagesCombo {
    */
   _showPopupCodeBlockLanguages() {
     const clientRect = this._inputLanguage.getBoundingClientRect();
-    this._wrapper.classList.toggle('active', true);
+    $(this._wrapper).toggleClass('active', true);
     this.active = true;
 
     this._popupCodeBlockLanguages = this._eventManager.emitReduce('openPopupCodeBlockLanguages', {
@@ -69,7 +69,7 @@ class CodeBlockLanguagesCombo {
 
   _toggleFocus() {
     const inputLanguage = this._inputLanguage;
-    if (this._wrapper.classList.contains('active')) {
+    if ($(this._wrapper).hasClass('active')) {
       inputLanguage.blur();
     } else {
       inputLanguage.focus();
@@ -77,7 +77,7 @@ class CodeBlockLanguagesCombo {
   }
 
   _onFocusOut() {
-    this._wrapper.classList.toggle('active', false);
+    $(this._wrapper).toggleClass('active', false);
     this._inputLanguage.value = this._prevStoredLanguage;
     this._hidePopupCodeBlockLanguages();
   }

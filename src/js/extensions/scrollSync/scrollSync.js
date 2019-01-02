@@ -7,8 +7,6 @@ import Editor from '../editorProxy';
 import ScrollManager from './scrollManager';
 import SectionManager from './sectionManager';
 
-const {Button} = Editor;
-
 /**
  * scrollSync plugin
  * @param {Editor} editor - editor
@@ -19,7 +17,7 @@ function scrollSyncExtension(editor) {
   const i18n = editor.i18n;
   const TOOL_TIP = {
     active: i18n.get('Auto scroll enabled'),
-    inActive: i18n.get('Auto scroll disabled')
+    inactive: i18n.get('Auto scroll disabled')
   };
 
   if (editor.isViewer()) {
@@ -37,16 +35,21 @@ function scrollSyncExtension(editor) {
 
   // UI
   if (editor.getUI().name === 'default') {
-    // init button
-    button = new Button({
-      className,
-      command: 'scrollSyncToggle',
-      tooltip: TOOL_TIP.active,
-      $el: $(`<button class="active ${className}" type="button"></button>`)
-    });
+    const toolbar = editor.getUI().getToolbar();
 
-    $divider = editor.getUI().toolbar.addDivider();
-    editor.getUI().toolbar.addButton(button);
+    toolbar.addItem('divider');
+    toolbar.addItem({
+      type: 'button',
+      options: {
+        className,
+        command: 'scrollSyncToggle',
+        tooltip: TOOL_TIP.active,
+        $el: $(`<button class="active ${className}" type="button"></button>`)
+      }
+    });
+    const items = toolbar.getItems();
+    $divider = items[items.length - 2].$el;
+    button = items[items.length - 1];
 
     changeButtonVisiblityStateIfNeed();
     // hide scroll follow button in wysiwyg
@@ -61,10 +64,10 @@ function scrollSyncExtension(editor) {
         button._onOut();
         if (isActive) {
           button.$el.addClass('active');
-          button.tooltip = TOOL_TIP.active;
+          button.setTooltip(TOOL_TIP.active);
         } else {
           button.$el.removeClass('active');
-          button.tooltip = TOOL_TIP.inActive;
+          button.setTooltip(TOOL_TIP.inactive);
         }
         button._onOver();
       }
@@ -92,7 +95,9 @@ function scrollSyncExtension(editor) {
 
   editor.on('previewRenderAfter', () => {
     sectionManager.sectionMatch();
-    scrollManager.syncPreviewScrollTopToMarkdown();
+    if (isActive) {
+      scrollManager.syncPreviewScrollTopToMarkdown();
+    }
     isScrollable = true;
   });
 

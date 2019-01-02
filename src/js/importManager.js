@@ -16,7 +16,6 @@ class ImportManager {
    */
   constructor(eventManager) {
     this.eventManager = eventManager;
-    this._lastState = null;
 
     this._initEvent();
     this._initDefaultImageImporter();
@@ -86,10 +85,6 @@ class ImportManager {
    * @private
    */
   _initEvent() {
-    this.eventManager.listen('stateChange', ev => {
-      this._lastState = ev;
-    });
-
     this.eventManager.listen('drop', ev => {
       const items = ev.data.dataTransfer && ev.data.dataTransfer.files;
       this._processBlobItems(items, ev.data);
@@ -206,6 +201,7 @@ class ImportManager {
       util.forEachArray(items, item => {
         if (item.type.indexOf('image') !== -1) {
           evData.preventDefault();
+          evData.stopPropagation();
           evData.codemirrorIgnore = true;
 
           const blob = item.name ? item : item.getAsFile(); // Blob or File
@@ -217,17 +213,6 @@ class ImportManager {
         return true;
       });
     }
-  }
-
-  /**
-   * Returns if current cursor state is in block format ex) blockquote, list, task, codeblock
-   * @returns {boolean}
-   * @private
-   */
-  _isInBlockFormat() {
-    const state = this._lastState;
-
-    return state && (state.codeBlock || state.list || state.task || state.code);
   }
 }
 

@@ -95,24 +95,21 @@ function colorSyntaxExtension(editor) {
     editor.addCommand('wysiwyg', {
       name: 'color',
       exec(wwe, color) {
-        const sq = wwe.getEditor();
-
         if (!color) {
           return;
         }
 
-        if (!sq.hasFormat('PRE')) {
-          if (color === RESET_COLOR) {
-            sq.changeFormat(null, {
-              class: 'colour',
-              tag: 'span'
-            });
-          } else {
-            sq.setTextColour(color);
-          }
-        }
+        const sq = wwe.getEditor();
+        const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+          tableSelectionManager.styleToSelectedCells(styleColor, color);
 
-        wwe.focus();
+          const range = sq.getSelection();
+          range.collapse(true);
+          sq.setSelection(range);
+        } else {
+          styleColor(sq, color);
+        }
       }
     });
 
@@ -121,30 +118,58 @@ function colorSyntaxExtension(editor) {
 }
 
 /**
+ * style color
+ * @param {SquireExt} sq - squire ext instance
+ * @param {string} color - color sting value
+ * @ignore
+ */
+function styleColor(sq, color) {
+  if (!sq.hasFormat('PRE')) {
+    if (color === RESET_COLOR) {
+      sq.changeFormat(null, {
+        class: 'colour',
+        tag: 'span'
+      });
+    } else {
+      sq.setTextColour(color);
+    }
+  }
+}
+
+/**
  * Initialize UI
- * @param {object} editor Editor instance
- * @param {Array.<string>} preset Preset for color palette
+ * @param {object} editor - Editor instance
+ * @param {Array.<string>} preset - Preset for color palette
  * @ignore
  */
 function initUI(editor, preset) {
+  const name = 'colorSyntax';
   const className = 'tui-color';
   const i18n = editor.i18n;
+  const toolbar = editor.getUI().getToolbar();
+  const {usageStatistics} = editor.options;
 
   editor.eventManager.addEventType('colorButtonClicked');
 
-  editor.getUI().toolbar.addButton({
-    className,
-    event: 'colorButtonClicked',
-    tooltip: i18n.get('Text color')
-  }, 4);
-  const $button = editor.getUI().toolbar.$el.find(`button.${className}`);
+  toolbar.insertItem(3, {
+    type: 'button',
+    options: {
+      name,
+      className,
+      event: 'colorButtonClicked',
+      tooltip: i18n.get('Text color')
+    }
+  });
+  const colorSyntaxButtonIndex = toolbar.indexOfItem(name);
+  const {$el: $button} = toolbar.getItem(colorSyntaxButtonIndex);
 
   const $colorPickerContainer = $('<div />');
 
-  const $buttonBar = $('<button type="button" class="te-apply-button">입력</button>');
+  const $buttonBar = $(`<button type="button" class="te-apply-button">${i18n.get('OK')}</button>`);
 
   const cpOptions = {
-    container: $colorPickerContainer[0]
+    container: $colorPickerContainer[0],
+    usageStatistics
   };
 
   if (preset) {
@@ -162,7 +187,7 @@ function initUI(editor, preset) {
     title: false,
     content: $colorPickerContainer,
     className: 'tui-popup-color',
-    $target: editor.getUI().$el,
+    $target: editor.getUI().getToolbar().$el,
     css: {
       'width': 'auto',
       'position': 'absolute'
@@ -174,18 +199,24 @@ function initUI(editor, preset) {
   });
 
   editor.eventManager.listen('colorButtonClicked', () => {
-    editor.eventManager.emit('closeAllPopup');
     if (popup.isShow()) {
       popup.hide();
-    } else {
-      const position = $button.position();
-      popup.$el.css({
-        top: position.top + $button.outerHeight(true),
-        left: position.left
-      });
-      popup.show();
-      colorPicker.slider.toggle(true);
+
+      return;
     }
+
+    const {
+      offsetTop,
+      offsetLeft
+    } = $button.get(0);
+    popup.$el.css({
+      top: offsetTop + $button.outerHeight(),
+      left: offsetLeft
+    });
+    colorPicker.slider.toggle(true);
+
+    editor.eventManager.emit('closeAllPopup');
+    popup.show();
   });
 
   editor.eventManager.listen('closeAllPopup', () => {

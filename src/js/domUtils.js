@@ -176,14 +176,18 @@ const getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
   return prevNode;
 };
 
-const getParentUntilBy = function(node, condition) {
+const getParentUntilBy = function(node, matchCondition, stopCondition) {
   let foundedNode;
 
-  while (node.parentNode && !condition(node.parentNode)) {
+  while (node.parentNode && !matchCondition(node.parentNode)) {
     node = node.parentNode;
+
+    if (stopCondition && stopCondition(node.parentNode)) {
+      break;
+    }
   }
 
-  if (condition(node.parentNode)) {
+  if (matchCondition(node.parentNode)) {
     foundedNode = node;
   }
 
@@ -292,6 +296,23 @@ const getPrevTextNode = function(node) {
   }
 
   return node;
+};
+
+/**
+ * test whether root contains the given node
+ * @param {HTMLNode} root - root node
+ * @param {HTMLNode} node - node to test
+ * @returns {Boolean} true if root contains node
+ */
+const containsNode = function(root, node) {
+  const walker = document.createTreeWalker(root, 4, null, false);
+  let found = root === node;
+
+  while (!found && walker.nextNode()) {
+    found = walker.currentNode === node;
+  }
+
+  return found;
 };
 
 /**
@@ -473,8 +494,10 @@ export default {
   getPrevOffsetNodeUntil,
   getNodeOffsetOfParent,
   getChildNodeByOffset,
+  containsNode,
   getTopPrevNodeUnder,
   getTopNextNodeUnder,
+  getParentUntilBy,
   getParentUntil,
   getTopBlockNode,
   getPrevTextNode,

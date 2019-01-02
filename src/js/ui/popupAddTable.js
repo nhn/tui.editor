@@ -39,6 +39,24 @@ const LAST_BORDER = 1;
  */
 class PopupAddTable extends LayerPopup {
   /**
+   * Toolbar Button which the Popup is bound to.
+   *
+   * @memberof PopupAddTable
+   * @type {jQuery}
+   * @private
+   */
+  _$button;
+
+  /**
+   * EventManager instance
+   *
+   * @memberof PopupAddTabe
+   * @type {EventManager}
+   * @private
+   */
+  _eventManager;
+
+  /**
    * Creates an instance of PopupAddTable.
    * @param {LayerPopupOption} options - layer popup option
    * @memberof PopupAddTable
@@ -66,7 +84,7 @@ class PopupAddTable extends LayerPopup {
     this._selectedBound = {};
     this._tableBound = {};
     this._eventManager = options.eventManager;
-    this.$button = options.$button;
+    this._$button = options.$button;
   }
 
   /**
@@ -122,13 +140,16 @@ class PopupAddTable extends LayerPopup {
     this._eventManager.listen('closeAllPopup', () => this.hide());
 
     this._eventManager.listen('openPopupAddTable', () => {
-      this._eventManager.emit('closeAllPopup');
-      const $button = this.$button;
-      const position = $button.position();
+      const $button = this._$button;
+      const {
+        offsetTop,
+        offsetLeft
+      } = $button.get(0);
       this.$el.css({
-        top: position.top + $button.outerHeight(true),
-        left: position.left
+        top: offsetTop + $button.outerHeight(),
+        left: offsetLeft
       });
+      this._eventManager.emit('closeAllPopup');
       this.show();
       this._selectionOffset = this.$el.find(`.${CLASS_TABLE_SELECTION}`).offset();
     });

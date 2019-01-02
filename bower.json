@@ -1,7 +1,9 @@
 {
   "name": "tui-editor",
   "description": "GFM  Markdown Wysiwyg Editor - Productive and Extensible",
-  "authors": ["NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)"],
+  "authors": [
+    "NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)"
+  ],
   "homepage": "https://github.com/nhnent/tui.editor",
   "repository": {
     "type": "git",
@@ -42,18 +44,18 @@
     "ISSUE_TEMPLATE.md"
   ],
   "dependencies": {
-    "tui-code-snippet": "^1.2.9",
+    "tui-code-snippet": "^1.5.0",
     "codemirror": "^5.32.0",
     "highlightjs": "^9.12.0",
-    "jquery": "^2.2.4",
+    "jquery": "^3.3.1",
     "markdown-it": "^8.4.0",
-    "toMark": "nhnent/toMark#0.0.19",
-    "tui-color-picker": "^2.0.1",
-    "squire-rte": "neilj/Squire#306230d0df9b38047cd06204476ddc0582569cfd",
-    "plantuml-encoder": "kyuwoo-choi/plantuml-encoder#156729063bfa62da6fa5f577627ebab57ae98c95",
+    "to-mark": "^1.1.2",
+    "tui-color-picker": "^2.2.1",
+    "squire-rte": "sohee-lee7/Squire#fde64d0bedb524e4495f3121dce518b94ad5852b",
+    "plantuml-encoder": "^1.2.5",
     "tui-chart": "^2.13.0"
   },
   "resolutions": {
-    "tui-code-snippet": "^1.2.9"
+    "tui-code-snippet": "^1.5.0"
   }
 }

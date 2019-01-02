@@ -98,10 +98,10 @@ configurator.saucelabs = function(defaultConfig) {
   };
   const customLaunchers = defaultConfig.customLaunchers = {};
   if (BROWSER === 'Chrome' || !BROWSER) {
-    customLaunchers.sl_chrome = saucelabsLauncher('SauceLabs', 'chrome', 'Windows 10', '59.0');
+    customLaunchers.sl_chrome = saucelabsLauncher('SauceLabs', 'chrome', 'Windows 10', 'latest-1');
   }
   if (BROWSER === 'Firefox' || !BROWSER) {
-    customLaunchers.sl_firefox = saucelabsLauncher('SauceLabs', 'firefox', 'macOS 10.12', '54.0');
+    customLaunchers.sl_firefox = saucelabsLauncher('SauceLabs', 'firefox', 'macOS 10.13', 'latest-2');
   }
   if (BROWSER === 'IE10' || !BROWSER) {
     customLaunchers.sl_ie_10 = saucelabsLauncher('SauceLabs', 'internet explorer', 'Windows 8', '10.0');
@@ -110,15 +110,15 @@ configurator.saucelabs = function(defaultConfig) {
     customLaunchers.sl_ie_11 = saucelabsLauncher('SauceLabs', 'internet explorer', 'Windows 8.1', '11.0');
   }
   if (BROWSER === 'Edge' || !BROWSER) {
-    customLaunchers.sl_edge_14 = saucelabsLauncher('SauceLabs', 'MicrosoftEdge', 'Windows 10', '15.15063');
+    customLaunchers.sl_edge_14 = saucelabsLauncher('SauceLabs', 'MicrosoftEdge', 'Windows 10', 'latest-2');
   }
   if (BROWSER === 'Safari' || !BROWSER) {
-    defaultConfig.customLaunchers.sl_safari = saucelabsLauncher('SauceLabs', 'safari', 'macOS 10.13', '11.0');
+    customLaunchers.sl_safari = saucelabsLauncher('SauceLabs', 'safari', 'macOS 10.13', 'latest');
   }
   defaultConfig.reporters.push('saucelabs');
   defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
   defaultConfig.browserNoActivityTimeout = 120000;
-  defaultConfig.concurrency = 5;
+  defaultConfig.concurrency = 1;
 
   // safari & edge browsers can't run TC on localhost. the hostname below should be added to your system too
   // 127.0.0.1    tui.dev
@@ -162,21 +162,21 @@ module.exports = function(config) {
     files: [
       'node_modules/codemirror/lib/codemirror.css',
       'src/css/tui-editor.css',
-      'test/fixtures/*.*',
-      'test/test.bundle.js'
+      'test/unit/fixtures/*.*',
+      'test/unit/test.bundle.js'
     ],
 
     // list of files to exclude
     exclude: [],
 
-    reporters: ['progress', 'junit', 'coverage', 'remap-coverage'],
+    reporters: ['dots', 'junit', 'coverage', 'remap-coverage'],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 
     preprocessors: {
       'src/js/**/*.js': ['webpack', 'sourcemap', 'coverage'],
-      'test/test.bundle.js': ['webpack', 'sourcemap']
+      'test/unit/test.bundle.js': ['webpack', 'sourcemap']
     },
 
     webpack: {

@@ -53,8 +53,7 @@ Unsure where to begin contributing to TOAST UI? You can start by looking through
 
 ### Make changes
 #### Checkout a branch
-- **develop**: PR base branch. merge features, updates for next minor or major release
-- **master**: bug fix or document update for next patch release. develop branch will rebase every time master branch update. so keep code change to a minimum.
+- **master**: PR Base branch.
 - **production**: lastest release branch with distribution files. never make a PR on this
 - **gh-pages**: API docs, examples and demo
 
@@ -86,7 +85,7 @@ If it has related to issues, add links to the issues(like `#123`) in the descrip
 Fill in the [Pull Request Template](./docs/PULL_REQUEST_TEMPLATE.md) by check your case.
 
 ## Code of Conduct
-This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to dl_javascript@github.com.
+This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to dl_javascript@nhnent.com.
 
 > This Guide is base on [atom contributing guide](https://github.com/atom/atom/blob/master/CONTRIBUTING.md), [CocoaPods](http://guides.cocoapods.org/contributing/contribute-to-cocoapods.html) and [ESLint](http://eslint.org/docs/developer-guide/contributing/pull-requests)
 

@@ -38,6 +38,7 @@ class WwCodeBlockManager {
 
     this._init();
   }
+
   /**
    * _init
    * Initialize
@@ -56,7 +57,8 @@ class WwCodeBlockManager {
    * @private
    */
   _initKeyHandler() {
-    this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeblockIfNeed.bind(this));
+    this._onKeyEventHandler = this._removeCodeblockIfNeed.bind(this);
+    this.wwe.addKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
   }
 
   /**
@@ -68,11 +70,11 @@ class WwCodeBlockManager {
   _initEvent() {
     const self = this;
 
-    this.eventManager.listen('wysiwygSetValueAfter', () => {
+    this.eventManager.listen('wysiwygSetValueAfter.codeblock', () => {
       self.splitCodeblockToEachLine();
     });
 
-    this.eventManager.listen('wysiwygProcessHTMLText', html => self._mergeCodeblockEachlinesFromHTMLText(html));
+    this.eventManager.listen('wysiwygProcessHTMLText.codeblock', html => self._mergeCodeblockEachlinesFromHTMLText(html));
   }
 
   /**
@@ -146,7 +148,7 @@ class WwCodeBlockManager {
    */
   _mergeCodeblockEachlinesFromHTMLText(html) {
     html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, (match, codeAttr, code) => {
-      code = code.replace(/<br \/>/g, '\n');
+      code = code.replace(/<br\s*\/?>/g, '\n');
       code = code.replace(/<div ?(.*?)>/g, '');
       code = code.replace(/\n$/, '');
 
@@ -172,6 +174,7 @@ class WwCodeBlockManager {
     $(node).find('pre').each((index, pre) => {
       const $pre = $(pre);
       const lang = $pre.find('code').attr('data-language');
+      const numberOfBackticks = $pre.find('code').attr('data-backticks');
       let textLines;
 
       // if this pre can have lines
@@ -193,6 +196,9 @@ class WwCodeBlockManager {
       if (lang) {
         $pre.attr('data-language', lang);
         $pre.addClass(`lang-${lang}`);
+      }
+      if (numberOfBackticks) {
+        $pre.attr('data-backticks', numberOfBackticks);
       }
 
       $pre.empty();
@@ -293,6 +299,15 @@ class WwCodeBlockManager {
    */
   _isCodeBlock(element) {
     return !!$(element).closest('pre').length;
+  }
+
+  /**
+   * Destroy.
+   */
+  destroy() {
+    this.eventManager.removeEventHandler('wysiwygSetValueAfter.codeblock');
+    this.eventManager.removeEventHandler('wysiwygProcessHTMLText.codeblock');
+    this.wwe.removeKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
   }
 }
 

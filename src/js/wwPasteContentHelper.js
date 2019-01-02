@@ -377,8 +377,19 @@ class WwPasteContentHelper {
    * @private
    */
   _tableElementAid($container) {
+    this._removeColgroup($container);
     this._completeTableIfNeed($container);
     this._updateTableIDClassName($container);
+  }
+
+  /**
+   * Remove colgroup tag
+   * @param {jQuery} $container - clipboard container
+   * @memberof WwPasteContentHelper
+   * @private
+   **/
+  _removeColgroup($container) {
+    $container.find('colgroup').remove();
   }
 
   /**

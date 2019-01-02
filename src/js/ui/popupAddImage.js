@@ -127,10 +127,13 @@ class PopupAddImage extends LayerPopup {
       if (imageUrl) {
         this._applyImage(imageUrl, altText);
       } else {
-        const imageFile = this._$imageFileInput.get(0).files.item(0);
-        const hookCallback = (url, text) => this._applyImage(url, altText || text);
+        const {files} = this._$imageFileInput.get(0);
+        if (files.length) {
+          const imageFile = files.item(0);
+          const hookCallback = (url, text) => this._applyImage(url, altText || text);
 
-        this.eventManager.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
+          this.eventManager.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
+        }
       }
 
       this.hide();

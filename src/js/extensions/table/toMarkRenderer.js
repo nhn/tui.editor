@@ -4,7 +4,7 @@
 */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
-import toMark from 'toMark';
+import toMark from 'to-mark';
 
 const RX_COLS = /@cols=[0-9]+:/g;
 
@@ -21,7 +21,7 @@ function _createRepeatString(str, count) {
 
 /**
  * Make table head align text.
- * Copy from https://github.com/nhnent/toMark/blob/develop/src/renderer.gfm.js
+ * Copy from https://github.com/nhnent/to-mark/blob/develop/src/renderer.gfm.js
  * @param {HTMLElement} thElement - Table head cell element
  * @returns {string}
  * @private

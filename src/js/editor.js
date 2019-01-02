@@ -37,6 +37,8 @@ import mdAddLink from './markdownCommands/addLink';
 import mdAddImage from './markdownCommands/addImage';
 import mdUL from './markdownCommands/ul';
 import mdOL from './markdownCommands/ol';
+import mdIndent from './markdownCommands/indent';
+import mdOutdent from './markdownCommands/outdent';
 import mdTable from './markdownCommands/table';
 import mdTask from './markdownCommands/task';
 import mdCode from './markdownCommands/code';
@@ -61,8 +63,8 @@ import wwTableRemoveRow from './wysiwygCommands/tableRemoveRow';
 import wwTableRemoveCol from './wysiwygCommands/tableRemoveCol';
 import wwTableAlignCol from './wysiwygCommands/tableAlignCol';
 import wwTableRemove from './wysiwygCommands/tableRemove';
-import wwIncreaseDepth from './wysiwygCommands/increaseDepth';
-import wwDecreaseDepth from './wysiwygCommands/decreaseDepth';
+import wwIndent from './wysiwygCommands/indent';
+import wwOutdent from './wysiwygCommands/outdent';
 import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
@@ -73,8 +75,19 @@ import './langs/ko_KR';
 import './langs/zh_CN';
 import './langs/ja_JP';
 import './langs/nl_NL';
+import './langs/es_ES';
+import './langs/de_DE';
+import './langs/ru_RU';
+import './langs/fr_FR';
+import './langs/uk_UA';
+import './langs/tr_TR';
+import './langs/fi_FI';
+import './langs/cs_CZ';
+import './langs/ar_AR';
+import './langs/pl_PL';
 
 const __nedInstance = [];
+const gaTrackingId = 'UA-129966929-1';
 
 /**
  * @callback addImageBlobHook
@@ -88,28 +101,36 @@ const __nedInstance = [];
  */
 class ToastUIEditor {
   /**
-     * ToastUI Editor
-     * @param {object} options Option object
-         * @param {string} [options.height='300px'] - Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
-         * @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
-         * @param {string} options.initialValue - Editor's initial value
-         * @param {string} options.previewStyle - Markdown editor's preview style (tab, vertical)
-         * @param {string} options.initialEditType - Initial editor type (markdown, wysiwyg)
-         * @param {object} options.events - eventlist Event list
-             * @param {function} options.events.load - It would be emitted when editor fully load
-             * @param {function} options.events.change - It would be emitted when content changed
-             * @param {function} options.events.stateChange - It would be emitted when format change by cursor position
-             * @param {function} options.events.focus - It would be emitted when editor get focus
-             * @param {function} options.events.blur - It would be emitted when editor loose focus
-         * @param {object} options.hooks - Hook list
-             * @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
-             * @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
-        * @param {string} language - language
-        * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
-        * @param {boolean} useDefaultHTMLSanitizer - use default htmlSanitizer
-        * @param {string[]} options.codeBlockLanguages - supported code block languages to be listed
+   * ToastUI Editor
+   * @param {object} options Option object
+    * @param {HTMLElement} options.el - container element
+    * @param {string} [options.height='300px'] - Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+    * @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
+    * @param {string} [options.initialValue] - Editor's initial value
+    * @param {string} [options.previewStyle] - Markdown editor's preview style (tab, vertical)
+    * @param {string} [options.initialEditType] - Initial editor type (markdown, wysiwyg)
+    * @param {object[]} [options.events] - eventlist Event list
+      * @param {function} options.events.load - It would be emitted when editor fully load
+      * @param {function} options.events.change - It would be emitted when content changed
+      * @param {function} options.events.stateChange - It would be emitted when format change by cursor position
+      * @param {function} options.events.focus - It would be emitted when editor get focus
+      * @param {function} options.events.blur - It would be emitted when editor loose focus
+    * @param {object[]} [options.hooks] - Hook list
+      * @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
+      * @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
+    * @param {string} [options.language='en_US'] - language
+    * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
+    * @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
+    * @param {string[]} [options.codeBlockLanguages] - supported code block languages to be listed. default is what highlight.js supports
+    * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
+    * @param {string[]} [options.toolbarItems] - toolbar items.
+    * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
+    * @param {string[]} [options.exts] - extensions
     */
   constructor(options) {
+    this.initialHtml = options.el.innerHTML;
+    options.el.innerHTML = '';
+
     this.options = $.extend({
       previewStyle: 'tab',
       initialEditType: 'markdown',
@@ -118,7 +139,31 @@ class ToastUIEditor {
       language: 'en_US',
       useDefaultHTMLSanitizer: true,
       useCommandShortcut: true,
-      codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages()
+      codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
+      usageStatistics: true,
+      toolbarItems: [
+        'heading',
+        'bold',
+        'italic',
+        'strike',
+        'divider',
+        'hr',
+        'quote',
+        'divider',
+        'ul',
+        'ol',
+        'task',
+        'indent',
+        'outdent',
+        'divider',
+        'table',
+        'image',
+        'link',
+        'divider',
+        'code',
+        'codeblock'
+      ],
+      hideModeSwitch: false
     }, options);
 
     this.eventManager = new EventManager();
@@ -152,20 +197,22 @@ class ToastUIEditor {
 
     this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new MarkdownPreview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
-      useCommandShortcut: this.options.useCommandShortcut
-    });
+    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
     this.toMarkOptions = null;
 
     this.changePreviewStyle(this.options.previewStyle);
 
     this.changeMode(this.options.initialEditType, true);
 
-    this.setValue(this.options.initialValue, false);
-
     this.minHeight(this.options.minHeight);
 
     this.height(this.options.height);
+
+    this.setValue(this.options.initialValue, false);
+
+    if (!this.options.initialValue) {
+      this.setHtml(this.initialHtml, false);
+    }
 
     extManager.applyExtension(this, this.options.exts);
 
@@ -174,6 +221,10 @@ class ToastUIEditor {
     __nedInstance.push(this);
 
     this._addDefaultCommands();
+
+    if (this.options.usageStatistics) {
+      util.sendHostname('editor', gaTrackingId);
+    }
   }
 
   /**
@@ -191,6 +242,7 @@ class ToastUIEditor {
   /**
    * call commandManager's exec method
    * @memberof ToastUIEditor
+   * @param {string} style - 'tab'|'vertical'
    */
   exec(...args) {
     this.commandManager.exec(...args);
@@ -212,6 +264,8 @@ class ToastUIEditor {
     this.addCommand(mdAddImage);
     this.addCommand(mdUL);
     this.addCommand(mdOL);
+    this.addCommand(mdIndent);
+    this.addCommand(mdOutdent);
     this.addCommand(mdTable);
     this.addCommand(mdTask);
     this.addCommand(mdCode);
@@ -228,8 +282,8 @@ class ToastUIEditor {
     this.addCommand(wwHR);
     this.addCommand(wwHeading);
     this.addCommand(wwParagraph);
-    this.addCommand(wwIncreaseDepth);
-    this.addCommand(wwDecreaseDepth);
+    this.addCommand(wwIndent);
+    this.addCommand(wwOutdent);
     this.addCommand(wwTask);
     this.addCommand(wwTable);
     this.addCommand(wwTableAddRow);
@@ -373,7 +427,7 @@ class ToastUIEditor {
    */
   setHtml(html, cursorToEnd = true) {
     html = html || '';
-    this.wwEditor.setValue(html);
+    this.wwEditor.setValue(html, cursorToEnd);
 
     if (this.isMarkdownMode()) {
       const markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
@@ -467,10 +521,10 @@ class ToastUIEditor {
   height(height) {
     if (util.isExisty(height)) {
       if (height === 'auto') {
-        this.options.el.classList.add('auto-height');
+        $(this.options.el).addClass('auto-height');
         this.minHeight(this.minHeight());
       } else {
-        this.options.el.classList.remove('auto-height');
+        $(this.options.el).removeClass('auto-height');
         this.minHeight(height);
       }
       if (util.isNumber(height)) {
@@ -511,7 +565,7 @@ class ToastUIEditor {
   /**
    * Get current editor mode name
    * @memberof ToastUIEditor
-   * @returns {string}
+   * @returns {Object} mdEditor or wwEditor
    */
   getCurrentModeEditor() {
     let editor;
@@ -565,7 +619,7 @@ class ToastUIEditor {
    * Change editor's mode to given mode string
    * @memberof ToastUIEditor
    * @param {string} mode - Editor mode name of want to change
-   * @param {boolean} isWithoutFocus - Change mode without focus
+   * @param {boolean} [isWithoutFocus] - Change mode without focus
    */
   changeMode(mode, isWithoutFocus) {
     if (this.currentMode === mode) {
@@ -732,7 +786,7 @@ class ToastUIEditor {
    * Factory method for Editor
    * @memberof ToastUIEditor
    * @param {object} options Option for initialize TUIEditor
-   * @returns {ToastUIEditor}
+   * @returns {object} ToastUIEditor or ToastUIEditorViewer
    */
   static factory(options) {
     let tuiEditor;
@@ -774,6 +828,7 @@ ToastUIEditor.codeBlockManager = codeBlockManager;
 /**
  * Button class
  * @type {Class.<Button>}
+ * @deprecated
  */
 ToastUIEditor.Button = Button;
 

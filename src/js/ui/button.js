@@ -2,14 +2,31 @@
  * @fileoverview Implements UI Button
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-import UIController from './uicontroller';
+import ToolbarItem from './toolbarItem';
 import tooltip from './tooltip';
 
 /**
  * Class Button UI
- * @extends {UIController}
+ * @extends {ToolbarItem}
+ * @deprecated
  */
-class Button extends UIController {
+class Button extends ToolbarItem {
+  /**
+   * item name
+   * @memberof Button
+   * @type {String}
+   * @static
+   */
+  static name = 'button';
+
+  /**
+   * ToolbarItem className
+   * @type {String}
+   * @memberof Button
+   * @static
+   */
+  static className = 'tui-toolbar-icons';
+
   /**
    * Creates an instance of Button.
    * @param {object} options - button options
@@ -22,10 +39,14 @@ class Button extends UIController {
    *  @param {string} options.state - button state
    * @memberof Button
    */
-  constructor(options) {
+  constructor(options = {
+    tagName: 'button',
+    name: Button.name
+  }) {
     super({
+      name: options.name,
       tagName: 'button',
-      className: `${options.className} tui-toolbar-icons`,
+      className: `${options.className} ${Button.className}`,
       rootElement: options.$el
     });
 
@@ -37,6 +58,15 @@ class Button extends UIController {
       this.on('mouseover', this._onOver.bind(this));
       this.on('mouseout', this._onOut.bind(this));
     }
+  }
+
+  /**
+   * set tooltip text
+   * @param {string} text - tooltip text to show
+   * @memberof button
+   */
+  setTooltip(text) {
+    this._tooltip = text;
   }
 
   _setOptions(options) {
@@ -58,6 +88,10 @@ class Button extends UIController {
   }
 
   _onClick() {
+    if (!this.isEnabled()) {
+      return;
+    }
+
     if (this._command) {
       this.trigger('command', this._command);
     } else if (this._event) {
@@ -68,11 +102,40 @@ class Button extends UIController {
   }
 
   _onOver() {
+    if (!this.isEnabled()) {
+      return;
+    }
+
     tooltip.show(this.$el, this._tooltip);
   }
 
   _onOut() {
     tooltip.hide();
+  }
+
+  /**
+   * enable button
+   * @memberof Button
+   */
+  enable() {
+    this.$el.attr('disabled', false);
+  }
+
+  /**
+   * disable button
+   * @memberof Button
+   */
+  disable() {
+    this.$el.attr('disabled', true);
+  }
+
+  /**
+   * check whether this button is enabled
+   * @returns {Boolean} - true for enabled
+   * @memberof Button
+   */
+  isEnabled() {
+    return !(this.$el.attr('disabled'));
   }
 }
 

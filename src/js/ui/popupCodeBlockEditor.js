@@ -139,7 +139,7 @@ class PopupCodeBlockEditor extends LayerPopup {
 
   _createCodeBlockEditor() {
     const codeMirrorWrapper = document.createElement('div');
-    codeMirrorWrapper.classList.add(`${CLASS_PREFIX}editor-wrapper`);
+    codeMirrorWrapper.className = `${CLASS_PREFIX}editor-wrapper`;
 
     this._codeBlockEditor = new CodeBlockEditor(codeMirrorWrapper, this.eventManager);
 

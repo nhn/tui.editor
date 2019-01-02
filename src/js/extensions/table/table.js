@@ -37,12 +37,12 @@ function tableExtension(editor) {
   }
 
   const wwComponentManager = editor.wwEditor.componentManager;
-  const {popupTableUtils} = editor._ui;
+  const popupTableUtils = editor.getUI().getPopupTableUtils();
 
   _addCommands(editor);
   _changeWysiwygManagers(wwComponentManager);
 
-  if (editor._ui.popupTableUtils) {
+  if (popupTableUtils) {
     mergedTableUI.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
   }
 }

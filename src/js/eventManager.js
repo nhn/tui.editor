@@ -20,6 +20,8 @@ const eventList = [
   'changeModeBefore',
   'changeMode',
   'changePreviewStyle',
+  'changePreviewTabPreview',
+  'changePreviewTabWrite',
   'openPopupAddLink',
   'openPopupAddImage',
   'openPopupAddTable',
@@ -27,6 +29,7 @@ const eventList = [
   'openHeadingSelect',
   'openPopupCodeBlockLanguages',
   'openPopupCodeBlockEditor',
+  'openDropdownToolbar',
   'closePopupCodeBlockLanguages',
   'closePopupCodeBlockEditor',
   'closeAllPopup',
@@ -254,6 +257,8 @@ class EventManager {
       if (handler.namespace !== namespace) {
         handlersToSurvive.push(handler);
       }
+
+      return null;
     });
 
     this.events.set(type, handlersToSurvive);

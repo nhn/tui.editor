@@ -23,34 +23,39 @@ const TableRemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */
   exec(wwe) {
     const sq = wwe.getEditor();
     const range = sq.getSelection().cloneRange();
+    const $table = $(range.startContainer).parents('table');
     const tableMgr = wwe.componentManager.getManager('table');
     const selectionMgr = wwe.componentManager.getManager('tableSelection');
-    const isAbleToRemoveColumn = $(range.startContainer).closest('table').find('thead tr th').length > 1;
+    const hasMultipleCols = $(range.startContainer).closest('table').find('thead tr th').length > 1;
 
     wwe.focus();
-    // IE 800a025e error on removing part of selection range. collpase
+    // IE 800a025e error on removing part of selection range. collapse
     range.collapse(true);
     sq.setSelection(range);
 
-    if (sq.hasFormat('TR', null, range) && isAbleToRemoveColumn) {
-      sq.saveUndoState(range);
-      let $nextFocus, $cell;
-
+    if (sq.hasFormat('TR', null, range) && hasMultipleCols) {
+      const tbodyColLength = $table.find('tbody tr:first td').length;
       const $selectedCellsByManager = selectionMgr.getSelectedCells();
-      if ($selectedCellsByManager.length > 1) {
-        const $tailCell = $selectedCellsByManager.last();
-        const $headCell = $selectedCellsByManager.first();
-        $nextFocus = $tailCell.next().length > 0 ? $tailCell.next() : $headCell.prev();
 
-        removeMultipleColsByCells($selectedCellsByManager);
-      } else {
-        $cell = getCellByRange(range);
-        $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
+      if ($selectedCellsByManager.length < tbodyColLength) {
+        sq.saveUndoState(range);
+        let $nextFocus;
 
-        removeColByCell($cell);
+        if ($selectedCellsByManager.length > 1) {
+          const $tailCell = $selectedCellsByManager.last();
+          const $headCell = $selectedCellsByManager.first();
+          $nextFocus = $tailCell.next().length ? $tailCell.next() : $headCell.prev();
+
+          removeMultipleColsByCells($selectedCellsByManager);
+        } else {
+          let $cell = getCellByRange(range);
+          $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
+
+          removeColByCell($cell);
+        }
+
+        focusToCell(sq, $nextFocus, tableMgr);
       }
-
-      focusToCell(sq, $nextFocus, tableMgr);
     }
   }
 });
