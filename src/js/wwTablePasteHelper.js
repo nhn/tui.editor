@@ -28,6 +28,7 @@ class WwTablePasteHelper {
   pasteClipboardItem(items) {
     let textItem = null;
     let htmlItem = null;
+
     for (let i = 0; i < items.length; i += 1) {
       if (items[i].type === 'text/html') {
         htmlItem = items[i];
@@ -93,16 +94,8 @@ class WwTablePasteHelper {
     const fragment = document.createDocumentFragment();
 
     if (childNodes.length) {
-      const childNodesArray = util.toArray(childNodes);
-      childNodesArray.forEach(child => {
-        if (domUtils.isBlockNode(child)) {
-          fragment.appendChild(this._unwrapBlock(child));
-        } else if (this._isPossibleInsertToTable(child)) {
-          // inline and text node could be inserted to table
-          fragment.appendChild(child);
-        }
-      });
-    } else if (domUtils.isMDSupportInlineNode(clipboardContainer) || domUtils.isTextNode(clipboardContainer)) {
+      fragment.appendChild(this._unwrapBlock(clipboardContainer));
+    } else if (this._isPossibleInsertToTable(clipboardContainer)) {
       fragment.appendChild(clipboardContainer);
     }
 
@@ -119,27 +112,34 @@ class WwTablePasteHelper {
   _unwrapBlock(node) {
     const fragment = document.createDocumentFragment();
     const childNodes = util.toArray(node.childNodes);
+
     while (childNodes.length) {
       let child = childNodes.shift();
+
       if (this._isPossibleInsertToTable(child)) {
-        // inline and text node could be inserted to table
         fragment.appendChild(child);
       } else {
-        // block node should be unwraped
         fragment.appendChild(this._unwrapBlock(child));
+        // If current child is last or fragment already has last br,
+        // appending br would create unintended line break.
+        if (childNodes.length && fragment.lastChild.nodeName !== 'BR') {
+          fragment.appendChild(document.createElement('br'));
+        }
       }
     }
-    fragment.appendChild(document.createElement('br'));
 
     return fragment;
   }
 
   _isPossibleInsertToTable(node) {
     let result = false;
+
     if (domUtils.isMDSupportInlineNode(node) || domUtils.isTextNode(node)) {
       result = true;
     }
 
+    // 'code' is able to paste into table,
+    // but if 'code' has children, 'code' should be unwrap.
     if (node.nodeName === 'CODE' && node.childNodes.length > 1) {
       result = false;
     }
@@ -156,14 +156,20 @@ class WwTablePasteHelper {
   _pasteData(range, fragment) {
     const container = range.startContainer;
     const offset = range.startOffset;
+
     if (domUtils.isTextNode(container)) {
       const newRange = this._pasteIntoTextNode(container, offset, fragment);
       this.wwe.getEditor().setSelection(newRange);
     } else {
       let node = domUtils.getChildNodeByOffset(container, offset);
       if (!node) {
+        // For example when container is br, br don't have child, so node is null
+        if (container.nodeName === 'TD') {
+          container.appendChild(fragment);
+        } else {
+          container.parentNode.insertBefore(fragment, container);
+        }
         node = container;
-        node.parentNode.insertBefore(fragment, node);
       } else {
         container.insertBefore(fragment, node);
       }
@@ -187,16 +193,20 @@ class WwTablePasteHelper {
     const prevText = container.textContent.slice(0, offset);
     const postText = container.textContent.slice(offset, length);
     const range = container.ownerDocument.createRange();
+
     if (prevText === '') {
       container.parentNode.insertBefore(fragment, container);
+
       range.setStart(container, 0);
       range.collapse(true);
     } else if (postText === '') {
       container.parentNode.insertBefore(fragment, container.nextSibling);
+
       range.setStartAfter(container.nextSibling);
       range.collapse(true);
     } else if (fragment.childNodes.length === 1 && domUtils.isTextNode(fragment.childNodes[0])) {
       container.textContent = `${prevText}${fragment.childNodes[0].textContent}${postText}`;
+
       range.setStart(container, prevText.length + fragment.childNodes[0].textContent.length);
       range.collapse(true);
     } else {
@@ -205,6 +215,7 @@ class WwTablePasteHelper {
       resultFragment.appendChild(document.createTextNode(prevText));
       resultFragment.appendChild(fragment);
       resultFragment.appendChild(document.createTextNode(postText));
+
       const childNodesArray = util.toArray(parentNode.childNodes);
       let index = 0;
       childNodesArray.forEach((child, i) => {
@@ -213,6 +224,7 @@ class WwTablePasteHelper {
         }
       });
       parentNode.replaceChild(resultFragment, container);
+
       range.setStart(parentNode.childNodes[index], 0);
       range.collapse(true);
     }
@@ -235,19 +247,33 @@ class WwTablePasteHelper {
       range.setStart(startContainer, startOffset);
       range.collapse(true);
     } else {
+      // Find parent block node of startContainer and endContainer
+      // If startContainer and endContainer is same common,
+      // find node at offset of startContainer and endContainer.
       let startBlock = domUtils.getParentUntil(startContainer, common)
                       || domUtils.getChildNodeByOffset(startContainer, startOffset);
       let endBlock = domUtils.getParentUntil(endContainer, common)
                       || domUtils.getChildNodeByOffset(endContainer, endOffset);
+
       if (startContainer.nodeName !== 'TD') {
+        // Remove child nodes from node of startOffset in startContainer.
         this._deleteContentsOffset(startContainer, startOffset, domUtils.getOffsetLength(startContainer));
+
+        // Remove nodes from startContainer in startBlock
         this._removeNodesByDirection(startBlock, startContainer, false);
       }
+
       if (endContainer.nodeName !== 'TD') {
+        // Remove child nodes until node of endOffset in endContainer.
         this._deleteContentsOffset(endContainer, 0, endOffset);
+
+        // Remove nodes until endContainer in endBlock
         this._removeNodesByDirection(endBlock, endContainer, true);
       }
+
+      // Remove nodes between startBlock and endBlock
       this._removeChild(common, startBlock.nextSibling, endBlock);
+
       range.setStart(endBlock, 0);
       range.collapse(true);
     }
@@ -266,10 +292,12 @@ class WwTablePasteHelper {
       const {textContent} = container;
       const prevText = textContent.slice(0, startOffset);
       const postText = textContent.slice(endOffset, textContent.length);
+
       container.textContent = `${prevText}${postText}`;
     } else {
       const startNode = domUtils.getChildNodeByOffset(container, startOffset);
       const endNode = domUtils.getChildNodeByOffset(container, endOffset);
+
       if (startNode) {
         this._removeChild(container, startNode, endNode || null);
       }
@@ -277,16 +305,18 @@ class WwTablePasteHelper {
   }
 
   /**
-   * remove node 'from'~'to-1' inside parent
+   * remove node from 'start' node to 'end-1' node inside parent
+   * if 'end' node is null, remove all child nodes after 'start' node.
    * @memberof WwTablePasteHelper
-   * @param {Node} parent - range is not collapse
-   * @param {Node} from - range is not collapse
-   * @param {Node} to - range is not collapse
+   * @param {Node} parent - parent node
+   * @param {Node} start - start node to remove
+   * @param {Node} end - end node to remove
    * @private
    */
-  _removeChild(parent, from, to) {
-    let child = from;
-    while (child !== to) {
+  _removeChild(parent, start, end) {
+    let child = start;
+
+    while (child !== end) {
       const next = child.nextSibling;
       parent.removeChild(child);
       child = next;
@@ -303,13 +333,17 @@ class WwTablePasteHelper {
    */
   _removeNodesByDirection(targetParent, node, isForward) {
     let parent = node;
+
     while (parent !== targetParent) {
       const nextParent = parent.parentNode;
-      if (!isForward && parent.nextSibling) {
-        this._removeChild(nextParent, parent.nextSibling, null);
-      } else if (isForward && parent.previousSibling) {
+      const {nextSibling, previousSibling} = parent;
+
+      if (!isForward && nextSibling) {
+        this._removeChild(nextParent, nextSibling, null);
+      } else if (isForward && previousSibling) {
         this._removeChild(nextParent, nextParent.childNodes[0], parent);
       }
+
       parent = nextParent;
     }
   }
