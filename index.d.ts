@@ -102,9 +102,14 @@ interface I18n {
   setLanguage(codes: string | string[], data: ILanguageData): void;
 }
 
+interface IButtonItem {
+  name: string;
+  options: IButtonOptions;
+}
+
 interface IButtonOptions {
   className: string;
-  element: JQuery;
+  $el: JQuery;
   command?: string;
   event?: string;
   text?: string;
@@ -142,6 +147,7 @@ declare class Button extends ToolbarItem {
   public enable(): void;
   public getName(): string;
   public isEnabled(): boolean;
+  public setTooltip(text: string): void;
 }
 
 interface ICommandType {
@@ -167,8 +173,16 @@ interface ICommand {
 }
 
 interface ILayerPopupOptions {
-  header: boolean;
-  $target: JQuery;
+  openerCssQuery?: string[];
+  closerCssQuery?: string[];
+  $el: JQuery;
+  content?: JQuery | string;
+  textContent?: string;
+  title: string;
+  header?: boolean;
+  $target?: JQuery;
+  modal: boolean;
+  headerButtons?: string;
 }
 
 interface IUIController {
@@ -196,8 +210,8 @@ interface ILayerPopup extends IUIController {
 }
 
 interface IModeSwitchType {
-  markdown: 'markdown';
-  wysiwyg: 'wysiwyg';
+  MARKDOWN: 'markdown';
+  WYSIWYG: 'wysiwyg';
 }
 
 interface IModeSwitch extends IUIController {
@@ -213,9 +227,9 @@ declare class Toolbar extends UIController {
   public getItems(): ToolbarItem[];
   public getItem(index: number): ToolbarItem;
   public setItems(items: ToolbarItem[]): void;
-  public addItem(item: ToolbarItem | string): void;
-  public insertItem(index: number, item: ToolbarItem | string): void;
-  public insertOfItem(item: ToolbarItem): number;
+  public addItem(item: ToolbarItem | IButtonItem | string): void;
+  public insertItem(index: number, item: ToolbarItem | IButtonItem | string): void;
+  public indexOfItem(item: ToolbarItem): number;
   public removeItem(item: ToolbarItem | number, destroy?: boolean): ToolbarItem | undefined;
   public removeAllItems(): void;
   public addButton(button: Button, index?: number): void;
@@ -241,14 +255,14 @@ interface ICommandManagerOptions {
   useCommandShortcut?: boolean;
 }
 
-interface ICommandManagerPropsOptions {
+interface ICommandPropsOptions {
   name: string;
-  keyMap: string[];
+  keyMap?: string[];
   exec?: CommandManagerExecFunc;
 }
 
 declare class CommandManager {
-  public static command(type: string, props: ICommandManagerPropsOptions): ICommand;
+  public static command(type: string, props: ICommandPropsOptions): ICommand;
 
   constructor(base: Editor, options?: ICommandManagerOptions);
 
@@ -293,8 +307,8 @@ interface IWwTextObject {
   getTextContent(): string;
   peekStartBeforeOffset(offset: number): string;
   replaceContent(content: string): void;
-  setEndBeforeRange(range: RangeType): void;
-  setRange(range: RangeType): void;
+  setEndBeforeRange(range: Range): void;
+  setRange(range: Range): void;
 }
 
 interface IFindOffsetNodeInfo {
@@ -312,16 +326,16 @@ interface INodeInfo {
 interface IWwCodeBlockManager {
   convertToCodeblock(nodes: Node[]): Element;
   destroy(): void;
-  isInCodeBlock(range: RangeType): boolean;
+  isInCodeBlock(range: Range): boolean;
   prepareToPasteOnCodeblock(nodes: Node[]): DocumentFragment;
 }
 
 interface IWwTableManager {
   destroy(): void;
   getTableIDClassName(): string;
-  isInTable(range: RangeType): boolean;
-  isNonTextDeleting(range: RangeType): boolean;
-  sTableOrSubTableElement(pastingNodeName: string): string;
+  isInTable(range: Range): boolean;
+  isNonTextDeleting(range: Range): boolean;
+  isTableOrSubTableElement(pastingNodeName: string): string;
   pasteClipboardData($clipboardTable: JQuery): boolean;
   prepareToTableCellStuffing($trs: JQuery): object;
   resetLastCellNode(): void;
@@ -341,7 +355,7 @@ interface IWwTableSelectionManager {
   highlightTableCellsBy(selectionStart: Element, selectionEnd: Element): void;
   removeClassAttrbuteFromAllCellsIfNeed(): void;
   setTableSelectionTimerIfNeed(selectionStart: Element): void;
-  styleToSelectedCells(onStyle: any, options?: any): void; // 파라미터 타입 확인 필요
+  styleToSelectedCells(onStyle: SquireExt, options?: any): void;
 }
 
 interface IDomUtil {
@@ -364,28 +378,28 @@ interface IDomUtil {
   getPath(node: Node, root: Node): INodeInfo[];
   getNodeInfo(node: Node): INodeInfo;
   getTableCellByDirection(node: Element, direction: string): Element | null;
-  getSiblingRowCellByDirection(node: Element, direction: string): Element | null;
+  getSiblingRowCellByDirection(node: Element, direction: string, needEdgeCell?: boolean): Element | null;
 }
 
 interface IMarkDownEditor {
-  getTextObject(range: IRangeType): IMdTextObject; // 리턴 object 타입 확인 필요!!
+  getTextObject(range: IRangeType): IMdTextObject;
   setValue(markdown: string, cursorToEnd?: boolean): void;
 }
 
 interface IWysiwygEditor {
   addKeyEventHandler(keyMap: string | string[], handler: HandlerFunc): void;
-  addWidget(range: RangeType, node: Node, style: string, offset?: number): void;
+  addWidget(range: Range, node: Node, style: string, offset?: number): void;
   blur(): void;
-  breakToNewDefaultBlock(range: RangeType, where?: string): void;
+  breakToNewDefaultBlock(range: Range, where?: string): void;
   changeBlockFormatTo(targetTagName: string): void;
   findTextNodeFilter(): boolean;
   fixIMERange(): void;
   focus(): void;
   get$Body(): JQuery;
   getEditor(): SquireExt;
-  getIMERange(): RangeType;
-  getRange(): RangeType;
-  getTextObject(range: RangeType): IWwTextObject;
+  getIMERange(): Range;
+  getRange(): Range;
+  getTextObject(range: Range): IWwTextObject;
   getValue(): string;
   hasFormatWithRx(rx: RegExp): boolean;
   init(): void;
@@ -399,17 +413,17 @@ interface IWysiwygEditor {
   removeKeyEventHandler(keyMap: string, handler: HandlerFunc): void;
   replaceContentText(container: Node, from: string, to: string);
   replaceRelativeOffset(content: string, offset: number, overwriteLength: number): void;
-  replaceSelection(content: string, range: RangeType): void;
+  replaceSelection(content: string, range: Range): void;
   reset(): void;
   restoreSavedSelection(): void;
-  saveSelection(range: RangeType): void;
+  saveSelection(range: Range): void;
   scrollTop(value: number): boolean;
   setHeight(height: number | string): void;
   setMinHeight(minHeight: number): void;
-  setRange(range: RangeType): void;
-  setSelectionByContainerAndOffset(startContainer: Node, startOffset: number, endContainer: Node, endOffset: number): RangeType;
+  setRange(range: Range): void;
+  setSelectionByContainerAndOffset(startContainer: Node, startOffset: number, endContainer: Node, endOffset: number): Range;
   setValue(html: string, cursorToEnd?: boolean): void;
-  unwrapBlockTag(condition?: (...args: any[]) => any): void; // condition type이 어떻게 될까요??
+  unwrapBlockTag(condition?: (tagName: string) => boolean): void;
 }
 
 declare class Editor {
