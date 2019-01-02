@@ -35,6 +35,6 @@
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
-    "tui-editor": "1.2.x"
+    "tui-editor": "~1.2.10"
   }
 }
