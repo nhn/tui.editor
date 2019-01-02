@@ -11,7 +11,8 @@
     "lint": "eslint src/**",
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
-    "serve": "vue serve ./example/App.vue"
+    "serve": "vue serve ./example/App.vue",
+    "note": "tuie --tag=$(git describe --tags)"
   },
   "homepage": "https://github.com/nhnent/toast-ui.vue-editor",
   "bugs": "https://github.com/nhnent/toast-ui.vue-editor/issues",
@@ -31,6 +32,7 @@
     "vue": "^2.5.17",
     "vue-loader": "^15.4.1",
     "vue-template-compiler": "^2.5.17",
+    "tui-release-notes": "github:nhnent/tui.release-notes#v1.0.0",
     "webpack": "^4.17.2",
     "webpack-cli": "^3.1.0"
   },
