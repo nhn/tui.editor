@@ -17,7 +17,7 @@ type TriggerExtraParameterType = any[] | JQuery.PlainObject | string | number | 
 type RangeType = Range | IRangeType;
 type PopupTableUtils = ILayerPopup;
 
-interface IEvents {
+interface IEvent {
   [propName: string]: HandlerFunc;
 }
 
@@ -28,8 +28,8 @@ interface IEditorOptions {
   initialValue?: string;
   previewStyle?: string;
   initialEditType?: string;
-  events?: IEvents[];
-  hooks?: IEvents[];
+  events?: IEvent[];
+  hooks?: IEvent[];
   language?: string;
   useCommandShortcut?: boolean;
   useDefaultHTMLSanitizer?: boolean;
@@ -44,11 +44,10 @@ interface IViewerOptions {
   el: Element;
   exts?: string[];
   initialValue?: string;
-  events?: IEvents[];
-  hooks?: IEvents[];
+  events?: IEvent[];
+  hooks?: IEvent[];
 }
 
-// 각각의 키값이 옵셔널일까요??
 interface ILanguageData {
   'Markdown': string;
   'WYSIWYG': string;
@@ -368,6 +367,51 @@ interface IDomUtil {
   getSiblingRowCellByDirection(node: Element, direction: string): Element | null;
 }
 
+interface IMarkDownEditor {
+  getTextObject(range: IRangeType): IMdTextObject; // 리턴 object 타입 확인 필요!!
+  setValue(markdown: string, cursorToEnd?: boolean): void;
+}
+
+interface IWysiwygEditor {
+  addKeyEventHandler(keyMap: string | string[], handler: HandlerFunc): void;
+  addWidget(range: RangeType, node: Node, style: string, offset?: number): void;
+  blur(): void;
+  breakToNewDefaultBlock(range: RangeType, where?: string): void;
+  changeBlockFormatTo(targetTagName: string): void;
+  findTextNodeFilter(): boolean;
+  fixIMERange(): void;
+  focus(): void;
+  get$Body(): JQuery;
+  getEditor(): SquireExt;
+  getIMERange(): RangeType;
+  getRange(): RangeType;
+  getTextObject(range: RangeType): IWwTextObject;
+  getValue(): string;
+  hasFormatWithRx(rx: RegExp): boolean;
+  init(): void;
+  insertText(text: string): void;
+  makeEmptyBlockCurrentSelection(): void;
+  moveCursorToEnd(): void;
+  moveCursorToStart(): void;
+  postProcessForChange(): void;
+  readySilentChange(): void;
+  remove(): void;
+  removeKeyEventHandler(keyMap: string, handler: HandlerFunc): void;
+  replaceContentText(container: Node, from: string, to: string);
+  replaceRelativeOffset(content: string, offset: number, overwriteLength: number): void;
+  replaceSelection(content: string, range: RangeType): void;
+  reset(): void;
+  restoreSavedSelection(): void;
+  saveSelection(range: RangeType): void;
+  scrollTop(value: number): boolean;
+  setHeight(height: number | string): void;
+  setMinHeight(minHeight: number): void;
+  setRange(range: RangeType): void;
+  setSelectionByContainerAndOffset(startContainer: Node, startOffset: number, endContainer: Node, endOffset: number): RangeType;
+  setValue(html: string, cursorToEnd?: boolean): void;
+  unwrapBlockTag(condition?: (...args: any[]) => any): void; // condition type이 어떻게 될까요??
+}
+
 declare class Editor {
   public static Button: ButtonConstructor;
   public static codeBlockManager: CodeBlockManager;
@@ -395,7 +439,7 @@ declare class Editor {
   public exec(name: string, ...args: any[]): void;
   public focus(): void;
   public getCodeMirror(): CodeMirrorType;
-  public getCurrentModeEditor(): CodeMirrorType | SquireExt;
+  public getCurrentModeEditor(): IMarkDownEditor | IWysiwygEditor;
   public getCurrentPreviewStyle(): string;
   public getHtml(): string;
   public getMarkdown(): string;
