@@ -128,6 +128,9 @@ class ToastUIEditor {
     * @param {string[]} [options.exts] - extensions
     */
   constructor(options) {
+    this.initialHtml = options.el.innerHTML;
+    options.el.innerHTML = '';
+
     this.options = $.extend({
       previewStyle: 'tab',
       initialEditType: 'markdown',
@@ -206,6 +209,10 @@ class ToastUIEditor {
     this.height(this.options.height);
 
     this.setValue(this.options.initialValue, false);
+
+    if (!this.options.initialValue) {
+      this.setHtml(this.initialHtml, false);
+    }
 
     extManager.applyExtension(this, this.options.exts);
 
