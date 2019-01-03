@@ -226,6 +226,12 @@ ToastUIEditorViewer.codeBlockManager = codeBlockManager;
 ToastUIEditorViewer.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
 
 /**
+ * MarkdownIt instance
+ * @type {MarkdownIt}
+ */
+ToastUIEditorViewer.markdownit = Convertor.getMarkdownitRenderer();
+
+/**
  * @ignore
  */
 ToastUIEditorViewer.i18n = null;
