@@ -6,6 +6,7 @@
       "single"
     ],
     "trailing-comma": false,
-    "max-classes-per-file": false
+    "max-classes-per-file": false,
+    "max-line-length": false
   }
 }

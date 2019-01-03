@@ -21,6 +21,19 @@ interface IEvent {
   [propName: string]: HandlerFunc;
 }
 
+interface IToMarkOptions {
+  gfm?: boolean;
+  renderer?: any;
+}
+
+interface IConvertor {
+  getMarkdownitHighlightRenderer(): markdownit;
+  initHtmlSanitizer(): void;
+  toHTML(makrdown: string): string;
+  toHTMLWithCodeHightlight(markdown: string): string;
+  toMarkdown(html: string, toMarkdownOptions: IToMarkOptions): string;
+}
+
 interface IEditorOptions {
   el: Element;
   height?: string;
@@ -38,6 +51,7 @@ interface IEditorOptions {
   toolbarItems?: string[];
   hideModeSwitch?: boolean;
   exts?: string[];
+  customConvertor?: IConvertor;
 }
 
 interface IViewerOptions {
@@ -433,6 +447,7 @@ declare class Editor {
   public static domUtils: IDomUtil;
   public static i18n: I18n;
   public static isViewer: boolean;
+  public static markdownit: MarkdownIt;
   public static markdownitHighlight: MarkdownIt;
   public static WwCodeBlockManager: IWwCodeBlockManager;
   public static WwTableManager: IWwTableManager;
