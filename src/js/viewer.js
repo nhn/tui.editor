@@ -39,12 +39,18 @@ class ToastUIEditorViewer {
   constructor(options) {
     this.options = $.extend({
       useDefaultHTMLSanitizer: true,
-      codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages()
+      codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
+      customConvertor: null
     }, options);
 
     this.eventManager = new EventManager();
     this.commandManager = new CommandManager(this);
-    this.convertor = new Convertor(this.eventManager);
+    if (this.options.customConvertor) {
+      // eslint-disable-next-line new-cap
+      this.convertor = new this.options.customConvertor(this.eventManager);
+    } else {
+      this.convertor = new Convertor(this.eventManager);
+    }
     this.toMarkOptions = null;
 
     if (this.options.useDefaultHTMLSanitizer) {
