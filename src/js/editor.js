@@ -126,6 +126,7 @@ class ToastUIEditor {
     * @param {string[]} [options.toolbarItems] - toolbar items.
     * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
     * @param {string[]} [options.exts] - extensions
+    * @param {object} [options.customConvertor] - convertor extention
     */
   constructor(options) {
     this.initialHtml = options.el.innerHTML;
