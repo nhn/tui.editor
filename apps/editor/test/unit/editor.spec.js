@@ -7,6 +7,7 @@ import MarkdownIt from 'markdown-it';
 import util from 'tui-code-snippet';
 
 import Editor from '../../src/js/editor';
+import Convertor from '../../src/js/convertor';
 import {CodeBlockManager} from '../../src/js/codeBlockManager';
 import {I18n} from '../../src/js/i18n';
 import Button from '../../src/js/ui/button';
@@ -389,6 +390,27 @@ describe('Editor', () => {
 
         const modeSwitch = editor.getUI().getModeSwitch();
         expect(modeSwitch.isShown()).toBe(true);
+      });
+    });
+
+    describe('customConvertor', () => {
+      it('should use default convertor if the option value is not set', () => {
+        editor = new Editor({
+          el: container
+        });
+        expect(editor.convertor instanceof Convertor).toBe(true);
+      });
+
+      it('should use custom convertor if the option value is set', () => {
+        const CustomConvertor = class extends Convertor {
+        };
+
+        editor = new Editor({
+          el: container,
+          customConvertor: CustomConvertor
+        });
+        expect(editor.convertor instanceof Convertor).toBe(true);
+        expect(editor.convertor instanceof CustomConvertor).toBe(true);
       });
     });
   });
