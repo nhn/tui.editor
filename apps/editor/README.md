@@ -6,6 +6,7 @@
 ## Wrappers
 
 - [toast-ui.vue-editor](https://github.com/nhnent/toast-ui.vue-editor): Vue wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
+- [ember-tui-editor](https://github.com/evocount/ember-tui-editor): Ember wrapper component by @evocount. Thanks for their effort.
 
 <p align="center"><a href="https://nhnent.github.io/tui.editor/"><img src="https://user-images.githubusercontent.com/1215767/34356204-4c03be8a-ea7f-11e7-9aa9-0d84f9e912ec.gif" /></a></p>
 
