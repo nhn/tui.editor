@@ -643,6 +643,7 @@ class ToastUIEditor {
       this.eventManager.emit('changeModeToWysiwyg');
     } else {
       this.layout.switchToMarkdown();
+      this.mdEditor.resetState();
       this.mdEditor.setValue(
         this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions), !isWithoutFocus
       );

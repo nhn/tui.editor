@@ -235,6 +235,14 @@ class MarkdownEditor extends CodeMirrorExt {
   }
 
   /**
+   * latestState reset
+   * @memberof MarkdownEditor
+   */
+  resetState() {
+    this._latestState = null;
+  }
+
+  /**
    * MarkdownEditor factory method
    * @memberof MarkdownEditor
    * @param {jQuery} $el - Container element for editor
