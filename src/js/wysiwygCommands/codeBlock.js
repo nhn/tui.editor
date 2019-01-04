@@ -57,7 +57,7 @@ const CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
 function focusToFirstCode($pre, wwe) {
   const range = wwe.getEditor().getSelection().cloneRange();
 
-  range.setStartBefore($pre.find('div')[0].firstChild);
+  range.setStartBefore($pre.get(0).firstChild);
   range.collapse(true);
 
   wwe.getEditor().setSelection(range);
@@ -71,16 +71,15 @@ function focusToFirstCode($pre, wwe) {
  */
 function getCodeBlockBody(range, wwe) {
   const mgr = wwe.componentManager.getManager('codeblock');
-  let contents, nodes;
-
+  let codeBlock;
   if (range.collapsed) {
-    nodes = [$('<div><br></div>')[0]];
+    codeBlock = '<br>';
   } else {
-    contents = range.extractContents();
-    nodes = util.toArray(contents.childNodes);
+    const contents = range.extractContents();
+    const nodes = util.toArray(contents.childNodes);
+    const tempDiv = $('<div>').append(mgr.prepareToPasteOnCodeblock(nodes));
+    codeBlock = tempDiv.html();
   }
-
-  const codeBlock = mgr.convertToCodeblock(nodes).innerHTML;
 
   return codeBlock;
 }
