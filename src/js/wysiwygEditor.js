@@ -423,10 +423,14 @@ class WysiwygEditor {
     });
 
     squire.addEventListener('willPaste', ev => {
-      this.eventManager.emit('willPaste', {
-        source: 'wysiwyg',
-        data: ev
-      });
+      // ev has 'fragment' when event occurs from 'insertHTML' of squire
+      // ev has 'text' when event occurs from 'insertPlainText' of squire
+      if (ev.fragment) {
+        this.eventManager.emit('willPaste', {
+          source: 'wysiwyg',
+          data: ev
+        });
+      }
     });
   }
 
