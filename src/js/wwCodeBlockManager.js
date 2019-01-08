@@ -57,7 +57,7 @@ class WwCodeBlockManager {
    * @private
    */
   _initKeyHandler() {
-    this._onKeyEventHandler = this._removeCodeblockIfNeed.bind(this);
+    this._onKeyEventHandler = this._removeCodeblockFirstLine.bind(this);
     this.wwe.addKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
   }
 
@@ -72,7 +72,7 @@ class WwCodeBlockManager {
       this.modifyCodeBlockForWysiwyg();
     });
 
-    this.eventManager.listen('wysiwygProcessHTMLText.codeblock', html => this._changePreToPreCode((html)));
+    this.eventManager.listen('wysiwygProcessHTMLText.codeblock', html => this._changePreToPreCode(html));
   }
 
   /**
@@ -98,21 +98,19 @@ class WwCodeBlockManager {
    */
   convertNodesToText(nodes) {
     let str = '';
-    if (nodes.length) {
-      let node = nodes.shift();
+    let node = nodes.shift();
 
-      while (util.isTruthy(node)) {
-        const {childNodes} = node;
-        if (childNodes && domUtils.isBlockNode(node)) {
-          str += this.convertNodesToText(util.toArray(node.childNodes));
-        } else if (node.nodeName === 'BR') {
-          str += '\n';
-        } else {
-          const {textContent} = node;
-          str += sanitizeHtmlCode(textContent);
-        }
-        node = nodes.shift();
+    while (util.isTruthy(node)) {
+      const {childNodes} = node;
+      if (childNodes && domUtils.isBlockNode(node)) {
+        str += this.convertNodesToText(util.toArray(node.childNodes));
+      } else if (node.nodeName === 'BR') {
+        str += '\n';
+      } else {
+        const {textContent} = node;
+        str += sanitizeHtmlCode(textContent);
       }
+      node = nodes.shift();
     }
 
     return str;
@@ -181,11 +179,7 @@ class WwCodeBlockManager {
 
       const resultText = $pre.text().replace(/\s+$/, '');
       $pre.empty();
-      if (resultText) {
-        $pre.text(resultText);
-      } else {
-        $pre.append('<br>');
-      }
+      $pre.html(resultText ? resultText : '<br>');
 
       if (lang) {
         $pre.attr('data-language', lang);
@@ -198,16 +192,20 @@ class WwCodeBlockManager {
     });
   }
 
+  _isCodeBlockFirstLine(range) {
+    return this.isInCodeBlock(range) && range.collapsed && range.startOffset === 0;
+  }
+
   /**
-   * Remove codeblock if need
+   * Remove codeblock of first line when press backspace in first line
    * @memberof WwCodeBlockManager
    * @param {Event} ev Event object
    * @param {Range} range Range object
    * @returns {boolean}
    * @private
    */
-  _removeCodeblockIfNeed(ev, range) {
-    if (this.isInCodeBlock(range) && range.collapsed && range.startOffset === 0) {
+  _removeCodeblockFirstLine(ev, range) {
+    if (this._isCodeBlockFirstLine(range)) {
       const sq = this.wwe.getEditor();
       const container = range.commonAncestorContainer;
       const preNode = container.nodeName === 'PRE' ? container : container.parentNode;
@@ -249,17 +247,7 @@ class WwCodeBlockManager {
     let target;
 
     if (range.collapsed) {
-      // If the offset node is PRE, adjust range.
-      const container = range.startContainer;
-      const offset = range.startOffset;
-      const node = domUtils.getChildNodeByOffset(container, offset);
-      if (node && node.nodeName === 'PRE') {
-        range.setStart(node, 0);
-        this.wwe.getEditor().setSelection(range);
-        target = node;
-      } else {
-        target = range.startContainer;
-      }
+      target = range.startContainer;
     } else {
       target = range.commonAncestorContainer;
     }
