@@ -210,8 +210,7 @@ class WwCodeBlockManager {
       prevent = true;
     } else if (range.collapsed && this._isEmptyLine(container)
               && this._isBetweenSameCodeblocks(container)) {
-      const {previousSibling} = container;
-      const {nextSibling} = container;
+      const {previousSibling, nextSibling} = container;
       const prevTextLength = previousSibling.textContent.length;
       sq.saveUndoState(range);
       container.parentNode.removeChild(container);
