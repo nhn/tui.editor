@@ -197,83 +197,83 @@ class WwCodeBlockManager {
    * @memberof WwCodeBlockManager
    * @param {Event} ev Event object
    * @param {Range} range Range object
-   * @returns {boolean} result
+   * @returns {boolean}
    * @private
    */
   _onBackspaceKeyEvnetHandler(ev, range) {
-    let prevent = false;
+    let isNeedNext = true;
     const sq = this.wwe.getEditor();
     const {commonAncestorContainer: container} = range;
     if (this._isCodeBlockFirstLine(range)) {
       this._removeCodeblockFirstLine(container);
       range.collapse(true);
-      prevent = true;
-    } else if (range.collapsed && this._isEmptyLine(container)
-              && this._isBetweenSameCodeblocks(container)) {
+      isNeedNext = false;
+    } else if (
+      range.collapsed && this._isEmptyLine(container) &&
+      this._isBetweenSameCodeblocks(container)
+    ) {
       const {previousSibling, nextSibling} = container;
       const prevTextLength = previousSibling.textContent.length;
+
       sq.saveUndoState(range);
+
       container.parentNode.removeChild(container);
       this._mergeCodeblocks(previousSibling, nextSibling);
+
       range.setStart(previousSibling.childNodes[0], prevTextLength);
       range.collapse(true);
-      prevent = true;
+      isNeedNext = false;
     }
 
-    if (prevent) {
+    if (!isNeedNext) {
       sq.setSelection(range);
       ev.preventDefault();
     }
 
-    return !prevent;
+    return isNeedNext;
   }
 
   /**
    * Check node is empty line
    * @memberof WwCodeBlockManager
    * @param {Node} node node
-   * @returns {boolean} result
+   * @returns {boolean}
    * @private
    */
   _isEmptyLine(node) {
     const {nodeName, childNodes} = node;
-    if (nodeName === 'DIV' && childNodes.length === 1 && childNodes[0].nodeName === 'BR') {
-      return true;
-    }
 
-    return false;
+    return nodeName === 'DIV' && childNodes.length === 1 && childNodes[0].nodeName === 'BR';
   }
 
   /**
    * Check whether node is between same codeblocks
    * @memberof WwCodeBlockManager
    * @param {Node} node Node
-   * @returns {boolean} result
+   * @returns {boolean}
    * @private
    */
   _isBetweenSameCodeblocks(node) {
-    const {previousSibling} = node;
-    const {nextSibling} = node;
-    if (domUtils.getNodeName(previousSibling) === 'PRE' &&
-      domUtils.getNodeName(nextSibling) === 'PRE' &&
-      previousSibling.getAttribute('data-language') === nextSibling.getAttribute('data-language')) {
-      return true;
-    }
+    const {previousSibling, nextSibling} = node;
 
-    return false;
+    return (
+      domUtils.getNodeName(previousSibling) === 'PRE' &&
+      domUtils.getNodeName(nextSibling) === 'PRE' &&
+      previousSibling.getAttribute('data-language') === nextSibling.getAttribute('data-language')
+    );
   }
 
-  _mergeCodeblocks(preNode, postNode) {
-    const postText = postNode.textContent;
-    preNode.childNodes[0].textContent += `\n${postText}`;
-    postNode.parentNode.removeChild(postNode);
+  _mergeCodeblocks(frontCodeblock, backCodeblock) {
+    const postText = backCodeblock.textContent;
+    frontCodeblock.childNodes[0].textContent += `\n${postText}`;
+    backCodeblock.parentNode.removeChild(backCodeblock);
   }
 
   /**
    * Check whether range is first line of code block
    * @memberof WwCodeBlockManager
    * @param {Range} range Range object
-   * @returns {boolean} result
+   * @returns {boolean}
    * @private
    */
   _isCodeBlockFirstLine(range) {
