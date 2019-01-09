@@ -202,6 +202,7 @@ class WwCodeBlockManager {
    */
   _onBackspaceKeyEvnetHandler(ev, range) {
     let prevent = false;
+    const sq = this.wwe.getEditor();
     const {commonAncestorContainer: container} = range;
     if (this._isCodeBlockFirstLine(range)) {
       this._removeCodeblockFirstLine(container);
@@ -212,6 +213,7 @@ class WwCodeBlockManager {
       const {previousSibling} = container;
       const {nextSibling} = container;
       const prevTextLength = previousSibling.textContent.length;
+      sq.saveUndoState(range);
       container.parentNode.removeChild(container);
       this._mergeCodeblocks(previousSibling, nextSibling);
       range.setStart(previousSibling.childNodes[0], prevTextLength);
@@ -220,7 +222,7 @@ class WwCodeBlockManager {
     }
 
     if (prevent) {
-      this.wwe.getEditor().setSelection(range);
+      sq.setSelection(range);
       ev.preventDefault();
     }
 
