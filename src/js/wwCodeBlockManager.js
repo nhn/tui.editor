@@ -204,7 +204,7 @@ class WwCodeBlockManager {
     let isNeedNext = true;
     const sq = this.wwe.getEditor();
     const {commonAncestorContainer: container} = range;
-    if (this._isCodeBlockFirstLine(range)) {
+    if (this._isCodeBlockFirstLine(range) && !this._isFrontCodeblock(range)) {
       this._removeCodeblockFirstLine(container);
       range.collapse(true);
       isNeedNext = false;
@@ -278,6 +278,20 @@ class WwCodeBlockManager {
    */
   _isCodeBlockFirstLine(range) {
     return this.isInCodeBlock(range) && range.collapsed && range.startOffset === 0;
+  }
+
+  /**
+   * Check whether front block of range is code block
+   * @memberof WwCodeBlockManager
+   * @param {Range} range Range object
+   * @returns {boolean}
+   * @private
+   */
+  _isFrontCodeblock(range) {
+    const block = domUtils.getParentUntil(range.startContainer, this.wwe.getEditor().getRoot());
+    const {previousSibling} = block;
+
+    return previousSibling && previousSibling.nodeName === 'PRE';
   }
 
   /**
