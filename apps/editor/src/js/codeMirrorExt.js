@@ -54,7 +54,8 @@ class CodeMirrorExt {
         'Alt-Down': 'replaceLineTextToLower'
       },
       indentUnit: 4,
-      cursorScrollMargin: 12
+      cursorScrollMargin: 12,
+      specialCharPlaceholder: () => document.createElement('span')
     }, options);
 
     this.cm = CodeMirror.fromTextArea(cmTextarea, options);
