@@ -57,7 +57,7 @@ class WwCodeBlockManager {
    * @private
    */
   _initKeyHandler() {
-    this._onKeyEventHandler = this._removeCodeblockFirstLine.bind(this);
+    this._onKeyEventHandler = this._onBackspaceKeyEvnetHandler.bind(this);
     this.wwe.addKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
   }
 
@@ -192,49 +192,120 @@ class WwCodeBlockManager {
     });
   }
 
-  _isCodeBlockFirstLine(range) {
-    return this.isInCodeBlock(range) && range.collapsed && range.startOffset === 0;
-  }
-
   /**
    * Remove codeblock of first line when press backspace in first line
    * @memberof WwCodeBlockManager
    * @param {Event} ev Event object
    * @param {Range} range Range object
-   * @returns {boolean}
+   * @returns {boolean} result
    * @private
    */
-  _removeCodeblockFirstLine(ev, range) {
+  _onBackspaceKeyEvnetHandler(ev, range) {
+    let prevent = false;
+    const {commonAncestorContainer: container} = range;
     if (this._isCodeBlockFirstLine(range)) {
-      const sq = this.wwe.getEditor();
-      const container = range.commonAncestorContainer;
-      const preNode = container.nodeName === 'PRE' ? container : container.parentNode;
-      const codeContent = preNode.textContent.replace(FIND_ZWS_RX, '');
-      sq.modifyBlocks(() => {
-        const newFrag = this.wwe.getEditor().getDocument().createDocumentFragment();
-        let strArray = codeContent.split('\n');
-
-        const firstDiv = document.createElement('div');
-        const firstLine = strArray.shift();
-        firstDiv.innerHTML += `${firstLine}<br>`;
-        newFrag.appendChild(firstDiv);
-
-        if (strArray.length) {
-          const newPreNode = preNode.cloneNode();
-          newPreNode.textContent = strArray.join('\n');
-          newFrag.appendChild(newPreNode);
-        }
-
-        return newFrag;
-      });
+      this._removeCodeblockFirstLine(container);
       range.collapse(true);
-      sq.setSelection(range);
-      ev.preventDefault();
-
-      return false;
+      prevent = true;
+    } else if (range.collapsed && this._isEmptyLine(container)
+              && this._isBetweenSameCodeblocks(container)) {
+      const {previousSibling} = container;
+      const {nextSibling} = container;
+      const prevTextLength = previousSibling.textContent.length;
+      container.parentNode.removeChild(container);
+      this._mergeCodeblocks(previousSibling, nextSibling);
+      range.setStart(previousSibling.childNodes[0], prevTextLength);
+      range.collapse(true);
+      prevent = true;
     }
 
-    return true;
+    if (prevent) {
+      this.wwe.getEditor().setSelection(range);
+      ev.preventDefault();
+    }
+
+    return !prevent;
+  }
+
+  /**
+   * Check node is empty line
+   * @memberof WwCodeBlockManager
+   * @param {Node} node node
+   * @returns {boolean} result
+   * @private
+   */
+  _isEmptyLine(node) {
+    const {nodeName, childNodes} = node;
+    if (nodeName === 'DIV' && childNodes.length === 1 && childNodes[0].nodeName === 'BR') {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Check whether node is between same codeblocks
+   * @memberof WwCodeBlockManager
+   * @param {Node} node Node
+   * @returns {boolean} result
+   * @private
+   */
+  _isBetweenSameCodeblocks(node) {
+    const {previousSibling} = node;
+    const {nextSibling} = node;
+    if (domUtils.getNodeName(previousSibling) === 'PRE' &&
+      domUtils.getNodeName(nextSibling) === 'PRE' &&
+      previousSibling.getAttribute('data-language') === nextSibling.getAttribute('data-language')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  _mergeCodeblocks(preNode, postNode) {
+    const postText = postNode.textContent;
+    preNode.childNodes[0].textContent += `\n${postText}`;
+    postNode.parentNode.removeChild(postNode);
+  }
+
+  /**
+   * Check whether range is first line of code block
+   * @memberof WwCodeBlockManager
+   * @param {Range} range Range object
+   * @returns {boolean} result
+   * @private
+   */
+  _isCodeBlockFirstLine(range) {
+    return this.isInCodeBlock(range) && range.collapsed && range.startOffset === 0;
+  }
+
+  /**
+   * Remove codeblock first line of codeblock
+   * @memberof WwCodeBlockManager
+   * @param {Node} node Pre Node
+   * @private
+   */
+  _removeCodeblockFirstLine(node) {
+    const sq = this.wwe.getEditor();
+    const preNode = node.nodeName === 'PRE' ? node : node.parentNode;
+    const codeContent = preNode.textContent.replace(FIND_ZWS_RX, '');
+    sq.modifyBlocks(() => {
+      const newFrag = sq.getDocument().createDocumentFragment();
+      let strArray = codeContent.split('\n');
+
+      const firstDiv = document.createElement('div');
+      const firstLine = strArray.shift();
+      firstDiv.innerHTML += `${firstLine}<br>`;
+      newFrag.appendChild(firstDiv);
+
+      if (strArray.length) {
+        const newPreNode = preNode.cloneNode();
+        newPreNode.textContent = strArray.join('\n');
+        newFrag.appendChild(newPreNode);
+      }
+
+      return newFrag;
+    });
   }
 
   /**
