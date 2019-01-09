@@ -149,31 +149,6 @@ describe('WwPasteContentHelper', () => {
       expect($container.find('nav').length).toEqual(1);
       expect($container.find('nav').text()).toEqual('simon');
     });
-    it('_preElementAid should make pre tag content that has element to useful', () => {
-      const $container = $('<div />');
-      const $node = $('<pre><div><span>TEST</span></div></pre>');
-
-      $container.append($node);
-
-      pch._preElementAid($container);
-
-      expect($node.find('code').length).toEqual(0);
-      expect($node.find('span').length).toEqual(0);
-      expect($node.find('div').length).toEqual(1);
-      expect($node.find('div').eq(0).text()).toEqual('TEST');
-    });
-    it('_preElementAid should make pre tag content that has only text to useful', () => {
-      const $container = $('<div />');
-      const $node = $('<pre>TEST\nTEST2</pre>');
-
-      $container.append($node);
-
-      pch._preElementAid($container);
-
-      expect($node.find('div').length).toEqual(2);
-      expect($node.find('div').eq(0).text()).toEqual('TEST');
-      expect($node.find('div').eq(1).text()).toEqual('TEST2');
-    });
 
     it('_wrapOrphanNodeWithDiv should wrap orphan nodes with div element', () => {
       const $container = $('<div />');
@@ -323,18 +298,6 @@ describe('WwPasteContentHelper', () => {
   });
 
   describe('get html string of range content', () => {
-    it('unrwap first child for paste as inline', () => {
-      const $container = $('<div />');
-
-      $container.html('<div>text<b>text2</b><br></div>');
-
-      pch.preparePaste($container);
-
-      expect($container[0].childNodes.length).toEqual(2);
-      expect($container[0].childNodes[0].nodeType).toEqual(Node.TEXT_NODE);
-      expect($container[0].childNodes[1].tagName).toEqual('B');
-    });
-
     describe('List', () => {
       beforeEach(() => {
         wwe.getEditor().focus();
