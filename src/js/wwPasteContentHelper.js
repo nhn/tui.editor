@@ -37,13 +37,6 @@ class WwPasteContentHelper {
     this._pasteFirstAid($container);
 
     const childNodes = util.toArray($container[0].childNodes);
-
-    // prepare to paste as inline of first node if possible
-    if (childNodes.length && childNodes[0].tagName === 'DIV') {
-      $tempContainer.append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
-      childNodes.shift();
-    }
-
     while (childNodes.length) {
       [node] = childNodes;
       nodeName = domUtils.getNodeName(node);
@@ -138,8 +131,7 @@ class WwPasteContentHelper {
    */
   _preElementAid($container) {
     const wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
-
-    wwCodeblockManager.splitCodeblockToEachLine($container);
+    wwCodeblockManager.modifyCodeBlockForWysiwyg($container);
   }
 
   /**

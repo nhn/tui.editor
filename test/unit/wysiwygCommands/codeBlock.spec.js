@@ -39,13 +39,11 @@ describe('CodeBlock', () => {
     CodeBlock.exec(wwe);
 
     expect($body.find('pre').length).toBe(1);
-    expect($body.find('pre div').length).toBe(1);
     expect($body.find('pre').attr('data-te-codeblock')).toBeDefined();
   });
   it('add CodeBlock with language', () => {
     CodeBlock.exec(wwe, 'javascript');
 
-    expect($body.find('pre').hasClass('te-content-codeblock-1')).toBe(true);
     expect($body.find('pre').attr('data-language')).toBe('javascript');
   });
   it('add CodeBlock with selection', () => {
@@ -60,8 +58,7 @@ describe('CodeBlock', () => {
     CodeBlock.exec(wwe);
 
     expect($body.find('pre').length).toBe(1);
-    expect($body.find('pre div').length).toBe(1);
-    expect($body.find('pre div').eq(0).text()).toBe('hello');
+    expect($body.find('pre').eq(0).text()).toBe('hello');
     expect($body.find('pre + div').eq(0).text()).toBe(', my name is code');
   });
 });

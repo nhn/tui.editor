@@ -327,7 +327,7 @@ class SquireExt extends Squire {
 
   blockCommandShortcuts() {
     const meta = isMac ? 'meta' : 'ctrl';
-    const keys = ['b', 'i', 'u', 'shift-7', 'shift-5', 'shift-6', 'shift-8', 'shift-9', '[', ']'];
+    const keys = ['b', 'i', 'u', 'shift-7', 'shift-5', 'shift-6', 'shift-8', 'shift-9', '[', ']', 'd'];
 
     keys.forEach(key => {
       this.setKeyHandler(`${meta}-${key}`, (editor, keyboardEvent) => {

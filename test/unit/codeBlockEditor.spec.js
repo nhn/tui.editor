@@ -14,20 +14,20 @@ describe('CodeBlockEditor', () => {
     codeBlockEditor = new CodeBlockEditor(container);
   });
 
-  it('should load code from given code block element', () => {
-    pre.innerHTML = '<div>a<br/></div><div>code</div><div>block<br/></div>';
+  it('should load code as same text of code block element', () => {
+    pre.innerHTML = 'a\ncode\nblock';
 
     codeBlockEditor.load(pre);
 
     expect(codeBlockEditor.getEditorCodeText()).toEqual('a\ncode\nblock');
   });
 
-  it('should save code to given code block element', () => {
+  it('should save code as same text to code block element', () => {
     codeBlockEditor.setEditorCodeText('some\ncode');
 
     codeBlockEditor.save(pre);
 
-    expect(pre.innerHTML).toEqual('<div>some</div><div>code</div>');
+    expect(pre.innerHTML).toEqual('some\ncode');
   });
 
   it('should load language from given code block element', () => {

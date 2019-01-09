@@ -69,6 +69,6 @@ describe('uml extension', () => {
 
     editor.setValue(`\`\`\`uml\nAlice -> Bob: Hello\n\`\`\``);
 
-    expect(editor.wwEditor.get$Body().get(0).querySelector('pre').innerHTML).toEqual('<div>Alice -&gt; Bob: Hello</div>');
+    expect(editor.wwEditor.get$Body().get(0).querySelector('pre').innerHTML).toEqual('Alice -&gt; Bob: Hello');
   });
 });
