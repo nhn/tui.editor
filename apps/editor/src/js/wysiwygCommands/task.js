@@ -16,7 +16,7 @@ import domUtil from '../domUtils';
  */
 const Task = CommandManager.command('wysiwyg', /** @lends Task */{
   name: 'Task',
-  keyMap: ['CTRL+T', 'META+T'],
+  keyMap: ['ALT+T', 'ALT+T'],
   /**
    * Command Handler
    * @param {WysiwygEditor} wwe WYSIWYGEditor instance

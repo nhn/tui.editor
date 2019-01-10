@@ -20,7 +20,7 @@ const MD_TASK_SYNTAX_RX = /([*-] |[\d]+\. )(\[[ xX]] )/;
  */
 const Task = CommandManager.command('markdown', /** @lends Task */{
   name: 'Task',
-  keyMap: ['CTRL+T', 'META+T'],
+  keyMap: ['ALT+T', 'ALT+T'],
   /**
    * Command handler
    * @param {MarkdownEditor} mde MarkdownEditor instance
