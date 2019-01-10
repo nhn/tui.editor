@@ -50,7 +50,7 @@ describe('WwCodeBlockManager', () => {
 
   describe('key handlers', () => {
     describe('BACKSPACE', () => {
-      it('_removeCodeblockIfNeed() remove codeblock if codeblock has one code line when offset is 0', () => {
+      it('_onBackspaceKeyEvnetHandler() remove codeblock if codeblock has one code line when offset is 0', () => {
         const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<pre>test</pre>');
@@ -72,7 +72,7 @@ describe('WwCodeBlockManager', () => {
         expect(wwe.get$Body().find('pre').length).toEqual(0);
       });
 
-      it('_removeCodeblockIfNeed() remove codeblock and make one empty line if there is no content', () => {
+      it('_onBackspaceKeyEvnetHandler() remove codeblock and make one empty line if there is no content', () => {
         const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<pre>\n</pre>');
@@ -91,6 +91,57 @@ describe('WwCodeBlockManager', () => {
 
         expect(wwe.get$Body().find('div').length).toEqual(2);
         expect(wwe.get$Body().find('pre').length).toEqual(0);
+      });
+
+      it('_onBackspaceKeyEventHandler() merge same codeblocks if backspace key is pressed in empty line between same codeblock', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
+
+        wwe.setValue([
+          '<pre>test1</pre>',
+          '<div><br></div>',
+          '<pre>test2</pre>'
+        ].join(''));
+
+        range.setStart(wwe.get$Body().find('div')[0], 0);
+        range.collapse(true);
+
+        wwe.getEditor().setSelection(range);
+
+        em.emit('wysiwygKeyEvent', {
+          keyMap: 'BACK_SPACE',
+          data: {
+            preventDefault: () => {}
+          }
+        });
+
+        expect(wwe.get$Body().find('div').length).toEqual(1);
+        expect(wwe.get$Body().find('pre').length).toEqual(1);
+        expect(wwe.get$Body().find('pre').text()).toEqual('test1\ntest2');
+      });
+
+      it('_onBackspaceKeyEventHandler() do not merge codeblocks that has different data-language attribute if backspace key is pressed in empty line between different codeblock', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
+
+        wwe.setValue([
+          '<pre data-language="uml">test1</pre>',
+          '<div><br></div>',
+          '<pre data-language="chart">test2</pre>'
+        ].join(''));
+
+        range.setStart(wwe.get$Body().find('div')[0], 0);
+        range.collapse(true);
+
+        wwe.getEditor().setSelection(range);
+
+        em.emit('wysiwygKeyEvent', {
+          keyMap: 'BACK_SPACE',
+          data: {
+            preventDefault: () => {}
+          }
+        });
+
+        expect(wwe.get$Body().find('div').length).toEqual(2);
+        expect(wwe.get$Body().find('pre').length).toEqual(2);
       });
     });
   });
