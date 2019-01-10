@@ -7,6 +7,6 @@
     ],
     "trailing-comma": false,
     "max-classes-per-file": false,
-    "max-line-length": false
+    "no-namespace": false
   }
 }
