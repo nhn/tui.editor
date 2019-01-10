@@ -57,7 +57,7 @@ class WwCodeBlockManager {
    * @private
    */
   _initKeyHandler() {
-    this._onKeyEventHandler = this._onBackspaceKeyEvnetHandler.bind(this);
+    this._onKeyEventHandler = this._onBackspaceKeyEventHandler.bind(this);
     this.wwe.addKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
   }
 
@@ -200,7 +200,7 @@ class WwCodeBlockManager {
    * @returns {boolean}
    * @private
    */
-  _onBackspaceKeyEvnetHandler(ev, range) {
+  _onBackspaceKeyEventHandler(ev, range) {
     let isNeedNext = true;
     const sq = this.wwe.getEditor();
     const {commonAncestorContainer: container} = range;
@@ -310,7 +310,7 @@ class WwCodeBlockManager {
 
       const firstDiv = document.createElement('div');
       const firstLine = strArray.shift();
-      firstDiv.innerHTML += `${firstLine}<br>`;
+      firstDiv.innerHTML = `${firstLine}<br>`;
       newFrag.appendChild(firstDiv);
 
       if (strArray.length) {
