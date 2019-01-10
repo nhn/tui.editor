@@ -28,7 +28,6 @@ const Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
       if (sq.hasFormat('BLOCKQUOTE')) {
         sq.decreaseQuoteLevel();
       } else {
-        wwe.unwrapBlockTag();
         sq.increaseQuoteLevel();
       }
     }
