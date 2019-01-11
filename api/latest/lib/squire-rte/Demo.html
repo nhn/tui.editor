@@ -59,6 +59,16 @@
     margin: 0;
     padding: 0 10px;
   }
+  pre {
+white-space: pre-wrap;word-wrap: break-word;overflow-wrap: break-word;border-radius: 3px;border: 1px solid #ccc;    padding: 7px 10px;    background: #f6f6f6;    font-family: menlo, consolas, monospace;    font-size: 90%;  }
+  code {
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    padding: 1px 3px;
+    background: #f6f6f6;
+    font-family: menlo, consolas, monospace;
+    font-size: 90%;
+  }
   </style>
 </head>
 <body>
@@ -94,6 +104,9 @@
     <span id="increaseListLevel">Increase list level</span>
     <span id="decreaseListLevel">Decrease list level</span>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <span id="code">Code</span>
+    <span id="removeCode">Uncode</span>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <span id="insertImage" class="prompt">Insert image</span>
   <span id="setHTML" class="prompt">Set HTML</span>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -112,7 +125,13 @@
           ul: {'class': 'UL'},
           ol: {'class': 'OL'},
           li: {'class': 'listItem'},
-          a: {'target': '_blank'}
+          a: {'target': '_blank'},
+          pre: {
+              style: 'border-radius:3px;border:1px solid #ccc;padding:7px 10px;background:#f6f6f6;font-family:menlo,consolas,monospace;font-size:90%;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:break-word;'
+          },
+          code: {
+              style: 'border-radius:3px;border:1px solid #ccc;padding:1px 3px;background:#f6f6f6;font-family:menlo,consolas,monospace;font-size:90%;'
+          },
       }
   });
   Squire.prototype.makeHeader = function() {

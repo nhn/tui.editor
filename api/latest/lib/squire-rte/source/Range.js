@@ -97,7 +97,7 @@ var extractContentsOfRange = function ( range, common, root ) {
     var endNode = split( endContainer, endOffset, common, root ),
         startNode = split( startContainer, startOffset, common, root ),
         frag = common.ownerDocument.createDocumentFragment(),
-        next, before, after;
+        next, before, after, beforeText, afterText;
 
     // End node will be null if at end of child nodes list.
     while ( startNode !== endNode ) {
@@ -120,7 +120,17 @@ var extractContentsOfRange = function ( range, common, root ) {
             after.nodeType === TEXT_NODE ) {
         startContainer = before;
         startOffset = before.length;
-        before.appendData( after.data );
+        beforeText = before.data;
+        afterText = after.data;
+
+        // If we now have two adjacent spaces, the second one needs to become
+        // a nbsp, otherwise the browser will swallow it due to HTML whitespace
+        // collapsing.
+        if ( beforeText.charAt( beforeText.length - 1 ) === ' ' &&
+                afterText.charAt( 0 ) === ' ' ) {
+            afterText = ' ' + afterText.slice( 1 ); // nbsp
+        }
+        before.appendData( afterText );
         detach( after );
     }
 
@@ -180,7 +190,8 @@ var deleteContentsOfRange = function ( range, root ) {
 // After method, range will be around inserted content
 var insertTreeFragmentIntoRange = function ( range, frag, root ) {
     var node, block, blockContentsAfterSplit, stopPoint, container, offset;
-    var firstBlockInFrag, nodeAfterSplit, nodeBeforeSplit, tempRange;
+    var replaceBlock, firstBlockInFrag, nodeAfterSplit, nodeBeforeSplit;
+    var tempRange;
 
     // Fixup content: ensure no top-level inline, and add cursor fix elements.
     fixContainer( frag, root );
@@ -203,10 +214,12 @@ var insertTreeFragmentIntoRange = function ( range, frag, root ) {
 
     // Merge the contents of the first block in the frag with the focused block.
     // If there are contents in the block after the focus point, collect this
-    // up to insert in the last block later
+    // up to insert in the last block later. If the block is empty, replace
+    // it instead of merging.
     block = getStartBlockOfRange( range, root );
     firstBlockInFrag = getNextBlock( frag, frag );
-    if ( block && firstBlockInFrag &&
+    replaceBlock = !!block && isEmptyBlock( block );
+    if ( block && firstBlockInFrag && !replaceBlock &&
             // Don't merge table cells or PRE elements into block
             !getNearest( firstBlockInFrag, frag, 'PRE' ) &&
             !getNearest( firstBlockInFrag, frag, 'TABLE' ) ) {
@@ -243,6 +256,11 @@ var insertTreeFragmentIntoRange = function ( range, frag, root ) {
 
     // Is there still any content in the fragment?
     if ( getLength( frag ) ) {
+        if ( replaceBlock ) {
+            range.setEndBefore( block );
+            range.collapse( false );
+            detach( block );
+        }
         moveRangeBoundariesUpTree( range, stopPoint, stopPoint, root );
         // Now split after block up to blockquote (if a parent) or root
         nodeAfterSplit = split(
