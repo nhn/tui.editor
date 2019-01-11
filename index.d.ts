@@ -11,7 +11,7 @@ declare namespace tuiEditor {
   type ReplacerFunc = (inputString: string) => string;
   type CodeMirrorType = CodeMirror.EditorFromTextArea;
   type ButtonConstructor = new (options?: IButtonOptions) => Button;
-  type CommandManagerConstructor = (new (base: Editor, options?: ICommandManagerOptions) => CommandManager);
+  type CommandManagerConstructor = new (base: Editor, options?: ICommandManagerOptions) => CommandManager;
   type CommandManagerExecFunc = (name: string, ...args: any[]) => any;
   type TriggerExtraParameterType = any[] | JQuery.PlainObject | string | number | boolean;
   type RangeType = Range | IRangeType;
