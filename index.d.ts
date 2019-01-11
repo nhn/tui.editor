@@ -339,7 +339,7 @@ declare namespace tuiEditor {
   }
 
   interface IWwCodeBlockManager {
-    convertToCodeblock(nodes: Node[]): Element;
+    convertNodesToText(nodes: Node[]): string;
     destroy(): void;
     isInCodeBlock(range: Range): boolean;
     prepareToPasteOnCodeblock(nodes: Node[]): DocumentFragment;

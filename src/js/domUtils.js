@@ -30,6 +30,16 @@ const isElemNode = function(node) {
 };
 
 /**
+ * Check that the node is block node
+ * @param {Node} node node
+ * @returns {boolean}
+ * @ignore
+ */
+const isBlockNode = function(node) {
+  return /^(ADDRESS|ARTICLE|ASIDE|BLOCKQUOTE|DETAILS|DIALOG|DD|DIV|DL|DT|FIELDSET|FIGCAPTION|FIGURE|FOOTER|FORM|H[\d]|HEADER|HGROUP|HR|LI|MAIN|NAV|OL|P|PRE|SECTION|UL)$/ig.test(this.getNodeName(node));
+};
+
+/**
  * getNodeName
  * Get node name of node
  * @param {Node} node node
@@ -489,6 +499,7 @@ export default {
   getNodeName,
   isTextNode,
   isElemNode,
+  isBlockNode,
   getTextLength,
   getOffsetLength,
   getPrevOffsetNodeUntil,

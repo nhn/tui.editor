@@ -107,11 +107,42 @@ class WwClipboardManager {
       });
     }
 
+    // @TODO Temporary code : paste to empty code block
+    this._pasteToEmptyCodeBlock(pasteData);
+
     // once right after the squire insertHTML DOM.
     const handler = () => {
       this.wwe.getEditor().removeEventListener('input', handler);
       this.wwe.eventManager.emit('wysiwygRangeChangeAfter', this);
       this._focusTableBookmark();
+    };
+    this.wwe.getEditor().addEventListener('input', handler);
+  }
+
+  // @TODO Temporary code : paste to empty code block
+  // Squire remove empty code block when paste.
+  // This code should remove after Squire update !!!
+  // https://github.com/neilj/Squire/blob/7cef58bda854c49989c429d90756bff8d6fe758c/source/Range.js#L259
+  _pasteToEmptyCodeBlock(pasteData) {
+    const sq = this.wwe.getEditor();
+    const range = sq.getSelection().cloneRange();
+    const container = range.startContainer;
+    const wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
+    let shouldChangeSelection = false;
+    if (wwCodeblockManager.isInCodeBlock(range) && range.collapse &&
+        container.nodeName === 'PRE' && !container.textContent) {
+      const brNode = container.firstChild;
+      container.insertBefore(pasteData.fragment, brNode);
+      pasteData.defaultPrevented = true;
+      shouldChangeSelection = true;
+    }
+
+    const handler = () => {
+      this.wwe.getEditor().removeEventListener('input', handler);
+      if (shouldChangeSelection) {
+        range.setStart(container, 1);
+        sq.setSelection(range);
+      }
     };
     this.wwe.getEditor().addEventListener('input', handler);
   }

@@ -62,15 +62,8 @@ class CodeBlockEditor extends CodeMirrorExt {
    */
   load(codeBlockElement) {
     const el = codeBlockElement.cloneNode(true);
-    const texts = [];
-
-    const divs = el.querySelectorAll('div');
-    [].slice.call(divs).forEach(div => {
-      texts.push(div.innerText.replace(/\n$/, ''));
-    });
-
     this.setLanguage(el.getAttribute('data-language') || '');
-    this.setEditorCodeText(texts.join('\n'));
+    this.setEditorCodeText(el.textContent);
   }
 
   /**
@@ -80,21 +73,7 @@ class CodeBlockEditor extends CodeMirrorExt {
    */
   save(codeBlockElement) {
     codeBlockElement.innerHTML = '';
-
-    const codeLines = this.getEditorCodeText().split('\n');
-    codeLines.forEach(codeLine => {
-      const div = document.createElement('div');
-      codeBlockElement.appendChild(div);
-
-      let childElement;
-      if (codeLine.length > 0) {
-        childElement = document.createTextNode(codeLine);
-      } else {
-        childElement = document.createElement('br');
-      }
-      div.appendChild(childElement);
-    });
-
+    codeBlockElement.textContent = this.getEditorCodeText();
     codeBlockElement.setAttribute('data-language', this._language);
     $(codeBlockElement).trigger(EVENT_LANGUAGE_CHANGED);
   }
