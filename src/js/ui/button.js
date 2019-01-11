@@ -30,6 +30,7 @@ class Button extends ToolbarItem {
   /**
    * Creates an instance of Button.
    * @param {object} options - button options
+   *  @param {jquery} $el - button rootElement
    *  @param {string} options.className - button class name
    *  @param {string} options.command - command name to execute on click
    *  @param {string} options.event - event name to trigger on click
@@ -63,7 +64,7 @@ class Button extends ToolbarItem {
   /**
    * set tooltip text
    * @param {string} text - tooltip text to show
-   * @memberof button
+   * @memberof Button
    */
   setTooltip(text) {
     this._tooltip = text;

@@ -1,0 +1,12 @@
+{
+  "extends": "tslint:recommended",
+  "rules": {
+    "quotemark": [
+      true,
+      "single"
+    ],
+    "trailing-comma": false,
+    "max-classes-per-file": false,
+    "no-namespace": false
+  }
+}

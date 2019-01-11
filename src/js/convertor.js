@@ -245,6 +245,16 @@ class Convertor {
   static getMarkdownitHighlightRenderer() {
     return markdownitHighlight;
   }
+
+  /**
+   * get markdownit
+   * @returns {markdownit} - markdownit instance
+   * @memberof Convertor
+   * @static
+   */
+  static getMarkdownitRenderer() {
+    return markdownit;
+  }
 }
 
 export default Convertor;

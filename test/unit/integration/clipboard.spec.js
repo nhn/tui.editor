@@ -62,8 +62,10 @@ describe('Clipboard', () => {
   }
 
   beforeEach(done => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
     editor = new Editor({
-      el: document.body,
+      el: container,
       height: '300px',
       initialEditType: 'wysiwyg'
     });

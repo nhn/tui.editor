@@ -126,8 +126,12 @@ class ToastUIEditor {
     * @param {string[]} [options.toolbarItems] - toolbar items.
     * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
     * @param {string[]} [options.exts] - extensions
+    * @param {object} [options.customConvertor] - convertor extention
     */
   constructor(options) {
+    this.initialHtml = options.el.innerHTML;
+    options.el.innerHTML = '';
+
     this.options = $.extend({
       previewStyle: 'tab',
       initialEditType: 'markdown',
@@ -160,7 +164,8 @@ class ToastUIEditor {
         'code',
         'codeblock'
       ],
-      hideModeSwitch: false
+      hideModeSwitch: false,
+      customConvertor: null
     }, options);
 
     this.eventManager = new EventManager();
@@ -171,7 +176,12 @@ class ToastUIEditor {
       useCommandShortcut: this.options.useCommandShortcut
     });
 
-    this.convertor = new Convertor(this.eventManager);
+    if (this.options.customConvertor) {
+      // eslint-disable-next-line new-cap
+      this.convertor = new this.options.customConvertor(this.eventManager);
+    } else {
+      this.convertor = new Convertor(this.eventManager);
+    }
 
     if (this.options.useDefaultHTMLSanitizer) {
       this.convertor.initHtmlSanitizer();
@@ -207,6 +217,10 @@ class ToastUIEditor {
 
     this.setValue(this.options.initialValue, false);
 
+    if (!this.options.initialValue) {
+      this.setHtml(this.initialHtml, false);
+    }
+
     extManager.applyExtension(this, this.options.exts);
 
     this.eventManager.emit('load', this);
@@ -235,7 +249,7 @@ class ToastUIEditor {
   /**
    * call commandManager's exec method
    * @memberof ToastUIEditor
-   * @param {string} style - 'tab'|'vertical'
+   * @param {*} ...args Command argument
    */
   exec(...args) {
     this.commandManager.exec(...args);
@@ -629,6 +643,7 @@ class ToastUIEditor {
       this.eventManager.emit('changeModeToWysiwyg');
     } else {
       this.layout.switchToMarkdown();
+      this.mdEditor.resetState();
       this.mdEditor.setValue(
         this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions), !isWithoutFocus
       );
@@ -854,5 +869,11 @@ ToastUIEditor.CommandManager = CommandManager;
  * @type {MarkdownIt}
  */
 ToastUIEditor.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
+
+/**
+ * MarkdownIt instance
+ * @type {MarkdownIt}
+ */
+ToastUIEditor.markdownit = Convertor.getMarkdownitRenderer();
 
 module.exports = ToastUIEditor;

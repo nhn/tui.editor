@@ -5,6 +5,7 @@
 import MarkdownIt from 'markdown-it';
 
 import ToastUIEditorViewer from '../../src/js/viewer';
+import Convertor from '../../src/js/convertor';
 import {CodeBlockManager} from '../../src/js/codeBlockManager';
 
 describe('Viewer', () => {
@@ -41,5 +42,21 @@ describe('Viewer', () => {
   it('should have codeBlockLanugages option', () => {
     const viewer = new ToastUIEditorViewer();
     expect(viewer.options.codeBlockLanguages.length).toBeTruthy();
+  });
+
+  it('should use default convertor if the option value is not set', () => {
+    const viewer = new ToastUIEditorViewer();
+    expect(viewer.convertor instanceof Convertor).toBe(true);
+  });
+
+  it('should use custom convertor if the option value is set', () => {
+    const CustomConvertor = class extends Convertor {
+    };
+
+    const viewer = new ToastUIEditorViewer({
+      customConvertor: CustomConvertor
+    });
+    expect(viewer.convertor instanceof Convertor).toBe(true);
+    expect(viewer.convertor instanceof CustomConvertor).toBe(true);
   });
 });

@@ -15,7 +15,7 @@ const BlockquoteRegex = /^> ?/;
  */
 const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
   name: 'Blockquote',
-  keyMap: ['CTRL+Q', 'META+Q'],
+  keyMap: ['ALT+Q', 'ALT+Q'],
   /**
    * command handler
    * @param {MarkdownEditor} mde MarkdownEditor instance

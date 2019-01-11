@@ -18,11 +18,23 @@ const editor:Editor = new Editor({
   initialValue: '# HELLO TOAST UI EDITOR!'
 });
 
-new Editor.Button();
+new Editor.Button({
+  className: 'editor-btn',
+  element: $('#container')
+});
 Editor.codeBlockManager;
 Editor.codeBlockManager.createCodeBlockHtml('en_US', 'Hello World');
 Editor.codeBlockManager.getReplacer('youtube');
-new Editor.CommandManager();
+const cm = new Editor.CommandManager();
+const command = cm.addCommand(Editor.CommandManager.command('shift'));
+command.getName();
+command.getType();
+command.isGlobalType();
+command.isMDType();
+command.isWWType();
+command.TYPE.GB;
+command.TYPE.MD;
+command.TYPE.WW;
 Editor.domUtils;
 Editor.i18n;
 Editor.isViewer;
