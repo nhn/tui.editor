@@ -1,9 +1,9 @@
 import Editor from 'tui-editor';
-import tuiEditor from 'tui-editor/dist/tui-editor-Editor-all';
+import EditorAll from 'tui-editor/dist/tui-editor-Editor-all';
 import Viewer from 'tui-editor/dist/tui-editor-Viewer';
-import tuiViewer from 'tui-editor/dist/tui-editor-Viewer-all';
+import ViewerAll from 'tui-editor/dist/tui-editor-Viewer-all';
 
-const editor2 = new tuiEditor({
+const editor2 = new EditorAll({
   el: document.getElementById('editor'),
   height: '200px',
   minHeight: '100px',
@@ -20,28 +20,33 @@ const editor:Editor = new Editor({
 
 new Editor.Button({
   className: 'editor-btn',
-  element: $('#container')
+  $el: $('#container')
 });
 Editor.codeBlockManager;
 Editor.codeBlockManager.createCodeBlockHtml('en_US', 'Hello World');
 Editor.codeBlockManager.getReplacer('youtube');
-const cm = new Editor.CommandManager();
-const command = cm.addCommand(Editor.CommandManager.command('shift'));
+const cm = new Editor.CommandManager(editor);
+const tuiCommand = tuiEditor.Command;
+tuiCommand.TYPE.GB;
+tuiCommand.TYPE.MD;
+tuiCommand.TYPE.WW;
+const cmd = new tuiCommand('enter', 13);
+const tuiCmdManagerCmd = tuiEditor.CommandManager.command('shift', {name: 'shift'});
+const command = cm.addCommand(cmd);
 command.getName();
 command.getType();
 command.isGlobalType();
 command.isMDType();
 command.isWWType();
-command.TYPE.GB;
-command.TYPE.MD;
-command.TYPE.WW;
+
 Editor.domUtils;
 Editor.i18n;
 Editor.isViewer;
 Editor.markdownitHighlight;
-new Editor.WwCodeBlockManager();
-new Editor.WwTableManager();
-new Editor.WwTableSelectionManager();
+const wwe = editor.getCurrentModeEditor() as tuiEditor.WysiwygEditor;
+new Editor.WwCodeBlockManager(wwe);
+new Editor.WwTableManager(wwe);
+new Editor.WwTableSelectionManager(wwe);
 
 Editor.defineExtension('youtube', () => { return '<div></div>'});
 Editor.factory({el: document.querySelector('#editorSectoin')});
@@ -54,7 +59,7 @@ editor.afterAddedCommand();
 editor.blur();
 editor.changeMode('markdown', false);
 editor.changePreviewStyle('tab');
-editor.exec();
+editor.exec('delete');
 editor.focus();
 editor.getCodeMirror();
 editor.getCurrentModeEditor();
@@ -84,7 +89,8 @@ editor.reset();
 editor.scrollTop(0);
 editor.setHtml('<div>HELLO</div>');
 editor.setMarkdown('### Delicious Web!', true);
-editor.setUI({});
+const customUI = new tuiEditor.DefaultUI(editor);
+editor.setUI(customUI);
 editor.setValue('* using TOAST UI');
 editor.show();
 
@@ -111,7 +117,7 @@ viewer.setMarkdown('### I am Viewer!');
 viewer.setValue('### I am setValue method!');
 Editor.getInstances().length == 1;
 
-const viewer2 = new tuiViewer({
+const viewer2 = new ViewerAll({
   el: document.querySelector('#el')
 });
 viewer2.isViewer();
