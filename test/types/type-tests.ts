@@ -89,8 +89,7 @@ editor.reset();
 editor.scrollTop(0);
 editor.setHtml('<div>HELLO</div>');
 editor.setMarkdown('### Delicious Web!', true);
-const customUI = new tuiEditor.DefaultUI(editor);
-editor.setUI(customUI);
+editor.setUI(editor.getUI());
 editor.setValue('* using TOAST UI');
 editor.show();
 

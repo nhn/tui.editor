@@ -258,21 +258,17 @@ declare namespace tuiEditor {
 
   class DefaultToolbar extends Toolbar {}
 
-  class DefaultUI {
-    public $el: JQuery;
-    public name: string;
-
-    constructor(editor: Editor);
-
-    public getEditorHeight(): number;
-    public getEditorSectionHeight(): number;
-    public getModeSwitch(): IModeSwitch;
-    public getPopupTableUtils(): PopupTableUtils;
-    public getToolbar(): Toolbar;
-    public hide(): void;
-    public remove(): void;
-    public setToolbar(toolbar: Toolbar): void;
-    public show(): void;
+  interface IUI {
+    createPopup(options: ILayerPopupOptions): ILayerPopup;
+    getEditorHeight(): number;
+    getEditorSectionHeight(): number;
+    getModeSwitch(): IModeSwitch;
+    getPopupTableUtils(): PopupTableUtils;
+    getToolbar(): Toolbar;
+    hide(): void;
+    remove(): void;
+    setToolbar(toolbar: Toolbar): void;
+    show(): void;
   }
 
   interface ICommandManagerOptions {
@@ -507,7 +503,7 @@ declare namespace tuiEditor {
     public getSelectedText(): string;
     public getSquire(): SquireExt;
     public getTextObject(range: RangeType): IMdTextObject | IWwTextObject;
-    public getUI(): DefaultUI;
+    public getUI(): IUI;
     public getValue(): string;
     public height(height: string): string;
     public hide(): void;
@@ -526,7 +522,7 @@ declare namespace tuiEditor {
     public scrollTop(value: number): number;
     public setHtml(html: string, cursorToEnd?: boolean): void;
     public setMarkdown(markdown: string, cursorToEnd?: boolean): void;
-    public setUI(UI: DefaultUI): void;
+    public setUI(UI: IUI): void;
     public setValue(value: string, cursorToEnd?: boolean): void;
     public show(): void;
   }
