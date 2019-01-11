@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.10
+ * @version 1.3.0
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -5793,21 +5793,21 @@ function _setWwCodeBlockManagerForChart(editor) {
     }
 
     _createClass(_class, [{
-      key: 'convertToCodeblock',
+      key: 'convertNodesToText',
 
       /**
-       * Wrap table nodes into code block as TSV
+       * Convert table nodes into code block as TSV
        * @memberof WwCodeBlockManager
        * @param {Array.<Node>} nodes Node array
        * @returns {HTMLElement} Code block element
        */
-      value: function convertToCodeblock(nodes) {
+      value: function convertNodesToText(nodes) {
         if (nodes.length !== 1 || nodes[0].tagName !== 'TABLE') {
-          return _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'convertToCodeblock', this).call(this, nodes);
+          return _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'convertNodesToText', this).call(this, nodes);
         }
 
-        var $codeblock = (0, _jquery2.default)('<pre />');
         var node = nodes.shift();
+        var str = '';
 
         // convert table to 2-dim array
         var cells = [].slice.call(node.rows).map(function (row) {
@@ -5817,13 +5817,11 @@ function _setWwCodeBlockManagerForChart(editor) {
         });
 
         var tsvRows = _reduceToTSV(cells);
-        $codeblock.append(tsvRows.reduce(function (acc, row) {
-          return acc + ('<div>' + row + '</div>');
-        }, []));
+        str += tsvRows.reduce(function (acc, row) {
+          return acc + (row + '\n');
+        }, []);
 
-        $codeblock.attr('data-te-codeblock', '');
-
-        return $codeblock[0];
+        return str;
       }
     }]);
 

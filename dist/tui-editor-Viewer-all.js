@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.10
+ * @version 1.3.0
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -2589,12 +2589,18 @@ var ToastUIEditorViewer = function () {
 
     this.options = _jquery2.default.extend({
       useDefaultHTMLSanitizer: true,
-      codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages()
+      codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages(),
+      customConvertor: null
     }, options);
 
     this.eventManager = new _eventManager2.default();
     this.commandManager = new _commandManager2.default(this);
-    this.convertor = new _convertor2.default(this.eventManager);
+    if (this.options.customConvertor) {
+      // eslint-disable-next-line new-cap
+      this.convertor = new this.options.customConvertor(this.eventManager);
+    } else {
+      this.convertor = new _convertor2.default(this.eventManager);
+    }
     this.toMarkOptions = null;
 
     if (this.options.useDefaultHTMLSanitizer) {
@@ -2807,6 +2813,12 @@ ToastUIEditorViewer.codeBlockManager = _codeBlockManager2.default;
  * @type {MarkdownIt}
  */
 ToastUIEditorViewer.markdownitHighlight = _convertor2.default.getMarkdownitHighlightRenderer();
+
+/**
+ * MarkdownIt instance
+ * @type {MarkdownIt}
+ */
+ToastUIEditorViewer.markdownit = _convertor2.default.getMarkdownitRenderer();
 
 /**
  * @ignore
@@ -7040,21 +7052,21 @@ function _setWwCodeBlockManagerForChart(editor) {
     }
 
     _createClass(_class, [{
-      key: 'convertToCodeblock',
+      key: 'convertNodesToText',
 
       /**
-       * Wrap table nodes into code block as TSV
+       * Convert table nodes into code block as TSV
        * @memberof WwCodeBlockManager
        * @param {Array.<Node>} nodes Node array
        * @returns {HTMLElement} Code block element
        */
-      value: function convertToCodeblock(nodes) {
+      value: function convertNodesToText(nodes) {
         if (nodes.length !== 1 || nodes[0].tagName !== 'TABLE') {
-          return _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'convertToCodeblock', this).call(this, nodes);
+          return _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'convertNodesToText', this).call(this, nodes);
         }
 
-        var $codeblock = (0, _jquery2.default)('<pre />');
         var node = nodes.shift();
+        var str = '';
 
         // convert table to 2-dim array
         var cells = [].slice.call(node.rows).map(function (row) {
@@ -7064,13 +7076,11 @@ function _setWwCodeBlockManagerForChart(editor) {
         });
 
         var tsvRows = _reduceToTSV(cells);
-        $codeblock.append(tsvRows.reduce(function (acc, row) {
-          return acc + ('<div>' + row + '</div>');
-        }, []));
+        str += tsvRows.reduce(function (acc, row) {
+          return acc + (row + '\n');
+        }, []);
 
-        $codeblock.attr('data-te-codeblock', '');
-
-        return $codeblock[0];
+        return str;
       }
     }]);
 
@@ -7982,6 +7992,7 @@ var CommandManager = function () {
      * Execute command
      * @memberof CommandManager
      * @param {String} name Command name
+     * @param {*} ...args Command argument
      * @returns {*}
      */
 
@@ -8024,9 +8035,9 @@ var CommandManager = function () {
 
 /**
  * Create command by given editor type and property object
- * @memberof ComponentManager
+ * @memberof CommandManager
  * @param {string} type Command type
- * @param {{name: string, keyMap: object}} props Property
+ * @param {{name: string, keyMap: Array}} props Property
  * @returns {*}
  */
 
@@ -8645,6 +8656,19 @@ var Convertor = function () {
     key: 'getMarkdownitHighlightRenderer',
     value: function getMarkdownitHighlightRenderer() {
       return markdownitHighlight;
+    }
+
+    /**
+     * get markdownit
+     * @returns {markdownit} - markdownit instance
+     * @memberof Convertor
+     * @static
+     */
+
+  }, {
+    key: 'getMarkdownitRenderer',
+    value: function getMarkdownitRenderer() {
+      return markdownit;
     }
   }]);
 
@@ -9802,6 +9826,17 @@ var isElemNode = function isElemNode(node) {
 };
 
 /**
+ * Check that the node is block node
+ * @param {Node} node node
+ * @returns {boolean}
+ * @ignore
+ */
+var isBlockNode = function isBlockNode(node) {
+  return (/^(ADDRESS|ARTICLE|ASIDE|BLOCKQUOTE|DETAILS|DIALOG|DD|DIV|DL|DT|FIELDSET|FIGCAPTION|FIGURE|FOOTER|FORM|H[\d]|HEADER|HGROUP|HR|LI|MAIN|NAV|OL|P|PRE|SECTION|UL)$/ig.test(this.getNodeName(node))
+  );
+};
+
+/**
  * getNodeName
  * Get node name of node
  * @param {Node} node node
@@ -10185,7 +10220,7 @@ var getPath = function getPath(node, root) {
 /**
  * Find next, previous TD or TH element by given TE element
  * @param {HTMLElement} node TD element
- * @param {string} direction Boolean value for direction true is find next cell
+ * @param {string} direction 'next' or 'previous'
  * @returns {HTMLElement|null}
  * @ignore
  */
@@ -10271,6 +10306,7 @@ exports.default = {
   getNodeName: getNodeName,
   isTextNode: isTextNode,
   isElemNode: isElemNode,
+  isBlockNode: isBlockNode,
   getTextLength: getTextLength,
   getOffsetLength: getOffsetLength,
   getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,

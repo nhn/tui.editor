@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.10
+ * @version 1.3.0
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -249,6 +249,7 @@ var CommandManager = function () {
      * Execute command
      * @memberof CommandManager
      * @param {String} name Command name
+     * @param {*} ...args Command argument
      * @returns {*}
      */
 
@@ -291,9 +292,9 @@ var CommandManager = function () {
 
 /**
  * Create command by given editor type and property object
- * @memberof ComponentManager
+ * @memberof CommandManager
  * @param {string} type Command type
- * @param {{name: string, keyMap: object}} props Property
+ * @param {{name: string, keyMap: Array}} props Property
  * @returns {*}
  */
 
@@ -481,6 +482,17 @@ var isTextNode = function isTextNode(node) {
  */
 var isElemNode = function isElemNode(node) {
   return node && node.nodeType === Node.ELEMENT_NODE;
+};
+
+/**
+ * Check that the node is block node
+ * @param {Node} node node
+ * @returns {boolean}
+ * @ignore
+ */
+var isBlockNode = function isBlockNode(node) {
+  return (/^(ADDRESS|ARTICLE|ASIDE|BLOCKQUOTE|DETAILS|DIALOG|DD|DIV|DL|DT|FIELDSET|FIGCAPTION|FIGURE|FOOTER|FORM|H[\d]|HEADER|HGROUP|HR|LI|MAIN|NAV|OL|P|PRE|SECTION|UL)$/ig.test(this.getNodeName(node))
+  );
 };
 
 /**
@@ -867,7 +879,7 @@ var getPath = function getPath(node, root) {
 /**
  * Find next, previous TD or TH element by given TE element
  * @param {HTMLElement} node TD element
- * @param {string} direction Boolean value for direction true is find next cell
+ * @param {string} direction 'next' or 'previous'
  * @returns {HTMLElement|null}
  * @ignore
  */
@@ -953,6 +965,7 @@ exports.default = {
   getNodeName: getNodeName,
   isTextNode: isTextNode,
   isElemNode: isElemNode,
+  isBlockNode: isBlockNode,
   getTextLength: getTextLength,
   getOffsetLength: getOffsetLength,
   getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
@@ -1019,16 +1032,16 @@ var LAYOUT_TEMPLATE_MODAL = '<div class="' + CLASS_PREFIX + 'wrapper">\n        
 /**
  * A number, or a string containing a number.
  * @typedef {Object} LayerPopupOption
-    * @property {string[]} openerCssQuery - Css Query list to bind clickevent that open popup
-    * @property {string[]} closerCssQuery - Css Query list to bind clickevent that close popup
+    * @property {string[]} [openerCssQuery] - Css Query list to bind clickevent that open popup
+    * @property {string[]} [closerCssQuery] - Css Query list to bind clickevent that close popup
     * @property {jQuery} $el - popup root element
-    * @property {jQuery|string} content - popup content that html string or jQuery element
-    * @property {string} textContent - popup text content
+    * @property {jQuery|string} [content] - popup content that html string or jQuery element
+    * @property {string} [textContent] - popup text content
     * @property {string} title - popup title
-    * @property {boolean} header - whether to draw header
-    * @property {jQuery} $target - element to append popup
+    * @property {boolean} [header] - whether to draw header
+    * @property {jQuery} [$target] - element to append popup
     * @property {boolean} modal - true: modal, false: modeless
-    * @property {string} headerButtons - replace header(close) button
+    * @property {string} [headerButtons] - replace header(close) button
  */
 
 /**
@@ -3216,6 +3229,19 @@ var Convertor = function () {
     value: function getMarkdownitHighlightRenderer() {
       return markdownitHighlight;
     }
+
+    /**
+     * get markdownit
+     * @returns {markdownit} - markdownit instance
+     * @memberof Convertor
+     * @static
+     */
+
+  }, {
+    key: 'getMarkdownitRenderer',
+    value: function getMarkdownitRenderer() {
+      return markdownit;
+    }
   }]);
 
   return Convertor;
@@ -3267,6 +3293,7 @@ var Button = function (_ToolbarItem) {
   /**
    * Creates an instance of Button.
    * @param {object} options - button options
+   *  @param {jquery} $el - button rootElement
    *  @param {string} options.className - button class name
    *  @param {string} options.command - command name to execute on click
    *  @param {string} options.event - event name to trigger on click
@@ -3312,7 +3339,7 @@ var Button = function (_ToolbarItem) {
   /**
    * set tooltip text
    * @param {string} text - tooltip text to show
-   * @memberof button
+   * @memberof Button
    */
 
 
@@ -5191,12 +5218,18 @@ var ToastUIEditorViewer = function () {
 
     this.options = _jquery2.default.extend({
       useDefaultHTMLSanitizer: true,
-      codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages()
+      codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages(),
+      customConvertor: null
     }, options);
 
     this.eventManager = new _eventManager2.default();
     this.commandManager = new _commandManager2.default(this);
-    this.convertor = new _convertor2.default(this.eventManager);
+    if (this.options.customConvertor) {
+      // eslint-disable-next-line new-cap
+      this.convertor = new this.options.customConvertor(this.eventManager);
+    } else {
+      this.convertor = new _convertor2.default(this.eventManager);
+    }
     this.toMarkOptions = null;
 
     if (this.options.useDefaultHTMLSanitizer) {
@@ -5411,6 +5444,12 @@ ToastUIEditorViewer.codeBlockManager = _codeBlockManager2.default;
 ToastUIEditorViewer.markdownitHighlight = _convertor2.default.getMarkdownitHighlightRenderer();
 
 /**
+ * MarkdownIt instance
+ * @type {MarkdownIt}
+ */
+ToastUIEditorViewer.markdownit = _convertor2.default.getMarkdownitRenderer();
+
+/**
  * @ignore
  */
 ToastUIEditorViewer.i18n = null;
@@ -5619,7 +5658,10 @@ var CodeMirrorExt = function () {
           'Alt-Down': 'replaceLineTextToLower'
         },
         indentUnit: 4,
-        cursorScrollMargin: 12
+        cursorScrollMargin: 12,
+        specialCharPlaceholder: function specialCharPlaceholder() {
+          return document.createElement('span');
+        }
       }, options);
 
       this.cm = _codemirror2.default.fromTextArea(cmTextarea, options);
@@ -8060,7 +8102,7 @@ var WwCodeBlockManager = function () {
   }, {
     key: '_initKeyHandler',
     value: function _initKeyHandler() {
-      this._onKeyEventHandler = this._removeCodeblockIfNeed.bind(this);
+      this._onKeyEventHandler = this._onBackspaceKeyEventHandler.bind(this);
       this.wwe.addKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
     }
 
@@ -8074,19 +8116,19 @@ var WwCodeBlockManager = function () {
   }, {
     key: '_initEvent',
     value: function _initEvent() {
-      var self = this;
+      var _this = this;
 
       this.eventManager.listen('wysiwygSetValueAfter.codeblock', function () {
-        self.splitCodeblockToEachLine();
+        _this.modifyCodeBlockForWysiwyg();
       });
 
       this.eventManager.listen('wysiwygProcessHTMLText.codeblock', function (html) {
-        return self._mergeCodeblockEachlinesFromHTMLText(html);
+        return _this._changePreToPreCode(html);
       });
     }
 
     /**
-     * Convert copied nodes to code block if need
+     * Prepare nodes for pasting to code block
      * @memberof WwCodeBlockManager
      * @param {Array.<Node>} nodes Node array
      * @returns {DocumentFragment}
@@ -8095,40 +8137,45 @@ var WwCodeBlockManager = function () {
   }, {
     key: 'prepareToPasteOnCodeblock',
     value: function prepareToPasteOnCodeblock(nodes) {
-      var range = this.wwe.getEditor().getSelection().cloneRange();
       var frag = this.wwe.getEditor().getDocument().createDocumentFragment();
-
-      if (nodes.length === 1 && this._isCodeBlock(nodes[0])) {
-        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(nodes.shift(), range));
-      } else {
-        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(this.convertToCodeblock(nodes), range));
-      }
+      var text = this.convertNodesToText(nodes);
+      text = text.replace(/\n$/, '');
+      frag.appendChild(document.createTextNode(text));
 
       return frag;
     }
 
     /**
-     * Wrap nodes into code block
+     * Convert nodes to text for pasting to code block
      * @memberof WwCodeBlockManager
      * @param {Array.<Node>} nodes Node array
-     * @returns {HTMLElement} Code block element
+     * @returns {string} coverted string
      */
 
   }, {
-    key: 'convertToCodeblock',
-    value: function convertToCodeblock(nodes) {
-      var $codeblock = (0, _jquery2.default)('<pre />');
-      var self = this;
+    key: 'convertNodesToText',
+    value: function convertNodesToText(nodes) {
+      var str = '';
       var node = nodes.shift();
 
       while (_tuiCodeSnippet2.default.isTruthy(node)) {
-        $codeblock.append(self._makeCodeBlockLineHtml(_tuiCodeSnippet2.default.isString(node) ? node : node.textContent));
+        var _node = node,
+            childNodes = _node.childNodes;
+
+        if (childNodes && _domUtils2.default.isBlockNode(node)) {
+          str += this.convertNodesToText(_tuiCodeSnippet2.default.toArray(node.childNodes));
+        } else if (node.nodeName === 'BR') {
+          str += '\n';
+        } else {
+          var _node2 = node,
+              textContent = _node2.textContent;
+
+          str += sanitizeHtmlCode(textContent);
+        }
         node = nodes.shift();
       }
 
-      $codeblock.attr(CODEBLOCK_ATTR_NAME, '');
-
-      return $codeblock[0];
+      return str;
     }
 
     /**
@@ -8157,7 +8204,7 @@ var WwCodeBlockManager = function () {
     }
 
     /**
-     * Merge code block lines
+     * Change pre tag to pre and code
      * @memberof WwCodeBlockManager
      * @param {string} html HTML string
      * @returns {string}
@@ -8165,31 +8212,23 @@ var WwCodeBlockManager = function () {
      */
 
   }, {
-    key: '_mergeCodeblockEachlinesFromHTMLText',
-    value: function _mergeCodeblockEachlinesFromHTMLText(html) {
-      html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, function (match, codeAttr, code) {
-        code = code.replace(/<br\s*\/?>/g, '\n');
-        code = code.replace(/<div ?(.*?)>/g, '');
-        code = code.replace(/\n$/, '');
-
+    key: '_changePreToPreCode',
+    value: function _changePreToPreCode(html) {
+      return html.replace(/<pre( .*?)?>((.|\n)*?)<\/pre>/g, function (match, codeAttr, code) {
         return '<pre><code' + (codeAttr || '') + '>' + code + '</code></pre>';
       });
-
-      return html;
     }
 
     /**
-     * Split code block to lines
+     * Modify Code Block for Wysiwyg
      * @memberof WwCodeBlockManager
      * @param {HTMLElement} node root node to find pre
      * @private
      */
 
   }, {
-    key: 'splitCodeblockToEachLine',
-    value: function splitCodeblockToEachLine(node) {
-      var self = this;
-
+    key: 'modifyCodeBlockForWysiwyg',
+    value: function modifyCodeBlockForWysiwyg(node) {
       if (!node) {
         node = this.wwe.get$Body();
       }
@@ -8198,21 +8237,20 @@ var WwCodeBlockManager = function () {
         var $pre = (0, _jquery2.default)(pre);
         var lang = $pre.find('code').attr('data-language');
         var numberOfBackticks = $pre.find('code').attr('data-backticks');
-        var textLines = void 0;
 
         // if this pre can have lines
         if ($pre.children().length > 1) {
-          textLines = [];
-
           $pre.children().each(function (idx, childNode) {
             if ((childNode.nodeName === 'DIV' || childNode.nodeName === 'P') && !(0, _jquery2.default)(childNode).find('br').length) {
-              (0, _jquery2.default)(childNode).append('<br>');
+              (0, _jquery2.default)(childNode).append('\n');
             }
           });
         }
-
         $pre.find('br').replaceWith('\n');
-        textLines = $pre.text().replace(/\s+$/, '').split(/\n/g);
+
+        var resultText = $pre.text().replace(/\s+$/, '');
+        $pre.empty();
+        $pre.html(resultText ? resultText : '<br>');
 
         if (lang) {
           $pre.attr('data-language', lang);
@@ -8221,39 +8259,12 @@ var WwCodeBlockManager = function () {
         if (numberOfBackticks) {
           $pre.attr('data-backticks', numberOfBackticks);
         }
-
-        $pre.empty();
-
-        _tuiCodeSnippet2.default.forEach(textLines, function (line) {
-          $pre.append(self._makeCodeBlockLineHtml(line));
-        });
-
         $pre.attr(CODEBLOCK_ATTR_NAME, '');
       });
     }
 
     /**
-     * Make code HTML text
-     * @memberof WwCodeBlockManager
-     * @param {string} lineContent Content text
-     * @returns {string}
-     * @private
-     */
-
-  }, {
-    key: '_makeCodeBlockLineHtml',
-    value: function _makeCodeBlockLineHtml(lineContent) {
-      if (!lineContent) {
-        lineContent = '<br>';
-      } else {
-        lineContent = sanitizeHtmlCode(lineContent);
-      }
-
-      return '<div>' + lineContent + '</div>';
-    }
-
-    /**
-     * Remove codeblock if need
+     * Remove codeblock of first line when press backspace in first line
      * @memberof WwCodeBlockManager
      * @param {Event} ev Event object
      * @param {Range} range Range object
@@ -8262,39 +8273,145 @@ var WwCodeBlockManager = function () {
      */
 
   }, {
-    key: '_removeCodeblockIfNeed',
-    value: function _removeCodeblockIfNeed(ev, range) {
-      var self = this;
+    key: '_onBackspaceKeyEventHandler',
+    value: function _onBackspaceKeyEventHandler(ev, range) {
+      var isNeedNext = true;
+      var sq = this.wwe.getEditor();
+      var container = range.commonAncestorContainer;
 
-      if (!this.isInCodeBlock(range)) {
-        return true;
+      if (this._isCodeBlockFirstLine(range) && !this._isFrontCodeblock(range)) {
+        this._removeCodeblockFirstLine(container);
+        range.collapse(true);
+        isNeedNext = false;
+      } else if (range.collapsed && this._isEmptyLine(container) && this._isBetweenSameCodeblocks(container)) {
+        var previousSibling = container.previousSibling,
+            nextSibling = container.nextSibling;
+
+        var prevTextLength = previousSibling.textContent.length;
+
+        sq.saveUndoState(range);
+
+        container.parentNode.removeChild(container);
+        this._mergeCodeblocks(previousSibling, nextSibling);
+
+        range.setStart(previousSibling.childNodes[0], prevTextLength);
+        range.collapse(true);
+        isNeedNext = false;
       }
 
-      var pre = (0, _jquery2.default)(range.startContainer).closest('pre');
-      var $div = (0, _jquery2.default)(pre).find('div').eq(0);
-      var codeContent = $div.text().replace(FIND_ZWS_RX, '');
-
-      // only one code
-      if ((range.startOffset === 0 || codeContent.length === 0) && (0, _jquery2.default)(pre).find('div').length <= 1) {
-        this.wwe.getEditor().modifyBlocks(function () {
-          var newFrag = self.wwe.getEditor().getDocument().createDocumentFragment();
-          var content = void 0;
-
-          if (codeContent.length === 0) {
-            content = '<br>';
-          } else {
-            content = $div.html().replace(FIND_ZWS_RX, '');
-          }
-
-          (0, _jquery2.default)(newFrag).append((0, _jquery2.default)('<div>' + content + '</div>'));
-
-          return newFrag;
-        });
-
-        return false;
+      if (!isNeedNext) {
+        sq.setSelection(range);
+        ev.preventDefault();
       }
 
-      return true;
+      return isNeedNext;
+    }
+
+    /**
+     * Check node is empty line
+     * @memberof WwCodeBlockManager
+     * @param {Node} node node
+     * @returns {boolean}
+     * @private
+     */
+
+  }, {
+    key: '_isEmptyLine',
+    value: function _isEmptyLine(node) {
+      var nodeName = node.nodeName,
+          childNodes = node.childNodes;
+
+
+      return nodeName === 'DIV' && childNodes.length === 1 && childNodes[0].nodeName === 'BR';
+    }
+
+    /**
+     * Check whether node is between same codeblocks
+     * @memberof WwCodeBlockManager
+     * @param {Node} node Node
+     * @returns {boolean}
+     * @private
+     */
+
+  }, {
+    key: '_isBetweenSameCodeblocks',
+    value: function _isBetweenSameCodeblocks(node) {
+      var previousSibling = node.previousSibling,
+          nextSibling = node.nextSibling;
+
+
+      return _domUtils2.default.getNodeName(previousSibling) === 'PRE' && _domUtils2.default.getNodeName(nextSibling) === 'PRE' && previousSibling.getAttribute('data-language') === nextSibling.getAttribute('data-language');
+    }
+  }, {
+    key: '_mergeCodeblocks',
+    value: function _mergeCodeblocks(frontCodeblock, backCodeblock) {
+      var postText = backCodeblock.textContent;
+      frontCodeblock.childNodes[0].textContent += '\n' + postText;
+      backCodeblock.parentNode.removeChild(backCodeblock);
+    }
+
+    /**
+     * Check whether range is first line of code block
+     * @memberof WwCodeBlockManager
+     * @param {Range} range Range object
+     * @returns {boolean}
+     * @private
+     */
+
+  }, {
+    key: '_isCodeBlockFirstLine',
+    value: function _isCodeBlockFirstLine(range) {
+      return this.isInCodeBlock(range) && range.collapsed && range.startOffset === 0;
+    }
+
+    /**
+     * Check whether front block of range is code block
+     * @memberof WwCodeBlockManager
+     * @param {Range} range Range object
+     * @returns {boolean}
+     * @private
+     */
+
+  }, {
+    key: '_isFrontCodeblock',
+    value: function _isFrontCodeblock(range) {
+      var block = _domUtils2.default.getParentUntil(range.startContainer, this.wwe.getEditor().getRoot());
+      var previousSibling = block.previousSibling;
+
+
+      return previousSibling && previousSibling.nodeName === 'PRE';
+    }
+
+    /**
+     * Remove codeblock first line of codeblock
+     * @memberof WwCodeBlockManager
+     * @param {Node} node Pre Node
+     * @private
+     */
+
+  }, {
+    key: '_removeCodeblockFirstLine',
+    value: function _removeCodeblockFirstLine(node) {
+      var sq = this.wwe.getEditor();
+      var preNode = node.nodeName === 'PRE' ? node : node.parentNode;
+      var codeContent = preNode.textContent.replace(FIND_ZWS_RX, '');
+      sq.modifyBlocks(function () {
+        var newFrag = sq.getDocument().createDocumentFragment();
+        var strArray = codeContent.split('\n');
+
+        var firstDiv = document.createElement('div');
+        var firstLine = strArray.shift();
+        firstDiv.innerHTML = firstLine + '<br>';
+        newFrag.appendChild(firstDiv);
+
+        if (strArray.length) {
+          var newPreNode = preNode.cloneNode();
+          newPreNode.textContent = strArray.join('\n');
+          newFrag.appendChild(newPreNode);
+        }
+
+        return newFrag;
+      });
     }
 
     /**
@@ -8315,21 +8432,7 @@ var WwCodeBlockManager = function () {
         target = range.commonAncestorContainer;
       }
 
-      return this._isCodeBlock(target);
-    }
-
-    /**
-     * Verify given element is code block
-     * @memberof WwCodeBlockManager
-     * @param {HTMLElement} element Element
-     * @returns {boolean}
-     * @private
-     */
-
-  }, {
-    key: '_isCodeBlock',
-    value: function _isCodeBlock(element) {
-      return !!(0, _jquery2.default)(element).closest('pre').length;
+      return !!(0, _jquery2.default)(target).closest('pre').length;
     }
 
     /**
@@ -8357,9 +8460,9 @@ var WwCodeBlockManager = function () {
 
 
 function sanitizeHtmlCode(code) {
-  return code.replace(/[<>&]/g, function (tag) {
+  return code ? code.replace(/[<>&]/g, function (tag) {
     return tagEntities[tag] || tag;
-  });
+  }) : '';
 }
 
 exports.default = WwCodeBlockManager;
@@ -9643,11 +9746,15 @@ var ToastUIEditor = function () {
     * @param {string[]} [options.toolbarItems] - toolbar items.
     * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
     * @param {string[]} [options.exts] - extensions
+    * @param {object} [options.customConvertor] - convertor extention
     */
   function ToastUIEditor(options) {
     var _this = this;
 
     _classCallCheck(this, ToastUIEditor);
+
+    this.initialHtml = options.el.innerHTML;
+    options.el.innerHTML = '';
 
     this.options = _jquery2.default.extend({
       previewStyle: 'tab',
@@ -9660,7 +9767,8 @@ var ToastUIEditor = function () {
       codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages(),
       usageStatistics: true,
       toolbarItems: ['heading', 'bold', 'italic', 'strike', 'divider', 'hr', 'quote', 'divider', 'ul', 'ol', 'task', 'indent', 'outdent', 'divider', 'table', 'image', 'link', 'divider', 'code', 'codeblock'],
-      hideModeSwitch: false
+      hideModeSwitch: false,
+      customConvertor: null
     }, options);
 
     this.eventManager = new _eventManager2.default();
@@ -9671,7 +9779,12 @@ var ToastUIEditor = function () {
       useCommandShortcut: this.options.useCommandShortcut
     });
 
-    this.convertor = new _convertor2.default(this.eventManager);
+    if (this.options.customConvertor) {
+      // eslint-disable-next-line new-cap
+      this.convertor = new this.options.customConvertor(this.eventManager);
+    } else {
+      this.convertor = new _convertor2.default(this.eventManager);
+    }
 
     if (this.options.useDefaultHTMLSanitizer) {
       this.convertor.initHtmlSanitizer();
@@ -9711,6 +9824,10 @@ var ToastUIEditor = function () {
 
     this.setValue(this.options.initialValue, false);
 
+    if (!this.options.initialValue) {
+      this.setHtml(this.initialHtml, false);
+    }
+
     _extManager2.default.applyExtension(this, this.options.exts);
 
     this.eventManager.emit('load', this);
@@ -9743,7 +9860,7 @@ var ToastUIEditor = function () {
     /**
      * call commandManager's exec method
      * @memberof ToastUIEditor
-     * @param {string} style - 'tab'|'vertical'
+     * @param {*} ...args Command argument
      */
 
   }, {
@@ -10233,6 +10350,7 @@ var ToastUIEditor = function () {
         this.eventManager.emit('changeModeToWysiwyg');
       } else {
         this.layout.switchToMarkdown();
+        this.mdEditor.resetState();
         this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions), !isWithoutFocus);
         this.getCodeMirror().refresh();
         this.eventManager.emit('changeModeToMarkdown');
@@ -10501,6 +10619,12 @@ ToastUIEditor.CommandManager = _commandManager3.default;
  */
 ToastUIEditor.markdownitHighlight = _convertor2.default.getMarkdownitHighlightRenderer();
 
+/**
+ * MarkdownIt instance
+ * @type {MarkdownIt}
+ */
+ToastUIEditor.markdownit = _convertor2.default.getMarkdownitRenderer();
+
 module.exports = ToastUIEditor;
 
 /***/ }),
@@ -10743,7 +10867,7 @@ var MarkdownEditor = function (_CodeMirrorExt) {
      * Get text object of current range
      * @memberof MarkdownEditor
      * @param {{start, end}} range Range object of each editor
-     * @returns {object}
+     * @returns {MdTextObject}
      */
 
   }, {
@@ -10805,6 +10929,17 @@ var MarkdownEditor = function (_CodeMirrorExt) {
       });
 
       return result;
+    }
+
+    /**
+     * latestState reset
+     * @memberof MarkdownEditor
+     */
+
+  }, {
+    key: 'resetState',
+    value: function resetState() {
+      this._latestState = null;
     }
 
     /**
@@ -13382,10 +13517,14 @@ var WysiwygEditor = function () {
       });
 
       squire.addEventListener('willPaste', function (ev) {
-        _this4.eventManager.emit('willPaste', {
-          source: 'wysiwyg',
-          data: ev
-        });
+        // ev has 'fragment' when event occurs from 'insertHTML' of squire
+        // ev has 'text' when event occurs from 'insertPlainText' of squire
+        if (ev.fragment) {
+          _this4.eventManager.emit('willPaste', {
+            source: 'wysiwyg',
+            data: ev
+          });
+        }
       });
     }
 
@@ -14461,11 +14600,46 @@ var WwClipboardManager = function () {
         });
       }
 
+      // @TODO Temporary code : paste to empty code block
+      this._pasteToEmptyCodeBlock(pasteData);
+
       // once right after the squire insertHTML DOM.
       var handler = function handler() {
         _this2.wwe.getEditor().removeEventListener('input', handler);
         _this2.wwe.eventManager.emit('wysiwygRangeChangeAfter', _this2);
         _this2._focusTableBookmark();
+      };
+      this.wwe.getEditor().addEventListener('input', handler);
+    }
+
+    // @TODO Temporary code : paste to empty code block
+    // Squire remove empty code block when paste.
+    // This code should remove after Squire update !!!
+    // https://github.com/neilj/Squire/blob/7cef58bda854c49989c429d90756bff8d6fe758c/source/Range.js#L259
+
+  }, {
+    key: '_pasteToEmptyCodeBlock',
+    value: function _pasteToEmptyCodeBlock(pasteData) {
+      var _this3 = this;
+
+      var sq = this.wwe.getEditor();
+      var range = sq.getSelection().cloneRange();
+      var container = range.startContainer;
+      var wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
+      var shouldChangeSelection = false;
+      if (wwCodeblockManager.isInCodeBlock(range) && range.collapse && container.nodeName === 'PRE' && !container.textContent) {
+        var brNode = container.firstChild;
+        container.insertBefore(pasteData.fragment, brNode);
+        pasteData.defaultPrevented = true;
+        shouldChangeSelection = true;
+      }
+
+      var handler = function handler() {
+        _this3.wwe.getEditor().removeEventListener('input', handler);
+        if (shouldChangeSelection) {
+          range.setStart(container, 1);
+          sq.setSelection(range);
+        }
       };
       this.wwe.getEditor().addEventListener('input', handler);
     }
@@ -14811,13 +14985,6 @@ var WwPasteContentHelper = function () {
       this._pasteFirstAid($container);
 
       var childNodes = _tuiCodeSnippet2.default.toArray($container[0].childNodes);
-
-      // prepare to paste as inline of first node if possible
-      if (childNodes.length && childNodes[0].tagName === 'DIV') {
-        $tempContainer.append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
-        childNodes.shift();
-      }
-
       while (childNodes.length) {
         node = childNodes[0];
 
@@ -14924,8 +15091,7 @@ var WwPasteContentHelper = function () {
     key: '_preElementAid',
     value: function _preElementAid($container) {
       var wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
-
-      wwCodeblockManager.splitCodeblockToEachLine($container);
+      wwCodeblockManager.modifyCodeBlockForWysiwyg($container);
     }
 
     /**
@@ -17098,7 +17264,7 @@ var SquireExt = function (_Squire) {
       var _this3 = this;
 
       var meta = _util.isMac ? 'meta' : 'ctrl';
-      var keys = ['b', 'i', 'u', 'shift-7', 'shift-5', 'shift-6', 'shift-8', 'shift-9', '[', ']'];
+      var keys = ['b', 'i', 'u', 'shift-7', 'shift-5', 'shift-6', 'shift-8', 'shift-9', '[', ']', 'd'];
 
       keys.forEach(function (key) {
         _this3.setKeyHandler(meta + '-' + key, function (editor, keyboardEvent) {
@@ -18348,7 +18514,7 @@ var DefaultUI = function () {
 
     /**
      * get toolbar instance
-     * @returns {DefaultToolbar} - toolbar instance
+     * @returns {Toolbar} - toolbar instance
      * @memberof DefaultUI
      */
 
@@ -18360,7 +18526,7 @@ var DefaultUI = function () {
 
     /**
      * set toolbar instance
-     * @param {DefaultToolbar} toolbar - toolbar
+     * @param {Toolbar} toolbar - toolbar
      * @memberof DefaultUI
      */
 
@@ -22623,15 +22789,8 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
     key: 'load',
     value: function load(codeBlockElement) {
       var el = codeBlockElement.cloneNode(true);
-      var texts = [];
-
-      var divs = el.querySelectorAll('div');
-      [].slice.call(divs).forEach(function (div) {
-        texts.push(div.innerText.replace(/\n$/, ''));
-      });
-
       this.setLanguage(el.getAttribute('data-language') || '');
-      this.setEditorCodeText(texts.join('\n'));
+      this.setEditorCodeText(el.textContent);
     }
 
     /**
@@ -22644,21 +22803,7 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
     key: 'save',
     value: function save(codeBlockElement) {
       codeBlockElement.innerHTML = '';
-
-      var codeLines = this.getEditorCodeText().split('\n');
-      codeLines.forEach(function (codeLine) {
-        var div = document.createElement('div');
-        codeBlockElement.appendChild(div);
-
-        var childElement = void 0;
-        if (codeLine.length > 0) {
-          childElement = document.createTextNode(codeLine);
-        } else {
-          childElement = document.createElement('br');
-        }
-        div.appendChild(childElement);
-      });
-
+      codeBlockElement.textContent = this.getEditorCodeText();
       codeBlockElement.setAttribute('data-language', this._language);
       (0, _jquery2.default)(codeBlockElement).trigger(EVENT_LANGUAGE_CHANGED);
     }
@@ -23627,7 +23772,7 @@ var BlockquoteRegex = /^> ?/;
 */
 var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockquote */{
   name: 'Blockquote',
-  keyMap: ['CTRL+Q', 'META+Q'],
+  keyMap: ['ALT+Q', 'ALT+Q'],
   /**
    * command handler
    * @param {MarkdownEditor} mde MarkdownEditor instance
@@ -24568,7 +24713,7 @@ var MD_TASK_SYNTAX_RX = /([*-] |[\d]+\. )(\[[ xX]] )/;
  */
 var Task = _commandManager2.default.command('markdown', /** @lends Task */{
   name: 'Task',
-  keyMap: ['CTRL+T', 'META+T'],
+  keyMap: ['ALT+T', 'ALT+T'],
   /**
    * Command handler
    * @param {MarkdownEditor} mde MarkdownEditor instance
@@ -25040,7 +25185,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var Blockquote = _commandManager2.default.command('wysiwyg', /** @lends Blockquote */{
   name: 'Blockquote',
-  keyMap: ['CTRL+Q', 'META+Q'],
+  keyMap: ['ALT+Q', 'ALT+Q'],
   /**
    * command handler
    * @param {WysiwygEditor} wwe wysiwygEditor instance
@@ -25054,7 +25199,6 @@ var Blockquote = _commandManager2.default.command('wysiwyg', /** @lends Blockquo
       if (sq.hasFormat('BLOCKQUOTE')) {
         sq.decreaseQuoteLevel();
       } else {
-        wwe.unwrapBlockTag();
         sq.increaseQuoteLevel();
       }
     }
@@ -26721,7 +26865,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
   name: 'Task',
-  keyMap: ['CTRL+T', 'META+T'],
+  keyMap: ['ALT+T', 'ALT+T'],
   /**
    * Command Handler
    * @param {WysiwygEditor} wwe WYSIWYGEditor instance
@@ -26929,13 +27073,12 @@ var _commandManager2 = _interopRequireDefault(_commandManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-'; /**
-                                                       * @fileoverview Implements code block WysiwygCommand
-                                                       * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                                       */
+var CODEBLOCK_CLASS_TEMP = 'te-content-codeblock-temp'; /**
+                                                         * @fileoverview Implements code block WysiwygCommand
+                                                         * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                         */
 
 var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
-var codeBlockID = 0;
 
 /**
  * CodeBlock
@@ -26956,7 +27099,7 @@ var CodeBlock = _commandManager2.default.command('wysiwyg', /** @lends CodeBlock
     var sq = wwe.getEditor();
     var range = sq.getSelection().cloneRange();
     if (!sq.hasFormat('PRE') && !sq.hasFormat('TABLE')) {
-      var attr = CODEBLOCK_ATTR_NAME + ' class = "' + CODEBLOCK_CLASS_PREFIX + codeBlockID + '"';
+      var attr = CODEBLOCK_ATTR_NAME + ' class = "' + CODEBLOCK_CLASS_TEMP + '"';
 
       if (type) {
         attr += ' data-language="' + type + '"';
@@ -26965,9 +27108,7 @@ var CodeBlock = _commandManager2.default.command('wysiwyg', /** @lends CodeBlock
       var codeBlockBody = getCodeBlockBody(range, wwe);
       sq.insertHTML('<pre ' + attr + '>' + codeBlockBody + '</pre>');
 
-      focusToFirstCode(wwe.get$Body().find('.' + CODEBLOCK_CLASS_PREFIX + codeBlockID), wwe);
-
-      codeBlockID += 1;
+      focusToFirstCode(wwe.get$Body().find('.' + CODEBLOCK_CLASS_TEMP), wwe);
     }
 
     wwe.focus();
@@ -26982,8 +27123,9 @@ var CodeBlock = _commandManager2.default.command('wysiwyg', /** @lends CodeBlock
  */
 function focusToFirstCode($pre, wwe) {
   var range = wwe.getEditor().getSelection().cloneRange();
+  $pre.removeClass(CODEBLOCK_CLASS_TEMP);
 
-  range.setStartBefore($pre.find('div')[0].firstChild);
+  range.setStartBefore($pre.get(0).firstChild);
   range.collapse(true);
 
   wwe.getEditor().setSelection(range);
@@ -26997,17 +27139,15 @@ function focusToFirstCode($pre, wwe) {
  */
 function getCodeBlockBody(range, wwe) {
   var mgr = wwe.componentManager.getManager('codeblock');
-  var contents = void 0,
-      nodes = void 0;
-
+  var codeBlock = void 0;
   if (range.collapsed) {
-    nodes = [(0, _jquery2.default)('<div><br></div>')[0]];
+    codeBlock = '<br>';
   } else {
-    contents = range.extractContents();
-    nodes = _tuiCodeSnippet2.default.toArray(contents.childNodes);
+    var contents = range.extractContents();
+    var nodes = _tuiCodeSnippet2.default.toArray(contents.childNodes);
+    var tempDiv = (0, _jquery2.default)('<div>').append(mgr.prepareToPasteOnCodeblock(nodes));
+    codeBlock = tempDiv.html();
   }
-
-  var codeBlock = mgr.convertToCodeblock(nodes).innerHTML;
 
   return codeBlock;
 }
@@ -27166,7 +27306,7 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
   'Italic': '斜体字',
   'Strike': '删除线',
   'Code': '内嵌代码',
-  'Line': '画水平线',
+  'Line': '水平线',
   'Blockquote': '引用块',
   'Unordered list': '无序列表',
   'Ordered list': '有序列表',
@@ -27179,7 +27319,7 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
   'Insert image': '插入图片',
   'Heading': '标题',
   'Image URL': '图片网址',
-  'Select image file': '选择映像文件',
+  'Select image file': '选择图片文件',
   'Description': '说明',
   'OK': '确认',
   'More': '更多',
@@ -27187,19 +27327,19 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
   'File': '文件',
   'URL': 'URL',
   'Link text': '链接文本',
-  'Add row': '添加一行',
+  'Add row': '添加行',
   'Add col': '添加列',
   'Remove row': '删除行',
   'Remove col': '删除列',
   'Align left': '左对齐',
   'Align center': '居中对齐',
   'Align right': '右对齐',
-  'Remove table': '删除表',
-  'Would you like to paste as table?': '你想粘贴表吗?',
-  'Text color': '文字色相',
-  'Auto scroll enabled': '自动滚动启用',
-  'Auto scroll disabled': '自动的滚动作非使用',
-  'Cannot paste values ​​other than a table in the cell selection state': '在单元格选择状态下无法粘贴表格以外的值。',
+  'Remove table': '删除表格',
+  'Would you like to paste as table?': '需要粘贴为表格吗?',
+  'Text color': '文字颜色',
+  'Auto scroll enabled': '自动滚动已启用',
+  'Auto scroll disabled': '自动滚动已禁用',
+  'Cannot paste values ​​other than a table in the cell selection state': '在选中单元格状态下无法将值粘贴到表格以外。',
   'Choose language': '选择语言'
 }); /**
     * @fileoverview I18N for Chinese

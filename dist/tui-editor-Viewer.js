@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.2.10
+ * @version 1.3.0
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -1236,6 +1236,19 @@ var Convertor = function () {
     value: function getMarkdownitHighlightRenderer() {
       return markdownitHighlight;
     }
+
+    /**
+     * get markdownit
+     * @returns {markdownit} - markdownit instance
+     * @memberof Convertor
+     * @static
+     */
+
+  }, {
+    key: 'getMarkdownitRenderer',
+    value: function getMarkdownitRenderer() {
+      return markdownit;
+    }
   }]);
 
   return Convertor;
@@ -1402,6 +1415,7 @@ var CommandManager = function () {
      * Execute command
      * @memberof CommandManager
      * @param {String} name Command name
+     * @param {*} ...args Command argument
      * @returns {*}
      */
 
@@ -1444,9 +1458,9 @@ var CommandManager = function () {
 
 /**
  * Create command by given editor type and property object
- * @memberof ComponentManager
+ * @memberof CommandManager
  * @param {string} type Command type
- * @param {{name: string, keyMap: object}} props Property
+ * @param {{name: string, keyMap: Array}} props Property
  * @returns {*}
  */
 
@@ -2830,12 +2844,18 @@ var ToastUIEditorViewer = function () {
 
     this.options = _jquery2.default.extend({
       useDefaultHTMLSanitizer: true,
-      codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages()
+      codeBlockLanguages: _codeBlockManager.CodeBlockManager.getHighlightJSLanguages(),
+      customConvertor: null
     }, options);
 
     this.eventManager = new _eventManager2.default();
     this.commandManager = new _commandManager2.default(this);
-    this.convertor = new _convertor2.default(this.eventManager);
+    if (this.options.customConvertor) {
+      // eslint-disable-next-line new-cap
+      this.convertor = new this.options.customConvertor(this.eventManager);
+    } else {
+      this.convertor = new _convertor2.default(this.eventManager);
+    }
     this.toMarkOptions = null;
 
     if (this.options.useDefaultHTMLSanitizer) {
@@ -3050,6 +3070,12 @@ ToastUIEditorViewer.codeBlockManager = _codeBlockManager2.default;
 ToastUIEditorViewer.markdownitHighlight = _convertor2.default.getMarkdownitHighlightRenderer();
 
 /**
+ * MarkdownIt instance
+ * @type {MarkdownIt}
+ */
+ToastUIEditorViewer.markdownit = _convertor2.default.getMarkdownitRenderer();
+
+/**
  * @ignore
  */
 ToastUIEditorViewer.i18n = null;
@@ -3124,6 +3150,17 @@ var isTextNode = function isTextNode(node) {
  */
 var isElemNode = function isElemNode(node) {
   return node && node.nodeType === Node.ELEMENT_NODE;
+};
+
+/**
+ * Check that the node is block node
+ * @param {Node} node node
+ * @returns {boolean}
+ * @ignore
+ */
+var isBlockNode = function isBlockNode(node) {
+  return (/^(ADDRESS|ARTICLE|ASIDE|BLOCKQUOTE|DETAILS|DIALOG|DD|DIV|DL|DT|FIELDSET|FIGCAPTION|FIGURE|FOOTER|FORM|H[\d]|HEADER|HGROUP|HR|LI|MAIN|NAV|OL|P|PRE|SECTION|UL)$/ig.test(this.getNodeName(node))
+  );
 };
 
 /**
@@ -3510,7 +3547,7 @@ var getPath = function getPath(node, root) {
 /**
  * Find next, previous TD or TH element by given TE element
  * @param {HTMLElement} node TD element
- * @param {string} direction Boolean value for direction true is find next cell
+ * @param {string} direction 'next' or 'previous'
  * @returns {HTMLElement|null}
  * @ignore
  */
@@ -3596,6 +3633,7 @@ exports.default = {
   getNodeName: getNodeName,
   isTextNode: isTextNode,
   isElemNode: isElemNode,
+  isBlockNode: isBlockNode,
   getTextLength: getTextLength,
   getOffsetLength: getOffsetLength,
   getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
