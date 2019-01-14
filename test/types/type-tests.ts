@@ -31,7 +31,7 @@ tuiCommand.TYPE.GB;
 tuiCommand.TYPE.MD;
 tuiCommand.TYPE.WW;
 const cmd = new tuiCommand('enter', 13);
-const tuiCmdManagerCmd = tuiEditor.CommandManager.command('shift', {name: 'shift'});
+const tuiCmdManagerCmd = Editor.CommandManager.command('shift', {name: 'shift'});
 const command = cm.addCommand(cmd);
 command.getName();
 command.getType();
