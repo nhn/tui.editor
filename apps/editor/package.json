@@ -24,9 +24,6 @@
   ],
   "main": "dist/tui-editor-Editor.js",
   "devDependencies": {
-    "@types/codemirror": "0.0.71",
-    "@types/jquery": "^3.3.29",
-    "@types/markdown-it": "0.0.7",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.1.2",
     "babel-loader": "^7.1.2",
@@ -89,6 +86,9 @@
     "tslint": "tslint index.d.ts"
   },
   "dependencies": {
+    "@types/codemirror": "0.0.71",
+    "@types/jquery": "^3.3.29",
+    "@types/markdown-it": "0.0.7",
     "codemirror": "^5.33.0",
     "highlight.js": "^9.12.0",
     "jquery": "^3.3.1",

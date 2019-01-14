@@ -1,9 +1,9 @@
 import Editor from 'tui-editor';
-import tuiEditor from 'tui-editor/dist/tui-editor-Editor-all';
+import EditorAll from 'tui-editor/dist/tui-editor-Editor-all';
 import Viewer from 'tui-editor/dist/tui-editor-Viewer';
-import tuiViewer from 'tui-editor/dist/tui-editor-Viewer-all';
+import ViewerAll from 'tui-editor/dist/tui-editor-Viewer-all';
 
-const editor2 = new tuiEditor({
+const editor2 = new EditorAll({
   el: document.getElementById('editor'),
   height: '200px',
   minHeight: '100px',
@@ -20,29 +20,36 @@ const editor:Editor = new Editor({
 
 new Editor.Button({
   className: 'editor-btn',
-  element: $('#container')
+  $el: $('#container')
 });
 Editor.codeBlockManager;
 Editor.codeBlockManager.createCodeBlockHtml('en_US', 'Hello World');
 Editor.codeBlockManager.getReplacer('youtube');
-const cm = new Editor.CommandManager();
-const command = cm.addCommand(Editor.CommandManager.command('shift'));
+const cm = new Editor.CommandManager(editor);
+const tuiCommand = tuiEditor.Command;
+tuiCommand.TYPE.GB;
+tuiCommand.TYPE.MD;
+tuiCommand.TYPE.WW;
+const cmd = new tuiCommand('enter', 13);
+const tuiCmdManagerCmd = Editor.CommandManager.command('shift', {name: 'shift'});
+const command = cm.addCommand(cmd);
 command.getName();
 command.getType();
 command.isGlobalType();
 command.isMDType();
 command.isWWType();
-command.TYPE.GB;
-command.TYPE.MD;
-command.TYPE.WW;
+
 Editor.domUtils;
 Editor.i18n;
 Editor.isViewer;
 Editor.markdownitHighlight;
-new Editor.WwCodeBlockManager();
-new Editor.WwTableManager();
-new Editor.WwTableSelectionManager();
+const wwe = editor.getCurrentModeEditor() as tuiEditor.WysiwygEditor;
+new Editor.WwCodeBlockManager(wwe);
+new Editor.WwTableManager(wwe);
+new Editor.WwTableSelectionManager(wwe);
 
+const node = new Node();
+Editor.WwCodeBlockManager.convertNodesToText([node]);
 Editor.defineExtension('youtube', () => { return '<div></div>'});
 Editor.factory({el: document.querySelector('#editorSectoin')});
 Editor.getInstances().length == 1;
@@ -54,7 +61,7 @@ editor.afterAddedCommand();
 editor.blur();
 editor.changeMode('markdown', false);
 editor.changePreviewStyle('tab');
-editor.exec();
+editor.exec('delete');
 editor.focus();
 editor.getCodeMirror();
 editor.getCurrentModeEditor();
@@ -84,9 +91,58 @@ editor.reset();
 editor.scrollTop(0);
 editor.setHtml('<div>HELLO</div>');
 editor.setMarkdown('### Delicious Web!', true);
-editor.setUI({});
+editor.setUI(editor.getUI());
 editor.setValue('* using TOAST UI');
 editor.show();
+
+Editor.i18n.setLanguage(['en', 'en_US'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Write',
+  'Preview': 'Preview',
+  'Headings': 'Headings',
+  'Paragraph': 'Paragraph',
+  'Bold': 'Bold',
+  'Italic': 'Italic',
+  'Strike': 'Strike',
+  'Code': 'Inline code',
+  'Line': 'Line',
+  'Blockquote': 'Blockquote',
+  'Unordered list': 'Unordered list',
+  'Ordered list': 'Ordered list',
+  'Task': 'Task',
+  'Indent': 'Indent',
+  'Outdent': 'Outdent',
+  'Insert link': 'Insert link',
+  'Insert CodeBlock': 'Insert codeBlock',
+  'Insert table': 'Insert table',
+  'Insert image': 'Insert image',
+  'Heading': 'Heading',
+  'Image URL': 'Image URL',
+  'Select image file': 'Select image file',
+  'Description': 'Description',
+  'OK': 'OK',
+  'More': 'More',
+  'Cancel': 'Cancel',
+  'File': 'File',
+  'URL': 'URL',
+  'Link text': 'Link text',
+  'Add row': 'Add row',
+  'Add col': 'Add col',
+  'Remove row': 'Remove row',
+  'Remove col': 'Remove col',
+  'Align left': 'Align left',
+  'Align center': 'Align center',
+  'Align right': 'Align right',
+  'Remove table': 'Remove table',
+  'Would you like to paste as table?': 'Would you like to paste as table?',
+  'Text color': 'Text color',
+  'Auto scroll enabled': 'Auto scroll enabled',
+  'Auto scroll disabled': 'Auto scroll disabled',
+  'Cannot paste values ​​other than a table in the cell selection state':
+        'Cannot paste values ​​other than a table in the cell selection state.',
+  'Choose language': 'Choose language'
+});
 
 const viewer:Viewer = new Viewer({
   el: document.querySelector('#el'),
@@ -111,7 +167,7 @@ viewer.setMarkdown('### I am Viewer!');
 viewer.setValue('### I am setValue method!');
 Editor.getInstances().length == 1;
 
-const viewer2 = new tuiViewer({
+const viewer2 = new ViewerAll({
   el: document.querySelector('#el')
 });
 viewer2.isViewer();
