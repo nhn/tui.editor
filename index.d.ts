@@ -1,18 +1,15 @@
-// Type definitions for TOAST UI Editor v1.2.10
+// Type definitions for TOAST UI Editor v1.3.0
 // TypeScript Version: 3.2.2
 
 /// <reference types="jquery" />
 /// <reference types="codemirror" />
-
-import MarkdownIt = require('markdown-it');
+/// <reference types="markdown-it" />
 
 declare namespace tuiEditor {
   type SquireExt = any;
   type HandlerFunc = (...args: any[]) => void;
   type ReplacerFunc = (inputString: string) => string;
   type CodeMirrorType = CodeMirror.EditorFromTextArea;
-  type ButtonConstructor = new (options?: IButtonOptions) => Button;
-  type CommandManagerConstructor = new (base: Editor, options?: ICommandManagerOptions) => CommandManager;
   type CommandManagerExecFunc = (name: string, ...args: any[]) => any;
   type TriggerExtraParameterType = any[] | JQuery.PlainObject | string | number | boolean;
   type RangeType = Range | IRangeType;
@@ -64,57 +61,13 @@ declare namespace tuiEditor {
   }
 
   interface ILanguageData {
-    'Markdown': string;
-    'WYSIWYG': string;
-    'Write': string;
-    'Preview': string;
-    'Headings': string;
-    'Paragraph': string;
-    'Bold': string;
-    'Italic': string;
-    'Strike': string;
-    'Code': string;
-    'Line': string;
-    'Blockquote': string;
-    'Unordered list': string;
-    'Ordered list': string;
-    'Task': string;
-    'Indent': string;
-    'Outdent': string;
-    'Insert link': string;
-    'Insert CodeBlock': string;
-    'Insert table': string;
-    'Insert image': string;
-    'Heading': string;
-    'Image URL': string;
-    'Select image file': string;
-    'Description': string;
-    'OK': string;
-    'More': string;
-    'Cancel': string;
-    'File': string;
-    'URL': string;
-    'Link text': string;
-    'Add row': string;
-    'Add col': string;
-    'Remove row': string;
-    'Remove col': string;
-    'Align left': string;
-    'Align center': string;
-    'Align right': string;
-    'Remove table': string;
-    'Would you like to paste as table?': string;
-    'Text color': string;
-    'Auto scroll enabled': string;
-    'Auto scroll disabled': string;
-    'Cannot paste values ​​other than a table in the cell selection state': string;
-    'Choose language': string;
+    [propType: string]: string;
   }
 
-  interface I18n {
-    get(key: string, code: string): string;
-    setCode(code: string): void;
-    setLanguage(codes: string | string[], data: ILanguageData): void;
+  class I18n {
+    public get(key: string, code: string): string;
+    public setCode(code: string): void;
+    public setLanguage(codes: string | string[], data: ILanguageData): void;
   }
 
   interface IButtonItem {
@@ -176,15 +129,18 @@ declare namespace tuiEditor {
     type: number;
   }
 
-  interface ICommand {
-    TYPE: ICommandType;
-    factory(typeStr: string, props: ICommandProps): ICommand;
-    getName(): string;
-    getType(): number;
-    isGlobalType(): boolean;
-    isMDType(): boolean;
-    isWWType(): boolean;
-    setKeyMap(win: string, mac: string): void;
+  class Command {
+    public static TYPE: ICommandType;
+    public static factory(typeStr: string, props: ICommandProps): Command;
+
+    constructor(name: string, type: number, keyMap?: string[]);
+
+    public getName(): string;
+    public getType(): number;
+    public isGlobalType(): boolean;
+    public isMDType(): boolean;
+    public isWWType(): boolean;
+    public setKeyMap(win: string, mac: string): void;
   }
 
   interface ILayerPopupOptions {
@@ -277,11 +233,11 @@ declare namespace tuiEditor {
   }
 
   class CommandManager {
-    public static command(type: string, props: ICommandPropsOptions): ICommand;
+    public static command(type: string, props: ICommandPropsOptions): Command;
 
     constructor(base: Editor, options?: ICommandManagerOptions);
 
-    public addCommand(command: ICommand): ICommand;
+    public addCommand(command: Command): Command;
     public exec(name: string, ...args: any[]): any;
   }
 
@@ -338,39 +294,103 @@ declare namespace tuiEditor {
     className?: string;
   }
 
-  interface IWwCodeBlockManager {
-    convertNodesToText(nodes: Node[]): string;
-    destroy(): void;
-    isInCodeBlock(range: Range): boolean;
-    prepareToPasteOnCodeblock(nodes: Node[]): DocumentFragment;
+  class WwCodeBlockManager {
+    public static convertNodesToText(nodes: Node[]): string;
+
+    constructor(wwe: WysiwygEditor);
+
+    public destroy(): void;
+    public isInCodeBlock(range: Range): boolean;
+    public prepareToPasteOnCodeblock(nodes: Node[]): DocumentFragment;
   }
 
-  interface IWwTableManager {
-    destroy(): void;
-    getTableIDClassName(): string;
-    isInTable(range: Range): boolean;
-    isNonTextDeleting(range: Range): boolean;
-    isTableOrSubTableElement(pastingNodeName: string): string;
-    pasteClipboardData($clipboardTable: JQuery): boolean;
-    prepareToTableCellStuffing($trs: JQuery): object;
-    resetLastCellNode(): void;
-    setLastCellNode(node: Element): void;
-    tableCellAppendAidForTableElement(node: Element): void;
-    updateTableHtmlOfClipboardIfNeed($clipboardContainer: JQuery): void;
-    wrapDanglingTableCellsIntoTrIfNeed($container: JQuery): Element | null;
-    wrapTheadAndTbodyIntoTableIfNeed($container: JQuery): Element | null;
-    wrapTrsIntoTbodyIfNeed($container: JQuery): Element | null;
+  class WwTableManager {
+    constructor(wwe: WysiwygEditor);
+
+    public destroy(): void;
+    public getTableIDClassName(): string;
+    public isInTable(range: Range): boolean;
+    public isNonTextDeleting(range: Range): boolean;
+    public isTableOrSubTableElement(pastingNodeName: string): string;
+    public pasteClipboardData($clipboardTable: JQuery): boolean;
+    public prepareToTableCellStuffing($trs: JQuery): object;
+    public resetLastCellNode(): void;
+    public setLastCellNode(node: Element): void;
+    public tableCellAppendAidForTableElement(node: Element): void;
+    public updateTableHtmlOfClipboardIfNeed($clipboardContainer: JQuery): void;
+    public wrapDanglingTableCellsIntoTrIfNeed($container: JQuery): Element | null;
+    public wrapTheadAndTbodyIntoTableIfNeed($container: JQuery): Element | null;
+    public wrapTrsIntoTbodyIfNeed($container: JQuery): Element | null;
   }
 
-  interface IWwTableSelectionManager {
-    createRangeBySelectedCells(): void;
-    destroy(): void;
-    getSelectedCells(): JQuery;
-    getSelectionRangeFromTable(selectionStart: Element, selectionEnd: Element): object;
-    highlightTableCellsBy(selectionStart: Element, selectionEnd: Element): void;
-    removeClassAttrbuteFromAllCellsIfNeed(): void;
-    setTableSelectionTimerIfNeed(selectionStart: Element): void;
-    styleToSelectedCells(onStyle: SquireExt, options?: any): void;
+  class WwTableSelectionManager {
+    constructor(wwe: WysiwygEditor);
+
+    public createRangeBySelectedCells(): void;
+    public destroy(): void;
+    public getSelectedCells(): JQuery;
+    public getSelectionRangeFromTable(selectionStart: Element, selectionEnd: Element): object;
+    public highlightTableCellsBy(selectionStart: Element, selectionEnd: Element): void;
+    public removeClassAttrbuteFromAllCellsIfNeed(): void;
+    public setTableSelectionTimerIfNeed(selectionStart: Element): void;
+    public styleToSelectedCells(onStyle: SquireExt, options?: any): void;
+  }
+
+  class MarkDownEditor {
+    constructor($el: JQuery, eventManager: EventManager);
+
+    public getTextObject(range: IRangeType): IMdTextObject;
+    public setValue(markdown: string, cursorToEnd?: boolean): void;
+  }
+  class WysiwygEditor {
+    constructor($el: JQuery, eventManager: EventManager);
+
+    public addKeyEventHandler(keyMap: string | string[], handler: HandlerFunc): void;
+    public addWidget(range: Range, node: Node, style: string, offset?: number): void;
+    public blur(): void;
+    public breakToNewDefaultBlock(range: Range, where?: string): void;
+    public changeBlockFormatTo(targetTagName: string): void;
+    public findTextNodeFilter(): boolean;
+    public fixIMERange(): void;
+    public focus(): void;
+    public get$Body(): JQuery;
+    public getEditor(): SquireExt;
+    public getIMERange(): Range;
+    public getRange(): Range;
+    public getTextObject(range: Range): IWwTextObject;
+    public getValue(): string;
+    public hasFormatWithRx(rx: RegExp): boolean;
+    public init(): void;
+    public insertText(text: string): void;
+    public makeEmptyBlockCurrentSelection(): void;
+    public moveCursorToEnd(): void;
+    public moveCursorToStart(): void;
+    public postProcessForChange(): void;
+    public readySilentChange(): void;
+    public remove(): void;
+    public removeKeyEventHandler(keyMap: string, handler: HandlerFunc): void;
+    public replaceContentText(container: Node, from: string, to: string);
+    public replaceRelativeOffset(content: string, offset: number, overwriteLength: number): void;
+    public replaceSelection(content: string, range: Range): void;
+    public reset(): void;
+    public restoreSavedSelection(): void;
+    public saveSelection(range: Range): void;
+    public scrollTop(value: number): boolean;
+    public setHeight(height: number | string): void;
+    public setMinHeight(minHeight: number): void;
+    public setRange(range: Range): void;
+    public setSelectionByContainerAndOffset(startContainer: Node, startOffset: number,
+                                            endContainer: Node, endOffset: number): Range;
+    public setValue(html: string, cursorToEnd?: boolean): void;
+    public unwrapBlockTag(condition?: (tagName: string) => boolean): void;
+  }
+
+  class EventManager {
+    public addEventType(type: string): void;
+    public emit(eventName: string): any[];
+    public emitReduce(eventName: string, sourceText: string): string;
+    public listen(typeStr: string, handler: HandlerFunc): void;
+    public removeEventHandler(typeStr: string, handler?: HandlerFunc): void;
   }
 
   interface IDomUtil {
@@ -385,7 +405,8 @@ declare namespace tuiEditor {
     containsNode(root: Node, node: Node): boolean;
     getTopPrevNodeUnder(node: Node, underNode: Node): Node;
     getTopNextNodeUnder(node: Node, underNode: Node): Node;
-    getParentUntilBy(node: Node, matchCondition: (node: Node) => boolean, stopCondition: (node: Node) => boolean): Node;
+    getParentUntilBy(node: Node, matchCondition: (node: Node) => boolean,
+                     stopCondition: (node: Node) => boolean): Node;
     getParentUntil(node: Node, untilNode: string | Node): Node;
     getTopBlockNode(node: Node): Node;
     getPrevTextNode(node: Node): Node;
@@ -397,64 +418,18 @@ declare namespace tuiEditor {
     getSiblingRowCellByDirection(node: Element, direction: string, needEdgeCell?: boolean): Element | null;
   }
 
-  interface IMarkDownEditor {
-    getTextObject(range: IRangeType): IMdTextObject;
-    setValue(markdown: string, cursorToEnd?: boolean): void;
-  }
-
-  interface IWysiwygEditor {
-    addKeyEventHandler(keyMap: string | string[], handler: HandlerFunc): void;
-    addWidget(range: Range, node: Node, style: string, offset?: number): void;
-    blur(): void;
-    breakToNewDefaultBlock(range: Range, where?: string): void;
-    changeBlockFormatTo(targetTagName: string): void;
-    findTextNodeFilter(): boolean;
-    fixIMERange(): void;
-    focus(): void;
-    get$Body(): JQuery;
-    getEditor(): SquireExt;
-    getIMERange(): Range;
-    getRange(): Range;
-    getTextObject(range: Range): IWwTextObject;
-    getValue(): string;
-    hasFormatWithRx(rx: RegExp): boolean;
-    init(): void;
-    insertText(text: string): void;
-    makeEmptyBlockCurrentSelection(): void;
-    moveCursorToEnd(): void;
-    moveCursorToStart(): void;
-    postProcessForChange(): void;
-    readySilentChange(): void;
-    remove(): void;
-    removeKeyEventHandler(keyMap: string, handler: HandlerFunc): void;
-    replaceContentText(container: Node, from: string, to: string);
-    replaceRelativeOffset(content: string, offset: number, overwriteLength: number): void;
-    replaceSelection(content: string, range: Range): void;
-    reset(): void;
-    restoreSavedSelection(): void;
-    saveSelection(range: Range): void;
-    scrollTop(value: number): boolean;
-    setHeight(height: number | string): void;
-    setMinHeight(minHeight: number): void;
-    setRange(range: Range): void;
-    setSelectionByContainerAndOffset(startContainer: Node, startOffset: number,
-                                     endContainer: Node, endOffset: number): Range;
-    setValue(html: string, cursorToEnd?: boolean): void;
-    unwrapBlockTag(condition?: (tagName: string) => boolean): void;
-  }
-
   class Editor {
-    public static Button: ButtonConstructor;
+    public static Button: typeof Button;
     public static codeBlockManager: CodeBlockManager;
-    public static CommandManager: CommandManagerConstructor;
+    public static CommandManager: typeof CommandManager;
     public static domUtils: IDomUtil;
     public static i18n: I18n;
     public static isViewer: boolean;
-    public static markdownit: MarkdownIt;
-    public static markdownitHighlight: MarkdownIt;
-    public static WwCodeBlockManager: IWwCodeBlockManager;
-    public static WwTableManager: IWwTableManager;
-    public static WwTableSelectionManager: IWwTableSelectionManager;
+    public static markdownit: markdownit;
+    public static markdownitHighlight: markdownit;
+    public static WwCodeBlockManager: typeof WwCodeBlockManager;
+    public static WwTableManager: typeof WwTableManager;
+    public static WwTableSelectionManager: typeof WwTableSelectionManager;
 
     public static defineExtension(name: string, ext: HandlerFunc): void;
     public static factory(options: IEditorOptions): Editor | Viewer;
@@ -471,7 +446,7 @@ declare namespace tuiEditor {
     public exec(name: string, ...args: any[]): void;
     public focus(): void;
     public getCodeMirror(): CodeMirrorType;
-    public getCurrentModeEditor(): IMarkDownEditor | IWysiwygEditor;
+    public getCurrentModeEditor(): MarkDownEditor | WysiwygEditor;
     public getCurrentPreviewStyle(): string;
     public getHtml(): string;
     public getMarkdown(): string;
@@ -507,7 +482,7 @@ declare namespace tuiEditor {
     public static codeBlockManager: CodeBlockManager;
     public static domUtils: IDomUtil;
     public static isViewer: boolean;
-    public static markdownitHighlight: MarkdownIt;
+    public static markdownitHighlight: markdownit;
 
     public static defineExtension(name: string, ext: HandlerFunc): void;
 
