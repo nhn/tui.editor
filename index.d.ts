@@ -61,51 +61,7 @@ declare namespace tuiEditor {
   }
 
   interface ILanguageData {
-    'Markdown': string;
-    'WYSIWYG': string;
-    'Write': string;
-    'Preview': string;
-    'Headings': string;
-    'Paragraph': string;
-    'Bold': string;
-    'Italic': string;
-    'Strike': string;
-    'Code': string;
-    'Line': string;
-    'Blockquote': string;
-    'Unordered list': string;
-    'Ordered list': string;
-    'Task': string;
-    'Indent': string;
-    'Outdent': string;
-    'Insert link': string;
-    'Insert CodeBlock': string;
-    'Insert table': string;
-    'Insert image': string;
-    'Heading': string;
-    'Image URL': string;
-    'Select image file': string;
-    'Description': string;
-    'OK': string;
-    'More': string;
-    'Cancel': string;
-    'File': string;
-    'URL': string;
-    'Link text': string;
-    'Add row': string;
-    'Add col': string;
-    'Remove row': string;
-    'Remove col': string;
-    'Align left': string;
-    'Align center': string;
-    'Align right': string;
-    'Remove table': string;
-    'Would you like to paste as table?': string;
-    'Text color': string;
-    'Auto scroll enabled': string;
-    'Auto scroll disabled': string;
-    'Cannot paste values ​​other than a table in the cell selection state': string;
-    'Choose language': string;
+    [propType: string]: string;
   }
 
   class I18n {
