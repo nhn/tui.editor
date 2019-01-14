@@ -10,15 +10,10 @@ declare namespace tuiEditor {
   type HandlerFunc = (...args: any[]) => void;
   type ReplacerFunc = (inputString: string) => string;
   type CodeMirrorType = CodeMirror.EditorFromTextArea;
-  type ButtonConstructor = new (options?: IButtonOptions) => Button;
-  type CommandManagerConstructor = new (base: Editor, options?: ICommandManagerOptions) => CommandManager;
   type CommandManagerExecFunc = (name: string, ...args: any[]) => any;
   type TriggerExtraParameterType = any[] | JQuery.PlainObject | string | number | boolean;
   type RangeType = Range | IRangeType;
   type PopupTableUtils = ILayerPopup;
-  type WwCodeBlockManagerConstructor = new (wwe: WysiwygEditor) => WwCodeBlockManager;
-  type WwTableManagerConstructor = new (wwe: WysiwygEditor) => WwTableManager;
-  type WwTableSelectionManagerConstructor = new (wwe: WysiwygEditor) => WwTableSelectionManager;
 
   interface IEvent {
     [propName: string]: HandlerFunc;
@@ -468,17 +463,17 @@ declare namespace tuiEditor {
   }
 
   class Editor {
-    public static Button: ButtonConstructor;
+    public static Button: typeof Button;
     public static codeBlockManager: CodeBlockManager;
-    public static CommandManager: CommandManagerConstructor;
+    public static CommandManager: typeof CommandManager;
     public static domUtils: IDomUtil;
     public static i18n: I18n;
     public static isViewer: boolean;
     public static markdownit: markdownit;
     public static markdownitHighlight: markdownit;
-    public static WwCodeBlockManager: WwCodeBlockManagerConstructor;
-    public static WwTableManager: WwTableManagerConstructor;
-    public static WwTableSelectionManager: WwTableSelectionManagerConstructor;
+    public static WwCodeBlockManager: typeof WwCodeBlockManager;
+    public static WwTableManager: typeof WwTableManager;
+    public static WwTableSelectionManager: typeof WwTableSelectionManager;
 
     public static defineExtension(name: string, ext: HandlerFunc): void;
     public static factory(options: IEditorOptions): Editor | Viewer;

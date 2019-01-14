@@ -48,6 +48,8 @@ new Editor.WwCodeBlockManager(wwe);
 new Editor.WwTableManager(wwe);
 new Editor.WwTableSelectionManager(wwe);
 
+const node = new Node();
+Editor.WwCodeBlockManager.convertNodesToText([node]);
 Editor.defineExtension('youtube', () => { return '<div></div>'});
 Editor.factory({el: document.querySelector('#editorSectoin')});
 Editor.getInstances().length == 1;
