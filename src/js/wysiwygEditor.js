@@ -1017,7 +1017,7 @@ class WysiwygEditor {
     if (cursorAboveEditor < 0) {
       this.scrollTop(scrollTop + cursorAboveEditor);
     } else if (cursorBelowEditor > 0) {
-      this.scrollTop(scrollTop + cursorBelowEditor);
+      this.scrollTop(Math.ceil(scrollTop + cursorBelowEditor));
     }
   }
 
