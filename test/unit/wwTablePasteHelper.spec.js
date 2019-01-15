@@ -167,8 +167,4 @@ describe('WwTablePasteHelper', () => {
       });
     });
   });
-
-  describe('_pasteIntoTextNode', () => {
-
-  });
 });
