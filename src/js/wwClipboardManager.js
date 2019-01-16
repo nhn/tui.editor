@@ -105,7 +105,7 @@ class WwClipboardManager {
     if (tableManager.isInTable(range)) {
       const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
       if (tableSelectionManager.getSelectedCells().length) {
-        alert(i18n.get('Cannot paste values other than a table in the cell selection state'));
+        alert(i18n.get('Cannot paste values ​​other than a table in the cell selection state'));
         ev.preventDefault();
       } else {
         const cbData = ev.clipboardData || window.clipboardData;
