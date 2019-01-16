@@ -66,6 +66,7 @@ class WwTablePasteHelper {
    * @private
    */
   pasteClipboardContainer(clipboardContainer) {
+    const sq = this.wwe.getEditor();
     const {childNodes} = clipboardContainer;
     const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
 
@@ -73,8 +74,11 @@ class WwTablePasteHelper {
       const tableManager = this.wwe.componentManager.getManager('table');
       tableManager.pasteTableData(clipboardContainer);
     } else {
-      const range = this.wwe.getEditor().getSelection().cloneRange();
+      const range = sq.getSelection().cloneRange();
       const fragment = this._getPasteDocumentFragment(clipboardContainer);
+
+      sq.saveUndoState(range);
+
       if (!range.collapsed) {
         this._deleteContentsRange(range);
       }

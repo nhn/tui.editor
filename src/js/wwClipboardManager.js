@@ -110,7 +110,7 @@ class WwClipboardManager {
       } else {
         const cbData = ev.clipboardData || window.clipboardData;
         const items = cbData && cbData.items;
-        sq.saveUndoState(range);
+
         if (items) {
           this._tablePasteHelper.pasteClipboardItem(items);
           ev.preventDefault();
