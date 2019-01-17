@@ -82,7 +82,14 @@ class WwTablePasteHelper {
       if (!range.collapsed) {
         this._deleteContentsRange(range);
       }
-      this._pasteData(range, fragment);
+
+      if (domUtils.isTextNode(range.startContainer)) {
+        this._pasteIntoTextNode(range, fragment);
+      } else {
+        this._pasteIntoElements(range, fragment);
+      }
+
+      sq.setSelection(range);
     }
   }
 
@@ -150,90 +157,85 @@ class WwTablePasteHelper {
 
     return result;
   }
+
   /**
-   * paste fragment to offset of container
+   * paste fragment to offset of range.startContainer
    * @memberof WwTablePasteHelper
    * @param {Range} range - selection range
    * @param {DocumentFragment} fragment - paste data
    * @private
    */
-  _pasteData(range, fragment) {
-    const container = range.startContainer;
-    const offset = range.startOffset;
+  _pasteIntoElements(range, fragment) {
+    const {startContainer: container, startOffset: offset} = range;
+    const node = domUtils.getChildNodeByOffset(container, offset);
 
-    if (domUtils.isTextNode(container)) {
-      const newRange = this._pasteIntoTextNode(container, offset, fragment);
-      this.wwe.getEditor().setSelection(newRange);
-    } else {
-      let node = domUtils.getChildNodeByOffset(container, offset);
-      if (!node) {
-        // For example when container is br, br don't have child, so node is null
-        if (container.nodeName === 'TD') {
-          container.appendChild(fragment);
-        } else {
-          container.parentNode.insertBefore(fragment, container);
-        }
-        node = container;
+    if (!node) {
+      // For example when container is br, br don't have child, so node is null
+      if (container.nodeName === 'TD') {
+        container.appendChild(fragment);
+        range.setStart(container, container.childNodes.length);
       } else {
-        container.insertBefore(fragment, node);
+        const {parentNode, nextSibling} = container;
+
+        parentNode.insertBefore(fragment, nextSibling);
+
+        if (nextSibling) {
+          range.setStart(nextSibling, 0);
+        } else {
+          range.setStartAfter(parentNode.lastChild);
+        }
       }
+    } else {
+      container.insertBefore(fragment, node);
       range.setStart(node, 0);
-      range.collapse(true);
-      this.wwe.getEditor().setSelection(range);
     }
+
+    range.collapse(true);
   }
 
   /**
    * paste fragment to offset of container that is text node
    * @memberof WwTablePasteHelper
-   * @param {Node} container - container is text node
-   * @param {Number} offset - offset
+   * @param {Range} range - selection range
    * @param {DocumentFragment} fragment - paste data
-   * @returns {Range} result - range
    * @private
    */
-  _pasteIntoTextNode(container, offset, fragment) {
-    const length = container.textContent.length;
-    const prevText = container.textContent.slice(0, offset);
-    const postText = container.textContent.slice(offset, length);
-    const range = container.ownerDocument.createRange();
+  _pasteIntoTextNode(range, fragment) {
+    const {startContainer: container, startOffset: offset} = range;
+    const {parentNode, textContent} = container;
+    const length = textContent.length;
+    const prevText = textContent.slice(0, offset);
+    const postText = textContent.slice(offset, length);
 
     if (prevText === '') {
-      container.parentNode.insertBefore(fragment, container);
-
+      parentNode.insertBefore(fragment, container);
       range.setStart(container, 0);
-      range.collapse(true);
     } else if (postText === '') {
-      container.parentNode.insertBefore(fragment, container.nextSibling);
-
-      range.setStartAfter(container.nextSibling);
-      range.collapse(true);
+      const {nextSibling} = container;
+      parentNode.insertBefore(fragment, nextSibling);
+      range.setStartAfter(nextSibling);
     } else if (fragment.childNodes.length === 1 && domUtils.isTextNode(fragment.childNodes[0])) {
       container.textContent = `${prevText}${fragment.childNodes[0].textContent}${postText}`;
-
       range.setStart(container, prevText.length + fragment.childNodes[0].textContent.length);
-      range.collapse(true);
     } else {
-      const parentNode = container.parentNode;
       const resultFragment = document.createDocumentFragment();
       resultFragment.appendChild(document.createTextNode(prevText));
       resultFragment.appendChild(fragment);
       resultFragment.appendChild(document.createTextNode(postText));
+      parentNode.replaceChild(resultFragment, container);
 
       const childNodesArray = util.toArray(parentNode.childNodes);
       let index = 0;
       childNodesArray.forEach((child, i) => {
-        if (container === child) {
+        if (child.textContent === postText) {
           index = i;
         }
       });
-      parentNode.replaceChild(resultFragment, container);
 
       range.setStart(parentNode.childNodes[index], 0);
-      range.collapse(true);
     }
 
-    return range;
+    range.collapse(true);
   }
 
   /**
@@ -244,22 +246,35 @@ class WwTablePasteHelper {
    */
   _deleteContentsRange(range) {
     const {startContainer, startOffset, endContainer, endOffset} = range;
-    const common = range.commonAncestorContainer;
 
     if (startContainer === endContainer) {
       this._deleteContentsOffset(startContainer, startOffset, endOffset);
       range.setStart(startContainer, startOffset);
       range.collapse(true);
     } else {
-      // Find parent block node of startContainer and endContainer
-      // If startContainer and endContainer is same common,
-      // find node at offset of startContainer and endContainer.
-      let startBlock = domUtils.getParentUntil(startContainer, common)
-                      || domUtils.getChildNodeByOffset(startContainer, startOffset);
-      let endBlock = domUtils.getParentUntil(endContainer, common)
-                      || domUtils.getChildNodeByOffset(endContainer, endOffset);
+      this._deleteContentsNotCollapsedRange(range);
+    }
+  }
 
-      if (startContainer.nodeName !== 'TD') {
+  _deleteContentsNotCollapsedRange(range) {
+    const {startContainer, startOffset, endContainer, endOffset} = range;
+    const common = range.commonAncestorContainer;
+    const startBlock = this._getBlock(startContainer, common, startOffset);
+    let endBlock = this._getBlock(endContainer, common, endOffset - 1);
+
+    if (startBlock === endBlock) {
+      if (startOffset < endOffset) {
+        this._deleteContentsOffset(startBlock, startOffset, endOffset);
+      } else {
+        this._deleteContentsOffset(startBlock, startOffset, domUtils.getOffsetLength(startBlock));
+        endBlock = null;
+      }
+    } else {
+      let {nextSibling: nextOfstartBlock} = startBlock;
+
+      if (startContainer.nodeName === 'TD') {
+        nextOfstartBlock = this._removeOneLine(startBlock);
+      } else {
         // Remove child nodes from node of startOffset in startContainer.
         this._deleteContentsOffset(startContainer, startOffset, domUtils.getOffsetLength(startContainer));
 
@@ -267,7 +282,9 @@ class WwTablePasteHelper {
         this._removeNodesByDirection(startBlock, startContainer, false);
       }
 
-      if (endContainer.nodeName !== 'TD') {
+      if (endContainer.nodeName === 'TD') {
+        endBlock = this._removeOneLine(endBlock);
+      } else {
         // Remove child nodes until node of endOffset in endContainer.
         this._deleteContentsOffset(endContainer, 0, endOffset);
 
@@ -276,11 +293,45 @@ class WwTablePasteHelper {
       }
 
       // Remove nodes between startBlock and endBlock
-      this._removeChild(common, startBlock.nextSibling, endBlock);
-
-      range.setStart(endBlock, 0);
-      range.collapse(true);
+      this._removeChild(common, nextOfstartBlock, endBlock);
     }
+
+    if (endBlock) {
+      range.setStart(endBlock, 0);
+    } else {
+      range.setStartAfter(startBlock);
+    }
+
+    range.collapse(true);
+  }
+
+  _removeOneLine(node) {
+    const {nextSibling, parentNode} = node;
+    let next = nextSibling;
+
+    parentNode.removeChild(node);
+
+    if (nextSibling && nextSibling.nodeName === 'BR') {
+      next = nextSibling.nextSibling;
+      parentNode.removeChild(nextSibling);
+    }
+
+    return next;
+  }
+
+  /**
+   * Find parent block node of startContainer and endContainer
+   * If startContainer or endContainer is same commonAncestor,
+   * find node at offset of startContainer and endContainer.
+   * @memberof WwTablePasteHelper
+   * @param {Node} node - startContainer or endContainer
+   * @param {Node} parent - commonAncestor
+   * @param {Number} offset - startOffset or endOffset-1
+   * @returns {Node} block node
+   * @private
+   */
+  _getBlock(node, parent, offset) {
+    return domUtils.getParentUntil(node, parent) || domUtils.getChildNodeByOffset(node, offset);
   }
 
   /**
@@ -319,6 +370,10 @@ class WwTablePasteHelper {
    */
   _removeChild(parent, start, end) {
     let child = start;
+
+    if (!child || parent !== child.parentNode) {
+      return;
+    }
 
     while (child !== end) {
       const next = child.nextSibling;
