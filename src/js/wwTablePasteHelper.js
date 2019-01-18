@@ -316,7 +316,13 @@ class WwTablePasteHelper {
     let endBlock = this._getBlock(endContainer, common, endOffset - 1);
 
     if (startBlock === endBlock) {
-      endBlock = this._removeInSameBlock(startBlock, startContainer, endContainer, startOffset, endOffset);
+      this._removeInSameBlock(startBlock, startContainer, endContainer, startOffset, endOffset);
+
+      // When endContainer is not same endBlock, endBlock is removed.
+      // For example, aaa| <- this is cursor.
+      // When cursor is last, endContainer would be 'TD' and endBlock is text node
+      // In this case, remove all 'aaa' so endBlock should be null.
+      endBlock = endContainer !== endBlock ? null : endBlock;
     } else {
       let {nextSibling: nextOfstartBlock} = startBlock;
 
@@ -358,8 +364,6 @@ class WwTablePasteHelper {
     const end = endContainer === block ? endOffset : domUtils.getOffsetLength(block);
 
     this._deleteContentsOffset(block, start, end);
-
-    return endOffset !== end ? null : block;
   }
 
   _removeOneLine(node) {
