@@ -41,7 +41,7 @@ class WwClipboardManager {
     this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this));
     this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this));
     this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this));
-    this.wwe.getEditor().addEventListener('paste', this._onPaste.bind(this));
+    this.wwe.eventManager.listen('paste', this._onPasteIntoTable.bind(this));
   }
 
   _onCopyCut(event) {
@@ -94,13 +94,13 @@ class WwClipboardManager {
   }
 
   /**
-   * On paste.
-   * @param {MouseEvent} ev - event
+   * Process paste event that occured in table
+   * @param {{source: string, data: event}} event - event
    * @private
    */
-  _onPaste(ev) {
-    const sq = this.wwe.getEditor();
-    const range = sq.getSelection();
+  _onPasteIntoTable(event) {
+    const {data: ev} = event;
+    const range = this.wwe.getEditor().getSelection();
     const tableManager = this.wwe.componentManager.getManager('table');
     if (tableManager.isInTable(range)) {
       const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
@@ -108,32 +108,7 @@ class WwClipboardManager {
         alert(i18n.get('Cannot paste values ​​other than a table in the cell selection state'));
         ev.preventDefault();
       } else {
-        const cbData = ev.clipboardData || window.clipboardData;
-        const items = cbData && cbData.items;
-
-        if (items) {
-          this._tablePasteHelper.pasteClipboardItem(items);
-          ev.preventDefault();
-        } else {
-          const {startContainer, startOffset, endContainer, endOffset} = range;
-          const pasteArea = document.createElement('div');
-
-          pasteArea.setAttribute('contenteditable', true);
-          pasteArea.setAttribute('style', 'position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;');
-          document.body.appendChild(pasteArea);
-
-          range.selectNodeContents(pasteArea);
-          sq.setSelection(range);
-
-          ev.squirePrevented = true;
-          setTimeout(() => {
-            const clipboard = document.body.removeChild(pasteArea);
-            const restoreRange = sq.createRange(startContainer, startOffset, endContainer, endOffset);
-
-            sq.setSelection(restoreRange);
-            this._tablePasteHelper.pasteClipboardHtml(clipboard.innerHTML);
-          });
-        }
+        this._tablePasteHelper.pasteClipboard(ev);
       }
     }
   }

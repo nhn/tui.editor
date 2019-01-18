@@ -21,11 +21,58 @@ class WwTablePasteHelper {
   }
 
   /**
-   * paste items of clipboard data
+   * Prossse paste clipboardEvent
+   * @param {ClipboardEvent} ev - ClipboardEvent
+   * @private
+   */
+  pasteClipboard(ev) {
+    const cbData = ev.clipboardData || window.clipboardData;
+    const items = cbData && cbData.items;
+
+    if (items) {
+      this._pasteClipboardItem(items);
+      ev.preventDefault();
+    } else {
+      this._pasteClipboardUsingPasteArea();
+      ev.squirePrevented = true;
+    }
+  }
+
+  /**
+   * ClipboardEvent is not supported in IE.
+   * To get clipboard, create temporay dom element and then paste into that dom element.
+   * After end of paste, can get clipboard from that temporary dom element.
+   * @param {ClipboardEvent} ev - ClipboardEvent
+   * @private
+   */
+  _pasteClipboardUsingPasteArea() {
+    const sq = this.wwe.getEditor();
+    const range = sq.getSelection();
+    const {startContainer, startOffset, endContainer, endOffset} = range;
+    const pasteArea = document.createElement('div');
+
+    pasteArea.setAttribute('contenteditable', true);
+    pasteArea.setAttribute('style', 'position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;');
+    document.body.appendChild(pasteArea);
+
+    range.selectNodeContents(pasteArea);
+    sq.setSelection(range);
+
+    setTimeout(() => {
+      const clipboard = document.body.removeChild(pasteArea);
+      const restoreRange = sq.createRange(startContainer, startOffset, endContainer, endOffset);
+
+      sq.setSelection(restoreRange);
+      this._pasteClipboardHtml(clipboard.innerHTML);
+    });
+  }
+
+  /**
+   * Paste items of clipboard data
    * @param {DataTransfer.items} items - items of clipboarddata
    * @private
    */
-  pasteClipboardItem(items) {
+  _pasteClipboardItem(items) {
     let textItem = null;
     let htmlItem = null;
 
@@ -39,33 +86,33 @@ class WwTablePasteHelper {
 
     if (htmlItem) {
       htmlItem.getAsString(html => {
-        this.pasteClipboardHtml(html);
+        this._pasteClipboardHtml(html);
       });
     } else if (textItem) {
       textItem.getAsString(text => {
-        this.pasteClipboardContainer(document.createTextNode(text));
+        this._pasteClipboardContainer(document.createTextNode(text));
       });
     }
   }
 
   /**
-   * Paste clibpard html
+   * Paste html of clipboard
    * @param {string} html - html
    * @private
    */
-  pasteClipboardHtml(html) {
+  _pasteClipboardHtml(html) {
     const container = document.createDocumentFragment();
 
     container.appendChild(htmlSanitizer(html));
-    this.pasteClipboardContainer(container);
+    this._pasteClipboardContainer(container);
   }
 
   /**
-   * Paste clibpard container.
+   * Paste container of clipboard
    * @param {DocumentFragment} clipboardContainer - clipboard
    * @private
    */
-  pasteClipboardContainer(clipboardContainer) {
+  _pasteClipboardContainer(clipboardContainer) {
     const sq = this.wwe.getEditor();
     const {childNodes} = clipboardContainer;
     const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
@@ -94,7 +141,7 @@ class WwTablePasteHelper {
   }
 
   /**
-   * processing clipboard data for paste to table
+   * Prepare clipboard for paste to table
    * @memberof WwTablePasteHelper
    * @param {DocumentFragment} clipboardContainer - clipboard
    * @returns {DocumentFragment} processed result
