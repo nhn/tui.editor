@@ -13,7 +13,6 @@ class WwTablePasteHelper {
   /**
    * Creates an instance of WwTablePasteHelper.
    * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @param {WwTableManager} tableManager - WwTableManager or WwMergedTableManager
    * @memberof WwTablePasteHelper
    */
   constructor(wwe) {
@@ -23,7 +22,7 @@ class WwTablePasteHelper {
   /**
    * Prossse paste clipboardEvent
    * @param {ClipboardEvent} ev - ClipboardEvent
-   * @private
+   * @memberof WwTablePasteHelper
    */
   pasteClipboard(ev) {
     const cbData = ev.clipboardData || window.clipboardData;
@@ -40,8 +39,8 @@ class WwTablePasteHelper {
 
   /**
    * ClipboardEvent is not supported in IE.
-   * To get clipboard, create temporay dom element and then paste into that dom element.
-   * After end of paste, can get clipboard from that temporary dom element.
+   * To get clipboard, create temporay element and then paste into that element.
+   * After end of paste, can get clipboard from that temporary element.
    * @param {ClipboardEvent} ev - ClipboardEvent
    * @private
    */
@@ -248,7 +247,7 @@ class WwTablePasteHelper {
   }
 
   /**
-   * paste fragment to offset of container that is text node
+   * paste fragment to offset of text node
    * @memberof WwTablePasteHelper
    * @param {Range} range - selection range
    * @param {DocumentFragment} fragment - paste data
@@ -393,9 +392,9 @@ class WwTablePasteHelper {
   }
 
   /**
-   * delete contents from start offset to end offset inside 'td'
+   * delete contents from start offset to end offset
    * @memberof WwTablePasteHelper
-   * @param {Node} container - container is td or child of td
+   * @param {Node} container - container
    * @param {Number} startOffset - start offset
    * @param {Number} endOffset - end offset
    * @private

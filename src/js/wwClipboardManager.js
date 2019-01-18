@@ -94,7 +94,7 @@ class WwClipboardManager {
   }
 
   /**
-   * Process paste event that occured in table
+   * Process paste event when occured in table
    * @param {{source: string, data: event}} event - event
    * @private
    */

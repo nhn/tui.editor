@@ -498,7 +498,7 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
 /**
  * Check that the inline node is supported by markdown
  * @param {Node} node TD element
- * @returns {boolean} result
+ * @returns {boolean}
  * @ignore
  */
 const isMDSupportInlineNode = function(node) {
