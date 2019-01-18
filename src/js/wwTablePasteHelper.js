@@ -182,9 +182,11 @@ class WwTablePasteHelper {
         fragment.appendChild(child);
       } else {
         fragment.appendChild(this._unwrapBlock(child));
+
         // If current child is last or fragment already has last br,
         // appending br would create unintended line break.
-        if (childNodes.length && fragment.lastChild.nodeName !== 'BR') {
+        const {lastChild} = fragment;
+        if (childNodes.length && lastChild && lastChild.nodeName !== 'BR') {
           fragment.appendChild(document.createElement('br'));
         }
       }
