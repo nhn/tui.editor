@@ -314,12 +314,7 @@ class WwTablePasteHelper {
     let endBlock = this._getBlock(endContainer, common, endOffset - 1);
 
     if (startBlock === endBlock) {
-      if (startOffset < endOffset) {
-        this._deleteContentsOffset(startBlock, startOffset, endOffset);
-      } else {
-        this._deleteContentsOffset(startBlock, startOffset, domUtils.getOffsetLength(startBlock));
-        endBlock = null;
-      }
+      endBlock = this._removeInSameBlock(startBlock, startContainer, endContainer, startOffset, endOffset);
     } else {
       let {nextSibling: nextOfstartBlock} = startBlock;
 
@@ -354,6 +349,15 @@ class WwTablePasteHelper {
     }
 
     range.collapse(true);
+  }
+
+  _removeInSameBlock(block, startContainer, endContainer, startOffset, endOffset) {
+    const start = startContainer === block ? startOffset : 0;
+    const end = endContainer === block ? endOffset : domUtils.getOffsetLength(block);
+
+    this._deleteContentsOffset(block, start, end);
+
+    return endOffset !== end ? null : block;
   }
 
   _removeOneLine(node) {
