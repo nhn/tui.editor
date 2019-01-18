@@ -50,16 +50,17 @@ class WwTablePasteHelper {
     const range = sq.getSelection();
     const {startContainer, startOffset, endContainer, endOffset} = range;
     const pasteArea = document.createElement('div');
+    const {body} = document;
 
     pasteArea.setAttribute('contenteditable', true);
     pasteArea.setAttribute('style', 'position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;');
-    document.body.appendChild(pasteArea);
+    body.appendChild(pasteArea);
 
     range.selectNodeContents(pasteArea);
     sq.setSelection(range);
 
     setTimeout(() => {
-      const clipboard = document.body.removeChild(pasteArea);
+      const clipboard = body.removeChild(pasteArea);
 
       range.setStart(startContainer, startOffset);
       range.setEnd(endContainer, endOffset);

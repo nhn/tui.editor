@@ -25,7 +25,7 @@ class WwClipboardManager {
   constructor(wwe) {
     this.wwe = wwe;
     this._pch = new WwPasteContentHelper(this.wwe);
-    this._tablePasteHelper = new WwTablePasteHelper(this.wwe, this);
+    this._tablePasteHelper = new WwTablePasteHelper(this.wwe);
     this._selectedSellCount = 0;
     this._$clipboardArea = null;
   }
@@ -102,8 +102,10 @@ class WwClipboardManager {
     const {data: ev} = event;
     const range = this.wwe.getEditor().getSelection();
     const tableManager = this.wwe.componentManager.getManager('table');
+
     if (tableManager.isInTable(range)) {
       const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+
       if (tableSelectionManager.getSelectedCells().length) {
         alert(i18n.get('Cannot paste values ​​other than a table in the cell selection state'));
         ev.preventDefault();
@@ -119,7 +121,7 @@ class WwClipboardManager {
     this._setTableBookmark($clipboardContainer);
 
     pasteData.fragment = document.createDocumentFragment();
-    $($clipboardContainer[0].childNodes).each((index, element) => {
+    $clipboardContainer.children().each((index, element) => {
       pasteData.fragment.appendChild(element);
     });
 
