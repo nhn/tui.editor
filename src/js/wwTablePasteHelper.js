@@ -60,9 +60,13 @@ class WwTablePasteHelper {
 
     setTimeout(() => {
       const clipboard = document.body.removeChild(pasteArea);
-      const restoreRange = sq.createRange(startContainer, startOffset, endContainer, endOffset);
 
-      sq.setSelection(restoreRange);
+      range.setStart(startContainer, startOffset);
+      range.setEnd(endContainer, endOffset);
+
+      sq.focus();
+      sq.setSelection(range);
+
       this._pasteClipboardHtml(clipboard.innerHTML);
     });
   }
