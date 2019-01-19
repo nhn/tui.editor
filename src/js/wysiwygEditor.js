@@ -82,6 +82,7 @@ class WysiwygEditor {
 
     this.get$Body().addClass(EDITOR_CONTENT_CSS_CLASSNAME);
     this.$editorContainerEl.css('position', 'relative');
+    this._togglePlaceholder();
 
     this.codeBlockGadget = new CodeBlockGadget({
       eventManager: this.eventManager,
@@ -341,6 +342,8 @@ class WysiwygEditor {
         source: 'wysiwyg',
         data: keyboardEvent
       });
+
+      this._togglePlaceholder();
     });
 
     this.$editorContainerEl.on('scroll', ev => {
@@ -432,6 +435,14 @@ class WysiwygEditor {
         });
       }
     });
+  }
+
+  _togglePlaceholder() {
+    if (this.get$Body()[0].textContent === '') {
+      this.get$Body().addClass('tui-editor-contents-placeholder');
+    } else {
+      this.get$Body().removeClass('tui-editor-contents-placeholder');
+    }
   }
 
   /**
@@ -753,6 +764,12 @@ class WysiwygEditor {
     editorBody.style.minHeight = `${minHeight}px`;
   }
 
+  setPlaceholder(placeholder) {
+    if (placeholder) {
+      this.get$Body()[0].dataset.placeholder = placeholder;
+    }
+  }
+
   /**
    * setValue
    * Set value to wysiwyg editor
@@ -776,6 +793,8 @@ class WysiwygEditor {
 
     this.getEditor().removeLastUndoStack();
     this.getEditor().saveUndoState();
+
+    this._togglePlaceholder();
   }
 
   /**

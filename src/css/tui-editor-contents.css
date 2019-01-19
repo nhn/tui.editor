@@ -237,3 +237,9 @@
     margin-right: 3.8px;
     margin-top: 3px;
 }
+
+.tui-editor-contents-placeholder:not(:focus):before {
+    content: attr(data-placeholder);
+    color:grey;
+    font-style: italic;
+}

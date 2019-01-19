@@ -217,6 +217,8 @@ class ToastUIEditor {
 
     this.setValue(this.options.initialValue, false);
 
+    this.setPlaceholder(this.options.placeholder);
+
     if (!this.options.initialValue) {
       this.setHtml(this.initialHtml, false);
     }
@@ -769,6 +771,10 @@ class ToastUIEditor {
     const textObject = this.getTextObject(range);
 
     return textObject.getTextContent() || '';
+  }
+
+  setPlaceholder(placeholder) {
+    this.wwEditor.setPlaceholder(placeholder);
   }
 
   /**
