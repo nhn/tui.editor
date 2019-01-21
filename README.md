@@ -101,7 +101,7 @@ You can use the CDN as below.
 <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor.css"></link>
 <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor-contents.css"></link>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.2/codemirror.css"></link>
-<script src="https://uicdn.toast.com/tui-editor/latest/tui-editor-Editor-deps.js"></script>
+<script src="https://uicdn.toast.com/tui-editor/latest/tui-editor-Editor-full.js"></script>
 ```
 
 If you want to use a specific version, use the tag name instead of `latest` in the url's path.
