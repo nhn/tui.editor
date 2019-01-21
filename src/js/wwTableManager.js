@@ -209,17 +209,9 @@ class WwTableManager {
    * @memberof WwTableManager
    */
   isInTable(range) {
-    let target, result;
+    const target = range.collapsed ? range.startContainer : range.commonAncestorContainer;
 
-    if (range.collapsed) {
-      target = range.startContainer;
-      result = !!$(target).closest('[contenteditable=true] table').length;
-    } else {
-      target = range.commonAncestorContainer;
-      result = !!$(target).closest('[contenteditable=true] table').length;
-    }
-
-    return result;
+    return !!$(target).closest('[contenteditable=true] table').length;
   }
 
   /**

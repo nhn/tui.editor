@@ -80,13 +80,13 @@ class WwTablePasteHelper {
     let textItem = null;
     let htmlItem = null;
 
-    for (let i = 0; i < items.length; i += 1) {
-      if (items[i].type === 'text/html') {
-        htmlItem = items[i];
-      } else if (items[i].type === 'text/plain') {
-        textItem = items[i];
+    util.forEachArray(items, item => {
+      if (item.type === 'text/html') {
+        htmlItem = item;
+      } else if (item.type === 'text/plain') {
+        textItem = item;
       }
-    }
+    });
 
     if (htmlItem) {
       htmlItem.getAsString(html => {
@@ -126,7 +126,7 @@ class WwTablePasteHelper {
       tableManager.pasteTableData(clipboardContainer);
     } else {
       const range = sq.getSelection().cloneRange();
-      const fragment = this._getPasteDocumentFragment(clipboardContainer);
+      const fragment = this._preparePasteDocumentFragment(clipboardContainer);
 
       sq.saveUndoState(range);
 
@@ -151,7 +151,7 @@ class WwTablePasteHelper {
    * @returns {DocumentFragment} processed result
    * @private
    */
-  _getPasteDocumentFragment(clipboardContainer) {
+  _preparePasteDocumentFragment(clipboardContainer) {
     const {childNodes} = clipboardContainer;
     const fragment = document.createDocumentFragment();
 
@@ -196,19 +196,9 @@ class WwTablePasteHelper {
   }
 
   _isPossibleInsertToTable(node) {
-    let result = false;
+    const isChildlessCode = node.nodeName === 'CODE' && node.childNodes.length > 1;
 
-    if (domUtils.isMDSupportInlineNode(node) || domUtils.isTextNode(node)) {
-      result = true;
-    }
-
-    // 'code' is able to paste into table,
-    // but if 'code' has children, 'code' should be unwrap.
-    if (node.nodeName === 'CODE' && node.childNodes.length > 1) {
-      result = false;
-    }
-
-    return result;
+    return !isChildlessCode && (domUtils.isMDSupportInlineNode(node) || domUtils.isTextNode(node));
   }
 
   /**
@@ -256,22 +246,28 @@ class WwTablePasteHelper {
   _pasteIntoTextNode(range, fragment) {
     const {startContainer: container, startOffset: offset} = range;
     const {parentNode, textContent} = container;
-    const length = textContent.length;
     const prevText = textContent.slice(0, offset);
-    const postText = textContent.slice(offset, length);
+    const postText = textContent.slice(offset, textContent.length);
+    const {childNodes: fragmentChildNodes} = fragment;
+    const firstChild = fragmentChildNodes[0];
+    const isFragmenthasOneTextNode = fragmentChildNodes.length === 1 && domUtils.isTextNode(firstChild);
 
-    if (prevText === '') {
+    if (!prevText) {
       parentNode.insertBefore(fragment, container);
       range.setStart(container, 0);
-    } else if (postText === '') {
+    } else if (!postText) {
       const {nextSibling} = container;
+
       parentNode.insertBefore(fragment, nextSibling);
       range.setStartAfter(nextSibling);
-    } else if (fragment.childNodes.length === 1 && domUtils.isTextNode(fragment.childNodes[0])) {
-      container.textContent = `${prevText}${fragment.childNodes[0].textContent}${postText}`;
-      range.setStart(container, prevText.length + fragment.childNodes[0].textContent.length);
+    } else if (isFragmenthasOneTextNode) {
+      const {textContent: firstChildText} = firstChild;
+
+      container.textContent = `${prevText}${firstChildText}${postText}`;
+      range.setStart(container, prevText.length + firstChildText.length);
     } else {
       const resultFragment = document.createDocumentFragment();
+
       resultFragment.appendChild(document.createTextNode(prevText));
       resultFragment.appendChild(fragment);
       resultFragment.appendChild(document.createTextNode(postText));
@@ -301,15 +297,15 @@ class WwTablePasteHelper {
     const {startContainer, startOffset, endContainer, endOffset} = range;
 
     if (startContainer === endContainer) {
-      this._deleteContentsOffset(startContainer, startOffset, endOffset);
+      this._deleteContentsByOffset(startContainer, startOffset, endOffset);
       range.setStart(startContainer, startOffset);
       range.collapse(true);
     } else {
-      this._deleteContentsNotCollapsedRange(range);
+      this._deleteNotCollapsedRangeContents(range);
     }
   }
 
-  _deleteContentsNotCollapsedRange(range) {
+  _deleteNotCollapsedRangeContents(range) {
     const {startContainer, startOffset, endContainer, endOffset} = range;
     const common = range.commonAncestorContainer;
     const startBlock = this._getBlock(startContainer, common, startOffset);
@@ -330,7 +326,7 @@ class WwTablePasteHelper {
         nextOfstartBlock = this._removeOneLine(startBlock);
       } else {
         // Remove child nodes from node of startOffset in startContainer.
-        this._deleteContentsOffset(startContainer, startOffset, domUtils.getOffsetLength(startContainer));
+        this._deleteContentsByOffset(startContainer, startOffset, domUtils.getOffsetLength(startContainer));
 
         // Remove nodes from startContainer in startBlock
         this._removeNodesByDirection(startBlock, startContainer, false);
@@ -340,7 +336,7 @@ class WwTablePasteHelper {
         endBlock = this._removeOneLine(endBlock);
       } else {
         // Remove child nodes until node of endOffset in endContainer.
-        this._deleteContentsOffset(endContainer, 0, endOffset);
+        this._deleteContentsByOffset(endContainer, 0, endOffset);
 
         // Remove nodes until endContainer in endBlock
         this._removeNodesByDirection(endBlock, endContainer, true);
@@ -363,7 +359,7 @@ class WwTablePasteHelper {
     const start = startContainer === block ? startOffset : 0;
     const end = endContainer === block ? endOffset : domUtils.getOffsetLength(block);
 
-    this._deleteContentsOffset(block, start, end);
+    this._deleteContentsByOffset(block, start, end);
   }
 
   _removeOneLine(node) {
@@ -403,7 +399,7 @@ class WwTablePasteHelper {
    * @param {Number} endOffset - end offset
    * @private
    */
-  _deleteContentsOffset(container, startOffset, endOffset) {
+  _deleteContentsByOffset(container, startOffset, endOffset) {
     if (domUtils.isTextNode(container)) {
       const {textContent} = container;
       const prevText = textContent.slice(0, startOffset);

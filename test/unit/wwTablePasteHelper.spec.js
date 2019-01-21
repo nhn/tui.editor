@@ -38,11 +38,11 @@ describe('WwTablePasteHelper', () => {
   });
 
   describe('Remove contents of range when range is not collapsed', () => {
-    describe('_deleteContentsOffset', () => {
+    describe('_deleteContentsByOffset', () => {
       it('Remove nodes from start offset to end offset when container is text node', () => {
         const textNode = document.createTextNode('123456789');
 
-        tph._deleteContentsOffset(textNode, 3, 6);
+        tph._deleteContentsByOffset(textNode, 3, 6);
 
         expect(textNode.textContent).toBe('123789');
       });
@@ -55,7 +55,7 @@ describe('WwTablePasteHelper', () => {
 
         const expectedHtml = '<div>aaa</div><div>ccc</div>';
 
-        tph._deleteContentsOffset(node, 1, 2);
+        tph._deleteContentsByOffset(node, 1, 2);
 
         expect(node.innerHTML).toBe(expectedHtml);
       });
