@@ -495,6 +495,16 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
   return null;
 };
 
+/**
+ * Check that the inline node is supported by markdown
+ * @param {Node} node TD element
+ * @returns {boolean}
+ * @ignore
+ */
+const isMDSupportInlineNode = function(node) {
+  return /^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/ig.test(node.nodeName);
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -516,5 +526,6 @@ export default {
   getPath,
   getNodeInfo,
   getTableCellByDirection,
-  getSiblingRowCellByDirection
+  getSiblingRowCellByDirection,
+  isMDSupportInlineNode
 };
