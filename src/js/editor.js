@@ -85,6 +85,7 @@ import './langs/fi_FI';
 import './langs/cs_CZ';
 import './langs/ar_AR';
 import './langs/pl_PL';
+import './langs/zh_TW';
 
 const __nedInstance = [];
 const gaTrackingId = 'UA-129966929-1';
