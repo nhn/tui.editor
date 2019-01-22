@@ -438,10 +438,11 @@ class WysiwygEditor {
   }
 
   _togglePlaceholder() {
-    if (this.get$Body()[0].textContent === '') {
-      this.get$Body().addClass('tui-editor-contents-placeholder');
+    const $body = this.get$Body();
+    if ($body[0].textContent) {
+      $body.removeClass('tui-editor-contents-placeholder');
     } else {
-      this.get$Body().removeClass('tui-editor-contents-placeholder');
+      $body.addClass('tui-editor-contents-placeholder');
     }
   }
 
@@ -764,6 +765,10 @@ class WysiwygEditor {
     editorBody.style.minHeight = `${minHeight}px`;
   }
 
+  /**
+   * Set the placeholder to wysiwyg editor
+   * @param {string} placeholder - placeholder to set
+   */
   setPlaceholder(placeholder) {
     if (placeholder) {
       this.get$Body()[0].dataset.placeholder = placeholder;

@@ -127,6 +127,7 @@ class ToastUIEditor {
     * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
     * @param {string[]} [options.exts] - extensions
     * @param {object} [options.customConvertor] - convertor extention
+    * @param {string} [options.placeholder] - The placeholder text of the editable element.
     */
   constructor(options) {
     this.initialHtml = options.el.innerHTML;
@@ -217,7 +218,9 @@ class ToastUIEditor {
 
     this.setValue(this.options.initialValue, false);
 
-    this.setPlaceholder(this.options.placeholder);
+    if (this.options.placeholder) {
+      this.setPlaceholder(this.options.placeholder);
+    }
 
     if (!this.options.initialValue) {
       this.setHtml(this.initialHtml, false);
@@ -773,7 +776,12 @@ class ToastUIEditor {
     return textObject.getTextContent() || '';
   }
 
+  /**
+   * Set the placeholder an all editors
+   * @param {string} placeholder - placeholder to set
+   */
   setPlaceholder(placeholder) {
+    this.mdEditor.setPlaceholder(placeholder);
     this.wwEditor.setPlaceholder(placeholder);
   }
 

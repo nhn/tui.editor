@@ -242,4 +242,6 @@
     content: attr(data-placeholder);
     color:grey;
     font-style: italic;
+    line-height: 160%;
+    position: absolute;
 }
