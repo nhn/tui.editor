@@ -122,7 +122,10 @@ TOAST UI products are available over the CDN powered by [TOAST Cloud](https://ww
 You can use the CDN as below.
 
 ```html
-<script src="https://uicdn.toast.com/tui-editor/latest/tui-editor-Editor.js"></script>
+<link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor.css"></link>
+<link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor-contents.css"></link>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.2/codemirror.css"></link>
+<script src="https://uicdn.toast.com/tui-editor/latest/tui-editor-Editor-full.js"></script>
 ```
 
 If you want to use a specific version, use the tag name instead of `latest` in the url's path.
@@ -180,6 +183,16 @@ var editor = new Editor({
 or you can use jquery plugin.
 ```javascript
 $('#editSection').tuiEditor({
+    initialEditType: 'markdown',
+    previewStyle: 'vertical',
+    height: '300px'
+});
+```
+
+or if using the CDN
+```javascript
+var editor = new tui.Editor({
+    el: document.querySelector('#editSection'),
     initialEditType: 'markdown',
     previewStyle: 'vertical',
     height: '300px'
