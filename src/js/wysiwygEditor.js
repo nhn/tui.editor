@@ -272,6 +272,8 @@ class WysiwygEditor {
       }
 
       this.getEditor().preserveLastLine();
+
+      this._togglePlaceholder();
     }, 0));
 
     squire.addEventListener('keydown', keyboardEvent => {
@@ -342,8 +344,6 @@ class WysiwygEditor {
         source: 'wysiwyg',
         data: keyboardEvent
       });
-
-      this._togglePlaceholder();
     });
 
     this.$editorContainerEl.on('scroll', ev => {

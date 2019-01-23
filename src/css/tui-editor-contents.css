@@ -238,10 +238,9 @@
     margin-top: 3px;
 }
 
-.tui-editor-contents-placeholder:not(:focus):before {
+.tui-editor-contents-placeholder:before {
     content: attr(data-placeholder);
     color:grey;
-    font-style: italic;
     line-height: 160%;
     position: absolute;
 }
