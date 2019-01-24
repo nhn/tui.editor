@@ -8,7 +8,6 @@ import util from 'tui-code-snippet';
 import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
 import WwTablePasteHelper from './wwTablePasteHelper';
-import i18n from './i18n';
 
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
@@ -104,14 +103,7 @@ class WwClipboardManager {
     const tableManager = this.wwe.componentManager.getManager('table');
 
     if (tableManager.isInTable(range)) {
-      const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
-
-      if (tableSelectionManager.getSelectedCells().length) {
-        alert(i18n.get('Cannot paste values ​​other than a table in the cell selection state'));
-        ev.preventDefault();
-      } else {
-        this._tablePasteHelper.pasteClipboard(ev);
-      }
+      this._tablePasteHelper.pasteClipboard(ev);
     }
   }
 

@@ -48,7 +48,5 @@ i18n.setLanguage(['pl', 'pl_PL'], {
   'Text color': 'Kolor tekstu',
   'Auto scroll enabled': 'Włączono automatyczne przewijanie',
   'Auto scroll disabled': 'Wyłączono automatyczne przewijanie',
-  'Cannot paste values ​​other than a table in the cell selection state':
-        'Nie można wkleić wartości innej niż tabela w trybie wyboru komórki.',
   'Choose language': 'Wybierz język'
 });
