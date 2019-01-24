@@ -82,6 +82,7 @@ class WysiwygEditor {
 
     this.get$Body().addClass(EDITOR_CONTENT_CSS_CLASSNAME);
     this.$editorContainerEl.css('position', 'relative');
+    this._togglePlaceholder();
 
     this.codeBlockGadget = new CodeBlockGadget({
       eventManager: this.eventManager,
@@ -271,6 +272,8 @@ class WysiwygEditor {
       }
 
       this.getEditor().preserveLastLine();
+
+      this._togglePlaceholder();
     }, 0));
 
     squire.addEventListener('keydown', keyboardEvent => {
@@ -432,6 +435,15 @@ class WysiwygEditor {
         });
       }
     });
+  }
+
+  _togglePlaceholder() {
+    const $body = this.get$Body();
+    if ($body[0].textContent) {
+      $body.removeClass('tui-editor-contents-placeholder');
+    } else {
+      $body.addClass('tui-editor-contents-placeholder');
+    }
   }
 
   /**
@@ -754,6 +766,16 @@ class WysiwygEditor {
   }
 
   /**
+   * Set the placeholder to wysiwyg editor
+   * @param {string} placeholder - placeholder to set
+   */
+  setPlaceholder(placeholder) {
+    if (placeholder) {
+      this.get$Body()[0].dataset.placeholder = placeholder;
+    }
+  }
+
+  /**
    * setValue
    * Set value to wysiwyg editor
    * @memberof WysiwygEditor
@@ -776,6 +798,8 @@ class WysiwygEditor {
 
     this.getEditor().removeLastUndoStack();
     this.getEditor().saveUndoState();
+
+    this._togglePlaceholder();
   }
 
   /**

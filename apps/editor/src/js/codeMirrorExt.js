@@ -11,6 +11,7 @@ import './codemirror/markdown';
 import './codemirror/gfm';
 import './codemirror/continuelist';
 import './codemirror/arrowKeyFunction';
+import './codemirror/placeholder';
 
 /**
  * Class CodeMirrorExt
@@ -224,6 +225,16 @@ class CodeMirrorExt {
     const contentWrapper = this.getWrapperElement();
 
     contentWrapper.style.minHeight = `${minHeight}px`;
+  }
+
+  /**
+   * Set the placeholder to CodeMirror
+   * @param {string} placeholder - placeholder to set
+   */
+  setPlaceholder(placeholder) {
+    if (placeholder) {
+      this.cm.setOption('placeholder', placeholder);
+    }
   }
 
   /**

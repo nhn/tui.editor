@@ -50,6 +50,7 @@ declare namespace tuiEditor {
     hideModeSwitch?: boolean;
     exts?: string[];
     customConvertor?: IConvertor;
+    placeholder?: string;
   }
 
   interface IViewerOptions {

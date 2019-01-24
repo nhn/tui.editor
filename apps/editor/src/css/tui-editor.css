@@ -183,7 +183,12 @@
 
 .tui-editor-defaultUI .CodeMirror-line {
     padding-left: 25px;
-    padding-right: 25px
+    padding-right: 25px;
+}
+
+.tui-editor-defaultUI .CodeMirror pre.CodeMirror-placeholder {
+    padding-left: 25px;
+    color: grey;
 }
 
 .tui-editor-defaultUI .CodeMirror-scroll {
