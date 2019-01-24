@@ -237,3 +237,10 @@
     margin-right: 3.8px;
     margin-top: 3px;
 }
+
+.tui-editor-contents-placeholder:before {
+    content: attr(data-placeholder);
+    color:grey;
+    line-height: 160%;
+    position: absolute;
+}
