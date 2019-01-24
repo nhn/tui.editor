@@ -48,6 +48,5 @@ i18n.setLanguage(['ar', 'ar_AR'], {
   'Text color': 'لون النص',
   'Auto scroll enabled': 'التحريك التلقائي ممكّن',
   'Auto scroll disabled': 'التحريك التلقائي معطّل',
-  'Cannot paste values ​​other than a table in the cell selection state': 'لا يمكن اللصق في الجدول إلا في وجود خلايا مختارة',
   'Choose language': 'اختر اللغة'
 });

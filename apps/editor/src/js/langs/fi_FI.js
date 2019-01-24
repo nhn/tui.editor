@@ -48,6 +48,5 @@ i18n.setLanguage(['fi', 'fi_FI'], {
   'Text color': 'Tekstin väri',
   'Auto scroll enabled': 'Automaattinen skrollaus käytössä',
   'Auto scroll disabled': 'Automaattinen skrollaus pois käytöstä',
-  'Cannot paste values other than a table in the cell selection state': 'Vain taulukko voidaan liittää solunvalintatilassa.',
   'Choose language': 'Valitse kieli'
 });

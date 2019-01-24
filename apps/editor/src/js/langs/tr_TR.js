@@ -48,7 +48,5 @@ i18n.setLanguage(['tr', 'tr_TR'], {
   'Text color': 'Metin rengi',
   'Auto scroll enabled': 'Otomatik kaydırma açık',
   'Auto scroll disabled': 'Otomatik kaydırma kapalı',
-  'Cannot paste values ​​other than a table in the cell selection state':
-        'Hücre seçimi sırasında tablo dışında veriler yapıştırılamaz.',
   'Choose language': 'Dil seçiniz'
 });

@@ -48,6 +48,5 @@ i18n.setLanguage(['nl', 'nl_NL'], {
   'Text color': 'Tekstkleur',
   'Auto scroll enabled': 'Autoscroll ingeschakeld',
   'Auto scroll disabled': 'Autoscroll uitgeschakeld',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Kan geen waardes anders dan de tabel in de cell plakken',
   'Choose language': 'Kies een taal'
 });
