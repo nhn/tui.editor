@@ -113,7 +113,7 @@ class WwClipboardManager {
     this._setTableBookmark($clipboardContainer);
 
     pasteData.fragment = document.createDocumentFragment();
-    $clipboardContainer.children().each((index, element) => {
+    $clipboardContainer.contents().each((index, element) => {
       pasteData.fragment.appendChild(element);
     });
 
