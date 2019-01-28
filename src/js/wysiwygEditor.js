@@ -523,6 +523,25 @@ class WysiwygEditor {
 
       return true;
     });
+
+    this.addKeyEventHandler('BACK_SPACE', (ev, range, keymap) => this._handleRemoveKeyEvent(ev, range, keymap));
+    this.addKeyEventHandler('DELETE', (ev, range, keymap) => this._handleRemoveKeyEvent(ev, range, keymap));
+  }
+
+  _handleRemoveKeyEvent(ev, range, keyMap) {
+    const sq = this.getEditor();
+
+    if (!range.collapsed) {
+      const keyStr = keyMap === 'BACK_SPACE' ? 'backspace' : 'delete';
+
+      sq.removeAllFormatting();
+      sq._keyHandlers[keyStr](sq, ev, sq.getSelection());
+      sq.removeLastUndoStack();
+
+      return false;
+    }
+
+    return true;
   }
 
   _wrapDefaultBlockToOrphanTexts() {
