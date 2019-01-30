@@ -709,6 +709,11 @@ class WwTableManager {
     this._addTrIntoContainerIfNeed($table);
 
     const $trs = $table.find('tr');
+    $trs.each((index, tr) => {
+      if (!tr.cells.length) {
+        tr.remove();
+      }
+    });
     const tableAidInformation = this.prepareToTableCellStuffing($trs);
     const {maximumCellLength, needTableCellStuffingAid} = tableAidInformation;
 
@@ -832,14 +837,13 @@ class WwTableManager {
 
       if (!this.isTableOrSubTableElement(node.nodeName)) {
         return;
-      } else if (node.nodeName === 'TABLE'
-                && $node.find('thead').length === 0
-                && $node.find('tbody').length === 0
-      ) {
-        $node.remove();
       }
 
-      this._completeIncompleteTable(node);
+      if (node.nodeName === 'TABLE' && $node.find('tbody').length === 0) {
+        $node.remove();
+      } else {
+        this._completeIncompleteTable(node);
+      }
     });
   }
 

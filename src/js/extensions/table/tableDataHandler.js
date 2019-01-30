@@ -336,11 +336,13 @@ function findElementIndex(tableData, rowIndex, colIndex) {
 function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
   tableData.forEach((rowData, rowIndex) => {
     const startIndex = rowData.length;
-    const [{nodeName}] = rowData;
+    if (startIndex) {
+      const [{nodeName}] = rowData;
 
-    util.range(startIndex, limitIndex).forEach(colIndex => {
-      rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
-    });
+      util.range(startIndex, limitIndex).forEach(colIndex => {
+        rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
+      });
+    }
   });
 }
 
