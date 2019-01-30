@@ -28,6 +28,7 @@ const FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi,
   FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
 
 const EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
+const PLACEHOLDER_CSS_CLASSNAME = 'tui-editor-contents-placeholder';
 
 const canObserveMutations = (typeof MutationObserver !== 'undefined');
 
@@ -113,6 +114,9 @@ class WysiwygEditor {
     this.eventManager.listen('wysiwygSetValueBefore', html => this._preprocessForInlineElement(html));
     this.eventManager.listen('wysiwygKeyEvent', ev => this._runKeyEventHandlers(ev.data, ev.keyMap));
     this.eventManager.listen('wysiwygRangeChangeAfter', () => this.scrollIntoCursor());
+    this.eventManager.listen('contentChangedFromWysiwyg', () => {
+      this._togglePlaceholder();
+    });
   }
 
   /**
@@ -272,8 +276,6 @@ class WysiwygEditor {
       }
 
       this.getEditor().preserveLastLine();
-
-      this._togglePlaceholder();
     }, 0));
 
     squire.addEventListener('keydown', keyboardEvent => {
@@ -438,12 +440,17 @@ class WysiwygEditor {
   }
 
   _togglePlaceholder() {
-    const $body = this.get$Body();
-    if ($body[0].textContent) {
-      $body.removeClass('tui-editor-contents-placeholder');
-    } else {
-      $body.addClass('tui-editor-contents-placeholder');
-    }
+    const squire = this.getEditor();
+    squire.modifyDocument(() => {
+      const root = squire.getRoot();
+      if (root.textContent || root.childNodes.length > 1) {
+        if (root.classList.contains(PLACEHOLDER_CSS_CLASSNAME)) {
+          root.classList.remove(PLACEHOLDER_CSS_CLASSNAME);
+        }
+      } else if (!root.classList.contains(PLACEHOLDER_CSS_CLASSNAME)) {
+        root.classList.add(PLACEHOLDER_CSS_CLASSNAME);
+      }
+    });
   }
 
   /**
@@ -771,7 +778,7 @@ class WysiwygEditor {
    */
   setPlaceholder(placeholder) {
     if (placeholder) {
-      this.get$Body()[0].dataset.placeholder = placeholder;
+      this.getEditor().getRoot().setAttribute('data-placeholder', placeholder);
     }
   }
 
@@ -798,8 +805,6 @@ class WysiwygEditor {
 
     this.getEditor().removeLastUndoStack();
     this.getEditor().saveUndoState();
-
-    this._togglePlaceholder();
   }
 
   /**
