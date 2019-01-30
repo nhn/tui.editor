@@ -531,7 +531,7 @@ class WysiwygEditor {
   _handleRemoveKeyEvent(ev, range, keyMap) {
     const sq = this.getEditor();
 
-    if (!range.collapsed) {
+    if (this._isStartHeadingOrTableAndContainsThem(range)) {
       const keyStr = keyMap === 'BACK_SPACE' ? 'backspace' : 'delete';
 
       sq.removeAllFormatting();
@@ -542,6 +542,22 @@ class WysiwygEditor {
     }
 
     return true;
+  }
+
+  _isStartHeadingOrTableAndContainsThem(range) {
+    const {startContainer, startOffset, commonAncestorContainer, collapsed} = range;
+    const root = this.getEditor().getRoot();
+    const isHeadingOrTableRegexp = /^(TABLE|H[1-6])$/;
+
+    if (!collapsed && commonAncestorContainer === root) {
+      if (startContainer === root) {
+        return isHeadingOrTableRegexp.test(domUtils.getChildNodeByOffset(startContainer, startOffset).nodeName);
+      }
+
+      return startOffset === 0 && isHeadingOrTableRegexp.test(domUtils.getParentUntil(startContainer, root).nodeName);
+    }
+
+    return false;
   }
 
   _wrapDefaultBlockToOrphanTexts() {
