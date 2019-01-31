@@ -26,6 +26,7 @@ const keyMapper = KeyMapper.getSharedInstance();
 const FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi,
   FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi,
   FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
+const FIND_TABLE_AND_HEADING_RX = /^(TABLE|H[1-6])$/;
 
 const EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 
@@ -523,6 +524,40 @@ class WysiwygEditor {
 
       return true;
     });
+
+    this.addKeyEventHandler('BACK_SPACE', (ev, range, keymap) => this._handleRemoveKeyEvent(ev, range, keymap));
+    this.addKeyEventHandler('DELETE', (ev, range, keymap) => this._handleRemoveKeyEvent(ev, range, keymap));
+  }
+
+  _handleRemoveKeyEvent(ev, range, keyMap) {
+    const sq = this.getEditor();
+
+    if (this._isStartHeadingOrTableAndContainsThem(range)) {
+      const keyStr = keyMap === 'BACK_SPACE' ? 'backspace' : 'delete';
+
+      sq.removeAllFormatting();
+      sq._keyHandlers[keyStr](sq, ev, sq.getSelection());
+      sq.removeLastUndoStack();
+
+      return false;
+    }
+
+    return true;
+  }
+
+  _isStartHeadingOrTableAndContainsThem(range) {
+    const {startContainer, startOffset, commonAncestorContainer, collapsed} = range;
+    const root = this.getEditor().getRoot();
+
+    if (!collapsed && commonAncestorContainer === root) {
+      if (startContainer === root) {
+        return FIND_TABLE_AND_HEADING_RX.test(domUtils.getChildNodeByOffset(startContainer, startOffset).nodeName);
+      } else if (startOffset === 0) {
+        return FIND_TABLE_AND_HEADING_RX.test(domUtils.getParentUntil(startContainer, root).nodeName);
+      }
+    }
+
+    return false;
   }
 
   _wrapDefaultBlockToOrphanTexts() {
