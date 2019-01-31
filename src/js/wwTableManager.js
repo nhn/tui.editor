@@ -792,20 +792,17 @@ class WwTableManager {
   /**
    * Complete passed table
    * @param {HTMLElement} node - Table inner element
-   * @param {?boolean} useHeader - whether use header or not
    * @private
    */
-  _completeIncompleteTable(node, useHeader) {
+  _completeIncompleteTable(node) {
     const nodeName = node.tagName;
     let table, completedTableContents;
-
-    useHeader = util.isUndefined(useHeader) ? true : useHeader;
 
     if (nodeName === 'TABLE') {
       table = node;
     } else {
-      table = $('<table></table>');
-      table.insertAfter(node);
+      table = document.createElement('table');
+      node.parentNode.insertBefore(table, node.nextSibling);
 
       if (nodeName === 'TBODY') {
         completedTableContents = this._generateTheadAndTbodyFromTbody(node);
@@ -815,14 +812,21 @@ class WwTableManager {
         completedTableContents = this._generateTheadAndTbodyFromTr(node);
       }
 
-      if (useHeader) {
-        table.append(completedTableContents.thead);
-      }
-
-      table.append(completedTableContents.tbody);
+      table.appendChild(completedTableContents.thead);
+      table.appendChild(completedTableContents.tbody);
     }
 
+    this._removeEmptyRows(table);
     this.tableCellAppendAidForTableElement(table);
+  }
+
+  _removeEmptyRows(table) {
+    const trs = table.querySelectorAll('tr');
+    util.forEachArray(trs, tr => {
+      if (!tr.cells.length) {
+        tr.parentNode.removeChild(tr);
+      }
+    });
   }
 
   /**

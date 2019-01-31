@@ -34,7 +34,7 @@ function _createTheadOrTbodyHtml(trs, wrapperNodeName) {
     html = trs.map(tr => {
       const tdHtml = tr.map(_createCellHtml).join('');
 
-      return tdHtml ? `<tr>${tdHtml}</tr>` : '';
+      return `<tr>${tdHtml}</tr>`;
     }).join('');
     html = `<${wrapperNodeName}>${html}</${wrapperNodeName}>`;
   }

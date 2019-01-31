@@ -102,12 +102,12 @@ class WwClipboardManager {
     const range = this.wwe.getEditor().getSelection();
     const tableManager = this.wwe.componentManager.getManager('table');
 
-    if (tableManager.isInTable(range) && this._isInOneCell(range)) {
+    if (tableManager.isInTable(range) && this._isSingleCellSelected(range)) {
       this._tablePasteHelper.pasteClipboard(ev);
     }
   }
 
-  _isInOneCell(range) {
+  _isSingleCellSelected(range) {
     const {startContainer, endContainer} = range;
 
     return this._getCell(startContainer) === this._getCell(endContainer);
