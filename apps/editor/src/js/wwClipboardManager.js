@@ -102,9 +102,19 @@ class WwClipboardManager {
     const range = this.wwe.getEditor().getSelection();
     const tableManager = this.wwe.componentManager.getManager('table');
 
-    if (tableManager.isInTable(range)) {
+    if (tableManager.isInTable(range) && this._isSingleCellSelected(range)) {
       this._tablePasteHelper.pasteClipboard(ev);
     }
+  }
+
+  _isSingleCellSelected(range) {
+    const {startContainer, endContainer} = range;
+
+    return this._getCell(startContainer) === this._getCell(endContainer);
+  }
+
+  _getCell(node) {
+    return node.nodeName === 'TD' ? node : domUtils.getParentUntil(node, 'TR');
   }
 
   _onWillPaste(pasteData) {
