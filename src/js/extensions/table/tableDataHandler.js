@@ -336,11 +336,13 @@ function findElementIndex(tableData, rowIndex, colIndex) {
 function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
   tableData.forEach((rowData, rowIndex) => {
     const startIndex = rowData.length;
-    const nodeName = startIndex ? rowData[0].nodeName : null;
+    if (startIndex) {
+      const [{nodeName}] = rowData;
 
-    util.range(startIndex, limitIndex).forEach(colIndex => {
-      rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
-    });
+      util.range(startIndex, limitIndex).forEach(colIndex => {
+        rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
+      });
+    }
   });
 }
 
@@ -359,7 +361,7 @@ function addTbodyOrTheadIfNeed(tableData) {
     util.range(0, tableData[1].length).forEach(colIndex => {
       header.push(createBasicCell(0, colIndex, 'TH'));
     });
-  } else if (tableData[0][0] && tableData[0][0].nodeName !== 'TH') {
+  } else if (tableData[0][0].nodeName !== 'TH') {
     const newHeader = util.range(0, cellCount).map(colIndex => createBasicCell(0, colIndex, 'TH'));
 
     [].concat(...tableData).forEach(cellData => {
