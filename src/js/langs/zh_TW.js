@@ -48,6 +48,5 @@ i18n.setLanguage(['zh', 'zh_TW'], {
   'Text color': '文字顏色',
   'Auto scroll enabled': '已啟用自動滾動',
   'Auto scroll disabled': '已停用自動滾動',
-  'Cannot paste values ​​other than a table in the cell selection state': '在選取儲存格狀態下只能貼上表格內容。',
   'Choose language': '選擇語言'
 });
