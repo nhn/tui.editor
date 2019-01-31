@@ -26,6 +26,7 @@ const keyMapper = KeyMapper.getSharedInstance();
 const FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi,
   FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi,
   FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
+const FIND_TABLE_AND_HEADING_RX = /^(TABLE|H[1-6])$/;
 
 const EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 
@@ -547,14 +548,13 @@ class WysiwygEditor {
   _isStartHeadingOrTableAndContainsThem(range) {
     const {startContainer, startOffset, commonAncestorContainer, collapsed} = range;
     const root = this.getEditor().getRoot();
-    const isHeadingOrTableRegexp = /^(TABLE|H[1-6])$/;
 
     if (!collapsed && commonAncestorContainer === root) {
       if (startContainer === root) {
-        return isHeadingOrTableRegexp.test(domUtils.getChildNodeByOffset(startContainer, startOffset).nodeName);
+        return FIND_TABLE_AND_HEADING_RX.test(domUtils.getChildNodeByOffset(startContainer, startOffset).nodeName);
+      } else if (startOffset === 0) {
+        return FIND_TABLE_AND_HEADING_RX.test(domUtils.getParentUntil(startContainer, root).nodeName);
       }
-
-      return startOffset === 0 && isHeadingOrTableRegexp.test(domUtils.getParentUntil(startContainer, root).nodeName);
     }
 
     return false;
