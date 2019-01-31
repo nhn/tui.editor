@@ -709,11 +709,6 @@ class WwTableManager {
     this._addTrIntoContainerIfNeed($table);
 
     const $trs = $table.find('tr');
-    $trs.each((index, tr) => {
-      if (!tr.cells.length) {
-        tr.remove();
-      }
-    });
     const tableAidInformation = this.prepareToTableCellStuffing($trs);
     const {maximumCellLength, needTableCellStuffingAid} = tableAidInformation;
 
