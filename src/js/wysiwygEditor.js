@@ -444,10 +444,8 @@ class WysiwygEditor {
     squire.modifyDocument(() => {
       const root = squire.getRoot();
       if (root.textContent || root.childNodes.length > 1) {
-        if (root.classList.contains(PLACEHOLDER_CSS_CLASSNAME)) {
-          root.classList.remove(PLACEHOLDER_CSS_CLASSNAME);
-        }
-      } else if (!root.classList.contains(PLACEHOLDER_CSS_CLASSNAME)) {
+        root.classList.remove(PLACEHOLDER_CSS_CLASSNAME);
+      } else {
         root.classList.add(PLACEHOLDER_CSS_CLASSNAME);
       }
     });
