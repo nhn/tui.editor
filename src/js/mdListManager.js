@@ -126,11 +126,11 @@ class MdListManager {
     const isRangeEndInUlOrTask = this._isDifferentListType(comparator, doc.getLine(end));
 
     if (isRangeStartInUlOrTask) {
-      start = this._getStartLineNumberOfList(doc, start);
+      start = this._getStartLineNumberOfSameList(doc, start);
     }
 
     if (isRangeEndInUlOrTask) {
-      end = this._getEndLineNumberOfList(doc, end);
+      end = this._getEndLineNumberOfSameList(doc, end);
     }
 
     return {
@@ -232,6 +232,98 @@ class MdListManager {
     }
 
     return lineNumber;
+  }
+
+  /**
+   * Get depth of list. If line is not list, depth is 0.
+   * @param {object} doc CodeMirror doc instance
+   * @param {number} lineNumber line number
+   * @returns {number}
+   */
+  getListDepth(doc, lineNumber) {
+    return doc.cm.getStateAfter(lineNumber).base.listStack.length;
+  }
+
+  _isSameDepthList(doc, lineNumber, depth) {
+    return doc.getLine(lineNumber) && this.getListDepth(doc, lineNumber) === depth;
+  }
+
+  _getStartLineNumberOfSameList(doc, startLineNumber) {
+    const depth = this.getListDepth(doc, startLineNumber);
+    let lineNumber;
+
+    for (lineNumber = startLineNumber; lineNumber > 0; lineNumber -= 1) {
+      if (!this._isSameDepthList(doc, lineNumber - 1, depth)) {
+        break;
+      }
+    }
+
+    return lineNumber;
+  }
+
+  _getEndLineNumberOfSameList(doc, endLineNumber) {
+    const lineCount = doc.lineCount();
+    const depth = this.getListDepth(doc, endLineNumber);
+    let lineNumber;
+
+    for (lineNumber = endLineNumber; lineNumber < lineCount; lineNumber += 1) {
+      if (!this._isSameDepthList(doc, lineNumber + 1, depth)) {
+        break;
+      }
+    }
+
+    return lineNumber;
+  }
+
+  _findForwardOneDepthList(doc, lineNumber) {
+    let result = [];
+
+    for (let i = lineNumber - 1; i >= 0; i -= 1) {
+      if (this._isSameDepthList(doc, i, 1)) {
+        result.push(i);
+      }
+    }
+
+    return result.reverse();
+  }
+
+  _findBackwardOneDepthList(doc, lineNumber) {
+    const lineCount = doc.lineCount();
+    let result = [];
+
+    for (let i = lineNumber + 1; i < lineCount; i += 1) {
+      if (this._isSameDepthList(doc, i, 1)) {
+        result.push(i);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Find One depth list from start line to end line
+   * Also, find one depth items start line forward or end line backward
+   * @param {object} doc CodeMirror doc instance
+   * @param {number} startLineNumber start line number
+   * @param {number} endLineNumber end line number
+   * @returns {Array}
+   */
+  findOneDepthList(doc, startLineNumber, endLineNumber) {
+    let result = [];
+
+    for (let i = startLineNumber; i <= endLineNumber; i += 1) {
+      if (this.getListDepth(doc, i) === 1) {
+        result.push(i);
+      }
+    }
+
+    if (result.length) {
+      const forwardList = this._findForwardOneDepthList(doc, startLineNumber);
+      const bacwardList = this._findBackwardOneDepthList(doc, endLineNumber);
+      result = forwardList.concat(result).concat(bacwardList);
+    }
+
+    return result;
   }
 }
 

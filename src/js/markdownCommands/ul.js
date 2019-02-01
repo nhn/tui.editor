@@ -35,23 +35,19 @@ const UL = CommandManager.command('markdown', /** @lends UL */{
     const lineRange = listManager.expandLineRangeIfNeed(doc, range, isOlOrTask);
     const startLineNumber = lineRange.start;
     const endLineNumber = lineRange.end;
-    let line, currentLineStart;
+
+    const oneDepthList = listManager.findOneDepthList(doc, startLineNumber, endLineNumber);
+    oneDepthList.forEach(lineNumber => {
+      changeToUL(listManager, doc, doc.getLine(lineNumber), lineNumber);
+    });
 
     for (let i = startLineNumber; i <= endLineNumber; i += 1) {
-      currentLineStart = {
-        line: i,
-        ch: 0
-      };
-
-      line = doc.getLine(i);
+      const line = doc.getLine(i);
 
       if (listManager.isListOrParagraph(line)) {
-        if (isUlTask(line)) {
-          listManager.replaceLineText(doc, i, MD_UL_TASK_SYNTAX_RX, '$1 ');
-        } else if (isOlOrTask(line)) {
-          listManager.replaceLineText(doc, i, MD_UL_OR_UL_TASK_SYNTAX_RX, '* ');
-        } else if (!line.match(FIND_MD_UL_RX)) {
-          doc.replaceRange('* ', currentLineStart);
+        const depth = listManager.getListDepth(doc, i);
+        if (depth !== 1) {
+          changeToUL(listManager, doc, line, i);
         }
 
         if (i === endLineNumber) {
@@ -61,9 +57,31 @@ const UL = CommandManager.command('markdown', /** @lends UL */{
         break;
       }
     }
+
     cm.focus();
   }
 });
+
+/**
+ * Change to ul list
+ * @param {MdListManager} listManager MdListManager
+ * @param {object} doc CodeMirror doc instance
+ * @param {string} lineText text of the line
+ * @param {number} lineNumber line number
+ * @param {number} ordinalNumber ordinal number
+ */
+function changeToUL(listManager, doc, lineText, lineNumber) {
+  if (isUlTask(lineText)) {
+    listManager.replaceLineText(doc, lineNumber, MD_UL_TASK_SYNTAX_RX, '$1 ');
+  } else if (isOlOrTask(lineText)) {
+    listManager.replaceLineText(doc, lineNumber, MD_UL_OR_UL_TASK_SYNTAX_RX, '* ');
+  } else if (!lineText.match(FIND_MD_UL_RX)) {
+    doc.replaceRange('* ', {
+      line: lineNumber,
+      ch: 0
+    });
+  }
+}
 
 /**
  * Return whether the given line is UL TASK

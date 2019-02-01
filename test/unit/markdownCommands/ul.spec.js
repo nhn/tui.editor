@@ -303,4 +303,38 @@ describe('UL', () => {
       expect(doc.getLine(1)).toEqual('* another task');
     });
   });
+
+  describe('change to ul', () => {
+    it('should change same depth items to ul when item of same list change to ul', () => {
+      cm.setValue([
+        '1. AAA',
+        '    1. aaa',
+        '    2. bbb' // cursor
+      ].join('\n'));
+
+      doc.setCursor(2, 0);
+      UL.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('1. AAA');
+      expect(doc.getLine(1)).toEqual('    * aaa');
+      expect(doc.getLine(2)).toEqual('    * bbb');
+    });
+
+    it('should change all one depth items to ul when one depth item of the list change to ul', () => {
+      cm.setValue([
+        '1. AAA',
+        '    1. aaa',
+        '2. BBB', // cursor
+        '    1. bbb'
+      ].join('\n'));
+
+      doc.setCursor(2, 0);
+      UL.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('* AAA');
+      expect(doc.getLine(1)).toEqual('    1. aaa');
+      expect(doc.getLine(2)).toEqual('* BBB');
+      expect(doc.getLine(3)).toEqual('    1. bbb');
+    });
+  });
 });

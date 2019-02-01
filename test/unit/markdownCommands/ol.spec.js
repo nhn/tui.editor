@@ -283,4 +283,86 @@ describe('OL', () => {
       expect(doc.getLine(1)).toEqual('2. another task');
     });
   });
+
+  describe('change to ol', () => {
+    it('should change same depth items to ol when item of same list change to ol', () => {
+      cm.setValue([
+        '* AAA',
+        '    * aaa',
+        '    * bbb' // cursor
+      ].join('\n'));
+
+      doc.setCursor(2, 0);
+      OL.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('* AAA');
+      expect(doc.getLine(1)).toEqual('    1. aaa');
+      expect(doc.getLine(2)).toEqual('    2. bbb');
+    });
+
+    it('should change all one depth items to ol when one depth item of the list change to ol', () => {
+      cm.setValue([
+        '* AAA',
+        '    * aaa',
+        '* BBB', // cursor
+        '    * bbb'
+      ].join('\n'));
+
+      doc.setCursor(2, 0);
+      OL.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('1. AAA');
+      expect(doc.getLine(1)).toEqual('    * aaa');
+      expect(doc.getLine(2)).toEqual('2. BBB');
+      expect(doc.getLine(3)).toEqual('    * bbb');
+    });
+
+    it('should be correct numbering when select lines that is different depth', () => {
+      cm.setValue([
+        '* AAA',
+        '    * aaa',
+        '* BBB', // cursor start
+        '    * bbb',
+        '    * bbbb', // cursor end
+        '* CCC'
+      ].join('\n'));
+
+      doc.setSelection({
+        line: 2,
+        ch: 0
+      }, {
+        line: 4,
+        ch: 0
+      });
+      OL.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('1. AAA');
+      expect(doc.getLine(1)).toEqual('    * aaa');
+      expect(doc.getLine(2)).toEqual('2. BBB');
+      expect(doc.getLine(3)).toEqual('    1. bbb');
+      expect(doc.getLine(4)).toEqual('    2. bbbb');
+      expect(doc.getLine(5)).toEqual('3. CCC');
+    });
+
+    it('should be correct numbering when select lines that contain ol list', () => {
+      cm.setValue([
+        '* AAA',
+        '* BBB', // cursor start
+        '1. CCC' // cursor end
+      ].join('\n'));
+
+      doc.setSelection({
+        line: 1,
+        ch: 0
+      }, {
+        line: 2,
+        ch: 0
+      });
+      OL.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('1. AAA');
+      expect(doc.getLine(1)).toEqual('2. BBB');
+      expect(doc.getLine(2)).toEqual('3. CCC');
+    });
+  });
 });

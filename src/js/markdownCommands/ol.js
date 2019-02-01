@@ -11,6 +11,7 @@ import {
 } from './listRegex';
 
 const MD_LIST_OR_TASK_SYNTAX_RX = /([-*]|[\d]+\.)( \[[ xX]])? /;
+const MD_LIST_OL_SYNTAX_RX = /([\d]+\.) /;
 
 /**
  * OL
@@ -34,25 +35,24 @@ const OL = CommandManager.command('markdown', /** @lends OL */{
     const lineRange = listManager.expandLineRangeIfNeed(doc, range, isUlOrTask);
     const startLineNumber = lineRange.start;
     const endLineNumber = lineRange.end;
+
+    const oneDepthList = listManager.findOneDepthList(doc, startLineNumber, endLineNumber);
     let ordinalNumber = 1;
-    let line, currentLineStart;
+    oneDepthList.forEach(lineNumber => {
+      changeToOL(listManager, doc, doc.getLine(lineNumber), lineNumber, ordinalNumber);
+      ordinalNumber += 1;
+    });
 
+    let numbers = [];
     for (let i = startLineNumber; i <= endLineNumber; i += 1) {
-      currentLineStart = {
-        line: i,
-        ch: 0
-      };
+      const lineText = doc.getLine(i);
 
-      line = doc.getLine(i);
-
-      if (listManager.isListOrParagraph(line)) {
-        if (isUlOrTask(line)) {
-          listManager.replaceLineText(doc, i, MD_LIST_OR_TASK_SYNTAX_RX, `${ordinalNumber}. `);
-        } else if (!line.match(FIND_MD_OL_RX)) {
-          doc.replaceRange(`${ordinalNumber}. `, currentLineStart);
+      if (listManager.isListOrParagraph(lineText)) {
+        const depth = listManager.getListDepth(doc, i);
+        if (depth !== 1) {
+          numbers[depth] = numbers[depth] ? numbers[depth] + 1 : 1;
+          changeToOL(listManager, doc, lineText, i, numbers[depth]);
         }
-
-        ordinalNumber += 1;
 
         if (i === endLineNumber) {
           listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
@@ -61,9 +61,31 @@ const OL = CommandManager.command('markdown', /** @lends OL */{
         break;
       }
     }
+
     cm.focus();
   }
 });
+
+/**
+ * Change to ol list
+ * @param {MdListManager} listManager MdListManager
+ * @param {CodeMirror.Doc} doc doc of cm
+ * @param {string} lineText text of the line
+ * @param {number} lineNumber line number
+ * @param {number} ordinalNumber ordinal number
+ */
+function changeToOL(listManager, doc, lineText, lineNumber, ordinalNumber) {
+  if (isUlOrTask(lineText)) {
+    listManager.replaceLineText(doc, lineNumber, MD_LIST_OR_TASK_SYNTAX_RX, `${ordinalNumber}. `);
+  } else if (lineText.match(FIND_MD_OL_RX)) {
+    listManager.replaceLineText(doc, lineNumber, MD_LIST_OL_SYNTAX_RX, `${ordinalNumber}. `);
+  } else {
+    doc.replaceRange(`${ordinalNumber}. `, {
+      line: lineNumber,
+      ch: 0
+    });
+  }
+}
 
 /**
  * Return whether passed line is UL or TASK or neither
