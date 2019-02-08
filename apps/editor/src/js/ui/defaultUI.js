@@ -370,6 +370,11 @@ class DefaultUI {
    */
   remove() {
     this.$el.remove();
+    this._markdownTab.remove();
+    this._modeSwitch.remove();
+    this._toolbar.destroy();
+    this._popups.forEach(popup => popup.remove());
+    this._popups = [];
     tooltip.hide();
   }
 
