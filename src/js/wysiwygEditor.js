@@ -770,8 +770,8 @@ class WysiwygEditor {
    * @memberof WysiwygEditor
    */
   remove() {
+    this.$editorContainerEl.off('scroll');
     this.getEditor().destroy();
-
     this.editor = null;
     this.$body = null;
     this.eventManager = null;

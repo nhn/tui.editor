@@ -249,6 +249,7 @@ class LayerPopup extends UIController {
     }
 
     this.$el.remove();
+    this.$el = null;
   }
 
   /**
