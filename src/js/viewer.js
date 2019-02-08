@@ -145,6 +145,7 @@ class ToastUIEditorViewer {
   remove() {
     this.eventManager.emit('removeEditor');
     this.preview.$el.off('mousedown', $.proxy(this._toggleTask, this));
+    this.preview.remove();
     this.options = null;
     this.eventManager = null;
     this.commandManager = null;

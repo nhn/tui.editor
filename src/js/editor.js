@@ -674,6 +674,7 @@ class ToastUIEditor {
     this.wwEditor.remove();
     this.mdEditor.remove();
     this.layout.remove();
+    this.preview.remove();
 
     if (this.getUI()) {
       this.getUI().remove();
