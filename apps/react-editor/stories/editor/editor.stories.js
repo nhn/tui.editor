@@ -1,7 +1,7 @@
 import React from 'react';
 import 'codemirror/lib/codemirror.css';
 import 'highlight.js/styles/github.css';
-import 'tui-editor/dist/tui-editor.css';
+import 'tui-editor/dist/tui-editor.min.css';
 import 'tui-editor/dist/tui-editor-contents.min.css';
 
 import 'tui-editor/dist/tui-editor-extScrollSync';
