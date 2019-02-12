@@ -279,7 +279,9 @@ class MdListManager {
     let result = [];
 
     for (let i = lineNumber - 1; i >= 0; i -= 1) {
-      if (this._isSameDepthList(doc, i, 1)) {
+      if (!this._isListLine(doc.getLine(i))) {
+        break;
+      } else if (this._isSameDepthList(doc, i, 1)) {
         result.push(i);
       }
     }
@@ -292,7 +294,9 @@ class MdListManager {
     let result = [];
 
     for (let i = lineNumber + 1; i < lineCount; i += 1) {
-      if (this._isSameDepthList(doc, i, 1)) {
+      if (!this._isListLine(doc.getLine(i))) {
+        break;
+      } else if (this._isSameDepthList(doc, i, 1)) {
         result.push(i);
       }
     }
