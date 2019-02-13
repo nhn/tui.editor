@@ -173,7 +173,7 @@ stories.add('dynamically change react state', () => {
 
       this.setState({
         ...this.state,
-        initialContent: value
+        content: value
       });
     };
 

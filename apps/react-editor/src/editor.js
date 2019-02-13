@@ -33,16 +33,7 @@ export default class extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     const instance = this.getInstance();
-    const {
-      initialValue,
-      initialEditType,
-      height,
-      previewStyle
-    } = nextProps;
-
-    if (this.props.initialValue !== initialValue) {
-      instance.setValue(initialValue);
-    }
+    const {height, previewStyle} = nextProps;
 
     if (this.props.height !== height) {
       instance.height(height);
@@ -50,10 +41,6 @@ export default class extends React.Component {
 
     if (this.props.previewStyle !== previewStyle) {
       instance.changePreviewStyle(previewStyle);
-    }
-
-    if(this.props.initialEditType !== initialEditType) {
-      instance.changeMode(initialEditType)
     }
 
     return false;
