@@ -80,8 +80,7 @@ describe('UL', () => {
 
       UL.exec(mde);
 
-      expect(doc.getLine(4)).toEqual('');
-      expect(doc.getLine(5)).toEqual('* mytext4');
+      expect(doc.getLine(4)).toEqual('* mytext4');
     });
     it('Add ul markdown text to line start', () => {
       doc.setCursor(0, 4);
@@ -124,7 +123,8 @@ describe('UL', () => {
       expect(doc.getLine(1)).toEqual('* mytext2');
       expect(doc.getLine(2)).toEqual('* mytext3');
       expect(doc.getLine(3)).toEqual('* mytext4');
-      expect(doc.getLine(4)).toEqual('# myheading');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('# myheading');
     });
     it('add ul markdown text except blockquote', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '> myheading'];
@@ -144,7 +144,8 @@ describe('UL', () => {
       expect(doc.getLine(1)).toEqual('* mytext2');
       expect(doc.getLine(2)).toEqual('* mytext3');
       expect(doc.getLine(3)).toEqual('* mytext4');
-      expect(doc.getLine(4)).toEqual('> myheading');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('> myheading');
     });
     it('add ul markdown text except blockquote', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '```', 'var a = 10;', '```'];
@@ -164,7 +165,8 @@ describe('UL', () => {
       expect(doc.getLine(1)).toEqual('* mytext2');
       expect(doc.getLine(2)).toEqual('* mytext3');
       expect(doc.getLine(3)).toEqual('* mytext4');
-      expect(doc.getLine(4)).toEqual('```');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('```');
     });
     it('add ul markdown text except table', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '| hi | hello |', '| --- | --- |', '| bye | bye |'];
@@ -184,7 +186,8 @@ describe('UL', () => {
       expect(doc.getLine(1)).toEqual('* mytext2');
       expect(doc.getLine(2)).toEqual('* mytext3');
       expect(doc.getLine(3)).toEqual('* mytext4');
-      expect(doc.getLine(4)).toEqual('| hi | hello |');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('| hi | hello |');
     });
     it('do not add blank at start & end of ul when already blank line exists', () => {
       const sourceText = ['', 'mytext2', '', 'mytext4', '# myheading'];
@@ -335,6 +338,27 @@ describe('UL', () => {
       expect(doc.getLine(1)).toEqual('    1. aaa');
       expect(doc.getLine(2)).toEqual('* BBB');
       expect(doc.getLine(3)).toEqual('    1. bbb');
+    });
+
+    it('should change when select lines that contain ol and plain text', () => {
+      cm.setValue([
+        '1. AAA',
+        '2. BBB', // cursor start
+        'CCC' // cursor end
+      ].join('\n'));
+
+      doc.setSelection({
+        line: 1,
+        ch: 0
+      }, {
+        line: 2,
+        ch: 0
+      });
+      UL.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('* AAA');
+      expect(doc.getLine(1)).toEqual('* BBB');
+      expect(doc.getLine(2)).toEqual('* CCC');
     });
   });
 });

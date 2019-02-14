@@ -53,7 +53,7 @@ describe('OL', () => {
 
       OL.exec(mde);
 
-      expect(doc.getLine(5)).toEqual('1. mytext4');
+      expect(doc.getLine(4)).toEqual('1. mytext4');
     });
     it('Don\'t add already have ol markdown text in line start', () => {
       doc.setCursor(0, 4);
@@ -113,7 +113,8 @@ describe('OL', () => {
       expect(doc.getLine(1)).toEqual('2. mytext2');
       expect(doc.getLine(2)).toEqual('3. mytext3');
       expect(doc.getLine(3)).toEqual('4. mytext4');
-      expect(doc.getLine(4)).toEqual('# myheading');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('# myheading');
     });
     it('add ol markdown text except blockquote', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '> myheading'];
@@ -133,7 +134,8 @@ describe('OL', () => {
       expect(doc.getLine(1)).toEqual('2. mytext2');
       expect(doc.getLine(2)).toEqual('3. mytext3');
       expect(doc.getLine(3)).toEqual('4. mytext4');
-      expect(doc.getLine(4)).toEqual('> myheading');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('> myheading');
     });
     it('add ol markdown text except blockquote', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '```', 'var a = 10;', '```'];
@@ -153,7 +155,8 @@ describe('OL', () => {
       expect(doc.getLine(1)).toEqual('2. mytext2');
       expect(doc.getLine(2)).toEqual('3. mytext3');
       expect(doc.getLine(3)).toEqual('4. mytext4');
-      expect(doc.getLine(4)).toEqual('```');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('```');
     });
     it('add ol markdown text except table', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '| hi | hello |', '| --- | --- |', '| bye | bye |'];
@@ -173,7 +176,8 @@ describe('OL', () => {
       expect(doc.getLine(1)).toEqual('2. mytext2');
       expect(doc.getLine(2)).toEqual('3. mytext3');
       expect(doc.getLine(3)).toEqual('4. mytext4');
-      expect(doc.getLine(4)).toEqual('| hi | hello |');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('| hi | hello |');
     });
     it('do not add blank at start & end of ol when already blank line exists', () => {
       const sourceText = ['', 'mytext2', '', 'mytext4', '# myheading'];
@@ -349,6 +353,27 @@ describe('OL', () => {
         '* AAA',
         '* BBB', // cursor start
         '1. CCC' // cursor end
+      ].join('\n'));
+
+      doc.setSelection({
+        line: 1,
+        ch: 0
+      }, {
+        line: 2,
+        ch: 0
+      });
+      OL.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('1. AAA');
+      expect(doc.getLine(1)).toEqual('2. BBB');
+      expect(doc.getLine(2)).toEqual('3. CCC');
+    });
+
+    it('should be correct numbering when select lines that contain ul and plain text', () => {
+      cm.setValue([
+        '* AAA',
+        '* BBB', // cursor start
+        'CCC' // cursor end
       ].join('\n'));
 
       doc.setSelection({
