@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     "noEmit": true,
-    "noImplicitAny": false,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "noImplicitAny": false
   },
   "files": [
     "../../index.d.ts",

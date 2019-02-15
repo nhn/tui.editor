@@ -502,17 +502,17 @@ declare namespace tuiEditor {
 }
 
 declare module 'tui-editor' {
-  export = tuiEditor.Editor;
+  export default tuiEditor.Editor;
 }
 
 declare module 'tui-editor/dist/tui-editor-Editor-all' {
-  export = tuiEditor.Editor;
+  export default tuiEditor.Editor;
 }
 
 declare module 'tui-editor/dist/tui-editor-Viewer' {
-  export = tuiEditor.Viewer;
+  export default tuiEditor.Viewer;
 }
 
 declare module 'tui-editor/dist/tui-editor-Viewer-all' {
-  export = tuiEditor.Viewer;
+  export default tuiEditor.Viewer;
 }
