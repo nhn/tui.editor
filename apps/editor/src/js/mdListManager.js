@@ -2,9 +2,19 @@
  * @fileoverview Implements markdown list manager
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-const FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
-const FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
-const FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
+
+const FIND_LIST_RX = /^[ \t]*([-*]|[\d]+\.)( \[[ xX]])? /;
+const FIND_TASK_LIST_RX = /^[ \t]*([*-] |[\d]+\. )(\[[ xX]] )/;
+
+const FIND_UL_RX = /^[ \t]*[-*] .*/;
+const FIND_OL_TASK_RX = /^[ \t]*[\d]+\. \[[ xX]] .*/;
+
+const LIST_SYNTAX_RX = /([*-] |[\d]+\. )/;
+const TASK_SYNTAX_RX = /([-*] |[\d]+\. )(\[[ xX]] )/;
+const LIST_OR_TASK_SYNTAX_RX = /([-*]|[\d]+\.)( \[[ xX]])? /;
+const UL_TASK_SYNTAX_RX = /([-*])( \[[ xX]]) /;
+const OL_SYNTAX_RX = /([\d])+\.( \[[ xX]])? /;
+
 const FIND_TABLE_RX = /^\|([-\s\w\d\t<>?!@#$%^&*()_=+\\/'";: \r[\]]*\|+)+/i;
 const FIND_HEADING_RX = /^#+\s/;
 const FIND_BLOCK_RX = /^ {0,3}(```|\||>)/;
@@ -19,8 +29,8 @@ class MdListManager {
    * @memberof MdListManager
    */
   constructor(mde) {
-    this.mde = mde;
-    this.eventManager = mde.eventManager;
+    this.cm = mde.getEditor();
+    this.doc = this.cm.getDoc();
 
     /**
      * Name property
@@ -31,70 +41,12 @@ class MdListManager {
   }
 
   /**
-   * Return whether passed line is list or paragraph or not
-   * @param {string} line line text
-   * @returns {boolean}
-   */
-  isListOrParagraph(line) {
-    return !FIND_BLOCK_RX.test(line) && !FIND_TABLE_RX.test(line) && !FIND_HEADING_RX.test(line);
-  }
-
-  /**
-   * Append blank line at list top or bottom if needed
-   * @param {CodeMirror} cm CodeMirror instance
-   * @param {number} index index number
-   * @param {number} endLineNumber end line index number
-   * @param {number} startLineNumber start line index number
-   */
-  appendBlankLineIfNeed(cm, index, endLineNumber, startLineNumber) {
-    const doc = cm.getDoc();
-    let cursorPositionFactor = 0;
-    const isMultiLineSelection = startLineNumber !== endLineNumber;
-    const nextLineOfLastIndex = doc.getLine(this._getEndLineNumberOfList(doc, endLineNumber) + 1);
-    const previousLineOfFirstIndex = doc.getLine(this._getStartLineNumberOfList(doc, startLineNumber) - 1);
-
-    const nextLine = doc.getLine(index + 1);
-    if ((isMultiLineSelection && this._isNeedAppendBlankLine(nextLineOfLastIndex))
-            || (!isMultiLineSelection && this._isNeedAppendBlankLine(nextLine))
-    ) {
-      doc.replaceRange('\n', {
-        line: index,
-        ch: doc.getLine(index).length
-      });
-    }
-
-    const previousLine = doc.getLine(index - 1);
-    if ((isMultiLineSelection && this._isNeedAppendBlankLine(previousLineOfFirstIndex))
-            || (!isMultiLineSelection && this._isNeedAppendBlankLine(previousLine))
-    ) {
-      doc.replaceRange('\n', {
-        line: startLineNumber,
-        ch: 0
-      });
-      cursorPositionFactor += 1;
-    }
-    if (!isMultiLineSelection) {
-      const currentLineNumber = index + cursorPositionFactor;
-      cm.setCursor(currentLineNumber, doc.getLine(currentLineNumber).length);
-    }
-  }
-
-  /**
-   * Return whether need to append blank line or not
-   * @param {string} line Line text
-   * @returns {boolean}
-   * @private
-   */
-  _isNeedAppendBlankLine(line) {
-    return line && line.length !== 0 && !this._isAList(line);
-  }
-
-  /**
    * Sort line number of selection descending
    * @param {{from, to}} range start, end CodeMirror range information
    * @returns {{start: {number}, end: {number}}}
+   * @private
    */
-  createSortedLineRange(range) {
+  _createSortedLineRange(range) {
     const isReversed = range.from.line > range.to.line;
     const rangeStart = {
       line: isReversed ? range.to.line : range.from.line,
@@ -112,42 +64,201 @@ class MdListManager {
   }
 
   /**
-   * Expand line range if need
-   * @param {object} doc doc instance
-   * @param {{from, to}} range CodeMirror range information
-   * @param {function} comparator comparator function
-   * @returns {{start: number, end: number}}
+   * For odering the ol list, search preivous lines and
+   * calculate ordinal number when find ol list
+   * @param {number} lineNumber lineNumber
+   * @returns {number}
+   * @private
    */
-  expandLineRangeIfNeed(doc, range, comparator) {
-    const lineRange = this.createSortedLineRange(range);
-    let {start, end} = lineRange;
+  _calculateOrdinalNumber(lineNumber) {
+    let ordinalNumber = 1;
 
-    const isRangeStartInUlOrTask = this._isDifferentListType(comparator, doc.getLine(start));
-    const isRangeEndInUlOrTask = this._isDifferentListType(comparator, doc.getLine(end));
+    for (let i = lineNumber - 1; i >= 0; i -= 1) {
+      const depth = this._getListDepth(i);
 
-    if (isRangeStartInUlOrTask) {
-      start = this._getStartLineNumberOfList(doc, start);
+      if (depth === 1 && OL_SYNTAX_RX.exec(this.doc.getLine(i))) {
+        ordinalNumber = parseInt(RegExp.$1, 10) + 1;
+        break;
+      } else if (depth === 0) {
+        break;
+      }
     }
 
-    if (isRangeEndInUlOrTask) {
-      end = this._getEndLineNumberOfList(doc, end);
-    }
+    return ordinalNumber;
+  }
 
-    return {
-      start,
-      end
-    };
+  _isListLine(lineNumber) {
+    return !!FIND_LIST_RX.exec(this.doc.getLine(lineNumber));
   }
 
   /**
-   * Replace list syntax
-   * @param {object} doc CodeMirror doc instance
+   * If text already have sytax for heading, table and code block,
+   * can not change to list.
+   * @param {number} lineNumber lineNumber
+   * @returns {boolean}
+   * @private
+   */
+  _isCanBeList(lineNumber) {
+    const line = this.doc.getLine(lineNumber);
+
+    return !FIND_BLOCK_RX.test(line) && !FIND_TABLE_RX.test(line) && !FIND_HEADING_RX.test(line);
+  }
+
+  /**
+   * Return a function for change according to type
+   * @param {string} type ol, ul, task
+   * @returns {Function}
+   * @private
+   */
+  _getChangeFn(type) {
+    let fn;
+
+    switch (type) {
+    case 'ol':
+    case 'ul':
+      fn = (lineNumber) => this._changeToList(lineNumber, type);
+      break;
+    case 'task':
+      fn = (lineNumber) => this._changeToTask(lineNumber);
+      break;
+    default:
+      break;
+    }
+
+    return fn;
+  }
+
+  /**
+   * Change syntax by traversing each line selected.
+   * @param {{from, to}} range start, end CodeMirror range information
+   * @param {string} type ol, ul, task
+   */
+  changeSyntax(range, type) {
+    const newListLine = [];
+    const lineRange = this._createSortedLineRange(range);
+    const {
+      start: startLineNumber,
+      end: endLineNumber
+    } = lineRange;
+
+    const changeFn = this._getChangeFn(type);
+
+    for (let lineNumber = startLineNumber; lineNumber <= endLineNumber; lineNumber += 1) {
+      if (!this._isCanBeList(lineNumber)) {
+        break;
+      }
+
+      // If text of lineNumber is not list, cache for inserting blank line
+      if (!this._isListLine(lineNumber)) {
+        newListLine.push(lineNumber);
+      }
+
+      changeFn(lineNumber);
+    }
+
+    // Should insert blank line before and after new list
+    this._insertBlankLineForNewList(newListLine);
+
+    this.cm.focus();
+  }
+
+  _replaceLineText(text, lineNumber) {
+    this.doc.replaceRange(text, {
+      line: lineNumber,
+      ch: 0
+    });
+  }
+
+  /**
+   * change to list according to the type.
+   * @param {number} lineNumber line number
+   * @param {string} type ol, ul
+   * @private
+   */
+  _changeToList(lineNumber, type) {
+    if (this._isListLine(lineNumber)) {
+      // If type is ol, need ordinal number.
+      this._changeSameDepthList(lineNumber, type === 'ol' ?
+        (lineNum, ordinalNumber) => {
+          this._replaceListTypeToOL(lineNum, ordinalNumber);
+        } :
+        (lineNum) => {
+          this._replaceListTypeToUL(lineNum);
+        });
+    } else {
+      this._replaceLineText(
+        type === 'ol' ? `${this._calculateOrdinalNumber(lineNumber)}. ` : '* '
+        , lineNumber);
+    }
+  }
+
+  /**
+   * change to task list according
+   * @param {number} lineNumber line number
+   * @private
+   */
+  _changeToTask(lineNumber) {
+    if (FIND_TASK_LIST_RX.exec(this.doc.getLine(lineNumber))) {
+      this._replaceLineTextByRegexp(lineNumber, TASK_SYNTAX_RX, '$1');
+    } else if (this._isListLine(lineNumber)) {
+      this._replaceLineTextByRegexp(lineNumber, LIST_SYNTAX_RX, '$1[ ] ');
+    } else {
+      this._replaceLineText('* [ ] ', lineNumber);
+    }
+  }
+
+  _getListDepth(lineNumber) {
+    return this.doc.getLine(lineNumber) ? this.doc.cm.getStateAfter(lineNumber).base.listStack.length : 0;
+  }
+
+  _findSameDepthList(listNumber, depth, isIncrease) {
+    const lineCount = this.doc.lineCount();
+    let result = [];
+    let i = listNumber;
+    let currentLineDepth;
+
+    while (isIncrease ? i < lineCount - 1 : i > 0) {
+      i = isIncrease ? i + 1 : i - 1;
+      currentLineDepth = this._getListDepth(i);
+
+      if (currentLineDepth === depth) {
+        result.push(i);
+      } else if (currentLineDepth < depth) {
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Find Sampe depth list before and after the line number,
+   * and then same depth lines change using replacer function
+   * @param {number} lineNumber line number
+   * @param {Function} replacer The function should be called with line numbers and ordinal number as arguments.
+   * @private
+   */
+  _changeSameDepthList(lineNumber, replacer) {
+    const depth = this._getListDepth(lineNumber);
+
+    const backwardList = this._findSameDepthList(lineNumber, depth, false).reverse();
+    const forwardList = this._findSameDepthList(lineNumber, depth, true);
+    const sameDepthList = backwardList.concat([lineNumber]).concat(forwardList);
+
+    sameDepthList.forEach((lineNum, i) => {
+      replacer(lineNum, i + 1);
+    });
+  }
+
+  /**
+   * Replace text using regular expression
    * @param {number} lineNumber Line number
    * @param {RegExp} regexp Regexp for find list syntax
    * @param {string} replacePattern Replacement string
+   * @private
    */
-  replaceLineText(doc, lineNumber, regexp, replacePattern) {
-    let line = doc.getLine(lineNumber);
+  _replaceLineTextByRegexp(lineNumber, regexp, replacePattern) {
+    let line = this.doc.getLine(lineNumber);
     const currentLineStart = {
       line: lineNumber,
       ch: 0
@@ -159,79 +270,61 @@ class MdListManager {
 
     line = line.replace(regexp, replacePattern);
 
-    doc.replaceRange(line, currentLineStart, currentLineEnd);
+    this.doc.replaceRange(line, currentLineStart, currentLineEnd);
   }
 
-  /**
-   * Return whether is a different list type or not
-   * @param {function} comparator comparator function
-   * @param {string} line line string
-   * @returns {boolean}
-   * @private
-   */
-  _isDifferentListType(comparator, line) {
-    return line && line.length !== 0 && comparator.call(this, line);
+  _replaceListTypeToUL(lineNumber) {
+    const lineText = this.doc.getLine(lineNumber);
+
+    if (UL_TASK_SYNTAX_RX.exec(lineText)) {
+      this._replaceLineTextByRegexp(lineNumber, UL_TASK_SYNTAX_RX, '$1 ');
+    } else if (OL_SYNTAX_RX.exec(lineText)) {
+      this._replaceLineTextByRegexp(lineNumber, OL_SYNTAX_RX, '* ');
+    }
   }
 
-  /**
-   * Return whether is a list or not
-   * @param {string} line line string
-   * @returns {boolean}
-   * @private
-   */
-  _isAList(line) {
-    return line && line.length !== 0 && this._isListLine(line);
-  }
+  _replaceListTypeToOL(lineNumber, ordinalNumber) {
+    const lineText = this.doc.getLine(lineNumber);
 
-  /**
-   * Return whether passed line is list or not
-   * @param {string} line Line text
-   * @returns {Boolean}
-   * @private
-   */
-  _isListLine(line) {
-    return !!(line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_UL_RX) || line.match(FIND_MD_OL_RX));
-  }
-
-  /**
-   * Get start line number of current list
-   * @param {object} doc CodeMirror doc instance
-   * @param {number} startLineNumber start line number of selection
-   * @returns {number|undefined}
-   * @private
-   */
-  _getStartLineNumberOfList(doc, startLineNumber) {
-    let lineNumber;
-
-    for (lineNumber = startLineNumber; lineNumber > 0; lineNumber -= 1) {
-      const previousLine = doc.getLine(lineNumber - 1);
-      if (!previousLine || !this._isListLine(previousLine)) {
-        break;
+    if (FIND_UL_RX.exec(lineText) || FIND_OL_TASK_RX.exec(lineText)) {
+      this._replaceLineTextByRegexp(lineNumber, LIST_OR_TASK_SYNTAX_RX, `${ordinalNumber}. `);
+    } else if (OL_SYNTAX_RX.exec(lineText)) {
+      if (parseInt(RegExp.$1, 10) !== ordinalNumber) {
+        this._replaceLineTextByRegexp(lineNumber, OL_SYNTAX_RX, `${ordinalNumber}. `);
       }
     }
-
-    return lineNumber;
   }
 
   /**
-   * Get end line number of current list
-   * @param {object} doc CodeMirror doc instance
-   * @param {number} endLineNumber end line number of selection
-   * @returns {number|undefined}
+   * The new list must have a blank line before and after.
+   * @param {Array} newListLines lines that changed to list
    * @private
    */
-  _getEndLineNumberOfList(doc, endLineNumber) {
-    const lineCount = doc.lineCount();
-    let lineNumber;
+  _insertBlankLineForNewList(newListLines) {
+    const {length} = newListLines;
 
-    for (lineNumber = endLineNumber; lineNumber < lineCount; lineNumber += 1) {
-      const nextLine = doc.getLine(lineNumber + 1);
-      if (!nextLine || !this._isListLine(nextLine)) {
-        break;
+    if (length) {
+      const startLineNumber = newListLines[0];
+      const endLineNumber = newListLines[length - 1];
+
+      if (this._isNotBlankNotListLine(endLineNumber + 1)) {
+        this.doc.replaceRange('\n', {
+          line: endLineNumber,
+          ch: this.doc.getLine(endLineNumber).length
+        });
+      }
+
+      if (startLineNumber > 0 && this._isNotBlankNotListLine(startLineNumber - 1)) {
+        this.doc.replaceRange('\n', {
+          line: startLineNumber,
+          ch: 0
+        });
       }
     }
+  }
 
-    return lineNumber;
+  _isNotBlankNotListLine(lineNumber) {
+    return !!this.doc.getLine(lineNumber) && !this._isListLine(lineNumber);
   }
 }
 

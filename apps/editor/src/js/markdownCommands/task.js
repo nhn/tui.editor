@@ -3,14 +3,6 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import CommandManager from '../commandManager';
-import {
-  FIND_MD_OL_RX,
-  FIND_MD_UL_RX,
-  FIND_MD_TASK_RX
-} from './listRegex';
-
-const MD_UL_OR_OL_SYNTAX_RX = /([*-] |[\d]+\. )/;
-const MD_TASK_SYNTAX_RX = /([*-] |[\d]+\. )(\[[ xX]] )/;
 
 /**
  * Task
@@ -26,52 +18,11 @@ const Task = CommandManager.command('markdown', /** @lends Task */{
    * @param {MarkdownEditor} mde MarkdownEditor instance
    */
   exec(mde) {
-    const cm = mde.getEditor();
-    const doc = cm.getDoc();
     const range = mde.getCurrentRange();
     const listManager = mde.componentManager.getManager('list');
-    const lineRange = listManager.createSortedLineRange(range);
-    const startLineNumber = lineRange.start;
-    const endLineNumber = lineRange.end;
-    let line, currentLineStart;
 
-    for (let i = startLineNumber; i <= endLineNumber; i += 1) {
-      currentLineStart = {
-        line: i,
-        ch: 0
-      };
-
-      line = doc.getLine(i);
-
-      const hasTaskSyntax = !!line.match(MD_TASK_SYNTAX_RX);
-
-      if (listManager.isListOrParagraph(line)) {
-        if (isOlOrUl(line) && hasTaskSyntax) {
-          listManager.replaceLineText(doc, i, MD_TASK_SYNTAX_RX, '$1');
-        } else if (isOlOrUl(line) && !hasTaskSyntax) {
-          listManager.replaceLineText(doc, i, MD_UL_OR_OL_SYNTAX_RX, '$1[ ] ');
-        } else if (!line.match(FIND_MD_TASK_RX)) {
-          doc.replaceRange('* [ ] ', currentLineStart);
-        }
-
-        if (i === endLineNumber) {
-          listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
-        }
-      } else {
-        break;
-      }
-    }
-    cm.focus();
+    listManager.changeSyntax(range, 'task');
   }
 });
-
-/**
- * Return whether passed line is OL or UL or neither
- * @param {string} line Line text
- * @returns {boolean}
- */
-function isOlOrUl(line) {
-  return !!(line && (line.match(FIND_MD_UL_RX) || line.match(FIND_MD_OL_RX)));
-}
 
 export default Task;
