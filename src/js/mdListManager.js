@@ -88,7 +88,7 @@ class MdListManager {
   }
 
   _isListLine(lineNumber) {
-    return FIND_LIST_RX.exec(this.doc.getLine(lineNumber));
+    return !!FIND_LIST_RX.exec(this.doc.getLine(lineNumber));
   }
 
   _isCanBeList(lineNumber) {
@@ -103,7 +103,7 @@ class MdListManager {
    * @param {boolean} isOL change OL or UL
    */
   command(range, isOL) {
-    const checkBlankLine = [];
+    const newListLine = [];
     const lineRange = this._createSortedLineRange(range);
     const {
       start: startLineNumber,
@@ -120,14 +120,14 @@ class MdListManager {
             line: i,
             ch: 0
           });
-          checkBlankLine.push(i);
+          newListLine.push(i);
         }
       } else {
         break;
       }
     }
 
-    this._insertBlankLineForNewList(checkBlankLine);
+    this._insertBlankLineForNewList(newListLine);
 
     this.cm.focus();
   }
@@ -137,7 +137,7 @@ class MdListManager {
    * @param {{from, to}} range start, end CodeMirror range information
    */
   commandTask(range) {
-    const checkBlankLine = [];
+    const newListLine = [];
     const lineRange = this._createSortedLineRange(range);
     const {
       start: startLineNumber,
@@ -155,14 +155,14 @@ class MdListManager {
             line: i,
             ch: 0
           });
-          checkBlankLine.push(i);
+          newListLine.push(i);
         }
       } else {
         break;
       }
     }
 
-    this._insertBlankLineForNewList(checkBlankLine);
+    this._insertBlankLineForNewList(newListLine);
 
     this.cm.focus();
   }
@@ -255,54 +255,35 @@ class MdListManager {
     }
   }
 
-  _isBlankLine(lineNumber) {
-    return !this.doc.getLine(lineNumber);
-  }
+  /**
+   * The new list must have a blank line before and after.
+   * @param {Array} newListLines lines that changed to list
+   */
+  _insertBlankLineForNewList(newListLines) {
+    const {length} = newListLines;
 
-  _insertBlankLineForNewList(checkBlankLine) {
-    let previouse = -1;
-    let start = -1;
+    if (length) {
+      const startLineNumber = newListLines[0];
+      const endLineNumber = newListLines[length - 1];
 
-    checkBlankLine.forEach((lineNumber, index) => {
-      if (previouse === -1) {
-        start = lineNumber;
-      } else if (lineNumber - previouse === 1 && start === -1) {
-        start = previouse;
-      } else if (lineNumber - previouse > 1) {
-        this._insertBlankLine(start, previouse);
-        start = -1;
+      if (this._isNotBlankNotListLine(endLineNumber + 1)) {
+        this.doc.replaceRange('\n', {
+          line: endLineNumber,
+          ch: this.doc.getLine(endLineNumber).length
+        });
       }
 
-      if (index === checkBlankLine.length - 1) {
-        this._insertBlankLine(start, lineNumber);
+      if (startLineNumber > 0 && this._isNotBlankNotListLine(startLineNumber - 1)) {
+        this.doc.replaceRange('\n', {
+          line: startLineNumber,
+          ch: 0
+        });
       }
-
-      previouse = lineNumber;
-    });
+    }
   }
 
-  _insertBlankLine(startLineNumber, endLineNumber) {
-    let end = endLineNumber;
-
-    if (startLineNumber > 0
-      && !this._isBlankLine(startLineNumber - 1)
-      && !this._isListLine(startLineNumber - 1)
-    ) {
-      this.doc.replaceRange('\n', {
-        line: startLineNumber,
-        ch: 0
-      });
-      end += 1;
-    }
-
-    if (!this._isBlankLine(end + 1)
-      && !this._isListLine(end + 1)
-    ) {
-      this.doc.replaceRange('\n', {
-        line: end,
-        ch: this.doc.getLine(end).length
-      });
-    }
+  _isNotBlankNotListLine(lineNumber) {
+    return !!this.doc.getLine(lineNumber) && !this._isListLine(lineNumber);
   }
 }
 
