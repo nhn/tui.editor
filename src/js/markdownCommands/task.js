@@ -21,7 +21,7 @@ const Task = CommandManager.command('markdown', /** @lends Task */{
     const range = mde.getCurrentRange();
     const listManager = mde.componentManager.getManager('list');
 
-    listManager.commandTask(range);
+    listManager.changeSyntax(range, 'task');
   }
 });
 

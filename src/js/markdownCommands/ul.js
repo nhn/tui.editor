@@ -22,7 +22,7 @@ const UL = CommandManager.command('markdown', /** @lends UL */{
     const range = mde.getCurrentRange();
     const listManager = mde.componentManager.getManager('list');
 
-    listManager.command(range, false);
+    listManager.changeSyntax(range, 'ul');
   }
 });
 
