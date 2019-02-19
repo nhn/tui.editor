@@ -35,10 +35,10 @@ if (i18n) {
   });
 
   i18n.setLanguage(['nl', 'nl_NL'], {
-    'Merge cells': 'cellen samenvoegen',
-    'Unmerge cells': 'Samenvoegen cellen ongedaan maken',
-    'Cannot change part of merged cell': 'Kan geen deel uit van samengevoegde cel te veranderen.',
-    'Cannot paste row merged cells into the table header': 'Kan niet plakken rij samengevoegde cellen in de koptekst. '
+    'Merge cells': 'Cellen samenvoegen',
+    'Unmerge cells': 'Samengevoegde cellen ongedaan maken',
+    'Cannot change part of merged cell': 'Kan geen deel uit van een samengevoegde cel veranderen.',
+    'Cannot paste row merged cells into the table header': 'Kan geen rij met samengevoegde cellen in de koptekst plakken.'
   });
 
   i18n.setLanguage(['zh', 'zh_CN'], {
@@ -109,5 +109,12 @@ if (i18n) {
     'Unmerge cells': 'Rozłącz komórki',
     'Cannot change part of merged cell': 'Nie można zmienić części scalonej komórki.',
     'Cannot paste row merged cells into the table header': 'Nie można wkleić komórek o scalonym rzędzie w nagłówek tabeli.'
+  });
+
+  i18n.setLanguage(['zh', 'zh_TW'], {
+    'Merge cells': '合併儲存格',
+    'Unmerge cells': '取消合併儲存格',
+    'Cannot change part of merged cell': '無法變更儲存格的一部分。',
+    'Cannot paste row merged cells into the table header': '無法將合併的儲存格貼上至表格標題中。'
   });
 }

@@ -48,7 +48,5 @@ i18n.setLanguage(['uk', 'uk_UA'], {
   'Text color': 'Колір тексту',
   'Auto scroll enabled': 'Автоматична прокрутка включена',
   'Auto scroll disabled': 'Автоматична прокрутка відключена',
-  'Cannot paste values ​​other than a table in the cell selection state':
-        'Ви не можете вставляти значення, відмінні від таблиці, в стані вибору комірки.',
   'Choose language': 'Вибрати мову'
 });

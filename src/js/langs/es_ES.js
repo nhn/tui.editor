@@ -48,6 +48,5 @@ i18n.setLanguage(['es', 'es_ES'], {
   'Text color': 'Color del texto',
   'Auto scroll enabled': 'Desplazamiento automático habilitado',
   'Auto scroll disabled': 'Desplazamiento automático deshabilitado',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Sólo se pueden pegar tablas en el modo de selección de celdas',
   'Choose language': 'Elegir idioma'
 });

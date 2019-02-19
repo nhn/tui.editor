@@ -48,7 +48,5 @@ i18n.setLanguage(['ru', 'ru_RU'], {
   'Text color': 'Цвет текста',
   'Auto scroll enabled': 'Автоматическая прокрутка включена',
   'Auto scroll disabled': 'Автоматическая прокрутка отключена',
-  'Cannot paste values ​​other than a table in the cell selection state':
-        'Вы не можете вставлять значения, отличные от таблицы, в состоянии выбора ячейки.',
   'Choose language': 'Выбрать язык'
 });

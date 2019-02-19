@@ -133,7 +133,8 @@ describe('task', () => {
       expect(doc.getLine(1)).toEqual('* [ ] mytext2');
       expect(doc.getLine(2)).toEqual('* [ ] mytext3');
       expect(doc.getLine(3)).toEqual('* [ ] mytext4');
-      expect(doc.getLine(4)).toEqual('# myheading');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('# myheading');
     });
     it('add task markdown text except blockquote', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '> myheading'];
@@ -153,7 +154,8 @@ describe('task', () => {
       expect(doc.getLine(1)).toEqual('* [ ] mytext2');
       expect(doc.getLine(2)).toEqual('* [ ] mytext3');
       expect(doc.getLine(3)).toEqual('* [ ] mytext4');
-      expect(doc.getLine(4)).toEqual('> myheading');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('> myheading');
     });
     it('add task markdown text except blockquote', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '```', 'var a = 10;', '```'];
@@ -173,7 +175,8 @@ describe('task', () => {
       expect(doc.getLine(1)).toEqual('* [ ] mytext2');
       expect(doc.getLine(2)).toEqual('* [ ] mytext3');
       expect(doc.getLine(3)).toEqual('* [ ] mytext4');
-      expect(doc.getLine(4)).toEqual('```');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('```');
     });
     it('add task markdown text except table', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '| hi | hello |', '| --- | --- |', '| bye | bye |'];
@@ -193,7 +196,8 @@ describe('task', () => {
       expect(doc.getLine(1)).toEqual('* [ ] mytext2');
       expect(doc.getLine(2)).toEqual('* [ ] mytext3');
       expect(doc.getLine(3)).toEqual('* [ ] mytext4');
-      expect(doc.getLine(4)).toEqual('| hi | hello |');
+      expect(doc.getLine(4)).toEqual('');
+      expect(doc.getLine(5)).toEqual('| hi | hello |');
     });
     it('do not add blank at start & end of task when already blank line exists', () => {
       const sourceText = ['', 'mytext2', '', 'mytext4', '# myheading'];
@@ -264,6 +268,40 @@ describe('task', () => {
       expect(doc.getLine(4)).toEqual('');
       expect(doc.getLine(5)).toEqual('mytext4');
       expect(doc.getLine(6)).toEqual('# myheading');
+    });
+
+    it('should maintain depth when apply task', () => {
+      const sourceText = ['* mytext1', '    * mytext2'];
+
+      cm.setValue(sourceText.join('\n'));
+      doc.setSelection({
+        line: 0,
+        ch: 0
+      }, {
+        line: 1,
+        ch: 0
+      });
+      task.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('* [ ] mytext1');
+      expect(doc.getLine(1)).toEqual('    * [ ] mytext2');
+    });
+
+    it('should maintain depth when remove task', () => {
+      const sourceText = ['* [ ] mytext1', '    * [ ] mytext2'];
+
+      cm.setValue(sourceText.join('\n'));
+      doc.setSelection({
+        line: 0,
+        ch: 0
+      }, {
+        line: 1,
+        ch: 0
+      });
+      task.exec(mde);
+
+      expect(doc.getLine(0)).toEqual('* mytext1');
+      expect(doc.getLine(1)).toEqual('    * mytext2');
     });
   });
 });

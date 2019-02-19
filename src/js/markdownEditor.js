@@ -78,7 +78,6 @@ class MarkdownEditor extends CodeMirrorExt {
       this.eventManager.emit('focus', {
         source: 'markdown'
       });
-      this.getEditor().refresh();
     });
 
     this.cm.on('blur', () => {

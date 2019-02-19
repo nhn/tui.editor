@@ -7,6 +7,9 @@ import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
 
+const isIE10 = util.browser.msie && util.browser.version === 10;
+const brString = isIE10 ? '' : '<br>';
+
 const tagEntities = {
   '&': '&amp;',
   '<': '&lt;',
@@ -179,7 +182,7 @@ class WwCodeBlockManager {
 
       const resultText = $pre.text().replace(/\s+$/, '');
       $pre.empty();
-      $pre.html(resultText ? resultText : '<br>');
+      $pre.html(resultText ? resultText : brString);
 
       if (lang) {
         $pre.attr('data-language', lang);
@@ -242,8 +245,9 @@ class WwCodeBlockManager {
    */
   _isEmptyLine(node) {
     const {nodeName, childNodes} = node;
+    const isEmpty = isIE10 ? node.textContent === '' : childNodes.length === 1 && childNodes[0].nodeName === 'BR';
 
-    return nodeName === 'DIV' && childNodes.length === 1 && childNodes[0].nodeName === 'BR';
+    return nodeName === 'DIV' && isEmpty;
   }
 
   /**
@@ -310,7 +314,7 @@ class WwCodeBlockManager {
 
       const firstDiv = document.createElement('div');
       const firstLine = strArray.shift();
-      firstDiv.innerHTML = `${firstLine}<br>`;
+      firstDiv.innerHTML = `${firstLine}${brString}`;
       newFrag.appendChild(firstDiv);
 
       if (strArray.length) {

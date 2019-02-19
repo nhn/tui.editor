@@ -48,6 +48,5 @@ i18n.setLanguage(['de', 'de_DE'], {
   'Text color': 'Textfarbe',
   'Auto scroll enabled': 'Autoscrollen aktiviert',
   'Auto scroll disabled': 'Autoscrollen deaktiviert',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Im Zellenauswahlstatus können keine anderen Werte als eine Tabelle eingefügt werden',
   'Choose language': 'Sprache auswählen'
 });

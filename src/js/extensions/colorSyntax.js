@@ -225,6 +225,8 @@ function initUI(editor, preset) {
 
   editor.eventManager.listen('removeEditor', () => {
     colorPicker.off('selectColor');
+    popup.$el.find('.te-apply-button').off('click');
+    popup.remove();
   });
 
   colorPicker.on('selectColor', e => {

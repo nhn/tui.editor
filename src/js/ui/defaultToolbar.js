@@ -131,6 +131,7 @@ class DefaultToolbar extends Toolbar {
   destroy() {
     if (this._observer) {
       this._observer.disconnect();
+      this._observer = null;
     }
   }
 }

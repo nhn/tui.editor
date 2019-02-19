@@ -6,6 +6,7 @@ import $ from 'jquery';
 import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
+
 const isIE10 = util.browser.msie && util.browser.version === 10;
 const TABLE_CLASS_PREFIX = 'te-content-table-';
 const isIE10And11 = util.browser.msie
@@ -32,7 +33,6 @@ class WwTableManager {
      * @type {string}
      */
     this.name = 'table';
-
     this._lastCellNode = null;
     this._init();
   }
@@ -92,9 +92,6 @@ class WwTableManager {
 
     this.eventManager.listen('copyBefore.table', ({$clipboardContainer}) =>
       this.updateTableHtmlOfClipboardIfNeed($clipboardContainer));
-
-    this.onBindedPaste = this._onPaste.bind(this);
-    this.wwe.getEditor().addEventListener('paste', this.onBindedPaste);
   }
 
   /**
@@ -139,30 +136,13 @@ class WwTableManager {
   }
 
   /**
-   * Paste clibpard data.
-   * @param {jQuery} $clipboardTable - jQuery table element of clipboard
+   * Paste clibpard data that contains only table.
+   * @param {Node} clipboardTable - table element of clipboard
    */
-  pasteClipboardData($clipboardTable) {
-    if (this.wwe.componentManager.getManager('tableSelection').getSelectedCells().length) {
-      return;
-    }
-
+  pasteTableData(clipboardTable) {
+    const $clipboardTable = $(clipboardTable);
     this._expandTableIfNeed($clipboardTable);
     this._pasteDataIntoTable($clipboardTable);
-  }
-
-  /**
-   * On paste.
-   * @param {MouseEvent} ev - event
-   * @private
-   */
-  _onPaste(ev) {
-    const range = this.wwe.getEditor().getSelection();
-    const isNotPastingIntoTextNode = !domUtils.isTextNode(range.commonAncestorContainer);
-
-    if (this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
-      ev.preventDefault();
-    }
   }
 
   /**
@@ -229,18 +209,9 @@ class WwTableManager {
    * @memberof WwTableManager
    */
   isInTable(range) {
-    let target, result;
+    const target = range.collapsed ? range.startContainer : range.commonAncestorContainer;
 
-    if (range.collapsed) {
-      target = range.startContainer;
-      result = !!$(target).closest('[contenteditable=true] table').length;
-    } else {
-      target = range.commonAncestorContainer;
-      result = (!!$(target).closest('[contenteditable=true] table').length
-                || !!$(range.cloneContents()).find('table').length);
-    }
-
-    return result;
+    return !!$(target).closest('[contenteditable=true] table').length;
   }
 
   /**
@@ -816,20 +787,17 @@ class WwTableManager {
   /**
    * Complete passed table
    * @param {HTMLElement} node - Table inner element
-   * @param {?boolean} useHeader - whether use header or not
    * @private
    */
-  _completeIncompleteTable(node, useHeader) {
+  _completeIncompleteTable(node) {
     const nodeName = node.tagName;
     let table, completedTableContents;
-
-    useHeader = util.isUndefined(useHeader) ? true : useHeader;
 
     if (nodeName === 'TABLE') {
       table = node;
     } else {
-      table = $('<table></table>');
-      table.insertAfter(node);
+      table = document.createElement('table');
+      node.parentNode.insertBefore(table, node.nextSibling);
 
       if (nodeName === 'TBODY') {
         completedTableContents = this._generateTheadAndTbodyFromTbody(node);
@@ -839,14 +807,21 @@ class WwTableManager {
         completedTableContents = this._generateTheadAndTbodyFromTr(node);
       }
 
-      if (useHeader) {
-        table.append(completedTableContents.thead);
-      }
-
-      table.append(completedTableContents.tbody);
+      table.appendChild(completedTableContents.thead);
+      table.appendChild(completedTableContents.tbody);
     }
 
+    this._removeEmptyRows(table);
     this.tableCellAppendAidForTableElement(table);
+  }
+
+  _removeEmptyRows(table) {
+    const trs = table.querySelectorAll('tr');
+    util.forEachArray(trs, tr => {
+      if (!tr.cells.length) {
+        tr.parentNode.removeChild(tr);
+      }
+    });
   }
 
   /**
@@ -861,14 +836,13 @@ class WwTableManager {
 
       if (!this.isTableOrSubTableElement(node.nodeName)) {
         return;
-      } else if (node.nodeName === 'TABLE'
-                && $node.find('thead').length === 0
-                && $node.find('tbody').length === 0
-      ) {
-        $node.remove();
       }
 
-      this._completeIncompleteTable(node);
+      if (node.nodeName === 'TABLE' && $node.find('tbody').length === 0) {
+        $node.remove();
+      } else {
+        this._completeIncompleteTable(node);
+      }
     });
   }
 
@@ -1191,7 +1165,6 @@ class WwTableManager {
     this.eventManager.removeEventHandler('wysiwygProcessHTMLText.table');
     this.eventManager.removeEventHandler('cut.table');
     this.eventManager.removeEventHandler('copyBefore.table');
-    this.wwe.getEditor().removeEventListener('paste', this.onBindedPaste);
     util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.removeKeyEventHandler(key, handler));
   }
 }

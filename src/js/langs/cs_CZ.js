@@ -48,6 +48,5 @@ i18n.setLanguage(['cs', 'cs_CZ'], {
   'Text color': 'Barva textu',
   'Auto scroll enabled': 'Automatické rolování zapnuto',
   'Auto scroll disabled': 'Automatické rolování vypnuto',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Nelze vkládat jiné hodnoty než tabulka ve stavu výběru buněk',
   'Choose language': 'Vybrat jazyk'
 });

@@ -75,9 +75,10 @@ configurator.nhnent = function(defaultConfig) {
   if (BROWSER === 'Firefox' || !BROWSER) {
     customLaunchers['Firefox-WebDriver'] = nhnentLauncher('WebDriver', 'firefox');
   }
-  if (BROWSER === 'Safari' || !BROWSER) {
-    customLaunchers['Safari-WebDriver'] = nhnentLauncher('WebDriver', 'safari');
-  }
+  // NE does not support Safari
+  // if (BROWSER === 'Safari' || !BROWSER) {
+  //   customLaunchers['Safari-WebDriver'] = nhnentLauncher('WebDriver', 'safari');
+  // }
   defaultConfig.concurrency = 1;
   defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
 };

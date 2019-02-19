@@ -48,7 +48,5 @@ i18n.setLanguage(['fr', 'fr_FR'], {
   'Text color': 'Couleur du texte',
   'Auto scroll enabled': 'Défilement automatique activé',
   'Auto scroll disabled': 'Défilement automatique désactivé',
-  'Cannot paste values ​​other than a table in the cell selection state':
-  'Impossible de coller autre chose qu\'un tableau dans la sélection de la cellule.',
   'Choose language': 'Choix de la langue'
 });

@@ -85,6 +85,7 @@ import './langs/fi_FI';
 import './langs/cs_CZ';
 import './langs/ar_AR';
 import './langs/pl_PL';
+import './langs/zh_TW';
 
 const __nedInstance = [];
 const gaTrackingId = 'UA-129966929-1';
@@ -127,6 +128,7 @@ class ToastUIEditor {
     * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
     * @param {string[]} [options.exts] - extensions
     * @param {object} [options.customConvertor] - convertor extention
+    * @param {string} [options.placeholder] - The placeholder text of the editable element.
     */
   constructor(options) {
     this.initialHtml = options.el.innerHTML;
@@ -216,6 +218,10 @@ class ToastUIEditor {
     this.height(this.options.height);
 
     this.setValue(this.options.initialValue, false);
+
+    if (this.options.placeholder) {
+      this.setPlaceholder(this.options.placeholder);
+    }
 
     if (!this.options.initialValue) {
       this.setHtml(this.initialHtml, false);
@@ -668,6 +674,7 @@ class ToastUIEditor {
     this.wwEditor.remove();
     this.mdEditor.remove();
     this.layout.remove();
+    this.preview.remove();
 
     if (this.getUI()) {
       this.getUI().remove();
@@ -769,6 +776,15 @@ class ToastUIEditor {
     const textObject = this.getTextObject(range);
 
     return textObject.getTextContent() || '';
+  }
+
+  /**
+   * Set the placeholder an all editors
+   * @param {string} placeholder - placeholder to set
+   */
+  setPlaceholder(placeholder) {
+    this.mdEditor.setPlaceholder(placeholder);
+    this.wwEditor.setPlaceholder(placeholder);
   }
 
   /**
