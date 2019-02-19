@@ -152,6 +152,8 @@
     { keys: '~', type: 'operatorMotion', operator: 'changeCase', motion: 'moveByCharacters', motionArgs: { forward: true }, operatorArgs: { shouldMoveCursor: true }, context: 'normal'},
     { keys: '~', type: 'operator', operator: 'changeCase', context: 'visual'},
     { keys: '<C-w>', type: 'operatorMotion', operator: 'delete', motion: 'moveByWords', motionArgs: { forward: false, wordEnd: false }, context: 'insert' },
+    //ignore C-w in normal mode
+    { keys: '<C-w>', type: 'idle', context: 'normal' },
     // Actions
     { keys: '<C-i>', type: 'action', action: 'jumpListWalk', actionArgs: { forward: true }},
     { keys: '<C-o>', type: 'action', action: 'jumpListWalk', actionArgs: { forward: false }},
@@ -1975,7 +1977,7 @@
           }
         }
         if (ch < lineText.length) {
-          var matched = cm.findMatchingBracket(Pos(line, ch));
+          var matched = cm.findMatchingBracket(Pos(line, ch), {bracketRegex: /[(){}[\]<>]/});
           return matched.to;
         } else {
           return cursor;
@@ -1995,12 +1997,10 @@
       textObjectManipulation: function(cm, head, motionArgs, vim) {
         // TODO: lots of possible exceptions that can be thrown here. Try da(
         //     outside of a () block.
-
-        // TODO: adding <> >< to this map doesn't work, presumably because
-        // they're operators
         var mirroredPairs = {'(': ')', ')': '(',
                              '{': '}', '}': '{',
-                             '[': ']', ']': '['};
+                             '[': ']', ']': '[',
+                             '<': '>', '>': '<'};
         var selfPaired = {'\'': true, '"': true};
 
         var character = motionArgs.selectedCharacter;
@@ -3802,11 +3802,13 @@
       var bracketRegexp = ({
         '(': /[()]/, ')': /[()]/,
         '[': /[[\]]/, ']': /[[\]]/,
-        '{': /[{}]/, '}': /[{}]/})[symb];
+        '{': /[{}]/, '}': /[{}]/,
+        '<': /[<>]/, '>': /[<>]/})[symb];
       var openSym = ({
         '(': '(', ')': '(',
         '[': '[', ']': '[',
-        '{': '{', '}': '{'})[symb];
+        '{': '{', '}': '{',
+        '<': '<', '>': '<'})[symb];
       var curChar = cm.getLine(cur.line).charAt(cur.ch);
       // Due to the behavior of scanForBracket, we need to add an offset if the
       // cursor is on a matching open bracket.
