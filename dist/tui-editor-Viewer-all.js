@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.3.0
+ * @version 1.3.1
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -484,12 +484,14 @@ function findElementIndex(tableData, rowIndex, colIndex) {
 function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
   tableData.forEach(function (rowData, rowIndex) {
     var startIndex = rowData.length;
-    var nodeName = rowData[0].nodeName;
+    if (startIndex) {
+      var nodeName = rowData[0].nodeName;
 
 
-    _tuiCodeSnippet2.default.range(startIndex, limitIndex).forEach(function (colIndex) {
-      rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
-    });
+      _tuiCodeSnippet2.default.range(startIndex, limitIndex).forEach(function (colIndex) {
+        rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
+      });
+    }
   });
 }
 
@@ -2714,6 +2716,7 @@ var ToastUIEditorViewer = function () {
     value: function remove() {
       this.eventManager.emit('removeEditor');
       this.preview.$el.off('mousedown', _jquery2.default.proxy(this._toggleTask, this));
+      this.preview.remove();
       this.options = null;
       this.eventManager = null;
       this.commandManager = null;
@@ -7291,6 +7294,12 @@ var MarkdownPreview = function (_Preview) {
 
       this.eventManager.emit('previewRenderAfter', this);
     }
+  }, {
+    key: 'remove',
+    value: function remove() {
+      this.$el.off('scroll');
+      this.$el = null;
+    }
   }]);
 
   return MarkdownPreview;
@@ -10302,6 +10311,17 @@ var getSiblingRowCellByDirection = function getSiblingRowCellByDirection(node, d
   return null;
 };
 
+/**
+ * Check that the inline node is supported by markdown
+ * @param {Node} node TD element
+ * @returns {boolean}
+ * @ignore
+ */
+var isMDSupportInlineNode = function isMDSupportInlineNode(node) {
+  return (/^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/ig.test(node.nodeName)
+  );
+};
+
 exports.default = {
   getNodeName: getNodeName,
   isTextNode: isTextNode,
@@ -10323,7 +10343,8 @@ exports.default = {
   getPath: getPath,
   getNodeInfo: getNodeInfo,
   getTableCellByDirection: getTableCellByDirection,
-  getSiblingRowCellByDirection: getSiblingRowCellByDirection
+  getSiblingRowCellByDirection: getSiblingRowCellByDirection,
+  isMDSupportInlineNode: isMDSupportInlineNode
 };
 
 /***/ }),
@@ -11718,10 +11739,10 @@ if (i18n) {
   });
 
   i18n.setLanguage(['nl', 'nl_NL'], {
-    'Merge cells': 'cellen samenvoegen',
-    'Unmerge cells': 'Samenvoegen cellen ongedaan maken',
-    'Cannot change part of merged cell': 'Kan geen deel uit van samengevoegde cel te veranderen.',
-    'Cannot paste row merged cells into the table header': 'Kan niet plakken rij samengevoegde cellen in de koptekst. '
+    'Merge cells': 'Cellen samenvoegen',
+    'Unmerge cells': 'Samengevoegde cellen ongedaan maken',
+    'Cannot change part of merged cell': 'Kan geen deel uit van een samengevoegde cel veranderen.',
+    'Cannot paste row merged cells into the table header': 'Kan geen rij met samengevoegde cellen in de koptekst plakken.'
   });
 
   i18n.setLanguage(['zh', 'zh_CN'], {
@@ -11792,6 +11813,13 @@ if (i18n) {
     'Unmerge cells': 'Rozłącz komórki',
     'Cannot change part of merged cell': 'Nie można zmienić części scalonej komórki.',
     'Cannot paste row merged cells into the table header': 'Nie można wkleić komórek o scalonym rzędzie w nagłówek tabeli.'
+  });
+
+  i18n.setLanguage(['zh', 'zh_TW'], {
+    'Merge cells': '合併儲存格',
+    'Unmerge cells': '取消合併儲存格',
+    'Cannot change part of merged cell': '無法變更儲存格的一部分。',
+    'Cannot paste row merged cells into the table header': '無法將合併的儲存格貼上至表格標題中。'
   });
 }
 
@@ -12855,12 +12883,13 @@ var WwMergedTableManager = function (_WwTableManager) {
 
     /**
      * Paste clibpard data.
-     * @param {jQuery} $clipboardTable - jQuery table element of clipboard
+     * @param {Node} clipboardTable - table element of clipboard
      */
 
   }, {
-    key: 'pasteClipboardData',
-    value: function pasteClipboardData($clipboardTable) {
+    key: 'pasteTableData',
+    value: function pasteTableData(clipboardTable) {
+      var $clipboardTable = (0, _jquery2.default)(clipboardTable);
       var clipboardTableData = _tableDataHandler2.default.createTableData($clipboardTable);
       var tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
       var $selectedCells = tableSelectionManager.getSelectedCells();
@@ -14732,6 +14761,8 @@ function initUI(editor, preset) {
 
   editor.eventManager.listen('removeEditor', function () {
     colorPicker.off('selectColor');
+    popup.$el.find('.te-apply-button').off('click');
+    popup.remove();
   });
 
   colorPicker.on('selectColor', function (e) {

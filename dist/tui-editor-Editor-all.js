@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.3.0
+ * @version 1.3.1
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("to-mark"), require("tui-chart"), require("squire-rte"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["CodeMirror"], root["toMark"], (root["tui"] && root["tui"]["chart"]), root["Squire"], root["markdownit"], root["hljs"], (root["tui"] && root["tui"]["colorPicker"]), root["plantumlEncoder"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_42__, __WEBPACK_EXTERNAL_MODULE_57__, __WEBPACK_EXTERNAL_MODULE_77__, __WEBPACK_EXTERNAL_MODULE_83__, __WEBPACK_EXTERNAL_MODULE_91__, __WEBPACK_EXTERNAL_MODULE_198__, __WEBPACK_EXTERNAL_MODULE_200__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_41__, __WEBPACK_EXTERNAL_MODULE_56__, __WEBPACK_EXTERNAL_MODULE_78__, __WEBPACK_EXTERNAL_MODULE_84__, __WEBPACK_EXTERNAL_MODULE_92__, __WEBPACK_EXTERNAL_MODULE_200__, __WEBPACK_EXTERNAL_MODULE_202__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 55);
+/******/ 	return __webpack_require__(__webpack_require__.s = 54);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -116,11 +116,11 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _command = __webpack_require__(82);
+var _command = __webpack_require__(83);
 
 var _command2 = _interopRequireDefault(_command);
 
-var _util = __webpack_require__(38);
+var _util = __webpack_require__(37);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -961,6 +961,17 @@ var getSiblingRowCellByDirection = function getSiblingRowCellByDirection(node, d
   return null;
 };
 
+/**
+ * Check that the inline node is supported by markdown
+ * @param {Node} node TD element
+ * @returns {boolean}
+ * @ignore
+ */
+var isMDSupportInlineNode = function isMDSupportInlineNode(node) {
+  return (/^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/ig.test(node.nodeName)
+  );
+};
+
 exports.default = {
   getNodeName: getNodeName,
   isTextNode: isTextNode,
@@ -982,7 +993,8 @@ exports.default = {
   getPath: getPath,
   getNodeInfo: getNodeInfo,
   getTableCellByDirection: getTableCellByDirection,
-  getSiblingRowCellByDirection: getSiblingRowCellByDirection
+  getSiblingRowCellByDirection: getSiblingRowCellByDirection,
+  isMDSupportInlineNode: isMDSupportInlineNode
 };
 
 /***/ }),
@@ -1378,12 +1390,14 @@ function findElementIndex(tableData, rowIndex, colIndex) {
 function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
   tableData.forEach(function (rowData, rowIndex) {
     var startIndex = rowData.length;
-    var nodeName = rowData[0].nodeName;
+    if (startIndex) {
+      var nodeName = rowData[0].nodeName;
 
 
-    _tuiCodeSnippet2.default.range(startIndex, limitIndex).forEach(function (colIndex) {
-      rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
-    });
+      _tuiCodeSnippet2.default.range(startIndex, limitIndex).forEach(function (colIndex) {
+        rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
+      });
+    }
   });
 }
 
@@ -1765,6 +1779,7 @@ var LayerPopup = function (_UIController) {
       }
 
       this.$el.remove();
+      this.$el = null;
     }
 
     /**
@@ -2229,7 +2244,7 @@ var util = __webpack_require__(16);
 util.inherits = __webpack_require__(13);
 /*</replacement>*/
 
-var Readable = __webpack_require__(48);
+var Readable = __webpack_require__(47);
 var Writable = __webpack_require__(27);
 
 util.inherits(Duplex, Readable);
@@ -3036,7 +3051,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(51).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50).Buffer))
 
 /***/ }),
 /* 17 */
@@ -3387,7 +3402,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint-disable node/no-deprecated-api */
-var buffer = __webpack_require__(51)
+var buffer = __webpack_require__(50)
 var Buffer = buffer.Buffer
 
 // alternative to using Object.keys for old browsers
@@ -4073,6 +4088,118 @@ exports.default = KeyMapper;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _tuiCodeSnippet = __webpack_require__(1);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @fileoverview Implements htmlSanitizer
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
+
+var SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' + 'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' + 'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' + 'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' + 'height|horiz-adv-x|horiz-origin-x|ideographic|k|keyPoints|keySplines|keyTimes|lang|' + 'marker-end|marker-mid|marker-start|markerHeight|markerUnits|markerWidth|mathematical|' + 'max|min|offset|opacity|orient|origin|overline-position|overline-thickness|panose-1|' + 'path|pathLength|points|preserveAspectRatio|r|refX|refY|repeatCount|repeatDur|' + 'requiredExtensions|requiredFeatures|restart|rotate|rx|ry|slope|stemh|stemv|stop-color|' + 'stop-opacity|strikethrough-position|strikethrough-thickness|stroke|stroke-dasharray|' + 'stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|' + 'stroke-width|systemLanguage|target|text-anchor|to|transform|type|u1|u2|underline-position|' + 'underline-thickness|unicode|unicode-range|units-per-em|values|version|viewBox|visibility|' + 'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' + 'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
+
+/**
+ * htmlSanitizer
+ * @param {string|Node} html html or Node
+ * @param {boolean} [needHtmlText] pass true if need html text
+ * @returns {string|DocumentFragment} result
+ * @ignore
+ */
+function htmlSanitizer(html, needHtmlText) {
+  var $html = (0, _jquery2.default)('<div />');
+
+  html = html.replace(/<!--[\s\S]*?-->/g, '');
+
+  $html.append(html);
+
+  removeUnnecessaryTags($html);
+  leaveOnlyWhitelistAttribute($html);
+
+  return finalizeHtml($html, needHtmlText);
+}
+
+/**
+ * Remove unnecessary tags
+ * @private
+ * @param {jQuery} $html jQuery instance
+ */
+function removeUnnecessaryTags($html) {
+  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title').remove();
+}
+
+/**
+ * Leave only white list attributes
+ * @private
+ * @param {jQuery} $html jQuery instance
+ */
+function leaveOnlyWhitelistAttribute($html) {
+  $html.find('*').each(function (index, node) {
+    var attrs = node.attributes;
+    var blacklist = _tuiCodeSnippet2.default.toArray(attrs).filter(function (attr) {
+      var isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
+      var isSVGAttr = attr.name.match(SVG_ATTR_LIST_RX);
+
+      return !isHTMLAttr && !isSVGAttr;
+    });
+
+    _tuiCodeSnippet2.default.forEachArray(blacklist, function (attr) {
+      // Edge svg attribute name returns uppercase bug. error guard.
+      // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5579311/
+      if (attrs.getNamedItem(attr.name)) {
+        attrs.removeNamedItem(attr.name);
+      }
+    });
+  });
+}
+
+/**
+ * Finalize html result
+ * @private
+ * @param {jQuery} $html jQuery instance
+ * @param {boolean} needHtmlText pass true if need html text
+ * @returns {string|DocumentFragment} result
+ */
+function finalizeHtml($html, needHtmlText) {
+  var returnValue = void 0;
+
+  if (needHtmlText) {
+    returnValue = $html[0].innerHTML;
+  } else {
+    var frag = document.createDocumentFragment();
+    var childNodes = _tuiCodeSnippet2.default.toArray($html[0].childNodes);
+    var length = childNodes.length;
+
+
+    for (var i = 0; i < length; i += 1) {
+      frag.appendChild(childNodes[i]);
+    }
+    returnValue = frag;
+  }
+
+  return returnValue;
+}
+
+exports.default = htmlSanitizer;
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.CodeBlockManager = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
@@ -4081,7 +4208,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _highlight = __webpack_require__(91);
+var _highlight = __webpack_require__(92);
 
 var _highlight2 = _interopRequireDefault(_highlight);
 
@@ -4182,21 +4309,6 @@ function escape(html, encode) {
 
 exports.CodeBlockManager = CodeBlockManager;
 exports.default = new CodeBlockManager();
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var FIND_MD_OL_RX = exports.FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
-var FIND_MD_UL_RX = exports.FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
-var FIND_MD_TASK_RX = exports.FIND_MD_TASK_RX = /^[ \t]*([*-] |[\d]+\. )(\[[ xX]] ).*/;
-var FIND_MD_UL_TASK_RX = exports.FIND_MD_UL_TASK_RX = /^[ \t]*[*-] (\[[ xX]] ).*/;
 
 /***/ }),
 /* 25 */
@@ -4510,13 +4622,13 @@ function isUndefined(arg) {
 /* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(48);
+exports = module.exports = __webpack_require__(47);
 exports.Stream = exports;
 exports.Readable = exports;
 exports.Writable = __webpack_require__(27);
 exports.Duplex = __webpack_require__(11);
-exports.Transform = __webpack_require__(54);
-exports.PassThrough = __webpack_require__(173);
+exports.Transform = __webpack_require__(53);
+exports.PassThrough = __webpack_require__(175);
 
 
 /***/ }),
@@ -4596,12 +4708,12 @@ util.inherits = __webpack_require__(13);
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(172)
+  deprecate: __webpack_require__(174)
 };
 /*</replacement>*/
 
 /*<replacement>*/
-var Stream = __webpack_require__(50);
+var Stream = __webpack_require__(49);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -4615,7 +4727,7 @@ function _isUint8Array(obj) {
 }
 /*</replacement>*/
 
-var destroyImpl = __webpack_require__(52);
+var destroyImpl = __webpack_require__(51);
 
 util.inherits(Writable, Stream);
 
@@ -5188,7 +5300,7 @@ Writable.prototype._destroy = function (err, cb) {
   this.end();
   cb(err);
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18), __webpack_require__(170).setImmediate, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18), __webpack_require__(172).setImmediate, __webpack_require__(12)))
 
 /***/ }),
 /* 28 */
@@ -5224,7 +5336,7 @@ var _button = __webpack_require__(21);
 
 var _button2 = _interopRequireDefault(_button);
 
-var _markdownEditor = __webpack_require__(58);
+var _markdownEditor = __webpack_require__(57);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
@@ -5236,11 +5348,11 @@ var _wysiwygEditor = __webpack_require__(68);
 
 var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-var _layout = __webpack_require__(81);
+var _layout = __webpack_require__(82);
 
 var _layout2 = _interopRequireDefault(_layout);
 
-var _eventManager = __webpack_require__(39);
+var _eventManager = __webpack_require__(38);
 
 var _eventManager2 = _interopRequireDefault(_eventManager);
 
@@ -5248,7 +5360,7 @@ var _commandManager2 = __webpack_require__(2);
 
 var _commandManager3 = _interopRequireDefault(_commandManager2);
 
-var _extManager = __webpack_require__(40);
+var _extManager = __webpack_require__(39);
 
 var _extManager2 = _interopRequireDefault(_extManager);
 
@@ -5256,15 +5368,15 @@ var _importManager = __webpack_require__(15);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
-var _wwCodeBlockManager = __webpack_require__(37);
+var _wwCodeBlockManager = __webpack_require__(36);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-var _convertor = __webpack_require__(41);
+var _convertor = __webpack_require__(40);
 
 var _convertor2 = _interopRequireDefault(_convertor);
 
-var _viewer = __webpack_require__(92);
+var _viewer = __webpack_require__(93);
 
 var _viewer2 = _interopRequireDefault(_viewer);
 
@@ -5272,7 +5384,7 @@ var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _defaultUI = __webpack_require__(93);
+var _defaultUI = __webpack_require__(94);
 
 var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
@@ -5280,179 +5392,177 @@ var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwTableManager = __webpack_require__(35);
+var _wwTableManager = __webpack_require__(34);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(36);
+var _wwTableSelectionManager = __webpack_require__(35);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-var _codeBlockManager = __webpack_require__(23);
+var _codeBlockManager = __webpack_require__(24);
 
 var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
-var _bold = __webpack_require__(110);
+var _bold = __webpack_require__(111);
 
 var _bold2 = _interopRequireDefault(_bold);
 
-var _italic = __webpack_require__(111);
+var _italic = __webpack_require__(112);
 
 var _italic2 = _interopRequireDefault(_italic);
 
-var _strike = __webpack_require__(112);
+var _strike = __webpack_require__(113);
 
 var _strike2 = _interopRequireDefault(_strike);
 
-var _blockquote = __webpack_require__(113);
+var _blockquote = __webpack_require__(114);
 
 var _blockquote2 = _interopRequireDefault(_blockquote);
 
-var _heading = __webpack_require__(114);
+var _heading = __webpack_require__(115);
 
 var _heading2 = _interopRequireDefault(_heading);
 
-var _paragraph = __webpack_require__(115);
+var _paragraph = __webpack_require__(116);
 
 var _paragraph2 = _interopRequireDefault(_paragraph);
 
-var _hr = __webpack_require__(116);
+var _hr = __webpack_require__(117);
 
 var _hr2 = _interopRequireDefault(_hr);
 
-var _addLink = __webpack_require__(117);
+var _addLink = __webpack_require__(118);
 
 var _addLink2 = _interopRequireDefault(_addLink);
 
-var _addImage = __webpack_require__(118);
+var _addImage = __webpack_require__(119);
 
 var _addImage2 = _interopRequireDefault(_addImage);
 
-var _ul = __webpack_require__(119);
+var _ul = __webpack_require__(120);
 
 var _ul2 = _interopRequireDefault(_ul);
 
-var _ol = __webpack_require__(120);
+var _ol = __webpack_require__(121);
 
 var _ol2 = _interopRequireDefault(_ol);
 
-var _indent = __webpack_require__(121);
+var _indent = __webpack_require__(122);
 
 var _indent2 = _interopRequireDefault(_indent);
 
-var _outdent = __webpack_require__(122);
+var _outdent = __webpack_require__(123);
 
 var _outdent2 = _interopRequireDefault(_outdent);
 
-var _table = __webpack_require__(123);
+var _table = __webpack_require__(124);
 
 var _table2 = _interopRequireDefault(_table);
 
-var _task = __webpack_require__(124);
+var _task = __webpack_require__(125);
 
 var _task2 = _interopRequireDefault(_task);
 
-var _code = __webpack_require__(125);
+var _code = __webpack_require__(126);
 
 var _code2 = _interopRequireDefault(_code);
 
-var _codeBlock = __webpack_require__(126);
+var _codeBlock = __webpack_require__(127);
 
 var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-var _bold3 = __webpack_require__(127);
+var _bold3 = __webpack_require__(128);
 
 var _bold4 = _interopRequireDefault(_bold3);
 
-var _italic3 = __webpack_require__(128);
+var _italic3 = __webpack_require__(129);
 
 var _italic4 = _interopRequireDefault(_italic3);
 
-var _strike3 = __webpack_require__(129);
+var _strike3 = __webpack_require__(130);
 
 var _strike4 = _interopRequireDefault(_strike3);
 
-var _blockquote3 = __webpack_require__(130);
+var _blockquote3 = __webpack_require__(131);
 
 var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-var _addImage3 = __webpack_require__(131);
+var _addImage3 = __webpack_require__(132);
 
 var _addImage4 = _interopRequireDefault(_addImage3);
 
-var _addLink3 = __webpack_require__(132);
+var _addLink3 = __webpack_require__(133);
 
 var _addLink4 = _interopRequireDefault(_addLink3);
 
-var _hr3 = __webpack_require__(133);
+var _hr3 = __webpack_require__(134);
 
 var _hr4 = _interopRequireDefault(_hr3);
 
-var _heading3 = __webpack_require__(134);
+var _heading3 = __webpack_require__(135);
 
 var _heading4 = _interopRequireDefault(_heading3);
 
-var _paragraph3 = __webpack_require__(135);
+var _paragraph3 = __webpack_require__(136);
 
 var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-var _ul3 = __webpack_require__(136);
+var _ul3 = __webpack_require__(137);
 
 var _ul4 = _interopRequireDefault(_ul3);
 
-var _ol3 = __webpack_require__(137);
+var _ol3 = __webpack_require__(138);
 
 var _ol4 = _interopRequireDefault(_ol3);
 
-var _table3 = __webpack_require__(138);
+var _table3 = __webpack_require__(139);
 
 var _table4 = _interopRequireDefault(_table3);
 
-var _tableAddRow = __webpack_require__(139);
+var _tableAddRow = __webpack_require__(140);
 
 var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-var _tableAddCol = __webpack_require__(140);
+var _tableAddCol = __webpack_require__(141);
 
 var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-var _tableRemoveRow = __webpack_require__(141);
+var _tableRemoveRow = __webpack_require__(142);
 
 var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-var _tableRemoveCol = __webpack_require__(142);
+var _tableRemoveCol = __webpack_require__(143);
 
 var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-var _tableAlignCol = __webpack_require__(143);
+var _tableAlignCol = __webpack_require__(144);
 
 var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-var _tableRemove = __webpack_require__(144);
+var _tableRemove = __webpack_require__(145);
 
 var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-var _indent3 = __webpack_require__(145);
+var _indent3 = __webpack_require__(146);
 
 var _indent4 = _interopRequireDefault(_indent3);
 
-var _outdent3 = __webpack_require__(146);
+var _outdent3 = __webpack_require__(147);
 
 var _outdent4 = _interopRequireDefault(_outdent3);
 
-var _task3 = __webpack_require__(147);
+var _task3 = __webpack_require__(148);
 
 var _task4 = _interopRequireDefault(_task3);
 
-var _code3 = __webpack_require__(148);
+var _code3 = __webpack_require__(149);
 
 var _code4 = _interopRequireDefault(_code3);
 
-var _codeBlock3 = __webpack_require__(149);
+var _codeBlock3 = __webpack_require__(150);
 
 var _codeBlock4 = _interopRequireDefault(_codeBlock3);
-
-__webpack_require__(150);
 
 __webpack_require__(151);
 
@@ -5481,6 +5591,10 @@ __webpack_require__(162);
 __webpack_require__(163);
 
 __webpack_require__(164);
+
+__webpack_require__(165);
+
+__webpack_require__(166);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5528,6 +5642,7 @@ var ToastUIEditor = function () {
     * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
     * @param {string[]} [options.exts] - extensions
     * @param {object} [options.customConvertor] - convertor extention
+    * @param {string} [options.placeholder] - The placeholder text of the editable element.
     */
   function ToastUIEditor(options) {
     var _this = this;
@@ -5604,6 +5719,10 @@ var ToastUIEditor = function () {
     this.height(this.options.height);
 
     this.setValue(this.options.initialValue, false);
+
+    if (this.options.placeholder) {
+      this.setPlaceholder(this.options.placeholder);
+    }
 
     if (!this.options.initialValue) {
       this.setHtml(this.initialHtml, false);
@@ -6157,6 +6276,7 @@ var ToastUIEditor = function () {
       this.wwEditor.remove();
       this.mdEditor.remove();
       this.layout.remove();
+      this.preview.remove();
 
       if (this.getUI()) {
         this.getUI().remove();
@@ -6285,6 +6405,18 @@ var ToastUIEditor = function () {
       var textObject = this.getTextObject(range);
 
       return textObject.getTextContent() || '';
+    }
+
+    /**
+     * Set the placeholder an all editors
+     * @param {string} placeholder - placeholder to set
+     */
+
+  }, {
+    key: 'setPlaceholder',
+    value: function setPlaceholder(placeholder) {
+      this.mdEditor.setPlaceholder(placeholder);
+      this.wwEditor.setPlaceholder(placeholder);
     }
 
     /**
@@ -6508,6 +6640,8 @@ var _jquery2 = _interopRequireDefault(_jquery);
 var _codemirror = __webpack_require__(10);
 
 var _codemirror2 = _interopRequireDefault(_codemirror);
+
+__webpack_require__(58);
 
 __webpack_require__(59);
 
@@ -6791,6 +6925,19 @@ var CodeMirrorExt = function () {
       var contentWrapper = this.getWrapperElement();
 
       contentWrapper.style.minHeight = minHeight + 'px';
+    }
+
+    /**
+     * Set the placeholder to CodeMirror
+     * @param {string} placeholder - placeholder to set
+     */
+
+  }, {
+    key: 'setPlaceholder',
+    value: function setPlaceholder(placeholder) {
+      if (placeholder) {
+        this.cm.setOption('placeholder', placeholder);
+      }
     }
 
     /**
@@ -7124,6 +7271,12 @@ var MarkdownPreview = function (_Preview) {
 
       this.eventManager.emit('previewRenderAfter', this);
     }
+  }, {
+    key: 'remove',
+    value: function remove() {
+      this.$el.off('scroll');
+      this.$el = null;
+    }
   }]);
 
   return MarkdownPreview;
@@ -7306,118 +7459,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * @fileoverview Implements htmlSanitizer
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- */
-var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
-
-var SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' + 'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' + 'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' + 'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' + 'height|horiz-adv-x|horiz-origin-x|ideographic|k|keyPoints|keySplines|keyTimes|lang|' + 'marker-end|marker-mid|marker-start|markerHeight|markerUnits|markerWidth|mathematical|' + 'max|min|offset|opacity|orient|origin|overline-position|overline-thickness|panose-1|' + 'path|pathLength|points|preserveAspectRatio|r|refX|refY|repeatCount|repeatDur|' + 'requiredExtensions|requiredFeatures|restart|rotate|rx|ry|slope|stemh|stemv|stop-color|' + 'stop-opacity|strikethrough-position|strikethrough-thickness|stroke|stroke-dasharray|' + 'stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|' + 'stroke-width|systemLanguage|target|text-anchor|to|transform|type|u1|u2|underline-position|' + 'underline-thickness|unicode|unicode-range|units-per-em|values|version|viewBox|visibility|' + 'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' + 'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
-
-/**
- * htmlSanitizer
- * @param {string|Node} html html or Node
- * @param {boolean} [needHtmlText] pass true if need html text
- * @returns {string|DocumentFragment} result
- * @ignore
- */
-function htmlSanitizer(html, needHtmlText) {
-  var $html = (0, _jquery2.default)('<div />');
-
-  html = html.replace(/<!--[\s\S]*?-->/g, '');
-
-  $html.append(html);
-
-  removeUnnecessaryTags($html);
-  leaveOnlyWhitelistAttribute($html);
-
-  return finalizeHtml($html, needHtmlText);
-}
-
-/**
- * Remove unnecessary tags
- * @private
- * @param {jQuery} $html jQuery instance
- */
-function removeUnnecessaryTags($html) {
-  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title').remove();
-}
-
-/**
- * Leave only white list attributes
- * @private
- * @param {jQuery} $html jQuery instance
- */
-function leaveOnlyWhitelistAttribute($html) {
-  $html.find('*').each(function (index, node) {
-    var attrs = node.attributes;
-    var blacklist = _tuiCodeSnippet2.default.toArray(attrs).filter(function (attr) {
-      var isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
-      var isSVGAttr = attr.name.match(SVG_ATTR_LIST_RX);
-
-      return !isHTMLAttr && !isSVGAttr;
-    });
-
-    _tuiCodeSnippet2.default.forEachArray(blacklist, function (attr) {
-      // Edge svg attribute name returns uppercase bug. error guard.
-      // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5579311/
-      if (attrs.getNamedItem(attr.name)) {
-        attrs.removeNamedItem(attr.name);
-      }
-    });
-  });
-}
-
-/**
- * Finalize html result
- * @private
- * @param {jQuery} $html jQuery instance
- * @param {boolean} needHtmlText pass true if need html text
- * @returns {string|DocumentFragment} result
- */
-function finalizeHtml($html, needHtmlText) {
-  var returnValue = void 0;
-
-  if (needHtmlText) {
-    returnValue = $html[0].innerHTML;
-  } else {
-    var frag = document.createDocumentFragment();
-    var childNodes = _tuiCodeSnippet2.default.toArray($html[0].childNodes);
-    var length = childNodes.length;
-
-
-    for (var i = 0; i < length; i += 1) {
-      frag.appendChild(childNodes[i]);
-    }
-    returnValue = frag;
-  }
-
-  return returnValue;
-}
-
-exports.default = htmlSanitizer;
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg table manager
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
@@ -7468,7 +7509,6 @@ var WwTableManager = function () {
      * @type {string}
      */
     this.name = 'table';
-
     this._lastCellNode = null;
     this._init();
   }
@@ -7543,9 +7583,6 @@ var WwTableManager = function () {
         var $clipboardContainer = _ref.$clipboardContainer;
         return _this.updateTableHtmlOfClipboardIfNeed($clipboardContainer);
       });
-
-      this.onBindedPaste = this._onPaste.bind(this);
-      this.wwe.getEditor().addEventListener('paste', this.onBindedPaste);
     }
 
     /**
@@ -7592,36 +7629,16 @@ var WwTableManager = function () {
     }
 
     /**
-     * Paste clibpard data.
-     * @param {jQuery} $clipboardTable - jQuery table element of clipboard
+     * Paste clibpard data that contains only table.
+     * @param {Node} clipboardTable - table element of clipboard
      */
 
   }, {
-    key: 'pasteClipboardData',
-    value: function pasteClipboardData($clipboardTable) {
-      if (this.wwe.componentManager.getManager('tableSelection').getSelectedCells().length) {
-        return;
-      }
-
+    key: 'pasteTableData',
+    value: function pasteTableData(clipboardTable) {
+      var $clipboardTable = (0, _jquery2.default)(clipboardTable);
       this._expandTableIfNeed($clipboardTable);
       this._pasteDataIntoTable($clipboardTable);
-    }
-
-    /**
-     * On paste.
-     * @param {MouseEvent} ev - event
-     * @private
-     */
-
-  }, {
-    key: '_onPaste',
-    value: function _onPaste(ev) {
-      var range = this.wwe.getEditor().getSelection();
-      var isNotPastingIntoTextNode = !_domUtils2.default.isTextNode(range.commonAncestorContainer);
-
-      if (this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
-        ev.preventDefault();
-      }
     }
 
     /**
@@ -7710,18 +7727,9 @@ var WwTableManager = function () {
   }, {
     key: 'isInTable',
     value: function isInTable(range) {
-      var target = void 0,
-          result = void 0;
+      var target = range.collapsed ? range.startContainer : range.commonAncestorContainer;
 
-      if (range.collapsed) {
-        target = range.startContainer;
-        result = !!(0, _jquery2.default)(target).closest('[contenteditable=true] table').length;
-      } else {
-        target = range.commonAncestorContainer;
-        result = !!(0, _jquery2.default)(target).closest('[contenteditable=true] table').length || !!(0, _jquery2.default)(range.cloneContents()).find('table').length;
-      }
-
-      return result;
+      return !!(0, _jquery2.default)(target).closest('[contenteditable=true] table').length;
     }
 
     /**
@@ -8372,24 +8380,21 @@ var WwTableManager = function () {
     /**
      * Complete passed table
      * @param {HTMLElement} node - Table inner element
-     * @param {?boolean} useHeader - whether use header or not
      * @private
      */
 
   }, {
     key: '_completeIncompleteTable',
-    value: function _completeIncompleteTable(node, useHeader) {
+    value: function _completeIncompleteTable(node) {
       var nodeName = node.tagName;
       var table = void 0,
           completedTableContents = void 0;
 
-      useHeader = _tuiCodeSnippet2.default.isUndefined(useHeader) ? true : useHeader;
-
       if (nodeName === 'TABLE') {
         table = node;
       } else {
-        table = (0, _jquery2.default)('<table></table>');
-        table.insertAfter(node);
+        table = document.createElement('table');
+        node.parentNode.insertBefore(table, node.nextSibling);
 
         if (nodeName === 'TBODY') {
           completedTableContents = this._generateTheadAndTbodyFromTbody(node);
@@ -8399,14 +8404,22 @@ var WwTableManager = function () {
           completedTableContents = this._generateTheadAndTbodyFromTr(node);
         }
 
-        if (useHeader) {
-          table.append(completedTableContents.thead);
-        }
-
-        table.append(completedTableContents.tbody);
+        table.appendChild(completedTableContents.thead);
+        table.appendChild(completedTableContents.tbody);
       }
 
+      this._removeEmptyRows(table);
       this.tableCellAppendAidForTableElement(table);
+    }
+  }, {
+    key: '_removeEmptyRows',
+    value: function _removeEmptyRows(table) {
+      var trs = table.querySelectorAll('tr');
+      _tuiCodeSnippet2.default.forEachArray(trs, function (tr) {
+        if (!tr.cells.length) {
+          tr.parentNode.removeChild(tr);
+        }
+      });
     }
 
     /**
@@ -8426,11 +8439,13 @@ var WwTableManager = function () {
 
         if (!_this4.isTableOrSubTableElement(node.nodeName)) {
           return;
-        } else if (node.nodeName === 'TABLE' && $node.find('thead').length === 0 && $node.find('tbody').length === 0) {
-          $node.remove();
         }
 
-        _this4._completeIncompleteTable(node);
+        if (node.nodeName === 'TABLE' && $node.find('tbody').length === 0) {
+          $node.remove();
+        } else {
+          _this4._completeIncompleteTable(node);
+        }
       });
     }
 
@@ -8787,7 +8802,6 @@ var WwTableManager = function () {
       this.eventManager.removeEventHandler('wysiwygProcessHTMLText.table');
       this.eventManager.removeEventHandler('cut.table');
       this.eventManager.removeEventHandler('copyBefore.table');
-      this.wwe.getEditor().removeEventListener('paste', this.onBindedPaste);
       _tuiCodeSnippet2.default.forEach(this.keyEventHandlers, function (handler, key) {
         return _this5.wwe.removeKeyEventHandler(key, handler);
       });
@@ -8821,7 +8835,7 @@ function tableCellGenerator(amount, tagName) {
 exports.default = WwTableManager;
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9312,7 +9326,7 @@ var WwTableSelectionManager = function () {
 exports.default = WwTableSelectionManager;
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9343,6 +9357,9 @@ var _domUtils2 = _interopRequireDefault(_domUtils);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var isIE10 = _tuiCodeSnippet2.default.browser.msie && _tuiCodeSnippet2.default.browser.version === 10;
+var brString = isIE10 ? '' : '<br>';
 
 var tagEntities = {
   '&': '&amp;',
@@ -9552,7 +9569,7 @@ var WwCodeBlockManager = function () {
 
         var resultText = $pre.text().replace(/\s+$/, '');
         $pre.empty();
-        $pre.html(resultText ? resultText : '<br>');
+        $pre.html(resultText ? resultText : brString);
 
         if (lang) {
           $pre.attr('data-language', lang);
@@ -9623,8 +9640,9 @@ var WwCodeBlockManager = function () {
       var nodeName = node.nodeName,
           childNodes = node.childNodes;
 
+      var isEmpty = isIE10 ? node.textContent === '' : childNodes.length === 1 && childNodes[0].nodeName === 'BR';
 
-      return nodeName === 'DIV' && childNodes.length === 1 && childNodes[0].nodeName === 'BR';
+      return nodeName === 'DIV' && isEmpty;
     }
 
     /**
@@ -9703,7 +9721,7 @@ var WwCodeBlockManager = function () {
 
         var firstDiv = document.createElement('div');
         var firstLine = strArray.shift();
-        firstDiv.innerHTML = firstLine + '<br>';
+        firstDiv.innerHTML = '' + firstLine + brString;
         newFrag.appendChild(firstDiv);
 
         if (strArray.length) {
@@ -9770,7 +9788,7 @@ function sanitizeHtmlCode(code) {
 exports.default = WwCodeBlockManager;
 
 /***/ }),
-/* 38 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9783,7 +9801,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 39 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10048,7 +10066,7 @@ var EventManager = function () {
 exports.default = EventManager;
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10137,7 +10155,7 @@ var ExtManager = function () {
 exports.default = new ExtManager();
 
 /***/ }),
-/* 41 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10161,47 +10179,47 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _markdownIt = __webpack_require__(83);
+var _markdownIt = __webpack_require__(84);
 
 var _markdownIt2 = _interopRequireDefault(_markdownIt);
 
-var _toMark = __webpack_require__(42);
+var _toMark = __webpack_require__(41);
 
 var _toMark2 = _interopRequireDefault(_toMark);
 
-var _htmlSanitizer = __webpack_require__(34);
+var _htmlSanitizer = __webpack_require__(23);
 
 var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
-var _markdownitTaskPlugin = __webpack_require__(84);
+var _markdownitTaskPlugin = __webpack_require__(85);
 
 var _markdownitTaskPlugin2 = _interopRequireDefault(_markdownitTaskPlugin);
 
-var _markdownitCodeBlockPlugin = __webpack_require__(85);
+var _markdownitCodeBlockPlugin = __webpack_require__(86);
 
 var _markdownitCodeBlockPlugin2 = _interopRequireDefault(_markdownitCodeBlockPlugin);
 
-var _markdownitCodeRenderer = __webpack_require__(86);
+var _markdownitCodeRenderer = __webpack_require__(87);
 
 var _markdownitCodeRenderer2 = _interopRequireDefault(_markdownitCodeRenderer);
 
-var _markdownitBlockQuoteRenderer = __webpack_require__(87);
+var _markdownitBlockQuoteRenderer = __webpack_require__(88);
 
 var _markdownitBlockQuoteRenderer2 = _interopRequireDefault(_markdownitBlockQuoteRenderer);
 
-var _markdownitTableRenderer = __webpack_require__(88);
+var _markdownitTableRenderer = __webpack_require__(89);
 
 var _markdownitTableRenderer2 = _interopRequireDefault(_markdownitTableRenderer);
 
-var _markdownitHtmlBlockRenderer = __webpack_require__(89);
+var _markdownitHtmlBlockRenderer = __webpack_require__(90);
 
 var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockRenderer);
 
-var _markdownitBackticksRenderer = __webpack_require__(90);
+var _markdownitBackticksRenderer = __webpack_require__(91);
 
 var _markdownitBackticksRenderer2 = _interopRequireDefault(_markdownitBackticksRenderer);
 
-var _codeBlockManager = __webpack_require__(23);
+var _codeBlockManager = __webpack_require__(24);
 
 var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
@@ -10487,13 +10505,13 @@ var Convertor = function () {
 exports.default = Convertor;
 
 /***/ }),
-/* 42 */
+/* 41 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_42__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_41__;
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10527,11 +10545,11 @@ var _toolbarItem = __webpack_require__(17);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _toolbarDivider = __webpack_require__(44);
+var _toolbarDivider = __webpack_require__(43);
 
 var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
 
-var _toolbarItemFactory = __webpack_require__(45);
+var _toolbarItemFactory = __webpack_require__(44);
 
 var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
 
@@ -10935,7 +10953,7 @@ var Toolbar = function (_UIController) {
 exports.default = Toolbar;
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11009,7 +11027,7 @@ Object.defineProperty(ToolbarDivider, 'className', {
 exports.default = ToolbarDivider;
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11028,11 +11046,11 @@ var _toolbarItem = __webpack_require__(17);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _toolbarButton = __webpack_require__(96);
+var _toolbarButton = __webpack_require__(97);
 
 var _toolbarButton2 = _interopRequireDefault(_toolbarButton);
 
-var _toolbarDivider = __webpack_require__(44);
+var _toolbarDivider = __webpack_require__(43);
 
 var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
 
@@ -11226,7 +11244,7 @@ var ToolbarItemFactory = function () {
 exports.default = ToolbarItemFactory;
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11382,7 +11400,7 @@ var Tab = function (_UIController) {
 exports.default = Tab;
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -11413,10 +11431,10 @@ var inherits = __webpack_require__(13);
 
 inherits(Stream, EE);
 Stream.Readable = __webpack_require__(26);
-Stream.Writable = __webpack_require__(174);
-Stream.Duplex = __webpack_require__(175);
-Stream.Transform = __webpack_require__(176);
-Stream.PassThrough = __webpack_require__(177);
+Stream.Writable = __webpack_require__(176);
+Stream.Duplex = __webpack_require__(177);
+Stream.Transform = __webpack_require__(178);
+Stream.PassThrough = __webpack_require__(179);
 
 // Backwards-compat with node 0.4.x
 Stream.Stream = Stream;
@@ -11515,7 +11533,7 @@ Stream.prototype.pipe = function(dest, options) {
 
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11550,7 +11568,7 @@ var processNextTick = __webpack_require__(19);
 module.exports = Readable;
 
 /*<replacement>*/
-var isArray = __webpack_require__(49);
+var isArray = __webpack_require__(48);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -11568,7 +11586,7 @@ var EElistenerCount = function (emitter, type) {
 /*</replacement>*/
 
 /*<replacement>*/
-var Stream = __webpack_require__(50);
+var Stream = __webpack_require__(49);
 /*</replacement>*/
 
 // TODO(bmeurer): Change this back to const once hole checks are
@@ -11590,7 +11608,7 @@ util.inherits = __webpack_require__(13);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(168);
+var debugUtil = __webpack_require__(170);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -11599,8 +11617,8 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(169);
-var destroyImpl = __webpack_require__(52);
+var BufferList = __webpack_require__(171);
+var destroyImpl = __webpack_require__(51);
 var StringDecoder;
 
 util.inherits(Readable, Stream);
@@ -11683,7 +11701,7 @@ function ReadableState(options, stream) {
   this.decoder = null;
   this.encoding = null;
   if (options.encoding) {
-    if (!StringDecoder) StringDecoder = __webpack_require__(53).StringDecoder;
+    if (!StringDecoder) StringDecoder = __webpack_require__(52).StringDecoder;
     this.decoder = new StringDecoder(options.encoding);
     this.encoding = options.encoding;
   }
@@ -11839,7 +11857,7 @@ Readable.prototype.isPaused = function () {
 
 // backwards compatibility.
 Readable.prototype.setEncoding = function (enc) {
-  if (!StringDecoder) StringDecoder = __webpack_require__(53).StringDecoder;
+  if (!StringDecoder) StringDecoder = __webpack_require__(52).StringDecoder;
   this._readableState.decoder = new StringDecoder(enc);
   this._readableState.encoding = enc;
   return this;
@@ -12529,7 +12547,7 @@ function indexOf(xs, x) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12), __webpack_require__(18)))
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -12540,14 +12558,14 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 50 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(25).EventEmitter;
 
 
 /***/ }),
-/* 51 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12561,9 +12579,9 @@ module.exports = __webpack_require__(25).EventEmitter;
 
 
 
-var base64 = __webpack_require__(166)
-var ieee754 = __webpack_require__(167)
-var isArray = __webpack_require__(49)
+var base64 = __webpack_require__(168)
+var ieee754 = __webpack_require__(169)
+var isArray = __webpack_require__(48)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -14344,7 +14362,7 @@ function isnan (val) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
 
 /***/ }),
-/* 52 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14422,7 +14440,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 53 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14700,7 +14718,7 @@ function simpleEnd(buf) {
 }
 
 /***/ }),
-/* 54 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14920,32 +14938,32 @@ function done(stream, er, data) {
 }
 
 /***/ }),
-/* 55 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(56);
+__webpack_require__(55);
 
-__webpack_require__(179);
+__webpack_require__(181);
 
-__webpack_require__(182);
-
-__webpack_require__(197);
+__webpack_require__(184);
 
 __webpack_require__(199);
+
+__webpack_require__(201);
 
 /**
  * @fileoverview entry point for editor with all extension included
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-var Editor = __webpack_require__(201);
+var Editor = __webpack_require__(203);
 
 module.exports = Editor;
 
 /***/ }),
-/* 56 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14968,7 +14986,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _tuiChart = __webpack_require__(57);
+var _tuiChart = __webpack_require__(56);
 
 var _tuiChart2 = _interopRequireDefault(_tuiChart);
 
@@ -14976,7 +14994,7 @@ var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-var _csv = __webpack_require__(165);
+var _csv = __webpack_require__(167);
 
 var _csv2 = _interopRequireDefault(_csv);
 
@@ -15594,13 +15612,13 @@ exports.detectDelimiter = detectDelimiter;
 exports.setDefaultOptions = setDefaultOptions;
 
 /***/ }),
-/* 57 */
+/* 56 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_57__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_56__;
 
 /***/ }),
-/* 58 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15731,7 +15749,6 @@ var MarkdownEditor = function (_CodeMirrorExt) {
         _this2.eventManager.emit('focus', {
           source: 'markdown'
         });
-        _this2.getEditor().refresh();
       });
 
       this.cm.on('blur', function () {
@@ -15937,7 +15954,7 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 exports.default = MarkdownEditor;
 
 /***/ }),
-/* 59 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16080,7 +16097,7 @@ function findFirstListItem(lineNumber, cm) {
 }
 
 /***/ }),
-/* 60 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16165,7 +16182,7 @@ _codemirror2.default.overlayMode = function (base, overlay, combine) {
  */
 
 /***/ }),
-/* 61 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17065,7 +17082,7 @@ _codemirror2.default.defineMIME("text/markdown", "markdown");
 _codemirror2.default.defineMIME("text/x-markdown", "markdown");
 
 /***/ }),
-/* 62 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17203,7 +17220,7 @@ _codemirror2.default.defineMode("gfm", function (config, modeConfig) {
 _codemirror2.default.defineMIME("text/x-gfm", "gfm");
 
 /***/ }),
-/* 63 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17321,7 +17338,7 @@ function incrementRemainingMarkdownListNumbers(cm, pos) {
 }
 
 /***/ }),
-/* 64 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17474,6 +17491,76 @@ function replaceMultiLine(cm, upper, bottom, lineAdjustment) {
 }
 
 /***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _codemirror = __webpack_require__(10);
+
+var _codemirror2 = _interopRequireDefault(_codemirror);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* eslint-disable */
+_codemirror2.default.defineOption('placeholder', '', function (cm, val, old) {
+  var prev = old && old != _codemirror2.default.Init;
+  if (val && !prev) {
+    cm.on('blur', onBlur);
+    cm.on('change', onChange);
+    cm.on('swapDoc', onChange);
+    onChange(cm);
+  } else if (!val && prev) {
+    cm.off('blur', onBlur);
+    cm.off('change', onChange);
+    cm.off('swapDoc', onChange);
+    clearPlaceholder(cm);
+    var wrapper = cm.getWrapperElement();
+    wrapper.className = wrapper.className.replace(' CodeMirror-empty', '');
+  }
+
+  if (val && !cm.hasFocus()) onBlur(cm);
+}); // CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+/**
+ * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+
+
+function clearPlaceholder(cm) {
+  if (cm.state.placeholder) {
+    cm.state.placeholder.parentNode.removeChild(cm.state.placeholder);
+    cm.state.placeholder = null;
+  }
+}
+function setPlaceholder(cm) {
+  clearPlaceholder(cm);
+  var elt = cm.state.placeholder = document.createElement('pre');
+  elt.style.cssText = 'height: 0; overflow: visible';
+  elt.className = 'CodeMirror-placeholder';
+  var placeHolder = cm.getOption('placeholder');
+  if (typeof placeHolder == 'string') placeHolder = document.createTextNode(placeHolder);
+  elt.appendChild(placeHolder);
+  cm.display.lineSpace.insertBefore(elt, cm.display.lineSpace.firstChild);
+}
+
+function onBlur(cm) {
+  if (isEmpty(cm)) setPlaceholder(cm);
+}
+function onChange(cm) {
+  var wrapper = cm.getWrapperElement(),
+      empty = isEmpty(cm);
+  wrapper.className = wrapper.className.replace(' CodeMirror-empty', '') + (empty ? ' CodeMirror-empty' : '');
+
+  if (empty) setPlaceholder(cm);else clearPlaceholder(cm);
+}
+
+function isEmpty(cm) {
+  return cm.lineCount() === 1 && cm.getLine(0) === '';
+}
+
+/***/ }),
 /* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -17492,9 +17579,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * @fileoverview Implements markdown list manager
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
-var FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
-var FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
+
+var FIND_LIST_RX = /^[ \t]*([-*]|[\d]+\.)( \[[ xX]])? /;
+var FIND_TASK_LIST_RX = /^[ \t]*([*-] |[\d]+\. )(\[[ xX]] )/;
+
+var FIND_UL_RX = /^[ \t]*[-*] .*/;
+var FIND_OL_TASK_RX = /^[ \t]*[\d]+\. \[[ xX]] .*/;
+
+var LIST_SYNTAX_RX = /([*-] |[\d]+\. )/;
+var TASK_SYNTAX_RX = /([-*] |[\d]+\. )(\[[ xX]] )/;
+var LIST_OR_TASK_SYNTAX_RX = /([-*]|[\d]+\.)( \[[ xX]])? /;
+var UL_TASK_SYNTAX_RX = /([-*])( \[[ xX]]) /;
+var OL_SYNTAX_RX = /([\d])+\.( \[[ xX]])? /;
+
 var FIND_TABLE_RX = /^\|([-\s\w\d\t<>?!@#$%^&*()_=+\\/'";: \r[\]]*\|+)+/i;
 var FIND_HEADING_RX = /^#+\s/;
 var FIND_BLOCK_RX = /^ {0,3}(```|\||>)/;
@@ -17512,8 +17609,8 @@ var MdListManager = function () {
   function MdListManager(mde) {
     _classCallCheck(this, MdListManager);
 
-    this.mde = mde;
-    this.eventManager = mde.eventManager;
+    this.cm = mde.getEditor();
+    this.doc = this.cm.getDoc();
 
     /**
      * Name property
@@ -17524,79 +17621,16 @@ var MdListManager = function () {
   }
 
   /**
-   * Return whether passed line is list or paragraph or not
-   * @param {string} line line text
-   * @returns {boolean}
+   * Sort line number of selection descending
+   * @param {{from, to}} range start, end CodeMirror range information
+   * @returns {{start: {number}, end: {number}}}
+   * @private
    */
 
 
   _createClass(MdListManager, [{
-    key: 'isListOrParagraph',
-    value: function isListOrParagraph(line) {
-      return !FIND_BLOCK_RX.test(line) && !FIND_TABLE_RX.test(line) && !FIND_HEADING_RX.test(line);
-    }
-
-    /**
-     * Append blank line at list top or bottom if needed
-     * @param {CodeMirror} cm CodeMirror instance
-     * @param {number} index index number
-     * @param {number} endLineNumber end line index number
-     * @param {number} startLineNumber start line index number
-     */
-
-  }, {
-    key: 'appendBlankLineIfNeed',
-    value: function appendBlankLineIfNeed(cm, index, endLineNumber, startLineNumber) {
-      var doc = cm.getDoc();
-      var cursorPositionFactor = 0;
-      var isMultiLineSelection = startLineNumber !== endLineNumber;
-      var nextLineOfLastIndex = doc.getLine(this._getEndLineNumberOfList(doc, endLineNumber) + 1);
-      var previousLineOfFirstIndex = doc.getLine(this._getStartLineNumberOfList(doc, startLineNumber) - 1);
-
-      var nextLine = doc.getLine(index + 1);
-      if (isMultiLineSelection && this._isNeedAppendBlankLine(nextLineOfLastIndex) || !isMultiLineSelection && this._isNeedAppendBlankLine(nextLine)) {
-        doc.replaceRange('\n', {
-          line: index,
-          ch: doc.getLine(index).length
-        });
-      }
-
-      var previousLine = doc.getLine(index - 1);
-      if (isMultiLineSelection && this._isNeedAppendBlankLine(previousLineOfFirstIndex) || !isMultiLineSelection && this._isNeedAppendBlankLine(previousLine)) {
-        doc.replaceRange('\n', {
-          line: startLineNumber,
-          ch: 0
-        });
-        cursorPositionFactor += 1;
-      }
-      if (!isMultiLineSelection) {
-        var currentLineNumber = index + cursorPositionFactor;
-        cm.setCursor(currentLineNumber, doc.getLine(currentLineNumber).length);
-      }
-    }
-
-    /**
-     * Return whether need to append blank line or not
-     * @param {string} line Line text
-     * @returns {boolean}
-     * @private
-     */
-
-  }, {
-    key: '_isNeedAppendBlankLine',
-    value: function _isNeedAppendBlankLine(line) {
-      return line && line.length !== 0 && !this._isAList(line);
-    }
-
-    /**
-     * Sort line number of selection descending
-     * @param {{from, to}} range start, end CodeMirror range information
-     * @returns {{start: {number}, end: {number}}}
-     */
-
-  }, {
-    key: 'createSortedLineRange',
-    value: function createSortedLineRange(range) {
+    key: '_createSortedLineRange',
+    value: function _createSortedLineRange(range) {
       var isReversed = range.from.line > range.to.line;
       var rangeStart = {
         line: isReversed ? range.to.line : range.from.line,
@@ -17614,50 +17648,232 @@ var MdListManager = function () {
     }
 
     /**
-     * Expand line range if need
-     * @param {object} doc doc instance
-     * @param {{from, to}} range CodeMirror range information
-     * @param {function} comparator comparator function
-     * @returns {{start: number, end: number}}
+     * For odering the ol list, search preivous lines and
+     * calculate ordinal number when find ol list
+     * @param {number} lineNumber lineNumber
+     * @returns {number}
+     * @private
      */
 
   }, {
-    key: 'expandLineRangeIfNeed',
-    value: function expandLineRangeIfNeed(doc, range, comparator) {
-      var lineRange = this.createSortedLineRange(range);
-      var start = lineRange.start,
-          end = lineRange.end;
+    key: '_calculateOrdinalNumber',
+    value: function _calculateOrdinalNumber(lineNumber) {
+      var ordinalNumber = 1;
 
+      for (var i = lineNumber - 1; i >= 0; i -= 1) {
+        var depth = this._getListDepth(i);
 
-      var isRangeStartInUlOrTask = this._isDifferentListType(comparator, doc.getLine(start));
-      var isRangeEndInUlOrTask = this._isDifferentListType(comparator, doc.getLine(end));
-
-      if (isRangeStartInUlOrTask) {
-        start = this._getStartLineNumberOfList(doc, start);
+        if (depth === 1 && OL_SYNTAX_RX.exec(this.doc.getLine(i))) {
+          ordinalNumber = parseInt(RegExp.$1, 10) + 1;
+          break;
+        } else if (depth === 0) {
+          break;
+        }
       }
 
-      if (isRangeEndInUlOrTask) {
-        end = this._getEndLineNumberOfList(doc, end);
-      }
-
-      return {
-        start: start,
-        end: end
-      };
+      return ordinalNumber;
+    }
+  }, {
+    key: '_isListLine',
+    value: function _isListLine(lineNumber) {
+      return !!FIND_LIST_RX.exec(this.doc.getLine(lineNumber));
     }
 
     /**
-     * Replace list syntax
-     * @param {object} doc CodeMirror doc instance
-     * @param {number} lineNumber Line number
-     * @param {RegExp} regexp Regexp for find list syntax
-     * @param {string} replacePattern Replacement string
+     * If text already have sytax for heading, table and code block,
+     * can not change to list.
+     * @param {number} lineNumber lineNumber
+     * @returns {boolean}
+     * @private
      */
 
   }, {
-    key: 'replaceLineText',
-    value: function replaceLineText(doc, lineNumber, regexp, replacePattern) {
-      var line = doc.getLine(lineNumber);
+    key: '_isCanBeList',
+    value: function _isCanBeList(lineNumber) {
+      var line = this.doc.getLine(lineNumber);
+
+      return !FIND_BLOCK_RX.test(line) && !FIND_TABLE_RX.test(line) && !FIND_HEADING_RX.test(line);
+    }
+
+    /**
+     * Return a function for change according to type
+     * @param {string} type ol, ul, task
+     * @returns {Function}
+     * @private
+     */
+
+  }, {
+    key: '_getChangeFn',
+    value: function _getChangeFn(type) {
+      var _this = this;
+
+      var fn = void 0;
+
+      switch (type) {
+        case 'ol':
+        case 'ul':
+          fn = function fn(lineNumber) {
+            return _this._changeToList(lineNumber, type);
+          };
+          break;
+        case 'task':
+          fn = function fn(lineNumber) {
+            return _this._changeToTask(lineNumber);
+          };
+          break;
+        default:
+          break;
+      }
+
+      return fn;
+    }
+
+    /**
+     * Change syntax by traversing each line selected.
+     * @param {{from, to}} range start, end CodeMirror range information
+     * @param {string} type ol, ul, task
+     */
+
+  }, {
+    key: 'changeSyntax',
+    value: function changeSyntax(range, type) {
+      var newListLine = [];
+      var lineRange = this._createSortedLineRange(range);
+      var startLineNumber = lineRange.start,
+          endLineNumber = lineRange.end;
+
+
+      var changeFn = this._getChangeFn(type);
+
+      for (var lineNumber = startLineNumber; lineNumber <= endLineNumber; lineNumber += 1) {
+        if (!this._isCanBeList(lineNumber)) {
+          break;
+        }
+
+        // If text of lineNumber is not list, cache for inserting blank line
+        if (!this._isListLine(lineNumber)) {
+          newListLine.push(lineNumber);
+        }
+
+        changeFn(lineNumber);
+      }
+
+      // Should insert blank line before and after new list
+      this._insertBlankLineForNewList(newListLine);
+
+      this.cm.focus();
+    }
+  }, {
+    key: '_replaceLineText',
+    value: function _replaceLineText(text, lineNumber) {
+      this.doc.replaceRange(text, {
+        line: lineNumber,
+        ch: 0
+      });
+    }
+
+    /**
+     * change to list according to the type.
+     * @param {number} lineNumber line number
+     * @param {string} type ol, ul
+     * @private
+     */
+
+  }, {
+    key: '_changeToList',
+    value: function _changeToList(lineNumber, type) {
+      var _this2 = this;
+
+      if (this._isListLine(lineNumber)) {
+        // If type is ol, need ordinal number.
+        this._changeSameDepthList(lineNumber, type === 'ol' ? function (lineNum, ordinalNumber) {
+          _this2._replaceListTypeToOL(lineNum, ordinalNumber);
+        } : function (lineNum) {
+          _this2._replaceListTypeToUL(lineNum);
+        });
+      } else {
+        this._replaceLineText(type === 'ol' ? this._calculateOrdinalNumber(lineNumber) + '. ' : '* ', lineNumber);
+      }
+    }
+
+    /**
+     * change to task list according
+     * @param {number} lineNumber line number
+     * @private
+     */
+
+  }, {
+    key: '_changeToTask',
+    value: function _changeToTask(lineNumber) {
+      if (FIND_TASK_LIST_RX.exec(this.doc.getLine(lineNumber))) {
+        this._replaceLineTextByRegexp(lineNumber, TASK_SYNTAX_RX, '$1');
+      } else if (this._isListLine(lineNumber)) {
+        this._replaceLineTextByRegexp(lineNumber, LIST_SYNTAX_RX, '$1[ ] ');
+      } else {
+        this._replaceLineText('* [ ] ', lineNumber);
+      }
+    }
+  }, {
+    key: '_getListDepth',
+    value: function _getListDepth(lineNumber) {
+      return this.doc.getLine(lineNumber) ? this.doc.cm.getStateAfter(lineNumber).base.listStack.length : 0;
+    }
+  }, {
+    key: '_findSameDepthList',
+    value: function _findSameDepthList(listNumber, depth, isIncrease) {
+      var lineCount = this.doc.lineCount();
+      var result = [];
+      var i = listNumber;
+      var currentLineDepth = void 0;
+
+      while (isIncrease ? i < lineCount - 1 : i > 0) {
+        i = isIncrease ? i + 1 : i - 1;
+        currentLineDepth = this._getListDepth(i);
+
+        if (currentLineDepth === depth) {
+          result.push(i);
+        } else if (currentLineDepth < depth) {
+          break;
+        }
+      }
+
+      return result;
+    }
+
+    /**
+     * Find Sampe depth list before and after the line number,
+     * and then same depth lines change using replacer function
+     * @param {number} lineNumber line number
+     * @param {Function} replacer The function should be called with line numbers and ordinal number as arguments.
+     * @private
+     */
+
+  }, {
+    key: '_changeSameDepthList',
+    value: function _changeSameDepthList(lineNumber, replacer) {
+      var depth = this._getListDepth(lineNumber);
+
+      var backwardList = this._findSameDepthList(lineNumber, depth, false).reverse();
+      var forwardList = this._findSameDepthList(lineNumber, depth, true);
+      var sameDepthList = backwardList.concat([lineNumber]).concat(forwardList);
+
+      sameDepthList.forEach(function (lineNum, i) {
+        replacer(lineNum, i + 1);
+      });
+    }
+
+    /**
+     * Replace text using regular expression
+     * @param {number} lineNumber Line number
+     * @param {RegExp} regexp Regexp for find list syntax
+     * @param {string} replacePattern Replacement string
+     * @private
+     */
+
+  }, {
+    key: '_replaceLineTextByRegexp',
+    value: function _replaceLineTextByRegexp(lineNumber, regexp, replacePattern) {
+      var line = this.doc.getLine(lineNumber);
       var currentLineStart = {
         line: lineNumber,
         ch: 0
@@ -17669,94 +17885,68 @@ var MdListManager = function () {
 
       line = line.replace(regexp, replacePattern);
 
-      doc.replaceRange(line, currentLineStart, currentLineEnd);
+      this.doc.replaceRange(line, currentLineStart, currentLineEnd);
     }
-
-    /**
-     * Return whether is a different list type or not
-     * @param {function} comparator comparator function
-     * @param {string} line line string
-     * @returns {boolean}
-     * @private
-     */
-
   }, {
-    key: '_isDifferentListType',
-    value: function _isDifferentListType(comparator, line) {
-      return line && line.length !== 0 && comparator.call(this, line);
+    key: '_replaceListTypeToUL',
+    value: function _replaceListTypeToUL(lineNumber) {
+      var lineText = this.doc.getLine(lineNumber);
+
+      if (UL_TASK_SYNTAX_RX.exec(lineText)) {
+        this._replaceLineTextByRegexp(lineNumber, UL_TASK_SYNTAX_RX, '$1 ');
+      } else if (OL_SYNTAX_RX.exec(lineText)) {
+        this._replaceLineTextByRegexp(lineNumber, OL_SYNTAX_RX, '* ');
+      }
     }
-
-    /**
-     * Return whether is a list or not
-     * @param {string} line line string
-     * @returns {boolean}
-     * @private
-     */
-
   }, {
-    key: '_isAList',
-    value: function _isAList(line) {
-      return line && line.length !== 0 && this._isListLine(line);
-    }
+    key: '_replaceListTypeToOL',
+    value: function _replaceListTypeToOL(lineNumber, ordinalNumber) {
+      var lineText = this.doc.getLine(lineNumber);
 
-    /**
-     * Return whether passed line is list or not
-     * @param {string} line Line text
-     * @returns {Boolean}
-     * @private
-     */
-
-  }, {
-    key: '_isListLine',
-    value: function _isListLine(line) {
-      return !!(line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_UL_RX) || line.match(FIND_MD_OL_RX));
-    }
-
-    /**
-     * Get start line number of current list
-     * @param {object} doc CodeMirror doc instance
-     * @param {number} startLineNumber start line number of selection
-     * @returns {number|undefined}
-     * @private
-     */
-
-  }, {
-    key: '_getStartLineNumberOfList',
-    value: function _getStartLineNumberOfList(doc, startLineNumber) {
-      var lineNumber = void 0;
-
-      for (lineNumber = startLineNumber; lineNumber > 0; lineNumber -= 1) {
-        var previousLine = doc.getLine(lineNumber - 1);
-        if (!previousLine || !this._isListLine(previousLine)) {
-          break;
+      if (FIND_UL_RX.exec(lineText) || FIND_OL_TASK_RX.exec(lineText)) {
+        this._replaceLineTextByRegexp(lineNumber, LIST_OR_TASK_SYNTAX_RX, ordinalNumber + '. ');
+      } else if (OL_SYNTAX_RX.exec(lineText)) {
+        if (parseInt(RegExp.$1, 10) !== ordinalNumber) {
+          this._replaceLineTextByRegexp(lineNumber, OL_SYNTAX_RX, ordinalNumber + '. ');
         }
       }
-
-      return lineNumber;
     }
 
     /**
-     * Get end line number of current list
-     * @param {object} doc CodeMirror doc instance
-     * @param {number} endLineNumber end line number of selection
-     * @returns {number|undefined}
+     * The new list must have a blank line before and after.
+     * @param {Array} newListLines lines that changed to list
      * @private
      */
 
   }, {
-    key: '_getEndLineNumberOfList',
-    value: function _getEndLineNumberOfList(doc, endLineNumber) {
-      var lineCount = doc.lineCount();
-      var lineNumber = void 0;
+    key: '_insertBlankLineForNewList',
+    value: function _insertBlankLineForNewList(newListLines) {
+      var length = newListLines.length;
 
-      for (lineNumber = endLineNumber; lineNumber < lineCount; lineNumber += 1) {
-        var nextLine = doc.getLine(lineNumber + 1);
-        if (!nextLine || !this._isListLine(nextLine)) {
-          break;
+
+      if (length) {
+        var startLineNumber = newListLines[0];
+        var endLineNumber = newListLines[length - 1];
+
+        if (this._isNotBlankNotListLine(endLineNumber + 1)) {
+          this.doc.replaceRange('\n', {
+            line: endLineNumber,
+            ch: this.doc.getLine(endLineNumber).length
+          });
+        }
+
+        if (startLineNumber > 0 && this._isNotBlankNotListLine(startLineNumber - 1)) {
+          this.doc.replaceRange('\n', {
+            line: startLineNumber,
+            ch: 0
+          });
         }
       }
-
-      return lineNumber;
+    }
+  }, {
+    key: '_isNotBlankNotListLine',
+    value: function _isNotBlankNotListLine(lineNumber) {
+      return !!this.doc.getLine(lineNumber) && !this._isListLine(lineNumber);
     }
   }]);
 
@@ -18093,39 +18283,39 @@ var _wwClipboardManager = __webpack_require__(69);
 
 var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-var _wwListManager = __webpack_require__(71);
+var _wwListManager = __webpack_require__(72);
 
 var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-var _wwTaskManager = __webpack_require__(72);
+var _wwTaskManager = __webpack_require__(73);
 
 var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-var _wwTableManager = __webpack_require__(35);
+var _wwTableManager = __webpack_require__(34);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(36);
+var _wwTableSelectionManager = __webpack_require__(35);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-var _wwHrManager = __webpack_require__(73);
+var _wwHrManager = __webpack_require__(74);
 
 var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-var _wwPManager = __webpack_require__(74);
+var _wwPManager = __webpack_require__(75);
 
 var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-var _wwHeadingManager = __webpack_require__(75);
+var _wwHeadingManager = __webpack_require__(76);
 
 var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-var _wwCodeBlockManager = __webpack_require__(37);
+var _wwCodeBlockManager = __webpack_require__(36);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-var _squireExt = __webpack_require__(76);
+var _squireExt = __webpack_require__(77);
 
 var _squireExt2 = _interopRequireDefault(_squireExt);
 
@@ -18133,7 +18323,7 @@ var _keyMapper = __webpack_require__(22);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _wwTextObject = __webpack_require__(78);
+var _wwTextObject = __webpack_require__(79);
 
 var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
 
@@ -18141,7 +18331,7 @@ var _componentManager = __webpack_require__(31);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _codeBlockGadget = __webpack_require__(79);
+var _codeBlockGadget = __webpack_require__(80);
 
 var _codeBlockGadget2 = _interopRequireDefault(_codeBlockGadget);
 
@@ -18154,8 +18344,10 @@ var keyMapper = _keyMapper2.default.getSharedInstance();
 var FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
+var FIND_TABLE_AND_HEADING_RX = /^(TABLE|H[1-6])$/;
 
 var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
+var PLACEHOLDER_CSS_CLASSNAME = 'tui-editor-contents-placeholder';
 
 var canObserveMutations = typeof MutationObserver !== 'undefined';
 
@@ -18221,6 +18413,7 @@ var WysiwygEditor = function () {
 
       this.get$Body().addClass(EDITOR_CONTENT_CSS_CLASSNAME);
       this.$editorContainerEl.css('position', 'relative');
+      this._togglePlaceholder();
 
       this.codeBlockGadget = new _codeBlockGadget2.default({
         eventManager: this.eventManager,
@@ -18264,6 +18457,9 @@ var WysiwygEditor = function () {
       });
       this.eventManager.listen('wysiwygRangeChangeAfter', function () {
         return _this2.scrollIntoCursor();
+      });
+      this.eventManager.listen('contentChangedFromWysiwyg', function () {
+        _this2._togglePlaceholder();
       });
     }
 
@@ -18606,6 +18802,19 @@ var WysiwygEditor = function () {
         }
       });
     }
+  }, {
+    key: '_togglePlaceholder',
+    value: function _togglePlaceholder() {
+      var squire = this.getEditor();
+      squire.modifyDocument(function () {
+        var root = squire.getRoot();
+        if (root.textContent || root.childNodes.length > 1) {
+          root.classList.remove(PLACEHOLDER_CSS_CLASSNAME);
+        } else {
+          root.classList.add(PLACEHOLDER_CSS_CLASSNAME);
+        }
+      });
+    }
 
     /**
      * Return last matched list item path string matched index to end
@@ -18697,6 +18906,50 @@ var WysiwygEditor = function () {
 
         return true;
       });
+
+      this.addKeyEventHandler('BACK_SPACE', function (ev, range, keymap) {
+        return _this5._handleRemoveKeyEvent(ev, range, keymap);
+      });
+      this.addKeyEventHandler('DELETE', function (ev, range, keymap) {
+        return _this5._handleRemoveKeyEvent(ev, range, keymap);
+      });
+    }
+  }, {
+    key: '_handleRemoveKeyEvent',
+    value: function _handleRemoveKeyEvent(ev, range, keyMap) {
+      var sq = this.getEditor();
+
+      if (this._isStartHeadingOrTableAndContainsThem(range)) {
+        var keyStr = keyMap === 'BACK_SPACE' ? 'backspace' : 'delete';
+
+        sq.removeAllFormatting();
+        sq._keyHandlers[keyStr](sq, ev, sq.getSelection());
+        sq.removeLastUndoStack();
+
+        return false;
+      }
+
+      return true;
+    }
+  }, {
+    key: '_isStartHeadingOrTableAndContainsThem',
+    value: function _isStartHeadingOrTableAndContainsThem(range) {
+      var startContainer = range.startContainer,
+          startOffset = range.startOffset,
+          commonAncestorContainer = range.commonAncestorContainer,
+          collapsed = range.collapsed;
+
+      var root = this.getEditor().getRoot();
+
+      if (!collapsed && commonAncestorContainer === root) {
+        if (startContainer === root) {
+          return FIND_TABLE_AND_HEADING_RX.test(_domUtils2.default.getChildNodeByOffset(startContainer, startOffset).nodeName);
+        } else if (startOffset === 0) {
+          return FIND_TABLE_AND_HEADING_RX.test(_domUtils2.default.getParentUntil(startContainer, root).nodeName);
+        }
+      }
+
+      return false;
     }
   }, {
     key: '_wrapDefaultBlockToOrphanTexts',
@@ -18946,8 +19199,8 @@ var WysiwygEditor = function () {
   }, {
     key: 'remove',
     value: function remove() {
+      this.$editorContainerEl.off('scroll');
       this.getEditor().destroy();
-
       this.editor = null;
       this.$body = null;
       this.eventManager = null;
@@ -18985,6 +19238,19 @@ var WysiwygEditor = function () {
     value: function setMinHeight(minHeight) {
       var editorBody = this.get$Body().get(0);
       editorBody.style.minHeight = minHeight + 'px';
+    }
+
+    /**
+     * Set the placeholder to wysiwyg editor
+     * @param {string} placeholder - placeholder to set
+     */
+
+  }, {
+    key: 'setPlaceholder',
+    value: function setPlaceholder(placeholder) {
+      if (placeholder) {
+        this.getEditor().getRoot().setAttribute('data-placeholder', placeholder);
+      }
     }
 
     /**
@@ -19306,7 +19572,7 @@ var WysiwygEditor = function () {
       if (cursorAboveEditor < 0) {
         this.scrollTop(scrollTop + cursorAboveEditor);
       } else if (cursorBelowEditor > 0) {
-        this.scrollTop(scrollTop + cursorBelowEditor);
+        this.scrollTop(Math.ceil(scrollTop + cursorBelowEditor));
       }
     }
 
@@ -19555,9 +19821,9 @@ var _wwPasteContentHelper = __webpack_require__(70);
 
 var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
-var _i18n = __webpack_require__(3);
+var _wwTablePasteHelper = __webpack_require__(71);
 
-var _i18n2 = _interopRequireDefault(_i18n);
+var _wwTablePasteHelper2 = _interopRequireDefault(_wwTablePasteHelper);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19581,6 +19847,7 @@ var WwClipboardManager = function () {
 
     this.wwe = wwe;
     this._pch = new _wwPasteContentHelper2.default(this.wwe);
+    this._tablePasteHelper = new _wwTablePasteHelper2.default(this.wwe);
     this._selectedSellCount = 0;
     this._$clipboardArea = null;
   }
@@ -19604,6 +19871,7 @@ var WwClipboardManager = function () {
       this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this));
       this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this));
       this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this));
+      this.wwe.eventManager.listen('paste', this._onPasteIntoTable.bind(this));
     }
   }, {
     key: '_onCopyCut',
@@ -19658,26 +19926,52 @@ var WwClipboardManager = function () {
       this.wwe.getEditor().focus();
       this._clearClipboardArea();
     }
+
+    /**
+     * Process paste event when occured in table
+     * @param {{source: string, data: event}} event - event
+     * @private
+     */
+
+  }, {
+    key: '_onPasteIntoTable',
+    value: function _onPasteIntoTable(event) {
+      var ev = event.data;
+
+      var range = this.wwe.getEditor().getSelection();
+      var tableManager = this.wwe.componentManager.getManager('table');
+
+      if (tableManager.isInTable(range) && this._isSingleCellSelected(range)) {
+        this._tablePasteHelper.pasteClipboard(ev);
+      }
+    }
+  }, {
+    key: '_isSingleCellSelected',
+    value: function _isSingleCellSelected(range) {
+      var startContainer = range.startContainer,
+          endContainer = range.endContainer;
+
+
+      return this._getCell(startContainer) === this._getCell(endContainer);
+    }
+  }, {
+    key: '_getCell',
+    value: function _getCell(node) {
+      return node.nodeName === 'TD' ? node : _domUtils2.default.getParentUntil(node, 'TR');
+    }
   }, {
     key: '_onWillPaste',
     value: function _onWillPaste(pasteData) {
       var _this2 = this;
 
       var $clipboardContainer = (0, _jquery2.default)('<div>').append(pasteData.fragment.cloneNode(true));
-
+      this._preparePaste($clipboardContainer);
       this._setTableBookmark($clipboardContainer);
 
-      if (this._pasteToTable($clipboardContainer)) {
-        pasteData.preventDefault();
-      } else {
-        this._preparePaste($clipboardContainer);
-        this._setTableBookmark($clipboardContainer);
-
-        pasteData.fragment = document.createDocumentFragment();
-        (0, _jquery2.default)($clipboardContainer[0].childNodes).each(function (index, element) {
-          pasteData.fragment.appendChild(element);
-        });
-      }
+      pasteData.fragment = document.createDocumentFragment();
+      $clipboardContainer.contents().each(function (index, element) {
+        pasteData.fragment.appendChild(element);
+      });
 
       // @TODO Temporary code : paste to empty code block
       this._pasteToEmptyCodeBlock(pasteData);
@@ -19785,42 +20079,6 @@ var WwClipboardManager = function () {
           $element.remove();
         }
       });
-    }
-
-    /**
-     * Paste to table.
-     * @param {jQuery} $clipboardContainer - clibpard container
-     * @returns {boolean} whether processed or not
-     * @private
-     */
-
-  }, {
-    key: '_pasteToTable',
-    value: function _pasteToTable($clipboardContainer) {
-      var tableManager = this.wwe.componentManager.getManager('table');
-      var tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
-      var range = this.wwe.getEditor().getSelection();
-      var pastingToTable = tableManager.isInTable(range);
-
-      var _$clipboardContainer$ = $clipboardContainer.get(0),
-          childNodes = _$clipboardContainer$.childNodes;
-
-      var containsOneTableOnly = childNodes.length === 1 && childNodes[0].nodeName === 'TABLE';
-      var processed = false;
-
-      if (pastingToTable) {
-        if (containsOneTableOnly) {
-          tableManager.pasteClipboardData($clipboardContainer.first());
-          $clipboardContainer.html(''); // drains clipboard data as we've pasted everything here.
-          processed = true;
-        } else if (tableSelectionManager.getSelectedCells().length) {
-          alert(_i18n2.default.get('Cannot paste values ​​other than a table in the cell selection state'));
-          $clipboardContainer.html(''); // drains clipboard data
-          processed = true;
-        }
-      }
-
-      return processed;
     }
 
     /**
@@ -20019,7 +20277,7 @@ var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _htmlSanitizer = __webpack_require__(34);
+var _htmlSanitizer = __webpack_require__(23);
 
 var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
@@ -20523,6 +20781,590 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Paste helper when past to table
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _tuiCodeSnippet = __webpack_require__(1);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
+var _htmlSanitizer = __webpack_require__(23);
+
+var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Class WwTablePasteHelper
+ */
+var WwTablePasteHelper = function () {
+  /**
+   * Creates an instance of WwTablePasteHelper.
+   * @param {WysiwygEditor} wwe - WysiwygEditor instance
+   * @memberof WwTablePasteHelper
+   */
+  function WwTablePasteHelper(wwe) {
+    _classCallCheck(this, WwTablePasteHelper);
+
+    this.wwe = wwe;
+  }
+
+  /**
+   * Prossse paste clipboardEvent
+   * @param {ClipboardEvent} ev - ClipboardEvent
+   * @memberof WwTablePasteHelper
+   */
+
+
+  _createClass(WwTablePasteHelper, [{
+    key: 'pasteClipboard',
+    value: function pasteClipboard(ev) {
+      var cbData = ev.clipboardData || window.clipboardData;
+      var items = cbData && cbData.items;
+
+      if (items) {
+        this._pasteClipboardItem(items);
+        ev.preventDefault();
+      } else {
+        this._pasteClipboardUsingPasteArea();
+        ev.squirePrevented = true;
+      }
+    }
+
+    /**
+     * ClipboardEvent is not supported in IE.
+     * To get clipboard, create temporay element and then paste into that element.
+     * After end of paste, can get clipboard from that temporary element.
+     * @param {ClipboardEvent} ev - ClipboardEvent
+     * @private
+     */
+
+  }, {
+    key: '_pasteClipboardUsingPasteArea',
+    value: function _pasteClipboardUsingPasteArea() {
+      var _this = this;
+
+      var sq = this.wwe.getEditor();
+      var range = sq.getSelection();
+      var startContainer = range.startContainer,
+          startOffset = range.startOffset,
+          endContainer = range.endContainer,
+          endOffset = range.endOffset;
+
+      var pasteArea = document.createElement('div');
+      var _document = document,
+          body = _document.body;
+
+
+      pasteArea.setAttribute('contenteditable', true);
+      pasteArea.setAttribute('style', 'position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;');
+      body.appendChild(pasteArea);
+
+      range.selectNodeContents(pasteArea);
+      sq.setSelection(range);
+
+      setTimeout(function () {
+        var clipboard = body.removeChild(pasteArea);
+
+        range.setStart(startContainer, startOffset);
+        range.setEnd(endContainer, endOffset);
+
+        sq.focus();
+        sq.setSelection(range);
+
+        _this._pasteClipboardHtml(clipboard.innerHTML);
+      });
+    }
+
+    /**
+     * Paste items of clipboard data
+     * @param {DataTransfer.items} items - items of clipboarddata
+     * @private
+     */
+
+  }, {
+    key: '_pasteClipboardItem',
+    value: function _pasteClipboardItem(items) {
+      var _this2 = this;
+
+      var textItem = null;
+      var htmlItem = null;
+
+      _tuiCodeSnippet2.default.forEachArray(items, function (item) {
+        if (item.type === 'text/html') {
+          htmlItem = item;
+        } else if (item.type === 'text/plain') {
+          textItem = item;
+        }
+      });
+
+      if (htmlItem) {
+        htmlItem.getAsString(function (html) {
+          _this2._pasteClipboardHtml(html);
+        });
+      } else if (textItem) {
+        textItem.getAsString(function (text) {
+          _this2._pasteClipboardContainer(document.createTextNode(text));
+        });
+      }
+    }
+
+    /**
+     * Paste html of clipboard
+     * @param {string} html - html
+     * @private
+     */
+
+  }, {
+    key: '_pasteClipboardHtml',
+    value: function _pasteClipboardHtml(html) {
+      var container = document.createDocumentFragment();
+
+      container.appendChild((0, _htmlSanitizer2.default)(html));
+      this._pasteClipboardContainer(container);
+    }
+
+    /**
+     * Paste container of clipboard
+     * @param {DocumentFragment} clipboardContainer - clipboard
+     * @private
+     */
+
+  }, {
+    key: '_pasteClipboardContainer',
+    value: function _pasteClipboardContainer(clipboardContainer) {
+      var sq = this.wwe.getEditor();
+      var childNodes = clipboardContainer.childNodes;
+
+      var containsOneTableOnly = childNodes.length === 1 && childNodes[0].nodeName === 'TABLE';
+
+      if (containsOneTableOnly) {
+        var tableManager = this.wwe.componentManager.getManager('table');
+        tableManager.pasteTableData(clipboardContainer);
+      } else {
+        var range = sq.getSelection().cloneRange();
+        var fragment = this._preparePasteDocumentFragment(clipboardContainer);
+
+        sq.saveUndoState(range);
+
+        if (!range.collapsed) {
+          this._deleteContentsRange(range);
+        }
+
+        if (_domUtils2.default.isTextNode(range.startContainer)) {
+          this._pasteIntoTextNode(range, fragment);
+        } else {
+          this._pasteIntoElements(range, fragment);
+        }
+
+        sq.setSelection(range);
+      }
+    }
+
+    /**
+     * Prepare clipboard for paste to table
+     * @memberof WwTablePasteHelper
+     * @param {DocumentFragment} clipboardContainer - clipboard
+     * @returns {DocumentFragment} processed result
+     * @private
+     */
+
+  }, {
+    key: '_preparePasteDocumentFragment',
+    value: function _preparePasteDocumentFragment(clipboardContainer) {
+      var childNodes = clipboardContainer.childNodes;
+
+      var fragment = document.createDocumentFragment();
+
+      if (childNodes.length) {
+        fragment.appendChild(this._unwrapBlock(clipboardContainer));
+      } else if (this._isPossibleInsertToTable(clipboardContainer)) {
+        fragment.appendChild(clipboardContainer);
+      }
+
+      return fragment;
+    }
+
+    /**
+     * unwrap block node
+     * @memberof WwTablePasteHelper
+     * @param {Node} node - target node
+     * @returns {DocumentFragment} processed result
+     * @private
+     */
+
+  }, {
+    key: '_unwrapBlock',
+    value: function _unwrapBlock(node) {
+      var fragment = document.createDocumentFragment();
+      var childNodes = _tuiCodeSnippet2.default.toArray(node.childNodes);
+
+      while (childNodes.length) {
+        var child = childNodes.shift();
+
+        if (this._isPossibleInsertToTable(child)) {
+          fragment.appendChild(child);
+        } else {
+          fragment.appendChild(this._unwrapBlock(child));
+
+          // If current child is last or fragment already has last br,
+          // appending br would create unintended line break.
+          var lastChild = fragment.lastChild;
+
+          if (childNodes.length && lastChild && lastChild.nodeName !== 'BR') {
+            fragment.appendChild(document.createElement('br'));
+          }
+        }
+      }
+
+      return fragment;
+    }
+  }, {
+    key: '_isPossibleInsertToTable',
+    value: function _isPossibleInsertToTable(node) {
+      var isChildlessCode = node.nodeName === 'CODE' && node.childNodes.length > 1;
+
+      return !isChildlessCode && (_domUtils2.default.isMDSupportInlineNode(node) || _domUtils2.default.isTextNode(node));
+    }
+
+    /**
+     * paste fragment to offset of range.startContainer
+     * @memberof WwTablePasteHelper
+     * @param {Range} range - selection range
+     * @param {DocumentFragment} fragment - paste data
+     * @private
+     */
+
+  }, {
+    key: '_pasteIntoElements',
+    value: function _pasteIntoElements(range, fragment) {
+      var container = range.startContainer,
+          offset = range.startOffset;
+
+      var node = _domUtils2.default.getChildNodeByOffset(container, offset);
+
+      if (!node) {
+        // For example when container is br, br don't have child, so node is null
+        if (container.nodeName === 'TD') {
+          container.appendChild(fragment);
+          range.setStart(container, container.childNodes.length);
+        } else {
+          var parentNode = container.parentNode,
+              nextSibling = container.nextSibling;
+
+
+          parentNode.insertBefore(fragment, nextSibling);
+
+          if (nextSibling) {
+            range.setStart(nextSibling, 0);
+          } else {
+            range.setStartAfter(parentNode.lastChild);
+          }
+        }
+      } else {
+        container.insertBefore(fragment, node);
+        range.setStart(node, 0);
+      }
+
+      range.collapse(true);
+    }
+
+    /**
+     * paste fragment to offset of text node
+     * @memberof WwTablePasteHelper
+     * @param {Range} range - selection range
+     * @param {DocumentFragment} fragment - paste data
+     * @private
+     */
+
+  }, {
+    key: '_pasteIntoTextNode',
+    value: function _pasteIntoTextNode(range, fragment) {
+      var container = range.startContainer,
+          offset = range.startOffset;
+      var parentNode = container.parentNode,
+          textContent = container.textContent;
+
+      var prevText = textContent.slice(0, offset);
+      var postText = textContent.slice(offset, textContent.length);
+      var fragmentChildNodes = fragment.childNodes;
+
+      var firstChild = fragmentChildNodes[0];
+      var isFragmenthasOneTextNode = fragmentChildNodes.length === 1 && _domUtils2.default.isTextNode(firstChild);
+
+      if (!prevText) {
+        parentNode.insertBefore(fragment, container);
+        range.setStart(container, 0);
+      } else if (!postText) {
+        var nextSibling = container.nextSibling;
+
+
+        parentNode.insertBefore(fragment, nextSibling);
+        range.setStartAfter(nextSibling);
+      } else if (isFragmenthasOneTextNode) {
+        var firstChildText = firstChild.textContent;
+
+
+        container.textContent = '' + prevText + firstChildText + postText;
+        range.setStart(container, prevText.length + firstChildText.length);
+      } else {
+        var resultFragment = document.createDocumentFragment();
+
+        resultFragment.appendChild(document.createTextNode(prevText));
+        resultFragment.appendChild(fragment);
+        resultFragment.appendChild(document.createTextNode(postText));
+        parentNode.replaceChild(resultFragment, container);
+
+        var childNodesArray = _tuiCodeSnippet2.default.toArray(parentNode.childNodes);
+        var index = 0;
+        childNodesArray.forEach(function (child, i) {
+          if (child.textContent === postText) {
+            index = i;
+          }
+        });
+
+        range.setStart(parentNode.childNodes[index], 0);
+      }
+
+      range.collapse(true);
+    }
+
+    /**
+     * delete contents of range that is not collapse
+     * @memberof WwTablePasteHelper
+     * @param {Range} range - range is not collapse
+     * @private
+     */
+
+  }, {
+    key: '_deleteContentsRange',
+    value: function _deleteContentsRange(range) {
+      var startContainer = range.startContainer,
+          startOffset = range.startOffset,
+          endContainer = range.endContainer,
+          endOffset = range.endOffset;
+
+
+      if (startContainer === endContainer) {
+        this._deleteContentsByOffset(startContainer, startOffset, endOffset);
+        range.setStart(startContainer, startOffset);
+        range.collapse(true);
+      } else {
+        this._deleteNotCollapsedRangeContents(range);
+      }
+    }
+  }, {
+    key: '_deleteNotCollapsedRangeContents',
+    value: function _deleteNotCollapsedRangeContents(range) {
+      var startContainer = range.startContainer,
+          startOffset = range.startOffset,
+          endContainer = range.endContainer,
+          endOffset = range.endOffset;
+
+      var common = range.commonAncestorContainer;
+      var startBlock = this._getBlock(startContainer, common, startOffset);
+      var endBlock = this._getBlock(endContainer, common, endOffset - 1);
+
+      if (startBlock === endBlock) {
+        this._removeInSameBlock(startBlock, startContainer, endContainer, startOffset, endOffset);
+
+        // When endContainer is not same endBlock, endBlock is removed.
+        // For example, aaa| <- this is cursor.
+        // When cursor is last, endContainer would be 'TD' and endBlock is text node
+        // In this case, remove all 'aaa' so endBlock should be null.
+        endBlock = endContainer !== endBlock ? null : endBlock;
+      } else {
+        var nextOfstartBlock = startBlock.nextSibling;
+
+
+        if (startContainer.nodeName === 'TD') {
+          nextOfstartBlock = this._removeOneLine(startBlock);
+        } else {
+          // Remove child nodes from node of startOffset in startContainer.
+          this._deleteContentsByOffset(startContainer, startOffset, _domUtils2.default.getOffsetLength(startContainer));
+
+          // Remove nodes from startContainer in startBlock
+          this._removeNodesByDirection(startBlock, startContainer, false);
+        }
+
+        if (endContainer.nodeName === 'TD') {
+          endBlock = this._removeOneLine(endBlock);
+        } else {
+          // Remove child nodes until node of endOffset in endContainer.
+          this._deleteContentsByOffset(endContainer, 0, endOffset);
+
+          // Remove nodes until endContainer in endBlock
+          this._removeNodesByDirection(endBlock, endContainer, true);
+        }
+
+        // Remove nodes between startBlock and endBlock
+        this._removeChild(common, nextOfstartBlock, endBlock);
+      }
+
+      if (endBlock) {
+        range.setStart(endBlock, 0);
+      } else {
+        range.setStartAfter(startBlock);
+      }
+
+      range.collapse(true);
+    }
+  }, {
+    key: '_removeInSameBlock',
+    value: function _removeInSameBlock(block, startContainer, endContainer, startOffset, endOffset) {
+      var start = startContainer === block ? startOffset : 0;
+      var end = endContainer === block ? endOffset : _domUtils2.default.getOffsetLength(block);
+
+      this._deleteContentsByOffset(block, start, end);
+    }
+  }, {
+    key: '_removeOneLine',
+    value: function _removeOneLine(node) {
+      var nextSibling = node.nextSibling,
+          parentNode = node.parentNode;
+
+      var next = nextSibling;
+
+      parentNode.removeChild(node);
+
+      if (nextSibling && nextSibling.nodeName === 'BR') {
+        next = nextSibling.nextSibling;
+        parentNode.removeChild(nextSibling);
+      }
+
+      return next;
+    }
+
+    /**
+     * Find parent block node of startContainer and endContainer
+     * If startContainer or endContainer is same commonAncestor,
+     * find node at offset of startContainer and endContainer.
+     * @memberof WwTablePasteHelper
+     * @param {Node} node - startContainer or endContainer
+     * @param {Node} parent - commonAncestor
+     * @param {Number} offset - startOffset or endOffset-1
+     * @returns {Node} block node
+     * @private
+     */
+
+  }, {
+    key: '_getBlock',
+    value: function _getBlock(node, parent, offset) {
+      return _domUtils2.default.getParentUntil(node, parent) || _domUtils2.default.getChildNodeByOffset(node, offset);
+    }
+
+    /**
+     * delete contents from start offset to end offset
+     * @memberof WwTablePasteHelper
+     * @param {Node} container - container
+     * @param {Number} startOffset - start offset
+     * @param {Number} endOffset - end offset
+     * @private
+     */
+
+  }, {
+    key: '_deleteContentsByOffset',
+    value: function _deleteContentsByOffset(container, startOffset, endOffset) {
+      if (_domUtils2.default.isTextNode(container)) {
+        var textContent = container.textContent;
+
+        var prevText = textContent.slice(0, startOffset);
+        var postText = textContent.slice(endOffset, textContent.length);
+
+        container.textContent = '' + prevText + postText;
+      } else {
+        var startNode = _domUtils2.default.getChildNodeByOffset(container, startOffset);
+        var endNode = _domUtils2.default.getChildNodeByOffset(container, endOffset);
+
+        if (startNode) {
+          this._removeChild(container, startNode, endNode || null);
+        }
+      }
+    }
+
+    /**
+     * remove node from 'start' node to 'end-1' node inside parent
+     * if 'end' node is null, remove all child nodes after 'start' node.
+     * @memberof WwTablePasteHelper
+     * @param {Node} parent - parent node
+     * @param {Node} start - start node to remove
+     * @param {Node} end - end node to remove
+     * @private
+     */
+
+  }, {
+    key: '_removeChild',
+    value: function _removeChild(parent, start, end) {
+      var child = start;
+
+      if (!child || parent !== child.parentNode) {
+        return;
+      }
+
+      while (child !== end) {
+        var next = child.nextSibling;
+        parent.removeChild(child);
+        child = next;
+      }
+    }
+
+    /**
+     * remove nodes along the direction from the node to reach targetParent node
+     * @memberof WwTablePasteHelper
+     * @param {Node} targetParent - stop removing when reach target parent node
+     * @param {Node} node - start node
+     * @param {boolean} isForward - direction
+     * @private
+     */
+
+  }, {
+    key: '_removeNodesByDirection',
+    value: function _removeNodesByDirection(targetParent, node, isForward) {
+      var parent = node;
+
+      while (parent !== targetParent) {
+        var nextParent = parent.parentNode;
+        var _parent = parent,
+            nextSibling = _parent.nextSibling,
+            previousSibling = _parent.previousSibling;
+
+
+        if (!isForward && nextSibling) {
+          this._removeChild(nextParent, nextSibling, null);
+        } else if (isForward && previousSibling) {
+          this._removeChild(nextParent, nextParent.childNodes[0], parent);
+        }
+
+        parent = nextParent;
+      }
+    }
+  }]);
+
+  return WwTablePasteHelper;
+}();
+
+exports.default = WwTablePasteHelper;
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg list manager
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
@@ -20962,7 +21804,7 @@ var WwListManager = function () {
 exports.default = WwListManager;
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21184,7 +22026,7 @@ var WwTaskManager = function () {
 exports.default = WwTaskManager;
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21503,7 +22345,7 @@ function findTextNodeFilter() {
 exports.default = WwHrManager;
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21669,7 +22511,7 @@ var WwPManager = function () {
 exports.default = WwPManager;
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21937,7 +22779,7 @@ var WwHeadingManager = function () {
 exports.default = WwHeadingManager;
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21957,7 +22799,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _squireRte = __webpack_require__(77);
+var _squireRte = __webpack_require__(78);
 
 var _squireRte2 = _interopRequireDefault(_squireRte);
 
@@ -21965,7 +22807,7 @@ var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _util = __webpack_require__(38);
+var _util = __webpack_require__(37);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22359,13 +23201,13 @@ var SquireExt = function (_Squire) {
 exports.default = SquireExt;
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_77__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_78__;
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22572,7 +23414,7 @@ var WwTextObject = function () {
 exports.default = WwTextObject;
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22590,7 +23432,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _blockOverlay = __webpack_require__(80);
+var _blockOverlay = __webpack_require__(81);
 
 var _blockOverlay2 = _interopRequireDefault(_blockOverlay);
 
@@ -22650,19 +23492,25 @@ var CodeBlockGadget = function (_BlockOverlay) {
   _createClass(CodeBlockGadget, [{
     key: '_initDOM',
     value: function _initDOM() {
+      var _this2 = this;
+
       this.$el.addClass('code-block-header');
       this._$languageLabel = (0, _jquery2.default)('<span>text</span>');
       this.$el.append(this._$languageLabel);
       this._$buttonOpenModalEditor = (0, _jquery2.default)('<button type="button">Editor</button>');
       this.$el.append(this._$buttonOpenModalEditor);
+      this._eventManager.emit('removeEditor', function () {
+        _this2._$buttonOpenModalEditor.off('click');
+        _this2._$buttonOpenModalEditor = null;
+      });
     }
   }, {
     key: '_initDOMEvent',
     value: function _initDOMEvent() {
-      var _this2 = this;
+      var _this3 = this;
 
       this._$buttonOpenModalEditor.on('click', function () {
-        return _this2._openPopupCodeBlockEditor();
+        return _this3._openPopupCodeBlockEditor();
       });
     }
   }, {
@@ -22709,12 +23557,12 @@ var CodeBlockGadget = function (_BlockOverlay) {
   }, {
     key: 'onShow',
     value: function onShow() {
-      var _this3 = this;
+      var _this4 = this;
 
       _get(CodeBlockGadget.prototype.__proto__ || Object.getPrototypeOf(CodeBlockGadget.prototype), 'onShow', this).call(this);
 
       this._onAttachedElementChange = function () {
-        return _this3._updateLanguage();
+        return _this4._updateLanguage();
       };
       (0, _jquery2.default)(this.getAttachedElement()).on(EVENT_LANGUAGE_CHANGED, this._onAttachedElementChange);
 
@@ -22743,7 +23591,7 @@ var CodeBlockGadget = function (_BlockOverlay) {
 exports.default = CodeBlockGadget;
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22949,7 +23797,7 @@ var BlockOverlay = function () {
 exports.default = BlockOverlay;
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23223,7 +24071,7 @@ var Layout = function () {
 exports.default = Layout;
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23396,13 +24244,13 @@ Command.TYPE = {
 exports.default = Command;
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_83__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_84__;
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23510,7 +24358,7 @@ function isTaskListItemToken(tokens, index) {
 module.exports = MarkdownitTaskRenderer;
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23593,7 +24441,7 @@ function escape(html, encode) {
 module.exports = MarkdownitCodeBlockRenderer;
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23662,7 +24510,7 @@ module.exports = function code(state, startLine, endLine /*, silent*/) {
 /* eslint-enable */
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23994,7 +24842,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
 };
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24208,7 +25056,7 @@ module.exports = function table(state, startLine, endLine, silent) {
 };
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24305,7 +25153,7 @@ module.exports = function html_block(state, startLine, endLine, silent) {
 /* eslint-enable */
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24377,13 +25225,13 @@ module.exports = function backtick(state, silent) {
 };
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_91__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_92__;
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24407,7 +25255,7 @@ var _mdPreview = __webpack_require__(32);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
-var _eventManager = __webpack_require__(39);
+var _eventManager = __webpack_require__(38);
 
 var _eventManager2 = _interopRequireDefault(_eventManager);
 
@@ -24415,11 +25263,11 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _extManager = __webpack_require__(40);
+var _extManager = __webpack_require__(39);
 
 var _extManager2 = _interopRequireDefault(_extManager);
 
-var _convertor = __webpack_require__(41);
+var _convertor = __webpack_require__(40);
 
 var _convertor2 = _interopRequireDefault(_convertor);
 
@@ -24427,7 +25275,7 @@ var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _codeBlockManager = __webpack_require__(23);
+var _codeBlockManager = __webpack_require__(24);
 
 var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
@@ -24590,6 +25438,7 @@ var ToastUIEditorViewer = function () {
     value: function remove() {
       this.eventManager.emit('removeEditor');
       this.preview.$el.off('mousedown', _jquery2.default.proxy(this._toggleTask, this));
+      this.preview.remove();
       this.options = null;
       this.eventManager = null;
       this.commandManager = null;
@@ -24724,7 +25573,7 @@ ToastUIEditorViewer.WwTableSelectionManager = null;
 module.exports = ToastUIEditorViewer;
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24744,11 +25593,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _defaultToolbar = __webpack_require__(94);
+var _defaultToolbar = __webpack_require__(95);
 
 var _defaultToolbar2 = _interopRequireDefault(_defaultToolbar);
 
-var _tab = __webpack_require__(46);
+var _tab = __webpack_require__(45);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -24756,35 +25605,35 @@ var _layerpopup = __webpack_require__(7);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _modeSwitch = __webpack_require__(98);
+var _modeSwitch = __webpack_require__(99);
 
 var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-var _popupAddLink = __webpack_require__(99);
+var _popupAddLink = __webpack_require__(100);
 
 var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-var _popupAddImage = __webpack_require__(100);
+var _popupAddImage = __webpack_require__(101);
 
 var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-var _popupTableUtils = __webpack_require__(101);
+var _popupTableUtils = __webpack_require__(102);
 
 var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-var _popupAddTable = __webpack_require__(102);
+var _popupAddTable = __webpack_require__(103);
 
 var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-var _popupAddHeading = __webpack_require__(103);
+var _popupAddHeading = __webpack_require__(104);
 
 var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
-var _popupCodeBlockLanguages = __webpack_require__(104);
+var _popupCodeBlockLanguages = __webpack_require__(105);
 
 var _popupCodeBlockLanguages2 = _interopRequireDefault(_popupCodeBlockLanguages);
 
-var _popupCodeBlockEditor = __webpack_require__(105);
+var _popupCodeBlockEditor = __webpack_require__(106);
 
 var _popupCodeBlockEditor2 = _interopRequireDefault(_popupCodeBlockEditor);
 
@@ -25207,6 +26056,13 @@ var DefaultUI = function () {
     key: 'remove',
     value: function remove() {
       this.$el.remove();
+      this._markdownTab.remove();
+      this._modeSwitch.remove();
+      this._toolbar.destroy();
+      this._popups.forEach(function (popup) {
+        return popup.remove();
+      });
+      this._popups = [];
       _tooltip2.default.hide();
     }
 
@@ -25230,7 +26086,7 @@ var DefaultUI = function () {
 exports.default = DefaultUI;
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25244,7 +26100,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _resizeObserverPolyfill = __webpack_require__(95);
+var _resizeObserverPolyfill = __webpack_require__(96);
 
 var _resizeObserverPolyfill2 = _interopRequireDefault(_resizeObserverPolyfill);
 
@@ -25252,15 +26108,15 @@ var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _toolbar = __webpack_require__(43);
+var _toolbar = __webpack_require__(42);
 
 var _toolbar2 = _interopRequireDefault(_toolbar);
 
-var _popupDropdownToolbar = __webpack_require__(97);
+var _popupDropdownToolbar = __webpack_require__(98);
 
 var _popupDropdownToolbar2 = _interopRequireDefault(_popupDropdownToolbar);
 
-var _toolbarItemFactory = __webpack_require__(45);
+var _toolbarItemFactory = __webpack_require__(44);
 
 var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
 
@@ -25416,6 +26272,7 @@ var DefaultToolbar = function (_Toolbar) {
     value: function destroy() {
       if (this._observer) {
         this._observer.disconnect();
+        this._observer = null;
       }
     }
   }]);
@@ -25426,7 +26283,7 @@ var DefaultToolbar = function (_Toolbar) {
 exports.default = DefaultToolbar;
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -26459,7 +27316,7 @@ var index = (function () {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(12)))
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26504,7 +27361,7 @@ var ToolbarButton = function (_Button) {
 exports.default = ToolbarButton;
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26526,7 +27383,7 @@ var _layerpopup = __webpack_require__(7);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _toolbar = __webpack_require__(43);
+var _toolbar = __webpack_require__(42);
 
 var _toolbar2 = _interopRequireDefault(_toolbar);
 
@@ -26771,7 +27628,7 @@ Object.defineProperty(PopupDropdownToolbar, 'OPEN_EVENT', {
 exports.default = PopupDropdownToolbar;
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26974,7 +27831,7 @@ Object.defineProperty(ModeSwitch, 'TYPE', {
 exports.default = ModeSwitch;
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27210,7 +28067,7 @@ var PopupAddLink = function (_LayerPopup) {
 exports.default = PopupAddLink;
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27232,7 +28089,7 @@ var _layerpopup = __webpack_require__(7);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _tab = __webpack_require__(46);
+var _tab = __webpack_require__(45);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -27433,6 +28290,12 @@ var PopupAddImage = function (_LayerPopup) {
     value: function _resetInputs() {
       this.$el.find('input').val('');
     }
+  }, {
+    key: 'remove',
+    value: function remove() {
+      this.tab.remove();
+      _get(PopupAddImage.prototype.__proto__ || Object.getPrototypeOf(PopupAddImage.prototype), 'remove', this).call(this);
+    }
   }]);
 
   return PopupAddImage;
@@ -27441,7 +28304,7 @@ var PopupAddImage = function (_LayerPopup) {
 exports.default = PopupAddImage;
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27612,7 +28475,7 @@ var PopupTableUtils = function (_LayerPopup) {
 exports.default = PopupTableUtils;
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28109,7 +28972,7 @@ PopupAddTable.MIN_COL_SELECTION_INDEX = MIN_COL_SELECTION_INDEX;
 exports.default = PopupAddTable;
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28255,7 +29118,7 @@ var PopupAddHeading = function (_LayerPopup) {
 exports.default = PopupAddHeading;
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28553,7 +29416,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 exports.default = PopupCodeBlockLanguages;
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28579,19 +29442,19 @@ var _layerpopup = __webpack_require__(7);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _scrollSyncSplit = __webpack_require__(106);
+var _scrollSyncSplit = __webpack_require__(107);
 
 var _scrollSyncSplit2 = _interopRequireDefault(_scrollSyncSplit);
 
-var _codeBlockEditor = __webpack_require__(107);
+var _codeBlockEditor = __webpack_require__(108);
 
 var _codeBlockEditor2 = _interopRequireDefault(_codeBlockEditor);
 
-var _codeBlockPreview = __webpack_require__(108);
+var _codeBlockPreview = __webpack_require__(109);
 
 var _codeBlockPreview2 = _interopRequireDefault(_codeBlockPreview);
 
-var _codeBlockLanguagesCombo = __webpack_require__(109);
+var _codeBlockLanguagesCombo = __webpack_require__(110);
 
 var _codeBlockLanguagesCombo2 = _interopRequireDefault(_codeBlockLanguagesCombo);
 
@@ -28926,7 +29789,7 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 exports.default = PopupCodeBlockEditor;
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29240,7 +30103,7 @@ var ScrollSyncSplit = function () {
 exports.default = ScrollSyncSplit;
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29443,7 +30306,7 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
 exports.default = CodeBlockEditor;
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29546,7 +30409,7 @@ var CodeBlockPreview = function (_Preview) {
 exports.default = CodeBlockPreview;
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29786,7 +30649,7 @@ var CodeBlockLanguagesCombo = function () {
 exports.default = CodeBlockLanguagesCombo;
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29941,7 +30804,7 @@ var Bold = _commandManager2.default.command('markdown', /** @lends Bold */{
 exports.default = Bold;
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30174,7 +31037,7 @@ var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
 exports.default = Italic;
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30294,7 +31157,7 @@ var Strike = _commandManager2.default.command('markdown', /** @lends Strike */{
 exports.default = Strike;
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30434,7 +31297,7 @@ var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockqu
 exports.default = Blockquote;
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30535,7 +31398,7 @@ function getHeadingMarkdown(text, size) {
 exports.default = Heading;
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30616,7 +31479,7 @@ function getParagraphMarkdown(lineText) {
 exports.default = Paragraph;
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30687,7 +31550,7 @@ var HR = _commandManager2.default.command('markdown', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30764,7 +31627,7 @@ var AddLink = _commandManager2.default.command('markdown', /** @lends AddLink */
 exports.default = AddLink;
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30840,7 +31703,7 @@ var AddImage = _commandManager2.default.command('markdown', /** @lends AddImage 
 exports.default = AddImage;
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30854,16 +31717,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _listRegex = __webpack_require__(24);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * @fileoverview Implements UL markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- */
-var MD_UL_TASK_SYNTAX_RX = /([-*])( \[[ xX]]) /;
-var MD_UL_OR_UL_TASK_SYNTAX_RX = /[\d]+\.( \[[ xX]])? /;
 
 /**
  * UL
@@ -30880,66 +31734,19 @@ var UL = _commandManager2.default.command('markdown', /** @lends UL */{
    * @param {MarkdownEditor} mde MarkdownEditor instance
    */
   exec: function exec(mde) {
-    var cm = mde.getEditor();
-    var doc = cm.getDoc();
     var range = mde.getCurrentRange();
     var listManager = mde.componentManager.getManager('list');
-    var lineRange = listManager.expandLineRangeIfNeed(doc, range, isOlOrTask);
-    var startLineNumber = lineRange.start;
-    var endLineNumber = lineRange.end;
-    var line = void 0,
-        currentLineStart = void 0;
 
-    for (var i = startLineNumber; i <= endLineNumber; i += 1) {
-      currentLineStart = {
-        line: i,
-        ch: 0
-      };
-
-      line = doc.getLine(i);
-
-      if (listManager.isListOrParagraph(line)) {
-        if (isUlTask(line)) {
-          listManager.replaceLineText(doc, i, MD_UL_TASK_SYNTAX_RX, '$1 ');
-        } else if (isOlOrTask(line)) {
-          listManager.replaceLineText(doc, i, MD_UL_OR_UL_TASK_SYNTAX_RX, '* ');
-        } else if (!line.match(_listRegex.FIND_MD_UL_RX)) {
-          doc.replaceRange('* ', currentLineStart);
-        }
-
-        if (i === endLineNumber) {
-          listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
-        }
-      } else {
-        break;
-      }
-    }
-    cm.focus();
+    listManager.changeSyntax(range, 'ul');
   }
-});
-
-/**
- * Return whether the given line is UL TASK
- * @param {string} line Line text
- * @returns {boolean}
- */
-function isUlTask(line) {
-  return !!(line && line.match(_listRegex.FIND_MD_UL_TASK_RX));
-}
-
-/**
- * Return whether passed line is OL or TASK or neither
- * @param {string} line Line text
- * @returns {boolean}
- */
-function isOlOrTask(line) {
-  return !!(line && (line.match(_listRegex.FIND_MD_TASK_RX) || line.match(_listRegex.FIND_MD_OL_RX)));
-}
-
+}); /**
+     * @fileoverview Implements UL markdown command
+     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     */
 exports.default = UL;
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30953,16 +31760,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _listRegex = __webpack_require__(24);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * @fileoverview Implements OL markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- */
-
-var MD_LIST_OR_TASK_SYNTAX_RX = /([-*]|[\d]+\.)( \[[ xX]])? /;
 
 /**
  * OL
@@ -30979,58 +31777,20 @@ var OL = _commandManager2.default.command('markdown', /** @lends OL */{
    * @param {MarkdownEditor} mde MarkdownEditor instance
    */
   exec: function exec(mde) {
-    var cm = mde.getEditor();
-    var doc = cm.getDoc();
     var range = mde.getCurrentRange();
     var listManager = mde.componentManager.getManager('list');
-    var lineRange = listManager.expandLineRangeIfNeed(doc, range, isUlOrTask);
-    var startLineNumber = lineRange.start;
-    var endLineNumber = lineRange.end;
-    var ordinalNumber = 1;
-    var line = void 0,
-        currentLineStart = void 0;
 
-    for (var i = startLineNumber; i <= endLineNumber; i += 1) {
-      currentLineStart = {
-        line: i,
-        ch: 0
-      };
-
-      line = doc.getLine(i);
-
-      if (listManager.isListOrParagraph(line)) {
-        if (isUlOrTask(line)) {
-          listManager.replaceLineText(doc, i, MD_LIST_OR_TASK_SYNTAX_RX, ordinalNumber + '. ');
-        } else if (!line.match(_listRegex.FIND_MD_OL_RX)) {
-          doc.replaceRange(ordinalNumber + '. ', currentLineStart);
-        }
-
-        ordinalNumber += 1;
-
-        if (i === endLineNumber) {
-          listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
-        }
-      } else {
-        break;
-      }
-    }
-    cm.focus();
+    listManager.changeSyntax(range, 'ol');
   }
-});
-
-/**
- * Return whether passed line is UL or TASK or neither
- * @param {string} line Line text
- * @returns {boolean}
- */
-function isUlOrTask(line) {
-  return !!(line && (line.match(_listRegex.FIND_MD_TASK_RX) || line.match(_listRegex.FIND_MD_UL_RX)));
-}
+}); /**
+     * @fileoverview Implements OL markdown command
+     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     */
 
 exports.default = OL;
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31071,7 +31831,7 @@ var Indent = _commandManager2.default.command('markdown', /** @lends Indent */{
 exports.default = Indent;
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31112,7 +31872,7 @@ var Outdent = _commandManager2.default.command('markdown', /** @lends Outdent */
 exports.default = Outdent;
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31233,7 +31993,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31247,16 +32007,7 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _listRegex = __webpack_require__(24);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * @fileoverview Implements Task markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- */
-var MD_UL_OR_OL_SYNTAX_RX = /([*-] |[\d]+\. )/;
-var MD_TASK_SYNTAX_RX = /([*-] |[\d]+\. )(\[[ xX]] )/;
 
 /**
  * Task
@@ -31272,59 +32023,19 @@ var Task = _commandManager2.default.command('markdown', /** @lends Task */{
    * @param {MarkdownEditor} mde MarkdownEditor instance
    */
   exec: function exec(mde) {
-    var cm = mde.getEditor();
-    var doc = cm.getDoc();
     var range = mde.getCurrentRange();
     var listManager = mde.componentManager.getManager('list');
-    var lineRange = listManager.createSortedLineRange(range);
-    var startLineNumber = lineRange.start;
-    var endLineNumber = lineRange.end;
-    var line = void 0,
-        currentLineStart = void 0;
 
-    for (var i = startLineNumber; i <= endLineNumber; i += 1) {
-      currentLineStart = {
-        line: i,
-        ch: 0
-      };
-
-      line = doc.getLine(i);
-
-      var hasTaskSyntax = !!line.match(MD_TASK_SYNTAX_RX);
-
-      if (listManager.isListOrParagraph(line)) {
-        if (isOlOrUl(line) && hasTaskSyntax) {
-          listManager.replaceLineText(doc, i, MD_TASK_SYNTAX_RX, '$1');
-        } else if (isOlOrUl(line) && !hasTaskSyntax) {
-          listManager.replaceLineText(doc, i, MD_UL_OR_OL_SYNTAX_RX, '$1[ ] ');
-        } else if (!line.match(_listRegex.FIND_MD_TASK_RX)) {
-          doc.replaceRange('* [ ] ', currentLineStart);
-        }
-
-        if (i === endLineNumber) {
-          listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
-        }
-      } else {
-        break;
-      }
-    }
-    cm.focus();
+    listManager.changeSyntax(range, 'task');
   }
-});
-
-/**
- * Return whether passed line is OL or UL or neither
- * @param {string} line Line text
- * @returns {boolean}
- */
-function isOlOrUl(line) {
-  return !!(line && (line.match(_listRegex.FIND_MD_UL_RX) || line.match(_listRegex.FIND_MD_OL_RX)));
-}
-
+}); /**
+     * @fileoverview Implements Task markdown command
+     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     */
 exports.default = Task;
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31443,7 +32154,7 @@ var Code = _commandManager2.default.command('markdown', /** @lends Code */{
 exports.default = Code;
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31501,7 +32212,7 @@ var CodeBlock = _commandManager2.default.command('markdown', /** @lends CodeBloc
 exports.default = CodeBlock;
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31571,7 +32282,7 @@ function styleBold(sq) {
 exports.default = Bold;
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31642,7 +32353,7 @@ function styleItalic(sq) {
 exports.default = Italic;
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31713,7 +32424,7 @@ function styleStrike(sq) {
 exports.default = Strike;
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31764,7 +32475,7 @@ var Blockquote = _commandManager2.default.command('wysiwyg', /** @lends Blockquo
 exports.default = Blockquote;
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31825,7 +32536,7 @@ var AddImage = _commandManager2.default.command('wysiwyg', /** @lends AddImage *
 exports.default = AddImage;
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31898,7 +32609,7 @@ var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
 exports.default = AddLink;
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31979,7 +32690,7 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32049,7 +32760,7 @@ var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
 exports.default = Heading;
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32116,7 +32827,7 @@ var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph
 exports.default = Paragraph;
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32224,7 +32935,7 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
 exports.default = UL;
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32333,7 +33044,7 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
 exports.default = OL;
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32473,7 +33184,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32598,7 +33309,7 @@ function focusToFirstTd(sq, $tr) {
 exports.default = TableAddRow;
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32747,7 +33458,7 @@ function focusToNextCell(sq, $cell) {
 exports.default = TableAddCol;
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32876,7 +33587,7 @@ function getTrs(range, selectionMgr, $table) {
 exports.default = TableRemoveRow;
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33022,7 +33733,7 @@ function focusToCell(sq, $cell, tableMgr) {
 exports.default = TableRemoveCol;
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33174,7 +33885,7 @@ function getRangeInformation(range, selectionMgr) {
 exports.default = TableAlignCol;
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33229,7 +33940,7 @@ var TableRemove = _commandManager2.default.command('wysiwyg', /** @lends RemoveT
 exports.default = TableRemove;
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33305,7 +34016,7 @@ var Indent = _commandManager2.default.command('wysiwyg', /** @lends Indent */{
 exports.default = Indent;
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33385,7 +34096,7 @@ function getCurrent$Li(wwe) {
 exports.default = Outdent;
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33497,7 +34208,7 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
 exports.default = Task;
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33602,7 +34313,7 @@ function styleCode(editor, sq) {
 exports.default = Code;
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33708,7 +34419,7 @@ function getCodeBlockBody(range, wwe) {
 exports.default = CodeBlock;
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33764,7 +34475,6 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
   'Text color': 'Text color',
   'Auto scroll enabled': 'Auto scroll enabled',
   'Auto scroll disabled': 'Auto scroll disabled',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Cannot paste values ​​other than a table in the cell selection state.',
   'Choose language': 'Choose language'
 }); /**
     * @fileoverview I18N for English
@@ -33772,7 +34482,7 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
     */
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33828,7 +34538,6 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
   'Text color': '글자 색상',
   'Auto scroll enabled': '자동 스크롤 켜짐',
   'Auto scroll disabled': '자동 스크롤 꺼짐',
-  'Cannot paste values ​​other than a table in the cell selection state.': '셀 선택 상태에서는 테이블 이외의 값은 붙여넣을 수 없습니다.',
   'Choose language': '언어 선택'
 }); /**
     * @fileoverview I18N for Korean
@@ -33836,7 +34545,7 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
     */
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33892,7 +34601,6 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
   'Text color': '文字颜色',
   'Auto scroll enabled': '自动滚动已启用',
   'Auto scroll disabled': '自动滚动已禁用',
-  'Cannot paste values ​​other than a table in the cell selection state': '在选中单元格状态下无法将值粘贴到表格以外。',
   'Choose language': '选择语言'
 }); /**
     * @fileoverview I18N for Chinese
@@ -33900,7 +34608,7 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
     */
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33956,7 +34664,6 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
   'Text color': '文字色相',
   'Auto scroll enabled': '自動スクロールが有効',
   'Auto scroll disabled': '自動スクロールを無効に',
-  'Cannot paste values ​​other than a table in the cell selection state': '表以外の値をセル選択状態に貼り付けることはできません。',
   'Choose language': '言語選択'
 }); /**
     * @fileoverview I18N for Japanese
@@ -33964,7 +34671,7 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
     */
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33979,21 +34686,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 _i18n2.default.setLanguage(['nl', 'nl_NL'], {
   'Markdown': 'Markdown',
   'WYSIWYG': 'WYSIWYG',
-  'Write': 'Write',
-  'Preview': 'Preview',
+  'Write': 'Opslaan',
+  'Preview': 'Voorbeeld',
   'Headings': 'Koppen',
-  'Paragraph': 'tekst',
+  'Paragraph': 'Alinea',
   'Bold': 'Vet',
   'Italic': 'Cursief',
   'Strike': 'Doorhalen',
-  'Code': 'Inline Code',
+  'Code': 'Inline code',
   'Line': 'Regel',
   'Blockquote': 'Citaatblok',
   'Unordered list': 'Opsomming',
   'Ordered list': 'Genummerde opsomming',
   'Task': 'Taak',
-  'Indent': 'Inspringen',
-  'Outdent': 'Outdent',
+  'Indent': 'Niveau verhogen',
+  'Outdent': 'Niveau verlagen',
   'Insert link': 'Link invoegen',
   'Insert CodeBlock': 'Codeblok toevoegen',
   'Insert table': 'Tabel invoegen',
@@ -34003,7 +34710,7 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
   'Select image file': 'Selecteer een afbeelding',
   'Description': 'Omschrijving',
   'OK': 'OK',
-  'More': 'verder',
+  'More': 'Meer',
   'Cancel': 'Annuleren',
   'File': 'Bestand',
   'URL': 'URL',
@@ -34020,7 +34727,6 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
   'Text color': 'Tekstkleur',
   'Auto scroll enabled': 'Autoscroll ingeschakeld',
   'Auto scroll disabled': 'Autoscroll uitgeschakeld',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Kan geen waardes anders dan de tabel in de cell plakken',
   'Choose language': 'Kies een taal'
 }); /**
     * @fileoverview I18N for Dutch
@@ -34028,7 +34734,7 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
     */
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34084,7 +34790,6 @@ _i18n2.default.setLanguage(['es', 'es_ES'], {
   'Text color': 'Color del texto',
   'Auto scroll enabled': 'Desplazamiento automático habilitado',
   'Auto scroll disabled': 'Desplazamiento automático deshabilitado',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Sólo se pueden pegar tablas en el modo de selección de celdas',
   'Choose language': 'Elegir idioma'
 }); /**
     * @fileoverview I18N for Spanish
@@ -34092,7 +34797,7 @@ _i18n2.default.setLanguage(['es', 'es_ES'], {
     */
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34148,7 +34853,6 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
   'Text color': 'Textfarbe',
   'Auto scroll enabled': 'Autoscrollen aktiviert',
   'Auto scroll disabled': 'Autoscrollen deaktiviert',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Im Zellenauswahlstatus können keine anderen Werte als eine Tabelle eingefügt werden',
   'Choose language': 'Sprache auswählen'
 }); /**
     * @fileoverview I18N for German
@@ -34156,7 +34860,7 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
     */
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34212,7 +34916,6 @@ _i18n2.default.setLanguage(['ru', 'ru_RU'], {
   'Text color': 'Цвет текста',
   'Auto scroll enabled': 'Автоматическая прокрутка включена',
   'Auto scroll disabled': 'Автоматическая прокрутка отключена',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Вы не можете вставлять значения, отличные от таблицы, в состоянии выбора ячейки.',
   'Choose language': 'Выбрать язык'
 }); /**
     * @fileoverview I18N for Russian
@@ -34220,7 +34923,7 @@ _i18n2.default.setLanguage(['ru', 'ru_RU'], {
     */
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34276,7 +34979,6 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
   'Text color': 'Couleur du texte',
   'Auto scroll enabled': 'Défilement automatique activé',
   'Auto scroll disabled': 'Défilement automatique désactivé',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Impossible de coller autre chose qu\'un tableau dans la sélection de la cellule.',
   'Choose language': 'Choix de la langue'
 }); /**
     * @fileoverview I18N for French
@@ -34284,7 +34986,7 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
     */
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34340,7 +35042,6 @@ _i18n2.default.setLanguage(['uk', 'uk_UA'], {
   'Text color': 'Колір тексту',
   'Auto scroll enabled': 'Автоматична прокрутка включена',
   'Auto scroll disabled': 'Автоматична прокрутка відключена',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Ви не можете вставляти значення, відмінні від таблиці, в стані вибору комірки.',
   'Choose language': 'Вибрати мову'
 }); /**
     * @fileoverview I18N for Ukrainian
@@ -34348,7 +35049,7 @@ _i18n2.default.setLanguage(['uk', 'uk_UA'], {
     */
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34404,7 +35105,6 @@ _i18n2.default.setLanguage(['tr', 'tr_TR'], {
   'Text color': 'Metin rengi',
   'Auto scroll enabled': 'Otomatik kaydırma açık',
   'Auto scroll disabled': 'Otomatik kaydırma kapalı',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Hücre seçimi sırasında tablo dışında veriler yapıştırılamaz.',
   'Choose language': 'Dil seçiniz'
 }); /**
     * @fileoverview I18N for Turkish
@@ -34412,7 +35112,7 @@ _i18n2.default.setLanguage(['tr', 'tr_TR'], {
     */
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34468,7 +35168,6 @@ _i18n2.default.setLanguage(['fi', 'fi_FI'], {
   'Text color': 'Tekstin väri',
   'Auto scroll enabled': 'Automaattinen skrollaus käytössä',
   'Auto scroll disabled': 'Automaattinen skrollaus pois käytöstä',
-  'Cannot paste values other than a table in the cell selection state': 'Vain taulukko voidaan liittää solunvalintatilassa.',
   'Choose language': 'Valitse kieli'
 }); /**
     * @fileoverview I18N for Finnish
@@ -34476,7 +35175,7 @@ _i18n2.default.setLanguage(['fi', 'fi_FI'], {
     */
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34532,7 +35231,6 @@ _i18n2.default.setLanguage(['cs', 'cs_CZ'], {
   'Text color': 'Barva textu',
   'Auto scroll enabled': 'Automatické rolování zapnuto',
   'Auto scroll disabled': 'Automatické rolování vypnuto',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Nelze vkládat jiné hodnoty než tabulka ve stavu výběru buněk',
   'Choose language': 'Vybrat jazyk'
 }); /**
     * @fileoverview I18N for Czech
@@ -34540,7 +35238,7 @@ _i18n2.default.setLanguage(['cs', 'cs_CZ'], {
     */
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34596,7 +35294,6 @@ _i18n2.default.setLanguage(['ar', 'ar_AR'], {
   'Text color': 'لون النص',
   'Auto scroll enabled': 'التحريك التلقائي ممكّن',
   'Auto scroll disabled': 'التحريك التلقائي معطّل',
-  'Cannot paste values ​​other than a table in the cell selection state': 'لا يمكن اللصق في الجدول إلا في وجود خلايا مختارة',
   'Choose language': 'اختر اللغة'
 }); /**
     * @fileoverview I18N for Arabic
@@ -34604,7 +35301,7 @@ _i18n2.default.setLanguage(['ar', 'ar_AR'], {
     */
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34660,7 +35357,6 @@ _i18n2.default.setLanguage(['pl', 'pl_PL'], {
   'Text color': 'Kolor tekstu',
   'Auto scroll enabled': 'Włączono automatyczne przewijanie',
   'Auto scroll disabled': 'Wyłączono automatyczne przewijanie',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Nie można wkleić wartości innej niż tabela w trybie wyboru komórki.',
   'Choose language': 'Wybierz język'
 }); /**
     * @fileoverview I18N for Polish
@@ -34668,7 +35364,70 @@ _i18n2.default.setLanguage(['pl', 'pl_PL'], {
     */
 
 /***/ }),
-/* 165 */
+/* 166 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(3);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['zh', 'zh_TW'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': '所見即所得',
+  'Write': '編輯',
+  'Preview': '預覽',
+  'Headings': '標題',
+  'Paragraph': '內文',
+  'Bold': '粗體',
+  'Italic': '斜體',
+  'Strike': '刪除線',
+  'Code': '內嵌程式碼',
+  'Line': '分隔線',
+  'Blockquote': '引言',
+  'Unordered list': '項目符號清單',
+  'Ordered list': '編號清單',
+  'Task': '核取方塊清單',
+  'Indent': '增加縮排',
+  'Outdent': '減少縮排',
+  'Insert link': '插入超連結',
+  'Insert CodeBlock': '插入程式碼區塊',
+  'Insert table': '插入表格',
+  'Insert image': '插入圖片',
+  'Heading': '標題',
+  'Image URL': '圖片網址',
+  'Select image file': '選擇圖片檔案',
+  'Description': '描述',
+  'OK': '確認',
+  'More': '更多',
+  'Cancel': '取消',
+  'File': '檔案',
+  'URL': 'URL',
+  'Link text': '超連結文字',
+  'Add row': '增加行',
+  'Add col': '增加列',
+  'Remove row': '刪除行',
+  'Remove col': '刪除列',
+  'Align left': '靠左對齊',
+  'Align center': '置中',
+  'Align right': '靠右對齊',
+  'Remove table': '刪除表格',
+  'Would you like to paste as table?': '您要以表格貼上嗎？',
+  'Text color': '文字顏色',
+  'Auto scroll enabled': '已啟用自動滾動',
+  'Auto scroll disabled': '已停用自動滾動',
+  'Choose language': '選擇語言'
+}); /**
+    * @fileoverview I18N for Traditional Chinese
+    * @author Tzu-Ray Su <raysu3329@gmail.com>
+    */
+
+/***/ }),
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34875,7 +35634,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
      * @ignore
      */
     CSV.stream = function () {
-        var stream = __webpack_require__(47);
+        var stream = __webpack_require__(46);
         var s = new stream.Transform({ objectMode: true });
         s.EOL = '\n';
         s.prior = "";
@@ -34918,8 +35677,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     CSV.stream.json = function () {
-        var os = __webpack_require__(178);
-        var stream = __webpack_require__(47);
+        var os = __webpack_require__(180);
+        var stream = __webpack_require__(46);
         var s = new streamTransform({ objectMode: true });
         s._transform = function (chunk, encoding, done) {
             s.push(JSON.stringify(chunk.toString()) + os.EOL);
@@ -35053,7 +35812,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })(undefined);
 
 /***/ }),
-/* 166 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35174,7 +35933,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 167 */
+/* 169 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -35264,13 +36023,13 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 168 */
+/* 170 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 169 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35350,7 +36109,7 @@ module.exports = function () {
 }();
 
 /***/ }),
-/* 170 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var apply = Function.prototype.apply;
@@ -35403,13 +36162,13 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(171);
+__webpack_require__(173);
 exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
 
 /***/ }),
-/* 171 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -35602,7 +36361,7 @@ exports.clearImmediate = clearImmediate;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12), __webpack_require__(18)))
 
 /***/ }),
-/* 172 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -35676,7 +36435,7 @@ function config (name) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
 
 /***/ }),
-/* 173 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35709,7 +36468,7 @@ function config (name) {
 
 module.exports = PassThrough;
 
-var Transform = __webpack_require__(54);
+var Transform = __webpack_require__(53);
 
 /*<replacement>*/
 var util = __webpack_require__(16);
@@ -35729,35 +36488,35 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 174 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(27);
 
 
 /***/ }),
-/* 175 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(11);
 
 
 /***/ }),
-/* 176 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(26).Transform
 
 
 /***/ }),
-/* 177 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(26).PassThrough
 
 
 /***/ }),
-/* 178 */
+/* 180 */
 /***/ (function(module, exports) {
 
 exports.endianness = function () { return 'LE' };
@@ -35812,7 +36571,7 @@ exports.homedir = function () {
 
 
 /***/ }),
-/* 179 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35830,11 +36589,11 @@ var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-var _scrollManager = __webpack_require__(180);
+var _scrollManager = __webpack_require__(182);
 
 var _scrollManager2 = _interopRequireDefault(_scrollManager);
 
-var _sectionManager = __webpack_require__(181);
+var _sectionManager = __webpack_require__(183);
 
 var _sectionManager2 = _interopRequireDefault(_sectionManager);
 
@@ -35960,7 +36719,7 @@ _editorProxy2.default.defineExtension('scrollSync', scrollSyncExtension);
 exports.default = scrollSyncExtension;
 
 /***/ }),
-/* 180 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36397,7 +37156,7 @@ var ScrollManager = function () {
 exports.default = ScrollManager;
 
 /***/ }),
-/* 181 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36910,7 +37669,7 @@ function findElementNodeFilter() {
 exports.default = SectionManager;
 
 /***/ }),
-/* 182 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36924,57 +37683,57 @@ var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-__webpack_require__(183);
+__webpack_require__(185);
 
-var _mergedTableCreator = __webpack_require__(184);
+var _mergedTableCreator = __webpack_require__(186);
 
 var _mergedTableCreator2 = _interopRequireDefault(_mergedTableCreator);
 
-var _tableUnmergePreparer = __webpack_require__(185);
+var _tableUnmergePreparer = __webpack_require__(187);
 
 var _tableUnmergePreparer2 = _interopRequireDefault(_tableUnmergePreparer);
 
-var _toMarkRenderer = __webpack_require__(186);
+var _toMarkRenderer = __webpack_require__(188);
 
 var _toMarkRenderer2 = _interopRequireDefault(_toMarkRenderer);
 
-var _wwMergedTableManager = __webpack_require__(187);
+var _wwMergedTableManager = __webpack_require__(189);
 
 var _wwMergedTableManager2 = _interopRequireDefault(_wwMergedTableManager);
 
-var _wwMergedTableSelectionManager = __webpack_require__(188);
+var _wwMergedTableSelectionManager = __webpack_require__(190);
 
 var _wwMergedTableSelectionManager2 = _interopRequireDefault(_wwMergedTableSelectionManager);
 
-var _mergedTableAddRow = __webpack_require__(189);
+var _mergedTableAddRow = __webpack_require__(191);
 
 var _mergedTableAddRow2 = _interopRequireDefault(_mergedTableAddRow);
 
-var _mergedTableAddCol = __webpack_require__(190);
+var _mergedTableAddCol = __webpack_require__(192);
 
 var _mergedTableAddCol2 = _interopRequireDefault(_mergedTableAddCol);
 
-var _mergedTableRemoveRow = __webpack_require__(191);
+var _mergedTableRemoveRow = __webpack_require__(193);
 
 var _mergedTableRemoveRow2 = _interopRequireDefault(_mergedTableRemoveRow);
 
-var _mergedTableRemoveCol = __webpack_require__(192);
+var _mergedTableRemoveCol = __webpack_require__(194);
 
 var _mergedTableRemoveCol2 = _interopRequireDefault(_mergedTableRemoveCol);
 
-var _mergedTableAlignCol = __webpack_require__(193);
+var _mergedTableAlignCol = __webpack_require__(195);
 
 var _mergedTableAlignCol2 = _interopRequireDefault(_mergedTableAlignCol);
 
-var _mergeCell = __webpack_require__(194);
+var _mergeCell = __webpack_require__(196);
 
 var _mergeCell2 = _interopRequireDefault(_mergeCell);
 
-var _unmergeCell = __webpack_require__(195);
+var _unmergeCell = __webpack_require__(197);
 
 var _unmergeCell2 = _interopRequireDefault(_unmergeCell);
 
-var _mergedTableUI = __webpack_require__(196);
+var _mergedTableUI = __webpack_require__(198);
 
 var _mergedTableUI2 = _interopRequireDefault(_mergedTableUI);
 
@@ -37110,7 +37869,7 @@ function _bindEvents(eventManager) {
 _editorProxy2.default.defineExtension('table', tableExtension);
 
 /***/ }),
-/* 183 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37157,10 +37916,10 @@ if (i18n) {
   });
 
   i18n.setLanguage(['nl', 'nl_NL'], {
-    'Merge cells': 'cellen samenvoegen',
-    'Unmerge cells': 'Samenvoegen cellen ongedaan maken',
-    'Cannot change part of merged cell': 'Kan geen deel uit van samengevoegde cel te veranderen.',
-    'Cannot paste row merged cells into the table header': 'Kan niet plakken rij samengevoegde cellen in de koptekst. '
+    'Merge cells': 'Cellen samenvoegen',
+    'Unmerge cells': 'Samengevoegde cellen ongedaan maken',
+    'Cannot change part of merged cell': 'Kan geen deel uit van een samengevoegde cel veranderen.',
+    'Cannot paste row merged cells into the table header': 'Kan geen rij met samengevoegde cellen in de koptekst plakken.'
   });
 
   i18n.setLanguage(['zh', 'zh_CN'], {
@@ -37232,10 +37991,17 @@ if (i18n) {
     'Cannot change part of merged cell': 'Nie można zmienić części scalonej komórki.',
     'Cannot paste row merged cells into the table header': 'Nie można wkleić komórek o scalonym rzędzie w nagłówek tabeli.'
   });
+
+  i18n.setLanguage(['zh', 'zh_TW'], {
+    'Merge cells': '合併儲存格',
+    'Unmerge cells': '取消合併儲存格',
+    'Cannot change part of merged cell': '無法變更儲存格的一部分。',
+    'Cannot paste row merged cells into the table header': '無法將合併的儲存格貼上至表格標題中。'
+  });
 }
 
 /***/ }),
-/* 184 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37466,7 +38232,7 @@ function createMergedTable(tableElement) {
 }
 
 /***/ }),
-/* 185 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37524,7 +38290,7 @@ function prepareTableUnmerge(tableElement) {
 }
 
 /***/ }),
-/* 186 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37544,7 +38310,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _toMark = __webpack_require__(42);
+var _toMark = __webpack_require__(41);
 
 var _toMark2 = _interopRequireDefault(_toMark);
 
@@ -37644,7 +38410,7 @@ exports.default = _toMark2.default.Renderer.factory(_toMark2.default.gfmRenderer
 });
 
 /***/ }),
-/* 187 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38294,12 +39060,13 @@ var WwMergedTableManager = function (_WwTableManager) {
 
     /**
      * Paste clibpard data.
-     * @param {jQuery} $clipboardTable - jQuery table element of clipboard
+     * @param {Node} clipboardTable - table element of clipboard
      */
 
   }, {
-    key: 'pasteClipboardData',
-    value: function pasteClipboardData($clipboardTable) {
+    key: 'pasteTableData',
+    value: function pasteTableData(clipboardTable) {
+      var $clipboardTable = (0, _jquery2.default)(clipboardTable);
       var clipboardTableData = _tableDataHandler2.default.createTableData($clipboardTable);
       var tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
       var $selectedCells = tableSelectionManager.getSelectedCells();
@@ -38345,7 +39112,7 @@ function any(arr, contition) {
 exports.default = WwMergedTableManager;
 
 /***/ }),
-/* 188 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38547,7 +39314,7 @@ var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
 exports.default = WwMergedTableSelectionManager;
 
 /***/ }),
-/* 189 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38724,7 +39491,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = AddRow;
 
 /***/ }),
-/* 190 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38925,7 +39692,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = AddCol;
 
 /***/ }),
-/* 191 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39112,7 +39879,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = RemoveRow;
 
 /***/ }),
-/* 192 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39292,7 +40059,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = RemoveCol;
 
 /***/ }),
-/* 193 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39407,7 +40174,7 @@ function _findFocusCell($newTable, $startContainer) {
 exports.default = AlignCol;
 
 /***/ }),
-/* 194 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39629,7 +40396,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = MergeCell;
 
 /***/ }),
-/* 195 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39809,7 +40576,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = UnmergeCell;
 
 /***/ }),
-/* 196 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39911,7 +40678,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 197 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39925,7 +40692,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiColorPicker = __webpack_require__(198);
+var _tuiColorPicker = __webpack_require__(200);
 
 var _tuiColorPicker2 = _interopRequireDefault(_tuiColorPicker);
 
@@ -40171,6 +40938,8 @@ function initUI(editor, preset) {
 
   editor.eventManager.listen('removeEditor', function () {
     colorPicker.off('selectColor');
+    popup.$el.find('.te-apply-button').off('click');
+    popup.remove();
   });
 
   colorPicker.on('selectColor', function (e) {
@@ -40272,13 +41041,13 @@ _editorProxy2.default.defineExtension('colorSyntax', colorSyntaxExtension);
 exports.default = colorSyntaxExtension;
 
 /***/ }),
-/* 198 */
+/* 200 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_198__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_200__;
 
 /***/ }),
-/* 199 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40288,7 +41057,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _plantumlEncoder = __webpack_require__(200);
+var _plantumlEncoder = __webpack_require__(202);
 
 var _plantumlEncoder2 = _interopRequireDefault(_plantumlEncoder);
 
@@ -40355,13 +41124,13 @@ _editorProxy2.default.defineExtension('uml', umlExtension);
 exports.default = umlExtension;
 
 /***/ }),
-/* 200 */
+/* 202 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_200__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_202__;
 
 /***/ }),
-/* 201 */
+/* 203 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
