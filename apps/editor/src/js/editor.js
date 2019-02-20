@@ -779,7 +779,7 @@ class ToastUIEditor {
   }
 
   /**
-   * Set the placeholder an all editors
+   * Set the placeholder on all editors
    * @param {string} placeholder - placeholder to set
    */
   setPlaceholder(placeholder) {
