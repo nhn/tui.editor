@@ -370,7 +370,7 @@ declare namespace tuiEditor {
     public readySilentChange(): void;
     public remove(): void;
     public removeKeyEventHandler(keyMap: string, handler: HandlerFunc): void;
-    public replaceContentText(container: Node, from: string, to: string);
+    public replaceContentText(container: Node, from: string, to: string): void;
     public replaceRelativeOffset(content: string, offset: number, overwriteLength: number): void;
     public replaceSelection(content: string, range: Range): void;
     public reset(): void;
@@ -496,8 +496,8 @@ declare namespace tuiEditor {
     public off(type: string): void;
     public on(type: string, handler: HandlerFunc): void;
     public remove(): void;
-    public setMarkdown(markdown: string);
-    public setValue(markdown: string);
+    public setMarkdown(markdown: string): void;
+    public setValue(markdown: string): void;
   }
 }
 
