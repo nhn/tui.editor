@@ -60,8 +60,33 @@ class WwCodeBlockManager {
    * @private
    */
   _initKeyHandler() {
-    this._onKeyEventHandler = this._onBackspaceKeyEventHandler.bind(this);
-    this.wwe.addKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
+    this._keyEventHandlers = {
+      'BACK_SPACE': this._onBackspaceKeyEventHandler.bind(this),
+      'ENTER': (ev, range) => {
+        if (!this.wwe.isInTable(range) && this.wwe.getEditor().hasFormat('CODE')) {
+          this.wwe.defer(() => {
+            const {startContainer} = this.wwe.getRange();
+            const codeNode = this._getCodeNode(startContainer);
+            if (codeNode && !domUtils.getTextLength(codeNode)) {
+              codeNode.parentNode.removeChild(codeNode);
+            }
+          });
+        }
+      }
+    };
+
+    util.forEach(this._keyEventHandlers, (handler, key) => this.wwe.addKeyEventHandler(key, handler));
+  }
+
+  _getCodeNode(node) {
+    let result;
+    if (node.nodeName === 'CODE') {
+      result = node;
+    } else if (node.parentNode.nodeName === 'CODE') {
+      result = node.parentNode;
+    }
+
+    return result;
   }
 
   /**
@@ -351,7 +376,7 @@ class WwCodeBlockManager {
   destroy() {
     this.eventManager.removeEventHandler('wysiwygSetValueAfter.codeblock');
     this.eventManager.removeEventHandler('wysiwygProcessHTMLText.codeblock');
-    this.wwe.removeKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
+    util.forEach(this._keyEventHandlers, (handler, key) => this.wwe.removeKeyEventHandler(key, handler));
   }
 }
 
