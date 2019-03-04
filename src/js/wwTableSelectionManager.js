@@ -385,11 +385,10 @@ class WwTableSelectionManager {
     const sq = this.wwe.getEditor();
     const range = sq.getSelection().cloneRange();
     const $selectedCells = this.getSelectedCells();
-    const tableManager = this.wwe.componentManager.getManager('table');
     const firstSelectedCell = $selectedCells.first().get(0);
     const lastSelectedCell = $selectedCells.last().get(0);
 
-    if ($selectedCells.length && tableManager.isInTable(range)) {
+    if ($selectedCells.length && this.wwe.isInTable(range)) {
       range.setStart(firstSelectedCell, 0);
       range.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
       sq.setSelection(range);

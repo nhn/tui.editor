@@ -58,7 +58,7 @@ class WwTableManager {
   _initEvent() {
     this.eventManager.listen('wysiwygRangeChangeAfter.table', () => {
       const range = this.wwe.getEditor().getSelection();
-      const isRangeInTable = this.isInTable(range);
+      const isRangeInTable = this.wwe.isInTable(range);
 
       this._unwrapBlockInTable();
       this._completeTableIfNeed();
@@ -154,7 +154,7 @@ class WwTableManager {
   _initKeyHandler() {
     this.keyEventHandlers = {
       'DEFAULT': (ev, range, keymap) => {
-        const isRangeInTable = this.isInTable(range);
+        const isRangeInTable = this.wwe.isInTable(range);
 
         if (isRangeInTable && !this._isSingleModifierKey(keymap)) {
           this._recordUndoStateIfNeed(range);
@@ -183,7 +183,7 @@ class WwTableManager {
           ev.preventDefault();
           this.wwe.breakToNewDefaultBlock(range, 'before');
           isNeedNext = false;
-        } else if (this.isInTable(range)) {
+        } else if (this.wwe.isInTable(range)) {
           this._appendBrIfTdOrThNotHaveAsLastChild(range);
           isNeedNext = false;
         }
@@ -199,19 +199,6 @@ class WwTableManager {
     };
 
     util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.addKeyEventHandler(key, handler));
-  }
-
-  /**
-   * isInTable
-   * Check whether passed range is in table or not
-   * @param {Range} range range
-   * @returns {boolean} result
-   * @memberof WwTableManager
-   */
-  isInTable(range) {
-    const target = range.collapsed ? range.startContainer : range.commonAncestorContainer;
-
-    return !!$(target).closest('[contenteditable=true] table').length;
   }
 
   /**
@@ -255,7 +242,7 @@ class WwTableManager {
     let isNeedNext = true;
 
     if (range.collapsed) {
-      if (this.isInTable(range)) {
+      if (this.wwe.isInTable(range)) {
         if (isBackspace) {
           this._tableHandlerOnBackspace(range, ev);
         } else {
@@ -273,7 +260,7 @@ class WwTableManager {
         this._removeTable(range, domUtils.getChildNodeByOffset(range.startContainer, startOffset));
         isNeedNext = false;
       }
-    } else if (this.isInTable(range)) {
+    } else if (this.wwe.isInTable(range)) {
       if ($selectedCells.length > 0) {
         const removed = this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
         if (removed) {
@@ -1058,7 +1045,7 @@ class WwTableManager {
     let isNeedNext;
 
     if (range.collapsed) {
-      if (this.isInTable(range) && currentCell) {
+      if (this.wwe.isInTable(range) && currentCell) {
         if ((direction === 'previous' || interval === 'row')
                     && !util.isUndefined(ev)
         ) {
