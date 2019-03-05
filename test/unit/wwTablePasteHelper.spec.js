@@ -61,62 +61,6 @@ describe('WwTablePasteHelper', () => {
       });
     });
 
-    describe('_removeChild', () => {
-      it('Remove child nodes from "start" node to node before "end" node', () => {
-        const targetParent = document.createElement('div');
-        targetParent.appendChild(createElement('b', 'aaa'));
-        targetParent.appendChild(createElement('i', 'bbb'));
-        targetParent.appendChild(createElement('s', 'ccc'));
-        targetParent.appendChild(document.createTextNode('eee'));
-
-        const expectedHtml = '<b>aaa</b>eee';
-
-        tph._removeChild(targetParent, targetParent.childNodes[1], targetParent.childNodes[3]);
-
-        expect(targetParent.innerHTML).toBe(expectedHtml);
-      });
-
-      it('Remove child nodes after "start" node', () => {
-        const targetParent = document.createElement('div');
-        targetParent.appendChild(createElement('b', 'aaa'));
-        targetParent.appendChild(createElement('i', 'bbb'));
-        targetParent.appendChild(createElement('s', 'ccc'));
-        targetParent.appendChild(document.createTextNode('eee'));
-
-        const expectedHtml = '<b>aaa</b><i>bbb</i>';
-
-        tph._removeChild(targetParent, targetParent.childNodes[2], null);
-
-        expect(targetParent.innerHTML).toBe(expectedHtml);
-      });
-    });
-
-    describe('_removeNodesByDirection', () => {
-      it('Remove forward nodes from the node to reach targetParent node', () => {
-        const targetParent = document.createElement('div');
-        targetParent.innerHTML = '<b>aaa<i>bbb<s>ccc</s>ddd</i>eee</b>';
-        document.body.appendChild(targetParent);
-
-        const expectedHtml = '<b><i><s>ccc</s>ddd</i>eee</b>';
-
-        tph._removeNodesByDirection(targetParent, document.querySelector('s'), true);
-
-        expect(targetParent.innerHTML).toBe(expectedHtml);
-      });
-
-      it('Remove backward nodes from the node to reach targetParent node', () => {
-        const targetParent = document.createElement('div');
-        targetParent.innerHTML = '<b>aaa<i>bbb<s>ccc</s>ddd</i>eee</b>';
-        document.body.appendChild(targetParent);
-
-        const expectedHtml = '<b>aaa<i>bbb<s>ccc</s></i></b>';
-
-        tph._removeNodesByDirection(targetParent, document.querySelector('s'), false);
-
-        expect(targetParent.innerHTML).toBe(expectedHtml);
-      });
-    });
-
     describe('_deleteContentsRange', () => {
       it('Remove nodes in range when startContainer and endContianer is td', () => {
         const target = document.createElement('td');
