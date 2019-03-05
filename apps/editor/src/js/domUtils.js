@@ -505,6 +505,52 @@ const isMDSupportInlineNode = function(node) {
   return /^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/ig.test(node.nodeName);
 };
 
+/**
+ * remove node from 'start' node to 'end-1' node inside parent
+ * if 'end' node is null, remove all child nodes after 'start' node.
+ * @param {Node} parent - parent node
+ * @param {Node} start - start node to remove
+ * @param {Node} end - end node to remove
+ * @ignore
+ */
+const removeChildFromStartToEndNode = function(parent, start, end) {
+  let child = start;
+
+  if (!child || parent !== child.parentNode) {
+    return;
+  }
+
+  while (child !== end) {
+    const next = child.nextSibling;
+    parent.removeChild(child);
+    child = next;
+  }
+};
+
+/**
+ * remove nodes along the direction from the node to reach targetParent node
+ * @param {Node} targetParent - stop removing when reach target parent node
+ * @param {Node} node - start node
+ * @param {boolean} isForward - direction
+ * @ignore
+ */
+const removeNodesByDirection = function(targetParent, node, isForward) {
+  let parent = node;
+
+  while (parent !== targetParent) {
+    const nextParent = parent.parentNode;
+    const {nextSibling, previousSibling} = parent;
+
+    if (!isForward && nextSibling) {
+      removeChildFromStartToEndNode(nextParent, nextSibling, null);
+    } else if (isForward && previousSibling) {
+      removeChildFromStartToEndNode(nextParent, nextParent.childNodes[0], parent);
+    }
+
+    parent = nextParent;
+  }
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -527,5 +573,7 @@ export default {
   getNodeInfo,
   getTableCellByDirection,
   getSiblingRowCellByDirection,
-  isMDSupportInlineNode
+  isMDSupportInlineNode,
+  removeChildFromStartToEndNode,
+  removeNodesByDirection
 };

@@ -6,6 +6,15 @@ import $ from 'jquery';
 
 import domUtils from '../../src/js/domUtils.js';
 
+function createElement(tag, textContent) {
+  const element = document.createElement(tag);
+  if (textContent) {
+    element.textContent = textContent;
+  }
+
+  return element;
+}
+
 describe('domUtils', () => {
   let container;
 
@@ -339,6 +348,56 @@ describe('domUtils', () => {
       expect(result.textContent).toBe('1');
       expect(result2.textContent).toBe('2');
       expect(result3.textContent).toBe('4');
+    });
+  });
+
+  describe('removeChildFromStartToEndNode', () => {
+    it('Remove child nodes from "start" node to node before "end" node', () => {
+      container.appendChild(createElement('b', 'aaa'));
+      container.appendChild(createElement('i', 'bbb'));
+      container.appendChild(createElement('s', 'ccc'));
+      container.appendChild(document.createTextNode('eee'));
+
+      const expectedHtml = '<b>aaa</b>eee';
+
+      domUtils.removeChildFromStartToEndNode(container, container.childNodes[1], container.childNodes[3]);
+
+      expect(container.innerHTML).toBe(expectedHtml);
+    });
+
+    it('Remove child nodes after "start" node', () => {
+      container.appendChild(createElement('b', 'aaa'));
+      container.appendChild(createElement('i', 'bbb'));
+      container.appendChild(createElement('s', 'ccc'));
+      container.appendChild(document.createTextNode('eee'));
+
+      const expectedHtml = '<b>aaa</b><i>bbb</i>';
+
+      domUtils.removeChildFromStartToEndNode(container, container.childNodes[2], null);
+
+      expect(container.innerHTML).toBe(expectedHtml);
+    });
+  });
+
+  describe('removeNodesByDirection', () => {
+    it('Remove forward nodes from the node to reach targetParent node', () => {
+      container.innerHTML = '<b>aaa<i>bbb<s>ccc</s>ddd</i>eee</b>';
+
+      const expectedHtml = '<b><i><s>ccc</s>ddd</i>eee</b>';
+
+      domUtils.removeNodesByDirection(container, document.querySelector('s'), true);
+
+      expect(container.innerHTML).toBe(expectedHtml);
+    });
+
+    it('Remove backward nodes from the node to reach targetParent node', () => {
+      container.innerHTML = '<b>aaa<i>bbb<s>ccc</s>ddd</i>eee</b>';
+
+      const expectedHtml = '<b>aaa<i>bbb<s>ccc</s></i></b>';
+
+      domUtils.removeNodesByDirection(container, document.querySelector('s'), false);
+
+      expect(container.innerHTML).toBe(expectedHtml);
     });
   });
 });
