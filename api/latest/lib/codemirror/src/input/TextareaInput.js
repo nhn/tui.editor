@@ -48,7 +48,7 @@ export default class TextareaInput {
     on(te, "paste", e => {
       if (signalDOMEvent(cm, e) || handlePaste(e, cm)) return
 
-      cm.state.pasteIncoming = true
+      cm.state.pasteIncoming = +new Date
       input.fastPoll()
     })
 
@@ -69,15 +69,23 @@ export default class TextareaInput {
           selectInput(te)
         }
       }
-      if (e.type == "cut") cm.state.cutIncoming = true
+      if (e.type == "cut") cm.state.cutIncoming = +new Date
     }
     on(te, "cut", prepareCopyCut)
     on(te, "copy", prepareCopyCut)
 
     on(display.scroller, "paste", e => {
       if (eventInWidget(display, e) || signalDOMEvent(cm, e)) return
-      cm.state.pasteIncoming = true
-      input.focus()
+      if (!te.dispatchEvent) {
+        cm.state.pasteIncoming = +new Date
+        input.focus()
+        return
+      }
+
+      // Pass the `paste` event to the textarea so it's handled by its event listener.
+      const event = new Event("paste")
+      event.clipboardData = e.clipboardData
+      te.dispatchEvent(event)
     })
 
     // Prevent normal selection in the editor (we handle our own)

@@ -62,7 +62,7 @@ var onKey = function ( event ) {
     // !event.isComposing stops us from blatting Kana-Kanji conversion in Safari
     } else if ( !range.collapsed && !event.isComposing &&
             !event.ctrlKey && !event.metaKey &&
-            ( event.key || key ).length === 1 ) {
+            (isIE ? key : event.key || key).length === 1) {
         // Record undo checkpoint.
         this.saveUndoState( range );
         // Delete the selection

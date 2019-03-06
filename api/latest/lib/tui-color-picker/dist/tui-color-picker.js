@@ -1,6 +1,6 @@
 /*!
  * Toast UI Colorpicker
- * @version 2.2.1
+ * @version 2.2.2
  * @author NHNEnt FE Development Team <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -187,16 +187,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {boolean} match?
 	     */
 	    _matcher: function (el, selector) {
-	        var cssClassSelector = /^\./,
-	            idSelector = /^#/;
+	        var cssClassSelector = /^\./;
+	        var idSelector = /^#/;
+	        var reuslt = el.nodeName.toLowerCase() === selector.toLowerCase();
 
 	        if (cssClassSelector.test(selector)) {
-	            return domutil.hasClass(el, selector.replace('.', ''));
+	            reuslt = domutil.hasClass(el, selector.replace('.', ''));
 	        } else if (idSelector.test(selector)) {
-	            return el.id === selector.replace('#', '');
+	            reuslt = el.id === selector.replace('#', '');
 	        }
 
-	        return el.nodeName.toLowerCase() === selector.toLowerCase();
+	        return reuslt;
 	    },
 
 	    /**
@@ -1111,10 +1112,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {number} - The value of meaning which button is clicked?
 	     */
 	    getMouseButton: function (mouseEvent) {
-	        var button,
-	            primary = '0,1,3,5,7',
-	            secondary = '2,6',
-	            wheel = '4';
+	        var primary = '0,1,3,5,7';
+	        var secondary = '2,6';
+	        var wheel = '4';
+	        var button, result;
 
 	        /* istanbul ignore else */
 	        if (document.implementation.hasFeature('MouseEvents', '2.0')) {
@@ -1123,12 +1124,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        button = mouseEvent.button + '';
 	        if (~primary.indexOf(button)) {
-	            return 0;
+	            result = 0;
 	        } else if (~secondary.indexOf(button)) {
-	            return 2;
+	            result = 2;
 	        } else if (~wheel.indexOf(button)) {
-	            return 1;
+	            result = 1;
 	        }
+
+	        return result;
 	    }
 	};
 
@@ -1985,7 +1988,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @constructor
-	 * @mixes CustomEvents
 	 * @param {object} options - options for colorpicker component
 	 *  @param {HTMLDivElement} options.container - container element
 	 *  @param {string} [options.color='#ffffff'] - default selected color
@@ -1995,8 +1997,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *  @param {boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
 	 * @example
 	 * var colorPicker = tui.colorPicker; // or require('tui-color-picker')
-	 *
-	 * colorPicker.create({
+	 * 
+	 * var instance = colorPicker.create({
 	 *   container: document.getElementById('color-picker')
 	 * });
 	 */
@@ -2144,7 +2146,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * The string parameter must be hex color value
 	 * @param {string} hexStr - hex formatted color string
 	 * @example
-	 * colorPicker.setColor('#ffff00');
+	 * instance.setColor('#ffff00');
 	 */
 	ColorPicker.prototype.setColor = function (hexStr) {
 	    if (!colorutil.isValidRGB(hexStr)) {
@@ -2159,8 +2161,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Get hex color string of current selected color in colorpicker instance.
 	 * @returns {string} hex string formatted color
 	 * @example
-	 * colorPicker.setColor('#ffff00');
-	 * colorPicker.getColor(); // '#ffff00';
+	 * instance.setColor('#ffff00');
+	 * instance.getColor(); // '#ffff00';
 	 */
 	ColorPicker.prototype.getColor = function () {
 	    return this.options.color;
@@ -2170,9 +2172,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Toggle colorpicker element. set true then reveal colorpicker view.
 	 * @param {boolean} [isShow=false] - A flag to show
 	 * @example
-	 * colorPicker.toggle(false); // hide
-	 * colorPicker.toggle(); // hide
-	 * colorPicker.toggle(true); // show
+	 * instance.toggle(false); // hide
+	 * instance.toggle(); // hide
+	 * instance.toggle(true); // show
 	 */
 	ColorPicker.prototype.toggle = function (isShow) {
 	    this.layout.container.style.display = !!isShow ? 'block' : 'none';
@@ -2190,7 +2192,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Destroy colorpicker instance.
 	 * @example
-	 * colorPicker.destroy(); // DOM-element is removed
+	 * instance.destroy(); // DOM-element is removed
 	 */
 	ColorPicker.prototype.destroy = function () {
 	    this.layout.destroy();
