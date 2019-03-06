@@ -6,6 +6,7 @@
 ## Wrappers
 
 - [toast-ui.vue-editor](https://github.com/nhnent/toast-ui.vue-editor): Vue wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
+- [toast-ui.react-editor](https://github.com/nhnent/toast-ui.react-editor): React wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
 - [ember-tui-editor](https://github.com/evocount/ember-tui-editor): Ember wrapper component by [@evocount](https://github.com/evocount). Thanks for their effort.
 
 <p align="center"><a href="https://nhnent.github.io/tui.editor/"><img src="https://user-images.githubusercontent.com/1215767/34356204-4c03be8a-ea7f-11e7-9aa9-0d84f9e912ec.gif" /></a></p>
@@ -124,7 +125,8 @@ You can use the CDN as below.
 ```html
 <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor.css"></link>
 <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor-contents.css"></link>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.2/codemirror.css"></link>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"></link>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"></link>
 <script src="https://uicdn.toast.com/tui-editor/latest/tui-editor-Editor-full.js"></script>
 ```
 

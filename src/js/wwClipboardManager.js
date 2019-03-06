@@ -141,8 +141,7 @@ class WwClipboardManager {
 
   // @TODO Temporary code : paste to empty code block
   // Squire remove empty code block when paste.
-  // This code should remove after Squire update !!!
-  // https://github.com/neilj/Squire/blob/7cef58bda854c49989c429d90756bff8d6fe758c/source/Range.js#L259
+  // This code should remove after https://github.com/neilj/Squire/issues/349 would be resolved.
   _pasteToEmptyCodeBlock(pasteData) {
     const sq = this.wwe.getEditor();
     const range = sq.getSelection().cloneRange();
