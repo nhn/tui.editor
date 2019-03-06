@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.3.1
+ * @version 1.3.2
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -6408,7 +6408,7 @@ var ToastUIEditor = function () {
     }
 
     /**
-     * Set the placeholder an all editors
+     * Set the placeholder on all editors
      * @param {string} placeholder - placeholder to set
      */
 
@@ -19987,8 +19987,7 @@ var WwClipboardManager = function () {
 
     // @TODO Temporary code : paste to empty code block
     // Squire remove empty code block when paste.
-    // This code should remove after Squire update !!!
-    // https://github.com/neilj/Squire/blob/7cef58bda854c49989c429d90756bff8d6fe758c/source/Range.js#L259
+    // This code should remove after https://github.com/neilj/Squire/issues/349 would be resolved.
 
   }, {
     key: '_pasteToEmptyCodeBlock',
