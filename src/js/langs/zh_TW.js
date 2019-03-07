@@ -4,7 +4,7 @@
 */
 import i18n from '../i18n';
 
-i18n.setLanguage(['zh', 'zh_TW'], {
+i18n.setLanguage(['zhtw', 'zh_TW'], {
   'Markdown': 'Markdown',
   'WYSIWYG': '所見即所得',
   'Write': '編輯',
