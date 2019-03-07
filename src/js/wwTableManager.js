@@ -184,6 +184,11 @@ class WwTableManager {
           this.wwe.breakToNewDefaultBlock(range, 'before');
           isNeedNext = false;
         } else if (this.wwe.isInTable(range)) {
+          if (this._isInStyledText(range)) {
+            this.wwe.defer(() => {
+              this._removeBRinStyleText();
+            });
+          }
           this._appendBrIfTdOrThNotHaveAsLastChild(range);
           isNeedNext = false;
         }
@@ -199,6 +204,128 @@ class WwTableManager {
     };
 
     util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.addKeyEventHandler(key, handler));
+  }
+
+  /**
+   * Check whether range is in style tag that is like 'B', 'I', 'S', 'SPAN', 'CODE'
+   * Those tag is supported in Wysiwyg.
+   * @param {Range} range range
+   * @returns {Boolean} range is in the style tag
+   * @private
+   */
+  _isInStyledText(range) {
+    const styleNodeNames = ['B', 'I', 'S', 'SPAN', 'CODE'];
+    const {startContainer} = range;
+    let nodeName;
+    if (domUtils.isTextNode(startContainer)) {
+      nodeName = startContainer.parentNode.nodeName;
+    } else {
+      nodeName = startContainer.nodeName;
+    }
+
+    return range.collapsed && styleNodeNames.indexOf(nodeName) !== -1;
+  }
+
+  /**
+   * When enter key occur in the styled text, 'br' tag insert in the style tag like 'b', 'i' etc.
+   * So in thoes case, 'br' tag would be pulled out in this logic.
+   * @private
+   */
+  _removeBRinStyleText() {
+    const afterRange = this.wwe.getRange();
+    const {startContainer, startOffset} = afterRange;
+
+    let styleNode;
+    if (startContainer.nodeName === 'TD') {
+      // This case is <i>TEST<br></i>|<br>
+      styleNode = domUtils.getChildNodeByOffset(startContainer, startOffset - 1);
+    } else {
+      styleNode = domUtils.getParentUntil(startContainer, 'TD');
+    }
+
+    const brNode = styleNode.querySelector('br');
+    const {parentNode: tdNode, nodeName} = styleNode;
+
+    if (nodeName === 'CODE' && !brNode.previousSibling) {
+      // cursor is located in the start of text
+      // Before Enter : <code>|TEST</code>
+      // After Enter  : <code><br>|TEST</code>
+      // TO BE        : <br><code>|TEST</code>
+      tdNode.insertBefore(brNode, styleNode);
+      afterRange.setStart(styleNode, 0);
+    } else if (nodeName === 'CODE' && !brNode.nextSibling) {
+      // cursor is located in the end of text
+      // Before Enter : <code>TEST|</code>
+      // After Enter  : <code>TEST<br>|</code>
+      // TO BE        : <code>TEST</code><br>|
+      tdNode.insertBefore(brNode, styleNode.nextSibling);
+      afterRange.setStart(tdNode, domUtils.getNodeOffsetOfParent(brNode) + 1);
+    } else {
+      // [Case 1] cursor is located in the middle of text
+      // Before Enter : <i>TE|ST</i>
+      // After Enter  : <i>TE<br>|ST</i>
+      // TO BE        : <i>TE</i><br><i>|ST</i>
+      // [Case 2] cursor is located in the start of text
+      // Before Enter : <i>|TEST</i>
+      // After Enter  : <i><br>|TEST</i>
+      // TO BE        : <i>|</i><br><i>TEST</i>
+      // [Case 3] cursor is located in the end of text
+      // Before Enter : <i>TEST|</i>
+      // After Enter  : <i>TEST<br>|</i>
+      // TO BE        : <i>TEST</i><br><i>|</i>
+      const newNode = this._splitByBR(styleNode, brNode);
+      afterRange.setStart(newNode, 0);
+    }
+
+    afterRange.collapse(true);
+    this.wwe.getEditor().setSelection(afterRange);
+  }
+
+  /**
+   * When container node have br node, split container base on br node and pull out BR.
+   * After Enter  : <i>TE<br>ST</i>
+   * TO BE        : <i>TE</i><br><i>ST</i>
+   * @param {Node} container container
+   * @param {Node} brNode container
+   * @returns {Node} node for positioning of cursor
+   * @private
+   */
+  _splitByBR(container, brNode) {
+    const cloneStyleNode = container.cloneNode(true);
+    const newBR = document.createElement('br');
+    const {parentNode} = container;
+
+    // Origin style node should be removed the back nodes of br node.
+    domUtils.removeNodesByDirection(container, brNode, false);
+    brNode.parentNode.removeChild(brNode);
+
+    // Cloned style node should be removed the front nodes of br node
+    const clonedBR = cloneStyleNode.querySelector('br');
+    domUtils.removeNodesByDirection(cloneStyleNode, clonedBR, true);
+    clonedBR.parentNode.removeChild(clonedBR);
+
+    parentNode.insertBefore(cloneStyleNode, container.nextSibling);
+    parentNode.insertBefore(newBR, cloneStyleNode);
+
+    const leafNode = domUtils.getLeafNode(cloneStyleNode);
+    if (!domUtils.getTextLength(leafNode)) {
+      leafNode.textContent = '\u200B';
+    }
+
+    return leafNode;
+  }
+
+  /**
+   * isInTable
+   * Check whether passed range is in table or not
+   * @param {Range} range range
+   * @returns {boolean} result
+   * @memberof WwTableManager
+   */
+  isInTable(range) {
+    const target = range.collapsed ? range.startContainer : range.commonAncestorContainer;
+
+    return !!$(target).closest('[contenteditable=true] table').length;
   }
 
   /**
