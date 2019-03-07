@@ -551,6 +551,22 @@ const removeNodesByDirection = function(targetParent, node, isForward) {
   }
 };
 
+const getLeafNode = function(node) {
+  let result = node;
+  while (result.childNodes && result.childNodes.length) {
+    const {firstChild: nextLeaf} = result;
+
+    // When inline tag have empty text node with other childnodes, ignore empty text node.
+    if (isTextNode(nextLeaf) && !getTextLength(nextLeaf)) {
+      result = nextLeaf.nextSibling || nextLeaf;
+    } else {
+      result = nextLeaf;
+    }
+  }
+
+  return result;
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -575,5 +591,6 @@ export default {
   getSiblingRowCellByDirection,
   isMDSupportInlineNode,
   removeChildFromStartToEndNode,
-  removeNodesByDirection
+  removeNodesByDirection,
+  getLeafNode
 };
