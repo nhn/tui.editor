@@ -74,16 +74,14 @@ class WwListManager {
   }
 
   _initKeyHandler() {
-    this.wwe.addKeyEventHandler(['TAB', 'CTRL+]', 'META+]'], (ev, range) => {
+    this.wwe.addKeyEventHandler(['TAB', 'CTRL+]', 'META+]'], (ev) => {
       let isNeedNext;
 
-      if (range.collapsed) {
-        if (this.wwe.getEditor().hasFormat('LI')) {
-          ev.preventDefault();
-          this.eventManager.emit('command', 'Indent');
+      if (this.wwe.getEditor().hasFormat('LI')) {
+        ev.preventDefault();
+        this.eventManager.emit('command', 'Indent');
 
-          isNeedNext = false;
-        }
+        isNeedNext = false;
       }
 
       return isNeedNext;
@@ -92,19 +90,17 @@ class WwListManager {
     this.wwe.addKeyEventHandler(['SHIFT+TAB', 'CTRL+[', 'META+['], (ev, range) => {
       let isNeedNext;
 
-      if (range.collapsed) {
-        if (this.wwe.getEditor().hasFormat('LI')) {
-          ev.preventDefault();
-          const $ul = $(range.startContainer).closest('li').children(UL_OR_OL);
+      if (this.wwe.getEditor().hasFormat('LI')) {
+        ev.preventDefault();
+        const $ul = $(range.startContainer).closest('li').children(UL_OR_OL);
 
-          this.eventManager.emit('command', 'Outdent');
+        this.eventManager.emit('command', 'Outdent');
 
-          if ($ul.length && !$ul.prev().length) {
-            this._removeBranchList($ul);
-          }
-
-          isNeedNext = false;
+        if ($ul.length && !$ul.prev().length) {
+          this._removeBranchList($ul);
         }
+
+        isNeedNext = false;
       }
 
       return isNeedNext;
