@@ -106,6 +106,25 @@ class WwTablePasteHelper {
    */
   _pasteClipboardHtml(html) {
     const container = document.createDocumentFragment();
+    const startFramgmentStr = '<!--StartFragment-->';
+    const endFragmentStr = '<!--EndFragment-->';
+    const startFragmentIndex = html.indexOf(startFramgmentStr);
+    const endFragmentIndex = html.lastIndexOf(endFragmentStr);
+
+    if (startFragmentIndex > -1 && endFragmentIndex > -1) {
+      html = html.slice(startFragmentIndex + startFramgmentStr.length, endFragmentIndex);
+    }
+
+    // Wrap with <tr> if html contains dangling <td> tags
+    // Dangling <td> tag is that tag does not have <tr> as parent node.
+    if (/<\/td>((?!<\/tr>)[\s\S])*$/i.test(html)) {
+      html = '<TR>' + html + '</TR>';
+    }
+    // Wrap with <table> if html contains dangling <tr> tags
+    // Dangling <tr> tag is that tag does not have <table> as parent node.
+    if (/<\/tr>((?!<\/table>)[\s\S])*$/i.test(html)) {
+      html = '<TABLE>' + html + '</TABLE>';
+    }
 
     container.appendChild(htmlSanitizer(html));
     this._pasteClipboardContainer(container);
