@@ -222,7 +222,7 @@ class WwTableManager {
       node = startContainer;
     }
 
-    return range.collapsed && domUtils.isStyledTextNode(node);
+    return range.collapsed && domUtils.isStyledNode(node);
   }
 
   /**
