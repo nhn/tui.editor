@@ -214,16 +214,15 @@ class WwTableManager {
    * @private
    */
   _isInStyledText(range) {
-    const styleNodeNames = ['B', 'I', 'S', 'SPAN', 'CODE'];
     const {startContainer} = range;
-    let nodeName;
+    let node;
     if (domUtils.isTextNode(startContainer)) {
-      nodeName = startContainer.parentNode.nodeName;
+      node = startContainer.parentNode;
     } else {
-      nodeName = startContainer.nodeName;
+      node = startContainer;
     }
 
-    return range.collapsed && styleNodeNames.indexOf(nodeName) !== -1;
+    return range.collapsed && domUtils.isStyledTextNode(node);
   }
 
   /**

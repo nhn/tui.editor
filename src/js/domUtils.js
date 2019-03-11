@@ -505,6 +505,10 @@ const isMDSupportInlineNode = function(node) {
   return /^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/ig.test(node.nodeName);
 };
 
+const isStyledTextNode = function(node) {
+  return /^(A|ABBR|ACRONYM|B|BDI|BDO|BIG|CITE|CODE|DEL|DFN|EM|I|INS|KBD|MARK|Q|S|SAMP|SMALL|SPAN|STRONG|SUB|SUP|U|VAR)$/ig.test(node.nodeName);
+};
+
 /**
  * remove node from 'start' node to 'end-1' node inside parent
  * if 'end' node is null, remove all child nodes after 'start' node.
@@ -590,6 +594,7 @@ export default {
   getTableCellByDirection,
   getSiblingRowCellByDirection,
   isMDSupportInlineNode,
+  isStyledTextNode,
   removeChildFromStartToEndNode,
   removeNodesByDirection,
   getLeafNode
