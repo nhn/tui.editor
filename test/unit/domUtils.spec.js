@@ -358,9 +358,9 @@ describe('domUtils', () => {
       container.appendChild(createElement('s', 'ccc'));
       container.appendChild(document.createTextNode('eee'));
 
-      const expectedHtml = '<b>aaa</b>eee';
-
       domUtils.removeChildFromStartToEndNode(container, container.childNodes[1], container.childNodes[3]);
+
+      const expectedHtml = '<b>aaa</b>eee';
 
       expect(container.innerHTML).toBe(expectedHtml);
     });
@@ -371,9 +371,9 @@ describe('domUtils', () => {
       container.appendChild(createElement('s', 'ccc'));
       container.appendChild(document.createTextNode('eee'));
 
-      const expectedHtml = '<b>aaa</b><i>bbb</i>';
-
       domUtils.removeChildFromStartToEndNode(container, container.childNodes[2], null);
+
+      const expectedHtml = '<b>aaa</b><i>bbb</i>';
 
       expect(container.innerHTML).toBe(expectedHtml);
     });
@@ -383,9 +383,9 @@ describe('domUtils', () => {
     it('Remove forward nodes from the node to reach targetParent node', () => {
       container.innerHTML = '<b>aaa<i>bbb<s>ccc</s>ddd</i>eee</b>';
 
-      const expectedHtml = '<b><i><s>ccc</s>ddd</i>eee</b>';
-
       domUtils.removeNodesByDirection(container, document.querySelector('s'), true);
+
+      const expectedHtml = '<b><i><s>ccc</s>ddd</i>eee</b>';
 
       expect(container.innerHTML).toBe(expectedHtml);
     });
@@ -393,9 +393,9 @@ describe('domUtils', () => {
     it('Remove backward nodes from the node to reach targetParent node', () => {
       container.innerHTML = '<b>aaa<i>bbb<s>ccc</s>ddd</i>eee</b>';
 
-      const expectedHtml = '<b>aaa<i>bbb<s>ccc</s></i></b>';
-
       domUtils.removeNodesByDirection(container, document.querySelector('s'), false);
+
+      const expectedHtml = '<b>aaa<i>bbb<s>ccc</s></i></b>';
 
       expect(container.innerHTML).toBe(expectedHtml);
     });
