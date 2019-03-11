@@ -20,9 +20,10 @@ class MarkdownEditor extends CodeMirrorExt {
    * Creates an instance of MarkdownEditor.
    * @param {jQuery} $el - container jquery element
    * @param {EventManager} eventManager - event manager
+   * @param {Object} options - options of editor
    * @memberof MarkdownEditor
    */
-  constructor($el, eventManager) {
+  constructor($el, eventManager, options) {
     super($el.get(0), {
       mode: 'gfm',
       dragDrop: true,
@@ -31,7 +32,8 @@ class MarkdownEditor extends CodeMirrorExt {
         'Enter': 'newlineAndIndentContinueMarkdownList',
         'Tab': 'indentOrderedList',
         'Shift-Tab': 'indentLessOrderedList'
-      }
+      },
+      viewportMargin: options.height === 'auto' ? Infinity : 10
     });
     this.eventManager = eventManager;
     this.componentManager = new ComponentManager(this);
@@ -246,10 +248,11 @@ class MarkdownEditor extends CodeMirrorExt {
    * @memberof MarkdownEditor
    * @param {jQuery} $el - Container element for editor
    * @param {EventManager} eventManager - EventManager instance
+   * @param {Object} options - options of editor
    * @returns {MarkdownEditor} - MarkdownEditor
    */
-  static factory($el, eventManager) {
-    const mde = new MarkdownEditor($el, eventManager);
+  static factory($el, eventManager, options) {
+    const mde = new MarkdownEditor($el, eventManager, options);
 
     return mde;
   }
