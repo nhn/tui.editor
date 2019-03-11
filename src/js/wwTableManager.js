@@ -316,19 +316,6 @@ class WwTableManager {
   }
 
   /**
-   * isInTable
-   * Check whether passed range is in table or not
-   * @param {Range} range range
-   * @returns {boolean} result
-   * @memberof WwTableManager
-   */
-  isInTable(range) {
-    const target = range.collapsed ? range.startContainer : range.commonAncestorContainer;
-
-    return !!$(target).closest('[contenteditable=true] table').length;
-  }
-
-  /**
    * _isBeforeTable
    * Check whether passed range is right before table or not
    * @param {Range} range range
