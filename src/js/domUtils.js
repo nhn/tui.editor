@@ -505,7 +505,14 @@ const isMDSupportInlineNode = function(node) {
   return /^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/ig.test(node.nodeName);
 };
 
-const isStyledTextNode = function(node) {
+/**
+ * Check that node is styled node.
+ * Styled node is a node that has text and decorates text.
+ * @param {Node} node TD element
+ * @returns {boolean}
+ * @ignore
+ */
+const isStyledNode = function(node) {
   return /^(A|ABBR|ACRONYM|B|BDI|BDO|BIG|CITE|CODE|DEL|DFN|EM|I|INS|KBD|MARK|Q|S|SAMP|SMALL|SPAN|STRONG|SUB|SUP|U|VAR)$/ig.test(node.nodeName);
 };
 
@@ -594,7 +601,7 @@ export default {
   getTableCellByDirection,
   getSiblingRowCellByDirection,
   isMDSupportInlineNode,
-  isStyledTextNode,
+  isStyledNode,
   removeChildFromStartToEndNode,
   removeNodesByDirection,
   getLeafNode
