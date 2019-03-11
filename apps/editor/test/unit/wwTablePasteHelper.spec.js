@@ -53,9 +53,9 @@ describe('WwTablePasteHelper', () => {
         node.appendChild(createElement('div', 'bbb'));
         node.appendChild(createElement('div', 'ccc'));
 
-        const expectedHtml = '<div>aaa</div><div>ccc</div>';
-
         tph._deleteContentsByOffset(node, 1, 2);
+
+        const expectedHtml = '<div>aaa</div><div>ccc</div>';
 
         expect(node.innerHTML).toBe(expectedHtml);
       });
@@ -71,9 +71,9 @@ describe('WwTablePasteHelper', () => {
         range.setStart(document.querySelector('td'), 1);
         range.setEnd(document.querySelector('td'), 3);
 
-        const expectedHtml = '111<i>444</i>555';
-
         tph._deleteContentsRange(range);
+
+        const expectedHtml = '111<i>444</i>555';
 
         expect(target.innerHTML).toBe(expectedHtml);
       });
@@ -87,9 +87,9 @@ describe('WwTablePasteHelper', () => {
         range.setStart(document.querySelector('b'), 1);
         range.setEnd(document.querySelector('i'), 0);
 
-        const expectedHtml = '111<b>222</b><i>555</i>';
-
         tph._deleteContentsRange(range);
+
+        const expectedHtml = '111<b>222</b><i>555</i>';
 
         expect(target.innerHTML).toBe(expectedHtml);
       });
@@ -103,9 +103,9 @@ describe('WwTablePasteHelper', () => {
         range.setStart(document.querySelector('b').firstChild, 1);
         range.setEnd(document.querySelector('i').firstChild, 1);
 
-        const expectedHtml = '111<b>2</b><i>44</i>555';
-
         tph._deleteContentsRange(range);
+
+        const expectedHtml = '111<b>2</b><i>44</i>555';
 
         expect(target.innerHTML).toBe(expectedHtml);
       });
