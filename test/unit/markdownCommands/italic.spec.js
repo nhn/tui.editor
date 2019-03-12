@@ -36,7 +36,7 @@ describe('Italic', () => {
 
       Italic.exec(mde);
 
-      expect(cm.getValue()).toEqual(['mytext1', '', 'myt__ext2', 'mytext3'].join('\n'));
+      expect(cm.getValue()).toEqual(['mytext1', '', 'myt**ext2', 'mytext3'].join('\n'));
     });
 
     it('in a blank line', () => {
@@ -44,7 +44,7 @@ describe('Italic', () => {
 
       Italic.exec(mde);
 
-      expect(cm.getValue()).toEqual(['mytext1', '__', 'mytext2', 'mytext3'].join('\n'));
+      expect(cm.getValue()).toEqual(['mytext1', '**', 'mytext2', 'mytext3'].join('\n'));
     });
 
     it('around selected text', () => {
@@ -58,7 +58,7 @@ describe('Italic', () => {
 
       Italic.exec(mde);
 
-      expect(cm.getValue()).toEqual(['_mytext1_', '', 'mytext2', 'mytext3'].join('\n'));
+      expect(cm.getValue()).toEqual(['*mytext1*', '', 'mytext2', 'mytext3'].join('\n'));
     });
 
     it('should remove italic syntax in the middle of the given range', () => {
@@ -74,7 +74,7 @@ describe('Italic', () => {
 
       Italic.exec(mde);
 
-      expect(cm.getValue()).toEqual('_my text 1_');
+      expect(cm.getValue()).toEqual('*my text 1*');
     });
   });
 });

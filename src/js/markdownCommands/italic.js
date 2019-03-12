@@ -87,7 +87,7 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
    * @returns {string} - italic text
    */
   append(text) {
-    return `_${text}_`;
+    return `*${text}*`;
   },
 
   /**
