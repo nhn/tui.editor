@@ -42,7 +42,7 @@ var basicRenderer = Renderer.factory({
         var res = '';
 
         if (!this.isEmptyText(subContent)) {
-            res = '_' + subContent + '_';
+            res = '*' + subContent + '*';
         }
 
         return res;
