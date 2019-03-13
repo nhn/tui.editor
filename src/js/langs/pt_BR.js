@@ -14,7 +14,7 @@ i18n.setLanguage(['pt', 'pt_BR'], {
   'Bold': 'Negrito',
   'Italic': 'Itálico',
   'Strike': 'Subscrito',
-  'Code': 'Inline code',
+  'Code': 'Inserir código inline',
   'Line': 'Linha horizontal',
   'Blockquote': 'Citação',
   'Unordered list': 'Lista não ordenada',
