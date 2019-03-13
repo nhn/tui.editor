@@ -1,0 +1,52 @@
+/**
+* @fileoverview I18N for English
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
+import i18n from '../i18n';
+
+i18n.setLanguage(['pt', 'pt_BR'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Edição',
+  'Preview': 'Visualização',
+  'Headings': 'Títulos',
+  'Paragraph': 'Parágrafo',
+  'Bold': 'Negrito',
+  'Italic': 'Itálico',
+  'Strike': 'Subscrito',
+  'Code': 'Inline code',
+  'Line': 'Linha horizontal',
+  'Blockquote': 'Citação',
+  'Unordered list': 'Lista não ordenada',
+  'Ordered list': 'Lista ordenada',
+  'Task': 'Tarefas',
+  'Indent': 'Espaçamento',
+  'Outdent': 'Recuo',
+  'Insert link': 'Inserir link',
+  'Insert CodeBlock': 'Inserir bloco de código',
+  'Insert table': 'Inserir tabela',
+  'Insert image': 'Inserir imagem',
+  'Heading': 'Título',
+  'Image URL': 'URL da imagem',
+  'Select image file': 'Selecione um arquivo de imagem',
+  'Description': 'Descrição',
+  'OK': 'OK',
+  'More': 'Mais',
+  'Cancel': 'Cancelar',
+  'File': 'Arquivo',
+  'URL': 'URL',
+  'Link text': 'Link do texto',
+  'Add row': 'Adicionar linha',
+  'Add col': 'Adicionar coluna',
+  'Remove row': 'Remover linha',
+  'Remove col': 'Remover coluna',
+  'Align left': 'Alinhar à esquerda',
+  'Align center': 'Alinhar ao centro',
+  'Align right': 'Alinhar à direita',
+  'Remove table': 'Remover tabela',
+  'Would you like to paste as table?': 'Você gostaria de colar como tabela?',
+  'Text color': 'Cor do texto',
+  'Auto scroll enabled': 'Auto scroll ativado',
+  'Auto scroll disabled': 'Auto scroll desativado',
+  'Choose language': 'Escolher linguagem'
+});
