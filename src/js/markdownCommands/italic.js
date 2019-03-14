@@ -3,10 +3,13 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import CommandManager from '../commandManager';
+import common from './empahsisCommon';
 
-const boldItalicRangeRegex = /^[*_]{3,}[^*_]+[*_]{3,}$/;
-const italicRangeRegex = /^[*_][^*_]+[*_]$/;
-const italicContentRegex = /[*_]([^*_]+)[*_]/g;
+const boldItalicRangeRegex = /^(\*|_){3}[^\1]+\1{3}$/;
+const boldRangeRegex = /^(\*|_){2}.*\1{2}$/;
+const italicRangeRegex = /^(\*|_).*\1$/;
+const italicContentRegex = /([^*_])[*_]([^*_]+)[*_]([^*_])/g;
+const symbol = '*';
 
 /**
  * Italic
@@ -25,174 +28,86 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
   exec(mde) {
     const cm = mde.getEditor();
     const doc = cm.getDoc();
-
     const cursor = doc.getCursor();
-    let selection = doc.getSelection();
-    const isEmpty = !selection;
-    let isWithBold = false;
-    let tmpSelection;
+    const originRange = mde.getRange();
+    const selectionStr = doc.getSelection();
+    const symbolLength = symbol.length;
 
-    // if selection is empty, expend selection to detect a syntax
-    if (isEmpty) {
-      if (cursor.ch > 2) {
-        tmpSelection = this.expendWithBoldSelection(doc, cursor);
+    const {
+      getReplacer,
+      appendSyntax,
+      getCursorMover
+    } = common;
 
-        if (tmpSelection) {
-          isWithBold = 'with';
-        }
-      }
+    const replace = getReplacer(doc);
 
-      if (isWithBold !== 'with' && cursor.ch > 1) {
-        isWithBold = this.expendOnlyBoldSelection(doc, cursor);
-      }
-
-      if (!isWithBold && cursor.ch > 0) {
-        this.expendSelection(doc, cursor);
-        selection = tmpSelection || selection;
-      }
-    }
-
-    const isRemoved = this.isNeedRemove(selection);
-    let result;
-    if (isRemoved) {
-      result = this.remove(selection);
-      result = this._removeItalicSyntax(result);
+    if (selectionStr) {
+      // check selectionStr match bold & italic, bold, italic and then
+      // if there is no match, append italic
+      replace(
+        this.getTextReplacer(doc, selectionStr, originRange)
+        || appendSyntax(this.removeItalic(selectionStr), symbol));
     } else {
-      result = this._removeItalicSyntax(selection);
-      result = this.append(result);
-    }
+      // check expended text match bold & italic, bold, italic and then
+      // if there is no match, make italic
+      const result = replace(
+        this.getEmptyReplacer(doc, originRange)
+        || '**');
 
-    doc.replaceSelection(result, 'around');
-
-    if (isEmpty) {
-      this.setCursorToCenter(doc, cursor, isRemoved);
+      // move cursor according to symbol length
+      const cursorMover = getCursorMover(doc, cursor);
+      cursorMover(result ? symbolLength : -symbolLength);
+      // doc.setCursor(cursor.line, cursor.ch + symbolLength);
     }
 
     cm.focus();
   },
 
-  /**
-   * isNeedRemove
-   * test given text has italic or bold
-   * @param {string} text - text to test
-   * @returns {boolean} - true if it has italic or bold
-   */
-  isNeedRemove(text) {
-    return italicRangeRegex.test(text) || boldItalicRangeRegex.test(text);
+  getTextReplacer(doc, text, originRange) {
+    // Check 3 cases when both text and expend text
+    // case 1 : bold & italic (when expend 3 both front and end) => remove italic
+    // case 2 : bold (when expend 2 both front and end) => append
+    // case 3 : italic (expend 1 both front and end) => remove
+    const {
+      getExpendTextChecker,
+      getSyntaxChecker,
+      getTextChecker,
+      appendSyntax,
+      removeSyntax
+    } = common;
+
+    const getExpendReplacer = getExpendTextChecker(doc, originRange);
+    const getReplacer = getTextChecker(text);
+    const isBoldItalic = getSyntaxChecker(boldItalicRangeRegex);
+    const isBold = getSyntaxChecker(boldRangeRegex);
+    const isItalic = getSyntaxChecker(italicRangeRegex);
+
+    const remover = t => removeSyntax(t, symbol);
+
+    return getExpendReplacer(3, isBoldItalic, remover)
+        || getExpendReplacer(2, isBold, () => appendSyntax(this.removeItalic(text), '***'))
+        || getExpendReplacer(1, isItalic, remover)
+        || getReplacer(isBoldItalic, remover)
+        || getReplacer(isBold, t => appendSyntax(t, symbol))
+        || getReplacer(isItalic, remover);
   },
 
-  /**
-   * apply italic
-   * @param {string} text - text to apply
-   * @returns {string} - italic text
-   */
-  append(text) {
-    return `*${text}*`;
-  },
+  getEmptyReplacer(doc, originRange) {
+    // Check 3 cases when expend text
+    // case 1 : bold & italic => remove italic
+    // case 2 : bold => append
+    // case 3 : italic => remove
+    const {
+      getExpendTextChecker,
+      appendSyntax,
+      removeSyntax
+    } = common;
 
-  /**
-   * remove italic
-   * @param {string} text - text to remove italic syntax
-   * @returns {string} - italic syntax revmoed text
-   */
-  remove(text) {
-    return text.substr(1, text.length - 2);
-  },
+    const getExpendReplacer = getExpendTextChecker(doc, originRange);
 
-  /**
-   * expand selected area
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @returns {string} - text in range after it has been expaneded
-   */
-  expendWithBoldSelection(doc, cursor) {
-    const tmpSelection = doc.getSelection();
-    let result;
-    const start = {
-      line: cursor.line,
-      ch: cursor.ch - 3
-    };
-    const end = {
-      line: cursor.line,
-      ch: cursor.ch + 3
-    };
-
-    doc.setSelection(start, end);
-
-    if (tmpSelection === '******' || tmpSelection === '______') {
-      result = tmpSelection;
-    } else {
-      doc.setSelection(cursor);
-    }
-
-    return result;
-  },
-
-  /**
-   * expand only bold selection
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @returns {string} - text in area after it has been expaneded
-   */
-  expendOnlyBoldSelection(doc, cursor) {
-    const tmpSelection = doc.getSelection();
-    let result = false;
-    const start = {
-      line: cursor.line,
-      ch: cursor.ch - 2
-    };
-    const end = {
-      line: cursor.line,
-      ch: cursor.ch + 2
-    };
-
-    doc.setSelection(start, end);
-
-    if (tmpSelection === '****' || tmpSelection === '____') {
-      doc.setSelection(cursor);
-      result = 'only';
-    }
-
-    return result;
-  },
-
-  /**
-   * expand only italic selection
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @returns {string} - text in area after it has been expaneded
-   */
-  expendSelection(doc, cursor) {
-    const tmpSelection = doc.getSelection();
-    let result;
-    const start = {
-      line: cursor.line,
-      ch: cursor.ch - 2
-    };
-    const end = {
-      line: cursor.line,
-      ch: cursor.ch + 2
-    };
-
-    doc.setSelection(start, end);
-
-    if (tmpSelection === '****' || tmpSelection === '____') {
-      result = tmpSelection;
-    } else {
-      doc.setSelection(cursor);
-    }
-
-    return result;
-  },
-  /**
-   * move cursor to center
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @param {boolean} isRemoved - whether it involes deletion
-   */
-  setCursorToCenter(doc, cursor, isRemoved) {
-    const pos = isRemoved ? -1 : 1;
-    doc.setCursor(cursor.line, cursor.ch + pos);
+    return getExpendReplacer(3, t => t === '******' || t === '______', t => removeSyntax(t, symbol))
+        || getExpendReplacer(2, t => t === '****' || t === '____', t => appendSyntax(t, symbol))
+        || getExpendReplacer(1, t => t === '**' || t === '__', () => '');
   },
 
   /**
@@ -201,8 +116,8 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
    * @returns {string} - text eliminated all italic in the middle of it's content
    * @private
    */
-  _removeItalicSyntax(text) {
-    return text ? text.replace(italicContentRegex, '$1') : '';
+  removeItalic(text) {
+    return text ? text.replace(italicContentRegex, '$1$2$3') : '';
   }
 });
 
