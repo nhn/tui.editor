@@ -9,11 +9,11 @@ describe('toMark', function() {
         });
 
         it('convert heading2 tag to markdown', function() {
-            expect(toMark('<h2>Hello <em>World</em></h2>')).toEqual('## Hello _World_');
+            expect(toMark('<h2>Hello <em>World</em></h2>')).toEqual('## Hello *World*');
         });
 
         it('convert heading2 tag to markdown', function() {
-            expect(toMark('<h2>Hello <em>World</em></h2>')).toEqual('## Hello _World_');
+            expect(toMark('<h2>Hello <em>World</em></h2>')).toEqual('## Hello *World*');
         });
 
         it('convert heading1, heading2 tag to markdown', function() {

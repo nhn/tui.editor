@@ -56,8 +56,8 @@ describe('basicRenderer', function() {
 
     describe('inline', function() {
         it('em, i', function() {
-            expect(getMarkdownText('<em></em>', 'emphasis')).toEqual('_emphasis_');
-            expect(getMarkdownText('<i></i>', 'emphasis')).toEqual('_emphasis_');
+            expect(getMarkdownText('<em></em>', 'emphasis')).toEqual('*emphasis*');
+            expect(getMarkdownText('<i></i>', 'emphasis')).toEqual('*emphasis*');
         });
 
         it('empty em, i returns empty string', function() {

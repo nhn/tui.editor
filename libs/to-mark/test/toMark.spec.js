@@ -26,21 +26,21 @@ describe('toMark', function() {
     });
 
     it('Empty spaces more than 1 are removed even if flanked space in tags', function() {
-        expect(toMark('<h2>Hello <em> World</em></h2>')).toEqual('## Hello _World_');
-        expect(toMark('<h2>Hello  <em>World</em></h2>')).toEqual('## Hello _World_');
-        expect(toMark('<h2>Hello  <em>World </em></h2>')).toEqual('## Hello _World_');
-        expect(toMark('<h2><em>Hello</em> <em>World</em></h2>')).toEqual('## _Hello_ _World_');
-        expect(toMark('<h2><em>Hello</em> World</h2>')).toEqual('## _Hello_ World');
-        expect(toMark('<h2><em>Hello </em> World</h2>')).toEqual('## _Hello_ World');
-        expect(toMark('<h2><em>Hello </em>World</h2>')).toEqual('## _Hello_ World');
-        expect(toMark('<h2><em>Hello</em>  &nbsp;&nbsp;World</h2>')).toEqual('## _Hello_ \u00a0\u00a0World');
-        expect(toMark('<h2><em>Hello&nbsp;</em>  &nbsp;&nbsp;World</h2>')).toEqual('## _Hello\u00a0_ \u00a0\u00a0World');
+        expect(toMark('<h2>Hello <em> World</em></h2>')).toEqual('## Hello *World*');
+        expect(toMark('<h2>Hello  <em>World</em></h2>')).toEqual('## Hello *World*');
+        expect(toMark('<h2>Hello  <em>World </em></h2>')).toEqual('## Hello *World*');
+        expect(toMark('<h2><em>Hello</em> <em>World</em></h2>')).toEqual('## *Hello* *World*');
+        expect(toMark('<h2><em>Hello</em> World</h2>')).toEqual('## *Hello* World');
+        expect(toMark('<h2><em>Hello </em> World</h2>')).toEqual('## *Hello* World');
+        expect(toMark('<h2><em>Hello </em>World</h2>')).toEqual('## *Hello* World');
+        expect(toMark('<h2><em>Hello</em>  &nbsp;&nbsp;World</h2>')).toEqual('## *Hello* \u00a0\u00a0World');
+        expect(toMark('<h2><em>Hello&nbsp;</em>  &nbsp;&nbsp;World</h2>')).toEqual('## *Hello\u00a0* \u00a0\u00a0World');
     });
 
     it('p and inlines', function() {
         expect(toMark('<p>this is link <a href="http://nhnent.com">link</a></p>')).toEqual('this is link [link](http://nhnent.com)');
-        expect(toMark('<p><em>this</em> is link <a href="http://nhnent.com">link</a></p>')).toEqual('_this_ is link [link](http://nhnent.com)');
-        expect(toMark('<p><em>this</em> is &nbsp;<strong>strong</strong></p>')).toEqual('_this_ is \u00a0**strong**');
+        expect(toMark('<p><em>this</em> is link <a href="http://nhnent.com">link</a></p>')).toEqual('*this* is link [link](http://nhnent.com)');
+        expect(toMark('<p><em>this</em> is &nbsp;<strong>strong</strong></p>')).toEqual('*this* is \u00a0**strong**');
     });
 
     it('pass gfm false option to using basic markdown renderer', function() {
