@@ -76,6 +76,22 @@ describe('Strike', () => {
 
       expect(cm.getValue()).toEqual('~~mytext1~~');
     });
+
+    it('in select text that is collapsed bold', () => {
+      cm.setValue('**text**');
+
+      doc.setSelection({
+        line: 0,
+        ch: 2
+      }, {
+        line: 0,
+        ch: 6
+      });
+
+      Strike.exec(mde);
+
+      expect(cm.getValue()).toEqual('**~~text~~**');
+    });
   });
 
   describe('remove strike', () => {
@@ -102,6 +118,29 @@ describe('Strike', () => {
       Strike.exec(mde);
 
       expect(cm.getValue()).toEqual(['mytext1', '', 'mytext2', 'mytext3'].join('\n'));
+    });
+
+    it('selected only text that is collapsed strike', () => {
+      cm.setValue('~~test~~');
+      doc.setSelection({
+        line: 0,
+        ch: 2
+      }, {
+        line: 0,
+        ch: 6
+      });
+
+      Strike.exec(mde);
+
+      expect(cm.getValue()).toEqual('test');
+    });
+
+    it('in the empty string collapsed strike', () => {
+      cm.setValue('~~~~');
+      doc.setCursor(0, 2);
+
+      Strike.exec(mde);
+      expect(cm.getValue()).toEqual('');
     });
   });
 });

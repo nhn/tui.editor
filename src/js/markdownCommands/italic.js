@@ -3,10 +3,104 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import CommandManager from '../commandManager';
+import {
+  getExpandedRange,
+  removeSyntax,
+  appendSyntax
+} from './empahsisCommon';
 
-const boldItalicRangeRegex = /^[*_]{3,}[^*_]+[*_]{3,}$/;
-const italicRangeRegex = /^[*_][^*_]+[*_]$/;
-const italicContentRegex = /[*_]([^*_]+)[*_]/g;
+const boldItalicRangeRegex = /^(\*|_){3}[^\1]+\1{3}$/;
+const boldRangeRegex = /^(\*|_){2}.*\1{2}$/;
+const italicRangeRegex = /^(\*|_).*\1$/;
+const italicContentRegex = /([^*_])[*_]([^*_]+)[*_]([^*_])/g;
+const symbol = '*';
+const symbolLength = symbol.length;
+
+const isBoldItalic = t => boldItalicRangeRegex.test(t);
+const isBold = t => boldRangeRegex.test(t);
+const isItalic = t => italicRangeRegex.test(t);
+
+/**
+ * remove italic syntax in the middle of given text
+ * @param {string} text - text selected
+ * @returns {string} - text eliminated all italic in the middle of it's content
+ * @ignore
+ */
+const removeItalicInsideText = function(text) {
+  return text ? text.replace(italicContentRegex, '$1$2$3') : '';
+};
+
+/**
+ * check expanded text and replace text using replacer
+ * @param {CodeMirror.doc} doc - doc of codemirror
+ * @param {range} range - origin range
+ * @param {number} expandSize - expandSize
+ * @param {function} checker - sytax check function
+ * @param {function} replacer - text replace function
+ * @returns {boolean} - if replace text, return true.
+ * @ignore
+ */
+const getExpandReplacer = function(doc, range, expandSize, checker, replacer) {
+  const expendRange = getExpandedRange(range, expandSize);
+  let result = false;
+
+  if (expendRange) {
+    const {from, to} = expendRange;
+    const expendRangeText = doc.getRange(from, to);
+    if (checker(expendRangeText)) {
+      doc.setSelection(from, to);
+      doc.replaceSelection(replacer(expendRangeText), 'around');
+      result = true;
+    }
+  }
+
+  return result;
+};
+
+/**
+ * check text and replace text using replacer
+ * @param {CodeMirror.doc} doc - doc of codemirror
+ * @param {string} text - text
+ * @param {function} checker - sytax check function
+ * @param {function} replacer - text replace function
+ * @returns {boolean} - if replace text, return true.
+ * @ignore
+ */
+const getReplacer = function(doc, text, checker, replacer) {
+  let result = false;
+
+  if (checker(text)) {
+    doc.replaceSelection(replacer(text), 'around');
+    result = true;
+  }
+
+  return result;
+};
+
+const getTextReplacer = function(doc, text, range) {
+  // Check 3 cases when both text and expand text
+  // case 1 : bold & italic (when expand 3 both front and end) => remove italic
+  // case 2 : bold (when expand 2 both front and end) => append
+  // case 3 : italic (expand 1 both front and end) => remove
+  // const expandTextChecker = this.getExpandTextChecker(doc, originRange);
+  // const textChecker = this.getTextChecker(text);
+  return getExpandReplacer(doc, range, 3, isBoldItalic, t => removeSyntax(t, symbol))
+        || getExpandReplacer(doc, range, 2, isBold, t => appendSyntax(removeItalicInsideText(t), symbol))
+        || getExpandReplacer(doc, range, 1, isItalic, t => removeSyntax(t, symbol))
+        || getReplacer(doc, text, isBoldItalic, t => removeSyntax(t, symbol))
+        || getReplacer(doc, text, isBold, t => appendSyntax(removeItalicInsideText(t), symbol))
+        || getReplacer(doc, text, isItalic, t => removeSyntax(t, symbol));
+};
+
+const getEmptyReplacer = function(doc, range) {
+  // Check 3 cases when expand text
+  // case 1 : bold & italic => remove italic
+  // case 2 : bold => append
+  // case 3 : italic => remove
+  return getExpandReplacer(doc, range, 3, t => t === '******' || t === '______', t => removeSyntax(t, symbol))
+        || getExpandReplacer(doc, range, 2, t => t === '****' || t === '____', t => appendSyntax(t, symbol))
+        || getExpandReplacer(doc, range, 1, t => t === '**' || t === '__', () => '');
+};
 
 /**
  * Italic
@@ -25,184 +119,31 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
   exec(mde) {
     const cm = mde.getEditor();
     const doc = cm.getDoc();
+    const {line, ch} = doc.getCursor();
+    const range = mde.getRange();
+    const selectionStr = doc.getSelection();
 
-    const cursor = doc.getCursor();
-    let selection = doc.getSelection();
-    const isEmpty = !selection;
-    let isWithBold = false;
-    let tmpSelection;
-
-    // if selection is empty, expend selection to detect a syntax
-    if (isEmpty) {
-      if (cursor.ch > 2) {
-        tmpSelection = this.expendWithBoldSelection(doc, cursor);
-
-        if (tmpSelection) {
-          isWithBold = 'with';
-        }
+    if (selectionStr) {
+      // check selectionStr match bold & italic, bold, italic and then
+      // if there is no match, append italic
+      if (!getTextReplacer(doc, selectionStr, range)) {
+        // Before append italic, remove italic inside text and then append italic
+        // Example: One*Two*Three => *OneTwoThree*
+        const replaceText = appendSyntax(removeItalicInsideText(selectionStr), symbol);
+        doc.replaceSelection(replaceText, 'around');
       }
-
-      if (isWithBold !== 'with' && cursor.ch > 1) {
-        isWithBold = this.expendOnlyBoldSelection(doc, cursor);
-      }
-
-      if (!isWithBold && cursor.ch > 0) {
-        this.expendSelection(doc, cursor);
-        selection = tmpSelection || selection;
-      }
-    }
-
-    const isRemoved = this.isNeedRemove(selection);
-    let result;
-    if (isRemoved) {
-      result = this.remove(selection);
-      result = this._removeItalicSyntax(result);
     } else {
-      result = this._removeItalicSyntax(selection);
-      result = this.append(result);
-    }
+      // check expanded text match bold & italic, bold, italic and then
+      // if there is no match, make italic
+      if (!getEmptyReplacer(doc, range)) {
+        doc.replaceSelection('**', 'around');
+      }
 
-    doc.replaceSelection(result, 'around');
-
-    if (isEmpty) {
-      this.setCursorToCenter(doc, cursor, isRemoved);
+      const afterSelectStr = doc.getSelection();
+      doc.setCursor(line, afterSelectStr ? ch - symbolLength : ch + symbolLength);
     }
 
     cm.focus();
-  },
-
-  /**
-   * isNeedRemove
-   * test given text has italic or bold
-   * @param {string} text - text to test
-   * @returns {boolean} - true if it has italic or bold
-   */
-  isNeedRemove(text) {
-    return italicRangeRegex.test(text) || boldItalicRangeRegex.test(text);
-  },
-
-  /**
-   * apply italic
-   * @param {string} text - text to apply
-   * @returns {string} - italic text
-   */
-  append(text) {
-    return `*${text}*`;
-  },
-
-  /**
-   * remove italic
-   * @param {string} text - text to remove italic syntax
-   * @returns {string} - italic syntax revmoed text
-   */
-  remove(text) {
-    return text.substr(1, text.length - 2);
-  },
-
-  /**
-   * expand selected area
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @returns {string} - text in range after it has been expaneded
-   */
-  expendWithBoldSelection(doc, cursor) {
-    const tmpSelection = doc.getSelection();
-    let result;
-    const start = {
-      line: cursor.line,
-      ch: cursor.ch - 3
-    };
-    const end = {
-      line: cursor.line,
-      ch: cursor.ch + 3
-    };
-
-    doc.setSelection(start, end);
-
-    if (tmpSelection === '******' || tmpSelection === '______') {
-      result = tmpSelection;
-    } else {
-      doc.setSelection(cursor);
-    }
-
-    return result;
-  },
-
-  /**
-   * expand only bold selection
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @returns {string} - text in area after it has been expaneded
-   */
-  expendOnlyBoldSelection(doc, cursor) {
-    const tmpSelection = doc.getSelection();
-    let result = false;
-    const start = {
-      line: cursor.line,
-      ch: cursor.ch - 2
-    };
-    const end = {
-      line: cursor.line,
-      ch: cursor.ch + 2
-    };
-
-    doc.setSelection(start, end);
-
-    if (tmpSelection === '****' || tmpSelection === '____') {
-      doc.setSelection(cursor);
-      result = 'only';
-    }
-
-    return result;
-  },
-
-  /**
-   * expand only italic selection
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @returns {string} - text in area after it has been expaneded
-   */
-  expendSelection(doc, cursor) {
-    const tmpSelection = doc.getSelection();
-    let result;
-    const start = {
-      line: cursor.line,
-      ch: cursor.ch - 2
-    };
-    const end = {
-      line: cursor.line,
-      ch: cursor.ch + 2
-    };
-
-    doc.setSelection(start, end);
-
-    if (tmpSelection === '****' || tmpSelection === '____') {
-      result = tmpSelection;
-    } else {
-      doc.setSelection(cursor);
-    }
-
-    return result;
-  },
-  /**
-   * move cursor to center
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @param {boolean} isRemoved - whether it involes deletion
-   */
-  setCursorToCenter(doc, cursor, isRemoved) {
-    const pos = isRemoved ? -1 : 1;
-    doc.setCursor(cursor.line, cursor.ch + pos);
-  },
-
-  /**
-   * remove italic syntax in the middle of given text
-   * @param {string} text - text selected
-   * @returns {string} - text eliminated all italic in the middle of it's content
-   * @private
-   */
-  _removeItalicSyntax(text) {
-    return text ? text.replace(italicContentRegex, '$1') : '';
   }
 });
 
