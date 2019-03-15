@@ -57,7 +57,6 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
       // move cursor according to symbol length
       const cursorMover = getCursorMover(doc, cursor);
       cursorMover(result ? symbolLength : -symbolLength);
-      // doc.setCursor(cursor.line, cursor.ch + symbolLength);
     }
 
     cm.focus();

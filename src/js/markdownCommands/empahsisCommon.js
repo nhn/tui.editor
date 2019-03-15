@@ -169,7 +169,6 @@ const changeSyntax = function(mde, symbol, syntaxRegx, contentRegx) {
     // move cursor according to symbol length
     const cursorMover = getCursorMover(doc, originalCursor);
     cursorMover(result ? symbolLength : -symbolLength);
-    // doc.setCursor(originalCursor.line, originalCursor.ch + symbolLength);
   }
 
   cm.focus();
