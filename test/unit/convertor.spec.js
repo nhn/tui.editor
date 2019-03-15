@@ -115,7 +115,7 @@ describe('Convertor', () => {
     it('should convert BRs to newline', () => {
       expect(convertor.toMarkdown('text<br><br>text')).toBe('text\n\ntext');
       expect(convertor.toMarkdown('<b>text</b><br><br>text')).toBe('**text**\n\ntext');
-      expect(convertor.toMarkdown('<i>text</i><br><br>text')).toBe('_text_\n\ntext');
+      expect(convertor.toMarkdown('<i>text</i><br><br>text')).toBe('*text*\n\ntext');
       expect(convertor.toMarkdown('<s>text</s><br><br>text')).toBe('~~text~~\n\ntext');
       expect(convertor.toMarkdown('<code>text</code><br><br>text')).toBe('`text`\n\ntext');
       expect(convertor.toMarkdown('<a href="some_url">text</a><br><br>text')).toBe('[text](some_url)\n\ntext');
