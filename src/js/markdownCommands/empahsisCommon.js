@@ -2,7 +2,7 @@
  * range expend according to expendSize
  * If can not expend, return null
  * @param {range} range - range
- * @param {number} expendSize - text
+ * @param {number} expendSize - expendSize
  * @returns {object} expended range or null
  * @private
  */
@@ -34,7 +34,7 @@ const getExpendRange = function(range, expendSize) {
  * If there is contentRegx, remove symbol syntax inside text before remove symbol in the font and back text.
  * @param {string} text - text
  * @param {string} symbol - text
- * @param {RegExp} contentRegx - text
+ * @param {RegExp} contentRegx - regular expression for find syntax inside text
  * @returns {string}
  * @private
  */
@@ -52,7 +52,7 @@ const removeSyntax = function(text, symbol, contentRegx) {
  * If there is contentRegx, remove symbol syntax inside text and append symbol
  * @param {string} text - text
  * @param {string} symbol - text
- * @param {RegExp} contentRegx - text
+ * @param {RegExp} contentRegx - regular expression for find syntax inside text
  * @returns {string}
  * @private
  */
@@ -69,10 +69,10 @@ const appendSyntax = function(text, symbol, contentRegx) {
 const getSyntaxChecker = (regx) => (text) => regx.test(text);
 
 /**
- * Return function that check text and then replace text using replacer
+ * Return function that check text and then return replacer function that is for text replace
  * @param {string} text - text
  * @returns {function} - get sytanx chack function and text replace function as parameter
- * and then return replaced text. If replace text is '', check is not correct.
+ * When checking text pass, return replacer function.
  * @private
  */
 const getTextChecker = (text) => {
@@ -92,7 +92,7 @@ const getTextChecker = (text) => {
  * @param {CodeMirror.doc} doc - doc of codemirror
  * @param {range} range - origin range
  * @returns {function} - get expendSize, sytanx chack function and text replace function as parameter
- * and then return replaced text. If replace text is '', expend or check is not correct.
+ * When expend text and checking expended text pass, return replacer function.
  * @private
  */
 const getExpendTextChecker = (doc, range) => {
