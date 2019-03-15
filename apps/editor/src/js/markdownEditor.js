@@ -33,7 +33,7 @@ class MarkdownEditor extends CodeMirrorExt {
         'Tab': 'indentOrderedList',
         'Shift-Tab': 'indentLessOrderedList'
       },
-      viewportMargin: options.height === 'auto' ? Infinity : 10
+      viewportMargin: options && options.height === 'auto' ? Infinity : 10
     });
     this.eventManager = eventManager;
     this.componentManager = new ComponentManager(this);
