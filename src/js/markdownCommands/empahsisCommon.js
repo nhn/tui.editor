@@ -1,3 +1,5 @@
+// This file is common logic for italic, bold, strike makrdown commands.
+
 /**
  * range expand according to expendSize
  * If can not expand, return null
@@ -6,7 +8,7 @@
  * @returns {object} expanded range or null
  * @ignore
  */
-export const getExpandedRange = (range, expendSize) => {
+const getExpandedRange = (range, expendSize) => {
   const {start, end} = range;
   let expendRange;
 
@@ -53,69 +55,81 @@ export const appendSyntax = function(text, symbol) {
   return `${symbol}${text}${symbol}`;
 };
 
-const getReplaceText = function(doc, range, symbol, syntaxRegex, contentRegex) {
-  const expandedRange = getExpandedRange(range, symbol.length);
-  const expandedText = expandedRange ? doc.getRange(expandedRange.from, expandedRange.to) : '';
-  const selectionStr = doc.getSelection();
-  let replaceText;
+/**
+ * check expanded text and replace text using replacer
+ * @param {CodeMirror.doc} doc - doc of codemirror
+ * @param {range} range - origin range
+ * @param {number} expandSize - expandSize
+ * @param {function} checker - sytax check function
+ * @param {function} replacer - text replace function
+ * @returns {boolean} - if replace text, return true.
+ * @ignore
+ */
+export const expandReplace = function(doc, range, expandSize, checker, replacer) {
+  const expendRange = getExpandedRange(range, expandSize);
+  let result = false;
 
-  // 1. check text is syntax => remove syntax
-  // 2. expand text and check syntax => remove syntax of expanded text
-  // 3. text does not match syntax so append syntax
-  if (syntaxRegex.test(selectionStr)) {
-    replaceText = removeSyntax(selectionStr, symbol);
-  } else if (expandedRange) {
-    if (syntaxRegex.test(expandedText)) {
-      const {from, to} = expandedRange;
-      replaceText = removeSyntax(expandedText, symbol);
+  if (expendRange) {
+    const {from, to} = expendRange;
+    const expendRangeText = doc.getRange(from, to);
+    if (checker(expendRangeText)) {
       doc.setSelection(from, to);
-    } else {
-      replaceText = selectionStr.replace(contentRegex, '$1');
-      replaceText = appendSyntax(replaceText, symbol);
+      doc.replaceSelection(replacer(expendRangeText), 'around');
+      result = true;
     }
-  } else {
-    replaceText = selectionStr.replace(contentRegex, '$1');
-    replaceText = appendSyntax(replaceText, symbol);
   }
 
-  return replaceText;
+  return result;
 };
 
-const getReplaceEmptyText = function(doc, range, symbol) {
-  const expandedRange = getExpandedRange(range, symbol.length);
-  const expandedText = expandedRange ? doc.getRange(expandedRange.from, expandedRange.to) : '';
-  let replaceText;
+/**
+ * check text and replace text using replacer
+ * @param {CodeMirror.doc} doc - doc of codemirror
+ * @param {string} text - text
+ * @param {function} checker - sytax check function
+ * @param {function} replacer - text replace function
+ * @returns {boolean} - if replace text, return true.
+ * @ignore
+ */
+export const replace = function(doc, text, checker, replacer) {
+  let result = false;
 
-  // 1. expand range and check expanded text is ${symbol}${symbol} => remove syntax
-  // 2. expand text does not match syntax => append syntax and that is {symbol}${symbol}
-  if (expandedRange && expandedText === `${symbol}${symbol}`) {
-    replaceText = '';
-    doc.setSelection(expandedRange.from, expandedRange.to);
-  } else {
-    replaceText = `${symbol}${symbol}`;
+  if (checker(text)) {
+    doc.replaceSelection(replacer(text), 'around');
+    result = true;
   }
 
-  return replaceText;
+  return result;
 };
 
 export const changeSyntax = function(doc, range, symbol, syntaxRegex, contentRegex) {
   const {line, ch} = doc.getCursor();
   const selectionStr = doc.getSelection();
   const symbolLength = symbol.length;
-  let replaceText;
+  const isSyntax = t => syntaxRegex.test(t);
 
-  if (selectionStr) {
-    replaceText = getReplaceText(doc, range, symbol, syntaxRegex, contentRegex);
-  } else {
-    replaceText = getReplaceEmptyText(doc, range, symbol);
+  // 1. expand text and check syntax => remove syntax
+  // 2. check text is syntax => remove syntax
+  // 3. text does not match syntax so append syntax
+  if (!(expandReplace(doc, range, symbolLength, isSyntax, t => removeSyntax(t, symbol))
+      || replace(doc, selectionStr, isSyntax, t => removeSyntax(t, symbol))
+  )) {
+    const removeSyntaxInsideText = selectionStr.replace(contentRegex, '$1');
+    doc.replaceSelection(appendSyntax(removeSyntaxInsideText, symbol), 'around');
   }
 
-  doc.replaceSelection(replaceText, 'around');
+  const afterSelectStr = doc.getSelection();
+  let size = ch;
 
-  if (replaceText === '') {
-    doc.setCursor(line, ch - symbolLength);
-  } else if (replaceText === `${symbol}${symbol}`) {
-    doc.setCursor(line, ch + symbolLength);
+  if (!selectionStr) {
+    // If text was not selected, after replace text, move cursor
+    // For example **|** => | (move cusor -symbolLenth)
+    if (isSyntax(afterSelectStr)) {
+      size += symbolLength;
+    } else {
+      size -= symbolLength;
+    }
+    doc.setCursor(line, size);
   }
 };
 

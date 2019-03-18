@@ -5,9 +5,9 @@
 import CommandManager from '../commandManager';
 import {changeSyntax} from './empahsisCommon';
 
-const boldRangeRegex = /^(\*|_){2}.*\1{2}$/;
+const boldRangeRegex = /^(\*{2}|_{2}).*\1$/;
 const boldContentRegex = /[*_]{2,}([^*_]*)[*_]{2,}/g;
-const symbol = '**';
+const boldSymbol = '**';
 
 /**
  * Bold
@@ -28,7 +28,7 @@ const Bold = CommandManager.command('markdown', /** @lends Bold */{
     const doc = cm.getDoc();
     const originRange = mde.getRange();
 
-    changeSyntax(doc, originRange, symbol, boldRangeRegex, boldContentRegex);
+    changeSyntax(doc, originRange, boldSymbol, boldRangeRegex, boldContentRegex);
 
     cm.focus();
   }

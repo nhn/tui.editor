@@ -7,7 +7,7 @@ import {changeSyntax} from './empahsisCommon';
 
 const strikeRangeRegex = /^~~.*~~$/;
 const strikeContentRegex = /~~([^~]*)~~/g;
-const symbol = '~~';
+const strikeSymbol = '~~';
 
 /**
  * Strike
@@ -28,7 +28,7 @@ const Strike = CommandManager.command('markdown', /** @lends Strike */{
     const doc = cm.getDoc();
     const originRange = mde.getRange();
 
-    changeSyntax(doc, originRange, symbol, strikeRangeRegex, strikeContentRegex);
+    changeSyntax(doc, originRange, strikeSymbol, strikeRangeRegex, strikeContentRegex);
 
     cm.focus();
   }
