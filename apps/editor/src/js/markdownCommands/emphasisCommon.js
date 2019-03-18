@@ -1,4 +1,7 @@
-// This file is common logic for italic, bold, strike makrdown commands.
+/**
+ * @fileoverview This file is common logic for italic, bold, strike makrdown commands.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 
 /**
  * range expand according to expendSize
@@ -110,7 +113,7 @@ export const changeSyntax = function(doc, range, symbol, syntaxRegex, contentReg
 
   // 1. expand text and check syntax => remove syntax
   // 2. check text is syntax => remove syntax
-  // 3. text does not match syntax so append syntax
+  // 3. If text does not match syntax, remove syntax inside text and then append syntax
   if (!(expandReplace(doc, range, symbolLength, isSyntax, t => removeSyntax(t, symbol))
       || replace(doc, selectionStr, isSyntax, t => removeSyntax(t, symbol))
   )) {
