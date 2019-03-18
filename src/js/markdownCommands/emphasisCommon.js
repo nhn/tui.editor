@@ -132,4 +132,3 @@ export const changeSyntax = function(doc, range, symbol, syntaxRegex, contentReg
     doc.setCursor(line, size);
   }
 };
-
