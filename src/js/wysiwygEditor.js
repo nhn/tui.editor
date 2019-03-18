@@ -1201,6 +1201,17 @@ class WysiwygEditor {
   }
 
   /**
+   * Check whether passed range is in table or not
+   * @param {Range} range range
+   * @returns {boolean} result
+   */
+  isInTable(range) {
+    const target = range.collapsed ? range.startContainer : range.commonAncestorContainer;
+
+    return !!$(target).closest('[contenteditable=true] table').length;
+  }
+
+  /**
    * Get text object of current range
    * @memberof WysiwygEditor
    * @param {Range} range Range object

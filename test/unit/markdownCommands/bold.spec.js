@@ -61,6 +61,24 @@ describe('Bold', () => {
       expect(cm.getValue()).toEqual(['**mytext1**', '', 'mytext2', 'mytext3'].join('\n'));
     });
 
+    it('in select text that is collapsed strike', () => {
+      cm.setValue('~~text~~');
+
+      doc.setSelection({
+        line: 0,
+        ch: 2
+      }, {
+        line: 0,
+        ch: 6
+      });
+
+      Bold.exec(mde);
+
+      expect(cm.getValue()).toEqual('~~**text**~~');
+    });
+  });
+
+  describe('remove bold syntax', () => {
     it('should remove bold syntax in the middle of the given range', () => {
       cm.setValue('my**text**1');
 
@@ -75,6 +93,86 @@ describe('Bold', () => {
       Bold.exec(mde);
 
       expect(cm.getValue()).toEqual('**mytext1**');
+    });
+
+    it('selected only text that is collapsed bold', () => {
+      cm.setValue('**test**');
+      doc.setSelection({
+        line: 0,
+        ch: 2
+      }, {
+        line: 0,
+        ch: 6
+      });
+
+      Bold.exec(mde);
+
+      expect(cm.getValue()).toEqual('test');
+    });
+
+    it('selected all text that is collapsed bold', () => {
+      cm.setValue('**test**');
+      doc.setSelection({
+        line: 0,
+        ch: 0
+      }, {
+        line: 0,
+        ch: 8
+      });
+
+      Bold.exec(mde);
+
+      expect(cm.getValue()).toEqual('test');
+    });
+
+    it('selected collapsed bold', () => {
+      cm.setValue('****');
+      doc.setSelection({
+        line: 0,
+        ch: 0
+      }, {
+        line: 0,
+        ch: 4
+      });
+
+      Bold.exec(mde);
+      expect(cm.getValue()).toEqual('');
+    });
+
+    it('in the empty string collapsed bold', () => {
+      cm.setValue('****');
+      doc.setCursor(0, 2);
+
+      Bold.exec(mde);
+      expect(cm.getValue()).toEqual('');
+    });
+
+    it('selected string including italic', () => {
+      cm.setValue('**TEST*italic*TEST**');
+      doc.setSelection({
+        line: 0,
+        ch: 0
+      }, {
+        line: 0,
+        ch: 20
+      });
+
+      Bold.exec(mde);
+      expect(cm.getValue()).toEqual('TEST*italic*TEST');
+    });
+
+    it('selected string collaped italic and bold', () => {
+      cm.setValue('***TEST***');
+      doc.setSelection({
+        line: 0,
+        ch: 0
+      }, {
+        line: 0,
+        ch: 10
+      });
+
+      Bold.exec(mde);
+      expect(cm.getValue()).toEqual('*TEST*');
     });
   });
 });

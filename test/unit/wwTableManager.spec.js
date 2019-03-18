@@ -37,16 +37,6 @@ describe('WwTableManager', () => {
     });
   });
 
-  it('isInTable() check if passed range is in table', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
-    wwe.getEditor().setHTML('<table><thead><tr><th><br></th><th><br></th></tr></thead>' +
-            '<tbody><tr><td><br></td><td><br></td></tr></tbody></table>');
-    range.setStart(wwe.get$Body().find('td')[0], 0);
-    range.collapse(true);
-
-    expect(mgr.isInTable(range)).toEqual(true);
-  });
-
   describe('_appendBrIfTdOrThNotHaveAsLastChild()', () => {
     beforeEach(() => {
       wwe.getEditor().setHTML('<table><thead><tr><th>1234</th></tr></thead>' +

@@ -106,6 +106,25 @@ class WwTablePasteHelper {
    */
   _pasteClipboardHtml(html) {
     const container = document.createDocumentFragment();
+    const startFramgmentStr = '<!--StartFragment-->';
+    const endFragmentStr = '<!--EndFragment-->';
+    const startFragmentIndex = html.indexOf(startFramgmentStr);
+    const endFragmentIndex = html.lastIndexOf(endFragmentStr);
+
+    if (startFragmentIndex > -1 && endFragmentIndex > -1) {
+      html = html.slice(startFragmentIndex + startFramgmentStr.length, endFragmentIndex);
+    }
+
+    // Wrap with <tr> if html contains dangling <td> tags
+    // Dangling <td> tag is that tag does not have <tr> as parent node.
+    if (/<\/td>((?!<\/tr>)[\s\S])*$/i.test(html)) {
+      html = '<TR>' + html + '</TR>';
+    }
+    // Wrap with <table> if html contains dangling <tr> tags
+    // Dangling <tr> tag is that tag does not have <table> as parent node.
+    if (/<\/tr>((?!<\/table>)[\s\S])*$/i.test(html)) {
+      html = '<TABLE>' + html + '</TABLE>';
+    }
 
     container.appendChild(htmlSanitizer(html));
     this._pasteClipboardContainer(container);
@@ -329,7 +348,7 @@ class WwTablePasteHelper {
         this._deleteContentsByOffset(startContainer, startOffset, domUtils.getOffsetLength(startContainer));
 
         // Remove nodes from startContainer in startBlock
-        this._removeNodesByDirection(startBlock, startContainer, false);
+        domUtils.removeNodesByDirection(startBlock, startContainer, false);
       }
 
       if (endContainer.nodeName === 'TD') {
@@ -339,11 +358,11 @@ class WwTablePasteHelper {
         this._deleteContentsByOffset(endContainer, 0, endOffset);
 
         // Remove nodes until endContainer in endBlock
-        this._removeNodesByDirection(endBlock, endContainer, true);
+        domUtils.removeNodesByDirection(endBlock, endContainer, true);
       }
 
       // Remove nodes between startBlock and endBlock
-      this._removeChild(common, nextOfstartBlock, endBlock);
+      domUtils.removeChildFromStartToEndNode(common, nextOfstartBlock, endBlock);
     }
 
     if (endBlock) {
@@ -411,56 +430,8 @@ class WwTablePasteHelper {
       const endNode = domUtils.getChildNodeByOffset(container, endOffset);
 
       if (startNode) {
-        this._removeChild(container, startNode, endNode || null);
+        domUtils.removeChildFromStartToEndNode(container, startNode, endNode || null);
       }
-    }
-  }
-
-  /**
-   * remove node from 'start' node to 'end-1' node inside parent
-   * if 'end' node is null, remove all child nodes after 'start' node.
-   * @memberof WwTablePasteHelper
-   * @param {Node} parent - parent node
-   * @param {Node} start - start node to remove
-   * @param {Node} end - end node to remove
-   * @private
-   */
-  _removeChild(parent, start, end) {
-    let child = start;
-
-    if (!child || parent !== child.parentNode) {
-      return;
-    }
-
-    while (child !== end) {
-      const next = child.nextSibling;
-      parent.removeChild(child);
-      child = next;
-    }
-  }
-
-  /**
-   * remove nodes along the direction from the node to reach targetParent node
-   * @memberof WwTablePasteHelper
-   * @param {Node} targetParent - stop removing when reach target parent node
-   * @param {Node} node - start node
-   * @param {boolean} isForward - direction
-   * @private
-   */
-  _removeNodesByDirection(targetParent, node, isForward) {
-    let parent = node;
-
-    while (parent !== targetParent) {
-      const nextParent = parent.parentNode;
-      const {nextSibling, previousSibling} = parent;
-
-      if (!isForward && nextSibling) {
-        this._removeChild(nextParent, nextSibling, null);
-      } else if (isForward && previousSibling) {
-        this._removeChild(nextParent, nextParent.childNodes[0], parent);
-      }
-
-      parent = nextParent;
     }
   }
 }

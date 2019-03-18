@@ -505,6 +505,79 @@ const isMDSupportInlineNode = function(node) {
   return /^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/ig.test(node.nodeName);
 };
 
+/**
+ * Check that node is styled node.
+ * Styled node is a node that has text and decorates text.
+ * @param {Node} node TD element
+ * @returns {boolean}
+ * @ignore
+ */
+const isStyledNode = function(node) {
+  return /^(A|ABBR|ACRONYM|B|BDI|BDO|BIG|CITE|CODE|DEL|DFN|EM|I|INS|KBD|MARK|Q|S|SAMP|SMALL|SPAN|STRONG|SUB|SUP|U|VAR)$/ig.test(node.nodeName);
+};
+
+/**
+ * remove node from 'start' node to 'end-1' node inside parent
+ * if 'end' node is null, remove all child nodes after 'start' node.
+ * @param {Node} parent - parent node
+ * @param {Node} start - start node to remove
+ * @param {Node} end - end node to remove
+ * @ignore
+ */
+const removeChildFromStartToEndNode = function(parent, start, end) {
+  let child = start;
+
+  if (!child || parent !== child.parentNode) {
+    return;
+  }
+
+  while (child !== end) {
+    const next = child.nextSibling;
+    parent.removeChild(child);
+    child = next;
+  }
+};
+
+/**
+ * remove nodes along the direction from the node to reach targetParent node
+ * @param {Node} targetParent - stop removing when reach target parent node
+ * @param {Node} node - start node
+ * @param {boolean} isForward - direction
+ * @ignore
+ */
+const removeNodesByDirection = function(targetParent, node, isForward) {
+  let parent = node;
+
+  while (parent !== targetParent) {
+    const nextParent = parent.parentNode;
+    const {nextSibling, previousSibling} = parent;
+
+    if (!isForward && nextSibling) {
+      removeChildFromStartToEndNode(nextParent, nextSibling, null);
+    } else if (isForward && previousSibling) {
+      removeChildFromStartToEndNode(nextParent, nextParent.childNodes[0], parent);
+    }
+
+    parent = nextParent;
+  }
+};
+
+const getLeafNode = function(node) {
+  let result = node;
+  while (result.childNodes && result.childNodes.length) {
+    const {firstChild: nextLeaf} = result;
+
+    // When inline tag have empty text node with other childnodes, ignore empty text node.
+    if (isTextNode(nextLeaf) && !getTextLength(nextLeaf)) {
+      result = nextLeaf.nextSibling || nextLeaf;
+    } else {
+      result = nextLeaf;
+    }
+  }
+
+  return result;
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -527,5 +600,9 @@ export default {
   getNodeInfo,
   getTableCellByDirection,
   getSiblingRowCellByDirection,
-  isMDSupportInlineNode
+  isMDSupportInlineNode,
+  isStyledNode,
+  removeChildFromStartToEndNode,
+  removeNodesByDirection,
+  getLeafNode
 };
