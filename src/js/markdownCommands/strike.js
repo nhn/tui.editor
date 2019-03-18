@@ -3,7 +3,7 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import CommandManager from '../commandManager';
-import {changeSyntax} from './empahsisCommon';
+import {changeSyntax} from './emphasisCommon';
 
 const strikeRangeRegex = /^~~.*~~$/;
 const strikeContentRegex = /~~([^~]*)~~/g;

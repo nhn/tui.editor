@@ -8,7 +8,7 @@ import {
   appendSyntax,
   expandReplace,
   replace
-} from './empahsisCommon';
+} from './emphasisCommon';
 
 const boldItalicRangeRegex = /^(\*{3}|_{3}).*\1$/;
 const boldRangeRegex = /^(\*{2}|_{2}).*\1$/;

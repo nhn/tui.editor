@@ -3,7 +3,7 @@
 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
 */
 import CommandManager from '../commandManager';
-import {changeSyntax} from './empahsisCommon';
+import {changeSyntax} from './emphasisCommon';
 
 const boldRangeRegex = /^(\*{2}|_{2}).*\1$/;
 const boldContentRegex = /[*_]{2,}([^*_]*)[*_]{2,}/g;
