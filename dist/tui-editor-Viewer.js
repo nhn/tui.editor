@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.3.2
+ * @version 1.3.3
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 144);
+/******/ 	return __webpack_require__(__webpack_require__.s = 145);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -390,7 +390,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 144:
+/***/ 145:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3534,6 +3534,85 @@ var isMDSupportInlineNode = function isMDSupportInlineNode(node) {
   );
 };
 
+/**
+ * Check that node is styled node.
+ * Styled node is a node that has text and decorates text.
+ * @param {Node} node TD element
+ * @returns {boolean}
+ * @ignore
+ */
+var isStyledNode = function isStyledNode(node) {
+  return (/^(A|ABBR|ACRONYM|B|BDI|BDO|BIG|CITE|CODE|DEL|DFN|EM|I|INS|KBD|MARK|Q|S|SAMP|SMALL|SPAN|STRONG|SUB|SUP|U|VAR)$/ig.test(node.nodeName)
+  );
+};
+
+/**
+ * remove node from 'start' node to 'end-1' node inside parent
+ * if 'end' node is null, remove all child nodes after 'start' node.
+ * @param {Node} parent - parent node
+ * @param {Node} start - start node to remove
+ * @param {Node} end - end node to remove
+ * @ignore
+ */
+var removeChildFromStartToEndNode = function removeChildFromStartToEndNode(parent, start, end) {
+  var child = start;
+
+  if (!child || parent !== child.parentNode) {
+    return;
+  }
+
+  while (child !== end) {
+    var next = child.nextSibling;
+    parent.removeChild(child);
+    child = next;
+  }
+};
+
+/**
+ * remove nodes along the direction from the node to reach targetParent node
+ * @param {Node} targetParent - stop removing when reach target parent node
+ * @param {Node} node - start node
+ * @param {boolean} isForward - direction
+ * @ignore
+ */
+var removeNodesByDirection = function removeNodesByDirection(targetParent, node, isForward) {
+  var parent = node;
+
+  while (parent !== targetParent) {
+    var nextParent = parent.parentNode;
+    var _parent = parent,
+        nextSibling = _parent.nextSibling,
+        previousSibling = _parent.previousSibling;
+
+
+    if (!isForward && nextSibling) {
+      removeChildFromStartToEndNode(nextParent, nextSibling, null);
+    } else if (isForward && previousSibling) {
+      removeChildFromStartToEndNode(nextParent, nextParent.childNodes[0], parent);
+    }
+
+    parent = nextParent;
+  }
+};
+
+var getLeafNode = function getLeafNode(node) {
+  var result = node;
+  while (result.childNodes && result.childNodes.length) {
+    var _result = result,
+        nextLeaf = _result.firstChild;
+
+    // When inline tag have empty text node with other childnodes, ignore empty text node.
+
+    if (isTextNode(nextLeaf) && !getTextLength(nextLeaf)) {
+      result = nextLeaf.nextSibling || nextLeaf;
+    } else {
+      result = nextLeaf;
+    }
+  }
+
+  return result;
+};
+
 exports.default = {
   getNodeName: getNodeName,
   isTextNode: isTextNode,
@@ -3556,7 +3635,11 @@ exports.default = {
   getNodeInfo: getNodeInfo,
   getTableCellByDirection: getTableCellByDirection,
   getSiblingRowCellByDirection: getSiblingRowCellByDirection,
-  isMDSupportInlineNode: isMDSupportInlineNode
+  isMDSupportInlineNode: isMDSupportInlineNode,
+  isStyledNode: isStyledNode,
+  removeChildFromStartToEndNode: removeChildFromStartToEndNode,
+  removeNodesByDirection: removeNodesByDirection,
+  getLeafNode: getLeafNode
 };
 
 /***/ }),

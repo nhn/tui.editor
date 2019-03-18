@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.3.2
+ * @version 1.3.3
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
  * @license MIT
  */
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 288);
+/******/ 	return __webpack_require__(__webpack_require__.s = 289);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -15965,6 +15965,85 @@ var isMDSupportInlineNode = function isMDSupportInlineNode(node) {
   );
 };
 
+/**
+ * Check that node is styled node.
+ * Styled node is a node that has text and decorates text.
+ * @param {Node} node TD element
+ * @returns {boolean}
+ * @ignore
+ */
+var isStyledNode = function isStyledNode(node) {
+  return (/^(A|ABBR|ACRONYM|B|BDI|BDO|BIG|CITE|CODE|DEL|DFN|EM|I|INS|KBD|MARK|Q|S|SAMP|SMALL|SPAN|STRONG|SUB|SUP|U|VAR)$/ig.test(node.nodeName)
+  );
+};
+
+/**
+ * remove node from 'start' node to 'end-1' node inside parent
+ * if 'end' node is null, remove all child nodes after 'start' node.
+ * @param {Node} parent - parent node
+ * @param {Node} start - start node to remove
+ * @param {Node} end - end node to remove
+ * @ignore
+ */
+var removeChildFromStartToEndNode = function removeChildFromStartToEndNode(parent, start, end) {
+  var child = start;
+
+  if (!child || parent !== child.parentNode) {
+    return;
+  }
+
+  while (child !== end) {
+    var next = child.nextSibling;
+    parent.removeChild(child);
+    child = next;
+  }
+};
+
+/**
+ * remove nodes along the direction from the node to reach targetParent node
+ * @param {Node} targetParent - stop removing when reach target parent node
+ * @param {Node} node - start node
+ * @param {boolean} isForward - direction
+ * @ignore
+ */
+var removeNodesByDirection = function removeNodesByDirection(targetParent, node, isForward) {
+  var parent = node;
+
+  while (parent !== targetParent) {
+    var nextParent = parent.parentNode;
+    var _parent = parent,
+        nextSibling = _parent.nextSibling,
+        previousSibling = _parent.previousSibling;
+
+
+    if (!isForward && nextSibling) {
+      removeChildFromStartToEndNode(nextParent, nextSibling, null);
+    } else if (isForward && previousSibling) {
+      removeChildFromStartToEndNode(nextParent, nextParent.childNodes[0], parent);
+    }
+
+    parent = nextParent;
+  }
+};
+
+var getLeafNode = function getLeafNode(node) {
+  var result = node;
+  while (result.childNodes && result.childNodes.length) {
+    var _result = result,
+        nextLeaf = _result.firstChild;
+
+    // When inline tag have empty text node with other childnodes, ignore empty text node.
+
+    if (isTextNode(nextLeaf) && !getTextLength(nextLeaf)) {
+      result = nextLeaf.nextSibling || nextLeaf;
+    } else {
+      result = nextLeaf;
+    }
+  }
+
+  return result;
+};
+
 exports.default = {
   getNodeName: getNodeName,
   isTextNode: isTextNode,
@@ -15987,7 +16066,11 @@ exports.default = {
   getNodeInfo: getNodeInfo,
   getTableCellByDirection: getTableCellByDirection,
   getSiblingRowCellByDirection: getSiblingRowCellByDirection,
-  isMDSupportInlineNode: isMDSupportInlineNode
+  isMDSupportInlineNode: isMDSupportInlineNode,
+  isStyledNode: isStyledNode,
+  removeChildFromStartToEndNode: removeChildFromStartToEndNode,
+  removeNodesByDirection: removeNodesByDirection,
+  getLeafNode: getLeafNode
 };
 
 /***/ }),
@@ -28878,7 +28961,7 @@ var _toolbarItem = __webpack_require__(23);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _tooltip = __webpack_require__(278);
+var _tooltip = __webpack_require__(279);
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -36994,7 +37077,8 @@ var basicRenderer = Renderer.factory({
 
         if (this._isNeedEscapeHtml(managedText)) {
             managedText = this.escapeTextHtml(managedText);
-        } else if (this._isNeedEscape(managedText)) {
+        }
+        if (this._isNeedEscape(managedText)) {
             managedText = this.escapeText(managedText);
         }
 
@@ -37007,7 +37091,7 @@ var basicRenderer = Renderer.factory({
         var res = '';
 
         if (!this.isEmptyText(subContent)) {
-            res = '_' + subContent + '_';
+            res = '*' + subContent + '*';
         }
 
         return res;
@@ -57056,6 +57140,165 @@ module.exports = ToastUIEditorViewer;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+/**
+ * @fileoverview This file is common logic for italic, bold, strike makrdown commands.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+
+/**
+ * range expand according to expendSize
+ * If can not expand, return null
+ * @param {range} range - range
+ * @param {number} expendSize - expendSize
+ * @returns {object} expanded range or null
+ * @ignore
+ */
+var getExpandedRange = function getExpandedRange(range, expendSize) {
+  var start = range.start,
+      end = range.end;
+
+  var expendRange = void 0;
+
+  if (start.ch >= expendSize) {
+    var from = {
+      line: start.line,
+      ch: start.ch - expendSize
+    };
+    var to = {
+      line: end.line,
+      ch: end.ch + expendSize
+    };
+
+    expendRange = {
+      from: from,
+      to: to
+    };
+  }
+
+  return expendRange;
+};
+
+/**
+ * remove symbol in the front and back of text
+ * @param {string} text - text
+ * @param {string} symbol - text
+ * @returns {string}
+ * @ignore
+ */
+var removeSyntax = exports.removeSyntax = function removeSyntax(text, symbol) {
+  var symbolLength = symbol.length;
+
+  return text.substr(symbolLength, text.length - symbolLength * 2);
+};
+
+/**
+ * append symbol in the front and back of text
+ * @param {string} text - text
+ * @param {string} symbol - text
+ * @returns {string}
+ * @ignore
+ */
+var appendSyntax = exports.appendSyntax = function appendSyntax(text, symbol) {
+  return '' + symbol + text + symbol;
+};
+
+/**
+ * check expanded text and replace text using replacer
+ * @param {CodeMirror.doc} doc - doc of codemirror
+ * @param {range} range - origin range
+ * @param {number} expandSize - expandSize
+ * @param {function} checker - sytax check function
+ * @param {function} replacer - text replace function
+ * @returns {boolean} - if replace text, return true.
+ * @ignore
+ */
+var expandReplace = exports.expandReplace = function expandReplace(doc, range, expandSize, checker, replacer) {
+  var expendRange = getExpandedRange(range, expandSize);
+  var result = false;
+
+  if (expendRange) {
+    var from = expendRange.from,
+        to = expendRange.to;
+
+    var expendRangeText = doc.getRange(from, to);
+    if (checker(expendRangeText)) {
+      doc.setSelection(from, to);
+      doc.replaceSelection(replacer(expendRangeText), 'around');
+      result = true;
+    }
+  }
+
+  return result;
+};
+
+/**
+ * check text and replace text using replacer
+ * @param {CodeMirror.doc} doc - doc of codemirror
+ * @param {string} text - text
+ * @param {function} checker - sytax check function
+ * @param {function} replacer - text replace function
+ * @returns {boolean} - if replace text, return true.
+ * @ignore
+ */
+var replace = exports.replace = function replace(doc, text, checker, replacer) {
+  var result = false;
+
+  if (checker(text)) {
+    doc.replaceSelection(replacer(text), 'around');
+    result = true;
+  }
+
+  return result;
+};
+
+var changeSyntax = exports.changeSyntax = function changeSyntax(doc, range, symbol, syntaxRegex, contentRegex) {
+  var _doc$getCursor = doc.getCursor(),
+      line = _doc$getCursor.line,
+      ch = _doc$getCursor.ch;
+
+  var selectionStr = doc.getSelection();
+  var symbolLength = symbol.length;
+  var isSyntax = function isSyntax(t) {
+    return syntaxRegex.test(t);
+  };
+
+  // 1. expand text and check syntax => remove syntax
+  // 2. check text is syntax => remove syntax
+  // 3. If text does not match syntax, remove syntax inside text and then append syntax
+  if (!(expandReplace(doc, range, symbolLength, isSyntax, function (t) {
+    return removeSyntax(t, symbol);
+  }) || replace(doc, selectionStr, isSyntax, function (t) {
+    return removeSyntax(t, symbol);
+  }))) {
+    var removeSyntaxInsideText = selectionStr.replace(contentRegex, '$1');
+    doc.replaceSelection(appendSyntax(removeSyntaxInsideText, symbol), 'around');
+  }
+
+  var afterSelectStr = doc.getSelection();
+  var size = ch;
+
+  if (!selectionStr) {
+    // If text was not selected, after replace text, move cursor
+    // For example **|** => | (move cusor -symbolLenth)
+    if (isSyntax(afterSelectStr)) {
+      size += symbolLength;
+    } else {
+      size -= symbolLength;
+    }
+    doc.setCursor(line, size);
+  }
+};
+
+/***/ }),
+/* 279 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements tooltip
@@ -57123,7 +57366,7 @@ var Tooltip = function () {
 exports.default = new Tooltip();
 
 /***/ }),
-/* 279 */
+/* 280 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57147,8 +57390,6 @@ var _codemirror = __webpack_require__(7);
 
 var _codemirror2 = _interopRequireDefault(_codemirror);
 
-__webpack_require__(291);
-
 __webpack_require__(292);
 
 __webpack_require__(293);
@@ -57160,6 +57401,8 @@ __webpack_require__(295);
 __webpack_require__(296);
 
 __webpack_require__(297);
+
+__webpack_require__(298);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -57573,7 +57816,7 @@ var CodeMirrorExt = function () {
 exports.default = CodeMirrorExt;
 
 /***/ }),
-/* 280 */
+/* 281 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57676,7 +57919,7 @@ var ComponentManager = function () {
 exports.default = ComponentManager;
 
 /***/ }),
-/* 281 */
+/* 282 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57770,7 +58013,7 @@ var WwTableManager = function () {
 
       this.eventManager.listen('wysiwygRangeChangeAfter.table', function () {
         var range = _this.wwe.getEditor().getSelection();
-        var isRangeInTable = _this.isInTable(range);
+        var isRangeInTable = _this.wwe.isInTable(range);
 
         _this._unwrapBlockInTable();
         _this._completeTableIfNeed();
@@ -57882,7 +58125,7 @@ var WwTableManager = function () {
 
       this.keyEventHandlers = {
         'DEFAULT': function DEFAULT(ev, range, keymap) {
-          var isRangeInTable = _this3.isInTable(range);
+          var isRangeInTable = _this3.wwe.isInTable(range);
 
           if (isRangeInTable && !_this3._isSingleModifierKey(keymap)) {
             _this3._recordUndoStateIfNeed(range);
@@ -57911,7 +58154,12 @@ var WwTableManager = function () {
             ev.preventDefault();
             _this3.wwe.breakToNewDefaultBlock(range, 'before');
             isNeedNext = false;
-          } else if (_this3.isInTable(range)) {
+          } else if (_this3.wwe.isInTable(range)) {
+            if (_this3._isInStyledText(range)) {
+              _this3.wwe.defer(function () {
+                _this3._removeBRinStyleText();
+              });
+            }
             _this3._appendBrIfTdOrThNotHaveAsLastChild(range);
             isNeedNext = false;
           }
@@ -57944,19 +58192,127 @@ var WwTableManager = function () {
     }
 
     /**
-     * isInTable
-     * Check whether passed range is in table or not
+     * Check whether range is in style tag that is like 'B', 'I', 'S', 'SPAN', 'CODE'
+     * Those tag is supported in Wysiwyg.
      * @param {Range} range range
-     * @returns {boolean} result
-     * @memberof WwTableManager
+     * @returns {Boolean} range is in the style tag
+     * @private
      */
 
   }, {
-    key: 'isInTable',
-    value: function isInTable(range) {
-      var target = range.collapsed ? range.startContainer : range.commonAncestorContainer;
+    key: '_isInStyledText',
+    value: function _isInStyledText(range) {
+      var startContainer = range.startContainer;
 
-      return !!(0, _jquery2.default)(target).closest('[contenteditable=true] table').length;
+      var node = void 0;
+      if (_domUtils2.default.isTextNode(startContainer)) {
+        node = startContainer.parentNode;
+      } else {
+        node = startContainer;
+      }
+
+      return range.collapsed && _domUtils2.default.isStyledNode(node);
+    }
+
+    /**
+     * When enter key occur in the styled text, 'br' tag insert in the style tag like 'b', 'i' etc.
+     * So in thoes case, 'br' tag would be pulled out in this logic.
+     * @private
+     */
+
+  }, {
+    key: '_removeBRinStyleText',
+    value: function _removeBRinStyleText() {
+      var afterRange = this.wwe.getRange();
+      var startContainer = afterRange.startContainer,
+          startOffset = afterRange.startOffset;
+
+
+      var styleNode = void 0;
+      if (startContainer.nodeName === 'TD') {
+        // This case is <i>TEST<br></i>|<br>
+        styleNode = _domUtils2.default.getChildNodeByOffset(startContainer, startOffset - 1);
+      } else {
+        styleNode = _domUtils2.default.getParentUntil(startContainer, 'TD');
+      }
+
+      var brNode = styleNode.querySelector('br');
+      var _styleNode = styleNode,
+          tdNode = _styleNode.parentNode,
+          nodeName = _styleNode.nodeName;
+
+
+      if (nodeName === 'CODE' && !brNode.previousSibling) {
+        // cursor is located in the start of text
+        // Before Enter : <code>|TEST</code>
+        // After Enter  : <code><br>|TEST</code>
+        // TO BE        : <br><code>|TEST</code>
+        tdNode.insertBefore(brNode, styleNode);
+        afterRange.setStart(styleNode, 0);
+      } else if (nodeName === 'CODE' && !brNode.nextSibling) {
+        // cursor is located in the end of text
+        // Before Enter : <code>TEST|</code>
+        // After Enter  : <code>TEST<br>|</code>
+        // TO BE        : <code>TEST</code><br>|
+        tdNode.insertBefore(brNode, styleNode.nextSibling);
+        afterRange.setStart(tdNode, _domUtils2.default.getNodeOffsetOfParent(brNode) + 1);
+      } else {
+        // [Case 1] cursor is located in the middle of text
+        // Before Enter : <i>TE|ST</i>
+        // After Enter  : <i>TE<br>|ST</i>
+        // TO BE        : <i>TE</i><br><i>|ST</i>
+        // [Case 2] cursor is located in the start of text
+        // Before Enter : <i>|TEST</i>
+        // After Enter  : <i><br>|TEST</i>
+        // TO BE        : <i>|</i><br><i>TEST</i>
+        // [Case 3] cursor is located in the end of text
+        // Before Enter : <i>TEST|</i>
+        // After Enter  : <i>TEST<br>|</i>
+        // TO BE        : <i>TEST</i><br><i>|</i>
+        var newNode = this._splitByBR(styleNode, brNode);
+        afterRange.setStart(newNode, 0);
+      }
+
+      afterRange.collapse(true);
+      this.wwe.getEditor().setSelection(afterRange);
+    }
+
+    /**
+     * When container node have br node, split container base on br node and pull out BR.
+     * After Enter  : <i>TE<br>ST</i>
+     * TO BE        : <i>TE</i><br><i>ST</i>
+     * @param {Node} container container
+     * @param {Node} brNode container
+     * @returns {Node} node for positioning of cursor
+     * @private
+     */
+
+  }, {
+    key: '_splitByBR',
+    value: function _splitByBR(container, brNode) {
+      var cloneStyleNode = container.cloneNode(true);
+      var newBR = document.createElement('br');
+      var parentNode = container.parentNode;
+
+      // Origin style node should be removed the back nodes of br node.
+
+      _domUtils2.default.removeNodesByDirection(container, brNode, false);
+      brNode.parentNode.removeChild(brNode);
+
+      // Cloned style node should be removed the front nodes of br node
+      var clonedBR = cloneStyleNode.querySelector('br');
+      _domUtils2.default.removeNodesByDirection(cloneStyleNode, clonedBR, true);
+      clonedBR.parentNode.removeChild(clonedBR);
+
+      parentNode.insertBefore(cloneStyleNode, container.nextSibling);
+      parentNode.insertBefore(newBR, cloneStyleNode);
+
+      var leafNode = _domUtils2.default.getLeafNode(cloneStyleNode);
+      if (!_domUtils2.default.getTextLength(leafNode)) {
+        leafNode.textContent = '\u200B';
+      }
+
+      return leafNode;
     }
 
     /**
@@ -58009,7 +58365,7 @@ var WwTableManager = function () {
       var isNeedNext = true;
 
       if (range.collapsed) {
-        if (this.isInTable(range)) {
+        if (this.wwe.isInTable(range)) {
           if (isBackspace) {
             this._tableHandlerOnBackspace(range, ev);
           } else {
@@ -58025,7 +58381,7 @@ var WwTableManager = function () {
           this._removeTable(range, _domUtils2.default.getChildNodeByOffset(range.startContainer, startOffset));
           isNeedNext = false;
         }
-      } else if (this.isInTable(range)) {
+      } else if (this.wwe.isInTable(range)) {
         if ($selectedCells.length > 0) {
           var removed = this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
           if (removed) {
@@ -58912,7 +59268,7 @@ var WwTableManager = function () {
       var isNeedNext = void 0;
 
       if (range.collapsed) {
-        if (this.isInTable(range) && currentCell) {
+        if (this.wwe.isInTable(range) && currentCell) {
           if ((direction === 'previous' || interval === 'row') && !_tuiCodeSnippet2.default.isUndefined(ev)) {
             ev.preventDefault();
           }
@@ -59062,7 +59418,7 @@ function tableCellGenerator(amount, tagName) {
 exports.default = WwTableManager;
 
 /***/ }),
-/* 282 */
+/* 283 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -59508,11 +59864,10 @@ var WwTableSelectionManager = function () {
       var sq = this.wwe.getEditor();
       var range = sq.getSelection().cloneRange();
       var $selectedCells = this.getSelectedCells();
-      var tableManager = this.wwe.componentManager.getManager('table');
       var firstSelectedCell = $selectedCells.first().get(0);
       var lastSelectedCell = $selectedCells.last().get(0);
 
-      if ($selectedCells.length && tableManager.isInTable(range)) {
+      if ($selectedCells.length && this.wwe.isInTable(range)) {
         range.setStart(firstSelectedCell, 0);
         range.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
         sq.setSelection(range);
@@ -59553,7 +59908,7 @@ var WwTableSelectionManager = function () {
 exports.default = WwTableSelectionManager;
 
 /***/ }),
-/* 283 */
+/* 284 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -59648,8 +60003,40 @@ var WwCodeBlockManager = function () {
   }, {
     key: '_initKeyHandler',
     value: function _initKeyHandler() {
-      this._onKeyEventHandler = this._onBackspaceKeyEventHandler.bind(this);
-      this.wwe.addKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
+      var _this = this;
+
+      this._keyEventHandlers = {
+        'BACK_SPACE': this._onBackspaceKeyEventHandler.bind(this),
+        'ENTER': function ENTER(ev, range) {
+          if (!_this.wwe.isInTable(range) && _this.wwe.getEditor().hasFormat('CODE')) {
+            _this.wwe.defer(function () {
+              var _wwe$getRange = _this.wwe.getRange(),
+                  startContainer = _wwe$getRange.startContainer;
+
+              var codeNode = _this._getCodeNode(startContainer);
+              if (codeNode && !_domUtils2.default.getTextLength(codeNode)) {
+                codeNode.parentNode.removeChild(codeNode);
+              }
+            });
+          }
+        }
+      };
+
+      _tuiCodeSnippet2.default.forEach(this._keyEventHandlers, function (handler, key) {
+        return _this.wwe.addKeyEventHandler(key, handler);
+      });
+    }
+  }, {
+    key: '_getCodeNode',
+    value: function _getCodeNode(node) {
+      var result = void 0;
+      if (node.nodeName === 'CODE') {
+        result = node;
+      } else if (node.parentNode.nodeName === 'CODE') {
+        result = node.parentNode;
+      }
+
+      return result;
     }
 
     /**
@@ -59662,14 +60049,14 @@ var WwCodeBlockManager = function () {
   }, {
     key: '_initEvent',
     value: function _initEvent() {
-      var _this = this;
+      var _this2 = this;
 
       this.eventManager.listen('wysiwygSetValueAfter.codeblock', function () {
-        _this.modifyCodeBlockForWysiwyg();
+        _this2.modifyCodeBlockForWysiwyg();
       });
 
       this.eventManager.listen('wysiwygProcessHTMLText.codeblock', function (html) {
-        return _this._changePreToPreCode(html);
+        return _this2._changePreToPreCode(html);
       });
     }
 
@@ -59989,9 +60376,13 @@ var WwCodeBlockManager = function () {
   }, {
     key: 'destroy',
     value: function destroy() {
+      var _this3 = this;
+
       this.eventManager.removeEventHandler('wysiwygSetValueAfter.codeblock');
       this.eventManager.removeEventHandler('wysiwygProcessHTMLText.codeblock');
-      this.wwe.removeKeyEventHandler('BACK_SPACE', this._onKeyEventHandler);
+      _tuiCodeSnippet2.default.forEach(this._keyEventHandlers, function (handler, key) {
+        return _this3.wwe.removeKeyEventHandler(key, handler);
+      });
     }
   }]);
 
@@ -60015,7 +60406,7 @@ function sanitizeHtmlCode(code) {
 exports.default = WwCodeBlockManager;
 
 /***/ }),
-/* 284 */
+/* 285 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -60049,11 +60440,11 @@ var _toolbarItem = __webpack_require__(23);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _toolbarDivider = __webpack_require__(285);
+var _toolbarDivider = __webpack_require__(286);
 
 var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
 
-var _toolbarItemFactory = __webpack_require__(286);
+var _toolbarItemFactory = __webpack_require__(287);
 
 var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
 
@@ -60457,7 +60848,7 @@ var Toolbar = function (_UIController) {
 exports.default = Toolbar;
 
 /***/ }),
-/* 285 */
+/* 286 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -60531,7 +60922,7 @@ Object.defineProperty(ToolbarDivider, 'className', {
 exports.default = ToolbarDivider;
 
 /***/ }),
-/* 286 */
+/* 287 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -60550,11 +60941,11 @@ var _toolbarItem = __webpack_require__(23);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _toolbarButton = __webpack_require__(318);
+var _toolbarButton = __webpack_require__(319);
 
 var _toolbarButton2 = _interopRequireDefault(_toolbarButton);
 
-var _toolbarDivider = __webpack_require__(285);
+var _toolbarDivider = __webpack_require__(286);
 
 var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
 
@@ -60748,7 +61139,7 @@ var ToolbarItemFactory = function () {
 exports.default = ToolbarItemFactory;
 
 /***/ }),
-/* 287 */
+/* 288 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -60904,7 +61295,7 @@ var Tab = function (_UIController) {
 exports.default = Tab;
 
 /***/ }),
-/* 288 */
+/* 289 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -60916,7 +61307,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Editor = __webpack_require__(289);
+var Editor = __webpack_require__(290);
 
 // for jquery
 /**
@@ -60957,7 +61348,7 @@ _jquery2.default.fn.tuiEditor = function () {
 module.exports = Editor;
 
 /***/ }),
-/* 289 */
+/* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -60990,7 +61381,7 @@ var _button = __webpack_require__(31);
 
 var _button2 = _interopRequireDefault(_button);
 
-var _markdownEditor = __webpack_require__(290);
+var _markdownEditor = __webpack_require__(291);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
@@ -60998,11 +61389,11 @@ var _mdPreview = __webpack_require__(24);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
-var _wysiwygEditor = __webpack_require__(300);
+var _wysiwygEditor = __webpack_require__(301);
 
 var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-var _layout = __webpack_require__(314);
+var _layout = __webpack_require__(315);
 
 var _layout2 = _interopRequireDefault(_layout);
 
@@ -61022,7 +61413,7 @@ var _importManager = __webpack_require__(14);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
-var _wwCodeBlockManager = __webpack_require__(283);
+var _wwCodeBlockManager = __webpack_require__(284);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
@@ -61038,7 +61429,7 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _defaultUI = __webpack_require__(315);
+var _defaultUI = __webpack_require__(316);
 
 var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
@@ -61046,11 +61437,11 @@ var _domUtils = __webpack_require__(5);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwTableManager = __webpack_require__(281);
+var _wwTableManager = __webpack_require__(282);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(282);
+var _wwTableSelectionManager = __webpack_require__(283);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
@@ -61058,167 +61449,165 @@ var _codeBlockManager = __webpack_require__(11);
 
 var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
-var _bold = __webpack_require__(332);
+var _bold = __webpack_require__(333);
 
 var _bold2 = _interopRequireDefault(_bold);
 
-var _italic = __webpack_require__(333);
+var _italic = __webpack_require__(334);
 
 var _italic2 = _interopRequireDefault(_italic);
 
-var _strike = __webpack_require__(334);
+var _strike = __webpack_require__(335);
 
 var _strike2 = _interopRequireDefault(_strike);
 
-var _blockquote = __webpack_require__(335);
+var _blockquote = __webpack_require__(336);
 
 var _blockquote2 = _interopRequireDefault(_blockquote);
 
-var _heading = __webpack_require__(336);
+var _heading = __webpack_require__(337);
 
 var _heading2 = _interopRequireDefault(_heading);
 
-var _paragraph = __webpack_require__(337);
+var _paragraph = __webpack_require__(338);
 
 var _paragraph2 = _interopRequireDefault(_paragraph);
 
-var _hr = __webpack_require__(338);
+var _hr = __webpack_require__(339);
 
 var _hr2 = _interopRequireDefault(_hr);
 
-var _addLink = __webpack_require__(339);
+var _addLink = __webpack_require__(340);
 
 var _addLink2 = _interopRequireDefault(_addLink);
 
-var _addImage = __webpack_require__(340);
+var _addImage = __webpack_require__(341);
 
 var _addImage2 = _interopRequireDefault(_addImage);
 
-var _ul = __webpack_require__(341);
+var _ul = __webpack_require__(342);
 
 var _ul2 = _interopRequireDefault(_ul);
 
-var _ol = __webpack_require__(342);
+var _ol = __webpack_require__(343);
 
 var _ol2 = _interopRequireDefault(_ol);
 
-var _indent = __webpack_require__(343);
+var _indent = __webpack_require__(344);
 
 var _indent2 = _interopRequireDefault(_indent);
 
-var _outdent = __webpack_require__(344);
+var _outdent = __webpack_require__(345);
 
 var _outdent2 = _interopRequireDefault(_outdent);
 
-var _table = __webpack_require__(345);
+var _table = __webpack_require__(346);
 
 var _table2 = _interopRequireDefault(_table);
 
-var _task = __webpack_require__(346);
+var _task = __webpack_require__(347);
 
 var _task2 = _interopRequireDefault(_task);
 
-var _code = __webpack_require__(347);
+var _code = __webpack_require__(348);
 
 var _code2 = _interopRequireDefault(_code);
 
-var _codeBlock = __webpack_require__(348);
+var _codeBlock = __webpack_require__(349);
 
 var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-var _bold3 = __webpack_require__(349);
+var _bold3 = __webpack_require__(350);
 
 var _bold4 = _interopRequireDefault(_bold3);
 
-var _italic3 = __webpack_require__(350);
+var _italic3 = __webpack_require__(351);
 
 var _italic4 = _interopRequireDefault(_italic3);
 
-var _strike3 = __webpack_require__(351);
+var _strike3 = __webpack_require__(352);
 
 var _strike4 = _interopRequireDefault(_strike3);
 
-var _blockquote3 = __webpack_require__(352);
+var _blockquote3 = __webpack_require__(353);
 
 var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-var _addImage3 = __webpack_require__(353);
+var _addImage3 = __webpack_require__(354);
 
 var _addImage4 = _interopRequireDefault(_addImage3);
 
-var _addLink3 = __webpack_require__(354);
+var _addLink3 = __webpack_require__(355);
 
 var _addLink4 = _interopRequireDefault(_addLink3);
 
-var _hr3 = __webpack_require__(355);
+var _hr3 = __webpack_require__(356);
 
 var _hr4 = _interopRequireDefault(_hr3);
 
-var _heading3 = __webpack_require__(356);
+var _heading3 = __webpack_require__(357);
 
 var _heading4 = _interopRequireDefault(_heading3);
 
-var _paragraph3 = __webpack_require__(357);
+var _paragraph3 = __webpack_require__(358);
 
 var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-var _ul3 = __webpack_require__(358);
+var _ul3 = __webpack_require__(359);
 
 var _ul4 = _interopRequireDefault(_ul3);
 
-var _ol3 = __webpack_require__(359);
+var _ol3 = __webpack_require__(360);
 
 var _ol4 = _interopRequireDefault(_ol3);
 
-var _table3 = __webpack_require__(360);
+var _table3 = __webpack_require__(361);
 
 var _table4 = _interopRequireDefault(_table3);
 
-var _tableAddRow = __webpack_require__(361);
+var _tableAddRow = __webpack_require__(362);
 
 var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-var _tableAddCol = __webpack_require__(362);
+var _tableAddCol = __webpack_require__(363);
 
 var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-var _tableRemoveRow = __webpack_require__(363);
+var _tableRemoveRow = __webpack_require__(364);
 
 var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-var _tableRemoveCol = __webpack_require__(364);
+var _tableRemoveCol = __webpack_require__(365);
 
 var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-var _tableAlignCol = __webpack_require__(365);
+var _tableAlignCol = __webpack_require__(366);
 
 var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-var _tableRemove = __webpack_require__(366);
+var _tableRemove = __webpack_require__(367);
 
 var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-var _indent3 = __webpack_require__(367);
+var _indent3 = __webpack_require__(368);
 
 var _indent4 = _interopRequireDefault(_indent3);
 
-var _outdent3 = __webpack_require__(368);
+var _outdent3 = __webpack_require__(369);
 
 var _outdent4 = _interopRequireDefault(_outdent3);
 
-var _task3 = __webpack_require__(369);
+var _task3 = __webpack_require__(370);
 
 var _task4 = _interopRequireDefault(_task3);
 
-var _code3 = __webpack_require__(370);
+var _code3 = __webpack_require__(371);
 
 var _code4 = _interopRequireDefault(_code3);
 
-var _codeBlock3 = __webpack_require__(371);
+var _codeBlock3 = __webpack_require__(372);
 
 var _codeBlock4 = _interopRequireDefault(_codeBlock3);
-
-__webpack_require__(372);
 
 __webpack_require__(373);
 
@@ -61249,6 +61638,8 @@ __webpack_require__(385);
 __webpack_require__(386);
 
 __webpack_require__(387);
+
+__webpack_require__(388);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -61359,7 +61750,7 @@ var ToastUIEditor = function () {
 
     this.setUI(this.options.UI || new _defaultUI2.default(this));
 
-    this.mdEditor = _markdownEditor2.default.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
+    this.mdEditor = _markdownEditor2.default.factory(this.layout.getMdEditorContainerEl(), this.eventManager, this.options);
     this.preview = new _mdPreview2.default(this.layout.getPreviewEl(), this.eventManager, this.convertor);
     this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
     this.toMarkOptions = null;
@@ -62195,7 +62586,7 @@ ToastUIEditor.markdownit = _convertor2.default.getMarkdownitRenderer();
 module.exports = ToastUIEditor;
 
 /***/ }),
-/* 290 */
+/* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -62213,7 +62604,7 @@ var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _codeMirrorExt = __webpack_require__(279);
+var _codeMirrorExt = __webpack_require__(280);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
@@ -62221,15 +62612,15 @@ var _keyMapper = __webpack_require__(32);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _mdListManager = __webpack_require__(298);
+var _mdListManager = __webpack_require__(299);
 
 var _mdListManager2 = _interopRequireDefault(_mdListManager);
 
-var _componentManager = __webpack_require__(280);
+var _componentManager = __webpack_require__(281);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _mdTextObject = __webpack_require__(299);
+var _mdTextObject = __webpack_require__(300);
 
 var _mdTextObject2 = _interopRequireDefault(_mdTextObject);
 
@@ -62258,9 +62649,10 @@ var MarkdownEditor = function (_CodeMirrorExt) {
    * Creates an instance of MarkdownEditor.
    * @param {jQuery} $el - container jquery element
    * @param {EventManager} eventManager - event manager
+   * @param {Object} options - options of editor
    * @memberof MarkdownEditor
    */
-  function MarkdownEditor($el, eventManager) {
+  function MarkdownEditor($el, eventManager, options) {
     _classCallCheck(this, MarkdownEditor);
 
     var _this = _possibleConstructorReturn(this, (MarkdownEditor.__proto__ || Object.getPrototypeOf(MarkdownEditor)).call(this, $el.get(0), {
@@ -62271,7 +62663,8 @@ var MarkdownEditor = function (_CodeMirrorExt) {
         'Enter': 'newlineAndIndentContinueMarkdownList',
         'Tab': 'indentOrderedList',
         'Shift-Tab': 'indentLessOrderedList'
-      }
+      },
+      viewportMargin: options && options.height === 'auto' ? Infinity : 10
     }));
 
     _this.eventManager = eventManager;
@@ -62513,13 +62906,14 @@ var MarkdownEditor = function (_CodeMirrorExt) {
      * @memberof MarkdownEditor
      * @param {jQuery} $el - Container element for editor
      * @param {EventManager} eventManager - EventManager instance
+     * @param {Object} options - options of editor
      * @returns {MarkdownEditor} - MarkdownEditor
      */
 
   }], [{
     key: 'factory',
-    value: function factory($el, eventManager) {
-      var mde = new MarkdownEditor($el, eventManager);
+    value: function factory($el, eventManager, options) {
+      var mde = new MarkdownEditor($el, eventManager, options);
 
       return mde;
     }
@@ -62531,7 +62925,7 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 exports.default = MarkdownEditor;
 
 /***/ }),
-/* 291 */
+/* 292 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -62674,7 +63068,7 @@ function findFirstListItem(lineNumber, cm) {
 }
 
 /***/ }),
-/* 292 */
+/* 293 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -62759,7 +63153,7 @@ _codemirror2.default.overlayMode = function (base, overlay, combine) {
  */
 
 /***/ }),
-/* 293 */
+/* 294 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -63659,7 +64053,7 @@ _codemirror2.default.defineMIME("text/markdown", "markdown");
 _codemirror2.default.defineMIME("text/x-markdown", "markdown");
 
 /***/ }),
-/* 294 */
+/* 295 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -63797,7 +64191,7 @@ _codemirror2.default.defineMode("gfm", function (config, modeConfig) {
 _codemirror2.default.defineMIME("text/x-gfm", "gfm");
 
 /***/ }),
-/* 295 */
+/* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -63915,7 +64309,7 @@ function incrementRemainingMarkdownListNumbers(cm, pos) {
 }
 
 /***/ }),
-/* 296 */
+/* 297 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64068,7 +64462,7 @@ function replaceMultiLine(cm, upper, bottom, lineAdjustment) {
 }
 
 /***/ }),
-/* 297 */
+/* 298 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64138,7 +64532,7 @@ function isEmpty(cm) {
 }
 
 /***/ }),
-/* 298 */
+/* 299 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64533,7 +64927,7 @@ var MdListManager = function () {
 exports.default = MdListManager;
 
 /***/ }),
-/* 299 */
+/* 300 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64721,7 +65115,7 @@ var mdTextObject = function () {
 exports.default = mdTextObject;
 
 /***/ }),
-/* 300 */
+/* 301 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64749,43 +65143,43 @@ var _domUtils = __webpack_require__(5);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwClipboardManager = __webpack_require__(301);
+var _wwClipboardManager = __webpack_require__(302);
 
 var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-var _wwListManager = __webpack_require__(304);
+var _wwListManager = __webpack_require__(305);
 
 var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-var _wwTaskManager = __webpack_require__(305);
+var _wwTaskManager = __webpack_require__(306);
 
 var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-var _wwTableManager = __webpack_require__(281);
+var _wwTableManager = __webpack_require__(282);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(282);
+var _wwTableSelectionManager = __webpack_require__(283);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-var _wwHrManager = __webpack_require__(306);
+var _wwHrManager = __webpack_require__(307);
 
 var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-var _wwPManager = __webpack_require__(307);
+var _wwPManager = __webpack_require__(308);
 
 var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-var _wwHeadingManager = __webpack_require__(308);
+var _wwHeadingManager = __webpack_require__(309);
 
 var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-var _wwCodeBlockManager = __webpack_require__(283);
+var _wwCodeBlockManager = __webpack_require__(284);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-var _squireExt = __webpack_require__(309);
+var _squireExt = __webpack_require__(310);
 
 var _squireExt2 = _interopRequireDefault(_squireExt);
 
@@ -64793,15 +65187,15 @@ var _keyMapper = __webpack_require__(32);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _wwTextObject = __webpack_require__(311);
+var _wwTextObject = __webpack_require__(312);
 
 var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
 
-var _componentManager = __webpack_require__(280);
+var _componentManager = __webpack_require__(281);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _codeBlockGadget = __webpack_require__(312);
+var _codeBlockGadget = __webpack_require__(313);
 
 var _codeBlockGadget2 = _interopRequireDefault(_codeBlockGadget);
 
@@ -66188,6 +66582,20 @@ var WysiwygEditor = function () {
     }
 
     /**
+     * Check whether passed range is in table or not
+     * @param {Range} range range
+     * @returns {boolean} result
+     */
+
+  }, {
+    key: 'isInTable',
+    value: function isInTable(range) {
+      var target = range.collapsed ? range.startContainer : range.commonAncestorContainer;
+
+      return !!(0, _jquery2.default)(target).closest('[contenteditable=true] table').length;
+    }
+
+    /**
      * Get text object of current range
      * @memberof WysiwygEditor
      * @param {Range} range Range object
@@ -66259,7 +66667,7 @@ var WysiwygEditor = function () {
 exports.default = WysiwygEditor;
 
 /***/ }),
-/* 301 */
+/* 302 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -66287,11 +66695,11 @@ var _domUtils = __webpack_require__(5);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwPasteContentHelper = __webpack_require__(302);
+var _wwPasteContentHelper = __webpack_require__(303);
 
 var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
-var _wwTablePasteHelper = __webpack_require__(303);
+var _wwTablePasteHelper = __webpack_require__(304);
 
 var _wwTablePasteHelper2 = _interopRequireDefault(_wwTablePasteHelper);
 
@@ -66409,9 +66817,8 @@ var WwClipboardManager = function () {
       var ev = event.data;
 
       var range = this.wwe.getEditor().getSelection();
-      var tableManager = this.wwe.componentManager.getManager('table');
 
-      if (tableManager.isInTable(range) && this._isSingleCellSelected(range)) {
+      if (this.wwe.isInTable(range) && this._isSingleCellSelected(range)) {
         this._tablePasteHelper.pasteClipboard(ev);
       }
     }
@@ -66718,7 +67125,7 @@ var WwClipboardManager = function () {
 exports.default = WwClipboardManager;
 
 /***/ }),
-/* 302 */
+/* 303 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -66828,7 +67235,7 @@ var WwPasteContentHelper = function () {
       _tuiCodeSnippet2.default.forEachArray(array, function (node) {
         var isTextNode = node.nodeType === 3;
         /* eslint-disable max-len */
-        var isInlineNode = /^(SPAN|A|CODE|EM|I|STRONG|B|S|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/ig.test(node.tagName);
+        var isInlineNode = /^(SPAN|A|CODE|EM|I|STRONG|B|S|U|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/ig.test(node.tagName);
         /* eslint-enable max-len */
 
         if (isTextNode || isInlineNode) {
@@ -67239,7 +67646,7 @@ var WwPasteContentHelper = function () {
 exports.default = WwPasteContentHelper;
 
 /***/ }),
-/* 303 */
+/* 304 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -67396,6 +67803,25 @@ var WwTablePasteHelper = function () {
     key: '_pasteClipboardHtml',
     value: function _pasteClipboardHtml(html) {
       var container = document.createDocumentFragment();
+      var startFramgmentStr = '<!--StartFragment-->';
+      var endFragmentStr = '<!--EndFragment-->';
+      var startFragmentIndex = html.indexOf(startFramgmentStr);
+      var endFragmentIndex = html.lastIndexOf(endFragmentStr);
+
+      if (startFragmentIndex > -1 && endFragmentIndex > -1) {
+        html = html.slice(startFragmentIndex + startFramgmentStr.length, endFragmentIndex);
+      }
+
+      // Wrap with <tr> if html contains dangling <td> tags
+      // Dangling <td> tag is that tag does not have <tr> as parent node.
+      if (/<\/td>((?!<\/tr>)[\s\S])*$/i.test(html)) {
+        html = '<TR>' + html + '</TR>';
+      }
+      // Wrap with <table> if html contains dangling <tr> tags
+      // Dangling <tr> tag is that tag does not have <table> as parent node.
+      if (/<\/tr>((?!<\/table>)[\s\S])*$/i.test(html)) {
+        html = '<TABLE>' + html + '</TABLE>';
+      }
 
       container.appendChild((0, _htmlSanitizer2.default)(html));
       this._pasteClipboardContainer(container);
@@ -67661,7 +68087,7 @@ var WwTablePasteHelper = function () {
           this._deleteContentsByOffset(startContainer, startOffset, _domUtils2.default.getOffsetLength(startContainer));
 
           // Remove nodes from startContainer in startBlock
-          this._removeNodesByDirection(startBlock, startContainer, false);
+          _domUtils2.default.removeNodesByDirection(startBlock, startContainer, false);
         }
 
         if (endContainer.nodeName === 'TD') {
@@ -67671,11 +68097,11 @@ var WwTablePasteHelper = function () {
           this._deleteContentsByOffset(endContainer, 0, endOffset);
 
           // Remove nodes until endContainer in endBlock
-          this._removeNodesByDirection(endBlock, endContainer, true);
+          _domUtils2.default.removeNodesByDirection(endBlock, endContainer, true);
         }
 
         // Remove nodes between startBlock and endBlock
-        this._removeChild(common, nextOfstartBlock, endBlock);
+        _domUtils2.default.removeChildFromStartToEndNode(common, nextOfstartBlock, endBlock);
       }
 
       if (endBlock) {
@@ -67754,65 +68180,8 @@ var WwTablePasteHelper = function () {
         var endNode = _domUtils2.default.getChildNodeByOffset(container, endOffset);
 
         if (startNode) {
-          this._removeChild(container, startNode, endNode || null);
+          _domUtils2.default.removeChildFromStartToEndNode(container, startNode, endNode || null);
         }
-      }
-    }
-
-    /**
-     * remove node from 'start' node to 'end-1' node inside parent
-     * if 'end' node is null, remove all child nodes after 'start' node.
-     * @memberof WwTablePasteHelper
-     * @param {Node} parent - parent node
-     * @param {Node} start - start node to remove
-     * @param {Node} end - end node to remove
-     * @private
-     */
-
-  }, {
-    key: '_removeChild',
-    value: function _removeChild(parent, start, end) {
-      var child = start;
-
-      if (!child || parent !== child.parentNode) {
-        return;
-      }
-
-      while (child !== end) {
-        var next = child.nextSibling;
-        parent.removeChild(child);
-        child = next;
-      }
-    }
-
-    /**
-     * remove nodes along the direction from the node to reach targetParent node
-     * @memberof WwTablePasteHelper
-     * @param {Node} targetParent - stop removing when reach target parent node
-     * @param {Node} node - start node
-     * @param {boolean} isForward - direction
-     * @private
-     */
-
-  }, {
-    key: '_removeNodesByDirection',
-    value: function _removeNodesByDirection(targetParent, node, isForward) {
-      var parent = node;
-
-      while (parent !== targetParent) {
-        var nextParent = parent.parentNode;
-        var _parent = parent,
-            nextSibling = _parent.nextSibling,
-            previousSibling = _parent.previousSibling;
-
-
-        if (!isForward && nextSibling) {
-          this._removeChild(nextParent, nextSibling, null);
-        } else if (isForward && previousSibling) {
-          this._removeChild(nextParent, nextParent.childNodes[0], parent);
-        }
-
-        parent = nextParent;
       }
     }
   }]);
@@ -67823,7 +68192,7 @@ var WwTablePasteHelper = function () {
 exports.default = WwTablePasteHelper;
 
 /***/ }),
-/* 304 */
+/* 305 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -67937,16 +68306,14 @@ var WwListManager = function () {
     value: function _initKeyHandler() {
       var _this2 = this;
 
-      this.wwe.addKeyEventHandler(['TAB', 'CTRL+]', 'META+]'], function (ev, range) {
+      this.wwe.addKeyEventHandler(['TAB', 'CTRL+]', 'META+]'], function (ev) {
         var isNeedNext = void 0;
 
-        if (range.collapsed) {
-          if (_this2.wwe.getEditor().hasFormat('LI')) {
-            ev.preventDefault();
-            _this2.eventManager.emit('command', 'Indent');
+        if (_this2.wwe.getEditor().hasFormat('LI')) {
+          ev.preventDefault();
+          _this2.eventManager.emit('command', 'Indent');
 
-            isNeedNext = false;
-          }
+          isNeedNext = false;
         }
 
         return isNeedNext;
@@ -67955,19 +68322,17 @@ var WwListManager = function () {
       this.wwe.addKeyEventHandler(['SHIFT+TAB', 'CTRL+[', 'META+['], function (ev, range) {
         var isNeedNext = void 0;
 
-        if (range.collapsed) {
-          if (_this2.wwe.getEditor().hasFormat('LI')) {
-            ev.preventDefault();
-            var $ul = (0, _jquery2.default)(range.startContainer).closest('li').children(UL_OR_OL);
+        if (_this2.wwe.getEditor().hasFormat('LI')) {
+          ev.preventDefault();
+          var $ul = (0, _jquery2.default)(range.startContainer).closest('li').children(UL_OR_OL);
 
-            _this2.eventManager.emit('command', 'Outdent');
+          _this2.eventManager.emit('command', 'Outdent');
 
-            if ($ul.length && !$ul.prev().length) {
-              _this2._removeBranchList($ul);
-            }
-
-            isNeedNext = false;
+          if ($ul.length && !$ul.prev().length) {
+            _this2._removeBranchList($ul);
           }
+
+          isNeedNext = false;
         }
 
         return isNeedNext;
@@ -68273,7 +68638,7 @@ var WwListManager = function () {
 exports.default = WwListManager;
 
 /***/ }),
-/* 305 */
+/* 306 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68495,7 +68860,7 @@ var WwTaskManager = function () {
 exports.default = WwTaskManager;
 
 /***/ }),
-/* 306 */
+/* 307 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68814,7 +69179,7 @@ function findTextNodeFilter() {
 exports.default = WwHrManager;
 
 /***/ }),
-/* 307 */
+/* 308 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68980,7 +69345,7 @@ var WwPManager = function () {
 exports.default = WwPManager;
 
 /***/ }),
-/* 308 */
+/* 309 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69248,7 +69613,7 @@ var WwHeadingManager = function () {
 exports.default = WwHeadingManager;
 
 /***/ }),
-/* 309 */
+/* 310 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69268,7 +69633,7 @@ var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _squireRte = __webpack_require__(310);
+var _squireRte = __webpack_require__(311);
 
 var _squireRte2 = _interopRequireDefault(_squireRte);
 
@@ -69670,14 +70035,14 @@ var SquireExt = function (_Squire) {
 exports.default = SquireExt;
 
 /***/ }),
-/* 310 */
+/* 311 */
 /***/ (function(module, exports, __webpack_require__) {
 
 !function(e,t){"use strict";function n(e,t,n){this.root=this.currentNode=e,this.nodeType=t,this.filter=n||ce}function o(e,t){for(var n=e.length;n--;)if(!t(e[n]))return!1;return!0}function i(e){return e.nodeType===w&&!!ue[e.nodeName]}function r(e){switch(e.nodeType){case F:return pe;case w:case H:if(ae&&ve.has(e))return ve.get(e);break;default:return fe}var t;return t=o(e.childNodes,a)?he.test(e.nodeName)?pe:ge:me,ae&&ve.set(e,t),t}function a(e){return r(e)===pe}function s(e){return r(e)===ge}function d(e){return r(e)===me}function l(e,t){var o=new n(t,W,s);return o.currentNode=e,o}function c(e,t){return e=l(e,t).previousNode(),e!==t?e:null}function h(e,t){return e=l(e,t).nextNode(),e!==t?e:null}function u(e){return!e.textContent&&!e.querySelector("IMG")}function f(e,t){return!i(e)&&e.nodeType===t.nodeType&&e.nodeName===t.nodeName&&"A"!==e.nodeName&&e.className===t.className&&(!e.style&&!t.style||e.style.cssText===t.style.cssText)}function p(e,t,n){if(e.nodeName!==t)return!1;for(var o in n)if(e.getAttribute(o)!==n[o])return!1;return!0}function g(e,t,n,o){for(;e&&e!==t;){if(p(e,n,o))return e;e=e.parentNode}return null}function m(e,t){for(;t;){if(t===e)return!0;t=t.parentNode}return!1}function v(e,t,n){var o,i,r,a,s,d="";return e&&e!==t&&(d=v(e.parentNode,t,n),e.nodeType===w&&(d+=(d?">":"")+e.nodeName,(o=e.id)&&(d+="#"+o),(i=e.className.trim())&&(r=i.split(/\s\s*/),r.sort(),d+=".",d+=r.join(".")),(a=e.dir)&&(d+="[dir="+a+"]"),r&&(s=n.classNames,de.call(r,s.highlight)>-1&&(d+="[backgroundColor="+e.style.backgroundColor.replace(/ /g,"")+"]"),de.call(r,s.colour)>-1&&(d+="[color="+e.style.color.replace(/ /g,"")+"]"),de.call(r,s.fontFamily)>-1&&(d+="[fontFamily="+e.style.fontFamily.replace(/ /g,"")+"]"),de.call(r,s.fontSize)>-1&&(d+="[fontSize="+e.style.fontSize+"]")))),d}function C(e){var t=e.nodeType;return t===w||t===H?e.childNodes.length:e.length||0}function _(e){var t=e.parentNode;return t&&t.removeChild(e),e}function N(e,t){var n=e.parentNode;n&&n.replaceChild(t,e)}function S(e){for(var t=e.ownerDocument.createDocumentFragment(),n=e.childNodes,o=n?n.length:0;o--;)t.appendChild(e.firstChild);return t}function y(e,n,o,i){var r,a,s,d=e.createElement(n);if(o instanceof Array&&(i=o,o=null),o)for(r in o)o[r]!==t&&d.setAttribute(r,o[r]);if(i)for(a=0,s=i.length;a<s;a+=1)d.appendChild(i[a]);return d}function T(e,t){var n,o,r=t.__squire__,s=e.ownerDocument,d=e;if(e===t&&((o=e.firstChild)&&"BR"!==o.nodeName||(n=r.createDefaultBlock(),o?e.replaceChild(n,o):e.appendChild(n),e=n,n=null)),e.nodeType===F)return d;if(a(e)){for(o=e.firstChild;oe&&o&&o.nodeType===F&&!o.data;)e.removeChild(o),o=e.firstChild;o||(oe?(n=s.createTextNode(z),r._didAddZWS()):n=s.createTextNode(""))}else if(ne){for(;e.nodeType!==F&&!i(e);){if(!(o=e.firstChild)){n=s.createTextNode("");break}e=o}e.nodeType===F?/^ +$/.test(e.data)&&(e.data=""):i(e)&&e.parentNode.insertBefore(s.createTextNode(""),e)}else if(!e.querySelector("BR"))for(n=y(s,"BR");(o=e.lastElementChild)&&!a(o);)e=o;if(n)try{e.appendChild(n)}catch(t){r.didError({name:"Squire: fixCursor – "+t,message:"Parent: "+e.nodeName+"/"+e.innerHTML+" appendChild: "+n.nodeName})}return d}function E(e,t){var n,o,i,r,s=e.childNodes,l=e.ownerDocument,c=null,h=t.__squire__._config;for(n=0,o=s.length;n<o;n+=1)i=s[n],r="BR"===i.nodeName,!r&&a(i)?(c||(c=y(l,h.blockTag,h.blockAttributes)),c.appendChild(i),n-=1,o-=1):(r||c)&&(c||(c=y(l,h.blockTag,h.blockAttributes)),T(c,t),r?e.replaceChild(c,i):(e.insertBefore(c,i),n+=1,o+=1),c=null),d(i)&&E(i,t);return c&&e.appendChild(T(c,t)),e}function b(e,t,n,o){var i,r,a,s=e.nodeType;if(s===F&&e!==n)return b(e.parentNode,e.splitText(t),n,o);if(s===w){if("number"==typeof t&&(t=t<e.childNodes.length?e.childNodes[t]:null),e===n)return t;for(i=e.parentNode,r=e.cloneNode(!1);t;)a=t.nextSibling,r.appendChild(t),t=a;return"OL"===e.nodeName&&g(e,o,"BLOCKQUOTE")&&(r.start=(+e.start||1)+e.childNodes.length-1),T(e,o),T(r,o),(a=e.nextSibling)?i.insertBefore(r,a):i.appendChild(r),b(i,r,n,o)}return t}function x(e,t){for(var n,o,i,r=e.childNodes,s=r.length,d=[];s--;)if(n=r[s],o=s&&r[s-1],s&&a(n)&&f(n,o)&&!ue[n.nodeName])t.startContainer===n&&(t.startContainer=o,t.startOffset+=C(o)),t.endContainer===n&&(t.endContainer=o,t.endOffset+=C(o)),t.startContainer===e&&(t.startOffset>s?t.startOffset-=1:t.startOffset===s&&(t.startContainer=o,t.startOffset=C(o))),t.endContainer===e&&(t.endOffset>s?t.endOffset-=1:t.endOffset===s&&(t.endContainer=o,t.endOffset=C(o))),_(n),n.nodeType===F?o.appendData(n.data):d.push(S(n));else if(n.nodeType===w){for(i=d.length;i--;)n.appendChild(d.pop());x(n,t)}}function k(e,t){if(e.nodeType===F&&(e=e.parentNode),e.nodeType===w){var n={startContainer:t.startContainer,startOffset:t.startOffset,endContainer:t.endContainer,endOffset:t.endOffset};x(e,n),t.setStart(n.startContainer,n.startOffset),t.setEnd(n.endContainer,n.endOffset)}}function A(e,t,n,o){for(var i,r,a,s=t;(i=s.parentNode)&&i!==o&&i.nodeType===w&&1===i.childNodes.length;)s=i;_(s),a=e.childNodes.length,r=e.lastChild,r&&"BR"===r.nodeName&&(e.removeChild(r),a-=1),e.appendChild(S(t)),n.setStart(e,a),n.collapse(!0),k(e,n),Y&&(r=e.lastChild)&&"BR"===r.nodeName&&e.removeChild(r)}function L(e,t){var n,o,i=e.previousSibling,r=e.firstChild,a=e.ownerDocument,s="LI"===e.nodeName;if(!s||r&&/^[OU]L$/.test(r.nodeName))if(i&&f(i,e)){if(!d(i)){if(!s)return;o=y(a,"DIV"),o.appendChild(S(i)),i.appendChild(o)}_(e),n=!d(e),i.appendChild(S(e)),n&&E(i,t),r&&L(r,t)}else s&&(i=y(a,"DIV"),e.insertBefore(i,r),T(i,t))}function B(e){this.isShiftDown=e.shiftKey}function O(e,t,n){var o,i;if(e||(e={}),t)for(o in t)!n&&o in e||(i=t[o],e[o]=i&&i.constructor===Object?O(e[o],i,n):i);return e}function R(e,t){e.nodeType===M&&(e=e.body);var n,o=e.ownerDocument,i=o.defaultView;this._win=i,this._doc=o,this._root=e,this._events={},this._isFocused=!1,this._lastSelection=null,ie&&this.addEventListener("beforedeactivate",this.getSelection),this._hasZWS=!1,this._lastAnchorNode=null,this._lastFocusNode=null,this._path="",this._willUpdatePath=!1,"onselectionchange"in o?this.addEventListener("selectionchange",this._updatePathOnEvent):(this.addEventListener("keyup",this._updatePathOnEvent),this.addEventListener("mouseup",this._updatePathOnEvent)),this._undoIndex=-1,this._undoStack=[],this._undoStackLength=0,this._isInUndoState=!1,this._ignoreChange=!1,this._ignoreAllChanges=!1,re?(n=new MutationObserver(this._docWasChanged.bind(this)),n.observe(e,{childList:!0,attributes:!0,characterData:!0,subtree:!0}),this._mutation=n):this.addEventListener("keyup",this._keyUpDetectChange),this._restoreSelection=!1,this.addEventListener("blur",D),this.addEventListener("mousedown",P),this.addEventListener("touchstart",P),this.addEventListener("focus",U),this._awaitingPaste=!1,this.addEventListener(V?"beforecut":"cut",Je),this.addEventListener("copy",et),this.addEventListener("keydown",B),this.addEventListener("keyup",B),this.addEventListener(V?"beforepaste":"paste",tt),this.addEventListener("drop",nt),this.addEventListener(Y?"keypress":"keydown",Pe),this._keyHandlers=Object.create(Fe),this.setConfig(t),V&&(i.Text.prototype.splitText=function(e){var t=this.ownerDocument.createTextNode(this.data.slice(e)),n=this.nextSibling,o=this.parentNode,i=this.length-e;return n?o.insertBefore(t,n):o.appendChild(t),i&&this.deleteData(e,i),t}),e.setAttribute("contenteditable","true");try{o.execCommand("enableObjectResizing",!1,"false"),o.execCommand("enableInlineTableEditing",!1,"false")}catch(e){}e.__squire__=this,this.setHTML("")}function D(){this._restoreSelection=!0}function P(){this._restoreSelection=!1}function U(){this._restoreSelection&&this.setSelection(this._lastSelection)}function I(e,t,n){var o,i;for(o=t.firstChild;o;o=i){if(i=o.nextSibling,a(o)){if(o.nodeType===F||"BR"===o.nodeName||"IMG"===o.nodeName){n.appendChild(o);continue}}else if(s(o)){n.appendChild(e.createDefaultBlock([I(e,o,e._doc.createDocumentFragment())]));continue}I(e,o,n)}return n}var w=1,F=3,M=9,H=11,W=1,z="​",q=e.defaultView,K=navigator.userAgent,G=/Android/.test(K),Z=/iP(?:ad|hone|od)/.test(K),j=/Mac OS X/.test(K),$=/Windows NT/.test(K),Q=/Gecko\//.test(K),V=/Trident\/[456]\./.test(K),Y=!!q.opera,X=/Edge\//.test(K),J=!X&&/WebKit\//.test(K),ee=/Trident\/[4567]\./.test(K),te=j?"meta-":"ctrl-",ne=V||Y,oe=V||J,ie=V,re="undefined"!=typeof MutationObserver,ae="undefined"!=typeof WeakMap,se=/[^ \t\r\n]/,de=Array.prototype.indexOf;Object.create||(Object.create=function(e){var t=function(){};return t.prototype=e,new t});var le={1:1,2:2,3:4,8:128,9:256,11:1024},ce=function(){return!0};n.prototype.nextNode=function(){for(var e,t=this.currentNode,n=this.root,o=this.nodeType,i=this.filter;;){for(e=t.firstChild;!e&&t&&t!==n;)(e=t.nextSibling)||(t=t.parentNode);if(!e)return null;if(le[e.nodeType]&o&&i(e))return this.currentNode=e,e;t=e}},n.prototype.previousNode=function(){for(var e,t=this.currentNode,n=this.root,o=this.nodeType,i=this.filter;;){if(t===n)return null;if(e=t.previousSibling)for(;t=e.lastChild;)e=t;else e=t.parentNode;if(!e)return null;if(le[e.nodeType]&o&&i(e))return this.currentNode=e,e;t=e}},n.prototype.previousPONode=function(){for(var e,t=this.currentNode,n=this.root,o=this.nodeType,i=this.filter;;){for(e=t.lastChild;!e&&t&&t!==n;)(e=t.previousSibling)||(t=t.parentNode);if(!e)return null;if(le[e.nodeType]&o&&i(e))return this.currentNode=e,e;t=e}};var he=/^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:FRAME|MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|TIME|U|VAR|WBR)$/,ue={BR:1,HR:1,IFRAME:1,IMG:1,INPUT:1},fe=0,pe=1,ge=2,me=3,ve=ae?new WeakMap:null,Ce=function(e,t){for(var n=e.childNodes;t&&e.nodeType===w;)e=n[t-1],n=e.childNodes,t=n.length;return e},_e=function(e,t){if(e.nodeType===w){var n=e.childNodes;if(t<n.length)e=n[t];else{for(;e&&!e.nextSibling;)e=e.parentNode;e&&(e=e.nextSibling)}}return e},Ne=function(e,t){var n,o,i,r,a=e.startContainer,s=e.startOffset,d=e.endContainer,l=e.endOffset;a.nodeType===F?(n=a.parentNode,o=n.childNodes,s===a.length?(s=de.call(o,a)+1,e.collapsed&&(d=n,l=s)):(s&&(r=a.splitText(s),d===a?(l-=s,d=r):d===n&&(l+=1),a=r),s=de.call(o,a)),a=n):o=a.childNodes,i=o.length,s===i?a.appendChild(t):a.insertBefore(t,o[s]),a===d&&(l+=o.length-i),e.setStart(a,s),e.setEnd(d,l)},Se=function(e,t,n){var o=e.startContainer,i=e.startOffset,r=e.endContainer,a=e.endOffset;t||(t=e.commonAncestorContainer),t.nodeType===F&&(t=t.parentNode);for(var s,d,l,c,h,u=b(r,a,t,n),f=b(o,i,t,n),p=t.ownerDocument.createDocumentFragment();f!==u;)s=f.nextSibling,p.appendChild(f),f=s;return o=t,i=u?de.call(t.childNodes,u):t.childNodes.length,l=t.childNodes[i],d=l&&l.previousSibling,d&&d.nodeType===F&&l.nodeType===F&&(o=d,i=d.length,c=d.data,h=l.data," "===c.charAt(c.length-1)&&" "===h.charAt(0)&&(h=" "+h.slice(1)),d.appendData(h),_(l)),e.setStart(o,i),e.collapse(!0),T(t,n),p},ye=function(e,t){var n,o,i=ke(e,t),r=Ae(e,t),a=i!==r;return be(e),xe(e,i,r,t),n=Se(e,null,t),be(e),a&&(r=Ae(e,t),i&&r&&i!==r&&A(i,r,e,t)),i&&T(i,t),o=t.firstChild,o&&"BR"!==o.nodeName?e.collapse(!0):(T(t,t),e.selectNodeContents(t.firstChild)),n},Te=function(e,t,n){var o,i,r,s,l,f,p,m,v,N,S;for(E(t,n),o=t;o=h(o,n);)T(o,n);if(e.collapsed||ye(e,n),be(e),e.collapse(!1),s=g(e.endContainer,n,"BLOCKQUOTE")||n,i=ke(e,n),m=h(t,t),p=!!i&&u(i),i&&m&&!p&&!g(m,t,"PRE")&&!g(m,t,"TABLE")){if(xe(e,i,i,n),e.collapse(!0),l=e.endContainer,f=e.endOffset,Ye(i,n,!1),a(l)&&(v=b(l,f,c(l,n),n),l=v.parentNode,f=de.call(l.childNodes,v)),f!==C(l))for(r=n.ownerDocument.createDocumentFragment();o=l.childNodes[f];)r.appendChild(o);A(l,m,e,n),f=de.call(l.parentNode.childNodes,l)+1,l=l.parentNode,e.setEnd(l,f)}C(t)&&(p&&(e.setEndBefore(i),e.collapse(!1),_(i)),xe(e,s,s,n),v=b(e.endContainer,e.endOffset,s,n),N=v?v.previousSibling:s.lastChild,s.insertBefore(t,v),v?e.setEndBefore(v):e.setEnd(s,C(s)),i=Ae(e,n),be(e),l=e.endContainer,f=e.endOffset,v&&d(v)&&L(v,n),v=N&&N.nextSibling,v&&d(v)&&L(v,n),e.setEnd(l,f)),r&&(S=e.cloneRange(),A(i,r,S,n),e.setEnd(S.endContainer,S.endOffset)),be(e)},Ee=function(e,t,n){var o=t.ownerDocument.createRange();if(o.selectNode(t),n){var i=e.compareBoundaryPoints(3,o)>-1,r=e.compareBoundaryPoints(1,o)<1;return!i&&!r}var a=e.compareBoundaryPoints(0,o)<1,s=e.compareBoundaryPoints(2,o)>-1;return a&&s},be=function(e){for(var t,n=e.startContainer,o=e.startOffset,r=e.endContainer,a=e.endOffset,s=!0;n.nodeType!==F&&(t=n.childNodes[o])&&!i(t);)n=t,o=0;if(a)for(;r.nodeType!==F;){if(!(t=r.childNodes[a-1])||i(t)){if(s&&t&&"BR"===t.nodeName){a-=1,s=!1;continue}break}r=t,a=C(r)}else for(;r.nodeType!==F&&(t=r.firstChild)&&!i(t);)r=t;e.collapsed?(e.setStart(r,a),e.setEnd(n,o)):(e.setStart(n,o),e.setEnd(r,a))},xe=function(e,t,n,o){var i,r=e.startContainer,a=e.startOffset,s=e.endContainer,d=e.endOffset,l=!0;for(t||(t=e.commonAncestorContainer),n||(n=t);!a&&r!==t&&r!==o;)i=r.parentNode,a=de.call(i.childNodes,r),r=i;for(;;){if(l&&s.nodeType!==F&&s.childNodes[d]&&"BR"===s.childNodes[d].nodeName&&(d+=1,l=!1),s===n||s===o||d!==C(s))break;i=s.parentNode,d=de.call(i.childNodes,s)+1,s=i}e.setStart(r,a),e.setEnd(s,d)},ke=function(e,t){var n,o=e.startContainer;return a(o)?n=c(o,t):o!==t&&s(o)?n=o:(n=Ce(o,e.startOffset),n=h(n,t)),n&&Ee(e,n,!0)?n:null},Ae=function(e,t){var n,o,i=e.endContainer;if(a(i))n=c(i,t);else if(i!==t&&s(i))n=i;else{if(!(n=_e(i,e.endOffset))||!m(t,n))for(n=t;o=n.lastChild;)n=o;n=c(n,t)}return n&&Ee(e,n,!0)?n:null},Le=new n(null,4|W,function(e){return e.nodeType===F?se.test(e.data):"IMG"===e.nodeName}),Be=function(e,t){var n,o=e.startContainer,i=e.startOffset;if(Le.root=null,o.nodeType===F){if(i)return!1;n=o}else if(n=_e(o,i),n&&!m(t,n)&&(n=null),!n&&(n=Ce(o,i),n.nodeType===F&&n.length))return!1;return Le.currentNode=n,Le.root=ke(e,t),!Le.previousNode()},Oe=function(e,t){var n,o=e.endContainer,i=e.endOffset;if(Le.root=null,o.nodeType===F){if((n=o.data.length)&&i<n)return!1;Le.currentNode=o}else Le.currentNode=Ce(o,i);return Le.root=Ae(e,t),!Le.nextNode()},Re=function(e,t){var n,o=ke(e,t),i=Ae(e,t);o&&i&&(n=o.parentNode,e.setStart(n,de.call(n.childNodes,o)),n=i.parentNode,e.setEnd(n,de.call(n.childNodes,i)+1))},De={8:"backspace",9:"tab",13:"enter",32:"space",33:"pageup",34:"pagedown",37:"left",39:"right",46:"delete",219:"[",221:"]"},Pe=function(e){var t=e.keyCode,n=De[t],o="",i=this.getSelection();e.defaultPrevented||(n||(n=String.fromCharCode(t).toLowerCase(),/^[A-Za-z0-9]$/.test(n)||(n="")),Y&&46===e.which&&(n="."),111<t&&t<124&&(n="f"+(t-111)),"backspace"!==n&&"delete"!==n&&(e.altKey&&(o+="alt-"),e.ctrlKey&&(o+="ctrl-"),e.metaKey&&(o+="meta-")),e.shiftKey&&(o+="shift-"),n=o+n,this._keyHandlers[n]?this._keyHandlers[n](this,e,i):i.collapsed||e.isComposing||e.ctrlKey||e.metaKey||1!==(ee?n:e.key||n).length||(this.saveUndoState(i),ye(i,this._root),this._ensureBottomLine(),this.setSelection(i),this._updatePath(i,!0)))},Ue=function(e){return function(t,n){n.preventDefault(),t[e]()}},Ie=function(e,t){return t=t||null,function(n,o){o.preventDefault();var i=n.getSelection();n.hasFormat(e,null,i)?n.changeFormat(null,{tag:e},i):n.changeFormat({tag:e},t,i)}},we=function(e,t){try{t||(t=e.getSelection());var n,o=t.startContainer;for(o.nodeType===F&&(o=o.parentNode),n=o;a(n)&&(!n.textContent||n.textContent===z);)o=n,n=o.parentNode;o!==n&&(t.setStart(n,de.call(n.childNodes,o)),t.collapse(!0),n.removeChild(o),s(n)||(n=c(n,e._root)),T(n,e._root),be(t)),o===e._root&&(o=o.firstChild)&&"BR"===o.nodeName&&_(o),e._ensureBottomLine(),e.setSelection(t),e._updatePath(t,!0)}catch(t){e.didError(t)}},Fe={enter:function(e,t,n){var o,i,r,a,s,d=e._root;if(t.preventDefault(),e._recordUndoState(n),_t(n.startContainer,d,e),e._removeZWS(),e._getRangeAndRemoveBookmark(n),n.collapsed||ye(n,d),(o=ke(n,d))&&(i=g(o,d,"PRE")))return be(n),r=n.startContainer,a=n.startOffset,r.nodeType!==F&&(r=e._doc.createTextNode(""),i.insertBefore(r,i.firstChild)),t.shiftKey||"\n"!==r.data.charAt(a-1)&&!Be(n,d)||"\n"!==r.data.charAt(a)&&!Oe(n,d)?(r.insertData(a,"\n"),T(i,d),r.length===a+1?n.setStartAfter(r):n.setStart(r,a+1)):(r.deleteData(a&&a-1,a?2:1),s=b(r,a&&a-1,d,d),r=s.previousSibling,r.textContent||_(r),r=e.createDefaultBlock(),s.parentNode.insertBefore(r,s),s.textContent||_(s),n.setStart(r,0)),n.collapse(!0),e.setSelection(n),e._updatePath(n,!0),void e._docWasChanged();if(!o||t.shiftKey||/^T[HD]$/.test(o.nodeName))return i=g(n.endContainer,d,"A"),i&&(i=i.parentNode,xe(n,i,i,d),n.collapse(!1)),Ne(n,e.createElement("BR")),n.collapse(!1),e.setSelection(n),void e._updatePath(n,!0);if((i=g(o,d,"LI"))&&(o=i),u(o)){if(g(o,d,"UL")||g(o,d,"OL"))return e.decreaseListLevel(n);if(g(o,d,"BLOCKQUOTE"))return e.modifyBlocks(ft,n)}for(s=ct(e,o,n.startContainer,n.startOffset),st(o),$e(o),T(o,d);s.nodeType===w;){var l,c=s.firstChild;if("A"===s.nodeName&&(!s.textContent||s.textContent===z)){c=e._doc.createTextNode(""),N(s,c),s=c;break}for(;c&&c.nodeType===F&&!c.data&&(l=c.nextSibling)&&"BR"!==l.nodeName;)_(c),c=l;if(!c||"BR"===c.nodeName||c.nodeType===F&&!Y)break;s=c}n=e.createRange(s,0),e.setSelection(n),e._updatePath(n,!0)},"shift-enter":function(e,t,n){return e._keyHandlers.enter(e,t,n)},backspace:function(e,t,n){var o=e._root;if(e._removeZWS(),e.saveUndoState(n),n.collapsed)if(Be(n,o)){t.preventDefault();var i,r=ke(n,o);if(!r)return;if(E(r.parentNode,o),i=c(r,o)){if(!i.isContentEditable)return void _(i);for(A(i,r,n,o),r=i.parentNode;r!==o&&!r.nextSibling;)r=r.parentNode;r!==o&&(r=r.nextSibling)&&L(r,o),e.setSelection(n)}else if(r){if(g(r,o,"UL")||g(r,o,"OL"))return e.decreaseListLevel(n);if(g(r,o,"BLOCKQUOTE"))return e.modifyBlocks(ut,n);e.setSelection(n),e._updatePath(n,!0)}}else e.setSelection(n),setTimeout(function(){we(e)},0);else t.preventDefault(),ye(n,o),we(e,n)},delete:function(e,t,n){var o,i,r,a,s,d,l=e._root;if(e._removeZWS(),e.saveUndoState(n),n.collapsed)if(Oe(n,l)){if(t.preventDefault(),!(o=ke(n,l)))return;if(E(o.parentNode,l),i=h(o,l)){if(!i.isContentEditable)return void _(i);for(A(o,i,n,l),i=o.parentNode;i!==l&&!i.nextSibling;)i=i.parentNode;i!==l&&(i=i.nextSibling)&&L(i,l),e.setSelection(n),e._updatePath(n,!0)}}else{if(r=n.cloneRange(),xe(n,l,l,l),a=n.endContainer,s=n.endOffset,a.nodeType===w&&(d=a.childNodes[s])&&"IMG"===d.nodeName)return t.preventDefault(),_(d),be(n),void we(e,n);e.setSelection(r),setTimeout(function(){we(e)},0)}else t.preventDefault(),ye(n,l),we(e,n)},tab:function(e,t,n){var o,i,r=e._root;if(e._removeZWS(),n.collapsed&&Be(n,r))for(o=ke(n,r);i=o.parentNode;){if("UL"===i.nodeName||"OL"===i.nodeName){t.preventDefault(),e.increaseListLevel(n);break}o=i}},"shift-tab":function(e,t,n){var o,i=e._root;e._removeZWS(),n.collapsed&&Be(n,i)&&(o=n.startContainer,(g(o,i,"UL")||g(o,i,"OL"))&&(t.preventDefault(),e.decreaseListLevel(n)))},space:function(e,t,n){var o,i=e._root;if(e._recordUndoState(n),_t(n.startContainer,i,e),e._getRangeAndRemoveBookmark(n),o=n.endContainer,n.collapsed&&n.endOffset===C(o))do{if("A"===o.nodeName){n.setStartAfter(o);break}}while(!o.nextSibling&&(o=o.parentNode)&&o!==i);n.collapsed||(ye(n,i),e._ensureBottomLine(),e.setSelection(n),e._updatePath(n,!0)),e.setSelection(n)},left:function(e){e._removeZWS()},right:function(e){e._removeZWS()}};j&&Q&&(Fe["meta-left"]=function(e,t){t.preventDefault();var n=at(e);n&&n.modify&&n.modify("move","backward","lineboundary")},Fe["meta-right"]=function(e,t){t.preventDefault();var n=at(e);n&&n.modify&&n.modify("move","forward","lineboundary")}),j||(Fe.pageup=function(e){e.moveCursorToStart()},Fe.pagedown=function(e){e.moveCursorToEnd()}),Fe[te+"b"]=Ie("B"),Fe[te+"i"]=Ie("I"),Fe[te+"u"]=Ie("U"),Fe[te+"shift-7"]=Ie("S"),Fe[te+"shift-5"]=Ie("SUB",{tag:"SUP"}),Fe[te+"shift-6"]=Ie("SUP",{tag:"SUB"}),Fe[te+"shift-8"]=Ue("makeUnorderedList"),Fe[te+"shift-9"]=Ue("makeOrderedList"),Fe[te+"["]=Ue("decreaseQuoteLevel"),Fe[te+"]"]=Ue("increaseQuoteLevel"),Fe[te+"d"]=Ue("toggleCode"),Fe[te+"y"]=Ue("redo"),Fe[te+"z"]=Ue("undo"),Fe[te+"shift-z"]=Ue("redo");var Me={1:10,2:13,3:16,4:18,5:24,6:32,7:48},He={backgroundColor:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.highlight,style:"background-color:"+n})}},color:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.colour,style:"color:"+n})}},fontWeight:{regexp:/^bold|^700/i,replace:function(e){return y(e,"B")}},fontStyle:{regexp:/^italic/i,replace:function(e){return y(e,"I")}},fontFamily:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.fontFamily,style:"font-family:"+n})}},fontSize:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.fontSize,style:"font-size:"+n})}},textDecoration:{regexp:/^underline/i,replace:function(e){return y(e,"U")}}},We=function(e){return function(t,n){var o=y(t.ownerDocument,e);return n.replaceChild(o,t),o.appendChild(S(t)),o}},ze=function(e,t,n){var o,i,r,a,s,d,l=e.style,c=e.ownerDocument;for(o in He)i=He[o],(r=l[o])&&i.regexp.test(r)&&(d=i.replace(c,n.classNames,r),s||(s=d),a&&a.appendChild(d),a=d,e.style[o]="");return s&&(a.appendChild(S(e)),"SPAN"===e.nodeName?t.replaceChild(s,e):e.appendChild(s)),a||e},qe={P:ze,SPAN:ze,STRONG:We("B"),EM:We("I"),INS:We("U"),STRIKE:We("S"),FONT:function(e,t,n){var o,i,r,a,s,d=e.face,l=e.size,c=e.color,h=e.ownerDocument,u=n.classNames;return d&&(o=y(h,"SPAN",{class:u.fontFamily,style:"font-family:"+d}),s=o,a=o),l&&(i=y(h,"SPAN",{class:u.fontSize,style:"font-size:"+Me[l]+"px"}),s||(s=i),a&&a.appendChild(i),a=i),c&&/^#?([\dA-F]{3}){1,2}$/i.test(c)&&("#"!==c.charAt(0)&&(c="#"+c),r=y(h,"SPAN",{class:u.colour,style:"color:"+c}),s||(s=r),a&&a.appendChild(r),a=r),s||(s=a=y(h,"SPAN")),t.replaceChild(s,e),a.appendChild(S(e)),a},TT:function(e,t,n){var o=y(e.ownerDocument,"SPAN",{class:n.classNames.fontFamily,style:'font-family:menlo,consolas,"courier new",monospace'});return t.replaceChild(o,e),o.appendChild(S(e)),o}},Ke=/^(?:A(?:DDRESS|RTICLE|SIDE|UDIO)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|IGCAPTION|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|COL(?:GROUP)?|UL)$/,Ge=/^(?:HEAD|META|STYLE)/,Ze=new n(null,4|W),je=function e(t,n,o){var i,r,s,d,l,c,h,u,f,p,g,m,v=t.childNodes;for(i=t;a(i);)i=i.parentNode;for(Ze.root=i,r=0,s=v.length;r<s;r+=1)if(d=v[r],l=d.nodeName,c=d.nodeType,h=qe[l],c===w){if(u=d.childNodes.length,h)d=h(d,t,n);else{if(Ge.test(l)){t.removeChild(d),r-=1,s-=1;continue}if(!Ke.test(l)&&!a(d)){r-=1,s+=u-1,t.replaceChild(S(d),d);continue}}u&&e(d,n,o||"PRE"===l)}else{if(c===F){if(g=d.data,f=!se.test(g.charAt(0)),p=!se.test(g.charAt(g.length-1)),o||!f&&!p)continue;if(f){for(Ze.currentNode=d;(m=Ze.previousPONode())&&!("IMG"===(l=m.nodeName)||"#text"===l&&se.test(m.data));)if(!a(m)){m=null;break}g=g.replace(/^[ \t\r\n]+/g,m?" ":"")}if(p){for(Ze.currentNode=d;(m=Ze.nextNode())&&!("IMG"===l||"#text"===l&&se.test(m.data));)if(!a(m)){m=null;break}g=g.replace(/[ \t\r\n]+$/g,m?" ":"")}if(g){d.data=g;continue}}t.removeChild(d),r-=1,s-=1}return t},$e=function e(t){for(var n,o=t.childNodes,r=o.length;r--;)n=o[r],n.nodeType!==w||i(n)?n.nodeType!==F||n.data||t.removeChild(n):(e(n),a(n)&&!n.firstChild&&t.removeChild(n))},Qe=function(e){return e.nodeType===w?"BR"===e.nodeName:se.test(e.data)},Ve=function(e,t){for(var o,i=e.parentNode;a(i);)i=i.parentNode;return o=new n(i,4|W,Qe),o.currentNode=e,!!o.nextNode()||t&&!o.previousNode()},Ye=function(e,t,n){var o,i,r,s=e.querySelectorAll("BR"),d=[],l=s.length;for(o=0;o<l;o+=1)d[o]=Ve(s[o],n);for(;l--;)i=s[l],(r=i.parentNode)&&(d[l]?a(r)||E(r,t):_(i))},Xe=function(e,t,n,o){var i,r,a=t.ownerDocument.body,s=o.willCutCopy;Ye(t,n,!0),t.setAttribute("style","position:fixed;overflow:hidden;bottom:100%;right:100%;"),a.appendChild(t),i=t.innerHTML,r=t.innerText||t.textContent,s&&(i=s(i)),$&&(r=r.replace(/\r?\n/g,"\r\n")),e.setData("text/html",i),e.setData("text/plain",r),a.removeChild(t)},Je=function(e){var t,n,o,i,r,a,s,d=e.clipboardData,l=this.getSelection(),c=this._root,h=this;if(l.collapsed)return void e.preventDefault();if(this.saveUndoState(l),X||Z||!d)setTimeout(function(){try{h._ensureBottomLine()}catch(e){h.didError(e)}},0);else{for(t=ke(l,c),n=Ae(l,c),o=t===n&&t||c,i=ye(l,c),r=l.commonAncestorContainer,r.nodeType===F&&(r=r.parentNode);r&&r!==o;)a=r.cloneNode(!1),a.appendChild(i),i=a,r=r.parentNode;s=this.createElement("div"),s.appendChild(i),Xe(d,s,c,this._config),e.preventDefault()}this.setSelection(l)},et=function(e){var t,n,o,i,r,a,s,d=e.clipboardData,l=this.getSelection(),c=this._root;if(!X&&!Z&&d){for(t=ke(l,c),n=Ae(l,c),o=t===n&&t||c,l=l.cloneRange(),be(l),xe(l,o,o,c),i=l.cloneContents(),r=l.commonAncestorContainer,r.nodeType===F&&(r=r.parentNode);r&&r!==o;)a=r.cloneNode(!1),a.appendChild(i),i=a,r=r.parentNode;s=this.createElement("div"),s.appendChild(i),Xe(d,s,c,this._config),e.preventDefault()}},tt=function(e){var t,n,o,i,r,a=e.clipboardData,s=a&&a.items,d=this.isShiftDown,l=!1,c=!1,h=null,u=this;if(X&&s){for(t=s.length;t--;)!d&&/^image\/.*/.test(s[t].type)&&(c=!0);c||(s=null)}if(s){for(e.preventDefault(),t=s.length;t--;){if(n=s[t],o=n.type,!d&&"text/html"===o)return void n.getAsString(function(e){u.insertHTML(e,!0)});"text/plain"===o&&(h=n),!d&&/^image\/.*/.test(o)&&(c=!0)}return void(c?(this.fireEvent("dragover",{dataTransfer:a,preventDefault:function(){l=!0}}),l&&this.fireEvent("drop",{dataTransfer:a})):h&&h.getAsString(function(e){u.insertPlainText(e,!0)}))}if(i=a&&a.types,!X&&i&&(de.call(i,"text/html")>-1||!Q&&de.call(i,"text/plain")>-1&&de.call(i,"text/rtf")<0))return e.preventDefault(),void(!d&&(r=a.getData("text/html"))?this.insertHTML(r,!0):((r=a.getData("text/plain"))||(r=a.getData("text/uri-list")))&&this.insertPlainText(r,!0));this._awaitingPaste=!0;var f=this._doc.body,p=this.getSelection(),g=p.startContainer,m=p.startOffset,v=p.endContainer,C=p.endOffset,N=this.createElement("DIV",{contenteditable:"true",style:"position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;"});f.appendChild(N),p.selectNodeContents(N),this.setSelection(p),setTimeout(function(){try{u._awaitingPaste=!1;for(var e,t,n="",o=N;N=o;)o=N.nextSibling,_(N),e=N.firstChild,e&&e===N.lastChild&&"DIV"===e.nodeName&&(N=e),n+=N.innerHTML;t=u.createRange(g,m,v,C),u.setSelection(t),n&&u.insertHTML(n,!0)}catch(e){u.didError(e)}},0)},nt=function(e){for(var t=e.dataTransfer.types,n=t.length,o=!1,i=!1;n--;)switch(t[n]){case"text/plain":o=!0;break;case"text/html":i=!0;break;default:return}(i||o)&&this.saveUndoState()},ot=R.prototype,it=function(e,t,n){var o=n._doc,i=e?DOMPurify.sanitize(e,{ALLOW_UNKNOWN_PROTOCOLS:!0,WHOLE_DOCUMENT:!1,RETURN_DOM:!0,RETURN_DOM_FRAGMENT:!0}):null;return i?o.importNode(i,!0):o.createDocumentFragment()};ot.setConfig=function(e){return e=O({blockTag:"DIV",blockAttributes:null,tagAttributes:{blockquote:null,ul:null,ol:null,li:null,a:null},classNames:{colour:"colour",fontFamily:"font",fontSize:"size",highlight:"highlight"},leafNodeNames:ue,undo:{documentSizeThreshold:-1,undoLimit:-1},isInsertedHTMLSanitized:!0,isSetHTMLSanitized:!0,sanitizeToDOMFragment:"undefined"!=typeof DOMPurify&&DOMPurify.isSupported?it:null,willCutCopy:null},e,!0),e.blockTag=e.blockTag.toUpperCase(),this._config=e,this},ot.createElement=function(e,t,n){return y(this._doc,e,t,n)},ot.createDefaultBlock=function(e){var t=this._config;return T(this.createElement(t.blockTag,t.blockAttributes,e),this._root)},ot.didError=function(e){console.log(e)},ot.getDocument=function(){return this._doc},ot.getRoot=function(){return this._root},ot.modifyDocument=function(e){var t=this._mutation;t&&(t.takeRecords().length&&this._docWasChanged(),t.disconnect()),this._ignoreAllChanges=!0,e(),this._ignoreAllChanges=!1,t&&(t.observe(this._root,{childList:!0,attributes:!0,characterData:!0,subtree:!0}),this._ignoreChange=!1)};var rt={pathChange:1,select:1,input:1,undoStateChange:1};ot.fireEvent=function(e,t){var n,o,i,r=this._events[e];if(/^(?:focus|blur)/.test(e))if(n=this._root===this._doc.activeElement,"focus"===e){if(!n||this._isFocused)return this;this._isFocused=!0}else{if(n||!this._isFocused)return this;this._isFocused=!1}if(r)for(t||(t={}),t.type!==e&&(t.type=e),r=r.slice(),o=r.length;o--;){i=r[o];try{i.handleEvent?i.handleEvent(t):i.call(this,t)}catch(t){t.details="Squire: fireEvent error. Event type: "+e,this.didError(t)}}return this},ot.destroy=function(){var e,t=this._events;for(e in t)this.removeEventListener(e);this._mutation&&this._mutation.disconnect(),delete this._root.__squire__,this._undoIndex=-1,this._undoStack=[],this._undoStackLength=0},ot.handleEvent=function(e){this.fireEvent(e.type,e)},ot.addEventListener=function(e,t){var n=this._events[e],o=this._root;return t?(n||(n=this._events[e]=[],rt[e]||("selectionchange"===e&&(o=this._doc),o.addEventListener(e,this,!0))),n.push(t),this):(this.didError({name:"Squire: addEventListener with null or undefined fn",message:"Event type: "+e}),this)},ot.removeEventListener=function(e,t){var n,o=this._events[e],i=this._root;if(o){if(t)for(n=o.length;n--;)o[n]===t&&o.splice(n,1);else o.length=0;o.length||(delete this._events[e],rt[e]||("selectionchange"===e&&(i=this._doc),i.removeEventListener(e,this,!0)))}return this},ot.createRange=function(e,t,n,o){if(e instanceof this._win.Range)return e.cloneRange();var i=this._doc.createRange();return i.setStart(e,t),n?i.setEnd(n,o):i.setEnd(e,t),i},ot.getCursorPosition=function(e){if(!e&&!(e=this.getSelection())||!e.getBoundingClientRect)return null;var t,n,o=e.getBoundingClientRect();return o&&!o.top&&(this._ignoreChange=!0,t=this._doc.createElement("SPAN"),t.textContent=z,Ne(e,t),o=t.getBoundingClientRect(),n=t.parentNode,n.removeChild(t),k(n,e)),o},ot._moveCursorTo=function(e){var t=this._root,n=this.createRange(t,e?0:t.childNodes.length);return be(n),this.setSelection(n),this},ot.moveCursorToStart=function(){return this._moveCursorTo(!0)},ot.moveCursorToEnd=function(){return this._moveCursorTo(!1)};var at=function(e){return e._win.getSelection()||null};ot.setSelection=function(e){if(e)if(this._lastSelection=e,this._isFocused)if(G&&!this._restoreSelection)D.call(this),this.blur(),this.focus();else{Z&&this._win.focus();var t=at(this);t&&(t.removeAllRanges(),t.addRange(e))}else D.call(this);return this},ot.getSelection=function(){var e,t,n,o,r=at(this),a=this._root;return this._isFocused&&r&&r.rangeCount&&(e=r.getRangeAt(0).cloneRange(),t=e.startContainer,n=e.endContainer,t&&i(t)&&e.setStartBefore(t),n&&i(n)&&e.setEndBefore(n)),e&&m(a,e.commonAncestorContainer)?this._lastSelection=e:(e=this._lastSelection,o=e.commonAncestorContainer,m(o.ownerDocument,o)||(e=null)),e||(e=this.createRange(a.firstChild,0)),e},ot.getSelectedText=function(){var e=this.getSelection();if(!e||e.collapsed)return"";var t,o=new n(e.commonAncestorContainer,4|W,function(t){return Ee(e,t,!0)}),i=e.startContainer,r=e.endContainer,s=o.currentNode=i,d="",l=!1;for(o.filter(s)||(s=o.nextNode());s;)s.nodeType===F?(t=s.data)&&/\S/.test(t)&&(s===r&&(t=t.slice(0,e.endOffset)),s===i&&(t=t.slice(e.startOffset)),d+=t,l=!0):("BR"===s.nodeName||l&&!a(s))&&(d+="\n",l=!1),s=o.nextNode();return d},ot.getPath=function(){return this._path};var st=function(e,t){for(var o,i,r,s=new n(e,4);i=s.nextNode();)for(;(r=i.data.indexOf(z))>-1&&(!t||i.parentNode!==t);){if(1===i.length){do{o=i.parentNode,o.removeChild(i),i=o,s.currentNode=o}while(a(i)&&!C(i));break}i.deleteData(r,1)}};ot._didAddZWS=function(){this._hasZWS=!0},ot._removeZWS=function(){this._hasZWS&&(st(this._root),this._hasZWS=!1)},ot._updatePath=function(e,t){if(e){var n,o=e.startContainer,i=e.endContainer;(t||o!==this._lastAnchorNode||i!==this._lastFocusNode)&&(this._lastAnchorNode=o,this._lastFocusNode=i,n=o&&i?o===i?v(i,this._root,this._config):"(selection)":"",this._path!==n&&(this._path=n,this.fireEvent("pathChange",{path:n}))),this.fireEvent(e.collapsed?"cursor":"select",{range:e})}},ot._updatePathOnEvent=function(e){var t=this;t._isFocused&&!t._willUpdatePath&&(t._willUpdatePath=!0,setTimeout(function(){t._willUpdatePath=!1,t._updatePath(t.getSelection())},0))},ot.focus=function(){return this._root.focus(),ee&&this.fireEvent("focus"),this},ot.blur=function(){return this._root.blur(),ee&&this.fireEvent("blur"),this};var dt="squire-selection-end"
 ;ot._saveRangeToBookmark=function(e){var t,n=this.createElement("INPUT",{id:"squire-selection-start",type:"hidden"}),o=this.createElement("INPUT",{id:dt,type:"hidden"});Ne(e,n),e.collapse(!1),Ne(e,o),2&n.compareDocumentPosition(o)&&(n.id=dt,o.id="squire-selection-start",t=n,n=o,o=t),e.setStartAfter(n),e.setEndBefore(o)},ot._getRangeAndRemoveBookmark=function(e){var t=this._root,n=t.querySelector("#squire-selection-start"),o=t.querySelector("#"+dt);if(n&&o){var i=n.parentNode,r=o.parentNode,a=de.call(i.childNodes,n),s=de.call(r.childNodes,o);i===r&&(s-=1),_(n),_(o),e||(e=this._doc.createRange()),e.setStart(i,a),e.setEnd(r,s),k(i,e),i!==r&&k(r,e),e.collapsed&&(i=e.startContainer,i.nodeType===F&&(r=i.childNodes[e.startOffset],r&&r.nodeType===F||(r=i.childNodes[e.startOffset-1]),r&&r.nodeType===F&&(e.setStart(r,0),e.collapse(!0))))}return e||null},ot._keyUpDetectChange=function(e){var t=e.keyCode;e.ctrlKey||e.metaKey||e.altKey||!(t<16||t>20)||!(t<33||t>45)||this._docWasChanged()},ot._docWasChanged=function(){if(ae&&(ve=new WeakMap),!this._ignoreAllChanges){if(re&&this._ignoreChange)return void(this._ignoreChange=!1);this._isInUndoState&&(this._isInUndoState=!1,this.fireEvent("undoStateChange",{canUndo:!0,canRedo:!1})),this.fireEvent("input")}},ot._recordUndoState=function(e,t){if(!this._isInUndoState||t){var n,o=this._undoIndex,i=this._undoStack,r=this._config.undo,a=r.documentSizeThreshold,s=r.undoLimit;t||(o+=1),o<this._undoStackLength&&(i.length=this._undoStackLength=o),e&&this._saveRangeToBookmark(e),n=this._getHTML(),a>-1&&2*n.length>a&&s>-1&&o>s&&(i.splice(0,o-s),o=s,this._undoStackLength=s),i[o]=n,this._undoIndex=o,this._undoStackLength+=1,this._isInUndoState=!0}},ot.saveUndoState=function(e){return e===t&&(e=this.getSelection()),this._recordUndoState(e,this._isInUndoState),this._getRangeAndRemoveBookmark(e),this},ot.undo=function(){if(0!==this._undoIndex||!this._isInUndoState){this._recordUndoState(this.getSelection(),!1),this._undoIndex-=1,this._setHTML(this._undoStack[this._undoIndex]);var e=this._getRangeAndRemoveBookmark();e&&this.setSelection(e),this._isInUndoState=!0,this.fireEvent("undoStateChange",{canUndo:0!==this._undoIndex,canRedo:!0}),this.fireEvent("input")}return this},ot.redo=function(){var e=this._undoIndex,t=this._undoStackLength;if(e+1<t&&this._isInUndoState){this._undoIndex+=1,this._setHTML(this._undoStack[this._undoIndex]);var n=this._getRangeAndRemoveBookmark();n&&this.setSelection(n),this.fireEvent("undoStateChange",{canUndo:!0,canRedo:e+2<t}),this.fireEvent("input")}return this},ot.hasFormat=function(e,t,o){if(e=e.toUpperCase(),t||(t={}),!o&&!(o=this.getSelection()))return!1;!o.collapsed&&o.startContainer.nodeType===F&&o.startOffset===o.startContainer.length&&o.startContainer.nextSibling&&o.setStartBefore(o.startContainer.nextSibling),!o.collapsed&&o.endContainer.nodeType===F&&0===o.endOffset&&o.endContainer.previousSibling&&o.setEndAfter(o.endContainer.previousSibling);var i,r,a=this._root,s=o.commonAncestorContainer;if(g(s,a,e,t))return!0;if(s.nodeType===F)return!1;i=new n(s,4,function(e){return Ee(o,e,!0)});for(var d=!1;r=i.nextNode();){if(!g(r,a,e,t))return!1;d=!0}return d},ot.getFontInfo=function(e){var n,o,i,r={color:t,backgroundColor:t,family:t,size:t},a=0;if(!e&&!(e=this.getSelection()))return r;if(n=e.commonAncestorContainer,e.collapsed||n.nodeType===F)for(n.nodeType===F&&(n=n.parentNode);a<4&&n;)(o=n.style)&&(!r.color&&(i=o.color)&&(r.color=i,a+=1),!r.backgroundColor&&(i=o.backgroundColor)&&(r.backgroundColor=i,a+=1),!r.family&&(i=o.fontFamily)&&(r.family=i,a+=1),!r.size&&(i=o.fontSize)&&(r.size=i,a+=1)),n=n.parentNode;return r},ot._addFormat=function(e,t,o){var i,r,s,d,l,c,h,u,f=this._root;if(o.collapsed){for(i=T(this.createElement(e,t),f),Ne(o,i),o.setStart(i.firstChild,i.firstChild.length),o.collapse(!0),u=i;a(u);)u=u.parentNode;st(u,i)}else{if(r=new n(o.commonAncestorContainer,4|W,function(e){return(e.nodeType===F||"BR"===e.nodeName||"IMG"===e.nodeName)&&Ee(o,e,!0)}),s=o.startContainer,l=o.startOffset,d=o.endContainer,c=o.endOffset,r.currentNode=s,r.filter(s)||(s=r.nextNode(),l=0),!s)return o;do{h=r.currentNode,!g(h,f,e,t)&&(h===d&&h.length>c&&h.splitText(c),h===s&&l&&(h=h.splitText(l),d===s&&(d=h,c-=l),s=h,l=0),i=this.createElement(e,t),N(h,i),i.appendChild(h))}while(r.nextNode());d.nodeType!==F&&(h.nodeType===F?(d=h,c=h.length):(d=h.parentNode,c=1)),o=this.createRange(s,l,d,c)}return o},ot._removeFormat=function(e,t,n,o){this._saveRangeToBookmark(n);var i,r=this._doc;n.collapsed&&(oe?(i=r.createTextNode(z),this._didAddZWS()):i=r.createTextNode(""),Ne(n,i));for(var s=n.commonAncestorContainer;a(s);)s=s.parentNode;var d=n.startContainer,l=n.startOffset,c=n.endContainer,h=n.endOffset,u=[],f=function(e,t){if(!Ee(n,e,!1)){var o,i,r=e.nodeType===F;if(!Ee(n,e,!0))return void("INPUT"===e.nodeName||r&&!e.data||u.push([t,e]));if(r)e===c&&h!==e.length&&u.push([t,e.splitText(h)]),e===d&&l&&(e.splitText(l),u.push([t,e]));else for(o=e.firstChild;o;o=i)i=o.nextSibling,f(o,t)}},g=Array.prototype.filter.call(s.getElementsByTagName(e),function(o){return Ee(n,o,!0)&&p(o,e,t)});return o||g.forEach(function(e){f(e,e)}),u.forEach(function(e){var t=e[0].cloneNode(!1),n=e[1];N(n,t),t.appendChild(n)}),g.forEach(function(e){N(e,S(e))}),this._getRangeAndRemoveBookmark(n),i&&n.collapse(!1),k(s,n),n},ot.changeFormat=function(e,t,n,o){return n||(n=this.getSelection())?(this.saveUndoState(n),t&&(n=this._removeFormat(t.tag.toUpperCase(),t.attributes||{},n,o)),e&&(n=this._addFormat(e.tag.toUpperCase(),e.attributes||{},n)),this.setSelection(n),this._updatePath(n,!0),re||this._docWasChanged(),this):this};var lt={DT:"DD",DD:"DT",LI:"LI",PRE:"PRE"},ct=function(e,t,n,o){var i=lt[t.nodeName],r=null,a=b(n,o,t.parentNode,e._root),s=e._config;return i||(i=s.blockTag,r=s.blockAttributes),p(a,i,r)||(t=y(a.ownerDocument,i,r),a.dir&&(t.dir=a.dir),N(a,t),t.appendChild(S(a)),a=t),a};ot.forEachBlock=function(e,t,n){if(!n&&!(n=this.getSelection()))return this;t&&this.saveUndoState(n);var o=this._root,i=ke(n,o),r=Ae(n,o);if(i&&r)do{if(e(i)||i===r)break}while(i=h(i,o));return t&&(this.setSelection(n),this._updatePath(n,!0),re||this._docWasChanged()),this},ot.modifyBlocks=function(e,t){if(!t&&!(t=this.getSelection()))return this;this._recordUndoState(t,this._isInUndoState);var n,o=this._root;return Re(t,o),xe(t,o,o,o),n=Se(t,o,o),Ne(t,e.call(this,n)),t.endOffset<t.endContainer.childNodes.length&&L(t.endContainer.childNodes[t.endOffset],o),L(t.startContainer.childNodes[t.startOffset],o),this._getRangeAndRemoveBookmark(t),this.setSelection(t),this._updatePath(t,!0),re||this._docWasChanged(),this};var ht=function(e){return this.createElement("BLOCKQUOTE",this._config.tagAttributes.blockquote,[e])},ut=function(e){var t=this._root,n=e.querySelectorAll("blockquote");return Array.prototype.filter.call(n,function(e){return!g(e.parentNode,t,"BLOCKQUOTE")}).forEach(function(e){N(e,S(e))}),e},ft=function(){return this.createDefaultBlock([this.createElement("INPUT",{id:"squire-selection-start",type:"hidden"}),this.createElement("INPUT",{id:dt,type:"hidden"})])},pt=function(e,t,n){for(var o,i,r,a,s=l(t,e._root),d=e._config.tagAttributes,c=d[n.toLowerCase()],h=d.li;o=s.nextNode();)"LI"===o.parentNode.nodeName&&(o=o.parentNode,s.currentNode=o.lastChild),"LI"!==o.nodeName?(a=e.createElement("LI",h),o.dir&&(a.dir=o.dir),(r=o.previousSibling)&&r.nodeName===n?(r.appendChild(a),_(o)):N(o,e.createElement(n,c,[a])),a.appendChild(S(o)),s.currentNode=a):(o=o.parentNode,(i=o.nodeName)!==n&&/^[OU]L$/.test(i)&&N(o,e.createElement(n,c,[S(o)])))},gt=function(e){return pt(this,e,"UL"),e},mt=function(e){return pt(this,e,"OL"),e},vt=function(e){var t,n,o,i,r,a=e.querySelectorAll("UL, OL"),d=e.querySelectorAll("LI"),l=this._root;for(t=0,n=a.length;t<n;t+=1)o=a[t],i=S(o),E(i,l),N(o,i);for(t=0,n=d.length;t<n;t+=1)r=d[t],s(r)?N(r,this.createDefaultBlock([S(r)])):(E(r,l),N(r,S(r)));return e},Ct=function(e,t){for(var n=e.commonAncestorContainer,o=e.startContainer,i=e.endContainer;n&&n!==t&&!/^[OU]L$/.test(n.nodeName);)n=n.parentNode;if(!n||n===t)return null;for(o===n&&(o=o.childNodes[e.startOffset]),i===n&&(i=i.childNodes[e.endOffset]);o&&o.parentNode!==n;)o=o.parentNode;for(;i&&i.parentNode!==n;)i=i.parentNode;return[n,o,i]};ot.increaseListLevel=function(e){if(!e&&!(e=this.getSelection()))return this.focus();var t=this._root,n=Ct(e,t);if(!n)return this.focus();var o=n[0],i=n[1],r=n[2];if(!i||i===o.firstChild)return this.focus();this._recordUndoState(e,this._isInUndoState);var a,s,d=o.nodeName,l=i.previousSibling;l.nodeName!==d&&(a=this._config.tagAttributes[d.toLowerCase()],l=this.createElement(d,a),o.insertBefore(l,i));do{s=i===r?null:i.nextSibling,l.appendChild(i)}while(i=s);return s=l.nextSibling,s&&L(s,t),this._getRangeAndRemoveBookmark(e),this.setSelection(e),this._updatePath(e,!0),re||this._docWasChanged(),this.focus()},ot.decreaseListLevel=function(e){if(!e&&!(e=this.getSelection()))return this.focus();var t=this._root,n=Ct(e,t);if(!n)return this.focus();var o=n[0],i=n[1],r=n[2];i||(i=o.firstChild),r||(r=o.lastChild),this._recordUndoState(e,this._isInUndoState);var a,s=o.parentNode,d=r.nextSibling?b(o,r.nextSibling,s,t):o.nextSibling;if(s!==t&&"LI"===s.nodeName){for(s=s.parentNode;d;)a=d.nextSibling,r.appendChild(d),d=a;d=o.parentNode.nextSibling}var l=!/^[OU]L$/.test(s.nodeName);do{a=i===r?null:i.nextSibling,o.removeChild(i),l&&"LI"===i.nodeName&&(i=this.createDefaultBlock([S(i)])),s.insertBefore(i,d)}while(i=a);return o.firstChild||_(o),d&&L(d,t),this._getRangeAndRemoveBookmark(e),this.setSelection(e),this._updatePath(e,!0),re||this._docWasChanged(),this.focus()},ot._ensureBottomLine=function(){var e=this._root,t=e.lastElementChild;t&&t.nodeName===this._config.blockTag&&s(t)||e.appendChild(this.createDefaultBlock())},ot.setKeyHandler=function(e,t){return this._keyHandlers[e]=t,this},ot._getHTML=function(){return this._root.innerHTML},ot._setHTML=function(e){var t=this._root,n=t;n.innerHTML=e;do{T(n,t)}while(n=h(n,t));this._ignoreChange=!0},ot.getHTML=function(e){var t,n,o,i,r,a,s=[];if(e&&(a=this.getSelection())&&this._saveRangeToBookmark(a),ne)for(t=this._root,n=t;n=h(n,t);)n.textContent||n.querySelector("BR")||(o=this.createElement("BR"),n.appendChild(o),s.push(o));if(i=this._getHTML().replace(/\u200B/g,""),ne)for(r=s.length;r--;)_(s[r]);return a&&this._getRangeAndRemoveBookmark(a),i},ot.setHTML=function(e){var t,n,o,i=this._config,r=i.isSetHTMLSanitized?i.sanitizeToDOMFragment:null,a=this._root;"function"==typeof r?n=r(e,!1,this):(t=this.createElement("DIV"),t.innerHTML=e,n=this._doc.createDocumentFragment(),n.appendChild(S(t))),je(n,i),Ye(n,a,!1),E(n,a);for(var s=n;s=h(s,a);)T(s,a);for(this._ignoreChange=!0;o=a.lastChild;)a.removeChild(o);a.appendChild(n),T(a,a),this._undoIndex=-1,this._undoStack.length=0,this._undoStackLength=0,this._isInUndoState=!1;var d=this._getRangeAndRemoveBookmark()||this.createRange(a.firstChild,0);return this.saveUndoState(d),this._lastSelection=d,D.call(this),this._updatePath(d,!0),this},ot.insertElement=function(e,t){if(t||(t=this.getSelection()),t.collapse(!0),a(e))Ne(t,e),t.setStartAfter(e);else{for(var n,o,i=this._root,r=ke(t,i)||i;r!==i&&!r.nextSibling;)r=r.parentNode;r!==i&&(n=r.parentNode,o=b(n,r.nextSibling,i,i)),o?i.insertBefore(e,o):(i.appendChild(e),o=this.createDefaultBlock(),i.appendChild(o)),t.setStart(o,0),t.setEnd(o,0),be(t)}return this.focus(),this.setSelection(t),this._updatePath(t),re||this._docWasChanged(),this},ot.insertImage=function(e,t){var n=this.createElement("IMG",O({src:e},t,!0));return this.insertElement(n),n},ot.linkRegExp=/\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))|([\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,}\b)(?:\?[^&?\s]+=[^&?\s]+(?:&[^&?\s]+=[^&?\s]+)*)?/i;var _t=function(e,t,o){var i,r,a,s,d,l,c,h=e.ownerDocument,u=new n(e,4,function(e){return!g(e,t,"A")}),f=o.linkRegExp,p=o._config.tagAttributes.a;if(f)for(;i=u.nextNode();)for(r=i.data,a=i.parentNode;s=f.exec(r);)d=s.index,l=d+s[0].length,d&&(c=h.createTextNode(r.slice(0,d)),a.insertBefore(c,i)),c=o.createElement("A",O({href:s[1]?/^(?:ht|f)tps?:/i.test(s[1])?s[1]:"http://"+s[1]:"mailto:"+s[0]},p,!1)),c.textContent=r.slice(d,l),a.insertBefore(c,i),i.data=r=r.slice(l)};ot.insertHTML=function(e,t){var n,o,i,r,a,s,d,l=this._config,c=l.isInsertedHTMLSanitized?l.sanitizeToDOMFragment:null,u=this.getSelection(),f=this._doc;"function"==typeof c?r=c(e,t,this):(t&&(n=e.indexOf("\x3c!--StartFragment--\x3e"),o=e.lastIndexOf("\x3c!--EndFragment--\x3e"),n>-1&&o>-1&&(e=e.slice(n+20,o))),/<\/td>((?!<\/tr>)[\s\S])*$/i.test(e)&&(e="<TR>"+e+"</TR>"),/<\/tr>((?!<\/table>)[\s\S])*$/i.test(e)&&(e="<TABLE>"+e+"</TABLE>"),i=this.createElement("DIV"),i.innerHTML=e,r=f.createDocumentFragment(),r.appendChild(S(i))),this.saveUndoState(u);try{for(a=this._root,s=r,d={fragment:r,preventDefault:function(){this.defaultPrevented=!0},defaultPrevented:!1},_t(r,r,this),je(r,l),Ye(r,a,!1),$e(r),r.normalize();s=h(s,r);)T(s,a);t&&this.fireEvent("willPaste",d),d.defaultPrevented||(Te(u,d.fragment,a),re||this._docWasChanged(),u.collapse(!1),this._ensureBottomLine()),this.setSelection(u),this._updatePath(u,!0),t&&this.focus()}catch(e){this.didError(e)}return this};var Nt=function(e){return e.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;").split('"').join("&quot;")};ot.insertPlainText=function(e,t){var n=this.getSelection();if(n.collapsed&&g(n.startContainer,this._root,"PRE")){var o,i,r=n.startContainer,a=n.startOffset;return r&&r.nodeType===F||(o=this._doc.createTextNode(""),r.insertBefore(o,r.childNodes[a]),r=o,a=0),i={text:e,preventDefault:function(){this.defaultPrevented=!0},defaultPrevented:!1},t&&this.fireEvent("willPaste",i),i.defaultPrevented||(e=i.text,r.insertData(a,e),n.setStart(r,a+e.length),n.collapse(!0)),this.setSelection(n),this}var s,d,l,c,h=e.split("\n"),u=this._config,f=u.blockTag,p=u.blockAttributes,m="</"+f+">",v="<"+f;for(s in p)v+=" "+s+'="'+Nt(p[s])+'"';for(v+=">",d=0,l=h.length;d<l;d+=1)c=h[d],c=Nt(c).replace(/ (?= )/g,"&nbsp;"),h[d]=v+(c||"<BR>")+m;return this.insertHTML(h.join(""),t)};var St=function(e,t,n){return function(){return this[e](t,n),this.focus()}};ot.addStyles=function(e){if(e){var t=this._doc.documentElement.firstChild,n=this.createElement("STYLE",{type:"text/css"});n.appendChild(this._doc.createTextNode(e)),t.appendChild(n)}return this},ot.bold=St("changeFormat",{tag:"B"}),ot.italic=St("changeFormat",{tag:"I"}),ot.underline=St("changeFormat",{tag:"U"}),ot.strikethrough=St("changeFormat",{tag:"S"}),ot.subscript=St("changeFormat",{tag:"SUB"},{tag:"SUP"}),ot.superscript=St("changeFormat",{tag:"SUP"},{tag:"SUB"}),ot.removeBold=St("changeFormat",null,{tag:"B"}),ot.removeItalic=St("changeFormat",null,{tag:"I"}),ot.removeUnderline=St("changeFormat",null,{tag:"U"}),ot.removeStrikethrough=St("changeFormat",null,{tag:"S"}),ot.removeSubscript=St("changeFormat",null,{tag:"SUB"}),ot.removeSuperscript=St("changeFormat",null,{tag:"SUP"}),ot.makeLink=function(e,t){var n=this.getSelection();if(n.collapsed){var o=e.indexOf(":")+1;if(o)for(;"/"===e[o];)o+=1;Ne(n,this._doc.createTextNode(e.slice(o)))}return t=O(O({href:e},t,!0),this._config.tagAttributes.a,!1),this.changeFormat({tag:"A",attributes:t},{tag:"A"},n),this.focus()},ot.removeLink=function(){return this.changeFormat(null,{tag:"A"},this.getSelection(),!0),this.focus()},ot.setFontFace=function(e){var t=this._config.classNames.fontFamily;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"font-family: "+e+", sans-serif;"}}:null,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setFontSize=function(e){var t=this._config.classNames.fontSize;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"font-size: "+("number"==typeof e?e+"px":e)}}:null,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setTextColour=function(e){var t=this._config.classNames.colour;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"color:"+e}}:null,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setHighlightColour=function(e){var t=this._config.classNames.highlight;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"background-color:"+e}}:e,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setTextAlignment=function(e){return this.forEachBlock(function(t){var n=t.className.split(/\s+/).filter(function(e){return!!e&&!/^align/.test(e)}).join(" ");e?(t.className=n+" align-"+e,t.style.textAlign=e):(t.className=n,t.style.textAlign="")},!0),this.focus()},ot.setTextDirection=function(e){return this.forEachBlock(function(t){e?t.dir=e:t.removeAttribute("dir")},!0),this.focus()};var yt=function(e){for(var t,o=this._root,i=this._doc,r=i.createDocumentFragment(),a=l(e,o);t=a.nextNode();){var s,d,c=t.querySelectorAll("BR"),h=[],u=c.length;for(s=0;s<u;s+=1)h[s]=Ve(c[s],!1);for(;u--;)d=c[u],h[u]?N(d,i.createTextNode("\n")):_(d);for(c=t.querySelectorAll("CODE"),u=c.length;u--;)_(c[u]);r.childNodes.length&&r.appendChild(i.createTextNode("\n")),r.appendChild(S(t))}for(a=new n(r,4);t=a.nextNode();)t.data=t.data.replace(/ /g," ");return r.normalize(),T(this.createElement("PRE",this._config.tagAttributes.pre,[r]),o)},Tt=function(e){for(var t,o,i,r,a,s,d=this._doc,l=this._root,c=e.querySelectorAll("PRE"),h=c.length;h--;){for(t=c[h],o=new n(t,4);i=o.nextNode();){for(r=i.data,r=r.replace(/ (?= )/g," "),a=d.createDocumentFragment();(s=r.indexOf("\n"))>-1;)a.appendChild(d.createTextNode(r.slice(0,s))),a.appendChild(d.createElement("BR")),r=r.slice(s+1);i.parentNode.insertBefore(a,i),i.data=r}E(t,l),N(t,S(t))}return e};ot.code=function(){var e=this.getSelection();return e.collapsed||d(e.commonAncestorContainer)?this.modifyBlocks(yt,e):this.changeFormat({tag:"CODE",attributes:this._config.tagAttributes.code},null,e),this.focus()},ot.removeCode=function(){var e=this.getSelection();return g(e.commonAncestorContainer,this._root,"PRE")?this.modifyBlocks(Tt,e):this.changeFormat(null,{tag:"CODE"},e),this.focus()},ot.toggleCode=function(){return this.hasFormat("PRE")||this.hasFormat("CODE")?this.removeCode():this.code(),this},ot.removeAllFormatting=function(e){if(!e&&!(e=this.getSelection())||e.collapsed)return this;for(var t=this._root,n=e.commonAncestorContainer;n&&!s(n);)n=n.parentNode;if(n||(Re(e,t),n=t),n.nodeType===F)return this;this.saveUndoState(e),xe(e,n,n,t);for(var o,i,r=n.ownerDocument,a=e.startContainer,d=e.startOffset,l=e.endContainer,c=e.endOffset,h=r.createDocumentFragment(),u=r.createDocumentFragment(),f=b(l,c,n,t),p=b(a,d,n,t);p!==f;)o=p.nextSibling,h.appendChild(p),p=o;return I(this,h,u),u.normalize(),p=u.firstChild,o=u.lastChild,i=n.childNodes,p?(n.insertBefore(u,f),d=de.call(i,p),c=de.call(i,o)+1):(d=de.call(i,f),c=d),e.setStart(n,d),e.setEnd(n,c),k(n,e),be(e),this.setSelection(e),this._updatePath(e,!0),this.focus()},ot.increaseQuoteLevel=St("modifyBlocks",ht),ot.decreaseQuoteLevel=St("modifyBlocks",ut),ot.makeUnorderedList=St("modifyBlocks",gt),ot.makeOrderedList=St("modifyBlocks",mt),ot.removeList=St("modifyBlocks",vt),R.isInline=a,R.isBlock=s,R.isContainer=d,R.getBlockWalker=l,R.getPreviousBlock=c,R.getNextBlock=h,R.areAlike=f,R.hasTagAttributes=p,R.getNearest=g,R.isOrContains=m,R.detach=_,R.replaceWith=N,R.empty=S,R.getNodeBefore=Ce,R.getNodeAfter=_e,R.insertNodeInRange=Ne,R.extractContentsOfRange=Se,R.deleteContentsOfRange=ye,R.insertTreeFragmentIntoRange=Te,R.isNodeContainedInRange=Ee,R.moveRangeBoundariesDownTree=be,R.moveRangeBoundariesUpTree=xe,R.getStartBlockOfRange=ke,R.getEndBlockOfRange=Ae,R.contentWalker=Le,R.rangeDoesStartAtBlockBoundary=Be,R.rangeDoesEndAtBlockBoundary=Oe,R.expandRangeToBlockBoundaries=Re,R.onPaste=tt,R.addLinks=_t,R.splitBlock=ct,R.startSelectionId="squire-selection-start",R.endSelectionId=dt, true?module.exports=R:"function"==typeof define&&define.amd?define(function(){return R}):(q.Squire=R,top!==q&&"true"===e.documentElement.getAttribute("data-squireinit")&&(q.editor=new R(e),q.onEditorLoad&&(q.onEditorLoad(q.editor),q.onEditorLoad=null)))}(document);
 
 /***/ }),
-/* 311 */
+/* 312 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69884,7 +70249,7 @@ var WwTextObject = function () {
 exports.default = WwTextObject;
 
 /***/ }),
-/* 312 */
+/* 313 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69902,7 +70267,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _blockOverlay = __webpack_require__(313);
+var _blockOverlay = __webpack_require__(314);
 
 var _blockOverlay2 = _interopRequireDefault(_blockOverlay);
 
@@ -70061,7 +70426,7 @@ var CodeBlockGadget = function (_BlockOverlay) {
 exports.default = CodeBlockGadget;
 
 /***/ }),
-/* 313 */
+/* 314 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70267,7 +70632,7 @@ var BlockOverlay = function () {
 exports.default = BlockOverlay;
 
 /***/ }),
-/* 314 */
+/* 315 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70541,7 +70906,7 @@ var Layout = function () {
 exports.default = Layout;
 
 /***/ }),
-/* 315 */
+/* 316 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70561,11 +70926,11 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _defaultToolbar = __webpack_require__(316);
+var _defaultToolbar = __webpack_require__(317);
 
 var _defaultToolbar2 = _interopRequireDefault(_defaultToolbar);
 
-var _tab = __webpack_require__(287);
+var _tab = __webpack_require__(288);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -70573,35 +70938,35 @@ var _layerpopup = __webpack_require__(6);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _modeSwitch = __webpack_require__(320);
+var _modeSwitch = __webpack_require__(321);
 
 var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-var _popupAddLink = __webpack_require__(321);
+var _popupAddLink = __webpack_require__(322);
 
 var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-var _popupAddImage = __webpack_require__(322);
+var _popupAddImage = __webpack_require__(323);
 
 var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-var _popupTableUtils = __webpack_require__(323);
+var _popupTableUtils = __webpack_require__(324);
 
 var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-var _popupAddTable = __webpack_require__(324);
+var _popupAddTable = __webpack_require__(325);
 
 var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-var _popupAddHeading = __webpack_require__(325);
+var _popupAddHeading = __webpack_require__(326);
 
 var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
-var _popupCodeBlockLanguages = __webpack_require__(326);
+var _popupCodeBlockLanguages = __webpack_require__(327);
 
 var _popupCodeBlockLanguages2 = _interopRequireDefault(_popupCodeBlockLanguages);
 
-var _popupCodeBlockEditor = __webpack_require__(327);
+var _popupCodeBlockEditor = __webpack_require__(328);
 
 var _popupCodeBlockEditor2 = _interopRequireDefault(_popupCodeBlockEditor);
 
@@ -70609,7 +70974,7 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _tooltip = __webpack_require__(278);
+var _tooltip = __webpack_require__(279);
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -71054,7 +71419,7 @@ var DefaultUI = function () {
 exports.default = DefaultUI;
 
 /***/ }),
-/* 316 */
+/* 317 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71068,7 +71433,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _resizeObserverPolyfill = __webpack_require__(317);
+var _resizeObserverPolyfill = __webpack_require__(318);
 
 var _resizeObserverPolyfill2 = _interopRequireDefault(_resizeObserverPolyfill);
 
@@ -71076,15 +71441,15 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _toolbar = __webpack_require__(284);
+var _toolbar = __webpack_require__(285);
 
 var _toolbar2 = _interopRequireDefault(_toolbar);
 
-var _popupDropdownToolbar = __webpack_require__(319);
+var _popupDropdownToolbar = __webpack_require__(320);
 
 var _popupDropdownToolbar2 = _interopRequireDefault(_popupDropdownToolbar);
 
-var _toolbarItemFactory = __webpack_require__(286);
+var _toolbarItemFactory = __webpack_require__(287);
 
 var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
 
@@ -71251,7 +71616,7 @@ var DefaultToolbar = function (_Toolbar) {
 exports.default = DefaultToolbar;
 
 /***/ }),
-/* 317 */
+/* 318 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -72284,7 +72649,7 @@ var index = (function () {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(30)))
 
 /***/ }),
-/* 318 */
+/* 319 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72329,7 +72694,7 @@ var ToolbarButton = function (_Button) {
 exports.default = ToolbarButton;
 
 /***/ }),
-/* 319 */
+/* 320 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72351,7 +72716,7 @@ var _layerpopup = __webpack_require__(6);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _toolbar = __webpack_require__(284);
+var _toolbar = __webpack_require__(285);
 
 var _toolbar2 = _interopRequireDefault(_toolbar);
 
@@ -72596,7 +72961,7 @@ Object.defineProperty(PopupDropdownToolbar, 'OPEN_EVENT', {
 exports.default = PopupDropdownToolbar;
 
 /***/ }),
-/* 320 */
+/* 321 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72799,7 +73164,7 @@ Object.defineProperty(ModeSwitch, 'TYPE', {
 exports.default = ModeSwitch;
 
 /***/ }),
-/* 321 */
+/* 322 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73035,7 +73400,7 @@ var PopupAddLink = function (_LayerPopup) {
 exports.default = PopupAddLink;
 
 /***/ }),
-/* 322 */
+/* 323 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73057,7 +73422,7 @@ var _layerpopup = __webpack_require__(6);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _tab = __webpack_require__(287);
+var _tab = __webpack_require__(288);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -73272,7 +73637,7 @@ var PopupAddImage = function (_LayerPopup) {
 exports.default = PopupAddImage;
 
 /***/ }),
-/* 323 */
+/* 324 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73443,7 +73808,7 @@ var PopupTableUtils = function (_LayerPopup) {
 exports.default = PopupTableUtils;
 
 /***/ }),
-/* 324 */
+/* 325 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73940,7 +74305,7 @@ PopupAddTable.MIN_COL_SELECTION_INDEX = MIN_COL_SELECTION_INDEX;
 exports.default = PopupAddTable;
 
 /***/ }),
-/* 325 */
+/* 326 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74086,7 +74451,7 @@ var PopupAddHeading = function (_LayerPopup) {
 exports.default = PopupAddHeading;
 
 /***/ }),
-/* 326 */
+/* 327 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74384,7 +74749,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 exports.default = PopupCodeBlockLanguages;
 
 /***/ }),
-/* 327 */
+/* 328 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74410,19 +74775,19 @@ var _layerpopup = __webpack_require__(6);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _scrollSyncSplit = __webpack_require__(328);
+var _scrollSyncSplit = __webpack_require__(329);
 
 var _scrollSyncSplit2 = _interopRequireDefault(_scrollSyncSplit);
 
-var _codeBlockEditor = __webpack_require__(329);
+var _codeBlockEditor = __webpack_require__(330);
 
 var _codeBlockEditor2 = _interopRequireDefault(_codeBlockEditor);
 
-var _codeBlockPreview = __webpack_require__(330);
+var _codeBlockPreview = __webpack_require__(331);
 
 var _codeBlockPreview2 = _interopRequireDefault(_codeBlockPreview);
 
-var _codeBlockLanguagesCombo = __webpack_require__(331);
+var _codeBlockLanguagesCombo = __webpack_require__(332);
 
 var _codeBlockLanguagesCombo2 = _interopRequireDefault(_codeBlockLanguagesCombo);
 
@@ -74757,7 +75122,7 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 exports.default = PopupCodeBlockEditor;
 
 /***/ }),
-/* 328 */
+/* 329 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75071,7 +75436,7 @@ var ScrollSyncSplit = function () {
 exports.default = ScrollSyncSplit;
 
 /***/ }),
-/* 329 */
+/* 330 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75087,7 +75452,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _codeMirrorExt = __webpack_require__(279);
+var _codeMirrorExt = __webpack_require__(280);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
@@ -75274,7 +75639,7 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
 exports.default = CodeBlockEditor;
 
 /***/ }),
-/* 330 */
+/* 331 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75377,7 +75742,7 @@ var CodeBlockPreview = function (_Preview) {
 exports.default = CodeBlockPreview;
 
 /***/ }),
-/* 331 */
+/* 332 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75617,7 +75982,7 @@ var CodeBlockLanguagesCombo = function () {
 exports.default = CodeBlockLanguagesCombo;
 
 /***/ }),
-/* 332 */
+/* 333 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75631,14 +75996,17 @@ var _commandManager = __webpack_require__(3);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _emphasisCommon = __webpack_require__(278);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var boldRangeRegex = /^[*_]{2,}[^*_]+[*_]{2,}$/; /**
-                                                 * @fileoverview Implements Bold markdown command
-                                                 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                                 */
-
-var boldContentRegex = /[*_]{2,}([^*_]+)[*_]{2,}/g;
+/**
+* @fileoverview Implements Bold markdown command
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
+var boldRangeRegex = /^(\*{2}|_{2}).*\1$/;
+var boldContentRegex = /[*_]{2,}([^*_]*)[*_]{2,}/g;
+var boldSymbol = '**';
 
 /**
  * Bold
@@ -75657,122 +76025,18 @@ var Bold = _commandManager2.default.command('markdown', /** @lends Bold */{
   exec: function exec(mde) {
     var cm = mde.getEditor();
     var doc = cm.getDoc();
+    var originRange = mde.getRange();
 
-    var cursor = doc.getCursor();
-    var selection = doc.getSelection();
-    var isEmpty = !selection;
-
-    // if selection is empty, expend selection to detect a syntax
-    if (isEmpty && cursor.ch > 1) {
-      var tmpSelection = this.expendSelection(doc, cursor);
-      selection = tmpSelection || selection;
-    }
-
-    var isRemoved = this.isNeedRemove(selection);
-    var result = void 0;
-    if (isRemoved) {
-      result = this.remove(selection);
-      result = this._removeBoldSyntax(result);
-    } else {
-      result = this._removeBoldSyntax(selection);
-      result = this.append(result);
-    }
-
-    doc.replaceSelection(result, 'around');
-
-    if (isEmpty && !isRemoved) {
-      this.setCursorToCenter(doc, cursor);
-    }
+    (0, _emphasisCommon.changeSyntax)(doc, originRange, boldSymbol, boldRangeRegex, boldContentRegex);
 
     cm.focus();
-  },
-
-
-  /**
-   * test it has bold
-   * @param {string} text - text selected
-   * @returns {boolean} - true if it has bold
-   */
-  isNeedRemove: function isNeedRemove(text) {
-    return boldRangeRegex.test(text);
-  },
-
-
-  /**
-   * apply bold
-   * @param {string} text - text selected
-   * @returns {string} - bold text
-   */
-  append: function append(text) {
-    return '**' + text + '**';
-  },
-
-
-  /**
-   * remove bold
-   * @param {string} text - text selected
-   * @returns {string} - un-bold text
-   */
-  remove: function remove(text) {
-    return text.substr(2, text.length - 4);
-  },
-
-
-  /**
-   * expand selection
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @returns {string} - text selected
-   */
-  expendSelection: function expendSelection(doc, cursor) {
-    var tmpSelection = doc.getSelection();
-    var result = void 0;
-    var start = {
-      line: cursor.line,
-      ch: cursor.ch - 2
-    };
-    var end = {
-      line: cursor.line,
-      ch: cursor.ch + 2
-    };
-
-    doc.setSelection(start, end);
-
-    if (tmpSelection === '****' || tmpSelection === '____') {
-      result = tmpSelection;
-    } else {
-      doc.setSelection(cursor);
-    }
-
-    return result;
-  },
-
-
-  /**
-   * move cursor to center
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   */
-  setCursorToCenter: function setCursorToCenter(doc, cursor) {
-    doc.setCursor(cursor.line, cursor.ch + 2);
-  },
-
-
-  /**
-   * remove bold syntax in the middle of given text
-   * @param {string} text - text selected
-   * @returns {string} - text eliminated all bold in the middle of it's content
-   * @private
-   */
-  _removeBoldSyntax: function _removeBoldSyntax(text) {
-    return text ? text.replace(boldContentRegex, '$1') : '';
   }
 });
 
 exports.default = Bold;
 
 /***/ }),
-/* 333 */
+/* 334 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75786,15 +76050,82 @@ var _commandManager = __webpack_require__(3);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _emphasisCommon = __webpack_require__(278);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var boldItalicRangeRegex = /^[*_]{3,}[^*_]+[*_]{3,}$/; /**
-                                                        * @fileoverview Implements Italic markdown command
-                                                        * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                                        */
+/**
+ * @fileoverview Implements Italic markdown command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+var boldItalicRangeRegex = /^(\*{3}|_{3}).*\1$/;
+var boldRangeRegex = /^(\*{2}|_{2}).*\1$/;
+var italicRangeRegex = /^(\*|_).*\1$/;
+var italicContentRegex = /([^*_])[*_]([^*_]+)[*_]([^*_])/g;
 
-var italicRangeRegex = /^[*_][^*_]+[*_]$/;
-var italicContentRegex = /[*_]([^*_]+)[*_]/g;
+var isBoldItalic = function isBoldItalic(t) {
+  return boldItalicRangeRegex.test(t);
+};
+var isBold = function isBold(t) {
+  return boldRangeRegex.test(t);
+};
+var isItalic = function isItalic(t) {
+  return italicRangeRegex.test(t);
+};
+
+var italicSymbol = '*';
+var boldSymbol = '**';
+var boldItalicSymbol = '***';
+var italicLength = italicSymbol.length;
+var boldLength = boldSymbol.length;
+var boldItalicLength = boldItalicSymbol.length;
+
+/**
+ * remove italic syntax in the middle of given text
+ * @param {string} text - text selected
+ * @returns {string} - text eliminated all italic in the middle of it's content
+ * @ignore
+ */
+var removeItalicInsideText = function removeItalicInsideText(text) {
+  return text ? text.replace(italicContentRegex, '$1$2$3') : '';
+};
+
+var replaceText = function replaceText(doc, text, range) {
+  // Check 3 cases when both text and expand text
+  // case 1 : bold & italic (when expand 3 both front and end) => remove italic
+  // case 2 : bold (when expand 2 both front and end) => append
+  // case 3 : italic (expand 1 both front and end) => remove
+  var expandReplaceBind = _emphasisCommon.expandReplace.bind(this, doc, range);
+
+  return expandReplaceBind(boldItalicLength, isBoldItalic, function (t) {
+    return (0, _emphasisCommon.removeSyntax)(t, italicSymbol);
+  }) || expandReplaceBind(boldLength, isBold, function (t) {
+    return (0, _emphasisCommon.appendSyntax)(removeItalicInsideText(t), italicSymbol);
+  }) || expandReplaceBind(italicLength, isItalic, function (t) {
+    return (0, _emphasisCommon.removeSyntax)(t, italicSymbol);
+  }) || (0, _emphasisCommon.replace)(doc, text, isBoldItalic, function (t) {
+    return (0, _emphasisCommon.removeSyntax)(t, italicSymbol);
+  }) || (0, _emphasisCommon.replace)(doc, text, isBold, function (t) {
+    return (0, _emphasisCommon.appendSyntax)(removeItalicInsideText(t), italicSymbol);
+  }) || (0, _emphasisCommon.replace)(doc, text, isItalic, function (t) {
+    return (0, _emphasisCommon.removeSyntax)(t, italicSymbol);
+  });
+};
+
+var replaceEmptyText = function replaceEmptyText(doc, range) {
+  // Check 3 cases when expand text
+  // case 1 : bold & italic => remove italic
+  // case 2 : bold => append
+  // case 3 : italic => remove
+  // if there is no match, make italic
+  return (0, _emphasisCommon.expandReplace)(doc, range, boldItalicLength, isBoldItalic, function (t) {
+    return (0, _emphasisCommon.removeSyntax)(t, italicSymbol);
+  }) || (0, _emphasisCommon.expandReplace)(doc, range, boldLength, isBold, function (t) {
+    return (0, _emphasisCommon.appendSyntax)(t, italicSymbol);
+  }) || (0, _emphasisCommon.expandReplace)(doc, range, italicLength, isItalic, function () {
+    return '';
+  }) || doc.replaceSelection('' + italicSymbol + italicSymbol, 'around');
+};
 
 /**
  * Italic
@@ -75814,198 +76145,47 @@ var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
     var cm = mde.getEditor();
     var doc = cm.getDoc();
 
-    var cursor = doc.getCursor();
-    var selection = doc.getSelection();
-    var isEmpty = !selection;
-    var isWithBold = false;
-    var tmpSelection = void 0;
+    var _doc$getCursor = doc.getCursor(),
+        line = _doc$getCursor.line,
+        ch = _doc$getCursor.ch;
 
-    // if selection is empty, expend selection to detect a syntax
-    if (isEmpty) {
-      if (cursor.ch > 2) {
-        tmpSelection = this.expendWithBoldSelection(doc, cursor);
+    var range = mde.getRange();
+    var selectionStr = doc.getSelection();
 
-        if (tmpSelection) {
-          isWithBold = 'with';
-        }
+    if (selectionStr) {
+      // check selectionStr match bold & italic, bold, italic and then
+      // if there is no match, append italic
+      if (!replaceText(doc, selectionStr, range)) {
+        // Before append italic, remove italic inside text and then append italic
+        // Example: One*Two*Three => *OneTwoThree*
+        doc.replaceSelection((0, _emphasisCommon.appendSyntax)(removeItalicInsideText(selectionStr), italicSymbol), 'around');
       }
-
-      if (isWithBold !== 'with' && cursor.ch > 1) {
-        isWithBold = this.expendOnlyBoldSelection(doc, cursor);
-      }
-
-      if (!isWithBold && cursor.ch > 0) {
-        this.expendSelection(doc, cursor);
-        selection = tmpSelection || selection;
-      }
-    }
-
-    var isRemoved = this.isNeedRemove(selection);
-    var result = void 0;
-    if (isRemoved) {
-      result = this.remove(selection);
-      result = this._removeItalicSyntax(result);
     } else {
-      result = this._removeItalicSyntax(selection);
-      result = this.append(result);
-    }
+      replaceEmptyText(doc, range);
 
-    doc.replaceSelection(result, 'around');
+      var afterSelectStr = doc.getSelection();
+      var size = ch;
 
-    if (isEmpty) {
-      this.setCursorToCenter(doc, cursor, isRemoved);
+      // If text was not selected, after replace text, move cursor
+      if (isBoldItalic(afterSelectStr) || isItalic(afterSelectStr) && !isBold(afterSelectStr)) {
+        // For example **|** => ***|*** (move cusor +symbolLenth)
+        size += italicLength;
+      } else {
+        // For example *|* => | (move cusor -symbolLenth)
+        size -= italicLength;
+      }
+
+      doc.setCursor(line, size);
     }
 
     cm.focus();
-  },
-
-
-  /**
-   * isNeedRemove
-   * test given text has italic or bold
-   * @param {string} text - text to test
-   * @returns {boolean} - true if it has italic or bold
-   */
-  isNeedRemove: function isNeedRemove(text) {
-    return italicRangeRegex.test(text) || boldItalicRangeRegex.test(text);
-  },
-
-
-  /**
-   * apply italic
-   * @param {string} text - text to apply
-   * @returns {string} - italic text
-   */
-  append: function append(text) {
-    return '_' + text + '_';
-  },
-
-
-  /**
-   * remove italic
-   * @param {string} text - text to remove italic syntax
-   * @returns {string} - italic syntax revmoed text
-   */
-  remove: function remove(text) {
-    return text.substr(1, text.length - 2);
-  },
-
-
-  /**
-   * expand selected area
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @returns {string} - text in range after it has been expaneded
-   */
-  expendWithBoldSelection: function expendWithBoldSelection(doc, cursor) {
-    var tmpSelection = doc.getSelection();
-    var result = void 0;
-    var start = {
-      line: cursor.line,
-      ch: cursor.ch - 3
-    };
-    var end = {
-      line: cursor.line,
-      ch: cursor.ch + 3
-    };
-
-    doc.setSelection(start, end);
-
-    if (tmpSelection === '******' || tmpSelection === '______') {
-      result = tmpSelection;
-    } else {
-      doc.setSelection(cursor);
-    }
-
-    return result;
-  },
-
-
-  /**
-   * expand only bold selection
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @returns {string} - text in area after it has been expaneded
-   */
-  expendOnlyBoldSelection: function expendOnlyBoldSelection(doc, cursor) {
-    var tmpSelection = doc.getSelection();
-    var result = false;
-    var start = {
-      line: cursor.line,
-      ch: cursor.ch - 2
-    };
-    var end = {
-      line: cursor.line,
-      ch: cursor.ch + 2
-    };
-
-    doc.setSelection(start, end);
-
-    if (tmpSelection === '****' || tmpSelection === '____') {
-      doc.setSelection(cursor);
-      result = 'only';
-    }
-
-    return result;
-  },
-
-
-  /**
-   * expand only italic selection
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @returns {string} - text in area after it has been expaneded
-   */
-  expendSelection: function expendSelection(doc, cursor) {
-    var tmpSelection = doc.getSelection();
-    var result = void 0;
-    var start = {
-      line: cursor.line,
-      ch: cursor.ch - 2
-    };
-    var end = {
-      line: cursor.line,
-      ch: cursor.ch + 2
-    };
-
-    doc.setSelection(start, end);
-
-    if (tmpSelection === '****' || tmpSelection === '____') {
-      result = tmpSelection;
-    } else {
-      doc.setSelection(cursor);
-    }
-
-    return result;
-  },
-
-  /**
-   * move cursor to center
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @param {boolean} isRemoved - whether it involes deletion
-   */
-  setCursorToCenter: function setCursorToCenter(doc, cursor, isRemoved) {
-    var pos = isRemoved ? -1 : 1;
-    doc.setCursor(cursor.line, cursor.ch + pos);
-  },
-
-
-  /**
-   * remove italic syntax in the middle of given text
-   * @param {string} text - text selected
-   * @returns {string} - text eliminated all italic in the middle of it's content
-   * @private
-   */
-  _removeItalicSyntax: function _removeItalicSyntax(text) {
-    return text ? text.replace(italicContentRegex, '$1') : '';
   }
 });
 
 exports.default = Italic;
 
 /***/ }),
-/* 334 */
+/* 335 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76019,14 +76199,17 @@ var _commandManager = __webpack_require__(3);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _emphasisCommon = __webpack_require__(278);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var strikeRangeRegex = /^~~[^~]+~~$/; /**
-                                       * @fileoverview Implements StrikeThrough markdown command
-                                       * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
-                                       */
-
-var strikeContentRegex = /~~([^~]+)~~/g;
+/**
+ * @fileoverview Implements StrikeThrough markdown command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+var strikeRangeRegex = /^~~.*~~$/;
+var strikeContentRegex = /~~([^~]*)~~/g;
+var strikeSymbol = '~~';
 
 /**
  * Strike
@@ -76045,87 +76228,18 @@ var Strike = _commandManager2.default.command('markdown', /** @lends Strike */{
   exec: function exec(mde) {
     var cm = mde.getEditor();
     var doc = cm.getDoc();
-    var cursor = doc.getCursor();
-    var selection = doc.getSelection();
-    var isNeedToRemove = this.hasStrikeSyntax(selection);
+    var originRange = mde.getRange();
 
-    var result = void 0;
-
-    if (isNeedToRemove) {
-      result = this.remove(selection);
-      result = this._removeStrikeSyntax(result);
-    } else {
-      result = this._removeStrikeSyntax(selection);
-      result = this.append(result);
-    }
-
-    doc.replaceSelection(result, 'around');
-
-    if (!selection && !isNeedToRemove) {
-      this.setCursorToCenter(doc, cursor, isNeedToRemove);
-    }
+    (0, _emphasisCommon.changeSyntax)(doc, originRange, strikeSymbol, strikeRangeRegex, strikeContentRegex);
 
     cm.focus();
-  },
-
-
-  /**
-   * hasStrikeSyntax
-   * @param {string} text Source text
-   * @returns {boolean} Boolean value of strike syntax removal
-   */
-  hasStrikeSyntax: function hasStrikeSyntax(text) {
-    return strikeRangeRegex.test(text);
-  },
-
-
-  /**
-   * append strike
-   * @param {string} text - text to apply
-   * @returns {string} - strike through text
-   */
-  append: function append(text) {
-    return '~~' + text + '~~';
-  },
-
-
-  /**
-   * remove strike
-   * @param {string} text - text to remove
-   * @returns {string} - strike removed text
-   */
-  remove: function remove(text) {
-    return text.substr(2, text.length - 4);
-  },
-
-
-  /**
-   * set cursor to center
-   * @param {CodeMirror.doc} doc - codemirror document
-   * @param {object} cursor - codemirror cursor
-   * @param {boolean} isRemoved - whether it involes deletion
-   */
-  setCursorToCenter: function setCursorToCenter(doc, cursor, isRemoved) {
-    var pos = isRemoved ? -2 : 2;
-    doc.setCursor(cursor.line, cursor.ch + pos);
-  },
-
-
-  /**
-   * remove strike syntax in the middle of given text
-   * @param {string} text - text selected
-   * @returns {string} - text eliminated all strike in the middle of it's content
-   * @private
-   */
-  _removeStrikeSyntax: function _removeStrikeSyntax(text) {
-    return text ? text.replace(strikeContentRegex, '$1') : '';
   }
 });
 
 exports.default = Strike;
 
 /***/ }),
-/* 335 */
+/* 336 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76265,7 +76379,7 @@ var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockqu
 exports.default = Blockquote;
 
 /***/ }),
-/* 336 */
+/* 337 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76366,7 +76480,7 @@ function getHeadingMarkdown(text, size) {
 exports.default = Heading;
 
 /***/ }),
-/* 337 */
+/* 338 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76447,7 +76561,7 @@ function getParagraphMarkdown(lineText) {
 exports.default = Paragraph;
 
 /***/ }),
-/* 338 */
+/* 339 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76518,7 +76632,7 @@ var HR = _commandManager2.default.command('markdown', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 339 */
+/* 340 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76595,7 +76709,7 @@ var AddLink = _commandManager2.default.command('markdown', /** @lends AddLink */
 exports.default = AddLink;
 
 /***/ }),
-/* 340 */
+/* 341 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76671,7 +76785,7 @@ var AddImage = _commandManager2.default.command('markdown', /** @lends AddImage 
 exports.default = AddImage;
 
 /***/ }),
-/* 341 */
+/* 342 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76714,7 +76828,7 @@ var UL = _commandManager2.default.command('markdown', /** @lends UL */{
 exports.default = UL;
 
 /***/ }),
-/* 342 */
+/* 343 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76758,7 +76872,7 @@ var OL = _commandManager2.default.command('markdown', /** @lends OL */{
 exports.default = OL;
 
 /***/ }),
-/* 343 */
+/* 344 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76799,7 +76913,7 @@ var Indent = _commandManager2.default.command('markdown', /** @lends Indent */{
 exports.default = Indent;
 
 /***/ }),
-/* 344 */
+/* 345 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76840,7 +76954,7 @@ var Outdent = _commandManager2.default.command('markdown', /** @lends Outdent */
 exports.default = Outdent;
 
 /***/ }),
-/* 345 */
+/* 346 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76961,7 +77075,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 346 */
+/* 347 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77003,7 +77117,7 @@ var Task = _commandManager2.default.command('markdown', /** @lends Task */{
 exports.default = Task;
 
 /***/ }),
-/* 347 */
+/* 348 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77122,7 +77236,7 @@ var Code = _commandManager2.default.command('markdown', /** @lends Code */{
 exports.default = Code;
 
 /***/ }),
-/* 348 */
+/* 349 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77180,7 +77294,7 @@ var CodeBlock = _commandManager2.default.command('markdown', /** @lends CodeBloc
 exports.default = CodeBlock;
 
 /***/ }),
-/* 349 */
+/* 350 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77250,7 +77364,7 @@ function styleBold(sq) {
 exports.default = Bold;
 
 /***/ }),
-/* 350 */
+/* 351 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77321,7 +77435,7 @@ function styleItalic(sq) {
 exports.default = Italic;
 
 /***/ }),
-/* 351 */
+/* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77392,7 +77506,7 @@ function styleStrike(sq) {
 exports.default = Strike;
 
 /***/ }),
-/* 352 */
+/* 353 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77443,7 +77557,7 @@ var Blockquote = _commandManager2.default.command('wysiwyg', /** @lends Blockquo
 exports.default = Blockquote;
 
 /***/ }),
-/* 353 */
+/* 354 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77504,7 +77618,7 @@ var AddImage = _commandManager2.default.command('wysiwyg', /** @lends AddImage *
 exports.default = AddImage;
 
 /***/ }),
-/* 354 */
+/* 355 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77577,7 +77691,7 @@ var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
 exports.default = AddLink;
 
 /***/ }),
-/* 355 */
+/* 356 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77658,7 +77772,7 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 356 */
+/* 357 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77728,7 +77842,7 @@ var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
 exports.default = Heading;
 
 /***/ }),
-/* 357 */
+/* 358 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77795,7 +77909,7 @@ var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph
 exports.default = Paragraph;
 
 /***/ }),
-/* 358 */
+/* 359 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77903,7 +78017,7 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
 exports.default = UL;
 
 /***/ }),
-/* 359 */
+/* 360 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78012,7 +78126,7 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
 exports.default = OL;
 
 /***/ }),
-/* 360 */
+/* 361 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78152,7 +78266,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 361 */
+/* 362 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78277,7 +78391,7 @@ function focusToFirstTd(sq, $tr) {
 exports.default = TableAddRow;
 
 /***/ }),
-/* 362 */
+/* 363 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78426,7 +78540,7 @@ function focusToNextCell(sq, $cell) {
 exports.default = TableAddCol;
 
 /***/ }),
-/* 363 */
+/* 364 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78555,7 +78669,7 @@ function getTrs(range, selectionMgr, $table) {
 exports.default = TableRemoveRow;
 
 /***/ }),
-/* 364 */
+/* 365 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78701,7 +78815,7 @@ function focusToCell(sq, $cell, tableMgr) {
 exports.default = TableRemoveCol;
 
 /***/ }),
-/* 365 */
+/* 366 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78853,7 +78967,7 @@ function getRangeInformation(range, selectionMgr) {
 exports.default = TableAlignCol;
 
 /***/ }),
-/* 366 */
+/* 367 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78908,7 +79022,7 @@ var TableRemove = _commandManager2.default.command('wysiwyg', /** @lends RemoveT
 exports.default = TableRemove;
 
 /***/ }),
-/* 367 */
+/* 368 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78984,7 +79098,7 @@ var Indent = _commandManager2.default.command('wysiwyg', /** @lends Indent */{
 exports.default = Indent;
 
 /***/ }),
-/* 368 */
+/* 369 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79064,7 +79178,7 @@ function getCurrent$Li(wwe) {
 exports.default = Outdent;
 
 /***/ }),
-/* 369 */
+/* 370 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79176,7 +79290,7 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
 exports.default = Task;
 
 /***/ }),
-/* 370 */
+/* 371 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79281,7 +79395,7 @@ function styleCode(editor, sq) {
 exports.default = Code;
 
 /***/ }),
-/* 371 */
+/* 372 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79387,7 +79501,7 @@ function getCodeBlockBody(range, wwe) {
 exports.default = CodeBlock;
 
 /***/ }),
-/* 372 */
+/* 373 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79450,7 +79564,7 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
     */
 
 /***/ }),
-/* 373 */
+/* 374 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79513,7 +79627,7 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
     */
 
 /***/ }),
-/* 374 */
+/* 375 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79576,7 +79690,7 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
     */
 
 /***/ }),
-/* 375 */
+/* 376 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79639,7 +79753,7 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
     */
 
 /***/ }),
-/* 376 */
+/* 377 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79702,7 +79816,7 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
     */
 
 /***/ }),
-/* 377 */
+/* 378 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79765,7 +79879,7 @@ _i18n2.default.setLanguage(['es', 'es_ES'], {
     */
 
 /***/ }),
-/* 378 */
+/* 379 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79828,7 +79942,7 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
     */
 
 /***/ }),
-/* 379 */
+/* 380 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79891,7 +80005,7 @@ _i18n2.default.setLanguage(['ru', 'ru_RU'], {
     */
 
 /***/ }),
-/* 380 */
+/* 381 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79954,7 +80068,7 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
     */
 
 /***/ }),
-/* 381 */
+/* 382 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80017,7 +80131,7 @@ _i18n2.default.setLanguage(['uk', 'uk_UA'], {
     */
 
 /***/ }),
-/* 382 */
+/* 383 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80080,7 +80194,7 @@ _i18n2.default.setLanguage(['tr', 'tr_TR'], {
     */
 
 /***/ }),
-/* 383 */
+/* 384 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80143,7 +80257,7 @@ _i18n2.default.setLanguage(['fi', 'fi_FI'], {
     */
 
 /***/ }),
-/* 384 */
+/* 385 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80206,7 +80320,7 @@ _i18n2.default.setLanguage(['cs', 'cs_CZ'], {
     */
 
 /***/ }),
-/* 385 */
+/* 386 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80269,7 +80383,7 @@ _i18n2.default.setLanguage(['ar', 'ar_AR'], {
     */
 
 /***/ }),
-/* 386 */
+/* 387 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80332,7 +80446,7 @@ _i18n2.default.setLanguage(['pl', 'pl_PL'], {
     */
 
 /***/ }),
-/* 387 */
+/* 388 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80344,7 +80458,7 @@ var _i18n2 = _interopRequireDefault(_i18n);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_i18n2.default.setLanguage(['zh', 'zh_TW'], {
+_i18n2.default.setLanguage(['zhtw', 'zh_TW'], {
   'Markdown': 'Markdown',
   'WYSIWYG': '所見即所得',
   'Write': '編輯',
