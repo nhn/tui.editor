@@ -207,7 +207,7 @@ class WwCodeBlockManager {
 
       const resultText = $pre.text().replace(/\s+$/, '');
       $pre.empty();
-      $pre.html(resultText ? resultText : brString);
+      $pre.html(resultText ? sanitizeHtmlCode(resultText) : brString);
 
       if (lang) {
         $pre.attr('data-language', lang);
