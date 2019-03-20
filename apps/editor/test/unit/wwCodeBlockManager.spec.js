@@ -306,5 +306,19 @@ describe('WwCodeBlockManager', () => {
 
       expect(codeblock.split('\n').length).toEqual(3);
     });
+
+    it('keep tag text in the pre tag', () => {
+      const frag = document.createDocumentFragment();
+      $(frag).append('<pre></pre>');
+
+      const preTag = $(frag).find('pre');
+      preTag.text('<span>test</span>');
+
+      mgr.modifyCodeBlockForWysiwyg(frag);
+
+      const codeblockText = $($(frag).find('pre')).text();
+
+      expect(codeblockText).toEqual('<span>test</span>');
+    });
   });
 });
