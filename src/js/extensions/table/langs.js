@@ -117,4 +117,11 @@ if (i18n) {
     'Cannot change part of merged cell': '無法變更儲存格的一部分。',
     'Cannot paste row merged cells into the table header': '無法將合併的儲存格貼上至表格標題中。'
   });
+
+  i18n.setLanguage(['gl', 'gl_ES'], {
+    'Merge cells': 'Combinar celas',
+    'Unmerge cells': 'Separar celas',
+    'Cannot change part of merged cell': 'Non se pode cambiar parte dunha cela combinada',
+    'Cannot paste row merged cells into the table header': 'Non se poden pegar celas no encabezado da táboa'
+  });
 }
