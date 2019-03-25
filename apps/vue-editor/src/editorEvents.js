@@ -1,7 +1,7 @@
 export default [
-    'load',
-    'change',
-    'stateChange',
-    'focus',
-    'blur'
+  'load',
+  'change',
+  'stateChange',
+  'focus',
+  'blur'
 ];

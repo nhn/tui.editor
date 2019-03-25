@@ -26,7 +26,7 @@
     "babel-eslint": "^9.0.0",
     "babel-loader": "^8.0.2",
     "eslint": "^5.5.0",
-    "eslint-config-tui": "^1.0.3",
+    "eslint-config-tui": "^2.1.0",
     "eslint-loader": "^2.1.0",
     "eslint-plugin-vue": "^4.7.1",
     "vue": "^2.5.17",
