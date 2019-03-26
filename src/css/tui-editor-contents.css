@@ -223,7 +223,7 @@
     margin-left: -22px;
 }
 
-.tui-editor-contents ul li.task-list-item:before {
+.tui-editor-contents .task-list-item:before {
     background-repeat: no-repeat;
     background-size: 16px 16px;
     background-position: 50%;
@@ -232,7 +232,8 @@
     width: 18px;
     position: absolute;
     left: 0;
-    top: 2px;
+    top: 1px;
+    cursor: pointer;
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAADdJREFUKBVjvHv37n8GMgALSI+SkhJJWu/du8fARJIOJMWjGpECA505GjjoIYLEB6dVUNojFQAA/1MJUFWet/4AAAAASUVORK5CYII=');
 }
 
