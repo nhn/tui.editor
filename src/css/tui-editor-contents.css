@@ -226,7 +226,7 @@
 .tui-editor-contents .task-list-item:before {
     background-repeat: no-repeat;
     background-size: 16px 16px;
-    background-position: 50%;
+    background-position: center;
     content: "";
     height: 18px;
     width: 18px;
