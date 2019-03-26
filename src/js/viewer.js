@@ -86,20 +86,9 @@ class ToastUIEditorViewer {
    * @private
    */
   _toggleTask(ev) {
-    // Get position of the before element
     const style = getComputedStyle(ev.target, ':before');
-    const left = parseInt(style.left, 10);
-    const top = parseInt(style.top, 10);
-    const width = parseInt(style.width, 10);
-    const height = parseInt(style.height, 10);
 
-    // Check if click is inside the square delimited by the before element
-    const isOnTaskBox = ev.offsetX >= left
-      && ev.offsetX <= (left + width)
-      && ev.offsetY >= top
-      && ev.offsetY <= (top + height);
-
-    if (ev.target.hasAttribute(TASK_ATTR_NAME) && isOnTaskBox) {
+    if (ev.target.hasAttribute(TASK_ATTR_NAME) && domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
       $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
       this.eventManager.emit('change', {
         source: 'viewer',
