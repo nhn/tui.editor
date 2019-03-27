@@ -3,35 +3,26 @@
 </template>
 <script>
 import Editor from "tui-editor";
-
 import editorEvents from "./editorEvents";
-import editorDefaultOptions from "./editorDefaultOptions";
 import valueUpdateMethod from "./valueUpdateMethod";
 
 export default {
   name: "TuiEditor",
   props: {
     previewStyle: {
-      type: String,
-      default: "tab"
+      type: String
     },
     height: {
-      type: String,
-      default: "300px"
+      type: String
     },
     value: {
-      type: String,
-      default: ""
+      type: String
     },
     mode: {
-      type: String,
-      default: "markdown"
+      type: String
     },
     options: {
-      type: Object,
-      default() {
-        return editorDefaultOptions;
-      }
+      type: Object
     },
     html: {
       type: String
@@ -48,7 +39,7 @@ export default {
   },
   computed: {
     editorOptions() {
-      const options = Object.assign({}, editorDefaultOptions, this.options);
+      const options = Object.assign({}, this.options);
       options.initialValue = this.value;
       options.initialEditType = this.mode;
       options.height = this.height;

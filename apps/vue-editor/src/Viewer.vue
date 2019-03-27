@@ -2,7 +2,7 @@
   <div ref="tuiEditorViewer"></div>
 </template>
 <script>
-import Viewer from "tui-editor/dist/tui-editor-Viewer";
+import Editor from "tui-editor";
 
 import editorEvents from "./editorEvents";
 
@@ -10,12 +10,13 @@ export default {
   name: "TuiEditorViewer",
   props: {
     height: {
-      type: String,
-      default: "300px"
+      type: String
     },
     value: {
-      type: String,
-      default: ""
+      type: String
+    },
+    exts: {
+      type: Array
     }
   },
   data() {
@@ -38,11 +39,12 @@ export default {
       };
     });
 
-    this.editor = new Viewer({
+    this.editor = Editor.factory({
       el: this.$refs.tuiEditorViewer,
       events: eventOption,
       initialValue: this.value,
-      height: this.height
+      height: this.height,
+      viewer: true
     });
   },
   destroyed() {
@@ -50,6 +52,16 @@ export default {
       this.editor.off(event);
     });
     this.editor.remove();
+  },
+  methods: {
+    invoke(methodName, ...args) {
+      let result = null;
+      if (this.editor[methodName]) {
+        result = this.editor[methodName](...args);
+      }
+
+      return result;
+    }
   }
 };
 </script>
