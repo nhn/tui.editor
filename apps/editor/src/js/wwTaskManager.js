@@ -4,6 +4,8 @@
  */
 import $ from 'jquery';
 
+import domUtils from './domUtils';
+
 const TASK_CLASS_NAME = 'task-list-item';
 const TASK_ATTR_NAME = 'data-te-task';
 const TASK_CHECKED_CLASS_NAME = 'checked';
@@ -42,9 +44,11 @@ class WwTaskManager {
     this._initEvent();
 
     this.wwe.getEditor().addEventListener('mousedown', ev => {
-      const isOnTaskBox = ev.offsetX < 18 && ev.offsetY < 18;
+      const style = getComputedStyle(ev.target, ':before');
 
-      if (ev.target.hasAttribute(TASK_ATTR_NAME) && isOnTaskBox) {
+      if (ev.target.hasAttribute(TASK_ATTR_NAME) && domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
+        // Prevent cursor focusing
+        ev.preventDefault();
         $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
       }
     });

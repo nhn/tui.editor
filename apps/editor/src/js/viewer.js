@@ -86,9 +86,9 @@ class ToastUIEditorViewer {
    * @private
    */
   _toggleTask(ev) {
-    const isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+    const style = getComputedStyle(ev.target, ':before');
 
-    if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+    if (ev.target.hasAttribute(TASK_ATTR_NAME) && domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
       $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
       this.eventManager.emit('change', {
         source: 'viewer',
