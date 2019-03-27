@@ -577,6 +577,27 @@ const getLeafNode = function(node) {
 
   return result;
 };
+/**
+ * check if a coordinates is inside a task box
+ * @param {object} style - computed style of task box
+ * @param {number} offsetX - event x offset
+ * @param {number} offsetY - event y offset
+ * @returns {boolean}
+ * @ignore
+ */
+const isInsideTaskBox = function(style, offsetX, offsetY) {
+  const rect = {
+    left: parseInt(style.left, 10),
+    top: parseInt(style.top, 10),
+    width: parseInt(style.width, 10),
+    height: parseInt(style.height, 10)
+  };
+
+  return offsetX >= rect.left
+    && offsetX <= (rect.left + rect.width)
+    && offsetY >= rect.top
+    && offsetY <= (rect.top + rect.height);
+};
 
 export default {
   getNodeName,
@@ -604,5 +625,6 @@ export default {
   isStyledNode,
   removeChildFromStartToEndNode,
   removeNodesByDirection,
-  getLeafNode
+  getLeafNode,
+  isInsideTaskBox
 };
