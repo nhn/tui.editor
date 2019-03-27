@@ -247,7 +247,7 @@ describe('WwCodeBlockManager', () => {
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 
-      const codeblock = $($(frag).find('pre'));
+      const codeblock = $(frag).find('pre');
 
       expect(codeblock.length).toEqual(1);
       expect(codeblock.hasClass('lang-javascript')).toBe(true);
@@ -261,7 +261,7 @@ describe('WwCodeBlockManager', () => {
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 
-      const codeblock = $($(frag).find('pre'));
+      const codeblock = $(frag).find('pre');
       expect(codeblock.attr('data-backticks')).toEqual('4');
     });
 
@@ -273,7 +273,7 @@ describe('WwCodeBlockManager', () => {
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 
-      const codeblock = $($(frag).find('pre')).text();
+      const codeblock = $(frag).find('pre').text();
 
       expect(codeblock.split('\n').length).toEqual(3);
     });
@@ -286,7 +286,7 @@ describe('WwCodeBlockManager', () => {
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 
-      const codeblock = $($(frag).find('pre')).text();
+      const codeblock = $(frag).find('pre').text();
 
       expect(codeblock.split('\n').length).toEqual(4);
     });
@@ -302,7 +302,7 @@ describe('WwCodeBlockManager', () => {
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 
-      const codeblock = $($(frag).find('pre')).text();
+      const codeblock = $(frag).find('pre').text();
 
       expect(codeblock.split('\n').length).toEqual(3);
     });
@@ -316,7 +316,7 @@ describe('WwCodeBlockManager', () => {
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 
-      const codeblockText = $($(frag).find('pre')).text();
+      const codeblockText = $(frag).find('pre').text();
 
       expect(codeblockText).toEqual('<span>test</span>');
     });
