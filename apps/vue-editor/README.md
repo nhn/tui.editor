@@ -382,7 +382,8 @@ new Vue({
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | value | String | '' | This prop can change content of the viewer. |
-| height | String | '300px' | This prop can control the height of the editor. |
+| height | String | '300px' | This prop can control the height of the viewer. |
+| exts | Array | | This prop can apply the extensions of the viewer. |
 
 Example :
 
