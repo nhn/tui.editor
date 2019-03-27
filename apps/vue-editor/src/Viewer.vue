@@ -2,12 +2,12 @@
   <div ref="tuiEditorViewer"></div>
 </template>
 <script>
-import Editor from "tui-editor";
+import Editor from 'tui-editor';
 
-import editorEvents from "./editorEvents";
+import editorEvents from './editorEvents';
 
 export default {
-  name: "TuiEditorViewer",
+  name: 'TuiEditorViewer',
   props: {
     height: {
       type: String

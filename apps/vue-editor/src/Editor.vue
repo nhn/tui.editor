@@ -2,12 +2,12 @@
   <div ref="tuiEditor"></div>
 </template>
 <script>
-import Editor from "tui-editor";
-import editorEvents from "./editorEvents";
-import valueUpdateMethod from "./valueUpdateMethod";
+import Editor from 'tui-editor';
+import editorEvents from './editorEvents';
+import valueUpdateMethod from './valueUpdateMethod';
 
 export default {
-  name: "TuiEditor",
+  name: 'TuiEditor',
   props: {
     previewStyle: {
       type: String
@@ -65,7 +65,7 @@ export default {
     },
     html(newValue) {
       this.editor.setHtml(newValue);
-      this.$emit("input", this.editor.getValue());
+      this.$emit('input', this.editor.getValue());
     },
     visible(newValue) {
       if (newValue) {
@@ -90,8 +90,8 @@ export default {
 
     this.editor = new Editor(options);
     if (this.$listeners.input) {
-      this.editor.on("change", () => {
-        this.$emit("input", this.editor.getValue());
+      this.editor.on('change', () => {
+        this.$emit('input', this.editor.getValue());
       });
     }
   },
@@ -107,7 +107,7 @@ export default {
       if (this.editor[methodName]) {
         result = this.editor[methodName](...args);
         if (valueUpdateMethod.indexOf(methodName) > -1) {
-          this.$emit("input", this.editor.getValue());
+          this.$emit('input', this.editor.getValue());
         }
       }
 
