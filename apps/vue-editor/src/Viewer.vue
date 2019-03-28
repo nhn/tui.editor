@@ -41,6 +41,7 @@ export default {
 
     this.editor = Editor.factory({
       el: this.$refs.tuiEditorViewer,
+      exts: this.exts,
       events: eventOption,
       initialValue: this.value,
       height: this.height,
