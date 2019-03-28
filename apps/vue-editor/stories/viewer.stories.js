@@ -9,7 +9,6 @@ import 'highlight.js/styles/github.css';
 import 'tui-editor/dist/tui-editor.min.css';
 import 'tui-editor/dist/tui-editor-contents.min.css';
 
-import 'tui-editor/dist/tui-editor-extScrollSync';
 import 'tui-editor/dist/tui-editor-extColorSyntax';
 import 'tui-editor/dist/tui-editor-extUML';
 import 'tui-editor/dist/tui-editor-extChart';
@@ -35,7 +34,6 @@ stories.add('demo', () => ({
           minHeight: 100,
           maxHeight: 300
         },
-        'scrollSync',
         'colorSyntax',
         'uml',
         'mark',
@@ -65,7 +63,6 @@ stories.add('change value prop', () => ({
           minHeight: 100,
           maxHeight: 300
         },
-        'scrollSync',
         'colorSyntax',
         'uml',
         'mark',
@@ -100,7 +97,6 @@ stories.add('invoke method', () => ({
           minHeight: 100,
           maxHeight: 300
         },
-        'scrollSync',
         'colorSyntax',
         'uml',
         'mark',
