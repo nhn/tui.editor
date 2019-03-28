@@ -1,5 +1,4 @@
 
-import Vue from 'vue';
 import {storiesOf} from '@storybook/vue';
 import {html} from 'common-tags';
 import * as dummy from './dummyData';
