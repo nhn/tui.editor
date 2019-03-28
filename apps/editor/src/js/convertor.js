@@ -213,22 +213,11 @@ class Convertor {
     const FIRST_TWO_BRS_BEFORE_RX = /([^>]|<\/a>|<\/code>|<\/span>|<\/b>|<\/i>|<\/s>|<img [^>]*>)/;
     const TWO_BRS_RX = /<br data-tomark-pass \/><br data-tomark-pass \/>/;
     const FIND_FIRST_TWO_BRS_RX = new RegExp(FIRST_TWO_BRS_BEFORE_RX.source + TWO_BRS_RX.source, 'g');
+    const FIND_ATTRI_WITH_EMTPY_STR_RX = /<br data-tomark-pass="">/ig;
 
     html = html.replace(FIND_BR_RX, '<br />');
-
     html = html.replace(FIND_DOUBLE_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />');
-
-    const div = document.createElement('div');
-    const $div = $(div);
-    $div.html(html);
-    $div.find('pre br,code br').each((index, node) => {
-      if (node.hasAttribute('data-tomark-pass')) {
-        node.removeAttribute('data-tomark-pass');
-      }
-    });
-
-    html = $div.html().replace(/<br data-tomark-pass="">/ig, '<br data-tomark-pass />');
-    html = html.replace(FIND_BR_RX, '<br />');
+    html = html.replace(FIND_ATTRI_WITH_EMTPY_STR_RX, '<br data-tomark-pass />');
 
     html = html.replace(FIND_PASSING_AND_NORMAL_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />$1');
     html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
