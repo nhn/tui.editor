@@ -126,13 +126,18 @@ class Convertor {
    * @private
    */
   _removeBrToMarkPassAttributeInCode(renderedHTML) {
-    const $wrapperDiv = $('<div />');
+    const brRegex = /&lt;br data-tomark-pass&gt;/g;
+    const brSpanRegex = /&lt;(<span class="hljs-name">)br(<\/span>) /;
+    const attrSpanRegex = /(<span class="hljs-attr">)data-tomark-pass(<\/span>)&gt;/;
+    const brWithSpanRegex = new RegExp(brSpanRegex.source + attrSpanRegex.source, 'g');
 
+    const $wrapperDiv = $('<div />');
     $wrapperDiv.html(renderedHTML);
 
     $wrapperDiv.find('code, pre').each((i, codeOrPre) => {
       const $code = $(codeOrPre);
-      $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/, '&lt;br&gt;'));
+      const html = $code.html().replace(brRegex, '&lt;br&gt;');
+      $code.html(html.replace(brWithSpanRegex, '&lt;$1br$2&gt;'));
     });
 
     renderedHTML = $wrapperDiv.html();
