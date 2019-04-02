@@ -135,8 +135,7 @@ class WwCodeBlockManager {
       } else if (node.nodeName === 'BR') {
         str += '\n';
       } else {
-        const {textContent} = node;
-        str += sanitizeHtmlCode(textContent);
+        str += node.textContent;
       }
       node = nodes.shift();
     }
