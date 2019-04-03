@@ -84,17 +84,13 @@ class Convertor {
    * @returns {string} html text
    */
   _markdownToHtmlWithCodeHighlight(markdown) {
-    markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
     // eslint-disable-next-line
         const onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
     while (onerrorStripeRegex.exec(markdown)) {
       markdown = markdown.replace(onerrorStripeRegex, '$1$3');
     }
 
-    let renderedHTML = markdownitHighlight.render(markdown);
-    renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
-
-    return renderedHTML;
+    return markdownitHighlight.render(markdown);
   }
 
   /**
@@ -132,7 +128,7 @@ class Convertor {
 
     $wrapperDiv.find('code, pre').each((i, codeOrPre) => {
       const $code = $(codeOrPre);
-      $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/, '&lt;br&gt;'));
+      $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/g, '&lt;br&gt;'));
     });
 
     renderedHTML = $wrapperDiv.html();
