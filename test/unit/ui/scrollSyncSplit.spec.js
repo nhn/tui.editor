@@ -1,6 +1,6 @@
 /**
  * @fileoverview test ui scroll sync split
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import ScrollSyncSplit from '../../../src/js/ui/scrollSyncSplit';
 

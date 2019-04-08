@@ -1,7 +1,7 @@
 /**
 * @fileoverview tsv, csv format chart plugin
 * consumes tab separated values and make data/options for tui chart
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 
 /**

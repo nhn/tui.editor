@@ -1,6 +1,6 @@
 /**
  * @fileoverview This file is common logic for italic, bold, strike makrdown commands.
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**

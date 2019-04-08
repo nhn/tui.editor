@@ -1,6 +1,6 @@
 /**
  * @fileoverview test key mapper
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import KeyMapper from '../../src/js/keyMapper';
 

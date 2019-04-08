@@ -1,6 +1,6 @@
 /*
  * @fileoverview configs file for bundling
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /* eslint max-len: 0, no-process-env: 0, strict: 0 */
