@@ -346,9 +346,9 @@ Renderer.markdownTextToEscapeRx = {
 
     link: /!?\[.*\]\(.*\)/,
     reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
-    strong: /__(\S[\s\S]*\h)__|\*\*(\S[\s\S]*\S)\*\*/,
-    em: /_(\S[\s\S]*\S)_|\*(\S[\s\S]*\S)\*/,
-    strikeThrough: /~~(\S[\s\S]*\S)~~/,
+    strong: /__(\S|\S[\s\S]*\S)__|\*\*(\S|\S[\s\S]*\S)\*\*/,
+    em: /_(\S|\S[\s\S]*\S)_|\*(\S|\S[\s\S]*\S)\*/,
+    strikeThrough: /~~(\S|\S[\s\S]*\S)~~/,
     code: /(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
 
     verticalBar: /\u007C/,

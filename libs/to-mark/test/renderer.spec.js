@@ -291,6 +291,8 @@ describe('renderer', function() {
         });
 
         it('em, strong', function() {
+            expect(renderer._isNeedEscape('*a*')).toEqual(true);
+            expect(renderer._isNeedEscape('_a_')).toEqual(true);
             expect(renderer._isNeedEscape('*em*')).toEqual(true);
             expect(renderer._isNeedEscape('_em_')).toEqual(true);
             expect(renderer._isNeedEscape('**strong**')).toEqual(true);
@@ -300,6 +302,7 @@ describe('renderer', function() {
         });
 
         it('strikeThrough', function() {
+            expect(renderer._isNeedEscape('~~a~~')).toEqual(true);
             expect(renderer._isNeedEscape('~~true~~')).toEqual(true);
             expect(renderer._isNeedEscape('~~strike through~~')).toEqual(true);
 
@@ -474,16 +477,16 @@ describe('renderer', function() {
 
     it('factory can make renderer that extend from exist renderer', function() {
         var convertedText,
-        renderer = Renderer.factory({
-            'H1, H2, H3, H4, H5, H6': function() {
-                return 'renderer';
-            }
-        }),
-        renderer2 = Renderer.factory(renderer, {
-            'H2': function() {
-                return 'renderer2';
-            }
-        });
+            renderer = Renderer.factory({
+                'H1, H2, H3, H4, H5, H6': function() {
+                    return 'renderer';
+                }
+            }),
+            renderer2 = Renderer.factory(renderer, {
+                'H2': function() {
+                    return 'renderer2';
+                }
+            });
 
         runner = new DomRunner(toDom('<h1>test</h1>'));
         runner.next();
