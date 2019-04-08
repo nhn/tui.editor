@@ -16,7 +16,7 @@
   },
   "homepage": "https://github.com/nhnent/toast-ui.vue-editor",
   "bugs": "https://github.com/nhnent/toast-ui.vue-editor/issues",
-  "author": "NHN Ent. FE Development Lab <dl_javascript@nhnent.com>",
+  "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
   "repository": "https://github.com/nhnent/toast-ui.vue-editor.git",
   "license": "MIT",
   "devDependencies": {
