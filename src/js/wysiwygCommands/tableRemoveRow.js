@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements table remove row WysiwygCommand
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 

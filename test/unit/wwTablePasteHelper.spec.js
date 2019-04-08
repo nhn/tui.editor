@@ -1,6 +1,6 @@
 /**
  * @fileoverview test wysiwyg table paste helper
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import WwTablePasteHelper from '../../src/js/wwTablePasteHelper';
 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements markdown list manager
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 const FIND_LIST_RX = /^[ \t]*([-*]|[\d]+\.)( \[[ xX]])? /;

@@ -1,6 +1,6 @@
 /**
  * @fileoverview test wysiwyg table add row command
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements toolbar
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 import ToolbarDivider from '../../../src/js/ui/toolbarDivider';

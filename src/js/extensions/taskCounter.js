@@ -1,6 +1,6 @@
 /**
 * @fileoverview Implements Task counter
-* @author NHN. FE Development Lab <dl_javascript@nhn.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 import Editor from './editorProxy';
 

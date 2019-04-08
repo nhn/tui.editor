@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements wysiwyg hr manager
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 

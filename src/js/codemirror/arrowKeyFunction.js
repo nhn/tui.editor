@@ -1,7 +1,7 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 /**
- * @modifier NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import CodeMirror from 'codemirror';
 

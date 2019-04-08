@@ -1,6 +1,6 @@
 /**
  * @fileoverview test code block manager
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import {CodeBlockManager} from '../../src/js/codeBlockManager';
 

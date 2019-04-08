@@ -1,6 +1,6 @@
 /**
  * @fileoverview Test Toolbar Item Factory
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 import ToolbarItemFactory from '../../../src/js/ui/toolbarItemFactory';

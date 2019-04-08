@@ -3,7 +3,7 @@
 /* eslint-disable */
 /**
  * @fileoverview Implements markdownitCodeBlockPlugin
- * @modifier NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**

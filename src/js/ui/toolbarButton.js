@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements UI Button
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import Button from './button';
 

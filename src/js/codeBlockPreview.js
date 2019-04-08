@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements CodeBlockPreview
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import Preview from './preview';
 

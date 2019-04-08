@@ -1,6 +1,6 @@
 /**
 * @fileoverview i18n for table extension
-* @author NHN. FE Development Lab <dl_javascript@nhn.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 import Editor from '../editorProxy';
 

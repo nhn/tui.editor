@@ -1,6 +1,6 @@
 /**
  * @fileoverview test wysiwyg clipboard manager
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 

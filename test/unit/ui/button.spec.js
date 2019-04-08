@@ -1,6 +1,6 @@
 /**
  * @fileoverview test button
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import Button from '../../../src/js/ui/button';
 

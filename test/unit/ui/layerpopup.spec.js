@@ -1,6 +1,6 @@
 /**
  * @fileoverview test ui layer popup
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 

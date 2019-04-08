@@ -1,6 +1,6 @@
 /**
 * @fileoverview Implements Scroll Sync Extension
-* @author NHN. FE Development Lab <dl_javascript@nhn.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 import $ from 'jquery';
 import Editor from '../editorProxy';

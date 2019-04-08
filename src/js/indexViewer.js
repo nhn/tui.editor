@@ -1,6 +1,6 @@
 /**
  * @fileoverview entry point for viewer
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview DOM Utils
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';

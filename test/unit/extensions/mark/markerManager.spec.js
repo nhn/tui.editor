@@ -1,6 +1,6 @@
 /**
  * @fileoverview test marker manager
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import MarkerManager from '../../../../src/js/extensions/mark/markerManager';
 import MarkerList from '../../../../src/js/extensions/mark/markerList';

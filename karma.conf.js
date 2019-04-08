@@ -1,6 +1,6 @@
 /*
 * @fileoverview configs file for testing
-* @author NHN. FE Development Lab <dl_javascript@nhn.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 
 /* eslint max-len: 0, no-process-env: 0, object-shorthand: 0, camelcase: 0 */

@@ -1,6 +1,6 @@
 /**
  * @fileoverview test toolbar item
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import ToolbarItem from '../../../src/js/ui/toolbarItem';
 

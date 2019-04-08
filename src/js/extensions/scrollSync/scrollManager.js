@@ -1,6 +1,6 @@
 /**
 * @fileoverview Implements Scroll Sync Extension ScrollManager Module
-* @author NHN. FE Development Lab <dl_javascript@nhn.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 import util from 'tui-code-snippet';
 

@@ -1,6 +1,6 @@
 /**
 * @fileoverview Implements Bold markdown command
-* @author NHN. FE Development Lab <dl_javascript@nhn.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 import CommandManager from '../commandManager';
 import {changeSyntax} from './emphasisCommon';

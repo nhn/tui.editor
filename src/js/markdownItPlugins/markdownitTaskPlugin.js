@@ -3,8 +3,8 @@
 
 /**
  * @fileoverview Implements markdownitTaskPlugin
- * @modifier Sungho Kim(sungho-kim@nhn.com) FE Development Lab/NHN.
- * @modifier Junghwan Park(junghwan.park@nhn.com) FE Development Lab/NHN.
+ * @modifier Sungho Kim(sungho-kim@nhn.com) FE Development Lab/NHN
+ * @modifier Junghwan Park(junghwan.park@nhn.com) FE Development Lab/NHN
  */
 /* eslint-disable */
 

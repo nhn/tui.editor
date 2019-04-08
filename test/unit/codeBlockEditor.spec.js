@@ -1,6 +1,6 @@
 /**
  * @fileoverview test code block editor
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 /* eslint new-cap:0 */
 import CodeBlockEditor from '../../src/js/codeBlockEditor';

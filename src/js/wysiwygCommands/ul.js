@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements ul WysiwygCommand
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import CommandManager from '../commandManager';
 import domUtil from '../domUtils';

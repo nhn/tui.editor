@@ -1,6 +1,6 @@
 /**
  * @fileoverview test command manager
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import CommandManager from '../../src/js/commandManager';
 import Command from '../../src/js/command';

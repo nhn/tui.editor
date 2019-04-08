@@ -3,7 +3,7 @@
 
 /**
  * @fileoverview Implements markdownitTableRenderer
- * @modifier NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /*eslint-disable */

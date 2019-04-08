@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements code block editor
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements CodeBlockManager
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import hljs from 'highlight.js';
 

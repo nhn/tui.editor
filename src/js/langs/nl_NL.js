@@ -1,6 +1,6 @@
 /**
 * @fileoverview I18N for Dutch
-* @author NHN. FE Development Lab <dl_javascript@nhn.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 import i18n from '../i18n';
 

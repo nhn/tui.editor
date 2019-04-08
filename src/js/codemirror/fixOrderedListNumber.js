@@ -1,6 +1,6 @@
 /**
 * @fileoverview codemirror extension for fix ordered list number
-* @author NHN. FE Development Lab <dl_javascript@nhn.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 
 import CodeMirror from 'codemirror';

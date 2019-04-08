@@ -1,6 +1,6 @@
 /**
 * @fileoverview Implements Color syntax Extension
-* @author NHN. FE Development Lab <dl_javascript@nhn.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 import $ from 'jquery';
 import ColorPicker from 'tui-color-picker';

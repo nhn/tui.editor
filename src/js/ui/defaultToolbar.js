@@ -1,6 +1,6 @@
 /**
  * @fileoverview implements DefaultToolbar
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import ResizeObserver from 'resize-observer-polyfill';
 

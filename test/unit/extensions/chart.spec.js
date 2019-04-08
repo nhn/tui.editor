@@ -1,6 +1,6 @@
 /**
  * @fileoverview test chart extension
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import {
   parseCode2ChartOption,

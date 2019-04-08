@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements UI code block languages combo
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 

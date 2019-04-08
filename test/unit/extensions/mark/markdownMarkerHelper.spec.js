@@ -1,6 +1,6 @@
 /**
  * @fileoverview test markdown marker helper
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import CodeMirror from 'codemirror';
 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements KeyMapper
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**

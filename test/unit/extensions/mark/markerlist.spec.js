@@ -1,6 +1,6 @@
 /**
  * @fileoverview test marker list
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import MarkerList from '../../../../src/js/extensions/mark/markerList';
 
