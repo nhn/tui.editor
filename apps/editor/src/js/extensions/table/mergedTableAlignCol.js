@@ -1,6 +1,6 @@
 /**
 * @fileoverview Implements mergedTableAlignCol. Align selected column's text content to given direction
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 import $ from 'jquery';
 import util from 'tui-code-snippet';

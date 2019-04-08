@@ -22,7 +22,7 @@
  Author Greg Kindel (twitter @gkindel), 2014
  */
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 (function (global) {

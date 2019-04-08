@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements wysiwyg task manager
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview test default UI
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import ToastUIEditor from '../../../src/js/editor';
 import DefaultUI from '../../../src/js/ui/defaultUI';

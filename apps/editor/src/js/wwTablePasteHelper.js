@@ -1,6 +1,6 @@
 /**
  * @fileoverview Paste helper when past to table
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import util from 'tui-code-snippet';
 import domUtils from './domUtils';

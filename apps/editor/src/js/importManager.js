@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implement Module for managing import external data such as image
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import util from 'tui-code-snippet';
 const URLRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/g;

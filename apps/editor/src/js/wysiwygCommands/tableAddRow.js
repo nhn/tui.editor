@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements table add row WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';

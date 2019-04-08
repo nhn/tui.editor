@@ -2,7 +2,7 @@
   "name": "tui-editor",
   "description": "GFM  Markdown Wysiwyg Editor - Productive and Extensible",
   "authors": [
-    "NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)"
+    "NHN FE Development Lab <dl_javascript@nhn.com> (https://nhnent.github.io/tui.editor/)"
   ],
   "homepage": "https://github.com/nhnent/tui.editor",
   "repository": {
