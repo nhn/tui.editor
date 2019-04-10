@@ -89,4 +89,4 @@ This project and everyone participating in it is governed by the [Code of Conduc
 
 > This Guide is base on [atom contributing guide](https://github.com/atom/atom/blob/master/CONTRIBUTING.md), [CocoaPods](http://guides.cocoapods.org/contributing/contribute-to-cocoapods.html) and [ESLint](http://eslint.org/docs/developer-guide/contributing/pull-requests)
 
-[demo]:https://nhnent.github.io/tui.editor/
+[demo]:https://nhn.github.io/tui.editor/
