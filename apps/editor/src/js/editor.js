@@ -130,6 +130,7 @@ class ToastUIEditor {
     * @param {string[]} [options.exts] - extensions
     * @param {object} [options.customConvertor] - convertor extention
     * @param {string} [options.placeholder] - The placeholder text of the editable element.
+    * @param {string} [options.previewDelayTime] - the delay time for rendering preview
     */
   constructor(options) {
     this.initialHtml = options.el.innerHTML;
@@ -206,7 +207,12 @@ class ToastUIEditor {
     this.setUI(this.options.UI || new DefaultUI(this));
 
     this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager, this.options);
-    this.preview = new MarkdownPreview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
+    this.preview = new MarkdownPreview(
+      this.layout.getPreviewEl(),
+      this.eventManager,
+      this.convertor,
+      false,
+      this.options.previewDelayTime);
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
     this.toMarkOptions = null;
 
