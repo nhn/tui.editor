@@ -19,7 +19,7 @@ class Preview {
    * @param {Number} delayTime - lazyRunner delay time
    * @memberof Preview
    */
-  constructor($el, eventManager, convertor, isViewer, delayTime) {
+  constructor($el, eventManager, convertor, isViewer, delayTime = 800) {
     this.eventManager = eventManager;
     this.convertor = convertor;
     this.$el = $el;
@@ -32,7 +32,7 @@ class Preview {
     this.lazyRunner.registerLazyRunFunction(
       'refresh',
       this.refresh,
-      delayTime ? delayTime : 800,
+      delayTime,
       this
     );
   }
