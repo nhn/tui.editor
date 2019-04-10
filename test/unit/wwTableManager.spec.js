@@ -1119,7 +1119,7 @@ describe('WwTableManager', () => {
     });
   });
 
-  describe('_isNonTextDeleting', () => {
+  describe('_isDeletingNonText', () => {
     beforeEach(() => {
       const html = '<table>' +
                 '<thead>' +
@@ -1139,7 +1139,7 @@ describe('WwTableManager', () => {
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
-      expect(mgr._isNonTextDeleting(range)).toEqual(true);
+      expect(mgr._isDeletingNonText(range)).toEqual(true);
     });
 
     it('should check the empty line between text line as false', () => {
@@ -1148,7 +1148,7 @@ describe('WwTableManager', () => {
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
-      expect(mgr._isNonTextDeleting(range)).toEqual(false);
+      expect(mgr._isDeletingNonText(range)).toEqual(false);
     });
 
     it('should check the end of text as true', () => {
@@ -1157,7 +1157,7 @@ describe('WwTableManager', () => {
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
-      expect(mgr._isNonTextDeleting(range)).toEqual(true);
+      expect(mgr._isDeletingNonText(range)).toEqual(true);
     });
 
     it('should check the last cell of row as true', () => {
@@ -1166,11 +1166,11 @@ describe('WwTableManager', () => {
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
-      expect(mgr._isNonTextDeleting(range)).toEqual(true);
+      expect(mgr._isDeletingNonText(range)).toEqual(true);
     });
   });
 
-  describe('_isBRDeleting', () => {
+  describe('_isDeletingBR', () => {
     beforeEach(() => {
       const html = '<table>' +
                 '<thead>' +
@@ -1191,7 +1191,7 @@ describe('WwTableManager', () => {
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
-      expect(mgr._isBRDeleting(range)).toEqual(false);
+      expect(mgr._isDeletingBR(range)).toEqual(false);
     });
 
     it('should check the br beween br is as true', () => {
@@ -1200,7 +1200,7 @@ describe('WwTableManager', () => {
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
-      expect(mgr._isBRDeleting(range)).toEqual(true);
+      expect(mgr._isDeletingBR(range)).toEqual(true);
     });
 
     it('should check the text as false', () => {
@@ -1209,7 +1209,7 @@ describe('WwTableManager', () => {
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
-      expect(mgr._isBRDeleting(range)).toEqual(false);
+      expect(mgr._isDeletingBR(range)).toEqual(false);
     });
   });
 });

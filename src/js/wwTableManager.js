@@ -411,7 +411,7 @@ class WwTableManager {
    * @param {Range} range Range object
    * @returns {boolean}
    */
-  _isNonTextDeleting(range) {
+  _isDeletingNonText(range) {
     const currentElement = range.startContainer;
     const nextNode = currentElement.nextSibling;
     const nextNodeName = domUtils.getNodeName(nextNode);
@@ -435,12 +435,12 @@ class WwTableManager {
    * @param {Range} range Range object
    * @returns {boolean}
    */
-  _isBRDeleting(range) {
+  _isDeletingBR(range) {
     const currentNode = this._getCurrentNodeInCell(range);
     const nextSibling = currentNode && currentNode.nextSibling;
 
-    return !!(domUtils.getNodeName(currentNode) === 'BR' &&
-              nextSibling && domUtils.getNodeName(nextSibling) === 'BR');
+    return domUtils.getNodeName(currentNode) === 'BR' && !!nextSibling
+        && domUtils.getNodeName(nextSibling) === 'BR';
   }
 
   _getCurrentNodeInCell(range) {
@@ -465,12 +465,12 @@ class WwTableManager {
    * @private
    */
   _tableHandlerOnDelete(range, event) {
-    if (this._isBRDeleting(range)) {
+    if (this._isDeletingBR(range)) {
       const currentNode = this._getCurrentNodeInCell(range);
 
       currentNode.parentNode.removeChild(currentNode.nextSibling);
       event.preventDefault();
-    } else if (this._isNonTextDeleting(range)) {
+    } else if (this._isDeletingNonText(range)) {
       event.preventDefault();
       range.startContainer.normalize();
     }
