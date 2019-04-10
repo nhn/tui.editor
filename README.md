@@ -9,7 +9,7 @@
 - [toast-ui.react-editor](https://github.com/nhnent/toast-ui.react-editor): React wrapper component is powered by [NHN](https://github.com/nhnent).
 - [ember-tui-editor](https://github.com/evocount/ember-tui-editor): Ember wrapper component by [@evocount](https://github.com/evocount). Thanks for their effort.
 
-<p align="center"><a href="https://nhnent.github.io/tui.editor/"><img src="https://user-images.githubusercontent.com/1215767/34356204-4c03be8a-ea7f-11e7-9aa9-0d84f9e912ec.gif" /></a></p>
+<p align="center"><a href="https://nhn.github.io/tui.editor/"><img src="https://user-images.githubusercontent.com/1215767/34356204-4c03be8a-ea7f-11e7-9aa9-0d84f9e912ec.gif" /></a></p>
 
 ## 🚩 Table of Contents
 - [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
@@ -208,7 +208,7 @@ var editor = new tui.Editor({
 * **previewType**: Preview style of Markdown mode `tab` | `vertical`
 * **usageStatistics**: Let us know the *hostname*. We want to learn from you how you are using the editor. You are free to disable it. `true` | `false`
 
-Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
+Find out more options [here](https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 
 ### Viewer
 **TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** is much **lighter** than the editor.
@@ -228,7 +228,7 @@ var editor = new Viewer({
 ...
 ```
 
-Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize editor [Editor.factory()](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) and set the `viewer` option to value `true` in order to make the editor a viewer. You can also call [getHTML()](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to render the HTML.
+Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize editor [Editor.factory()](https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) and set the `viewer` option to value `true` in order to make the editor a viewer. You can also call [getHTML()](https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to render the HTML.
 
 
 ```javascript
@@ -250,16 +250,16 @@ var editor = Editor.factory({
 * [Getting started](https://github.com/nhnent/tui.editor/blob/master/docs/getting-started.md)
 * [Getting started with bower](https://github.com/nhnent/tui.editor/blob/master/docs/getting-started-with-bower.md)
 * [Writing your own extension](https://github.com/nhnent/tui.editor/blob/master/docs/writing-your-own-extension.md)
-* [APIs](https://nhnent.github.io/tui.editor/api/latest/)
+* [APIs](https://nhn.github.io/tui.editor/api/latest/)
 
 ## 🐾 Examples
-* [editor basic](https://nhnent.github.io/tui.editor/api/latest/tutorial-example01-basic.html)
-* [viewer basic](https://nhnent.github.io/tui.editor/api/latest/tutorial-example02-viewer-basic.html)
-* [jQuery plugin](https://nhnent.github.io/tui.editor/api/latest/tutorial-example03-jquery.html)
-* [uml extension](https://nhnent.github.io/tui.editor/api/latest/tutorial-example08-uml.html)
-* [chart extension](https://nhnent.github.io/tui.editor/api/latest/tutorial-example11-chart.html)
-* [writing extension](https://nhnent.github.io/tui.editor/api/latest/tutorial-example12-writing-extension.html)
-* [all extensions](https://nhnent.github.io/tui.editor/api/latest/tutorial-example00-demo.html)
+* [editor basic](https://nhn.github.io/tui.editor/api/latest/tutorial-example01-basic.html)
+* [viewer basic](https://nhn.github.io/tui.editor/api/latest/tutorial-example02-viewer-basic.html)
+* [jQuery plugin](https://nhn.github.io/tui.editor/api/latest/tutorial-example03-jquery.html)
+* [uml extension](https://nhn.github.io/tui.editor/api/latest/tutorial-example08-uml.html)
+* [chart extension](https://nhn.github.io/tui.editor/api/latest/tutorial-example11-chart.html)
+* [writing extension](https://nhn.github.io/tui.editor/api/latest/tutorial-example12-writing-extension.html)
+* [all extensions](https://nhn.github.io/tui.editor/api/latest/tutorial-example00-demo.html)
 
 ## 💬 Contributing
 * [Code of Conduct](https://github.com/nhnent/tui.editor/blob/master/CODE_OF_CONDUCT.md)
