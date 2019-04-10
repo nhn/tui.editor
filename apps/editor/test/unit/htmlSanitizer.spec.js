@@ -15,7 +15,7 @@ describe('htmlSanitizer', function() {
 
   describe('attributes', () => {
     it('Remove all attritube but white list', () => {
-      var html = '<img style="display:inline" class="V" title="V" data-custom="V" src="http://www.nhnent.com/renewal/img/ci_nhnent.png" onload="dd=1" />';
+      var html = '<img style="display:inline" class="V" title="V" data-custom="V" src="http://www.nhn.com/renewal/img/ci_nhn.png" onload="dd=1" />';
       var dom = htmlSanitizer(html);
 
       const $img = $(dom).find('img');

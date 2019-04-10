@@ -21,7 +21,7 @@ function _createRepeatString(str, count) {
 
 /**
  * Make table head align text.
- * Copy from https://github.com/nhnent/to-mark/blob/develop/src/renderer.gfm.js
+ * Copy from https://github.com/nhn/to-mark/blob/develop/src/renderer.gfm.js
  * @param {HTMLElement} thElement - Table head cell element
  * @returns {string}
  * @private

@@ -4,10 +4,10 @@
   "authors": [
     "NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)"
   ],
-  "homepage": "https://github.com/nhnent/tui.editor",
+  "homepage": "https://github.com/nhn/tui.editor",
   "repository": {
     "type": "git",
-    "url": "git@github.com:nhnent/tui.editor.git"
+    "url": "git@github.com:nhn/tui.editor.git"
   },
   "moduleType": [
     "globals",
