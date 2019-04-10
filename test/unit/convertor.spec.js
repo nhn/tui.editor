@@ -39,11 +39,11 @@ describe('Convertor', () => {
     });
 
     it('do not add line breaks in table before and after image syntax', () => {
-      expect(convertor._markdownToHtmlWithCodeHighlight('\n| ![nhnent](http://www.nhnent.com/) |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext').match(/\/td/g).length).toEqual(6);
+      expect(convertor._markdownToHtmlWithCodeHighlight('\n| ![nhn](http://www.nhn.com/) |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext').match(/\/td/g).length).toEqual(6);
     });
 
     it('do not add line breaks in list before and after image syntax', () => {
-      expect(convertor._markdownToHtmlWithCodeHighlight('\n* asd![nhnent](http://www.nhnent.com/)\n- asd![nhnent](http://www.nhnent.com/)\n1. asd![nhnent](http://www.nhnent.com/)\n* [ ] asd![nhnent](http://www.nhnent.com/)\n').match(/\/p/g)).toBe(null);
+      expect(convertor._markdownToHtmlWithCodeHighlight('\n* asd![nhn](http://www.nhn.com/)\n- asd![nhn](http://www.nhn.com/)\n1. asd![nhn](http://www.nhn.com/)\n* [ ] asd![nhn](http://www.nhn.com/)\n').match(/\/p/g)).toBe(null);
     });
 
     it('should store number of backticks in code to data-backticks attribute', () => {

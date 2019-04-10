@@ -353,7 +353,7 @@ describe('sectionManager', () => {
         'paragraph',
         'paragraph',
         '',
-        '![nhnent](http://www.nhnent.com)',
+        '![nhn](http://www.nhn.com)',
         '',
         '## header2',
         'paragraph'
@@ -375,8 +375,8 @@ describe('sectionManager', () => {
         '# header1',
         'paragraph',
         'paragraph',
-        '* NHN EnterTainment ![nhnent](http://www.nhnent.com)',
-        'NHN EnterTainment ![nhnent](http://www.nhnent.com)',
+        '* NHN EnterTainment ![nhn](http://www.nhn.com)',
+        'NHN EnterTainment ![nhn](http://www.nhn.com)',
         '## header2',
         'paragraph'
       ].join('\n'));
@@ -398,15 +398,15 @@ describe('sectionManager', () => {
         '# header1',
         'paragraph',
         'paragraph',
-        'asdNHN EnterTainment ![nhnent](http://www.nhnent.com)',
-        '* NHN EnterTainment ![nhnent](http://www.nhnent.com)',
-        '* [ ] NHN EnterTainment ![nhnent](http://www.nhnent.com)',
-        '1. NHN EnterTainment ![nhnent](http://www.nhnent.com)',
-        '- NHN EnterTainment ![nhnent](http://www.nhnent.com)',
-        '> NHN EnterTainment ![nhnent](http://www.nhnent.com)',
-        '>> NHN EnterTainment ![nhnent](http://www.nhnent.com)',
+        'asdNHN EnterTainment ![nhn](http://www.nhn.com)',
+        '* NHN EnterTainment ![nhn](http://www.nhn.com)',
+        '* [ ] NHN EnterTainment ![nhn](http://www.nhn.com)',
+        '1. NHN EnterTainment ![nhn](http://www.nhn.com)',
+        '- NHN EnterTainment ![nhn](http://www.nhn.com)',
+        '> NHN EnterTainment ![nhn](http://www.nhn.com)',
+        '>> NHN EnterTainment ![nhn](http://www.nhn.com)',
         '```',
-        '![nhnent](http://www.nhnent.com)',
+        '![nhn](http://www.nhn.com)',
         '```',
         '## header2',
         'paragraph'
@@ -439,7 +439,7 @@ describe('sectionManager', () => {
         'var b = 20;',
         '```',
         '',
-        '![nhnent](http://www.nhnent.com)',
+        '![nhn](http://www.nhn.com)',
         ''
       ].join('\n'));
 
@@ -454,7 +454,7 @@ describe('sectionManager', () => {
 
     it('do not create new section right after image that line has no content', () => {
       ned.setValue([
-        '![nhnent](http://www.nhnent.com)',
+        '![nhn](http://www.nhn.com)',
         ''
       ].join('\n'));
 
@@ -468,22 +468,22 @@ describe('sectionManager', () => {
 
     it('should create new section on sequential image', () => {
       ned.setValue([
-        '![nhnent](http://www.nhnent.com)',
+        '![nhn](http://www.nhn.com)',
         '',
-        '![nhnent](http://www.nhnent.com)',
-        '',
-        '',
-        '',
-        '![nhnent](http://www.nhnent.com)',
+        '![nhn](http://www.nhn.com)',
         '',
         '',
         '',
-        '![nhnent](http://www.nhnent.com)',
+        '![nhn](http://www.nhn.com)',
         '',
         '',
-        '![nhnent](http://www.nhnent.com)<br>',
+        '',
+        '![nhn](http://www.nhn.com)',
+        '',
+        '',
+        '![nhn](http://www.nhn.com)<br>',
         '<br>',
-        '![nhnent](http://www.nhnent.com)',
+        '![nhn](http://www.nhn.com)',
         '',
         '',
         '# heading',
@@ -514,9 +514,9 @@ describe('sectionManager', () => {
     });
     it('should create new section on spaced image', () => {
       ned.setValue([
-        ' ![nhnent](http://www.nhnent.com)',
+        ' ![nhn](http://www.nhn.com)',
         '',
-        '  ![nhnent](http://www.nhnent.com)',
+        '  ![nhn](http://www.nhn.com)',
         ''
       ].join('\n'));
 
@@ -531,9 +531,9 @@ describe('sectionManager', () => {
     });
     it('should create new section on non independent inline image', () => {
       ned.setValue([
-        'This is ![nhnent](http://www.nhnent.com) official logo.',
+        'This is ![nhn](http://www.nhn.com) official logo.',
         '',
-        'And here is too ![nhnent](http://www.nhnent.com).',
+        'And here is too ![nhn](http://www.nhn.com).',
         ''
       ].join('\n'));
 

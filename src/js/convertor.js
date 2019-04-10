@@ -111,10 +111,7 @@ class Convertor {
       markdown = markdown.replace(onerrorStripeRegex, '$1$3');
     }
 
-    let renderedHTML = markdownit.render(markdown, env);
-    renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
-
-    return renderedHTML;
+    return markdownit.render(markdown, env);
   }
 
   /**
@@ -165,6 +162,7 @@ class Convertor {
     let html = this._markdownToHtml(markdown);
 
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+    html = this._removeBrToMarkPassAttributeInCode(html);
 
     return html;
   }

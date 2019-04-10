@@ -96,7 +96,7 @@ function parseCode2DataAndOptions(code, callback) {
  * @param {string} dataCode - code block containing chart data
  * @param {string} optionCode - code block containing chart options
  * @returns {Object} - tui.chart data & options
- * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
 function _parseCode2DataAndOptions(dataCode, optionCode) {
@@ -171,7 +171,7 @@ function calcDSVDelta(code, delimiter) {
  * @param {string} code - data code
  * @param {string|RegExp} delimiter - delimiter
  * @returns {Object} - tui.chart data
- * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
 function parseDSV2ChartData(code, delimiter) {
@@ -236,7 +236,7 @@ function parseURL2ChartData(url, callback) {
  * parse option code
  * @param {string} optionCode - option code
  * @returns {Object} - tui.chart option string
- * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
 function parseCode2ChartOption(optionCode) {
@@ -313,7 +313,7 @@ function isNumeric(str) {
  * @param {Object} extensionOptions - extension options
  * @param {HTMLElement} chartContainer - chart container
  * @returns {Object} - options
- * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
 function setDefaultOptions(chartOptions, extensionOptions, chartContainer) {
