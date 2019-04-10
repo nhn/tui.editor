@@ -156,7 +156,7 @@ describe('PopupAddLink', () => {
     });
 
     it('load selected url text from editor and fill url too', () => {
-      selectedText = 'http://www.nhnent.com';
+      selectedText = 'http://www.nhn.com';
       popup.show();
 
       const value = popup._getValue();

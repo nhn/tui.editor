@@ -36,7 +36,7 @@ describe('AddLink', () => {
     beforeEach(() => {
       data = {
         linkText: 'mylink',
-        url: 'http://www.nhnent.com'
+        url: 'http://www.nhn.com'
       };
     });
 

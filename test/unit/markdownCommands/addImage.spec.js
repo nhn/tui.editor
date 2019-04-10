@@ -35,7 +35,7 @@ describe('AddImage', () => {
 
     beforeEach(() => {
       data = {
-        imageUrl: 'http://static.nhnent.com/static/site/wgnb/siteTheme_ent/logoImage/logo_ne_theme_01.png?ver=20150121',
+        imageUrl: 'http://static.nhn.com/static/site/wgnb/siteTheme_ent/logoImage/logo_ne_theme_01.png?ver=20150121',
         altText: 'NHN'
       };
     });

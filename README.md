@@ -1,12 +1,12 @@
 # ![logo](https://cloud.githubusercontent.com/assets/389021/16107646/9729e556-33d8-11e6-933f-5b09fa3a53bb.png)
 > GFM  Markdown WYSIWYG Editor - Productive and Extensible
 
-[![github version](https://img.shields.io/github/release/nhnent/tui.editor.svg)](https://github.com/nhnent/tui.editor/releases/latest) [![npm version](https://img.shields.io/npm/v/tui-editor.svg)](https://www.npmjs.com/package/tui-editor) [![bower version](https://img.shields.io/bower/v/tui-editor.svg)](https://github.com/nhnent/tui.editor/releases/latest) [![license](https://img.shields.io/github/license/nhnent/tui.editor.svg)](https://github.com/nhnent/tui.editor/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
+[![github version](https://img.shields.io/github/release/nhn/tui.editor.svg)](https://github.com/nhn/tui.editor/releases/latest) [![npm version](https://img.shields.io/npm/v/tui-editor.svg)](https://www.npmjs.com/package/tui-editor) [![bower version](https://img.shields.io/bower/v/tui-editor.svg)](https://github.com/nhn/tui.editor/releases/latest) [![license](https://img.shields.io/github/license/nhn/tui.editor.svg)](https://github.com/nhn/tui.editor/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## Wrappers
 
-- [toast-ui.vue-editor](https://github.com/nhnent/toast-ui.vue-editor): Vue wrapper component is powered by [NHN](https://github.com/nhnent).
-- [toast-ui.react-editor](https://github.com/nhnent/toast-ui.react-editor): React wrapper component is powered by [NHN](https://github.com/nhnent).
+- [toast-ui.vue-editor](https://github.com/nhn/toast-ui.vue-editor): Vue wrapper component is powered by [NHN](https://github.com/nhn).
+- [toast-ui.react-editor](https://github.com/nhn/toast-ui.react-editor): React wrapper component is powered by [NHN](https://github.com/nhn).
 - [ember-tui-editor](https://github.com/evocount/ember-tui-editor): Ember wrapper component by [@evocount](https://github.com/evocount). Thanks for their effort.
 
 <p align="center"><a href="https://nhn.github.io/tui.editor/"><img src="https://user-images.githubusercontent.com/1215767/34356204-4c03be8a-ea7f-11e7-9aa9-0d84f9e912ec.gif" /></a></p>
@@ -75,12 +75,12 @@ Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Ma
 
 Here are some of the extensions you can start with:
 
-* **Color picker**: [ColorPicker](https://github.com/nhnent/tui.color-picker) provides an easy way to color text with a GUI tool box
-* **Chart code block**: A Code block marked as a 'chart' will render [charts](https://github.com/nhnent/tui.chart)
+* **Color picker**: [ColorPicker](https://github.com/nhn/tui.color-picker) provides an easy way to color text with a GUI tool box
+* **Chart code block**: A Code block marked as a 'chart' will render [charts](https://github.com/nhn/tui.chart)
 * **UML code block**: A Code block marked as an 'uml' will render [UML diagrams](http://plantuml.com/screenshot)
 * **Table merge**: You can merge columns and rows in tables
 
- To learn more about **Extensions** check the [Using Extension](https://github.com/nhnent/tui.editor/blob/master/docs/using-extensions.md)
+ To learn more about **Extensions** check the [Using Extension](https://github.com/nhn/tui.editor/blob/master/docs/using-extensions.md)
 
 ## 🎨 Features
 **TOAST UI Editor** provides **Markdown mode** and **WYSIWYG mode**.
@@ -145,11 +145,11 @@ tui-editor/
 ```
 
 ### download
-* [Download bundle files from `dist` directory](https://github.com/nhnent/tui.editor/tree/production/dist)
-* [Download all sources for each version from release](https://github.com/nhnent/tui.editor/releases)
+* [Download bundle files from `dist` directory](https://github.com/nhn/tui.editor/tree/production/dist)
+* [Download all sources for each version from release](https://github.com/nhn/tui.editor/releases)
 
 ## 🔨 Usage
-The code provided underneath is for *npm* + *bundler*. If you are using *bower* please see [Getting started with bower](https://github.com/nhnent/tui.editor/blob/master/docs/getting-started-with-bower.md).
+The code provided underneath is for *npm* + *bundler*. If you are using *bower* please see [Getting started with bower](https://github.com/nhn/tui.editor/blob/master/docs/getting-started-with-bower.md).
 
 ### Editor
 
@@ -247,9 +247,9 @@ var editor = Editor.factory({
 
 
 ## 📙 Docs
-* [Getting started](https://github.com/nhnent/tui.editor/blob/master/docs/getting-started.md)
-* [Getting started with bower](https://github.com/nhnent/tui.editor/blob/master/docs/getting-started-with-bower.md)
-* [Writing your own extension](https://github.com/nhnent/tui.editor/blob/master/docs/writing-your-own-extension.md)
+* [Getting started](https://github.com/nhn/tui.editor/blob/master/docs/getting-started.md)
+* [Getting started with bower](https://github.com/nhn/tui.editor/blob/master/docs/getting-started-with-bower.md)
+* [Writing your own extension](https://github.com/nhn/tui.editor/blob/master/docs/writing-your-own-extension.md)
 * [APIs](https://nhn.github.io/tui.editor/api/latest/)
 
 ## 🐾 Examples
@@ -262,19 +262,19 @@ var editor = Editor.factory({
 * [all extensions](https://nhn.github.io/tui.editor/api/latest/tutorial-example00-demo.html)
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhnent/tui.editor/blob/master/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhnent/tui.editor/blob/master/CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhnent/tui.editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhn/tui.editor/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/tui.editor/blob/master/CONTRIBUTING.md)
+* [Commit convention](https://github.com/nhn/tui.editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🍞 TOAST UI Family
-* [TOAST UI Grid](https://github.com/nhnent/tui.grid)
-* [TOAST UI Chart](https://github.com/nhnent/tui.chart)
-* [TOAST UI Calendar](https://github.com/nhnent/tui.calendar)
-* [TOAST UI Image Editor](https://github.com/nhnent/tui.image-editor)
-* [TOAST UI Components](https://github.com/nhnent?q=tui)
+* [TOAST UI Grid](https://github.com/nhn/tui.grid)
+* [TOAST UI Chart](https://github.com/nhn/tui.chart)
+* [TOAST UI Calendar](https://github.com/nhn/tui.calendar)
+* [TOAST UI Image Editor](https://github.com/nhn/tui.image-editor)
+* [TOAST UI Components](https://github.com/nhn?q=tui)
 
 ## 🚀 Used By
 * [TOAST Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com)
 
 ## 📜 License
-This software is licensed under the [MIT](https://github.com/nhnent/tui.editor/blob/master/LICENSE) © [NHN](https://github.com/nhnent).
+This software is licensed under the [MIT](https://github.com/nhn/tui.editor/blob/master/LICENSE) © [NHN](https://github.com/nhn).
