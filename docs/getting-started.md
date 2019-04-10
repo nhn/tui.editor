@@ -44,7 +44,7 @@ $('#editSection').tuiEditor({
 * **initialEditType**: Initial type to show `markdown` | `wysiwyg`
 * **previewType**: Preview style of Markdown mode `tab` | `vertical`
 
-Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
+Find out more options [here](https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 
 ## Viewer
 **TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** is much **lighter** than the editor.
@@ -59,7 +59,7 @@ var editor = new Viewer({
 });
 ...
 ```
-Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize editor [Editor.factory()]()(https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) and set the `viewer` option to value `true` in order to make the editor a viewer. You can also call [getHTML()]()(https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to render the HTML.
+Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize editor [Editor.factory()]()(https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) and set the `viewer` option to value `true` in order to make the editor a viewer. You can also call [getHTML()]()(https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to render the HTML.
 
 ```javascript
 var Editor = require('tui-editor');
