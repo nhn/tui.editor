@@ -405,26 +405,57 @@ class WwTableManager {
       $(prevNode).remove();
     }
   }
+
   /**
    * Return whether delete non text or not
    * @param {Range} range Range object
    * @returns {boolean}
    */
-  isNonTextDeleting(range) {
+  _isDeletingNonText(range) {
     const currentElement = range.startContainer;
     const nextNode = currentElement.nextSibling;
     const nextNodeName = domUtils.getNodeName(nextNode);
     const currentNodeName = domUtils.getNodeName(currentElement);
+    const insideNode = this._getCurrentNodeInCell(range);
+    const insideNodeName = domUtils.getNodeName(insideNode);
 
-    const isCellDeleting = currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
+    const isEmptyLineBetweenText = insideNode && insideNodeName === 'BR' && insideNode.nextSibling;
+    const isCellDeleting = !isEmptyLineBetweenText && currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
     const isEndOfText = (!nextNode || (nextNodeName === 'BR' && nextNode.parentNode.lastChild === nextNode))
             && (domUtils.isTextNode(currentElement) && range.startOffset === currentElement.nodeValue.length);
-    const isLastCellOfRow = !isEndOfText
+    const isLastCellOfRow = !isEmptyLineBetweenText && !isEndOfText
             && $(currentElement).parents('tr').children().last()[0] === currentElement
             && (currentNodeName === 'TD' || currentNodeName === 'TH');
 
     return isCellDeleting || isEndOfText || isLastCellOfRow;
   }
+
+  /**
+   * Return whether delete br in the br
+   * @param {Range} range Range object
+   * @returns {boolean}
+   */
+  _isDeletingBR(range) {
+    const currentNode = this._getCurrentNodeInCell(range);
+    const nextSibling = currentNode && currentNode.nextSibling;
+
+    return domUtils.getNodeName(currentNode) === 'BR' && !!nextSibling
+        && domUtils.getNodeName(nextSibling) === 'BR';
+  }
+
+  _getCurrentNodeInCell(range) {
+    const {startContainer, startOffset} = range;
+    let currentNode;
+
+    if (domUtils.getNodeName(startContainer) === 'TD') {
+      currentNode = domUtils.getChildNodeByOffset(startContainer, startOffset);
+    } else if (domUtils.getParentUntil(startContainer, 'TD')) {
+      currentNode = startContainer;
+    }
+
+    return currentNode;
+  }
+
   /**
    * _tableHandlerOnDelete
    * Delete handler in table
@@ -434,9 +465,12 @@ class WwTableManager {
    * @private
    */
   _tableHandlerOnDelete(range, event) {
-    const needPreventDefault = this.isNonTextDeleting(range);
+    if (this._isDeletingBR(range)) {
+      const currentNode = this._getCurrentNodeInCell(range);
 
-    if (needPreventDefault) {
+      currentNode.parentNode.removeChild(currentNode.nextSibling);
+      event.preventDefault();
+    } else if (this._isDeletingNonText(range)) {
       event.preventDefault();
       range.startContainer.normalize();
     }
