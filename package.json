@@ -74,7 +74,7 @@
     "doc:copy": "VER=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && copyfiles \"dist/**/*\" \"api/$VER\" && copyfiles \"lib/**/*\" \"api/$VER\"",
     "doc:jsdoc": "jsdoc -c jsdoc.conf.js",
     "test": "karma start",
-    "test:ne": "cross-env SERVER=nhn karma start",
+    "test:ne": "cross-env SERVER=nhnent karma start",
     "test:sl": "cross-env SERVER=saucelabs karma start",
     "test:lh": "cross-env SERVER=localhost karma start",
     "test:types": "tsc --project test/types",
