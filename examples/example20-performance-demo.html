@@ -58,7 +58,12 @@
           'uml',
           'mark',
           'table'
-        ]
+        ],
+        linkAttribute: {
+          target: '_blank',
+          contenteditable: 'false',
+          rel: 'noopener noreferrer'
+        }
       });
       editor.on('change', function() {
         setTimeout(function() {

@@ -816,6 +816,22 @@ class WysiwygEditor {
   }
 
   /**
+   * Set attribute of link for wysiwyg
+   * @param {object} attribute - attribute of anchor tag
+   */
+  setLinkAttribute(attribute) {
+    this._linkAttribute = attribute;
+  }
+
+  /**
+   * Get attribute of link for wysiwyg
+   * @returns {object} attribute - attribute of anchor tag
+   */
+  getLinkAttribute() {
+    return this._linkAttribute || {};
+  }
+
+  /**
    * setValue
    * Set value to wysiwyg editor
    * @memberof WysiwygEditor

@@ -24,6 +24,7 @@ const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
    */
   exec(wwe, data) {
     const sq = wwe.getEditor();
+    const linkAttibute = wwe.getLinkAttribute();
     let {url, linkText} = data;
     linkText = decodeURIGraceful(linkText);
     url = encodeMarkdownCharacters(url);
@@ -34,9 +35,12 @@ const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
       sq.removeAllFormatting();
 
       if (sq.getSelectedText()) {
-        sq.makeLink(url);
+        sq.makeLink(url, linkAttibute);
       } else {
-        const link = sq.createElement('A', {href: url});
+        const link = sq.createElement('A', $.extend({
+          href: data.url
+        }, linkAttibute));
+
         $(link).text(linkText);
         sq.insertElement(link);
       }
