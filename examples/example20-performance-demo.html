@@ -35,6 +35,7 @@
           position: sticky;
       }
     </style>
+    <button onclick="replace()">replaceContent</button>
     <div id="editSection"></div>
     <script class="code-js">
       var editor = new tui.Editor({
@@ -67,6 +68,12 @@
       editor.on('blur', function() {
           var content = editor.getValue();
       });
+
+      var text = '<a class="custom" data-custom="20" href="https://ui.toast.com/" title="toast" target="_blank">TOAST UI</a>';
+      var replace = function() {
+        var textObject = editor.getTextObject();
+        textObject.replaceContent(text);
+      }
     </script>
   </body>
 </html>
