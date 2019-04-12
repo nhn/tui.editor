@@ -1081,44 +1081,6 @@ describe('WwTableManager', () => {
     });
   });
 
-  describe('_removeBRIfNeed', () => {
-    beforeEach(() => {
-      wwe.getEditor().setHTML('<table><thead><tr><th>1</th></tr></thead>' +
-                '<tbody><tr><td>1<br></td></tr></tbody></table>');
-    });
-
-    it('should remove BR when one character inputted', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
-      range.setStart(wwe.get$Body().find('td')[0].childNodes[0], 0);
-      range.collapse(true);
-
-      mgr._removeBRIfNeed(range);
-
-      expect(wwe.get$Body().find('td').eq(0).find('br').length).toEqual(0);
-      expect(wwe.get$Body().find('td').eq(0).find('br').length).toEqual(0);
-    });
-  });
-
-  describe('_insertBRIfNeed', () => {
-    beforeEach(() => {
-      wwe.getEditor().setHTML('<table><thead><tr><th>1234</th></tr></thead>' +
-                '<tbody><tr><td></td></tr></tbody></table>');
-      wwe.get$Body().find('br').remove();
-    });
-    const expectation =
-            util.browser.msie && (util.browser.version === 10 || util.browser.version === 11) ? 0 : 1;
-
-    it('should insert BR when text content length is 0', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
-      range.setStart(wwe.get$Body().find('td')[0], 0);
-      range.collapse(true);
-
-      mgr._insertBRIfNeed(range);
-
-      expect(wwe.get$Body().find('td').eq(0).find('br').length).toEqual(expectation);
-    });
-  });
-
   describe('_isDeletingNonText', () => {
     beforeEach(() => {
       const html = '<table>' +
