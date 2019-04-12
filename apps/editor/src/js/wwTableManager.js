@@ -158,7 +158,6 @@ class WwTableManager {
 
         if (isRangeInTable && !this._isSingleModifierKey(keymap)) {
           this._recordUndoStateIfNeed(range);
-          this._removeBRIfNeed(range);
           this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
         } else if (!isRangeInTable && this._lastCellNode) {
           this._recordUndoStateAndResetCellNode(range);
@@ -362,7 +361,6 @@ class WwTableManager {
           this._tableHandlerOnDelete(range, ev);
         }
 
-        this._insertBRIfNeed(range);
         this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
         isNeedNext = false;
       } else if ((!isBackspace && this._isBeforeTable(range))
@@ -1251,43 +1249,6 @@ class WwTableManager {
     this.tableID += 1;
 
     return tableClassName;
-  }
-
-  /**
-   * Remove br when text inputted
-   * @param {Range} range Range object
-   * @private
-   */
-  _removeBRIfNeed(range) {
-    const isText = domUtils.isTextNode(range.startContainer);
-    const startContainer = isText ? range.startContainer.parentNode : range.startContainer;
-    const nodeName = domUtils.getNodeName(startContainer);
-
-    if (/td|th/i.test(nodeName) && range.collapsed && startContainer.textContent.length === 1) {
-      $(startContainer).find('br').remove();
-    }
-  }
-
-  /**
-   * Insert br when text deleted
-   * @param {Range} range Range object
-   * @private
-   */
-  _insertBRIfNeed(range) {
-    const isText = domUtils.isTextNode(range.startContainer);
-    const currentCell = isText ? range.startContainer.parentNode : range.startContainer;
-    const nodeName = domUtils.getNodeName(currentCell);
-    const $currentCell = $(currentCell);
-
-    if (/td|th/i.test(nodeName)
-            && range.collapsed
-            && !currentCell.textContent.length
-            && !$currentCell.children().length
-            && !isIE10And11
-    ) {
-      currentCell.normalize();
-      $currentCell.append('<br>');
-    }
   }
 
   /**
