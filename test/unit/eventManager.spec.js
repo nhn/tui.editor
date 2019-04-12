@@ -78,6 +78,26 @@ describe('eventManager', function() {
       em.emit('testEvent');
       expect(handler).toHaveBeenCalled();
     });
+
+    it('emit should call handler when event source is same', function() {
+      let handler = jasmine.createSpy('handler');
+
+      em.listen('testEvent', handler, 'wysiwyg');
+      em.emit('testEvent', {
+        source: 'wysiwyg'
+      });
+      expect(handler).toHaveBeenCalled();
+    });
+
+    it('emit should not call handler when event source is not same', function() {
+      let handler = jasmine.createSpy('handler');
+
+      em.listen('testEvent', handler, 'wysiwyg');
+      em.emit('testEvent', {
+        source: 'markdown'
+      });
+      expect(handler).not.toHaveBeenCalled();
+    });
   });
   describe('emitReduce()', function() {
     beforeEach(function() {

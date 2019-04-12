@@ -93,8 +93,9 @@ class EventManager {
    * @memberof EventManager
    * @param {string} typeStr Event type string
    * @param {function} handler Event handler
+   * @param {string} source Event source
    */
-  listen(typeStr, handler) {
+  listen(typeStr, handler, source) {
     const typeInfo = this._getTypeInfo(typeStr);
     const eventHandlers = this.events.get(typeInfo.type) || [];
 
@@ -104,6 +105,10 @@ class EventManager {
 
     if (typeInfo.namespace) {
       handler.namespace = typeInfo.namespace;
+    }
+
+    if (source) {
+      handler.source = source;
     }
 
     eventHandlers.push(handler);
@@ -125,11 +130,16 @@ class EventManager {
 
     if (eventHandlers) {
       util.forEach(eventHandlers, handler => {
-        const result = handler(...args);
+        const {source} = handler;
+        const whereFromEvent = args && args[0] && args[0].source;
 
-        if (!util.isUndefined(result)) {
-          results = results || [];
-          results.push(result);
+        if (!source || source === whereFromEvent) {
+          const result = handler(...args);
+
+          if (!util.isUndefined(result)) {
+            results = results || [];
+            results.push(result);
+          }
         }
       });
     }

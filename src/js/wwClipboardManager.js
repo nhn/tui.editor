@@ -11,6 +11,7 @@ import WwTablePasteHelper from './wwTablePasteHelper';
 
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
+const WYSIWYG = 'wysiwyg';
 
 /**
  * Class WwClipboardManager
@@ -35,18 +36,12 @@ class WwClipboardManager {
    * @memberof WwClipboardManager
    */
   init() {
-    this.wwe.eventManager.listen('willPaste', ev => this._executeHandler(this._onWillPaste, ev));
-    this.wwe.eventManager.listen('copy', ev => this._executeHandler(this._onCopyCut, ev));
-    this.wwe.eventManager.listen('copyAfter', ev => this._executeHandler(this._onCopyAfter, ev));
-    this.wwe.eventManager.listen('cut', ev => this._executeHandler(this._onCopyCut, ev));
-    this.wwe.eventManager.listen('cutAfter', ev => this._executeHandler(this._onCutAfter, ev));
-    this.wwe.eventManager.listen('paste', ev => this._executeHandler(this._onPasteIntoTable, ev));
-  }
-
-  _executeHandler(handler, event) {
-    if (event.source === 'wysiwyg') {
-      handler.call(this, event);
-    }
+    this.wwe.eventManager.listen('willPaste', this._onWillPaste.bind(this), WYSIWYG);
+    this.wwe.eventManager.listen('copy', this._onCopyCut.bind(this), WYSIWYG);
+    this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this), WYSIWYG);
+    this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this), WYSIWYG);
+    this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this), WYSIWYG);
+    this.wwe.eventManager.listen('paste', this._onPasteIntoTable.bind(this), WYSIWYG);
   }
 
   _onCopyCut(event) {
@@ -72,7 +67,7 @@ class WwClipboardManager {
     $clipboardContainer.append(range.cloneContents());
     this._updateCopyDataForListTypeIfNeed(range, $clipboardContainer);
     this.wwe.eventManager.emit('copyBefore', {
-      source: 'wysiwyg',
+      source: WYSIWYG,
       $clipboardContainer
     });
 
@@ -239,7 +234,7 @@ class WwClipboardManager {
     this._pch.preparePaste($clipboardContainer);
 
     this.wwe.eventManager.emit('pasteBefore', {
-      source: 'wysiwyg',
+      source: WYSIWYG,
       $clipboardContainer
     });
   }
