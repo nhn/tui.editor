@@ -155,7 +155,7 @@ class WwTableSelectionManager {
           this.setTableSelectionTimerIfNeed(selectionStart);
           this.eventManager.listen('mouseover.tableSelection', onMouseover);
           this.eventManager.listen('mouseup.tableSelection', onMouseup);
-          if (this.onDragStart && selectionStart) {
+          if (this.onDragStart) {
             this.onDragStart(selectionStart);
           }
         }
