@@ -121,6 +121,15 @@ class WysiwygEditor {
   }
 
   /**
+   * Check whether event is from wysiwyg
+   * @param {object} ev - event data
+   * @returns {boolean} whether ev is from wysiwyg
+   */
+  isWysiwygEvent(ev) {
+    return ev && ev.source && ev.source === 'wysiwyg';
+  }
+
+  /**
    * addKeyEventHandler
    * Add key event handler
    * @memberof WysiwygEditor

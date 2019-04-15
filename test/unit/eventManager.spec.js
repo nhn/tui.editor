@@ -79,20 +79,20 @@ describe('eventManager', function() {
       expect(handler).toHaveBeenCalled();
     });
 
-    it('emit should call handler when event source is same', function() {
+    it('emit should call handler when filter is true', function() {
       let handler = jasmine.createSpy('handler');
 
-      em.listen('testEvent', handler, 'wysiwyg');
+      em.listen('testEvent', handler, (eventData) => eventData.source === 'wysiwyg');
       em.emit('testEvent', {
         source: 'wysiwyg'
       });
       expect(handler).toHaveBeenCalled();
     });
 
-    it('emit should not call handler when event source is not same', function() {
+    it('emit should not call handler when filter is false', function() {
       let handler = jasmine.createSpy('handler');
 
-      em.listen('testEvent', handler, 'wysiwyg');
+      em.listen('testEvent', handler, (eventData) => eventData.source === 'wysiwyg');
       em.emit('testEvent', {
         source: 'markdown'
       });

@@ -36,12 +36,14 @@ class WwClipboardManager {
    * @memberof WwClipboardManager
    */
   init() {
-    this.wwe.eventManager.listen('willPaste', this._onWillPaste.bind(this), WYSIWYG);
-    this.wwe.eventManager.listen('copy', this._onCopyCut.bind(this), WYSIWYG);
-    this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this), WYSIWYG);
-    this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this), WYSIWYG);
-    this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this), WYSIWYG);
-    this.wwe.eventManager.listen('paste', this._onPasteIntoTable.bind(this), WYSIWYG);
+    const eventFilter = this.wwe.isWysiwygEvent.bind(null);
+
+    this.wwe.eventManager.listen('willPaste', this._onWillPaste.bind(this), eventFilter);
+    this.wwe.eventManager.listen('copy', this._onCopyCut.bind(this), eventFilter);
+    this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this), eventFilter);
+    this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this), eventFilter);
+    this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this), eventFilter);
+    this.wwe.eventManager.listen('paste', this._onPasteIntoTable.bind(this), eventFilter);
   }
 
   _onCopyCut(event) {
