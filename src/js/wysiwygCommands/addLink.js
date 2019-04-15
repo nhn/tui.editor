@@ -38,7 +38,7 @@ const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
         sq.makeLink(url, linkAttibute);
       } else {
         const link = sq.createElement('A', $.extend({
-          href: data.url
+          href: url
         }, linkAttibute));
 
         $(link).text(linkText);
