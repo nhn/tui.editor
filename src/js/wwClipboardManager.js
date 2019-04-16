@@ -35,12 +35,18 @@ class WwClipboardManager {
    * @memberof WwClipboardManager
    */
   init() {
-    this.wwe.eventManager.listen('willPaste', ev => this._onWillPaste(ev.data));
-    this.wwe.eventManager.listen('copy', this._onCopyCut.bind(this));
-    this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this));
-    this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this));
-    this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this));
-    this.wwe.eventManager.listen('paste', this._onPasteIntoTable.bind(this));
+    this.wwe.eventManager.listen('willPaste', ev => this._executeHandler(this._onWillPaste.bind(this), ev));
+    this.wwe.eventManager.listen('copy', ev => this._executeHandler(this._onCopyCut.bind(this), ev));
+    this.wwe.eventManager.listen('copyAfter', ev => this._executeHandler(this._onCopyAfter.bind(this), ev));
+    this.wwe.eventManager.listen('cut', ev => this._executeHandler(this._onCopyCut.bind(this), ev));
+    this.wwe.eventManager.listen('cutAfter', ev => this._executeHandler(this._onCutAfter.bind(this), ev));
+    this.wwe.eventManager.listen('paste', ev => this._executeHandler(this._onPasteIntoTable.bind(this), ev));
+  }
+
+  _executeHandler(handler, event) {
+    if (event.source === 'wysiwyg') {
+      handler(event);
+    }
   }
 
   _onCopyCut(event) {
@@ -116,7 +122,8 @@ class WwClipboardManager {
     return node.nodeName === 'TD' ? node : domUtils.getParentUntil(node, 'TR');
   }
 
-  _onWillPaste(pasteData) {
+  _onWillPaste(event) {
+    const {data: pasteData} = event;
     const $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
     this._preparePaste($clipboardContainer);
     this._setTableBookmark($clipboardContainer);
