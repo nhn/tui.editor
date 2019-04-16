@@ -179,14 +179,14 @@ class Convertor {
    */
   setLinkAttribute(attribute) {
     const keys = Object.keys(attribute);
-    const iteartor = (tokens, idx) => {
+    const setAttributeToToken = (tokens, idx) => {
       keys.forEach(key => {
         tokens[idx].attrPush([key, attribute[key]]);
       });
     };
 
-    markdownitHighlight.use(linkAttribute, iteartor);
-    markdownit.use(linkAttribute, iteartor);
+    markdownitHighlight.use(linkAttribute, setAttributeToToken);
+    markdownit.use(linkAttribute, setAttributeToToken);
   }
 
   /**

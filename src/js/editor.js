@@ -91,7 +91,7 @@ import './langs/gl_ES';
 const __nedInstance = [];
 const gaTrackingId = 'UA-129966929-1';
 
-const canLinkAttribute = ['rel', 'target', 'contenteditable', 'hreflang', 'type'];
+const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang', 'type'];
 
 /**
  * @callback addImageBlobHook
@@ -263,11 +263,10 @@ class ToastUIEditor {
    * @returns {object} sanitized attribute
    */
   _sanitizeLinkAttribute(attribute) {
-    const keys = Object.keys(attribute);
     const linkAttribute = {};
 
-    keys.forEach(key => {
-      if (canLinkAttribute.indexOf(key) > -1) {
+    availableLinkAttributes.forEach(key => {
+      if (!util.isUndefined(attribute[key])) {
         linkAttribute[key] = attribute[key];
       }
     });

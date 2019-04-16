@@ -3,6 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import CommandManager from '../commandManager';
 import ImportManager from '../importManager';
@@ -37,7 +38,7 @@ const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
       if (sq.getSelectedText()) {
         sq.makeLink(url, linkAttibute);
       } else {
-        const link = sq.createElement('A', $.extend({
+        const link = sq.createElement('A', util.extend({
           href: url
         }, linkAttibute));
 

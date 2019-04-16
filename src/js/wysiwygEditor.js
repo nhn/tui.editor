@@ -54,6 +54,7 @@ class WysiwygEditor {
 
     this._keyEventHandlers = {};
     this._managers = {};
+    this._linkAttribute = {};
 
     this._initEvent();
     this._initDefaultKeyEventHandler();
@@ -828,7 +829,7 @@ class WysiwygEditor {
    * @returns {object} attribute - attribute of anchor tag
    */
   getLinkAttribute() {
-    return this._linkAttribute || {};
+    return this._linkAttribute;
   }
 
   /**
