@@ -54,6 +54,7 @@ class WysiwygEditor {
 
     this._keyEventHandlers = {};
     this._managers = {};
+    this._linkAttribute = {};
 
     this._initEvent();
     this._initDefaultKeyEventHandler();
@@ -813,6 +814,22 @@ class WysiwygEditor {
     if (placeholder) {
       this.getEditor().getRoot().setAttribute('data-placeholder', placeholder);
     }
+  }
+
+  /**
+   * Set attribute of link for wysiwyg
+   * @param {object} attribute - attribute of anchor tag
+   */
+  setLinkAttribute(attribute) {
+    this._linkAttribute = attribute;
+  }
+
+  /**
+   * Get attribute of link for wysiwyg
+   * @returns {object} attribute - attribute of anchor tag
+   */
+  getLinkAttribute() {
+    return this._linkAttribute;
   }
 
   /**

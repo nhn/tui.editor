@@ -15,6 +15,7 @@ import blockQuote from './markdownItPlugins/markdownitBlockQuoteRenderer';
 import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
 import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
 import codeBackticks from './markdownItPlugins/markdownitBackticksRenderer';
+import {linkAttribute} from './markdownItPlugins/markdownitInlinePlugin';
 import codeBlockManager from './codeBlockManager';
 
 const markdownitHighlight = new MarkdownIt({
@@ -169,6 +170,23 @@ class Convertor {
 
   initHtmlSanitizer() {
     this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => htmlSanitizer(html, true));
+  }
+
+  /**
+   * set link attribute to markdownitHighlight, markdownit
+   * using linkAttribute of markdownItInlinePlugin
+   * @param {object} attribute markdown text
+   */
+  setLinkAttribute(attribute) {
+    const keys = Object.keys(attribute);
+    const setAttributeToToken = (tokens, idx) => {
+      keys.forEach(key => {
+        tokens[idx].attrPush([key, attribute[key]]);
+      });
+    };
+
+    markdownitHighlight.use(linkAttribute, setAttributeToToken);
+    markdownit.use(linkAttribute, setAttributeToToken);
   }
 
   /**
