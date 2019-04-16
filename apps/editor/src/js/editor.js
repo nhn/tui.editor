@@ -91,6 +91,8 @@ import './langs/gl_ES';
 const __nedInstance = [];
 const gaTrackingId = 'UA-129966929-1';
 
+const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang', 'type'];
+
 /**
  * @callback addImageBlobHook
  * @param  {File|Blob} fileOrBlob - image blob
@@ -131,6 +133,7 @@ class ToastUIEditor {
     * @param {object} [options.customConvertor] - convertor extention
     * @param {string} [options.placeholder] - The placeholder text of the editable element.
     * @param {string} [options.previewDelayTime] - the delay time for rendering preview
+    * @param {object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
     */
   constructor(options) {
     this.initialHtml = options.el.innerHTML;
@@ -216,6 +219,13 @@ class ToastUIEditor {
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
     this.toMarkOptions = null;
 
+    if (this.options.linkAttribute) {
+      const attribute = this._sanitizeLinkAttribute(this.options.linkAttribute);
+
+      this.convertor.setLinkAttribute(attribute);
+      this.wwEditor.setLinkAttribute(attribute);
+    }
+
     this.changePreviewStyle(this.options.previewStyle);
 
     this.changeMode(this.options.initialEditType, true);
@@ -245,6 +255,23 @@ class ToastUIEditor {
     if (this.options.usageStatistics) {
       util.sendHostname('editor', gaTrackingId);
     }
+  }
+
+  /**
+   * sanitize attribute for link
+   * @param {object} attribute - attribute for link
+   * @returns {object} sanitized attribute
+   */
+  _sanitizeLinkAttribute(attribute) {
+    const linkAttribute = {};
+
+    availableLinkAttributes.forEach(key => {
+      if (!util.isUndefined(attribute[key])) {
+        linkAttribute[key] = attribute[key];
+      }
+    });
+
+    return linkAttribute;
   }
 
   /**

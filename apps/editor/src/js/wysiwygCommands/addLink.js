@@ -3,6 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import CommandManager from '../commandManager';
 import ImportManager from '../importManager';
@@ -24,6 +25,7 @@ const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
    */
   exec(wwe, data) {
     const sq = wwe.getEditor();
+    const linkAttibute = wwe.getLinkAttribute();
     let {url, linkText} = data;
     linkText = decodeURIGraceful(linkText);
     url = encodeMarkdownCharacters(url);
@@ -34,9 +36,12 @@ const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
       sq.removeAllFormatting();
 
       if (sq.getSelectedText()) {
-        sq.makeLink(url);
+        sq.makeLink(url, linkAttibute);
       } else {
-        const link = sq.createElement('A', {href: url});
+        const link = sq.createElement('A', util.extend({
+          href: url
+        }, linkAttibute));
+
         $(link).text(linkText);
         sq.insertElement(link);
       }
