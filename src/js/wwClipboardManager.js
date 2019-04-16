@@ -11,7 +11,6 @@ import WwTablePasteHelper from './wwTablePasteHelper';
 
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
-const WYSIWYG = 'wysiwyg';
 
 /**
  * Class WwClipboardManager
@@ -36,14 +35,18 @@ class WwClipboardManager {
    * @memberof WwClipboardManager
    */
   init() {
-    const eventFilter = this.wwe.isWysiwygEvent.bind(null);
+    this.wwe.eventManager.listen('willPaste', ev => this._executeHandler(this._onWillPaste.bind(this), ev));
+    this.wwe.eventManager.listen('copy', ev => this._executeHandler(this._onCopyCut.bind(this), ev));
+    this.wwe.eventManager.listen('copyAfter', ev => this._executeHandler(this._onCopyAfter.bind(this), ev));
+    this.wwe.eventManager.listen('cut', ev => this._executeHandler(this._onCopyCut.bind(this), ev));
+    this.wwe.eventManager.listen('cutAfter', ev => this._executeHandler(this._onCutAfter.bind(this), ev));
+    this.wwe.eventManager.listen('paste', ev => this._executeHandler(this._onPasteIntoTable.bind(this), ev));
+  }
 
-    this.wwe.eventManager.listen('willPaste', this._onWillPaste.bind(this), eventFilter);
-    this.wwe.eventManager.listen('copy', this._onCopyCut.bind(this), eventFilter);
-    this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this), eventFilter);
-    this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this), eventFilter);
-    this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this), eventFilter);
-    this.wwe.eventManager.listen('paste', this._onPasteIntoTable.bind(this), eventFilter);
+  _executeHandler(handler, event) {
+    if (event.source === 'wysiwyg') {
+      handler(event);
+    }
   }
 
   _onCopyCut(event) {
@@ -69,7 +72,7 @@ class WwClipboardManager {
     $clipboardContainer.append(range.cloneContents());
     this._updateCopyDataForListTypeIfNeed(range, $clipboardContainer);
     this.wwe.eventManager.emit('copyBefore', {
-      source: WYSIWYG,
+      source: 'wysiwyg',
       $clipboardContainer
     });
 
@@ -236,7 +239,7 @@ class WwClipboardManager {
     this._pch.preparePaste($clipboardContainer);
 
     this.wwe.eventManager.emit('pasteBefore', {
-      source: WYSIWYG,
+      source: 'wysiwyg',
       $clipboardContainer
     });
   }
