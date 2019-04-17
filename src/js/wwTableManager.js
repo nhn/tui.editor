@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements wysiwyg table manager
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
@@ -158,7 +158,6 @@ class WwTableManager {
 
         if (isRangeInTable && !this._isSingleModifierKey(keymap)) {
           this._recordUndoStateIfNeed(range);
-          this._removeBRIfNeed(range);
           this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
         } else if (!isRangeInTable && this._lastCellNode) {
           this._recordUndoStateAndResetCellNode(range);
@@ -362,7 +361,6 @@ class WwTableManager {
           this._tableHandlerOnDelete(range, ev);
         }
 
-        this._insertBRIfNeed(range);
         this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
         isNeedNext = false;
       } else if ((!isBackspace && this._isBeforeTable(range))
@@ -405,26 +403,57 @@ class WwTableManager {
       $(prevNode).remove();
     }
   }
+
   /**
    * Return whether delete non text or not
    * @param {Range} range Range object
    * @returns {boolean}
    */
-  isNonTextDeleting(range) {
+  _isDeletingNonText(range) {
     const currentElement = range.startContainer;
     const nextNode = currentElement.nextSibling;
     const nextNodeName = domUtils.getNodeName(nextNode);
     const currentNodeName = domUtils.getNodeName(currentElement);
+    const insideNode = this._getCurrentNodeInCell(range);
+    const insideNodeName = domUtils.getNodeName(insideNode);
 
-    const isCellDeleting = currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
+    const isEmptyLineBetweenText = insideNode && insideNodeName === 'BR' && insideNode.nextSibling;
+    const isCellDeleting = !isEmptyLineBetweenText && currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
     const isEndOfText = (!nextNode || (nextNodeName === 'BR' && nextNode.parentNode.lastChild === nextNode))
             && (domUtils.isTextNode(currentElement) && range.startOffset === currentElement.nodeValue.length);
-    const isLastCellOfRow = !isEndOfText
+    const isLastCellOfRow = !isEmptyLineBetweenText && !isEndOfText
             && $(currentElement).parents('tr').children().last()[0] === currentElement
             && (currentNodeName === 'TD' || currentNodeName === 'TH');
 
     return isCellDeleting || isEndOfText || isLastCellOfRow;
   }
+
+  /**
+   * Return whether delete br in the br
+   * @param {Range} range Range object
+   * @returns {boolean}
+   */
+  _isDeletingBR(range) {
+    const currentNode = this._getCurrentNodeInCell(range);
+    const nextSibling = currentNode && currentNode.nextSibling;
+
+    return domUtils.getNodeName(currentNode) === 'BR' && !!nextSibling
+        && domUtils.getNodeName(nextSibling) === 'BR';
+  }
+
+  _getCurrentNodeInCell(range) {
+    const {startContainer, startOffset} = range;
+    let currentNode;
+
+    if (domUtils.getNodeName(startContainer) === 'TD') {
+      currentNode = domUtils.getChildNodeByOffset(startContainer, startOffset);
+    } else if (domUtils.getParentUntil(startContainer, 'TD')) {
+      currentNode = startContainer;
+    }
+
+    return currentNode;
+  }
+
   /**
    * _tableHandlerOnDelete
    * Delete handler in table
@@ -434,9 +463,12 @@ class WwTableManager {
    * @private
    */
   _tableHandlerOnDelete(range, event) {
-    const needPreventDefault = this.isNonTextDeleting(range);
+    if (this._isDeletingBR(range)) {
+      const currentNode = this._getCurrentNodeInCell(range);
 
-    if (needPreventDefault) {
+      currentNode.parentNode.removeChild(currentNode.nextSibling);
+      event.preventDefault();
+    } else if (this._isDeletingNonText(range)) {
       event.preventDefault();
       range.startContainer.normalize();
     }
@@ -1217,43 +1249,6 @@ class WwTableManager {
     this.tableID += 1;
 
     return tableClassName;
-  }
-
-  /**
-   * Remove br when text inputted
-   * @param {Range} range Range object
-   * @private
-   */
-  _removeBRIfNeed(range) {
-    const isText = domUtils.isTextNode(range.startContainer);
-    const startContainer = isText ? range.startContainer.parentNode : range.startContainer;
-    const nodeName = domUtils.getNodeName(startContainer);
-
-    if (/td|th/i.test(nodeName) && range.collapsed && startContainer.textContent.length === 1) {
-      $(startContainer).find('br').remove();
-    }
-  }
-
-  /**
-   * Insert br when text deleted
-   * @param {Range} range Range object
-   * @private
-   */
-  _insertBRIfNeed(range) {
-    const isText = domUtils.isTextNode(range.startContainer);
-    const currentCell = isText ? range.startContainer.parentNode : range.startContainer;
-    const nodeName = domUtils.getNodeName(currentCell);
-    const $currentCell = $(currentCell);
-
-    if (/td|th/i.test(nodeName)
-            && range.collapsed
-            && !currentCell.textContent.length
-            && !$currentCell.children().length
-            && !isIE10And11
-    ) {
-      currentCell.normalize();
-      $currentCell.append('<br>');
-    }
   }
 
   /**

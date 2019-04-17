@@ -1,6 +1,6 @@
 /**
  * @fileoverview test wysiwyg table manager
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
@@ -1081,41 +1081,97 @@ describe('WwTableManager', () => {
     });
   });
 
-  describe('_removeBRIfNeed', () => {
+  describe('_isDeletingNonText', () => {
     beforeEach(() => {
-      wwe.getEditor().setHTML('<table><thead><tr><th>1</th></tr></thead>' +
-                '<tbody><tr><td>1<br></td></tr></tbody></table>');
+      const html = '<table>' +
+                '<thead>' +
+                '<tr><th>1<br></th><th>2<br></th></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td><br></td><td>1<br><br>2<br></td></tr>' +
+                '<tr><td>123<br></td><td><br></td></tr>' +
+                '</tbody>' +
+                '</table>';
+      wwe.get$Body().html(html);
     });
 
-    it('should remove BR when one character inputted', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
-      range.setStart(wwe.get$Body().find('td')[0].childNodes[0], 0);
+    it('should check empty cell as true', () => {
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[0], 0);
       range.collapse(true);
+      wwe.getEditor().setSelection(range);
 
-      mgr._removeBRIfNeed(range);
+      expect(mgr._isDeletingNonText(range)).toEqual(true);
+    });
 
-      expect(wwe.get$Body().find('td').eq(0).find('br').length).toEqual(0);
-      expect(wwe.get$Body().find('td').eq(0).find('br').length).toEqual(0);
+    it('should check the empty line between text line as false', () => {
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[1], 2);
+      range.collapse(true);
+      wwe.getEditor().setSelection(range);
+
+      expect(mgr._isDeletingNonText(range)).toEqual(false);
+    });
+
+    it('should check the end of text as true', () => {
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[2].childNodes[0], 3);
+      range.collapse(true);
+      wwe.getEditor().setSelection(range);
+
+      expect(mgr._isDeletingNonText(range)).toEqual(true);
+    });
+
+    it('should check the last cell of row as true', () => {
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[2].childNodes[0], 3);
+      range.collapse(true);
+      wwe.getEditor().setSelection(range);
+
+      expect(mgr._isDeletingNonText(range)).toEqual(true);
     });
   });
 
-  describe('_insertBRIfNeed', () => {
+  describe('_isDeletingBR', () => {
     beforeEach(() => {
-      wwe.getEditor().setHTML('<table><thead><tr><th>1234</th></tr></thead>' +
-                '<tbody><tr><td></td></tr></tbody></table>');
-      wwe.get$Body().find('br').remove();
+      const html = '<table>' +
+                '<thead>' +
+                '<tr><th><br></th></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td>1<br></td></tr>' +
+                '<tr><td>1<br><br><br><br></td></tr>' +
+                '<tr><td>123<br><br><br><br></td></tr>' +
+                '</tbody>' +
+                '</table>';
+      wwe.get$Body().html(html);
     });
-    const expectation =
-            util.browser.msie && (util.browser.version === 10 || util.browser.version === 11) ? 0 : 1;
 
-    it('should insert BR when text content length is 0', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
-      range.setStart(wwe.get$Body().find('td')[0], 0);
+    it('should check the last br as false', () => {
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[0], 1);
       range.collapse(true);
+      wwe.getEditor().setSelection(range);
 
-      mgr._insertBRIfNeed(range);
+      expect(mgr._isDeletingBR(range)).toEqual(false);
+    });
 
-      expect(wwe.get$Body().find('td').eq(0).find('br').length).toEqual(expectation);
+    it('should check the br beween br is as true', () => {
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[1], 2);
+      range.collapse(true);
+      wwe.getEditor().setSelection(range);
+
+      expect(mgr._isDeletingBR(range)).toEqual(true);
+    });
+
+    it('should check the text as false', () => {
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[2], 0);
+      range.collapse(true);
+      wwe.getEditor().setSelection(range);
+
+      expect(mgr._isDeletingBR(range)).toEqual(false);
     });
   });
 });

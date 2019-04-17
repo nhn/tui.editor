@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements wysiwyg table selection manager
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
@@ -151,11 +151,13 @@ class WwTableSelectionManager {
 
       if (!isSelectedCell || (isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON)) {
         this.removeClassAttrbuteFromAllCellsIfNeed();
-        this.setTableSelectionTimerIfNeed(selectionStart);
-        this.eventManager.listen('mouseover.tableSelection', onMouseover);
-        this.eventManager.listen('mouseup.tableSelection', onMouseup);
-        if (this.onDragStart && selectionStart) {
-          this.onDragStart(selectionStart);
+        if (selectionStart) {
+          this.setTableSelectionTimerIfNeed(selectionStart);
+          this.eventManager.listen('mouseover.tableSelection', onMouseover);
+          this.eventManager.listen('mouseup.tableSelection', onMouseup);
+          if (this.onDragStart) {
+            this.onDragStart(selectionStart);
+          }
         }
       } else if (ev.data.button === MOUSE_RIGHT_BUTTON) {
         finishSelection();

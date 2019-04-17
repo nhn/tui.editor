@@ -1,6 +1,6 @@
 /**
  * @fileoverview test code block languages combo
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 /* eslint new-cap:0 */
 import $ from 'jquery';

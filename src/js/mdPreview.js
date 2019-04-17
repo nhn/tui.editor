@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements markdown preview
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import Preview from './preview';
 
@@ -15,10 +15,11 @@ class MarkdownPreview extends Preview {
    * @param {EventManager} eventManager - event manager
    * @param {Convertor} convertor - convertor
    * @param {boolean} isViewer - true for view only mode
+   * @param {Number} delayTime - lazyRunner delay time
    * @memberof MarkdownPreview
    */
-  constructor($el, eventManager, convertor, isViewer) {
-    super($el, eventManager, convertor, isViewer);
+  constructor($el, eventManager, convertor, isViewer, delayTime) {
+    super($el, eventManager, convertor, isViewer, delayTime);
 
     this._initEvent();
   }

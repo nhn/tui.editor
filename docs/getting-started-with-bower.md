@@ -39,7 +39,7 @@ Place a `<div></div>` where you want TOAST UI Editor to render.
 ```
 
 ### javascript
-Initialize editor with required options. Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
+Initialize editor with required options. Find out more options [here](https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 ```javascript
   var editor = new tui.Editor({
     el: document.querySelector('#editSection'),
@@ -63,7 +63,7 @@ $('#editSection').tuiEditor({
 * **initialEditType**: initial editor type `markdown` | `wysiwyg`
 * **previewType**: markdown editor's preview style `tab` | `vertical`
 
-Find out more options [here](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
+Find out more options [here](https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
 
 ## Viewer
 TOAST UI Editor provides a viewer in case you want to show the content of the *markdown* without loading the editor. The viewer is much lighter than the editor.
@@ -77,7 +77,7 @@ var editor = new tui.Editor({
 ...
 ```
 
-Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize editor [Editor.factory()]()(https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) and set the `viewer` option to value `true` in order to make the editor a viewer. You can also call [getHTML()]()(https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to render the HTML.
+Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize editor [Editor.factory()]()(https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) and set the `viewer` option to value `true` in order to make the editor a viewer. You can also call [getHTML()]()(https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to render the HTML.
 
 
 ```javascript

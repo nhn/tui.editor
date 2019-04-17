@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>17. i18n-language</title>
+    <title>20. Performance Demo</title>
     <script src="../lib/jquery/dist/jquery.js"></script>
     <script src="../lib/markdown-it/dist/markdown-it.js"></script>
     <script src="../lib/to-mark/dist/to-mark.js"></script>
@@ -16,6 +16,9 @@
     <link rel="stylesheet" href="./explain.css">
   </head>
   <body>
+    <div class="explain">
+      All extensions are enabled
+    </div>
     <div class="code-html">
     <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
     <script src="../lib/raphael/raphael.js"></script>
@@ -25,23 +28,57 @@
     <link rel="stylesheet" href="../dist/tui-editor-contents.css">
     <link rel="stylesheet" href="../lib/tui-color-picker/dist/tui-color-picker.css">
     <link rel="stylesheet" href="../lib/tui-chart/dist/tui-chart.css">
-
+    <style>
+      .te-toolbar-section {
+          top: 0;
+          z-index: 5;
+          position: sticky;
+      }
+    </style>
+    <button onclick="replace()">replaceContent</button>
     <div id="editSection"></div>
-
     <script class="code-js">
-      var content = 'Hover on item above show different language tooltips '
-      + 'Full available language list: '
-      + 'https://github.com/nhn/tui.editor/tree/master/src/js/langs '
-      + 'ko, zh, de, en, es, fr (and more)';
-
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
         previewStyle: 'vertical',
-        height: '400px',
-        initialEditType: 'markdown',
-        language: 'zh',
-        initialValue: content
+        height: 'auto',
+        minHeight: '120px',
+        initialEditType: 'wysiwyg',
+        useCommandShortcut: true,
+        exts: [
+          {
+            name: 'chart',
+            minWidth: 100,
+            maxWidth: 600,
+            minHeight: 100,
+            maxHeight: 300
+          },
+          'scrollSync',
+          'colorSyntax',
+          'uml',
+          'mark',
+          'table'
+        ],
+        linkAttribute: {
+          target: '_blank',
+          contenteditable: 'false',
+          rel: 'noopener noreferrer'
+        }
       });
+      editor.on('change', function() {
+        setTimeout(function() {
+          var content = editor.getValue();
+        }, 3000);
+      });
+      editor.on('blur', function() {
+          var content = editor.getValue();
+      });
+
+      var text = '<a class="custom" data-custom="20" href="https://ui.toast.com/" title="toast" target="_blank">TOAST UI</a>';
+      var replace = function() {
+        var textObject = editor.getTextObject();
+        textObject.replaceContent(text);
+      }
     </script>
   </body>
 </html>

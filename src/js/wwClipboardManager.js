@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements wysiwyg editor clipboard manager
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
@@ -35,12 +35,18 @@ class WwClipboardManager {
    * @memberof WwClipboardManager
    */
   init() {
-    this.wwe.eventManager.listen('willPaste', ev => this._onWillPaste(ev.data));
-    this.wwe.eventManager.listen('copy', this._onCopyCut.bind(this));
-    this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this));
-    this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this));
-    this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this));
-    this.wwe.eventManager.listen('paste', this._onPasteIntoTable.bind(this));
+    this.wwe.eventManager.listen('willPaste', ev => this._executeHandler(this._onWillPaste.bind(this), ev));
+    this.wwe.eventManager.listen('copy', ev => this._executeHandler(this._onCopyCut.bind(this), ev));
+    this.wwe.eventManager.listen('copyAfter', ev => this._executeHandler(this._onCopyAfter.bind(this), ev));
+    this.wwe.eventManager.listen('cut', ev => this._executeHandler(this._onCopyCut.bind(this), ev));
+    this.wwe.eventManager.listen('cutAfter', ev => this._executeHandler(this._onCutAfter.bind(this), ev));
+    this.wwe.eventManager.listen('paste', ev => this._executeHandler(this._onPasteIntoTable.bind(this), ev));
+  }
+
+  _executeHandler(handler, event) {
+    if (event.source === 'wysiwyg') {
+      handler(event);
+    }
   }
 
   _onCopyCut(event) {
@@ -116,7 +122,8 @@ class WwClipboardManager {
     return node.nodeName === 'TD' ? node : domUtils.getParentUntil(node, 'TR');
   }
 
-  _onWillPaste(pasteData) {
+  _onWillPaste(event) {
+    const {data: pasteData} = event;
     const $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
     this._preparePaste($clipboardContainer);
     this._setTableBookmark($clipboardContainer);
@@ -126,41 +133,11 @@ class WwClipboardManager {
       pasteData.fragment.appendChild(element);
     });
 
-    // @TODO Temporary code : paste to empty code block
-    this._pasteToEmptyCodeBlock(pasteData);
-
     // once right after the squire insertHTML DOM.
     const handler = () => {
       this.wwe.getEditor().removeEventListener('input', handler);
       this.wwe.eventManager.emit('wysiwygRangeChangeAfter', this);
       this._focusTableBookmark();
-    };
-    this.wwe.getEditor().addEventListener('input', handler);
-  }
-
-  // @TODO Temporary code : paste to empty code block
-  // Squire remove empty code block when paste.
-  // This code should remove after https://github.com/neilj/Squire/issues/349 would be resolved.
-  _pasteToEmptyCodeBlock(pasteData) {
-    const sq = this.wwe.getEditor();
-    const range = sq.getSelection().cloneRange();
-    const container = range.startContainer;
-    const wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
-    let shouldChangeSelection = false;
-    if (wwCodeblockManager.isInCodeBlock(range) && range.collapse &&
-        container.nodeName === 'PRE' && !container.textContent) {
-      const brNode = container.firstChild;
-      container.insertBefore(pasteData.fragment, brNode);
-      pasteData.defaultPrevented = true;
-      shouldChangeSelection = true;
-    }
-
-    const handler = () => {
-      this.wwe.getEditor().removeEventListener('input', handler);
-      if (shouldChangeSelection) {
-        range.setStart(container, 1);
-        sq.setSelection(range);
-      }
     };
     this.wwe.getEditor().addEventListener('input', handler);
   }

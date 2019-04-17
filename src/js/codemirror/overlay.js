@@ -10,7 +10,7 @@
 // or state.overlay.combineTokens was true, in which case the styles are
 // combined.
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import CodeMirror from 'codemirror';
 

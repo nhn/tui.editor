@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements preview
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 
@@ -16,9 +16,10 @@ class Preview {
    * @param {EventManager} eventManager Event manager instance
    * @param {Convertor} convertor Convertor instance
    * @param {boolean} isViewer - whether viewer mode or not
+   * @param {Number} delayTime - lazyRunner delay time
    * @memberof Preview
    */
-  constructor($el, eventManager, convertor, isViewer) {
+  constructor($el, eventManager, convertor, isViewer, delayTime = 800) {
     this.eventManager = eventManager;
     this.convertor = convertor;
     this.$el = $el;
@@ -31,7 +32,7 @@ class Preview {
     this.lazyRunner.registerLazyRunFunction(
       'refresh',
       this.refresh,
-      800,
+      delayTime,
       this
     );
   }

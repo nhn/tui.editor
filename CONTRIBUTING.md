@@ -18,7 +18,7 @@ Explain the problem and include additional details to help maintainers reproduce
 
 ## Suggesting Enhancements
 In case you want to suggest for TOAST UI Editor, please follow this guideline to help maintainers and the community understand your suggestion.
-Before creating suggestions, please check [issue list](https://github.com/nhnent/tui.editor/labels/feature%20request) if there's already a request.
+Before creating suggestions, please check [issue list](https://github.com/nhn/tui.editor/labels/feature%20request) if there's already a request.
 
 Create an issue and provide the following information:
 
@@ -85,8 +85,8 @@ If it has related to issues, add links to the issues(like `#123`) in the descrip
 Fill in the [Pull Request Template](./docs/PULL_REQUEST_TEMPLATE.md) by check your case.
 
 ## Code of Conduct
-This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to dl_javascript@nhnent.com.
+This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to dl_javascript@nhn.com.
 
 > This Guide is base on [atom contributing guide](https://github.com/atom/atom/blob/master/CONTRIBUTING.md), [CocoaPods](http://guides.cocoapods.org/contributing/contribute-to-cocoapods.html) and [ESLint](http://eslint.org/docs/developer-guide/contributing/pull-requests)
 
-[demo]:https://nhnent.github.io/tui.editor/
+[demo]:https://nhn.github.io/tui.editor/

@@ -1,6 +1,6 @@
 /**
  * @fileoverview test ui popup add link
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 
@@ -156,7 +156,7 @@ describe('PopupAddLink', () => {
     });
 
     it('load selected url text from editor and fill url too', () => {
-      selectedText = 'http://www.nhnent.com';
+      selectedText = 'http://www.nhn.com';
       popup.show();
 
       const value = popup._getValue();

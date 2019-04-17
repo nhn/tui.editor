@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implemtents Editor
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
@@ -86,9 +86,12 @@ import './langs/cs_CZ';
 import './langs/ar_AR';
 import './langs/pl_PL';
 import './langs/zh_TW';
+import './langs/gl_ES';
 
 const __nedInstance = [];
 const gaTrackingId = 'UA-129966929-1';
+
+const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang', 'type'];
 
 /**
  * @callback addImageBlobHook
@@ -129,6 +132,8 @@ class ToastUIEditor {
     * @param {string[]} [options.exts] - extensions
     * @param {object} [options.customConvertor] - convertor extention
     * @param {string} [options.placeholder] - The placeholder text of the editable element.
+    * @param {string} [options.previewDelayTime] - the delay time for rendering preview
+    * @param {object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
     */
   constructor(options) {
     this.initialHtml = options.el.innerHTML;
@@ -205,9 +210,21 @@ class ToastUIEditor {
     this.setUI(this.options.UI || new DefaultUI(this));
 
     this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager, this.options);
-    this.preview = new MarkdownPreview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
+    this.preview = new MarkdownPreview(
+      this.layout.getPreviewEl(),
+      this.eventManager,
+      this.convertor,
+      false,
+      this.options.previewDelayTime);
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
     this.toMarkOptions = null;
+
+    if (this.options.linkAttribute) {
+      const attribute = this._sanitizeLinkAttribute(this.options.linkAttribute);
+
+      this.convertor.setLinkAttribute(attribute);
+      this.wwEditor.setLinkAttribute(attribute);
+    }
 
     this.changePreviewStyle(this.options.previewStyle);
 
@@ -238,6 +255,23 @@ class ToastUIEditor {
     if (this.options.usageStatistics) {
       util.sendHostname('editor', gaTrackingId);
     }
+  }
+
+  /**
+   * sanitize attribute for link
+   * @param {object} attribute - attribute for link
+   * @returns {object} sanitized attribute
+   */
+  _sanitizeLinkAttribute(attribute) {
+    const linkAttribute = {};
+
+    availableLinkAttributes.forEach(key => {
+      if (!util.isUndefined(attribute[key])) {
+        linkAttribute[key] = attribute[key];
+      }
+    });
+
+    return linkAttribute;
   }
 
   /**

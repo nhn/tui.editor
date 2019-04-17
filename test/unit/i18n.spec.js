@@ -1,6 +1,6 @@
 /**
  * @fileoverview test i18n
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import {I18n} from '../../src/js/i18n';
 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview test markdown add image
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 
@@ -35,8 +35,8 @@ describe('AddImage', () => {
 
     beforeEach(() => {
       data = {
-        imageUrl: 'http://static.nhnent.com/static/site/wgnb/siteTheme_ent/logoImage/logo_ne_theme_01.png?ver=20150121',
-        altText: 'NHN Entertainment'
+        imageUrl: 'http://static.nhn.com/static/site/wgnb/siteTheme_ent/logoImage/logo_ne_theme_01.png?ver=20150121',
+        altText: 'NHN'
       };
     });
 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements wysiwyg code block manager
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
@@ -135,8 +135,7 @@ class WwCodeBlockManager {
       } else if (node.nodeName === 'BR') {
         str += '\n';
       } else {
-        const {textContent} = node;
-        str += sanitizeHtmlCode(textContent);
+        str += node.textContent;
       }
       node = nodes.shift();
     }
@@ -207,7 +206,7 @@ class WwCodeBlockManager {
 
       const resultText = $pre.text().replace(/\s+$/, '');
       $pre.empty();
-      $pre.html(resultText ? resultText : brString);
+      $pre.html(resultText ? sanitizeHtmlCode(resultText) : brString);
 
       if (lang) {
         $pre.attr('data-language', lang);

@@ -1,6 +1,6 @@
 /**
  * @fileoverview test markdown add link
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 
@@ -36,7 +36,7 @@ describe('AddLink', () => {
     beforeEach(() => {
       data = {
         linkText: 'mylink',
-        url: 'http://www.nhnent.com'
+        url: 'http://www.nhn.com'
       };
     });
 

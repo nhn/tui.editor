@@ -1,6 +1,6 @@
 /**
  * @fileoverview test wysiwyg code block manager
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
@@ -247,7 +247,7 @@ describe('WwCodeBlockManager', () => {
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 
-      const codeblock = $($(frag).find('pre'));
+      const codeblock = $(frag).find('pre');
 
       expect(codeblock.length).toEqual(1);
       expect(codeblock.hasClass('lang-javascript')).toBe(true);
@@ -261,7 +261,7 @@ describe('WwCodeBlockManager', () => {
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 
-      const codeblock = $($(frag).find('pre'));
+      const codeblock = $(frag).find('pre');
       expect(codeblock.attr('data-backticks')).toEqual('4');
     });
 
@@ -273,7 +273,7 @@ describe('WwCodeBlockManager', () => {
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 
-      const codeblock = $($(frag).find('pre')).text();
+      const codeblock = $(frag).find('pre').text();
 
       expect(codeblock.split('\n').length).toEqual(3);
     });
@@ -286,7 +286,7 @@ describe('WwCodeBlockManager', () => {
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 
-      const codeblock = $($(frag).find('pre')).text();
+      const codeblock = $(frag).find('pre').text();
 
       expect(codeblock.split('\n').length).toEqual(4);
     });
@@ -302,9 +302,23 @@ describe('WwCodeBlockManager', () => {
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 
-      const codeblock = $($(frag).find('pre')).text();
+      const codeblock = $(frag).find('pre').text();
 
       expect(codeblock.split('\n').length).toEqual(3);
+    });
+
+    it('keep tag text in the pre tag', () => {
+      const frag = document.createDocumentFragment();
+      $(frag).append('<pre></pre>');
+
+      const preTag = $(frag).find('pre');
+      preTag.text('<span>test</span>');
+
+      mgr.modifyCodeBlockForWysiwyg(frag);
+
+      const codeblockText = $(frag).find('pre').text();
+
+      expect(codeblockText).toEqual('<span>test</span>');
     });
   });
 });

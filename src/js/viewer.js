@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements editor preivew
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
@@ -86,9 +86,9 @@ class ToastUIEditorViewer {
    * @private
    */
   _toggleTask(ev) {
-    const isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+    const style = getComputedStyle(ev.target, ':before');
 
-    if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+    if (ev.target.hasAttribute(TASK_ATTR_NAME) && domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
       $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
       this.eventManager.emit('change', {
         source: 'viewer',
