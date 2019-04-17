@@ -1,7 +1,7 @@
 /*!
  * tui-editor
- * @version 1.3.3
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
+ * @version 1.4.0
+ * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 389);
+/******/ 	return __webpack_require__(__webpack_require__.s = 391);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -15097,7 +15097,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements CommandManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -15326,7 +15326,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview DOM Utils
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var FIND_ZWB = /\u200B/g;
 
@@ -15918,6 +15918,24 @@ var getLeafNode = function getLeafNode(node) {
 
   return result;
 };
+/**
+ * check if a coordinates is inside a task box
+ * @param {object} style - computed style of task box
+ * @param {number} offsetX - event x offset
+ * @param {number} offsetY - event y offset
+ * @returns {boolean}
+ * @ignore
+ */
+var isInsideTaskBox = function isInsideTaskBox(style, offsetX, offsetY) {
+  var rect = {
+    left: parseInt(style.left, 10),
+    top: parseInt(style.top, 10),
+    width: parseInt(style.width, 10),
+    height: parseInt(style.height, 10)
+  };
+
+  return offsetX >= rect.left && offsetX <= rect.left + rect.width && offsetY >= rect.top && offsetY <= rect.top + rect.height;
+};
 
 exports.default = {
   getNodeName: getNodeName,
@@ -15945,7 +15963,8 @@ exports.default = {
   isStyledNode: isStyledNode,
   removeChildFromStartToEndNode: removeChildFromStartToEndNode,
   removeNodesByDirection: removeNodesByDirection,
-  getLeafNode: getLeafNode
+  getLeafNode: getLeafNode,
+  isInsideTaskBox: isInsideTaskBox
 };
 
 /***/ }),
@@ -16533,11 +16552,11 @@ exports.CodeBlockManager = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements CodeBlockManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _highlight = __webpack_require__(99);
+var _highlight = __webpack_require__(100);
 
 var _highlight2 = _interopRequireDefault(_highlight);
 
@@ -16663,7 +16682,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview Implements htmlSanitizer
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
 
@@ -17119,7 +17138,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements markdown preview
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -17136,12 +17155,13 @@ var MarkdownPreview = function (_Preview) {
    * @param {EventManager} eventManager - event manager
    * @param {Convertor} convertor - convertor
    * @param {boolean} isViewer - true for view only mode
+   * @param {Number} delayTime - lazyRunner delay time
    * @memberof MarkdownPreview
    */
-  function MarkdownPreview($el, eventManager, convertor, isViewer) {
+  function MarkdownPreview($el, eventManager, convertor, isViewer, delayTime) {
     _classCallCheck(this, MarkdownPreview);
 
-    var _this = _possibleConstructorReturn(this, (MarkdownPreview.__proto__ || Object.getPrototypeOf(MarkdownPreview)).call(this, $el, eventManager, convertor, isViewer));
+    var _this = _possibleConstructorReturn(this, (MarkdownPreview.__proto__ || Object.getPrototypeOf(MarkdownPreview)).call(this, $el, eventManager, convertor, isViewer, delayTime));
 
     _this._initEvent();
     return _this;
@@ -17220,7 +17240,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements preview
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -17246,9 +17266,12 @@ var Preview = function () {
    * @param {EventManager} eventManager Event manager instance
    * @param {Convertor} convertor Convertor instance
    * @param {boolean} isViewer - whether viewer mode or not
+   * @param {Number} delayTime - lazyRunner delay time
    * @memberof Preview
    */
   function Preview($el, eventManager, convertor, isViewer) {
+    var delayTime = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 800;
+
     _classCallCheck(this, Preview);
 
     this.eventManager = eventManager;
@@ -17260,7 +17283,7 @@ var Preview = function () {
 
     this.lazyRunner = new _lazyRunner2.default();
 
-    this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, 800, this);
+    this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, delayTime, this);
   }
 
   /**
@@ -17397,7 +17420,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements EventManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -17662,7 +17685,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview extension manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -17751,7 +17774,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Convertor have responsible to convert markdown and html
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -17802,6 +17825,8 @@ var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockR
 var _markdownitBackticksRenderer = __webpack_require__(98);
 
 var _markdownitBackticksRenderer2 = _interopRequireDefault(_markdownitBackticksRenderer);
+
+var _markdownitInlinePlugin = __webpack_require__(99);
 
 var _codeBlockManager = __webpack_require__(11);
 
@@ -17878,24 +17903,21 @@ var Convertor = function () {
    * @private
    * @memberof Convertor
    * @param {string} markdown markdown text
+   * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
    */
 
 
   _createClass(Convertor, [{
     key: '_markdownToHtmlWithCodeHighlight',
-    value: function _markdownToHtmlWithCodeHighlight(markdown) {
-      markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+    value: function _markdownToHtmlWithCodeHighlight(markdown, env) {
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
       while (onerrorStripeRegex.exec(markdown)) {
         markdown = markdown.replace(onerrorStripeRegex, '$1$3');
       }
 
-      var renderedHTML = markdownitHighlight.render(markdown);
-      renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
-
-      return renderedHTML;
+      return markdownitHighlight.render(markdown, env);
     }
 
     /**
@@ -17904,12 +17926,13 @@ var Convertor = function () {
      * @private
      * @memberof Convertor
      * @param {string} markdown markdown text
+     * @param {object} env environment sandbox for markdownit
      * @returns {string} html text
      */
 
   }, {
     key: '_markdownToHtml',
-    value: function _markdownToHtml(markdown) {
+    value: function _markdownToHtml(markdown, env) {
       markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
@@ -17917,10 +17940,7 @@ var Convertor = function () {
         markdown = markdown.replace(onerrorStripeRegex, '$1$3');
       }
 
-      var renderedHTML = markdownit.render(markdown);
-      renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
-
-      return renderedHTML;
+      return markdownit.render(markdown, env);
     }
 
     /**
@@ -17939,7 +17959,7 @@ var Convertor = function () {
 
       $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
         var $code = (0, _jquery2.default)(codeOrPre);
-        $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/, '&lt;br&gt;'));
+        $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/g, '&lt;br&gt;'));
       });
 
       renderedHTML = $wrapperDiv.html();
@@ -17980,6 +18000,7 @@ var Convertor = function () {
       var html = this._markdownToHtml(markdown);
 
       html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+      html = this._removeBrToMarkPassAttributeInCode(html);
 
       return html;
     }
@@ -17989,6 +18010,26 @@ var Convertor = function () {
       this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function (html) {
         return (0, _htmlSanitizer2.default)(html, true);
       });
+    }
+
+    /**
+     * set link attribute to markdownitHighlight, markdownit
+     * using linkAttribute of markdownItInlinePlugin
+     * @param {object} attribute markdown text
+     */
+
+  }, {
+    key: 'setLinkAttribute',
+    value: function setLinkAttribute(attribute) {
+      var keys = Object.keys(attribute);
+      var setAttributeToToken = function setAttributeToToken(tokens, idx) {
+        keys.forEach(function (key) {
+          tokens[idx].attrPush([key, attribute[key]]);
+        });
+      };
+
+      markdownitHighlight.use(_markdownitInlinePlugin.linkAttribute, setAttributeToToken);
+      markdownit.use(_markdownitInlinePlugin.linkAttribute, setAttributeToToken);
     }
 
     /**
@@ -18033,22 +18074,11 @@ var Convertor = function () {
       var FIRST_TWO_BRS_BEFORE_RX = /([^>]|<\/a>|<\/code>|<\/span>|<\/b>|<\/i>|<\/s>|<img [^>]*>)/;
       var TWO_BRS_RX = /<br data-tomark-pass \/><br data-tomark-pass \/>/;
       var FIND_FIRST_TWO_BRS_RX = new RegExp(FIRST_TWO_BRS_BEFORE_RX.source + TWO_BRS_RX.source, 'g');
+      var FIND_ATTRI_WITH_EMTPY_STR_RX = /<br data-tomark-pass="">/ig;
 
       html = html.replace(FIND_BR_RX, '<br />');
-
       html = html.replace(FIND_DOUBLE_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />');
-
-      var div = document.createElement('div');
-      var $div = (0, _jquery2.default)(div);
-      $div.html(html);
-      $div.find('pre br,code br').each(function (index, node) {
-        if (node.hasAttribute('data-tomark-pass')) {
-          node.removeAttribute('data-tomark-pass');
-        }
-      });
-
-      html = $div.html().replace(/<br data-tomark-pass="">/ig, '<br data-tomark-pass />');
-      html = html.replace(FIND_BR_RX, '<br />');
+      html = html.replace(FIND_ATTRI_WITH_EMTPY_STR_RX, '<br data-tomark-pass />');
 
       html = html.replace(FIND_PASSING_AND_NORMAL_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />$1');
       html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
@@ -18130,7 +18160,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements LazyRunner
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -18237,7 +18267,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements Command
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -26202,9 +26232,9 @@ Renderer.markdownTextToEscapeRx = {
 
     link: /!?\[.*\]\(.*\)/,
     reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
-    strong: /__(\S[\s\S]*\h)__|\*\*(\S[\s\S]*\S)\*\*/,
-    em: /_(\S[\s\S]*\S)_|\*(\S[\s\S]*\S)\*/,
-    strikeThrough: /~~(\S[\s\S]*\S)~~/,
+    strong: /__(\S|\S[\s\S]*\S)__|\*\*(\S|\S[\s\S]*\S)\*\*/,
+    em: /_(\S|\S[\s\S]*\S)_|\*(\S|\S[\s\S]*\S)\*/,
+    strikeThrough: /~~(\S|\S[\s\S]*\S)~~/,
     code: /(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
 
     verticalBar: /\u007C/,
@@ -26841,8 +26871,8 @@ module.exports = toDom;
 
 /**
  * @fileoverview Implements markdownitTaskPlugin
- * @modifier Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
- * @modifier Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+ * @modifier Sungho Kim(sungho-kim@nhn.com) FE Development Lab/NHN
+ * @modifier Junghwan Park(junghwan.park@nhn.com) FE Development Lab/NHN
  */
 /* eslint-disable */
 
@@ -26949,7 +26979,7 @@ module.exports = MarkdownitTaskRenderer;
 /* eslint-disable */
 /**
  * @fileoverview Implements markdownitCodeBlockPlugin
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -27031,7 +27061,7 @@ module.exports = MarkdownitCodeBlockRenderer;
 // Distributed under an ISC license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements MarkdownItCodeRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /* eslint-disable */
@@ -27098,7 +27128,7 @@ module.exports = function code(state, startLine, endLine /*, silent*/) {
 // Distributed under MIT license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements markdownitCodeBlockQuoteRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /* eslint-disable */
@@ -27433,7 +27463,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
 
 /**
  * @fileoverview Implements markdownitTableRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /*eslint-disable */
@@ -27645,7 +27675,7 @@ module.exports = function table(state, startLine, endLine, silent) {
 
 /**
  * @fileoverview Implements markdownitHtmlBlockRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 /* eslint-disable */
 // HTML block
@@ -27743,7 +27773,7 @@ module.exports = function html_block(state, startLine, endLine, silent) {
 // Distributed under MIT license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements markdownitBackticksRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 /* eslint-disable */
 
@@ -27788,7 +27818,7 @@ module.exports = function backtick(state, silent) {
         token.content = state.src.slice(pos, matchStart).replace(/[ \n]+/g, ' ').trim();
         // TUI.EDITOR MODIFICATION START
         // store number of backtick in data-backtick
-        // https://github.nhnent.com/fe/tui.editor/pull/981
+        // https://github.nhn.com/fe/tui.editor/pull/981
         token.attrSet('data-backticks', token.markup.length);
         // TUI.EDITOR MODIFICATION END
       }
@@ -27808,189 +27838,237 @@ module.exports = function backtick(state, silent) {
 /* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var hljs = __webpack_require__(100);
+"use strict";
 
-hljs.registerLanguage('1c', __webpack_require__(101));
-hljs.registerLanguage('abnf', __webpack_require__(102));
-hljs.registerLanguage('accesslog', __webpack_require__(103));
-hljs.registerLanguage('actionscript', __webpack_require__(104));
-hljs.registerLanguage('ada', __webpack_require__(105));
-hljs.registerLanguage('apache', __webpack_require__(106));
-hljs.registerLanguage('applescript', __webpack_require__(107));
-hljs.registerLanguage('cpp', __webpack_require__(108));
-hljs.registerLanguage('arduino', __webpack_require__(109));
-hljs.registerLanguage('armasm', __webpack_require__(110));
-hljs.registerLanguage('xml', __webpack_require__(111));
-hljs.registerLanguage('asciidoc', __webpack_require__(112));
-hljs.registerLanguage('aspectj', __webpack_require__(113));
-hljs.registerLanguage('autohotkey', __webpack_require__(114));
-hljs.registerLanguage('autoit', __webpack_require__(115));
-hljs.registerLanguage('avrasm', __webpack_require__(116));
-hljs.registerLanguage('awk', __webpack_require__(117));
-hljs.registerLanguage('axapta', __webpack_require__(118));
-hljs.registerLanguage('bash', __webpack_require__(119));
-hljs.registerLanguage('basic', __webpack_require__(120));
-hljs.registerLanguage('bnf', __webpack_require__(121));
-hljs.registerLanguage('brainfuck', __webpack_require__(122));
-hljs.registerLanguage('cal', __webpack_require__(123));
-hljs.registerLanguage('capnproto', __webpack_require__(124));
-hljs.registerLanguage('ceylon', __webpack_require__(125));
-hljs.registerLanguage('clean', __webpack_require__(126));
-hljs.registerLanguage('clojure', __webpack_require__(127));
-hljs.registerLanguage('clojure-repl', __webpack_require__(128));
-hljs.registerLanguage('cmake', __webpack_require__(129));
-hljs.registerLanguage('coffeescript', __webpack_require__(130));
-hljs.registerLanguage('coq', __webpack_require__(131));
-hljs.registerLanguage('cos', __webpack_require__(132));
-hljs.registerLanguage('crmsh', __webpack_require__(133));
-hljs.registerLanguage('crystal', __webpack_require__(134));
-hljs.registerLanguage('cs', __webpack_require__(135));
-hljs.registerLanguage('csp', __webpack_require__(136));
-hljs.registerLanguage('css', __webpack_require__(137));
-hljs.registerLanguage('d', __webpack_require__(138));
-hljs.registerLanguage('markdown', __webpack_require__(139));
-hljs.registerLanguage('dart', __webpack_require__(140));
-hljs.registerLanguage('delphi', __webpack_require__(141));
-hljs.registerLanguage('diff', __webpack_require__(142));
-hljs.registerLanguage('django', __webpack_require__(143));
-hljs.registerLanguage('dns', __webpack_require__(144));
-hljs.registerLanguage('dockerfile', __webpack_require__(145));
-hljs.registerLanguage('dos', __webpack_require__(146));
-hljs.registerLanguage('dsconfig', __webpack_require__(147));
-hljs.registerLanguage('dts', __webpack_require__(148));
-hljs.registerLanguage('dust', __webpack_require__(149));
-hljs.registerLanguage('ebnf', __webpack_require__(150));
-hljs.registerLanguage('elixir', __webpack_require__(151));
-hljs.registerLanguage('elm', __webpack_require__(152));
-hljs.registerLanguage('ruby', __webpack_require__(153));
-hljs.registerLanguage('erb', __webpack_require__(154));
-hljs.registerLanguage('erlang-repl', __webpack_require__(155));
-hljs.registerLanguage('erlang', __webpack_require__(156));
-hljs.registerLanguage('excel', __webpack_require__(157));
-hljs.registerLanguage('fix', __webpack_require__(158));
-hljs.registerLanguage('flix', __webpack_require__(159));
-hljs.registerLanguage('fortran', __webpack_require__(160));
-hljs.registerLanguage('fsharp', __webpack_require__(161));
-hljs.registerLanguage('gams', __webpack_require__(162));
-hljs.registerLanguage('gauss', __webpack_require__(163));
-hljs.registerLanguage('gcode', __webpack_require__(164));
-hljs.registerLanguage('gherkin', __webpack_require__(165));
-hljs.registerLanguage('glsl', __webpack_require__(166));
-hljs.registerLanguage('go', __webpack_require__(167));
-hljs.registerLanguage('golo', __webpack_require__(168));
-hljs.registerLanguage('gradle', __webpack_require__(169));
-hljs.registerLanguage('groovy', __webpack_require__(170));
-hljs.registerLanguage('haml', __webpack_require__(171));
-hljs.registerLanguage('handlebars', __webpack_require__(172));
-hljs.registerLanguage('haskell', __webpack_require__(173));
-hljs.registerLanguage('haxe', __webpack_require__(174));
-hljs.registerLanguage('hsp', __webpack_require__(175));
-hljs.registerLanguage('htmlbars', __webpack_require__(176));
-hljs.registerLanguage('http', __webpack_require__(177));
-hljs.registerLanguage('hy', __webpack_require__(178));
-hljs.registerLanguage('inform7', __webpack_require__(179));
-hljs.registerLanguage('ini', __webpack_require__(180));
-hljs.registerLanguage('irpf90', __webpack_require__(181));
-hljs.registerLanguage('java', __webpack_require__(182));
-hljs.registerLanguage('javascript', __webpack_require__(183));
-hljs.registerLanguage('jboss-cli', __webpack_require__(184));
-hljs.registerLanguage('json', __webpack_require__(185));
-hljs.registerLanguage('julia', __webpack_require__(186));
-hljs.registerLanguage('julia-repl', __webpack_require__(187));
-hljs.registerLanguage('kotlin', __webpack_require__(188));
-hljs.registerLanguage('lasso', __webpack_require__(189));
-hljs.registerLanguage('ldif', __webpack_require__(190));
-hljs.registerLanguage('leaf', __webpack_require__(191));
-hljs.registerLanguage('less', __webpack_require__(192));
-hljs.registerLanguage('lisp', __webpack_require__(193));
-hljs.registerLanguage('livecodeserver', __webpack_require__(194));
-hljs.registerLanguage('livescript', __webpack_require__(195));
-hljs.registerLanguage('llvm', __webpack_require__(196));
-hljs.registerLanguage('lsl', __webpack_require__(197));
-hljs.registerLanguage('lua', __webpack_require__(198));
-hljs.registerLanguage('makefile', __webpack_require__(199));
-hljs.registerLanguage('mathematica', __webpack_require__(200));
-hljs.registerLanguage('matlab', __webpack_require__(201));
-hljs.registerLanguage('maxima', __webpack_require__(202));
-hljs.registerLanguage('mel', __webpack_require__(203));
-hljs.registerLanguage('mercury', __webpack_require__(204));
-hljs.registerLanguage('mipsasm', __webpack_require__(205));
-hljs.registerLanguage('mizar', __webpack_require__(206));
-hljs.registerLanguage('perl', __webpack_require__(207));
-hljs.registerLanguage('mojolicious', __webpack_require__(208));
-hljs.registerLanguage('monkey', __webpack_require__(209));
-hljs.registerLanguage('moonscript', __webpack_require__(210));
-hljs.registerLanguage('n1ql', __webpack_require__(211));
-hljs.registerLanguage('nginx', __webpack_require__(212));
-hljs.registerLanguage('nimrod', __webpack_require__(213));
-hljs.registerLanguage('nix', __webpack_require__(214));
-hljs.registerLanguage('nsis', __webpack_require__(215));
-hljs.registerLanguage('objectivec', __webpack_require__(216));
-hljs.registerLanguage('ocaml', __webpack_require__(217));
-hljs.registerLanguage('openscad', __webpack_require__(218));
-hljs.registerLanguage('oxygene', __webpack_require__(219));
-hljs.registerLanguage('parser3', __webpack_require__(220));
-hljs.registerLanguage('pf', __webpack_require__(221));
-hljs.registerLanguage('php', __webpack_require__(222));
-hljs.registerLanguage('pony', __webpack_require__(223));
-hljs.registerLanguage('powershell', __webpack_require__(224));
-hljs.registerLanguage('processing', __webpack_require__(225));
-hljs.registerLanguage('profile', __webpack_require__(226));
-hljs.registerLanguage('prolog', __webpack_require__(227));
-hljs.registerLanguage('protobuf', __webpack_require__(228));
-hljs.registerLanguage('puppet', __webpack_require__(229));
-hljs.registerLanguage('purebasic', __webpack_require__(230));
-hljs.registerLanguage('python', __webpack_require__(231));
-hljs.registerLanguage('q', __webpack_require__(232));
-hljs.registerLanguage('qml', __webpack_require__(233));
-hljs.registerLanguage('r', __webpack_require__(234));
-hljs.registerLanguage('rib', __webpack_require__(235));
-hljs.registerLanguage('roboconf', __webpack_require__(236));
-hljs.registerLanguage('routeros', __webpack_require__(237));
-hljs.registerLanguage('rsl', __webpack_require__(238));
-hljs.registerLanguage('ruleslanguage', __webpack_require__(239));
-hljs.registerLanguage('rust', __webpack_require__(240));
-hljs.registerLanguage('scala', __webpack_require__(241));
-hljs.registerLanguage('scheme', __webpack_require__(242));
-hljs.registerLanguage('scilab', __webpack_require__(243));
-hljs.registerLanguage('scss', __webpack_require__(244));
-hljs.registerLanguage('shell', __webpack_require__(245));
-hljs.registerLanguage('smali', __webpack_require__(246));
-hljs.registerLanguage('smalltalk', __webpack_require__(247));
-hljs.registerLanguage('sml', __webpack_require__(248));
-hljs.registerLanguage('sqf', __webpack_require__(249));
-hljs.registerLanguage('sql', __webpack_require__(250));
-hljs.registerLanguage('stan', __webpack_require__(251));
-hljs.registerLanguage('stata', __webpack_require__(252));
-hljs.registerLanguage('step21', __webpack_require__(253));
-hljs.registerLanguage('stylus', __webpack_require__(254));
-hljs.registerLanguage('subunit', __webpack_require__(255));
-hljs.registerLanguage('swift', __webpack_require__(256));
-hljs.registerLanguage('taggerscript', __webpack_require__(257));
-hljs.registerLanguage('yaml', __webpack_require__(258));
-hljs.registerLanguage('tap', __webpack_require__(259));
-hljs.registerLanguage('tcl', __webpack_require__(260));
-hljs.registerLanguage('tex', __webpack_require__(261));
-hljs.registerLanguage('thrift', __webpack_require__(262));
-hljs.registerLanguage('tp', __webpack_require__(263));
-hljs.registerLanguage('twig', __webpack_require__(264));
-hljs.registerLanguage('typescript', __webpack_require__(265));
-hljs.registerLanguage('vala', __webpack_require__(266));
-hljs.registerLanguage('vbnet', __webpack_require__(267));
-hljs.registerLanguage('vbscript', __webpack_require__(268));
-hljs.registerLanguage('vbscript-html', __webpack_require__(269));
-hljs.registerLanguage('verilog', __webpack_require__(270));
-hljs.registerLanguage('vhdl', __webpack_require__(271));
-hljs.registerLanguage('vim', __webpack_require__(272));
-hljs.registerLanguage('x86asm', __webpack_require__(273));
-hljs.registerLanguage('xl', __webpack_require__(274));
-hljs.registerLanguage('xquery', __webpack_require__(275));
-hljs.registerLanguage('zephir', __webpack_require__(276));
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+// Copyright (c) 2014, Vitaly Puzrin.
+// Distributed under an MIT license: https://github.com/markdown-it/markdown-it-for-inline
+/* eslint-disable */
+
+/**
+ * @fileoverview Implements markdownItLinkPlugin
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+function for_inline_plugin(md, ruleName, tokenType, iteartor) {
+
+  function scan(state) {
+    var i, blkIdx, inlineTokens;
+
+    for (blkIdx = state.tokens.length - 1; blkIdx >= 0; blkIdx--) {
+      if (state.tokens[blkIdx].type !== 'inline') {
+        continue;
+      }
+
+      inlineTokens = state.tokens[blkIdx].children;
+
+      for (i = inlineTokens.length - 1; i >= 0; i--) {
+        if (inlineTokens[i].type !== tokenType) {
+          continue;
+        }
+
+        iteartor(inlineTokens, i);
+      }
+    }
+  }
+
+  md.core.ruler.push(ruleName, scan);
+};
+
+var linkAttribute = exports.linkAttribute = function linkAttribute(markdownit, iteartor) {
+  for_inline_plugin(markdownit, 'url_attribute', 'link_open', iteartor);
+};
+
+/***/ }),
+/* 100 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var hljs = __webpack_require__(101);
+
+hljs.registerLanguage('1c', __webpack_require__(102));
+hljs.registerLanguage('abnf', __webpack_require__(103));
+hljs.registerLanguage('accesslog', __webpack_require__(104));
+hljs.registerLanguage('actionscript', __webpack_require__(105));
+hljs.registerLanguage('ada', __webpack_require__(106));
+hljs.registerLanguage('apache', __webpack_require__(107));
+hljs.registerLanguage('applescript', __webpack_require__(108));
+hljs.registerLanguage('cpp', __webpack_require__(109));
+hljs.registerLanguage('arduino', __webpack_require__(110));
+hljs.registerLanguage('armasm', __webpack_require__(111));
+hljs.registerLanguage('xml', __webpack_require__(112));
+hljs.registerLanguage('asciidoc', __webpack_require__(113));
+hljs.registerLanguage('aspectj', __webpack_require__(114));
+hljs.registerLanguage('autohotkey', __webpack_require__(115));
+hljs.registerLanguage('autoit', __webpack_require__(116));
+hljs.registerLanguage('avrasm', __webpack_require__(117));
+hljs.registerLanguage('awk', __webpack_require__(118));
+hljs.registerLanguage('axapta', __webpack_require__(119));
+hljs.registerLanguage('bash', __webpack_require__(120));
+hljs.registerLanguage('basic', __webpack_require__(121));
+hljs.registerLanguage('bnf', __webpack_require__(122));
+hljs.registerLanguage('brainfuck', __webpack_require__(123));
+hljs.registerLanguage('cal', __webpack_require__(124));
+hljs.registerLanguage('capnproto', __webpack_require__(125));
+hljs.registerLanguage('ceylon', __webpack_require__(126));
+hljs.registerLanguage('clean', __webpack_require__(127));
+hljs.registerLanguage('clojure', __webpack_require__(128));
+hljs.registerLanguage('clojure-repl', __webpack_require__(129));
+hljs.registerLanguage('cmake', __webpack_require__(130));
+hljs.registerLanguage('coffeescript', __webpack_require__(131));
+hljs.registerLanguage('coq', __webpack_require__(132));
+hljs.registerLanguage('cos', __webpack_require__(133));
+hljs.registerLanguage('crmsh', __webpack_require__(134));
+hljs.registerLanguage('crystal', __webpack_require__(135));
+hljs.registerLanguage('cs', __webpack_require__(136));
+hljs.registerLanguage('csp', __webpack_require__(137));
+hljs.registerLanguage('css', __webpack_require__(138));
+hljs.registerLanguage('d', __webpack_require__(139));
+hljs.registerLanguage('markdown', __webpack_require__(140));
+hljs.registerLanguage('dart', __webpack_require__(141));
+hljs.registerLanguage('delphi', __webpack_require__(142));
+hljs.registerLanguage('diff', __webpack_require__(143));
+hljs.registerLanguage('django', __webpack_require__(144));
+hljs.registerLanguage('dns', __webpack_require__(145));
+hljs.registerLanguage('dockerfile', __webpack_require__(146));
+hljs.registerLanguage('dos', __webpack_require__(147));
+hljs.registerLanguage('dsconfig', __webpack_require__(148));
+hljs.registerLanguage('dts', __webpack_require__(149));
+hljs.registerLanguage('dust', __webpack_require__(150));
+hljs.registerLanguage('ebnf', __webpack_require__(151));
+hljs.registerLanguage('elixir', __webpack_require__(152));
+hljs.registerLanguage('elm', __webpack_require__(153));
+hljs.registerLanguage('ruby', __webpack_require__(154));
+hljs.registerLanguage('erb', __webpack_require__(155));
+hljs.registerLanguage('erlang-repl', __webpack_require__(156));
+hljs.registerLanguage('erlang', __webpack_require__(157));
+hljs.registerLanguage('excel', __webpack_require__(158));
+hljs.registerLanguage('fix', __webpack_require__(159));
+hljs.registerLanguage('flix', __webpack_require__(160));
+hljs.registerLanguage('fortran', __webpack_require__(161));
+hljs.registerLanguage('fsharp', __webpack_require__(162));
+hljs.registerLanguage('gams', __webpack_require__(163));
+hljs.registerLanguage('gauss', __webpack_require__(164));
+hljs.registerLanguage('gcode', __webpack_require__(165));
+hljs.registerLanguage('gherkin', __webpack_require__(166));
+hljs.registerLanguage('glsl', __webpack_require__(167));
+hljs.registerLanguage('go', __webpack_require__(168));
+hljs.registerLanguage('golo', __webpack_require__(169));
+hljs.registerLanguage('gradle', __webpack_require__(170));
+hljs.registerLanguage('groovy', __webpack_require__(171));
+hljs.registerLanguage('haml', __webpack_require__(172));
+hljs.registerLanguage('handlebars', __webpack_require__(173));
+hljs.registerLanguage('haskell', __webpack_require__(174));
+hljs.registerLanguage('haxe', __webpack_require__(175));
+hljs.registerLanguage('hsp', __webpack_require__(176));
+hljs.registerLanguage('htmlbars', __webpack_require__(177));
+hljs.registerLanguage('http', __webpack_require__(178));
+hljs.registerLanguage('hy', __webpack_require__(179));
+hljs.registerLanguage('inform7', __webpack_require__(180));
+hljs.registerLanguage('ini', __webpack_require__(181));
+hljs.registerLanguage('irpf90', __webpack_require__(182));
+hljs.registerLanguage('java', __webpack_require__(183));
+hljs.registerLanguage('javascript', __webpack_require__(184));
+hljs.registerLanguage('jboss-cli', __webpack_require__(185));
+hljs.registerLanguage('json', __webpack_require__(186));
+hljs.registerLanguage('julia', __webpack_require__(187));
+hljs.registerLanguage('julia-repl', __webpack_require__(188));
+hljs.registerLanguage('kotlin', __webpack_require__(189));
+hljs.registerLanguage('lasso', __webpack_require__(190));
+hljs.registerLanguage('ldif', __webpack_require__(191));
+hljs.registerLanguage('leaf', __webpack_require__(192));
+hljs.registerLanguage('less', __webpack_require__(193));
+hljs.registerLanguage('lisp', __webpack_require__(194));
+hljs.registerLanguage('livecodeserver', __webpack_require__(195));
+hljs.registerLanguage('livescript', __webpack_require__(196));
+hljs.registerLanguage('llvm', __webpack_require__(197));
+hljs.registerLanguage('lsl', __webpack_require__(198));
+hljs.registerLanguage('lua', __webpack_require__(199));
+hljs.registerLanguage('makefile', __webpack_require__(200));
+hljs.registerLanguage('mathematica', __webpack_require__(201));
+hljs.registerLanguage('matlab', __webpack_require__(202));
+hljs.registerLanguage('maxima', __webpack_require__(203));
+hljs.registerLanguage('mel', __webpack_require__(204));
+hljs.registerLanguage('mercury', __webpack_require__(205));
+hljs.registerLanguage('mipsasm', __webpack_require__(206));
+hljs.registerLanguage('mizar', __webpack_require__(207));
+hljs.registerLanguage('perl', __webpack_require__(208));
+hljs.registerLanguage('mojolicious', __webpack_require__(209));
+hljs.registerLanguage('monkey', __webpack_require__(210));
+hljs.registerLanguage('moonscript', __webpack_require__(211));
+hljs.registerLanguage('n1ql', __webpack_require__(212));
+hljs.registerLanguage('nginx', __webpack_require__(213));
+hljs.registerLanguage('nimrod', __webpack_require__(214));
+hljs.registerLanguage('nix', __webpack_require__(215));
+hljs.registerLanguage('nsis', __webpack_require__(216));
+hljs.registerLanguage('objectivec', __webpack_require__(217));
+hljs.registerLanguage('ocaml', __webpack_require__(218));
+hljs.registerLanguage('openscad', __webpack_require__(219));
+hljs.registerLanguage('oxygene', __webpack_require__(220));
+hljs.registerLanguage('parser3', __webpack_require__(221));
+hljs.registerLanguage('pf', __webpack_require__(222));
+hljs.registerLanguage('php', __webpack_require__(223));
+hljs.registerLanguage('pony', __webpack_require__(224));
+hljs.registerLanguage('powershell', __webpack_require__(225));
+hljs.registerLanguage('processing', __webpack_require__(226));
+hljs.registerLanguage('profile', __webpack_require__(227));
+hljs.registerLanguage('prolog', __webpack_require__(228));
+hljs.registerLanguage('protobuf', __webpack_require__(229));
+hljs.registerLanguage('puppet', __webpack_require__(230));
+hljs.registerLanguage('purebasic', __webpack_require__(231));
+hljs.registerLanguage('python', __webpack_require__(232));
+hljs.registerLanguage('q', __webpack_require__(233));
+hljs.registerLanguage('qml', __webpack_require__(234));
+hljs.registerLanguage('r', __webpack_require__(235));
+hljs.registerLanguage('rib', __webpack_require__(236));
+hljs.registerLanguage('roboconf', __webpack_require__(237));
+hljs.registerLanguage('routeros', __webpack_require__(238));
+hljs.registerLanguage('rsl', __webpack_require__(239));
+hljs.registerLanguage('ruleslanguage', __webpack_require__(240));
+hljs.registerLanguage('rust', __webpack_require__(241));
+hljs.registerLanguage('scala', __webpack_require__(242));
+hljs.registerLanguage('scheme', __webpack_require__(243));
+hljs.registerLanguage('scilab', __webpack_require__(244));
+hljs.registerLanguage('scss', __webpack_require__(245));
+hljs.registerLanguage('shell', __webpack_require__(246));
+hljs.registerLanguage('smali', __webpack_require__(247));
+hljs.registerLanguage('smalltalk', __webpack_require__(248));
+hljs.registerLanguage('sml', __webpack_require__(249));
+hljs.registerLanguage('sqf', __webpack_require__(250));
+hljs.registerLanguage('sql', __webpack_require__(251));
+hljs.registerLanguage('stan', __webpack_require__(252));
+hljs.registerLanguage('stata', __webpack_require__(253));
+hljs.registerLanguage('step21', __webpack_require__(254));
+hljs.registerLanguage('stylus', __webpack_require__(255));
+hljs.registerLanguage('subunit', __webpack_require__(256));
+hljs.registerLanguage('swift', __webpack_require__(257));
+hljs.registerLanguage('taggerscript', __webpack_require__(258));
+hljs.registerLanguage('yaml', __webpack_require__(259));
+hljs.registerLanguage('tap', __webpack_require__(260));
+hljs.registerLanguage('tcl', __webpack_require__(261));
+hljs.registerLanguage('tex', __webpack_require__(262));
+hljs.registerLanguage('thrift', __webpack_require__(263));
+hljs.registerLanguage('tp', __webpack_require__(264));
+hljs.registerLanguage('twig', __webpack_require__(265));
+hljs.registerLanguage('typescript', __webpack_require__(266));
+hljs.registerLanguage('vala', __webpack_require__(267));
+hljs.registerLanguage('vbnet', __webpack_require__(268));
+hljs.registerLanguage('vbscript', __webpack_require__(269));
+hljs.registerLanguage('vbscript-html', __webpack_require__(270));
+hljs.registerLanguage('verilog', __webpack_require__(271));
+hljs.registerLanguage('vhdl', __webpack_require__(272));
+hljs.registerLanguage('vim', __webpack_require__(273));
+hljs.registerLanguage('x86asm', __webpack_require__(274));
+hljs.registerLanguage('xl', __webpack_require__(275));
+hljs.registerLanguage('xquery', __webpack_require__(276));
+hljs.registerLanguage('zephir', __webpack_require__(277));
 
 module.exports = hljs;
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -28812,7 +28890,7 @@ https://highlightjs.org/
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs){
@@ -29326,7 +29404,7 @@ module.exports = function(hljs){
 };
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -29401,7 +29479,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -29443,7 +29521,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -29521,7 +29599,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports) {
 
 module.exports = // We try to support full Ada2012
@@ -29698,7 +29776,7 @@ function(hljs) {
 };
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -29748,7 +29826,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -29838,7 +29916,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -30017,7 +30095,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -30121,7 +30199,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -30217,7 +30295,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -30324,7 +30402,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -30516,7 +30594,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -30665,7 +30743,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -30728,7 +30806,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -30868,7 +30946,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -30934,7 +31012,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -30991,7 +31069,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31026,7 +31104,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31105,7 +31183,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31160,7 +31238,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs){
@@ -31193,7 +31271,7 @@ module.exports = function(hljs){
 };
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs){
@@ -31234,7 +31312,7 @@ module.exports = function(hljs){
 };
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31318,7 +31396,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31371,7 +31449,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31442,7 +31520,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31471,7 +31549,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31571,7 +31649,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31590,7 +31668,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31632,7 +31710,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31782,7 +31860,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -31853,7 +31931,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports) {
 
 module.exports = function cos (hljs) {
@@ -31981,7 +32059,7 @@ module.exports = function cos (hljs) {
 };
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -32079,7 +32157,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -32277,7 +32355,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -32458,7 +32536,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -32484,7 +32562,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -32593,7 +32671,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports) {
 
 module.exports = /**
@@ -32855,7 +32933,7 @@ function(hljs) {
 };
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -32967,7 +33045,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -33072,7 +33150,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33145,7 +33223,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33189,7 +33267,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33257,7 +33335,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33290,7 +33368,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33316,7 +33394,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33372,7 +33450,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33423,7 +33501,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33551,7 +33629,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33587,7 +33665,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33624,7 +33702,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33725,7 +33803,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33813,7 +33891,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -33994,7 +34072,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -34013,7 +34091,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -34063,7 +34141,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -34213,7 +34291,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -34265,7 +34343,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -34298,7 +34376,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -34347,7 +34425,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -34422,7 +34500,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -34485,7 +34563,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -34643,7 +34721,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -34871,7 +34949,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -34942,7 +35020,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -34983,7 +35061,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35104,7 +35182,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35162,7 +35240,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35189,7 +35267,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35228,7 +35306,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35326,7 +35404,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports) {
 
 module.exports = // TODO support filter tags like :javascript, support inline HTML
@@ -35437,7 +35515,7 @@ function(hljs) {
 };
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35475,7 +35553,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 173 */
+/* 174 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35601,7 +35679,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 174 */
+/* 175 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35717,7 +35795,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 175 */
+/* 176 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35767,7 +35845,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 176 */
+/* 177 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35842,7 +35920,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 177 */
+/* 178 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35887,7 +35965,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 178 */
+/* 179 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -35993,7 +36071,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 179 */
+/* 180 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -36054,7 +36132,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 180 */
+/* 181 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -36124,7 +36202,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 181 */
+/* 182 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -36204,7 +36282,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 182 */
+/* 183 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -36316,7 +36394,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 183 */
+/* 184 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -36491,7 +36569,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 184 */
+/* 185 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -36542,7 +36620,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 185 */
+/* 186 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -36583,7 +36661,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 186 */
+/* 187 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -36749,7 +36827,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 187 */
+/* 188 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -36777,7 +36855,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 188 */
+/* 189 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -36955,7 +37033,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 189 */
+/* 190 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -37122,7 +37200,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 190 */
+/* 191 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -37149,7 +37227,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 191 */
+/* 192 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -37193,7 +37271,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 192 */
+/* 193 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -37337,7 +37415,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 193 */
+/* 194 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -37444,7 +37522,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 194 */
+/* 195 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -37605,7 +37683,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 195 */
+/* 196 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -37758,7 +37836,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 196 */
+/* 197 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -37851,7 +37929,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 197 */
+/* 198 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -37938,7 +38016,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 198 */
+/* 199 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -38008,7 +38086,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 199 */
+/* 200 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -38093,7 +38171,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 200 */
+/* 201 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -38155,7 +38233,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 201 */
+/* 202 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -38247,7 +38325,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 202 */
+/* 203 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -38657,7 +38735,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 203 */
+/* 204 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -38886,7 +38964,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 204 */
+/* 205 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -38972,7 +39050,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 205 */
+/* 206 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39062,7 +39140,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 206 */
+/* 207 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39085,7 +39163,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 207 */
+/* 208 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39246,7 +39324,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 208 */
+/* 209 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39275,7 +39353,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 209 */
+/* 210 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39354,7 +39432,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 210 */
+/* 211 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39470,7 +39548,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 211 */
+/* 212 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39543,7 +39621,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 212 */
+/* 213 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39640,7 +39718,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 213 */
+/* 214 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39699,7 +39777,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 214 */
+/* 215 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39752,7 +39830,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 215 */
+/* 216 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39862,7 +39940,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 216 */
+/* 217 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -39957,7 +40035,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 217 */
+/* 218 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40032,7 +40110,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 218 */
+/* 219 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40093,7 +40171,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 219 */
+/* 220 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40167,7 +40245,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 220 */
+/* 221 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40219,7 +40297,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 221 */
+/* 222 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40275,7 +40353,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 222 */
+/* 223 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40406,7 +40484,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 223 */
+/* 224 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40501,7 +40579,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 224 */
+/* 225 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40586,7 +40664,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 225 */
+/* 226 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40638,7 +40716,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 226 */
+/* 227 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40672,7 +40750,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 227 */
+/* 228 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40764,7 +40842,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 228 */
+/* 229 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40804,7 +40882,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 229 */
+/* 230 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40923,7 +41001,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 230 */
+/* 231 */
 /***/ (function(module, exports) {
 
 module.exports = // Base deafult colors in PB IDE: background: #FFFFDF; foreground: #000000;
@@ -40985,7 +41063,7 @@ function(hljs) {
 };
 
 /***/ }),
-/* 231 */
+/* 232 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41105,7 +41183,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 232 */
+/* 233 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41132,7 +41210,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 233 */
+/* 234 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41305,7 +41383,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 234 */
+/* 235 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41379,7 +41457,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 235 */
+/* 236 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41410,7 +41488,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 236 */
+/* 237 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41481,7 +41559,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 237 */
+/* 238 */
 /***/ (function(module, exports) {
 
 module.exports = // Colors from RouterOS terminal:
@@ -41644,7 +41722,7 @@ function(hljs) {
 };
 
 /***/ }),
-/* 238 */
+/* 239 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41684,7 +41762,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 239 */
+/* 240 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41749,7 +41827,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 240 */
+/* 241 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41861,7 +41939,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 241 */
+/* 242 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41980,7 +42058,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 242 */
+/* 243 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42128,7 +42206,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 243 */
+/* 244 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42186,7 +42264,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 244 */
+/* 245 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42288,7 +42366,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 245 */
+/* 246 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42307,7 +42385,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 246 */
+/* 247 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42367,7 +42445,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 247 */
+/* 248 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42421,7 +42499,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 248 */
+/* 249 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42491,7 +42569,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 249 */
+/* 250 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42866,7 +42944,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 250 */
+/* 251 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43030,7 +43108,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 251 */
+/* 252 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43117,7 +43195,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 252 */
+/* 253 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43159,7 +43237,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 253 */
+/* 254 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43210,7 +43288,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 254 */
+/* 255 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43668,7 +43746,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 255 */
+/* 256 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43706,7 +43784,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 256 */
+/* 257 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43827,7 +43905,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 257 */
+/* 258 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43875,7 +43953,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 258 */
+/* 259 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43967,7 +44045,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 259 */
+/* 260 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44007,7 +44085,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 260 */
+/* 261 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44072,7 +44150,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 261 */
+/* 262 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44138,7 +44216,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 262 */
+/* 263 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44177,7 +44255,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 263 */
+/* 264 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44265,7 +44343,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 264 */
+/* 265 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44335,7 +44413,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 265 */
+/* 266 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44495,7 +44573,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 266 */
+/* 267 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44549,7 +44627,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 267 */
+/* 268 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44609,7 +44687,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 268 */
+/* 269 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44652,7 +44730,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 269 */
+/* 270 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44668,7 +44746,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 270 */
+/* 271 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44771,7 +44849,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 271 */
+/* 272 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44836,7 +44914,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 272 */
+/* 273 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44946,7 +45024,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 273 */
+/* 274 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45086,7 +45164,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 274 */
+/* 275 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45163,7 +45241,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 275 */
+/* 276 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45238,7 +45316,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 276 */
+/* 277 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45349,7 +45427,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 277 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45357,7 +45435,7 @@ module.exports = function(hljs) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements editor preivew
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -45482,9 +45560,9 @@ var ToastUIEditorViewer = function () {
   _createClass(ToastUIEditorViewer, [{
     key: '_toggleTask',
     value: function _toggleTask(ev) {
-      var isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+      var style = getComputedStyle(ev.target, ':before');
 
-      if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+      if (ev.target.hasAttribute(TASK_ATTR_NAME) && _domUtils2.default.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
         (0, _jquery2.default)(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
         this.eventManager.emit('change', {
           source: 'viewer',
@@ -45691,7 +45769,6 @@ ToastUIEditorViewer.WwTableSelectionManager = null;
 module.exports = ToastUIEditorViewer;
 
 /***/ }),
-/* 278 */,
 /* 279 */,
 /* 280 */,
 /* 281 */,
@@ -45802,7 +45879,9 @@ module.exports = ToastUIEditorViewer;
 /* 386 */,
 /* 387 */,
 /* 388 */,
-/* 389 */
+/* 389 */,
+/* 390 */,
+/* 391 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45814,12 +45893,12 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Viewer = __webpack_require__(277);
+var Viewer = __webpack_require__(278);
 
 // for jquery
 /**
  * @fileoverview entry point for viewer
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 _jquery2.default.fn.tuiEditor = function () {
   var options = void 0,

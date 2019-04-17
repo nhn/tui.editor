@@ -1,7 +1,7 @@
 /*!
  * tui-editor
- * @version 1.3.3
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
+ * @version 1.4.0
+ * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -92,7 +92,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 /**
 * @fileoverview Editor/Viewer proxy for extensions
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 /* eslint global-require: 0 no-empty: 0 */
 
@@ -140,7 +140,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implements UML extension
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var codeBlockManager = _editorProxy2.default.codeBlockManager;
 

@@ -1,7 +1,7 @@
 /*!
  * tui-editor
- * @version 1.3.3
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
+ * @version 1.4.0
+ * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -13,7 +13,7 @@
 		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("markdown-it"), require("to-mark"), require("highlight.js"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["markdownit"], root["toMark"], root["hljs"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_22__, __WEBPACK_EXTERNAL_MODULE_23__, __WEBPACK_EXTERNAL_MODULE_31__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_22__, __WEBPACK_EXTERNAL_MODULE_23__, __WEBPACK_EXTERNAL_MODULE_32__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 145);
+/******/ 	return __webpack_require__(__webpack_require__.s = 147);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -121,7 +121,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements markdown preview
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -138,12 +138,13 @@ var MarkdownPreview = function (_Preview) {
    * @param {EventManager} eventManager - event manager
    * @param {Convertor} convertor - convertor
    * @param {boolean} isViewer - true for view only mode
+   * @param {Number} delayTime - lazyRunner delay time
    * @memberof MarkdownPreview
    */
-  function MarkdownPreview($el, eventManager, convertor, isViewer) {
+  function MarkdownPreview($el, eventManager, convertor, isViewer, delayTime) {
     _classCallCheck(this, MarkdownPreview);
 
-    var _this = _possibleConstructorReturn(this, (MarkdownPreview.__proto__ || Object.getPrototypeOf(MarkdownPreview)).call(this, $el, eventManager, convertor, isViewer));
+    var _this = _possibleConstructorReturn(this, (MarkdownPreview.__proto__ || Object.getPrototypeOf(MarkdownPreview)).call(this, $el, eventManager, convertor, isViewer, delayTime));
 
     _this._initEvent();
     return _this;
@@ -223,7 +224,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements preview
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -249,9 +250,12 @@ var Preview = function () {
    * @param {EventManager} eventManager Event manager instance
    * @param {Convertor} convertor Convertor instance
    * @param {boolean} isViewer - whether viewer mode or not
+   * @param {Number} delayTime - lazyRunner delay time
    * @memberof Preview
    */
   function Preview($el, eventManager, convertor, isViewer) {
+    var delayTime = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 800;
+
     _classCallCheck(this, Preview);
 
     this.eventManager = eventManager;
@@ -263,7 +267,7 @@ var Preview = function () {
 
     this.lazyRunner = new _lazyRunner2.default();
 
-    this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, 800, this);
+    this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, delayTime, this);
   }
 
   /**
@@ -390,7 +394,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 145:
+/***/ 147:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -402,12 +406,12 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Viewer = __webpack_require__(32);
+var Viewer = __webpack_require__(33);
 
 // for jquery
 /**
  * @fileoverview entry point for viewer
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 _jquery2.default.fn.tuiEditor = function () {
   var options = void 0,
@@ -456,7 +460,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements EventManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -722,7 +726,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview extension manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -812,7 +816,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Convertor have responsible to convert markdown and html
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -863,6 +867,8 @@ var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockR
 var _markdownitBackticksRenderer = __webpack_require__(30);
 
 var _markdownitBackticksRenderer2 = _interopRequireDefault(_markdownitBackticksRenderer);
+
+var _markdownitInlinePlugin = __webpack_require__(31);
 
 var _codeBlockManager = __webpack_require__(7);
 
@@ -939,24 +945,21 @@ var Convertor = function () {
    * @private
    * @memberof Convertor
    * @param {string} markdown markdown text
+   * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
    */
 
 
   _createClass(Convertor, [{
     key: '_markdownToHtmlWithCodeHighlight',
-    value: function _markdownToHtmlWithCodeHighlight(markdown) {
-      markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+    value: function _markdownToHtmlWithCodeHighlight(markdown, env) {
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
       while (onerrorStripeRegex.exec(markdown)) {
         markdown = markdown.replace(onerrorStripeRegex, '$1$3');
       }
 
-      var renderedHTML = markdownitHighlight.render(markdown);
-      renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
-
-      return renderedHTML;
+      return markdownitHighlight.render(markdown, env);
     }
 
     /**
@@ -965,12 +968,13 @@ var Convertor = function () {
      * @private
      * @memberof Convertor
      * @param {string} markdown markdown text
+     * @param {object} env environment sandbox for markdownit
      * @returns {string} html text
      */
 
   }, {
     key: '_markdownToHtml',
-    value: function _markdownToHtml(markdown) {
+    value: function _markdownToHtml(markdown, env) {
       markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
@@ -978,10 +982,7 @@ var Convertor = function () {
         markdown = markdown.replace(onerrorStripeRegex, '$1$3');
       }
 
-      var renderedHTML = markdownit.render(markdown);
-      renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
-
-      return renderedHTML;
+      return markdownit.render(markdown, env);
     }
 
     /**
@@ -1000,7 +1001,7 @@ var Convertor = function () {
 
       $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
         var $code = (0, _jquery2.default)(codeOrPre);
-        $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/, '&lt;br&gt;'));
+        $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/g, '&lt;br&gt;'));
       });
 
       renderedHTML = $wrapperDiv.html();
@@ -1041,6 +1042,7 @@ var Convertor = function () {
       var html = this._markdownToHtml(markdown);
 
       html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+      html = this._removeBrToMarkPassAttributeInCode(html);
 
       return html;
     }
@@ -1050,6 +1052,26 @@ var Convertor = function () {
       this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function (html) {
         return (0, _htmlSanitizer2.default)(html, true);
       });
+    }
+
+    /**
+     * set link attribute to markdownitHighlight, markdownit
+     * using linkAttribute of markdownItInlinePlugin
+     * @param {object} attribute markdown text
+     */
+
+  }, {
+    key: 'setLinkAttribute',
+    value: function setLinkAttribute(attribute) {
+      var keys = Object.keys(attribute);
+      var setAttributeToToken = function setAttributeToToken(tokens, idx) {
+        keys.forEach(function (key) {
+          tokens[idx].attrPush([key, attribute[key]]);
+        });
+      };
+
+      markdownitHighlight.use(_markdownitInlinePlugin.linkAttribute, setAttributeToToken);
+      markdownit.use(_markdownitInlinePlugin.linkAttribute, setAttributeToToken);
     }
 
     /**
@@ -1094,22 +1116,11 @@ var Convertor = function () {
       var FIRST_TWO_BRS_BEFORE_RX = /([^>]|<\/a>|<\/code>|<\/span>|<\/b>|<\/i>|<\/s>|<img [^>]*>)/;
       var TWO_BRS_RX = /<br data-tomark-pass \/><br data-tomark-pass \/>/;
       var FIND_FIRST_TWO_BRS_RX = new RegExp(FIRST_TWO_BRS_BEFORE_RX.source + TWO_BRS_RX.source, 'g');
+      var FIND_ATTRI_WITH_EMTPY_STR_RX = /<br data-tomark-pass="">/ig;
 
       html = html.replace(FIND_BR_RX, '<br />');
-
       html = html.replace(FIND_DOUBLE_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />');
-
-      var div = document.createElement('div');
-      var $div = (0, _jquery2.default)(div);
-      $div.html(html);
-      $div.find('pre br,code br').each(function (index, node) {
-        if (node.hasAttribute('data-tomark-pass')) {
-          node.removeAttribute('data-tomark-pass');
-        }
-      });
-
-      html = $div.html().replace(/<br data-tomark-pass="">/ig, '<br data-tomark-pass />');
-      html = html.replace(FIND_BR_RX, '<br />');
+      html = html.replace(FIND_ATTRI_WITH_EMTPY_STR_RX, '<br data-tomark-pass />');
 
       html = html.replace(FIND_PASSING_AND_NORMAL_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />$1');
       html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
@@ -1163,7 +1174,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements CommandManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -1382,7 +1393,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements LazyRunner
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -1490,7 +1501,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements Command
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -1677,8 +1688,8 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_23__;
 
 /**
  * @fileoverview Implements markdownitTaskPlugin
- * @modifier Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
- * @modifier Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+ * @modifier Sungho Kim(sungho-kim@nhn.com) FE Development Lab/NHN
+ * @modifier Junghwan Park(junghwan.park@nhn.com) FE Development Lab/NHN
  */
 /* eslint-disable */
 
@@ -1786,7 +1797,7 @@ module.exports = MarkdownitTaskRenderer;
 /* eslint-disable */
 /**
  * @fileoverview Implements markdownitCodeBlockPlugin
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -1869,7 +1880,7 @@ module.exports = MarkdownitCodeBlockRenderer;
 // Distributed under an ISC license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements MarkdownItCodeRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /* eslint-disable */
@@ -1937,7 +1948,7 @@ module.exports = function code(state, startLine, endLine /*, silent*/) {
 // Distributed under MIT license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements markdownitCodeBlockQuoteRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /* eslint-disable */
@@ -2273,7 +2284,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
 
 /**
  * @fileoverview Implements markdownitTableRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /*eslint-disable */
@@ -2486,7 +2497,7 @@ module.exports = function table(state, startLine, endLine, silent) {
 
 /**
  * @fileoverview Implements markdownitHtmlBlockRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 /* eslint-disable */
 // HTML block
@@ -2585,7 +2596,7 @@ module.exports = function html_block(state, startLine, endLine, silent) {
 // Distributed under MIT license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements markdownitBackticksRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 /* eslint-disable */
 
@@ -2630,7 +2641,7 @@ module.exports = function backtick(state, silent) {
         token.content = state.src.slice(pos, matchStart).replace(/[ \n]+/g, ' ').trim();
         // TUI.EDITOR MODIFICATION START
         // store number of backtick in data-backtick
-        // https://github.nhnent.com/fe/tui.editor/pull/981
+        // https://github.nhn.com/fe/tui.editor/pull/981
         token.attrSet('data-backticks', token.markup.length);
         // TUI.EDITOR MODIFICATION END
       }
@@ -2649,13 +2660,62 @@ module.exports = function backtick(state, silent) {
 /***/ }),
 
 /***/ 31:
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_31__;
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+// Copyright (c) 2014, Vitaly Puzrin.
+// Distributed under an MIT license: https://github.com/markdown-it/markdown-it-for-inline
+/* eslint-disable */
+
+/**
+ * @fileoverview Implements markdownItLinkPlugin
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+function for_inline_plugin(md, ruleName, tokenType, iteartor) {
+
+  function scan(state) {
+    var i, blkIdx, inlineTokens;
+
+    for (blkIdx = state.tokens.length - 1; blkIdx >= 0; blkIdx--) {
+      if (state.tokens[blkIdx].type !== 'inline') {
+        continue;
+      }
+
+      inlineTokens = state.tokens[blkIdx].children;
+
+      for (i = inlineTokens.length - 1; i >= 0; i--) {
+        if (inlineTokens[i].type !== tokenType) {
+          continue;
+        }
+
+        iteartor(inlineTokens, i);
+      }
+    }
+  }
+
+  md.core.ruler.push(ruleName, scan);
+};
+
+var linkAttribute = exports.linkAttribute = function linkAttribute(markdownit, iteartor) {
+  for_inline_plugin(markdownit, 'url_attribute', 'link_open', iteartor);
+};
 
 /***/ }),
 
 /***/ 32:
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_32__;
+
+/***/ }),
+
+/***/ 33:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2663,7 +2723,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_31__;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements editor preivew
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -2788,9 +2848,9 @@ var ToastUIEditorViewer = function () {
   _createClass(ToastUIEditorViewer, [{
     key: '_toggleTask',
     value: function _toggleTask(ev) {
-      var isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+      var style = getComputedStyle(ev.target, ':before');
 
-      if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+      if (ev.target.hasAttribute(TASK_ATTR_NAME) && _domUtils2.default.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
         (0, _jquery2.default)(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
         this.eventManager.emit('change', {
           source: 'viewer',
@@ -3020,7 +3080,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview DOM Utils
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var FIND_ZWB = /\u200B/g;
 
@@ -3612,6 +3672,24 @@ var getLeafNode = function getLeafNode(node) {
 
   return result;
 };
+/**
+ * check if a coordinates is inside a task box
+ * @param {object} style - computed style of task box
+ * @param {number} offsetX - event x offset
+ * @param {number} offsetY - event y offset
+ * @returns {boolean}
+ * @ignore
+ */
+var isInsideTaskBox = function isInsideTaskBox(style, offsetX, offsetY) {
+  var rect = {
+    left: parseInt(style.left, 10),
+    top: parseInt(style.top, 10),
+    width: parseInt(style.width, 10),
+    height: parseInt(style.height, 10)
+  };
+
+  return offsetX >= rect.left && offsetX <= rect.left + rect.width && offsetY >= rect.top && offsetY <= rect.top + rect.height;
+};
 
 exports.default = {
   getNodeName: getNodeName,
@@ -3639,7 +3717,8 @@ exports.default = {
   isStyledNode: isStyledNode,
   removeChildFromStartToEndNode: removeChildFromStartToEndNode,
   removeNodesByDirection: removeNodesByDirection,
-  getLeafNode: getLeafNode
+  getLeafNode: getLeafNode,
+  isInsideTaskBox: isInsideTaskBox
 };
 
 /***/ }),
@@ -3657,11 +3736,11 @@ exports.CodeBlockManager = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements CodeBlockManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _highlight = __webpack_require__(31);
+var _highlight = __webpack_require__(32);
 
 var _highlight2 = _interopRequireDefault(_highlight);
 
@@ -3787,7 +3866,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview Implements htmlSanitizer
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
 

@@ -1,7 +1,7 @@
 /*!
  * tui-editor
- * @version 1.3.3
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
+ * @version 1.4.0
+ * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -97,7 +97,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 /**
 * @fileoverview Editor/Viewer proxy for extensions
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 /* eslint global-require: 0 no-empty: 0 */
 
@@ -5320,7 +5320,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview tsv, csv format chart plugin
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * consumes tab separated values and make data/options for tui chart
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
 /**
@@ -5419,7 +5419,7 @@ function parseCode2DataAndOptions(code, callback) {
  * @param {string} dataCode - code block containing chart data
  * @param {string} optionCode - code block containing chart options
  * @returns {Object} - tui.chart data & options
- * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
 function _parseCode2DataAndOptions(dataCode, optionCode) {
@@ -5500,7 +5500,7 @@ function calcDSVDelta(code, delimiter) {
  * @param {string} code - data code
  * @param {string|RegExp} delimiter - delimiter
  * @returns {Object} - tui.chart data
- * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
 function parseDSV2ChartData(code, delimiter) {
@@ -5585,7 +5585,7 @@ function parseURL2ChartData(url, callback) {
  * parse option code
  * @param {string} optionCode - option code
  * @returns {Object} - tui.chart option string
- * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
 function parseCode2ChartOption(optionCode) {
@@ -5668,7 +5668,7 @@ function isNumeric(str) {
  * @param {Object} extensionOptions - extension options
  * @param {HTMLElement} chartContainer - chart container
  * @returns {Object} - options
- * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
 function setDefaultOptions(chartOptions, extensionOptions, chartContainer) {
@@ -5963,7 +5963,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  Author Greg Kindel (twitter @gkindel), 2014
  */
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 (function (global) {

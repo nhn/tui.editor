@@ -1,7 +1,7 @@
 /*!
  * tui-editor
- * @version 1.3.3
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
+ * @version 1.4.0
+ * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -97,7 +97,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 /**
 * @fileoverview Editor/Viewer proxy for extensions
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 /* eslint global-require: 0 no-empty: 0 */
 
@@ -158,7 +158,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
 * @fileoverview Implements tableDataHandler
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 function _parseCell(cell, rowIndex, colIndex) {
   var $cell = (0, _jquery2.default)(cell);
@@ -596,7 +596,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
 * @fileoverview Implements tableRenderer
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 function _createCellHtml(cell) {
   var attrs = cell.colspan > 1 ? ' colspan="' + cell.colspan + '"' : '';
@@ -765,7 +765,7 @@ function _findUnmergedRange(tableData, $start, $end) {
  */
 /**
 * @fileoverview Implements tableRangeHandler
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 function _expandRowMergedRange(tableData, tableRange, rangeType) {
   var rowIndex = tableRange[rangeType].rowIndex;
@@ -1040,7 +1040,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
 * @fileoverview Implements table extension
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 function tableExtension(editor) {
   var eventManager = editor.eventManager;
@@ -1177,7 +1177,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var i18n = _editorProxy2.default.i18n; /**
                                        * @fileoverview i18n for table extension
-                                       * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                       * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                        */
 
 if (i18n) {
@@ -1292,6 +1292,13 @@ if (i18n) {
     'Cannot change part of merged cell': '無法變更儲存格的一部分。',
     'Cannot paste row merged cells into the table header': '無法將合併的儲存格貼上至表格標題中。'
   });
+
+  i18n.setLanguage(['gl', 'gl_ES'], {
+    'Merge cells': 'Combinar celas',
+    'Unmerge cells': 'Separar celas',
+    'Cannot change part of merged cell': 'Non se pode cambiar parte dunha cela combinada',
+    'Cannot paste row merged cells into the table header': 'Non se poden pegar celas no encabezado da táboa'
+  });
 }
 
 /***/ }),
@@ -1363,7 +1370,7 @@ function _extractPropertiesForMerge(value, type, oppossitType) {
  */
 /**
 * @fileoverview Implements mergedTableCreator.
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 function _parseTableCell(cell) {
   var nodeName = cell.nodeName;
@@ -1575,7 +1582,7 @@ function _prependMergeSyntaxToContent(cell) {
  */
 /**
 * @fileoverview Implements tableUnmergePreparer.
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 function prepareTableUnmerge(tableElement) {
   (0, _jquery2.default)(tableElement).find('td, th').get().forEach(_prependMergeSyntaxToContent);
@@ -1621,7 +1628,7 @@ var RX_COLS = /@cols=[0-9]+:/g;
  */
 /**
 * @fileoverview Implements toMarkRendererCreator.
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 function _createRepeatString(str, count) {
   return _tuiCodeSnippet2.default.range(0, count).map(function () {
@@ -1631,7 +1638,7 @@ function _createRepeatString(str, count) {
 
 /**
  * Make table head align text.
- * Copy from https://github.com/nhnent/to-mark/blob/develop/src/renderer.gfm.js
+ * Copy from https://github.com/nhn/to-mark/blob/develop/src/renderer.gfm.js
  * @param {HTMLElement} thElement - Table head cell element
  * @returns {string}
  * @private
@@ -1754,7 +1761,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements wysiwyg merged table manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
 
@@ -2452,7 +2459,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements wysiwyg merged table selection manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
 
@@ -2654,7 +2661,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implements mergedTableAddRow. Add Row to selected table
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var CommandManager = _editorProxy2.default.CommandManager;
 
@@ -2831,7 +2838,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implements mergedTableAddCol. Add Row to selected table.
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var CommandManager = _editorProxy2.default.CommandManager;
 
@@ -3031,7 +3038,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implements mergedTableRemoveRow
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var CommandManager = _editorProxy2.default.CommandManager;
 
@@ -3218,7 +3225,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implements mergedTableRemoveCol. Remove col to selected table
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var CommandManager = _editorProxy2.default.CommandManager;
 
@@ -3397,7 +3404,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implements mergedTableAlignCol. Align selected column's text content to given direction
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var CommandManager = _editorProxy2.default.CommandManager;
 
@@ -3513,7 +3520,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implements MergeCell
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var CommandManager = _editorProxy2.default.CommandManager;
 
@@ -3736,7 +3743,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implements UnmergeCell
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var CommandManager = _editorProxy2.default.CommandManager;
 
@@ -3898,7 +3905,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implements table extension ui
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var i18n = _editorProxy2.default.i18n;
 

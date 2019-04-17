@@ -1,7 +1,7 @@
 /*!
  * tui-editor
- * @version 1.3.3
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
+ * @version 1.4.0
+ * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 289);
+/******/ 	return __webpack_require__(__webpack_require__.s = 290);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -15097,7 +15097,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements CommandManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -15316,7 +15316,7 @@ exports.I18n = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements i18n
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -15451,7 +15451,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview DOM Utils
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var FIND_ZWB = /\u200B/g;
 
@@ -16043,6 +16043,24 @@ var getLeafNode = function getLeafNode(node) {
 
   return result;
 };
+/**
+ * check if a coordinates is inside a task box
+ * @param {object} style - computed style of task box
+ * @param {number} offsetX - event x offset
+ * @param {number} offsetY - event y offset
+ * @returns {boolean}
+ * @ignore
+ */
+var isInsideTaskBox = function isInsideTaskBox(style, offsetX, offsetY) {
+  var rect = {
+    left: parseInt(style.left, 10),
+    top: parseInt(style.top, 10),
+    width: parseInt(style.width, 10),
+    height: parseInt(style.height, 10)
+  };
+
+  return offsetX >= rect.left && offsetX <= rect.left + rect.width && offsetY >= rect.top && offsetY <= rect.top + rect.height;
+};
 
 exports.default = {
   getNodeName: getNodeName,
@@ -16070,7 +16088,8 @@ exports.default = {
   isStyledNode: isStyledNode,
   removeChildFromStartToEndNode: removeChildFromStartToEndNode,
   removeNodesByDirection: removeNodesByDirection,
-  getLeafNode: getLeafNode
+  getLeafNode: getLeafNode,
+  isInsideTaskBox: isInsideTaskBox
 };
 
 /***/ }),
@@ -16106,7 +16125,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements LayerPopup
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -26699,11 +26718,11 @@ exports.CodeBlockManager = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements CodeBlockManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _highlight = __webpack_require__(99);
+var _highlight = __webpack_require__(100);
 
 var _highlight2 = _interopRequireDefault(_highlight);
 
@@ -26818,7 +26837,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements ui controller
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -27097,7 +27116,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview Implements htmlSanitizer
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
 
@@ -27199,7 +27218,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implement Module for managing import external data such as image
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -27847,7 +27866,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements Toolbar Item
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -27948,7 +27967,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements markdown preview
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -27965,12 +27984,13 @@ var MarkdownPreview = function (_Preview) {
    * @param {EventManager} eventManager - event manager
    * @param {Convertor} convertor - convertor
    * @param {boolean} isViewer - true for view only mode
+   * @param {Number} delayTime - lazyRunner delay time
    * @memberof MarkdownPreview
    */
-  function MarkdownPreview($el, eventManager, convertor, isViewer) {
+  function MarkdownPreview($el, eventManager, convertor, isViewer, delayTime) {
     _classCallCheck(this, MarkdownPreview);
 
-    var _this = _possibleConstructorReturn(this, (MarkdownPreview.__proto__ || Object.getPrototypeOf(MarkdownPreview)).call(this, $el, eventManager, convertor, isViewer));
+    var _this = _possibleConstructorReturn(this, (MarkdownPreview.__proto__ || Object.getPrototypeOf(MarkdownPreview)).call(this, $el, eventManager, convertor, isViewer, delayTime));
 
     _this._initEvent();
     return _this;
@@ -28049,7 +28069,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements preview
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -28075,9 +28095,12 @@ var Preview = function () {
    * @param {EventManager} eventManager Event manager instance
    * @param {Convertor} convertor Convertor instance
    * @param {boolean} isViewer - whether viewer mode or not
+   * @param {Number} delayTime - lazyRunner delay time
    * @memberof Preview
    */
   function Preview($el, eventManager, convertor, isViewer) {
+    var delayTime = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 800;
+
     _classCallCheck(this, Preview);
 
     this.eventManager = eventManager;
@@ -28089,7 +28112,7 @@ var Preview = function () {
 
     this.lazyRunner = new _lazyRunner2.default();
 
-    this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, 800, this);
+    this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, delayTime, this);
   }
 
   /**
@@ -28226,7 +28249,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements EventManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -28491,7 +28514,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview extension manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -28580,7 +28603,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Convertor have responsible to convert markdown and html
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -28631,6 +28654,8 @@ var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockR
 var _markdownitBackticksRenderer = __webpack_require__(98);
 
 var _markdownitBackticksRenderer2 = _interopRequireDefault(_markdownitBackticksRenderer);
+
+var _markdownitInlinePlugin = __webpack_require__(99);
 
 var _codeBlockManager = __webpack_require__(11);
 
@@ -28707,24 +28732,21 @@ var Convertor = function () {
    * @private
    * @memberof Convertor
    * @param {string} markdown markdown text
+   * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
    */
 
 
   _createClass(Convertor, [{
     key: '_markdownToHtmlWithCodeHighlight',
-    value: function _markdownToHtmlWithCodeHighlight(markdown) {
-      markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+    value: function _markdownToHtmlWithCodeHighlight(markdown, env) {
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
       while (onerrorStripeRegex.exec(markdown)) {
         markdown = markdown.replace(onerrorStripeRegex, '$1$3');
       }
 
-      var renderedHTML = markdownitHighlight.render(markdown);
-      renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
-
-      return renderedHTML;
+      return markdownitHighlight.render(markdown, env);
     }
 
     /**
@@ -28733,12 +28755,13 @@ var Convertor = function () {
      * @private
      * @memberof Convertor
      * @param {string} markdown markdown text
+     * @param {object} env environment sandbox for markdownit
      * @returns {string} html text
      */
 
   }, {
     key: '_markdownToHtml',
-    value: function _markdownToHtml(markdown) {
+    value: function _markdownToHtml(markdown, env) {
       markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
@@ -28746,10 +28769,7 @@ var Convertor = function () {
         markdown = markdown.replace(onerrorStripeRegex, '$1$3');
       }
 
-      var renderedHTML = markdownit.render(markdown);
-      renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
-
-      return renderedHTML;
+      return markdownit.render(markdown, env);
     }
 
     /**
@@ -28768,7 +28788,7 @@ var Convertor = function () {
 
       $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
         var $code = (0, _jquery2.default)(codeOrPre);
-        $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/, '&lt;br&gt;'));
+        $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/g, '&lt;br&gt;'));
       });
 
       renderedHTML = $wrapperDiv.html();
@@ -28809,6 +28829,7 @@ var Convertor = function () {
       var html = this._markdownToHtml(markdown);
 
       html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+      html = this._removeBrToMarkPassAttributeInCode(html);
 
       return html;
     }
@@ -28818,6 +28839,26 @@ var Convertor = function () {
       this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function (html) {
         return (0, _htmlSanitizer2.default)(html, true);
       });
+    }
+
+    /**
+     * set link attribute to markdownitHighlight, markdownit
+     * using linkAttribute of markdownItInlinePlugin
+     * @param {object} attribute markdown text
+     */
+
+  }, {
+    key: 'setLinkAttribute',
+    value: function setLinkAttribute(attribute) {
+      var keys = Object.keys(attribute);
+      var setAttributeToToken = function setAttributeToToken(tokens, idx) {
+        keys.forEach(function (key) {
+          tokens[idx].attrPush([key, attribute[key]]);
+        });
+      };
+
+      markdownitHighlight.use(_markdownitInlinePlugin.linkAttribute, setAttributeToToken);
+      markdownit.use(_markdownitInlinePlugin.linkAttribute, setAttributeToToken);
     }
 
     /**
@@ -28862,22 +28903,11 @@ var Convertor = function () {
       var FIRST_TWO_BRS_BEFORE_RX = /([^>]|<\/a>|<\/code>|<\/span>|<\/b>|<\/i>|<\/s>|<img [^>]*>)/;
       var TWO_BRS_RX = /<br data-tomark-pass \/><br data-tomark-pass \/>/;
       var FIND_FIRST_TWO_BRS_RX = new RegExp(FIRST_TWO_BRS_BEFORE_RX.source + TWO_BRS_RX.source, 'g');
+      var FIND_ATTRI_WITH_EMTPY_STR_RX = /<br data-tomark-pass="">/ig;
 
       html = html.replace(FIND_BR_RX, '<br />');
-
       html = html.replace(FIND_DOUBLE_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />');
-
-      var div = document.createElement('div');
-      var $div = (0, _jquery2.default)(div);
-      $div.html(html);
-      $div.find('pre br,code br').each(function (index, node) {
-        if (node.hasAttribute('data-tomark-pass')) {
-          node.removeAttribute('data-tomark-pass');
-        }
-      });
-
-      html = $div.html().replace(/<br data-tomark-pass="">/ig, '<br data-tomark-pass />');
-      html = html.replace(FIND_BR_RX, '<br />');
+      html = html.replace(FIND_ATTRI_WITH_EMTPY_STR_RX, '<br data-tomark-pass />');
 
       html = html.replace(FIND_PASSING_AND_NORMAL_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />$1');
       html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
@@ -28961,7 +28991,7 @@ var _toolbarItem = __webpack_require__(23);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _tooltip = __webpack_require__(279);
+var _tooltip = __webpack_require__(280);
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -28973,7 +29003,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements UI Button
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -29168,7 +29198,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @fileoverview Implements KeyMapper
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -29570,7 +29600,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements LazyRunner
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -29677,7 +29707,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements Command
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -37642,9 +37672,9 @@ Renderer.markdownTextToEscapeRx = {
 
     link: /!?\[.*\]\(.*\)/,
     reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
-    strong: /__(\S[\s\S]*\h)__|\*\*(\S[\s\S]*\S)\*\*/,
-    em: /_(\S[\s\S]*\S)_|\*(\S[\s\S]*\S)\*/,
-    strikeThrough: /~~(\S[\s\S]*\S)~~/,
+    strong: /__(\S|\S[\s\S]*\S)__|\*\*(\S|\S[\s\S]*\S)\*\*/,
+    em: /_(\S|\S[\s\S]*\S)_|\*(\S|\S[\s\S]*\S)\*/,
+    strikeThrough: /~~(\S|\S[\s\S]*\S)~~/,
     code: /(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
 
     verticalBar: /\u007C/,
@@ -38281,8 +38311,8 @@ module.exports = toDom;
 
 /**
  * @fileoverview Implements markdownitTaskPlugin
- * @modifier Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
- * @modifier Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+ * @modifier Sungho Kim(sungho-kim@nhn.com) FE Development Lab/NHN
+ * @modifier Junghwan Park(junghwan.park@nhn.com) FE Development Lab/NHN
  */
 /* eslint-disable */
 
@@ -38389,7 +38419,7 @@ module.exports = MarkdownitTaskRenderer;
 /* eslint-disable */
 /**
  * @fileoverview Implements markdownitCodeBlockPlugin
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -38471,7 +38501,7 @@ module.exports = MarkdownitCodeBlockRenderer;
 // Distributed under an ISC license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements MarkdownItCodeRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /* eslint-disable */
@@ -38538,7 +38568,7 @@ module.exports = function code(state, startLine, endLine /*, silent*/) {
 // Distributed under MIT license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements markdownitCodeBlockQuoteRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /* eslint-disable */
@@ -38873,7 +38903,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
 
 /**
  * @fileoverview Implements markdownitTableRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /*eslint-disable */
@@ -39085,7 +39115,7 @@ module.exports = function table(state, startLine, endLine, silent) {
 
 /**
  * @fileoverview Implements markdownitHtmlBlockRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 /* eslint-disable */
 // HTML block
@@ -39183,7 +39213,7 @@ module.exports = function html_block(state, startLine, endLine, silent) {
 // Distributed under MIT license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements markdownitBackticksRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 /* eslint-disable */
 
@@ -39228,7 +39258,7 @@ module.exports = function backtick(state, silent) {
         token.content = state.src.slice(pos, matchStart).replace(/[ \n]+/g, ' ').trim();
         // TUI.EDITOR MODIFICATION START
         // store number of backtick in data-backtick
-        // https://github.nhnent.com/fe/tui.editor/pull/981
+        // https://github.nhn.com/fe/tui.editor/pull/981
         token.attrSet('data-backticks', token.markup.length);
         // TUI.EDITOR MODIFICATION END
       }
@@ -39248,189 +39278,237 @@ module.exports = function backtick(state, silent) {
 /* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var hljs = __webpack_require__(100);
+"use strict";
 
-hljs.registerLanguage('1c', __webpack_require__(101));
-hljs.registerLanguage('abnf', __webpack_require__(102));
-hljs.registerLanguage('accesslog', __webpack_require__(103));
-hljs.registerLanguage('actionscript', __webpack_require__(104));
-hljs.registerLanguage('ada', __webpack_require__(105));
-hljs.registerLanguage('apache', __webpack_require__(106));
-hljs.registerLanguage('applescript', __webpack_require__(107));
-hljs.registerLanguage('cpp', __webpack_require__(108));
-hljs.registerLanguage('arduino', __webpack_require__(109));
-hljs.registerLanguage('armasm', __webpack_require__(110));
-hljs.registerLanguage('xml', __webpack_require__(111));
-hljs.registerLanguage('asciidoc', __webpack_require__(112));
-hljs.registerLanguage('aspectj', __webpack_require__(113));
-hljs.registerLanguage('autohotkey', __webpack_require__(114));
-hljs.registerLanguage('autoit', __webpack_require__(115));
-hljs.registerLanguage('avrasm', __webpack_require__(116));
-hljs.registerLanguage('awk', __webpack_require__(117));
-hljs.registerLanguage('axapta', __webpack_require__(118));
-hljs.registerLanguage('bash', __webpack_require__(119));
-hljs.registerLanguage('basic', __webpack_require__(120));
-hljs.registerLanguage('bnf', __webpack_require__(121));
-hljs.registerLanguage('brainfuck', __webpack_require__(122));
-hljs.registerLanguage('cal', __webpack_require__(123));
-hljs.registerLanguage('capnproto', __webpack_require__(124));
-hljs.registerLanguage('ceylon', __webpack_require__(125));
-hljs.registerLanguage('clean', __webpack_require__(126));
-hljs.registerLanguage('clojure', __webpack_require__(127));
-hljs.registerLanguage('clojure-repl', __webpack_require__(128));
-hljs.registerLanguage('cmake', __webpack_require__(129));
-hljs.registerLanguage('coffeescript', __webpack_require__(130));
-hljs.registerLanguage('coq', __webpack_require__(131));
-hljs.registerLanguage('cos', __webpack_require__(132));
-hljs.registerLanguage('crmsh', __webpack_require__(133));
-hljs.registerLanguage('crystal', __webpack_require__(134));
-hljs.registerLanguage('cs', __webpack_require__(135));
-hljs.registerLanguage('csp', __webpack_require__(136));
-hljs.registerLanguage('css', __webpack_require__(137));
-hljs.registerLanguage('d', __webpack_require__(138));
-hljs.registerLanguage('markdown', __webpack_require__(139));
-hljs.registerLanguage('dart', __webpack_require__(140));
-hljs.registerLanguage('delphi', __webpack_require__(141));
-hljs.registerLanguage('diff', __webpack_require__(142));
-hljs.registerLanguage('django', __webpack_require__(143));
-hljs.registerLanguage('dns', __webpack_require__(144));
-hljs.registerLanguage('dockerfile', __webpack_require__(145));
-hljs.registerLanguage('dos', __webpack_require__(146));
-hljs.registerLanguage('dsconfig', __webpack_require__(147));
-hljs.registerLanguage('dts', __webpack_require__(148));
-hljs.registerLanguage('dust', __webpack_require__(149));
-hljs.registerLanguage('ebnf', __webpack_require__(150));
-hljs.registerLanguage('elixir', __webpack_require__(151));
-hljs.registerLanguage('elm', __webpack_require__(152));
-hljs.registerLanguage('ruby', __webpack_require__(153));
-hljs.registerLanguage('erb', __webpack_require__(154));
-hljs.registerLanguage('erlang-repl', __webpack_require__(155));
-hljs.registerLanguage('erlang', __webpack_require__(156));
-hljs.registerLanguage('excel', __webpack_require__(157));
-hljs.registerLanguage('fix', __webpack_require__(158));
-hljs.registerLanguage('flix', __webpack_require__(159));
-hljs.registerLanguage('fortran', __webpack_require__(160));
-hljs.registerLanguage('fsharp', __webpack_require__(161));
-hljs.registerLanguage('gams', __webpack_require__(162));
-hljs.registerLanguage('gauss', __webpack_require__(163));
-hljs.registerLanguage('gcode', __webpack_require__(164));
-hljs.registerLanguage('gherkin', __webpack_require__(165));
-hljs.registerLanguage('glsl', __webpack_require__(166));
-hljs.registerLanguage('go', __webpack_require__(167));
-hljs.registerLanguage('golo', __webpack_require__(168));
-hljs.registerLanguage('gradle', __webpack_require__(169));
-hljs.registerLanguage('groovy', __webpack_require__(170));
-hljs.registerLanguage('haml', __webpack_require__(171));
-hljs.registerLanguage('handlebars', __webpack_require__(172));
-hljs.registerLanguage('haskell', __webpack_require__(173));
-hljs.registerLanguage('haxe', __webpack_require__(174));
-hljs.registerLanguage('hsp', __webpack_require__(175));
-hljs.registerLanguage('htmlbars', __webpack_require__(176));
-hljs.registerLanguage('http', __webpack_require__(177));
-hljs.registerLanguage('hy', __webpack_require__(178));
-hljs.registerLanguage('inform7', __webpack_require__(179));
-hljs.registerLanguage('ini', __webpack_require__(180));
-hljs.registerLanguage('irpf90', __webpack_require__(181));
-hljs.registerLanguage('java', __webpack_require__(182));
-hljs.registerLanguage('javascript', __webpack_require__(183));
-hljs.registerLanguage('jboss-cli', __webpack_require__(184));
-hljs.registerLanguage('json', __webpack_require__(185));
-hljs.registerLanguage('julia', __webpack_require__(186));
-hljs.registerLanguage('julia-repl', __webpack_require__(187));
-hljs.registerLanguage('kotlin', __webpack_require__(188));
-hljs.registerLanguage('lasso', __webpack_require__(189));
-hljs.registerLanguage('ldif', __webpack_require__(190));
-hljs.registerLanguage('leaf', __webpack_require__(191));
-hljs.registerLanguage('less', __webpack_require__(192));
-hljs.registerLanguage('lisp', __webpack_require__(193));
-hljs.registerLanguage('livecodeserver', __webpack_require__(194));
-hljs.registerLanguage('livescript', __webpack_require__(195));
-hljs.registerLanguage('llvm', __webpack_require__(196));
-hljs.registerLanguage('lsl', __webpack_require__(197));
-hljs.registerLanguage('lua', __webpack_require__(198));
-hljs.registerLanguage('makefile', __webpack_require__(199));
-hljs.registerLanguage('mathematica', __webpack_require__(200));
-hljs.registerLanguage('matlab', __webpack_require__(201));
-hljs.registerLanguage('maxima', __webpack_require__(202));
-hljs.registerLanguage('mel', __webpack_require__(203));
-hljs.registerLanguage('mercury', __webpack_require__(204));
-hljs.registerLanguage('mipsasm', __webpack_require__(205));
-hljs.registerLanguage('mizar', __webpack_require__(206));
-hljs.registerLanguage('perl', __webpack_require__(207));
-hljs.registerLanguage('mojolicious', __webpack_require__(208));
-hljs.registerLanguage('monkey', __webpack_require__(209));
-hljs.registerLanguage('moonscript', __webpack_require__(210));
-hljs.registerLanguage('n1ql', __webpack_require__(211));
-hljs.registerLanguage('nginx', __webpack_require__(212));
-hljs.registerLanguage('nimrod', __webpack_require__(213));
-hljs.registerLanguage('nix', __webpack_require__(214));
-hljs.registerLanguage('nsis', __webpack_require__(215));
-hljs.registerLanguage('objectivec', __webpack_require__(216));
-hljs.registerLanguage('ocaml', __webpack_require__(217));
-hljs.registerLanguage('openscad', __webpack_require__(218));
-hljs.registerLanguage('oxygene', __webpack_require__(219));
-hljs.registerLanguage('parser3', __webpack_require__(220));
-hljs.registerLanguage('pf', __webpack_require__(221));
-hljs.registerLanguage('php', __webpack_require__(222));
-hljs.registerLanguage('pony', __webpack_require__(223));
-hljs.registerLanguage('powershell', __webpack_require__(224));
-hljs.registerLanguage('processing', __webpack_require__(225));
-hljs.registerLanguage('profile', __webpack_require__(226));
-hljs.registerLanguage('prolog', __webpack_require__(227));
-hljs.registerLanguage('protobuf', __webpack_require__(228));
-hljs.registerLanguage('puppet', __webpack_require__(229));
-hljs.registerLanguage('purebasic', __webpack_require__(230));
-hljs.registerLanguage('python', __webpack_require__(231));
-hljs.registerLanguage('q', __webpack_require__(232));
-hljs.registerLanguage('qml', __webpack_require__(233));
-hljs.registerLanguage('r', __webpack_require__(234));
-hljs.registerLanguage('rib', __webpack_require__(235));
-hljs.registerLanguage('roboconf', __webpack_require__(236));
-hljs.registerLanguage('routeros', __webpack_require__(237));
-hljs.registerLanguage('rsl', __webpack_require__(238));
-hljs.registerLanguage('ruleslanguage', __webpack_require__(239));
-hljs.registerLanguage('rust', __webpack_require__(240));
-hljs.registerLanguage('scala', __webpack_require__(241));
-hljs.registerLanguage('scheme', __webpack_require__(242));
-hljs.registerLanguage('scilab', __webpack_require__(243));
-hljs.registerLanguage('scss', __webpack_require__(244));
-hljs.registerLanguage('shell', __webpack_require__(245));
-hljs.registerLanguage('smali', __webpack_require__(246));
-hljs.registerLanguage('smalltalk', __webpack_require__(247));
-hljs.registerLanguage('sml', __webpack_require__(248));
-hljs.registerLanguage('sqf', __webpack_require__(249));
-hljs.registerLanguage('sql', __webpack_require__(250));
-hljs.registerLanguage('stan', __webpack_require__(251));
-hljs.registerLanguage('stata', __webpack_require__(252));
-hljs.registerLanguage('step21', __webpack_require__(253));
-hljs.registerLanguage('stylus', __webpack_require__(254));
-hljs.registerLanguage('subunit', __webpack_require__(255));
-hljs.registerLanguage('swift', __webpack_require__(256));
-hljs.registerLanguage('taggerscript', __webpack_require__(257));
-hljs.registerLanguage('yaml', __webpack_require__(258));
-hljs.registerLanguage('tap', __webpack_require__(259));
-hljs.registerLanguage('tcl', __webpack_require__(260));
-hljs.registerLanguage('tex', __webpack_require__(261));
-hljs.registerLanguage('thrift', __webpack_require__(262));
-hljs.registerLanguage('tp', __webpack_require__(263));
-hljs.registerLanguage('twig', __webpack_require__(264));
-hljs.registerLanguage('typescript', __webpack_require__(265));
-hljs.registerLanguage('vala', __webpack_require__(266));
-hljs.registerLanguage('vbnet', __webpack_require__(267));
-hljs.registerLanguage('vbscript', __webpack_require__(268));
-hljs.registerLanguage('vbscript-html', __webpack_require__(269));
-hljs.registerLanguage('verilog', __webpack_require__(270));
-hljs.registerLanguage('vhdl', __webpack_require__(271));
-hljs.registerLanguage('vim', __webpack_require__(272));
-hljs.registerLanguage('x86asm', __webpack_require__(273));
-hljs.registerLanguage('xl', __webpack_require__(274));
-hljs.registerLanguage('xquery', __webpack_require__(275));
-hljs.registerLanguage('zephir', __webpack_require__(276));
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+// Copyright (c) 2014, Vitaly Puzrin.
+// Distributed under an MIT license: https://github.com/markdown-it/markdown-it-for-inline
+/* eslint-disable */
+
+/**
+ * @fileoverview Implements markdownItLinkPlugin
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+function for_inline_plugin(md, ruleName, tokenType, iteartor) {
+
+  function scan(state) {
+    var i, blkIdx, inlineTokens;
+
+    for (blkIdx = state.tokens.length - 1; blkIdx >= 0; blkIdx--) {
+      if (state.tokens[blkIdx].type !== 'inline') {
+        continue;
+      }
+
+      inlineTokens = state.tokens[blkIdx].children;
+
+      for (i = inlineTokens.length - 1; i >= 0; i--) {
+        if (inlineTokens[i].type !== tokenType) {
+          continue;
+        }
+
+        iteartor(inlineTokens, i);
+      }
+    }
+  }
+
+  md.core.ruler.push(ruleName, scan);
+};
+
+var linkAttribute = exports.linkAttribute = function linkAttribute(markdownit, iteartor) {
+  for_inline_plugin(markdownit, 'url_attribute', 'link_open', iteartor);
+};
+
+/***/ }),
+/* 100 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var hljs = __webpack_require__(101);
+
+hljs.registerLanguage('1c', __webpack_require__(102));
+hljs.registerLanguage('abnf', __webpack_require__(103));
+hljs.registerLanguage('accesslog', __webpack_require__(104));
+hljs.registerLanguage('actionscript', __webpack_require__(105));
+hljs.registerLanguage('ada', __webpack_require__(106));
+hljs.registerLanguage('apache', __webpack_require__(107));
+hljs.registerLanguage('applescript', __webpack_require__(108));
+hljs.registerLanguage('cpp', __webpack_require__(109));
+hljs.registerLanguage('arduino', __webpack_require__(110));
+hljs.registerLanguage('armasm', __webpack_require__(111));
+hljs.registerLanguage('xml', __webpack_require__(112));
+hljs.registerLanguage('asciidoc', __webpack_require__(113));
+hljs.registerLanguage('aspectj', __webpack_require__(114));
+hljs.registerLanguage('autohotkey', __webpack_require__(115));
+hljs.registerLanguage('autoit', __webpack_require__(116));
+hljs.registerLanguage('avrasm', __webpack_require__(117));
+hljs.registerLanguage('awk', __webpack_require__(118));
+hljs.registerLanguage('axapta', __webpack_require__(119));
+hljs.registerLanguage('bash', __webpack_require__(120));
+hljs.registerLanguage('basic', __webpack_require__(121));
+hljs.registerLanguage('bnf', __webpack_require__(122));
+hljs.registerLanguage('brainfuck', __webpack_require__(123));
+hljs.registerLanguage('cal', __webpack_require__(124));
+hljs.registerLanguage('capnproto', __webpack_require__(125));
+hljs.registerLanguage('ceylon', __webpack_require__(126));
+hljs.registerLanguage('clean', __webpack_require__(127));
+hljs.registerLanguage('clojure', __webpack_require__(128));
+hljs.registerLanguage('clojure-repl', __webpack_require__(129));
+hljs.registerLanguage('cmake', __webpack_require__(130));
+hljs.registerLanguage('coffeescript', __webpack_require__(131));
+hljs.registerLanguage('coq', __webpack_require__(132));
+hljs.registerLanguage('cos', __webpack_require__(133));
+hljs.registerLanguage('crmsh', __webpack_require__(134));
+hljs.registerLanguage('crystal', __webpack_require__(135));
+hljs.registerLanguage('cs', __webpack_require__(136));
+hljs.registerLanguage('csp', __webpack_require__(137));
+hljs.registerLanguage('css', __webpack_require__(138));
+hljs.registerLanguage('d', __webpack_require__(139));
+hljs.registerLanguage('markdown', __webpack_require__(140));
+hljs.registerLanguage('dart', __webpack_require__(141));
+hljs.registerLanguage('delphi', __webpack_require__(142));
+hljs.registerLanguage('diff', __webpack_require__(143));
+hljs.registerLanguage('django', __webpack_require__(144));
+hljs.registerLanguage('dns', __webpack_require__(145));
+hljs.registerLanguage('dockerfile', __webpack_require__(146));
+hljs.registerLanguage('dos', __webpack_require__(147));
+hljs.registerLanguage('dsconfig', __webpack_require__(148));
+hljs.registerLanguage('dts', __webpack_require__(149));
+hljs.registerLanguage('dust', __webpack_require__(150));
+hljs.registerLanguage('ebnf', __webpack_require__(151));
+hljs.registerLanguage('elixir', __webpack_require__(152));
+hljs.registerLanguage('elm', __webpack_require__(153));
+hljs.registerLanguage('ruby', __webpack_require__(154));
+hljs.registerLanguage('erb', __webpack_require__(155));
+hljs.registerLanguage('erlang-repl', __webpack_require__(156));
+hljs.registerLanguage('erlang', __webpack_require__(157));
+hljs.registerLanguage('excel', __webpack_require__(158));
+hljs.registerLanguage('fix', __webpack_require__(159));
+hljs.registerLanguage('flix', __webpack_require__(160));
+hljs.registerLanguage('fortran', __webpack_require__(161));
+hljs.registerLanguage('fsharp', __webpack_require__(162));
+hljs.registerLanguage('gams', __webpack_require__(163));
+hljs.registerLanguage('gauss', __webpack_require__(164));
+hljs.registerLanguage('gcode', __webpack_require__(165));
+hljs.registerLanguage('gherkin', __webpack_require__(166));
+hljs.registerLanguage('glsl', __webpack_require__(167));
+hljs.registerLanguage('go', __webpack_require__(168));
+hljs.registerLanguage('golo', __webpack_require__(169));
+hljs.registerLanguage('gradle', __webpack_require__(170));
+hljs.registerLanguage('groovy', __webpack_require__(171));
+hljs.registerLanguage('haml', __webpack_require__(172));
+hljs.registerLanguage('handlebars', __webpack_require__(173));
+hljs.registerLanguage('haskell', __webpack_require__(174));
+hljs.registerLanguage('haxe', __webpack_require__(175));
+hljs.registerLanguage('hsp', __webpack_require__(176));
+hljs.registerLanguage('htmlbars', __webpack_require__(177));
+hljs.registerLanguage('http', __webpack_require__(178));
+hljs.registerLanguage('hy', __webpack_require__(179));
+hljs.registerLanguage('inform7', __webpack_require__(180));
+hljs.registerLanguage('ini', __webpack_require__(181));
+hljs.registerLanguage('irpf90', __webpack_require__(182));
+hljs.registerLanguage('java', __webpack_require__(183));
+hljs.registerLanguage('javascript', __webpack_require__(184));
+hljs.registerLanguage('jboss-cli', __webpack_require__(185));
+hljs.registerLanguage('json', __webpack_require__(186));
+hljs.registerLanguage('julia', __webpack_require__(187));
+hljs.registerLanguage('julia-repl', __webpack_require__(188));
+hljs.registerLanguage('kotlin', __webpack_require__(189));
+hljs.registerLanguage('lasso', __webpack_require__(190));
+hljs.registerLanguage('ldif', __webpack_require__(191));
+hljs.registerLanguage('leaf', __webpack_require__(192));
+hljs.registerLanguage('less', __webpack_require__(193));
+hljs.registerLanguage('lisp', __webpack_require__(194));
+hljs.registerLanguage('livecodeserver', __webpack_require__(195));
+hljs.registerLanguage('livescript', __webpack_require__(196));
+hljs.registerLanguage('llvm', __webpack_require__(197));
+hljs.registerLanguage('lsl', __webpack_require__(198));
+hljs.registerLanguage('lua', __webpack_require__(199));
+hljs.registerLanguage('makefile', __webpack_require__(200));
+hljs.registerLanguage('mathematica', __webpack_require__(201));
+hljs.registerLanguage('matlab', __webpack_require__(202));
+hljs.registerLanguage('maxima', __webpack_require__(203));
+hljs.registerLanguage('mel', __webpack_require__(204));
+hljs.registerLanguage('mercury', __webpack_require__(205));
+hljs.registerLanguage('mipsasm', __webpack_require__(206));
+hljs.registerLanguage('mizar', __webpack_require__(207));
+hljs.registerLanguage('perl', __webpack_require__(208));
+hljs.registerLanguage('mojolicious', __webpack_require__(209));
+hljs.registerLanguage('monkey', __webpack_require__(210));
+hljs.registerLanguage('moonscript', __webpack_require__(211));
+hljs.registerLanguage('n1ql', __webpack_require__(212));
+hljs.registerLanguage('nginx', __webpack_require__(213));
+hljs.registerLanguage('nimrod', __webpack_require__(214));
+hljs.registerLanguage('nix', __webpack_require__(215));
+hljs.registerLanguage('nsis', __webpack_require__(216));
+hljs.registerLanguage('objectivec', __webpack_require__(217));
+hljs.registerLanguage('ocaml', __webpack_require__(218));
+hljs.registerLanguage('openscad', __webpack_require__(219));
+hljs.registerLanguage('oxygene', __webpack_require__(220));
+hljs.registerLanguage('parser3', __webpack_require__(221));
+hljs.registerLanguage('pf', __webpack_require__(222));
+hljs.registerLanguage('php', __webpack_require__(223));
+hljs.registerLanguage('pony', __webpack_require__(224));
+hljs.registerLanguage('powershell', __webpack_require__(225));
+hljs.registerLanguage('processing', __webpack_require__(226));
+hljs.registerLanguage('profile', __webpack_require__(227));
+hljs.registerLanguage('prolog', __webpack_require__(228));
+hljs.registerLanguage('protobuf', __webpack_require__(229));
+hljs.registerLanguage('puppet', __webpack_require__(230));
+hljs.registerLanguage('purebasic', __webpack_require__(231));
+hljs.registerLanguage('python', __webpack_require__(232));
+hljs.registerLanguage('q', __webpack_require__(233));
+hljs.registerLanguage('qml', __webpack_require__(234));
+hljs.registerLanguage('r', __webpack_require__(235));
+hljs.registerLanguage('rib', __webpack_require__(236));
+hljs.registerLanguage('roboconf', __webpack_require__(237));
+hljs.registerLanguage('routeros', __webpack_require__(238));
+hljs.registerLanguage('rsl', __webpack_require__(239));
+hljs.registerLanguage('ruleslanguage', __webpack_require__(240));
+hljs.registerLanguage('rust', __webpack_require__(241));
+hljs.registerLanguage('scala', __webpack_require__(242));
+hljs.registerLanguage('scheme', __webpack_require__(243));
+hljs.registerLanguage('scilab', __webpack_require__(244));
+hljs.registerLanguage('scss', __webpack_require__(245));
+hljs.registerLanguage('shell', __webpack_require__(246));
+hljs.registerLanguage('smali', __webpack_require__(247));
+hljs.registerLanguage('smalltalk', __webpack_require__(248));
+hljs.registerLanguage('sml', __webpack_require__(249));
+hljs.registerLanguage('sqf', __webpack_require__(250));
+hljs.registerLanguage('sql', __webpack_require__(251));
+hljs.registerLanguage('stan', __webpack_require__(252));
+hljs.registerLanguage('stata', __webpack_require__(253));
+hljs.registerLanguage('step21', __webpack_require__(254));
+hljs.registerLanguage('stylus', __webpack_require__(255));
+hljs.registerLanguage('subunit', __webpack_require__(256));
+hljs.registerLanguage('swift', __webpack_require__(257));
+hljs.registerLanguage('taggerscript', __webpack_require__(258));
+hljs.registerLanguage('yaml', __webpack_require__(259));
+hljs.registerLanguage('tap', __webpack_require__(260));
+hljs.registerLanguage('tcl', __webpack_require__(261));
+hljs.registerLanguage('tex', __webpack_require__(262));
+hljs.registerLanguage('thrift', __webpack_require__(263));
+hljs.registerLanguage('tp', __webpack_require__(264));
+hljs.registerLanguage('twig', __webpack_require__(265));
+hljs.registerLanguage('typescript', __webpack_require__(266));
+hljs.registerLanguage('vala', __webpack_require__(267));
+hljs.registerLanguage('vbnet', __webpack_require__(268));
+hljs.registerLanguage('vbscript', __webpack_require__(269));
+hljs.registerLanguage('vbscript-html', __webpack_require__(270));
+hljs.registerLanguage('verilog', __webpack_require__(271));
+hljs.registerLanguage('vhdl', __webpack_require__(272));
+hljs.registerLanguage('vim', __webpack_require__(273));
+hljs.registerLanguage('x86asm', __webpack_require__(274));
+hljs.registerLanguage('xl', __webpack_require__(275));
+hljs.registerLanguage('xquery', __webpack_require__(276));
+hljs.registerLanguage('zephir', __webpack_require__(277));
 
 module.exports = hljs;
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -40252,7 +40330,7 @@ https://highlightjs.org/
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs){
@@ -40766,7 +40844,7 @@ module.exports = function(hljs){
 };
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40841,7 +40919,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40883,7 +40961,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -40961,7 +41039,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports) {
 
 module.exports = // We try to support full Ada2012
@@ -41138,7 +41216,7 @@ function(hljs) {
 };
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41188,7 +41266,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41278,7 +41356,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41457,7 +41535,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41561,7 +41639,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41657,7 +41735,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41764,7 +41842,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -41956,7 +42034,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -42105,7 +42183,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42168,7 +42246,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42308,7 +42386,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42374,7 +42452,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42431,7 +42509,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42466,7 +42544,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42545,7 +42623,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42600,7 +42678,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs){
@@ -42633,7 +42711,7 @@ module.exports = function(hljs){
 };
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs){
@@ -42674,7 +42752,7 @@ module.exports = function(hljs){
 };
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42758,7 +42836,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42811,7 +42889,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42882,7 +42960,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -42911,7 +42989,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43011,7 +43089,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43030,7 +43108,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43072,7 +43150,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43222,7 +43300,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43293,7 +43371,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports) {
 
 module.exports = function cos (hljs) {
@@ -43421,7 +43499,7 @@ module.exports = function cos (hljs) {
 };
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43519,7 +43597,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43717,7 +43795,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43898,7 +43976,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -43924,7 +44002,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44033,7 +44111,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports) {
 
 module.exports = /**
@@ -44295,7 +44373,7 @@ function(hljs) {
 };
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44407,7 +44485,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -44512,7 +44590,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44585,7 +44663,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44629,7 +44707,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44697,7 +44775,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44730,7 +44808,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44756,7 +44834,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44812,7 +44890,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44863,7 +44941,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -44991,7 +45069,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45027,7 +45105,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45064,7 +45142,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45165,7 +45243,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45253,7 +45331,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45434,7 +45512,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45453,7 +45531,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45503,7 +45581,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45653,7 +45731,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45705,7 +45783,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45738,7 +45816,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -45787,7 +45865,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45862,7 +45940,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -45925,7 +46003,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -46083,7 +46161,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -46311,7 +46389,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -46382,7 +46460,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -46423,7 +46501,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -46544,7 +46622,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -46602,7 +46680,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -46629,7 +46707,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -46668,7 +46746,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -46766,7 +46844,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports) {
 
 module.exports = // TODO support filter tags like :javascript, support inline HTML
@@ -46877,7 +46955,7 @@ function(hljs) {
 };
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -46915,7 +46993,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 173 */
+/* 174 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -47041,7 +47119,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 174 */
+/* 175 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -47157,7 +47235,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 175 */
+/* 176 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -47207,7 +47285,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 176 */
+/* 177 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -47282,7 +47360,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 177 */
+/* 178 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -47327,7 +47405,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 178 */
+/* 179 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -47433,7 +47511,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 179 */
+/* 180 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -47494,7 +47572,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 180 */
+/* 181 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -47564,7 +47642,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 181 */
+/* 182 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -47644,7 +47722,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 182 */
+/* 183 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -47756,7 +47834,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 183 */
+/* 184 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -47931,7 +48009,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 184 */
+/* 185 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -47982,7 +48060,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 185 */
+/* 186 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -48023,7 +48101,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 186 */
+/* 187 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -48189,7 +48267,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 187 */
+/* 188 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -48217,7 +48295,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 188 */
+/* 189 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -48395,7 +48473,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 189 */
+/* 190 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -48562,7 +48640,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 190 */
+/* 191 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -48589,7 +48667,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 191 */
+/* 192 */
 /***/ (function(module, exports) {
 
 module.exports = function (hljs) {
@@ -48633,7 +48711,7 @@ module.exports = function (hljs) {
 };
 
 /***/ }),
-/* 192 */
+/* 193 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -48777,7 +48855,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 193 */
+/* 194 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -48884,7 +48962,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 194 */
+/* 195 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -49045,7 +49123,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 195 */
+/* 196 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -49198,7 +49276,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 196 */
+/* 197 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -49291,7 +49369,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 197 */
+/* 198 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -49378,7 +49456,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 198 */
+/* 199 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -49448,7 +49526,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 199 */
+/* 200 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -49533,7 +49611,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 200 */
+/* 201 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -49595,7 +49673,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 201 */
+/* 202 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -49687,7 +49765,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 202 */
+/* 203 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -50097,7 +50175,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 203 */
+/* 204 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -50326,7 +50404,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 204 */
+/* 205 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -50412,7 +50490,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 205 */
+/* 206 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -50502,7 +50580,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 206 */
+/* 207 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -50525,7 +50603,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 207 */
+/* 208 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -50686,7 +50764,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 208 */
+/* 209 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -50715,7 +50793,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 209 */
+/* 210 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -50794,7 +50872,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 210 */
+/* 211 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -50910,7 +50988,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 211 */
+/* 212 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -50983,7 +51061,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 212 */
+/* 213 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51080,7 +51158,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 213 */
+/* 214 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51139,7 +51217,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 214 */
+/* 215 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51192,7 +51270,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 215 */
+/* 216 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51302,7 +51380,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 216 */
+/* 217 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51397,7 +51475,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 217 */
+/* 218 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51472,7 +51550,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 218 */
+/* 219 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51533,7 +51611,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 219 */
+/* 220 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51607,7 +51685,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 220 */
+/* 221 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51659,7 +51737,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 221 */
+/* 222 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51715,7 +51793,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 222 */
+/* 223 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51846,7 +51924,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 223 */
+/* 224 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -51941,7 +52019,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 224 */
+/* 225 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52026,7 +52104,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 225 */
+/* 226 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52078,7 +52156,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 226 */
+/* 227 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52112,7 +52190,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 227 */
+/* 228 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52204,7 +52282,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 228 */
+/* 229 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52244,7 +52322,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 229 */
+/* 230 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52363,7 +52441,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 230 */
+/* 231 */
 /***/ (function(module, exports) {
 
 module.exports = // Base deafult colors in PB IDE: background: #FFFFDF; foreground: #000000;
@@ -52425,7 +52503,7 @@ function(hljs) {
 };
 
 /***/ }),
-/* 231 */
+/* 232 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52545,7 +52623,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 232 */
+/* 233 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52572,7 +52650,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 233 */
+/* 234 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52745,7 +52823,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 234 */
+/* 235 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52819,7 +52897,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 235 */
+/* 236 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52850,7 +52928,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 236 */
+/* 237 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -52921,7 +52999,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 237 */
+/* 238 */
 /***/ (function(module, exports) {
 
 module.exports = // Colors from RouterOS terminal:
@@ -53084,7 +53162,7 @@ function(hljs) {
 };
 
 /***/ }),
-/* 238 */
+/* 239 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -53124,7 +53202,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 239 */
+/* 240 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -53189,7 +53267,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 240 */
+/* 241 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -53301,7 +53379,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 241 */
+/* 242 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -53420,7 +53498,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 242 */
+/* 243 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -53568,7 +53646,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 243 */
+/* 244 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -53626,7 +53704,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 244 */
+/* 245 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -53728,7 +53806,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 245 */
+/* 246 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -53747,7 +53825,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 246 */
+/* 247 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -53807,7 +53885,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 247 */
+/* 248 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -53861,7 +53939,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 248 */
+/* 249 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -53931,7 +54009,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 249 */
+/* 250 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -54306,7 +54384,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 250 */
+/* 251 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -54470,7 +54548,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 251 */
+/* 252 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -54557,7 +54635,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 252 */
+/* 253 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -54599,7 +54677,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 253 */
+/* 254 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -54650,7 +54728,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 254 */
+/* 255 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55108,7 +55186,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 255 */
+/* 256 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55146,7 +55224,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 256 */
+/* 257 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55267,7 +55345,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 257 */
+/* 258 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55315,7 +55393,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 258 */
+/* 259 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55407,7 +55485,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 259 */
+/* 260 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55447,7 +55525,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 260 */
+/* 261 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55512,7 +55590,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 261 */
+/* 262 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55578,7 +55656,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 262 */
+/* 263 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55617,7 +55695,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 263 */
+/* 264 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55705,7 +55783,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 264 */
+/* 265 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55775,7 +55853,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 265 */
+/* 266 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55935,7 +56013,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 266 */
+/* 267 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -55989,7 +56067,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 267 */
+/* 268 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -56049,7 +56127,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 268 */
+/* 269 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -56092,7 +56170,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 269 */
+/* 270 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -56108,7 +56186,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 270 */
+/* 271 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -56211,7 +56289,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 271 */
+/* 272 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -56276,7 +56354,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 272 */
+/* 273 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -56386,7 +56464,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 273 */
+/* 274 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -56526,7 +56604,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 274 */
+/* 275 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -56603,7 +56681,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 275 */
+/* 276 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -56678,7 +56756,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 276 */
+/* 277 */
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
@@ -56789,7 +56867,7 @@ module.exports = function(hljs) {
 };
 
 /***/ }),
-/* 277 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56797,7 +56875,7 @@ module.exports = function(hljs) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements editor preivew
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -56922,9 +57000,9 @@ var ToastUIEditorViewer = function () {
   _createClass(ToastUIEditorViewer, [{
     key: '_toggleTask',
     value: function _toggleTask(ev) {
-      var isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+      var style = getComputedStyle(ev.target, ':before');
 
-      if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+      if (ev.target.hasAttribute(TASK_ATTR_NAME) && _domUtils2.default.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
         (0, _jquery2.default)(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
         this.eventManager.emit('change', {
           source: 'viewer',
@@ -57131,7 +57209,7 @@ ToastUIEditorViewer.WwTableSelectionManager = null;
 module.exports = ToastUIEditorViewer;
 
 /***/ }),
-/* 278 */
+/* 279 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57142,7 +57220,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 /**
  * @fileoverview This file is common logic for italic, bold, strike makrdown commands.
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -57290,7 +57368,7 @@ var changeSyntax = exports.changeSyntax = function changeSyntax(doc, range, symb
 };
 
 /***/ }),
-/* 279 */
+/* 280 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57302,7 +57380,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements tooltip
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -57366,7 +57444,7 @@ var Tooltip = function () {
 exports.default = new Tooltip();
 
 /***/ }),
-/* 280 */
+/* 281 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57378,7 +57456,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements CodeBlockExt
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -57389,8 +57467,6 @@ var _jquery2 = _interopRequireDefault(_jquery);
 var _codemirror = __webpack_require__(7);
 
 var _codemirror2 = _interopRequireDefault(_codemirror);
-
-__webpack_require__(292);
 
 __webpack_require__(293);
 
@@ -57403,6 +57479,8 @@ __webpack_require__(296);
 __webpack_require__(297);
 
 __webpack_require__(298);
+
+__webpack_require__(299);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -57816,7 +57894,7 @@ var CodeMirrorExt = function () {
 exports.default = CodeMirrorExt;
 
 /***/ }),
-/* 281 */
+/* 282 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57832,7 +57910,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @fileoverview Implements ComponentManager
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -57919,7 +57997,7 @@ var ComponentManager = function () {
 exports.default = ComponentManager;
 
 /***/ }),
-/* 282 */
+/* 283 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57931,7 +58009,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg table manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -58129,7 +58207,6 @@ var WwTableManager = function () {
 
           if (isRangeInTable && !_this3._isSingleModifierKey(keymap)) {
             _this3._recordUndoStateIfNeed(range);
-            _this3._removeBRIfNeed(range);
             _this3._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
           } else if (!isRangeInTable && _this3._lastCellNode) {
             _this3._recordUndoStateAndResetCellNode(range);
@@ -58372,7 +58449,6 @@ var WwTableManager = function () {
             this._tableHandlerOnDelete(range, ev);
           }
 
-          this._insertBRIfNeed(range);
           this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
           isNeedNext = false;
         } else if (!isBackspace && this._isBeforeTable(range) || isBackspace && this._isAfterTable(range)) {
@@ -58416,6 +58492,7 @@ var WwTableManager = function () {
         (0, _jquery2.default)(prevNode).remove();
       }
     }
+
     /**
      * Return whether delete non text or not
      * @param {Range} range Range object
@@ -58423,19 +58500,54 @@ var WwTableManager = function () {
      */
 
   }, {
-    key: 'isNonTextDeleting',
-    value: function isNonTextDeleting(range) {
+    key: '_isDeletingNonText',
+    value: function _isDeletingNonText(range) {
       var currentElement = range.startContainer;
       var nextNode = currentElement.nextSibling;
       var nextNodeName = _domUtils2.default.getNodeName(nextNode);
       var currentNodeName = _domUtils2.default.getNodeName(currentElement);
+      var insideNode = this._getCurrentNodeInCell(range);
+      var insideNodeName = _domUtils2.default.getNodeName(insideNode);
 
-      var isCellDeleting = currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
+      var isEmptyLineBetweenText = insideNode && insideNodeName === 'BR' && insideNode.nextSibling;
+      var isCellDeleting = !isEmptyLineBetweenText && currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
       var isEndOfText = (!nextNode || nextNodeName === 'BR' && nextNode.parentNode.lastChild === nextNode) && _domUtils2.default.isTextNode(currentElement) && range.startOffset === currentElement.nodeValue.length;
-      var isLastCellOfRow = !isEndOfText && (0, _jquery2.default)(currentElement).parents('tr').children().last()[0] === currentElement && (currentNodeName === 'TD' || currentNodeName === 'TH');
+      var isLastCellOfRow = !isEmptyLineBetweenText && !isEndOfText && (0, _jquery2.default)(currentElement).parents('tr').children().last()[0] === currentElement && (currentNodeName === 'TD' || currentNodeName === 'TH');
 
       return isCellDeleting || isEndOfText || isLastCellOfRow;
     }
+
+    /**
+     * Return whether delete br in the br
+     * @param {Range} range Range object
+     * @returns {boolean}
+     */
+
+  }, {
+    key: '_isDeletingBR',
+    value: function _isDeletingBR(range) {
+      var currentNode = this._getCurrentNodeInCell(range);
+      var nextSibling = currentNode && currentNode.nextSibling;
+
+      return _domUtils2.default.getNodeName(currentNode) === 'BR' && !!nextSibling && _domUtils2.default.getNodeName(nextSibling) === 'BR';
+    }
+  }, {
+    key: '_getCurrentNodeInCell',
+    value: function _getCurrentNodeInCell(range) {
+      var startContainer = range.startContainer,
+          startOffset = range.startOffset;
+
+      var currentNode = void 0;
+
+      if (_domUtils2.default.getNodeName(startContainer) === 'TD') {
+        currentNode = _domUtils2.default.getChildNodeByOffset(startContainer, startOffset);
+      } else if (_domUtils2.default.getParentUntil(startContainer, 'TD')) {
+        currentNode = startContainer;
+      }
+
+      return currentNode;
+    }
+
     /**
      * _tableHandlerOnDelete
      * Delete handler in table
@@ -58448,9 +58560,12 @@ var WwTableManager = function () {
   }, {
     key: '_tableHandlerOnDelete',
     value: function _tableHandlerOnDelete(range, event) {
-      var needPreventDefault = this.isNonTextDeleting(range);
+      if (this._isDeletingBR(range)) {
+        var currentNode = this._getCurrentNodeInCell(range);
 
-      if (needPreventDefault) {
+        currentNode.parentNode.removeChild(currentNode.nextSibling);
+        event.preventDefault();
+      } else if (this._isDeletingNonText(range)) {
         event.preventDefault();
         range.startContainer.normalize();
       }
@@ -59334,44 +59449,6 @@ var WwTableManager = function () {
     }
 
     /**
-     * Remove br when text inputted
-     * @param {Range} range Range object
-     * @private
-     */
-
-  }, {
-    key: '_removeBRIfNeed',
-    value: function _removeBRIfNeed(range) {
-      var isText = _domUtils2.default.isTextNode(range.startContainer);
-      var startContainer = isText ? range.startContainer.parentNode : range.startContainer;
-      var nodeName = _domUtils2.default.getNodeName(startContainer);
-
-      if (/td|th/i.test(nodeName) && range.collapsed && startContainer.textContent.length === 1) {
-        (0, _jquery2.default)(startContainer).find('br').remove();
-      }
-    }
-
-    /**
-     * Insert br when text deleted
-     * @param {Range} range Range object
-     * @private
-     */
-
-  }, {
-    key: '_insertBRIfNeed',
-    value: function _insertBRIfNeed(range) {
-      var isText = _domUtils2.default.isTextNode(range.startContainer);
-      var currentCell = isText ? range.startContainer.parentNode : range.startContainer;
-      var nodeName = _domUtils2.default.getNodeName(currentCell);
-      var $currentCell = (0, _jquery2.default)(currentCell);
-
-      if (/td|th/i.test(nodeName) && range.collapsed && !currentCell.textContent.length && !$currentCell.children().length && !isIE10And11) {
-        currentCell.normalize();
-        $currentCell.append('<br>');
-      }
-    }
-
-    /**
      * Destroy.
      */
 
@@ -59418,7 +59495,7 @@ function tableCellGenerator(amount, tagName) {
 exports.default = WwTableManager;
 
 /***/ }),
-/* 283 */
+/* 284 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -59430,7 +59507,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg table selection manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -59607,11 +59684,13 @@ var WwTableSelectionManager = function () {
 
         if (!isSelectedCell || isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON) {
           _this.removeClassAttrbuteFromAllCellsIfNeed();
-          _this.setTableSelectionTimerIfNeed(selectionStart);
-          _this.eventManager.listen('mouseover.tableSelection', onMouseover);
-          _this.eventManager.listen('mouseup.tableSelection', onMouseup);
-          if (_this.onDragStart && selectionStart) {
-            _this.onDragStart(selectionStart);
+          if (selectionStart) {
+            _this.setTableSelectionTimerIfNeed(selectionStart);
+            _this.eventManager.listen('mouseover.tableSelection', onMouseover);
+            _this.eventManager.listen('mouseup.tableSelection', onMouseup);
+            if (_this.onDragStart) {
+              _this.onDragStart(selectionStart);
+            }
           }
         } else if (ev.data.button === MOUSE_RIGHT_BUTTON) {
           finishSelection();
@@ -59908,7 +59987,7 @@ var WwTableSelectionManager = function () {
 exports.default = WwTableSelectionManager;
 
 /***/ }),
-/* 284 */
+/* 285 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -59920,7 +59999,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg code block manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -60100,10 +60179,7 @@ var WwCodeBlockManager = function () {
         } else if (node.nodeName === 'BR') {
           str += '\n';
         } else {
-          var _node2 = node,
-              textContent = _node2.textContent;
-
-          str += sanitizeHtmlCode(textContent);
+          str += node.textContent;
         }
         node = nodes.shift();
       }
@@ -60183,7 +60259,7 @@ var WwCodeBlockManager = function () {
 
         var resultText = $pre.text().replace(/\s+$/, '');
         $pre.empty();
-        $pre.html(resultText ? resultText : brString);
+        $pre.html(resultText ? sanitizeHtmlCode(resultText) : brString);
 
         if (lang) {
           $pre.attr('data-language', lang);
@@ -60406,7 +60482,7 @@ function sanitizeHtmlCode(code) {
 exports.default = WwCodeBlockManager;
 
 /***/ }),
-/* 285 */
+/* 286 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -60440,11 +60516,11 @@ var _toolbarItem = __webpack_require__(23);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _toolbarDivider = __webpack_require__(286);
+var _toolbarDivider = __webpack_require__(287);
 
 var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
 
-var _toolbarItemFactory = __webpack_require__(287);
+var _toolbarItemFactory = __webpack_require__(288);
 
 var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
 
@@ -60456,7 +60532,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements toolbar
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -60848,7 +60924,7 @@ var Toolbar = function (_UIController) {
 exports.default = Toolbar;
 
 /***/ }),
-/* 286 */
+/* 287 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -60870,7 +60946,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements Toolbar Divider
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -60922,7 +60998,7 @@ Object.defineProperty(ToolbarDivider, 'className', {
 exports.default = ToolbarDivider;
 
 /***/ }),
-/* 287 */
+/* 288 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -60934,18 +61010,18 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements Toolbar Item Factory
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 var _toolbarItem = __webpack_require__(23);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _toolbarButton = __webpack_require__(319);
+var _toolbarButton = __webpack_require__(320);
 
 var _toolbarButton2 = _interopRequireDefault(_toolbarButton);
 
-var _toolbarDivider = __webpack_require__(286);
+var _toolbarDivider = __webpack_require__(287);
 
 var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
 
@@ -61139,7 +61215,7 @@ var ToolbarItemFactory = function () {
 exports.default = ToolbarItemFactory;
 
 /***/ }),
-/* 288 */
+/* 289 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61167,7 +61243,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements tab button ui
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -61295,7 +61371,7 @@ var Tab = function (_UIController) {
 exports.default = Tab;
 
 /***/ }),
-/* 289 */
+/* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61307,12 +61383,12 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Editor = __webpack_require__(290);
+var Editor = __webpack_require__(291);
 
 // for jquery
 /**
  * @fileoverview entry point for editor
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 _jquery2.default.fn.tuiEditor = function () {
   var options = void 0,
@@ -61348,7 +61424,7 @@ _jquery2.default.fn.tuiEditor = function () {
 module.exports = Editor;
 
 /***/ }),
-/* 290 */
+/* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61356,7 +61432,7 @@ module.exports = Editor;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implemtents Editor
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -61381,7 +61457,7 @@ var _button = __webpack_require__(31);
 
 var _button2 = _interopRequireDefault(_button);
 
-var _markdownEditor = __webpack_require__(291);
+var _markdownEditor = __webpack_require__(292);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
@@ -61389,11 +61465,11 @@ var _mdPreview = __webpack_require__(24);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
-var _wysiwygEditor = __webpack_require__(301);
+var _wysiwygEditor = __webpack_require__(302);
 
 var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-var _layout = __webpack_require__(315);
+var _layout = __webpack_require__(316);
 
 var _layout2 = _interopRequireDefault(_layout);
 
@@ -61413,7 +61489,7 @@ var _importManager = __webpack_require__(14);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
-var _wwCodeBlockManager = __webpack_require__(284);
+var _wwCodeBlockManager = __webpack_require__(285);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
@@ -61421,7 +61497,7 @@ var _convertor = __webpack_require__(29);
 
 var _convertor2 = _interopRequireDefault(_convertor);
 
-var _viewer = __webpack_require__(277);
+var _viewer = __webpack_require__(278);
 
 var _viewer2 = _interopRequireDefault(_viewer);
 
@@ -61429,7 +61505,7 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _defaultUI = __webpack_require__(316);
+var _defaultUI = __webpack_require__(317);
 
 var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
@@ -61437,11 +61513,11 @@ var _domUtils = __webpack_require__(5);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwTableManager = __webpack_require__(282);
+var _wwTableManager = __webpack_require__(283);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(283);
+var _wwTableSelectionManager = __webpack_require__(284);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
@@ -61449,167 +61525,165 @@ var _codeBlockManager = __webpack_require__(11);
 
 var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
-var _bold = __webpack_require__(333);
+var _bold = __webpack_require__(334);
 
 var _bold2 = _interopRequireDefault(_bold);
 
-var _italic = __webpack_require__(334);
+var _italic = __webpack_require__(335);
 
 var _italic2 = _interopRequireDefault(_italic);
 
-var _strike = __webpack_require__(335);
+var _strike = __webpack_require__(336);
 
 var _strike2 = _interopRequireDefault(_strike);
 
-var _blockquote = __webpack_require__(336);
+var _blockquote = __webpack_require__(337);
 
 var _blockquote2 = _interopRequireDefault(_blockquote);
 
-var _heading = __webpack_require__(337);
+var _heading = __webpack_require__(338);
 
 var _heading2 = _interopRequireDefault(_heading);
 
-var _paragraph = __webpack_require__(338);
+var _paragraph = __webpack_require__(339);
 
 var _paragraph2 = _interopRequireDefault(_paragraph);
 
-var _hr = __webpack_require__(339);
+var _hr = __webpack_require__(340);
 
 var _hr2 = _interopRequireDefault(_hr);
 
-var _addLink = __webpack_require__(340);
+var _addLink = __webpack_require__(341);
 
 var _addLink2 = _interopRequireDefault(_addLink);
 
-var _addImage = __webpack_require__(341);
+var _addImage = __webpack_require__(342);
 
 var _addImage2 = _interopRequireDefault(_addImage);
 
-var _ul = __webpack_require__(342);
+var _ul = __webpack_require__(343);
 
 var _ul2 = _interopRequireDefault(_ul);
 
-var _ol = __webpack_require__(343);
+var _ol = __webpack_require__(344);
 
 var _ol2 = _interopRequireDefault(_ol);
 
-var _indent = __webpack_require__(344);
+var _indent = __webpack_require__(345);
 
 var _indent2 = _interopRequireDefault(_indent);
 
-var _outdent = __webpack_require__(345);
+var _outdent = __webpack_require__(346);
 
 var _outdent2 = _interopRequireDefault(_outdent);
 
-var _table = __webpack_require__(346);
+var _table = __webpack_require__(347);
 
 var _table2 = _interopRequireDefault(_table);
 
-var _task = __webpack_require__(347);
+var _task = __webpack_require__(348);
 
 var _task2 = _interopRequireDefault(_task);
 
-var _code = __webpack_require__(348);
+var _code = __webpack_require__(349);
 
 var _code2 = _interopRequireDefault(_code);
 
-var _codeBlock = __webpack_require__(349);
+var _codeBlock = __webpack_require__(350);
 
 var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-var _bold3 = __webpack_require__(350);
+var _bold3 = __webpack_require__(351);
 
 var _bold4 = _interopRequireDefault(_bold3);
 
-var _italic3 = __webpack_require__(351);
+var _italic3 = __webpack_require__(352);
 
 var _italic4 = _interopRequireDefault(_italic3);
 
-var _strike3 = __webpack_require__(352);
+var _strike3 = __webpack_require__(353);
 
 var _strike4 = _interopRequireDefault(_strike3);
 
-var _blockquote3 = __webpack_require__(353);
+var _blockquote3 = __webpack_require__(354);
 
 var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-var _addImage3 = __webpack_require__(354);
+var _addImage3 = __webpack_require__(355);
 
 var _addImage4 = _interopRequireDefault(_addImage3);
 
-var _addLink3 = __webpack_require__(355);
+var _addLink3 = __webpack_require__(356);
 
 var _addLink4 = _interopRequireDefault(_addLink3);
 
-var _hr3 = __webpack_require__(356);
+var _hr3 = __webpack_require__(357);
 
 var _hr4 = _interopRequireDefault(_hr3);
 
-var _heading3 = __webpack_require__(357);
+var _heading3 = __webpack_require__(358);
 
 var _heading4 = _interopRequireDefault(_heading3);
 
-var _paragraph3 = __webpack_require__(358);
+var _paragraph3 = __webpack_require__(359);
 
 var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-var _ul3 = __webpack_require__(359);
+var _ul3 = __webpack_require__(360);
 
 var _ul4 = _interopRequireDefault(_ul3);
 
-var _ol3 = __webpack_require__(360);
+var _ol3 = __webpack_require__(361);
 
 var _ol4 = _interopRequireDefault(_ol3);
 
-var _table3 = __webpack_require__(361);
+var _table3 = __webpack_require__(362);
 
 var _table4 = _interopRequireDefault(_table3);
 
-var _tableAddRow = __webpack_require__(362);
+var _tableAddRow = __webpack_require__(363);
 
 var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-var _tableAddCol = __webpack_require__(363);
+var _tableAddCol = __webpack_require__(364);
 
 var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-var _tableRemoveRow = __webpack_require__(364);
+var _tableRemoveRow = __webpack_require__(365);
 
 var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-var _tableRemoveCol = __webpack_require__(365);
+var _tableRemoveCol = __webpack_require__(366);
 
 var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-var _tableAlignCol = __webpack_require__(366);
+var _tableAlignCol = __webpack_require__(367);
 
 var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-var _tableRemove = __webpack_require__(367);
+var _tableRemove = __webpack_require__(368);
 
 var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-var _indent3 = __webpack_require__(368);
+var _indent3 = __webpack_require__(369);
 
 var _indent4 = _interopRequireDefault(_indent3);
 
-var _outdent3 = __webpack_require__(369);
+var _outdent3 = __webpack_require__(370);
 
 var _outdent4 = _interopRequireDefault(_outdent3);
 
-var _task3 = __webpack_require__(370);
+var _task3 = __webpack_require__(371);
 
 var _task4 = _interopRequireDefault(_task3);
 
-var _code3 = __webpack_require__(371);
+var _code3 = __webpack_require__(372);
 
 var _code4 = _interopRequireDefault(_code3);
 
-var _codeBlock3 = __webpack_require__(372);
+var _codeBlock3 = __webpack_require__(373);
 
 var _codeBlock4 = _interopRequireDefault(_codeBlock3);
-
-__webpack_require__(373);
 
 __webpack_require__(374);
 
@@ -61641,12 +61715,18 @@ __webpack_require__(387);
 
 __webpack_require__(388);
 
+__webpack_require__(389);
+
+__webpack_require__(390);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var __nedInstance = [];
 var gaTrackingId = 'UA-129966929-1';
+
+var availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang', 'type'];
 
 /**
  * @callback addImageBlobHook
@@ -61688,6 +61768,8 @@ var ToastUIEditor = function () {
     * @param {string[]} [options.exts] - extensions
     * @param {object} [options.customConvertor] - convertor extention
     * @param {string} [options.placeholder] - The placeholder text of the editable element.
+    * @param {string} [options.previewDelayTime] - the delay time for rendering preview
+    * @param {object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
     */
   function ToastUIEditor(options) {
     var _this = this;
@@ -61751,9 +61833,16 @@ var ToastUIEditor = function () {
     this.setUI(this.options.UI || new _defaultUI2.default(this));
 
     this.mdEditor = _markdownEditor2.default.factory(this.layout.getMdEditorContainerEl(), this.eventManager, this.options);
-    this.preview = new _mdPreview2.default(this.layout.getPreviewEl(), this.eventManager, this.convertor);
+    this.preview = new _mdPreview2.default(this.layout.getPreviewEl(), this.eventManager, this.convertor, false, this.options.previewDelayTime);
     this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
     this.toMarkOptions = null;
+
+    if (this.options.linkAttribute) {
+      var attribute = this._sanitizeLinkAttribute(this.options.linkAttribute);
+
+      this.convertor.setLinkAttribute(attribute);
+      this.wwEditor.setLinkAttribute(attribute);
+    }
 
     this.changePreviewStyle(this.options.previewStyle);
 
@@ -61787,13 +61876,33 @@ var ToastUIEditor = function () {
   }
 
   /**
-   * change preview style
-   * @memberof ToastUIEditor
-   * @param {string} style - 'tab'|'vertical'
+   * sanitize attribute for link
+   * @param {object} attribute - attribute for link
+   * @returns {object} sanitized attribute
    */
 
 
   _createClass(ToastUIEditor, [{
+    key: '_sanitizeLinkAttribute',
+    value: function _sanitizeLinkAttribute(attribute) {
+      var linkAttribute = {};
+
+      availableLinkAttributes.forEach(function (key) {
+        if (!_tuiCodeSnippet2.default.isUndefined(attribute[key])) {
+          linkAttribute[key] = attribute[key];
+        }
+      });
+
+      return linkAttribute;
+    }
+
+    /**
+     * change preview style
+     * @memberof ToastUIEditor
+     * @param {string} style - 'tab'|'vertical'
+     */
+
+  }, {
     key: 'changePreviewStyle',
     value: function changePreviewStyle(style) {
       this.layout.changePreviewStyle(style);
@@ -62586,7 +62695,7 @@ ToastUIEditor.markdownit = _convertor2.default.getMarkdownitRenderer();
 module.exports = ToastUIEditor;
 
 /***/ }),
-/* 291 */
+/* 292 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -62604,7 +62713,7 @@ var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _codeMirrorExt = __webpack_require__(280);
+var _codeMirrorExt = __webpack_require__(281);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
@@ -62612,15 +62721,15 @@ var _keyMapper = __webpack_require__(32);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _mdListManager = __webpack_require__(299);
+var _mdListManager = __webpack_require__(300);
 
 var _mdListManager2 = _interopRequireDefault(_mdListManager);
 
-var _componentManager = __webpack_require__(281);
+var _componentManager = __webpack_require__(282);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _mdTextObject = __webpack_require__(300);
+var _mdTextObject = __webpack_require__(301);
 
 var _mdTextObject2 = _interopRequireDefault(_mdTextObject);
 
@@ -62632,7 +62741,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements markdown editor
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -62925,7 +63034,7 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 exports.default = MarkdownEditor;
 
 /***/ }),
-/* 292 */
+/* 293 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -62948,7 +63057,7 @@ var listRE = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
  */
 /**
 * @fileoverview codemirror extension for fix ordered list number
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 
 _codemirror2.default.commands.indentLessOrderedList = function (cm) {
@@ -63068,7 +63177,7 @@ function findFirstListItem(lineNumber, cm) {
 }
 
 /***/ }),
-/* 293 */
+/* 294 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -63149,11 +63258,11 @@ _codemirror2.default.overlayMode = function (base, overlay, combine) {
 // or state.overlay.combineTokens was true, in which case the styles are
 // combined.
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /***/ }),
-/* 294 */
+/* 295 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64043,7 +64152,7 @@ _codemirror2.default.defineMode("markdown", function (cmCfg, modeCfg) {
 }, "xml"); // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 // based on https://github.com/codemirror/CodeMirror/blob/ff04f127ba8a736b97d06c505fb85d976e3f2980/mode/markdown/markdown.js
 
@@ -64053,7 +64162,7 @@ _codemirror2.default.defineMIME("text/markdown", "markdown");
 _codemirror2.default.defineMIME("text/x-markdown", "markdown");
 
 /***/ }),
-/* 295 */
+/* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64069,7 +64178,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var urlRE = /^((?:(?:aaas?|about|acap|adiumxtra|af[ps]|aim|apt|attachment|aw|beshare|bitcoin|bolo|callto|cap|chrome(?:-extension)?|cid|coap|com-eventbrite-attendee|content|crid|cvs|data|dav|dict|dlna-(?:playcontainer|playsingle)|dns|doi|dtn|dvb|ed2k|facetime|feed|file|finger|fish|ftp|geo|gg|git|gizmoproject|go|gopher|gtalk|h323|hcp|https?|iax|icap|icon|im|imap|info|ipn|ipp|irc[6s]?|iris(?:\.beep|\.lwz|\.xpc|\.xpcs)?|itms|jar|javascript|jms|keyparc|lastfm|ldaps?|magnet|mailto|maps|market|message|mid|mms|ms-help|msnim|msrps?|mtqp|mumble|mupdate|mvn|news|nfs|nih?|nntp|notes|oid|opaquelocktoken|palm|paparazzi|platform|pop|pres|proxy|psyc|query|res(?:ource)?|rmi|rsync|rtmp|rtsp|secondlife|service|session|sftp|sgn|shttp|sieve|sips?|skype|sm[bs]|snmp|soap\.beeps?|soldat|spotify|ssh|steam|svn|tag|teamspeak|tel(?:net)?|tftp|things|thismessage|tip|tn3270|tv|udp|unreal|urn|ut2004|vemmi|ventrilo|view-source|webcal|wss?|wtai|wyciwyg|xcon(?:-userid)?|xfire|xmlrpc\.beeps?|xmpp|xri|ymsgr|z39\.50[rs]?):(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]|\([^\s()<>]*\))+(?:\([^\s()<>]*\)|[^\s`*!()\[\]{};:'".,<>?«»“”‘’]))/i; // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 
@@ -64191,7 +64300,7 @@ _codemirror2.default.defineMode("gfm", function (config, modeConfig) {
 _codemirror2.default.defineMIME("text/x-gfm", "gfm");
 
 /***/ }),
-/* 296 */
+/* 297 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64209,7 +64318,7 @@ var listRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]\s|[*+-]\s|(\d+)([.)]))(\s*)/,
     unorderedListRE = /[*+-]\s/; // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 
@@ -64309,7 +64418,7 @@ function incrementRemainingMarkdownListNumbers(cm, pos) {
 }
 
 /***/ }),
-/* 297 */
+/* 298 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64350,7 +64459,7 @@ _codemirror2.default.commands.replaceLineTextToUpper = function (cm) {
 }; // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 
@@ -64462,7 +64571,7 @@ function replaceMultiLine(cm, upper, bottom, lineAdjustment) {
 }
 
 /***/ }),
-/* 298 */
+/* 299 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64495,7 +64604,7 @@ _codemirror2.default.defineOption('placeholder', '', function (cm, val, old) {
 }); // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 
@@ -64532,7 +64641,7 @@ function isEmpty(cm) {
 }
 
 /***/ }),
-/* 299 */
+/* 300 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64548,7 +64657,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @fileoverview Implements markdown list manager
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 var FIND_LIST_RX = /^[ \t]*([-*]|[\d]+\.)( \[[ xX]])? /;
@@ -64927,7 +65036,7 @@ var MdListManager = function () {
 exports.default = MdListManager;
 
 /***/ }),
-/* 300 */
+/* 301 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64943,7 +65052,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @fileoverview Implements markdown textObject
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -65115,7 +65224,7 @@ var mdTextObject = function () {
 exports.default = mdTextObject;
 
 /***/ }),
-/* 301 */
+/* 302 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -65127,7 +65236,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implments wysiwygEditor
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -65143,43 +65252,43 @@ var _domUtils = __webpack_require__(5);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwClipboardManager = __webpack_require__(302);
+var _wwClipboardManager = __webpack_require__(303);
 
 var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-var _wwListManager = __webpack_require__(305);
+var _wwListManager = __webpack_require__(306);
 
 var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-var _wwTaskManager = __webpack_require__(306);
+var _wwTaskManager = __webpack_require__(307);
 
 var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-var _wwTableManager = __webpack_require__(282);
+var _wwTableManager = __webpack_require__(283);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(283);
+var _wwTableSelectionManager = __webpack_require__(284);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-var _wwHrManager = __webpack_require__(307);
+var _wwHrManager = __webpack_require__(308);
 
 var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-var _wwPManager = __webpack_require__(308);
+var _wwPManager = __webpack_require__(309);
 
 var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-var _wwHeadingManager = __webpack_require__(309);
+var _wwHeadingManager = __webpack_require__(310);
 
 var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-var _wwCodeBlockManager = __webpack_require__(284);
+var _wwCodeBlockManager = __webpack_require__(285);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-var _squireExt = __webpack_require__(310);
+var _squireExt = __webpack_require__(311);
 
 var _squireExt2 = _interopRequireDefault(_squireExt);
 
@@ -65187,15 +65296,15 @@ var _keyMapper = __webpack_require__(32);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _wwTextObject = __webpack_require__(312);
+var _wwTextObject = __webpack_require__(313);
 
 var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
 
-var _componentManager = __webpack_require__(281);
+var _componentManager = __webpack_require__(282);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _codeBlockGadget = __webpack_require__(313);
+var _codeBlockGadget = __webpack_require__(314);
 
 var _codeBlockGadget2 = _interopRequireDefault(_codeBlockGadget);
 
@@ -65241,6 +65350,7 @@ var WysiwygEditor = function () {
 
     this._keyEventHandlers = {};
     this._managers = {};
+    this._linkAttribute = {};
 
     this._initEvent();
     this._initDefaultKeyEventHandler();
@@ -66118,6 +66228,28 @@ var WysiwygEditor = function () {
     }
 
     /**
+     * Set attribute of link for wysiwyg
+     * @param {object} attribute - attribute of anchor tag
+     */
+
+  }, {
+    key: 'setLinkAttribute',
+    value: function setLinkAttribute(attribute) {
+      this._linkAttribute = attribute;
+    }
+
+    /**
+     * Get attribute of link for wysiwyg
+     * @returns {object} attribute - attribute of anchor tag
+     */
+
+  }, {
+    key: 'getLinkAttribute',
+    value: function getLinkAttribute() {
+      return this._linkAttribute;
+    }
+
+    /**
      * setValue
      * Set value to wysiwyg editor
      * @memberof WysiwygEditor
@@ -66667,7 +66799,7 @@ var WysiwygEditor = function () {
 exports.default = WysiwygEditor;
 
 /***/ }),
-/* 302 */
+/* 303 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -66679,7 +66811,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg editor clipboard manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -66695,11 +66827,11 @@ var _domUtils = __webpack_require__(5);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwPasteContentHelper = __webpack_require__(303);
+var _wwPasteContentHelper = __webpack_require__(304);
 
 var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
-var _wwTablePasteHelper = __webpack_require__(304);
+var _wwTablePasteHelper = __webpack_require__(305);
 
 var _wwTablePasteHelper2 = _interopRequireDefault(_wwTablePasteHelper);
 
@@ -66743,13 +66875,30 @@ var WwClipboardManager = function () {
       var _this = this;
 
       this.wwe.eventManager.listen('willPaste', function (ev) {
-        return _this._onWillPaste(ev.data);
+        return _this._executeHandler(_this._onWillPaste.bind(_this), ev);
       });
-      this.wwe.eventManager.listen('copy', this._onCopyCut.bind(this));
-      this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this));
-      this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this));
-      this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this));
-      this.wwe.eventManager.listen('paste', this._onPasteIntoTable.bind(this));
+      this.wwe.eventManager.listen('copy', function (ev) {
+        return _this._executeHandler(_this._onCopyCut.bind(_this), ev);
+      });
+      this.wwe.eventManager.listen('copyAfter', function (ev) {
+        return _this._executeHandler(_this._onCopyAfter.bind(_this), ev);
+      });
+      this.wwe.eventManager.listen('cut', function (ev) {
+        return _this._executeHandler(_this._onCopyCut.bind(_this), ev);
+      });
+      this.wwe.eventManager.listen('cutAfter', function (ev) {
+        return _this._executeHandler(_this._onCutAfter.bind(_this), ev);
+      });
+      this.wwe.eventManager.listen('paste', function (ev) {
+        return _this._executeHandler(_this._onPasteIntoTable.bind(_this), ev);
+      });
+    }
+  }, {
+    key: '_executeHandler',
+    value: function _executeHandler(handler, event) {
+      if (event.source === 'wysiwyg') {
+        handler(event);
+      }
     }
   }, {
     key: '_onCopyCut',
@@ -66838,8 +66987,10 @@ var WwClipboardManager = function () {
     }
   }, {
     key: '_onWillPaste',
-    value: function _onWillPaste(pasteData) {
+    value: function _onWillPaste(event) {
       var _this2 = this;
+
+      var pasteData = event.data;
 
       var $clipboardContainer = (0, _jquery2.default)('<div>').append(pasteData.fragment.cloneNode(true));
       this._preparePaste($clipboardContainer);
@@ -66850,45 +67001,11 @@ var WwClipboardManager = function () {
         pasteData.fragment.appendChild(element);
       });
 
-      // @TODO Temporary code : paste to empty code block
-      this._pasteToEmptyCodeBlock(pasteData);
-
       // once right after the squire insertHTML DOM.
       var handler = function handler() {
         _this2.wwe.getEditor().removeEventListener('input', handler);
         _this2.wwe.eventManager.emit('wysiwygRangeChangeAfter', _this2);
         _this2._focusTableBookmark();
-      };
-      this.wwe.getEditor().addEventListener('input', handler);
-    }
-
-    // @TODO Temporary code : paste to empty code block
-    // Squire remove empty code block when paste.
-    // This code should remove after https://github.com/neilj/Squire/issues/349 would be resolved.
-
-  }, {
-    key: '_pasteToEmptyCodeBlock',
-    value: function _pasteToEmptyCodeBlock(pasteData) {
-      var _this3 = this;
-
-      var sq = this.wwe.getEditor();
-      var range = sq.getSelection().cloneRange();
-      var container = range.startContainer;
-      var wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
-      var shouldChangeSelection = false;
-      if (wwCodeblockManager.isInCodeBlock(range) && range.collapse && container.nodeName === 'PRE' && !container.textContent) {
-        var brNode = container.firstChild;
-        container.insertBefore(pasteData.fragment, brNode);
-        pasteData.defaultPrevented = true;
-        shouldChangeSelection = true;
-      }
-
-      var handler = function handler() {
-        _this3.wwe.getEditor().removeEventListener('input', handler);
-        if (shouldChangeSelection) {
-          range.setStart(container, 1);
-          sq.setSelection(range);
-        }
       };
       this.wwe.getEditor().addEventListener('input', handler);
     }
@@ -67125,7 +67242,7 @@ var WwClipboardManager = function () {
 exports.default = WwClipboardManager;
 
 /***/ }),
-/* 303 */
+/* 304 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -67137,7 +67254,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements WwPasteContentHelper
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -67646,7 +67763,7 @@ var WwPasteContentHelper = function () {
 exports.default = WwPasteContentHelper;
 
 /***/ }),
-/* 304 */
+/* 305 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -67658,7 +67775,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Paste helper when past to table
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -68192,7 +68309,7 @@ var WwTablePasteHelper = function () {
 exports.default = WwTablePasteHelper;
 
 /***/ }),
-/* 305 */
+/* 306 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68204,7 +68321,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg list manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -68638,7 +68755,7 @@ var WwListManager = function () {
 exports.default = WwListManager;
 
 /***/ }),
-/* 306 */
+/* 307 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68650,13 +68767,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg task manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
 var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
+
+var _domUtils = __webpack_require__(5);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -68707,9 +68828,11 @@ var WwTaskManager = function () {
       this._initEvent();
 
       this.wwe.getEditor().addEventListener('mousedown', function (ev) {
-        var isOnTaskBox = ev.offsetX < 18 && ev.offsetY < 18;
+        var style = getComputedStyle(ev.target, ':before');
 
-        if (ev.target.hasAttribute(TASK_ATTR_NAME) && isOnTaskBox) {
+        if (ev.target.hasAttribute(TASK_ATTR_NAME) && _domUtils2.default.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
+          // Prevent cursor focusing
+          ev.preventDefault();
           (0, _jquery2.default)(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
         }
       });
@@ -68860,7 +68983,7 @@ var WwTaskManager = function () {
 exports.default = WwTaskManager;
 
 /***/ }),
-/* 307 */
+/* 308 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68872,7 +68995,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg hr manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -69179,7 +69302,7 @@ function findTextNodeFilter() {
 exports.default = WwHrManager;
 
 /***/ }),
-/* 308 */
+/* 309 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69191,7 +69314,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg p tag manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -69345,7 +69468,7 @@ var WwPManager = function () {
 exports.default = WwPManager;
 
 /***/ }),
-/* 309 */
+/* 310 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69357,7 +69480,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg heading manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -69613,7 +69736,7 @@ var WwHeadingManager = function () {
 exports.default = WwHeadingManager;
 
 /***/ }),
-/* 310 */
+/* 311 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69633,7 +69756,7 @@ var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _squireRte = __webpack_require__(311);
+var _squireRte = __webpack_require__(312);
 
 var _squireRte2 = _interopRequireDefault(_squireRte);
 
@@ -69651,7 +69774,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements squire extension
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -70035,14 +70158,14 @@ var SquireExt = function (_Squire) {
 exports.default = SquireExt;
 
 /***/ }),
-/* 311 */
+/* 312 */
 /***/ (function(module, exports, __webpack_require__) {
 
-!function(e,t){"use strict";function n(e,t,n){this.root=this.currentNode=e,this.nodeType=t,this.filter=n||ce}function o(e,t){for(var n=e.length;n--;)if(!t(e[n]))return!1;return!0}function i(e){return e.nodeType===w&&!!ue[e.nodeName]}function r(e){switch(e.nodeType){case F:return pe;case w:case H:if(ae&&ve.has(e))return ve.get(e);break;default:return fe}var t;return t=o(e.childNodes,a)?he.test(e.nodeName)?pe:ge:me,ae&&ve.set(e,t),t}function a(e){return r(e)===pe}function s(e){return r(e)===ge}function d(e){return r(e)===me}function l(e,t){var o=new n(t,W,s);return o.currentNode=e,o}function c(e,t){return e=l(e,t).previousNode(),e!==t?e:null}function h(e,t){return e=l(e,t).nextNode(),e!==t?e:null}function u(e){return!e.textContent&&!e.querySelector("IMG")}function f(e,t){return!i(e)&&e.nodeType===t.nodeType&&e.nodeName===t.nodeName&&"A"!==e.nodeName&&e.className===t.className&&(!e.style&&!t.style||e.style.cssText===t.style.cssText)}function p(e,t,n){if(e.nodeName!==t)return!1;for(var o in n)if(e.getAttribute(o)!==n[o])return!1;return!0}function g(e,t,n,o){for(;e&&e!==t;){if(p(e,n,o))return e;e=e.parentNode}return null}function m(e,t){for(;t;){if(t===e)return!0;t=t.parentNode}return!1}function v(e,t,n){var o,i,r,a,s,d="";return e&&e!==t&&(d=v(e.parentNode,t,n),e.nodeType===w&&(d+=(d?">":"")+e.nodeName,(o=e.id)&&(d+="#"+o),(i=e.className.trim())&&(r=i.split(/\s\s*/),r.sort(),d+=".",d+=r.join(".")),(a=e.dir)&&(d+="[dir="+a+"]"),r&&(s=n.classNames,de.call(r,s.highlight)>-1&&(d+="[backgroundColor="+e.style.backgroundColor.replace(/ /g,"")+"]"),de.call(r,s.colour)>-1&&(d+="[color="+e.style.color.replace(/ /g,"")+"]"),de.call(r,s.fontFamily)>-1&&(d+="[fontFamily="+e.style.fontFamily.replace(/ /g,"")+"]"),de.call(r,s.fontSize)>-1&&(d+="[fontSize="+e.style.fontSize+"]")))),d}function C(e){var t=e.nodeType;return t===w||t===H?e.childNodes.length:e.length||0}function _(e){var t=e.parentNode;return t&&t.removeChild(e),e}function N(e,t){var n=e.parentNode;n&&n.replaceChild(t,e)}function S(e){for(var t=e.ownerDocument.createDocumentFragment(),n=e.childNodes,o=n?n.length:0;o--;)t.appendChild(e.firstChild);return t}function y(e,n,o,i){var r,a,s,d=e.createElement(n);if(o instanceof Array&&(i=o,o=null),o)for(r in o)o[r]!==t&&d.setAttribute(r,o[r]);if(i)for(a=0,s=i.length;a<s;a+=1)d.appendChild(i[a]);return d}function T(e,t){var n,o,r=t.__squire__,s=e.ownerDocument,d=e;if(e===t&&((o=e.firstChild)&&"BR"!==o.nodeName||(n=r.createDefaultBlock(),o?e.replaceChild(n,o):e.appendChild(n),e=n,n=null)),e.nodeType===F)return d;if(a(e)){for(o=e.firstChild;oe&&o&&o.nodeType===F&&!o.data;)e.removeChild(o),o=e.firstChild;o||(oe?(n=s.createTextNode(z),r._didAddZWS()):n=s.createTextNode(""))}else if(ne){for(;e.nodeType!==F&&!i(e);){if(!(o=e.firstChild)){n=s.createTextNode("");break}e=o}e.nodeType===F?/^ +$/.test(e.data)&&(e.data=""):i(e)&&e.parentNode.insertBefore(s.createTextNode(""),e)}else if(!e.querySelector("BR"))for(n=y(s,"BR");(o=e.lastElementChild)&&!a(o);)e=o;if(n)try{e.appendChild(n)}catch(t){r.didError({name:"Squire: fixCursor – "+t,message:"Parent: "+e.nodeName+"/"+e.innerHTML+" appendChild: "+n.nodeName})}return d}function E(e,t){var n,o,i,r,s=e.childNodes,l=e.ownerDocument,c=null,h=t.__squire__._config;for(n=0,o=s.length;n<o;n+=1)i=s[n],r="BR"===i.nodeName,!r&&a(i)?(c||(c=y(l,h.blockTag,h.blockAttributes)),c.appendChild(i),n-=1,o-=1):(r||c)&&(c||(c=y(l,h.blockTag,h.blockAttributes)),T(c,t),r?e.replaceChild(c,i):(e.insertBefore(c,i),n+=1,o+=1),c=null),d(i)&&E(i,t);return c&&e.appendChild(T(c,t)),e}function b(e,t,n,o){var i,r,a,s=e.nodeType;if(s===F&&e!==n)return b(e.parentNode,e.splitText(t),n,o);if(s===w){if("number"==typeof t&&(t=t<e.childNodes.length?e.childNodes[t]:null),e===n)return t;for(i=e.parentNode,r=e.cloneNode(!1);t;)a=t.nextSibling,r.appendChild(t),t=a;return"OL"===e.nodeName&&g(e,o,"BLOCKQUOTE")&&(r.start=(+e.start||1)+e.childNodes.length-1),T(e,o),T(r,o),(a=e.nextSibling)?i.insertBefore(r,a):i.appendChild(r),b(i,r,n,o)}return t}function x(e,t){for(var n,o,i,r=e.childNodes,s=r.length,d=[];s--;)if(n=r[s],o=s&&r[s-1],s&&a(n)&&f(n,o)&&!ue[n.nodeName])t.startContainer===n&&(t.startContainer=o,t.startOffset+=C(o)),t.endContainer===n&&(t.endContainer=o,t.endOffset+=C(o)),t.startContainer===e&&(t.startOffset>s?t.startOffset-=1:t.startOffset===s&&(t.startContainer=o,t.startOffset=C(o))),t.endContainer===e&&(t.endOffset>s?t.endOffset-=1:t.endOffset===s&&(t.endContainer=o,t.endOffset=C(o))),_(n),n.nodeType===F?o.appendData(n.data):d.push(S(n));else if(n.nodeType===w){for(i=d.length;i--;)n.appendChild(d.pop());x(n,t)}}function k(e,t){if(e.nodeType===F&&(e=e.parentNode),e.nodeType===w){var n={startContainer:t.startContainer,startOffset:t.startOffset,endContainer:t.endContainer,endOffset:t.endOffset};x(e,n),t.setStart(n.startContainer,n.startOffset),t.setEnd(n.endContainer,n.endOffset)}}function A(e,t,n,o){for(var i,r,a,s=t;(i=s.parentNode)&&i!==o&&i.nodeType===w&&1===i.childNodes.length;)s=i;_(s),a=e.childNodes.length,r=e.lastChild,r&&"BR"===r.nodeName&&(e.removeChild(r),a-=1),e.appendChild(S(t)),n.setStart(e,a),n.collapse(!0),k(e,n),Y&&(r=e.lastChild)&&"BR"===r.nodeName&&e.removeChild(r)}function L(e,t){var n,o,i=e.previousSibling,r=e.firstChild,a=e.ownerDocument,s="LI"===e.nodeName;if(!s||r&&/^[OU]L$/.test(r.nodeName))if(i&&f(i,e)){if(!d(i)){if(!s)return;o=y(a,"DIV"),o.appendChild(S(i)),i.appendChild(o)}_(e),n=!d(e),i.appendChild(S(e)),n&&E(i,t),r&&L(r,t)}else s&&(i=y(a,"DIV"),e.insertBefore(i,r),T(i,t))}function B(e){this.isShiftDown=e.shiftKey}function O(e,t,n){var o,i;if(e||(e={}),t)for(o in t)!n&&o in e||(i=t[o],e[o]=i&&i.constructor===Object?O(e[o],i,n):i);return e}function R(e,t){e.nodeType===M&&(e=e.body);var n,o=e.ownerDocument,i=o.defaultView;this._win=i,this._doc=o,this._root=e,this._events={},this._isFocused=!1,this._lastSelection=null,ie&&this.addEventListener("beforedeactivate",this.getSelection),this._hasZWS=!1,this._lastAnchorNode=null,this._lastFocusNode=null,this._path="",this._willUpdatePath=!1,"onselectionchange"in o?this.addEventListener("selectionchange",this._updatePathOnEvent):(this.addEventListener("keyup",this._updatePathOnEvent),this.addEventListener("mouseup",this._updatePathOnEvent)),this._undoIndex=-1,this._undoStack=[],this._undoStackLength=0,this._isInUndoState=!1,this._ignoreChange=!1,this._ignoreAllChanges=!1,re?(n=new MutationObserver(this._docWasChanged.bind(this)),n.observe(e,{childList:!0,attributes:!0,characterData:!0,subtree:!0}),this._mutation=n):this.addEventListener("keyup",this._keyUpDetectChange),this._restoreSelection=!1,this.addEventListener("blur",D),this.addEventListener("mousedown",P),this.addEventListener("touchstart",P),this.addEventListener("focus",U),this._awaitingPaste=!1,this.addEventListener(V?"beforecut":"cut",Je),this.addEventListener("copy",et),this.addEventListener("keydown",B),this.addEventListener("keyup",B),this.addEventListener(V?"beforepaste":"paste",tt),this.addEventListener("drop",nt),this.addEventListener(Y?"keypress":"keydown",Pe),this._keyHandlers=Object.create(Fe),this.setConfig(t),V&&(i.Text.prototype.splitText=function(e){var t=this.ownerDocument.createTextNode(this.data.slice(e)),n=this.nextSibling,o=this.parentNode,i=this.length-e;return n?o.insertBefore(t,n):o.appendChild(t),i&&this.deleteData(e,i),t}),e.setAttribute("contenteditable","true");try{o.execCommand("enableObjectResizing",!1,"false"),o.execCommand("enableInlineTableEditing",!1,"false")}catch(e){}e.__squire__=this,this.setHTML("")}function D(){this._restoreSelection=!0}function P(){this._restoreSelection=!1}function U(){this._restoreSelection&&this.setSelection(this._lastSelection)}function I(e,t,n){var o,i;for(o=t.firstChild;o;o=i){if(i=o.nextSibling,a(o)){if(o.nodeType===F||"BR"===o.nodeName||"IMG"===o.nodeName){n.appendChild(o);continue}}else if(s(o)){n.appendChild(e.createDefaultBlock([I(e,o,e._doc.createDocumentFragment())]));continue}I(e,o,n)}return n}var w=1,F=3,M=9,H=11,W=1,z="​",q=e.defaultView,K=navigator.userAgent,G=/Android/.test(K),Z=/iP(?:ad|hone|od)/.test(K),j=/Mac OS X/.test(K),$=/Windows NT/.test(K),Q=/Gecko\//.test(K),V=/Trident\/[456]\./.test(K),Y=!!q.opera,X=/Edge\//.test(K),J=!X&&/WebKit\//.test(K),ee=/Trident\/[4567]\./.test(K),te=j?"meta-":"ctrl-",ne=V||Y,oe=V||J,ie=V,re="undefined"!=typeof MutationObserver,ae="undefined"!=typeof WeakMap,se=/[^ \t\r\n]/,de=Array.prototype.indexOf;Object.create||(Object.create=function(e){var t=function(){};return t.prototype=e,new t});var le={1:1,2:2,3:4,8:128,9:256,11:1024},ce=function(){return!0};n.prototype.nextNode=function(){for(var e,t=this.currentNode,n=this.root,o=this.nodeType,i=this.filter;;){for(e=t.firstChild;!e&&t&&t!==n;)(e=t.nextSibling)||(t=t.parentNode);if(!e)return null;if(le[e.nodeType]&o&&i(e))return this.currentNode=e,e;t=e}},n.prototype.previousNode=function(){for(var e,t=this.currentNode,n=this.root,o=this.nodeType,i=this.filter;;){if(t===n)return null;if(e=t.previousSibling)for(;t=e.lastChild;)e=t;else e=t.parentNode;if(!e)return null;if(le[e.nodeType]&o&&i(e))return this.currentNode=e,e;t=e}},n.prototype.previousPONode=function(){for(var e,t=this.currentNode,n=this.root,o=this.nodeType,i=this.filter;;){for(e=t.lastChild;!e&&t&&t!==n;)(e=t.previousSibling)||(t=t.parentNode);if(!e)return null;if(le[e.nodeType]&o&&i(e))return this.currentNode=e,e;t=e}};var he=/^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:FRAME|MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|TIME|U|VAR|WBR)$/,ue={BR:1,HR:1,IFRAME:1,IMG:1,INPUT:1},fe=0,pe=1,ge=2,me=3,ve=ae?new WeakMap:null,Ce=function(e,t){for(var n=e.childNodes;t&&e.nodeType===w;)e=n[t-1],n=e.childNodes,t=n.length;return e},_e=function(e,t){if(e.nodeType===w){var n=e.childNodes;if(t<n.length)e=n[t];else{for(;e&&!e.nextSibling;)e=e.parentNode;e&&(e=e.nextSibling)}}return e},Ne=function(e,t){var n,o,i,r,a=e.startContainer,s=e.startOffset,d=e.endContainer,l=e.endOffset;a.nodeType===F?(n=a.parentNode,o=n.childNodes,s===a.length?(s=de.call(o,a)+1,e.collapsed&&(d=n,l=s)):(s&&(r=a.splitText(s),d===a?(l-=s,d=r):d===n&&(l+=1),a=r),s=de.call(o,a)),a=n):o=a.childNodes,i=o.length,s===i?a.appendChild(t):a.insertBefore(t,o[s]),a===d&&(l+=o.length-i),e.setStart(a,s),e.setEnd(d,l)},Se=function(e,t,n){var o=e.startContainer,i=e.startOffset,r=e.endContainer,a=e.endOffset;t||(t=e.commonAncestorContainer),t.nodeType===F&&(t=t.parentNode);for(var s,d,l,c,h,u=b(r,a,t,n),f=b(o,i,t,n),p=t.ownerDocument.createDocumentFragment();f!==u;)s=f.nextSibling,p.appendChild(f),f=s;return o=t,i=u?de.call(t.childNodes,u):t.childNodes.length,l=t.childNodes[i],d=l&&l.previousSibling,d&&d.nodeType===F&&l.nodeType===F&&(o=d,i=d.length,c=d.data,h=l.data," "===c.charAt(c.length-1)&&" "===h.charAt(0)&&(h=" "+h.slice(1)),d.appendData(h),_(l)),e.setStart(o,i),e.collapse(!0),T(t,n),p},ye=function(e,t){var n,o,i=ke(e,t),r=Ae(e,t),a=i!==r;return be(e),xe(e,i,r,t),n=Se(e,null,t),be(e),a&&(r=Ae(e,t),i&&r&&i!==r&&A(i,r,e,t)),i&&T(i,t),o=t.firstChild,o&&"BR"!==o.nodeName?e.collapse(!0):(T(t,t),e.selectNodeContents(t.firstChild)),n},Te=function(e,t,n){var o,i,r,s,l,f,p,m,v,N,S;for(E(t,n),o=t;o=h(o,n);)T(o,n);if(e.collapsed||ye(e,n),be(e),e.collapse(!1),s=g(e.endContainer,n,"BLOCKQUOTE")||n,i=ke(e,n),m=h(t,t),p=!!i&&u(i),i&&m&&!p&&!g(m,t,"PRE")&&!g(m,t,"TABLE")){if(xe(e,i,i,n),e.collapse(!0),l=e.endContainer,f=e.endOffset,Ye(i,n,!1),a(l)&&(v=b(l,f,c(l,n),n),l=v.parentNode,f=de.call(l.childNodes,v)),f!==C(l))for(r=n.ownerDocument.createDocumentFragment();o=l.childNodes[f];)r.appendChild(o);A(l,m,e,n),f=de.call(l.parentNode.childNodes,l)+1,l=l.parentNode,e.setEnd(l,f)}C(t)&&(p&&(e.setEndBefore(i),e.collapse(!1),_(i)),xe(e,s,s,n),v=b(e.endContainer,e.endOffset,s,n),N=v?v.previousSibling:s.lastChild,s.insertBefore(t,v),v?e.setEndBefore(v):e.setEnd(s,C(s)),i=Ae(e,n),be(e),l=e.endContainer,f=e.endOffset,v&&d(v)&&L(v,n),v=N&&N.nextSibling,v&&d(v)&&L(v,n),e.setEnd(l,f)),r&&(S=e.cloneRange(),A(i,r,S,n),e.setEnd(S.endContainer,S.endOffset)),be(e)},Ee=function(e,t,n){var o=t.ownerDocument.createRange();if(o.selectNode(t),n){var i=e.compareBoundaryPoints(3,o)>-1,r=e.compareBoundaryPoints(1,o)<1;return!i&&!r}var a=e.compareBoundaryPoints(0,o)<1,s=e.compareBoundaryPoints(2,o)>-1;return a&&s},be=function(e){for(var t,n=e.startContainer,o=e.startOffset,r=e.endContainer,a=e.endOffset,s=!0;n.nodeType!==F&&(t=n.childNodes[o])&&!i(t);)n=t,o=0;if(a)for(;r.nodeType!==F;){if(!(t=r.childNodes[a-1])||i(t)){if(s&&t&&"BR"===t.nodeName){a-=1,s=!1;continue}break}r=t,a=C(r)}else for(;r.nodeType!==F&&(t=r.firstChild)&&!i(t);)r=t;e.collapsed?(e.setStart(r,a),e.setEnd(n,o)):(e.setStart(n,o),e.setEnd(r,a))},xe=function(e,t,n,o){var i,r=e.startContainer,a=e.startOffset,s=e.endContainer,d=e.endOffset,l=!0;for(t||(t=e.commonAncestorContainer),n||(n=t);!a&&r!==t&&r!==o;)i=r.parentNode,a=de.call(i.childNodes,r),r=i;for(;;){if(l&&s.nodeType!==F&&s.childNodes[d]&&"BR"===s.childNodes[d].nodeName&&(d+=1,l=!1),s===n||s===o||d!==C(s))break;i=s.parentNode,d=de.call(i.childNodes,s)+1,s=i}e.setStart(r,a),e.setEnd(s,d)},ke=function(e,t){var n,o=e.startContainer;return a(o)?n=c(o,t):o!==t&&s(o)?n=o:(n=Ce(o,e.startOffset),n=h(n,t)),n&&Ee(e,n,!0)?n:null},Ae=function(e,t){var n,o,i=e.endContainer;if(a(i))n=c(i,t);else if(i!==t&&s(i))n=i;else{if(!(n=_e(i,e.endOffset))||!m(t,n))for(n=t;o=n.lastChild;)n=o;n=c(n,t)}return n&&Ee(e,n,!0)?n:null},Le=new n(null,4|W,function(e){return e.nodeType===F?se.test(e.data):"IMG"===e.nodeName}),Be=function(e,t){var n,o=e.startContainer,i=e.startOffset;if(Le.root=null,o.nodeType===F){if(i)return!1;n=o}else if(n=_e(o,i),n&&!m(t,n)&&(n=null),!n&&(n=Ce(o,i),n.nodeType===F&&n.length))return!1;return Le.currentNode=n,Le.root=ke(e,t),!Le.previousNode()},Oe=function(e,t){var n,o=e.endContainer,i=e.endOffset;if(Le.root=null,o.nodeType===F){if((n=o.data.length)&&i<n)return!1;Le.currentNode=o}else Le.currentNode=Ce(o,i);return Le.root=Ae(e,t),!Le.nextNode()},Re=function(e,t){var n,o=ke(e,t),i=Ae(e,t);o&&i&&(n=o.parentNode,e.setStart(n,de.call(n.childNodes,o)),n=i.parentNode,e.setEnd(n,de.call(n.childNodes,i)+1))},De={8:"backspace",9:"tab",13:"enter",32:"space",33:"pageup",34:"pagedown",37:"left",39:"right",46:"delete",219:"[",221:"]"},Pe=function(e){var t=e.keyCode,n=De[t],o="",i=this.getSelection();e.defaultPrevented||(n||(n=String.fromCharCode(t).toLowerCase(),/^[A-Za-z0-9]$/.test(n)||(n="")),Y&&46===e.which&&(n="."),111<t&&t<124&&(n="f"+(t-111)),"backspace"!==n&&"delete"!==n&&(e.altKey&&(o+="alt-"),e.ctrlKey&&(o+="ctrl-"),e.metaKey&&(o+="meta-")),e.shiftKey&&(o+="shift-"),n=o+n,this._keyHandlers[n]?this._keyHandlers[n](this,e,i):i.collapsed||e.isComposing||e.ctrlKey||e.metaKey||1!==(ee?n:e.key||n).length||(this.saveUndoState(i),ye(i,this._root),this._ensureBottomLine(),this.setSelection(i),this._updatePath(i,!0)))},Ue=function(e){return function(t,n){n.preventDefault(),t[e]()}},Ie=function(e,t){return t=t||null,function(n,o){o.preventDefault();var i=n.getSelection();n.hasFormat(e,null,i)?n.changeFormat(null,{tag:e},i):n.changeFormat({tag:e},t,i)}},we=function(e,t){try{t||(t=e.getSelection());var n,o=t.startContainer;for(o.nodeType===F&&(o=o.parentNode),n=o;a(n)&&(!n.textContent||n.textContent===z);)o=n,n=o.parentNode;o!==n&&(t.setStart(n,de.call(n.childNodes,o)),t.collapse(!0),n.removeChild(o),s(n)||(n=c(n,e._root)),T(n,e._root),be(t)),o===e._root&&(o=o.firstChild)&&"BR"===o.nodeName&&_(o),e._ensureBottomLine(),e.setSelection(t),e._updatePath(t,!0)}catch(t){e.didError(t)}},Fe={enter:function(e,t,n){var o,i,r,a,s,d=e._root;if(t.preventDefault(),e._recordUndoState(n),_t(n.startContainer,d,e),e._removeZWS(),e._getRangeAndRemoveBookmark(n),n.collapsed||ye(n,d),(o=ke(n,d))&&(i=g(o,d,"PRE")))return be(n),r=n.startContainer,a=n.startOffset,r.nodeType!==F&&(r=e._doc.createTextNode(""),i.insertBefore(r,i.firstChild)),t.shiftKey||"\n"!==r.data.charAt(a-1)&&!Be(n,d)||"\n"!==r.data.charAt(a)&&!Oe(n,d)?(r.insertData(a,"\n"),T(i,d),r.length===a+1?n.setStartAfter(r):n.setStart(r,a+1)):(r.deleteData(a&&a-1,a?2:1),s=b(r,a&&a-1,d,d),r=s.previousSibling,r.textContent||_(r),r=e.createDefaultBlock(),s.parentNode.insertBefore(r,s),s.textContent||_(s),n.setStart(r,0)),n.collapse(!0),e.setSelection(n),e._updatePath(n,!0),void e._docWasChanged();if(!o||t.shiftKey||/^T[HD]$/.test(o.nodeName))return i=g(n.endContainer,d,"A"),i&&(i=i.parentNode,xe(n,i,i,d),n.collapse(!1)),Ne(n,e.createElement("BR")),n.collapse(!1),e.setSelection(n),void e._updatePath(n,!0);if((i=g(o,d,"LI"))&&(o=i),u(o)){if(g(o,d,"UL")||g(o,d,"OL"))return e.decreaseListLevel(n);if(g(o,d,"BLOCKQUOTE"))return e.modifyBlocks(ft,n)}for(s=ct(e,o,n.startContainer,n.startOffset),st(o),$e(o),T(o,d);s.nodeType===w;){var l,c=s.firstChild;if("A"===s.nodeName&&(!s.textContent||s.textContent===z)){c=e._doc.createTextNode(""),N(s,c),s=c;break}for(;c&&c.nodeType===F&&!c.data&&(l=c.nextSibling)&&"BR"!==l.nodeName;)_(c),c=l;if(!c||"BR"===c.nodeName||c.nodeType===F&&!Y)break;s=c}n=e.createRange(s,0),e.setSelection(n),e._updatePath(n,!0)},"shift-enter":function(e,t,n){return e._keyHandlers.enter(e,t,n)},backspace:function(e,t,n){var o=e._root;if(e._removeZWS(),e.saveUndoState(n),n.collapsed)if(Be(n,o)){t.preventDefault();var i,r=ke(n,o);if(!r)return;if(E(r.parentNode,o),i=c(r,o)){if(!i.isContentEditable)return void _(i);for(A(i,r,n,o),r=i.parentNode;r!==o&&!r.nextSibling;)r=r.parentNode;r!==o&&(r=r.nextSibling)&&L(r,o),e.setSelection(n)}else if(r){if(g(r,o,"UL")||g(r,o,"OL"))return e.decreaseListLevel(n);if(g(r,o,"BLOCKQUOTE"))return e.modifyBlocks(ut,n);e.setSelection(n),e._updatePath(n,!0)}}else e.setSelection(n),setTimeout(function(){we(e)},0);else t.preventDefault(),ye(n,o),we(e,n)},delete:function(e,t,n){var o,i,r,a,s,d,l=e._root;if(e._removeZWS(),e.saveUndoState(n),n.collapsed)if(Oe(n,l)){if(t.preventDefault(),!(o=ke(n,l)))return;if(E(o.parentNode,l),i=h(o,l)){if(!i.isContentEditable)return void _(i);for(A(o,i,n,l),i=o.parentNode;i!==l&&!i.nextSibling;)i=i.parentNode;i!==l&&(i=i.nextSibling)&&L(i,l),e.setSelection(n),e._updatePath(n,!0)}}else{if(r=n.cloneRange(),xe(n,l,l,l),a=n.endContainer,s=n.endOffset,a.nodeType===w&&(d=a.childNodes[s])&&"IMG"===d.nodeName)return t.preventDefault(),_(d),be(n),void we(e,n);e.setSelection(r),setTimeout(function(){we(e)},0)}else t.preventDefault(),ye(n,l),we(e,n)},tab:function(e,t,n){var o,i,r=e._root;if(e._removeZWS(),n.collapsed&&Be(n,r))for(o=ke(n,r);i=o.parentNode;){if("UL"===i.nodeName||"OL"===i.nodeName){t.preventDefault(),e.increaseListLevel(n);break}o=i}},"shift-tab":function(e,t,n){var o,i=e._root;e._removeZWS(),n.collapsed&&Be(n,i)&&(o=n.startContainer,(g(o,i,"UL")||g(o,i,"OL"))&&(t.preventDefault(),e.decreaseListLevel(n)))},space:function(e,t,n){var o,i=e._root;if(e._recordUndoState(n),_t(n.startContainer,i,e),e._getRangeAndRemoveBookmark(n),o=n.endContainer,n.collapsed&&n.endOffset===C(o))do{if("A"===o.nodeName){n.setStartAfter(o);break}}while(!o.nextSibling&&(o=o.parentNode)&&o!==i);n.collapsed||(ye(n,i),e._ensureBottomLine(),e.setSelection(n),e._updatePath(n,!0)),e.setSelection(n)},left:function(e){e._removeZWS()},right:function(e){e._removeZWS()}};j&&Q&&(Fe["meta-left"]=function(e,t){t.preventDefault();var n=at(e);n&&n.modify&&n.modify("move","backward","lineboundary")},Fe["meta-right"]=function(e,t){t.preventDefault();var n=at(e);n&&n.modify&&n.modify("move","forward","lineboundary")}),j||(Fe.pageup=function(e){e.moveCursorToStart()},Fe.pagedown=function(e){e.moveCursorToEnd()}),Fe[te+"b"]=Ie("B"),Fe[te+"i"]=Ie("I"),Fe[te+"u"]=Ie("U"),Fe[te+"shift-7"]=Ie("S"),Fe[te+"shift-5"]=Ie("SUB",{tag:"SUP"}),Fe[te+"shift-6"]=Ie("SUP",{tag:"SUB"}),Fe[te+"shift-8"]=Ue("makeUnorderedList"),Fe[te+"shift-9"]=Ue("makeOrderedList"),Fe[te+"["]=Ue("decreaseQuoteLevel"),Fe[te+"]"]=Ue("increaseQuoteLevel"),Fe[te+"d"]=Ue("toggleCode"),Fe[te+"y"]=Ue("redo"),Fe[te+"z"]=Ue("undo"),Fe[te+"shift-z"]=Ue("redo");var Me={1:10,2:13,3:16,4:18,5:24,6:32,7:48},He={backgroundColor:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.highlight,style:"background-color:"+n})}},color:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.colour,style:"color:"+n})}},fontWeight:{regexp:/^bold|^700/i,replace:function(e){return y(e,"B")}},fontStyle:{regexp:/^italic/i,replace:function(e){return y(e,"I")}},fontFamily:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.fontFamily,style:"font-family:"+n})}},fontSize:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.fontSize,style:"font-size:"+n})}},textDecoration:{regexp:/^underline/i,replace:function(e){return y(e,"U")}}},We=function(e){return function(t,n){var o=y(t.ownerDocument,e);return n.replaceChild(o,t),o.appendChild(S(t)),o}},ze=function(e,t,n){var o,i,r,a,s,d,l=e.style,c=e.ownerDocument;for(o in He)i=He[o],(r=l[o])&&i.regexp.test(r)&&(d=i.replace(c,n.classNames,r),s||(s=d),a&&a.appendChild(d),a=d,e.style[o]="");return s&&(a.appendChild(S(e)),"SPAN"===e.nodeName?t.replaceChild(s,e):e.appendChild(s)),a||e},qe={P:ze,SPAN:ze,STRONG:We("B"),EM:We("I"),INS:We("U"),STRIKE:We("S"),FONT:function(e,t,n){var o,i,r,a,s,d=e.face,l=e.size,c=e.color,h=e.ownerDocument,u=n.classNames;return d&&(o=y(h,"SPAN",{class:u.fontFamily,style:"font-family:"+d}),s=o,a=o),l&&(i=y(h,"SPAN",{class:u.fontSize,style:"font-size:"+Me[l]+"px"}),s||(s=i),a&&a.appendChild(i),a=i),c&&/^#?([\dA-F]{3}){1,2}$/i.test(c)&&("#"!==c.charAt(0)&&(c="#"+c),r=y(h,"SPAN",{class:u.colour,style:"color:"+c}),s||(s=r),a&&a.appendChild(r),a=r),s||(s=a=y(h,"SPAN")),t.replaceChild(s,e),a.appendChild(S(e)),a},TT:function(e,t,n){var o=y(e.ownerDocument,"SPAN",{class:n.classNames.fontFamily,style:'font-family:menlo,consolas,"courier new",monospace'});return t.replaceChild(o,e),o.appendChild(S(e)),o}},Ke=/^(?:A(?:DDRESS|RTICLE|SIDE|UDIO)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|IGCAPTION|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|COL(?:GROUP)?|UL)$/,Ge=/^(?:HEAD|META|STYLE)/,Ze=new n(null,4|W),je=function e(t,n,o){var i,r,s,d,l,c,h,u,f,p,g,m,v=t.childNodes;for(i=t;a(i);)i=i.parentNode;for(Ze.root=i,r=0,s=v.length;r<s;r+=1)if(d=v[r],l=d.nodeName,c=d.nodeType,h=qe[l],c===w){if(u=d.childNodes.length,h)d=h(d,t,n);else{if(Ge.test(l)){t.removeChild(d),r-=1,s-=1;continue}if(!Ke.test(l)&&!a(d)){r-=1,s+=u-1,t.replaceChild(S(d),d);continue}}u&&e(d,n,o||"PRE"===l)}else{if(c===F){if(g=d.data,f=!se.test(g.charAt(0)),p=!se.test(g.charAt(g.length-1)),o||!f&&!p)continue;if(f){for(Ze.currentNode=d;(m=Ze.previousPONode())&&!("IMG"===(l=m.nodeName)||"#text"===l&&se.test(m.data));)if(!a(m)){m=null;break}g=g.replace(/^[ \t\r\n]+/g,m?" ":"")}if(p){for(Ze.currentNode=d;(m=Ze.nextNode())&&!("IMG"===l||"#text"===l&&se.test(m.data));)if(!a(m)){m=null;break}g=g.replace(/[ \t\r\n]+$/g,m?" ":"")}if(g){d.data=g;continue}}t.removeChild(d),r-=1,s-=1}return t},$e=function e(t){for(var n,o=t.childNodes,r=o.length;r--;)n=o[r],n.nodeType!==w||i(n)?n.nodeType!==F||n.data||t.removeChild(n):(e(n),a(n)&&!n.firstChild&&t.removeChild(n))},Qe=function(e){return e.nodeType===w?"BR"===e.nodeName:se.test(e.data)},Ve=function(e,t){for(var o,i=e.parentNode;a(i);)i=i.parentNode;return o=new n(i,4|W,Qe),o.currentNode=e,!!o.nextNode()||t&&!o.previousNode()},Ye=function(e,t,n){var o,i,r,s=e.querySelectorAll("BR"),d=[],l=s.length;for(o=0;o<l;o+=1)d[o]=Ve(s[o],n);for(;l--;)i=s[l],(r=i.parentNode)&&(d[l]?a(r)||E(r,t):_(i))},Xe=function(e,t,n,o){var i,r,a=t.ownerDocument.body,s=o.willCutCopy;Ye(t,n,!0),t.setAttribute("style","position:fixed;overflow:hidden;bottom:100%;right:100%;"),a.appendChild(t),i=t.innerHTML,r=t.innerText||t.textContent,s&&(i=s(i)),$&&(r=r.replace(/\r?\n/g,"\r\n")),e.setData("text/html",i),e.setData("text/plain",r),a.removeChild(t)},Je=function(e){var t,n,o,i,r,a,s,d=e.clipboardData,l=this.getSelection(),c=this._root,h=this;if(l.collapsed)return void e.preventDefault();if(this.saveUndoState(l),X||Z||!d)setTimeout(function(){try{h._ensureBottomLine()}catch(e){h.didError(e)}},0);else{for(t=ke(l,c),n=Ae(l,c),o=t===n&&t||c,i=ye(l,c),r=l.commonAncestorContainer,r.nodeType===F&&(r=r.parentNode);r&&r!==o;)a=r.cloneNode(!1),a.appendChild(i),i=a,r=r.parentNode;s=this.createElement("div"),s.appendChild(i),Xe(d,s,c,this._config),e.preventDefault()}this.setSelection(l)},et=function(e){var t,n,o,i,r,a,s,d=e.clipboardData,l=this.getSelection(),c=this._root;if(!X&&!Z&&d){for(t=ke(l,c),n=Ae(l,c),o=t===n&&t||c,l=l.cloneRange(),be(l),xe(l,o,o,c),i=l.cloneContents(),r=l.commonAncestorContainer,r.nodeType===F&&(r=r.parentNode);r&&r!==o;)a=r.cloneNode(!1),a.appendChild(i),i=a,r=r.parentNode;s=this.createElement("div"),s.appendChild(i),Xe(d,s,c,this._config),e.preventDefault()}},tt=function(e){var t,n,o,i,r,a=e.clipboardData,s=a&&a.items,d=this.isShiftDown,l=!1,c=!1,h=null,u=this;if(X&&s){for(t=s.length;t--;)!d&&/^image\/.*/.test(s[t].type)&&(c=!0);c||(s=null)}if(s){for(e.preventDefault(),t=s.length;t--;){if(n=s[t],o=n.type,!d&&"text/html"===o)return void n.getAsString(function(e){u.insertHTML(e,!0)});"text/plain"===o&&(h=n),!d&&/^image\/.*/.test(o)&&(c=!0)}return void(c?(this.fireEvent("dragover",{dataTransfer:a,preventDefault:function(){l=!0}}),l&&this.fireEvent("drop",{dataTransfer:a})):h&&h.getAsString(function(e){u.insertPlainText(e,!0)}))}if(i=a&&a.types,!X&&i&&(de.call(i,"text/html")>-1||!Q&&de.call(i,"text/plain")>-1&&de.call(i,"text/rtf")<0))return e.preventDefault(),void(!d&&(r=a.getData("text/html"))?this.insertHTML(r,!0):((r=a.getData("text/plain"))||(r=a.getData("text/uri-list")))&&this.insertPlainText(r,!0));this._awaitingPaste=!0;var f=this._doc.body,p=this.getSelection(),g=p.startContainer,m=p.startOffset,v=p.endContainer,C=p.endOffset,N=this.createElement("DIV",{contenteditable:"true",style:"position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;"});f.appendChild(N),p.selectNodeContents(N),this.setSelection(p),setTimeout(function(){try{u._awaitingPaste=!1;for(var e,t,n="",o=N;N=o;)o=N.nextSibling,_(N),e=N.firstChild,e&&e===N.lastChild&&"DIV"===e.nodeName&&(N=e),n+=N.innerHTML;t=u.createRange(g,m,v,C),u.setSelection(t),n&&u.insertHTML(n,!0)}catch(e){u.didError(e)}},0)},nt=function(e){for(var t=e.dataTransfer.types,n=t.length,o=!1,i=!1;n--;)switch(t[n]){case"text/plain":o=!0;break;case"text/html":i=!0;break;default:return}(i||o)&&this.saveUndoState()},ot=R.prototype,it=function(e,t,n){var o=n._doc,i=e?DOMPurify.sanitize(e,{ALLOW_UNKNOWN_PROTOCOLS:!0,WHOLE_DOCUMENT:!1,RETURN_DOM:!0,RETURN_DOM_FRAGMENT:!0}):null;return i?o.importNode(i,!0):o.createDocumentFragment()};ot.setConfig=function(e){return e=O({blockTag:"DIV",blockAttributes:null,tagAttributes:{blockquote:null,ul:null,ol:null,li:null,a:null},classNames:{colour:"colour",fontFamily:"font",fontSize:"size",highlight:"highlight"},leafNodeNames:ue,undo:{documentSizeThreshold:-1,undoLimit:-1},isInsertedHTMLSanitized:!0,isSetHTMLSanitized:!0,sanitizeToDOMFragment:"undefined"!=typeof DOMPurify&&DOMPurify.isSupported?it:null,willCutCopy:null},e,!0),e.blockTag=e.blockTag.toUpperCase(),this._config=e,this},ot.createElement=function(e,t,n){return y(this._doc,e,t,n)},ot.createDefaultBlock=function(e){var t=this._config;return T(this.createElement(t.blockTag,t.blockAttributes,e),this._root)},ot.didError=function(e){console.log(e)},ot.getDocument=function(){return this._doc},ot.getRoot=function(){return this._root},ot.modifyDocument=function(e){var t=this._mutation;t&&(t.takeRecords().length&&this._docWasChanged(),t.disconnect()),this._ignoreAllChanges=!0,e(),this._ignoreAllChanges=!1,t&&(t.observe(this._root,{childList:!0,attributes:!0,characterData:!0,subtree:!0}),this._ignoreChange=!1)};var rt={pathChange:1,select:1,input:1,undoStateChange:1};ot.fireEvent=function(e,t){var n,o,i,r=this._events[e];if(/^(?:focus|blur)/.test(e))if(n=this._root===this._doc.activeElement,"focus"===e){if(!n||this._isFocused)return this;this._isFocused=!0}else{if(n||!this._isFocused)return this;this._isFocused=!1}if(r)for(t||(t={}),t.type!==e&&(t.type=e),r=r.slice(),o=r.length;o--;){i=r[o];try{i.handleEvent?i.handleEvent(t):i.call(this,t)}catch(t){t.details="Squire: fireEvent error. Event type: "+e,this.didError(t)}}return this},ot.destroy=function(){var e,t=this._events;for(e in t)this.removeEventListener(e);this._mutation&&this._mutation.disconnect(),delete this._root.__squire__,this._undoIndex=-1,this._undoStack=[],this._undoStackLength=0},ot.handleEvent=function(e){this.fireEvent(e.type,e)},ot.addEventListener=function(e,t){var n=this._events[e],o=this._root;return t?(n||(n=this._events[e]=[],rt[e]||("selectionchange"===e&&(o=this._doc),o.addEventListener(e,this,!0))),n.push(t),this):(this.didError({name:"Squire: addEventListener with null or undefined fn",message:"Event type: "+e}),this)},ot.removeEventListener=function(e,t){var n,o=this._events[e],i=this._root;if(o){if(t)for(n=o.length;n--;)o[n]===t&&o.splice(n,1);else o.length=0;o.length||(delete this._events[e],rt[e]||("selectionchange"===e&&(i=this._doc),i.removeEventListener(e,this,!0)))}return this},ot.createRange=function(e,t,n,o){if(e instanceof this._win.Range)return e.cloneRange();var i=this._doc.createRange();return i.setStart(e,t),n?i.setEnd(n,o):i.setEnd(e,t),i},ot.getCursorPosition=function(e){if(!e&&!(e=this.getSelection())||!e.getBoundingClientRect)return null;var t,n,o=e.getBoundingClientRect();return o&&!o.top&&(this._ignoreChange=!0,t=this._doc.createElement("SPAN"),t.textContent=z,Ne(e,t),o=t.getBoundingClientRect(),n=t.parentNode,n.removeChild(t),k(n,e)),o},ot._moveCursorTo=function(e){var t=this._root,n=this.createRange(t,e?0:t.childNodes.length);return be(n),this.setSelection(n),this},ot.moveCursorToStart=function(){return this._moveCursorTo(!0)},ot.moveCursorToEnd=function(){return this._moveCursorTo(!1)};var at=function(e){return e._win.getSelection()||null};ot.setSelection=function(e){if(e)if(this._lastSelection=e,this._isFocused)if(G&&!this._restoreSelection)D.call(this),this.blur(),this.focus();else{Z&&this._win.focus();var t=at(this);t&&(t.removeAllRanges(),t.addRange(e))}else D.call(this);return this},ot.getSelection=function(){var e,t,n,o,r=at(this),a=this._root;return this._isFocused&&r&&r.rangeCount&&(e=r.getRangeAt(0).cloneRange(),t=e.startContainer,n=e.endContainer,t&&i(t)&&e.setStartBefore(t),n&&i(n)&&e.setEndBefore(n)),e&&m(a,e.commonAncestorContainer)?this._lastSelection=e:(e=this._lastSelection,o=e.commonAncestorContainer,m(o.ownerDocument,o)||(e=null)),e||(e=this.createRange(a.firstChild,0)),e},ot.getSelectedText=function(){var e=this.getSelection();if(!e||e.collapsed)return"";var t,o=new n(e.commonAncestorContainer,4|W,function(t){return Ee(e,t,!0)}),i=e.startContainer,r=e.endContainer,s=o.currentNode=i,d="",l=!1;for(o.filter(s)||(s=o.nextNode());s;)s.nodeType===F?(t=s.data)&&/\S/.test(t)&&(s===r&&(t=t.slice(0,e.endOffset)),s===i&&(t=t.slice(e.startOffset)),d+=t,l=!0):("BR"===s.nodeName||l&&!a(s))&&(d+="\n",l=!1),s=o.nextNode();return d},ot.getPath=function(){return this._path};var st=function(e,t){for(var o,i,r,s=new n(e,4);i=s.nextNode();)for(;(r=i.data.indexOf(z))>-1&&(!t||i.parentNode!==t);){if(1===i.length){do{o=i.parentNode,o.removeChild(i),i=o,s.currentNode=o}while(a(i)&&!C(i));break}i.deleteData(r,1)}};ot._didAddZWS=function(){this._hasZWS=!0},ot._removeZWS=function(){this._hasZWS&&(st(this._root),this._hasZWS=!1)},ot._updatePath=function(e,t){if(e){var n,o=e.startContainer,i=e.endContainer;(t||o!==this._lastAnchorNode||i!==this._lastFocusNode)&&(this._lastAnchorNode=o,this._lastFocusNode=i,n=o&&i?o===i?v(i,this._root,this._config):"(selection)":"",this._path!==n&&(this._path=n,this.fireEvent("pathChange",{path:n}))),this.fireEvent(e.collapsed?"cursor":"select",{range:e})}},ot._updatePathOnEvent=function(e){var t=this;t._isFocused&&!t._willUpdatePath&&(t._willUpdatePath=!0,setTimeout(function(){t._willUpdatePath=!1,t._updatePath(t.getSelection())},0))},ot.focus=function(){return this._root.focus(),ee&&this.fireEvent("focus"),this},ot.blur=function(){return this._root.blur(),ee&&this.fireEvent("blur"),this};var dt="squire-selection-end"
-;ot._saveRangeToBookmark=function(e){var t,n=this.createElement("INPUT",{id:"squire-selection-start",type:"hidden"}),o=this.createElement("INPUT",{id:dt,type:"hidden"});Ne(e,n),e.collapse(!1),Ne(e,o),2&n.compareDocumentPosition(o)&&(n.id=dt,o.id="squire-selection-start",t=n,n=o,o=t),e.setStartAfter(n),e.setEndBefore(o)},ot._getRangeAndRemoveBookmark=function(e){var t=this._root,n=t.querySelector("#squire-selection-start"),o=t.querySelector("#"+dt);if(n&&o){var i=n.parentNode,r=o.parentNode,a=de.call(i.childNodes,n),s=de.call(r.childNodes,o);i===r&&(s-=1),_(n),_(o),e||(e=this._doc.createRange()),e.setStart(i,a),e.setEnd(r,s),k(i,e),i!==r&&k(r,e),e.collapsed&&(i=e.startContainer,i.nodeType===F&&(r=i.childNodes[e.startOffset],r&&r.nodeType===F||(r=i.childNodes[e.startOffset-1]),r&&r.nodeType===F&&(e.setStart(r,0),e.collapse(!0))))}return e||null},ot._keyUpDetectChange=function(e){var t=e.keyCode;e.ctrlKey||e.metaKey||e.altKey||!(t<16||t>20)||!(t<33||t>45)||this._docWasChanged()},ot._docWasChanged=function(){if(ae&&(ve=new WeakMap),!this._ignoreAllChanges){if(re&&this._ignoreChange)return void(this._ignoreChange=!1);this._isInUndoState&&(this._isInUndoState=!1,this.fireEvent("undoStateChange",{canUndo:!0,canRedo:!1})),this.fireEvent("input")}},ot._recordUndoState=function(e,t){if(!this._isInUndoState||t){var n,o=this._undoIndex,i=this._undoStack,r=this._config.undo,a=r.documentSizeThreshold,s=r.undoLimit;t||(o+=1),o<this._undoStackLength&&(i.length=this._undoStackLength=o),e&&this._saveRangeToBookmark(e),n=this._getHTML(),a>-1&&2*n.length>a&&s>-1&&o>s&&(i.splice(0,o-s),o=s,this._undoStackLength=s),i[o]=n,this._undoIndex=o,this._undoStackLength+=1,this._isInUndoState=!0}},ot.saveUndoState=function(e){return e===t&&(e=this.getSelection()),this._recordUndoState(e,this._isInUndoState),this._getRangeAndRemoveBookmark(e),this},ot.undo=function(){if(0!==this._undoIndex||!this._isInUndoState){this._recordUndoState(this.getSelection(),!1),this._undoIndex-=1,this._setHTML(this._undoStack[this._undoIndex]);var e=this._getRangeAndRemoveBookmark();e&&this.setSelection(e),this._isInUndoState=!0,this.fireEvent("undoStateChange",{canUndo:0!==this._undoIndex,canRedo:!0}),this.fireEvent("input")}return this},ot.redo=function(){var e=this._undoIndex,t=this._undoStackLength;if(e+1<t&&this._isInUndoState){this._undoIndex+=1,this._setHTML(this._undoStack[this._undoIndex]);var n=this._getRangeAndRemoveBookmark();n&&this.setSelection(n),this.fireEvent("undoStateChange",{canUndo:!0,canRedo:e+2<t}),this.fireEvent("input")}return this},ot.hasFormat=function(e,t,o){if(e=e.toUpperCase(),t||(t={}),!o&&!(o=this.getSelection()))return!1;!o.collapsed&&o.startContainer.nodeType===F&&o.startOffset===o.startContainer.length&&o.startContainer.nextSibling&&o.setStartBefore(o.startContainer.nextSibling),!o.collapsed&&o.endContainer.nodeType===F&&0===o.endOffset&&o.endContainer.previousSibling&&o.setEndAfter(o.endContainer.previousSibling);var i,r,a=this._root,s=o.commonAncestorContainer;if(g(s,a,e,t))return!0;if(s.nodeType===F)return!1;i=new n(s,4,function(e){return Ee(o,e,!0)});for(var d=!1;r=i.nextNode();){if(!g(r,a,e,t))return!1;d=!0}return d},ot.getFontInfo=function(e){var n,o,i,r={color:t,backgroundColor:t,family:t,size:t},a=0;if(!e&&!(e=this.getSelection()))return r;if(n=e.commonAncestorContainer,e.collapsed||n.nodeType===F)for(n.nodeType===F&&(n=n.parentNode);a<4&&n;)(o=n.style)&&(!r.color&&(i=o.color)&&(r.color=i,a+=1),!r.backgroundColor&&(i=o.backgroundColor)&&(r.backgroundColor=i,a+=1),!r.family&&(i=o.fontFamily)&&(r.family=i,a+=1),!r.size&&(i=o.fontSize)&&(r.size=i,a+=1)),n=n.parentNode;return r},ot._addFormat=function(e,t,o){var i,r,s,d,l,c,h,u,f=this._root;if(o.collapsed){for(i=T(this.createElement(e,t),f),Ne(o,i),o.setStart(i.firstChild,i.firstChild.length),o.collapse(!0),u=i;a(u);)u=u.parentNode;st(u,i)}else{if(r=new n(o.commonAncestorContainer,4|W,function(e){return(e.nodeType===F||"BR"===e.nodeName||"IMG"===e.nodeName)&&Ee(o,e,!0)}),s=o.startContainer,l=o.startOffset,d=o.endContainer,c=o.endOffset,r.currentNode=s,r.filter(s)||(s=r.nextNode(),l=0),!s)return o;do{h=r.currentNode,!g(h,f,e,t)&&(h===d&&h.length>c&&h.splitText(c),h===s&&l&&(h=h.splitText(l),d===s&&(d=h,c-=l),s=h,l=0),i=this.createElement(e,t),N(h,i),i.appendChild(h))}while(r.nextNode());d.nodeType!==F&&(h.nodeType===F?(d=h,c=h.length):(d=h.parentNode,c=1)),o=this.createRange(s,l,d,c)}return o},ot._removeFormat=function(e,t,n,o){this._saveRangeToBookmark(n);var i,r=this._doc;n.collapsed&&(oe?(i=r.createTextNode(z),this._didAddZWS()):i=r.createTextNode(""),Ne(n,i));for(var s=n.commonAncestorContainer;a(s);)s=s.parentNode;var d=n.startContainer,l=n.startOffset,c=n.endContainer,h=n.endOffset,u=[],f=function(e,t){if(!Ee(n,e,!1)){var o,i,r=e.nodeType===F;if(!Ee(n,e,!0))return void("INPUT"===e.nodeName||r&&!e.data||u.push([t,e]));if(r)e===c&&h!==e.length&&u.push([t,e.splitText(h)]),e===d&&l&&(e.splitText(l),u.push([t,e]));else for(o=e.firstChild;o;o=i)i=o.nextSibling,f(o,t)}},g=Array.prototype.filter.call(s.getElementsByTagName(e),function(o){return Ee(n,o,!0)&&p(o,e,t)});return o||g.forEach(function(e){f(e,e)}),u.forEach(function(e){var t=e[0].cloneNode(!1),n=e[1];N(n,t),t.appendChild(n)}),g.forEach(function(e){N(e,S(e))}),this._getRangeAndRemoveBookmark(n),i&&n.collapse(!1),k(s,n),n},ot.changeFormat=function(e,t,n,o){return n||(n=this.getSelection())?(this.saveUndoState(n),t&&(n=this._removeFormat(t.tag.toUpperCase(),t.attributes||{},n,o)),e&&(n=this._addFormat(e.tag.toUpperCase(),e.attributes||{},n)),this.setSelection(n),this._updatePath(n,!0),re||this._docWasChanged(),this):this};var lt={DT:"DD",DD:"DT",LI:"LI",PRE:"PRE"},ct=function(e,t,n,o){var i=lt[t.nodeName],r=null,a=b(n,o,t.parentNode,e._root),s=e._config;return i||(i=s.blockTag,r=s.blockAttributes),p(a,i,r)||(t=y(a.ownerDocument,i,r),a.dir&&(t.dir=a.dir),N(a,t),t.appendChild(S(a)),a=t),a};ot.forEachBlock=function(e,t,n){if(!n&&!(n=this.getSelection()))return this;t&&this.saveUndoState(n);var o=this._root,i=ke(n,o),r=Ae(n,o);if(i&&r)do{if(e(i)||i===r)break}while(i=h(i,o));return t&&(this.setSelection(n),this._updatePath(n,!0),re||this._docWasChanged()),this},ot.modifyBlocks=function(e,t){if(!t&&!(t=this.getSelection()))return this;this._recordUndoState(t,this._isInUndoState);var n,o=this._root;return Re(t,o),xe(t,o,o,o),n=Se(t,o,o),Ne(t,e.call(this,n)),t.endOffset<t.endContainer.childNodes.length&&L(t.endContainer.childNodes[t.endOffset],o),L(t.startContainer.childNodes[t.startOffset],o),this._getRangeAndRemoveBookmark(t),this.setSelection(t),this._updatePath(t,!0),re||this._docWasChanged(),this};var ht=function(e){return this.createElement("BLOCKQUOTE",this._config.tagAttributes.blockquote,[e])},ut=function(e){var t=this._root,n=e.querySelectorAll("blockquote");return Array.prototype.filter.call(n,function(e){return!g(e.parentNode,t,"BLOCKQUOTE")}).forEach(function(e){N(e,S(e))}),e},ft=function(){return this.createDefaultBlock([this.createElement("INPUT",{id:"squire-selection-start",type:"hidden"}),this.createElement("INPUT",{id:dt,type:"hidden"})])},pt=function(e,t,n){for(var o,i,r,a,s=l(t,e._root),d=e._config.tagAttributes,c=d[n.toLowerCase()],h=d.li;o=s.nextNode();)"LI"===o.parentNode.nodeName&&(o=o.parentNode,s.currentNode=o.lastChild),"LI"!==o.nodeName?(a=e.createElement("LI",h),o.dir&&(a.dir=o.dir),(r=o.previousSibling)&&r.nodeName===n?(r.appendChild(a),_(o)):N(o,e.createElement(n,c,[a])),a.appendChild(S(o)),s.currentNode=a):(o=o.parentNode,(i=o.nodeName)!==n&&/^[OU]L$/.test(i)&&N(o,e.createElement(n,c,[S(o)])))},gt=function(e){return pt(this,e,"UL"),e},mt=function(e){return pt(this,e,"OL"),e},vt=function(e){var t,n,o,i,r,a=e.querySelectorAll("UL, OL"),d=e.querySelectorAll("LI"),l=this._root;for(t=0,n=a.length;t<n;t+=1)o=a[t],i=S(o),E(i,l),N(o,i);for(t=0,n=d.length;t<n;t+=1)r=d[t],s(r)?N(r,this.createDefaultBlock([S(r)])):(E(r,l),N(r,S(r)));return e},Ct=function(e,t){for(var n=e.commonAncestorContainer,o=e.startContainer,i=e.endContainer;n&&n!==t&&!/^[OU]L$/.test(n.nodeName);)n=n.parentNode;if(!n||n===t)return null;for(o===n&&(o=o.childNodes[e.startOffset]),i===n&&(i=i.childNodes[e.endOffset]);o&&o.parentNode!==n;)o=o.parentNode;for(;i&&i.parentNode!==n;)i=i.parentNode;return[n,o,i]};ot.increaseListLevel=function(e){if(!e&&!(e=this.getSelection()))return this.focus();var t=this._root,n=Ct(e,t);if(!n)return this.focus();var o=n[0],i=n[1],r=n[2];if(!i||i===o.firstChild)return this.focus();this._recordUndoState(e,this._isInUndoState);var a,s,d=o.nodeName,l=i.previousSibling;l.nodeName!==d&&(a=this._config.tagAttributes[d.toLowerCase()],l=this.createElement(d,a),o.insertBefore(l,i));do{s=i===r?null:i.nextSibling,l.appendChild(i)}while(i=s);return s=l.nextSibling,s&&L(s,t),this._getRangeAndRemoveBookmark(e),this.setSelection(e),this._updatePath(e,!0),re||this._docWasChanged(),this.focus()},ot.decreaseListLevel=function(e){if(!e&&!(e=this.getSelection()))return this.focus();var t=this._root,n=Ct(e,t);if(!n)return this.focus();var o=n[0],i=n[1],r=n[2];i||(i=o.firstChild),r||(r=o.lastChild),this._recordUndoState(e,this._isInUndoState);var a,s=o.parentNode,d=r.nextSibling?b(o,r.nextSibling,s,t):o.nextSibling;if(s!==t&&"LI"===s.nodeName){for(s=s.parentNode;d;)a=d.nextSibling,r.appendChild(d),d=a;d=o.parentNode.nextSibling}var l=!/^[OU]L$/.test(s.nodeName);do{a=i===r?null:i.nextSibling,o.removeChild(i),l&&"LI"===i.nodeName&&(i=this.createDefaultBlock([S(i)])),s.insertBefore(i,d)}while(i=a);return o.firstChild||_(o),d&&L(d,t),this._getRangeAndRemoveBookmark(e),this.setSelection(e),this._updatePath(e,!0),re||this._docWasChanged(),this.focus()},ot._ensureBottomLine=function(){var e=this._root,t=e.lastElementChild;t&&t.nodeName===this._config.blockTag&&s(t)||e.appendChild(this.createDefaultBlock())},ot.setKeyHandler=function(e,t){return this._keyHandlers[e]=t,this},ot._getHTML=function(){return this._root.innerHTML},ot._setHTML=function(e){var t=this._root,n=t;n.innerHTML=e;do{T(n,t)}while(n=h(n,t));this._ignoreChange=!0},ot.getHTML=function(e){var t,n,o,i,r,a,s=[];if(e&&(a=this.getSelection())&&this._saveRangeToBookmark(a),ne)for(t=this._root,n=t;n=h(n,t);)n.textContent||n.querySelector("BR")||(o=this.createElement("BR"),n.appendChild(o),s.push(o));if(i=this._getHTML().replace(/\u200B/g,""),ne)for(r=s.length;r--;)_(s[r]);return a&&this._getRangeAndRemoveBookmark(a),i},ot.setHTML=function(e){var t,n,o,i=this._config,r=i.isSetHTMLSanitized?i.sanitizeToDOMFragment:null,a=this._root;"function"==typeof r?n=r(e,!1,this):(t=this.createElement("DIV"),t.innerHTML=e,n=this._doc.createDocumentFragment(),n.appendChild(S(t))),je(n,i),Ye(n,a,!1),E(n,a);for(var s=n;s=h(s,a);)T(s,a);for(this._ignoreChange=!0;o=a.lastChild;)a.removeChild(o);a.appendChild(n),T(a,a),this._undoIndex=-1,this._undoStack.length=0,this._undoStackLength=0,this._isInUndoState=!1;var d=this._getRangeAndRemoveBookmark()||this.createRange(a.firstChild,0);return this.saveUndoState(d),this._lastSelection=d,D.call(this),this._updatePath(d,!0),this},ot.insertElement=function(e,t){if(t||(t=this.getSelection()),t.collapse(!0),a(e))Ne(t,e),t.setStartAfter(e);else{for(var n,o,i=this._root,r=ke(t,i)||i;r!==i&&!r.nextSibling;)r=r.parentNode;r!==i&&(n=r.parentNode,o=b(n,r.nextSibling,i,i)),o?i.insertBefore(e,o):(i.appendChild(e),o=this.createDefaultBlock(),i.appendChild(o)),t.setStart(o,0),t.setEnd(o,0),be(t)}return this.focus(),this.setSelection(t),this._updatePath(t),re||this._docWasChanged(),this},ot.insertImage=function(e,t){var n=this.createElement("IMG",O({src:e},t,!0));return this.insertElement(n),n},ot.linkRegExp=/\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))|([\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,}\b)(?:\?[^&?\s]+=[^&?\s]+(?:&[^&?\s]+=[^&?\s]+)*)?/i;var _t=function(e,t,o){var i,r,a,s,d,l,c,h=e.ownerDocument,u=new n(e,4,function(e){return!g(e,t,"A")}),f=o.linkRegExp,p=o._config.tagAttributes.a;if(f)for(;i=u.nextNode();)for(r=i.data,a=i.parentNode;s=f.exec(r);)d=s.index,l=d+s[0].length,d&&(c=h.createTextNode(r.slice(0,d)),a.insertBefore(c,i)),c=o.createElement("A",O({href:s[1]?/^(?:ht|f)tps?:/i.test(s[1])?s[1]:"http://"+s[1]:"mailto:"+s[0]},p,!1)),c.textContent=r.slice(d,l),a.insertBefore(c,i),i.data=r=r.slice(l)};ot.insertHTML=function(e,t){var n,o,i,r,a,s,d,l=this._config,c=l.isInsertedHTMLSanitized?l.sanitizeToDOMFragment:null,u=this.getSelection(),f=this._doc;"function"==typeof c?r=c(e,t,this):(t&&(n=e.indexOf("\x3c!--StartFragment--\x3e"),o=e.lastIndexOf("\x3c!--EndFragment--\x3e"),n>-1&&o>-1&&(e=e.slice(n+20,o))),/<\/td>((?!<\/tr>)[\s\S])*$/i.test(e)&&(e="<TR>"+e+"</TR>"),/<\/tr>((?!<\/table>)[\s\S])*$/i.test(e)&&(e="<TABLE>"+e+"</TABLE>"),i=this.createElement("DIV"),i.innerHTML=e,r=f.createDocumentFragment(),r.appendChild(S(i))),this.saveUndoState(u);try{for(a=this._root,s=r,d={fragment:r,preventDefault:function(){this.defaultPrevented=!0},defaultPrevented:!1},_t(r,r,this),je(r,l),Ye(r,a,!1),$e(r),r.normalize();s=h(s,r);)T(s,a);t&&this.fireEvent("willPaste",d),d.defaultPrevented||(Te(u,d.fragment,a),re||this._docWasChanged(),u.collapse(!1),this._ensureBottomLine()),this.setSelection(u),this._updatePath(u,!0),t&&this.focus()}catch(e){this.didError(e)}return this};var Nt=function(e){return e.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;").split('"').join("&quot;")};ot.insertPlainText=function(e,t){var n=this.getSelection();if(n.collapsed&&g(n.startContainer,this._root,"PRE")){var o,i,r=n.startContainer,a=n.startOffset;return r&&r.nodeType===F||(o=this._doc.createTextNode(""),r.insertBefore(o,r.childNodes[a]),r=o,a=0),i={text:e,preventDefault:function(){this.defaultPrevented=!0},defaultPrevented:!1},t&&this.fireEvent("willPaste",i),i.defaultPrevented||(e=i.text,r.insertData(a,e),n.setStart(r,a+e.length),n.collapse(!0)),this.setSelection(n),this}var s,d,l,c,h=e.split("\n"),u=this._config,f=u.blockTag,p=u.blockAttributes,m="</"+f+">",v="<"+f;for(s in p)v+=" "+s+'="'+Nt(p[s])+'"';for(v+=">",d=0,l=h.length;d<l;d+=1)c=h[d],c=Nt(c).replace(/ (?= )/g,"&nbsp;"),h[d]=v+(c||"<BR>")+m;return this.insertHTML(h.join(""),t)};var St=function(e,t,n){return function(){return this[e](t,n),this.focus()}};ot.addStyles=function(e){if(e){var t=this._doc.documentElement.firstChild,n=this.createElement("STYLE",{type:"text/css"});n.appendChild(this._doc.createTextNode(e)),t.appendChild(n)}return this},ot.bold=St("changeFormat",{tag:"B"}),ot.italic=St("changeFormat",{tag:"I"}),ot.underline=St("changeFormat",{tag:"U"}),ot.strikethrough=St("changeFormat",{tag:"S"}),ot.subscript=St("changeFormat",{tag:"SUB"},{tag:"SUP"}),ot.superscript=St("changeFormat",{tag:"SUP"},{tag:"SUB"}),ot.removeBold=St("changeFormat",null,{tag:"B"}),ot.removeItalic=St("changeFormat",null,{tag:"I"}),ot.removeUnderline=St("changeFormat",null,{tag:"U"}),ot.removeStrikethrough=St("changeFormat",null,{tag:"S"}),ot.removeSubscript=St("changeFormat",null,{tag:"SUB"}),ot.removeSuperscript=St("changeFormat",null,{tag:"SUP"}),ot.makeLink=function(e,t){var n=this.getSelection();if(n.collapsed){var o=e.indexOf(":")+1;if(o)for(;"/"===e[o];)o+=1;Ne(n,this._doc.createTextNode(e.slice(o)))}return t=O(O({href:e},t,!0),this._config.tagAttributes.a,!1),this.changeFormat({tag:"A",attributes:t},{tag:"A"},n),this.focus()},ot.removeLink=function(){return this.changeFormat(null,{tag:"A"},this.getSelection(),!0),this.focus()},ot.setFontFace=function(e){var t=this._config.classNames.fontFamily;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"font-family: "+e+", sans-serif;"}}:null,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setFontSize=function(e){var t=this._config.classNames.fontSize;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"font-size: "+("number"==typeof e?e+"px":e)}}:null,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setTextColour=function(e){var t=this._config.classNames.colour;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"color:"+e}}:null,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setHighlightColour=function(e){var t=this._config.classNames.highlight;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"background-color:"+e}}:e,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setTextAlignment=function(e){return this.forEachBlock(function(t){var n=t.className.split(/\s+/).filter(function(e){return!!e&&!/^align/.test(e)}).join(" ");e?(t.className=n+" align-"+e,t.style.textAlign=e):(t.className=n,t.style.textAlign="")},!0),this.focus()},ot.setTextDirection=function(e){return this.forEachBlock(function(t){e?t.dir=e:t.removeAttribute("dir")},!0),this.focus()};var yt=function(e){for(var t,o=this._root,i=this._doc,r=i.createDocumentFragment(),a=l(e,o);t=a.nextNode();){var s,d,c=t.querySelectorAll("BR"),h=[],u=c.length;for(s=0;s<u;s+=1)h[s]=Ve(c[s],!1);for(;u--;)d=c[u],h[u]?N(d,i.createTextNode("\n")):_(d);for(c=t.querySelectorAll("CODE"),u=c.length;u--;)_(c[u]);r.childNodes.length&&r.appendChild(i.createTextNode("\n")),r.appendChild(S(t))}for(a=new n(r,4);t=a.nextNode();)t.data=t.data.replace(/ /g," ");return r.normalize(),T(this.createElement("PRE",this._config.tagAttributes.pre,[r]),o)},Tt=function(e){for(var t,o,i,r,a,s,d=this._doc,l=this._root,c=e.querySelectorAll("PRE"),h=c.length;h--;){for(t=c[h],o=new n(t,4);i=o.nextNode();){for(r=i.data,r=r.replace(/ (?= )/g," "),a=d.createDocumentFragment();(s=r.indexOf("\n"))>-1;)a.appendChild(d.createTextNode(r.slice(0,s))),a.appendChild(d.createElement("BR")),r=r.slice(s+1);i.parentNode.insertBefore(a,i),i.data=r}E(t,l),N(t,S(t))}return e};ot.code=function(){var e=this.getSelection();return e.collapsed||d(e.commonAncestorContainer)?this.modifyBlocks(yt,e):this.changeFormat({tag:"CODE",attributes:this._config.tagAttributes.code},null,e),this.focus()},ot.removeCode=function(){var e=this.getSelection();return g(e.commonAncestorContainer,this._root,"PRE")?this.modifyBlocks(Tt,e):this.changeFormat(null,{tag:"CODE"},e),this.focus()},ot.toggleCode=function(){return this.hasFormat("PRE")||this.hasFormat("CODE")?this.removeCode():this.code(),this},ot.removeAllFormatting=function(e){if(!e&&!(e=this.getSelection())||e.collapsed)return this;for(var t=this._root,n=e.commonAncestorContainer;n&&!s(n);)n=n.parentNode;if(n||(Re(e,t),n=t),n.nodeType===F)return this;this.saveUndoState(e),xe(e,n,n,t);for(var o,i,r=n.ownerDocument,a=e.startContainer,d=e.startOffset,l=e.endContainer,c=e.endOffset,h=r.createDocumentFragment(),u=r.createDocumentFragment(),f=b(l,c,n,t),p=b(a,d,n,t);p!==f;)o=p.nextSibling,h.appendChild(p),p=o;return I(this,h,u),u.normalize(),p=u.firstChild,o=u.lastChild,i=n.childNodes,p?(n.insertBefore(u,f),d=de.call(i,p),c=de.call(i,o)+1):(d=de.call(i,f),c=d),e.setStart(n,d),e.setEnd(n,c),k(n,e),be(e),this.setSelection(e),this._updatePath(e,!0),this.focus()},ot.increaseQuoteLevel=St("modifyBlocks",ht),ot.decreaseQuoteLevel=St("modifyBlocks",ut),ot.makeUnorderedList=St("modifyBlocks",gt),ot.makeOrderedList=St("modifyBlocks",mt),ot.removeList=St("modifyBlocks",vt),R.isInline=a,R.isBlock=s,R.isContainer=d,R.getBlockWalker=l,R.getPreviousBlock=c,R.getNextBlock=h,R.areAlike=f,R.hasTagAttributes=p,R.getNearest=g,R.isOrContains=m,R.detach=_,R.replaceWith=N,R.empty=S,R.getNodeBefore=Ce,R.getNodeAfter=_e,R.insertNodeInRange=Ne,R.extractContentsOfRange=Se,R.deleteContentsOfRange=ye,R.insertTreeFragmentIntoRange=Te,R.isNodeContainedInRange=Ee,R.moveRangeBoundariesDownTree=be,R.moveRangeBoundariesUpTree=xe,R.getStartBlockOfRange=ke,R.getEndBlockOfRange=Ae,R.contentWalker=Le,R.rangeDoesStartAtBlockBoundary=Be,R.rangeDoesEndAtBlockBoundary=Oe,R.expandRangeToBlockBoundaries=Re,R.onPaste=tt,R.addLinks=_t,R.splitBlock=ct,R.startSelectionId="squire-selection-start",R.endSelectionId=dt, true?module.exports=R:"function"==typeof define&&define.amd?define(function(){return R}):(q.Squire=R,top!==q&&"true"===e.documentElement.getAttribute("data-squireinit")&&(q.editor=new R(e),q.onEditorLoad&&(q.onEditorLoad(q.editor),q.onEditorLoad=null)))}(document);
+!function(e,t){"use strict";function n(e,t,n){this.root=this.currentNode=e,this.nodeType=t,this.filter=n||ce}function o(e,t){for(var n=e.length;n--;)if(!t(e[n]))return!1;return!0}function i(e){return e.nodeType===w&&!!ue[e.nodeName]}function r(e){switch(e.nodeType){case F:return pe;case w:case H:if(ae&&ve.has(e))return ve.get(e);break;default:return fe}var t;return t=o(e.childNodes,a)?he.test(e.nodeName)?pe:ge:me,ae&&ve.set(e,t),t}function a(e){return r(e)===pe}function s(e){return r(e)===ge}function d(e){return r(e)===me}function l(e,t){var o=new n(t,W,s);return o.currentNode=e,o}function c(e,t){return e=l(e,t).previousNode(),e!==t?e:null}function h(e,t){return e=l(e,t).nextNode(),e!==t?e:null}function u(e){return!e.textContent&&!e.querySelector("IMG")}function f(e,t){return!i(e)&&e.nodeType===t.nodeType&&e.nodeName===t.nodeName&&"A"!==e.nodeName&&e.className===t.className&&(!e.style&&!t.style||e.style.cssText===t.style.cssText)}function p(e,t,n){if(e.nodeName!==t)return!1;for(var o in n)if(e.getAttribute(o)!==n[o])return!1;return!0}function g(e,t,n,o){for(;e&&e!==t;){if(p(e,n,o))return e;e=e.parentNode}return null}function m(e,t){for(;t;){if(t===e)return!0;t=t.parentNode}return!1}function v(e,t,n){var o,i,r,a,s,d="";return e&&e!==t&&(d=v(e.parentNode,t,n),e.nodeType===w&&(d+=(d?">":"")+e.nodeName,(o=e.id)&&(d+="#"+o),(i=e.className.trim())&&(r=i.split(/\s\s*/),r.sort(),d+=".",d+=r.join(".")),(a=e.dir)&&(d+="[dir="+a+"]"),r&&(s=n.classNames,de.call(r,s.highlight)>-1&&(d+="[backgroundColor="+e.style.backgroundColor.replace(/ /g,"")+"]"),de.call(r,s.colour)>-1&&(d+="[color="+e.style.color.replace(/ /g,"")+"]"),de.call(r,s.fontFamily)>-1&&(d+="[fontFamily="+e.style.fontFamily.replace(/ /g,"")+"]"),de.call(r,s.fontSize)>-1&&(d+="[fontSize="+e.style.fontSize+"]")))),d}function C(e){var t=e.nodeType;return t===w||t===H?e.childNodes.length:e.length||0}function _(e){var t=e.parentNode;return t&&t.removeChild(e),e}function N(e,t){var n=e.parentNode;n&&n.replaceChild(t,e)}function S(e){for(var t=e.ownerDocument.createDocumentFragment(),n=e.childNodes,o=n?n.length:0;o--;)t.appendChild(e.firstChild);return t}function y(e,n,o,i){var r,a,s,d=e.createElement(n);if(o instanceof Array&&(i=o,o=null),o)for(r in o)o[r]!==t&&d.setAttribute(r,o[r]);if(i)for(a=0,s=i.length;a<s;a+=1)d.appendChild(i[a]);return d}function T(e,t){var n,o,r=t.__squire__,s=e.ownerDocument,d=e;if(e===t&&((o=e.firstChild)&&"BR"!==o.nodeName||(n=r.createDefaultBlock(),o?e.replaceChild(n,o):e.appendChild(n),e=n,n=null)),e.nodeType===F)return d;if(a(e)){for(o=e.firstChild;oe&&o&&o.nodeType===F&&!o.data;)e.removeChild(o),o=e.firstChild;o||(oe?(n=s.createTextNode(z),r._didAddZWS()):n=s.createTextNode(""))}else if(ne){for(;e.nodeType!==F&&!i(e);){if(!(o=e.firstChild)){n=s.createTextNode("");break}e=o}e.nodeType===F?/^ +$/.test(e.data)&&(e.data=""):i(e)&&e.parentNode.insertBefore(s.createTextNode(""),e)}else if(!e.querySelector("BR"))for(n=y(s,"BR");(o=e.lastElementChild)&&!a(o);)e=o;if(n)try{e.appendChild(n)}catch(t){r.didError({name:"Squire: fixCursor – "+t,message:"Parent: "+e.nodeName+"/"+e.innerHTML+" appendChild: "+n.nodeName})}return d}function E(e,t){var n,o,i,r,s=e.childNodes,l=e.ownerDocument,c=null,h=t.__squire__._config;for(n=0,o=s.length;n<o;n+=1)i=s[n],r="BR"===i.nodeName,!r&&a(i)?(c||(c=y(l,h.blockTag,h.blockAttributes)),c.appendChild(i),n-=1,o-=1):(r||c)&&(c||(c=y(l,h.blockTag,h.blockAttributes)),T(c,t),r?e.replaceChild(c,i):(e.insertBefore(c,i),n+=1,o+=1),c=null),d(i)&&E(i,t);return c&&e.appendChild(T(c,t)),e}function b(e,t,n,o){var i,r,a,s=e.nodeType;if(s===F&&e!==n)return b(e.parentNode,e.splitText(t),n,o);if(s===w){if("number"==typeof t&&(t=t<e.childNodes.length?e.childNodes[t]:null),e===n)return t;for(i=e.parentNode,r=e.cloneNode(!1);t;)a=t.nextSibling,r.appendChild(t),t=a;return"OL"===e.nodeName&&g(e,o,"BLOCKQUOTE")&&(r.start=(+e.start||1)+e.childNodes.length-1),T(e,o),T(r,o),(a=e.nextSibling)?i.insertBefore(r,a):i.appendChild(r),b(i,r,n,o)}return t}function x(e,t){for(var n,o,i,r=e.childNodes,s=r.length,d=[];s--;)if(n=r[s],o=s&&r[s-1],s&&a(n)&&f(n,o)&&!ue[n.nodeName])t.startContainer===n&&(t.startContainer=o,t.startOffset+=C(o)),t.endContainer===n&&(t.endContainer=o,t.endOffset+=C(o)),t.startContainer===e&&(t.startOffset>s?t.startOffset-=1:t.startOffset===s&&(t.startContainer=o,t.startOffset=C(o))),t.endContainer===e&&(t.endOffset>s?t.endOffset-=1:t.endOffset===s&&(t.endContainer=o,t.endOffset=C(o))),_(n),n.nodeType===F?o.appendData(n.data):d.push(S(n));else if(n.nodeType===w){for(i=d.length;i--;)n.appendChild(d.pop());x(n,t)}}function k(e,t){if(e.nodeType===F&&(e=e.parentNode),e.nodeType===w){var n={startContainer:t.startContainer,startOffset:t.startOffset,endContainer:t.endContainer,endOffset:t.endOffset};x(e,n),t.setStart(n.startContainer,n.startOffset),t.setEnd(n.endContainer,n.endOffset)}}function A(e,t,n,o){for(var i,r,a,s=t;(i=s.parentNode)&&i!==o&&i.nodeType===w&&1===i.childNodes.length;)s=i;_(s),a=e.childNodes.length,r=e.lastChild,r&&"BR"===r.nodeName&&(e.removeChild(r),a-=1),e.appendChild(S(t)),n.setStart(e,a),n.collapse(!0),k(e,n),Y&&(r=e.lastChild)&&"BR"===r.nodeName&&e.removeChild(r)}function L(e,t){var n,o,i=e.previousSibling,r=e.firstChild,a=e.ownerDocument,s="LI"===e.nodeName;if(!s||r&&/^[OU]L$/.test(r.nodeName))if(i&&f(i,e)){if(!d(i)){if(!s)return;o=y(a,"DIV"),o.appendChild(S(i)),i.appendChild(o)}_(e),n=!d(e),i.appendChild(S(e)),n&&E(i,t),r&&L(r,t)}else s&&(i=y(a,"DIV"),e.insertBefore(i,r),T(i,t))}function B(e){this.isShiftDown=e.shiftKey}function O(e,t,n){var o,i;if(e||(e={}),t)for(o in t)!n&&o in e||(i=t[o],e[o]=i&&i.constructor===Object?O(e[o],i,n):i);return e}function R(e,t){e.nodeType===M&&(e=e.body);var n,o=e.ownerDocument,i=o.defaultView;this._win=i,this._doc=o,this._root=e,this._events={},this._isFocused=!1,this._lastSelection=null,ie&&this.addEventListener("beforedeactivate",this.getSelection),this._hasZWS=!1,this._lastAnchorNode=null,this._lastFocusNode=null,this._path="",this._willUpdatePath=!1,"onselectionchange"in o?this.addEventListener("selectionchange",this._updatePathOnEvent):(this.addEventListener("keyup",this._updatePathOnEvent),this.addEventListener("mouseup",this._updatePathOnEvent)),this._undoIndex=-1,this._undoStack=[],this._undoStackLength=0,this._isInUndoState=!1,this._ignoreChange=!1,this._ignoreAllChanges=!1,re?(n=new MutationObserver(this._docWasChanged.bind(this)),n.observe(e,{childList:!0,attributes:!0,characterData:!0,subtree:!0}),this._mutation=n):this.addEventListener("keyup",this._keyUpDetectChange),this._restoreSelection=!1,this.addEventListener("blur",D),this.addEventListener("mousedown",P),this.addEventListener("touchstart",P),this.addEventListener("focus",U),this._awaitingPaste=!1,this.addEventListener(V?"beforecut":"cut",Je),this.addEventListener("copy",et),this.addEventListener("keydown",B),this.addEventListener("keyup",B),this.addEventListener(V?"beforepaste":"paste",tt),this.addEventListener("drop",nt),this.addEventListener(Y?"keypress":"keydown",Pe),this._keyHandlers=Object.create(Fe),this.setConfig(t),V&&(i.Text.prototype.splitText=function(e){var t=this.ownerDocument.createTextNode(this.data.slice(e)),n=this.nextSibling,o=this.parentNode,i=this.length-e;return n?o.insertBefore(t,n):o.appendChild(t),i&&this.deleteData(e,i),t}),e.setAttribute("contenteditable","true");try{o.execCommand("enableObjectResizing",!1,"false"),o.execCommand("enableInlineTableEditing",!1,"false")}catch(e){}e.__squire__=this,this.setHTML("")}function D(){this._restoreSelection=!0}function P(){this._restoreSelection=!1}function U(){this._restoreSelection&&this.setSelection(this._lastSelection)}function I(e,t,n){var o,i;for(o=t.firstChild;o;o=i){if(i=o.nextSibling,a(o)){if(o.nodeType===F||"BR"===o.nodeName||"IMG"===o.nodeName){n.appendChild(o);continue}}else if(s(o)){n.appendChild(e.createDefaultBlock([I(e,o,e._doc.createDocumentFragment())]));continue}I(e,o,n)}return n}var w=1,F=3,M=9,H=11,W=1,z="​",q=e.defaultView,K=navigator.userAgent,G=/Android/.test(K),Z=/iP(?:ad|hone|od)/.test(K),j=/Mac OS X/.test(K),$=/Windows NT/.test(K),Q=/Gecko\//.test(K),V=/Trident\/[456]\./.test(K),Y=!!q.opera,X=/Edge\//.test(K),J=!X&&/WebKit\//.test(K),ee=/Trident\/[4567]\./.test(K),te=j?"meta-":"ctrl-",ne=V||Y,oe=V||J,ie=V,re="undefined"!=typeof MutationObserver,ae="undefined"!=typeof WeakMap,se=/[^ \t\r\n]/,de=Array.prototype.indexOf;Object.create||(Object.create=function(e){var t=function(){};return t.prototype=e,new t});var le={1:1,2:2,3:4,8:128,9:256,11:1024},ce=function(){return!0};n.prototype.nextNode=function(){for(var e,t=this.currentNode,n=this.root,o=this.nodeType,i=this.filter;;){for(e=t.firstChild;!e&&t&&t!==n;)(e=t.nextSibling)||(t=t.parentNode);if(!e)return null;if(le[e.nodeType]&o&&i(e))return this.currentNode=e,e;t=e}},n.prototype.previousNode=function(){for(var e,t=this.currentNode,n=this.root,o=this.nodeType,i=this.filter;;){if(t===n)return null;if(e=t.previousSibling)for(;t=e.lastChild;)e=t;else e=t.parentNode;if(!e)return null;if(le[e.nodeType]&o&&i(e))return this.currentNode=e,e;t=e}},n.prototype.previousPONode=function(){for(var e,t=this.currentNode,n=this.root,o=this.nodeType,i=this.filter;;){for(e=t.lastChild;!e&&t&&t!==n;)(e=t.previousSibling)||(t=t.parentNode);if(!e)return null;if(le[e.nodeType]&o&&i(e))return this.currentNode=e,e;t=e}};var he=/^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:FRAME|MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|TIME|U|VAR|WBR)$/,ue={BR:1,HR:1,IFRAME:1,IMG:1,INPUT:1},fe=0,pe=1,ge=2,me=3,ve=ae?new WeakMap:null,Ce=function(e,t){for(var n=e.childNodes;t&&e.nodeType===w;)e=n[t-1],n=e.childNodes,t=n.length;return e},_e=function(e,t){if(e.nodeType===w){var n=e.childNodes;if(t<n.length)e=n[t];else{for(;e&&!e.nextSibling;)e=e.parentNode;e&&(e=e.nextSibling)}}return e},Ne=function(e,t){var n,o,i,r,a=e.startContainer,s=e.startOffset,d=e.endContainer,l=e.endOffset;a.nodeType===F?(n=a.parentNode,o=n.childNodes,s===a.length?(s=de.call(o,a)+1,e.collapsed&&(d=n,l=s)):(s&&(r=a.splitText(s),d===a?(l-=s,d=r):d===n&&(l+=1),a=r),s=de.call(o,a)),a=n):o=a.childNodes,i=o.length,s===i?a.appendChild(t):a.insertBefore(t,o[s]),a===d&&(l+=o.length-i),e.setStart(a,s),e.setEnd(d,l)},Se=function(e,t,n){var o=e.startContainer,i=e.startOffset,r=e.endContainer,a=e.endOffset;t||(t=e.commonAncestorContainer),t.nodeType===F&&(t=t.parentNode);for(var s,d,l,c,h,u=b(r,a,t,n),f=b(o,i,t,n),p=t.ownerDocument.createDocumentFragment();f!==u;)s=f.nextSibling,p.appendChild(f),f=s;return o=t,i=u?de.call(t.childNodes,u):t.childNodes.length,l=t.childNodes[i],d=l&&l.previousSibling,d&&d.nodeType===F&&l.nodeType===F&&(o=d,i=d.length,c=d.data,h=l.data," "===c.charAt(c.length-1)&&" "===h.charAt(0)&&(h=" "+h.slice(1)),d.appendData(h),_(l)),e.setStart(o,i),e.collapse(!0),T(t,n),p},ye=function(e,t){var n,o,i=ke(e,t),r=Ae(e,t),a=i!==r;return be(e),xe(e,i,r,t),n=Se(e,null,t),be(e),a&&(r=Ae(e,t),i&&r&&i!==r&&A(i,r,e,t)),i&&T(i,t),o=t.firstChild,o&&"BR"!==o.nodeName?e.collapse(!0):(T(t,t),e.selectNodeContents(t.firstChild)),n},Te=function(e,t,n){var o,i,r,s,l,u,f,p,m,v;for(E(t,n),o=t;o=h(o,n);)T(o,n);if(e.collapsed||ye(e,n),be(e),e.collapse(!1),s=g(e.endContainer,n,"BLOCKQUOTE")||n,i=ke(e,n),f=h(t,t),i&&f&&!g(f,t,"PRE")&&!g(f,t,"TABLE")){if(xe(e,i,i,n),e.collapse(!0),l=e.endContainer,u=e.endOffset,Ye(i,n,!1),a(l)&&(p=b(l,u,c(l,n),n),l=p.parentNode,u=de.call(l.childNodes,p)),u!==C(l))for(r=n.ownerDocument.createDocumentFragment();o=l.childNodes[u];)r.appendChild(o);A(l,f,e,n),u=de.call(l.parentNode.childNodes,l)+1,l=l.parentNode,e.setEnd(l,u)}C(t)&&(xe(e,s,s,n),p=b(e.endContainer,e.endOffset,s,n),m=p?p.previousSibling:s.lastChild,s.insertBefore(t,p),p?e.setEndBefore(p):e.setEnd(s,C(s)),i=Ae(e,n),be(e),l=e.endContainer,u=e.endOffset,p&&d(p)&&L(p,n),p=m&&m.nextSibling,p&&d(p)&&L(p,n),e.setEnd(l,u)),r&&(v=e.cloneRange(),A(i,r,v,n),e.setEnd(v.endContainer,v.endOffset)),be(e)},Ee=function(e,t,n){var o=t.ownerDocument.createRange();if(o.selectNode(t),n){var i=e.compareBoundaryPoints(3,o)>-1,r=e.compareBoundaryPoints(1,o)<1;return!i&&!r}var a=e.compareBoundaryPoints(0,o)<1,s=e.compareBoundaryPoints(2,o)>-1;return a&&s},be=function(e){for(var t,n=e.startContainer,o=e.startOffset,r=e.endContainer,a=e.endOffset,s=!0;n.nodeType!==F&&(t=n.childNodes[o])&&!i(t);)n=t,o=0;if(a)for(;r.nodeType!==F;){if(!(t=r.childNodes[a-1])||i(t)){if(s&&t&&"BR"===t.nodeName){a-=1,s=!1;continue}break}r=t,a=C(r)}else for(;r.nodeType!==F&&(t=r.firstChild)&&!i(t);)r=t;e.collapsed?(e.setStart(r,a),e.setEnd(n,o)):(e.setStart(n,o),e.setEnd(r,a))},xe=function(e,t,n,o){var i,r=e.startContainer,a=e.startOffset,s=e.endContainer,d=e.endOffset,l=!0;for(t||(t=e.commonAncestorContainer),n||(n=t);!a&&r!==t&&r!==o;)i=r.parentNode,a=de.call(i.childNodes,r),r=i;for(;;){if(l&&s.nodeType!==F&&s.childNodes[d]&&"BR"===s.childNodes[d].nodeName&&(d+=1,l=!1),s===n||s===o||d!==C(s))break;i=s.parentNode,d=de.call(i.childNodes,s)+1,s=i}e.setStart(r,a),e.setEnd(s,d)},ke=function(e,t){var n,o=e.startContainer;return a(o)?n=c(o,t):o!==t&&s(o)?n=o:(n=Ce(o,e.startOffset),n=h(n,t)),n&&Ee(e,n,!0)?n:null},Ae=function(e,t){var n,o,i=e.endContainer;if(a(i))n=c(i,t);else if(i!==t&&s(i))n=i;else{if(!(n=_e(i,e.endOffset))||!m(t,n))for(n=t;o=n.lastChild;)n=o;n=c(n,t)}return n&&Ee(e,n,!0)?n:null},Le=new n(null,4|W,function(e){return e.nodeType===F?se.test(e.data):"IMG"===e.nodeName}),Be=function(e,t){var n,o=e.startContainer,i=e.startOffset;if(Le.root=null,o.nodeType===F){if(i)return!1;n=o}else if(n=_e(o,i),n&&!m(t,n)&&(n=null),!n&&(n=Ce(o,i),n.nodeType===F&&n.length))return!1;return Le.currentNode=n,Le.root=ke(e,t),!Le.previousNode()},Oe=function(e,t){var n,o=e.endContainer,i=e.endOffset;if(Le.root=null,o.nodeType===F){if((n=o.data.length)&&i<n)return!1;Le.currentNode=o}else Le.currentNode=Ce(o,i);return Le.root=Ae(e,t),!Le.nextNode()},Re=function(e,t){var n,o=ke(e,t),i=Ae(e,t);o&&i&&(n=o.parentNode,e.setStart(n,de.call(n.childNodes,o)),n=i.parentNode,e.setEnd(n,de.call(n.childNodes,i)+1))},De={8:"backspace",9:"tab",13:"enter",32:"space",33:"pageup",34:"pagedown",37:"left",39:"right",46:"delete",219:"[",221:"]"},Pe=function(e){var t=e.keyCode,n=De[t],o="",i=this.getSelection();e.defaultPrevented||(n||(n=String.fromCharCode(t).toLowerCase(),/^[A-Za-z0-9]$/.test(n)||(n="")),Y&&46===e.which&&(n="."),111<t&&t<124&&(n="f"+(t-111)),"backspace"!==n&&"delete"!==n&&(e.altKey&&(o+="alt-"),e.ctrlKey&&(o+="ctrl-"),e.metaKey&&(o+="meta-")),e.shiftKey&&(o+="shift-"),n=o+n,this._keyHandlers[n]?this._keyHandlers[n](this,e,i):i.collapsed||e.isComposing||e.ctrlKey||e.metaKey||1!==(ee?n:e.key||n).length||(this.saveUndoState(i),ye(i,this._root),this._ensureBottomLine(),this.setSelection(i),this._updatePath(i,!0)))},Ue=function(e){return function(t,n){n.preventDefault(),t[e]()}},Ie=function(e,t){return t=t||null,function(n,o){o.preventDefault();var i=n.getSelection();n.hasFormat(e,null,i)?n.changeFormat(null,{tag:e},i):n.changeFormat({tag:e},t,i)}},we=function(e,t){try{t||(t=e.getSelection());var n,o=t.startContainer;for(o.nodeType===F&&(o=o.parentNode),n=o;a(n)&&(!n.textContent||n.textContent===z);)o=n,n=o.parentNode;o!==n&&(t.setStart(n,de.call(n.childNodes,o)),t.collapse(!0),n.removeChild(o),s(n)||(n=c(n,e._root)),T(n,e._root),be(t)),o===e._root&&(o=o.firstChild)&&"BR"===o.nodeName&&_(o),e._ensureBottomLine(),e.setSelection(t),e._updatePath(t,!0)}catch(t){e.didError(t)}},Fe={enter:function(e,t,n){var o,i,r,a,s,d=e._root;if(t.preventDefault(),e._recordUndoState(n),_t(n.startContainer,d,e),e._removeZWS(),e._getRangeAndRemoveBookmark(n),n.collapsed||ye(n,d),(o=ke(n,d))&&(i=g(o,d,"PRE")))return be(n),r=n.startContainer,a=n.startOffset,r.nodeType!==F&&(r=e._doc.createTextNode(""),i.insertBefore(r,i.firstChild)),t.shiftKey||"\n"!==r.data.charAt(a-1)&&!Be(n,d)||"\n"!==r.data.charAt(a)&&!Oe(n,d)?(r.insertData(a,"\n"),T(i,d),r.length===a+1?n.setStartAfter(r):n.setStart(r,a+1)):(r.deleteData(a&&a-1,a?2:1),s=b(r,a&&a-1,d,d),r=s.previousSibling,r.textContent||_(r),r=e.createDefaultBlock(),s.parentNode.insertBefore(r,s),s.textContent||_(s),n.setStart(r,0)),n.collapse(!0),e.setSelection(n),e._updatePath(n,!0),void e._docWasChanged();if(!o||t.shiftKey||/^T[HD]$/.test(o.nodeName))return i=g(n.endContainer,d,"A"),i&&(i=i.parentNode,xe(n,i,i,d),n.collapse(!1)),Ne(n,e.createElement("BR")),n.collapse(!1),e.setSelection(n),void e._updatePath(n,!0);if((i=g(o,d,"LI"))&&(o=i),u(o)){if(g(o,d,"UL")||g(o,d,"OL"))return e.decreaseListLevel(n);if(g(o,d,"BLOCKQUOTE"))return e.modifyBlocks(ft,n)}for(s=ct(e,o,n.startContainer,n.startOffset),st(o),$e(o),T(o,d);s.nodeType===w;){var l,c=s.firstChild;if("A"===s.nodeName&&(!s.textContent||s.textContent===z)){c=e._doc.createTextNode(""),N(s,c),s=c;break}for(;c&&c.nodeType===F&&!c.data&&(l=c.nextSibling)&&"BR"!==l.nodeName;)_(c),c=l;if(!c||"BR"===c.nodeName||c.nodeType===F&&!Y)break;s=c}n=e.createRange(s,0),e.setSelection(n),e._updatePath(n,!0)},"shift-enter":function(e,t,n){return e._keyHandlers.enter(e,t,n)},backspace:function(e,t,n){var o=e._root;if(e._removeZWS(),e.saveUndoState(n),n.collapsed)if(Be(n,o)){t.preventDefault();var i,r=ke(n,o);if(!r)return;if(E(r.parentNode,o),i=c(r,o)){if(!i.isContentEditable)return void _(i);for(A(i,r,n,o),r=i.parentNode;r!==o&&!r.nextSibling;)r=r.parentNode;r!==o&&(r=r.nextSibling)&&L(r,o),e.setSelection(n)}else if(r){if(g(r,o,"UL")||g(r,o,"OL"))return e.decreaseListLevel(n);if(g(r,o,"BLOCKQUOTE"))return e.modifyBlocks(ut,n);e.setSelection(n),e._updatePath(n,!0)}}else e.setSelection(n),setTimeout(function(){we(e)},0);else t.preventDefault(),ye(n,o),we(e,n)},delete:function(e,t,n){var o,i,r,a,s,d,l=e._root;if(e._removeZWS(),e.saveUndoState(n),n.collapsed)if(Oe(n,l)){if(t.preventDefault(),!(o=ke(n,l)))return;if(E(o.parentNode,l),i=h(o,l)){if(!i.isContentEditable)return void _(i);for(A(o,i,n,l),i=o.parentNode;i!==l&&!i.nextSibling;)i=i.parentNode;i!==l&&(i=i.nextSibling)&&L(i,l),e.setSelection(n),e._updatePath(n,!0)}}else{if(r=n.cloneRange(),xe(n,l,l,l),a=n.endContainer,s=n.endOffset,a.nodeType===w&&(d=a.childNodes[s])&&"IMG"===d.nodeName)return t.preventDefault(),_(d),be(n),void we(e,n);e.setSelection(r),setTimeout(function(){we(e)},0)}else t.preventDefault(),ye(n,l),we(e,n)},tab:function(e,t,n){var o,i,r=e._root;if(e._removeZWS(),n.collapsed&&Be(n,r))for(o=ke(n,r);i=o.parentNode;){if("UL"===i.nodeName||"OL"===i.nodeName){t.preventDefault(),e.increaseListLevel(n);break}o=i}},"shift-tab":function(e,t,n){var o,i=e._root;e._removeZWS(),n.collapsed&&Be(n,i)&&(o=n.startContainer,(g(o,i,"UL")||g(o,i,"OL"))&&(t.preventDefault(),e.decreaseListLevel(n)))},space:function(e,t,n){var o,i=e._root;if(e._recordUndoState(n),_t(n.startContainer,i,e),e._getRangeAndRemoveBookmark(n),o=n.endContainer,n.collapsed&&n.endOffset===C(o))do{if("A"===o.nodeName){n.setStartAfter(o);break}}while(!o.nextSibling&&(o=o.parentNode)&&o!==i);n.collapsed||(ye(n,i),e._ensureBottomLine(),e.setSelection(n),e._updatePath(n,!0)),e.setSelection(n)},left:function(e){e._removeZWS()},right:function(e){e._removeZWS()}};j&&Q&&(Fe["meta-left"]=function(e,t){t.preventDefault();var n=at(e);n&&n.modify&&n.modify("move","backward","lineboundary")},Fe["meta-right"]=function(e,t){t.preventDefault();var n=at(e);n&&n.modify&&n.modify("move","forward","lineboundary")}),j||(Fe.pageup=function(e){e.moveCursorToStart()},Fe.pagedown=function(e){e.moveCursorToEnd()}),Fe[te+"b"]=Ie("B"),Fe[te+"i"]=Ie("I"),Fe[te+"u"]=Ie("U"),Fe[te+"shift-7"]=Ie("S"),Fe[te+"shift-5"]=Ie("SUB",{tag:"SUP"}),Fe[te+"shift-6"]=Ie("SUP",{tag:"SUB"}),Fe[te+"shift-8"]=Ue("makeUnorderedList"),Fe[te+"shift-9"]=Ue("makeOrderedList"),Fe[te+"["]=Ue("decreaseQuoteLevel"),Fe[te+"]"]=Ue("increaseQuoteLevel"),Fe[te+"d"]=Ue("toggleCode"),Fe[te+"y"]=Ue("redo"),Fe[te+"z"]=Ue("undo"),Fe[te+"shift-z"]=Ue("redo");var Me={1:10,2:13,3:16,4:18,5:24,6:32,7:48},He={backgroundColor:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.highlight,style:"background-color:"+n})}},color:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.colour,style:"color:"+n})}},fontWeight:{regexp:/^bold|^700/i,replace:function(e){return y(e,"B")}},fontStyle:{regexp:/^italic/i,replace:function(e){return y(e,"I")}},fontFamily:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.fontFamily,style:"font-family:"+n})}},fontSize:{regexp:se,replace:function(e,t,n){return y(e,"SPAN",{class:t.fontSize,style:"font-size:"+n})}},textDecoration:{regexp:/^underline/i,replace:function(e){return y(e,"U")}}},We=function(e){return function(t,n){var o=y(t.ownerDocument,e);return n.replaceChild(o,t),o.appendChild(S(t)),o}},ze=function(e,t,n){var o,i,r,a,s,d,l=e.style,c=e.ownerDocument;for(o in He)i=He[o],(r=l[o])&&i.regexp.test(r)&&(d=i.replace(c,n.classNames,r),s||(s=d),a&&a.appendChild(d),a=d,e.style[o]="");return s&&(a.appendChild(S(e)),"SPAN"===e.nodeName?t.replaceChild(s,e):e.appendChild(s)),a||e},qe={P:ze,SPAN:ze,STRONG:We("B"),EM:We("I"),INS:We("U"),STRIKE:We("S"),FONT:function(e,t,n){var o,i,r,a,s,d=e.face,l=e.size,c=e.color,h=e.ownerDocument,u=n.classNames;return d&&(o=y(h,"SPAN",{class:u.fontFamily,style:"font-family:"+d}),s=o,a=o),l&&(i=y(h,"SPAN",{class:u.fontSize,style:"font-size:"+Me[l]+"px"}),s||(s=i),a&&a.appendChild(i),a=i),c&&/^#?([\dA-F]{3}){1,2}$/i.test(c)&&("#"!==c.charAt(0)&&(c="#"+c),r=y(h,"SPAN",{class:u.colour,style:"color:"+c}),s||(s=r),a&&a.appendChild(r),a=r),s||(s=a=y(h,"SPAN")),t.replaceChild(s,e),a.appendChild(S(e)),a},TT:function(e,t,n){var o=y(e.ownerDocument,"SPAN",{class:n.classNames.fontFamily,style:'font-family:menlo,consolas,"courier new",monospace'});return t.replaceChild(o,e),o.appendChild(S(e)),o}},Ke=/^(?:A(?:DDRESS|RTICLE|SIDE|UDIO)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|IGCAPTION|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|COL(?:GROUP)?|UL)$/,Ge=/^(?:HEAD|META|STYLE)/,Ze=new n(null,4|W),je=function e(t,n,o){var i,r,s,d,l,c,h,u,f,p,g,m,v=t.childNodes;for(i=t;a(i);)i=i.parentNode;for(Ze.root=i,r=0,s=v.length;r<s;r+=1)if(d=v[r],l=d.nodeName,c=d.nodeType,h=qe[l],c===w){if(u=d.childNodes.length,h)d=h(d,t,n);else{if(Ge.test(l)){t.removeChild(d),r-=1,s-=1;continue}if(!Ke.test(l)&&!a(d)){r-=1,s+=u-1,t.replaceChild(S(d),d);continue}}u&&e(d,n,o||"PRE"===l)}else{if(c===F){if(g=d.data,f=!se.test(g.charAt(0)),p=!se.test(g.charAt(g.length-1)),o||!f&&!p)continue;if(f){for(Ze.currentNode=d;(m=Ze.previousPONode())&&!("IMG"===(l=m.nodeName)||"#text"===l&&se.test(m.data));)if(!a(m)){m=null;break}g=g.replace(/^[ \t\r\n]+/g,m?" ":"")}if(p){for(Ze.currentNode=d;(m=Ze.nextNode())&&!("IMG"===l||"#text"===l&&se.test(m.data));)if(!a(m)){m=null;break}g=g.replace(/[ \t\r\n]+$/g,m?" ":"")}if(g){d.data=g;continue}}t.removeChild(d),r-=1,s-=1}return t},$e=function e(t){for(var n,o=t.childNodes,r=o.length;r--;)n=o[r],n.nodeType!==w||i(n)?n.nodeType!==F||n.data||t.removeChild(n):(e(n),a(n)&&!n.firstChild&&t.removeChild(n))},Qe=function(e){return e.nodeType===w?"BR"===e.nodeName:se.test(e.data)},Ve=function(e,t){for(var o,i=e.parentNode;a(i);)i=i.parentNode;return o=new n(i,4|W,Qe),o.currentNode=e,!!o.nextNode()||t&&!o.previousNode()},Ye=function(e,t,n){var o,i,r,s=e.querySelectorAll("BR"),d=[],l=s.length;for(o=0;o<l;o+=1)d[o]=Ve(s[o],n);for(;l--;)i=s[l],(r=i.parentNode)&&(d[l]?a(r)||E(r,t):_(i))},Xe=function(e,t,n,o){var i,r,a=t.ownerDocument.body,s=o.willCutCopy;Ye(t,n,!0),t.setAttribute("style","position:fixed;overflow:hidden;bottom:100%;right:100%;"),a.appendChild(t),i=t.innerHTML,r=t.innerText||t.textContent,s&&(i=s(i)),$&&(r=r.replace(/\r?\n/g,"\r\n")),e.setData("text/html",i),e.setData("text/plain",r),a.removeChild(t)},Je=function(e){var t,n,o,i,r,a,s,d=e.clipboardData,l=this.getSelection(),c=this._root,h=this;if(l.collapsed)return void e.preventDefault();if(this.saveUndoState(l),X||Z||!d)setTimeout(function(){try{h._ensureBottomLine()}catch(e){h.didError(e)}},0);else{for(t=ke(l,c),n=Ae(l,c),o=t===n&&t||c,i=ye(l,c),r=l.commonAncestorContainer,r.nodeType===F&&(r=r.parentNode);r&&r!==o;)a=r.cloneNode(!1),a.appendChild(i),i=a,r=r.parentNode;s=this.createElement("div"),s.appendChild(i),Xe(d,s,c,this._config),e.preventDefault()}this.setSelection(l)},et=function(e){var t,n,o,i,r,a,s,d=e.clipboardData,l=this.getSelection(),c=this._root;if(!X&&!Z&&d){for(t=ke(l,c),n=Ae(l,c),o=t===n&&t||c,l=l.cloneRange(),be(l),xe(l,o,o,c),i=l.cloneContents(),r=l.commonAncestorContainer,r.nodeType===F&&(r=r.parentNode);r&&r!==o;)a=r.cloneNode(!1),a.appendChild(i),i=a,r=r.parentNode;s=this.createElement("div"),s.appendChild(i),Xe(d,s,c,this._config),e.preventDefault()}},tt=function(e){var t,n,o,i,r,a=e.clipboardData,s=a&&a.items,d=this.isShiftDown,l=!1,c=!1,h=null,u=this;if(X&&s){for(t=s.length;t--;)!d&&/^image\/.*/.test(s[t].type)&&(c=!0);c||(s=null)}if(s){for(e.preventDefault(),t=s.length;t--;){if(n=s[t],o=n.type,!d&&"text/html"===o)return void n.getAsString(function(e){u.insertHTML(e,!0)});"text/plain"===o&&(h=n),!d&&/^image\/.*/.test(o)&&(c=!0)}return void(c?(this.fireEvent("dragover",{dataTransfer:a,preventDefault:function(){l=!0}}),l&&this.fireEvent("drop",{dataTransfer:a})):h&&h.getAsString(function(e){u.insertPlainText(e,!0)}))}if(i=a&&a.types,!X&&i&&(de.call(i,"text/html")>-1||!Q&&de.call(i,"text/plain")>-1&&de.call(i,"text/rtf")<0))return e.preventDefault(),void(!d&&(r=a.getData("text/html"))?this.insertHTML(r,!0):((r=a.getData("text/plain"))||(r=a.getData("text/uri-list")))&&this.insertPlainText(r,!0));this._awaitingPaste=!0;var f=this._doc.body,p=this.getSelection(),g=p.startContainer,m=p.startOffset,v=p.endContainer,C=p.endOffset,N=this.createElement("DIV",{contenteditable:"true",style:"position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;"});f.appendChild(N),p.selectNodeContents(N),this.setSelection(p),setTimeout(function(){try{u._awaitingPaste=!1;for(var e,t,n="",o=N;N=o;)o=N.nextSibling,_(N),e=N.firstChild,e&&e===N.lastChild&&"DIV"===e.nodeName&&(N=e),n+=N.innerHTML;t=u.createRange(g,m,v,C),u.setSelection(t),n&&u.insertHTML(n,!0)}catch(e){u.didError(e)}},0)},nt=function(e){for(var t=e.dataTransfer.types,n=t.length,o=!1,i=!1;n--;)switch(t[n]){case"text/plain":o=!0;break;case"text/html":i=!0;break;default:return}(i||o)&&this.saveUndoState()},ot=R.prototype,it=function(e,t,n){var o=n._doc,i=e?DOMPurify.sanitize(e,{ALLOW_UNKNOWN_PROTOCOLS:!0,WHOLE_DOCUMENT:!1,RETURN_DOM:!0,RETURN_DOM_FRAGMENT:!0}):null;return i?o.importNode(i,!0):o.createDocumentFragment()};ot.setConfig=function(e){return e=O({blockTag:"DIV",blockAttributes:null,tagAttributes:{blockquote:null,ul:null,ol:null,li:null,a:null},classNames:{colour:"colour",fontFamily:"font",fontSize:"size",highlight:"highlight"},leafNodeNames:ue,undo:{documentSizeThreshold:-1,undoLimit:-1},isInsertedHTMLSanitized:!0,isSetHTMLSanitized:!0,sanitizeToDOMFragment:"undefined"!=typeof DOMPurify&&DOMPurify.isSupported?it:null,willCutCopy:null},e,!0),e.blockTag=e.blockTag.toUpperCase(),this._config=e,this},ot.createElement=function(e,t,n){return y(this._doc,e,t,n)},ot.createDefaultBlock=function(e){var t=this._config;return T(this.createElement(t.blockTag,t.blockAttributes,e),this._root)},ot.didError=function(e){console.log(e)},ot.getDocument=function(){return this._doc},ot.getRoot=function(){return this._root},ot.modifyDocument=function(e){var t=this._mutation;t&&(t.takeRecords().length&&this._docWasChanged(),t.disconnect()),this._ignoreAllChanges=!0,e(),this._ignoreAllChanges=!1,t&&(t.observe(this._root,{childList:!0,attributes:!0,characterData:!0,subtree:!0}),this._ignoreChange=!1)};var rt={pathChange:1,select:1,input:1,undoStateChange:1};ot.fireEvent=function(e,t){var n,o,i,r=this._events[e];if(/^(?:focus|blur)/.test(e))if(n=this._root===this._doc.activeElement,"focus"===e){if(!n||this._isFocused)return this;this._isFocused=!0}else{if(n||!this._isFocused)return this;this._isFocused=!1}if(r)for(t||(t={}),t.type!==e&&(t.type=e),r=r.slice(),o=r.length;o--;){i=r[o];try{i.handleEvent?i.handleEvent(t):i.call(this,t)}catch(t){t.details="Squire: fireEvent error. Event type: "+e,this.didError(t)}}return this},ot.destroy=function(){var e,t=this._events;for(e in t)this.removeEventListener(e);this._mutation&&this._mutation.disconnect(),delete this._root.__squire__,this._undoIndex=-1,this._undoStack=[],this._undoStackLength=0},ot.handleEvent=function(e){this.fireEvent(e.type,e)},ot.addEventListener=function(e,t){var n=this._events[e],o=this._root;return t?(n||(n=this._events[e]=[],rt[e]||("selectionchange"===e&&(o=this._doc),o.addEventListener(e,this,!0))),n.push(t),this):(this.didError({name:"Squire: addEventListener with null or undefined fn",message:"Event type: "+e}),this)},ot.removeEventListener=function(e,t){var n,o=this._events[e],i=this._root;if(o){if(t)for(n=o.length;n--;)o[n]===t&&o.splice(n,1);else o.length=0;o.length||(delete this._events[e],rt[e]||("selectionchange"===e&&(i=this._doc),i.removeEventListener(e,this,!0)))}return this},ot.createRange=function(e,t,n,o){if(e instanceof this._win.Range)return e.cloneRange();var i=this._doc.createRange();return i.setStart(e,t),n?i.setEnd(n,o):i.setEnd(e,t),i},ot.getCursorPosition=function(e){if(!e&&!(e=this.getSelection())||!e.getBoundingClientRect)return null;var t,n,o=e.getBoundingClientRect();return o&&!o.top&&(this._ignoreChange=!0,t=this._doc.createElement("SPAN"),t.textContent=z,Ne(e,t),o=t.getBoundingClientRect(),n=t.parentNode,n.removeChild(t),k(n,e)),o},ot._moveCursorTo=function(e){var t=this._root,n=this.createRange(t,e?0:t.childNodes.length);return be(n),this.setSelection(n),this},ot.moveCursorToStart=function(){return this._moveCursorTo(!0)},ot.moveCursorToEnd=function(){return this._moveCursorTo(!1)};var at=function(e){return e._win.getSelection()||null};ot.setSelection=function(e){if(e)if(this._lastSelection=e,this._isFocused)if(G&&!this._restoreSelection)D.call(this),this.blur(),this.focus();else{Z&&this._win.focus();var t=at(this);t&&(t.removeAllRanges(),t.addRange(e))}else D.call(this);return this},ot.getSelection=function(){var e,t,n,o,r=at(this),a=this._root;return this._isFocused&&r&&r.rangeCount&&(e=r.getRangeAt(0).cloneRange(),t=e.startContainer,n=e.endContainer,t&&i(t)&&e.setStartBefore(t),n&&i(n)&&e.setEndBefore(n)),e&&m(a,e.commonAncestorContainer)?this._lastSelection=e:(e=this._lastSelection,o=e.commonAncestorContainer,m(o.ownerDocument,o)||(e=null)),e||(e=this.createRange(a.firstChild,0)),e},ot.getSelectedText=function(){var e=this.getSelection();if(!e||e.collapsed)return"";var t,o=new n(e.commonAncestorContainer,4|W,function(t){return Ee(e,t,!0)}),i=e.startContainer,r=e.endContainer,s=o.currentNode=i,d="",l=!1;for(o.filter(s)||(s=o.nextNode());s;)s.nodeType===F?(t=s.data)&&/\S/.test(t)&&(s===r&&(t=t.slice(0,e.endOffset)),s===i&&(t=t.slice(e.startOffset)),d+=t,l=!0):("BR"===s.nodeName||l&&!a(s))&&(d+="\n",l=!1),s=o.nextNode();return d},ot.getPath=function(){return this._path};var st=function(e,t){for(var o,i,r,s=new n(e,4);i=s.nextNode();)for(;(r=i.data.indexOf(z))>-1&&(!t||i.parentNode!==t);){if(1===i.length){do{o=i.parentNode,o.removeChild(i),i=o,s.currentNode=o}while(a(i)&&!C(i));break}i.deleteData(r,1)}};ot._didAddZWS=function(){this._hasZWS=!0},ot._removeZWS=function(){this._hasZWS&&(st(this._root),this._hasZWS=!1)},ot._updatePath=function(e,t){if(e){var n,o=e.startContainer,i=e.endContainer;(t||o!==this._lastAnchorNode||i!==this._lastFocusNode)&&(this._lastAnchorNode=o,this._lastFocusNode=i,n=o&&i?o===i?v(i,this._root,this._config):"(selection)":"",this._path!==n&&(this._path=n,this.fireEvent("pathChange",{path:n}))),this.fireEvent(e.collapsed?"cursor":"select",{range:e})}},ot._updatePathOnEvent=function(e){var t=this;t._isFocused&&!t._willUpdatePath&&(t._willUpdatePath=!0,setTimeout(function(){t._willUpdatePath=!1,t._updatePath(t.getSelection())},0))},ot.focus=function(){return this._root.focus(),ee&&this.fireEvent("focus"),this},ot.blur=function(){return this._root.blur(),ee&&this.fireEvent("blur"),this};var dt="squire-selection-end";ot._saveRangeToBookmark=function(e){var t,n=this.createElement("INPUT",{
+id:"squire-selection-start",type:"hidden"}),o=this.createElement("INPUT",{id:dt,type:"hidden"});Ne(e,n),e.collapse(!1),Ne(e,o),2&n.compareDocumentPosition(o)&&(n.id=dt,o.id="squire-selection-start",t=n,n=o,o=t),e.setStartAfter(n),e.setEndBefore(o)},ot._getRangeAndRemoveBookmark=function(e){var t=this._root,n=t.querySelector("#squire-selection-start"),o=t.querySelector("#"+dt);if(n&&o){var i=n.parentNode,r=o.parentNode,a=de.call(i.childNodes,n),s=de.call(r.childNodes,o);i===r&&(s-=1),_(n),_(o),e||(e=this._doc.createRange()),e.setStart(i,a),e.setEnd(r,s),k(i,e),i!==r&&k(r,e),e.collapsed&&(i=e.startContainer,i.nodeType===F&&(r=i.childNodes[e.startOffset],r&&r.nodeType===F||(r=i.childNodes[e.startOffset-1]),r&&r.nodeType===F&&(e.setStart(r,0),e.collapse(!0))))}return e||null},ot._keyUpDetectChange=function(e){var t=e.keyCode;e.ctrlKey||e.metaKey||e.altKey||!(t<16||t>20)||!(t<33||t>45)||this._docWasChanged()},ot._docWasChanged=function(){if(ae&&(ve=new WeakMap),!this._ignoreAllChanges){if(re&&this._ignoreChange)return void(this._ignoreChange=!1);this._isInUndoState&&(this._isInUndoState=!1,this.fireEvent("undoStateChange",{canUndo:!0,canRedo:!1})),this.fireEvent("input")}},ot._recordUndoState=function(e,t){if(!this._isInUndoState||t){var n,o=this._undoIndex,i=this._undoStack,r=this._config.undo,a=r.documentSizeThreshold,s=r.undoLimit;t||(o+=1),o<this._undoStackLength&&(i.length=this._undoStackLength=o),e&&this._saveRangeToBookmark(e),n=this._getHTML(),a>-1&&2*n.length>a&&s>-1&&o>s&&(i.splice(0,o-s),o=s,this._undoStackLength=s),i[o]=n,this._undoIndex=o,this._undoStackLength+=1,this._isInUndoState=!0}},ot.saveUndoState=function(e){return e===t&&(e=this.getSelection()),this._recordUndoState(e,this._isInUndoState),this._getRangeAndRemoveBookmark(e),this},ot.undo=function(){if(0!==this._undoIndex||!this._isInUndoState){this._recordUndoState(this.getSelection(),!1),this._undoIndex-=1,this._setHTML(this._undoStack[this._undoIndex]);var e=this._getRangeAndRemoveBookmark();e&&this.setSelection(e),this._isInUndoState=!0,this.fireEvent("undoStateChange",{canUndo:0!==this._undoIndex,canRedo:!0}),this.fireEvent("input")}return this},ot.redo=function(){var e=this._undoIndex,t=this._undoStackLength;if(e+1<t&&this._isInUndoState){this._undoIndex+=1,this._setHTML(this._undoStack[this._undoIndex]);var n=this._getRangeAndRemoveBookmark();n&&this.setSelection(n),this.fireEvent("undoStateChange",{canUndo:!0,canRedo:e+2<t}),this.fireEvent("input")}return this},ot.hasFormat=function(e,t,o){if(e=e.toUpperCase(),t||(t={}),!o&&!(o=this.getSelection()))return!1;!o.collapsed&&o.startContainer.nodeType===F&&o.startOffset===o.startContainer.length&&o.startContainer.nextSibling&&o.setStartBefore(o.startContainer.nextSibling),!o.collapsed&&o.endContainer.nodeType===F&&0===o.endOffset&&o.endContainer.previousSibling&&o.setEndAfter(o.endContainer.previousSibling);var i,r,a=this._root,s=o.commonAncestorContainer;if(g(s,a,e,t))return!0;if(s.nodeType===F)return!1;i=new n(s,4,function(e){return Ee(o,e,!0)});for(var d=!1;r=i.nextNode();){if(!g(r,a,e,t))return!1;d=!0}return d},ot.getFontInfo=function(e){var n,o,i,r={color:t,backgroundColor:t,family:t,size:t},a=0;if(!e&&!(e=this.getSelection()))return r;if(n=e.commonAncestorContainer,e.collapsed||n.nodeType===F)for(n.nodeType===F&&(n=n.parentNode);a<4&&n;)(o=n.style)&&(!r.color&&(i=o.color)&&(r.color=i,a+=1),!r.backgroundColor&&(i=o.backgroundColor)&&(r.backgroundColor=i,a+=1),!r.family&&(i=o.fontFamily)&&(r.family=i,a+=1),!r.size&&(i=o.fontSize)&&(r.size=i,a+=1)),n=n.parentNode;return r},ot._addFormat=function(e,t,o){var i,r,s,d,l,c,h,u,f=this._root;if(o.collapsed){for(i=T(this.createElement(e,t),f),Ne(o,i),o.setStart(i.firstChild,i.firstChild.length),o.collapse(!0),u=i;a(u);)u=u.parentNode;st(u,i)}else{if(r=new n(o.commonAncestorContainer,4|W,function(e){return(e.nodeType===F||"BR"===e.nodeName||"IMG"===e.nodeName)&&Ee(o,e,!0)}),s=o.startContainer,l=o.startOffset,d=o.endContainer,c=o.endOffset,r.currentNode=s,r.filter(s)||(s=r.nextNode(),l=0),!s)return o;do{h=r.currentNode,!g(h,f,e,t)&&(h===d&&h.length>c&&h.splitText(c),h===s&&l&&(h=h.splitText(l),d===s&&(d=h,c-=l),s=h,l=0),i=this.createElement(e,t),N(h,i),i.appendChild(h))}while(r.nextNode());d.nodeType!==F&&(h.nodeType===F?(d=h,c=h.length):(d=h.parentNode,c=1)),o=this.createRange(s,l,d,c)}return o},ot._removeFormat=function(e,t,n,o){this._saveRangeToBookmark(n);var i,r=this._doc;n.collapsed&&(oe?(i=r.createTextNode(z),this._didAddZWS()):i=r.createTextNode(""),Ne(n,i));for(var s=n.commonAncestorContainer;a(s);)s=s.parentNode;var d=n.startContainer,l=n.startOffset,c=n.endContainer,h=n.endOffset,u=[],f=function(e,t){if(!Ee(n,e,!1)){var o,i,r=e.nodeType===F;if(!Ee(n,e,!0))return void("INPUT"===e.nodeName||r&&!e.data||u.push([t,e]));if(r)e===c&&h!==e.length&&u.push([t,e.splitText(h)]),e===d&&l&&(e.splitText(l),u.push([t,e]));else for(o=e.firstChild;o;o=i)i=o.nextSibling,f(o,t)}},g=Array.prototype.filter.call(s.getElementsByTagName(e),function(o){return Ee(n,o,!0)&&p(o,e,t)});return o||g.forEach(function(e){f(e,e)}),u.forEach(function(e){var t=e[0].cloneNode(!1),n=e[1];N(n,t),t.appendChild(n)}),g.forEach(function(e){N(e,S(e))}),this._getRangeAndRemoveBookmark(n),i&&n.collapse(!1),k(s,n),n},ot.changeFormat=function(e,t,n,o){return n||(n=this.getSelection())?(this.saveUndoState(n),t&&(n=this._removeFormat(t.tag.toUpperCase(),t.attributes||{},n,o)),e&&(n=this._addFormat(e.tag.toUpperCase(),e.attributes||{},n)),this.setSelection(n),this._updatePath(n,!0),re||this._docWasChanged(),this):this};var lt={DT:"DD",DD:"DT",LI:"LI",PRE:"PRE"},ct=function(e,t,n,o){var i=lt[t.nodeName],r=null,a=b(n,o,t.parentNode,e._root),s=e._config;return i||(i=s.blockTag,r=s.blockAttributes),p(a,i,r)||(t=y(a.ownerDocument,i,r),a.dir&&(t.dir=a.dir),N(a,t),t.appendChild(S(a)),a=t),a};ot.forEachBlock=function(e,t,n){if(!n&&!(n=this.getSelection()))return this;t&&this.saveUndoState(n);var o=this._root,i=ke(n,o),r=Ae(n,o);if(i&&r)do{if(e(i)||i===r)break}while(i=h(i,o));return t&&(this.setSelection(n),this._updatePath(n,!0),re||this._docWasChanged()),this},ot.modifyBlocks=function(e,t){if(!t&&!(t=this.getSelection()))return this;this._recordUndoState(t,this._isInUndoState);var n,o=this._root;return Re(t,o),xe(t,o,o,o),n=Se(t,o,o),Ne(t,e.call(this,n)),t.endOffset<t.endContainer.childNodes.length&&L(t.endContainer.childNodes[t.endOffset],o),L(t.startContainer.childNodes[t.startOffset],o),this._getRangeAndRemoveBookmark(t),this.setSelection(t),this._updatePath(t,!0),re||this._docWasChanged(),this};var ht=function(e){return this.createElement("BLOCKQUOTE",this._config.tagAttributes.blockquote,[e])},ut=function(e){var t=this._root,n=e.querySelectorAll("blockquote");return Array.prototype.filter.call(n,function(e){return!g(e.parentNode,t,"BLOCKQUOTE")}).forEach(function(e){N(e,S(e))}),e},ft=function(){return this.createDefaultBlock([this.createElement("INPUT",{id:"squire-selection-start",type:"hidden"}),this.createElement("INPUT",{id:dt,type:"hidden"})])},pt=function(e,t,n){for(var o,i,r,a,s=l(t,e._root),d=e._config.tagAttributes,c=d[n.toLowerCase()],h=d.li;o=s.nextNode();)"LI"===o.parentNode.nodeName&&(o=o.parentNode,s.currentNode=o.lastChild),"LI"!==o.nodeName?(a=e.createElement("LI",h),o.dir&&(a.dir=o.dir),(r=o.previousSibling)&&r.nodeName===n?(r.appendChild(a),_(o)):N(o,e.createElement(n,c,[a])),a.appendChild(S(o)),s.currentNode=a):(o=o.parentNode,(i=o.nodeName)!==n&&/^[OU]L$/.test(i)&&N(o,e.createElement(n,c,[S(o)])))},gt=function(e){return pt(this,e,"UL"),e},mt=function(e){return pt(this,e,"OL"),e},vt=function(e){var t,n,o,i,r,a=e.querySelectorAll("UL, OL"),d=e.querySelectorAll("LI"),l=this._root;for(t=0,n=a.length;t<n;t+=1)o=a[t],i=S(o),E(i,l),N(o,i);for(t=0,n=d.length;t<n;t+=1)r=d[t],s(r)?N(r,this.createDefaultBlock([S(r)])):(E(r,l),N(r,S(r)));return e},Ct=function(e,t){for(var n=e.commonAncestorContainer,o=e.startContainer,i=e.endContainer;n&&n!==t&&!/^[OU]L$/.test(n.nodeName);)n=n.parentNode;if(!n||n===t)return null;for(o===n&&(o=o.childNodes[e.startOffset]),i===n&&(i=i.childNodes[e.endOffset]);o&&o.parentNode!==n;)o=o.parentNode;for(;i&&i.parentNode!==n;)i=i.parentNode;return[n,o,i]};ot.increaseListLevel=function(e){if(!e&&!(e=this.getSelection()))return this.focus();var t=this._root,n=Ct(e,t);if(!n)return this.focus();var o=n[0],i=n[1],r=n[2];if(!i||i===o.firstChild)return this.focus();this._recordUndoState(e,this._isInUndoState);var a,s,d=o.nodeName,l=i.previousSibling;l.nodeName!==d&&(a=this._config.tagAttributes[d.toLowerCase()],l=this.createElement(d,a),o.insertBefore(l,i));do{s=i===r?null:i.nextSibling,l.appendChild(i)}while(i=s);return s=l.nextSibling,s&&L(s,t),this._getRangeAndRemoveBookmark(e),this.setSelection(e),this._updatePath(e,!0),re||this._docWasChanged(),this.focus()},ot.decreaseListLevel=function(e){if(!e&&!(e=this.getSelection()))return this.focus();var t=this._root,n=Ct(e,t);if(!n)return this.focus();var o=n[0],i=n[1],r=n[2];i||(i=o.firstChild),r||(r=o.lastChild),this._recordUndoState(e,this._isInUndoState);var a,s=o.parentNode,d=r.nextSibling?b(o,r.nextSibling,s,t):o.nextSibling;if(s!==t&&"LI"===s.nodeName){for(s=s.parentNode;d;)a=d.nextSibling,r.appendChild(d),d=a;d=o.parentNode.nextSibling}var l=!/^[OU]L$/.test(s.nodeName);do{a=i===r?null:i.nextSibling,o.removeChild(i),l&&"LI"===i.nodeName&&(i=this.createDefaultBlock([S(i)])),s.insertBefore(i,d)}while(i=a);return o.firstChild||_(o),d&&L(d,t),this._getRangeAndRemoveBookmark(e),this.setSelection(e),this._updatePath(e,!0),re||this._docWasChanged(),this.focus()},ot._ensureBottomLine=function(){var e=this._root,t=e.lastElementChild;t&&t.nodeName===this._config.blockTag&&s(t)||e.appendChild(this.createDefaultBlock())},ot.setKeyHandler=function(e,t){return this._keyHandlers[e]=t,this},ot._getHTML=function(){return this._root.innerHTML},ot._setHTML=function(e){var t=this._root,n=t;n.innerHTML=e;do{T(n,t)}while(n=h(n,t));this._ignoreChange=!0},ot.getHTML=function(e){var t,n,o,i,r,a,s=[];if(e&&(a=this.getSelection())&&this._saveRangeToBookmark(a),ne)for(t=this._root,n=t;n=h(n,t);)n.textContent||n.querySelector("BR")||(o=this.createElement("BR"),n.appendChild(o),s.push(o));if(i=this._getHTML().replace(/\u200B/g,""),ne)for(r=s.length;r--;)_(s[r]);return a&&this._getRangeAndRemoveBookmark(a),i},ot.setHTML=function(e){var t,n,o,i=this._config,r=i.isSetHTMLSanitized?i.sanitizeToDOMFragment:null,a=this._root;"function"==typeof r?n=r(e,!1,this):(t=this.createElement("DIV"),t.innerHTML=e,n=this._doc.createDocumentFragment(),n.appendChild(S(t))),je(n,i),Ye(n,a,!1),E(n,a);for(var s=n;s=h(s,a);)T(s,a);for(this._ignoreChange=!0;o=a.lastChild;)a.removeChild(o);a.appendChild(n),T(a,a),this._undoIndex=-1,this._undoStack.length=0,this._undoStackLength=0,this._isInUndoState=!1;var d=this._getRangeAndRemoveBookmark()||this.createRange(a.firstChild,0);return this.saveUndoState(d),this._lastSelection=d,D.call(this),this._updatePath(d,!0),this},ot.insertElement=function(e,t){if(t||(t=this.getSelection()),t.collapse(!0),a(e))Ne(t,e),t.setStartAfter(e);else{for(var n,o,i=this._root,r=ke(t,i)||i;r!==i&&!r.nextSibling;)r=r.parentNode;r!==i&&(n=r.parentNode,o=b(n,r.nextSibling,i,i)),o?i.insertBefore(e,o):(i.appendChild(e),o=this.createDefaultBlock(),i.appendChild(o)),t.setStart(o,0),t.setEnd(o,0),be(t)}return this.focus(),this.setSelection(t),this._updatePath(t),re||this._docWasChanged(),this},ot.insertImage=function(e,t){var n=this.createElement("IMG",O({src:e},t,!0));return this.insertElement(n),n},ot.linkRegExp=/\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))|([\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,}\b)(?:\?[^&?\s]+=[^&?\s]+(?:&[^&?\s]+=[^&?\s]+)*)?/i;var _t=function(e,t,o){var i,r,a,s,d,l,c,h=e.ownerDocument,u=new n(e,4,function(e){return!g(e,t,"A")}),f=o.linkRegExp,p=o._config.tagAttributes.a;if(f)for(;i=u.nextNode();)for(r=i.data,a=i.parentNode;s=f.exec(r);)d=s.index,l=d+s[0].length,d&&(c=h.createTextNode(r.slice(0,d)),a.insertBefore(c,i)),c=o.createElement("A",O({href:s[1]?/^(?:ht|f)tps?:/i.test(s[1])?s[1]:"http://"+s[1]:"mailto:"+s[0]},p,!1)),c.textContent=r.slice(d,l),a.insertBefore(c,i),i.data=r=r.slice(l)};ot.insertHTML=function(e,t){var n,o,i,r,a,s,d,l=this._config,c=l.isInsertedHTMLSanitized?l.sanitizeToDOMFragment:null,u=this.getSelection(),f=this._doc;"function"==typeof c?r=c(e,t,this):(t&&(n=e.indexOf("\x3c!--StartFragment--\x3e"),o=e.lastIndexOf("\x3c!--EndFragment--\x3e"),n>-1&&o>-1&&(e=e.slice(n+20,o))),/<\/td>((?!<\/tr>)[\s\S])*$/i.test(e)&&(e="<TR>"+e+"</TR>"),/<\/tr>((?!<\/table>)[\s\S])*$/i.test(e)&&(e="<TABLE>"+e+"</TABLE>"),i=this.createElement("DIV"),i.innerHTML=e,r=f.createDocumentFragment(),r.appendChild(S(i))),this.saveUndoState(u);try{for(a=this._root,s=r,d={fragment:r,preventDefault:function(){this.defaultPrevented=!0},defaultPrevented:!1},_t(r,r,this),je(r,l),Ye(r,a,!1),$e(r),r.normalize();s=h(s,r);)T(s,a);t&&this.fireEvent("willPaste",d),d.defaultPrevented||(Te(u,d.fragment,a),re||this._docWasChanged(),u.collapse(!1),this._ensureBottomLine()),this.setSelection(u),this._updatePath(u,!0),t&&this.focus()}catch(e){this.didError(e)}return this};var Nt=function(e){return e.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;").split('"').join("&quot;")};ot.insertPlainText=function(e,t){var n=this.getSelection();if(n.collapsed&&g(n.startContainer,this._root,"PRE")){var o,i,r=n.startContainer,a=n.startOffset;return r&&r.nodeType===F||(o=this._doc.createTextNode(""),r.insertBefore(o,r.childNodes[a]),r=o,a=0),i={text:e,preventDefault:function(){this.defaultPrevented=!0},defaultPrevented:!1},t&&this.fireEvent("willPaste",i),i.defaultPrevented||(e=i.text,r.insertData(a,e),n.setStart(r,a+e.length),n.collapse(!0)),this.setSelection(n),this}var s,d,l,c,h=e.split("\n"),u=this._config,f=u.blockTag,p=u.blockAttributes,m="</"+f+">",v="<"+f;for(s in p)v+=" "+s+'="'+Nt(p[s])+'"';for(v+=">",d=0,l=h.length;d<l;d+=1)c=h[d],c=Nt(c).replace(/ (?= )/g,"&nbsp;"),h[d]=v+(c||"<BR>")+m;return this.insertHTML(h.join(""),t)};var St=function(e,t,n){return function(){return this[e](t,n),this.focus()}};ot.addStyles=function(e){if(e){var t=this._doc.documentElement.firstChild,n=this.createElement("STYLE",{type:"text/css"});n.appendChild(this._doc.createTextNode(e)),t.appendChild(n)}return this},ot.bold=St("changeFormat",{tag:"B"}),ot.italic=St("changeFormat",{tag:"I"}),ot.underline=St("changeFormat",{tag:"U"}),ot.strikethrough=St("changeFormat",{tag:"S"}),ot.subscript=St("changeFormat",{tag:"SUB"},{tag:"SUP"}),ot.superscript=St("changeFormat",{tag:"SUP"},{tag:"SUB"}),ot.removeBold=St("changeFormat",null,{tag:"B"}),ot.removeItalic=St("changeFormat",null,{tag:"I"}),ot.removeUnderline=St("changeFormat",null,{tag:"U"}),ot.removeStrikethrough=St("changeFormat",null,{tag:"S"}),ot.removeSubscript=St("changeFormat",null,{tag:"SUB"}),ot.removeSuperscript=St("changeFormat",null,{tag:"SUP"}),ot.makeLink=function(e,t){var n=this.getSelection();if(n.collapsed){var o=e.indexOf(":")+1;if(o)for(;"/"===e[o];)o+=1;Ne(n,this._doc.createTextNode(e.slice(o)))}return t=O(O({href:e},t,!0),this._config.tagAttributes.a,!1),this.changeFormat({tag:"A",attributes:t},{tag:"A"},n),this.focus()},ot.removeLink=function(){return this.changeFormat(null,{tag:"A"},this.getSelection(),!0),this.focus()},ot.setFontFace=function(e){var t=this._config.classNames.fontFamily;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"font-family: "+e+", sans-serif;"}}:null,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setFontSize=function(e){var t=this._config.classNames.fontSize;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"font-size: "+("number"==typeof e?e+"px":e)}}:null,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setTextColour=function(e){var t=this._config.classNames.colour;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"color:"+e}}:null,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setHighlightColour=function(e){var t=this._config.classNames.highlight;return this.changeFormat(e?{tag:"SPAN",attributes:{class:t,style:"background-color:"+e}}:e,{tag:"SPAN",attributes:{class:t}}),this.focus()},ot.setTextAlignment=function(e){return this.forEachBlock(function(t){var n=t.className.split(/\s+/).filter(function(e){return!!e&&!/^align/.test(e)}).join(" ");e?(t.className=n+" align-"+e,t.style.textAlign=e):(t.className=n,t.style.textAlign="")},!0),this.focus()},ot.setTextDirection=function(e){return this.forEachBlock(function(t){e?t.dir=e:t.removeAttribute("dir")},!0),this.focus()};var yt=function(e){for(var t,o=this._root,i=this._doc,r=i.createDocumentFragment(),a=l(e,o);t=a.nextNode();){var s,d,c=t.querySelectorAll("BR"),h=[],u=c.length;for(s=0;s<u;s+=1)h[s]=Ve(c[s],!1);for(;u--;)d=c[u],h[u]?N(d,i.createTextNode("\n")):_(d);for(c=t.querySelectorAll("CODE"),u=c.length;u--;)_(c[u]);r.childNodes.length&&r.appendChild(i.createTextNode("\n")),r.appendChild(S(t))}for(a=new n(r,4);t=a.nextNode();)t.data=t.data.replace(/ /g," ");return r.normalize(),T(this.createElement("PRE",this._config.tagAttributes.pre,[r]),o)},Tt=function(e){for(var t,o,i,r,a,s,d=this._doc,l=this._root,c=e.querySelectorAll("PRE"),h=c.length;h--;){for(t=c[h],o=new n(t,4);i=o.nextNode();){for(r=i.data,r=r.replace(/ (?= )/g," "),a=d.createDocumentFragment();(s=r.indexOf("\n"))>-1;)a.appendChild(d.createTextNode(r.slice(0,s))),a.appendChild(d.createElement("BR")),r=r.slice(s+1);i.parentNode.insertBefore(a,i),i.data=r}E(t,l),N(t,S(t))}return e};ot.code=function(){var e=this.getSelection();return e.collapsed||d(e.commonAncestorContainer)?this.modifyBlocks(yt,e):this.changeFormat({tag:"CODE",attributes:this._config.tagAttributes.code},null,e),this.focus()},ot.removeCode=function(){var e=this.getSelection();return g(e.commonAncestorContainer,this._root,"PRE")?this.modifyBlocks(Tt,e):this.changeFormat(null,{tag:"CODE"},e),this.focus()},ot.toggleCode=function(){return this.hasFormat("PRE")||this.hasFormat("CODE")?this.removeCode():this.code(),this},ot.removeAllFormatting=function(e){if(!e&&!(e=this.getSelection())||e.collapsed)return this;for(var t=this._root,n=e.commonAncestorContainer;n&&!s(n);)n=n.parentNode;if(n||(Re(e,t),n=t),n.nodeType===F)return this;this.saveUndoState(e),xe(e,n,n,t);for(var o,i,r=n.ownerDocument,a=e.startContainer,d=e.startOffset,l=e.endContainer,c=e.endOffset,h=r.createDocumentFragment(),u=r.createDocumentFragment(),f=b(l,c,n,t),p=b(a,d,n,t);p!==f;)o=p.nextSibling,h.appendChild(p),p=o;return I(this,h,u),u.normalize(),p=u.firstChild,o=u.lastChild,i=n.childNodes,p?(n.insertBefore(u,f),d=de.call(i,p),c=de.call(i,o)+1):(d=de.call(i,f),c=d),e.setStart(n,d),e.setEnd(n,c),k(n,e),be(e),this.setSelection(e),this._updatePath(e,!0),this.focus()},ot.increaseQuoteLevel=St("modifyBlocks",ht),ot.decreaseQuoteLevel=St("modifyBlocks",ut),ot.makeUnorderedList=St("modifyBlocks",gt),ot.makeOrderedList=St("modifyBlocks",mt),ot.removeList=St("modifyBlocks",vt),R.isInline=a,R.isBlock=s,R.isContainer=d,R.getBlockWalker=l,R.getPreviousBlock=c,R.getNextBlock=h,R.areAlike=f,R.hasTagAttributes=p,R.getNearest=g,R.isOrContains=m,R.detach=_,R.replaceWith=N,R.empty=S,R.getNodeBefore=Ce,R.getNodeAfter=_e,R.insertNodeInRange=Ne,R.extractContentsOfRange=Se,R.deleteContentsOfRange=ye,R.insertTreeFragmentIntoRange=Te,R.isNodeContainedInRange=Ee,R.moveRangeBoundariesDownTree=be,R.moveRangeBoundariesUpTree=xe,R.getStartBlockOfRange=ke,R.getEndBlockOfRange=Ae,R.contentWalker=Le,R.rangeDoesStartAtBlockBoundary=Be,R.rangeDoesEndAtBlockBoundary=Oe,R.expandRangeToBlockBoundaries=Re,R.onPaste=tt,R.addLinks=_t,R.splitBlock=ct,R.startSelectionId="squire-selection-start",R.endSelectionId=dt, true?module.exports=R:"function"==typeof define&&define.amd?define(function(){return R}):(q.Squire=R,top!==q&&"true"===e.documentElement.getAttribute("data-squireinit")&&(q.editor=new R(e),q.onEditorLoad&&(q.onEditorLoad(q.editor),q.onEditorLoad=null)))}(document);
 
 /***/ }),
-/* 312 */
+/* 313 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70054,7 +70177,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements WwTextObject
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -70249,7 +70372,7 @@ var WwTextObject = function () {
 exports.default = WwTextObject;
 
 /***/ }),
-/* 313 */
+/* 314 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70267,7 +70390,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _blockOverlay = __webpack_require__(314);
+var _blockOverlay = __webpack_require__(315);
 
 var _blockOverlay2 = _interopRequireDefault(_blockOverlay);
 
@@ -70279,7 +70402,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements UI code block gadget
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -70426,7 +70549,7 @@ var CodeBlockGadget = function (_BlockOverlay) {
 exports.default = CodeBlockGadget;
 
 /***/ }),
-/* 314 */
+/* 315 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70438,7 +70561,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements UI block overlay
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -70632,7 +70755,7 @@ var BlockOverlay = function () {
 exports.default = BlockOverlay;
 
 /***/ }),
-/* 315 */
+/* 316 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70644,7 +70767,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview editor layout
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -70906,7 +71029,7 @@ var Layout = function () {
 exports.default = Layout;
 
 /***/ }),
-/* 316 */
+/* 317 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70918,7 +71041,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview default UI
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -70926,11 +71049,11 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _defaultToolbar = __webpack_require__(317);
+var _defaultToolbar = __webpack_require__(318);
 
 var _defaultToolbar2 = _interopRequireDefault(_defaultToolbar);
 
-var _tab = __webpack_require__(288);
+var _tab = __webpack_require__(289);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -70938,35 +71061,35 @@ var _layerpopup = __webpack_require__(6);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _modeSwitch = __webpack_require__(321);
+var _modeSwitch = __webpack_require__(322);
 
 var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-var _popupAddLink = __webpack_require__(322);
+var _popupAddLink = __webpack_require__(323);
 
 var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-var _popupAddImage = __webpack_require__(323);
+var _popupAddImage = __webpack_require__(324);
 
 var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-var _popupTableUtils = __webpack_require__(324);
+var _popupTableUtils = __webpack_require__(325);
 
 var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-var _popupAddTable = __webpack_require__(325);
+var _popupAddTable = __webpack_require__(326);
 
 var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-var _popupAddHeading = __webpack_require__(326);
+var _popupAddHeading = __webpack_require__(327);
 
 var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
-var _popupCodeBlockLanguages = __webpack_require__(327);
+var _popupCodeBlockLanguages = __webpack_require__(328);
 
 var _popupCodeBlockLanguages2 = _interopRequireDefault(_popupCodeBlockLanguages);
 
-var _popupCodeBlockEditor = __webpack_require__(328);
+var _popupCodeBlockEditor = __webpack_require__(329);
 
 var _popupCodeBlockEditor2 = _interopRequireDefault(_popupCodeBlockEditor);
 
@@ -70974,7 +71097,7 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _tooltip = __webpack_require__(279);
+var _tooltip = __webpack_require__(280);
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -71419,7 +71542,7 @@ var DefaultUI = function () {
 exports.default = DefaultUI;
 
 /***/ }),
-/* 317 */
+/* 318 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71433,7 +71556,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _resizeObserverPolyfill = __webpack_require__(318);
+var _resizeObserverPolyfill = __webpack_require__(319);
 
 var _resizeObserverPolyfill2 = _interopRequireDefault(_resizeObserverPolyfill);
 
@@ -71441,15 +71564,15 @@ var _i18n = __webpack_require__(4);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _toolbar = __webpack_require__(285);
+var _toolbar = __webpack_require__(286);
 
 var _toolbar2 = _interopRequireDefault(_toolbar);
 
-var _popupDropdownToolbar = __webpack_require__(320);
+var _popupDropdownToolbar = __webpack_require__(321);
 
 var _popupDropdownToolbar2 = _interopRequireDefault(_popupDropdownToolbar);
 
-var _toolbarItemFactory = __webpack_require__(287);
+var _toolbarItemFactory = __webpack_require__(288);
 
 var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
 
@@ -71461,7 +71584,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview implements DefaultToolbar
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -71616,7 +71739,7 @@ var DefaultToolbar = function (_Toolbar) {
 exports.default = DefaultToolbar;
 
 /***/ }),
-/* 318 */
+/* 319 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -72649,7 +72772,7 @@ var index = (function () {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(30)))
 
 /***/ }),
-/* 319 */
+/* 320 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72671,7 +72794,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements UI Button
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -72694,7 +72817,7 @@ var ToolbarButton = function (_Button) {
 exports.default = ToolbarButton;
 
 /***/ }),
-/* 320 */
+/* 321 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72716,7 +72839,7 @@ var _layerpopup = __webpack_require__(6);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _toolbar = __webpack_require__(285);
+var _toolbar = __webpack_require__(286);
 
 var _toolbar2 = _interopRequireDefault(_toolbar);
 
@@ -72728,7 +72851,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview implements DefaultToolbar
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -72961,7 +73084,7 @@ Object.defineProperty(PopupDropdownToolbar, 'OPEN_EVENT', {
 exports.default = PopupDropdownToolbar;
 
 /***/ }),
-/* 321 */
+/* 322 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72997,7 +73120,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements ui mode switch
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -73164,7 +73287,7 @@ Object.defineProperty(ModeSwitch, 'TYPE', {
 exports.default = ModeSwitch;
 
 /***/ }),
-/* 322 */
+/* 323 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73202,7 +73325,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements PopupAddLink
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -73400,7 +73523,7 @@ var PopupAddLink = function (_LayerPopup) {
 exports.default = PopupAddLink;
 
 /***/ }),
-/* 323 */
+/* 324 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73422,7 +73545,7 @@ var _layerpopup = __webpack_require__(6);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _tab = __webpack_require__(288);
+var _tab = __webpack_require__(289);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -73438,7 +73561,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements PopupAddImage
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -73637,7 +73760,7 @@ var PopupAddImage = function (_LayerPopup) {
 exports.default = PopupAddImage;
 
 /***/ }),
-/* 324 */
+/* 325 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73675,7 +73798,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements PopupTableUtils
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -73808,7 +73931,7 @@ var PopupTableUtils = function (_LayerPopup) {
 exports.default = PopupTableUtils;
 
 /***/ }),
-/* 325 */
+/* 326 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73838,7 +73961,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements PopupAddTable
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -74305,7 +74428,7 @@ PopupAddTable.MIN_COL_SELECTION_INDEX = MIN_COL_SELECTION_INDEX;
 exports.default = PopupAddTable;
 
 /***/ }),
-/* 326 */
+/* 327 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74343,7 +74466,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements PopupAddTable
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -74451,7 +74574,7 @@ var PopupAddHeading = function (_LayerPopup) {
 exports.default = PopupAddHeading;
 
 /***/ }),
-/* 327 */
+/* 328 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74485,7 +74608,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements popup code block languages
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -74749,7 +74872,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 exports.default = PopupCodeBlockLanguages;
 
 /***/ }),
-/* 328 */
+/* 329 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74775,19 +74898,19 @@ var _layerpopup = __webpack_require__(6);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _scrollSyncSplit = __webpack_require__(329);
+var _scrollSyncSplit = __webpack_require__(330);
 
 var _scrollSyncSplit2 = _interopRequireDefault(_scrollSyncSplit);
 
-var _codeBlockEditor = __webpack_require__(330);
+var _codeBlockEditor = __webpack_require__(331);
 
 var _codeBlockEditor2 = _interopRequireDefault(_codeBlockEditor);
 
-var _codeBlockPreview = __webpack_require__(331);
+var _codeBlockPreview = __webpack_require__(332);
 
 var _codeBlockPreview2 = _interopRequireDefault(_codeBlockPreview);
 
-var _codeBlockLanguagesCombo = __webpack_require__(332);
+var _codeBlockLanguagesCombo = __webpack_require__(333);
 
 var _codeBlockLanguagesCombo2 = _interopRequireDefault(_codeBlockLanguagesCombo);
 
@@ -74803,7 +74926,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements popup code block editor
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -75122,7 +75245,7 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 exports.default = PopupCodeBlockEditor;
 
 /***/ }),
-/* 329 */
+/* 330 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75134,7 +75257,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements scroll sync split
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -75436,7 +75559,7 @@ var ScrollSyncSplit = function () {
 exports.default = ScrollSyncSplit;
 
 /***/ }),
-/* 330 */
+/* 331 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75452,7 +75575,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _codeMirrorExt = __webpack_require__(280);
+var _codeMirrorExt = __webpack_require__(281);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
@@ -75464,7 +75587,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements code block editor
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -75639,7 +75762,7 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
 exports.default = CodeBlockEditor;
 
 /***/ }),
-/* 331 */
+/* 332 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75665,7 +75788,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements CodeBlockPreview
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -75742,7 +75865,7 @@ var CodeBlockPreview = function (_Preview) {
 exports.default = CodeBlockPreview;
 
 /***/ }),
-/* 332 */
+/* 333 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75754,7 +75877,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements UI code block languages combo
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -75982,7 +76105,7 @@ var CodeBlockLanguagesCombo = function () {
 exports.default = CodeBlockLanguagesCombo;
 
 /***/ }),
-/* 333 */
+/* 334 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75996,13 +76119,13 @@ var _commandManager = __webpack_require__(3);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _emphasisCommon = __webpack_require__(278);
+var _emphasisCommon = __webpack_require__(279);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
 * @fileoverview Implements Bold markdown command
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var boldRangeRegex = /^(\*{2}|_{2}).*\1$/;
 var boldContentRegex = /[*_]{2,}([^*_]*)[*_]{2,}/g;
@@ -76036,7 +76159,7 @@ var Bold = _commandManager2.default.command('markdown', /** @lends Bold */{
 exports.default = Bold;
 
 /***/ }),
-/* 334 */
+/* 335 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76050,13 +76173,13 @@ var _commandManager = __webpack_require__(3);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _emphasisCommon = __webpack_require__(278);
+var _emphasisCommon = __webpack_require__(279);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * @fileoverview Implements Italic markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var boldItalicRangeRegex = /^(\*{3}|_{3}).*\1$/;
 var boldRangeRegex = /^(\*{2}|_{2}).*\1$/;
@@ -76185,7 +76308,7 @@ var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
 exports.default = Italic;
 
 /***/ }),
-/* 335 */
+/* 336 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76199,13 +76322,13 @@ var _commandManager = __webpack_require__(3);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _emphasisCommon = __webpack_require__(278);
+var _emphasisCommon = __webpack_require__(279);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * @fileoverview Implements StrikeThrough markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var strikeRangeRegex = /^~~.*~~$/;
 var strikeContentRegex = /~~([^~]*)~~/g;
@@ -76239,7 +76362,7 @@ var Strike = _commandManager2.default.command('markdown', /** @lends Strike */{
 exports.default = Strike;
 
 /***/ }),
-/* 336 */
+/* 337 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76266,7 +76389,7 @@ var BlockquoteRegex = /^> ?/;
  */
 /**
 * @fileoverview Implements Blockquote markdown command
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockquote */{
   name: 'Blockquote',
@@ -76379,7 +76502,7 @@ var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockqu
 exports.default = Blockquote;
 
 /***/ }),
-/* 337 */
+/* 338 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76401,7 +76524,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview Implements Heading markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var FIND_HEADING_RX = /^#+\s/g;
 
@@ -76480,7 +76603,7 @@ function getHeadingMarkdown(text, size) {
 exports.default = Heading;
 
 /***/ }),
-/* 338 */
+/* 339 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76509,7 +76632,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements Paragraph markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Paragraph = _commandManager2.default.command('markdown', /** @lends Paragraph */{
   name: 'Paragraph',
@@ -76561,7 +76684,7 @@ function getParagraphMarkdown(lineText) {
 exports.default = Paragraph;
 
 /***/ }),
-/* 339 */
+/* 340 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76626,13 +76749,13 @@ var HR = _commandManager2.default.command('markdown', /** @lends HR */{
   }
 }); /**
      * @fileoverview Implements HR markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 
 exports.default = HR;
 
 /***/ }),
-/* 340 */
+/* 341 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76654,7 +76777,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implements Addlink markdown command
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var decodeURIGraceful = _importManager2.default.decodeURIGraceful,
     encodeMarkdownCharacters = _importManager2.default.encodeMarkdownCharacters,
@@ -76709,7 +76832,7 @@ var AddLink = _commandManager2.default.command('markdown', /** @lends AddLink */
 exports.default = AddLink;
 
 /***/ }),
-/* 341 */
+/* 342 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76731,7 +76854,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implments AddImage markdown command
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var decodeURIGraceful = _importManager2.default.decodeURIGraceful,
     encodeMarkdownCharacters = _importManager2.default.encodeMarkdownCharacters,
@@ -76785,7 +76908,7 @@ var AddImage = _commandManager2.default.command('markdown', /** @lends AddImage 
 exports.default = AddImage;
 
 /***/ }),
-/* 342 */
+/* 343 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76823,12 +76946,12 @@ var UL = _commandManager2.default.command('markdown', /** @lends UL */{
   }
 }); /**
      * @fileoverview Implements UL markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 exports.default = UL;
 
 /***/ }),
-/* 343 */
+/* 344 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76866,13 +76989,13 @@ var OL = _commandManager2.default.command('markdown', /** @lends OL */{
   }
 }); /**
      * @fileoverview Implements OL markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 
 exports.default = OL;
 
 /***/ }),
-/* 344 */
+/* 345 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76907,13 +77030,13 @@ var Indent = _commandManager2.default.command('markdown', /** @lends Indent */{
   }
 }); /**
      * @fileoverview Implements Indent markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 
 exports.default = Indent;
 
 /***/ }),
-/* 345 */
+/* 346 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76948,13 +77071,13 @@ var Outdent = _commandManager2.default.command('markdown', /** @lends Outdent */
   }
 }); /**
      * @fileoverview Implements Outdent markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 
 exports.default = Outdent;
 
 /***/ }),
-/* 346 */
+/* 347 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77017,7 +77140,7 @@ var Table = _commandManager2.default.command('markdown', /** @lends Table */{
  */
 /**
  * @fileoverview Implements Table markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 function makeHeader(col, data) {
@@ -77075,7 +77198,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 347 */
+/* 348 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77112,12 +77235,12 @@ var Task = _commandManager2.default.command('markdown', /** @lends Task */{
   }
 }); /**
      * @fileoverview Implements Task markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 exports.default = Task;
 
 /***/ }),
-/* 348 */
+/* 349 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77135,7 +77258,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var codeRangeRegex = /^`([^`]+)`$/; /**
                                     * @fileoverview Implements Code markdown command
-                                    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                    * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                     */
 
 var codeContentRegex = /`([^`]+)`/g;
@@ -77236,7 +77359,7 @@ var Code = _commandManager2.default.command('markdown', /** @lends Code */{
 exports.default = Code;
 
 /***/ }),
-/* 349 */
+/* 350 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77289,12 +77412,12 @@ var CodeBlock = _commandManager2.default.command('markdown', /** @lends CodeBloc
   }
 }); /**
      * @fileoverview Implements CodeBlock markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 exports.default = CodeBlock;
 
 /***/ }),
-/* 350 */
+/* 351 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77348,7 +77471,7 @@ var Bold = _commandManager2.default.command('wysiwyg', /** @lends Bold */{
  */
 /**
  * @fileoverview Implements bold WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 function styleBold(sq) {
   if (sq.hasFormat('b') || sq.hasFormat('strong')) {
@@ -77364,7 +77487,7 @@ function styleBold(sq) {
 exports.default = Bold;
 
 /***/ }),
-/* 351 */
+/* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77418,7 +77541,7 @@ var Italic = _commandManager2.default.command('wysiwyg', /** @lends Italic */{
  */
 /**
  * @fileoverview Implements italic WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 function styleItalic(sq) {
@@ -77435,7 +77558,7 @@ function styleItalic(sq) {
 exports.default = Italic;
 
 /***/ }),
-/* 352 */
+/* 353 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77489,7 +77612,7 @@ var Strike = _commandManager2.default.command('wysiwyg', /** @lends Strike */{
  */
 /**
  * @fileoverview Implements strike WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 function styleStrike(sq) {
@@ -77506,7 +77629,7 @@ function styleStrike(sq) {
 exports.default = Strike;
 
 /***/ }),
-/* 353 */
+/* 354 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77551,13 +77674,13 @@ var Blockquote = _commandManager2.default.command('wysiwyg', /** @lends Blockquo
   }
 }); /**
      * @fileoverview Implements block quote WysiwygCommand
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 
 exports.default = Blockquote;
 
 /***/ }),
-/* 354 */
+/* 355 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77579,7 +77702,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview Implements AddImage wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var decodeURIGraceful = _importManager2.default.decodeURIGraceful,
     encodeMarkdownCharacters = _importManager2.default.encodeMarkdownCharacters;
@@ -77618,7 +77741,7 @@ var AddImage = _commandManager2.default.command('wysiwyg', /** @lends AddImage *
 exports.default = AddImage;
 
 /***/ }),
-/* 355 */
+/* 356 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77632,6 +77755,10 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _tuiCodeSnippet = __webpack_require__(2);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
 var _commandManager = __webpack_require__(3);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
@@ -77642,6 +77769,10 @@ var _importManager2 = _interopRequireDefault(_importManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/**
+ * @fileoverview Implements AddLink wysiwyg command
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 var decodeURIGraceful = _importManager2.default.decodeURIGraceful,
     encodeMarkdownCharacters = _importManager2.default.encodeMarkdownCharacters;
 
@@ -77651,10 +77782,6 @@ var decodeURIGraceful = _importManager2.default.decodeURIGraceful,
  * @extends Command
  * @module wysiwygCommands/AddLink
  * @ignore
- */
-/**
- * @fileoverview Implements AddLink wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 
 var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
@@ -77666,6 +77793,7 @@ var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
    */
   exec: function exec(wwe, data) {
     var sq = wwe.getEditor();
+    var linkAttibute = wwe.getLinkAttribute();
     var url = data.url,
         linkText = data.linkText;
 
@@ -77678,9 +77806,12 @@ var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
       sq.removeAllFormatting();
 
       if (sq.getSelectedText()) {
-        sq.makeLink(url);
+        sq.makeLink(url, linkAttibute);
       } else {
-        var link = sq.createElement('A', { href: url });
+        var link = sq.createElement('A', _tuiCodeSnippet2.default.extend({
+          href: url
+        }, linkAttibute));
+
         (0, _jquery2.default)(link).text(linkText);
         sq.insertElement(link);
       }
@@ -77691,7 +77822,7 @@ var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
 exports.default = AddLink;
 
 /***/ }),
-/* 356 */
+/* 357 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77720,7 +77851,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements HR wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
   name: 'HR',
@@ -77772,7 +77903,7 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 357 */
+/* 358 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77801,7 +77932,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements Heading wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
   name: 'Heading',
@@ -77842,7 +77973,7 @@ var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
 exports.default = Heading;
 
 /***/ }),
-/* 358 */
+/* 359 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77871,7 +78002,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements Paragraph wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph */{
   name: 'Paragraph',
@@ -77909,7 +78040,7 @@ var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph
 exports.default = Paragraph;
 
 /***/ }),
-/* 359 */
+/* 360 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77938,7 +78069,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements ul WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
   name: 'UL',
@@ -78017,7 +78148,7 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
 exports.default = UL;
 
 /***/ }),
-/* 360 */
+/* 361 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78046,7 +78177,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements ol WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
@@ -78126,7 +78257,7 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
 exports.default = OL;
 
 /***/ }),
-/* 361 */
+/* 362 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78191,7 +78322,7 @@ var Table = _commandManager2.default.command('wysiwyg', /** @lends Table */{
  */
 /**
  * @fileoverview Implements table WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 function focusToFirstTh(sq, $table) {
   var range = sq.getSelection();
@@ -78266,7 +78397,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 362 */
+/* 363 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78342,7 +78473,7 @@ var TableAddRow = _commandManager2.default.command('wysiwyg', /** @lends AddRow 
  */
 /**
  * @fileoverview Implements table add row WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 function getSelectedRowsLength(wwe) {
   var selectionMgr = wwe.componentManager.getManager('tableSelection');
@@ -78391,7 +78522,7 @@ function focusToFirstTd(sq, $tr) {
 exports.default = TableAddRow;
 
 /***/ }),
-/* 363 */
+/* 364 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78428,7 +78559,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements table add column WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var TableAddCol = _commandManager2.default.command('wysiwyg', /** @lends AddCol */{
   name: 'AddCol',
@@ -78540,7 +78671,7 @@ function focusToNextCell(sq, $cell) {
 exports.default = TableAddCol;
 
 /***/ }),
-/* 364 */
+/* 365 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78569,7 +78700,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements table remove row WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var TableRemoveRow = _commandManager2.default.command('wysiwyg', /** @lends RemoveRow */{
   name: 'RemoveRow',
@@ -78669,7 +78800,7 @@ function getTrs(range, selectionMgr, $table) {
 exports.default = TableRemoveRow;
 
 /***/ }),
-/* 365 */
+/* 366 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78753,7 +78884,7 @@ var TableRemoveCol = _commandManager2.default.command('wysiwyg', /** @lends Remo
  */
 /**
  * @fileoverview Implements table remove column WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 function getCellByRange(range) {
   var cell = range.startContainer;
@@ -78815,7 +78946,7 @@ function focusToCell(sq, $cell, tableMgr) {
 exports.default = TableRemoveCol;
 
 /***/ }),
-/* 366 */
+/* 367 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78886,7 +79017,7 @@ var TableAlignCol = _commandManager2.default.command('wysiwyg', /** @lends Align
  */
 /**
  * @fileoverview Implements table align column WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 function setAlignAttributeToTableCells($table, alignDirection, selectionInformation) {
   var isDivided = selectionInformation.isDivided || false;
@@ -78967,7 +79098,7 @@ function getRangeInformation(range, selectionMgr) {
 exports.default = TableAlignCol;
 
 /***/ }),
-/* 367 */
+/* 368 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78996,7 +79127,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements table remove WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var TableRemove = _commandManager2.default.command('wysiwyg', /** @lends RemoveTable */{
   name: 'RemoveTable',
@@ -79022,7 +79153,7 @@ var TableRemove = _commandManager2.default.command('wysiwyg', /** @lends RemoveT
 exports.default = TableRemove;
 
 /***/ }),
-/* 368 */
+/* 369 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79051,7 +79182,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements Indent wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Indent = _commandManager2.default.command('wysiwyg', /** @lends Indent */{
   name: 'Indent',
@@ -79098,7 +79229,7 @@ var Indent = _commandManager2.default.command('wysiwyg', /** @lends Indent */{
 exports.default = Indent;
 
 /***/ }),
-/* 369 */
+/* 370 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79127,7 +79258,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements Outdent wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Outdent = _commandManager2.default.command('wysiwyg', /** @lends Outdent */{
   name: 'Outdent',
@@ -79178,7 +79309,7 @@ function getCurrent$Li(wwe) {
 exports.default = Outdent;
 
 /***/ }),
-/* 370 */
+/* 371 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79285,12 +79416,12 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
   }
 }); /**
      * @fileoverview Implements Task WysiwygCommand
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 exports.default = Task;
 
 /***/ }),
-/* 371 */
+/* 372 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79327,7 +79458,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements code WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Code = _commandManager2.default.command('wysiwyg', /** @lends Code */{
   name: 'Code',
@@ -79395,7 +79526,7 @@ function styleCode(editor, sq) {
 exports.default = Code;
 
 /***/ }),
-/* 372 */
+/* 373 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79421,7 +79552,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var CODEBLOCK_CLASS_TEMP = 'te-content-codeblock-temp'; /**
                                                          * @fileoverview Implements code block WysiwygCommand
-                                                         * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                         * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                          */
 
 var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
@@ -79501,7 +79632,7 @@ function getCodeBlockBody(range, wwe) {
 exports.default = CodeBlock;
 
 /***/ }),
-/* 373 */
+/* 374 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79560,11 +79691,11 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
   'Choose language': 'Choose language'
 }); /**
     * @fileoverview I18N for English
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+    * @author NHN FE Development Lab <dl_javascript@nhn.com>
     */
 
 /***/ }),
-/* 374 */
+/* 375 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79623,11 +79754,11 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
   'Choose language': '언어 선택'
 }); /**
     * @fileoverview I18N for Korean
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+    * @author NHN FE Development Lab <dl_javascript@nhn.com>
     */
 
 /***/ }),
-/* 375 */
+/* 376 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79686,11 +79817,11 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
   'Choose language': '选择语言'
 }); /**
     * @fileoverview I18N for Chinese
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+    * @author NHN FE Development Lab <dl_javascript@nhn.com>
     */
 
 /***/ }),
-/* 376 */
+/* 377 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79749,11 +79880,11 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
   'Choose language': '言語選択'
 }); /**
     * @fileoverview I18N for Japanese
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+    * @author NHN FE Development Lab <dl_javascript@nhn.com>
     */
 
 /***/ }),
-/* 377 */
+/* 378 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79812,11 +79943,11 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
   'Choose language': 'Kies een taal'
 }); /**
     * @fileoverview I18N for Dutch
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+    * @author NHN FE Development Lab <dl_javascript@nhn.com>
     */
 
 /***/ }),
-/* 378 */
+/* 379 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79879,7 +80010,7 @@ _i18n2.default.setLanguage(['es', 'es_ES'], {
     */
 
 /***/ }),
-/* 379 */
+/* 380 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -79942,7 +80073,7 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
     */
 
 /***/ }),
-/* 380 */
+/* 381 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80005,7 +80136,7 @@ _i18n2.default.setLanguage(['ru', 'ru_RU'], {
     */
 
 /***/ }),
-/* 381 */
+/* 382 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80068,7 +80199,7 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
     */
 
 /***/ }),
-/* 382 */
+/* 383 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80131,7 +80262,7 @@ _i18n2.default.setLanguage(['uk', 'uk_UA'], {
     */
 
 /***/ }),
-/* 383 */
+/* 384 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80194,7 +80325,7 @@ _i18n2.default.setLanguage(['tr', 'tr_TR'], {
     */
 
 /***/ }),
-/* 384 */
+/* 385 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80257,7 +80388,7 @@ _i18n2.default.setLanguage(['fi', 'fi_FI'], {
     */
 
 /***/ }),
-/* 385 */
+/* 386 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80320,7 +80451,7 @@ _i18n2.default.setLanguage(['cs', 'cs_CZ'], {
     */
 
 /***/ }),
-/* 386 */
+/* 387 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80383,7 +80514,7 @@ _i18n2.default.setLanguage(['ar', 'ar_AR'], {
     */
 
 /***/ }),
-/* 387 */
+/* 388 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80446,7 +80577,7 @@ _i18n2.default.setLanguage(['pl', 'pl_PL'], {
     */
 
 /***/ }),
-/* 388 */
+/* 389 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -80506,6 +80637,69 @@ _i18n2.default.setLanguage(['zhtw', 'zh_TW'], {
 }); /**
     * @fileoverview I18N for Traditional Chinese
     * @author Tzu-Ray Su <raysu3329@gmail.com>
+    */
+
+/***/ }),
+/* 390 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(4);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['gl', 'gl_ES'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Escribir',
+  'Preview': 'Vista previa',
+  'Headings': 'Encabezados',
+  'Paragraph': 'Parágrafo',
+  'Bold': 'Negriña',
+  'Italic': 'Cursiva',
+  'Strike': 'Riscado',
+  'Code': 'Código',
+  'Line': 'Liña',
+  'Blockquote': 'Cita',
+  'Unordered list': 'Lista desordenada',
+  'Ordered list': 'Lista ordenada',
+  'Task': 'Tarefa',
+  'Indent': 'Sangría',
+  'Outdent': 'Anular sangría',
+  'Insert link': 'Inserir enlace',
+  'Insert CodeBlock': 'Inserir bloque de código',
+  'Insert table': 'Inserir táboa',
+  'Insert image': 'Inserir imaxe',
+  'Heading': 'Encabezado',
+  'Image URL': 'URL da imaxe',
+  'Select image file': 'Seleccionar arquivo da imaxe',
+  'Description': 'Descrición',
+  'OK': 'Aceptar',
+  'More': 'Máis',
+  'Cancel': 'Cancelar',
+  'File': 'Arquivo',
+  'URL': 'URL',
+  'Link text': 'Texto do enlace',
+  'Add row': 'Agregar fila',
+  'Add col': 'Agregar columna',
+  'Remove row': 'Eliminar fila',
+  'Remove col': 'Eliminar columna',
+  'Align left': 'Aliñar á esquerda',
+  'Align center': 'Centrar',
+  'Align right': 'Aliñar á dereita',
+  'Remove table': 'Eliminar táboa',
+  'Would you like to paste as table?': 'Desexa pegar como táboa?',
+  'Text color': 'Cor do texto',
+  'Auto scroll enabled': 'Desprazamento automático habilitado',
+  'Auto scroll disabled': 'Desprazamento automático deshabilitado',
+  'Choose language': 'Elixir idioma'
+}); /**
+    * @fileoverview I18N for Spanish
+    * @author Aida Vidal <avidal@emapic.es>
     */
 
 /***/ })

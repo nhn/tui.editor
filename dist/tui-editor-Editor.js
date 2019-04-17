@@ -1,7 +1,7 @@
 /*!
  * tui-editor
- * @version 1.3.3
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)
+ * @version 1.4.0
+ * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -13,7 +13,7 @@
 		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("markdown-it"), require("to-mark"), require("highlight.js"), require("squire-rte"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["CodeMirror"], root["markdownit"], root["toMark"], root["hljs"], root["Squire"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_22__, __WEBPACK_EXTERNAL_MODULE_23__, __WEBPACK_EXTERNAL_MODULE_31__, __WEBPACK_EXTERNAL_MODULE_66__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_22__, __WEBPACK_EXTERNAL_MODULE_23__, __WEBPACK_EXTERNAL_MODULE_32__, __WEBPACK_EXTERNAL_MODULE_67__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 44);
+/******/ 	return __webpack_require__(__webpack_require__.s = 45);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -104,7 +104,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements CommandManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -323,7 +323,7 @@ exports.I18n = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements i18n
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -458,7 +458,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview DOM Utils
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var FIND_ZWB = /\u200B/g;
 
@@ -1050,6 +1050,24 @@ var getLeafNode = function getLeafNode(node) {
 
   return result;
 };
+/**
+ * check if a coordinates is inside a task box
+ * @param {object} style - computed style of task box
+ * @param {number} offsetX - event x offset
+ * @param {number} offsetY - event y offset
+ * @returns {boolean}
+ * @ignore
+ */
+var isInsideTaskBox = function isInsideTaskBox(style, offsetX, offsetY) {
+  var rect = {
+    left: parseInt(style.left, 10),
+    top: parseInt(style.top, 10),
+    width: parseInt(style.width, 10),
+    height: parseInt(style.height, 10)
+  };
+
+  return offsetX >= rect.left && offsetX <= rect.left + rect.width && offsetY >= rect.top && offsetY <= rect.top + rect.height;
+};
 
 exports.default = {
   getNodeName: getNodeName,
@@ -1077,7 +1095,8 @@ exports.default = {
   isStyledNode: isStyledNode,
   removeChildFromStartToEndNode: removeChildFromStartToEndNode,
   removeNodesByDirection: removeNodesByDirection,
-  getLeafNode: getLeafNode
+  getLeafNode: getLeafNode,
+  isInsideTaskBox: isInsideTaskBox
 };
 
 /***/ }),
@@ -1113,7 +1132,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements LayerPopup
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -1471,11 +1490,11 @@ exports.CodeBlockManager = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements CodeBlockManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _highlight = __webpack_require__(31);
+var _highlight = __webpack_require__(32);
 
 var _highlight2 = _interopRequireDefault(_highlight);
 
@@ -1590,7 +1609,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements ui controller
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -1869,7 +1888,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview Implements htmlSanitizer
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
 
@@ -1971,7 +1990,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implement Module for managing import external data such as image
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -2281,7 +2300,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements Toolbar Item
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -2382,7 +2401,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements markdown preview
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -2399,12 +2418,13 @@ var MarkdownPreview = function (_Preview) {
    * @param {EventManager} eventManager - event manager
    * @param {Convertor} convertor - convertor
    * @param {boolean} isViewer - true for view only mode
+   * @param {Number} delayTime - lazyRunner delay time
    * @memberof MarkdownPreview
    */
-  function MarkdownPreview($el, eventManager, convertor, isViewer) {
+  function MarkdownPreview($el, eventManager, convertor, isViewer, delayTime) {
     _classCallCheck(this, MarkdownPreview);
 
-    var _this = _possibleConstructorReturn(this, (MarkdownPreview.__proto__ || Object.getPrototypeOf(MarkdownPreview)).call(this, $el, eventManager, convertor, isViewer));
+    var _this = _possibleConstructorReturn(this, (MarkdownPreview.__proto__ || Object.getPrototypeOf(MarkdownPreview)).call(this, $el, eventManager, convertor, isViewer, delayTime));
 
     _this._initEvent();
     return _this;
@@ -2483,7 +2503,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements preview
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -2509,9 +2529,12 @@ var Preview = function () {
    * @param {EventManager} eventManager Event manager instance
    * @param {Convertor} convertor Convertor instance
    * @param {boolean} isViewer - whether viewer mode or not
+   * @param {Number} delayTime - lazyRunner delay time
    * @memberof Preview
    */
   function Preview($el, eventManager, convertor, isViewer) {
+    var delayTime = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 800;
+
     _classCallCheck(this, Preview);
 
     this.eventManager = eventManager;
@@ -2523,7 +2546,7 @@ var Preview = function () {
 
     this.lazyRunner = new _lazyRunner2.default();
 
-    this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, 800, this);
+    this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, delayTime, this);
   }
 
   /**
@@ -2660,7 +2683,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements EventManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -2925,7 +2948,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview extension manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -3014,7 +3037,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Convertor have responsible to convert markdown and html
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -3065,6 +3088,8 @@ var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockR
 var _markdownitBackticksRenderer = __webpack_require__(30);
 
 var _markdownitBackticksRenderer2 = _interopRequireDefault(_markdownitBackticksRenderer);
+
+var _markdownitInlinePlugin = __webpack_require__(31);
 
 var _codeBlockManager = __webpack_require__(7);
 
@@ -3141,24 +3166,21 @@ var Convertor = function () {
    * @private
    * @memberof Convertor
    * @param {string} markdown markdown text
+   * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
    */
 
 
   _createClass(Convertor, [{
     key: '_markdownToHtmlWithCodeHighlight',
-    value: function _markdownToHtmlWithCodeHighlight(markdown) {
-      markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+    value: function _markdownToHtmlWithCodeHighlight(markdown, env) {
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
       while (onerrorStripeRegex.exec(markdown)) {
         markdown = markdown.replace(onerrorStripeRegex, '$1$3');
       }
 
-      var renderedHTML = markdownitHighlight.render(markdown);
-      renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
-
-      return renderedHTML;
+      return markdownitHighlight.render(markdown, env);
     }
 
     /**
@@ -3167,12 +3189,13 @@ var Convertor = function () {
      * @private
      * @memberof Convertor
      * @param {string} markdown markdown text
+     * @param {object} env environment sandbox for markdownit
      * @returns {string} html text
      */
 
   }, {
     key: '_markdownToHtml',
-    value: function _markdownToHtml(markdown) {
+    value: function _markdownToHtml(markdown, env) {
       markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
@@ -3180,10 +3203,7 @@ var Convertor = function () {
         markdown = markdown.replace(onerrorStripeRegex, '$1$3');
       }
 
-      var renderedHTML = markdownit.render(markdown);
-      renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
-
-      return renderedHTML;
+      return markdownit.render(markdown, env);
     }
 
     /**
@@ -3202,7 +3222,7 @@ var Convertor = function () {
 
       $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
         var $code = (0, _jquery2.default)(codeOrPre);
-        $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/, '&lt;br&gt;'));
+        $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/g, '&lt;br&gt;'));
       });
 
       renderedHTML = $wrapperDiv.html();
@@ -3243,6 +3263,7 @@ var Convertor = function () {
       var html = this._markdownToHtml(markdown);
 
       html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+      html = this._removeBrToMarkPassAttributeInCode(html);
 
       return html;
     }
@@ -3252,6 +3273,26 @@ var Convertor = function () {
       this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function (html) {
         return (0, _htmlSanitizer2.default)(html, true);
       });
+    }
+
+    /**
+     * set link attribute to markdownitHighlight, markdownit
+     * using linkAttribute of markdownItInlinePlugin
+     * @param {object} attribute markdown text
+     */
+
+  }, {
+    key: 'setLinkAttribute',
+    value: function setLinkAttribute(attribute) {
+      var keys = Object.keys(attribute);
+      var setAttributeToToken = function setAttributeToToken(tokens, idx) {
+        keys.forEach(function (key) {
+          tokens[idx].attrPush([key, attribute[key]]);
+        });
+      };
+
+      markdownitHighlight.use(_markdownitInlinePlugin.linkAttribute, setAttributeToToken);
+      markdownit.use(_markdownitInlinePlugin.linkAttribute, setAttributeToToken);
     }
 
     /**
@@ -3296,22 +3337,11 @@ var Convertor = function () {
       var FIRST_TWO_BRS_BEFORE_RX = /([^>]|<\/a>|<\/code>|<\/span>|<\/b>|<\/i>|<\/s>|<img [^>]*>)/;
       var TWO_BRS_RX = /<br data-tomark-pass \/><br data-tomark-pass \/>/;
       var FIND_FIRST_TWO_BRS_RX = new RegExp(FIRST_TWO_BRS_BEFORE_RX.source + TWO_BRS_RX.source, 'g');
+      var FIND_ATTRI_WITH_EMTPY_STR_RX = /<br data-tomark-pass="">/ig;
 
       html = html.replace(FIND_BR_RX, '<br />');
-
       html = html.replace(FIND_DOUBLE_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />');
-
-      var div = document.createElement('div');
-      var $div = (0, _jquery2.default)(div);
-      $div.html(html);
-      $div.find('pre br,code br').each(function (index, node) {
-        if (node.hasAttribute('data-tomark-pass')) {
-          node.removeAttribute('data-tomark-pass');
-        }
-      });
-
-      html = $div.html().replace(/<br data-tomark-pass="">/ig, '<br data-tomark-pass />');
-      html = html.replace(FIND_BR_RX, '<br />');
+      html = html.replace(FIND_ATTRI_WITH_EMTPY_STR_RX, '<br data-tomark-pass />');
 
       html = html.replace(FIND_PASSING_AND_NORMAL_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />$1');
       html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
@@ -3368,7 +3398,7 @@ var _toolbarItem = __webpack_require__(11);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _tooltip = __webpack_require__(34);
+var _tooltip = __webpack_require__(35);
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -3380,7 +3410,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements UI Button
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -3575,7 +3605,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @fileoverview Implements KeyMapper
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -3977,7 +4007,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements LazyRunner
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -4084,7 +4114,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements Command
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -4268,8 +4298,8 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_23__;
 
 /**
  * @fileoverview Implements markdownitTaskPlugin
- * @modifier Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
- * @modifier Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+ * @modifier Sungho Kim(sungho-kim@nhn.com) FE Development Lab/NHN
+ * @modifier Junghwan Park(junghwan.park@nhn.com) FE Development Lab/NHN
  */
 /* eslint-disable */
 
@@ -4376,7 +4406,7 @@ module.exports = MarkdownitTaskRenderer;
 /* eslint-disable */
 /**
  * @fileoverview Implements markdownitCodeBlockPlugin
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -4458,7 +4488,7 @@ module.exports = MarkdownitCodeBlockRenderer;
 // Distributed under an ISC license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements MarkdownItCodeRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /* eslint-disable */
@@ -4525,7 +4555,7 @@ module.exports = function code(state, startLine, endLine /*, silent*/) {
 // Distributed under MIT license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements markdownitCodeBlockQuoteRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /* eslint-disable */
@@ -4860,7 +4890,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
 
 /**
  * @fileoverview Implements markdownitTableRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /*eslint-disable */
@@ -5072,7 +5102,7 @@ module.exports = function table(state, startLine, endLine, silent) {
 
 /**
  * @fileoverview Implements markdownitHtmlBlockRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 /* eslint-disable */
 // HTML block
@@ -5170,7 +5200,7 @@ module.exports = function html_block(state, startLine, endLine, silent) {
 // Distributed under MIT license: https://github.com/markdown-it/markdown-it/
 /**
  * @fileoverview Implements markdownitBackticksRenderer
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 /* eslint-disable */
 
@@ -5215,7 +5245,7 @@ module.exports = function backtick(state, silent) {
         token.content = state.src.slice(pos, matchStart).replace(/[ \n]+/g, ' ').trim();
         // TUI.EDITOR MODIFICATION START
         // store number of backtick in data-backtick
-        // https://github.nhnent.com/fe/tui.editor/pull/981
+        // https://github.nhn.com/fe/tui.editor/pull/981
         token.attrSet('data-backticks', token.markup.length);
         // TUI.EDITOR MODIFICATION END
       }
@@ -5233,12 +5263,60 @@ module.exports = function backtick(state, silent) {
 
 /***/ }),
 /* 31 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_31__;
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+// Copyright (c) 2014, Vitaly Puzrin.
+// Distributed under an MIT license: https://github.com/markdown-it/markdown-it-for-inline
+/* eslint-disable */
+
+/**
+ * @fileoverview Implements markdownItLinkPlugin
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+function for_inline_plugin(md, ruleName, tokenType, iteartor) {
+
+  function scan(state) {
+    var i, blkIdx, inlineTokens;
+
+    for (blkIdx = state.tokens.length - 1; blkIdx >= 0; blkIdx--) {
+      if (state.tokens[blkIdx].type !== 'inline') {
+        continue;
+      }
+
+      inlineTokens = state.tokens[blkIdx].children;
+
+      for (i = inlineTokens.length - 1; i >= 0; i--) {
+        if (inlineTokens[i].type !== tokenType) {
+          continue;
+        }
+
+        iteartor(inlineTokens, i);
+      }
+    }
+  }
+
+  md.core.ruler.push(ruleName, scan);
+};
+
+var linkAttribute = exports.linkAttribute = function linkAttribute(markdownit, iteartor) {
+  for_inline_plugin(markdownit, 'url_attribute', 'link_open', iteartor);
+};
 
 /***/ }),
 /* 32 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_32__;
+
+/***/ }),
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5246,7 +5324,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_31__;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements editor preivew
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -5371,9 +5449,9 @@ var ToastUIEditorViewer = function () {
   _createClass(ToastUIEditorViewer, [{
     key: '_toggleTask',
     value: function _toggleTask(ev) {
-      var isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+      var style = getComputedStyle(ev.target, ':before');
 
-      if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+      if (ev.target.hasAttribute(TASK_ATTR_NAME) && _domUtils2.default.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
         (0, _jquery2.default)(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
         this.eventManager.emit('change', {
           source: 'viewer',
@@ -5580,7 +5658,7 @@ ToastUIEditorViewer.WwTableSelectionManager = null;
 module.exports = ToastUIEditorViewer;
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5591,7 +5669,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 /**
  * @fileoverview This file is common logic for italic, bold, strike makrdown commands.
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -5739,7 +5817,7 @@ var changeSyntax = exports.changeSyntax = function changeSyntax(doc, range, symb
 };
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5751,7 +5829,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements tooltip
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -5815,7 +5893,7 @@ var Tooltip = function () {
 exports.default = new Tooltip();
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5827,7 +5905,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements CodeBlockExt
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -5838,8 +5916,6 @@ var _jquery2 = _interopRequireDefault(_jquery);
 var _codemirror = __webpack_require__(6);
 
 var _codemirror2 = _interopRequireDefault(_codemirror);
-
-__webpack_require__(47);
 
 __webpack_require__(48);
 
@@ -5852,6 +5928,8 @@ __webpack_require__(51);
 __webpack_require__(52);
 
 __webpack_require__(53);
+
+__webpack_require__(54);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6265,7 +6343,7 @@ var CodeMirrorExt = function () {
 exports.default = CodeMirrorExt;
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6281,7 +6359,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @fileoverview Implements ComponentManager
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -6368,7 +6446,7 @@ var ComponentManager = function () {
 exports.default = ComponentManager;
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6380,7 +6458,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg table manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -6578,7 +6656,6 @@ var WwTableManager = function () {
 
           if (isRangeInTable && !_this3._isSingleModifierKey(keymap)) {
             _this3._recordUndoStateIfNeed(range);
-            _this3._removeBRIfNeed(range);
             _this3._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
           } else if (!isRangeInTable && _this3._lastCellNode) {
             _this3._recordUndoStateAndResetCellNode(range);
@@ -6821,7 +6898,6 @@ var WwTableManager = function () {
             this._tableHandlerOnDelete(range, ev);
           }
 
-          this._insertBRIfNeed(range);
           this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
           isNeedNext = false;
         } else if (!isBackspace && this._isBeforeTable(range) || isBackspace && this._isAfterTable(range)) {
@@ -6865,6 +6941,7 @@ var WwTableManager = function () {
         (0, _jquery2.default)(prevNode).remove();
       }
     }
+
     /**
      * Return whether delete non text or not
      * @param {Range} range Range object
@@ -6872,19 +6949,54 @@ var WwTableManager = function () {
      */
 
   }, {
-    key: 'isNonTextDeleting',
-    value: function isNonTextDeleting(range) {
+    key: '_isDeletingNonText',
+    value: function _isDeletingNonText(range) {
       var currentElement = range.startContainer;
       var nextNode = currentElement.nextSibling;
       var nextNodeName = _domUtils2.default.getNodeName(nextNode);
       var currentNodeName = _domUtils2.default.getNodeName(currentElement);
+      var insideNode = this._getCurrentNodeInCell(range);
+      var insideNodeName = _domUtils2.default.getNodeName(insideNode);
 
-      var isCellDeleting = currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
+      var isEmptyLineBetweenText = insideNode && insideNodeName === 'BR' && insideNode.nextSibling;
+      var isCellDeleting = !isEmptyLineBetweenText && currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
       var isEndOfText = (!nextNode || nextNodeName === 'BR' && nextNode.parentNode.lastChild === nextNode) && _domUtils2.default.isTextNode(currentElement) && range.startOffset === currentElement.nodeValue.length;
-      var isLastCellOfRow = !isEndOfText && (0, _jquery2.default)(currentElement).parents('tr').children().last()[0] === currentElement && (currentNodeName === 'TD' || currentNodeName === 'TH');
+      var isLastCellOfRow = !isEmptyLineBetweenText && !isEndOfText && (0, _jquery2.default)(currentElement).parents('tr').children().last()[0] === currentElement && (currentNodeName === 'TD' || currentNodeName === 'TH');
 
       return isCellDeleting || isEndOfText || isLastCellOfRow;
     }
+
+    /**
+     * Return whether delete br in the br
+     * @param {Range} range Range object
+     * @returns {boolean}
+     */
+
+  }, {
+    key: '_isDeletingBR',
+    value: function _isDeletingBR(range) {
+      var currentNode = this._getCurrentNodeInCell(range);
+      var nextSibling = currentNode && currentNode.nextSibling;
+
+      return _domUtils2.default.getNodeName(currentNode) === 'BR' && !!nextSibling && _domUtils2.default.getNodeName(nextSibling) === 'BR';
+    }
+  }, {
+    key: '_getCurrentNodeInCell',
+    value: function _getCurrentNodeInCell(range) {
+      var startContainer = range.startContainer,
+          startOffset = range.startOffset;
+
+      var currentNode = void 0;
+
+      if (_domUtils2.default.getNodeName(startContainer) === 'TD') {
+        currentNode = _domUtils2.default.getChildNodeByOffset(startContainer, startOffset);
+      } else if (_domUtils2.default.getParentUntil(startContainer, 'TD')) {
+        currentNode = startContainer;
+      }
+
+      return currentNode;
+    }
+
     /**
      * _tableHandlerOnDelete
      * Delete handler in table
@@ -6897,9 +7009,12 @@ var WwTableManager = function () {
   }, {
     key: '_tableHandlerOnDelete',
     value: function _tableHandlerOnDelete(range, event) {
-      var needPreventDefault = this.isNonTextDeleting(range);
+      if (this._isDeletingBR(range)) {
+        var currentNode = this._getCurrentNodeInCell(range);
 
-      if (needPreventDefault) {
+        currentNode.parentNode.removeChild(currentNode.nextSibling);
+        event.preventDefault();
+      } else if (this._isDeletingNonText(range)) {
         event.preventDefault();
         range.startContainer.normalize();
       }
@@ -7783,44 +7898,6 @@ var WwTableManager = function () {
     }
 
     /**
-     * Remove br when text inputted
-     * @param {Range} range Range object
-     * @private
-     */
-
-  }, {
-    key: '_removeBRIfNeed',
-    value: function _removeBRIfNeed(range) {
-      var isText = _domUtils2.default.isTextNode(range.startContainer);
-      var startContainer = isText ? range.startContainer.parentNode : range.startContainer;
-      var nodeName = _domUtils2.default.getNodeName(startContainer);
-
-      if (/td|th/i.test(nodeName) && range.collapsed && startContainer.textContent.length === 1) {
-        (0, _jquery2.default)(startContainer).find('br').remove();
-      }
-    }
-
-    /**
-     * Insert br when text deleted
-     * @param {Range} range Range object
-     * @private
-     */
-
-  }, {
-    key: '_insertBRIfNeed',
-    value: function _insertBRIfNeed(range) {
-      var isText = _domUtils2.default.isTextNode(range.startContainer);
-      var currentCell = isText ? range.startContainer.parentNode : range.startContainer;
-      var nodeName = _domUtils2.default.getNodeName(currentCell);
-      var $currentCell = (0, _jquery2.default)(currentCell);
-
-      if (/td|th/i.test(nodeName) && range.collapsed && !currentCell.textContent.length && !$currentCell.children().length && !isIE10And11) {
-        currentCell.normalize();
-        $currentCell.append('<br>');
-      }
-    }
-
-    /**
      * Destroy.
      */
 
@@ -7867,7 +7944,7 @@ function tableCellGenerator(amount, tagName) {
 exports.default = WwTableManager;
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7879,7 +7956,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg table selection manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -8056,11 +8133,13 @@ var WwTableSelectionManager = function () {
 
         if (!isSelectedCell || isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON) {
           _this.removeClassAttrbuteFromAllCellsIfNeed();
-          _this.setTableSelectionTimerIfNeed(selectionStart);
-          _this.eventManager.listen('mouseover.tableSelection', onMouseover);
-          _this.eventManager.listen('mouseup.tableSelection', onMouseup);
-          if (_this.onDragStart && selectionStart) {
-            _this.onDragStart(selectionStart);
+          if (selectionStart) {
+            _this.setTableSelectionTimerIfNeed(selectionStart);
+            _this.eventManager.listen('mouseover.tableSelection', onMouseover);
+            _this.eventManager.listen('mouseup.tableSelection', onMouseup);
+            if (_this.onDragStart) {
+              _this.onDragStart(selectionStart);
+            }
           }
         } else if (ev.data.button === MOUSE_RIGHT_BUTTON) {
           finishSelection();
@@ -8357,7 +8436,7 @@ var WwTableSelectionManager = function () {
 exports.default = WwTableSelectionManager;
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8369,7 +8448,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg code block manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -8549,10 +8628,7 @@ var WwCodeBlockManager = function () {
         } else if (node.nodeName === 'BR') {
           str += '\n';
         } else {
-          var _node2 = node,
-              textContent = _node2.textContent;
-
-          str += sanitizeHtmlCode(textContent);
+          str += node.textContent;
         }
         node = nodes.shift();
       }
@@ -8632,7 +8708,7 @@ var WwCodeBlockManager = function () {
 
         var resultText = $pre.text().replace(/\s+$/, '');
         $pre.empty();
-        $pre.html(resultText ? resultText : brString);
+        $pre.html(resultText ? sanitizeHtmlCode(resultText) : brString);
 
         if (lang) {
           $pre.attr('data-language', lang);
@@ -8855,7 +8931,7 @@ function sanitizeHtmlCode(code) {
 exports.default = WwCodeBlockManager;
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8889,11 +8965,11 @@ var _toolbarItem = __webpack_require__(11);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _toolbarDivider = __webpack_require__(41);
+var _toolbarDivider = __webpack_require__(42);
 
 var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
 
-var _toolbarItemFactory = __webpack_require__(42);
+var _toolbarItemFactory = __webpack_require__(43);
 
 var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
 
@@ -8905,7 +8981,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements toolbar
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -9297,7 +9373,7 @@ var Toolbar = function (_UIController) {
 exports.default = Toolbar;
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9319,7 +9395,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements Toolbar Divider
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -9371,7 +9447,7 @@ Object.defineProperty(ToolbarDivider, 'className', {
 exports.default = ToolbarDivider;
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9383,18 +9459,18 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements Toolbar Item Factory
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 var _toolbarItem = __webpack_require__(11);
 
 var _toolbarItem2 = _interopRequireDefault(_toolbarItem);
 
-var _toolbarButton = __webpack_require__(75);
+var _toolbarButton = __webpack_require__(76);
 
 var _toolbarButton2 = _interopRequireDefault(_toolbarButton);
 
-var _toolbarDivider = __webpack_require__(41);
+var _toolbarDivider = __webpack_require__(42);
 
 var _toolbarDivider2 = _interopRequireDefault(_toolbarDivider);
 
@@ -9588,7 +9664,7 @@ var ToolbarItemFactory = function () {
 exports.default = ToolbarItemFactory;
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9616,7 +9692,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements tab button ui
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -9744,7 +9820,7 @@ var Tab = function (_UIController) {
 exports.default = Tab;
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9756,12 +9832,12 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Editor = __webpack_require__(45);
+var Editor = __webpack_require__(46);
 
 // for jquery
 /**
  * @fileoverview entry point for editor
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 _jquery2.default.fn.tuiEditor = function () {
   var options = void 0,
@@ -9797,7 +9873,7 @@ _jquery2.default.fn.tuiEditor = function () {
 module.exports = Editor;
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9805,7 +9881,7 @@ module.exports = Editor;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implemtents Editor
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -9830,7 +9906,7 @@ var _button = __webpack_require__(18);
 
 var _button2 = _interopRequireDefault(_button);
 
-var _markdownEditor = __webpack_require__(46);
+var _markdownEditor = __webpack_require__(47);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
@@ -9838,11 +9914,11 @@ var _mdPreview = __webpack_require__(12);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
-var _wysiwygEditor = __webpack_require__(56);
+var _wysiwygEditor = __webpack_require__(57);
 
 var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-var _layout = __webpack_require__(70);
+var _layout = __webpack_require__(71);
 
 var _layout2 = _interopRequireDefault(_layout);
 
@@ -9862,7 +9938,7 @@ var _importManager = __webpack_require__(10);
 
 var _importManager2 = _interopRequireDefault(_importManager);
 
-var _wwCodeBlockManager = __webpack_require__(39);
+var _wwCodeBlockManager = __webpack_require__(40);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
@@ -9870,7 +9946,7 @@ var _convertor = __webpack_require__(17);
 
 var _convertor2 = _interopRequireDefault(_convertor);
 
-var _viewer = __webpack_require__(32);
+var _viewer = __webpack_require__(33);
 
 var _viewer2 = _interopRequireDefault(_viewer);
 
@@ -9878,7 +9954,7 @@ var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _defaultUI = __webpack_require__(71);
+var _defaultUI = __webpack_require__(72);
 
 var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
@@ -9886,11 +9962,11 @@ var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwTableManager = __webpack_require__(37);
+var _wwTableManager = __webpack_require__(38);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(38);
+var _wwTableSelectionManager = __webpack_require__(39);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
@@ -9898,167 +9974,165 @@ var _codeBlockManager = __webpack_require__(7);
 
 var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
-var _bold = __webpack_require__(89);
+var _bold = __webpack_require__(90);
 
 var _bold2 = _interopRequireDefault(_bold);
 
-var _italic = __webpack_require__(90);
+var _italic = __webpack_require__(91);
 
 var _italic2 = _interopRequireDefault(_italic);
 
-var _strike = __webpack_require__(91);
+var _strike = __webpack_require__(92);
 
 var _strike2 = _interopRequireDefault(_strike);
 
-var _blockquote = __webpack_require__(92);
+var _blockquote = __webpack_require__(93);
 
 var _blockquote2 = _interopRequireDefault(_blockquote);
 
-var _heading = __webpack_require__(93);
+var _heading = __webpack_require__(94);
 
 var _heading2 = _interopRequireDefault(_heading);
 
-var _paragraph = __webpack_require__(94);
+var _paragraph = __webpack_require__(95);
 
 var _paragraph2 = _interopRequireDefault(_paragraph);
 
-var _hr = __webpack_require__(95);
+var _hr = __webpack_require__(96);
 
 var _hr2 = _interopRequireDefault(_hr);
 
-var _addLink = __webpack_require__(96);
+var _addLink = __webpack_require__(97);
 
 var _addLink2 = _interopRequireDefault(_addLink);
 
-var _addImage = __webpack_require__(97);
+var _addImage = __webpack_require__(98);
 
 var _addImage2 = _interopRequireDefault(_addImage);
 
-var _ul = __webpack_require__(98);
+var _ul = __webpack_require__(99);
 
 var _ul2 = _interopRequireDefault(_ul);
 
-var _ol = __webpack_require__(99);
+var _ol = __webpack_require__(100);
 
 var _ol2 = _interopRequireDefault(_ol);
 
-var _indent = __webpack_require__(100);
+var _indent = __webpack_require__(101);
 
 var _indent2 = _interopRequireDefault(_indent);
 
-var _outdent = __webpack_require__(101);
+var _outdent = __webpack_require__(102);
 
 var _outdent2 = _interopRequireDefault(_outdent);
 
-var _table = __webpack_require__(102);
+var _table = __webpack_require__(103);
 
 var _table2 = _interopRequireDefault(_table);
 
-var _task = __webpack_require__(103);
+var _task = __webpack_require__(104);
 
 var _task2 = _interopRequireDefault(_task);
 
-var _code = __webpack_require__(104);
+var _code = __webpack_require__(105);
 
 var _code2 = _interopRequireDefault(_code);
 
-var _codeBlock = __webpack_require__(105);
+var _codeBlock = __webpack_require__(106);
 
 var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-var _bold3 = __webpack_require__(106);
+var _bold3 = __webpack_require__(107);
 
 var _bold4 = _interopRequireDefault(_bold3);
 
-var _italic3 = __webpack_require__(107);
+var _italic3 = __webpack_require__(108);
 
 var _italic4 = _interopRequireDefault(_italic3);
 
-var _strike3 = __webpack_require__(108);
+var _strike3 = __webpack_require__(109);
 
 var _strike4 = _interopRequireDefault(_strike3);
 
-var _blockquote3 = __webpack_require__(109);
+var _blockquote3 = __webpack_require__(110);
 
 var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-var _addImage3 = __webpack_require__(110);
+var _addImage3 = __webpack_require__(111);
 
 var _addImage4 = _interopRequireDefault(_addImage3);
 
-var _addLink3 = __webpack_require__(111);
+var _addLink3 = __webpack_require__(112);
 
 var _addLink4 = _interopRequireDefault(_addLink3);
 
-var _hr3 = __webpack_require__(112);
+var _hr3 = __webpack_require__(113);
 
 var _hr4 = _interopRequireDefault(_hr3);
 
-var _heading3 = __webpack_require__(113);
+var _heading3 = __webpack_require__(114);
 
 var _heading4 = _interopRequireDefault(_heading3);
 
-var _paragraph3 = __webpack_require__(114);
+var _paragraph3 = __webpack_require__(115);
 
 var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-var _ul3 = __webpack_require__(115);
+var _ul3 = __webpack_require__(116);
 
 var _ul4 = _interopRequireDefault(_ul3);
 
-var _ol3 = __webpack_require__(116);
+var _ol3 = __webpack_require__(117);
 
 var _ol4 = _interopRequireDefault(_ol3);
 
-var _table3 = __webpack_require__(117);
+var _table3 = __webpack_require__(118);
 
 var _table4 = _interopRequireDefault(_table3);
 
-var _tableAddRow = __webpack_require__(118);
+var _tableAddRow = __webpack_require__(119);
 
 var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-var _tableAddCol = __webpack_require__(119);
+var _tableAddCol = __webpack_require__(120);
 
 var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-var _tableRemoveRow = __webpack_require__(120);
+var _tableRemoveRow = __webpack_require__(121);
 
 var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-var _tableRemoveCol = __webpack_require__(121);
+var _tableRemoveCol = __webpack_require__(122);
 
 var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-var _tableAlignCol = __webpack_require__(122);
+var _tableAlignCol = __webpack_require__(123);
 
 var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-var _tableRemove = __webpack_require__(123);
+var _tableRemove = __webpack_require__(124);
 
 var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-var _indent3 = __webpack_require__(124);
+var _indent3 = __webpack_require__(125);
 
 var _indent4 = _interopRequireDefault(_indent3);
 
-var _outdent3 = __webpack_require__(125);
+var _outdent3 = __webpack_require__(126);
 
 var _outdent4 = _interopRequireDefault(_outdent3);
 
-var _task3 = __webpack_require__(126);
+var _task3 = __webpack_require__(127);
 
 var _task4 = _interopRequireDefault(_task3);
 
-var _code3 = __webpack_require__(127);
+var _code3 = __webpack_require__(128);
 
 var _code4 = _interopRequireDefault(_code3);
 
-var _codeBlock3 = __webpack_require__(128);
+var _codeBlock3 = __webpack_require__(129);
 
 var _codeBlock4 = _interopRequireDefault(_codeBlock3);
-
-__webpack_require__(129);
 
 __webpack_require__(130);
 
@@ -10090,12 +10164,18 @@ __webpack_require__(143);
 
 __webpack_require__(144);
 
+__webpack_require__(145);
+
+__webpack_require__(146);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var __nedInstance = [];
 var gaTrackingId = 'UA-129966929-1';
+
+var availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang', 'type'];
 
 /**
  * @callback addImageBlobHook
@@ -10137,6 +10217,8 @@ var ToastUIEditor = function () {
     * @param {string[]} [options.exts] - extensions
     * @param {object} [options.customConvertor] - convertor extention
     * @param {string} [options.placeholder] - The placeholder text of the editable element.
+    * @param {string} [options.previewDelayTime] - the delay time for rendering preview
+    * @param {object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
     */
   function ToastUIEditor(options) {
     var _this = this;
@@ -10200,9 +10282,16 @@ var ToastUIEditor = function () {
     this.setUI(this.options.UI || new _defaultUI2.default(this));
 
     this.mdEditor = _markdownEditor2.default.factory(this.layout.getMdEditorContainerEl(), this.eventManager, this.options);
-    this.preview = new _mdPreview2.default(this.layout.getPreviewEl(), this.eventManager, this.convertor);
+    this.preview = new _mdPreview2.default(this.layout.getPreviewEl(), this.eventManager, this.convertor, false, this.options.previewDelayTime);
     this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
     this.toMarkOptions = null;
+
+    if (this.options.linkAttribute) {
+      var attribute = this._sanitizeLinkAttribute(this.options.linkAttribute);
+
+      this.convertor.setLinkAttribute(attribute);
+      this.wwEditor.setLinkAttribute(attribute);
+    }
 
     this.changePreviewStyle(this.options.previewStyle);
 
@@ -10236,13 +10325,33 @@ var ToastUIEditor = function () {
   }
 
   /**
-   * change preview style
-   * @memberof ToastUIEditor
-   * @param {string} style - 'tab'|'vertical'
+   * sanitize attribute for link
+   * @param {object} attribute - attribute for link
+   * @returns {object} sanitized attribute
    */
 
 
   _createClass(ToastUIEditor, [{
+    key: '_sanitizeLinkAttribute',
+    value: function _sanitizeLinkAttribute(attribute) {
+      var linkAttribute = {};
+
+      availableLinkAttributes.forEach(function (key) {
+        if (!_tuiCodeSnippet2.default.isUndefined(attribute[key])) {
+          linkAttribute[key] = attribute[key];
+        }
+      });
+
+      return linkAttribute;
+    }
+
+    /**
+     * change preview style
+     * @memberof ToastUIEditor
+     * @param {string} style - 'tab'|'vertical'
+     */
+
+  }, {
     key: 'changePreviewStyle',
     value: function changePreviewStyle(style) {
       this.layout.changePreviewStyle(style);
@@ -11035,7 +11144,7 @@ ToastUIEditor.markdownit = _convertor2.default.getMarkdownitRenderer();
 module.exports = ToastUIEditor;
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11053,7 +11162,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _codeMirrorExt = __webpack_require__(35);
+var _codeMirrorExt = __webpack_require__(36);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
@@ -11061,15 +11170,15 @@ var _keyMapper = __webpack_require__(19);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _mdListManager = __webpack_require__(54);
+var _mdListManager = __webpack_require__(55);
 
 var _mdListManager2 = _interopRequireDefault(_mdListManager);
 
-var _componentManager = __webpack_require__(36);
+var _componentManager = __webpack_require__(37);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _mdTextObject = __webpack_require__(55);
+var _mdTextObject = __webpack_require__(56);
 
 var _mdTextObject2 = _interopRequireDefault(_mdTextObject);
 
@@ -11081,7 +11190,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements markdown editor
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -11374,7 +11483,7 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 exports.default = MarkdownEditor;
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11397,7 +11506,7 @@ var listRE = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
  */
 /**
 * @fileoverview codemirror extension for fix ordered list number
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 
 _codemirror2.default.commands.indentLessOrderedList = function (cm) {
@@ -11517,7 +11626,7 @@ function findFirstListItem(lineNumber, cm) {
 }
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11598,11 +11707,11 @@ _codemirror2.default.overlayMode = function (base, overlay, combine) {
 // or state.overlay.combineTokens was true, in which case the styles are
 // combined.
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12492,7 +12601,7 @@ _codemirror2.default.defineMode("markdown", function (cmCfg, modeCfg) {
 }, "xml"); // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 // based on https://github.com/codemirror/CodeMirror/blob/ff04f127ba8a736b97d06c505fb85d976e3f2980/mode/markdown/markdown.js
 
@@ -12502,7 +12611,7 @@ _codemirror2.default.defineMIME("text/markdown", "markdown");
 _codemirror2.default.defineMIME("text/x-markdown", "markdown");
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12518,7 +12627,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var urlRE = /^((?:(?:aaas?|about|acap|adiumxtra|af[ps]|aim|apt|attachment|aw|beshare|bitcoin|bolo|callto|cap|chrome(?:-extension)?|cid|coap|com-eventbrite-attendee|content|crid|cvs|data|dav|dict|dlna-(?:playcontainer|playsingle)|dns|doi|dtn|dvb|ed2k|facetime|feed|file|finger|fish|ftp|geo|gg|git|gizmoproject|go|gopher|gtalk|h323|hcp|https?|iax|icap|icon|im|imap|info|ipn|ipp|irc[6s]?|iris(?:\.beep|\.lwz|\.xpc|\.xpcs)?|itms|jar|javascript|jms|keyparc|lastfm|ldaps?|magnet|mailto|maps|market|message|mid|mms|ms-help|msnim|msrps?|mtqp|mumble|mupdate|mvn|news|nfs|nih?|nntp|notes|oid|opaquelocktoken|palm|paparazzi|platform|pop|pres|proxy|psyc|query|res(?:ource)?|rmi|rsync|rtmp|rtsp|secondlife|service|session|sftp|sgn|shttp|sieve|sips?|skype|sm[bs]|snmp|soap\.beeps?|soldat|spotify|ssh|steam|svn|tag|teamspeak|tel(?:net)?|tftp|things|thismessage|tip|tn3270|tv|udp|unreal|urn|ut2004|vemmi|ventrilo|view-source|webcal|wss?|wtai|wyciwyg|xcon(?:-userid)?|xfire|xmlrpc\.beeps?|xmpp|xri|ymsgr|z39\.50[rs]?):(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]|\([^\s()<>]*\))+(?:\([^\s()<>]*\)|[^\s`*!()\[\]{};:'".,<>?«»“”‘’]))/i; // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 
@@ -12640,7 +12749,7 @@ _codemirror2.default.defineMode("gfm", function (config, modeConfig) {
 _codemirror2.default.defineMIME("text/x-gfm", "gfm");
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12658,7 +12767,7 @@ var listRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]\s|[*+-]\s|(\d+)([.)]))(\s*)/,
     unorderedListRE = /[*+-]\s/; // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 
@@ -12758,7 +12867,7 @@ function incrementRemainingMarkdownListNumbers(cm, pos) {
 }
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12799,7 +12908,7 @@ _codemirror2.default.commands.replaceLineTextToUpper = function (cm) {
 }; // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 
@@ -12911,7 +13020,7 @@ function replaceMultiLine(cm, upper, bottom, lineAdjustment) {
 }
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12944,7 +13053,7 @@ _codemirror2.default.defineOption('placeholder', '', function (cm, val, old) {
 }); // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 /**
- * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 
@@ -12981,7 +13090,7 @@ function isEmpty(cm) {
 }
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12997,7 +13106,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @fileoverview Implements markdown list manager
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 var FIND_LIST_RX = /^[ \t]*([-*]|[\d]+\.)( \[[ xX]])? /;
@@ -13376,7 +13485,7 @@ var MdListManager = function () {
 exports.default = MdListManager;
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13392,7 +13501,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @fileoverview Implements markdown textObject
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -13564,7 +13673,7 @@ var mdTextObject = function () {
 exports.default = mdTextObject;
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13576,7 +13685,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implments wysiwygEditor
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -13592,43 +13701,43 @@ var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwClipboardManager = __webpack_require__(57);
+var _wwClipboardManager = __webpack_require__(58);
 
 var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-var _wwListManager = __webpack_require__(60);
+var _wwListManager = __webpack_require__(61);
 
 var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-var _wwTaskManager = __webpack_require__(61);
+var _wwTaskManager = __webpack_require__(62);
 
 var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-var _wwTableManager = __webpack_require__(37);
+var _wwTableManager = __webpack_require__(38);
 
 var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-var _wwTableSelectionManager = __webpack_require__(38);
+var _wwTableSelectionManager = __webpack_require__(39);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-var _wwHrManager = __webpack_require__(62);
+var _wwHrManager = __webpack_require__(63);
 
 var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-var _wwPManager = __webpack_require__(63);
+var _wwPManager = __webpack_require__(64);
 
 var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-var _wwHeadingManager = __webpack_require__(64);
+var _wwHeadingManager = __webpack_require__(65);
 
 var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-var _wwCodeBlockManager = __webpack_require__(39);
+var _wwCodeBlockManager = __webpack_require__(40);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-var _squireExt = __webpack_require__(65);
+var _squireExt = __webpack_require__(66);
 
 var _squireExt2 = _interopRequireDefault(_squireExt);
 
@@ -13636,15 +13745,15 @@ var _keyMapper = __webpack_require__(19);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _wwTextObject = __webpack_require__(67);
+var _wwTextObject = __webpack_require__(68);
 
 var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
 
-var _componentManager = __webpack_require__(36);
+var _componentManager = __webpack_require__(37);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _codeBlockGadget = __webpack_require__(68);
+var _codeBlockGadget = __webpack_require__(69);
 
 var _codeBlockGadget2 = _interopRequireDefault(_codeBlockGadget);
 
@@ -13690,6 +13799,7 @@ var WysiwygEditor = function () {
 
     this._keyEventHandlers = {};
     this._managers = {};
+    this._linkAttribute = {};
 
     this._initEvent();
     this._initDefaultKeyEventHandler();
@@ -14567,6 +14677,28 @@ var WysiwygEditor = function () {
     }
 
     /**
+     * Set attribute of link for wysiwyg
+     * @param {object} attribute - attribute of anchor tag
+     */
+
+  }, {
+    key: 'setLinkAttribute',
+    value: function setLinkAttribute(attribute) {
+      this._linkAttribute = attribute;
+    }
+
+    /**
+     * Get attribute of link for wysiwyg
+     * @returns {object} attribute - attribute of anchor tag
+     */
+
+  }, {
+    key: 'getLinkAttribute',
+    value: function getLinkAttribute() {
+      return this._linkAttribute;
+    }
+
+    /**
      * setValue
      * Set value to wysiwyg editor
      * @memberof WysiwygEditor
@@ -15116,7 +15248,7 @@ var WysiwygEditor = function () {
 exports.default = WysiwygEditor;
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15128,7 +15260,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg editor clipboard manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -15144,11 +15276,11 @@ var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwPasteContentHelper = __webpack_require__(58);
+var _wwPasteContentHelper = __webpack_require__(59);
 
 var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
-var _wwTablePasteHelper = __webpack_require__(59);
+var _wwTablePasteHelper = __webpack_require__(60);
 
 var _wwTablePasteHelper2 = _interopRequireDefault(_wwTablePasteHelper);
 
@@ -15192,13 +15324,30 @@ var WwClipboardManager = function () {
       var _this = this;
 
       this.wwe.eventManager.listen('willPaste', function (ev) {
-        return _this._onWillPaste(ev.data);
+        return _this._executeHandler(_this._onWillPaste.bind(_this), ev);
       });
-      this.wwe.eventManager.listen('copy', this._onCopyCut.bind(this));
-      this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this));
-      this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this));
-      this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this));
-      this.wwe.eventManager.listen('paste', this._onPasteIntoTable.bind(this));
+      this.wwe.eventManager.listen('copy', function (ev) {
+        return _this._executeHandler(_this._onCopyCut.bind(_this), ev);
+      });
+      this.wwe.eventManager.listen('copyAfter', function (ev) {
+        return _this._executeHandler(_this._onCopyAfter.bind(_this), ev);
+      });
+      this.wwe.eventManager.listen('cut', function (ev) {
+        return _this._executeHandler(_this._onCopyCut.bind(_this), ev);
+      });
+      this.wwe.eventManager.listen('cutAfter', function (ev) {
+        return _this._executeHandler(_this._onCutAfter.bind(_this), ev);
+      });
+      this.wwe.eventManager.listen('paste', function (ev) {
+        return _this._executeHandler(_this._onPasteIntoTable.bind(_this), ev);
+      });
+    }
+  }, {
+    key: '_executeHandler',
+    value: function _executeHandler(handler, event) {
+      if (event.source === 'wysiwyg') {
+        handler(event);
+      }
     }
   }, {
     key: '_onCopyCut',
@@ -15287,8 +15436,10 @@ var WwClipboardManager = function () {
     }
   }, {
     key: '_onWillPaste',
-    value: function _onWillPaste(pasteData) {
+    value: function _onWillPaste(event) {
       var _this2 = this;
+
+      var pasteData = event.data;
 
       var $clipboardContainer = (0, _jquery2.default)('<div>').append(pasteData.fragment.cloneNode(true));
       this._preparePaste($clipboardContainer);
@@ -15299,45 +15450,11 @@ var WwClipboardManager = function () {
         pasteData.fragment.appendChild(element);
       });
 
-      // @TODO Temporary code : paste to empty code block
-      this._pasteToEmptyCodeBlock(pasteData);
-
       // once right after the squire insertHTML DOM.
       var handler = function handler() {
         _this2.wwe.getEditor().removeEventListener('input', handler);
         _this2.wwe.eventManager.emit('wysiwygRangeChangeAfter', _this2);
         _this2._focusTableBookmark();
-      };
-      this.wwe.getEditor().addEventListener('input', handler);
-    }
-
-    // @TODO Temporary code : paste to empty code block
-    // Squire remove empty code block when paste.
-    // This code should remove after https://github.com/neilj/Squire/issues/349 would be resolved.
-
-  }, {
-    key: '_pasteToEmptyCodeBlock',
-    value: function _pasteToEmptyCodeBlock(pasteData) {
-      var _this3 = this;
-
-      var sq = this.wwe.getEditor();
-      var range = sq.getSelection().cloneRange();
-      var container = range.startContainer;
-      var wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
-      var shouldChangeSelection = false;
-      if (wwCodeblockManager.isInCodeBlock(range) && range.collapse && container.nodeName === 'PRE' && !container.textContent) {
-        var brNode = container.firstChild;
-        container.insertBefore(pasteData.fragment, brNode);
-        pasteData.defaultPrevented = true;
-        shouldChangeSelection = true;
-      }
-
-      var handler = function handler() {
-        _this3.wwe.getEditor().removeEventListener('input', handler);
-        if (shouldChangeSelection) {
-          range.setStart(container, 1);
-          sq.setSelection(range);
-        }
       };
       this.wwe.getEditor().addEventListener('input', handler);
     }
@@ -15574,7 +15691,7 @@ var WwClipboardManager = function () {
 exports.default = WwClipboardManager;
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15586,7 +15703,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements WwPasteContentHelper
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -16095,7 +16212,7 @@ var WwPasteContentHelper = function () {
 exports.default = WwPasteContentHelper;
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16107,7 +16224,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Paste helper when past to table
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -16641,7 +16758,7 @@ var WwTablePasteHelper = function () {
 exports.default = WwTablePasteHelper;
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16653,7 +16770,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg list manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -17087,7 +17204,7 @@ var WwListManager = function () {
 exports.default = WwListManager;
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17099,13 +17216,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg task manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
 var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
+
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17156,9 +17277,11 @@ var WwTaskManager = function () {
       this._initEvent();
 
       this.wwe.getEditor().addEventListener('mousedown', function (ev) {
-        var isOnTaskBox = ev.offsetX < 18 && ev.offsetY < 18;
+        var style = getComputedStyle(ev.target, ':before');
 
-        if (ev.target.hasAttribute(TASK_ATTR_NAME) && isOnTaskBox) {
+        if (ev.target.hasAttribute(TASK_ATTR_NAME) && _domUtils2.default.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
+          // Prevent cursor focusing
+          ev.preventDefault();
           (0, _jquery2.default)(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
         }
       });
@@ -17309,7 +17432,7 @@ var WwTaskManager = function () {
 exports.default = WwTaskManager;
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17321,7 +17444,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg hr manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -17628,7 +17751,7 @@ function findTextNodeFilter() {
 exports.default = WwHrManager;
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17640,7 +17763,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg p tag manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -17794,7 +17917,7 @@ var WwPManager = function () {
 exports.default = WwPManager;
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17806,7 +17929,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements wysiwyg heading manager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -18062,7 +18185,7 @@ var WwHeadingManager = function () {
 exports.default = WwHeadingManager;
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18082,7 +18205,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _squireRte = __webpack_require__(66);
+var _squireRte = __webpack_require__(67);
 
 var _squireRte2 = _interopRequireDefault(_squireRte);
 
@@ -18100,7 +18223,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements squire extension
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -18484,13 +18607,13 @@ var SquireExt = function (_Squire) {
 exports.default = SquireExt;
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_66__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_67__;
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18502,7 +18625,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements WwTextObject
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -18697,7 +18820,7 @@ var WwTextObject = function () {
 exports.default = WwTextObject;
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18715,7 +18838,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _blockOverlay = __webpack_require__(69);
+var _blockOverlay = __webpack_require__(70);
 
 var _blockOverlay2 = _interopRequireDefault(_blockOverlay);
 
@@ -18727,7 +18850,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements UI code block gadget
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -18874,7 +18997,7 @@ var CodeBlockGadget = function (_BlockOverlay) {
 exports.default = CodeBlockGadget;
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18886,7 +19009,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements UI block overlay
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -19080,7 +19203,7 @@ var BlockOverlay = function () {
 exports.default = BlockOverlay;
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19092,7 +19215,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview editor layout
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -19354,7 +19477,7 @@ var Layout = function () {
 exports.default = Layout;
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19366,7 +19489,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview default UI
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -19374,11 +19497,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _defaultToolbar = __webpack_require__(72);
+var _defaultToolbar = __webpack_require__(73);
 
 var _defaultToolbar2 = _interopRequireDefault(_defaultToolbar);
 
-var _tab = __webpack_require__(43);
+var _tab = __webpack_require__(44);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -19386,35 +19509,35 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _modeSwitch = __webpack_require__(77);
+var _modeSwitch = __webpack_require__(78);
 
 var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-var _popupAddLink = __webpack_require__(78);
+var _popupAddLink = __webpack_require__(79);
 
 var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-var _popupAddImage = __webpack_require__(79);
+var _popupAddImage = __webpack_require__(80);
 
 var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-var _popupTableUtils = __webpack_require__(80);
+var _popupTableUtils = __webpack_require__(81);
 
 var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-var _popupAddTable = __webpack_require__(81);
+var _popupAddTable = __webpack_require__(82);
 
 var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-var _popupAddHeading = __webpack_require__(82);
+var _popupAddHeading = __webpack_require__(83);
 
 var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
-var _popupCodeBlockLanguages = __webpack_require__(83);
+var _popupCodeBlockLanguages = __webpack_require__(84);
 
 var _popupCodeBlockLanguages2 = _interopRequireDefault(_popupCodeBlockLanguages);
 
-var _popupCodeBlockEditor = __webpack_require__(84);
+var _popupCodeBlockEditor = __webpack_require__(85);
 
 var _popupCodeBlockEditor2 = _interopRequireDefault(_popupCodeBlockEditor);
 
@@ -19422,7 +19545,7 @@ var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _tooltip = __webpack_require__(34);
+var _tooltip = __webpack_require__(35);
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -19867,7 +19990,7 @@ var DefaultUI = function () {
 exports.default = DefaultUI;
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19881,7 +20004,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _resizeObserverPolyfill = __webpack_require__(73);
+var _resizeObserverPolyfill = __webpack_require__(74);
 
 var _resizeObserverPolyfill2 = _interopRequireDefault(_resizeObserverPolyfill);
 
@@ -19889,15 +20012,15 @@ var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _toolbar = __webpack_require__(40);
+var _toolbar = __webpack_require__(41);
 
 var _toolbar2 = _interopRequireDefault(_toolbar);
 
-var _popupDropdownToolbar = __webpack_require__(76);
+var _popupDropdownToolbar = __webpack_require__(77);
 
 var _popupDropdownToolbar2 = _interopRequireDefault(_popupDropdownToolbar);
 
-var _toolbarItemFactory = __webpack_require__(42);
+var _toolbarItemFactory = __webpack_require__(43);
 
 var _toolbarItemFactory2 = _interopRequireDefault(_toolbarItemFactory);
 
@@ -19909,7 +20032,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview implements DefaultToolbar
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -20064,7 +20187,7 @@ var DefaultToolbar = function (_Toolbar) {
 exports.default = DefaultToolbar;
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21094,10 +21217,10 @@ var index = (function () {
 
 /* harmony default export */ __webpack_exports__["default"] = (index);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(74)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(75)))
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports) {
 
 var g;
@@ -21124,7 +21247,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21146,7 +21269,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements UI Button
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -21169,7 +21292,7 @@ var ToolbarButton = function (_Button) {
 exports.default = ToolbarButton;
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21191,7 +21314,7 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _toolbar = __webpack_require__(40);
+var _toolbar = __webpack_require__(41);
 
 var _toolbar2 = _interopRequireDefault(_toolbar);
 
@@ -21203,7 +21326,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview implements DefaultToolbar
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -21436,7 +21559,7 @@ Object.defineProperty(PopupDropdownToolbar, 'OPEN_EVENT', {
 exports.default = PopupDropdownToolbar;
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21472,7 +21595,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements ui mode switch
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -21639,7 +21762,7 @@ Object.defineProperty(ModeSwitch, 'TYPE', {
 exports.default = ModeSwitch;
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21677,7 +21800,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements PopupAddLink
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -21875,7 +21998,7 @@ var PopupAddLink = function (_LayerPopup) {
 exports.default = PopupAddLink;
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21897,7 +22020,7 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _tab = __webpack_require__(43);
+var _tab = __webpack_require__(44);
 
 var _tab2 = _interopRequireDefault(_tab);
 
@@ -21913,7 +22036,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements PopupAddImage
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -22112,7 +22235,7 @@ var PopupAddImage = function (_LayerPopup) {
 exports.default = PopupAddImage;
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22150,7 +22273,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements PopupTableUtils
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -22283,7 +22406,7 @@ var PopupTableUtils = function (_LayerPopup) {
 exports.default = PopupTableUtils;
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22313,7 +22436,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements PopupAddTable
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -22780,7 +22903,7 @@ PopupAddTable.MIN_COL_SELECTION_INDEX = MIN_COL_SELECTION_INDEX;
 exports.default = PopupAddTable;
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22818,7 +22941,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements PopupAddTable
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -22926,7 +23049,7 @@ var PopupAddHeading = function (_LayerPopup) {
 exports.default = PopupAddHeading;
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22960,7 +23083,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements popup code block languages
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -23224,7 +23347,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 exports.default = PopupCodeBlockLanguages;
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23250,19 +23373,19 @@ var _layerpopup = __webpack_require__(5);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _scrollSyncSplit = __webpack_require__(85);
+var _scrollSyncSplit = __webpack_require__(86);
 
 var _scrollSyncSplit2 = _interopRequireDefault(_scrollSyncSplit);
 
-var _codeBlockEditor = __webpack_require__(86);
+var _codeBlockEditor = __webpack_require__(87);
 
 var _codeBlockEditor2 = _interopRequireDefault(_codeBlockEditor);
 
-var _codeBlockPreview = __webpack_require__(87);
+var _codeBlockPreview = __webpack_require__(88);
 
 var _codeBlockPreview2 = _interopRequireDefault(_codeBlockPreview);
 
-var _codeBlockLanguagesCombo = __webpack_require__(88);
+var _codeBlockLanguagesCombo = __webpack_require__(89);
 
 var _codeBlockLanguagesCombo2 = _interopRequireDefault(_codeBlockLanguagesCombo);
 
@@ -23278,7 +23401,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements popup code block editor
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -23597,7 +23720,7 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 exports.default = PopupCodeBlockEditor;
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23609,7 +23732,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements scroll sync split
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -23911,7 +24034,7 @@ var ScrollSyncSplit = function () {
 exports.default = ScrollSyncSplit;
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23927,7 +24050,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _codeMirrorExt = __webpack_require__(35);
+var _codeMirrorExt = __webpack_require__(36);
 
 var _codeMirrorExt2 = _interopRequireDefault(_codeMirrorExt);
 
@@ -23939,7 +24062,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements code block editor
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -24114,7 +24237,7 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
 exports.default = CodeBlockEditor;
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24140,7 +24263,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @fileoverview Implements CodeBlockPreview
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
@@ -24217,7 +24340,7 @@ var CodeBlockPreview = function (_Preview) {
 exports.default = CodeBlockPreview;
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24229,7 +24352,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @fileoverview Implements UI code block languages combo
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
@@ -24457,7 +24580,7 @@ var CodeBlockLanguagesCombo = function () {
 exports.default = CodeBlockLanguagesCombo;
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24471,13 +24594,13 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _emphasisCommon = __webpack_require__(33);
+var _emphasisCommon = __webpack_require__(34);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
 * @fileoverview Implements Bold markdown command
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var boldRangeRegex = /^(\*{2}|_{2}).*\1$/;
 var boldContentRegex = /[*_]{2,}([^*_]*)[*_]{2,}/g;
@@ -24511,7 +24634,7 @@ var Bold = _commandManager2.default.command('markdown', /** @lends Bold */{
 exports.default = Bold;
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24525,13 +24648,13 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _emphasisCommon = __webpack_require__(33);
+var _emphasisCommon = __webpack_require__(34);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * @fileoverview Implements Italic markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var boldItalicRangeRegex = /^(\*{3}|_{3}).*\1$/;
 var boldRangeRegex = /^(\*{2}|_{2}).*\1$/;
@@ -24660,7 +24783,7 @@ var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
 exports.default = Italic;
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24674,13 +24797,13 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _emphasisCommon = __webpack_require__(33);
+var _emphasisCommon = __webpack_require__(34);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * @fileoverview Implements StrikeThrough markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var strikeRangeRegex = /^~~.*~~$/;
 var strikeContentRegex = /~~([^~]*)~~/g;
@@ -24714,7 +24837,7 @@ var Strike = _commandManager2.default.command('markdown', /** @lends Strike */{
 exports.default = Strike;
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24741,7 +24864,7 @@ var BlockquoteRegex = /^> ?/;
  */
 /**
 * @fileoverview Implements Blockquote markdown command
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockquote */{
   name: 'Blockquote',
@@ -24854,7 +24977,7 @@ var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockqu
 exports.default = Blockquote;
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24876,7 +24999,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview Implements Heading markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var FIND_HEADING_RX = /^#+\s/g;
 
@@ -24955,7 +25078,7 @@ function getHeadingMarkdown(text, size) {
 exports.default = Heading;
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24984,7 +25107,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements Paragraph markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Paragraph = _commandManager2.default.command('markdown', /** @lends Paragraph */{
   name: 'Paragraph',
@@ -25036,7 +25159,7 @@ function getParagraphMarkdown(lineText) {
 exports.default = Paragraph;
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25101,13 +25224,13 @@ var HR = _commandManager2.default.command('markdown', /** @lends HR */{
   }
 }); /**
      * @fileoverview Implements HR markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 
 exports.default = HR;
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25129,7 +25252,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implements Addlink markdown command
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var decodeURIGraceful = _importManager2.default.decodeURIGraceful,
     encodeMarkdownCharacters = _importManager2.default.encodeMarkdownCharacters,
@@ -25184,7 +25307,7 @@ var AddLink = _commandManager2.default.command('markdown', /** @lends AddLink */
 exports.default = AddLink;
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25206,7 +25329,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * @fileoverview Implments AddImage markdown command
-* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+* @author NHN FE Development Lab <dl_javascript@nhn.com>
 */
 var decodeURIGraceful = _importManager2.default.decodeURIGraceful,
     encodeMarkdownCharacters = _importManager2.default.encodeMarkdownCharacters,
@@ -25260,7 +25383,7 @@ var AddImage = _commandManager2.default.command('markdown', /** @lends AddImage 
 exports.default = AddImage;
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25298,12 +25421,12 @@ var UL = _commandManager2.default.command('markdown', /** @lends UL */{
   }
 }); /**
      * @fileoverview Implements UL markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 exports.default = UL;
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25341,13 +25464,13 @@ var OL = _commandManager2.default.command('markdown', /** @lends OL */{
   }
 }); /**
      * @fileoverview Implements OL markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 
 exports.default = OL;
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25382,13 +25505,13 @@ var Indent = _commandManager2.default.command('markdown', /** @lends Indent */{
   }
 }); /**
      * @fileoverview Implements Indent markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 
 exports.default = Indent;
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25423,13 +25546,13 @@ var Outdent = _commandManager2.default.command('markdown', /** @lends Outdent */
   }
 }); /**
      * @fileoverview Implements Outdent markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 
 exports.default = Outdent;
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25492,7 +25615,7 @@ var Table = _commandManager2.default.command('markdown', /** @lends Table */{
  */
 /**
  * @fileoverview Implements Table markdown command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 function makeHeader(col, data) {
@@ -25550,7 +25673,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25587,12 +25710,12 @@ var Task = _commandManager2.default.command('markdown', /** @lends Task */{
   }
 }); /**
      * @fileoverview Implements Task markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 exports.default = Task;
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25610,7 +25733,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var codeRangeRegex = /^`([^`]+)`$/; /**
                                     * @fileoverview Implements Code markdown command
-                                    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                    * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                     */
 
 var codeContentRegex = /`([^`]+)`/g;
@@ -25711,7 +25834,7 @@ var Code = _commandManager2.default.command('markdown', /** @lends Code */{
 exports.default = Code;
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25764,12 +25887,12 @@ var CodeBlock = _commandManager2.default.command('markdown', /** @lends CodeBloc
   }
 }); /**
      * @fileoverview Implements CodeBlock markdown command
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 exports.default = CodeBlock;
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25823,7 +25946,7 @@ var Bold = _commandManager2.default.command('wysiwyg', /** @lends Bold */{
  */
 /**
  * @fileoverview Implements bold WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 function styleBold(sq) {
   if (sq.hasFormat('b') || sq.hasFormat('strong')) {
@@ -25839,7 +25962,7 @@ function styleBold(sq) {
 exports.default = Bold;
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25893,7 +26016,7 @@ var Italic = _commandManager2.default.command('wysiwyg', /** @lends Italic */{
  */
 /**
  * @fileoverview Implements italic WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 function styleItalic(sq) {
@@ -25910,7 +26033,7 @@ function styleItalic(sq) {
 exports.default = Italic;
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25964,7 +26087,7 @@ var Strike = _commandManager2.default.command('wysiwyg', /** @lends Strike */{
  */
 /**
  * @fileoverview Implements strike WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 function styleStrike(sq) {
@@ -25981,7 +26104,7 @@ function styleStrike(sq) {
 exports.default = Strike;
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26026,13 +26149,13 @@ var Blockquote = _commandManager2.default.command('wysiwyg', /** @lends Blockquo
   }
 }); /**
      * @fileoverview Implements block quote WysiwygCommand
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 
 exports.default = Blockquote;
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26054,7 +26177,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @fileoverview Implements AddImage wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var decodeURIGraceful = _importManager2.default.decodeURIGraceful,
     encodeMarkdownCharacters = _importManager2.default.encodeMarkdownCharacters;
@@ -26093,7 +26216,7 @@ var AddImage = _commandManager2.default.command('wysiwyg', /** @lends AddImage *
 exports.default = AddImage;
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26107,6 +26230,10 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _tuiCodeSnippet = __webpack_require__(1);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
 var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
@@ -26117,6 +26244,10 @@ var _importManager2 = _interopRequireDefault(_importManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/**
+ * @fileoverview Implements AddLink wysiwyg command
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 var decodeURIGraceful = _importManager2.default.decodeURIGraceful,
     encodeMarkdownCharacters = _importManager2.default.encodeMarkdownCharacters;
 
@@ -26126,10 +26257,6 @@ var decodeURIGraceful = _importManager2.default.decodeURIGraceful,
  * @extends Command
  * @module wysiwygCommands/AddLink
  * @ignore
- */
-/**
- * @fileoverview Implements AddLink wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 
 var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
@@ -26141,6 +26268,7 @@ var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
    */
   exec: function exec(wwe, data) {
     var sq = wwe.getEditor();
+    var linkAttibute = wwe.getLinkAttribute();
     var url = data.url,
         linkText = data.linkText;
 
@@ -26153,9 +26281,12 @@ var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
       sq.removeAllFormatting();
 
       if (sq.getSelectedText()) {
-        sq.makeLink(url);
+        sq.makeLink(url, linkAttibute);
       } else {
-        var link = sq.createElement('A', { href: url });
+        var link = sq.createElement('A', _tuiCodeSnippet2.default.extend({
+          href: url
+        }, linkAttibute));
+
         (0, _jquery2.default)(link).text(linkText);
         sq.insertElement(link);
       }
@@ -26166,7 +26297,7 @@ var AddLink = _commandManager2.default.command('wysiwyg', /** @lends AddLink */{
 exports.default = AddLink;
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26195,7 +26326,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements HR wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
   name: 'HR',
@@ -26247,7 +26378,7 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
 exports.default = HR;
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26276,7 +26407,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements Heading wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
   name: 'Heading',
@@ -26317,7 +26448,7 @@ var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
 exports.default = Heading;
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26346,7 +26477,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements Paragraph wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph */{
   name: 'Paragraph',
@@ -26384,7 +26515,7 @@ var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph
 exports.default = Paragraph;
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26413,7 +26544,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements ul WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
   name: 'UL',
@@ -26492,7 +26623,7 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
 exports.default = UL;
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26521,7 +26652,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements ol WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
@@ -26601,7 +26732,7 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
 exports.default = OL;
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26666,7 +26797,7 @@ var Table = _commandManager2.default.command('wysiwyg', /** @lends Table */{
  */
 /**
  * @fileoverview Implements table WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 function focusToFirstTh(sq, $table) {
   var range = sq.getSelection();
@@ -26741,7 +26872,7 @@ function makeBody(col, row, data) {
 exports.default = Table;
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26817,7 +26948,7 @@ var TableAddRow = _commandManager2.default.command('wysiwyg', /** @lends AddRow 
  */
 /**
  * @fileoverview Implements table add row WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 function getSelectedRowsLength(wwe) {
   var selectionMgr = wwe.componentManager.getManager('tableSelection');
@@ -26866,7 +26997,7 @@ function focusToFirstTd(sq, $tr) {
 exports.default = TableAddRow;
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26903,7 +27034,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements table add column WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var TableAddCol = _commandManager2.default.command('wysiwyg', /** @lends AddCol */{
   name: 'AddCol',
@@ -27015,7 +27146,7 @@ function focusToNextCell(sq, $cell) {
 exports.default = TableAddCol;
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27044,7 +27175,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements table remove row WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var TableRemoveRow = _commandManager2.default.command('wysiwyg', /** @lends RemoveRow */{
   name: 'RemoveRow',
@@ -27144,7 +27275,7 @@ function getTrs(range, selectionMgr, $table) {
 exports.default = TableRemoveRow;
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27228,7 +27359,7 @@ var TableRemoveCol = _commandManager2.default.command('wysiwyg', /** @lends Remo
  */
 /**
  * @fileoverview Implements table remove column WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 function getCellByRange(range) {
   var cell = range.startContainer;
@@ -27290,7 +27421,7 @@ function focusToCell(sq, $cell, tableMgr) {
 exports.default = TableRemoveCol;
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27361,7 +27492,7 @@ var TableAlignCol = _commandManager2.default.command('wysiwyg', /** @lends Align
  */
 /**
  * @fileoverview Implements table align column WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 function setAlignAttributeToTableCells($table, alignDirection, selectionInformation) {
   var isDivided = selectionInformation.isDivided || false;
@@ -27442,7 +27573,7 @@ function getRangeInformation(range, selectionMgr) {
 exports.default = TableAlignCol;
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27471,7 +27602,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements table remove WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var TableRemove = _commandManager2.default.command('wysiwyg', /** @lends RemoveTable */{
   name: 'RemoveTable',
@@ -27497,7 +27628,7 @@ var TableRemove = _commandManager2.default.command('wysiwyg', /** @lends RemoveT
 exports.default = TableRemove;
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27526,7 +27657,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements Indent wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Indent = _commandManager2.default.command('wysiwyg', /** @lends Indent */{
   name: 'Indent',
@@ -27573,7 +27704,7 @@ var Indent = _commandManager2.default.command('wysiwyg', /** @lends Indent */{
 exports.default = Indent;
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27602,7 +27733,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements Outdent wysiwyg command
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Outdent = _commandManager2.default.command('wysiwyg', /** @lends Outdent */{
   name: 'Outdent',
@@ -27653,7 +27784,7 @@ function getCurrent$Li(wwe) {
 exports.default = Outdent;
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27760,12 +27891,12 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
   }
 }); /**
      * @fileoverview Implements Task WysiwygCommand
-     * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
      */
 exports.default = Task;
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27802,7 +27933,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 /**
  * @fileoverview Implements code WysiwygCommand
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Code = _commandManager2.default.command('wysiwyg', /** @lends Code */{
   name: 'Code',
@@ -27870,7 +28001,7 @@ function styleCode(editor, sq) {
 exports.default = Code;
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27896,7 +28027,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var CODEBLOCK_CLASS_TEMP = 'te-content-codeblock-temp'; /**
                                                          * @fileoverview Implements code block WysiwygCommand
-                                                         * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+                                                         * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                          */
 
 var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
@@ -27976,7 +28107,7 @@ function getCodeBlockBody(range, wwe) {
 exports.default = CodeBlock;
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28035,11 +28166,11 @@ _i18n2.default.setLanguage(['en', 'en_US'], {
   'Choose language': 'Choose language'
 }); /**
     * @fileoverview I18N for English
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+    * @author NHN FE Development Lab <dl_javascript@nhn.com>
     */
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28098,11 +28229,11 @@ _i18n2.default.setLanguage(['ko', 'ko_KR'], {
   'Choose language': '언어 선택'
 }); /**
     * @fileoverview I18N for Korean
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+    * @author NHN FE Development Lab <dl_javascript@nhn.com>
     */
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28161,11 +28292,11 @@ _i18n2.default.setLanguage(['zh', 'zh_CN'], {
   'Choose language': '选择语言'
 }); /**
     * @fileoverview I18N for Chinese
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+    * @author NHN FE Development Lab <dl_javascript@nhn.com>
     */
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28224,11 +28355,11 @@ _i18n2.default.setLanguage(['ja', 'ja_JP'], {
   'Choose language': '言語選択'
 }); /**
     * @fileoverview I18N for Japanese
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+    * @author NHN FE Development Lab <dl_javascript@nhn.com>
     */
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28287,11 +28418,11 @@ _i18n2.default.setLanguage(['nl', 'nl_NL'], {
   'Choose language': 'Kies een taal'
 }); /**
     * @fileoverview I18N for Dutch
-    * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+    * @author NHN FE Development Lab <dl_javascript@nhn.com>
     */
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28354,7 +28485,7 @@ _i18n2.default.setLanguage(['es', 'es_ES'], {
     */
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28417,7 +28548,7 @@ _i18n2.default.setLanguage(['de', 'de_DE'], {
     */
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28480,7 +28611,7 @@ _i18n2.default.setLanguage(['ru', 'ru_RU'], {
     */
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28543,7 +28674,7 @@ _i18n2.default.setLanguage(['fr', 'fr_FR'], {
     */
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28606,7 +28737,7 @@ _i18n2.default.setLanguage(['uk', 'uk_UA'], {
     */
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28669,7 +28800,7 @@ _i18n2.default.setLanguage(['tr', 'tr_TR'], {
     */
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28732,7 +28863,7 @@ _i18n2.default.setLanguage(['fi', 'fi_FI'], {
     */
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28795,7 +28926,7 @@ _i18n2.default.setLanguage(['cs', 'cs_CZ'], {
     */
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28858,7 +28989,7 @@ _i18n2.default.setLanguage(['ar', 'ar_AR'], {
     */
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28921,7 +29052,7 @@ _i18n2.default.setLanguage(['pl', 'pl_PL'], {
     */
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28981,6 +29112,69 @@ _i18n2.default.setLanguage(['zhtw', 'zh_TW'], {
 }); /**
     * @fileoverview I18N for Traditional Chinese
     * @author Tzu-Ray Su <raysu3329@gmail.com>
+    */
+
+/***/ }),
+/* 146 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(3);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['gl', 'gl_ES'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Escribir',
+  'Preview': 'Vista previa',
+  'Headings': 'Encabezados',
+  'Paragraph': 'Parágrafo',
+  'Bold': 'Negriña',
+  'Italic': 'Cursiva',
+  'Strike': 'Riscado',
+  'Code': 'Código',
+  'Line': 'Liña',
+  'Blockquote': 'Cita',
+  'Unordered list': 'Lista desordenada',
+  'Ordered list': 'Lista ordenada',
+  'Task': 'Tarefa',
+  'Indent': 'Sangría',
+  'Outdent': 'Anular sangría',
+  'Insert link': 'Inserir enlace',
+  'Insert CodeBlock': 'Inserir bloque de código',
+  'Insert table': 'Inserir táboa',
+  'Insert image': 'Inserir imaxe',
+  'Heading': 'Encabezado',
+  'Image URL': 'URL da imaxe',
+  'Select image file': 'Seleccionar arquivo da imaxe',
+  'Description': 'Descrición',
+  'OK': 'Aceptar',
+  'More': 'Máis',
+  'Cancel': 'Cancelar',
+  'File': 'Arquivo',
+  'URL': 'URL',
+  'Link text': 'Texto do enlace',
+  'Add row': 'Agregar fila',
+  'Add col': 'Agregar columna',
+  'Remove row': 'Eliminar fila',
+  'Remove col': 'Eliminar columna',
+  'Align left': 'Aliñar á esquerda',
+  'Align center': 'Centrar',
+  'Align right': 'Aliñar á dereita',
+  'Remove table': 'Eliminar táboa',
+  'Would you like to paste as table?': 'Desexa pegar como táboa?',
+  'Text color': 'Cor do texto',
+  'Auto scroll enabled': 'Desprazamento automático habilitado',
+  'Auto scroll disabled': 'Desprazamento automático deshabilitado',
+  'Choose language': 'Elixir idioma'
+}); /**
+    * @fileoverview I18N for Spanish
+    * @author Aida Vidal <avidal@emapic.es>
     */
 
 /***/ })
