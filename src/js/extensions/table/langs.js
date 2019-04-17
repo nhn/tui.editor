@@ -124,4 +124,11 @@ if (i18n) {
     'Cannot change part of merged cell': 'Non se pode cambiar parte dunha cela combinada',
     'Cannot paste row merged cells into the table header': 'Non se poden pegar celas no encabezado da táboa'
   });
+
+  i18n.setLanguage(['sv', 'sv_SE'], {
+    'Merge cells': 'Sammanfoga celler',
+    'Unmerge cells': 'Dela celler',
+    'Cannot change part of merged cell': 'Ej möjligt att ändra en del av en sammanfogad cell',
+    'Cannot paste row merged cells into the table header': 'Ej möjligt att klistra in rad-sammanfogade celler i tabellens huvud'
+  });
 }
