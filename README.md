@@ -101,7 +101,7 @@ Depending on the type of use you want like production of *Markdown* or maybe to 
 * **Table**: Hate the Markdown table? You can do everything with a mouse
 
 ### And more
-* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian, Turkish, Finnish, Czech, Arabic, Polish, Galician + language you extend.
+* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian, Turkish, Finnish, Czech, Arabic, Polish, Galician, Swedish + language you extend.
 * **Viewer**: Renders Markdown content with extensions
 
 
