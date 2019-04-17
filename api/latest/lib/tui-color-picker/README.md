@@ -4,7 +4,7 @@
 [![GitHub release](https://img.shields.io/github/release/nhnent/tui.color-picker.svg)](https://github.com/nhnent/tui.color-picker/releases/latest)
 [![npm](https://img.shields.io/npm/v/tui-color-picker.svg)](https://www.npmjs.com/package/tui-color-picker)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.project-name/labels/help%20wanted)
-[![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
+[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
 
 
 ## 🚩 Table of Contents
@@ -230,4 +230,4 @@ You can also see the older versions of API page on the [releases page](https://g
 
 ## 📜 License
 
-This software is licensed under the [MIT](https://github.com/nhnent/tui.color-picker/blob/production/LICENSE) © [NHN Entertainment](https://github.com/nhnent).
+This software is licensed under the [MIT](https://github.com/nhnent/tui.color-picker/blob/production/LICENSE) © [NHN](https://github.com/nhnent).

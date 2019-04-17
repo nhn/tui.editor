@@ -4,7 +4,7 @@
 
 It includes several features like `class simulation`, `browser detecting`, `type checking` and +30 more.
 
-`tui-code-snippet` supports IE8+ and modern browsers and already has been used for [open source javascript components](http://github.com/nhnent/) and many commercial projects in [NHNEnt](http://www.nhnent.com/en/index.nhn) corporation.
+`tui-code-snippet` supports IE8+ and modern browsers and already has been used for [open source javascript components](http://github.com/nhnent/) and many commercial projects in [NHN](http://www.nhn.com) corporation.
 
 ## Feature
 * browser.js

@@ -1,7 +1,7 @@
 /*!
  * Toast UI Colorpicker
- * @version 2.2.2
- * @author NHNEnt FE Development Team <dl_javascript@nhnent.com>
+ * @version 2.2.3
+ * @author NHN FE Development Team <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -113,7 +113,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Utility modules for manipulate DOM elements.
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -717,7 +717,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Utility module for handling DOM events.
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1143,7 +1143,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Common collections.
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1579,7 +1579,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview The base class of views.
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1769,7 +1769,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * @fileoverview General drag handler
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1975,7 +1975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview ColorPicker factory module
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2211,7 +2211,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Utility methods to manipulate colors
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2386,7 +2386,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview ColorPicker layout module
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2439,7 +2439,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Color palette view
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2609,7 +2609,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Palette view template
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2631,7 +2631,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Slider view
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -3039,7 +3039,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview module for manipulate SVG or VML object
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -3155,7 +3155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * @fileoverview Slider template
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	'use strict';

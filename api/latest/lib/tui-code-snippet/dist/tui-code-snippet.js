@@ -1,7 +1,7 @@
 /*!
  * tui-code-snippet.js
- * @version 1.5.0
- * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
+ * @version 1.5.1
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -64,8 +64,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 * @namespace tui.util
 	 * @example
 	 * // node, commonjs
@@ -112,8 +112,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module has some functions for handling a plain object, json.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -396,8 +396,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module provides some functions to check the type of variable
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -762,8 +762,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module has some functions for handling array.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -903,8 +903,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module has some functions for handling object as collection.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1263,8 +1263,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module provides a bind() function for context binding.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1305,8 +1305,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module provides some simple function for inheritance.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1378,8 +1378,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module has some functions for handling the string.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1512,7 +1512,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview collections of some technic methods.
-	 * @author NHN Ent. FE Development Lab <e0242.nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript.nhn.com>
 	 */
 
 	'use strict';
@@ -1670,8 +1671,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module has some functions for handling object as collection.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	'use strict';
 
@@ -1785,8 +1786,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module detects the kind of well-known browser and version.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1894,8 +1895,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module has some methods for handling popup-window
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2218,8 +2219,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module has a function for date format.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2458,8 +2459,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @fileoverview
 	 *  This module provides a function to make a constructor
 	 * that can inherit from the other constructors like the CLASS easily.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2542,8 +2543,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Define module
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javscript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javscript@nhn.com>
 	 * @dependency type.js, defineNamespace.js
 	 */
 
@@ -2598,8 +2599,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Define namespace
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 * @dependency object.js, collection.js
 	 */
 
@@ -2663,8 +2664,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @fileoverview
 	 *  This module provides some functions for custom events.<br>
 	 *  And it is implemented in the observer design pattern.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -3256,8 +3257,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module provides a Enum Constructor.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 * @example
 	 * // node, commonjs
 	 * var Enum = require('tui-code-snippet').Enum;
@@ -3429,8 +3430,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * @fileoverview
 	 *  Implements the ExMap (Extended Map) object.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -3546,8 +3547,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * @fileoverview
 	 *  Implements the Map object.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -3939,8 +3940,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This module provides the HashMap constructor.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';

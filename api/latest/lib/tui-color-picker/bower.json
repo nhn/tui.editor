@@ -1,7 +1,7 @@
 {
     "name": "tui-color-picker",
     "authors": [
-        "NHNent. FE Development Lab <dl_javascript@nhnent.com>"
+        "NHN. FE Development Lab <dl_javascript@nhn.com>"
     ],
     "main": [
         "dist/tui-color-picker.js",
