@@ -59,7 +59,7 @@ You can use Toast UI Editor for React as a ECMAScript module or a CommonJS modul
 import 'codemirror/lib/codemirror.css';
 import 'tui-editor/dist/tui-editor.min.css';
 import 'tui-editor/dist/tui-editor-contents.min.css';
-import Editor from '@toast-ui/react-editor'
+import { Editor } from '@toast-ui/react-editor'
 ```
 
 * Using CommonJS module
