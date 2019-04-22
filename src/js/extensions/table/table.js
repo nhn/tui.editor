@@ -85,6 +85,10 @@ function _changeHtml(html, onChangeTable) {
     $tables.get().forEach(tableElement => {
       const changedTableElement = onChangeTable(tableElement);
 
+      if (tableElement.hasAttribute('data-tomark-pass')) {
+        changedTableElement.setAttribute('data-tomark-pass', '');
+      }
+
       $(tableElement).replaceWith(changedTableElement);
     });
 
