@@ -4,7 +4,6 @@
  */
 
 import CommandManager from '../commandManager';
-import domUtil from '../domUtils';
 
 /**
  * OL
@@ -30,27 +29,26 @@ const OL = CommandManager.command('wysiwyg', /** @lends OL */{
       endContainer,
       endOffset
     } = range;
+    let newLIs = [];
 
     wwe.focus();
     sq.saveUndoState(range);
 
-    const lines = listManager.getLinesOfSelection(startContainer, endContainer);
+    if (listManager.isAvailableMakeListInTable()) {
+      newLIs = listManager.createListInTable(range, 'OL');
+    } else {
+      const lines = listManager.getLinesOfSelection(startContainer, endContainer);
 
-    const newLIs = [];
-    for (let i = 0; i < lines.length; i += 1) {
-      const newLI = this._changeFormatToOrderedListIfNeed(wwe, lines[i]);
-      if (newLI) {
-        newLIs.push(newLI);
+      for (let i = 0; i < lines.length; i += 1) {
+        const newLI = this._changeFormatToOrderedListIfNeed(wwe, lines[i]);
+        if (newLI) {
+          newLIs.push(newLI);
+        }
       }
     }
 
     if (newLIs.length) {
-      const newStartContainer = domUtil.containsNode(newLIs[0], startContainer)
-        ? startContainer : newLIs[0];
-      const newEndContainer = domUtil.containsNode(newLIs[newLIs.length - 1], endContainer)
-        ? endContainer : newLIs[newLIs.length - 1];
-
-      wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
+      listManager.adjustRange(startContainer, endContainer, startOffset, endOffset, newLIs);
     }
   },
 
@@ -67,7 +65,7 @@ const OL = CommandManager.command('wysiwyg', /** @lends OL */{
     const taskManager = wwe.componentManager.getManager('task');
     let newLI;
 
-    if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+    if (!sq.hasFormat('PRE')) {
       range.setStart(target, 0);
       range.collapse(true);
       sq.setSelection(range);

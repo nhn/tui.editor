@@ -599,6 +599,24 @@ const isInsideTaskBox = function(style, offsetX, offsetY) {
     && offsetY <= (rect.top + rect.height);
 };
 
+/**
+ * Check whether node is OL or UL
+ * @param {node} node - node
+ * @returns {boolean} - whether node is OL or UL
+ * @ignore
+ */
+const isListNode = function(node) {
+  let result = false;
+
+  if (node) {
+    const {nodeName} = node;
+
+    result = nodeName === 'UL' || nodeName === 'OL';
+  }
+
+  return result;
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -626,5 +644,6 @@ export default {
   removeChildFromStartToEndNode,
   removeNodesByDirection,
   getLeafNode,
-  isInsideTaskBox
+  isInsideTaskBox,
+  isListNode
 };

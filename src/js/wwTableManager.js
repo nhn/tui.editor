@@ -492,9 +492,11 @@ class WwTableManager {
       tdOrTh = paths[paths.length - 1];
     }
 
-    if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR'
-            && domUtils.getNodeName(tdOrTh.lastChild) !== 'DIV'
-            && !isIE10And11
+    const nodeName = domUtils.getNodeName(tdOrTh.lastChild);
+
+    if (nodeName !== 'BR' && nodeName !== 'DIV'
+        && nodeName !== 'UL' && nodeName !== 'OL'
+        && !isIE10And11
     ) {
       $(tdOrTh).append($('<br />')[0]);
     }

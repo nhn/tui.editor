@@ -9,6 +9,7 @@ import WwListManager from '../../../src/js/wwListManager';
 import WwTaskManager from '../../../src/js/wwTaskManager';
 import WysiwygEditor from '../../../src/js/wysiwygEditor';
 import EventManager from '../../../src/js/eventManager';
+import WwTableSelectionManager from '../../../src/js/wwTableSelectionManager';
 
 describe('Task', () => {
   let wwe, sq, container;
@@ -24,6 +25,7 @@ describe('Task', () => {
     sq = wwe.getEditor();
     wwe.componentManager.addManager(WwTaskManager);
     wwe.componentManager.addManager(WwListManager);
+    wwe.componentManager.addManager(WwTableSelectionManager);
     wwe.getEditor().focus();
   });
 
