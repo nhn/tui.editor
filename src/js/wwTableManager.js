@@ -396,36 +396,10 @@ class WwTableManager {
     const prevNode = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset, 'TR'),
       prevNodeName = domUtils.getNodeName(prevNode);
 
-    if (!prevNode || prevNodeName === 'TD' || prevNodeName === 'TH') {
-      event.preventDefault();
-    } else if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
+    if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
       event.preventDefault();
       $(prevNode).remove();
     }
-  }
-
-  /**
-   * Return whether delete non text or not
-   * @param {Range} range Range object
-   * @returns {boolean}
-   */
-  _isDeletingNonText(range) {
-    const currentElement = range.startContainer;
-    const nextNode = currentElement.nextSibling;
-    const nextNodeName = domUtils.getNodeName(nextNode);
-    const currentNodeName = domUtils.getNodeName(currentElement);
-    const insideNode = this._getCurrentNodeInCell(range);
-    const insideNodeName = domUtils.getNodeName(insideNode);
-
-    const isEmptyLineBetweenText = insideNode && insideNodeName === 'BR' && insideNode.nextSibling;
-    const isCellDeleting = !isEmptyLineBetweenText && currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
-    const isEndOfText = (!nextNode || (nextNodeName === 'BR' && nextNode.parentNode.lastChild === nextNode))
-            && (domUtils.isTextNode(currentElement) && range.startOffset === currentElement.nodeValue.length);
-    const isLastCellOfRow = !isEmptyLineBetweenText && !isEndOfText
-            && $(currentElement).parents('tr').children().last()[0] === currentElement
-            && (currentNodeName === 'TD' || currentNodeName === 'TH');
-
-    return isCellDeleting || isEndOfText || isLastCellOfRow;
   }
 
   /**
@@ -468,9 +442,6 @@ class WwTableManager {
 
       currentNode.parentNode.removeChild(currentNode.nextSibling);
       event.preventDefault();
-    } else if (this._isDeletingNonText(range)) {
-      event.preventDefault();
-      range.startContainer.normalize();
     }
   }
 

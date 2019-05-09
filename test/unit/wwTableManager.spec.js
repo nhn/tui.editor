@@ -1081,57 +1081,6 @@ describe('WwTableManager', () => {
     });
   });
 
-  describe('_isDeletingNonText', () => {
-    beforeEach(() => {
-      const html = '<table>' +
-                '<thead>' +
-                '<tr><th>1<br></th><th>2<br></th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td><br></td><td>1<br><br>2<br></td></tr>' +
-                '<tr><td>123<br></td><td><br></td></tr>' +
-                '</tbody>' +
-                '</table>';
-      wwe.get$Body().html(html);
-    });
-
-    it('should check empty cell as true', () => {
-      const range = wwe.getEditor().getSelection();
-      range.setStart(wwe.get$Body().find('td')[0], 0);
-      range.collapse(true);
-      wwe.getEditor().setSelection(range);
-
-      expect(mgr._isDeletingNonText(range)).toEqual(true);
-    });
-
-    it('should check the empty line between text line as false', () => {
-      const range = wwe.getEditor().getSelection();
-      range.setStart(wwe.get$Body().find('td')[1], 2);
-      range.collapse(true);
-      wwe.getEditor().setSelection(range);
-
-      expect(mgr._isDeletingNonText(range)).toEqual(false);
-    });
-
-    it('should check the end of text as true', () => {
-      const range = wwe.getEditor().getSelection();
-      range.setStart(wwe.get$Body().find('td')[2].childNodes[0], 3);
-      range.collapse(true);
-      wwe.getEditor().setSelection(range);
-
-      expect(mgr._isDeletingNonText(range)).toEqual(true);
-    });
-
-    it('should check the last cell of row as true', () => {
-      const range = wwe.getEditor().getSelection();
-      range.setStart(wwe.get$Body().find('td')[2].childNodes[0], 3);
-      range.collapse(true);
-      wwe.getEditor().setSelection(range);
-
-      expect(mgr._isDeletingNonText(range)).toEqual(true);
-    });
-  });
-
   describe('_isDeletingBR', () => {
     beforeEach(() => {
       const html = '<table>' +
