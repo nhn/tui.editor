@@ -1192,7 +1192,7 @@ class WwTableManager {
     let isNeedNext;
 
     if (range.collapsed) {
-      if (this.wwe.isInTable(range) && currentCell) {
+      if (this.wwe.isInTable(range) && currentCell && !sq.hasFormat('LI')) {
         if ((direction === 'previous' || interval === 'row')
                     && !util.isUndefined(ev)
         ) {
