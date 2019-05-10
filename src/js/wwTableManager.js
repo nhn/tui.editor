@@ -385,6 +385,42 @@ class WwTableManager {
   }
 
   /**
+   * Move Li node to previous node that is previous node of list node.
+   * @param {node} liNode li node
+   * @param {range} range range
+   * @private
+   */
+  _moveListItemToPreviousOfList(liNode, range) {
+    const {parentNode: listNode} = liNode;
+    const fragment = document.createDocumentFragment();
+
+    domUtils.mergeNode(liNode, fragment);
+    listNode.parentNode.insertBefore(fragment, listNode);
+
+    range.setStart(listNode.previousSibling, 0);
+    range.collapse(true);
+    this.wwe.getEditor().setSelection(range);
+
+    if (!listNode.hasChildNodes()) {
+      listNode.parentNode.removeChild(listNode);
+    }
+  }
+
+  /**
+   * Find LI node while search parentNode inside TD
+   * @param {node} startContainer startContainer
+   * @returns {node} liNode or null
+   * @private
+   */
+  _findLI(startContainer) {
+    return domUtils.getParentUntilBy(startContainer, (node) => {
+      return node && domUtils.isListNode(node);
+    }, (node) => {
+      return node && (node.nodeName === 'TD' || node.nodeName === 'TH');
+    });
+  }
+
+  /**
    * _tableHandlerOnBackspace
    * Backspace handler in table
    * @param {Range} range range
@@ -393,12 +429,24 @@ class WwTableManager {
    * @private
    */
   _tableHandlerOnBackspace(range, event) {
-    const prevNode = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset, 'TR'),
-      prevNodeName = domUtils.getNodeName(prevNode);
+    const {startContainer, startOffset} = range;
+    const liNode = this._findLI(startContainer);
 
-    if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
+    if (liNode && startOffset === 0
+      && domUtils.isFirstListItem(liNode)
+      && domUtils.isFirstLevelListItem(liNode)
+    ) {
+      this.wwe.getEditor().saveUndoState(range);
+      this._moveListItemToPreviousOfList(liNode, range);
       event.preventDefault();
-      $(prevNode).remove();
+    } else {
+      const prevNode = domUtils.getPrevOffsetNodeUntil(startContainer, startOffset, 'TR'),
+        prevNodeName = domUtils.getNodeName(prevNode);
+
+      if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
+        event.preventDefault();
+        $(prevNode).remove();
+      }
     }
   }
 
