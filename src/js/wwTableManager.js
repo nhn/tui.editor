@@ -511,6 +511,68 @@ class WwTableManager {
   }
 
   /**
+   * Check whether range is located in end of the list
+   * @param {Node} liNode liNode
+   * @param {Range} range range
+   * @returns {Boolean} whether range is located in end of the list
+   * @private
+   */
+  _isEndOfList(liNode, range) {
+    const {startContainer, startOffset} = range;
+    let result = false;
+
+    if (!liNode.nextSibling) {
+      if (liNode === startContainer) {
+        let liNodeOffset = domUtils.getOffsetLength(liNode);
+
+        if (liNode.lastChild.nodeName === 'BR') {
+          liNodeOffset -= 1;
+        }
+
+        result = liNodeOffset === startOffset;
+      } else {
+        const parentNode = domUtils.getParentUntil(startContainer, 'li') || startContainer;
+        const startContainerOffset = domUtils.getOffsetLength(startContainer);
+        let {lastChild} = liNode;
+
+        if (lastChild.nodeName === 'BR') {
+          lastChild = lastChild.previousSibling;
+        }
+
+        result = lastChild === parentNode && startContainerOffset === startOffset;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Get next line nodes from target node
+   * @param {Node} node target node
+   * @returns {DocumentFragment} next line nodes
+   * @private
+   */
+  _getNextLineNode(node) {
+    const fragment = document.createDocumentFragment();
+    const parentNode = domUtils.getParentUntil(node, 'TD');
+    let {nextSibling} = parentNode;
+
+    while (nextSibling) {
+      const {nextSibling: next} = nextSibling;
+
+      fragment.appendChild(nextSibling);
+
+      if (nextSibling.nodeName === 'BR') {
+        break;
+      }
+
+      nextSibling = next;
+    }
+
+    return fragment;
+  }
+
+  /**
    * _tableHandlerOnDelete
    * Delete handler in table
    * @param {Range} range range
@@ -519,7 +581,18 @@ class WwTableManager {
    * @private
    */
   _tableHandlerOnDelete(range, event) {
-    if (this._isDeletingBR(range)) {
+    const liNode = this._findLI(range.startContainer);
+
+    if (liNode && this._isEndOfList(liNode, range)) {
+      this.wwe.getEditor().saveUndoState(range);
+
+      if (liNode.lastChild.nodeName === 'BR') {
+        liNode.removeChild(liNode.lastChild);
+      }
+
+      domUtils.mergeNode(this._getNextLineNode(liNode), liNode);
+      event.preventDefault();
+    } else if (this._isDeletingBR(range)) {
       const currentNode = this._getCurrentNodeInCell(range);
 
       currentNode.parentNode.removeChild(currentNode.nextSibling);
