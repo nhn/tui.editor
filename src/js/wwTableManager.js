@@ -187,6 +187,14 @@ class WwTableManager {
             this.wwe.defer(() => {
               this._removeBRinStyleText();
             });
+          } else if (this._isEmptyFirstLevelLI(range)) {
+            this.wwe.defer(() => {
+              // Squire make div when LI level is decreased in first level so should replace div to br
+              const afterRange = this.wwe.getRange();
+              const div = afterRange.startContainer;
+
+              div.parentNode.replaceChild(document.createElement('br'), div);
+            });
           }
           this._appendBrIfTdOrThNotHaveAsLastChild(range);
           isNeedNext = false;
@@ -203,6 +211,32 @@ class WwTableManager {
     };
 
     util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.addKeyEventHandler(key, handler));
+  }
+
+  /**
+   * Check whether node is li and empty
+   * @param {node} node node
+   * @returns {boolean} whether node is li and empty
+   * @private
+   */
+  _isEmptyLI(node) {
+    const {childNodes, nodeName} = node;
+
+    return nodeName === 'LI' && childNodes.length === 1 && childNodes[0].nodeName === 'BR';
+  }
+
+  /**
+   * Check whether range is in empty LI that is first level
+   * @param {range} range range
+   * @returns {boolean} whether range is in empty LI that is first level
+   * @private
+   */
+  _isEmptyFirstLevelLI(range) {
+    const {collapsed, startContainer, startOffset} = range;
+
+    return collapsed && startOffset === 0
+        && this._isEmptyLI(startContainer)
+        && domUtils.isFirstLevelListItem(startContainer);
   }
 
   /**
