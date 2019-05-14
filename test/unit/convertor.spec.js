@@ -253,5 +253,32 @@ describe('Convertor', () => {
       expect(convertor.toHTML(markdown)).toEqual(html);
       expect(convertor.toMarkdown(html)).toEqual(resultMarkdown);
     });
+
+    it('raw table element in markdown', () => {
+      const markdown = [
+        '<table><tbody>',
+        '<tr><td>123</td></tr>',
+        '<tr><td>123</td></tr>',
+        '</tbody></table>'
+      ].join('');
+
+      const html = [
+        '<table data-tomark-pass=""><tbody data-tomark-pass="">',
+        '<tr data-tomark-pass=""><td data-tomark-pass="">123</td></tr>',
+        '<tr data-tomark-pass=""><td data-tomark-pass="">123</td></tr>',
+        '</tbody></table>'
+      ].join('');
+
+      expect(convertor.toHTML(markdown)).toEqual(html);
+      expect(convertor.toMarkdown(html)).toEqual(markdown);
+    });
+
+    it('raw ul element in markdown', () => {
+      const markdown = '<ul><li>123</li><li>123</li></ul>';
+      const html = '<ul data-tomark-pass=""><li data-tomark-pass="">123</li><li data-tomark-pass="">123</li></ul>';
+
+      expect(convertor.toHTML(markdown)).toEqual(html);
+      expect(convertor.toMarkdown(html)).toEqual(markdown);
+    });
   });
 });
