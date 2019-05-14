@@ -219,7 +219,7 @@ class WwTableManager {
    * @returns {boolean} whether node is li and empty
    * @private
    */
-  _isEmptyLI(node) {
+  _isEmptyListItem(node) {
     const {childNodes, nodeName} = node;
 
     return nodeName === 'LI' && childNodes.length === 1 && childNodes[0].nodeName === 'BR';
@@ -235,7 +235,7 @@ class WwTableManager {
     const {collapsed, startContainer, startOffset} = range;
 
     return collapsed && startOffset === 0
-        && this._isEmptyLI(startContainer)
+        && this._isEmptyListItem(startContainer)
         && domUtils.isFirstLevelListItem(startContainer);
   }
 
@@ -446,12 +446,10 @@ class WwTableManager {
    * @returns {node} liNode or null
    * @private
    */
-  _findLI(startContainer) {
-    return domUtils.getParentUntilBy(startContainer, (node) => {
-      return node && domUtils.isListNode(node);
-    }, (node) => {
-      return node && (node.nodeName === 'TD' || node.nodeName === 'TH');
-    });
+  _findListItem(startContainer) {
+    return domUtils.getParentUntilBy(startContainer,
+      (node) => node && domUtils.isListNode(node),
+      (node) => node && (node.nodeName === 'TD' || node.nodeName === 'TH'));
   }
 
   /**
@@ -464,7 +462,7 @@ class WwTableManager {
    */
   _tableHandlerOnBackspace(range, event) {
     const {startContainer, startOffset} = range;
-    const liNode = this._findLI(startContainer);
+    const liNode = this._findListItem(startContainer);
 
     if (liNode && startOffset === 0
       && domUtils.isFirstListItem(liNode)
@@ -474,8 +472,8 @@ class WwTableManager {
       this._moveListItemToPreviousOfList(liNode, range);
       event.preventDefault();
     } else {
-      const prevNode = domUtils.getPrevOffsetNodeUntil(startContainer, startOffset, 'TR'),
-        prevNodeName = domUtils.getNodeName(prevNode);
+      const prevNode = domUtils.getPrevOffsetNodeUntil(startContainer, startOffset, 'TR');
+      const prevNodeName = domUtils.getNodeName(prevNode);
 
       if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
         event.preventDefault();
@@ -581,7 +579,7 @@ class WwTableManager {
    * @private
    */
   _tableHandlerOnDelete(range, event) {
-    const liNode = this._findLI(range.startContainer);
+    const liNode = this._findListItem(range.startContainer);
 
     if (liNode && this._isEndOfList(liNode, range)) {
       this.wwe.getEditor().saveUndoState(range);
