@@ -116,7 +116,7 @@ class WwTableSelectionManager {
       this._clearTableSelectionTimerIfNeed();
 
       if (this._isSelectionStarted) {
-        if (isTextSelect) {
+        if (isTextSelect || this._isListSelect(range)) {
           this.removeClassAttrbuteFromAllCellsIfNeed();
         } else {
           this.wwe.componentManager.getManager('table').resetLastCellNode();
@@ -178,6 +178,16 @@ class WwTableSelectionManager {
      */
   _isTextSelect(range, isSameCell) {
     return /TD|TH|TEXT/i.test(range.commonAncestorContainer.nodeName) && isSameCell;
+  }
+
+  /**
+   * Return whether list selection or not
+   * @param {Range} range Range object
+   * @returns {boolean}
+   * @private
+   */
+  _isListSelect(range) {
+    return /UL|OL|LI/i.test(range.commonAncestorContainer.nodeName);
   }
 
   /**
