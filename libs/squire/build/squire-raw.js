@@ -655,9 +655,20 @@ function mergeInlines ( node, range ) {
     }
 }
 
+function isInTable (node) {
+    var nodeName = node.nodeName;
+    return nodeName === 'TD' || nodeName === 'TH' || nodeName === 'TR'
+        || nodeName === 'TBODY' || nodeName === 'THEAD';
+}
+
 function mergeWithBlock ( block, next, range, root ) {
     var container = next;
     var parent, last, offset;
+
+    if (isInTable(block) || isInTable(next)) {
+        return;
+    }
+
     while ( ( parent = container.parentNode ) &&
             parent !== root &&
             parent.nodeType === ELEMENT_NODE &&
@@ -702,7 +713,9 @@ function mergeContainers ( node, root ) {
         needsFix, block;
 
     // Do not merge LIs, unless it only contains a UL
-    if ( isListItem && ( !first || !/^[OU]L$/.test( first.nodeName ) ) ) {
+    if ( ( isListItem && ( !first || !/^[OU]L$/.test( first.nodeName ) ) )
+        || isInTable(node)
+    ) {
         return;
     }
 
