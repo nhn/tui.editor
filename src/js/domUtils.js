@@ -606,15 +606,11 @@ const isInsideTaskBox = function(style, offsetX, offsetY) {
  * @ignore
  */
 const isListNode = function(node) {
-  let result = false;
-
-  if (node) {
-    const {nodeName} = node;
-
-    result = nodeName === 'UL' || nodeName === 'OL';
+  if (!node) {
+    return false;
   }
 
-  return result;
+  return node.nodeName === 'UL' || node.nodeName === 'OL';
 };
 
 /**

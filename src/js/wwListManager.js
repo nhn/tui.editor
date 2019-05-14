@@ -582,10 +582,7 @@ class WwListManager {
    * @ignore
    */
   _createListElement(listType) {
-    const isTask = listType === 'TASK';
-    const listNode = document.createElement(isTask ? 'UL' : listType);
-
-    return listNode;
+    return document.createElement(listType === 'TASK' ? 'UL' : listType);
   }
 
   /**
@@ -596,14 +593,13 @@ class WwListManager {
    * @ignore
    */
   _createListItemElement(oneLineNodes, listType) {
-    const isTask = listType === 'TASK';
-    let liNode = document.createElement('li');
+    const liNode = document.createElement('li');
 
     oneLineNodes.forEach((node) => {
       liNode.appendChild(node);
     });
 
-    if (isTask) {
+    if (listType === 'TASK') {
       const taskManager = this.wwe.componentManager.getManager('task');
 
       taskManager.formatTask(liNode);
