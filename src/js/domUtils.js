@@ -617,6 +617,49 @@ const isListNode = function(node) {
   return result;
 };
 
+/**
+ * Check whether node is first list item
+ * @param {node} node - node
+ * @returns {boolean} whether node is first list item
+ * @ignore
+ */
+const isFirstListItem = function(node) {
+  const {nodeName, parentNode} = node;
+
+  return nodeName === 'LI' && node === parentNode.firstChild;
+};
+
+/**
+ * Check whether node is first level list item
+ * @param {node} node - node
+ * @returns {boolean} whether node is first level list item
+ * @ignore
+ */
+const isFirstLevelListItem = function(node) {
+  const {nodeName, parentNode: listNode} = node;
+  const {parentNode: listParentNode} = listNode;
+
+  return nodeName === 'LI' && !isListNode(listParentNode);
+};
+
+/**
+ * Merge node to target node and detach node
+ * @param {node} node - node
+ * @param {node} targetNode - target node
+ * @ignore
+ */
+const mergeNode = function(node, targetNode) {
+  if (node.hasChildNodes()) {
+    util.forEachArray(node.childNodes, () => {
+      targetNode.appendChild(node.firstChild);
+    });
+  }
+
+  if (node.parentNode) {
+    node.parentNode.removeChild(node);
+  }
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -627,6 +670,7 @@ export default {
   getPrevOffsetNodeUntil,
   getNodeOffsetOfParent,
   getChildNodeByOffset,
+  getNodeWithDirectionUntil,
   containsNode,
   getTopPrevNodeUnder,
   getTopNextNodeUnder,
@@ -645,5 +689,8 @@ export default {
   removeNodesByDirection,
   getLeafNode,
   isInsideTaskBox,
-  isListNode
+  isListNode,
+  isFirstListItem,
+  isFirstLevelListItem,
+  mergeNode
 };
