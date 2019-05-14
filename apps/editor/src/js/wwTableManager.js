@@ -187,6 +187,14 @@ class WwTableManager {
             this.wwe.defer(() => {
               this._removeBRinStyleText();
             });
+          } else if (this._isEmptyFirstLevelLI(range)) {
+            this.wwe.defer(() => {
+              // Squire make div when LI level is decreased in first level so should replace div to br
+              const afterRange = this.wwe.getRange();
+              const div = afterRange.startContainer;
+
+              div.parentNode.replaceChild(document.createElement('br'), div);
+            });
           }
           this._appendBrIfTdOrThNotHaveAsLastChild(range);
           isNeedNext = false;
@@ -203,6 +211,32 @@ class WwTableManager {
     };
 
     util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.addKeyEventHandler(key, handler));
+  }
+
+  /**
+   * Check whether node is li and empty
+   * @param {node} node node
+   * @returns {boolean} whether node is li and empty
+   * @private
+   */
+  _isEmptyListItem(node) {
+    const {childNodes, nodeName} = node;
+
+    return nodeName === 'LI' && childNodes.length === 1 && childNodes[0].nodeName === 'BR';
+  }
+
+  /**
+   * Check whether range is in empty LI that is first level
+   * @param {range} range range
+   * @returns {boolean} whether range is in empty LI that is first level
+   * @private
+   */
+  _isEmptyFirstLevelLI(range) {
+    const {collapsed, startContainer, startOffset} = range;
+
+    return collapsed && startOffset === 0
+        && this._isEmptyListItem(startContainer)
+        && domUtils.isFirstLevelListItem(startContainer);
   }
 
   /**
@@ -385,6 +419,40 @@ class WwTableManager {
   }
 
   /**
+   * Move Li node to previous node that is previous node of list node.
+   * @param {node} liNode li node
+   * @param {range} range range
+   * @private
+   */
+  _moveListItemToPreviousOfList(liNode, range) {
+    const {parentNode: listNode} = liNode;
+    const fragment = document.createDocumentFragment();
+
+    domUtils.mergeNode(liNode, fragment);
+    listNode.parentNode.insertBefore(fragment, listNode);
+
+    range.setStart(listNode.previousSibling, 0);
+    range.collapse(true);
+    this.wwe.getEditor().setSelection(range);
+
+    if (!listNode.hasChildNodes()) {
+      listNode.parentNode.removeChild(listNode);
+    }
+  }
+
+  /**
+   * Find LI node while search parentNode inside TD
+   * @param {node} startContainer startContainer
+   * @returns {node} liNode or null
+   * @private
+   */
+  _findListItem(startContainer) {
+    return domUtils.getParentUntilBy(startContainer,
+      (node) => node && domUtils.isListNode(node),
+      (node) => node && (node.nodeName === 'TD' || node.nodeName === 'TH'));
+  }
+
+  /**
    * _tableHandlerOnBackspace
    * Backspace handler in table
    * @param {Range} range range
@@ -393,39 +461,25 @@ class WwTableManager {
    * @private
    */
   _tableHandlerOnBackspace(range, event) {
-    const prevNode = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset, 'TR'),
-      prevNodeName = domUtils.getNodeName(prevNode);
+    const {startContainer, startOffset} = range;
+    const liNode = this._findListItem(startContainer);
 
-    if (!prevNode || prevNodeName === 'TD' || prevNodeName === 'TH') {
+    if (liNode && startOffset === 0
+      && domUtils.isFirstListItem(liNode)
+      && domUtils.isFirstLevelListItem(liNode)
+    ) {
+      this.wwe.getEditor().saveUndoState(range);
+      this._moveListItemToPreviousOfList(liNode, range);
       event.preventDefault();
-    } else if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
-      event.preventDefault();
-      $(prevNode).remove();
+    } else {
+      const prevNode = domUtils.getPrevOffsetNodeUntil(startContainer, startOffset, 'TR');
+      const prevNodeName = domUtils.getNodeName(prevNode);
+
+      if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
+        event.preventDefault();
+        $(prevNode).remove();
+      }
     }
-  }
-
-  /**
-   * Return whether delete non text or not
-   * @param {Range} range Range object
-   * @returns {boolean}
-   */
-  _isDeletingNonText(range) {
-    const currentElement = range.startContainer;
-    const nextNode = currentElement.nextSibling;
-    const nextNodeName = domUtils.getNodeName(nextNode);
-    const currentNodeName = domUtils.getNodeName(currentElement);
-    const insideNode = this._getCurrentNodeInCell(range);
-    const insideNodeName = domUtils.getNodeName(insideNode);
-
-    const isEmptyLineBetweenText = insideNode && insideNodeName === 'BR' && insideNode.nextSibling;
-    const isCellDeleting = !isEmptyLineBetweenText && currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
-    const isEndOfText = (!nextNode || (nextNodeName === 'BR' && nextNode.parentNode.lastChild === nextNode))
-            && (domUtils.isTextNode(currentElement) && range.startOffset === currentElement.nodeValue.length);
-    const isLastCellOfRow = !isEmptyLineBetweenText && !isEndOfText
-            && $(currentElement).parents('tr').children().last()[0] === currentElement
-            && (currentNodeName === 'TD' || currentNodeName === 'TH');
-
-    return isCellDeleting || isEndOfText || isLastCellOfRow;
   }
 
   /**
@@ -455,6 +509,68 @@ class WwTableManager {
   }
 
   /**
+   * Check whether range is located in end of the list
+   * @param {Node} liNode liNode
+   * @param {Range} range range
+   * @returns {Boolean} whether range is located in end of the list
+   * @private
+   */
+  _isEndOfList(liNode, range) {
+    const {startContainer, startOffset} = range;
+    let result = false;
+
+    if (!liNode.nextSibling) {
+      if (liNode === startContainer) {
+        let liNodeOffset = domUtils.getOffsetLength(liNode);
+
+        if (liNode.lastChild.nodeName === 'BR') {
+          liNodeOffset -= 1;
+        }
+
+        result = liNodeOffset === startOffset;
+      } else {
+        const parentNode = domUtils.getParentUntil(startContainer, 'li') || startContainer;
+        const startContainerOffset = domUtils.getOffsetLength(startContainer);
+        let {lastChild} = liNode;
+
+        if (lastChild.nodeName === 'BR') {
+          lastChild = lastChild.previousSibling;
+        }
+
+        result = lastChild === parentNode && startContainerOffset === startOffset;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Get next line nodes from target node
+   * @param {Node} node target node
+   * @returns {DocumentFragment} next line nodes
+   * @private
+   */
+  _getNextLineNode(node) {
+    const fragment = document.createDocumentFragment();
+    const parentNode = domUtils.getParentUntil(node, 'TD');
+    let {nextSibling} = parentNode;
+
+    while (nextSibling) {
+      const {nextSibling: next} = nextSibling;
+
+      fragment.appendChild(nextSibling);
+
+      if (nextSibling.nodeName === 'BR') {
+        break;
+      }
+
+      nextSibling = next;
+    }
+
+    return fragment;
+  }
+
+  /**
    * _tableHandlerOnDelete
    * Delete handler in table
    * @param {Range} range range
@@ -463,14 +579,22 @@ class WwTableManager {
    * @private
    */
   _tableHandlerOnDelete(range, event) {
-    if (this._isDeletingBR(range)) {
+    const liNode = this._findListItem(range.startContainer);
+
+    if (liNode && this._isEndOfList(liNode, range)) {
+      this.wwe.getEditor().saveUndoState(range);
+
+      if (liNode.lastChild.nodeName === 'BR') {
+        liNode.removeChild(liNode.lastChild);
+      }
+
+      domUtils.mergeNode(this._getNextLineNode(liNode), liNode);
+      event.preventDefault();
+    } else if (this._isDeletingBR(range)) {
       const currentNode = this._getCurrentNodeInCell(range);
 
       currentNode.parentNode.removeChild(currentNode.nextSibling);
       event.preventDefault();
-    } else if (this._isDeletingNonText(range)) {
-      event.preventDefault();
-      range.startContainer.normalize();
     }
   }
 
@@ -492,9 +616,11 @@ class WwTableManager {
       tdOrTh = paths[paths.length - 1];
     }
 
-    if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR'
-            && domUtils.getNodeName(tdOrTh.lastChild) !== 'DIV'
-            && !isIE10And11
+    const nodeName = domUtils.getNodeName(tdOrTh.lastChild);
+
+    if (nodeName !== 'BR' && nodeName !== 'DIV'
+        && nodeName !== 'UL' && nodeName !== 'OL'
+        && !isIE10And11
     ) {
       $(tdOrTh).append($('<br />')[0]);
     }
@@ -1190,7 +1316,7 @@ class WwTableManager {
     let isNeedNext;
 
     if (range.collapsed) {
-      if (this.wwe.isInTable(range) && currentCell) {
+      if (this.wwe.isInTable(range) && currentCell && !sq.hasFormat('LI')) {
         if ((direction === 'previous' || interval === 'row')
                     && !util.isUndefined(ev)
         ) {

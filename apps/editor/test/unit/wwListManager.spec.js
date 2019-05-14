@@ -7,6 +7,8 @@ import $ from 'jquery';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 import WwListManager from '../../src/js/wwListManager';
+import WwTaskManager from '../../src/js/wwTaskManager';
+import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
 
 describe('WwListManager', () => {
   let container, em, wwe, mgr;
@@ -21,6 +23,8 @@ describe('WwListManager', () => {
 
     wwe.init();
 
+    wwe.componentManager.addManager(WwTaskManager);
+    wwe.componentManager.addManager(WwTableSelectionManager);
     mgr = new WwListManager(wwe);
   });
 
@@ -364,6 +368,199 @@ describe('WwListManager', () => {
       expect(list.querySelectorAll('ol > ul > li').length).toBe(5);
       expect(list.querySelectorAll('ol > ul').length).toBe(1);
       expect(list.querySelectorAll('ol > ol').length).toBe(0);
+    });
+  });
+
+  describe('_insertDataToMarkPassForListInTable', () => {
+    it('should insert data-tomark-pass attribute in list that is located inside table', () => {
+      const html = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ul><li>123<br></li></ul>'
+                  + '456<br>'
+                  + '<ol><li>789<br></li></ol>'
+                  + '</td></tr></tbody></table>';
+
+      const result = mgr._insertDataToMarkPassForListInTable(html);
+
+      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ul data-tomark-pass="" ><li>123<br></li></ul>'
+                  + '456<br>'
+                  + '<ol data-tomark-pass="" ><li>789<br></li></ol>'
+                  + '</td></tr></tbody></table>';
+
+      expect(result).toEqual(expectedHtml);
+    });
+  });
+
+  describe('createListInTable', () => {
+    it('make UL in empty td', () => {
+      const html = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td><br></td></tr></tbody></table>';
+      wwe.get$Body().html(html);
+
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[0], 0);
+      range.collapse(true);
+
+      mgr.createListInTable(range, 'UL');
+
+      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ul><li><br></li></ul>'
+                  + '</td></tr></tbody></table>';
+
+      expect(wwe.get$Body().html()).toEqual(expectedHtml);
+    });
+
+    it('make TASK in empty td', () => {
+      const html = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td><br></td></tr></tbody></table>';
+      wwe.get$Body().html(html);
+
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[0], 0);
+      range.collapse(true);
+
+      mgr.createListInTable(range, 'TASK');
+
+      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ul><li class="task-list-item" data-te-task=""><br></li></ul>'
+                  + '</td></tr></tbody></table>';
+
+      expect(wwe.get$Body().html()).toEqual(expectedHtml);
+    });
+
+    it('make UL in td when select multi lines', () => {
+      const html = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '123<br>345'
+                  + '</td></tr></tbody></table>';
+      wwe.get$Body().html(html);
+
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[0].childNodes[0], 1);
+      range.setEnd(wwe.get$Body().find('td')[0].childNodes[2], 2);
+
+      mgr.createListInTable(range, 'UL');
+
+      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ul><li>123<br></li><li>345</li></ul>'
+                  + '</td></tr></tbody></table>';
+
+      expect(wwe.get$Body().html()).toEqual(expectedHtml);
+    });
+
+    it('make UL in td when select just text line before OL', () => {
+      const html = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ol><li>123<br></li></ol>'
+                  + '345</td></tr></tbody></table>';
+      wwe.get$Body().html(html);
+
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[0].childNodes[1], 2);
+      range.collapse(true);
+
+      mgr.createListInTable(range, 'UL');
+
+      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ol><li>123<br></li></ol>'
+                  + '<ul><li>345</li></ul>'
+                  + '</td></tr></tbody></table>';
+
+      expect(wwe.get$Body().html()).toEqual(expectedHtml);
+    });
+
+    it('merge UL in td when select just text line', () => {
+      const html = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ul><li>123<br></li></ul>'
+                  + '345'
+                  + '</td></tr></tbody></table>';
+      wwe.get$Body().html(html);
+
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[0].childNodes[1], 2);
+      range.collapse(true);
+
+      mgr.createListInTable(range, 'UL');
+
+      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ul><li>123<br></li><li>345</li></ul>'
+                  + '</td></tr></tbody></table>';
+
+      expect(wwe.get$Body().html()).toEqual(expectedHtml);
+    });
+
+    it('merge UL in td when select multi lines with UL', () => {
+      const html = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ul><li>123<br></li></ul>'
+                  + '345'
+                  + '</td></tr></tbody></table>';
+      wwe.get$Body().html(html);
+
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('li')[0].childNodes[0], 1);
+      range.setEnd(wwe.get$Body().find('td')[0].childNodes[1], 2);
+
+      mgr.createListInTable(range, 'UL');
+
+      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead><tbody><tr><td>'
+                  + '<ul><li>123<br></li><li>345</li></ul>'
+                  + '</td></tr></tbody></table>';
+
+      expect(wwe.get$Body().html()).toEqual(expectedHtml);
+    });
+
+    it('make OL in td when select multi lines with UL', () => {
+      const html = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ul><li>123<br></li><li>345</li></ul>'
+                  + '789'
+                  + '</td></tr></tbody></table>';
+      wwe.get$Body().html(html);
+
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('li')[1].childNodes[0], 1);
+      range.setEnd(wwe.get$Body().find('td')[0].childNodes[1], 2);
+
+      mgr.createListInTable(range, 'OL');
+
+      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ol><li>123<br></li><li>345</li><li>789</li></ol>'
+                  + '</td></tr></tbody></table>';
+
+      expect(wwe.get$Body().html()).toEqual(expectedHtml);
+    });
+
+    it('make UL in td when select one line that is loacated between two list ', () => {
+      const html = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ul><li>123<br></li></ul>'
+                  + '456<br>'
+                  + '<ul><li>789<br></li></ul>'
+                  + '</td></tr></tbody></table>';
+      wwe.get$Body().html(html);
+
+      const range = wwe.getEditor().getSelection();
+      range.setStart(wwe.get$Body().find('td')[0].childNodes[1], 1);
+      range.collapse(true);
+
+      mgr.createListInTable(range, 'UL');
+
+      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
+                  + '<tbody><tr><td>'
+                  + '<ul><li>123<br></li><li>456<br></li><li>789<br></li></ul>'
+                  + '</td></tr></tbody></table>';
+
+      expect(wwe.get$Body().html()).toEqual(expectedHtml);
     });
   });
 });
