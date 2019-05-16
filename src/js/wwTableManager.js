@@ -425,13 +425,13 @@ class WwTableManager {
    * @private
    */
   _moveListItemToPreviousOfList(liNode, range) {
-    const {parentNode: listNode} = liNode;
+    const {parentNode: listNode, firstChild} = liNode;
     const fragment = document.createDocumentFragment();
 
     domUtils.mergeNode(liNode, fragment);
     listNode.parentNode.insertBefore(fragment, listNode);
 
-    range.setStart(listNode.previousSibling, 0);
+    range.setStart(firstChild, 0);
     range.collapse(true);
     this.wwe.getEditor().setSelection(range);
 
