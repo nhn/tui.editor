@@ -190,10 +190,15 @@ class WwTableManager {
           } else if (this._isEmptyFirstLevelLI(range)) {
             this.wwe.defer(() => {
               // Squire make div when LI level is decreased in first level so should replace div to br
-              const afterRange = this.wwe.getRange();
+              const afterRange = this.wwe.getRange().cloneRange();
               const div = afterRange.startContainer;
+              const br = document.createElement('br');
 
-              div.parentNode.replaceChild(document.createElement('br'), div);
+              div.parentNode.replaceChild(br, div);
+
+              afterRange.setStartBefore(br);
+              afterRange.collapse(true);
+              this.wwe.getEditor().setSelection(afterRange);
             });
           }
           this._appendBrIfTdOrThNotHaveAsLastChild(range);
