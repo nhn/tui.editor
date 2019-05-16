@@ -120,17 +120,31 @@ describe('WwPasteContentHelper', () => {
       expect(spans.eq(0).text()).toEqual('hello');
       expect(spans.eq(1).text()).toEqual('-simon');
     });
-    it('_removeUnnecessaryBlocks should not unwrap div without block element child', () => {
+
+    it('_removeUnnecessaryBlocks should insert br when unwraped block have not br at the last', () => {
       const $container = $('<div />');
-      const $node = $('<div>asdasd<br /></div><div><nav>asd</nav></div>');
+      const $node = $('<article><span>hello</sapn></article>');
 
       $container.append($node);
 
       pch._removeUnnecessaryBlocks($container, blockTags);
 
-      expect($container.children().length).toEqual(2);
-      expect($container.find('div').length).toEqual(1);
-      expect($container.find('div').text()).toEqual('asdasd');
+      const expctedHtml = '<span>hello</span><br>';
+
+      expect($container.html()).toEqual(expctedHtml);
+    });
+
+    it('_removeUnnecessaryBlocks should not unwrap div without block element child', () => {
+      const $container = $('<div />');
+      const $node = $('<div>asdasd<br></div><div><nav>asd</nav></div>');
+
+      $container.append($node);
+
+      pch._removeUnnecessaryBlocks($container, blockTags);
+
+      const expectedHtml = '<div>asdasd<br></div><nav>asd</nav><br>';
+
+      expect($container.html()).toEqual(expectedHtml);
     });
     it('_unwrapNestedBlocks should unwrap nested blockTags', () => {
       const $container = $('<div />');
@@ -170,10 +184,27 @@ describe('WwPasteContentHelper', () => {
       $container.html(pch._wrapOrphanNodeWithDiv($container));
 
       expect($container.find('div').length).toEqual(2);
-      expect($container.find('br').length).toEqual(4);
+      expect($container.find('br').length).toEqual(2);
       expect($container.find('div')[0].innerHTML).toEqual('ip lorem sit amet<br>');
       expect($container.find('div')[1].innerHTML).toEqual('and so on<br>');
     });
+
+    it('_wrapOrphanNodeWithDiv should wrap br node with div element', () => {
+      const $container = $('<div />');
+
+      $container.append(document.createTextNode('text1'));
+      $container.append(document.createElement('br'));
+      $container.append(document.createElement('br'));
+      $container.append(document.createTextNode('text2'));
+      $container.append(document.createElement('br'));
+
+      $container.html(pch._wrapOrphanNodeWithDiv($container));
+
+      const expectedHtml = '<div>text1<br></div><div><br></div><div>text2<br></div>';
+
+      expect($container.html()).toEqual(expectedHtml);
+    });
+
     it('_wrapOrphanNodeWithDiv should not wrap block element nodes', () => {
       const $container = $('<div />');
 
@@ -181,7 +212,7 @@ describe('WwPasteContentHelper', () => {
 
       $container.html(pch._wrapOrphanNodeWithDiv($container));
 
-      expect($container.find('div').length).toEqual(1);
+      expect($container.find('div').length).toEqual(2);
       expect($container.find('p').length).toEqual(1);
       expect($container.find('span').length).toEqual(1);
       expect($container.find('br').length).toEqual(1);
