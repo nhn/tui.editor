@@ -215,10 +215,6 @@ class WwPasteContentHelper {
         $blockElement.append(document.createElement('br'));
       }
 
-      if (tagName === 'P' && !this._hasOnlyBR(blockElement)) {
-        $blockElement.append(document.createElement('br'));
-      }
-
       $blockElement.replaceWith($blockElement.html());
     });
   }

@@ -134,19 +134,6 @@ describe('WwPasteContentHelper', () => {
       expect($container.html()).toEqual(expctedHtml);
     });
 
-    it('_removeUnnecessaryBlocks should unwrap p and insert br after p', () => {
-      const $container = $('<div />');
-      const $node = $('<p>hello<br></p><p>editor<br></p>');
-
-      $container.append($node);
-
-      pch._removeUnnecessaryBlocks($container, blockTags);
-
-      const expctedHtml = 'hello<br><br>editor<br><br>';
-
-      expect($container.html()).toEqual(expctedHtml);
-    });
-
     it('_removeUnnecessaryBlocks should not unwrap div without block element child', () => {
       const $container = $('<div />');
       const $node = $('<div>asdasd<br></div><div><nav>asd</nav></div>');
