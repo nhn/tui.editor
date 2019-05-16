@@ -179,16 +179,6 @@ class WwPasteContentHelper {
     });
   }
 
-  _hasOnlyBR(node) {
-    if (!node) {
-      return false;
-    }
-
-    const {childNodes} = node;
-
-    return childNodes && childNodes.length === 1 && childNodes[0].nodeName === 'BR';
-  }
-
   /**
    * Remove unnecessary block element in pasting data
    * @param {jQuery} $container - clipboard container
