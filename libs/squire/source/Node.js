@@ -486,7 +486,7 @@ function mergeWithBlock ( block, next, range, root ) {
     var container = next;
     var parent, last, offset;
 
-    if (isInTable(block) || isInTable(next)) {
+    if (isInTable(block) && isInTable(next)) {
         return;
     }
 
