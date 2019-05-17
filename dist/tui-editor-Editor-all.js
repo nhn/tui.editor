@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.0
+ * @version 1.4.1
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("codemirror"), require("to-mark"), require("tui-chart"), require("squire-rte"), require("markdown-it"), require("highlight.js"), require("tui-color-picker"), require("plantuml-encoder"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["CodeMirror"], root["toMark"], (root["tui"] && root["tui"]["chart"]), root["Squire"], root["markdownit"], root["hljs"], (root["tui"] && root["tui"]["colorPicker"]), root["plantumlEncoder"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_42__, __WEBPACK_EXTERNAL_MODULE_57__, __WEBPACK_EXTERNAL_MODULE_79__, __WEBPACK_EXTERNAL_MODULE_85__, __WEBPACK_EXTERNAL_MODULE_94__, __WEBPACK_EXTERNAL_MODULE_203__, __WEBPACK_EXTERNAL_MODULE_205__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_42__, __WEBPACK_EXTERNAL_MODULE_57__, __WEBPACK_EXTERNAL_MODULE_79__, __WEBPACK_EXTERNAL_MODULE_85__, __WEBPACK_EXTERNAL_MODULE_94__, __WEBPACK_EXTERNAL_MODULE_204__, __WEBPACK_EXTERNAL_MODULE_206__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -1069,6 +1069,67 @@ var isInsideTaskBox = function isInsideTaskBox(style, offsetX, offsetY) {
   return offsetX >= rect.left && offsetX <= rect.left + rect.width && offsetY >= rect.top && offsetY <= rect.top + rect.height;
 };
 
+/**
+ * Check whether node is OL or UL
+ * @param {node} node - node
+ * @returns {boolean} - whether node is OL or UL
+ * @ignore
+ */
+var isListNode = function isListNode(node) {
+  if (!node) {
+    return false;
+  }
+
+  return node.nodeName === 'UL' || node.nodeName === 'OL';
+};
+
+/**
+ * Check whether node is first list item
+ * @param {node} node - node
+ * @returns {boolean} whether node is first list item
+ * @ignore
+ */
+var isFirstListItem = function isFirstListItem(node) {
+  var nodeName = node.nodeName,
+      parentNode = node.parentNode;
+
+
+  return nodeName === 'LI' && node === parentNode.firstChild;
+};
+
+/**
+ * Check whether node is first level list item
+ * @param {node} node - node
+ * @returns {boolean} whether node is first level list item
+ * @ignore
+ */
+var isFirstLevelListItem = function isFirstLevelListItem(node) {
+  var nodeName = node.nodeName,
+      listNode = node.parentNode;
+  var listParentNode = listNode.parentNode;
+
+
+  return nodeName === 'LI' && !isListNode(listParentNode);
+};
+
+/**
+ * Merge node to target node and detach node
+ * @param {node} node - node
+ * @param {node} targetNode - target node
+ * @ignore
+ */
+var mergeNode = function mergeNode(node, targetNode) {
+  if (node.hasChildNodes()) {
+    _tuiCodeSnippet2.default.forEachArray(node.childNodes, function () {
+      targetNode.appendChild(node.firstChild);
+    });
+  }
+
+  if (node.parentNode) {
+    node.parentNode.removeChild(node);
+  }
+};
+
 exports.default = {
   getNodeName: getNodeName,
   isTextNode: isTextNode,
@@ -1079,6 +1140,7 @@ exports.default = {
   getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
   getNodeOffsetOfParent: getNodeOffsetOfParent,
   getChildNodeByOffset: getChildNodeByOffset,
+  getNodeWithDirectionUntil: getNodeWithDirectionUntil,
   containsNode: containsNode,
   getTopPrevNodeUnder: getTopPrevNodeUnder,
   getTopNextNodeUnder: getTopNextNodeUnder,
@@ -1096,7 +1158,11 @@ exports.default = {
   removeChildFromStartToEndNode: removeChildFromStartToEndNode,
   removeNodesByDirection: removeNodesByDirection,
   getLeafNode: getLeafNode,
-  isInsideTaskBox: isInsideTaskBox
+  isInsideTaskBox: isInsideTaskBox,
+  isListNode: isListNode,
+  isFirstListItem: isFirstListItem,
+  isFirstLevelListItem: isFirstLevelListItem,
+  mergeNode: mergeNode
 };
 
 /***/ }),
@@ -4889,7 +4955,7 @@ exports.Readable = exports;
 exports.Writable = __webpack_require__(28);
 exports.Duplex = __webpack_require__(11);
 exports.Transform = __webpack_require__(54);
-exports.PassThrough = __webpack_require__(178);
+exports.PassThrough = __webpack_require__(179);
 
 
 /***/ }),
@@ -4969,7 +5035,7 @@ util.inherits = __webpack_require__(13);
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(177)
+  deprecate: __webpack_require__(178)
 };
 /*</replacement>*/
 
@@ -5561,7 +5627,7 @@ Writable.prototype._destroy = function (err, cb) {
   this.end();
   cb(err);
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18), __webpack_require__(175).setImmediate, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18), __webpack_require__(176).setImmediate, __webpack_require__(12)))
 
 /***/ }),
 /* 29 */
@@ -5858,6 +5924,8 @@ __webpack_require__(167);
 __webpack_require__(168);
 
 __webpack_require__(169);
+
+__webpack_require__(170);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7982,9 +8050,22 @@ var WwTableManager = function () {
             _this3.wwe.breakToNewDefaultBlock(range, 'before');
             isNeedNext = false;
           } else if (_this3.wwe.isInTable(range)) {
-            if (_this3._isInStyledText(range)) {
+            if (!_this3._isInList(range.startContainer) && _this3._isInStyledText(range)) {
               _this3.wwe.defer(function () {
                 _this3._removeBRinStyleText();
+              });
+            } else if (_this3._isEmptyFirstLevelLI(range)) {
+              _this3.wwe.defer(function () {
+                // Squire make div when LI level is decreased in first level so should replace div to br
+                var afterRange = _this3.wwe.getRange().cloneRange();
+                var div = afterRange.startContainer;
+                var br = document.createElement('br');
+
+                div.parentNode.replaceChild(br, div);
+
+                afterRange.setStartBefore(br);
+                afterRange.collapse(true);
+                _this3.wwe.getEditor().setSelection(afterRange);
               });
             }
             _this3._appendBrIfTdOrThNotHaveAsLastChild(range);
@@ -8016,6 +8097,41 @@ var WwTableManager = function () {
       _tuiCodeSnippet2.default.forEach(this.keyEventHandlers, function (handler, key) {
         return _this3.wwe.addKeyEventHandler(key, handler);
       });
+    }
+
+    /**
+     * Check whether node is li and empty
+     * @param {node} node node
+     * @returns {boolean} whether node is li and empty
+     * @private
+     */
+
+  }, {
+    key: '_isEmptyListItem',
+    value: function _isEmptyListItem(node) {
+      var childNodes = node.childNodes,
+          nodeName = node.nodeName;
+
+
+      return nodeName === 'LI' && childNodes.length === 1 && childNodes[0].nodeName === 'BR';
+    }
+
+    /**
+     * Check whether range is in empty LI that is first level
+     * @param {range} range range
+     * @returns {boolean} whether range is in empty LI that is first level
+     * @private
+     */
+
+  }, {
+    key: '_isEmptyFirstLevelLI',
+    value: function _isEmptyFirstLevelLI(range) {
+      var collapsed = range.collapsed,
+          startContainer = range.startContainer,
+          startOffset = range.startOffset;
+
+
+      return collapsed && startOffset === 0 && this._isEmptyListItem(startContainer) && _domUtils2.default.isFirstLevelListItem(startContainer);
     }
 
     /**
@@ -8221,6 +8337,59 @@ var WwTableManager = function () {
     }
 
     /**
+     * Move Li node to previous node that is previous node of list node.
+     * @param {node} liNode li node
+     * @param {range} range range
+     * @private
+     */
+
+  }, {
+    key: '_moveListItemToPreviousOfList',
+    value: function _moveListItemToPreviousOfList(liNode, range) {
+      var listNode = liNode.parentNode,
+          firstChild = liNode.firstChild;
+
+      var fragment = document.createDocumentFragment();
+
+      _domUtils2.default.mergeNode(liNode, fragment);
+      listNode.parentNode.insertBefore(fragment, listNode);
+
+      range.setStart(firstChild, 0);
+      range.collapse(true);
+      this.wwe.getEditor().setSelection(range);
+
+      if (!listNode.hasChildNodes()) {
+        listNode.parentNode.removeChild(listNode);
+      }
+    }
+  }, {
+    key: '_isInList',
+    value: function _isInList(targetNode) {
+      return _domUtils2.default.getParentUntilBy(targetNode, function (node) {
+        return node && (_domUtils2.default.isListNode(node) || node.nodeName === 'LI');
+      }, function (node) {
+        return node && (node.nodeName === 'TD' || node.nodeName === 'TH');
+      });
+    }
+
+    /**
+     * Find LI node while search parentNode inside TD
+     * @param {node} startContainer startContainer
+     * @returns {node} liNode or null
+     * @private
+     */
+
+  }, {
+    key: '_findListItem',
+    value: function _findListItem(startContainer) {
+      return _domUtils2.default.getParentUntilBy(startContainer, function (node) {
+        return node && _domUtils2.default.isListNode(node);
+      }, function (node) {
+        return node && (node.nodeName === 'TD' || node.nodeName === 'TH');
+      });
+    }
+
+    /**
      * _tableHandlerOnBackspace
      * Backspace handler in table
      * @param {Range} range range
@@ -8232,39 +8401,24 @@ var WwTableManager = function () {
   }, {
     key: '_tableHandlerOnBackspace',
     value: function _tableHandlerOnBackspace(range, event) {
-      var prevNode = _domUtils2.default.getPrevOffsetNodeUntil(range.startContainer, range.startOffset, 'TR'),
-          prevNodeName = _domUtils2.default.getNodeName(prevNode);
+      var startContainer = range.startContainer,
+          startOffset = range.startOffset;
 
-      if (!prevNode || prevNodeName === 'TD' || prevNodeName === 'TH') {
+      var liNode = this._findListItem(startContainer);
+
+      if (liNode && startOffset === 0 && _domUtils2.default.isFirstListItem(liNode) && _domUtils2.default.isFirstLevelListItem(liNode)) {
+        this.wwe.getEditor().saveUndoState(range);
+        this._moveListItemToPreviousOfList(liNode, range);
         event.preventDefault();
-      } else if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
-        event.preventDefault();
-        (0, _jquery2.default)(prevNode).remove();
+      } else {
+        var prevNode = _domUtils2.default.getPrevOffsetNodeUntil(startContainer, startOffset, 'TR');
+        var prevNodeName = _domUtils2.default.getNodeName(prevNode);
+
+        if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
+          event.preventDefault();
+          (0, _jquery2.default)(prevNode).remove();
+        }
       }
-    }
-
-    /**
-     * Return whether delete non text or not
-     * @param {Range} range Range object
-     * @returns {boolean}
-     */
-
-  }, {
-    key: '_isDeletingNonText',
-    value: function _isDeletingNonText(range) {
-      var currentElement = range.startContainer;
-      var nextNode = currentElement.nextSibling;
-      var nextNodeName = _domUtils2.default.getNodeName(nextNode);
-      var currentNodeName = _domUtils2.default.getNodeName(currentElement);
-      var insideNode = this._getCurrentNodeInCell(range);
-      var insideNodeName = _domUtils2.default.getNodeName(insideNode);
-
-      var isEmptyLineBetweenText = insideNode && insideNodeName === 'BR' && insideNode.nextSibling;
-      var isCellDeleting = !isEmptyLineBetweenText && currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
-      var isEndOfText = (!nextNode || nextNodeName === 'BR' && nextNode.parentNode.lastChild === nextNode) && _domUtils2.default.isTextNode(currentElement) && range.startOffset === currentElement.nodeValue.length;
-      var isLastCellOfRow = !isEmptyLineBetweenText && !isEndOfText && (0, _jquery2.default)(currentElement).parents('tr').children().last()[0] === currentElement && (currentNodeName === 'TD' || currentNodeName === 'TH');
-
-      return isCellDeleting || isEndOfText || isLastCellOfRow;
     }
 
     /**
@@ -8299,6 +8453,80 @@ var WwTableManager = function () {
     }
 
     /**
+     * Check whether range is located in end of the list
+     * @param {Node} liNode liNode
+     * @param {Range} range range
+     * @returns {Boolean} whether range is located in end of the list
+     * @private
+     */
+
+  }, {
+    key: '_isEndOfList',
+    value: function _isEndOfList(liNode, range) {
+      var startContainer = range.startContainer,
+          startOffset = range.startOffset;
+
+      var result = false;
+
+      if (!liNode.nextSibling) {
+        if (liNode === startContainer) {
+          var liNodeOffset = _domUtils2.default.getOffsetLength(liNode);
+
+          if (liNode.lastChild.nodeName === 'BR') {
+            liNodeOffset -= 1;
+          }
+
+          result = liNodeOffset === startOffset;
+        } else {
+          var parentNode = _domUtils2.default.getParentUntil(startContainer, 'li') || startContainer;
+          var startContainerOffset = _domUtils2.default.getOffsetLength(startContainer);
+          var lastChild = liNode.lastChild;
+
+
+          if (lastChild.nodeName === 'BR') {
+            lastChild = lastChild.previousSibling;
+          }
+
+          result = lastChild === parentNode && startContainerOffset === startOffset;
+        }
+      }
+
+      return result;
+    }
+
+    /**
+     * Get next line nodes from target node
+     * @param {Node} node target node
+     * @returns {DocumentFragment} next line nodes
+     * @private
+     */
+
+  }, {
+    key: '_getNextLineNode',
+    value: function _getNextLineNode(node) {
+      var fragment = document.createDocumentFragment();
+      var parentNode = _domUtils2.default.getParentUntil(node, 'TD');
+      var nextSibling = parentNode.nextSibling;
+
+
+      while (nextSibling) {
+        var _nextSibling = nextSibling,
+            next = _nextSibling.nextSibling;
+
+
+        fragment.appendChild(nextSibling);
+
+        if (nextSibling.nodeName === 'BR') {
+          break;
+        }
+
+        nextSibling = next;
+      }
+
+      return fragment;
+    }
+
+    /**
      * _tableHandlerOnDelete
      * Delete handler in table
      * @param {Range} range range
@@ -8310,14 +8538,22 @@ var WwTableManager = function () {
   }, {
     key: '_tableHandlerOnDelete',
     value: function _tableHandlerOnDelete(range, event) {
-      if (this._isDeletingBR(range)) {
+      var liNode = this._findListItem(range.startContainer);
+
+      if (liNode && this._isEndOfList(liNode, range)) {
+        this.wwe.getEditor().saveUndoState(range);
+
+        if (liNode.lastChild.nodeName === 'BR') {
+          liNode.removeChild(liNode.lastChild);
+        }
+
+        _domUtils2.default.mergeNode(this._getNextLineNode(liNode), liNode);
+        event.preventDefault();
+      } else if (this._isDeletingBR(range)) {
         var currentNode = this._getCurrentNodeInCell(range);
 
         currentNode.parentNode.removeChild(currentNode.nextSibling);
         event.preventDefault();
-      } else if (this._isDeletingNonText(range)) {
-        event.preventDefault();
-        range.startContainer.normalize();
       }
     }
 
@@ -8342,7 +8578,9 @@ var WwTableManager = function () {
         tdOrTh = paths[paths.length - 1];
       }
 
-      if (_domUtils2.default.getNodeName(tdOrTh.lastChild) !== 'BR' && _domUtils2.default.getNodeName(tdOrTh.lastChild) !== 'DIV' && !isIE10And11) {
+      var nodeName = _domUtils2.default.getNodeName(tdOrTh.lastChild);
+
+      if (nodeName !== 'BR' && nodeName !== 'DIV' && nodeName !== 'UL' && nodeName !== 'OL' && !isIE10And11) {
         (0, _jquery2.default)(tdOrTh).append((0, _jquery2.default)('<br />')[0]);
       }
     }
@@ -9133,7 +9371,7 @@ var WwTableManager = function () {
       var isNeedNext = void 0;
 
       if (range.collapsed) {
-        if (this.wwe.isInTable(range) && currentCell) {
+        if (this.wwe.isInTable(range) && currentCell && !sq.hasFormat('LI')) {
           if ((direction === 'previous' || interval === 'row') && !_tuiCodeSnippet2.default.isUndefined(ev)) {
             ev.preventDefault();
           }
@@ -9399,7 +9637,7 @@ var WwTableSelectionManager = function () {
         _this._clearTableSelectionTimerIfNeed();
 
         if (_this._isSelectionStarted) {
-          if (isTextSelect) {
+          if (isTextSelect || _this._isListSelect(range)) {
             _this.removeClassAttrbuteFromAllCellsIfNeed();
           } else {
             _this.wwe.componentManager.getManager('table').resetLastCellNode();
@@ -9464,6 +9702,20 @@ var WwTableSelectionManager = function () {
     key: '_isTextSelect',
     value: function _isTextSelect(range, isSameCell) {
       return (/TD|TH|TEXT/i.test(range.commonAncestorContainer.nodeName) && isSameCell
+      );
+    }
+
+    /**
+     * Return whether list selection or not
+     * @param {Range} range Range object
+     * @returns {boolean}
+     * @private
+     */
+
+  }, {
+    key: '_isListSelect',
+    value: function _isListSelect(range) {
+      return (/UL|OL|LI/i.test(range.commonAncestorContainer.nodeName)
       );
     }
 
@@ -10770,7 +11022,7 @@ var Convertor = function () {
   }, {
     key: '_markdownToHtml',
     value: function _markdownToHtml(markdown, env) {
-      markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+      markdown = markdown.replace(/<([^/>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
       while (onerrorStripeRegex.exec(markdown)) {
@@ -10796,7 +11048,7 @@ var Convertor = function () {
 
       $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
         var $code = (0, _jquery2.default)(codeOrPre);
-        $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/g, '&lt;br&gt;'));
+        $code.html($code.html().replace(/&lt;([a-zA-Z0-9]+\s*) data-tomark-pass &gt;/g, '&lt;$1&gt;'));
       });
 
       renderedHTML = $wrapperDiv.html();
@@ -11882,10 +12134,10 @@ var inherits = __webpack_require__(13);
 
 inherits(Stream, EE);
 Stream.Readable = __webpack_require__(27);
-Stream.Writable = __webpack_require__(179);
-Stream.Duplex = __webpack_require__(180);
-Stream.Transform = __webpack_require__(181);
-Stream.PassThrough = __webpack_require__(182);
+Stream.Writable = __webpack_require__(180);
+Stream.Duplex = __webpack_require__(181);
+Stream.Transform = __webpack_require__(182);
+Stream.PassThrough = __webpack_require__(183);
 
 // Backwards-compat with node 0.4.x
 Stream.Stream = Stream;
@@ -12059,7 +12311,7 @@ util.inherits = __webpack_require__(13);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(173);
+var debugUtil = __webpack_require__(174);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -12068,7 +12320,7 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(174);
+var BufferList = __webpack_require__(175);
 var destroyImpl = __webpack_require__(52);
 var StringDecoder;
 
@@ -13030,8 +13282,8 @@ module.exports = __webpack_require__(26).EventEmitter;
 
 
 
-var base64 = __webpack_require__(171)
-var ieee754 = __webpack_require__(172)
+var base64 = __webpack_require__(172)
+var ieee754 = __webpack_require__(173)
 var isArray = __webpack_require__(49)
 
 exports.Buffer = Buffer
@@ -15397,19 +15649,19 @@ function done(stream, er, data) {
 
 __webpack_require__(56);
 
-__webpack_require__(184);
+__webpack_require__(185);
 
-__webpack_require__(187);
+__webpack_require__(188);
 
-__webpack_require__(202);
+__webpack_require__(203);
 
-__webpack_require__(204);
+__webpack_require__(205);
 
 /**
  * @fileoverview entry point for editor with all extension included
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-var Editor = __webpack_require__(206);
+var Editor = __webpack_require__(207);
 
 module.exports = Editor;
 
@@ -15445,7 +15697,7 @@ var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-var _csv = __webpack_require__(170);
+var _csv = __webpack_require__(171);
 
 var _csv2 = _interopRequireDefault(_csv);
 
@@ -20834,16 +21086,20 @@ var WwPasteContentHelper = function () {
         var isTextNode = node.nodeType === 3;
         /* eslint-disable max-len */
         var isInlineNode = /^(SPAN|A|CODE|EM|I|STRONG|B|S|U|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/ig.test(node.tagName);
+        var isBR = node.nodeName === 'BR';
         /* eslint-enable max-len */
 
-        if (isTextNode || isInlineNode) {
+        if (isTextNode || isInlineNode || isBR) {
           if (!currentDiv) {
             currentDiv = document.createElement('div');
             $tempContainer.append(currentDiv);
-            // newFrag.appendChild(currentDiv);
           }
 
           currentDiv.appendChild(node);
+
+          if (isBR) {
+            currentDiv = null;
+          }
         } else {
           if (currentDiv && currentDiv.lastChild.tagName !== 'BR') {
             currentDiv.appendChild((0, _jquery2.default)('<br/>')[0]);
@@ -20851,7 +21107,6 @@ var WwPasteContentHelper = function () {
 
           currentDiv = null;
           $tempContainer.append(node);
-          // newFrag.appendChild(node);
         }
       });
 
@@ -20975,6 +21230,10 @@ var WwPasteContentHelper = function () {
 
         if (isDivElement && (isInListItem || isInBlockquote || !hasBlockChildElement)) {
           return;
+        }
+
+        if (blockElement.lastChild && blockElement.lastChild.nodeName !== 'BR') {
+          $blockElement.append(document.createElement('br'));
         }
 
         $blockElement.replaceWith($blockElement.html());
@@ -21523,9 +21782,12 @@ var WwTablePasteHelper = function () {
   }, {
     key: '_isPossibleInsertToTable',
     value: function _isPossibleInsertToTable(node) {
-      var isChildlessCode = node.nodeName === 'CODE' && node.childNodes.length > 1;
+      var nodeName = node.nodeName;
 
-      return !isChildlessCode && (_domUtils2.default.isMDSupportInlineNode(node) || _domUtils2.default.isTextNode(node));
+      var isChildlessCode = nodeName === 'CODE' && node.childNodes.length > 1;
+      var isList = nodeName === 'UL' || nodeName === 'OL';
+
+      return !isChildlessCode && (isList || _domUtils2.default.isMDSupportInlineNode(node) || _domUtils2.default.isTextNode(node));
     }
 
     /**
@@ -21810,6 +22072,10 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _tuiCodeSnippet = __webpack_require__(1);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
 var _domUtils = __webpack_require__(4);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
@@ -21821,6 +22087,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var FIND_LI_ELEMENT = /<li/i;
 var DIV_OR_LI = 'DIV,LI';
 var UL_OR_OL = 'OL,UL';
+var FIND_TD_ELEMNT = /(<td[^>]*>)(.*?)(<\/td>)/g;
+var FIND_UL_OR_OL_ELEMNT = /<(ul|ol)([^>]*)>(.*?)(<\/\1>)/g;
 
 /**
  * Class WwListManager
@@ -21893,6 +22161,10 @@ var WwListManager = function () {
         html = _this._convertFromArbitraryNestingList(html);
 
         return html;
+      });
+
+      this.eventManager.listen('convertorBeforeHtmlToMarkdownConverted', function (html) {
+        return _this._insertDataToMarkPassForListInTable(html);
       });
 
       this.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function (markdown) {
@@ -22105,6 +22377,17 @@ var WwListManager = function () {
       }
       nestedList.parentNode.replaceChild(fragment, nestedList);
     }
+  }, {
+    key: '_insertDataToMarkPassForListInTable',
+    value: function _insertDataToMarkPassForListInTable(html) {
+      var replacedHtml = html.replace(FIND_TD_ELEMNT, function (match, tdStart, tdContent, tdEnd) {
+        var content = tdContent.replace(FIND_UL_OR_OL_ELEMNT, '<$1 data-tomark-pass="" $2>$3$4');
+
+        return '' + tdStart + content + tdEnd;
+      });
+
+      return replacedHtml;
+    }
 
     /**
      * Return lines in selection
@@ -22227,6 +22510,381 @@ var WwListManager = function () {
 
         list.parentNode.removeChild(list);
       }
+    }
+
+    /**
+     * Check whether is available to make List in table.
+     * @returns {boolean} - li element
+     */
+
+  }, {
+    key: 'isAvailableMakeListInTable',
+    value: function isAvailableMakeListInTable() {
+      var selectionManager = this.wwe.componentManager.getManager('tableSelection');
+      var $selectedCells = selectionManager.getSelectedCells();
+      var sq = this.wwe.getEditor();
+
+      return $selectedCells.length === 0 && sq.hasFormat('table') && !sq.hasFormat('OL') && !sq.hasFormat('UL');
+    }
+
+    /**
+     * Find parent node before TD
+     * @param {Node} node - startContainer or endContainer of range
+     * @param {Number} offset - offset
+     * @returns {Node} - parent node before TD
+     * @ignore
+     */
+
+  }, {
+    key: '_getParentNodeBeforeTD',
+    value: function _getParentNodeBeforeTD(node, offset) {
+      var parentNode = _domUtils2.default.getParentUntil(node, 'TD');
+
+      if (!parentNode) {
+        var childNodes = node.childNodes;
+
+        var length = childNodes ? childNodes.length : 0;
+        var newOffset = offset > 0 && offset === length ? offset - 1 : offset;
+
+        parentNode = _domUtils2.default.getChildNodeByOffset(node, newOffset);
+      }
+
+      return parentNode;
+    }
+
+    /**
+     * Find LI node inside TD
+     * If target node is not li and parents of taget node is not li, return null.
+     * @param {Node} targetNode - startContainer or endContainer of range
+     * @param {Number} offset - offset
+     * @returns {Node} - LI node or null
+     * @ignore
+     */
+
+  }, {
+    key: '_findLINodeInsideTD',
+    value: function _findLINodeInsideTD(targetNode, offset) {
+      var liNode = null;
+
+      var liParent = _domUtils2.default.getParentUntilBy(targetNode, function (node) {
+        return node && _domUtils2.default.isListNode(node);
+      }, function (node) {
+        return node && node.nodeName === 'TD';
+      });
+
+      if (liParent) {
+        liNode = liParent;
+      } else if (targetNode.nodeName === 'LI') {
+        liNode = targetNode;
+      } else if (_domUtils2.default.isListNode(targetNode)) {
+        var childLength = targetNode.childNodes.length;
+
+        liNode = targetNode.childNodes[offset >= childLength ? childLength - 1 : offset];
+      }
+
+      return liNode;
+    }
+
+    /**
+     * Get first node on the line where range start.
+     * @param {Node} targetNode - startContainer
+     * @param {Number} offset - startOffset
+     * @returns {Node} - first node where range start
+     * @ignore
+     */
+
+  }, {
+    key: '_getFirstNodeInLineOfTable',
+    value: function _getFirstNodeInLineOfTable(targetNode, offset) {
+      var startNode = this._findLINodeInsideTD(targetNode, offset);
+
+      if (!startNode) {
+        startNode = this._getParentNodeBeforeTD(targetNode, offset);
+
+        var _startNode = startNode,
+            previousSibling = _startNode.previousSibling;
+
+        while (previousSibling && previousSibling.nodeName !== 'BR' && !_domUtils2.default.isListNode(previousSibling)) {
+          startNode = previousSibling;
+          previousSibling = startNode.previousSibling;
+        }
+      }
+
+      return startNode;
+    }
+
+    /**
+     * Get last node on the line where range end.
+     * @param {Node} targetNode - endContainer
+     * @param {Number} offset - endOffset
+     * @returns {Node} - last node where range end
+     * @ignore
+     */
+
+  }, {
+    key: '_getLastNodeInLineOfTable',
+    value: function _getLastNodeInLineOfTable(targetNode, offset) {
+      var endNode = this._findLINodeInsideTD(targetNode, offset);
+
+      if (!endNode) {
+        endNode = this._getParentNodeBeforeTD(targetNode, offset);
+
+        while (endNode.nextSibling) {
+          if (endNode.nodeName === 'BR' || _domUtils2.default.isListNode(endNode)) {
+            break;
+          }
+
+          endNode = endNode.nextSibling;
+        }
+      }
+
+      return endNode;
+    }
+
+    /**
+     * Check whether node is last node in the line of table
+     * If the node is li or br, the node is last node in the line of table.
+     * @param {node} node - node
+     * @returns {boolean} - whether node is last node in line of table
+     * @ignore
+     */
+
+  }, {
+    key: '_isLastNodeInLineOfTable',
+    value: function _isLastNodeInLineOfTable(node) {
+      var nodeName = node.nodeName;
+
+
+      return nodeName === 'LI' || nodeName === 'BR';
+    }
+
+    /**
+     * Get next node in the line of table
+     * If current node is li node and nextSibling is not existing, next node is parent's nextSibling.
+     * If nextSibiling of node is a list node (UL or OL), next node is first child of the list node.
+     * @param {node} node - node
+     * @returns {node} - next node
+     * @ignore
+     */
+
+  }, {
+    key: '_getNextNodeInLineOfTable',
+    value: function _getNextNodeInLineOfTable(node) {
+      var nextSibling = node.nextSibling;
+
+
+      if (node.nodeName === 'LI' && !nextSibling) {
+        var parentNode = node.parentNode;
+
+
+        while (parentNode.nodeName !== 'TD') {
+          if (parentNode.nextSibling) {
+            nextSibling = parentNode.nextSibling;
+            break;
+          }
+
+          parentNode = parentNode.parentNode;
+        }
+      } else if (_domUtils2.default.isListNode(nextSibling)) {
+        nextSibling = nextSibling.firstChild;
+      }
+
+      return nextSibling;
+    }
+
+    /**
+     * get nodes in each lines of table
+     * @param {range} range - range
+     * @returns {array} - each nodes in line
+     * @ignore
+     */
+
+  }, {
+    key: '_getLinesOfSelectionInTable',
+    value: function _getLinesOfSelectionInTable(range) {
+      var startContainer = range.startContainer,
+          endContainer = range.endContainer,
+          startOffset = range.startOffset,
+          endOffset = range.endOffset;
+
+      var firstNode = this._getFirstNodeInLineOfTable(startContainer, startOffset);
+      var lastNode = this._getLastNodeInLineOfTable(endContainer, endOffset);
+
+      var lines = [];
+      var oneLine = [];
+
+      while (firstNode) {
+        oneLine.push(firstNode);
+
+        if (this._isLastNodeInLineOfTable(firstNode)) {
+          lines.push(oneLine);
+          oneLine = [];
+        }
+
+        if (firstNode === lastNode) {
+          if (oneLine.length) {
+            lines.push(oneLine);
+          }
+          break;
+        }
+
+        firstNode = this._getNextNodeInLineOfTable(firstNode);
+      }
+
+      return lines;
+    }
+
+    /**
+     * create OL or UL element
+     * @param {string} listType - OL, UL or TASK
+     * @returns {Node} - OL or UL element
+     * @ignore
+     */
+
+  }, {
+    key: '_createListElement',
+    value: function _createListElement(listType) {
+      return document.createElement(listType === 'TASK' ? 'UL' : listType);
+    }
+
+    /**
+     * create li element
+     * @param {array} oneLineNodes - node array
+     * @param {string} listType - OL, UL or TASK
+     * @returns {Node} - li element
+     * @ignore
+     */
+
+  }, {
+    key: '_createListItemElement',
+    value: function _createListItemElement(oneLineNodes, listType) {
+      var liNode = document.createElement('li');
+
+      oneLineNodes.forEach(function (node) {
+        liNode.appendChild(node);
+      });
+
+      if (listType === 'TASK') {
+        var taskManager = this.wwe.componentManager.getManager('task');
+
+        taskManager.formatTask(liNode);
+      }
+
+      return liNode;
+    }
+  }, {
+    key: '_mergeListWithPreviousSibiling',
+    value: function _mergeListWithPreviousSibiling(node) {
+      var previousSibling = node.previousSibling;
+
+      var result = node;
+
+      if (previousSibling && node.nodeName === previousSibling.nodeName) {
+        this._mergeList(node, previousSibling);
+        result = previousSibling;
+      }
+
+      return result;
+    }
+  }, {
+    key: '_mergeListWithNextSibiling',
+    value: function _mergeListWithNextSibiling(node) {
+      var nextSibling = node.nextSibling;
+
+
+      if (nextSibling && node.nodeName === nextSibling.nodeName) {
+        this._mergeList(nextSibling, node);
+      }
+
+      return node;
+    }
+
+    /**
+     * make listNode (OL or UL)
+     * @param {range} range - range
+     * @param {staring} listType - UL, OL, TASK
+     * @returns {array} childNodes of list node (OL/UL)
+     */
+
+  }, {
+    key: 'createListInTable',
+    value: function createListInTable(range, listType) {
+      var _this4 = this;
+
+      var lines = this._getLinesOfSelectionInTable(range);
+
+      var lastLine = lines[lines.length - 1];
+      var lastNode = lastLine[lastLine.length - 1];
+      var nextNode = lastNode.nextSibling;
+      var parentNode = lastNode.parentNode;
+
+      var listNode = this._createListElement(listType);
+      var _listNode = listNode,
+          listNodeName = _listNode.nodeName;
+
+
+      var newLIs = [];
+      lines.forEach(function (oneLineNodes) {
+        var oneLineFirstNode = oneLineNodes[0];
+        var liElement = void 0;
+
+        // oneLineFirstNode was already a list item in the table
+        if (oneLineFirstNode.nodeName === 'LI') {
+          var existingListNode = oneLineFirstNode.parentNode;
+          liElement = oneLineFirstNode;
+
+          // If the existing list that is already in table is not same the list to be created,
+          // change the existing list to the list to be created
+          if (existingListNode.nodeName !== listNodeName) {
+            var childNodes = existingListNode.childNodes;
+
+
+            _tuiCodeSnippet2.default.forEachArray(childNodes, function () {
+              listNode.appendChild(existingListNode.firstChild);
+            });
+
+            existingListNode.parentNode.replaceChild(listNode, existingListNode);
+          }
+
+          listNode = liElement.parentNode;
+        } else {
+          liElement = _this4._createListItemElement(oneLineNodes, listType);
+          listNode.appendChild(liElement);
+        }
+
+        newLIs.push(liElement);
+      });
+
+      if (!listNode.parentNode) {
+        parentNode.insertBefore(listNode, nextNode);
+      }
+
+      listNode = this._mergeListWithPreviousSibiling(listNode);
+      this._mergeListWithNextSibiling(listNode);
+
+      return newLIs;
+    }
+
+    /**
+     * adjust range for list node (OL/UL)
+     * according to origin startContainer and endContainer
+     * @param {node} startContainer - startContainer
+     * @param {node} endContainer - endContainer
+     * @param {number} startOffset - startOffset
+     * @param {number} endOffset - endOffset
+     * @param {array} listNode - node array
+     */
+
+  }, {
+    key: 'adjustRange',
+    value: function adjustRange(startContainer, endContainer, startOffset, endOffset, listNode) {
+      var newStartContainer = _domUtils2.default.containsNode(listNode[0], startContainer) ? startContainer : listNode[0];
+      var newEndContainer = _domUtils2.default.containsNode(listNode[listNode.length - 1], endContainer) ? endContainer : listNode[listNode.length - 1];
+
+      var newStartOffset = startContainer.nodeName === 'TD' ? 0 : startOffset;
+      var newEndOffset = endContainer.nodeName === 'TD' ? 0 : endOffset;
+
+      this.wwe.setSelectionByContainerAndOffset(newStartContainer, newStartOffset, newEndContainer, newEndOffset);
     }
   }]);
 
@@ -33084,10 +33742,6 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(4);
-
-var _domUtils2 = _interopRequireDefault(_domUtils);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -33096,10 +33750,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @extends Command
  * @module wysiwygCommands/UL
  * @ignore
- */
-/**
- * @fileoverview Implements ul WysiwygCommand
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
   name: 'UL',
@@ -33117,25 +33767,26 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
         startOffset = range.startOffset,
         endOffset = range.endOffset;
 
+    var newLIs = [];
 
     wwe.focus();
     sq.saveUndoState(range);
 
-    var lines = listManager.getLinesOfSelection(startContainer, endContainer);
+    if (listManager.isAvailableMakeListInTable()) {
+      newLIs = listManager.createListInTable(range, 'UL');
+    } else {
+      var lines = listManager.getLinesOfSelection(startContainer, endContainer);
 
-    var newLIs = [];
-    for (var i = 0; i < lines.length; i += 1) {
-      var newLI = this._changeFormatToUnorderedListIfNeed(wwe, lines[i]);
-      if (newLI) {
-        newLIs.push(newLI);
+      for (var i = 0; i < lines.length; i += 1) {
+        var newLI = this._changeFormatToUnorderedListIfNeed(wwe, lines[i]);
+        if (newLI) {
+          newLIs.push(newLI);
+        }
       }
     }
 
     if (newLIs.length) {
-      var newStartContainer = _domUtils2.default.containsNode(newLIs[0], startContainer) ? startContainer : newLIs[0];
-      var newEndContainer = _domUtils2.default.containsNode(newLIs[newLIs.length - 1], endContainer) ? endContainer : newLIs[newLIs.length - 1];
-
-      wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
+      listManager.adjustRange(startContainer, endContainer, startOffset, endOffset, newLIs);
     }
   },
 
@@ -33153,7 +33804,7 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
     var taskManager = wwe.componentManager.getManager('task');
     var newLI = void 0;
 
-    if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+    if (!sq.hasFormat('PRE')) {
       range.setStart(target, 0);
       range.collapse(true);
       sq.setSelection(range);
@@ -33173,8 +33824,10 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
 
     return newLI;
   }
-});
-
+}); /**
+     * @fileoverview Implements ul WysiwygCommand
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
+     */
 exports.default = UL;
 
 /***/ }),
@@ -33192,10 +33845,6 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(4);
-
-var _domUtils2 = _interopRequireDefault(_domUtils);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -33205,11 +33854,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @module wysiwygCommands/OL
  * @ignore
  */
-/**
- * @fileoverview Implements ol WysiwygCommand
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-
 var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
   name: 'OL',
   keyMap: ['CTRL+O', 'META+O'],
@@ -33226,25 +33870,26 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
         endContainer = range.endContainer,
         endOffset = range.endOffset;
 
+    var newLIs = [];
 
     wwe.focus();
     sq.saveUndoState(range);
 
-    var lines = listManager.getLinesOfSelection(startContainer, endContainer);
+    if (listManager.isAvailableMakeListInTable()) {
+      newLIs = listManager.createListInTable(range, 'OL');
+    } else {
+      var lines = listManager.getLinesOfSelection(startContainer, endContainer);
 
-    var newLIs = [];
-    for (var i = 0; i < lines.length; i += 1) {
-      var newLI = this._changeFormatToOrderedListIfNeed(wwe, lines[i]);
-      if (newLI) {
-        newLIs.push(newLI);
+      for (var i = 0; i < lines.length; i += 1) {
+        var newLI = this._changeFormatToOrderedListIfNeed(wwe, lines[i]);
+        if (newLI) {
+          newLIs.push(newLI);
+        }
       }
     }
 
     if (newLIs.length) {
-      var newStartContainer = _domUtils2.default.containsNode(newLIs[0], startContainer) ? startContainer : newLIs[0];
-      var newEndContainer = _domUtils2.default.containsNode(newLIs[newLIs.length - 1], endContainer) ? endContainer : newLIs[newLIs.length - 1];
-
-      wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
+      listManager.adjustRange(startContainer, endContainer, startOffset, endOffset, newLIs);
     }
   },
 
@@ -33262,7 +33907,7 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
     var taskManager = wwe.componentManager.getManager('task');
     var newLI = void 0;
 
-    if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+    if (!sq.hasFormat('PRE')) {
       range.setStart(target, 0);
       range.collapse(true);
       sq.setSelection(range);
@@ -33282,7 +33927,10 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
 
     return newLI;
   }
-});
+}); /**
+     * @fileoverview Implements ol WysiwygCommand
+     * @author NHN FE Development Lab <dl_javascript@nhn.com>
+     */
 
 exports.default = OL;
 
@@ -34357,10 +35005,6 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
-var _domUtils = __webpack_require__(4);
-
-var _domUtils2 = _interopRequireDefault(_domUtils);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -34369,6 +35013,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @extends Command
  * @module wysiwygCommands/Task
  * @ignore
+ */
+/**
+ * @fileoverview Implements Task WysiwygCommand
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
   name: 'Task',
@@ -34386,26 +35034,27 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
         startOffset = range.startOffset,
         endOffset = range.endOffset;
 
+    var newLIs = [];
 
     wwe.focus();
 
     sq.saveUndoState(range);
 
-    var lines = listManager.getLinesOfSelection(startContainer, endContainer);
+    if (listManager.isAvailableMakeListInTable()) {
+      newLIs = listManager.createListInTable(range, 'TASK');
+    } else {
+      var lines = listManager.getLinesOfSelection(startContainer, endContainer);
 
-    var newLIs = [];
-    for (var i = 0; i < lines.length; i += 1) {
-      var newLI = this._changeFormatToTaskIfNeed(wwe, lines[i]);
-      if (newLI) {
-        newLIs.push(newLI);
+      for (var i = 0; i < lines.length; i += 1) {
+        var newLI = this._changeFormatToTaskIfNeed(wwe, lines[i]);
+        if (newLI) {
+          newLIs.push(newLI);
+        }
       }
     }
 
     if (newLIs.length) {
-      var newStartContainer = _domUtils2.default.containsNode(newLIs[0], startContainer) ? startContainer : newLIs[0];
-      var newEndContainer = _domUtils2.default.containsNode(newLIs[newLIs.length - 1], endContainer) ? endContainer : newLIs[newLIs.length - 1];
-
-      wwe.setSelectionByContainerAndOffset(newStartContainer, startOffset, newEndContainer, endOffset);
+      listManager.adjustRange(startContainer, endContainer, startOffset, endOffset, newLIs);
     }
   },
 
@@ -34423,7 +35072,7 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
     var taskManager = wwe.componentManager.getManager('task');
     var newLI = void 0;
 
-    if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+    if (!sq.hasFormat('PRE')) {
       range.setStart(target, 0);
       range.collapse(true);
       sq.setSelection(range);
@@ -34444,10 +35093,8 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
 
     return newLI;
   }
-}); /**
-     * @fileoverview Implements Task WysiwygCommand
-     * @author NHN FE Development Lab <dl_javascript@nhn.com>
-     */
+});
+
 exports.default = Task;
 
 /***/ }),
@@ -35739,6 +36386,70 @@ _i18n2.default.setLanguage(['gl', 'gl_ES'], {
 "use strict";
 
 
+var _i18n = __webpack_require__(3);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['sv', 'sv_SE'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Skriv',
+  'Preview': 'Förhandsgranska',
+  'Headings': 'Överskrifter',
+  'Paragraph': 'Paragraf',
+  'Bold': 'Fet',
+  'Italic': 'Kursiv',
+  'Strike': 'Genomstruken',
+  'Code': 'Kodrad',
+  'Line': 'Linje',
+  'Blockquote': 'Citatblock',
+  'Unordered list': 'Punktlista',
+  'Ordered list': 'Numrerad lista',
+  'Task': 'Att göra',
+  'Indent': 'Öka indrag',
+  'Outdent': 'Minska indrag',
+  'Insert link': 'Infoga länk',
+  'Insert CodeBlock': 'Infoga kodblock',
+  'Insert table': 'Infoga tabell',
+  'Insert image': 'Infoga bild',
+  'Heading': 'Överskrift',
+  'Image URL': 'Bildadress',
+  'Select image file': 'Välj en bildfil',
+  'Description': 'Beskrivning',
+  'OK': 'OK',
+  'More': 'Mer',
+  'Cancel': 'Avbryt',
+  'File': 'Fil',
+  'URL': 'Adress',
+  'Link text': 'Länktext',
+  'Add row': 'Infoga rad',
+  'Add col': 'Infoga kolumn',
+  'Remove row': 'Radera rad',
+  'Remove col': 'Radera kolumn',
+  'Align left': 'Vänsterjustera',
+  'Align center': 'Centrera',
+  'Align right': 'Högerjustera',
+  'Remove table': 'Radera tabell',
+  'Would you like to paste as table?': 'Vill du klistra in som en tabell?',
+  'Text color': 'Textfärg',
+  'Auto scroll enabled': 'Automatisk scroll aktiverad',
+  'Auto scroll disabled': 'Automatisk scroll inaktiverad',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Ej möjligt att klistra in andra värden än en tabell i nuvarande cellmarkering.',
+  'Choose language': 'Välj språk'
+}); /**
+     * @fileoverview I18N for Swedish
+     * @author Magnus Aspling <magnus@yug.se>
+     */
+
+/***/ }),
+/* 171 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 /* eslint-disable */
@@ -35983,7 +36694,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     CSV.stream.json = function () {
-        var os = __webpack_require__(183);
+        var os = __webpack_require__(184);
         var stream = __webpack_require__(47);
         var s = new streamTransform({ objectMode: true });
         s._transform = function (chunk, encoding, done) {
@@ -36118,7 +36829,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })(undefined);
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36239,7 +36950,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -36329,13 +37040,13 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 173 */
+/* 174 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 174 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36415,7 +37126,7 @@ module.exports = function () {
 }();
 
 /***/ }),
-/* 175 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var apply = Function.prototype.apply;
@@ -36468,13 +37179,13 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(176);
+__webpack_require__(177);
 exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
 
 /***/ }),
-/* 176 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -36667,7 +37378,7 @@ exports.clearImmediate = clearImmediate;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12), __webpack_require__(18)))
 
 /***/ }),
-/* 177 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -36741,7 +37452,7 @@ function config (name) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
 
 /***/ }),
-/* 178 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36794,35 +37505,35 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 179 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(28);
 
 
 /***/ }),
-/* 180 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(11);
 
 
 /***/ }),
-/* 181 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(27).Transform
 
 
 /***/ }),
-/* 182 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(27).PassThrough
 
 
 /***/ }),
-/* 183 */
+/* 184 */
 /***/ (function(module, exports) {
 
 exports.endianness = function () { return 'LE' };
@@ -36877,7 +37588,7 @@ exports.homedir = function () {
 
 
 /***/ }),
-/* 184 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36895,11 +37606,11 @@ var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-var _scrollManager = __webpack_require__(185);
+var _scrollManager = __webpack_require__(186);
 
 var _scrollManager2 = _interopRequireDefault(_scrollManager);
 
-var _sectionManager = __webpack_require__(186);
+var _sectionManager = __webpack_require__(187);
 
 var _sectionManager2 = _interopRequireDefault(_sectionManager);
 
@@ -37025,7 +37736,7 @@ _editorProxy2.default.defineExtension('scrollSync', scrollSyncExtension);
 exports.default = scrollSyncExtension;
 
 /***/ }),
-/* 185 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37462,7 +38173,7 @@ var ScrollManager = function () {
 exports.default = ScrollManager;
 
 /***/ }),
-/* 186 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37975,7 +38686,7 @@ function findElementNodeFilter() {
 exports.default = SectionManager;
 
 /***/ }),
-/* 187 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37989,57 +38700,57 @@ var _editorProxy = __webpack_require__(5);
 
 var _editorProxy2 = _interopRequireDefault(_editorProxy);
 
-__webpack_require__(188);
+__webpack_require__(189);
 
-var _mergedTableCreator = __webpack_require__(189);
+var _mergedTableCreator = __webpack_require__(190);
 
 var _mergedTableCreator2 = _interopRequireDefault(_mergedTableCreator);
 
-var _tableUnmergePreparer = __webpack_require__(190);
+var _tableUnmergePreparer = __webpack_require__(191);
 
 var _tableUnmergePreparer2 = _interopRequireDefault(_tableUnmergePreparer);
 
-var _toMarkRenderer = __webpack_require__(191);
+var _toMarkRenderer = __webpack_require__(192);
 
 var _toMarkRenderer2 = _interopRequireDefault(_toMarkRenderer);
 
-var _wwMergedTableManager = __webpack_require__(192);
+var _wwMergedTableManager = __webpack_require__(193);
 
 var _wwMergedTableManager2 = _interopRequireDefault(_wwMergedTableManager);
 
-var _wwMergedTableSelectionManager = __webpack_require__(193);
+var _wwMergedTableSelectionManager = __webpack_require__(194);
 
 var _wwMergedTableSelectionManager2 = _interopRequireDefault(_wwMergedTableSelectionManager);
 
-var _mergedTableAddRow = __webpack_require__(194);
+var _mergedTableAddRow = __webpack_require__(195);
 
 var _mergedTableAddRow2 = _interopRequireDefault(_mergedTableAddRow);
 
-var _mergedTableAddCol = __webpack_require__(195);
+var _mergedTableAddCol = __webpack_require__(196);
 
 var _mergedTableAddCol2 = _interopRequireDefault(_mergedTableAddCol);
 
-var _mergedTableRemoveRow = __webpack_require__(196);
+var _mergedTableRemoveRow = __webpack_require__(197);
 
 var _mergedTableRemoveRow2 = _interopRequireDefault(_mergedTableRemoveRow);
 
-var _mergedTableRemoveCol = __webpack_require__(197);
+var _mergedTableRemoveCol = __webpack_require__(198);
 
 var _mergedTableRemoveCol2 = _interopRequireDefault(_mergedTableRemoveCol);
 
-var _mergedTableAlignCol = __webpack_require__(198);
+var _mergedTableAlignCol = __webpack_require__(199);
 
 var _mergedTableAlignCol2 = _interopRequireDefault(_mergedTableAlignCol);
 
-var _mergeCell = __webpack_require__(199);
+var _mergeCell = __webpack_require__(200);
 
 var _mergeCell2 = _interopRequireDefault(_mergeCell);
 
-var _unmergeCell = __webpack_require__(200);
+var _unmergeCell = __webpack_require__(201);
 
 var _unmergeCell2 = _interopRequireDefault(_unmergeCell);
 
-var _mergedTableUI = __webpack_require__(201);
+var _mergedTableUI = __webpack_require__(202);
 
 var _mergedTableUI2 = _interopRequireDefault(_mergedTableUI);
 
@@ -38115,6 +38826,10 @@ function _changeHtml(html, onChangeTable) {
     $tables.get().forEach(function (tableElement) {
       var changedTableElement = onChangeTable(tableElement);
 
+      if (tableElement.hasAttribute('data-tomark-pass')) {
+        changedTableElement.setAttribute('data-tomark-pass', '');
+      }
+
       (0, _jquery2.default)(tableElement).replaceWith(changedTableElement);
     });
 
@@ -38175,7 +38890,7 @@ function _bindEvents(eventManager) {
 _editorProxy2.default.defineExtension('table', tableExtension);
 
 /***/ }),
-/* 188 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38311,10 +39026,17 @@ if (i18n) {
     'Cannot change part of merged cell': 'Non se pode cambiar parte dunha cela combinada',
     'Cannot paste row merged cells into the table header': 'Non se poden pegar celas no encabezado da táboa'
   });
+
+  i18n.setLanguage(['sv', 'sv_SE'], {
+    'Merge cells': 'Sammanfoga celler',
+    'Unmerge cells': 'Dela celler',
+    'Cannot change part of merged cell': 'Ej möjligt att ändra en del av en sammanfogad cell',
+    'Cannot paste row merged cells into the table header': 'Ej möjligt att klistra in rad-sammanfogade celler i tabellens huvud'
+  });
 }
 
 /***/ }),
-/* 189 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38545,7 +39267,7 @@ function createMergedTable(tableElement) {
 }
 
 /***/ }),
-/* 190 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38603,7 +39325,7 @@ function prepareTableUnmerge(tableElement) {
 }
 
 /***/ }),
-/* 191 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38723,7 +39445,7 @@ exports.default = _toMark2.default.Renderer.factory(_toMark2.default.gfmRenderer
 });
 
 /***/ }),
-/* 192 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39425,7 +40147,7 @@ function any(arr, contition) {
 exports.default = WwMergedTableManager;
 
 /***/ }),
-/* 193 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39627,7 +40349,7 @@ var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
 exports.default = WwMergedTableSelectionManager;
 
 /***/ }),
-/* 194 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39804,7 +40526,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = AddRow;
 
 /***/ }),
-/* 195 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40005,7 +40727,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = AddCol;
 
 /***/ }),
-/* 196 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40192,7 +40914,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 exports.default = RemoveRow;
 
 /***/ }),
-/* 197 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40372,7 +41094,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = RemoveCol;
 
 /***/ }),
-/* 198 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40487,7 +41209,7 @@ function _findFocusCell($newTable, $startContainer) {
 exports.default = AlignCol;
 
 /***/ }),
-/* 199 */
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40709,7 +41431,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = MergeCell;
 
 /***/ }),
-/* 200 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40889,7 +41611,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 exports.default = UnmergeCell;
 
 /***/ }),
-/* 201 */
+/* 202 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40991,7 +41713,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 202 */
+/* 203 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41005,7 +41727,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _tuiColorPicker = __webpack_require__(203);
+var _tuiColorPicker = __webpack_require__(204);
 
 var _tuiColorPicker2 = _interopRequireDefault(_tuiColorPicker);
 
@@ -41354,13 +42076,13 @@ _editorProxy2.default.defineExtension('colorSyntax', colorSyntaxExtension);
 exports.default = colorSyntaxExtension;
 
 /***/ }),
-/* 203 */
+/* 204 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_203__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_204__;
 
 /***/ }),
-/* 204 */
+/* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41370,7 +42092,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _plantumlEncoder = __webpack_require__(205);
+var _plantumlEncoder = __webpack_require__(206);
 
 var _plantumlEncoder2 = _interopRequireDefault(_plantumlEncoder);
 
@@ -41437,13 +42159,13 @@ _editorProxy2.default.defineExtension('uml', umlExtension);
 exports.default = umlExtension;
 
 /***/ }),
-/* 205 */
+/* 206 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_205__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_206__;
 
 /***/ }),
-/* 206 */
+/* 207 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.0
+ * @version 1.4.1
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -8512,7 +8512,7 @@ var Convertor = function () {
   }, {
     key: '_markdownToHtml',
     value: function _markdownToHtml(markdown, env) {
-      markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+      markdown = markdown.replace(/<([^/>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
       while (onerrorStripeRegex.exec(markdown)) {
@@ -8538,7 +8538,7 @@ var Convertor = function () {
 
       $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
         var $code = (0, _jquery2.default)(codeOrPre);
-        $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/g, '&lt;br&gt;'));
+        $code.html($code.html().replace(/&lt;([a-zA-Z0-9]+\s*) data-tomark-pass &gt;/g, '&lt;$1&gt;'));
       });
 
       renderedHTML = $wrapperDiv.html();
@@ -10478,6 +10478,67 @@ var isInsideTaskBox = function isInsideTaskBox(style, offsetX, offsetY) {
   return offsetX >= rect.left && offsetX <= rect.left + rect.width && offsetY >= rect.top && offsetY <= rect.top + rect.height;
 };
 
+/**
+ * Check whether node is OL or UL
+ * @param {node} node - node
+ * @returns {boolean} - whether node is OL or UL
+ * @ignore
+ */
+var isListNode = function isListNode(node) {
+  if (!node) {
+    return false;
+  }
+
+  return node.nodeName === 'UL' || node.nodeName === 'OL';
+};
+
+/**
+ * Check whether node is first list item
+ * @param {node} node - node
+ * @returns {boolean} whether node is first list item
+ * @ignore
+ */
+var isFirstListItem = function isFirstListItem(node) {
+  var nodeName = node.nodeName,
+      parentNode = node.parentNode;
+
+
+  return nodeName === 'LI' && node === parentNode.firstChild;
+};
+
+/**
+ * Check whether node is first level list item
+ * @param {node} node - node
+ * @returns {boolean} whether node is first level list item
+ * @ignore
+ */
+var isFirstLevelListItem = function isFirstLevelListItem(node) {
+  var nodeName = node.nodeName,
+      listNode = node.parentNode;
+  var listParentNode = listNode.parentNode;
+
+
+  return nodeName === 'LI' && !isListNode(listParentNode);
+};
+
+/**
+ * Merge node to target node and detach node
+ * @param {node} node - node
+ * @param {node} targetNode - target node
+ * @ignore
+ */
+var mergeNode = function mergeNode(node, targetNode) {
+  if (node.hasChildNodes()) {
+    _tuiCodeSnippet2.default.forEachArray(node.childNodes, function () {
+      targetNode.appendChild(node.firstChild);
+    });
+  }
+
+  if (node.parentNode) {
+    node.parentNode.removeChild(node);
+  }
+};
+
 exports.default = {
   getNodeName: getNodeName,
   isTextNode: isTextNode,
@@ -10488,6 +10549,7 @@ exports.default = {
   getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
   getNodeOffsetOfParent: getNodeOffsetOfParent,
   getChildNodeByOffset: getChildNodeByOffset,
+  getNodeWithDirectionUntil: getNodeWithDirectionUntil,
   containsNode: containsNode,
   getTopPrevNodeUnder: getTopPrevNodeUnder,
   getTopNextNodeUnder: getTopNextNodeUnder,
@@ -10505,7 +10567,11 @@ exports.default = {
   removeChildFromStartToEndNode: removeChildFromStartToEndNode,
   removeNodesByDirection: removeNodesByDirection,
   getLeafNode: getLeafNode,
-  isInsideTaskBox: isInsideTaskBox
+  isInsideTaskBox: isInsideTaskBox,
+  isListNode: isListNode,
+  isFirstListItem: isFirstListItem,
+  isFirstLevelListItem: isFirstLevelListItem,
+  mergeNode: mergeNode
 };
 
 /***/ }),
@@ -11793,6 +11859,10 @@ function _changeHtml(html, onChangeTable) {
     $tables.get().forEach(function (tableElement) {
       var changedTableElement = onChangeTable(tableElement);
 
+      if (tableElement.hasAttribute('data-tomark-pass')) {
+        changedTableElement.setAttribute('data-tomark-pass', '');
+      }
+
       (0, _jquery2.default)(tableElement).replaceWith(changedTableElement);
     });
 
@@ -11988,6 +12058,13 @@ if (i18n) {
     'Unmerge cells': 'Separar celas',
     'Cannot change part of merged cell': 'Non se pode cambiar parte dunha cela combinada',
     'Cannot paste row merged cells into the table header': 'Non se poden pegar celas no encabezado da táboa'
+  });
+
+  i18n.setLanguage(['sv', 'sv_SE'], {
+    'Merge cells': 'Sammanfoga celler',
+    'Unmerge cells': 'Dela celler',
+    'Cannot change part of merged cell': 'Ej möjligt att ändra en del av en sammanfogad cell',
+    'Cannot paste row merged cells into the table header': 'Ej möjligt att klistra in rad-sammanfogade celler i tabellens huvud'
   });
 }
 

@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.0
+ * @version 1.4.1
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -1103,6 +1103,10 @@ function _changeHtml(html, onChangeTable) {
     $tables.get().forEach(function (tableElement) {
       var changedTableElement = onChangeTable(tableElement);
 
+      if (tableElement.hasAttribute('data-tomark-pass')) {
+        changedTableElement.setAttribute('data-tomark-pass', '');
+      }
+
       (0, _jquery2.default)(tableElement).replaceWith(changedTableElement);
     });
 
@@ -1298,6 +1302,13 @@ if (i18n) {
     'Unmerge cells': 'Separar celas',
     'Cannot change part of merged cell': 'Non se pode cambiar parte dunha cela combinada',
     'Cannot paste row merged cells into the table header': 'Non se poden pegar celas no encabezado da táboa'
+  });
+
+  i18n.setLanguage(['sv', 'sv_SE'], {
+    'Merge cells': 'Sammanfoga celler',
+    'Unmerge cells': 'Dela celler',
+    'Cannot change part of merged cell': 'Ej möjligt att ändra en del av en sammanfogad cell',
+    'Cannot paste row merged cells into the table header': 'Ej möjligt att klistra in rad-sammanfogade celler i tabellens huvud'
   });
 }
 
