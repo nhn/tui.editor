@@ -101,7 +101,7 @@ Depending on the type of use you want like production of *Markdown* or maybe to 
 * **Table**: Hate the Markdown table? You can do everything with a mouse
 
 ### And more
-* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian, Turkish, Finnish, Czech, Arabic, Polish, Galician + language you extend.
+* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian, Turkish, Finnish, Czech, Arabic, Polish, Galician, Swedish + language you extend.
 * **Viewer**: Renders Markdown content with extensions
 
 
@@ -275,6 +275,7 @@ var editor = Editor.factory({
 
 ## 🚀 Used By
 * [TOAST Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com)
+* [UNOTES - Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=ryanmcalister.Unotes)
 
 ## 📜 License
 This software is licensed under the [MIT](https://github.com/nhn/tui.editor/blob/master/LICENSE) © [NHN](https://github.com/nhn).

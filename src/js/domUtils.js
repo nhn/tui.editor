@@ -599,6 +599,63 @@ const isInsideTaskBox = function(style, offsetX, offsetY) {
     && offsetY <= (rect.top + rect.height);
 };
 
+/**
+ * Check whether node is OL or UL
+ * @param {node} node - node
+ * @returns {boolean} - whether node is OL or UL
+ * @ignore
+ */
+const isListNode = function(node) {
+  if (!node) {
+    return false;
+  }
+
+  return node.nodeName === 'UL' || node.nodeName === 'OL';
+};
+
+/**
+ * Check whether node is first list item
+ * @param {node} node - node
+ * @returns {boolean} whether node is first list item
+ * @ignore
+ */
+const isFirstListItem = function(node) {
+  const {nodeName, parentNode} = node;
+
+  return nodeName === 'LI' && node === parentNode.firstChild;
+};
+
+/**
+ * Check whether node is first level list item
+ * @param {node} node - node
+ * @returns {boolean} whether node is first level list item
+ * @ignore
+ */
+const isFirstLevelListItem = function(node) {
+  const {nodeName, parentNode: listNode} = node;
+  const {parentNode: listParentNode} = listNode;
+
+  return nodeName === 'LI' && !isListNode(listParentNode);
+};
+
+/**
+ * Merge node to target node and detach node
+ * @param {node} node - node
+ * @param {node} targetNode - target node
+ * @ignore
+ */
+const mergeNode = function(node, targetNode) {
+  if (node.hasChildNodes()) {
+    util.forEachArray(node.childNodes, () => {
+      targetNode.appendChild(node.firstChild);
+    });
+  }
+
+  if (node.parentNode) {
+    node.parentNode.removeChild(node);
+  }
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -609,6 +666,7 @@ export default {
   getPrevOffsetNodeUntil,
   getNodeOffsetOfParent,
   getChildNodeByOffset,
+  getNodeWithDirectionUntil,
   containsNode,
   getTopPrevNodeUnder,
   getTopNextNodeUnder,
@@ -626,5 +684,9 @@ export default {
   removeChildFromStartToEndNode,
   removeNodesByDirection,
   getLeafNode,
-  isInsideTaskBox
+  isInsideTaskBox,
+  isListNode,
+  isFirstListItem,
+  isFirstLevelListItem,
+  mergeNode
 };

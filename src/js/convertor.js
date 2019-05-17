@@ -105,7 +105,7 @@ class Convertor {
    * @returns {string} html text
    */
   _markdownToHtml(markdown, env) {
-    markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+    markdown = markdown.replace(/<([^/>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
     // eslint-disable-next-line
         const onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
     while (onerrorStripeRegex.exec(markdown)) {
@@ -128,7 +128,7 @@ class Convertor {
 
     $wrapperDiv.find('code, pre').each((i, codeOrPre) => {
       const $code = $(codeOrPre);
-      $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/g, '&lt;br&gt;'));
+      $code.html($code.html().replace(/&lt;([a-zA-Z0-9]+\s*) data-tomark-pass &gt;/g, '&lt;$1&gt;'));
     });
 
     renderedHTML = $wrapperDiv.html();
