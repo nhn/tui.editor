@@ -183,7 +183,7 @@ class WwTableManager {
           this.wwe.breakToNewDefaultBlock(range, 'before');
           isNeedNext = false;
         } else if (this.wwe.isInTable(range)) {
-          if (this._isInStyledText(range)) {
+          if (!this._isInList(range.startContainer) && this._isInStyledText(range)) {
             this.wwe.defer(() => {
               this._removeBRinStyleText();
             });
@@ -443,6 +443,12 @@ class WwTableManager {
     if (!listNode.hasChildNodes()) {
       listNode.parentNode.removeChild(listNode);
     }
+  }
+
+  _isInList(targetNode) {
+    return domUtils.getParentUntilBy(targetNode,
+      (node) => node && (domUtils.isListNode(node) || node.nodeName === 'LI'),
+      (node) => node && (node.nodeName === 'TD' || node.nodeName === 'TH'));
   }
 
   /**
