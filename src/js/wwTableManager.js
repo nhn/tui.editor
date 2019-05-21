@@ -90,8 +90,9 @@ class WwTableManager {
       selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
     });
 
-    this.eventManager.listen('copyBefore.table', ({$clipboardContainer}) =>
-      this.updateTableHtmlOfClipboardIfNeed($clipboardContainer));
+    this.eventManager.listen('copyBefore.table', ({$clipboardContainer}) => (
+      this.updateTableHtmlOfClipboardIfNeed($clipboardContainer)
+    ));
   }
 
   /**
@@ -1122,6 +1123,7 @@ class WwTableManager {
   resetLastCellNode() {
     this._lastCellNode = null;
   }
+
   /**
    * Set _lastCellNode to given node
    * @param {HTMLElement} node Table cell

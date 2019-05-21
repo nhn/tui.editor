@@ -21,6 +21,7 @@ class Command {
       this.setKeyMap(keyMap);
     }
   }
+
   /**
    * getName
    * returns Name of command
