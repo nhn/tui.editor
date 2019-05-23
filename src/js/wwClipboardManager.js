@@ -199,11 +199,48 @@ class WwClipboardManager {
   }
 
   /**
+   * MS Office use specific CSS attributes with mso- prefix.
+   * But safari does not support mso- prefix.
+   * @param {string} html - html string
+   * @returns {boolean}
+   * @private
+   */
+  _isFromMs(html) {
+    return /<p style="[^>]*mso-/.test(html);
+  }
+
+  /**
+   * P tags append 'BR' to make blank line.
+   * Our viewer renders new line as P tag with margin.
+   * When pasting text from viewer, insert BR between P tags.
+   * @param {Node} node - node
+   * @private
+   */
+  _preProcessPtag(node) {
+    const pTags = node.querySelectorAll('p');
+
+    util.forEachArray(pTags, (pTag) => {
+      if (pTag.lastChild && pTag.lastChild.nodeName !== 'BR') {
+        pTag.appendChild(document.createElement('br'));
+      }
+
+      pTag.appendChild(document.createElement('br'));
+    });
+  }
+
+  /**
    * Prepare paste.
    * @param {jQuery} $clipboardContainer - temporary jQuery container for clipboard contents
    * @private
    */
   _preparePaste($clipboardContainer) {
+    // When pasting text, the empty line processing differ our viewer and MS Office.
+    // In our viewer case, <p>aaa</p><p>bbb<p> have empty line becuase P tags have margin.
+    // In MS Office case, <p>aaa</p><p>bbb<p> do not have empty line becuase P tags means just one line.
+    if (!this._isFromMs($clipboardContainer.html())) {
+      this._preProcessPtag($clipboardContainer.get(0));
+    }
+
     this._removeEmptyFontElement($clipboardContainer);
 
     this._pch.preparePaste($clipboardContainer);
