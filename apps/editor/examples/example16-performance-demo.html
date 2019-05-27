@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>20. Performance Demo</title>
+    <title>16. Performance Demo</title>
     <script src="../lib/jquery/dist/jquery.js"></script>
     <script src="../lib/markdown-it/dist/markdown-it.js"></script>
     <script src="../lib/to-mark/dist/to-mark.js"></script>
@@ -17,26 +17,28 @@
   </head>
   <body>
     <div class="explain">
-      All extensions are enabled
+      'getValue' is called when 'change' and 'blur' event occur.
     </div>
     <div class="code-html">
-    <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
-    <script src="../lib/raphael/raphael.js"></script>
-    <script src="../lib/tui-chart/dist/tui-chart.js"></script>
-    <script src="../dist/tui-editor-Editor-all.js"></script>
-    <link rel="stylesheet" href="../dist/tui-editor.css">
-    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
-    <link rel="stylesheet" href="../lib/tui-color-picker/dist/tui-color-picker.css">
-    <link rel="stylesheet" href="../lib/tui-chart/dist/tui-chart.css">
-    <style>
+      <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
+      <script src="../lib/raphael/raphael.js"></script>
+      <script src="../lib/tui-chart/dist/tui-chart.js"></script>
+      <script src="../dist/tui-editor-Editor-all.js"></script>
+      <link rel="stylesheet" href="../dist/tui-editor.css">
+      <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+      <link rel="stylesheet" href="../lib/tui-color-picker/dist/tui-color-picker.css">
+      <link rel="stylesheet" href="../lib/tui-chart/dist/tui-chart.css">
+
+      <button onclick="replace()">replaceContent</button>
+      <div id="editSection"></div>
+    </div>
+    <style class="code-css">
       .te-toolbar-section {
           top: 0;
           z-index: 5;
           position: sticky;
       }
     </style>
-    <button onclick="replace()">replaceContent</button>
-    <div id="editSection"></div>
     <script class="code-js">
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
@@ -66,12 +68,10 @@
         }
       });
       editor.on('change', function() {
-        setTimeout(function() {
-          var content = editor.getValue();
-        }, 3000);
+        var content1 = editor.getValue();
       });
       editor.on('blur', function() {
-          var content = editor.getValue();
+        var content2 = editor.getValue();
       });
 
       var text = '<a class="custom" data-custom="20" href="https://ui.toast.com/" title="toast" target="_blank">TOAST UI</a>';
