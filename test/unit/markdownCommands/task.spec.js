@@ -31,7 +31,8 @@ describe('task', () => {
       '* mytext4',
       '',
       '1. mytext5',
-      '# myheading'];
+      '# myheading'
+    ];
 
     cm.setValue(sourceText.join('\n'));
     doc = cm.getDoc();

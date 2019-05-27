@@ -423,19 +423,14 @@ const getPath = function(node, root) {
  * @ignore
  */
 const getTableCellByDirection = function(node, direction) {
-  let isForward = true;
   let targetElement = null;
 
-  if (util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
-    return null;
-  } else if (direction === 'previous') {
-    isForward = false;
-  }
-
-  if (isForward) {
-    targetElement = node.nextElementSibling;
-  } else {
-    targetElement = node.previousElementSibling;
+  if (!util.isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
+    if (direction === 'next') {
+      targetElement = node.nextElementSibling;
+    } else {
+      targetElement = node.previousElementSibling;
+    }
   }
 
   return targetElement;
@@ -450,49 +445,42 @@ const getTableCellByDirection = function(node, direction) {
  * @ignore
  */
 const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
-  let isForward = true;
   let tableCellElement = null;
   let $node, index, $targetRowElement, $currentContainer, $siblingContainer, isSiblingContainerExists;
 
-  if (util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
-    return null;
-  } else if (direction === 'previous') {
-    isForward = false;
+  if (!util.isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
+    if (node) {
+      $node = $(node);
+
+      if (direction === 'next') {
+        $targetRowElement = $node.parent().next();
+        $currentContainer = $node.parents('thead');
+        $siblingContainer = $currentContainer[0] && $currentContainer.next();
+        isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
+
+        index = 0;
+      } else {
+        $targetRowElement = $node.parent().prev();
+        $currentContainer = $node.parents('tbody');
+        $siblingContainer = $currentContainer[0] && $currentContainer.prev();
+        isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
+
+        index = node.parentNode.childNodes.length - 1;
+      }
+
+      if (util.isUndefined(needEdgeCell) || !needEdgeCell) {
+        index = getNodeOffsetOfParent(node);
+      }
+
+      if ($targetRowElement[0]) {
+        tableCellElement = $targetRowElement.children('td,th')[index];
+      } else if ($currentContainer[0] && isSiblingContainerExists) {
+        tableCellElement = $siblingContainer.find('td,th')[index];
+      }
+    }
   }
 
-  if (node) {
-    $node = $(node);
-
-    if (isForward) {
-      $targetRowElement = $node.parent().next();
-      $currentContainer = $node.parents('thead');
-      $siblingContainer = $currentContainer[0] && $currentContainer.next();
-      isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
-
-      index = 0;
-    } else {
-      $targetRowElement = $node.parent().prev();
-      $currentContainer = $node.parents('tbody');
-      $siblingContainer = $currentContainer[0] && $currentContainer.prev();
-      isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
-
-      index = node.parentNode.childNodes.length - 1;
-    }
-
-    if (util.isUndefined(needEdgeCell) || !needEdgeCell) {
-      index = getNodeOffsetOfParent(node);
-    }
-
-    if ($targetRowElement[0]) {
-      tableCellElement = $targetRowElement.children('td,th')[index];
-    } else if ($currentContainer[0] && isSiblingContainerExists) {
-      tableCellElement = $siblingContainer.find('td,th')[index];
-    }
-
-    return tableCellElement;
-  }
-
-  return null;
+  return tableCellElement;
 };
 
 /**

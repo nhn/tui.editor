@@ -62,6 +62,7 @@ class MarkdownPreview extends Preview {
 
     this.eventManager.emit('previewRenderAfter', this);
   }
+
   remove() {
     this.$el.off('scroll');
     this.$el = null;
