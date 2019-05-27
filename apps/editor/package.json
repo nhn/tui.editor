@@ -96,7 +96,7 @@
     "plantuml-encoder": "^1.2.5",
     "resize-observer-polyfill": "^1.5.0",
     "squire-rte": "github:sohee-lee7/Squire#a11c7d3b5d6faa07b93e7d72946c94c6b83cee82",
-    "to-mark": "^1.1.5",
+    "to-mark": "^1.1.6",
     "tui-chart": "^3.0.1",
     "tui-code-snippet": "^1.5.0",
     "tui-color-picker": "^2.2.1"
