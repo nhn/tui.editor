@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>9. Multiple extensions</title>
+    <title>9. UML</title>
     <script src="../lib/jquery/dist/jquery.js"></script>
     <script src="../lib/markdown-it/dist/markdown-it.js"></script>
     <script src="../lib/to-mark/dist/to-mark.js"></script>
@@ -22,33 +22,16 @@
       See available options in <a target="_blank" href="http://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html">here</a>
     </div>
     <div class="code-html">
-    <script src="../dist/tui-editor-Editor.js"></script>
-    <script src="../dist/tui-editor-extTable.js"></script>
-    <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
-    <script src="../dist/tui-editor-extUML.js"></script>
-    <link rel="stylesheet" href="../dist/tui-editor.css">
-    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+      <script src="../dist/tui-editor-Editor.js"></script>
+      <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
+      <script src="../dist/tui-editor-extUML.js"></script>
+      <link rel="stylesheet" href="../dist/tui-editor.css">
+      <link rel="stylesheet" href="../dist/tui-editor-contents.css">
 
-    <div id="editSection"></div>
+      <div id="editSection"></div>
     </div>
     <script class="code-js">
       var content = [
-        '![image](https://cloud.githubusercontent.com/assets/389021/16107646/9729e556-33d8-11e6-933f-5b09fa3a53bb.png)',
-        '# Heading 1',
-        '## Heading 2',
-        '    code block',
-        '```js',
-        'console.log("fenced code block");',
-        '```',
-        '[link](https://nhn.github.io/tui.editor/)',
-        '> block quote',
-        '---',
-        'horizontal line',
-        '***',
-        '`code`, *italic*, **bold**, ~~strikethrough~~, <span style="color:#e11d21">Red color</span>',
-        '| @cols=2:merged |',
-        '| --- | --- |',
-        '| table | table |',
         '```uml',
         'partition Conductor {',
         '  (*) --> "Climbs on Platform"',
@@ -77,8 +60,9 @@
         el: document.querySelector('#editSection'),
         previewStyle: 'vertical',
         height: '400px',
+        initialEditType: 'markdown',
         initialValue: content,
-        exts: ['table', 'uml']
+        exts: ['uml']
       });
     </script>
   </body>
