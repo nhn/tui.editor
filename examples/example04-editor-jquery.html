@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>1. Basic</title>
+    <title>4. Editor jQuery</title>
     <script src="../lib/jquery/dist/jquery.js"></script>
     <script src='../lib/markdown-it/dist/markdown-it.js'></script>
     <script src="../lib/to-mark/dist/to-mark.js"></script>
@@ -26,8 +26,7 @@
       <div id="editSection"></div>
     </div>
     <script class="code-js">
-      var editor = new tui.Editor({
-        el: document.querySelector('#editSection'),
+      $('#editSection').tuiEditor({
         initialEditType: 'markdown',
         previewStyle: 'vertical',
         height: '300px'
