@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>16. Toolbar add button</title>
+    <title>12. Customize Toolbar</title>
     <script src="../lib/jquery/dist/jquery.js"></script>
     <script src="../lib/markdown-it/dist/markdown-it.js"></script>
     <script src="../lib/to-mark/dist/to-mark.js"></script>
@@ -17,18 +17,22 @@
   </head>
   <body>
     <div class="code-html">
-    <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
-    <script src="../lib/raphael/raphael.js"></script>
-    <script src="../lib/tui-chart/dist/tui-chart.js"></script>
-    <script src="../dist/tui-editor-Editor-all.js"></script>
-    <link rel="stylesheet" href="../dist/tui-editor.css">
-    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
-    <link rel="stylesheet" href="../lib/tui-color-picker/dist/tui-color-picker.css">
-    <link rel="stylesheet" href="../lib/tui-chart/dist/tui-chart.css">
+      <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
+      <script src="../lib/raphael/raphael.js"></script>
+      <script src="../lib/tui-chart/dist/tui-chart.js"></script>
+      <script src="../dist/tui-editor-Editor-all.js"></script>
+      <link rel="stylesheet" href="../dist/tui-editor.css">
+      <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+      <link rel="stylesheet" href="../lib/tui-color-picker/dist/tui-color-picker.css">
+      <link rel="stylesheet" href="../lib/tui-chart/dist/tui-chart.css">
 
-    <!-- IMPORT Font Awesome 5 here-->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
-    <style>
+      <!-- IMPORT Font Awesome 5 here-->
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+
+      <div id="editSection"></div>
+    </div>
+
+    <style class="code-css">
       /* class for our button */
       .our-button-class{
         float: left;
@@ -47,8 +51,6 @@
       }
     </style>
 
-    <div id="editSection"></div>
-
     <script class="code-js">
       var content = 'FIRST and LAST button are custom';
 
@@ -59,7 +61,7 @@
         initialEditType: 'markdown',
         initialValue: content,
         toolbarItems: [
-        'heading',
+          'heading',
           'bold',
           'italic',
           'strike',
