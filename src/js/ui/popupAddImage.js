@@ -171,6 +171,7 @@ class PopupAddImage extends LayerPopup {
   _resetInputs() {
     this.$el.find('input').val('');
   }
+
   remove() {
     this.tab.remove();
     super.remove();
