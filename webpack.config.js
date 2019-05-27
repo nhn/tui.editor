@@ -163,7 +163,7 @@ defaultConfigs[0].plugins.push(new CopyWebpackPlugin([ENTRY_IMAGE_DIR]));
 if (isDevServer) {
   // Serve
   defaultConfigs[0].entry = {
-    'Editor-all': ENTRY_MAIN_ALL
+    'Editor': ENTRY_MAIN
   };
   defaultConfigs[0].output.publicPath = PUBLIC_PATH;
   defaultConfigs[0].output.library = NAME_SPACE;
