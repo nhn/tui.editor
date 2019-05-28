@@ -39,7 +39,7 @@ You can draw many kind of UML Diagram using [plantUML](http://plantuml.com/).
 
 Load script `'tui-editor/dist/tui-editor-extUML.js'` and enable uml extension by `exts: ['uml']` option.
 
-see example [here](https://nhn.github.io/tui.editor/api/latest/tutorial-example08-uml.html)
+see example [here](https://nhn.github.io/tui.editor/api/latest/tutorial-example09-uml.html)
 
 ## For Chart
 You can draw chart from TSV, CSV data format using [tui-chart](nhn.github.io/tui.chart/latest)
@@ -55,7 +55,7 @@ The code block format looks like this.
 * data block come first, TSV, CSV or White-Space Separated Values
 * option block follows, each option is [tui-chart](nhn.github.io/tui.chart/latest) option in dot notation.
 
-see the [example](https://nhn.github.io/tui.editor/api/latest/tutorial-example11-chart.html)
+see the [example](https://nhn.github.io/tui.editor/api/latest/tutorial-example10-chart.html)
 
 ## For Table
 You can draw merged table cells.
@@ -66,7 +66,7 @@ Load script `'tui-editor/dist/tui-editor-extTable.js'` and enable the extension 
 
 ![image](https://user-images.githubusercontent.com/1215767/34479230-d264ca32-efe8-11e7-9ed1-392a863b127e.png)
 
-see the [example](https://nhn.github.io/tui.editor/api/latest/tutorial-example07-table.html)
+see the [example](https://nhn.github.io/tui.editor/api/latest/tutorial-example08-table.html)
 
 ## For Color Syntax
 You can color text by toolbox easy.
@@ -79,7 +79,7 @@ Once you enable this extension. You can see a button appearing on the toolbar.
 
 ![image](https://user-images.githubusercontent.com/1215767/34479308-4ca815ec-efe9-11e7-8c6d-2d2b395667bc.png)
 
-see the [example](https://nhn.github.io/tui.editor/api/latest/tutorial-example06-colorsyntax.html)
+see the [example](https://nhn.github.io/tui.editor/api/latest/tutorial-example07-colorsyntax.html)
 
 ## For Scroll Sync
 Sync markdown editor & preview scroll. You can toggle *sync mode* by click on blue `scroll on` button on toolbar.
@@ -88,4 +88,4 @@ Sync markdown editor & preview scroll. You can toggle *sync mode* by click on bl
 
 Load script `'tui-editor/dist/tui-editor-extScrollSync.js'` and enable the extension by `exts: ['scrollSync']` option.
 
-see the [example](https://nhn.github.io/tui.editor/api/latest/tutorial-example05-scrollsync.html)
+see the [example](https://nhn.github.io/tui.editor/api/latest/tutorial-example06-scrollsync.html)
