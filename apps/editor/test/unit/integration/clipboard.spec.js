@@ -167,7 +167,7 @@ describe('Clipboard', () => {
                     '<div>text</div>' +
                     '<section>text</section>';
         const outputHtml =
-                    '<div>text<br></div>' +
+                    '<div>text<br></div><div><br></div>' +
                     '<div>text<br></div>' +
                     '<div>text<br></div>' +
                     '<div>text<br></div>' +
