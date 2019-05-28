@@ -253,13 +253,13 @@ var editor = Editor.factory({
 * [APIs](https://nhn.github.io/tui.editor/api/latest/)
 
 ## 🐾 Examples
-* [editor basic](https://nhn.github.io/tui.editor/api/latest/tutorial-example01-basic.html)
-* [viewer basic](https://nhn.github.io/tui.editor/api/latest/tutorial-example02-viewer-basic.html)
-* [jQuery plugin](https://nhn.github.io/tui.editor/api/latest/tutorial-example03-jquery.html)
-* [uml extension](https://nhn.github.io/tui.editor/api/latest/tutorial-example08-uml.html)
-* [chart extension](https://nhn.github.io/tui.editor/api/latest/tutorial-example11-chart.html)
-* [writing extension](https://nhn.github.io/tui.editor/api/latest/tutorial-example12-writing-extension.html)
-* [all extensions](https://nhn.github.io/tui.editor/api/latest/tutorial-example00-demo.html)
+* [editor basic](https://nhn.github.io/tui.editor/api/latest/tutorial-example02-editor-basic.html)
+* [viewer basic](https://nhn.github.io/tui.editor/api/latest/tutorial-example03-viewer-basic.html)
+* [jQuery plugin](https://nhn.github.io/tui.editor/api/latest/tutorial-example04-editor-jquery.html)
+* [uml extension](https://nhn.github.io/tui.editor/api/latest/tutorial-example09-uml.html)
+* [chart extension](https://nhn.github.io/tui.editor/api/latest/tutorial-example10-chart.html)
+* [writing extension](https://nhn.github.io/tui.editor/api/latest/tutorial-example11-writing-extension.html)
+* [all extensions](https://nhn.github.io/tui.editor/api/latest/tutorial-example00-editor-with-extensions.html)
 
 ## 💬 Contributing
 * [Code of Conduct](https://github.com/nhn/tui.editor/blob/master/CODE_OF_CONDUCT.md)
