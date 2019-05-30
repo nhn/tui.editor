@@ -48,7 +48,5 @@ i18n.setLanguage(['sv', 'sv_SE'], {
   'Text color': 'Textfärg',
   'Auto scroll enabled': 'Automatisk scroll aktiverad',
   'Auto scroll disabled': 'Automatisk scroll inaktiverad',
-  'Cannot paste values ​​other than a table in the cell selection state':
-    'Ej möjligt att klistra in andra värden än en tabell i nuvarande cellmarkering.',
   'Choose language': 'Välj språk'
 });
