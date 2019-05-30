@@ -234,6 +234,12 @@ class WwClipboardManager {
    * @private
    */
   _preparePaste($clipboardContainer) {
+    const html = $clipboardContainer.html();
+
+    $clipboardContainer.html(html.replace(/>([^<]*\s[^<]*)</g, (match, text) => {
+      return `>${text.replace(/\s/g, '&nbsp;')}<`;
+    }));
+
     // When pasting text, the empty line processing differ our viewer and MS Office.
     // In our viewer case, <p>aaa</p><p>bbb<p> have empty line becuase P tags have margin.
     // In MS Office case, <p>aaa</p><p>bbb<p> do not have empty line becuase P tags means just one line.
