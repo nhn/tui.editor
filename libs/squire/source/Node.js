@@ -119,6 +119,15 @@ function getNearest ( node, root, tag, attributes ) {
     }
     return null;
 }
+function getNearestTag ( node, root, tagRegexp ) {
+    while ( node && node !== root ) {
+        if ( tagRegexp.test(node.nodeName) ) {
+            return node;
+        }
+        node = node.parentNode;
+    }
+    return null;
+}
 function isOrContains ( parent, node ) {
     while ( node ) {
         if ( node === parent ) {

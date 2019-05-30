@@ -298,6 +298,15 @@ function getNearest ( node, root, tag, attributes ) {
     }
     return null;
 }
+function getNearestTag ( node, root, tagRegexp ) {
+    while ( node && node !== root ) {
+        if ( tagRegexp.test(node.nodeName) ) {
+            return node;
+        }
+        node = node.parentNode;
+    }
+    return null;
+}
 function isOrContains ( parent, node ) {
     while ( node ) {
         if ( node === parent ) {
@@ -962,9 +971,8 @@ var insertTreeFragmentIntoRange = function ( range, frag, root ) {
     block = getStartBlockOfRange( range, root );
     firstBlockInFrag = getNextBlock( frag, frag );
     if ( block && firstBlockInFrag &&
-            // Don't merge table cells or PRE elements into block
-            !getNearest( firstBlockInFrag, frag, 'PRE' ) &&
-            !getNearest( firstBlockInFrag, frag, 'TABLE' ) ) {
+        // Don't merge PRE, table, heading, list, blockquoute elements into block
+        !getNearestTag( firstBlockInFrag, frag, /PRE|TABLE|H[1-6]|OL|UL|BLOCKQUOTE/ ) ) {
         moveRangeBoundariesUpTree( range, block, block, root );
         range.collapse( true ); // collapse to start
         container = range.endContainer;
