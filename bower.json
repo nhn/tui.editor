@@ -51,7 +51,7 @@
     "markdown-it": "^8.4.0",
     "to-mark": "^1.1.6",
     "tui-color-picker": "^2.2.1",
-    "squire-rte": "sohee-lee7/Squire#7cd62d0dc45de708ed4bbf81b9a62814f780e0d3",
+    "squire-rte": "sohee-lee7/Squire#eba04e7bcf519ad6e174a624a4bd3fb86eb371a2",
     "plantuml-encoder": "^1.2.5",
     "tui-chart": "^2.13.0"
   },
