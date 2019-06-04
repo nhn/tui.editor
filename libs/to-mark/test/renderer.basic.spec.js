@@ -170,6 +170,11 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<ol><li></li><li></li><li></li></ol>', '3', 4)).toEqual('3. 3\n');
         });
 
+        it('ol has start attribute', function() {
+            expect(getMarkdownText('<ol start="5"><li></li><li></li></ol>', 'test1', 2)).toEqual('5. test1\n');
+            expect(getMarkdownText('<ol start="5"><li></li><li></li></ol>', 'test2', 3)).toEqual('6. test2\n');
+        });
+
         it('nested list', function() {
             var htmlStr = [
                 '<ul>',
