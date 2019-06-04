@@ -1,7 +1,7 @@
 import editor from '../editorFixture';
 
 fixture`wysiwyg new line`
-  .page`http://localhost:8080/examples/example13-all-extension-blank.html`;
+  .page`http://localhost:8080/examples/example-e2e.html`;
 
 test('should convert BR after links #200', async t => {
   await editor.showWysiwyg();
