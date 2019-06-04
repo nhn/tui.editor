@@ -130,7 +130,7 @@ class PopupAddImage extends LayerPopup {
         const {files} = this._$imageFileInput.get(0);
         if (files.length) {
           const imageFile = files.item(0);
-          const hookCallback = (url, text) => this._applyImage(url, altText || text);
+          const hookCallback = (url, text) => this._applyImage(url, text || altText);
 
           this.eventManager.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
         }
