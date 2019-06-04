@@ -26,6 +26,9 @@ var basicRenderer = Renderer.factory({
 
         managedText = this.trim(this.getSpaceCollapsedText(node.nodeValue));
 
+        if (this._isNeedEscapeBackSlash(managedText)) {
+            managedText = this.escapeTextBackSlash(managedText);
+        }
         if (this._isNeedEscapeHtml(managedText)) {
             managedText = this.escapeTextHtml(managedText);
         }

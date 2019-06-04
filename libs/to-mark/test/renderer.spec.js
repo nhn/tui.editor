@@ -233,6 +233,14 @@ describe('renderer', function() {
         expect(renderer.escapeTextHtml('im <http://example.com/\\[> text')).toEqual('im <http://example.com/\\[> text');
     });
 
+    it('escapeTextBackSlash() can process backslash text for markdown text', function() {
+        var renderer = Renderer.factory();
+
+        expect(renderer.escapeTextBackSlash('"\\"')).toEqual('"\\\\"');
+        expect(renderer.escapeTextBackSlash('(\\)')).toEqual('(\\\\)');
+        expect(renderer.escapeTextBackSlash('_\\_')).toEqual('_\\\\_');
+    });
+
     describe('_isNeedEscape() can check passed text is needed escape or not', function() {
         var renderer;
 
