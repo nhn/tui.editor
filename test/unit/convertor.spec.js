@@ -70,6 +70,23 @@ describe('Convertor', () => {
       expect(convertor.toHTML(tag).replace(/\n/g, '')).toEqual(expectedHTML);
     });
 
+    it('should insert data-tomark-pass in html tag with markdown syntax', () => {
+      const tag = [
+        '| | |',
+        '| --- | --- |',
+        '| aa | <ul><li>test</li></ul> |'
+      ].join('\n');
+
+      const expectedHTML = [
+        '<table><thead><tr><th></th><th></th></tr></thead>',
+        '<tbody><tr><td>aa</td>',
+        '<td><ul data-tomark-pass=""><li data-tomark-pass="">test</li></ul></td>',
+        '</tr></tbody></table>'
+      ].join('');
+
+      expect(convertor.toHTML(tag).replace(/\n/g, '')).toEqual(expectedHTML);
+    });
+
     it('should insert data-tomark-pass in html tag even if attrubute has slash', () => {
       const imgTag = '<img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png">';
 
