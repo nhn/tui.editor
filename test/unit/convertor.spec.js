@@ -61,6 +61,22 @@ describe('Convertor', () => {
     it('should convert blockquote even if there is a line above it (ref #989)', () => {
       expect(convertor.toHTML('text above\n> quote').replace(/\n/g, '')).toEqual('<p>text above</p><blockquote><p>quote</p></blockquote>');
     });
+
+    it('should insert data-tomark-pass in html tag', () => {
+      const tag = '<table></table>';
+
+      const expectedHTML = '<table data-tomark-pass=""></table>';
+
+      expect(convertor.toHTML(tag).replace(/\n/g, '')).toEqual(expectedHTML);
+    });
+
+    it('should insert data-tomark-pass in html tag even if attrubute has slash', () => {
+      const imgTag = '<img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png">';
+
+      const expectedHTML = '<p><img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png" data-tomark-pass=""></p>';
+
+      expect(convertor.toHTML(imgTag).replace(/\n/g, '')).toEqual(expectedHTML);
+    });
   });
 
   describe('html to markdown', () => {
