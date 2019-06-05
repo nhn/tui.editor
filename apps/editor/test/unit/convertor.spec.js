@@ -94,6 +94,22 @@ describe('Convertor', () => {
 
       expect(convertor.toHTML(imgTag).replace(/\n/g, '')).toEqual(expectedHTML);
     });
+
+    it('should not insert data-tomark-pass in codeblock that has tag', () => {
+      const codeBlockMd = `\`\`\`\n<p>hello</p>\n\`\`\``;
+
+      const expectedHTML = `<pre><code>&lt;p&gt;hello&lt;/p&gt;</code></pre>`;
+
+      expect(convertor.toHTML(codeBlockMd).replace(/\n/g, '')).toEqual(expectedHTML);
+    });
+
+    it('should not insert data-tomark-pass in codeblock that has tag with attribute', () => {
+      const codeBlockMd = `\`\`\`\n<p class="test">hello</p>\n\`\`\``;
+
+      const expectedHTML = `<pre><code>&lt;p class="test"&gt;hello&lt;/p&gt;</code></pre>`;
+
+      expect(convertor.toHTML(codeBlockMd).replace(/\n/g, '')).toEqual(expectedHTML);
+    });
   });
 
   describe('html to markdown', () => {
