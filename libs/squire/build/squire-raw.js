@@ -474,7 +474,7 @@ function fixCursor ( node, root ) {
                 node.parentNode.insertBefore( doc.createTextNode( '' ), node );
             }
         }
-        else if ( !node.querySelector( 'BR' ) ) {
+        else if ( node.nodeName !== 'HR' && !node.querySelector( 'BR' ) ) {
             fixer = createElement( doc, 'BR' );
             while ( ( child = node.lastElementChild ) && !isInline( child ) ) {
                 node = child;
