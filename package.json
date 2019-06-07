@@ -1,6 +1,6 @@
 {
   "name": "tui-editor",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "GFM  Markdown Wysiwyg Editor - Productive and Extensible",
   "keywords": [
     "toast",
@@ -33,8 +33,8 @@
     "clean-css": "^4.1.9",
     "copy-webpack-plugin": "^4.5.1",
     "cross-env": "^5.1.3",
-    "eslint": "^4.19.1",
-    "eslint-config-tui": "^1.0.1",
+    "eslint": "^5.12.0",
+    "eslint-config-tui": "^2.2.0",
     "eslint-loader": "^1.7.1",
     "istanbul-instrumenter-loader": "^3.0.0",
     "jasmine-core": "^2.5.2",
@@ -95,8 +95,8 @@
     "markdown-it": "^8.4.0",
     "plantuml-encoder": "^1.2.5",
     "resize-observer-polyfill": "^1.5.0",
-    "squire-rte": "github:sohee-lee7/Squire#a11c7d3b5d6faa07b93e7d72946c94c6b83cee82",
-    "to-mark": "^1.1.5",
+    "squire-rte": "github:sohee-lee7/Squire#812513279820be381f0182683e01ad7867e140c0",
+    "to-mark": "^1.1.7",
     "tui-chart": "^3.0.1",
     "tui-code-snippet": "^1.5.0",
     "tui-color-picker": "^2.2.1"

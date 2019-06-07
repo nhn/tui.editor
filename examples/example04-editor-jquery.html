@@ -2,14 +2,17 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>17. i18n language</title>
+    <title>4. Editor jQuery</title>
     <link rel="stylesheet" href="./explain.css">
   </head>
   <body>
+    <div class="explain">
+      See available options in <a target="_blank" href="http://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html">here</a>
+    </div>
     <div class="code-html">
       <!-- Editor Dependencies -->
       <script src="../lib/jquery/dist/jquery.js"></script>
-      <script src="../lib/markdown-it/dist/markdown-it.js"></script>
+      <script src='../lib/markdown-it/dist/markdown-it.js'></script>
       <script src="../lib/to-mark/dist/to-mark.js"></script>
       <script src="../lib/tui-code-snippet/dist/tui-code-snippet.js"></script>
       <script src="../lib/codemirror/lib/codemirror.js"></script>
@@ -25,20 +28,11 @@
 
       <div id="editSection"></div>
     </div>
-
     <script class="code-js">
-      var content = 'Hover on item above show different language tooltips '
-      + 'Full available language list: '
-      + 'https://github.com/nhn/tui.editor/tree/master/src/js/langs '
-      + 'ko, zh, de, en, es, fr (and more)';
-
-      var editor = new tui.Editor({
-        el: document.querySelector('#editSection'),
-        previewStyle: 'vertical',
-        height: '400px',
+      $('#editSection').tuiEditor({
         initialEditType: 'markdown',
-        language: 'zh',
-        initialValue: content
+        previewStyle: 'vertical',
+        height: '300px'
       });
     </script>
   </body>

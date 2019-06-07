@@ -2,10 +2,16 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>17. i18n language</title>
+    <title>10. Chart</title>
     <link rel="stylesheet" href="./explain.css">
   </head>
   <body>
+    <div class="explain">
+      Learn more about Extensions in <a target="_blank" href="https://github.com/nhn/tui.editor/wiki/Extensions">here</a>
+    </div>
+    <div class="explain">
+      See available options in <a target="_blank" href="http://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html">here</a>
+    </div>
     <div class="code-html">
       <!-- Editor Dependencies -->
       <script src="../lib/jquery/dist/jquery.js"></script>
@@ -23,22 +29,43 @@
       <link rel="stylesheet" href="../dist/tui-editor.css">
       <link rel="stylesheet" href="../dist/tui-editor-contents.css">
 
+      <!-- chart extention -->
+      <script src="../lib/raphael/raphael.js"></script>
+      <script src="../lib/tui-chart/dist/tui-chart.js"></script>
+      <script src="../dist/tui-editor-extChart.js"></script>
+      <link rel="stylesheet" href="../lib/tui-chart/dist/tui-chart.css">
+
       <div id="editSection"></div>
     </div>
-
     <script class="code-js">
-      var content = 'Hover on item above show different language tooltips '
-      + 'Full available language list: '
-      + 'https://github.com/nhn/tui.editor/tree/master/src/js/langs '
-      + 'ko, zh, de, en, es, fr (and more)';
-
+      var content = [
+        '```chart',
+        ',category1,category2',
+        'Jan,21,23',
+        'Feb,31,17',
+        '',
+        'type: column',
+        'title: Monthly Revenue',
+        'x.title: Amount',
+        'y.title: Month',
+        'y.min: 1',
+        'y.max: 40',
+        'y.suffix: $',
+        '```'
+      ].join('\n');
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
         previewStyle: 'vertical',
         height: '400px',
         initialEditType: 'markdown',
-        language: 'zh',
-        initialValue: content
+        initialValue: content,
+        exts: [{
+          name: 'chart',
+          minWidth: 100,
+          maxWidth: 600,
+          minHeight: 100,
+          maxHeight: 300
+        }]
       });
     </script>
   </body>

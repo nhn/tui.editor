@@ -1,7 +1,7 @@
 import editor from '../../editorFixture';
 
 fixture`markdown toolbar bold`
-  .page`http://localhost:8080/examples/example13-all-extension-blank.html`;
+  .page`http://localhost:8080/examples/example-e2e.html`;
 
 test('click bold button then type text', async t => {
   await t

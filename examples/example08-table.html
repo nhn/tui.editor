@@ -2,10 +2,16 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>17. i18n language</title>
+    <title>8. Table</title>
     <link rel="stylesheet" href="./explain.css">
   </head>
   <body>
+    <div class="explain">
+      Learn more about Extensions in <a target="_blank" href="https://github.com/nhn/tui.editor/wiki/Extensions">here</a>
+    </div>
+    <div class="explain">
+      See available options in <a target="_blank" href="http://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html">here</a>
+    </div>
     <div class="code-html">
       <!-- Editor Dependencies -->
       <script src="../lib/jquery/dist/jquery.js"></script>
@@ -23,22 +29,24 @@
       <link rel="stylesheet" href="../dist/tui-editor.css">
       <link rel="stylesheet" href="../dist/tui-editor-contents.css">
 
+      <!-- table extention -->
+      <script src="../dist/tui-editor-extTable.js"></script>
+
       <div id="editSection"></div>
     </div>
-
     <script class="code-js">
-      var content = 'Hover on item above show different language tooltips '
-      + 'Full available language list: '
-      + 'https://github.com/nhn/tui.editor/tree/master/src/js/langs '
-      + 'ko, zh, de, en, es, fr (and more)';
+      var content = [
+        '| @cols=2:merged |',
+        '| --- | --- |',
+        '| table | table |'
+      ].join('\n');
 
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
         previewStyle: 'vertical',
         height: '400px',
-        initialEditType: 'markdown',
-        language: 'zh',
-        initialValue: content
+        initialValue: content,
+        exts: ['table']
       });
     </script>
   </body>

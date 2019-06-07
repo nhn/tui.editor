@@ -1,5 +1,5 @@
 # Writing your own extension
-Check out the [example](https://nhn.github.io/tui.editor/api/latest/tutorial-example12-writing-extension.html).
+Check out the [example](https://nhn.github.io/tui.editor/api/latest/tutorial-example11-writing-extension.html).
 
 ## Prepare
 ### Bower

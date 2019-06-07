@@ -21,6 +21,7 @@
     "linebreak-style": 0,
     "max-len": [2, {"code": 120, "tabWidth": 4, "ignoreStrings": true, "ignoreComments": true, "ignoreRegExpLiterals": true, "ignoreTemplateLiterals": true}],
     "no-sync": 0,
-    "indent": ["error", 2]
+    "indent": ["error", 2],
+    "complexity": 0
   }
 }
