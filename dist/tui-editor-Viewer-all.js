@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.1
+ * @version 1.4.2
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -8109,6 +8109,7 @@ var Command = function () {
       this.setKeyMap(keyMap);
     }
   }
+
   /**
    * getName
    * returns Name of command
@@ -8512,7 +8513,8 @@ var Convertor = function () {
   }, {
     key: '_markdownToHtml',
     value: function _markdownToHtml(markdown, env) {
-      markdown = markdown.replace(/<([^/>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
+      // should insert data-tomark-pass in the opening tag
+      markdown = markdown.replace(/<(?!\/)([^>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
       while (onerrorStripeRegex.exec(markdown)) {
@@ -8538,7 +8540,7 @@ var Convertor = function () {
 
       $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
         var $code = (0, _jquery2.default)(codeOrPre);
-        $code.html($code.html().replace(/&lt;([a-zA-Z0-9]+\s*) data-tomark-pass &gt;/g, '&lt;$1&gt;'));
+        $code.html($code.html().replace(/ data-tomark-pass &gt;/g, '&gt;'));
       });
 
       renderedHTML = $wrapperDiv.html();
@@ -10293,19 +10295,14 @@ var getPath = function getPath(node, root) {
  * @ignore
  */
 var getTableCellByDirection = function getTableCellByDirection(node, direction) {
-  var isForward = true;
   var targetElement = null;
 
-  if (_tuiCodeSnippet2.default.isUndefined(direction) || direction !== 'next' && direction !== 'previous') {
-    return null;
-  } else if (direction === 'previous') {
-    isForward = false;
-  }
-
-  if (isForward) {
-    targetElement = node.nextElementSibling;
-  } else {
-    targetElement = node.previousElementSibling;
+  if (!_tuiCodeSnippet2.default.isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
+    if (direction === 'next') {
+      targetElement = node.nextElementSibling;
+    } else {
+      targetElement = node.previousElementSibling;
+    }
   }
 
   return targetElement;
@@ -10320,7 +10317,6 @@ var getTableCellByDirection = function getTableCellByDirection(node, direction) 
  * @ignore
  */
 var getSiblingRowCellByDirection = function getSiblingRowCellByDirection(node, direction, needEdgeCell) {
-  var isForward = true;
   var tableCellElement = null;
   var $node = void 0,
       index = void 0,
@@ -10329,45 +10325,39 @@ var getSiblingRowCellByDirection = function getSiblingRowCellByDirection(node, d
       $siblingContainer = void 0,
       isSiblingContainerExists = void 0;
 
-  if (_tuiCodeSnippet2.default.isUndefined(direction) || direction !== 'next' && direction !== 'previous') {
-    return null;
-  } else if (direction === 'previous') {
-    isForward = false;
+  if (!_tuiCodeSnippet2.default.isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
+    if (node) {
+      $node = (0, _jquery2.default)(node);
+
+      if (direction === 'next') {
+        $targetRowElement = $node.parent().next();
+        $currentContainer = $node.parents('thead');
+        $siblingContainer = $currentContainer[0] && $currentContainer.next();
+        isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
+
+        index = 0;
+      } else {
+        $targetRowElement = $node.parent().prev();
+        $currentContainer = $node.parents('tbody');
+        $siblingContainer = $currentContainer[0] && $currentContainer.prev();
+        isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
+
+        index = node.parentNode.childNodes.length - 1;
+      }
+
+      if (_tuiCodeSnippet2.default.isUndefined(needEdgeCell) || !needEdgeCell) {
+        index = getNodeOffsetOfParent(node);
+      }
+
+      if ($targetRowElement[0]) {
+        tableCellElement = $targetRowElement.children('td,th')[index];
+      } else if ($currentContainer[0] && isSiblingContainerExists) {
+        tableCellElement = $siblingContainer.find('td,th')[index];
+      }
+    }
   }
 
-  if (node) {
-    $node = (0, _jquery2.default)(node);
-
-    if (isForward) {
-      $targetRowElement = $node.parent().next();
-      $currentContainer = $node.parents('thead');
-      $siblingContainer = $currentContainer[0] && $currentContainer.next();
-      isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
-
-      index = 0;
-    } else {
-      $targetRowElement = $node.parent().prev();
-      $currentContainer = $node.parents('tbody');
-      $siblingContainer = $currentContainer[0] && $currentContainer.prev();
-      isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
-
-      index = node.parentNode.childNodes.length - 1;
-    }
-
-    if (_tuiCodeSnippet2.default.isUndefined(needEdgeCell) || !needEdgeCell) {
-      index = getNodeOffsetOfParent(node);
-    }
-
-    if ($targetRowElement[0]) {
-      tableCellElement = $targetRowElement.children('td,th')[index];
-    } else if ($currentContainer[0] && isSiblingContainerExists) {
-      tableCellElement = $siblingContainer.find('td,th')[index];
-    }
-
-    return tableCellElement;
-  }
-
-  return null;
+  return tableCellElement;
 };
 
 /**

@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.1
+ * @version 1.4.2
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -884,19 +884,14 @@ var getPath = function getPath(node, root) {
  * @ignore
  */
 var getTableCellByDirection = function getTableCellByDirection(node, direction) {
-  var isForward = true;
   var targetElement = null;
 
-  if (_tuiCodeSnippet2.default.isUndefined(direction) || direction !== 'next' && direction !== 'previous') {
-    return null;
-  } else if (direction === 'previous') {
-    isForward = false;
-  }
-
-  if (isForward) {
-    targetElement = node.nextElementSibling;
-  } else {
-    targetElement = node.previousElementSibling;
+  if (!_tuiCodeSnippet2.default.isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
+    if (direction === 'next') {
+      targetElement = node.nextElementSibling;
+    } else {
+      targetElement = node.previousElementSibling;
+    }
   }
 
   return targetElement;
@@ -911,7 +906,6 @@ var getTableCellByDirection = function getTableCellByDirection(node, direction) 
  * @ignore
  */
 var getSiblingRowCellByDirection = function getSiblingRowCellByDirection(node, direction, needEdgeCell) {
-  var isForward = true;
   var tableCellElement = null;
   var $node = void 0,
       index = void 0,
@@ -920,45 +914,39 @@ var getSiblingRowCellByDirection = function getSiblingRowCellByDirection(node, d
       $siblingContainer = void 0,
       isSiblingContainerExists = void 0;
 
-  if (_tuiCodeSnippet2.default.isUndefined(direction) || direction !== 'next' && direction !== 'previous') {
-    return null;
-  } else if (direction === 'previous') {
-    isForward = false;
+  if (!_tuiCodeSnippet2.default.isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
+    if (node) {
+      $node = (0, _jquery2.default)(node);
+
+      if (direction === 'next') {
+        $targetRowElement = $node.parent().next();
+        $currentContainer = $node.parents('thead');
+        $siblingContainer = $currentContainer[0] && $currentContainer.next();
+        isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
+
+        index = 0;
+      } else {
+        $targetRowElement = $node.parent().prev();
+        $currentContainer = $node.parents('tbody');
+        $siblingContainer = $currentContainer[0] && $currentContainer.prev();
+        isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
+
+        index = node.parentNode.childNodes.length - 1;
+      }
+
+      if (_tuiCodeSnippet2.default.isUndefined(needEdgeCell) || !needEdgeCell) {
+        index = getNodeOffsetOfParent(node);
+      }
+
+      if ($targetRowElement[0]) {
+        tableCellElement = $targetRowElement.children('td,th')[index];
+      } else if ($currentContainer[0] && isSiblingContainerExists) {
+        tableCellElement = $siblingContainer.find('td,th')[index];
+      }
+    }
   }
 
-  if (node) {
-    $node = (0, _jquery2.default)(node);
-
-    if (isForward) {
-      $targetRowElement = $node.parent().next();
-      $currentContainer = $node.parents('thead');
-      $siblingContainer = $currentContainer[0] && $currentContainer.next();
-      isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
-
-      index = 0;
-    } else {
-      $targetRowElement = $node.parent().prev();
-      $currentContainer = $node.parents('tbody');
-      $siblingContainer = $currentContainer[0] && $currentContainer.prev();
-      isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
-
-      index = node.parentNode.childNodes.length - 1;
-    }
-
-    if (_tuiCodeSnippet2.default.isUndefined(needEdgeCell) || !needEdgeCell) {
-      index = getNodeOffsetOfParent(node);
-    }
-
-    if ($targetRowElement[0]) {
-      tableCellElement = $targetRowElement.children('td,th')[index];
-    } else if ($currentContainer[0] && isSiblingContainerExists) {
-      tableCellElement = $siblingContainer.find('td,th')[index];
-    }
-
-    return tableCellElement;
-  }
-
-  return null;
+  return tableCellElement;
 };
 
 /**
@@ -3262,7 +3250,8 @@ var Convertor = function () {
   }, {
     key: '_markdownToHtml',
     value: function _markdownToHtml(markdown, env) {
-      markdown = markdown.replace(/<([^/>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
+      // should insert data-tomark-pass in the opening tag
+      markdown = markdown.replace(/<(?!\/)([^>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
       while (onerrorStripeRegex.exec(markdown)) {
@@ -3288,7 +3277,7 @@ var Convertor = function () {
 
       $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
         var $code = (0, _jquery2.default)(codeOrPre);
-        $code.html($code.html().replace(/&lt;([a-zA-Z0-9]+\s*) data-tomark-pass &gt;/g, '&lt;$1&gt;'));
+        $code.html($code.html().replace(/ data-tomark-pass &gt;/g, '&gt;'));
       });
 
       renderedHTML = $wrapperDiv.html();
@@ -4211,6 +4200,7 @@ var Command = function () {
       this.setKeyMap(keyMap);
     }
   }
+
   /**
    * getName
    * returns Name of command
@@ -7842,6 +7832,7 @@ var WwTableManager = function () {
     value: function resetLastCellNode() {
       this._lastCellNode = null;
     }
+
     /**
      * Set _lastCellNode to given node
      * @param {HTMLElement} node Table cell
@@ -14615,16 +14606,17 @@ var WysiwygEditor = function () {
           collapsed = range.collapsed;
 
       var root = this.getEditor().getRoot();
+      var result = false;
 
       if (!collapsed && commonAncestorContainer === root) {
         if (startContainer === root) {
-          return FIND_TABLE_AND_HEADING_RX.test(_domUtils2.default.getChildNodeByOffset(startContainer, startOffset).nodeName);
+          result = FIND_TABLE_AND_HEADING_RX.test(_domUtils2.default.getChildNodeByOffset(startContainer, startOffset).nodeName);
         } else if (startOffset === 0) {
-          return FIND_TABLE_AND_HEADING_RX.test(_domUtils2.default.getParentUntil(startContainer, root).nodeName);
+          result = FIND_TABLE_AND_HEADING_RX.test(_domUtils2.default.getParentUntil(startContainer, root).nodeName);
         }
       }
 
-      return false;
+      return result;
     }
   }, {
     key: '_wrapDefaultBlockToOrphanTexts',
@@ -15776,6 +15768,43 @@ var WwClipboardManager = function () {
     }
 
     /**
+     * MS Office use specific CSS attributes with mso- prefix.
+     * But safari does not support mso- prefix.
+     * @param {string} html - html string
+     * @returns {boolean}
+     * @private
+     */
+
+  }, {
+    key: '_isFromMs',
+    value: function _isFromMs(html) {
+      return (/<p style="[^>]*mso-/.test(html)
+      );
+    }
+
+    /**
+     * P tags append 'BR' to make blank line.
+     * Our viewer renders new line as P tag with margin.
+     * When pasting text from viewer, insert BR between P tags.
+     * @param {Node} node - node
+     * @private
+     */
+
+  }, {
+    key: '_preProcessPtag',
+    value: function _preProcessPtag(node) {
+      var pTags = node.querySelectorAll('p');
+
+      _tuiCodeSnippet2.default.forEachArray(pTags, function (pTag) {
+        if (pTag.lastChild && pTag.lastChild.nodeName !== 'BR') {
+          pTag.appendChild(document.createElement('br'));
+        }
+
+        pTag.appendChild(document.createElement('br'));
+      });
+    }
+
+    /**
      * Prepare paste.
      * @param {jQuery} $clipboardContainer - temporary jQuery container for clipboard contents
      * @private
@@ -15784,6 +15813,19 @@ var WwClipboardManager = function () {
   }, {
     key: '_preparePaste',
     value: function _preparePaste($clipboardContainer) {
+      var html = $clipboardContainer.html();
+
+      $clipboardContainer.html(html.replace(/>([^<]*\s[^<]*)</g, function (match, text) {
+        return '>' + text.replace(/\s/g, '&nbsp;') + '<';
+      }));
+
+      // When pasting text, the empty line processing differ our viewer and MS Office.
+      // In our viewer case, <p>aaa</p><p>bbb<p> have empty line becuase P tags have margin.
+      // In MS Office case, <p>aaa</p><p>bbb<p> do not have empty line becuase P tags means just one line.
+      if (!this._isFromMs($clipboardContainer.html())) {
+        this._preProcessPtag($clipboardContainer.get(0));
+      }
+
       this._removeEmptyFontElement($clipboardContainer);
 
       this._pch.preparePaste($clipboardContainer);
@@ -18106,13 +18148,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
 
-var _jquery = __webpack_require__(0);
+var _tuiCodeSnippet = __webpack_require__(1);
 
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _domUtils = __webpack_require__(4);
-
-var _domUtils2 = _interopRequireDefault(_domUtils);
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -18154,7 +18192,6 @@ var WwHrManager = function () {
   _createClass(WwHrManager, [{
     key: '_init',
     value: function _init() {
-      this._initKeyHandler();
       this._initEvent();
     }
 
@@ -18173,182 +18210,6 @@ var WwHrManager = function () {
       this.eventManager.listen('wysiwygSetValueAfter', function () {
         _this._unwrapDivOnHr();
       });
-
-      this.eventManager.listen('wysiwygGetValueBefore', function () {
-        _this._wrapDefaultBlockToOrphanTexts();
-      });
-    }
-
-    /**
-     * _initKeyHandler
-     * Initialize key event handler
-     * @memberof WwHrManager
-     * @private
-     */
-
-  }, {
-    key: '_initKeyHandler',
-    value: function _initKeyHandler() {
-      var _this2 = this;
-
-      this.wwe.addKeyEventHandler(function (ev, range) {
-        return _this2._onTypedInHr(range);
-      });
-
-      this.wwe.addKeyEventHandler('ENTER', function (ev, range) {
-        if (range.collapsed) {
-          return _this2._removeHrOnEnter(range, ev);
-        }
-
-        return true;
-      });
-
-      this.wwe.addKeyEventHandler('BACK_SPACE', function (ev, range) {
-        if (range.collapsed) {
-          return _this2._removeHrOnBackspace(range, ev);
-        }
-
-        return true;
-      });
-    }
-
-    /**
-     * _isInHr
-     * Check whether passed range is in hr or not
-     * @param {Range} range range
-     * @returns {boolean} result
-     * @memberof WwHrManager
-     * @private
-     */
-
-  }, {
-    key: '_isInHr',
-    value: function _isInHr(range) {
-      return _domUtils2.default.getNodeName(range.startContainer.childNodes[range.startOffset]) === 'HR';
-    }
-
-    /**
-     * _isNearHr
-     * Check whether passed range is near hr or not
-     * @param {Range} range range
-     * @returns {boolean} result
-     * @memberof WwHrManager
-     * @private
-     */
-
-  }, {
-    key: '_isNearHr',
-    value: function _isNearHr(range) {
-      var prevNode = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
-
-      return _domUtils2.default.getNodeName(prevNode) === 'HR';
-    }
-
-    /**
-     * Handler for delete HR when user typing within
-     * @param {Range} range Range object
-     * @memberof WwHrManager
-     * @private
-     */
-
-  }, {
-    key: '_onTypedInHr',
-    value: function _onTypedInHr(range) {
-      var _this3 = this;
-
-      // in case user try to input above hr
-      if (this._isInHr(range) || this._isNearHr(range)) {
-        this.wwe.defer(function (wwe) {
-          wwe.saveSelection();
-          _this3._wrapDefaultBlockToOrphanTexts();
-          wwe.restoreSavedSelection();
-        });
-      }
-    }
-
-    /**
-     * _removeHrOnEnter
-     * Remove hr if need on enter
-     * @param {Range} range range
-     * @param {Event} ev event
-     * @returns {boolean} return true if hr was removed
-     * @memberof WwHrManager
-     * @private
-     */
-
-  }, {
-    key: '_removeHrOnEnter',
-    value: function _removeHrOnEnter(range, ev) {
-      var hrSuspect = void 0,
-          blockPosition = void 0;
-
-      if (this._isInHr(range)) {
-        hrSuspect = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
-      } else if (this._isNearHr(range)) {
-        hrSuspect = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
-        blockPosition = 'before';
-      }
-
-      return this._changeHrToNewDefaultBlock(hrSuspect, range, ev, blockPosition);
-    }
-
-    /**
-     * _removeHrOnBackspace
-     * Remove hr if need on backspace
-     * @param {Range} range range
-     * @param {Event} ev event
-     * @returns {boolean} return true if hr was removed
-     * @memberof WwHrManager
-     * @private
-     */
-
-  }, {
-    key: '_removeHrOnBackspace',
-    value: function _removeHrOnBackspace(range, ev) {
-      var hrSuspect = void 0,
-          blockPosition = void 0;
-
-      if (this._isInHr(range)) {
-        hrSuspect = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
-      } else if (range.startOffset === 0) {
-        hrSuspect = _domUtils2.default.getTopPrevNodeUnder(range.startContainer, this.wwe.get$Body()[0]);
-        blockPosition = 'none';
-      } else if (this._isNearHr(range)) {
-        hrSuspect = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
-        blockPosition = 'before';
-      }
-
-      return this._changeHrToNewDefaultBlock(hrSuspect, range, ev, blockPosition);
-    }
-
-    /**
-     * _changeHrToNewDefaultBlock
-     * Remove hr and add new default block then set range to it
-     * @param {Node} hrSuspect Node could be hr
-     * @param {Range} range range
-     * @param {Event} ev event
-     * @param {strong} newBlockPosition new default block add position
-     * @returns {boolean} return true if hr was removed
-     * @memberof WwHrManager
-     * @private
-     */
-
-  }, {
-    key: '_changeHrToNewDefaultBlock',
-    value: function _changeHrToNewDefaultBlock(hrSuspect, range, ev, newBlockPosition) {
-      if (hrSuspect && _domUtils2.default.getNodeName(hrSuspect) === 'HR') {
-        ev.preventDefault();
-
-        if (newBlockPosition !== 'none') {
-          this.wwe.breakToNewDefaultBlock(range, newBlockPosition);
-        }
-
-        (0, _jquery2.default)(hrSuspect).remove();
-
-        return false;
-      }
-
-      return true;
     }
 
     /**
@@ -18361,50 +18222,31 @@ var WwHrManager = function () {
   }, {
     key: '_unwrapDivOnHr',
     value: function _unwrapDivOnHr() {
-      var editorContentBody = this.wwe.get$Body().get(0);
-      this.wwe.get$Body().find('hr').each(function (index, node) {
-        var parentDiv = (0, _jquery2.default)(node).parent('div');
-        if (parentDiv[0] !== editorContentBody) {
-          parentDiv.find('br').remove();
-          (0, _jquery2.default)(node).unwrap();
+      var editorContentBody = this.wwe.get$Body()[0];
+      var hrNodes = editorContentBody.querySelectorAll('hr');
+      _tuiCodeSnippet2.default.forEachArray(hrNodes, function (hrNode) {
+        var parentNode = hrNode.parentNode;
+
+
+        if (parentNode !== editorContentBody) {
+          var parentOfparent = parentNode.parentNode;
+
+
+          parentOfparent.removeChild(parentNode);
+          parentOfparent.appendChild(hrNode);
         }
-      });
-    }
 
-    /**
-     * _wrapDefaultBlockToOrphanTexts
-     * Wrap default block to orphan texts
-     * mainly, this is used for orphan text that made by controlling hr
-     * @memberof WwHrManager
-     * @private
-     */
+        while (hrNode.firstChild) {
+          hrNode.removeChild(hrNode.firstChild);
+        }
 
-  }, {
-    key: '_wrapDefaultBlockToOrphanTexts',
-    value: function _wrapDefaultBlockToOrphanTexts() {
-      var textNodes = this.wwe.get$Body().contents().filter(findTextNodeFilter);
-
-      textNodes.each(function (i, node) {
-        (0, _jquery2.default)(node).wrap('<div />');
+        hrNode.setAttribute('contenteditable', false);
       });
     }
   }]);
 
   return WwHrManager;
 }();
-
-/**
- * findTextNodeFilter
- * @function
- * @this Node
- * @returns {boolean}
- * @ignore
- */
-
-
-function findTextNodeFilter() {
-  return this.nodeType === Node.TEXT_NODE;
-}
 
 exports.default = WwHrManager;
 
@@ -22824,7 +22666,7 @@ var PopupAddImage = function (_LayerPopup) {
           if (files.length) {
             var imageFile = files.item(0);
             var hookCallback = function hookCallback(url, text) {
-              return _this2._applyImage(url, altText || text);
+              return _this2._applyImage(url, text || altText);
             };
 
             _this2.eventManager.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
@@ -27010,6 +26852,7 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
       }
 
       var hr = sq.createElement('HR');
+      hr.setAttribute('contenteditable', false);
 
       sq.modifyBlocks(function (frag) {
         frag.appendChild(hr);
@@ -29881,7 +29724,6 @@ _i18n2.default.setLanguage(['sv', 'sv_SE'], {
   'Text color': 'Textfärg',
   'Auto scroll enabled': 'Automatisk scroll aktiverad',
   'Auto scroll disabled': 'Automatisk scroll inaktiverad',
-  'Cannot paste values ​​other than a table in the cell selection state': 'Ej möjligt att klistra in andra värden än en tabell i nuvarande cellmarkering.',
   'Choose language': 'Välj språk'
 }); /**
      * @fileoverview I18N for Swedish

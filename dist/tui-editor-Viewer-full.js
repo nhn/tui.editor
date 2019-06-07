@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.1
+ * @version 1.4.2
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -15752,19 +15752,14 @@ var getPath = function getPath(node, root) {
  * @ignore
  */
 var getTableCellByDirection = function getTableCellByDirection(node, direction) {
-  var isForward = true;
   var targetElement = null;
 
-  if (_tuiCodeSnippet2.default.isUndefined(direction) || direction !== 'next' && direction !== 'previous') {
-    return null;
-  } else if (direction === 'previous') {
-    isForward = false;
-  }
-
-  if (isForward) {
-    targetElement = node.nextElementSibling;
-  } else {
-    targetElement = node.previousElementSibling;
+  if (!_tuiCodeSnippet2.default.isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
+    if (direction === 'next') {
+      targetElement = node.nextElementSibling;
+    } else {
+      targetElement = node.previousElementSibling;
+    }
   }
 
   return targetElement;
@@ -15779,7 +15774,6 @@ var getTableCellByDirection = function getTableCellByDirection(node, direction) 
  * @ignore
  */
 var getSiblingRowCellByDirection = function getSiblingRowCellByDirection(node, direction, needEdgeCell) {
-  var isForward = true;
   var tableCellElement = null;
   var $node = void 0,
       index = void 0,
@@ -15788,45 +15782,39 @@ var getSiblingRowCellByDirection = function getSiblingRowCellByDirection(node, d
       $siblingContainer = void 0,
       isSiblingContainerExists = void 0;
 
-  if (_tuiCodeSnippet2.default.isUndefined(direction) || direction !== 'next' && direction !== 'previous') {
-    return null;
-  } else if (direction === 'previous') {
-    isForward = false;
+  if (!_tuiCodeSnippet2.default.isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
+    if (node) {
+      $node = (0, _jquery2.default)(node);
+
+      if (direction === 'next') {
+        $targetRowElement = $node.parent().next();
+        $currentContainer = $node.parents('thead');
+        $siblingContainer = $currentContainer[0] && $currentContainer.next();
+        isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
+
+        index = 0;
+      } else {
+        $targetRowElement = $node.parent().prev();
+        $currentContainer = $node.parents('tbody');
+        $siblingContainer = $currentContainer[0] && $currentContainer.prev();
+        isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
+
+        index = node.parentNode.childNodes.length - 1;
+      }
+
+      if (_tuiCodeSnippet2.default.isUndefined(needEdgeCell) || !needEdgeCell) {
+        index = getNodeOffsetOfParent(node);
+      }
+
+      if ($targetRowElement[0]) {
+        tableCellElement = $targetRowElement.children('td,th')[index];
+      } else if ($currentContainer[0] && isSiblingContainerExists) {
+        tableCellElement = $siblingContainer.find('td,th')[index];
+      }
+    }
   }
 
-  if (node) {
-    $node = (0, _jquery2.default)(node);
-
-    if (isForward) {
-      $targetRowElement = $node.parent().next();
-      $currentContainer = $node.parents('thead');
-      $siblingContainer = $currentContainer[0] && $currentContainer.next();
-      isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
-
-      index = 0;
-    } else {
-      $targetRowElement = $node.parent().prev();
-      $currentContainer = $node.parents('tbody');
-      $siblingContainer = $currentContainer[0] && $currentContainer.prev();
-      isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
-
-      index = node.parentNode.childNodes.length - 1;
-    }
-
-    if (_tuiCodeSnippet2.default.isUndefined(needEdgeCell) || !needEdgeCell) {
-      index = getNodeOffsetOfParent(node);
-    }
-
-    if ($targetRowElement[0]) {
-      tableCellElement = $targetRowElement.children('td,th')[index];
-    } else if ($currentContainer[0] && isSiblingContainerExists) {
-      tableCellElement = $siblingContainer.find('td,th')[index];
-    }
-
-    return tableCellElement;
-  }
-
-  return null;
+  return tableCellElement;
 };
 
 /**
@@ -17999,7 +17987,8 @@ var Convertor = function () {
   }, {
     key: '_markdownToHtml',
     value: function _markdownToHtml(markdown, env) {
-      markdown = markdown.replace(/<([^/>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
+      // should insert data-tomark-pass in the opening tag
+      markdown = markdown.replace(/<(?!\/)([^>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
       while (onerrorStripeRegex.exec(markdown)) {
@@ -18025,7 +18014,7 @@ var Convertor = function () {
 
       $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
         var $code = (0, _jquery2.default)(codeOrPre);
-        $code.html($code.html().replace(/&lt;([a-zA-Z0-9]+\s*) data-tomark-pass &gt;/g, '&lt;$1&gt;'));
+        $code.html($code.html().replace(/ data-tomark-pass &gt;/g, '&gt;'));
       });
 
       renderedHTML = $wrapperDiv.html();
@@ -18364,6 +18353,7 @@ var Command = function () {
       this.setKeyMap(keyMap);
     }
   }
+
   /**
    * getName
    * returns Name of command
@@ -25731,6 +25721,9 @@ var basicRenderer = Renderer.factory({
 
         managedText = this.trim(this.getSpaceCollapsedText(node.nodeValue));
 
+        if (this._isNeedEscapeBackSlash(managedText)) {
+            managedText = this.escapeTextBackSlash(managedText);
+        }
         if (this._isNeedEscapeHtml(managedText)) {
             managedText = this.escapeTextHtml(managedText);
         }
@@ -25854,8 +25847,10 @@ var basicRenderer = Renderer.factory({
 
         return '\n\n' + res + '\n\n';
     },
-    'LI H1, LI H2, LI H3, LI H4, LI H5, LI H6': function(node) {
-        return '<' + node.tagName.toLowerCase() + '>' + node.innerHTML + '</' + node.tagName.toLowerCase() + '>';
+    'LI H1, LI H2, LI H3, LI H4, LI H5, LI H6': function(node, subContent) {
+        var headingNumber = parseInt(node.tagName.charAt(1), 10);
+
+        return Array(headingNumber + 1).join('#') + ' ' + subContent;
     },
 
     //List
@@ -25890,8 +25885,8 @@ var basicRenderer = Renderer.factory({
         return res;
     },
     'OL LI': function(node, subContent) {
-        var res = '',
-            liCounter = 1;
+        var res = '';
+        var liCounter = parseInt(node.parentNode.getAttribute('start') || 1, 10);
 
         while (node.previousSibling) {
             node = node.previousSibling;
@@ -26287,6 +26282,22 @@ Renderer.prototype.escapeTextHtml = function(text) {
     return text;
 };
 
+/**
+ * Backslash is using for escape ASCII punctuation character.
+ * https://spec.commonmark.org/0.29/#backslash-escapes
+ * If user input backslash as text, backslash is kept by inserting backslash.
+ * For example, if input text is "\$", this text is changed "\\$"
+ * @param {string} text text be processed
+ * @returns {string} processed text
+ */
+Renderer.prototype.escapeTextBackSlash = function(text) {
+    text = text.replace(Renderer.markdownTextToEscapeBackSlashRx, function(matched) {
+        return '\\' + matched;
+    });
+
+    return text;
+};
+
 Renderer.markdownTextToEscapeRx = {
     codeblock: /(^ {4}[^\n]+\n*)+/,
     hr: /^ *((\* *){3,}|(- *){3,} *|(_ *){3,}) */,
@@ -26311,6 +26322,8 @@ Renderer.markdownTextToEscapeRx = {
 
 Renderer.markdownTextToEscapeHtmlRx = /<([a-zA-Z_][a-zA-Z0-9\-\._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-\._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-\.:/]*)>/g;
 
+Renderer.markdownTextToEscapeBackSlashRx = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
+
 Renderer.prototype._isNeedEscape = function(text) {
     var res = false;
     var markdownTextToEscapeRx = Renderer.markdownTextToEscapeRx;
@@ -26328,6 +26341,10 @@ Renderer.prototype._isNeedEscape = function(text) {
 
 Renderer.prototype._isNeedEscapeHtml = function(text) {
     return Renderer.markdownTextToEscapeHtmlRx.test(text);
+};
+
+Renderer.prototype._isNeedEscapeBackSlash = function(text) {
+    return Renderer.markdownTextToEscapeBackSlashRx.test(text);
 };
 
 /**
