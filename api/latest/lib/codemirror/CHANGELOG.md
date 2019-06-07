@@ -1,3 +1,19 @@
+## 5.47.0 (2019-05-21)
+
+### Bug fixes
+
+[python mode](https://codemirror.net/mode/python/): Properly handle `...` syntax.
+
+[ruby mode](https://codemirror.net/mode/ruby): Fix indenting before closing brackets.
+
+[vim bindings](https://codemirror.net/demo/vim.html): Fix repeat for `C-v I`, fix handling of fat cursor `C-v c Esc` and `0`, fix `@@`, fix block-wise yank.
+
+### New features
+
+[vim bindings](https://codemirror.net/demo/vim.html): Add support for `` ` `` text object.
+
+## 5.46.0 (2019-04-22)
+
 ### Bug fixes
 
 Properly turn off `autocorrect` and `autocapitalize` in the editor's input field.
@@ -12,7 +28,7 @@ Remove a legacy key code for delete that is used for F16 on keyboards that have 
 
 ### New features
 
-Allow [gutters](https://codemirror.net/doc/manual.html#option_gutters) to specify direct CSS stings.
+Allow [gutters](https://codemirror.net/doc/manual.html#option_gutters) to specify direct CSS strings.
 
 ## 5.45.0 (2019-03-20)
 

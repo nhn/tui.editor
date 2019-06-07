@@ -179,7 +179,7 @@ TreeWalker.prototype.previousPONode = function () {
     }
 };
 
-var inlineNodeNames  = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:FRAME|MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|TIME|U|VAR|WBR)$/;
+var inlineNodeNames  = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|I(?:FRAME|MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|TIME|U|VAR|WBR)$/;
 
 var leafNodeNames = {
     BR: 1,
@@ -292,6 +292,15 @@ function hasTagAttributes ( node, tag, attributes ) {
 function getNearest ( node, root, tag, attributes ) {
     while ( node && node !== root ) {
         if ( hasTagAttributes( node, tag, attributes ) ) {
+            return node;
+        }
+        node = node.parentNode;
+    }
+    return null;
+}
+function getNearestTag ( node, root, tagRegexp ) {
+    while ( node && node !== root ) {
+        if ( tagRegexp.test(node.nodeName) ) {
             return node;
         }
         node = node.parentNode;
@@ -465,7 +474,7 @@ function fixCursor ( node, root ) {
                 node.parentNode.insertBefore( doc.createTextNode( '' ), node );
             }
         }
-        else if ( !node.querySelector( 'BR' ) ) {
+        else if ( node.nodeName !== 'HR' && !node.querySelector( 'BR' ) ) {
             fixer = createElement( doc, 'BR' );
             while ( ( child = node.lastElementChild ) && !isInline( child ) ) {
                 node = child;
@@ -962,9 +971,8 @@ var insertTreeFragmentIntoRange = function ( range, frag, root ) {
     block = getStartBlockOfRange( range, root );
     firstBlockInFrag = getNextBlock( frag, frag );
     if ( block && firstBlockInFrag &&
-            // Don't merge table cells or PRE elements into block
-            !getNearest( firstBlockInFrag, frag, 'PRE' ) &&
-            !getNearest( firstBlockInFrag, frag, 'TABLE' ) ) {
+        // Don't merge PRE, table, heading, list, blockquoute elements into block
+        !getNearestTag( firstBlockInFrag, frag, /PRE|TABLE|H[1-6]|OL|UL|BLOCKQUOTE/ ) ) {
         moveRangeBoundariesUpTree( range, block, block, root );
         range.collapse( true ); // collapse to start
         container = range.endContainer;
@@ -2028,7 +2036,7 @@ var stylesRewriters = {
     }
 };
 
-var allowedBlock = /^(?:A(?:DDRESS|RTICLE|SIDE|UDIO)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|IGCAPTION|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|COL(?:GROUP)?|UL)$/;
+var allowedBlock = /^(?:A(?:DDRESS|RTICLE|SIDE|UDIO)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|IGCAPTION|OOTER)|H[1-6]|HEADER|HR|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|COL(?:GROUP)?|UL)$/;
 
 var blacklist = /^(?:HEAD|META|STYLE)/;
 
