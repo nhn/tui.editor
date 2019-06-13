@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.2
+ * @version 1.4.3
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -8168,10 +8168,13 @@ var WwTableManager = function () {
       }
 
       var brNode = styleNode.querySelector('br');
+      if (!brNode) {
+        return;
+      }
+
       var _styleNode = styleNode,
           tdNode = _styleNode.parentNode,
           nodeName = _styleNode.nodeName;
-
 
       if (nodeName === 'CODE' && !brNode.previousSibling) {
         // cursor is located in the start of text
@@ -24310,6 +24313,14 @@ var WwTextObject = function () {
     value: function replaceContent(content) {
       this._wwe.getEditor().setSelection(this._range);
       this._wwe.getEditor().insertHTML(content);
+
+      // When range is in table, 'insertHTML' makes div in table.
+      // So after 'insertHTML', div in table should be unwrap.
+      // 'wysiwygRangeChangeAfter' event let wwTableManager call '_unwrapBlockInTable'
+      if (this._wwe.isInTable(this._range)) {
+        this._wwe.eventManager.emit('wysiwygRangeChangeAfter', this._wwe);
+      }
+
       this._range = this._wwe.getRange();
     }
 
