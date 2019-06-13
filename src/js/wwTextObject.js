@@ -116,6 +116,14 @@ class WwTextObject {
   replaceContent(content) {
     this._wwe.getEditor().setSelection(this._range);
     this._wwe.getEditor().insertHTML(content);
+
+    // When range is in table, 'insertHTML' makes div in table.
+    // So after 'insertHTML', div in table should be unwrap.
+    // 'wysiwygRangeChangeAfter' event let wwTableManager call '_unwrapBlockInTable'
+    if (this._wwe.isInTable(this._range)) {
+      this._wwe.eventManager.emit('wysiwygRangeChangeAfter', this._wwe);
+    }
+
     this._range = this._wwe.getRange();
   }
 
