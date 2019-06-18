@@ -275,8 +275,9 @@ function areAlike ( node, node2 ) {
         node.nodeName !== 'A' &&
         node.className === node2.className &&
         ( ( !node.style && !node2.style ) ||
-          node.style.cssText === node2.style.cssText )
-    );
+          node.style.cssText === node2.style.cssText ) &&
+        ( node.getAttribute && node.getAttribute( 'contenteditable' ) !== 'false' &&
+          node2.getAttribute && node2.getAttribute( 'contenteditable' ) !== 'false' ) );
 }
 function hasTagAttributes ( node, tag, attributes ) {
     if ( node.nodeName !== tag ) {
@@ -474,7 +475,8 @@ function fixCursor ( node, root ) {
                 node.parentNode.insertBefore( doc.createTextNode( '' ), node );
             }
         }
-        else if ( node.nodeName !== 'HR' && !node.querySelector( 'BR' ) ) {
+        else if ( node.getAttribute && node.getAttribute('contenteditable') !== 'false' &&
+                  !node.querySelector( 'BR' ) ) {
             fixer = createElement( doc, 'BR' );
             while ( ( child = node.lastElementChild ) && !isInline( child ) ) {
                 node = child;
@@ -1627,6 +1629,9 @@ var keyHandlers = {
             if ( previous ) {
                 // If not editable, just delete whole block.
                 if ( !previous.isContentEditable ) {
+                    while ( !previous.parentNode.isContentEditable ) {
+                        previous = previous.parentNode;
+                    }
                     detach( previous );
                     return;
                 }
@@ -1694,6 +1699,9 @@ var keyHandlers = {
             if ( next ) {
                 // If not editable, just delete whole block.
                 if ( !next.isContentEditable ) {
+                    while ( !next.parentNode.isContentEditable ) {
+                        next = next.parentNode;
+                    }
                     detach( next );
                     return;
                 }
