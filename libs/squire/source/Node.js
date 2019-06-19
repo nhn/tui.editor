@@ -549,7 +549,9 @@ function mergeContainers ( node, root ) {
         return;
     }
 
-    if ( prev && areAlike( prev, node ) ) {
+    if ( prev && areAlike( prev, node ) &&
+        prev.isContentEditable && node.isContentEditable
+    ) {
         if ( !isContainer( prev ) ) {
             if ( isListItem ) {
                 block = createElement( doc, 'DIV' );
