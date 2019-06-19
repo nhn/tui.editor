@@ -3,6 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import util from 'tui-code-snippet';
+import domUtils from './domUtils';
 
 /**
  * Class WwHrManager
@@ -45,34 +46,40 @@ class WwHrManager {
    */
   _initEvent() {
     this.eventManager.listen('wysiwygSetValueAfter', () => {
-      this._unwrapDivOnHr();
+      this._insertEmptyLineIfNeed();
+      this._changeHRForWysiwyg();
     });
   }
 
   /**
-   * _unwrapDivOnHr
-   * Unwrap default block on hr
+   * If <hr> is frist or last child of root, insert empty line before or after HR
+   * @private
+   */
+  _insertEmptyLineIfNeed() {
+    const editorContentBody = this.wwe.get$Body()[0];
+    const {firstChild, lastChild} = editorContentBody;
+
+    if (firstChild && firstChild.nodeName === 'HR') {
+      editorContentBody.insertBefore(domUtils.createEmptyLine(), firstChild);
+    } else if (lastChild && lastChild.nodeName === 'HR') {
+      editorContentBody.appendChild(domUtils.createEmptyLine());
+    }
+  }
+
+  /**
+   * <hr> is set contenteditable to false with wrapping div like below.
+   * <div contenteditable="false"><hr contenteditable="false"><div>
    * @memberof WwHrManager
    * @private
    */
-  _unwrapDivOnHr() {
+  _changeHRForWysiwyg() {
     const editorContentBody = this.wwe.get$Body()[0];
     const hrNodes = editorContentBody.querySelectorAll('hr');
+
     util.forEachArray(hrNodes, hrNode => {
       const {parentNode} = hrNode;
 
-      if (parentNode !== editorContentBody) {
-        const {parentNode: parentOfparent} = parentNode;
-
-        parentOfparent.removeChild(parentNode);
-        parentOfparent.appendChild(hrNode);
-      }
-
-      while (hrNode.firstChild) {
-        hrNode.removeChild(hrNode.firstChild);
-      }
-
-      hrNode.setAttribute('contenteditable', false);
+      parentNode.replaceChild(domUtils.createHorizontalRule(), hrNode);
     });
   }
 }
