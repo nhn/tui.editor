@@ -47,7 +47,7 @@ class WwHrManager {
   _initEvent() {
     this.eventManager.listen('wysiwygSetValueAfter', () => {
       this._insertEmptyLineIfNeed();
-      this._changeHRContenteditableFalse();
+      this._changeHRForWysiwyg();
     });
   }
 
@@ -72,7 +72,7 @@ class WwHrManager {
    * @memberof WwHrManager
    * @private
    */
-  _changeHRContenteditableFalse() {
+  _changeHRForWysiwyg() {
     const editorContentBody = this.wwe.get$Body()[0];
     const hrNodes = editorContentBody.querySelectorAll('hr');
 
