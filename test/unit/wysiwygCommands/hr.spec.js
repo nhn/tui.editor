@@ -44,13 +44,13 @@ describe('HR', () => {
     HR.exec(wwe);
 
     expect(wwe.get$Body().find('hr').length).toEqual(1);
-    expect(wwe.get$Body().find('div').length).toEqual(2);
+    expect(wwe.get$Body().find('div').length).toEqual(3);
   });
 
   it('add HR and if there is next block then dont make default block', () => {
     const range = sq.getSelection().cloneRange();
 
-    sq.setHTML('<div>test</div><div><br/></div>');
+    sq.setHTML('<div>test</div><div><br></div>');
 
     range.setStart(wwe.get$Body().find('div')[0], 0);
     range.collapse(true);
@@ -59,14 +59,13 @@ describe('HR', () => {
 
     HR.exec(wwe);
 
-    expect(wwe.get$Body().find('hr').length).toEqual(1);
-    expect(wwe.get$Body().find('div').length).toEqual(2);
+    expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>test</div><div contenteditable="false"><hr contenteditable="false"></div><div></div>');
   });
 
   it('append hr then cursor to next block', () => {
     const range = sq.getSelection().cloneRange();
 
-    sq.setHTML('<div>test</div><div><br/></div>');
+    sq.setHTML('<div>test</div><div><br></div>');
 
     range.setStart(wwe.get$Body().find('div')[0], 0);
     range.collapse(true);
@@ -75,7 +74,6 @@ describe('HR', () => {
 
     HR.exec(wwe);
 
-    expect(wwe.get$Body().find('div').length).toEqual(2);
-    expect(sq.getSelection().startContainer).toBe(wwe.get$Body().find('div')[1]);
+    expect(sq.getSelection().startContainer).toBe(wwe.get$Body().find('div')[2]);
   });
 });
