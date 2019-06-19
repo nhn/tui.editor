@@ -644,6 +644,35 @@ const mergeNode = function(node, targetNode) {
   }
 };
 
+/**
+ * Create hr that is not contenteditable
+ * @returns {node} hr is wraped div
+ * @ignore
+ */
+const createHorizontalRule = function() {
+  const div = document.createElement('div');
+  const hr = document.createElement('hr');
+
+  div.setAttribute('contenteditable', false);
+  hr.setAttribute('contenteditable', false);
+
+  div.appendChild(hr);
+
+  return div;
+};
+
+/**
+ * Create Empty Line
+ * @returns {node} <div><br></div>
+ * @private
+ */
+const createEmptyLine = function() {
+  const div = document.createElement('div');
+  div.appendChild(document.createElement('br'));
+
+  return div;
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -676,5 +705,7 @@ export default {
   isListNode,
   isFirstListItem,
   isFirstLevelListItem,
-  mergeNode
+  mergeNode,
+  createHorizontalRule,
+  createEmptyLine
 };

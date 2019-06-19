@@ -7,7 +7,6 @@ import $ from 'jquery';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 import WwHrManager from '../../src/js/wwHrManager';
-import Hr from '../../src/js/wysiwygCommands/hr';
 
 describe('WwHrManager', () => {
   let $container, em, wwe, mgr;
@@ -36,10 +35,26 @@ describe('WwHrManager', () => {
   });
 
   it('hr has contenteditable="false" whene wysiwygSetValueAfter event fire', () => {
-    wwe.getEditor().setHTML('<hr><h1>abcd</h1>');
+    wwe.getEditor().setHTML('<div>test</div><hr><div>test</div>');
 
     em.emit('wysiwygSetValueAfter');
 
-    expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<hr contenteditable="false"><h1>abcd</h1>');
+    expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>test</div><div contenteditable="false"><hr contenteditable="false"></div><div>test</div>');
+  });
+
+  it('should insert empty line before hr if hr is first child of root', () => {
+    wwe.getEditor().setHTML('<hr><div>test</div>');
+
+    em.emit('wysiwygSetValueAfter');
+
+    expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div></div><div contenteditable="false"><hr contenteditable="false"></div><div>test</div>');
+  });
+
+  it('should insert empty line after hr if hr is last child of root', () => {
+    wwe.getEditor().setHTML('<div>test</div><hr>');
+
+    em.emit('wysiwygSetValueAfter');
+
+    expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>test</div><div contenteditable="false"><hr contenteditable="false"></div><div></div>');
   });
 });
