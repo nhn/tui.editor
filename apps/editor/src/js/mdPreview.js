@@ -35,7 +35,7 @@ class MarkdownPreview extends Preview {
       latestMarkdownValue = markdownEditor.getValue();
 
       if (this.isVisible()) {
-        this.lazyRunner.run('refresh', latestMarkdownValue.replace(/<br>\n/g, '<br>'));
+        this.lazyRunner.run('refresh', latestMarkdownValue);
       }
     });
 
