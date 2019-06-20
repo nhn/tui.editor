@@ -64,6 +64,17 @@ markdownit.inline.ruler.at('backticks', codeBackticks);
 markdownit.use(taskList);
 markdownit.use(codeBlock);
 
+// This regular expression refere markdownIt.
+// https://github.com/markdown-it/markdown-it/blob/master/lib/common/html_re.js
+const attrName = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
+const unquoted = '[^"\'=<>`\\x00-\\x20]+';
+const singleQuoted = "'[^']*'";
+const doubleQuoted = '"[^"]*"';
+const attrValue = '(?:' + unquoted + '|' + singleQuoted + '|' + doubleQuoted + ')';
+const attributeProperty = '(?:\\s+' + attrName + '(?:\\s*=\\s*' + attrValue + ')?)*\\s*';
+const openTag = '(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*' + attributeProperty + ')(\\/?>)';
+const HTML_TAG_RE = new RegExp(openTag, 'g');
+
 /**
  * Class Convertor
  */
@@ -105,8 +116,15 @@ class Convertor {
    * @returns {string} html text
    */
   _markdownToHtml(markdown, env) {
-    // should insert data-tomark-pass in the opening tag
-    markdown = markdown.replace(/<(?!\/)([^>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
+    markdown = markdown.replace(HTML_TAG_RE, (match, $1, $2, $3) => {
+      let result = match;
+      if (match[0] !== '\\') {
+        result = `${$1}${$2} data-tomark-pass ${$3}`;
+      }
+
+      return result;
+    });
+
     // eslint-disable-next-line
         const onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
     while (onerrorStripeRegex.exec(markdown)) {
