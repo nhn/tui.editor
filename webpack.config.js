@@ -270,8 +270,8 @@ if (isDevServer) {
 
   // Build with Deps
   defaultConfigs[4].entry = {
-    'Editor-full': ENTRY_MAIN,
-    'Viewer-full': ENTRY_VIEWER
+    'Editor-full': ENTRY_MAIN_ALL,
+    'Viewer-full': ENTRY_VIEWER_ALL
   };
   defaultConfigs[4].externals.length = 0;
   defaultConfigs[4].output.library = NAME_SPACE;
