@@ -637,6 +637,8 @@ const mergeNode = function(node, targetNode) {
     util.forEachArray(node.childNodes, () => {
       targetNode.appendChild(node.firstChild);
     });
+
+    targetNode.normalize();
   }
 
   if (node.parentNode) {
@@ -673,6 +675,101 @@ const createEmptyLine = function() {
   return div;
 };
 
+const optimizeNode = function(node, tagName) {
+  const {parentNode} = node;
+  let tempNode = node;
+
+  while (
+    tempNode.childNodes && tempNode.childNodes.length === 1 &&
+    !isTextNode(tempNode.firstChild)
+  ) {
+    tempNode = tempNode.firstChild;
+
+    if (tempNode.nodeName === tagName) {
+      const wrapper = document.createElement(tagName);
+
+      mergeNode(tempNode, tempNode.parentNode);
+      parentNode.replaceChild(wrapper, node);
+      wrapper.appendChild(node);
+
+      return wrapper;
+    }
+  }
+
+  return node;
+};
+
+const optimizeNodes = function(startNode, endNode, tagName) {
+  const startBlock = optimizeNode(startNode, tagName);
+  const endBlock = optimizeNode(endNode, tagName);
+  let nextNode = startBlock.nextSibling;
+
+  while (nextNode) {
+    const tempNext = nextNode.nextSibling;
+
+    nextNode = optimizeNode(nextNode, tagName);
+
+    if (nextNode.nodeName === tagName) {
+      mergeNode(nextNode, startBlock);
+    } else {
+      break;
+    }
+
+    if (nextNode === endBlock) {
+      break;
+    }
+
+    nextNode = tempNext;
+  }
+
+  return startBlock;
+};
+
+const optimizeRange = function(range, tagName) {
+  const {
+    collapsed,
+    commonAncestorContainer,
+    startContainer,
+    endContainer
+  } = range;
+
+  if (!collapsed) {
+    let optimizedNode = null;
+
+    if (startContainer !== endContainer) {
+      optimizedNode = optimizeNodes(
+        getParentUntil(startContainer, commonAncestorContainer),
+        getParentUntil(endContainer, commonAncestorContainer),
+        tagName);
+    } else if (isTextNode(startContainer)) {
+      optimizedNode = startContainer.parentNode;
+    }
+
+    if (optimizedNode) {
+      const {previousSibling} = optimizedNode;
+      let tempNode;
+
+      if (previousSibling) {
+        tempNode = optimizeNode(previousSibling);
+
+        if (tempNode.nodeName === tagName) {
+          mergeNode(optimizedNode, tempNode);
+        }
+      }
+
+      const {nextSibling} = optimizedNode;
+
+      if (nextSibling) {
+        tempNode = optimizeNode(nextSibling);
+
+        if (tempNode.nodeName === tagName) {
+          mergeNode(tempNode, optimizedNode);
+        }
+      }
+    }
+  }
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -707,5 +804,8 @@ export default {
   isFirstLevelListItem,
   mergeNode,
   createHorizontalRule,
-  createEmptyLine
+  createEmptyLine,
+  optimizeNode,
+  optimizeNodes,
+  optimizeRange
 };
