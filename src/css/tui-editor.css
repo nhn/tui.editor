@@ -703,8 +703,9 @@
     background: #fff;
     border: 1px solid #efefef;
     position: absolute;
-    bottom: 141px;
+    bottom: 135px;
     right: 10px;
+    color: black;
 }
 
 .tui-popup-color .tui-colorpicker-container .tui-colorpicker-palette-hex {
