@@ -681,8 +681,7 @@ const createEmptyLine = function() {
  * <i><s><b>test</b></s></i>
  * should be changed tag's order.
  * <b><i><s>test</s></i></b>
- * @param {node} startNode
- * @param {node} endNode
+ * @param {node} node
  * @param {string} tagName
  * @returns {node}
  * @private
