@@ -675,6 +675,18 @@ const createEmptyLine = function() {
   return div;
 };
 
+/**
+ * Find same tagName child node and change wrapping order.
+ * For example, if below node need to optimize 'B' tag.
+ * <i><s><b>test</b></s></i>
+ * should be changed tag's order.
+ * <b><i><s>test</s></i></b>
+ * @param {node} startNode
+ * @param {node} endNode
+ * @param {string} tagName
+ * @returns {node}
+ * @private
+ */
 const optimizeNode = function(node, tagName) {
   if (node.nodeName !== 'SPAN') {
     const {parentNode} = node;
@@ -705,6 +717,14 @@ const optimizeNode = function(node, tagName) {
   return node;
 };
 
+/**
+ * Find same tagName nodes and merge from startNode to endNode.
+ * @param {node} startNode
+ * @param {node} endNode
+ * @param {string} tagName
+ * @returns {node}
+ * @private
+ */
 const optimizeNodes = function(startNode, endNode, tagName) {
   const startBlock = optimizeNode(startNode, tagName);
 
@@ -734,6 +754,16 @@ const optimizeNodes = function(startNode, endNode, tagName) {
   return startBlock;
 };
 
+/**
+ * Find same tagName nodes in range and merge nodes.
+ * For example range is like this
+ * <s><b>AAA</b></s><b>BBB</b>
+ * nodes is changed below
+ * <b><s>AAA</s>BBB</b>
+ * @param {range} range
+ * @param {string} tagName
+ * @private
+ */
 const optimizeRange = function(range, tagName) {
   const {
     collapsed,
