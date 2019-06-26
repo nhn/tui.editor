@@ -676,23 +676,29 @@ const createEmptyLine = function() {
 };
 
 const optimizeNode = function(node, tagName) {
-  const {parentNode} = node;
-  let tempNode = node;
+  if (node.nodeName !== 'SPAN') {
+    const {parentNode} = node;
+    let tempNode = node;
 
-  while (
-    tempNode.childNodes && tempNode.childNodes.length === 1 &&
+    while (
+      tempNode.childNodes && tempNode.childNodes.length === 1 &&
     !isTextNode(tempNode.firstChild)
-  ) {
-    tempNode = tempNode.firstChild;
+    ) {
+      tempNode = tempNode.firstChild;
 
-    if (tempNode.nodeName === tagName) {
-      const wrapper = document.createElement(tagName);
+      if (tempNode.nodeName === 'SPAN') {
+        break;
+      }
 
-      mergeNode(tempNode, tempNode.parentNode);
-      parentNode.replaceChild(wrapper, node);
-      wrapper.appendChild(node);
+      if (tempNode.nodeName === tagName) {
+        const wrapper = document.createElement(tagName);
 
-      return wrapper;
+        mergeNode(tempNode, tempNode.parentNode);
+        parentNode.replaceChild(wrapper, node);
+        wrapper.appendChild(node);
+
+        return wrapper;
+      }
     }
   }
 
@@ -701,25 +707,28 @@ const optimizeNode = function(node, tagName) {
 
 const optimizeNodes = function(startNode, endNode, tagName) {
   const startBlock = optimizeNode(startNode, tagName);
-  const endBlock = optimizeNode(endNode, tagName);
-  let nextNode = startBlock.nextSibling;
 
-  while (nextNode) {
-    const tempNext = nextNode.nextSibling;
+  if (startBlock.nodeName === tagName) {
+    const endBlock = optimizeNode(endNode, tagName);
+    let nextNode = startBlock.nextSibling;
 
-    nextNode = optimizeNode(nextNode, tagName);
+    while (nextNode) {
+      const tempNext = nextNode.nextSibling;
 
-    if (nextNode.nodeName === tagName) {
-      mergeNode(nextNode, startBlock);
-    } else {
-      break;
+      nextNode = optimizeNode(nextNode, tagName);
+
+      if (nextNode.nodeName === tagName) {
+        mergeNode(nextNode, startBlock);
+      } else {
+        break;
+      }
+
+      if (nextNode === endBlock) {
+        break;
+      }
+
+      nextNode = tempNext;
     }
-
-    if (nextNode === endBlock) {
-      break;
-    }
-
-    nextNode = tempNext;
   }
 
   return startBlock;
@@ -745,7 +754,7 @@ const optimizeRange = function(range, tagName) {
       optimizedNode = startContainer.parentNode;
     }
 
-    if (optimizedNode) {
+    if (optimizedNode && optimizeNode.nodeName === tagName) {
       const {previousSibling} = optimizedNode;
       let tempNode;
 

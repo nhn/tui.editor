@@ -413,13 +413,23 @@ describe('domUtils', () => {
     });
 
     it('should not change tag order when node has one more child', () => {
-      container.innerHTML = '<s><i><b>test</b><span>test</span></i></s>';
+      container.innerHTML = '<s><i><b>test</b><code>test</code></i></s>';
 
       const result = domUtils.optimizeNode(container.firstChild, 'B');
 
       expect(result.nodeName).toBe('S');
-      expect(result.innerHTML).toBe('<i><b>test</b><span>test</span></i>');
-      expect(container.innerHTML).toBe('<s><i><b>test</b><span>test</span></i></s>');
+      expect(result.innerHTML).toBe('<i><b>test</b><code>test</code></i>');
+      expect(container.innerHTML).toBe('<s><i><b>test</b><code>test</code></i></s>');
+    });
+
+    it('should not optimize when contains <span>', () => {
+      container.innerHTML = '<span><b>test</b></span>';
+
+      const result = domUtils.optimizeNode(container.firstChild, 'B');
+
+      expect(result.nodeName).toBe('SPAN');
+      expect(result.innerHTML).toBe('<b>test</b>');
+      expect(container.innerHTML).toBe('<span><b>test</b></span>');
     });
   });
 
@@ -471,6 +481,20 @@ describe('domUtils', () => {
       domUtils.optimizeNodes(startTag, endTag, 'B');
 
       expect(container.innerHTML).toBe('<b><s>test</s><i>test</i></b>');
+    });
+
+    it('should not optimize when contains <span>', () => {
+      const startTag = makeTag('span');
+      startTag.appendChild(makeTag('b', 'test'));
+
+      const endTag = makeTag('b', 'test');
+
+      container.appendChild(startTag);
+      container.appendChild(endTag);
+
+      domUtils.optimizeNodes(startTag, endTag, 'B');
+
+      expect(container.innerHTML).toBe('<span><b>test</b></span><b>test</b>');
     });
   });
 });
