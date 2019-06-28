@@ -3,6 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * Bold
@@ -32,6 +33,7 @@ const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
       sq.setSelection(range);
     } else {
       styleBold(sq);
+      domUtils.optimizeRange(sq.getSelection(), 'B');
     }
   }
 });

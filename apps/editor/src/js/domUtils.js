@@ -637,6 +637,8 @@ const mergeNode = function(node, targetNode) {
     util.forEachArray(node.childNodes, () => {
       targetNode.appendChild(node.firstChild);
     });
+
+    targetNode.normalize();
   }
 
   if (node.parentNode) {
@@ -673,6 +675,145 @@ const createEmptyLine = function() {
   return div;
 };
 
+/**
+ * Find same tagName child node and change wrapping order.
+ * For example, if below node need to optimize 'B' tag.
+ * <i><s><b>test</b></s></i>
+ * should be changed tag's order.
+ * <b><i><s>test</s></i></b>
+ * @param {node} node
+ * @param {string} tagName
+ * @returns {node}
+ * @private
+ */
+const changeTagOrder = function(node, tagName) {
+  if (node.nodeName !== 'SPAN') {
+    const {parentNode} = node;
+    let tempNode = node;
+
+    while (
+      tempNode.childNodes && tempNode.childNodes.length === 1 &&
+      !isTextNode(tempNode.firstChild)
+    ) {
+      tempNode = tempNode.firstChild;
+
+      if (tempNode.nodeName === 'SPAN') {
+        break;
+      }
+
+      if (tempNode.nodeName === tagName) {
+        const wrapper = document.createElement(tagName);
+
+        mergeNode(tempNode, tempNode.parentNode);
+        parentNode.replaceChild(wrapper, node);
+        wrapper.appendChild(node);
+
+        return wrapper;
+      }
+    }
+  }
+
+  return node;
+};
+
+/**
+ * Find same tagName nodes and merge from startNode to endNode.
+ * @param {node} startNode
+ * @param {node} endNode
+ * @param {string} tagName
+ * @returns {node}
+ * @private
+ */
+const mergeSameNodes = function(startNode, endNode, tagName) {
+  const startBlockNode = changeTagOrder(startNode, tagName);
+
+  if (startBlockNode.nodeName === tagName) {
+    const endBlockNode = changeTagOrder(endNode, tagName);
+    let mergeTargetNode = startBlockNode;
+    let nextNode = startBlockNode.nextSibling;
+
+    while (nextNode) {
+      const tempNext = nextNode.nextSibling;
+
+      nextNode = changeTagOrder(nextNode, tagName);
+
+      if (nextNode.nodeName === tagName) {
+        // eslint-disable-next-line max-depth
+        if (mergeTargetNode) {
+          mergeNode(nextNode, mergeTargetNode);
+        } else {
+          mergeTargetNode = nextNode;
+        }
+      } else {
+        mergeTargetNode = null;
+      }
+
+      if (nextNode === endBlockNode) {
+        break;
+      }
+
+      nextNode = tempNext;
+    }
+  }
+};
+
+/**
+ * Find same tagName nodes in range and merge nodes.
+ * For example range is like this
+ * <s><b>AAA</b></s><b>BBB</b>
+ * nodes is changed below
+ * <b><s>AAA</s>BBB</b>
+ * @param {range} range
+ * @param {string} tagName
+ * @private
+ */
+const optimizeRange = function(range, tagName) {
+  const {
+    collapsed,
+    commonAncestorContainer,
+    startContainer,
+    endContainer
+  } = range;
+
+  if (!collapsed) {
+    let optimizedNode = null;
+
+    if (startContainer !== endContainer) {
+      mergeSameNodes(
+        getParentUntil(startContainer, commonAncestorContainer),
+        getParentUntil(endContainer, commonAncestorContainer),
+        tagName);
+
+      optimizedNode = commonAncestorContainer;
+    } else if (isTextNode(startContainer)) {
+      optimizedNode = startContainer.parentNode;
+    }
+
+    if (optimizedNode && optimizedNode.nodeName === tagName) {
+      const {previousSibling} = optimizedNode;
+      let tempNode;
+
+      if (previousSibling) {
+        tempNode = changeTagOrder(previousSibling);
+
+        if (tempNode.nodeName === tagName) {
+          mergeNode(optimizedNode, tempNode);
+        }
+      }
+
+      const {nextSibling} = optimizedNode;
+
+      if (nextSibling) {
+        tempNode = changeTagOrder(nextSibling);
+
+        if (tempNode.nodeName === tagName) {
+          mergeNode(tempNode, optimizedNode);
+        }
+      }
+    }
+  }
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -707,5 +848,8 @@ export default {
   isFirstLevelListItem,
   mergeNode,
   createHorizontalRule,
-  createEmptyLine
+  createEmptyLine,
+  changeTagOrder,
+  mergeSameNodes,
+  optimizeRange
 };
