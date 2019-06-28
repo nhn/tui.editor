@@ -106,7 +106,7 @@ describe('Strike', () => {
 
     wwe.setValue('<i>line</i>');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.get$Body().children()[0].firstChild);
     wwe.getEditor().setSelection(range);
 
     Strike.exec(wwe);
@@ -119,7 +119,7 @@ describe('Strike', () => {
 
     wwe.setValue('<b>line</b>');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.get$Body().children()[0].firstChild);
     wwe.getEditor().setSelection(range);
 
     Strike.exec(wwe);
@@ -132,7 +132,7 @@ describe('Strike', () => {
 
     wwe.setValue('<b><i>line</i></b>');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.get$Body().children()[0].firstChild);
     wwe.getEditor().setSelection(range);
 
     Strike.exec(wwe);
