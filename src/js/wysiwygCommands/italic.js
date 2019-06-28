@@ -4,6 +4,7 @@
  */
 
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * Italic
@@ -33,6 +34,7 @@ const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
       sq.setSelection(range);
     } else {
       styleItalic(sq);
+      domUtils.optimizeRange(sq.getSelection(), 'I');
     }
   }
 });

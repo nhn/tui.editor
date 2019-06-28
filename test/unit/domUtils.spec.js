@@ -400,4 +400,111 @@ describe('domUtils', () => {
       expect(container.innerHTML).toBe(expectedHtml);
     });
   });
+
+  describe('changeTagOrder', () => {
+    it('should change tag order when find same tag', () => {
+      container.innerHTML = '<s><i><b>test</b></i></s>';
+
+      const result = domUtils.changeTagOrder(container.firstChild, 'B');
+
+      expect(result.nodeName).toBe('B');
+      expect(result.innerHTML).toBe('<s><i>test</i></s>');
+      expect(container.innerHTML).toBe('<b><s><i>test</i></s></b>');
+    });
+
+    it('should not change tag order when node has one more child', () => {
+      container.innerHTML = '<s><i><b>test</b><code>test</code></i></s>';
+
+      const result = domUtils.changeTagOrder(container.firstChild, 'B');
+
+      expect(result.nodeName).toBe('S');
+      expect(result.innerHTML).toBe('<i><b>test</b><code>test</code></i>');
+      expect(container.innerHTML).toBe('<s><i><b>test</b><code>test</code></i></s>');
+    });
+
+    it('should not optimize when contains <span>', () => {
+      container.innerHTML = '<span><b>test</b></span>';
+
+      const result = domUtils.changeTagOrder(container.firstChild, 'B');
+
+      expect(result.nodeName).toBe('SPAN');
+      expect(result.innerHTML).toBe('<b>test</b>');
+      expect(container.innerHTML).toBe('<span><b>test</b></span>');
+    });
+  });
+
+  describe('mergeSameNodes', () => {
+    const makeTag = (tagName, textContent) => {
+      const tag = document.createElement(tagName);
+
+      if (textContent) {
+        tag.textContent = textContent;
+      }
+
+      return tag;
+    };
+
+    it('should merge same tags', () => {
+      const startTag = makeTag('b', 'test');
+      const endTag = makeTag('b', 'test');
+
+      container.appendChild(startTag);
+      container.appendChild(endTag);
+
+      domUtils.mergeSameNodes(startTag, endTag, 'B');
+
+      expect(container.innerHTML).toBe('<b>testtest</b>');
+    });
+
+    it('should not merge tags if tags is not same tag', () => {
+      const startTag = makeTag('b', 'test');
+      const endTag = makeTag('s', 'test');
+
+      container.appendChild(startTag);
+      container.appendChild(endTag);
+
+      domUtils.mergeSameNodes(startTag, endTag, 'B');
+
+      expect(container.innerHTML).toBe('<b>test</b><s>test</s>');
+    });
+
+    it('should merge tags when the tags wrapping other tags', () => {
+      const startTag = makeTag('s');
+      startTag.appendChild(makeTag('b', 'test'));
+
+      const endTag = makeTag('i');
+      endTag.appendChild(makeTag('b', 'test'));
+
+      container.appendChild(startTag);
+      container.appendChild(endTag);
+
+      domUtils.mergeSameNodes(startTag, endTag, 'B');
+
+      expect(container.innerHTML).toBe('<b><s>test</s><i>test</i></b>');
+    });
+
+    it('should not merge when contains <span>', () => {
+      const startTag = makeTag('span');
+      startTag.appendChild(makeTag('b', 'test'));
+
+      const endTag = makeTag('b', 'test');
+
+      container.appendChild(startTag);
+      container.appendChild(endTag);
+
+      domUtils.mergeSameNodes(startTag, endTag, 'B');
+
+      expect(container.innerHTML).toBe('<span><b>test</b></span><b>test</b>');
+    });
+
+    it('should merge', () => {
+      container.innerHTML = '<b>1</b><b>2</b><s>3</s><b>4</b><b>5</b>';
+
+      const bTags = document.getElementsByTagName('b');
+
+      domUtils.mergeSameNodes(bTags[0], bTags[3], 'B');
+
+      expect(container.innerHTML).toBe('<b>12</b><s>3</s><b>45</b>');
+    });
+  });
 });
