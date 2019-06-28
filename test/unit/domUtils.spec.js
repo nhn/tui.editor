@@ -401,11 +401,11 @@ describe('domUtils', () => {
     });
   });
 
-  describe('optimizeNode', () => {
+  describe('changeTagOrder', () => {
     it('should change tag order when find same tag', () => {
       container.innerHTML = '<s><i><b>test</b></i></s>';
 
-      const result = domUtils.optimizeNode(container.firstChild, 'B');
+      const result = domUtils.changeTagOrder(container.firstChild, 'B');
 
       expect(result.nodeName).toBe('B');
       expect(result.innerHTML).toBe('<s><i>test</i></s>');
@@ -415,7 +415,7 @@ describe('domUtils', () => {
     it('should not change tag order when node has one more child', () => {
       container.innerHTML = '<s><i><b>test</b><code>test</code></i></s>';
 
-      const result = domUtils.optimizeNode(container.firstChild, 'B');
+      const result = domUtils.changeTagOrder(container.firstChild, 'B');
 
       expect(result.nodeName).toBe('S');
       expect(result.innerHTML).toBe('<i><b>test</b><code>test</code></i>');
@@ -425,7 +425,7 @@ describe('domUtils', () => {
     it('should not optimize when contains <span>', () => {
       container.innerHTML = '<span><b>test</b></span>';
 
-      const result = domUtils.optimizeNode(container.firstChild, 'B');
+      const result = domUtils.changeTagOrder(container.firstChild, 'B');
 
       expect(result.nodeName).toBe('SPAN');
       expect(result.innerHTML).toBe('<b>test</b>');
@@ -433,7 +433,7 @@ describe('domUtils', () => {
     });
   });
 
-  describe('optimizeNodes', () => {
+  describe('mergeSameNodes', () => {
     const makeTag = (tagName, textContent) => {
       const tag = document.createElement(tagName);
 
@@ -451,7 +451,7 @@ describe('domUtils', () => {
       container.appendChild(startTag);
       container.appendChild(endTag);
 
-      domUtils.optimizeNodes(startTag, endTag, 'B');
+      domUtils.mergeSameNodes(startTag, endTag, 'B');
 
       expect(container.innerHTML).toBe('<b>testtest</b>');
     });
@@ -463,7 +463,7 @@ describe('domUtils', () => {
       container.appendChild(startTag);
       container.appendChild(endTag);
 
-      domUtils.optimizeNodes(startTag, endTag, 'B');
+      domUtils.mergeSameNodes(startTag, endTag, 'B');
 
       expect(container.innerHTML).toBe('<b>test</b><s>test</s>');
     });
@@ -478,12 +478,12 @@ describe('domUtils', () => {
       container.appendChild(startTag);
       container.appendChild(endTag);
 
-      domUtils.optimizeNodes(startTag, endTag, 'B');
+      domUtils.mergeSameNodes(startTag, endTag, 'B');
 
       expect(container.innerHTML).toBe('<b><s>test</s><i>test</i></b>');
     });
 
-    it('should not optimize when contains <span>', () => {
+    it('should not merge when contains <span>', () => {
       const startTag = makeTag('span');
       startTag.appendChild(makeTag('b', 'test'));
 
@@ -492,9 +492,19 @@ describe('domUtils', () => {
       container.appendChild(startTag);
       container.appendChild(endTag);
 
-      domUtils.optimizeNodes(startTag, endTag, 'B');
+      domUtils.mergeSameNodes(startTag, endTag, 'B');
 
       expect(container.innerHTML).toBe('<span><b>test</b></span><b>test</b>');
+    });
+
+    it('should merge', () => {
+      container.innerHTML = '<b>1</b><b>2</b><s>3</s><b>4</b><b>5</b>';
+
+      const bTags = document.getElementsByTagName('b');
+
+      domUtils.mergeSameNodes(bTags[0], bTags[3], 'B');
+
+      expect(container.innerHTML).toBe('<b>12</b><s>3</s><b>45</b>');
     });
   });
 });

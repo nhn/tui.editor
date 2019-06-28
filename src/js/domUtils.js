@@ -686,14 +686,14 @@ const createEmptyLine = function() {
  * @returns {node}
  * @private
  */
-const optimizeNode = function(node, tagName) {
+const changeTagOrder = function(node, tagName) {
   if (node.nodeName !== 'SPAN') {
     const {parentNode} = node;
     let tempNode = node;
 
     while (
       tempNode.childNodes && tempNode.childNodes.length === 1 &&
-    !isTextNode(tempNode.firstChild)
+      !isTextNode(tempNode.firstChild)
     ) {
       tempNode = tempNode.firstChild;
 
@@ -724,33 +724,37 @@ const optimizeNode = function(node, tagName) {
  * @returns {node}
  * @private
  */
-const optimizeNodes = function(startNode, endNode, tagName) {
-  const startBlock = optimizeNode(startNode, tagName);
+const mergeSameNodes = function(startNode, endNode, tagName) {
+  const startBlockNode = changeTagOrder(startNode, tagName);
 
-  if (startBlock.nodeName === tagName) {
-    const endBlock = optimizeNode(endNode, tagName);
-    let nextNode = startBlock.nextSibling;
+  if (startBlockNode.nodeName === tagName) {
+    const endBlockNode = changeTagOrder(endNode, tagName);
+    let mergeTargetNode = startBlockNode;
+    let nextNode = startBlockNode.nextSibling;
 
     while (nextNode) {
       const tempNext = nextNode.nextSibling;
 
-      nextNode = optimizeNode(nextNode, tagName);
+      nextNode = changeTagOrder(nextNode, tagName);
 
       if (nextNode.nodeName === tagName) {
-        mergeNode(nextNode, startBlock);
+        // eslint-disable-next-line max-depth
+        if (mergeTargetNode) {
+          mergeNode(nextNode, mergeTargetNode);
+        } else {
+          mergeTargetNode = nextNode;
+        }
       } else {
-        break;
+        mergeTargetNode = null;
       }
 
-      if (nextNode === endBlock) {
+      if (nextNode === endBlockNode) {
         break;
       }
 
       nextNode = tempNext;
     }
   }
-
-  return startBlock;
 };
 
 /**
@@ -775,20 +779,22 @@ const optimizeRange = function(range, tagName) {
     let optimizedNode = null;
 
     if (startContainer !== endContainer) {
-      optimizedNode = optimizeNodes(
+      mergeSameNodes(
         getParentUntil(startContainer, commonAncestorContainer),
         getParentUntil(endContainer, commonAncestorContainer),
         tagName);
+
+      optimizedNode = commonAncestorContainer;
     } else if (isTextNode(startContainer)) {
       optimizedNode = startContainer.parentNode;
     }
 
-    if (optimizedNode && optimizeNode.nodeName === tagName) {
+    if (optimizedNode && optimizedNode.nodeName === tagName) {
       const {previousSibling} = optimizedNode;
       let tempNode;
 
       if (previousSibling) {
-        tempNode = optimizeNode(previousSibling);
+        tempNode = changeTagOrder(previousSibling);
 
         if (tempNode.nodeName === tagName) {
           mergeNode(optimizedNode, tempNode);
@@ -798,7 +804,7 @@ const optimizeRange = function(range, tagName) {
       const {nextSibling} = optimizedNode;
 
       if (nextSibling) {
-        tempNode = optimizeNode(nextSibling);
+        tempNode = changeTagOrder(nextSibling);
 
         if (tempNode.nodeName === tagName) {
           mergeNode(tempNode, optimizedNode);
@@ -843,7 +849,7 @@ export default {
   mergeNode,
   createHorizontalRule,
   createEmptyLine,
-  optimizeNode,
-  optimizeNodes,
+  changeTagOrder,
+  mergeSameNodes,
   optimizeRange
 };
