@@ -143,7 +143,7 @@ class SectionManager {
         }
 
         isSection = true;
-      } else if (this._isAtxHeader(lineString)) {
+      } else if (!onCodeBlock && this._isAtxHeader(lineString)) {
         isRightAfterImageSection = false;
         isSection = true;
         isEnsuredSection = false;
