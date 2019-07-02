@@ -368,7 +368,7 @@ class SectionManager {
     this.$previewContent.contents().filter(findElementNodeFilter).each((index, el) => {
       const isParagraph = (el.tagName === 'P');
       const isHeading = el.tagName.match(/^(H1|H2|H3|H4|H5|H6)$/);
-      const isImage = (isParagraph && el.childNodes[0].nodeName === 'IMG');
+      const isImage = (isParagraph && el.hasChildNodes() && el.childNodes[0].nodeName === 'IMG');
 
       if ((isHeading || isImage || isRightAfterImageSection)
                 && sections[lastSection].length
