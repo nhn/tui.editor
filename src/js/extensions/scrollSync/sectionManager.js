@@ -103,8 +103,8 @@ class SectionManager {
   _eachLineState(iteratee) {
     let isSection, i, lineString, nextLineString, prevLineString,
       isTrimming = true,
-      onTable = false,
-      onCodeBlock = false,
+      isInTable = false,
+      isInCodeBlock = false,
       trimCapture = '';
     let isRightAfterImageSection = false;
     let isEnsuredSection = false;
@@ -119,22 +119,22 @@ class SectionManager {
       prevLineString = this.cm.getLine(i - 1) || '';
       const isCodeBlockEnded = this._isCodeBlockEnd(prevLineString) && (codeblockStartLineIndex !== (i - 1));
 
-      if (onTable && (!lineString || !this._isTableCode(lineString))) {
-        onTable = false;
-      } else if (!onTable && this._isTable(lineString, nextLineString)) {
-        onTable = true;
+      if (isInTable && (!lineString || !this._isTableCode(lineString))) {
+        isInTable = false;
+      } else if (!isInTable && this._isTable(lineString, nextLineString)) {
+        isInTable = true;
       }
 
-      if (onCodeBlock && isCodeBlockEnded) {
-        onCodeBlock = false;
+      if (isInCodeBlock && isCodeBlockEnded) {
+        isInCodeBlock = false;
       }
-      if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
-        onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
+      if (!isInCodeBlock && this._isCodeBlockStart(lineString)) {
+        isInCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
         codeblockStartLineIndex = i;
       }
 
       if (isEnsuredSection && lineString.length !== 0) {
-        if (this._isIndependentImage(onCodeBlock, onTable, lineString, prevLineString)) {
+        if (this._isIndependentImage(isInCodeBlock, isInTable, lineString, prevLineString)) {
           isRightAfterImageSection = true;
           isEnsuredSection = true;
         } else {
@@ -143,19 +143,19 @@ class SectionManager {
         }
 
         isSection = true;
-      } else if (!onCodeBlock && this._isAtxHeader(lineString)) {
+      } else if (!isInCodeBlock && this._isAtxHeader(lineString)) {
         isRightAfterImageSection = false;
         isSection = true;
         isEnsuredSection = false;
         // setext header
       } else if (!this._isCodeBlockEnd(lineString)
-                && !onTable
+                && !isInTable
                 && this._isSeTextHeader(lineString, nextLineString)
       ) {
         isRightAfterImageSection = false;
         isSection = true;
         isEnsuredSection = false;
-      } else if (this._isIndependentImage(onCodeBlock, onTable, lineString, prevLineString)) {
+      } else if (this._isIndependentImage(isInCodeBlock, isInTable, lineString, prevLineString)) {
         isRightAfterImageSection = true;
         isSection = true;
         isEnsuredSection = false;
@@ -181,15 +181,15 @@ class SectionManager {
 
   /**
    * Return whether is independent image line with padding lines top and bottom
-   * @param {boolean} onCodeBlock Is on codeblock
-   * @param {boolean} onTable Is on table
+   * @param {boolean} isInCodeBlock Is on codeblock
+   * @param {boolean} isInTable Is on table
    * @param {string} lineString Current line string
    * @param {string} prevLineString Previous line string
    * @returns {boolean}
    * @private
    */
-  _isIndependentImage(onCodeBlock, onTable, lineString, prevLineString) {
-    return !onCodeBlock && !onTable
+  _isIndependentImage(isInCodeBlock, isInTable, lineString, prevLineString) {
+    return !isInCodeBlock && !isInTable
             && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString)
             && prevLineString.length === 0;
   }
