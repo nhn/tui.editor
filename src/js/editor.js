@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implemtents Editor
+ * @fileoverview Implements Editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
