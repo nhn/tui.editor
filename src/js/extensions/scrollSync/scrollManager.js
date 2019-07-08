@@ -158,7 +158,7 @@ class ScrollManager {
       factors = {
         section: cusrsorSection,
         sectionRatio: ratio,
-        cursorTop: cursorInfo.top - scrollInfo.top
+        relativeCursorTop: cursorInfo.top - scrollInfo.top
       };
     }
 
@@ -245,11 +245,11 @@ class ScrollManager {
     const cursorFactors = this._getCursorFactorsOfEditor();
 
     if (cursorFactors) {
-      const {section, sectionRatio, cursorTop} = cursorFactors;
+      const {section, sectionRatio, relativeCursorTop} = cursorFactors;
 
       scrollTop = section.$previewSectionEl[0].offsetTop;
       scrollTop += (section.$previewSectionEl.height() * sectionRatio) - SCROLL_TOP_PADDING;
-      scrollTop -= cursorTop;
+      scrollTop -= relativeCursorTop;
 
       scrollTop = scrollTop && Math.max(scrollTop, 0);
     }
@@ -292,7 +292,7 @@ class ScrollManager {
   /**
    * syncPreviewScrollTopToMarkdown
    * sync preview scroll to markdown
-   * @param isCursorBase boolean
+   * @param {boolean} isCursorBase whether sync according to cursor position
    */
   syncPreviewScrollTopToMarkdown(isCursorBase) {
     const {$previewContainerEl} = this;
