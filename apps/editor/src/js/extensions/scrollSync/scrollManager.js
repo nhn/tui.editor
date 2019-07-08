@@ -130,6 +130,39 @@ class ScrollManager {
   }
 
   /**
+   * _getCursorFactorsOfEditor
+   * Return cursor position information of editor for preview scroll sync
+   * @returns {object} scroll factors
+   * @private
+   */
+  _getCursorFactorsOfEditor() {
+    const {cm} = this;
+    const cursorInfo = cm.cursorCoords(true, 'local');
+
+    // if codemirror has not visible scrollInfo have incorrect value
+    // so we use saved scroll info for alternative
+    const scrollInfo = this._fallbackScrollInfoIfIncorrect(cm.getScrollInfo());
+    const cursorLine = cm.coordsChar({
+      left: cursorInfo.left,
+      top: cursorInfo.top
+    }, 'local').line;
+
+    const cusrsorSection = this.sectionManager.sectionByLine(cursorLine);
+
+    if (cusrsorSection) {
+      const ratio = this._getEditorSectionScrollRatio(cusrsorSection, cursorLine);
+
+      return {
+        section: cusrsorSection,
+        sectionRatio: ratio,
+        relativeCursorTop: cursorInfo.top - scrollInfo.top
+      };
+    }
+
+    return null;
+  }
+
+  /**
    * Return Scroll Information of editor for Markdown scroll sync
    * @returns {object} scroll factors
    * @private
@@ -199,6 +232,32 @@ class ScrollManager {
   }
 
   /**
+   * _getScrollTopForPreviewBaseCursor
+   * Return scrollTop value for preview according cursor position
+   * @returns {number} scrollTop value
+   */
+  _getScrollTopForPreviewBaseCursor() {
+    const cursorFactors = this._getCursorFactorsOfEditor();
+
+    if (!cursorFactors) {
+      return 0;
+    }
+
+    const {section, sectionRatio, relativeCursorTop} = cursorFactors;
+    let scrollTop = section.$previewSectionEl[0].offsetTop;
+
+    // Moves the preview so that the line of cursor is positioned at top of the preview.
+    scrollTop += (section.$previewSectionEl.height() * sectionRatio) - SCROLL_TOP_PADDING;
+
+    // Moves the preview by the position of the cursor at markdown.
+    scrollTop -= relativeCursorTop;
+
+    scrollTop = scrollTop && Math.max(scrollTop, 0);
+
+    return scrollTop;
+  }
+
+  /**
    * Return scrollTop value for Markdown editor
    * @returns {number}
    * @private
@@ -233,11 +292,12 @@ class ScrollManager {
   /**
    * syncPreviewScrollTopToMarkdown
    * sync preview scroll to markdown
+   * @param {boolean} isCursorBase whether sync according to cursor position
    */
-  syncPreviewScrollTopToMarkdown() {
+  syncPreviewScrollTopToMarkdown(isCursorBase) {
     const {$previewContainerEl} = this;
     const sourceScrollTop = $previewContainerEl.scrollTop();
-    const targetScrollTop = this._getScrollTopForPreview();
+    const targetScrollTop = isCursorBase ? this._getScrollTopForPreviewBaseCursor() : this._getScrollTopForPreview();
 
     this.isPreviewScrollEventBlocked = true;
 

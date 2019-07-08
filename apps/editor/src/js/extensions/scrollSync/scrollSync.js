@@ -94,11 +94,16 @@ function scrollSyncExtension(editor) {
   }
 
   editor.on('previewRenderAfter', () => {
-    sectionManager.sectionMatch();
-    if (isActive) {
-      scrollManager.syncPreviewScrollTopToMarkdown();
-    }
-    isScrollable = true;
+    // Immediately after the 'previewRenderAfter' event has occurred,
+    // browser rendering is not yet complete.
+    // So the size of elements can not be accurately measured.
+    setTimeout(() => {
+      sectionManager.sectionMatch();
+      if (isActive) {
+        scrollManager.syncPreviewScrollTopToMarkdown(true);
+      }
+      isScrollable = true;
+    }, 200);
   });
 
   editor.eventManager.listen('scroll', event => {
@@ -108,7 +113,7 @@ function scrollSyncExtension(editor) {
 
     if (isScrollable && editor.preview.isVisible()) {
       if (event.source === 'markdown' && !scrollManager.isMarkdownScrollEventBlocked) {
-        scrollManager.syncPreviewScrollTopToMarkdown();
+        scrollManager.syncPreviewScrollTopToMarkdown(false);
       } else if (event.source === 'preview' && !scrollManager.isPreviewScrollEventBlocked) {
         scrollManager.syncMarkdownScrollTopToPreview();
       }
