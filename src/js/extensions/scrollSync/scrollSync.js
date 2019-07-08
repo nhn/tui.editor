@@ -95,7 +95,7 @@ function scrollSyncExtension(editor) {
 
   editor.on('previewRenderAfter', () => {
     // Immediately after the 'previewRenderAfter' event has occurred,
-    // brower rendering is not yet complete.
+    // browser rendering is not yet complete.
     // So the size of elements can not be accurately measured.
     setTimeout(() => {
       sectionManager.sectionMatch();

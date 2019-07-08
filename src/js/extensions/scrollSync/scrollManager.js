@@ -138,31 +138,28 @@ class ScrollManager {
   _getCursorFactorsOfEditor() {
     const {cm} = this;
     const cursorInfo = cm.cursorCoords(true, 'local');
-    let scrollInfo = cm.getScrollInfo();
-    let cursorLine, cusrsorSection, ratio, factors;
 
     // if codemirror has not visible scrollInfo have incorrect value
     // so we use saved scroll info for alternative
-    scrollInfo = this._fallbackScrollInfoIfIncorrect(scrollInfo);
-
-    cursorLine = cm.coordsChar({
+    const scrollInfo = this._fallbackScrollInfoIfIncorrect(cm.getScrollInfo());
+    const cursorLine = cm.coordsChar({
       left: cursorInfo.left,
       top: cursorInfo.top
     }, 'local').line;
 
-    cusrsorSection = this.sectionManager.sectionByLine(cursorLine);
+    const cusrsorSection = this.sectionManager.sectionByLine(cursorLine);
 
     if (cusrsorSection) {
-      ratio = this._getEditorSectionScrollRatio(cusrsorSection, cursorLine);
+      const ratio = this._getEditorSectionScrollRatio(cusrsorSection, cursorLine);
 
-      factors = {
+      return {
         section: cusrsorSection,
         sectionRatio: ratio,
         relativeCursorTop: cursorInfo.top - scrollInfo.top
       };
     }
 
-    return factors;
+    return null;
   }
 
   /**
@@ -236,23 +233,26 @@ class ScrollManager {
 
   /**
    * _getScrollTopForPreviewBaseCursor
-   * Return scrollTop value for preview accourding cursor position
+   * Return scrollTop value for preview according cursor position
    * @returns {number} scrollTop value
    */
   _getScrollTopForPreviewBaseCursor() {
-    let scrollTop = 0;
-
     const cursorFactors = this._getCursorFactorsOfEditor();
 
-    if (cursorFactors) {
-      const {section, sectionRatio, relativeCursorTop} = cursorFactors;
-
-      scrollTop = section.$previewSectionEl[0].offsetTop;
-      scrollTop += (section.$previewSectionEl.height() * sectionRatio) - SCROLL_TOP_PADDING;
-      scrollTop -= relativeCursorTop;
-
-      scrollTop = scrollTop && Math.max(scrollTop, 0);
+    if (!cursorFactors) {
+      return 0;
     }
+
+    const {section, sectionRatio, relativeCursorTop} = cursorFactors;
+    let scrollTop = section.$previewSectionEl[0].offsetTop;
+
+    // Moves the preview so that the line of cursor is positioned at top of the preview.
+    scrollTop += (section.$previewSectionEl.height() * sectionRatio) - SCROLL_TOP_PADDING;
+
+    // Moves the preview by the position of the cursor at markdown.
+    scrollTop -= relativeCursorTop;
+
+    scrollTop = scrollTop && Math.max(scrollTop, 0);
 
     return scrollTop;
   }
