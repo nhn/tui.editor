@@ -1,6 +1,6 @@
 {
   "name": "tui-editor",
-  "version": "1.4.4-alpha.0",
+  "version": "1.4.4-alpha.1",
   "description": "GFM  Markdown Wysiwyg Editor - Productive and Extensible",
   "keywords": [
     "toast",
@@ -91,6 +91,7 @@
     "@types/markdown-it": "0.0.7",
     "codemirror": "^5.33.0",
     "highlight.js": "^9.12.0",
+    "i": "^0.3.6",
     "jquery": "^3.3.1",
     "markdown-it": "^8.4.0",
     "plantuml-encoder": "^1.2.5",

@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.4-alpha.0
+ * @version 1.4.4-alpha.1
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -19158,8 +19158,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var isIE11 = _tuiCodeSnippet2.default.browser.msie && _tuiCodeSnippet2.default.browser.version === 11;
-var isWindowChrome = navigator.appVersion.indexOf('Win') !== -1 && _tuiCodeSnippet2.default.browser.chrome;
-var isNeedOffsetFix = isIE11 || isWindowChrome;
+var isNeedOffsetFix = isIE11;
 
 /**
  * Class WwTextObject
