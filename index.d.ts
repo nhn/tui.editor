@@ -51,6 +51,7 @@ declare namespace tuiEditor {
     exts?: string[];
     customConvertor?: IConvertor;
     placeholder?: string;
+    viewer?: boolean
   }
 
   interface IViewerOptions {
