@@ -14,12 +14,16 @@ export default class ViewerComponent extends React.Component {
     return this.viewerInst;
   }
 
-  bindEventHandlers() {
+  bindEventHandlers(props, prevProps) {
     Object.keys(this.props)
       .filter((key) => /on[A-Z][a-zA-Z]+/.test(key))
       .forEach((key) => {
         const eventName = key[2].toLowerCase() + key.slice(3);
-        this.viewerInst.on(eventName, this.props[key]);
+        // For <Viewer onFocus={condition ? onFocus1 : onFocus2} />
+        if(prevProps && prevProps[key] !== props[key]) {
+          this.viewerInst.off(eventName);
+        }
+        this.viewerInst.on(eventName, props[key]);
       });
   }
 
@@ -29,7 +33,7 @@ export default class ViewerComponent extends React.Component {
       ...this.props
     });
 
-    this.bindEventHandlers();
+    this.bindEventHandlers(this.props);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -39,6 +43,8 @@ export default class ViewerComponent extends React.Component {
     if (currentValue !== nextValue) {
       this.getInstance().setValue(nextValue);
     }
+
+    this.bindEventHandlers(nextProps, this.props);
 
     return false;
   }

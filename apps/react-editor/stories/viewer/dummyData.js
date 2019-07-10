@@ -22,7 +22,7 @@ export const basicViewerDummy = {
     '- [ ] task',
     '- [x] list completed',
     '',
-    '[link](https://nhnent.github.io/tui.editor/)',
+    '[link](https://nhn.github.io/tui.editor/)',
     '> block quote',
     '---',
     'horizontal line',

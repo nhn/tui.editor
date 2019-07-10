@@ -1,12 +1,12 @@
 # TOAST UI Editor for React
 
-> This is a React component wrapping [TOAST UI Editor](https://github.com/nhnent/tui.editor).
+> This is a React component wrapping [TOAST UI Editor](https://github.com/nhn/tui.editor).
 
-[![github version](https://img.shields.io/github/release/nhnent/toast-ui.react-editor.svg)](https://github.com/nhnent/toast-ui.react-editor/releases/latest)
+[![github version](https://img.shields.io/github/release/nhn/toast-ui.react-editor.svg)](https://github.com/nhn/toast-ui.react-editor/releases/latest)
 [![npm version](https://img.shields.io/npm/v/@toast-ui/react-editor.svg)](https://www.npmjs.com/package/@toast-ui/react-editor)
-[![license](https://img.shields.io/github/license/nhnent/toast-ui.react-editor.svg)](https://github.com/nhnent/toast-ui.react-editor/blob/master/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.react-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
+[![license](https://img.shields.io/github/license/nhn/toast-ui.react-editor.svg)](https://github.com/nhn/toast-ui.react-editor/blob/master/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/toast-ui.react-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## 🚩 Table of Contents
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
@@ -73,7 +73,7 @@ const Editor = require('@toast-ui/react-editor');
 
 ### Props
 
-[All the options of the TOAST UI Editor](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor) are supported in the form of props.
+[All the options of the TOAST UI Editor](https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor) are supported in the form of props.
 
 ```js
 const MyComponent = () => (
@@ -103,7 +103,7 @@ const MyComponent = () => (
 
 ### Instance Methods
 
-For using [instance methods of TOAST UI Editor](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#.defineExtension), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Editor directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
+For using [instance methods of TOAST UI Editor](https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#.defineExtension), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Editor directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
 
 ```js
 class MyComponent extends React.Component {
@@ -160,11 +160,11 @@ class MyComponent extends React.Component {
 ```
 
 ### Events
-[All the events of TOAST UI Editor](https://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html#focus) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `focus` event you can use `onFocus` prop like the example below.
+[All the events of TOAST UI Editor](https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#focus) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `focus` event you can use `onFocus` prop like the example below.
 
 ```js
 class MyComponent extends React.Component {
-  handleFoucs = () => {
+  handleFocus = () => {
     console.log('focus!!');
   }
 
@@ -177,7 +177,7 @@ class MyComponent extends React.Component {
         initialEditType="markdown"
         initialValue="hello"
         ref={this.editorRef}
-        onFocus={this.handleFoucs}
+        onFocus={this.handleFocus}
       />
     );
   }
@@ -213,9 +213,9 @@ If it has no error, commit and then push it!
 For more information on PR's step, please see links of Contributing section.
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhnent/toast-ui.react-editor/blob/master/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhnent/toast-ui.react-editor/blob/master/CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhnent/toast-ui.react-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhn/toast-ui.react-editor/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/toast-ui.react-editor/blob/master/CONTRIBUTING.md)
+* [Commit convention](https://github.com/nhn/toast-ui.react-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
-This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhnent)
+This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhn)
