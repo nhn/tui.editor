@@ -14,6 +14,8 @@ const decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
 
 const RESET_COLOR = '#181818';
 
+let lastScrollTop = 0;
+
 /**
  * color syntax extension
  * @param {editor} editor - editor
@@ -101,6 +103,9 @@ function colorSyntaxExtension(editor) {
 
         const sq = wwe.getEditor();
         const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+
+        lastScrollTop = sq.getRoot().parentNode.scrollTop;
+
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
           tableSelectionManager.styleToSelectedCells(styleColor, color);
 
@@ -196,6 +201,11 @@ function initUI(editor, preset) {
 
   editor.eventManager.listen('focus', () => {
     popup.hide();
+
+    if (editor.isWysiwygMode() && lastScrollTop) {
+      editor.getSquire().getRoot().parentNode.scrollTop = lastScrollTop;
+      lastScrollTop = 0;
+    }
   });
 
   editor.eventManager.listen('colorButtonClicked', () => {
