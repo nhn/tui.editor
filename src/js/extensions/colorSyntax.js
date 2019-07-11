@@ -104,6 +104,9 @@ function colorSyntaxExtension(editor) {
         const sq = wwe.getEditor();
         const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
+        // Cache scrollTop before change text color.
+        // Because scrollTop is set 0 when focus() is called.
+        // focus() is called when change text color.
         lastScrollTop = sq.getRoot().parentNode.scrollTop;
 
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
