@@ -107,7 +107,7 @@ function colorSyntaxExtension(editor) {
         // Cache scrollTop before change text color.
         // Because scrollTop is set 0 when focus() is called.
         // focus() is called when change text color.
-        lastScrollTop = sq.getRoot().parentNode.scrollTop;
+        lastScrollTop = getScrollTopForReFocus(sq);
 
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
           tableSelectionManager.styleToSelectedCells(styleColor, color);
@@ -142,6 +142,15 @@ function styleColor(sq, color) {
       sq.setTextColour(color);
     }
   }
+}
+
+/**
+ * Get scrollTop of squire
+ * @param {SquireExt} sq - squire ext instance
+ * @ignore
+ */
+function getScrollTopForReFocus(sq) {
+  return sq.getRoot().parentNode.scrollTop;
 }
 
 /**
