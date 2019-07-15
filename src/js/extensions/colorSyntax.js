@@ -14,6 +14,8 @@ const decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
 
 const RESET_COLOR = '#181818';
 
+let lastScrollTop = 0;
+
 /**
  * color syntax extension
  * @param {editor} editor - editor
@@ -101,6 +103,12 @@ function colorSyntaxExtension(editor) {
 
         const sq = wwe.getEditor();
         const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+
+        // Cache scrollTop before change text color.
+        // Because scrollTop is set 0 when focus() is called.
+        // focus() is called when change text color.
+        lastScrollTop = getScrollTopForReFocus(sq);
+
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
           tableSelectionManager.styleToSelectedCells(styleColor, color);
 
@@ -134,6 +142,15 @@ function styleColor(sq, color) {
       sq.setTextColour(color);
     }
   }
+}
+
+/**
+ * Get scrollTop of squire
+ * @param {SquireExt} sq - squire ext instance
+ * @ignore
+ */
+function getScrollTopForReFocus(sq) {
+  return sq.getRoot().parentNode.scrollTop;
 }
 
 /**
@@ -196,6 +213,11 @@ function initUI(editor, preset) {
 
   editor.eventManager.listen('focus', () => {
     popup.hide();
+
+    if (editor.isWysiwygMode() && lastScrollTop) {
+      editor.getSquire().getRoot().parentNode.scrollTop = lastScrollTop;
+      lastScrollTop = 0;
+    }
   });
 
   editor.eventManager.listen('colorButtonClicked', () => {
