@@ -100,7 +100,7 @@ const defaultConfigs = Array(isDevServer ? 1 : 5).fill(0).map(() => {
         amd: 'tui-code-snippet',
         root: ['tui', 'util']
       },
-      'tui-chart': {
+      'tui-chart/dist/tui-chart-polyfill': {
         commonjs: 'tui-chart',
         commonjs2: 'tui-chart',
         amd: 'tui-chart',
