@@ -29,7 +29,7 @@
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
-import chart from 'tui-chart';
+import chart from 'tui-chart/dist/tui-chart-polyfill';
 
 import Editor from '../editorProxy';
 import csv from './csv';
