@@ -1,6 +1,6 @@
 ## Table of supported options
 
-For more information about options, refer to the [API documentation](https://nhnent.github.io/tui.chart/latest).
+For more information about options, refer to the [API documentation](https://nhn.github.io/tui.chart/latest).
 
 * [`chart` options](#chart-options)
 * [`xAxis` options](#xaxis-options)

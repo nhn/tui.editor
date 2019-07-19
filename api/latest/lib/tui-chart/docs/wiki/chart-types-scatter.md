@@ -53,6 +53,6 @@ A scatter chart is a type of chart that displays values for typically two variab
 tui.chart.scatterChart(container, rawData);
 ```
 
-![Scatter chart](https://cloud.githubusercontent.com/assets/2888775/15538905/123328d2-22ba-11e6-842f-4daa362bf4ac.png)
+![Scatter chart](https://user-images.githubusercontent.com/35218826/36881748-22f279c4-1e13-11e8-8272-a73437e16e14.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html)_

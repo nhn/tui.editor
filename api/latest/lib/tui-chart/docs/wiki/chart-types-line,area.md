@@ -108,9 +108,9 @@ var options = {
 };
 tui.chart.lineChart(container, rawData, options);
 ```
-![Spline Line Chart](https://cloud.githubusercontent.com/assets/2888775/13161387/aed38e1e-d6e0-11e5-84f4-fbead6c6445b.png)
+![Spline Line Chart](https://user-images.githubusercontent.com/35218826/36793813-b9b5a1c0-1ce1-11e8-920b-f73602077433.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example03-02-line-chart-spline.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-02-line-chart-spline.html)_
 
 ***
 
@@ -131,9 +131,10 @@ var options = {
 };
 tui.chart.areaChart(container, rawData, options);
 ```
-![Stacked Area Chart](https://cloud.githubusercontent.com/assets/2888775/13161453/1d87cb5e-d6e1-11e5-82cc-7f1ba612a7a7.png)
+![Stacked Area Chart](https://user-images.githubusercontent.com/35218826/36793845-dce7e31a-1ce1-11e8-9b25-d69c3c7717e5.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example04-02-area-chart-normal-stack.html)_
+
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example04-02-area-chart-normal-stack.html)_
 
 ***
 
@@ -155,9 +156,9 @@ var rawData = {
 tui.chart.areaChart(container, rawData);
 ```
 
-![Range area chart](https://cloud.githubusercontent.com/assets/2888775/14885919/0ea1c926-0d89-11e6-9a91-c7b4bc11b0fc.png)
+![Range area chart](https://user-images.githubusercontent.com/35218826/36793913-1ec6a2c6-1ce2-11e8-91f9-d95320563c3b.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example04-03-area-chart-range-data.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example04-03-area-chart-range-data.html)_
 
 ***
 
@@ -191,7 +192,7 @@ var rawData = {
 ```
 ![coordinate data type line chart](https://github.nhnent.com/storage/user/429/files/95bfd7e6-6b66-11e6-96a6-fe642b96b39a)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example03-03-line-chart-coordinate-data.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-03-line-chart-coordinate-data.html)_
 
 ***
 
@@ -208,9 +209,9 @@ var options = {
 tui.chart.areaChart(container, rawData, options);
 ```
 
-![zoomable](https://cloud.githubusercontent.com/assets/2888775/16506811/04a66cb6-3f60-11e6-985d-31b8c5f2ba30.gif)
+![zoomable](https://user-images.githubusercontent.com/35218826/36794307-55e872ba-1ce3-11e8-9ac0-600cd97c9aba.gif)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example04-04-area-chart-auto-tick-zoomable.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example04-04-area-chart-auto-tick-zoomable.html)_
 
 ***
 
@@ -229,7 +230,7 @@ var options = {
 tui.chart.areaChart(container, rawData, options);
 ```
 
-![tickInterval=auto](https://cloud.githubusercontent.com/assets/2888775/16507456/d2e7fbb8-3f64-11e6-9390-82c3e81fa92e.png)
+![tickInterval=auto](https://user-images.githubusercontent.com/35218826/36879342-97e402aa-1e06-11e8-9aa6-2bd59347b8fa.png)
 
 ***
 
@@ -270,7 +271,8 @@ chart.on('load', function() {
 });
 ```
 
-![dynamic data](https://cloud.githubusercontent.com/assets/2888775/16507586/d6664b36-3f65-11e6-8357-497936e794bc.gif)
+![dynamic data](https://user-images.githubusercontent.com/35218826/36879815-e4b9d3d2-1e08-11e8-8eaf-728d9ca7d63b.gif)
+
 
 And if you use `shifting` option, your graph is will be moving to left.
 
@@ -312,9 +314,9 @@ chart.on('load', function() {
 });
 
 ```
-![shifting](https://cloud.githubusercontent.com/assets/2888775/16507706/df00a3d0-3f66-11e6-90e5-f5ead2ce0338.gif)
+![shifting](https://user-images.githubusercontent.com/35218826/36879927-65094f04-1e09-11e8-8dfb-0c50b64e743a.gif)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)_
 
 ### Set an opacity of series area
 
@@ -330,4 +332,4 @@ var options = {
     }
 };
 ```
-![areaOpacity-v2.10.0](https://user-images.githubusercontent.com/13758710/31540788-8cc90e56-b047-11e7-96fa-2d30173f8fe1.gif)
+![areaOpacity-v2.10.0](https://user-images.githubusercontent.com/35218826/36881637-75fff1d8-1e12-11e8-8ff2-a140093b8a9c.gif)

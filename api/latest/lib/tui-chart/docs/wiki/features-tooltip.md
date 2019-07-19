@@ -24,7 +24,6 @@ tui.chart.barChart(container, data, options);
 ### Tooltip positioning
 
 Using `tooltip.offsetX`, `tooltip.offsetY` option, you can moving a tooltip to four direction like top, bottom, left and right.
-Deprecated `tooltip.position` option.
 
 ##### Example
 
@@ -35,12 +34,6 @@ var options = {
         // Recommended
         offsetX: 10,
         offsetY: -10
-
-        // Deprecated
-        position: {
-            left: 10,
-            top: -10
-        }
     }
 };
 tui.chart.barChart(container, data, options);
@@ -64,9 +57,9 @@ var options = {
 tui.chart.lineChart(container, data, options);
 ```
 
-![Group Tooltip](https://cloud.githubusercontent.com/assets/2888775/12045583/bf466e48-aee9-11e5-9c76-00c3a2a6d687.png)
+![Group Tooltip](https://user-images.githubusercontent.com/35218826/36886301-0d477126-1e2f-11e8-96f5-290966a22530.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example04-02-area-chart-normal-stack.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example04-02-area-chart-normal-stack.html)_
 
 ***
 
@@ -153,26 +146,15 @@ var chart = tui.chart.barChart(data);
 
 chart.on('beforeShowTooltip', function(info) {
     if (info.legendIndex === 0) {
-        // Recommended
         chart.setTooltipOffset({
             x: 20,
             y: -10
-        });
-
-        // Deprecated
-        chart.setTooltipPosition({
-            left: 20,
-            top: -10
         });
     }
 });
 
 chart.on('afterShowTooltip', function(info) {
-    // Recommended
     chart.resetTooltipOffset();
-
-    // Deprecated
-    chart.resetTooltipPosition();
 });
 
 ```

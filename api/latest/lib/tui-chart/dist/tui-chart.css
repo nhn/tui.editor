@@ -1,14 +1,15 @@
 /*!
  * tui-chart
  * @fileoverview tui-chart
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.17.1
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @version 3.7.0
  * @license MIT
- * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue Apr 17 2018 10:21:01 GMT+0900 (KST)"
+ * @link https://github.com/nhn/tui.chart
+ * bundle created at "Tue Apr 23 2019 10:58:50 GMT+0900 (대한민국 표준시)"
  */
 .tui-chart {
   position: relative;
+  font-family: Arial;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -19,7 +20,23 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  line-height: 1;
+}
+.tui-chart svg line,
+.tui-chart svg path,
+.tui-chart svg rect {
+  shape-rendering: crispEdges;
+}
+.tui-chart svg .auto-shape-rendering {
+  shape-rendering: auto;
+}
+.tui-chart .tui-chart-icon {
+  background-color: '#f4f4f4';
+}
+.tui-chart .tui-chart-icon:hover {
+  background-color: '#eeeeee';
+}
+.tui-chart .tui-chart-icon:active {
+  background-color: '#e5e5e5';
 }
 .tui-chart .tui-chart-title {
   position: absolute;
@@ -336,50 +353,36 @@
 .tui-chart .tui-chart-zoom-area {
   z-index: 1500;
   position: absolute;
-  border: 1px solid #cccccc;
-  background-color: #cccccc;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
+  -webkit-border-radius: 1px;
+  border-radius: 1px;
   background-clip: padding-box;
 }
 .tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn {
-  width: 21px;
-  height: 21px;
+  width: 24px;
+  height: 24px;
   display: block;
-  background-color: #fff;
+  background-color: #f4f4f4;
+  border-radius: 1px;
   cursor: pointer;
-  position: relative;
+  margin-top: 5px;
 }
-.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn:first-child {
-  margin-bottom: 1px;
-  -webkit-border-radius: 4px 4px 0 0;
-  border-radius: 4px 4px 0 0;
-  background-clip: padding-box;
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn.zoom-in {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAAHqHuX9AAAADFBMVEX19fX19fVVVVX09PSSNEQ7AAAAAnRSTlO0tU0x4YcAAABCSURBVAjXY6hh+AOGb4D4/weGXx9AJBwhuP//Q/BvKIbx//9FYgPxeyheBaX/Y2A81L/9YGrVKmQelMKioR5E/gEA8IGRuVetr4kAAAAASUVORK5CYII=);
 }
-.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn:last-child {
-  -webkit-border-radius: 0 0 4px 4px;
-  border-radius: 0 0 4px 4px;
-  background-clip: padding-box;
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn.zoom-in:hover {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAAHqHuX9AAAADFBMVEXu7u7u7u5VVVXu7u6LRCi7AAAAAnRSTlO0tU0x4YcAAABCSURBVAjXY6hh+AOGb4D4/weGXx9AJBwhuP//Q/BvKIbx//9FYgPxeyheBaX/Y2A81L/9YGrVKmQelMKioR5E/gEA8IGRuVetr4kAAAAASUVORK5CYII=);
 }
-.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn:hover {
-  background-color: #efefef;
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn.zoom-in:active {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAAHqHuX9AAAADFBMVEXm5ubm5uZVVVXl5eUH/eecAAAAAnRSTlO0tU0x4YcAAABCSURBVAjXY6hh+AOGb4D4/weGXx9AJBwhuP//Q/BvKIbx//9FYgPxeyheBaX/Y2A81L/9YGrVKmQelMKioR5E/gEA8IGRuVetr4kAAAAASUVORK5CYII=);
 }
-.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn > div {
-  font-szie: 0;
-  background-color: #555555;
-  position: absolute;
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn.zoom-out {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAAHqHuX9AAAADFBMVEX19fX19fVVVVX09PSSNEQ7AAAAAnRSTlO0tU0x4YcAAAAuSURBVAjXY6hh+AOH/z8w/PoAIuEIwf3/Hwf+i118FS71/wlTq1YRp7IeRP4BADPMksSlXC3ZAAAAAElFTkSuQmCC);
 }
-.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn > div.horizontal-line {
-  width: 9px;
-  height: 1px;
-  left: 6px;
-  top: 10px;
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn.zoom-out:hover {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAAHqHuX9AAAADFBMVEXu7u7u7u5VVVXu7u6LRCi7AAAAAnRSTlO0tU0x4YcAAAAuSURBVAjXY6hh+AOH/z8w/PoAIuEIwf3/Hwf+i118FS71/wlTq1YRp7IeRP4BADPMksSlXC3ZAAAAAElFTkSuQmCC);
 }
-.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn > div.vertical-line {
-  width: 1px;
-  height: 9px;
-  left: 10px;
-  top: 6px;
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn.zoom-out:active {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAAHqHuX9AAAADFBMVEXm5ubm5uZVVVXl5eUH/eecAAAAAnRSTlO0tU0x4YcAAAAuSURBVAjXY6hh+AOH/z8w/PoAIuEIwf3/Hwf+i118FS71/wlTq1YRp7IeRP4BADPMksSlXC3ZAAAAAElFTkSuQmCC);
 }
 .tui-chart .tui-chart-series-custom-event-area {
   z-index: 1000;
@@ -410,74 +413,103 @@
   position: absolute;
   left: 20px;
   top: 20px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAAGXcA1uAAAAAXNSR0IArs4c6QAAAclJREFUSA21VT2LAjEQnZUFwZ9haWWvtcVhJwpiZSdY+AMEOxs7C8FCsBfERq/QVntbC/0B1iooQs43XkKym+wROAObTN7Mm49kltD1el1dLheBLyWE+JrP54QRAGEpukkBbTabrHSbsfp3YgpkSZOrQdcZToVypVtDVgr4lv4NxXQ6ZdJkMuGVZOG9Xo8PQO6dwZ2Kt7/4rJKKq+xIjKBXstlsaDAYGMwYAVoYYuRyOToejyzL6fM1eEUIguDbi4A6rEXLAm2rNyGMetHvoVwuU6VSMU1k82BFQy0WC9VU1WpVydLOSOl0OlGhUGCPsj31iKyQTKzb7VbU63VxPp/Zc6PREIfDwYgSO9b9fk/j8Zg/M/n3LkawGemYUYOucMneBO+UXJFduHdGLkcu/OMBYq1qywRXv16vCY2Gkc1mqVQqUT6ft5kbWOIdwPFwOKQwDKlWq6ku3u12NJvN6Pl8UqfTSQyUGKDVatH9fqfRaESZTMbI7Ha7UbvdpnQ67WxqEBLvAEeBgYz18Xg8qN/vM4QEut0uAbONxApAwLO6XC4VV75FAF7/MuPFYlHpo8KfAaIE333iEfk6s9l/PgCeElvk/8Bevlc/uNwgcfw7KQUAAAAASUVORK5CYII=);
+  border-radius: 1px;
   font-size: 11px;
-  padding: 5px;
-  border: 1px solid #ccc;
-  background-color: #efefef;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
 }
+.tui-chart .tui-chart-series-custom-event-area .tui-chart-reset-zoom-btn:hover {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAAGgrv1cAAAAM1BMVEXu7u7u7u5VVVVZWVlbW1tcXFxubm59fX2Ojo6enp6rq6u0tLTAwMDU1NTk5OTo6Oju7u5AkNcdAAAAAnRSTlO0tU0x4YcAAACCSURBVCjPtY/BDoQgDERhsCKI+P7/az0IJuqa9bBLQuibmbbBeXAkHLSro94fNeUkdk87acJBvEWeQJCPtDLL8L2nHf8u1kZLqUPMoA5WmaQGJVSGpfcUezX6I/zKKNEslptRFHKtOahcDFMFqLKLEZWBdZTG9bwjSQLm+Q//8A/6BjkPISqrVth/AAAAAElFTkSuQmCC);
+}
+.tui-chart .tui-chart-series-custom-event-area .tui-chart-reset-zoom-btn:active {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAAGgrv1cAAAAM1BMVEXm5ubm5uZVVVVYWFhaWlpcXFxsbGx6enqLi4uampqmpqaurq66urrNzc3c3Nzg4ODl5eUljSS/AAAAAnRSTlO0tU0x4YcAAACCSURBVCjPtY/BDoQgDERhsCKI+P7/az0IJuqa9bBLQuibmbbBeXAkHLSro94fNeUkdk87acJBvEWeQJCPtDLL8L2nHf8u1kZLqUPMoA5WmaQGJVSGpfcUezX6I/zKKNEslptRFHKtOahcDFMFqLKLEZWBdZTG9bwjSQLm+Q//8A/6BjkPISqrVth/AAAAAElFTkSuQmCC);
+}
 .tui-chart .tui-chart-legend-rect {
   margin-top: 2px;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 .tui-chart .tui-chart-legend-rect.line {
-  height: 2px;
-}
-.tui-chart .tui-chart-legend-rect.area,
-.tui-chart .tui-chart-legend-rect.bubble {
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-  filter: alpha(opacity=50);
-  opacity: 0.5;
+  padding: 3px 0;
 }
 .tui-chart .tui-chart-chartExportMenu-area {
-  z-index: 900;
   position: absolute;
   font-family: Verdana;
   margin: 0;
-  padding: 10px 0 0 0;
-  z-index: 5000;
+  z-index: 1001;
 }
 .tui-chart .tui-chart-chartExportMenu-area .tui-chart-chartExportMenu-button {
   position: absolute;
-  width: 26px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   right: 0;
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAAKklEQVQ4EWMsKCj4z0BFwERFs8BGUd1AajtwCJjHOBrLQyCWKHXiCIxlAM/yBv2WsAlAAAAAAElFTkSuQmCC) top left no-repeat;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAAHqHuX9AAAADFBMVEX19fX19fVVVVX09PSSNEQ7AAAAAnRSTlO0tU0x4YcAAAAwSURBVAjXY6hh+AOGb4Dw/weGfx9AJBb0/z8O/BeV/x4HjcDYqH/7ieUhU/Ug8g8ALeuSuXF73FYAAAAASUVORK5CYII=);
+  background-color: #f4f4f4;
   border: 0px;
   font-size: 12px;
   padding: 3px 5px;
   margin: 0;
   cursor: pointer;
 }
+.tui-chart .tui-chart-chartExportMenu-area .tui-chart-chartExportMenu-button:hover {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAAHqHuX9AAAADFBMVEXu7u7u7u5VVVXu7u6LRCi7AAAAAnRSTlO0tU0x4YcAAAAwSURBVAjXY6hh+AOGb4Dw/weGfx9AJBb0/z8O/BeV/x4HjcDYqH/7ieUhU/Ug8g8ALeuSuXF73FYAAAAASUVORK5CYII=);
+}
+.tui-chart .tui-chart-chartExportMenu-area .tui-chart-chartExportMenu-button:active {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAAHqHuX9AAAADFBMVEXm5ubm5uZVVVXl5eUH/eecAAAAAnRSTlO0tU0x4YcAAAAwSURBVAjXY6hh+AOGb4Dw/weGfx9AJBb0/z8O/BeV/x4HjcDYqH/7ieUhU/Ug8g8ALeuSuXF73FYAAAAASUVORK5CYII=);
+}
+.tui-chart .tui-chart-chartExportMenu-area.menu-opened .tui-chart-chartExportMenu-button {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAAGXcA1uAAAAAXNSR0IArs4c6QAAAU5JREFUSA3NVTuOhDAMNSMEDeICnI6CK1AhGqi4Apegmb0RHABBAULaxZl1FJPPDEisNlJix37Pjp0IYJ7n5zRN3zg9XLquAxwPsf4uwkMG5mEbBiM4SoZK01T6rAyrg4WScdQc4zgCThqSsZcHOGn4pERRRKqQ1uRWB6MrG5lbsTlVjYCVYMeGYRBSrQwjaQRn+N15fw2nMnie93WKcKno013SCEVRyM6qOhnlYyIDShOQ/MaisywT/rZtCSelRjhGr+taglHRakAjgo5AtOPQMrzM9tWYwQ63HMlFOH0kVzCT73QJpiAu2/9IsK6r8ZA2uwo2Pm0CLMsCVVVB3/eQJAnkeQ5xHIsvcNM00l6WJQRBQDQmP7pk/PBRQN/3Yds2lpBFPGxuvwNnBX/WIrxMU4/xAGEYHprCt84KOPTa7vY7eOCv5NrZ3rP22M8fyPG11kibO+MAAAAASUVORK5CYII=');
+}
+.tui-chart .tui-chart-chartExportMenu-area.menu-opened .tui-chart-chartExportMenu-button:hover {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAFlXhBdAAAAIVBMVEXu7u7u7u5VVVVZWVlvb2+hoaHV1dXh4eHn5+fo6Oju7u75trgQAAAAAnRSTlO0tU0x4YcAAABlSURBVBjTY5BawLA0AIRWLYChVasYVi1aBaFhuByI06A0RAyFKkqqQqJWoStZiE0QRHktAVMuLmBqsRUyDyqHVR8CEOCsBCMIZ4WT+3InT5jMcicj91XYOKjKgLpXELBHCsFeAACm5rR2c72cZwAAAABJRU5ErkJggg==);
+}
+.tui-chart .tui-chart-chartExportMenu-area.menu-opened .tui-chart-chartExportMenu-button:active {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAFlXhBdAAAAIVBMVEXm5ubm5uZVVVVZWVltbW2dnZ3Ozs7Z2dnf39/g4ODl5eV33AFxAAAAAnRSTlO0tU0x4YcAAABlSURBVBjTY5BawLA0AIRWLYChVasYVi1aBaFhuByI06A0RAyFKkqqQqJWoStZiE0QRHktAVMuLmBqsRUyDyqHVR8CEOCsBCMIZ4WT+3InT5jMcicj91XYOKjKgLpXELBHCsFeAACm5rR2c72cZwAAAABJRU5ErkJggg==);
+}
 .tui-chart .tui-chart-chartExportMenu-area ul {
   display: none;
   position: absolute;
-  top: 30px;
+  top: 28px;
   right: 0;
-  width: 120px;
+  width: 150px;
   background: #fff;
-  border: 0.5px solid #000;
-  font-size: 0.8em;
+  border: 1px solid #bab9ba;
+  font-size: 11px;
   padding: 0;
   margin: 0;
-  box-shadow: 3px 3px 5px #888888;
 }
 .tui-chart .tui-chart-chartExportMenu-area ul > li {
   margin: 0;
-  padding: 7px 3px;
   border-collapse: collapse;
   text-align: center;
   list-style-type: none;
+}
+.tui-chart .tui-chart-chartExportMenu-area ul > li.tui-chart-chartExportMenu-head {
+  padding: 10px;
+  text-align: left;
+  background-color: #f3f3f3;
+  margin: 1px 1px 0 0;
+}
+.tui-chart .tui-chart-chartExportMenu-area ul > li.tui-chart-chartExportMenu-body {
+  display: inline-block;
+  width: 100%;
+  padding: 7px 0;
+}
+.tui-chart .tui-chart-chartExportMenu-area ul > li.tui-chart-chartExportMenu-body > li {
+  padding: 12px 3px;
   line-height: 1;
   cursor: pointer;
+  width: 50%;
+  float: left;
 }
-.tui-chart .tui-chart-chartExportMenu-area ul > li:hover {
-  background-color: #91ade5;
+.tui-chart .tui-chart-chartExportMenu-area ul > li.tui-chart-chartExportMenu-body > li:hover {
+  font-weight: bold;
 }
 .tui-chart .tui-chart-legend-area {
   z-index: 400;
@@ -593,7 +625,7 @@
 }
 .tui-chart .tui-chart-tooltip-area {
   position: absolute;
-  z-index: 500;
+  z-index: 1010;
 }
 .tui-chart .tui-chart-tooltip-area * {
   user-select: none;
@@ -606,50 +638,99 @@
   position: absolute;
   display: none;
   user-select: none;
+  font-size: 12px;
+  font-weight: normal;
+  color: #ffffff;
 }
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip.show {
   display: block;
 }
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip {
-  padding: 4px 0;
-  font-size: 12px;
-  min-width: 100px;
-  color: #fff;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   background-clip: padding-box;
-  background-color: rgba(0, 0, 0, 0.7);
-  background-color: #555 \9;
+  background-color: #5f5f5f;
+  background-color: rgba(85, 85, 85, 0.95);
 }
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > * {
-  padding: 2px 7px;
-  text-align: center;
+  text-align: left;
   white-space: nowrap;
 }
-.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > :first-child {
-  backgound-color: #fff;
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > .tui-chart-tooltip-head {
+  padding: 8px 15px;
+  border-bottom: 1px solid #565656;
+  font-size: 13px;
   font-weight: bold;
+  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: separate;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > table tr {
+  padding-bottom: 5px;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > .tui-chart-tooltip-body {
+  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 11px 15px;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > .tui-chart-tooltip-body span {
+  display: inline-block;
+  height: 10px;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > .tui-chart-tooltip-body span.tui-chart-legend-rect {
+  width: 10px;
+  margin-right: 8px;
+  vertical-align: text-top;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > .tui-chart-tooltip-body span.tui-chart-legend-rect.line {
+  padding: 0;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > .tui-chart-tooltip-body .tui-chart-tooltip-value {
+  padding-left: 44px;
+  text-align: right;
 }
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > * {
   text-align: left;
   position: relative;
-  padding-left: 20px;
+  padding-left: 18px;
   padding-top: 4px;
   padding-bottom: 4px;
 }
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > table {
+  border-spacing: 0;
+  border-collapse: separate;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > table tr {
+  padding-bottom: 5px;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > table tr:last-child {
+  padding-bottom: 0;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > .tui-chart-tooltip-body {
+  padding: 11px 15px;
+  font-size: 12px;
+  font-weight: lighter;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > .tui-chart-tooltip-body > span {
+  display: inline-block;
+}
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > .tui-chart-tooltip-body .tui-chart-tooltip-value {
+  padding-left: 44px;
+  text-align: right;
+}
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip .tui-chart-legend-rect {
-  position: absolute;
-  left: 7px;
-  top: 2px;
+  position: relative;
+  left: 0px;
+  top: -2px;
+  margin-right: 5px;
 }
-.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip .tui-chart-legend-rect.line {
-  top: 7px;
-}
-.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > :first-child {
-  padding-left: 7px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  text-align: center;
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > .tui-chart-tooltip-head {
+  padding: 8px 15px;
+  text-align: left;
 }
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > .tui-chart-tooltip-type {
   padding-left: 7px;
@@ -674,6 +755,15 @@
 }
 .tui-chart.tui-map-chart .tui-chart-tooltip-area .tui-chart-default-tooltip > :first-child {
   font-weight: normal;
+}
+.tui-chart.tui-treemap-chart .tui-chart-reset-zoom-btn {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAFlXhBdAAAAMFBMVEX19fX19fVVVVVbW1tgYGBkZGRvb2+CgoKNjY2QkJC4uLi5ubnZ2dnj4+Pu7u709PQ6Nl8lAAAAAnRSTlO0tU0x4YcAAABxSURBVBjTY5D/wPDtA8N/GPoEJP//Z/j/Ph5CI+O/QKwB5yNTv5WU7oN53/sx5EDgIzZBIPVHH0x9VlIBC87/BJG7BKaUYv//x6EPCRDgvETiLFZSUu2Fcf4k/f9b1I+k51I8jPNJSUnlPgn2yCPYHwBOuQ5rod0HXAAAAABJRU5ErkJggg==);
+}
+.tui-chart.tui-treemap-chart .tui-chart-reset-zoom-btn:hover {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAFlXhBdAAAAMFBMVEXu7u7u7u5VVVVbW1tfX19kZGRubm6BgYGLi4uOjo60tLS1tbXU1NTd3d3o6Oju7u6bzfGZAAAAAnRSTlO0tU0x4YcAAABxSURBVBjTY5D/wPDtA8N/GPoEJP//Z/j/Ph5CI+O/QKwB5yNTv5WU7oN53/sx5EDgIzZBIPVHH0x9VlIBC87/BJG7BKaUYv//x6EPCRDgvETiLFZSUu2Fcf4k/f9b1I+k51I8jPNJSUnlPgn2yCPYHwBOuQ5rod0HXAAAAABJRU5ErkJggg==);
+}
+.tui-chart.tui-treemap-chart .tui-chart-reset-zoom-btn:active {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAFlXhBdAAAAMFBMVEXm5ubm5uZVVVVaWlpfX19jY2NsbGx+fn6Hh4eLi4uurq6vr6/Nzc3V1dXg4ODl5eWoWcyYAAAAAnRSTlO0tU0x4YcAAABxSURBVBjTY5D/wPDtA8N/GPoEJP//Z/j/Ph5CI+O/QKwB5yNTv5WU7oN53/sx5EDgIzZBIPVHH0x9VlIBC87/BJG7BKaUYv//x6EPCRDgvETiLFZSUu2Fcf4k/f9b1I+k51I8jPNJSUnlPgn2yCPYHwBOuQ5rod0HXAAAAABJRU5ErkJggg==);
 }
 .tui-chart-size-check-element {
   clear: both;
@@ -701,4 +791,7 @@
 :root .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label.tui-chart-xaxis-rotation65 span,
 :root .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label.tui-chart-xaxis-rotation85 span {
   filter: none \0;
+}
+.box-shadow {
+  filter: shadow(0 4px 4px);
 }

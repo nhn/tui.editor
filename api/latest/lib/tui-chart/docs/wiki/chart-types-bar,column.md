@@ -86,10 +86,9 @@ var rawData = {
 };
 tui.chart.barChart(container, rawData);
 ```
+![Range bar chart](https://user-images.githubusercontent.com/35218826/36792568-3f34ed14-1cde-11e8-8175-d9f36bccc737.png)
 
-![Range bar chart](https://cloud.githubusercontent.com/assets/2888775/14136752/66d94eee-f69f-11e5-9e40-5b58c071e74d.png)
-
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example01-06-bar-chart-range-data.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example01-06-bar-chart-range-data.html)_
 
 
 ***
@@ -114,9 +113,9 @@ var options = {
 tui.chart.barChart(container, rawData, options);
 ```
 
-![Stacked bar chart of normal type](https://cloud.githubusercontent.com/assets/2888775/13161327/60cfc75a-d6e0-11e5-9771-9c625c39d9eb.png)
+![Stacked bar chart of normal type](https://user-images.githubusercontent.com/35218826/36792893-375540f2-1cdf-11e8-9b34-23f0ff2967c3.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example01-03-bar-chart-normal-stack.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example01-03-bar-chart-normal-stack.html)_
 
 
 #### Stacked column chart of percent type
@@ -134,9 +133,10 @@ var options = {
 tui.chart.columnChart(container, rawData, options);
 ```
 
-![Stacked bar chart of percent type](https://cloud.githubusercontent.com/assets/2888775/13161350/7d84b504-d6e0-11e5-854f-f4672fdb4c36.png)
+![Stacked bar chart of percent type](https://user-images.githubusercontent.com/35218826/36793002-85dca10c-1cdf-11e8-9f9e-d80442835648.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example02-03-column-chart-percent-stack.html)_
+
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example02-03-column-chart-percent-stack.html)_
 
 #### Group stacked column chart
 
@@ -178,9 +178,9 @@ var options = {
 tui.chart.columnChart(container, rawData, options);
 ```
 
-![Group stacked bar chart](https://cloud.githubusercontent.com/assets/2888775/14137076/143d9bde-f6a1-11e5-818a-da6b24ad8031.png)
+![Group stacked bar chart](https://user-images.githubusercontent.com/35218826/36793166-fcf360a0-1cdf-11e8-9f56-2f863dbb4ba8.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example02-04-column-chart-group-stack.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example02-04-column-chart-group-stack.html)_
 
 ***
 
@@ -225,9 +225,9 @@ var options = {
 };
 tui.chart.barChart(container, rawData, options);
 ```
-![Diverging Bar Chart](https://cloud.githubusercontent.com/assets/2888775/13161827/9dab5ef2-d6e3-11e5-9716-fe54b5acb864.png)
+![Diverging Bar Chart](https://user-images.githubusercontent.com/35218826/36793270-512f192a-1ce0-11e8-8d35-1c0f22498c60.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example01-04-bar-chart-diverging.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example01-04-bar-chart-diverging.html)_
 
 #### Diverging bar chart, which yAxis is placed at the center.
 If you set single yAxis option and setting `yAxis.align` to 'center', you can create diverging chart, which yAxis is placed at the center.
@@ -261,9 +261,9 @@ var options = {
 };
 tui.chart.barChart(container, rawData, options);
 ```
-![Single yAxis Diverging Bar Chart](https://cloud.githubusercontent.com/assets/2888775/14136037/bac25112-f69b-11e5-8df1-dcd75bf9356c.png)
+![Single yAxis Diverging Bar Chart](https://user-images.githubusercontent.com/35218826/36793344-8834abd8-1ce0-11e8-9163-8ab11a60a35b.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example01-05-bar-chart-diverging-and-center-yaxis.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example01-05-bar-chart-diverging-and-center-yaxis.html)_
 
 #### Stacked diverging column chart
 The stacked diverging chart is groupings based on the stack properties of `data.series` elements,
@@ -307,6 +307,6 @@ var options = {
 };
 tui.chart.columnChart(container, rawData, options);
 ```
-![Diverging Stacked Column Chart](https://cloud.githubusercontent.com/assets/2888775/13162206/95824e7c-d6e6-11e5-8b6b-3b729b8a9fe7.png)
+![Diverging Stacked Column Chart](https://user-images.githubusercontent.com/35218826/36793434-bf0bfd3c-1ce0-11e8-91cd-426eb4e7da81.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example02-05-column-chart-diverging-and-stacked.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example02-05-column-chart-diverging-and-stacked.html)_

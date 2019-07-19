@@ -64,7 +64,7 @@ tui.chart.radialChart(container, rawData, options);
 ![radialChart with area or line series](https://cloud.githubusercontent.com/assets/7088720/21558376/3dfe5f36-ce7c-11e6-812a-0698138a489d.gif)
 
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html)_
 
 
 ### Creating radial chart without series dot
@@ -91,7 +91,7 @@ tui.chart.radialChart(container, rawData, options);
 
 
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html)_
 
 ***
 
@@ -118,4 +118,4 @@ tui.chart.radialChart(container, rawData, options);
 
 
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic.html)_

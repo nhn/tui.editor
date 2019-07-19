@@ -95,4 +95,4 @@ tui.chart.comboChart(container, rawData);
 ```
 ![Pie & Donut Combo Chart](https://cloud.githubusercontent.com/assets/2888775/15540328/a7c51ac0-22c1-11e6-8727-224089a3f762.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut.html)_

@@ -34,6 +34,6 @@ A heatmap chart is a graphical representation of data where the individual value
 tui.chart.heatmapChart(container, rawData);
 ```
 
-![Heatmap chart](https://cloud.githubusercontent.com/assets/2888775/16507839/0e678a98-3f68-11e6-8e8e-1713a6ba0420.gif)
+![Heatmap chart](https://user-images.githubusercontent.com/35218826/36883668-5668e0d4-1e1f-11e8-865e-20bef4598801.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic.html)_

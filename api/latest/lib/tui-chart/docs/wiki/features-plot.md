@@ -68,9 +68,9 @@ var options = {
 };
 ```
 
-![image](https://github.nhnent.com/storage/user/429/files/50e96390-6b6a-11e6-8499-019975f8ada3)
+![image](https://user-images.githubusercontent.com/35218826/36886584-8a6df2e6-1e30-11e8-9028-0084bebb7a72.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example03-03-line-chart-coordinate-data.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-03-line-chart-coordinate-data.html)_
 
 #### Using options - Assign the same color and opacity to multiple ranges
 Put range informations into an array.
@@ -107,7 +107,7 @@ chart.addPlotLine({
 });
 ```
 
-![image](https://github.nhnent.com/storage/user/429/files/86eb0430-6b6a-11e6-9295-0358be2f37a1)
+![image](https://user-images.githubusercontent.com/35218826/36886690-f0dc2a8e-1e30-11e8-810e-42933888f925.png)
 
 ### Merge overlapping areas in the same plotBand
 When the background color is transparent, the overlapping areas are sequentially displayed.(Yellow Band)  
@@ -138,4 +138,4 @@ var options.plot = {
 };
 ```
 
-![image](https://github.nhnent.com/storage/user/429/files/86eb0430-6b6a-11e6-9295-0358be2f37a1)
+![image](https://user-images.githubusercontent.com/35218826/36886927-0cbe8c1e-1e32-11e8-9d04-bc7f9fd0e4bb.png)

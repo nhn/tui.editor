@@ -95,7 +95,7 @@ tui.chart.comboChart(container, rawData);
 ```
 ![image](https://cloud.githubusercontent.com/assets/7088720/20824269/9af12e9c-b89e-11e6-9e8b-1a617eebba86.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter.html)_
 
 ***
 

@@ -1,7 +1,7 @@
 {
   "name": "tui-chart",
   "authors": [
-    "NHN Ent. FE Development Lab <dl_javascript@nhnent.com>"
+    "NHN. FE Development Lab <dl_javascript@nhn.com>"
   ],
   "license": "MIT",
   "main": [
@@ -24,8 +24,8 @@
     "package.json"
   ],
   "dependencies": {
-    "raphael": "https://github.com/nhnent/raphael.git#2.2.0b",
-    "tui-code-snippet": "^1.2.5"
+    "raphael": "https://github.com/nhn/raphael.git#2.2.0-c",
+    "tui-code-snippet": "^1.5.0"
   },
   "devDependencies": {
     "codemirror": "5.24.0"

@@ -55,9 +55,9 @@ var rawData = {
 };
 tui.chart.pieChart(container, rawData);
 ```
-![Pie Chart](https://cloud.githubusercontent.com/assets/2888775/13131333/2390345e-d62e-11e5-892b-03fb7a8cf5f2.png)
+![Pie Chart](https://user-images.githubusercontent.com/35218826/36881907-21f7af84-1e14-11e8-8d50-755e5f4674d2.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)_
 
 ***
 
@@ -80,9 +80,9 @@ var options = {
 };
 tui.chart.pieChart(container, rawData, options);
 ```
-![Center Legend Pie Chart](https://cloud.githubusercontent.com/assets/2888775/13131315/03314216-d62e-11e5-90f2-4e37ac2ec11c.png)
+![Center Legend Pie Chart](https://user-images.githubusercontent.com/35218826/36882119-5ccf1182-1e15-11e8-9bcf-c1d30e1a8ca0.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example07-02-pie-chart-center-legend.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-02-pie-chart-center-legend.html)_
 
 ***
 
@@ -104,9 +104,9 @@ var options = {
 };
 tui.chart.pieChart(container, rawData, options);
 ```
-![Outer Legend Pie Chart](https://cloud.githubusercontent.com/assets/2888775/13131343/387cb7f2-d62e-11e5-8791-a71ab0bed651.png)
+![Outer Legend Pie Chart](https://user-images.githubusercontent.com/35218826/36882140-81a3815a-1e15-11e8-890a-ff89c8b70dcb.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example07-03-pie-chart-outer-legend.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-03-pie-chart-outer-legend.html)_
 
 ***
 
@@ -127,9 +127,10 @@ var options = {
 tui.chart.pieChart(container, rawData, options);
 ```
 
-![Donut Chart](https://cloud.githubusercontent.com/assets/2888775/15539508/e81745fc-22bd-11e6-9631-21e7a834ecb4.png)
+![Donut Chart](https://user-images.githubusercontent.com/35218826/36882216-cc4f9a2c-1e15-11e8-9e25-04f351daef4e.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut.html)_
+
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut.html)_
 
 ***
 
@@ -150,7 +151,8 @@ var options = {
 tui.chart.pieChart(container, rawData, options);
 ```
 
-![radiusRatio option](https://cloud.githubusercontent.com/assets/2888775/15539764/4246cb46-22bf-11e6-8c25-1ed9bff44bca.png)
+![radiusRatio option](https://user-images.githubusercontent.com/35218826/36882295-5182fca2-1e16-11e8-9724-ba94b2901d6e.png)
+
 
 ***
 
@@ -181,6 +183,6 @@ var options = {
 tui.chart.pieChart(container, rawData, options);
 ```
 
-![Semi Circle Donut Chart](https://cloud.githubusercontent.com/assets/2888775/15539472/b105dd62-22bd-11e6-8598-97d446035f60.png)
+![Semi Circle Donut Chart](https://user-images.githubusercontent.com/35218826/36882331-82acfd1e-1e16-11e8-8bb6-351a91487d4e.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example07-05-pie-chart-semi-circle-donut.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-05-pie-chart-semi-circle-donut.html)_

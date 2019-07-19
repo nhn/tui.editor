@@ -20,9 +20,9 @@ var options = {
 tui.chart.barChart(container, data, options);
 ```
 
-![Chart label](https://cloud.githubusercontent.com/assets/2888775/12045566/9480963e-aee9-11e5-9fa8-8ae565bd43a8.png)
+![Chart label](https://user-images.githubusercontent.com/35218826/36885318-96340ff4-1e29-11e8-9fee-ddebfb2f281d.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example01-02-bar-chart-negative-data.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example01-02-bar-chart-negative-data.html)_
 
 ***
 
@@ -66,9 +66,9 @@ var options = {
 tui.chart.lineChart(container, data, options);
 ```
 
-![Line Chart](https://cloud.githubusercontent.com/assets/2888775/12045582/bf4638e2-aee9-11e5-9e62-d5e66b842165.png)
+![Line Chart](https://user-images.githubusercontent.com/35218826/36885376-e3699870-1e29-11e8-8418-43001d491ff9.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)_
 
 ***
 
@@ -112,9 +112,9 @@ var options = {
 tui.chart.lineChart(container, data, options);
 ```
 
-![Line Chart](https://cloud.githubusercontent.com/assets/2888775/12045582/bf4638e2-aee9-11e5-9e62-d5e66b842165.png)
+![Line Chart](https://user-images.githubusercontent.com/35218826/36885376-e3699870-1e29-11e8-8418-43001d491ff9.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)_
 
 ***
 
@@ -195,7 +195,7 @@ var rawData = {
         
 ```
 
-![2016-12-30 11 56 59](https://cloud.githubusercontent.com/assets/7088720/21559011/23b936ea-ce87-11e6-832f-9a0d60985d3a.png)
+![2018-03-02 3 02 27](https://user-images.githubusercontent.com/35218826/36885528-ced3554e-1e2a-11e8-8fc1-3cbfbb407357.png)
 
 
 ***
@@ -237,4 +237,4 @@ You can use `null` in series data to express empty data.
 }
         
 ```
-![2016-12-30 12 07 33](https://cloud.githubusercontent.com/assets/7088720/21559071/953cd906-ce88-11e6-89d4-0fba34f82a84.png)
+![2018-03-02 3 06 30](https://user-images.githubusercontent.com/35218826/36885594-5ae9d774-1e2b-11e8-89b6-133b3b51f22d.png)

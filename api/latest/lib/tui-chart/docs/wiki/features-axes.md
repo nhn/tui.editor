@@ -128,30 +128,10 @@ var options = {
 tui.chart.columnChart(container, data, options);
 ```
 
-![rotateLabel option](https://cloud.githubusercontent.com/assets/2888775/15560313/649adae6-2325-11e6-89d9-fcae657277b2.png)
+![rotateLabel option](https://user-images.githubusercontent.com/35218826/36885740-1e2a9c0a-1e2c-11e8-9546-d10281d4895d.png)
 
 ***
 
-### How to not rotated title of y axis?
-
-Title of y axis is rotated, when rendering.<br>
-If you do not want rotating title of y axis, you can use `yAxis.rotateTitle` option.
-
-##### Example
-
-``` javascript
-//...
-var options = {
-    yAxis: {
-        rotateTitle: false
-    }
-};
-tui.chart.columnChart(container, data, options);
-```
-
-![rotateTitle option](https://cloud.githubusercontent.com/assets/2888775/15560163/ea8343d4-2323-11e6-9f30-1611bd50686a.png)
-
-***
 
 ### How to formatting label to date format
 If you want formatting label to date format, you can use `type='datetime'` and `dateFormat` options.
@@ -183,15 +163,18 @@ var options = {
 |meridiem(AM,PM)|A / a|
 
 a. before using format option
-![image](https://github.nhnent.com/storage/user/429/files/b23a5250-6b68-11e6-9e9f-0a24fe7eb99a)
+
+![image](https://user-images.githubusercontent.com/35218826/36885888-06a6bc52-1e2d-11e8-8949-c036c3b377f9.png)
 
 b. `dateFormat='MMM'`
-![image](https://github.nhnent.com/storage/user/429/files/ce25b20c-6b68-11e6-8b5f-2074654e11fd)
+
+![image](https://user-images.githubusercontent.com/35218826/36885998-7851aa2e-1e2d-11e8-8264-77ceca32dcbb.png)
 
 c. `dateFormat='YYYY.MM`
-![image](https://github.nhnent.com/storage/user/429/files/038af6be-6b96-11e6-83d2-c85ce94f2177)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)_
+![image](https://user-images.githubusercontent.com/35218826/36886041-a3783d44-1e2d-11e8-9995-91ad8097dcdb.png)
+
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)_
 ***
 
 ### How to define distance between the axis and the label?

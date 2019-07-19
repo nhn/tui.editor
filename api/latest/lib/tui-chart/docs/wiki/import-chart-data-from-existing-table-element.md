@@ -140,11 +140,11 @@ tui.chart.barChart(container, data);
 
 - Bar chart
 
-![2016-12-30 2 51 24](https://cloud.githubusercontent.com/assets/7088720/21560253/7826ddf0-ce9f-11e6-81f5-a69ec693eb35.png)
+![2018-03-02 4 06 00](https://user-images.githubusercontent.com/35218826/36887292-e4ea2052-1e33-11e8-8457-20271a6f504c.png)
 
 
 - Line chart
 
-![2016-12-30 2 49 41](https://cloud.githubusercontent.com/assets/7088720/21560242/41070566-ce9f-11e6-8fe1-5b7c5f828b40.png)
+![2018-03-02 4 06 22](https://user-images.githubusercontent.com/35218826/36887295-e6c5c21e-1e33-11e8-8e33-40cb1fd1dda8.png)
 
 

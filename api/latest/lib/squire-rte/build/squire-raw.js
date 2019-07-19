@@ -728,7 +728,9 @@ function mergeContainers ( node, root ) {
         return;
     }
 
-    if ( prev && areAlike( prev, node ) ) {
+    if ( prev && areAlike( prev, node ) &&
+        prev.isContentEditable && node.isContentEditable
+    ) {
         if ( !isContainer( prev ) ) {
             if ( isListItem ) {
                 block = createElement( doc, 'DIV' );
@@ -1627,6 +1629,9 @@ var keyHandlers = {
             if ( previous ) {
                 // If not editable, just delete whole block.
                 if ( !previous.isContentEditable ) {
+                    while ( !previous.parentNode.isContentEditable ) {
+                        previous = previous.parentNode;
+                    }
                     detach( previous );
                     return;
                 }
@@ -1694,6 +1699,9 @@ var keyHandlers = {
             if ( next ) {
                 // If not editable, just delete whole block.
                 if ( !next.isContentEditable ) {
+                    while ( !next.parentNode.isContentEditable ) {
+                        next = next.parentNode;
+                    }
                     detach( next );
                     return;
                 }
