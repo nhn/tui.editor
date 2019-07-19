@@ -83,7 +83,7 @@
 }
 
 .te-md-container .te-preview .tui-editor-contents {
-    padding-top: 11px;
+    padding-top: 8px;
 }
 
 .tui-editor .te-preview-style-tab>.te-editor,
@@ -177,8 +177,8 @@
 }
 
 .tui-editor-defaultUI .CodeMirror-lines {
-    padding-top: 13px;
-    padding-bottom: 13px;
+    padding-top: 18px;
+    padding-bottom: 18px;
 }
 
 .tui-editor-defaultUI .CodeMirror-line {
@@ -703,8 +703,9 @@
     background: #fff;
     border: 1px solid #efefef;
     position: absolute;
-    bottom: 141px;
+    bottom: 135px;
     right: 10px;
+    color: black;
 }
 
 .tui-popup-color .tui-colorpicker-container .tui-colorpicker-palette-hex {
@@ -928,10 +929,6 @@ only screen and (                min-resolution: 2dppx) {
 }
 .tui-colorpicker-svg-huebar {
     border: 1px solid #ebebeb;
-}
-
-.CodeMirror-sizer {
-    margin-top: 6px;
 }
 
 .CodeMirror .cm-header {

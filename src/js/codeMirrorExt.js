@@ -113,6 +113,7 @@ class CodeMirrorExt {
     if (cursorToEnd) {
       this.moveCursorToEnd();
     }
+    this.cm.doc.clearHistory();
     this.cm.refresh();
   }
 
@@ -122,7 +123,7 @@ class CodeMirrorExt {
    * @returns {string} - codeMirror text value
    */
   getValue() {
-    return this.cm.getValue('\n');
+    return this.cm.getValue('\n').replace(/<br>\n/g, '<br>');
   }
 
   /**

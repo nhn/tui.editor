@@ -7,7 +7,8 @@ import util from 'tui-code-snippet';
 import domUtils from './domUtils';
 const isIE11 = util.browser.msie && util.browser.version === 11;
 const isWindowChrome = (navigator.appVersion.indexOf('Win') !== -1) && util.browser.chrome;
-const isNeedOffsetFix = isIE11 || isWindowChrome;
+const isWindows10 = /Windows (NT )?10/g.test(navigator.appVersion);
+const isNeedOffsetFix = isIE11 || (isWindowChrome && !isWindows10);
 
 /**
  * Class WwTextObject

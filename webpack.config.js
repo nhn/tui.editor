@@ -100,7 +100,7 @@ const defaultConfigs = Array(isDevServer ? 1 : 5).fill(0).map(() => {
         amd: 'tui-code-snippet',
         root: ['tui', 'util']
       },
-      'tui-chart': {
+      'tui-chart/dist/tui-chart-polyfill': {
         commonjs: 'tui-chart',
         commonjs2: 'tui-chart',
         amd: 'tui-chart',
@@ -270,8 +270,8 @@ if (isDevServer) {
 
   // Build with Deps
   defaultConfigs[4].entry = {
-    'Editor-full': ENTRY_MAIN,
-    'Viewer-full': ENTRY_VIEWER
+    'Editor-full': ENTRY_MAIN_ALL,
+    'Viewer-full': ENTRY_VIEWER_ALL
   };
   defaultConfigs[4].externals.length = 0;
   defaultConfigs[4].output.library = NAME_SPACE;

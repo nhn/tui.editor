@@ -93,7 +93,7 @@ describe('Italic', () => {
 
     wwe.setValue('<b>line</b>');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.get$Body().children()[0].firstChild);
     wwe.getEditor().setSelection(range);
 
     Italic.exec(wwe);

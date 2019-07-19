@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>0. Editor with extensions</title>
+    <title>Placeholder TEST</title>
     <link rel="stylesheet" href="./explain.css">
   </head>
   <body>
@@ -51,54 +51,13 @@
       <div id="editSection"></div>
     </div>
     <script class="code-js">
-      var content = [
-        '| @cols=2:merged |',
-        '| --- | --- |',
-        '| table | table |',
-        '```uml',
-        'partition Conductor {',
-        '  (*) --> "Climbs on Platform"',
-        '  --> === S1 ===',
-        '  --> Bows',
-        '}',
-        '',
-        'partition Audience #LightSkyBlue {',
-        '  === S1 === --> Applauds',
-        '}',
-        '',
-        'partition Conductor {',
-        '  Bows --> === S2 ===',
-        '  --> WavesArmes',
-        '  Applauds --> === S2 ===',
-        '}',
-        '',
-        'partition Orchestra #CCCCEE {',
-        '  WavesArmes --> Introduction',
-        '  --> "Play music"',
-        '}',
-        '```',
-        '```chart',
-        ',category1,category2',
-        'Jan,21,23',
-        'Feb,31,17',
-        '',
-        'type: column',
-        'title: Monthly Revenue',
-        'x.title: Amount',
-        'y.title: Month',
-        'y.min: 1',
-        'y.max: 40',
-        'y.suffix: $',
-        '```'
-      ].join('\n');
-
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
-        previewStyle: 'vertical',
+        previewStyle: 'tab',
         height: '400px',
         initialEditType: 'markdown',
+        placeholder: 'text input...',
         useCommandShortcut: true,
-        initialValue: content,
         exts: [
           {
             name: 'chart',

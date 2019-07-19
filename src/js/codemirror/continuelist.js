@@ -32,7 +32,17 @@ CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
   var ranges = cm.listSelections(), replacements = [];
   for (var i = 0; i < ranges.length; i++) {
     var pos = ranges[i].head;
+
+    // If we're not in Markdown mode, fall back to normal newlineAndIndent
     var eolState = cm.getStateAfter(pos.line);
+    var inner = CodeMirror.innerMode(cm.getMode(), eolState);
+    if (inner.mode.name !== "markdown") {
+      cm.execCommand("newlineAndIndent");
+      return;
+    } else {
+      eolState = inner.state;
+    }
+
     var inList = eolState.list !== false;
     var inQuote = eolState.quote !== 0;
 

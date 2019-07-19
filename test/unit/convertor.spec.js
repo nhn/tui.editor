@@ -330,4 +330,20 @@ describe('Convertor', () => {
       expect(convertor.toMarkdown(html)).toEqual(markdown);
     });
   });
+
+  describe('should not insert data-tomark-pass', () => {
+    it('when <> include korean', () => {
+      const markdown = '<AS 안내>';
+      const html = '<p>&lt;AS 안내&gt;</p>';
+
+      expect(convertor.toHTML(markdown).replace('\n', '')).toEqual(html);
+    });
+
+    it('when < start with backslash', () => {
+      const markdown = '\\<AS>';
+      const html = '<p>&lt;AS&gt;</p>';
+
+      expect(convertor.toHTML(markdown).replace('\n', '')).toEqual(html);
+    });
+  });
 });

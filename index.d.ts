@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Editor v1.4.3
+// Type definitions for TOAST UI Editor v1.4.4
 // TypeScript Version: 3.2.2
 
 /// <reference types="jquery" />
@@ -51,6 +51,7 @@ declare namespace tuiEditor {
     exts?: string[];
     customConvertor?: IConvertor;
     placeholder?: string;
+    viewer?: boolean
   }
 
   interface IViewerOptions {
