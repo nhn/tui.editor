@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.3
+ * @version 1.4.4
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -1111,10 +1111,178 @@ var mergeNode = function mergeNode(node, targetNode) {
     _tuiCodeSnippet2.default.forEachArray(node.childNodes, function () {
       targetNode.appendChild(node.firstChild);
     });
+
+    targetNode.normalize();
   }
 
   if (node.parentNode) {
     node.parentNode.removeChild(node);
+  }
+};
+
+/**
+ * Create hr that is not contenteditable
+ * @returns {node} hr is wraped div
+ * @ignore
+ */
+var createHorizontalRule = function createHorizontalRule() {
+  var div = document.createElement('div');
+  var hr = document.createElement('hr');
+
+  div.setAttribute('contenteditable', false);
+  hr.setAttribute('contenteditable', false);
+
+  div.appendChild(hr);
+
+  return div;
+};
+
+/**
+ * Create Empty Line
+ * @returns {node} <div><br></div>
+ * @private
+ */
+var createEmptyLine = function createEmptyLine() {
+  var div = document.createElement('div');
+  div.appendChild(document.createElement('br'));
+
+  return div;
+};
+
+/**
+ * Find same tagName child node and change wrapping order.
+ * For example, if below node need to optimize 'B' tag.
+ * <i><s><b>test</b></s></i>
+ * should be changed tag's order.
+ * <b><i><s>test</s></i></b>
+ * @param {node} node
+ * @param {string} tagName
+ * @returns {node}
+ * @private
+ */
+var changeTagOrder = function changeTagOrder(node, tagName) {
+  if (node.nodeName !== 'SPAN') {
+    var parentNode = node.parentNode;
+
+    var tempNode = node;
+
+    while (tempNode.childNodes && tempNode.childNodes.length === 1 && !isTextNode(tempNode.firstChild)) {
+      tempNode = tempNode.firstChild;
+
+      if (tempNode.nodeName === 'SPAN') {
+        break;
+      }
+
+      if (tempNode.nodeName === tagName) {
+        var wrapper = document.createElement(tagName);
+
+        mergeNode(tempNode, tempNode.parentNode);
+        parentNode.replaceChild(wrapper, node);
+        wrapper.appendChild(node);
+
+        return wrapper;
+      }
+    }
+  }
+
+  return node;
+};
+
+/**
+ * Find same tagName nodes and merge from startNode to endNode.
+ * @param {node} startNode
+ * @param {node} endNode
+ * @param {string} tagName
+ * @returns {node}
+ * @private
+ */
+var mergeSameNodes = function mergeSameNodes(startNode, endNode, tagName) {
+  var startBlockNode = changeTagOrder(startNode, tagName);
+
+  if (startBlockNode.nodeName === tagName) {
+    var endBlockNode = changeTagOrder(endNode, tagName);
+    var mergeTargetNode = startBlockNode;
+    var nextNode = startBlockNode.nextSibling;
+
+    while (nextNode) {
+      var tempNext = nextNode.nextSibling;
+
+      nextNode = changeTagOrder(nextNode, tagName);
+
+      if (nextNode.nodeName === tagName) {
+        // eslint-disable-next-line max-depth
+        if (mergeTargetNode) {
+          mergeNode(nextNode, mergeTargetNode);
+        } else {
+          mergeTargetNode = nextNode;
+        }
+      } else {
+        mergeTargetNode = null;
+      }
+
+      if (nextNode === endBlockNode) {
+        break;
+      }
+
+      nextNode = tempNext;
+    }
+  }
+};
+
+/**
+ * Find same tagName nodes in range and merge nodes.
+ * For example range is like this
+ * <s><b>AAA</b></s><b>BBB</b>
+ * nodes is changed below
+ * <b><s>AAA</s>BBB</b>
+ * @param {range} range
+ * @param {string} tagName
+ * @private
+ */
+var optimizeRange = function optimizeRange(range, tagName) {
+  var collapsed = range.collapsed,
+      commonAncestorContainer = range.commonAncestorContainer,
+      startContainer = range.startContainer,
+      endContainer = range.endContainer;
+
+
+  if (!collapsed) {
+    var optimizedNode = null;
+
+    if (startContainer !== endContainer) {
+      mergeSameNodes(getParentUntil(startContainer, commonAncestorContainer), getParentUntil(endContainer, commonAncestorContainer), tagName);
+
+      optimizedNode = commonAncestorContainer;
+    } else if (isTextNode(startContainer)) {
+      optimizedNode = startContainer.parentNode;
+    }
+
+    if (optimizedNode && optimizedNode.nodeName === tagName) {
+      var _optimizedNode = optimizedNode,
+          previousSibling = _optimizedNode.previousSibling;
+
+      var tempNode = void 0;
+
+      if (previousSibling) {
+        tempNode = changeTagOrder(previousSibling);
+
+        if (tempNode.nodeName === tagName) {
+          mergeNode(optimizedNode, tempNode);
+        }
+      }
+
+      var _optimizedNode2 = optimizedNode,
+          nextSibling = _optimizedNode2.nextSibling;
+
+
+      if (nextSibling) {
+        tempNode = changeTagOrder(nextSibling);
+
+        if (tempNode.nodeName === tagName) {
+          mergeNode(tempNode, optimizedNode);
+        }
+      }
+    }
   }
 };
 
@@ -1150,7 +1318,12 @@ exports.default = {
   isListNode: isListNode,
   isFirstListItem: isFirstListItem,
   isFirstLevelListItem: isFirstLevelListItem,
-  mergeNode: mergeNode
+  mergeNode: mergeNode,
+  createHorizontalRule: createHorizontalRule,
+  createEmptyLine: createEmptyLine,
+  changeTagOrder: changeTagOrder,
+  mergeSameNodes: mergeSameNodes,
+  optimizeRange: optimizeRange
 };
 
 /***/ }),
@@ -2501,7 +2674,7 @@ var MarkdownPreview = function (_Preview) {
         latestMarkdownValue = markdownEditor.getValue();
 
         if (_this2.isVisible()) {
-          _this2.lazyRunner.run('refresh', latestMarkdownValue.replace(/<br>\n/g, '<br>'));
+          _this2.lazyRunner.run('refresh', latestMarkdownValue);
         }
       });
 
@@ -3199,6 +3372,17 @@ markdownit.inline.ruler.at('backticks', _markdownitBackticksRenderer2.default);
 markdownit.use(_markdownitTaskPlugin2.default);
 markdownit.use(_markdownitCodeBlockPlugin2.default);
 
+// This regular expression refere markdownIt.
+// https://github.com/markdown-it/markdown-it/blob/master/lib/common/html_re.js
+var attrName = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
+var unquoted = '[^"\'=<>`\\x00-\\x20]+';
+var singleQuoted = "'[^']*'";
+var doubleQuoted = '"[^"]*"';
+var attrValue = '(?:' + unquoted + '|' + singleQuoted + '|' + doubleQuoted + ')';
+var attribute = '(?:\\s+' + attrName + '(?:\\s*=\\s*' + attrValue + ')?)*\\s*';
+var openingTag = '(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*' + attribute + ')(\\/?>)';
+var HTML_TAG_RX = new RegExp(openingTag, 'g');
+
 /**
  * Class Convertor
  */
@@ -3250,8 +3434,10 @@ var Convertor = function () {
   }, {
     key: '_markdownToHtml',
     value: function _markdownToHtml(markdown, env) {
-      // should insert data-tomark-pass in the opening tag
-      markdown = markdown.replace(/<(?!\/)([^>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
+      markdown = markdown.replace(HTML_TAG_RX, function (match, $1, $2, $3) {
+        return match[0] !== '\\' ? '' + $1 + $2 + ' data-tomark-pass ' + $3 : match;
+      });
+
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
       while (onerrorStripeRegex.exec(markdown)) {
@@ -3333,16 +3519,16 @@ var Convertor = function () {
     /**
      * set link attribute to markdownitHighlight, markdownit
      * using linkAttribute of markdownItInlinePlugin
-     * @param {object} attribute markdown text
+     * @param {object} attr markdown text
      */
 
   }, {
     key: 'setLinkAttribute',
-    value: function setLinkAttribute(attribute) {
-      var keys = Object.keys(attribute);
+    value: function setLinkAttribute(attr) {
+      var keys = Object.keys(attr);
       var setAttributeToToken = function setAttributeToToken(tokens, idx) {
         keys.forEach(function (key) {
-          tokens[idx].attrPush([key, attribute[key]]);
+          tokens[idx].attrPush([key, attr[key]]);
         });
       };
 
@@ -6118,6 +6304,7 @@ var CodeMirrorExt = function () {
       if (cursorToEnd) {
         this.moveCursorToEnd();
       }
+      this.cm.doc.clearHistory();
       this.cm.refresh();
     }
 
@@ -6130,7 +6317,7 @@ var CodeMirrorExt = function () {
   }, {
     key: 'getValue',
     value: function getValue() {
-      return this.cm.getValue('\n');
+      return this.cm.getValue('\n').replace(/<br>\n/g, '<br>');
     }
 
     /**
@@ -10124,7 +10311,7 @@ module.exports = Editor;
 
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implemtents Editor
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements Editor
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @author NHN FE Development Lab <dl_javascript@nhn.com>
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
@@ -13040,7 +13227,17 @@ _codemirror2.default.commands.newlineAndIndentContinueMarkdownList = function (c
       replacements = [];
   for (var i = 0; i < ranges.length; i++) {
     var pos = ranges[i].head;
+
+    // If we're not in Markdown mode, fall back to normal newlineAndIndent
     var eolState = cm.getStateAfter(pos.line);
+    var inner = _codemirror2.default.innerMode(cm.getMode(), eolState);
+    if (inner.mode.name !== "markdown") {
+      cm.execCommand("newlineAndIndent");
+      return;
+    } else {
+      eolState = inner.state;
+    }
+
     var inList = eolState.list !== false;
     var inQuote = eolState.quote !== 0;
 
@@ -16204,7 +16401,7 @@ var WwPasteContentHelper = function () {
   }, {
     key: '_unwrapNestedBlocks',
     value: function _unwrapNestedBlocks($container, blockTags) {
-      var $leafElements = $container.find(':not(:has(*))').not('b,s,i,em,code,span');
+      var $leafElements = $container.find(':not(:has(*))').not('b,s,i,em,code,span,hr');
 
       $leafElements.each(function (i, node) {
         var leafElement = node.nodeName === 'BR' ? (0, _jquery2.default)(node.parentNode) : (0, _jquery2.default)(node);
@@ -18155,6 +18352,10 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -18211,39 +18412,49 @@ var WwHrManager = function () {
       var _this = this;
 
       this.eventManager.listen('wysiwygSetValueAfter', function () {
-        _this._unwrapDivOnHr();
+        _this._insertEmptyLineIfNeed();
+        _this._changeHRForWysiwyg();
       });
     }
 
     /**
-     * _unwrapDivOnHr
-     * Unwrap default block on hr
+     * If <hr> is frist or last child of root, insert empty line before or after HR
+     * @private
+     */
+
+  }, {
+    key: '_insertEmptyLineIfNeed',
+    value: function _insertEmptyLineIfNeed() {
+      var editorContentBody = this.wwe.get$Body()[0];
+      var firstChild = editorContentBody.firstChild,
+          lastChild = editorContentBody.lastChild;
+
+
+      if (firstChild && firstChild.nodeName === 'HR') {
+        editorContentBody.insertBefore(_domUtils2.default.createEmptyLine(), firstChild);
+      } else if (lastChild && lastChild.nodeName === 'HR') {
+        editorContentBody.appendChild(_domUtils2.default.createEmptyLine());
+      }
+    }
+
+    /**
+     * <hr> is set contenteditable to false with wrapping div like below.
+     * <div contenteditable="false"><hr contenteditable="false"><div>
      * @memberof WwHrManager
      * @private
      */
 
   }, {
-    key: '_unwrapDivOnHr',
-    value: function _unwrapDivOnHr() {
+    key: '_changeHRForWysiwyg',
+    value: function _changeHRForWysiwyg() {
       var editorContentBody = this.wwe.get$Body()[0];
       var hrNodes = editorContentBody.querySelectorAll('hr');
+
       _tuiCodeSnippet2.default.forEachArray(hrNodes, function (hrNode) {
         var parentNode = hrNode.parentNode;
 
 
-        if (parentNode !== editorContentBody) {
-          var parentOfparent = parentNode.parentNode;
-
-
-          parentOfparent.removeChild(parentNode);
-          parentOfparent.appendChild(hrNode);
-        }
-
-        while (hrNode.firstChild) {
-          hrNode.removeChild(hrNode.firstChild);
-        }
-
-        hrNode.setAttribute('contenteditable', false);
+        parentNode.replaceChild(_domUtils2.default.createHorizontalRule(), hrNode);
       });
     }
   }]);
@@ -19146,7 +19357,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var isIE11 = _tuiCodeSnippet2.default.browser.msie && _tuiCodeSnippet2.default.browser.version === 11;
 var isWindowChrome = navigator.appVersion.indexOf('Win') !== -1 && _tuiCodeSnippet2.default.browser.chrome;
-var isNeedOffsetFix = isIE11 || isWindowChrome;
+var isWindows10 = /Windows (NT )?10/g.test(navigator.appVersion);
+var isNeedOffsetFix = isIE11 || isWindowChrome && !isWindows10;
 
 /**
  * Class WwTextObject
@@ -22334,7 +22546,7 @@ var PopupAddLink = function (_LayerPopup) {
   function PopupAddLink(options) {
     _classCallCheck(this, PopupAddLink);
 
-    var POPUP_CONTENT = '\n            <label for="linkText">' + _i18n2.default.get('Link text') + '</label>\n            <input type="text" class="te-link-text-input" />\n            <label for="url">' + _i18n2.default.get('URL') + '</label>\n            <input type="text" class="te-url-input" />\n            <div class="te-button-section">\n                <button type="button" class="te-ok-button">' + _i18n2.default.get('OK') + '</button>\n                <button type="button" class="te-close-button">' + _i18n2.default.get('Cancel') + '</button>\n            </div>\n        ';
+    var POPUP_CONTENT = '\n            <label for="url">' + _i18n2.default.get('URL') + '</label>\n            <input type="text" class="te-url-input" />\n            <label for="linkText">' + _i18n2.default.get('Link text') + '</label>\n            <input type="text" class="te-link-text-input" />\n            <div class="te-button-section">\n                <button type="button" class="te-ok-button">' + _i18n2.default.get('OK') + '</button>\n                <button type="button" class="te-close-button">' + _i18n2.default.get('Cancel') + '</button>\n            </div>\n        ';
     options = _tuiCodeSnippet2.default.extend({
       header: true,
       title: _i18n2.default.get('Insert link'),
@@ -22412,12 +22624,7 @@ var PopupAddLink = function (_LayerPopup) {
           inputURL.value = selectedText;
         }
 
-        if (selectedText.length > 0 && inputURL.value.length < 1) {
-          inputURL.focus();
-        } else {
-          inputText.focus();
-          inputText.setSelectionRange(0, selectedText.length);
-        }
+        inputURL.focus();
       });
 
       this.on('hidden', function () {
@@ -26417,6 +26624,10 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -26425,6 +26636,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @extends Command
  * @module wysiwygCommands/Bold
  * @ignore
+ */
+/**
+ * @fileoverview Implements bold WysiwygCommand
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 var Bold = _commandManager2.default.command('wysiwyg', /** @lends Bold */{
   name: 'Bold',
@@ -26447,6 +26662,7 @@ var Bold = _commandManager2.default.command('wysiwyg', /** @lends Bold */{
       sq.setSelection(range);
     } else {
       styleBold(sq);
+      _domUtils2.default.optimizeRange(sq.getSelection(), 'B');
     }
   }
 });
@@ -26454,10 +26670,6 @@ var Bold = _commandManager2.default.command('wysiwyg', /** @lends Bold */{
 /**
  * Style bold.
  * @param {object} sq - squire editor instance
- */
-/**
- * @fileoverview Implements bold WysiwygCommand
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 function styleBold(sq) {
   if (sq.hasFormat('b') || sq.hasFormat('strong')) {
@@ -26487,6 +26699,10 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -26496,6 +26712,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @module wysiwygCommands/Italic
  * @ignore
  */
+/**
+ * @fileoverview Implements italic WysiwygCommand
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
 var Italic = _commandManager2.default.command('wysiwyg', /** @lends Italic */{
   name: 'Italic',
   keyMap: ['CTRL+I', 'META+I'],
@@ -26517,6 +26738,7 @@ var Italic = _commandManager2.default.command('wysiwyg', /** @lends Italic */{
       sq.setSelection(range);
     } else {
       styleItalic(sq);
+      _domUtils2.default.optimizeRange(sq.getSelection(), 'I');
     }
   }
 });
@@ -26525,11 +26747,6 @@ var Italic = _commandManager2.default.command('wysiwyg', /** @lends Italic */{
  * Style italic.
  * @param {object} sq - squire editor instance
  */
-/**
- * @fileoverview Implements italic WysiwygCommand
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-
 function styleItalic(sq) {
   if (sq.hasFormat('i') || sq.hasFormat('em')) {
     sq.changeFormat(null, { tag: 'i' });
@@ -26558,6 +26775,10 @@ var _commandManager = __webpack_require__(2);
 
 var _commandManager2 = _interopRequireDefault(_commandManager);
 
+var _domUtils = __webpack_require__(4);
+
+var _domUtils2 = _interopRequireDefault(_domUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -26567,6 +26788,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @module wysiwygCommands/Strike
  * @ignore
  */
+/**
+ * @fileoverview Implements strike WysiwygCommand
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
 var Strike = _commandManager2.default.command('wysiwyg', /** @lends Strike */{
   name: 'Strike',
   keyMap: ['CTRL+S', 'META+S'],
@@ -26588,6 +26814,7 @@ var Strike = _commandManager2.default.command('wysiwyg', /** @lends Strike */{
       sq.setSelection(range);
     } else {
       styleStrike(sq);
+      _domUtils2.default.optimizeRange(sq.getSelection(), 'S');
     }
   }
 });
@@ -26596,11 +26823,6 @@ var Strike = _commandManager2.default.command('wysiwyg', /** @lends Strike */{
  * Style strike.
  * @param {object} sq - squire editor instance
  */
-/**
- * @fileoverview Implements strike WysiwygCommand
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-
 function styleStrike(sq) {
   if (sq.hasFormat('S')) {
     sq.changeFormat(null, { tag: 'S' });
@@ -26849,21 +27071,24 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
   exec: function exec(wwe) {
     var sq = wwe.getEditor();
     var range = sq.getSelection();
-    var currentNode = void 0,
-        nextBlockNode = void 0,
-        previousSibling = void 0;
 
     if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-      currentNode = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
-      nextBlockNode = _domUtils2.default.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
+      var hr = document.createElement('hr');
+      var currentNode = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
+      var nextBlockNode = _domUtils2.default.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
 
-      if (!nextBlockNode) {
-        nextBlockNode = sq.createDefaultBlock();
-        wwe.get$Body().append(nextBlockNode);
+      // If nextBlockNode is div that has hr and has contenteditable as false,
+      // nextBlockNode should be set as nextSibling that is normal block.
+      if (nextBlockNode && !_domUtils2.default.isTextNode(nextBlockNode)) {
+        while (nextBlockNode && nextBlockNode.getAttribute('contenteditable') === 'false') {
+          nextBlockNode = nextBlockNode.nextSibling;
+        }
       }
 
-      var hr = sq.createElement('HR');
-      hr.setAttribute('contenteditable', false);
+      if (!nextBlockNode) {
+        nextBlockNode = _domUtils2.default.createEmptyLine();
+        wwe.get$Body().append(nextBlockNode);
+      }
 
       sq.modifyBlocks(function (frag) {
         frag.appendChild(hr);
@@ -26871,16 +27096,19 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
         return frag;
       });
 
-      previousSibling = hr.previousSibling;
+      var previousSibling = hr.previousSibling;
 
       if (previousSibling && _domUtils2.default.isTextNode(previousSibling) && _domUtils2.default.getTextLength(previousSibling) === 0) {
         hr.parentNode.removeChild(previousSibling);
       }
 
+      hr.parentNode.replaceChild(_domUtils2.default.createHorizontalRule(), hr);
+
       range.selectNodeContents(nextBlockNode);
       range.collapse(true);
 
       sq.setSelection(range);
+      sq.saveUndoState(range);
     }
 
     wwe.focus();

@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.3
+ * @version 1.4.4
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -167,7 +167,7 @@ var MarkdownPreview = function (_Preview) {
         latestMarkdownValue = markdownEditor.getValue();
 
         if (_this2.isVisible()) {
-          _this2.lazyRunner.run('refresh', latestMarkdownValue.replace(/<br>\n/g, '<br>'));
+          _this2.lazyRunner.run('refresh', latestMarkdownValue);
         }
       });
 
@@ -924,6 +924,17 @@ markdownit.inline.ruler.at('backticks', _markdownitBackticksRenderer2.default);
 markdownit.use(_markdownitTaskPlugin2.default);
 markdownit.use(_markdownitCodeBlockPlugin2.default);
 
+// This regular expression refere markdownIt.
+// https://github.com/markdown-it/markdown-it/blob/master/lib/common/html_re.js
+var attrName = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
+var unquoted = '[^"\'=<>`\\x00-\\x20]+';
+var singleQuoted = "'[^']*'";
+var doubleQuoted = '"[^"]*"';
+var attrValue = '(?:' + unquoted + '|' + singleQuoted + '|' + doubleQuoted + ')';
+var attribute = '(?:\\s+' + attrName + '(?:\\s*=\\s*' + attrValue + ')?)*\\s*';
+var openingTag = '(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*' + attribute + ')(\\/?>)';
+var HTML_TAG_RX = new RegExp(openingTag, 'g');
+
 /**
  * Class Convertor
  */
@@ -975,8 +986,10 @@ var Convertor = function () {
   }, {
     key: '_markdownToHtml',
     value: function _markdownToHtml(markdown, env) {
-      // should insert data-tomark-pass in the opening tag
-      markdown = markdown.replace(/<(?!\/)([^>]+)([/]?)>/g, '<$1 data-tomark-pass $2>');
+      markdown = markdown.replace(HTML_TAG_RX, function (match, $1, $2, $3) {
+        return match[0] !== '\\' ? '' + $1 + $2 + ' data-tomark-pass ' + $3 : match;
+      });
+
       // eslint-disable-next-line
       var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
       while (onerrorStripeRegex.exec(markdown)) {
@@ -1058,16 +1071,16 @@ var Convertor = function () {
     /**
      * set link attribute to markdownitHighlight, markdownit
      * using linkAttribute of markdownItInlinePlugin
-     * @param {object} attribute markdown text
+     * @param {object} attr markdown text
      */
 
   }, {
     key: 'setLinkAttribute',
-    value: function setLinkAttribute(attribute) {
-      var keys = Object.keys(attribute);
+    value: function setLinkAttribute(attr) {
+      var keys = Object.keys(attr);
       var setAttributeToToken = function setAttributeToToken(tokens, idx) {
         keys.forEach(function (key) {
-          tokens[idx].attrPush([key, attribute[key]]);
+          tokens[idx].attrPush([key, attr[key]]);
         });
       };
 
@@ -3735,10 +3748,178 @@ var mergeNode = function mergeNode(node, targetNode) {
     _tuiCodeSnippet2.default.forEachArray(node.childNodes, function () {
       targetNode.appendChild(node.firstChild);
     });
+
+    targetNode.normalize();
   }
 
   if (node.parentNode) {
     node.parentNode.removeChild(node);
+  }
+};
+
+/**
+ * Create hr that is not contenteditable
+ * @returns {node} hr is wraped div
+ * @ignore
+ */
+var createHorizontalRule = function createHorizontalRule() {
+  var div = document.createElement('div');
+  var hr = document.createElement('hr');
+
+  div.setAttribute('contenteditable', false);
+  hr.setAttribute('contenteditable', false);
+
+  div.appendChild(hr);
+
+  return div;
+};
+
+/**
+ * Create Empty Line
+ * @returns {node} <div><br></div>
+ * @private
+ */
+var createEmptyLine = function createEmptyLine() {
+  var div = document.createElement('div');
+  div.appendChild(document.createElement('br'));
+
+  return div;
+};
+
+/**
+ * Find same tagName child node and change wrapping order.
+ * For example, if below node need to optimize 'B' tag.
+ * <i><s><b>test</b></s></i>
+ * should be changed tag's order.
+ * <b><i><s>test</s></i></b>
+ * @param {node} node
+ * @param {string} tagName
+ * @returns {node}
+ * @private
+ */
+var changeTagOrder = function changeTagOrder(node, tagName) {
+  if (node.nodeName !== 'SPAN') {
+    var parentNode = node.parentNode;
+
+    var tempNode = node;
+
+    while (tempNode.childNodes && tempNode.childNodes.length === 1 && !isTextNode(tempNode.firstChild)) {
+      tempNode = tempNode.firstChild;
+
+      if (tempNode.nodeName === 'SPAN') {
+        break;
+      }
+
+      if (tempNode.nodeName === tagName) {
+        var wrapper = document.createElement(tagName);
+
+        mergeNode(tempNode, tempNode.parentNode);
+        parentNode.replaceChild(wrapper, node);
+        wrapper.appendChild(node);
+
+        return wrapper;
+      }
+    }
+  }
+
+  return node;
+};
+
+/**
+ * Find same tagName nodes and merge from startNode to endNode.
+ * @param {node} startNode
+ * @param {node} endNode
+ * @param {string} tagName
+ * @returns {node}
+ * @private
+ */
+var mergeSameNodes = function mergeSameNodes(startNode, endNode, tagName) {
+  var startBlockNode = changeTagOrder(startNode, tagName);
+
+  if (startBlockNode.nodeName === tagName) {
+    var endBlockNode = changeTagOrder(endNode, tagName);
+    var mergeTargetNode = startBlockNode;
+    var nextNode = startBlockNode.nextSibling;
+
+    while (nextNode) {
+      var tempNext = nextNode.nextSibling;
+
+      nextNode = changeTagOrder(nextNode, tagName);
+
+      if (nextNode.nodeName === tagName) {
+        // eslint-disable-next-line max-depth
+        if (mergeTargetNode) {
+          mergeNode(nextNode, mergeTargetNode);
+        } else {
+          mergeTargetNode = nextNode;
+        }
+      } else {
+        mergeTargetNode = null;
+      }
+
+      if (nextNode === endBlockNode) {
+        break;
+      }
+
+      nextNode = tempNext;
+    }
+  }
+};
+
+/**
+ * Find same tagName nodes in range and merge nodes.
+ * For example range is like this
+ * <s><b>AAA</b></s><b>BBB</b>
+ * nodes is changed below
+ * <b><s>AAA</s>BBB</b>
+ * @param {range} range
+ * @param {string} tagName
+ * @private
+ */
+var optimizeRange = function optimizeRange(range, tagName) {
+  var collapsed = range.collapsed,
+      commonAncestorContainer = range.commonAncestorContainer,
+      startContainer = range.startContainer,
+      endContainer = range.endContainer;
+
+
+  if (!collapsed) {
+    var optimizedNode = null;
+
+    if (startContainer !== endContainer) {
+      mergeSameNodes(getParentUntil(startContainer, commonAncestorContainer), getParentUntil(endContainer, commonAncestorContainer), tagName);
+
+      optimizedNode = commonAncestorContainer;
+    } else if (isTextNode(startContainer)) {
+      optimizedNode = startContainer.parentNode;
+    }
+
+    if (optimizedNode && optimizedNode.nodeName === tagName) {
+      var _optimizedNode = optimizedNode,
+          previousSibling = _optimizedNode.previousSibling;
+
+      var tempNode = void 0;
+
+      if (previousSibling) {
+        tempNode = changeTagOrder(previousSibling);
+
+        if (tempNode.nodeName === tagName) {
+          mergeNode(optimizedNode, tempNode);
+        }
+      }
+
+      var _optimizedNode2 = optimizedNode,
+          nextSibling = _optimizedNode2.nextSibling;
+
+
+      if (nextSibling) {
+        tempNode = changeTagOrder(nextSibling);
+
+        if (tempNode.nodeName === tagName) {
+          mergeNode(tempNode, optimizedNode);
+        }
+      }
+    }
   }
 };
 
@@ -3774,7 +3955,12 @@ exports.default = {
   isListNode: isListNode,
   isFirstListItem: isFirstListItem,
   isFirstLevelListItem: isFirstLevelListItem,
-  mergeNode: mergeNode
+  mergeNode: mergeNode,
+  createHorizontalRule: createHorizontalRule,
+  createEmptyLine: createEmptyLine,
+  changeTagOrder: changeTagOrder,
+  mergeSameNodes: mergeSameNodes,
+  optimizeRange: optimizeRange
 };
 
 /***/ }),

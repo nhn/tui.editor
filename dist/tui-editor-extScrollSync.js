@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.3
+ * @version 1.4.4
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -251,11 +251,16 @@ function scrollSyncExtension(editor) {
   }
 
   editor.on('previewRenderAfter', function () {
-    sectionManager.sectionMatch();
-    if (isActive) {
-      scrollManager.syncPreviewScrollTopToMarkdown();
-    }
-    isScrollable = true;
+    // Immediately after the 'previewRenderAfter' event has occurred,
+    // browser rendering is not yet complete.
+    // So the size of elements can not be accurately measured.
+    setTimeout(function () {
+      sectionManager.sectionMatch();
+      if (isActive) {
+        scrollManager.syncPreviewScrollTopToMarkdown(true);
+      }
+      isScrollable = true;
+    }, 200);
   });
 
   editor.eventManager.listen('scroll', function (event) {
@@ -265,7 +270,7 @@ function scrollSyncExtension(editor) {
 
     if (isScrollable && editor.preview.isVisible()) {
       if (event.source === 'markdown' && !scrollManager.isMarkdownScrollEventBlocked) {
-        scrollManager.syncPreviewScrollTopToMarkdown();
+        scrollManager.syncPreviewScrollTopToMarkdown(false);
       } else if (event.source === 'preview' && !scrollManager.isPreviewScrollEventBlocked) {
         scrollManager.syncMarkdownScrollTopToPreview();
       }
@@ -451,6 +456,43 @@ var ScrollManager = function () {
     }
 
     /**
+     * _getCursorFactorsOfEditor
+     * Return cursor position information of editor for preview scroll sync
+     * @returns {object} scroll factors
+     * @private
+     */
+
+  }, {
+    key: '_getCursorFactorsOfEditor',
+    value: function _getCursorFactorsOfEditor() {
+      var cm = this.cm;
+
+      var cursorInfo = cm.cursorCoords(true, 'local');
+
+      // if codemirror has not visible scrollInfo have incorrect value
+      // so we use saved scroll info for alternative
+      var scrollInfo = this._fallbackScrollInfoIfIncorrect(cm.getScrollInfo());
+      var cursorLine = cm.coordsChar({
+        left: cursorInfo.left,
+        top: cursorInfo.top
+      }, 'local').line;
+
+      var cusrsorSection = this.sectionManager.sectionByLine(cursorLine);
+
+      if (cusrsorSection) {
+        var ratio = this._getEditorSectionScrollRatio(cusrsorSection, cursorLine);
+
+        return {
+          section: cusrsorSection,
+          sectionRatio: ratio,
+          relativeCursorTop: cursorInfo.top - scrollInfo.top
+        };
+      }
+
+      return null;
+    }
+
+    /**
      * Return Scroll Information of editor for Markdown scroll sync
      * @returns {object} scroll factors
      * @private
@@ -533,6 +575,38 @@ var ScrollManager = function () {
     }
 
     /**
+     * _getScrollTopForPreviewBaseCursor
+     * Return scrollTop value for preview according cursor position
+     * @returns {number} scrollTop value
+     */
+
+  }, {
+    key: '_getScrollTopForPreviewBaseCursor',
+    value: function _getScrollTopForPreviewBaseCursor() {
+      var cursorFactors = this._getCursorFactorsOfEditor();
+
+      if (!cursorFactors) {
+        return 0;
+      }
+
+      var section = cursorFactors.section,
+          sectionRatio = cursorFactors.sectionRatio,
+          relativeCursorTop = cursorFactors.relativeCursorTop;
+
+      var scrollTop = section.$previewSectionEl[0].offsetTop;
+
+      // Moves the preview so that the line of cursor is positioned at top of the preview.
+      scrollTop += section.$previewSectionEl.height() * sectionRatio - SCROLL_TOP_PADDING;
+
+      // Moves the preview by the position of the cursor at markdown.
+      scrollTop -= relativeCursorTop;
+
+      scrollTop = scrollTop && Math.max(scrollTop, 0);
+
+      return scrollTop;
+    }
+
+    /**
      * Return scrollTop value for Markdown editor
      * @returns {number}
      * @private
@@ -571,17 +645,18 @@ var ScrollManager = function () {
     /**
      * syncPreviewScrollTopToMarkdown
      * sync preview scroll to markdown
+     * @param {boolean} isCursorBase whether sync according to cursor position
      */
 
   }, {
     key: 'syncPreviewScrollTopToMarkdown',
-    value: function syncPreviewScrollTopToMarkdown() {
+    value: function syncPreviewScrollTopToMarkdown(isCursorBase) {
       var _this2 = this;
 
       var $previewContainerEl = this.$previewContainerEl;
 
       var sourceScrollTop = $previewContainerEl.scrollTop();
-      var targetScrollTop = this._getScrollTopForPreview();
+      var targetScrollTop = isCursorBase ? this._getScrollTopForPreviewBaseCursor() : this._getScrollTopForPreview();
 
       this.isPreviewScrollEventBlocked = true;
 
@@ -865,8 +940,8 @@ var SectionManager = function () {
           nextLineString = void 0,
           prevLineString = void 0,
           isTrimming = true,
-          onTable = false,
-          onCodeBlock = false,
+          isInTable = false,
+          isInCodeBlock = false,
           trimCapture = '';
       var isRightAfterImageSection = false;
       var isEnsuredSection = false;
@@ -881,22 +956,22 @@ var SectionManager = function () {
         prevLineString = this.cm.getLine(i - 1) || '';
         var isCodeBlockEnded = this._isCodeBlockEnd(prevLineString) && codeblockStartLineIndex !== i - 1;
 
-        if (onTable && (!lineString || !this._isTableCode(lineString))) {
-          onTable = false;
-        } else if (!onTable && this._isTable(lineString, nextLineString)) {
-          onTable = true;
+        if (isInTable && (!lineString || !this._isTableCode(lineString))) {
+          isInTable = false;
+        } else if (!isInTable && this._isTable(lineString, nextLineString)) {
+          isInTable = true;
         }
 
-        if (onCodeBlock && isCodeBlockEnded) {
-          onCodeBlock = false;
+        if (isInCodeBlock && isCodeBlockEnded) {
+          isInCodeBlock = false;
         }
-        if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
-          onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
+        if (!isInCodeBlock && this._isCodeBlockStart(lineString)) {
+          isInCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
           codeblockStartLineIndex = i;
         }
 
         if (isEnsuredSection && lineString.length !== 0) {
-          if (this._isIndependentImage(onCodeBlock, onTable, lineString, prevLineString)) {
+          if (this._isIndependentImage(isInCodeBlock, isInTable, lineString, prevLineString)) {
             isRightAfterImageSection = true;
             isEnsuredSection = true;
           } else {
@@ -905,16 +980,16 @@ var SectionManager = function () {
           }
 
           isSection = true;
-        } else if (this._isAtxHeader(lineString)) {
+        } else if (!isInCodeBlock && this._isAtxHeader(lineString)) {
           isRightAfterImageSection = false;
           isSection = true;
           isEnsuredSection = false;
           // setext header
-        } else if (!this._isCodeBlockEnd(lineString) && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
+        } else if (!this._isCodeBlockEnd(lineString) && !isInTable && this._isSeTextHeader(lineString, nextLineString)) {
           isRightAfterImageSection = false;
           isSection = true;
           isEnsuredSection = false;
-        } else if (this._isIndependentImage(onCodeBlock, onTable, lineString, prevLineString)) {
+        } else if (this._isIndependentImage(isInCodeBlock, isInTable, lineString, prevLineString)) {
           isRightAfterImageSection = true;
           isSection = true;
           isEnsuredSection = false;
@@ -940,8 +1015,8 @@ var SectionManager = function () {
 
     /**
      * Return whether is independent image line with padding lines top and bottom
-     * @param {boolean} onCodeBlock Is on codeblock
-     * @param {boolean} onTable Is on table
+     * @param {boolean} isInCodeBlock Is on codeblock
+     * @param {boolean} isInTable Is on table
      * @param {string} lineString Current line string
      * @param {string} prevLineString Previous line string
      * @returns {boolean}
@@ -950,8 +1025,8 @@ var SectionManager = function () {
 
   }, {
     key: '_isIndependentImage',
-    value: function _isIndependentImage(onCodeBlock, onTable, lineString, prevLineString) {
-      return !onCodeBlock && !onTable && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString) && prevLineString.length === 0;
+    value: function _isIndependentImage(isInCodeBlock, isInTable, lineString, prevLineString) {
+      return !isInCodeBlock && !isInTable && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString) && prevLineString.length === 0;
     }
 
     /**
@@ -1168,7 +1243,7 @@ var SectionManager = function () {
       this.$previewContent.contents().filter(findElementNodeFilter).each(function (index, el) {
         var isParagraph = el.tagName === 'P';
         var isHeading = el.tagName.match(/^(H1|H2|H3|H4|H5|H6)$/);
-        var isImage = isParagraph && el.childNodes[0].nodeName === 'IMG';
+        var isImage = isParagraph && el.hasChildNodes() && el.childNodes[0].nodeName === 'IMG';
 
         if ((isHeading || isImage || isRightAfterImageSection) && sections[lastSection].length) {
           sections.push([]);

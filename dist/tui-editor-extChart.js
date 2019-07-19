@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.3
+ * @version 1.4.4
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -5299,9 +5299,9 @@ var _tuiCodeSnippet = __webpack_require__(2);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _tuiChart = __webpack_require__(27);
+var _tuiChartPolyfill = __webpack_require__(27);
 
-var _tuiChart2 = _interopRequireDefault(_tuiChart);
+var _tuiChartPolyfill2 = _interopRequireDefault(_tuiChartPolyfill);
 
 var _editorProxy = __webpack_require__(1);
 
@@ -5739,7 +5739,7 @@ function chartReplacer(codeBlockChartDataAndOptions, extensionOptions) {
         } else if (CATEGORY_CHART_TYPES.indexOf(chartType) > -1 && data.categories.length !== data.series[0].data.length) {
           chartContainer.innerHTML = 'invalid chart data';
         } else {
-          _tuiChart2.default[chartType](chartContainer, data, chartOptions);
+          _tuiChartPolyfill2.default[chartType](chartContainer, data, chartOptions);
         }
       });
     } catch (e) {
