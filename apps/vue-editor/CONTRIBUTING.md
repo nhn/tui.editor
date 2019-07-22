@@ -18,7 +18,7 @@ Explain the problem and include additional details to help maintainers reproduce
 
 ## Suggesting Enhancements
 In case you want to suggest for TOAST UI Editor, please follow this guideline to help maintainers and the community understand your suggestion.
-Before creating suggestions, please check [issue list](https://github.com/nhnent/toast-ui.vue-editor/labels/feature%20request) if there's already a request.
+Before creating suggestions, please check [issue list](https://github.com/nhn/toast-ui.vue-editor/labels/feature%20request) if there's already a request.
 
 Create an issue and provide the following information:
 
@@ -83,4 +83,4 @@ This project and everyone participating in it is governed by the [Code of Conduc
 
 > This Guide is base on [atom contributing guide](https://github.com/atom/atom/blob/master/CONTRIBUTING.md), [CocoaPods](http://guides.cocoapods.org/contributing/contribute-to-cocoapods.html) and [ESLint](http://eslint.org/docs/developer-guide/contributing/pull-requests)
 
-[demo]:https://nhnent.github.io/tui.editor/
+[demo]:https://nhn.github.io/tui.editor/

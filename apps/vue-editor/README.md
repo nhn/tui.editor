@@ -1,13 +1,13 @@
 # TOAST UI Editor for Vue
 
-> This is Vue component wrapping [TOAST UI Editor](https://github.com/nhnent/tui.editor).
+> This is Vue component wrapping [TOAST UI Editor](https://github.com/nhn/tui.editor).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
-[![github version](https://img.shields.io/github/release/nhnent/toast-ui.vue-editor.svg)](https://github.com/nhnent/toast-ui.vue-editor/releases/latest) 
+[![github version](https://img.shields.io/github/release/nhn/toast-ui.vue-editor.svg)](https://github.com/nhn/toast-ui.vue-editor/releases/latest) 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/vue-editor.svg)](https://www.npmjs.com/package/@toast-ui/vue-editor)
-[![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-editor.svg)](https://github.com/nhnent/toast-ui.vue-editor/blob/master/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.vue-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
+[![license](https://img.shields.io/github/license/nhn/toast-ui.vue-editor.svg)](https://github.com/nhn/toast-ui.vue-editor/blob/master/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/toast-ui.vue-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## 🚩 Table of Contents
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
@@ -281,7 +281,7 @@ export default {
 
 ### Method
 
-If you want to more manipulate the Editor, you can use `invoke` method to call the method of tui.editor. For more information of method, see [method of tui.editor](http://nhnent.github.io/tui.editor/api/latest/ToastUIEditor.html).
+If you want to more manipulate the Editor, you can use `invoke` method to call the method of tui.editor. For more information of method, see [method of tui.editor](http://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html).
 
 First, you need to assign `ref` attribute of `<editor/>` and then you can use `invoke` method through `this.$refs` like this:
 
@@ -487,9 +487,9 @@ If it has no error, commit and then push it!
 For more information on PR's step, please see links of Contributing section.
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhnent/toast-ui.vue-editor/blob/master/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhnent/toast-ui.vue-editor/blob/master/CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhnent/toast-ui.vue-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhn/toast-ui.vue-editor/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/toast-ui.vue-editor/blob/master/CONTRIBUTING.md)
+* [Commit convention](https://github.com/nhn/toast-ui.vue-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
-This software is licensed under the [MIT](https://github.com/nhnent/toast-ui.vue-editor/blob/master/LICENSE) © [NHN.](https://github.com/nhnent)
+This software is licensed under the [MIT](https://github.com/nhn/toast-ui.vue-editor/blob/master/LICENSE) © [NHN.](https://github.com/nhn)
