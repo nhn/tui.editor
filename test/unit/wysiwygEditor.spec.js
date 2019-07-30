@@ -275,6 +275,22 @@ describe('WysiwygEditor', () => {
       expect(wwe.getValue()).toEqual(`${html}<br />`);
     });
 
+    it('should replace space(32) to &nbsp; in the front/back span tag', () => {
+      const html = [
+        '<span class="color1">aaa </span>',
+        '<span class="color2">bbb</span>',
+        '<span class="color3"> ccc</span>'
+      ].join('');
+      wwe.setValue(html);
+
+      const expectedHtml = [
+        '<span class="color1">aaa&nbsp;</span>',
+        '<span class="color2">bbb</span>',
+        '<span class="color3">&nbsp;ccc</span>'
+      ].join('');
+      expect(wwe.getValue()).toEqual(`${expectedHtml}<br />`);
+    });
+
     it('prevent text, image merge', () => {
       const html = '<p>test<br><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAAXklEQVQIHWM8OeXvfwaW/wx/fjMwsHMwMjD9BLH+MDIwMTIy/PnJwMDMI87aIMiswCDMx89w98UNBpZX/48zbLx7h0H/TTjDo18nGZjYWVkZOLm5GU587mb4wvCcAQACuB2BMklKxwAAAABJRU5ErkJggg==" alt="image"></p>';
       wwe.setValue(html);
