@@ -23,11 +23,11 @@ import CodeBlockGadget from './ui/codeBlockGadget';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
-const FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi,
-  FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi,
-  FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/,
-  FIND_OPENING_SPAN_WITH_SPACE = /<span([^>]*)>[\u0020]/g,
-  FIND_CLOSING_SPAN_WITH_SPACE = /[\u0020]<\/span>/g;
+const FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi;
+const FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi;
+const FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
+const FIND_OPENING_SPAN_WITH_SPACE = /<span([^>]*)>[\u0020]/g;
+const FIND_CLOSING_SPAN_WITH_SPACE = /[\u0020]<\/span>/g;
 const FIND_TABLE_AND_HEADING_RX = /^(TABLE|H[1-6])$/;
 
 const EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
@@ -897,6 +897,7 @@ class WysiwygEditor {
       return result;
     });
 
+    // replace a space of the first and end in sapn tag to &nbsp;.
     html = html.replace(FIND_OPENING_SPAN_WITH_SPACE, '<span$1>&nbsp;');
     html = html.replace(FIND_CLOSING_SPAN_WITH_SPACE, '&nbsp;</span>');
 
