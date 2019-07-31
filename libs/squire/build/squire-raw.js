@@ -3204,10 +3204,11 @@ proto._updatePathOnEvent = function ( event ) {
 // --- Focus ---
 
 proto.focus = function () {
-    this._root.focus();
-
     if ( isIE ) {
+        this._root.setActive();
         this.fireEvent( 'focus' );
+    } else {
+        this._root.focus();
     }
 
     return this;
