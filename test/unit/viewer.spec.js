@@ -2,6 +2,7 @@
  * @fileoverview test viewer
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
 
 import ToastUIEditorViewer from '../../src/js/viewer';
@@ -58,5 +59,29 @@ describe('Viewer', () => {
     });
     expect(viewer.convertor instanceof Convertor).toBe(true);
     expect(viewer.convertor instanceof CustomConvertor).toBe(true);
+  });
+
+  it('should render initialValue', () => {
+    const initialValue = 'Initial **Value**';
+    const vieweForInitialValue = new ToastUIEditorViewer({
+      el: $(`<div/>`)[0],
+      initialValue
+    });
+
+    const viewerForSetValue = new ToastUIEditorViewer({
+      el: $(`<div/>`)[0]
+    });
+    viewerForSetValue.setValue(initialValue);
+
+    expect(vieweForInitialValue.preview.getHTML()).toBe(viewerForSetValue.preview.getHTML());
+  });
+
+  it('should use existing html as initial value', () => {
+    const html = 'Existing <b>HTML</b>';
+    const viewer = new ToastUIEditorViewer({
+      el: $(`<div>${html}</div>`)[0]
+    });
+
+    expect(viewer.preview.getHTML()).toBe(html);
   });
 });
