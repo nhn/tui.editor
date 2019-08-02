@@ -304,7 +304,7 @@ var removeEmptyInlines = function removeEmptyInlines ( node ) {
 
 var notWSTextNode = function ( node ) {
     return node.nodeType === ELEMENT_NODE ?
-        node.nodeName === 'BR' || node.nodeName === 'IMG' :
+        node.nodeName === 'BR' :
         notWS.test( node.data );
 };
 var isLineBreak = function ( br, isLBIfEmptyBlock ) {
