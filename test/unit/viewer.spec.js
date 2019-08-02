@@ -23,7 +23,8 @@ describe('Viewer', () => {
   });
 
   it('should sanitize html', () => {
-    const viewer = new ToastUIEditorViewer();
+    const el = $('<div>')[0];
+    const viewer = new ToastUIEditorViewer({el});
     const xss = '<script>alert("xss");</script>';
     viewer.setValue(xss);
     const content = viewer.preview.getHTML();
@@ -32,6 +33,7 @@ describe('Viewer', () => {
 
   it('should not sanitize html if useDefaultHTMLSanitizer is false', () => {
     const xssViewer = new ToastUIEditorViewer({
+      el: $('<div>')[0],
       useDefaultHTMLSanitizer: false
     });
     const xss = '<script>alert("xss");</script>';
@@ -41,12 +43,14 @@ describe('Viewer', () => {
   });
 
   it('should have codeBlockLanugages option', () => {
-    const viewer = new ToastUIEditorViewer();
+    const el = $('<div>')[0];
+    const viewer = new ToastUIEditorViewer({el});
     expect(viewer.options.codeBlockLanguages.length).toBeTruthy();
   });
 
   it('should use default convertor if the option value is not set', () => {
-    const viewer = new ToastUIEditorViewer();
+    const el = $('<div>')[0];
+    const viewer = new ToastUIEditorViewer({el});
     expect(viewer.convertor instanceof Convertor).toBe(true);
   });
 
@@ -55,6 +59,7 @@ describe('Viewer', () => {
     };
 
     const viewer = new ToastUIEditorViewer({
+      el: $('<div>')[0],
       customConvertor: CustomConvertor
     });
     expect(viewer.convertor instanceof Convertor).toBe(true);
@@ -64,12 +69,12 @@ describe('Viewer', () => {
   it('should render initialValue', () => {
     const initialValue = 'Initial **Value**';
     const vieweForInitialValue = new ToastUIEditorViewer({
-      el: $(`<div/>`)[0],
+      el: $(`<div>`)[0],
       initialValue
     });
 
     const viewerForSetValue = new ToastUIEditorViewer({
-      el: $(`<div/>`)[0]
+      el: $(`<div>`)[0]
     });
     viewerForSetValue.setValue(initialValue);
 

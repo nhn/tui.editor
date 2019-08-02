@@ -69,18 +69,18 @@ class ToastUIEditorViewer {
       });
     }
 
-    const $el = $(this.options.el);
-    const existingHTML = $el.html();
+    const {el, initialValue} = this.options;
+    const existingHTML = el.innerHTML;
+    el.innerHTML = '';
 
-    $el.empty();
-    this.preview = new MarkdownPreview($(this.options.el), this.eventManager, this.convertor, true);
+    this.preview = new MarkdownPreview($(el), this.eventManager, this.convertor, true);
 
     this.preview.$el.on('mousedown', $.proxy(this._toggleTask, this));
 
     extManager.applyExtension(this, this.options.exts);
 
-    if (this.options.initialValue) {
-      this.setValue(this.options.initialValue);
+    if (initialValue) {
+      this.setValue(initialValue);
     } else if (existingHTML) {
       this.preview.setHTML(existingHTML);
     }
