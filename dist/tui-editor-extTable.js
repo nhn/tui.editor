@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.4
+ * @version 1.4.5
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -1309,6 +1309,13 @@ if (i18n) {
     'Unmerge cells': 'Dela celler',
     'Cannot change part of merged cell': 'Ej möjligt att ändra en del av en sammanfogad cell',
     'Cannot paste row merged cells into the table header': 'Ej möjligt att klistra in rad-sammanfogade celler i tabellens huvud'
+  });
+
+  i18n.setLanguage(['it', 'it_IT'], {
+    'Merge cells': 'Unisci celle',
+    'Unmerge cells': 'Separa celle',
+    'Cannot change part of merged cell': 'Non è possibile modificare parte di una cella unita',
+    'Cannot paste row merged cells into the table header': 'Non è possibile incollare celle unite per riga nell\'intestazione della tabella'
   });
 }
 

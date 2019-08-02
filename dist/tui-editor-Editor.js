@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.4
+ * @version 1.4.5
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -5670,13 +5670,24 @@ var ToastUIEditorViewer = function () {
       });
     }
 
-    this.preview = new _mdPreview2.default((0, _jquery2.default)(this.options.el), this.eventManager, this.convertor, true);
+    var _options = this.options,
+        el = _options.el,
+        initialValue = _options.initialValue;
+
+    var existingHTML = el.innerHTML;
+    el.innerHTML = '';
+
+    this.preview = new _mdPreview2.default((0, _jquery2.default)(el), this.eventManager, this.convertor, true);
 
     this.preview.$el.on('mousedown', _jquery2.default.proxy(this._toggleTask, this));
 
     _extManager2.default.applyExtension(this, this.options.exts);
 
-    this.setValue(this.options.initialValue);
+    if (initialValue) {
+      this.setValue(initialValue);
+    } else if (existingHTML) {
+      this.preview.setHTML(existingHTML);
+    }
 
     this.eventManager.emit('load', this);
   }
@@ -10601,6 +10612,8 @@ __webpack_require__(146);
 
 __webpack_require__(147);
 
+__webpack_require__(148);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14206,9 +14219,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var keyMapper = _keyMapper2.default.getSharedInstance();
 
-var FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi,
-    FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi,
-    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
+var FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi;
+var FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi;
+var FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
+var FIND_OPENING_SPAN_WITH_SPACE = /<span([^>]*)>[\u0020]/g;
+var FIND_CLOSING_SPAN_WITH_SPACE = /[\u0020]<\/span>/g;
 var FIND_TABLE_AND_HEADING_RX = /^(TABLE|H[1-6])$/;
 
 var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
@@ -15215,6 +15230,10 @@ var WysiwygEditor = function () {
         return result;
       });
 
+      // replace a space of the first and end in sapn tag to &nbsp;.
+      html = html.replace(FIND_OPENING_SPAN_WITH_SPACE, '<span$1>&nbsp;');
+      html = html.replace(FIND_CLOSING_SPAN_WITH_SPACE, '&nbsp;</span>');
+
       // remove unnecessary brs
       html = html.replace(FIND_UNNECESSARY_BR, '</$1>');
 
@@ -16013,12 +16032,6 @@ var WwClipboardManager = function () {
   }, {
     key: '_preparePaste',
     value: function _preparePaste($clipboardContainer) {
-      var html = $clipboardContainer.html();
-
-      $clipboardContainer.html(html.replace(/>([^<]*\s[^<]*)</g, function (match, text) {
-        return '>' + text.replace(/\s/g, '&nbsp;') + '<';
-      }));
-
       // When pasting text, the empty line processing differ our viewer and MS Office.
       // In our viewer case, <p>aaa</p><p>bbb<p> have empty line becuase P tags have margin.
       // In MS Office case, <p>aaa</p><p>bbb<p> do not have empty line becuase P tags means just one line.
@@ -29968,6 +29981,69 @@ _i18n2.default.setLanguage(['sv', 'sv_SE'], {
      * @fileoverview I18N for Swedish
      * @author Magnus Aspling <magnus@yug.se>
      */
+
+/***/ }),
+/* 148 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _i18n = __webpack_require__(3);
+
+var _i18n2 = _interopRequireDefault(_i18n);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_i18n2.default.setLanguage(['it', 'it_IT'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Scrivere',
+  'Preview': 'Anteprima',
+  'Headings': 'Intestazioni',
+  'Paragraph': 'Paragrafo',
+  'Bold': 'Grassetto',
+  'Italic': 'Corsivo',
+  'Strike': 'Barrato',
+  'Code': 'Codice',
+  'Line': 'Linea',
+  'Blockquote': 'Blocco citazione',
+  'Unordered list': 'Lista puntata',
+  'Ordered list': 'Lista numerata',
+  'Task': 'Attività',
+  'Indent': 'Aggiungi indentazione',
+  'Outdent': 'Rimuovi indentazione',
+  'Insert link': 'Inserisci link',
+  'Insert CodeBlock': 'Inserisci blocco di codice',
+  'Insert table': 'Inserisci tabella',
+  'Insert image': 'Inserisci immagine',
+  'Heading': 'Intestazione',
+  'Image URL': 'URL immagine',
+  'Select image file': 'Seleziona file immagine',
+  'Description': 'Descrizione',
+  'OK': 'OK',
+  'More': 'Più',
+  'Cancel': 'Cancella',
+  'File': 'File',
+  'URL': 'URL',
+  'Link text': 'Testo del collegamento',
+  'Add row': 'Aggiungi riga',
+  'Add col': 'Aggiungi colonna',
+  'Remove row': 'Rimuovi riga',
+  'Remove col': 'Rimuovi colonna',
+  'Align left': 'Allinea a sinistra',
+  'Align center': 'Allinea al centro',
+  'Align right': 'Allinea a destra',
+  'Remove table': 'Rimuovi tabella',
+  'Would you like to paste as table?': 'Desideri incollare sotto forma di tabella?',
+  'Text color': 'Colore del testo',
+  'Auto scroll enabled': 'Scrolling automatico abilitato',
+  'Auto scroll disabled': 'Scrolling automatico disabilitato',
+  'Choose language': 'Scegli la lingua'
+}); /**
+    * @fileoverview I18N for Italian
+    * @author Massimo Redaelli <massimo@typish.io>
+    */
 
 /***/ })
 /******/ ]);

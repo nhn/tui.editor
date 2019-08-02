@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.4
+ * @version 1.4.5
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -2621,13 +2621,24 @@ var ToastUIEditorViewer = function () {
       });
     }
 
-    this.preview = new _mdPreview2.default((0, _jquery2.default)(this.options.el), this.eventManager, this.convertor, true);
+    var _options = this.options,
+        el = _options.el,
+        initialValue = _options.initialValue;
+
+    var existingHTML = el.innerHTML;
+    el.innerHTML = '';
+
+    this.preview = new _mdPreview2.default((0, _jquery2.default)(el), this.eventManager, this.convertor, true);
 
     this.preview.$el.on('mousedown', _jquery2.default.proxy(this._toggleTask, this));
 
     _extManager2.default.applyExtension(this, this.options.exts);
 
-    this.setValue(this.options.initialValue);
+    if (initialValue) {
+      this.setValue(initialValue);
+    } else if (existingHTML) {
+      this.preview.setHTML(existingHTML);
+    }
 
     this.eventManager.emit('load', this);
   }
@@ -12241,6 +12252,13 @@ if (i18n) {
     'Unmerge cells': 'Dela celler',
     'Cannot change part of merged cell': 'Ej möjligt att ändra en del av en sammanfogad cell',
     'Cannot paste row merged cells into the table header': 'Ej möjligt att klistra in rad-sammanfogade celler i tabellens huvud'
+  });
+
+  i18n.setLanguage(['it', 'it_IT'], {
+    'Merge cells': 'Unisci celle',
+    'Unmerge cells': 'Separa celle',
+    'Cannot change part of merged cell': 'Non è possibile modificare parte di una cella unita',
+    'Cannot paste row merged cells into the table header': 'Non è possibile incollare celle unite per riga nell\'intestazione della tabella'
   });
 }
 
