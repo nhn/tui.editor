@@ -68,17 +68,16 @@ describe('Viewer', () => {
 
   it('should render initialValue', () => {
     const initialValue = 'Initial **Value**';
-    const vieweForInitialValue = new ToastUIEditorViewer({
+    const viewerForInitialValue = new ToastUIEditorViewer({
       el: $(`<div>`)[0],
       initialValue
     });
-
     const viewerForSetValue = new ToastUIEditorViewer({
       el: $(`<div>`)[0]
     });
     viewerForSetValue.setValue(initialValue);
 
-    expect(vieweForInitialValue.preview.getHTML()).toBe(viewerForSetValue.preview.getHTML());
+    expect(viewerForInitialValue.preview.getHTML()).toBe(viewerForSetValue.preview.getHTML());
   });
 
   it('should use existing html as initial value', () => {
