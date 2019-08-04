@@ -124,7 +124,7 @@ const defaultConfigs = Array(isDevServer ? 1 : 5).fill(0).map(() => {
         amd: 'markdown-it',
         root: ['markdownit']
       },
-      'squire-rte': {
+      'squire-rte/build/squire-raw': {
         commonjs: 'squire-rte',
         commonjs2: 'squire-rte',
         amd: 'squire-rte',
