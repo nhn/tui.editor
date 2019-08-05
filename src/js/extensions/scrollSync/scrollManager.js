@@ -239,7 +239,7 @@ class ScrollManager {
   _getScrollTopForPreviewBaseCursor() {
     const cursorFactors = this._getCursorFactorsOfEditor();
 
-    if (!cursorFactors) {
+    if (!cursorFactors || !cursorFactors.section.$previewSectionEl) {
       return 0;
     }
 
