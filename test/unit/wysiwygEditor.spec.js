@@ -291,7 +291,7 @@ describe('WysiwygEditor', () => {
       expect(wwe.getValue()).toEqual(`${expectedHtml}<br />`);
     });
 
-    it('the line breaking is working between <br> to <img>.', () => {
+    it('the line break is working between <br> to <img>.', () => {
       let html = '<p>test<br><img src="" alt="image"></p>';
       wwe.setValue(html);
 
