@@ -157,7 +157,7 @@ class WwTableManager {
       'DEFAULT': (ev, range, keymap) => {
         const isRangeInTable = this.wwe.isInTable(range);
 
-        if (isRangeInTable && !this._isPressedWithModifierKey(keymap)) {
+        if (isRangeInTable && !this._isModifierKey(keymap)) {
           this._recordUndoStateIfNeed(range);
           this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
         } else if (!isRangeInTable && this._lastCellNode) {
@@ -1142,7 +1142,7 @@ class WwTableManager {
    * @returns {boolean}
    * @private
    */
-  _isPressedWithModifierKey(keymap) {
+  _isModifierKey(keymap) {
     return /((META|SHIFT|ALT|CONTROL)\+?)/g.test(keymap);
   }
 
