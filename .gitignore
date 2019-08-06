@@ -1,3 +1,5 @@
-lib
+!**/lib
+/lib
 node_modules
 report
+.DS_Store
