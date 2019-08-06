@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title>13. Use Command</title>
+    <link rel="stylesheet" href="./explain.css">
+  </head>
+  <body>
+    <div class="explain">
+      Click your customize button to get `Bold`
+    </div>
+    <div class="code-html">
+      <!-- Editor Dependencies -->
+      <script src="../lib/jquery/dist/jquery.js"></script>
+      <script src="../lib/markdown-it/dist/markdown-it.js"></script>
+      <script src="../lib/to-mark/dist/to-mark.js"></script>
+      <script src="../lib/tui-code-snippet/dist/tui-code-snippet.js"></script>
+      <script src="../lib/codemirror/lib/codemirror.js"></script>
+      <script src="../lib/highlightjs/highlight.pack.js"></script>
+      <script src="../lib/squire-rte/build/squire-raw.js"></script>
+      <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
+      <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
+
+      <!-- Editor -->
+      <script src="../dist/tui-editor-Editor.js"></script>
+      <link rel="stylesheet" href="../dist/tui-editor.css">
+      <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+
+      <button id='my_bold'>Click me to "Bold" text</button>
+      <div id="editSection"></div>
+    </div>
+    <script class="code-js">
+      var content = 'please select this row and click button above';
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        initialValue: content
+      });
+      var el = document.querySelector('#my_bold');
+
+      el.addEventListener('click', function(){
+        editor.exec('Bold');
+      })
+    </script>
+  </body>
+</html>

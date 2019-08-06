@@ -1,0 +1,83 @@
+{
+  "header" : {
+    "logo" : {
+      "src" : "https://uicdn.toast.com/toastui/img/tui-chart-bi-white.png"
+    },
+    "title" : {
+      "text" : "repo",
+      "linkUrl" : "https://github.com/nhn/tui.chart"
+    }
+  },
+  "footer" : [
+    {
+      "title" : "NHN",
+      "linkUrl" : "https://github.com/nhn"
+    },
+    {
+      "title" : "FE Development Lab",
+      "linkUrl" : "https://github.com/nhn/fe.javascript"
+    }
+  ],
+  "main" : {
+    "filePath" : "README.md"
+  },
+  "api" : {
+    "filePath" : "src/js/**"
+  },
+  "examples" : {
+    "filePath" : "examples",
+    "titles" : {
+      "example01-01-bar-chart-basic":  "1.1 [Bar Chart] basic",
+      "example01-02-bar-chart-negative-data":  "1.2 [Bar Chart] negative data",
+      "example01-03-bar-chart-normal-stack":  "1.3 [Bar Chart] normal stack",
+      "example01-04-bar-chart-diverging":  "1.4 [Bar Chart] diverging",
+      "example01-05-bar-chart-diverging-and-center-yaxis":  "1.5 [Bar Chart] diverging and center yAxis",
+      "example01-06-bar-chart-range-data":  "1.6 [Bar Chart] range data",
+      "example01-07-bar-chart-secondary-axis":  "1.7 [Bar Chart] secondary axis",
+      "example02-01-column-chart-basic":  "2.1 [Column Chart] basic",
+      "example02-02-column-chart-negative-data":  "2.2 [Column Chart] negative data",
+      "example02-03-column-chart-percent-stack":  "2.3 [Column Chart] percent stack",
+      "example02-04-column-chart-group-stack":  "2.4 [Column Chart] group stack",
+      "example02-05-column-chart-diverging-and-stacked":  "2.5 [Column Chart] diverging and stacked",
+      "example03-01-line-chart-basic":  "3.1 [Line Chart] basic",
+      "example03-02-line-chart-spline":  "3.2 [Line Chart] spline",
+      "example03-03-line-chart-coordinate-data":  "3.3 [Line Chart] coordinate data",
+      "example03-04-line-chart-without-series-data":  "3.4 [Line Chart] without series data",
+      "example03-05-line-chart-synchronized-tooltip":  "3.5 [Line Chart] synchronized tooltip",
+      "example03-06-line-chart-secondary-axis":  "3.6 [Line Chart] secondary axis",
+      "example04-01-area-chart-basic":  "4.1 [Area Chart] basic",
+      "example04-02-area-chart-normal-stack":  "4.2 [Area Chart] normal stack",
+      "example04-03-area-chart-range-data":  "4.3 [Area Chart] range data",
+      "example04-04-area-chart-auto-tick-zoomable":  "4.4 [Area Chart] auto tick and zoomable",
+      "example04-05-area-chart-merge-overlapping-plotbands":  "4.5 [Area Chart] merge overlapping plotbands",
+      "example05-01-bubble-chart-basic":  "5.1 [Bubble Chart] basic",
+      "example06-01-scatter-chart-basic":  "6.1 [Scatter Chart] basic",
+      "example07-01-pie-chart-basic":  "7.1 [Pie Chart] basic",
+      "example07-02-pie-chart-center-legend":  "7.2 [Pie Chart] center legend",
+      "example07-03-pie-chart-outer-legend":  "7.3 [Pie Chart] outer legend",
+      "example07-04-pie-chart-donut":  "7.4 [Pie Chart] donut",
+      "example07-05-pie-chart-semi-circle-donut":  "7.5 [Pie Chart] semi circle donut",
+      "example08-01-combo-chart-column-and-line":  "8.1 [Combo Chart] column and line",
+      "example08-02-combo-chart-pie-and-donut":  "8.2 [Combo Chart] pie and donut",
+      "example08-03-combo-chart-line-and-area":  "8.3 [Combo Chart] line and area",
+      "example08-04-combo-chart-line-and-scatter":  "8.4 [Combo Chart] line and scatter",
+      "example09-01-map-chart-world-map":  "9.1 [Map chart] world map",
+      "example09-02-map-chart-south-korea-map":  "9.2 [Map chart] south korea map",
+      "example09-03-map-chart-usa-map":  "9.3 [Map chart] USA map",
+      "example09-04-map-chart-china-map":  "9.4 [Map chart] china map",
+      "example09-05-map-chart-japan-map":  "9.5 [Map chart] japan map",
+      "example09-06-map-chart-singapore-map":  "9.6 [Map chart] singapore map",
+      "example09-07-map-chart-thailand-map":  "9.7 [Map chart] thailand map",
+      "example09-08-map-chart-taiwan-map":  "9.8 [Map chart] taiwan map",
+      "example10-01-heatmap-chart-basic":  "10.1 [Heatmap chart] basic",
+      "example10-02-heatmap-chart-random-series":  "10.2 [Heatmap chart] random series",
+      "example11-01-treemap-chart-basic":  "11.1 [Treemap chart] basic",
+      "example11-02-treemap-chart-useColorValue-option":  "11.2 [Treemap chart] useColorValue option",
+      "example12-01-dynamic-chart-append-and-shift-data-dynamically":  "12.1 [Dynamic chart] append and shift data dynamically",
+      "example13-01-radial-chart-basic":  "13.1 [Radial chart] basic",
+      "example14-01-boxplot-chart-basic":  "14.1 [Boxplot chart] basic",
+      "example15-01-bullet-chart-basic":  "15.1 [Bullet chart] basic"
+    }
+  },
+  "pathPrefix" : "tui.chart"
+}
