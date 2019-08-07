@@ -149,7 +149,9 @@ class ScrollManager {
 
     const cusrsorSection = this.sectionManager.sectionByLine(cursorLine);
 
-    if (cusrsorSection) {
+    if (cusrsorSection && cusrsorSection.$previewSectionEl &&
+      cusrsorSection.$previewSectionEl.length
+    ) {
       const ratio = this._getEditorSectionScrollRatio(cusrsorSection, cursorLine);
 
       return {
