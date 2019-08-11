@@ -97,11 +97,7 @@ class Convertor {
    * @returns {string} html text
    */
   _markdownToHtmlWithCodeHighlight(markdown, env) {
-    // eslint-disable-next-line
-        const onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
-    while (onerrorStripeRegex.exec(markdown)) {
-      markdown = markdown.replace(onerrorStripeRegex, '$1$3');
-    }
+    markdown = this._replaceImgAttrToDataProp(markdown);
 
     return markdownitHighlight.render(markdown, env);
   }
@@ -120,13 +116,25 @@ class Convertor {
       return match[0] !== '\\' ? `${$1}${$2} data-tomark-pass ${$3}` : match;
     });
 
-    // eslint-disable-next-line
-        const onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+    markdown = this._replaceImgAttrToDataProp(markdown);
+
+    return markdownit.render(markdown, env);
+  }
+
+  /**
+   * Replace 'onerror' attribute of img tag to data property string
+   * @param {string} markdown markdown text
+   * @returns {string} replaced markdown text
+   * @private
+   */
+  _replaceImgAttrToDataProp(markdown) {
+    const onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\\"']?[^\\"']*[\\"']?)(.*)/i;
+
     while (onerrorStripeRegex.exec(markdown)) {
       markdown = markdown.replace(onerrorStripeRegex, '$1$3');
     }
 
-    return markdownit.render(markdown, env);
+    return markdown;
   }
 
   /**
@@ -160,7 +168,11 @@ class Convertor {
    */
   toHTMLWithCodeHightlight(markdown) {
     let html = this._markdownToHtmlWithCodeHighlight(markdown);
+
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+
+    // Change double br created by markdown-it
+    html = html.replace(/<br><br>\n/g, '\n<br>');
 
     return html;
   }
