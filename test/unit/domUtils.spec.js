@@ -507,4 +507,15 @@ describe('domUtils', () => {
       expect(container.innerHTML).toBe('<b>12</b><s>3</s><b>45</b>');
     });
   });
+
+  it('getAllTextNode() returns all text node in root', () => {
+    container.innerHTML = 'foo\nbar<div>baz<br>qux</div>';
+
+    const nodes = domUtils.getAllTextNode(container);
+
+    expect(nodes.length).toBe(3);
+    expect(nodes[0].nodeValue).toBe('foo\nbar');
+    expect(nodes[1].nodeValue).toBe('baz');
+    expect(nodes[2].nodeValue).toBe('qux');
+  });
 });
