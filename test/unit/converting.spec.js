@@ -39,6 +39,7 @@ const mdInput = ['# HELLO\n\n',
   '| :-------------- | :---------------: | ---------------: |\n',
   '| _data_ | data | data |\n',
   '| ~~data~~ | data | data |\n' +
+  '| a<br>c | c<br>\nd |  |\n' +
     '\\[link\\]\\(www\\.google\\.com\\)\n\n' +
     '\\| vertical bar\n\n' +
     '\\* list1\n\n' +
@@ -103,7 +104,8 @@ const mdOutput = ['# HELLO\n\n',
   '| Left Align Head | Center Align Head | Right Align Head |\n',
   '| :-------------- | :---------------: | ---------------: |\n',
   '| _data_ | data | data |\n',
-  '| ~~data~~ | data | data |\n\n' +
+  '| ~~data~~ | data | data |\n' +
+  '| a<br>c | c<br>\nd |  |\n\n' +
     '\\[link\\]\\(www\\.google\\.com\\)\n\n' +
     '\\| vertical bar\n\n' +
     '\\* list1\n\n' +

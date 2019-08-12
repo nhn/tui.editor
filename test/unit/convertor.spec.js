@@ -31,6 +31,28 @@ describe('Convertor', () => {
         .toEqual(2);
     });
 
+    it('<br> is added between lines', () => {
+      const expected = [
+        '1',
+        '\n',
+        '<br>',
+        '<br>',
+        '2',
+        '\n',
+        '<br>',
+        '<br>',
+        '<br>',
+        '3'
+      ].join('\n');
+      const result = [
+        '<p>1</p>',
+        '<p><br><br>2</p>',
+        '<p><br><br><br>3</p>\n'
+      ].join('\n');
+
+      expect(convertor.toHTMLWithCodeHightlight(expected)).toBe(result);
+    });
+
     it('Avoid hidden last cell in table', () => {
       expect(convertor.toHTML('| a |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext').match(/\/td/g).length).toEqual(6);
     });
