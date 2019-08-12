@@ -122,6 +122,16 @@ class WwClipboardManager {
     return node.nodeName === 'TD' ? node : domUtils.getParentUntil(node, 'TR');
   }
 
+  _replaceNewLineToBr(node) {
+    const textNodes = domUtils.getAllTextNode(node);
+
+    textNodes.forEach((textNode) => {
+      if (/\n/.test(textNode.nodeValue)) {
+        textNode.parentNode.innerHTML = textNode.nodeValue.replace(/\n/g, '<br>');
+      }
+    });
+  }
+
   _onWillPaste(event) {
     const {data: pasteData} = event;
     const $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
@@ -241,6 +251,7 @@ class WwClipboardManager {
       this._preProcessPtag($clipboardContainer.get(0));
     }
 
+    this._replaceNewLineToBr($clipboardContainer.get(0));
     this._removeEmptyFontElement($clipboardContainer);
 
     this._pch.preparePaste($clipboardContainer);
