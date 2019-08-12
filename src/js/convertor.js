@@ -50,18 +50,18 @@ markdownitHighlight.use(taskList);
 markdownitHighlight.use(codeBlock);
 
 markdownitHighlight.renderer.rules.softbreak = (tokens, idx, options) => {
-  const beforeToken = tokens[idx - 1];
+  if (!options.breaks) {
+    return '\n';
+  }
 
-  if (beforeToken && beforeToken.type === 'html_inline' &&
-    beforeToken.content === '<br>') {
+  const prevToken = tokens[idx - 1];
+
+  if (prevToken && prevToken.type === 'html_inline' &&
+    prevToken.content === '<br>') {
     return '';
   }
 
-  if (options.breaks) {
-    return options.xhtmlOut ? '<br />\n' : '<br>\n';
-  }
-
-  return '\n';
+  return options.xhtmlOut ? '<br />\n' : '<br>\n';
 };
 
 // markdownit
