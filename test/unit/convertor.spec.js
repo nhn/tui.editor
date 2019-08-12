@@ -46,13 +46,8 @@ describe('Convertor', () => {
       ].join('\n');
       const result = [
         '<p>1</p>',
-        '<p>',
-        '<br>',
-        '<br>2</p>',
-        '<p>',
-        '<br>',
-        '<br>',
-        '<br>3</p>\n'
+        '<p><br><br>2</p>',
+        '<p><br><br><br>3</p>\n'
       ].join('\n');
 
       expect(convertor.toHTMLWithCodeHightlight(expected)).toBe(result);

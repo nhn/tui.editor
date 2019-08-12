@@ -49,6 +49,21 @@ markdownitHighlight.inline.ruler.at('backticks', codeBackticks);
 markdownitHighlight.use(taskList);
 markdownitHighlight.use(codeBlock);
 
+markdownitHighlight.renderer.rules.softbreak = (tokens, idx, options) => {
+  const beforeToken = tokens[idx - 1];
+
+  if (beforeToken && beforeToken.type === 'html_inline' &&
+    beforeToken.content === '<br>') {
+    return '';
+  }
+
+  if (options.breaks) {
+    return options.xhtmlOut ? '<br />\n' : '<br>\n';
+  }
+
+  return '\n';
+};
+
 // markdownit
 markdownit.block.ruler.at('code', code);
 markdownit.block.ruler.at('table', tableRenderer, {
@@ -168,11 +183,7 @@ class Convertor {
    */
   toHTMLWithCodeHightlight(markdown) {
     let html = this._markdownToHtmlWithCodeHighlight(markdown);
-
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
-
-    // Change double br created by markdown-it
-    html = html.replace(/<br><br>\n/g, '\n<br>');
 
     return html;
   }
