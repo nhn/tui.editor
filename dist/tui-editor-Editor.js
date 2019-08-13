@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.5
+ * @version 1.4.6
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -1286,6 +1286,26 @@ var optimizeRange = function optimizeRange(range, tagName) {
   }
 };
 
+/**
+ * Gets all text node from root element.
+ * @param {HTMLElement} root Root element
+ * @returns {Array} list of text nodes
+ */
+var getAllTextNode = function getAllTextNode(root) {
+  var walker = document.createTreeWalker(root, 4, null, false);
+  var result = [];
+
+  while (walker.nextNode()) {
+    var node = walker.currentNode;
+
+    if (isTextNode(node)) {
+      result.push(node);
+    }
+  }
+
+  return result;
+};
+
 exports.default = {
   getNodeName: getNodeName,
   isTextNode: isTextNode,
@@ -1323,7 +1343,8 @@ exports.default = {
   createEmptyLine: createEmptyLine,
   changeTagOrder: changeTagOrder,
   mergeSameNodes: mergeSameNodes,
-  optimizeRange: optimizeRange
+  optimizeRange: optimizeRange,
+  getAllTextNode: getAllTextNode
 };
 
 /***/ }),
@@ -3357,6 +3378,20 @@ markdownitHighlight.inline.ruler.at('backticks', _markdownitBackticksRenderer2.d
 markdownitHighlight.use(_markdownitTaskPlugin2.default);
 markdownitHighlight.use(_markdownitCodeBlockPlugin2.default);
 
+markdownitHighlight.renderer.rules.softbreak = function (tokens, idx, options) {
+  if (!options.breaks) {
+    return '\n';
+  }
+
+  var prevToken = tokens[idx - 1];
+
+  if (prevToken && prevToken.type === 'html_inline' && prevToken.content === '<br>') {
+    return '';
+  }
+
+  return options.xhtmlOut ? '<br />\n' : '<br>\n';
+};
+
 // markdownit
 markdownit.block.ruler.at('code', _markdownitCodeRenderer2.default);
 markdownit.block.ruler.at('table', _markdownitTableRenderer2.default, {
@@ -3412,11 +3447,7 @@ var Convertor = function () {
   _createClass(Convertor, [{
     key: '_markdownToHtmlWithCodeHighlight',
     value: function _markdownToHtmlWithCodeHighlight(markdown, env) {
-      // eslint-disable-next-line
-      var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
-      while (onerrorStripeRegex.exec(markdown)) {
-        markdown = markdown.replace(onerrorStripeRegex, '$1$3');
-      }
+      markdown = this._replaceImgAttrToDataProp(markdown);
 
       return markdownitHighlight.render(markdown, env);
     }
@@ -3438,13 +3469,28 @@ var Convertor = function () {
         return match[0] !== '\\' ? '' + $1 + $2 + ' data-tomark-pass ' + $3 : match;
       });
 
-      // eslint-disable-next-line
-      var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+      markdown = this._replaceImgAttrToDataProp(markdown);
+
+      return markdownit.render(markdown, env);
+    }
+
+    /**
+     * Replace 'onerror' attribute of img tag to data property string
+     * @param {string} markdown markdown text
+     * @returns {string} replaced markdown text
+     * @private
+     */
+
+  }, {
+    key: '_replaceImgAttrToDataProp',
+    value: function _replaceImgAttrToDataProp(markdown) {
+      var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\\"']?[^\\"']*[\\"']?)(.*)/i;
+
       while (onerrorStripeRegex.exec(markdown)) {
         markdown = markdown.replace(onerrorStripeRegex, '$1$3');
       }
 
-      return markdownit.render(markdown, env);
+      return markdown;
     }
 
     /**
@@ -6328,7 +6374,7 @@ var CodeMirrorExt = function () {
   }, {
     key: 'getValue',
     value: function getValue() {
-      return this.cm.getValue('\n').replace(/<br>\n/g, '<br>');
+      return this.cm.getValue('\n');
     }
 
     /**
@@ -6908,7 +6954,7 @@ var WwTableManager = function () {
         'DEFAULT': function DEFAULT(ev, range, keymap) {
           var isRangeInTable = _this3.wwe.isInTable(range);
 
-          if (isRangeInTable && !_this3._isSingleModifierKey(keymap)) {
+          if (isRangeInTable && !_this3._isModifierKey(keymap)) {
             _this3._recordUndoStateIfNeed(range);
             _this3._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
           } else if (!isRangeInTable && _this3._lastCellNode) {
@@ -8054,9 +8100,10 @@ var WwTableManager = function () {
      */
 
   }, {
-    key: '_isSingleModifierKey',
-    value: function _isSingleModifierKey(keymap) {
-      return keymap === 'META' || keymap === 'SHIFT' || keymap === 'ALT' || keymap === 'CONTROL';
+    key: '_isModifierKey',
+    value: function _isModifierKey(keymap) {
+      return (/((META|SHIFT|ALT|CONTROL)\+?)/g.test(keymap)
+      );
     }
 
     /**
@@ -14304,21 +14351,6 @@ var WysiwygEditor = function () {
     }
 
     /**
-     * _preprocessForInlineElement
-     * Seperate anchor tags with \u200B and replace blank space between <br> and <img to <br>$1
-     * @param {string} html Inner html of content editable
-     * @returns {string}
-     * @memberof WysiwygEditor
-     * @private
-     */
-
-  }, {
-    key: '_preprocessForInlineElement',
-    value: function _preprocessForInlineElement(html) {
-      return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
-    }
-
-    /**
      * _initEvent
      * Initialize EventManager event handler
      * @memberof WysiwygEditor
@@ -14330,9 +14362,6 @@ var WysiwygEditor = function () {
     value: function _initEvent() {
       var _this2 = this;
 
-      this.eventManager.listen('wysiwygSetValueBefore', function (html) {
-        return _this2._preprocessForInlineElement(html);
-      });
       this.eventManager.listen('wysiwygKeyEvent', function (ev) {
         return _this2._runKeyEventHandlers(ev.data, ev.keyMap);
       });
@@ -15898,6 +15927,17 @@ var WwClipboardManager = function () {
       return node.nodeName === 'TD' ? node : _domUtils2.default.getParentUntil(node, 'TR');
     }
   }, {
+    key: '_replaceNewLineToBr',
+    value: function _replaceNewLineToBr(node) {
+      var textNodes = _domUtils2.default.getAllTextNode(node);
+
+      textNodes.forEach(function (textNode) {
+        if (/\n/.test(textNode.nodeValue)) {
+          textNode.parentNode.innerHTML = textNode.nodeValue.replace(/\n/g, '<br>');
+        }
+      });
+    }
+  }, {
     key: '_onWillPaste',
     value: function _onWillPaste(event) {
       var _this2 = this;
@@ -16039,6 +16079,7 @@ var WwClipboardManager = function () {
         this._preProcessPtag($clipboardContainer.get(0));
       }
 
+      this._replaceNewLineToBr($clipboardContainer.get(0));
       this._removeEmptyFontElement($clipboardContainer);
 
       this._pch.preparePaste($clipboardContainer);

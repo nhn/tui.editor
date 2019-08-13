@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.5
+ * @version 1.4.6
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -479,7 +479,7 @@ var ScrollManager = function () {
 
       var cusrsorSection = this.sectionManager.sectionByLine(cursorLine);
 
-      if (cusrsorSection) {
+      if (cusrsorSection && cusrsorSection.$previewSectionEl && cusrsorSection.$previewSectionEl.length) {
         var ratio = this._getEditorSectionScrollRatio(cusrsorSection, cursorLine);
 
         return {

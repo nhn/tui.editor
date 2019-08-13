@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.5
+ * @version 1.4.6
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -8458,6 +8458,20 @@ markdownitHighlight.inline.ruler.at('backticks', _markdownitBackticksRenderer2.d
 markdownitHighlight.use(_markdownitTaskPlugin2.default);
 markdownitHighlight.use(_markdownitCodeBlockPlugin2.default);
 
+markdownitHighlight.renderer.rules.softbreak = function (tokens, idx, options) {
+  if (!options.breaks) {
+    return '\n';
+  }
+
+  var prevToken = tokens[idx - 1];
+
+  if (prevToken && prevToken.type === 'html_inline' && prevToken.content === '<br>') {
+    return '';
+  }
+
+  return options.xhtmlOut ? '<br />\n' : '<br>\n';
+};
+
 // markdownit
 markdownit.block.ruler.at('code', _markdownitCodeRenderer2.default);
 markdownit.block.ruler.at('table', _markdownitTableRenderer2.default, {
@@ -8513,11 +8527,7 @@ var Convertor = function () {
   _createClass(Convertor, [{
     key: '_markdownToHtmlWithCodeHighlight',
     value: function _markdownToHtmlWithCodeHighlight(markdown, env) {
-      // eslint-disable-next-line
-      var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
-      while (onerrorStripeRegex.exec(markdown)) {
-        markdown = markdown.replace(onerrorStripeRegex, '$1$3');
-      }
+      markdown = this._replaceImgAttrToDataProp(markdown);
 
       return markdownitHighlight.render(markdown, env);
     }
@@ -8539,13 +8549,28 @@ var Convertor = function () {
         return match[0] !== '\\' ? '' + $1 + $2 + ' data-tomark-pass ' + $3 : match;
       });
 
-      // eslint-disable-next-line
-      var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+      markdown = this._replaceImgAttrToDataProp(markdown);
+
+      return markdownit.render(markdown, env);
+    }
+
+    /**
+     * Replace 'onerror' attribute of img tag to data property string
+     * @param {string} markdown markdown text
+     * @returns {string} replaced markdown text
+     * @private
+     */
+
+  }, {
+    key: '_replaceImgAttrToDataProp',
+    value: function _replaceImgAttrToDataProp(markdown) {
+      var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\\"']?[^\\"']*[\\"']?)(.*)/i;
+
       while (onerrorStripeRegex.exec(markdown)) {
         markdown = markdown.replace(onerrorStripeRegex, '$1$3');
       }
 
-      return markdownit.render(markdown, env);
+      return markdown;
     }
 
     /**
@@ -10721,6 +10746,26 @@ var optimizeRange = function optimizeRange(range, tagName) {
   }
 };
 
+/**
+ * Gets all text node from root element.
+ * @param {HTMLElement} root Root element
+ * @returns {Array} list of text nodes
+ */
+var getAllTextNode = function getAllTextNode(root) {
+  var walker = document.createTreeWalker(root, 4, null, false);
+  var result = [];
+
+  while (walker.nextNode()) {
+    var node = walker.currentNode;
+
+    if (isTextNode(node)) {
+      result.push(node);
+    }
+  }
+
+  return result;
+};
+
 exports.default = {
   getNodeName: getNodeName,
   isTextNode: isTextNode,
@@ -10758,7 +10803,8 @@ exports.default = {
   createEmptyLine: createEmptyLine,
   changeTagOrder: changeTagOrder,
   mergeSameNodes: mergeSameNodes,
-  optimizeRange: optimizeRange
+  optimizeRange: optimizeRange,
+  getAllTextNode: getAllTextNode
 };
 
 /***/ }),
