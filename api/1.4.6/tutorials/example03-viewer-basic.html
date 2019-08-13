@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title>3. Viewer basic</title>
+    <link rel="stylesheet" href="./explain.css">
+  </head>
+  <body>
+    <div class="explain">
+      Learn more about Viewer in <a target="_blank" href="https://github.com/nhn/tui.editor/wiki/Getting-started-with-bower#viewer">here</a>
+    </div>
+    <div class="explain">
+      See available options in <a target="_blank" href="http://nhn.github.io/tui.editor/api/latest/ToastUIEditorViewer.html">here</a>
+    </div>
+    <div class="code-html">
+      <!-- Viewer Dependencies -->
+      <script src="../lib/jquery/dist/jquery.js"></script>
+      <script src='../lib/markdown-it/dist/markdown-it.js'></script>
+      <script src="../lib/tui-code-snippet/dist/tui-code-snippet.js"></script>
+      <script src="../lib/highlightjs/highlight.pack.js"></script>
+      <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
+
+      <!-- Viewer -->
+      <script src="../dist/tui-editor-Viewer.js"></script>
+      <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+
+      <div id="editSection"></div>
+    </div>
+    <script class="code-js">
+      var content = [
+        '![image](https://cloud.githubusercontent.com/assets/389021/16107646/9729e556-33d8-11e6-933f-5b09fa3a53bb.png)',
+        '# Heading 1',
+        '## Heading 2',
+        '### Heading 3',
+        '#### Heading 4',
+        '##### Heading 5',
+        '###### Heading 6',
+        '    code block',
+        '```js',
+        'console.log("fenced code block");',
+        '```',
+        '<pre>**HTML block**</pre>',
+        '* list',
+        '    * list indented',
+        '1. ordered',
+        '2. list',
+        '    1. ordered list',
+        '    2. indented',
+        '',
+        '- [ ] task',
+        '- [x] list completed',
+        '',
+        '[link](https://nhn.github.io/tui.editor/)',
+        '> block quote',
+        '---',
+        'horizontal line',
+        '***',
+        '`code`, *italic*, **bold**, ~~strikethrough~~, <span style="color:#e11d21">Red color</span>',
+        '|table|head|',
+        '|---|---|',
+        '|table|body|'
+      ].join('\n');
+
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        height: '300px',
+        initialValue: content
+      });
+    </script>
+  </body>
+</html>

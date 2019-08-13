@@ -1,0 +1,33 @@
+{
+  "name": "tui-chart",
+  "authors": [
+    "NHN. FE Development Lab <dl_javascript@nhn.com>"
+  ],
+  "license": "MIT",
+  "main": [
+    "dist/tui-chart.js",
+    "dist/tui-chart.css"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "maps",
+    "!dist/maps",
+    "examples",
+    "src",
+    "test",
+    "index.html",
+    "jsdoc.conf.json",
+    "karma.conf.js",
+    "webpack.config.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "raphael": "https://github.com/nhn/raphael.git#2.2.0-c",
+    "tui-code-snippet": "^1.5.0"
+  },
+  "devDependencies": {
+    "codemirror": "5.24.0"
+  }
+}
