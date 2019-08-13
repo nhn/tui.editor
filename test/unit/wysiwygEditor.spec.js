@@ -291,10 +291,18 @@ describe('WysiwygEditor', () => {
       expect(wwe.getValue()).toEqual(`${expectedHtml}<br />`);
     });
 
-    it('prevent text, image merge', () => {
-      const html = '<p>test<br><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAAXklEQVQIHWM8OeXvfwaW/wx/fjMwsHMwMjD9BLH+MDIwMTIy/PnJwMDMI87aIMiswCDMx89w98UNBpZX/48zbLx7h0H/TTjDo18nGZjYWVkZOLm5GU587mb4wvCcAQACuB2BMklKxwAAAABJRU5ErkJggg==" alt="image"></p>';
+    it('the line break is working between <br> to <img>.', () => {
+      let html = '<p>test<br><img src="" alt="image"></p>';
       wwe.setValue(html);
+
       expect(wwe.get$Body().find('div').length).toEqual(3);
+      expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test');
+      expect(wwe.get$Body().find('div').eq(1).find('img').length).toEqual(1);
+
+      html = 'test<br>\n<img src="" alt="image">';
+      wwe.setValue(html);
+
+      expect(wwe.get$Body().find('div').length).toEqual(2);
       expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test');
       expect(wwe.get$Body().find('div').eq(1).find('img').length).toEqual(1);
     });

@@ -97,25 +97,12 @@ class WysiwygEditor {
   }
 
   /**
-   * _preprocessForInlineElement
-   * Seperate anchor tags with \u200B and replace blank space between <br> and <img to <br>$1
-   * @param {string} html Inner html of content editable
-   * @returns {string}
-   * @memberof WysiwygEditor
-   * @private
-   */
-  _preprocessForInlineElement(html) {
-    return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
-  }
-
-  /**
    * _initEvent
    * Initialize EventManager event handler
    * @memberof WysiwygEditor
    * @private
    */
   _initEvent() {
-    this.eventManager.listen('wysiwygSetValueBefore', html => this._preprocessForInlineElement(html));
     this.eventManager.listen('wysiwygKeyEvent', ev => this._runKeyEventHandlers(ev.data, ev.keyMap));
     this.eventManager.listen('wysiwygRangeChangeAfter', () => this.scrollIntoCursor());
     this.eventManager.listen('contentChangedFromWysiwyg', () => {

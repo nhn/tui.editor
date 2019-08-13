@@ -814,6 +814,26 @@ const optimizeRange = function(range, tagName) {
   }
 };
 
+/**
+ * Gets all text node from root element.
+ * @param {HTMLElement} root Root element
+ * @returns {Array} list of text nodes
+ */
+const getAllTextNode = function(root) {
+  const walker = document.createTreeWalker(root, 4, null, false);
+  let result = [];
+
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+
+    if (isTextNode(node)) {
+      result.push(node);
+    }
+  }
+
+  return result;
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -851,5 +871,6 @@ export default {
   createEmptyLine,
   changeTagOrder,
   mergeSameNodes,
-  optimizeRange
+  optimizeRange,
+  getAllTextNode
 };

@@ -1105,7 +1105,7 @@ describe('WwTableManager', () => {
       expect(mgr._isDeletingBR(range)).toEqual(false);
     });
 
-    it('should check the br beween br is as true', () => {
+    it('should check the br between br is as true', () => {
       const range = wwe.getEditor().getSelection();
       range.setStart(wwe.get$Body().find('td')[1], 2);
       range.collapse(true);
@@ -1121,6 +1121,50 @@ describe('WwTableManager', () => {
       wwe.getEditor().setSelection(range);
 
       expect(mgr._isDeletingBR(range)).toEqual(false);
+    });
+  });
+
+  describe('undo/redo for each cell in the table', () => {
+    let defaultKeyEventHandler, range;
+
+    beforeEach(() => {
+      const html = `
+        <table>
+          <thead>
+            <tr>
+              <th>1234</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1123</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+      wwe.getEditor().setHTML(html);
+
+      mgr._recordUndoStateIfNeed = jasmine.createSpy('recordUndoStateIfNeed');
+      defaultKeyEventHandler = mgr.keyEventHandlers.DEFAULT;
+
+      range = wwe.getEditor().getSelection().cloneRange();
+      range.setStart(wwe.get$Body().find('th')[0], 0);
+      range.collapse(true);
+    });
+
+    it('when normal key is pressed, calls function to add undo state.', () =>{
+      defaultKeyEventHandler({}, range, 'A');
+      expect(mgr._recordUndoStateIfNeed).toHaveBeenCalled();
+    });
+
+    it('when key of undo action is pressed, not call function to add undo state.', () =>{
+      defaultKeyEventHandler({}, range, 'META+Z');
+      expect(mgr._recordUndoStateIfNeed).not.toHaveBeenCalled();
+    });
+
+    it('when key of redo action is pressed, not call function to add undo state.', () =>{
+      defaultKeyEventHandler({}, range, 'META+SHIFT+Z');
+      expect(mgr._recordUndoStateIfNeed).not.toHaveBeenCalled();
     });
   });
 });

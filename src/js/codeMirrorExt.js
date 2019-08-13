@@ -123,7 +123,7 @@ class CodeMirrorExt {
    * @returns {string} - codeMirror text value
    */
   getValue() {
-    return this.cm.getValue('\n').replace(/<br>\n/g, '<br>');
+    return this.cm.getValue('\n');
   }
 
   /**
