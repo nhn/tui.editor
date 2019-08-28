@@ -49,13 +49,13 @@ function _createTheadOrTbodyHtml(trs, wrapperNodeName) {
  * @private
  */
 function createTableHtml(renderData) {
-  const thead = [renderData[0]];
+  const thead = renderData[0] ? [renderData[0]] : [];
   const tbody = renderData.slice(1);
   const theadHtml = _createTheadOrTbodyHtml(thead, 'THEAD');
   const tbodyHtml = _createTheadOrTbodyHtml(tbody, 'TBODY');
   const className = renderData.className ? ` class="${renderData.className}"` : '';
 
-  return `<table${className}>${theadHtml + tbodyHtml}</renderData>`;
+  return `<table${className}>${theadHtml + tbodyHtml}</table>`;
 }
 
 /**
