@@ -31,12 +31,6 @@ describe('tableRenderer', () => {
       const tableHtml = [
         '<table>',
         '<!-- header>',
-        '<thead>',
-        '<tr><th>foo</th></tr>',
-        '</thead>',
-        '<tbody>',
-        '<tr><td>bar</td></tr>',
-        '</tbody>',
         '</table>'
       ].join('');
       const $table = $(tableHtml);
