@@ -55,7 +55,7 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-sauce-launcher": "^1.2.0",
     "karma-sourcemap-loader": "^0.3.7",
-    "karma-webdriver-launcher": "github:nhn/karma-webdriver-launcher#v1.1.0",
+    "karma-webdriver-launcher": "github:nhn/karma-webdriver-launcher#v1.2.0",
     "karma-webpack": "^3.0.0",
     "safe-umd-webpack-plugin": "0.0.2",
     "testcafe": "^0.23.3",
