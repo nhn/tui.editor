@@ -132,6 +132,14 @@ describe('Convertor', () => {
 
       expect(convertor.toHTML(codeBlockMd).replace(/\n/g, '')).toEqual(expectedHTML);
     });
+
+    it('should not insert data-tomark-pass in codeblock that has tag of empty element.', () => {
+      const codeBlockMd = `\`\`\`\n<br/><br /><input type="text" />\n\`\`\``;
+
+      const expectedHTML = `<pre><code>&lt;br/&gt;&lt;br /&gt;&lt;input type="text" /&gt;</code></pre>`;
+
+      expect(convertor.toHTML(codeBlockMd).replace(/\n/g, '')).toEqual(expectedHTML);
+    });
   });
 
   describe('html to markdown', () => {
