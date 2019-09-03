@@ -24,6 +24,7 @@ import WwTableManager from './wwTableManager';
 import WwTableSelectionManager from './wwTableSelectionManager';
 import {CodeBlockManager} from './codeBlockManager';
 import codeBlockManager from './codeBlockManager';
+import toMarkRenderer from './toMarkRenderer';
 
 // markdown commands
 import mdBold from './markdownCommands/bold';
@@ -219,7 +220,7 @@ class ToastUIEditor {
       false,
       this.options.previewDelayTime);
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
-    this.toMarkOptions = null;
+    this.toMarkOptions = {renderer: toMarkRenderer};
 
     if (this.options.linkAttribute) {
       const attribute = this._sanitizeLinkAttribute(this.options.linkAttribute);
