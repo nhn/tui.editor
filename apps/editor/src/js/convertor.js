@@ -165,7 +165,7 @@ class Convertor {
 
     $wrapperDiv.find('code, pre').each((i, codeOrPre) => {
       const $code = $(codeOrPre);
-      $code.html($code.html().replace(/ data-tomark-pass &gt;/g, '&gt;'));
+      $code.html($code.html().replace(/\sdata-tomark-pass\s(\/?)&gt;/g, '$1&gt;'));
     });
 
     renderedHTML = $wrapperDiv.html();
