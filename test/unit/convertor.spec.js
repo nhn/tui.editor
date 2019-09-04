@@ -111,24 +111,28 @@ describe('Convertor', () => {
 
     it('should insert data-tomark-pass in html tag even if attrubute has slash', () => {
       const imgTag = '<img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png">';
-
       const expectedHTML = '<p><img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png" data-tomark-pass=""></p>';
 
       expect(convertor.toHTML(imgTag).replace(/\n/g, '')).toEqual(expectedHTML);
     });
 
     it('should not insert data-tomark-pass in codeblock that has tag', () => {
-      const codeBlockMd = `\`\`\`\n<p>hello</p>\n\`\`\``;
-
+      const codeBlockMd = '```\n<p>hello</p>\n```';
       const expectedHTML = `<pre><code>&lt;p&gt;hello&lt;/p&gt;</code></pre>`;
 
       expect(convertor.toHTML(codeBlockMd).replace(/\n/g, '')).toEqual(expectedHTML);
     });
 
     it('should not insert data-tomark-pass in codeblock that has tag with attribute', () => {
-      const codeBlockMd = `\`\`\`\n<p class="test">hello</p>\n\`\`\``;
-
+      const codeBlockMd = '```\n<p class="test">hello</p>\n```';
       const expectedHTML = `<pre><code>&lt;p class="test"&gt;hello&lt;/p&gt;</code></pre>`;
+
+      expect(convertor.toHTML(codeBlockMd).replace(/\n/g, '')).toEqual(expectedHTML);
+    });
+
+    it('should not insert data-tomark-pass in codeblock that has tag of empty element.', () => {
+      const codeBlockMd = '```\n<br/><br /><input type="text" />\n```';
+      const expectedHTML = `<pre><code>&lt;br/&gt;&lt;br /&gt;&lt;input type="text" /&gt;</code></pre>`;
 
       expect(convertor.toHTML(codeBlockMd).replace(/\n/g, '')).toEqual(expectedHTML);
     });
