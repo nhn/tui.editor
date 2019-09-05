@@ -97,7 +97,8 @@ Depending on the type of use you want like production of *Markdown* or maybe to 
 
 ### And More
 
-* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian, Turkish, Finnish, Czech, Arabic, Polish, Galician, Swedish, Italian + language you extend.
+### And more
+* **i18n**: English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian, Turkish, Finnish, Czech, Arabic, Polish, Galician, Swedish, Italian, Portuguese + language you extend.
 * **Viewer**: Renders Markdown content with extensions
 
 
