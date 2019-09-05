@@ -1,0 +1,50 @@
+/**
+* @fileoverview I18N for Português
+* @author Victor Magalhães <https://github.com/vmagalhaes>
+*/
+import i18n from '../i18n';
+
+i18n.setLanguage(['ptBR', 'pt_BR'], {
+  'Markdown': 'Markdown',
+  'WYSIWYG': 'WYSIWYG',
+  'Write': 'Escrever',
+  'Preview': 'Pré-visualizar',
+  'Headings': 'Cabeçalhos',
+  'Paragraph': 'Parágrafo',
+  'Bold': 'Negrito',
+  'Italic': 'Itálico',
+  'Strike': 'Traçado',
+  'Code': 'Código',
+  'Line': 'Linha',
+  'Blockquote': 'Bloco de citação',
+  'Unordered list': 'Lista não ordenada',
+  'Ordered list': 'Lista ordenada',
+  'Task': 'Tarefa',
+  'Insert link': 'Inserir link',
+  'Insert CodeBlock': 'Inserir bloco de código',
+  'Insert table': 'Inserir tabela',
+  'Insert image': 'Inserir imagem',
+  'Heading': 'Título',
+  'Image URL': 'URL da imagem',
+  'Select image file': 'Selecionar arquivo da imagem',
+  'Description': 'Descrição',
+  'OK': 'OK',
+  'Cancel': 'Cancelar',
+  'File': 'Arquivo',
+  'URL': 'URL',
+  'Link text': 'Texto do link',
+  'Add row': 'Adicionar linha',
+  'Add col': 'Adicionar coluna',
+  'Remove row': 'Remover linha',
+  'Remove col': 'Remover coluna',
+  'Align left': 'Alinhar à esquerda',
+  'Align center': 'Alinhar ao centro',
+  'Align right': 'Alinhar à direita',
+  'Remove table': 'Remover tabela',
+  'Would you like to paste as table?': 'Você gostaria de colar como uma tabela?',
+  'Text color': 'Cor do texto',
+  'Auto scroll enabled': 'Autoscroll ligado',
+  'Auto scroll disabled': 'Autoscroll desligado',
+  'Cannot paste values ​​other than a table in the cell selection state': 'Não é possível colar valores diferentes de uma tabela no estado de seleção de célula',
+  'Choose language': 'Escolher idioma'
+});
