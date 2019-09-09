@@ -328,11 +328,9 @@ Renderer.prototype.escapeTextForLink = function(text) {
  * @returns {string} processed text
  */
 Renderer.prototype.escapeTextHtml = function(text) {
-    text = text.replace(Renderer.markdownTextToEscapeHtmlRx, function(matched) {
+    return text.replace(Renderer.markdownTextToEscapeHtmlRx, function(matched) {
         return '\\' + matched;
     });
-
-    return text;
 };
 
 /**
@@ -344,11 +342,20 @@ Renderer.prototype.escapeTextHtml = function(text) {
  * @returns {string} processed text
  */
 Renderer.prototype.escapeTextBackSlash = function(text) {
-    text = text.replace(Renderer.markdownTextToEscapeBackSlashRx, function(matched) {
+    return text.replace(Renderer.markdownTextToEscapeBackSlashRx, function(matched) {
         return '\\' + matched;
     });
+};
 
-    return text;
+/**
+ * Escapes in markdown emphasis characters ('*', '_', '~')
+ * @param {string} text Text to escape
+ * @returns {string} escaped text
+ */
+Renderer.prototype.escapeEmphasisCharacters = function(text) {
+    return text.replace(Renderer.markdownTextToEscapeEmphasisCharsRx, function(matched) {
+        return '\\' + matched;
+    });
 };
 
 Renderer.markdownTextToEscapeRx = {
@@ -362,9 +369,6 @@ Renderer.markdownTextToEscapeRx = {
 
     link: /!?\[.*\]\(.*\)/,
     reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
-    strong: /__(\S|\S[\s\S]*\S)__|\*\*(\S|\S[\s\S]*\S)\*\*/,
-    em: /_(\S|\S[\s\S]*\S)_|\*(\S|\S[\s\S]*\S)\*/,
-    strikeThrough: /~~(\S|\S[\s\S]*\S)~~/,
     code: /(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
 
     verticalBar: /\u007C/,
@@ -376,6 +380,8 @@ Renderer.markdownTextToEscapeRx = {
 Renderer.markdownTextToEscapeHtmlRx = /<([a-zA-Z_][a-zA-Z0-9\-\._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-\._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-\.:/]*)>/g;
 
 Renderer.markdownTextToEscapeBackSlashRx = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
+
+Renderer.markdownTextToEscapeEmphasisCharsRx = /[*_~]/g;
 
 Renderer.prototype._isNeedEscape = function(text) {
     var res = false;

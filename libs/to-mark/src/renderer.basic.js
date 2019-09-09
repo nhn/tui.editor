@@ -22,13 +22,14 @@ var FIND_LAST_RETURN_RX = /\n$/g,
 var basicRenderer = Renderer.factory({
     //inlines
     'TEXT_NODE': function(node) {
-        var managedText;
-
-        managedText = this.trim(this.getSpaceCollapsedText(node.nodeValue));
+        var managedText = this.trim(this.getSpaceCollapsedText(node.nodeValue));
 
         if (this._isNeedEscapeBackSlash(managedText)) {
             managedText = this.escapeTextBackSlash(managedText);
         }
+
+        managedText = this.escapeEmphasisCharacters(managedText);
+
         if (this._isNeedEscapeHtml(managedText)) {
             managedText = this.escapeTextHtml(managedText);
         }

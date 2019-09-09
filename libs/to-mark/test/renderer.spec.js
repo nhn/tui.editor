@@ -298,27 +298,6 @@ describe('renderer', function() {
             expect(renderer._isNeedEscape('~awefwaef')).toEqual(false);
         });
 
-        it('em, strong', function() {
-            expect(renderer._isNeedEscape('*a*')).toEqual(true);
-            expect(renderer._isNeedEscape('_a_')).toEqual(true);
-            expect(renderer._isNeedEscape('*em*')).toEqual(true);
-            expect(renderer._isNeedEscape('_em_')).toEqual(true);
-            expect(renderer._isNeedEscape('**strong**')).toEqual(true);
-            expect(renderer._isNeedEscape('__strong__')).toEqual(true);
-
-            expect(renderer._isNeedEscape('_ em_')).toEqual(false);
-        });
-
-        it('strikeThrough', function() {
-            expect(renderer._isNeedEscape('~~a~~')).toEqual(true);
-            expect(renderer._isNeedEscape('~~true~~')).toEqual(true);
-            expect(renderer._isNeedEscape('~~strike through~~')).toEqual(true);
-
-            expect(renderer._isNeedEscape('~~strike~')).toEqual(false);
-            expect(renderer._isNeedEscape('~~strike~through~')).toEqual(false);
-            expect(renderer._isNeedEscape('~strike~')).toEqual(false);
-        });
-
         it('link,img', function() {
             expect(renderer._isNeedEscape('[abaewf](afewf)')).toEqual(true);
             expect(renderer._isNeedEscape('![abaewf](afewf)')).toEqual(true);
