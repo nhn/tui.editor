@@ -240,9 +240,14 @@ class Convertor {
 
     html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
 
-    let markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
+    html = this._preventBrBetweenTextAndCodeBlock(html);
+    html = this._appendAttributeForBrIfNeed(html);
+
+    let markdown = toMark(html, toMarkOptions);
 
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
+
+    markdown = this._removeNewlinesBeforeAfterCodeblock(markdown);
 
     util.forEach(markdown.split('\n'), (line, index) => {
       const FIND_TABLE_RX = /^\|[^|]*\|/ig;
@@ -255,6 +260,22 @@ class Convertor {
     });
 
     return resultArray.join('\n');
+  }
+
+  _preventBrBetweenTextAndCodeBlock(html) {
+    // first "br" is a line break and second "br" is an empty line on html
+    html = html.replace(/<br><br><pre>/g, '<br><br data-tomark-pass><pre>');
+    html = html.replace(/<\/pre><br>([^<\s])/g, '</pre><br data-tomark-pass>$1');
+
+    return html;
+  }
+
+  _removeNewlinesBeforeAfterCodeblock(markdown) {
+    // newlines("\n\n") are created on to-mark
+    markdown = markdown.replace(/<br>\n\n```/g, '<br>```');
+    markdown = markdown.replace(/```\n\n(<br>[^<\s])/g, '```\n$1');
+
+    return markdown;
   }
 
   _appendAttributeForBrIfNeed(html) {

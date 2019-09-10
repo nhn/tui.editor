@@ -197,6 +197,11 @@ describe('Convertor', () => {
       expect(convertor.toMarkdown('<span>text</span><br><br>text'))
         .toBe('<span>text</span>\n\ntext');
     });
+
+    it('should prevent 1 BR befere and after code block.', () => {
+      expect(convertor.toMarkdown('text<br><br><pre><code>code block</code></pre>')).toBe('text\n<br>\n```\ncode block\n```');
+      expect(convertor.toMarkdown('<pre><code>code block</code></pre><br>text')).toBe('```\ncode block\n```\n<br>\ntext');
+    });
   });
 
   describe('event', () => {
