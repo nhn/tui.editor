@@ -30,14 +30,16 @@ const SINGLE_RUN = process.env.SINGLE_RUN === 'true';
  * @param {string} base - 'SauceLabs' || 'WebDriver'
  * @param {string} browserName - browser name
  * @param {string} version - browser version
+ * @param {string} [platformName] - platform name
  * @returns {object} - custom launcher format object
  */
-function nhnentLauncher(base, browserName, version) {
+function nhnentLauncher(base, browserName, version, platformName) {
   return {
     base,
     browserName,
     version,
-    config: nhnentWebDriver
+    config: nhnentWebDriver,
+    ...(platformName ? {platformName} : null)
   };
 }
 
@@ -64,7 +66,7 @@ configurator.nhnent = function(defaultConfig) {
     customLaunchers.IE10 = nhnentLauncher('WebDriver', 'internet explorer', '10');
   }
   if (BROWSER === 'IE11' || !BROWSER) {
-    customLaunchers.IE11 = nhnentLauncher('WebDriver', 'internet explorer', '11');
+    customLaunchers.IE11 = nhnentLauncher('WebDriver', 'internet explorer', '11', 'windows');
   }
   if (BROWSER === 'Edge' || !BROWSER) {
     customLaunchers.Edge = nhnentLauncher('WebDriver', 'MicrosoftEdge');
