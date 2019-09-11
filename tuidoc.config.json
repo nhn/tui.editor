@@ -1,0 +1,35 @@
+{
+  "header": {
+    "logo": {
+      "src": "https://uicdn.toast.com/toastui/img/tui-editor-bi-white.png",
+      "linkUrl": "/"
+    },
+    "title": {
+      "text": "repo",
+      "linkUrl": "https://github.com/nhn/tui.editor"
+    },
+    "version": true
+  },
+  "footer": [
+    {
+      "title": "NHN",
+      "linkUrl": "https://github.com/nhn"
+    },
+    {
+      "title": "FE Development Lab",
+      "linkUrl": "https://github.com/nhn/fe.javascript"
+    }
+  ],
+  "main": {
+    "filePath": "README.md"
+  },
+  "api": {
+    "filePath": "src/js/*",
+    "permalink": true
+  },
+  "examples": {
+    "filePath": "examples",
+    "titles": {}
+  },
+  "pathPrefix": "tui-editor"
+}
