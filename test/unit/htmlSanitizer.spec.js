@@ -41,5 +41,13 @@ describe('htmlSanitizer', function() {
       expect($circle.attr('stroke-width')).toBeTruthy();
       expect($circle.attr('fill')).toBeTruthy();
     });
+
+    it('Remove attributes with invalid value', function() {
+      expect(htmlSanitizer('<a href="javascript:alert();">xss</a>', true)).toEqual('<a>xss</a>');
+      expect(htmlSanitizer('<a href="#">benign</a>', true)).toEqual('<a href="#">benign</a>');
+      expect(htmlSanitizer('<a href="http://example.com">http</a>', true)).toEqual('<a href="http://example.com">http</a>');
+      expect(htmlSanitizer('<a href="https://example.com">https</a>', true)).toEqual('<a href="https://example.com">https</a>');
+      expect(htmlSanitizer('<a href="ftp://example.com">ftp</a>', true)).toEqual('<a href="ftp://example.com">ftp</a>');
+    });
   });
 });
