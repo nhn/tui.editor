@@ -28,6 +28,10 @@ const SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabe
     'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' +
     'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
 
+const ATTR_VALUE_BLACK_LIST_RX = {
+  'href': new RegExp('^(javascript:).*', 'g')
+};
+
 /**
  * htmlSanitizer
  * @param {string|Node} html html or Node
@@ -44,6 +48,7 @@ function htmlSanitizer(html, needHtmlText) {
 
   removeUnnecessaryTags($html);
   leaveOnlyWhitelistAttribute($html);
+  removeInvalidAttributeValues($html);
 
   return finalizeHtml($html, needHtmlText);
 }
@@ -76,6 +81,24 @@ function leaveOnlyWhitelistAttribute($html) {
       // Edge svg attribute name returns uppercase bug. error guard.
       // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5579311/
       if (attrs.getNamedItem(attr.name)) {
+        attrs.removeNamedItem(attr.name);
+      }
+    });
+  });
+}
+
+/**
+ * Remove invalid attribute values
+ * @private
+ * @param {jQuery} $html jQuery instance
+ */
+function removeInvalidAttributeValues($html) {
+  $html.find('*').each((index, node) => {
+    const attrs = node.attributes;
+
+    util.forEachArray(util.toArray(attrs), attr => {
+      const valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr.name];
+      if (valueBlackListRX && attr.value.match(valueBlackListRX) && attrs.getNamedItem(attr.name)) {
         attrs.removeNamedItem(attr.name);
       }
     });
