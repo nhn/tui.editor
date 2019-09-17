@@ -12,31 +12,27 @@ import ToolbarItemFactory from './toolbarItemFactory';
 const MORE_BUTTON_NAME = 'more';
 
 /**
- * default toolbar
- * @extends Toolbar
+ * Class DefaultToolbar
  */
 class DefaultToolbar extends Toolbar {
   /**
    * more button
-   * @memberof DefaultToolbar
-   * @private
    * @type {ToolbarButton}
+   * @private
    */
   _moreButton;
 
   /**
    * popup dropdown toolbar
-   * @memberof DefaultToolbar
-   * @private
    * @type {PopupDropdownToolbar}
+   * @private
    */
   _popupDropdownToolbar;
 
   /**
    * resize observer
-   * @memberof DefaultToolbar
-   * @private
    * @type {ResizeObserver}
+   * @private
    */
   _observer;
 
@@ -51,7 +47,7 @@ class DefaultToolbar extends Toolbar {
    * insert toolbar item
    * @param  {number} index - index at given item inserted
    * @param  {ToolbarItem|string|object} item - toolbar item
-   * @memberof Toolbar
+   * @override
    */
   insertItem(index, item) {
     super.insertItem(index, item);

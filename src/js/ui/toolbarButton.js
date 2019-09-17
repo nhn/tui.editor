@@ -6,7 +6,7 @@ import Button from './button';
 
 /**
  * Toolbar Button UI
- * @extends {ToolbarItem}
+ * @ignore
  */
 class ToolbarButton extends Button {}
 
