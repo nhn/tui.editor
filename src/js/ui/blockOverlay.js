@@ -6,16 +6,13 @@ import $ from 'jquery';
 
 /**
  * Class BlockOverlay
+ * @param {Object} options - options
+ *     @param {EventManager} options.eventManager - event manager instance
+ *     @param {HTMLElement} options.container - container element
+ *     @param {string} options.attachedSelector - selector string to find attached element
+ * @ignore
  */
 class BlockOverlay {
-  /**
-   * Creates an instance of BlockOverlay.
-   * @param {Object} options - options
-   *  @param {EventManager} options.eventManager - event manager instance
-   *  @param {HTMLElement} options.container - container element
-   *  @param {string} options.attachedSelector - selector string to find attached element
-   * @memberof BlockOverlay
-   */
   constructor({eventManager, container, attachedSelector}) {
     this._eventManager = eventManager;
     this._attachedSelector = `[contenteditable=true] ${attachedSelector}`;
@@ -26,6 +23,7 @@ class BlockOverlay {
      * is activated.
      * if this blockOverlay is active, It always be visible unconditionally.
      * @type {boolean}
+     * @private
      */
     this.active = false;
 
@@ -80,7 +78,6 @@ class BlockOverlay {
   /**
    * update blockOverlay position & size update to attached element
    * you may want to override this to adjust position & size
-   * @memberof BlockOverlay
    * @protected
    */
   syncLayout() {
@@ -93,7 +90,6 @@ class BlockOverlay {
    * attached element
    * @protected
    * @returns {HTMLElement} - attached element
-   * @memberof BlockOverlay
    */
   getAttachedElement() {
     return this._$attachedElement ? this._$attachedElement.get(0) : null;
@@ -103,7 +99,6 @@ class BlockOverlay {
    * visibility
    * @protected
    * @returns {boolean} visibility
-   * @memberof BlockOverlay
    */
   getVisibility() {
     return this.$el.css('display') === 'block';
@@ -113,7 +108,6 @@ class BlockOverlay {
    * visibility
    * @param {boolean} visibility - is visible
    * @protected
-   * @memberof BlockOverlay
    */
   setVisibility(visibility) {
     if (visibility && this._$attachedElement) {
@@ -132,7 +126,6 @@ class BlockOverlay {
 
   /**
    * called on show. you may want to override to get the event
-   * @memberof BlockOverlay
    * @protected
    * @abstract
    */
@@ -140,7 +133,6 @@ class BlockOverlay {
 
   /**
    * called on hide. you may want to override to get the event
-   * @memberof BlockOverlay
    * @protected
    */
   onHide() {
