@@ -22,19 +22,16 @@ const CLASS_CONTENT = {
 
 /**
  * Class ScrollSyncSplit
+ * @param {Element} baseElement - an element which attach a splitSyncSplit
+ * @param {Element} leftElement - an element to be on left side split view
+ * @param {Element} rightElement - an element to be on right side split view
+ * @param {object} options - options
+ *     @param {boolean} [options.showScrollSyncButton=false] - show scroll sync button on top right corner
+ *     @param {boolean} [options.scrollSync=true] - true for enable scroll sync
+ *     @param {boolean} [options.splitView=true] - true for split, false for single view
+ * @ignore
  */
 class ScrollSyncSplit {
-  /**
-   * Creates an instance of ScrollSyncSplit.
-   * @param {Element} baseElement - an element which attach a splitSyncSplit
-   * @param {Element} leftElement - an element to be on left side split view
-   * @param {Element} rightElement - an element to be on right side split view
-   * @param {object} options - options
-   *  @param {boolean} [options.showScrollSyncButton=false] - show scroll sync button on top right corner
-   *  @param {boolean} [options.scrollSync=true] - true for enable scroll sync
-   *  @param {boolean} [options.splitView=true] - true for split, false for single view
-   * @memberof ScrollSyncSplit
-   */
   constructor(baseElement, leftElement, rightElement, options = {}) {
     options = util.extend({
       showScrollSyncButton: false,
@@ -44,8 +41,10 @@ class ScrollSyncSplit {
     this._baseElement = baseElement;
 
     /**
-       * left, right side content elements
-       */
+     * left, right side content elements
+     * @type {HTMLElement[]}
+     * @private
+     */
     this._contentElements = [];
 
     this._initDom(leftElement, rightElement, options);
@@ -111,7 +110,6 @@ class ScrollSyncSplit {
    * set content element for given side
    * @param {Element} element - content element
    * @param {string} side - 'left' | 'right'
-   * @memberof ScrollSyncSplit
    * @private
    */
   _setContentElement(element, side) {
@@ -134,7 +132,6 @@ class ScrollSyncSplit {
   /**
    * set left side element
    * @param {Element} element - an element to be on left side split view
-   * @memberof ScrollSyncSplit
    * @private
    */
   _setLeft(element) {
@@ -144,7 +141,6 @@ class ScrollSyncSplit {
   /**
    * set right side element
    * @param {Element} element - an element to be on right side split view
-   * @memberof ScrollSyncSplit
    * @private
    */
   _setRight(element) {
@@ -157,7 +153,6 @@ class ScrollSyncSplit {
 
   /**
    * toggle multi scroll
-   * @memberof ScrollSyncSplit
    */
   toggleScrollSync() {
     $(this._el).toggleClass(CLASS_SCROLL_SYNC);
@@ -169,7 +164,6 @@ class ScrollSyncSplit {
 
   /**
    * toggle split
-   * @memberof ScrollSyncSplit
    */
   toggleSplitView() {
     $(this._el).toggleClass(CLASS_SINGLE_CONTENT);
@@ -178,7 +172,6 @@ class ScrollSyncSplit {
   /**
    * is scroll synced
    * @returns {boolean} - true for synced, false for each scroll
-   * @memberof ScrollSyncSplit
    */
   isScrollSynced() {
     return $(this._el).hasClass(CLASS_SCROLL_SYNC);
@@ -187,7 +180,6 @@ class ScrollSyncSplit {
   /**
    * is split view
    * @returns {boolean} - true for split view, false for single view
-   * @memberof ScrollSyncSplit
    */
   isSplitView() {
     return !$(this._el).hasClass(CLASS_SINGLE_CONTENT);
@@ -195,7 +187,6 @@ class ScrollSyncSplit {
 
   /**
    * sync scroll
-   * @memberof ScrollSyncSplit
    */
   sync() {
     if (!this._contentElements.left || !this._contentElements.right) {
@@ -222,7 +213,6 @@ class ScrollSyncSplit {
   /**
    * scroll top
    * @param {number} top - scroll top in pixel
-   * @memberof ScrollSyncSplit
    */
   scrollTop(top) {
     this._contentWrapper.scrollTop = top;
