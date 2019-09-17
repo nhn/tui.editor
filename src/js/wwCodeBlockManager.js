@@ -21,20 +21,16 @@ const CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
 
 /**
  * Class WwCodeBlockManager
+ * @param {WysiwygEditor} wwe - wysiwygEditor instance
+ * @ignore
  */
 class WwCodeBlockManager {
-  /**
-   * Creates an instance of WwCodeBlockManager.
-   * @param {WysiwygEditor} wwe - wysiwygEditor instance
-   * @memberof WwCodeBlockManager
-   */
   constructor(wwe) {
     this.wwe = wwe;
     this.eventManager = wwe.eventManager;
 
     /**
      * Name property
-     * @memberof WwCodeBlockManager#
      * @type {string}
      */
     this.name = 'codeblock';
@@ -43,9 +39,7 @@ class WwCodeBlockManager {
   }
 
   /**
-   * _init
    * Initialize
-   * @memberof WwCodeBlockManager
    * @private
    */
   _init() {
@@ -54,9 +48,7 @@ class WwCodeBlockManager {
   }
 
   /**
-   * _initKeyHandler
    * Initialize key event handler
-   * @memberof WwCodeBlockManager
    * @private
    */
   _initKeyHandler() {
@@ -90,9 +82,7 @@ class WwCodeBlockManager {
   }
 
   /**
-   * _initEvent
    * Initialize eventmanager event
-   * @memberof WwCodeBlockManager
    * @private
    */
   _initEvent() {
@@ -105,7 +95,6 @@ class WwCodeBlockManager {
 
   /**
    * Prepare nodes for pasting to code block
-   * @memberof WwCodeBlockManager
    * @param {Array.<Node>} nodes Node array
    * @returns {DocumentFragment}
    */
@@ -120,7 +109,6 @@ class WwCodeBlockManager {
 
   /**
    * Convert nodes to text for pasting to code block
-   * @memberof WwCodeBlockManager
    * @param {Array.<Node>} nodes Node array
    * @returns {string} coverted string
    */
@@ -145,7 +133,6 @@ class WwCodeBlockManager {
 
   /**
    * Copy content with code block style from code block selection
-   * @memberof WwCodeBlockManager
    * @param {HTMLElement} element Copied element
    * @param {Range} range Range object
    * @returns {HTMLElement}
@@ -167,7 +154,6 @@ class WwCodeBlockManager {
 
   /**
    * Change pre tag to pre and code
-   * @memberof WwCodeBlockManager
    * @param {string} html HTML string
    * @returns {string}
    * @private
@@ -178,9 +164,7 @@ class WwCodeBlockManager {
 
   /**
    * Modify Code Block for Wysiwyg
-   * @memberof WwCodeBlockManager
    * @param {HTMLElement} node root node to find pre
-   * @private
    */
   modifyCodeBlockForWysiwyg(node) {
     if (!node) {
@@ -221,7 +205,6 @@ class WwCodeBlockManager {
 
   /**
    * Remove codeblock of first line when press backspace in first line
-   * @memberof WwCodeBlockManager
    * @param {Event} ev Event object
    * @param {Range} range Range object
    * @returns {boolean}
@@ -262,7 +245,6 @@ class WwCodeBlockManager {
 
   /**
    * Check node is empty line
-   * @memberof WwCodeBlockManager
    * @param {Node} node node
    * @returns {boolean}
    * @private
@@ -276,7 +258,6 @@ class WwCodeBlockManager {
 
   /**
    * Check whether node is between same codeblocks
-   * @memberof WwCodeBlockManager
    * @param {Node} node Node
    * @returns {boolean}
    * @private
@@ -299,7 +280,6 @@ class WwCodeBlockManager {
 
   /**
    * Check whether range is first line of code block
-   * @memberof WwCodeBlockManager
    * @param {Range} range Range object
    * @returns {boolean}
    * @private
@@ -310,7 +290,6 @@ class WwCodeBlockManager {
 
   /**
    * Check whether front block of range is code block
-   * @memberof WwCodeBlockManager
    * @param {Range} range Range object
    * @returns {boolean}
    * @private
@@ -324,7 +303,6 @@ class WwCodeBlockManager {
 
   /**
    * Remove codeblock first line of codeblock
-   * @memberof WwCodeBlockManager
    * @param {Node} node Pre Node
    * @private
    */
@@ -353,7 +331,6 @@ class WwCodeBlockManager {
 
   /**
    * Return boolean value of whether current range is in the code block
-   * @memberof WwCodeBlockManager
    * @param {Range} range Range object
    * @returns {boolean}
    */
@@ -370,7 +347,7 @@ class WwCodeBlockManager {
   }
 
   /**
-   * Destroy.
+   * Destroy
    */
   destroy() {
     this.eventManager.removeEventHandler('wysiwygSetValueAfter.codeblock');

@@ -9,20 +9,16 @@ const FIND_HEADING_RX = /h[\d]/i;
 
 /**
  * Class WwHeadingManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 class WwHeadingManager {
-  /**
-   * Creates an instance of WwHeadingManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwHeadingManager
-   */
   constructor(wwe) {
     this.wwe = wwe;
     this.eventManager = wwe.eventManager;
 
     /**
      * Name property
-     * @memberof WwHeadingManager#
      * @type {string}
      */
     this.name = 'heading';
@@ -31,9 +27,7 @@ class WwHeadingManager {
   }
 
   /**
-   * _init
    * Initialize
-   * @memberof WwHeadingManager
    * @private
    */
   _init() {
@@ -48,9 +42,7 @@ class WwHeadingManager {
   }
 
   /**
-   * _initKeyHandler
    * Initialize key event handler
-   * @memberof WwHeadingManager
    * @private
    */
   _initKeyHandler() {
@@ -76,7 +68,6 @@ class WwHeadingManager {
   }
 
   /**
-   * _wrapDefaultBlockToHeadingInner
    * Wrap default block to heading inner contents
    * @private
    */
@@ -89,9 +80,7 @@ class WwHeadingManager {
   }
 
   /**
-   * _unwrapHeading
    * Unwrap heading
-   * @memberof WwHeadingManager
    * @private
    */
   _unwrapHeading() {
@@ -99,9 +88,7 @@ class WwHeadingManager {
   }
 
   /**
-   * _onEnter
    * Enter key handler
-   * @memberof WwHeadingManager
    * @param {Event} event event object
    * @param {Range} range range
    * @private
@@ -120,9 +107,7 @@ class WwHeadingManager {
   }
 
   /**
-   * _insertEmptyBlockToPrevious
    * Insert empty block to previous of passed range
-   * @memberof WwHeadingManager
    * @param {Range} range range
    * @private
    */
@@ -132,9 +117,7 @@ class WwHeadingManager {
   }
 
   /**
-   * _removePrevTopNodeIfNeed
    * Remove previous top node if need
-   * @memberof WwHeadingManager
    * @param {Event} event event object
    * @param {Range} range range
    * @returns {Boolean} whether needed or not

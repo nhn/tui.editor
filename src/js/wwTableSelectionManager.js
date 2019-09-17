@@ -10,31 +10,25 @@ const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
  * Class WwTableSelectionManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 class WwTableSelectionManager {
-  /**
-     * Creates an instance of WwTableSelectionManager.
-     * @param {WysiwygEditor} wwe - WysiwygEditor instance
-     * @memberof WwTableSelectionManager
-     */
   constructor(wwe) {
     this.wwe = wwe;
     this.eventManager = wwe.eventManager;
 
     /**
-         * Name property
-         * @memberof WwTableSelectionManager#
-         * @type {string}
-         */
+     * Name property
+     * @type {string}
+     */
     this.name = 'tableSelection';
 
     this._init();
   }
 
   /**
-     * _init
      * Initialize
-     * @memberof WwTableSelectionManager
      * @private
      */
   _init() {
@@ -48,31 +42,31 @@ class WwTableSelectionManager {
   }
 
   /**
-     * _initEvent
      * Initialize event
-     * @memberof WwTableSelectionManager
      * @private
      */
   _initEvent() {
     let selectionStart, selectionEnd, validSelectionEnd;
 
     /**
-         * Start table selection timer
-         * @type {object}
-         * @private
-         */
+     * Start table selection timer
+     * @type {object}
+     * @private
+     */
     this._tableSelectionTimer = null;
+
     /**
-         * Remove selection timer for Firefox table selection
-         * @type {object}
-         * @private
-         */
+     * Remove selection timer for Firefox table selection
+     * @type {object}
+     * @private
+     */
     this._removeSelectionTimer = null;
+
     /**
-         * Boolean value for whether selection started
-         * @type {boolean}
-         * @private
-         */
+     * Boolean value for whether selection started
+     * @type {boolean}
+     * @private
+     */
     this._isSelectionStarted = false;
 
     const onMouseover = ev => {
@@ -170,12 +164,12 @@ class WwTableSelectionManager {
   }
 
   /**
-     * Return whether single cell text selection or not
-     * @param {Range} range Range object
-     * @param {boolean} isSameCell Boolean value for same cell selection
-     * @returns {boolean}
-     * @private
-     */
+   * Return whether single cell text selection or not
+   * @param {Range} range Range object
+   * @param {boolean} isSameCell Boolean value for same cell selection
+   * @returns {boolean}
+   * @private
+   */
   _isTextSelect(range, isSameCell) {
     return /TD|TH|TEXT/i.test(range.commonAncestorContainer.nodeName) && isSameCell;
   }
@@ -191,9 +185,9 @@ class WwTableSelectionManager {
   }
 
   /**
-     * Set setTimeout and setInterval timer execution if table selecting situation
-     * @param {HTMLElement} selectionStart Start element
-     */
+   * Set setTimeout and setInterval timer execution if table selecting situation
+   * @param {HTMLElement} selectionStart Start element
+   */
   setTableSelectionTimerIfNeed(selectionStart) {
     const isTableSelecting = $(selectionStart).parents('[contenteditable=true] table').length;
 
@@ -203,9 +197,9 @@ class WwTableSelectionManager {
   }
 
   /**
-     * Clear setTimeout and setInterval timer execution
-     * @private
-     */
+   * Clear setTimeout and setInterval timer execution
+   * @private
+   */
   _clearTableSelectionTimerIfNeed() {
     clearTimeout(this._tableSelectionTimer);
     // For disable firefox's native table selection
@@ -216,12 +210,12 @@ class WwTableSelectionManager {
   }
 
   /**
-     * Re arrange selection when table does not include both start and end selection element
-     * @param {HTMLElement} selectionStart Start element of selection
-     * @param {HTMLElement} selectionEnd End element of selection
-     * @returns {{startContainer: HTMLElement, endContainer: HTMLElement}}
-     * @private
-     */
+   * Re arrange selection when table does not include both start and end selection element
+   * @param {HTMLElement} selectionStart Start element of selection
+   * @param {HTMLElement} selectionEnd End element of selection
+   * @returns {{startContainer: HTMLElement, endContainer: HTMLElement}}
+   * @private
+   */
   _reArrangeSelectionIfneed(selectionStart, selectionEnd) {
     const isRangeStartInTable = $(selectionStart).parents('[contenteditable=true] table').length;
     const isRangeEndInTable = $(selectionEnd).parents('[contenteditable=true] table').length;
@@ -241,13 +235,13 @@ class WwTableSelectionManager {
   }
 
   /**
-     * Apply select direction to editor
-     * @param {{startContainer: HTMLElement, endContainer: HTMLElement}} selectionInformation
-     *     Selection start and end element
-     * @param {Range} range Range object
-     * @returns {Range}
-     * @private
-     */
+   * Apply select direction to editor
+   * @param {{startContainer: HTMLElement, endContainer: HTMLElement}} selectionInformation
+   *     Selection start and end element
+   * @param {Range} range Range object
+   * @returns {Range}
+   * @private
+   */
   _applySelectionDirection(selectionInformation, range) {
     const nodeOffsetOfParent = domUtils.getNodeOffsetOfParent;
     const selectionStart = selectionInformation.startContainer;
@@ -279,12 +273,11 @@ class WwTableSelectionManager {
   }
 
   /**
-     * Get selection coordinate by current selection
-     * @param {HTMLElement} selectionStart start element
-     * @param {HTMLElement} selectionEnd end element
-     * @returns {{from: {row: number, cell: number}, to: {row: number, cell: number}}}
-     * @memberof WwTableSelectionManager
-     */
+   * Get selection coordinate by current selection
+   * @param {HTMLElement} selectionStart start element
+   * @param {HTMLElement} selectionEnd end element
+   * @returns {{from: {row: number, cell: number}, to: {row: number, cell: number}}}
+   */
   getSelectionRangeFromTable(selectionStart, selectionEnd) {
     const nodeOffsetOfParent = domUtils.getNodeOffsetOfParent;
     const startRowOffset = nodeOffsetOfParent(selectionStart.parentNode);
@@ -333,10 +326,10 @@ class WwTableSelectionManager {
   }
 
   /**
-     * Highlight selected table cells
-     * @param {HTMLElement} selectionStart start element
-     * @param {HTMLElement} selectionEnd end element
-     */
+   * Highlight selected table cells
+   * @param {HTMLElement} selectionStart start element
+   * @param {HTMLElement} selectionEnd end element
+   */
   highlightTableCellsBy(selectionStart, selectionEnd) {
     const trs = $(selectionStart).parents('[contenteditable=true] table').find('tr');
     const selection = this.getSelectionRangeFromTable(selectionStart, selectionEnd);
@@ -365,9 +358,8 @@ class WwTableSelectionManager {
   }
 
   /**
-     * Remove '.te-cell-selected' class from all of table Cell
-     * @memberof WwTableSelectionManager
-     */
+   * Remove '.te-cell-selected' class from all of table Cell
+   */
   removeClassAttrbuteFromAllCellsIfNeed() {
     this.wwe.get$Body().find(`td.${TABLE_CELL_SELECTED_CLASS_NAME},th.${TABLE_CELL_SELECTED_CLASS_NAME}`)
       .each((i, node) => {
@@ -382,17 +374,16 @@ class WwTableSelectionManager {
   }
 
   /**
-     * gets selected cells
-     * @returns {jQuery} selected cells
-     * @memberof WwTableSelectionManager
-     */
+   * gets selected cells
+   * @returns {jQuery} selected cells
+   */
   getSelectedCells() {
     return this.wwe.get$Body().find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
   }
 
   /**
-     * Create selection by selected cells and collapse that selection to end
-     */
+   * Create selection by selected cells and collapse that selection to end
+   */
   createRangeBySelectedCells() {
     const sq = this.wwe.getEditor();
     const range = sq.getSelection().cloneRange();
@@ -408,18 +399,18 @@ class WwTableSelectionManager {
   }
 
   /**
-     * Style to selected cells.
-     * @param {function} onStyle - function for styling
-     * @param {Object} [options] - options to be passed into onStyle
-     */
+   * Style to selected cells.
+   * @param {function} onStyle - function for styling
+   * @param {Object} [options] - options to be passed into onStyle
+   */
   styleToSelectedCells(onStyle, options) {
     this.createRangeBySelectedCells();
     onStyle(this.wwe.getEditor(), options);
   }
 
   /**
-     * Destroy.
-     */
+   * Destroy.
+   */
   destroy() {
     this.eventManager.removeEventHandler('mousedown.tableSelection');
     this.eventManager.removeEventHandler('mouseover.tableSelection');
