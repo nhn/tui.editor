@@ -7,19 +7,18 @@ import util from 'tui-code-snippet';
 import LayerPopup from './layerpopup';
 import Toolbar from './toolbar';
 
+/**
+ * Class PopupDropdownToolbar
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
+ */
 class PopupDropdownToolbar extends LayerPopup {
   /**
    * open event string
-   * @memberof PopupDropdownToolbar
-   * @static
-   * @type {ToolbarButton}
+   * @type {string}
    */
   static OPEN_EVENT = 'openDropdownToolbar';
 
-  /**
-   * constructor
-   * @param {object} options - popup options
-   */
   constructor(options) {
     options = util.extend({
       header: false,
@@ -39,7 +38,6 @@ class PopupDropdownToolbar extends LayerPopup {
   /**
    * get toolbar items
    * @returns {ToolbarItem[]} - toolbar items
-   * @memberof PopupDropdownToolbar
    */
   getItems() {
     return this.getToolbar().getItems();
@@ -49,7 +47,6 @@ class PopupDropdownToolbar extends LayerPopup {
    * get toolbar item at given index
    * @param  {number} index - item index
    * @returns {ToolbarItem} - toolbar item at the index
-   * @memberof PopupDropdownToolbar
    */
   getItem(index) {
     return this.getToolbar().getItem(index);
@@ -58,7 +55,6 @@ class PopupDropdownToolbar extends LayerPopup {
   /**
    * set toolbar items
    * @param {ToolbarItem[]} items - toolbar items
-   * @memberof PopupDropdownToolbar
    */
   setItems(items) {
     this.getToolbar().setItems(items);
@@ -67,7 +63,6 @@ class PopupDropdownToolbar extends LayerPopup {
   /**
    * add toolbar item
    * @param {ToolbarItem|string|object} item - toolbar item
-   * @memberof PopupDropdownToolbar
    */
   addItem(item) {
     this.getToolbar().addItem(item);
@@ -77,7 +72,6 @@ class PopupDropdownToolbar extends LayerPopup {
    * insert toolbar item
    * @param  {number} index - index at given item inserted
    * @param  {ToolbarItem|string|object} item - toolbar item
-   * @memberof PopupDropdownToolbar
    */
   insertItem(index, item) {
     this.getToolbar().insertItem(index, item);
@@ -87,7 +81,6 @@ class PopupDropdownToolbar extends LayerPopup {
    * get index of given item
    * @param  {ToolbarItem} item - toolbar item
    * @returns {number} - index of given toolbar item
-   * @memberof PopupDropdownToolbar
    */
   indexOfItem(item) {
     return this.getToolbar().indexOfItem(item);
@@ -98,7 +91,6 @@ class PopupDropdownToolbar extends LayerPopup {
    * @param  {number} index - item index to remove
    * @param  {boolean} destroy - destroy item or not
    * @returns {ToolbarItem} - removed item
-   * @memberof PopupDropdownToolbar
    */
   removeItem(index, destroy) {
     return this.getToolbar().removeItem(index, destroy);
@@ -106,7 +98,6 @@ class PopupDropdownToolbar extends LayerPopup {
 
   /**
    * remove all toolbar items
-   * @memberof PopupDropdownToolbar
    */
   removeAllItems() {
     this.getToolbar().removeAllItems();
@@ -116,8 +107,7 @@ class PopupDropdownToolbar extends LayerPopup {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupDropdownToolbar
-   * @protected
+   * @private
    * @override
    */
   _initInstance(options) {
@@ -132,8 +122,8 @@ class PopupDropdownToolbar extends LayerPopup {
 
   /**
    * initialize DOM, render popup
-   * @memberof PopupDropdownToolbar
-   * @protected
+   * @private
+   * @override
    */
   _initDOM() {
     super._initDOM();
@@ -143,8 +133,8 @@ class PopupDropdownToolbar extends LayerPopup {
 
   /**
    * bind editor events
-   * @memberof PopupDropdownToolbar
-   * @protected
+   * @private
+   * @override
    */
   _initEditorEvent() {
     super._initEditorEvent();

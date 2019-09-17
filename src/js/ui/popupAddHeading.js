@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements PopupAddTable
+ * @fileoverview Implements PopupAddHeading
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -9,16 +9,12 @@ import LayerPopup from './layerpopup';
 import i18n from '../i18n';
 
 /**
- * Class PopupHeading
+ * Class PopupAddHeading
  * It implements Popup to add headings
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
  */
 class PopupAddHeading extends LayerPopup {
-  /**
-   * Creates an instance of PopupAddHeading.
-   * @param {LayerPopupOption} options - layer popup option
-   * @memberof PopupAddHeading
-   */
   constructor(options) {
     const POPUP_CONTENT = `
             <ul>
@@ -43,8 +39,7 @@ class PopupAddHeading extends LayerPopup {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupAddHeading
-   * @protected
+   * @private
    * @override
    */
   _initInstance(options) {
@@ -56,8 +51,7 @@ class PopupAddHeading extends LayerPopup {
 
   /**
    * bind DOM events
-   * @memberof PopupAddHeading
-   * @protected
+   * @private
    * @override
    */
   _initDOMEvent() {
@@ -71,9 +65,8 @@ class PopupAddHeading extends LayerPopup {
 
   /**
    * bind editor events
-   * @memberof PopupAddHeading
-   * @protected
-   * @abstract
+   * @private
+   * @override
    */
   _initEditorEvent() {
     super._initEditorEvent();

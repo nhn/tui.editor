@@ -35,13 +35,12 @@ const LAST_BORDER = 1;
 /**
  * Class PopupAddTable
  * It implements Popup to add a table
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
  */
 class PopupAddTable extends LayerPopup {
   /**
    * Toolbar Button which the Popup is bound to.
-   *
-   * @memberof PopupAddTable
    * @type {jQuery}
    * @private
    */
@@ -49,18 +48,11 @@ class PopupAddTable extends LayerPopup {
 
   /**
    * EventManager instance
-   *
-   * @memberof PopupAddTabe
    * @type {EventManager}
    * @private
    */
   _eventManager;
 
-  /**
-   * Creates an instance of PopupAddTable.
-   * @param {LayerPopupOption} options - layer popup option
-   * @memberof PopupAddTable
-   */
   constructor(options) {
     options = util.extend({
       header: false,
@@ -74,8 +66,7 @@ class PopupAddTable extends LayerPopup {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupAddTable
-   * @protected
+   * @private
    * @override
    */
   _initInstance(options) {
@@ -89,8 +80,7 @@ class PopupAddTable extends LayerPopup {
 
   /**
    * initialize DOM, render popup
-   * @memberof PopupAddTable
-   * @protected
+   * @private
    * @override
    */
   _initDOM() {
@@ -102,8 +92,7 @@ class PopupAddTable extends LayerPopup {
 
   /**
    * bind DOM events
-   * @memberof PopupAddTable
-   * @protected
+   * @private
    * @override
    */
   _initDOMEvent(options) {
@@ -129,9 +118,8 @@ class PopupAddTable extends LayerPopup {
 
   /**
    * bind editor events
-   * @memberof PopupAddTable
-   * @protected
-   * @abstract
+   * @private
+   * @override
    */
   _initEditorEvent() {
     super._initEditorEvent();
@@ -156,7 +144,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _cacheElements
    * Cache elements for use
    * @private
    */
@@ -168,7 +155,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _resizeTableBySelectionIfNeed
    * Resize table if need
    * @param {number} col column index
    * @param {number} row row index
@@ -183,7 +169,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _getResizedTableBound
    * Get resized table bound if Need
    * @param {number} col column index
    * @param {number} row row index
@@ -216,7 +201,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _isNeedResizeTable
    * check if need resize table
    * @param {number} col column index
    * @param {number} row row index
@@ -229,7 +213,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _getBoundByOffset
    * Get bound by offset
    * @param {number} x offset
    * @param {number} y offset
@@ -247,7 +230,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _getOffsetByBound
    * Get offset by bound
    * @param {number} col column index
    * @param {number} row row index
@@ -265,7 +247,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _setTableSizeByBound
    * Set table size with bound
    * @param {number} col column index
    * @param {number} row row index
@@ -279,7 +260,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _getSelectionBoundByOffset
    * Get selection bound that process with range by offset
    * @param {number} x offset
    * @param {number} y offset
@@ -305,7 +285,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _setSelectionAreaByBound
    * Set selection area with bound
    * @param {number} col column index
    * @param {number} row row index
@@ -317,7 +296,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _setSelectedBound
    * Set selected bound
    * @param {number} col column index
    * @param {number} row row index
@@ -329,7 +307,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _getSelectedTableSize
    * Get selected table size
    * @returns {object} bound
    * @private
@@ -342,7 +319,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _setDisplayText
    * Set selected table size text for display
    * @param {number} col column index
    * @param {number} row row index
@@ -353,7 +329,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _setTableSize
    * Set table element size
    * @param {number} x offset
    * @param {number} y offset
@@ -379,7 +354,6 @@ class PopupAddTable extends LayerPopup {
   }
 
   /**
-   * _setSelectionArea
    * Set selection element size
    * @param {number} x offset
    * @param {number} y offset
