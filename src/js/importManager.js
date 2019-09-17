@@ -7,13 +7,10 @@ const URLRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/g;
 
 /**
  * Class ImportManager
+ * @param {EventManager} eventManager - eventManager
+ * @ignore
  */
 class ImportManager {
-  /**
-   * Creates an instance of ImportManager.
-   * @param {EventManager} eventManager - eventManager
-   * @memberof ImportManager
-   */
   constructor(eventManager) {
     this.eventManager = eventManager;
 
@@ -25,7 +22,6 @@ class ImportManager {
    * graceful decode uri component
    * @param {string} originalURI - string to be decoded
    * @returns {string} decoded string
-   * @memberof ImportManager
    * @static
    */
   static decodeURIGraceful(originalURI) {
@@ -49,10 +45,9 @@ class ImportManager {
 
   /**
    * encode markdown critical characters
-   * @static
    * @param {string} text - string to encode
    * @returns {string} - markdown character encoded string
-   * @memberof ImportManager
+   * @static
    */
   static encodeMarkdownCharacters(text) {
     return text.replace(/\(/g, '%28')
@@ -65,10 +60,9 @@ class ImportManager {
 
   /**
    * escape markdown critical characters
-   * @static
    * @param {string} text - string to escape
    * @returns {string} - markdown character escaped string
-   * @memberof ImportManager
+   * @static
    */
   static escapeMarkdownCharacters(text) {
     return text.replace(/\(/g, '\\(')
@@ -81,7 +75,6 @@ class ImportManager {
 
   /**
    * Initialize event handler
-   * @memberof ImportManager
    * @private
    */
   _initEvent() {
@@ -115,7 +108,6 @@ class ImportManager {
 
   /**
    * Initialize default image importer
-   * @memberof ImportManager
    * @private
    */
   _initDefaultImageImporter() {
@@ -132,7 +124,6 @@ class ImportManager {
 
   /**
    * Emit add image blob hook
-   * @memberof ImportManager
    * @param {object} blob - blob or file
    * @param {string} type - type of an event the item belongs to. paste or drop
    * @private
@@ -175,7 +166,6 @@ class ImportManager {
 
   /**
    * Get blob or excel data from clipboard
-   * @memberof ImportManager
    * @param {object} evData Clipboard data
    * @private
    */
@@ -191,7 +181,6 @@ class ImportManager {
 
   /**
    * Process for blob item
-   * @memberof ImportManager
    * @param {Array.<string>} items Item array
    * @param {object} evData Event data
    * @private

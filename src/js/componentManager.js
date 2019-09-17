@@ -5,12 +5,10 @@
 
 /**
  * Class ComponentManager
+ * @param {MarkdownEditor|WysiwygEditor} editor - Editor instance
+ * @ignore
  */
 class ComponentManager {
-  /**
-   * Constructor
-   * @param {MarkdownEditor|WysiwygEditor} editor - Editor instance
-   */
   constructor(editor) {
     /**
      * private
@@ -24,7 +22,6 @@ class ComponentManager {
   /**
    * addManager
    * Add manager
-   * @memberof ComponentManager
    * @param {string|function} nameOrConstructor Manager name or constructor
    * @param {function} [ManagerConstructor] Constructor
    */
@@ -42,7 +39,6 @@ class ComponentManager {
   /**
    * getManager
    * Get manager by manager name
-   * @memberof ComponentManager
    * @param {string} name Manager name
    * @returns {object} manager
    */
