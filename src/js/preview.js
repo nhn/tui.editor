@@ -8,17 +8,14 @@ import LazyRunner from './lazyRunner';
 
 /**
  * Class Preview
- **/
+ * @param {jQuery} $el Container element for preview
+ * @param {EventManager} eventManager Event manager instance
+ * @param {Convertor} convertor Convertor instance
+ * @param {boolean} isViewer - whether viewer mode or not
+ * @param {Number} delayTime - lazyRunner delay time
+ * @ignore
+ */
 class Preview {
-  /**
-   * Creates an instance of Preview.
-   * @param {jQuery} $el Container element for preview
-   * @param {EventManager} eventManager Event manager instance
-   * @param {Convertor} convertor Convertor instance
-   * @param {boolean} isViewer - whether viewer mode or not
-   * @param {Number} delayTime - lazyRunner delay time
-   * @memberof Preview
-   */
   constructor($el, eventManager, convertor, isViewer, delayTime = 800) {
     this.eventManager = eventManager;
     this.convertor = convertor;
@@ -48,7 +45,6 @@ class Preview {
 
   /**
    * Refresh rendering
-   * @memberof Preview
    * @param {string} markdown Markdown text
    */
   refresh(markdown) {
@@ -58,7 +54,6 @@ class Preview {
   /**
    * get html string
    * @returns {string} - html preview string
-   * @memberof Preview
    */
   getHTML() {
     return this._$previewContent.html();
@@ -67,7 +62,6 @@ class Preview {
   /**
    * set html string
    * @param {string} html - html preview string
-   * @memberof Preview
    */
   setHTML(html) {
     this._$previewContent.html(html);
@@ -75,9 +69,7 @@ class Preview {
 
   /**
    * Render HTML on preview
-   * @memberof Preview
    * @param {string} html HTML string
-   * @protected
    */
   render(html) {
     const {_$previewContent} = this;
@@ -89,7 +81,6 @@ class Preview {
 
   /**
    * Set preview height
-   * @memberof Preview
    * @param {number} height - Height for preview container
    */
   setHeight(height) {
@@ -99,7 +90,6 @@ class Preview {
   /**
    * set min height
    * @param {number} minHeight - min height
-   * @memberof Preview
    */
   setMinHeight(minHeight) {
     this.$el.get(0).style.minHeight = `${minHeight}px`;

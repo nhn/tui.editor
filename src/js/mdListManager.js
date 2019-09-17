@@ -21,20 +21,16 @@ const FIND_BLOCK_RX = /^ {0,3}(```|\||>)/;
 
 /**
  * Class MdListManager
+ * @param {MarkdownEditor} mde - MarkdownEditor instance
+ * @ignore
  */
 class MdListManager {
-  /**
-   * Creates an instance of MdListManager.
-   * @param {MarkdownEditor} mde - MarkdownEditor instance
-   * @memberof MdListManager
-   */
   constructor(mde) {
     this.cm = mde.getEditor();
     this.doc = this.cm.getDoc();
 
     /**
      * Name property
-     * @memberof MdListManager#
      * @type {string}
      */
     this.name = 'list';
