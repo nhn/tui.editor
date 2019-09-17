@@ -6,13 +6,12 @@ import util from 'tui-code-snippet';
 
 /**
  * Class Command
+ * @param {string} name Command name
+ * @param {number} type Command type (Command.TYPE)
+ * @param {Array.<string>} [keyMap] keyMap
+ * @ignore
  */
 class Command {
-  /**
-   * @param {string} name Command name
-   * @param {number} type Command type (Command.TYPE)
-   * @param {Array.<string>} [keyMap] keyMap
-   */
   constructor(name, type, keyMap) {
     this.name = name;
     this.type = type;
@@ -23,9 +22,7 @@ class Command {
   }
 
   /**
-   * getName
    * returns Name of command
-   * @memberof Command
    * @returns {string} Command Name
    */
   getName() {
@@ -33,9 +30,7 @@ class Command {
   }
 
   /**
-   * getType
    * returns Type of command
-   * @memberof Command
    * @returns {number} Command Command type number
    */
   getType() {
@@ -43,9 +38,7 @@ class Command {
   }
 
   /**
-   * isMDType
    * returns whether Command Type is Markdown or not
-   * @memberof Command
    * @returns {boolean} result
    */
   isMDType() {
@@ -53,9 +46,7 @@ class Command {
   }
 
   /**
-   * isWWType
    * returns whether Command Type is Wysiwyg or not
-   * @memberof Command
    * @returns {boolean} result
    */
   isWWType() {
@@ -63,9 +54,7 @@ class Command {
   }
 
   /**
-   * isGlobalType
    * returns whether Command Type is Global or not
-   * @memberof Command
    * @returns {boolean} result
    */
   isGlobalType() {
@@ -73,9 +62,7 @@ class Command {
   }
 
   /**
-   * setKeyMap
    * Set keymap value for each os
-   * @memberof Command
    * @param {string} win Windows Key(and etc)
    * @param {string} mac Mac osx key
    */
@@ -86,12 +73,12 @@ class Command {
 
 /**
  * Command factory method
- * @memberof Command
  * @param {string} typeStr Editor type name
  * @param {object} props Property
  *     @param {string} props.name Command name
  *     @param {number} props.type Command type number
  * @returns {Command}
+ * @static
  */
 Command.factory = function(typeStr, props) {
   let type;
@@ -116,8 +103,8 @@ Command.factory = function(typeStr, props) {
  * markdown : 0
  * wysiwyg : 1
  * global : 2
- * @memberof Command
  * @type {object}
+ * @private
  */
 Command.TYPE = {
   MD: 0,
