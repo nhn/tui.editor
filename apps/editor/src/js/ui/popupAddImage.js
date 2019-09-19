@@ -21,14 +21,10 @@ const TYPE_UI = 'ui';
 /**
  * Class PopupAddImage
  * It implements a Image Add Popup
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
  */
 class PopupAddImage extends LayerPopup {
-  /**
-   * Creates an instance of PopupAddImage.
-   * @param {LayerPopupOption} options - layer popup option
-   * @memberof PopupAddImage
-   */
   constructor(options) {
     const POPUP_CONTENT = `
             <div class="${CLASS_TAB_SECTION}"></div>
@@ -60,8 +56,7 @@ class PopupAddImage extends LayerPopup {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupAddImage
-   * @protected
+   * @private
    * @override
    */
   _initInstance(options) {
@@ -72,8 +67,7 @@ class PopupAddImage extends LayerPopup {
 
   /**
    * initialize DOM, render popup
-   * @memberof PopupAddImage
-   * @protected
+   * @private
    * @override
    */
   _initDOM() {
@@ -104,8 +98,7 @@ class PopupAddImage extends LayerPopup {
 
   /**
    * bind DOM events
-   * @memberof PopupAddImage
-   * @protected
+   * @private
    * @override
    */
   _initDOMEvent() {
@@ -144,9 +137,8 @@ class PopupAddImage extends LayerPopup {
 
   /**
    * bind editor events
-   * @memberof PopupAddImage
-   * @protected
-   * @abstract
+   * @private
+   * @override
    */
   _initEditorEvent() {
     super._initEditorEvent();
@@ -172,6 +164,10 @@ class PopupAddImage extends LayerPopup {
     this.$el.find('input').val('');
   }
 
+  /**
+   * Remove popup
+   * @override
+   */
   remove() {
     this.tab.remove();
     super.remove();

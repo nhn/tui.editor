@@ -8,19 +8,15 @@ const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
 /**
  * Class MarkdownMarkerHelper
+ * @param {CodeMirror} cm codemirror instance
+ * @ignore
  */
 class MarkdownMarkerHelper {
-  /**
-   * Creates an instance of MarkdownMarkerHelper.
-   * @param {CodeMirror} cm codemirror instance
-   * @memberof MarkdownMarkerHelper
-   */
   constructor(cm) {
     this.cm = cm;
   }
 
   /**
-   * getTextContent
    * Get CRLF removed text content of CodeMirror
    * @returns {string} text content
    */
@@ -29,7 +25,6 @@ class MarkdownMarkerHelper {
   }
 
   /**
-   * updateMarkerWithExtraInfo
    * Update marker with extra info of CodeMirror
    * @param {object} marker marker
    * @returns {object} marker
@@ -53,7 +48,6 @@ class MarkdownMarkerHelper {
   }
 
   /**
-   * _getExtraInfoOfRange
    *  Get additional info of range
    * @param {number} startLine start line
    * @param {number} startCh start offset
@@ -96,7 +90,6 @@ class MarkdownMarkerHelper {
   }
 
   /**
-   * getMarkerInfoOfCurrentSelection
    * Get marker info of current selection
    * @returns {object} marker
    */
@@ -130,7 +123,6 @@ class MarkdownMarkerHelper {
   }
 
   /**
-   * _getSelection
    * Get selection of CodeMirror, if selection is reversed then correct it
    * @returns {object} selection
    * @private
@@ -153,7 +145,6 @@ class MarkdownMarkerHelper {
   }
 
   /**
-   * _findOffsetCursor
    * Find offset cursor by given offset list
    * @param {Array.<number>} offsetlist offset list
    * @returns {Array.<object>} offset cursors
@@ -200,7 +191,6 @@ class MarkdownMarkerHelper {
   }
 
   /**
-   * selectOffsetRange
    * Make selection with given offset range
    * @param {number} start start offset
    * @param {number} end end offset
@@ -218,7 +208,6 @@ class MarkdownMarkerHelper {
   }
 
   /**
-   * clearSelect
    * Clear selection of CodeMirror
    */
   clearSelect() {

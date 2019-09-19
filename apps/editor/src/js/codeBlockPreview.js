@@ -8,17 +8,13 @@ const EVENT_REQUIRE_SCROLL_SYNC = 'requireScrollSync';
 
 /**
  * Class Code block preview
- * @extends {Preview}
+ * @param {jQuery} $el - base element
+ * @param {EventManager} eventManager - event manager
+ * @param {Convertor} convertor - convertor
+ * @param {CodeBlockEditor} codeBlockEditor - code block editor
+ * @ignore
  */
 class CodeBlockPreview extends Preview {
-  /**
-   * Creates an instance of CodeBlockPreview.
-   * @param {jQuery} $el - base element
-   * @param {EventManager} eventManager - event manager
-   * @param {Convertor} convertor - convertor
-   * @param {CodeBlockEditor} codeBlockEditor - code block editor
-   * @memberof CodeBlockPreview
-   */
   constructor($el, eventManager, convertor, codeBlockEditor) {
     super($el, eventManager, convertor, true);
 
@@ -33,7 +29,6 @@ class CodeBlockPreview extends Preview {
 
   /**
    * refresh preview
-   * @memberof CodeBlockPreview
    * @override
    */
   refresh() {
@@ -46,7 +41,6 @@ class CodeBlockPreview extends Preview {
 
   /**
    * clear preview
-   * @memberof CodeBlockPreview
    */
   clear() {
     super.render('');

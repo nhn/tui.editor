@@ -31,34 +31,30 @@ const CONTAINER_TEMPLATE = `
 `;
 
 /**
- * Class Default UI
- * initialize ui instances. toolbar, popups
+ * Class DefaultUI
+ * @param {ToastUIEditor} editor - editor instance
  */
 class DefaultUI {
   /**
    * UI name
-   * @memberof DefaultUI
    * @type {string}
    */
   name = 'default';
 
   /**
    * DefaultToolbar wrapper element
-   * @memberof DefaultUI
    * @type {jQuery}
    */
   $el;
 
   /**
    * DefaultToolbar instance
-   * @memberof DefaultUI
    * @type {DefaultToolbar}
    * @private
    */
   _toolbar;
 
   /**
-   * @memberof DefaultUI
    * @type {HTMLElement}
    * @private
    */
@@ -66,7 +62,6 @@ class DefaultUI {
 
   /**
    * editor section element
-   * @memberof DefaultUI
    * @private
    * @type {HTMLElement}
    */
@@ -74,7 +69,6 @@ class DefaultUI {
 
   /**
    * editor type ww/md
-   * @memberof DefaultUI
    * @private
    * @type {string}
    */
@@ -82,7 +76,6 @@ class DefaultUI {
 
   /**
    * editor instance
-   * @memberof DefaultUI
    * @private
    * @type {ToastUIEditor}
    */
@@ -90,7 +83,6 @@ class DefaultUI {
 
   /**
    * markdown tab section jQuery element
-   * @memberof DefaultUI
    * @private
    * @type {HTMLElement}
    */
@@ -98,7 +90,6 @@ class DefaultUI {
 
   /**
    * markdown tab
-   * @memberof DefaultUI
    * @private
    * @type {Tab}
    */
@@ -106,7 +97,6 @@ class DefaultUI {
 
   /**
    * mode switch instance
-   * @memberof DefaultUI
    * @private
    * @type {ModeSwitch}
    */
@@ -114,17 +104,11 @@ class DefaultUI {
 
   /**
    * popup instances
-   * @memberof DefaultUI
    * @private
    * @type {Array}
    */
   _popups = [];
 
-  /**
-   * Creates an instance of DefaultUI.
-   * @param {ToastUIEditor} editor - editor instance
-   * @memberof DefaultUI
-   */
   constructor(editor) {
     this._editor = editor;
     this._initialEditType = editor.options.initialEditType;
@@ -285,7 +269,6 @@ class DefaultUI {
   /**
    * get toolbar instance
    * @returns {Toolbar} - toolbar instance
-   * @memberof DefaultUI
    */
   getToolbar() {
     return this._toolbar;
@@ -294,7 +277,6 @@ class DefaultUI {
   /**
    * set toolbar instance
    * @param {Toolbar} toolbar - toolbar
-   * @memberof DefaultUI
    */
   setToolbar(toolbar) {
     this._toolbar.destroy();
@@ -303,7 +285,6 @@ class DefaultUI {
 
   /**
    * get mode switch instance
-   * @memberof DefaultUI
    * @returns {ModeSwitch} - mode switch instance
    */
   getModeSwitch() {
@@ -313,7 +294,6 @@ class DefaultUI {
   /**
    * get editor section height
    * @returns {Number} - height of editor section
-   * @memberof DefaultUI
    */
   getEditorSectionHeight() {
     const clientRect = this._editorSection.getBoundingClientRect();
@@ -324,7 +304,6 @@ class DefaultUI {
   /**
    * get editor height
    * @returns {Number} - height of editor
-   * @memberof DefaultUI
    */
   getEditorHeight() {
     const clientRect = this._container.getBoundingClientRect();
@@ -335,7 +314,6 @@ class DefaultUI {
   /**
    * get Table Popup
    * @returns {PopupTableUtils} - PopupTableUtils
-   * @memberof DefaultUI
    */
   getPopupTableUtils() {
     let tablePopup;
@@ -350,7 +328,6 @@ class DefaultUI {
 
   /**
    * hide
-   * @memberof DefaultUI
    */
   hide() {
     this.$el.addClass('te-hide');
@@ -358,7 +335,6 @@ class DefaultUI {
 
   /**
    * show
-   * @memberof DefaultUI
    */
   show() {
     this.$el.removeClass('te-hide');
@@ -366,7 +342,6 @@ class DefaultUI {
 
   /**
    * remove
-   * @memberof DefaultUI
    */
   remove() {
     this.$el.remove();
@@ -382,7 +357,6 @@ class DefaultUI {
    * creates popup
    * @param {LayerPopupOption} options - layerPopup options
    * @returns {LayerPopup} - crated layerPopup
-   * @memberof DefaultUI
    */
   createPopup(options) {
     return new LayerPopup(options);

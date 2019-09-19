@@ -38,7 +38,6 @@
     "eslint-loader": "^1.7.1",
     "istanbul-instrumenter-loader": "^3.0.0",
     "jasmine-core": "^2.5.2",
-    "jsdoc": "^3.5.5",
     "karma": "^2.0.4",
     "karma-chrome-launcher": "^2.2.0",
     "karma-cli": "^1.0.1",
@@ -61,7 +60,6 @@
     "testcafe": "^0.23.3",
     "testcafe-browser-provider-saucelabs": "^1.3.0",
     "tslint": "^5.12.0",
-    "tui-jsdoc-template": "^1.2.2",
     "tui-release-notes": "github:nhn/tui.release-notes#v1.0.0",
     "typescript": "^3.2.2",
     "webpack": "^3.10.0",
@@ -70,9 +68,6 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "doc": "npm run doc:copy & npm run doc:jsdoc",
-    "doc:copy": "VER=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && copyfiles \"dist/**/*\" \"api/$VER\" && copyfiles \"lib/**/*\" \"api/$VER\"",
-    "doc:jsdoc": "jsdoc -c jsdoc.conf.js",
     "test": "karma start",
     "test:ne": "cross-env SERVER=nhnent karma start",
     "test:sl": "cross-env SERVER=saucelabs karma start",
@@ -83,7 +78,9 @@
     "serve": "webpack-dev-server --progress --inline",
     "build": "cross-env webpack && webpack -p && node tsBannerGenerator.js",
     "note": "tuie --tag=$(git describe --tags)",
-    "tslint": "tslint index.d.ts"
+    "tslint": "tslint index.d.ts",
+    "doc:serve": "tuidoc --serv",
+    "doc": "tuidoc"
   },
   "dependencies": {
     "@types/codemirror": "0.0.71",

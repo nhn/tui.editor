@@ -6,20 +6,16 @@ import $ from 'jquery';
 
 /**
  * Class WwPManager
+ * @param {WysiwygEditor} wwe - wysiwygEditor instance
+ * @ignore
  */
 class WwPManager {
-  /**
-   * Creates an instance of WwPManager.
-   * @param {WysiwygEditor} wwe - wysiwygEditor instance
-   * @memberof WwPManager
-   */
   constructor(wwe) {
     this.wwe = wwe;
     this.eventManager = wwe.eventManager;
 
     /**
      * Name property
-     * @memberof WwPManager#
      * @type {string}
      */
     this.name = 'p';
@@ -28,9 +24,7 @@ class WwPManager {
   }
 
   /**
-   * _initEvent
    * Initialize event
-   * @memberof WwPManager
    * @private
    */
   _initEvent() {
@@ -89,9 +83,7 @@ class WwPManager {
   }
 
   /**
-   * _ensurePtagContentWrappedWithDiv
    * Wrap new line inside P tag to DIV, and additional empty line added within too
-   * @memberof WwPManager
    * @private
    */
   _ensurePtagContentWrappedWithDiv() {
@@ -107,9 +99,7 @@ class WwPManager {
   }
 
   /**
-   * _unwrapPtags
    * Unwrap P tag
-   * @memberof WwPManager
    * @private
    */
   _unwrapPtags() {

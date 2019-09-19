@@ -14,15 +14,11 @@ const keyMapper = KeyMapper.getSharedInstance();
 
 /**
  * Class MarkdownEditor
+ * @param {jQuery} $el - container jquery element
+ * @param {EventManager} eventManager - event manager
+ * @param {Object} options - options of editor
  */
 class MarkdownEditor extends CodeMirrorExt {
-  /**
-   * Creates an instance of MarkdownEditor.
-   * @param {jQuery} $el - container jquery element
-   * @param {EventManager} eventManager - event manager
-   * @param {Object} options - options of editor
-   * @memberof MarkdownEditor
-   */
   constructor($el, eventManager, options) {
     super($el.get(0), {
       mode: 'gfm',
@@ -52,7 +48,6 @@ class MarkdownEditor extends CodeMirrorExt {
   /**
    * _initEvent
    * Initialize EventManager event handler
-   * @memberof MarkdownEditor
    * @private
    */
   _initEvent() {
@@ -169,10 +164,9 @@ class MarkdownEditor extends CodeMirrorExt {
 
   /**
    * Set Editor value
-   * @memberof MarkdownEditor
-   * @override
    * @param {string} markdown - Markdown syntax text
    * @param {boolean} [cursorToEnd=true] - move cursor to contents end
+   * @override
    */
   setValue(markdown, cursorToEnd) {
     super.setValue(markdown, cursorToEnd);
@@ -181,7 +175,6 @@ class MarkdownEditor extends CodeMirrorExt {
 
   /**
    * Get text object of current range
-   * @memberof MarkdownEditor
    * @param {{start, end}} range Range object of each editor
    * @returns {MdTextObject}
    */
@@ -191,7 +184,6 @@ class MarkdownEditor extends CodeMirrorExt {
 
   /**
    * Emit contentChangedFromMarkdown event
-   * @memberof MarkdownEditor
    * @private
    */
   _emitMarkdownEditorContentChangedEvent() {
@@ -200,7 +192,6 @@ class MarkdownEditor extends CodeMirrorExt {
 
   /**
    * Emit changeEvent
-   * @memberof MarkdownEditor
    * @param {event} e - Event object
    * @private
    */
@@ -217,7 +208,6 @@ class MarkdownEditor extends CodeMirrorExt {
 
   /**
    * Return whether state changed or not
-   * @memberof MarkdownEditor
    * @param {object} previousState - Previous state
    * @param {object} currentState - Current state
    * @returns {boolean} - changed state
@@ -237,7 +227,6 @@ class MarkdownEditor extends CodeMirrorExt {
 
   /**
    * latestState reset
-   * @memberof MarkdownEditor
    */
   resetState() {
     this._latestState = null;
@@ -245,11 +234,11 @@ class MarkdownEditor extends CodeMirrorExt {
 
   /**
    * MarkdownEditor factory method
-   * @memberof MarkdownEditor
    * @param {jQuery} $el - Container element for editor
    * @param {EventManager} eventManager - EventManager instance
    * @param {Object} options - options of editor
    * @returns {MarkdownEditor} - MarkdownEditor
+   * @ignore
    */
   static factory($el, eventManager, options) {
     const mde = new MarkdownEditor($el, eventManager, options);

@@ -8,12 +8,9 @@ const TOOLTIP_CONTENT = '<div class="tui-tooltip"><div class="arrow"></div><span
 
 /**
  * Class Tooltip
+ * @ignore
  */
 class Tooltip {
-  /**
-   * Creates an instance of Tooltip.
-   * @memberof Tooltip
-   */
   constructor() {
     this.$el = $(TOOLTIP_CONTENT);
     this.$el.appendTo('body');

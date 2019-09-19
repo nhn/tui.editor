@@ -14,14 +14,9 @@ const isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
 
 /**
  * Class SquireExt
- * @extends {Squire}
+ * @params {Squire} ...args
  */
 class SquireExt extends Squire {
-  /**
-   * Creates an instance of SquireExt.
-   * @augments Squire
-   * @memberof SquireExt
-   */
   constructor(...args) {
     super(...args);
 
@@ -37,7 +32,6 @@ class SquireExt extends Squire {
   }
 
   /**
-   * _decorateHandlerToCancelable
    * Decorate squire handler to cancelable cuz sometimes, we dont need squire handler process
    * event.preventDefault() will cancel squire and browser default behavior
    * event.squirePrevented = true will cancel squire but allow browser default behavior

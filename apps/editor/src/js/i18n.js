@@ -12,10 +12,6 @@ const DEFAULT_CODE = 'en_US';
  * Class I18n
  */
 class I18n {
-  /**
-   * Creates an instance of I18n.
-   * @memberof I18n
-   */
   constructor() {
     this._code = DEFAULT_CODE;
     this._langs = new util.Map();

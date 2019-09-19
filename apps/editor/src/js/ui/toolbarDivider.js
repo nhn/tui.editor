@@ -4,10 +4,13 @@
  */
 import ToolbarItem from './toolbarItem';
 
+/**
+ * Class ToolbarDivider
+ * @ignore
+ */
 class ToolbarDivider extends ToolbarItem {
   /**
    * item name
-   * @memberof ToolbarDivider
    * @type {String}
    * @static
    */
@@ -15,16 +18,11 @@ class ToolbarDivider extends ToolbarItem {
 
   /**
    * item class name
-   * @memberof ToolbarDivider
    * @type {String}
    * @static
    */
   static className = 'tui-toolbar-divider';
 
-  /**
-   * toolbar divider constructor
-   * @memberof ToolbarDivider
-   */
   constructor() {
     super({
       name: ToolbarDivider.name,

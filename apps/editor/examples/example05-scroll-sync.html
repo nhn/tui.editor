@@ -2,33 +2,29 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>3. Viewer basic</title>
-    <link rel="stylesheet" href="./explain.css">
+    <title>5. Scroll Sync Extension</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css">
+    <!-- Editor's Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/tui-editor.css">
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
   </head>
+  
   <body>
-    <div class="explain">
-      Learn more about Viewer in <a target="_blank" href="https://github.com/nhn/tui.editor/wiki/Getting-started-with-bower#viewer">here</a>
+    <div class="description">
+      Learn more about Extensions in <a target="_blank" href="https://github.com/nhn/tui.editor/wiki/Extensions">here</a>.<br>
+      See available options in <a target="_blank" href="http://nhn.github.io/tui.editor/api/latest/ToastUIEditor">here</a>.
     </div>
-    <div class="explain">
-      See available options in <a target="_blank" href="http://nhn.github.io/tui.editor/api/latest/ToastUIEditorViewer.html">here</a>
-    </div>
-    <div class="code-html">
-      <!-- Viewer Dependencies -->
-      <script src="../lib/jquery/dist/jquery.js"></script>
-      <script src='../lib/markdown-it/dist/markdown-it.js'></script>
-      <script src="../lib/tui-code-snippet/dist/tui-code-snippet.js"></script>
-      <script src="../lib/highlightjs/highlight.pack.js"></script>
-      <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
-
-      <!-- Viewer -->
-      <script src="../dist/tui-editor-Viewer.js"></script>
-      <link rel="stylesheet" href="../dist/tui-editor-contents.css">
-
+    <div class="contents code-html">
       <div id="editSection"></div>
     </div>
+
+    <script src="../dist/tui-editor-Editor-full.js"></script>
     <script class="code-js">
       var content = [
-        '![image](https://cloud.githubusercontent.com/assets/389021/16107646/9729e556-33d8-11e6-933f-5b09fa3a53bb.png)',
+        '![image](https://uicdn.toast.com/toastui/img/tui-editor-bi.png)',
         '# Heading 1',
         '## Heading 2',
         '### Heading 3',
@@ -63,8 +59,11 @@
 
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
-        height: '300px',
-        initialValue: content
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        initialValue: content,
+        exts: ['scrollSync']
       });
     </script>
   </body>

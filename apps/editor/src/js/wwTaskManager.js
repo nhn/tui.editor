@@ -12,20 +12,16 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
  * Class WwTaskManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 class WwTaskManager {
-  /**
-   * Creates an instance of WwTaskManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwTaskManager
-   */
   constructor(wwe) {
     this.wwe = wwe;
     this.eventManager = wwe.eventManager;
 
     /**
      * Name property
-     * @memberof WwTaskManager#
      * @type {string}
      */
     this.name = 'task';
@@ -34,9 +30,7 @@ class WwTaskManager {
   }
 
   /**
-   * _init
    * Init
-   * @memberof WwTaskManager
    * @private
    */
   _init() {
@@ -55,9 +49,7 @@ class WwTaskManager {
   }
 
   /**
-   * _initEvent
    * Initialize event
-   * @memberof WwTaskManager
    * @private
    */
   _initEvent() {
@@ -67,9 +59,7 @@ class WwTaskManager {
   }
 
   /**
-   * _initKeyHandler
    * Initialize key event handler
-   * @memberof WwTaskManager
    * @private
    */
   _initKeyHandler() {
@@ -85,11 +75,9 @@ class WwTaskManager {
   }
 
   /**
-   * isInTaskList
    * Check whether passed range is in task list or not
    * @param {Range} range range
    * @returns {boolean} result
-   * @memberof WwTaskManager
    */
   isInTaskList(range) {
     let li;
@@ -110,10 +98,8 @@ class WwTaskManager {
   }
 
   /**
-   * unformatTask
    * Unforamt task
    * @param {Node} node target
-   * @memberof WwTaskManager
    */
   unformatTask(node) {
     const $li = $(node).closest('li');
@@ -129,10 +115,8 @@ class WwTaskManager {
   }
 
   /**
-   * formatTask
    * Format task
    * @param {Node} node target
-   * @memberof WwTaskManager
    */
   formatTask(node) {
     const $selected = $(node);
@@ -143,9 +127,7 @@ class WwTaskManager {
   }
 
   /**
-   * _formatTaskIfNeed
    * Format task if current range has task class name
-   * @memberof WwTaskManager
    * @private
    */
   _formatTaskIfNeed() {
@@ -157,9 +139,7 @@ class WwTaskManager {
   }
 
   /**
-   * _removeTaskListClass
    * Remove tasklist class
-   * @memberof WwTaskManager
    * @private
    */
   _removeTaskListClass() {

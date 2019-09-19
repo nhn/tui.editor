@@ -6,18 +6,14 @@ import Preview from './preview';
 
 /**
  * Class Markdown Preview
- * @extends {Preview}
+ * @param {jQuery} $el - base jQuery element
+ * @param {EventManager} eventManager - event manager
+ * @param {Convertor} convertor - convertor
+ * @param {boolean} isViewer - true for view only mode
+ * @param {Number} delayTime - lazyRunner delay time
+ * @ignore
  */
 class MarkdownPreview extends Preview {
-  /**
-   * Creates an instance of MarkdownPreview.
-   * @param {jQuery} $el - base jQuery element
-   * @param {EventManager} eventManager - event manager
-   * @param {Convertor} convertor - convertor
-   * @param {boolean} isViewer - true for view only mode
-   * @param {Number} delayTime - lazyRunner delay time
-   * @memberof MarkdownPreview
-   */
   constructor($el, eventManager, convertor, isViewer, delayTime) {
     super($el, eventManager, convertor, isViewer, delayTime);
 
@@ -54,7 +50,6 @@ class MarkdownPreview extends Preview {
   /**
    * render
    * @param {string} html - html string to render
-   * @memberof MarkdownPreview
    * @override
    */
   render(html) {

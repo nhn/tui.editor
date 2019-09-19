@@ -1,0 +1,55 @@
+{
+  "header": {
+    "logo": {
+      "src": "https://uicdn.toast.com/toastui/img/tui-editor-bi-white.png",
+      "linkUrl": "/"
+    },
+    "title": {
+      "text": "repo",
+      "linkUrl": "https://github.com/nhn/tui.editor"
+    },
+    "version": true
+  },
+  "footer": [
+    {
+      "title": "NHN",
+      "linkUrl": "https://github.com/nhn"
+    },
+    {
+      "title": "FE Development Lab",
+      "linkUrl": "https://github.com/nhn/fe.javascript"
+    }
+  ],
+  "main": {
+    "filePath": "README.md"
+  },
+  "api": {
+    "filePath": "src/js/**/*",
+    "permalink": {
+      "repository": "https://github.com/nhn/tui.editor",
+      "ref": "master"
+    }
+  },
+  "examples": {
+    "filePath": "examples",
+    "titles": {
+      "example01-editor-basic": "1. Editor Basic",
+      "example02-viewer-basic": "2. Viewer Basic",
+      "example03-editor-extensions": "3. Editor with All Extensions",
+      "example04-viewer-extensions": "4. Viewer with All Extensions",
+      "example05-scroll-sync": "5. Scroll Sync Extension",
+      "example06-color-syntax": "6. Color Syntax Extension",
+      "example07-table": "7. Table Extension",
+      "example08-uml": "8. UML Extension",
+      "example09-chart": "9. Chart Extension",
+      "example10-make-new-extension": "10. Make New Extension",
+      "example11-customize-toolbar": "11. Customize Toolbar",
+      "example12-use-command": "12. Use Command",
+      "example13-change-content": "13. Change Content Dynamically",
+      "example14-custom-convertor": "14. Custom Convertor",
+      "example15-i18n": "15. Internationalization(i18n)",
+      "example16-placeholder": "16. Placeholder"
+    }
+  },
+  "pathPrefix": "tui.editor"
+}

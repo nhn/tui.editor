@@ -6,12 +6,9 @@ import util from 'tui-code-snippet';
 
 /**
  * Class LazyRunner
+ * @ignore
  */
 class LazyRunner {
-  /**
-   * Creates an instance of LazyRunner.
-   * @memberof LazyRunner
-   */
   constructor() {
     this.globalTOID = null;
     this.lazyRunFunctions = {};

@@ -2,36 +2,18 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8">
-    <title>12. Customize Toolbar</title>
-    <link rel="stylesheet" href="./explain.css">
-  </head>
-  <body>
-    <div class="code-html">
-      <!-- Editor Dependencies -->
-      <script src="../lib/jquery/dist/jquery.js"></script>
-      <script src="../lib/markdown-it/dist/markdown-it.js"></script>
-      <script src="../lib/to-mark/dist/to-mark.js"></script>
-      <script src="../lib/tui-code-snippet/dist/tui-code-snippet.js"></script>
-      <script src="../lib/codemirror/lib/codemirror.js"></script>
-      <script src="../lib/highlightjs/highlight.pack.js"></script>
-      <script src="../lib/squire-rte/build/squire-raw.js"></script>
-      <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
-      <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
-
-      <!-- Editor -->
-      <script src="../dist/tui-editor-Editor.js"></script>
-      <link rel="stylesheet" href="../dist/tui-editor.css">
-      <link rel="stylesheet" href="../dist/tui-editor-contents.css">
-
-      <!-- IMPORT Font Awesome 5 here-->
-      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
-
-      <div id="editSection"></div>
-    </div>
-
-    <style class="code-css">
-      /* class for our button */
-      .our-button-class{
+    <title>11. Customize Toolbar</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css">
+    <!-- Editor's Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/tui-editor.css">
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+    <!-- Using Service (Import "Font Awesome 5") -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <style type="text/css">
+      .custom-button {
         float: left;
         box-sizing: border-box;
         outline: none;
@@ -47,7 +29,15 @@
         align-items: center;
       }
     </style>
+  </head>
 
+  <body>
+    <div class="contents code-html">
+      <div id="editSection"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="../dist/tui-editor-Editor-full.js"></script>
     <script class="code-js">
       var content = 'FIRST and LAST button are custom';
 
@@ -79,11 +69,11 @@
           'code',
           'codeblock',
           'divider',
-          // ADD button method 1
+          // First way to add a button
           {
             type: 'button',
             options: {
-              $el: $('<div class="our-button-class"><i class="fas fa-briefcase-medical"></i></div>'),
+              $el: $('<div class="custom-button"><i class="fas fa-briefcase-medical"></i></div>'),
               name: 'test2',
               className: '',
               command: 'Bold', // you can use "Bold"
@@ -93,13 +83,13 @@
         ]
       });
 
-      // ADD button method 2
+      // Second way to add a button
       var toolbar = editor.getUI().getToolbar();
 
       editor.eventManager.addEventType('Event1');
       editor.eventManager.listen('Event1', function() {
         alert('button click!');
-        // do some other thing...
+        // Do some other thing...
       });
 
       toolbar.addButton({
@@ -107,7 +97,7 @@
         className: 'fab fa-accessible-icon',
         event: 'Event1',
         tooltip: 'Apple!!!',
-        $el: $('<div class="our-button-class"><i class="fab fa-apple"></i></div>')
+        $el: $('<div class="custom-button"><i class="fab fa-apple"></i></div>')
       }, 1);
     </script>
   </body>

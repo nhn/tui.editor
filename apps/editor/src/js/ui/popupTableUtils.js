@@ -11,14 +11,9 @@ import i18n from '../i18n';
 /**
  * PopupTableUtils
  * It implements table utils popup
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup options
  */
 class PopupTableUtils extends LayerPopup {
-  /**
-   * Creates an instance of PopupTableUtils.
-   * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupTableUtils
-   */
   constructor(options) {
     const POPUP_CONTENT = `
             <button type="button" class="te-table-add-row">${i18n.get('Add row')}</button>
@@ -44,8 +39,7 @@ class PopupTableUtils extends LayerPopup {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupTableUtils
-   * @protected
+   * @private
    * @override
    */
   _initInstance(options) {
@@ -55,8 +49,7 @@ class PopupTableUtils extends LayerPopup {
 
   /**
    * bind DOM events
-   * @memberof PopupTableUtils
-   * @protected
+   * @private
    * @override
    */
   _initDOMEvent() {
@@ -74,9 +67,8 @@ class PopupTableUtils extends LayerPopup {
 
   /**
    * bind editor events
-   * @memberof PopupTableUtils
-   * @protected
-   * @abstract
+   * @private
+   * @override
    */
   _initEditorEvent() {
     super._initEditorEvent();

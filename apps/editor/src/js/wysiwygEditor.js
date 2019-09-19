@@ -37,14 +37,10 @@ const canObserveMutations = (typeof MutationObserver !== 'undefined');
 
 /**
  * Class WysiwygEditor
+ * @param {jQuery} $el element to insert editor
+ * @param {EventManager} eventManager EventManager instance
  */
 class WysiwygEditor {
-  /**
-   * Creates an instance of WysiwygEditor.
-   * @param {jQuery} $el element to insert editor
-   * @param {EventManager} eventManager EventManager instance
-   * @memberof WysiwygEditor
-   */
   constructor($el, eventManager) {
     this.componentManager = new ComponentManager(this);
     this.eventManager = eventManager;
@@ -66,7 +62,6 @@ class WysiwygEditor {
 
   /**
    * init
-   * @memberof WysiwygEditor
    */
   init() {
     const $editorBody = $('<div />');
@@ -97,9 +92,7 @@ class WysiwygEditor {
   }
 
   /**
-   * _initEvent
    * Initialize EventManager event handler
-   * @memberof WysiwygEditor
    * @private
    */
   _initEvent() {
@@ -111,9 +104,7 @@ class WysiwygEditor {
   }
 
   /**
-   * addKeyEventHandler
    * Add key event handler
-   * @memberof WysiwygEditor
    * @param {string|Array.<string>} keyMap - keyMap string or array of string
    * @param {function} handler handler
    */
@@ -136,7 +127,7 @@ class WysiwygEditor {
   }
 
   /**
-   * REmove key event handler.
+   * Remove key event handler.
    * @param {string} keyMap keyMap string
    * @param {function} handler handler
    */
@@ -154,7 +145,6 @@ class WysiwygEditor {
   }
 
   /**
-   * _runKeyEventHandlers
    * Run key event handler
    * @param {Event} event event object
    * @param {string} keyMap keyMapString
@@ -182,7 +172,6 @@ class WysiwygEditor {
   }
 
   /**
-   * _initSquireEvent
    * Initialize squire event
    * @private
    */
@@ -487,7 +476,6 @@ class WysiwygEditor {
   }
 
   /**
-   * _initDefaultKeyEventHandler
    * Initialize default event handler
    * @private
    */
@@ -569,7 +557,6 @@ class WysiwygEditor {
   }
 
   /**
-   * _isInOrphanText
    * check if range is orphan text
    * @param {Range} range range
    * @returns {boolean} result
@@ -581,7 +568,6 @@ class WysiwygEditor {
   }
 
   /**
-   * _wrapDefaultBlockTo
    * Wrap default block to passed range
    * @param {Range} range range
    * @private
@@ -621,7 +607,6 @@ class WysiwygEditor {
 
   /**
    * findTextNodeFilter
-   * @this Node
    * @returns {boolean} true or not
    */
   findTextNodeFilter() {
@@ -629,7 +614,6 @@ class WysiwygEditor {
   }
 
   /**
-   * _joinSplitedTextNodes
    * Join spliated text nodes
    * @private
    */
@@ -653,9 +637,7 @@ class WysiwygEditor {
   }
 
   /**
-   * saveSelection
    * Save current selection before modification
-   * @memberof WysiwygEditor
    * @param {Range} range Range object
    */
   saveSelection(range) {
@@ -673,7 +655,6 @@ class WysiwygEditor {
    * @param {HTMLNode} endContainer - end container
    * @param {Number} endOffset - end offset
    * @returns {Range} - range instance
-   * @memberof WysiwygEditor
    */
   setSelectionByContainerAndOffset(startContainer, startOffset, endContainer, endOffset) {
     const sq = this.getEditor();
@@ -686,27 +667,21 @@ class WysiwygEditor {
   }
 
   /**
-   * restoreSavedSelection
    * Restore saved selection
-   * @memberof WysiwygEditor
    */
   restoreSavedSelection() {
     this.setRange(this.getEditor()._getRangeAndRemoveBookmark());
   }
 
   /**
-   * reset
    * Reset wysiwyg editor
-   * @memberof WysiwygEditor
    */
   reset() {
     this.setValue('');
   }
 
   /**
-   * changeBlockFormatTo
    * Change current range block format to passed tag
-   * @memberof WysiwygEditor
    * @param {string} targetTagName Target element tag name
    */
   changeBlockFormatTo(targetTagName) {
@@ -715,9 +690,7 @@ class WysiwygEditor {
   }
 
   /**
-   * makeEmptyBlockCurrentSelection
    * Make empty block to current selection
-   * @memberof WysiwygEditor
    */
   makeEmptyBlockCurrentSelection() {
     this.getEditor().modifyBlocks(frag => {
@@ -730,9 +703,7 @@ class WysiwygEditor {
   }
 
   /**
-   * focus
    * Focus to editor
-   * @memberof WysiwygEditor
    */
   focus() {
     const scrollTop = this.scrollTop();
@@ -747,18 +718,14 @@ class WysiwygEditor {
   }
 
   /**
-   * blur
    * Remove focus of editor
-   * @memberof WysiwygEditor
    */
   blur() {
     this.editor.blur();
   }
 
   /**
-   * remove
    * Remove wysiwyg editor
-   * @memberof WysiwygEditor
    */
   remove() {
     this.$editorContainerEl.off('scroll');
@@ -769,9 +736,7 @@ class WysiwygEditor {
   }
 
   /**
-   * setHeight
    * Set editor height
-   * @memberof WysiwygEditor
    * @param {number|string} height pixel of height or "auto"
    */
   setHeight(height) {
@@ -787,9 +752,8 @@ class WysiwygEditor {
   }
 
   /**
-   * set min height
+   * Set min height
    * @param {number} minHeight - min height in px
-   * @memberof WysiwygEditor
    */
   setMinHeight(minHeight) {
     const editorBody = this.get$Body().get(0);
@@ -823,9 +787,7 @@ class WysiwygEditor {
   }
 
   /**
-   * setValue
    * Set value to wysiwyg editor
-   * @memberof WysiwygEditor
    * @param {string} html - HTML text
    * @param {boolean} [cursorToEnd=true] - move cursor to contents end
    */
@@ -848,18 +810,15 @@ class WysiwygEditor {
   }
 
   /**
-   * insert given text to cursor position or selected area
+   * Insert given text to cursor position or selected area
    * @param {string} text - text string to insert
-   * @memberof WysiwygEditor
    */
   insertText(text) {
     this.editor.insertPlainText(text);
   }
 
   /**
-   * getValue
    * Get value of wysiwyg editor
-   * @memberof WysiwygEditor
    * @returns {string} html
    */
   getValue() {
@@ -901,9 +860,7 @@ class WysiwygEditor {
   }
 
   /**
-   * _prepareGetHTML
    * Prepare before get html
-   * @memberof WysiwygEditor
    * @private
    */
   _prepareGetHTML() {
@@ -915,7 +872,6 @@ class WysiwygEditor {
 
   /**
    * postProcessForChange
-   * @memberof WysiwygEditor
    */
   postProcessForChange() {
     if (!this.isEditorValid()) {
@@ -928,9 +884,7 @@ class WysiwygEditor {
   }
 
   /**
-   * readySilentChange
    * Ready to silent change
-   * @memberof WysiwygEditor
    */
   readySilentChange() {
     if (canObserveMutations && !this.getEditor().isIgnoreChange()) {
@@ -939,9 +893,7 @@ class WysiwygEditor {
   }
 
   /**
-   * getEditor
    * Get squire
-   * @memberof WysiwygEditor
    * @returns {SquireExt} squire
    */
   getEditor() {
@@ -949,9 +901,7 @@ class WysiwygEditor {
   }
 
   /**
-   * replaceSelection
    * Replace text of passed range
-   * @memberof WysiwygEditor
    * @param {string} content Content for change current selection
    * @param {Range} range range
    */
@@ -960,9 +910,7 @@ class WysiwygEditor {
   }
 
   /**
-   * replaceRelativeOffset
    * Replace content by relative offset
-   * @memberof WysiwygEditor
    * @param {string} content Content for change current selection
    * @param {number} offset Offset of current range
    * @param {number} overwriteLength Length to overwrite content
@@ -972,9 +920,7 @@ class WysiwygEditor {
   }
 
   /**
-   * addWidget
    * Add widget to selection
-   * @memberof WysiwygEditor
    * @param {Range} range Range object
    * @param {Node} node Widget node
    * @param {string} style Adding style "over" or "bottom"
@@ -994,9 +940,7 @@ class WysiwygEditor {
   }
 
   /**
-   * get$Body
    * Get jQuery wrapped body container of Squire
-   * @memberof WysiwygEditor
    * @returns {JQuery} jquery body
    */
   get$Body() {
@@ -1004,9 +948,7 @@ class WysiwygEditor {
   }
 
   /**
-   * hasFormatWithRx
    * Check with given regexp whether current path has some format or not
-   * @memberof WysiwygEditor
    * @param {RegExp} rx Regexp
    * @returns {boolean} Match result
    */
@@ -1015,9 +957,7 @@ class WysiwygEditor {
   }
 
   /**
-   * breakToNewDefaultBlock
    * Break line to new default block from passed range
-   * @memberof WysiwygEditor
    * @param {Range} range Range object
    * @param {string} [where] "before" or not
    */
@@ -1039,9 +979,7 @@ class WysiwygEditor {
   }
 
   /**
-   * replaceContentText
    * Replace textContet of node
-   * @memberof WysiwygEditor
    * @param {Node} container Container node
    * @param {string} from Target text to change
    * @param {string} to Replacement text
@@ -1052,9 +990,7 @@ class WysiwygEditor {
   }
 
   /**
-   * unwrapBlockTag
    * Unwrap Block tag of current range
-   * @memberof WysiwygEditor
    * @param {function} [condition] iterate with tagName
    */
   unwrapBlockTag(condition) {
@@ -1071,7 +1007,6 @@ class WysiwygEditor {
    * scrollIntoView browser function may cause scrolling on document.
    * this function aims to replace scrollIntoView function to prevent that.
    * it will move the scroll of squire only.
-   * @memberof SquireExt
    */
   scrollIntoCursor() {
     const scrollTop = this.scrollTop();
@@ -1096,7 +1031,6 @@ class WysiwygEditor {
 
   /**
    * Set cursor position to end
-   * @memberof WysiwygEditor
    */
   moveCursorToEnd() {
     this.getEditor().moveCursorToEnd();
@@ -1106,7 +1040,6 @@ class WysiwygEditor {
 
   /**
    * Set cursor position to start
-   * @memberof WysiwygEditor
    */
   moveCursorToStart() {
     this.getEditor().moveCursorToStart();
@@ -1115,7 +1048,6 @@ class WysiwygEditor {
 
   /**
    * Set cursor position to start
-   * @memberof WysiwygEditor
    * @param {number} value Scroll amount
    * @returns {boolean}
    */
@@ -1128,9 +1060,7 @@ class WysiwygEditor {
   }
 
   /**
-   * _correctRangeAfterMoveCursor
    * For arrange Range after moveCursorToEnd api invocation. Squire has bug in Firefox, IE.
-   * @memberof WysiwygEditor
    * @param {string} direction Direction of cursor move
    * @private
    */
@@ -1162,7 +1092,6 @@ class WysiwygEditor {
 
   /**
    * Get current Range object
-   * @memberof WysiwygEditor
    * @returns {Range}
    */
   getRange() {
@@ -1173,7 +1102,6 @@ class WysiwygEditor {
    * get IME range
    * cjk composition causes wrong caret position.
    * it returns fixed IME composition range
-   * @memberof WysiwygEditor
    * @returns {Range}
    */
   getIMERange() {
@@ -1191,7 +1119,6 @@ class WysiwygEditor {
    * get IME range
    * cjk composition causes wrong caret position.
    * it sets fixed IME composition range
-   * @memberof WysiwygEditor
    */
   fixIMERange() {
     const range = this.getIMERange();
@@ -1205,7 +1132,6 @@ class WysiwygEditor {
   /**
    * set range
    * @param {Range} range - range to set
-   * @memberof WysiwygEditor
    */
   setRange(range) {
     this.getEditor().setSelection(range);
@@ -1224,7 +1150,6 @@ class WysiwygEditor {
 
   /**
    * Get text object of current range
-   * @memberof WysiwygEditor
    * @param {Range} range Range object
    * @returns {WwTextObject}
    */
@@ -1253,12 +1178,12 @@ class WysiwygEditor {
 
   /**
    * WysiwygEditor factory method
-   * @memberof WysiwygEditor
    * @param {jQuery} $el Container element for editor
    * @param {EventManager} eventManager EventManager instance
    * @param {object} [options={}] - option object
-   *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
+   *     @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
    * @returns {WysiwygEditor} wysiwygEditor
+   * @ignore
    */
   static factory($el, eventManager, options) {
     const wwe = new WysiwygEditor($el, eventManager, options);
