@@ -37,7 +37,7 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-sauce-launcher": "^1.2.0",
     "karma-sourcemap-loader": "^0.3.6",
-    "karma-webdriver-launcher": "https://github.com/nhnent/karma-webdriver-launcher.git#v1.1.0",
+    "karma-webdriver-launcher": "git+https://github.com/nhn/karma-webdriver-launcher.git#v1.2.0",
     "karma-webpack": "^2.0.9",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^1.14.1"

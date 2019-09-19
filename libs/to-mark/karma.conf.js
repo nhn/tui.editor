@@ -38,7 +38,8 @@ function setConfig(defaultConfig, server, browser) {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
-                version: '11'
+                version: '11',
+                platformName: 'windows'
             };
         }
         if (browser === 'Edge' || !browser) {
@@ -62,13 +63,13 @@ function setConfig(defaultConfig, server, browser) {
                 browserName: 'firefox'
             };
         }
-        if (browser === 'Safari' || !browser) {
-            defaultConfig.customLaunchers['Safari-WebDriver'] = {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'safari'
-            };
-        }
+        // if (browser === 'Safari' || !browser) {
+        //     defaultConfig.customLaunchers['Safari-WebDriver'] = {
+        //         base: 'WebDriver',
+        //         config: webdriverConfig,
+        //         browserName: 'safari'
+        //     };
+        // }
         defaultConfig.concurrency = 1;
         defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
     } else if (server === 'sl') {
