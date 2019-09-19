@@ -19,23 +19,20 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
  * Class ToastUIEditorViewer
+ * @param {object} options Option object
+ *     @param {HTMLElement} options.el - container element
+ *     @param {string} options.initialValue Editor's initial value
+ *     @param {object} options.events eventlist Event list
+ *         @param {function} options.events.load It would be emitted when editor fully load
+ *         @param {function} options.events.change It would be emitted when content changed
+ *         @param {function} options.events.stateChange It would be emitted when format change by cursor position
+ *         @param {function} options.events.focus It would be emitted when editor get focus
+ *         @param {function} options.events.blur It would be emitted when editor loose focus
+ *     @param {object} options.hooks Hook list
+ *     @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
+ *     @param {string[]} [options.exts] - extensions
  */
 class ToastUIEditorViewer {
-  /**
-   * Viewer
-   * @param {object} options Option object
-    * @param {HTMLElement} options.el - container element
-    * @param {string} options.initialValue Editor's initial value
-    * @param {object} options.events eventlist Event list
-      * @param {function} options.events.load It would be emitted when editor fully load
-      * @param {function} options.events.change It would be emitted when content changed
-      * @param {function} options.events.stateChange It would be emitted when format change by cursor position
-      * @param {function} options.events.focus It would be emitted when editor get focus
-      * @param {function} options.events.blur It would be emitted when editor loose focus
-    * @param {object} options.hooks Hook list
-      * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
-    * @param {string[]} [options.exts] - extensions
-    */
   constructor(options) {
     this.options = $.extend({
       useDefaultHTMLSanitizer: true,
@@ -107,7 +104,6 @@ class ToastUIEditorViewer {
 
   /**
    * Set content for preview
-   * @memberof ToastUIEditorViewer
    * @param {string} markdown Markdown text
    */
   setMarkdown(markdown) {
@@ -119,7 +115,6 @@ class ToastUIEditorViewer {
 
   /**
    * Set content for preview
-   * @memberof ToastUIEditorViewer
    * @param {string} markdown Markdown text
    * @deprecated
    */
@@ -129,7 +124,6 @@ class ToastUIEditorViewer {
 
   /**
    * Bind eventHandler to event type
-   * @memberof ToastUIEditorViewer
    * @param {string} type Event type
    * @param {function} handler Event handler
    */
@@ -139,7 +133,6 @@ class ToastUIEditorViewer {
 
   /**
    * Unbind eventHandler from event type
-   * @memberof ToastUIEditorViewer
    * @param {string} type Event type
    */
   off(type) {
@@ -148,7 +141,6 @@ class ToastUIEditorViewer {
 
   /**
    * Remove Viewer preview from document
-   * @memberof ToastUIEditorViewer
    */
   remove() {
     this.eventManager.emit('removeEditor');
@@ -163,7 +155,6 @@ class ToastUIEditorViewer {
 
   /**
    * Add hook to Viewer preview's event
-   * @memberof ToastUIEditorViewer
    * @param {string} type Event type
    * @param {function} handler Event handler
    */
@@ -174,7 +165,6 @@ class ToastUIEditorViewer {
 
   /**
    * Return true
-   * @memberof ToastUIEditorViewer
    * @returns {boolean}
    */
   isViewer() {
@@ -183,7 +173,6 @@ class ToastUIEditorViewer {
 
   /**
    * Return false
-   * @memberof ToastUIEditorViewer
    * @returns {boolean}
    */
   isMarkdownMode() {
@@ -192,7 +181,6 @@ class ToastUIEditorViewer {
 
   /**
    * Return false
-   * @memberof ToastUIEditorViewer
    * @returns {boolean}
    */
   isWysiwygMode() {
@@ -201,7 +189,6 @@ class ToastUIEditorViewer {
 
   /**
    * Define extension
-   * @memberof ToastUIEditorViewer
    * @param {string} name Extension name
    * @param {ExtManager~extension} ext extension
    */
@@ -219,6 +206,7 @@ ToastUIEditorViewer.isViewer = true;
 /**
  * domUtil instance
  * @type {DomUtil}
+ * @ignore
  */
 ToastUIEditorViewer.domUtils = domUtils;
 

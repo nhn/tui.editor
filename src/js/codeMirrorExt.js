@@ -15,21 +15,17 @@ import './codemirror/placeholder';
 
 /**
  * Class CodeMirrorExt
+ * @param {HTMLElement} el - container jquery element
+ * @param {Object} [options={}] - codeMirror options
  */
 class CodeMirrorExt {
-  /**
-   * Creates an instance of CodeMirrorExt.
-   * @param {HTMLElement} el - container jquery element
-   * @param {Object} [options={}] - codeMirror options
-   * @memberof CodeMirrorExt
-   */
   constructor(el, options = {}) {
     this.editorContainerEl = el;
 
     /**
-     * @memberof CodeMirrorExt
-     * @protected
-     * @member
+     * CodeMirror instance
+     * @type {CodeMirror.EditorFromTextArea}
+     * @private
      */
     this.cm = null;
 
@@ -39,7 +35,6 @@ class CodeMirrorExt {
   /**
    * init
    * @param {Object} options - codeMirror option
-   * @memberof CodeMirrorExt
    * @private
    */
   _init(options) {
@@ -64,7 +59,6 @@ class CodeMirrorExt {
 
   /**
    * getCurrentRange
-   * @memberof CodeMirrorExt
    * @returns {Object} - selection range
    */
   getCurrentRange() {
@@ -80,7 +74,6 @@ class CodeMirrorExt {
 
   /**
    * Set focus to current Editor
-   * @memberof CodeMirrorExt
    */
   focus() {
     this.cm.focus();
@@ -88,7 +81,6 @@ class CodeMirrorExt {
 
   /**
    * blur focus to current Editor
-   * @memberof CodeMirrorExt
    */
   blur() {
     this.cm.getInputField().blur();
@@ -96,7 +88,6 @@ class CodeMirrorExt {
 
   /**
    * Remove Editor from document
-   * @memberof CodeMirrorExt
    */
   remove() {
     this.cm.toTextArea();
@@ -104,7 +95,6 @@ class CodeMirrorExt {
 
   /**
    * Set Editor value
-   * @memberof CodeMirrorExt
    * @param {string} markdown - Markdown syntax text
    * @param {boolean} [cursorToEnd=true] - move cursor to contents end
    */
@@ -119,7 +109,6 @@ class CodeMirrorExt {
 
   /**
    * Get editor value
-   * @memberof CodeMirrorExt
    * @returns {string} - codeMirror text value
    */
   getValue() {
@@ -128,7 +117,6 @@ class CodeMirrorExt {
 
   /**
    * Get CodeMirror instance
-   * @memberof CodeMirrorExt
    * @returns {CodeMirror}
    */
   getEditor() {
@@ -137,7 +125,6 @@ class CodeMirrorExt {
 
   /**
    * Reset Editor
-   * @memberof CodeMirrorExt
    */
   reset() {
     this.setValue('');
@@ -145,7 +132,6 @@ class CodeMirrorExt {
 
   /**
    * Get current caret position
-   * @memberof CodeMirrorExt
    * @returns {{from: {line: number, ch: number}, to: {line: number, ch: number}}}
    */
   getCaretPosition() {
@@ -154,7 +140,6 @@ class CodeMirrorExt {
 
   /**
    * Add widget
-   * @memberof CodeMirrorExt
    * @param {object} selection - Selection object
    * @param {HTMLElement} node - Widget node
    * @param {string} style - Adding style "over" or "bottom"
@@ -170,7 +155,6 @@ class CodeMirrorExt {
 
   /**
    * Replace selection with given replacement content
-   * @memberof CodeMirrorExt
    * @param {string} content - Replacement content text
    * @param {object} selection - Selection object
    */
@@ -185,7 +169,6 @@ class CodeMirrorExt {
 
   /**
    * Replace selection with replacement content and offset
-   * @memberof CodeMirrorExt
    * @param {string} content - Replacement content text
    * @param {number} offset - Offset
    * @param {number} overwriteLength - Length to overwrite
@@ -208,7 +191,6 @@ class CodeMirrorExt {
 
   /**
    * Set Editor height
-   * @memberof CodeMirrorExt
    * @param {number} height - Editor height
    */
   setHeight(height) {
@@ -220,7 +202,6 @@ class CodeMirrorExt {
   /**
    * set min height
    * @param {number} minHeight - min height
-   * @memberof CodeMirrorExt
    */
   setMinHeight(minHeight) {
     const contentWrapper = this.getWrapperElement();
@@ -241,7 +222,6 @@ class CodeMirrorExt {
   /**
    * get code mirror wrapper element
    * @returns {HTMLElement} - code mirror wrapper element
-   * @memberof CodeMirrorExt
    */
   getWrapperElement() {
     return this.cm.getWrapperElement();
@@ -251,7 +231,6 @@ class CodeMirrorExt {
    * get code mirror cursor
    * @param {string} [start='head'] - which end of the selection. 'from'|'to'|'head'|'anchor'
    * @returns {Cursor} - code mirror cursor
-   * @memberof CodeMirrorExt
    */
   getCursor(start) {
     return this.cm.getCursor(start);
@@ -259,7 +238,6 @@ class CodeMirrorExt {
 
   /**
    * Set cursor position to end
-   * @memberof CodeMirrorExt
    */
   moveCursorToEnd() {
     const doc = this.getEditor().getDoc();
@@ -270,7 +248,6 @@ class CodeMirrorExt {
 
   /**
    * Set cursor position to start
-   * @memberof CodeMirrorExt
    */
   moveCursorToStart() {
     const doc = this.getEditor().getDoc();
@@ -281,7 +258,6 @@ class CodeMirrorExt {
 
   /**
    * Scroll Editor content to Top
-   * @memberof CodeMirrorExt
    * @param {number} value - Scroll amount
    * @returns {number} - changed scroll top
    */
@@ -295,7 +271,6 @@ class CodeMirrorExt {
 
   /**
    * Get start, end position of current selection
-   * @memberof CodeMirrorExt
    * @returns {{start: {line: *, ch: *}, end: {line: *, ch: *}}}
    */
   getRange() {
@@ -318,7 +293,6 @@ class CodeMirrorExt {
    * add codemirror event handler
    * @param {string} type - event type
    * @param {function} func - handler function
-   * @memberof CodeMirrorExt
    */
   on(type, func) {
     this.cm.on(type, func);
@@ -328,7 +302,6 @@ class CodeMirrorExt {
    * remove codemirror event handler
    * @param {string} type - event type
    * @param {function} func - handler function
-   * @memberof CodeMirrorExt
    */
   off(type, func) {
     this.cm.off(type, func);

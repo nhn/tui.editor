@@ -7,20 +7,16 @@ import domUtils from './domUtils';
 
 /**
  * Class WwHrManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 class WwHrManager {
-  /**
-   * Creates an instance of WwHrManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwHrManager
-   */
   constructor(wwe) {
     this.wwe = wwe;
     this.eventManager = wwe.eventManager;
 
     /**
      * Name property
-     * @memberof WwHrManager#
      * @type {string}
      */
     this.name = 'hr';
@@ -29,9 +25,7 @@ class WwHrManager {
   }
 
   /**
-   * _init
    * Initialize
-   * @memberof WwHrManager
    * @private
    */
   _init() {
@@ -39,9 +33,7 @@ class WwHrManager {
   }
 
   /**
-   * _initEvent
    * Initialize eventmanager event
-   * @memberof WwHrManager
    * @private
    */
   _initEvent() {
@@ -69,7 +61,6 @@ class WwHrManager {
   /**
    * <hr> is set contenteditable to false with wrapping div like below.
    * <div contenteditable="false"><hr contenteditable="false"><div>
-   * @memberof WwHrManager
    * @private
    */
   _changeHRForWysiwyg() {

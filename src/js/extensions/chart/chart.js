@@ -427,9 +427,10 @@ function _setWwCodeBlockManagerForChart(editor) {
   componentManager.addManager(class extends WwCodeBlockManager {
     /**
      * Convert table nodes into code block as TSV
-     * @memberof WwCodeBlockManager
      * @param {Array.<Node>} nodes Node array
      * @returns {HTMLElement} Code block element
+     * @override
+     * @ignore
      */
     convertNodesToText(nodes) {
       if (nodes.length !== 1 || nodes[0].tagName !== 'TABLE') {

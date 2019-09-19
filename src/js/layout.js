@@ -24,14 +24,11 @@ const containerTmpl = [
 
 /**
  * Class Layout
+ * @param {object} options - Option object
+ * @param {EventManager} eventManager - Event manager instance
+ * @ignore
  */
 class Layout {
-  /**
-   * Creates an instance of Layout.
-   * @param {object} options - Option object
-   * @param {EventManager} eventManager - Event manager instance
-   * @memberof Layout
-   */
   constructor(options, eventManager) {
     this.$el = $(options.el);
     this.height = options.height;
@@ -44,7 +41,7 @@ class Layout {
 
   /**
    * Initializer
-   * @memberof Layout
+   * @protected
    */
   init() {
     this._renderLayout();
@@ -55,7 +52,6 @@ class Layout {
 
   /**
    * Initialize show and hide event
-   * @memberof Layout
    * @private
    */
   _initEvent() {
@@ -65,7 +61,6 @@ class Layout {
 
   /**
    * Create editor container with template
-   * @memberof Layout
    * @private
    */
   _renderLayout() {
@@ -75,7 +70,6 @@ class Layout {
 
   /**
    * Switch editor mode to WYSIWYG
-   * @memberof Layout
    */
   switchToWYSIWYG() {
     this.$containerEl.removeClass('te-md-mode');
@@ -84,7 +78,6 @@ class Layout {
 
   /**
    * Switch editor mode to Markdown
-   * @memberof Layout
    */
   switchToMarkdown() {
     this.$containerEl.removeClass('te-ww-mode');
@@ -93,7 +86,6 @@ class Layout {
 
   /**
    * Initialize editor to Markdown and set preview section
-   * @memberof Layout
    * @private
    */
   _initMarkdownAndPreviewSection() {
@@ -103,7 +95,6 @@ class Layout {
 
   /**
    * Initialize editor to WYSIWYG
-   * @memberof Layout
    * @private
    */
   _initWysiwygSection() {
@@ -112,7 +103,6 @@ class Layout {
 
   /**
    * Set preview to vertical split style
-   * @memberof Layout
    * @private
    */
   _verticalSplitStyle() {
@@ -122,7 +112,6 @@ class Layout {
 
   /**
    * Set tab style preview mode
-   * @memberof Layout
    * @private
    */
   _tabStyle() {
@@ -132,7 +121,6 @@ class Layout {
 
   /**
    * Toggle preview style between tab and vertical split
-   * @memberof Layout
    * @param {string} style Preview style ('tab' or 'vertical')
    */
   changePreviewStyle(style) {
@@ -145,7 +133,6 @@ class Layout {
 
   /**
    * Hide Editor
-   * @memberof Layout
    */
   hide() {
     this.$el.find('.tui-editor').addClass('te-hide');
@@ -153,7 +140,6 @@ class Layout {
 
   /**
    * Show Editor
-   * @memberof Layout
    */
   show() {
     this.$el.find('.tui-editor').removeClass('te-hide');
@@ -161,7 +147,6 @@ class Layout {
 
   /**
    * Remove Editor
-   * @memberof Layout
    */
   remove() {
     this.$el.find('.tui-editor').remove();
@@ -169,7 +154,6 @@ class Layout {
 
   /**
    * Get jQuery wrapped editor container element
-   * @memberof Layout
    * @returns {jQuery}
    */
   getEditorEl() {
@@ -178,7 +162,6 @@ class Layout {
 
   /**
    * Get jQuery wrapped preview element
-   * @memberof Layout
    * @returns {jQuery}
    */
   getPreviewEl() {
@@ -187,7 +170,6 @@ class Layout {
 
   /**
    * Get jQuery wrapped Markdown editor element
-   * @memberof Layout
    * @returns {jQuery}
    */
   getMdEditorContainerEl() {
@@ -196,7 +178,6 @@ class Layout {
 
   /**
    * Get jQuery wrapped WYSIWYG editor element
-   * @memberof Layout
    * @returns {jQuery}
    */
   getWwEditorContainerEl() {

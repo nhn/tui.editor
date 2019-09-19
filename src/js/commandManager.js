@@ -12,13 +12,12 @@ const KEYMAP_OS_INDEX = isMac ? 1 : 0;
 
 /**
  * Class CommandManager
+ * @param {ToastUIEditor} base nedInstance
+ * @param {object} [options={}] - option object
+ *     @param {boolean} [options.useCommandShortcut=true] - execute command with keyMap
+ * @ignore
  */
 class CommandManager {
-  /**
-   * @param {ToastUIEditor} base nedInstance
-   * @param {object} [options={}] - option object
-   *  @param {boolean} [options.useCommandShortcut=true] - execute command with keyMap
-   */
   constructor(base, options = {}) {
     this._command = new util.Map();
     this._mdCommand = new util.Map();
@@ -50,7 +49,6 @@ class CommandManager {
 
   /**
    * Add command
-   * @memberof CommandManager
    * @param {Command} command Command instance
    * @returns {Command} Command
    */
@@ -86,7 +84,6 @@ class CommandManager {
    * _initEvent
    * Bind event handler to eventManager
    * @private
-   * @memberof CommandManager
    */
   _initEvent() {
     this.base.eventManager.listen('command', (...args) => {
@@ -108,7 +105,6 @@ class CommandManager {
 
   /**
    * Execute command
-   * @memberof CommandManager
    * @param {String} name Command name
    * @param {*} ...args Command argument
    * @returns {*}
@@ -140,10 +136,10 @@ class CommandManager {
 
 /**
  * Create command by given editor type and property object
- * @memberof CommandManager
  * @param {string} type Command type
  * @param {{name: string, keyMap: Array}} props Property
  * @returns {*}
+ * @static
  */
 CommandManager.command = function(type, props) {
   const command = Command.factory(type, props.name, props.keyMap);

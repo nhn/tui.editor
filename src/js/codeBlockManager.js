@@ -8,10 +8,6 @@ import hljs from 'highlight.js';
  * Class Code Block Manager
  */
 class CodeBlockManager {
-  /**
-   * Creates an instance of CodeBlockManager.
-   * @memberof CodeBlockManager
-   */
   constructor() {
     this._replacers = {};
   }
@@ -29,7 +25,6 @@ class CodeBlockManager {
    * get replacer for code block
    * @param {string} language - code block type
    * @returns {function} - replacer function
-   * @memberof CodeBlockManager
    */
   getReplacer(language) {
     return this._replacers[language];
@@ -57,7 +52,6 @@ class CodeBlockManager {
   /**
    * get supported languages by highlight-js
    * @returns {Array<string>} - supported languages by highlight-js
-   * @static
    */
   static getHighlightJSLanguages() {
     return hljs.listLanguages();

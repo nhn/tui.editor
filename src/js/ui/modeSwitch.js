@@ -14,15 +14,16 @@ const WYSIWYG = 'wysiwyg';
 /**
  * Class ModeSwitch
  * UI Control for switch between Markdown and WYSIWYG
- * @extends {UIController}
+ * @param {jQuery} $rootElement - root jquery element
+ * @param {string} initialType - initial type of editor
  */
 class ModeSwitch extends UIController {
   /**
    * mode switch type
-   * @memberof ModeSwitch
    * @property {string} MARKDOWN - Markdown
    * @property {string} WYSIWYG - WYSIWYG
    * @static
+   * @ignore
    */
   static TYPE = {
     MARKDOWN,
@@ -31,7 +32,6 @@ class ModeSwitch extends UIController {
 
   /**
    * mode switch buttons
-   * @memberof ModeSwitch
    * @type {Object}
    * @private
    */
@@ -39,7 +39,6 @@ class ModeSwitch extends UIController {
 
   /**
    * current mode
-   * @memberof ModeSwitch
    * @type {String}
    * @private
    */
@@ -48,15 +47,10 @@ class ModeSwitch extends UIController {
   /**
    * root element
    * @type {jQuery}
+   * @private
    */
   _$rootElement;
 
-  /**
-   * Creates an instance of ModeSwitch.
-   * @param {jQuery} $rootElement - root jquery element
-   * @param {string} initialType - initial type of editor
-   * @memberof ModeSwitch
-   */
   constructor($rootElement, initialType) {
     super({
       tagName: 'div',
@@ -77,7 +71,6 @@ class ModeSwitch extends UIController {
 
   /**
    * show switch tab bar
-   * @memberof ModeSwitch
    */
   show() {
     this._$rootElement.css('display', 'block');
@@ -85,7 +78,6 @@ class ModeSwitch extends UIController {
 
   /**
    * hide switch tab bar
-   * @memberof ModeSwitch
    */
   hide() {
     this._$rootElement.css('display', 'none');

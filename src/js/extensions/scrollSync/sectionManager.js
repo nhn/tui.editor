@@ -16,34 +16,32 @@ const FIND_SPACE = /\s/g;
 /**
  * Class SectionManager
  * manage logical markdown content sections
+ * @param {CodeMirror} cm - codemirror
+ * @param {Preview} preview - preview
+ * @ignore
  */
 class SectionManager {
-  /**
-   * Creates an instance of SectionManager.
-   * @param {CodeMirror} cm - codemirror
-   * @param {Preview} preview - preview
-   * @memberof SectionManager
-   */
   constructor(cm, preview) {
     this.cm = cm;
     this.preview = preview;
     this.$previewContent = preview.$el.find('.tui-editor-contents');
 
     /**
-     *  section list
+     * section list
      * @type {object[]}
+     * @private
      */
     this._sectionList = null;
 
     /**
      * current working section needs making section list
      * @type {object}
+     * @private
      */
     this._currentSection = null;
   }
 
   /**
-   * _addNewSection
    * add new section
    * @param {number} start initial start line number
    * @param {number} end initial end line number
@@ -56,7 +54,6 @@ class SectionManager {
   }
 
   /**
-   * getSectionList
    * return section list
    * @returns {object[]} section object list
    */
@@ -69,7 +66,6 @@ class SectionManager {
   }
 
   /**
-   * _makeSectionData
    * make default section object
    * @param {number} start initial start line number
    * @param {number} end initial end line number
@@ -85,7 +81,6 @@ class SectionManager {
   }
 
   /**
-   * _updateCurrentSectionEnd
    * update current section's end line number
    * @param {number} end end value to update
    * @private
@@ -95,7 +90,6 @@ class SectionManager {
   }
 
   /**
-   * _eachLineState
    * iterate codemiror lines, callback function parameter pass line type and line number
    * @param {function} iteratee callback function
    * @private
@@ -195,7 +189,6 @@ class SectionManager {
   }
 
   /**
-   * _doFollowedLinesHaveCodeBlockEnd
    * Check if follow lines have codeblock end
    * @param {number} lineIndex current index
    * @param {number} lineLength line length
@@ -216,7 +209,6 @@ class SectionManager {
   }
 
   /**
-   * _isCodeBlockStart
    * Check if passed string have code block start
    * @param {string} string string to check
    * @returns {boolean} result
@@ -227,7 +219,6 @@ class SectionManager {
   }
 
   /**
-   * _isCodeBlockEnd
    * Check if passed string have code block end
    * @param {string} string string to check
    * @returns {boolean} result
@@ -238,7 +229,6 @@ class SectionManager {
   }
 
   /**
-   * _isTable
    * Check if passed string have table
    * @param {string} lineString current line string
    * @param {string} nextLineString next line string
@@ -250,7 +240,6 @@ class SectionManager {
   }
 
   /**
-   * _isTableCode
    * Check if passed string have table code
    * @param {string} string string to check
    * @returns {boolean} result
@@ -261,7 +250,6 @@ class SectionManager {
   }
 
   /**
-   * _isTableAligner
    * Check if passed string have table align code
    * @param {string} string string to check
    * @returns {boolean} result
@@ -272,7 +260,6 @@ class SectionManager {
   }
 
   /**
-   * _isAtxHeader
    * Check if passed string have atx header
    * @param {string} string string to check
    * @returns {boolean} result
@@ -283,7 +270,6 @@ class SectionManager {
   }
 
   /**
-   * _isSeTextHeader
    * @param {string} lineString current line string
    * @param {string} nextLineString next line string
    * @returns {boolean} result
@@ -309,7 +295,6 @@ class SectionManager {
   }
 
   /**
-   * makeSectionList
    * make section list
    */
   makeSectionList() {
@@ -325,7 +310,6 @@ class SectionManager {
   }
 
   /**
-   * sectionMatch
    * make preview sections then match section list with preview section element
    */
   sectionMatch() {
@@ -336,7 +320,6 @@ class SectionManager {
   }
 
   /**
-   * _matchPreviewSectionsWithSectionlist
    * match section list with preview section element
    * @param {HTMLNode[]} sections section nodes
    * @private
@@ -353,7 +336,6 @@ class SectionManager {
   }
 
   /**
-   * _getPreviewSections
    * get preview html section group to make section
    * @returns {array[]} element node array
    * @private
@@ -389,7 +371,6 @@ class SectionManager {
   }
 
   /**
-   * _sectionByLine
    * get section by markdown line
    * @param {number} line markdown editor line number
    * @returns {object} section
@@ -415,7 +396,6 @@ class SectionManager {
 
 /**
  * findElementNodeFilter
- * @this Node
  * @returns {boolean} true or not
  * @ignore
  */

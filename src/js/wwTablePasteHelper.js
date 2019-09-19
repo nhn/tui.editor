@@ -8,13 +8,10 @@ import htmlSanitizer from './htmlSanitizer';
 
 /**
  * Class WwTablePasteHelper
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 class WwTablePasteHelper {
-  /**
-   * Creates an instance of WwTablePasteHelper.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwTablePasteHelper
-   */
   constructor(wwe) {
     this.wwe = wwe;
   }
@@ -22,7 +19,6 @@ class WwTablePasteHelper {
   /**
    * Prossse paste clipboardEvent
    * @param {ClipboardEvent} ev - ClipboardEvent
-   * @memberof WwTablePasteHelper
    */
   pasteClipboard(ev) {
     const cbData = ev.clipboardData || window.clipboardData;
@@ -165,7 +161,6 @@ class WwTablePasteHelper {
 
   /**
    * Prepare clipboard for paste to table
-   * @memberof WwTablePasteHelper
    * @param {DocumentFragment} clipboardContainer - clipboard
    * @returns {DocumentFragment} processed result
    * @private
@@ -185,7 +180,6 @@ class WwTablePasteHelper {
 
   /**
    * unwrap block node
-   * @memberof WwTablePasteHelper
    * @param {Node} node - target node
    * @returns {DocumentFragment} processed result
    * @private
@@ -224,7 +218,6 @@ class WwTablePasteHelper {
 
   /**
    * paste fragment to offset of range.startContainer
-   * @memberof WwTablePasteHelper
    * @param {Range} range - selection range
    * @param {DocumentFragment} fragment - paste data
    * @private
@@ -259,7 +252,6 @@ class WwTablePasteHelper {
 
   /**
    * paste fragment to offset of text node
-   * @memberof WwTablePasteHelper
    * @param {Range} range - selection range
    * @param {DocumentFragment} fragment - paste data
    * @private
@@ -310,7 +302,6 @@ class WwTablePasteHelper {
 
   /**
    * delete contents of range that is not collapse
-   * @memberof WwTablePasteHelper
    * @param {Range} range - range is not collapse
    * @private
    */
@@ -401,7 +392,6 @@ class WwTablePasteHelper {
    * Find parent block node of startContainer and endContainer
    * If startContainer or endContainer is same commonAncestor,
    * find node at offset of startContainer and endContainer.
-   * @memberof WwTablePasteHelper
    * @param {Node} node - startContainer or endContainer
    * @param {Node} parent - commonAncestor
    * @param {Number} offset - startOffset or endOffset-1
@@ -414,7 +404,6 @@ class WwTablePasteHelper {
 
   /**
    * delete contents from start offset to end offset
-   * @memberof WwTablePasteHelper
    * @param {Node} container - container
    * @param {Number} startOffset - start offset
    * @param {Number} endOffset - end offset

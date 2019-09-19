@@ -11,36 +11,35 @@ const SCROLL_BOCKING_RESET_DELAY = 15;
 /**
  * Class ScrollManager
  * manage scroll sync between markdown editor and preview
+ * @param {SectionManager} sectionManager - sectionManager
+ * @param {CodeMirror} cm - CodeMirror
+ * @param {jQuery} $previewContainerEl - preview container
+ * @ignore
  */
 class ScrollManager {
-  /**
-   * Creates an instance of ScrollManager.
-   * @param {SectionManager} sectionManager - sectionManager
-   * @param {CodeMirror} cm - CodeMirror
-   * @param {jQuery} $previewContainerEl - preview container
-   * @memberof ScrollManager
-   */
   constructor(sectionManager, cm, $previewContainerEl) {
     this.sectionManager = sectionManager;
     this.cm = cm;
     this.$previewContainerEl = $previewContainerEl;
     this.$contents = this.$previewContainerEl.find('.tui-editor-contents');
     this.releaseTimer = null;
+
     /**
      * current timeout id needs animation
      * @type {number}
+     * @private
      */
     this._currentTimeoutId = null;
 
     /**
      * Saved scrollInfo object of CodeMirror
      * @type {object}
+     * @private
      */
     this._savedScrollInfo = null;
   }
 
   /**
-   * _getEditorSectionHeight
    * Return section height of editor
    * @param {object} section section be calculated height
    * @returns {number} height
@@ -54,7 +53,6 @@ class ScrollManager {
   }
 
   /**
-   * _getLineHeightGapInSection
    * Return height gap between passed line in passed section
    * @param {object} section section be calculated
    * @param {number} line line number
@@ -69,7 +67,6 @@ class ScrollManager {
   }
 
   /**
-   * _getSectionScrollRatio
    * Return ratio of height between scrollTop line and scrollTop section
    * @param {object} section section be calculated
    * @param {number} line line number
@@ -90,7 +87,6 @@ class ScrollManager {
   }
 
   /**
-   * _getScrollFactorsOfEditor
    * Return Scroll Information of editor for preview scroll sync
    * @returns {object} scroll factors
    * @private
@@ -130,7 +126,6 @@ class ScrollManager {
   }
 
   /**
-   * _getCursorFactorsOfEditor
    * Return cursor position information of editor for preview scroll sync
    * @returns {object} scroll factors
    * @private
@@ -210,7 +205,6 @@ class ScrollManager {
   }
 
   /**
-   * _getScrollTopForPreview
    * Return scrollTop value for preview
    * @returns {number|undefined} scrollTop value, when something wrong then return undefined
    * @private
@@ -234,9 +228,9 @@ class ScrollManager {
   }
 
   /**
-   * _getScrollTopForPreviewBaseCursor
    * Return scrollTop value for preview according cursor position
    * @returns {number} scrollTop value
+   * @private
    */
   _getScrollTopForPreviewBaseCursor() {
     const cursorFactors = this._getCursorFactorsOfEditor();
@@ -292,7 +286,6 @@ class ScrollManager {
   }
 
   /**
-   * syncPreviewScrollTopToMarkdown
    * sync preview scroll to markdown
    * @param {boolean} isCursorBase whether sync according to cursor position
    */
@@ -315,7 +308,6 @@ class ScrollManager {
   }
 
   /**
-   * syncMarkdownScrollTopToPreview
    * sync markdown scroll to preview
    */
   syncMarkdownScrollTopToPreview() {
@@ -338,7 +330,6 @@ class ScrollManager {
   }
 
   /**
-   * _animateRun
    * animate with passed Callback
    * @param {number} originValue original value
    * @param {number} targetValue target value
@@ -389,7 +380,6 @@ class ScrollManager {
 
   /**
    * Save Codemirror's scrollInfo for alternative use
-   * memberOf ScrollManager
    */
   saveScrollInfo() {
     this._savedScrollInfo = this.cm.getScrollInfo();

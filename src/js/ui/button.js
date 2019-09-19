@@ -7,13 +7,20 @@ import tooltip from './tooltip';
 
 /**
  * Class Button UI
- * @extends {ToolbarItem}
+ * @param {object} options - button options
+ *     @param {string} options.className - button class name
+ *     @param {string} options.command - command name to execute on click
+ *     @param {string} options.event - event name to trigger on click
+ *     @param {string} options.text - text on button
+ *     @param {string} options.tooltip - text on tooltip
+ *     @param {string} options.style - button style
+ *     @param {string} options.state - button state
+ * @param {jquery} $el - button rootElement
  * @deprecated
  */
 class Button extends ToolbarItem {
   /**
    * item name
-   * @memberof Button
    * @type {String}
    * @static
    */
@@ -22,24 +29,10 @@ class Button extends ToolbarItem {
   /**
    * ToolbarItem className
    * @type {String}
-   * @memberof Button
    * @static
    */
   static className = 'tui-toolbar-icons';
 
-  /**
-   * Creates an instance of Button.
-   * @param {object} options - button options
-   *  @param {jquery} $el - button rootElement
-   *  @param {string} options.className - button class name
-   *  @param {string} options.command - command name to execute on click
-   *  @param {string} options.event - event name to trigger on click
-   *  @param {string} options.text - text on button
-   *  @param {string} options.tooltip - text on tooltip
-   *  @param {string} options.style - button style
-   *  @param {string} options.state - button state
-   * @memberof Button
-   */
   constructor(options = {
     tagName: 'button',
     name: Button.name
@@ -64,7 +57,6 @@ class Button extends ToolbarItem {
   /**
    * set tooltip text
    * @param {string} text - tooltip text to show
-   * @memberof Button
    */
   setTooltip(text) {
     this._tooltip = text;
@@ -116,7 +108,6 @@ class Button extends ToolbarItem {
 
   /**
    * enable button
-   * @memberof Button
    */
   enable() {
     this.$el.attr('disabled', false);
@@ -124,7 +115,6 @@ class Button extends ToolbarItem {
 
   /**
    * disable button
-   * @memberof Button
    */
   disable() {
     this.$el.attr('disabled', true);
@@ -133,7 +123,6 @@ class Button extends ToolbarItem {
   /**
    * check whether this button is enabled
    * @returns {Boolean} - true for enabled
-   * @memberof Button
    */
   isEnabled() {
     return !(this.$el.attr('disabled'));

@@ -14,13 +14,10 @@ const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
 /**
  * Class WwClipboardManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 class WwClipboardManager {
-  /**
-   * Creates an instance of WwClipboardManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwClipboardManager
-   */
   constructor(wwe) {
     this.wwe = wwe;
     this._pch = new WwPasteContentHelper(this.wwe);
@@ -30,9 +27,7 @@ class WwClipboardManager {
   }
 
   /**
-   * init
    * initialize
-   * @memberof WwClipboardManager
    */
   init() {
     this.wwe.eventManager.listen('willPaste', ev => this._executeHandler(this._onWillPaste.bind(this), ev));
@@ -265,7 +260,6 @@ class WwClipboardManager {
   /**
    * set table bookmark which will gain focus after document modification ends.
    * @param {jQuery} $clipboardContainer - clipboard container
-   * @memberof WwClipboardManager
    * @private
    */
   _setTableBookmark($clipboardContainer) {
@@ -303,9 +297,7 @@ class WwClipboardManager {
   }
 
   /**
-   * _extendRange
    * extend range if need
-   * @memberof WwClipboardManager
    * @param {Range} range to extend
    * @private
    */
@@ -335,7 +327,6 @@ class WwClipboardManager {
 
   /**
    * Extends current range's startContainer
-   * @memberof WwClipboardManager
    * @param {Range} range Range object
    * @returns {Range}
    * @private
@@ -359,7 +350,6 @@ class WwClipboardManager {
 
   /**
    * Extends current range's endContainer
-   * @memberof WwClipboardManager
    * @param {Range} range Range object
    * @returns {Range}
    * @private
@@ -383,9 +373,7 @@ class WwClipboardManager {
   }
 
   /**
-   * _isWholeCommonAncestorContainerSelected
    * Check whether whole commonAncestorContainter textContent selected or not
-   * @memberof WwClipboardManager
    * @param {Range} range Range object
    * @returns {boolean} result
    * @private

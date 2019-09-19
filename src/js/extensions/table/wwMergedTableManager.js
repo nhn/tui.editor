@@ -16,7 +16,7 @@ const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
 /**
  * Class WwMergedTableManager
- * @extends {WwTableManager}
+ * @ignore
  */
 class WwMergedTableManager extends WwTableManager {
   /**

@@ -16,20 +16,16 @@ const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
  * Class WwTableManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 class WwTableManager {
-  /**
-   * Creates an instance of WwTableManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwTableManager
-   */
   constructor(wwe) {
     this.wwe = wwe;
     this.eventManager = wwe.eventManager;
 
     /**
      * Name property
-     * @memberof WwTableManager#
      * @type {string}
      */
     this.name = 'table';
@@ -38,9 +34,7 @@ class WwTableManager {
   }
 
   /**
-   * _init
    * Initialize
-   * @memberof WwTableManager
    * @private
    */
   _init() {
@@ -50,9 +44,7 @@ class WwTableManager {
   }
 
   /**
-   * _initEvent
    * Initialize event
-   * @memberof WwTableManager
    * @private
    */
   _initEvent() {
@@ -147,9 +139,7 @@ class WwTableManager {
   }
 
   /**
-   * _initKeyHandler
    * Initialize key event handler
-   * @memberof WwTableManager
    * @private
    */
   _initKeyHandler() {
@@ -357,11 +347,9 @@ class WwTableManager {
   }
 
   /**
-   * _isBeforeTable
    * Check whether passed range is right before table or not
    * @param {Range} range range
    * @returns {boolean} result
-   * @memberof WwTableManager
    * @private
    */
   _isBeforeTable(range) {
@@ -369,11 +357,9 @@ class WwTableManager {
   }
 
   /**
-   * _isAfterTable
    * Check whether passed range is right after table or not
    * @param {Range} range range
    * @returns {boolean} result
-   * @memberof WwTableManager
    * @private
    */
   _isAfterTable(range) {
@@ -468,11 +454,9 @@ class WwTableManager {
   }
 
   /**
-   * _tableHandlerOnBackspace
    * Backspace handler in table
    * @param {Range} range range
    * @param {Event} event event
-   * @memberof WwTableManager
    * @private
    */
   _tableHandlerOnBackspace(range, event) {
@@ -501,6 +485,7 @@ class WwTableManager {
    * Return whether delete br in the br
    * @param {Range} range Range object
    * @returns {boolean}
+   * @private
    */
   _isDeletingBR(range) {
     const currentNode = this._getCurrentNodeInCell(range);
@@ -586,11 +571,9 @@ class WwTableManager {
   }
 
   /**
-   * _tableHandlerOnDelete
    * Delete handler in table
    * @param {Range} range range
    * @param {Event} event event
-   * @memberof WwTableManager
    * @private
    */
   _tableHandlerOnDelete(range, event) {
@@ -614,10 +597,8 @@ class WwTableManager {
   }
 
   /**
-   * _appendBrIfTdOrThNotHaveAsLastChild
    * Append br if td or th doesn't have br as last child
    * @param {Range} range range
-   * @memberof WwTableManager
    * @private
    */
   _appendBrIfTdOrThNotHaveAsLastChild(range) {
@@ -642,10 +623,8 @@ class WwTableManager {
   }
 
   /**
-   * _unwrapBlockInTable
    * Unwrap default block tag in table
    * For Squire default action making abnormal behavior, remove default blocks in Table after setValue() called
-   * @memberof WwTableManager
    * @private
    */
   _unwrapBlockInTable() {
@@ -680,11 +659,9 @@ class WwTableManager {
   }
 
   /**
-   * _removeTable
    * Remove table
    * @param {Range} range range
    * @param {Node} table table
-   * @memberof WwTableManager
    * @private
    */
   _removeTable(range, table) {
@@ -697,10 +674,8 @@ class WwTableManager {
   }
 
   /**
-   * _recordUndoStateIfNeed
    * record undo state if need
    * @param {Range} range range
-   * @memberof WwTableManager
    * @private
    */
   _recordUndoStateIfNeed(range) {
@@ -713,10 +688,8 @@ class WwTableManager {
   }
 
   /**
-   * _recordUndoStateAndResetCellNode
    * record undo state and reset last cell node
    * @param {Range} range range
-   * @memberof WwTableManager
    * @private
    */
   _recordUndoStateAndResetCellNode(range) {
@@ -1121,7 +1094,6 @@ class WwTableManager {
 
   /**
    * Reset _lastCellNode to null
-   * @memberof WwTableManager
    */
   resetLastCellNode() {
     this._lastCellNode = null;
@@ -1130,7 +1102,6 @@ class WwTableManager {
   /**
    * Set _lastCellNode to given node
    * @param {HTMLElement} node Table cell
-   * @memberof WwTableManager
    */
   setLastCellNode(node) {
     this._lastCellNode = node;
@@ -1384,7 +1355,6 @@ class WwTableManager {
   /**
    * Return new table ID class name string
    * @returns {string}
-   * @memberof WwTableManager
    */
   getTableIDClassName() {
     const tableClassName = TABLE_CLASS_PREFIX + this.tableID;

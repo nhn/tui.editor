@@ -92,12 +92,10 @@ const HTML_TAG_RX = new RegExp(openingTag, 'g');
 
 /**
  * Class Convertor
+ * @param {EventManager} em - EventManager instance
+ * @ignore
  */
 class Convertor {
-  /**
-   * Convertor constructor
-   * @param {EventManager} em - EventManager instance
-   */
   constructor(em) {
     this.eventManager = em;
   }
@@ -105,11 +103,10 @@ class Convertor {
   /**
    * _markdownToHtmlWithCodeHighlight
    * Convert markdown to html with Codehighlight
-   * @private
-   * @memberof Convertor
    * @param {string} markdown markdown text
    * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
+   * @private
    */
   _markdownToHtmlWithCodeHighlight(markdown, env) {
     markdown = this._replaceImgAttrToDataProp(markdown);
@@ -120,11 +117,10 @@ class Convertor {
   /**
    * _markdownToHtml
    * Convert markdown to html
-   * @private
-   * @memberof Convertor
    * @param {string} markdown markdown text
    * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
+   * @private
    */
   _markdownToHtml(markdown, env) {
     markdown = markdown.replace(HTML_TAG_RX, (match, $1, $2, $3) => {
@@ -177,7 +173,6 @@ class Convertor {
    * toHTMLWithCodeHightlight
    * Convert markdown to html with Codehighlight
    * emit convertorAfterMarkdownToHtmlConverted
-   * @memberof Convertor
    * @param {string} markdown markdown text
    * @returns {string} html text
    */
@@ -192,7 +187,6 @@ class Convertor {
    * toHTML
    * Convert markdown to html
    * emit convertorAfterMarkdownToHtmlConverted
-   * @memberof Convertor
    * @param {string} markdown markdown text
    * @returns {string} html text
    */
@@ -230,7 +224,6 @@ class Convertor {
    * toMarkdown
    * Convert html to markdown
    * emit convertorAfterHtmlToMarkdownConverted
-   * @memberof Convertor
    * @param {string} html html text
    * @param {object | null} toMarkOptions - toMark library options
    * @returns {string} markdown text
@@ -279,7 +272,6 @@ class Convertor {
   /**
    * get markdownit with code highlight
    * @returns {markdownit} - markdownit instance
-   * @memberof Convertor
    * @static
    */
   static getMarkdownitHighlightRenderer() {
@@ -289,7 +281,6 @@ class Convertor {
   /**
    * get markdownit
    * @returns {markdownit} - markdownit instance
-   * @memberof Convertor
    * @static
    */
   static getMarkdownitRenderer() {

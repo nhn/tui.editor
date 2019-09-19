@@ -8,7 +8,6 @@ import util from 'tui-code-snippet';
 const FIND_ZWB = /\u200B/g;
 
 /**
- * isTextNode
  * Check if node is text node
  * @param {Node} node node to check
  * @returns {boolean} result
@@ -19,7 +18,6 @@ const isTextNode = function(node) {
 };
 
 /**
- * isElemNode
  * Check if node is element node
  * @param {Node} node node to check
  * @returns {boolean} result
@@ -40,7 +38,6 @@ const isBlockNode = function(node) {
 };
 
 /**
- * getNodeName
  * Get node name of node
  * @param {Node} node node
  * @returns {string} node name
@@ -55,7 +52,6 @@ const getNodeName = function(node) {
 };
 
 /**
- * getTextLength
  * Get node offset length of node(for Range API)
  * @param {Node} node node
  * @returns {number} length
@@ -74,7 +70,6 @@ const getTextLength = function(node) {
 };
 
 /**
- * getOffsetLength
  * Get node offset length of node(for Range API)
  * @param {Node} node node
  * @returns {number} length
@@ -93,7 +88,6 @@ const getOffsetLength = function(node) {
 };
 
 /**
- * getNodeOffsetOfParent
  * get node offset between parent's childnodes
  * @param {Node} node node
  * @returns {number} offset(index)
@@ -114,7 +108,6 @@ const getNodeOffsetOfParent = function(node) {
 };
 
 /**
- * getChildNodeByOffset
  * get child node by offset
  * @param {Node} node node
  * @param {number} index offset index
@@ -134,7 +127,6 @@ const getChildNodeByOffset = function(node, index) {
 };
 
 /**
- * getNodeWithDirectionUntil
  * find next node from passed node
  * @param {strong} direction previous or next
  * @param {Node} node node
@@ -166,7 +158,6 @@ const getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
 };
 
 /**
- * getPrevOffsetNodeUntil
  * get prev node of childnode pointed with index
  * @param {Node} node node
  * @param {number} index offset index
@@ -205,7 +196,6 @@ const getParentUntilBy = function(node, matchCondition, stopCondition) {
 };
 
 /**
- * getParentUntil
  * get parent node until paseed node name
  * @param {Node} node node
  * @param {string|HTMLNode} untilNode node name or node to limit
@@ -225,7 +215,6 @@ const getParentUntil = function(node, untilNode) {
 };
 
 /**
- * getNodeWithDirectionUnderParent
  * get node on the given direction under given parent
  * @param {strong} direction previous or next
  * @param {Node} node node
@@ -247,7 +236,6 @@ const getNodeWithDirectionUnderParent = function(direction, node, underNode) {
 };
 
 /**
- * getTopPrevNodeUnder
  * get top previous top level node under given node
  * @param {Node} node node
  * @param {Node} underNode underNode
@@ -259,7 +247,6 @@ const getTopPrevNodeUnder = function(node, underNode) {
 };
 
 /**
- * getNextTopBlockNode
  * get next top level block node
  * @param {Node} node node
  * @param {Node} underNode underNode
@@ -313,6 +300,7 @@ const getPrevTextNode = function(node) {
  * @param {HTMLNode} root - root node
  * @param {HTMLNode} node - node to test
  * @returns {Boolean} true if root contains node
+ * @ignore
  */
 const containsNode = function(root, node) {
   const walker = document.createTreeWalker(root, 4, null, false);
@@ -818,6 +806,7 @@ const optimizeRange = function(range, tagName) {
  * Gets all text node from root element.
  * @param {HTMLElement} root Root element
  * @returns {Array} list of text nodes
+ * @ignore
  */
 const getAllTextNode = function(root) {
   const walker = document.createTreeWalker(root, 4, null, false);

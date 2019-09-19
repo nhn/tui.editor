@@ -9,13 +9,10 @@ import KeyMapper from '../keyMapper';
 
 /**
  * Class CodeBlockLanguagesCombo
+ * @param {EventManager} eventManager - event manager instance
+ * @ignore
  */
 class CodeBlockLanguagesCombo {
-  /**
-   * Creates an instance of CodeBlockLanguagesCombo.
-   * @param {EventManager} eventManager - event manager instance
-   * @memberof CodeBlockLanguagesCombo
-   */
   constructor(eventManager) {
     this._eventManager = eventManager;
 
@@ -45,7 +42,6 @@ class CodeBlockLanguagesCombo {
   /**
    * show popup
    * @private
-   * @memberof CodeBlockGadget
    */
   _showPopupCodeBlockLanguages() {
     const clientRect = this._inputLanguage.getBoundingClientRect();
@@ -118,7 +114,7 @@ class CodeBlockLanguagesCombo {
   /**
    * set a callback to be called on language selected
    * @param {function} callback - callback function
-   * @memberof CodeBlockLanguagesCombo
+   * @protected
    */
   setOnLanguageSelected(callback) {
     this._onLanguageSelected = callback;
@@ -127,7 +123,6 @@ class CodeBlockLanguagesCombo {
   /**
    * hide popup
    * @private
-   * @memberof CodeBlockGadget
    */
   _hidePopupCodeBlockLanguages() {
     this._eventManager.emit('closePopupCodeBlockLanguages');
@@ -136,7 +131,7 @@ class CodeBlockLanguagesCombo {
   /**
    * set language
    * @param {string} language - code block language
-   * @memberof CodeBlockLanguagesCombo
+   * @protected
    */
   setLanguage(language) {
     this._prevStoredLanguage = language;
@@ -146,7 +141,6 @@ class CodeBlockLanguagesCombo {
   /**
    * store selection(typed) language & hide popup
    * @private
-   * @memberof CodeBlockGadget
    */
   _storeInputLanguage() {
     const selectedLanguage = this._inputLanguage.value;
@@ -162,7 +156,7 @@ class CodeBlockLanguagesCombo {
   /**
    * get element body
    * @returns {HTMLElement} - CodeBlockLanguagesCombo body element
-   * @memberof CodeBlockLanguagesCombo
+   * @protected
    */
   getElement() {
     return this._wrapper;
