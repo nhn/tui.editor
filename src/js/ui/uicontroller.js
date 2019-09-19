@@ -20,26 +20,27 @@ function makeUIInstanceId() {
 
 /**
  * Class UIController
+ * @param {Object} [options] - options
+ *     @param {jQuery} [options.rootElement] - root element
+ *     @param {string} [options.tagName] - tag name
+ *     @param {string} [options.className] - class name
  */
 class UIController {
   /**
    * tag name
    * @type {string}
-   * @memberof UIController
    */
   tagName;
 
   /**
    * ui controller class name
    * @type {string}
-   * @memberof UIController
    */
   className;
 
   /**
    * UI jQuery element
    * @type {Object}
-   * @memberof UIController
    */
   $el;
 
@@ -47,18 +48,9 @@ class UIController {
    * UI Id
    * @type {number}
    * @private
-   * @memberof UIController
    */
   _id;
 
-  /**
-   * Creates an instance of UIController.
-   * @param {Object} [options] - options
-   * @param {jQuery} [options.rootElement] - root element
-   * @param {string} [options.tagName] - tag name
-   * @param {string} [options.className] - class name
-   * @memberof UIController
-   */
   constructor(options = {}) {
     options = util.extend({
       tagName: 'div'
@@ -76,7 +68,6 @@ class UIController {
   /**
    * @param {string|object} aType - event name and selector string
    * @param {function} aFn - event handler
-   * @memberof UIController
    */
   on(aType, aFn) {
     if (util.isObject(aType)) {
@@ -92,7 +83,6 @@ class UIController {
    * bind event
    * @param {string} type - event name and selector
    * @param {function} fn - handler function
-   * @memberof UIController
    * @private
    */
   _addEvent(type, fn) {
@@ -109,7 +99,6 @@ class UIController {
    * unbind event handler
    * @param {string} type - event name and selector
    * @param {function} fn - handler function
-   * @memberof UIController
    */
   off(type, fn) {
     if (type) {
@@ -162,7 +151,6 @@ class UIController {
   /**
    * trigger event
    * @param {...object} args - event name & extra params
-   * @memberof UIController
    */
   trigger(...args) {
     this.$el.trigger(...args);
@@ -177,7 +165,6 @@ class UIController {
 
   /**
    * remove
-   * @memberof UIController
    */
   remove() {
     if (this.$el) {
@@ -187,7 +174,6 @@ class UIController {
 
   /**
    * destroy
-   * @memberof UIController
    */
   destroy() {
     this.remove();

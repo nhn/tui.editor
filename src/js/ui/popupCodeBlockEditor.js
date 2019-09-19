@@ -25,14 +25,10 @@ const TEMPLATE_HEADER_BUTTONS = `
 
 /**
  * Class popup code block editor
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
  */
 class PopupCodeBlockEditor extends LayerPopup {
-  /**
-   * Creates an instance of PopupCodeBlockEditor.
-   * @param {LayerPopupOption} options - layer popup option
-   * @memberof PopupCodeBlockEditor
-   */
   constructor(options) {
     const TEMPLATE_CONTENT = `
             <div class="${CLASS_PREFIX}body"></div>
@@ -56,8 +52,7 @@ class PopupCodeBlockEditor extends LayerPopup {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupCodeBlockEditor
-   * @protected
+   * @private
    * @override
    */
   _initInstance(options) {
@@ -69,8 +64,7 @@ class PopupCodeBlockEditor extends LayerPopup {
 
   /**
    * initialize DOM, render popup
-   * @memberof PopupCodeBlockEditor
-   * @protected
+   * @private
    * @override
    */
   _initDOM(options) {
@@ -97,8 +91,7 @@ class PopupCodeBlockEditor extends LayerPopup {
 
   /**
    * bind DOM events
-   * @memberof PopupCodeBlockEditor
-   * @protected
+   * @private
    * @override
    */
   _initDOMEvent() {
@@ -120,9 +113,8 @@ class PopupCodeBlockEditor extends LayerPopup {
 
   /**
    * bind editor events
-   * @memberof PopupCodeBlockEditor
-   * @protected
-   * @abstract
+   * @private
+   * @override
    */
   _initEditorEvent() {
     super._initEditorEvent();
@@ -220,7 +212,6 @@ class PopupCodeBlockEditor extends LayerPopup {
 
   /**
    * store code mirror text to wysiwyg code block
-   * @memberof PopupCodeBlockEditor
    * @private
    */
   _save() {
@@ -232,7 +223,6 @@ class PopupCodeBlockEditor extends LayerPopup {
    * load code mirror text from wysiwyg code block
    * @param {HTMLElement} codeBlockElement - code block element instance to load code from
    * @private
-   * @memberof PopupCodeBlockEditor
    */
   _load(codeBlockElement) {
     this._codeBlockElement = codeBlockElement;
@@ -245,7 +235,6 @@ class PopupCodeBlockEditor extends LayerPopup {
   /**
    * show popup
    * @param {HTMLElement} codeBlockElement - code block element
-   * @memberof PopupCodeBlockEditor
    * @override
    */
   show(codeBlockElement) {
@@ -259,7 +248,6 @@ class PopupCodeBlockEditor extends LayerPopup {
 
   /**
    * hide popup
-   * @memberof PopupCodeBlockEditor
    * @override
    */
   hide() {

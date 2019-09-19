@@ -13,14 +13,10 @@ const URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/;
 /**
  * Class PopupAddLink
  * It implements a link Add Popup
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup options
+ * @ignore
  */
 class PopupAddLink extends LayerPopup {
-  /**
-   * Creates an instance of PopupAddLink.
-   * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupAddLink
-   */
   constructor(options) {
     const POPUP_CONTENT = `
             <label for="url">${i18n.get('URL')}</label>
@@ -45,8 +41,7 @@ class PopupAddLink extends LayerPopup {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupAddLink
-   * @protected
+   * @private
    * @override
    */
   _initInstance(options) {
@@ -58,8 +53,7 @@ class PopupAddLink extends LayerPopup {
 
   /**
    * initialize DOM, render popup
-   * @memberof PopupAddLink
-   * @protected
+   * @private
    * @override
    */
   _initDOM() {
@@ -72,8 +66,7 @@ class PopupAddLink extends LayerPopup {
 
   /**
    * bind DOM events
-   * @memberof PopupAddLink
-   * @protected
+   * @private
    * @override
    */
   _initDOMEvent() {
@@ -103,9 +96,8 @@ class PopupAddLink extends LayerPopup {
 
   /**
    * bind editor events
-   * @memberof PopupAddLink
-   * @protected
-   * @abstract
+   * @private
+   * @override
    */
   _initEditorEvent() {
     super._initEditorEvent();

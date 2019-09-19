@@ -13,31 +13,24 @@ import ToolbarItemFactory from './toolbarItemFactory';
 
 /**
  * Class Toolbar
- * @extends {UIController}
+ * @param {EventManager} eventManager - event manager
+ * @param {ToolbarItem[]} [items=[]] - toolbar items
  */
 class Toolbar extends UIController {
   /**
    * items
-   * @memberof Toolbar
-   * @private
    * @type {Array}
+   * @private
    */
   _items = [];
 
   /**
    * event manager
-   * @memberof Toolbar
-   * @private
    * @type {EventManager}
+   * @private
    */
   _eventManager;
 
-  /**
-   * Creates an instance of Toolbar.
-   * @param {EventManager} eventManager - event manager
-   * @param {ToolbarItem[]} [items=[]] - toolbar items
-   * @memberof Toolbar
-   */
   constructor(eventManager, items = []) {
     super({
       tagName: 'div',
@@ -53,6 +46,8 @@ class Toolbar extends UIController {
   /**
    * init event
    * @param  {EventManager} eventManager - event manager
+   * @private
+   * @override
    */
   _initEvent(eventManager) {
     eventManager.listen('stateChange', ev => {
@@ -73,7 +68,6 @@ class Toolbar extends UIController {
 
   /**
    * disable all toolbar button
-   * @memberof Toolbar
    */
   disableAllButton() {
     this._items.forEach(item => {
@@ -85,7 +79,6 @@ class Toolbar extends UIController {
 
   /**
    * enable all toolbar button
-   * @memberof Toolbar
    */
   enableAllButton() {
     this._items.forEach(item => {
@@ -98,7 +91,6 @@ class Toolbar extends UIController {
   /**
    * get toolbar items
    * @returns {ToolbarItem[]} - toolbar items
-   * @memberof Toolbar
    */
   getItems() {
     return this._items.slice(0);
@@ -116,7 +108,6 @@ class Toolbar extends UIController {
   /**
    * set toolbar items
    * @param {ToolbarItem[]} items - toolbar items
-   * @memberof Toolbar
    */
   setItems(items) {
     this.removeAllItems();
@@ -126,7 +117,6 @@ class Toolbar extends UIController {
   /**
    * add toolbar item
    * @param {ToolbarItem|string|object} item - toolbar item
-   * @memberof Toolbar
    */
   addItem(item) {
     this.insertItem(this._items.length, item);
@@ -136,7 +126,6 @@ class Toolbar extends UIController {
    * insert toolbar item
    * @param  {number} index - index at given item inserted
    * @param  {ToolbarItem|string|object} item - toolbar item
-   * @memberof Toolbar
    */
   insertItem(index, item) {
     if (util.isString(item)) {
@@ -164,7 +153,6 @@ class Toolbar extends UIController {
    * get index of given item
    * @param  {ToolbarItem} item - toolbar item
    * @returns {number} - index of given toolbar item
-   * @memberof Toolbar
    */
   indexOfItem(item) {
     let index;
@@ -183,7 +171,6 @@ class Toolbar extends UIController {
    * @param  {ToolbarItem|number} item - an toolbar item or index of the item to remove
    * @param  {boolean} destroy - destroy item or not
    * @returns {ToolbarItem|undefined} - removed item
-   * @memberof Toolbar
    */
   removeItem(item, destroy = true) {
     let index;
@@ -213,7 +200,6 @@ class Toolbar extends UIController {
 
   /**
    * remove all toolbar items
-   * @memberof Toolbar
    */
   removeAllItems() {
     while (this._items && this._items.length > 0) {
@@ -223,7 +209,6 @@ class Toolbar extends UIController {
 
   /**
    * destroy instance
-   * @memberof Toolbar
    * @override
    */
   destroy() {
@@ -235,7 +220,6 @@ class Toolbar extends UIController {
    * add button
    * @param {Button} button - button instance
    * @param {Number} [index] - location the button will be placed
-   * @memberof Toolbar
    * @deprecated
    */
   addButton(button, index) {
@@ -273,7 +257,6 @@ class Toolbar extends UIController {
   /**
    * add divider
    * @returns {jQuery} - created divider jquery element
-   * @memberof Toolbar
    * @deprecated
    */
   addDivider() {

@@ -77,12 +77,9 @@ const eventList = [
 
 /**
  * Class EventManager
+ * @ignore
  */
 class EventManager {
-  /**
-   * Creates an instance of EventManager.
-   * @memberof EventManager
-   */
   constructor() {
     this.events = new util.Map();
     this.TYPE = new util.Enum(eventList);
@@ -90,7 +87,6 @@ class EventManager {
 
   /**
    * Listen event and bind event handler
-   * @memberof EventManager
    * @param {string} typeStr Event type string
    * @param {function} handler Event handler
    */
@@ -113,7 +109,6 @@ class EventManager {
 
   /**
    * Emit event
-   * @memberof EventManager
    * @param {string} eventName Event name to emit
    * @returns {Array}
    */
@@ -139,7 +134,6 @@ class EventManager {
 
   /**
    * Emit given event and return result
-   * @memberof EventManager
    * @param {string} eventName Event name to emit
    * @param {string} sourceText Source text to change
    * @returns {string}
@@ -163,7 +157,6 @@ class EventManager {
 
   /**
    * Get event type and namespace
-   * @memberof EventManager
    * @param {string} typeStr Event type name
    * @returns {{type: string, namespace: string}}
    * @private
@@ -189,7 +182,6 @@ class EventManager {
 
   /**
    * Add event type when given event not exists
-   * @memberof EventManager
    * @param {string} type Event type name
    */
   addEventType(type) {
@@ -202,7 +194,6 @@ class EventManager {
 
   /**
    * Remove event handler from given event type
-   * @memberof EventManager
    * @param {string} typeStr Event type name
    * @param {function} [handler] - registered event handler
    */
@@ -227,7 +218,6 @@ class EventManager {
    * Remove event handler with event handler
    * @param {string} type - event type name
    * @param {function} handler - event handler
-   * @memberof EventManager
    * @private
    */
   _removeEventHandlerWithHandler(type, handler) {
@@ -240,7 +230,6 @@ class EventManager {
 
   /**
    * Remove event handler with event type information
-   * @memberof EventManager
    * @param {string} type Event type name
    * @param {string} namespace Event namespace
    * @private

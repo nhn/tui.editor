@@ -68,7 +68,10 @@ var DIFF_DELETE = -1;
 var DIFF_INSERT = 1;
 var DIFF_EQUAL = 0;
 
-/** @typedef {{0: number, 1: string}} */
+/**
+ * @typedef {{0: number, 1: string}}
+ * @ignore
+ */
 diff_match_patch.Diff;
 
 /**

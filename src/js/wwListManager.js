@@ -15,20 +15,16 @@ const FIND_UL_OR_OL_ELEMNT = /<(ul|ol)([^>]*)>(.*?)(<\/\1>)/g;
 
 /**
  * Class WwListManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 class WwListManager {
-  /**
-   * Creates an instance of WwListManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwListManager
-   */
   constructor(wwe) {
     this.wwe = wwe;
     this.eventManager = wwe.eventManager;
 
     /**
      * Name property
-     * @memberof WwListManager#
      * @type {string}
      */
     this.name = 'list';
@@ -37,9 +33,7 @@ class WwListManager {
   }
 
   /**
-   * _init
    * Initialize
-   * @memberof WwListManager
    * @private
    */
   _init() {
@@ -48,9 +42,7 @@ class WwListManager {
   }
 
   /**
-   * _initEvent
    * Initialize event
-   * @memberof WwListManager
    * @private
    */
   _initEvent() {
@@ -137,7 +129,6 @@ class WwListManager {
 
   /**
    * Find empty list for whole container and remove it.
-   * @memberof WwListManager
    * @private
    */
   _findAndRemoveEmptyList() {
@@ -150,9 +141,8 @@ class WwListManager {
 
   /**
    * Remove branch lists all from body
-   * @memberof WwListManager
-   * @private
    * @param {jQuery|HTMLElement} $root root to remove branch list
+   * @private
    */
   _removeBranchListAll($root) {
     $root = !$root ? this.wwe.get$Body() : $($root);
@@ -167,7 +157,6 @@ class WwListManager {
 
   /**
    * Remove branch list of passed list(ul, ol)
-   * @memberof WwListManager
    * @param {HTMLElement} list list
    * @private
    */
@@ -342,7 +331,6 @@ class WwListManager {
    * merge to previous list
    * consider remove this function when https://github.com/neilj/Squire/issues/294 resolved
    * @param {HTMLLIElement} currentLine - current li element
-   * @ignore
    */
   mergeList(currentLine) {
     let currentList = currentLine.parentNode;
@@ -367,7 +355,7 @@ class WwListManager {
    * merge list to targetList
    * @param {HTMLOListElement|HTMLUListElement} list - list to merge
    * @param {HTMLOListElement|HTMLUListElement} targetList - target list
-   * @ignore
+   * @private
    */
   _mergeList(list, targetList) {
     let listItem = list.firstElementChild;
@@ -400,7 +388,7 @@ class WwListManager {
    * @param {Node} node - startContainer or endContainer of range
    * @param {Number} offset - offset
    * @returns {Node} - parent node before TD
-   * @ignore
+   * @private
    */
   _getParentNodeBeforeTD(node, offset) {
     let parentNode = domUtils.getParentUntil(node, 'TD');
@@ -422,7 +410,7 @@ class WwListManager {
    * @param {Node} targetNode - startContainer or endContainer of range
    * @param {Number} offset - offset
    * @returns {Node} - LI node or null
-   * @ignore
+   * @private
    */
   _findLINodeInsideTD(targetNode, offset) {
     let liNode = null;
@@ -450,7 +438,7 @@ class WwListManager {
    * @param {Node} targetNode - startContainer
    * @param {Number} offset - startOffset
    * @returns {Node} - first node where range start
-   * @ignore
+   * @private
    */
   _getFirstNodeInLineOfTable(targetNode, offset) {
     let startNode = this._findLINodeInsideTD(targetNode, offset);
@@ -473,7 +461,7 @@ class WwListManager {
    * @param {Node} targetNode - endContainer
    * @param {Number} offset - endOffset
    * @returns {Node} - last node where range end
-   * @ignore
+   * @private
    */
   _getLastNodeInLineOfTable(targetNode, offset) {
     let endNode = this._findLINodeInsideTD(targetNode, offset);
@@ -498,7 +486,7 @@ class WwListManager {
    * If the node is li or br, the node is last node in the line of table.
    * @param {node} node - node
    * @returns {boolean} - whether node is last node in line of table
-   * @ignore
+   * @private
    */
   _isLastNodeInLineOfTable(node) {
     const {nodeName} = node;
@@ -512,7 +500,7 @@ class WwListManager {
    * If nextSibiling of node is a list node (UL or OL), next node is first child of the list node.
    * @param {node} node - node
    * @returns {node} - next node
-   * @ignore
+   * @private
    */
   _getNextNodeInLineOfTable(node) {
     let {nextSibling} = node;
@@ -539,7 +527,7 @@ class WwListManager {
    * get nodes in each lines of table
    * @param {range} range - range
    * @returns {array} - each nodes in line
-   * @ignore
+   * @private
    */
   _getLinesOfSelectionInTable(range) {
     const {
@@ -579,7 +567,7 @@ class WwListManager {
    * create OL or UL element
    * @param {string} listType - OL, UL or TASK
    * @returns {Node} - OL or UL element
-   * @ignore
+   * @private
    */
   _createListElement(listType) {
     return document.createElement(listType === 'TASK' ? 'UL' : listType);
@@ -590,7 +578,7 @@ class WwListManager {
    * @param {array} oneLineNodes - node array
    * @param {string} listType - OL, UL or TASK
    * @returns {Node} - li element
-   * @ignore
+   * @private
    */
   _createListItemElement(oneLineNodes, listType) {
     const liNode = document.createElement('li');

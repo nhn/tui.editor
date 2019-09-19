@@ -10,15 +10,11 @@ const EVENT_LANGUAGE_CHANGED = 'language-changed';
 
 /**
  * Class Code Block Editor
- * @extends {CodeMirrorExt}
+ * @param {HTMLElement} el - code block editor container element
+ * @param {EventManager} eventManager - event manager
+ * @ignore
  */
 class CodeBlockEditor extends CodeMirrorExt {
-  /**
-   * Creates an instance of CodeBlockEditor.
-   * @param {HTMLElement} el - code block editor container element
-   * @param {EventManager} eventManager - event manager
-   * @memberof CodeBlockEditor
-   */
   constructor(el, eventManager) {
     super(el, {
       singleCursorHeightPerLine: false,
@@ -58,7 +54,6 @@ class CodeBlockEditor extends CodeMirrorExt {
   /**
    * load code from code block element
    * @param {HTMLElement} codeBlockElement - code block element
-   * @memberof CodeBlockEditor
    */
   load(codeBlockElement) {
     const el = codeBlockElement.cloneNode(true);
@@ -69,7 +64,6 @@ class CodeBlockEditor extends CodeMirrorExt {
   /**
    * save code to code block element
    * @param {HTMLElement} codeBlockElement - code block element
-   * @memberof CodeBlockEditor
    */
   save(codeBlockElement) {
     codeBlockElement.innerHTML = '';
@@ -80,7 +74,6 @@ class CodeBlockEditor extends CodeMirrorExt {
 
   /**
    * clear code and language
-   * @memberof CodeBlockEditor
    */
   clear() {
     this.setLanguage('');
@@ -90,7 +83,6 @@ class CodeBlockEditor extends CodeMirrorExt {
   /**
    * get code language
    * @returns {string} - code language
-   * @memberof CodeBlockEditor
    */
   getLanguage() {
     return this._language;
@@ -99,7 +91,6 @@ class CodeBlockEditor extends CodeMirrorExt {
   /**
    * set code language
    * @param {string} [language=''] - code language
-   * @memberof CodeBlockEditor
    */
   setLanguage(language = '') {
     this._language = language;
@@ -108,7 +99,6 @@ class CodeBlockEditor extends CodeMirrorExt {
   /**
    * get code text
    * @returns {string} - code text
-   * @memberof CodeBlockEditor
    */
   getEditorCodeText() {
     return this.getValue();
@@ -117,7 +107,6 @@ class CodeBlockEditor extends CodeMirrorExt {
   /**
    * set code text
    * @param {string} [code=''] - code text
-   * @memberof CodeBlockEditor
    */
   setEditorCodeText(code = '') {
     this.setValue(code);
@@ -125,7 +114,6 @@ class CodeBlockEditor extends CodeMirrorExt {
 
   /**
    * refresh. call if codemirror resized
-   * @memberof CodeBlockEditor
    */
   refresh() {
     this.cm.refresh();

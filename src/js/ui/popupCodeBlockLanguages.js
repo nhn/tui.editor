@@ -11,14 +11,10 @@ const BUTTON_CLASS_PREFIX = 'te-popup-code-block-lang-';
 
 /**
  * Class Popup code block languages select list
- * @extends {LayerPopup}
+ * @param {LayerPopupOption} options - layer popup option
+ * @ignore
  */
 class PopupCodeBlockLanguages extends LayerPopup {
-  /**
-   * Creates an instance of PopupCodeBlockLanguages.
-   * @param {LayerPopupOption} options - layer popup option
-   * @memberof PopupCodeBlockLanguages
-   */
   constructor(options) {
     const popupButtonsHTML = [];
     const {languages} = options;
@@ -38,8 +34,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof PopupCodeBlockLanguages
-   * @protected
+   * @private
    * @override
    */
   _initInstance(options) {
@@ -56,8 +51,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
   /**
    * initialize DOM, render popup
-   * @memberof PopupCodeBlockLanguages
-   * @protected
+   * @private
    * @override
    */
   _initDOM(options) {
@@ -71,8 +65,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
   /**
    * bind DOM events
-   * @memberof PopupCodeBlockLanguages
-   * @protected
+   * @private
    * @override
    */
   _initDOMEvent() {
@@ -90,9 +83,8 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
   /**
    * bind editor events
-   * @memberof PopupCodeBlockLanguages
-   * @protected
-   * @abstract
+   * @private
+   * @override
    */
   _initEditorEvent() {
     super._initEditorEvent();
@@ -117,7 +109,6 @@ class PopupCodeBlockLanguages extends LayerPopup {
    * activate an item by index
    * @param {number} index - item index
    * @private
-   * @memberof PopupCodeBlockLanguages
    */
   _activateButtonByIndex(index) {
     if (this._currentButton) {
@@ -130,7 +121,6 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
   /**
    * move to prev language
-   * @memberof PopupCodeBlockLanguages
    */
   prev() {
     let index = this._$buttons.index(this._currentButton) - 1;
@@ -142,7 +132,6 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
   /**
    * move to next language
-   * @memberof PopupCodeBlockLanguages
    */
   next() {
     let index = this._$buttons.index(this._currentButton) + 1;
@@ -154,8 +143,6 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
   /**
    * current language
-   * @public
-   * @memberof PopupCodeBlockLanguages
    * @returns {string} language
    */
   getCurrentLanguage() {
@@ -167,7 +154,6 @@ class PopupCodeBlockLanguages extends LayerPopup {
   /**
    * set current language
    * @param {string} language - current language
-   * @memberof PopupCodeBlockLanguages
    */
   setCurrentLanguage(language) {
     const item = this._$buttons.filter(`.${BUTTON_CLASS_PREFIX}${language}`);
@@ -180,8 +166,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
   /**
    * show popup
    * @param {object} callback - to be called on language selected & dismissed
-   * @protected
-   * @memberof PopupCodeBlockLanguages
+   * @override
    */
   show(callback) {
     this._onSelectedLanguage = callback.selected;
@@ -191,8 +176,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
   /**
    * hide popup
-   * @memberof PopupCodeBlockLanguages
-   * @protected
+   * @override
    */
   hide() {
     if (this._onDismissed) {
