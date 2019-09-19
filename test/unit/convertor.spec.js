@@ -265,17 +265,18 @@ describe('Convertor', () => {
           'foo',
           '<br>', // Generated when a line break occurs after an inline element.
           '<br>',
-          '<table><thead><tr><th>bar</th></tr></thead></table>',
+          '<table><thead><tr><th>bar</th></tr></thead><tbody><tr><td>baz</td></tr></tbody></table>',
           '<br>',
-          'baz'
+          'qux'
         ].join('');
         markdown = [
           'foo',
           '<br>',
           '| bar |',
           '| --- |',
+          '| baz |',
           '<br>',
-          'baz'
+          'qux'
         ].join('\n');
 
         expect(convertor.toMarkdown(html)).toBe(markdown);
