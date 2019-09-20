@@ -197,6 +197,174 @@ describe('Convertor', () => {
       expect(convertor.toMarkdown('<span>text</span><br><br>text'))
         .toBe('<span>text</span>\n\ntext');
     });
+
+    describe('should prevent <br> from being removed if there is only one empty line before or after the block element.', () => {
+      it('header with inline elements', () => {
+        const html = [
+          'foo',
+          '<br>', // Generated when a line break occurs after an inline element.
+          '<br>',
+          '<h1>bar</h1>',
+          '<br>',
+          'baz'
+        ].join('');
+        const markdown = [
+          'foo',
+          '<br>',
+          '# bar',
+          '<br>',
+          'baz'
+        ].join('\n');
+
+        expect(convertor.toMarkdown(html)).toBe(markdown);
+      });
+
+      it('codeblock with inline elements', () => {
+        const html = [
+          'foo',
+          '<br>', // Generated when a line break occurs after an inline element.
+          '<br>',
+          '<pre><code>bar</code></pre>',
+          '<br>',
+          'baz'
+        ].join('');
+        const markdown = [
+          'foo',
+          '<br>',
+          '```',
+          'bar',
+          '```',
+          '<br>',
+          'baz'
+        ].join('\n');
+
+        expect(convertor.toMarkdown(html)).toBe(markdown);
+      });
+
+      it('table with inline elements', () => {
+        const html = [
+          'foo',
+          '<br>', // Generated when a line break occurs after an inline element.
+          '<br>',
+          '<table><thead><tr><th>bar</th></tr></thead><tbody><tr><td>baz</td></tr></tbody></table>',
+          '<br>',
+          'qux'
+        ].join('');
+        const markdown = [
+          'foo',
+          '<br>',
+          '| bar |',
+          '| --- |',
+          '| baz |',
+          '<br>',
+          'qux'
+        ].join('\n');
+
+        expect(convertor.toMarkdown(html)).toBe(markdown);
+      });
+
+      it('list with inline elements', () => {
+        let html = [
+          'foo',
+          '<br>', // Generated when a line break occurs after an inline element.
+          '<br>',
+          '<ul><li>bar</li><li>baz</li></ul>',
+          '<br>',
+          'qux'
+        ].join('');
+        let markdown = [
+          'foo',
+          '<br>',
+          '* bar',
+          '* baz',
+          // If <br> immediately follows the list, the next element is indented.
+          // So empty line(below '') must be maintained.
+          '',
+          '<br>',
+          'qux'
+        ].join('\n');
+
+        expect(convertor.toMarkdown(html)).toBe(markdown);
+
+        html = [
+          'foo',
+          '<br>', // Generated when a line break occurs after an inline element.
+          '<br>',
+          '<ol><li>bar</li><li>baz</li></ol>',
+          '<br>',
+          'qux'
+        ].join('');
+        markdown = [
+          'foo',
+          '<br>',
+          '1. bar',
+          '2. baz',
+          // If <br> immediately follows the list, the next element is indented.
+          // So empty line(below '') must be maintained.
+          '',
+          '<br>',
+          'qux'
+        ].join('\n');
+
+        expect(convertor.toMarkdown(html)).toBe(markdown);
+      });
+
+      it('blockquote with inline elements', () => {
+        const html = [
+          'foo',
+          '<br>', // Generated when a line break occurs after an inline element.
+          '<br>',
+          '<blockquote>bar</blockquote>',
+          '<br>',
+          'baz'
+        ].join('');
+        const markdown = [
+          'foo',
+          '<br>',
+          '> bar',
+          // If <br> immediately follows the blockquote, the next element is indented.
+          // So empty line(below '') must be maintained.
+          '',
+          '<br>',
+          'baz'
+        ].join('\n');
+
+        expect(convertor.toMarkdown(html)).toBe(markdown);
+      });
+
+      it('between block elements.', () => {
+        const html = [
+          '<h1>foo</h1>',
+          '<br>',
+          '<pre><code>bar</code></pre>',
+          '<br>',
+          '<table><thead><tr><th>bar</th></tr></thead><tbody><tr><td>baz</td></tr></tbody></table>',
+          '<br>',
+          '<ol><li>bar</li><li>baz</li></ol>',
+          '<br>',
+          '<blockquote>bar</blockquote>'
+        ].join('');
+        const markdown = [
+          '# foo',
+          '<br>',
+          '```',
+          'bar',
+          '```',
+          '<br>',
+          '| bar |',
+          '| --- |',
+          '| baz |',
+          '<br>',
+          '1. bar',
+          '2. baz',
+          '',
+          '<br>',
+          '> bar'
+        ].join('\n');
+
+        expect(convertor.toMarkdown(html)).toBe(markdown);
+      });
+    });
   });
 
   describe('event', () => {
