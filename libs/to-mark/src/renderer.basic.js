@@ -28,7 +28,7 @@ var basicRenderer = Renderer.factory({
             managedText = this.escapeTextBackSlash(managedText);
         }
 
-        managedText = this.escapeEmphasisCharacters(managedText);
+        managedText = this.escapePairedCharacters(managedText);
 
         if (this._isNeedEscapeHtml(managedText)) {
             managedText = this.escapeTextHtml(managedText);

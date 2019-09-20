@@ -348,12 +348,12 @@ Renderer.prototype.escapeTextBackSlash = function(text) {
 };
 
 /**
- * Escapes in markdown emphasis characters ('*', '_', '~')
+ * Escapes in markdown paired characters
  * @param {string} text Text to escape
  * @returns {string} escaped text
  */
-Renderer.prototype.escapeEmphasisCharacters = function(text) {
-    return text.replace(Renderer.markdownTextToEscapeEmphasisCharsRx, function(matched) {
+Renderer.prototype.escapePairedCharacters = function(text) {
+    return text.replace(Renderer.markdownTextToEscapePairedCharsRx, function(matched) {
         return '\\' + matched;
     });
 };
@@ -369,7 +369,6 @@ Renderer.markdownTextToEscapeRx = {
 
     link: /!?\[.*\]\(.*\)/,
     reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
-    code: /(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
 
     verticalBar: /\u007C/,
 
@@ -381,7 +380,7 @@ Renderer.markdownTextToEscapeHtmlRx = /<([a-zA-Z_][a-zA-Z0-9\-\._]*)(\s|[^\\/>])
 
 Renderer.markdownTextToEscapeBackSlashRx = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 
-Renderer.markdownTextToEscapeEmphasisCharsRx = /[*_~]/g;
+Renderer.markdownTextToEscapePairedCharsRx = /[*_~`]/g;
 
 Renderer.prototype._isNeedEscape = function(text) {
     var res = false;

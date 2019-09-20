@@ -284,10 +284,9 @@ describe('renderer', function() {
             expect(renderer._isNeedEscape('awef1. awef')).toEqual(false);
         });
 
-        it('code, codeblock', function() {
+        it('codeblock', function() {
             expect(renderer._isNeedEscape('``` awefwaef')).toEqual(true);
             expect(renderer._isNeedEscape('```` awefwaef')).toEqual(true);
-            expect(renderer._isNeedEscape('`awefwaef`')).toEqual(true);
             expect(renderer._isNeedEscape('```')).toEqual(true);
             expect(renderer._isNeedEscape('~~~')).toEqual(true);
             expect(renderer._isNeedEscape('~~~ awefwaef')).toEqual(true);
