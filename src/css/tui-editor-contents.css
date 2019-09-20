@@ -223,6 +223,7 @@
     list-style: none;
     padding-left: 22px;
     margin-left: -22px;
+    min-height: 20px;
 }
 
 .tui-editor-contents .task-list-item:before {
