@@ -260,8 +260,8 @@ class Convertor {
 
   _removeNewlinesBeforeAfterAndBlockElement(markdown) {
     // Newlines('\n\n') are created on to-mark.
-    const NEWLINES_BEFORE_BLOCK_RX = /<br>\n\n((#{1,6} .*)|(```)|(\|)|((\*+|-+|\d+\.) .*)|( *>[^\n]+.*))/g;
-    const NEWLINES_AFTER_BLOCK_RX = /((#{1,6} .*)|(```)|(\|))\n\n<br>/g;
+    const NEWLINES_BEFORE_BLOCK_RX = /<br>\n\n(#{1,6} .*|```|\||(\*+|-+|\d+\.) .*| *>[^\n]+.*)/g;
+    const NEWLINES_AFTER_BLOCK_RX = /(#{1,6} .*|```|\|)\n\n<br>/g;
 
     markdown = markdown.replace(NEWLINES_BEFORE_BLOCK_RX, '<br>$1');
     markdown = markdown.replace(NEWLINES_AFTER_BLOCK_RX, '$1\n<br>');

@@ -198,11 +198,9 @@ describe('Convertor', () => {
         .toBe('<span>text</span>\n\ntext');
     });
 
-    describe('should prevent <br> if there is only one empty line before or after the block element.', () => {
-      let html, markdown;
-
-      it('header', () => {
-        html = [
+    describe('should prevent <br> from being removed if there is only one empty line before or after the block element.', () => {
+      it('header with inline elements', () => {
+        const html = [
           'foo',
           '<br>', // Generated when a line break occurs after an inline element.
           '<br>',
@@ -210,7 +208,7 @@ describe('Convertor', () => {
           '<br>',
           'baz'
         ].join('');
-        markdown = [
+        const markdown = [
           'foo',
           '<br>',
           '# bar',
@@ -219,27 +217,10 @@ describe('Convertor', () => {
         ].join('\n');
 
         expect(convertor.toMarkdown(html)).toBe(markdown);
-
-        html = [
-          '<h1>foo</h1>',
-          '<br>',
-          '<h2>bar</h2>',
-          '<br>',
-          '<h3>baz</h3>'
-        ].join('');
-        markdown = [
-          '# foo',
-          '<br>',
-          '## bar',
-          '<br>',
-          '### baz'
-        ].join('\n');
-
-        expect(convertor.toMarkdown(html)).toBe(markdown);
       });
 
-      it('codeblock', () => {
-        html = [
+      it('codeblock with inline elements', () => {
+        const html = [
           'foo',
           '<br>', // Generated when a line break occurs after an inline element.
           '<br>',
@@ -247,7 +228,7 @@ describe('Convertor', () => {
           '<br>',
           'baz'
         ].join('');
-        markdown = [
+        const markdown = [
           'foo',
           '<br>',
           '```',
@@ -260,8 +241,8 @@ describe('Convertor', () => {
         expect(convertor.toMarkdown(html)).toBe(markdown);
       });
 
-      it('table', () => {
-        html = [
+      it('table with inline elements', () => {
+        const html = [
           'foo',
           '<br>', // Generated when a line break occurs after an inline element.
           '<br>',
@@ -269,7 +250,7 @@ describe('Convertor', () => {
           '<br>',
           'qux'
         ].join('');
-        markdown = [
+        const markdown = [
           'foo',
           '<br>',
           '| bar |',
@@ -282,8 +263,8 @@ describe('Convertor', () => {
         expect(convertor.toMarkdown(html)).toBe(markdown);
       });
 
-      it('list', () => {
-        html = [
+      it('list with inline elements', () => {
+        let html = [
           'foo',
           '<br>', // Generated when a line break occurs after an inline element.
           '<br>',
@@ -291,7 +272,7 @@ describe('Convertor', () => {
           '<br>',
           'qux'
         ].join('');
-        markdown = [
+        let markdown = [
           'foo',
           '<br>',
           '* bar',
@@ -328,8 +309,8 @@ describe('Convertor', () => {
         expect(convertor.toMarkdown(html)).toBe(markdown);
       });
 
-      it('blockquote', () => {
-        html = [
+      it('blockquote with inline elements', () => {
+        const html = [
           'foo',
           '<br>', // Generated when a line break occurs after an inline element.
           '<br>',
@@ -337,7 +318,7 @@ describe('Convertor', () => {
           '<br>',
           'baz'
         ].join('');
-        markdown = [
+        const markdown = [
           'foo',
           '<br>',
           '> bar',
@@ -346,6 +327,39 @@ describe('Convertor', () => {
           '',
           '<br>',
           'baz'
+        ].join('\n');
+
+        expect(convertor.toMarkdown(html)).toBe(markdown);
+      });
+
+      it('between block elements.', () => {
+        const html = [
+          '<h1>foo</h1>',
+          '<br>',
+          '<pre><code>bar</code></pre>',
+          '<br>',
+          '<table><thead><tr><th>bar</th></tr></thead><tbody><tr><td>baz</td></tr></tbody></table>',
+          '<br>',
+          '<ol><li>bar</li><li>baz</li></ol>',
+          '<br>',
+          '<blockquote>bar</blockquote>'
+        ].join('');
+        const markdown = [
+          '# foo',
+          '<br>',
+          '```',
+          'bar',
+          '```',
+          '<br>',
+          '| bar |',
+          '| --- |',
+          '| baz |',
+          '<br>',
+          '1. bar',
+          '2. baz',
+          '',
+          '<br>',
+          '> bar'
         ].join('\n');
 
         expect(convertor.toMarkdown(html)).toBe(markdown);
