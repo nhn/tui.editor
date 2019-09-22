@@ -8,7 +8,7 @@ import Editor from '../editorProxy';
 import './langs';
 import createMergedTable from './mergedTableCreator';
 import prepareTableUnmerge from './tableUnmergePreparer';
-import toMarkRenderer from './toMarkRenderer';
+import {createToMarkRenderer} from './toMarkRenderer';
 import WwMergedTableManager from './wwMergedTableManager';
 import WwMergedTableSelectionManager from './wwMergedTableSelectionManager';
 import wwAddRow from './mergedTableAddRow';
@@ -28,8 +28,7 @@ import mergedTableUI from './mergedTableUI';
 function tableExtension(editor) {
   const {eventManager} = editor;
 
-  editor.toMarkOptions = editor.toMarkOptions || {};
-  editor.toMarkOptions.renderer = toMarkRenderer;
+  editor.toMarkOptions = getExtendedToMarkOptions(editor.toMarkOptions);
   _bindEvents(eventManager);
 
   if (editor.isViewer()) {
@@ -45,6 +44,15 @@ function tableExtension(editor) {
   if (popupTableUtils) {
     mergedTableUI.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
   }
+}
+
+function getExtendedToMarkOptions(toMarkOptions) {
+  const extendedOptions = toMarkOptions || {};
+  const baseRenderer = extendedOptions.renderer;
+
+  extendedOptions.renderer = createToMarkRenderer(baseRenderer);
+
+  return extendedOptions;
 }
 
 /**

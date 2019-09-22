@@ -84,7 +84,8 @@ export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
   return theadContentMarkdown ? `${theadContentMarkdown}|${align}\n` : '';
 }
 
-export default toMark.Renderer.factory(toMark.gfmRenderer, {
-  'THEAD': _createTheadMarkdown
-});
-
+export function createToMarkRenderer(baseRenderer) {
+  return toMark.Renderer.factory(baseRenderer || toMark.gfmRenderer, {
+    'THEAD': _createTheadMarkdown
+  });
+}
