@@ -1,12 +1,5 @@
 import toMark from 'to-mark';
-
-function isElementNode(node) {
-  return node && node.nodeType === Node.ELEMENT_NODE;
-}
-
-function isTextNode(node) {
-  return node && node.nodeType === Node.TEXT_NODE;
-}
+import domUtils from './domUtils';
 
 /**
  * Check if given node is valid delimiter run.
@@ -15,19 +8,20 @@ function isTextNode(node) {
  *    (ex: a**~~c~~b**)
  * 2. closing (*|**) preceded by a punctuation and followed by an alphanumeric.
  *    (ex: **b~~c~~**a)
- * @See {@link https://spec.commonmark.org/0.29/#delimiter-run}
- * @See {@link https://github.com/commonmark/commonmark-spec/issues/611#issuecomment-533578503}
- **/
+ * @see {@link https://spec.commonmark.org/0.29/#delimiter-run}
+ * @see {@link https://github.com/commonmark/commonmark-spec/issues/611#issuecomment-533578503}
+ */
 function isValidDelimiterRun(node) {
-  const isInvalidOpener = isTextNode(node.previousSibling) && isElementNode(node.firstChild);
-  const isInvalidCloser = isTextNode(node.nextSibling) && isElementNode(node.lastChild);
+  const {isElemNode, isTextNode} = domUtils;
+  const isInvalidOpener = isTextNode(node.previousSibling) && isElemNode(node.firstChild);
+  const isInvalidCloser = isTextNode(node.nextSibling) && isElemNode(node.lastChild);
 
   return !isInvalidOpener && !isInvalidCloser;
 }
 
-function convertEmphasis(node, subContent, token) {
+function convertEmphasis(node, subContent, delimiter) {
   if (isValidDelimiterRun(node)) {
-    return `${token}${subContent}${token}`;
+    return `${delimiter}${subContent}${delimiter}`;
   }
 
   const tagName = node.nodeName.toLowerCase();
