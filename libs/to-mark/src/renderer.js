@@ -103,6 +103,19 @@ function isInlineNode(node) {
 }
 
 /**
+ * Returns HTML string of an element using given subContent
+ * @param {Node} node Element
+ * @param {string} subContent string content of node
+ * @returns {string}
+ */
+function getRawHtmlString(node, subContent) {
+    var tempNode = node.cloneNode(false);
+    tempNode.innerHTML = subContent;
+
+    return tempNode.outerHTML;
+}
+
+/**
  * getSpaceControlled
  * Remove flanked space of dom node
  * @param {string} content text content
@@ -145,7 +158,7 @@ Renderer.prototype.convert = function(node, subContent) {
 
     if (node && node.nodeType === Node.ELEMENT_NODE && node.hasAttribute('data-tomark-pass')) {
         node.removeAttribute('data-tomark-pass');
-        result = node.outerHTML;
+        result = getRawHtmlString(node, subContent);
     } else if (converter) {
         result = converter.call(this, node, subContent);
     } else if (node) {

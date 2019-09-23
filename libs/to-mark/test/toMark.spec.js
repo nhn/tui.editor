@@ -3,23 +3,30 @@
 var toMark = require('../src/toMark');
 
 describe('toMark', function() {
-    it('do not converting markdown syntax when passed element has \'data-tomark-pass\' attribute', function() {
+    it('do not convert markdown syntax when passed element has \'data-tomark-pass\' attribute', function() {
         expect(toMark('<br data-tomark-pass>')).toEqual('<br>');
         expect(toMark('<div data-tomark-pass>hello</div>')).toEqual('<div>hello</div>');
         expect(toMark('<span data-tomark-pass>world</span>')).toEqual('<span>world</span>');
-        expect(toMark('<ul data-tomark-pass><li>1</li><li>2</li></ul>')).toEqual('<ul><li>1</li><li>2</li></ul>');
     });
+
+    it('child elements of an element which has \'data-tomark-pass\' should be converted', function() {
+        expect(toMark('<b data-tomark-pass>Hello <s>World</s></b>')).toBe('<b>Hello ~~World~~</b>');
+        expect(toMark('<b id="a1" class="custom" data-tomark-pass>Hello <s>World</s></b>')).toBe('<b id="a1" class="custom">Hello ~~World~~</b>');
+    });
+
     it('if pass empty string or falsy object return empty string', function() {
         expect(toMark('')).toEqual('');
         expect(toMark(false)).toEqual('');
         expect(toMark()).toEqual('');
         expect(toMark(null)).toEqual('');
     });
+
     it('should escape vertical bars', function() {
         expect(toMark('<div>1 | Introduction</div>')).toEqual('<div>1 \\| Introduction</div>');
         expect(toMark('<p>|||. Exercise</p>')).toEqual('\\|\\|\\|\\. Exercise');
         expect(toMark('<b>|go ro Work|</b>')).toEqual('**\\|go ro Work\\|**');
     });
+
     it('markdown text\'s EOL FOL newline characters should be removed', function() {
         expect(toMark('<h1>Hello World</h1>')).toEqual('# Hello World');
         expect(toMark('<h1>Hello World</h1><br />')).toEqual('# Hello World');
