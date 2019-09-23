@@ -28,7 +28,6 @@ import mergedTableUI from './mergedTableUI';
 function tableExtension(editor) {
   const {eventManager} = editor;
 
-  editor.toMarkOptions = getExtendedToMarkOptions(editor.toMarkOptions);
   _bindEvents(eventManager);
 
   if (editor.isViewer()) {
@@ -40,6 +39,8 @@ function tableExtension(editor) {
 
   _addCommands(editor);
   _changeWysiwygManagers(wwComponentManager);
+
+  editor.toMarkOptions = getExtendedToMarkOptions(editor.toMarkOptions);
 
   if (popupTableUtils) {
     mergedTableUI.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));

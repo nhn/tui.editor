@@ -48,7 +48,6 @@ class ToastUIEditorViewer {
     } else {
       this.convertor = new Convertor(this.eventManager);
     }
-    this.toMarkOptions = null;
 
     if (this.options.useDefaultHTMLSanitizer) {
       this.convertor.initHtmlSanitizer();
