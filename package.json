@@ -86,7 +86,7 @@
     "@types/codemirror": "0.0.71",
     "@types/jquery": "^3.3.29",
     "@types/markdown-it": "0.0.7",
-    "codemirror": "^5.33.0",
+    "codemirror": "^5.48.4",
     "highlight.js": "^9.12.0",
     "jquery": "^3.3.1",
     "markdown-it": "^8.4.0",
