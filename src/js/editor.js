@@ -217,7 +217,10 @@ class ToastUIEditor {
       false,
       this.options.previewDelayTime);
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
-    this.toMarkOptions = {renderer: toMarkRenderer};
+    this.toMarkOptions = {
+      gfm: true,
+      renderer: toMarkRenderer
+    };
 
     if (this.options.linkAttribute) {
       const attribute = this._sanitizeLinkAttribute(this.options.linkAttribute);

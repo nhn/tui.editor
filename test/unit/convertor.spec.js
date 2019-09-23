@@ -141,7 +141,10 @@ describe('Convertor', () => {
 
   describe('html to markdown', () => {
     function toMark(html) {
-      return convertor.toMarkdown(html, {renderer: toMarkRenderer});
+      return convertor.toMarkdown(html, {
+        gfm: true,
+        renderer: toMarkRenderer
+      });
     }
 
     it('converting markdown to html', () => {
@@ -218,6 +221,7 @@ describe('Convertor', () => {
           '<br>',
           'baz'
         ].join('');
+
         const markdown = [
           'foo',
           '<br>',
