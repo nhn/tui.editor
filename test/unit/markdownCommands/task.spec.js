@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import task from '../../../src/js/markdownCommands/task';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
-import mdListManager from '../../../src/js/mdListManager';
+import task from '@/markdownCommands/task';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
+import mdListManager from '@/mdListManager';
 
 describe('task', () => {
   let cm, doc, mde;

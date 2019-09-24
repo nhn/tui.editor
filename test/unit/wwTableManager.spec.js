@@ -5,10 +5,10 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import WysiwygEditor from '../../src/js/wysiwygEditor';
-import EventManager from '../../src/js/eventManager';
-import WwTableManager from '../../src/js/wwTableManager';
-import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import WwTableManager from '@/wwTableManager';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
 
 describe('WwTableManager', () => {
   let $container, em, wwe, mgr;

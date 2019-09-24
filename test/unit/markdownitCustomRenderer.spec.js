@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import Convertor from '../../src/js/convertor';
-import EventManager from '../../src/js/eventManager';
+import Convertor from '@/convertor';
+import EventManager from '@/eventManager';
 
 describe('Markdown-it', () => {
   let convertor, em;

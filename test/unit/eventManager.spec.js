@@ -2,7 +2,7 @@
  * @fileoverview test event manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import EventManager from '../../src/js/eventManager';
+import EventManager from '@/eventManager';
 
 describe('eventManager', function() {
   let em;

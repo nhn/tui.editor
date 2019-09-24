@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import CodeBlock from '../../../src/js/markdownCommands/codeBlock';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import CodeBlock from '@/markdownCommands/codeBlock';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('CodeBlock', () => {
   let cm, doc, mde;

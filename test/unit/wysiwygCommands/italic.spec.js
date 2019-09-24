@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import Italic from '../../../src/js/wysiwygCommands/italic';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import WwTableSelectionManager from '../../../src/js/wwTableSelectionManager';
-import EventManager from '../../../src/js/eventManager';
+import Italic from '@/wysiwygCommands/italic';
+import WysiwygEditor from '@/wysiwygEditor';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
+import EventManager from '@/eventManager';
 
 describe('Italic', () => {
   let wwe;

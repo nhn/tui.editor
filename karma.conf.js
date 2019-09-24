@@ -201,6 +201,11 @@ module.exports = function(config) {
             loader: 'istanbul-instrumenter-loader'
           }
         ]
+      },
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, './src/js')
+        }
       }
     },
 

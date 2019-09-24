@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import ViewerMarkerHelper from '../../../../src/js/extensions/mark/viewerMarkerHelper';
-import Convertor from '../../../../src/js/convertor';
-import EventManager from '../../../../src/js/eventManager';
-import Preview from '../../../../src/js/preview';
+import ViewerMarkerHelper from '@/extensions/mark/viewerMarkerHelper';
+import Convertor from '@/convertor';
+import EventManager from '@/eventManager';
+import Preview from '@/preview';
 
 describe('ViewerMarkerHelper', () => {
   let preview, vmh, container;

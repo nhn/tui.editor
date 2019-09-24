@@ -12,8 +12,8 @@ import {
   _mergeByColspan,
   _getRemovalTdCountsByRowspan,
   _mergeByRowspan
-} from '../../../../src/js/extensions/table/mergedTableCreator';
-import createMergedTable from '../../../../src/js/extensions/table/mergedTableCreator';
+} from '@/extensions/table/mergedTableCreator';
+import createMergedTable from '@/extensions/table/mergedTableCreator';
 
 describe('mergedTableCreator', () => {
   describe('_extractPropertiesForMerge()', () => {

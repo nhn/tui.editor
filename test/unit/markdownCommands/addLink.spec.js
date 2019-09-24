@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import AddLink from '../../../src/js/markdownCommands/addLink';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import AddLink from '@/markdownCommands/addLink';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('AddLink', () => {
   let cm, doc, mde;

@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import Code from '../../../src/js/wysiwygCommands/code';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import WwTableSelectionManager from '../../../src/js/wwTableSelectionManager';
-import EventManager from '../../../src/js/eventManager';
+import Code from '@/wysiwygCommands/code';
+import WysiwygEditor from '@/wysiwygEditor';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
+import EventManager from '@/eventManager';
 
 describe('Code', () => {
   let wwe;

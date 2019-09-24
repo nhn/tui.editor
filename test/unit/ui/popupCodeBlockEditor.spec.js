@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import PopupCodeBlockEditor from '../../../src/js/ui/popupCodeBlockEditor';
-import EventManager from '../../../src/js/eventManager';
-import Convertor from '../../../src/js/convertor';
+import PopupCodeBlockEditor from '@/ui/popupCodeBlockEditor';
+import EventManager from '@/eventManager';
+import Convertor from '@/convertor';
 
 describe('PopupCodeBlockEditor', () => {
   let eventManager,

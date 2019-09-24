@@ -2,10 +2,10 @@
  * @fileoverview test default UI
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import ToastUIEditor from '../../../src/js/editor';
-import DefaultUI from '../../../src/js/ui/defaultUI';
-import Toolbar from '../../../src/js/ui/toolbar';
-import ModeSwitch from '../../../src/js/ui/modeSwitch';
+import ToastUIEditor from '@/editor';
+import DefaultUI from '@/ui/defaultUI';
+import Toolbar from '@/ui/toolbar';
+import ModeSwitch from '@/ui/modeSwitch';
 
 describe('DeafultUI', () => {
   let container, editor, defaultUI;

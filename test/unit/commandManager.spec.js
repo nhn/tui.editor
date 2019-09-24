@@ -2,9 +2,9 @@
  * @fileoverview test command manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import CommandManager from '../../src/js/commandManager';
-import Command from '../../src/js/command';
-import EventManager from '../../src/js/eventManager';
+import CommandManager from '@/commandManager';
+import Command from '@/command';
+import EventManager from '@/eventManager';
 
 describe('CommandManager', function() {
   var mockupCm = {

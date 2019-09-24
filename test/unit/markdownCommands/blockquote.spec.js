@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import Blockquote from '../../../src/js/markdownCommands/blockquote';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import Blockquote from '@/markdownCommands/blockquote';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('Blockquote', () => {
   let cm, doc, mde;

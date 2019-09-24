@@ -5,12 +5,12 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import RemoveCol, {_removeColumns} from '../../../../src/js/extensions/table/mergedTableRemoveCol';
-import tableDataHandler from '../../../../src/js/extensions/table/tableDataHandler';
-import WwMergedTableSelectionManager from '../../../../src/js/extensions/table/wwMergedTableSelectionManager';
-import WwMergedTableManager from '../../../../src/js/extensions/table/wwMergedTableManager';
-import WysiwygEditor from '../../../../src/js/wysiwygEditor';
-import EventManager from '../../../../src/js/eventManager';
+import RemoveCol, {_removeColumns} from '@/extensions/table/mergedTableRemoveCol';
+import tableDataHandler from '@/extensions/table/tableDataHandler';
+import WwMergedTableSelectionManager from '@/extensions/table/wwMergedTableSelectionManager';
+import WwMergedTableManager from '@/extensions/table/wwMergedTableManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('mergedTableRemoveCol', () => {
   describe('_removeColumns()', () => {
