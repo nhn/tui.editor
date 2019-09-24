@@ -4,6 +4,7 @@
  */
 import Convertor from '../../src/js/convertor';
 import EventManager from '../../src/js/eventManager';
+import toMarkRenderer from '../../src/js/toMarkRenderer';
 
 describe('Convertor', () => {
   let convertor, em;
@@ -139,62 +140,74 @@ describe('Convertor', () => {
   });
 
   describe('html to markdown', () => {
+    function toMark(html) {
+      return convertor.toMarkdown(html, {
+        gfm: true,
+        renderer: toMarkRenderer
+      });
+    }
+
     it('converting markdown to html', () => {
-      expect(convertor.toMarkdown('<h1 id="hello-world">HELLO WORLD</h1>')).toEqual('# HELLO WORLD');
+      expect(toMark('<h1 id="hello-world">HELLO WORLD</h1>')).toEqual('# HELLO WORLD');
     });
+
     it('should reserve br on multi line breaks', () => {
-      expect(convertor.toMarkdown('HELLO WORLD<br><br><br>!')).toEqual('HELLO WORLD\n\n<br>\n!');
+      expect(toMark('HELLO WORLD<br><br><br>!')).toEqual('HELLO WORLD\n\n<br>\n!');
     });
+
     it('should not reserve br on normal line breaks', () => {
-      expect(convertor.toMarkdown('HELLO WORLD<br><br>!')).toEqual('HELLO WORLD\n\n!');
+      expect(toMark('HELLO WORLD<br><br>!')).toEqual('HELLO WORLD\n\n!');
     });
+
     it('should not reserve br in codeblock', () => {
-      expect(convertor.toMarkdown('<pre><code>HELLO WORLD\n\n\n\n\n!</code></pre>')).toEqual('```\nHELLO WORLD\n\n\n\n\n!\n```');
+      expect(toMark('<pre><code>HELLO WORLD\n\n\n\n\n!</code></pre>')).toEqual('```\nHELLO WORLD\n\n\n\n\n!\n```');
     });
+
     it('should reserve br to inline in table', () => {
       const html = '<table>' +
                 '<thead><th>1</th><th>2</th><th>3</th></thead>' +
                 '<tbody><td>HELLO WORLD<br><br><br><br><br>!</td><td>4</td><td>5</td></tbody>' +
                 '</table>';
       const markdown = '| 1 | 2 | 3 |\n| --- | --- | --- |\n| HELLO WORLD<br><br><br><br><br>! | 4 | 5 |';
-      expect(convertor.toMarkdown(html)).toEqual(markdown);
+      expect(toMark(html)).toEqual(markdown);
     });
+
     it('should escape html in html text', () => {
       // valid tags
-      expect(convertor.toMarkdown('im &lt;span&gt; text')).toEqual('im \\<span> text');
-      expect(convertor.toMarkdown('im &lt;span attr="value"&gt; text')).toEqual('im \\<span attr="value"> text');
-      expect(convertor.toMarkdown('im &lt;!-- comment --&gt; text')).toEqual('im \\<!-- comment --> text');
+      expect(toMark('im &lt;span&gt; text')).toEqual('im \\<span> text');
+      expect(toMark('im &lt;span attr="value"&gt; text')).toEqual('im \\<span attr="value"> text');
+      expect(toMark('im &lt;!-- comment --&gt; text')).toEqual('im \\<!-- comment --> text');
 
       // common mark auto link
-      expect(convertor.toMarkdown('im &lt;http://google.com&gt; text')).toEqual('im \\<http://google.com> text');
+      expect(toMark('im &lt;http://google.com&gt; text')).toEqual('im \\<http://google.com> text');
 
       // invalid tags
-      expect(convertor.toMarkdown('im &lt;\\span&gt; text')).toEqual('im <\\span> text');
-      expect(convertor.toMarkdown('im &lt;/span attr="value"&gt; text')).toEqual('im </span attr="value"> text');
+      expect(toMark('im &lt;\\span&gt; text')).toEqual('im <\\span> text');
+      expect(toMark('im &lt;/span attr="value"&gt; text')).toEqual('im </span attr="value"> text');
     });
 
     it('should print number of backticks for code according to data-backticks attribute', () => {
-      expect(convertor.toMarkdown('<code data-backticks="1">code span</code>').trim()).toEqual('`code span`');
-      expect(convertor.toMarkdown('<code data-backticks="3">code span</code>').trim()).toEqual('```code span```');
+      expect(toMark('<code data-backticks="1">code span</code>').trim()).toEqual('`code span`');
+      expect(toMark('<code data-backticks="3">code span</code>').trim()).toEqual('```code span```');
     });
 
     it('should print number of backticks for code block according to data-backticks attribute', () => {
-      expect(convertor.toMarkdown('<pre><code>code block</code></pre>').trim()).toEqual('```\ncode block\n```');
-      expect(convertor.toMarkdown('<pre><code data-backticks="4">code block</code></pre>').trim()).toEqual('````\ncode block\n````');
+      expect(toMark('<pre><code>code block</code></pre>').trim()).toEqual('```\ncode block\n```');
+      expect(toMark('<pre><code data-backticks="4">code block</code></pre>').trim()).toEqual('````\ncode block\n````');
     });
 
     it('should treat $ special characters', () => {
-      expect(convertor.toMarkdown('<span>,;:$&+=</span>').trim()).toEqual('<span>,;:$&+=</span>');
+      expect(toMark('<span>,;:$&+=</span>').trim()).toEqual('<span>,;:$&+=</span>');
     });
 
     it('should convert BRs to newline', () => {
-      expect(convertor.toMarkdown('text<br><br>text')).toBe('text\n\ntext');
-      expect(convertor.toMarkdown('<b>text</b><br><br>text')).toBe('**text**\n\ntext');
-      expect(convertor.toMarkdown('<i>text</i><br><br>text')).toBe('*text*\n\ntext');
-      expect(convertor.toMarkdown('<s>text</s><br><br>text')).toBe('~~text~~\n\ntext');
-      expect(convertor.toMarkdown('<code>text</code><br><br>text')).toBe('`text`\n\ntext');
-      expect(convertor.toMarkdown('<a href="some_url">text</a><br><br>text')).toBe('[text](some_url)\n\ntext');
-      expect(convertor.toMarkdown('<span>text</span><br><br>text'))
+      expect(toMark('text<br><br>text')).toBe('text\n\ntext');
+      expect(toMark('<b>text</b><br><br>text')).toBe('**text**\n\ntext');
+      expect(toMark('<i>text</i><br><br>text')).toBe('*text*\n\ntext');
+      expect(toMark('<s>text</s><br><br>text')).toBe('~~text~~\n\ntext');
+      expect(toMark('<code>text</code><br><br>text')).toBe('`text`\n\ntext');
+      expect(toMark('<a href="some_url">text</a><br><br>text')).toBe('[text](some_url)\n\ntext');
+      expect(toMark('<span>text</span><br><br>text'))
         .toBe('<span>text</span>\n\ntext');
     });
 
@@ -208,6 +221,7 @@ describe('Convertor', () => {
           '<br>',
           'baz'
         ].join('');
+
         const markdown = [
           'foo',
           '<br>',
@@ -216,7 +230,7 @@ describe('Convertor', () => {
           'baz'
         ].join('\n');
 
-        expect(convertor.toMarkdown(html)).toBe(markdown);
+        expect(toMark(html)).toBe(markdown);
       });
 
       it('codeblock with inline elements', () => {
@@ -238,7 +252,7 @@ describe('Convertor', () => {
           'baz'
         ].join('\n');
 
-        expect(convertor.toMarkdown(html)).toBe(markdown);
+        expect(toMark(html)).toBe(markdown);
       });
 
       it('table with inline elements', () => {
@@ -260,7 +274,7 @@ describe('Convertor', () => {
           'qux'
         ].join('\n');
 
-        expect(convertor.toMarkdown(html)).toBe(markdown);
+        expect(toMark(html)).toBe(markdown);
       });
 
       it('list with inline elements', () => {
@@ -284,7 +298,7 @@ describe('Convertor', () => {
           'qux'
         ].join('\n');
 
-        expect(convertor.toMarkdown(html)).toBe(markdown);
+        expect(toMark(html)).toBe(markdown);
 
         html = [
           'foo',
@@ -306,7 +320,7 @@ describe('Convertor', () => {
           'qux'
         ].join('\n');
 
-        expect(convertor.toMarkdown(html)).toBe(markdown);
+        expect(toMark(html)).toBe(markdown);
       });
 
       it('blockquote with inline elements', () => {
@@ -329,7 +343,7 @@ describe('Convertor', () => {
           'baz'
         ].join('\n');
 
-        expect(convertor.toMarkdown(html)).toBe(markdown);
+        expect(toMark(html)).toBe(markdown);
       });
 
       it('between block elements.', () => {
@@ -362,7 +376,75 @@ describe('Convertor', () => {
           '> bar'
         ].join('\n');
 
-        expect(convertor.toMarkdown(html)).toBe(markdown);
+        expect(toMark(html)).toBe(markdown);
+      });
+    });
+
+    describe('should not convert <strong>,<b> to **', () => {
+      it('if preceded by normal text and first child is an element', () => {
+        // b
+        expect(toMark('a<b><code>c</code>b</b>')).toEqual('a<b>`c`b</b>');
+        expect(toMark('a<b><del>c</del>b</b>')).toEqual('a<b>~~c~~b</b>');
+        expect(toMark('a<b><span>c</span>b</b>')).toEqual('a<b><span>c</span>b</b>');
+
+        // strong
+        expect(toMark('a<strong><code>c</code>b</strong>')).toEqual('a<strong>`c`b</strong>');
+        expect(toMark('a<strong><del>c</del>b</strong>')).toEqual('a<strong>~~c~~b</strong>');
+        expect(toMark('a<strong><span>c</span>b</strong>')).toEqual('a<strong><span>c</span>b</strong>');
+
+        // should convert if an opening is not preceded by normal text
+        expect(toMark('<b><code>c</code>b</b>')).toEqual('**`c`b**');
+        expect(toMark('<strong><code>c</code>b</strong>')).toEqual('**`c`b**');
+      });
+
+      it('if followed by normal text and last child is an element', () => {
+        // b
+        expect(toMark('<b>b<code>c</code></b>a')).toEqual('<b>b`c`</b>a');
+        expect(toMark('<b>b<del>c</del></b>a')).toEqual('<b>b~~c~~</b>a');
+        expect(toMark('<b>b<span>c</span></b>a')).toEqual('<b>b<span>c</span></b>a');
+
+        // strong
+        expect(toMark('<strong>b<code>c</code></strong>a')).toEqual('<strong>b`c`</strong>a');
+        expect(toMark('<strong>b<del>c</del></strong>a')).toEqual('<strong>b~~c~~</strong>a');
+        expect(toMark('<strong>b<span>c</span></strong>a')).toEqual('<strong>b<span>c</span></strong>a');
+
+        // should convert if a closing tag is not followed by normal text
+        expect(toMark('<b>b<code>c</code></b>')).toEqual('**b`c`**');
+        expect(toMark('<strong>b<code>c</code></strong>')).toEqual('**b`c`**');
+      });
+    });
+
+    describe('should not convert <em>,<i> to *', () => {
+      it('if preceded by normal text and first child is an element', () => {
+        // i
+        expect(toMark('a<i><code>c</code>b</i>')).toEqual('a<i>`c`b</i>');
+        expect(toMark('a<i><del>c</del>b</i>')).toEqual('a<i>~~c~~b</i>');
+        expect(toMark('a<i><span>c</span>b</i>')).toEqual('a<i><span>c</span>b</i>');
+
+        // em
+        expect(toMark('a<em><code>c</code>b</em>')).toEqual('a<em>`c`b</em>');
+        expect(toMark('a<em><del>c</del>b</em>')).toEqual('a<em>~~c~~b</em>');
+        expect(toMark('a<em><span>c</span>b</em>')).toEqual('a<em><span>c</span>b</em>');
+
+        // should convert if an opening tag is not preceded by normal text
+        expect(toMark('<i><code>c</code>b</i>')).toEqual('*`c`b*');
+        expect(toMark('<em><code>c</code>b</em>')).toEqual('*`c`b*');
+      });
+
+      it('if followed by normal text and last child is an element', () => {
+        // i
+        expect(toMark('<i>b<code>c</code></i>a')).toEqual('<i>b`c`</i>a');
+        expect(toMark('<i>b<del>c</del></i>a')).toEqual('<i>b~~c~~</i>a');
+        expect(toMark('<i>b<span>c</span></i>a')).toEqual('<i>b<span>c</span></i>a');
+
+        // em
+        expect(toMark('<em>b<code>c</code></em>a')).toEqual('<em>b`c`</em>a');
+        expect(toMark('<em>b<del>c</del></em>a')).toEqual('<em>b~~c~~</em>a');
+        expect(toMark('<em>b<span>c</span></em>a')).toEqual('<em>b<span>c</span></em>a');
+
+        // should convert if a closing tag is not followed by normal text
+        expect(toMark('<i>b<code>c</code></i>')).toEqual('*b`c`*');
+        expect(toMark('<em>b<code>c</code></em>')).toEqual('*b`c`*');
       });
     });
   });
