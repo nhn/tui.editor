@@ -447,6 +447,70 @@ describe('Convertor', () => {
         expect(toMark('<em>b<code>c</code></em>')).toEqual('*b`c`*');
       });
     });
+
+    describe('should not convert <s>, <del> to ~~', () => {
+      it('if preceded by normal text and first child is an element', () => {
+        // s
+        expect(toMark('a<s><code>c</code>b</s>')).toBe('a<s>`c`b</s>');
+        expect(toMark('a<s><b>c</b>b</s>')).toBe('a<s>**c**b</s>');
+        expect(toMark('a<s><span>c</span>b</s>')).toBe('a<s><span>c</span>b</s>');
+
+        // del
+        expect(toMark('a<del><code>c</code>b</del>')).toBe('a<del>`c`b</del>');
+        expect(toMark('a<del><strong>c</strong>b</del>')).toBe('a<del>**c**b</del>');
+        expect(toMark('a<del><span>c</span>b</del>')).toBe('a<del><span>c</span>b</del>');
+
+        // should convert if an opening tag is not preceded by normal text
+        expect(toMark('<s><code>c</code>b</s>')).toBe('~~`c`b~~');
+        expect(toMark('<del><code>c</code>b</del>')).toBe('~~`c`b~~');
+      });
+
+      it('if followed by normal text and last child is an element', () => {
+        // s
+        expect(toMark('<s>b<code>c</code></s>a')).toBe('<s>b`c`</s>a');
+        expect(toMark('<s>b<b>c</b></s>a')).toBe('<s>b**c**</s>a');
+        expect(toMark('<s>b<span>c</span></s>a')).toBe('<s>b<span>c</span></s>a');
+
+        // del
+        expect(toMark('<del>b<code>c</code></del>a')).toBe('<del>b`c`</del>a');
+        expect(toMark('<del>b<strong>c</strong></del>a')).toBe('<del>b**c**</del>a');
+        expect(toMark('<del>b<span>c</span></del>a')).toBe('<del>b<span>c</span></del>a');
+
+        // should convert if a closing tag is not followed by normal text
+        expect(toMark('<s>b<code>c</code></s>')).toBe('~~b`c`~~');
+        expect(toMark('<del>b<code>c</code></del>')).toBe('~~b`c`~~');
+      });
+    });
+
+    describe('should move spaces out of the tag when there are spaces between the text and the tag', () => {
+      it('if there are spaces between the opening tag and the text', () => {
+        // bold
+        expect(toMark('foo&nbsp; &nbsp;<b>bar</b>baz')).toBe('foo\u00a0 \u00a0**bar**baz');
+        expect(toMark('foo&nbsp; &nbsp;<strong>bar</strong>baz')).toBe('foo\u00a0 \u00a0**bar**baz');
+
+        // italic
+        expect(toMark('foo&nbsp; &nbsp;<i>bar</i>baz')).toBe('foo\u00a0 \u00a0*bar*baz');
+        expect(toMark('foo&nbsp; &nbsp;<em>bar</em>baz')).toBe('foo\u00a0 \u00a0*bar*baz');
+
+        // strike
+        expect(toMark('foo&nbsp; &nbsp;<s>bar</s>baz')).toBe('foo\u00a0 \u00a0~~bar~~baz');
+        expect(toMark('foo&nbsp; &nbsp;<del>bar</del>baz')).toBe('foo\u00a0 \u00a0~~bar~~baz');
+      });
+
+      it('if there are spaces between the text and the closing tag', () => {
+        // bold
+        expect(toMark('foo<b>bar&nbsp; &nbsp;</b>baz')).toBe('foo**bar**\u00a0 \u00a0baz');
+        expect(toMark('foo<strong>bar&nbsp; &nbsp;</strong>baz')).toBe('foo**bar**\u00a0 \u00a0baz');
+
+        // italic
+        expect(toMark('foo<i>bar&nbsp; &nbsp;</i>baz')).toBe('foo*bar*\u00a0 \u00a0baz');
+        expect(toMark('foo<em>bar&nbsp; &nbsp;</em>baz')).toBe('foo*bar*\u00a0 \u00a0baz');
+
+        // strike
+        expect(toMark('foo<s>bar&nbsp; &nbsp;</s>baz')).toBe('foo~~bar~~\u00a0 \u00a0baz');
+        expect(toMark('foo<del>bar&nbsp; &nbsp;</del>baz')).toBe('foo~~bar~~\u00a0 \u00a0baz');
+      });
+    });
   });
 
   describe('event', () => {
