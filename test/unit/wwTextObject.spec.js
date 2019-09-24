@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import WwTextObject from '../../src/js/wwTextObject';
-import WysiwygEditor from '../../src/js/wysiwygEditor';
-import EventManager from '../../src/js/eventManager';
+import WwTextObject from '@/wwTextObject';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('WwTextObject', () => {
   let wwe, sq, to;

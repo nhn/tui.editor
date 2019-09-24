@@ -2,7 +2,7 @@
  * @fileoverview test key mapper
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import KeyMapper from '../../src/js/keyMapper';
+import KeyMapper from '@/keyMapper';
 
 describe('KeyMapper', () => {
   let km;

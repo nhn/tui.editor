@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import HR from '../../../src/js/markdownCommands/hr';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import HR from '@/markdownCommands/hr';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('HR', () => {
   let cm, mde;

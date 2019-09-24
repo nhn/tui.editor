@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import Italic from '../../../src/js/markdownCommands/italic';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import Italic from '@/markdownCommands/italic';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('Italic', () => {
   let cm, doc, mde, $container;

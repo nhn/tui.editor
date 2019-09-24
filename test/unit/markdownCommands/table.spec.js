@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import Table from '../../../src/js/markdownCommands/table';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import Table from '@/markdownCommands/table';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('Table', () => {
   let cm, doc, mde;

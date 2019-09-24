@@ -2,9 +2,9 @@
  * @fileoverview test convertor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import Convertor from '../../src/js/convertor';
-import EventManager from '../../src/js/eventManager';
-import toMarkRenderer from '../../src/js/toMarkRenderer';
+import Convertor from '@/convertor';
+import EventManager from '@/eventManager';
+import toMarkRenderer from '@/toMarkRenderer';
 
 describe('Convertor', () => {
   let convertor, em;

@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import Tab from '../../../src/js/ui/tab';
+import Tab from '@/ui/tab';
 
 describe('Tab', () => {
   let tab;

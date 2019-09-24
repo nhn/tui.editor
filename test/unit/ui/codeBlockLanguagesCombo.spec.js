@@ -5,10 +5,10 @@
 /* eslint new-cap:0 */
 import $ from 'jquery';
 
-import CodeBlockLanguagesCombo from '../../../src/js/ui/codeBlockLanguagesCombo';
-import PopupCodeBlockLanguages from '../../../src/js/ui/popupCodeBlockLanguages';
-import EventManager from '../../../src/js/eventManager';
-import KeyMapper from '../../../src/js/keyMapper';
+import CodeBlockLanguagesCombo from '@/ui/codeBlockLanguagesCombo';
+import PopupCodeBlockLanguages from '@/ui/popupCodeBlockLanguages';
+import EventManager from '@/eventManager';
+import KeyMapper from '@/keyMapper';
 
 describe('CodeBlockLanguagesCombo', () => {
   let combo, $popupWrapper, eventManager, popupLanguages;

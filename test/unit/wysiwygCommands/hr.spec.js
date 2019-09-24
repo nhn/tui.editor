@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import HR from '../../../src/js/wysiwygCommands/hr';
-import WwTaskManager from '../../../src/js/wwTaskManager';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import HR from '@/wysiwygCommands/hr';
+import WwTaskManager from '@/wwTaskManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('HR', () => {
   let wwe, sq;

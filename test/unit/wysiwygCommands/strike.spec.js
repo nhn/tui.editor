@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import Strike from '../../../src/js/wysiwygCommands/strike';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import WwTableSelectionManager from '../../../src/js/wwTableSelectionManager';
-import EventManager from '../../../src/js/eventManager';
+import Strike from '@/wysiwygCommands/strike';
+import WysiwygEditor from '@/wysiwygEditor';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
+import EventManager from '@/eventManager';
 
 describe('Strike', () => {
   let wwe;

@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import MdTextObject from '../../src/js/mdTextObject';
-import MarkdownEditor from '../../src/js/markdownEditor';
-import EventManager from '../../src/js/eventManager';
+import MdTextObject from '@/mdTextObject';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('MdTextObject', () => {
   let cm, doc, mde, to;

@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../../../src/js/editor';
+import Editor from '@/editor';
 
 /**
  * make fake clipboard event

@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import RemoveTable from '../../../src/js/wysiwygCommands/tableRemove';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import RemoveTable from '@/wysiwygCommands/tableRemove';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('Table - Remove', () => {
   let wwe;

@@ -2,7 +2,7 @@
  * @fileoverview test code block manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import {CodeBlockManager} from '../../src/js/codeBlockManager';
+import {CodeBlockManager} from '@/codeBlockManager';
 
 describe('CodeBlockManager', () => {
   let codeBlockManager;

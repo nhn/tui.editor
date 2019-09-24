@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import Indent from '../../../src/js/markdownCommands/indent';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import Indent from '@/markdownCommands/indent';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('Indent', () => {
   let cm, mde, $container;

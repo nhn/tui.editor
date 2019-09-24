@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import EventManager from '../../src/js/eventManager';
-import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '@/eventManager';
+import WysiwygEditor from '@/wysiwygEditor';
 
 describe('WwClipboardManager', () => {
   let wwe, cbm;

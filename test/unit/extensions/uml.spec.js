@@ -2,8 +2,8 @@
  * @fileoverview test uml extension
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import TuiEditor from '../../../src/js/editor';
-import umlExtension from '../../../src/js/extensions/uml';
+import TuiEditor from '@/editor';
+import umlExtension from '@/extensions/uml';
 
 TuiEditor.defineExtension('uml', umlExtension);
 

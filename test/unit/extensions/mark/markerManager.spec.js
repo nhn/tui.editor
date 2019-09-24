@@ -2,8 +2,8 @@
  * @fileoverview test marker manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import MarkerManager from '../../../../src/js/extensions/mark/markerManager';
-import MarkerList from '../../../../src/js/extensions/mark/markerList';
+import MarkerManager from '@/extensions/mark/markerManager';
+import MarkerList from '@/extensions/mark/markerList';
 
 describe('MarkerManager', function() {
   var mm, ml;

@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import PopupAddImage from '../../../src/js/ui/popupAddImage';
-import EventManager from '../../../src/js/eventManager';
+import PopupAddImage from '@/ui/popupAddImage';
+import EventManager from '@/eventManager';
 
 describe('PopupAddImage', () => {
   let popup,

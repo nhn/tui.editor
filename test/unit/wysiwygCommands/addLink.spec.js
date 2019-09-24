@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import AddLink from '../../../src/js/wysiwygCommands/addLink';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import AddLink from '@/wysiwygCommands/addLink';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('AddLink', () => {
   let wwe;

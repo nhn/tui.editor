@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import Outdent from '../../../src/js/wysiwygCommands/outdent';
-import WwTaskManager from '../../../src/js/wwTaskManager';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import Outdent from '@/wysiwygCommands/outdent';
+import WwTaskManager from '@/wwTaskManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('Outdent', () => {
   let wwe, sq, container;

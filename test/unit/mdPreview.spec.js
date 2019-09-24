@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import MarkdownPreview from '../../src/js/mdPreview';
-import EventManager from '../../src/js/eventManager';
-import Convertor from '../../src/js/convertor';
+import MarkdownPreview from '@/mdPreview';
+import EventManager from '@/eventManager';
+import Convertor from '@/convertor';
 
 describe('Preview', () => {
   let eventManager,
