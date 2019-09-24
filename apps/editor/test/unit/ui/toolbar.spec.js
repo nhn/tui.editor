@@ -4,13 +4,13 @@
  */
 import $ from 'jquery';
 
-import Toolbar from '../../../src/js/ui/toolbar';
-import ToolbarItem from '../../../src/js/ui/toolbarItem';
-import ToolbarButton from '../../../src/js/ui/toolbarButton';
-import CommandManager from '../../../src/js/commandManager';
-import Command from '../../../src/js/command';
-import EventManager from '../../../src/js/eventManager';
-import Button from '../../../src/js/ui/button';
+import Toolbar from '@/ui/toolbar';
+import ToolbarItem from '@/ui/toolbarItem';
+import ToolbarButton from '@/ui/toolbarButton';
+import CommandManager from '@/commandManager';
+import Command from '@/command';
+import EventManager from '@/eventManager';
+import Button from '@/ui/button';
 
 describe('Toolbar', () => {
   let toolbar,

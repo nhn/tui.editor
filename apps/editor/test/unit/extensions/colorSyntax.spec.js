@@ -3,8 +3,8 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import util from 'tui-code-snippet';
-import TuiEditor from '../../../src/js/editor';
-import colorSyntaxExtension from '../../../src/js/extensions/colorSyntax';
+import TuiEditor from '@/editor';
+import colorSyntaxExtension from '@/extensions/colorSyntax';
 
 TuiEditor.defineExtension('colorSyntax', colorSyntaxExtension);
 

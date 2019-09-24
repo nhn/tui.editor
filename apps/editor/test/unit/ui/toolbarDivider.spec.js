@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
-import ToolbarDivider from '../../../src/js/ui/toolbarDivider';
+import ToolbarDivider from '@/ui/toolbarDivider';
 
 describe('ToolbarDivider', () => {
   describe('constructor', () => {

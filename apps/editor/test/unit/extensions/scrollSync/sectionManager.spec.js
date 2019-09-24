@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import TuiEditor from '../../../../src/js/editor';
-import SectionManager from '../../../../src/js/extensions/scrollSync/sectionManager';
+import TuiEditor from '@/editor';
+import SectionManager from '@/extensions/scrollSync/sectionManager';
 
 describe('sectionManager', () => {
   let ned, sectionManager, container;

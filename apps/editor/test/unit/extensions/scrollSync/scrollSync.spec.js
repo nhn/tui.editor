@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import TuiEditor from '../../../../src/js/editor';
-import '../../../../src/js/extensions/scrollSync/scrollSync';
-import ScrollManager from '../../../../src/js/extensions/scrollSync/scrollManager.js';
+import TuiEditor from '@/editor';
+import '@/extensions/scrollSync/scrollSync';
+import ScrollManager from '@/extensions/scrollSync/scrollManager.js';
 
 describe('scrollSync', () => {
   let ned, container;

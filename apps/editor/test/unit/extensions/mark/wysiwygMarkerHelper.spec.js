@@ -2,8 +2,8 @@
  * @fileoverview test wysiwyg marker helper
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import WysiwygMarkerHelper from '../../../../src/js/extensions/mark/wysiwygMarkerHelper';
-import SquireExt from '../../../../src/js/squireExt';
+import WysiwygMarkerHelper from '@/extensions/mark/wysiwygMarkerHelper';
+import SquireExt from '@/squireExt';
 
 describe('WysiwygMarkerHelper', function() {
   let sqe, wmh, container;

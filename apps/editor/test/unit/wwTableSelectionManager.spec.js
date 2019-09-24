@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import WysiwygEditor from '../../src/js/wysiwygEditor';
-import EventManager from '../../src/js/eventManager';
-import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
-import WwTableManager from '../../src/js/wwTableManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
+import WwTableManager from '@/wwTableManager';
 
 describe('WwTableSelectionManager', () => {
   let $container, em, wwe, mgr;

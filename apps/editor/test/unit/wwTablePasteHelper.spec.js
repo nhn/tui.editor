@@ -2,7 +2,7 @@
  * @fileoverview test wysiwyg table paste helper
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import WwTablePasteHelper from '../../src/js/wwTablePasteHelper';
+import WwTablePasteHelper from '@/wwTablePasteHelper';
 
 function createElement(tag, textContent) {
   const element = document.createElement(tag);

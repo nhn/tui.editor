@@ -4,11 +4,11 @@
  */
 import $ from 'jquery';
 
-import WysiwygEditor from '../../src/js/wysiwygEditor';
-import EventManager from '../../src/js/eventManager';
-import WwPasteContentHelper from '../../src/js/wwPasteContentHelper';
-import WwCodeBlockManager from '../../src/js/wwCodeBlockManager';
-import WwTableManager from '../../src/js/wwTableManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import WwPasteContentHelper from '@/wwPasteContentHelper';
+import WwCodeBlockManager from '@/wwCodeBlockManager';
+import WwTableManager from '@/wwTableManager';
 
 describe('WwPasteContentHelper', () => {
   let wwe, pch;

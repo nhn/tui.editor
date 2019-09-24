@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import htmlSanitizer from '../../src/js/htmlSanitizer';
+import htmlSanitizer from '@/htmlSanitizer';
 
 describe('htmlSanitizer', function() {
   describe('tags', function() {

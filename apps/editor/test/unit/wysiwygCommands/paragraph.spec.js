@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import Paragraph from '../../../src/js/wysiwygCommands/paragraph';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import Paragraph from '@/wysiwygCommands/paragraph';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('Paragraph', () => {
   let wwe;

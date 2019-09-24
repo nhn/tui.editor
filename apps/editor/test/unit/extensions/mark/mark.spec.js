@@ -4,8 +4,8 @@
  */
 import util from 'tui-code-snippet';
 
-import TuiEditor from '../../../../src/js/editor';
-import '../../../../src/js/extensions/mark/mark';
+import TuiEditor from '@/editor';
+import '@/extensions/mark/mark';
 
 describe('Mark', function() {
   let editor, container;

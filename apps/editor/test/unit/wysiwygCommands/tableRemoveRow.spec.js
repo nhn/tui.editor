@@ -4,11 +4,11 @@
  */
 import $ from 'jquery';
 
-import RemoveRow from '../../../src/js/wysiwygCommands/tableRemoveRow';
-import WwTableManager from '../../../src/js/wwTableManager';
-import WwTableSelectionManager from '../../../src/js/wwTableSelectionManager';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import RemoveRow from '@/wysiwygCommands/tableRemoveRow';
+import WwTableManager from '@/wwTableManager';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('Table - RemoveRow', () => {
   let wwe;

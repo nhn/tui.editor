@@ -131,7 +131,7 @@ const mdOutput = ['# HELLO\n\n',
   '<br>\n',
   'end'].join('');
 
-import Editor from '../../src/js/editor';
+import Editor from '@/editor';
 
 describe('converting', () => {
   let editor, el;

@@ -5,9 +5,9 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import WysiwygEditor from '../../src/js/wysiwygEditor';
-import EventManager from '../../src/js/eventManager';
-import WwCodeBlockManager from '../../src/js/wwCodeBlockManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import WwCodeBlockManager from '@/wwCodeBlockManager';
 
 describe('WwCodeBlockManager', () => {
   let $container, em, wwe, mgr;

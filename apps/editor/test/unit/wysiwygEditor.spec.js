@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import WysiwygEditor from '../../src/js/wysiwygEditor';
-import EventManager from '../../src/js/eventManager';
-import ListManager from '../../src/js/wwListManager';
-import {isMac} from '../../src/js/util';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import ListManager from '@/wwListManager';
+import {isMac} from '@/util';
 
 describe('WysiwygEditor', () => {
   let $container, em, wwe;

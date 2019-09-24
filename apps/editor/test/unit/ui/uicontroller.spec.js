@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import UIController from '../../../src/js/ui/uicontroller';
+import UIController from '@/ui/uicontroller';
 
 describe('UIController', () => {
   let uic;

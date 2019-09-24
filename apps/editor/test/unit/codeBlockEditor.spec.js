@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 /* eslint new-cap:0 */
-import CodeBlockEditor from '../../src/js/codeBlockEditor';
+import CodeBlockEditor from '@/codeBlockEditor';
 
 describe('CodeBlockEditor', () => {
   let codeBlockEditor, pre;

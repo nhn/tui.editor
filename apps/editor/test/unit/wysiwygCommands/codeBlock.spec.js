@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import CodeBlock from '../../../src/js/wysiwygCommands/codeBlock';
-import WwCodeBlockManager from '../../../src/js/wwCodeBlockManager';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import CodeBlock from '@/wysiwygCommands/codeBlock';
+import WwCodeBlockManager from '@/wwCodeBlockManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('CodeBlock', () => {
   let wwe, sq, $body;

@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import PopupDropdownToolbar from '../../../src/js/ui/popupDropdownToolbar';
-import EventManager from '../../../src/js/eventManager';
+import PopupDropdownToolbar from '@/ui/popupDropdownToolbar';
+import EventManager from '@/eventManager';
 
 describe('popupDropdownToolbar', () => {
   let popup,

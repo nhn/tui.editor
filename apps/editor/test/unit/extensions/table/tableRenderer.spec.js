@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import tableDataHandler from '../../../../src/js/extensions/table/tableDataHandler';
-import tableRenderer from '../../../../src/js/extensions/table/tableRenderer';
+import tableDataHandler from '@/extensions/table/tableDataHandler';
+import tableRenderer from '@/extensions/table/tableRenderer';
 
 describe('tableRenderer', () => {
   describe('createTableHtml()', () => {

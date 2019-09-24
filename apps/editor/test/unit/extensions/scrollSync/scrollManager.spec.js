@@ -2,9 +2,9 @@
  * @fileoverview test scroll manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import TuiEditor from '../../../../src/js/editor';
-import ScrollManager from '../../../../src/js/extensions/scrollSync/scrollManager';
-import SectionManager from '../../../../src/js/extensions/scrollSync/sectionManager';
+import TuiEditor from '@/editor';
+import ScrollManager from '@/extensions/scrollSync/scrollManager';
+import SectionManager from '@/extensions/scrollSync/sectionManager';
 
 describe('ScrollManager', () => {
   let ned, sectionManager, scrollManager, container;

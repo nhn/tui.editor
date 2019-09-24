@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import {_prependMergeSyntaxToContent} from '../../../../src/js/extensions/table/tableUnmergePreparer';
-import prepareTableUnmerge from '../../../../src/js/extensions/table/tableUnmergePreparer';
+import {_prependMergeSyntaxToContent} from '@/extensions/table/tableUnmergePreparer';
+import prepareTableUnmerge from '@/extensions/table/tableUnmergePreparer';
 
 describe('tableUnmergePreparer', () => {
   describe('_prependMergeSyntaxToContent()', () => {

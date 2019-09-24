@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import Layout from '../../src/js/layout';
-import EventManager from '../../src/js/eventManager';
+import Layout from '@/layout';
+import EventManager from '@/eventManager';
 
 describe('Layout', () => {
   let layout, em;

@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import AlignCol from '../../../src/js/wysiwygCommands/tableAlignCol';
-import WwTableSelectionManager from '../../../src/js/wwTableSelectionManager';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import AlignCol from '@/wysiwygCommands/tableAlignCol';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('Table - AlignCol', () => {
   let wwe;

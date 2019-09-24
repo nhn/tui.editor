@@ -5,8 +5,8 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import EventManager from '../../src/js/eventManager';
-import ImportManager from '../../src/js/importManager';
+import EventManager from '@/eventManager';
+import ImportManager from '@/importManager';
 
 function createMDTextClipboardEvent(texts) {
   const ev = {

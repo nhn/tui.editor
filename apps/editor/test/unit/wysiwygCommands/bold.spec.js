@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import Bold from '../../../src/js/wysiwygCommands/bold';
-import WwTableSelectionManager from '../../../src/js/wwTableSelectionManager';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import Bold from '@/wysiwygCommands/bold';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('Bold', () => {
   let wwe;

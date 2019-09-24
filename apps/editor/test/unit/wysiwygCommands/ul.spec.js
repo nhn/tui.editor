@@ -4,12 +4,12 @@
  */
 import $ from 'jquery';
 
-import UL from '../../../src/js/wysiwygCommands/ul';
-import WwTaskManager from '../../../src/js/wwTaskManager';
-import WwListManager from '../../../src/js/wwListManager';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
-import WwTableSelectionManager from '../../../src/js/wwTableSelectionManager';
+import UL from '@/wysiwygCommands/ul';
+import WwTaskManager from '@/wwTaskManager';
+import WwListManager from '@/wwListManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
 
 describe('UL', () => {
   let wwe, sq, container;

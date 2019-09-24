@@ -5,8 +5,8 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import {_hasMergedCell, _unmergeCells} from '../../../../src/js/extensions/table/unmergeCell';
-import tableDataHandler from '../../../../src/js/extensions/table/tableDataHandler';
+import {_hasMergedCell, _unmergeCells} from '@/extensions/table/unmergeCell';
+import tableDataHandler from '@/extensions/table/tableDataHandler';
 
 describe('unmergeCell', () => {
   const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
