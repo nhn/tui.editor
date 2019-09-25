@@ -29,7 +29,7 @@ const SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabe
     'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
 
 const ATTR_VALUE_BLACK_LIST_RX = {
-  'href': new RegExp('^(javascript:).*', 'g')
+  'href': /^(javascript:).*/g
 };
 
 /**
@@ -59,7 +59,7 @@ function htmlSanitizer(html, needHtmlText) {
  * @param {jQuery} $html jQuery instance
  */
 function removeUnnecessaryTags($html) {
-  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title').remove();
+  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title, embed, object').remove();
 }
 
 /**
@@ -93,16 +93,17 @@ function leaveOnlyWhitelistAttribute($html) {
  * @param {jQuery} $html jQuery instance
  */
 function removeInvalidAttributeValues($html) {
-  $html.find('*').each((index, node) => {
-    const attrs = node.attributes;
-
-    util.forEachArray(util.toArray(attrs), attr => {
-      const valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr.name];
-      if (valueBlackListRX && attr.value.match(valueBlackListRX) && attrs.getNamedItem(attr.name)) {
-        attrs.removeNamedItem(attr.name);
-      }
-    });
-  });
+  for (const attr in ATTR_VALUE_BLACK_LIST_RX) {
+    if (ATTR_VALUE_BLACK_LIST_RX.hasOwnProperty(attr)) {
+      $html.find(`[${attr}]`).each((index, node) => {
+        const attrs = node.attributes;
+        const valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr];
+        if (valueBlackListRX && attrs.getNamedItem(attr) && attrs.getNamedItem(attr).value.match(valueBlackListRX)) {
+          attrs.removeNamedItem(attr);
+        }
+      });
+    }
+  }
 }
 
 /**
