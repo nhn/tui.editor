@@ -485,16 +485,16 @@ describe('Convertor', () => {
     describe('should move spaces out of the tag when there are spaces between the text and the tag', () => {
       it('if there are spaces between the opening tag and the text', () => {
         // bold
-        expect(toMark('foo&nbsp; &nbsp;<b>bar</b>baz')).toBe('foo\u00a0 \u00a0**bar**baz');
-        expect(toMark('foo&nbsp; &nbsp;<strong>bar</strong>baz')).toBe('foo\u00a0 \u00a0**bar**baz');
+        expect(toMark('foo<b>&nbsp; &nbsp;bar</b>baz')).toBe('foo\u00a0 \u00a0**bar**baz');
+        expect(toMark('foo<strong>&nbsp; &nbsp;bar</strong>baz')).toBe('foo\u00a0 \u00a0**bar**baz');
 
         // italic
-        expect(toMark('foo&nbsp; &nbsp;<i>bar</i>baz')).toBe('foo\u00a0 \u00a0*bar*baz');
-        expect(toMark('foo&nbsp; &nbsp;<em>bar</em>baz')).toBe('foo\u00a0 \u00a0*bar*baz');
+        expect(toMark('foo<i>&nbsp; &nbsp;bar</i>baz')).toBe('foo\u00a0 \u00a0*bar*baz');
+        expect(toMark('foo<em>&nbsp; &nbsp;bar</em>baz')).toBe('foo\u00a0 \u00a0*bar*baz');
 
         // strike
-        expect(toMark('foo&nbsp; &nbsp;<s>bar</s>baz')).toBe('foo\u00a0 \u00a0~~bar~~baz');
-        expect(toMark('foo&nbsp; &nbsp;<del>bar</del>baz')).toBe('foo\u00a0 \u00a0~~bar~~baz');
+        expect(toMark('foo<s>&nbsp; &nbsp;bar</s>baz')).toBe('foo\u00a0 \u00a0~~bar~~baz');
+        expect(toMark('foo<del>&nbsp; &nbsp;bar</del>baz')).toBe('foo\u00a0 \u00a0~~bar~~baz');
       });
 
       it('if there are spaces between the text and the closing tag', () => {

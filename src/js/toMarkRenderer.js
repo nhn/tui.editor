@@ -1,8 +1,6 @@
 import toMark from 'to-mark';
 import domUtils from './domUtils';
 
-const FINE_BEFORE_AND_AFTER_SPACES_RX = /^(\s*)(\S|\S.*\S)(\s*)$/;
-
 /**
  * Check if given node is valid delimiter run.
  * According to common-mark spec, following examples are not valid delimiter runs.
@@ -22,7 +20,8 @@ function isValidDelimiterRun(node) {
 }
 
 function convertEmphasis(node, subContent, delimiter) {
-  const [, beforeSpaces, trimmedContent, afterSpaces] = subContent.match(FINE_BEFORE_AND_AFTER_SPACES_RX);
+  const FIND_BEFORE_AND_AFTER_SPACES_RX = /^(\s*)(\S|\S.*\S)(\s*)$/;
+  const [, beforeSpaces, trimmedContent, afterSpaces] = subContent.match(FIND_BEFORE_AND_AFTER_SPACES_RX);
 
   let convertedContent;
 
