@@ -8,8 +8,10 @@ import htmlSanitizer from '../../src/js/htmlSanitizer';
 
 describe('htmlSanitizer', function() {
   describe('tags', function() {
-    it('escape script tags to text', function() {
-      expect(htmlSanitizer('<script>alert("test");</script>', true)).toEqual('');
+    it('Remove unnecessary tags', function() {
+      expect(htmlSanitizer('<script>alert("test");</script>', true)).toBe('');
+      expect(htmlSanitizer('<embed>child alive</embed>', true)).toBe('child alive');
+      expect(htmlSanitizer('<object>child die</object>', true)).toBe('');
     });
   });
 
@@ -43,11 +45,11 @@ describe('htmlSanitizer', function() {
     });
 
     it('Remove attributes with invalid value', function() {
-      expect(htmlSanitizer('<a href="javascript:alert();">xss</a>', true)).toEqual('<a>xss</a>');
-      expect(htmlSanitizer('<a href="#">benign</a>', true)).toEqual('<a href="#">benign</a>');
-      expect(htmlSanitizer('<a href="http://example.com">http</a>', true)).toEqual('<a href="http://example.com">http</a>');
-      expect(htmlSanitizer('<a href="https://example.com">https</a>', true)).toEqual('<a href="https://example.com">https</a>');
-      expect(htmlSanitizer('<a href="ftp://example.com">ftp</a>', true)).toEqual('<a href="ftp://example.com">ftp</a>');
+      expect(htmlSanitizer('<a href="javascript:alert();">xss</a>', true)).toBe('<a>xss</a>');
+      expect(htmlSanitizer('<a href="#">benign</a>', true)).toBe('<a href="#">benign</a>');
+      expect(htmlSanitizer('<a href="http://example.com">http</a>', true)).toBe('<a href="http://example.com">http</a>');
+      expect(htmlSanitizer('<a href="https://example.com">https</a>', true)).toBe('<a href="https://example.com">https</a>');
+      expect(htmlSanitizer('<a href="ftp://example.com">ftp</a>', true)).toBe('<a href="ftp://example.com">ftp</a>');
     });
   });
 });
