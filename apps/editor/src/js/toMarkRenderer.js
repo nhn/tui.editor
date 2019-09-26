@@ -20,13 +20,20 @@ function isValidDelimiterRun(node) {
 }
 
 function convertEmphasis(node, subContent, delimiter) {
+  const FIND_BEFORE_AND_AFTER_SPACES_RX = /^(\s*)(\S|\S.*\S)(\s*)$/;
+  const [, beforeSpaces, trimmedContent, afterSpaces] = subContent.match(FIND_BEFORE_AND_AFTER_SPACES_RX);
+
+  let convertedContent;
+
   if (isValidDelimiterRun(node)) {
-    return `${delimiter}${subContent}${delimiter}`;
+    convertedContent = `${delimiter}${trimmedContent}${delimiter}`;
+  } else {
+    const tagName = node.nodeName.toLowerCase();
+
+    convertedContent = `<${tagName}>${trimmedContent}</${tagName}>`;
   }
 
-  const tagName = node.nodeName.toLowerCase();
-
-  return `<${tagName}>${subContent}</${tagName}>`;
+  return `${beforeSpaces}${convertedContent}${afterSpaces}`;
 }
 
 export default toMark.Renderer.factory(toMark.gfmRenderer, {
@@ -43,5 +50,12 @@ export default toMark.Renderer.factory(toMark.gfmRenderer, {
     }
 
     return convertEmphasis(node, subContent, '**');
+  },
+  'DEL, S': function(node, subContent) {
+    if (this.isEmptyText(subContent)) {
+      return '';
+    }
+
+    return convertEmphasis(node, subContent, '~~');
   }
 });
