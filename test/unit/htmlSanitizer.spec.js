@@ -46,6 +46,7 @@ describe('htmlSanitizer', function() {
 
     it('Remove attributes with invalid value', function() {
       expect(htmlSanitizer('<a href="javascript:alert();">xss</a>', true)).toBe('<a>xss</a>');
+      expect(htmlSanitizer('<a href="JaVaScRiPt:alert();">xss</a>', true)).toBe('<a>xss</a>');
       expect(htmlSanitizer('<a href="#">benign</a>', true)).toBe('<a href="#">benign</a>');
       expect(htmlSanitizer('<a href="http://example.com">http</a>', true)).toBe('<a href="http://example.com">http</a>');
       expect(htmlSanitizer('<a href="https://example.com">https</a>', true)).toBe('<a href="https://example.com">https</a>');
