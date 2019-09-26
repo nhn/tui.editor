@@ -98,7 +98,8 @@ function removeInvalidAttributeValues($html) {
       $html.find(`[${attr}]`).each((index, node) => {
         const attrs = node.attributes;
         const valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr];
-        if (valueBlackListRX && attrs.getNamedItem(attr) && attrs.getNamedItem(attr).value.match(valueBlackListRX)) {
+        const attrItem = attrs.getNamedItem(attr);
+        if (valueBlackListRX && attrItem && attrItem.value.toLowerCase().match(valueBlackListRX)) {
           attrs.removeNamedItem(attr);
         }
       });
