@@ -28,6 +28,10 @@ const SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabe
     'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' +
     'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
 
+const ATTR_VALUE_BLACK_LIST_RX = {
+  'href': /^(javascript:).*/g
+};
+
 /**
  * htmlSanitizer
  * @param {string|Node} html html or Node
@@ -44,6 +48,7 @@ function htmlSanitizer(html, needHtmlText) {
 
   removeUnnecessaryTags($html);
   leaveOnlyWhitelistAttribute($html);
+  removeInvalidAttributeValues($html);
 
   return finalizeHtml($html, needHtmlText);
 }
@@ -54,7 +59,7 @@ function htmlSanitizer(html, needHtmlText) {
  * @param {jQuery} $html jQuery instance
  */
 function removeUnnecessaryTags($html) {
-  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title').remove();
+  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title, embed, object').remove();
 }
 
 /**
@@ -80,6 +85,26 @@ function leaveOnlyWhitelistAttribute($html) {
       }
     });
   });
+}
+
+/**
+ * Remove invalid attribute values
+ * @private
+ * @param {jQuery} $html jQuery instance
+ */
+function removeInvalidAttributeValues($html) {
+  for (const attr in ATTR_VALUE_BLACK_LIST_RX) {
+    if (ATTR_VALUE_BLACK_LIST_RX.hasOwnProperty(attr)) {
+      $html.find(`[${attr}]`).each((index, node) => {
+        const attrs = node.attributes;
+        const valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr];
+        const attrItem = attrs.getNamedItem(attr);
+        if (valueBlackListRX && attrItem && attrItem.value.toLowerCase().match(valueBlackListRX)) {
+          attrs.removeNamedItem(attr);
+        }
+      });
+    }
+  }
 }
 
 /**
