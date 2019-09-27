@@ -378,6 +378,56 @@ describe('Convertor', () => {
 
         expect(toMark(html)).toBe(markdown);
       });
+
+      it('between list elements of the same type.', () => {
+        const html = [
+          '<ul><li>foo<ul><li>bar<ul><li>baz</li></ul></li></ul></li></ul>',
+          '<br>',
+          '<ul><li>foo</li><li>bar</li></ul>',
+          '<br>',
+          '<ul><li class="task-list-item">foo</li><li class="task-list-item">bar</li></ul>'
+        ].join('');
+        const markdown = [
+          '* foo',
+          '    * bar',
+          '        * baz',
+          '',
+          '<br>',
+          '* foo',
+          '* bar',
+          '',
+          '<br>',
+          '* [ ] foo',
+          '* [ ] bar'
+        ].join('\n');
+
+        expect(toMark(html)).toBe(markdown);
+      });
+
+      it('between list elements of different types.', () => {
+        const html = [
+          '<ul><li>foo<ul><li>bar<ul><li>baz</li></ul></li></ul></li></ul>',
+          '<br>',
+          '<ol><li>foo</li><li>bar</li></ol>',
+          '<br>',
+          '<ul><li class="task-list-item">foo</li><li class="task-list-item">bar</li></ul>'
+        ].join('');
+        const markdown = [
+          '* foo',
+          '    * bar',
+          '        * baz',
+          '',
+          '<br>',
+          '1. foo',
+          '2. bar',
+          '',
+          '<br>',
+          '* [ ] foo',
+          '* [ ] bar'
+        ].join('\n');
+
+        expect(toMark(html)).toBe(markdown);
+      });
     });
 
     describe('should not convert <b>, <strong> to **', () => {

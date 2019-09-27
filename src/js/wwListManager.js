@@ -58,7 +58,6 @@ class WwListManager {
     });
 
     this.eventManager.listen('wysiwygProcessHTMLText', html => {
-      html = this._insertBlankToBetweenSameList(html);
       html = this._convertFromArbitraryNestingList(html);
 
       return html;
@@ -66,9 +65,6 @@ class WwListManager {
 
     this.eventManager.listen('convertorBeforeHtmlToMarkdownConverted',
       html => this._insertDataToMarkPassForListInTable(html));
-
-    this.eventManager.listen('convertorAfterHtmlToMarkdownConverted',
-      markdown => markdown.replace(/:BLANK_LINE:\n/g, ''));
   }
 
   _initKeyHandler() {
@@ -174,10 +170,6 @@ class WwListManager {
     $branchRoot.prepend($list.children().unwrap());
 
     $firstLi.remove();
-  }
-
-  _insertBlankToBetweenSameList(html) {
-    return html.replace(/<\/(ul|ol)>(<br \/>|<br>){0,}<\1>/g, '</$1>:BLANK_LINE:<$1>');
   }
 
   /**

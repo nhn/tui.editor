@@ -173,59 +173,6 @@ describe('WwListManager', () => {
     });
   });
 
-  describe('Control list blank line', () => {
-    it('ul - br - ul', () => {
-      const html = [
-        '<ul>',
-        '<li><div>1</div></li>',
-        '</ul>',
-        '<br />',
-        '<ul>',
-        '<li><div>2</div></li>',
-        '</ul>'
-      ].join('');
-
-      const result = mgr._insertBlankToBetweenSameList(html);
-
-      expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
-      expect(result.indexOf('<br />')).toBe(-1);
-    });
-
-    it('ul - br - br - ul', () => {
-      const html = [
-        '<ul>',
-        '<li><div>1</div></li>',
-        '</ul>',
-        '<br />',
-        '<br />',
-        '<ul>',
-        '<li><div>2</div></li>',
-        '</ul>'
-      ].join('');
-
-      const result = mgr._insertBlankToBetweenSameList(html);
-
-      expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
-      expect(result.indexOf('<br />')).toBe(-1);
-    });
-
-    it('ul - ul', () => {
-      const html = [
-        '<ul>',
-        '<li><div>1</div></li>',
-        '</ul>',
-        '<ul>',
-        '<li><div>2</div></li>',
-        '</ul>'
-      ].join('');
-
-      const result = mgr._insertBlankToBetweenSameList(html);
-
-      expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
-      expect(result.indexOf('<br />')).toBe(-1);
-    });
-  });
-
   describe('_unwrap', () => {
     it('should unwrap itself and preserve the children', () => {
       const arbitraryNestingList = $(`
