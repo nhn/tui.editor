@@ -46,19 +46,6 @@ describe('Strike', () => {
     expect(wwe.getValue()).toEqual('<s>line1</s><br />line2<br />');
   });
 
-  it('dont add Strike in Achor tag', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
-
-    wwe.setValue('<a href="#">line1</a>');
-
-    range.selectNodeContents(wwe.get$Body().find('a')[0]);
-    wwe.getEditor().setSelection(range);
-
-    Strike.exec(wwe);
-
-    expect(wwe.getValue()).toEqual('<a href="#">line1</a><br />');
-  });
-
   it('dont add Strike in PRE tag', () => {
     const range = wwe.getEditor().getSelection().cloneRange();
 
