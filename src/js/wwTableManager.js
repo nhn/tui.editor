@@ -1210,33 +1210,6 @@ class WwTableManager {
   }
 
   /**
-   * Get sibling textNode by given direction
-   * @param {HTMLElement} currentTextNode Current text node
-   * @param {boolean} isNext Boolean value whether direction equals 'next'
-   * @returns {boolean|null}
-   * @private
-   */
-  _getSiblingTextNodeByDirection(currentTextNode, isNext) {
-    const isPreviousLineExist = currentTextNode.previousSibling
-            && currentTextNode.previousSibling.nodeName === 'BR'
-            && currentTextNode.previousSibling.previousSibling
-            && currentTextNode.previousSibling.previousSibling.nodeType === 3;
-    const isNextLineExist = currentTextNode.nextSibling
-            && currentTextNode.nextSibling.nodeName === 'BR'
-            && currentTextNode.nextSibling.nextSibling
-            && currentTextNode.nextSibling.nextSibling.nodeType === 3;
-    let target;
-
-    if (isNext && isNextLineExist) {
-      target = currentTextNode.nextSibling.nextSibling;
-    } else if (!isNext && isPreviousLineExist) {
-      target = currentTextNode.previousSibling.previousSibling;
-    }
-
-    return target;
-  }
-
-  /**
    * Change selection to sibling cell
    * @param {HTMLElement} currentCell current TD or TH
    * @param {Range} range Range object
@@ -1245,24 +1218,11 @@ class WwTableManager {
    * @private
    */
   _changeSelectionToTargetCell(currentCell, range, direction, scale) {
-    const {startContainer} = range;
     const isNext = direction === 'next';
     const isRow = scale === 'row';
-    let target, textOffset;
+    let target;
 
     if (isRow) {
-      if (domUtils.isTextNode(startContainer)) {
-        target = this._getSiblingTextNodeByDirection(startContainer, isNext);
-        if (target) {
-          textOffset = target.length < range.startOffset ? target.length : range.startOffset;
-
-          range.setStart(target, textOffset);
-          range.collapse(true);
-
-          return;
-        }
-      }
-
       target = domUtils.getSiblingRowCellByDirection(currentCell, direction, false);
     } else {
       target = domUtils.getTableCellByDirection(currentCell, direction);
@@ -1272,7 +1232,11 @@ class WwTableManager {
     }
 
     if (target) {
-      range.setStart(target, 0);
+      if (isRow && !isNext) {
+        this._moveToCursorEndOfCell(target, range);
+      } else {
+        range.setStart(target, 0);
+      }
       range.collapse(true);
     } else {
       target = $(currentCell).parents('table').get(0);
@@ -1286,6 +1250,31 @@ class WwTableManager {
 
       range.collapse(true);
     }
+  }
+
+  _moveToCursorEndOfCell(target, range) {
+    let lastListItem;
+
+    if (target && domUtils.isListNode(target.lastChild)) {
+      lastListItem = domUtils.findLastNodeBy(target, (node) => domUtils.isListNode(node));
+    }
+
+    let lastNode = domUtils.findLastNodeBy(lastListItem || target,
+      (node) => !domUtils.isTextNode(node));
+
+    let textOffset;
+
+    if (lastNode) {
+      textOffset = lastNode.length;
+    } else if (lastListItem) {
+      lastNode = lastListItem;
+      textOffset = 0;
+    } else { // if target value is <br>
+      lastNode = target;
+      textOffset = target.childNodes.length - 1;
+    }
+
+    range.setStart(lastNode, textOffset);
   }
 
   /**
@@ -1302,22 +1291,70 @@ class WwTableManager {
     const currentCell = $(range.startContainer).closest('td,th').get(0);
     let isNeedNext;
 
-    if (range.collapsed) {
-      if (this.wwe.isInTable(range) && currentCell && !sq.hasFormat('LI')) {
-        if ((direction === 'previous' || interval === 'row')
-                    && !util.isUndefined(ev)
-        ) {
-          ev.preventDefault();
-        }
-
-        this._changeSelectionToTargetCell(currentCell, range, direction, interval);
-        sq.setSelection(range);
-
-        isNeedNext = false;
+    if (range.collapsed && this.wwe.isInTable(range) && currentCell) {
+      if (interval === 'row' && !this._isMovedCursorToRow(range, direction)) {
+        return isNeedNext;
       }
+
+      if ((direction === 'previous' || interval === 'row') && !util.isUndefined(ev)) {
+        ev.preventDefault();
+      }
+
+      this._changeSelectionToTargetCell(currentCell, range, direction, interval);
+      sq.setSelection(range);
+
+      isNeedNext = false;
     }
 
     return isNeedNext;
+  }
+
+  _isMovedCursorToRow(range, direction) {
+    const {startContainer} = range;
+
+    if (this._isInList(startContainer)) {
+      return this._isMovedCursorFromListToRow(startContainer, direction);
+    }
+
+    return this._isMovedCursorFromTextToRow(range, direction);
+  }
+
+  _isMovedCursorFromListToRow(startContainer, direction) {
+    const directionKey = `${direction}Sibling`;
+
+    let target = this._findListItem(startContainer);
+
+    while (target && !domUtils.isCellNode(target.parentNode) &&
+      target[directionKey] === null &&
+      target.parentNode[directionKey] === null) {
+      target = target.parentNode;
+    }
+
+    return domUtils.isCellNode(target.parentNode) &&
+      domUtils.isListNode(target) &&
+      target[directionKey] === null;
+  }
+
+  _isMovedCursorFromTextToRow(range, direction) {
+    const directionKey = `${direction}Sibling`;
+    const {startContainer, startOffset} = range;
+
+    let target = domUtils.isCellNode(startContainer) ?
+      startContainer.childNodes[startOffset] : startContainer;
+
+    while (target && !domUtils.isTextNode(target.parentNode) &&
+      !domUtils.isCellNode(target.parentNode)) {
+      target = target.parentNode;
+    }
+
+    let sibling = target;
+
+    while (sibling && sibling[directionKey] !== null &&
+      sibling[directionKey].nodeName !== 'BR') {
+      sibling = target[directionKey];
+    }
+
+    return sibling[directionKey] === null;
   }
 
   /**

@@ -559,8 +559,9 @@ describe('WwTableManager', () => {
       });
     });
   });
+
   describe('_moveCursorTo', () => {
-    it('should move to previous cell', () => {
+    it('should move to previous cell.', () => {
       const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
@@ -572,21 +573,20 @@ describe('WwTableManager', () => {
                 '</table>';
 
       const $body = wwe.get$Body().html(html);
-
       const range = wwe.getEditor().getSelection();
+
       range.setStart($body.find('th')[1], 0);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
       mgr._moveCursorTo('previous', 'cell', {
-        preventDefault: () => {
-        }
+        preventDefault: () => {}
       });
 
-      expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('1');
+      expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('1');
     });
 
-    it('should move to next cell', () => {
+    it('should move to next cell.', () => {
       const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
@@ -598,20 +598,20 @@ describe('WwTableManager', () => {
                 '</table>';
 
       const $body = wwe.get$Body().html(html);
-
       const range = wwe.getEditor().getSelection();
+
       range.setStart($body.find('th')[0], 0);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
       mgr._moveCursorTo('next', 'cell', {
-        preventDefault: () => {
-        }
+        preventDefault: () => {}
       });
 
-      expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('2');
+      expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('2');
     });
-    it('should move to next row first cell when next row not exist', () => {
+
+    it('should move to next row first cell when next row not exist.', () => {
       const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
@@ -623,148 +623,343 @@ describe('WwTableManager', () => {
                 '</table>';
 
       const $body = wwe.get$Body().html(html);
-
       const range = wwe.getEditor().getSelection();
+
       range.setStart($body.find('td')[1], 0);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
       mgr._moveCursorTo('next', 'cell', {
-        preventDefault: () => {
-        }
+        preventDefault: () => {}
       });
 
-      expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('5');
+      expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('5');
     });
 
-    it('should move to next row', () => {
-      const html = '<table>' +
+    describe('should move to the last row of the previous row ' +
+      'when the cursor is in the first line of multi line text.', () => {
+      let html, $body, range;
+
+      beforeEach(() => {
+        html = '<table>' +
                 '<thead>' +
-                '<tr><th>1</th><th>2</th></tr>' +
+                '<tr><th>foo<br>bar</th></tr>' +
                 '</thead>' +
                 '<tbody>' +
-                '<tr><td>3</td><td>4</td></tr>' +
-                '<tr><td>5</td><td>6</td></tr>' +
+                '<tr><td>baz<br>qux</td></tr>' +
+                '<tr><td>quxx<br>corge</td></tr>' +
                 '</tbody>' +
                 '</table>';
-
-      const $body = wwe.get$Body().html(html);
-
-      const range = wwe.getEditor().getSelection();
-      range.setStart($body.find('th')[0], 0);
-      range.collapse(true);
-      wwe.getEditor().setSelection(range);
-
-      mgr._moveCursorTo('next', 'row', {
-        preventDefault: () => {
-        }
+        $body = wwe.get$Body().html(html);
+        range = wwe.getEditor().getSelection();
       });
 
-      expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('3');
-    });
+      it(`from 'td' to 'td'.`, () => {
+        range.setStart($body.find('td:eq(1)')[0].firstChild, 2); // qu|xx
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
 
-    it('should move to previous row', () => {
-      const html = '<table>' +
-                '<thead>' +
-                '<tr><th>1</th><th>2</th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td>3</td><td>4</td></tr>' +
-                '<tr><td>5</td><td>6</td></tr>' +
-                '</tbody>' +
-                '</table>';
+        mgr._moveCursorTo('previous', 'row', {
+          preventDefault: () => {}
+        });
 
-      const $body = wwe.get$Body().html(html);
-
-      const range = wwe.getEditor().getSelection();
-      range.setStart($body.find('td')[3], 0);
-      range.collapse(true);
-      wwe.getEditor().setSelection(range);
-
-      mgr._moveCursorTo('previous', 'row', {
-        preventDefault: () => {
-        }
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('qux');
       });
 
-      expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('4');
+      it(`from 'td' to 'th'.`, () => {
+        range.setStart($body.find('td:eq(0)')[0].firstChild, 0); // |baz
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('previous', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('bar');
+      });
     });
 
-    it('should move to previous row on textNode', () => {
-      const html = '<table>' +
-                '<thead>' +
-                '<tr><th>1</th><th>2</th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td>3</td><td>4</td></tr>' +
-                '<tr><td>5</td><td>6<br>7<br>8<br>9<br></td></tr>' +
-                '</tbody>' +
-                '</table>';
+    describe('should move to the end of the previous row ' +
+      'when the cursor is in the first item of list ', () => {
+      let html, $body, range;
 
-      const $body = wwe.get$Body().html(html);
-
-      const range = wwe.getEditor().getSelection();
-      range.setStart($body.find('td')[3].firstChild, 0);
-      range.collapse(true);
-      wwe.getEditor().setSelection(range);
-
-      mgr._moveCursorTo('previous', 'row', {
-        preventDefault: () => {
-        }
+      beforeEach(() => {
+        html = '<table>' +
+              '<thead>' +
+              '<tr><th><ul><li>foo</li><li>bar</li></ul></th></tr>' +
+              '</thead>' +
+              '<tbody>' +
+              '<tr><td><ul><li>baz</li></ul></td></tr>' +
+              '<tr><td>qux</td></tr>' +
+              '<tr><td><ol><li>quxx</li><li><br></li></ol></td></tr>' +
+              '<tr><td><ul><li>courge</li></ul></td></tr>' +
+              '</tbody>' +
+              '</table>';
+        $body = wwe.get$Body().html(html);
+        range = wwe.getEditor().getSelection();
       });
 
-      expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('4');
-    });
-    it('should move to previous row on textNode', () => {
-      const html = '<table>' +
-                '<thead>' +
-                '<tr><th>1</th><th>2</th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td>3</td><td>4</td></tr>' +
-                '<tr><td>5</td><td>6<br>7<br>8<br>9<br></td></tr>' +
-                '</tbody>' +
-                '</table>';
+      it('from the list to the text.', () => {
+        range.setStart($body.find('td:eq(2)').find('li:eq(0)')[0].firstChild, 2); // qu|xx
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
 
-      const $body = wwe.get$Body().html(html);
+        mgr._moveCursorTo('previous', 'row', {
+          preventDefault: () => {}
+        });
 
-      const range = wwe.getEditor().getSelection();
-      range.setStart($body.find('td')[3].childNodes[2], 0);
-      range.collapse(true);
-      wwe.getEditor().setSelection(range);
-
-      mgr._moveCursorTo('previous', 'row', {
-        preventDefault: () => {
-        }
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('qux');
       });
 
-      expect(wwe.getEditor().getSelection().startContainer.nodeValue).toEqual('6');
-    });
-    it('should move to next row on textNode', () => {
-      const html = '<table>' +
-                '<thead>' +
-                '<tr><th>1</th><th>2</th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td>3</td><td>4</td></tr>' +
-                '<tr><td>5</td><td>6<br>7<br>8<br>9<br></td></tr>' +
-                '</tbody>' +
-                '</table>';
+      it('from the list to the list that the last item have value.', () => {
+        range.setStart($body.find('td:eq(0)').find('li:eq(0)')[0].firstChild, 2); // |baz
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
 
-      const $body = wwe.get$Body().html(html);
+        mgr._moveCursorTo('previous', 'row', {
+          preventDefault: () => {}
+        });
 
-      const range = wwe.getEditor().getSelection();
-      range.setStart($body.find('td')[3].childNodes[2], 0);
-      range.collapse(true);
-      wwe.getEditor().setSelection(range);
-
-      mgr._moveCursorTo('next', 'row', {
-        preventDefault: () => {
-        }
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('bar');
       });
 
-      expect(wwe.getEditor().getSelection().startContainer.nodeValue).toEqual('8');
+      it('from the list to the list that the last item is empty.', () => {
+        range.setStart($body.find('td:eq(3)').find('li:eq(0)')[0].firstChild, 2); // cou|rge
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('previous', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('');
+      });
     });
-    it('should move to previous element of table when cursor in first th', () => {
+
+    describe('should move to the end of the previous row ' +
+      'when the cursor is in the first of blank lines ', () => {
+      let html, $body, range;
+
+      beforeEach(() => {
+        html = '<table>' +
+              '<thead>' +
+              '<tr><th><ul><li>foo</li><li>bar</li></ul></th></tr>' +
+              '</thead>' +
+              '<tbody>' +
+              '<tr><td><br><br></td></tr>' +
+              '<tr><td>baz<br>qux</td></tr>' +
+              '<tr><td><br><br></td></tr>' +
+              '<tr><td><ol><li>quxx</li><li><br></li></ol></td></tr>' +
+              '<tr><td><br></td></tr>' +
+              '</tbody>' +
+              '</table>';
+        $body = wwe.get$Body().html(html);
+        range = wwe.getEditor().getSelection();
+      });
+
+      it(`from 'br' to text.`, () => {
+        range.setStart($body.find('td:eq(2)')[0].firstChild, 0);
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('previous', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('qux');
+      });
+
+      it(`from 'br' to the list that the last item have value.`, () => {
+        range.setStart($body.find('td:eq(0)')[0].firstChild, 0);
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('previous', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('bar');
+      });
+
+      it('from the list to the list that the last item is empty.', () => {
+        range.setStart($body.find('td:eq(4)')[0].firstChild, 0);
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('previous', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('');
+      });
+    });
+
+    describe('should move to the start of the next row ' +
+      'when the cursor is in the last line of text ', () => {
+      let html, $body, range;
+
+      beforeEach(() => {
+        html = '<table>' +
+              '<thead>' +
+              '<tr><th>foo<br>bar</th></tr>' +
+              '</thead>' +
+              '<tbody>' +
+              '<tr><td>baz<br>qux</td></tr>' +
+              '<tr><td>quxx<br>corge</td></tr>' +
+              '</tbody>' +
+              '</table>';
+        $body = wwe.get$Body().html(html);
+        range = wwe.getEditor().getSelection();
+      });
+
+      it(`from 'td' to 'td'.`, () => {
+        range.setStart($body.find('td:eq(0)')[0].lastChild, 2); // qu|x
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('next', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('quxxcorge');
+        expect(wwe.getEditor().getSelection().startOffset).toBe(0);
+      });
+
+      it(`from 'th' to 'td'.`, () => {
+        range.setStart($body.find('th:eq(0)')[0].lastChild, 0); // |baz
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('next', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('bazqux');
+        expect(wwe.getEditor().getSelection().startOffset).toBe(0);
+      });
+    });
+
+    describe('should move to the start of the previous row ' +
+      'when the cursor is in the last item of list ', () => {
+      let html, $body, range;
+
+      beforeEach(() => {
+        html = '<table>' +
+              '<thead>' +
+              '<tr><th><ul><li>foo</li><li>bar</li></ul></th></tr>' +
+              '</thead>' +
+              '<tbody>' +
+              '<tr><td><ul><li>baz</li><li>qux</li></ul></td></tr>' +
+              '<tr><td><ol><li><br></li><li>quxx</li></ol></td></tr>' +
+              '<tr><td>corge</td></tr>' +
+              '</tbody>' +
+              '</table>';
+        $body = wwe.get$Body().html(html);
+        range = wwe.getEditor().getSelection();
+      });
+
+      it('from the list to the text.', () => {
+        range.setStart($body.find('td:eq(1)').find('li').last()[0].firstChild, 2); // qu|xx
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('next', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('corge');
+        expect(wwe.getEditor().getSelection().startOffset).toBe(0);
+      });
+
+      it('from the list to the list that the first item have value.', () => {
+        range.setStart($body.find('th:eq(0)').find('li').last()[0].firstChild, 2); // ba|r
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('next', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('bazqux');
+        expect(wwe.getEditor().getSelection().startOffset).toBe(0);
+      });
+
+      it('from the list to the list that the first item is empty.', () => {
+        range.setStart($body.find('td:eq(0)').find('li').last()[0].firstChild, 2); // qu|x
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('next', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('quxx');
+        expect(wwe.getEditor().getSelection().startOffset).toBe(0);
+      });
+    });
+
+    describe('should move to the first of the next row ' +
+      'when the cursor is in the last of blank lines ', () => {
+      let html, $body, range;
+
+      beforeEach(() => {
+        html = '<table>' +
+              '<thead>' +
+              '<tr><th><br><br></th></tr>' +
+              '</thead>' +
+              '<tbody>' +
+              '<tr><td><ul><li>foo</li><li>bar</li></ul></td></tr>' +
+              '<tr><td><br><br></td></tr>' +
+              '<tr><td>baz<br>qux</td></tr>' +
+              '<tr><td><br></td></tr>' +
+              '<tr><td><ol><li><br></li><li>qux</li></ol></td></tr>' +
+              '</tbody>' +
+              '</table>';
+        $body = wwe.get$Body().html(html);
+        range = wwe.getEditor().getSelection();
+      });
+
+      it(`from 'br' to text.`, () => {
+        range.setStart($body.find('td:eq(1)')[0].lastChild, 0);
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('next', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('bazqux');
+        expect(wwe.getEditor().getSelection().startOffset).toBe(0);
+      });
+
+      it(`from 'br' to the list that the first item have value.`, () => {
+        range.setStart($body.find('th:eq(0)')[0].lastChild, 0);
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('next', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('foobar');
+        expect(wwe.getEditor().getSelection().startOffset).toBe(0);
+      });
+
+      it(`from 'br' to the list that the first item is empty.`, () => {
+        range.setStart($body.find('td:eq(3)')[0].lastChild, 0);
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        mgr._moveCursorTo('next', 'row', {
+          preventDefault: () => {}
+        });
+
+        expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('qux');
+        expect(wwe.getEditor().getSelection().startOffset).toBe(0);
+      });
+    });
+
+    it('should move to previous element of table when cursor in first th.', () => {
       const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
@@ -783,13 +978,13 @@ describe('WwTableManager', () => {
       wwe.getEditor().setSelection(range);
 
       mgr._moveCursorTo('previous', 'row', {
-        preventDefault: () => {
-        }
+        preventDefault: () => {}
       });
 
       expect(wwe.getEditor().getSelection().startContainer).toEqual(wwe.get$Body()[0]);
     });
-    it('should move to previous element of table when cursor in first th', () => {
+
+    it('should move to previous element of table when cursor in first th.', () => {
       const html = '<div>12</div><table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
@@ -801,20 +996,20 @@ describe('WwTableManager', () => {
                 '</table>';
 
       const $body = wwe.get$Body().html(html);
-
       const range = wwe.getEditor().getSelection();
+
       range.setStart($body.find('th')[0].childNodes[0], 0);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
       mgr._moveCursorTo('previous', 'row', {
-        preventDefault: () => {
-        }
+        preventDefault: () => {}
       });
 
-      expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('12');
+      expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('12');
     });
-    it('should move to next element of table when cursor in last td', () => {
+
+    it('should move to next element of table when cursor in last td.', () => {
       const html = '<div>12</div><table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
@@ -826,84 +1021,17 @@ describe('WwTableManager', () => {
                 '</table><div>34</div>';
 
       const $body = wwe.get$Body().html(html);
-
       const range = wwe.getEditor().getSelection();
-      range.setStart($body.find('td')[3].childNodes[6], 0);
+
+      range.setStart($body.find('td')[3].childNodes[7], 0);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
       mgr._moveCursorTo('next', 'row', {
-        preventDefault: () => {
-        }
+        preventDefault: () => {}
       });
 
-      expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('34');
-    });
-  });
-  describe('_getSiblingTextNodeByDirection', () => {
-    it('should get next sibling text node', () => {
-      const html = '<table>' +
-                '<thead>' +
-                '<tr><th>1</th><th>2</th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td>3<br>2<br>1</td><td>4</td></tr>' +
-                '<tr><td>5</td><td>6</td></tr>' +
-                '</tbody>' +
-                '</table>';
-      const $body = wwe.get$Body().html(html);
-
-      const target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].firstChild, true);
-
-      expect(target.nodeValue).toEqual('2');
-    });
-    it('should return undefined when previous sibling text node not exists', () => {
-      const html = '<table>' +
-                '<thead>' +
-                '<tr><th>1</th><th>2</th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td>3<br>2<br>1</td><td>4</td></tr>' +
-                '<tr><td>5</td><td>6</td></tr>' +
-                '</tbody>' +
-                '</table>';
-      const $body = wwe.get$Body().html(html);
-
-      const target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].firstChild, false);
-
-      expect(target).toBeUndefined();
-    });
-    it('should get previous sibling text node', () => {
-      const html = '<table>' +
-                '<thead>' +
-                '<tr><th>1</th><th>2</th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td>3<br>2<br>1</td><td>4</td></tr>' +
-                '<tr><td>5</td><td>6</td></tr>' +
-                '</tbody>' +
-                '</table>';
-      const $body = wwe.get$Body().html(html);
-
-      const target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].childNodes[2], false);
-
-      expect(target.nodeValue).toEqual('3');
-    });
-    it('should return undefined when next sibling text node not exists', () => {
-      const html = '<table>' +
-                '<thead>' +
-                '<tr><th>1</th><th>2</th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td>3<br>2<br>1</td><td>4</td></tr>' +
-                '<tr><td>5</td><td>6</td></tr>' +
-                '</tbody>' +
-                '</table>';
-      const $body = wwe.get$Body().html(html);
-
-      const target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].childNodes[4], true);
-
-      expect(target).toBeUndefined();
+      expect(wwe.getEditor().getSelection().startContainer.textContent).toBe('34');
     });
   });
 

@@ -823,6 +823,36 @@ const getAllTextNode = function(root) {
   return result;
 };
 
+/**
+ * Check whether the node is 'TD' or 'TH'
+ * @param {HTMLElement} node - the target node
+ * @returns {boolean} - whether the node is 'TD' or 'TH'
+ * @ignore
+ */
+const isCellNode = function(node) {
+  if (!node) {
+    return false;
+  }
+
+  return node.nodeName === 'TD' || node.nodeName === 'TH';
+};
+
+/**
+ * Find the last node on the target node by the condition
+ * @param {HTMLElement} node - the target node
+ * @returns {function} - the condition to find the node
+ * @ignore
+ */
+const findLastNodeBy = function(node, condition) {
+  let lastNode = node && node.lastChild;
+
+  while (lastNode && condition(lastNode)) {
+    lastNode = lastNode.lastChild;
+  }
+
+  return lastNode;
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -861,5 +891,7 @@ export default {
   changeTagOrder,
   mergeSameNodes,
   optimizeRange,
-  getAllTextNode
+  getAllTextNode,
+  isCellNode,
+  findLastNodeBy
 };
