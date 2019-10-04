@@ -1252,29 +1252,21 @@ class WwTableManager {
     }
   }
 
-  _moveToCursorEndOfCell(target, range) {
+  _moveToCursorEndOfCell(cell, range) {
     let lastListItem;
 
-    if (target && domUtils.isListNode(target.lastChild)) {
-      lastListItem = domUtils.findLastNodeBy(target, (node) => domUtils.isListNode(node));
+    if (domUtils.isListNode(cell.lastChild)) {
+      lastListItem = domUtils.getLastNodeBy(cell.lastChild,
+        (lastNode) => lastNode.nodeName !== 'LI' || lastNode.nextSibling !== null);
     }
 
-    let lastNode = domUtils.findLastNodeBy(lastListItem || target,
+    const lastText = domUtils.getLastNodeBy(lastListItem || cell,
       (node) => !domUtils.isTextNode(node));
 
-    let textOffset;
+    const lastNode = lastText || lastListItem || cell;
+    const offset = lastText ? lastText.length : lastNode.childNodes.length - 1;
 
-    if (lastNode) {
-      textOffset = lastNode.length;
-    } else if (lastListItem) {
-      lastNode = lastListItem;
-      textOffset = 0;
-    } else { // if target value is <br>
-      lastNode = target;
-      textOffset = target.childNodes.length - 1;
-    }
-
-    range.setStart(lastNode, textOffset);
+    range.setStart(lastNode, offset);
   }
 
   /**
@@ -1321,40 +1313,34 @@ class WwTableManager {
 
   _isMovedCursorFromListToRow(startContainer, direction) {
     const directionKey = `${direction}Sibling`;
+    const listItem = this._findListItem(startContainer);
 
-    let target = this._findListItem(startContainer);
+    const parentOfListItem = domUtils.getParentNodeBy(listItem, (parentNode, currentNode) => {
+      const firstOrLastItem = currentNode[directionKey] === null &&
+        parentNode[directionKey] === null;
 
-    while (target && !domUtils.isCellNode(target.parentNode) &&
-      target[directionKey] === null &&
-      target.parentNode[directionKey] === null) {
-      target = target.parentNode;
-    }
+      return !domUtils.isCellNode(parentNode) && firstOrLastItem;
+    });
 
-    return domUtils.isCellNode(target.parentNode) &&
-      domUtils.isListNode(target) &&
-      target[directionKey] === null;
+    const firstOrLastList = domUtils.isListNode(parentOfListItem) &&
+      parentOfListItem[directionKey] === null;
+
+    return domUtils.isCellNode(parentOfListItem.parentNode) && firstOrLastList;
   }
 
   _isMovedCursorFromTextToRow(range, direction) {
-    const directionKey = `${direction}Sibling`;
     const {startContainer, startOffset} = range;
-
-    let target = domUtils.isCellNode(startContainer) ?
+    const text = domUtils.isCellNode(startContainer) ?
       startContainer.childNodes[startOffset] : startContainer;
 
-    while (target && !domUtils.isTextNode(target.parentNode) &&
-      !domUtils.isCellNode(target.parentNode)) {
-      target = target.parentNode;
-    }
+    const parentOfStyledText = domUtils.getParentNodeBy(text,
+      (parentNode) => !domUtils.isCellNode(parentNode) &&
+        !domUtils.isTextNode(parentNode));
 
-    let sibling = target;
+    const foundSiblingNode = domUtils.getSiblingNodeBy(parentOfStyledText, direction,
+      (siblingNode) => siblingNode !== null && siblingNode.nodeName !== 'BR');
 
-    while (sibling && sibling[directionKey] !== null &&
-      sibling[directionKey].nodeName !== 'BR') {
-      sibling = target[directionKey];
-    }
-
-    return sibling[directionKey] === null;
+    return foundSiblingNode && foundSiblingNode[`${direction}Sibling`] === null;
   }
 
   /**
