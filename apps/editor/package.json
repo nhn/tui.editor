@@ -1,6 +1,6 @@
 {
   "name": "tui-editor",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "description": "GFM  Markdown Wysiwyg Editor - Productive and Extensible",
   "keywords": [
     "toast",
@@ -22,6 +22,22 @@
     "dist",
     "index.d.ts"
   ],
+  "scripts": {
+    "lint": "eslint .",
+    "test": "karma start",
+    "test:ne": "cross-env SERVER=nhnent karma start",
+    "test:sl": "cross-env SERVER=saucelabs karma start",
+    "test:lh": "cross-env SERVER=localhost karma start",
+    "test:types": "tsc --project test/types",
+    "e2e": "testcafe chrome 'test/e2e/**/*.spec.js'",
+    "e2e:sl": "testcafe \"saucelabs:Chrome@65.0:Windows 10,saucelabs:Firefox@59.0:Windows 10,saucelabs:Safari@10.0:OS X 10.11,saucelabs:Internet Explorer@11.103:Windows 10,saucelabs:MicrosoftEdge@16.16299:Windows 10\" 'test/e2e/**/*.spec.js'",
+    "serve": "webpack-dev-server --progress --inline",
+    "build": "cross-env webpack && webpack -p && node tsBannerGenerator.js",
+    "note": "tuie --tag=$(git describe --tags)",
+    "tslint": "tslint index.d.ts",
+    "doc:serve": "tuidoc --serv",
+    "doc": "tuidoc"
+  },
   "main": "dist/tui-editor-Editor.js",
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -66,22 +82,6 @@
     "webpack-bundle-analyzer": "^2.9.1",
     "webpack-dev-server": "^2.10.0"
   },
-  "scripts": {
-    "lint": "eslint .",
-    "test": "karma start",
-    "test:ne": "cross-env SERVER=nhnent karma start",
-    "test:sl": "cross-env SERVER=saucelabs karma start",
-    "test:lh": "cross-env SERVER=localhost karma start",
-    "test:types": "tsc --project test/types",
-    "e2e": "testcafe chrome 'test/e2e/**/*.spec.js'",
-    "e2e:sl": "testcafe \"saucelabs:Chrome@65.0:Windows 10,saucelabs:Firefox@59.0:Windows 10,saucelabs:Safari@10.0:OS X 10.11,saucelabs:Internet Explorer@11.103:Windows 10,saucelabs:MicrosoftEdge@16.16299:Windows 10\" 'test/e2e/**/*.spec.js'",
-    "serve": "webpack-dev-server --progress --inline",
-    "build": "cross-env webpack && webpack -p && node tsBannerGenerator.js",
-    "note": "tuie --tag=$(git describe --tags)",
-    "tslint": "tslint index.d.ts",
-    "doc:serve": "tuidoc --serv",
-    "doc": "tuidoc"
-  },
   "dependencies": {
     "@types/codemirror": "0.0.71",
     "@types/jquery": "^3.3.29",
@@ -93,7 +93,7 @@
     "plantuml-encoder": "^1.2.5",
     "resize-observer-polyfill": "^1.5.0",
     "squire-rte": "github:seonim-ryu/Squire#fb6cd9b1ac66ca471ded83637523c4fbf7072f86",
-    "to-mark": "^1.1.7",
+    "to-mark": "^1.1.8",
     "tui-chart": "^3.7.0",
     "tui-code-snippet": "^1.5.0",
     "tui-color-picker": "^2.2.1"

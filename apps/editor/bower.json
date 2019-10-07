@@ -49,7 +49,7 @@
     "highlightjs": "^9.12.0",
     "jquery": "^3.3.1",
     "markdown-it": "^9.0.0",
-    "to-mark": "^1.1.7",
+    "to-mark": "^1.1.8",
     "tui-color-picker": "^2.2.1",
     "squire-rte": "seonim-ryu/Squire#fb6cd9b1ac66ca471ded83637523c4fbf7072f86",
     "plantuml-encoder": "^1.2.5",
