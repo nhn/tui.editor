@@ -46,19 +46,6 @@ describe('Bold', () => {
     expect(wwe.getValue()).toEqual('<b>line1</b><br />line2<br />');
   });
 
-  it('dont add bold in Achor tag', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
-
-    wwe.setValue('<a href="#">line1</a>');
-
-    range.selectNodeContents(wwe.get$Body().find('a')[0]);
-    wwe.getEditor().setSelection(range);
-
-    Bold.exec(wwe);
-
-    expect(wwe.getValue()).toEqual('<a href="#">line1</a><br />');
-  });
-
   it('if there have bold already remove format', () => {
     const range = wwe.getEditor().getSelection().cloneRange();
 

@@ -46,7 +46,7 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
 function styleStrike(sq) {
   if (sq.hasFormat('S')) {
     sq.changeFormat(null, {tag: 'S'});
-  } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+  } else if (!sq.hasFormat('PRE')) {
     if (sq.hasFormat('code')) {
       sq.changeFormat(null, {tag: 'code'});
     }
