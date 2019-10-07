@@ -46,19 +46,6 @@ describe('Italic', () => {
     expect(wwe.getValue()).toEqual('<i>line1</i><br />line2<br />');
   });
 
-  it('dont add italic in Achor tag', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
-
-    wwe.setValue('<a href="#">line1</a>');
-
-    range.selectNodeContents(wwe.get$Body().find('a')[0]);
-    wwe.getEditor().setSelection(range);
-
-    Italic.exec(wwe);
-
-    expect(wwe.getValue()).toEqual('<a href="#">line1</a><br />');
-  });
-
   it('if there have italic already remove format', () => {
     const range = wwe.getEditor().getSelection().cloneRange();
 
