@@ -14,7 +14,9 @@ var FIND_LEAD_SPACE_RX = /^\u0020/,
     //find characters that need escape
     FIND_CHAR_TO_ESCAPE_RX = /[~>()*{}\[\]_`+-.!#|]/g,
     // find characters to be escaped in links or images
-    FIND_CHAR_TO_ESCAPE_IN_LINK_RX = /[\[\]\(\)<>]/g;
+    FIND_CHAR_TO_ESCAPE_IN_LINK_RX = /[\[\]]/g,
+    // find markdown image syntax
+    FIND_MARKDOWN_IMAGE_SYNTAX_RX = /!\[.*\]\(.*\)/g;
 
 var TEXT_NODE = 3;
 
@@ -329,8 +331,20 @@ Renderer.prototype.escapeText = function(text) {
  * @returns {string} - processed text
  */
 Renderer.prototype.escapeTextForLink = function(text) {
-    return text.replace(FIND_CHAR_TO_ESCAPE_IN_LINK_RX, function(matched) {
-        return '\\' + matched;
+    var imageSyntaxRanges = [];
+    var result = FIND_MARKDOWN_IMAGE_SYNTAX_RX.exec(text);
+
+    while (result) {
+        imageSyntaxRanges.push([result.index, result.index + result[0].length]);
+        result = FIND_MARKDOWN_IMAGE_SYNTAX_RX.exec(text);
+    }
+
+    return text.replace(FIND_CHAR_TO_ESCAPE_IN_LINK_RX, function(matched, offset) {
+        var isDelimiter = imageSyntaxRanges.some(function(range) {
+            return offset > range[0] && offset < range[1];
+        });
+
+        return isDelimiter ? matched : '\\' + matched;
     });
 };
 

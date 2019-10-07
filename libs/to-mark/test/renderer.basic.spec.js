@@ -98,7 +98,7 @@ describe('basicRenderer', function() {
         });
 
         it('link which has characters for markdown link syntax', function() {
-            expect(getMarkdownText('<a href="#head"></a>', 'char []()<> to escape')).toEqual('[char \\[\\]\\(\\)\\<\\> to escape](#head)');
+            expect(getMarkdownText('<a href="#head"></a>', 'char [] to escape')).toEqual('[char \\[\\] to escape](#head)');
         });
 
         it('image', function() {
@@ -114,7 +114,7 @@ describe('basicRenderer', function() {
         });
 
         it('image which has characters for markdown image syntax', function() {
-            expect(getMarkdownText('<img src="#head" alt="char []()<> to escape"></a>')).toEqual('![char \\[\\]\\(\\)\\<\\> to escape](#head)');
+            expect(getMarkdownText('<img src="#head" alt="char [] to escape"></a>')).toEqual('![char \\[\\] to escape](#head)');
         });
 
         it('strong, b', function() {

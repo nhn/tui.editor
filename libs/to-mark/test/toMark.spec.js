@@ -27,6 +27,27 @@ describe('toMark', function() {
         expect(toMark('<b>|go ro Work|</b>')).toEqual('**\\|go ro Work\\|**');
     });
 
+    it('should escape [, ] inside link syntax', function() {
+        expect(toMark('<a href="url">text[</a>')).toEqual('[text\\[](url)');
+        expect(toMark('<a href="url">text]</a>')).toEqual('[text\\]](url)');
+        expect(toMark('<a href="url">[text]</a>')).toEqual('[\\[text\\]](url)');
+    });
+
+    it('should not escape image syntax inside link syntax', function() {
+        expect(toMark(
+            '<a href="url"><img src="src" alt="alt" /></a>')).toEqual(
+            '[![alt](src)](url)'
+        );
+        expect(toMark(
+            '<a href="url"><img src="src" alt="alt" /><img src="src2" alt="alt2" /></a>')).toEqual(
+            '[![alt](src)![alt2](src2)](url)'
+        );
+        expect(toMark(
+            '<a href="url"><img src="src" alt="alt" />Text<img src="src2" alt="alt2" /></a>')).toEqual(
+            '[![alt](src)Text![alt2](src2)](url)'
+        );
+    });
+
     it('markdown text\'s EOL FOL newline characters should be removed', function() {
         expect(toMark('<h1>Hello World</h1>')).toEqual('# Hello World');
         expect(toMark('<h1>Hello World</h1><br />')).toEqual('# Hello World');
