@@ -823,6 +823,67 @@ const getAllTextNode = function(root) {
   return result;
 };
 
+/**
+ * Check whether the node is 'TD' or 'TH'
+ * @param {HTMLElement} node - the target node
+ * @returns {boolean} - whether the node is 'TD' or 'TH'
+ * @ignore
+ */
+const isCellNode = function(node) {
+  if (!node) {
+    return false;
+  }
+
+  return node.nodeName === 'TD' || node.nodeName === 'TH';
+};
+
+/**
+ * Get the last node on the target node by the condition
+ * @param {HTMLElement} node - the target node
+ * @returns {function} - the condition to find the node
+ * @ignore
+ */
+const getLastNodeBy = function(node, condition) {
+  let lastNode = node && node.lastChild;
+
+  while (lastNode && condition(lastNode)) {
+    lastNode = lastNode.lastChild;
+  }
+
+  return lastNode;
+};
+
+/**
+ * Get the parent node on the target node by the condition
+ * @param {HTMLElement} node - the target node
+ * @returns {function} - the condition to find the node
+ * @ignore
+ */
+const getParentNodeBy = function(node, condition) {
+  while (node && condition(node.parentNode, node)) {
+    node = node.parentNode;
+  }
+
+  return node;
+};
+
+/**
+ * Get the sibling node on the target node by the condition
+ * @param {HTMLElement} node - the target node
+ * @param {string} direction - the direction to find node ('previous', 'next')
+ * @returns {function} - the condition to find the node
+ * @ignore
+ */
+const getSiblingNodeBy = function(node, direction, condition) {
+  const directionKey = `${direction}Sibling`;
+
+  while (node && condition(node[directionKey], node)) {
+    node = node[directionKey];
+  }
+
+  return node;
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -861,5 +922,9 @@ export default {
   changeTagOrder,
   mergeSameNodes,
   optimizeRange,
-  getAllTextNode
+  getAllTextNode,
+  isCellNode,
+  getLastNodeBy,
+  getParentNodeBy,
+  getSiblingNodeBy
 };
