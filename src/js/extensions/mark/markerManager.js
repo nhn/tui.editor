@@ -12,13 +12,10 @@ const CHANGE_NOTHING = 0,
 
 /**
  * Class MarkerManager
+ * @param {MarkerList} markerList - MarkerList object
+ * @ignore
  */
 class MarkerManager {
-  /**
-   * Creates an instance of MarkerManager.
-   * @param {MarkerList} markerList - MarkerList object
-   * @memberof MarkerManager
-   */
   constructor(markerList) {
     this._dmp = new DiffMatchPatch();
     this.markerList = markerList;
@@ -26,7 +23,6 @@ class MarkerManager {
   }
 
   /**
-   * resetContent
    * Reset content
    * @param {string} content reset base content
    */
@@ -35,7 +31,6 @@ class MarkerManager {
   }
 
   /**
-   * uppdateMarkersByContent
    * Get updated markers by updated content
    * @param {string} newContent updated content
    * @returns {object} updated markers
@@ -55,7 +50,6 @@ class MarkerManager {
   }
 
   /**
-   * _makeMarkerDiffs
    * Make diffs of marker by updated content
    * @param {string} newContent updated content
    * @returns {object} marker diffs
@@ -89,7 +83,6 @@ class MarkerManager {
   }
 
   /**
-   * _forEachChanges
    * Iterate each change of updated content
    * @param {string} newContent updated content
    * @param {function} iteratee iteratee
@@ -128,7 +121,6 @@ class MarkerManager {
   }
 
   /**
-   * _calculateStartDiff
    * Calculate start diff
    * @param {number} start change start offset
    * @param {number} end change end offset
@@ -154,7 +146,6 @@ class MarkerManager {
   }
 
   /**
-   * _calculateEndDiff
    * Calculate end diff
    * @param {number} start change start offset
    * @param {number} end change end offset
@@ -180,7 +171,6 @@ class MarkerManager {
   }
 
   /**
-   * _getUpdateMarkersWithDiffs
    * Get updated markers with diffs
    * @param {object} markerDiffs marker diff object that contains diff info of specific marker
    * @returns {Array.<object>} updated markers

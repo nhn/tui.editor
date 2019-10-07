@@ -6,15 +6,15 @@ import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
 import util from 'tui-code-snippet';
 
-import Editor from '../../src/js/editor';
-import Convertor from '../../src/js/convertor';
-import {CodeBlockManager} from '../../src/js/codeBlockManager';
-import {I18n} from '../../src/js/i18n';
-import Button from '../../src/js/ui/button';
-import WwCodeBlockManager from '../../src/js/wwCodeBlockManager';
-import WwTableManager from '../../src/js/wwTableManager';
-import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
-import CommandManager from '../../src/js/commandManager';
+import Editor from '@/editor';
+import Convertor from '@/convertor';
+import {CodeBlockManager} from '@/codeBlockManager';
+import {I18n} from '@/i18n';
+import Button from '@/ui/button';
+import WwCodeBlockManager from '@/wwCodeBlockManager';
+import WwTableManager from '@/wwTableManager';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
+import CommandManager from '@/commandManager';
 
 describe('Editor', () => {
   let editor, container;

@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import domUtils from '../../src/js/domUtils.js';
+import domUtils from '@/domUtils.js';
 
 function createElement(tag, textContent) {
   const element = document.createElement(tag);

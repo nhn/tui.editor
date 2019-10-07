@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import Blockquote from '../../../src/js/wysiwygCommands/blockquote';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import Blockquote from '@/wysiwygCommands/blockquote';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('Blockquote', () => {
   let wwe;

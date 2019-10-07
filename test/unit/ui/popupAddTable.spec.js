@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import PopupAddTable from '../../../src/js/ui/popupAddTable';
-import EventManager from '../../../src/js/eventManager';
+import PopupAddTable from '@/ui/popupAddTable';
+import EventManager from '@/eventManager';
 
 describe('PopupAddTable', () => {
   let popup,

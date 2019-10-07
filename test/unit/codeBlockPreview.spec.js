@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import CodeBlockPreview from '../../src/js/codeBlockPreview';
-import EventManager from '../../src/js/eventManager';
-import Convertor from '../../src/js/convertor';
-import CodeBlockEditor from '../../src/js/codeBlockEditor';
+import CodeBlockPreview from '@/codeBlockPreview';
+import EventManager from '@/eventManager';
+import Convertor from '@/convertor';
+import CodeBlockEditor from '@/codeBlockEditor';
 
 describe('Preview', () => {
   let eventManager,

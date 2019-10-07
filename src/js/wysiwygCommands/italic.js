@@ -46,7 +46,7 @@ const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
 function styleItalic(sq) {
   if (sq.hasFormat('i') || sq.hasFormat('em')) {
     sq.changeFormat(null, {tag: 'i'});
-  } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+  } else if (!sq.hasFormat('PRE')) {
     if (sq.hasFormat('code')) {
       sq.changeFormat(null, {tag: 'code'});
     }

@@ -2,7 +2,7 @@
  * @fileoverview test toolbar item
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import ToolbarItem from '../../../src/js/ui/toolbarItem';
+import ToolbarItem from '@/ui/toolbarItem';
 
 describe('ToolbarItem', () => {
   let toolbarItem;

@@ -16,20 +16,16 @@ const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
  * Class WwTableManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
  */
 class WwTableManager {
-  /**
-   * Creates an instance of WwTableManager.
-   * @param {WysiwygEditor} wwe - WysiwygEditor instance
-   * @memberof WwTableManager
-   */
   constructor(wwe) {
     this.wwe = wwe;
     this.eventManager = wwe.eventManager;
 
     /**
      * Name property
-     * @memberof WwTableManager#
      * @type {string}
      */
     this.name = 'table';
@@ -38,9 +34,7 @@ class WwTableManager {
   }
 
   /**
-   * _init
    * Initialize
-   * @memberof WwTableManager
    * @private
    */
   _init() {
@@ -50,9 +44,7 @@ class WwTableManager {
   }
 
   /**
-   * _initEvent
    * Initialize event
-   * @memberof WwTableManager
    * @private
    */
   _initEvent() {
@@ -147,9 +139,7 @@ class WwTableManager {
   }
 
   /**
-   * _initKeyHandler
    * Initialize key event handler
-   * @memberof WwTableManager
    * @private
    */
   _initKeyHandler() {
@@ -357,11 +347,9 @@ class WwTableManager {
   }
 
   /**
-   * _isBeforeTable
    * Check whether passed range is right before table or not
    * @param {Range} range range
    * @returns {boolean} result
-   * @memberof WwTableManager
    * @private
    */
   _isBeforeTable(range) {
@@ -369,11 +357,9 @@ class WwTableManager {
   }
 
   /**
-   * _isAfterTable
    * Check whether passed range is right after table or not
    * @param {Range} range range
    * @returns {boolean} result
-   * @memberof WwTableManager
    * @private
    */
   _isAfterTable(range) {
@@ -468,11 +454,9 @@ class WwTableManager {
   }
 
   /**
-   * _tableHandlerOnBackspace
    * Backspace handler in table
    * @param {Range} range range
    * @param {Event} event event
-   * @memberof WwTableManager
    * @private
    */
   _tableHandlerOnBackspace(range, event) {
@@ -501,6 +485,7 @@ class WwTableManager {
    * Return whether delete br in the br
    * @param {Range} range Range object
    * @returns {boolean}
+   * @private
    */
   _isDeletingBR(range) {
     const currentNode = this._getCurrentNodeInCell(range);
@@ -586,11 +571,9 @@ class WwTableManager {
   }
 
   /**
-   * _tableHandlerOnDelete
    * Delete handler in table
    * @param {Range} range range
    * @param {Event} event event
-   * @memberof WwTableManager
    * @private
    */
   _tableHandlerOnDelete(range, event) {
@@ -614,10 +597,8 @@ class WwTableManager {
   }
 
   /**
-   * _appendBrIfTdOrThNotHaveAsLastChild
    * Append br if td or th doesn't have br as last child
    * @param {Range} range range
-   * @memberof WwTableManager
    * @private
    */
   _appendBrIfTdOrThNotHaveAsLastChild(range) {
@@ -642,10 +623,8 @@ class WwTableManager {
   }
 
   /**
-   * _unwrapBlockInTable
    * Unwrap default block tag in table
    * For Squire default action making abnormal behavior, remove default blocks in Table after setValue() called
-   * @memberof WwTableManager
    * @private
    */
   _unwrapBlockInTable() {
@@ -680,11 +659,9 @@ class WwTableManager {
   }
 
   /**
-   * _removeTable
    * Remove table
    * @param {Range} range range
    * @param {Node} table table
-   * @memberof WwTableManager
    * @private
    */
   _removeTable(range, table) {
@@ -697,10 +674,8 @@ class WwTableManager {
   }
 
   /**
-   * _recordUndoStateIfNeed
    * record undo state if need
    * @param {Range} range range
-   * @memberof WwTableManager
    * @private
    */
   _recordUndoStateIfNeed(range) {
@@ -713,10 +688,8 @@ class WwTableManager {
   }
 
   /**
-   * _recordUndoStateAndResetCellNode
    * record undo state and reset last cell node
    * @param {Range} range range
-   * @memberof WwTableManager
    * @private
    */
   _recordUndoStateAndResetCellNode(range) {
@@ -1121,7 +1094,6 @@ class WwTableManager {
 
   /**
    * Reset _lastCellNode to null
-   * @memberof WwTableManager
    */
   resetLastCellNode() {
     this._lastCellNode = null;
@@ -1130,7 +1102,6 @@ class WwTableManager {
   /**
    * Set _lastCellNode to given node
    * @param {HTMLElement} node Table cell
-   * @memberof WwTableManager
    */
   setLastCellNode(node) {
     this._lastCellNode = node;
@@ -1239,33 +1210,6 @@ class WwTableManager {
   }
 
   /**
-   * Get sibling textNode by given direction
-   * @param {HTMLElement} currentTextNode Current text node
-   * @param {boolean} isNext Boolean value whether direction equals 'next'
-   * @returns {boolean|null}
-   * @private
-   */
-  _getSiblingTextNodeByDirection(currentTextNode, isNext) {
-    const isPreviousLineExist = currentTextNode.previousSibling
-            && currentTextNode.previousSibling.nodeName === 'BR'
-            && currentTextNode.previousSibling.previousSibling
-            && currentTextNode.previousSibling.previousSibling.nodeType === 3;
-    const isNextLineExist = currentTextNode.nextSibling
-            && currentTextNode.nextSibling.nodeName === 'BR'
-            && currentTextNode.nextSibling.nextSibling
-            && currentTextNode.nextSibling.nextSibling.nodeType === 3;
-    let target;
-
-    if (isNext && isNextLineExist) {
-      target = currentTextNode.nextSibling.nextSibling;
-    } else if (!isNext && isPreviousLineExist) {
-      target = currentTextNode.previousSibling.previousSibling;
-    }
-
-    return target;
-  }
-
-  /**
    * Change selection to sibling cell
    * @param {HTMLElement} currentCell current TD or TH
    * @param {Range} range Range object
@@ -1274,24 +1218,11 @@ class WwTableManager {
    * @private
    */
   _changeSelectionToTargetCell(currentCell, range, direction, scale) {
-    const {startContainer} = range;
     const isNext = direction === 'next';
     const isRow = scale === 'row';
-    let target, textOffset;
+    let target;
 
     if (isRow) {
-      if (domUtils.isTextNode(startContainer)) {
-        target = this._getSiblingTextNodeByDirection(startContainer, isNext);
-        if (target) {
-          textOffset = target.length < range.startOffset ? target.length : range.startOffset;
-
-          range.setStart(target, textOffset);
-          range.collapse(true);
-
-          return;
-        }
-      }
-
       target = domUtils.getSiblingRowCellByDirection(currentCell, direction, false);
     } else {
       target = domUtils.getTableCellByDirection(currentCell, direction);
@@ -1301,7 +1232,11 @@ class WwTableManager {
     }
 
     if (target) {
-      range.setStart(target, 0);
+      if (isRow && !isNext) {
+        this._moveToCursorEndOfCell(target, range);
+      } else {
+        range.setStart(target, 0);
+      }
       range.collapse(true);
     } else {
       target = $(currentCell).parents('table').get(0);
@@ -1315,6 +1250,23 @@ class WwTableManager {
 
       range.collapse(true);
     }
+  }
+
+  _moveToCursorEndOfCell(cell, range) {
+    let lastListItem;
+
+    if (domUtils.isListNode(cell.lastChild)) {
+      lastListItem = domUtils.getLastNodeBy(cell.lastChild,
+        (lastNode) => lastNode.nodeName !== 'LI' || lastNode.nextSibling !== null);
+    }
+
+    const lastText = domUtils.getLastNodeBy(lastListItem || cell,
+      (node) => !domUtils.isTextNode(node));
+
+    const lastNode = lastText || lastListItem || cell;
+    const offset = lastText ? lastText.length : lastNode.childNodes.length - 1;
+
+    range.setStart(lastNode, offset);
   }
 
   /**
@@ -1331,22 +1283,64 @@ class WwTableManager {
     const currentCell = $(range.startContainer).closest('td,th').get(0);
     let isNeedNext;
 
-    if (range.collapsed) {
-      if (this.wwe.isInTable(range) && currentCell && !sq.hasFormat('LI')) {
-        if ((direction === 'previous' || interval === 'row')
-                    && !util.isUndefined(ev)
-        ) {
-          ev.preventDefault();
-        }
-
-        this._changeSelectionToTargetCell(currentCell, range, direction, interval);
-        sq.setSelection(range);
-
-        isNeedNext = false;
+    if (range.collapsed && this.wwe.isInTable(range) && currentCell) {
+      if (interval === 'row' && !this._isMovedCursorToRow(range, direction)) {
+        return isNeedNext;
       }
+
+      if ((direction === 'previous' || interval === 'row') && !util.isUndefined(ev)) {
+        ev.preventDefault();
+      }
+
+      this._changeSelectionToTargetCell(currentCell, range, direction, interval);
+      sq.setSelection(range);
+
+      isNeedNext = false;
     }
 
     return isNeedNext;
+  }
+
+  _isMovedCursorToRow(range, direction) {
+    const {startContainer} = range;
+
+    if (this._isInList(startContainer)) {
+      return this._isMovedCursorFromListToRow(startContainer, direction);
+    }
+
+    return this._isMovedCursorFromTextToRow(range, direction);
+  }
+
+  _isMovedCursorFromListToRow(startContainer, direction) {
+    const directionKey = `${direction}Sibling`;
+    const listItem = this._findListItem(startContainer);
+
+    const parentOfListItem = domUtils.getParentNodeBy(listItem, (parentNode, currentNode) => {
+      const firstOrLastItem = currentNode[directionKey] === null &&
+        parentNode[directionKey] === null;
+
+      return !domUtils.isCellNode(parentNode) && firstOrLastItem;
+    });
+
+    const firstOrLastList = domUtils.isListNode(parentOfListItem) &&
+      parentOfListItem[directionKey] === null;
+
+    return domUtils.isCellNode(parentOfListItem.parentNode) && firstOrLastList;
+  }
+
+  _isMovedCursorFromTextToRow(range, direction) {
+    const {startContainer, startOffset} = range;
+    const text = domUtils.isCellNode(startContainer) ?
+      startContainer.childNodes[startOffset] : startContainer;
+
+    const parentOfStyledText = domUtils.getParentNodeBy(text,
+      (parentNode) => !domUtils.isCellNode(parentNode) &&
+        !domUtils.isTextNode(parentNode));
+
+    const foundSiblingNode = domUtils.getSiblingNodeBy(parentOfStyledText, direction,
+      (siblingNode) => siblingNode !== null && siblingNode.nodeName !== 'BR');
+
+    return foundSiblingNode && foundSiblingNode[`${direction}Sibling`] === null;
   }
 
   /**
@@ -1384,7 +1378,6 @@ class WwTableManager {
   /**
    * Return new table ID class name string
    * @returns {string}
-   * @memberof WwTableManager
    */
   getTableIDClassName() {
     const tableClassName = TABLE_CLASS_PREFIX + this.tableID;

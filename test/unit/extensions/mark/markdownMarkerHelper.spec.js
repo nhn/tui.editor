@@ -4,7 +4,7 @@
  */
 import CodeMirror from 'codemirror';
 
-import MarkdownMarkerHelper from '../../../../src/js/extensions/mark/markdownMarkerHelper';
+import MarkdownMarkerHelper from '@/extensions/mark/markdownMarkerHelper';
 
 describe('MarkdownMarkerHelper', function() {
   let cm, mmh, cmTextarea;

@@ -6,22 +6,17 @@ import util from 'tui-code-snippet';
 
 /**
  * Class ExtManager
+ * @ignore
  */
 class ExtManager {
-  /**
-   * Creates an instance of ExtManager.
-   * @memberof ExtManager
-   */
   constructor() {
     this.exts = new util.Map();
   }
 
   /**
-   * defineExtension
    * Defined Extension
-   * @memberof ExtManager
    * @param {string} name extension name
-   * @param {ExtManager~extension} ext extension
+   * @param {function} ext extension
    */
   defineExtension(name, ext) {
     this.exts.set(name, ext);
@@ -29,7 +24,6 @@ class ExtManager {
 
   /**
    * Apply extensions
-   * @memberof ExtManager
    * @param {object} context Context
    * @param {Array.<string|object>} options - options or names array
    */

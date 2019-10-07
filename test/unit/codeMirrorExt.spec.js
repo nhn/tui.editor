@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import CodeMirrorExt from '../../src/js/codeMirrorExt';
+import CodeMirrorExt from '@/codeMirrorExt';
 
 describe('CodeMirrorExt', () => {
   let codeMirrorExt, container;

@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import Strike from '../../../src/js/markdownCommands/strike';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import Strike from '@/markdownCommands/strike';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('Strike', () => {
   let cm, doc, mde, $container;

@@ -2,7 +2,7 @@
  * @fileoverview test editor integration
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import Editor from '../../../src/js/editor';
+import Editor from '@/editor';
 
 describe('Editor', () => {
   let container;

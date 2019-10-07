@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import SquireExt from '../../src/js/squireExt';
-import {isMac} from '../../src/js/util';
+import SquireExt from '@/squireExt';
+import {isMac} from '@/util';
 
 describe('SquireExt', () => {
   let sqe;

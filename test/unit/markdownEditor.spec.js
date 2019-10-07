@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import MarkdownEditor from '../../src/js/markdownEditor';
-import EventManager from '../../src/js/eventManager';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('MarkdownEditor', () => {
   let mde, em;

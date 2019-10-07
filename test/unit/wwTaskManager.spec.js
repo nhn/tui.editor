@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import WysiwygEditor from '../../src/js/wysiwygEditor';
-import EventManager from '../../src/js/eventManager';
-import WwTaskManager from '../../src/js/wwTaskManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import WwTaskManager from '@/wwTaskManager';
 
 describe('WwTaskManager', () => {
   let $container, em, wwe, mgr;

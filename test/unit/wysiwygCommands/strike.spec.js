@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import Strike from '../../../src/js/wysiwygCommands/strike';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import WwTableSelectionManager from '../../../src/js/wwTableSelectionManager';
-import EventManager from '../../../src/js/eventManager';
+import Strike from '@/wysiwygCommands/strike';
+import WysiwygEditor from '@/wysiwygEditor';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
+import EventManager from '@/eventManager';
 
 describe('Strike', () => {
   let wwe;
@@ -44,19 +44,6 @@ describe('Strike', () => {
     Strike.exec(wwe);
 
     expect(wwe.getValue()).toEqual('<s>line1</s><br />line2<br />');
-  });
-
-  it('dont add Strike in Achor tag', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
-
-    wwe.setValue('<a href="#">line1</a>');
-
-    range.selectNodeContents(wwe.get$Body().find('a')[0]);
-    wwe.getEditor().setSelection(range);
-
-    Strike.exec(wwe);
-
-    expect(wwe.getValue()).toEqual('<a href="#">line1</a><br />');
   });
 
   it('dont add Strike in PRE tag', () => {

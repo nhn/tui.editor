@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import Heading from '../../../src/js/wysiwygCommands/heading';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import Heading from '@/wysiwygCommands/heading';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('Heading', () => {
   let wwe;

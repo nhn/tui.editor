@@ -4,11 +4,11 @@
  */
 import $ from 'jquery';
 
-import WysiwygEditor from '../../src/js/wysiwygEditor';
-import EventManager from '../../src/js/eventManager';
-import WwListManager from '../../src/js/wwListManager';
-import WwTaskManager from '../../src/js/wwTaskManager';
-import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import WwListManager from '@/wwListManager';
+import WwTaskManager from '@/wwTaskManager';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
 
 describe('WwListManager', () => {
   let container, em, wwe, mgr;
@@ -170,59 +170,6 @@ describe('WwListManager', () => {
       expect(wwe.get$Body().find('ul li ul').eq(0).children('li').length).toEqual(2);
       expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(0).children('div').text()).toEqual('t3');
       expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(1).text()).toEqual('t4');
-    });
-  });
-
-  describe('Control list blank line', () => {
-    it('ul - br - ul', () => {
-      const html = [
-        '<ul>',
-        '<li><div>1</div></li>',
-        '</ul>',
-        '<br />',
-        '<ul>',
-        '<li><div>2</div></li>',
-        '</ul>'
-      ].join('');
-
-      const result = mgr._insertBlankToBetweenSameList(html);
-
-      expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
-      expect(result.indexOf('<br />')).toBe(-1);
-    });
-
-    it('ul - br - br - ul', () => {
-      const html = [
-        '<ul>',
-        '<li><div>1</div></li>',
-        '</ul>',
-        '<br />',
-        '<br />',
-        '<ul>',
-        '<li><div>2</div></li>',
-        '</ul>'
-      ].join('');
-
-      const result = mgr._insertBlankToBetweenSameList(html);
-
-      expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
-      expect(result.indexOf('<br />')).toBe(-1);
-    });
-
-    it('ul - ul', () => {
-      const html = [
-        '<ul>',
-        '<li><div>1</div></li>',
-        '</ul>',
-        '<ul>',
-        '<li><div>2</div></li>',
-        '</ul>'
-      ].join('');
-
-      const result = mgr._insertBlankToBetweenSameList(html);
-
-      expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
-      expect(result.indexOf('<br />')).toBe(-1);
     });
   });
 

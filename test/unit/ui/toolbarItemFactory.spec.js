@@ -3,10 +3,10 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
-import ToolbarItemFactory from '../../../src/js/ui/toolbarItemFactory';
-import ToolbarItem from '../../../src/js/ui/toolbarItem';
-import ToolbarButton from '../../../src/js/ui/toolbarButton';
-import ToolbarDivider from '../../../src/js/ui/toolbarDivider';
+import ToolbarItemFactory from '@/ui/toolbarItemFactory';
+import ToolbarItem from '@/ui/toolbarItem';
+import ToolbarButton from '@/ui/toolbarButton';
+import ToolbarDivider from '@/ui/toolbarDivider';
 
 describe('ToolbarItemFactory', () => {
   describe('createItem', () => {

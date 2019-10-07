@@ -10,19 +10,15 @@ const FIND_ZWB_RX = /\u200B/g;
 
 /**
  * Class WysiwygMarkerHelper
+ * @param {SquireExt} sqe - squire instance
+ * @ignore
  */
 class WysiwygMarkerHelper {
-  /**
-   * Creates an instance of WysiwygMarkerHelper.
-   * @param {SquireExt} sqe - squire instance
-   * @memberof WysiwygMarkerHelper
-   */
   constructor(sqe) {
     this.sqe = sqe;
   }
 
   /**
-   * getTextContent
    * Get text content of wysiwyg
    * @returns {string}
    */
@@ -31,7 +27,6 @@ class WysiwygMarkerHelper {
   }
 
   /**
-   * updateMarkerWithExtraInfo
    * Update marker with extra info of CodeMirror
    * @param {object} marker marker
    * @returns {object} marker
@@ -54,7 +49,6 @@ class WysiwygMarkerHelper {
   }
 
   /**
-   * _getExtraInfoOfRange
    * Get extra info of range
    * @param {Range} range range
    * @returns {object} extra info
@@ -102,7 +96,6 @@ class WysiwygMarkerHelper {
   }
 
   /**
-   * getMarkerInfoOfCurrentSelection
    * Get marker info of current selection
    * @returns {object} marker
    */
@@ -135,7 +128,6 @@ class WysiwygMarkerHelper {
   }
 
   /**
-   * _extendRangeToTextNodeIfHasNone
    * Extend range to text node if start or end container have none
    * Containers of range should be text node
    * @param {Range} range range
@@ -163,7 +155,6 @@ class WysiwygMarkerHelper {
   }
 
   /**
-   * _findOffsetNode
    * Find offset nodes by given offset list
    * @param {Array.<number>} offsetlist offset list
    * @returns {Array.<object>} offset node informations
@@ -190,7 +181,6 @@ class WysiwygMarkerHelper {
   }
 
   /**
-   * clearSelect
    * Clear selection of squire
    */
   clearSelect() {

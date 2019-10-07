@@ -5,12 +5,12 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import '../../../../src/js/extensions/table/langs';
-import WysiwygEditor from '../../../../src/js/wysiwygEditor';
-import EventManager from '../../../../src/js/eventManager';
-import WwMergedTableManager from '../../../../src/js/extensions/table/wwMergedTableManager';
-import WwTableMergedSelectionManager from '../../../../src/js/extensions/table/wwMergedTableSelectionManager';
-import tableDataHandler from '../../../../src/js/extensions/table/tableDataHandler';
+import '@/extensions/table/langs';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import WwMergedTableManager from '@/extensions/table/wwMergedTableManager';
+import WwTableMergedSelectionManager from '@/extensions/table/wwMergedTableSelectionManager';
+import tableDataHandler from '@/extensions/table/tableDataHandler';
 
 describe('WwMergedTableManager', () => {
   let container, em, wwe, mgr;

@@ -271,14 +271,11 @@ let sharedInstance;
 
 /**
  * Class KeyMapper
+ * @param {object} [options] options
+ * @param {string} options.splitter splitter string default is +
+ * @ignore
  */
 class KeyMapper {
-  /**
-   * Creates an instance of KeyMapper.
-   * @param {object} [options] options
-   *  @param {string} options.splitter splitter string default is +
-   * @memberof KeyMapper
-   */
   constructor(options) {
     this._setSplitter(options);
   }
@@ -286,7 +283,6 @@ class KeyMapper {
   /**
    * Set key splitter
    * @param {object} options Option object
-   * @memberof KeyMapper
    * @private
    */
   _setSplitter(options) {
@@ -296,7 +292,6 @@ class KeyMapper {
 
   /**
    * Convert event to keyMap
-   * @memberof KeyMapper
    * @param {event} event Event object
    * @returns {string}
    */
@@ -330,7 +325,6 @@ class KeyMapper {
 
   /**
    * Get character from key code
-   * @memberof KeyMapper
    * @param {number} keyCode Key code
    * @returns {string}
    * @private
@@ -343,7 +337,6 @@ class KeyMapper {
 
   /**
    * Get sharedInstance
-   * @memberof KeyMapper
    * @returns {KeyMapper}
    */
   static getSharedInstance() {
@@ -356,10 +349,9 @@ class KeyMapper {
 
   /**
    * get key code for a character
-   * @static
    * @param {string} char - a character to be converted
    * @returns {number} key code for the char
-   * @memberof KeyMapper
+   * @static
    */
   static keyCode(char) {
     return KEYBOARD_MAP.indexOf(char);

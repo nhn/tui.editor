@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import CodeBlockGadget from '../../../src/js/ui/codeBlockGadget';
-import EventManager from '../../../src/js/eventManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import CodeBlockGadget from '@/ui/codeBlockGadget';
+import EventManager from '@/eventManager';
 const GADGET_WIDTH = 250;
 const GADGET_HEIGHT = 30;
 

@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import LazyRunner from '../../src/js/lazyRunner';
+import LazyRunner from '@/lazyRunner';
 
 describe('LazyRunner', () => {
   let lr;

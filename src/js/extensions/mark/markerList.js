@@ -5,20 +5,16 @@
 import util from 'tui-code-snippet';
 
 /**
- * Class Markerlist
+ * Class MarkerList
+ * @ignore
  */
-class Markerlist {
-  /**
-   * Creates an instance of Markerlist.
-   * @memberof Markerlist
-   */
+class MarkerList {
   constructor() {
     this._sortedMarkers = [];
     this._markersWithId = {};
   }
 
   /**
-   * addMarker
    * Add Marker
    * @param {number|object} start start text offset
    * @param {number} end end text offset
@@ -47,7 +43,6 @@ class Markerlist {
   }
 
   /**
-   * getMarker
    * Get marker with given id
    * @param {string} id id of marker
    * @returns {object} marker
@@ -57,7 +52,6 @@ class Markerlist {
   }
 
   /**
-   * removeMarker
    * Remove marker with given id
    * @param {string} id of marker that should be removed
    * @returns {marker} removed marker
@@ -73,7 +67,6 @@ class Markerlist {
   }
 
   /**
-   * updateMarker
    * Update marker with extra information
    * @param {string} id id of marker
    * @param {object} obj extra information
@@ -86,7 +79,6 @@ class Markerlist {
   }
 
   /**
-   * forEachByRangeAffected
    * Iterate markers affected by given range
    * @param {number} start start offset
    * @param {end} end end offset
@@ -99,7 +91,6 @@ class Markerlist {
   }
 
   /**
-   * _getMarkersByRangeAffected
    * Get markers affected by given range
    * @param {number} start start offset
    * @param {end} end end offset
@@ -119,7 +110,6 @@ class Markerlist {
   }
 
   /**
-   * getAll
    * Get markers all
    * @returns {Array.<object>} markers
    */
@@ -128,7 +118,6 @@ class Markerlist {
   }
 
   /**
-   * resetMarkers
    * Reset markerlist
    */
   resetMarkers() {
@@ -137,7 +126,6 @@ class Markerlist {
   }
 
   /**
-   * sortBy
    * Sort markers with given key of marker
    * @param {string} rangeKey, start or end
    */
@@ -146,7 +134,6 @@ class Markerlist {
   }
 
   /**
-   * getMarkersData
    * Get marker data to export
    * @returns {object} markers data
    */
@@ -160,4 +147,4 @@ class Markerlist {
   }
 }
 
-module.exports = Markerlist;
+module.exports = MarkerList;

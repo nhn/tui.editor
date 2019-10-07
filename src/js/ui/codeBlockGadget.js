@@ -12,17 +12,13 @@ const GADGET_HEIGHT = 30;
 
 /**
  * Class CodeBlockGadget
- * @extends {BlockOverlay}
+ * @param {Object} options - options
+ *     @param {EventManager} options.eventManager - event manager instance
+ *     @param {HTMLElement} options.container - container element
+ *     @param {WysiwygEditor} options.wysiwygEditor - wysiwyg editor instance
+ * @ignore
  */
 class CodeBlockGadget extends BlockOverlay {
-  /**
-   * Creates an instance of CodeBlockGadget.
-   * @param {Object} options - options
-   * @param {EventManager} options.eventManager - event manager instance
-   * @param {HTMLElement} options.container - container element
-   * @param {WysiwygEditor} options.wysiwygEditor - wysiwyg editor instance
-   * @memberof CodeBlockGadget
-   */
   constructor({eventManager, container, wysiwygEditor}) {
     super({
       eventManager,
@@ -66,7 +62,6 @@ class CodeBlockGadget extends BlockOverlay {
 
   /**
    * update gadget position
-   * @memberof CodeBlockGadget
    * @protected
    * @override
    */
@@ -83,7 +78,6 @@ class CodeBlockGadget extends BlockOverlay {
 
   /**
    * on show
-   * @memberof CodeBlockGadget
    * @protected
    * @override
    */
@@ -98,7 +92,6 @@ class CodeBlockGadget extends BlockOverlay {
 
   /**
    * on hide
-   * @memberof CodeBlockGadget
    * @protected
    * @override
    */

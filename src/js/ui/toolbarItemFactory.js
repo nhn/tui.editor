@@ -10,11 +10,11 @@ import i18n from '../i18n';
 
 /**
  * Toolbar Item Factory
+ * @ignore
  */
 class ToolbarItemFactory {
   /**
    * create toolbar item instance
-   * @memberof ToolbarItemFactory
    * @param {string} name - toolbar item name
    * @param {object} [options] - options to the constructor
    * @return {ToolbarItem} - created toolbar item instance

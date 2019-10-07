@@ -32,29 +32,24 @@ const LAYOUT_TEMPLATE_MODAL =
 
 /**
  * A number, or a string containing a number.
- * @typedef {Object} LayerPopupOption
-    * @property {string[]} [openerCssQuery] - Css Query list to bind clickevent that open popup
-    * @property {string[]} [closerCssQuery] - Css Query list to bind clickevent that close popup
-    * @property {jQuery} $el - popup root element
-    * @property {jQuery|string} [content] - popup content that html string or jQuery element
-    * @property {string} [textContent] - popup text content
-    * @property {string} title - popup title
-    * @property {boolean} [header] - whether to draw header
-    * @property {jQuery} [$target] - element to append popup
-    * @property {boolean} modal - true: modal, false: modeless
-    * @property {string} [headerButtons] - replace header(close) button
+ * @typedef {object} LayerPopupOption
+ * @property {string[]} [openerCssQuery] - Css Query list to bind clickevent that open popup
+ * @property {string[]} [closerCssQuery] - Css Query list to bind clickevent that close popup
+ * @property {jQuery} $el - popup root element
+ * @property {jQuery|string} [content] - popup content that html string or jQuery element
+ * @property {string} [textContent] - popup text content
+ * @property {string} title - popup title
+ * @property {boolean} [header] - whether to draw header
+ * @property {jQuery} [$target] - element to append popup
+ * @property {boolean} modal - true: modal, false: modeless
+ * @property {string} [headerButtons] - replace header(close) button
  */
 
 /**
  * Class LayerPopup
- * @extends {UIController}
+ * @param {LayerPopupOption} options - popup option
  */
 class LayerPopup extends UIController {
-  /**
-   * Creates an instance of LayerPopup.
-   * @param {LayerPopupOption} options - popup option
-   * @memberof LayerPopup
-   */
   constructor(options) {
     options = util.extend({
       header: true,
@@ -77,8 +72,7 @@ class LayerPopup extends UIController {
    * init instance.
    * store properties & prepare before initialize DOM
    * @param {LayerPopupOption} options - layer popup options
-   * @memberof LayerPopup
-   * @protected
+   * @private
    */
   _initInstance(options) {
     this._$target = options.$target;
@@ -99,8 +93,7 @@ class LayerPopup extends UIController {
 
   /**
    * initialize DOM, render popup
-   * @memberof LayerPopup
-   * @protected
+   * @private
    */
   _initDOM() {
     this._initLayout();
@@ -128,8 +121,7 @@ class LayerPopup extends UIController {
 
   /**
    * bind DOM events
-   * @memberof LayerPopup
-   * @protected
+   * @private
    */
   _initDOMEvent() {
     const {openerCssQuery, closerCssQuery} = this.options;
@@ -145,8 +137,7 @@ class LayerPopup extends UIController {
 
   /**
    * bind editor events
-   * @memberof LayerPopup
-   * @protected
+   * @private
    * @abstract
    */
   _initEditorEvent() {}
@@ -174,7 +165,6 @@ class LayerPopup extends UIController {
   /**
    * set popup content
    * @param {jQuery|HTMLElement|string} $content - content
-   * @memberof LayerPopup
    */
   setContent($content) {
     this.$body.empty();
@@ -184,7 +174,6 @@ class LayerPopup extends UIController {
   /**
    * set title
    * @param {string} title - title text
-   * @memberof LayerPopup
    */
   setTitle(title) {
     const $title = this.$el.find(`.${CLASS_PREFIX}title`);
@@ -195,7 +184,6 @@ class LayerPopup extends UIController {
 
   /**
    * get title element
-   * @memberof LayerPopup
    * @returns {HTMLElement} - title html element
    */
   getTitleElement() {
@@ -204,7 +192,6 @@ class LayerPopup extends UIController {
 
   /**
    * hide popup
-   * @memberof LayerPopup
    */
   hide() {
     this.$el.css('display', 'none');
@@ -214,7 +201,6 @@ class LayerPopup extends UIController {
 
   /**
    * show popup
-   * @memberof LayerPopup
    */
   show() {
     this.$el.css('display', 'block');
@@ -225,7 +211,6 @@ class LayerPopup extends UIController {
   /**
    * whether this popup is visible
    * @returns {boolean} - true: shown, false: hidden
-   * @memberof LayerPopup
    */
   isShow() {
     return this._isShow;
@@ -233,7 +218,6 @@ class LayerPopup extends UIController {
 
   /**
    * remove popup content
-   * @memberof LayerPopup
    */
   remove() {
     const {openerCssQuery, closerCssQuery} = this.options;
@@ -255,8 +239,8 @@ class LayerPopup extends UIController {
   /**
    * make popup size fit to window
    * @param {boolean} fit - true to make popup fit to window
-   * @memberof LayerPopup
    * @protected
+   * @ignore
    */
   setFitToWindow(fit) {
     this.$el.toggleClass(CLASS_FIT_WINDOW, fit);
@@ -264,9 +248,9 @@ class LayerPopup extends UIController {
 
   /**
    * make popup size fit to window
-   * @memberof LayerPopup
-   * @protected
    * @returns {boolean} - true for fit to window
+   * @protected
+   * @ignore
    */
   isFitToWindow() {
     return this.$el.hasClass(CLASS_FIT_WINDOW);
@@ -274,9 +258,9 @@ class LayerPopup extends UIController {
 
   /**
    * toggle size fit to window
-   * @memberof LayerPopup
-   * @protected
    * @returns {boolean} - true for fit to window
+   * @protected
+   * @ignore
    */
   toggleFitToWindow() {
     const fitToWindow = !this.isFitToWindow();

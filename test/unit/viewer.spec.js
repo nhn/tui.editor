@@ -5,9 +5,9 @@
 import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
 
-import ToastUIEditorViewer from '../../src/js/viewer';
-import Convertor from '../../src/js/convertor';
-import {CodeBlockManager} from '../../src/js/codeBlockManager';
+import ToastUIEditorViewer from '@/viewer';
+import Convertor from '@/convertor';
+import {CodeBlockManager} from '@/codeBlockManager';
 
 describe('Viewer', () => {
   it('markdownitHighlight should be MarkdownIt instance', () => {

@@ -92,12 +92,10 @@ const HTML_TAG_RX = new RegExp(openingTag, 'g');
 
 /**
  * Class Convertor
+ * @param {EventManager} em - EventManager instance
+ * @ignore
  */
 class Convertor {
-  /**
-   * Convertor constructor
-   * @param {EventManager} em - EventManager instance
-   */
   constructor(em) {
     this.eventManager = em;
   }
@@ -105,11 +103,10 @@ class Convertor {
   /**
    * _markdownToHtmlWithCodeHighlight
    * Convert markdown to html with Codehighlight
-   * @private
-   * @memberof Convertor
    * @param {string} markdown markdown text
    * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
+   * @private
    */
   _markdownToHtmlWithCodeHighlight(markdown, env) {
     markdown = this._replaceImgAttrToDataProp(markdown);
@@ -120,11 +117,10 @@ class Convertor {
   /**
    * _markdownToHtml
    * Convert markdown to html
-   * @private
-   * @memberof Convertor
    * @param {string} markdown markdown text
    * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
+   * @private
    */
   _markdownToHtml(markdown, env) {
     markdown = markdown.replace(HTML_TAG_RX, (match, $1, $2, $3) => {
@@ -165,7 +161,7 @@ class Convertor {
 
     $wrapperDiv.find('code, pre').each((i, codeOrPre) => {
       const $code = $(codeOrPre);
-      $code.html($code.html().replace(/ data-tomark-pass &gt;/g, '&gt;'));
+      $code.html($code.html().replace(/\sdata-tomark-pass\s(\/?)&gt;/g, '$1&gt;'));
     });
 
     renderedHTML = $wrapperDiv.html();
@@ -177,7 +173,6 @@ class Convertor {
    * toHTMLWithCodeHightlight
    * Convert markdown to html with Codehighlight
    * emit convertorAfterMarkdownToHtmlConverted
-   * @memberof Convertor
    * @param {string} markdown markdown text
    * @returns {string} html text
    */
@@ -192,7 +187,6 @@ class Convertor {
    * toHTML
    * Convert markdown to html
    * emit convertorAfterMarkdownToHtmlConverted
-   * @memberof Convertor
    * @param {string} markdown markdown text
    * @returns {string} html text
    */
@@ -230,7 +224,6 @@ class Convertor {
    * toMarkdown
    * Convert html to markdown
    * emit convertorAfterHtmlToMarkdownConverted
-   * @memberof Convertor
    * @param {string} html html text
    * @param {object | null} toMarkOptions - toMark library options
    * @returns {string} markdown text
@@ -243,6 +236,7 @@ class Convertor {
     let markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
 
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
+    markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
 
     util.forEach(markdown.split('\n'), (line, index) => {
       const FIND_TABLE_RX = /^\|[^|]*\|/ig;
@@ -257,6 +251,17 @@ class Convertor {
     return resultArray.join('\n');
   }
 
+  _removeNewlinesBeforeAfterAndBlockElement(markdown) {
+    // Newlines('\n\n') are created on to-mark.
+    const NEWLINES_BEFORE_BLOCK_RX = /<br>\n\n(#{1,6} .*|```|\||(\*+|-+|\d+\.) .*| *>[^\n]+.*)/g;
+    const NEWLINES_AFTER_BLOCK_RX = /(#{1,6} .*|```|\|)\n\n<br>/g;
+
+    markdown = markdown.replace(NEWLINES_BEFORE_BLOCK_RX, '<br>$1');
+    markdown = markdown.replace(NEWLINES_AFTER_BLOCK_RX, '$1\n<br>');
+
+    return markdown;
+  }
+
   _appendAttributeForBrIfNeed(html) {
     const FIND_BR_RX = /<br>/ig;
     const FIND_DOUBLE_BR_RX = /<br \/><br \/>/ig;
@@ -267,11 +272,16 @@ class Convertor {
     const FIND_ATTRI_WITH_EMTPY_STR_RX = /<br data-tomark-pass="">/ig;
 
     html = html.replace(FIND_BR_RX, '<br />');
+
     html = html.replace(FIND_DOUBLE_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />');
     html = html.replace(FIND_ATTRI_WITH_EMTPY_STR_RX, '<br data-tomark-pass />');
 
     html = html.replace(FIND_PASSING_AND_NORMAL_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />$1');
     html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
+
+    // Preserve <br> when there is only one empty line before or after a block element.
+    html = html.replace(/(.)<br \/><br \/>(<h[1-6]>|<pre>|<table>|<ul>|<ol>|<blockquote>)/g, '$1<br /><br data-tomark-pass />$2');
+    html = html.replace(/(<\/h[1-6]>|<\/pre>|<\/table>|<\/ul>|<\/ol>|<\/blockquote>)<br \/>(.)/g, '$1<br data-tomark-pass />$2');
 
     return html;
   }
@@ -279,7 +289,6 @@ class Convertor {
   /**
    * get markdownit with code highlight
    * @returns {markdownit} - markdownit instance
-   * @memberof Convertor
    * @static
    */
   static getMarkdownitHighlightRenderer() {
@@ -289,7 +298,6 @@ class Convertor {
   /**
    * get markdownit
    * @returns {markdownit} - markdownit instance
-   * @memberof Convertor
    * @static
    */
   static getMarkdownitRenderer() {

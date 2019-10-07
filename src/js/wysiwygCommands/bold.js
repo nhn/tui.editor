@@ -45,7 +45,7 @@ const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
 function styleBold(sq) {
   if (sq.hasFormat('b') || sq.hasFormat('strong')) {
     sq.changeFormat(null, {tag: 'b'});
-  } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+  } else if (!sq.hasFormat('PRE')) {
     if (sq.hasFormat('code')) {
       sq.changeFormat(null, {tag: 'code'});
     }

@@ -4,12 +4,12 @@
  */
 import $ from 'jquery';
 
-import WysiwygEditor from '../../src/js/wysiwygEditor';
-import EventManager from '../../src/js/eventManager';
-import WwHrManager from '../../src/js/wwHrManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import WwHrManager from '@/wwHrManager';
 
 describe('WwHrManager', () => {
-  let $container, em, wwe, mgr;
+  let $container, em, wwe;
 
   beforeEach(() => {
     $container = $('<div />');
@@ -21,8 +21,7 @@ describe('WwHrManager', () => {
     wwe = new WysiwygEditor($container, em);
 
     wwe.init();
-
-    mgr = new WwHrManager(wwe);
+    wwe.componentManager.addManager(WwHrManager);
     wwe.getEditor().focus();
   });
 

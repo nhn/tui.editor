@@ -9,7 +9,7 @@ import {
   parseCode2DataAndOptions,
   detectDelimiter,
   setDefaultOptions
-} from '../../../src/js/extensions/chart/chart';
+} from '@/extensions/chart/chart';
 
 describe('CodeBlockChart', () => {
   let wrapper;

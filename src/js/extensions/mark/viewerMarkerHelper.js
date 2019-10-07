@@ -10,19 +10,15 @@ const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
 /**
  * Class ViewerMarkerHelper
+ * @param {Preview} preview - preview instance
+ * @ignore
  */
 class ViewerMarkerHelper {
-  /**
-   * Creates an instance of ViewerMarkerHelper.
-   * @param {Preview} preview - preview instance
-   * @memberof ViewerMarkerHelper
-   */
   constructor(preview) {
     this.preview = preview;
   }
 
   /**
-   * getTextContent
    * Get text content of wysiwyg
    * @returns {string}
    */
@@ -31,7 +27,6 @@ class ViewerMarkerHelper {
   }
 
   /**
-   * updateMarkerWithExtraInfo
    * Update marker with extra info of preview
    * @param {object} marker marker
    * @returns {object} marker
@@ -55,7 +50,6 @@ class ViewerMarkerHelper {
   }
 
   /**
-   * _getExtraInfoOfRange
    * Get extra info of range
    * @param {Range} range range
    * @returns {object} extra info
@@ -98,7 +92,6 @@ class ViewerMarkerHelper {
   }
 
   /**
-   * getMarkerInfoOfCurrentSelection
    * Get marker info of current selection
    * @returns {object} marker
    */
@@ -133,7 +126,6 @@ class ViewerMarkerHelper {
   }
 
   /**
-   * _extendRangeToTextNodeIfHasNone
    * Extend range to text node if start or end container have none
    * Containers of range should be text node
    * @param {Range} range range
@@ -161,7 +153,6 @@ class ViewerMarkerHelper {
   }
 
   /**
-   * _findOffsetNode
    * Find offset nodes by given offset list
    * @param {Array.<number>} offsetlist offset list
    * @returns {Array.<object>} offset node informations
@@ -172,7 +163,6 @@ class ViewerMarkerHelper {
   }
 
   /**
-   * selectOffsetRange
    * Make selection with given offset range
    * @param {number} start start offset
    * @param {number} end end offset
@@ -190,7 +180,6 @@ class ViewerMarkerHelper {
   }
 
   /**
-   * clearSelect
    * Clear selection
    */
   clearSelect() {
@@ -199,7 +188,6 @@ class ViewerMarkerHelper {
 }
 
 /**
- * getRange
  * get current range
  * @returns {Range}
  * @ignore

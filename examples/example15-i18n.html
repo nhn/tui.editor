@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title>15. Internationalization(i18n)</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css">
+    <!-- Editor's Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/tui-editor.css">
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+  </head>
+
+  <body>
+    <div class="contents code-html">
+      <div id="editSection"></div>
+    </div>
+
+    <script src="../dist/tui-editor-Editor-full.js"></script>
+    <script class="code-js">
+      var content = 'Hover on item above show different language tooltips ';
+      content += 'Full available language list: ';
+      content += 'https://github.com/nhn/tui.editor/tree/master/src/js/langs ';
+      content += 'ko, zh, de, en, es, fr (and more)';
+
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        initialValue: content,
+        language: 'zh'
+      });
+    </script>
+  </body>
+</html>

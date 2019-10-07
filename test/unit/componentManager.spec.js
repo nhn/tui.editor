@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import WysiwygEditor from '../../src/js/wysiwygEditor';
-import MarkdownEditor from '../../src/js/markdownEditor';
-import EventManager from '../../src/js/eventManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('ComponentManager', () => {
   let container, container2, em, wwe, mde;

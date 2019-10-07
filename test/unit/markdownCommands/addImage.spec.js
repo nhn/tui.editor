@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import AddImage from '../../../src/js/markdownCommands/addImage';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import AddImage from '@/markdownCommands/addImage';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('AddImage', () => {
   let cm, doc, mde;

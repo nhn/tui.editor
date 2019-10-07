@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import PopupAddHeading from '../../../src/js/ui/popupAddHeading';
-import EventManager from '../../../src/js/eventManager';
+import PopupAddHeading from '@/ui/popupAddHeading';
+import EventManager from '@/eventManager';
 
 describe('PopupAddHeading', () => {
   let popup,

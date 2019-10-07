@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import AddImage from '../../../src/js/wysiwygCommands/addImage';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import AddImage from '@/wysiwygCommands/addImage';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('AddImage', () => {
   let wwe, $container;

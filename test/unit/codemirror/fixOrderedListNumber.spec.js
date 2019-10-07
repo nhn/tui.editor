@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
-import '../../../src/js/codemirror/fixOrderedListNumber';
+import '@/codemirror/fixOrderedListNumber';
 
 describe('fixOrderedListNumber', () => {
   let mde, em, container;

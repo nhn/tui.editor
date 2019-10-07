@@ -2,7 +2,7 @@
  * @fileoverview test i18n
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import {I18n} from '../../src/js/i18n';
+import {I18n} from '@/i18n';
 
 describe('I18n', () => {
   let i18n;

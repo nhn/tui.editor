@@ -4,11 +4,11 @@
  */
 import $ from 'jquery';
 
-import AddRow from '../../../src/js/wysiwygCommands/tableAddRow';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
-import WwTableManager from '../../../src/js/wwTableManager';
-import WwTableSelectionManager from '../../../src/js/wwTableSelectionManager';
+import AddRow from '@/wysiwygCommands/tableAddRow';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import WwTableManager from '@/wwTableManager';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
 
 describe('Table - AddRow', () => {
   let wwe, container;

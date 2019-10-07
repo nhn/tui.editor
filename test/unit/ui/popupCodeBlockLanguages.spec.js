@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import PopupCodeBlockLanguages from '../../../src/js/ui/popupCodeBlockLanguages';
-import EventManager from '../../../src/js/eventManager';
+import PopupCodeBlockLanguages from '@/ui/popupCodeBlockLanguages';
+import EventManager from '@/eventManager';
 
 const languages = ['javascript', 'java', 'php'];
 

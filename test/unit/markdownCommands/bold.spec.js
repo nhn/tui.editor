@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import Bold from '../../../src/js/markdownCommands/bold';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import Bold from '@/markdownCommands/bold';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('Bold', () => {
   let cm, doc, mde, $container;

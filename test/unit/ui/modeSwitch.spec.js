@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import ModeSwitch from '../../../src/js/ui/modeSwitch';
+import ModeSwitch from '@/ui/modeSwitch';
 
 describe('ModeSwitch', () => {
   let $container, modeSwitch;

@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import PopupAddLink from '../../../src/js/ui/popupAddLink';
-import EventManager from '../../../src/js/eventManager';
+import PopupAddLink from '@/ui/popupAddLink';
+import EventManager from '@/eventManager';
 
 describe('PopupAddLink', () => {
   let popup,

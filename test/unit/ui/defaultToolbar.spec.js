@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import EventManager from '../../../src/js/eventManager';
-import Toolbar from '../../../src/js/ui/toolbar';
-import DefaultToolbar from '../../../src/js/ui/defaultToolbar';
-import PopupDropdownToolbar from '../../../src/js/ui/popupDropdownToolbar';
+import EventManager from '@/eventManager';
+import Toolbar from '@/ui/toolbar';
+import DefaultToolbar from '@/ui/defaultToolbar';
+import PopupDropdownToolbar from '@/ui/popupDropdownToolbar';
 
 const items = [
   'heading',

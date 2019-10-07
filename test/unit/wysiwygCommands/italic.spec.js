@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import Italic from '../../../src/js/wysiwygCommands/italic';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import WwTableSelectionManager from '../../../src/js/wwTableSelectionManager';
-import EventManager from '../../../src/js/eventManager';
+import Italic from '@/wysiwygCommands/italic';
+import WysiwygEditor from '@/wysiwygEditor';
+import WwTableSelectionManager from '@/wwTableSelectionManager';
+import EventManager from '@/eventManager';
 
 describe('Italic', () => {
   let wwe;
@@ -44,19 +44,6 @@ describe('Italic', () => {
     Italic.exec(wwe);
 
     expect(wwe.getValue()).toEqual('<i>line1</i><br />line2<br />');
-  });
-
-  it('dont add italic in Achor tag', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
-
-    wwe.setValue('<a href="#">line1</a>');
-
-    range.selectNodeContents(wwe.get$Body().find('a')[0]);
-    wwe.getEditor().setSelection(range);
-
-    Italic.exec(wwe);
-
-    expect(wwe.getValue()).toEqual('<a href="#">line1</a><br />');
   });
 
   it('if there have italic already remove format', () => {

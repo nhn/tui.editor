@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import BlockOverlay from '../../../src/js/ui/blockOverlay';
-import EventManager from '../../../src/js/eventManager';
+import BlockOverlay from '@/ui/blockOverlay';
+import EventManager from '@/eventManager';
 
 describe('BlockOverlay', () => {
   let blockOverlay,

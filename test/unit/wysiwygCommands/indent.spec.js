@@ -4,11 +4,11 @@
  */
 import $ from 'jquery';
 
-import Indent from '../../../src/js/wysiwygCommands/indent';
-import WwTaskManager from '../../../src/js/wwTaskManager';
-import WwListManager from '../../../src/js/wwListManager';
-import WysiwygEditor from '../../../src/js/wysiwygEditor';
-import EventManager from '../../../src/js/eventManager';
+import Indent from '@/wysiwygCommands/indent';
+import WwTaskManager from '@/wwTaskManager';
+import WwListManager from '@/wwListManager';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
 
 describe('Indent', () => {
   let wwe, sq, container;

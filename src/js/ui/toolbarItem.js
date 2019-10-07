@@ -6,30 +6,26 @@ import util from 'tui-code-snippet';
 import UIController from './uicontroller';
 
 /**
- * Toolbar Item
- * @extends {UIController}
+ * Class ToolbarItem
+ * @param {Object} [options={name: 'toolbar-item'}] [description]
  */
 class ToolbarItem extends UIController {
   /**
    * item name
-   * @memberof ToolbarDivider
    * @type {String}
    * @static
+   * @private
    */
   static name = 'item';
 
   /**
    * toolbar item class name
-   * @memberof ToolbarItem
    * @type {String}
+   * @static
+   * @private
    */
   static className = 'tui-toolbar-item';
 
-  /**
-   * toolbar item constructor
-   * @memberof ToolbarItem
-   * @param {Object} [options={name: 'toolbar-item'}] [description]
-   */
   constructor(options = {
     name: ToolbarItem.name
   }) {
@@ -42,7 +38,6 @@ class ToolbarItem extends UIController {
 
   /**
    * get the name of the toolbar item
-   * @memberof ToolbarItem
    * @returns {string} - the name of the toolbar item
    */
   getName() {

@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import Outdent from '../../../src/js/markdownCommands/outdent';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import Outdent from '@/markdownCommands/outdent';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('Outdent', () => {
   let cm, mde, $container;

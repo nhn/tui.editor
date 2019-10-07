@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import OL from '../../../src/js/markdownCommands/ol';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
-import mdListManager from '../../../src/js/mdListManager';
+import OL from '@/markdownCommands/ol';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
+import mdListManager from '@/mdListManager';
 
 describe('OL', () => {
   let cm, doc, mde;

@@ -4,9 +4,9 @@
  */
 import $ from 'jquery';
 
-import Paragraph from '../../../src/js/markdownCommands/paragraph';
-import MarkdownEditor from '../../../src/js/markdownEditor';
-import EventManager from '../../../src/js/eventManager';
+import Paragraph from '@/markdownCommands/paragraph';
+import MarkdownEditor from '@/markdownEditor';
+import EventManager from '@/eventManager';
 
 describe('Paragraph', () => {
   let cm, doc, mde;
