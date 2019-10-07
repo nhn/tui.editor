@@ -11,7 +11,7 @@ describe('toMark', function() {
 
     it('child elements of an element which has \'data-tomark-pass\' should be converted', function() {
         expect(toMark('<b data-tomark-pass>Hello <s>World</s></b>')).toBe('<b>Hello ~~World~~</b>');
-        expect(toMark('<b id="a1" class="custom" data-tomark-pass>Hello <s>World</s></b>')).toBe('<b id="a1" class="custom">Hello ~~World~~</b>');
+        expect(toMark('<b class="custom" data-tomark-pass>Hello <s>World</s></b>')).toBe('<b class="custom">Hello ~~World~~</b>');
     });
 
     it('if pass empty string or falsy object return empty string', function() {

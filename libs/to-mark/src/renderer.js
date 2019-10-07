@@ -355,7 +355,7 @@ Renderer.prototype.escapeTextForLink = function(text) {
  * @returns {string} processed text
  */
 Renderer.prototype.escapeTextHtml = function(text) {
-    return text.replace(Renderer.markdownTextToEscapeHtmlRx, function(matched) {
+    return text.replace(new RegExp(Renderer.markdownTextToEscapeHtmlRx.source, 'g'), function(matched) {
         return '\\' + matched;
     });
 };
@@ -369,7 +369,7 @@ Renderer.prototype.escapeTextHtml = function(text) {
  * @returns {string} processed text
  */
 Renderer.prototype.escapeTextBackSlash = function(text) {
-    return text.replace(Renderer.markdownTextToEscapeBackSlashRx, function(matched) {
+    return text.replace(new RegExp(Renderer.markdownTextToEscapeBackSlashRx.source, 'g'), function(matched) {
         return '\\' + matched;
     });
 };
@@ -380,7 +380,7 @@ Renderer.prototype.escapeTextBackSlash = function(text) {
  * @returns {string} escaped text
  */
 Renderer.prototype.escapePairedCharacters = function(text) {
-    return text.replace(Renderer.markdownTextToEscapePairedCharsRx, function(matched) {
+    return text.replace(new RegExp(Renderer.markdownTextToEscapePairedCharsRx.source, 'g'), function(matched) {
         return '\\' + matched;
     });
 };
@@ -403,11 +403,11 @@ Renderer.markdownTextToEscapeRx = {
     codeblockTildes: /^(~{3,})/
 };
 
-Renderer.markdownTextToEscapeHtmlRx = /<([a-zA-Z_][a-zA-Z0-9\-\._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-\._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-\.:/]*)>/g;
+Renderer.markdownTextToEscapeHtmlRx = /<([a-zA-Z_][a-zA-Z0-9\-\._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-\._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-\.:/]*)>/;
 
-Renderer.markdownTextToEscapeBackSlashRx = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
+Renderer.markdownTextToEscapeBackSlashRx = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/;
 
-Renderer.markdownTextToEscapePairedCharsRx = /[*_~`]/g;
+Renderer.markdownTextToEscapePairedCharsRx = /[*_~`]/;
 
 Renderer.prototype._isNeedEscape = function(text) {
     var res = false;

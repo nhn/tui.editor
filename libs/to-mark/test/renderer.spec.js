@@ -309,7 +309,7 @@ describe('renderer', function() {
         });
     });
 
-    it('_isNeedEscapeHtml() can check passed text is needed escape or not', function() {
+    describe('_isNeedEscapeHtml() can check passed text is needed escape or not', function() {
         var renderer;
 
         beforeEach(function() {
