@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title>2. Viewer Basic</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css">
+    <!-- Editor's Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+  </head>
+
+  <body>
+    <div class="description">
+      Learn more about Viewer in <a target="_blank" href="https://github.com/nhn/tui.editor/wiki/Getting-started-with-bower#viewer">here</a>.<br>
+      See available options in <a target="_blank" href="http://nhn.github.io/tui.editor/api/latest/ToastUIEditorViewer">here</a>.
+    </div>
+    <div class="contents code-html">
+      <div id="editSection"></div>
+    </div>
+    
+    <script src="../dist/tui-editor-Viewer-full.js"></script>
+    <script class="code-js">
+      var content = [
+        '![image](https://uicdn.toast.com/toastui/img/tui-editor-bi.png)',
+        '# Heading 1',
+        '## Heading 2',
+        '### Heading 3',
+        '#### Heading 4',
+        '##### Heading 5',
+        '###### Heading 6',
+        '    code block',
+        '```js',
+        'console.log("fenced code block");',
+        '```',
+        '<pre>**HTML block**</pre>',
+        '* list',
+        '    * list indented',
+        '1. ordered',
+        '2. list',
+        '    1. ordered list',
+        '    2. indented',
+        '',
+        '- [ ] task',
+        '- [x] list completed',
+        '',
+        '[link](https://nhn.github.io/tui.editor/)',
+        '> block quote',
+        '---',
+        'horizontal line',
+        '***',
+        '`code`, *italic*, **bold**, ~~strikethrough~~, <span style="color:#e11d21">Red color</span>',
+        '|table|head|',
+        '|---|---|',
+        '|table|body|'
+      ].join('\n');
+
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        height: '300px',
+        initialValue: content
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title>11. Customize Toolbar</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css">
+    <!-- Editor's Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/tui-editor.css">
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+    <!-- Using Service (Import "Font Awesome 5") -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <style type="text/css">
+      .custom-button {
+        float: left;
+        box-sizing: border-box;
+        outline: none;
+        cursor: pointer;
+        background-color: #fff;
+        width: 22px;
+        height: 22px;
+        border-radius: 0;
+        margin: 5px 3px;
+        border: 1px solid #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="contents code-html">
+      <div id="editSection"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="../dist/tui-editor-Editor-full.js"></script>
+    <script class="code-js">
+      var content = 'FIRST and LAST button are custom';
+
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        initialValue: content,
+        toolbarItems: [
+          'heading',
+          'bold',
+          'italic',
+          'strike',
+          'divider',
+          'hr',
+          'quote',
+          'divider',
+          'ul',
+          'ol',
+          'task',
+          'indent',
+          'outdent',
+          'divider',
+          'table',
+          'image',
+          'link',
+          'divider',
+          'code',
+          'codeblock',
+          'divider',
+          // First way to add a button
+          {
+            type: 'button',
+            options: {
+              $el: $('<div class="custom-button"><i class="fas fa-briefcase-medical"></i></div>'),
+              name: 'test2',
+              className: '',
+              command: 'Bold', // you can use "Bold"
+              tooltip: 'Bold'
+            }
+          }
+        ]
+      });
+
+      // Second way to add a button
+      var toolbar = editor.getUI().getToolbar();
+
+      editor.eventManager.addEventType('Event1');
+      editor.eventManager.listen('Event1', function() {
+        alert('button click!');
+        // Do some other thing...
+      });
+
+      toolbar.addButton({
+        name: 'customize',
+        className: 'fab fa-accessible-icon',
+        event: 'Event1',
+        tooltip: 'Apple!!!',
+        $el: $('<div class="custom-button"><i class="fab fa-apple"></i></div>')
+      }, 1);
+    </script>
+  </body>
+</html>

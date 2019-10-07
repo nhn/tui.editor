@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title>04. Viewer with All Extensions</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css">
+    <!-- Editor's Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+  </head>
+
+  <body>
+    <div class="description">
+      Learn more about Viewer in <a target="_blank" href="https://github.com/nhn/tui.editor/wiki/Getting-started-with-bower#viewer">here</a> 
+      and Extensions in <a target="_blank" href="https://github.com/nhn/tui.editor/wiki/Extensions">here</a>.<br>
+      See available options in <a target="_blank" href="http://nhn.github.io/tui.editor/api/latest/ToastUIEditorViewer">here</a>.<br>
+    </div>
+
+    <div class="contents code-html">
+      <div id="editSection"></div>
+    </div>
+
+    <script src="../dist/tui-editor-Viewer-full.js"></script>
+    <script class="code-js">
+      var content = [
+        '![image](https://uicdn.toast.com/toastui/img/tui-editor-bi.png)',
+        '# Heading 1',
+        '## Heading 2',
+        '    code block',
+        '```js',
+        'console.log("fenced code block");',
+        '```',
+        '[link](https://nhn.github.io/tui.editor/)',
+        '> block quote',
+        '---',
+        'horizontal line',
+        '***',
+        '`code`, *italic*, **bold**, ~~strikethrough~~, <span style="color:#e11d21">Red color</span>',
+        '| @cols=2:merged |',
+        '| --- | --- |',
+        '| table | table |',
+        '```uml',
+        'partition Conductor {',
+        '  (*) --> "Climbs on Platform"',
+        '  --> === S1 ===',
+        '  --> Bows',
+        '}',
+        '',
+        'partition Audience #LightSkyBlue {',
+        '  === S1 === --> Applauds',
+        '}',
+        '',
+        'partition Conductor {',
+        '  Bows --> === S2 ===',
+        '  --> WavesArmes',
+        '  Applauds --> === S2 ===',
+        '}',
+        '',
+        'partition Orchestra #CCCCEE {',
+        '  WavesArmes --> Introduction',
+        '  --> "Play music"',
+        '}',
+        '```'
+      ].join('\n');
+
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        height: '300px',
+        initialValue: content,
+        exts: ['table', 'uml']
+      });
+    </script>
+  </body>
+</html>
