@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.6
+ * @version 1.4.7
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -5797,9 +5797,10 @@ function _setWwCodeBlockManagerForChart(editor) {
 
       /**
        * Convert table nodes into code block as TSV
-       * @memberof WwCodeBlockManager
        * @param {Array.<Node>} nodes Node array
        * @returns {HTMLElement} Code block element
+       * @override
+       * @ignore
        */
       value: function convertNodesToText(nodes) {
         if (nodes.length !== 1 || nodes[0].tagName !== 'TABLE') {

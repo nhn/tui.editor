@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.6
+ * @version 1.4.7
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -317,16 +317,13 @@ var SCROLL_BOCKING_RESET_DELAY = 15;
 /**
  * Class ScrollManager
  * manage scroll sync between markdown editor and preview
+ * @param {SectionManager} sectionManager - sectionManager
+ * @param {CodeMirror} cm - CodeMirror
+ * @param {jQuery} $previewContainerEl - preview container
+ * @ignore
  */
 
 var ScrollManager = function () {
-  /**
-   * Creates an instance of ScrollManager.
-   * @param {SectionManager} sectionManager - sectionManager
-   * @param {CodeMirror} cm - CodeMirror
-   * @param {jQuery} $previewContainerEl - preview container
-   * @memberof ScrollManager
-   */
   function ScrollManager(sectionManager, cm, $previewContainerEl) {
     _classCallCheck(this, ScrollManager);
 
@@ -335,21 +332,23 @@ var ScrollManager = function () {
     this.$previewContainerEl = $previewContainerEl;
     this.$contents = this.$previewContainerEl.find('.tui-editor-contents');
     this.releaseTimer = null;
+
     /**
      * current timeout id needs animation
      * @type {number}
+     * @private
      */
     this._currentTimeoutId = null;
 
     /**
      * Saved scrollInfo object of CodeMirror
      * @type {object}
+     * @private
      */
     this._savedScrollInfo = null;
   }
 
   /**
-   * _getEditorSectionHeight
    * Return section height of editor
    * @param {object} section section be calculated height
    * @returns {number} height
@@ -367,7 +366,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * _getLineHeightGapInSection
      * Return height gap between passed line in passed section
      * @param {object} section section be calculated
      * @param {number} line line number
@@ -385,7 +383,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * _getSectionScrollRatio
      * Return ratio of height between scrollTop line and scrollTop section
      * @param {object} section section be calculated
      * @param {number} line line number
@@ -409,7 +406,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * _getScrollFactorsOfEditor
      * Return Scroll Information of editor for preview scroll sync
      * @returns {object} scroll factors
      * @private
@@ -456,7 +452,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * _getCursorFactorsOfEditor
      * Return cursor position information of editor for preview scroll sync
      * @returns {object} scroll factors
      * @private
@@ -546,7 +541,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * _getScrollTopForPreview
      * Return scrollTop value for preview
      * @returns {number|undefined} scrollTop value, when something wrong then return undefined
      * @private
@@ -575,9 +569,9 @@ var ScrollManager = function () {
     }
 
     /**
-     * _getScrollTopForPreviewBaseCursor
      * Return scrollTop value for preview according cursor position
      * @returns {number} scrollTop value
+     * @private
      */
 
   }, {
@@ -643,7 +637,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * syncPreviewScrollTopToMarkdown
      * sync preview scroll to markdown
      * @param {boolean} isCursorBase whether sync according to cursor position
      */
@@ -672,7 +665,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * syncMarkdownScrollTopToPreview
      * sync markdown scroll to preview
      */
 
@@ -700,7 +692,6 @@ var ScrollManager = function () {
     }
 
     /**
-     * _animateRun
      * animate with passed Callback
      * @param {number} originValue original value
      * @param {number} targetValue target value
@@ -757,7 +748,6 @@ var ScrollManager = function () {
 
     /**
      * Save Codemirror's scrollInfo for alternative use
-     * memberOf ScrollManager
      */
 
   }, {
@@ -830,15 +820,12 @@ var FIND_SPACE = /\s/g;
 /**
  * Class SectionManager
  * manage logical markdown content sections
+ * @param {CodeMirror} cm - codemirror
+ * @param {Preview} preview - preview
+ * @ignore
  */
 
 var SectionManager = function () {
-  /**
-   * Creates an instance of SectionManager.
-   * @param {CodeMirror} cm - codemirror
-   * @param {Preview} preview - preview
-   * @memberof SectionManager
-   */
   function SectionManager(cm, preview) {
     _classCallCheck(this, SectionManager);
 
@@ -847,20 +834,21 @@ var SectionManager = function () {
     this.$previewContent = preview.$el.find('.tui-editor-contents');
 
     /**
-     *  section list
+     * section list
      * @type {object[]}
+     * @private
      */
     this._sectionList = null;
 
     /**
      * current working section needs making section list
      * @type {object}
+     * @private
      */
     this._currentSection = null;
   }
 
   /**
-   * _addNewSection
    * add new section
    * @param {number} start initial start line number
    * @param {number} end initial end line number
@@ -877,7 +865,6 @@ var SectionManager = function () {
     }
 
     /**
-     * getSectionList
      * return section list
      * @returns {object[]} section object list
      */
@@ -893,7 +880,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _makeSectionData
      * make default section object
      * @param {number} start initial start line number
      * @param {number} end initial end line number
@@ -912,7 +898,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _updateCurrentSectionEnd
      * update current section's end line number
      * @param {number} end end value to update
      * @private
@@ -925,7 +910,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _eachLineState
      * iterate codemiror lines, callback function parameter pass line type and line number
      * @param {function} iteratee callback function
      * @private
@@ -1030,7 +1014,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _doFollowedLinesHaveCodeBlockEnd
      * Check if follow lines have codeblock end
      * @param {number} lineIndex current index
      * @param {number} lineLength line length
@@ -1054,7 +1037,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isCodeBlockStart
      * Check if passed string have code block start
      * @param {string} string string to check
      * @returns {boolean} result
@@ -1068,7 +1050,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isCodeBlockEnd
      * Check if passed string have code block end
      * @param {string} string string to check
      * @returns {boolean} result
@@ -1082,7 +1063,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isTable
      * Check if passed string have table
      * @param {string} lineString current line string
      * @param {string} nextLineString next line string
@@ -1097,7 +1077,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isTableCode
      * Check if passed string have table code
      * @param {string} string string to check
      * @returns {boolean} result
@@ -1112,7 +1091,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isTableAligner
      * Check if passed string have table align code
      * @param {string} string string to check
      * @returns {boolean} result
@@ -1127,7 +1105,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isAtxHeader
      * Check if passed string have atx header
      * @param {string} string string to check
      * @returns {boolean} result
@@ -1141,7 +1118,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _isSeTextHeader
      * @param {string} lineString current line string
      * @param {string} nextLineString next line string
      * @returns {boolean} result
@@ -1170,7 +1146,6 @@ var SectionManager = function () {
     }
 
     /**
-     * makeSectionList
      * make section list
      */
 
@@ -1191,7 +1166,6 @@ var SectionManager = function () {
     }
 
     /**
-     * sectionMatch
      * make preview sections then match section list with preview section element
      */
 
@@ -1205,7 +1179,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _matchPreviewSectionsWithSectionlist
      * match section list with preview section element
      * @param {HTMLNode[]} sections section nodes
      * @private
@@ -1225,7 +1198,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _getPreviewSections
      * get preview html section group to make section
      * @returns {array[]} element node array
      * @private
@@ -1262,7 +1234,6 @@ var SectionManager = function () {
     }
 
     /**
-     * _sectionByLine
      * get section by markdown line
      * @param {number} line markdown editor line number
      * @returns {object} section
@@ -1294,7 +1265,6 @@ var SectionManager = function () {
 
 /**
  * findElementNodeFilter
- * @this Node
  * @returns {boolean} true or not
  * @ignore
  */

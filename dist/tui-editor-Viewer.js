@@ -1,19 +1,19 @@
 /*!
  * tui-editor
- * @version 1.4.6
+ * @version 1.4.7
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("jquery"), require("tui-code-snippet"), require("markdown-it"), require("to-mark"), require("highlight.js"));
+		module.exports = factory(require("jquery"), require("tui-code-snippet"), require("to-mark"), require("markdown-it"), require("highlight.js"));
 	else if(typeof define === 'function' && define.amd)
-		define(["jquery", "tui-code-snippet", "markdown-it", "to-mark", "highlight.js"], factory);
+		define(["jquery", "tui-code-snippet", "to-mark", "markdown-it", "highlight.js"], factory);
 	else if(typeof exports === 'object')
-		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("markdown-it"), require("to-mark"), require("highlight.js"));
+		exports["Editor"] = factory(require("jquery"), require("tui-code-snippet"), require("to-mark"), require("markdown-it"), require("highlight.js"));
 	else
-		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["markdownit"], root["toMark"], root["hljs"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_22__, __WEBPACK_EXTERNAL_MODULE_23__, __WEBPACK_EXTERNAL_MODULE_32__) {
+		root["tui"] = root["tui"] || {}, root["tui"]["Editor"] = factory(root["$"], (root["tui"] && root["tui"]["util"]), root["toMark"], root["markdownit"], root["hljs"]);
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_18__, __WEBPACK_EXTERNAL_MODULE_23__, __WEBPACK_EXTERNAL_MODULE_32__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 149);
+/******/ 	return __webpack_require__(__webpack_require__.s = 150);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -127,20 +127,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * Class Markdown Preview
- * @extends {Preview}
+ * @param {jQuery} $el - base jQuery element
+ * @param {EventManager} eventManager - event manager
+ * @param {Convertor} convertor - convertor
+ * @param {boolean} isViewer - true for view only mode
+ * @param {Number} delayTime - lazyRunner delay time
+ * @ignore
  */
 var MarkdownPreview = function (_Preview) {
   _inherits(MarkdownPreview, _Preview);
 
-  /**
-   * Creates an instance of MarkdownPreview.
-   * @param {jQuery} $el - base jQuery element
-   * @param {EventManager} eventManager - event manager
-   * @param {Convertor} convertor - convertor
-   * @param {boolean} isViewer - true for view only mode
-   * @param {Number} delayTime - lazyRunner delay time
-   * @memberof MarkdownPreview
-   */
   function MarkdownPreview($el, eventManager, convertor, isViewer, delayTime) {
     _classCallCheck(this, MarkdownPreview);
 
@@ -186,7 +182,6 @@ var MarkdownPreview = function (_Preview) {
     /**
      * render
      * @param {string} html - html string to render
-     * @memberof MarkdownPreview
      * @override
      */
 
@@ -232,7 +227,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _lazyRunner = __webpack_require__(20);
+var _lazyRunner = __webpack_require__(21);
 
 var _lazyRunner2 = _interopRequireDefault(_lazyRunner);
 
@@ -242,17 +237,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class Preview
- **/
+ * @param {jQuery} $el Container element for preview
+ * @param {EventManager} eventManager Event manager instance
+ * @param {Convertor} convertor Convertor instance
+ * @param {boolean} isViewer - whether viewer mode or not
+ * @param {Number} delayTime - lazyRunner delay time
+ * @ignore
+ */
 var Preview = function () {
-  /**
-   * Creates an instance of Preview.
-   * @param {jQuery} $el Container element for preview
-   * @param {EventManager} eventManager Event manager instance
-   * @param {Convertor} convertor Convertor instance
-   * @param {boolean} isViewer - whether viewer mode or not
-   * @param {Number} delayTime - lazyRunner delay time
-   * @memberof Preview
-   */
   function Preview($el, eventManager, convertor, isViewer) {
     var delayTime = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 800;
 
@@ -285,7 +277,6 @@ var Preview = function () {
 
     /**
      * Refresh rendering
-     * @memberof Preview
      * @param {string} markdown Markdown text
      */
 
@@ -298,7 +289,6 @@ var Preview = function () {
     /**
      * get html string
      * @returns {string} - html preview string
-     * @memberof Preview
      */
 
   }, {
@@ -310,7 +300,6 @@ var Preview = function () {
     /**
      * set html string
      * @param {string} html - html preview string
-     * @memberof Preview
      */
 
   }, {
@@ -321,9 +310,7 @@ var Preview = function () {
 
     /**
      * Render HTML on preview
-     * @memberof Preview
      * @param {string} html HTML string
-     * @protected
      */
 
   }, {
@@ -339,7 +326,6 @@ var Preview = function () {
 
     /**
      * Set preview height
-     * @memberof Preview
      * @param {number} height - Height for preview container
      */
 
@@ -352,7 +338,6 @@ var Preview = function () {
     /**
      * set min height
      * @param {number} minHeight - min height
-     * @memberof Preview
      */
 
   }, {
@@ -394,7 +379,262 @@ module.exports = {
 
 /***/ }),
 
-/***/ 149:
+/***/ 15:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements EventManager
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _tuiCodeSnippet = __webpack_require__(1);
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh', 'addImageBlobHook', 'setMarkdownAfter', 'contentChangedFromWysiwyg', 'changeFromWysiwyg', 'contentChangedFromMarkdown', 'changeFromMarkdown', 'change', 'changeModeToWysiwyg', 'changeModeToMarkdown', 'changeModeBefore', 'changeMode', 'changePreviewStyle', 'changePreviewTabPreview', 'changePreviewTabWrite', 'openPopupAddLink', 'openPopupAddImage', 'openPopupAddTable', 'openPopupTableUtils', 'openHeadingSelect', 'openPopupCodeBlockLanguages', 'openPopupCodeBlockEditor', 'openDropdownToolbar', 'closePopupCodeBlockLanguages', 'closePopupCodeBlockEditor', 'closeAllPopup', 'command', 'addCommandBefore', 'htmlUpdate', 'markdownUpdate', 'renderedHtmlUpdated', 'removeEditor', 'convertorAfterMarkdownToHtmlConverted', 'convertorBeforeHtmlToMarkdownConverted', 'convertorAfterHtmlToMarkdownConverted', 'stateChange', 'wysiwygSetValueAfter', 'wysiwygSetValueBefore', 'wysiwygGetValueBefore', 'wysiwygProcessHTMLText', 'wysiwygRangeChangeAfter', 'wysiwygKeyEvent', 'scroll', 'click', 'mousedown', 'mouseover', 'mouseout', 'mouseup', 'contextmenu', 'keydown', 'keyup', 'keyMap', 'load', 'focus', 'blur', 'paste', 'pasteBefore', 'willPaste', 'copy', 'copyBefore', 'copyAfter', 'cut', 'cutAfter', 'drop', 'show', 'hide'];
+
+/**
+ * Class EventManager
+ * @ignore
+ */
+
+var EventManager = function () {
+  function EventManager() {
+    _classCallCheck(this, EventManager);
+
+    this.events = new _tuiCodeSnippet2.default.Map();
+    this.TYPE = new _tuiCodeSnippet2.default.Enum(eventList);
+  }
+
+  /**
+   * Listen event and bind event handler
+   * @param {string} typeStr Event type string
+   * @param {function} handler Event handler
+   */
+
+
+  _createClass(EventManager, [{
+    key: 'listen',
+    value: function listen(typeStr, handler) {
+      var typeInfo = this._getTypeInfo(typeStr);
+      var eventHandlers = this.events.get(typeInfo.type) || [];
+
+      if (!this._hasEventType(typeInfo.type)) {
+        throw new Error('There is no event type ' + typeInfo.type);
+      }
+
+      if (typeInfo.namespace) {
+        handler.namespace = typeInfo.namespace;
+      }
+
+      eventHandlers.push(handler);
+
+      this.events.set(typeInfo.type, eventHandlers);
+    }
+
+    /**
+     * Emit event
+     * @param {string} eventName Event name to emit
+     * @returns {Array}
+     */
+
+  }, {
+    key: 'emit',
+    value: function emit() {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      var typeStr = args.shift();
+      var typeInfo = this._getTypeInfo(typeStr);
+      var eventHandlers = this.events.get(typeInfo.type);
+      var results = void 0;
+
+      if (eventHandlers) {
+        _tuiCodeSnippet2.default.forEach(eventHandlers, function (handler) {
+          var result = handler.apply(undefined, args);
+
+          if (!_tuiCodeSnippet2.default.isUndefined(result)) {
+            results = results || [];
+            results.push(result);
+          }
+        });
+      }
+
+      return results;
+    }
+
+    /**
+     * Emit given event and return result
+     * @param {string} eventName Event name to emit
+     * @param {string} sourceText Source text to change
+     * @returns {string}
+     */
+
+  }, {
+    key: 'emitReduce',
+    value: function emitReduce() {
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      var type = args.shift();
+      var eventHandlers = this.events.get(type);
+
+      if (eventHandlers) {
+        _tuiCodeSnippet2.default.forEach(eventHandlers, function (handler) {
+          var result = handler.apply(undefined, args);
+
+          if (!_tuiCodeSnippet2.default.isFalsy(result)) {
+            args[0] = result;
+          }
+        });
+      }
+
+      return args[0];
+    }
+
+    /**
+     * Get event type and namespace
+     * @param {string} typeStr Event type name
+     * @returns {{type: string, namespace: string}}
+     * @private
+     */
+
+  }, {
+    key: '_getTypeInfo',
+    value: function _getTypeInfo(typeStr) {
+      var splited = typeStr.split('.');
+
+      return {
+        type: splited[0],
+        namespace: splited[1]
+      };
+    }
+
+    /**
+     * Check whether event type exists or not
+     * @param {string} type Event type name
+     * @returns {boolean}
+     * @private
+     */
+
+  }, {
+    key: '_hasEventType',
+    value: function _hasEventType(type) {
+      return !_tuiCodeSnippet2.default.isUndefined(this.TYPE[this._getTypeInfo(type).type]);
+    }
+
+    /**
+     * Add event type when given event not exists
+     * @param {string} type Event type name
+     */
+
+  }, {
+    key: 'addEventType',
+    value: function addEventType(type) {
+      if (this._hasEventType(type)) {
+        throw new Error('There is already have event type ' + type);
+      }
+
+      this.TYPE.set(type);
+    }
+
+    /**
+     * Remove event handler from given event type
+     * @param {string} typeStr Event type name
+     * @param {function} [handler] - registered event handler
+     */
+
+  }, {
+    key: 'removeEventHandler',
+    value: function removeEventHandler(typeStr, handler) {
+      var _this = this;
+
+      var _getTypeInfo2 = this._getTypeInfo(typeStr),
+          type = _getTypeInfo2.type,
+          namespace = _getTypeInfo2.namespace;
+
+      if (type && handler) {
+        this._removeEventHandlerWithHandler(type, handler);
+      } else if (type && !namespace) {
+        // dont use dot notation cuz eslint
+        this.events['delete'](type);
+      } else if (!type && namespace) {
+        this.events.forEach(function (eventHandlers, eventType) {
+          _this._removeEventHandlerWithTypeInfo(eventType, namespace);
+        });
+      } else if (type && namespace) {
+        this._removeEventHandlerWithTypeInfo(type, namespace);
+      }
+    }
+
+    /**
+     * Remove event handler with event handler
+     * @param {string} type - event type name
+     * @param {function} handler - event handler
+     * @private
+     */
+
+  }, {
+    key: '_removeEventHandlerWithHandler',
+    value: function _removeEventHandlerWithHandler(type, handler) {
+      var eventHandlers = this.events.get(type) || [];
+      var handlerIndex = eventHandlers.indexOf(handler);
+      if (handlerIndex >= 0) {
+        eventHandlers.splice(handlerIndex, 1);
+      }
+    }
+
+    /**
+     * Remove event handler with event type information
+     * @param {string} type Event type name
+     * @param {string} namespace Event namespace
+     * @private
+     */
+
+  }, {
+    key: '_removeEventHandlerWithTypeInfo',
+    value: function _removeEventHandlerWithTypeInfo(type, namespace) {
+      var handlersToSurvive = [];
+      var eventHandlers = this.events.get(type);
+
+      if (!eventHandlers) {
+        return;
+      }
+
+      eventHandlers.map(function (handler) {
+        if (handler.namespace !== namespace) {
+          handlersToSurvive.push(handler);
+        }
+
+        return null;
+      });
+
+      this.events.set(type, handlersToSurvive);
+    }
+  }]);
+
+  return EventManager;
+}();
+
+exports.default = EventManager;
+
+/***/ }),
+
+/***/ 150:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -448,272 +688,6 @@ module.exports = Viewer;
 
 /***/ }),
 
-/***/ 15:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements EventManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN FE Development Lab <dl_javascript@nhn.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-
-var _tuiCodeSnippet = __webpack_require__(1);
-
-var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh', 'addImageBlobHook', 'setMarkdownAfter', 'contentChangedFromWysiwyg', 'changeFromWysiwyg', 'contentChangedFromMarkdown', 'changeFromMarkdown', 'change', 'changeModeToWysiwyg', 'changeModeToMarkdown', 'changeModeBefore', 'changeMode', 'changePreviewStyle', 'changePreviewTabPreview', 'changePreviewTabWrite', 'openPopupAddLink', 'openPopupAddImage', 'openPopupAddTable', 'openPopupTableUtils', 'openHeadingSelect', 'openPopupCodeBlockLanguages', 'openPopupCodeBlockEditor', 'openDropdownToolbar', 'closePopupCodeBlockLanguages', 'closePopupCodeBlockEditor', 'closeAllPopup', 'command', 'addCommandBefore', 'htmlUpdate', 'markdownUpdate', 'renderedHtmlUpdated', 'removeEditor', 'convertorAfterMarkdownToHtmlConverted', 'convertorBeforeHtmlToMarkdownConverted', 'convertorAfterHtmlToMarkdownConverted', 'stateChange', 'wysiwygSetValueAfter', 'wysiwygSetValueBefore', 'wysiwygGetValueBefore', 'wysiwygProcessHTMLText', 'wysiwygRangeChangeAfter', 'wysiwygKeyEvent', 'scroll', 'click', 'mousedown', 'mouseover', 'mouseout', 'mouseup', 'contextmenu', 'keydown', 'keyup', 'keyMap', 'load', 'focus', 'blur', 'paste', 'pasteBefore', 'willPaste', 'copy', 'copyBefore', 'copyAfter', 'cut', 'cutAfter', 'drop', 'show', 'hide'];
-
-/**
- * Class EventManager
- */
-
-var EventManager = function () {
-  /**
-   * Creates an instance of EventManager.
-   * @memberof EventManager
-   */
-  function EventManager() {
-    _classCallCheck(this, EventManager);
-
-    this.events = new _tuiCodeSnippet2.default.Map();
-    this.TYPE = new _tuiCodeSnippet2.default.Enum(eventList);
-  }
-
-  /**
-   * Listen event and bind event handler
-   * @memberof EventManager
-   * @param {string} typeStr Event type string
-   * @param {function} handler Event handler
-   */
-
-
-  _createClass(EventManager, [{
-    key: 'listen',
-    value: function listen(typeStr, handler) {
-      var typeInfo = this._getTypeInfo(typeStr);
-      var eventHandlers = this.events.get(typeInfo.type) || [];
-
-      if (!this._hasEventType(typeInfo.type)) {
-        throw new Error('There is no event type ' + typeInfo.type);
-      }
-
-      if (typeInfo.namespace) {
-        handler.namespace = typeInfo.namespace;
-      }
-
-      eventHandlers.push(handler);
-
-      this.events.set(typeInfo.type, eventHandlers);
-    }
-
-    /**
-     * Emit event
-     * @memberof EventManager
-     * @param {string} eventName Event name to emit
-     * @returns {Array}
-     */
-
-  }, {
-    key: 'emit',
-    value: function emit() {
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      var typeStr = args.shift();
-      var typeInfo = this._getTypeInfo(typeStr);
-      var eventHandlers = this.events.get(typeInfo.type);
-      var results = void 0;
-
-      if (eventHandlers) {
-        _tuiCodeSnippet2.default.forEach(eventHandlers, function (handler) {
-          var result = handler.apply(undefined, args);
-
-          if (!_tuiCodeSnippet2.default.isUndefined(result)) {
-            results = results || [];
-            results.push(result);
-          }
-        });
-      }
-
-      return results;
-    }
-
-    /**
-     * Emit given event and return result
-     * @memberof EventManager
-     * @param {string} eventName Event name to emit
-     * @param {string} sourceText Source text to change
-     * @returns {string}
-     */
-
-  }, {
-    key: 'emitReduce',
-    value: function emitReduce() {
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-
-      var type = args.shift();
-      var eventHandlers = this.events.get(type);
-
-      if (eventHandlers) {
-        _tuiCodeSnippet2.default.forEach(eventHandlers, function (handler) {
-          var result = handler.apply(undefined, args);
-
-          if (!_tuiCodeSnippet2.default.isFalsy(result)) {
-            args[0] = result;
-          }
-        });
-      }
-
-      return args[0];
-    }
-
-    /**
-     * Get event type and namespace
-     * @memberof EventManager
-     * @param {string} typeStr Event type name
-     * @returns {{type: string, namespace: string}}
-     * @private
-     */
-
-  }, {
-    key: '_getTypeInfo',
-    value: function _getTypeInfo(typeStr) {
-      var splited = typeStr.split('.');
-
-      return {
-        type: splited[0],
-        namespace: splited[1]
-      };
-    }
-
-    /**
-     * Check whether event type exists or not
-     * @param {string} type Event type name
-     * @returns {boolean}
-     * @private
-     */
-
-  }, {
-    key: '_hasEventType',
-    value: function _hasEventType(type) {
-      return !_tuiCodeSnippet2.default.isUndefined(this.TYPE[this._getTypeInfo(type).type]);
-    }
-
-    /**
-     * Add event type when given event not exists
-     * @memberof EventManager
-     * @param {string} type Event type name
-     */
-
-  }, {
-    key: 'addEventType',
-    value: function addEventType(type) {
-      if (this._hasEventType(type)) {
-        throw new Error('There is already have event type ' + type);
-      }
-
-      this.TYPE.set(type);
-    }
-
-    /**
-     * Remove event handler from given event type
-     * @memberof EventManager
-     * @param {string} typeStr Event type name
-     * @param {function} [handler] - registered event handler
-     */
-
-  }, {
-    key: 'removeEventHandler',
-    value: function removeEventHandler(typeStr, handler) {
-      var _this = this;
-
-      var _getTypeInfo2 = this._getTypeInfo(typeStr),
-          type = _getTypeInfo2.type,
-          namespace = _getTypeInfo2.namespace;
-
-      if (type && handler) {
-        this._removeEventHandlerWithHandler(type, handler);
-      } else if (type && !namespace) {
-        // dont use dot notation cuz eslint
-        this.events['delete'](type);
-      } else if (!type && namespace) {
-        this.events.forEach(function (eventHandlers, eventType) {
-          _this._removeEventHandlerWithTypeInfo(eventType, namespace);
-        });
-      } else if (type && namespace) {
-        this._removeEventHandlerWithTypeInfo(type, namespace);
-      }
-    }
-
-    /**
-     * Remove event handler with event handler
-     * @param {string} type - event type name
-     * @param {function} handler - event handler
-     * @memberof EventManager
-     * @private
-     */
-
-  }, {
-    key: '_removeEventHandlerWithHandler',
-    value: function _removeEventHandlerWithHandler(type, handler) {
-      var eventHandlers = this.events.get(type) || [];
-      var handlerIndex = eventHandlers.indexOf(handler);
-      if (handlerIndex >= 0) {
-        eventHandlers.splice(handlerIndex, 1);
-      }
-    }
-
-    /**
-     * Remove event handler with event type information
-     * @memberof EventManager
-     * @param {string} type Event type name
-     * @param {string} namespace Event namespace
-     * @private
-     */
-
-  }, {
-    key: '_removeEventHandlerWithTypeInfo',
-    value: function _removeEventHandlerWithTypeInfo(type, namespace) {
-      var handlersToSurvive = [];
-      var eventHandlers = this.events.get(type);
-
-      if (!eventHandlers) {
-        return;
-      }
-
-      eventHandlers.map(function (handler) {
-        if (handler.namespace !== namespace) {
-          handlersToSurvive.push(handler);
-        }
-
-        return null;
-      });
-
-      this.events.set(type, handlersToSurvive);
-    }
-  }]);
-
-  return EventManager;
-}();
-
-exports.default = EventManager;
-
-/***/ }),
-
 /***/ 16:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -740,12 +714,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class ExtManager
+ * @ignore
  */
 var ExtManager = function () {
-  /**
-   * Creates an instance of ExtManager.
-   * @memberof ExtManager
-   */
   function ExtManager() {
     _classCallCheck(this, ExtManager);
 
@@ -753,11 +724,9 @@ var ExtManager = function () {
   }
 
   /**
-   * defineExtension
    * Defined Extension
-   * @memberof ExtManager
    * @param {string} name extension name
-   * @param {ExtManager~extension} ext extension
+   * @param {function} ext extension
    */
 
 
@@ -769,7 +738,6 @@ var ExtManager = function () {
 
     /**
      * Apply extensions
-     * @memberof ExtManager
      * @param {object} context Context
      * @param {Array.<string|object>} options - options or names array
      */
@@ -828,11 +796,11 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _markdownIt = __webpack_require__(22);
+var _markdownIt = __webpack_require__(23);
 
 var _markdownIt2 = _interopRequireDefault(_markdownIt);
 
-var _toMark = __webpack_require__(23);
+var _toMark = __webpack_require__(18);
 
 var _toMark2 = _interopRequireDefault(_toMark);
 
@@ -951,13 +919,11 @@ var HTML_TAG_RX = new RegExp(openingTag, 'g');
 
 /**
  * Class Convertor
+ * @param {EventManager} em - EventManager instance
+ * @ignore
  */
 
 var Convertor = function () {
-  /**
-   * Convertor constructor
-   * @param {EventManager} em - EventManager instance
-   */
   function Convertor(em) {
     _classCallCheck(this, Convertor);
 
@@ -967,11 +933,10 @@ var Convertor = function () {
   /**
    * _markdownToHtmlWithCodeHighlight
    * Convert markdown to html with Codehighlight
-   * @private
-   * @memberof Convertor
    * @param {string} markdown markdown text
    * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
+   * @private
    */
 
 
@@ -986,11 +951,10 @@ var Convertor = function () {
     /**
      * _markdownToHtml
      * Convert markdown to html
-     * @private
-     * @memberof Convertor
      * @param {string} markdown markdown text
      * @param {object} env environment sandbox for markdownit
      * @returns {string} html text
+     * @private
      */
 
   }, {
@@ -1040,7 +1004,7 @@ var Convertor = function () {
 
       $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
         var $code = (0, _jquery2.default)(codeOrPre);
-        $code.html($code.html().replace(/ data-tomark-pass &gt;/g, '&gt;'));
+        $code.html($code.html().replace(/\sdata-tomark-pass\s(\/?)&gt;/g, '$1&gt;'));
       });
 
       renderedHTML = $wrapperDiv.html();
@@ -1052,7 +1016,6 @@ var Convertor = function () {
      * toHTMLWithCodeHightlight
      * Convert markdown to html with Codehighlight
      * emit convertorAfterMarkdownToHtmlConverted
-     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -1070,7 +1033,6 @@ var Convertor = function () {
      * toHTML
      * Convert markdown to html
      * emit convertorAfterMarkdownToHtmlConverted
-     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -1117,7 +1079,6 @@ var Convertor = function () {
      * toMarkdown
      * Convert html to markdown
      * emit convertorAfterHtmlToMarkdownConverted
-     * @memberof Convertor
      * @param {string} html html text
      * @param {object | null} toMarkOptions - toMark library options
      * @returns {string} markdown text
@@ -1133,6 +1094,7 @@ var Convertor = function () {
       var markdown = (0, _toMark2.default)(this._appendAttributeForBrIfNeed(html), toMarkOptions);
 
       markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
+      markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
 
       _tuiCodeSnippet2.default.forEach(markdown.split('\n'), function (line, index) {
         var FIND_TABLE_RX = /^\|[^|]*\|/ig;
@@ -1147,6 +1109,18 @@ var Convertor = function () {
       return resultArray.join('\n');
     }
   }, {
+    key: '_removeNewlinesBeforeAfterAndBlockElement',
+    value: function _removeNewlinesBeforeAfterAndBlockElement(markdown) {
+      // Newlines('\n\n') are created on to-mark.
+      var NEWLINES_BEFORE_BLOCK_RX = /<br>\n\n(#{1,6} .*|```|\||(\*+|-+|\d+\.) .*| *>[^\n]+.*)/g;
+      var NEWLINES_AFTER_BLOCK_RX = /(#{1,6} .*|```|\|)\n\n<br>/g;
+
+      markdown = markdown.replace(NEWLINES_BEFORE_BLOCK_RX, '<br>$1');
+      markdown = markdown.replace(NEWLINES_AFTER_BLOCK_RX, '$1\n<br>');
+
+      return markdown;
+    }
+  }, {
     key: '_appendAttributeForBrIfNeed',
     value: function _appendAttributeForBrIfNeed(html) {
       var FIND_BR_RX = /<br>/ig;
@@ -1158,11 +1132,16 @@ var Convertor = function () {
       var FIND_ATTRI_WITH_EMTPY_STR_RX = /<br data-tomark-pass="">/ig;
 
       html = html.replace(FIND_BR_RX, '<br />');
+
       html = html.replace(FIND_DOUBLE_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />');
       html = html.replace(FIND_ATTRI_WITH_EMTPY_STR_RX, '<br data-tomark-pass />');
 
       html = html.replace(FIND_PASSING_AND_NORMAL_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />$1');
       html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
+
+      // Preserve <br> when there is only one empty line before or after a block element.
+      html = html.replace(/(.)<br \/><br \/>(<h[1-6]>|<pre>|<table>|<ul>|<ol>|<blockquote>)/g, '$1<br /><br data-tomark-pass />$2');
+      html = html.replace(/(<\/h[1-6]>|<\/pre>|<\/table>|<\/ul>|<\/ol>|<\/blockquote>)<br \/>(.)/g, '$1<br data-tomark-pass />$2');
 
       return html;
     }
@@ -1170,7 +1149,6 @@ var Convertor = function () {
     /**
      * get markdownit with code highlight
      * @returns {markdownit} - markdownit instance
-     * @memberof Convertor
      * @static
      */
 
@@ -1183,7 +1161,6 @@ var Convertor = function () {
     /**
      * get markdownit
      * @returns {markdownit} - markdownit instance
-     * @memberof Convertor
      * @static
      */
 
@@ -1198,6 +1175,13 @@ var Convertor = function () {
 }();
 
 exports.default = Convertor;
+
+/***/ }),
+
+/***/ 18:
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_18__;
 
 /***/ }),
 
@@ -1225,7 +1209,7 @@ var _tuiCodeSnippet = __webpack_require__(1);
 
 var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-var _command = __webpack_require__(21);
+var _command = __webpack_require__(22);
 
 var _command2 = _interopRequireDefault(_command);
 
@@ -1239,14 +1223,13 @@ var KEYMAP_OS_INDEX = _util.isMac ? 1 : 0;
 
 /**
  * Class CommandManager
+ * @param {ToastUIEditor} base nedInstance
+ * @param {object} [options={}] - option object
+ *     @param {boolean} [options.useCommandShortcut=true] - execute command with keyMap
+ * @ignore
  */
 
 var CommandManager = function () {
-  /**
-   * @param {ToastUIEditor} base nedInstance
-   * @param {object} [options={}] - option object
-   *  @param {boolean} [options.useCommandShortcut=true] - execute command with keyMap
-   */
   function CommandManager(base) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -1286,7 +1269,6 @@ var CommandManager = function () {
 
     /**
      * Add command
-     * @memberof CommandManager
      * @param {Command} command Command instance
      * @returns {Command} Command
      */
@@ -1329,7 +1311,6 @@ var CommandManager = function () {
      * _initEvent
      * Bind event handler to eventManager
      * @private
-     * @memberof CommandManager
      */
 
   }, {
@@ -1356,7 +1337,6 @@ var CommandManager = function () {
 
     /**
      * Execute command
-     * @memberof CommandManager
      * @param {String} name Command name
      * @param {*} ...args Command argument
      * @returns {*}
@@ -1401,10 +1381,10 @@ var CommandManager = function () {
 
 /**
  * Create command by given editor type and property object
- * @memberof CommandManager
  * @param {string} type Command type
  * @param {{name: string, keyMap: Array}} props Property
  * @returns {*}
+ * @static
  */
 
 
@@ -1420,7 +1400,7 @@ exports.default = CommandManager;
 
 /***/ }),
 
-/***/ 20:
+/***/ 21:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1446,12 +1426,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class LazyRunner
+ * @ignore
  */
 var LazyRunner = function () {
-  /**
-   * Creates an instance of LazyRunner.
-   * @memberof LazyRunner
-   */
   function LazyRunner() {
     _classCallCheck(this, LazyRunner);
 
@@ -1528,7 +1505,7 @@ exports.default = LazyRunner;
 
 /***/ }),
 
-/***/ 21:
+/***/ 22:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1554,13 +1531,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * Class Command
+ * @param {string} name Command name
+ * @param {number} type Command type (Command.TYPE)
+ * @param {Array.<string>} [keyMap] keyMap
+ * @ignore
  */
 var Command = function () {
-  /**
-   * @param {string} name Command name
-   * @param {number} type Command type (Command.TYPE)
-   * @param {Array.<string>} [keyMap] keyMap
-   */
   function Command(name, type, keyMap) {
     _classCallCheck(this, Command);
 
@@ -1573,9 +1549,7 @@ var Command = function () {
   }
 
   /**
-   * getName
    * returns Name of command
-   * @memberof Command
    * @returns {string} Command Name
    */
 
@@ -1587,9 +1561,7 @@ var Command = function () {
     }
 
     /**
-     * getType
      * returns Type of command
-     * @memberof Command
      * @returns {number} Command Command type number
      */
 
@@ -1600,9 +1572,7 @@ var Command = function () {
     }
 
     /**
-     * isMDType
      * returns whether Command Type is Markdown or not
-     * @memberof Command
      * @returns {boolean} result
      */
 
@@ -1613,9 +1583,7 @@ var Command = function () {
     }
 
     /**
-     * isWWType
      * returns whether Command Type is Wysiwyg or not
-     * @memberof Command
      * @returns {boolean} result
      */
 
@@ -1626,9 +1594,7 @@ var Command = function () {
     }
 
     /**
-     * isGlobalType
      * returns whether Command Type is Global or not
-     * @memberof Command
      * @returns {boolean} result
      */
 
@@ -1639,9 +1605,7 @@ var Command = function () {
     }
 
     /**
-     * setKeyMap
      * Set keymap value for each os
-     * @memberof Command
      * @param {string} win Windows Key(and etc)
      * @param {string} mac Mac osx key
      */
@@ -1658,12 +1622,12 @@ var Command = function () {
 
 /**
  * Command factory method
- * @memberof Command
  * @param {string} typeStr Editor type name
  * @param {object} props Property
  *     @param {string} props.name Command name
  *     @param {number} props.type Command type number
  * @returns {Command}
+ * @static
  */
 
 
@@ -1690,8 +1654,8 @@ Command.factory = function (typeStr, props) {
  * markdown : 0
  * wysiwyg : 1
  * global : 2
- * @memberof Command
  * @type {object}
+ * @private
  */
 Command.TYPE = {
   MD: 0,
@@ -1700,13 +1664,6 @@ Command.TYPE = {
 };
 
 exports.default = Command;
-
-/***/ }),
-
-/***/ 22:
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_22__;
 
 /***/ }),
 
@@ -2812,24 +2769,21 @@ var TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
  * Class ToastUIEditorViewer
+ * @param {object} options Option object
+ *     @param {HTMLElement} options.el - container element
+ *     @param {string} options.initialValue Editor's initial value
+ *     @param {object} options.events eventlist Event list
+ *         @param {function} options.events.load It would be emitted when editor fully load
+ *         @param {function} options.events.change It would be emitted when content changed
+ *         @param {function} options.events.stateChange It would be emitted when format change by cursor position
+ *         @param {function} options.events.focus It would be emitted when editor get focus
+ *         @param {function} options.events.blur It would be emitted when editor loose focus
+ *     @param {object} options.hooks Hook list
+ *     @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
+ *     @param {string[]} [options.exts] - extensions
  */
 
 var ToastUIEditorViewer = function () {
-  /**
-   * Viewer
-   * @param {object} options Option object
-    * @param {HTMLElement} options.el - container element
-    * @param {string} options.initialValue Editor's initial value
-    * @param {object} options.events eventlist Event list
-      * @param {function} options.events.load It would be emitted when editor fully load
-      * @param {function} options.events.change It would be emitted when content changed
-      * @param {function} options.events.stateChange It would be emitted when format change by cursor position
-      * @param {function} options.events.focus It would be emitted when editor get focus
-      * @param {function} options.events.blur It would be emitted when editor loose focus
-    * @param {object} options.hooks Hook list
-      * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
-    * @param {string[]} [options.exts] - extensions
-    */
   function ToastUIEditorViewer(options) {
     var _this = this;
 
@@ -2849,7 +2803,6 @@ var ToastUIEditorViewer = function () {
     } else {
       this.convertor = new _convertor2.default(this.eventManager);
     }
-    this.toMarkOptions = null;
 
     if (this.options.useDefaultHTMLSanitizer) {
       this.convertor.initHtmlSanitizer();
@@ -2912,7 +2865,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Set content for preview
-     * @memberof ToastUIEditorViewer
      * @param {string} markdown Markdown text
      */
 
@@ -2927,7 +2879,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Set content for preview
-     * @memberof ToastUIEditorViewer
      * @param {string} markdown Markdown text
      * @deprecated
      */
@@ -2940,7 +2891,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Bind eventHandler to event type
-     * @memberof ToastUIEditorViewer
      * @param {string} type Event type
      * @param {function} handler Event handler
      */
@@ -2953,7 +2903,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Unbind eventHandler from event type
-     * @memberof ToastUIEditorViewer
      * @param {string} type Event type
      */
 
@@ -2965,7 +2914,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Remove Viewer preview from document
-     * @memberof ToastUIEditorViewer
      */
 
   }, {
@@ -2983,7 +2931,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Add hook to Viewer preview's event
-     * @memberof ToastUIEditorViewer
      * @param {string} type Event type
      * @param {function} handler Event handler
      */
@@ -2997,7 +2944,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Return true
-     * @memberof ToastUIEditorViewer
      * @returns {boolean}
      */
 
@@ -3009,7 +2955,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Return false
-     * @memberof ToastUIEditorViewer
      * @returns {boolean}
      */
 
@@ -3021,7 +2966,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Return false
-     * @memberof ToastUIEditorViewer
      * @returns {boolean}
      */
 
@@ -3033,7 +2977,6 @@ var ToastUIEditorViewer = function () {
 
     /**
      * Define extension
-     * @memberof ToastUIEditorViewer
      * @param {string} name Extension name
      * @param {ExtManager~extension} ext extension
      */
@@ -3059,6 +3002,7 @@ ToastUIEditorViewer.isViewer = true;
 /**
  * domUtil instance
  * @type {DomUtil}
+ * @ignore
  */
 ToastUIEditorViewer.domUtils = _domUtils2.default;
 
@@ -3136,7 +3080,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var FIND_ZWB = /\u200B/g;
 
 /**
- * isTextNode
  * Check if node is text node
  * @param {Node} node node to check
  * @returns {boolean} result
@@ -3147,7 +3090,6 @@ var isTextNode = function isTextNode(node) {
 };
 
 /**
- * isElemNode
  * Check if node is element node
  * @param {Node} node node to check
  * @returns {boolean} result
@@ -3169,7 +3111,6 @@ var isBlockNode = function isBlockNode(node) {
 };
 
 /**
- * getNodeName
  * Get node name of node
  * @param {Node} node node
  * @returns {string} node name
@@ -3184,7 +3125,6 @@ var getNodeName = function getNodeName(node) {
 };
 
 /**
- * getTextLength
  * Get node offset length of node(for Range API)
  * @param {Node} node node
  * @returns {number} length
@@ -3203,7 +3143,6 @@ var getTextLength = function getTextLength(node) {
 };
 
 /**
- * getOffsetLength
  * Get node offset length of node(for Range API)
  * @param {Node} node node
  * @returns {number} length
@@ -3222,7 +3161,6 @@ var getOffsetLength = function getOffsetLength(node) {
 };
 
 /**
- * getNodeOffsetOfParent
  * get node offset between parent's childnodes
  * @param {Node} node node
  * @returns {number} offset(index)
@@ -3245,7 +3183,6 @@ var getNodeOffsetOfParent = function getNodeOffsetOfParent(node) {
 };
 
 /**
- * getChildNodeByOffset
  * get child node by offset
  * @param {Node} node node
  * @param {number} index offset index
@@ -3265,7 +3202,6 @@ var getChildNodeByOffset = function getChildNodeByOffset(node, index) {
 };
 
 /**
- * getNodeWithDirectionUntil
  * find next node from passed node
  * @param {strong} direction previous or next
  * @param {Node} node node
@@ -3296,7 +3232,6 @@ var getNodeWithDirectionUntil = function getNodeWithDirectionUntil(direction, no
 };
 
 /**
- * getPrevOffsetNodeUntil
  * get prev node of childnode pointed with index
  * @param {Node} node node
  * @param {number} index offset index
@@ -3335,7 +3270,6 @@ var getParentUntilBy = function getParentUntilBy(node, matchCondition, stopCondi
 };
 
 /**
- * getParentUntil
  * get parent node until paseed node name
  * @param {Node} node node
  * @param {string|HTMLNode} untilNode node name or node to limit
@@ -3359,7 +3293,6 @@ var getParentUntil = function getParentUntil(node, untilNode) {
 };
 
 /**
- * getNodeWithDirectionUnderParent
  * get node on the given direction under given parent
  * @param {strong} direction previous or next
  * @param {Node} node node
@@ -3381,7 +3314,6 @@ var getNodeWithDirectionUnderParent = function getNodeWithDirectionUnderParent(d
 };
 
 /**
- * getTopPrevNodeUnder
  * get top previous top level node under given node
  * @param {Node} node node
  * @param {Node} underNode underNode
@@ -3393,7 +3325,6 @@ var getTopPrevNodeUnder = function getTopPrevNodeUnder(node, underNode) {
 };
 
 /**
- * getNextTopBlockNode
  * get next top level block node
  * @param {Node} node node
  * @param {Node} underNode underNode
@@ -3447,6 +3378,7 @@ var getPrevTextNode = function getPrevTextNode(node) {
  * @param {HTMLNode} root - root node
  * @param {HTMLNode} node - node to test
  * @returns {Boolean} true if root contains node
+ * @ignore
  */
 var containsNode = function containsNode(root, node) {
   var walker = document.createTreeWalker(root, 4, null, false);
@@ -3963,6 +3895,7 @@ var optimizeRange = function optimizeRange(range, tagName) {
  * Gets all text node from root element.
  * @param {HTMLElement} root Root element
  * @returns {Array} list of text nodes
+ * @ignore
  */
 var getAllTextNode = function getAllTextNode(root) {
   var walker = document.createTreeWalker(root, 4, null, false);
@@ -3977,6 +3910,67 @@ var getAllTextNode = function getAllTextNode(root) {
   }
 
   return result;
+};
+
+/**
+ * Check whether the node is 'TD' or 'TH'
+ * @param {HTMLElement} node - the target node
+ * @returns {boolean} - whether the node is 'TD' or 'TH'
+ * @ignore
+ */
+var isCellNode = function isCellNode(node) {
+  if (!node) {
+    return false;
+  }
+
+  return node.nodeName === 'TD' || node.nodeName === 'TH';
+};
+
+/**
+ * Get the last node on the target node by the condition
+ * @param {HTMLElement} node - the target node
+ * @returns {function} - the condition to find the node
+ * @ignore
+ */
+var getLastNodeBy = function getLastNodeBy(node, condition) {
+  var lastNode = node && node.lastChild;
+
+  while (lastNode && condition(lastNode)) {
+    lastNode = lastNode.lastChild;
+  }
+
+  return lastNode;
+};
+
+/**
+ * Get the parent node on the target node by the condition
+ * @param {HTMLElement} node - the target node
+ * @returns {function} - the condition to find the node
+ * @ignore
+ */
+var getParentNodeBy = function getParentNodeBy(node, condition) {
+  while (node && condition(node.parentNode, node)) {
+    node = node.parentNode;
+  }
+
+  return node;
+};
+
+/**
+ * Get the sibling node on the target node by the condition
+ * @param {HTMLElement} node - the target node
+ * @param {string} direction - the direction to find node ('previous', 'next')
+ * @returns {function} - the condition to find the node
+ * @ignore
+ */
+var getSiblingNodeBy = function getSiblingNodeBy(node, direction, condition) {
+  var directionKey = direction + 'Sibling';
+
+  while (node && condition(node[directionKey], node)) {
+    node = node[directionKey];
+  }
+
+  return node;
 };
 
 exports.default = {
@@ -4017,7 +4011,11 @@ exports.default = {
   changeTagOrder: changeTagOrder,
   mergeSameNodes: mergeSameNodes,
   optimizeRange: optimizeRange,
-  getAllTextNode: getAllTextNode
+  getAllTextNode: getAllTextNode,
+  isCellNode: isCellNode,
+  getLastNodeBy: getLastNodeBy,
+  getParentNodeBy: getParentNodeBy,
+  getSiblingNodeBy: getSiblingNodeBy
 };
 
 /***/ }),
@@ -4051,10 +4049,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Class Code Block Manager
  */
 var CodeBlockManager = function () {
-  /**
-   * Creates an instance of CodeBlockManager.
-   * @memberof CodeBlockManager
-   */
   function CodeBlockManager() {
     _classCallCheck(this, CodeBlockManager);
 
@@ -4078,7 +4072,6 @@ var CodeBlockManager = function () {
      * get replacer for code block
      * @param {string} language - code block type
      * @returns {function} - replacer function
-     * @memberof CodeBlockManager
      */
 
   }, {
@@ -4112,7 +4105,6 @@ var CodeBlockManager = function () {
     /**
      * get supported languages by highlight-js
      * @returns {Array<string>} - supported languages by highlight-js
-     * @static
      */
 
   }], [{
@@ -4171,6 +4163,10 @@ var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpad
 
 var SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' + 'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' + 'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' + 'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' + 'height|horiz-adv-x|horiz-origin-x|ideographic|k|keyPoints|keySplines|keyTimes|lang|' + 'marker-end|marker-mid|marker-start|markerHeight|markerUnits|markerWidth|mathematical|' + 'max|min|offset|opacity|orient|origin|overline-position|overline-thickness|panose-1|' + 'path|pathLength|points|preserveAspectRatio|r|refX|refY|repeatCount|repeatDur|' + 'requiredExtensions|requiredFeatures|restart|rotate|rx|ry|slope|stemh|stemv|stop-color|' + 'stop-opacity|strikethrough-position|strikethrough-thickness|stroke|stroke-dasharray|' + 'stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|' + 'stroke-width|systemLanguage|target|text-anchor|to|transform|type|u1|u2|underline-position|' + 'underline-thickness|unicode|unicode-range|units-per-em|values|version|viewBox|visibility|' + 'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' + 'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
 
+var ATTR_VALUE_BLACK_LIST_RX = {
+  'href': /^(javascript:).*/g
+};
+
 /**
  * htmlSanitizer
  * @param {string|Node} html html or Node
@@ -4187,6 +4183,7 @@ function htmlSanitizer(html, needHtmlText) {
 
   removeUnnecessaryTags($html);
   leaveOnlyWhitelistAttribute($html);
+  removeInvalidAttributeValues($html);
 
   return finalizeHtml($html, needHtmlText);
 }
@@ -4197,7 +4194,7 @@ function htmlSanitizer(html, needHtmlText) {
  * @param {jQuery} $html jQuery instance
  */
 function removeUnnecessaryTags($html) {
-  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title').remove();
+  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title, embed, object').remove();
 }
 
 /**
@@ -4223,6 +4220,30 @@ function leaveOnlyWhitelistAttribute($html) {
       }
     });
   });
+}
+
+/**
+ * Remove invalid attribute values
+ * @private
+ * @param {jQuery} $html jQuery instance
+ */
+function removeInvalidAttributeValues($html) {
+  var _loop = function _loop(attr) {
+    if (ATTR_VALUE_BLACK_LIST_RX.hasOwnProperty(attr)) {
+      $html.find('[' + attr + ']').each(function (index, node) {
+        var attrs = node.attributes;
+        var valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr];
+        var attrItem = attrs.getNamedItem(attr);
+        if (valueBlackListRX && attrItem && attrItem.value.toLowerCase().match(valueBlackListRX)) {
+          attrs.removeNamedItem(attr);
+        }
+      });
+    }
+  };
+
+  for (var attr in ATTR_VALUE_BLACK_LIST_RX) {
+    _loop(attr);
+  }
 }
 
 /**
