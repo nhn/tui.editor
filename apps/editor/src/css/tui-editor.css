@@ -186,7 +186,8 @@
     padding-right: 25px;
 }
 
-.tui-editor-defaultUI pre.CodeMirror pre.CodeMirror-placeholder {
+.tui-editor-defaultUI .CodeMirror pre.CodeMirror-placeholder {
+    margin: 0;
     padding-left: 25px;
     color: grey;
 }
