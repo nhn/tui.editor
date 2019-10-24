@@ -53,7 +53,7 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('1. &lt;text&gt;')).toEqual('1\\. \\<text\\>');
         });
 
-        it('should escape all markdown paired characters.', function() {
+        it('should escape all markdown paired characters', function() {
             expect(getMarkdownText('foo*bar')).toBe('foo\\*bar');
             expect(getMarkdownText('foo*bar*baz')).toBe('foo\\*bar\\*baz');
             expect(getMarkdownText('foo**bar**baz')).toBe('foo\\*\\*bar\\*\\*baz');
@@ -65,8 +65,16 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('foo~bar')).toBe('foo\\~bar');
             expect(getMarkdownText('foo~~bar~~baz')).toBe('foo\\~\\~bar\\~\\~baz');
 
+            expect(getMarkdownText('1. foo~bar*baz*_qux_')).toBe('1\\. foo\\~bar\\*baz\\*\\_qux\\_');
+            expect(getMarkdownText('> foo~bar*baz*_qux_')).toBe('\\> foo\\~bar\\*baz\\*\\_qux\\_');
+        });
+
+        it('should escape all backticks', function() {
             expect(getMarkdownText('foo`bar')).toBe('foo\\`bar');
             expect(getMarkdownText('foo`bar`')).toBe('foo\\`bar\\`');
+
+            expect(getMarkdownText('1. foo`bar`')).toBe('1\\. foo\\`bar\\`');
+            expect(getMarkdownText('> foo`bar`')).toBe('\\> foo\\`bar\\`');
         });
     });
 

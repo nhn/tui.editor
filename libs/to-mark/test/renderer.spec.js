@@ -193,18 +193,14 @@ describe('renderer', function() {
     it('escapeText() can process html text node for markdown text', function() {
         var renderer = Renderer.factory();
 
-        expect(renderer.escapeText('im *text*')).toEqual('im \\*text\\*');
         expect(renderer.escapeText('im (text)')).toEqual('im \\(text\\)');
         expect(renderer.escapeText('im [text]')).toEqual('im \\[text\\]');
         expect(renderer.escapeText('im {text}')).toEqual('im \\{text\\}');
-        expect(renderer.escapeText('im _text_')).toEqual('im \\_text\\_');
         expect(renderer.escapeText('im ## text')).toEqual('im \\#\\# text');
-        expect(renderer.escapeText('im ` text')).toEqual('im \\` text');
         expect(renderer.escapeText('im + text -')).toEqual('im \\+ text \\-');
         expect(renderer.escapeText('im . text !')).toEqual('im \\. text \\!');
         expect(renderer.escapeText('> im text')).toEqual('\\> im text');
         expect(renderer.escapeText('im | text')).toEqual('im \\| text');
-        expect(renderer.escapeText('im ` text')).toEqual('im \\` text');
     });
 
     it('escapeTextHtml() can process html text node for markdown text', function() {
