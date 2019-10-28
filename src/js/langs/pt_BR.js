@@ -4,7 +4,7 @@
 */
 import i18n from '../i18n';
 
-i18n.setLanguage(['ptBR', 'pt_BR'], {
+i18n.setLanguage(['pt', 'pt_BR'], {
   'Markdown': 'Markdown',
   'WYSIWYG': 'WYSIWYG',
   'Write': 'Escrever',

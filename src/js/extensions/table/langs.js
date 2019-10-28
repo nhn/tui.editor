@@ -139,7 +139,7 @@ if (i18n) {
     'Cannot paste row merged cells into the table header': 'Non è possibile incollare celle unite per riga nell\'intestazione della tabella'
   });
 
-  i18n.setLanguage(['ptBR', 'pt_BR'], {
+  i18n.setLanguage(['pt', 'pt_BR'], {
     'Merge cells': 'Mesclar células',
     'Unmerge cells': 'Desmembrar células',
     'Cannot change part of merged cell': 'Não é possível alterar parte da célula mesclada',
