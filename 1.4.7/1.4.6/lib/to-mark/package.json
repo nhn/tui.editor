@@ -1,0 +1,53 @@
+{
+  "name": "to-mark",
+  "version": "1.1.7",
+  "author": "NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://github.com/to-mark)",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/to-mark.js",
+  "devDependencies": {
+    "cross-env": "^5.0.5",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-concat-css": "^2.2.0",
+    "gulp-csslint": "^0.3.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-livereload": "^3.7.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-strip-debug": "^1.0.2",
+    "gulp-sync": "^0.1.4",
+    "gulp-uglify": "^1.4.1",
+    "gulp-util": "^3.0.6",
+    "istanbul-instrumenter-loader": "^3.0.0",
+    "jasmine-core": "^2.4.1",
+    "karma": "^2.0.3",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.2",
+    "karma-edge-launcher": "^0.4.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-ie-launcher": "^1.0.0",
+    "karma-jasmine": "^1.0.2",
+    "karma-jasmine-ajax": "^0.1.13",
+    "karma-jasmine-jquery": "^0.1.1",
+    "karma-junit-reporter": "^1.1.0",
+    "karma-narrow-reporter": "^1.1.1",
+    "karma-remap-coverage": "^0.1.4",
+    "karma-safari-launcher": "^1.0.0",
+    "karma-sauce-launcher": "^1.2.0",
+    "karma-sourcemap-loader": "^0.3.6",
+    "karma-webdriver-launcher": "https://github.com/nhnent/karma-webdriver-launcher.git#v1.1.0",
+    "karma-webpack": "^2.0.9",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "scripts": {
+    "dev": "gulp develop",
+    "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json -t ./node_modules/fedoc-template/",
+    "build": "gulp build",
+    "test": "karma start",
+    "test:ne": "cross-env SERVER=ne karma start",
+    "test:sl": "cross-env SERVER=sl karma start"
+  }
+}

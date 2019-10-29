@@ -1,0 +1,14 @@
+{
+  "name": "highlightjs",
+  "version": "9.12.0",
+  "main": [
+    "highlight.pack.js",
+    "styles/default.css"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "vendor",
+    "components"
+  ]
+}

@@ -1,0 +1,940 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: editor.js | Editor</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px">
+        
+            <a href="https://nhnent.github.io/tui.editor/" rel="noopener noreferrer" target="_blank">
+                <img src="https://cloud.githubusercontent.com/assets/389021/16107646/9729e556-33d8-11e6-933f-5b09fa3a53bb.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Editor</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example00-demo.html">0. Demo</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example00-demo_sub"></div></li><li><a href="tutorial-example01-basic.html">1. Basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-basic_sub"></div></li><li><a href="tutorial-example02-viewer-basic.html">2. Viewer basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-viewer-basic_sub"></div></li><li><a href="tutorial-example03-jquery.html">3. jQuery</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-jquery_sub"></div></li><li><a href="tutorial-example04-viewer-jquery.html">4. Viewer jQuery</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-viewer-jquery_sub"></div></li><li><a href="tutorial-example05-scrollsync.html">5. Scroll Sync</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example05-scrollsync_sub"></div></li><li><a href="tutorial-example06-colorsyntax.html">6. Color Syntax</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example06-colorsyntax_sub"></div></li><li><a href="tutorial-example07-table.html">7. Table</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-table_sub"></div></li><li><a href="tutorial-example08-uml.html">8. UML</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-uml_sub"></div></li><li><a href="tutorial-example09-multiple-extensions.html">9. Multiple extensions</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-multiple-extensions_sub"></div></li><li><a href="tutorial-example10-viewer-multiple-extensions.html">10. Viewer multiple extensions</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example10-viewer-multiple-extensions_sub"></div></li><li><a href="tutorial-example11-chart.html">11. Chart</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example11-chart_sub"></div></li><li><a href="tutorial-example12-writing-extension.html">12. Writing your own extension</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example12-writing-extension_sub"></div></li><li><a href="tutorial-example13-all-extension-blank.html">example13-all-extension-blank</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example13-all-extension-blank_sub"></div></li><li><a href="tutorial-example14-customize-toolbar.html">example14-customize-toolbar</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example14-customize-toolbar_sub"></div></li><li><a href="tutorial-example15-customize-feature.html">example15-customize-feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example15-customize-feature_sub"></div></li><li><a href="tutorial-example16-toolbar-add-button-fontawesome.html">example16-toolbar-add-button-fontawesome</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example16-toolbar-add-button-fontawesome_sub"></div></li><li><a href="tutorial-example17-i18n-language.html">example17-i18n-language</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example17-i18n-language_sub"></div></li><li><a href="tutorial-example18-set-content-programmatically.html">example18-set-content-programmatically</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example18-set-content-programmatically_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="BlockOverlay.html">BlockOverlay</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="BlockOverlay_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="BlockOverlay.html#active">active</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="BlockOverlay.html#getAttachedElement">getAttachedElement</a></li><li><a href="BlockOverlay.html#getVisibility">getVisibility</a></li><li><a href="BlockOverlay.html#onHide">onHide</a></li><li><a href="BlockOverlay.html#onShow">onShow</a></li><li><a href="BlockOverlay.html#setVisibility">setVisibility</a></li><li><a href="BlockOverlay.html#syncLayout">syncLayout</a></li></ul></div></li><li><a href="Button.html">Button</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Button_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Button.html#.className">className</a></li><li><a href="Button.html#.name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Button.html#destroy">destroy</a></li><li><a href="Button.html#disable">disable</a></li><li><a href="Button.html#enable">enable</a></li><li><a href="Button.html#getName">getName</a></li><li><a href="Button.html#isEnabled">isEnabled</a></li><li><a href="Button.html#off">off</a></li><li><a href="Button.html#on">on</a></li><li><a href="Button.html#remove">remove</a></li><li><a href="Button.html#trigger">trigger</a></li></ul></div></li><li><a href="CodeBlockEditor.html">CodeBlockEditor</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CodeBlockEditor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="CodeBlockEditor.html#addWidget">addWidget</a></li><li><a href="CodeBlockEditor.html#blur">blur</a></li><li><a href="CodeBlockEditor.html#clear">clear</a></li><li><a href="CodeBlockEditor.html#focus">focus</a></li><li><a href="CodeBlockEditor.html#getCaretPosition">getCaretPosition</a></li><li><a href="CodeBlockEditor.html#getCurrentRange">getCurrentRange</a></li><li><a href="CodeBlockEditor.html#getCursor">getCursor</a></li><li><a href="CodeBlockEditor.html#getEditor">getEditor</a></li><li><a href="CodeBlockEditor.html#getEditorCodeText">getEditorCodeText</a></li><li><a href="CodeBlockEditor.html#getLanguage">getLanguage</a></li><li><a href="CodeBlockEditor.html#getRange">getRange</a></li><li><a href="CodeBlockEditor.html#getValue">getValue</a></li><li><a href="CodeBlockEditor.html#getWrapperElement">getWrapperElement</a></li><li><a href="CodeBlockEditor.html#load">load</a></li><li><a href="CodeBlockEditor.html#moveCursorToEnd">moveCursorToEnd</a></li><li><a href="CodeBlockEditor.html#moveCursorToStart">moveCursorToStart</a></li><li><a href="CodeBlockEditor.html#off">off</a></li><li><a href="CodeBlockEditor.html#on">on</a></li><li><a href="CodeBlockEditor.html#refresh">refresh</a></li><li><a href="CodeBlockEditor.html#remove">remove</a></li><li><a href="CodeBlockEditor.html#replaceRelativeOffset">replaceRelativeOffset</a></li><li><a href="CodeBlockEditor.html#replaceSelection">replaceSelection</a></li><li><a href="CodeBlockEditor.html#reset">reset</a></li><li><a href="CodeBlockEditor.html#save">save</a></li><li><a href="CodeBlockEditor.html#scrollTop">scrollTop</a></li><li><a href="CodeBlockEditor.html#setEditorCodeText">setEditorCodeText</a></li><li><a href="CodeBlockEditor.html#setHeight">setHeight</a></li><li><a href="CodeBlockEditor.html#setLanguage">setLanguage</a></li><li><a href="CodeBlockEditor.html#setMinHeight">setMinHeight</a></li><li><a href="CodeBlockEditor.html#setValue">setValue</a></li></ul></div></li><li><a href="CodeBlockGadget.html">CodeBlockGadget</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CodeBlockGadget_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="CodeBlockGadget.html#active">active</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="CodeBlockGadget.html#getAttachedElement">getAttachedElement</a></li><li><a href="CodeBlockGadget.html#getVisibility">getVisibility</a></li><li><a href="CodeBlockGadget.html#onHide">onHide</a></li><li><a href="CodeBlockGadget.html#onShow">onShow</a></li><li><a href="CodeBlockGadget.html#setVisibility">setVisibility</a></li><li><a href="CodeBlockGadget.html#syncLayout">syncLayout</a></li></ul></div></li><li><a href="CodeBlockLanguagesCombo.html">CodeBlockLanguagesCombo</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CodeBlockLanguagesCombo_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="CodeBlockLanguagesCombo.html#getElement">getElement</a></li><li><a href="CodeBlockLanguagesCombo.html#setLanguage">setLanguage</a></li><li><a href="CodeBlockLanguagesCombo.html#setOnLanguageSelected">setOnLanguageSelected</a></li></ul></div></li><li><a href="CodeBlockManager.html">CodeBlockManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CodeBlockManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="CodeBlockManager.html#.getHighlightJSLanguages">getHighlightJSLanguages</a></li><li><a href="CodeBlockManager.html#createCodeBlockHtml">createCodeBlockHtml</a></li><li><a href="CodeBlockManager.html#getReplacer">getReplacer</a></li><li><a href="CodeBlockManager.html#setReplacer">setReplacer</a></li></ul></div></li><li><a href="CodeBlockPreview.html">CodeBlockPreview</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CodeBlockPreview_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="CodeBlockPreview.html#clear">clear</a></li><li><a href="CodeBlockPreview.html#getHTML">getHTML</a></li><li><a href="CodeBlockPreview.html#isVisible">isVisible</a></li><li><a href="CodeBlockPreview.html#refresh">refresh</a></li><li><a href="CodeBlockPreview.html#render">render</a></li><li><a href="CodeBlockPreview.html#setHeight">setHeight</a></li><li><a href="CodeBlockPreview.html#setHTML">setHTML</a></li><li><a href="CodeBlockPreview.html#setMinHeight">setMinHeight</a></li></ul></div></li><li><a href="CodeMirrorExt.html">CodeMirrorExt</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CodeMirrorExt_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="CodeMirrorExt.html#.this.cm">this.cm</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="CodeMirrorExt.html#addWidget">addWidget</a></li><li><a href="CodeMirrorExt.html#blur">blur</a></li><li><a href="CodeMirrorExt.html#focus">focus</a></li><li><a href="CodeMirrorExt.html#getCaretPosition">getCaretPosition</a></li><li><a href="CodeMirrorExt.html#getCurrentRange">getCurrentRange</a></li><li><a href="CodeMirrorExt.html#getCursor">getCursor</a></li><li><a href="CodeMirrorExt.html#getEditor">getEditor</a></li><li><a href="CodeMirrorExt.html#getRange">getRange</a></li><li><a href="CodeMirrorExt.html#getValue">getValue</a></li><li><a href="CodeMirrorExt.html#getWrapperElement">getWrapperElement</a></li><li><a href="CodeMirrorExt.html#moveCursorToEnd">moveCursorToEnd</a></li><li><a href="CodeMirrorExt.html#moveCursorToStart">moveCursorToStart</a></li><li><a href="CodeMirrorExt.html#off">off</a></li><li><a href="CodeMirrorExt.html#on">on</a></li><li><a href="CodeMirrorExt.html#remove">remove</a></li><li><a href="CodeMirrorExt.html#replaceRelativeOffset">replaceRelativeOffset</a></li><li><a href="CodeMirrorExt.html#replaceSelection">replaceSelection</a></li><li><a href="CodeMirrorExt.html#reset">reset</a></li><li><a href="CodeMirrorExt.html#scrollTop">scrollTop</a></li><li><a href="CodeMirrorExt.html#setHeight">setHeight</a></li><li><a href="CodeMirrorExt.html#setMinHeight">setMinHeight</a></li><li><a href="CodeMirrorExt.html#setValue">setValue</a></li></ul></div></li><li><a href="Command.html">Command</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Command_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Command.html#.TYPE">TYPE</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Command.html#.factory">factory</a></li><li><a href="Command.html#getName">getName</a></li><li><a href="Command.html#getType">getType</a></li><li><a href="Command.html#isGlobalType">isGlobalType</a></li><li><a href="Command.html#isMDType">isMDType</a></li><li><a href="Command.html#isWWType">isWWType</a></li><li><a href="Command.html#setKeyMap">setKeyMap</a></li></ul></div></li><li><a href="CommandManager.html">CommandManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CommandManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="CommandManager.html#addCommand">addCommand</a></li><li><a href="CommandManager.html#exec">exec</a></li></ul></div></li><li><a href="ComponentManager.html">ComponentManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ComponentManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ComponentManager.html#.CommandManager.command">CommandManager.command</a></li><li><a href="ComponentManager.html#addManager">addManager</a></li><li><a href="ComponentManager.html#getManager">getManager</a></li><li><a href="ComponentManager.html#removeManager">removeManager</a></li></ul></div></li><li><a href="Convertor.html">Convertor</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Convertor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Convertor.html#.getMarkdownitHighlightRenderer">getMarkdownitHighlightRenderer</a></li><li><a href="Convertor.html#toHTML">toHTML</a></li><li><a href="Convertor.html#toHTMLWithCodeHightlight">toHTMLWithCodeHightlight</a></li><li><a href="Convertor.html#toMarkdown">toMarkdown</a></li></ul></div></li><li><a href="DefaultToolbar.html">DefaultToolbar</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="DefaultToolbar_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="DefaultToolbar.html#_initEvent">_initEvent</a></li><li><a href="DefaultToolbar.html#addButton">addButton</a></li><li><a href="DefaultToolbar.html#addDivider">addDivider</a></li><li><a href="DefaultToolbar.html#addItem">addItem</a></li><li><a href="DefaultToolbar.html#destroy">destroy</a></li><li><a href="DefaultToolbar.html#disableAllButton">disableAllButton</a></li><li><a href="DefaultToolbar.html#enableAllButton">enableAllButton</a></li><li><a href="DefaultToolbar.html#getItem">getItem</a></li><li><a href="DefaultToolbar.html#getItems">getItems</a></li><li><a href="DefaultToolbar.html#indexOfItem">indexOfItem</a></li><li><a href="DefaultToolbar.html#insertItem">insertItem</a></li><li><a href="DefaultToolbar.html#removeAllItems">removeAllItems</a></li><li><a href="DefaultToolbar.html#removeItem">removeItem</a></li><li><a href="DefaultToolbar.html#setItems">setItems</a></li></ul></div></li><li><a href="DefaultUI.html">DefaultUI</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="DefaultUI_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="DefaultUI.html#.$el">$el</a></li><li><a href="DefaultUI.html#.name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="DefaultUI.html#createPopup">createPopup</a></li><li><a href="DefaultUI.html#getEditorHeight">getEditorHeight</a></li><li><a href="DefaultUI.html#getEditorSectionHeight">getEditorSectionHeight</a></li><li><a href="DefaultUI.html#getModeSwitch">getModeSwitch</a></li><li><a href="DefaultUI.html#getToolbar">getToolbar</a></li><li><a href="DefaultUI.html#hide">hide</a></li><li><a href="DefaultUI.html#remove">remove</a></li><li><a href="DefaultUI.html#setToolbar">setToolbar</a></li><li><a href="DefaultUI.html#show">show</a></li></ul></div></li><li><a href="EventManager.html">EventManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="EventManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="EventManager.html#addEventType">addEventType</a></li><li><a href="EventManager.html#emit">emit</a></li><li><a href="EventManager.html#emitReduce">emitReduce</a></li><li><a href="EventManager.html#listen">listen</a></li><li><a href="EventManager.html#removeEventHandler">removeEventHandler</a></li></ul></div></li><li><a href="ExtManager.html">ExtManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ExtManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ExtManager.html#applyExtension">applyExtension</a></li><li><a href="ExtManager.html#defineExtension">defineExtension</a></li></ul></div></li><li><a href="I18n.html">I18n</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="I18n_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="I18n.html#get">get</a></li><li><a href="I18n.html#setCode">setCode</a></li><li><a href="I18n.html#setLanguage">setLanguage</a></li></ul></div></li><li><a href="ImportManager.html">ImportManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ImportManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ImportManager.html#.decodeURIGraceful">decodeURIGraceful</a></li><li><a href="ImportManager.html#.encodeMarkdownCharacters">encodeMarkdownCharacters</a></li><li><a href="ImportManager.html#.escapeMarkdownCharacters">escapeMarkdownCharacters</a></li></ul></div></li><li><a href="KeyMapper.html">KeyMapper</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="KeyMapper_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="KeyMapper.html#.getSharedInstance">getSharedInstance</a></li><li><a href="KeyMapper.html#.keyCode">keyCode</a></li><li><a href="KeyMapper.html#convert">convert</a></li></ul></div></li><li><a href="LayerPopup.html">LayerPopup</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LayerPopup_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="LayerPopup.html#_initDOM">_initDOM</a></li><li><a href="LayerPopup.html#_initDOMEvent">_initDOMEvent</a></li><li><a href="LayerPopup.html#_initEditorEvent">_initEditorEvent</a></li><li><a href="LayerPopup.html#_initInstance">_initInstance</a></li><li><a href="LayerPopup.html#destroy">destroy</a></li><li><a href="LayerPopup.html#getTitleElement">getTitleElement</a></li><li><a href="LayerPopup.html#hide">hide</a></li><li><a href="LayerPopup.html#isFitToWindow">isFitToWindow</a></li><li><a href="LayerPopup.html#isShow">isShow</a></li><li><a href="LayerPopup.html#off">off</a></li><li><a href="LayerPopup.html#on">on</a></li><li><a href="LayerPopup.html#remove">remove</a></li><li><a href="LayerPopup.html#setContent">setContent</a></li><li><a href="LayerPopup.html#setFitToWindow">setFitToWindow</a></li><li><a href="LayerPopup.html#setTitle">setTitle</a></li><li><a href="LayerPopup.html#show">show</a></li><li><a href="LayerPopup.html#toggleFitToWindow">toggleFitToWindow</a></li><li><a href="LayerPopup.html#trigger">trigger</a></li></ul></div></li><li><a href="Layout.html">Layout</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Layout_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Layout.html#changePreviewStyle">changePreviewStyle</a></li><li><a href="Layout.html#getEditorEl">getEditorEl</a></li><li><a href="Layout.html#getMdEditorContainerEl">getMdEditorContainerEl</a></li><li><a href="Layout.html#getPreviewEl">getPreviewEl</a></li><li><a href="Layout.html#getWwEditorContainerEl">getWwEditorContainerEl</a></li><li><a href="Layout.html#hide">hide</a></li><li><a href="Layout.html#init">init</a></li><li><a href="Layout.html#remove">remove</a></li><li><a href="Layout.html#show">show</a></li><li><a href="Layout.html#switchToMarkdown">switchToMarkdown</a></li><li><a href="Layout.html#switchToWYSIWYG">switchToWYSIWYG</a></li></ul></div></li><li><a href="LazyRunner.html">LazyRunner</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LazyRunner_sub"></div></li><li><a href="MarkdownEditor.html">MarkdownEditor</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MarkdownEditor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="MarkdownEditor.html#.factory">factory</a></li><li><a href="MarkdownEditor.html#getTextObject">getTextObject</a></li><li><a href="MarkdownEditor.html#setValue">setValue</a></li></ul></div></li><li><a href="MarkdownMarkerHelper.html">MarkdownMarkerHelper</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MarkdownMarkerHelper_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="MarkdownMarkerHelper.html#clearSelect">clearSelect</a></li><li><a href="MarkdownMarkerHelper.html#getMarkerInfoOfCurrentSelection">getMarkerInfoOfCurrentSelection</a></li><li><a href="MarkdownMarkerHelper.html#getTextContent">getTextContent</a></li><li><a href="MarkdownMarkerHelper.html#selectOffsetRange">selectOffsetRange</a></li><li><a href="MarkdownMarkerHelper.html#updateMarkerWithExtraInfo">updateMarkerWithExtraInfo</a></li></ul></div></li><li><a href="MarkdownPreview.html">MarkdownPreview</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MarkdownPreview_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="MarkdownPreview.html#getHTML">getHTML</a></li><li><a href="MarkdownPreview.html#isVisible">isVisible</a></li><li><a href="MarkdownPreview.html#refresh">refresh</a></li><li><a href="MarkdownPreview.html#render">render</a></li><li><a href="MarkdownPreview.html#setHeight">setHeight</a></li><li><a href="MarkdownPreview.html#setHTML">setHTML</a></li><li><a href="MarkdownPreview.html#setMinHeight">setMinHeight</a></li></ul></div></li><li><a href="Markerlist.html">Markerlist</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Markerlist_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Markerlist.html#addMarker">addMarker</a></li><li><a href="Markerlist.html#forEachByRangeAffected">forEachByRangeAffected</a></li><li><a href="Markerlist.html#getAll">getAll</a></li><li><a href="Markerlist.html#getMarker">getMarker</a></li><li><a href="Markerlist.html#getMarkersData">getMarkersData</a></li><li><a href="Markerlist.html#removeMarker">removeMarker</a></li><li><a href="Markerlist.html#resetMarkers">resetMarkers</a></li><li><a href="Markerlist.html#sortBy">sortBy</a></li><li><a href="Markerlist.html#updateMarker">updateMarker</a></li></ul></div></li><li><a href="MarkerManager.html">MarkerManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MarkerManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="MarkerManager.html#resetContent">resetContent</a></li><li><a href="MarkerManager.html#updateMarkersByContent">updateMarkersByContent</a></li></ul></div></li><li><a href="MdListManager.html">MdListManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MdListManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="MdListManager.html#appendBlankLineIfNeed">appendBlankLineIfNeed</a></li><li><a href="MdListManager.html#createSortedLineRange">createSortedLineRange</a></li><li><a href="MdListManager.html#expandLineRangeIfNeed">expandLineRangeIfNeed</a></li><li><a href="MdListManager.html#isListOrParagraph">isListOrParagraph</a></li><li><a href="MdListManager.html#replaceLineText">replaceLineText</a></li></ul></div></li><li><a href="mdTextObject.html">mdTextObject</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="mdTextObject_sub"></div></li><li><a href="ModeSwitch.html">ModeSwitch</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ModeSwitch_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ModeSwitch.html#.TYPE">TYPE</a></li><li><a href="ModeSwitch.html#_$rootElement">_$rootElement</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ModeSwitch.html#destroy">destroy</a></li><li><a href="ModeSwitch.html#hide">hide</a></li><li><a href="ModeSwitch.html#isShown">isShown</a></li><li><a href="ModeSwitch.html#off">off</a></li><li><a href="ModeSwitch.html#on">on</a></li><li><a href="ModeSwitch.html#remove">remove</a></li><li><a href="ModeSwitch.html#show">show</a></li><li><a href="ModeSwitch.html#trigger">trigger</a></li></ul></div></li><li><a href="PopupAddHeading.html">PopupAddHeading</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PopupAddHeading_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PopupAddHeading.html#_initDOM">_initDOM</a></li><li><a href="PopupAddHeading.html#_initDOMEvent">_initDOMEvent</a></li><li><a href="PopupAddHeading.html#_initEditorEvent">_initEditorEvent</a></li><li><a href="PopupAddHeading.html#_initInstance">_initInstance</a></li><li><a href="PopupAddHeading.html#destroy">destroy</a></li><li><a href="PopupAddHeading.html#getTitleElement">getTitleElement</a></li><li><a href="PopupAddHeading.html#hide">hide</a></li><li><a href="PopupAddHeading.html#isFitToWindow">isFitToWindow</a></li><li><a href="PopupAddHeading.html#isShow">isShow</a></li><li><a href="PopupAddHeading.html#off">off</a></li><li><a href="PopupAddHeading.html#on">on</a></li><li><a href="PopupAddHeading.html#remove">remove</a></li><li><a href="PopupAddHeading.html#setContent">setContent</a></li><li><a href="PopupAddHeading.html#setFitToWindow">setFitToWindow</a></li><li><a href="PopupAddHeading.html#setTitle">setTitle</a></li><li><a href="PopupAddHeading.html#show">show</a></li><li><a href="PopupAddHeading.html#toggleFitToWindow">toggleFitToWindow</a></li><li><a href="PopupAddHeading.html#trigger">trigger</a></li></ul></div></li><li><a href="PopupAddImage.html">PopupAddImage</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PopupAddImage_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PopupAddImage.html#_initDOM">_initDOM</a></li><li><a href="PopupAddImage.html#_initDOMEvent">_initDOMEvent</a></li><li><a href="PopupAddImage.html#_initEditorEvent">_initEditorEvent</a></li><li><a href="PopupAddImage.html#_initInstance">_initInstance</a></li><li><a href="PopupAddImage.html#destroy">destroy</a></li><li><a href="PopupAddImage.html#getTitleElement">getTitleElement</a></li><li><a href="PopupAddImage.html#hide">hide</a></li><li><a href="PopupAddImage.html#isFitToWindow">isFitToWindow</a></li><li><a href="PopupAddImage.html#isShow">isShow</a></li><li><a href="PopupAddImage.html#off">off</a></li><li><a href="PopupAddImage.html#on">on</a></li><li><a href="PopupAddImage.html#remove">remove</a></li><li><a href="PopupAddImage.html#setContent">setContent</a></li><li><a href="PopupAddImage.html#setFitToWindow">setFitToWindow</a></li><li><a href="PopupAddImage.html#setTitle">setTitle</a></li><li><a href="PopupAddImage.html#show">show</a></li><li><a href="PopupAddImage.html#toggleFitToWindow">toggleFitToWindow</a></li><li><a href="PopupAddImage.html#trigger">trigger</a></li></ul></div></li><li><a href="PopupAddLink.html">PopupAddLink</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PopupAddLink_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PopupAddLink.html#_initDOM">_initDOM</a></li><li><a href="PopupAddLink.html#_initDOMEvent">_initDOMEvent</a></li><li><a href="PopupAddLink.html#_initEditorEvent">_initEditorEvent</a></li><li><a href="PopupAddLink.html#_initInstance">_initInstance</a></li><li><a href="PopupAddLink.html#destroy">destroy</a></li><li><a href="PopupAddLink.html#getTitleElement">getTitleElement</a></li><li><a href="PopupAddLink.html#hide">hide</a></li><li><a href="PopupAddLink.html#isFitToWindow">isFitToWindow</a></li><li><a href="PopupAddLink.html#isShow">isShow</a></li><li><a href="PopupAddLink.html#off">off</a></li><li><a href="PopupAddLink.html#on">on</a></li><li><a href="PopupAddLink.html#remove">remove</a></li><li><a href="PopupAddLink.html#setContent">setContent</a></li><li><a href="PopupAddLink.html#setFitToWindow">setFitToWindow</a></li><li><a href="PopupAddLink.html#setTitle">setTitle</a></li><li><a href="PopupAddLink.html#show">show</a></li><li><a href="PopupAddLink.html#toggleFitToWindow">toggleFitToWindow</a></li><li><a href="PopupAddLink.html#trigger">trigger</a></li></ul></div></li><li><a href="PopupAddTable.html">PopupAddTable</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PopupAddTable_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PopupAddTable.html#_initDOM">_initDOM</a></li><li><a href="PopupAddTable.html#_initDOMEvent">_initDOMEvent</a></li><li><a href="PopupAddTable.html#_initEditorEvent">_initEditorEvent</a></li><li><a href="PopupAddTable.html#_initInstance">_initInstance</a></li><li><a href="PopupAddTable.html#destroy">destroy</a></li><li><a href="PopupAddTable.html#getTitleElement">getTitleElement</a></li><li><a href="PopupAddTable.html#hide">hide</a></li><li><a href="PopupAddTable.html#isFitToWindow">isFitToWindow</a></li><li><a href="PopupAddTable.html#isShow">isShow</a></li><li><a href="PopupAddTable.html#off">off</a></li><li><a href="PopupAddTable.html#on">on</a></li><li><a href="PopupAddTable.html#remove">remove</a></li><li><a href="PopupAddTable.html#setContent">setContent</a></li><li><a href="PopupAddTable.html#setFitToWindow">setFitToWindow</a></li><li><a href="PopupAddTable.html#setTitle">setTitle</a></li><li><a href="PopupAddTable.html#show">show</a></li><li><a href="PopupAddTable.html#toggleFitToWindow">toggleFitToWindow</a></li><li><a href="PopupAddTable.html#trigger">trigger</a></li></ul></div></li><li><a href="PopupCodeBlockEditor.html">PopupCodeBlockEditor</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PopupCodeBlockEditor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PopupCodeBlockEditor.html#_initDOM">_initDOM</a></li><li><a href="PopupCodeBlockEditor.html#_initDOMEvent">_initDOMEvent</a></li><li><a href="PopupCodeBlockEditor.html#_initEditorEvent">_initEditorEvent</a></li><li><a href="PopupCodeBlockEditor.html#_initInstance">_initInstance</a></li><li><a href="PopupCodeBlockEditor.html#destroy">destroy</a></li><li><a href="PopupCodeBlockEditor.html#getTitleElement">getTitleElement</a></li><li><a href="PopupCodeBlockEditor.html#hide">hide</a></li><li><a href="PopupCodeBlockEditor.html#isFitToWindow">isFitToWindow</a></li><li><a href="PopupCodeBlockEditor.html#isShow">isShow</a></li><li><a href="PopupCodeBlockEditor.html#off">off</a></li><li><a href="PopupCodeBlockEditor.html#on">on</a></li><li><a href="PopupCodeBlockEditor.html#remove">remove</a></li><li><a href="PopupCodeBlockEditor.html#setContent">setContent</a></li><li><a href="PopupCodeBlockEditor.html#setFitToWindow">setFitToWindow</a></li><li><a href="PopupCodeBlockEditor.html#setTitle">setTitle</a></li><li><a href="PopupCodeBlockEditor.html#show">show</a></li><li><a href="PopupCodeBlockEditor.html#toggleFitToWindow">toggleFitToWindow</a></li><li><a href="PopupCodeBlockEditor.html#trigger">trigger</a></li></ul></div></li><li><a href="PopupCodeBlockLanguages.html">PopupCodeBlockLanguages</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PopupCodeBlockLanguages_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PopupCodeBlockLanguages.html#_initDOM">_initDOM</a></li><li><a href="PopupCodeBlockLanguages.html#_initDOMEvent">_initDOMEvent</a></li><li><a href="PopupCodeBlockLanguages.html#_initEditorEvent">_initEditorEvent</a></li><li><a href="PopupCodeBlockLanguages.html#_initInstance">_initInstance</a></li><li><a href="PopupCodeBlockLanguages.html#destroy">destroy</a></li><li><a href="PopupCodeBlockLanguages.html#getCurrentLanguage">getCurrentLanguage</a></li><li><a href="PopupCodeBlockLanguages.html#getTitleElement">getTitleElement</a></li><li><a href="PopupCodeBlockLanguages.html#hide">hide</a></li><li><a href="PopupCodeBlockLanguages.html#isFitToWindow">isFitToWindow</a></li><li><a href="PopupCodeBlockLanguages.html#isShow">isShow</a></li><li><a href="PopupCodeBlockLanguages.html#next">next</a></li><li><a href="PopupCodeBlockLanguages.html#off">off</a></li><li><a href="PopupCodeBlockLanguages.html#on">on</a></li><li><a href="PopupCodeBlockLanguages.html#prev">prev</a></li><li><a href="PopupCodeBlockLanguages.html#remove">remove</a></li><li><a href="PopupCodeBlockLanguages.html#setContent">setContent</a></li><li><a href="PopupCodeBlockLanguages.html#setCurrentLanguage">setCurrentLanguage</a></li><li><a href="PopupCodeBlockLanguages.html#setFitToWindow">setFitToWindow</a></li><li><a href="PopupCodeBlockLanguages.html#setTitle">setTitle</a></li><li><a href="PopupCodeBlockLanguages.html#show">show</a></li><li><a href="PopupCodeBlockLanguages.html#toggleFitToWindow">toggleFitToWindow</a></li><li><a href="PopupCodeBlockLanguages.html#trigger">trigger</a></li></ul></div></li><li><a href="PopupDropdownToolbar.html">PopupDropdownToolbar</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PopupDropdownToolbar_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PopupDropdownToolbar.html#.OPEN_EVENT">OPEN_EVENT</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PopupDropdownToolbar.html#_initDOM">_initDOM</a></li><li><a href="PopupDropdownToolbar.html#_initEditorEvent">_initEditorEvent</a></li><li><a href="PopupDropdownToolbar.html#_initInstance">_initInstance</a></li><li><a href="PopupDropdownToolbar.html#addItem">addItem</a></li><li><a href="PopupDropdownToolbar.html#getItem">getItem</a></li><li><a href="PopupDropdownToolbar.html#getItems">getItems</a></li><li><a href="PopupDropdownToolbar.html#getToolbar">getToolbar</a></li><li><a href="PopupDropdownToolbar.html#indexOfItem">indexOfItem</a></li><li><a href="PopupDropdownToolbar.html#insertItem">insertItem</a></li><li><a href="PopupDropdownToolbar.html#removeAllItems">removeAllItems</a></li><li><a href="PopupDropdownToolbar.html#removeItem">removeItem</a></li><li><a href="PopupDropdownToolbar.html#setItems">setItems</a></li></ul></div></li><li><a href="PopupTableUtils.html">PopupTableUtils</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PopupTableUtils_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PopupTableUtils.html#_initDOM">_initDOM</a></li><li><a href="PopupTableUtils.html#_initDOMEvent">_initDOMEvent</a></li><li><a href="PopupTableUtils.html#_initEditorEvent">_initEditorEvent</a></li><li><a href="PopupTableUtils.html#_initInstance">_initInstance</a></li><li><a href="PopupTableUtils.html#destroy">destroy</a></li><li><a href="PopupTableUtils.html#getTitleElement">getTitleElement</a></li><li><a href="PopupTableUtils.html#hide">hide</a></li><li><a href="PopupTableUtils.html#isFitToWindow">isFitToWindow</a></li><li><a href="PopupTableUtils.html#isShow">isShow</a></li><li><a href="PopupTableUtils.html#off">off</a></li><li><a href="PopupTableUtils.html#on">on</a></li><li><a href="PopupTableUtils.html#remove">remove</a></li><li><a href="PopupTableUtils.html#setContent">setContent</a></li><li><a href="PopupTableUtils.html#setFitToWindow">setFitToWindow</a></li><li><a href="PopupTableUtils.html#setTitle">setTitle</a></li><li><a href="PopupTableUtils.html#show">show</a></li><li><a href="PopupTableUtils.html#toggleFitToWindow">toggleFitToWindow</a></li><li><a href="PopupTableUtils.html#trigger">trigger</a></li></ul></div></li><li><a href="Preview.html">Preview</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Preview_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Preview.html#getHTML">getHTML</a></li><li><a href="Preview.html#isVisible">isVisible</a></li><li><a href="Preview.html#refresh">refresh</a></li><li><a href="Preview.html#render">render</a></li><li><a href="Preview.html#setHeight">setHeight</a></li><li><a href="Preview.html#setHTML">setHTML</a></li><li><a href="Preview.html#setMinHeight">setMinHeight</a></li></ul></div></li><li><a href="ScrollManager.html">ScrollManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ScrollManager_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ScrollManager.html#_currentTimeoutId">_currentTimeoutId</a></li><li><a href="ScrollManager.html#_savedScrollInfo">_savedScrollInfo</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ScrollManager.html#saveScrollInfo">saveScrollInfo</a></li><li><a href="ScrollManager.html#syncMarkdownScrollTopToPreview">syncMarkdownScrollTopToPreview</a></li><li><a href="ScrollManager.html#syncPreviewScrollTopToMarkdown">syncPreviewScrollTopToMarkdown</a></li></ul></div></li><li><a href="ScrollSyncSplit.html">ScrollSyncSplit</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ScrollSyncSplit_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ScrollSyncSplit.html#_contentElements">_contentElements</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ScrollSyncSplit.html#isScrollSynced">isScrollSynced</a></li><li><a href="ScrollSyncSplit.html#isSplitView">isSplitView</a></li><li><a href="ScrollSyncSplit.html#scrollTop">scrollTop</a></li><li><a href="ScrollSyncSplit.html#sync">sync</a></li><li><a href="ScrollSyncSplit.html#toggleScrollSync">toggleScrollSync</a></li><li><a href="ScrollSyncSplit.html#toggleSplitView">toggleSplitView</a></li></ul></div></li><li><a href="SectionManager.html">SectionManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SectionManager_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="SectionManager.html#_currentSection">_currentSection</a></li><li><a href="SectionManager.html#_sectionList">_sectionList</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="SectionManager.html#getSectionList">getSectionList</a></li><li><a href="SectionManager.html#makeSectionList">makeSectionList</a></li><li><a href="SectionManager.html#sectionByLine">sectionByLine</a></li><li><a href="SectionManager.html#sectionMatch">sectionMatch</a></li></ul></div></li><li><a href="SquireExt.html">SquireExt</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SquireExt_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="SquireExt.html#.WysiwygEditor#scrollIntoCursor">WysiwygEditor#scrollIntoCursor</a></li></ul></div></li><li><a href="Tab.html">Tab</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Tab_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Tab.html#activate">activate</a></li><li><a href="Tab.html#destroy">destroy</a></li><li><a href="Tab.html#off">off</a></li><li><a href="Tab.html#on">on</a></li><li><a href="Tab.html#remove">remove</a></li><li><a href="Tab.html#trigger">trigger</a></li></ul></div></li><li><a href="ToastUIEditor.html">ToastUIEditor</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ToastUIEditor_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ToastUIEditor.html#.Button">Button</a></li><li><a href="ToastUIEditor.html#.codeBlockManager">codeBlockManager</a></li><li><a href="ToastUIEditor.html#.CommandManager">CommandManager</a></li><li><a href="ToastUIEditor.html#.domUtils">domUtils</a></li><li><a href="ToastUIEditor.html#.i18n">i18n</a></li><li><a href="ToastUIEditor.html#.isViewer">isViewer</a></li><li><a href="ToastUIEditor.html#.markdownitHighlight">markdownitHighlight</a></li><li><a href="ToastUIEditor.html#.WwCodeBlockManager">WwCodeBlockManager</a></li><li><a href="ToastUIEditor.html#.WwTableManager">WwTableManager</a></li><li><a href="ToastUIEditor.html#.WwTableSelectionManager">WwTableSelectionManager</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ToastUIEditor.html#.defineExtension">defineExtension</a></li><li><a href="ToastUIEditor.html#.factory">factory</a></li><li><a href="ToastUIEditor.html#.getInstances">getInstances</a></li><li><a href="ToastUIEditor.html#addHook">addHook</a></li><li><a href="ToastUIEditor.html#addWidget">addWidget</a></li><li><a href="ToastUIEditor.html#afterAddedCommand">afterAddedCommand</a></li><li><a href="ToastUIEditor.html#blur">blur</a></li><li><a href="ToastUIEditor.html#changeMode">changeMode</a></li><li><a href="ToastUIEditor.html#changePreviewStyle">changePreviewStyle</a></li><li><a href="ToastUIEditor.html#exec">exec</a></li><li><a href="ToastUIEditor.html#focus">focus</a></li><li><a href="ToastUIEditor.html#getCodeMirror">getCodeMirror</a></li><li><a href="ToastUIEditor.html#getCurrentModeEditor">getCurrentModeEditor</a></li><li><a href="ToastUIEditor.html#getCurrentPreviewStyle">getCurrentPreviewStyle</a></li><li><a href="ToastUIEditor.html#getHtml">getHtml</a></li><li><a href="ToastUIEditor.html#getMarkdown">getMarkdown</a></li><li><a href="ToastUIEditor.html#getRange">getRange</a></li><li><a href="ToastUIEditor.html#getSelectedText">getSelectedText</a></li><li><a href="ToastUIEditor.html#getSquire">getSquire</a></li><li><a href="ToastUIEditor.html#getTextObject">getTextObject</a></li><li><a href="ToastUIEditor.html#getUI">getUI</a></li><li><a href="ToastUIEditor.html#getValue">getValue</a></li><li><a href="ToastUIEditor.html#height">height</a></li><li><a href="ToastUIEditor.html#hide">hide</a></li><li><a href="ToastUIEditor.html#insertText">insertText</a></li><li><a href="ToastUIEditor.html#isMarkdownMode">isMarkdownMode</a></li><li><a href="ToastUIEditor.html#isViewer">isViewer</a></li><li><a href="ToastUIEditor.html#isWysiwygMode">isWysiwygMode</a></li><li><a href="ToastUIEditor.html#minHeight">minHeight</a></li><li><a href="ToastUIEditor.html#moveCursorToEnd">moveCursorToEnd</a></li><li><a href="ToastUIEditor.html#moveCursorToStart">moveCursorToStart</a></li><li><a href="ToastUIEditor.html#off">off</a></li><li><a href="ToastUIEditor.html#on">on</a></li><li><a href="ToastUIEditor.html#remove">remove</a></li><li><a href="ToastUIEditor.html#removeHook">removeHook</a></li><li><a href="ToastUIEditor.html#reset">reset</a></li><li><a href="ToastUIEditor.html#scrollTop">scrollTop</a></li><li><a href="ToastUIEditor.html#setHtml">setHtml</a></li><li><a href="ToastUIEditor.html#setMarkdown">setMarkdown</a></li><li><a href="ToastUIEditor.html#setUI">setUI</a></li><li><a href="ToastUIEditor.html#setValue">setValue</a></li><li><a href="ToastUIEditor.html#show">show</a></li></ul></div></li><li><a href="ToastUIEditorViewer.html">ToastUIEditorViewer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ToastUIEditorViewer_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ToastUIEditorViewer.html#.codeBlockManager">codeBlockManager</a></li><li><a href="ToastUIEditorViewer.html#.domUtils">domUtils</a></li><li><a href="ToastUIEditorViewer.html#.isViewer">isViewer</a></li><li><a href="ToastUIEditorViewer.html#.markdownitHighlight">markdownitHighlight</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ToastUIEditorViewer.html#.defineExtension">defineExtension</a></li><li><a href="ToastUIEditorViewer.html#addHook">addHook</a></li><li><a href="ToastUIEditorViewer.html#isMarkdownMode">isMarkdownMode</a></li><li><a href="ToastUIEditorViewer.html#isViewer">isViewer</a></li><li><a href="ToastUIEditorViewer.html#isWysiwygMode">isWysiwygMode</a></li><li><a href="ToastUIEditorViewer.html#off">off</a></li><li><a href="ToastUIEditorViewer.html#on">on</a></li><li><a href="ToastUIEditorViewer.html#remove">remove</a></li><li><a href="ToastUIEditorViewer.html#setMarkdown">setMarkdown</a></li><li><a href="ToastUIEditorViewer.html#setValue">setValue</a></li></ul></div></li><li><a href="Toolbar.html">Toolbar</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Toolbar_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Toolbar.html#.DefaultToolbar#insertItem">DefaultToolbar#insertItem</a></li><li><a href="Toolbar.html#_initEvent">_initEvent</a></li><li><a href="Toolbar.html#addButton">addButton</a></li><li><a href="Toolbar.html#addDivider">addDivider</a></li><li><a href="Toolbar.html#addItem">addItem</a></li><li><a href="Toolbar.html#destroy">destroy</a></li><li><a href="Toolbar.html#disableAllButton">disableAllButton</a></li><li><a href="Toolbar.html#enableAllButton">enableAllButton</a></li><li><a href="Toolbar.html#getItem">getItem</a></li><li><a href="Toolbar.html#getItems">getItems</a></li><li><a href="Toolbar.html#indexOfItem">indexOfItem</a></li><li><a href="Toolbar.html#insertItem">insertItem</a></li><li><a href="Toolbar.html#off">off</a></li><li><a href="Toolbar.html#on">on</a></li><li><a href="Toolbar.html#remove">remove</a></li><li><a href="Toolbar.html#removeAllItems">removeAllItems</a></li><li><a href="Toolbar.html#removeItem">removeItem</a></li><li><a href="Toolbar.html#setItems">setItems</a></li><li><a href="Toolbar.html#trigger">trigger</a></li></ul></div></li><li><a href="ToolbarButton.html">ToolbarButton</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ToolbarButton_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ToolbarButton.html#destroy">destroy</a></li><li><a href="ToolbarButton.html#getName">getName</a></li><li><a href="ToolbarButton.html#off">off</a></li><li><a href="ToolbarButton.html#on">on</a></li><li><a href="ToolbarButton.html#remove">remove</a></li><li><a href="ToolbarButton.html#trigger">trigger</a></li></ul></div></li><li><a href="ToolbarDivider.ToolbarDivider.html">ToolbarDivider</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ToolbarDivider.ToolbarDivider_sub"></div></li><li><a href="ToolbarItem.html">ToolbarItem</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ToolbarItem_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ToolbarItem.html#.className">className</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ToolbarItem.html#destroy">destroy</a></li><li><a href="ToolbarItem.html#getName">getName</a></li><li><a href="ToolbarItem.html#off">off</a></li><li><a href="ToolbarItem.html#on">on</a></li><li><a href="ToolbarItem.html#remove">remove</a></li><li><a href="ToolbarItem.html#trigger">trigger</a></li></ul></div></li><li><a href="ToolbarItemFactory.html">ToolbarItemFactory</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ToolbarItemFactory_sub"></div></li><li><a href="Tooltip.html">Tooltip</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Tooltip_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Tooltip.html#show">show</a></li></ul></div></li><li><a href="UIController.html">UIController</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="UIController_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="UIController.html#.$el">$el</a></li><li><a href="UIController.html#.className">className</a></li><li><a href="UIController.html#.tagName">tagName</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="UIController.html#destroy">destroy</a></li><li><a href="UIController.html#off">off</a></li><li><a href="UIController.html#on">on</a></li><li><a href="UIController.html#remove">remove</a></li><li><a href="UIController.html#trigger">trigger</a></li></ul></div></li><li><a href="ViewerMarkerHelper.html">ViewerMarkerHelper</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ViewerMarkerHelper_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ViewerMarkerHelper.html#clearSelect">clearSelect</a></li><li><a href="ViewerMarkerHelper.html#getMarkerInfoOfCurrentSelection">getMarkerInfoOfCurrentSelection</a></li><li><a href="ViewerMarkerHelper.html#getTextContent">getTextContent</a></li><li><a href="ViewerMarkerHelper.html#selectOffsetRange">selectOffsetRange</a></li><li><a href="ViewerMarkerHelper.html#updateMarkerWithExtraInfo">updateMarkerWithExtraInfo</a></li></ul></div></li><li><a href="WwClipboardManager.html">WwClipboardManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwClipboardManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WwClipboardManager.html#init">init</a></li></ul></div></li><li><a href="WwCodeBlockManager.html">WwCodeBlockManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwCodeBlockManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WwCodeBlockManager.html#.convertToCodeblock">convertToCodeblock</a></li><li><a href="WwCodeBlockManager.html#convertToCodeblock">convertToCodeblock</a></li><li><a href="WwCodeBlockManager.html#destroy">destroy</a></li><li><a href="WwCodeBlockManager.html#isInCodeBlock">isInCodeBlock</a></li><li><a href="WwCodeBlockManager.html#prepareToPasteOnCodeblock">prepareToPasteOnCodeblock</a></li></ul></div></li><li><a href="WwHeadingManager.html">WwHeadingManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwHeadingManager_sub"></div></li><li><a href="WwHrManager.html">WwHrManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwHrManager_sub"></div></li><li><a href="WwListManager.html">WwListManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwListManager_sub"></div></li><li><a href="WwMergedTableManager.html">WwMergedTableManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwMergedTableManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WwMergedTableManager.html#destroy">destroy</a></li><li><a href="WwMergedTableManager.html#getTableIDClassName">getTableIDClassName</a></li><li><a href="WwMergedTableManager.html#isInTable">isInTable</a></li><li><a href="WwMergedTableManager.html#isNonTextDeleting">isNonTextDeleting</a></li><li><a href="WwMergedTableManager.html#isTableOrSubTableElement">isTableOrSubTableElement</a></li><li><a href="WwMergedTableManager.html#pasteClipboardData">pasteClipboardData</a></li><li><a href="WwMergedTableManager.html#prepareToTableCellStuffing">prepareToTableCellStuffing</a></li><li><a href="WwMergedTableManager.html#resetLastCellNode">resetLastCellNode</a></li><li><a href="WwMergedTableManager.html#setLastCellNode">setLastCellNode</a></li><li><a href="WwMergedTableManager.html#tableCellAppendAidForTableElement">tableCellAppendAidForTableElement</a></li><li><a href="WwMergedTableManager.html#updateTableHtmlOfClipboardIfNeed">updateTableHtmlOfClipboardIfNeed</a></li><li><a href="WwMergedTableManager.html#wrapDanglingTableCellsIntoTrIfNeed">wrapDanglingTableCellsIntoTrIfNeed</a></li><li><a href="WwMergedTableManager.html#wrapTheadAndTbodyIntoTableIfNeed">wrapTheadAndTbodyIntoTableIfNeed</a></li><li><a href="WwMergedTableManager.html#wrapTrsIntoTbodyIfNeed">wrapTrsIntoTbodyIfNeed</a></li></ul></div></li><li><a href="WwMergedTableSelectionManager.html">WwMergedTableSelectionManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwMergedTableSelectionManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WwMergedTableSelectionManager.html#hasSelectedBothThAndTd">hasSelectedBothThAndTd</a></li><li><a href="WwMergedTableSelectionManager.html#highlightTableCellsBy">highlightTableCellsBy</a></li><li><a href="WwMergedTableSelectionManager.html#onDragEnd">onDragEnd</a></li><li><a href="WwMergedTableSelectionManager.html#onDragStart">onDragStart</a></li><li><a href="WwMergedTableSelectionManager.html#styleToSelectedCells">styleToSelectedCells</a></li></ul></div></li><li><a href="WwPasteContentHelper.html">WwPasteContentHelper</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwPasteContentHelper_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WwPasteContentHelper.html#preparePaste">preparePaste</a></li></ul></div></li><li><a href="WwPManager.html">WwPManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwPManager_sub"></div></li><li><a href="WwTableManager.html">WwTableManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwTableManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WwTableManager.html#destroy">destroy</a></li><li><a href="WwTableManager.html#getTableIDClassName">getTableIDClassName</a></li><li><a href="WwTableManager.html#isInTable">isInTable</a></li><li><a href="WwTableManager.html#isNonTextDeleting">isNonTextDeleting</a></li><li><a href="WwTableManager.html#isTableOrSubTableElement">isTableOrSubTableElement</a></li><li><a href="WwTableManager.html#pasteClipboardData">pasteClipboardData</a></li><li><a href="WwTableManager.html#prepareToTableCellStuffing">prepareToTableCellStuffing</a></li><li><a href="WwTableManager.html#resetLastCellNode">resetLastCellNode</a></li><li><a href="WwTableManager.html#setLastCellNode">setLastCellNode</a></li><li><a href="WwTableManager.html#tableCellAppendAidForTableElement">tableCellAppendAidForTableElement</a></li><li><a href="WwTableManager.html#updateTableHtmlOfClipboardIfNeed">updateTableHtmlOfClipboardIfNeed</a></li><li><a href="WwTableManager.html#wrapDanglingTableCellsIntoTrIfNeed">wrapDanglingTableCellsIntoTrIfNeed</a></li><li><a href="WwTableManager.html#wrapTheadAndTbodyIntoTableIfNeed">wrapTheadAndTbodyIntoTableIfNeed</a></li><li><a href="WwTableManager.html#wrapTrsIntoTbodyIfNeed">wrapTrsIntoTbodyIfNeed</a></li></ul></div></li><li><a href="WwTableSelectionManager.html">WwTableSelectionManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwTableSelectionManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WwTableSelectionManager.html#createRangeBySelectedCells">createRangeBySelectedCells</a></li><li><a href="WwTableSelectionManager.html#destroy">destroy</a></li><li><a href="WwTableSelectionManager.html#getSelectedCells">getSelectedCells</a></li><li><a href="WwTableSelectionManager.html#getSelectionRangeFromTable">getSelectionRangeFromTable</a></li><li><a href="WwTableSelectionManager.html#highlightTableCellsBy">highlightTableCellsBy</a></li><li><a href="WwTableSelectionManager.html#removeClassAttrbuteFromAllCellsIfNeed">removeClassAttrbuteFromAllCellsIfNeed</a></li><li><a href="WwTableSelectionManager.html#setTableSelectionTimerIfNeed">setTableSelectionTimerIfNeed</a></li><li><a href="WwTableSelectionManager.html#styleToSelectedCells">styleToSelectedCells</a></li></ul></div></li><li><a href="WwTaskManager.html">WwTaskManager</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwTaskManager_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WwTaskManager.html#formatTask">formatTask</a></li><li><a href="WwTaskManager.html#isInTaskList">isInTaskList</a></li><li><a href="WwTaskManager.html#unformatTask">unformatTask</a></li></ul></div></li><li><a href="WwTextObject.html">WwTextObject</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WwTextObject_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WwTextObject.html#deleteContent">deleteContent</a></li><li><a href="WwTextObject.html#expandEndOffset">expandEndOffset</a></li><li><a href="WwTextObject.html#expandStartOffset">expandStartOffset</a></li><li><a href="WwTextObject.html#getTextContent">getTextContent</a></li><li><a href="WwTextObject.html#peekStartBeforeOffset">peekStartBeforeOffset</a></li><li><a href="WwTextObject.html#replaceContent">replaceContent</a></li><li><a href="WwTextObject.html#setEndBeforeRange">setEndBeforeRange</a></li><li><a href="WwTextObject.html#setRange">setRange</a></li></ul></div></li><li><a href="WysiwygEditor.html">WysiwygEditor</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WysiwygEditor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WysiwygEditor.html#.factory">factory</a></li><li><a href="WysiwygEditor.html#addKeyEventHandler">addKeyEventHandler</a></li><li><a href="WysiwygEditor.html#addWidget">addWidget</a></li><li><a href="WysiwygEditor.html#blur">blur</a></li><li><a href="WysiwygEditor.html#breakToNewDefaultBlock">breakToNewDefaultBlock</a></li><li><a href="WysiwygEditor.html#changeBlockFormatTo">changeBlockFormatTo</a></li><li><a href="WysiwygEditor.html#findTextNodeFilter">findTextNodeFilter</a></li><li><a href="WysiwygEditor.html#fixIMERange">fixIMERange</a></li><li><a href="WysiwygEditor.html#focus">focus</a></li><li><a href="WysiwygEditor.html#get$Body">get$Body</a></li><li><a href="WysiwygEditor.html#getEditor">getEditor</a></li><li><a href="WysiwygEditor.html#getIMERange">getIMERange</a></li><li><a href="WysiwygEditor.html#getRange">getRange</a></li><li><a href="WysiwygEditor.html#getTextObject">getTextObject</a></li><li><a href="WysiwygEditor.html#getValue">getValue</a></li><li><a href="WysiwygEditor.html#hasFormatWithRx">hasFormatWithRx</a></li><li><a href="WysiwygEditor.html#init">init</a></li><li><a href="WysiwygEditor.html#insertText">insertText</a></li><li><a href="WysiwygEditor.html#makeEmptyBlockCurrentSelection">makeEmptyBlockCurrentSelection</a></li><li><a href="WysiwygEditor.html#moveCursorToEnd">moveCursorToEnd</a></li><li><a href="WysiwygEditor.html#moveCursorToStart">moveCursorToStart</a></li><li><a href="WysiwygEditor.html#postProcessForChange">postProcessForChange</a></li><li><a href="WysiwygEditor.html#readySilentChange">readySilentChange</a></li><li><a href="WysiwygEditor.html#remove">remove</a></li><li><a href="WysiwygEditor.html#removeKeyEventHandler">removeKeyEventHandler</a></li><li><a href="WysiwygEditor.html#replaceContentText">replaceContentText</a></li><li><a href="WysiwygEditor.html#replaceRelativeOffset">replaceRelativeOffset</a></li><li><a href="WysiwygEditor.html#replaceSelection">replaceSelection</a></li><li><a href="WysiwygEditor.html#reset">reset</a></li><li><a href="WysiwygEditor.html#restoreSavedSelection">restoreSavedSelection</a></li><li><a href="WysiwygEditor.html#saveSelection">saveSelection</a></li><li><a href="WysiwygEditor.html#scrollTop">scrollTop</a></li><li><a href="WysiwygEditor.html#setHeight">setHeight</a></li><li><a href="WysiwygEditor.html#setMinHeight">setMinHeight</a></li><li><a href="WysiwygEditor.html#setRange">setRange</a></li><li><a href="WysiwygEditor.html#setSelectionByContainerAndOffset">setSelectionByContainerAndOffset</a></li><li><a href="WysiwygEditor.html#setValue">setValue</a></li><li><a href="WysiwygEditor.html#unwrapBlockTag">unwrapBlockTag</a></li></ul></div></li><li><a href="WysiwygMarkerHelper.html">WysiwygMarkerHelper</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WysiwygMarkerHelper_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WysiwygMarkerHelper.html#clearSelect">clearSelect</a></li><li><a href="WysiwygMarkerHelper.html#getMarkerInfoOfCurrentSelection">getMarkerInfoOfCurrentSelection</a></li><li><a href="WysiwygMarkerHelper.html#getTextContent">getTextContent</a></li><li><a href="WysiwygMarkerHelper.html#selectOffsetRange">selectOffsetRange</a></li><li><a href="WysiwygMarkerHelper.html#updateMarkerWithExtraInfo">updateMarkerWithExtraInfo</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Global</h3><ul><li class="hidden"><a href="global.html#addImageBlobHook">addImageBlobHook</a></li><li><a href="global.html#containsNode">containsNode</a></li><li class="hidden"><a href="global.html#LayerPopupOption">LayerPopupOption</a></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Implemtents Editor
+ * @author NHN Ent. FE Development Lab &lt;dl_javascript@nhnent.com>
+ */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+
+import Button from './ui/button';
+import MarkdownEditor from './markdownEditor';
+import MarkdownPreview from './mdPreview';
+import WysiwygEditor from './wysiwygEditor';
+import Layout from './layout';
+import EventManager from './eventManager';
+import CommandManager from './commandManager';
+import extManager from './extManager';
+import ImportManager from './importManager';
+import WwCodeBlockManager from './wwCodeBlockManager';
+import Convertor from './convertor';
+import Viewer from './viewer';
+import i18n from './i18n';
+import DefaultUI from './ui/defaultUI';
+import domUtils from './domUtils';
+import WwTableManager from './wwTableManager';
+import WwTableSelectionManager from './wwTableSelectionManager';
+import {CodeBlockManager} from './codeBlockManager';
+import codeBlockManager from './codeBlockManager';
+
+// markdown commands
+import mdBold from './markdownCommands/bold';
+import mdItalic from './markdownCommands/italic';
+import mdStrike from './markdownCommands/strike';
+import mdBlockquote from './markdownCommands/blockquote';
+import mdHeading from './markdownCommands/heading';
+import mdParagraph from './markdownCommands/paragraph';
+import mdHR from './markdownCommands/hr';
+import mdAddLink from './markdownCommands/addLink';
+import mdAddImage from './markdownCommands/addImage';
+import mdUL from './markdownCommands/ul';
+import mdOL from './markdownCommands/ol';
+import mdIndent from './markdownCommands/indent';
+import mdOutdent from './markdownCommands/outdent';
+import mdTable from './markdownCommands/table';
+import mdTask from './markdownCommands/task';
+import mdCode from './markdownCommands/code';
+import mdCodeBlock from './markdownCommands/codeBlock';
+
+// wysiwyg Commands
+import wwBold from './wysiwygCommands/bold';
+import wwItalic from './wysiwygCommands/italic';
+import wwStrike from './wysiwygCommands/strike';
+import wwBlockquote from './wysiwygCommands/blockquote';
+import wwAddImage from './wysiwygCommands/addImage';
+import wwAddLink from './wysiwygCommands/addLink';
+import wwHR from './wysiwygCommands/hr';
+import wwHeading from './wysiwygCommands/heading';
+import wwParagraph from './wysiwygCommands/paragraph';
+import wwUL from './wysiwygCommands/ul';
+import wwOL from './wysiwygCommands/ol';
+import wwTable from './wysiwygCommands/table';
+import wwTableAddRow from './wysiwygCommands/tableAddRow';
+import wwTableAddCol from './wysiwygCommands/tableAddCol';
+import wwTableRemoveRow from './wysiwygCommands/tableRemoveRow';
+import wwTableRemoveCol from './wysiwygCommands/tableRemoveCol';
+import wwTableAlignCol from './wysiwygCommands/tableAlignCol';
+import wwTableRemove from './wysiwygCommands/tableRemove';
+import wwIndent from './wysiwygCommands/indent';
+import wwOutdent from './wysiwygCommands/outdent';
+import wwTask from './wysiwygCommands/task';
+import wwCode from './wysiwygCommands/code';
+import wwCodeBlock from './wysiwygCommands/codeBlock';
+
+// langs
+import './langs/en_US';
+import './langs/ko_KR';
+import './langs/zh_CN';
+import './langs/ja_JP';
+import './langs/nl_NL';
+import './langs/es_ES';
+import './langs/de_DE';
+import './langs/ru_RU';
+import './langs/fr_FR';
+import './langs/uk_UA';
+import './langs/tr_TR';
+import './langs/fi_FI';
+
+const __nedInstance = [];
+
+/**
+ * @callback addImageBlobHook
+ * @param  {File|Blob} fileOrBlob - image blob
+ * @param  {callback} callback - callback function to be called after
+ * @param  {string} source - source of an event the item belongs to. 'paste', 'drop', 'ui'
+ */
+
+/**
+ * Class ToastUIEditor
+ */
+class ToastUIEditor {
+  /**
+     * ToastUI Editor
+     * @param {object} options Option object
+         * @param {string} [options.height='300px'] - Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+         * @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
+         * @param {string} options.initialValue - Editor's initial value
+         * @param {string} options.previewStyle - Markdown editor's preview style (tab, vertical)
+         * @param {string} options.initialEditType - Initial editor type (markdown, wysiwyg)
+         * @param {object} options.events - eventlist Event list
+             * @param {function} options.events.load - It would be emitted when editor fully load
+             * @param {function} options.events.change - It would be emitted when content changed
+             * @param {function} options.events.stateChange - It would be emitted when format change by cursor position
+             * @param {function} options.events.focus - It would be emitted when editor get focus
+             * @param {function} options.events.blur - It would be emitted when editor loose focus
+         * @param {object} options.hooks - Hook list
+             * @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
+             * @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
+        * @param {string} [options.language='en_US'] - language
+        * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
+        * @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
+        * @param {string[]} [options.codeBlockLanguages] - supported code block languages to be listed. default is what highlight.js supports
+        * @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
+        * @param {object[]} [options.toolbarItems] - toolbar items.
+        * @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
+    */
+  constructor(options) {
+    this.options = $.extend({
+      previewStyle: 'tab',
+      initialEditType: 'markdown',
+      height: '300px',
+      minHeight: '200px',
+      language: 'en_US',
+      useDefaultHTMLSanitizer: true,
+      useCommandShortcut: true,
+      codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
+      usageStatistics: true,
+      toolbarItems: [
+        'heading',
+        'bold',
+        'italic',
+        'strike',
+        'divider',
+        'hr',
+        'quote',
+        'divider',
+        'ul',
+        'ol',
+        'task',
+        'indent',
+        'outdent',
+        'divider',
+        'table',
+        'image',
+        'link',
+        'divider',
+        'code',
+        'codeblock'
+      ],
+      hideModeSwitch: false
+    }, options);
+
+    this.eventManager = new EventManager();
+
+    this.importManager = new ImportManager(this.eventManager);
+
+    this.commandManager = new CommandManager(this, {
+      useCommandShortcut: this.options.useCommandShortcut
+    });
+
+    this.convertor = new Convertor(this.eventManager);
+
+    if (this.options.useDefaultHTMLSanitizer) {
+      this.convertor.initHtmlSanitizer();
+    }
+
+    if (this.options.hooks) {
+      util.forEach(this.options.hooks, (fn, key) => this.addHook(key, fn));
+    }
+
+    if (this.options.events) {
+      util.forEach(this.options.events, (fn, key) => this.on(key, fn));
+    }
+
+    this.layout = new Layout(options, this.eventManager);
+
+    this.i18n = i18n;
+    this.i18n.setCode(this.options.language);
+
+    this.setUI(this.options.UI || new DefaultUI(this));
+
+    this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
+    this.preview = new MarkdownPreview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
+    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
+    this.toMarkOptions = null;
+
+    this.changePreviewStyle(this.options.previewStyle);
+
+    this.changeMode(this.options.initialEditType, true);
+
+    this.minHeight(this.options.minHeight);
+
+    this.height(this.options.height);
+
+    this.setValue(this.options.initialValue, false);
+
+    extManager.applyExtension(this, this.options.exts);
+
+    this.eventManager.emit('load', this);
+
+    __nedInstance.push(this);
+
+    this._addDefaultCommands();
+
+    if (this.options.usageStatistics) {
+      util.sendHostname('editor');
+    }
+  }
+
+  /**
+   * change preview style
+   * @memberof ToastUIEditor
+   * @param {string} style - 'tab'|'vertical'
+   */
+  changePreviewStyle(style) {
+    this.layout.changePreviewStyle(style);
+    this.mdPreviewStyle = style;
+    this.eventManager.emit('changePreviewStyle', style);
+    this.eventManager.emit('previewNeedsRefresh');
+  }
+
+  /**
+   * call commandManager's exec method
+   * @memberof ToastUIEditor
+   */
+  exec(...args) {
+    this.commandManager.exec(...args);
+  }
+
+  /**
+   * add default commands
+   * @memberof ToastUIEditor
+   * @private
+   */
+  _addDefaultCommands() {
+    this.addCommand(mdBold);
+    this.addCommand(mdItalic);
+    this.addCommand(mdBlockquote);
+    this.addCommand(mdHeading);
+    this.addCommand(mdParagraph);
+    this.addCommand(mdHR);
+    this.addCommand(mdAddLink);
+    this.addCommand(mdAddImage);
+    this.addCommand(mdUL);
+    this.addCommand(mdOL);
+    this.addCommand(mdIndent);
+    this.addCommand(mdOutdent);
+    this.addCommand(mdTable);
+    this.addCommand(mdTask);
+    this.addCommand(mdCode);
+    this.addCommand(mdCodeBlock);
+    this.addCommand(mdStrike);
+
+    this.addCommand(wwBold);
+    this.addCommand(wwItalic);
+    this.addCommand(wwBlockquote);
+    this.addCommand(wwUL);
+    this.addCommand(wwOL);
+    this.addCommand(wwAddImage);
+    this.addCommand(wwAddLink);
+    this.addCommand(wwHR);
+    this.addCommand(wwHeading);
+    this.addCommand(wwParagraph);
+    this.addCommand(wwIndent);
+    this.addCommand(wwOutdent);
+    this.addCommand(wwTask);
+    this.addCommand(wwTable);
+    this.addCommand(wwTableAddRow);
+    this.addCommand(wwTableAddCol);
+    this.addCommand(wwTableRemoveRow);
+    this.addCommand(wwTableRemoveCol);
+    this.addCommand(wwTableAlignCol);
+    this.addCommand(wwTableRemove);
+    this.addCommand(wwCode);
+    this.addCommand(wwCodeBlock);
+    this.addCommand(wwStrike);
+  }
+
+  addCommand(type, props) {
+    if (!props) {
+      this.commandManager.addCommand(type);
+    } else {
+      this.commandManager.addCommand(CommandManager.command(type, props));
+    }
+  }
+
+  /**
+   * After added command.
+   */
+  afterAddedCommand() {
+    this.eventManager.emit('afterAddedCommand', this);
+  }
+
+  /**
+   * Bind eventHandler to event type
+   * @memberof ToastUIEditor
+   * @param {string} type Event type
+   * @param {function} handler Event handler
+   */
+  on(type, handler) {
+    this.eventManager.listen(type, handler);
+  }
+
+  /**
+   * Unbind eventHandler from event type
+   * @memberof ToastUIEditor
+   * @param {string} type Event type
+   */
+  off(type) {
+    this.eventManager.removeEventHandler(type);
+  }
+
+  /**
+   * Add hook to TUIEditor event
+   * @memberof ToastUIEditor
+   * @param {string} type Event type
+   * @param {function} handler Event handler
+   */
+  addHook(type, handler) {
+    this.eventManager.removeEventHandler(type);
+    this.eventManager.listen(type, handler);
+  }
+
+  /**
+   * Remove hook from TUIEditor event
+   * @memberof ToastUIEditor
+   * @param {string} type Event type
+   */
+  removeHook(type) {
+    this.eventManager.removeEventHandler(type);
+  }
+
+  /**
+   * Get CodeMirror instance
+   * @memberof ToastUIEditor
+   * @returns {CodeMirror}
+   */
+  getCodeMirror() {
+    return this.mdEditor.getEditor();
+  }
+
+  /**
+   * Get SquireExt instance
+   * @memberof ToastUIEditor
+   * @returns {SquireExt}
+   */
+  getSquire() {
+    return this.wwEditor.getEditor();
+  }
+
+  /**
+   * Set focus to current Editor
+   * @memberof ToastUIEditor
+   */
+  focus() {
+    this.getCurrentModeEditor().focus();
+  }
+
+  /**
+   * Remove focus of current Editor
+   * @memberof ToastUIEditor
+   */
+  blur() {
+    this.getCurrentModeEditor().blur();
+  }
+
+  /**
+   * Set cursor position to end
+   * @memberof ToastUIEditor
+   */
+  moveCursorToEnd() {
+    this.getCurrentModeEditor().moveCursorToEnd();
+  }
+
+  /**
+   * Set cursor position to start
+   * @memberof ToastUIEditor
+   */
+  moveCursorToStart() {
+    this.getCurrentModeEditor().moveCursorToStart();
+  }
+
+  /**
+   * Set markdown syntax text.
+   * @memberof ToastUIEditor
+   * @param {string} markdown - markdown syntax text.
+   * @param {boolean} [cursorToEnd=true] - move cursor to contents end
+   */
+  setMarkdown(markdown, cursorToEnd = true) {
+    markdown = markdown || '';
+
+    if (this.isMarkdownMode()) {
+      this.mdEditor.setValue(markdown, cursorToEnd);
+    } else {
+      this.wwEditor.setValue(this.convertor.toHTML(markdown), cursorToEnd);
+    }
+
+    this.eventManager.emit('setMarkdownAfter', markdown);
+  }
+
+  /**
+   * Set html value.
+   * @memberof ToastUIEditor
+   * @param {string} html - html syntax text
+   * @param {boolean} [cursorToEnd=true] - move cursor to contents end
+   */
+  setHtml(html, cursorToEnd = true) {
+    html = html || '';
+    this.wwEditor.setValue(html);
+
+    if (this.isMarkdownMode()) {
+      const markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
+      this.mdEditor.setValue(markdown, cursorToEnd);
+      this.eventManager.emit('setMarkdownAfter', markdown);
+    }
+  }
+
+  /**
+   * Set markdown syntax text.
+   * @memberof ToastUIEditor
+   * @param {string} value - markdown syntax text
+   * @param {boolean} [cursorToEnd=true] - move cursor to contents end
+   * @deprecated
+   */
+  setValue(value, cursorToEnd = true) {
+    this.setMarkdown(value, cursorToEnd);
+  }
+
+  /**
+   * Get markdown syntax text.
+   * @memberof ToastUIEditor
+   * @returns {string}
+   */
+  getMarkdown() {
+    let markdown;
+
+    if (this.isMarkdownMode()) {
+      markdown = this.mdEditor.getValue();
+    } else {
+      markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
+    }
+
+    return markdown;
+  }
+
+  /**
+   * Get html syntax text.
+   * @memberof ToastUIEditor
+   * @returns {string}
+   */
+  getHtml() {
+    if (this.isWysiwygMode()) {
+      this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions));
+    }
+
+    return this.convertor.toHTML(this.mdEditor.getValue());
+  }
+
+  /**
+   * Get editor value.
+   * @memberof ToastUIEditor
+   * @returns {string}
+   * @deprecated
+   */
+  getValue() {
+    return this.getMarkdown();
+  }
+
+  /**
+   * insert text
+   * @param {string} text - text string to insert
+   * @memberof ToastUIEditor
+   */
+  insertText(text) {
+    if (this.isMarkdownMode()) {
+      this.mdEditor.replaceSelection(text);
+    } else {
+      this.wwEditor.insertText(text);
+    }
+  }
+
+  /**
+   * Add widget to selection
+   * @memberof ToastUIEditor
+   * @param {Range} selection Current selection
+   * @param {Node} node widget node
+   * @param {string} style Adding style "over" or "bottom"
+   * @param {number} [offset] Offset for adjust position
+   */
+  addWidget(selection, node, style, offset) {
+    this.getCurrentModeEditor().addWidget(selection, node, style, offset);
+  }
+
+  /**
+   * Set and return edithr height
+   * @memberof ToastUIEditor
+   * @param {string} height - editor height
+   * @returns {string} editor height
+   */
+  height(height) {
+    if (util.isExisty(height)) {
+      if (height === 'auto') {
+        $(this.options.el).addClass('auto-height');
+        this.minHeight(this.minHeight());
+      } else {
+        $(this.options.el).removeClass('auto-height');
+        this.minHeight(height);
+      }
+      if (util.isNumber(height)) {
+        height = `${height}px`;
+      }
+
+      this.options.el.style.height = height;
+      this._height = height;
+    }
+
+    return this._height;
+  }
+
+  /**
+   * Set / Get min content height
+   * @param {string} minHeight - min content height in pixel
+   * @memberof ToastUIEditor
+   * @returns {string} - min height in pixel
+   */
+  minHeight(minHeight) {
+    if (util.isExisty(minHeight)) {
+      const editorHeight = this._ui.getEditorHeight();
+      const editorSectionHeight = this._ui.getEditorSectionHeight();
+      const diffHeight = editorHeight - editorSectionHeight;
+      this._minHeight = minHeight;
+
+      minHeight = parseInt(minHeight, 10);
+      minHeight = Math.max(minHeight - diffHeight, 0);
+
+      this.wwEditor.setMinHeight(minHeight);
+      this.mdEditor.setMinHeight(minHeight);
+      this.preview.setMinHeight(minHeight);
+    }
+
+    return this._minHeight;
+  }
+
+  /**
+   * Get current editor mode name
+   * @memberof ToastUIEditor
+   * @returns {string}
+   */
+  getCurrentModeEditor() {
+    let editor;
+
+    if (this.isMarkdownMode()) {
+      editor = this.mdEditor;
+    } else {
+      editor = this.wwEditor;
+    }
+
+    return editor;
+  }
+
+  /**
+   * Return true if current editor mode is Markdown
+   * @memberof ToastUIEditor
+   * @returns {boolean}
+   */
+  isMarkdownMode() {
+    return this.currentMode === 'markdown';
+  }
+
+  /**
+   * Return true if current editor mode is WYSIWYG
+   * @memberof ToastUIEditor
+   * @returns {boolean}
+   */
+  isWysiwygMode() {
+    return this.currentMode === 'wysiwyg';
+  }
+
+  /**
+   * Return false
+   * @memberof ToastUIEditor
+   * @returns {boolean}
+   */
+  isViewer() {
+    return false;
+  }
+
+  /**
+   * Get current Markdown editor's preview style
+   * @memberof ToastUIEditor
+   * @returns {string}
+   */
+  getCurrentPreviewStyle() {
+    return this.mdPreviewStyle;
+  }
+
+  /**
+   * Change editor's mode to given mode string
+   * @memberof ToastUIEditor
+   * @param {string} mode - Editor mode name of want to change
+   * @param {boolean} isWithoutFocus - Change mode without focus
+   */
+  changeMode(mode, isWithoutFocus) {
+    if (this.currentMode === mode) {
+      return;
+    }
+
+    this.eventManager.emit('changeModeBefore', this.currentMode);
+
+    this.currentMode = mode;
+
+    if (this.isWysiwygMode()) {
+      this.layout.switchToWYSIWYG();
+      this.wwEditor.setValue(this.convertor.toHTML(this.mdEditor.getValue()), !isWithoutFocus);
+      this.eventManager.emit('changeModeToWysiwyg');
+    } else {
+      this.layout.switchToMarkdown();
+      this.mdEditor.setValue(
+        this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions), !isWithoutFocus
+      );
+      this.getCodeMirror().refresh();
+      this.eventManager.emit('changeModeToMarkdown');
+    }
+
+    this.eventManager.emit('changeMode', mode);
+
+    if (!isWithoutFocus) {
+      this.focus();
+    }
+  }
+
+  /**
+   * Remove TUIEditor from document
+   * @memberof ToastUIEditor
+   */
+  remove() {
+    const self = this;
+    let i = __nedInstance.length - 1;
+    this.wwEditor.remove();
+    this.mdEditor.remove();
+    this.layout.remove();
+
+    if (this.getUI()) {
+      this.getUI().remove();
+    }
+
+    this.eventManager.emit('removeEditor');
+    this.eventManager.events.forEach((value, key) => {
+      self.off(key);
+    });
+    this.eventManager = null;
+
+    for (; i >= 0; i -= 1) {
+      if (__nedInstance[i] === this) {
+        __nedInstance.splice(i, 1);
+      }
+    }
+  }
+
+  /**
+   * Hide TUIEditor
+   * @memberof ToastUIEditor
+   */
+  hide() {
+    this.eventManager.emit('hide', this);
+  }
+
+  /**
+   * Show TUIEditor
+   * @memberof ToastUIEditor
+   */
+  show() {
+    this.eventManager.emit('show', this);
+    this.getCodeMirror().refresh();
+  }
+
+  /**
+   * Scroll Editor content to Top
+   * @memberof ToastUIEditor
+   * @param {number} value Scroll amount
+   * @returns {number}
+   */
+  scrollTop(value) {
+    return this.getCurrentModeEditor().scrollTop(value);
+  }
+
+  /**
+   * Set UI to private UI property
+   * @memberof ToastUIEditor
+   * @param {UI} UI UI instance
+   */
+  setUI(UI) {
+    this._ui = UI;
+  }
+
+  /**
+   * Get _ui property
+   * @memberof ToastUIEditor
+   * @returns {UI}
+   */
+  getUI() {
+    return this._ui;
+  }
+
+  /**
+   * Reset TUIEditor
+   * @memberof ToastUIEditor
+   */
+  reset() {
+    this.wwEditor.reset();
+    this.mdEditor.reset();
+  }
+
+  /**
+   * Get current range
+   * @memberof ToastUIEditor
+   * @returns {{start, end}|Range}
+   */
+  getRange() {
+    return this.getCurrentModeEditor().getRange();
+  }
+
+  /**
+   * Get text object of current range
+   * @memberof ToastUIEditor
+   * @param {{start, end}|Range} range Range object of each editor
+   * @returns {object} TextObject class
+   */
+  getTextObject(range) {
+    return this.getCurrentModeEditor().getTextObject(range);
+  }
+
+  /**
+   * get selected text
+   * @returns {string} - selected text
+   * @memberof ToastUIEditor
+   */
+  getSelectedText() {
+    const range = this.getRange();
+    const textObject = this.getTextObject(range);
+
+    return textObject.getTextContent() || '';
+  }
+
+  /**
+   * Get instance of TUIEditor
+   * @memberof ToastUIEditor
+   * @returns {Array}
+   */
+  static getInstances() {
+    return __nedInstance;
+  }
+
+  /**
+   * Define extension
+   * @memberof ToastUIEditor
+   * @param {string} name Extension name
+   * @param {ExtManager~extension} ext extension
+   */
+  static defineExtension(name, ext) {
+    extManager.defineExtension(name, ext);
+  }
+
+  /**
+   * Factory method for Editor
+   * @memberof ToastUIEditor
+   * @param {object} options Option for initialize TUIEditor
+   * @returns {ToastUIEditor}
+   */
+  static factory(options) {
+    let tuiEditor;
+
+    if (options.viewer) {
+      tuiEditor = new Viewer(options);
+    } else {
+      tuiEditor = new ToastUIEditor(options);
+    }
+
+    return tuiEditor;
+  }
+}
+
+/**
+ * check whther is viewer
+ * @type {boolean}
+ */
+ToastUIEditor.isViewer = false;
+
+/**
+ * I18n instance
+ * @type {I18n}
+ */
+ToastUIEditor.i18n = i18n;
+
+/**
+ * domUtil instance
+ * @type {DomUtil}
+ */
+ToastUIEditor.domUtils = domUtils;
+
+/**
+ * CodeBlockManager instance
+ * @type {CodeBlockManager}
+ */
+ToastUIEditor.codeBlockManager = codeBlockManager;
+
+/**
+ * Button class
+ * @type {Class.&lt;Button>}
+ * @deprecated
+ */
+ToastUIEditor.Button = Button;
+
+/**
+ * WwCodeBlockManager class
+ * @type {Class.&lt;WwCodeBlockManager>}
+ */
+ToastUIEditor.WwCodeBlockManager = WwCodeBlockManager;
+
+/**
+ * WwTableManager class
+ * @type {Class.&lt;WwTableManager>}
+ */
+ToastUIEditor.WwTableManager = WwTableManager;
+
+/**
+ * WwTableManager class
+ * @type {Class.&lt;WwTableSelectionManager>}
+ */
+ToastUIEditor.WwTableSelectionManager = WwTableSelectionManager;
+
+/**
+ * CommandManager class
+ * @type {Class.&lt;CommandManager>}
+ */
+ToastUIEditor.CommandManager = CommandManager;
+
+/**
+ * MarkdownIt hightlight instance
+ * @type {MarkdownIt}
+ */
+ToastUIEditor.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
+
+module.exports = ToastUIEditor;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/389021/16107646/9729e556-33d8-11e6-933f-5b09fa3a53bb.png" style="width: 150px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

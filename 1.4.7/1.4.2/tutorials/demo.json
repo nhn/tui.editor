@@ -1,0 +1,113 @@
+{
+  "files": [
+    {
+      "filename": "example00-editor-with-extensions.html",
+      "title": "0. Editor with extensions",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example01-viewer-with-extensions.html",
+      "title": "1. Viewer with extensions",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example02-editor-basic.html",
+      "title": "2. Editor Basic",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example03-viewer-basic.html",
+      "title": "3. Viewer Basic",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example04-editor-jquery.html",
+      "title": "4. Editor jQuery",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example05-viewer-jquery.html",
+      "title": "5. Viewer jQuery",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example06-scrollsync.html",
+      "title": "6. Scroll Sync",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example07-colorsyntax.html",
+      "title": "7. Color Syntax",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example08-table.html",
+      "title": "8. Table",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example09-uml.html",
+      "title": "9. UML",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example10-chart.html",
+      "title": "10. Chart",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example11-writing-extension.html",
+      "title": "11. Writting Extension",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example12-customize-toolbar.html",
+      "title": "12. Customize Toolbar",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example13-use-command.html",
+      "title": "13. Use Command",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example14-set-content-programmatically.html",
+      "title": "14. Set content programmatically",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example15-custom-convertor.html",
+      "title": "15. Custom convertor",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example16-performance-demo.html",
+      "title": "16. Performance Demo",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    },
+    {
+      "filename": "example17-i18n-language.html",
+      "title": "17. i18n language",
+      "jsFilePaths": [],
+      "cssFilePaths": ["explain.css"]
+    }
+  ],
+  "staticDir": []
+}

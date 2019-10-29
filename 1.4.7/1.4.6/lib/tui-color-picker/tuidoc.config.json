@@ -1,0 +1,34 @@
+{
+  "header": {
+    "logo": {
+      "src": "https://uicdn.toast.com/toastui/img/tui-component-bi-white.png"
+    },
+    "title": {
+      "text": "Color Picker",
+      "linkUrl": "https://github.com/nhnent/tui.color-picker"
+    }
+  },
+  "footer": [
+    {
+      "title": "NHN",
+      "linkUrl": "https://github.com/nhnent"
+    },
+    {
+      "title": "FE Development Lab",
+      "linkUrl": "https://github.com/nhnent/fe.javascript"
+    }
+  ],
+  "main": {
+    "filePath": "README.md"
+  },
+  "api": {
+    "filePath": "src/js/**"
+  },
+  "examples": {
+    "filePath": "examples",
+    "titles": {
+      "example01-basic": "1. Basic"
+    }
+  },
+  "pathPrefix": "tui.color-picker"
+}

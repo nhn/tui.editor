@@ -1,0 +1,8 @@
+{
+  "name": "highlightjs",
+  "description": "Syntax highlighting for the Web",
+  "version": "9.12.0",
+  "private": false,
+  "license": "BSD-3-Clause",
+  "main": "highlight.pack.js"
+}

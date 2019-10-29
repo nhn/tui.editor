@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title>01. Viewer with extensions</title>
+    <link rel="stylesheet" href="./explain.css">
+  </head>
+  <body>
+    <div class="explain">
+      Learn more about Viewer in <a target="_blank" href="https://github.com/nhn/tui.editor/wiki/Getting-started-with-bower#viewer">here</a>
+    </div>
+    <div class="explain">
+      Learn more about Extensions in <a target="_blank" href="https://github.com/nhn/tui.editor/wiki/Extensions">here</a>
+    </div>
+    <div class="explain">
+      See available options in <a target="_blank" href="http://nhn.github.io/tui.editor/api/latest/ToastUIEditorViewer.html">here</a>
+    </div>
+
+    <div class="code-html">
+      <!-- Viewer Dependencies -->
+      <script src="../lib/jquery/dist/jquery.js"></script>
+      <script src="../lib/markdown-it/dist/markdown-it.js"></script>
+      <script src="../lib/tui-code-snippet/dist/tui-code-snippet.js"></script>
+      <script src="../lib/highlightjs/highlight.pack.js"></script>
+      <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
+
+      <!-- Viewer -->
+      <script src="../dist/tui-editor-Viewer.js"></script>
+      <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+
+      <!-- table extention -->
+      <script src="../lib/to-mark/dist/to-mark.js"></script>
+      <script src="../dist/tui-editor-extTable.js"></script>
+
+      <!-- uml extention -->
+      <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
+      <script src="../dist/tui-editor-extUML.js"></script>
+
+      <div id="editSection"></div>
+    </div>
+    <script class="code-js">
+      var content = [
+        '![image](https://cloud.githubusercontent.com/assets/389021/16107646/9729e556-33d8-11e6-933f-5b09fa3a53bb.png)',
+        '# Heading 1',
+        '## Heading 2',
+        '    code block',
+        '```js',
+        'console.log("fenced code block");',
+        '```',
+        '[link](https://nhn.github.io/tui.editor/)',
+        '> block quote',
+        '---',
+        'horizontal line',
+        '***',
+        '`code`, *italic*, **bold**, ~~strikethrough~~, <span style="color:#e11d21">Red color</span>',
+        '| @cols=2:merged |',
+        '| --- | --- |',
+        '| table | table |',
+        '```uml',
+        'partition Conductor {',
+        '  (*) --> "Climbs on Platform"',
+        '  --> === S1 ===',
+        '  --> Bows',
+        '}',
+        '',
+        'partition Audience #LightSkyBlue {',
+        '  === S1 === --> Applauds',
+        '}',
+        '',
+        'partition Conductor {',
+        '  Bows --> === S2 ===',
+        '  --> WavesArmes',
+        '  Applauds --> === S2 ===',
+        '}',
+        '',
+        'partition Orchestra #CCCCEE {',
+        '  WavesArmes --> Introduction',
+        '  --> "Play music"',
+        '}',
+        '```'
+      ].join('\n');
+
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        height: '300px',
+        initialValue: content,
+        exts: ['table', 'uml']
+      });
+    </script>
+  </body>
+</html>
