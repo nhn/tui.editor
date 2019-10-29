@@ -1,5 +1,7 @@
-!**/lib
-/lib
-node_modules
-report
-.DS_Store
+# ignore all
+/*
+
+# except
+!.gitignore
+![0-9]*.[0-9]*.[0-9]*
+!latest
