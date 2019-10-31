@@ -79,8 +79,8 @@
     "tui-release-notes": "github:nhn/tui.release-notes#v1.0.0",
     "typescript": "^3.2.2",
     "webpack": "^3.10.0",
-    "webpack-bundle-analyzer": "^2.9.1",
-    "webpack-dev-server": "^2.10.0"
+    "webpack-bundle-analyzer": "^3.3.2",
+    "webpack-dev-server": "^3.1.11"
   },
   "dependencies": {
     "@types/codemirror": "0.0.71",
