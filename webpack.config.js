@@ -1,17 +1,15 @@
-/*
+/**
  * @fileoverview configs file for bundling
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-
-/* eslint max-len: 0, no-process-env: 0, strict: 0 */
-
 const path = require('path');
 const webpack = require('webpack');
 const pkg = require('./package.json');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+
 const CleanCSS = require('clean-css');
-const SafeUmdPlugin = require('safe-umd-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
 const ENTRY_MAIN = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
@@ -26,36 +24,24 @@ const ENTRY_EDITOR_CSS = './src/css/tui-editor.css';
 const ENTRY_CONTENT_CSS = './src/css/tui-editor-contents.css';
 const ENTRY_IMAGE_DIR = './src/image';
 
-const isDevServer = process.argv[1].indexOf('webpack-dev-server') >= 0;
-const isProduction = process.argv.indexOf('-p') >= 0;
-const isHMR = process.argv.indexOf('--hot') >= 0 || process.argv.indexOf('--hotOnly') >= 0;
+const isProduction = process.argv.indexOf('--mode=production') >= 0;
+const isMinified = process.argv.indexOf('--minify') >= 0;
 
-const NAME_SPACE = ['tui', 'Editor'];
-const DIST_DIR_NAME = 'dist';
-const DIST_PATH = path.join(__dirname, DIST_DIR_NAME);
-const DIST_JS_NAME = `tui-editor-[name]${isProduction ? '.min' : ''}.js`;
-const ANALYZER_DIR = '../report/webpack';
-const PUBLIC_PATH = `http://localhost:8080/${DIST_DIR_NAME}/`;
-const BANNER = [
-  pkg.name,
-  `@version ${pkg.version}`,
-  `@author ${pkg.author}`,
-  `@license ${pkg.license}`
-].join('\n');
-
-const defaultConfigs = Array(isDevServer ? 1 : 5).fill(0).map(() => {
+const defaultConfigs = Array(isProduction ? 5 : 1).fill(0).map(() => {
   return {
+    mode: isProduction ? 'production' : 'development',
     cache: false,
     output: {
-      path: DIST_PATH,
-      publicPath: 'dist/',
-      pathinfo: false,
-      filename: DIST_JS_NAME
+      library: ['tui', 'Editor'],
+      libraryTarget: 'umd',
+      path: path.resolve(__dirname, 'dist'),
+      publicPath: '/dist',
+      filename: `tui-editor-[name]${isMinified ? '.min' : ''}.js`
     },
     module: {
       rules: [{
         test: /\.js$/,
-        exclude: /node_modules|lib|dist/,
+        exclude: /node_modules|dist/,
         loader: 'eslint-loader',
         enforce: 'pre',
         options: {
@@ -66,7 +52,7 @@ const defaultConfigs = Array(isDevServer ? 1 : 5).fill(0).map(() => {
       },
       {
         test: /\.js$/,
-        exclude: /node_modules|lib|dist/,
+        exclude: /node_modules|dist/,
         loader: 'babel-loader?cacheDirectory',
         options: {
           babelrc: true
@@ -75,30 +61,28 @@ const defaultConfigs = Array(isDevServer ? 1 : 5).fill(0).map(() => {
     },
     plugins: [
       new webpack.BannerPlugin({
-        banner: BANNER,
+        banner: [
+          pkg.name,
+          `@version ${pkg.version}`,
+          `@author ${pkg.author}`,
+          `@license ${pkg.license}`
+        ].join('\n'),
         raw: false,
         entryOnly: true
-      }),
-      new SafeUmdPlugin()
+      })
     ],
     externals: [{
-      'tui-color-picker': {
-        commonjs: 'tui-color-picker',
-        commonjs2: 'tui-color-picker',
-        amd: 'tui-color-picker',
-        root: ['tui', 'colorPicker']
-      },
-      'jquery': {
-        commonjs: 'jquery',
-        commonjs2: 'jquery',
-        amd: 'jquery',
-        root: ['$']
-      },
       'tui-code-snippet': {
         commonjs: 'tui-code-snippet',
         commonjs2: 'tui-code-snippet',
         amd: 'tui-code-snippet',
         root: ['tui', 'util']
+      },
+      'tui-color-picker': {
+        commonjs: 'tui-color-picker',
+        commonjs2: 'tui-color-picker',
+        amd: 'tui-color-picker',
+        root: ['tui', 'colorPicker']
       },
       'tui-chart/dist/tui-chart-polyfill': {
         commonjs: 'tui-chart',
@@ -106,17 +90,11 @@ const defaultConfigs = Array(isDevServer ? 1 : 5).fill(0).map(() => {
         amd: 'tui-chart',
         root: ['tui', 'chart']
       },
-      'plantuml-encoder': {
-        commonjs: 'plantuml-encoder',
-        commonjs2: 'plantuml-encoder',
-        amd: 'plantuml-encoder',
-        root: ['plantumlEncoder']
-      },
-      'highlight.js': {
-        commonjs: 'highlight.js',
-        commonjs2: 'highlight.js',
-        amd: 'highlight.js',
-        root: ['hljs']
+      'jquery': {
+        commonjs: 'jquery',
+        commonjs2: 'jquery',
+        amd: 'jquery',
+        root: ['$']
       },
       'markdown-it': {
         commonjs: 'markdown-it',
@@ -141,104 +119,140 @@ const defaultConfigs = Array(isDevServer ? 1 : 5).fill(0).map(() => {
         commonjs2: 'to-mark',
         amd: 'to-mark',
         root: ['toMark']
+      },
+      'plantuml-encoder': {
+        commonjs: 'plantuml-encoder',
+        commonjs2: 'plantuml-encoder',
+        amd: 'plantuml-encoder',
+        root: ['plantumlEncoder']
+      },
+      'highlight.js': {
+        commonjs: 'highlight.js',
+        commonjs2: 'highlight.js',
+        amd: 'highlight.js',
+        root: ['hljs']
       }
-    }]
+    }],
+    optimization: {
+      minimize: false
+    }
   };
 });
 
-// Style
-defaultConfigs[0].plugins.push(new CopyWebpackPlugin([{
-  from: ENTRY_EDITOR_CSS,
-  transform: content => isProduction ? new CleanCSS({compatibility: '*'}).minify(content).styles : content,
-  to: `tui-editor${isProduction ? '.min' : ''}.css`
-}, {
-  from: ENTRY_CONTENT_CSS,
-  transform: content => isProduction ? new CleanCSS({compatibility: '*'}).minify(content).styles : content,
-  to: `tui-editor-contents${isProduction ? '.min' : ''}.css`
-}]));
+function addMinifyPlugin(config) {
+  config.optimization = {
+    minimizer: [
+      new TerserPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: false,
+        extractComments: false
+      })
+    ]
+  };
+}
 
-// Image
-defaultConfigs[0].plugins.push(new CopyWebpackPlugin([ENTRY_IMAGE_DIR]));
+function addAnalyzerPlugin(config, type) {
+  config.plugins.push(new BundleAnalyzerPlugin({
+    analyzerMode: 'static',
+    reportFilename: `../report/webpack/stats-${pkg.version}-${type}.html`
+  }));
+}
 
-if (isDevServer) {
-  // Serve
-  defaultConfigs[0].entry = {
+function addCopyingAssetsPlugin(config) {
+  config.plugins.push(new CopyWebpackPlugin([{ // style
+    from: ENTRY_EDITOR_CSS,
+    transform: content => isMinified ? new CleanCSS({compatibility: '*'}).minify(content).styles : content,
+    to: `tui-editor${isMinified ? '.min' : ''}.css`
+  }, {
+    from: ENTRY_CONTENT_CSS,
+    transform: content => isMinified ? new CleanCSS({compatibility: '*'}).minify(content).styles : content,
+    to: `tui-editor-contents${isMinified ? '.min' : ''}.css`
+  }]));
+
+  config.plugins.push(new CopyWebpackPlugin([ENTRY_IMAGE_DIR])); // image
+}
+
+function setDevelopConfig(config) {
+  config.entry = {
     'Editor': ENTRY_MAIN
   };
-  defaultConfigs[0].output.publicPath = PUBLIC_PATH;
-  defaultConfigs[0].output.library = NAME_SPACE;
-  defaultConfigs[0].output.libraryTarget = 'umd';
-  defaultConfigs[0].plugins.push(new webpack.IgnorePlugin(/viewer$/, /extensions/));
-  defaultConfigs[0].devServer = {
-    host: '0.0.0.0',
-    disableHostCheck: true,
-    port: 8080,
-    publicPath: PUBLIC_PATH,
-    noInfo: true,
+  
+  config.devtool = 'inline-source-map';
+  config.devServer = {
     inline: true,
-    stats: {
-      colors: true
-    }
+    host: '0.0.0.0',
+    port: 8080,
+    disableHostCheck: true
   };
-  defaultConfigs[0].devtool = 'inline-source-map';
 
-  if (isHMR) {
-    defaultConfigs[0].plugins.push(new webpack.HotModuleReplacementPlugin());
+  config.plugins.push(new webpack.IgnorePlugin(/viewer$/, /extensions/));
+}
+
+function setProductionConfig(config) {
+  config.entry = {
+    'Editor': ENTRY_MAIN,
+    'Viewer': ENTRY_VIEWER
+  };
+
+  if (isMinified) {
+    addMinifyPlugin(config);
+    addAnalyzerPlugin(config, 'normal');
   }
-} else {
-  // BuildAll
-  defaultConfigs[0].entry = {
+}
+
+function setProductionConfigForEditorAll(config) {
+  config.entry = {
     'Editor-all': ENTRY_MAIN_ALL
   };
-  defaultConfigs[0].output.library = NAME_SPACE;
-  defaultConfigs[0].output.libraryTarget = 'umd';
-  defaultConfigs[0].plugins.push(new webpack.IgnorePlugin(/viewer$/, /extensions/));
-  if (isProduction) {
-    defaultConfigs[0].plugins.push(new BundleAnalyzerPlugin({
-      analyzerMode: 'static',
-      reportFilename: `${ANALYZER_DIR}/stats-${pkg.version}-all.html`
-    }));
-  }
 
-  // BuildAll Viewer
-  defaultConfigs[1].entry = {
+  config.plugins.push(new webpack.IgnorePlugin(/viewer$/, /extensions/));
+
+  if (isMinified) {
+    addMinifyPlugin(config);
+    addAnalyzerPlugin(config, 'all');
+  }
+}
+
+function setProductionConfigForViewerAll(config) {
+  config.entry = {
     'Viewer-all': ENTRY_VIEWER_ALL
   };
-  defaultConfigs[1].output.library = NAME_SPACE;
-  defaultConfigs[1].output.libraryTarget = 'umd';
-  defaultConfigs[1].plugins.push(new webpack.IgnorePlugin(/editor$/, /extensions/));
-  if (isProduction) {
-    defaultConfigs[1].plugins.push(new BundleAnalyzerPlugin({
-      analyzerMode: 'static',
-      reportFilename: `${ANALYZER_DIR}/stats-${pkg.version}-viewer-all.html`
-    }));
-  }
 
-  // BuildExt
-  defaultConfigs[2].entry = {
+  config.plugins.push(new webpack.IgnorePlugin(/editor$/, /extensions/));
+  
+  if (isMinified) {
+    addMinifyPlugin(config);
+    addAnalyzerPlugin(config, 'viewer-all');
+  }
+}
+
+function setProductionConfigForExtensions(config) {
+  config.entry = {
     'extChart': ENTRY_EXT_CHART,
     'extUML': ENTRY_EXT_UML,
     'extColorSyntax': ENTRY_EXT_COLOR_SYNTAX,
     'extScrollSync': ENTRY_EXT_SCROLL_SYNC,
     'extTable': ENTRY_EXT_TABLE
   };
-  defaultConfigs[2].output.libraryTarget = 'umd';
-  defaultConfigs[2].externals.push(function(context, request, callback) {
+
+  config.externals.push(function(context, request, callback) {
     const dir = path.relative(__dirname, context);
+
     if (dir.includes('extensions')) {
       if (request.match(/editor$/)) {
         callback(null, {
           commonjs: 'tui-editor',
           commonjs2: 'tui-editor',
           amd: 'tui-editor',
-          root: NAME_SPACE
+          root: ['tui', 'Editor']
         });
       } else if (request.match(/viewer$/)) {
         callback(null, {
           commonjs: 'tui-editor/dist/tui-editor-Viewer',
           commonjs2: 'tui-editor/dist/tui-editor-Viewer',
           amd: 'tui-editor/dist/tui-editor-Viewer',
-          root: NAME_SPACE
+          root: ['tui', 'Editor']
         });
       } else {
         callback();
@@ -247,41 +261,39 @@ if (isDevServer) {
       callback();
     }
   });
-  if (isProduction) {
-    defaultConfigs[2].plugins.push(new BundleAnalyzerPlugin({
-      analyzerMode: 'static',
-      reportFilename: `${ANALYZER_DIR}/stats-${pkg.version}-exts.html`
-    }));
-  }
 
-  // BuildNormal
-  defaultConfigs[3].entry = {
-    'Editor': ENTRY_MAIN,
-    'Viewer': ENTRY_VIEWER
-  };
-  defaultConfigs[3].output.library = NAME_SPACE;
-  defaultConfigs[3].output.libraryTarget = 'umd';
-  if (isProduction) {
-    defaultConfigs[3].plugins.push(new BundleAnalyzerPlugin({
-      analyzerMode: 'static',
-      reportFilename: `${ANALYZER_DIR}/stats-${pkg.version}.html`
-    }));
-  }
+  delete config.output.library;
 
-  // Build with Deps
-  defaultConfigs[4].entry = {
+  if (isMinified) {
+    addMinifyPlugin(config);
+    addAnalyzerPlugin(config, 'exts');
+  }
+}
+
+function setProductionConfigForFull(config) {
+  config.entry = {
     'Editor-full': ENTRY_MAIN_ALL,
     'Viewer-full': ENTRY_VIEWER_ALL
   };
-  defaultConfigs[4].externals.length = 0;
-  defaultConfigs[4].output.library = NAME_SPACE;
-  defaultConfigs[4].output.libraryTarget = 'umd';
-  if (isProduction) {
-    defaultConfigs[4].plugins.push(new BundleAnalyzerPlugin({
-      analyzerMode: 'static',
-      reportFilename: `${ANALYZER_DIR}/stats-${pkg.version}.html`
-    }));
+
+  config.externals = [];
+
+  if (isMinified) {
+    addMinifyPlugin(config);
+    addAnalyzerPlugin(config, 'full');
   }
+}
+
+addCopyingAssetsPlugin(defaultConfigs[0]);
+
+if (isProduction) {
+  setProductionConfig(defaultConfigs[0]);
+  setProductionConfigForEditorAll(defaultConfigs[1]);
+  setProductionConfigForViewerAll(defaultConfigs[2]);
+  setProductionConfigForExtensions(defaultConfigs[3]);
+  setProductionConfigForFull(defaultConfigs[4]);
+} else {
+  setDevelopConfig(defaultConfigs[0]);
 }
 
 module.exports = defaultConfigs;
