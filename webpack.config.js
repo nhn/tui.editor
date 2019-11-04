@@ -189,7 +189,7 @@ function setDevelopConfig(config) {
   config.plugins.push(new webpack.IgnorePlugin(/viewer$/, /extensions/));
 }
 
-function setProdcutionConfig(config) {
+function setProductionConfig(config) {
   config.entry = {
     'Editor': ENTRY_MAIN,
     'Viewer': ENTRY_VIEWER
@@ -201,7 +201,7 @@ function setProdcutionConfig(config) {
   }
 }
 
-function setProdcutionConfigForEditorAll(config) {
+function setProductionConfigForEditorAll(config) {
   config.entry = {
     'Editor-all': ENTRY_MAIN_ALL
   };
@@ -214,7 +214,7 @@ function setProdcutionConfigForEditorAll(config) {
   }
 }
 
-function setProdcutionConfigForViewerAll(config) {
+function setProductionConfigForViewerAll(config) {
   config.entry = {
     'Viewer-all': ENTRY_VIEWER_ALL
   };
@@ -227,7 +227,7 @@ function setProdcutionConfigForViewerAll(config) {
   }
 }
 
-function setProdcutionConfigForExtensions(config) {
+function setProductionConfigForExtensions(config) {
   config.entry = {
     'extChart': ENTRY_EXT_CHART,
     'extUML': ENTRY_EXT_UML,
@@ -262,13 +262,15 @@ function setProdcutionConfigForExtensions(config) {
     }
   });
 
+  delete config.output.library;
+
   if (isMinified) {
     addMinifyPlugin(config);
     addAnalyzerPlugin(config, 'exts');
   }
 }
 
-function setProdcutionConfigForFull(config) {
+function setProductionConfigForFull(config) {
   config.entry = {
     'Editor-full': ENTRY_MAIN_ALL,
     'Viewer-full': ENTRY_VIEWER_ALL
@@ -285,11 +287,11 @@ function setProdcutionConfigForFull(config) {
 addCopyingAssetsPlugin(defaultConfigs[0]);
 
 if (isProduction) {
-  setProdcutionConfig(defaultConfigs[0]);
-  setProdcutionConfigForEditorAll(defaultConfigs[1]);
-  setProdcutionConfigForViewerAll(defaultConfigs[2]);
-  setProdcutionConfigForExtensions(defaultConfigs[3]);
-  setProdcutionConfigForFull(defaultConfigs[4]);
+  setProductionConfig(defaultConfigs[0]);
+  setProductionConfigForEditorAll(defaultConfigs[1]);
+  setProductionConfigForViewerAll(defaultConfigs[2]);
+  setProductionConfigForExtensions(defaultConfigs[3]);
+  setProductionConfigForFull(defaultConfigs[4]);
 } else {
   setDevelopConfig(defaultConfigs[0]);
 }
