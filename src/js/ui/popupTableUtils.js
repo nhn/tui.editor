@@ -9,7 +9,7 @@ import LayerPopup from './layerpopup';
 import i18n from '../i18n';
 
 export const REMOVE_ROW_MENU_CLASS_NAME = 'te-table-remove-row';
-export const DISABLE_MENU_CLASS_NAME = 'te-context-menu-disabled';
+export const DISABLED_MENU_CLASS_NAME = 'te-context-menu-disabled';
 
 /**
  * PopupTableUtils
@@ -65,6 +65,7 @@ class PopupTableUtils extends LayerPopup {
     this.on('click .te-table-col-align-right', () => this.eventManager.emit('command', 'AlignCol', 'right'));
     this.on('click .te-table-remove-col', () => this.eventManager.emit('command', 'RemoveCol'));
     this.on('click .te-table-remove', () => this.eventManager.emit('command', 'RemoveTable'));
+    this._bindClickEventOnRemoveRowMenu();
   }
 
   /**
@@ -78,13 +79,13 @@ class PopupTableUtils extends LayerPopup {
     this.eventManager.listen('focus', () => this.hide());
     this.eventManager.listen('mousedown', () => this.hide());
     this.eventManager.listen('closeAllPopup', () => this.hide());
-
-    this.eventManager.listen('openPopupTableUtils', event => {
+    this.eventManager.listen('openPopupTableUtils', ev => {
+      const {clientX, clientY, target} = ev;
       const offset = this.$el.parent().offset();
-      const x = event.clientX - offset.left;
-      const y = event.clientY - offset.top + $(window).scrollTop();
+      const x = clientX - offset.left;
+      const y = clientY - offset.top + $(window).scrollTop();
 
-      this._disableRemoveRowMenu(event.target);
+      this._disableRemoveRowMenu(target);
 
       this.$el.css({
         position: 'absolute',
@@ -96,15 +97,25 @@ class PopupTableUtils extends LayerPopup {
     });
   }
 
+  _bindClickEventOnRemoveRowMenu() {
+    this.on(`click .${REMOVE_ROW_MENU_CLASS_NAME}`, ev => {
+      const {target} = ev;
+
+      if ($(target).hasClass(DISABLED_MENU_CLASS_NAME)) {
+        ev.preventDefault();
+      } else {
+        this.eventManager.emit('command', 'RemoveRow');
+      }
+    });
+  }
+
   _disableRemoveRowMenu(target) {
     const $menu = this.$el.find(`.${REMOVE_ROW_MENU_CLASS_NAME}`);
 
     if (target.nodeName === 'TH') {
-      $menu.addClass(DISABLE_MENU_CLASS_NAME);
-      this.off(`click .${REMOVE_ROW_MENU_CLASS_NAME}`);
+      $menu.addClass(DISABLED_MENU_CLASS_NAME);
     } else {
-      $menu.removeClass(DISABLE_MENU_CLASS_NAME);
-      this.on(`click .${REMOVE_ROW_MENU_CLASS_NAME}`, () => this.eventManager.emit('command', 'RemoveRow'));
+      $menu.removeClass(DISABLED_MENU_CLASS_NAME);
     }
   }
 }

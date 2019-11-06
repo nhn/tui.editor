@@ -6,19 +6,18 @@ import $ from 'jquery';
 
 import PopupTableUtils, {
   REMOVE_ROW_MENU_CLASS_NAME,
-  DISABLE_MENU_CLASS_NAME
+  DISABLED_MENU_CLASS_NAME
 } from '@/ui/popupTableUtils';
 import EventManager from '@/eventManager';
 
 describe('popupTableUtils', () => {
-  let $target, em, popup;
+  let $target, popup;
 
   beforeEach(() => {
     $target = $('<div>');
-    em = new EventManager();
     popup = new PopupTableUtils({
       $target,
-      eventManager: em
+      eventManager: new EventManager()
     });
   });
 
@@ -26,13 +25,26 @@ describe('popupTableUtils', () => {
     $target.remove();
   });
 
-  it(`if target element where created popup is table header, 'remove row' menu is disabled`, () => {
-    const $menu = popup.$el.find(`.${REMOVE_ROW_MENU_CLASS_NAME}`);
+  describe(`'remove row' menu`, () => {
+    it('is disabled when target element where created popup is table header', () => {
+      const $menu = popup.$el.find(`.${REMOVE_ROW_MENU_CLASS_NAME}`);
+  
+      popup._disableRemoveRowMenu($('<th>')[0]);
+      expect($menu.hasClass(DISABLED_MENU_CLASS_NAME)).toBe(true);
+  
+      popup._disableRemoveRowMenu($('<td>')[0]);
+      expect($menu.hasClass(DISABLED_MENU_CLASS_NAME)).toBe(false);
+    });
 
-    popup._disableRemoveRowMenu($('<th>')[0]);
-    expect($menu.hasClass(`${DISABLE_MENU_CLASS_NAME}`)).toBe(true);
+    it('is prevented click event when having disabled class name', () => {
+      const $menu = popup.$el.find(`.${REMOVE_ROW_MENU_CLASS_NAME}`);
 
-    popup._disableRemoveRowMenu($('<td>')[0]);
-    expect($menu.hasClass(`${DISABLE_MENU_CLASS_NAME}`)).toBe(false);
-  })
+      spyOn(popup.eventManager, 'emit');
+
+      $menu.addClass(DISABLED_MENU_CLASS_NAME);
+      $menu.click();
+
+      expect(popup.eventManager.emit).not.toHaveBeenCalled();
+    });
+  });
 });
