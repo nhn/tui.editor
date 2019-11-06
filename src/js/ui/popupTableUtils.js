@@ -8,6 +8,9 @@ import util from 'tui-code-snippet';
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
 
+export const REMOVE_ROW_MENU_CLASS_NAME = 'te-table-remove-row';
+export const DISABLE_MENU_CLASS_NAME = 'te-context-menu-disabled';
+
 /**
  * PopupTableUtils
  * It implements table utils popup
@@ -57,7 +60,6 @@ class PopupTableUtils extends LayerPopup {
 
     this.on('click .te-table-add-row', () => this.eventManager.emit('command', 'AddRow'));
     this.on('click .te-table-add-col', () => this.eventManager.emit('command', 'AddCol'));
-    this.on('click .te-table-remove-row', () => this.eventManager.emit('command', 'RemoveRow'));
     this.on('click .te-table-col-align-left', () => this.eventManager.emit('command', 'AlignCol', 'left'));
     this.on('click .te-table-col-align-center', () => this.eventManager.emit('command', 'AlignCol', 'center'));
     this.on('click .te-table-col-align-right', () => this.eventManager.emit('command', 'AlignCol', 'right'));
@@ -82,15 +84,28 @@ class PopupTableUtils extends LayerPopup {
       const x = event.clientX - offset.left;
       const y = event.clientY - offset.top + $(window).scrollTop();
 
+      this._disableRemoveRowMenu(event.target);
+
       this.$el.css({
         position: 'absolute',
         top: y + 5, // beside mouse pointer
         left: x + 10
       });
-
       this.eventManager.emit('closeAllPopup');
       this.show();
     });
+  }
+
+  _disableRemoveRowMenu(target) {
+    const $menu = this.$el.find(`.${REMOVE_ROW_MENU_CLASS_NAME}`);
+
+    if (target.nodeName === 'TH') {
+      $menu.addClass(DISABLE_MENU_CLASS_NAME);
+      this.off(`click .${REMOVE_ROW_MENU_CLASS_NAME}`);
+    } else {
+      $menu.removeClass(DISABLE_MENU_CLASS_NAME);
+      this.on(`click .${REMOVE_ROW_MENU_CLASS_NAME}`, () => this.eventManager.emit('command', 'RemoveRow'));
+    }
   }
 }
 
