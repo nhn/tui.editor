@@ -591,6 +591,14 @@
     height: 1px;
 }
 
+.te-popup-table-utils .te-context-menu-disabled {
+    color: #ccc;
+}
+
+.te-popup-table-utils .te-context-menu-disabled:hover {
+    background-color: #fff;
+}
+
 .te-heading-add {
     width: auto;
 }
