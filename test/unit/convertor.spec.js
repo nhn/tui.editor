@@ -429,6 +429,23 @@ describe('Convertor', () => {
         expect(toMark(html)).toBe(markdown);
       });
 
+      it('brs in front of table and cell has brs', () => {
+        const html = [
+          '<br>',
+          '<br>',
+          '<table><thead><tr><th>foo<br>bar</th></tr></thead><tbody><tr><td>baz<br>qux</td></tr></tbody></table>'
+        ].join('');
+        const markdown = [
+          '<br>',
+          '<br>',
+          '| foo<br>bar |',
+          '| ------ |',
+          '| baz<br>qux |',
+        ].join('\n');
+
+        expect(toMark(html)).toBe(markdown);
+      });
+
       it('prevent a tag in link from changing markdown syntax', () => {
         const link = '![foo](<a href="http://link.to">http://link.to</a>)';
     
