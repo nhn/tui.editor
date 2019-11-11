@@ -36,17 +36,18 @@ const ATTR_VALUE_BLACK_LIST_RX = {
  * htmlSanitizer
  * @param {string|Node} html html or Node
  * @param {boolean} [needHtmlText] pass true if need html text
+ * @param {string[]} [allowedTagsToSanitize] - List of tag names to exclude from sanitizing
  * @returns {string|DocumentFragment} result
  * @ignore
  */
-function htmlSanitizer(html, needHtmlText) {
+function htmlSanitizer(html, needHtmlText, allowedTagsToSanitize) {
   const $html = $('<div />');
 
   html = html.replace(/<!--[\s\S]*?-->/g, '');
 
   $html.append(html);
 
-  removeUnnecessaryTags($html);
+  removeUnnecessaryTags($html, allowedTagsToSanitize);
   leaveOnlyWhitelistAttribute($html);
   removeInvalidAttributeValues($html);
 
@@ -57,9 +58,31 @@ function htmlSanitizer(html, needHtmlText) {
  * Remove unnecessary tags
  * @private
  * @param {jQuery} $html jQuery instance
+ * @param {string[]} allowedTagsToSanitize - List of tag names to exclude from sanitizing
  */
-function removeUnnecessaryTags($html) {
-  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title, embed, object').remove();
+function removeUnnecessaryTags($html, allowedTagsToSanitize = []) {
+  let blacklistTags = [
+    'script',
+    'iframe',
+    'textarea',
+    'form',
+    'button',
+    'select',
+    'meta',
+    'style',
+    'link',
+    'title',
+    'embed',
+    'object',
+    'details',
+    'summary'
+  ];
+
+  allowedTagsToSanitize.forEach(allowedTag => {
+    blacklistTags = blacklistTags.filter(blacklistTag => allowedTag !== blacklistTag);
+  });
+
+  $html.find(blacklistTags.join(', ')).remove();
 }
 
 /**

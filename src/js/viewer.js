@@ -31,10 +31,13 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {object} options.hooks Hook list
  *     @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
  *     @param {string[]} [options.exts] - extensions
+ *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - Deprecated: use default htmlSanitizer (The default behavior will change to sanitize on v2)
+ *     @param {string[]} [options.allowedTagsToSanitize] - Add tag names to exclude from sanitizing.
  */
 class ToastUIEditorViewer {
   constructor(options) {
     this.options = $.extend({
+      allowedTagsToSanitize: [],
       useDefaultHTMLSanitizer: true,
       codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
       customConvertor: null

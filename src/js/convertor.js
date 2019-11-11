@@ -93,11 +93,13 @@ const HTML_TAG_RX = new RegExp(openingTag, 'g');
 /**
  * Class Convertor
  * @param {EventManager} em - EventManager instance
+ * @param {string[]} allowedTagsToSanitize - List of tag names to exclude from sanitizing
  * @ignore
  */
 class Convertor {
-  constructor(em) {
+  constructor(em, allowedTagsToSanitize) {
     this.eventManager = em;
+    this.allowedTagsToSanitize = allowedTagsToSanitize;
   }
 
   /**
@@ -200,7 +202,7 @@ class Convertor {
   }
 
   initHtmlSanitizer() {
-    this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => htmlSanitizer(html, true));
+    this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => htmlSanitizer(html, true, this.allowedTagsToSanitize));
   }
 
   /**

@@ -6,12 +6,20 @@ import $ from 'jquery';
 
 import htmlSanitizer from '@/htmlSanitizer';
 
-describe('htmlSanitizer', function() {
-  describe('tags', function() {
-    it('Remove unnecessary tags', function() {
+describe('htmlSanitizer', () => {
+  describe('tags', () => {
+    it('remove unnecessary tags', () => {
       expect(htmlSanitizer('<script>alert("test");</script>', true)).toBe('');
       expect(htmlSanitizer('<embed>child alive</embed>', true)).toBe('child alive');
       expect(htmlSanitizer('<object>child die</object>', true)).toBe('');
+      expect(htmlSanitizer('<details><summary>foo</summary></details>', true)).toBe('');
+    });
+
+    it(`don't remove unnecessary tags`, () => {
+      const html = '<details><summary>foo</summary></details>';
+      const allowedTags = ['details', 'summary'];
+
+      expect(htmlSanitizer(html, true, allowedTags)).toBe(html);
     });
   });
 

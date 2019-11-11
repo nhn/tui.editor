@@ -123,7 +123,8 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  *         @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
  *     @param {string} [options.language='en_US'] - language
  *     @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
- *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
+ *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - Deprecated: use default htmlSanitizer (The default behavior will change to sanitize on v2)
+ *     @param {string[]} [options.allowedTagsToSanitize] - Add tag names to exclude from sanitizing.
  *     @param {string[]} [options.codeBlockLanguages] - supported code block languages to be listed. default is what highlight.js supports
  *     @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
  *     @param {string[]} [options.toolbarItems] - toolbar items.
@@ -145,6 +146,7 @@ class ToastUIEditor {
       height: '300px',
       minHeight: '200px',
       language: 'en_US',
+      allowedTagsToSanitize: [],
       useDefaultHTMLSanitizer: true,
       useCommandShortcut: true,
       codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
@@ -187,7 +189,7 @@ class ToastUIEditor {
       // eslint-disable-next-line new-cap
       this.convertor = new this.options.customConvertor(this.eventManager);
     } else {
-      this.convertor = new Convertor(this.eventManager);
+      this.convertor = new Convertor(this.eventManager, this.options.allowedTagsToSanitize);
     }
 
     if (this.options.useDefaultHTMLSanitizer) {
@@ -216,7 +218,7 @@ class ToastUIEditor {
       this.convertor,
       false,
       this.options.previewDelayTime);
-    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
+    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, this.options);
     this.toMarkOptions = {
       gfm: true,
       renderer: toMarkRenderer
