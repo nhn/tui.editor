@@ -42,6 +42,17 @@ describe('Viewer', () => {
     expect(content).toBe(xss);
   });
 
+  it('should not sanitize html if allowedTagsToSanitize is set', () => {
+    const viewer = new ToastUIEditorViewer({
+      el: $('<div>')[0],
+      allowedTagsToSanitize: ['details', 'summary']
+    });
+    const md = '<details><summary>foo</summary></details>';
+    viewer.setValue(md);
+    const content = viewer.preview.getHTML();
+    expect(content).toBe(md);
+  });
+
   it('should have codeBlockLanugages option', () => {
     const el = $('<div>')[0];
     const viewer = new ToastUIEditorViewer({el});

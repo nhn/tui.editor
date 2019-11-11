@@ -187,7 +187,7 @@ class ToastUIEditor {
 
     if (this.options.customConvertor) {
       // eslint-disable-next-line new-cap
-      this.convertor = new this.options.customConvertor(this.eventManager);
+      this.convertor = new this.options.customConvertor(this.eventManager, this.options.allowedTagsToSanitize);
     } else {
       this.convertor = new Convertor(this.eventManager, this.options.allowedTagsToSanitize);
     }

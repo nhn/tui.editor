@@ -62,8 +62,9 @@ class WysiwygEditor {
 
   /**
    * init
+   * @param {string[]} allowedTagsToSanitize - List of tag names to exclude from sanitizing
    */
-  init() {
+  init(allowedTagsToSanitize) {
     const $editorBody = $('<div />');
 
     this.$editorContainerEl.append($editorBody);
@@ -72,7 +73,8 @@ class WysiwygEditor {
       blockTag: 'DIV',
       leafNodeNames: {
         'HR': false
-      }
+      },
+      allowedTagsToSanitize
     });
     this.editor.blockCommandShortcuts();
 
@@ -1188,7 +1190,7 @@ class WysiwygEditor {
   static factory($el, eventManager, options) {
     const wwe = new WysiwygEditor($el, eventManager, options);
 
-    wwe.init();
+    wwe.init(options.allowedTagsToSanitize);
 
     wwe.componentManager.addManager(WwListManager);
     wwe.componentManager.addManager(WwTaskManager);

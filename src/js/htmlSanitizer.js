@@ -40,7 +40,7 @@ const ATTR_VALUE_BLACK_LIST_RX = {
  * @returns {string|DocumentFragment} result
  * @ignore
  */
-function htmlSanitizer(html, needHtmlText, allowedTagsToSanitize) {
+function htmlSanitizer(html, needHtmlText, allowedTagsToSanitize = []) {
   const $html = $('<div />');
 
   html = html.replace(/<!--[\s\S]*?-->/g, '');
@@ -60,7 +60,7 @@ function htmlSanitizer(html, needHtmlText, allowedTagsToSanitize) {
  * @param {jQuery} $html jQuery instance
  * @param {string[]} allowedTagsToSanitize - List of tag names to exclude from sanitizing
  */
-function removeUnnecessaryTags($html, allowedTagsToSanitize = []) {
+function removeUnnecessaryTags($html, allowedTagsToSanitize) {
   let blacklistTags = [
     'script',
     'iframe',

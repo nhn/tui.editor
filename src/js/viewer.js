@@ -47,9 +47,9 @@ class ToastUIEditorViewer {
     this.commandManager = new CommandManager(this);
     if (this.options.customConvertor) {
       // eslint-disable-next-line new-cap
-      this.convertor = new this.options.customConvertor(this.eventManager);
+      this.convertor = new this.options.customConvertor(this.eventManager, this.options.allowedTagsToSanitize);
     } else {
-      this.convertor = new Convertor(this.eventManager);
+      this.convertor = new Convertor(this.eventManager, this.options.allowedTagsToSanitize);
     }
 
     if (this.options.useDefaultHTMLSanitizer) {
