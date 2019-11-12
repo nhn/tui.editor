@@ -216,7 +216,7 @@ class ToastUIEditor {
       this.convertor,
       false,
       this.options.previewDelayTime);
-    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
+    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, this.options);
     this.toMarkOptions = {
       gfm: true,
       renderer: toMarkRenderer
