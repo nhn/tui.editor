@@ -241,10 +241,13 @@ class Convertor {
     markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
 
     util.forEach(markdown.split('\n'), (line, index) => {
-      const FIND_TABLE_RX = /^\|[^|]*\|/ig;
+      const FIND_TABLE_RX = /^(<br>)+\||\|[^|]*\|/ig;
       const FIND_CODE_RX = /`[^`]*<br>[^`]*`/ig;
+      const FIND_BRS_BEFORE_TABLE = /^(<br>)+\|/ig;
 
-      if (!FIND_CODE_RX.test(line) && !FIND_TABLE_RX.test(line)) {
+      if (FIND_TABLE_RX.test(line)) {
+        line = line.replace(FIND_BRS_BEFORE_TABLE, match => match.replace(/<br>/ig, '<br>\n'));
+      } else if (!FIND_CODE_RX.test(line)) {
         line = line.replace(/<br>/ig, '<br>\n');
       }
       resultArray[index] = line;
