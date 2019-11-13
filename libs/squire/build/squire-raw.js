@@ -2050,23 +2050,6 @@ var blacklist = /^(?:HEAD|META|STYLE)/;
 
 var walker = new TreeWalker( null, SHOW_TEXT|SHOW_ELEMENT );
 
-var isAllowedBlock = function( nodeName, config ) {
-    var allowedBlocks = config.allowedBlocks;
-    var allowedBlockExtended = false;
-    var len = allowedBlocks.length;
-    var i;
-
-    if ( len ) {
-        for ( i = 0; i < len; i += 1 ) {
-            allowedBlocks[i] = allowedBlocks[i].toUpperCase();
-        }
-
-        allowedBlockExtended = new RegExp( allowedBlocks.join('|') ).test( nodeName );
-    }
-    
-    return allowedBlock.test( nodeName ) || allowedBlockExtended;
-};
-
 /*
     Two purposes:
 
@@ -2099,7 +2082,7 @@ var cleanTree = function cleanTree ( node, config, preserveWS ) {
                 i -= 1;
                 l -= 1;
                 continue;
-            } else if ( !isAllowedBlock( nodeName, config ) && !isInline( child ) ) {
+            } else if ( !allowedBlock.test( nodeName ) && !isInline( child ) ) {
                 i -= 1;
                 l += childLength - 1;
                 node.replaceChild( empty( child ), child );
