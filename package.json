@@ -94,7 +94,7 @@
     "markdown-it": "^9.0.0",
     "plantuml-encoder": "^1.2.5",
     "resize-observer-polyfill": "^1.5.0",
-    "squire-rte": "github:seonim-ryu/Squire#fb6cd9b1ac66ca471ded83637523c4fbf7072f86",
+    "squire-rte": "github:seonim-ryu/Squire#fd40b4e3020845825701e9689f190bab3f4775d4",
     "to-mark": "^1.1.8",
     "tui-chart": "^3.7.0",
     "tui-code-snippet": "^1.5.0",
