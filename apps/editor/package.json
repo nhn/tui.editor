@@ -1,6 +1,6 @@
 {
   "name": "tui-editor",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "description": "GFM  Markdown Wysiwyg Editor - Productive and Extensible",
   "keywords": [
     "toast",
@@ -33,7 +33,7 @@
     "e2e:sl": "testcafe \"saucelabs:Chrome@65.0:Windows 10,saucelabs:Firefox@59.0:Windows 10,saucelabs:Safari@10.0:OS X 10.11,saucelabs:Internet Explorer@11.103:Windows 10,saucelabs:MicrosoftEdge@16.16299:Windows 10\" 'test/e2e/**/*.spec.js'",
     "serve": "webpack-dev-server",
     "build": "cross-env webpack --mode=production && webpack --mode=production --minify && node tsBannerGenerator.js",
-    "note": "tuie --tag=$(git describe --tags)",
+    "note": "tui-note --tag=$(git describe --tags)",
     "tslint": "tslint index.d.ts",
     "doc:serve": "tuidoc --serv",
     "doc": "tuidoc"
@@ -95,7 +95,7 @@
     "plantuml-encoder": "^1.2.5",
     "resize-observer-polyfill": "^1.5.0",
     "squire-rte": "github:seonim-ryu/Squire#fd40b4e3020845825701e9689f190bab3f4775d4",
-    "to-mark": "^1.1.8",
+    "to-mark": "^1.1.9",
     "tui-chart": "^3.7.0",
     "tui-code-snippet": "^1.5.0",
     "tui-color-picker": "^2.2.1"
