@@ -12,6 +12,7 @@ describe('htmlSanitizer', function() {
       expect(htmlSanitizer('<script>alert("test");</script>', true)).toBe('');
       expect(htmlSanitizer('<embed>child alive</embed>', true)).toBe('child alive');
       expect(htmlSanitizer('<object>child die</object>', true)).toBe('');
+      expect(htmlSanitizer('<details><summary>foo</summary></details>', true)).toBe('');
     });
   });
 

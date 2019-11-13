@@ -232,17 +232,22 @@ class Convertor {
     const resultArray = [];
 
     html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
+    html = this._appendAttributeForLinkIfNeed(html);
+    html = this._appendAttributeForBrIfNeed(html);
 
-    let markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
+    let markdown = toMark(html, toMarkOptions);
 
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
     markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
 
     util.forEach(markdown.split('\n'), (line, index) => {
-      const FIND_TABLE_RX = /^\|[^|]*\|/ig;
+      const FIND_TABLE_RX = /^(<br>)+\||\|[^|]*\|/ig;
       const FIND_CODE_RX = /`[^`]*<br>[^`]*`/ig;
+      const FIND_BRS_BEFORE_TABLE = /^(<br>)+\|/ig;
 
-      if (!FIND_CODE_RX.test(line) && !FIND_TABLE_RX.test(line)) {
+      if (FIND_TABLE_RX.test(line)) {
+        line = line.replace(FIND_BRS_BEFORE_TABLE, match => match.replace(/<br>/ig, '<br>\n'));
+      } else if (!FIND_CODE_RX.test(line)) {
         line = line.replace(/<br>/ig, '<br>\n');
       }
       resultArray[index] = line;
@@ -260,6 +265,12 @@ class Convertor {
     markdown = markdown.replace(NEWLINES_AFTER_BLOCK_RX, '$1\n<br>');
 
     return markdown;
+  }
+
+  _appendAttributeForLinkIfNeed(html) {
+    const LINK_RX = /!?\[.*\]\(<\s*a[^>]*>(.*?)<\s*\/\s*a>\)/ig;
+
+    return html.replace(LINK_RX, match => match.replace(/<a /ig, '<a data-tomark-pass="" '));
   }
 
   _appendAttributeForBrIfNeed(html) {

@@ -54,7 +54,6 @@ class WwClipboardManager {
     if (!tableManager.mergedTableSelectionManager) {
       // set selection range to all contents in selected cells, then squire
       tableManager.createRangeBySelectedCells();
-      tableManager.removeClassAttrbuteFromAllCellsIfNeed();
 
       return;
     }
