@@ -244,12 +244,11 @@ class Convertor {
       const FIND_TABLE_RX = /^(<br>)+\||\|[^|]*\|/ig;
       const FIND_CODE_RX = /`[^`]*<br>[^`]*`/ig;
       const FIND_BRS_BEFORE_TABLE = /^(<br>)+\|/ig;
-      const foundTable = FIND_TABLE_RX.test(line);
 
-      if (!FIND_CODE_RX.test(line) && !foundTable) {
-        line = line.replace(/<br>/ig, '<br>\n');
-      } else if (foundTable) {
+      if (FIND_TABLE_RX.test(line)) {
         line = line.replace(FIND_BRS_BEFORE_TABLE, match => match.replace(/<br>/ig, '<br>\n'));
+      } else if (!FIND_CODE_RX.test(line)) {
+        line = line.replace(/<br>/ig, '<br>\n');
       }
       resultArray[index] = line;
     });
