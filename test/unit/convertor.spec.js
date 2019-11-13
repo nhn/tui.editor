@@ -428,6 +428,12 @@ describe('Convertor', () => {
 
         expect(toMark(html)).toBe(markdown);
       });
+
+      it('prevent a tag in link from changing markdown syntax', () => {
+        const link = '![foo](<a href="http://link.to">http://link.to</a>)';
+    
+        expect(convertor.toMarkdown(link)).toBe(link);
+      });
     });
 
     describe('should not convert <b>, <strong> to **', () => {

@@ -232,8 +232,10 @@ class Convertor {
     const resultArray = [];
 
     html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
+    html = this._appendAttributeForLinkIfNeed(html);
+    html = this._appendAttributeForBrIfNeed(html);
 
-    let markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
+    let markdown = toMark(html, toMarkOptions);
 
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
     markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
@@ -260,6 +262,12 @@ class Convertor {
     markdown = markdown.replace(NEWLINES_AFTER_BLOCK_RX, '$1\n<br>');
 
     return markdown;
+  }
+
+  _appendAttributeForLinkIfNeed(html) {
+    return html.replace(/!?\[.*\]\(<\s*a[^>]*>(.*?)<\s*\/\s*a>\)/ig, match =>
+      match.replace(/<a /g, '<a data-tomark-pass="" ')
+    );
   }
 
   _appendAttributeForBrIfNeed(html) {
