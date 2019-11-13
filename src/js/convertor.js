@@ -248,9 +248,8 @@ class Convertor {
 
       if (!FIND_CODE_RX.test(line) && !foundTable) {
         line = line.replace(/<br>/ig, '<br>\n');
-      } else if (foundTable && FIND_BRS_BEFORE_TABLE.test(line)) {
-        const brs = line.match(FIND_BRS_BEFORE_TABLE)[0].replace(/<br>/ig, '<br>\n');
-        line = `${brs}${line.replace(FIND_BRS_BEFORE_TABLE, '')}`;
+      } else if (foundTable) {
+        line = line.replace(FIND_BRS_BEFORE_TABLE, match => match.replace(/<br>/ig, '<br>\n'));
       }
       resultArray[index] = line;
     });
