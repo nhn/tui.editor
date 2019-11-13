@@ -25,8 +25,30 @@
       <button onclick="replace()">replaceContent</button>
       <div id="editSection"></div>
     </div>
-
-    <script src="../../dist/tui-editor-Editor-full.js"></script>
+    <!-- Editor Dependencies -->
+    <script src="../../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../../node_modules/tui-code-snippet/dist/tui-code-snippet.js"></script>
+    <script src='../../node_modules/markdown-it/dist/markdown-it.js'></script>
+    <script src="../../node_modules/codemirror/lib/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+    <script src="../../node_modules/squire-rte/build/squire-raw.js"></script>
+    <script src="../../node_modules/to-mark/dist/to-mark.js"></script>
+    <!-- Editor -->
+    <script src="../../dist/tui-editor-Editor.js"></script>
+    <!-- chart extention -->
+    <script src="../../node_modules/raphael/raphael.js"></script>
+    <script src="../../node_modules/tui-chart/dist/tui-chart-polyfill.js"></script>
+    <script src="../../dist/tui-editor-extChart.js"></script>
+    <!-- uml extention -->
+    <script src="../../node_modules/plantuml-encoder/dist/plantuml-encoder.js"></script>
+    <script src="../../dist/tui-editor-extUML.js"></script>
+    <!-- table extention -->
+    <script src="../../dist/tui-editor-extTable.js"></script>
+    <!-- colorSyntax extention -->
+    <script src="../../node_modules/tui-color-picker/dist/tui-color-picker.js"></script>
+    <script src="../../dist/tui-editor-extColorSyntax.js"></script>
+    <!-- scrollSync extention -->
+    <script src="../../dist/tui-editor-extScrollSync.js"></script>
     <script class="code-js">
       var editor = new tui.Editor({
         el: document.querySelector('#editSection'),
