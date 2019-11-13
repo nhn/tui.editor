@@ -268,9 +268,9 @@ class Convertor {
   }
 
   _appendAttributeForLinkIfNeed(html) {
-    return html.replace(/!?\[.*\]\(<\s*a[^>]*>(.*?)<\s*\/\s*a>\)/ig, match =>
-      match.replace(/<a /g, '<a data-tomark-pass="" ')
-    );
+    const LINK_RX = /!?\[.*\]\(<\s*a[^>]*>(.*?)<\s*\/\s*a>\)/ig;
+
+    return html.replace(LINK_RX, match => match.replace(/<a /ig, '<a data-tomark-pass="" '));
   }
 
   _appendAttributeForBrIfNeed(html) {
