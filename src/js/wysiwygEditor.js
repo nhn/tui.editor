@@ -74,7 +74,7 @@ class WysiwygEditor {
       leafNodeNames: {
         'HR': false
       },
-      allowedBlocks: useDefaultHTMLSanitizer === false ? ['details', 'summary'] : []
+      allowedBlocks: useDefaultHTMLSanitizer ? [] : ['details', 'summary']
     });
     this.editor.blockCommandShortcuts();
 
@@ -1183,7 +1183,6 @@ class WysiwygEditor {
    * @param {jQuery} $el Container element for editor
    * @param {EventManager} eventManager EventManager instance
    * @param {object} [options={}] - option object
-   *     @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
    *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - whether to use default html sanitizer
    * @returns {WysiwygEditor} wysiwygEditor
    * @ignore

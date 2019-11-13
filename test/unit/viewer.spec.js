@@ -22,24 +22,53 @@ describe('Viewer', () => {
     expect(ToastUIEditorViewer.codeBlockManager instanceof CodeBlockManager).toBe(true);
   });
 
-  it('should sanitize html', () => {
-    const el = $('<div>')[0];
-    const viewer = new ToastUIEditorViewer({el});
-    const xss = '<script>alert("xss");</script>';
-    viewer.setValue(xss);
-    const content = viewer.preview.getHTML();
-    expect(content).toBe('');
+  describe('should sanitize html', () => {
+    let viewer;
+
+    beforeEach(() => {
+      viewer = new ToastUIEditorViewer({
+        el: $('<div>')[0]
+      });
+    });
+
+    it('xss', () => {
+      const xss = '<script>alert("xss");</script>';
+      viewer.setValue(xss);
+      const content = viewer.preview.getHTML();
+      expect(content).toBe('');
+    });
+
+    it('details, summary', () => {
+      const html = '<details><summary>foo</summary></details>';
+      viewer.setValue(html);
+      const content = viewer.preview.getHTML();
+      expect(content).toBe('');
+    });
   });
 
-  it('should not sanitize html if useDefaultHTMLSanitizer is false', () => {
-    const xssViewer = new ToastUIEditorViewer({
-      el: $('<div>')[0],
-      useDefaultHTMLSanitizer: false
+  describe('should not sanitize html if useDefaultHTMLSanitizer is false', () => {
+    let viewer;
+
+    beforeEach(() => {
+      viewer = new ToastUIEditorViewer({
+        el: $('<div>')[0],
+        useDefaultHTMLSanitizer: false
+      });
     });
-    const xss = '<script>alert("xss");</script>';
-    xssViewer.setValue(xss);
-    const content = xssViewer.preview.getHTML();
-    expect(content).toBe(xss);
+
+    it('xss', () => {
+      const xss = '<script>alert("xss");</script>';
+      viewer.setValue(xss);
+      const content = viewer.preview.getHTML();
+      expect(content).toBe(xss);
+    });
+
+    it('details, summary', () => {
+      const html = '<details><summary>foo</summary></details>';
+      viewer.setValue(html);
+      const content = viewer.preview.getHTML();
+      expect(content).toBe(html);
+    });
   });
 
   it('should have codeBlockLanugages option', () => {
