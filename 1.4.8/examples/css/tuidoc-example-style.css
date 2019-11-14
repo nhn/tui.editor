@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.description {
+  padding: 22px 52px;
+  background-color: rgba(81, 92, 230, 0.1);
+  line-height: 1.4em;
+}
+
+.description,
+.description a {
+  font-family: Arial;
+  font-size: 14px;
+  color: #515ce6;
+}
+
+.contents {
+  padding: 20px 52px;
+}

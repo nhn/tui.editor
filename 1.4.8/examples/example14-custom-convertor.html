@@ -1,0 +1,54 @@
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title>14. Custom Convertor</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css">
+    <!-- Editor's Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    <!-- Editor's Extension Dependencies -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/v2.2.1/tui-color-picker.css">
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/tui-editor.css">
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+  </head>
+
+  <body>
+    <div class="contents code-html">
+      <div id="editSection"></div>
+    </div>
+
+    <script src="../dist/tui-editor-Editor-full.js"></script>
+    <script class="code-js">
+      var content = [
+        '<h1>Raw HTML Custom Convertor</h1>',
+        '<p>You can replace to <strong>any</strong> custom convertors like this.</p>'
+      ].join('\n');
+
+      function RawHtmlCustomConvertor(em) {
+        this.eventManager = em;
+      }
+
+      RawHtmlCustomConvertor.prototype.initHtmlSanitizer = function () {};
+      RawHtmlCustomConvertor.prototype.toHTML = function (string) {
+        return string;
+      };
+      RawHtmlCustomConvertor.prototype.toHTMLWithCodeHightlight = function (markdown) {
+        return markdown;
+      };
+      RawHtmlCustomConvertor.prototype.toMarkdown = function (html, toMarkOptions) {
+        return html;
+      };
+
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        initialValue: content,
+        customConvertor: RawHtmlCustomConvertor
+      });
+    </script>
+  </body>
+</html>
