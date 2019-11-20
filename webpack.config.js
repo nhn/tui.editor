@@ -135,6 +135,9 @@ const defaultConfigs = Array(isProduction ? 5 : 1).fill(0).map(() => {
     }],
     optimization: {
       minimize: false
+    },
+    performance: {
+      hints: false
     }
   };
 });
