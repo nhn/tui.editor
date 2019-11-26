@@ -108,5 +108,23 @@ describe('WwClipboardManager', () => {
       expect(range.startContainer.nodeType === Node.TEXT_NODE).toBe(true);
       expect(range.endContainer.nodeType === Node.TEXT_NODE).toBe(true);
     });
+  
+    describe('_replaceNewLineToBr', () => {
+      it('replace newlines to br in plain text only', () => {
+        const node = $('<span>foo\nbar</span>')[0];
+        
+        cbm._replaceNewLineToBr(node);
+
+        expect(node.innerHTML).toBe('foo<br>bar');
+      });
+
+      it('preserve newlines in code block', () => {
+        const node = $('<pre>foo\nbar</pre>')[0];
+
+        cbm._replaceNewLineToBr(node);
+
+        expect(node.innerHTML).toBe('foo\nbar');
+      });
+    });
   });
 });
