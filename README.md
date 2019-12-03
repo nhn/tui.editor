@@ -162,7 +162,7 @@ tui-editor/
 * [Download all sources for each version](https://github.com/nhn/tui.editor/releases)
 
 
-## 🛍 Wrappers
+## 🛍️ Wrappers
 
 * [toast-ui.vue-editor](https://github.com/nhn/toast-ui.vue-editor): **Vue** wrapper component is powered by [NHN](https://github.com/nhn).
 * [toast-ui.react-editor](https://github.com/nhn/toast-ui.react-editor): **React** wrapper component is powered by [NHN](https://github.com/nhn).
