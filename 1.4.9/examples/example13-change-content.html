@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title>13. Change Content Dynamically</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css">
+    <!-- Editor's Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    <!-- Editor's Extension Dependencies -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/v2.2.1/tui-color-picker.css">
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/tui-editor.css">
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+  </head>
+
+  <body>
+    <div class="description">
+      Click on the button below to change content dynamically.
+    </div>
+    <div class="contents code-html">
+      <button id="btn">Change content</button>
+      <div id="editSection"></div>
+    </div>
+
+    <script src="../dist/tui-editor-Editor-full.js"></script>
+    <script class="code-js">
+      var content = 'use "editor.setValue" to set content programmatically';
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        initialValue: content
+      });
+      
+      var content2 = [
+        '![image](https://uicdn.toast.com/toastui/img/tui-editor-bi.png)',
+        '# Heading 1',
+        '## Heading 2',
+        '### Heading 3',
+        '#### Heading 4',
+        '##### Heading 5',
+        '###### Heading 6',
+        '    code block',
+        '```js',
+        'console.log("fenced code block");',
+        '```',
+        '<pre>**HTML block**</pre>',
+        '* list',
+        '    * list indented',
+        '1. ordered',
+        '2. list',
+        '    1. ordered list',
+        '    2. indented',
+        '',
+        '- [ ] task',
+        '- [x] list completed',
+        '',
+        '[link](https://nhn.github.io/tui.editor/)',
+        '> block quote',
+        '---',
+        'horizontal line',
+        '***',
+        '`code`, *italic*, **bold**, ~~strikethrough~~, <span style="color:#e11d21">Red color</span>',
+        '|table|head|',
+        '|---|---|',
+        '|table|body|'
+      ].join('\n');
+
+      var el = document.querySelector('#btn');
+
+      el.addEventListener('click', function(){
+        editor.setValue(content2)
+      })
+    </script>
+  </body>
+</html>

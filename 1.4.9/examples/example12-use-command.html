@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8">
+    <title>12. Use Command</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css">
+    <!-- Editor's Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    <!-- Editor's Extension Dependencies -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/v2.2.1/tui-color-picker.css">
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/tui-editor.css">
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+  </head>
+
+  <body>
+    <div class="description">
+      Click on the button below to execute the "Bold" command.
+    </div>
+    <div class="contents code-html">
+      <button id="btn">Execute the "Bold" command</button>
+      <div id="editSection"></div>
+    </div>
+
+    <script src="../dist/tui-editor-Editor-full.js"></script>
+    <script class="code-js">
+      var content = 'please select this row and click button above';
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        initialValue: content
+      });
+      var el = document.querySelector('#btn');
+
+      el.addEventListener('click', function(){
+        editor.exec('Bold');
+      })
+    </script>
+  </body>
+</html>
