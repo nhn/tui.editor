@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.8
+ * @version 1.4.9
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */

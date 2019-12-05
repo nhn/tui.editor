@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.8
+ * @version 1.4.9
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -24745,7 +24745,7 @@ function isValidDelimiterRun(node) {
 }
 
 function convertEmphasis(node, subContent, delimiter) {
-  var FIND_BEFORE_AND_AFTER_SPACES_RX = /^(\s*)(\S|\S.*\S)(\s*)$/;
+  var FIND_BEFORE_AND_AFTER_SPACES_RX = /^(\s*)((?:.|\n)*\S)(\s*)$/m;
 
   var _subContent$match = subContent.match(FIND_BEFORE_AND_AFTER_SPACES_RX),
       beforeSpaces = _subContent$match[1],
