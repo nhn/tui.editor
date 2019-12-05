@@ -20,8 +20,8 @@ function isValidDelimiterRun(node) {
 }
 
 function convertEmphasis(node, subContent, delimiter) {
-  const FIND_BEFORE_AND_AFTER_SPACES_RX = /^(\s*)(\S|\S.*\S)(\s*)$/;
-  const [, beforeSpaces, trimmedContent, afterSpaces] = subContent.match(FIND_BEFORE_AND_AFTER_SPACES_RX);
+  const FIND_BEFORE_AND_AFTER_SPACES_RX = /^(\s*)((\S|.|\n)*\S)(\s*)$/m;
+  const [, beforeSpaces, trimmedContent, , afterSpaces] = subContent.match(FIND_BEFORE_AND_AFTER_SPACES_RX);
 
   let convertedContent;
 
