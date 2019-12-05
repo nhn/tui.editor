@@ -583,6 +583,12 @@ describe('Convertor', () => {
         expect(toMark('foo<s>bar&nbsp; &nbsp;</s>baz')).toBe('foo~~bar~~\u00a0 \u00a0baz');
         expect(toMark('foo<del>bar&nbsp; &nbsp;</del>baz')).toBe('foo~~bar~~\u00a0 \u00a0baz');
       });
+
+      it('if text has newlines', () => {
+        expect(toMark('foo<b>bar\nbaz&nbsp;</b>qux')).toBe('foo**bar\nbaz**\u00a0qux');
+        expect(toMark('foo<i>&nbsp;bar\nbaz&nbsp;</i>qux')).toBe('foo\u00a0*bar\nbaz*\u00a0qux');
+        expect(toMark('foo<s>&nbsp;bar&nbsp;\nbaz&nbsp;qux&nbsp;</s>quxx')).toBe('foo\u00a0~~bar\u00a0\nbaz\u00a0qux~~\u00a0quxx');
+      });
     });
   });
 
