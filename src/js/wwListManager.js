@@ -11,7 +11,7 @@ const FIND_LI_ELEMENT = /<li/i;
 const DIV_OR_LI = 'DIV,LI';
 const UL_OR_OL = 'OL,UL';
 const FIND_CELL_TAG_RX = /(<(?:th|td)[^>]*>)(.*?)(<\/(?:th|td)>)/g;
-const FIND_PREVENTED_TAG_RX = /<(ul|ol|li)([^>]*)>/g
+const FIND_PREVENTED_TAG_RX = /<(ul|ol|li)([^>]*)>/g;
 
 /**
  * Class WwListManager
