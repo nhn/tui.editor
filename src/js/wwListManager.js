@@ -11,7 +11,7 @@ const FIND_LI_ELEMENT = /<li/i;
 const DIV_OR_LI = 'DIV,LI';
 const UL_OR_OL = 'OL,UL';
 const FIND_CELL_TAG_RX = /(<(?:th|td)[^>]*>)(.*?)(<\/(?:th|td)>)/g;
-const FIND_PREVENTED_TAG_RX = /<(ul|ol|li)([^>]*)>/g;
+const FIND_LIST_OR_LIST_ITEM_TAG_RX = /<(ul|ol|li)([^>]*)>/g;
 
 /**
  * Class WwListManager
@@ -245,7 +245,7 @@ class WwListManager {
 
   _insertDataToMarkPassForListInTable(html) {
     const replacedHtml = html.replace(FIND_CELL_TAG_RX, (match, tdStart, tdContent, tdEnd) => {
-      const content = tdContent.replace(FIND_PREVENTED_TAG_RX, '<$1 data-tomark-pass="" $2>');
+      const content = tdContent.replace(FIND_LIST_OR_LIST_ITEM_TAG_RX, '<$1 data-tomark-pass="" $2>');
 
       return `${tdStart}${content}${tdEnd}`;
     });
