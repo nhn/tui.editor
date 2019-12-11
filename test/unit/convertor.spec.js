@@ -95,15 +95,19 @@ describe('Convertor', () => {
 
     it('should insert data-tomark-pass in html tag with markdown syntax', () => {
       const tag = [
-        '| | |',
+        '| header | <ul><li>test</li></ul> |',
         '| --- | --- |',
-        '| aa | <ul><li>test</li></ul> |'
+        '| body | <ol><li>test</li><ol><li>test</li></ol></ol> |'
       ].join('\n');
 
       const expectedHTML = [
-        '<table><thead><tr><th></th><th></th></tr></thead>',
-        '<tbody><tr><td>aa</td>',
-        '<td><ul data-tomark-pass=""><li data-tomark-pass="">test</li></ul></td>',
+        '<table><thead><tr>',
+        '<th>header</th>',
+        '<th><ul data-tomark-pass=""><li data-tomark-pass="">test</li></ul></th>',
+        '</tr></thead>',
+        '<tbody><tr>',
+        '<td>body</td>',
+        '<td><ol data-tomark-pass=""><li data-tomark-pass="">test</li><ol data-tomark-pass=""><li data-tomark-pass="">test</li></ol></ol></td>',
         '</tr></tbody></table>'
       ].join('');
 

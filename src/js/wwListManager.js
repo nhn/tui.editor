@@ -10,8 +10,8 @@ import domUtils from './domUtils';
 const FIND_LI_ELEMENT = /<li/i;
 const DIV_OR_LI = 'DIV,LI';
 const UL_OR_OL = 'OL,UL';
-const FIND_TD_ELEMNT = /(<td[^>]*>)(.*?)(<\/td>)/g;
-const FIND_UL_OR_OL_ELEMNT = /<(ul|ol)([^>]*)>(.*?)(<\/\1>)/g;
+const FIND_CELL_TAG_RX = /(<(?:th|td)[^>]*>)(.*?)(<\/(?:th|td)>)/g;
+const FIND_LIST_OR_LIST_ITEM_TAG_RX = /<(ul|ol|li)([^>]*)>/g;
 
 /**
  * Class WwListManager
@@ -244,8 +244,8 @@ class WwListManager {
   }
 
   _insertDataToMarkPassForListInTable(html) {
-    const replacedHtml = html.replace(FIND_TD_ELEMNT, (match, tdStart, tdContent, tdEnd) => {
-      const content = tdContent.replace(FIND_UL_OR_OL_ELEMNT, '<$1 data-tomark-pass="" $2>$3$4');
+    const replacedHtml = html.replace(FIND_CELL_TAG_RX, (match, tdStart, tdContent, tdEnd) => {
+      const content = tdContent.replace(FIND_LIST_OR_LIST_ITEM_TAG_RX, '<$1 data-tomark-pass="" $2>');
 
       return `${tdStart}${content}${tdEnd}`;
     });
