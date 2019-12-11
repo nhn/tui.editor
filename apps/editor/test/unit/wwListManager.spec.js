@@ -320,21 +320,33 @@ describe('WwListManager', () => {
 
   describe('_insertDataToMarkPassForListInTable', () => {
     it('should insert data-tomark-pass attribute in list that is located inside table', () => {
-      const html = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ul><li>123<br></li></ul>'
-                  + '456<br>'
-                  + '<ol><li>789<br></li></ol>'
-                  + '</td></tr></tbody></table>';
+      const html = [
+        '<table><thead><tr><th>',
+        '<ul><li>123<br></li></ul>',
+        '456<br>',
+        '<ol><li>789<br></li></ol>',
+        '</th></tr></thead>',
+        '<tbody><tr><td>',
+        '<ul><li>123<br></li></ul>',
+        '456<br>',
+        '<ol><li>789<br></li></ol>',
+        '</td></tr></tbody></table>'
+      ].join('');
 
       const result = mgr._insertDataToMarkPassForListInTable(html);
 
-      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ul data-tomark-pass="" ><li>123<br></li></ul>'
-                  + '456<br>'
-                  + '<ol data-tomark-pass="" ><li>789<br></li></ol>'
-                  + '</td></tr></tbody></table>';
+      const expectedHtml = [
+        '<table><thead><tr><th>',
+        '<ul data-tomark-pass="" ><li data-tomark-pass="" >123<br></li></ul>',
+        '456<br>',
+        '<ol data-tomark-pass="" ><li data-tomark-pass="" >789<br></li></ol>',
+        '</th></tr></thead>',
+        '<tbody><tr><td>',
+        '<ul data-tomark-pass="" ><li data-tomark-pass="" >123<br></li></ul>',
+        '456<br>',
+        '<ol data-tomark-pass="" ><li data-tomark-pass="" >789<br></li></ol>',
+        '</td></tr></tbody></table>'
+      ].join('');
 
       expect(result).toEqual(expectedHtml);
     });
