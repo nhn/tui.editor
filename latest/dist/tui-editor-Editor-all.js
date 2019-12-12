@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 1.4.9
+ * @version 1.4.10
  * @author NHN FE Development Lab <dl_javascript@nhn.com> (https://nhn.github.io/tui.editor/)
  * @license MIT
  */
@@ -22334,8 +22334,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var FIND_LI_ELEMENT = /<li/i;
 var DIV_OR_LI = 'DIV,LI';
 var UL_OR_OL = 'OL,UL';
-var FIND_TD_ELEMNT = /(<td[^>]*>)(.*?)(<\/td>)/g;
-var FIND_UL_OR_OL_ELEMNT = /<(ul|ol)([^>]*)>(.*?)(<\/\1>)/g;
+var FIND_CELL_TAG_RX = /(<(?:th|td)[^>]*>)(.*?)(<\/(?:th|td)>)/g;
+var FIND_LIST_OR_LIST_ITEM_TAG_RX = /<(ul|ol|li)([^>]*)>/g;
 
 /**
  * Class WwListManager
@@ -22606,8 +22606,8 @@ var WwListManager = function () {
   }, {
     key: '_insertDataToMarkPassForListInTable',
     value: function _insertDataToMarkPassForListInTable(html) {
-      var replacedHtml = html.replace(FIND_TD_ELEMNT, function (match, tdStart, tdContent, tdEnd) {
-        var content = tdContent.replace(FIND_UL_OR_OL_ELEMNT, '<$1 data-tomark-pass="" $2>$3$4');
+      var replacedHtml = html.replace(FIND_CELL_TAG_RX, function (match, tdStart, tdContent, tdEnd) {
+        var content = tdContent.replace(FIND_LIST_OR_LIST_ITEM_TAG_RX, '<$1 data-tomark-pass="" $2>');
 
         return '' + tdStart + content + tdEnd;
       });
