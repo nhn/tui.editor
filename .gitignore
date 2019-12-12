@@ -52,6 +52,7 @@ api
 doc
 report
 karma.conf.local.js
+tui-note.config.js
 .tern-project
 .tern-port
 *.vim
