@@ -90,6 +90,7 @@ import './langs/zh_TW';
 import './langs/gl_ES';
 import './langs/sv_SE';
 import './langs/it_IT';
+import './langs/nb_NO';
 
 const __nedInstance = [];
 const gaTrackingId = 'UA-129966929-1';
