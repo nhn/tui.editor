@@ -1,0 +1,43 @@
+module.exports = {
+  root: true,
+  env: {
+    browser: true,
+    node: true,
+    jest: true
+  },
+  parser: '@typescript-eslint/parser',
+  plugins: ['prettier', '@typescript-eslint'],
+  extends: [
+    'tui/es6',
+    'plugin:@typescript-eslint/recommended',
+    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended'
+  ],
+  parserOptions: {
+    parser: 'typescript-eslint-parser'
+  },
+  rules: {
+    'prefer-destructuring': 0,
+    'newline-before-return': 0,
+    'padding-line-between-statements': 0,
+    'lines-between-class-members': 0,
+    'no-useless-constructor': 0,
+    'default-param-last': 1,
+    '@typescript-eslint/no-non-null-assertion': 0,
+    '@typescript-eslint/explicit-function-return-type': 0,
+    '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-triple-slash-reference': 0,
+    '@typescript-eslint/no-object-literal-type-assertion': 0,
+    '@typescript-eslint/no-use-before-define': 0,
+    '@typescript-eslint/triple-slash-reference': 0,
+    '@typescript-eslint/interface-name-prefix': 0,
+    '@typescript-eslint/no-useless-constructor': 2,
+    '@typescript-eslint/ban-ts-ignore': 0,
+    'accessor-pairs': 0,
+    'require-jsdoc': 0,
+    'no-new': 0,
+    'spaced-comment': 0,
+    curly: 2,
+    complexity: 0
+  },
+};

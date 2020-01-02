@@ -1,0 +1,32 @@
+{
+  "name": "markdown-parser",
+  "version": "0.0.1",
+  "description": "Markdown Parser",
+  "scripts": {
+    "start": "rollup -c -w",
+    "test": "jest --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "main": "dist/markdown-parser.js",
+  "module": "dist/markdown-parser.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^2.0.1",
+    "@types/jest": "^24.0.25",
+    "@typescript-eslint/eslint-plugin": "^2.13.0",
+    "@typescript-eslint/parser": "^2.13.0",
+    "entities": "^2.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-config-tui": "^3.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "jest": "^24.9.0",
+    "mdurl": "^1.0.1",
+    "prettier": "^1.19.1",
+    "rollup": "^1.27.14",
+    "ts-jest": "^24.2.0",
+    "typescript": "^3.7.4"
+  },
+  "dependencies": {}
+}
