@@ -8,7 +8,7 @@ export default class NodeWalker {
   constructor(root: Node) {
     this.current = root;
     this.root = root;
-    this.entering = false;
+    this.entering = true;
   }
 
   next() {
