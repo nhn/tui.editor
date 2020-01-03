@@ -11,14 +11,8 @@ export type BlockNodeType =
   | 'htmlBlock'
   | 'paragraph';
 
-export type NodeType =
-  // containers
-  | BlockNodeType
-  // other blocks
-  | 'customInline'
-  | 'customBlock'
+export type InlineNodeType =
   | 'code'
-  // inlines
   | 'text'
   | 'emph'
   | 'strong'
@@ -28,6 +22,8 @@ export type NodeType =
   | 'htmlInline'
   | 'linebreak'
   | 'softbreak';
+
+export type NodeType = BlockNodeType | InlineNodeType | 'customBlock' | 'customInline';
 
 type SourcePos = [[number, number], [number, number]];
 
@@ -162,7 +158,6 @@ export class Node {
   /* Example of use of walker:
      var walker = w.walker();
      var event;
-
      while (event = walker.next()) {
      console.log(event.entering, event.node.type);
      }
