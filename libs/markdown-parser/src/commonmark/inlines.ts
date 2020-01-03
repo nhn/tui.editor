@@ -76,6 +76,7 @@ type Delimiter = {
   next: Delimiter | null;
   canOpen: boolean;
   canClose: boolean;
+  startpos: [number, number];
 };
 
 type Bracket = {
@@ -99,17 +100,19 @@ export class InlineParser {
   // An InlineParser keeps track of a subject (a string to be parsed)
   // and a position in that subject.
   private subject = '';
-  private delimiters: Delimiter | null; // used by handleDelim method
-  private brackets: Bracket | null;
+  private delimiters: Delimiter | null = null; // used by handleDelim method
+  private brackets: Bracket | null = null;
   private pos = 0;
+  private lineNum = 0;
+  private linePosOffset = 0;
+  // private contentStartPos = 0;
+  // private curLineStartPos = 0;
 
   public refmap: RefMap = {};
   public options: Options;
 
   constructor(options: Options) {
     this.options = options;
-    this.delimiters = null;
-    this.brackets = null;
   }
 
   // If re matches at current position in the subject, advance
@@ -330,6 +333,7 @@ export class InlineParser {
     ) {
       this.delimiters = {
         cc,
+        startpos: [this.lineNum, startpos + 1 + this.linePosOffset],
         numdelims,
         origdelims: numdelims,
         node,
@@ -433,6 +437,11 @@ export class InlineParser {
 
             // build contents for new emph element
             const emph = new Node(useDelims === 1 ? 'emph' : 'strong');
+            emph.sourcepos = [
+              [opener.startpos[0], opener.startpos[1]],
+              [closer.startpos[0], closer.startpos[1] + useDelims - 1]
+            ];
+
             let tmp = openerInl.next;
             let next;
             while (tmp && tmp !== closerInl) {
@@ -746,6 +755,8 @@ export class InlineParser {
   // a special meaning in markdown, as a plain string.
   parseString(block: Node) {
     let m;
+    const startpos = this.pos + 1;
+
     if ((m = this.match(reMain))) {
       if (this.options.smart) {
         block.appendChild(
@@ -773,7 +784,12 @@ export class InlineParser {
           )
         );
       } else {
-        block.appendChild(text(m));
+        const node = text(m);
+        node.sourcepos = [
+          [this.lineNum, startpos + this.linePosOffset],
+          [this.lineNum, this.pos + this.linePosOffset]
+        ];
+        block.appendChild(node);
       }
       return true;
     }
@@ -784,6 +800,9 @@ export class InlineParser {
   // line break; otherwise a soft line break.
   parseNewline(block: Node) {
     this.pos += 1; // assume we're at a \n
+    this.lineNum += 1;
+    this.linePosOffset = this.pos;
+
     // check previous node for trailing spaces
     const lastc = block.lastChild;
     if (lastc && lastc.type === 'text' && lastc.literal![lastc.literal!.length - 1] === ' ') {
@@ -937,6 +956,13 @@ export class InlineParser {
     this.pos = 0;
     this.delimiters = null;
     this.brackets = null;
+
+    this.lineNum = block.sourcepos[0][0];
+    this.linePosOffset = block.sourcepos[0][1] - 1;
+    if (block.type === 'heading') {
+      this.linePosOffset += block.level! + 1;
+    }
+
     while (this.parseInline(block)) {}
     block.stringContent = null; // allow raw string to be garbage collected
     this.processEmphasis(null);
