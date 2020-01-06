@@ -18,14 +18,13 @@ export type InlineNodeType =
   | 'strong'
   | 'link'
   | 'image'
-  | 'linebreak'
   | 'htmlInline'
   | 'linebreak'
   | 'softbreak';
 
 export type NodeType = BlockNodeType | InlineNodeType | 'customBlock' | 'customInline';
 
-type SourcePos = [[number, number], [number, number]];
+export type SourcePos = [[number, number], [number, number]];
 
 export function isContainer(node: Node) {
   switch (node.type) {
@@ -55,6 +54,7 @@ export class Node {
   public isFenced = false;
   public fenceChar: string | null = null;
   public fenceLength = 0;
+  public lineOffsets: number[] | null = null;
   public fenceOffset = -1;
   public stringContent: string | null = null;
   public type: NodeType;
