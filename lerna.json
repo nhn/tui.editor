@@ -1,0 +1,8 @@
+{
+  "packages": [
+    "apps/*",
+    "extensions/*",
+    "libs/*"
+  ],
+  "version": "2.0.0"
+}
