@@ -141,7 +141,7 @@ describe('softbreak and linebreak', () => {
   });
 });
 
-describe('inside header', () => {
+describe('header', () => {
   it('text and emphasis', () => {
     const root = reader.parse('# Hello *World*');
     const text = root.firstChild!.firstChild!;
@@ -179,6 +179,48 @@ describe('inside header', () => {
     expect(emphText.sourcepos).toEqual([
       [1, 12],
       [1, 16]
+    ]);
+  });
+});
+
+describe('link and image', () => {
+  it.only('image', () => {
+    const root = reader.parse('Hello ![World](http://nhn.com)');
+    const text = root.firstChild!.firstChild!;
+    const image = text.next!;
+    const imageText = image.firstChild!;
+
+    expect(text.sourcepos).toEqual([
+      [1, 1],
+      [1, 6]
+    ]);
+    expect(image.sourcepos).toEqual([
+      [1, 7],
+      [1, 30]
+    ]);
+    expect(imageText.sourcepos).toEqual([
+      [1, 9],
+      [1, 13]
+    ]);
+  });
+
+  it('link', () => {
+    const root = reader.parse('Hello [World](http://nhn.com)');
+    const text = root.firstChild!.firstChild!;
+    const link = text.next!;
+    const linkText = link.firstChild!;
+
+    expect(text.sourcepos).toEqual([
+      [1, 1],
+      [1, 6]
+    ]);
+    expect(link.sourcepos).toEqual([
+      [1, 7],
+      [1, 29]
+    ]);
+    expect(linkText.sourcepos).toEqual([
+      [1, 8],
+      [1, 12]
     ]);
   });
 });
