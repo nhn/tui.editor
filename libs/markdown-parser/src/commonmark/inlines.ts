@@ -87,6 +87,7 @@ type Bracket = {
   image: boolean;
   active: boolean;
   bracketAfter?: boolean;
+  startpos: [number, number];
 };
 
 type RefMap = {
@@ -576,14 +577,13 @@ export class InlineParser {
 
   // Add open bracket to delimiter stack and add a text node to block's children.
   parseOpenBracket(block: Node) {
-    const startpos = this.pos;
     this.pos += 1;
 
     const node = text('[');
     block.appendChild(node);
 
     // Add entry to stack for this opener
-    this.addBracket(node, startpos, false);
+    this.addBracket(node, this.pos, false);
     return true;
   }
 
@@ -596,12 +596,15 @@ export class InlineParser {
       this.pos += 1;
 
       const node = text('![');
+      node.sourcepos = [this.sourcepos(this.pos), this.sourcepos(this.pos + 1)];
       block.appendChild(node);
 
       // Add entry to stack for this opener
       this.addBracket(node, startpos + 1, true);
     } else {
-      block.appendChild(text('!'));
+      const node = text('!');
+      node.sourcepos = [this.sourcepos(this.pos), this.sourcepos(this.pos)];
+      block.appendChild(node);
     }
     return true;
   }
@@ -694,6 +697,7 @@ export class InlineParser {
       const node = new Node(isImage ? 'image' : 'link');
       node.destination = dest;
       node.title = title || '';
+      node.sourcepos = [opener.startpos, this.sourcepos(this.pos)];
 
       let tmp = opener.node.next;
       let next: Node | null;
@@ -736,6 +740,7 @@ export class InlineParser {
     }
     this.brackets = {
       node,
+      startpos: this.sourcepos(index),
       previous: this.brackets,
       previousDelimiter: this.delimiters,
       index,
@@ -975,10 +980,6 @@ export class InlineParser {
     if (block.lineOffsets) {
       this.lineOffsets = block.lineOffsets;
     }
-    console.log(block.lineOffsets);
-    console.log('subject', this.subject);
-    console.log('sourcepos', block.sourcepos);
-
     this.lineIdx = 0;
     this.linePosOffset = 0;
     this.lineStartNum = block.sourcepos[0][0];
