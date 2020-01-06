@@ -11,7 +11,6 @@
     "lint": "eslint src/**",
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
-    "note": "tuie --tag=$(git describe --tags)",
     "storybook": "start-storybook -p 6006"
   },
   "homepage": "https://github.com/nhn/toast-ui.vue-editor",
@@ -33,7 +32,6 @@
     "eslint-config-tui": "^2.1.0",
     "eslint-loader": "^2.1.0",
     "eslint-plugin-vue": "^4.7.1",
-    "tui-release-notes": "github:nhn/tui.release-notes#v1.0.0",
     "vue": "^2.5.17",
     "vue-loader": "^15.4.1",
     "vue-template-compiler": "^2.5.17",
