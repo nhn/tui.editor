@@ -139,6 +139,11 @@ export class Parser {
       const charsToTab = 4 - (this.column % 4);
       this.tip.stringContent += repeat(' ', charsToTab);
     }
+    if (this.tip.lineOffsets) {
+      this.tip.lineOffsets.push(this.offset);
+    } else {
+      this.tip.lineOffsets = [this.offset];
+    }
     this.tip.stringContent += `${this.currentLine.slice(this.offset)}\n`;
   }
 

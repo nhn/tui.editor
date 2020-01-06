@@ -103,16 +103,25 @@ export class InlineParser {
   private delimiters: Delimiter | null = null; // used by handleDelim method
   private brackets: Bracket | null = null;
   private pos = 0;
-  private lineNum = 0;
+  private lineStartNum = 0;
+  private lineIdx = 0;
+  private lineOffsets: number[] = [0];
   private linePosOffset = 0;
-  // private contentStartPos = 0;
-  // private curLineStartPos = 0;
-
   public refmap: RefMap = {};
   public options: Options;
 
   constructor(options: Options) {
     this.options = options;
+  }
+
+  sourcepos(pos: number): [number, number] {
+    const lineOffset = this.lineOffsets[this.lineIdx];
+    return [this.lineStartNum + this.lineIdx, pos + this.linePosOffset + lineOffset];
+  }
+
+  nextLine() {
+    this.lineIdx += 1;
+    this.linePosOffset = -this.pos;
   }
 
   // If re matches at current position in the subject, advance
@@ -190,8 +199,9 @@ export class InlineParser {
     this.pos += 1;
     if (this.peek() === C_NEWLINE) {
       this.pos += 1;
-      node = new Node('linebreak');
+      node = new Node('linebreak', [this.sourcepos(this.pos - 1), this.sourcepos(this.pos)]);
       block.appendChild(node);
+      this.nextLine();
     } else if (reEscapable.test(subj.charAt(this.pos))) {
       block.appendChild(text(subj.charAt(this.pos)));
       this.pos += 1;
@@ -328,12 +338,11 @@ export class InlineParser {
     // Add entry to stack for this opener
     if (
       (res.canOpen || res.canClose) &&
-      // @TODO: Check the conditional logic below
       (this.options.smart || (cc !== C_SINGLEQUOTE && cc !== C_DOUBLEQUOTE))
     ) {
       this.delimiters = {
         cc,
-        startpos: [this.lineNum, startpos + 1 + this.linePosOffset],
+        startpos: this.sourcepos(startpos + 1),
         numdelims,
         origdelims: numdelims,
         node,
@@ -372,12 +381,12 @@ export class InlineParser {
     let opener: Delimiter | null, closer: Delimiter | null, oldCloser: Delimiter | null;
     let openerInl: Node, closerInl: Node;
     let openerFound: boolean;
+    let oddMatch = false;
     const openersBottom: [(Delimiter | null)[], (Delimiter | null)[], (Delimiter | null)[]] = [
       [],
       [],
       []
     ];
-    let oddMatch = false;
 
     for (let i = 0; i < 3; i++) {
       openersBottom[i][C_UNDERSCORE] = stackBottom;
@@ -785,10 +794,7 @@ export class InlineParser {
         );
       } else {
         const node = text(m);
-        node.sourcepos = [
-          [this.lineNum, startpos + this.linePosOffset],
-          [this.lineNum, this.pos + this.linePosOffset]
-        ];
+        node.sourcepos = [this.sourcepos(startpos), this.sourcepos(this.pos)];
         block.appendChild(node);
       }
       return true;
@@ -800,18 +806,28 @@ export class InlineParser {
   // line break; otherwise a soft line break.
   parseNewline(block: Node) {
     this.pos += 1; // assume we're at a \n
-    this.lineNum += 1;
-    this.linePosOffset = this.pos;
 
     // check previous node for trailing spaces
     const lastc = block.lastChild;
     if (lastc && lastc.type === 'text' && lastc.literal![lastc.literal!.length - 1] === ' ') {
       const hardbreak = lastc.literal![lastc.literal!.length - 2] === ' ';
+      const litLen = lastc.literal!.length;
       lastc.literal = lastc.literal!.replace(reFinalSpace, '');
-      block.appendChild(new Node(hardbreak ? 'linebreak' : 'softbreak'));
+      const finalSpaceLen = litLen - lastc.literal.length;
+      lastc.sourcepos![1][1] -= finalSpaceLen;
+
+      block.appendChild(
+        new Node(hardbreak ? 'linebreak' : 'softbreak', [
+          this.sourcepos(this.pos - finalSpaceLen),
+          this.sourcepos(this.pos)
+        ])
+      );
     } else {
-      block.appendChild(new Node('softbreak'));
+      block.appendChild(
+        new Node('softbreak', [this.sourcepos(this.pos), this.sourcepos(this.pos)])
+      );
     }
+    this.nextLine();
     this.match(reInitialSpace); // gobble leading spaces in next line
     return true;
   }
@@ -956,11 +972,18 @@ export class InlineParser {
     this.pos = 0;
     this.delimiters = null;
     this.brackets = null;
+    if (block.lineOffsets) {
+      this.lineOffsets = block.lineOffsets;
+    }
+    console.log(block.lineOffsets);
+    console.log('subject', this.subject);
+    console.log('sourcepos', block.sourcepos);
 
-    this.lineNum = block.sourcepos[0][0];
-    this.linePosOffset = block.sourcepos[0][1] - 1;
+    this.lineIdx = 0;
+    this.linePosOffset = 0;
+    this.lineStartNum = block.sourcepos[0][0];
     if (block.type === 'heading') {
-      this.linePosOffset += block.level! + 1;
+      this.lineOffsets[0] += block.level! + 1;
     }
 
     while (this.parseInline(block)) {}

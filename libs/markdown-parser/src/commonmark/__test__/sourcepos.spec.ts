@@ -13,6 +13,27 @@ describe('paragraph', () => {
     ]);
   });
 
+  it('multiple offset', () => {
+    const root = reader.parse('  Hello  \n  World');
+    const text1 = root.firstChild!.firstChild!;
+    const linebreak = text1.next!;
+    const text2 = linebreak.next!;
+
+    expect(text1.sourcepos).toEqual([
+      [1, 3],
+      [1, 7]
+    ]);
+    expect(linebreak.sourcepos).toEqual([
+      [1, 8],
+      [1, 10]
+    ]);
+    // preceeding whitespaces are not included in text node
+    expect(text2.sourcepos).toEqual([
+      [2, 3],
+      [2, 7]
+    ]);
+  });
+
   it('text and emphasis', () => {
     const root = reader.parse('Hello *World*');
     const text = root.firstChild!.firstChild!;
@@ -54,6 +75,72 @@ describe('paragraph', () => {
   });
 });
 
+describe('softbreak and linebreak', () => {
+  it('text with softbreak', () => {
+    const root = reader.parse('Hello\nWorld');
+    const text1 = root.firstChild!.firstChild!;
+    const softbreak = text1.next!;
+    const text2 = softbreak.next!;
+
+    expect(text1.sourcepos).toEqual([
+      [1, 1],
+      [1, 5]
+    ]);
+    expect(softbreak.type).toBe('softbreak');
+    expect(softbreak.sourcepos).toEqual([
+      [1, 6],
+      [1, 6]
+    ]);
+    expect(text2.sourcepos).toEqual([
+      [2, 1],
+      [2, 5]
+    ]);
+  });
+
+  it('text with linebreak(space)', () => {
+    const root = reader.parse('Hello   \nWorld');
+    const text1 = root.firstChild!.firstChild!;
+    const linebreak = text1.next!;
+    const text2 = linebreak.next!;
+
+    // trailing spaces are not included in text node
+    expect(text1.sourcepos).toEqual([
+      [1, 1],
+      [1, 5]
+    ]);
+    // preceeding spaces are included in linebreak node
+    expect(linebreak.sourcepos).toEqual([
+      [1, 6],
+      [1, 9]
+    ]);
+    expect(text2.sourcepos).toEqual([
+      [2, 1],
+      [2, 5]
+    ]);
+  });
+
+  it('text with linebreak(backslash)', () => {
+    const root = reader.parse('Hello\\\nWorld');
+    const text1 = root.firstChild!.firstChild!;
+    const linebreak = text1.next!;
+    const text2 = linebreak.next!;
+
+    expect(text1.sourcepos).toEqual([
+      [1, 1],
+      [1, 5]
+    ]);
+    // preceeding backslash is included in linebreak node
+    expect(linebreak.sourcepos).toEqual([
+      [1, 6],
+      [1, 7]
+    ]);
+    expect(text2.sourcepos).toEqual([
+      [2, 1],
+      [2, 5]
+    ]);
+  });
+});
+
 describe('inside header', () => {
   it('text and emphasis', () => {
     const root = reader.parse('# Hello *World*');
@@ -75,7 +162,7 @@ describe('inside header', () => {
     ]);
   });
 
-  it('text and emphasis (header level 3)', () => {
+  it.only('text and emphasis (header level 3)', () => {
     const root = reader.parse('### Hello *World*');
     const text = root.firstChild!.firstChild!;
     const emph = text.next!;
