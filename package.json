@@ -6,5 +6,8 @@
     "prettier": "^1.19.1"
   },
   "scripts": {
+    "build": "lerna run --scope tui-editor build",
+    "build:react": "lerna run --scope @toast-ui/react-editor build",
+    "build:vue": "lerna run --scope @toast-ui/vue-editor build"
   }
 }
