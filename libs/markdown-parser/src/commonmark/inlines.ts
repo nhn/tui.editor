@@ -581,19 +581,21 @@ export class InlineParser {
 
   // Add open bracket to delimiter stack and add a text node to block's children.
   parseOpenBracket(block: Node) {
+    const startpos = this.pos;
     this.pos += 1;
 
     const node = text('[', this.sourcepos(this.pos, this.pos));
     block.appendChild(node);
 
     // Add entry to stack for this opener
-    this.addBracket(node, this.pos, false);
+    this.addBracket(node, startpos, false);
     return true;
   }
 
   // IF next character is [, and ! delimiter to delimiter stack and
   // add a text node to block's children.  Otherwise just add a text node.
   parseBang(block: Node) {
+    const startpos = this.pos;
     this.pos += 1;
     if (this.peek() === C_OPEN_BRACKET) {
       this.pos += 1;
@@ -602,7 +604,7 @@ export class InlineParser {
       block.appendChild(node);
 
       // Add entry to stack for this opener
-      this.addBracket(node, this.pos - 1, true);
+      this.addBracket(node, startpos + 1, true);
     } else {
       const node = text('!', this.sourcepos(this.pos, this.pos));
       block.appendChild(node);
@@ -741,7 +743,7 @@ export class InlineParser {
     }
     this.brackets = {
       node,
-      startpos: this.sourcepos(index),
+      startpos: this.sourcepos(index + (image ? 0 : 1)),
       previous: this.brackets,
       previousDelimiter: this.delimiters,
       index,
@@ -1012,6 +1014,6 @@ export class InlineParser {
     while (this.parseInline(block)) {}
     block.stringContent = null; // allow raw string to be garbage collected
     this.processEmphasis(null);
-    // this.mergeTextNodes(block.walker());
+    this.mergeTextNodes(block.walker());
   }
 }

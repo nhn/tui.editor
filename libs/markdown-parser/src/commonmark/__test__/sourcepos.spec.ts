@@ -335,7 +335,7 @@ describe('block quote', () => {
 });
 
 describe('block quote', () => {
-  it.skip('merge text nodes', () => {
+  it('merge text nodes', () => {
     const root = reader.parse(['\\ Text *', '[ Text !', '![ Text ]'].join('\n'));
     const text1 = root.firstChild!.firstChild!;
     const text2 = text1.next!.next!;
