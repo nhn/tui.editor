@@ -1,4 +1,12 @@
-import { Node, ListNode, ListNodeData, BlockNode } from './node';
+import {
+  ListNode,
+  ListNodeData,
+  HtmlBlockNode,
+  HeadingNode,
+  CodeBlockNode,
+  createNode,
+  BlockNode
+} from './node';
 import { OPENTAG, CLOSETAG } from './common';
 import {
   peek,
@@ -19,7 +27,7 @@ const enum Matched {
   Leaf // No more block starts
 }
 interface BlockStart {
-  (parser: Parser, container: Node): Matched;
+  (parser: Parser, container: BlockNode): Matched;
 }
 
 const reCodeFence = /^`{3,}(?!.*`)|^~{3,}/;
@@ -45,8 +53,6 @@ function parseListMarker(parser: Parser, container: ListNode): ListNodeData | nu
   const rest = parser.currentLine.slice(parser.nextNonspace);
   let match;
   let nextc;
-  let spacesStartCol;
-  let spacesStartOffset;
   const data: ListNodeData = {
     type: 'bullet',
     tight: true, // lists are tight by default
@@ -68,7 +74,7 @@ function parseListMarker(parser: Parser, container: ListNode): ListNodeData | nu
     (container.type !== 'paragraph' || match[1] === '1')
   ) {
     data.type = 'ordered';
-    data.start = parseInt(match[1]);
+    data.start = parseInt(match[1], 10);
     data.delimiter = match[2];
   } else {
     return null;
@@ -90,15 +96,15 @@ function parseListMarker(parser: Parser, container: ListNode): ListNodeData | nu
   // we've got a match! advance offset and calculate padding
   parser.advanceNextNonspace(); // to start of marker
   parser.advanceOffset(match[0].length, true); // to end of marker
-  spacesStartCol = parser.column;
-  spacesStartOffset = parser.offset;
+  const spacesStartCol = parser.column;
+  const spacesStartOffset = parser.offset;
   do {
     parser.advanceOffset(1, true);
     nextc = peek(parser.currentLine, parser.offset);
   } while (parser.column - spacesStartCol < 5 && isSpaceOrTab(nextc));
-  const blank_item = peek(parser.currentLine, parser.offset) === -1;
-  const spaces_after_marker = parser.column - spacesStartCol;
-  if (spaces_after_marker >= 5 || spaces_after_marker < 1 || blank_item) {
+  const blankItem = peek(parser.currentLine, parser.offset) === -1;
+  const spacesAfterMarker = parser.column - spacesStartCol;
+  if (spacesAfterMarker >= 5 || spacesAfterMarker < 1 || blankItem) {
     data.padding = match[0].length + 1;
     parser.column = spacesStartCol;
     parser.offset = spacesStartOffset;
@@ -106,7 +112,7 @@ function parseListMarker(parser: Parser, container: ListNode): ListNodeData | nu
       parser.advanceOffset(1, true);
     }
   } else {
-    data.padding = match[0].length + spaces_after_marker;
+    data.padding = match[0].length + spacesAfterMarker;
   }
 
   return data;
@@ -148,7 +154,7 @@ const atxHeading: BlockStart = parser => {
     parser.advanceOffset(match[0].length, false);
     parser.closeUnmatchedBlocks();
 
-    const container = parser.addChild('heading', parser.nextNonspace);
+    const container = parser.addChild('heading', parser.nextNonspace) as HeadingNode;
     container.level = match[0].trim().length; // number of #s
     // remove trailing ###s:
     container.stringContent = parser.currentLine
@@ -169,7 +175,7 @@ const fencedCodeBlock: BlockStart = parser => {
   ) {
     const fenceLength = match[0].length;
     parser.closeUnmatchedBlocks();
-    const container = parser.addChild('codeBlock', parser.nextNonspace);
+    const container = parser.addChild('codeBlock', parser.nextNonspace) as CodeBlockNode;
     container.isFenced = true;
     container.fenceLength = fenceLength;
     container.fenceChar = match[0][0];
@@ -191,7 +197,7 @@ const htmlBlock: BlockStart = (parser, container) => {
         parser.closeUnmatchedBlocks();
         // We don't adjust parser.offset;
         // spaces are part of the HTML block:
-        const b = parser.addChild('htmlBlock', parser.offset);
+        const b = parser.addChild('htmlBlock', parser.offset) as HtmlBlockNode;
         b.htmlBlockType = blockType;
         return Matched.Leaf;
       }
@@ -218,7 +224,7 @@ const seTextHeading: BlockStart = (parser, container) => {
       container.stringContent = container.stringContent.slice(pos);
     }
     if (container.stringContent.length > 0) {
-      const heading = new Node('heading', container.sourcepos) as BlockNode;
+      const heading = createNode('heading', container.sourcepos);
       heading.level = match[0][0] === '=' ? 1 : 2;
       heading.stringContent = container.stringContent;
       container.insertAfter(heading);
@@ -253,7 +259,7 @@ const listItem: BlockStart = (parser, container) => {
     parser.closeUnmatchedBlocks();
 
     // add the list if needed
-    if (parser.tip.type !== 'list' || !listsMatch(currNode.listData, data)) {
+    if (parser.tip.type !== 'list' || !listsMatch(currNode.listData!, data)) {
       currNode = parser.addChild('list', parser.nextNonspace) as ListNode;
       currNode.listData = data;
     }

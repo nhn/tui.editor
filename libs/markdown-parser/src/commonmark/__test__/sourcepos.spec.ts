@@ -1,12 +1,12 @@
 import { Parser } from '../blocks';
-import { HtmlRenderer } from '../render/html';
+import { BlockNode, ContainerNode, LinkNode, CodeNode, ListNode } from '../node';
 
 const reader = new Parser();
 
 describe('paragraph', () => {
   it('simple text', () => {
     const root = reader.parse('Hello World');
-    const text = root.firstChild!.firstChild!;
+    const text = (root.firstChild! as BlockNode).firstChild!;
 
     expect(text.sourcepos).toEqual([
       [1, 1],
@@ -16,7 +16,7 @@ describe('paragraph', () => {
 
   it('multiple offset', () => {
     const root = reader.parse('  Hello  \n  World');
-    const text1 = root.firstChild!.firstChild!;
+    const text1 = (root.firstChild as BlockNode).firstChild!;
     const linebreak = text1.next!;
     const text2 = linebreak.next!;
 
@@ -37,8 +37,8 @@ describe('paragraph', () => {
 
   it('text and emphasis', () => {
     const root = reader.parse('Hello *World*');
-    const text = root.firstChild!.firstChild!;
-    const emph = text.next!;
+    const text = (root.firstChild as BlockNode).firstChild!;
+    const emph = text.next as ContainerNode;
     const emphText = emph.firstChild!;
 
     expect(text.sourcepos).toEqual([
@@ -57,8 +57,8 @@ describe('paragraph', () => {
 
   it('text and strong emphasis', () => {
     const root = reader.parse('Hello **World**');
-    const text = root.firstChild!.firstChild!;
-    const strong = text.next!;
+    const text = (root.firstChild as BlockNode).firstChild!;
+    const strong = text.next as ContainerNode;
     const strongText = strong.firstChild!;
 
     expect(text.sourcepos).toEqual([
@@ -77,8 +77,8 @@ describe('paragraph', () => {
 
   it('text and image', () => {
     const root = reader.parse('Hello ![World](http://nhn.com)');
-    const text = root.firstChild!.firstChild!;
-    const image = text.next!;
+    const text = (root.firstChild as BlockNode).firstChild!;
+    const image = text.next as LinkNode;
     const imageText = image.firstChild!;
 
     expect(text.sourcepos).toEqual([
@@ -97,8 +97,8 @@ describe('paragraph', () => {
 
   it('text and link', () => {
     const root = reader.parse('Hello [World](http://nhn.com)');
-    const text = root.firstChild!.firstChild!;
-    const link = text.next!;
+    const text = (root.firstChild as BlockNode).firstChild!;
+    const link = text.next as LinkNode;
     const linkText = link.firstChild!;
 
     expect(text.sourcepos).toEqual([
@@ -117,8 +117,8 @@ describe('paragraph', () => {
 
   it('text and codespan', () => {
     const root = reader.parse('Hello ``World``');
-    const text = root.firstChild!.firstChild!;
-    const code = text.next!;
+    const text = (root.firstChild as BlockNode).firstChild!;
+    const code = text.next as CodeNode;
 
     expect(text.sourcepos).toEqual([
       [1, 1],
@@ -133,7 +133,7 @@ describe('paragraph', () => {
 
   it('text and raw html', () => {
     const root = reader.parse('Hello <strong>World</strong>');
-    const text1 = root.firstChild!.firstChild!;
+    const text1 = (root.firstChild as BlockNode).firstChild!;
     const html1 = text1.next!;
     const text2 = html1.next!;
     const html2 = text2.next!;
@@ -158,7 +158,7 @@ describe('paragraph', () => {
 
   it('autolink', () => {
     const root = reader.parse('Hello <http://nhn.com>');
-    const link = root.firstChild!.firstChild!.next!;
+    const link = (root.firstChild as BlockNode).firstChild!.next as LinkNode;
     const linkText = link.firstChild!;
 
     expect(link.sourcepos).toEqual([
@@ -173,7 +173,7 @@ describe('paragraph', () => {
 
   it('autolink (mailto)', () => {
     const root = reader.parse('Hello <world@nhn.com>');
-    const link = root.firstChild!.firstChild!.next!;
+    const link = (root.firstChild as BlockNode).firstChild!.next as LinkNode;
     const linkText = link.firstChild!;
 
     expect(link.sourcepos).toEqual([
@@ -190,7 +190,7 @@ describe('paragraph', () => {
 describe('softbreak and linebreak', () => {
   it('text with softbreak', () => {
     const root = reader.parse('Hello\nWorld');
-    const text1 = root.firstChild!.firstChild!;
+    const text1 = (root.firstChild as BlockNode).firstChild!;
     const softbreak = text1.next!;
     const text2 = softbreak.next!;
 
@@ -211,7 +211,7 @@ describe('softbreak and linebreak', () => {
 
   it('text with linebreak(space)', () => {
     const root = reader.parse('Hello   \nWorld');
-    const text1 = root.firstChild!.firstChild!;
+    const text1 = (root.firstChild as BlockNode).firstChild!;
     const linebreak = text1.next!;
     const text2 = linebreak.next!;
 
@@ -233,7 +233,7 @@ describe('softbreak and linebreak', () => {
 
   it('text with linebreak(backslash)', () => {
     const root = reader.parse('Hello\\\nWorld');
-    const text1 = root.firstChild!.firstChild!;
+    const text1 = (root.firstChild as BlockNode).firstChild!;
     const linebreak = text1.next!;
     const text2 = linebreak.next!;
 
@@ -256,8 +256,8 @@ describe('softbreak and linebreak', () => {
 describe('atx header', () => {
   it('text and emphasis', () => {
     const root = reader.parse('# Hello *World*');
-    const text = root.firstChild!.firstChild!;
-    const emph = text.next!;
+    const text = (root.firstChild as BlockNode).firstChild!;
+    const emph = text.next as ContainerNode;
     const emphText = emph.firstChild!;
 
     expect(text.sourcepos).toEqual([
@@ -276,8 +276,8 @@ describe('atx header', () => {
 
   it('text and emphasis (header level 3)', () => {
     const root = reader.parse('### Hello *World*');
-    const text = root.firstChild!.firstChild!;
-    const emph = text.next!;
+    const text = (root.firstChild as BlockNode).firstChild!;
+    const emph = text.next as ContainerNode;
     const emphText = emph.firstChild!;
 
     expect(text.sourcepos).toEqual([
@@ -298,10 +298,10 @@ describe('atx header', () => {
 describe('list items', () => {
   it('with columns', () => {
     const root = reader.parse('   - Hello\n\n     World');
-    const listItem = root.firstChild!.firstChild!;
-    const para1 = listItem.firstChild!;
+    const listItem = (root.firstChild as BlockNode).firstChild as ListNode;
+    const para1 = listItem.firstChild as BlockNode;
     const para1Text = para1.firstChild!;
-    const para2 = para1.next!;
+    const para2 = para1.next as BlockNode;
     const para2Text = para2.firstChild!;
 
     expect(para1Text.sourcepos).toEqual([
@@ -318,10 +318,10 @@ describe('list items', () => {
 describe('block quote', () => {
   it('nested paragraph', () => {
     const root = reader.parse('> Hello\n> > World');
-    const quote1 = root.firstChild!;
-    const para1 = quote1.firstChild!;
-    const quote2 = para1.next!;
-    const para2 = quote2.firstChild!;
+    const quote1 = root.firstChild as BlockNode;
+    const para1 = quote1.firstChild as BlockNode;
+    const quote2 = para1.next as BlockNode;
+    const para2 = quote2.firstChild as BlockNode;
 
     expect(para1.firstChild!.sourcepos).toEqual([
       [1, 3],
@@ -334,10 +334,10 @@ describe('block quote', () => {
   });
 });
 
-describe('block quote', () => {
-  it('merge text nodes', () => {
+describe('merge text nodes', () => {
+  it('tokens', () => {
     const root = reader.parse(['\\ Text *', '[ Text !', '![ Text ]'].join('\n'));
-    const text1 = root.firstChild!.firstChild!;
+    const text1 = (root.firstChild! as BlockNode).firstChild!;
     const text2 = text1.next!.next!;
     const text3 = text2.next!.next!;
 

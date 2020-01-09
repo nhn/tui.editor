@@ -7,9 +7,9 @@ export type BlockNodeType =
   | 'item'
   | 'heading'
   | 'thematicBreak'
+  | 'paragraph'
   | 'codeBlock'
-  | 'htmlBlock'
-  | 'paragraph';
+  | 'htmlBlock';
 
 export type InlineNodeType =
   | 'code'
@@ -22,7 +22,7 @@ export type InlineNodeType =
   | 'linebreak'
   | 'softbreak';
 
-export type NodeType = BlockNodeType | InlineNodeType | 'customBlock' | 'customInline';
+export type NodeType = BlockNodeType | InlineNodeType;
 
 export type SourcePos = [[number, number], [number, number]];
 
@@ -38,8 +38,6 @@ export function isContainer(node: Node) {
     case 'strong':
     case 'link':
     case 'image':
-    case 'customInline':
-    case 'customBlock':
       return true;
     default:
       return false;
@@ -47,31 +45,18 @@ export function isContainer(node: Node) {
 }
 
 export class Node {
-  public lastLineBlank = false;
-  public lastLineChecked = false;
-  public open = true;
-  public htmlBlockType = -1;
-  public isFenced = false;
-  public fenceChar: string | null = null;
-  public fenceLength = 0;
-  public lineOffsets: number[] | null = null;
-  public fenceOffset = -1;
-  public stringContent: string | null = null;
-  public tickCount = 0;
   public type: NodeType;
   public parent: Node | null = null;
-  public firstChild: Node | null = null;
-  public lastChild: Node | null = null;
   public prev: Node | null = null;
   public next: Node | null = null;
   public sourcepos?: SourcePos;
+
+  // only for container node
+  public firstChild: Node | null = null;
+  public lastChild: Node | null = null;
+
+  // only for leaf node
   public literal: string | null = null;
-  public info: string | null = null;
-  public destination: string | null = null;
-  public title: string | null = null;
-  public level: number | null = null;
-  public onEnter = null;
-  public onExit = null;
 
   constructor(nodeType: NodeType, sourcepos?: SourcePos) {
     this.type = nodeType;
@@ -80,32 +65,6 @@ export class Node {
 
   isContainer() {
     return isContainer(this);
-  }
-
-  appendChild(child: Node) {
-    child.unlink();
-    child.parent = this;
-    if (this.lastChild) {
-      this.lastChild.next = child;
-      child.prev = this.lastChild;
-      this.lastChild = child;
-    } else {
-      this.firstChild = child;
-      this.lastChild = child;
-    }
-  }
-
-  prependChild(child: Node) {
-    child.unlink();
-    child.parent = this;
-    if (this.firstChild) {
-      this.firstChild.prev = child;
-      child.next = this.firstChild;
-      this.firstChild = child;
-    } else {
-      this.firstChild = child;
-      this.lastChild = child;
-    }
   }
 
   unlink() {
@@ -156,22 +115,35 @@ export class Node {
     }
   }
 
-  /* Example of use of walker:
-     var walker = w.walker();
-     var event;
-     while (event = walker.next()) {
-     console.log(event.entering, event.node.type);
-     }
-  */
+  appendChild(child: Node) {
+    child.unlink();
+    child.parent = this;
+    if (this.lastChild) {
+      this.lastChild.next = child;
+      child.prev = this.lastChild;
+      this.lastChild = child;
+    } else {
+      this.firstChild = child;
+      this.lastChild = child;
+    }
+  }
+
+  prependChild(child: Node) {
+    child.unlink();
+    child.parent = this;
+    if (this.firstChild) {
+      this.firstChild.prev = child;
+      child.next = this.firstChild;
+      this.firstChild = child;
+    } else {
+      this.firstChild = child;
+      this.lastChild = child;
+    }
+  }
+
   walker() {
     return new NodeWalker(this);
   }
-}
-
-export interface BlockNode extends Node {
-  type: BlockNodeType;
-  parent: BlockNode;
-  sourcepos: SourcePos;
 }
 
 export type ListNodeData = {
@@ -184,6 +156,93 @@ export type ListNodeData = {
   padding: number;
 };
 
-export interface ListNode extends BlockNode {
-  listData: ListNodeData;
+export class BlockNode extends Node {
+  public type: BlockNodeType;
+
+  // temporal data (for parsing)
+  public open = true;
+  public lineOffsets: number[] | null = null;
+  public stringContent: string | null = null;
+  public lastLineBlank = false;
+  public lastLineChecked = false;
+
+  constructor(nodeType: BlockNodeType, sourcepos?: SourcePos) {
+    super(nodeType, sourcepos);
+    this.type = nodeType;
+  }
+}
+
+export class ListNode extends BlockNode {
+  public listData: ListNodeData | null = null;
+}
+
+export class HeadingNode extends BlockNode {
+  public level = 0;
+}
+
+export class LinkNode extends Node {
+  public destination: string | null = null;
+  public title: string | null = null;
+}
+
+export class CodeBlockNode extends BlockNode {
+  public isFenced = false;
+  public fenceChar: string | null = null;
+  public fenceLength = 0;
+  public fenceOffset = -1;
+  public info: string | null = null;
+}
+
+export class HtmlBlockNode extends BlockNode {
+  public htmlBlockType = -1;
+}
+
+export class CodeNode extends Node {
+  public tickCount = 0;
+}
+
+export function createNode(type: 'heading', sourcepos?: SourcePos): HeadingNode;
+export function createNode(type: 'list' | 'item', sourcepos?: SourcePos): ListNode;
+export function createNode(type: 'codeBlock', sourcepos?: SourcePos): CodeBlockNode;
+export function createNode(type: 'htmlBlock', sourcepos?: SourcePos): HtmlBlockNode;
+export function createNode(type: 'link' | 'image', sourcepos?: SourcePos): LinkNode;
+export function createNode(type: 'code', sourcepos?: SourcePos): CodeNode;
+export function createNode(type: BlockNodeType, sourcepos?: SourcePos): BlockNode;
+export function createNode(type: NodeType, sourcepos?: SourcePos): Node;
+export function createNode(type: NodeType, sourcepos?: SourcePos) {
+  switch (type) {
+    case 'heading':
+      return new HeadingNode(type, sourcepos);
+    case 'list':
+    case 'item':
+      return new ListNode(type, sourcepos);
+    case 'link':
+    case 'image':
+      return new LinkNode(type, sourcepos);
+    case 'codeBlock':
+      return new CodeBlockNode(type, sourcepos);
+    case 'htmlBlock':
+      return new HtmlBlockNode(type, sourcepos);
+    case 'document':
+    case 'paragraph':
+    case 'blockQuote':
+    case 'thematicBreak':
+      return new BlockNode(type, sourcepos);
+    case 'code':
+      return new CodeNode(type, sourcepos);
+    default:
+      return new Node(type, sourcepos) as Node;
+  }
+}
+
+export function isCodeBlock(node: Node): node is CodeBlockNode {
+  return node.type === 'codeBlock';
+}
+
+export function isHtmlBlock(node: Node): node is HtmlBlockNode {
+  return node.type === 'htmlBlock';
+}
+
+export function isHeading(node: Node): node is HeadingNode {
+  return node.type === 'heading';
 }

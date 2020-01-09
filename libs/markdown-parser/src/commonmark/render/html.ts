@@ -1,4 +1,4 @@
-import { Node, ListNode } from '../node';
+import { Node, ListNode, LinkNode, CodeBlockNode } from '../node';
 import { Renderer } from './renderer';
 import { escapeXml } from '../common';
 
@@ -45,7 +45,7 @@ export class HtmlRenderer extends Renderer {
     this.cr();
   }
 
-  link(node: Node, entering: boolean) {
+  link(node: LinkNode, entering: boolean) {
     const attrs = this.attrs(node);
     if (entering) {
       if (!(this.options.safe && potentiallyUnsafe(node.destination!))) {
@@ -60,7 +60,7 @@ export class HtmlRenderer extends Renderer {
     }
   }
 
-  image(node: Node, entering: boolean) {
+  image(node: LinkNode, entering: boolean) {
     if (entering) {
       if (this.disableTags === 0) {
         if (this.options.safe && potentiallyUnsafe(node.destination!)) {
@@ -124,11 +124,11 @@ export class HtmlRenderer extends Renderer {
     this.tag('/code');
   }
 
-  codeBlock(node: Node) {
-    const info_words = node.info ? node.info.split(/\s+/) : [],
+  codeBlock(node: CodeBlockNode) {
+    const infoWords = node.info ? node.info.split(/\s+/) : [],
       attrs = this.attrs(node);
-    if (info_words.length > 0 && info_words[0].length > 0) {
-      attrs.push(['class', `language-${this.esc(info_words[0])}`]);
+    if (infoWords.length > 0 && infoWords[0].length > 0) {
+      attrs.push(['class', `language-${this.esc(infoWords[0])}`]);
     }
     this.cr();
     this.tag('pre');
@@ -202,24 +202,6 @@ export class HtmlRenderer extends Renderer {
       this.lit('<!-- raw HTML omitted -->');
     } else {
       this.lit(node.literal);
-    }
-    this.cr();
-  }
-
-  customInline(node: Node, entering: boolean) {
-    if (entering && node.onEnter) {
-      this.lit(node.onEnter);
-    } else if (!entering && node.onExit) {
-      this.lit(node.onExit);
-    }
-  }
-
-  customBlock(node: Node, entering: boolean) {
-    this.cr();
-    if (entering && node.onEnter) {
-      this.lit(node.onEnter);
-    } else if (!entering && node.onExit) {
-      this.lit(node.onExit);
     }
     this.cr();
   }

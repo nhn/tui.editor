@@ -1,5 +1,5 @@
 import { Parser } from './blocks';
-import { ListNode, BlockNode } from './node';
+import { ListNode, BlockNode, CodeBlockNode, HtmlBlockNode } from './node';
 import {
   peek,
   isBlank,
@@ -46,24 +46,24 @@ const list: BlockHandler = {
     return Continue.Go;
   },
   finalize(_, block: ListNode) {
-    let item = block.firstChild;
+    let item = block.firstChild as BlockNode;
     while (item) {
       // check for non-final list item ending with blank line:
       if (endsWithBlankLine(item) && item.next) {
-        block.listData.tight = false;
+        block.listData!.tight = false;
         break;
       }
       // recurse into children of list item, to see if there are
       // spaces between any of them:
-      let subitem = item.firstChild;
+      let subitem = item.firstChild as BlockNode;
       while (subitem) {
         if (endsWithBlankLine(subitem) && (item.next || subitem.next)) {
-          block.listData.tight = false;
+          block.listData!.tight = false;
           break;
         }
-        subitem = subitem.next;
+        subitem = subitem.next as BlockNode;
       }
-      item = item.next;
+      item = item.next as BlockNode;
     }
   },
   canContain(t) {
@@ -96,13 +96,13 @@ const blockQuote: BlockHandler = {
 const item: BlockHandler = {
   continue(parser, container: ListNode) {
     if (parser.blank) {
-      if (container.firstChild == null) {
+      if (container.firstChild === null) {
         // Blank line after empty list item
         return Continue.Stop;
       }
       parser.advanceNextNonspace();
-    } else if (parser.indent >= container.listData.markerOffset + container.listData.padding) {
-      parser.advanceOffset(container.listData.markerOffset + container.listData.padding, true);
+    } else if (parser.indent >= container.listData!.markerOffset + container.listData!.padding) {
+      parser.advanceOffset(container.listData!.markerOffset + container.listData!.padding, true);
     } else {
       return Continue.Stop;
     }
@@ -140,7 +140,7 @@ const thematicBreak: BlockHandler = {
 };
 
 const codeBlock: BlockHandler = {
-  continue(parser, container) {
+  continue(parser, container: CodeBlockNode) {
     const ln = parser.currentLine;
     const indent = parser.indent;
     if (container.isFenced) {
@@ -172,7 +172,7 @@ const codeBlock: BlockHandler = {
     }
     return Continue.Go;
   },
-  finalize(_, block) {
+  finalize(_, block: CodeBlockNode) {
     if (block.stringContent === null) {
       return;
     }
@@ -198,7 +198,7 @@ const codeBlock: BlockHandler = {
 };
 
 const htmlBlock: BlockHandler = {
-  continue(parser, container) {
+  continue(parser, container: HtmlBlockNode) {
     return parser.blank && (container.htmlBlockType === 6 || container.htmlBlockType === 7)
       ? Continue.Stop
       : Continue.Go;

@@ -1,4 +1,4 @@
-import { Node } from './node';
+import { BlockNode } from './node';
 
 export const CODE_INDENT = 4;
 export const C_TAB = 9;
@@ -14,8 +14,8 @@ export const reClosingCodeFence = /^(?:`{3,}|~{3,})(?= *$)/;
 
 // Returns true if block ends with a blank line, descending if needed
 // into lists and sublists.
-export function endsWithBlankLine(block: Node) {
-  let curBlock: Node | null = block;
+export function endsWithBlankLine(block: BlockNode) {
+  let curBlock: BlockNode | null = block;
 
   while (curBlock) {
     if (curBlock.lastLineBlank) {
@@ -24,7 +24,7 @@ export function endsWithBlankLine(block: Node) {
     const t = curBlock.type;
     if (!curBlock.lastLineChecked && (t === 'list' || t === 'item')) {
       curBlock.lastLineChecked = true;
-      curBlock = curBlock.lastChild;
+      curBlock = curBlock.lastChild as BlockNode;
     } else {
       curBlock.lastLineChecked = true;
       break;
