@@ -57,6 +57,7 @@ export class Node {
   public lineOffsets: number[] | null = null;
   public fenceOffset = -1;
   public stringContent: string | null = null;
+  public tickCount = 0;
   public type: NodeType;
   public parent: Node | null = null;
   public firstChild: Node | null = null;

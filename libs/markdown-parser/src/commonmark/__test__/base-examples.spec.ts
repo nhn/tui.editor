@@ -8,7 +8,7 @@ const writer = new HtmlRenderer();
 specs.forEach(spec => {
   const { example, section, markdown, html } = spec;
 
-  it.skip(`Example ${example} (${section})`, () => {
+  it(`Example ${example} (${section})`, () => {
     const parsed = reader.parse(markdown);
     const result = writer.render(parsed);
 

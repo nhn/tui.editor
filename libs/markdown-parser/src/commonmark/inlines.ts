@@ -1,9 +1,10 @@
-import { Node, BlockNode } from './node';
+import { Node, BlockNode, SourcePos } from './node';
 import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY, reHtmlTag } from './common';
 import normalizeReference from './normalize-reference';
 import fromCodePoint from './from-code-point';
 
 import { decodeHTML } from 'entities';
+import NodeWalker from './nodeWalker';
 
 export const C_NEWLINE = 10;
 const C_ASTERISK = 42;
@@ -56,8 +57,8 @@ const reLinkLabel = /^\[(?:[^\\\[\]]|\\.){0,1000}\]/;
 // Matches a string of non-special characters.
 const reMain = /^[^\n`\[\]\\!<&*_'"]+/m;
 
-const text = function(s: string) {
-  const node = new Node('text');
+const text = function(s: string, sourcepos?: SourcePos) {
+  const node = new Node('text', sourcepos);
   node.literal = s;
   return node;
 };
@@ -115,9 +116,16 @@ export class InlineParser {
     this.options = options;
   }
 
-  sourcepos(pos: number): [number, number] {
-    const lineOffset = this.lineOffsets[this.lineIdx];
-    return [this.lineStartNum + this.lineIdx, pos + this.linePosOffset + lineOffset];
+  sourcepos(start: number): [number, number];
+  sourcepos(start: number, end: number): SourcePos;
+  sourcepos(start: number, end?: number): [number, number] | SourcePos {
+    const linePosOffset = this.linePosOffset + this.lineOffsets[this.lineIdx];
+    const lineNum = this.lineStartNum + this.lineIdx;
+    const startpos = [lineNum, start + linePosOffset];
+    if (typeof end === 'number') {
+      return [startpos, [lineNum, end + linePosOffset]] as SourcePos;
+    }
+    return startpos as [number, number];
   }
 
   nextLine() {
@@ -158,18 +166,19 @@ export class InlineParser {
   // Attempt to parse backticks, adding either a backtick code span or a
   // literal sequence of backticks.
   parseBackticks(block: Node) {
+    const startpos = this.pos + 1;
     const ticks = this.match(reTicksHere);
     if (ticks === null) {
       return false;
     }
     const afterOpenTicks = this.pos;
     let matched: string | null;
-    let node: Node;
-    let contents: string;
     while ((matched = this.match(reTicks)) !== null) {
       if (matched === ticks) {
-        node = new Node('code');
-        contents = this.subject.slice(afterOpenTicks, this.pos - ticks.length).replace(/\n/gm, ' ');
+        const node = new Node('code', this.sourcepos(startpos, this.pos));
+        const contents = this.subject
+          .slice(afterOpenTicks, this.pos - ticks.length)
+          .replace(/\n/gm, ' ');
         if (
           contents.length > 0 &&
           contents.match(/[^ ]/) !== null &&
@@ -180,13 +189,14 @@ export class InlineParser {
         } else {
           node.literal = contents;
         }
+        node.tickCount = ticks.length;
         block.appendChild(node);
         return true;
       }
     }
     // If we got here, we didn't match a closing backtick sequence.
     this.pos = afterOpenTicks;
-    block.appendChild(text(ticks));
+    block.appendChild(text(ticks, this.sourcepos(startpos, this.pos - 1)));
     return true;
   }
 
@@ -198,16 +208,18 @@ export class InlineParser {
     const subj = this.subject;
     let node: Node;
     this.pos += 1;
+    const startpos = this.pos;
+
     if (this.peek() === C_NEWLINE) {
       this.pos += 1;
-      node = new Node('linebreak', [this.sourcepos(this.pos - 1), this.sourcepos(this.pos)]);
+      node = new Node('linebreak', this.sourcepos(this.pos - 1, this.pos));
       block.appendChild(node);
       this.nextLine();
     } else if (reEscapable.test(subj.charAt(this.pos))) {
-      block.appendChild(text(subj.charAt(this.pos)));
+      block.appendChild(text(subj.charAt(this.pos), this.sourcepos(startpos, this.pos)));
       this.pos += 1;
     } else {
-      block.appendChild(text('\\'));
+      block.appendChild(text('\\', this.sourcepos(startpos, startpos)));
     }
     return true;
   }
@@ -217,21 +229,22 @@ export class InlineParser {
     let m: string | null;
     let dest: string;
     let node: Node;
+    const startpos = this.pos + 1;
     if ((m = this.match(reEmailAutolink))) {
       dest = m.slice(1, m.length - 1);
-      node = new Node('link');
+      node = new Node('link', this.sourcepos(startpos, this.pos));
       node.destination = normalizeURI(`mailto:${dest}`);
       node.title = '';
-      node.appendChild(text(dest));
+      node.appendChild(text(dest, this.sourcepos(startpos + 1, this.pos - 1)));
       block.appendChild(node);
       return true;
     }
     if ((m = this.match(reAutolink))) {
       dest = m.slice(1, m.length - 1);
-      node = new Node('link');
+      node = new Node('link', this.sourcepos(startpos, this.pos));
       node.destination = normalizeURI(dest);
       node.title = '';
-      node.appendChild(text(dest));
+      node.appendChild(text(dest, this.sourcepos(startpos + 1, this.pos - 1)));
       block.appendChild(node);
       return true;
     }
@@ -240,11 +253,12 @@ export class InlineParser {
 
   // Attempt to parse a raw HTML tag.
   parseHtmlTag(block: Node) {
+    const startpos = this.pos + 1;
     const m = this.match(reHtmlTag);
     if (m === null) {
       return false;
     }
-    const node = new Node('htmlInline');
+    const node = new Node('htmlInline', this.sourcepos(startpos, this.pos));
     node.literal = m;
     block.appendChild(node);
     return true;
@@ -256,17 +270,6 @@ export class InlineParser {
   // function for strong/emph parsing.
   scanDelims(cc: number) {
     let numdelims = 0;
-    let charBefore: string;
-    let charAfter: string;
-    let ccAfter: number;
-    let leftFlanking: boolean;
-    let rightFlanking: boolean;
-    let canOpen: boolean;
-    let canClose: boolean;
-    let afterIsWhitespace: boolean;
-    let afterIsPunctuation: boolean;
-    let beforeIsWhitespace: boolean;
-    let beforeIsPunctuation: boolean;
     const startpos = this.pos;
 
     if (cc === C_SINGLEQUOTE || cc === C_DOUBLEQUOTE) {
@@ -283,24 +286,26 @@ export class InlineParser {
       return null;
     }
 
-    charBefore = startpos === 0 ? '\n' : this.subject.charAt(startpos - 1);
-
-    ccAfter = this.peek();
+    const charBefore = startpos === 0 ? '\n' : this.subject.charAt(startpos - 1);
+    const ccAfter = this.peek();
+    let charAfter: string;
     if (ccAfter === -1) {
       charAfter = '\n';
     } else {
       charAfter = fromCodePoint(ccAfter);
     }
 
-    afterIsWhitespace = reUnicodeWhitespaceChar.test(charAfter);
-    afterIsPunctuation = rePunctuation.test(charAfter);
-    beforeIsWhitespace = reUnicodeWhitespaceChar.test(charBefore);
-    beforeIsPunctuation = rePunctuation.test(charBefore);
-
-    leftFlanking =
+    const afterIsWhitespace = reUnicodeWhitespaceChar.test(charAfter);
+    const afterIsPunctuation = rePunctuation.test(charAfter);
+    const beforeIsWhitespace = reUnicodeWhitespaceChar.test(charBefore);
+    const beforeIsPunctuation = rePunctuation.test(charBefore);
+    const leftFlanking =
       !afterIsWhitespace && (!afterIsPunctuation || beforeIsWhitespace || beforeIsPunctuation);
-    rightFlanking =
+    const rightFlanking =
       !beforeIsWhitespace && (!beforeIsPunctuation || afterIsWhitespace || afterIsPunctuation);
+    let canOpen: boolean;
+    let canClose: boolean;
+
     if (cc === C_UNDERSCORE) {
       canOpen = leftFlanking && (!rightFlanking || beforeIsPunctuation);
       canClose = rightFlanking && (!leftFlanking || afterIsPunctuation);
@@ -333,7 +338,7 @@ export class InlineParser {
     } else {
       contents = this.subject.slice(startpos, this.pos);
     }
-    const node = text(contents);
+    const node = text(contents, this.sourcepos(startpos, this.pos));
     block.appendChild(node);
 
     // Add entry to stack for this opener
@@ -379,15 +384,14 @@ export class InlineParser {
   }
 
   processEmphasis(stackBottom: Delimiter | null) {
-    let opener: Delimiter | null, closer: Delimiter | null, oldCloser: Delimiter | null;
+    let opener: Delimiter | null;
+    let closer: Delimiter | null;
+    let oldCloser: Delimiter | null;
     let openerInl: Node, closerInl: Node;
     let openerFound: boolean;
     let oddMatch = false;
-    const openersBottom: [(Delimiter | null)[], (Delimiter | null)[], (Delimiter | null)[]] = [
-      [],
-      [],
-      []
-    ];
+    type DelimiterMap = (Delimiter | null)[];
+    const openersBottom: [DelimiterMap, DelimiterMap, DelimiterMap] = [[], [], []];
 
     for (let i = 0; i < 3; i++) {
       openersBottom[i][C_UNDERSCORE] = stackBottom;
@@ -579,7 +583,7 @@ export class InlineParser {
   parseOpenBracket(block: Node) {
     this.pos += 1;
 
-    const node = text('[');
+    const node = text('[', this.sourcepos(this.pos, this.pos));
     block.appendChild(node);
 
     // Add entry to stack for this opener
@@ -590,20 +594,17 @@ export class InlineParser {
   // IF next character is [, and ! delimiter to delimiter stack and
   // add a text node to block's children.  Otherwise just add a text node.
   parseBang(block: Node) {
-    const startpos = this.pos;
     this.pos += 1;
     if (this.peek() === C_OPEN_BRACKET) {
       this.pos += 1;
 
-      const node = text('![');
-      node.sourcepos = [this.sourcepos(this.pos), this.sourcepos(this.pos + 1)];
+      const node = text('![', this.sourcepos(this.pos - 1, this.pos));
       block.appendChild(node);
 
       // Add entry to stack for this opener
-      this.addBracket(node, startpos + 1, true);
+      this.addBracket(node, this.pos - 1, true);
     } else {
-      const node = text('!');
-      node.sourcepos = [this.sourcepos(this.pos), this.sourcepos(this.pos)];
+      const node = text('!', this.sourcepos(this.pos, this.pos));
       block.appendChild(node);
     }
     return true;
@@ -625,13 +626,13 @@ export class InlineParser {
 
     if (opener === null) {
       // no matched opener, just return a literal
-      block.appendChild(text(']'));
+      block.appendChild(text(']', this.sourcepos(startpos, startpos)));
       return true;
     }
 
     if (!opener.active) {
       // no matched opener, just return a literal
-      block.appendChild(text(']'));
+      block.appendChild(text(']', this.sourcepos(startpos, startpos)));
       // take opener off brackets stack
       this.removeBracket();
       return true;
@@ -730,7 +731,7 @@ export class InlineParser {
 
     this.removeBracket(); // remove this opener from stack
     this.pos = startpos;
-    block.appendChild(text(']'));
+    block.appendChild(text(']', this.sourcepos(startpos, startpos)));
     return true;
   }
 
@@ -773,33 +774,29 @@ export class InlineParser {
 
     if ((m = this.match(reMain))) {
       if (this.options.smart) {
-        block.appendChild(
-          text(
-            m.replace(reEllipses, '\u2026').replace(reDash, function(chars) {
-              let enCount = 0;
-              let emCount = 0;
-              if (chars.length % 3 === 0) {
-                // If divisible by 3, use all em dashes
-                emCount = chars.length / 3;
-              } else if (chars.length % 2 === 0) {
-                // If divisible by 2, use all en dashes
-                enCount = chars.length / 2;
-              } else if (chars.length % 3 === 2) {
-                // If 2 extra dashes, use en dash for last 2; em dashes for rest
-                enCount = 1;
-                emCount = (chars.length - 2) / 3;
-              } else {
-                // Use en dashes for last 4 hyphens; em dashes for rest
-                enCount = 2;
-                emCount = (chars.length - 4) / 3;
-              }
-              return repeat('\u2014', emCount) + repeat('\u2013', enCount);
-            })
-          )
-        );
+        const lit = m.replace(reEllipses, '\u2026').replace(reDash, function(chars) {
+          let enCount = 0;
+          let emCount = 0;
+          if (chars.length % 3 === 0) {
+            // If divisible by 3, use all em dashes
+            emCount = chars.length / 3;
+          } else if (chars.length % 2 === 0) {
+            // If divisible by 2, use all en dashes
+            enCount = chars.length / 2;
+          } else if (chars.length % 3 === 2) {
+            // If 2 extra dashes, use en dash for last 2; em dashes for rest
+            enCount = 1;
+            emCount = (chars.length - 2) / 3;
+          } else {
+            // Use en dashes for last 4 hyphens; em dashes for rest
+            enCount = 2;
+            emCount = (chars.length - 4) / 3;
+          }
+          return repeat('\u2014', emCount) + repeat('\u2013', enCount);
+        });
+        block.appendChild(text(lit, this.sourcepos(startpos, this.pos)));
       } else {
-        const node = text(m);
-        node.sourcepos = [this.sourcepos(startpos), this.sourcepos(this.pos)];
+        const node = text(m, this.sourcepos(startpos, this.pos));
         block.appendChild(node);
       }
       return true;
@@ -822,15 +819,13 @@ export class InlineParser {
       lastc.sourcepos![1][1] -= finalSpaceLen;
 
       block.appendChild(
-        new Node(hardbreak ? 'linebreak' : 'softbreak', [
-          this.sourcepos(this.pos - finalSpaceLen),
-          this.sourcepos(this.pos)
-        ])
+        new Node(
+          hardbreak ? 'linebreak' : 'softbreak',
+          this.sourcepos(this.pos - finalSpaceLen, this.pos)
+        )
       );
     } else {
-      block.appendChild(
-        new Node('softbreak', [this.sourcepos(this.pos), this.sourcepos(this.pos)])
-      );
+      block.appendChild(new Node('softbreak', this.sourcepos(this.pos, this.pos)));
     }
     this.nextLine();
     this.match(reInitialSpace); // gobble leading spaces in next line
@@ -841,17 +836,15 @@ export class InlineParser {
   parseReference(s: string, refmap: RefMap) {
     this.subject = s;
     this.pos = 0;
-    let rawlabel: string;
     let title = null;
-    let matchChars: number;
     const startpos = this.pos;
 
     // label:
-    matchChars = this.parseLinkLabel();
+    const matchChars = this.parseLinkLabel();
     if (matchChars === 0) {
       return 0;
     }
-    rawlabel = this.subject.substr(0, matchChars);
+    const rawlabel = this.subject.substr(0, matchChars);
 
     // colon:
     if (this.peek() === C_COLON) {
@@ -916,6 +909,37 @@ export class InlineParser {
     return this.pos - startpos;
   }
 
+  mergeTextNodes(walker: NodeWalker) {
+    let event;
+    let textNodes: Node[] = [];
+
+    while ((event = walker.next())) {
+      const { entering, node } = event;
+      if (entering && node.type === 'text') {
+        textNodes.push(node);
+      } else if (textNodes.length === 1) {
+        textNodes = [];
+      } else if (textNodes.length > 1) {
+        const firstNode = textNodes[0];
+        const lastNode = textNodes[textNodes.length - 1];
+        // @TODO Fix This
+        if (firstNode.sourcepos && lastNode.sourcepos) {
+          firstNode.sourcepos![1] = lastNode.sourcepos![1];
+        }
+        firstNode.next = lastNode.next;
+        if (firstNode.next) {
+          firstNode.next.prev = firstNode;
+        }
+
+        for (let i = 1; i < textNodes.length; i += 1) {
+          firstNode.literal! += textNodes[i].literal;
+          textNodes[i].unlink();
+        }
+        textNodes = [];
+      }
+    }
+  }
+
   // Parse the next inline element in subject, advancing subject position.
   // On success, add the result to block's children and return true.
   // On failure, return false.
@@ -977,9 +1001,7 @@ export class InlineParser {
     this.pos = 0;
     this.delimiters = null;
     this.brackets = null;
-    if (block.lineOffsets) {
-      this.lineOffsets = block.lineOffsets;
-    }
+    this.lineOffsets = block.lineOffsets || [0];
     this.lineIdx = 0;
     this.linePosOffset = 0;
     this.lineStartNum = block.sourcepos[0][0];
@@ -990,5 +1012,6 @@ export class InlineParser {
     while (this.parseInline(block)) {}
     block.stringContent = null; // allow raw string to be garbage collected
     this.processEmphasis(null);
+    // this.mergeTextNodes(block.walker());
   }
 }
