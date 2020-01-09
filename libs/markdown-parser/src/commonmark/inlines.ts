@@ -1,4 +1,4 @@
-import { Node, BlockNode, SourcePos } from './node';
+import { Node, BlockNode, SourcePos, isHeading, LinkNode, createNode } from './node';
 import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY, reHtmlTag } from './common';
 import normalizeReference from './normalize-reference';
 import fromCodePoint from './from-code-point';
@@ -165,7 +165,7 @@ export class InlineParser {
 
   // Attempt to parse backticks, adding either a backtick code span or a
   // literal sequence of backticks.
-  parseBackticks(block: Node) {
+  parseBackticks(block: BlockNode) {
     const startpos = this.pos + 1;
     const ticks = this.match(reTicksHere);
     if (ticks === null) {
@@ -175,7 +175,7 @@ export class InlineParser {
     let matched: string | null;
     while ((matched = this.match(reTicks)) !== null) {
       if (matched === ticks) {
-        const node = new Node('code', this.sourcepos(startpos, this.pos));
+        const node = createNode('code', this.sourcepos(startpos, this.pos));
         const contents = this.subject
           .slice(afterOpenTicks, this.pos - ticks.length)
           .replace(/\n/gm, ' ');
@@ -204,7 +204,7 @@ export class InlineParser {
   // character, a hard line break (if the backslash is followed by a newline),
   // or a literal backslash to the block's children.  Assumes current character
   // is a backslash.
-  parseBackslash(block: Node) {
+  parseBackslash(block: BlockNode) {
     const subj = this.subject;
     let node: Node;
     this.pos += 1;
@@ -225,14 +225,14 @@ export class InlineParser {
   }
 
   // Attempt to parse an autolink (URL or email in pointy brackets).
-  parseAutolink(block: Node) {
+  parseAutolink(block: BlockNode) {
     let m: string | null;
     let dest: string;
-    let node: Node;
+    let node: LinkNode;
     const startpos = this.pos + 1;
     if ((m = this.match(reEmailAutolink))) {
       dest = m.slice(1, m.length - 1);
-      node = new Node('link', this.sourcepos(startpos, this.pos));
+      node = createNode('link', this.sourcepos(startpos, this.pos));
       node.destination = normalizeURI(`mailto:${dest}`);
       node.title = '';
       node.appendChild(text(dest, this.sourcepos(startpos + 1, this.pos - 1)));
@@ -241,7 +241,7 @@ export class InlineParser {
     }
     if ((m = this.match(reAutolink))) {
       dest = m.slice(1, m.length - 1);
-      node = new Node('link', this.sourcepos(startpos, this.pos));
+      node = createNode('link', this.sourcepos(startpos, this.pos));
       node.destination = normalizeURI(dest);
       node.title = '';
       node.appendChild(text(dest, this.sourcepos(startpos + 1, this.pos - 1)));
@@ -252,13 +252,13 @@ export class InlineParser {
   }
 
   // Attempt to parse a raw HTML tag.
-  parseHtmlTag(block: Node) {
+  parseHtmlTag(block: BlockNode) {
     const startpos = this.pos + 1;
     const m = this.match(reHtmlTag);
     if (m === null) {
       return false;
     }
-    const node = new Node('htmlInline', this.sourcepos(startpos, this.pos));
+    const node = createNode('htmlInline', this.sourcepos(startpos, this.pos));
     node.literal = m;
     block.appendChild(node);
     return true;
@@ -321,7 +321,7 @@ export class InlineParser {
   }
 
   // Handle a delimiter marker for emphasis or a quote.
-  handleDelim(cc: number, block: Node) {
+  handleDelim(cc: number, block: BlockNode) {
     const res = this.scanDelims(cc);
     if (!res) {
       return false;
@@ -450,7 +450,7 @@ export class InlineParser {
             }
 
             // build contents for new emph element
-            const emph = new Node(useDelims === 1 ? 'emph' : 'strong');
+            const emph = createNode(useDelims === 1 ? 'emph' : 'strong');
             emph.sourcepos = [
               [opener.startpos[0], opener.startpos[1]],
               [closer.startpos[0], closer.startpos[1] + useDelims - 1]
@@ -580,7 +580,7 @@ export class InlineParser {
   }
 
   // Add open bracket to delimiter stack and add a text node to block's children.
-  parseOpenBracket(block: Node) {
+  parseOpenBracket(block: BlockNode) {
     const startpos = this.pos;
     this.pos += 1;
 
@@ -594,7 +594,7 @@ export class InlineParser {
 
   // IF next character is [, and ! delimiter to delimiter stack and
   // add a text node to block's children.  Otherwise just add a text node.
-  parseBang(block: Node) {
+  parseBang(block: BlockNode) {
     const startpos = this.pos;
     this.pos += 1;
     if (this.peek() === C_OPEN_BRACKET) {
@@ -616,7 +616,7 @@ export class InlineParser {
   // stack.  Add either a link or image, or a plain [ character,
   // to block's children.  If there is a matching delimiter,
   // remove it from the delimiter stack.
-  parseCloseBracket(block: Node) {
+  parseCloseBracket(block: BlockNode) {
     let dest: string | null = null;
     let title: string | null = null;
     let matched = false;
@@ -697,7 +697,7 @@ export class InlineParser {
     }
 
     if (matched) {
-      const node = new Node(isImage ? 'image' : 'link');
+      const node = createNode(isImage ? 'image' : 'link');
       node.destination = dest;
       node.title = title || '';
       node.sourcepos = [opener.startpos, this.sourcepos(this.pos)];
@@ -759,7 +759,7 @@ export class InlineParser {
   }
 
   // Attempt to parse an entity.
-  parseEntity(block: Node) {
+  parseEntity(block: BlockNode) {
     let m;
     if ((m = this.match(reEntityHere))) {
       block.appendChild(text(decodeHTML(m)));
@@ -770,7 +770,7 @@ export class InlineParser {
 
   // Parse a run of ordinary characters, or a single character with
   // a special meaning in markdown, as a plain string.
-  parseString(block: Node) {
+  parseString(block: BlockNode) {
     let m;
     const startpos = this.pos + 1;
 
@@ -808,7 +808,7 @@ export class InlineParser {
 
   // Parse a newline.  If it was preceded by two spaces, return a hard
   // line break; otherwise a soft line break.
-  parseNewline(block: Node) {
+  parseNewline(block: BlockNode) {
     this.pos += 1; // assume we're at a \n
 
     // check previous node for trailing spaces
@@ -945,7 +945,7 @@ export class InlineParser {
   // Parse the next inline element in subject, advancing subject position.
   // On success, add the result to block's children and return true.
   // On failure, return false.
-  parseInline(block: Node) {
+  parseInline(block: BlockNode) {
     let res = false;
     const c = this.peek();
     if (c === -1) {
@@ -1006,9 +1006,9 @@ export class InlineParser {
     this.lineOffsets = block.lineOffsets || [0];
     this.lineIdx = 0;
     this.linePosOffset = 0;
-    this.lineStartNum = block.sourcepos[0][0];
-    if (block.type === 'heading') {
-      this.lineOffsets[0] += block.level! + 1;
+    this.lineStartNum = block.sourcepos![0][0];
+    if (isHeading(block)) {
+      this.lineOffsets[0] += block.level + 1;
     }
 
     while (this.parseInline(block)) {}

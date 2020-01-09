@@ -1,5 +1,5 @@
 import { repeat } from './common';
-import { Node, BlockNode, BlockNodeType } from './node';
+import { Node, BlockNode, BlockNodeType, isCodeBlock, isHtmlBlock, createNode } from './node';
 import { InlineParser, C_NEWLINE } from './inlines';
 import { blockHandlers } from './blockHandlers';
 import { CODE_INDENT } from './blockHelper';
@@ -18,14 +18,13 @@ const reMaybeSpecial = /^[#`~*+_=<>0-9-]/;
 const reLineEnding = /\r\n|\n|\r/;
 
 function document() {
-  return new Node('document', [
+  return createNode('document', [
     [1, 1],
     [0, 0]
-  ]) as BlockNode;
+  ]);
 }
 
 interface Options {
-  time: boolean;
   smart: boolean;
 }
 
@@ -51,7 +50,7 @@ export class Parser {
   private options: Options;
 
   constructor(options?: Options) {
-    this.options = Object.assign({ time: false, smart: false }, options);
+    this.options = Object.assign({ smart: false }, options);
     this.doc = document();
     this.tip = this.doc;
     this.oldtip = this.doc;
@@ -155,11 +154,11 @@ export class Parser {
       this.finalize(this.tip, this.lineNumber - 1);
     }
 
-    const column_number = offset + 1; // offset 0 = column 1
-    const newBlock = new Node(tag, [
-      [this.lineNumber, column_number],
+    const columnNumber = offset + 1; // offset 0 = column 1
+    const newBlock = createNode(tag, [
+      [this.lineNumber, columnNumber],
       [0, 0]
-    ]) as BlockNode;
+    ]);
     newBlock.stringContent = '';
     this.tip.appendChild(newBlock);
     this.tip = newBlock;
@@ -171,9 +170,9 @@ export class Parser {
     if (!this.allClosed) {
       // finalize any blocks not matched
       while (this.oldtip !== this.lastMatchedContainer) {
-        const parent = this.oldtip.parent;
+        const parent = this.oldtip.parent as BlockNode;
         this.finalize(this.oldtip, this.lineNumber - 1);
-        this.oldtip = parent;
+        this.oldtip = parent!;
       }
       this.allClosed = true;
     }
@@ -185,9 +184,9 @@ export class Parser {
   // of paragraphs for reference definitions.  Reset the tip to the
   // parent of the closed block.
   finalize(block: BlockNode, lineNumber: number) {
-    const above = block.parent;
+    const above = block.parent as BlockNode;
     block.open = false;
-    block.sourcepos[1] = [lineNumber, this.lastLineLength];
+    block.sourcepos![1] = [lineNumber, this.lastLineLength];
 
     blockHandlers[block.type].finalize(this, block);
 
@@ -251,10 +250,10 @@ export class Parser {
           this.lastLineLength = ln.length;
           return;
         default:
-          throw 'continue returned illegal value, must be 0, 1, or 2';
+          throw new Error('continue returned illegal value, must be 0, 1, or 2');
       }
       if (!allMatched) {
-        container = container.parent; // back up to last matching block
+        container = container.parent as BlockNode; // back up to last matching block
         break;
       }
     }
@@ -311,7 +310,7 @@ export class Parser {
       // finalize any blocks not matched
       this.closeUnmatchedBlocks();
       if (this.blank && container.lastChild) {
-        container.lastChild.lastLineBlank = true;
+        (container.lastChild as BlockNode).lastLineBlank = true;
       }
 
       t = container.type;
@@ -324,22 +323,22 @@ export class Parser {
         this.blank &&
         !(
           t === 'blockQuote' ||
-          (t === 'codeBlock' && container.isFenced) ||
-          (t === 'item' && !container.firstChild && container.sourcepos[0][0] === this.lineNumber)
+          (isCodeBlock(container) && container.isFenced) ||
+          (t === 'item' && !container.firstChild && container.sourcepos![0][0] === this.lineNumber)
         );
 
       // propagate lastLineBlank up through parents:
-      let cont = container;
+      let cont: BlockNode | null = container;
       while (cont) {
         cont.lastLineBlank = lastLineBlank;
-        cont = cont.parent;
+        cont = cont.parent as BlockNode;
       }
 
       if (blockHandlers[t].acceptsLines) {
         this.addLine();
         // if HtmlBlock, check for end condition
         if (
-          t === 'htmlBlock' &&
+          isHtmlBlock(container) &&
           container.htmlBlockType >= 1 &&
           container.htmlBlockType <= 5 &&
           reHtmlBlockClose[container.htmlBlockType].test(this.currentLine.slice(this.offset))
@@ -367,20 +366,11 @@ export class Parser {
     this.column = 0;
     this.lastMatchedContainer = this.doc;
     this.currentLine = '';
-    if (this.options.time) {
-      console.time('preparing input');
-    }
     const lines = input.split(reLineEnding);
     let len = lines.length;
     if (input.charCodeAt(input.length - 1) === C_NEWLINE) {
       // ignore last blank line created by final newline
       len -= 1;
-    }
-    if (this.options.time) {
-      console.timeEnd('preparing input');
-    }
-    if (this.options.time) {
-      console.time('block parsing');
     }
     for (let i = 0; i < len; i++) {
       this.incorporateLine(lines[i]);
@@ -388,16 +378,8 @@ export class Parser {
     while (this.tip) {
       this.finalize(this.tip, len);
     }
-    if (this.options.time) {
-      console.timeEnd('block parsing');
-    }
-    if (this.options.time) {
-      console.time('inline parsing');
-    }
     this.processInlines(this.doc);
-    if (this.options.time) {
-      console.timeEnd('inline parsing');
-    }
+
     return this.doc;
   }
 }
