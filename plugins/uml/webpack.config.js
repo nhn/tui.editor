@@ -73,7 +73,7 @@ module.exports = (env, argv) => {
       rules: [
         {
           test: /\.js$/,
-          exclude: /(dsit|node_modules)/,
+          exclude: /(dist|node_modules)/,
           loader: 'eslint-loader',
           enforce: 'pre',
           options: {
