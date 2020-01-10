@@ -12,7 +12,6 @@ const UML_LANGUAGES = ['uml', 'plantuml'];
  * @param {Editor} editor - editor
  * @param {object} [options={}] - plugin options
  * @param {string} options.rendererURL - plant uml renderer url
- * @ignore
  */
 function umlPlugin(editor, options = {}) {
   const { rendererURL = DEFAULT_RENDERER_URL } = options;
