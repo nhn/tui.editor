@@ -1,0 +1,51 @@
+{
+  "name": "@toast-ui/editor-plugin-uml",
+  "version": "1.0.0",
+  "description": "TOAST UI Editor : UML Plugin",
+  "keywords": [
+    "nhn",
+    "toastui",
+    "editor",
+    "plugin",
+    "uml"
+  ],
+  "main": "dist/plugin.js",
+  "files": [
+    "dist/*.js"
+  ],
+  "author": "NHN. FE Development Lab",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhn/tui.editor.git",
+    "directory": "plugins/uml"
+  },
+  "scripts": {
+    "lerna:editor": "npx lerna run --scope tui-editor build",
+    "copy:editor": "cp -r ../../apps/editor/dist/ ./demo/js",
+    "serve": "npm run copy:editor && webpack-dev-server",
+    "build:cdn": "webpack --mode=production --cdn & webpack --mode=production --cdn --minify",
+    "build": "webpack --mode=production && npm run build:cdn"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-config-tui": "^3.0.0",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1",
+    "terser-webpack-plugin": "^2.3.1",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
+  },
+  "dependencies": {
+    "plantuml-encoder": "^1.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
