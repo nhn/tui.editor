@@ -1,4 +1,5 @@
 import { Parser } from './blocks';
+import { taskListItemFinalize } from './gfm/taskListItem';
 import { ListNode, BlockNode, CodeBlockNode, HtmlBlockNode } from './node';
 import {
   peek,
@@ -12,7 +13,7 @@ import {
 } from './blockHelper';
 import { unescapeString } from './common';
 
-const enum Continue {
+const enum Process {
   Go = 0,
   Stop = 1,
   Finished = 2
@@ -24,7 +25,7 @@ const enum Continue {
 // contains a `>`.  It returns 0 for matched, 1 for not matched,
 // and 2 for "we've dealt with this line completely, go to next."
 interface BlockHandler {
-  continue(parser: Parser, container: BlockNode): Continue;
+  continue(parser: Parser, container: BlockNode): Process;
   finalize(parser: Parser, block: BlockNode): void;
   canContain(type: string): boolean;
   acceptsLines: boolean;
@@ -32,7 +33,7 @@ interface BlockHandler {
 
 const document: BlockHandler = {
   continue() {
-    return Continue.Go;
+    return Process.Go;
   },
   finalize() {},
   canContain(t) {
@@ -43,7 +44,7 @@ const document: BlockHandler = {
 
 const list: BlockHandler = {
   continue() {
-    return Continue.Go;
+    return Process.Go;
   },
   finalize(_, block: ListNode) {
     let item = block.firstChild as BlockNode;
@@ -82,9 +83,9 @@ const blockQuote: BlockHandler = {
         parser.advanceOffset(1, true);
       }
     } else {
-      return Continue.Stop;
+      return Process.Stop;
     }
-    return Continue.Go;
+    return Process.Go;
   },
   finalize() {},
   canContain(t) {
@@ -98,17 +99,17 @@ const item: BlockHandler = {
     if (parser.blank) {
       if (container.firstChild === null) {
         // Blank line after empty list item
-        return Continue.Stop;
+        return Process.Stop;
       }
       parser.advanceNextNonspace();
     } else if (parser.indent >= container.listData!.markerOffset + container.listData!.padding) {
       parser.advanceOffset(container.listData!.markerOffset + container.listData!.padding, true);
     } else {
-      return Continue.Stop;
+      return Process.Stop;
     }
-    return Continue.Go;
+    return Process.Go;
   },
-  finalize() {},
+  finalize: taskListItemFinalize,
   canContain(t) {
     return t !== 'item';
   },
@@ -118,7 +119,7 @@ const item: BlockHandler = {
 const heading: BlockHandler = {
   continue() {
     // a heading can never container > 1 line, so fail to match:
-    return Continue.Stop;
+    return Process.Stop;
   },
   finalize() {},
   canContain() {
@@ -130,7 +131,7 @@ const heading: BlockHandler = {
 const thematicBreak: BlockHandler = {
   continue() {
     // a thematic break can never container > 1 line, so fail to match:
-    return Continue.Stop;
+    return Process.Stop;
   },
   finalize() {},
   canContain() {
@@ -152,7 +153,7 @@ const codeBlock: BlockHandler = {
       if (match && match[0].length >= container.fenceLength) {
         // closing fence - we're at end of line, so we can return
         parser.finalize(container as BlockNode, parser.lineNumber);
-        return Continue.Finished;
+        return Process.Finished;
       }
       // skip optional spaces of fence offset
       let i = container.fenceOffset;
@@ -167,10 +168,10 @@ const codeBlock: BlockHandler = {
       } else if (parser.blank) {
         parser.advanceNextNonspace();
       } else {
-        return Continue.Stop;
+        return Process.Stop;
       }
     }
-    return Continue.Go;
+    return Process.Go;
   },
   finalize(_, block: CodeBlockNode) {
     if (block.stringContent === null) {
@@ -200,8 +201,8 @@ const codeBlock: BlockHandler = {
 const htmlBlock: BlockHandler = {
   continue(parser, container: HtmlBlockNode) {
     return parser.blank && (container.htmlBlockType === 6 || container.htmlBlockType === 7)
-      ? Continue.Stop
-      : Continue.Go;
+      ? Process.Stop
+      : Process.Go;
   },
   finalize(_, block) {
     block.literal = block.stringContent?.replace(/(\n *)+$/, '') || null;
@@ -215,7 +216,7 @@ const htmlBlock: BlockHandler = {
 
 const paragraph: BlockHandler = {
   continue(parser) {
-    return parser.blank ? Continue.Stop : Continue.Go;
+    return parser.blank ? Process.Stop : Process.Go;
   },
   finalize(parser, block) {
     if (block.stringContent === null) {

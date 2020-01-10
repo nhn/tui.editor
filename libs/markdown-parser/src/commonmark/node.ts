@@ -146,16 +146,6 @@ export class Node {
   }
 }
 
-export type ListNodeData = {
-  type: 'ordered' | 'bullet';
-  tight: boolean;
-  start: number;
-  bulletChar: string;
-  delimiter: string;
-  markerOffset: number;
-  padding: number;
-};
-
 export class BlockNode extends Node {
   public type: BlockNodeType;
 
@@ -171,6 +161,18 @@ export class BlockNode extends Node {
     this.type = nodeType;
   }
 }
+
+export type ListNodeData = {
+  type: 'ordered' | 'bullet';
+  tight: boolean;
+  start: number;
+  bulletChar: string;
+  delimiter: string;
+  markerOffset: number;
+  padding: number;
+  task: boolean;
+  checked: boolean;
+};
 
 export class ListNode extends BlockNode {
   public listData: ListNodeData | null = null;
