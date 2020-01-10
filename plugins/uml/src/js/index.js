@@ -43,9 +43,9 @@ function umlPlugin(editor, options = {}) {
       codeBlockLanguages.push(umlLanguage);
     }
 
-    const Editor = Object.getPrototypeOf(editor).constructor;
+    const { codeBlockManager } = Object.getPrototypeOf(editor).constructor;
 
-    Editor.codeBlockManager.setReplacer(umlLanguage, plantUMLReplacer);
+    codeBlockManager.setReplacer(umlLanguage, plantUMLReplacer);
   });
 }
 
