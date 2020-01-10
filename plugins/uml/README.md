@@ -58,7 +58,7 @@ or
 const umlPlugin = require('@toast-ui/editor-plugin-uml');
 ```
 
-### Create instance
+### Create Instance
 
 #### Basic
 
@@ -80,7 +80,7 @@ import umlPlugin from '@toast-ui/editor-plugin-uml';
 
 const instance = new Viewer({
   // ...
-  plugins: [umlPlugin
+  plugins: [umlPlugin]
 });
 ```
 
@@ -105,7 +105,7 @@ const instance = Editor.factory({
 <script src="https://uicdn.toast.com/tui-editor/latest/toastui-editor-plugin-uml.min.js"></script>
 ```
 
-### Create instance
+### Create Instance
 
 ```js
 const Editor = tui.Editor;
