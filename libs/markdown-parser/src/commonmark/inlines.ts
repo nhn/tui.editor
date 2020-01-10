@@ -58,7 +58,7 @@ const reLinkLabel = /^\[(?:[^\\\[\]]|\\.){0,1000}\]/;
 const reMain = /^[^\n`\[\]\\!<&*_'"]+/m;
 
 const text = function(s: string, sourcepos?: SourcePos) {
-  const node = new Node('text', sourcepos);
+  const node = createNode('text', sourcepos);
   node.literal = s;
   return node;
 };
@@ -212,7 +212,7 @@ export class InlineParser {
 
     if (this.peek() === C_NEWLINE) {
       this.pos += 1;
-      node = new Node('linebreak', this.sourcepos(this.pos - 1, this.pos));
+      node = createNode('linebreak', this.sourcepos(this.pos - 1, this.pos));
       block.appendChild(node);
       this.nextLine();
     } else if (reEscapable.test(subj.charAt(this.pos))) {
@@ -644,7 +644,6 @@ export class InlineParser {
     const isImage = opener.image;
 
     // Check to see if we have a link/image
-
     const savepos = this.pos;
 
     // Inline link?
@@ -821,13 +820,13 @@ export class InlineParser {
       lastc.sourcepos![1][1] -= finalSpaceLen;
 
       block.appendChild(
-        new Node(
+        createNode(
           hardbreak ? 'linebreak' : 'softbreak',
           this.sourcepos(this.pos - finalSpaceLen, this.pos)
         )
       );
     } else {
-      block.appendChild(new Node('softbreak', this.sourcepos(this.pos, this.pos)));
+      block.appendChild(createNode('softbreak', this.sourcepos(this.pos, this.pos)));
     }
     this.nextLine();
     this.match(reInitialSpace); // gobble leading spaces in next line

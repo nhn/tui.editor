@@ -1,6 +1,7 @@
-import { Node, ListNode, LinkNode, CodeBlockNode } from '../node';
+import { Node, ListNode, LinkNode, CodeBlockNode, HeadingNode } from '../node';
 import { Renderer } from './renderer';
 import { escapeXml } from '../common';
+import { taskListItemRender } from '../gfm/taskListItem';
 
 const reUnsafeProtocol = /^javascript:|vbscript:|file:|data:/i;
 const reSafeDataProtocol = /^data:image\/(?:png|gif|jpeg|webp)/i;
@@ -16,7 +17,7 @@ interface Options {
 }
 
 type AttrPair = [string, string];
-type AttrPairs = AttrPair[];
+export type AttrPairs = AttrPair[];
 
 export class HtmlRenderer extends Renderer {
   private options: Options;
@@ -93,7 +94,7 @@ export class HtmlRenderer extends Renderer {
     const grandparent = node.parent?.parent;
     const attrs = this.attrs(node);
     if (grandparent && grandparent.type === 'list') {
-      if ((grandparent as ListNode).listData.tight) {
+      if ((grandparent as ListNode).listData!.tight) {
         return;
       }
     }
@@ -106,7 +107,7 @@ export class HtmlRenderer extends Renderer {
     }
   }
 
-  heading(node: Node, entering: boolean) {
+  heading(node: HeadingNode, entering: boolean) {
     const tagname = `h${node.level}`;
     const attrs = this.attrs(node);
     if (entering) {
@@ -160,11 +161,11 @@ export class HtmlRenderer extends Renderer {
   }
 
   list(node: ListNode, entering: boolean) {
-    const tagname = node.listData.type === 'bullet' ? 'ul' : 'ol';
+    const tagname = node.listData!.type === 'bullet' ? 'ul' : 'ol';
     const attrs = this.attrs(node);
 
     if (entering) {
-      const { start } = node.listData;
+      const { start } = node.listData!;
       if (tagname === 'ol' && start !== null && start !== 1) {
         attrs.push(['start', start.toString()]);
       }
@@ -178,10 +179,11 @@ export class HtmlRenderer extends Renderer {
     }
   }
 
-  item(node: Node, entering: boolean) {
+  item(node: ListNode, entering: boolean) {
     const attrs = this.attrs(node);
     if (entering) {
       this.tag('li', attrs);
+      taskListItemRender(this, node);
     } else {
       this.tag('/li');
       this.cr();

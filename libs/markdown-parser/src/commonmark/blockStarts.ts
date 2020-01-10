@@ -60,7 +60,10 @@ function parseListMarker(parser: Parser, container: ListNode): ListNodeData | nu
     start: 0,
     delimiter: '',
     padding: 0,
-    markerOffset: parser.indent
+    markerOffset: parser.indent,
+    // GFM: Task List Item
+    task: false,
+    checked: false
   };
 
   if (parser.indent >= 4) {
@@ -267,6 +270,7 @@ const listItem: BlockStart = (parser, container) => {
     // add the list item
     currNode = parser.addChild('item', parser.nextNonspace) as ListNode;
     currNode.listData = data;
+
     return Matched.Container;
   }
   return Matched.None;
