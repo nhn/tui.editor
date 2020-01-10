@@ -73,7 +73,7 @@ module.exports = (env, argv) => {
       rules: [
         {
           test: /\.js$/,
-          exclude: /(node_modules)/,
+          exclude: /node_modules/,
           loader: 'eslint-loader',
           enforce: 'pre',
           options: {
@@ -82,7 +82,7 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.js$/,
-          exclude: /(node_modules)/,
+          exclude: /node_modules/,
           loader: 'babel-loader'
         }
       ]
