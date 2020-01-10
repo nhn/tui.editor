@@ -13,7 +13,7 @@ const UML_LANGUAGES = ['uml', 'plantuml'];
  * @param {object} [options={}] - plugin options
  * @param {string} options.rendererURL - plant uml renderer url
  */
-function umlPlugin(editor, options = {}) {
+export default function umlPlugin(editor, options = {}) {
   const { rendererURL = DEFAULT_RENDERER_URL } = options;
 
   /**
@@ -48,5 +48,3 @@ function umlPlugin(editor, options = {}) {
     codeBlockManager.setReplacer(umlLanguage, plantUMLReplacer);
   });
 }
-
-module.exports = umlPlugin;

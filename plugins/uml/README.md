@@ -44,11 +44,27 @@ $ npm install @toast-ui/editor-plugin-uml
 
 ### Import Plugin
 
+#### ES Modules
+
+```js
+import umlPlugin from '@toast-ui/editor-plugin-uml';
+```
+
+or
+
+#### CommonJS
+
+```js
+const umlPlugin = require('@toast-ui/editor-plugin-uml');
+```
+
+### Create instance
+
 #### Basic
 
 ```js
 import Editor from 'tui-editor';
-import { umlPlugin } from '@toast-ui/editor-plugin-uml';
+import umlPlugin from '@toast-ui/editor-plugin-uml';
 
 const instance = new Editor({
   // ...
@@ -60,11 +76,11 @@ const instance = new Editor({
 
 ```js
 import Viewer from 'tui-editor/viewer';
-import { umlPlugin } from '@toast-ui/editor-plugin-uml';
+import umlPlugin from '@toast-ui/editor-plugin-uml';
 
 const instance = new Viewer({
   // ...
-  plugins: [umlPlugin]
+  plugins: [umlPlugin
 });
 ```
 
@@ -72,7 +88,7 @@ or
 
 ```js
 import Editor from 'tui-editor';
-import { umlPlugin } from '@toast-ui/editor-plugin-uml';
+import umlPlugin from '@toast-ui/editor-plugin-uml';
 
 const instance = Editor.factory({
   // ...
@@ -89,7 +105,7 @@ const instance = Editor.factory({
 <script src="https://uicdn.toast.com/tui-editor/latest/toastui-editor-plugin-uml.min.js"></script>
 ```
 
-### Create Instance
+### Create instance
 
 ```js
 const Editor = tui.Editor;

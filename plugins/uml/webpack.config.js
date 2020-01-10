@@ -12,6 +12,7 @@ function getOutputConfig(isCDN, isMinified) {
   if (isCDN) {
     return {
       library: ['tui', 'Editor', 'plugin', 'uml'],
+      libraryExport: 'default',
       libraryTarget: 'window',
       path: path.resolve(__dirname, 'dist/cdn'),
       filename: `toastui-editor-plugin-uml${isMinified ? '.min' : ''}.js`
@@ -19,6 +20,7 @@ function getOutputConfig(isCDN, isMinified) {
   }
 
   return {
+    libraryExport: 'default',
     libraryTarget: 'commonjs2',
     path: path.resolve(__dirname, 'dist'),
     filename: 'plugin.js'
