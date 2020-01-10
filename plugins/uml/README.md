@@ -36,6 +36,8 @@
 
 ## Use npm
 
+> Note : To use the plugin, `tui-editor` must be installed.
+
 ### Install
 
 ```sh
@@ -98,6 +100,8 @@ const instance = Editor.factory({
 
 ## Use CDN
 
+> Note : To use the plugin, `tui-editor`'s cdn files(css, scripts) must be included.
+
 ### Include Files
 
 ```html
@@ -107,9 +111,31 @@ const instance = Editor.factory({
 
 ### Create Instance
 
+#### Basic
+
 ```js
 const Editor = tui.Editor;
 const instance = new Editor({
+  // ...
+  plugins: [Editor.plugin.uml]
+});
+```
+
+#### With Viewer
+
+```js
+const Viewer = tui.Editor;
+const instance = new Viewer({
+  // ...
+  plugins: [Editor.plugin.uml]
+});
+```
+
+or
+
+```js
+const Editor = tui.Editor;
+const instance = Editor.factory({
   // ...
   plugins: [Editor.plugin.uml]
 });
