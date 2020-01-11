@@ -21,9 +21,8 @@
     "directory": "plugins/uml"
   },
   "scripts": {
-    "lerna:editor": "npx lerna run --scope tui-editor build",
-    "copy:editor": "cp -r ../../apps/editor/dist/ ./demo/js",
-    "serve": "npm run copy:editor && webpack-dev-server",
+    "serve:editor": "npx lerna run --scope tui-editor serve",
+    "serve": "webpack-dev-server",
     "build:cdn": "webpack --mode=production --cdn & webpack --mode=production --cdn --minify",
     "build": "webpack --mode=production && npm run build:cdn"
   },

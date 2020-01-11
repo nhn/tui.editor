@@ -9,15 +9,15 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
     />
     <!-- Editor -->
-    <link rel="stylesheet" href="./js/tui-editor-contents.css" />
+    <link rel="stylesheet" href="http://localhost:8080/dist/tui-editor-contents.css" />
   </head>
   <body>
     <div class="code-html">
-      <div id="editor"></div>
+      <div id="viewer"></div>
     </div>
     <!-- Editor's Viewer -->
-    <script src="./js/tui-editor-Viewer-full.js"></script>
-    <!-- Plugin : uml -->
+    <script src="http://localhost:8080/dist/tui-editor-Viewer-full.js"></script>
+    <!-- Plugin -->
     <script src="../../dist/cdn/toastui-editor-plugin-uml.js"></script>
     <script class="code-js">
       var content = [
@@ -48,7 +48,7 @@
       var Viewer = tui.Editor;
 
       var instance = new Viewer({
-        el: document.querySelector('#editor'),
+        el: document.querySelector('#viewer'),
         previewStyle: 'vertical',
         height: '400px',
         initialEditType: 'markdown',
