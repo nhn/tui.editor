@@ -12,6 +12,7 @@ const C_UNDERSCORE = 95;
 const C_BACKTICK = 96;
 const C_OPEN_BRACKET = 91;
 const C_CLOSE_BRACKET = 93;
+const C_TILDE = 126;
 const C_LESSTHAN = 60;
 const C_BANG = 33;
 const C_BACKSLASH = 92;
@@ -55,7 +56,7 @@ const reSpaceAtEndOfLine = /^ *(?:\n|$)/;
 const reLinkLabel = /^\[(?:[^\\\[\]]|\\.){0,1000}\]/;
 
 // Matches a string of non-special characters.
-const reMain = /^[^\n`\[\]\\!<&*_'"]+/m;
+const reMain = /^[^\n`\[\]\\!<&*_'"~]+/m;
 
 const text = function(s: string, sourcepos?: SourcePos) {
   const node = createNode('text', sourcepos);
@@ -68,8 +69,15 @@ type Options = {
   smart: boolean;
 };
 
+type DelimiterCC =
+  | typeof C_ASTERISK
+  | typeof C_UNDERSCORE
+  | typeof C_SINGLEQUOTE
+  | typeof C_DOUBLEQUOTE
+  | typeof C_TILDE;
+
 type Delimiter = {
-  cc: number;
+  cc: DelimiterCC;
   numdelims: number;
   origdelims: number;
   node: Node;
@@ -77,7 +85,6 @@ type Delimiter = {
   next: Delimiter | null;
   canOpen: boolean;
   canClose: boolean;
-  startpos: [number, number];
 };
 
 type Bracket = {
@@ -282,7 +289,8 @@ export class InlineParser {
       }
     }
 
-    if (numdelims === 0) {
+    if (numdelims === 0 || (numdelims < 2 && cc === C_TILDE)) {
+      this.pos = startpos;
       return null;
     }
 
@@ -321,13 +329,13 @@ export class InlineParser {
   }
 
   // Handle a delimiter marker for emphasis or a quote.
-  handleDelim(cc: number, block: BlockNode) {
+  handleDelim(cc: DelimiterCC, block: BlockNode) {
     const res = this.scanDelims(cc);
     if (!res) {
       return false;
     }
     const numdelims = res.numdelims;
-    const startpos = this.pos;
+    const startpos = this.pos + 1;
     let contents: string;
 
     this.pos += numdelims;
@@ -336,8 +344,9 @@ export class InlineParser {
     } else if (cc === C_DOUBLEQUOTE) {
       contents = '\u201C';
     } else {
-      contents = this.subject.slice(startpos, this.pos);
+      contents = this.subject.slice(startpos - 1, this.pos);
     }
+
     const node = text(contents, this.sourcepos(startpos, this.pos));
     block.appendChild(node);
 
@@ -348,7 +357,6 @@ export class InlineParser {
     ) {
       this.delimiters = {
         cc,
-        startpos: this.sourcepos(startpos + 1),
         numdelims,
         origdelims: numdelims,
         node,
@@ -383,6 +391,11 @@ export class InlineParser {
     }
   }
 
+  /**
+   * Process all delimiters - emphasis, strong emphasis, strikethrough(gfm)
+   * If the smart punctuation options is true,
+   * convert single/double quotes to corresponding unicode characters.
+   **/
   processEmphasis(stackBottom: Delimiter | null) {
     let opener: Delimiter | null;
     let closer: Delimiter | null;
@@ -390,15 +403,14 @@ export class InlineParser {
     let openerInl: Node, closerInl: Node;
     let openerFound: boolean;
     let oddMatch = false;
-    type DelimiterMap = (Delimiter | null)[];
-    const openersBottom: [DelimiterMap, DelimiterMap, DelimiterMap] = [[], [], []];
+    const openersBottom = {
+      [C_UNDERSCORE]: [stackBottom, stackBottom, stackBottom],
+      [C_ASTERISK]: [stackBottom, stackBottom, stackBottom],
+      [C_SINGLEQUOTE]: [stackBottom],
+      [C_DOUBLEQUOTE]: [stackBottom],
+      [C_TILDE]: [stackBottom]
+    };
 
-    for (let i = 0; i < 3; i++) {
-      openersBottom[i][C_UNDERSCORE] = stackBottom;
-      openersBottom[i][C_ASTERISK] = stackBottom;
-      openersBottom[i][C_SINGLEQUOTE] = stackBottom;
-      openersBottom[i][C_DOUBLEQUOTE] = stackBottom;
-    }
     // find first closer above stackBottom:
     closer = this.delimiters;
     while (closer !== null && closer.previous !== stackBottom) {
@@ -407,21 +419,25 @@ export class InlineParser {
     // move forward, looking for closers, and handling each
     while (closer !== null) {
       const closercc = closer.cc;
+      const closerEmph = closercc === C_UNDERSCORE || closercc === C_ASTERISK;
       if (!closer.canClose) {
         closer = closer.next;
       } else {
         // found emphasis closer. now look back for first matching opener:
         opener = closer.previous;
         openerFound = false;
+
         while (
           opener !== null &&
           opener !== stackBottom &&
-          opener !== openersBottom[closer.origdelims % 3][closercc]
+          opener !== openersBottom[closercc][closerEmph ? closer.origdelims % 3 : 0]
         ) {
           oddMatch =
+            closerEmph &&
             (closer.canOpen || opener.canClose) &&
             closer.origdelims % 3 !== 0 &&
             (opener.origdelims + closer.origdelims) % 3 === 0;
+
           if (opener.cc === closer.cc && opener.canOpen && !oddMatch) {
             openerFound = true;
             break;
@@ -430,54 +446,66 @@ export class InlineParser {
         }
         oldCloser = closer;
 
-        if (closercc === C_ASTERISK || closercc === C_UNDERSCORE) {
+        if (closerEmph || closercc === C_TILDE) {
           if (!openerFound) {
             closer = closer.next;
           } else if (opener) {
             // (null opener check for type narrowing)
             // calculate actual number of delimiters used from closer
             const useDelims = closer.numdelims >= 2 && opener.numdelims >= 2 ? 2 : 1;
+            const emptyDelims = closerEmph ? 0 : 1;
 
             openerInl = opener.node;
             closerInl = closer.node;
 
-            // remove used delimiters from stack elts and inlines
+            // build contents for new emph element
+            const newNode = createNode(
+              closerEmph ? (useDelims === 1 ? 'emph' : 'strong') : 'strike'
+            );
+            const openerEndPos = openerInl.sourcepos![1];
+            const closerStartPos = closerInl.sourcepos![0];
+            newNode.sourcepos = [
+              [openerEndPos[0], openerEndPos[1] - useDelims + 1],
+              [closerStartPos[0], closerStartPos[1] + useDelims - 1]
+            ];
+            openerInl.sourcepos![1][1] -= useDelims;
+            closerInl.sourcepos![0][1] += useDelims;
+
+            openerInl.literal = openerInl.literal!.slice(useDelims);
+            closerInl.literal = closerInl.literal!.slice(useDelims);
             opener.numdelims -= useDelims;
             closer.numdelims -= useDelims;
-            if (openerInl.literal && closerInl.literal) {
-              openerInl.literal = openerInl.literal.slice(0, openerInl.literal.length - useDelims);
-              closerInl.literal = closerInl.literal.slice(0, closerInl.literal.length - useDelims);
-            }
 
-            // build contents for new emph element
-            const emph = createNode(useDelims === 1 ? 'emph' : 'strong');
-            emph.sourcepos = [
-              [opener.startpos[0], opener.startpos[1]],
-              [closer.startpos[0], closer.startpos[1] + useDelims - 1]
-            ];
-
+            // remove used delimiters from stack elts and inlines
             let tmp = openerInl.next;
             let next;
             while (tmp && tmp !== closerInl) {
               next = tmp.next;
               tmp.unlink();
-              emph.appendChild(tmp);
+              newNode.appendChild(tmp);
               tmp = next;
             }
 
-            openerInl.insertAfter(emph);
+            openerInl.insertAfter(newNode);
 
             // remove elts between opener and closer in delimiters stack
             this.removeDelimitersBetween(opener, closer);
 
             // if opener has 0 delims, remove it and the inline
-            if (opener.numdelims === 0) {
-              openerInl.unlink();
+            // if opener has 1 delims and character is tilde, remove delimiter only
+            if (opener.numdelims <= emptyDelims) {
+              if (opener.numdelims === 0) {
+                openerInl.unlink();
+              }
               this.removeDelimiter(opener);
             }
 
-            if (closer.numdelims === 0) {
-              closerInl.unlink();
+            // if closer has 0 delims, remove it and the inline
+            // if closer has 1 delims and character is tilde, remove delimiter only
+            if (closer.numdelims <= emptyDelims) {
+              if (closer.numdelims === 0) {
+                closerInl.unlink();
+              }
               const tempstack = closer.next;
               this.removeDelimiter(closer);
               closer = tempstack;
@@ -496,9 +524,10 @@ export class InlineParser {
           }
           closer = closer.next;
         }
+
         if (!openerFound) {
           // Set lower bound for future searches for openers:
-          openersBottom[oldCloser.origdelims % 3][closercc] = oldCloser.previous;
+          openersBottom[closercc][closerEmph ? oldCloser.origdelims % 3 : 0] = oldCloser.previous;
           if (!oldCloser.canOpen) {
             // We can remove a closer that can't be an opener,
             // once we've seen there's no matching opener:
@@ -962,6 +991,7 @@ export class InlineParser {
         break;
       case C_ASTERISK:
       case C_UNDERSCORE:
+      case C_TILDE:
         res = this.handleDelim(c, block);
         break;
       case C_SINGLEQUOTE:

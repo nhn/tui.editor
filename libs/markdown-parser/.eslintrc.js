@@ -38,6 +38,7 @@ module.exports = {
     'no-new': 0,
     'spaced-comment': 0,
     'no-lonely-if': 0,
+    'no-nested-ternary': 0,
     curly: 2,
     complexity: 0,
     '@typescript-eslint/no-non-null-assertion': 0,

@@ -16,6 +16,7 @@ export type InlineNodeType =
   | 'text'
   | 'emph'
   | 'strong'
+  | 'strike'
   | 'link'
   | 'image'
   | 'htmlInline'
@@ -36,6 +37,7 @@ export function isContainer(node: Node) {
     case 'heading':
     case 'emph':
     case 'strong':
+    case 'strike':
     case 'link':
     case 'image':
       return true;
