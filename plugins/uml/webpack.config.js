@@ -1,5 +1,5 @@
 /**
- * @fileoverview configs for plugin's bundle file
+ * @fileoverview Configs for plugin's bundle file
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 const path = require('path');
@@ -29,16 +29,7 @@ function getOutputConfig(isCDN, isMinified) {
 
 function getExternalsConfig(isProduction, isCDN) {
   if (isProduction && !isCDN) {
-    return [
-      {
-        'plantuml-encoder': {
-          commonjs: 'plantuml-encoder',
-          commonjs2: 'plantuml-encoder',
-          amd: 'plantuml-encoder',
-          root: ['plantumlEncoder']
-        }
-      }
-    ];
+    return ['plantuml-encoder'];
   }
 
   return [];
