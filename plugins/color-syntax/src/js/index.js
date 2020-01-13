@@ -14,125 +14,6 @@ const RESET_COLOR = '#181818';
 let lastScrollTop = 0;
 
 /**
- * Color syntax plugin
- * @param {editor} editor - editor
- * @ignore
- */
-function colorSyntaxPlugin(editor) {
-  const { colorSyntax = {} } = editor.options;
-  const { preset, useCustomSyntax = false } = colorSyntax;
-
-  editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => {
-    let replacement;
-
-    if (!useCustomSyntax) {
-      replacement = html;
-    } else {
-      replacement = html.replace(
-        colorSyntaxRx,
-        (matched, p1, p2) => makeHTMLColorSyntaxAndTextRange(p2, p1).result
-      );
-    }
-
-    return replacement;
-  });
-
-  editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', markdown => {
-    const findRx = useCustomSyntax ? colorHtmlCompleteRx : colorHtmlRx;
-
-    return markdown.replace(findRx, (founded, color, text) => {
-      let replacement;
-
-      if (color.match(decimalColorRx)) {
-        color = changeDecColorsToHex(color);
-      }
-
-      if (!useCustomSyntax) {
-        replacement = founded.replace(/ ?class="colour" ?/g, ' ').replace(decimalColorRx, color);
-      } else {
-        replacement = makeCustomColorSyntaxAndTextRange(text, color).result;
-      }
-
-      return replacement;
-    });
-  });
-
-  if (!editor.isViewer() && editor.getUI().name === 'default') {
-    editor.addCommand('markdown', {
-      name: 'color',
-      exec(mde, color) {
-        const cm = mde.getEditor();
-        const rangeFrom = cm.getCursor('from');
-        const rangeTo = cm.getCursor('to');
-        let replacedText;
-        let replacedFrom;
-
-        if (!color) {
-          return;
-        }
-
-        if (!useCustomSyntax) {
-          ({ result: replacedText, from: replacedFrom } = makeHTMLColorSyntaxAndTextRange(
-            cm.getSelection(),
-            color
-          ));
-          cm.replaceSelection(replacedText);
-        } else {
-          ({ result: replacedText, from: replacedFrom } = makeCustomColorSyntaxAndTextRange(
-            cm.getSelection(),
-            color
-          ));
-          cm.replaceSelection(replacedText);
-        }
-
-        cm.setSelection(
-          {
-            line: rangeFrom.line,
-            ch: rangeFrom.ch + replacedFrom
-          },
-          {
-            line: rangeTo.line,
-            ch: rangeFrom.line === rangeTo.line ? rangeTo.ch + replacedFrom : rangeTo.ch
-          }
-        );
-
-        mde.focus();
-      }
-    });
-
-    editor.addCommand('wysiwyg', {
-      name: 'color',
-      exec(wwe, color) {
-        if (!color) {
-          return;
-        }
-
-        const sq = wwe.getEditor();
-        const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
-
-        // Cache scrollTop before change text color.
-        // Because scrollTop is set 0 when focus() is called.
-        // focus() is called when change text color.
-        lastScrollTop = getScrollTopForReFocus(sq);
-
-        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-          tableSelectionManager.styleToSelectedCells(setStyleColor, color);
-
-          const range = sq.getSelection();
-
-          range.collapse(true);
-          sq.setSelection(range);
-        } else {
-          setStyleColor(sq, color);
-        }
-      }
-    });
-
-    initUI(editor, preset);
-  }
-}
-
-/**
  * Set style color
  * @param {SquireExt} sq - squire ext instance
  * @param {string} color - color sting value
@@ -365,4 +246,120 @@ function addDoubleZeroPad(numberStr) {
   return padded.substr(padded.length - 2);
 }
 
-export default colorSyntaxPlugin;
+/**
+ * Color syntax plugin
+ * @param {editor} editor - editor
+ */
+export default function colorSyntaxPlugin(editor) {
+  const { colorSyntax = {} } = editor.options;
+  const { preset, useCustomSyntax = false } = colorSyntax;
+
+  editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => {
+    let replacement;
+
+    if (!useCustomSyntax) {
+      replacement = html;
+    } else {
+      replacement = html.replace(
+        colorSyntaxRx,
+        (matched, p1, p2) => makeHTMLColorSyntaxAndTextRange(p2, p1).result
+      );
+    }
+
+    return replacement;
+  });
+
+  editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', markdown => {
+    const findRx = useCustomSyntax ? colorHtmlCompleteRx : colorHtmlRx;
+
+    return markdown.replace(findRx, (founded, color, text) => {
+      let replacement;
+
+      if (color.match(decimalColorRx)) {
+        color = changeDecColorsToHex(color);
+      }
+
+      if (!useCustomSyntax) {
+        replacement = founded.replace(/ ?class="colour" ?/g, ' ').replace(decimalColorRx, color);
+      } else {
+        replacement = makeCustomColorSyntaxAndTextRange(text, color).result;
+      }
+
+      return replacement;
+    });
+  });
+
+  if (!editor.isViewer() && editor.getUI().name === 'default') {
+    editor.addCommand('markdown', {
+      name: 'color',
+      exec(mde, color) {
+        const cm = mde.getEditor();
+        const rangeFrom = cm.getCursor('from');
+        const rangeTo = cm.getCursor('to');
+        let replacedText;
+        let replacedFrom;
+
+        if (!color) {
+          return;
+        }
+
+        if (!useCustomSyntax) {
+          ({ result: replacedText, from: replacedFrom } = makeHTMLColorSyntaxAndTextRange(
+            cm.getSelection(),
+            color
+          ));
+          cm.replaceSelection(replacedText);
+        } else {
+          ({ result: replacedText, from: replacedFrom } = makeCustomColorSyntaxAndTextRange(
+            cm.getSelection(),
+            color
+          ));
+          cm.replaceSelection(replacedText);
+        }
+
+        cm.setSelection(
+          {
+            line: rangeFrom.line,
+            ch: rangeFrom.ch + replacedFrom
+          },
+          {
+            line: rangeTo.line,
+            ch: rangeFrom.line === rangeTo.line ? rangeTo.ch + replacedFrom : rangeTo.ch
+          }
+        );
+
+        mde.focus();
+      }
+    });
+
+    editor.addCommand('wysiwyg', {
+      name: 'color',
+      exec(wwe, color) {
+        if (!color) {
+          return;
+        }
+
+        const sq = wwe.getEditor();
+        const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+
+        // Cache scrollTop before change text color.
+        // Because scrollTop is set 0 when focus() is called.
+        // focus() is called when change text color.
+        lastScrollTop = getScrollTopForReFocus(sq);
+
+        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+          tableSelectionManager.styleToSelectedCells(setStyleColor, color);
+
+          const range = sq.getSelection();
+
+          range.collapse(true);
+          sq.setSelection(range);
+        } else {
+          setStyleColor(sq, color);
+        }
+      }
+    });
+
+    initUI(editor, preset);
+  }
+}
