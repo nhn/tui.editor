@@ -4,7 +4,7 @@
 
 ### Build
 
-> Note: The bundle files under the `cdn` folder include all dependencies.
+> Note : The bundle files under the `cdn` folder include all dependencies.
 
 ```
 - dist/
