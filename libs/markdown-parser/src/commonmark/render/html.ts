@@ -90,6 +90,10 @@ export class HtmlRenderer extends Renderer {
     this.tag(entering ? 'strong' : '/strong');
   }
 
+  strike(_: Node, entering: boolean) {
+    this.tag(entering ? 'del' : '/del');
+  }
+
   paragraph(node: Node, entering: boolean) {
     const grandparent = node.parent?.parent;
     const attrs = this.attrs(node);
