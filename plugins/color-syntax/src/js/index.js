@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements Color Syntax Plugin
+ * @fileoverview Implements color syntax plugin
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import ColorPicker from 'tui-color-picker';
@@ -14,7 +14,7 @@ const RESET_COLOR = '#181818';
 let lastScrollTop = 0;
 
 /**
- * color syntax plugin
+ * Color syntax plugin
  * @param {editor} editor - editor
  * @ignore
  */
@@ -116,14 +116,14 @@ function colorSyntaxPlugin(editor) {
         lastScrollTop = getScrollTopForReFocus(sq);
 
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-          tableSelectionManager.styleToSelectedCells(styleColor, color);
+          tableSelectionManager.styleToSelectedCells(setStyleColor, color);
 
           const range = sq.getSelection();
 
           range.collapse(true);
           sq.setSelection(range);
         } else {
-          styleColor(sq, color);
+          setStyleColor(sq, color);
         }
       }
     });
@@ -133,12 +133,12 @@ function colorSyntaxPlugin(editor) {
 }
 
 /**
- * style color
+ * Set style color
  * @param {SquireExt} sq - squire ext instance
  * @param {string} color - color sting value
  * @ignore
  */
-function styleColor(sq, color) {
+function setStyleColor(sq, color) {
   if (!sq.hasFormat('PRE')) {
     if (color === RESET_COLOR) {
       sq.changeFormat(null, {
@@ -164,6 +164,7 @@ function getScrollTopForReFocus(sq) {
  * Create button element for applying color
  * @param {string} text - button's text
  * @returns {HTMLElement} button element
+ * @ignore
  */
 function createApplyButton(text) {
   const button = document.createElement('button');
@@ -284,7 +285,7 @@ function initUI(editor, preset) {
 }
 
 /**
- * make custom color syntax
+ * Make custom color syntax
  * @param {string} text - Text content
  * @param {string} color - Color value
  * @returns {object} - wrapped text and range(from, to)
@@ -306,7 +307,7 @@ function makeHTMLColorSyntaxAndTextRange(text, color) {
 }
 
 /**
- * wrap text with pre & post and return with text range
+ * Wrap text with pre & post and return with text range
  * @param {string} pre - text pre
  * @param {string} text - text
  * @param {string} post - text post
@@ -338,7 +339,7 @@ function changeDecColorsToHex(color) {
 }
 
 /**
- * change individual dec color value to hex color
+ * Change individual dec color value to hex color
  * @param {string} color - individual color value
  * @returns {string} - zero padded color string
  * @ignore
@@ -347,18 +348,18 @@ function changeDecColorToHex(color) {
   let hexColor = parseInt(color, 10);
 
   hexColor = hexColor.toString(16);
-  hexColor = doubleZeroPad(hexColor);
+  hexColor = addDoubleZeroPad(hexColor);
 
   return hexColor;
 }
 
 /**
- * leading 2 zeros number string
+ * Add leading 2 zeros number string
  * @param {string} numberStr - number string
  * @returns {string}
  * @ignore
  */
-function doubleZeroPad(numberStr) {
+function addDoubleZeroPad(numberStr) {
   const padded = `00${numberStr}`;
 
   return padded.substr(padded.length - 2);
