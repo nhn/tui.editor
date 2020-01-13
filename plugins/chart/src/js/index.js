@@ -1,14 +1,11 @@
 /**
- * @fileoverview tsv, csv format chart plugin
- * consumes tab separated values and make data/options for tui chart
+ * @fileoverview Implements tsv, csv format chart plugin
+ * consumes tab separated values and make data/options for tui-chart
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**
  * @example
- * tsv, csv format chart plugin
- * consumes tab separated values and make data/options for tui-chart
- *
  * ```chart
  * \tcat1\tcat2           => tsv, csv format chart data
  * jan\t21\t23
@@ -36,7 +33,6 @@ import inArray from 'tui-code-snippet/array/inArray';
 import extend from 'tui-code-snippet/object/extend';
 
 import csv from './csv';
-import { trimKeepingTabs, isNumeric } from './utils';
 
 const LANG = 'chart';
 
@@ -60,8 +56,28 @@ const DEFAULT_CHART_OPTIONS = {
 };
 
 /**
- * parse data and options for tui.chart
- * data format can be csv, tsv
+ * Trim whitespace and newlines at head/tail
+ * it should not trim \t in tsv
+ * @param {string} code - code to trim
+ * @returns {string} - trimmed code
+ * @ignore
+ */
+function trimKeepingTabs(code) {
+  return code.replace(/(^(\s*[\n\r])+)|([\n\r]+\s*$)/g, '');
+}
+
+/**
+ * Test given string is numeric
+ * @param {string} str - string to be tested
+ * @returns {boolean} - true for numeric string
+ * @ignore
+ */
+function isNumeric(str) {
+  return !isNaN(str) && isFinite(str);
+}
+
+/**
+ * Parse data and options for tui-chart data format can be csv, tsv
  * options format is colon separated keys & values
  * @param {string} code - plain text format data & options
  * @param {Function} callback - callback which provides json format data & options
@@ -87,6 +103,7 @@ function parseCode2DataAndOptions(code, callback) {
     };
     const fail = () => callback(null);
 
+    // @TODO change to ajax module of tui-code-snippet
     $.get(url)
       .done(success)
       .fail(fail);
@@ -98,7 +115,7 @@ function parseCode2DataAndOptions(code, callback) {
 }
 
 /**
- * parse codes to chart data & options Object
+ * Parse codes to chart data & options Object
  * @param {string} dataCode - code block containing chart data
  * @param {string} optionCode - code block containing chart options
  * @returns {Object} - tui.chart data & options
@@ -116,7 +133,7 @@ function _parseCode2DataAndOptions(dataCode, optionCode) {
 }
 
 /**
- * detect delimiter the comma, tab, regex
+ * Detect delimiter the comma, tab, regex
  * @param {string} code - code to detect delimiter
  * @returns {string|RegExp} - detected delimiter
  * @ignore
@@ -141,7 +158,7 @@ function detectDelimiter(code) {
 }
 
 /**
- * calculate delta(sum of length difference of rows) values of given DSV
+ * Calculate delta(sum of length difference of rows) values of given DSV
  * @param {string} code - code to be test
  * @param {string|RegExp} delimiter - delimiter to test
  * @returns {number} delta value for code
@@ -182,7 +199,7 @@ function calcDSVDelta(code, delimiter) {
 }
 
 /**
- * parse csv, tsv to chart data
+ * Parse csv, tsv to chart data
  * @param {string} code - data code
  * @param {string|RegExp} delimiter - delimiter
  * @returns {Object} - tui.chart data
@@ -275,7 +292,7 @@ function getLineKeys(keyString, reservedKeys) {
 }
 
 /**
- * parse option code
+ * Parse option code
  * @param {string} optionCode - option code
  * @returns {Object} - tui.chart option string
  * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
@@ -356,7 +373,7 @@ function getChartDimension(chartOptions, pluginOptions, chartContainer) {
 }
 
 /**
- * set default options
+ * Set default options
  * @param {Object} chartOptions - tui.chart options
  * @param {Object} pluginOptions - plugin options
  * @param {HTMLElement} chartContainer - chart container
@@ -395,7 +412,7 @@ function setDefaultOptions(chartOptions, pluginOptions, chartContainer) {
 }
 
 /**
- * replace html from chart data
+ * Replace html from chart data
  * @param {string} codeBlockChartDataAndOptions - chart data text
  * @param {Object} pluginOptions - chart plugin options
  * @returns {string} - rendered html
@@ -436,7 +453,7 @@ function chartReplacer(codeBlockChartDataAndOptions, pluginOptions) {
 }
 
 /**
- * reduce 2D array to TSV rows
+ * Reduce 2D array to TSV rows
  * @param {Array.<Array.<string>>} arr - 2d array
  * @returns {Array.<string>} - TSV row array
  * @ignore
@@ -462,7 +479,7 @@ function _reduceToTSV(arr) {
 }
 
 /**
- * override WwCodeBlockManager to enclose pasting data strings from wysiwyg in quotes
+ * Override WwCodeBlockManager to enclose pasting data strings from wysiwyg in quotes
  * @param {Editor} editor - editor
  * @ignore
  */
@@ -504,7 +521,7 @@ function _setWwCodeBlockManagerForChart(editor) {
 }
 
 /**
- * determine the event is from codeblock in markdown/codeblock editor
+ * Determine the event is from codeblock in markdown/codeblock editor
  * @param {CodeMirror} cm - markdown codemirror editor
  * @param {string} source - event source
  * @param {Object} eventData - event data
@@ -525,7 +542,7 @@ function _isFromCodeBlockInCodeMirror(cm, source, eventData) {
 }
 
 /**
- * enclose pasting data strings from markdown in quotes
+ * Enclose pasting data strings from markdown in quotes
  * wysiwyg event should be treated separately.
  * because pasteBefore event from wysiwyg has been already processed table data to string,
  * on the other hand we need a table element
@@ -551,7 +568,7 @@ function _onMDPasteBefore(cm, { source, data: eventData }) {
 }
 
 /**
- * chart plugin
+ * Chart plugin
  * @param {Editor} editor - editor
  * @param {Object} options - chart options
  * @param {number} [options.minWidth=0] - minimum width

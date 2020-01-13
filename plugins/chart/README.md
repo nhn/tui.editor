@@ -4,7 +4,7 @@
 
 ### Build
 
-> Note: The bundle files under the `cdn` folder include all dependencies.
+> Note : The bundle files under the `cdn` folder include all dependencies.
 
 ```
 - dist/
@@ -46,9 +46,13 @@ $ npm install @toast-ui/editor-plugin-chart
 
 ### Import Plugin
 
+> Note : Along with the plugin, the plugin's dependency style must be imported.
+
 #### ES Modules
 
 ```js
+import 'tui-chart/dist/tui-chart.css';
+
 import chartPlugin from '@toast-ui/editor-plugin-chart';
 ```
 
@@ -57,6 +61,8 @@ or
 #### CommonJS
 
 ```js
+require('tui-chart/dist/tui-chart.css');
+
 const chartPlugin = require('@toast-ui/editor-plugin-chart');
 ```
 
@@ -65,6 +71,8 @@ const chartPlugin = require('@toast-ui/editor-plugin-chart');
 #### Basic
 
 ```js
+// ...
+
 import Editor from 'tui-editor';
 import chartPlugin from '@toast-ui/editor-plugin-chart';
 
@@ -77,6 +85,8 @@ const instance = new Editor({
 #### With Viewer
 
 ```js
+// ...
+
 import Viewer from 'tui-editor/viewer';
 import chartPlugin from '@toast-ui/editor-plugin-chart';
 
@@ -89,6 +99,8 @@ const instance = new Viewer({
 or
 
 ```js
+// ...
+
 import Editor from 'tui-editor';
 import chartPlugin from '@toast-ui/editor-plugin-chart';
 
@@ -100,7 +112,7 @@ const instance = Editor.factory({
 
 ## Use CDN
 
-> Note : To use the plugin, `tui-editor`'s cdn files(css, scripts) must be included.
+> Note : To use the plugin, `tui-editor`'s CDN files(css, scripts) must be included.
 
 ### Include Files
 

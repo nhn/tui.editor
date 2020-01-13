@@ -1,5 +1,5 @@
 /**
- * @fileoverview configs for plugin's bundle file
+ * @fileoverview Configs for plugin's bundle file
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 const path = require('path');
@@ -29,22 +29,7 @@ function getOutputConfig(isCDN, isMinified) {
 
 function getExternalsConfig(isProduction, isCDN) {
   if (isProduction && !isCDN) {
-    return [
-      {
-        jquery: {
-          commonjs: 'jquery',
-          commonjs2: 'jquery',
-          amd: 'jquery',
-          root: ['$']
-        },
-        'tui-chart/dist/tui-chart-polyfill': {
-          commonjs: 'tui-chart',
-          commonjs2: 'tui-chart',
-          amd: 'tui-chart',
-          root: ['tui', 'chart']
-        }
-      }
-    ];
+    return ['jquery', 'tui-chart/dist/tui-chart-polyfill'];
   }
 
   return [];
