@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements UML plugin
+ * @fileoverview Implements uml plugin
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import plantumlEncoder from 'plantuml-encoder';
@@ -8,7 +8,7 @@ const DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';
 const UML_LANGUAGES = ['uml', 'plantuml'];
 
 /**
- * plant uml plugin
+ * Plant uml plugin
  * @param {Editor} editor - editor
  * @param {object} [options={}] - plugin options
  * @param {string} options.rendererURL - plant uml renderer url

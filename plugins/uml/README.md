@@ -4,7 +4,7 @@
 
 ### Build
 
-> Note: The bundle files under the `cdn` folder include all dependencies.
+> Note : The bundle files under the `cdn` folder include all dependencies.
 
 ```
 - dist/
@@ -100,7 +100,7 @@ const instance = Editor.factory({
 
 ## Use CDN
 
-> Note : To use the plugin, `tui-editor`'s cdn files(css, scripts) must be included.
+> Note : To use the plugin, `tui-editor`'s CDN files(css, scripts) must be included.
 
 ### Include Files
 
