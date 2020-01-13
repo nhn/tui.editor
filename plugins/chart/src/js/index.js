@@ -577,9 +577,8 @@ function _onMDPasteBefore(cm, { source, data: eventData }) {
  * @param {number} [options.maxHeight=Infinity] - maximum height
  * @param {number|string} [options.width='auto'] - default height
  * @param {number|string} [options.height='auto'] - default height
- * @ignore
  */
-function chartPlugin(editor, options = {}) {
+export default function chartPlugin(editor, options = {}) {
   const optionLanguages = editor.options.codeBlockLanguages;
 
   if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
@@ -607,5 +606,3 @@ function chartPlugin(editor, options = {}) {
     editor.eventManager.listen('pasteBefore', ev => _onMDPasteBefore(editor.mdEditor.cm, ev));
   }
 }
-
-export default chartPlugin;
