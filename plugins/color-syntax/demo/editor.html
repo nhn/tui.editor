@@ -4,14 +4,22 @@
     <meta charset="UTF-8" />
     <title>Editor</title>
     <!-- Editor's Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
     />
     <!-- Editor -->
     <link rel="stylesheet" href="http://localhost:8080/dist/tui-editor.css" />
     <link rel="stylesheet" href="http://localhost:8080/dist/tui-editor-contents.css" />
     <!-- Plugin -->
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.css" />
+    <link
+      rel="stylesheet"
+      href="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.css"
+    />
   </head>
   <body>
     <div class="code-html">
@@ -28,7 +36,7 @@
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '400px',
-        initialEditType: 'markdown',
+        initialEditType: 'wysiwyg',
         initialValue: 'Select some text and choose a color from the toolbar.',
         plugins: [Editor.plugin.colorSyntax]
       });

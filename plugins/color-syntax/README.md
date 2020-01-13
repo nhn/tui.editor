@@ -72,6 +72,7 @@ const colorSyntaxPlugin = require('@toast-ui/editor-plugin-color-syntax');
 
 ```js
 // ...
+
 import Editor from 'tui-editor';
 import colorSyntaxPlugin from '@toast-ui/editor-plugin-color-syntax';
 
@@ -89,7 +90,10 @@ const instance = new Editor({
 
 ```html
 <!-- CSS -->
-<link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css" />
+<link
+  rel="stylesheet"
+  href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css"
+/>
 <!-- Scripts -->
 <script src="https://uicdn.toast.com/tui-editor/latest/toastui-editor-plugin-color-syntax.min.js"></script>
 ```
