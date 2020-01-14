@@ -138,4 +138,11 @@ if (i18n) {
     'Cannot change part of merged cell': 'Non è possibile modificare parte di una cella unita',
     'Cannot paste row merged cells into the table header': 'Non è possibile incollare celle unite per riga nell\'intestazione della tabella'
   });
+
+  i18n.setLanguage(['nb', 'nb-NO'], {
+    'Merge cells': 'Slå sammen celler',
+    'Unmerge cells': 'Separer celler',
+    'Cannot change part of merged cell': 'Kan ikke endre deler av sammenslåtte celler',
+    'Cannot paste row merged cells into the table header': 'Kan ikke lime inn rad med sammenslåtte celler'
+  });
 }

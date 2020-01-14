@@ -40,7 +40,7 @@
   },
   "main": "dist/tui-editor-Editor.js",
   "devDependencies": {
-    "@toast-ui/release-notes": "^2.0.0",
+    "@toast-ui/release-notes": "^2.0.1",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.1.2",
     "babel-loader": "^7.1.2",
