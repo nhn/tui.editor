@@ -9,7 +9,7 @@ const pkg = require('./package.json');
 const CleanCSS = require('clean-css');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const ENTRY_MAIN = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
@@ -27,120 +27,126 @@ const ENTRY_IMAGE_DIR = './src/image';
 const isProduction = process.argv.indexOf('--mode=production') >= 0;
 const isMinified = process.argv.indexOf('--minify') >= 0;
 
-const defaultConfigs = Array(isProduction ? 5 : 1).fill(0).map(() => {
-  return {
-    mode: isProduction ? 'production' : 'development',
-    cache: false,
-    output: {
-      library: ['tui', 'Editor'],
-      libraryTarget: 'umd',
-      path: path.resolve(__dirname, 'dist'),
-      publicPath: '/dist',
-      filename: `tui-editor-[name]${isMinified ? '.min' : ''}.js`
-    },
-    module: {
-      rules: [{
-        test: /\.js$/,
-        exclude: /node_modules|dist/,
-        loader: 'eslint-loader',
-        enforce: 'pre',
-        options: {
-          configFile: './.eslintrc',
-          failOnWarning: false,
-          failOnError: false
+const defaultConfigs = Array(isProduction ? 5 : 1)
+  .fill(0)
+  .map(() => {
+    return {
+      mode: isProduction ? 'production' : 'development',
+      cache: false,
+      output: {
+        library: ['tui', 'Editor'],
+        libraryTarget: 'umd',
+        path: path.resolve(__dirname, 'dist'),
+        publicPath: '/dist',
+        filename: `tui-editor-[name]${isMinified ? '.min' : ''}.js`
+      },
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            exclude: /node_modules|dist/,
+            loader: 'eslint-loader',
+            enforce: 'pre',
+            options: {
+              configFile: './.eslintrc.js',
+              failOnWarning: false,
+              failOnError: false
+            }
+          },
+          {
+            test: /\.js$/,
+            exclude: /node_modules|dist/,
+            loader: 'babel-loader?cacheDirectory',
+            options: {
+              babelrc: true
+            }
+          }
+        ]
+      },
+      plugins: [
+        new webpack.BannerPlugin({
+          banner: [
+            pkg.name,
+            `@version ${pkg.version}`,
+            `@author ${pkg.author}`,
+            `@license ${pkg.license}`
+          ].join('\n'),
+          raw: false,
+          entryOnly: true
+        })
+      ],
+      externals: [
+        {
+          'tui-code-snippet': {
+            commonjs: 'tui-code-snippet',
+            commonjs2: 'tui-code-snippet',
+            amd: 'tui-code-snippet',
+            root: ['tui', 'util']
+          },
+          'tui-color-picker': {
+            commonjs: 'tui-color-picker',
+            commonjs2: 'tui-color-picker',
+            amd: 'tui-color-picker',
+            root: ['tui', 'colorPicker']
+          },
+          'tui-chart/dist/tui-chart-polyfill': {
+            commonjs: 'tui-chart',
+            commonjs2: 'tui-chart',
+            amd: 'tui-chart',
+            root: ['tui', 'chart']
+          },
+          jquery: {
+            commonjs: 'jquery',
+            commonjs2: 'jquery',
+            amd: 'jquery',
+            root: ['$']
+          },
+          'markdown-it': {
+            commonjs: 'markdown-it',
+            commonjs2: 'markdown-it',
+            amd: 'markdown-it',
+            root: ['markdownit']
+          },
+          'squire-rte': {
+            commonjs: 'squire-rte',
+            commonjs2: 'squire-rte',
+            amd: 'squire-rte',
+            root: ['Squire']
+          },
+          codemirror: {
+            commonjs: 'codemirror',
+            commonjs2: 'codemirror',
+            amd: 'codemirror',
+            root: ['CodeMirror']
+          },
+          'to-mark': {
+            commonjs: 'to-mark',
+            commonjs2: 'to-mark',
+            amd: 'to-mark',
+            root: ['toMark']
+          },
+          'plantuml-encoder': {
+            commonjs: 'plantuml-encoder',
+            commonjs2: 'plantuml-encoder',
+            amd: 'plantuml-encoder',
+            root: ['plantumlEncoder']
+          },
+          'highlight.js': {
+            commonjs: 'highlight.js',
+            commonjs2: 'highlight.js',
+            amd: 'highlight.js',
+            root: ['hljs']
+          }
         }
+      ],
+      optimization: {
+        minimize: false
       },
-      {
-        test: /\.js$/,
-        exclude: /node_modules|dist/,
-        loader: 'babel-loader?cacheDirectory',
-        options: {
-          babelrc: true
-        }
-      }]
-    },
-    plugins: [
-      new webpack.BannerPlugin({
-        banner: [
-          pkg.name,
-          `@version ${pkg.version}`,
-          `@author ${pkg.author}`,
-          `@license ${pkg.license}`
-        ].join('\n'),
-        raw: false,
-        entryOnly: true
-      })
-    ],
-    externals: [{
-      'tui-code-snippet': {
-        commonjs: 'tui-code-snippet',
-        commonjs2: 'tui-code-snippet',
-        amd: 'tui-code-snippet',
-        root: ['tui', 'util']
-      },
-      'tui-color-picker': {
-        commonjs: 'tui-color-picker',
-        commonjs2: 'tui-color-picker',
-        amd: 'tui-color-picker',
-        root: ['tui', 'colorPicker']
-      },
-      'tui-chart/dist/tui-chart-polyfill': {
-        commonjs: 'tui-chart',
-        commonjs2: 'tui-chart',
-        amd: 'tui-chart',
-        root: ['tui', 'chart']
-      },
-      'jquery': {
-        commonjs: 'jquery',
-        commonjs2: 'jquery',
-        amd: 'jquery',
-        root: ['$']
-      },
-      'markdown-it': {
-        commonjs: 'markdown-it',
-        commonjs2: 'markdown-it',
-        amd: 'markdown-it',
-        root: ['markdownit']
-      },
-      'squire-rte': {
-        commonjs: 'squire-rte',
-        commonjs2: 'squire-rte',
-        amd: 'squire-rte',
-        root: ['Squire']
-      },
-      'codemirror': {
-        commonjs: 'codemirror',
-        commonjs2: 'codemirror',
-        amd: 'codemirror',
-        root: ['CodeMirror']
-      },
-      'to-mark': {
-        commonjs: 'to-mark',
-        commonjs2: 'to-mark',
-        amd: 'to-mark',
-        root: ['toMark']
-      },
-      'plantuml-encoder': {
-        commonjs: 'plantuml-encoder',
-        commonjs2: 'plantuml-encoder',
-        amd: 'plantuml-encoder',
-        root: ['plantumlEncoder']
-      },
-      'highlight.js': {
-        commonjs: 'highlight.js',
-        commonjs2: 'highlight.js',
-        amd: 'highlight.js',
-        root: ['hljs']
+      performance: {
+        hints: false
       }
-    }],
-    optimization: {
-      minimize: false
-    },
-    performance: {
-      hints: false
-    }
-  };
-});
+    };
+  });
 
 function addMinifyPlugin(config) {
   config.optimization = {
@@ -156,31 +162,41 @@ function addMinifyPlugin(config) {
 }
 
 function addAnalyzerPlugin(config, type) {
-  config.plugins.push(new BundleAnalyzerPlugin({
-    analyzerMode: 'static',
-    reportFilename: `../report/webpack/stats-${pkg.version}-${type}.html`
-  }));
+  config.plugins.push(
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      reportFilename: `../report/webpack/stats-${pkg.version}-${type}.html`
+    })
+  );
 }
 
 function addCopyingAssetsPlugin(config) {
-  config.plugins.push(new CopyWebpackPlugin([{ // style
-    from: ENTRY_EDITOR_CSS,
-    transform: content => isMinified ? new CleanCSS({compatibility: '*'}).minify(content).styles : content,
-    to: `tui-editor${isMinified ? '.min' : ''}.css`
-  }, {
-    from: ENTRY_CONTENT_CSS,
-    transform: content => isMinified ? new CleanCSS({compatibility: '*'}).minify(content).styles : content,
-    to: `tui-editor-contents${isMinified ? '.min' : ''}.css`
-  }]));
+  config.plugins.push(
+    new CopyWebpackPlugin([
+      {
+        // style
+        from: ENTRY_EDITOR_CSS,
+        transform: content =>
+          isMinified ? new CleanCSS({ compatibility: '*' }).minify(content).styles : content,
+        to: `tui-editor${isMinified ? '.min' : ''}.css`
+      },
+      {
+        from: ENTRY_CONTENT_CSS,
+        transform: content =>
+          isMinified ? new CleanCSS({ compatibility: '*' }).minify(content).styles : content,
+        to: `tui-editor-contents${isMinified ? '.min' : ''}.css`
+      }
+    ])
+  );
 
   config.plugins.push(new CopyWebpackPlugin([ENTRY_IMAGE_DIR])); // image
 }
 
 function setDevelopConfig(config) {
   config.entry = {
-    'Editor': ENTRY_MAIN
+    Editor: ENTRY_MAIN
   };
-  
+
   config.devtool = 'inline-source-map';
   config.devServer = {
     inline: true,
@@ -194,8 +210,8 @@ function setDevelopConfig(config) {
 
 function setProductionConfig(config) {
   config.entry = {
-    'Editor': ENTRY_MAIN,
-    'Viewer': ENTRY_VIEWER
+    Editor: ENTRY_MAIN,
+    Viewer: ENTRY_VIEWER
   };
 
   if (isMinified) {
@@ -223,7 +239,7 @@ function setProductionConfigForViewerAll(config) {
   };
 
   config.plugins.push(new webpack.IgnorePlugin(/editor$/, /extensions/));
-  
+
   if (isMinified) {
     addMinifyPlugin(config);
     addAnalyzerPlugin(config, 'viewer-all');
@@ -232,11 +248,11 @@ function setProductionConfigForViewerAll(config) {
 
 function setProductionConfigForExtensions(config) {
   config.entry = {
-    'extChart': ENTRY_EXT_CHART,
-    'extUML': ENTRY_EXT_UML,
-    'extColorSyntax': ENTRY_EXT_COLOR_SYNTAX,
-    'extScrollSync': ENTRY_EXT_SCROLL_SYNC,
-    'extTable': ENTRY_EXT_TABLE
+    extChart: ENTRY_EXT_CHART,
+    extUML: ENTRY_EXT_UML,
+    extColorSyntax: ENTRY_EXT_COLOR_SYNTAX,
+    extScrollSync: ENTRY_EXT_SCROLL_SYNC,
+    extTable: ENTRY_EXT_TABLE
   };
 
   config.externals.push(function(context, request, callback) {
