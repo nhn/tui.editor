@@ -50,7 +50,7 @@ tui.usageStatistics = false;
 * [Getting Started](https://github.com/nhn/tui.editor/blob/master/docs/getting-started.md)
 * [Getting Started with Bower](https://github.com/nhn/tui.editor/blob/master/docs/getting-started-with-bower.md)
 * [Writing Your Own Extension](https://github.com/nhn/tui.editor/blob/master/docs/writing-your-own-extension.md)
-* [APIs](https://nhn.github.io/tui.editor/api/latest/)
+* [APIs](https://nhn.github.io/tui.editor/latest/)
 
 
 ## <img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png" height="18px" /> Standard and Extensible
