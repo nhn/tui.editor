@@ -665,7 +665,7 @@ class WwListManager {
     const newLIs = [];
 
     lines.forEach(oneLineNodes => {
-      const oneLineFirstNode = oneLineNodes[0];
+      const [oneLineFirstNode] = oneLineNodes;
       let liElement;
 
       // oneLineFirstNode was already a list item in the table

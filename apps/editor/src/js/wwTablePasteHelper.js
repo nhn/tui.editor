@@ -270,7 +270,7 @@ class WwTablePasteHelper {
     const prevText = textContent.slice(0, offset);
     const postText = textContent.slice(offset, textContent.length);
     const { childNodes: fragmentChildNodes } = fragment;
-    const firstChild = fragmentChildNodes[0];
+    const [firstChild] = fragmentChildNodes;
     const isFragmenthasOneTextNode =
       fragmentChildNodes.length === 1 && domUtils.isTextNode(firstChild);
 

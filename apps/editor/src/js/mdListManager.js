@@ -303,7 +303,7 @@ class MdListManager {
     const { length } = newListLines;
 
     if (length) {
-      const startLineNumber = newListLines[0];
+      const [startLineNumber] = newListLines;
       const endLineNumber = newListLines[length - 1];
 
       if (this._isNotBlankNotListLine(endLineNumber + 1)) {

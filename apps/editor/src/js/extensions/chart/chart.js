@@ -271,10 +271,12 @@ function parseCode2ChartOption(optionCode) {
   const optionLines = optionCode.split(REGEX_LINE_ENDING);
 
   optionLines.forEach(line => {
-    let [keyString, ...values] = line.split(OPTION_DELIMITER);
-    let value = values.join(OPTION_DELIMITER);
+    const eachLine = line.split(OPTION_DELIMITER);
+    let keyString = eachLine.shift();
+    let value = eachLine.join(OPTION_DELIMITER);
 
     keyString = keyString.trim();
+
     if (value.length === 0) {
       return;
     }
@@ -287,7 +289,7 @@ function parseCode2ChartOption(optionCode) {
 
     // parse keys
     const [...keys] = keyString.split('.');
-    const topKey = keys[0];
+    const [topKey] = keys;
 
     if (util.inArray(topKey, reservedKeys) >= 0) {
       // reserved keys for chart plugin option

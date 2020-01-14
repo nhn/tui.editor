@@ -48,7 +48,7 @@ class WwHrManager {
    * @private
    */
   _insertEmptyLineIfNeed() {
-    const editorContentBody = this.wwe.get$Body()[0];
+    const [editorContentBody] = this.wwe.get$Body();
     const { firstChild, lastChild } = editorContentBody;
 
     if (firstChild && firstChild.nodeName === 'HR') {
@@ -64,7 +64,7 @@ class WwHrManager {
    * @private
    */
   _changeHRForWysiwyg() {
-    const editorContentBody = this.wwe.get$Body()[0];
+    const [editorContentBody] = this.wwe.get$Body();
     const hrNodes = editorContentBody.querySelectorAll('hr');
 
     util.forEachArray(hrNodes, hrNode => {

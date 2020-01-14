@@ -161,7 +161,7 @@ class ImportManager {
 
     if (ev.source === 'markdown' && ev.data.text) {
       const texts = ev.data.text;
-      let text = texts[0];
+      let [text] = texts;
 
       if (texts.length === 1 && text.match(URLRegex)) {
         text = decodeURIGraceful(text);
@@ -170,7 +170,7 @@ class ImportManager {
       }
     } else if (ev.source === 'wysiwyg') {
       const container = ev.$clipboardContainer.get(0);
-      const firstChild = container.childNodes[0];
+      const [firstChild] = container.childNodes;
       const text = firstChild.innerText;
 
       if (container.childNodes.length === 1 && firstChild.tagName === 'A' && text.match(URLRegex)) {
@@ -235,17 +235,16 @@ class ImportManager {
  */
 function dataURItoBlob(dataURI) {
   const byteString = atob(dataURI.split(',')[1]);
-  const mimeString = dataURI
-    .split(',')[0]
-    .split(':')[1]
-    .split(';')[0];
+
   const ab = new ArrayBuffer(byteString.length);
   const ia = new Uint8Array(ab);
 
   for (let i = 0; i < byteString.length; i += 1) {
     ia[i] = byteString.charCodeAt(i);
   }
-  const blob = new Blob([ab], { type: mimeString });
+
+  const [mimeString] = dataURI.split(',');
+  const blob = new Blob([ab], { type: mimeString.split(':')[1].split(';')[0] });
 
   return blob;
 }

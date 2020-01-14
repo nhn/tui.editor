@@ -91,7 +91,7 @@ class ScrollSyncSplit {
   _requireScrollIntoView(event) {
     const element = event.target;
     const { top: targetTop, bottom: targetBottom } = element.getBoundingClientRect();
-    let wrapperTop, wrapperBottom, wrapperElement;
+    let wrapperElement;
 
     if (this.isScrollSynced()) {
       wrapperElement = this._contentWrapper;
@@ -102,7 +102,8 @@ class ScrollSyncSplit {
     } else {
       return;
     }
-    ({ top: wrapperTop, bottom: wrapperBottom } = wrapperElement.getBoundingClientRect());
+
+    const { top: wrapperTop, bottom: wrapperBottom } = wrapperElement.getBoundingClientRect();
 
     if (targetTop < wrapperTop) {
       wrapperElement.scrollTop = wrapperElement.scrollTop + targetTop - wrapperTop;

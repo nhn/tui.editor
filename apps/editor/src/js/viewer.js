@@ -11,8 +11,7 @@ import CommandManager from './commandManager';
 import extManager from './extManager';
 import Convertor from './convertor';
 import domUtils from './domUtils';
-import { CodeBlockManager } from './codeBlockManager';
-import codeBlockManager from './codeBlockManager';
+import codeBlockManager, { CodeBlockManager } from './codeBlockManager';
 
 const TASK_ATTR_NAME = 'data-te-task';
 const TASK_CHECKED_CLASS_NAME = 'checked';

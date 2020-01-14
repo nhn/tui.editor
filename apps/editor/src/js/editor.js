@@ -22,8 +22,7 @@ import DefaultUI from './ui/defaultUI';
 import domUtils from './domUtils';
 import WwTableManager from './wwTableManager';
 import WwTableSelectionManager from './wwTableSelectionManager';
-import { CodeBlockManager } from './codeBlockManager';
-import codeBlockManager from './codeBlockManager';
+import codeBlockManager, { CodeBlockManager } from './codeBlockManager';
 import toMarkRenderer from './toMarkRenderer';
 
 // markdown commands
