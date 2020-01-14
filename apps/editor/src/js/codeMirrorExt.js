@@ -39,20 +39,25 @@ class CodeMirrorExt {
    */
   _init(options) {
     const cmTextarea = document.createElement('textarea');
+
     this.editorContainerEl.appendChild(cmTextarea);
 
-    options = $.extend(true, {
-      lineWrapping: true,
-      theme: 'default',
-      extraKeys: {
-        'Shift-Tab': 'indentLess',
-        'Alt-Up': 'replaceLineTextToUpper',
-        'Alt-Down': 'replaceLineTextToLower'
+    options = $.extend(
+      true,
+      {
+        lineWrapping: true,
+        theme: 'default',
+        extraKeys: {
+          'Shift-Tab': 'indentLess',
+          'Alt-Up': 'replaceLineTextToUpper',
+          'Alt-Down': 'replaceLineTextToLower'
+        },
+        indentUnit: 4,
+        cursorScrollMargin: 12,
+        specialCharPlaceholder: () => document.createElement('span')
       },
-      indentUnit: 4,
-      cursorScrollMargin: 12,
-      specialCharPlaceholder: () => document.createElement('span')
-    }, options);
+      options
+    );
 
     this.cm = CodeMirror.fromTextArea(cmTextarea, options);
   }
@@ -182,7 +187,7 @@ class CodeMirrorExt {
       },
       to: {
         line: cursor.line,
-        ch: (cursor.ch + offset) + overwriteLength
+        ch: cursor.ch + offset + overwriteLength
       }
     };
 

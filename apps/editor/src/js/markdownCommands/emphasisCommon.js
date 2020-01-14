@@ -12,7 +12,7 @@
  * @ignore
  */
 const getExpandedRange = (range, expendSize) => {
-  const {start, end} = range;
+  const { start, end } = range;
   let expendRange;
 
   if (start.ch >= expendSize) {
@@ -44,7 +44,7 @@ const getExpandedRange = (range, expendSize) => {
 export const removeSyntax = (text, symbol) => {
   const symbolLength = symbol.length;
 
-  return text.substr(symbolLength, text.length - (symbolLength * 2));
+  return text.substr(symbolLength, text.length - symbolLength * 2);
 };
 
 /**
@@ -73,8 +73,9 @@ export const expandReplace = function(doc, range, expandSize, checker, replacer)
   let result = false;
 
   if (expendRange) {
-    const {from, to} = expendRange;
+    const { from, to } = expendRange;
     const expendRangeText = doc.getRange(from, to);
+
     if (checker(expendRangeText)) {
       doc.setSelection(from, to);
       doc.replaceSelection(replacer(expendRangeText), 'around');
@@ -106,7 +107,7 @@ export const replace = function(doc, text, checker, replacer) {
 };
 
 export const changeSyntax = function(doc, range, symbol, syntaxRegex, contentRegex) {
-  const {line, ch} = doc.getCursor();
+  const { line, ch } = doc.getCursor();
   const selectionStr = doc.getSelection();
   const symbolLength = symbol.length;
   const isSyntax = t => syntaxRegex.test(t);
@@ -114,10 +115,14 @@ export const changeSyntax = function(doc, range, symbol, syntaxRegex, contentReg
   // 1. expand text and check syntax => remove syntax
   // 2. check text is syntax => remove syntax
   // 3. If text does not match syntax, remove syntax inside text and then append syntax
-  if (!(expandReplace(doc, range, symbolLength, isSyntax, t => removeSyntax(t, symbol))
-      || replace(doc, selectionStr, isSyntax, t => removeSyntax(t, symbol))
-  )) {
+  if (
+    !(
+      expandReplace(doc, range, symbolLength, isSyntax, t => removeSyntax(t, symbol)) ||
+      replace(doc, selectionStr, isSyntax, t => removeSyntax(t, symbol))
+    )
+  ) {
     const removeSyntaxInsideText = selectionStr.replace(contentRegex, '$1');
+
     doc.replaceSelection(appendSyntax(removeSyntaxInsideText, symbol), 'around');
   }
 

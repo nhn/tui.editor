@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements tableRenderer
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements tableRenderer
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 
 import tableDataHandler from './tableDataHandler';
@@ -14,6 +14,7 @@ import tableDataHandler from './tableDataHandler';
  */
 function _createCellHtml(cell) {
   let attrs = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : '';
+
   attrs += cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
   attrs += cell.align ? ` align="${cell.align}"` : '';
 
@@ -31,11 +32,13 @@ function _createTheadOrTbodyHtml(trs, wrapperNodeName) {
   let html = '';
 
   if (trs.length) {
-    html = trs.map(tr => {
-      const tdHtml = tr.map(_createCellHtml).join('');
+    html = trs
+      .map(tr => {
+        const tdHtml = tr.map(_createCellHtml).join('');
 
-      return `<tr>${tdHtml}</tr>`;
-    }).join('');
+        return `<tr>${tdHtml}</tr>`;
+      })
+      .join('');
     html = `<${wrapperNodeName}>${html}</${wrapperNodeName}>`;
   }
 

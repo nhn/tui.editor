@@ -16,40 +16,40 @@
 // #811 START
 // var isSpace = require('../common/utils').isSpace;
 function isSpace(code) {
-    switch (code) {
-        case 0x09:
-        case 0x20:
-            return true;
-    }
-    return false;
+  switch (code) {
+    case 0x09:
+    case 0x20:
+      return true;
+  }
+  return false;
 }
 // #811 END
 
 module.exports = function blockquote(state, startLine, endLine, silent) {
   var adjustTab,
-      ch,
-      i,
-      initial,
-      l,
-      lastLineEmpty,
-      lines,
-      nextLine,
-      offset,
-      oldBMarks,
-      oldBSCount,
-      oldIndent,
-      oldParentType,
-      oldSCount,
-      oldTShift,
-      spaceAfterMarker,
-      terminate,
-      terminatorRules,
-      token,
-      wasOutdented,
-      oldLineMax = state.lineMax,
-      pos = state.bMarks[startLine] + state.tShift[startLine],
-      max = state.eMarks[startLine];
-  
+    ch,
+    i,
+    initial,
+    l,
+    lastLineEmpty,
+    lines,
+    nextLine,
+    offset,
+    oldBMarks,
+    oldBSCount,
+    oldIndent,
+    oldParentType,
+    oldSCount,
+    oldTShift,
+    spaceAfterMarker,
+    terminate,
+    terminatorRules,
+    token,
+    wasOutdented,
+    oldLineMax = state.lineMax,
+    pos = state.bMarks[startLine] + state.tShift[startLine],
+    max = state.eMarks[startLine];
+
   // #811 START
   var FIND_LIST_RX = /(?:-|\*|\d+\.) {1,4}(?:> {0,3})[^>]*$/;
   var sourceLines = state.src.split('\n');
@@ -57,10 +57,14 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
   // #811 END
 
   // if it's indented more than 3 spaces, it should be a code block
-  if (state.sCount[startLine] - state.blkIndent >= 4) { return false; }
+  if (state.sCount[startLine] - state.blkIndent >= 4) {
+    return false;
+  }
 
   // check the block quote marker
-  if (state.src.charCodeAt(pos++) !== 0x3E/* > */) { return false; }
+  if (state.src.charCodeAt(pos++) !== 0x3e /* > */) {
+    return false;
+  }
   // #811 START
   // check block quote in list
   if (currentLine.match(FIND_LIST_RX) /*&& !currentLine.match(/^ {0,6}>/)*/) {
@@ -70,10 +74,13 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
 
   // we know that it's going to be a valid blockquote,
   // so no point trying to find the end of it in silent mode
-  if (silent) { return true; }
+  if (silent) {
+    return true;
+  }
 
   // skip spaces after ">" and re-calculate offset
-  initial = offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]);
+  initial = offset =
+    state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]);
 
   // skip one optional space after '>'
   if (state.src.charCodeAt(pos) === 0x20 /* space */) {
@@ -104,7 +111,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
     spaceAfterMarker = false;
   }
 
-  oldBMarks = [ state.bMarks[startLine] ];
+  oldBMarks = [state.bMarks[startLine]];
   state.bMarks[startLine] = pos;
 
   while (pos < max) {
@@ -112,7 +119,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
 
     if (isSpace(ch)) {
       if (ch === 0x09) {
-        offset += 4 - (offset + state.bsCount[startLine] + (adjustTab ? 1 : 0)) % 4;
+        offset += 4 - ((offset + state.bsCount[startLine] + (adjustTab ? 1 : 0)) % 4);
       } else {
         offset++;
       }
@@ -123,15 +130,15 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
     pos++;
   }
 
-  oldBSCount = [ state.bsCount[startLine] ];
+  oldBSCount = [state.bsCount[startLine]];
   state.bsCount[startLine] = state.sCount[startLine] + 1 + (spaceAfterMarker ? 1 : 0);
 
   lastLineEmpty = pos >= max;
 
-  oldSCount = [ state.sCount[startLine] ];
+  oldSCount = [state.sCount[startLine]];
   state.sCount[startLine] = offset - initial;
 
-  oldTShift = [ state.tShift[startLine] ];
+  oldTShift = [state.tShift[startLine]];
   state.tShift[startLine] = pos - state.bMarks[startLine];
 
   terminatorRules = state.md.block.ruler.getRules('blockquote');
@@ -177,11 +184,12 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
       break;
     }
 
-    if (state.src.charCodeAt(pos++) === 0x3E/* > */ && !wasOutdented) {
+    if (state.src.charCodeAt(pos++) === 0x3e /* > */ && !wasOutdented) {
       // This line is inside the blockquote.
 
       // skip spaces after ">" and re-calculate offset
-      initial = offset = state.sCount[nextLine] + pos - (state.bMarks[nextLine] + state.tShift[nextLine]);
+      initial = offset =
+        state.sCount[nextLine] + pos - (state.bMarks[nextLine] + state.tShift[nextLine]);
 
       // skip one optional space after '>'
       if (state.src.charCodeAt(pos) === 0x20 /* space */) {
@@ -220,7 +228,7 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
 
         if (isSpace(ch)) {
           if (ch === 0x09) {
-            offset += 4 - (offset + state.bsCount[nextLine] + (adjustTab ? 1 : 0)) % 4;
+            offset += 4 - ((offset + state.bsCount[nextLine] + (adjustTab ? 1 : 0)) % 4);
           } else {
             offset++;
           }
@@ -245,7 +253,9 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
     }
 
     // Case 2: line is not inside the blockquote, and the last line was empty.
-    if (lastLineEmpty) { break; }
+    if (lastLineEmpty) {
+      break;
+    }
 
     // Case 3: another tag found.
     terminate = false;
@@ -290,13 +300,13 @@ module.exports = function blockquote(state, startLine, endLine, silent) {
   oldIndent = state.blkIndent;
   state.blkIndent = 0;
 
-  token        = state.push('blockquote_open', 'blockquote', 1);
+  token = state.push('blockquote_open', 'blockquote', 1);
   token.markup = '>';
-  token.map    = lines = [ startLine, 0 ];
+  token.map = lines = [startLine, 0];
 
   state.md.block.tokenize(state, startLine, nextLine);
 
-  token        = state.push('blockquote_close', 'blockquote', -1);
+  token = state.push('blockquote_close', 'blockquote', -1);
   token.markup = '>';
 
   state.lineMax = oldLineMax;

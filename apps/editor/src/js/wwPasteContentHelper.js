@@ -23,7 +23,10 @@ class WwPasteContentHelper {
    * @param {jQuery} $container - clipboard container
    */
   preparePaste($container) {
-    const range = this.wwe.getEditor().getSelection().cloneRange();
+    const range = this.wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
     const wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
     let firstBlockIsTaken = false;
     const $tempContainer = $('<div />');
@@ -33,6 +36,7 @@ class WwPasteContentHelper {
     this._pasteFirstAid($container);
 
     const childNodes = util.toArray($container[0].childNodes);
+
     while (childNodes.length) {
       [node] = childNodes;
       nodeName = domUtils.getNodeName(node);
@@ -65,7 +69,9 @@ class WwPasteContentHelper {
     util.forEachArray(array, node => {
       const isTextNode = node.nodeType === 3;
       /* eslint-disable max-len */
-      const isInlineNode = /^(SPAN|A|CODE|EM|I|STRONG|B|S|U|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/ig.test(node.tagName);
+      const isInlineNode = /^(SPAN|A|CODE|EM|I|STRONG|B|S|U|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/gi.test(
+        node.tagName
+      );
       const isBR = node.nodeName === 'BR';
       /* eslint-enable max-len */
 
@@ -127,6 +133,7 @@ class WwPasteContentHelper {
    */
   _preElementAid($container) {
     const wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
+
     wwCodeblockManager.modifyCodeBlockForWysiwyg($container);
   }
 
@@ -180,15 +187,13 @@ class WwPasteContentHelper {
   _removeUnnecessaryBlocks($container, blockTags) {
     $container.find(blockTags).each((index, blockElement) => {
       const $blockElement = $(blockElement);
-      const {tagName} = blockElement;
+      const { tagName } = blockElement;
       const isDivElement = tagName === 'DIV';
       const isInListItem = $blockElement.parent('li').length !== 0;
       const isInBlockquote = $blockElement.parent('blockquote').length !== 0;
       const hasBlockChildElement = $blockElement.children(blockTags).length;
 
-      if (isDivElement
-                && (isInListItem || isInBlockquote || !hasBlockChildElement)
-      ) {
+      if (isDivElement && (isInListItem || isInBlockquote || !hasBlockChildElement)) {
         return;
       }
 
@@ -238,15 +243,21 @@ class WwPasteContentHelper {
   _prepareToPasteList(nodes, rangeInfo, firstBlockIsTaken) {
     let nodeName = domUtils.getNodeName(nodes[0]);
     let node = nodes.shift();
-    const newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
+    const newFragment = this.wwe
+      .getEditor()
+      .getDocument()
+      .createDocumentFragment();
 
     // IE somethimes returns ul without li
     if (nodeName !== 'LI' && nodes.length && nodes[0].tagName === 'LI') {
       nodeName = 'LI';
 
-      node = this._makeNodeAndAppend({
-        tagName: nodeName
-      }, node);
+      node = this._makeNodeAndAppend(
+        {
+          tagName: nodeName
+        },
+        node
+      );
     }
 
     // pasting list into list, we should care indentation
@@ -259,7 +270,11 @@ class WwPasteContentHelper {
       }
     } else if (nodeName === 'LI') {
       // handle list group
-      const listGroup = this.wwe.getEditor().getDocument().createDocumentFragment();
+      const listGroup = this.wwe
+        .getEditor()
+        .getDocument()
+        .createDocumentFragment();
+
       listGroup.appendChild(node);
 
       while (nodes.length && nodes[0].tagName === 'LI') {
@@ -270,16 +285,28 @@ class WwPasteContentHelper {
       // ignore cursor if pasting data has block
       if (!firstBlockIsTaken && this.wwe.getEditor().hasFormat('LI')) {
         $(newFragment).append(this._wrapCurrentFormat(listGroup));
-      } else if (rangeInfo
-                && (rangeInfo.commonAncestorName === 'UL' || rangeInfo.commonAncestorName === 'OL')) {
-        $(newFragment).append(this._makeNodeAndAppend({
-          tagName: rangeInfo.commonAncestorName
-        }, listGroup));
+      } else if (
+        rangeInfo &&
+        (rangeInfo.commonAncestorName === 'UL' || rangeInfo.commonAncestorName === 'OL')
+      ) {
+        $(newFragment).append(
+          this._makeNodeAndAppend(
+            {
+              tagName: rangeInfo.commonAncestorName
+            },
+            listGroup
+          )
+        );
         // list from outside
       } else {
-        $(newFragment).append(this._makeNodeAndAppend({
-          tagName: 'UL'
-        }, listGroup));
+        $(newFragment).append(
+          this._makeNodeAndAppend(
+            {
+              tagName: 'UL'
+            },
+            listGroup
+          )
+        );
       }
     }
 
@@ -293,7 +320,9 @@ class WwPasteContentHelper {
    * @private
    */
   _unwrapFragmentFirstChildForPasteAsInline(node) {
-    $(node).find('br').remove();
+    $(node)
+      .find('br')
+      .remove();
 
     return node.childNodes;
   }
@@ -326,7 +355,10 @@ class WwPasteContentHelper {
   }
 
   _eachCurrentPath(iteratee) {
-    const paths = domUtils.getPath(this.wwe.getEditor().getSelection().startContainer, this.wwe.get$Body()[0]);
+    const paths = domUtils.getPath(
+      this.wwe.getEditor().getSelection().startContainer,
+      this.wwe.get$Body()[0]
+    );
 
     for (let i = paths.length - 1; i > -1; i -= 1) {
       iteratee(paths[i]);
@@ -411,9 +443,9 @@ class WwPasteContentHelper {
     const tableManager = this.wwe.componentManager.getManager('table');
 
     $container.find('table').each((index, table) => {
-      $(table).removeClass((idx, className) => (
+      $(table).removeClass((idx, className) =>
         className.replace(/.*\s*(te-content-table-\d+)\s*.*/, '$1')
-      ));
+      );
     });
 
     $container.find('table').each((index, table) => {

@@ -1,12 +1,12 @@
 /**
-* @fileoverview Implements UML extension
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements UML extension
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import plantumlEncoder from 'plantuml-encoder';
 
 import Editor from './editorProxy';
 
-const {codeBlockManager} = Editor;
+const { codeBlockManager } = Editor;
 const DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';
 const UML_LANGUAGES = ['uml', 'plantuml'];
 
@@ -18,9 +18,7 @@ const UML_LANGUAGES = ['uml', 'plantuml'];
  * @ignore
  */
 function umlExtension(editor, options = {}) {
-  const {
-    rendererURL = DEFAULT_RENDERER_URL
-  } = options;
+  const { rendererURL = DEFAULT_RENDERER_URL } = options;
 
   /**
    * render html from uml
@@ -42,7 +40,8 @@ function umlExtension(editor, options = {}) {
     return renderedHTML;
   }
 
-  const {codeBlockLanguages} = editor.options;
+  const { codeBlockLanguages } = editor.options;
+
   UML_LANGUAGES.forEach(umlLanguage => {
     if (codeBlockLanguages.indexOf(umlLanguage) < 0) {
       codeBlockLanguages.push(umlLanguage);

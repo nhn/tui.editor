@@ -11,19 +11,22 @@ import CommandManager from '../commandManager';
  * @module markdownCommands/UL
  * @ignore
  */
-const UL = CommandManager.command('markdown', /** @lends UL */{
-  name: 'UL',
-  keyMap: ['CTRL+U', 'META+U'],
-  /**
-   * Command handler
-   * @param {MarkdownEditor} mde MarkdownEditor instance
-   */
-  exec(mde) {
-    const range = mde.getCurrentRange();
-    const listManager = mde.componentManager.getManager('list');
+const UL = CommandManager.command(
+  'markdown',
+  /** @lends UL */ {
+    name: 'UL',
+    keyMap: ['CTRL+U', 'META+U'],
+    /**
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
+     */
+    exec(mde) {
+      const range = mde.getCurrentRange();
+      const listManager = mde.componentManager.getManager('list');
 
-    listManager.changeSyntax(range, 'ul');
+      listManager.changeSyntax(range, 'ul');
+    }
   }
-});
+);
 
 export default UL;

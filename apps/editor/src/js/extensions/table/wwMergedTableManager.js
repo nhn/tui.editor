@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements wysiwyg merged table manager
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements wysiwyg merged table manager
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
@@ -10,7 +10,7 @@ import tableDataHandler from './tableDataHandler';
 import tableRenderer from './tableRenderer';
 import tableRangeHandler from './tableRangeHandler';
 
-const {WwTableManager, i18n} = Editor;
+const { WwTableManager, i18n } = Editor;
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
@@ -50,7 +50,9 @@ class WwMergedTableManager extends WwTableManager {
   _createCopyTableData(tableData, startRange, endRange) {
     let copyTableData = tableData.slice(startRange.rowIndex, endRange.rowIndex + 1);
 
-    copyTableData = copyTableData.map(rowData => rowData.slice(startRange.colIndex, endRange.colIndex + 1));
+    copyTableData = copyTableData.map(rowData =>
+      rowData.slice(startRange.colIndex, endRange.colIndex + 1)
+    );
 
     this._updateCopyDataMergeWith(copyTableData, startRange);
 
@@ -63,12 +65,16 @@ class WwMergedTableManager extends WwTableManager {
    * @override
    */
   updateTableHtmlOfClipboardIfNeed($clipboardContainer) {
-    const $selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
+    const $selectedCells = this.wwe.componentManager
+      .getManager('tableSelection')
+      .getSelectedCells();
 
     if ($selectedCells.length) {
       const tableData = tableDataHandler.createTableData($($selectedCells[0]).closest('TABLE'));
-      const {start: startRange, end: endRange} =
-                  tableRangeHandler.getTableSelectionRange(tableData, $selectedCells);
+      const { start: startRange, end: endRange } = tableRangeHandler.getTableSelectionRange(
+        tableData,
+        $selectedCells
+      );
       const copyTableData = this._createCopyTableData(tableData, startRange, endRange);
       const cellIndexData = tableDataHandler.createCellIndexData(copyTableData);
       const renderData = tableDataHandler.createRenderData(copyTableData, cellIndexData);
@@ -115,10 +121,13 @@ class WwMergedTableManager extends WwTableManager {
     const tableData = tableDataHandler.createTableData($table);
     const added = tableDataHandler.addTbodyOrTheadIfNeed(tableData);
     const tableAidInformation = this.prepareToTableCellStuffing(tableData);
-    const {needTableCellStuffingAid} = tableAidInformation;
+    const { needTableCellStuffingAid } = tableAidInformation;
 
     if (needTableCellStuffingAid) {
-      tableDataHandler.stuffCellsIntoIncompleteRow(tableData, tableAidInformation.maximumCellLength);
+      tableDataHandler.stuffCellsIntoIncompleteRow(
+        tableData,
+        tableAidInformation.maximumCellLength
+      );
     }
 
     if (added || needTableCellStuffingAid) {
@@ -167,7 +176,10 @@ class WwMergedTableManager extends WwTableManager {
    */
   _hasRowMergedHeader(clipboardTableData, tableData, startCellIndex) {
     const isHeader = tableData[startCellIndex.rowIndex][startCellIndex.colIndex].nodeName === 'TH';
-    const hasHeaderMerge = any(clipboardTableData[0], cellData => (cellData.rowspan && cellData.rowspan > 1));
+    const hasHeaderMerge = any(
+      clipboardTableData[0],
+      cellData => cellData.rowspan && cellData.rowspan > 1
+    );
 
     return isHeader && hasHeaderMerge;
   }
@@ -181,8 +193,10 @@ class WwMergedTableManager extends WwTableManager {
    * @private
    */
   _isExactlyFit(clipboardTableData, targetRowCount, targetColCount) {
-    return (targetRowCount % clipboardTableData.length === 0) &&
-            (targetColCount % clipboardTableData[0].length === 0);
+    return (
+      targetRowCount % clipboardTableData.length === 0 &&
+      targetColCount % clipboardTableData[0].length === 0
+    );
   }
 
   /**
@@ -213,6 +227,7 @@ class WwMergedTableManager extends WwTableManager {
 
       util.range(0, increaseColCount - 1).forEach(() => {
         const newData = JSON.parse(JSON.stringify(originalData));
+
         clipboardTableData.forEach((rowData, rowIndex) => {
           rowData.push(...newData[rowIndex]);
         });
@@ -302,17 +317,24 @@ class WwMergedTableManager extends WwTableManager {
    * @param {number} endColIndex - end col index
    * @private
    */
-  _bookmarkLastTd({rowIndex: endRowIndex, colIndex: endColIndex}) {
+  _bookmarkLastTd({ rowIndex: endRowIndex, colIndex: endColIndex }) {
     const sq = this.wwe.getEditor();
     const $bookmarkedTable = sq.get$Body().find(`.${PASTE_TABLE_BOOKMARK}`);
     const tableData = tableDataHandler.createTableData($bookmarkedTable);
     const lastCellData = tableData[endRowIndex][endColIndex];
 
-    endRowIndex = util.isExisty(lastCellData.rowMergeWith) ? lastCellData.rowMergeWith : endRowIndex;
-    endColIndex = util.isExisty(lastCellData.colMergeWith) ? lastCellData.colMergeWith : endColIndex;
+    endRowIndex = util.isExisty(lastCellData.rowMergeWith)
+      ? lastCellData.rowMergeWith
+      : endRowIndex;
+    endColIndex = util.isExisty(lastCellData.colMergeWith)
+      ? lastCellData.colMergeWith
+      : endColIndex;
 
     const lastCellIndex = tableData[endRowIndex][endColIndex].elementIndex;
-    const lastTd = $bookmarkedTable.find('tr').eq(lastCellIndex.rowIndex).children()[lastCellIndex.colIndex];
+    const lastTd = $bookmarkedTable
+      .find('tr')
+      .eq(lastCellIndex.rowIndex)
+      .children()[lastCellIndex.colIndex];
 
     $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
     $(lastTd).addClass(PASTE_TABLE_CELL_BOOKMARK);
@@ -328,8 +350,13 @@ class WwMergedTableManager extends WwTableManager {
    * @returns {boolean}
    * @private
    */
-  _updateClipboardDataForPasteToSamllerSelectedArea(clipboardTableData, tableData, targetRowCount,
-    targetColCount, startRange) {
+  _updateClipboardDataForPasteToSamllerSelectedArea(
+    clipboardTableData,
+    tableData,
+    targetRowCount,
+    targetColCount,
+    startRange
+  ) {
     let updated = true;
     const startCellIndex = {
       rowIndex: 0,
@@ -360,13 +387,16 @@ class WwMergedTableManager extends WwTableManager {
    * @private
    */
   _pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells) {
-    const {start: startRange, end: endRange} = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells);
+    const { start: startRange, end: endRange } = tableRangeHandler.getTableSelectionRange(
+      tableData,
+      $selectedCells
+    );
     const targetRowCount = endRange.rowIndex - startRange.rowIndex + 1;
     const targetColCount = endRange.colIndex - startRange.colIndex + 1;
     const clipboardRowCount = clipboardTableData.length;
     const clipboardColCount = clipboardTableData[0].length;
-    const isSelectionLargerThanData = (targetRowCount >= clipboardRowCount) &&
-              (targetColCount >= clipboardColCount);
+    const isSelectionLargerThanData =
+      targetRowCount >= clipboardRowCount && targetColCount >= clipboardColCount;
     let alertMessage = i18n.get('Cannot change part of merged cell');
     let updated = true;
     let endCellIndex;
@@ -389,14 +419,20 @@ class WwMergedTableManager extends WwTableManager {
       } else {
         updated = false;
       }
-    } else { // selected area is smaller then paste data
+    } else {
+      // selected area is smaller then paste data
       endCellIndex = {
         rowIndex: startRange.rowIndex + targetRowCount - 1,
         colIndex: startRange.colIndex + targetColCount - 1
       };
 
-      updated = this._updateClipboardDataForPasteToSamllerSelectedArea(clipboardTableData,
-        tableData, targetRowCount, targetColCount, startRange);
+      updated = this._updateClipboardDataForPasteToSamllerSelectedArea(
+        clipboardTableData,
+        tableData,
+        targetRowCount,
+        targetColCount,
+        startRange
+      );
     }
 
     if (updated) {
@@ -417,7 +453,7 @@ class WwMergedTableManager extends WwTableManager {
    * @returns {{rowIndex: number, colIndex: number}}
    * @private
    */
-  _findEndCellIndex(clipboardTableData, {rowIndex: startRowIndex, colIndex: startColIndex}) {
+  _findEndCellIndex(clipboardTableData, { rowIndex: startRowIndex, colIndex: startColIndex }) {
     return {
       rowIndex: startRowIndex + clipboardTableData.length - 1,
       colIndex: startColIndex + clipboardTableData[0].length - 1
@@ -433,9 +469,13 @@ class WwMergedTableManager extends WwTableManager {
   _expandRow(tableData, expandCount) {
     const startRowIndex = tableData.length;
     const cellCount = tableData[0].length;
-    const newRows = util.range(startRowIndex, startRowIndex + expandCount).map(rowIndex => (
-      util.range(0, cellCount).map(colIndex => tableDataHandler.createBasicCell(rowIndex, colIndex))
-    ));
+    const newRows = util
+      .range(startRowIndex, startRowIndex + expandCount)
+      .map(rowIndex =>
+        util
+          .range(0, cellCount)
+          .map(colIndex => tableDataHandler.createBasicCell(rowIndex, colIndex))
+      );
 
     tableData.push(...newRows);
   }
@@ -451,10 +491,10 @@ class WwMergedTableManager extends WwTableManager {
     const additionalCellRange = util.range(startCellIndex, startCellIndex + expandCount);
 
     tableData.forEach((rowData, rowIndex) => {
-      const [{nodeName}] = rowData;
-      const newCells = additionalCellRange.map(colIndex => (
+      const [{ nodeName }] = rowData;
+      const newCells = additionalCellRange.map(colIndex =>
         tableDataHandler.createBasicCell(rowIndex, colIndex, nodeName)
-      ));
+      );
 
       rowData.push(...newCells);
     });
@@ -525,9 +565,11 @@ class WwMergedTableManager extends WwTableManager {
     const tableData = tableDataHandler.createTableData($table);
     const startCellIndex = this._findStartCellIndex(tableData, $startCell);
 
-    if ($selectedCells.length > 1) { // selection
+    if ($selectedCells.length > 1) {
+      // selection
       this._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
-    } else { // cursor
+    } else {
+      // cursor
       this._pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex);
     }
   }
@@ -553,4 +595,3 @@ function any(arr, contition) {
 }
 
 export default WwMergedTableManager;
-

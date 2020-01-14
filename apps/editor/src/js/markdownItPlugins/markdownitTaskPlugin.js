@@ -14,29 +14,29 @@
  * @ignore
  */
 var MarkdownitTaskRenderer = function(markdownit) {
-    markdownit.core.ruler.after('inline', 'tui-task-list', function(state) {
-        var TASK_LIST_ITEM_CLASS_NAME = 'task-list-item';
-        var CHECKED_CLASS_NAME = 'checked';
-        var tokens = state.tokens;
-        var className;
-        var tokenIndex;
+  markdownit.core.ruler.after('inline', 'tui-task-list', function(state) {
+    var TASK_LIST_ITEM_CLASS_NAME = 'task-list-item';
+    var CHECKED_CLASS_NAME = 'checked';
+    var tokens = state.tokens;
+    var className;
+    var tokenIndex;
 
-        // tokenIndex=0 'ul', tokenIndex=1 'li', tokenIndex=2 'p_open'
-        for (tokenIndex = 2; tokenIndex < tokens.length; tokenIndex += 1) {
-            if (isTaskListItemToken(tokens, tokenIndex)) {
-                if (isChecked(tokens[tokenIndex])) {
-                    className = TASK_LIST_ITEM_CLASS_NAME + ' ' + CHECKED_CLASS_NAME;
-                } else {
-                    className = TASK_LIST_ITEM_CLASS_NAME;
-                }
-
-                removeMarkdownTaskFormatText(tokens[tokenIndex]);
-
-                setTokenAttribute(tokens[tokenIndex - 2], 'class', className);
-                setTokenAttribute(tokens[tokenIndex - 2], 'data-te-task', '');
-            }
+    // tokenIndex=0 'ul', tokenIndex=1 'li', tokenIndex=2 'p_open'
+    for (tokenIndex = 2; tokenIndex < tokens.length; tokenIndex += 1) {
+      if (isTaskListItemToken(tokens, tokenIndex)) {
+        if (isChecked(tokens[tokenIndex])) {
+          className = TASK_LIST_ITEM_CLASS_NAME + ' ' + CHECKED_CLASS_NAME;
+        } else {
+          className = TASK_LIST_ITEM_CLASS_NAME;
         }
-    });
+
+        removeMarkdownTaskFormatText(tokens[tokenIndex]);
+
+        setTokenAttribute(tokens[tokenIndex - 2], 'class', className);
+        setTokenAttribute(tokens[tokenIndex - 2], 'data-te-task', '');
+      }
+    }
+  });
 };
 
 /**
@@ -45,10 +45,10 @@ var MarkdownitTaskRenderer = function(markdownit) {
  * @ignore
  */
 function removeMarkdownTaskFormatText(token) {
-    // '[X] ' length is 4
-    // FIXED: we don't need first space
-    token.content = token.content.slice(4);
-    token.children[0].content = token.children[0].content.slice(4);
+  // '[X] ' length is 4
+  // FIXED: we don't need first space
+  token.content = token.content.slice(4);
+  token.children[0].content = token.children[0].content.slice(4);
 }
 
 /**
@@ -58,13 +58,13 @@ function removeMarkdownTaskFormatText(token) {
  * @ignore
  */
 function isChecked(token) {
-    var checked = false;
+  var checked = false;
 
-    if (token.content.indexOf('[x]') === 0 || token.content.indexOf('[X]') === 0) {
-        checked = true;
-    }
+  if (token.content.indexOf('[x]') === 0 || token.content.indexOf('[X]') === 0) {
+    checked = true;
+  }
 
-    return checked;
+  return checked;
 }
 
 /**
@@ -75,14 +75,14 @@ function isChecked(token) {
  * @ignore
  */
 function setTokenAttribute(token, attributeName, attributeValue) {
-    var index = token.attrIndex(attributeName);
-    var attr = [attributeName, attributeValue];
+  var index = token.attrIndex(attributeName);
+  var attr = [attributeName, attributeValue];
 
-    if (index < 0) {
-        token.attrPush(attr);
-    } else {
-        token.attrs[index] = attr;
-    }
+  if (index < 0) {
+    token.attrPush(attr);
+  } else {
+    token.attrs[index] = attr;
+  }
 }
 
 /**
@@ -93,12 +93,14 @@ function setTokenAttribute(token, attributeName, attributeValue) {
  * @ignore
  */
 function isTaskListItemToken(tokens, index) {
-    return tokens[index].type === 'inline'
-        && tokens[index - 1].type === 'paragraph_open'
-        && tokens[index - 2].type === 'list_item_open'
-        && (tokens[index].content.indexOf('[ ]') === 0
-            || tokens[index].content.indexOf('[x]') === 0
-            || tokens[index].content.indexOf('[X]') === 0);
+  return (
+    tokens[index].type === 'inline' &&
+    tokens[index - 1].type === 'paragraph_open' &&
+    tokens[index - 2].type === 'list_item_open' &&
+    (tokens[index].content.indexOf('[ ]') === 0 ||
+      tokens[index].content.indexOf('[x]') === 0 ||
+      tokens[index].content.indexOf('[X]') === 0)
+  );
 }
 /* eslint-enable */
 

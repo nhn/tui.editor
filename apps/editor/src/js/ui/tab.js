@@ -33,7 +33,8 @@ class Tab extends UIController {
   }
 
   _initEvent(options) {
-    const {onItemClick} = options;
+    const { onItemClick } = options;
+
     if (onItemClick) {
       this.on('itemClick', onItemClick);
     }
@@ -42,8 +43,9 @@ class Tab extends UIController {
   }
 
   _render(options) {
-    const {items, initName} = options;
+    const { items, initName } = options;
     const tabButtons = [];
+
     for (let i = 0, len = items.length; i < len; i += 1) {
       tabButtons.push(`<button type="button" data-index="${i}">${items[i]}</button>`);
     }
@@ -57,11 +59,13 @@ class Tab extends UIController {
    */
   activate(name) {
     const $button = this.$el.find(`button:contains("${name}")`);
+
     this._activateTabByButton($button);
   }
 
   _onTabButton(ev) {
     const $button = $(ev.target);
+
     this._activateTabByButton($button);
     this.trigger('itemClick', $button.text());
   }
@@ -78,6 +82,7 @@ class Tab extends UIController {
     // deactivate previously activated button
     if (this._$activeButton) {
       const sectionIndex = this._$activeButton.attr('data-index');
+
       this._$activeButton.removeClass(CLASS_TAB_ACTIVE);
       if (this.sections) {
         this.sections[sectionIndex].removeClass(CLASS_TAB_ACTIVE);
@@ -88,6 +93,7 @@ class Tab extends UIController {
     $activeButton.addClass(CLASS_TAB_ACTIVE);
     this._$activeButton = $activeButton;
     const index = $activeButton.attr('data-index');
+
     if (this.sections) {
       this.sections[index].addClass(CLASS_TAB_ACTIVE);
     }

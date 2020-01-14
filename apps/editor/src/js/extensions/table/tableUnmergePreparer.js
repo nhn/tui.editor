@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements tableUnmergePreparer.
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements tableUnmergePreparer.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 
 /**
@@ -34,7 +34,10 @@ export function _prependMergeSyntaxToContent(cell) {
  * @returns {HTMLElement}
  */
 export default function prepareTableUnmerge(tableElement) {
-  $(tableElement).find('td, th').get().forEach(_prependMergeSyntaxToContent);
+  $(tableElement)
+    .find('td, th')
+    .get()
+    .forEach(_prependMergeSyntaxToContent);
 
   return tableElement;
 }

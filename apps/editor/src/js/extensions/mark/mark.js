@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements mark extension for making text marker
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements mark extension for making text marker
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
@@ -76,6 +76,7 @@ function markExtension(editor) {
   // Reset marker content after set value
   editor.on('setMarkdownAfter', () => {
     const helper = getHelper();
+
     mm.resetContent(helper.getTextContent());
   });
 
@@ -220,9 +221,12 @@ function markExtension(editor) {
       editor._updateMarkers();
     });
 
-    editor.on('change', util.debounce(() => {
-      editor._updateMarkers();
-    }, MARKER_UPDATE_DELAY));
+    editor.on(
+      'change',
+      util.debounce(() => {
+        editor._updateMarkers();
+      }, MARKER_UPDATE_DELAY)
+    );
 
     /**
      * _updateMarkers

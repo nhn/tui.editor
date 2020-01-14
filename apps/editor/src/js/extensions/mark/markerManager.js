@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements markdown marker helper for additional information
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements markdown marker helper for additional information
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import util from 'tui-code-snippet';
 
 import DiffMatchPatch from './diffMatchPatch';
@@ -27,7 +27,7 @@ class MarkerManager {
    * @param {string} content reset base content
    */
   resetContent(content) {
-    this.oldTextContent = (util.isString(content) ? content : null);
+    this.oldTextContent = util.isString(content) ? content : null;
   }
 
   /**
@@ -56,7 +56,7 @@ class MarkerManager {
    * @private
    */
   _makeMarkerDiffs(newContent) {
-    const {markerList} = this,
+    const { markerList } = this,
       self = this,
       markerDiffs = {};
 
@@ -178,14 +178,14 @@ class MarkerManager {
    */
   _getUpdateMarkersWithDiffs(markerDiffs) {
     const updatedMarkers = [],
-      {markerList} = this;
+      { markerList } = this;
 
     util.forEachOwnProperties(markerDiffs, (markerDiff, id) => {
       const marker = markerList.getMarker(id);
 
       markerList.updateMarker(id, {
-        start: marker.start += markerDiff.start,
-        end: marker.end += markerDiff.end
+        start: (marker.start += markerDiff.start),
+        end: (marker.end += markerDiff.end)
       });
 
       updatedMarkers.push(marker);

@@ -12,16 +12,20 @@ import CommandManager from '../commandManager';
  * @module markdownCommands/outdent
  * @ignore
  */
-const Outdent = CommandManager.command('markdown', /** @lends Outdent */{
-  name: 'Outdent',
-  /**
-   * Command handler
-   * @param {MarkdownEditor} mde MarkdownEditor instance
-   */
-  exec(mde) {
-    const cm = mde.getEditor();
-    cm.execCommand('indentLessOrderedList');
+const Outdent = CommandManager.command(
+  'markdown',
+  /** @lends Outdent */ {
+    name: 'Outdent',
+    /**
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
+     */
+    exec(mde) {
+      const cm = mde.getEditor();
+
+      cm.execCommand('indentLessOrderedList');
+    }
   }
-});
+);
 
 export default Outdent;

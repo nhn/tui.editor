@@ -135,6 +135,7 @@ class Toolbar extends UIController {
     }
 
     const children = this.$el.children();
+
     if (index >= 0 && index < children.length) {
       item.$el.insertBefore(children.eq(index));
       this._items.splice(index, 0, item);
@@ -156,10 +157,12 @@ class Toolbar extends UIController {
    */
   indexOfItem(item) {
     let index;
+
     if (item instanceof ToolbarItem) {
       index = this._items.indexOf(item);
     } else if (util.isString(item)) {
       const itemName = item;
+
       index = this._items.map(itemToTest => itemToTest.getName()).indexOf(itemName);
     }
 
@@ -225,6 +228,7 @@ class Toolbar extends UIController {
   addButton(button, index) {
     if (util.isArray(button)) {
       let arrayIndex = button.length - 1;
+
       for (; arrayIndex >= 0; arrayIndex -= 1) {
         if (util.isNumber(index)) {
           this._addButton(button[arrayIndex], index);
@@ -248,7 +252,10 @@ class Toolbar extends UIController {
     const $btn = this._setButton(button, index).$el;
 
     if (util.isNumber(index)) {
-      this.$el.find(`.${Button.className}`).eq(index - 1).before($btn);
+      this.$el
+        .find(`.${Button.className}`)
+        .eq(index - 1)
+        .before($btn);
     } else {
       this.$el.append($btn);
     }
@@ -261,6 +268,7 @@ class Toolbar extends UIController {
    */
   addDivider() {
     const $el = $(`<div class="${ToolbarDivider.className}"></div>`);
+
     this.$el.append($el);
 
     return $el;
@@ -276,6 +284,7 @@ class Toolbar extends UIController {
    */
   _setButton(button, index) {
     const ev = this._eventManager;
+
     if (!(button instanceof Button)) {
       button = new Button(button);
     }

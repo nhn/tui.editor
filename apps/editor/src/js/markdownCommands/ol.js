@@ -12,19 +12,22 @@ import CommandManager from '../commandManager';
  * @module markdownCommands/OL
  * @ignore
  */
-const OL = CommandManager.command('markdown', /** @lends OL */{
-  name: 'OL',
-  keyMap: ['CTRL+O', 'META+O'],
-  /**
-   * Command handler
-   * @param {MarkdownEditor} mde MarkdownEditor instance
-   */
-  exec(mde) {
-    const range = mde.getCurrentRange();
-    const listManager = mde.componentManager.getManager('list');
+const OL = CommandManager.command(
+  'markdown',
+  /** @lends OL */ {
+    name: 'OL',
+    keyMap: ['CTRL+O', 'META+O'],
+    /**
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
+     */
+    exec(mde) {
+      const range = mde.getCurrentRange();
+      const listManager = mde.componentManager.getManager('list');
 
-    listManager.changeSyntax(range, 'ol');
+      listManager.changeSyntax(range, 'ol');
+    }
   }
-});
+);
 
 export default OL;

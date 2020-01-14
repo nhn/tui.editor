@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements wysiwyg merged table selection manager
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements wysiwyg merged table selection manager
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
@@ -9,7 +9,7 @@ import Editor from '../editorProxy';
 import tableDataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 
-const {WwTableSelectionManager} = Editor;
+const { WwTableSelectionManager } = Editor;
 
 const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
@@ -56,7 +56,9 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
         const cellData = rowData[colIndex];
 
         if (cellData.elementIndex) {
-          $cells.eq(rowData[colIndex].elementIndex.colIndex).addClass(TABLE_CELL_SELECTED_CLASS_NAME);
+          $cells
+            .eq(rowData[colIndex].elementIndex.colIndex)
+            .addClass(TABLE_CELL_SELECTED_CLASS_NAME);
         }
       });
     });
@@ -68,6 +70,7 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
    */
   onDragStart(selectionStart) {
     const $table = $(selectionStart).closest('[contenteditable=true] table');
+
     this._tableData = tableDataHandler.createTableData($table);
   }
 
@@ -104,20 +107,23 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
     const range = sq.getSelection().cloneRange();
     const $table = $(range.startContainer).closest('[contenteditable=true] table');
 
-    $table.find('tr').get().forEach(tr => {
-      const $cells = $(tr).find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
-      const firstSelectedCell = $cells.first().get(0);
-      const lastSelectedCell = $cells.last().get(0);
+    $table
+      .find('tr')
+      .get()
+      .forEach(tr => {
+        const $cells = $(tr).find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
+        const firstSelectedCell = $cells.first().get(0);
+        const lastSelectedCell = $cells.last().get(0);
 
-      if (!$cells.length) {
-        return;
-      }
+        if (!$cells.length) {
+          return;
+        }
 
-      range.setStart(firstSelectedCell, 0);
-      range.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
-      sq.setSelection(range);
-      onStyle(sq, options);
-    });
+        range.setStart(firstSelectedCell, 0);
+        range.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
+        sq.setSelection(range);
+        onStyle(sq, options);
+      });
   }
 
   /**
@@ -133,4 +139,3 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
 }
 
 export default WwMergedTableSelectionManager;
-

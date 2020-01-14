@@ -1,8 +1,8 @@
 /**
-* @fileoverview tsv, csv format chart plugin
-* consumes tab separated values and make data/options for tui chart
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview tsv, csv format chart plugin
+ * consumes tab separated values and make data/options for tui chart
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 
 /**
  * @example
@@ -34,7 +34,7 @@ import chart from 'tui-chart/dist/tui-chart-polyfill';
 import Editor from '../editorProxy';
 import csv from './csv';
 
-const {WwCodeBlockManager, codeBlockManager} = Editor;
+const { WwCodeBlockManager, codeBlockManager } = Editor;
 const LANG = 'chart';
 
 // csv configuration
@@ -69,11 +69,12 @@ function parseCode2DataAndOptions(code, callback) {
   const [firstCode, secondCode] = code.split(/\n{2,}/);
 
   // try to parse first code block as `options`
-  let options = parseCode2ChartOption(firstCode);
+  const options = parseCode2ChartOption(firstCode);
   const url = options && options.editorChart && options.editorChart.url;
 
   // if first code block is `options` and has `url` option, fetch data from url
   let dataAndOptions;
+
   if (util.isString(url)) {
     // url option provided
     // fetch data from url
@@ -83,7 +84,9 @@ function parseCode2DataAndOptions(code, callback) {
     };
     const fail = () => callback(null);
 
-    $.get(url).done(success).fail(fail);
+    $.get(url)
+      .done(success)
+      .fail(fail);
   } else {
     // else first block is `data`
     dataAndOptions = _parseCode2DataAndOptions(firstCode, secondCode);
@@ -119,16 +122,19 @@ function detectDelimiter(code) {
   code = trimKeepingTabs(code);
 
   // chunk first max 10 lines to detect
-  const chunk = code.split(REGEX_LINE_ENDING).slice(0, 10).join('\n');
+  const chunk = code
+    .split(REGEX_LINE_ENDING)
+    .slice(0, 10)
+    .join('\n');
 
   // calc delta for each delimiters
   // then pick a delimiter having the minimum value delta
-  return DSV_DELIMITERS.map(delimiter => ({
-    delimiter,
-    delta: calcDSVDelta(chunk, delimiter)
-  })).sort((a, b) => (
-    a.delta - b.delta
-  ))[0].delimiter;
+  return DSV_DELIMITERS.map(delimiter => {
+    return {
+      delimiter,
+      delta: calcDSVDelta(chunk, delimiter)
+    };
+  }).sort((a, b) => a.delta - b.delta)[0].delimiter;
 }
 
 /**
@@ -151,14 +157,20 @@ function calcDSVDelta(code, delimiter) {
     }
 
     // sum of all length difference of all rows
-    delta = rows.map(row => row.length)
-      .reduce((a, b) => ({
-        deltaSum: a.deltaSum + Math.abs(a.length - b),
-        length: b
-      }), {
-        deltaSum: 0,
-        length: rows[0].length
-      }).deltaSum;
+    delta = rows
+      .map(row => row.length)
+      .reduce(
+        (a, b) => {
+          return {
+            deltaSum: a.deltaSum + Math.abs(a.length - b),
+            length: b
+          };
+        },
+        {
+          deltaSum: 0,
+          length: rows[0].length
+        }
+      ).deltaSum;
   } catch (e) {
     delta = Infinity;
   }
@@ -185,12 +197,15 @@ function parseDSV2ChartData(code, delimiter) {
   dsv = dsv.map(arr => arr.map(val => val.trim()));
 
   // test a first row for legends. ['anything', '1', '2', '3'] === false, ['anything', 't1', '2', 't3'] === true
-  const hasLegends = dsv[0].filter((v, i) => i > 0).reduce((hasNaN, item) => hasNaN || !isNumeric(item), false);
+  const hasLegends = dsv[0]
+    .filter((v, i) => i > 0)
+    .reduce((hasNaN, item) => hasNaN || !isNumeric(item), false);
   const legends = hasLegends ? dsv.shift() : [];
 
   // test a first column for categories
   const hasCategories = dsv.slice(1).reduce((hasNaN, row) => hasNaN || !isNumeric(row[0]), false);
   const categories = hasCategories ? dsv.map(arr => arr.shift()) : [];
+
   if (hasCategories) {
     legends.shift();
   }
@@ -202,12 +217,16 @@ function parseDSV2ChartData(code, delimiter) {
   dsv = dsv[0].map((t, i) => dsv.map(x => parseFloat(x[i])));
 
   // make series
-  const series = dsv.map((data, i) => hasLegends ? {
-    name: legends[i],
-    data
-  } : {
-    data
-  });
+  const series = dsv.map((data, i) =>
+    hasLegends
+      ? {
+          name: legends[i],
+          data
+        }
+      : {
+          data
+        }
+  );
 
   return {
     categories,
@@ -229,7 +248,9 @@ function parseURL2ChartData(url, callback) {
   };
   const fail = () => callback(null);
 
-  $.get(url).done(success).fail(fail);
+  $.get(url)
+    .done(success)
+    .fail(fail);
 }
 
 /**
@@ -241,15 +262,18 @@ function parseURL2ChartData(url, callback) {
  */
 function parseCode2ChartOption(optionCode) {
   const reservedKeys = ['type', 'url'];
-  let options = {};
+  const options = {};
+
   if (util.isUndefined(optionCode)) {
     return options;
   }
 
   const optionLines = optionCode.split(REGEX_LINE_ENDING);
+
   optionLines.forEach(line => {
     let [keyString, ...values] = line.split(OPTION_DELIMITER);
     let value = values.join(OPTION_DELIMITER);
+
     keyString = keyString.trim();
     if (value.length === 0) {
       return;
@@ -262,8 +286,9 @@ function parseCode2ChartOption(optionCode) {
     }
 
     // parse keys
-    let [...keys] = keyString.split('.');
-    let topKey = keys[0];
+    const [...keys] = keyString.split('.');
+    const topKey = keys[0];
+
     if (util.inArray(topKey, reservedKeys) >= 0) {
       // reserved keys for chart plugin option
       keys.unshift('editorChart');
@@ -276,8 +301,10 @@ function parseCode2ChartOption(optionCode) {
     }
 
     let option = options;
+
     for (let i = 0; i < keys.length; i += 1) {
-      let key = keys[i];
+      const key = keys[i];
+
       option[key] = option[key] || (keys.length - 1 === i ? value : {});
       option = option[key];
     }
@@ -318,25 +345,27 @@ function isNumeric(str) {
  */
 function setDefaultOptions(chartOptions, extensionOptions, chartContainer) {
   // chart options scaffolding
-  chartOptions = util.extend({
-    editorChart: {},
-    chart: {},
-    chartExportMenu: {},
-    usageStatistics: extensionOptions.usageStatistics
-  }, chartOptions);
+  chartOptions = util.extend(
+    {
+      editorChart: {},
+      chart: {},
+      chartExportMenu: {},
+      usageStatistics: extensionOptions.usageStatistics
+    },
+    chartOptions
+  );
 
   // set default extension options
   extensionOptions = util.extend(DEFAULT_CHART_OPTIONS, extensionOptions);
 
   // determine width, height
-  let {width, height} = chartOptions.chart;
+  let { width, height } = chartOptions.chart;
   const isWidthUndefined = util.isUndefined(width);
   const isHeightUndefined = util.isUndefined(height);
+
   if (isWidthUndefined || isHeightUndefined) {
     // if no width or height specified, set width and height to container width
-    const {
-      width: containerWidth
-    } = chartContainer.getBoundingClientRect();
+    const { width: containerWidth } = chartContainer.getBoundingClientRect();
 
     width = isWidthUndefined ? extensionOptions.width : width;
     height = isHeightUndefined ? extensionOptions.height : height;
@@ -349,7 +378,9 @@ function setDefaultOptions(chartOptions, extensionOptions, chartContainer) {
   chartOptions.chart.height = Math.max(extensionOptions.minHeight, height);
 
   // default chart type
-  chartOptions.editorChart.type = chartOptions.editorChart.type ? `${chartOptions.editorChart.type}Chart` : 'columnChart';
+  chartOptions.editorChart.type = chartOptions.editorChart.type
+    ? `${chartOptions.editorChart.type}Chart`
+    : 'columnChart';
   // default visibility of export menu
   chartOptions.chartExportMenu.visible = chartOptions.chartExportMenu.visible || false;
 
@@ -364,20 +395,26 @@ function setDefaultOptions(chartOptions, extensionOptions, chartContainer) {
  * @ignore
  */
 function chartReplacer(codeBlockChartDataAndOptions, extensionOptions) {
-  const randomId = `chart-${Math.random().toString(36).substr(2, 10)}`;
-  let renderedHTML = `<div id="${randomId}" class="chart" />`;
+  const randomId = `chart-${Math.random()
+    .toString(36)
+    .substr(2, 10)}`;
+  const renderedHTML = `<div id="${randomId}" class="chart" />`;
 
   setTimeout(() => {
     const chartContainer = document.querySelector(`#${randomId}`);
+
     try {
-      parseCode2DataAndOptions(codeBlockChartDataAndOptions, ({data, options: chartOptions}) => {
+      parseCode2DataAndOptions(codeBlockChartDataAndOptions, ({ data, options: chartOptions }) => {
         chartOptions = setDefaultOptions(chartOptions, extensionOptions, chartContainer);
 
         const chartType = chartOptions.editorChart.type;
+
         if (SUPPORTED_CHART_TYPES.indexOf(chartType) < 0) {
           chartContainer.innerHTML = `invalid chart type. type: bar, column, line, area, pie`;
-        } else if (CATEGORY_CHART_TYPES.indexOf(chartType) > -1 &&
-                    data.categories.length !== data.series[0].data.length) {
+        } else if (
+          CATEGORY_CHART_TYPES.indexOf(chartType) > -1 &&
+          data.categories.length !== data.series[0].data.length
+        ) {
           chartContainer.innerHTML = 'invalid chart data';
         } else {
           chart[chartType](chartContainer, data, chartOptions);
@@ -409,6 +446,7 @@ function _reduceToTSV(arr) {
 
       return text;
     });
+
     // ['a', '"b b"', '"c c"'] => 'a\t"b b"\t"c c"'
     acc.push(quoted.join('\t'));
 
@@ -422,37 +460,39 @@ function _reduceToTSV(arr) {
  * @ignore
  */
 function _setWwCodeBlockManagerForChart(editor) {
-  const componentManager = editor.wwEditor.componentManager;
+  const { componentManager } = editor.wwEditor;
+
   componentManager.removeManager('codeblock');
-  componentManager.addManager(class extends WwCodeBlockManager {
-    /**
-     * Convert table nodes into code block as TSV
-     * @param {Array.<Node>} nodes Node array
-     * @returns {HTMLElement} Code block element
-     * @override
-     * @ignore
-     */
-    convertNodesToText(nodes) {
-      if (nodes.length !== 1 || nodes[0].tagName !== 'TABLE') {
-        return super.convertNodesToText(nodes);
+  componentManager.addManager(
+    class extends WwCodeBlockManager {
+      /**
+       * Convert table nodes into code block as TSV
+       * @param {Array.<Node>} nodes Node array
+       * @returns {HTMLElement} Code block element
+       * @override
+       * @ignore
+       */
+      convertNodesToText(nodes) {
+        if (nodes.length !== 1 || nodes[0].tagName !== 'TABLE') {
+          return super.convertNodesToText(nodes);
+        }
+
+        const node = nodes.shift();
+        let str = '';
+
+        // convert table to 2-dim array
+        const cells = [].slice
+          .call(node.rows)
+          .map(row => [].slice.call(row.cells).map(cell => cell.innerText.trim()));
+
+        const tsvRows = _reduceToTSV(cells);
+
+        str += tsvRows.reduce((acc, row) => `${acc}${row}\n`, []);
+
+        return str;
       }
-
-      const node = nodes.shift();
-      let str = '';
-
-      // convert table to 2-dim array
-      const cells = [].slice.call(node.rows).map(
-        row => [].slice.call(row.cells).map(
-          cell => cell.innerText.trim()
-        )
-      );
-
-      const tsvRows = _reduceToTSV(cells);
-      str += tsvRows.reduce((acc, row) => acc + `${row}\n`, []);
-
-      return str;
     }
-  });
+  );
 }
 
 /**
@@ -465,11 +505,13 @@ function _setWwCodeBlockManagerForChart(editor) {
  */
 function _isFromCodeBlockInCodeMirror(cm, source, eventData) {
   // cursor in codeblock in markdown editor
-  let fromCodeBlockInCodeMirror = source === 'markdown' && cm.getTokenAt(eventData.from).state.overlay.codeBlock;
+  let fromCodeBlockInCodeMirror =
+    source === 'markdown' && cm.getTokenAt(eventData.from).state.overlay.codeBlock;
+
   // or codeblock editor
-  fromCodeBlockInCodeMirror = fromCodeBlockInCodeMirror || (source === 'codeblock');
+  fromCodeBlockInCodeMirror = fromCodeBlockInCodeMirror || source === 'codeblock';
   // but not from wysiwyg
-  fromCodeBlockInCodeMirror = fromCodeBlockInCodeMirror && (source !== 'wysiwyg');
+  fromCodeBlockInCodeMirror = fromCodeBlockInCodeMirror && source !== 'wysiwyg';
 
   return fromCodeBlockInCodeMirror;
 }
@@ -484,7 +526,7 @@ function _isFromCodeBlockInCodeMirror(cm, source, eventData) {
  * @param {Object} data - event data
  * @ignore
  */
-function _onMDPasteBefore(cm, {source, data: eventData}) {
+function _onMDPasteBefore(cm, { source, data: eventData }) {
   if (!_isFromCodeBlockInCodeMirror(cm, source, eventData)) {
     return;
   }
@@ -495,6 +537,7 @@ function _onMDPasteBefore(cm, {source, data: eventData}) {
   if (delta === 0) {
     csv.COLUMN_SEPARATOR = '\t';
     const parsed = _reduceToTSV(csv.parse(code));
+
     eventData.update(eventData.from, eventData.to, parsed);
   }
 }
@@ -503,27 +546,31 @@ function _onMDPasteBefore(cm, {source, data: eventData}) {
  * chart plugin
  * @param {Editor} editor - editor
  * @param {Object} options - chart options
-  * @param {number} [options.minWidth=0] - minimum width
-  * @param {number} [options.maxWidth=0] - maximum width
-  * @param {number} [options.minHeight=Infinity] - minimum height
-  * @param {number} [options.maxHeight=Infinity] - maximum height
-  * @param {number|string} [options.width='auto'] - default height
-  * @param {number|string} [options.height='auto'] - default height
+ * @param {number} [options.minWidth=0] - minimum width
+ * @param {number} [options.maxWidth=0] - maximum width
+ * @param {number} [options.minHeight=Infinity] - minimum height
+ * @param {number} [options.maxHeight=Infinity] - maximum height
+ * @param {number|string} [options.width='auto'] - default height
+ * @param {number|string} [options.height='auto'] - default height
  * @ignore
  */
 function chartExtension(editor, options = {}) {
   const optionLanguages = editor.options.codeBlockLanguages;
+
   if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
     optionLanguages.push(LANG);
   }
 
-  options = util.extend({
-    usageStatistics: editor.options.usageStatistics
-  }, options);
+  options = util.extend(
+    {
+      usageStatistics: editor.options.usageStatistics
+    },
+    options
+  );
 
-  codeBlockManager.setReplacer(LANG, codeBlockChartDataAndOptions => {
-    return chartReplacer(codeBlockChartDataAndOptions, options);
-  });
+  codeBlockManager.setReplacer(LANG, codeBlockChartDataAndOptions =>
+    chartReplacer(codeBlockChartDataAndOptions, options)
+  );
 
   if (!editor.isViewer()) {
     // treat wysiwyg paste event

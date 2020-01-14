@@ -27,11 +27,15 @@ class PopupAddHeading extends LayerPopup {
                 <li data-type="Paragraph"><div>${i18n.get('Paragraph')}</div></li>
             </ul>
         `;
-    options = util.extend({
-      header: false,
-      className: 'te-heading-add',
-      content: POPUP_CONTENT
-    }, options);
+
+    options = util.extend(
+      {
+        header: false,
+        className: 'te-heading-add',
+        content: POPUP_CONTENT
+      },
+      options
+    );
     super(options);
   }
 
@@ -59,6 +63,7 @@ class PopupAddHeading extends LayerPopup {
 
     this.on('click li', ev => {
       const $li = $(ev.target).closest('li');
+
       this._eventManager.emit('command', $li.data('type'), $li.data('value'));
     });
   }
@@ -75,10 +80,8 @@ class PopupAddHeading extends LayerPopup {
     this._eventManager.listen('closeAllPopup', this.hide.bind(this));
     this._eventManager.listen('openHeadingSelect', () => {
       const $button = this._$button;
-      const {
-        offsetTop,
-        offsetLeft
-      } = $button.get(0);
+      const { offsetTop, offsetLeft } = $button.get(0);
+
       this.$el.css({
         top: offsetTop + $button.outerHeight(),
         left: offsetLeft

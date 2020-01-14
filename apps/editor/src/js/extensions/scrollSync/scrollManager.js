@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements Scroll Sync Extension ScrollManager Module
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements Scroll Sync Extension ScrollManager Module
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import util from 'tui-code-snippet';
 
 const PREVIEW_MARGIN_TOP = 57;
@@ -47,6 +47,7 @@ class ScrollManager {
    */
   _getEditorSectionHeight(section) {
     let height = this.cm.heightAtLine(section.end, 'local');
+
     height -= this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
 
     return height;
@@ -61,6 +62,7 @@ class ScrollManager {
    */
   _getEditorLineHeightGapInSection(section, line) {
     let gap = this.cm.heightAtLine(line, 'local');
+
     gap -= this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
 
     return Math.max(gap, 0);
@@ -74,13 +76,15 @@ class ScrollManager {
    * @private
    */
   _getEditorSectionScrollRatio(section, line) {
-    const isOneLine = (section.end === section.start);
+    const isOneLine = section.end === section.start;
     let ratio;
 
     if (isOneLine) {
       ratio = 0;
     } else {
-      ratio = this._getEditorLineHeightGapInSection(section, line) / this._getEditorSectionHeight(section);
+      ratio =
+        this._getEditorLineHeightGapInSection(section, line) /
+        this._getEditorSectionHeight(section);
     }
 
     return ratio;
@@ -92,7 +96,7 @@ class ScrollManager {
    * @private
    */
   _getScrollFactorsOfEditor() {
-    const {cm} = this;
+    const { cm } = this;
     let scrollInfo = cm.getScrollInfo();
     let topLine, topSection, ratio, factors;
 
@@ -100,17 +104,20 @@ class ScrollManager {
     // so we use saved scroll info for alternative
     scrollInfo = this._fallbackScrollInfoIfIncorrect(scrollInfo);
 
-    const isEditorBottom = (scrollInfo.height - scrollInfo.top) <= scrollInfo.clientHeight;
+    const isEditorBottom = scrollInfo.height - scrollInfo.top <= scrollInfo.clientHeight;
 
     if (isEditorBottom) {
       factors = {
         isEditorBottom
       };
     } else {
-      topLine = cm.coordsChar({
-        left: scrollInfo.left,
-        top: scrollInfo.top
-      }, 'local').line;
+      topLine = cm.coordsChar(
+        {
+          left: scrollInfo.left,
+          top: scrollInfo.top
+        },
+        'local'
+      ).line;
 
       topSection = this.sectionManager.sectionByLine(topLine);
 
@@ -131,20 +138,25 @@ class ScrollManager {
    * @private
    */
   _getCursorFactorsOfEditor() {
-    const {cm} = this;
+    const { cm } = this;
     const cursorInfo = cm.cursorCoords(true, 'local');
 
     // if codemirror has not visible scrollInfo have incorrect value
     // so we use saved scroll info for alternative
     const scrollInfo = this._fallbackScrollInfoIfIncorrect(cm.getScrollInfo());
-    const cursorLine = cm.coordsChar({
-      left: cursorInfo.left,
-      top: cursorInfo.top
-    }, 'local').line;
+    const cursorLine = cm.coordsChar(
+      {
+        left: cursorInfo.left,
+        top: cursorInfo.top
+      },
+      'local'
+    ).line;
 
     const cusrsorSection = this.sectionManager.sectionByLine(cursorLine);
 
-    if (cusrsorSection && cusrsorSection.$previewSectionEl &&
+    if (
+      cusrsorSection &&
+      cusrsorSection.$previewSectionEl &&
       cusrsorSection.$previewSectionEl.length
     ) {
       const ratio = this._getEditorSectionScrollRatio(cusrsorSection, cursorLine);
@@ -171,7 +183,7 @@ class ScrollManager {
     util.forEachArray(sectionList, section => {
       const $div = section.$previewSectionEl;
       const $preview = $div.parent().parent();
-      const isPreviewBottom = ($preview[0].clientHeight - $preview.scrollTop()) <= $preview[0].height;
+      const isPreviewBottom = $preview[0].clientHeight - $preview.scrollTop() <= $preview[0].height;
       let needNext = true;
 
       if (isPreviewBottom) {
@@ -213,13 +225,13 @@ class ScrollManager {
     let scrollTop;
 
     const scrollFactors = this._getScrollFactorsOfEditor();
-    const {section, sectionRatio} = scrollFactors;
+    const { section, sectionRatio } = scrollFactors;
 
     if (scrollFactors.isEditorBottom) {
       scrollTop = this.$contents.height();
     } else if (section.$previewSectionEl) {
       scrollTop = section.$previewSectionEl[0].offsetTop;
-      scrollTop += (section.$previewSectionEl.height() * sectionRatio) - SCROLL_TOP_PADDING;
+      scrollTop += section.$previewSectionEl.height() * sectionRatio - SCROLL_TOP_PADDING;
     }
 
     scrollTop = scrollTop && Math.max(scrollTop, 0);
@@ -239,11 +251,11 @@ class ScrollManager {
       return 0;
     }
 
-    const {section, sectionRatio, relativeCursorTop} = cursorFactors;
+    const { section, sectionRatio, relativeCursorTop } = cursorFactors;
     let scrollTop = section.$previewSectionEl[0].offsetTop;
 
     // Moves the preview so that the line of cursor is positioned at top of the preview.
-    scrollTop += (section.$previewSectionEl.height() * sectionRatio) - SCROLL_TOP_PADDING;
+    scrollTop += section.$previewSectionEl.height() * sectionRatio - SCROLL_TOP_PADDING;
 
     // Moves the preview by the position of the cursor at markdown.
     scrollTop -= relativeCursorTop;
@@ -266,18 +278,24 @@ class ScrollManager {
     if (scrollFactors.isPreviewBottom) {
       scrollTop = this.cm.getScrollInfo().height;
     } else if (scrollFactors.section) {
-      const {section} = scrollFactors;
-      const coordsAtStart = this.cm.charCoords({
-        line: section.start,
-        char: 0
-      }, 'local');
-      const coordsAtEnd = this.cm.charCoords({
-        line: section.end,
-        char: 0
-      }, 'local');
+      const { section } = scrollFactors;
+      const coordsAtStart = this.cm.charCoords(
+        {
+          line: section.start,
+          char: 0
+        },
+        'local'
+      );
+      const coordsAtEnd = this.cm.charCoords(
+        {
+          line: section.end,
+          char: 0
+        },
+        'local'
+      );
 
       scrollTop = coordsAtStart.top;
-      scrollTop += ((coordsAtEnd.top - coordsAtStart.top) * ratio);
+      scrollTop += (coordsAtEnd.top - coordsAtStart.top) * ratio;
     }
 
     scrollTop = scrollTop && Math.max(scrollTop, 0);
@@ -290,9 +308,11 @@ class ScrollManager {
    * @param {boolean} isCursorBase whether sync according to cursor position
    */
   syncPreviewScrollTopToMarkdown(isCursorBase) {
-    const {$previewContainerEl} = this;
+    const { $previewContainerEl } = this;
     const sourceScrollTop = $previewContainerEl.scrollTop();
-    const targetScrollTop = isCursorBase ? this._getScrollTopForPreviewBaseCursor() : this._getScrollTopForPreview();
+    const targetScrollTop = isCursorBase
+      ? this._getScrollTopForPreviewBaseCursor()
+      : this._getScrollTopForPreview();
 
     this.isPreviewScrollEventBlocked = true;
 
@@ -355,7 +375,7 @@ class ScrollManager {
       let deltaValue;
 
       if (progress < 1) {
-        deltaValue = originValue + (valueDiff * Math.cos((1 - progress) * Math.PI / 2));
+        deltaValue = originValue + valueDiff * Math.cos(((1 - progress) * Math.PI) / 2);
         stepCB(Math.ceil(deltaValue));
         self._currentTimeoutId = setTimeout(step, 1);
       } else {
@@ -396,8 +416,8 @@ class ScrollManager {
     const previewScrollTop = $preview.scrollTop();
     const divOffsetTop = $div[0].offsetTop;
     const divHeight = $div.height();
-    const isSectionBegin = previewScrollTop >= (divOffsetTop - PREVIEW_MARGIN_TOP);
-    const isSectionEnd = previewScrollTop > (divOffsetTop + divHeight);
+    const isSectionBegin = previewScrollTop >= divOffsetTop - PREVIEW_MARGIN_TOP;
+    const isSectionEnd = previewScrollTop > divOffsetTop + divHeight;
 
     return isSectionBegin && !isSectionEnd;
   }

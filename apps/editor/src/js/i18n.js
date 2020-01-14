@@ -38,6 +38,7 @@ class I18n {
         this._langs.set(code, data);
       } else {
         const langData = this._langs.get(code);
+
         this._langs.set(code, util.extend(langData, data));
       }
     });
@@ -78,5 +79,5 @@ class I18n {
   }
 }
 
-export {I18n};
+export { I18n };
 export default new I18n();

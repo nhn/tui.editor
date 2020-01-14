@@ -14,51 +14,59 @@ import domUtils from '../domUtils';
  * @module wysiwygCommands/TableRemoveCol
  * @ignore
  */
-const TableRemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
-  name: 'RemoveCol',
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   */
-  exec(wwe) {
-    const sq = wwe.getEditor();
-    const range = sq.getSelection().cloneRange();
-    const $table = $(range.startContainer).parents('table');
-    const tableMgr = wwe.componentManager.getManager('table');
-    const selectionMgr = wwe.componentManager.getManager('tableSelection');
-    const hasMultipleCols = $(range.startContainer).closest('table').find('thead tr th').length > 1;
+const TableRemoveCol = CommandManager.command(
+  'wysiwyg',
+  /** @lends RemoveCol */ {
+    name: 'RemoveCol',
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe wysiwygEditor instance
+     */
+    exec(wwe) {
+      const sq = wwe.getEditor();
+      const range = sq.getSelection().cloneRange();
+      const $table = $(range.startContainer).parents('table');
+      const tableMgr = wwe.componentManager.getManager('table');
+      const selectionMgr = wwe.componentManager.getManager('tableSelection');
+      const hasMultipleCols =
+        $(range.startContainer)
+          .closest('table')
+          .find('thead tr th').length > 1;
 
-    wwe.focus();
-    // IE 800a025e error on removing part of selection range. collapse
-    range.collapse(true);
-    sq.setSelection(range);
+      wwe.focus();
+      // IE 800a025e error on removing part of selection range. collapse
+      range.collapse(true);
+      sq.setSelection(range);
 
-    if (sq.hasFormat('TR', null, range) && hasMultipleCols) {
-      const tbodyColLength = $table.find('tbody tr:first td').length;
-      const $selectedCellsByManager = selectionMgr.getSelectedCells();
+      if (sq.hasFormat('TR', null, range) && hasMultipleCols) {
+        const tbodyColLength = $table.find('tbody tr:first td').length;
+        const $selectedCellsByManager = selectionMgr.getSelectedCells();
 
-      if ($selectedCellsByManager.length < tbodyColLength) {
-        sq.saveUndoState(range);
-        let $nextFocus;
+        if ($selectedCellsByManager.length < tbodyColLength) {
+          sq.saveUndoState(range);
+          let $nextFocus;
 
-        if ($selectedCellsByManager.length > 1) {
-          const $tailCell = $selectedCellsByManager.last();
-          const $headCell = $selectedCellsByManager.first();
-          $nextFocus = $tailCell.next().length ? $tailCell.next() : $headCell.prev();
+          if ($selectedCellsByManager.length > 1) {
+            const $tailCell = $selectedCellsByManager.last();
+            const $headCell = $selectedCellsByManager.first();
 
-          removeMultipleColsByCells($selectedCellsByManager);
-        } else {
-          let $cell = getCellByRange(range);
-          $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
+            $nextFocus = $tailCell.next().length ? $tailCell.next() : $headCell.prev();
 
-          removeColByCell($cell);
+            removeMultipleColsByCells($selectedCellsByManager);
+          } else {
+            const $cell = getCellByRange(range);
+
+            $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
+
+            removeColByCell($cell);
+          }
+
+          focusToCell(sq, $nextFocus, tableMgr);
         }
-
-        focusToCell(sq, $nextFocus, tableMgr);
       }
     }
   }
-});
+);
 
 /**
  * Get cell by range object
@@ -83,8 +91,10 @@ function getCellByRange(range) {
  */
 function removeMultipleColsByCells($cells) {
   const numberOfCells = $cells.length;
+
   for (let i = 0; i < numberOfCells; i += 1) {
     const $cellToDelete = $cells.eq(i);
+
     if ($cellToDelete.length > 0) {
       removeColByCell($cells.eq(i));
     }
@@ -98,9 +108,15 @@ function removeMultipleColsByCells($cells) {
 function removeColByCell($cell) {
   const index = $cell.index();
 
-  $cell.parents('table').find('tr').each((n, tr) => {
-    $(tr).children().eq(index).remove();
-  });
+  $cell
+    .parents('table')
+    .find('tr')
+    .each((n, tr) => {
+      $(tr)
+        .children()
+        .eq(index)
+        .remove();
+    });
 }
 
 /**
@@ -114,6 +130,7 @@ function focusToCell(sq, $cell, tableMgr) {
 
   if ($cell.length && $.contains(document, $cell)) {
     const range = sq.getSelection();
+
     range.selectNodeContents($cell[0]);
     range.collapse(true);
     sq.setSelection(range);

@@ -35,6 +35,7 @@ class ExtManager {
 
         if (this.exts.has(name)) {
           const ext = this.exts.get(name);
+
           if (hasOption) {
             ext(context, option);
           } else {

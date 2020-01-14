@@ -11,40 +11,43 @@ import CommandManager from '../commandManager';
  * @module wysiwygCommands/Table
  * @ignore
  */
-const Table = CommandManager.command('wysiwyg', /** @lends Table */{
-  name: 'Table',
-  /**
-   * Command Handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   * @param {number} col column count
-   * @param {number} row row count
-   * @param {Array} data initial table data
-   */
-  exec(wwe, col, row, data) {
-    const sq = wwe.getEditor();
-    const tableIDClassName = wwe.componentManager.getManager('table').getTableIDClassName();
-    let tableHTMLString;
+const Table = CommandManager.command(
+  'wysiwyg',
+  /** @lends Table */ {
+    name: 'Table',
+    /**
+     * Command Handler
+     * @param {WysiwygEditor} wwe wysiwygEditor instance
+     * @param {number} col column count
+     * @param {number} row row count
+     * @param {Array} data initial table data
+     */
+    exec(wwe, col, row, data) {
+      const sq = wwe.getEditor();
+      const tableIDClassName = wwe.componentManager.getManager('table').getTableIDClassName();
+      let tableHTMLString;
 
-    if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
+      if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
+        wwe.focus();
+
+        return;
+      }
+
+      tableHTMLString = `<table class="${tableIDClassName}">`;
+      tableHTMLString += makeHeader(col, data);
+      tableHTMLString += makeBody(col, row - 1, data);
+      tableHTMLString += '</table>';
+
+      sq.insertHTML(tableHTMLString);
+
       wwe.focus();
 
-      return;
-    }
-
-    tableHTMLString = `<table class="${tableIDClassName}">`;
-    tableHTMLString += makeHeader(col, data);
-    tableHTMLString += makeBody(col, row - 1, data);
-    tableHTMLString += '</table>';
-
-    sq.insertHTML(tableHTMLString);
-
-    wwe.focus();
-
-    if (!data) {
-      focusToFirstTh(sq, wwe.get$Body().find(`.${tableIDClassName}`));
+      if (!data) {
+        focusToFirstTh(sq, wwe.get$Body().find(`.${tableIDClassName}`));
+      }
     }
   }
-});
+);
 
 /**
  * Focus to first th

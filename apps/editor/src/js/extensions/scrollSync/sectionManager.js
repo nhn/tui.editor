@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements Scroll Sync Extension SectionManager Module
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements Scroll Sync Extension SectionManager Module
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 
 const FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/;
@@ -49,6 +49,7 @@ class SectionManager {
    */
   _addNewSection(start, end) {
     const newSection = this._makeSectionData(start, end);
+
     this._sectionList.push(newSection);
     this._currentSection = newSection;
   }
@@ -95,7 +96,11 @@ class SectionManager {
    * @private
    */
   _eachLineState(iteratee) {
-    let isSection, i, lineString, nextLineString, prevLineString,
+    let isSection,
+      i,
+      lineString,
+      nextLineString,
+      prevLineString,
       isTrimming = true,
       isInTable = false,
       isInCodeBlock = false,
@@ -111,7 +116,8 @@ class SectionManager {
       lineString = this.cm.getLine(i);
       nextLineString = this.cm.getLine(i + 1) || '';
       prevLineString = this.cm.getLine(i - 1) || '';
-      const isCodeBlockEnded = this._isCodeBlockEnd(prevLineString) && (codeblockStartLineIndex !== (i - 1));
+      const isCodeBlockEnded =
+        this._isCodeBlockEnd(prevLineString) && codeblockStartLineIndex !== i - 1;
 
       if (isInTable && (!lineString || !this._isTableCode(lineString))) {
         isInTable = false;
@@ -142,9 +148,10 @@ class SectionManager {
         isSection = true;
         isEnsuredSection = false;
         // setext header
-      } else if (!this._isCodeBlockEnd(lineString)
-                && !isInTable
-                && this._isSeTextHeader(lineString, nextLineString)
+      } else if (
+        !this._isCodeBlockEnd(lineString) &&
+        !isInTable &&
+        this._isSeTextHeader(lineString, nextLineString)
       ) {
         isRightAfterImageSection = false;
         isSection = true;
@@ -183,9 +190,14 @@ class SectionManager {
    * @private
    */
   _isIndependentImage(isInCodeBlock, isInTable, lineString, prevLineString) {
-    return !isInCodeBlock && !isInTable
-            && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString)
-            && prevLineString.length === 0;
+    return (
+      !isInCodeBlock &&
+      !isInTable &&
+      this._isImage(lineString) &&
+      !this._isList(lineString) &&
+      !this._isQuote(lineString) &&
+      prevLineString.length === 0
+    );
   }
 
   /**
@@ -236,7 +248,7 @@ class SectionManager {
    * @private
    */
   _isTable(lineString, nextLineString) {
-    return (this._isTableCode(lineString) && this._isTableAligner(nextLineString));
+    return this._isTableCode(lineString) && this._isTableAligner(nextLineString);
   }
 
   /**
@@ -276,10 +288,12 @@ class SectionManager {
    * @private
    */
   _isSeTextHeader(lineString, nextLineString) {
-    return lineString.replace(FIND_SPACE, '') !== ''
-      && !this._isQuote(lineString)
-      && nextLineString
-      && FIND_SETEXT_HEADER_RX.test(nextLineString);
+    return (
+      lineString.replace(FIND_SPACE, '') !== '' &&
+      !this._isQuote(lineString) &&
+      nextLineString &&
+      FIND_SETEXT_HEADER_RX.test(nextLineString)
+    );
   }
 
   _isImage(lineString) {
@@ -315,6 +329,7 @@ class SectionManager {
   sectionMatch() {
     if (this.getSectionList()) {
       const sections = this._getPreviewSections();
+
       this._matchPreviewSectionsWithSectionlist(sections);
     }
   }
@@ -326,11 +341,16 @@ class SectionManager {
    */
   _matchPreviewSectionsWithSectionlist(sections) {
     const sectionList = this.getSectionList();
+
     sections.forEach((childs, index) => {
       const section = sectionList[index];
+
       if (section) {
         const $sectionDiv = $(`<div class='content-id-${index}'></div>`);
-        section.$previewSectionEl = $(childs).wrapAll($sectionDiv).parent();
+
+        section.$previewSectionEl = $(childs)
+          .wrapAll($sectionDiv)
+          .parent();
       }
     });
   }
@@ -347,25 +367,26 @@ class SectionManager {
 
     sections[0] = [];
 
-    this.$previewContent.contents().filter(findElementNodeFilter).each((index, el) => {
-      const isParagraph = (el.tagName === 'P');
-      const isHeading = el.tagName.match(/^(H1|H2|H3|H4|H5|H6)$/);
-      const isImage = (isParagraph && el.hasChildNodes() && el.childNodes[0].nodeName === 'IMG');
+    this.$previewContent
+      .contents()
+      .filter(findElementNodeFilter)
+      .each((index, el) => {
+        const isParagraph = el.tagName === 'P';
+        const isHeading = el.tagName.match(/^(H1|H2|H3|H4|H5|H6)$/);
+        const isImage = isParagraph && el.hasChildNodes() && el.childNodes[0].nodeName === 'IMG';
 
-      if ((isHeading || isImage || isRightAfterImageSection)
-                && sections[lastSection].length
-      ) {
-        sections.push([]);
-        lastSection += 1;
-        isRightAfterImageSection = false;
-      }
+        if ((isHeading || isImage || isRightAfterImageSection) && sections[lastSection].length) {
+          sections.push([]);
+          lastSection += 1;
+          isRightAfterImageSection = false;
+        }
 
-      if (isImage) {
-        isRightAfterImageSection = true;
-      }
+        if (isImage) {
+          isRightAfterImageSection = true;
+        }
 
-      sections[lastSection].push(el);
-    });
+        sections[lastSection].push(el);
+      });
 
     return sections;
   }

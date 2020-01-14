@@ -13,27 +13,31 @@ import CommandManager from '../commandManager';
  * @module wysiwygCommands/Outdent
  * @ignore
  */
-const Outdent = CommandManager.command('wysiwyg', /** @lends Outdent */{
-  name: 'Outdent',
+const Outdent = CommandManager.command(
+  'wysiwyg',
+  /** @lends Outdent */ {
+    name: 'Outdent',
 
-  /**
-   * Command Handler
-   * @param {WysiwygEditor} wwe WysiwygEditor instance
-   */
-  exec(wwe) {
-    let $node = getCurrent$Li(wwe);
+    /**
+     * Command Handler
+     * @param {WysiwygEditor} wwe WysiwygEditor instance
+     */
+    exec(wwe) {
+      let $node = getCurrent$Li(wwe);
 
-    if ($node.length && isExecutable($node)) {
-      wwe.getEditor().saveUndoState();
+      if ($node.length && isExecutable($node)) {
+        wwe.getEditor().saveUndoState();
 
-      const nodeClasses = $node.attr('class');
-      wwe.getEditor().decreaseListLevel();
+        const nodeClasses = $node.attr('class');
 
-      $node = getCurrent$Li(wwe);
-      $node.attr('class', nodeClasses);
+        wwe.getEditor().decreaseListLevel();
+
+        $node = getCurrent$Li(wwe);
+        $node.attr('class', nodeClasses);
+      }
     }
   }
-});
+);
 
 /**
  * test if outdent the given list item
@@ -44,7 +48,7 @@ const Outdent = CommandManager.command('wysiwyg', /** @lends Outdent */{
  * @ignore
  */
 function isExecutable($currentLiNode) {
-  return !($currentLiNode.next().is('OL,UL'));
+  return !$currentLiNode.next().is('OL,UL');
 }
 
 /**

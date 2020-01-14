@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements MergeCell
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements MergeCell
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
@@ -10,47 +10,59 @@ import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
-const {CommandManager} = Editor;
+const { CommandManager } = Editor;
 const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
 
 let MergeCell;
+
 if (CommandManager) {
-  MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
-    name: 'MergeCells',
-    /**
-     * Command handler.
-     * @param {WysiwygEditor} wwe - wysiwygEditor instance
-     */
-    exec(wwe) {
-      const sq = wwe.getEditor();
+  MergeCell = CommandManager.command(
+    'wysiwyg',
+    /** @lends MergeCell */ {
+      name: 'MergeCells',
+      /**
+       * Command handler.
+       * @param {WysiwygEditor} wwe - wysiwygEditor instance
+       */
+      exec(wwe) {
+        const sq = wwe.getEditor();
 
-      wwe.focus();
+        wwe.focus();
 
-      if (!sq.hasFormat('TABLE')) {
-        return;
+        if (!sq.hasFormat('TABLE')) {
+          return;
+        }
+
+        const selectionManager = wwe.componentManager.getManager('tableSelection');
+        const $selectedCells = selectionManager.getSelectedCells();
+
+        if ($selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
+          return;
+        }
+
+        const range = sq.getSelection().cloneRange();
+        const $startContainer = $(range.startContainer);
+        const $table = $startContainer.closest('table');
+        const tableData = dataHandler.createTableData($table);
+        const tableRange = tableRangeHandler.getTableSelectionRange(
+          tableData,
+          $selectedCells,
+          $startContainer
+        );
+
+        _mergeCells(tableData, tableRange);
+
+        const $newTable = tableRenderer.replaceTable($table, tableData);
+        const focusCell = _findFocusCell(
+          $newTable,
+          tableRange.start.rowIndex,
+          tableRange.start.colIndex
+        );
+
+        tableRenderer.focusToCell(sq, range, focusCell);
       }
-
-      const selectionManager = wwe.componentManager.getManager('tableSelection');
-      const $selectedCells = selectionManager.getSelectedCells();
-
-      if ($selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
-        return;
-      }
-
-      const range = sq.getSelection().cloneRange();
-      const $startContainer = $(range.startContainer);
-      const $table = $startContainer.closest('table');
-      const tableData = dataHandler.createTableData($table);
-      const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
-
-      _mergeCells(tableData, tableRange);
-
-      const $newTable = tableRenderer.replaceTable($table, tableData);
-      const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.start.colIndex);
-
-      tableRenderer.focusToCell(sq, range, focusCell);
     }
-  });
+  );
 }
 
 /**
@@ -63,8 +75,10 @@ if (CommandManager) {
  */
 function _pickContent(targetRows, startColIndex, endColIndex) {
   const limitColIndex = endColIndex + 1;
-  const cells = [].concat(...targetRows.map(rowData => rowData.slice(startColIndex, limitColIndex)));
-  const foundCellData = cells.filter(({content}) => content && content !== BASIC_CELL_CONTENT);
+  const cells = [].concat(
+    ...targetRows.map(rowData => rowData.slice(startColIndex, limitColIndex))
+  );
+  const foundCellData = cells.filter(({ content }) => content && content !== BASIC_CELL_CONTENT);
 
   return foundCellData.length ? foundCellData[0].content : BASIC_CELL_CONTENT;
 }
@@ -80,12 +94,15 @@ function _initCellData(targetRows, startColIndex, endColIndex) {
   const limitColIndex = endColIndex + 1;
   const targetCells = targetRows.map(rowData => rowData.slice(startColIndex, limitColIndex));
 
-  [].concat(...targetCells).slice(1).forEach(cellData => {
-    const {nodeName} = cellData;
+  []
+    .concat(...targetCells)
+    .slice(1)
+    .forEach(cellData => {
+      const { nodeName } = cellData;
 
-    util.forEach(cellData, (value, name) => (delete cellData[name]));
-    cellData.nodeName = nodeName;
-  });
+      util.forEach(cellData, (value, name) => delete cellData[name]);
+      cellData.nodeName = nodeName;
+    });
 }
 
 /**
@@ -131,7 +148,7 @@ function _updateColMergeWith(targetRows, startColIndex, endColIndex, colMergeWit
  * @param {{rowIndex: number, colIndex: number}} endRange - end table selection range
  * @private
  */
-export function _mergeCells(tableData, {start: startRange, end: endRange}) {
+export function _mergeCells(tableData, { start: startRange, end: endRange }) {
   const startRowIndex = startRange.rowIndex;
   const startColIndex = startRange.colIndex;
   const endRowIndex = endRange.rowIndex;
@@ -167,7 +184,10 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
   const tableData = dataHandler.createTableData($newTable);
   const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, colIndex);
 
-  return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
+  return $newTable
+    .find('tr')
+    .eq(cellElementIndex.rowIndex)
+    .find('td, th')[cellElementIndex.colIndex];
 }
 
 export default MergeCell;

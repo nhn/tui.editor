@@ -12,31 +12,35 @@ import domUtils from '../domUtils';
  * @module wysiwygCommands/Bold
  * @ignore
  */
-const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
-  name: 'Bold',
-  keyMap: ['CTRL+B', 'META+B'],
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   */
-  exec(wwe) {
-    const sq = wwe.getEditor();
-    const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+const Bold = CommandManager.command(
+  'wysiwyg',
+  /** @lends Bold */ {
+    name: 'Bold',
+    keyMap: ['CTRL+B', 'META+B'],
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe wysiwygEditor instance
+     */
+    exec(wwe) {
+      const sq = wwe.getEditor();
+      const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
-    wwe.focus();
+      wwe.focus();
 
-    if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-      tableSelectionManager.styleToSelectedCells(styleBold);
+      if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+        tableSelectionManager.styleToSelectedCells(styleBold);
 
-      const range = sq.getSelection();
-      range.collapse(true);
-      sq.setSelection(range);
-    } else {
-      styleBold(sq);
-      domUtils.optimizeRange(sq.getSelection(), 'B');
+        const range = sq.getSelection();
+
+        range.collapse(true);
+        sq.setSelection(range);
+      } else {
+        styleBold(sq);
+        domUtils.optimizeRange(sq.getSelection(), 'B');
+      }
     }
   }
-});
+);
 
 /**
  * Style bold.
@@ -44,10 +48,10 @@ const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
  */
 function styleBold(sq) {
   if (sq.hasFormat('b') || sq.hasFormat('strong')) {
-    sq.changeFormat(null, {tag: 'b'});
+    sq.changeFormat(null, { tag: 'b' });
   } else if (!sq.hasFormat('PRE')) {
     if (sq.hasFormat('code')) {
-      sq.changeFormat(null, {tag: 'code'});
+      sq.changeFormat(null, { tag: 'code' });
     }
     sq.bold();
   }

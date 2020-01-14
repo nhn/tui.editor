@@ -15,31 +15,35 @@ import domUtils from '../domUtils';
  * @module wysiwygCommands/Code
  * @ignore
  */
-const Code = CommandManager.command('wysiwyg', /** @lends Code */{
-  name: 'Code',
-  keyMap: ['SHIFT+CTRL+C', 'SHIFT+META+C'],
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   */
-  exec(wwe) {
-    const sq = wwe.getEditor();
-    const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
-    const _styleCode = util.bind(styleCode, null, wwe.getEditor());
+const Code = CommandManager.command(
+  'wysiwyg',
+  /** @lends Code */ {
+    name: 'Code',
+    keyMap: ['SHIFT+CTRL+C', 'SHIFT+META+C'],
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe wysiwygEditor instance
+     */
+    exec(wwe) {
+      const sq = wwe.getEditor();
+      const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+      const _styleCode = util.bind(styleCode, null, wwe.getEditor());
 
-    wwe.focus();
+      wwe.focus();
 
-    if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-      tableSelectionManager.styleToSelectedCells(_styleCode);
+      if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+        tableSelectionManager.styleToSelectedCells(_styleCode);
 
-      const range = sq.getSelection();
-      range.collapse(true);
-      sq.setSelection(range);
-    } else {
-      _styleCode(sq);
+        const range = sq.getSelection();
+
+        range.collapse(true);
+        sq.setSelection(range);
+      } else {
+        _styleCode(sq);
+      }
     }
   }
-});
+);
 
 /**
  * removeUnnecessaryCodeInNextToRange
@@ -47,8 +51,9 @@ const Code = CommandManager.command('wysiwyg', /** @lends Code */{
  * @param {Range} range range object
  */
 function removeUnnecessaryCodeInNextToRange(range) {
-  if (domUtils.getNodeName(range.startContainer.nextSibling) === 'CODE'
-        && domUtils.getTextLength(range.startContainer.nextSibling) === 0
+  if (
+    domUtils.getNodeName(range.startContainer.nextSibling) === 'CODE' &&
+    domUtils.getTextLength(range.startContainer.nextSibling) === 0
   ) {
     $(range.startContainer.nextSibling).remove();
   }
@@ -61,7 +66,7 @@ function removeUnnecessaryCodeInNextToRange(range) {
  */
 function styleCode(editor, sq) {
   if (!sq.hasFormat('PRE') && sq.hasFormat('code')) {
-    sq.changeFormat(null, {tag: 'code'});
+    sq.changeFormat(null, { tag: 'code' });
     removeUnnecessaryCodeInNextToRange(editor.getSelection().cloneRange());
   } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
     if (sq.hasFormat('b')) {
@@ -70,9 +75,10 @@ function styleCode(editor, sq) {
       sq.removeItalic();
     }
 
-    sq.changeFormat({tag: 'code'});
+    sq.changeFormat({ tag: 'code' });
 
     const range = sq.getSelection().cloneRange();
+
     range.setStart(range.endContainer, range.endOffset);
     range.collapse(true);
 

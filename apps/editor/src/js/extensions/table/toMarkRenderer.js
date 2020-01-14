@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements toMarkRendererCreator.
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements toMarkRendererCreator.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 import toMark from 'to-mark';
@@ -16,7 +16,10 @@ const RX_COLS = /@cols=[0-9]+:/g;
  * @private
  */
 function _createRepeatString(str, count) {
-  return util.range(0, count).map(() => str).join('');
+  return util
+    .range(0, count)
+    .map(() => str)
+    .join('');
 }
 
 /**
@@ -27,7 +30,7 @@ function _createRepeatString(str, count) {
  * @private
  */
 function _makeTableHeadAlignText(thElement) {
-  const {align} = thElement;
+  const { align } = thElement;
   const textContent = (thElement.textContent || thElement.innerText).replace(RX_COLS, '');
   let textLength = textContent.length;
   let leftAlignValue = '';
@@ -61,9 +64,11 @@ function _makeTableHeadAlignText(thElement) {
 export function _getAdditionalThCount(ths) {
   let additionalThCount = 0;
 
-  ths.filter(th => $(th).attr('colspan')).forEach(th => {
-    additionalThCount += (parseInt($(th).attr('colspan'), 10) - 1);
-  });
+  ths
+    .filter(th => $(th).attr('colspan'))
+    .forEach(th => {
+      additionalThCount += parseInt($(th).attr('colspan'), 10) - 1;
+    });
 
   return additionalThCount;
 }
@@ -76,7 +81,9 @@ export function _getAdditionalThCount(ths) {
  * @private
  */
 export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
-  const ths = $(theadElement).find('th').get();
+  const ths = $(theadElement)
+    .find('th')
+    .get();
   let align = ths.map(th => ` ${_makeTableHeadAlignText(th)} |`).join('');
 
   align += _createRepeatString(' --- |', _getAdditionalThCount(ths));
@@ -86,6 +93,6 @@ export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
 
 export function createToMarkRenderer(baseRenderer) {
   return toMark.Renderer.factory(baseRenderer || toMark.gfmRenderer, {
-    'THEAD': _createTheadMarkdown
+    THEAD: _createTheadMarkdown
   });
 }

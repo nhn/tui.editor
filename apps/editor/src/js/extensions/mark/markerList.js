@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements markdown marker helper for additional information
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements markdown marker helper for additional information
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import util from 'tui-code-snippet';
 
 /**
@@ -58,9 +58,11 @@ class MarkerList {
    */
   removeMarker(id) {
     const removedMarker = this._markersWithId[id];
+
     delete this._markersWithId[id];
 
     const index = this._sortedMarkers.indexOf(removedMarker);
+
     this._sortedMarkers.splice(index, 1);
 
     return removedMarker;
@@ -138,12 +140,13 @@ class MarkerList {
    * @returns {object} markers data
    */
   getMarkersData() {
-    return this.getAll().map(marker => ({
-      start: marker.start,
-      end: marker.end,
-      id: marker.id
-    })
-    );
+    return this.getAll().map(marker => {
+      return {
+        start: marker.start,
+        end: marker.end,
+        id: marker.id
+      };
+    });
   }
 }
 

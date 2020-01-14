@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements mergedTableAddCol. Add Row to selected table.
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements mergedTableAddCol. Add Row to selected table.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
@@ -10,41 +10,53 @@ import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
-const {CommandManager} = Editor;
+const { CommandManager } = Editor;
 
 let AddCol;
+
 if (CommandManager) {
-  AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
-    name: 'AddCol',
-    /**
-     * Command handler.
-     * @param {WysiwygEditor} wwe - wysiwygEditor instance
-     */
-    exec(wwe) {
-      const sq = wwe.getEditor();
-      const range = sq.getSelection().cloneRange();
+  AddCol = CommandManager.command(
+    'wysiwyg',
+    /** @lends AddCol */ {
+      name: 'AddCol',
+      /**
+       * Command handler.
+       * @param {WysiwygEditor} wwe - wysiwygEditor instance
+       */
+      exec(wwe) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
 
-      wwe.focus();
+        wwe.focus();
 
-      if (!sq.hasFormat('TABLE')) {
-        return;
+        if (!sq.hasFormat('TABLE')) {
+          return;
+        }
+
+        const $startContainer = $(range.startContainer);
+        const $table = $startContainer.closest('table');
+        const tableData = dataHandler.createTableData($table);
+        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const tableRange = tableRangeHandler.getTableSelectionRange(
+          tableData,
+          $selectedCells,
+          $startContainer
+        );
+
+        sq.saveUndoState(range);
+        _addColumns(tableData, tableRange);
+
+        const $newTable = tableRenderer.replaceTable($table, tableData);
+        const focusCell = _findFocusCell(
+          $newTable,
+          tableRange.start.rowIndex,
+          tableRange.end.colIndex
+        );
+
+        tableRenderer.focusToCell(sq, range, focusCell);
       }
-
-      const $startContainer = $(range.startContainer);
-      const $table = $startContainer.closest('table');
-      const tableData = dataHandler.createTableData($table);
-      const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-      const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
-
-      sq.saveUndoState(range);
-      _addColumns(tableData, tableRange);
-
-      const $newTable = tableRenderer.replaceTable($table, tableData);
-      const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
-
-      tableRenderer.focusToCell(sq, range, focusCell);
     }
-  });
+  );
 }
 
 /**
@@ -79,7 +91,7 @@ function _createNewCell(rowData, rowIndex, colIndex, prevCell) {
   let newCell;
 
   if (util.isExisty(cellData.colMergeWith)) {
-    const {colMergeWith} = cellData;
+    const { colMergeWith } = cellData;
     const merger = rowData[colMergeWith];
     const lastMergedCellIndex = colMergeWith + merger.colspan - 1;
 
@@ -139,7 +151,11 @@ export function _createNewColumns(tableData, startColIndex, endColIndex) {
  */
 export function _addColumns(tableData, tableRange) {
   const endRange = tableRange.end;
-  const endColIndex = dataHandler.findColMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
+  const endColIndex = dataHandler.findColMergedLastIndex(
+    tableData,
+    endRange.rowIndex,
+    endRange.colIndex
+  );
   const newColumns = _createNewColumns(tableData, tableRange.start.colIndex, endColIndex);
   const newColIndex = endColIndex + 1;
 
@@ -161,8 +177,10 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
   const newColIndex = dataHandler.findColMergedLastIndex(tableData, rowIndex, colIndex) + 1;
   const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, newColIndex);
 
-  return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
+  return $newTable
+    .find('tr')
+    .eq(cellElementIndex.rowIndex)
+    .find('td, th')[cellElementIndex.colIndex];
 }
 
 export default AddCol;
-

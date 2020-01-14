@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements tableDataHandler
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements tableDataHandler
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
@@ -23,7 +23,7 @@ function _parseCell(cell, rowIndex, colIndex) {
   const $cell = $(cell);
   const colspan = $cell.attr('colspan');
   const rowspan = $cell.attr('rowspan');
-  const {nodeName} = cell;
+  const { nodeName } = cell;
 
   if (nodeName !== 'TH' && nodeName !== 'TD') {
     return null;
@@ -56,11 +56,7 @@ function _parseCell(cell, rowIndex, colIndex) {
  * @private
  */
 function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
-  const {
-    colspan,
-    rowspan,
-    nodeName
-  } = cellData;
+  const { colspan, rowspan, nodeName } = cellData;
   const colMerged = colspan > 1;
   const rowMerged = rowspan > 1;
 
@@ -110,22 +106,24 @@ export function createTableData($table) {
 
     tableData[rowIndex] = tableData[rowIndex] || [];
 
-    $(tr).children().each((colIndex, cell) => {
-      const cellData = _parseCell(cell, rowIndex, colIndex);
+    $(tr)
+      .children()
+      .each((colIndex, cell) => {
+        const cellData = _parseCell(cell, rowIndex, colIndex);
 
-      if (!cellData) {
-        return;
-      }
-      let dataColIndex = colIndex + stackedColCount;
+        if (!cellData) {
+          return;
+        }
+        let dataColIndex = colIndex + stackedColCount;
 
-      while (tableData[rowIndex][dataColIndex]) {
-        dataColIndex += 1;
-        stackedColCount += 1;
-      }
+        while (tableData[rowIndex][dataColIndex]) {
+          dataColIndex += 1;
+          stackedColCount += 1;
+        }
 
-      tableData[rowIndex][dataColIndex] = cellData;
-      _addMergedCell(tableData, cellData, rowIndex, dataColIndex);
-    });
+        tableData[rowIndex][dataColIndex] = cellData;
+        _addMergedCell(tableData, cellData, rowIndex, dataColIndex);
+      });
   });
 
   if ($table[0].className) {
@@ -174,9 +172,9 @@ function _getHeaderAligns(tableData) {
     let align;
 
     if (util.isExisty(cellData.colMergeWith)) {
-      ({align} = headRowData[cellData.colMergeWith]);
+      ({ align } = headRowData[cellData.colMergeWith]);
     } else {
-      ({align} = cellData);
+      ({ align } = cellData);
     }
 
     return align;
@@ -192,9 +190,16 @@ function _getHeaderAligns(tableData) {
  */
 function createRenderData(tableData, cellIndexData) {
   const headerAligns = _getHeaderAligns(tableData);
-  const renderData = cellIndexData.map(row => row.map(({rowIndex, colIndex}) => (util.extend({
-    align: headerAligns[colIndex]
-  }, tableData[rowIndex][colIndex]))));
+  const renderData = cellIndexData.map(row =>
+    row.map(({ rowIndex, colIndex }) =>
+      util.extend(
+        {
+          align: headerAligns[colIndex]
+        },
+        tableData[rowIndex][colIndex]
+      )
+    )
+  );
 
   if (tableData.className) {
     renderData.className = tableData.className;
@@ -336,8 +341,9 @@ function findElementIndex(tableData, rowIndex, colIndex) {
 function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
   tableData.forEach((rowData, rowIndex) => {
     const startIndex = rowData.length;
+
     if (startIndex) {
-      const [{nodeName}] = rowData;
+      const [{ nodeName }] = rowData;
 
       util.range(startIndex, limitIndex).forEach(colIndex => {
         rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
@@ -372,9 +378,7 @@ function addTbodyOrTheadIfNeed(tableData) {
 
     tableData.unshift(newHeader);
   } else if (tableData.length === 1) {
-    const newRow = util.range(0, cellCount).map(colIndex => (
-      createBasicCell(1, colIndex, 'TD')
-    ));
+    const newRow = util.range(0, cellCount).map(colIndex => createBasicCell(1, colIndex, 'TD'));
 
     tableData.push(newRow);
   } else {

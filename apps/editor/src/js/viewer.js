@@ -11,7 +11,7 @@ import CommandManager from './commandManager';
 import extManager from './extManager';
 import Convertor from './convertor';
 import domUtils from './domUtils';
-import {CodeBlockManager} from './codeBlockManager';
+import { CodeBlockManager } from './codeBlockManager';
 import codeBlockManager from './codeBlockManager';
 
 const TASK_ATTR_NAME = 'data-te-task';
@@ -34,11 +34,14 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  */
 class ToastUIEditorViewer {
   constructor(options) {
-    this.options = $.extend({
-      useDefaultHTMLSanitizer: true,
-      codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
-      customConvertor: null
-    }, options);
+    this.options = $.extend(
+      {
+        useDefaultHTMLSanitizer: true,
+        codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
+        customConvertor: null
+      },
+      options
+    );
 
     this.eventManager = new EventManager();
     this.commandManager = new CommandManager(this);
@@ -65,8 +68,9 @@ class ToastUIEditorViewer {
       });
     }
 
-    const {el, initialValue} = this.options;
+    const { el, initialValue } = this.options;
     const existingHTML = el.innerHTML;
+
     el.innerHTML = '';
 
     this.preview = new MarkdownPreview($(el), this.eventManager, this.convertor, true);
@@ -92,7 +96,10 @@ class ToastUIEditorViewer {
   _toggleTask(ev) {
     const style = getComputedStyle(ev.target, ':before');
 
-    if (ev.target.hasAttribute(TASK_ATTR_NAME) && domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
+    if (
+      ev.target.hasAttribute(TASK_ATTR_NAME) &&
+      domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)
+    ) {
       $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
       this.eventManager.emit('change', {
         source: 'viewer',

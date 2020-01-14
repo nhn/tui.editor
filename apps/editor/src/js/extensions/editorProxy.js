@@ -1,10 +1,11 @@
 /**
-* @fileoverview Editor/Viewer proxy for extensions
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Editor/Viewer proxy for extensions
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 /* eslint global-require: 0 no-empty: 0 */
 
 let Editor;
+
 try {
   Editor = require('../editor');
 } catch (e) {}

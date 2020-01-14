@@ -6,53 +6,56 @@
  */
 
 /* eslint-disable */
-module.exports = function code(state, startLine, endLine/*, silent*/) {
-    // Added by Junghwan Park
-    var FIND_LIST_RX = / {0,3}(?:-|\*|\d\.) /;
-    var lines = state.src.split('\n');
-    var currentLine = lines[startLine];
-    // Added by Junghwan Park
+module.exports = function code(state, startLine, endLine /*, silent*/) {
+  // Added by Junghwan Park
+  var FIND_LIST_RX = / {0,3}(?:-|\*|\d\.) /;
+  var lines = state.src.split('\n');
+  var currentLine = lines[startLine];
+  // Added by Junghwan Park
 
-    var nextLine, last, token, emptyLines = 0;
+  var nextLine,
+    last,
+    token,
+    emptyLines = 0;
 
+  // Add condition by Junghwan Park
+  if (currentLine.match(FIND_LIST_RX) || state.sCount[startLine] - state.blkIndent < 4) {
     // Add condition by Junghwan Park
-    if (currentLine.match(FIND_LIST_RX) || (state.sCount[startLine] - state.blkIndent < 4)) {
-    // Add condition by Junghwan Park
-        return false;
-    }
+    return false;
+  }
 
-    last = nextLine = startLine + 1;
+  last = nextLine = startLine + 1;
 
-    while (nextLine < endLine) {
-        if (state.isEmpty(nextLine)) {
-            emptyLines++;
+  while (nextLine < endLine) {
+    if (state.isEmpty(nextLine)) {
+      emptyLines++;
 
-            // workaround for lists: 2 blank lines should terminate indented
-            // code block, but not fenced code block
-            if (emptyLines >= 2 && state.parentType === 'list') {
-                break;
-            }
-
-            nextLine++;
-            continue;
-        }
-
-        emptyLines = 0;
-
-        if (state.sCount[nextLine] - state.blkIndent >= 4) {
-            nextLine++;
-            last = nextLine;
-            continue;
-        }
+      // workaround for lists: 2 blank lines should terminate indented
+      // code block, but not fenced code block
+      if (emptyLines >= 2 && state.parentType === 'list') {
         break;
+      }
+
+      nextLine++;
+      continue;
     }
 
-    state.line = last;
+    emptyLines = 0;
 
-    token = state.push('code_block', 'code', 0);
-    token.content = state.getLines(startLine, last, 4 + state.blkIndent, true);
-    token.map = [startLine, state.line];
+    if (state.sCount[nextLine] - state.blkIndent >= 4) {
+      nextLine++;
+      last = nextLine;
+      continue;
+    }
+    break;
+  }
 
-    return true;
+  state.line = last;
+
+  token = state.push('code_block', 'code', 0);
+  token.content = state.getLines(startLine, last, 4 + state.blkIndent, true);
+  token.map = [startLine, state.line];
+
+  return true;
 };
 /* eslint-enable */

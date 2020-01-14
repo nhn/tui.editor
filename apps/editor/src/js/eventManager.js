@@ -198,13 +198,13 @@ class EventManager {
    * @param {function} [handler] - registered event handler
    */
   removeEventHandler(typeStr, handler) {
-    const {type, namespace} = this._getTypeInfo(typeStr);
+    const { type, namespace } = this._getTypeInfo(typeStr);
 
     if (type && handler) {
       this._removeEventHandlerWithHandler(type, handler);
     } else if (type && !namespace) {
       // dont use dot notation cuz eslint
-      this.events['delete'](type);
+      this.events.delete(type);
     } else if (!type && namespace) {
       this.events.forEach((eventHandlers, eventType) => {
         this._removeEventHandlerWithTypeInfo(eventType, namespace);
@@ -223,6 +223,7 @@ class EventManager {
   _removeEventHandlerWithHandler(type, handler) {
     const eventHandlers = this.events.get(type) || [];
     const handlerIndex = eventHandlers.indexOf(handler);
+
     if (handlerIndex >= 0) {
       eventHandlers.splice(handlerIndex, 1);
     }

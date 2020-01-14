@@ -8,7 +8,6 @@
  */
 
 function for_inline_plugin(md, ruleName, tokenType, iteartor) {
-
   function scan(state) {
     var i, blkIdx, inlineTokens;
 
@@ -30,7 +29,7 @@ function for_inline_plugin(md, ruleName, tokenType, iteartor) {
   }
 
   md.core.ruler.push(ruleName, scan);
-};
+}
 
 export const linkAttribute = function(markdownit, iteartor) {
   for_inline_plugin(markdownit, 'url_attribute', 'link_open', iteartor);

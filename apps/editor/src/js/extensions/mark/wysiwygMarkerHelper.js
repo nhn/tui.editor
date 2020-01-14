@@ -1,11 +1,11 @@
 /**
-* @fileoverview Implements markdown marker helper for additional information
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements markdown marker helper for additional information
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import Editor from '../editorProxy';
 
-const {domUtils} = Editor;
+const { domUtils } = Editor;
 const FIND_ZWB_RX = /\u200B/g;
 
 /**
@@ -35,6 +35,7 @@ class WysiwygMarkerHelper {
     const foundNode = this._findOffsetNode([marker.start, marker.end]);
 
     const markerRange = this.sqe.getSelection().cloneRange();
+
     markerRange.setStart(foundNode[0].container, foundNode[0].offsetInContainer);
     markerRange.setEnd(foundNode[1].container, foundNode[1].offsetInContainer);
 
@@ -56,7 +57,7 @@ class WysiwygMarkerHelper {
    */
   _getExtraInfoOfRange(range) {
     let top, left, rect, height, node, parentNode, containerOffset;
-    const {endContainer, endOffset} = range;
+    const { endContainer, endOffset } = range;
 
     const text = range.cloneContents().textContent.replace(FIND_ZWB_RX, '');
 
@@ -73,16 +74,19 @@ class WysiwygMarkerHelper {
         node.textContent = '\u200B';
         range.endContainer.parentNode.insertBefore(node, range.endContainer);
         rect = node.getBoundingClientRect();
-        ({parentNode} = node);
+        ({ parentNode } = node);
         parentNode.removeChild(node);
       });
     }
 
     if (rect) {
-      containerOffset = this.sqe.get$Body().parent().offset();
+      containerOffset = this.sqe
+        .get$Body()
+        .parent()
+        .offset();
       top = this.sqe.scrollTop() + rect.top - containerOffset.top + $('body').scrollTop();
       left = rect.left - containerOffset.left;
-      ({height} = rect);
+      ({ height } = rect);
     } else {
       height = top = left = 0;
     }
@@ -138,7 +142,10 @@ class WysiwygMarkerHelper {
     const endNode = domUtils.getChildNodeByOffset(range.endContainer, range.endOffset);
     let textNode;
 
-    if (!domUtils.isTextNode(range.endContainer) || !endNode.nodeValue.replace(FIND_ZWB_RX, '').length) {
+    if (
+      !domUtils.isTextNode(range.endContainer) ||
+      !endNode.nodeValue.replace(FIND_ZWB_RX, '').length
+    ) {
       if (domUtils.isTextNode(endNode)) {
         range.setEnd(endNode, 0);
       } else {
@@ -161,7 +168,9 @@ class WysiwygMarkerHelper {
    * @private
    */
   _findOffsetNode(offsetlist) {
-    return domUtils.findOffsetNode(this.sqe.get$Body()[0], offsetlist, text => text.replace(FIND_ZWB_RX, ''));
+    return domUtils.findOffsetNode(this.sqe.get$Body()[0], offsetlist, text =>
+      text.replace(FIND_ZWB_RX, '')
+    );
   }
 
   /**
@@ -185,6 +194,7 @@ class WysiwygMarkerHelper {
    */
   clearSelect() {
     const range = this.sqe.getSelection().cloneRange();
+
     range.collapse(true);
     this.sqe.setSelection(range);
   }

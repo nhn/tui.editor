@@ -1,11 +1,11 @@
 /**
-* @fileoverview Implements table extension ui
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements table extension ui
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 
 import Editor from '../editorProxy';
-const {i18n} = Editor;
+const { i18n } = Editor;
 
 /**
  * Change contextmenu content.

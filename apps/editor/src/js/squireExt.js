@@ -7,7 +7,7 @@ import util from 'tui-code-snippet';
 import Squire from 'squire-rte';
 
 import domUtils from './domUtils';
-import {isMac} from './util';
+import { isMac } from './util';
 
 const FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
 const isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
@@ -56,7 +56,13 @@ class SquireExt extends Squire {
 
   changeBlockFormat(srcCondition, targetTagName) {
     this.modifyBlocks(frag => {
-      let current, newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock, appendChidToNextBlock;
+      let current,
+        newFrag,
+        newBlock,
+        nextBlock,
+        tagName,
+        lastNodeOfNextBlock,
+        appendChidToNextBlock;
 
       // HR is non-block element, so frag don't have it
       // make a default block
@@ -79,9 +85,9 @@ class SquireExt extends Squire {
 
         // find tag
         while (current !== frag) {
-          ({tagName} = current);
+          ({ tagName } = current);
 
-          if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
+          if (util.isFunction(srcCondition) ? srcCondition(tagName) : tagName === srcCondition) {
             nextBlock = current.childNodes.item(0);
 
             // there is no next blocktag
@@ -121,9 +127,9 @@ class SquireExt extends Squire {
 
       // if source condition node is not founded, we wrap current div node with node named targetTagName
       if (
-        (!newFrag || !srcCondition)
-                && targetTagName
-                && domUtils.getNodeName(frag.childNodes[0]) === 'DIV'
+        (!newFrag || !srcCondition) &&
+        targetTagName &&
+        domUtils.getNodeName(frag.childNodes[0]) === 'DIV'
       ) {
         frag = this.createElement(targetTagName, [frag.childNodes[0]]);
       }
@@ -251,8 +257,11 @@ class SquireExt extends Squire {
   getSelectionPosition(selection, style, offset) {
     const marker = this.createElement('INPUT');
     const range = selection.cloneRange();
-    const endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer,
-      selection.endOffset + (offset || 0));
+    const endSelectionInfo = this.getSelectionInfoByOffset(
+      selection.endContainer,
+      selection.endOffset + (offset || 0)
+    );
+
     range.setStart(range.startContainer, range.startOffset);
     range.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
 
@@ -295,7 +304,9 @@ class SquireExt extends Squire {
   }
 
   preserveLastLine() {
-    const lastBlock = this.get$Body().children().last();
+    const lastBlock = this.get$Body()
+      .children()
+      .last();
 
     if (domUtils.getNodeName(lastBlock[0]) !== 'DIV') {
       this._ignoreChange = true;
@@ -321,7 +332,19 @@ class SquireExt extends Squire {
 
   blockCommandShortcuts() {
     const meta = isMac ? 'meta' : 'ctrl';
-    const keys = ['b', 'i', 'u', 'shift-7', 'shift-5', 'shift-6', 'shift-8', 'shift-9', '[', ']', 'd'];
+    const keys = [
+      'b',
+      'i',
+      'u',
+      'shift-7',
+      'shift-5',
+      'shift-6',
+      'shift-8',
+      'shift-9',
+      '[',
+      ']',
+      'd'
+    ];
 
     keys.forEach(key => {
       this.setKeyHandler(`${meta}-${key}`, (editor, keyboardEvent) => {

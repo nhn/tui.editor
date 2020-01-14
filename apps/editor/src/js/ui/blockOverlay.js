@@ -13,7 +13,7 @@ import $ from 'jquery';
  * @ignore
  */
 class BlockOverlay {
-  constructor({eventManager, container, attachedSelector}) {
+  constructor({ eventManager, container, attachedSelector }) {
     this._eventManager = eventManager;
     this._attachedSelector = `[contenteditable=true] ${attachedSelector}`;
     this._$container = $(container);

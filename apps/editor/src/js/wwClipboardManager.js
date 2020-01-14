@@ -30,12 +30,22 @@ class WwClipboardManager {
    * initialize
    */
   init() {
-    this.wwe.eventManager.listen('willPaste', ev => this._executeHandler(this._onWillPaste.bind(this), ev));
-    this.wwe.eventManager.listen('copy', ev => this._executeHandler(this._onCopyCut.bind(this), ev));
-    this.wwe.eventManager.listen('copyAfter', ev => this._executeHandler(this._onCopyAfter.bind(this), ev));
+    this.wwe.eventManager.listen('willPaste', ev =>
+      this._executeHandler(this._onWillPaste.bind(this), ev)
+    );
+    this.wwe.eventManager.listen('copy', ev =>
+      this._executeHandler(this._onCopyCut.bind(this), ev)
+    );
+    this.wwe.eventManager.listen('copyAfter', ev =>
+      this._executeHandler(this._onCopyAfter.bind(this), ev)
+    );
     this.wwe.eventManager.listen('cut', ev => this._executeHandler(this._onCopyCut.bind(this), ev));
-    this.wwe.eventManager.listen('cutAfter', ev => this._executeHandler(this._onCutAfter.bind(this), ev));
-    this.wwe.eventManager.listen('paste', ev => this._executeHandler(this._onPasteIntoTable.bind(this), ev));
+    this.wwe.eventManager.listen('cutAfter', ev =>
+      this._executeHandler(this._onCutAfter.bind(this), ev)
+    );
+    this.wwe.eventManager.listen('paste', ev =>
+      this._executeHandler(this._onPasteIntoTable.bind(this), ev)
+    );
   }
 
   _executeHandler(handler, event) {
@@ -47,6 +57,7 @@ class WwClipboardManager {
   _onCopyCut(event) {
     const tableManager = this.wwe.componentManager.getManager('tableSelection');
     const selectedCellCount = tableManager.getSelectedCells().length;
+
     if (!selectedCellCount) {
       // preserve selection range in a cell, let squire do the job
       return;
@@ -81,12 +92,16 @@ class WwClipboardManager {
   }
 
   _onCopyAfter() {
-    this.wwe.getEditor().get$Body().focus();
+    this.wwe
+      .getEditor()
+      .get$Body()
+      .focus();
     this._clearClipboardArea();
   }
 
   _onCutAfter() {
     const range = this.wwe.getEditor().getSelection();
+
     range.deleteContents();
     this.wwe.getEditor().focus();
     this._clearClipboardArea();
@@ -98,7 +113,7 @@ class WwClipboardManager {
    * @private
    */
   _onPasteIntoTable(event) {
-    const {data: ev} = event;
+    const { data: ev } = event;
     const range = this.wwe.getEditor().getSelection();
 
     if (this.wwe.isInTable(range) && this._isSingleCellSelected(range)) {
@@ -107,7 +122,7 @@ class WwClipboardManager {
   }
 
   _isSingleCellSelected(range) {
-    const {startContainer, endContainer} = range;
+    const { startContainer, endContainer } = range;
 
     return this._getCell(startContainer) === this._getCell(endContainer);
   }
@@ -119,7 +134,7 @@ class WwClipboardManager {
   _replaceNewLineToBr(node) {
     const textNodes = domUtils.getAllTextNode(node);
 
-    textNodes.forEach((textNode) => {
+    textNodes.forEach(textNode => {
       if (/\n/.test(textNode.nodeValue)) {
         textNode.parentNode.innerHTML = textNode.nodeValue.replace(/\n/g, '<br>');
       }
@@ -127,8 +142,9 @@ class WwClipboardManager {
   }
 
   _onWillPaste(event) {
-    const {data: pasteData} = event;
+    const { data: pasteData } = event;
     const $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
+
     this._preparePaste($clipboardContainer);
     this._setTableBookmark($clipboardContainer);
 
@@ -143,6 +159,7 @@ class WwClipboardManager {
       this.wwe.eventManager.emit('wysiwygRangeChangeAfter', this);
       this._focusTableBookmark();
     };
+
     this.wwe.getEditor().addEventListener('input', handler);
   }
 
@@ -162,10 +179,12 @@ class WwClipboardManager {
   }
 
   _createClipboardArea() {
-    return $('<DIV>').attr({
-      contenteditable: 'true',
-      style: 'position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;'
-    }).appendTo(document.body);
+    return $('<DIV>')
+      .attr({
+        contenteditable: 'true',
+        style: 'position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;'
+      })
+      .appendTo(document.body);
   }
 
   /**
@@ -176,11 +195,13 @@ class WwClipboardManager {
    */
   _updateCopyDataForListTypeIfNeed(range, $clipboardContainer) {
     const commonAncestorNodeName = range.commonAncestorContainer.nodeName;
+
     if (commonAncestorNodeName !== 'UL' && commonAncestorNodeName !== 'OL') {
       return;
     }
 
     const $newParent = $(`<${commonAncestorNodeName} />`);
+
     $newParent.append($clipboardContainer.html());
     $clipboardContainer.html('');
     $clipboardContainer.append($newParent);
@@ -223,7 +244,7 @@ class WwClipboardManager {
   _preProcessPtag(node) {
     const pTags = node.querySelectorAll('p');
 
-    util.forEachArray(pTags, (pTag) => {
+    util.forEachArray(pTags, pTag => {
       if (pTag.lastChild && pTag.lastChild.nodeName !== 'BR') {
         pTag.appendChild(document.createElement('br'));
       }
@@ -302,9 +323,11 @@ class WwClipboardManager {
    */
   _extendRange(range) {
     // non-text node && not selected whole area, then expand the range
-    if (domUtils.isTextNode(range.commonAncestorContainer)
-            && (range.startOffset !== 0 || range.commonAncestorContainer.textContent.length !== range.endOffset)
-            && range.commonAncestorContainer.nodeName !== 'TD'
+    if (
+      domUtils.isTextNode(range.commonAncestorContainer) &&
+      (range.startOffset !== 0 ||
+        range.commonAncestorContainer.textContent.length !== range.endOffset) &&
+      range.commonAncestorContainer.nodeName !== 'TD'
     ) {
       return;
     }
@@ -334,9 +357,10 @@ class WwClipboardManager {
     let newBound = range.startContainer;
 
     // expand range
-    while (newBound.parentNode !== range.commonAncestorContainer
-        && newBound.parentNode !== this.wwe.get$Body()[0]
-        && !newBound.previousSibling
+    while (
+      newBound.parentNode !== range.commonAncestorContainer &&
+      newBound.parentNode !== this.wwe.get$Body()[0] &&
+      !newBound.previousSibling
     ) {
       newBound = newBound.parentNode;
     }
@@ -358,9 +382,12 @@ class WwClipboardManager {
     let boundNext = newBound.nextSibling;
 
     // expand range
-    while (newBound.parentNode !== range.commonAncestorContainer
-        && newBound.parentNode !== this.wwe.get$Body()[0]
-        && (!boundNext || (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))) {
+    while (
+      newBound.parentNode !== range.commonAncestorContainer &&
+      newBound.parentNode !== this.wwe.get$Body()[0] &&
+      (!boundNext ||
+        (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))
+    ) {
       newBound = newBound.parentNode;
       boundNext = newBound.nextSibling;
     }
@@ -378,12 +405,14 @@ class WwClipboardManager {
    * @private
    */
   _isWholeCommonAncestorContainerSelected(range) {
-    return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
-            && range.commonAncestorContainer !== this.wwe.get$Body()[0]
-            && range.startOffset === 0
-            && range.endOffset === range.commonAncestorContainer.childNodes.length
-            && range.commonAncestorContainer === range.startContainer
-            && range.commonAncestorContainer === range.endContainer;
+    return (
+      range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE &&
+      range.commonAncestorContainer !== this.wwe.get$Body()[0] &&
+      range.startOffset === 0 &&
+      range.endOffset === range.commonAncestorContainer.childNodes.length &&
+      range.commonAncestorContainer === range.startContainer &&
+      range.commonAncestorContainer === range.endContainer
+    );
   }
 }
 

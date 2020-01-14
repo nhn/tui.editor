@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements markdown marker helper for additional information
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements markdown marker helper for additional information
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import util from 'tui-code-snippet';
 
 const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
@@ -64,20 +64,26 @@ class MarkdownMarkerHelper {
       top = left = height = 0;
       text = '';
     } else {
-      text = doc.getRange({
-        line: startLine,
-        ch: startCh
-      }, {
-        line: endLine,
-        ch: endCh
-      });
+      text = doc.getRange(
+        {
+          line: startLine,
+          ch: startCh
+        },
+        {
+          line: endLine,
+          ch: endCh
+        }
+      );
 
-      rect = this.cm.charCoords({
-        line: endLine,
-        ch: endCh
-      }, 'local');
+      rect = this.cm.charCoords(
+        {
+          line: endLine,
+          ch: endCh
+        },
+        'local'
+      );
 
-      ({top, left} = rect);
+      ({ top, left } = rect);
       height = rect.bottom - rect.top;
     }
 
@@ -98,19 +104,26 @@ class MarkdownMarkerHelper {
 
     const selection = this._getSelection();
 
-    const start = doc.getRange({
-      line: 0,
-      ch: 0
-    }, selection.anchor).replace(FIND_CRLF_RX, '').length;
+    const start = doc
+      .getRange(
+        {
+          line: 0,
+          ch: 0
+        },
+        selection.anchor
+      )
+      .replace(FIND_CRLF_RX, '').length;
 
     const end = start + doc.getSelection().replace(FIND_CRLF_RX, '').length;
 
     const foundCursor = this._findOffsetCursor([start, end]);
 
-    const info = this._getExtraInfoOfRange(foundCursor[0].line,
+    const info = this._getExtraInfoOfRange(
+      foundCursor[0].line,
       foundCursor[0].ch,
       foundCursor[1].line,
-      foundCursor[1].ch);
+      foundCursor[1].ch
+    );
 
     return {
       start,
@@ -128,12 +141,14 @@ class MarkdownMarkerHelper {
    * @private
    */
   _getSelection() {
-    let [{anchor, head}] = this.cm.getDoc().listSelections();
+    let [{ anchor, head }] = this.cm.getDoc().listSelections();
 
-    const isReversedSelection = (anchor.line > head.line) || (anchor.line === head.line && anchor.ch > head.ch);
+    const isReversedSelection =
+      anchor.line > head.line || (anchor.line === head.line && anchor.ch > head.ch);
 
     if (isReversedSelection) {
       const temp = head;
+
       head = anchor;
       anchor = temp;
     }
@@ -198,13 +213,16 @@ class MarkdownMarkerHelper {
   selectOffsetRange(start, end) {
     const foundCursor = this._findOffsetCursor([start, end]);
 
-    this.cm.setSelection({
-      line: foundCursor[0].line,
-      ch: foundCursor[0].ch
-    }, {
-      line: foundCursor[1].line,
-      ch: foundCursor[1].ch
-    });
+    this.cm.setSelection(
+      {
+        line: foundCursor[0].line,
+        ch: foundCursor[0].ch
+      },
+      {
+        line: foundCursor[1].line,
+        ch: foundCursor[1].ch
+      }
+    );
   }
 
   /**

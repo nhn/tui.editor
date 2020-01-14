@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements Color syntax Extension
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements Color syntax Extension
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import ColorPicker from 'tui-color-picker';
 
@@ -22,8 +22,8 @@ let lastScrollTop = 0;
  * @ignore
  */
 function colorSyntaxExtension(editor) {
-  const {colorSyntax = {}} = editor.options;
-  const {preset, useCustomSyntax = false} = colorSyntax;
+  const { colorSyntax = {} } = editor.options;
+  const { preset, useCustomSyntax = false } = colorSyntax;
 
   editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => {
     let replacement;
@@ -31,8 +31,10 @@ function colorSyntaxExtension(editor) {
     if (!useCustomSyntax) {
       replacement = html;
     } else {
-      replacement
-                = html.replace(colorSyntaxRx, (matched, p1, p2) => makeHTMLColorSyntaxAndTextRange(p2, p1).result);
+      replacement = html.replace(
+        colorSyntaxRx,
+        (matched, p1, p2) => makeHTMLColorSyntaxAndTextRange(p2, p1).result
+      );
     }
 
     return replacement;
@@ -73,22 +75,29 @@ function colorSyntaxExtension(editor) {
         }
 
         if (!useCustomSyntax) {
-          ({result: replacedText, from: replacedFrom}
-                        = makeHTMLColorSyntaxAndTextRange(cm.getSelection(), color));
+          ({ result: replacedText, from: replacedFrom } = makeHTMLColorSyntaxAndTextRange(
+            cm.getSelection(),
+            color
+          ));
           cm.replaceSelection(replacedText);
         } else {
-          ({result: replacedText, from: replacedFrom}
-                        = makeCustomColorSyntaxAndTextRange(cm.getSelection(), color));
+          ({ result: replacedText, from: replacedFrom } = makeCustomColorSyntaxAndTextRange(
+            cm.getSelection(),
+            color
+          ));
           cm.replaceSelection(replacedText);
         }
 
-        cm.setSelection({
-          line: rangeFrom.line,
-          ch: rangeFrom.ch + replacedFrom
-        }, {
-          line: rangeTo.line,
-          ch: rangeFrom.line === rangeTo.line ? rangeTo.ch + replacedFrom : rangeTo.ch
-        });
+        cm.setSelection(
+          {
+            line: rangeFrom.line,
+            ch: rangeFrom.ch + replacedFrom
+          },
+          {
+            line: rangeTo.line,
+            ch: rangeFrom.line === rangeTo.line ? rangeTo.ch + replacedFrom : rangeTo.ch
+          }
+        );
 
         mde.focus();
       }
@@ -113,6 +122,7 @@ function colorSyntaxExtension(editor) {
           tableSelectionManager.styleToSelectedCells(styleColor, color);
 
           const range = sq.getSelection();
+
           range.collapse(true);
           sq.setSelection(range);
         } else {
@@ -162,9 +172,9 @@ function getScrollTopForReFocus(sq) {
 function initUI(editor, preset) {
   const name = 'colorSyntax';
   const className = 'tui-color';
-  const i18n = editor.i18n;
+  const { i18n } = editor;
   const toolbar = editor.getUI().getToolbar();
-  const {usageStatistics} = editor.options;
+  const { usageStatistics } = editor.options;
 
   editor.eventManager.addEventType('colorButtonClicked');
 
@@ -178,7 +188,7 @@ function initUI(editor, preset) {
     }
   });
   const colorSyntaxButtonIndex = toolbar.indexOfItem(name);
-  const {$el: $button} = toolbar.getItem(colorSyntaxButtonIndex);
+  const { $el: $button } = toolbar.getItem(colorSyntaxButtonIndex);
 
   const $colorPickerContainer = $('<div />');
 
@@ -206,8 +216,8 @@ function initUI(editor, preset) {
     className: 'tui-popup-color',
     $target: editor.getUI().getToolbar().$el,
     css: {
-      'width': 'auto',
-      'position': 'absolute'
+      width: 'auto',
+      position: 'absolute'
     }
   });
 
@@ -227,10 +237,8 @@ function initUI(editor, preset) {
       return;
     }
 
-    const {
-      offsetTop,
-      offsetLeft
-    } = $button.get(0);
+    const { offsetTop, offsetLeft } = $button.get(0);
+
     popup.$el.css({
       top: offsetTop + $button.outerHeight(),
       left: offsetLeft
@@ -327,6 +335,7 @@ function changeDecColorsToHex(color) {
  */
 function changeDecColorToHex(color) {
   let hexColor = parseInt(color, 10);
+
   hexColor = hexColor.toString(16);
   hexColor = doubleZeroPad(hexColor);
 
@@ -340,7 +349,7 @@ function changeDecColorToHex(color) {
  * @ignore
  */
 function doubleZeroPad(numberStr) {
-  const padded = ('00' + numberStr);
+  const padded = `00${numberStr}`;
 
   return padded.substr(padded.length - 2);
 }

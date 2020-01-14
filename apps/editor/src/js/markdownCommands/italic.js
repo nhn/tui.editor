@@ -3,12 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import CommandManager from '../commandManager';
-import {
-  removeSyntax,
-  appendSyntax,
-  expandReplace,
-  replace
-} from './emphasisCommon';
+import { removeSyntax, appendSyntax, expandReplace, replace } from './emphasisCommon';
 
 const boldItalicRangeRegex = /^(\*{3}|_{3}).*\1$/;
 const boldRangeRegex = /^(\*{2}|_{2}).*\1$/;
@@ -43,12 +38,16 @@ const replaceText = function(doc, text, range) {
   // case 3 : italic (expand 1 both front and end) => remove
   const expandReplaceBind = expandReplace.bind(this, doc, range);
 
-  return expandReplaceBind(boldItalicLength, isBoldItalic, t => removeSyntax(t, italicSymbol))
-        || expandReplaceBind(boldLength, isBold, t => appendSyntax(removeItalicInsideText(t), italicSymbol))
-        || expandReplaceBind(italicLength, isItalic, t => removeSyntax(t, italicSymbol))
-        || replace(doc, text, isBoldItalic, t => removeSyntax(t, italicSymbol))
-        || replace(doc, text, isBold, t => appendSyntax(removeItalicInsideText(t), italicSymbol))
-        || replace(doc, text, isItalic, t => removeSyntax(t, italicSymbol));
+  return (
+    expandReplaceBind(boldItalicLength, isBoldItalic, t => removeSyntax(t, italicSymbol)) ||
+    expandReplaceBind(boldLength, isBold, t =>
+      appendSyntax(removeItalicInsideText(t), italicSymbol)
+    ) ||
+    expandReplaceBind(italicLength, isItalic, t => removeSyntax(t, italicSymbol)) ||
+    replace(doc, text, isBoldItalic, t => removeSyntax(t, italicSymbol)) ||
+    replace(doc, text, isBold, t => appendSyntax(removeItalicInsideText(t), italicSymbol)) ||
+    replace(doc, text, isItalic, t => removeSyntax(t, italicSymbol))
+  );
 };
 
 const replaceEmptyText = function(doc, range) {
@@ -57,10 +56,12 @@ const replaceEmptyText = function(doc, range) {
   // case 2 : bold => append
   // case 3 : italic => remove
   // if there is no match, make italic
-  return expandReplace(doc, range, boldItalicLength, isBoldItalic, t => removeSyntax(t, italicSymbol))
-        || expandReplace(doc, range, boldLength, isBold, t => appendSyntax(t, italicSymbol))
-        || expandReplace(doc, range, italicLength, isItalic, () => '')
-        || doc.replaceSelection(`${italicSymbol}${italicSymbol}`, 'around');
+  return (
+    expandReplace(doc, range, boldItalicLength, isBoldItalic, t => removeSyntax(t, italicSymbol)) ||
+    expandReplace(doc, range, boldLength, isBold, t => appendSyntax(t, italicSymbol)) ||
+    expandReplace(doc, range, italicLength, isItalic, () => '') ||
+    doc.replaceSelection(`${italicSymbol}${italicSymbol}`, 'around')
+  );
 };
 
 /**
@@ -70,48 +71,54 @@ const replaceEmptyText = function(doc, range) {
  * @module markdownCommands/Italic
  * @ignore
  */
-const Italic = CommandManager.command('markdown', /** @lends Italic */{
-  name: 'Italic',
-  keyMap: ['CTRL+I', 'META+I'],
-  /**
-   * Command handler
-   * @param {MarkdownEditor} mde MarkdownEditor instance
-   */
-  exec(mde) {
-    const cm = mde.getEditor();
-    const doc = cm.getDoc();
-    const {line, ch} = doc.getCursor();
-    const range = mde.getRange();
-    const selectionStr = doc.getSelection();
+const Italic = CommandManager.command(
+  'markdown',
+  /** @lends Italic */ {
+    name: 'Italic',
+    keyMap: ['CTRL+I', 'META+I'],
+    /**
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
+     */
+    exec(mde) {
+      const cm = mde.getEditor();
+      const doc = cm.getDoc();
+      const { line, ch } = doc.getCursor();
+      const range = mde.getRange();
+      const selectionStr = doc.getSelection();
 
-    if (selectionStr) {
-      // check selectionStr match bold & italic, bold, italic and then
-      // if there is no match, append italic
-      if (!replaceText(doc, selectionStr, range)) {
-        // Before append italic, remove italic inside text and then append italic
-        // Example: One*Two*Three => *OneTwoThree*
-        doc.replaceSelection(appendSyntax(removeItalicInsideText(selectionStr), italicSymbol), 'around');
-      }
-    } else {
-      replaceEmptyText(doc, range);
-
-      const afterSelectStr = doc.getSelection();
-      let size = ch;
-
-      // If text was not selected, after replace text, move cursor
-      if (isBoldItalic(afterSelectStr) || (isItalic(afterSelectStr) && !isBold(afterSelectStr))) {
-        // For example **|** => ***|*** (move cusor +symbolLenth)
-        size += italicLength;
+      if (selectionStr) {
+        // check selectionStr match bold & italic, bold, italic and then
+        // if there is no match, append italic
+        if (!replaceText(doc, selectionStr, range)) {
+          // Before append italic, remove italic inside text and then append italic
+          // Example: One*Two*Three => *OneTwoThree*
+          doc.replaceSelection(
+            appendSyntax(removeItalicInsideText(selectionStr), italicSymbol),
+            'around'
+          );
+        }
       } else {
-        // For example *|* => | (move cusor -symbolLenth)
-        size -= italicLength;
+        replaceEmptyText(doc, range);
+
+        const afterSelectStr = doc.getSelection();
+        let size = ch;
+
+        // If text was not selected, after replace text, move cursor
+        if (isBoldItalic(afterSelectStr) || (isItalic(afterSelectStr) && !isBold(afterSelectStr))) {
+          // For example **|** => ***|*** (move cusor +symbolLenth)
+          size += italicLength;
+        } else {
+          // For example *|* => | (move cusor -symbolLenth)
+          size -= italicLength;
+        }
+
+        doc.setCursor(line, size);
       }
 
-      doc.setCursor(line, size);
+      cm.focus();
     }
-
-    cm.focus();
   }
-});
+);
 
 export default Italic;

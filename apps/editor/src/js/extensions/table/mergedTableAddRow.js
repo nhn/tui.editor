@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements mergedTableAddRow. Add Row to selected table
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements mergedTableAddRow. Add Row to selected table
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
@@ -10,41 +10,49 @@ import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
-const {CommandManager} = Editor;
+const { CommandManager } = Editor;
 
 let AddRow;
+
 if (CommandManager) {
-  AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
-    name: 'AddRow',
-    /**
-     * Command handler.
-     * @param {WysiwygEditor} wwe - wysiwygEditor instance
-     */
-    exec(wwe) {
-      const sq = wwe.getEditor();
-      const range = sq.getSelection().cloneRange();
+  AddRow = CommandManager.command(
+    'wysiwyg',
+    /** @lends AddRow */ {
+      name: 'AddRow',
+      /**
+       * Command handler.
+       * @param {WysiwygEditor} wwe - wysiwygEditor instance
+       */
+      exec(wwe) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
 
-      wwe.focus();
+        wwe.focus();
 
-      if (!sq.hasFormat('TABLE')) {
-        return;
+        if (!sq.hasFormat('TABLE')) {
+          return;
+        }
+
+        const $startContainer = $(range.startContainer);
+        const $table = $startContainer.closest('table');
+        const tableData = dataHandler.createTableData($table);
+        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const tableRange = tableRangeHandler.getTableSelectionRange(
+          tableData,
+          $selectedCells,
+          $startContainer
+        );
+
+        sq.saveUndoState(range);
+        _addRow(tableData, tableRange);
+
+        const $newTable = tableRenderer.replaceTable($table, tableData);
+        const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
+
+        tableRenderer.focusToCell(sq, range, focusTd);
       }
-
-      const $startContainer = $(range.startContainer);
-      const $table = $startContainer.closest('table');
-      const tableData = dataHandler.createTableData($table);
-      const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-      const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
-
-      sq.saveUndoState(range);
-      _addRow(tableData, tableRange);
-
-      const $newTable = tableRenderer.replaceTable($table, tableData);
-      const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
-
-      tableRenderer.focusToCell(sq, range, focusTd);
     }
-  });
+  );
 }
 
 /**
@@ -77,7 +85,7 @@ export function _createNewRow(tableData, rowIndex) {
     let newCell;
 
     if (util.isExisty(cellData.rowMergeWith)) {
-      const {rowMergeWith} = cellData;
+      const { rowMergeWith } = cellData;
       const merger = tableData[rowMergeWith][colIndex];
       const lastMergedRowIndex = rowMergeWith + merger.rowspan - 1;
 
@@ -116,8 +124,14 @@ export function _createNewRow(tableData, rowIndex) {
 export function _addRow(tableData, tableRange) {
   const startRowIndex = tableRange.start.rowIndex;
   const endRange = tableRange.end;
-  const endRowIndex = dataHandler.findRowMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
-  const newRows = util.range(startRowIndex, endRowIndex + 1).map(() => _createNewRow(tableData, endRowIndex));
+  const endRowIndex = dataHandler.findRowMergedLastIndex(
+    tableData,
+    endRange.rowIndex,
+    endRange.colIndex
+  );
+  const newRows = util
+    .range(startRowIndex, endRowIndex + 1)
+    .map(() => _createNewRow(tableData, endRowIndex));
 
   tableData.splice(...[endRowIndex + 1, 0].concat(newRows));
 }
@@ -135,7 +149,10 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
   const newRowIndex = dataHandler.findRowMergedLastIndex(tableData, rowIndex, colIndex) + 1;
   const cellElementIndex = dataHandler.findElementIndex(tableData, newRowIndex, colIndex);
 
-  return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td')[cellElementIndex.colIndex];
+  return $newTable
+    .find('tr')
+    .eq(cellElementIndex.rowIndex)
+    .find('td')[cellElementIndex.colIndex];
 }
 
 export default AddRow;

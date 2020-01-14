@@ -43,12 +43,16 @@ class PopupAddImage extends LayerPopup {
                 <button type="button" class="${CLASS_CLOSE_BUTTON}">${i18n.get('Cancel')}</button>
             </div>
         `;
-    options = util.extend({
-      header: true,
-      title: i18n.get('Insert image'),
-      className: 'te-popup-add-image tui-editor-popup',
-      content: POPUP_CONTENT
-    }, options);
+
+    options = util.extend(
+      {
+        header: true,
+        title: i18n.get('Insert image'),
+        className: 'te-popup-add-image tui-editor-popup',
+        content: POPUP_CONTENT
+      },
+      options
+    );
     super(options);
   }
 
@@ -82,16 +86,11 @@ class PopupAddImage extends LayerPopup {
     const $fileTypeSection = $popup.find(`.${CLASS_FILE_TYPE}`);
     const $urlTypeSection = $popup.find(`.${CLASS_URL_TYPE}`);
     const $tabSection = this.$body.find(`.${CLASS_TAB_SECTION}`);
+
     this.tab = new Tab({
       initName: i18n.get('File'),
-      items: [
-        i18n.get('File'),
-        i18n.get('URL')
-      ],
-      sections: [
-        $fileTypeSection,
-        $urlTypeSection
-      ]
+      items: [i18n.get('File'), i18n.get('URL')],
+      sections: [$fileTypeSection, $urlTypeSection]
     });
     $tabSection.append(this.tab.$el);
   }
@@ -108,7 +107,11 @@ class PopupAddImage extends LayerPopup {
     this.on('hidden', () => this._resetInputs());
 
     this.on(`change .${CLASS_IMAGE_FILE_INPUT}`, () => {
-      const filename = this._$imageFileInput.val().split('\\').pop();
+      const filename = this._$imageFileInput
+        .val()
+        .split('\\')
+        .pop();
+
       this._$altTextInput.val(filename);
     });
 
@@ -120,7 +123,8 @@ class PopupAddImage extends LayerPopup {
       if (imageUrl) {
         this._applyImage(imageUrl, altText);
       } else {
-        const {files} = this._$imageFileInput.get(0);
+        const { files } = this._$imageFileInput.get(0);
+
         if (files.length) {
           const imageFile = files.item(0);
           const hookCallback = (url, text) => this._applyImage(url, text || altText);

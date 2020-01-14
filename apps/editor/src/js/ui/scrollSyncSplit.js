@@ -16,8 +16,8 @@ const EVENT_REQUIRE_SCROLL_INTO_VIEW = 'requireScrollIntoView';
 const CLASS_CONTENT_LEFT = 'tui-split-content-left';
 const CLASS_CONTENT_RIGHT = 'tui-split-content-right';
 const CLASS_CONTENT = {
-  'left': CLASS_CONTENT_LEFT,
-  'right': CLASS_CONTENT_RIGHT
+  left: CLASS_CONTENT_LEFT,
+  right: CLASS_CONTENT_RIGHT
 };
 
 /**
@@ -33,11 +33,14 @@ const CLASS_CONTENT = {
  */
 class ScrollSyncSplit {
   constructor(baseElement, leftElement, rightElement, options = {}) {
-    options = util.extend({
-      showScrollSyncButton: false,
-      scrollSync: true,
-      splitView: true
-    }, options);
+    options = util.extend(
+      {
+        showScrollSyncButton: false,
+        scrollSync: true,
+        splitView: true
+      },
+      options
+    );
     this._baseElement = baseElement;
 
     /**
@@ -53,20 +56,24 @@ class ScrollSyncSplit {
 
   _initDom(leftElement, rightElement, options) {
     const el = document.createElement('div');
+
     el.className = CLASS_SPLIT_SCROLL;
     this._el = el;
 
     const scrollWrapper = document.createElement('div');
+
     scrollWrapper.className = CLASS_SCROLL_WRAPPER;
     this._scrollWrapper = scrollWrapper;
     this._setScrollSync(options.scrollSync);
     this.setSplitView(options.splitView);
 
     const contentWrapper = document.createElement('div');
+
     contentWrapper.className = CLASS_SCROLL_CONTENT;
     this._contentWrapper = contentWrapper;
 
     const splitter = document.createElement('div');
+
     splitter.className = CLASS_SPLITTER;
 
     this._baseElement.appendChild(el);
@@ -83,7 +90,7 @@ class ScrollSyncSplit {
 
   _requireScrollIntoView(event) {
     const element = event.target;
-    const {top: targetTop, bottom: targetBottom} = element.getBoundingClientRect();
+    const { top: targetTop, bottom: targetBottom } = element.getBoundingClientRect();
     let wrapperTop, wrapperBottom, wrapperElement;
 
     if (this.isScrollSynced()) {
@@ -95,7 +102,7 @@ class ScrollSyncSplit {
     } else {
       return;
     }
-    ({top: wrapperTop, bottom: wrapperBottom} = wrapperElement.getBoundingClientRect());
+    ({ top: wrapperTop, bottom: wrapperBottom } = wrapperElement.getBoundingClientRect());
 
     if (targetTop < wrapperTop) {
       wrapperElement.scrollTop = wrapperElement.scrollTop + targetTop - wrapperTop;
@@ -194,11 +201,12 @@ class ScrollSyncSplit {
     }
 
     const wrapperHeight = this._contentWrapper.clientHeight;
-    const {scrollTop} = this._contentWrapper;
+    const { scrollTop } = this._contentWrapper;
     const leftElement = this._contentElements.left;
     const rightElement = this._contentElements.right;
 
-    const scrollingElement = leftElement.offsetHeight - wrapperHeight > 0 ? leftElement : rightElement;
+    const scrollingElement =
+      leftElement.offsetHeight - wrapperHeight > 0 ? leftElement : rightElement;
     const followingElement = scrollingElement === leftElement ? rightElement : leftElement;
 
     const scrollingElementHeight = scrollingElement.offsetHeight;
@@ -207,7 +215,8 @@ class ScrollSyncSplit {
     const followingElementTopMax = scrollingElementHeight - followingElementHeight;
 
     scrollingElement.style.top = '0px';
-    followingElement.style.top = `${(scrollTop / scrollingElementScrollMax) * followingElementTopMax}px`;
+    followingElement.style.top = `${(scrollTop / scrollingElementScrollMax) *
+      followingElementTopMax}px`;
   }
 
   /**

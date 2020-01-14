@@ -15,7 +15,7 @@ import blockQuote from './markdownItPlugins/markdownitBlockQuoteRenderer';
 import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
 import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
 import codeBackticks from './markdownItPlugins/markdownitBackticksRenderer';
-import {linkAttribute} from './markdownItPlugins/markdownitInlinePlugin';
+import { linkAttribute } from './markdownItPlugins/markdownitInlinePlugin';
 import codeBlockManager from './codeBlockManager';
 
 const markdownitHighlight = new MarkdownIt({
@@ -56,8 +56,7 @@ markdownitHighlight.renderer.rules.softbreak = (tokens, idx, options) => {
 
   const prevToken = tokens[idx - 1];
 
-  if (prevToken && prevToken.type === 'html_inline' &&
-    prevToken.content === '<br>') {
+  if (prevToken && prevToken.type === 'html_inline' && prevToken.content === '<br>') {
     return '';
   }
 
@@ -123,9 +122,9 @@ class Convertor {
    * @private
    */
   _markdownToHtml(markdown, env) {
-    markdown = markdown.replace(HTML_TAG_RX, (match, $1, $2, $3) => {
-      return match[0] !== '\\' ? `${$1}${$2} data-tomark-pass ${$3}` : match;
-    });
+    markdown = markdown.replace(HTML_TAG_RX, (match, $1, $2, $3) =>
+      match[0] !== '\\' ? `${$1}${$2} data-tomark-pass ${$3}` : match
+    );
 
     markdown = this._replaceImgAttrToDataProp(markdown);
 
@@ -161,6 +160,7 @@ class Convertor {
 
     $wrapperDiv.find('code, pre').each((i, codeOrPre) => {
       const $code = $(codeOrPre);
+
       $code.html($code.html().replace(/\sdata-tomark-pass\s(\/?)&gt;/g, '$1&gt;'));
     });
 
@@ -178,6 +178,7 @@ class Convertor {
    */
   toHTMLWithCodeHightlight(markdown) {
     let html = this._markdownToHtmlWithCodeHighlight(markdown);
+
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
 
     return html;
@@ -200,7 +201,9 @@ class Convertor {
   }
 
   initHtmlSanitizer() {
-    this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => htmlSanitizer(html, true));
+    this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html =>
+      htmlSanitizer(html, true)
+    );
   }
 
   /**
@@ -241,14 +244,14 @@ class Convertor {
     markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
 
     util.forEach(markdown.split('\n'), (line, index) => {
-      const FIND_TABLE_RX = /^(<br>)+\||\|[^|]*\|/ig;
-      const FIND_CODE_RX = /`[^`]*<br>[^`]*`/ig;
-      const FIND_BRS_BEFORE_TABLE = /^(<br>)+\|/ig;
+      const FIND_TABLE_RX = /^(<br>)+\||\|[^|]*\|/gi;
+      const FIND_CODE_RX = /`[^`]*<br>[^`]*`/gi;
+      const FIND_BRS_BEFORE_TABLE = /^(<br>)+\|/gi;
 
       if (FIND_TABLE_RX.test(line)) {
-        line = line.replace(FIND_BRS_BEFORE_TABLE, match => match.replace(/<br>/ig, '<br>\n'));
+        line = line.replace(FIND_BRS_BEFORE_TABLE, match => match.replace(/<br>/gi, '<br>\n'));
       } else if (!FIND_CODE_RX.test(line)) {
-        line = line.replace(/<br>/ig, '<br>\n');
+        line = line.replace(/<br>/gi, '<br>\n');
       }
       resultArray[index] = line;
     });
@@ -268,31 +271,43 @@ class Convertor {
   }
 
   _appendAttributeForLinkIfNeed(html) {
-    const LINK_RX = /!?\[.*\]\(<\s*a[^>]*>(.*?)<\s*\/\s*a>\)/ig;
+    const LINK_RX = /!?\[.*\]\(<\s*a[^>]*>(.*?)<\s*\/\s*a>\)/gi;
 
-    return html.replace(LINK_RX, match => match.replace(/<a /ig, '<a data-tomark-pass="" '));
+    return html.replace(LINK_RX, match => match.replace(/<a /gi, '<a data-tomark-pass="" '));
   }
 
   _appendAttributeForBrIfNeed(html) {
-    const FIND_BR_RX = /<br>/ig;
-    const FIND_DOUBLE_BR_RX = /<br \/><br \/>/ig;
-    const FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.)/ig;
+    const FIND_BR_RX = /<br>/gi;
+    const FIND_DOUBLE_BR_RX = /<br \/><br \/>/gi;
+    const FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.)/gi;
     const FIRST_TWO_BRS_BEFORE_RX = /([^>]|<\/a>|<\/code>|<\/span>|<\/b>|<\/i>|<\/s>|<img [^>]*>)/;
     const TWO_BRS_RX = /<br data-tomark-pass \/><br data-tomark-pass \/>/;
-    const FIND_FIRST_TWO_BRS_RX = new RegExp(FIRST_TWO_BRS_BEFORE_RX.source + TWO_BRS_RX.source, 'g');
-    const FIND_ATTRI_WITH_EMTPY_STR_RX = /<br data-tomark-pass="">/ig;
+    const FIND_FIRST_TWO_BRS_RX = new RegExp(
+      FIRST_TWO_BRS_BEFORE_RX.source + TWO_BRS_RX.source,
+      'g'
+    );
+    const FIND_ATTRI_WITH_EMTPY_STR_RX = /<br data-tomark-pass="">/gi;
 
     html = html.replace(FIND_BR_RX, '<br />');
 
     html = html.replace(FIND_DOUBLE_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />');
     html = html.replace(FIND_ATTRI_WITH_EMTPY_STR_RX, '<br data-tomark-pass />');
 
-    html = html.replace(FIND_PASSING_AND_NORMAL_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />$1');
+    html = html.replace(
+      FIND_PASSING_AND_NORMAL_BR_RX,
+      '<br data-tomark-pass /><br data-tomark-pass />$1'
+    );
     html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
 
     // Preserve <br> when there is only one empty line before or after a block element.
-    html = html.replace(/(.)<br \/><br \/>(<h[1-6]>|<pre>|<table>|<ul>|<ol>|<blockquote>)/g, '$1<br /><br data-tomark-pass />$2');
-    html = html.replace(/(<\/h[1-6]>|<\/pre>|<\/table>|<\/ul>|<\/ol>|<\/blockquote>)<br \/>(.)/g, '$1<br data-tomark-pass />$2');
+    html = html.replace(
+      /(.)<br \/><br \/>(<h[1-6]>|<pre>|<table>|<ul>|<ol>|<blockquote>)/g,
+      '$1<br /><br data-tomark-pass />$2'
+    );
+    html = html.replace(
+      /(<\/h[1-6]>|<\/pre>|<\/table>|<\/ul>|<\/ol>|<\/blockquote>)<br \/>(.)/g,
+      '$1<br data-tomark-pass />$2'
+    );
 
     return html;
   }

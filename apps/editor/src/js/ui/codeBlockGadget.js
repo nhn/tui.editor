@@ -19,7 +19,7 @@ const GADGET_HEIGHT = 30;
  * @ignore
  */
 class CodeBlockGadget extends BlockOverlay {
-  constructor({eventManager, container, wysiwygEditor}) {
+  constructor({ eventManager, container, wysiwygEditor }) {
     super({
       eventManager,
       container,

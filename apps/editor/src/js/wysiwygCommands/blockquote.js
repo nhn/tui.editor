@@ -12,26 +12,29 @@ import CommandManager from '../commandManager';
  * @module wysiwygCommands/Blockquote
  * @ignore
  */
-const Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
-  name: 'Blockquote',
-  keyMap: ['ALT+Q', 'ALT+Q'],
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   */
-  exec(wwe) {
-    const sq = wwe.getEditor();
+const Blockquote = CommandManager.command(
+  'wysiwyg',
+  /** @lends Blockquote */ {
+    name: 'Blockquote',
+    keyMap: ['ALT+Q', 'ALT+Q'],
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe wysiwygEditor instance
+     */
+    exec(wwe) {
+      const sq = wwe.getEditor();
 
-    wwe.focus();
+      wwe.focus();
 
-    if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-      if (sq.hasFormat('BLOCKQUOTE')) {
-        sq.decreaseQuoteLevel();
-      } else {
-        sq.increaseQuoteLevel();
+      if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+        if (sq.hasFormat('BLOCKQUOTE')) {
+          sq.decreaseQuoteLevel();
+        } else {
+          sq.increaseQuoteLevel();
+        }
       }
     }
   }
-});
+);
 
 export default Blockquote;

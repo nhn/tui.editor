@@ -1,11 +1,11 @@
 /**
-* @fileoverview Implements markdown marker helper for additional information
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements markdown marker helper for additional information
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import Editor from '../editorProxy';
 
-const {domUtils} = Editor;
+const { domUtils } = Editor;
 const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
 /**
@@ -70,7 +70,7 @@ class ViewerMarkerHelper {
       node.textContent = '\u200B';
       range.endContainer.parentNode.insertBefore(node, range.endContainer);
       rect = node.getBoundingClientRect();
-      ({parentNode} = node);
+      ({ parentNode } = node);
       parentNode.removeChild(node);
     }
 
@@ -78,7 +78,7 @@ class ViewerMarkerHelper {
       containerOffset = this.preview.$el.offset();
       top = rect.top + this.preview.$el.scrollTop() - containerOffset.top + $('body').scrollTop();
       left = rect.left - containerOffset.left;
-      ({height} = rect);
+      ({ height } = rect);
     } else {
       height = top = left = 0;
     }
@@ -159,7 +159,9 @@ class ViewerMarkerHelper {
    * @private
    */
   _findOffsetNode(offsetlist) {
-    return domUtils.findOffsetNode(this.preview.$el[0], offsetlist, text => text.replace(FIND_CRLF_RX, ''));
+    return domUtils.findOffsetNode(this.preview.$el[0], offsetlist, text =>
+      text.replace(FIND_CRLF_RX, '')
+    );
   }
 
   /**

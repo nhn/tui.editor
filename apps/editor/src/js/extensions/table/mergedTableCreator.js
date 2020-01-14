@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements mergedTableCreator.
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements mergedTableCreator.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
@@ -42,7 +42,7 @@ export function _extractPropertiesForMerge(value, type, oppossitType) {
  * @private
  */
 export function _parseTableCell(cell) {
-  const {nodeName} = cell;
+  const { nodeName } = cell;
   const align = cell.align || '';
   let content = cell.innerHTML.trim();
   let colspan = null;
@@ -67,7 +67,15 @@ export function _parseTableCell(cell) {
  * @private
  */
 export function _createTableObjectFrom$Table($table) {
-  return $table.find('tr').get().map(tr => $(tr).find('td, th').get().map(_parseTableCell));
+  return $table
+    .find('tr')
+    .get()
+    .map(tr =>
+      $(tr)
+        .find('td, th')
+        .get()
+        .map(_parseTableCell)
+    );
 }
 
 /**
@@ -82,6 +90,7 @@ function _findIndex(arr, onFind) {
 
   util.forEach(arr, (item, index) => {
     let nextFind = true;
+
     if (onFind(item, index)) {
       foundIndex = index;
       nextFind = false;
@@ -100,7 +109,7 @@ function _findIndex(arr, onFind) {
  * @private
  */
 export function _divideTrs(trs) {
-  const tbodyStartIndex = _findIndex(trs, tr => (tr[0].nodeName === 'TD'));
+  const tbodyStartIndex = _findIndex(trs, tr => tr[0].nodeName === 'TD');
 
   return [trs.slice(0, tbodyStartIndex), trs.slice(tbodyStartIndex)];
 }
@@ -116,7 +125,7 @@ export function _mergeByColspan(trs) {
     let removalCount = 0;
 
     tr.forEach(td => {
-      removalCount += (td.colspan - 1);
+      removalCount += td.colspan - 1;
     });
 
     tr.splice(tdCount - removalCount);
@@ -134,7 +143,7 @@ export function _getRemovalTdCountsByRowspan(trs) {
   const removalCounts = trIndexes.map(() => 0);
 
   trs.forEach((tr, trIndex) => {
-    const rowspanTds = tr.filter(td => (td.rowspan > 1));
+    const rowspanTds = tr.filter(td => td.rowspan > 1);
     const startTrIndexForRemoval = trIndex + 1;
 
     rowspanTds.forEach(td => {
@@ -178,4 +187,3 @@ export default function createMergedTable(tableElement) {
 
   return $(tableRenderer.createTableHtml(table))[0];
 }
-

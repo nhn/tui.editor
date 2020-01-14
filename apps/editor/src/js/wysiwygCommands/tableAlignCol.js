@@ -14,33 +14,36 @@ import domUtil from '../domUtils';
  * @module wysiwygCommands/TableAlignCol
  * @ignore
  */
-const TableAlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
-  name: 'AlignCol',
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   * @param {string} alignDirection Align direction
-   */
-  exec(wwe, alignDirection) {
-    const sq = wwe.getEditor();
-    const range = sq.getSelection().cloneRange();
-    const selectionMgr = wwe.componentManager.getManager('tableSelection');
-    const rangeInformation = getRangeInformation(range, selectionMgr);
+const TableAlignCol = CommandManager.command(
+  'wysiwyg',
+  /** @lends AlignCol */ {
+    name: 'AlignCol',
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe wysiwygEditor instance
+     * @param {string} alignDirection Align direction
+     */
+    exec(wwe, alignDirection) {
+      const sq = wwe.getEditor();
+      const range = sq.getSelection().cloneRange();
+      const selectionMgr = wwe.componentManager.getManager('tableSelection');
+      const rangeInformation = getRangeInformation(range, selectionMgr);
 
-    wwe.focus();
+      wwe.focus();
 
-    if (sq.hasFormat('TR')) {
-      sq.saveUndoState(range);
+      if (sq.hasFormat('TR')) {
+        sq.saveUndoState(range);
 
-      const $table = $(range.startContainer).parents('table');
+        const $table = $(range.startContainer).parents('table');
 
-      const selectionInformation = getSelectionInformation($table, rangeInformation);
+        const selectionInformation = getSelectionInformation($table, rangeInformation);
 
-      setAlignAttributeToTableCells($table, alignDirection, selectionInformation);
+        setAlignAttributeToTableCells($table, alignDirection, selectionInformation);
+      }
+      selectionMgr.removeClassAttrbuteFromAllCellsIfNeed();
     }
-    selectionMgr.removeClassAttrbuteFromAllCellsIfNeed();
   }
-});
+);
 
 /**
  * Set Column align
@@ -56,18 +59,21 @@ function setAlignAttributeToTableCells($table, alignDirection, selectionInformat
   const isDivided = selectionInformation.isDivided || false;
   const start = selectionInformation.startColumnIndex;
   const end = selectionInformation.endColumnIndex;
-  const columnLength = $table.find('tr').eq(0).find('td,th').length;
+  const columnLength = $table
+    .find('tr')
+    .eq(0)
+    .find('td,th').length;
 
   $table.find('tr').each((n, tr) => {
-    $(tr).children('td,th').each((index, cell) => {
-      if (isDivided &&
-                ((start <= index && index <= columnLength) || (index <= end))
-      ) {
-        $(cell).attr('align', alignDirection);
-      } else if ((start <= index && index <= end)) {
-        $(cell).attr('align', alignDirection);
-      }
-    });
+    $(tr)
+      .children('td,th')
+      .each((index, cell) => {
+        if (isDivided && ((start <= index && index <= columnLength) || index <= end)) {
+          $(cell).attr('align', alignDirection);
+        } else if (start <= index && index <= end) {
+          $(cell).attr('align', alignDirection);
+        }
+      });
   });
 }
 
@@ -78,11 +84,11 @@ function setAlignAttributeToTableCells($table, alignDirection, selectionInformat
  * @returns {{startColumnIndex: number, endColumnIndex: number, isDivided: boolean}}
  */
 function getSelectionInformation($table, rangeInformation) {
-  const columnLength = $table.find('tr').eq(0).find('td,th').length;
-  const {
-    from,
-    to
-  } = rangeInformation;
+  const columnLength = $table
+    .find('tr')
+    .eq(0)
+    .find('td,th').length;
+  const { from, to } = rangeInformation;
   let startColumnIndex, endColumnIndex, isDivided;
 
   if (from.row === to.row) {
@@ -117,11 +123,16 @@ function getRangeInformation(range, selectionMgr) {
   let rangeInformation, startCell;
 
   if ($selectedCells.length) {
-    rangeInformation = selectionMgr.getSelectionRangeFromTable($selectedCells.first().get(0),
-      $selectedCells.last().get(0));
+    rangeInformation = selectionMgr.getSelectionRangeFromTable(
+      $selectedCells.first().get(0),
+      $selectedCells.last().get(0)
+    );
   } else {
-    const {startContainer} = range;
-    startCell = domUtil.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
+    const { startContainer } = range;
+
+    startCell = domUtil.isTextNode(startContainer)
+      ? $(startContainer).parent('td,th')[0]
+      : startContainer;
     rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, startCell);
   }
 

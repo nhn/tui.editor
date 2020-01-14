@@ -1,7 +1,7 @@
 /**
-* @fileoverview Implements Scroll Sync Extension
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements Scroll Sync Extension
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import $ from 'jquery';
 import Editor from '../editorProxy';
 import ScrollManager from './scrollManager';
@@ -14,7 +14,7 @@ import SectionManager from './sectionManager';
  */
 function scrollSyncExtension(editor) {
   const className = 'tui-scrollsync';
-  const i18n = editor.i18n;
+  const { i18n } = editor;
   const TOOL_TIP = {
     active: i18n.get('Auto scroll enabled'),
     inactive: i18n.get('Auto scroll disabled')
@@ -48,6 +48,7 @@ function scrollSyncExtension(editor) {
       }
     });
     const items = toolbar.getItems();
+
     $divider = items[items.length - 2].$el;
     button = items[items.length - 1];
 

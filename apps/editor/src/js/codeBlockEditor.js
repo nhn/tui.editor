@@ -47,6 +47,7 @@ class CodeBlockEditor extends CodeMirrorExt {
     // we should proceed at next tick
     setTimeout(() => {
       const lineElement = wrapper.querySelector(`pre:nth-child(${cursor.line + 1})`);
+
       $(lineElement).trigger('requireScrollIntoView');
     }, 0);
   }
@@ -57,6 +58,7 @@ class CodeBlockEditor extends CodeMirrorExt {
    */
   load(codeBlockElement) {
     const el = codeBlockElement.cloneNode(true);
+
     this.setLanguage(el.getAttribute('data-language') || '');
     this.setEditorCodeText(el.textContent);
   }

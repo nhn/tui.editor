@@ -15,30 +15,33 @@ import domUtils from '../domUtils';
  * @module wysiwygCommands/TableAddCol
  * @ignore
  */
-const TableAddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
-  name: 'AddCol',
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   */
-  exec(wwe) {
-    const sq = wwe.getEditor();
-    const range = sq.getSelection().cloneRange();
-    const numberOfCols = getNumberOfCols(wwe);
-    let $cell;
+const TableAddCol = CommandManager.command(
+  'wysiwyg',
+  /** @lends AddCol */ {
+    name: 'AddCol',
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe wysiwygEditor instance
+     */
+    exec(wwe) {
+      const sq = wwe.getEditor();
+      const range = sq.getSelection().cloneRange();
+      const numberOfCols = getNumberOfCols(wwe);
+      let $cell;
 
-    wwe.focus();
+      wwe.focus();
 
-    if (sq.hasFormat('TR')) {
-      sq.saveUndoState(range);
+      if (sq.hasFormat('TR')) {
+        sq.saveUndoState(range);
 
-      $cell = getCellByRange(range);
-      addColToCellAfter($cell, numberOfCols);
+        $cell = getCellByRange(range);
+        addColToCellAfter($cell, numberOfCols);
 
-      focusToNextCell(sq, $cell);
+        focusToNextCell(sq, $cell);
+      }
     }
   }
-});
+);
 
 /**
  * get number of selected cols
@@ -53,6 +56,7 @@ function getNumberOfCols(wwe) {
 
   if ($selectedCells.length > 0) {
     const maxLength = $selectedCells.get(0).parentNode.querySelectorAll('td, th').length;
+
     length = Math.min(maxLength, $selectedCells.length);
   }
 
@@ -87,22 +91,26 @@ function addColToCellAfter($cell, numberOfCols = 1) {
   const index = $cell.index();
   let cellToAdd;
 
-  $cell.parents('table').find('tr').each((n, tr) => {
-    const isTBody = domUtils.getNodeName(tr.parentNode) === 'TBODY';
-    const isMSIE = util.browser.msie;
-    const cell = tr.children[index];
-    for (let i = 0; i < numberOfCols; i += 1) {
-      if (isTBody) {
-        cellToAdd = document.createElement('td');
-      } else {
-        cellToAdd = document.createElement('th');
+  $cell
+    .parents('table')
+    .find('tr')
+    .each((n, tr) => {
+      const isTBody = domUtils.getNodeName(tr.parentNode) === 'TBODY';
+      const isMSIE = util.browser.msie;
+      const cell = tr.children[index];
+
+      for (let i = 0; i < numberOfCols; i += 1) {
+        if (isTBody) {
+          cellToAdd = document.createElement('td');
+        } else {
+          cellToAdd = document.createElement('th');
+        }
+        if (!isMSIE) {
+          cellToAdd.appendChild(document.createElement('br'));
+        }
+        $(cellToAdd).insertAfter(cell);
       }
-      if (!isMSIE) {
-        cellToAdd.appendChild(document.createElement('br'));
-      }
-      $(cellToAdd).insertAfter(cell);
-    }
-  });
+    });
 }
 
 /**

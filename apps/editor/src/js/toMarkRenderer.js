@@ -12,7 +12,7 @@ import domUtils from './domUtils';
  * @see {@link https://github.com/commonmark/commonmark-spec/issues/611#issuecomment-533578503}
  */
 function isValidDelimiterRun(node) {
-  const {isElemNode, isTextNode} = domUtils;
+  const { isElemNode, isTextNode } = domUtils;
   const isInvalidOpener = isTextNode(node.previousSibling) && isElemNode(node.firstChild);
   const isInvalidCloser = isTextNode(node.nextSibling) && isElemNode(node.lastChild);
 
@@ -21,7 +21,9 @@ function isValidDelimiterRun(node) {
 
 function convertEmphasis(node, subContent, delimiter) {
   const FIND_BEFORE_AND_AFTER_SPACES_RX = /^(\s*)((?:.|\n)*\S)(\s*)$/m;
-  const [, beforeSpaces, trimmedContent, afterSpaces] = subContent.match(FIND_BEFORE_AND_AFTER_SPACES_RX);
+  const [, beforeSpaces, trimmedContent, afterSpaces] = subContent.match(
+    FIND_BEFORE_AND_AFTER_SPACES_RX
+  );
 
   let convertedContent;
 
