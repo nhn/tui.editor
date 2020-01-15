@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import {_mergeCells} from '@/extensions/table/mergeCell';
+import { _mergeCells } from '@/extensions/table/mergeCell';
 import tableDataHandler from '@/extensions/table/tableDataHandler';
 
 describe('mergeCell', () => {
@@ -24,6 +24,7 @@ describe('mergeCell', () => {
 
     beforeEach(function() {
       const $table = $(tableHtml);
+
       tableData = tableDataHandler.createTableData($table);
     });
 

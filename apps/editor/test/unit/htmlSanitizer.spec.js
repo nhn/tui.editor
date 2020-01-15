@@ -18,8 +18,9 @@ describe('htmlSanitizer', function() {
 
   describe('attributes', () => {
     it('Remove all attritube but white list', () => {
-      var html = '<img style="display:inline" class="V" title="V" data-custom="V" src="http://www.nhn.com/renewal/img/ci_nhn.png" onload="dd=1" />';
-      var dom = htmlSanitizer(html);
+      const html =
+        '<img style="display:inline" class="V" title="V" data-custom="V" src="http://www.nhn.com/renewal/img/ci_nhn.png" onload="dd=1" />';
+      const dom = htmlSanitizer(html);
 
       const $img = $(dom).find('img');
 
@@ -33,7 +34,8 @@ describe('htmlSanitizer', function() {
     });
 
     it('Leave svg attributes', function() {
-      const html = '<svg width="100" height="100"><circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" /></svg>';
+      const html =
+        '<svg width="100" height="100"><circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" /></svg>';
       const dom = htmlSanitizer(html);
       const $circle = $(dom).find('circle');
 
@@ -49,9 +51,15 @@ describe('htmlSanitizer', function() {
       expect(htmlSanitizer('<a href="javascript:alert();">xss</a>', true)).toBe('<a>xss</a>');
       expect(htmlSanitizer('<a href="JaVaScRiPt:alert();">xss</a>', true)).toBe('<a>xss</a>');
       expect(htmlSanitizer('<a href="#">benign</a>', true)).toBe('<a href="#">benign</a>');
-      expect(htmlSanitizer('<a href="http://example.com">http</a>', true)).toBe('<a href="http://example.com">http</a>');
-      expect(htmlSanitizer('<a href="https://example.com">https</a>', true)).toBe('<a href="https://example.com">https</a>');
-      expect(htmlSanitizer('<a href="ftp://example.com">ftp</a>', true)).toBe('<a href="ftp://example.com">ftp</a>');
+      expect(htmlSanitizer('<a href="http://example.com">http</a>', true)).toBe(
+        '<a href="http://example.com">http</a>'
+      );
+      expect(htmlSanitizer('<a href="https://example.com">https</a>', true)).toBe(
+        '<a href="https://example.com">https</a>'
+      );
+      expect(htmlSanitizer('<a href="ftp://example.com">ftp</a>', true)).toBe(
+        '<a href="ftp://example.com">ftp</a>'
+      );
     });
   });
 });

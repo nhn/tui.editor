@@ -8,13 +8,7 @@ import PopupAddLink from '@/ui/popupAddLink';
 import EventManager from '@/eventManager';
 
 describe('PopupAddLink', () => {
-  let popup,
-    em,
-    selectedText,
-    okButton,
-    closeButton,
-    linkTextInput,
-    urlInput;
+  let popup, em, selectedText, okButton, closeButton, linkTextInput, urlInput;
 
   beforeEach(() => {
     em = new EventManager();
@@ -27,6 +21,7 @@ describe('PopupAddLink', () => {
     });
 
     const el = popup.$el.get(0);
+
     okButton = el.querySelector('.te-ok-button');
     closeButton = el.querySelector('.te-close-button');
     urlInput = el.querySelector('.te-url-input');

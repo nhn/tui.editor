@@ -22,7 +22,7 @@ describe('sectionManager', () => {
       height: '150px',
       initialEditType: 'markdown',
       events: {
-        'load': function(editor) {
+        load(editor) {
           editor.getCodeMirror().setSize(200, 50);
           $('.preview').css('padding', '0');
           $('.preview').css('overflow', 'auto');
@@ -76,14 +76,9 @@ describe('sectionManager', () => {
     it('iterate each line with info', () => {
       const lineType = [];
 
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        ' ',
-        'paragraph',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        ['paragraph', '# header1', ' ', 'paragraph', '## header2', 'paragraph'].join('\n')
+      );
 
       sectionManager._eachLineState((isSection, lineNumber) => {
         lineType[lineNumber] = isSection;
@@ -96,16 +91,9 @@ describe('sectionManager', () => {
     it('trimming top lines while _eachLineState', () => {
       const lineType = [];
 
-      ned.setValue([
-        ' ',
-        '',
-        'paragraph',
-        '# header1',
-        ' ',
-        'paragraph',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        [' ', '', 'paragraph', '# header1', ' ', 'paragraph', '## header2', 'paragraph'].join('\n')
+      );
 
       sectionManager._eachLineState((isSection, lineNumber) => {
         lineType[lineNumber] = isSection;
@@ -118,13 +106,7 @@ describe('sectionManager', () => {
     });
 
     it('make section list', () => {
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(['paragraph', '# header1', 'paragraph', '## header2', 'paragraph'].join('\n'));
 
       sectionManager.makeSectionList();
 
@@ -132,13 +114,7 @@ describe('sectionManager', () => {
     });
 
     it('dont make section with only #', () => {
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        '##not header',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(['paragraph', '# header1', 'paragraph', '##not header', 'paragraph'].join('\n'));
 
       sectionManager.makeSectionList();
 
@@ -146,11 +122,7 @@ describe('sectionManager', () => {
     });
 
     it('make section list with default section ', () => {
-      ned.setValue([
-        ' ',
-        '***',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue([' ', '***', 'paragraph'].join('\n'));
 
       sectionManager.makeSectionList();
 
@@ -158,11 +130,7 @@ describe('sectionManager', () => {
     });
 
     it('make section list use default section if first contents is header ', () => {
-      ned.setValue([
-        '# header',
-        '***',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(['# header', '***', 'paragraph'].join('\n'));
 
       sectionManager.makeSectionList();
 
@@ -170,15 +138,11 @@ describe('sectionManager', () => {
     });
 
     it('make section list with setext type header ', () => {
-      ned.setValue([
-        'paragraph',
-        'header1',
-        '=======',
-        'paragraph',
-        'header2',
-        '------',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        ['paragraph', 'header1', '=======', 'paragraph', 'header2', '------', 'paragraph'].join(
+          '\n'
+        )
+      );
 
       sectionManager.makeSectionList();
 
@@ -186,15 +150,9 @@ describe('sectionManager', () => {
     });
 
     it('dont make section with line', () => {
-      ned.setValue([
-        'paragraph',
-        'header1',
-        '=======',
-        'paragraph',
-        ' ',
-        '------',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        ['paragraph', 'header1', '=======', 'paragraph', ' ', '------', 'paragraph'].join('\n')
+      );
 
       sectionManager.makeSectionList();
 
@@ -202,17 +160,19 @@ describe('sectionManager', () => {
     });
 
     it('dont make section with line synced by table', () => {
-      ned.setValue([
-        'paragraph',
-        'header1',
-        '=======',
-        'paragraph',
-        '| th | th |',
-        '| -- | -- |',
-        '| td | td |',
-        '------',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        [
+          'paragraph',
+          'header1',
+          '=======',
+          'paragraph',
+          '| th | th |',
+          '| -- | -- |',
+          '| td | td |',
+          '------',
+          'paragraph'
+        ].join('\n')
+      );
 
       sectionManager.makeSectionList();
 
@@ -220,15 +180,17 @@ describe('sectionManager', () => {
     });
 
     it('any problem with table in bottom', () => {
-      ned.setValue([
-        'paragraph',
-        'header1',
-        '=======',
-        'paragraph',
-        '| th | th |',
-        '| -- | -- |',
-        '| td | td |'
-      ].join('\n'));
+      ned.setValue(
+        [
+          'paragraph',
+          'header1',
+          '=======',
+          'paragraph',
+          '| th | th |',
+          '| -- | -- |',
+          '| td | td |'
+        ].join('\n')
+      );
 
       sectionManager.makeSectionList();
 
@@ -236,15 +198,17 @@ describe('sectionManager', () => {
     });
 
     it('any problem with table with space', () => {
-      ned.setValue([
-        'paragraph',
-        'header1',
-        '=======',
-        'paragraph',
-        '  | th | th |',
-        '| -- | -- |',
-        '| td | td |'
-      ].join('\n'));
+      ned.setValue(
+        [
+          'paragraph',
+          'header1',
+          '=======',
+          'paragraph',
+          '  | th | th |',
+          '| -- | -- |',
+          '| td | td |'
+        ].join('\n')
+      );
 
       sectionManager.makeSectionList();
 
@@ -252,16 +216,18 @@ describe('sectionManager', () => {
     });
 
     it('dont make section with line synced by codeBlock', () => {
-      ned.setValue([
-        'paragraph',
-        'header1',
-        '=======',
-        '``` javascript',
-        'const mm = 1;',
-        '```',
-        '------',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        [
+          'paragraph',
+          'header1',
+          '=======',
+          '``` javascript',
+          'const mm = 1;',
+          '```',
+          '------',
+          'paragraph'
+        ].join('\n')
+      );
 
       sectionManager.makeSectionList();
 
@@ -269,14 +235,9 @@ describe('sectionManager', () => {
     });
 
     it('section list have line info', () => {
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        'paragraph',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        ['paragraph', '# header1', 'paragraph', 'paragraph', '## header2', 'paragraph'].join('\n')
+      );
 
       sectionManager.makeSectionList();
 
@@ -291,14 +252,9 @@ describe('sectionManager', () => {
     });
 
     it('section match with preview', done => {
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        'paragraph',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        ['paragraph', '# header1', 'paragraph', 'paragraph', '## header2', 'paragraph'].join('\n')
+      );
 
       sectionManager.makeSectionList();
 
@@ -315,14 +271,9 @@ describe('sectionManager', () => {
     });
 
     it('find section with markdown line', () => {
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        'paragraph',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        ['paragraph', '# header1', 'paragraph', 'paragraph', '## header2', 'paragraph'].join('\n')
+      );
 
       sectionManager.makeSectionList();
       const sectionList = sectionManager.getSectionList();
@@ -332,11 +283,7 @@ describe('sectionManager', () => {
     });
 
     it('should not create a section for setext heading with quote', () => {
-      ned.setValue([
-        'text',
-        '> quote',
-        '---'
-      ].join('\n'));
+      ned.setValue(['text', '> quote', '---'].join('\n'));
 
       sectionManager.makeSectionList();
       const sectionList = sectionManager.getSectionList();
@@ -347,17 +294,19 @@ describe('sectionManager', () => {
     });
 
     it('create new section of image where at root level', () => {
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        'paragraph',
-        '',
-        '![nhn](http://www.nhn.com)',
-        '',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        [
+          'paragraph',
+          '# header1',
+          'paragraph',
+          'paragraph',
+          '',
+          '![nhn](http://www.nhn.com)',
+          '',
+          '## header2',
+          'paragraph'
+        ].join('\n')
+      );
 
       sectionManager.makeSectionList();
       const sectionList = sectionManager.getSectionList();
@@ -370,16 +319,18 @@ describe('sectionManager', () => {
     });
 
     it('do not new section of image where at non root level & paragraph first child', () => {
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        'paragraph',
-        '* NHN EnterTainment ![nhn](http://www.nhn.com)',
-        'NHN EnterTainment ![nhn](http://www.nhn.com)',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        [
+          'paragraph',
+          '# header1',
+          'paragraph',
+          'paragraph',
+          '* NHN EnterTainment ![nhn](http://www.nhn.com)',
+          'NHN EnterTainment ![nhn](http://www.nhn.com)',
+          '## header2',
+          'paragraph'
+        ].join('\n')
+      );
 
       sectionManager.makeSectionList();
       const sectionList = sectionManager.getSectionList();
@@ -393,24 +344,26 @@ describe('sectionManager', () => {
     });
 
     it('do not create new section of image where at non root level', () => {
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        'paragraph',
-        'asdNHN EnterTainment ![nhn](http://www.nhn.com)',
-        '* NHN EnterTainment ![nhn](http://www.nhn.com)',
-        '* [ ] NHN EnterTainment ![nhn](http://www.nhn.com)',
-        '1. NHN EnterTainment ![nhn](http://www.nhn.com)',
-        '- NHN EnterTainment ![nhn](http://www.nhn.com)',
-        '> NHN EnterTainment ![nhn](http://www.nhn.com)',
-        '>> NHN EnterTainment ![nhn](http://www.nhn.com)',
-        '```',
-        '![nhn](http://www.nhn.com)',
-        '```',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        [
+          'paragraph',
+          '# header1',
+          'paragraph',
+          'paragraph',
+          'asdNHN EnterTainment ![nhn](http://www.nhn.com)',
+          '* NHN EnterTainment ![nhn](http://www.nhn.com)',
+          '* [ ] NHN EnterTainment ![nhn](http://www.nhn.com)',
+          '1. NHN EnterTainment ![nhn](http://www.nhn.com)',
+          '- NHN EnterTainment ![nhn](http://www.nhn.com)',
+          '> NHN EnterTainment ![nhn](http://www.nhn.com)',
+          '>> NHN EnterTainment ![nhn](http://www.nhn.com)',
+          '```',
+          '![nhn](http://www.nhn.com)',
+          '```',
+          '## header2',
+          'paragraph'
+        ].join('\n')
+      );
 
       sectionManager.makeSectionList();
       const sectionList = sectionManager.getSectionList();
@@ -431,17 +384,19 @@ describe('sectionManager', () => {
     });
 
     it('should create new image section right after two codeblocks that without line breaks between', () => {
-      ned.setValue([
-        '``` js',
-        'var a = 10;',
-        '```',
-        '``` js',
-        'var b = 20;',
-        '```',
-        '',
-        '![nhn](http://www.nhn.com)',
-        ''
-      ].join('\n'));
+      ned.setValue(
+        [
+          '``` js',
+          'var a = 10;',
+          '```',
+          '``` js',
+          'var b = 20;',
+          '```',
+          '',
+          '![nhn](http://www.nhn.com)',
+          ''
+        ].join('\n')
+      );
 
       sectionManager.makeSectionList();
       const sectionList = sectionManager.getSectionList();
@@ -453,10 +408,7 @@ describe('sectionManager', () => {
     });
 
     it('do not create new section right after image that line has no content', () => {
-      ned.setValue([
-        '![nhn](http://www.nhn.com)',
-        ''
-      ].join('\n'));
+      ned.setValue(['![nhn](http://www.nhn.com)', ''].join('\n'));
 
       sectionManager.makeSectionList();
       const sectionList = sectionManager.getSectionList();
@@ -467,29 +419,31 @@ describe('sectionManager', () => {
     });
 
     it('should create new section on sequential image', () => {
-      ned.setValue([
-        '![nhn](http://www.nhn.com)',
-        '',
-        '![nhn](http://www.nhn.com)',
-        '',
-        '',
-        '',
-        '![nhn](http://www.nhn.com)',
-        '',
-        '',
-        '',
-        '![nhn](http://www.nhn.com)',
-        '',
-        '',
-        '![nhn](http://www.nhn.com)<br>',
-        '<br>',
-        '![nhn](http://www.nhn.com)',
-        '',
-        '',
-        '# heading',
-        '',
-        ''
-      ].join('\n'));
+      ned.setValue(
+        [
+          '![nhn](http://www.nhn.com)',
+          '',
+          '![nhn](http://www.nhn.com)',
+          '',
+          '',
+          '',
+          '![nhn](http://www.nhn.com)',
+          '',
+          '',
+          '',
+          '![nhn](http://www.nhn.com)',
+          '',
+          '',
+          '![nhn](http://www.nhn.com)<br>',
+          '<br>',
+          '![nhn](http://www.nhn.com)',
+          '',
+          '',
+          '# heading',
+          '',
+          ''
+        ].join('\n')
+      );
 
       sectionManager.makeSectionList();
       const sectionList = sectionManager.getSectionList();
@@ -513,12 +467,9 @@ describe('sectionManager', () => {
       expect(sectionManager.sectionByLine(99999)).toBe(sectionList[6]);
     });
     it('should create new section on spaced image', () => {
-      ned.setValue([
-        ' ![nhn](http://www.nhn.com)',
-        '',
-        '  ![nhn](http://www.nhn.com)',
-        ''
-      ].join('\n'));
+      ned.setValue(
+        [' ![nhn](http://www.nhn.com)', '', '  ![nhn](http://www.nhn.com)', ''].join('\n')
+      );
 
       sectionManager.makeSectionList();
       const sectionList = sectionManager.getSectionList();
@@ -530,12 +481,14 @@ describe('sectionManager', () => {
       expect(sectionManager.sectionByLine(99999)).toBe(sectionList[1]);
     });
     it('should create new section on non independent inline image', () => {
-      ned.setValue([
-        'This is ![nhn](http://www.nhn.com) official logo.',
-        '',
-        'And here is too ![nhn](http://www.nhn.com).',
-        ''
-      ].join('\n'));
+      ned.setValue(
+        [
+          'This is ![nhn](http://www.nhn.com) official logo.',
+          '',
+          'And here is too ![nhn](http://www.nhn.com).',
+          ''
+        ].join('\n')
+      );
 
       sectionManager.makeSectionList();
       const sectionList = sectionManager.getSectionList();

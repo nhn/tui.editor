@@ -43,13 +43,16 @@ describe('Paragraph', () => {
 
       cm.setValue(sourceText.join('\n'));
       doc = cm.getDoc();
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 2,
-        ch: 10
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 2,
+          ch: 10
+        }
+      );
 
       Paragraph.exec(mde);
 
@@ -63,13 +66,16 @@ describe('Paragraph', () => {
 
       cm.setValue(sourceText.join('\n'));
       doc = cm.getDoc();
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 3,
-        ch: 10
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 3,
+          ch: 10
+        }
+      );
 
       Paragraph.exec(mde);
 
@@ -84,13 +90,16 @@ describe('Paragraph', () => {
 
       cm.setValue(sourceText.join('\n'));
       doc = cm.getDoc();
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 3,
-        ch: 10
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 3,
+          ch: 10
+        }
+      );
 
       Paragraph.exec(mde);
 
@@ -100,17 +109,25 @@ describe('Paragraph', () => {
       expect(doc.getLine(3)).toBe('mytext3');
     });
     it('heading to paragraph, when use li', () => {
-      const sourceText = ['* [ ] mytext1', '- [ ] mytext2', '1. [ ] mytext3', '        - [ ] mytext4'];
+      const sourceText = [
+        '* [ ] mytext1',
+        '- [ ] mytext2',
+        '1. [ ] mytext3',
+        '        - [ ] mytext4'
+      ];
 
       cm.setValue(sourceText.join('\n'));
       doc = cm.getDoc();
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 3,
-        ch: 10
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 3,
+          ch: 10
+        }
+      );
 
       Paragraph.exec(mde);
 

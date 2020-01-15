@@ -20,8 +20,9 @@ describe('ToolbarItem', () => {
       expect(toolbarItem.$el.hasClass(ToolbarItem.className)).toBe(true);
     });
 
-    it('getName() should return the name it\'s instance has been initialized with', () => {
+    it("getName() should return the name it's instance has been initialized with", () => {
       const itemName = 'testItemName';
+
       toolbarItem = new ToolbarItem({
         name: itemName
       });

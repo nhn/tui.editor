@@ -33,9 +33,7 @@ const items = [
 ];
 
 describe('DefaultToolbar', () => {
-  let $container,
-    eventManager,
-    toolbar;
+  let $container, eventManager, toolbar;
 
   beforeEach(() => {
     jasmine.getStyleFixtures().fixturesPath = '/base';

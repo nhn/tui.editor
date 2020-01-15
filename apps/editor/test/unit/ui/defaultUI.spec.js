@@ -44,6 +44,7 @@ describe('DeafultUI', () => {
       const newToolbar = new Toolbar(editor.eventManager);
       const prevToolbar = defaultUI.getToolbar();
       const spy = jasmine.createSpy('destroy');
+
       prevToolbar.destroy = spy;
 
       defaultUI.setToolbar(newToolbar);

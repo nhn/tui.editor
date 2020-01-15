@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import {_getAdditionalThCount, _createTheadMarkdown} from '@/extensions/table/toMarkRenderer';
+import { _getAdditionalThCount, _createTheadMarkdown } from '@/extensions/table/toMarkRenderer';
 
 describe('toMarkRendererCreator', () => {
   describe('_getAdditionalThCount()', () => {
@@ -15,20 +15,19 @@ describe('toMarkRendererCreator', () => {
         '<th>title2</th>',
         '</thead>'
       ].join('');
-      const ths = $(theadHtml).find('th').get();
+      const ths = $(theadHtml)
+        .find('th')
+        .get();
       const actual = _getAdditionalThCount(ths);
 
       expect(actual).toBe(1);
     });
 
     it('Get additional th element count, when all th has not colspan.', () => {
-      const theadHtml = [
-        '<thead>',
-        '<th>title1</th>',
-        '<th>title2</th>',
-        '</thead>'
-      ].join('');
-      const ths = $(theadHtml).find('th').get();
+      const theadHtml = ['<thead>', '<th>title1</th>', '<th>title2</th>', '</thead>'].join('');
+      const ths = $(theadHtml)
+        .find('th')
+        .get();
       const actual = _getAdditionalThCount(ths);
 
       expect(actual).toBe(0);
@@ -51,12 +50,7 @@ describe('toMarkRendererCreator', () => {
     });
 
     it('Create thead markdown, when all th has not colspan.', () => {
-      const theadHtml = [
-        '<thead>',
-        '<th>title1</th>',
-        '<th>title2</th>',
-        '</thead>'
-      ].join('');
+      const theadHtml = ['<thead>', '<th>title1</th>', '<th>title2</th>', '</thead>'].join('');
       const theadElement = $(theadHtml)[0];
       const theadContent = '|title1|title2|\n';
       const actual = _createTheadMarkdown(theadElement, theadContent);

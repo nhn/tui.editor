@@ -31,7 +31,10 @@ describe('Heading', () => {
   });
 
   it('add heading to current selection or cursor', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('text');
 
@@ -73,7 +76,10 @@ describe('Heading', () => {
   });
 
   it('set heading tag 1~6 rotation', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('text');
 
@@ -103,11 +109,15 @@ describe('Heading', () => {
   it('pass converting on list element', () => {
     const range = wwe.getRange();
 
-    wwe.get$Body().html([
-      '<h2><div>text</div></h2>',
-      '<ul><li><div>hi</div></li></ul>',
-      '<h2><div>text2</div></h2>'
-    ].join(''));
+    wwe
+      .get$Body()
+      .html(
+        [
+          '<h2><div>text</div></h2>',
+          '<ul><li><div>hi</div></li></ul>',
+          '<h2><div>text2</div></h2>'
+        ].join('')
+      );
 
     range.setStart(wwe.get$Body().find('h2 div')[0], 0);
     range.setEnd(wwe.get$Body().find('h2 div')[1], 1);

@@ -78,6 +78,7 @@ describe('colorSyntax', () => {
 
     it('convert html to color syntax', () => {
       const src = '<span class="colour" style="color:rgb(255,0,255)">test</span>';
+
       actual = ned.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', src);
       expected = '{color:#ff00ff}test{color}';
 
@@ -85,8 +86,10 @@ describe('colorSyntax', () => {
     });
 
     it('convert multiple color html to color syntax', () => {
-      const src = '<span class="colour" style="color:rgb(255,0,255)">test</span>' +
-                'test2<span class="colour" style="color:rgb(255,0,255)">test3</span>';
+      const src =
+        '<span class="colour" style="color:rgb(255,0,255)">test</span>' +
+        'test2<span class="colour" style="color:rgb(255,0,255)">test3</span>';
+
       actual = ned.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', src);
       expected = '{color:#ff00ff}test{color}test2{color:#ff00ff}test3{color}';
 
@@ -95,6 +98,7 @@ describe('colorSyntax', () => {
 
     it('convert color syntax to html', () => {
       const src = '{color:#ff00ff}test{color}';
+
       actual = ned.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', src);
       expected = '<span style="color:#ff00ff">test</span>';
 
@@ -103,8 +107,10 @@ describe('colorSyntax', () => {
 
     it('convert multiple color syntax to html', () => {
       const src = '{color:#ff00ff}test{color}test2{color:#ff00ff}test3{color}';
+
       actual = ned.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', src);
-      expected = '<span style="color:#ff00ff">test</span>test2<span style="color:#ff00ff">test3</span>';
+      expected =
+        '<span style="color:#ff00ff">test</span>test2<span style="color:#ff00ff">test3</span>';
 
       expect(actual).toEqual(expected);
     });
@@ -172,7 +178,7 @@ describe('colorSyntax', () => {
       expect(ned.getValue()).toEqual('{color:#f0f}text{color}');
     });
 
-    it('Don\'t add color if value isn\'t truthy in markdown', () => {
+    it("Don't add color if value isn't truthy in markdown", () => {
       let falsyValue;
 
       ned.setValue('text');
@@ -191,6 +197,7 @@ describe('colorSyntax', () => {
       sq.setHTML('text');
 
       const selection = sq.getSelection().cloneRange();
+
       selection.selectNodeContents($body.find('div')[0].childNodes[0]);
       sq.setSelection(selection);
 
@@ -202,7 +209,7 @@ describe('colorSyntax', () => {
       expect($span.css('color')).toEqual('rgb(255, 0, 255)');
     });
 
-    it('Don\'t add color if value isn\'t truthy in wysiwyg', () => {
+    it("Don't add color if value isn't truthy in wysiwyg", () => {
       let falsyValue;
 
       ned.changeMode('wysiwyg');
@@ -213,6 +220,7 @@ describe('colorSyntax', () => {
       sq.setHTML('text');
 
       const selection = sq.getSelection().cloneRange();
+
       selection.selectNodeContents($body.find('div')[0].childNodes[0]);
       sq.setSelection(selection);
 
@@ -229,18 +237,21 @@ describe('colorSyntax', () => {
       const wwe = ned.wwEditor;
       const sq = ned.getSquire();
 
-      sq.setHTML([
-        '<table>',
-        '<thead>',
-        '<tr><th></th><th></th></tr>',
-        '</thead>',
-        '<tbody>',
-        '<tr><td class="te-cell-selected">text 1</td><td class="te-cell-selected">text 2</td></tr>',
-        '</tbody>',
-        '</table>'
-      ].join(''));
+      sq.setHTML(
+        [
+          '<table>',
+          '<thead>',
+          '<tr><th></th><th></th></tr>',
+          '</thead>',
+          '<tbody>',
+          '<tr><td class="te-cell-selected">text 1</td><td class="te-cell-selected">text 2</td></tr>',
+          '</tbody>',
+          '</table>'
+        ].join('')
+      );
 
-      let range = sq.getSelection();
+      const range = sq.getSelection();
+
       range.setStart(wwe.get$Body().find('th')[0], 0);
       range.collapse(true);
       sq.setSelection(range);

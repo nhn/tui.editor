@@ -27,6 +27,7 @@ describe('codemirror addon markdown', () => {
   it('should set different style according to it`s depth', () => {
     const list = '1. list1\n\t1. list2\n\t\t1. list3';
     const cm = mde.getEditor();
+
     cm.setValue(list);
 
     expect(cm.lineInfo(0).handle.styles).toContain('variable-2');
@@ -37,6 +38,7 @@ describe('codemirror addon markdown', () => {
   it('should set same style according to it`s depth (issue #1002)', () => {
     const list = '1. list1\n\t10. list2\n\t2. list3';
     const cm = mde.getEditor();
+
     cm.setValue(list);
 
     expect(cm.lineInfo(0).handle.styles).toContain('variable-2');

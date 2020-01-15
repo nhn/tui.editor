@@ -50,8 +50,14 @@ describe('tableRangeHandler', () => {
     });
 
     it('Find table range for selection, when has boath row merge and column merge.', () => {
-      const $start = $trs.eq(1).find('td').eq(1);
-      const $end = $trs.eq(3).find('td').eq(0);
+      const $start = $trs
+        .eq(1)
+        .find('td')
+        .eq(1);
+      const $end = $trs
+        .eq(3)
+        .find('td')
+        .eq(0);
       const actual = tableRangeHandler.findSelectionRange(tableData, $start, $end);
 
       expect(actual.start.rowIndex).toBe(1);
@@ -61,8 +67,14 @@ describe('tableRangeHandler', () => {
     });
 
     it('Find table range for selection, when cells chained expanded cells by merge properties like colspan, rowspan.', () => {
-      const $start = $trs.eq(1).find('td').eq(1);
-      const $end = $trs.eq(2).find('td').eq(1);
+      const $start = $trs
+        .eq(1)
+        .find('td')
+        .eq(1);
+      const $end = $trs
+        .eq(2)
+        .find('td')
+        .eq(1);
       const actual = tableRangeHandler.findSelectionRange(tableData, $start, $end);
 
       expect(actual.start.rowIndex).toBe(1);
@@ -72,8 +84,14 @@ describe('tableRangeHandler', () => {
     });
 
     it('Find table range for selection, when revered $start and $end.', () => {
-      const $start = $trs.eq(2).find('td').eq(1);
-      const $end = $trs.eq(1).find('td').eq(1);
+      const $start = $trs
+        .eq(2)
+        .find('td')
+        .eq(1);
+      const $end = $trs
+        .eq(1)
+        .find('td')
+        .eq(1);
       const actual = tableRangeHandler.findSelectionRange(tableData, $start, $end);
 
       expect(actual.start.rowIndex).toBe(1);

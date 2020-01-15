@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import RemoveRow, {_removeRow} from '@/extensions/table/mergedTableRemoveRow';
+import RemoveRow, { _removeRow } from '@/extensions/table/mergedTableRemoveRow';
 import tableDataHandler from '@/extensions/table/tableDataHandler';
 import WwMergedTableSelectionManager from '@/extensions/table/wwMergedTableSelectionManager';
 import WwMergedTableManager from '@/extensions/table/wwMergedTableManager';
@@ -44,6 +44,7 @@ describe('mergedTableRemoveRow', () => {
           colIndex: 1
         }
       };
+
       _removeRow(tableData, tableRange);
 
       expect(tableData.length).toBe(3);
@@ -80,6 +81,7 @@ describe('mergedTableRemoveRow', () => {
           colIndex: 1
         }
       };
+
       _removeRow(tableData, tableRange);
 
       expect(tableData.length).toBe(3);
@@ -111,6 +113,7 @@ describe('mergedTableRemoveRow', () => {
           colIndex: 1
         }
       };
+
       _removeRow(tableData, tableRange);
 
       expect(tableData.length).toBe(3);
@@ -142,6 +145,7 @@ describe('mergedTableRemoveRow', () => {
           colIndex: 1
         }
       };
+
       _removeRow(tableData, tableRange);
 
       expect(tableData.length).toBe(2);
@@ -169,6 +173,7 @@ describe('mergedTableRemoveRow', () => {
           colIndex: 0
         }
       };
+
       _removeRow(tableData, tableRange);
 
       expect(tableData.length).toBe(0);
@@ -185,6 +190,7 @@ describe('mergedTableRemoveRow', () => {
           colIndex: 0
         }
       };
+
       _removeRow(tableData, tableRange);
 
       expect(tableData.length).toBe(4);
@@ -201,6 +207,7 @@ describe('mergedTableRemoveRow', () => {
           colIndex: 1
         }
       };
+
       _removeRow(tableData, tableRange);
 
       expect(tableData.length).toBe(3);

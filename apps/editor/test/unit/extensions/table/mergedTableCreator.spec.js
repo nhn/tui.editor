@@ -185,13 +185,16 @@ describe('mergedTableCreator', () => {
         [
           {
             nodeName: 'TH'
-          }, {
+          },
+          {
             nodeName: 'TH'
           }
-        ], [
+        ],
+        [
           {
             nodeName: 'TD'
-          }, {
+          },
+          {
             nodeName: 'TD'
           }
         ]
@@ -202,7 +205,8 @@ describe('mergedTableCreator', () => {
         [
           {
             nodeName: 'TH'
-          }, {
+          },
+          {
             nodeName: 'TH'
           }
         ]
@@ -212,7 +216,8 @@ describe('mergedTableCreator', () => {
         [
           {
             nodeName: 'TD'
-          }, {
+          },
+          {
             nodeName: 'TD'
           }
         ]
@@ -227,7 +232,8 @@ describe('mergedTableCreator', () => {
           {
             nodeName: 'TD',
             colspan: 2
-          }, {
+          },
+          {
             nodeName: 'TD',
             colspan: 1
           }
@@ -252,38 +258,46 @@ describe('mergedTableCreator', () => {
             nodeName: 'TD',
             rowspan: 2,
             colspan: 1
-          }, {
+          },
+          {
             nodeName: 'TD',
             rowspan: 3,
             colspan: 1
-          }, {
+          },
+          {
             nodeName: 'TD',
             rowspan: 1
           }
-        ], [
+        ],
+        [
           {
             nodeName: 'TD',
             rowspan: 2,
             colspan: 1
-          }, {
-            nodeName: 'TD',
-            rowspan: 1,
-            colspan: 1
-          }, {
-            nodeName: 'TD',
-            rowspan: 1,
-            colspan: 1
-          }
-        ], [
+          },
           {
             nodeName: 'TD',
             rowspan: 1,
             colspan: 1
-          }, {
+          },
+          {
             nodeName: 'TD',
             rowspan: 1,
             colspan: 1
-          }, {
+          }
+        ],
+        [
+          {
+            nodeName: 'TD',
+            rowspan: 1,
+            colspan: 1
+          },
+          {
+            nodeName: 'TD',
+            rowspan: 1,
+            colspan: 1
+          },
+          {
             nodeName: 'TD',
             rowspan: 1,
             colspan: 1
@@ -305,35 +319,42 @@ describe('mergedTableCreator', () => {
             nodeName: 'TD',
             rowspan: 2,
             colspan: 2
-          }, {
-            nodeName: 'TD',
-            rowspan: 1,
-            colspan: 1
-          }
-        ], [
+          },
           {
             nodeName: 'TD',
             rowspan: 1,
             colspan: 1
-          }, {
-            nodeName: 'TD',
-            rowspan: 1,
-            colspan: 1
-          }, {
-            nodeName: 'TD',
-            rowspan: 1,
-            colspan: 1
           }
-        ], [
+        ],
+        [
           {
             nodeName: 'TD',
             rowspan: 1,
             colspan: 1
-          }, {
+          },
+          {
             nodeName: 'TD',
             rowspan: 1,
             colspan: 1
-          }, {
+          },
+          {
+            nodeName: 'TD',
+            rowspan: 1,
+            colspan: 1
+          }
+        ],
+        [
+          {
+            nodeName: 'TD',
+            rowspan: 1,
+            colspan: 1
+          },
+          {
+            nodeName: 'TD',
+            rowspan: 1,
+            colspan: 1
+          },
+          {
             nodeName: 'TD',
             rowspan: 1,
             colspan: 1
@@ -357,45 +378,47 @@ describe('mergedTableCreator', () => {
             nodeName: 'TD',
             rowspan: 2,
             colspan: 1
-          }, {
+          },
+          {
             nodeName: 'TD',
             rowspan: 3,
             colspan: 1
-          }, {
+          },
+          {
             nodeName: 'TD',
             rowspan: 1,
             colspan: 1
-
           }
-        ], [
+        ],
+        [
           {
             nodeName: 'TD',
             rowspan: 2,
             colspan: 1
-
-          }, {
-            nodeName: 'TD',
-            rowspan: 1,
-            colspan: 1
-
-          }, {
-            nodeName: 'TD',
-            rowspan: 1,
-            colspan: 1
-
-          }
-        ], [
+          },
           {
             nodeName: 'TD',
             rowspan: 1,
             colspan: 1
-
-          }, {
+          },
+          {
             nodeName: 'TD',
             rowspan: 1,
             colspan: 1
-
-          }, {
+          }
+        ],
+        [
+          {
+            nodeName: 'TD',
+            rowspan: 1,
+            colspan: 1
+          },
+          {
+            nodeName: 'TD',
+            rowspan: 1,
+            colspan: 1
+          },
+          {
             nodeName: 'TD',
             rowspan: 1,
             colspan: 1
@@ -454,9 +477,21 @@ describe('mergedTableCreator', () => {
       const $actual = $(createMergedTable(tableElement));
       const $trs = $actual.find('tr');
 
-      expect($trs.eq(0).find('th').eq(0).attr('colspan')).toBe('2');
+      expect(
+        $trs
+          .eq(0)
+          .find('th')
+          .eq(0)
+          .attr('colspan')
+      ).toBe('2');
       expect($trs.eq(1).find('td').length).toBe(3);
-      expect($trs.eq(1).find('td').eq(1).attr('rowspan')).toBe('2');
+      expect(
+        $trs
+          .eq(1)
+          .find('td')
+          .eq(1)
+          .attr('rowspan')
+      ).toBe('2');
       expect($trs.eq(2).find('td').length).toBe(2);
     });
   });

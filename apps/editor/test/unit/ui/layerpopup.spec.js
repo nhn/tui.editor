@@ -246,6 +246,7 @@ describe('LayerPopup', () => {
 
     it('should not trigger button click event after remove() call', () => {
       const button = $('.button1');
+
       popup.remove();
       button.trigger('click');
       expect(popup.isShow()).toBe(false);
@@ -253,6 +254,7 @@ describe('LayerPopup', () => {
 
     it('should not trigger close button click event after remove() call', () => {
       const button = $(`.${CLASS_PREFIX}close-button`);
+
       popup.show();
       popup.remove();
       button.trigger('click');
@@ -267,6 +269,7 @@ describe('LayerPopup', () => {
 
     it('trigger() should result calling given handler', () => {
       const spy = jasmine.createSpy('spy');
+
       popup.on('cev', spy);
       popup.trigger('cev');
 
@@ -275,6 +278,7 @@ describe('LayerPopup', () => {
 
     it('off() should unbind given event handler', () => {
       const spy = jasmine.createSpy('spy');
+
       popup.on('cev', spy);
       popup.off('cev');
       popup.trigger('cev');

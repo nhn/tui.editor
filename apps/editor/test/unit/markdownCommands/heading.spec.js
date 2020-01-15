@@ -48,13 +48,16 @@ describe('Paragraph', () => {
     });
 
     it('in selected lines', () => {
-      doc.setSelection({
-        line: 0,
-        ch: 3
-      }, {
-        line: 2,
-        ch: 2
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 3
+        },
+        {
+          line: 2,
+          ch: 2
+        }
+      );
 
       Heading.exec(mde, 1);
 

@@ -10,12 +10,7 @@ import Convertor from '@/convertor';
 import CodeBlockEditor from '@/codeBlockEditor';
 
 describe('Preview', () => {
-  let eventManager,
-    convertor,
-    $wrapper,
-    $editorWrapper,
-    codeBlockEditor,
-    preview;
+  let eventManager, convertor, $wrapper, $editorWrapper, codeBlockEditor, preview;
 
   beforeEach(() => {
     $editorWrapper = $('<div>');
@@ -49,6 +44,7 @@ describe('Preview', () => {
     preview.refresh();
 
     const $el = $(preview.getHTML()).find('code');
+
     expect($el.text()).toEqual('code text\n');
     expect($el.attr('data-language')).toEqual('javascript');
     expect($el.hasClass('lang-javascript')).toEqual(true);

@@ -34,7 +34,7 @@ describe('eventManager', function() {
     });
 
     it('should emit and listen event', function() {
-      let handler = jasmine.createSpy('handler');
+      const handler = jasmine.createSpy('handler');
 
       em.listen('testEvent', handler);
       em.emit('testEvent');
@@ -63,7 +63,7 @@ describe('eventManager', function() {
 
     it('emit should return undefined if listener have not return value', function() {
       let result;
-      let handler = jasmine.createSpy('handler');
+      const handler = jasmine.createSpy('handler');
 
       em.listen('testEvent', handler);
       result = em.emit('testEvent');
@@ -72,7 +72,7 @@ describe('eventManager', function() {
     });
 
     it('emit event handler added with namespace', function() {
-      let handler = jasmine.createSpy('handler');
+      const handler = jasmine.createSpy('handler');
 
       em.listen('testEvent.ns', handler);
       em.emit('testEvent');
@@ -108,7 +108,7 @@ describe('eventManager', function() {
       });
 
       em.listen('reduceTest', function(data, addition) {
-        data += (addition + 1);
+        data += addition + 1;
 
         return data;
       });
@@ -116,11 +116,10 @@ describe('eventManager', function() {
     });
 
     it('emitReduce pass handler return value if return value is falsy', function() {
-      em.listen('reduceTest', function() {
-      });
+      em.listen('reduceTest', function() {});
 
       em.listen('reduceTest', function(data, addition) {
-        data += (addition + 1);
+        data += addition + 1;
 
         return data;
       });
@@ -130,6 +129,7 @@ describe('eventManager', function() {
 
   describe('remove handler', function() {
     let handlerBeRemoved, handlerBeRemained;
+
     beforeEach(function() {
       handlerBeRemoved = jasmine.createSpy('handlerBeRemoved');
       handlerBeRemained = jasmine.createSpy('handlerBeRemained');

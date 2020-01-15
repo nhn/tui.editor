@@ -9,10 +9,7 @@ import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
 
 describe('Preview', () => {
-  let eventManager,
-    convertor,
-    $el,
-    preview;
+  let eventManager, convertor, $el, preview;
 
   beforeEach(() => {
     $el = $('<div>');

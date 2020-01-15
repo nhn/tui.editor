@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import RemoveCol, {_removeColumns} from '@/extensions/table/mergedTableRemoveCol';
+import RemoveCol, { _removeColumns } from '@/extensions/table/mergedTableRemoveCol';
 import tableDataHandler from '@/extensions/table/tableDataHandler';
 import WwMergedTableSelectionManager from '@/extensions/table/wwMergedTableSelectionManager';
 import WwMergedTableManager from '@/extensions/table/wwMergedTableManager';
@@ -42,6 +42,7 @@ describe('mergedTableRemoveCol', () => {
           colIndex: 0
         }
       };
+
       _removeColumns(tableData, tableRange);
 
       expect(tableData[0].length).toBe(2);
@@ -78,6 +79,7 @@ describe('mergedTableRemoveCol', () => {
           colIndex: 1
         }
       };
+
       _removeColumns(tableData, tableRange);
 
       expect(tableData[0].length).toBe(2);
@@ -109,6 +111,7 @@ describe('mergedTableRemoveCol', () => {
           colIndex: 2
         }
       };
+
       _removeColumns(tableData, tableRange);
 
       expect(tableData[0].length).toBe(2);
@@ -140,6 +143,7 @@ describe('mergedTableRemoveCol', () => {
           colIndex: 1
         }
       };
+
       _removeColumns(tableData, tableRange);
 
       expect(tableData[0].length).toBe(1);

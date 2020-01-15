@@ -28,10 +28,10 @@ describe('popupTableUtils', () => {
   describe(`'remove row' menu`, () => {
     it('is disabled when target element where created popup is table header', () => {
       const $menu = popup.$el.find(`.${REMOVE_ROW_MENU_CLASS_NAME}`);
-  
+
       popup._disableRemoveRowMenu($('<th>')[0]);
       expect($menu.hasClass(DISABLED_MENU_CLASS_NAME)).toBe(true);
-  
+
       popup._disableRemoveRowMenu($('<td>')[0]);
       expect($menu.hasClass(DISABLED_MENU_CLASS_NAME)).toBe(false);
     });

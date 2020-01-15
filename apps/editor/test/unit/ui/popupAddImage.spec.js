@@ -8,8 +8,7 @@ import PopupAddImage from '@/ui/popupAddImage';
 import EventManager from '@/eventManager';
 
 describe('PopupAddImage', () => {
-  let popup,
-    em;
+  let popup, em;
 
   beforeEach(() => {
     em = new EventManager();
@@ -106,7 +105,10 @@ describe('PopupAddImage', () => {
       $('.te-image-url-input').val('imageUrlText');
       $('.te-alt-text-input').val('altText');
 
-      popup.$el.find('.te-tab button').eq(1).trigger('click');
+      popup.$el
+        .find('.te-tab button')
+        .eq(1)
+        .trigger('click');
 
       expect($('.te-image-url-input').val()).toEqual('');
       expect($('.te-alt-text-input').val()).toEqual('');
@@ -118,6 +120,7 @@ describe('PopupAddImage', () => {
   describe('add image with selecting image', () => {
     xit('addImageBlobHook on ok button.', () => {
       const hook = jasmine.createSpy('addImageBlobHook');
+
       em.listen('addImageBlobHook', hook);
 
       $('.te-ok-button').trigger('click');

@@ -40,13 +40,16 @@ describe('Code', () => {
   });
 
   it('Add code for selection', () => {
-    doc.setSelection({
-      line: 0,
-      ch: 0
-    }, {
-      line: 0,
-      ch: 7
-    });
+    doc.setSelection(
+      {
+        line: 0,
+        ch: 0
+      },
+      {
+        line: 0,
+        ch: 7
+      }
+    );
 
     Code.exec(mde);
 
@@ -57,13 +60,16 @@ describe('Code', () => {
   it('should remove code for selection', () => {
     cm.setValue('`mytext1`');
 
-    doc.setSelection({
-      line: 0,
-      ch: 0
-    }, {
-      line: 0,
-      ch: 9
-    });
+    doc.setSelection(
+      {
+        line: 0,
+        ch: 0
+      },
+      {
+        line: 0,
+        ch: 9
+      }
+    );
 
     Code.exec(mde);
 
@@ -73,13 +79,16 @@ describe('Code', () => {
   it('should remove code syntax in the middle of the given range', () => {
     cm.setValue('my`text`1');
 
-    doc.setSelection({
-      line: 0,
-      ch: 0
-    }, {
-      line: 0,
-      ch: 9
-    });
+    doc.setSelection(
+      {
+        line: 0,
+        ch: 0
+      },
+      {
+        line: 0,
+        ch: 9
+      }
+    );
 
     Code.exec(mde);
 

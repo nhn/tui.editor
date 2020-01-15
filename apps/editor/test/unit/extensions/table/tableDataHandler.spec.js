@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import {createTableData, createCellIndexData} from '@/extensions/table/tableDataHandler';
+import { createTableData, createCellIndexData } from '@/extensions/table/tableDataHandler';
 import tableDataHandler from '@/extensions/table/tableDataHandler';
 
 describe('tableDataHandler', () => {
@@ -83,25 +83,30 @@ describe('tableDataHandler', () => {
             colspan: 2,
             rowspan: 1,
             content: 'title'
-          }, {
+          },
+          {
             colMergeWith: 0
           }
-        ], [
+        ],
+        [
           {
             colspan: 1,
             rowspan: 1,
             content: 'content1-1'
-          }, {
+          },
+          {
             colspan: 1,
             rowspan: 2,
             content: 'content1-2'
           }
-        ], [
+        ],
+        [
           {
             colspan: 1,
             rowspan: 1,
             content: 'content2-1'
-          }, {
+          },
+          {
             rowMergeWith: 1
           }
         ]
@@ -136,25 +141,30 @@ describe('tableDataHandler', () => {
           colspan: 2,
           rowspan: 1,
           content: 'title'
-        }, {
+        },
+        {
           colMergeWith: 0
         }
-      ], [
+      ],
+      [
         {
           colspan: 1,
           rowspan: 1,
           content: 'content1-1'
-        }, {
+        },
+        {
           colspan: 1,
           rowspan: 2,
           content: 'content1-2'
         }
-      ], [
+      ],
+      [
         {
           colspan: 1,
           rowspan: 1,
           content: 'content2-1'
-        }, {
+        },
+        {
           rowMergeWith: 1
         }
       ]
@@ -184,25 +194,30 @@ describe('tableDataHandler', () => {
           colspan: 1,
           rowspan: 1,
           content: 'title1'
-        }, {
+        },
+        {
           colspan: 1,
           rowspan: 1,
           content: 'title2'
         }
-      ], [
+      ],
+      [
         {
           colspan: 2,
           rowspan: 1,
           content: 'content1-1'
-        }, {
+        },
+        {
           colMergeWith: 0
         }
-      ], [
+      ],
+      [
         {
           colspan: 1,
           rowspan: 1,
           content: 'content2-1'
-        }, {
+        },
+        {
           colspan: 1,
           rowspan: 1,
           content: 'content2-2'
@@ -227,4 +242,3 @@ describe('tableDataHandler', () => {
     });
   });
 });
-

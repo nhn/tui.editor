@@ -9,10 +9,7 @@ import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
 
 describe('Preview', () => {
-  let eventManager,
-    convertor,
-    $wrapper,
-    preview;
+  let eventManager, convertor, $wrapper, preview;
 
   beforeEach(() => {
     $wrapper = $('<div>');
@@ -32,6 +29,7 @@ describe('Preview', () => {
 
   it('render() emits previewRenderAfter', () => {
     const listener = jasmine.createSpy('listener');
+
     eventManager.listen('previewRenderAfter', listener);
 
     preview.render();

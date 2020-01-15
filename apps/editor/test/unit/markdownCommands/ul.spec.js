@@ -59,13 +59,16 @@ describe('UL', () => {
     });
 
     it('around selected area', () => {
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 2,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 2,
+          ch: 7
+        }
+      );
 
       UL.exec(mde);
 
@@ -90,7 +93,7 @@ describe('UL', () => {
       expect(doc.getLine(0)).toEqual('* mytext1');
     });
 
-    it('Don\'t add already have ul markdown text in line start', () => {
+    it("Don't add already have ul markdown text in line start", () => {
       doc.setCursor(0, 4);
 
       UL.exec(mde);
@@ -98,7 +101,7 @@ describe('UL', () => {
 
       expect(doc.getLine(0)).toEqual('* mytext1');
     });
-    it('Don\'t add ul markdown text in heading', () => {
+    it("Don't add ul markdown text in heading", () => {
       doc.setCursor(5, 1);
 
       UL.exec(mde);
@@ -109,13 +112,16 @@ describe('UL', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '# myheading'];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 4,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 4,
+          ch: 7
+        }
+      );
 
       UL.exec(mde);
 
@@ -130,13 +136,16 @@ describe('UL', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '> myheading'];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 4,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 4,
+          ch: 7
+        }
+      );
 
       UL.exec(mde);
 
@@ -151,13 +160,16 @@ describe('UL', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '```', 'var a = 10;', '```'];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 4,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 4,
+          ch: 7
+        }
+      );
 
       UL.exec(mde);
 
@@ -169,16 +181,27 @@ describe('UL', () => {
       expect(doc.getLine(5)).toEqual('```');
     });
     it('add ul markdown text except table', () => {
-      const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '| hi | hello |', '| --- | --- |', '| bye | bye |'];
+      const sourceText = [
+        'mytext1',
+        'mytext2',
+        'mytext3',
+        'mytext4',
+        '| hi | hello |',
+        '| --- | --- |',
+        '| bye | bye |'
+      ];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 4,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 4,
+          ch: 7
+        }
+      );
 
       UL.exec(mde);
 
@@ -221,13 +244,16 @@ describe('UL', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '# myheading'];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 1,
-        ch: 0
-      }, {
-        line: 2,
-        ch: 4
-      });
+      doc.setSelection(
+        {
+          line: 1,
+          ch: 0
+        },
+        {
+          line: 2,
+          ch: 4
+        }
+      );
       UL.exec(mde);
 
       expect(doc.getLine(0)).toEqual('mytext1');
@@ -242,13 +268,16 @@ describe('UL', () => {
       const sourceText = ['mytext1', '', '1. mytext2', '1. mytext3', '', 'mytext4', '# myheading'];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 2,
-        ch: 0
-      }, {
-        line: 3,
-        ch: 4
-      });
+      doc.setSelection(
+        {
+          line: 2,
+          ch: 0
+        },
+        {
+          line: 3,
+          ch: 4
+        }
+      );
       UL.exec(mde);
 
       expect(doc.getLine(0)).toEqual('mytext1');
@@ -288,18 +317,18 @@ describe('UL', () => {
     });
 
     it('should remove task bracket of selected lines', () => {
-      cm.setValue([
-        '* [ ] a task',
-        '1. [ ] another task'
-      ].join('\n'));
+      cm.setValue(['* [ ] a task', '1. [ ] another task'].join('\n'));
 
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 1,
-        ch: 0
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 1,
+          ch: 0
+        }
+      );
       UL.exec(mde);
 
       expect(doc.getLine(0)).toEqual('* a task');
@@ -309,11 +338,13 @@ describe('UL', () => {
 
   describe('change to ul', () => {
     it('should change same depth items to ul when item of same list change to ul', () => {
-      cm.setValue([
-        '1. AAA',
-        '    1. aaa',
-        '    2. bbb' // cursor
-      ].join('\n'));
+      cm.setValue(
+        [
+          '1. AAA',
+          '    1. aaa',
+          '    2. bbb' // cursor
+        ].join('\n')
+      );
 
       doc.setCursor(2, 0);
       UL.exec(mde);
@@ -324,12 +355,14 @@ describe('UL', () => {
     });
 
     it('should change all one depth items to ul when one depth item of the list change to ul', () => {
-      cm.setValue([
-        '1. AAA',
-        '    1. aaa',
-        '2. BBB', // cursor
-        '    1. bbb'
-      ].join('\n'));
+      cm.setValue(
+        [
+          '1. AAA',
+          '    1. aaa',
+          '2. BBB', // cursor
+          '    1. bbb'
+        ].join('\n')
+      );
 
       doc.setCursor(2, 0);
       UL.exec(mde);
@@ -341,19 +374,24 @@ describe('UL', () => {
     });
 
     it('should change when select lines that contain ol and plain text', () => {
-      cm.setValue([
-        '1. AAA',
-        '2. BBB', // cursor start
-        'CCC' // cursor end
-      ].join('\n'));
+      cm.setValue(
+        [
+          '1. AAA',
+          '2. BBB', // cursor start
+          'CCC' // cursor end
+        ].join('\n')
+      );
 
-      doc.setSelection({
-        line: 1,
-        ch: 0
-      }, {
-        line: 2,
-        ch: 0
-      });
+      doc.setSelection(
+        {
+          line: 1,
+          ch: 0
+        },
+        {
+          line: 2,
+          ch: 0
+        }
+      );
       UL.exec(mde);
 
       expect(doc.getLine(0)).toEqual('* AAA');

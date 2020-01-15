@@ -48,13 +48,16 @@ describe('Bold', () => {
     });
 
     it('around selected area', () => {
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 0,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 0,
+          ch: 7
+        }
+      );
 
       Bold.exec(mde);
 
@@ -64,13 +67,16 @@ describe('Bold', () => {
     it('in select text that is collapsed strike', () => {
       cm.setValue('~~text~~');
 
-      doc.setSelection({
-        line: 0,
-        ch: 2
-      }, {
-        line: 0,
-        ch: 6
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 2
+        },
+        {
+          line: 0,
+          ch: 6
+        }
+      );
 
       Bold.exec(mde);
 
@@ -82,13 +88,16 @@ describe('Bold', () => {
     it('should remove bold syntax in the middle of the given range', () => {
       cm.setValue('my**text**1');
 
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 0,
-        ch: 11
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 0,
+          ch: 11
+        }
+      );
 
       Bold.exec(mde);
 
@@ -97,13 +106,16 @@ describe('Bold', () => {
 
     it('selected only text that is collapsed bold', () => {
       cm.setValue('**test**');
-      doc.setSelection({
-        line: 0,
-        ch: 2
-      }, {
-        line: 0,
-        ch: 6
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 2
+        },
+        {
+          line: 0,
+          ch: 6
+        }
+      );
 
       Bold.exec(mde);
 
@@ -112,13 +124,16 @@ describe('Bold', () => {
 
     it('selected all text that is collapsed bold', () => {
       cm.setValue('**test**');
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 0,
-        ch: 8
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 0,
+          ch: 8
+        }
+      );
 
       Bold.exec(mde);
 
@@ -127,13 +142,16 @@ describe('Bold', () => {
 
     it('selected collapsed bold', () => {
       cm.setValue('****');
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 0,
-        ch: 4
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 0,
+          ch: 4
+        }
+      );
 
       Bold.exec(mde);
       expect(cm.getValue()).toEqual('');
@@ -149,13 +167,16 @@ describe('Bold', () => {
 
     it('selected string including italic', () => {
       cm.setValue('**TEST*italic*TEST**');
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 0,
-        ch: 20
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 0,
+          ch: 20
+        }
+      );
 
       Bold.exec(mde);
       expect(cm.getValue()).toEqual('TEST*italic*TEST');
@@ -163,13 +184,16 @@ describe('Bold', () => {
 
     it('selected string collaped italic and bold', () => {
       cm.setValue('***TEST***');
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 0,
-        ch: 10
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 0,
+          ch: 10
+        }
+      );
 
       Bold.exec(mde);
       expect(cm.getValue()).toEqual('*TEST*');

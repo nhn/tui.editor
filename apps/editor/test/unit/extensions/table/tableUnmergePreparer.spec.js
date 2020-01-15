@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import {_prependMergeSyntaxToContent} from '@/extensions/table/tableUnmergePreparer';
+import { _prependMergeSyntaxToContent } from '@/extensions/table/tableUnmergePreparer';
 import prepareTableUnmerge from '@/extensions/table/tableUnmergePreparer';
 
 describe('tableUnmergePreparer', () => {
@@ -67,8 +67,18 @@ describe('tableUnmergePreparer', () => {
       const actual = prepareTableUnmerge(tableElement);
       const $actual = $(actual);
 
-      expect($actual.find('th').eq(0).html()).toBe('@cols=2:title');
-      expect($actual.find('td').eq(1).html()).toBe('@rows=2:content1-2');
+      expect(
+        $actual
+          .find('th')
+          .eq(0)
+          .html()
+      ).toBe('@cols=2:title');
+      expect(
+        $actual
+          .find('td')
+          .eq(1)
+          .html()
+      ).toBe('@rows=2:content1-2');
     });
   });
 });

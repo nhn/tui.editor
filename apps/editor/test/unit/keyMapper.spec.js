@@ -25,6 +25,7 @@ describe('KeyMapper', () => {
         keyCode: 'B'.charCodeAt(0),
         altKey: true
       };
+
       expect(km.convert(ke)).toEqual('ALT+B');
     });
 
@@ -33,6 +34,7 @@ describe('KeyMapper', () => {
         keyCode: '1'.charCodeAt(0),
         ctrlKey: true
       };
+
       expect(km.convert(ke)).toEqual('CTRL+1');
     });
 
@@ -41,6 +43,7 @@ describe('KeyMapper', () => {
         keyCode: '1'.charCodeAt(0),
         metaKey: true
       };
+
       expect(km.convert(ke)).toEqual('META+1');
     });
 
@@ -49,6 +52,7 @@ describe('KeyMapper', () => {
         keyCode: '0'.charCodeAt(0),
         shiftKey: true
       };
+
       expect(km.convert(ke)).toEqual('SHIFT+0');
     });
 
@@ -58,6 +62,7 @@ describe('KeyMapper', () => {
         ctrlKey: true,
         altKey: true
       };
+
       expect(km.convert(ke)).toEqual('CTRL+ALT+[');
     });
 
@@ -68,6 +73,7 @@ describe('KeyMapper', () => {
         altKey: true,
         shiftKey: true
       };
+
       expect(km.convert(ke)).toEqual('SHIFT+CTRL+ALT+;');
     });
 
@@ -79,6 +85,7 @@ describe('KeyMapper', () => {
         shiftKey: true,
         metaKey: true
       };
+
       expect(km.convert(ke)).toEqual('SHIFT+CTRL+META+ALT+;');
     });
   });
@@ -94,6 +101,7 @@ describe('KeyMapper', () => {
         keyCode: 'B'.charCodeAt(0),
         altKey: true
       };
+
       expect(km.convert(ke)).toEqual('ALT_B');
     });
   });

@@ -78,6 +78,7 @@ describe('WysiwygMarkerHelper', function() {
 
   it('get marker of current selection that has start or end container pointed to non textNode', function() {
     const range = sqe.getSelection().cloneRange();
+
     range.setStart(sqe.get$Body().find('h1')[0], 1);
     range.setEnd(sqe.get$Body().find('h2')[0], 1);
 
@@ -94,6 +95,7 @@ describe('WysiwygMarkerHelper', function() {
     sqe.setHTML('<ul><li><input type="checkbox" /> text1</li></ul>');
 
     const range = sqe.getSelection().cloneRange();
+
     range.setStart(sqe.get$Body().find('li')[0], 1);
     range.setEnd(sqe.get$Body().find('li')[0], 1);
 
@@ -110,6 +112,7 @@ describe('WysiwygMarkerHelper', function() {
     sqe.setHTML('<div>text1</div><div>&#8203</div>');
 
     const range = sqe.getSelection().cloneRange();
+
     range.setStart(sqe.get$Body().find('div')[1].firstChild, 1);
     range.setEnd(sqe.get$Body().find('div')[1].firstChild, 1);
 

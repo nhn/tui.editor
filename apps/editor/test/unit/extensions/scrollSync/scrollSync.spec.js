@@ -24,7 +24,7 @@ describe('scrollSync', () => {
       initialEditType: 'markdown',
       exts: ['scrollSync'],
       events: {
-        'load': editor => {
+        load: editor => {
           editor.getCodeMirror().setSize(200, 50);
           $('.preview').css('padding', '0');
           $('.preview').css('overflow', 'auto');
@@ -43,14 +43,9 @@ describe('scrollSync', () => {
 
   describe('activate/deactivate', () => {
     beforeEach(() => {
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        'paragraph',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        ['paragraph', '# header1', 'paragraph', 'paragraph', '## header2', 'paragraph'].join('\n')
+      );
 
       jasmine.clock().install();
     });
@@ -59,26 +54,26 @@ describe('scrollSync', () => {
       jasmine.clock().uninstall();
     });
 
-    it('should call scrollManager\'s syncPreviewScrollTopToMarkdown when activated', () => {
+    it("should call scrollManager's syncPreviewScrollTopToMarkdown when activated", () => {
       const codemirror = ned.mdEditor.cm;
       const lastLine = codemirror.lastLine();
 
       spyOn(ScrollManager.prototype, 'syncPreviewScrollTopToMarkdown');
 
-      codemirror.replaceRange('hello!', {line: lastLine});
+      codemirror.replaceRange('hello!', { line: lastLine });
       jasmine.clock().tick(1000);
 
       expect(ScrollManager.prototype.syncPreviewScrollTopToMarkdown).toHaveBeenCalled();
     });
 
-    it('should not call scrollManager\'s syncPreviewScrollTopToMarkdown when deactivated', () => {
+    it("should not call scrollManager's syncPreviewScrollTopToMarkdown when deactivated", () => {
       const codemirror = ned.mdEditor.cm;
       const lastLine = codemirror.lastLine();
 
       spyOn(ScrollManager.prototype, 'syncPreviewScrollTopToMarkdown');
 
       ned.commandManager.exec('scrollSyncToggle'); // deactivate
-      codemirror.replaceRange('hello!', {line: lastLine});
+      codemirror.replaceRange('hello!', { line: lastLine });
       jasmine.clock().tick(1000);
 
       expect(ScrollManager.prototype.syncPreviewScrollTopToMarkdown).not.toHaveBeenCalled();

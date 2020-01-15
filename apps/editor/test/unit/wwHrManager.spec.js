@@ -38,7 +38,14 @@ describe('WwHrManager', () => {
 
     em.emit('wysiwygSetValueAfter');
 
-    expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>test</div><div contenteditable="false"><hr contenteditable="false"></div><div>test</div>');
+    expect(
+      wwe
+        .getEditor()
+        .getHTML()
+        .replace(/<br \/>|<br>/g, '')
+    ).toEqual(
+      '<div>test</div><div contenteditable="false"><hr contenteditable="false"></div><div>test</div>'
+    );
   });
 
   it('should insert empty line before hr if hr is first child of root', () => {
@@ -46,7 +53,14 @@ describe('WwHrManager', () => {
 
     em.emit('wysiwygSetValueAfter');
 
-    expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div></div><div contenteditable="false"><hr contenteditable="false"></div><div>test</div>');
+    expect(
+      wwe
+        .getEditor()
+        .getHTML()
+        .replace(/<br \/>|<br>/g, '')
+    ).toEqual(
+      '<div></div><div contenteditable="false"><hr contenteditable="false"></div><div>test</div>'
+    );
   });
 
   it('should insert empty line after hr if hr is last child of root', () => {
@@ -54,6 +68,13 @@ describe('WwHrManager', () => {
 
     em.emit('wysiwygSetValueAfter');
 
-    expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>test</div><div contenteditable="false"><hr contenteditable="false"></div><div></div>');
+    expect(
+      wwe
+        .getEditor()
+        .getHTML()
+        .replace(/<br \/>|<br>/g, '')
+    ).toEqual(
+      '<div>test</div><div contenteditable="false"><hr contenteditable="false"></div><div></div>'
+    );
   });
 });

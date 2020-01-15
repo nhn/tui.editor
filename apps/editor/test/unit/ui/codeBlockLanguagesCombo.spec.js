@@ -47,7 +47,7 @@ describe('CodeBlockLanguagesCombo', () => {
   });
 
   describe('key events', () => {
-    let keyEvent = $.Event('keydown');
+    const keyEvent = $.Event('keydown');
 
     describe('_storeInpuLanguage() should be called', () => {
       beforeEach(() => {
@@ -107,7 +107,7 @@ describe('CodeBlockLanguagesCombo', () => {
 
     it('up / down keys should change current language on PopupCodeBlockLanguages', () => {
       combo._showPopupCodeBlockLanguages();
-      let focusedLanguage = popupLanguages.getCurrentLanguage();
+      const focusedLanguage = popupLanguages.getCurrentLanguage();
 
       keyEvent.which = KeyMapper.keyCode('UP');
       combo._onKeyEvent(keyEvent);

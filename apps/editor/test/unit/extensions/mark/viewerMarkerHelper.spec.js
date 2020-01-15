@@ -76,6 +76,7 @@ describe('ViewerMarkerHelper', () => {
     preview.refresh('# TEXT1\n- - -\n## TEXT2');
 
     const range = document.createRange();
+
     range.selectNode(preview.$el.find('hr')[0]);
     range.setStart(preview.$el.find('h1')[0].firstChild, 2);
 
@@ -92,6 +93,7 @@ describe('ViewerMarkerHelper', () => {
     preview.$el.html('<ul><li><input type="checkbox" /> text1</li></ul>');
 
     const range = document.createRange();
+
     range.setStart(preview.$el.find('li')[0], 1);
     range.setEnd(preview.$el.find('li')[0], 1);
 
@@ -106,9 +108,11 @@ describe('ViewerMarkerHelper', () => {
 
   it('getMarkerInfoOfCurrentSelection() return null if contents not contains range', () => {
     const $div = $('<div id="outsider">TEXT</div>');
+
     $('body').append($div);
 
     const range = document.createRange();
+
     range.selectNodeContents($('#outsider')[0]);
 
     window.getSelection().addRange(range);

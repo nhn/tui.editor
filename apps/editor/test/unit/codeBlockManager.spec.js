@@ -2,7 +2,7 @@
  * @fileoverview test code block manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import {CodeBlockManager} from '@/codeBlockManager';
+import { CodeBlockManager } from '@/codeBlockManager';
 
 describe('CodeBlockManager', () => {
   let codeBlockManager;
@@ -42,7 +42,8 @@ describe('CodeBlockManager', () => {
     it('Create code block html for highlight.js type without replacer.', () => {
       const type = 'javascript';
       const actual = codeBlockManager.createCodeBlockHtml(type, 'var a = 1;');
-      const expected = '<span class="hljs-keyword">var</span> a = <span class="hljs-number">1</span>;';
+      const expected =
+        '<span class="hljs-keyword">var</span> a = <span class="hljs-number">1</span>;';
 
       expect(actual).toBe(expected);
     });

@@ -34,7 +34,7 @@ describe('MarkdownMarkerHelper', function() {
   });
 
   it('update marker with additional info', function() {
-    let marker = mmh.updateMarkerWithExtraInfo({
+    const marker = mmh.updateMarkerWithExtraInfo({
       start: 2,
       end: 8
     });
@@ -48,7 +48,7 @@ describe('MarkdownMarkerHelper', function() {
   });
 
   it('update collapsed marker with additional info', function() {
-    let marker = mmh.updateMarkerWithExtraInfo({
+    const marker = mmh.updateMarkerWithExtraInfo({
       start: 2,
       end: 2
     });
@@ -64,13 +64,16 @@ describe('MarkdownMarkerHelper', function() {
   it('get marker info of current selection', function() {
     let marker;
 
-    cm.setSelection({
-      line: 0,
-      ch: 2
-    }, {
-      line: 1,
-      ch: 1
-    });
+    cm.setSelection(
+      {
+        line: 0,
+        ch: 2
+      },
+      {
+        line: 1,
+        ch: 1
+      }
+    );
 
     marker = mmh.getMarkerInfoOfCurrentSelection();
 
@@ -87,13 +90,16 @@ describe('MarkdownMarkerHelper', function() {
 
     cm.setValue('# TEXT1\n\n## TEXT2');
 
-    cm.setSelection({
-      line: 0,
-      ch: 2
-    }, {
-      line: 1,
-      ch: 0
-    });
+    cm.setSelection(
+      {
+        line: 0,
+        ch: 2
+      },
+      {
+        line: 1,
+        ch: 0
+      }
+    );
 
     marker = mmh.getMarkerInfoOfCurrentSelection();
 
@@ -110,13 +116,16 @@ describe('MarkdownMarkerHelper', function() {
 
     cm.setValue('# TEXT1\n\n## TEXT2');
 
-    cm.setSelection({
-      line: 1,
-      ch: 0
-    }, {
-      line: 0,
-      ch: 2
-    });
+    cm.setSelection(
+      {
+        line: 1,
+        ch: 0
+      },
+      {
+        line: 0,
+        ch: 2
+      }
+    );
 
     marker = mmh.getMarkerInfoOfCurrentSelection();
 

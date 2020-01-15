@@ -28,11 +28,7 @@ describe('tableRenderer', () => {
     });
 
     it('when wrong contents in table tag, returns only table tag.', () => {
-      const tableHtml = [
-        '<table>',
-        '<!-- header>',
-        '</table>'
-      ].join('');
+      const tableHtml = ['<table>', '<!-- header>', '</table>'].join('');
       const $table = $(tableHtml);
       const renderData = tableDataHandler.createTableData($table);
       const result = tableRenderer.createTableHtml(renderData);

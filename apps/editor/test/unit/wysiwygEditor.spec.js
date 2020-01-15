@@ -7,7 +7,7 @@ import $ from 'jquery';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 import ListManager from '@/wwListManager';
-import {isMac} from '@/util';
+import { isMac } from '@/util';
 
 describe('WysiwygEditor', () => {
   let $container, em, wwe;
@@ -48,69 +48,75 @@ describe('WysiwygEditor', () => {
 
     it('add key event handler and run', () => {
       const handler = jasmine.createSpy('keyEventHandler');
+
       wwe.addKeyEventHandler(handler);
       em.emit('wysiwygKeyEvent', {
         keyMap: 'HOME',
-        data: {keyCode: 0}
+        data: { keyCode: 0 }
       });
       expect(handler).toHaveBeenCalled();
     });
 
     it('add key event with particular keymap and run', () => {
       const handler = jasmine.createSpy('keyEventHandler');
+
       wwe.addKeyEventHandler('HOME', handler);
       em.emit('wysiwygKeyEvent', {
         keyMap: 'HOME',
-        data: {keyCode: 0}
+        data: { keyCode: 0 }
       });
       expect(handler).toHaveBeenCalled();
     });
 
     it('should take multiple keymaps as an array', () => {
       const handler = jasmine.createSpy('keyEventHandler');
+
       wwe.addKeyEventHandler(['HOME', 'END'], handler);
       em.emit('wysiwygKeyEvent', {
         keyMap: 'HOME',
-        data: {keyCode: 0}
+        data: { keyCode: 0 }
       });
       em.emit('wysiwygKeyEvent', {
         keyMap: 'END',
-        data: {keyCode: 0}
+        data: { keyCode: 0 }
       });
       expect(handler.calls.count()).toBe(2);
     });
 
     it('run particular keymap and default', () => {
       const handler = jasmine.createSpy('keyEventHandler');
+
       wwe.addKeyEventHandler('HOME', handler);
       wwe.addKeyEventHandler(handler);
       em.emit('wysiwygKeyEvent', {
         keyMap: 'HOME',
-        data: {keyCode: 0}
+        data: { keyCode: 0 }
       });
       expect(handler.calls.count()).toEqual(2);
     });
 
     it('if handler returns false stop invoke next handler', () => {
       const handler = jasmine.createSpy('keyEventHandler');
+
       wwe.addKeyEventHandler('HOME', () => false);
       wwe.addKeyEventHandler('HOME', handler);
       em.emit('wysiwygKeyEvent', {
         keyMap: 'HOME',
-        data: {keyCode: 0}
+        data: { keyCode: 0 }
       });
       expect(handler).not.toHaveBeenCalled();
     });
 
     it('if defalut handler returns false dont invoke keymap handler', () => {
       const handler = jasmine.createSpy('keyEventHandler');
+
       wwe.addKeyEventHandler(() => false);
 
       wwe.addKeyEventHandler('HOME', handler);
 
       em.emit('wysiwygKeyEvent', {
         keyMap: 'HOME',
-        data: {keyCode: 0}
+        data: { keyCode: 0 }
       });
       expect(handler).not.toHaveBeenCalled();
     });
@@ -125,7 +131,12 @@ describe('WysiwygEditor', () => {
         }
       });
 
-      expect(wwe.get$Body().find('div').text()).toBe('\u00a0\u00a0\u00a0\u00a0');
+      expect(
+        wwe
+          .get$Body()
+          .find('div')
+          .text()
+      ).toBe('\u00a0\u00a0\u00a0\u00a0');
     });
 
     it('should not insert 4 spaces when "TAB" pressed in list item', () => {
@@ -144,13 +155,22 @@ describe('WysiwygEditor', () => {
         }
       });
 
-      expect(wwe.get$Body().find('div').text()).toBe('');
+      expect(
+        wwe
+          .get$Body()
+          .find('div')
+          .text()
+      ).toBe('');
     });
 
     it('should not insert 4 spaces when "TAB" pressed in task list', () => {
       const range = wwe.getEditor().getSelection();
 
-      wwe.getEditor().setHTML('<ul><li class="task-list-item"><div><input type="checkbox"/><br></div></li></ul>');
+      wwe
+        .getEditor()
+        .setHTML(
+          '<ul><li class="task-list-item"><div><input type="checkbox"/><br></div></li></ul>'
+        );
 
       range.setStartAfter(wwe.get$Body().find('div>input')[0]);
       range.collapse(true);
@@ -163,7 +183,12 @@ describe('WysiwygEditor', () => {
         }
       });
 
-      expect(wwe.get$Body().find('div').text()).toBe('');
+      expect(
+        wwe
+          .get$Body()
+          .find('div')
+          .text()
+      ).toBe('');
     });
   });
 
@@ -241,36 +266,42 @@ describe('WysiwygEditor', () => {
   describe('getValue, setValue', () => {
     it('remove all unnecessary brs', () => {
       const html = '<h1>1</h1><h1>2</h1>';
+
       wwe.setValue(html);
       expect(wwe.getValue()).toEqual('<h1>1</h1><h1>2</h1><br />');
     });
 
     it('dont remove necessary brs', () => {
       const html = '<h1>1</h1><div><br></div><h1>2</h1>';
+
       wwe.setValue(html);
       expect(wwe.getValue()).toEqual('<h1>1</h1><br /><h1>2</h1><br />');
     });
 
     it('remove contentEditable block tag(div)', () => {
       const html = 'abcde<br />efg';
+
       wwe.setValue(html);
       expect(wwe.getValue()).toEqual('abcde<br />efg<br />');
     });
 
     it('should remove contentEditable block tag(div) even it has attributes', () => {
       const html = '<div class="some-class">text</div>';
+
       wwe.setValue(html);
       expect(wwe.getValue()).toEqual('text<br />');
     });
 
     it('empty line replace to br', () => {
       const html = '<div><br /></div>test';
+
       wwe.setValue(html);
       expect(wwe.getValue()).toEqual('<br />test<br />');
     });
 
     it('empty line li dont replace to br', () => {
       const html = '<ul><li></li></ul>';
+
       wwe.setValue(html);
       expect(wwe.getValue()).toEqual(`${html}<br />`);
     });
@@ -281,6 +312,7 @@ describe('WysiwygEditor', () => {
         '<span class="color2">bbb</span>',
         '<span class="color3"> ccc</span>'
       ].join('');
+
       wwe.setValue(html);
 
       const expectedHtml = [
@@ -288,23 +320,49 @@ describe('WysiwygEditor', () => {
         '<span class="color2">bbb</span>',
         '<span class="color3">&nbsp;ccc</span>'
       ].join('');
+
       expect(wwe.getValue()).toEqual(`${expectedHtml}<br />`);
     });
 
     it('the line break is working between <br> to <img>.', () => {
       let html = '<p>test<br><img src="" alt="image"></p>';
+
       wwe.setValue(html);
 
       expect(wwe.get$Body().find('div').length).toEqual(3);
-      expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test');
-      expect(wwe.get$Body().find('div').eq(1).find('img').length).toEqual(1);
+      expect(
+        wwe
+          .get$Body()
+          .find('div')
+          .eq(0)
+          .text()
+      ).toEqual('test');
+      expect(
+        wwe
+          .get$Body()
+          .find('div')
+          .eq(1)
+          .find('img').length
+      ).toEqual(1);
 
       html = 'test<br>\n<img src="" alt="image">';
       wwe.setValue(html);
 
       expect(wwe.get$Body().find('div').length).toEqual(2);
-      expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test');
-      expect(wwe.get$Body().find('div').eq(1).find('img').length).toEqual(1);
+      expect(
+        wwe
+          .get$Body()
+          .find('div')
+          .eq(0)
+          .text()
+      ).toEqual('test');
+      expect(
+        wwe
+          .get$Body()
+          .find('div')
+          .eq(1)
+          .find('img').length
+      ).toEqual(1);
     });
 
     it('record undo state after all setValue process not setHTML', done => {
@@ -345,9 +403,7 @@ describe('WysiwygEditor', () => {
   });
 
   describe('insertText()', () => {
-    let sqe,
-      selection,
-      $body;
+    let sqe, selection, $body;
 
     beforeEach(() => {
       sqe = wwe.getEditor();
@@ -393,7 +449,10 @@ describe('WysiwygEditor', () => {
 
   describe('_wrapDefaultBlockTo', () => {
     it('wrap selection defulat block', done => {
-      const range = wwe.getEditor().getSelection().cloneRange();
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       wwe.get$Body().html('abcdef');
 
@@ -401,7 +460,12 @@ describe('WysiwygEditor', () => {
       range.collapse(true);
       wwe._wrapDefaultBlockTo(range);
 
-      expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>abcdef</div>');
+      expect(
+        wwe
+          .getEditor()
+          .getHTML()
+          .replace(/<br \/>|<br>/g, '')
+      ).toEqual('<div>abcdef</div>');
       done();
     });
   });
@@ -410,7 +474,10 @@ describe('WysiwygEditor', () => {
     it('make new defulatBlock then move selection to it', () => {
       wwe.get$Body().html('<div>aef<br></div>');
 
-      const range = wwe.getEditor().getSelection().cloneRange();
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       range.setStart(wwe.get$Body()[0], 0);
       range.collapse(true);
@@ -424,7 +491,10 @@ describe('WysiwygEditor', () => {
     it('make new defulatBlock to body child then move selection to it', () => {
       wwe.get$Body().html('<h1><div>aef<br></div></h1>');
 
-      const range = wwe.getEditor().getSelection().cloneRange();
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       // select text node
       range.setStart(wwe.get$Body().find('div')[0], 0);
@@ -439,7 +509,10 @@ describe('WysiwygEditor', () => {
 
   describe('unwrapBlockTag()', () => {
     it('unwrap tag of current selection with tag name', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
@@ -452,7 +525,10 @@ describe('WysiwygEditor', () => {
     });
 
     it('unwrap tag of current selection with condition callback', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
@@ -466,14 +542,15 @@ describe('WysiwygEditor', () => {
     });
   });
 
-  describe('replace node\'s content text', () => {
+  describe("replace node's content text", () => {
     it('replace text without affect tags', () => {
       wwe.get$Body().html('<ul><li class="custom-class">list1</li><li>list2</li></ul>');
 
       wwe.replaceContentText(wwe.get$Body().find('li')[0], 'list1', 'list2');
 
-      expect(wwe.getValue().replace(/<br \/>/g, ''))
-        .toBe('<ul><li class="custom-class">list2</li><li>list2</li></ul>');
+      expect(wwe.getValue().replace(/<br \/>/g, '')).toBe(
+        '<ul><li class="custom-class">list2</li><li>list2</li></ul>'
+      );
     });
   });
 
@@ -490,7 +567,9 @@ describe('WysiwygEditor', () => {
       wwe.setHeight(30);
     });
     it('move cursor to end and scroll to end', () => {
-      wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+      wwe.setValue(
+        'a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>'
+      );
       wwe.moveCursorToEnd();
 
       const range = wwe.getRange();
@@ -500,7 +579,9 @@ describe('WysiwygEditor', () => {
       expect(range.startOffset).toEqual(1);
     });
     it('move cursor to start and scroll to top', () => {
-      wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+      wwe.setValue(
+        'a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>'
+      );
       wwe.moveCursorToEnd();
       wwe.moveCursorToStart();
 
@@ -514,7 +595,9 @@ describe('WysiwygEditor', () => {
 
   it('scroll if needed on wysiwygRangeChangeAfter', () => {
     wwe.setHeight(30);
-    wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+    wwe.setValue(
+      'a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>'
+    );
     wwe.scrollTop(0);
 
     em.emit('wysiwygRangeChangeAfter');
@@ -525,6 +608,7 @@ describe('WysiwygEditor', () => {
   describe('get current range', () => {
     it('get range', () => {
       const range = wwe.getEditor().getSelection();
+
       expect(wwe.getRange()).toEqual(range);
     });
   });
@@ -561,7 +645,9 @@ describe('WysiwygEditor', () => {
   describe('_getLastListString ', () => {
     it('should get last list string', () => {
       expect(wwe._getLastLiString('UL>LI>UL>LI>OL>LI>DIV')).toEqual('LI>DIV');
-      expect(wwe._getLastLiString('UL>LI>UL>LI>OL>LI.te-task-list>DIV')).toEqual('LI.te-task-list>DIV');
+      expect(wwe._getLastLiString('UL>LI>UL>LI>OL>LI.te-task-list>DIV')).toEqual(
+        'LI.te-task-list>DIV'
+      );
     });
     it('should return empty string when Last LI not exists', () => {
       expect(wwe._getLastLiString('DIV')).toEqual('');
@@ -578,6 +664,7 @@ describe('WysiwygEditor', () => {
       keyCode: 66,
       preventDefault: spy
     };
+
     keyEvent[`${meta}Key`] = true;
 
     Object.getPrototypeOf(sqe._keyHandlers)[`${meta}-b`] = spyOriginal;
@@ -593,13 +680,19 @@ describe('WysiwygEditor', () => {
     it('should scroll to cursor at the end', () => {
       wwe.setHeight(50);
       const sqe = wwe.getEditor();
-      sqe.setHTML('<div>a</div><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div>');
+
+      sqe.setHTML(
+        '<div>a</div><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div><div>a</div>'
+      );
       sqe.moveCursorToEnd();
 
       wwe.scrollIntoCursor();
 
-      const {top: cursorTop, height: cursorHeight} = sqe.getCursorPosition();
-      const {top: editorTop, height: editorHeight} = wwe.$editorContainerEl.get(0).getBoundingClientRect();
+      const { top: cursorTop, height: cursorHeight } = sqe.getCursorPosition();
+      const { top: editorTop, height: editorHeight } = wwe.$editorContainerEl
+        .get(0)
+        .getBoundingClientRect();
+
       expect(cursorTop >= 0).toBe(true);
       expect(cursorTop + cursorHeight <= editorTop + editorHeight).toBe(true);
     });
@@ -607,7 +700,10 @@ describe('WysiwygEditor', () => {
     it('should scroll to cursor at the first', () => {
       wwe.setHeight(50);
       const sqe = wwe.getEditor();
-      sqe.setHTML('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+
+      sqe.setHTML(
+        'a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>'
+      );
 
       // scroll to bottom
       wwe.scrollTop(99999);
@@ -615,8 +711,10 @@ describe('WysiwygEditor', () => {
       sqe.moveCursorToStart();
       wwe.scrollIntoCursor();
 
-      const {top: cursorTop, height: cursorHeight} = sqe.getCursorPosition();
-      const {top: editorTop, height: editorHeight} = wwe.$editorContainerEl.get(0).getBoundingClientRect();
+      const { top: cursorTop, height: cursorHeight } = sqe.getCursorPosition();
+      const { top: editorTop, height: editorHeight } = wwe.$editorContainerEl
+        .get(0)
+        .getBoundingClientRect();
 
       expect(cursorTop - editorTop >= 0).toBe(true);
       expect(cursorTop + cursorHeight <= editorTop + editorHeight).toBe(true);
@@ -625,9 +723,17 @@ describe('WysiwygEditor', () => {
 
   describe('isInTable ', () => {
     it('isInTable() check if passed range is in table', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
-      wwe.getEditor().setHTML('<table><thead><tr><th><br></th><th><br></th></tr></thead>' +
-              '<tbody><tr><td><br></td><td><br></td></tr></tbody></table>');
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
+
+      wwe
+        .getEditor()
+        .setHTML(
+          '<table><thead><tr><th><br></th><th><br></th></tr></thead>' +
+            '<tbody><tr><td><br></td><td><br></td></tr></tbody></table>'
+        );
       range.setStart(wwe.get$Body().find('td')[0], 0);
       range.collapse(true);
 

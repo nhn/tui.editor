@@ -5,7 +5,7 @@
 import MarkerList from '@/extensions/mark/markerList';
 
 describe('MarkerList', function() {
-  var ml;
+  let ml;
 
   beforeEach(function() {
     ml = new MarkerList();
@@ -136,6 +136,7 @@ describe('MarkerList', function() {
   describe('get markers with range', function() {
     it('get markers that affected by range', function() {
       const iteratee = jasmine.createSpy('forEachByRangeIteratee');
+
       ml.addMarker(0, 10, 'myId1');
       ml.addMarker(5, 20, 'myId2');
 
@@ -148,6 +149,7 @@ describe('MarkerList', function() {
 
     it('dont get markers that not affected by range', function() {
       const iteratee = jasmine.createSpy('forEachByRangeIteratee');
+
       ml.addMarker(0, 10, 'myId1');
       ml.addMarker(5, 20, 'myId2');
 

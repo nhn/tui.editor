@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import {_createNewColumns, _addColumns} from '@/extensions/table/mergedTableAddCol';
+import { _createNewColumns, _addColumns } from '@/extensions/table/mergedTableAddCol';
 import tableDataHandler from '@/extensions/table/tableDataHandler';
 
 describe('mergedTableAddCol', () => {
@@ -22,42 +22,50 @@ describe('mergedTableAddCol', () => {
             colspan: 1,
             rowspan: 1,
             content: 'title1'
-          }, {
+          },
+          {
             nodeName: 'TH',
             colspan: 1,
             rowspan: 1,
             content: 'title2'
-          }, {
+          },
+          {
             nodeName: 'TH',
             colspan: 1,
             rowspan: 1,
             content: 'title3'
           }
-        ], [
+        ],
+        [
           {
             nodeName: 'TD',
             colspan: 3,
             rowspan: 1,
             content: 'content1-1'
-          }, {
+          },
+          {
             nodeName: 'TD',
             colMergeWith: 0
-          }, {
+          },
+          {
             nodeName: 'TD',
             colMergeWith: 0
           }
-        ], [
+        ],
+        [
           {
             nodeName: 'TD',
             colspan: 1,
             rowspan: 1,
             content: 'content2-1'
-          }, {
+          },
+          {
             nodeName: 'TD',
             colspan: 1,
             rowspan: 1,
             content: 'content2-2'
-          }, {
+          },
+          {
             nodeName: 'TD',
             colspan: 1,
             rowspan: 1,
@@ -282,6 +290,7 @@ describe('mergedTableAddCol', () => {
           colIndex: 1
         }
       };
+
       _addColumns(tableData, tableRange);
 
       expect(tableData[0].length).toBe(4);
@@ -313,6 +322,7 @@ describe('mergedTableAddCol', () => {
           colIndex: 0
         }
       };
+
       _addColumns(tableData, tableRange);
 
       expect(tableData[0].length).toBe(4);
@@ -344,6 +354,7 @@ describe('mergedTableAddCol', () => {
           colIndex: 2
         }
       };
+
       _addColumns(tableData, tableRange);
 
       expect(tableData[0].length).toBe(4);
@@ -381,6 +392,7 @@ describe('mergedTableAddCol', () => {
           colIndex: 1
         }
       };
+
       _addColumns(tableData, tableRange);
 
       expect(tableData[0].length).toBe(5);

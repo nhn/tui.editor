@@ -35,7 +35,8 @@ describe('AddImage', () => {
 
     beforeEach(() => {
       data = {
-        imageUrl: 'http://static.nhn.com/static/site/wgnb/siteTheme_ent/logoImage/logo_ne_theme_01.png?ver=20150121',
+        imageUrl:
+          'http://static.nhn.com/static/site/wgnb/siteTheme_ent/logoImage/logo_ne_theme_01.png?ver=20150121',
         altText: 'NHN'
       };
     });
@@ -49,13 +50,16 @@ describe('AddImage', () => {
     });
 
     it('to selected area', () => {
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 2,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 2,
+          ch: 7
+        }
+      );
 
       AddImage.exec(mde, data);
 
@@ -69,7 +73,7 @@ describe('AddImage', () => {
       doc.setCursor(1, 0);
 
       cm.on('change', (cmOb, changeObj) => {
-        ({origin} = changeObj);
+        ({ origin } = changeObj);
       });
 
       AddImage.exec(mde, data);

@@ -31,7 +31,10 @@ describe('AddLink', () => {
   });
 
   it('add link to current selection', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('line');
 
@@ -44,8 +47,18 @@ describe('AddLink', () => {
     });
 
     expect(wwe.get$Body().find('a').length).toEqual(1);
-    expect(wwe.get$Body().find('a').attr('href')).toEqual('#url');
-    expect(wwe.get$Body().find('a').text()).toEqual('line');
+    expect(
+      wwe
+        .get$Body()
+        .find('a')
+        .attr('href')
+    ).toEqual('#url');
+    expect(
+      wwe
+        .get$Body()
+        .find('a')
+        .text()
+    ).toEqual('line');
   });
 
   it('add link with no selection text', () => {
@@ -55,8 +68,18 @@ describe('AddLink', () => {
     });
 
     expect(wwe.get$Body().find('a').length).toEqual(1);
-    expect(wwe.get$Body().find('a').attr('href')).toEqual('#url');
-    expect(wwe.get$Body().find('a').text()).toEqual('inputText');
+    expect(
+      wwe
+        .get$Body()
+        .find('a')
+        .attr('href')
+    ).toEqual('#url');
+    expect(
+      wwe
+        .get$Body()
+        .find('a')
+        .text()
+    ).toEqual('inputText');
   });
 
   it('should add link with decoded text', () => {
@@ -65,7 +88,12 @@ describe('AddLink', () => {
       linkText: '%ED%95%9C%EA%B8%80%EC%9C%A0%EB%8B%88%EC%BD%94%EB%93%9C'
     });
 
-    expect(wwe.get$Body().find('a').text()).toEqual('한글유니코드');
+    expect(
+      wwe
+        .get$Body()
+        .find('a')
+        .text()
+    ).toEqual('한글유니코드');
   });
 
   it('should add link markdown characters encoded url', () => {
@@ -74,6 +102,11 @@ describe('AddLink', () => {
       linkText: ''
     });
 
-    expect(wwe.get$Body().find('a').attr('href')).toEqual('%28%29%5B%5D%3C%3E');
+    expect(
+      wwe
+        .get$Body()
+        .find('a')
+        .attr('href')
+    ).toEqual('%28%29%5B%5D%3C%3E');
   });
 });

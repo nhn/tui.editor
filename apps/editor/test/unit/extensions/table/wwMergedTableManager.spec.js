@@ -66,12 +66,14 @@ describe('WwMergedTableManager', () => {
     });
 
     it('Paste to selected area, when exactly fit table selection by clipboard table data.', () => {
-      const $clipboardTable = $([
-        '<table>',
-        '<tr><td>1</td><td>2</td></tr>',
-        '<tr><td>3</td><td>4</td></tr>',
-        '</table>'
-      ].join(''));
+      const $clipboardTable = $(
+        [
+          '<table>',
+          '<tr><td>1</td><td>2</td></tr>',
+          '<tr><td>3</td><td>4</td></tr>',
+          '</table>'
+        ].join('')
+      );
 
       const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
       const tableData = tableDataHandler.createTableData($table);
@@ -92,21 +94,27 @@ describe('WwMergedTableManager', () => {
     });
 
     it('Paste to selected area, when selection is lager than clipboard table data', () => {
-      const $clipboardTable = $([
-        '<table>',
-        '<tr><td>1</td><td>2</td></tr>',
-        '<tr><td>3</td><td>4</td></tr>',
-        '</table>'
-      ].join(''));
+      const $clipboardTable = $(
+        [
+          '<table>',
+          '<tr><td>1</td><td>2</td></tr>',
+          '<tr><td>3</td><td>4</td></tr>',
+          '</table>'
+        ].join('')
+      );
 
       const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
       const tableData = tableDataHandler.createTableData($table);
-      const $selectedCells = $table.find('tbody').find('tr:nth-child(1), tr:nth-child(2), tr:nth-child(3)')
+      const $selectedCells = $table
+        .find('tbody')
+        .find('tr:nth-child(1), tr:nth-child(2), tr:nth-child(3)')
         .find('td:nth-child(1), td:nth-child(2), td:nth-child(3)');
 
       mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
 
-      const $trs = $(container).first().find('tr');
+      const $trs = $(container)
+        .first()
+        .find('tr');
 
       expect($trs.eq(1).html()).toBe('<td>1</td><td>2</td><td>c</td><td>d</td>');
       expect($trs.eq(2).html()).toBe('<td>3</td><td>4</td><td>g</td><td>h</td>');
@@ -118,22 +126,34 @@ describe('WwMergedTableManager', () => {
     });
 
     it('If selection is lager than clipboard table data and merged boundary of paste target, will not paste.', () => {
-      const $clipboardTable = $([
-        '<table>',
-        '<tr><td>1</td><td>2</td></tr>',
-        '<tr><td>3</td><td>4</td></tr>',
-        '</table>'
-      ].join(''));
+      const $clipboardTable = $(
+        [
+          '<table>',
+          '<tr><td>1</td><td>2</td></tr>',
+          '<tr><td>3</td><td>4</td></tr>',
+          '</table>'
+        ].join('')
+      );
 
       spyOn(window, 'alert');
       spyOn(wwe, 'focus');
 
-      $table.find('tbody').find('tr:nth-child(2)').find('td:nth-child(2)').attr('colspan', 2);
-      $table.find('tbody').find('tr:nth-child(2)').find('td:nth-child(3)').remove();
+      $table
+        .find('tbody')
+        .find('tr:nth-child(2)')
+        .find('td:nth-child(2)')
+        .attr('colspan', 2);
+      $table
+        .find('tbody')
+        .find('tr:nth-child(2)')
+        .find('td:nth-child(3)')
+        .remove();
 
       const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
       const tableData = tableDataHandler.createTableData($table);
-      const $selectedCells = $table.find('tbody').find('tr:nth-child(1), tr:nth-child(2), tr:nth-child(3)')
+      const $selectedCells = $table
+        .find('tbody')
+        .find('tr:nth-child(1), tr:nth-child(2), tr:nth-child(3)')
         .find('td:nth-child(1), td:nth-child(2), td:nth-child(3)');
 
       mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
@@ -144,21 +164,27 @@ describe('WwMergedTableManager', () => {
     });
 
     it('Paste to selected area, when selection is smaller than clipboard tata.', () => {
-      const $clipboardTable = $([
-        '<table>',
-        '<tr><td>1</td><td>2</td></tr>',
-        '<tr><td>3</td><td>4</td></tr>',
-        '</table>'
-      ].join(''));
+      const $clipboardTable = $(
+        [
+          '<table>',
+          '<tr><td>1</td><td>2</td></tr>',
+          '<tr><td>3</td><td>4</td></tr>',
+          '</table>'
+        ].join('')
+      );
 
       const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
       const tableData = tableDataHandler.createTableData($table);
-      const $selectedCells = $table.find('tbody').find('tr:nth-child(1), tr:nth-child(2)')
+      const $selectedCells = $table
+        .find('tbody')
+        .find('tr:nth-child(1), tr:nth-child(2)')
         .find('td:nth-child(2)');
 
       mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
 
-      const $trs = $(container).first().find('tr');
+      const $trs = $(container)
+        .first()
+        .find('tr');
 
       expect($trs.eq(1).html()).toBe('<td>a</td><td>1</td><td>c</td><td>d</td>');
       expect($trs.eq(2).html()).toBe('<td>e</td><td>3</td><td>g</td><td>h</td>');
@@ -170,19 +196,23 @@ describe('WwMergedTableManager', () => {
     });
 
     it('If selection is smaller than clipboard table data and merged boundary of data for paste in clipboard, will not paste.', () => {
-      const $clipboardTable = $([
-        '<table>',
-        '<tr><td>1</td><td>2</td></tr>',
-        '<tr><td colspan="2">3</td></tr>',
-        '</table>'
-      ].join(''));
+      const $clipboardTable = $(
+        [
+          '<table>',
+          '<tr><td>1</td><td>2</td></tr>',
+          '<tr><td colspan="2">3</td></tr>',
+          '</table>'
+        ].join('')
+      );
 
       spyOn(window, 'alert');
       spyOn(wwe, 'focus');
 
       const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
       const tableData = tableDataHandler.createTableData($table);
-      const $selectedCells = $table.find('tbody').find('tr:nth-child(1), tr:nth-child(2)')
+      const $selectedCells = $table
+        .find('tbody')
+        .find('tr:nth-child(1), tr:nth-child(2)')
         .find('td:nth-child(2)');
 
       mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
@@ -206,12 +236,14 @@ describe('WwMergedTableManager', () => {
     });
 
     it('Paste all clipboard table data.', () => {
-      const $clipboardTable = $([
-        '<table>',
-        '<tr><td>1</td><td>2</td></tr>',
-        '<tr><td>3</td><td>4</td></tr>',
-        '</table>'
-      ].join(''));
+      const $clipboardTable = $(
+        [
+          '<table>',
+          '<tr><td>1</td><td>2</td></tr>',
+          '<tr><td>3</td><td>4</td></tr>',
+          '</table>'
+        ].join('')
+      );
 
       const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
       const tableData = tableDataHandler.createTableData($table);
@@ -225,14 +257,17 @@ describe('WwMergedTableManager', () => {
 
       mgr._pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex);
 
-      const $trs = $(container).first().find('tr');
+      const $trs = $(container)
+        .first()
+        .find('tr');
       const cellContent = util.browser.msie ? '' : '<br>';
 
       expect($trs.length).toBe(6);
       expect($trs.eq(0).children().length).toBe(5);
       expect($trs.eq(4).html()).toBe('<td>m</td><td>n</td><td>o</td><td>1</td><td>2</td>');
-      expect($trs.eq(5).html())
-        .toBe(`<td>${cellContent}</td><td>${cellContent}</td><td>${cellContent}</td><td>3</td><td>4</td>`);
+      expect($trs.eq(5).html()).toBe(
+        `<td>${cellContent}</td><td>${cellContent}</td><td>${cellContent}</td><td>3</td><td>4</td>`
+      );
       expect(mgr._bookmarkLastTd).toHaveBeenCalledWith({
         rowIndex: 5,
         colIndex: 4
@@ -240,17 +275,27 @@ describe('WwMergedTableManager', () => {
     });
 
     it('If merged boundary of paste target, will not paste.', () => {
-      const $clipboardTable = $([
-        '<table>',
-        '<tr><td>1</td><td>2</td></tr>',
-        '<tr><td>3</td><td>4</td></tr>',
-        '</table>'
-      ].join(''));
+      const $clipboardTable = $(
+        [
+          '<table>',
+          '<tr><td>1</td><td>2</td></tr>',
+          '<tr><td>3</td><td>4</td></tr>',
+          '</table>'
+        ].join('')
+      );
 
       spyOn(window, 'alert');
 
-      $table.find('tbody').find('tr:nth-child(2)').find('td:nth-child(2)').attr('colspan', 2);
-      $table.find('tbody').find('tr:nth-child(2)').find('td:nth-child(3)').remove();
+      $table
+        .find('tbody')
+        .find('tr:nth-child(2)')
+        .find('td:nth-child(2)')
+        .attr('colspan', 2);
+      $table
+        .find('tbody')
+        .find('tr:nth-child(2)')
+        .find('td:nth-child(3)')
+        .remove();
 
       const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
       const tableData = tableDataHandler.createTableData($table);

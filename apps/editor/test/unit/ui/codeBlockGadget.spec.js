@@ -11,11 +11,7 @@ const GADGET_WIDTH = 250;
 const GADGET_HEIGHT = 30;
 
 describe('code block gadget', () => {
-  let gadget,
-    $container,
-    $wysiwygContainer,
-    $targetElement,
-    em;
+  let gadget, $container, $wysiwygContainer, $targetElement, em;
 
   beforeEach(() => {
     $container = $('<div>');
@@ -37,6 +33,7 @@ describe('code block gadget', () => {
 
     em = new EventManager();
     const wysiwygEditor = new WysiwygEditor($wysiwygContainer, em);
+
     wysiwygEditor.init();
     wysiwygEditor.focus();
     gadget = new CodeBlockGadget({

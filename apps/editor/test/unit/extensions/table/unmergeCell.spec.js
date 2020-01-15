@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import {_hasMergedCell, _unmergeCells} from '@/extensions/table/unmergeCell';
+import { _hasMergedCell, _unmergeCells } from '@/extensions/table/unmergeCell';
 import tableDataHandler from '@/extensions/table/tableDataHandler';
 
 describe('unmergeCell', () => {
@@ -25,6 +25,7 @@ describe('unmergeCell', () => {
 
   beforeEach(function() {
     const $table = $(tableHtml);
+
     tableData = tableDataHandler.createTableData($table);
   });
 

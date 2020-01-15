@@ -27,6 +27,7 @@ describe('fixOrderedListNumber', () => {
   it('should fix nested list item to start from 1', () => {
     const list = '1. list1\n\t2. list2';
     const cm = mde.getEditor();
+
     cm.setValue(list);
     cm.setCursor({
       line: 1,
@@ -40,6 +41,7 @@ describe('fixOrderedListNumber', () => {
   it('should fix peer list item number to be continued', () => {
     const list = '1. list1\n\t2. list2\n1. list3';
     const cm = mde.getEditor();
+
     cm.setValue(list);
     cm.setCursor({
       line: 1,
@@ -53,6 +55,7 @@ describe('fixOrderedListNumber', () => {
   it('should fix nested peer list item number to be continued', () => {
     const list = '1. list1\n\t2. list2\n\t1. list3';
     const cm = mde.getEditor();
+
     cm.setValue(list);
     cm.setCursor({
       line: 1,

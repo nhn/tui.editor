@@ -39,6 +39,7 @@ describe('WwPasteContentHelper', () => {
 
     it('_removeStyles should remove styles of node', () => {
       const $node = $('<div style="border: 1px solid #f00">TEST</div>');
+
       pch._removeStyles($node);
 
       expect($node.attr('style')).not.toBeDefined();
@@ -46,6 +47,7 @@ describe('WwPasteContentHelper', () => {
 
     it('_removeStyles should not remove color style of span', () => {
       const $node = $('<span style="color:#f00;border: 1px solid #f00">TEST</span>');
+
       pch._removeStyles($node);
 
       expect($node.attr('style')).toBeDefined();
@@ -115,6 +117,7 @@ describe('WwPasteContentHelper', () => {
       pch._removeUnnecessaryBlocks($container, blockTags);
 
       const spans = $container.find('span');
+
       expect(spans.length).toEqual(2);
       expect($node.find('p').length).toEqual(0);
       expect(spans.eq(0).text()).toEqual('hello');
@@ -229,13 +232,20 @@ describe('WwPasteContentHelper', () => {
       expect($container.find('span').length).toEqual(1);
       expect($container.find('br').length).toEqual(1);
       expect($container.text()).toEqual('ip lorem sit ametand so on');
-      expect($container.find('span').eq(0).text()).toEqual('and so on');
+      expect(
+        $container
+          .find('span')
+          .eq(0)
+          .text()
+      ).toEqual('and so on');
     });
     it('_unwrapIfNonBlockElementHasBr should unwrap b, i, em, s element with br', () => {
       const $container = $('<div />');
 
-      $container.html('<b>ip lorem sit amet<br /></b><i>and so on<br /></i>' +
-                '<s>la vita dolce<br /></s><em>carpe diem<br /></em>');
+      $container.html(
+        '<b>ip lorem sit amet<br /></b><i>and so on<br /></i>' +
+          '<s>la vita dolce<br /></s><em>carpe diem<br /></em>'
+      );
 
       pch._unwrapIfNonBlockElementHasBr($container);
 
@@ -273,7 +283,9 @@ describe('WwPasteContentHelper', () => {
     it('_tableElementAid should wrap THEAD and TBODY with TABLE', () => {
       const $container = $('<div />');
 
-      $container.html('<thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody>');
+      $container.html(
+        '<thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody>'
+      );
 
       pch._tableElementAid($container);
 
@@ -287,7 +299,9 @@ describe('WwPasteContentHelper', () => {
     it('_tableElementAid should remove colgroup', () => {
       const $container = $('<div />');
 
-      $container.html('<table><thead><tr><th>1</th><th>2</th></tr></thead><colgroup></colgroup><tbody><tr><td>a</td><td>b</td></tr></tbody></table>');
+      $container.html(
+        '<table><thead><tr><th>1</th><th>2</th></tr></thead><colgroup></colgroup><tbody><tr><td>a</td><td>b</td></tr></tbody></table>'
+      );
 
       pch._tableElementAid($container);
 
@@ -297,7 +311,9 @@ describe('WwPasteContentHelper', () => {
     it('_tableElementAid should update table ID class name', () => {
       const $container = $('<div />');
 
-      $container.html('<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>');
+      $container.html(
+        '<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>'
+      );
 
       pch._tableElementAid($container);
 
@@ -310,8 +326,9 @@ describe('WwPasteContentHelper', () => {
     });
     it('_tableElementAid should update all table ID class name in container', () => {
       const $container = $('<div />');
-      const html = '<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>' +
-                  '<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>';
+      const html =
+        '<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>' +
+        '<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>';
 
       $container.html(html);
 
@@ -341,7 +358,10 @@ describe('WwPasteContentHelper', () => {
 
         wwe.getEditor().setHTML('<ul><li><div>list1</div></li><li>list2</li></ul>');
 
-        const range = wwe.getEditor().getSelection().cloneRange();
+        const range = wwe
+          .getEditor()
+          .getSelection()
+          .cloneRange();
 
         range.setStart(wwe.get$Body().find('div')[0].childNodes[0], 1);
         range.collapse(true);
@@ -360,11 +380,18 @@ describe('WwPasteContentHelper', () => {
 
         $container.html('<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul>');
 
-        wwe.getEditor().setHTML('<ul><li><div>text0<br/></div>' +
-                    '<ul><li><div>list1</div></li><li>list2</li></ul></li>' +
-                    '</ul>');
+        wwe
+          .getEditor()
+          .setHTML(
+            '<ul><li><div>text0<br/></div>' +
+              '<ul><li><div>list1</div></li><li>list2</li></ul></li>' +
+              '</ul>'
+          );
 
-        const range = wwe.getEditor().getSelection().cloneRange();
+        const range = wwe
+          .getEditor()
+          .getSelection()
+          .cloneRange();
 
         range.setStart(wwe.get$Body().find('ul li ul li div')[0].childNodes[0], 1);
         range.collapse(true);
@@ -385,7 +412,10 @@ describe('WwPasteContentHelper', () => {
 
         wwe.getEditor().setHTML('<div><br></div>');
 
-        const range = wwe.getEditor().getSelection().cloneRange();
+        const range = wwe
+          .getEditor()
+          .getSelection()
+          .cloneRange();
 
         range.setStart(wwe.get$Body().find('div')[0], 1);
         range.collapse(true);
@@ -406,7 +436,10 @@ describe('WwPasteContentHelper', () => {
 
         wwe.getEditor().setHTML('<div><br></div>');
 
-        const range = wwe.getEditor().getSelection().cloneRange();
+        const range = wwe
+          .getEditor()
+          .getSelection()
+          .cloneRange();
 
         range.setStart(wwe.get$Body().find('div')[0], 1);
         range.collapse(true);
@@ -422,12 +455,18 @@ describe('WwPasteContentHelper', () => {
 
       it('paste data have backward depth list then limit list depth level', () => {
         const $container = $('<div />');
-        $container.html('<ul><li><div>text<br></div></li><li>' +
-                                '<div>text2<br></div></li></ul><li><div>myText<br></div></li>');
+
+        $container.html(
+          '<ul><li><div>text<br></div></li><li>' +
+            '<div>text2<br></div></li></ul><li><div>myText<br></div></li>'
+        );
 
         wwe.getEditor().setHTML('<ul><li><div>list1</div></li><li>list2</li></ul>');
 
-        const range = wwe.getEditor().getSelection().cloneRange();
+        const range = wwe
+          .getEditor()
+          .getSelection()
+          .cloneRange();
 
         range.setStart(wwe.get$Body().find('div')[0].childNodes[0], 1);
         range.collapse(true);

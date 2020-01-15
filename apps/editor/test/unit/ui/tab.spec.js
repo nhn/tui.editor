@@ -36,7 +36,9 @@ describe('Tab', () => {
 
       $('body').append(tab.$el);
 
-      $('button').eq(0).trigger('click');
+      $('button')
+        .eq(0)
+        .trigger('click');
 
       expect(handler).toHaveBeenCalled();
     });
@@ -51,7 +53,9 @@ describe('Tab', () => {
 
       $('body').append(tab.$el);
 
-      $('button').eq(0).trigger('click');
+      $('button')
+        .eq(0)
+        .trigger('click');
 
       expect(spy.calls.mostRecent().args[1]).toEqual('tab1');
     });
@@ -90,8 +94,7 @@ describe('Tab', () => {
   });
 
   describe('initName option', () => {
-    let tabSection1,
-      tabSection2;
+    let tabSection1, tabSection2;
 
     beforeEach(() => {
       tabSection1 = $('<div>tab1</div>');
@@ -115,13 +118,17 @@ describe('Tab', () => {
     });
 
     it('sets initial active tab section', () => {
-      expect($('div').eq(1).hasClass('te-tab-active')).toBe(true);
+      expect(
+        $('div')
+          .eq(1)
+          .hasClass('te-tab-active')
+      ).toBe(true);
     });
   });
 
   describe('tab section', () => {
-    let tabSection1,
-      tabSection2;
+    let tabSection1, tabSection2;
+
     beforeEach(() => {
       tabSection1 = $('<div>tab1</div>');
       tabSection2 = $('<div>tab2</div>');
@@ -139,13 +146,19 @@ describe('Tab', () => {
     });
 
     it('click on tab button should result corresponding section activated', () => {
-      $('button').eq(1).trigger('click');
+      $('button')
+        .eq(1)
+        .trigger('click');
       expect(tabSection2.hasClass('te-tab-active')).toBe(true);
     });
 
     it('click on the other tab button should result de-activating previously activated section', () => {
-      $('button').eq(0).trigger('click');
-      $('button').eq(1).trigger('click');
+      $('button')
+        .eq(0)
+        .trigger('click');
+      $('button')
+        .eq(1)
+        .trigger('click');
 
       expect(tabSection1.hasClass('te-tab-active')).toBe(false);
       expect(tabSection2.hasClass('te-tab-active')).toBe(true);

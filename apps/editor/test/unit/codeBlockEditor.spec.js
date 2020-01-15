@@ -11,6 +11,7 @@ describe('CodeBlockEditor', () => {
   beforeEach(() => {
     pre = document.createElement('pre');
     const container = document.createElement('div');
+
     codeBlockEditor = new CodeBlockEditor(container);
   });
 

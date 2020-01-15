@@ -11,10 +11,7 @@ describe('ScrollManager', () => {
 
   beforeEach(() => {
     jasmine.getStyleFixtures().fixturesPath = '/base';
-    loadStyleFixtures(
-      'node_modules/codemirror/lib/codemirror.css',
-      'src/css/tui-editor.css'
-    );
+    loadStyleFixtures('node_modules/codemirror/lib/codemirror.css', 'src/css/tui-editor.css');
 
     container = document.createElement('div');
     document.body.appendChild(container);
@@ -25,9 +22,13 @@ describe('ScrollManager', () => {
       height: '120px',
       initialEditType: 'markdown',
       events: {
-        'load': function(editor) {
+        load(editor) {
           sectionManager = new SectionManager(editor.getCodeMirror(), editor.preview);
-          scrollManager = new ScrollManager(sectionManager, editor.getCodeMirror(), editor.preview.$el);
+          scrollManager = new ScrollManager(
+            sectionManager,
+            editor.getCodeMirror(),
+            editor.preview.$el
+          );
         }
       }
     });
@@ -43,27 +44,30 @@ describe('ScrollManager', () => {
 
   describe('get scroll data for preview from markdown', () => {
     beforeEach(() => {
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        'paragraph',
-        'paragraph',
-        '## header2',
-        'paragraph',
-        'paragraph',
-        'paragraph',
-        'paragraph',
-        'paragraph',
-        'paragraph',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        [
+          'paragraph',
+          '# header1',
+          'paragraph',
+          'paragraph',
+          'paragraph',
+          '## header2',
+          'paragraph',
+          'paragraph',
+          'paragraph',
+          'paragraph',
+          'paragraph',
+          'paragraph',
+          'paragraph'
+        ].join('\n')
+      );
 
       sectionManager.makeSectionList();
     });
 
     it('get section by markdown scroll top', () => {
       const cm = ned.getCodeMirror();
+
       cm.scrollTo(0, Math.ceil(cm.heightAtLine(1, 'local')));
 
       const scrollFactors = scrollManager._getScrollFactorsOfEditor();
@@ -74,6 +78,7 @@ describe('ScrollManager', () => {
 
     it('if editor scroll to bottom then return isEditorBottom === true ', () => {
       const cm = ned.getCodeMirror();
+
       cm.scrollTo(0, cm.heightAtLine(12, 'local'));
 
       const scrollFactors = scrollManager._getScrollFactorsOfEditor();
@@ -85,6 +90,7 @@ describe('ScrollManager', () => {
   describe('running animation', () => {
     it('call step callback function', () => {
       const stepCallback = jasmine.createSpy('stepCallback');
+
       scrollManager._animateRun(0, 10, stepCallback);
 
       expect(stepCallback).toHaveBeenCalled();
@@ -108,14 +114,9 @@ describe('ScrollManager', () => {
     it('get preview scrollTop that synced with markdown scroll top', done => {
       const cm = ned.getCodeMirror();
 
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        'paragraph',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        ['paragraph', '# header1', 'paragraph', 'paragraph', '## header2', 'paragraph'].join('\n')
+      );
 
       sectionManager.makeSectionList();
 
@@ -136,14 +137,9 @@ describe('ScrollManager', () => {
     it('if scroll factors have something wrong, dont scroll control', done => {
       const cm = ned.getCodeMirror();
 
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        'paragraph',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        ['paragraph', '# header1', 'paragraph', 'paragraph', '## header2', 'paragraph'].join('\n')
+      );
 
       sectionManager.makeSectionList();
 
@@ -171,14 +167,9 @@ describe('ScrollManager', () => {
     it('if codemirror invisible so return scrollInfo incorrectly than use saved scrollInfo', () => {
       const cm = ned.getCodeMirror();
 
-      ned.setValue([
-        'paragraph',
-        '# header1',
-        'paragraph',
-        'paragraph',
-        '## header2',
-        'paragraph'
-      ].join('\n'));
+      ned.setValue(
+        ['paragraph', '# header1', 'paragraph', 'paragraph', '## header2', 'paragraph'].join('\n')
+      );
 
       sectionManager.makeSectionList();
 
@@ -190,7 +181,9 @@ describe('ScrollManager', () => {
 
       const scrollInfo = cm.getScrollInfo();
 
-      expect(scrollManager._fallbackScrollInfoIfIncorrect(scrollInfo)).toBe(scrollManager._savedScrollInfo);
+      expect(scrollManager._fallbackScrollInfoIfIncorrect(scrollInfo)).toBe(
+        scrollManager._savedScrollInfo
+      );
     });
   });
 });

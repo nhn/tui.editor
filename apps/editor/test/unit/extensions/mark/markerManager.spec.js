@@ -6,7 +6,7 @@ import MarkerManager from '@/extensions/mark/markerManager';
 import MarkerList from '@/extensions/mark/markerList';
 
 describe('MarkerManager', function() {
-  var mm, ml;
+  let mm, ml;
 
   beforeEach(function() {
     ml = new MarkerList();

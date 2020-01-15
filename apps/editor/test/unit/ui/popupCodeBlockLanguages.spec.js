@@ -10,8 +10,7 @@ import EventManager from '@/eventManager';
 const languages = ['javascript', 'java', 'php'];
 
 describe('code block gadget', () => {
-  let em,
-    popup;
+  let em, popup;
 
   beforeEach(() => {
     em = new EventManager();

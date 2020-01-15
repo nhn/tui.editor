@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import {_createNewRow, _addRow} from '@/extensions/table/mergedTableAddRow';
+import { _createNewRow, _addRow } from '@/extensions/table/mergedTableAddRow';
 import tableDataHandler from '@/extensions/table/tableDataHandler';
 
 describe('mergedTableAddRow', () => {
@@ -21,33 +21,40 @@ describe('mergedTableAddRow', () => {
             colspan: 2,
             rowspan: 1,
             content: 'title'
-          }, {
+          },
+          {
             colMergeWith: 0
           }
-        ], [
+        ],
+        [
           {
             colspan: 1,
             rowspan: 1,
             content: 'content1-1'
-          }, {
+          },
+          {
             colspan: 1,
             rowspan: 3,
             content: 'content1-2'
           }
-        ], [
+        ],
+        [
           {
             colspan: 1,
             rowspan: 1,
             content: 'content2-1'
-          }, {
+          },
+          {
             rowMergeWith: 1
           }
-        ], [
+        ],
+        [
           {
             colspan: 1,
             rowspan: 1,
             content: 'content3-1'
-          }, {
+          },
+          {
             rowMergeWith: 1
           }
         ]

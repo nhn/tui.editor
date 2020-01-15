@@ -76,13 +76,16 @@ describe('AddLink', () => {
     });
 
     it('on selected area', () => {
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 2,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 2,
+          ch: 7
+        }
+      );
 
       AddLink.exec(mde, data);
 

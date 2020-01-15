@@ -227,7 +227,7 @@ describe('Mark', function() {
     });
 
     it('udpate marker when content has been removed completely', function(done) {
-      let marker = editor.addMarker(6, 9, 'myId');
+      const marker = editor.addMarker(6, 9, 'myId');
 
       editor.setValue('');
 
@@ -318,6 +318,7 @@ describe('Mark', function() {
   describe('conversion marker between markdown and wysiwyg', function() {
     it('wysiwyg to markdown', function() {
       let marker;
+
       editor.setValue('# start\n---\n## this is me');
       marker = editor.addMarker(2, 7, 'myId1');
       editor.changeMode('markdown');

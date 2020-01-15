@@ -50,15 +50,38 @@ describe('CodeBlock', () => {
     wwe.setValue('<div>hello, my name is code</div>');
 
     const range = wwe.getEditor().getSelection();
-    range.setStart(wwe.get$Body().children().eq(0)[0].firstChild, 0);
-    range.setEnd(wwe.get$Body().children().eq(0)[0].firstChild, 5);
+
+    range.setStart(
+      wwe
+        .get$Body()
+        .children()
+        .eq(0)[0].firstChild,
+      0
+    );
+    range.setEnd(
+      wwe
+        .get$Body()
+        .children()
+        .eq(0)[0].firstChild,
+      5
+    );
 
     sq.setSelection(range);
 
     CodeBlock.exec(wwe);
 
     expect($body.find('pre').length).toBe(1);
-    expect($body.find('pre').eq(0).text()).toBe('hello');
-    expect($body.find('pre + div').eq(0).text()).toBe(', my name is code');
+    expect(
+      $body
+        .find('pre')
+        .eq(0)
+        .text()
+    ).toBe('hello');
+    expect(
+      $body
+        .find('pre + div')
+        .eq(0)
+        .text()
+    ).toBe(', my name is code');
   });
 });
