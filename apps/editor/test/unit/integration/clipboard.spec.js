@@ -88,7 +88,7 @@ describe('Clipboard', () => {
     describe('plain text', () => {
       it('line breaks should be wrapped with div', () => {
         const pasteText = ['text', 'text', 'text'].join('\n');
-        const pastedHtml = '<div>text<br></div>' + '<div>text<br></div>' + '<div>text<br></div>';
+        const pastedHtml = '<div>text<br></div><div>text<br></div><div>text<br></div>';
 
         se.fireEvent('paste', pasteClipboardEvent(pasteText));
 
@@ -97,8 +97,7 @@ describe('Clipboard', () => {
 
       it('multiple line breaks should be preserved', () => {
         const pasteText = ['text', '', '', 'text'].join('\n');
-        const pastedHtml =
-          '<div>text<br></div>' + '<div><br></div>' + '<div><br></div>' + '<div>text<br></div>';
+        const pastedHtml = '<div>text<br></div><div><br></div><div><br></div><div>text<br></div>';
 
         se.fireEvent('paste', pasteClipboardEvent(pasteText));
 
@@ -108,7 +107,7 @@ describe('Clipboard', () => {
 
     describe('html', () => {
       it('multiple links should be pasted right', () => {
-        const inputHtml = '<a href="">a</a>' + '<a href="">b</a>';
+        const inputHtml = '<a href="">a</a><a href="">b</a>';
         const outputHtml = `<div>${inputHtml}<br></div>`;
 
         se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
@@ -117,7 +116,7 @@ describe('Clipboard', () => {
       });
 
       it('comment tags should be stripped', () => {
-        const inputHtml = '<!-- comment -->' + 'text' + '<!-- comment -->';
+        const inputHtml = '<!-- comment -->text<!-- comment -->';
         const outputHtml = '<div>text<br></div>';
 
         se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
@@ -126,7 +125,7 @@ describe('Clipboard', () => {
       });
 
       it('danggling TD should become a table', done => {
-        const inputHtml = '<td>' + 'table' + '</td>';
+        const inputHtml = '<td>table</td>';
 
         se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
 

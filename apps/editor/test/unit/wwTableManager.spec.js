@@ -164,12 +164,12 @@ describe('WwTableManager', () => {
 
   describe('paste', () => {
     it('_getTableDataFromTable should extract each TD text contents from TABLE', () => {
-      const table = $(
+      const [table] = $(
         '<document-fragment><table>' +
           '<thead><tr><td>1</td><td>2</td></tr></thead>' +
           '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
           '</table></document-fragment>'
-      )[0];
+      );
       const data = mgr._getTableDataFromTable(table);
 
       expect(data.length).toEqual(3);
@@ -190,12 +190,12 @@ describe('WwTableManager', () => {
         '<thead><tr><th>1</th><th>2</th></tr></thead>' +
         '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
         '</table>';
-      const pastingTable = $(
+      const [pastingTable] = $(
         '<table>' +
           '<thead><tr><th>a</th><th>b</th></tr></thead>' +
           '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
           '</table>'
-      )[0];
+      );
 
       wwe.getEditor().setHTML(table);
       const $body = wwe.get$Body();
@@ -218,12 +218,12 @@ describe('WwTableManager', () => {
         '<thead><tr><th>1</th><th>2</th></tr></thead>' +
         '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
         '</table>';
-      const pastingTable = $(
+      const [pastingTable] = $(
         '<table>' +
           '<thead><tr><th>a</th><th>b</th></tr></thead>' +
           '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
           '</table>'
-      )[0];
+      );
 
       wwe.getEditor().setHTML(table);
       const $body = wwe.get$Body();
@@ -247,9 +247,7 @@ describe('WwTableManager', () => {
         '<tbody><tr><td><a href="">3</a></td><td>4</td></tr>' +
         '<tr><td>5</td><td>6</td></tr></tbody>' +
         '</table>';
-      const pastingTable = $(
-        '<table>' + '<tbody><tr><td>a</td><td>b</td></tr></tbody>' + '</table>'
-      ).get(0);
+      const pastingTable = $('<table><tbody><tr><td>a</td><td>b</td></tr></tbody></table>').get(0);
 
       wwe.getEditor().setHTML(table);
       const $body = wwe.get$Body();
@@ -410,8 +408,7 @@ describe('WwTableManager', () => {
     });
     it('wrapTheadAndTbodyIntoTableIfNeed when only tbody exist ', () => {
       const $tableContainer = $('<div />');
-      const html =
-        '<tbody>' + '<tr><td>3</td><td>4</td></tr>' + '<tr><td>5</td><td>6</td></tr>' + '</tbody>';
+      const html = '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>';
 
       $tableContainer.html(html);
 
@@ -427,7 +424,7 @@ describe('WwTableManager', () => {
   });
   describe('_completeTableIfNeed', () => {
     it('shuold complete TR to TABLE', done => {
-      const html = '<tr><td>3</td><td>4</td></tr>' + '<tr><td>5</td><td>6</td></tr>';
+      const html = '<tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr>';
 
       const $body = wwe.get$Body().html(html);
 
@@ -442,8 +439,7 @@ describe('WwTableManager', () => {
     });
 
     it('shuold complete TBODY to TABLE', done => {
-      const html =
-        '<tbody>' + '<tr><td>b</td><td>o</td></tr>' + '<tr><td>d</td><td>y</td></tr>' + '</tbody>';
+      const html = '<tbody><tr><td>b</td><td>o</td></tr><tr><td>d</td><td>y</td></tr></tbody>';
 
       const $body = wwe.get$Body().html(html);
 
@@ -902,153 +898,144 @@ describe('WwTableManager', () => {
       }
     );
 
-    describe(
-      'should move to the start of the next row ' + 'when the cursor is in the last line of text',
-      () => {
-        it(`from 'td' to 'td'`, () => {
-          const $body = createSingleColumnTable({
-            body: ['foo<br>bar', 'baz<br>qux']
-          });
-
-          setCursor($body.find('td:eq(0)')[0].lastChild, 2);
-          mgr._moveCursorTo('next', 'row', eventMock);
-
-          const range = wwe.getEditor().getSelection();
-
-          expect(range.startContainer.textContent).toBe('bazqux');
-          expect(range.startOffset).toBe(0);
+    describe('should move to the start of the next row when the cursor is in the last line of text', () => {
+      it(`from 'td' to 'td'`, () => {
+        const $body = createSingleColumnTable({
+          body: ['foo<br>bar', 'baz<br>qux']
         });
 
-        it(`from 'th' to 'td'`, () => {
-          const $body = createSingleColumnTable({
-            head: 'foo<br>bar',
-            body: ['baz<br>qux']
-          });
+        setCursor($body.find('td:eq(0)')[0].lastChild, 2);
+        mgr._moveCursorTo('next', 'row', eventMock);
 
-          setCursor($body.find('th:eq(0)')[0].lastChild, 0);
-          mgr._moveCursorTo('next', 'row', eventMock);
+        const range = wwe.getEditor().getSelection();
 
-          const range = wwe.getEditor().getSelection();
+        expect(range.startContainer.textContent).toBe('bazqux');
+        expect(range.startOffset).toBe(0);
+      });
 
-          expect(range.startContainer.textContent).toBe('bazqux');
-          expect(range.startOffset).toBe(0);
-        });
-      }
-    );
-
-    describe(
-      'should move to the start of the next row ' + 'when the cursor is in the last item of list',
-      () => {
-        it('from the list to the text', () => {
-          const $body = createSingleColumnTable({
-            body: ['<ul><li>bar</li></ul>', 'foo<br>bar']
-          });
-
-          setCursor(
-            $body
-              .find('td:eq(0)')
-              .find('li')
-              .last()[0].firstChild,
-            2
-          );
-          mgr._moveCursorTo('next', 'row', eventMock);
-
-          const range = wwe.getEditor().getSelection();
-
-          expect(range.startContainer.textContent).toBe('foobar');
-          expect(range.startOffset).toBe(0);
+      it(`from 'th' to 'td'`, () => {
+        const $body = createSingleColumnTable({
+          head: 'foo<br>bar',
+          body: ['baz<br>qux']
         });
 
-        it('from the list to the list that the first item have value', () => {
-          const $body = createSingleColumnTable({
-            body: ['<ul><li>foo</li><li>bar</li></ul>', '<ol><li>baz</li></ol>']
-          });
+        setCursor($body.find('th:eq(0)')[0].lastChild, 0);
+        mgr._moveCursorTo('next', 'row', eventMock);
 
-          setCursor(
-            $body
-              .find('td:eq(0)')
-              .find('li')
-              .last()[0].firstChild,
-            2
-          );
-          mgr._moveCursorTo('next', 'row', eventMock);
+        const range = wwe.getEditor().getSelection();
 
-          const range = wwe.getEditor().getSelection();
+        expect(range.startContainer.textContent).toBe('bazqux');
+        expect(range.startOffset).toBe(0);
+      });
+    });
 
-          expect(range.startContainer.textContent).toBe('baz');
-          expect(range.startOffset).toBe(0);
+    describe('should move to the start of the next row when the cursor is in the last item of list', () => {
+      it('from the list to the text', () => {
+        const $body = createSingleColumnTable({
+          body: ['<ul><li>bar</li></ul>', 'foo<br>bar']
         });
 
-        it('from the list to the list that the first item is empty', () => {
-          const $body = createSingleColumnTable({
-            head: '<ol><li>foo</li><li>bar</li></ol>',
-            body: ['<ul><li><br></li></ul>']
-          });
+        setCursor(
+          $body
+            .find('td:eq(0)')
+            .find('li')
+            .last()[0].firstChild,
+          2
+        );
+        mgr._moveCursorTo('next', 'row', eventMock);
 
-          setCursor(
-            $body
-              .find('th:eq(0)')
-              .find('li')
-              .last()[0].firstChild,
-            2
-          );
-          mgr._moveCursorTo('next', 'row', eventMock);
+        const range = wwe.getEditor().getSelection();
 
-          const range = wwe.getEditor().getSelection();
+        expect(range.startContainer.textContent).toBe('foobar');
+        expect(range.startOffset).toBe(0);
+      });
 
-          expect(range.startContainer.textContent).toBe('');
-          expect(range.startOffset).toBe(0);
-        });
-      }
-    );
-
-    describe(
-      'should move to the first of the next row ' + 'when the cursor is in the last of blank lines',
-      () => {
-        it(`from 'br' to text`, () => {
-          const $body = createSingleColumnTable({
-            body: ['<br>', 'foo<br>bar']
-          });
-
-          setCursor($body.find('td:eq(0)')[0].lastChild, 0);
-          mgr._moveCursorTo('next', 'row', eventMock);
-
-          const range = wwe.getEditor().getSelection();
-
-          expect(range.startContainer.textContent).toBe('foobar');
-          expect(range.startOffset).toBe(0);
+      it('from the list to the list that the first item have value', () => {
+        const $body = createSingleColumnTable({
+          body: ['<ul><li>foo</li><li>bar</li></ul>', '<ol><li>baz</li></ol>']
         });
 
-        it(`from 'br' to the list that the first item have value`, () => {
-          const $body = createSingleColumnTable({
-            body: ['<br>', '<ul><li>foo</li></ul>']
-          });
+        setCursor(
+          $body
+            .find('td:eq(0)')
+            .find('li')
+            .last()[0].firstChild,
+          2
+        );
+        mgr._moveCursorTo('next', 'row', eventMock);
 
-          setCursor($body.find('td:eq(0)')[0].lastChild, 0);
-          mgr._moveCursorTo('next', 'row', eventMock);
+        const range = wwe.getEditor().getSelection();
 
-          const range = wwe.getEditor().getSelection();
+        expect(range.startContainer.textContent).toBe('baz');
+        expect(range.startOffset).toBe(0);
+      });
 
-          expect(range.startContainer.textContent).toBe('foo');
-          expect(range.startOffset).toBe(0);
+      it('from the list to the list that the first item is empty', () => {
+        const $body = createSingleColumnTable({
+          head: '<ol><li>foo</li><li>bar</li></ol>',
+          body: ['<ul><li><br></li></ul>']
         });
 
-        it(`from 'br' to the list that the first item is empty`, () => {
-          const $body = createSingleColumnTable({
-            head: '<br>',
-            body: ['<ul><li><br></li></ul>']
-          });
+        setCursor(
+          $body
+            .find('th:eq(0)')
+            .find('li')
+            .last()[0].firstChild,
+          2
+        );
+        mgr._moveCursorTo('next', 'row', eventMock);
 
-          setCursor($body.find('th:eq(0)')[0].lastChild, 0);
-          mgr._moveCursorTo('next', 'row', eventMock);
+        const range = wwe.getEditor().getSelection();
 
-          const range = wwe.getEditor().getSelection();
+        expect(range.startContainer.textContent).toBe('');
+        expect(range.startOffset).toBe(0);
+      });
+    });
 
-          expect(range.startContainer.textContent).toBe('');
-          expect(range.startOffset).toBe(0);
+    describe('should move to the first of the next row when the cursor is in the last of blank lines', () => {
+      it(`from 'br' to text`, () => {
+        const $body = createSingleColumnTable({
+          body: ['<br>', 'foo<br>bar']
         });
-      }
-    );
+
+        setCursor($body.find('td:eq(0)')[0].lastChild, 0);
+        mgr._moveCursorTo('next', 'row', eventMock);
+
+        const range = wwe.getEditor().getSelection();
+
+        expect(range.startContainer.textContent).toBe('foobar');
+        expect(range.startOffset).toBe(0);
+      });
+
+      it(`from 'br' to the list that the first item have value`, () => {
+        const $body = createSingleColumnTable({
+          body: ['<br>', '<ul><li>foo</li></ul>']
+        });
+
+        setCursor($body.find('td:eq(0)')[0].lastChild, 0);
+        mgr._moveCursorTo('next', 'row', eventMock);
+
+        const range = wwe.getEditor().getSelection();
+
+        expect(range.startContainer.textContent).toBe('foo');
+        expect(range.startOffset).toBe(0);
+      });
+
+      it(`from 'br' to the list that the first item is empty`, () => {
+        const $body = createSingleColumnTable({
+          head: '<br>',
+          body: ['<ul><li><br></li></ul>']
+        });
+
+        setCursor($body.find('th:eq(0)')[0].lastChild, 0);
+        mgr._moveCursorTo('next', 'row', eventMock);
+
+        const range = wwe.getEditor().getSelection();
+
+        expect(range.startContainer.textContent).toBe('');
+        expect(range.startOffset).toBe(0);
+      });
+    });
   });
 
   describe('_removeContentsAndChangeSelectionIfNeed', () => {

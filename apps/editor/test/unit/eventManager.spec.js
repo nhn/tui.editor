@@ -43,7 +43,6 @@ describe('eventManager', function() {
     });
 
     it('emit should return value that returned by listener', function() {
-      let result;
       let count = 0;
 
       em.listen('testEventHook', function() {
@@ -56,17 +55,17 @@ describe('eventManager', function() {
         return count;
       });
 
-      result = em.emit('testEventHook');
+      const result = em.emit('testEventHook');
 
       expect(result).toEqual([0, 1]);
     });
 
     it('emit should return undefined if listener have not return value', function() {
-      let result;
       const handler = jasmine.createSpy('handler');
 
       em.listen('testEvent', handler);
-      result = em.emit('testEvent');
+
+      const result = em.emit('testEvent');
 
       expect(result).toBeUndefined();
     });

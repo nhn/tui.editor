@@ -4,8 +4,9 @@
  */
 import $ from 'jquery';
 
-import { _prependMergeSyntaxToContent } from '@/extensions/table/tableUnmergePreparer';
-import prepareTableUnmerge from '@/extensions/table/tableUnmergePreparer';
+import prepareTableUnmerge, {
+  _prependMergeSyntaxToContent
+} from '@/extensions/table/tableUnmergePreparer';
 
 describe('tableUnmergePreparer', () => {
   describe('_prependMergeSyntaxToContent()', () => {
@@ -63,7 +64,7 @@ describe('tableUnmergePreparer', () => {
         '<tbody>',
         '</table>'
       ].join('');
-      const tableElement = $(tableHtml)[0];
+      const [tableElement] = $(tableHtml);
       const actual = prepareTableUnmerge(tableElement);
       const $actual = $(actual);
 

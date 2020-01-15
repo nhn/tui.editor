@@ -62,8 +62,6 @@ describe('MarkdownMarkerHelper', function() {
   });
 
   it('get marker info of current selection', function() {
-    let marker;
-
     cm.setSelection(
       {
         line: 0,
@@ -75,7 +73,7 @@ describe('MarkdownMarkerHelper', function() {
       }
     );
 
-    marker = mmh.getMarkerInfoOfCurrentSelection();
+    const marker = mmh.getMarkerInfoOfCurrentSelection();
 
     expect(marker.start).toEqual(2);
     expect(marker.end).toEqual(8);
@@ -86,8 +84,6 @@ describe('MarkdownMarkerHelper', function() {
   });
 
   it('if current selection range have empty line then ignore emplty line', function() {
-    let marker;
-
     cm.setValue('# TEXT1\n\n## TEXT2');
 
     cm.setSelection(
@@ -101,7 +97,7 @@ describe('MarkdownMarkerHelper', function() {
       }
     );
 
-    marker = mmh.getMarkerInfoOfCurrentSelection();
+    const marker = mmh.getMarkerInfoOfCurrentSelection();
 
     expect(marker.start).toEqual(2);
     expect(marker.end).toEqual(7);
@@ -112,8 +108,6 @@ describe('MarkdownMarkerHelper', function() {
   });
 
   it('if current selection is backward then make it forward', function() {
-    let marker;
-
     cm.setValue('# TEXT1\n\n## TEXT2');
 
     cm.setSelection(
@@ -127,7 +121,7 @@ describe('MarkdownMarkerHelper', function() {
       }
     );
 
-    marker = mmh.getMarkerInfoOfCurrentSelection();
+    const marker = mmh.getMarkerInfoOfCurrentSelection();
 
     expect(marker.start).toEqual(2);
     expect(marker.end).toEqual(7);
@@ -138,11 +132,9 @@ describe('MarkdownMarkerHelper', function() {
   });
 
   it('get zero top and left when there is no text content', function() {
-    let marker;
-
     cm.setValue('');
 
-    marker = mmh.updateMarkerWithExtraInfo({
+    const marker = mmh.updateMarkerWithExtraInfo({
       start: 2,
       end: 8
     });

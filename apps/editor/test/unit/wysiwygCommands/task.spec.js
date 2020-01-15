@@ -239,7 +239,7 @@ describe('Task', () => {
 
     $body.append($div);
 
-    const rangeContainer = $div.get(0).childNodes[2];
+    const [, , rangeContainer] = $div.get(0).childNodes;
     let range = sq.getSelection();
 
     range.setStart(rangeContainer, 11);

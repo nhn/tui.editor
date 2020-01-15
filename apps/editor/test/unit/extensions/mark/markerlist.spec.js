@@ -30,13 +30,11 @@ describe('MarkerList', function() {
     });
 
     it('Get marks all', function() {
-      let markers;
-
       ml.addMarker(0, 10, 'myId');
       ml.addMarker(0, 10, 'myId2');
       ml.addMarker(0, 10, 'myId3');
 
-      markers = ml.getAll();
+      const markers = ml.getAll();
 
       expect(markers.length).toEqual(3);
       expect(markers[0].id).toEqual('myId');
@@ -70,14 +68,13 @@ describe('MarkerList', function() {
   describe('update marker', function() {
     it('update marker with id', function() {
       const marker = ml.addMarker(0, 10, 'myId');
-      let returnedMarker;
 
       ml.updateMarker('myId', {
         end: 20,
         text: 'text2'
       });
 
-      returnedMarker = ml.getMarker('myId');
+      const returnedMarker = ml.getMarker('myId');
 
       expect(returnedMarker).toEqual({
         start: 0,
@@ -90,9 +87,7 @@ describe('MarkerList', function() {
 
     it('return updated marker after update', function() {
       const marker = ml.addMarker(0, 10, 'myId');
-      let returnedMarker;
-
-      returnedMarker = ml.updateMarker('myId', {
+      const returnedMarker = ml.updateMarker('myId', {
         end: 20,
         text: 'text2'
       });

@@ -24,8 +24,13 @@ describe('Markdown-it', () => {
   });
 
   describe('tableRendererRule', () => {
-    const tableText =
-      '\n| | | |' + '\n| --- | :---: | ---: |' + '\n| | | |' + '\n| | | |' + '\n| | | |';
+    const tableText = [
+      '\n| | | |',
+      '\n| --- | :---: | ---: |',
+      '\n| | | |',
+      '\n| | | |',
+      '\n| | | |'
+    ].join('');
 
     it('sholud render table element accurately', () => {
       const tableHTML = convertor.toHTML(tableText);
@@ -45,7 +50,7 @@ describe('Markdown-it', () => {
   });
 
   describe('taskPlugin', () => {
-    const taskText = '\n* [ ] study' + '\n* [x] workout' + '\n* [X] eat breakfast';
+    const taskText = ['\n* [ ] study', '\n* [x] workout', '\n* [X] eat breakfast'].join('');
 
     it('should render task list accurately', () => {
       const taskHTML = convertor.toHTML(taskText);
@@ -78,9 +83,9 @@ describe('Markdown-it', () => {
   });
 
   describe('codeblock', () => {
-    const codeblockText = '\n```javascript' + '\nconst a = 100;' + '\n```';
-    const wrongLanguageText = '\n```korea' + '\n<div>asd</div>' + '\n```';
-    const planeText = '\n```' + '\n<div>asd</div>' + '\n```';
+    const codeblockText = ['\n```javascript', '\nconst a = 100;', '\n```'].join('');
+    const wrongLanguageText = ['\n```korea', '\n<div>asd</div>', '\n```'].join('');
+    const planeText = ['\n```', '\n<div>asd</div>', '\n```'].join('');
 
     it('rendering Codeblock element accurately', () => {
       const codeblockHTML = convertor._markdownToHtml(codeblockText);

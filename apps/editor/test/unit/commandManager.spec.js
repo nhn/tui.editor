@@ -116,17 +116,15 @@ describe('CommandManager', function() {
 
   describe('produce command', function() {
     it('create command', function() {
-      let mdCommand, wwCommand, command;
-
-      command = CommandManager.command('global', {
+      const command = CommandManager.command('global', {
         name: 'mycommand'
       });
 
-      mdCommand = CommandManager.command('markdown', {
+      const mdCommand = CommandManager.command('markdown', {
         name: 'mycommand'
       });
 
-      wwCommand = CommandManager.command('wysiwyg', {
+      const wwCommand = CommandManager.command('wysiwyg', {
         name: 'mycommand'
       });
 

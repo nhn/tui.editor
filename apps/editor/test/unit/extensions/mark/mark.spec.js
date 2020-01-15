@@ -44,15 +44,14 @@ describe('Mark', function() {
     });
 
     it('add marker with current selection in wysiwyg', function() {
-      let marker, range;
+      const range = sq.getSelection().cloneRange();
 
-      range = sq.getSelection().cloneRange();
       range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
       range.setEnd(sq.get$Body().find('h2 div')[0].firstChild, 4);
 
       sq.setSelection(range);
 
-      marker = editor.addMarker('myId');
+      const marker = editor.addMarker('myId');
 
       expect(marker).toBeDefined();
       expect(marker.start).toEqual(6);
@@ -64,9 +63,7 @@ describe('Mark', function() {
     });
 
     it('add marker with offset', function() {
-      let marker;
-
-      marker = editor.addMarker(6, 9, 'myId');
+      const marker = editor.addMarker(6, 9, 'myId');
 
       expect(marker).toBeDefined();
       expect(marker.start).toEqual(6);
@@ -78,11 +75,9 @@ describe('Mark', function() {
     });
 
     it('add marker if there has no text content', function() {
-      let marker;
-
       editor.setValue('');
 
-      marker = editor.addMarker(2, 4, 'myId');
+      const marker = editor.addMarker(2, 4, 'myId');
 
       expect(marker.start).toEqual(2);
       expect(marker.end).toEqual(4);
@@ -90,10 +85,9 @@ describe('Mark', function() {
     });
 
     it('get marker', function() {
-      let marker;
-
       editor.addMarker(6, 9, 'myId');
-      marker = editor.getMarker('myId');
+
+      const marker = editor.getMarker('myId');
 
       expect(marker).toBeDefined();
       expect(marker.id).toEqual('myId');
@@ -125,14 +119,13 @@ describe('Mark', function() {
     });
 
     it('update marker range when user have edited content', function(done) {
-      let range, marker;
+      const range = sq.getSelection().cloneRange();
 
-      range = sq.getSelection().cloneRange();
       range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
       range.setEnd(sq.get$Body().find('h2 div')[0].firstChild, 4);
       sq.setSelection(range);
 
-      marker = editor.addMarker('myId');
+      const marker = editor.addMarker('myId');
 
       range.collapse(true);
       sq.setSelection(range);
@@ -150,14 +143,13 @@ describe('Mark', function() {
     });
 
     it('update marker when content is removed marker start range area', function(done) {
-      let range, marker;
+      const range = sq.getSelection().cloneRange();
 
-      range = sq.getSelection().cloneRange();
       range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
       range.setEnd(sq.get$Body().find('h2 div')[0].firstChild, 4);
       sq.setSelection(range);
 
-      marker = editor.addMarker('myId');
+      const marker = editor.addMarker('myId');
 
       range.collapse(true);
       sq.setSelection(range);
@@ -175,14 +167,13 @@ describe('Mark', function() {
     });
 
     it('update marker when content is removed marker end range area', function(done) {
-      let range, marker;
+      const range = sq.getSelection().cloneRange();
 
-      range = sq.getSelection().cloneRange();
       range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
       range.setEnd(sq.get$Body().find('h2 div')[0].firstChild, 4);
       sq.setSelection(range);
 
-      marker = editor.addMarker('myId');
+      const marker = editor.addMarker('myId');
 
       range.setStart(range.endContainer, 4);
       range.collapse(true);
@@ -201,14 +192,13 @@ describe('Mark', function() {
     });
 
     it('update marker when content inserted inside marker range', function(done) {
-      let range, marker;
+      const range = sq.getSelection().cloneRange();
 
-      range = sq.getSelection().cloneRange();
       range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
       range.setEnd(sq.get$Body().find('h2 div')[0].firstChild, 4);
       sq.setSelection(range);
 
-      marker = editor.addMarker('myId');
+      const marker = editor.addMarker('myId');
 
       range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 2);
       range.collapse(true);
@@ -248,9 +238,7 @@ describe('Mark', function() {
 
   describe('persistence of marker data', function() {
     it('restore markers', function() {
-      let markers;
-
-      markers = editor.setValueWithMarkers('# start\n---\n## this is me', [
+      const markers = editor.setValueWithMarkers('# start\n---\n## this is me', [
         {
           id: 'myId',
           start: 14,
@@ -267,13 +255,11 @@ describe('Mark', function() {
     });
 
     it('remove current markers when restore markers', function() {
-      let markers;
-
       editor.setValue('# start\n---\n## this is me');
 
       editor.addMarker(1, 5, 'test');
 
-      markers = editor.setValueWithMarkers('# start\n---\n## this is me', [
+      const markers = editor.setValueWithMarkers('# start\n---\n## this is me', [
         {
           id: 'myId',
           start: 14,
@@ -286,12 +272,10 @@ describe('Mark', function() {
     });
 
     it('get current markers data', function() {
-      let markersData;
-
       editor.setValue('# start\n---\n## this is me');
       editor.addMarker(0, 2, 'test');
 
-      markersData = editor.exportMarkers();
+      const markersData = editor.exportMarkers();
 
       expect(markersData.length).toEqual(1);
       expect(markersData[0].start).toEqual(2);
@@ -299,14 +283,11 @@ describe('Mark', function() {
     });
 
     it('export and restore', function() {
-      let markersData, markers;
-
       editor.setValue('# start\n---\n## this is me');
       editor.addMarker(0, 2, 'test');
 
-      markersData = editor.exportMarkers();
-
-      markers = editor.setValueWithMarkers(editor.getValue(), markersData);
+      const markersData = editor.exportMarkers();
+      const markers = editor.setValueWithMarkers(editor.getValue(), markersData);
 
       expect(markers.length).toEqual(1);
       expect(markers[0].start).toEqual(0);
@@ -317,10 +298,10 @@ describe('Mark', function() {
 
   describe('conversion marker between markdown and wysiwyg', function() {
     it('wysiwyg to markdown', function() {
-      let marker;
-
       editor.setValue('# start\n---\n## this is me');
-      marker = editor.addMarker(2, 7, 'myId1');
+
+      const marker = editor.addMarker(2, 7, 'myId1');
+
       editor.changeMode('markdown');
 
       expect(marker.start).toEqual(4);
@@ -329,11 +310,11 @@ describe('Mark', function() {
     });
 
     it('markdown to wysiwyg', function() {
-      let marker;
-
       editor.changeMode('markdown');
       editor.setValue('# start\n---\n## this is me');
-      marker = editor.addMarker(4, 15, 'myId1');
+
+      const marker = editor.addMarker(4, 15, 'myId1');
+
       editor.changeMode('wysiwyg');
 
       expect(marker.start).toEqual(2);

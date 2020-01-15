@@ -272,7 +272,7 @@ describe('WwListManager', () => {
 
   describe('mergeList', () => {
     it('should merge list to previous list', () => {
-      const list = $(`
+      const [list] = $(`
                 <ol>
                     <li>1</li>
                     <ul>
@@ -283,7 +283,7 @@ describe('WwListManager', () => {
                         <li>4</li>
                     </ol>
                 </ol>
-            `)[0];
+            `);
 
       mgr.mergeList(list.querySelector('#target'));
 
@@ -300,7 +300,7 @@ describe('WwListManager', () => {
     });
 
     it('should not merge list to previous list if target is not the first list item', () => {
-      const list = $(`
+      const [list] = $(`
                 <ol>
                     <li>1</li>
                     <ul>
@@ -311,7 +311,7 @@ describe('WwListManager', () => {
                         <li id="target">4</li>
                     </ol>
                 </ol>
-            `)[0];
+            `);
 
       mgr.mergeList(list.querySelector('#target'));
 
@@ -331,7 +331,7 @@ describe('WwListManager', () => {
 
     it('should merge next list', () => {
       // merge rule: merge to previous list
-      const list = $(`
+      const [list] = $(`
                 <ol>
                     <li>1</li>
                     <ol>
@@ -342,7 +342,7 @@ describe('WwListManager', () => {
                         <li>4</li>
                     </ul>
                 </ol>
-            `)[0];
+            `);
 
       mgr.mergeList(list.querySelector('#target'));
 
@@ -360,7 +360,7 @@ describe('WwListManager', () => {
 
     it('should merge prev/next list', () => {
       // merge rule: merge to previous list
-      const list = $(`
+      const [list] = $(`
                 <ol>
                     <li>1</li>
                     <ul>
@@ -375,7 +375,7 @@ describe('WwListManager', () => {
                         <li>6</li>
                     </ul>
                 </ol>
-            `)[0];
+            `);
 
       mgr.mergeList(list.querySelector('#target'));
 

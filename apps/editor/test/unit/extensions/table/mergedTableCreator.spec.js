@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import {
+import createMergedTable, {
   _extractPropertiesForMerge,
   _parseTableCell,
   _createTableObjectFrom$Table,
@@ -13,7 +13,6 @@ import {
   _getRemovalTdCountsByRowspan,
   _mergeByRowspan
 } from '@/extensions/table/mergedTableCreator';
-import createMergedTable from '@/extensions/table/mergedTableCreator';
 
 describe('mergedTableCreator', () => {
   describe('_extractPropertiesForMerge()', () => {
@@ -473,7 +472,7 @@ describe('mergedTableCreator', () => {
         '<tbody>',
         '</table>'
       ].join('');
-      const tableElement = $(tableHtml)[0];
+      const [tableElement] = $(tableHtml);
       const $actual = $(createMergedTable(tableElement));
       const $trs = $actual.find('tr');
 

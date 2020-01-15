@@ -80,14 +80,14 @@ describe('Viewer', () => {
   });
 
   it('should have codeBlockLanugages option', () => {
-    const el = $('<div>')[0];
+    const [el] = $('<div>');
     const viewer = new ToastUIEditorViewer({ el });
 
     expect(viewer.options.codeBlockLanguages.length).toBeTruthy();
   });
 
   it('should use default convertor if the option value is not set', () => {
-    const el = $('<div>')[0];
+    const [el] = $('<div>');
     const viewer = new ToastUIEditorViewer({ el });
 
     expect(viewer.convertor instanceof Convertor).toBe(true);

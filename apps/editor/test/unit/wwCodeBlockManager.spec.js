@@ -175,7 +175,7 @@ describe('WwCodeBlockManager', () => {
       const codeblock = $('<pre><code>test</code><br></pre>');
 
       wwe.setValue(
-        '<pre><code class="lang-javascript" data-language="javascript">' + 'mycode</code></pre>'
+        '<pre><code class="lang-javascript" data-language="javascript">mycode</code></pre>'
       );
 
       const range = wwe
@@ -281,7 +281,7 @@ describe('WwCodeBlockManager', () => {
       const frag = document.createDocumentFragment();
 
       $(frag).append(
-        '<pre><code class="lang-javascript" data-language="javascript">' + 'test</code></pre>'
+        '<pre><code class="lang-javascript" data-language="javascript">test</code></pre>'
       );
 
       mgr.modifyCodeBlockForWysiwyg(frag);
@@ -343,9 +343,7 @@ describe('WwCodeBlockManager', () => {
     it('Makes normal codeblock with pre > divs', () => {
       const frag = document.createDocumentFragment();
 
-      $(frag).append(
-        '<pre>' + '<div>test</div>' + '<div>test2</div>' + '<div>test3</div>' + '</pre>'
-      );
+      $(frag).append('<pre><div>test</div><div>test2</div><div>test3</div></pre>');
 
       mgr.modifyCodeBlockForWysiwyg(frag);
 

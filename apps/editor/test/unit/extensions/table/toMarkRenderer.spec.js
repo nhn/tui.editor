@@ -42,7 +42,7 @@ describe('toMarkRendererCreator', () => {
         '<th>title2</th>',
         '</thead>'
       ].join('');
-      const theadElement = $(theadHtml)[0];
+      const [theadElement] = $(theadHtml);
       const theadContent = '|@cols=2:title1|title2|\n';
       const actual = _createTheadMarkdown(theadElement, theadContent);
 
@@ -51,7 +51,7 @@ describe('toMarkRendererCreator', () => {
 
     it('Create thead markdown, when all th has not colspan.', () => {
       const theadHtml = ['<thead>', '<th>title1</th>', '<th>title2</th>', '</thead>'].join('');
-      const theadElement = $(theadHtml)[0];
+      const [theadElement] = $(theadHtml);
       const theadContent = '|title1|title2|\n';
       const actual = _createTheadMarkdown(theadElement, theadContent);
 

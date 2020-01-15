@@ -314,7 +314,7 @@ describe('Toolbar', () => {
         }
       });
 
-      const item = toolbar._items[0];
+      const [item] = toolbar._items;
 
       expect(item instanceof ToolbarButton).toBe(true);
       expect(item.getName()).toBe('testButton');
