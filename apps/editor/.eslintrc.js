@@ -1,20 +1,18 @@
 module.exports = {
   plugins: ['prettier'],
   extends: ['tui/es6', 'plugin:prettier/recommended'],
+
   parser: 'babel-eslint',
   parserOptions: {
     sourceType: 'module',
-    ecmaVersion: 7,
-    ecmaFeatures: {
-      classes: true,
-      spread: true,
-      defaultParams: true,
-      destructuring: true
-    }
+    ecmaVersion: 7
   },
   env: {
-    es6: true,
-    amd: true
+    commonjs: true,
+    jasmine: true
+  },
+  globals: {
+    fixture: true
   },
   rules: {
     'lines-around-directive': 0,
