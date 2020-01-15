@@ -258,4 +258,4 @@ ToastUIEditorViewer.WwTableManager = null;
  */
 ToastUIEditorViewer.WwTableSelectionManager = null;
 
-module.exports = ToastUIEditorViewer;
+export default ToastUIEditorViewer;

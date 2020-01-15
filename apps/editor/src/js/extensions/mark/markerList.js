@@ -150,4 +150,4 @@ class MarkerList {
   }
 }
 
-module.exports = MarkerList;
+export default MarkerList;

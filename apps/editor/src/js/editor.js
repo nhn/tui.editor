@@ -909,4 +909,4 @@ ToastUIEditor.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
  */
 ToastUIEditor.markdownit = Convertor.getMarkdownitRenderer();
 
-module.exports = ToastUIEditor;
+export default ToastUIEditor;

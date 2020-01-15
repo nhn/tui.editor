@@ -7,11 +7,11 @@
 let Editor;
 
 try {
-  Editor = require('../editor');
+  Editor = require('../editor').default;
 } catch (e) {}
 if (!Editor) {
   try {
-    Editor = require('../viewer');
+    Editor = require('../viewer').default;
   } catch (e) {}
 }
 
