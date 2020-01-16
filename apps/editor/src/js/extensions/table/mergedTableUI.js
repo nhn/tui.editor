@@ -4,15 +4,13 @@
  */
 import $ from 'jquery';
 
-import Editor from '../editorProxy';
-const { i18n } = Editor;
-
 /**
  * Change contextmenu content.
  * @param {object} popupTableUtils - PopupTableUtils instance for managing contextmenu of table
+ * @param  {I18n} i18n - instance of language module
  * @private
  */
-function _changeContent(popupTableUtils) {
+function _changeContent(popupTableUtils, i18n) {
   const POPUP_CONTENT = [
     `<button type="button" class="te-table-add-row">${i18n.get('Add row')}</button>`,
     `<button type="button" class="te-table-add-col">${i18n.get('Add col')}</button>`,
@@ -84,13 +82,11 @@ function _bindEvents(popupTableUtils, eventManager, selectionManager) {
  * @param {object} popupTableUtils - PopupTableUtils instance for managing contextmenu of table
  * @param {object} eventManager - event manager instance of editor
  * @param {object} selectionManager - table selection manager instance
- * @ignore
+ * @param {Editor} editor - editor instance
  */
-function updateContextMenu(popupTableUtils, eventManager, selectionManager) {
-  _changeContent(popupTableUtils);
+export function updateContextMenu(popupTableUtils, eventManager, selectionManager, editor) {
+  const { i18n } = Object.getPrototypeOf(editor).constructor;
+
+  _changeContent(popupTableUtils, i18n);
   _bindEvents(popupTableUtils, eventManager, selectionManager);
 }
-
-export default {
-  updateContextMenu
-};

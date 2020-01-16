@@ -5,55 +5,9 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../editorProxy';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
-
-const { CommandManager } = Editor;
-
-let AddRow;
-
-if (CommandManager) {
-  AddRow = CommandManager.command(
-    'wysiwyg',
-    /** @lends AddRow */ {
-      name: 'AddRow',
-      /**
-       * Command handler.
-       * @param {WysiwygEditor} wwe - wysiwygEditor instance
-       */
-      exec(wwe) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
-
-        wwe.focus();
-
-        if (!sq.hasFormat('TABLE')) {
-          return;
-        }
-
-        const $startContainer = $(range.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-        const tableRange = tableRangeHandler.getTableSelectionRange(
-          tableData,
-          $selectedCells,
-          $startContainer
-        );
-
-        sq.saveUndoState(range);
-        _addRow(tableData, tableRange);
-
-        const $newTable = tableRenderer.replaceTable($table, tableData);
-        const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
-
-        tableRenderer.focusToCell(sq, range, focusTd);
-      }
-    }
-  );
-}
 
 /**
  * Create row merged cell data.
@@ -78,7 +32,7 @@ function _createRowMergedCell(rowMergeWith) {
  * @returns {object}
  * @private
  */
-export function _createNewRow(tableData, rowIndex) {
+function _createNewRow(tableData, rowIndex) {
   let prevCell = null;
 
   return tableData[rowIndex].map((cellData, colIndex) => {
@@ -155,4 +109,60 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
     .find('td')[cellElementIndex.colIndex];
 }
 
-export default AddRow;
+/**
+ * Get command instance
+ * @param {Editor} editor - editor instance
+ * @returns {command} command to add row
+ */
+export function getWwAddRowCommand(editor) {
+  const { CommandManager } = Object.getPrototypeOf(editor).constructor;
+
+  if (CommandManager) {
+    return CommandManager.command(
+      'wysiwyg',
+      /** @lends AddRow */ {
+        name: 'AddRow',
+        /**
+         * Command handler.
+         * @param {WysiwygEditor} wwe - wysiwygEditor instance
+         */
+        exec(wwe) {
+          const sq = wwe.getEditor();
+          const range = sq.getSelection().cloneRange();
+
+          wwe.focus();
+
+          if (!sq.hasFormat('TABLE')) {
+            return;
+          }
+
+          const $startContainer = $(range.startContainer);
+          const $table = $startContainer.closest('table');
+          const tableData = dataHandler.createTableData($table);
+          const $selectedCells = wwe.componentManager
+            .getManager('tableSelection')
+            .getSelectedCells();
+          const tableRange = tableRangeHandler.getTableSelectionRange(
+            tableData,
+            $selectedCells,
+            $startContainer
+          );
+
+          sq.saveUndoState(range);
+          _addRow(tableData, tableRange);
+
+          const $newTable = tableRenderer.replaceTable($table, tableData);
+          const focusTd = _findFocusTd(
+            $newTable,
+            tableRange.end.rowIndex,
+            tableRange.start.colIndex
+          );
+
+          tableRenderer.focusToCell(sq, range, focusTd);
+        }
+      }
+    );
+  }
+
+  return null;
+}

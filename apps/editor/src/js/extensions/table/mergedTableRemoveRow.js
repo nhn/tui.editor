@@ -5,65 +5,9 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../editorProxy';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
-
-const { CommandManager } = Editor;
-
-let RemoveRow;
-
-if (CommandManager) {
-  RemoveRow = CommandManager.command(
-    'wysiwyg',
-    /** @lends RemoveRow */ {
-      name: 'RemoveRow',
-      /**
-       * Command handler.
-       * @param {WysiwygEditor} wwe - wysiwygEditor instance
-       */
-      exec(wwe) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
-
-        wwe.focus();
-
-        if (!sq.hasFormat('TABLE')) {
-          return;
-        }
-
-        const $startContainer = $(range.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const beforeRowLength = tableData.length;
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-        const tableRange = tableRangeHandler.getTableSelectionRange(
-          tableData,
-          $selectedCells,
-          $startContainer
-        );
-
-        sq.saveUndoState(range);
-        _removeRow(tableData, tableRange);
-
-        if (tableData.length < 2) {
-          $table.remove();
-        } else if (beforeRowLength !== tableData.length) {
-          const $newTable = tableRenderer.replaceTable($table, tableData);
-
-          const startRowIndex = tableRange.start.rowIndex;
-          const focusRowIndex =
-            startRowIndex < tableData.length ? startRowIndex : startRowIndex - 1;
-          const focusCell = _findFocusTd($newTable, focusRowIndex, tableRange.start.colIndex);
-
-          tableRenderer.focusToCell(sq, range, focusCell);
-        }
-      }
-    }
-  );
-}
-
 /**
  * Update rowspan to row merger.
  * @param {Array.<Array.<object>>} tableData - table data
@@ -170,4 +114,65 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
     .find('th,td')[cellElementIndex.colIndex];
 }
 
-export default RemoveRow;
+/**
+ * Get command instance
+ * @param {Editor} editor - editor instance
+ * @returns {command} command to remove row
+ */
+export function getWwRemoveRowCommand(editor) {
+  const { CommandManager } = Object.getPrototypeOf(editor).constructor;
+
+  if (CommandManager) {
+    return CommandManager.command(
+      'wysiwyg',
+      /** @lends RemoveRow */ {
+        name: 'RemoveRow',
+        /**
+         * Command handler.
+         * @param {WysiwygEditor} wwe - wysiwygEditor instance
+         */
+        exec(wwe) {
+          const sq = wwe.getEditor();
+          const range = sq.getSelection().cloneRange();
+
+          wwe.focus();
+
+          if (!sq.hasFormat('TABLE')) {
+            return;
+          }
+
+          const $startContainer = $(range.startContainer);
+          const $table = $startContainer.closest('table');
+          const tableData = dataHandler.createTableData($table);
+          const beforeRowLength = tableData.length;
+          const $selectedCells = wwe.componentManager
+            .getManager('tableSelection')
+            .getSelectedCells();
+          const tableRange = tableRangeHandler.getTableSelectionRange(
+            tableData,
+            $selectedCells,
+            $startContainer
+          );
+
+          sq.saveUndoState(range);
+          _removeRow(tableData, tableRange);
+
+          if (tableData.length < 2) {
+            $table.remove();
+          } else if (beforeRowLength !== tableData.length) {
+            const $newTable = tableRenderer.replaceTable($table, tableData);
+
+            const startRowIndex = tableRange.start.rowIndex;
+            const focusRowIndex =
+              startRowIndex < tableData.length ? startRowIndex : startRowIndex - 1;
+            const focusCell = _findFocusTd($newTable, focusRowIndex, tableRange.start.colIndex);
+
+            tableRenderer.focusToCell(sq, range, focusCell);
+          }
+        }
+      }
+    );
+  }
+
+  return null;
+}

@@ -1,55 +1,28 @@
 /**
- * @fileoverview Implements table extension
+ * @fileoverview Implements table plugin
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
 
-import Editor from '../editorProxy';
-import './langs';
+import { addLangs } from './langs';
+
 import createMergedTable from './mergedTableCreator';
 import prepareTableUnmerge from './tableUnmergePreparer';
 import { createToMarkRenderer } from './toMarkRenderer';
-import WwMergedTableManager from './wwMergedTableManager';
-import WwMergedTableSelectionManager from './wwMergedTableSelectionManager';
-import wwAddRow from './mergedTableAddRow';
-import wwAddCol from './mergedTableAddCol';
-import wwRemoveRow from './mergedTableRemoveRow';
-import wwRemoveCol from './mergedTableRemoveCol';
-import wwAlignCol from './mergedTableAlignCol';
-import wwMergeCell from './mergeCell';
-import wwUnergeCell from './unmergeCell';
-import mergedTableUI from './mergedTableUI';
 
-/**
- * table extension
- * @param {Editor} editor - editor instance
- * @ignore
- */
-function tableExtension(editor) {
-  const { eventManager } = editor;
+import { getWwMergedTableManager } from './wwMergedTableManager';
+import { getWwMergedTableSelectionManager } from './wwMergedTableSelectionManager';
 
-  _bindEvents(eventManager);
+import { getWwAddRowCommand } from './mergedTableAddRow';
+import { getWwAddColumnCommand } from './mergedTableAddCol';
+import { getWwRemoveRowCommand } from './mergedTableRemoveRow';
+import { getWwRemoveColumnCommand } from './mergedTableRemoveCol';
+import { getWwAlignColumnCommand } from './mergedTableAlignCol';
 
-  if (editor.isViewer()) {
-    return;
-  }
+import { getMergeCellCommand } from './mergeCell';
+import { getUnmergeCellCommand } from './unmergeCell';
 
-  const wwComponentManager = editor.wwEditor.componentManager;
-  const popupTableUtils = editor.getUI().getPopupTableUtils();
-
-  _addCommands(editor);
-  _changeWysiwygManagers(wwComponentManager);
-
-  editor.toMarkOptions = getExtendedToMarkOptions(editor.toMarkOptions);
-
-  if (popupTableUtils) {
-    mergedTableUI.updateContextMenu(
-      popupTableUtils,
-      eventManager,
-      wwComponentManager.getManager('tableSelection')
-    );
-  }
-}
+import { updateContextMenu } from './mergedTableUI';
 
 function getExtendedToMarkOptions(toMarkOptions) {
   const extendedOptions = toMarkOptions || {};
@@ -66,18 +39,25 @@ function getExtendedToMarkOptions(toMarkOptions) {
  * @private
  */
 function _addCommands(editor) {
+  const wwMergeCell = getMergeCellCommand(editor);
+  const wwUnergeCell = getUnmergeCellCommand(editor);
+
   editor.addCommand(wwMergeCell);
   editor.addCommand(wwUnergeCell);
 }
 
 /**
- * Change wysiwyg component managers.
+ * Change wysiwyg component managers
  * @param {object} wwComponentManager - componentMananger instance
+ * @param {Editor} editor - editor instance
  * @private
  */
-function _changeWysiwygManagers(wwComponentManager) {
+function _changeWysiwygManagers(wwComponentManager, editor) {
   wwComponentManager.removeManager('table');
   wwComponentManager.removeManager('tableSelection');
+
+  const WwMergedTableManager = getWwMergedTableManager(editor);
+  const WwMergedTableSelectionManager = getWwMergedTableSelectionManager(editor);
 
   wwComponentManager.addManager(WwMergedTableManager);
   wwComponentManager.addManager(WwMergedTableSelectionManager);
@@ -114,9 +94,10 @@ function _changeHtml(html, onChangeTable) {
 /**
  * Snatch wysiwyg command.
  * @param {{command: object}} commandWrapper - wysiwyg command wrapper
+ * @param {Editor} editor - editor instance
  * @private
  */
-function _snatchWysiwygCommand(commandWrapper) {
+function _snatchWysiwygCommand(commandWrapper, editor) {
   const { command } = commandWrapper;
 
   if (!command.isWWType()) {
@@ -125,19 +106,19 @@ function _snatchWysiwygCommand(commandWrapper) {
 
   switch (command.getName()) {
     case 'AddRow':
-      commandWrapper.command = wwAddRow;
+      commandWrapper.command = getWwAddRowCommand(editor);
       break;
     case 'AddCol':
-      commandWrapper.command = wwAddCol;
+      commandWrapper.command = getWwAddColumnCommand(editor);
       break;
     case 'RemoveRow':
-      commandWrapper.command = wwRemoveRow;
+      commandWrapper.command = getWwRemoveRowCommand(editor);
       break;
     case 'RemoveCol':
-      commandWrapper.command = wwRemoveCol;
+      commandWrapper.command = getWwRemoveColumnCommand(editor);
       break;
     case 'AlignCol':
-      commandWrapper.command = wwAlignCol;
+      commandWrapper.command = getWwAlignColumnCommand(editor);
       break;
     default:
   }
@@ -146,16 +127,50 @@ function _snatchWysiwygCommand(commandWrapper) {
 /**
  * Bind events.
  * @param {object} eventManager - eventManager instance
+ * @parma {Editor} editor - editor instance
  * @private
  */
-function _bindEvents(eventManager) {
+function _bindEvents(eventManager, editor) {
   eventManager.listen('convertorAfterMarkdownToHtmlConverted', html =>
     _changeHtml(html, createMergedTable)
   );
   eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html =>
     _changeHtml(html, prepareTableUnmerge)
   );
-  eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
+  eventManager.listen('addCommandBefore', commandWrapper => {
+    _snatchWysiwygCommand(commandWrapper, editor);
+  });
 }
 
-Editor.defineExtension('table', tableExtension);
+/**
+ * Plant table plugin
+ * @param {Editor} editor - editor instance
+ */
+export default function tablePlugin(editor) {
+  const { eventManager } = editor;
+
+  addLangs(editor);
+
+  _bindEvents(eventManager, editor);
+
+  if (editor.isViewer()) {
+    return;
+  }
+
+  const wwComponentManager = editor.wwEditor.componentManager;
+  const popupTableUtils = editor.getUI().getPopupTableUtils();
+
+  _addCommands(editor);
+  _changeWysiwygManagers(wwComponentManager, editor);
+
+  editor.toMarkOptions = getExtendedToMarkOptions(editor.toMarkOptions);
+
+  if (popupTableUtils) {
+    updateContextMenu(
+      popupTableUtils,
+      eventManager,
+      wwComponentManager.getManager('tableSelection'),
+      editor
+    );
+  }
+}

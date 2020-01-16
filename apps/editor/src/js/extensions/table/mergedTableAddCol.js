@@ -5,59 +5,9 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../editorProxy';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
-
-const { CommandManager } = Editor;
-
-let AddCol;
-
-if (CommandManager) {
-  AddCol = CommandManager.command(
-    'wysiwyg',
-    /** @lends AddCol */ {
-      name: 'AddCol',
-      /**
-       * Command handler.
-       * @param {WysiwygEditor} wwe - wysiwygEditor instance
-       */
-      exec(wwe) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
-
-        wwe.focus();
-
-        if (!sq.hasFormat('TABLE')) {
-          return;
-        }
-
-        const $startContainer = $(range.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-        const tableRange = tableRangeHandler.getTableSelectionRange(
-          tableData,
-          $selectedCells,
-          $startContainer
-        );
-
-        sq.saveUndoState(range);
-        _addColumns(tableData, tableRange);
-
-        const $newTable = tableRenderer.replaceTable($table, tableData);
-        const focusCell = _findFocusCell(
-          $newTable,
-          tableRange.start.rowIndex,
-          tableRange.end.colIndex
-        );
-
-        tableRenderer.focusToCell(sq, range, focusCell);
-      }
-    }
-  );
-}
 
 /**
  * Create column merged cell.
@@ -183,4 +133,60 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
     .find('td, th')[cellElementIndex.colIndex];
 }
 
-export default AddCol;
+/**
+ * Get command instance
+ * @param {Editor} editor - editor instance
+ * @returns {command} command to add column
+ */
+export function getWwAddColumnCommand(editor) {
+  const { CommandManager } = Object.getPrototypeOf(editor).constructor;
+
+  if (CommandManager) {
+    return CommandManager.command(
+      'wysiwyg',
+      /** @lends AddCol */ {
+        name: 'AddCol',
+        /**
+         * Command handler.
+         * @param {WysiwygEditor} wwe - wysiwygEditor instance
+         */
+        exec(wwe) {
+          const sq = wwe.getEditor();
+          const range = sq.getSelection().cloneRange();
+
+          wwe.focus();
+
+          if (!sq.hasFormat('TABLE')) {
+            return;
+          }
+
+          const $startContainer = $(range.startContainer);
+          const $table = $startContainer.closest('table');
+          const tableData = dataHandler.createTableData($table);
+          const $selectedCells = wwe.componentManager
+            .getManager('tableSelection')
+            .getSelectedCells();
+          const tableRange = tableRangeHandler.getTableSelectionRange(
+            tableData,
+            $selectedCells,
+            $startContainer
+          );
+
+          sq.saveUndoState(range);
+          _addColumns(tableData, tableRange);
+
+          const $newTable = tableRenderer.replaceTable($table, tableData);
+          const focusCell = _findFocusCell(
+            $newTable,
+            tableRange.start.rowIndex,
+            tableRange.end.colIndex
+          );
+
+          tableRenderer.focusToCell(sq, range, focusCell);
+        }
+      }
+    );
+  }
+
+  return null;
+}

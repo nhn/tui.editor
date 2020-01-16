@@ -5,55 +5,9 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../editorProxy';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
-
-const { CommandManager } = Editor;
-
-let AlignCol;
-
-if (CommandManager) {
-  AlignCol = CommandManager.command(
-    'wysiwyg',
-    /** @lends AlignCol */ {
-      name: 'AlignCol',
-      /**
-       * Command handler.
-       * @param {WysiwygEditor} wwe - wysiwygEditor instance
-       * @param {string} alignDirection - align direction for table header
-       */
-      exec(wwe, alignDirection) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
-
-        wwe.focus();
-
-        if (!sq.hasFormat('TABLE')) {
-          return;
-        }
-
-        const $startContainer = $(range.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-        const tableRange = tableRangeHandler.getTableSelectionRange(
-          tableData,
-          $selectedCells,
-          $startContainer
-        );
-
-        _align(tableData[0], tableRange.start.colIndex, tableRange.end.colIndex, alignDirection);
-
-        const $newTable = tableRenderer.replaceTable($table, tableData);
-        const focusCell = _findFocusCell($newTable, $startContainer);
-
-        tableRenderer.focusToCell(sq, range, focusCell);
-      }
-    }
-  );
-}
 
 /**
  * Align to table header.
@@ -92,4 +46,56 @@ function _findFocusCell($newTable, $startContainer) {
     .find('td, th')[elementColIndex];
 }
 
-export default AlignCol;
+/**
+ * Get command instance
+ * @param {Editor} editor - editor instance
+ * @returns {command} command to align column
+ */
+export function getWwAlignColumnCommand(editor) {
+  const { CommandManager } = Object.getPrototypeOf(editor).constructor;
+
+  if (CommandManager) {
+    return CommandManager.command(
+      'wysiwyg',
+      /** @lends AlignCol */ {
+        name: 'AlignCol',
+        /**
+         * Command handler.
+         * @param {WysiwygEditor} wwe - wysiwygEditor instance
+         * @param {string} alignDirection - align direction for table header
+         */
+        exec(wwe, alignDirection) {
+          const sq = wwe.getEditor();
+          const range = sq.getSelection().cloneRange();
+
+          wwe.focus();
+
+          if (!sq.hasFormat('TABLE')) {
+            return;
+          }
+
+          const $startContainer = $(range.startContainer);
+          const $table = $startContainer.closest('table');
+          const tableData = dataHandler.createTableData($table);
+          const $selectedCells = wwe.componentManager
+            .getManager('tableSelection')
+            .getSelectedCells();
+          const tableRange = tableRangeHandler.getTableSelectionRange(
+            tableData,
+            $selectedCells,
+            $startContainer
+          );
+
+          _align(tableData[0], tableRange.start.colIndex, tableRange.end.colIndex, alignDirection);
+
+          const $newTable = tableRenderer.replaceTable($table, tableData);
+          const focusCell = _findFocusCell($newTable, $startContainer);
+
+          tableRenderer.focusToCell(sq, range, focusCell);
+        }
+      }
+    );
+  }
+
+  return null;
+}
