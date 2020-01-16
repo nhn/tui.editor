@@ -24,8 +24,9 @@ function document() {
   ]);
 }
 
-interface Options {
-  smart: boolean;
+export interface Options {
+  smart?: boolean;
+  tagFilter?: boolean;
 }
 
 export class Parser {

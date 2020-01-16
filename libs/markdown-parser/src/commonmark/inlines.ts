@@ -1,7 +1,9 @@
 import { Node, BlockNode, SourcePos, isHeading, LinkNode, createNode } from './node';
-import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY, reHtmlTag } from './common';
+import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY } from './common';
+import { reHtmlTag } from './rawHtml';
 import normalizeReference from './normalize-reference';
 import fromCodePoint from './from-code-point';
+import { Options } from './blocks';
 
 import { decodeHTML } from 'entities';
 import NodeWalker from './nodeWalker';
@@ -62,11 +64,6 @@ const text = function(s: string, sourcepos?: SourcePos) {
   const node = createNode('text', sourcepos);
   node.literal = s;
   return node;
-};
-
-type Options = {
-  time?: boolean;
-  smart: boolean;
 };
 
 type DelimiterCC =
@@ -262,6 +259,7 @@ export class InlineParser {
   parseHtmlTag(block: BlockNode) {
     const startpos = this.pos + 1;
     const m = this.match(reHtmlTag);
+
     if (m === null) {
       return false;
     }
@@ -996,7 +994,7 @@ export class InlineParser {
         break;
       case C_SINGLEQUOTE:
       case C_DOUBLEQUOTE:
-        res = this.options.smart && this.handleDelim(c, block);
+        res = !!this.options?.smart && this.handleDelim(c, block);
         break;
       case C_OPEN_BRACKET:
         res = this.parseOpenBracket(block);
