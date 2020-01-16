@@ -4,7 +4,6 @@
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
-import toMark from 'to-mark';
 
 const RX_COLS = /@cols=[0-9]+:/g;
 
@@ -92,7 +91,9 @@ export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
 }
 
 export function createToMarkRenderer(baseRenderer) {
-  return toMark.Renderer.factory(baseRenderer || toMark.gfmRenderer, {
+  const Renderer = Object.getPrototypeOf(baseRenderer).constructor;
+
+  return Renderer.factory(baseRenderer, {
     THEAD: _createTheadMarkdown
   });
 }
