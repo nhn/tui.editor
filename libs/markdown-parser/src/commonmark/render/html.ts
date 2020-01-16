@@ -10,27 +10,65 @@ const potentiallyUnsafe = function(url: string) {
   return reUnsafeProtocol.test(url) && !reSafeDataProtocol.test(url);
 };
 
+const disallowedTags = [
+  'title',
+  'textarea',
+  'style',
+  'xmp',
+  'iframe',
+  'noembed',
+  'noframes',
+  'script',
+  'plaintext'
+];
+
+function createTagRegexp(tags: string[]) {
+  return new RegExp(`<(\/?(?:${tags.join('|')})[^>]*>)`, 'ig');
+}
+
 interface Options {
   softbreak: string;
   safe: boolean;
   sourcepos: boolean;
+  tagFilter: boolean;
 }
 
 type AttrPair = [string, string];
 export type AttrPairs = AttrPair[];
 
+const defaultOptions: Options = {
+  softbreak: '\n',
+  safe: false,
+  sourcepos: false,
+  tagFilter: false
+};
+
 export class HtmlRenderer extends Renderer {
   private options: Options;
   private disableTags: number;
+  private reDisallowedTag?: RegExp;
 
   // by default, soft breaks are rendered as newlines in HTML
   // set to "<br />" to make them hard breaks
   // set to " " if you want to ignore line wrapping in source
-  constructor(options: Options = { softbreak: '\n', safe: false, sourcepos: false }) {
+  constructor(options: Partial<Options> = {}) {
     super();
     this.disableTags = 0;
     this.lastOut = '\n';
-    this.options = options;
+    this.options = {
+      ...defaultOptions,
+      ...options
+    };
+    if (this.options.tagFilter) {
+      this.reDisallowedTag = createTagRegexp(disallowedTags);
+    }
+  }
+
+  private filterDisallowedTags(str: string) {
+    if (this.reDisallowedTag && this.reDisallowedTag.test(str)) {
+      return str.replace(this.reDisallowedTag, (_, group) => `&lt;${group}`);
+    }
+    return str;
   }
 
   text(node: Node) {
@@ -198,7 +236,7 @@ export class HtmlRenderer extends Renderer {
     if (this.options.safe) {
       this.lit('<!-- raw HTML omitted -->');
     } else {
-      this.lit(node.literal);
+      this.lit(this.filterDisallowedTags(node.literal!));
     }
   }
 
@@ -207,7 +245,7 @@ export class HtmlRenderer extends Renderer {
     if (this.options.safe) {
       this.lit('<!-- raw HTML omitted -->');
     } else {
-      this.lit(node.literal);
+      this.lit(this.filterDisallowedTags(node.literal!));
     }
     this.cr();
   }

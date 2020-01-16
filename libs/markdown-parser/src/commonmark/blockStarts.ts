@@ -7,7 +7,7 @@ import {
   createNode,
   BlockNode
 } from './node';
-import { OPENTAG, CLOSETAG } from './common';
+import { OPENTAG, CLOSETAG } from './rawHtml';
 import {
   peek,
   isSpaceOrTab,
