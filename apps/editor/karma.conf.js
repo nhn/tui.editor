@@ -101,7 +101,10 @@ module.exports = function(config) {
           {
             test: /\.js$/,
             loader: 'babel-loader?cacheDirectory',
-            exclude: /node_modules|dist/
+            exclude: /node_modules|dist/,
+            options: {
+              rootMode: 'upward'
+            }
           },
           {
             test: /\.js$/,

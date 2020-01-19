@@ -58,7 +58,7 @@ const defaultConfigs = Array(isProduction ? 5 : 1)
             exclude: /node_modules|dist/,
             loader: 'babel-loader?cacheDirectory',
             options: {
-              babelrc: true
+              rootMode: 'upward'
             }
           }
         ]
