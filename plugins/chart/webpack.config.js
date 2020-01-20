@@ -77,8 +77,11 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.js$/,
-          exclude: /node_modules/,
-          loader: 'babel-loader'
+          exclude: /node_modules|dist/,
+          loader: 'babel-loader?cacheDirectory',
+          options: {
+            rootMode: 'upward'
+          }
         }
       ]
     },

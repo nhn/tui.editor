@@ -21,6 +21,7 @@
     "url": "https://github.com/nhn/tui.editor.git",
     "directory": "plugins/color-syntax"
   },
+  "browserslist": "last 2 versions, not ie <= 10",
   "scripts": {
     "serve:editor": "npx lerna run --scope tui-editor serve",
     "serve": "webpack-dev-server",
