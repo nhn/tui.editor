@@ -8,7 +8,7 @@
 
 ```
 - dist/
-  - plugin.js
+  - toastui-editor-plugin-uml.js
   - cdn/
     - toastui-editor-plugin-uml.js
     - toastui-editor-plugin-uml.min
@@ -21,7 +21,7 @@
   - @toast-ui/
     - editor-plugin-uml/
       - dist/
-        - plugin.js
+        - toastui-editor-plugin-uml.js
 ```
 
 ### Serve with CDN
