@@ -13,25 +13,28 @@ import CommandManager from '../commandManager';
  * @module wysiwygCommands/TableRemove
  * @ignore
  */
-const TableRemove = CommandManager.command('wysiwyg', /** @lends RemoveTable */{
-  name: 'RemoveTable',
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   */
-  exec(wwe) {
-    const sq = wwe.getEditor();
-    const range = sq.getSelection().cloneRange();
+const TableRemove = CommandManager.command(
+  'wysiwyg',
+  /** @lends RemoveTable */ {
+    name: 'RemoveTable',
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe wysiwygEditor instance
+     */
+    exec(wwe) {
+      const sq = wwe.getEditor();
+      const range = sq.getSelection().cloneRange();
 
-    if (sq.hasFormat('TABLE')) {
-      sq.saveUndoState(range);
-      const $table = $(range.startContainer).closest('table');
+      if (sq.hasFormat('TABLE')) {
+        sq.saveUndoState(range);
+        const $table = $(range.startContainer).closest('table');
 
-      $table.remove();
+        $table.remove();
+      }
+
+      wwe.focus();
     }
-
-    wwe.focus();
   }
-});
+);
 
 export default TableRemove;

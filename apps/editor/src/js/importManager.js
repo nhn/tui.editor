@@ -25,7 +25,7 @@ class ImportManager {
    * @static
    */
   static decodeURIGraceful(originalURI) {
-    let uris = originalURI.split(' ');
+    const uris = originalURI.split(' ');
     const decodedURIs = [];
     let decodedURI;
 
@@ -50,7 +50,8 @@ class ImportManager {
    * @static
    */
   static encodeMarkdownCharacters(text) {
-    return text.replace(/\(/g, '%28')
+    return text
+      .replace(/\(/g, '%28')
       .replace(/\)/g, '%29')
       .replace(/\[/g, '%5B')
       .replace(/\]/g, '%5D')
@@ -65,7 +66,8 @@ class ImportManager {
    * @static
    */
   static escapeMarkdownCharacters(text) {
-    return text.replace(/\(/g, '\\(')
+    return text
+      .replace(/\(/g, '\\(')
       .replace(/\)/g, '\\)')
       .replace(/\[/g, '\\[')
       .replace(/\]/g, '\\]')
@@ -80,20 +82,27 @@ class ImportManager {
   _initEvent() {
     this.eventManager.listen('drop', ev => {
       const items = ev.data.dataTransfer && ev.data.dataTransfer.files;
+
       this._processBlobItems(items, ev.data);
     });
 
     this.eventManager.listen('willPaste', ev => {
       // IE has no interface to handle clipboard image. #976
-      const fragment = ev.data.fragment;
+      const { fragment } = ev.data;
       const descendant = fragment.querySelectorAll('*');
+
       // only if paste event data has one img element and the element has base64 encoded image
-      if (descendant.length !== 1 || descendant[0].tagName !== 'IMG' || !/^data:image/.test(descendant[0].src)) {
+      if (
+        descendant.length !== 1 ||
+        descendant[0].tagName !== 'IMG' ||
+        !/^data:image/.test(descendant[0].src)
+      ) {
         return;
       }
       ev.data.preventDefault();
 
       const blob = dataURItoBlob(descendant[0].src);
+
       this._emitAddImageBlobHook(blob, 'paste');
     });
 
@@ -129,12 +138,17 @@ class ImportManager {
    * @private
    */
   _emitAddImageBlobHook(blob, type) {
-    this.eventManager.emit('addImageBlobHook', blob, (imageUrl, altText) => {
-      this.eventManager.emit('command', 'AddImage', {
-        imageUrl,
-        altText: altText || blob.name || 'image'
-      });
-    }, type);
+    this.eventManager.emit(
+      'addImageBlobHook',
+      blob,
+      (imageUrl, altText) => {
+        this.eventManager.emit('command', 'AddImage', {
+          imageUrl,
+          altText: altText || blob.name || 'image'
+        });
+      },
+      type
+    );
   }
 
   /**
@@ -143,11 +157,12 @@ class ImportManager {
    * @private
    */
   _decodeURL(ev) {
-    const {decodeURIGraceful, encodeMarkdownCharacters} = ImportManager;
+    const { decodeURIGraceful, encodeMarkdownCharacters } = ImportManager;
 
     if (ev.source === 'markdown' && ev.data.text) {
       const texts = ev.data.text;
-      let text = texts[0];
+      let [text] = texts;
+
       if (texts.length === 1 && text.match(URLRegex)) {
         text = decodeURIGraceful(text);
         text = encodeMarkdownCharacters(text);
@@ -155,8 +170,9 @@ class ImportManager {
       }
     } else if (ev.source === 'wysiwyg') {
       const container = ev.$clipboardContainer.get(0);
-      const firstChild = container.childNodes[0];
-      let text = firstChild.innerText;
+      const [firstChild] = container.childNodes;
+      const text = firstChild.innerText;
+
       if (container.childNodes.length === 1 && firstChild.tagName === 'A' && text.match(URLRegex)) {
         firstChild.innerText = decodeURIGraceful(text);
         firstChild.href = encodeMarkdownCharacters(firstChild.href);
@@ -172,9 +188,14 @@ class ImportManager {
   _processClipboard(evData) {
     const cbData = evData.clipboardData || window.clipboardData;
     const blobItems = cbData && cbData.items;
-    const {types} = cbData;
+    const { types } = cbData;
 
-    if (blobItems && types && types.length === 1 && util.inArray('Files', [].slice.call(types)) !== -1) {
+    if (
+      blobItems &&
+      types &&
+      types.length === 1 &&
+      util.inArray('Files', [].slice.call(types)) !== -1
+    ) {
       this._processBlobItems(blobItems, evData);
     }
   }
@@ -194,6 +215,7 @@ class ImportManager {
           evData.codemirrorIgnore = true;
 
           const blob = item.name ? item : item.getAsFile(); // Blob or File
+
           this._emitAddImageBlobHook(blob, evData.type);
 
           return false;
@@ -213,13 +235,16 @@ class ImportManager {
  */
 function dataURItoBlob(dataURI) {
   const byteString = atob(dataURI.split(',')[1]);
-  const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
   const ab = new ArrayBuffer(byteString.length);
   const ia = new Uint8Array(ab);
+
   for (let i = 0; i < byteString.length; i += 1) {
     ia[i] = byteString.charCodeAt(i);
   }
-  const blob = new Blob([ab], {type: mimeString});
+
+  const [mimeString] = dataURI.split(',');
+  const blob = new Blob([ab], { type: mimeString.split(':')[1].split(';')[0] });
 
   return blob;
 }

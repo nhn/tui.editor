@@ -25,16 +25,24 @@ class PopupTableUtils extends LayerPopup {
             <button type="button" class="te-table-remove-col">${i18n.get('Remove col')}</button>
             <hr/>
             <button type="button" class="te-table-col-align-left">${i18n.get('Align left')}</button>
-            <button type="button" class="te-table-col-align-center">${i18n.get('Align center')}</button>
-            <button type="button" class="te-table-col-align-right">${i18n.get('Align right')}</button>
+            <button type="button" class="te-table-col-align-center">${i18n.get(
+              'Align center'
+            )}</button>
+            <button type="button" class="te-table-col-align-right">${i18n.get(
+              'Align right'
+            )}</button>
             <hr/>
             <button type="button" class="te-table-remove">${i18n.get('Remove table')}</button>
         `;
-    options = util.extend({
-      header: false,
-      className: 'te-popup-table-utils',
-      content: POPUP_CONTENT
-    }, options);
+
+    options = util.extend(
+      {
+        header: false,
+        className: 'te-popup-table-utils',
+        content: POPUP_CONTENT
+      },
+      options
+    );
     super(options);
   }
 
@@ -60,9 +68,15 @@ class PopupTableUtils extends LayerPopup {
 
     this.on('click .te-table-add-row', () => this.eventManager.emit('command', 'AddRow'));
     this.on('click .te-table-add-col', () => this.eventManager.emit('command', 'AddCol'));
-    this.on('click .te-table-col-align-left', () => this.eventManager.emit('command', 'AlignCol', 'left'));
-    this.on('click .te-table-col-align-center', () => this.eventManager.emit('command', 'AlignCol', 'center'));
-    this.on('click .te-table-col-align-right', () => this.eventManager.emit('command', 'AlignCol', 'right'));
+    this.on('click .te-table-col-align-left', () =>
+      this.eventManager.emit('command', 'AlignCol', 'left')
+    );
+    this.on('click .te-table-col-align-center', () =>
+      this.eventManager.emit('command', 'AlignCol', 'center')
+    );
+    this.on('click .te-table-col-align-right', () =>
+      this.eventManager.emit('command', 'AlignCol', 'right')
+    );
     this.on('click .te-table-remove-col', () => this.eventManager.emit('command', 'RemoveCol'));
     this.on('click .te-table-remove', () => this.eventManager.emit('command', 'RemoveTable'));
     this._bindClickEventOnRemoveRowMenu();
@@ -98,7 +112,7 @@ class PopupTableUtils extends LayerPopup {
 
   _bindClickEventOnRemoveRowMenu() {
     this.on(`click .${REMOVE_ROW_MENU_CLASS_NAME}`, ev => {
-      const {target} = ev;
+      const { target } = ev;
 
       if ($(target).hasClass(DISABLED_MENU_CLASS_NAME)) {
         ev.preventDefault();

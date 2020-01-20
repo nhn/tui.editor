@@ -43,10 +43,12 @@ function pasteClipboardEvent(text, html, fileType) {
   if (fileType) {
     items.push({
       type: fileType,
-      getAsFile: () => ({
-        size: 0,
-        type: fileType
-      })
+      getAsFile: () => {
+        return {
+          size: 0,
+          type: fileType
+        };
+      }
     });
     types.push('Files');
   }
@@ -56,6 +58,7 @@ function pasteClipboardEvent(text, html, fileType) {
 
 describe('Clipboard', () => {
   let editor, se;
+
   // We can't simulate browser paste. skip IE & Edge browsers
   if (util.browser.msie || util.browser.edge) {
     pending();
@@ -63,6 +66,7 @@ describe('Clipboard', () => {
 
   beforeEach(done => {
     const container = document.createElement('div');
+
     document.body.appendChild(container);
     editor = new Editor({
       el: container,
@@ -83,15 +87,8 @@ describe('Clipboard', () => {
   describe('paste', () => {
     describe('plain text', () => {
       it('line breaks should be wrapped with div', () => {
-        const pasteText = [
-          'text',
-          'text',
-          'text'
-        ].join('\n');
-        const pastedHtml =
-                    '<div>text<br></div>' +
-                    '<div>text<br></div>' +
-                    '<div>text<br></div>';
+        const pasteText = ['text', 'text', 'text'].join('\n');
+        const pastedHtml = '<div>text<br></div><div>text<br></div><div>text<br></div>';
 
         se.fireEvent('paste', pasteClipboardEvent(pasteText));
 
@@ -99,17 +96,8 @@ describe('Clipboard', () => {
       });
 
       it('multiple line breaks should be preserved', () => {
-        const pasteText = [
-          'text',
-          '',
-          '',
-          'text'
-        ].join('\n');
-        const pastedHtml =
-                    '<div>text<br></div>' +
-                    '<div><br></div>' +
-                    '<div><br></div>' +
-                    '<div>text<br></div>';
+        const pasteText = ['text', '', '', 'text'].join('\n');
+        const pastedHtml = '<div>text<br></div><div><br></div><div><br></div><div>text<br></div>';
 
         se.fireEvent('paste', pasteClipboardEvent(pasteText));
 
@@ -119,9 +107,7 @@ describe('Clipboard', () => {
 
     describe('html', () => {
       it('multiple links should be pasted right', () => {
-        const inputHtml =
-                    '<a href="">a</a>' +
-                    '<a href="">b</a>';
+        const inputHtml = '<a href="">a</a><a href="">b</a>';
         const outputHtml = `<div>${inputHtml}<br></div>`;
 
         se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
@@ -130,10 +116,7 @@ describe('Clipboard', () => {
       });
 
       it('comment tags should be stripped', () => {
-        const inputHtml =
-                    '<!-- comment -->' +
-                    'text' +
-                    '<!-- comment -->';
+        const inputHtml = '<!-- comment -->text<!-- comment -->';
         const outputHtml = '<div>text<br></div>';
 
         se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
@@ -142,15 +125,13 @@ describe('Clipboard', () => {
       });
 
       it('danggling TD should become a table', done => {
-        const inputHtml =
-                    '<td>' +
-                    'table' +
-                    '</td>';
+        const inputHtml = '<td>table</td>';
 
         se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
 
         setTimeout(() => {
           const outputDOM = se._root;
+
           expect(outputDOM.querySelector('table')).toBeDefined();
           expect(outputDOM.querySelector('table thead')).toBeDefined();
           expect(outputDOM.querySelector('table tbody')).toBeDefined();
@@ -160,19 +141,19 @@ describe('Clipboard', () => {
 
       it('all block tags should be changed to div', () => {
         const inputHtml =
-                    '<p>text</p>' +
-                    '<article>text</article>' +
-                    '<aside>text</aside>' +
-                    '<nav>text</nav>' +
-                    '<div>text</div>' +
-                    '<section>text</section>';
+          '<p>text</p>' +
+          '<article>text</article>' +
+          '<aside>text</aside>' +
+          '<nav>text</nav>' +
+          '<div>text</div>' +
+          '<section>text</section>';
         const outputHtml =
-                    '<div>text<br></div><div><br></div>' +
-                    '<div>text<br></div>' +
-                    '<div>text<br></div>' +
-                    '<div>text<br></div>' +
-                    '<div>text<br></div>' +
-                    '<div>text<br></div>';
+          '<div>text<br></div><div><br></div>' +
+          '<div>text<br></div>' +
+          '<div>text<br></div>' +
+          '<div>text<br></div>' +
+          '<div>text<br></div>' +
+          '<div>text<br></div>';
 
         se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
 
@@ -183,6 +164,7 @@ describe('Clipboard', () => {
     describe('image', () => {
       it('should execute addImageBlobHook', () => {
         const spy = jasmine.createSpy();
+
         editor.addHook('addImageBlobHook', spy);
 
         se.fireEvent('paste', pasteClipboardEvent(null, null, 'image/png'));

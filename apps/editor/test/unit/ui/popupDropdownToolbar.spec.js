@@ -8,10 +8,7 @@ import PopupDropdownToolbar from '@/ui/popupDropdownToolbar';
 import EventManager from '@/eventManager';
 
 describe('popupDropdownToolbar', () => {
-  let popup,
-    eventManager,
-    $target,
-    $button;
+  let popup, eventManager, $target, $button;
 
   beforeEach(() => {
     $target = $('<div>');

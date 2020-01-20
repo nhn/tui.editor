@@ -13,9 +13,7 @@ import EventManager from '@/eventManager';
 import Button from '@/ui/button';
 
 describe('Toolbar', () => {
-  let toolbar,
-    em,
-    cm;
+  let toolbar, em, cm;
 
   beforeEach(() => {
     em = new EventManager();
@@ -35,11 +33,13 @@ describe('Toolbar', () => {
       let buttons = toolbar.getItems();
       const len = buttons.length;
 
-      toolbar.addButton(new Button({
-        className: 'test',
-        command: 'test',
-        text: 'test'
-      }));
+      toolbar.addButton(
+        new Button({
+          className: 'test',
+          command: 'test',
+          text: 'test'
+        })
+      );
 
       buttons = toolbar.getItems();
       expect(buttons.length).toBe(len + 1);
@@ -60,11 +60,14 @@ describe('Toolbar', () => {
     });
 
     it('addButton with index should insert button into given position', () => {
-      toolbar.addButton({
-        className: 'test',
-        command: 'test',
-        text: 'test'
-      }, 0);
+      toolbar.addButton(
+        {
+          className: 'test',
+          command: 'test',
+          text: 'test'
+        },
+        0
+      );
 
       expect(toolbar.getItems()[0].$el.text()).toBe('test');
     });
@@ -73,15 +76,18 @@ describe('Toolbar', () => {
       let buttons = toolbar.getItems();
       const len = buttons.length;
 
-      toolbar.addButton([{
-        className: 'test',
-        command: 'test',
-        text: 'test'
-      }, {
-        className: 'test2',
-        command: 'test2',
-        text: 'test2'
-      }]);
+      toolbar.addButton([
+        {
+          className: 'test',
+          command: 'test',
+          text: 'test'
+        },
+        {
+          className: 'test2',
+          command: 'test2',
+          text: 'test2'
+        }
+      ]);
 
       buttons = toolbar.getItems();
       expect(buttons.length).toBe(len + 2);
@@ -93,31 +99,41 @@ describe('Toolbar', () => {
         command: 'test0',
         text: 'test0'
       });
-      toolbar.addButton([{
-        className: 'test1',
-        command: 'test1',
-        text: 'test1'
-      }, {
-        className: 'test2',
-        command: 'test2',
-        text: 'test2'
-      }], 1);
+      toolbar.addButton(
+        [
+          {
+            className: 'test1',
+            command: 'test1',
+            text: 'test1'
+          },
+          {
+            className: 'test2',
+            command: 'test2',
+            text: 'test2'
+          }
+        ],
+        1
+      );
 
       const buttons = toolbar.getItems();
+
       expect(buttons[1].$el.text()).toBe('test1');
       expect(buttons[2].$el.text()).toBe('test2');
     });
 
     it('click on added button emits given command', () => {
-      toolbar.addButton(new Button({
-        className: 'test',
-        command: 'test',
-        text: 'test'
-      }));
+      toolbar.addButton(
+        new Button({
+          className: 'test',
+          command: 'test',
+          text: 'test'
+        })
+      );
 
       $('body').append(toolbar.$el);
 
       const command = new Command('test', Command.TYPE.GB);
+
       command.setup = function() {};
       command.exec = jasmine.createSpy('exec');
 
@@ -131,11 +147,13 @@ describe('Toolbar', () => {
     it('click on button calls handler through command', () => {
       const handler = jasmine.createSpy('exec');
 
-      toolbar.addButton(new Button({
-        className: 'test',
-        event: 'test',
-        text: 'test'
-      }));
+      toolbar.addButton(
+        new Button({
+          className: 'test',
+          event: 'test',
+          text: 'test'
+        })
+      );
 
       $('body').append(toolbar.$el);
 
@@ -148,12 +166,14 @@ describe('Toolbar', () => {
   });
 
   it('button state should be (de)activated on stateChange event', () => {
-    toolbar.addItem(new Button({
-      className: 'testButton',
-      event: 'testEvent',
-      text: 'textText',
-      state: 'testState'
-    }));
+    toolbar.addItem(
+      new Button({
+        className: 'testButton',
+        event: 'testEvent',
+        text: 'textText',
+        state: 'testState'
+      })
+    );
     const $buttonEl = toolbar.getItems()[0].$el;
 
     em.emit('stateChange', {
@@ -174,6 +194,7 @@ describe('Toolbar', () => {
       toolbar.setItems(inputItems);
 
       const outputItems = toolbar.getItems();
+
       expect(outputItems.length).toBe(inputItems.length);
       expect(outputItems[0]).toBe(inputItems[0]);
       expect(outputItems[1]).toBe(inputItems[1]);
@@ -203,12 +224,14 @@ describe('Toolbar', () => {
       toolbar.addItem(inputItem);
 
       const outputItem = toolbar.getItem(0);
+
       expect(outputItem).toBe(inputItem);
       expect(outputItem.$el.parent().get(0)).toBe(toolbar.$el.get(0));
     });
 
     it('should bind the item event', () => {
       const spy = jasmine.createSpy('test');
+
       em.listen('test', spy);
 
       toolbar.addItem(inputItem);
@@ -219,6 +242,7 @@ describe('Toolbar', () => {
 
     it('should bind the item command', () => {
       const command = new Command('testCommand', Command.TYPE.GB);
+
       command.setup = function() {};
       command.exec = jasmine.createSpy('exec');
       cm.addCommand(command);
@@ -264,6 +288,7 @@ describe('Toolbar', () => {
 
       // element index
       const children = toolbar.$el.children();
+
       expect(children.get(4)).toBe(inputItems[0].$el.get(0));
       expect(children.get(1)).toBe(inputItems[1].$el.get(0));
       expect(children.get(0)).toBe(inputItems[2].$el.get(0));
@@ -289,13 +314,15 @@ describe('Toolbar', () => {
         }
       });
 
-      const item = toolbar._items[0];
+      const [item] = toolbar._items;
+
       expect(item instanceof ToolbarButton).toBe(true);
       expect(item.getName()).toBe('testButton');
     });
 
     it('should bind the item event', () => {
       const spy = jasmine.createSpy('test');
+
       em.listen('test', spy);
 
       toolbar.insertItem(0, inputItems[0]);
@@ -306,6 +333,7 @@ describe('Toolbar', () => {
 
     it('should bind the item command', () => {
       const command = new Command('testCommand', Command.TYPE.GB);
+
       command.setup = function() {};
       command.exec = jasmine.createSpy('exec');
       cm.addCommand(command);
@@ -320,6 +348,7 @@ describe('Toolbar', () => {
   describe('getItems', () => {
     it('should return toolbar items array', () => {
       const items = toolbar.getItems();
+
       expect(items).toEqual(jasmine.any(Array));
       items.forEach(item => {
         expect(item).toEqual(jasmine.any(ToolbarItem));
@@ -330,6 +359,7 @@ describe('Toolbar', () => {
   describe('getItem', () => {
     it('should return toolbar item at given index', () => {
       const items = [new ToolbarItem(), new ToolbarItem(), new ToolbarItem()];
+
       toolbar.setItems(items);
 
       const item = toolbar.getItem(1);
@@ -341,6 +371,7 @@ describe('Toolbar', () => {
   describe('removeItem', () => {
     it('should remove item at given index', () => {
       const items = [new ToolbarItem(), new ToolbarItem(), new ToolbarItem()];
+
       toolbar.setItems(items);
 
       toolbar.removeItem(1);
@@ -351,6 +382,7 @@ describe('Toolbar', () => {
 
     it('should remove given item', () => {
       const items = [new ToolbarItem(), new ToolbarItem(), new ToolbarItem()];
+
       toolbar.setItems(items);
 
       toolbar.removeItem(items[1]);
@@ -363,6 +395,7 @@ describe('Toolbar', () => {
       const spy = jasmine.createSpy('destroy');
       const item = new ToolbarItem();
       const items = [new ToolbarItem(), new ToolbarItem(), item];
+
       item.destroy = spy;
       toolbar.setItems(items);
 
@@ -375,6 +408,7 @@ describe('Toolbar', () => {
       const spy = jasmine.createSpy('destroy');
       const item = new ToolbarItem();
       const items = [new ToolbarItem(), new ToolbarItem(), item];
+
       item.destroy = spy;
       toolbar.setItems(items);
 
@@ -388,13 +422,17 @@ describe('Toolbar', () => {
     let items;
 
     beforeEach(() => {
-      items = [new ToolbarItem({
-        name: 'item 1'
-      }), new ToolbarItem({
-        name: 'item 2'
-      }), new ToolbarItem({
-        name: 'item 3'
-      })];
+      items = [
+        new ToolbarItem({
+          name: 'item 1'
+        }),
+        new ToolbarItem({
+          name: 'item 2'
+        }),
+        new ToolbarItem({
+          name: 'item 3'
+        })
+      ];
       toolbar._items = items;
     });
 
@@ -415,7 +453,8 @@ describe('Toolbar', () => {
     it('should destory items and empty items array', () => {
       const destroySpy = jasmine.createSpy('destroy');
       const items = [new ToolbarItem(), new ToolbarItem()];
-      const length = items.length;
+      const { length } = items;
+
       items.forEach(item => {
         item.destroy = destroySpy;
       });
@@ -431,16 +470,20 @@ describe('Toolbar', () => {
 
   describe('enableAllButton', () => {
     it('should call the enable of all the button in the toolbar', () => {
-      toolbar.addButton([{
-        className: 'test',
-        command: 'test',
-        text: 'test'
-      }, {
-        className: 'test2',
-        command: 'test2',
-        text: 'test2'
-      }]);
+      toolbar.addButton([
+        {
+          className: 'test',
+          command: 'test',
+          text: 'test'
+        },
+        {
+          className: 'test2',
+          command: 'test2',
+          text: 'test2'
+        }
+      ]);
       const buttons = toolbar.getItems();
+
       spyOn(buttons[0], 'enable');
       spyOn(buttons[1], 'enable');
 
@@ -469,16 +512,20 @@ describe('Toolbar', () => {
 
   describe('disableAllButton', () => {
     it('should call the disable of all the button in the toolbar', () => {
-      toolbar.addButton([{
-        className: 'test',
-        command: 'test',
-        text: 'test'
-      }, {
-        className: 'test2',
-        command: 'test2',
-        text: 'test2'
-      }]);
+      toolbar.addButton([
+        {
+          className: 'test',
+          command: 'test',
+          text: 'test'
+        },
+        {
+          className: 'test2',
+          command: 'test2',
+          text: 'test2'
+        }
+      ]);
       const buttons = toolbar.getItems();
+
       spyOn(buttons[0], 'disable');
       spyOn(buttons[1], 'disable');
 
@@ -518,7 +565,8 @@ describe('Toolbar', () => {
     it('should destroy toolbar items too', () => {
       const destroySpy = jasmine.createSpy('destroy');
       const items = [new ToolbarItem(), new ToolbarItem()];
-      const length = items.length;
+      const { length } = items;
+
       items.forEach(item => {
         item.destroy = destroySpy;
       });
@@ -544,9 +592,11 @@ describe('Toolbar', () => {
 
     it('should create a toolbar with given items', () => {
       const itemsInput = [new ToolbarItem(), new ToolbarItem()];
+
       toolbar = new Toolbar(em, itemsInput);
 
       const itemsOutput = toolbar.getItems();
+
       expect(itemsOutput.length).toBe(itemsInput.length);
     });
   });

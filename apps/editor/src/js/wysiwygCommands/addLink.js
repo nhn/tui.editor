@@ -7,7 +7,7 @@ import util from 'tui-code-snippet';
 
 import CommandManager from '../commandManager';
 import ImportManager from '../importManager';
-const {decodeURIGraceful, encodeMarkdownCharacters} = ImportManager;
+const { decodeURIGraceful, encodeMarkdownCharacters } = ImportManager;
 
 /**
  * AddLink
@@ -16,37 +16,47 @@ const {decodeURIGraceful, encodeMarkdownCharacters} = ImportManager;
  * @module wysiwygCommands/AddLink
  * @ignore
  */
-const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
-  name: 'AddLink',
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe - wysiwygEditor instance
-   * @param {object} data - data for image
-   */
-  exec(wwe, data) {
-    const sq = wwe.getEditor();
-    const linkAttibute = wwe.getLinkAttribute();
-    let {url, linkText} = data;
-    linkText = decodeURIGraceful(linkText);
-    url = encodeMarkdownCharacters(url);
+const AddLink = CommandManager.command(
+  'wysiwyg',
+  /** @lends AddLink */ {
+    name: 'AddLink',
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe - wysiwygEditor instance
+     * @param {object} data - data for image
+     */
+    exec(wwe, data) {
+      const sq = wwe.getEditor();
+      const linkAttibute = wwe.getLinkAttribute();
+      let { url, linkText } = data;
 
-    wwe.focus();
+      linkText = decodeURIGraceful(linkText);
+      url = encodeMarkdownCharacters(url);
 
-    if (!sq.hasFormat('PRE')) {
-      sq.removeAllFormatting();
+      wwe.focus();
 
-      if (sq.getSelectedText()) {
-        sq.makeLink(url, linkAttibute);
-      } else {
-        const link = sq.createElement('A', util.extend({
-          href: url
-        }, linkAttibute));
+      if (!sq.hasFormat('PRE')) {
+        sq.removeAllFormatting();
 
-        $(link).text(linkText);
-        sq.insertElement(link);
+        if (sq.getSelectedText()) {
+          sq.makeLink(url, linkAttibute);
+        } else {
+          const link = sq.createElement(
+            'A',
+            util.extend(
+              {
+                href: url
+              },
+              linkAttibute
+            )
+          );
+
+          $(link).text(linkText);
+          sq.insertElement(link);
+        }
       }
     }
   }
-});
+);
 
 export default AddLink;

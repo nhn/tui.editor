@@ -4,7 +4,8 @@
  */
 import $ from 'jquery';
 
-const TOOLTIP_CONTENT = '<div class="tui-tooltip"><div class="arrow"></div><span class="text"></span></span></div>';
+const TOOLTIP_CONTENT =
+  '<div class="tui-tooltip"><div class="arrow"></div><span class="text"></span></span></div>';
 
 /**
  * Class Tooltip
@@ -23,10 +24,15 @@ class Tooltip {
    * @param {String} text - text to show
    */
   show(target, text) {
-    this.$el.css({
-      'top': target.offset().top + target.height() + 13, // below the button
-      'left': target.offset().left + 3
-    }).find('.text').html(text).end().show();
+    this.$el
+      .css({
+        top: target.offset().top + target.height() + 13, // below the button
+        left: target.offset().left + 3
+      })
+      .find('.text')
+      .html(text)
+      .end()
+      .show();
   }
 
   hide() {

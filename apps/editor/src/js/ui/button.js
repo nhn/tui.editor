@@ -33,10 +33,12 @@ class Button extends ToolbarItem {
    */
   static className = 'tui-toolbar-icons';
 
-  constructor(options = {
-    tagName: 'button',
-    name: Button.name
-  }) {
+  constructor(
+    options = {
+      tagName: 'button',
+      name: Button.name
+    }
+  ) {
     super({
       name: options.name,
       tagName: 'button',
@@ -125,7 +127,7 @@ class Button extends ToolbarItem {
    * @returns {Boolean} - true for enabled
    */
   isEnabled() {
-    return !(this.$el.attr('disabled'));
+    return !this.$el.attr('disabled');
   }
 }
 

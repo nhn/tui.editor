@@ -40,6 +40,7 @@ describe('ComponentManager', () => {
   describe('manager handling', () => {
     it('add and get manager independent of editor type', () => {
       const manager = jasmine.createSpy('manager');
+
       wwe.componentManager.addManager('myManager', manager);
 
       expect(manager).toHaveBeenCalledWith(wwe);
@@ -48,7 +49,9 @@ describe('ComponentManager', () => {
     });
 
     it('add manager only passing manager constructor', () => {
-      const manager = () => ({name: 'myManager'});
+      const manager = () => {
+        return { name: 'myManager' };
+      };
 
       mde.componentManager.addManager(manager);
 

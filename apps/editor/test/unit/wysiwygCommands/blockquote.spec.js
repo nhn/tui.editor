@@ -31,7 +31,10 @@ describe('Blockquote', () => {
   });
 
   it('add blockquote to current selection', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('text');
 
@@ -44,7 +47,10 @@ describe('Blockquote', () => {
   });
 
   it('if there have blockquote already remove format', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('text');
 

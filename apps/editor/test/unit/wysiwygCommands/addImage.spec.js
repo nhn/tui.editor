@@ -31,7 +31,10 @@ describe('AddImage', () => {
   });
 
   it('add image to current selection', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('line');
 
@@ -44,8 +47,18 @@ describe('AddImage', () => {
     });
 
     expect(wwe.get$Body().find('img').length).toEqual(1);
-    expect(wwe.get$Body().find('img').attr('src')).toEqual('#url');
-    expect(wwe.get$Body().find('img').attr('alt')).toEqual('altText');
+    expect(
+      wwe
+        .get$Body()
+        .find('img')
+        .attr('src')
+    ).toEqual('#url');
+    expect(
+      wwe
+        .get$Body()
+        .find('img')
+        .attr('alt')
+    ).toEqual('altText');
   });
 
   it('add image with no selection text', () => {
@@ -55,8 +68,18 @@ describe('AddImage', () => {
     });
 
     expect(wwe.get$Body().find('img').length).toEqual(1);
-    expect(wwe.get$Body().find('img').attr('src')).toEqual('#url');
-    expect(wwe.get$Body().find('img').attr('alt')).toEqual('altText');
+    expect(
+      wwe
+        .get$Body()
+        .find('img')
+        .attr('src')
+    ).toEqual('#url');
+    expect(
+      wwe
+        .get$Body()
+        .find('img')
+        .attr('alt')
+    ).toEqual('altText');
   });
 
   it('should add image with decoded text', () => {
@@ -65,7 +88,12 @@ describe('AddImage', () => {
       imageUrl: ''
     });
 
-    expect(wwe.get$Body().find('img').attr('alt')).toEqual('한글유니코드');
+    expect(
+      wwe
+        .get$Body()
+        .find('img')
+        .attr('alt')
+    ).toEqual('한글유니코드');
   });
 
   it('should add image markdown characters encoded url', () => {
@@ -74,6 +102,11 @@ describe('AddImage', () => {
       altText: ''
     });
 
-    expect(wwe.get$Body().find('img').attr('src')).toEqual('%28%29%5B%5D%3C%3E');
+    expect(
+      wwe
+        .get$Body()
+        .find('img')
+        .attr('src')
+    ).toEqual('%28%29%5B%5D%3C%3E');
   });
 });

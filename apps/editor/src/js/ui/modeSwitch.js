@@ -84,10 +84,12 @@ class ModeSwitch extends UIController {
   }
 
   _render($rootElement) {
-    this._buttons.$markdown
-            = $(`<button class="te-switch-button markdown" type="button">${i18n.get('Markdown')}</button>`);
-    this._buttons.$wysiwyg
-            = $(`<button class="te-switch-button wysiwyg" type="button">${i18n.get('WYSIWYG')}</button>`);
+    this._buttons.$markdown = $(
+      `<button class="te-switch-button markdown" type="button">${i18n.get('Markdown')}</button>`
+    );
+    this._buttons.$wysiwyg = $(
+      `<button class="te-switch-button wysiwyg" type="button">${i18n.get('WYSIWYG')}</button>`
+    );
     this.$el.append(this._buttons.$markdown);
     this.$el.append(this._buttons.$wysiwyg);
 

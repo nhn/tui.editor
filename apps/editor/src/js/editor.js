@@ -12,7 +12,6 @@ import WysiwygEditor from './wysiwygEditor';
 import Layout from './layout';
 import EventManager from './eventManager';
 import CommandManager from './commandManager';
-import extManager from './extManager';
 import ImportManager from './importManager';
 import WwCodeBlockManager from './wwCodeBlockManager';
 import Convertor from './convertor';
@@ -22,9 +21,9 @@ import DefaultUI from './ui/defaultUI';
 import domUtils from './domUtils';
 import WwTableManager from './wwTableManager';
 import WwTableSelectionManager from './wwTableSelectionManager';
-import {CodeBlockManager} from './codeBlockManager';
-import codeBlockManager from './codeBlockManager';
+import codeBlockManager, { CodeBlockManager } from './codeBlockManager';
 import toMarkRenderer from './toMarkRenderer';
+import { invokePlugins } from './pluginHelper';
 
 // markdown commands
 import mdBold from './markdownCommands/bold';
@@ -129,7 +128,7 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  *     @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
  *     @param {string[]} [options.toolbarItems] - toolbar items.
  *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
- *     @param {string[]} [options.exts] - extensions
+ *     @param {string[]} [options.plugins] - plugins
  *     @param {object} [options.customConvertor] - convertor extention
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {string} [options.previewDelayTime] - the delay time for rendering preview
@@ -140,41 +139,44 @@ class ToastUIEditor {
     this.initialHtml = options.el.innerHTML;
     options.el.innerHTML = '';
 
-    this.options = $.extend({
-      previewStyle: 'tab',
-      initialEditType: 'markdown',
-      height: '300px',
-      minHeight: '200px',
-      language: 'en_US',
-      useDefaultHTMLSanitizer: true,
-      useCommandShortcut: true,
-      codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
-      usageStatistics: true,
-      toolbarItems: [
-        'heading',
-        'bold',
-        'italic',
-        'strike',
-        'divider',
-        'hr',
-        'quote',
-        'divider',
-        'ul',
-        'ol',
-        'task',
-        'indent',
-        'outdent',
-        'divider',
-        'table',
-        'image',
-        'link',
-        'divider',
-        'code',
-        'codeblock'
-      ],
-      hideModeSwitch: false,
-      customConvertor: null
-    }, options);
+    this.options = $.extend(
+      {
+        previewStyle: 'tab',
+        initialEditType: 'markdown',
+        height: '300px',
+        minHeight: '200px',
+        language: 'en_US',
+        useDefaultHTMLSanitizer: true,
+        useCommandShortcut: true,
+        codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
+        usageStatistics: true,
+        toolbarItems: [
+          'heading',
+          'bold',
+          'italic',
+          'strike',
+          'divider',
+          'hr',
+          'quote',
+          'divider',
+          'ul',
+          'ol',
+          'task',
+          'indent',
+          'outdent',
+          'divider',
+          'table',
+          'image',
+          'link',
+          'divider',
+          'code',
+          'codeblock'
+        ],
+        hideModeSwitch: false,
+        customConvertor: null
+      },
+      options
+    );
 
     this.eventManager = new EventManager();
 
@@ -210,13 +212,18 @@ class ToastUIEditor {
 
     this.setUI(this.options.UI || new DefaultUI(this));
 
-    this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager, this.options);
+    this.mdEditor = MarkdownEditor.factory(
+      this.layout.getMdEditorContainerEl(),
+      this.eventManager,
+      this.options
+    );
     this.preview = new MarkdownPreview(
       this.layout.getPreviewEl(),
       this.eventManager,
       this.convertor,
       false,
-      this.options.previewDelayTime);
+      this.options.previewDelayTime
+    );
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
       useDefaultHTMLSanitizer: this.options.useDefaultHTMLSanitizer
     });
@@ -250,7 +257,9 @@ class ToastUIEditor {
       this.setHtml(this.initialHtml, false);
     }
 
-    extManager.applyExtension(this, this.options.exts);
+    if (this.options.plugins) {
+      invokePlugins(this.options.plugins, this);
+    }
 
     this.eventManager.emit('load', this);
 
@@ -470,6 +479,7 @@ class ToastUIEditor {
 
     if (this.isMarkdownMode()) {
       const markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
+
       this.mdEditor.setValue(markdown, cursorToEnd);
       this.eventManager.emit('setMarkdownAfter', markdown);
     }
@@ -507,7 +517,9 @@ class ToastUIEditor {
    */
   getHtml() {
     if (this.isWysiwygMode()) {
-      this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions));
+      this.mdEditor.setValue(
+        this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions)
+      );
     }
 
     return this.convertor.toHTML(this.mdEditor.getValue());
@@ -580,6 +592,7 @@ class ToastUIEditor {
       const editorHeight = this._ui.getEditorHeight();
       const editorSectionHeight = this._ui.getEditorSectionHeight();
       const diffHeight = editorHeight - editorSectionHeight;
+
       this._minHeight = minHeight;
 
       minHeight = parseInt(minHeight, 10);
@@ -663,7 +676,8 @@ class ToastUIEditor {
       this.layout.switchToMarkdown();
       this.mdEditor.resetState();
       this.mdEditor.setValue(
-        this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions), !isWithoutFocus
+        this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions),
+        !isWithoutFocus
       );
       this.getCodeMirror().refresh();
       this.eventManager.emit('changeModeToMarkdown');
@@ -682,6 +696,7 @@ class ToastUIEditor {
   remove() {
     const self = this;
     let i = __nedInstance.length - 1;
+
     this.wwEditor.remove();
     this.mdEditor.remove();
     this.layout.remove();
@@ -798,15 +813,6 @@ class ToastUIEditor {
   }
 
   /**
-   * Define extension
-   * @param {string} name Extension name
-   * @param {function} ext extension
-   */
-  static defineExtension(name, ext) {
-    extManager.defineExtension(name, ext);
-  }
-
-  /**
    * Factory method for Editor
    * @param {object} options Option for initialize TUIEditor
    * @returns {object} ToastUIEditor or ToastUIEditorViewer
@@ -896,4 +902,4 @@ ToastUIEditor.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
  */
 ToastUIEditor.markdownit = Convertor.getMarkdownitRenderer();
 
-module.exports = ToastUIEditor;
+export default ToastUIEditor;

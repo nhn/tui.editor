@@ -8,11 +8,7 @@ import BlockOverlay from '@/ui/blockOverlay';
 import EventManager from '@/eventManager';
 
 describe('BlockOverlay', () => {
-  let blockOverlay,
-    $container,
-    $targetElement,
-    $targetElement2,
-    em;
+  let blockOverlay, $container, $targetElement, $targetElement2, em;
 
   beforeEach(() => {
     $('body').attr('contenteditable', true);

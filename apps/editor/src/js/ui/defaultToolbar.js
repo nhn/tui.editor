@@ -61,6 +61,7 @@ class DefaultToolbar extends Toolbar {
       tooltip: i18n.get('More'),
       event: PopupDropdownToolbar.OPEN_EVENT
     });
+
     this._moreButton = moreButton;
 
     this._popupDropdownToolbar = new PopupDropdownToolbar({
@@ -81,11 +82,13 @@ class DefaultToolbar extends Toolbar {
   }
 
   _balanceButtons() {
-    let dropDownToolbarItems = this._popupDropdownToolbar.getItems();
+    const dropDownToolbarItems = this._popupDropdownToolbar.getItems();
+
     dropDownToolbarItems.forEach(item => {
       this._popupDropdownToolbar.removeItem(item, false);
 
       const itemLength = this.getItems().length;
+
       super.insertItem(itemLength, item);
     });
 
@@ -94,9 +97,9 @@ class DefaultToolbar extends Toolbar {
 
     const toolbarHeight = this.$el.height();
     const defaultToolbarItems = this.getItems();
-    const overflowItems = defaultToolbarItems.filter(item => {
-      return item.$el.position().top > toolbarHeight;
-    });
+    const overflowItems = defaultToolbarItems.filter(
+      item => item.$el.position().top > toolbarHeight
+    );
 
     overflowItems.forEach(item => {
       this.removeItem(item, false);
@@ -115,6 +118,7 @@ class DefaultToolbar extends Toolbar {
 
     const hasOverflow = this._popupDropdownToolbar.getItems().length > 0;
     const itemLength = this.getItems().length;
+
     if (hasOverflow) {
       super.insertItem(itemLength, this._moreButton);
     }

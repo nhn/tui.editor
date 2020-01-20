@@ -26,12 +26,19 @@ class ToolbarItem extends UIController {
    */
   static className = 'tui-toolbar-item';
 
-  constructor(options = {
-    name: ToolbarItem.name
-  }) {
-    super(util.extend({
-      className: ToolbarItem.className
-    }, options));
+  constructor(
+    options = {
+      name: ToolbarItem.name
+    }
+  ) {
+    super(
+      util.extend(
+        {
+          className: ToolbarItem.className
+        },
+        options
+      )
+    );
 
     this._name = options.name;
   }

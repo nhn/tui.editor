@@ -72,11 +72,14 @@ class WwHeadingManager {
    * @private
    */
   _wrapDefaultBlockToHeadingInner() {
-    this.wwe.get$Body().find('h1, h2, h3, h4, h5, h6').each((index, node) => {
-      if ($(node).children('div, p').length <= 0) {
-        $(node).wrapInner('<div />');
-      }
-    });
+    this.wwe
+      .get$Body()
+      .find('h1, h2, h3, h4, h5, h6')
+      .each((index, node) => {
+        if ($(node).children('div, p').length <= 0) {
+          $(node).wrapInner('<div />');
+        }
+      });
   }
 
   /**
@@ -113,7 +116,9 @@ class WwHeadingManager {
    */
   _insertEmptyBlockToPrevious(range) {
     this.wwe.getEditor().saveUndoState(range);
-    $('<div><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]));
+    $('<div><br></div>').insertBefore(
+      domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0])
+    );
   }
 
   /**
@@ -127,7 +132,7 @@ class WwHeadingManager {
     let isHandled = false;
 
     if (range.collapsed && range.startOffset === 0) {
-      const {startContainer} = range;
+      const { startContainer } = range;
       const prevTopNode = domUtils.getTopPrevNodeUnder(startContainer, this.wwe.get$Body()[0]);
       const isPrevTopNodeEmpty = prevTopNode && prevTopNode.textContent.length === 0;
       const sq = this.wwe.getEditor();
@@ -155,11 +160,13 @@ class WwHeadingManager {
    * @private
    */
   _removeHedingAndChangeSelection(event, range, prevTopNode) {
-    const {startContainer} = range;
+    const { startContainer } = range;
     const sq = this.wwe.getEditor();
     const $Body = this.wwe.get$Body();
     const isHeading = FIND_HEADING_RX.test(domUtils.getNodeName(startContainer));
-    const headingElement = isHeading ? startContainer : $(startContainer).parents('h1,h2,h3,h4,h5,h6')[0];
+    const headingElement = isHeading
+      ? startContainer
+      : $(startContainer).parents('h1,h2,h3,h4,h5,h6')[0];
     let targetNode = prevTopNode;
     let offset = 1;
 
@@ -171,7 +178,10 @@ class WwHeadingManager {
     $(headingElement).remove();
 
     if (!prevTopNode) {
-      targetNode = $Body.children('div').first().get(0);
+      targetNode = $Body
+        .children('div')
+        .first()
+        .get(0);
       offset = 0;
     }
 

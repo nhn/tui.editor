@@ -8,11 +8,10 @@ import util from 'tui-code-snippet';
 import MarkdownPreview from './mdPreview';
 import EventManager from './eventManager';
 import CommandManager from './commandManager';
-import extManager from './extManager';
 import Convertor from './convertor';
 import domUtils from './domUtils';
-import {CodeBlockManager} from './codeBlockManager';
-import codeBlockManager from './codeBlockManager';
+import codeBlockManager, { CodeBlockManager } from './codeBlockManager';
+import { invokePlugins } from './pluginHelper';
 
 const TASK_ATTR_NAME = 'data-te-task';
 const TASK_CHECKED_CLASS_NAME = 'checked';
@@ -30,15 +29,18 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *         @param {function} options.events.blur It would be emitted when editor loose focus
  *     @param {object} options.hooks Hook list
  *     @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
- *     @param {string[]} [options.exts] - extensions
+ *     @param {string[]} [options.plugins] - plugins
  */
 class ToastUIEditorViewer {
   constructor(options) {
-    this.options = $.extend({
-      useDefaultHTMLSanitizer: true,
-      codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
-      customConvertor: null
-    }, options);
+    this.options = $.extend(
+      {
+        useDefaultHTMLSanitizer: true,
+        codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
+        customConvertor: null
+      },
+      options
+    );
 
     this.eventManager = new EventManager();
     this.commandManager = new CommandManager(this);
@@ -65,15 +67,18 @@ class ToastUIEditorViewer {
       });
     }
 
-    const {el, initialValue} = this.options;
+    const { el, initialValue } = this.options;
     const existingHTML = el.innerHTML;
+
     el.innerHTML = '';
 
     this.preview = new MarkdownPreview($(el), this.eventManager, this.convertor, true);
 
     this.preview.$el.on('mousedown', $.proxy(this._toggleTask, this));
 
-    extManager.applyExtension(this, this.options.exts);
+    if (this.options.plugins) {
+      invokePlugins(this.options.plugins, this);
+    }
 
     if (initialValue) {
       this.setValue(initialValue);
@@ -92,7 +97,10 @@ class ToastUIEditorViewer {
   _toggleTask(ev) {
     const style = getComputedStyle(ev.target, ':before');
 
-    if (ev.target.hasAttribute(TASK_ATTR_NAME) && domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
+    if (
+      ev.target.hasAttribute(TASK_ATTR_NAME) &&
+      domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)
+    ) {
       $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
       this.eventManager.emit('change', {
         source: 'viewer',
@@ -185,15 +193,6 @@ class ToastUIEditorViewer {
   isWysiwygMode() {
     return false;
   }
-
-  /**
-   * Define extension
-   * @param {string} name Extension name
-   * @param {ExtManager~extension} ext extension
-   */
-  static defineExtension(name, ext) {
-    extManager.defineExtension(name, ext);
-  }
 }
 
 /**
@@ -252,4 +251,4 @@ ToastUIEditorViewer.WwTableManager = null;
  */
 ToastUIEditorViewer.WwTableSelectionManager = null;
 
-module.exports = ToastUIEditorViewer;
+export default ToastUIEditorViewer;

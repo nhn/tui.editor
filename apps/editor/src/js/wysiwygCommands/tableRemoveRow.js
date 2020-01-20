@@ -13,35 +13,38 @@ import CommandManager from '../commandManager';
  * @module wysiwygCommands/TableRemoveRow
  * @ignore
  */
-const TableRemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
-  name: 'RemoveRow',
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   */
-  exec(wwe) {
-    const sq = wwe.getEditor();
-    const range = sq.getSelection().cloneRange();
-    const $table = $(range.startContainer).parents('table');
-    const selectionMgr = wwe.componentManager.getManager('tableSelection');
-    const tableMgr = wwe.componentManager.getManager('table');
-    const $tr = getTrs(range, selectionMgr, $table);
-    const tbodyRowLength = $table.find('tbody tr').length;
+const TableRemoveRow = CommandManager.command(
+  'wysiwyg',
+  /** @lends RemoveRow */ {
+    name: 'RemoveRow',
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe wysiwygEditor instance
+     */
+    exec(wwe) {
+      const sq = wwe.getEditor();
+      const range = sq.getSelection().cloneRange();
+      const $table = $(range.startContainer).parents('table');
+      const selectionMgr = wwe.componentManager.getManager('tableSelection');
+      const tableMgr = wwe.componentManager.getManager('table');
+      const $tr = getTrs(range, selectionMgr, $table);
+      const tbodyRowLength = $table.find('tbody tr').length;
 
-    wwe.focus();
+      wwe.focus();
 
-    if ((sq.hasFormat('TD') || sq.hasFormat('TABLE')) && tbodyRowLength > 1) {
-      sq.saveUndoState(range);
-      const $nextFocus = $tr.last().next()[0] ? $tr.last().next() : $tr.first().prev();
+      if ((sq.hasFormat('TD') || sq.hasFormat('TABLE')) && tbodyRowLength > 1) {
+        sq.saveUndoState(range);
+        const $nextFocus = $tr.last().next()[0] ? $tr.last().next() : $tr.first().prev();
 
-      if ($nextFocus.length) {
-        focusToFirstTd(sq, range, $nextFocus, tableMgr);
+        if ($nextFocus.length) {
+          focusToFirstTd(sq, range, $nextFocus, tableMgr);
+        }
+        $tr.remove();
       }
-      $tr.remove();
+      selectionMgr.removeClassAttrbuteFromAllCellsIfNeed();
     }
-    selectionMgr.removeClassAttrbuteFromAllCellsIfNeed();
   }
-});
+);
 
 /**
  * Focus to first TD in given TR
@@ -52,6 +55,7 @@ const TableRemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */
  */
 function focusToFirstTd(sq, range, $tr, tableMgr) {
   const nextFocusCell = $tr.find('td').get(0);
+
   range.setStart(nextFocusCell, 0);
   range.collapse(true);
 
@@ -76,7 +80,8 @@ function getSelectedRows(firstSelectedCell, rangeInformation, $table) {
     startRowIndex += 1;
   }
 
-  const isWholeTbodySelected = (startRowIndex === 1 || isStartContainerInThead) && endRowIndex === tbodyRowLength;
+  const isWholeTbodySelected =
+    (startRowIndex === 1 || isStartContainerInThead) && endRowIndex === tbodyRowLength;
 
   if (isWholeTbodySelected) {
     endRowIndex -= 1;
@@ -97,11 +102,16 @@ function getTrs(range, selectionMgr, $table) {
   let rangeInformation, trs;
 
   if ($selectedCells.length) {
-    rangeInformation = selectionMgr.getSelectionRangeFromTable($selectedCells.first().get(0),
-      $selectedCells.last().get(0));
+    rangeInformation = selectionMgr.getSelectionRangeFromTable(
+      $selectedCells.first().get(0),
+      $selectedCells.last().get(0)
+    );
     trs = getSelectedRows($selectedCells.first()[0], rangeInformation, $table);
   } else {
-    const cell = $(range.startContainer).closest('td,th').get(0);
+    const cell = $(range.startContainer)
+      .closest('td,th')
+      .get(0);
+
     rangeInformation = selectionMgr.getSelectionRangeFromTable(cell, cell);
     trs = getSelectedRows(cell, rangeInformation, $table);
   }

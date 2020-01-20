@@ -28,9 +28,9 @@ class WwTableSelectionManager {
   }
 
   /**
-     * Initialize
-     * @private
-     */
+   * Initialize
+   * @private
+   */
   _init() {
     this._initEvent();
 
@@ -42,9 +42,9 @@ class WwTableSelectionManager {
   }
 
   /**
-     * Initialize event
-     * @private
-     */
+   * Initialize event
+   * @private
+   */
   _initEvent() {
     let selectionStart, selectionEnd, validSelectionEnd;
 
@@ -70,13 +70,18 @@ class WwTableSelectionManager {
     this._isSelectionStarted = false;
 
     const onMouseover = ev => {
-      selectionEnd = $(ev.data.target).closest('[contenteditable=true] td,th').get(0);
+      selectionEnd = $(ev.data.target)
+        .closest('[contenteditable=true] td,th')
+        .get(0);
 
       const range = this.wwe.getEditor().getSelection();
-      const isEndsInTable = $(selectionEnd).parents('[contenteditable=true] table').get(0);
+      const isEndsInTable = $(selectionEnd)
+        .parents('[contenteditable=true] table')
+        .get(0);
       const isSameCell = selectionStart === selectionEnd;
-      const isTextSelect = this._isTextSelect(range, isSameCell) &&
-                  !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
+      const isTextSelect =
+        this._isTextSelect(range, isSameCell) &&
+        !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
 
       if (this._isSelectionStarted && isEndsInTable && !isTextSelect) {
         window.getSelection().removeAllRanges();
@@ -100,12 +105,15 @@ class WwTableSelectionManager {
     };
 
     const onMouseup = ev => {
-      selectionEnd = $(ev.data.target).closest('[contenteditable=true] td,th').get(0);
+      selectionEnd = $(ev.data.target)
+        .closest('[contenteditable=true] td,th')
+        .get(0);
 
       let range = this.wwe.getEditor().getSelection();
       const isSameCell = selectionStart === selectionEnd;
-      const isTextSelect = this._isTextSelect(range, isSameCell) &&
-                  !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
+      const isTextSelect =
+        this._isTextSelect(range, isSameCell) &&
+        !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
 
       this._clearTableSelectionTimerIfNeed();
 
@@ -139,8 +147,12 @@ class WwTableSelectionManager {
 
     const onMousedown = ev => {
       const MOUSE_RIGHT_BUTTON = 2;
-      selectionStart = $(ev.data.target).closest('[contenteditable=true] td,th').get(0);
+
+      selectionStart = $(ev.data.target)
+        .closest('[contenteditable=true] td,th')
+        .get(0);
       const isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
+
       selectionEnd = null;
 
       if (!isSelectedCell || (isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON)) {
@@ -223,9 +235,17 @@ class WwTableSelectionManager {
     const isEndRangeOut = !isRangeEndInTable && isRangeStartInTable;
 
     if (isStartRangeOut) {
-      selectionStart = $(selectionEnd).parents('[contenteditable=true] table').find('th').first().get(0);
+      selectionStart = $(selectionEnd)
+        .parents('[contenteditable=true] table')
+        .find('th')
+        .first()
+        .get(0);
     } else if (isEndRangeOut) {
-      selectionEnd = $(selectionStart).parents('[contenteditable=true] table').find('td').last().get(0);
+      selectionEnd = $(selectionStart)
+        .parents('[contenteditable=true] table')
+        .find('td')
+        .last()
+        .get(0);
     }
 
     return {
@@ -246,12 +266,13 @@ class WwTableSelectionManager {
     const nodeOffsetOfParent = domUtils.getNodeOffsetOfParent;
     const selectionStart = selectionInformation.startContainer;
     const selectionEnd = selectionInformation.endContainer;
-    const rowDirection = nodeOffsetOfParent($(selectionStart).closest('[contenteditable=true] tr')[0])
-            - nodeOffsetOfParent($(selectionEnd).closest('[contenteditable=true] tr')[0]);
+    const rowDirection =
+      nodeOffsetOfParent($(selectionStart).closest('[contenteditable=true] tr')[0]) -
+      nodeOffsetOfParent($(selectionEnd).closest('[contenteditable=true] tr')[0]);
     const cellDirection = nodeOffsetOfParent(selectionStart) - nodeOffsetOfParent(selectionEnd);
-    const isSameRow = (rowDirection === 0);
-    const isRowIncreases = (rowDirection < 0);
-    const isColumnIncreases = (cellDirection > 0);
+    const isSameRow = rowDirection === 0;
+    const isRowIncreases = rowDirection < 0;
+    const isColumnIncreases = cellDirection > 0;
 
     if (isSameRow) {
       if (isColumnIncreases) {
@@ -286,10 +307,12 @@ class WwTableSelectionManager {
     const endCellOffset = nodeOffsetOfParent(selectionEnd);
     const startCellContainer = domUtils.getParentUntil(selectionStart, 'TABLE');
     const endCellContainer = domUtils.getParentUntil(selectionEnd, 'TABLE');
-    const isReversedTheadAndTbodySelect = (domUtils.getNodeName(startCellContainer) === 'TBODY'
-        && domUtils.getNodeName(endCellContainer) === 'THEAD');
+    const isReversedTheadAndTbodySelect =
+      domUtils.getNodeName(startCellContainer) === 'TBODY' &&
+      domUtils.getNodeName(endCellContainer) === 'THEAD';
     const isTheadAndTbodySelect = startCellContainer !== endCellContainer;
-    const isBothInTbody = !!$(selectionStart).parents('tbody').length && !!$(selectionEnd).parents('tbody').length;
+    const isBothInTbody =
+      !!$(selectionStart).parents('tbody').length && !!$(selectionEnd).parents('tbody').length;
     const start = {
       row: startRowOffset,
       cell: startCellOffset
@@ -309,8 +332,9 @@ class WwTableSelectionManager {
       end.row += 1;
     }
 
-    if (startRowOffset > endRowOffset
-            || (startRowOffset === endRowOffset && startCellOffset > endCellOffset)
+    if (
+      startRowOffset > endRowOffset ||
+      (startRowOffset === endRowOffset && startCellOffset > endCellOffset)
     ) {
       from = end;
       to = start;
@@ -331,7 +355,9 @@ class WwTableSelectionManager {
    * @param {HTMLElement} selectionEnd end element
    */
   highlightTableCellsBy(selectionStart, selectionEnd) {
-    const trs = $(selectionStart).parents('[contenteditable=true] table').find('tr');
+    const trs = $(selectionStart)
+      .parents('[contenteditable=true] table')
+      .find('tr');
     const selection = this.getSelectionRangeFromTable(selectionStart, selectionEnd);
     const rowFrom = selection.from.row;
     const cellFrom = selection.from.cell;
@@ -339,21 +365,24 @@ class WwTableSelectionManager {
     const cellTo = selection.to.cell;
 
     trs.each((rowIndex, row) => {
-      $(row).find('td,th').each((cellIndex, cell) => {
-        const $cell = $(cell);
-        const isFromRow = (rowIndex === rowFrom);
-        const isToRow = (rowIndex === rowTo);
+      $(row)
+        .find('td,th')
+        .each((cellIndex, cell) => {
+          const $cell = $(cell);
+          const isFromRow = rowIndex === rowFrom;
+          const isToRow = rowIndex === rowTo;
 
-        if ((isFromRow && cellIndex < cellFrom)
-                    || (isToRow && cellIndex > cellTo)
-                    || rowIndex < rowFrom
-                    || rowIndex > rowTo
-        ) {
-          $cell.removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
-        } else {
-          $cell.addClass(TABLE_CELL_SELECTED_CLASS_NAME);
-        }
-      });
+          if (
+            (isFromRow && cellIndex < cellFrom) ||
+            (isToRow && cellIndex > cellTo) ||
+            rowIndex < rowFrom ||
+            rowIndex > rowTo
+          ) {
+            $cell.removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
+          } else {
+            $cell.addClass(TABLE_CELL_SELECTED_CLASS_NAME);
+          }
+        });
     });
   }
 
@@ -361,7 +390,9 @@ class WwTableSelectionManager {
    * Remove '.te-cell-selected' class from all of table Cell
    */
   removeClassAttrbuteFromAllCellsIfNeed() {
-    this.wwe.get$Body().find(`td.${TABLE_CELL_SELECTED_CLASS_NAME},th.${TABLE_CELL_SELECTED_CLASS_NAME}`)
+    this.wwe
+      .get$Body()
+      .find(`td.${TABLE_CELL_SELECTED_CLASS_NAME},th.${TABLE_CELL_SELECTED_CLASS_NAME}`)
       .each((i, node) => {
         const $node = $(node);
 

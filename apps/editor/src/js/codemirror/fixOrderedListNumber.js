@@ -1,7 +1,7 @@
 /**
-* @fileoverview codemirror extension for fix ordered list number
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview codemirror extension for fix ordered list number
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 
 import CodeMirror from 'codemirror';
 
@@ -36,6 +36,7 @@ CodeMirror.commands.fixOrderedListNumber = cm => {
   }
 
   const ranges = cm.listSelections();
+
   for (let i = 0; i < ranges.length; i += 1) {
     const pos = ranges[i].head;
     const lineNumber = findFirstListItem(pos.line, cm);
@@ -43,6 +44,7 @@ CodeMirror.commands.fixOrderedListNumber = cm => {
     if (lineNumber >= 0) {
       const lineText = cm.getLine(lineNumber);
       const [, indent, , index] = listRE.exec(lineText);
+
       fixNumber(lineNumber, indent.length, parseInt(index, 10), cm);
     }
   }
@@ -70,13 +72,17 @@ function fixNumber(lineNumber, prevIndentLength, startIndex, cm) {
 
     if (indentLength === prevIndentLength) {
       // fix number
-      cm.replaceRange(`${indent}${index}${delimiter}${text}`, {
-        line: lineNumber,
-        ch: 0
-      }, {
-        line: lineNumber,
-        ch: lineText.length
-      });
+      cm.replaceRange(
+        `${indent}${index}${delimiter}${text}`,
+        {
+          line: lineNumber,
+          ch: 0
+        },
+        {
+          line: lineNumber,
+          ch: lineText.length
+        }
+      );
       index += 1;
       lineNumber += 1;
     } else if (indentLength > prevIndentLength) {

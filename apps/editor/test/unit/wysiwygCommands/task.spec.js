@@ -39,6 +39,7 @@ describe('Task', () => {
 
   it('add Task', () => {
     const range = sq.getSelection().cloneRange();
+
     range.setStart(wwe.get$Body().find('div')[0], 0);
     range.collapse(true);
     sq.setSelection(range);
@@ -94,6 +95,7 @@ describe('Task', () => {
     $body.append($div4);
 
     const range = sq.getSelection();
+
     range.setStart($div1[0], 0);
     range.setEnd($div4[0], 1);
     sq.setSelection(range);
@@ -237,17 +239,13 @@ describe('Task', () => {
 
     $body.append($div);
 
-    const rangeContainer = $div.get(0).childNodes[2];
+    const [, , rangeContainer] = $div.get(0).childNodes;
     let range = sq.getSelection();
+
     range.setStart(rangeContainer, 11);
     range.setEnd(rangeContainer, 11);
     sq.setSelection(range);
-    let {
-      startContainer,
-      endContainer,
-      startOffset,
-      endOffset
-    } = range;
+    const { startContainer, endContainer, startOffset, endOffset } = range;
 
     Task.exec(wwe);
 

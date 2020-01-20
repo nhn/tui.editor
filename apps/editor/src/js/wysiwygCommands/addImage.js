@@ -5,7 +5,7 @@
 import CommandManager from '../commandManager';
 import ImportManager from '../importManager';
 
-const {decodeURIGraceful, encodeMarkdownCharacters} = ImportManager;
+const { decodeURIGraceful, encodeMarkdownCharacters } = ImportManager;
 
 /**
  * AddImage
@@ -14,25 +14,29 @@ const {decodeURIGraceful, encodeMarkdownCharacters} = ImportManager;
  * @module wysiwygCommands/AddImage
  * @ignore
  */
-const AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
-  name: 'AddImage',
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   * @param {object} data data for image
-   */
-  exec(wwe, data) {
-    const sq = wwe.getEditor();
-    let {altText, imageUrl} = data;
-    altText = decodeURIGraceful(altText);
-    imageUrl = encodeMarkdownCharacters(imageUrl);
+const AddImage = CommandManager.command(
+  'wysiwyg',
+  /** @lends AddImage */ {
+    name: 'AddImage',
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe wysiwygEditor instance
+     * @param {object} data data for image
+     */
+    exec(wwe, data) {
+      const sq = wwe.getEditor();
+      let { altText, imageUrl } = data;
 
-    wwe.focus();
+      altText = decodeURIGraceful(altText);
+      imageUrl = encodeMarkdownCharacters(imageUrl);
 
-    if (!sq.hasFormat('PRE')) {
-      sq.insertImage(imageUrl, {'alt': altText});
+      wwe.focus();
+
+      if (!sq.hasFormat('PRE')) {
+        sq.insertImage(imageUrl, { alt: altText });
+      }
     }
   }
-});
+);
 
 export default AddImage;

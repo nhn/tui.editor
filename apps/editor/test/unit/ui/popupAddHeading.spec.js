@@ -8,8 +8,7 @@ import PopupAddHeading from '@/ui/popupAddHeading';
 import EventManager from '@/eventManager';
 
 describe('PopupAddHeading', () => {
-  let popup,
-    em;
+  let popup, em;
 
   beforeEach(() => {
     $('body').append('<button type="button" class="tui-heading"></button>');
@@ -41,10 +40,16 @@ describe('PopupAddHeading', () => {
 
     it('emits event on selecting item', () => {
       em.listen('command', handler);
-      popup.$el.find('li').eq(0).trigger('click');
+      popup.$el
+        .find('li')
+        .eq(0)
+        .trigger('click');
       expect(handler).toHaveBeenCalledWith('Heading', 1);
 
-      popup.$el.find('li').eq(1).trigger('click');
+      popup.$el
+        .find('li')
+        .eq(1)
+        .trigger('click');
       expect(handler).toHaveBeenCalledWith('Heading', 2);
     });
 

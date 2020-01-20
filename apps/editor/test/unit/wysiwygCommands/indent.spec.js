@@ -44,7 +44,10 @@ describe('Indent', () => {
   });
 
   it('success when it not first li.', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     range.setStart(wwe.get$Body().find('li')[1].firstChild, 0);
     range.collapse(true);
@@ -54,10 +57,18 @@ describe('Indent', () => {
     Indent.exec(wwe);
 
     expect(sq.get$Body().find('ul ul li').length).toEqual(1);
-    expect(sq.get$Body().find('ul ul li').hasClass('task-list-item')).toBe(true);
+    expect(
+      sq
+        .get$Body()
+        .find('ul ul li')
+        .hasClass('task-list-item')
+    ).toBe(true);
   });
   it('fail when it does not have previous li.', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     range.setStart(wwe.get$Body().find('li')[0].firstChild, 0);
     range.collapse(true);
@@ -70,7 +81,10 @@ describe('Indent', () => {
   });
   describe('should indent when cursor', () => {
     it('at startOffset 0.', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       range.setStart(wwe.get$Body().find('li')[1].firstChild, 0);
       range.collapse(true);
@@ -80,10 +94,18 @@ describe('Indent', () => {
       Indent.exec(wwe);
 
       expect(sq.get$Body().find('ul ul li').length).toEqual(1);
-      expect(sq.get$Body().find('ul ul li').hasClass('task-list-item')).toBe(true);
+      expect(
+        sq
+          .get$Body()
+          .find('ul ul li')
+          .hasClass('task-list-item')
+      ).toBe(true);
     });
     it('at startOffset 1.', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       range.setStart(wwe.get$Body().find('li')[1].firstChild, 1);
       range.collapse(true);
@@ -93,11 +115,19 @@ describe('Indent', () => {
       Indent.exec(wwe);
 
       expect(sq.get$Body().find('ul ul li').length).toEqual(1);
-      expect(sq.get$Body().find('ul ul li').hasClass('task-list-item')).toBe(true);
+      expect(
+        sq
+          .get$Body()
+          .find('ul ul li')
+          .hasClass('task-list-item')
+      ).toBe(true);
     });
   });
   it('should indent ordinary list', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.get$Body().html(`
             <ul>
@@ -122,11 +152,19 @@ describe('Indent', () => {
     expect(sq.get$Body().find('ul > li').length).toEqual(4);
     expect(sq.get$Body().find('ul > ul > li').length).toEqual(3);
     expect(sq.get$Body().find('ul > ul > ul > li').length).toEqual(1);
-    expect(sq.get$Body().find('ul > ul > ul > li').hasClass('task-list-item')).toBe(true);
+    expect(
+      sq
+        .get$Body()
+        .find('ul > ul > ul > li')
+        .hasClass('task-list-item')
+    ).toBe(true);
   });
 
   it('should merge prev/next list after outdent', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.get$Body().html(`
             <ul>

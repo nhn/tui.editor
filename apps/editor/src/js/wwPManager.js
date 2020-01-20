@@ -87,15 +87,22 @@ class WwPManager {
    * @private
    */
   _ensurePtagContentWrappedWithDiv() {
-    this.wwe.get$Body().find('p').each((index, node) => {
-      if ($(node).find('div').length <= 0) {
-        $(node).wrapInner('<div />');
-      }
+    this.wwe
+      .get$Body()
+      .find('p')
+      .each((index, node) => {
+        if ($(node).find('div').length <= 0) {
+          $(node).wrapInner('<div />');
+        }
 
-      if ($(node).next().is('p')) {
-        $(node).append('<div><br></div>');
-      }
-    });
+        if (
+          $(node)
+            .next()
+            .is('p')
+        ) {
+          $(node).append('<div><br></div>');
+        }
+      });
   }
 
   /**
@@ -103,11 +110,18 @@ class WwPManager {
    * @private
    */
   _unwrapPtags() {
-    this.wwe.get$Body().find('div').each((index, node) => {
-      if ($(node).parent().is('p')) {
-        $(node).unwrap();
-      }
-    });
+    this.wwe
+      .get$Body()
+      .find('div')
+      .each((index, node) => {
+        if (
+          $(node)
+            .parent()
+            .is('p')
+        ) {
+          $(node).unwrap();
+        }
+      });
   }
 }
 

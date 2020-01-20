@@ -8,6 +8,7 @@ import domUtils from '@/domUtils.js';
 
 function createElement(tag, textContent) {
   const element = document.createElement(tag);
+
   if (textContent) {
     element.textContent = textContent;
   }
@@ -58,7 +59,7 @@ describe('domUtils', () => {
   });
 
   describe('getTextLength', () => {
-    it('returns node\'s text content length', () => {
+    it("returns node's text content length", () => {
       expect(domUtils.getTextLength($('<p>hi</p>')[0])).toBe(2);
       expect(domUtils.getTextLength($('<p>hi</p>')[0].firstChild)).toBe(2);
     });
@@ -76,6 +77,7 @@ describe('domUtils', () => {
   describe('getNodeOffsetOfParent', () => {
     it('get node offset from parent childs', () => {
       const ul = $('<ul><li>list1</li><li>list2</li></ul>');
+
       expect(domUtils.getNodeOffsetOfParent(ul.find('li')[1])).toBe(1);
     });
   });
@@ -83,43 +85,53 @@ describe('domUtils', () => {
   describe('getPrevNodeUntil()', () => {
     it('if node is text node and not first offset then return text node', () => {
       const node = $('<p>text</p>');
+
       expect(domUtils.getPrevOffsetNodeUntil(node[0].childNodes[0], 1)).toBe(node[0].childNodes[0]);
     });
 
     it('if node is text node and offset is first then return prev element', () => {
       const node = $('<div>textPrev</div><p>text</p>');
+
       expect(domUtils.getPrevOffsetNodeUntil(node[1].childNodes[0], 0)).toBe(node[0]);
     });
 
     it('if node is text node that have multiple parent node and offset is first then return prev element', () => {
       const node = $('<div>textPrev</div><p><span>text</span></p>');
+
       expect(domUtils.getPrevOffsetNodeUntil(node.find('span')[0].childNodes[0], 0)).toBe(node[0]);
     });
 
     it('find prev offset node from element node', () => {
       const node = $('<div>textPrev</div><p><em>text</em><span>text</span></p>');
+
       expect(domUtils.getPrevOffsetNodeUntil(node[1], 1)).toBe(node.find('em')[0]);
     });
 
     it('find prev offset node from element node at first offset', () => {
       const node = $('<div>textPrev</div><p><span>text</span></p>');
+
       expect(domUtils.getPrevOffsetNodeUntil(node[1], 0)).toBe(node[0]);
     });
 
     it('find prev node until nodename', () => {
       const node = $('<div>textPrev</div><p><span>text</span></p>');
-      expect(domUtils.getPrevOffsetNodeUntil(node.find('span')[0].childNodes[0], 0, 'P')).toBeUndefined();
+
+      expect(
+        domUtils.getPrevOffsetNodeUntil(node.find('span')[0].childNodes[0], 0, 'P')
+      ).toBeUndefined();
     });
   });
 
   describe('getChildNodeByOffset()', () => {
-    it('return node\'s childNode with index', () => {
+    it("return node's childNode with index", () => {
       const node = $('<p><em>text</em><strong>weafwae</strong></p>');
+
       expect(domUtils.getChildNodeByOffset(node[0], 1)).toBe(node[0].childNodes[1]);
     });
 
     it('if node is text node then return passed node', () => {
       const node = $('<p>text</p>');
+
       expect(domUtils.getChildNodeByOffset(node[0].childNodes[0], 1)).toBe(node[0].childNodes[0]);
     });
     it('returns childNodes at index', () => {
@@ -158,7 +170,9 @@ describe('domUtils', () => {
   describe('getTopPrevNodeUnder ', () => {
     it('return previous block element of passed node', () => {
       container.innerHTML = '<div>text1</div><p>text2</p>';
-      expect(domUtils.getTopPrevNodeUnder(container.querySelector('p').firstChild, container)).toBe(container.querySelector('div'));
+      expect(domUtils.getTopPrevNodeUnder(container.querySelector('p').firstChild, container)).toBe(
+        container.querySelector('div')
+      );
     });
   });
 
@@ -189,24 +203,35 @@ describe('domUtils', () => {
 
     it('get parent until specific node that same as given node', () => {
       container.innerHTML = '<div><p>awef<em>text1</em></p></div>';
-      expect(domUtils.getParentUntil($('em')[0].firstChild, container.querySelector('div'))).toBe($('p')[0]);
+      expect(domUtils.getParentUntil($('em')[0].firstChild, container.querySelector('div'))).toBe(
+        $('p')[0]
+      );
     });
   });
 
   describe('getPrevTextNode', () => {
     it('get prev text node of given node #1', () => {
-      container.innerHTML = '<div class="test"><div>text1<em>text2</em></div><div>text3</div></div>';
-      expect(domUtils.getPrevTextNode($('.test div')[1].lastChild)).toBe($('.test em')[0].firstChild);
+      container.innerHTML =
+        '<div class="test"><div>text1<em>text2</em></div><div>text3</div></div>';
+      expect(domUtils.getPrevTextNode($('.test div')[1].lastChild)).toBe(
+        $('.test em')[0].firstChild
+      );
     });
 
     it('get prev text node of given node #2', () => {
-      container.innerHTML = '<div class="test"><div>text1</div><div><br></div><div>text3</div></div>';
-      expect(domUtils.getPrevTextNode($('.test div')[2].lastChild)).toBe($('.test div')[0].firstChild);
+      container.innerHTML =
+        '<div class="test"><div>text1</div><div><br></div><div>text3</div></div>';
+      expect(domUtils.getPrevTextNode($('.test div')[2].lastChild)).toBe(
+        $('.test div')[0].firstChild
+      );
     });
 
     it('get prev text node of given node #3', () => {
-      container.innerHTML = '<div class="test"><ul><li><em>text1</em></li></ul><div><p><br></p></div><div>text3</div></div>';
-      expect(domUtils.getPrevTextNode($('.test div')[1].lastChild)).toBe($('.test em')[0].firstChild);
+      container.innerHTML =
+        '<div class="test"><ul><li><em>text1</em></li></ul><div><p><br></p></div><div>text3</div></div>';
+      expect(domUtils.getPrevTextNode($('.test div')[1].lastChild)).toBe(
+        $('.test em')[0].firstChild
+      );
     });
   });
 
@@ -232,7 +257,9 @@ describe('domUtils', () => {
     });
 
     it('get path of passed node with id and class information', () => {
-      const $dom = $('<div><ul id="i1" class="c1"><li><div class="c2 c3"><span>findme</span></div></li></ul></div>');
+      const $dom = $(
+        '<div><ul id="i1" class="c1"><li><div class="c2 c3"><span>findme</span></div></li></ul></div>'
+      );
       const expected = [
         {
           tagName: 'UL',
@@ -256,95 +283,119 @@ describe('domUtils', () => {
   });
   describe('table traversal', () => {
     it('getTableCellByDirection should get next TH if exist', () => {
-      const $dom = $('<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>');
+      const $dom = $(
+        '<table>' +
+          '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+          '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+          '</table>'
+      );
       const result = domUtils.getTableCellByDirection($dom.find('th')[0], 'next');
       const result2 = domUtils.getTableCellByDirection($dom.find('th')[1], 'next');
+
       expect(result.textContent).toBe('2');
       expect(result2).toBeNull();
     });
 
     it('getTableCellByDirection should get next TD if exist', () => {
-      const $dom = $('<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>');
+      const $dom = $(
+        '<table>' +
+          '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+          '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+          '</table>'
+      );
       const result = domUtils.getTableCellByDirection($dom.find('td')[0], 'next');
       const result2 = domUtils.getTableCellByDirection($dom.find('td')[3], 'next');
+
       expect(result.textContent).toBe('4');
       expect(result2).toBeNull();
     });
 
     it('getSiblingRowCellByDirection should get next TD if exist at thead', () => {
-      const $dom = $('<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>');
+      const $dom = $(
+        '<table>' +
+          '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+          '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+          '</table>'
+      );
       const result = domUtils.getSiblingRowCellByDirection($dom.find('th')[0], 'next');
       const result2 = domUtils.getSiblingRowCellByDirection($dom.find('th')[1], 'next');
       const result3 = domUtils.getSiblingRowCellByDirection($dom.find('th')[3], 'next');
+
       expect(result.textContent).toBe('3');
       expect(result2.textContent).toBe('4');
       expect(result3).toBeNull();
     });
 
     it('getSiblingRowCellByDirection should get next TD if exist at tbody', () => {
-      const $dom = $('<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>');
+      const $dom = $(
+        '<table>' +
+          '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+          '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+          '</table>'
+      );
       const result = domUtils.getSiblingRowCellByDirection($dom.find('td')[0], 'next');
       const result2 = domUtils.getSiblingRowCellByDirection($dom.find('td')[1], 'next');
       const result3 = domUtils.getSiblingRowCellByDirection($dom.find('td')[3], 'next');
+
       expect(result.textContent).toBe('5');
       expect(result2.textContent).toBe('6');
       expect(result3).toBeNull();
     });
     it('getTableCellByDirection should get previous TH if exist', () => {
-      const $dom = $('<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>');
+      const $dom = $(
+        '<table>' +
+          '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+          '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+          '</table>'
+      );
       const result = domUtils.getTableCellByDirection($dom.find('th')[0], 'previous');
       const result2 = domUtils.getTableCellByDirection($dom.find('th')[1], 'previous');
+
       expect(result).toBeNull();
       expect(result2.textContent).toBe('1');
     });
 
     it('getTableCellByDirection should get previous TD if exist', () => {
-      const $dom = $('<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>');
+      const $dom = $(
+        '<table>' +
+          '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+          '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+          '</table>'
+      );
       const result = domUtils.getTableCellByDirection($dom.find('td')[0], 'previous');
       const result2 = domUtils.getTableCellByDirection($dom.find('td')[3], 'previous');
+
       expect(result).toBeNull();
       expect(result2.textContent).toBe('5');
     });
 
     it('getSiblingRowCellByDirection should get previous TD if exist at thead', () => {
-      const $dom = $('<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>');
+      const $dom = $(
+        '<table>' +
+          '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+          '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+          '</table>'
+      );
       const result = domUtils.getSiblingRowCellByDirection($dom.find('th')[0], 'previous');
       const result2 = domUtils.getSiblingRowCellByDirection($dom.find('th')[1], 'previous');
       const result3 = domUtils.getSiblingRowCellByDirection($dom.find('td')[3], 'previous');
+
       expect(result).toBeNull();
       expect(result2).toBeNull();
       expect(result3.textContent).toBe('4');
     });
 
     it('getSiblingRowCellByDirection should get previous TD if exist at tbody', () => {
-      const $dom = $('<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>');
+      const $dom = $(
+        '<table>' +
+          '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+          '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+          '</table>'
+      );
       const result = domUtils.getSiblingRowCellByDirection($dom.find('td')[0], 'previous');
       const result2 = domUtils.getSiblingRowCellByDirection($dom.find('td')[1], 'previous');
       const result3 = domUtils.getSiblingRowCellByDirection($dom.find('td')[3], 'previous');
+
       expect(result.textContent).toBe('1');
       expect(result2.textContent).toBe('2');
       expect(result3.textContent).toBe('4');
@@ -358,7 +409,11 @@ describe('domUtils', () => {
       container.appendChild(createElement('s', 'ccc'));
       container.appendChild(document.createTextNode('eee'));
 
-      domUtils.removeChildFromStartToEndNode(container, container.childNodes[1], container.childNodes[3]);
+      domUtils.removeChildFromStartToEndNode(
+        container,
+        container.childNodes[1],
+        container.childNodes[3]
+      );
 
       const expectedHtml = '<b>aaa</b>eee';
 
@@ -470,9 +525,11 @@ describe('domUtils', () => {
 
     it('should merge tags when the tags wrapping other tags', () => {
       const startTag = makeTag('s');
+
       startTag.appendChild(makeTag('b', 'test'));
 
       const endTag = makeTag('i');
+
       endTag.appendChild(makeTag('b', 'test'));
 
       container.appendChild(startTag);
@@ -485,6 +542,7 @@ describe('domUtils', () => {
 
     it('should not merge when contains <span>', () => {
       const startTag = makeTag('span');
+
       startTag.appendChild(makeTag('b', 'test'));
 
       const endTag = makeTag('b', 'test');

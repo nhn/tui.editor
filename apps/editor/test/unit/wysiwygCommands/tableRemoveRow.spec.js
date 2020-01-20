@@ -38,17 +38,19 @@ describe('Table - RemoveRow', () => {
     const sq = wwe.getEditor(),
       range = sq.getSelection().cloneRange();
 
-    sq.setHTML([
-      '<table>',
-      '<thead>',
-      '<tr><th>1</th><th>2</th></tr>',
-      '</thead>',
-      '<tbody>',
-      '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
-      '<tr><td>5</td><td>6</td></tr>',
-      '</tbody>',
-      '</table>'
-    ].join('\n'));
+    sq.setHTML(
+      [
+        '<table>',
+        '<thead>',
+        '<tr><th>1</th><th>2</th></tr>',
+        '</thead>',
+        '<tbody>',
+        '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
+        '<tr><td>5</td><td>6</td></tr>',
+        '</tbody>',
+        '</table>'
+      ].join('\n')
+    );
 
     range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
     range.collapse(true);
@@ -66,16 +68,18 @@ describe('Table - RemoveRow', () => {
     const sq = wwe.getEditor(),
       range = sq.getSelection().cloneRange();
 
-    sq.setHTML([
-      '<table>',
-      '<thead>',
-      '<tr><th>1</th><th>2</th></tr>',
-      '</thead>',
-      '<tbody>',
-      '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
-      '</tbody>',
-      '</table>'
-    ].join('\n'));
+    sq.setHTML(
+      [
+        '<table>',
+        '<thead>',
+        '<tr><th>1</th><th>2</th></tr>',
+        '</thead>',
+        '<tbody>',
+        '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
+        '</tbody>',
+        '</table>'
+      ].join('\n')
+    );
 
     range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
     range.collapse(true);
@@ -89,21 +93,23 @@ describe('Table - RemoveRow', () => {
     expect(wwe.get$Body().find('tbody td').length).toEqual(2);
   });
 
-  it('focus to next row\'s first td', () => {
+  it("focus to next row's first td", () => {
     const sq = wwe.getEditor(),
       range = sq.getSelection().cloneRange();
 
-    sq.setHTML([
-      '<table>',
-      '<thead>',
-      '<tr><th>1</th><th>2</th></tr>',
-      '</thead>',
-      '<tbody>',
-      '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
-      '<tr><td>5</td><td>6</td></tr>',
-      '</tbody>',
-      '</table>'
-    ].join('\n'));
+    sq.setHTML(
+      [
+        '<table>',
+        '<thead>',
+        '<tr><th>1</th><th>2</th></tr>',
+        '</thead>',
+        '<tbody>',
+        '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
+        '<tr><td>5</td><td>6</td></tr>',
+        '</tbody>',
+        '</table>'
+      ].join('\n')
+    );
 
     range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
     range.collapse(true);
@@ -113,24 +119,28 @@ describe('Table - RemoveRow', () => {
 
     RemoveRow.exec(wwe);
 
-    expect(sq.getSelection().startContainer.textContent).toBe(wwe.get$Body().find('tbody td')[0].textContent);
+    expect(sq.getSelection().startContainer.textContent).toBe(
+      wwe.get$Body().find('tbody td')[0].textContent
+    );
   });
 
-  it('focus to prev row\'s first td if it doesn\'t have next row', () => {
+  it("focus to prev row's first td if it doesn't have next row", () => {
     const sq = wwe.getEditor(),
       range = sq.getSelection().cloneRange();
 
-    sq.setHTML([
-      '<table>',
-      '<thead>',
-      '<tr><th>1</th><th>2</th></tr>',
-      '</thead>',
-      '<tbody>',
-      '<tr><td>3</td><td>4</td></tr>',
-      '<tr><td class="te-cell-selected">5</td><td>6</td></tr>',
-      '</tbody>',
-      '</table>'
-    ].join('\n'));
+    sq.setHTML(
+      [
+        '<table>',
+        '<thead>',
+        '<tr><th>1</th><th>2</th></tr>',
+        '</thead>',
+        '<tbody>',
+        '<tr><td>3</td><td>4</td></tr>',
+        '<tr><td class="te-cell-selected">5</td><td>6</td></tr>',
+        '</tbody>',
+        '</table>'
+      ].join('\n')
+    );
 
     range.setStartAfter(wwe.get$Body().find('tbody td')[2].firstChild);
     range.collapse(true);
@@ -140,25 +150,29 @@ describe('Table - RemoveRow', () => {
 
     RemoveRow.exec(wwe);
 
-    expect(sq.getSelection().startContainer.textContent).toEqual(wwe.get$Body().find('tbody td')[0].textContent);
+    expect(sq.getSelection().startContainer.textContent).toEqual(
+      wwe.get$Body().find('tbody td')[0].textContent
+    );
   });
   it('remove rows that have selected through selection manager', () => {
     const sq = wwe.getEditor(),
       range = sq.getSelection().cloneRange();
 
-    sq.setHTML([
-      '<table>',
-      '<thead>',
-      '<tr><th>1</th><th>2</th></tr>',
-      '</thead>',
-      '<tbody>',
-      '<tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td></tr>',
-      '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr>',
-      '<tr><td class="te-cell-selected">7</td><td>8</td></tr>',
-      '<tr><td>9</td><td>10</td></tr>',
-      '</tbody>',
-      '</table>'
-    ].join('\n'));
+    sq.setHTML(
+      [
+        '<table>',
+        '<thead>',
+        '<tr><th>1</th><th>2</th></tr>',
+        '</thead>',
+        '<tbody>',
+        '<tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td></tr>',
+        '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr>',
+        '<tr><td class="te-cell-selected">7</td><td>8</td></tr>',
+        '<tr><td>9</td><td>10</td></tr>',
+        '</tbody>',
+        '</table>'
+      ].join('\n')
+    );
 
     range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
     range.collapse(true);
@@ -176,17 +190,19 @@ describe('Table - RemoveRow', () => {
     const sq = wwe.getEditor(),
       range = sq.getSelection().cloneRange();
 
-    sq.setHTML([
-      '<table>',
-      '<thead>',
-      '<tr><th>1</th><th>2</th></tr>',
-      '</thead>',
-      '<tbody>',
-      '<tr><td>3</td><td>4</td></tr>',
-      '<tr><td>5</td><td>6</td></tr>',
-      '</tbody>',
-      '</table>'
-    ].join('\n'));
+    sq.setHTML(
+      [
+        '<table>',
+        '<thead>',
+        '<tr><th>1</th><th>2</th></tr>',
+        '</thead>',
+        '<tbody>',
+        '<tr><td>3</td><td>4</td></tr>',
+        '<tr><td>5</td><td>6</td></tr>',
+        '</tbody>',
+        '</table>'
+      ].join('\n')
+    );
 
     range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
     range.setEndAfter(wwe.get$Body().find('tbody td')[3].firstChild);
@@ -204,19 +220,21 @@ describe('Table - RemoveRow', () => {
     const sq = wwe.getEditor(),
       range = sq.getSelection().cloneRange();
 
-    sq.setHTML([
-      '<table>',
-      '<thead>',
-      '<tr><th>1</th><th>2</th></tr>',
-      '</thead>',
-      '<tbody>',
-      '<tr><td><span>3</span></td><td>4</td></tr>',
-      '<tr><td>5</td><td>6</td></tr>',
-      '<tr><td>7</td><td>8</td></tr>',
-      '<tr><td>9</td><td>10</td></tr>',
-      '</tbody>',
-      '</table>'
-    ].join('\n'));
+    sq.setHTML(
+      [
+        '<table>',
+        '<thead>',
+        '<tr><th>1</th><th>2</th></tr>',
+        '</thead>',
+        '<tbody>',
+        '<tr><td><span>3</span></td><td>4</td></tr>',
+        '<tr><td>5</td><td>6</td></tr>',
+        '<tr><td>7</td><td>8</td></tr>',
+        '<tr><td>9</td><td>10</td></tr>',
+        '</tbody>',
+        '</table>'
+      ].join('\n')
+    );
     range.selectNodeContents(wwe.get$Body().find('tbody td span')[0].firstChild);
 
     sq.setSelection(range);
@@ -232,19 +250,21 @@ describe('Table - RemoveRow', () => {
     const sq = wwe.getEditor(),
       range = sq.getSelection().cloneRange();
 
-    sq.setHTML([
-      '<table>',
-      '<thead>',
-      '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>',
-      '</thead>',
-      '<tbody>',
-      '<tr><td>3</td><td>4</td></tr>',
-      '<tr><td>5</td><td>6</td></tr>',
-      '<tr><td>7</td><td>8</td></tr>',
-      '<tr><td>9</td><td>10</td></tr>',
-      '</tbody>',
-      '</table>'
-    ].join('\n'));
+    sq.setHTML(
+      [
+        '<table>',
+        '<thead>',
+        '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>',
+        '</thead>',
+        '<tbody>',
+        '<tr><td>3</td><td>4</td></tr>',
+        '<tr><td>5</td><td>6</td></tr>',
+        '<tr><td>7</td><td>8</td></tr>',
+        '<tr><td>9</td><td>10</td></tr>',
+        '</tbody>',
+        '</table>'
+      ].join('\n')
+    );
 
     range.setStartAfter(wwe.get$Body().find('thead th')[0].firstChild);
     range.setEndAfter(wwe.get$Body().find('thead th')[1].firstChild);
@@ -262,19 +282,21 @@ describe('Table - RemoveRow', () => {
     const sq = wwe.getEditor(),
       range = sq.getSelection().cloneRange();
 
-    sq.setHTML([
-      '<table>',
-      '<thead>',
-      '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>',
-      '</thead>',
-      '<tbody>',
-      '<tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td></tr>',
-      '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr>',
-      '<tr><td class="te-cell-selected">7</td><td class="te-cell-selected">8</td></tr>',
-      '<tr><td class="te-cell-selected">9</td><td class="te-cell-selected">10</td></tr>',
-      '</tbody>',
-      '</table>'
-    ].join('\n'));
+    sq.setHTML(
+      [
+        '<table>',
+        '<thead>',
+        '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>',
+        '</thead>',
+        '<tbody>',
+        '<tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td></tr>',
+        '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr>',
+        '<tr><td class="te-cell-selected">7</td><td class="te-cell-selected">8</td></tr>',
+        '<tr><td class="te-cell-selected">9</td><td class="te-cell-selected">10</td></tr>',
+        '</tbody>',
+        '</table>'
+      ].join('\n')
+    );
 
     range.setStartAfter(wwe.get$Body().find('thead th')[0].firstChild);
     range.setEndAfter(wwe.get$Body().find('tbody td')[7].firstChild);
@@ -286,6 +308,12 @@ describe('Table - RemoveRow', () => {
 
     expect(wwe.get$Body().find('thead tr').length).toEqual(1);
     expect(wwe.get$Body().find('tbody tr').length).toEqual(1);
-    expect(wwe.get$Body().find('tbody tr').last().text()).toEqual('910');
+    expect(
+      wwe
+        .get$Body()
+        .find('tbody tr')
+        .last()
+        .text()
+    ).toEqual('910');
   });
 });

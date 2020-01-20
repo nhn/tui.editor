@@ -26,12 +26,7 @@ class Preview {
 
     this.lazyRunner = new LazyRunner();
 
-    this.lazyRunner.registerLazyRunFunction(
-      'refresh',
-      this.refresh,
-      delayTime,
-      this
-    );
+    this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, delayTime, this);
   }
 
   /**
@@ -72,7 +67,8 @@ class Preview {
    * @param {string} html HTML string
    */
   render(html) {
-    const {_$previewContent} = this;
+    const { _$previewContent } = this;
+
     html = this.eventManager.emit('previewBeforeHook', html) || html;
 
     _$previewContent.empty();

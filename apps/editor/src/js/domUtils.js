@@ -34,7 +34,9 @@ const isElemNode = function(node) {
  * @ignore
  */
 const isBlockNode = function(node) {
-  return /^(ADDRESS|ARTICLE|ASIDE|BLOCKQUOTE|DETAILS|DIALOG|DD|DIV|DL|DT|FIELDSET|FIGCAPTION|FIGURE|FOOTER|FORM|H[\d]|HEADER|HGROUP|HR|LI|MAIN|NAV|OL|P|PRE|SECTION|UL)$/ig.test(this.getNodeName(node));
+  return /^(ADDRESS|ARTICLE|ASIDE|BLOCKQUOTE|DETAILS|DIALOG|DD|DIV|DL|DT|FIELDSET|FIGCAPTION|FIGURE|FOOTER|FORM|H[\d]|HEADER|HGROUP|HR|LI|MAIN|NAV|OL|P|PRE|SECTION|UL)$/gi.test(
+    this.getNodeName(node)
+  );
 };
 
 /**
@@ -141,9 +143,7 @@ const getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
   while (node && !node[directionKey]) {
     nodeName = getNodeName(node.parentNode);
 
-    if ((nodeName === untilNodeName)
-            || nodeName === 'BODY'
-    ) {
+    if (nodeName === untilNodeName || nodeName === 'BODY') {
       break;
     }
 
@@ -434,7 +434,12 @@ const getTableCellByDirection = function(node, direction) {
  */
 const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
   let tableCellElement = null;
-  let $node, index, $targetRowElement, $currentContainer, $siblingContainer, isSiblingContainerExists;
+  let $node,
+    index,
+    $targetRowElement,
+    $currentContainer,
+    $siblingContainer,
+    isSiblingContainerExists;
 
   if (!util.isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
     if (node) {
@@ -444,14 +449,16 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
         $targetRowElement = $node.parent().next();
         $currentContainer = $node.parents('thead');
         $siblingContainer = $currentContainer[0] && $currentContainer.next();
-        isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
+        isSiblingContainerExists =
+          $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
 
         index = 0;
       } else {
         $targetRowElement = $node.parent().prev();
         $currentContainer = $node.parents('tbody');
         $siblingContainer = $currentContainer[0] && $currentContainer.prev();
-        isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
+        isSiblingContainerExists =
+          $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
 
         index = node.parentNode.childNodes.length - 1;
       }
@@ -478,7 +485,7 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
  * @ignore
  */
 const isMDSupportInlineNode = function(node) {
-  return /^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/ig.test(node.nodeName);
+  return /^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/gi.test(node.nodeName);
 };
 
 /**
@@ -489,7 +496,9 @@ const isMDSupportInlineNode = function(node) {
  * @ignore
  */
 const isStyledNode = function(node) {
-  return /^(A|ABBR|ACRONYM|B|BDI|BDO|BIG|CITE|CODE|DEL|DFN|EM|I|INS|KBD|MARK|Q|S|SAMP|SMALL|SPAN|STRONG|SUB|SUP|U|VAR)$/ig.test(node.nodeName);
+  return /^(A|ABBR|ACRONYM|B|BDI|BDO|BIG|CITE|CODE|DEL|DFN|EM|I|INS|KBD|MARK|Q|S|SAMP|SMALL|SPAN|STRONG|SUB|SUP|U|VAR)$/gi.test(
+    node.nodeName
+  );
 };
 
 /**
@@ -509,6 +518,7 @@ const removeChildFromStartToEndNode = function(parent, start, end) {
 
   while (child !== end) {
     const next = child.nextSibling;
+
     parent.removeChild(child);
     child = next;
   }
@@ -526,7 +536,7 @@ const removeNodesByDirection = function(targetParent, node, isForward) {
 
   while (parent !== targetParent) {
     const nextParent = parent.parentNode;
-    const {nextSibling, previousSibling} = parent;
+    const { nextSibling, previousSibling } = parent;
 
     if (!isForward && nextSibling) {
       removeChildFromStartToEndNode(nextParent, nextSibling, null);
@@ -540,8 +550,9 @@ const removeNodesByDirection = function(targetParent, node, isForward) {
 
 const getLeafNode = function(node) {
   let result = node;
+
   while (result.childNodes && result.childNodes.length) {
-    const {firstChild: nextLeaf} = result;
+    const { firstChild: nextLeaf } = result;
 
     // When inline tag have empty text node with other childnodes, ignore empty text node.
     if (isTextNode(nextLeaf) && !getTextLength(nextLeaf)) {
@@ -569,10 +580,12 @@ const isInsideTaskBox = function(style, offsetX, offsetY) {
     height: parseInt(style.height, 10)
   };
 
-  return offsetX >= rect.left
-    && offsetX <= (rect.left + rect.width)
-    && offsetY >= rect.top
-    && offsetY <= (rect.top + rect.height);
+  return (
+    offsetX >= rect.left &&
+    offsetX <= rect.left + rect.width &&
+    offsetY >= rect.top &&
+    offsetY <= rect.top + rect.height
+  );
 };
 
 /**
@@ -596,7 +609,7 @@ const isListNode = function(node) {
  * @ignore
  */
 const isFirstListItem = function(node) {
-  const {nodeName, parentNode} = node;
+  const { nodeName, parentNode } = node;
 
   return nodeName === 'LI' && node === parentNode.firstChild;
 };
@@ -608,8 +621,8 @@ const isFirstListItem = function(node) {
  * @ignore
  */
 const isFirstLevelListItem = function(node) {
-  const {nodeName, parentNode: listNode} = node;
-  const {parentNode: listParentNode} = listNode;
+  const { nodeName, parentNode: listNode } = node;
+  const { parentNode: listParentNode } = listNode;
 
   return nodeName === 'LI' && !isListNode(listParentNode);
 };
@@ -658,6 +671,7 @@ const createHorizontalRule = function() {
  */
 const createEmptyLine = function() {
   const div = document.createElement('div');
+
   div.appendChild(document.createElement('br'));
 
   return div;
@@ -676,11 +690,12 @@ const createEmptyLine = function() {
  */
 const changeTagOrder = function(node, tagName) {
   if (node.nodeName !== 'SPAN') {
-    const {parentNode} = node;
+    const { parentNode } = node;
     let tempNode = node;
 
     while (
-      tempNode.childNodes && tempNode.childNodes.length === 1 &&
+      tempNode.childNodes &&
+      tempNode.childNodes.length === 1 &&
       !isTextNode(tempNode.firstChild)
     ) {
       tempNode = tempNode.firstChild;
@@ -756,12 +771,7 @@ const mergeSameNodes = function(startNode, endNode, tagName) {
  * @private
  */
 const optimizeRange = function(range, tagName) {
-  const {
-    collapsed,
-    commonAncestorContainer,
-    startContainer,
-    endContainer
-  } = range;
+  const { collapsed, commonAncestorContainer, startContainer, endContainer } = range;
 
   if (!collapsed) {
     let optimizedNode = null;
@@ -770,7 +780,8 @@ const optimizeRange = function(range, tagName) {
       mergeSameNodes(
         getParentUntil(startContainer, commonAncestorContainer),
         getParentUntil(endContainer, commonAncestorContainer),
-        tagName);
+        tagName
+      );
 
       optimizedNode = commonAncestorContainer;
     } else if (isTextNode(startContainer)) {
@@ -778,7 +789,7 @@ const optimizeRange = function(range, tagName) {
     }
 
     if (optimizedNode && optimizedNode.nodeName === tagName) {
-      const {previousSibling} = optimizedNode;
+      const { previousSibling } = optimizedNode;
       let tempNode;
 
       if (previousSibling) {
@@ -789,7 +800,7 @@ const optimizeRange = function(range, tagName) {
         }
       }
 
-      const {nextSibling} = optimizedNode;
+      const { nextSibling } = optimizedNode;
 
       if (nextSibling) {
         tempNode = changeTagOrder(nextSibling);
@@ -810,7 +821,7 @@ const optimizeRange = function(range, tagName) {
  */
 const getAllTextNode = function(root) {
   const walker = document.createTreeWalker(root, 4, null, false);
-  let result = [];
+  const result = [];
 
   while (walker.nextNode()) {
     const node = walker.currentNode;

@@ -7,22 +7,22 @@ import Command from '@/command';
 import EventManager from '@/eventManager';
 
 describe('CommandManager', function() {
-  var mockupCm = {
-    execCommand: function(name) {
+  const mockupCm = {
+    execCommand(name) {
       return name;
     }
   };
 
-  var mockupBase = {
-    getCodeMirror: function() {
+  const mockupBase = {
+    getCodeMirror() {
       return mockupCm;
     },
-    getSquire: function() {
+    getSquire() {
       return {};
     }
   };
 
-  var cmgr;
+  let cmgr;
 
   beforeEach(function() {
     mockupBase.eventManager = new EventManager();
@@ -35,7 +35,7 @@ describe('CommandManager', function() {
 
   describe('addCommand', function() {
     it('register to _mdCommand', function() {
-      var command = new Command('mycommand', Command.TYPE.MD);
+      const command = new Command('mycommand', Command.TYPE.MD);
 
       command.setKeyMap('Ctrl-B', 'Cmd-B');
       command.exec = function() {};
@@ -48,7 +48,7 @@ describe('CommandManager', function() {
 
   describe('exec()', function() {
     it('should execute command', function() {
-      var command = new Command('mycommand', Command.TYPE.GB);
+      const command = new Command('mycommand', Command.TYPE.GB);
 
       command.exec = jasmine.createSpy('global command');
       cmgr.addCommand(command);
@@ -59,7 +59,7 @@ describe('CommandManager', function() {
     });
 
     it('should execute markdown command', function() {
-      var command = new Command('mycommand', Command.TYPE.MD),
+      const command = new Command('mycommand', Command.TYPE.MD),
         execSpy = jasmine.createSpy('spy');
 
       command.setKeyMap('Ctrl-B', 'Cmd-B');
@@ -72,7 +72,7 @@ describe('CommandManager', function() {
     });
 
     it('should execute wysiwyg command', function() {
-      var command = new Command('mycommand', Command.TYPE.WW),
+      const command = new Command('mycommand', Command.TYPE.WW),
         execSpy = jasmine.createSpy('spy');
 
       command.setKeyMap('Ctrl-B', 'Cmd-B');
@@ -89,7 +89,7 @@ describe('CommandManager', function() {
     });
 
     it('should execute command with params', function() {
-      var command = new Command('mycommand', Command.TYPE.GB),
+      const command = new Command('mycommand', Command.TYPE.GB),
         execSpy = jasmine.createSpy('spy');
 
       command.setKeyMap('Ctrl-B', 'Cmd-B');
@@ -103,7 +103,7 @@ describe('CommandManager', function() {
     });
 
     it('should execute command via event manager', function() {
-      var command = new Command('mycommand', Command.TYPE.GB);
+      const command = new Command('mycommand', Command.TYPE.GB);
 
       command.exec = jasmine.createSpy('global command');
       cmgr.addCommand(command);
@@ -116,17 +116,15 @@ describe('CommandManager', function() {
 
   describe('produce command', function() {
     it('create command', function() {
-      var mdCommand, wwCommand, command;
-
-      command = CommandManager.command('global', {
+      const command = CommandManager.command('global', {
         name: 'mycommand'
       });
 
-      mdCommand = CommandManager.command('markdown', {
+      const mdCommand = CommandManager.command('markdown', {
         name: 'mycommand'
       });
 
-      wwCommand = CommandManager.command('wysiwyg', {
+      const wwCommand = CommandManager.command('wysiwyg', {
         name: 'mycommand'
       });
 
@@ -136,7 +134,7 @@ describe('CommandManager', function() {
     });
 
     it('add & create command', function() {
-      var execSpy = jasmine.createSpy('spy');
+      const execSpy = jasmine.createSpy('spy');
 
       cmgr.addCommand('markdown', {
         name: 'mycommand',
@@ -166,7 +164,7 @@ describe('CommandManager', function() {
       mockupBase.eventManager.emit('keyMap', {
         keyMap: 'CTRL+B',
         data: {
-          preventDefault: preventDefault
+          preventDefault
         }
       });
 
@@ -178,6 +176,7 @@ describe('CommandManager', function() {
       const command = new Command('mycommand', Command.TYPE.WW),
         execSpy = jasmine.createSpy('spy'),
         preventDefault = jasmine.createSpy('preventDefault');
+
       cmgr._options.useCommandShortcut = false;
 
       command.setKeyMap('CTRL+B', 'CTRL+B');
@@ -191,7 +190,7 @@ describe('CommandManager', function() {
       mockupBase.eventManager.emit('keyMap', {
         keyMap: 'CTRL+B',
         data: {
-          preventDefault: preventDefault
+          preventDefault
         }
       });
 

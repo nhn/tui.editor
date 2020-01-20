@@ -40,7 +40,10 @@ class WwTaskManager {
     this.wwe.getEditor().addEventListener('mousedown', ev => {
       const style = getComputedStyle(ev.target, ':before');
 
-      if (ev.target.hasAttribute(TASK_ATTR_NAME) && domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
+      if (
+        ev.target.hasAttribute(TASK_ATTR_NAME) &&
+        domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)
+      ) {
         // Prevent cursor focusing
         ev.preventDefault();
         $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
@@ -68,6 +71,7 @@ class WwTaskManager {
         this.wwe.defer(() => {
           const newRange = this.wwe.getRange();
           const $li = $(newRange.startContainer).closest('li');
+
           $li.removeClass(TASK_CHECKED_CLASS_NAME);
         });
       }
@@ -83,15 +87,21 @@ class WwTaskManager {
     let li;
 
     if (!range) {
-      range = this.wwe.getEditor().getSelection().cloneRange();
+      range = this.wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
     }
 
-    if (range.startContainer.nodeType === Node.ELEMENT_NODE
-            && range.startContainer.tagName === 'LI'
+    if (
+      range.startContainer.nodeType === Node.ELEMENT_NODE &&
+      range.startContainer.tagName === 'LI'
     ) {
       li = range.startContainer;
     } else {
-      li = $(range.startContainer).parents('li').get(0);
+      li = $(range.startContainer)
+        .parents('li')
+        .get(0);
     }
 
     return $(li).hasClass(TASK_CLASS_NAME);
@@ -131,7 +141,10 @@ class WwTaskManager {
    * @private
    */
   _formatTaskIfNeed() {
-    const range = this.wwe.getEditor().getSelection().cloneRange();
+    const range = this.wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     if (this.isInTaskList(range)) {
       this.formatTask(range.startContainer);
@@ -144,9 +157,12 @@ class WwTaskManager {
    */
   _removeTaskListClass() {
     // because task-list class is block merge normal list and task list
-    this.wwe.get$Body().find('.task-list').each((index, node) => {
-      $(node).removeClass('task-list');
-    });
+    this.wwe
+      .get$Body()
+      .find('.task-list')
+      .each((index, node) => {
+        $(node).removeClass('task-list');
+      });
   }
 }
 

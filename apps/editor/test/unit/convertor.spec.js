@@ -27,62 +27,91 @@ describe('Convertor', () => {
     });
 
     it('escape vertical bar', () => {
-      expect(convertor.toHTML('| 1 | 2 |\n| -- | -- |\n| 4\\|5 | 6 |\n').match(/\/td/g).length).toBe(2);
-      expect(convertor.toHTMLWithCodeHightlight('| 1 | 2 |\n| -- | -- |\n| 3 | 4\\|4 |\n').match(/\/td/g).length)
-        .toBe(2);
+      expect(
+        convertor.toHTML('| 1 | 2 |\n| -- | -- |\n| 4\\|5 | 6 |\n').match(/\/td/g).length
+      ).toBe(2);
+      expect(
+        convertor.toHTMLWithCodeHightlight('| 1 | 2 |\n| -- | -- |\n| 3 | 4\\|4 |\n').match(/\/td/g)
+          .length
+      ).toBe(2);
     });
 
     it('<br> is added between lines', () => {
-      const expected = [
-        '1',
-        '\n',
-        '<br>',
-        '<br>',
-        '2',
-        '\n',
-        '<br>',
-        '<br>',
-        '<br>',
-        '3'
-      ].join('\n');
-      const result = [
-        '<p>1</p>',
-        '<p><br><br>2</p>',
-        '<p><br><br><br>3</p>\n'
-      ].join('\n');
+      const expected = ['1', '\n', '<br>', '<br>', '2', '\n', '<br>', '<br>', '<br>', '3'].join(
+        '\n'
+      );
+      const result = ['<p>1</p>', '<p><br><br>2</p>', '<p><br><br><br>3</p>\n'].join('\n');
 
       expect(convertor.toHTMLWithCodeHightlight(expected)).toBe(result);
     });
 
     it('Avoid hidden last cell in table', () => {
-      expect(convertor.toHTML('| a |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext').match(/\/td/g).length).toBe(6);
+      expect(
+        convertor
+          .toHTML('| a |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext')
+          .match(/\/td/g).length
+      ).toBe(6);
     });
     it('Avoid hidden last cell in table', () => {
-      expect(convertor.toHTML('first\n\n<br>first\n\n```\nsecond\n\n\nsecond\n```\n\n')).toBe('<p>first</p>\n<p><br data-tomark-pass="">first</p>\n<pre><code>second\n\n\nsecond\n</code></pre>\n');
+      expect(convertor.toHTML('first\n\n<br>first\n\n```\nsecond\n\n\nsecond\n```\n\n')).toBe(
+        '<p>first</p>\n<p><br data-tomark-pass="">first</p>\n<pre><code>second\n\n\nsecond\n</code></pre>\n'
+      );
     });
 
     it('do not add line breaks in table before and after image syntax', () => {
-      expect(convertor._markdownToHtmlWithCodeHighlight('\n| ![nhn](http://www.nhn.com/) |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext').match(/\/td/g).length).toBe(6);
+      expect(
+        convertor
+          ._markdownToHtmlWithCodeHighlight(
+            '\n| ![nhn](http://www.nhn.com/) |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext'
+          )
+          .match(/\/td/g).length
+      ).toBe(6);
     });
 
     it('do not add line breaks in list before and after image syntax', () => {
-      expect(convertor._markdownToHtmlWithCodeHighlight('\n* asd![nhn](http://www.nhn.com/)\n- asd![nhn](http://www.nhn.com/)\n1. asd![nhn](http://www.nhn.com/)\n* [ ] asd![nhn](http://www.nhn.com/)\n').match(/\/p/g)).toBe(null);
+      expect(
+        convertor
+          ._markdownToHtmlWithCodeHighlight(
+            '\n* asd![nhn](http://www.nhn.com/)\n- asd![nhn](http://www.nhn.com/)\n1. asd![nhn](http://www.nhn.com/)\n* [ ] asd![nhn](http://www.nhn.com/)\n'
+          )
+          .match(/\/p/g)
+      ).toBe(null);
     });
 
     it('should store number of backticks in code to data-backticks attribute', () => {
-      expect(convertor.toHTML('`code span`').trim()).toBe('<p><code data-backticks="1">code span</code></p>');
-      expect(convertor.toHTML('```code span```').trim()).toBe('<p><code data-backticks="3">code span</code></p>');
-      expect(convertor.toHTMLWithCodeHightlight('`code span`').trim()).toBe('<p><code data-backticks="1">code span</code></p>');
-      expect(convertor.toHTMLWithCodeHightlight('```code span```').trim()).toBe('<p><code data-backticks="3">code span</code></p>');
+      expect(convertor.toHTML('`code span`').trim()).toBe(
+        '<p><code data-backticks="1">code span</code></p>'
+      );
+      expect(convertor.toHTML('```code span```').trim()).toBe(
+        '<p><code data-backticks="3">code span</code></p>'
+      );
+      expect(convertor.toHTMLWithCodeHightlight('`code span`').trim()).toBe(
+        '<p><code data-backticks="1">code span</code></p>'
+      );
+      expect(convertor.toHTMLWithCodeHightlight('```code span```').trim()).toBe(
+        '<p><code data-backticks="3">code span</code></p>'
+      );
     });
 
     it('should store number of backticks in codeblock to data-backtics attribute', () => {
-      expect(convertor.toHTML('```\ncode block\n```').replace(/\n/g, '').trim()).toBe('<pre><code>code block</code></pre>');
-      expect(convertor.toHTML('````\ncode block\n````').replace(/\n/g, '').trim()).toBe('<pre><code data-backticks="4">code block</code></pre>');
+      expect(
+        convertor
+          .toHTML('```\ncode block\n```')
+          .replace(/\n/g, '')
+          .trim()
+      ).toBe('<pre><code>code block</code></pre>');
+      expect(
+        convertor
+          .toHTML('````\ncode block\n````')
+          .replace(/\n/g, '')
+          .trim()
+      ).toBe('<pre><code data-backticks="4">code block</code></pre>');
     });
 
     it('should convert blockquote even if there is a line above it (ref #989)', () => {
-      expect(convertor.toHTML('text above\n> quote').replace(/\n/g, '')).toBe('<p>text above</p><blockquote><p>quote</p></blockquote>');
+      expect(convertor.toHTML('text above\n> quote').replace(/\n/g, '')).toBe(
+        '<p>text above</p><blockquote><p>quote</p></blockquote>'
+      );
     });
 
     it('should insert data-tomark-pass in html tag', () => {
@@ -115,8 +144,10 @@ describe('Convertor', () => {
     });
 
     it('should insert data-tomark-pass in html tag even if attrubute has slash', () => {
-      const imgTag = '<img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png">';
-      const expectedHTML = '<p><img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png" data-tomark-pass=""></p>';
+      const imgTag =
+        '<img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png">';
+      const expectedHTML =
+        '<p><img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png" data-tomark-pass=""></p>';
 
       expect(convertor.toHTML(imgTag).replace(/\n/g, '')).toBe(expectedHTML);
     });
@@ -164,15 +195,20 @@ describe('Convertor', () => {
     });
 
     it('should not reserve br in codeblock', () => {
-      expect(toMark('<pre><code>HELLO WORLD\n\n\n\n\n!</code></pre>')).toBe('```\nHELLO WORLD\n\n\n\n\n!\n```');
+      expect(toMark('<pre><code>HELLO WORLD\n\n\n\n\n!</code></pre>')).toBe(
+        '```\nHELLO WORLD\n\n\n\n\n!\n```'
+      );
     });
 
     it('should reserve br to inline in table', () => {
-      const html = '<table>' +
-                '<thead><th>1</th><th>2</th><th>3</th></thead>' +
-                '<tbody><td>HELLO WORLD<br><br><br><br><br>!</td><td>4</td><td>5</td></tbody>' +
-                '</table>';
-      const markdown = '| 1 | 2 | 3 |\n| --- | --- | --- |\n| HELLO WORLD<br><br><br><br><br>! | 4 | 5 |';
+      const html =
+        '<table>' +
+        '<thead><th>1</th><th>2</th><th>3</th></thead>' +
+        '<tbody><td>HELLO WORLD<br><br><br><br><br>!</td><td>4</td><td>5</td></tbody>' +
+        '</table>';
+      const markdown =
+        '| 1 | 2 | 3 |\n| --- | --- | --- |\n| HELLO WORLD<br><br><br><br><br>! | 4 | 5 |';
+
       expect(toMark(html)).toBe(markdown);
     });
 
@@ -197,7 +233,9 @@ describe('Convertor', () => {
 
     it('should print number of backticks for code block according to data-backticks attribute', () => {
       expect(toMark('<pre><code>code block</code></pre>').trim()).toBe('```\ncode block\n```');
-      expect(toMark('<pre><code data-backticks="4">code block</code></pre>').trim()).toBe('````\ncode block\n````');
+      expect(toMark('<pre><code data-backticks="4">code block</code></pre>').trim()).toBe(
+        '````\ncode block\n````'
+      );
     });
 
     it('should treat $ special characters', () => {
@@ -211,8 +249,7 @@ describe('Convertor', () => {
       expect(toMark('<s>text</s><br><br>text')).toBe('~~text~~\n\ntext');
       expect(toMark('<code>text</code><br><br>text')).toBe('`text`\n\ntext');
       expect(toMark('<a href="some_url">text</a><br><br>text')).toBe('[text](some_url)\n\ntext');
-      expect(toMark('<span>text</span><br><br>text'))
-        .toBe('<span>text</span>\n\ntext');
+      expect(toMark('<span>text</span><br><br>text')).toBe('<span>text</span>\n\ntext');
     });
 
     describe('should prevent <br> from being removed if there is only one empty line before or after the block element.', () => {
@@ -226,13 +263,7 @@ describe('Convertor', () => {
           'baz'
         ].join('');
 
-        const markdown = [
-          'foo',
-          '<br>',
-          '# bar',
-          '<br>',
-          'baz'
-        ].join('\n');
+        const markdown = ['foo', '<br>', '# bar', '<br>', 'baz'].join('\n');
 
         expect(toMark(html)).toBe(markdown);
       });
@@ -246,15 +277,7 @@ describe('Convertor', () => {
           '<br>',
           'baz'
         ].join('');
-        const markdown = [
-          'foo',
-          '<br>',
-          '```',
-          'bar',
-          '```',
-          '<br>',
-          'baz'
-        ].join('\n');
+        const markdown = ['foo', '<br>', '```', 'bar', '```', '<br>', 'baz'].join('\n');
 
         expect(toMark(html)).toBe(markdown);
       });
@@ -268,15 +291,7 @@ describe('Convertor', () => {
           '<br>',
           'qux'
         ].join('');
-        const markdown = [
-          'foo',
-          '<br>',
-          '| bar |',
-          '| --- |',
-          '| baz |',
-          '<br>',
-          'qux'
-        ].join('\n');
+        const markdown = ['foo', '<br>', '| bar |', '| --- |', '| baz |', '<br>', 'qux'].join('\n');
 
         expect(toMark(html)).toBe(markdown);
       });
@@ -439,20 +454,16 @@ describe('Convertor', () => {
           '<br>',
           '<table><thead><tr><th>foo<br>bar</th></tr></thead><tbody><tr><td>baz<br>qux</td></tr></tbody></table>'
         ].join('');
-        const markdown = [
-          '<br>',
-          '<br>',
-          '| foo<br>bar |',
-          '| ------ |',
-          '| baz<br>qux |',
-        ].join('\n');
+        const markdown = ['<br>', '<br>', '| foo<br>bar |', '| ------ |', '| baz<br>qux |'].join(
+          '\n'
+        );
 
         expect(toMark(html)).toBe(markdown);
       });
 
       it('prevent a tag in link from changing markdown syntax', () => {
         const link = '![foo](<a href="http://link.to">http://link.to</a>)';
-    
+
         expect(convertor.toMarkdown(link)).toBe(link);
       });
     });
@@ -467,7 +478,9 @@ describe('Convertor', () => {
         // strong
         expect(toMark('a<strong><code>c</code>b</strong>')).toBe('a<strong>`c`b</strong>');
         expect(toMark('a<strong><del>c</del>b</strong>')).toBe('a<strong>~~c~~b</strong>');
-        expect(toMark('a<strong><span>c</span>b</strong>')).toBe('a<strong><span>c</span>b</strong>');
+        expect(toMark('a<strong><span>c</span>b</strong>')).toBe(
+          'a<strong><span>c</span>b</strong>'
+        );
 
         // should convert if an opening is not preceded by normal text
         expect(toMark('<b><code>c</code>b</b>')).toBe('**`c`b**');
@@ -483,7 +496,9 @@ describe('Convertor', () => {
         // strong
         expect(toMark('<strong>b<code>c</code></strong>a')).toBe('<strong>b`c`</strong>a');
         expect(toMark('<strong>b<del>c</del></strong>a')).toBe('<strong>b~~c~~</strong>a');
-        expect(toMark('<strong>b<span>c</span></strong>a')).toBe('<strong>b<span>c</span></strong>a');
+        expect(toMark('<strong>b<span>c</span></strong>a')).toBe(
+          '<strong>b<span>c</span></strong>a'
+        );
 
         // should convert if a closing tag is not followed by normal text
         expect(toMark('<b>b<code>c</code></b>')).toBe('**b`c`**');
@@ -563,7 +578,9 @@ describe('Convertor', () => {
       it('if there are spaces between the opening tag and the text', () => {
         // bold
         expect(toMark('foo<b>&nbsp; &nbsp;bar</b>baz')).toBe('foo\u00a0 \u00a0**bar**baz');
-        expect(toMark('foo<strong>&nbsp; &nbsp;bar</strong>baz')).toBe('foo\u00a0 \u00a0**bar**baz');
+        expect(toMark('foo<strong>&nbsp; &nbsp;bar</strong>baz')).toBe(
+          'foo\u00a0 \u00a0**bar**baz'
+        );
 
         // italic
         expect(toMark('foo<i>&nbsp; &nbsp;bar</i>baz')).toBe('foo\u00a0 \u00a0*bar*baz');
@@ -577,7 +594,9 @@ describe('Convertor', () => {
       it('if there are spaces between the text and the closing tag', () => {
         // bold
         expect(toMark('foo<b>bar&nbsp; &nbsp;</b>baz')).toBe('foo**bar**\u00a0 \u00a0baz');
-        expect(toMark('foo<strong>bar&nbsp; &nbsp;</strong>baz')).toBe('foo**bar**\u00a0 \u00a0baz');
+        expect(toMark('foo<strong>bar&nbsp; &nbsp;</strong>baz')).toBe(
+          'foo**bar**\u00a0 \u00a0baz'
+        );
 
         // italic
         expect(toMark('foo<i>bar&nbsp; &nbsp;</i>baz')).toBe('foo*bar*\u00a0 \u00a0baz');
@@ -591,7 +610,9 @@ describe('Convertor', () => {
       it('if text has newlines', () => {
         expect(toMark('foo<b>bar\nbaz&nbsp;</b>qux')).toBe('foo**bar\nbaz**\u00a0qux');
         expect(toMark('foo<i>&nbsp;bar\nbaz&nbsp;</i>qux')).toBe('foo\u00a0*bar\nbaz*\u00a0qux');
-        expect(toMark('foo<s>&nbsp;bar&nbsp;\nbaz&nbsp;qux&nbsp;</s>quxx')).toBe('foo\u00a0~~bar\u00a0\nbaz\u00a0qux~~\u00a0quxx');
+        expect(toMark('foo<s>&nbsp;bar&nbsp;\nbaz&nbsp;qux&nbsp;</s>quxx')).toBe(
+          'foo\u00a0~~bar\u00a0\nbaz\u00a0qux~~\u00a0quxx'
+        );
       });
     });
   });
@@ -705,22 +726,9 @@ describe('Convertor', () => {
     });
 
     it('< & > in codeblock', () => {
-      const markdown = [
-        '```',
-        '<span>',
-        '```'
-      ].join('\n');
-      const html = [
-        '<pre><code>&lt;span&gt;',
-        '</code></pre>',
-        ''
-      ].join('\n');
-      const resultMarkdown = [
-        '```',
-        '<span>',
-        '',
-        '```'
-      ].join('\n');
+      const markdown = ['```', '<span>', '```'].join('\n');
+      const html = ['<pre><code>&lt;span&gt;', '</code></pre>', ''].join('\n');
+      const resultMarkdown = ['```', '<span>', '', '```'].join('\n');
 
       expect(convertor.toHTML(markdown)).toBe(html);
       expect(convertor.toMarkdown(html)).toBe(resultMarkdown);
@@ -747,7 +755,8 @@ describe('Convertor', () => {
 
     it('raw ul element in markdown', () => {
       const markdown = '<ul><li>123</li><li>123</li></ul>';
-      const html = '<ul data-tomark-pass=""><li data-tomark-pass="">123</li><li data-tomark-pass="">123</li></ul>';
+      const html =
+        '<ul data-tomark-pass=""><li data-tomark-pass="">123</li><li data-tomark-pass="">123</li></ul>';
 
       expect(convertor.toHTML(markdown)).toBe(html);
       expect(convertor.toMarkdown(html)).toBe(markdown);

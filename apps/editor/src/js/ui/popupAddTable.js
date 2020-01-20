@@ -54,11 +54,14 @@ class PopupAddTable extends LayerPopup {
   _eventManager;
 
   constructor(options) {
-    options = util.extend({
-      header: false,
-      className: 'te-popup-add-table',
-      content: POPUP_CONTENT
-    }, options);
+    options = util.extend(
+      {
+        header: false,
+        className: 'te-popup-add-table',
+        content: POPUP_CONTENT
+      },
+      options
+    );
     super(options);
   }
 
@@ -112,6 +115,7 @@ class PopupAddTable extends LayerPopup {
 
     this.on(`click .${CLASS_TABLE_SELECTION}`, () => {
       const tableSize = this._getSelectedTableSize();
+
       this._eventManager.emit('command', 'Table', tableSize.col, tableSize.row);
     });
   }
@@ -129,10 +133,8 @@ class PopupAddTable extends LayerPopup {
 
     this._eventManager.listen('openPopupAddTable', () => {
       const $button = this._$button;
-      const {
-        offsetTop,
-        offsetLeft
-      } = $button.get(0);
+      const { offsetTop, offsetLeft } = $button.get(0);
+
       this.$el.css({
         top: offsetTop + $button.outerHeight(),
         left: offsetLeft
@@ -208,8 +210,7 @@ class PopupAddTable extends LayerPopup {
    * @private
    */
   _isNeedResizeTable(col, row) {
-    return (col && col !== this._tableBound.col)
-            || (row && row !== this._tableBound.row);
+    return (col && col !== this._tableBound.col) || (row && row !== this._tableBound.row);
   }
 
   /**
@@ -237,8 +238,8 @@ class PopupAddTable extends LayerPopup {
    * @private
    */
   _getOffsetByBound(col, row) {
-    const x = (col * CELL_WIDTH) + CELL_WIDTH,
-      y = (row * CELL_HEIGHT) + CELL_HEIGHT;
+    const x = col * CELL_WIDTH + CELL_WIDTH,
+      y = row * CELL_HEIGHT + CELL_HEIGHT;
 
     return {
       x,
@@ -254,6 +255,7 @@ class PopupAddTable extends LayerPopup {
    */
   _setTableSizeByBound(col, row) {
     const boundOffset = this._getOffsetByBound(col, row - HEADER_ROW_COUNT);
+
     this._setTableSize(boundOffset.x, boundOffset.y);
     this._tableBound.row = row;
     this._tableBound.col = col;
@@ -292,6 +294,7 @@ class PopupAddTable extends LayerPopup {
    */
   _setSelectionAreaByBound(col, row) {
     const boundOffset = this._getOffsetByBound(col, row);
+
     this._setSelectionArea(boundOffset.x, boundOffset.y);
   }
 
@@ -325,7 +328,7 @@ class PopupAddTable extends LayerPopup {
    * @private
    */
   _setDisplayText(col, row) {
-    this.$desc.html(`${(col + 1)} x ${(row + 1)}`);
+    this.$desc.html(`${col + 1} x ${row + 1}`);
   }
 
   /**

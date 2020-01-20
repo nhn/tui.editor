@@ -12,6 +12,7 @@ describe('Markdown-it', () => {
 
   beforeEach(() => {
     const $container = $('<div />');
+
     em = new EventManager();
     convertor = new Convertor(em);
 
@@ -23,11 +24,13 @@ describe('Markdown-it', () => {
   });
 
   describe('tableRendererRule', () => {
-    const tableText = '\n| | | |'
-            + '\n| --- | :---: | ---: |'
-            + '\n| | | |'
-            + '\n| | | |'
-            + '\n| | | |';
+    const tableText = [
+      '\n| | | |',
+      '\n| --- | :---: | ---: |',
+      '\n| | | |',
+      '\n| | | |',
+      '\n| | | |'
+    ].join('');
 
     it('sholud render table element accurately', () => {
       const tableHTML = convertor.toHTML(tableText);
@@ -36,6 +39,7 @@ describe('Markdown-it', () => {
       expect($tableElement.find('td,th').length).toBe(12);
       const tds = $tableElement.find('td');
       const ths = $tableElement.find('th');
+
       expect(tds.eq(0).attr('align')).toBeUndefined();
       expect(tds.eq(1).attr('align')).toBe('center');
       expect(tds.eq(2).attr('align')).toBe('right');
@@ -46,9 +50,7 @@ describe('Markdown-it', () => {
   });
 
   describe('taskPlugin', () => {
-    const taskText = '\n* [ ] study'
-            + '\n* [x] workout'
-            + '\n* [X] eat breakfast';
+    const taskText = ['\n* [ ] study', '\n* [x] workout', '\n* [X] eat breakfast'].join('');
 
     it('should render task list accurately', () => {
       const taskHTML = convertor.toHTML(taskText);
@@ -81,15 +83,9 @@ describe('Markdown-it', () => {
   });
 
   describe('codeblock', () => {
-    const codeblockText = '\n```javascript'
-            + '\nconst a = 100;'
-            + '\n```';
-    const wrongLanguageText = '\n```korea'
-            + '\n<div>asd</div>'
-            + '\n```';
-    const planeText = '\n```'
-            + '\n<div>asd</div>'
-            + '\n```';
+    const codeblockText = ['\n```javascript', '\nconst a = 100;', '\n```'].join('');
+    const wrongLanguageText = ['\n```korea', '\n<div>asd</div>', '\n```'].join('');
+    const planeText = ['\n```', '\n<div>asd</div>', '\n```'].join('');
 
     it('rendering Codeblock element accurately', () => {
       const codeblockHTML = convertor._markdownToHtml(codeblockText);
@@ -99,8 +95,18 @@ describe('Markdown-it', () => {
 
       expect($container.children('pre').length).toBe(1);
       expect($container.children('pre').children('code').length).toBe(1);
-      expect($container.children('pre').children('code').attr('data-language')).toBe('javascript');
-      expect($container.children('pre').children('code').hasClass('lang-javascript')).toBe(true);
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .attr('data-language')
+      ).toBe('javascript');
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .hasClass('lang-javascript')
+      ).toBe(true);
     });
     it('rendering Codeblock element accurately with highlight', () => {
       const codeblockHTML = convertor._markdownToHtmlWithCodeHighlight(codeblockText);
@@ -110,9 +116,24 @@ describe('Markdown-it', () => {
 
       expect($container.children('pre').length).toBe(1);
       expect($container.children('pre').children('code').length).toBe(1);
-      expect($container.children('pre').children('code').children('span').length).toBe(2);
-      expect($container.children('pre').children('code').attr('data-language')).toBe('javascript');
-      expect($container.children('pre').children('code').hasClass('lang-javascript')).toBe(true);
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .children('span').length
+      ).toBe(2);
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .attr('data-language')
+      ).toBe('javascript');
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .hasClass('lang-javascript')
+      ).toBe(true);
     });
     it('rendering Codeblock element with invalid language name should escape html entity', () => {
       const codeblockHTML = convertor._markdownToHtmlWithCodeHighlight(wrongLanguageText);
@@ -122,11 +143,36 @@ describe('Markdown-it', () => {
 
       expect($container.children('pre').length).toBe(1);
       expect($container.children('pre').children('code').length).toBe(1);
-      expect($container.children('pre').children('code').children('span').length).toBe(0);
-      expect($container.children('pre').children('code').children('div').length).toBe(0);
-      expect($container.children('pre').children('code').text()).toBe('<div>asd</div>\n');
-      expect($container.children('pre').children('code').attr('data-language')).toBe('korea');
-      expect($container.children('pre').children('code').hasClass('lang-korea')).toBe(true);
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .children('span').length
+      ).toBe(0);
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .children('div').length
+      ).toBe(0);
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .text()
+      ).toBe('<div>asd</div>\n');
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .attr('data-language')
+      ).toBe('korea');
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .hasClass('lang-korea')
+      ).toBe(true);
     });
     it('rendering Codeblock element without language name should escape html entity', () => {
       const codeblockHTML = convertor._markdownToHtmlWithCodeHighlight(planeText);
@@ -136,8 +182,18 @@ describe('Markdown-it', () => {
 
       expect($container.children('pre').length).toBe(1);
       expect($container.children('pre').children('code').length).toBe(1);
-      expect($container.children('pre').children('code').children('div').length).toBe(0);
-      expect($container.children('pre').children('code').text()).toBe('<div>asd</div>\n');
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .children('div').length
+      ).toBe(0);
+      expect(
+        $container
+          .children('pre')
+          .children('code')
+          .text()
+      ).toBe('<div>asd</div>\n');
     });
   });
 });

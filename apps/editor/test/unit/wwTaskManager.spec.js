@@ -34,19 +34,33 @@ describe('WwTaskManager', () => {
   });
 
   describe('Events', () => {
-    it('remove task-list class of element, it may block to merge normal list and task list' +
-            ' when wysiwygSetValueAfter fire', () => {
-      wwe.getEditor().setHTML('<ul><li class="task-list-item"><input type="checkbox">TASK</li></ul>');
+    it(
+      'remove task-list class of element, it may block to merge normal list and task list' +
+        ' when wysiwygSetValueAfter fire',
+      () => {
+        wwe
+          .getEditor()
+          .setHTML('<ul><li class="task-list-item"><input type="checkbox">TASK</li></ul>');
 
-      em.emit('wysiwygSetValueAfter');
+        em.emit('wysiwygSetValueAfter');
 
-      expect(wwe.get$Body().find('ul').eq(0).hasClass('task-list')).toEqual(false);
-    });
+        expect(
+          wwe
+            .get$Body()
+            .find('ul')
+            .eq(0)
+            .hasClass('task-list')
+        ).toEqual(false);
+      }
+    );
   });
 
   describe('formatTask()', () => {
     it('Format task to passed node', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       wwe.getEditor().setHTML('<ul><li><div><br></div></li></ul>');
 
@@ -56,10 +70,18 @@ describe('WwTaskManager', () => {
       mgr.formatTask(range.startContainer);
 
       expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
-      expect(wwe.get$Body().find('li').attr('data-te-task')).toBeDefined();
+      expect(
+        wwe
+          .get$Body()
+          .find('li')
+          .attr('data-te-task')
+      ).toBeDefined();
     });
     it('Format task to passed node that doesnt have any div', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       wwe.getEditor().setHTML('<ul><li><br></li></ul>');
 
@@ -69,15 +91,24 @@ describe('WwTaskManager', () => {
       mgr.formatTask(range.startContainer);
 
       expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
-      expect(wwe.get$Body().find('li').attr('data-te-task')).toBeDefined();
+      expect(
+        wwe
+          .get$Body()
+          .find('li')
+          .attr('data-te-task')
+      ).toBeDefined();
     });
   });
 
   describe('unformatTask()', () => {
     it('unformat task to passed node', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
-      wwe.getEditor()
+      wwe
+        .getEditor()
         .setHTML('<ul><li data-te-task class="task-list-item"><div>test</div></li></ul>');
 
       range.setStart(wwe.get$Body().find('li')[0], 0);
@@ -86,15 +117,33 @@ describe('WwTaskManager', () => {
       mgr.unformatTask(range.startContainer);
 
       expect(wwe.get$Body().find('.task-list-item').length).toEqual(0);
-      expect(wwe.get$Body().find('div').text()).toEqual('test');
-      expect(wwe.get$Body().find('li').attr('data-te-task')).not.toBeDefined();
+      expect(
+        wwe
+          .get$Body()
+          .find('div')
+          .text()
+      ).toEqual('test');
+      expect(
+        wwe
+          .get$Body()
+          .find('li')
+          .attr('data-te-task')
+      ).not.toBeDefined();
     });
     it('dont unformat to sub tasks', () => {
-      const range = wwe.getEditor().getSelection().cloneRange();
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
-      wwe.getEditor()
-        .setHTML(['<ul><li data-te-task class="task-list-item"><div>test1</div>',
-          '<ul><li data-te-task class="task-list-item"><div>test2</div></li></ul></li></ul>'].join(''));
+      wwe
+        .getEditor()
+        .setHTML(
+          [
+            '<ul><li data-te-task class="task-list-item"><div>test1</div>',
+            '<ul><li data-te-task class="task-list-item"><div>test2</div></li></ul></li></ul>'
+          ].join('')
+        );
 
       range.setStart(wwe.get$Body().find('li')[0], 0);
       range.collapse(true);
@@ -102,8 +151,19 @@ describe('WwTaskManager', () => {
       mgr.unformatTask(range.startContainer);
 
       expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
-      expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test1');
-      expect(wwe.get$Body().find('li').attr('data-te-task')).not.toBeDefined();
+      expect(
+        wwe
+          .get$Body()
+          .find('div')
+          .eq(0)
+          .text()
+      ).toEqual('test1');
+      expect(
+        wwe
+          .get$Body()
+          .find('li')
+          .attr('data-te-task')
+      ).not.toBeDefined();
     });
   });
 });

@@ -20,10 +20,13 @@ class PopupDropdownToolbar extends LayerPopup {
   static OPEN_EVENT = 'openDropdownToolbar';
 
   constructor(options) {
-    options = util.extend({
-      header: false,
-      className: 'te-dropdown-toolbar'
-    }, options);
+    options = util.extend(
+      {
+        header: false,
+        className: 'te-dropdown-toolbar'
+      },
+      options
+    );
     super(options);
   }
 
@@ -113,7 +116,7 @@ class PopupDropdownToolbar extends LayerPopup {
   _initInstance(options) {
     super._initInstance(options);
 
-    const {$button, eventManager} = options;
+    const { $button, eventManager } = options;
 
     this._$button = $button;
     this._eventManager = eventManager;
@@ -143,6 +146,7 @@ class PopupDropdownToolbar extends LayerPopup {
     this._eventManager.listen('closeAllPopup', () => this.hide());
     this._eventManager.listen(PopupDropdownToolbar.OPEN_EVENT, () => {
       const isShown = this.isShow();
+
       this._eventManager.emit('closeAllPopup');
       if (!isShown) {
         this.show();

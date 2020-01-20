@@ -113,12 +113,24 @@ describe('Table - AddRow', () => {
     AddRow.exec(wwe);
 
     expect(wwe.get$Body().find('tbody tr').length).toBe(2);
-    expect(wwe.get$Body().find('tbody tr').eq(0).text()).toBe('');
-    expect(wwe.get$Body().find('tbody tr').eq(1).text()).toBe('34');
+    expect(
+      wwe
+        .get$Body()
+        .find('tbody tr')
+        .eq(0)
+        .text()
+    ).toBe('');
+    expect(
+      wwe
+        .get$Body()
+        .find('tbody tr')
+        .eq(1)
+        .text()
+    ).toBe('34');
     expect(wwe.get$Body().find('tbody td').length).toBe(4);
   });
 
-  it('focus to new row\'s first td', () => {
+  it("focus to new row's first td", () => {
     const sq = wwe.getEditor(),
       range = sq.getSelection().cloneRange();
 

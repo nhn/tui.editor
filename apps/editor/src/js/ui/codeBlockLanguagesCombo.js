@@ -21,7 +21,9 @@ class CodeBlockLanguagesCombo {
   }
 
   _initDOM() {
-    this._inputLanguage = $(`<input type="text" maxlength="20" placeholder="${i18n.get('Choose language')}">`).get(0);
+    this._inputLanguage = $(
+      `<input type="text" maxlength="20" placeholder="${i18n.get('Choose language')}">`
+    ).get(0);
     this._wrapper = $(`<span class="te-input-language">`).get(0);
     this._wrapper.appendChild(this._inputLanguage);
   }
@@ -45,6 +47,7 @@ class CodeBlockLanguagesCombo {
    */
   _showPopupCodeBlockLanguages() {
     const clientRect = this._inputLanguage.getBoundingClientRect();
+
     $(this._wrapper).toggleClass('active', true);
     this.active = true;
 
@@ -65,6 +68,7 @@ class CodeBlockLanguagesCombo {
 
   _toggleFocus() {
     const inputLanguage = this._inputLanguage;
+
     if ($(this._wrapper).hasClass('active')) {
       inputLanguage.blur();
     } else {
@@ -81,26 +85,30 @@ class CodeBlockLanguagesCombo {
   _onKeyEvent(event) {
     if (this._popupCodeBlockLanguages) {
       switch (event.which) {
-      case KeyMapper.keyCode('UP'):
-        this._popupCodeBlockLanguages.prev();
-        event.preventDefault();
-        break;
-      case KeyMapper.keyCode('DOWN'):
-        this._popupCodeBlockLanguages.next();
-        event.preventDefault();
-        break;
-      case KeyMapper.keyCode('ENTER'):
-      case KeyMapper.keyCode('TAB'): {
-        const language = this._popupCodeBlockLanguages.getCurrentLanguage();
-        this._inputLanguage.value = language;
-        this._storeInputLanguage();
-        event.preventDefault();
-        break;
+        case KeyMapper.keyCode('UP'):
+          this._popupCodeBlockLanguages.prev();
+          event.preventDefault();
+          break;
+        case KeyMapper.keyCode('DOWN'):
+          this._popupCodeBlockLanguages.next();
+          event.preventDefault();
+          break;
+        case KeyMapper.keyCode('ENTER'):
+        case KeyMapper.keyCode('TAB'): {
+          const language = this._popupCodeBlockLanguages.getCurrentLanguage();
+
+          this._inputLanguage.value = language;
+          this._storeInputLanguage();
+          event.preventDefault();
+          break;
+        }
+        default:
+          this._popupCodeBlockLanguages.hide();
       }
-      default:
-        this._popupCodeBlockLanguages.hide();
-      }
-    } else if (event.which === KeyMapper.keyCode('ENTER') || event.which === KeyMapper.keyCode('TAB')) {
+    } else if (
+      event.which === KeyMapper.keyCode('ENTER') ||
+      event.which === KeyMapper.keyCode('TAB')
+    ) {
       this._storeInputLanguage();
       event.preventDefault();
     }

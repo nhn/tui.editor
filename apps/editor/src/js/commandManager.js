@@ -6,7 +6,7 @@ import $ from 'jquery';
 import util from 'tui-code-snippet';
 
 import Command from './command';
-import {isMac} from './util';
+import { isMac } from './util';
 
 const KEYMAP_OS_INDEX = isMac ? 1 : 0;
 
@@ -22,9 +22,12 @@ class CommandManager {
     this._command = new util.Map();
     this._mdCommand = new util.Map();
     this._wwCommand = new util.Map();
-    this._options = $.extend({
-      'useCommandShortcut': true
-    }, options);
+    this._options = $.extend(
+      {
+        useCommandShortcut: true
+      },
+      options
+    );
 
     this.base = base;
 
@@ -40,7 +43,7 @@ class CommandManager {
    * @private
    */
   _addCommandBefore(command) {
-    const commandWrapper = {command};
+    const commandWrapper = { command };
 
     this.base.eventManager.emit('addCommandBefore', commandWrapper);
 

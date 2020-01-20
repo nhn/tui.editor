@@ -12,25 +12,29 @@
  * @ignore
  */
 var MarkdownitCodeBlockRenderer = function(markdownit) {
-    markdownit.core.ruler.after('block', 'tui-code-block', function(state) {
-        var DEFAULT_NUMBER_OF_BACKTICKS = 3;
-        var tokens = state.tokens;
-        var currentToken, tokenIndex, numberOfBackticks;
+  markdownit.core.ruler.after('block', 'tui-code-block', function(state) {
+    var DEFAULT_NUMBER_OF_BACKTICKS = 3;
+    var tokens = state.tokens;
+    var currentToken, tokenIndex, numberOfBackticks;
 
-        for (tokenIndex = 0; tokenIndex < tokens.length; tokenIndex += 1) {
-            currentToken = tokens[tokenIndex];
+    for (tokenIndex = 0; tokenIndex < tokens.length; tokenIndex += 1) {
+      currentToken = tokens[tokenIndex];
 
-            if (isCodeFenceToken(currentToken)) {
-                numberOfBackticks = currentToken.markup.length;
-                if (numberOfBackticks > DEFAULT_NUMBER_OF_BACKTICKS) {
-                    setTokenAttribute(currentToken, 'data-backticks', numberOfBackticks, true);
-                }
-                if (currentToken.info) {
-                    setTokenAttribute(currentToken, 'data-language', escape(currentToken.info.replace(' ', ''), true));
-                }
-            }
+      if (isCodeFenceToken(currentToken)) {
+        numberOfBackticks = currentToken.markup.length;
+        if (numberOfBackticks > DEFAULT_NUMBER_OF_BACKTICKS) {
+          setTokenAttribute(currentToken, 'data-backticks', numberOfBackticks, true);
         }
-    });
+        if (currentToken.info) {
+          setTokenAttribute(
+            currentToken,
+            'data-language',
+            escape(currentToken.info.replace(' ', ''), true)
+          );
+        }
+      }
+    }
+  });
 };
 
 /**
@@ -41,14 +45,14 @@ var MarkdownitCodeBlockRenderer = function(markdownit) {
  * @ignore
  */
 function setTokenAttribute(token, attributeName, attributeValue) {
-    var index = token.attrIndex(attributeName);
-    var attr = [attributeName, attributeValue];
+  var index = token.attrIndex(attributeName);
+  var attr = [attributeName, attributeValue];
 
-    if (index < 0) {
-        token.attrPush(attr);
-    } else {
-        token.attrs[index] = attr;
-    }
+  if (index < 0) {
+    token.attrPush(attr);
+  } else {
+    token.attrs[index] = attr;
+  }
 }
 /**
  * Return boolean value whether passed token is code fence or not
@@ -57,9 +61,7 @@ function setTokenAttribute(token, attributeName, attributeValue) {
  * @ignore
  */
 function isCodeFenceToken(token) {
-    return token.block === true
-        && token.tag === 'code'
-        && token.type === 'fence';
+  return token.block === true && token.tag === 'code' && token.type === 'fence';
 }
 
 /**
@@ -70,7 +72,8 @@ function isCodeFenceToken(token) {
  * @ignore
  */
 function escape(html, encode) {
-    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
+  return html
+    .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')

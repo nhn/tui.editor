@@ -231,7 +231,7 @@ const KEYBOARD_MAP = [
   '[', // [219]
   '\\', // [220]
   ']', // [221]
-  '\'', // [222]
+  "'", // [222]
   '', // [223]
   'META', // [224]
   'ALTGR', // [225]
@@ -287,6 +287,7 @@ class KeyMapper {
    */
   _setSplitter(options) {
     const splitter = options ? options.splitter : '+';
+
     this._splitter = splitter;
   }
 

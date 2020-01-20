@@ -110,15 +110,15 @@ class MdListManager {
     let fn;
 
     switch (type) {
-    case 'ol':
-    case 'ul':
-      fn = (lineNumber) => this._changeToList(lineNumber, type);
-      break;
-    case 'task':
-      fn = (lineNumber) => this._changeToTask(lineNumber);
-      break;
-    default:
-      break;
+      case 'ol':
+      case 'ul':
+        fn = lineNumber => this._changeToList(lineNumber, type);
+        break;
+      case 'task':
+        fn = lineNumber => this._changeToTask(lineNumber);
+        break;
+      default:
+        break;
     }
 
     return fn;
@@ -132,10 +132,7 @@ class MdListManager {
   changeSyntax(range, type) {
     const newListLine = [];
     const lineRange = this._createSortedLineRange(range);
-    const {
-      start: startLineNumber,
-      end: endLineNumber
-    } = lineRange;
+    const { start: startLineNumber, end: endLineNumber } = lineRange;
 
     const changeFn = this._getChangeFn(type);
 
@@ -174,17 +171,21 @@ class MdListManager {
   _changeToList(lineNumber, type) {
     if (this._isListLine(lineNumber)) {
       // If type is ol, need ordinal number.
-      this._changeSameDepthList(lineNumber, type === 'ol' ?
-        (lineNum, ordinalNumber) => {
-          this._replaceListTypeToOL(lineNum, ordinalNumber);
-        } :
-        (lineNum) => {
-          this._replaceListTypeToUL(lineNum);
-        });
+      this._changeSameDepthList(
+        lineNumber,
+        type === 'ol'
+          ? (lineNum, ordinalNumber) => {
+              this._replaceListTypeToOL(lineNum, ordinalNumber);
+            }
+          : lineNum => {
+              this._replaceListTypeToUL(lineNum);
+            }
+      );
     } else {
       this._replaceLineText(
-        type === 'ol' ? `${this._calculateOrdinalNumber(lineNumber)}. ` : '* '
-        , lineNumber);
+        type === 'ol' ? `${this._calculateOrdinalNumber(lineNumber)}. ` : '* ',
+        lineNumber
+      );
     }
   }
 
@@ -204,12 +205,14 @@ class MdListManager {
   }
 
   _getListDepth(lineNumber) {
-    return this.doc.getLine(lineNumber) ? this.doc.cm.getStateAfter(lineNumber).base.listStack.length : 0;
+    return this.doc.getLine(lineNumber)
+      ? this.doc.cm.getStateAfter(lineNumber).base.listStack.length
+      : 0;
   }
 
   _findSameDepthList(listNumber, depth, isIncrease) {
     const lineCount = this.doc.lineCount();
-    let result = [];
+    const result = [];
     let i = listNumber;
     let currentLineDepth;
 
@@ -297,10 +300,10 @@ class MdListManager {
    * @private
    */
   _insertBlankLineForNewList(newListLines) {
-    const {length} = newListLines;
+    const { length } = newListLines;
 
     if (length) {
-      const startLineNumber = newListLines[0];
+      const [startLineNumber] = newListLines;
       const endLineNumber = newListLines[length - 1];
 
       if (this._isNotBlankNotListLine(endLineNumber + 1)) {

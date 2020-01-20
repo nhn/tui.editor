@@ -50,8 +50,9 @@ class LazyRunner {
 
   _runRegisteredRun(lazyRunName, params, context, delay) {
     const lazyRunFunction = this.lazyRunFunctions[lazyRunName];
-    const {fn} = lazyRunFunction;
-    let {TOID} = lazyRunFunction;
+    const { fn } = lazyRunFunction;
+    let { TOID } = lazyRunFunction;
+
     delay = delay || lazyRunFunction.delay;
     context = context || lazyRunFunction.context;
 

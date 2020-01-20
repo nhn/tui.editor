@@ -32,7 +32,10 @@ describe('WwClipboardManager', () => {
     });
     it('Extend start selection if whole content of startContainer are contained', () => {
       wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
-      let range = wwe.getEditor().getSelection().cloneRange();
+      let range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 0);
       range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 3);
@@ -48,7 +51,10 @@ describe('WwClipboardManager', () => {
 
     it('Extend end selection if whole content of endContainer are contained', () => {
       wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
-      let range = wwe.getEditor().getSelection().cloneRange();
+      let range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 3);
       range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 5);
@@ -64,7 +70,10 @@ describe('WwClipboardManager', () => {
 
     it('if selection area is whole content of commonAncestorContainer then select commonAncestorContainer', () => {
       wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
-      let range = wwe.getEditor().getSelection().cloneRange();
+      let range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 0);
       range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 5);
@@ -78,7 +87,10 @@ describe('WwClipboardManager', () => {
 
     it('if selection area is whole text content of one element then extend to commonAncestorContainer', () => {
       wwe.getEditor().setHTML('<h1>hello world<br></h1>');
-      let range = wwe.getEditor().getSelection().cloneRange();
+      let range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       range.setStart(wwe.get$Body().find('h1')[0].firstChild, 0);
       range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);
@@ -94,7 +106,10 @@ describe('WwClipboardManager', () => {
 
     it('if partial text selected of one text node then dont do anything', () => {
       wwe.getEditor().setHTML('<h1>hello world<br></h1>');
-      let range = wwe.getEditor().getSelection().cloneRange();
+      let range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
 
       range.setStart(wwe.get$Body().find('h1')[0].firstChild, 5);
       range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);

@@ -30,7 +30,10 @@ describe('Code', () => {
   });
 
   it('add code', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('line');
 
@@ -43,7 +46,10 @@ describe('Code', () => {
   });
 
   it('collapse range after code added', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('line');
 
@@ -52,12 +58,14 @@ describe('Code', () => {
 
     Code.exec(wwe);
 
-    expect(wwe.getEditor().getSelection().collapsed)
-      .toBe(true);
+    expect(wwe.getEditor().getSelection().collapsed).toBe(true);
   });
 
   it('if there have bold remove and add code', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('<b>line</b>');
 
@@ -70,7 +78,10 @@ describe('Code', () => {
   });
 
   it('if there have italic remove and add code', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('<i>line</i>');
 
@@ -83,7 +94,10 @@ describe('Code', () => {
   });
 
   it('if there have code already stop code tag', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('<code>line&#8203;</code>');
 

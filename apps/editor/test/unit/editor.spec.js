@@ -8,8 +8,8 @@ import util from 'tui-code-snippet';
 
 import Editor from '@/editor';
 import Convertor from '@/convertor';
-import {CodeBlockManager} from '@/codeBlockManager';
-import {I18n} from '@/i18n';
+import { CodeBlockManager } from '@/codeBlockManager';
+import { I18n } from '@/i18n';
 import Button from '@/ui/button';
 import WwCodeBlockManager from '@/wwCodeBlockManager';
 import WwTableManager from '@/wwTableManager';
@@ -26,7 +26,7 @@ describe('Editor', () => {
     it('markdownitHighlight should be MarkdownIt instance', () => {
       expect(Editor.markdownitHighlight instanceof MarkdownIt).toBe(true);
     });
-    it('domUtils should have it\' functions', () => {
+    it("domUtils should have it' functions", () => {
       expect(typeof Editor.domUtils.getNodeName).toBe('function');
     });
     it('codeBlockManager should be CodeBlockManager instance', () => {
@@ -55,10 +55,7 @@ describe('Editor', () => {
   describe('Api', () => {
     beforeEach(() => {
       jasmine.getStyleFixtures().fixturesPath = '/base';
-      loadStyleFixtures(
-        'node_modules/codemirror/lib/codemirror.css',
-        'src/css/tui-editor.css'
-      );
+      loadStyleFixtures('node_modules/codemirror/lib/codemirror.css', 'src/css/tui-editor.css');
       container = document.createElement('div');
       document.body.appendChild(container);
 
@@ -94,6 +91,7 @@ describe('Editor', () => {
         editor.changeMode('wysiwyg');
 
         const range = editor.wwEditor.getRange();
+
         expect(range.startContainer.textContent).toEqual('text 2');
         expect(container.contains(document.activeElement)).toEqual(true);
 
@@ -101,6 +99,7 @@ describe('Editor', () => {
         editor.changeMode('markdown');
 
         const cursor = editor.mdEditor.getCursor();
+
         expect(cursor.line).toEqual(1);
         expect(cursor.ch).toEqual(6);
         expect(container.contains(document.activeElement)).toEqual(true);
@@ -110,6 +109,7 @@ describe('Editor', () => {
         editor.changeMode('wysiwyg', true);
 
         const range = editor.wwEditor.getRange();
+
         expect(range.startContainer.textContent).toEqual('text 1');
         expect(range.startOffset).toEqual(0);
         expect(container.contains(document.activeElement)).toEqual(false);
@@ -117,6 +117,7 @@ describe('Editor', () => {
         editor.changeMode('markdown', true);
 
         const cursor = editor.mdEditor.getCursor();
+
         expect(cursor.line).toEqual(0);
         expect(cursor.ch).toEqual(0);
         expect(container.contains(document.activeElement)).toEqual(false);
@@ -142,6 +143,7 @@ describe('Editor', () => {
     describe('height("auto") and minHeight()', () => {
       it('set editor height "auto" to fit contents height of wysiwyg', () => {
         const height = $('.te-ww-container .te-editor').height();
+
         editor.height('auto');
         editor.changeMode('wysiwyg');
         editor.setMarkdown('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
@@ -150,6 +152,7 @@ describe('Editor', () => {
 
       it('set editor height "auto" to fit contents height of markdown', () => {
         const height = $('.te-md-container .te-editor').height();
+
         editor.height('auto');
         editor.setMarkdown('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
         expect($('.te-md-container .te-editor').height()).not.toEqual(height);
@@ -159,6 +162,7 @@ describe('Editor', () => {
         editor.height('auto');
 
         const rect = container.getBoundingClientRect();
+
         expect(rect.bottom - rect.top).toBeGreaterThan(100);
       });
 
@@ -167,6 +171,7 @@ describe('Editor', () => {
         editor.minHeight('300px');
 
         const rect = container.getBoundingClientRect();
+
         expect(rect.bottom - rect.top).toEqual(300);
       });
     });
@@ -206,13 +211,16 @@ describe('Editor', () => {
         editor.changeMode('markdown');
         editor.setValue('selected text');
 
-        editor.mdEditor.cm.setSelection({
-          line: 0,
-          ch: 9
-        }, {
-          line: 0,
-          ch: 13
-        });
+        editor.mdEditor.cm.setSelection(
+          {
+            line: 0,
+            ch: 9
+          },
+          {
+            line: 0,
+            ch: 13
+          }
+        );
 
         expect(editor.getSelectedText()).toEqual('text');
       });
@@ -221,9 +229,10 @@ describe('Editor', () => {
         editor.changeMode('wysiwyg');
         editor.setValue('selected text');
 
-        const wwEditor = editor.wwEditor;
+        const { wwEditor } = editor;
         const selection = wwEditor.editor.getSelection().cloneRange();
         const textElement = wwEditor.get$Body().find('div')[0].firstChild;
+
         selection.setStart(textElement, 9);
         selection.setEnd(textElement, 13);
         wwEditor.editor.setSelection(selection);
@@ -255,9 +264,11 @@ describe('Editor', () => {
       });
 
       const xss = '<script>alert("xss");</script>';
+
       editor.setValue(xss);
 
       const content = editor.preview.getHTML();
+
       expect(content).toBe('');
     });
 
@@ -270,9 +281,11 @@ describe('Editor', () => {
       });
 
       const xss = '<script>alert("xss");</script>';
+
       editor.setValue(xss);
 
       const content = editor.getHtml();
+
       expect(content).toBe('<script data-tomark-pass="">alert("xss");</script>');
     });
   });
@@ -288,6 +301,38 @@ describe('Editor', () => {
         editor.remove();
         container.parentNode.removeChild(container);
         done();
+      });
+    });
+
+    describe('plugins', () => {
+      it('should invoke plugin functions', () => {
+        const fooPlugin = jasmine.createSpy('fooPlugin');
+        const barPlugin = jasmine.createSpy('barPlugin');
+
+        editor = new Editor({
+          el: container,
+          plugins: [fooPlugin, barPlugin]
+        });
+
+        expect(fooPlugin).toHaveBeenCalledWith(editor);
+        expect(barPlugin).toHaveBeenCalledWith(editor);
+      });
+
+      it('should invoke plugin function with options of plugin', () => {
+        const plugin = jasmine.createSpy(plugin);
+        const options = {};
+
+        editor = new Editor({
+          el: container,
+          plugins: [
+            {
+              plugin,
+              options
+            }
+          ]
+        });
+
+        expect(plugin).toHaveBeenCalledWith(editor, options);
       });
     });
 
@@ -320,7 +365,11 @@ describe('Editor', () => {
           el: container
         });
 
-        const toolbarItems = editor.getUI().getToolbar().getItems();
+        const toolbarItems = editor
+          .getUI()
+          .getToolbar()
+          .getItems();
+
         expect(toolbarItems[0].getName()).toBe('heading');
         expect(toolbarItems[1].getName()).toBe('bold');
         expect(toolbarItems[2].getName()).toBe('italic');
@@ -364,7 +413,11 @@ describe('Editor', () => {
           ]
         });
 
-        const toolbarItems = editor.getUI().getToolbar().getItems();
+        const toolbarItems = editor
+          .getUI()
+          .getToolbar()
+          .getItems();
+
         expect(toolbarItems[0].getName()).toBe('bold');
         expect(toolbarItems[1].getName()).toBe('divider');
         expect(toolbarItems[2].getName()).toBe('testButton');
@@ -380,6 +433,7 @@ describe('Editor', () => {
         });
 
         const modeSwitch = editor.getUI().getModeSwitch();
+
         expect(modeSwitch.isShown()).toBe(false);
       });
 
@@ -389,6 +443,7 @@ describe('Editor', () => {
         });
 
         const modeSwitch = editor.getUI().getModeSwitch();
+
         expect(modeSwitch.isShown()).toBe(true);
       });
     });
@@ -402,8 +457,7 @@ describe('Editor', () => {
       });
 
       it('should use custom convertor if the option value is set', () => {
-        const CustomConvertor = class extends Convertor {
-        };
+        const CustomConvertor = class extends Convertor {};
 
         editor = new Editor({
           el: container,

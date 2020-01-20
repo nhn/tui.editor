@@ -5,10 +5,7 @@
 import ScrollSyncSplit from '@/ui/scrollSyncSplit';
 
 describe('ScrollSyncSplit', () => {
-  let scrollSyncSplit,
-    leftElement,
-    rightElement,
-    container;
+  let scrollSyncSplit, leftElement, rightElement, container;
 
   beforeEach(done => {
     jasmine.getStyleFixtures().fixturesPath = '/base';

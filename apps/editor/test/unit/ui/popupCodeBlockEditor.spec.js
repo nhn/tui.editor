@@ -9,13 +9,12 @@ import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
 
 describe('PopupCodeBlockEditor', () => {
-  let eventManager,
-    popup,
-    pre;
+  let eventManager, popup, pre;
 
   beforeEach(() => {
     eventManager = new EventManager();
     const convertor = new Convertor(eventManager);
+
     popup = new PopupCodeBlockEditor({
       eventManager,
       convertor
@@ -29,6 +28,7 @@ describe('PopupCodeBlockEditor', () => {
 
   it('should not be opened without code block element', () => {
     const openPopup = () => eventManager.emit('openPopupCodeBlockEditor');
+
     expect(openPopup).toThrow();
   });
 

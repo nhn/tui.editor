@@ -53,7 +53,7 @@ describe('CodeMirrorExt', () => {
       expect(codeMirrorExt.getValue()).toEqual('test');
     });
 
-    it('replace with current cursor\'s containers offset', () => {
+    it("replace with current cursor's containers offset", () => {
       codeMirrorExt.replaceSelection('t');
       codeMirrorExt.replaceSelection('e');
       codeMirrorExt.replaceSelection('s');

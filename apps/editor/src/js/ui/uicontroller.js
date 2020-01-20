@@ -52,9 +52,12 @@ class UIController {
   _id;
 
   constructor(options = {}) {
-    options = util.extend({
-      tagName: 'div'
-    }, options);
+    options = util.extend(
+      {
+        tagName: 'div'
+      },
+      options
+    );
 
     this.tagName = options.tagName;
 
@@ -86,7 +89,7 @@ class UIController {
    * @private
    */
   _addEvent(type, fn) {
-    const {event, selector} = this._parseEventType(type);
+    const { event, selector } = this._parseEventType(type);
 
     if (selector) {
       this.$el.on(event, selector, fn);
@@ -102,7 +105,7 @@ class UIController {
    */
   off(type, fn) {
     if (type) {
-      const {event, selector} = this._parseEventType(type);
+      const { event, selector } = this._parseEventType(type);
 
       if (selector) {
         this.$el.off(event, selector, fn);
@@ -138,11 +141,11 @@ class UIController {
    * @private
    */
   _setRootElement($el) {
-    const {tagName} = this;
-    let {className} = this;
+    const { tagName } = this;
+    let { className } = this;
 
     if (!$el) {
-      className = className || (`uic${this._id}`);
+      className = className || `uic${this._id}`;
       $el = $(`<${tagName} class="${className}"/>`);
     }
     this.$el = $el;
@@ -158,7 +161,8 @@ class UIController {
 
   _getEventNameWithNamespace(event) {
     const eventSplited = event.split(' ');
-    eventSplited[0] += (`.uicEvent${this._id}`);
+
+    eventSplited[0] += `.uicEvent${this._id}`;
 
     return eventSplited.join(' ');
   }

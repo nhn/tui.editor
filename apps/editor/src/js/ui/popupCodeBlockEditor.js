@@ -37,14 +37,18 @@ class PopupCodeBlockEditor extends LayerPopup {
                 <button type="button" class="${CLASS_CLOSE_BUTTON}">${i18n.get('Cancel')}</button>
             </div>
         `;
-    options = util.extend({
-      header: true,
-      title: 'CodeBlock Editor',
-      content: TEMPLATE_CONTENT,
-      className: 'tui-popup-code-block-editor',
-      headerButtons: TEMPLATE_HEADER_BUTTONS,
-      modal: true
-    }, options);
+
+    options = util.extend(
+      {
+        header: true,
+        title: 'CodeBlock Editor',
+        content: TEMPLATE_CONTENT,
+        className: 'tui-popup-code-block-editor',
+        headerButtons: TEMPLATE_HEADER_BUTTONS,
+        modal: true
+      },
+      options
+    );
     super(options);
   }
 
@@ -71,6 +75,7 @@ class PopupCodeBlockEditor extends LayerPopup {
     super._initDOM(options);
 
     const el = this.$el.get(0);
+
     this._body = el.querySelector(`.${CLASS_PREFIX}body`);
     this._toggleFitButton = el.querySelector(`.${CLASS_PREFIX}toggle-fit`);
     this._togglePreviewButton = el.querySelector(`.${CLASS_PREFIX}toggle-preview`);
@@ -80,7 +85,11 @@ class PopupCodeBlockEditor extends LayerPopup {
 
     this._codeMirrorWrapper = this._createCodeBlockEditor();
     this._previewWrapper = this._createPreview();
-    this._scrollSyncSplit = new ScrollSyncSplit(this._body, this._codeMirrorWrapper, this._previewWrapper);
+    this._scrollSyncSplit = new ScrollSyncSplit(
+      this._body,
+      this._codeMirrorWrapper,
+      this._previewWrapper
+    );
 
     this._updateFitWindowButton();
     this._updatePreviewButton();
@@ -131,6 +140,7 @@ class PopupCodeBlockEditor extends LayerPopup {
 
   _createCodeBlockEditor() {
     const codeMirrorWrapper = document.createElement('div');
+
     codeMirrorWrapper.className = `${CLASS_PREFIX}editor-wrapper`;
 
     this._codeBlockEditor = new CodeBlockEditor(codeMirrorWrapper, this.eventManager);
@@ -140,6 +150,7 @@ class PopupCodeBlockEditor extends LayerPopup {
 
   _createPreview() {
     const previewWrapper = document.createElement('div');
+
     this._codeBlockPreview = new CodeBlockPreview(
       $(previewWrapper),
       this.eventManager,

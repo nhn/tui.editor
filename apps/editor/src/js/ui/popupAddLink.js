@@ -28,12 +28,16 @@ class PopupAddLink extends LayerPopup {
                 <button type="button" class="te-close-button">${i18n.get('Cancel')}</button>
             </div>
         `;
-    options = util.extend({
-      header: true,
-      title: i18n.get('Insert link'),
-      className: 'te-popup-add-link tui-editor-popup',
-      content: POPUP_CONTENT
-    }, options);
+
+    options = util.extend(
+      {
+        header: true,
+        title: i18n.get('Insert link'),
+        className: 'te-popup-add-link tui-editor-popup',
+        content: POPUP_CONTENT
+      },
+      options
+    );
     super(options);
   }
 
@@ -60,6 +64,7 @@ class PopupAddLink extends LayerPopup {
     super._initDOM();
 
     const el = this.$el.get(0);
+
     this._inputText = el.querySelector('.te-link-text-input');
     this._inputURL = el.querySelector('.te-url-input');
   }
@@ -103,6 +108,7 @@ class PopupAddLink extends LayerPopup {
     super._initEditorEvent();
 
     const eventManager = this._eventManager;
+
     eventManager.listen('focus', () => this.hide());
     eventManager.listen('closeAllPopup', () => this.hide());
     eventManager.listen('openPopupAddLink', () => {
@@ -112,7 +118,7 @@ class PopupAddLink extends LayerPopup {
   }
 
   _addLink() {
-    const {url, linkText} = this._getValue();
+    const { url, linkText } = this._getValue();
 
     this._clearValidationStyle();
 

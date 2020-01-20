@@ -12,36 +12,39 @@ import CommandManager from '../commandManager';
  * @module markdownCommands/Table
  * @ignore
  */
-const Table = CommandManager.command('markdown', /** @lends Table */{
-  name: 'Table',
-  /**
-   * Command handler
-   * @param {MarkdownEditor} mde MarkdownEditor instance
-   * @param {number} col column count
-   * @param {number} row row count
-   * @param {Array} data initial table data
-   */
-  exec(mde, col, row, data) {
-    const cm = mde.getEditor();
-    const doc = cm.getDoc();
-    let table = '\n';
+const Table = CommandManager.command(
+  'markdown',
+  /** @lends Table */ {
+    name: 'Table',
+    /**
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
+     * @param {number} col column count
+     * @param {number} row row count
+     * @param {Array} data initial table data
+     */
+    exec(mde, col, row, data) {
+      const cm = mde.getEditor();
+      const doc = cm.getDoc();
+      let table = '\n';
 
-    if (cm.getCursor().ch > 0) {
-      table += '\n';
+      if (cm.getCursor().ch > 0) {
+        table += '\n';
+      }
+
+      table += makeHeader(col, data);
+      table += makeBody(col, row - 1, data);
+
+      doc.replaceSelection(table);
+
+      if (!data) {
+        cm.setCursor(cm.getCursor().line - row, 2);
+      }
+
+      mde.focus();
     }
-
-    table += makeHeader(col, data);
-    table += makeBody(col, row - 1, data);
-
-    doc.replaceSelection(table);
-
-    if (!data) {
-      cm.setCursor(cm.getCursor().line - row, 2);
-    }
-
-    mde.focus();
   }
-});
+);
 
 /**
  * makeHeader

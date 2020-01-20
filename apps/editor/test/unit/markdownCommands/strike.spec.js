@@ -48,13 +48,16 @@ describe('Strike', () => {
     });
 
     it('around selected area', () => {
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 0,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 0,
+          ch: 7
+        }
+      );
 
       Strike.exec(mde);
 
@@ -64,13 +67,16 @@ describe('Strike', () => {
     it('should remove strike syntax in the middle of the given range', () => {
       cm.setValue('my~~text~~1');
 
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 0,
-        ch: 11
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 0,
+          ch: 11
+        }
+      );
 
       Strike.exec(mde);
 
@@ -80,13 +86,16 @@ describe('Strike', () => {
     it('in select text that is collapsed bold', () => {
       cm.setValue('**text**');
 
-      doc.setSelection({
-        line: 0,
-        ch: 2
-      }, {
-        line: 0,
-        ch: 6
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 2
+        },
+        {
+          line: 0,
+          ch: 6
+        }
+      );
 
       Strike.exec(mde);
 
@@ -96,24 +105,30 @@ describe('Strike', () => {
 
   describe('remove strike', () => {
     it('selected area', () => {
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 0,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 0,
+          ch: 7
+        }
+      );
 
       Strike.exec(mde);
 
       expect(cm.getValue()).toEqual(['~~mytext1~~', '', 'mytext2', 'mytext3'].join('\n'));
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 0,
-        ch: 11
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 0,
+          ch: 11
+        }
+      );
 
       Strike.exec(mde);
 
@@ -122,13 +137,16 @@ describe('Strike', () => {
 
     it('selected only text that is collapsed strike', () => {
       cm.setValue('~~test~~');
-      doc.setSelection({
-        line: 0,
-        ch: 2
-      }, {
-        line: 0,
-        ch: 6
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 2
+        },
+        {
+          line: 0,
+          ch: 6
+        }
+      );
 
       Strike.exec(mde);
 

@@ -34,7 +34,10 @@ describe('Bold', () => {
   });
 
   it('add bold to current selection', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('line1<br />line2');
 
@@ -47,7 +50,10 @@ describe('Bold', () => {
   });
 
   it('if there have bold already remove format', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('line1<br />line2');
 
@@ -61,7 +67,10 @@ describe('Bold', () => {
   });
 
   it('if there have bold already remove format in colappsed selection', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('<b>line</b>');
 
@@ -76,7 +85,10 @@ describe('Bold', () => {
   });
 
   it('if there have italic apply bold into italic', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('<i>line</i>');
 
@@ -89,7 +101,10 @@ describe('Bold', () => {
   });
 
   it('if there have code remove and add bold', () => {
-    const range = wwe.getEditor().getSelection().cloneRange();
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
 
     wwe.setValue('<code>line</code>');
 

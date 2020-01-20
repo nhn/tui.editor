@@ -38,8 +38,7 @@ describe('WwListManager', () => {
 
   describe('_findAndRemoveEmptyList()', () => {
     it('remove ul that without li element within.', () => {
-      wwe.setValue(['<ul>this will deleted</ul>',
-        '<ol>and this too</ol>'].join(''));
+      wwe.setValue(['<ul>this will deleted</ul>', '<ol>and this too</ol>'].join(''));
 
       expect(wwe.get$Body().find('ul').length).toEqual(1);
       expect(wwe.get$Body().find('ol').length).toEqual(1);
@@ -50,14 +49,16 @@ describe('WwListManager', () => {
       expect(wwe.get$Body().find('ol').length).toEqual(0);
     });
     it('do not remove when ul have li element within.', () => {
-      wwe.setValue([
-        '<ul>',
-        '<li><div>survived!</div></li>',
-        '</ul>',
-        '<ol>',
-        '<li><div>me too!</div></li>',
-        '</ol>'
-      ].join(''));
+      wwe.setValue(
+        [
+          '<ul>',
+          '<li><div>survived!</div></li>',
+          '</ul>',
+          '<ol>',
+          '<li><div>me too!</div></li>',
+          '</ol>'
+        ].join('')
+      );
 
       expect(wwe.get$Body().find('ul').length).toEqual(1);
       expect(wwe.get$Body().find('ol').length).toEqual(1);
@@ -65,20 +66,32 @@ describe('WwListManager', () => {
       mgr._findAndRemoveEmptyList();
 
       expect(wwe.get$Body().find('ul').length).toEqual(1);
-      expect(wwe.get$Body().find('ul li').text()).toEqual('survived!');
-      expect(wwe.get$Body().find('ol li').text()).toEqual('me too!');
+      expect(
+        wwe
+          .get$Body()
+          .find('ul li')
+          .text()
+      ).toEqual('survived!');
+      expect(
+        wwe
+          .get$Body()
+          .find('ol li')
+          .text()
+      ).toEqual('me too!');
     });
   });
 
   describe('convert from/to arbitrary nesting list', () => {
     it('_convertToArbitraryNestingList should convert nested ul to arbitrary nested ul', () => {
-      expect(mgr._convertToArbitraryNestingList('<ul><li>text<ul><li>text2</li></ul></li></ul>'))
-        .toBe('<ul><li>text</li><ul><li>text2</li></ul></ul>');
+      expect(
+        mgr._convertToArbitraryNestingList('<ul><li>text<ul><li>text2</li></ul></li></ul>')
+      ).toBe('<ul><li>text</li><ul><li>text2</li></ul></ul>');
     });
 
     it('_convertFromArbitraryNestingList should convert nested ul to arbitrary nested ul', () => {
-      expect(mgr._convertFromArbitraryNestingList('<ul><li>text</li><ul><li>text2</li></ul></ul>'))
-        .toBe('<ul><li>text<ul><li>text2</li></ul></li></ul>');
+      expect(
+        mgr._convertFromArbitraryNestingList('<ul><li>text</li><ul><li>text2</li></ul></ul>')
+      ).toBe('<ul><li>text<ul><li>text2</li></ul></li></ul>');
     });
 
     it('should be called _convertToArbitraryNestingList on wysiwygSetValueBefore', () => {
@@ -100,76 +113,140 @@ describe('WwListManager', () => {
 
   describe('_removeBranchListAll', () => {
     it('Remove all branch list', () => {
-      wwe.getEditor().setHTML([
-        '<ul>',
-        '<li>',
-        '<div>t1<br></div>',
-        '<ul>',
-        '<li>',
-        '<ul>',
-        '<li>',
-        '<div>t2<br></div>',
-        '<ul>',
-        '<li><div>t3<br></div></li>',
-        '<li><div>t4<br></div></li>',
-        '</ul>',
-        '</li>',
-        '</ul>',
-        '</li>',
-        '<li><div>t5</div></li>',
-        '</ul>',
-        '</li>',
-        '</ul>'
-      ].join(''));
+      wwe
+        .getEditor()
+        .setHTML(
+          [
+            '<ul>',
+            '<li>',
+            '<div>t1<br></div>',
+            '<ul>',
+            '<li>',
+            '<ul>',
+            '<li>',
+            '<div>t2<br></div>',
+            '<ul>',
+            '<li><div>t3<br></div></li>',
+            '<li><div>t4<br></div></li>',
+            '</ul>',
+            '</li>',
+            '</ul>',
+            '</li>',
+            '<li><div>t5</div></li>',
+            '</ul>',
+            '</li>',
+            '</ul>'
+          ].join('')
+        );
       mgr._removeBranchListAll();
 
       expect(wwe.get$Body().find('ul').length).toEqual(3);
-      expect(wwe.get$Body().find('ul li ul').eq(0).children('li').length).toEqual(2);
-      expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(0).children('div').text()).toEqual('t2');
-      expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(1).text()).toEqual('t5');
+      expect(
+        wwe
+          .get$Body()
+          .find('ul li ul')
+          .eq(0)
+          .children('li').length
+      ).toEqual(2);
+      expect(
+        wwe
+          .get$Body()
+          .find('ul li ul')
+          .eq(0)
+          .children('li')
+          .eq(0)
+          .children('div')
+          .text()
+      ).toEqual('t2');
+      expect(
+        wwe
+          .get$Body()
+          .find('ul li ul')
+          .eq(0)
+          .children('li')
+          .eq(1)
+          .text()
+      ).toEqual('t5');
     });
 
     it('Dont break to contentEditable root body', () => {
-      wwe.getEditor().setHTML([
-        '<div>',
-        '<ul>',
-        '<li>',
-        '<ul>',
-        '<li><div>t1<br></div></li>',
-        '<li><div>t1<br></div></li>',
-        '<li><div>t1<br></div></li>',
-        '</ul>',
-        '</li>',
-        '<li><div>t2</div></li>',
-        '</ul>',
-        '</div>'
-      ].join(''));
+      wwe
+        .getEditor()
+        .setHTML(
+          [
+            '<div>',
+            '<ul>',
+            '<li>',
+            '<ul>',
+            '<li><div>t1<br></div></li>',
+            '<li><div>t1<br></div></li>',
+            '<li><div>t1<br></div></li>',
+            '</ul>',
+            '</li>',
+            '<li><div>t2</div></li>',
+            '</ul>',
+            '</div>'
+          ].join('')
+        );
 
       mgr._removeBranchListAll();
 
       expect(wwe.get$Body().find('ul').length).toEqual(1);
-      expect(wwe.get$Body().find('ul li ul').eq(0).children('li').length).toEqual(0);
+      expect(
+        wwe
+          .get$Body()
+          .find('ul li ul')
+          .eq(0)
+          .children('li').length
+      ).toEqual(0);
       expect(wwe.get$Body().children('div').length).toEqual(1);
     });
 
     it('Dont remove correct list with text node', () => {
-      wwe.getEditor().setHTML([
-        '<ul>',
-        '<li>',
-        't1',
-        '<ul>',
-        '<li><div>t3<br></div></li>',
-        '<li><div>t4<br></div></li>',
-        '</ul>',
-        '</li>',
-        '</ul>'
-      ].join(''));
+      wwe
+        .getEditor()
+        .setHTML(
+          [
+            '<ul>',
+            '<li>',
+            't1',
+            '<ul>',
+            '<li><div>t3<br></div></li>',
+            '<li><div>t4<br></div></li>',
+            '</ul>',
+            '</li>',
+            '</ul>'
+          ].join('')
+        );
       mgr._removeBranchListAll();
 
       expect(wwe.get$Body().find('ul').length).toEqual(2);
-      expect(wwe.get$Body().find('ul li ul').eq(0).children('li').length).toEqual(2);
-      expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(0).children('div').text()).toEqual('t3');
-      expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(1).text()).toEqual('t4');
+      expect(
+        wwe
+          .get$Body()
+          .find('ul li ul')
+          .eq(0)
+          .children('li').length
+      ).toEqual(2);
+      expect(
+        wwe
+          .get$Body()
+          .find('ul li ul')
+          .eq(0)
+          .children('li')
+          .eq(0)
+          .children('div')
+          .text()
+      ).toEqual('t3');
+      expect(
+        wwe
+          .get$Body()
+          .find('ul li ul')
+          .eq(0)
+          .children('li')
+          .eq(1)
+          .text()
+      ).toEqual('t4');
     });
   });
 
@@ -195,7 +272,7 @@ describe('WwListManager', () => {
 
   describe('mergeList', () => {
     it('should merge list to previous list', () => {
-      const list = $(`
+      const [list] = $(`
                 <ol>
                     <li>1</li>
                     <ul>
@@ -206,7 +283,7 @@ describe('WwListManager', () => {
                         <li>4</li>
                     </ol>
                 </ol>
-            `)[0];
+            `);
 
       mgr.mergeList(list.querySelector('#target'));
 
@@ -223,7 +300,7 @@ describe('WwListManager', () => {
     });
 
     it('should not merge list to previous list if target is not the first list item', () => {
-      const list = $(`
+      const [list] = $(`
                 <ol>
                     <li>1</li>
                     <ul>
@@ -234,7 +311,7 @@ describe('WwListManager', () => {
                         <li id="target">4</li>
                     </ol>
                 </ol>
-            `)[0];
+            `);
 
       mgr.mergeList(list.querySelector('#target'));
 
@@ -254,7 +331,7 @@ describe('WwListManager', () => {
 
     it('should merge next list', () => {
       // merge rule: merge to previous list
-      const list = $(`
+      const [list] = $(`
                 <ol>
                     <li>1</li>
                     <ol>
@@ -265,7 +342,7 @@ describe('WwListManager', () => {
                         <li>4</li>
                     </ul>
                 </ol>
-            `)[0];
+            `);
 
       mgr.mergeList(list.querySelector('#target'));
 
@@ -283,7 +360,7 @@ describe('WwListManager', () => {
 
     it('should merge prev/next list', () => {
       // merge rule: merge to previous list
-      const list = $(`
+      const [list] = $(`
                 <ol>
                     <li>1</li>
                     <ul>
@@ -298,7 +375,7 @@ describe('WwListManager', () => {
                         <li>6</li>
                     </ul>
                 </ol>
-            `)[0];
+            `);
 
       mgr.mergeList(list.querySelector('#target'));
 
@@ -354,170 +431,202 @@ describe('WwListManager', () => {
 
   describe('createListInTable', () => {
     it('make UL in empty td', () => {
-      const html = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td><br></td></tr></tbody></table>';
+      const html =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td><br></td></tr></tbody></table>';
+
       wwe.get$Body().html(html);
 
       const range = wwe.getEditor().getSelection();
+
       range.setStart(wwe.get$Body().find('td')[0], 0);
       range.collapse(true);
 
       mgr.createListInTable(range, 'UL');
 
-      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ul><li><br></li></ul>'
-                  + '</td></tr></tbody></table>';
+      const expectedHtml =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ul><li><br></li></ul>' +
+        '</td></tr></tbody></table>';
 
       expect(wwe.get$Body().html()).toEqual(expectedHtml);
     });
 
     it('make TASK in empty td', () => {
-      const html = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td><br></td></tr></tbody></table>';
+      const html =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td><br></td></tr></tbody></table>';
+
       wwe.get$Body().html(html);
 
       const range = wwe.getEditor().getSelection();
+
       range.setStart(wwe.get$Body().find('td')[0], 0);
       range.collapse(true);
 
       mgr.createListInTable(range, 'TASK');
 
-      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ul><li class="task-list-item" data-te-task=""><br></li></ul>'
-                  + '</td></tr></tbody></table>';
+      const expectedHtml =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ul><li class="task-list-item" data-te-task=""><br></li></ul>' +
+        '</td></tr></tbody></table>';
 
       expect(wwe.get$Body().html()).toEqual(expectedHtml);
     });
 
     it('make UL in td when select multi lines', () => {
-      const html = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '123<br>345'
-                  + '</td></tr></tbody></table>';
+      const html =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '123<br>345' +
+        '</td></tr></tbody></table>';
+
       wwe.get$Body().html(html);
 
       const range = wwe.getEditor().getSelection();
+
       range.setStart(wwe.get$Body().find('td')[0].childNodes[0], 1);
       range.setEnd(wwe.get$Body().find('td')[0].childNodes[2], 2);
 
       mgr.createListInTable(range, 'UL');
 
-      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ul><li>123<br></li><li>345</li></ul>'
-                  + '</td></tr></tbody></table>';
+      const expectedHtml =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ul><li>123<br></li><li>345</li></ul>' +
+        '</td></tr></tbody></table>';
 
       expect(wwe.get$Body().html()).toEqual(expectedHtml);
     });
 
     it('make UL in td when select just text line before OL', () => {
-      const html = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ol><li>123<br></li></ol>'
-                  + '345</td></tr></tbody></table>';
+      const html =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ol><li>123<br></li></ol>' +
+        '345</td></tr></tbody></table>';
+
       wwe.get$Body().html(html);
 
       const range = wwe.getEditor().getSelection();
+
       range.setStart(wwe.get$Body().find('td')[0].childNodes[1], 2);
       range.collapse(true);
 
       mgr.createListInTable(range, 'UL');
 
-      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ol><li>123<br></li></ol>'
-                  + '<ul><li>345</li></ul>'
-                  + '</td></tr></tbody></table>';
+      const expectedHtml =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ol><li>123<br></li></ol>' +
+        '<ul><li>345</li></ul>' +
+        '</td></tr></tbody></table>';
 
       expect(wwe.get$Body().html()).toEqual(expectedHtml);
     });
 
     it('merge UL in td when select just text line', () => {
-      const html = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ul><li>123<br></li></ul>'
-                  + '345'
-                  + '</td></tr></tbody></table>';
+      const html =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ul><li>123<br></li></ul>' +
+        '345' +
+        '</td></tr></tbody></table>';
+
       wwe.get$Body().html(html);
 
       const range = wwe.getEditor().getSelection();
+
       range.setStart(wwe.get$Body().find('td')[0].childNodes[1], 2);
       range.collapse(true);
 
       mgr.createListInTable(range, 'UL');
 
-      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ul><li>123<br></li><li>345</li></ul>'
-                  + '</td></tr></tbody></table>';
+      const expectedHtml =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ul><li>123<br></li><li>345</li></ul>' +
+        '</td></tr></tbody></table>';
 
       expect(wwe.get$Body().html()).toEqual(expectedHtml);
     });
 
     it('merge UL in td when select multi lines with UL', () => {
-      const html = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ul><li>123<br></li></ul>'
-                  + '345'
-                  + '</td></tr></tbody></table>';
+      const html =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ul><li>123<br></li></ul>' +
+        '345' +
+        '</td></tr></tbody></table>';
+
       wwe.get$Body().html(html);
 
       const range = wwe.getEditor().getSelection();
+
       range.setStart(wwe.get$Body().find('li')[0].childNodes[0], 1);
       range.setEnd(wwe.get$Body().find('td')[0].childNodes[1], 2);
 
       mgr.createListInTable(range, 'UL');
 
-      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead><tbody><tr><td>'
-                  + '<ul><li>123<br></li><li>345</li></ul>'
-                  + '</td></tr></tbody></table>';
+      const expectedHtml =
+        '<table><thead><tr><th><br></th></tr></thead><tbody><tr><td>' +
+        '<ul><li>123<br></li><li>345</li></ul>' +
+        '</td></tr></tbody></table>';
 
       expect(wwe.get$Body().html()).toEqual(expectedHtml);
     });
 
     it('make OL in td when select multi lines with UL', () => {
-      const html = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ul><li>123<br></li><li>345</li></ul>'
-                  + '789'
-                  + '</td></tr></tbody></table>';
+      const html =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ul><li>123<br></li><li>345</li></ul>' +
+        '789' +
+        '</td></tr></tbody></table>';
+
       wwe.get$Body().html(html);
 
       const range = wwe.getEditor().getSelection();
+
       range.setStart(wwe.get$Body().find('li')[1].childNodes[0], 1);
       range.setEnd(wwe.get$Body().find('td')[0].childNodes[1], 2);
 
       mgr.createListInTable(range, 'OL');
 
-      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ol><li>123<br></li><li>345</li><li>789</li></ol>'
-                  + '</td></tr></tbody></table>';
+      const expectedHtml =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ol><li>123<br></li><li>345</li><li>789</li></ol>' +
+        '</td></tr></tbody></table>';
 
       expect(wwe.get$Body().html()).toEqual(expectedHtml);
     });
 
     it('make UL in td when select one line that is loacated between two list ', () => {
-      const html = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ul><li>123<br></li></ul>'
-                  + '456<br>'
-                  + '<ul><li>789<br></li></ul>'
-                  + '</td></tr></tbody></table>';
+      const html =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ul><li>123<br></li></ul>' +
+        '456<br>' +
+        '<ul><li>789<br></li></ul>' +
+        '</td></tr></tbody></table>';
+
       wwe.get$Body().html(html);
 
       const range = wwe.getEditor().getSelection();
+
       range.setStart(wwe.get$Body().find('td')[0].childNodes[1], 1);
       range.collapse(true);
 
       mgr.createListInTable(range, 'UL');
 
-      const expectedHtml = '<table><thead><tr><th><br></th></tr></thead>'
-                  + '<tbody><tr><td>'
-                  + '<ul><li>123<br></li><li>456<br></li><li>789<br></li></ul>'
-                  + '</td></tr></tbody></table>';
+      const expectedHtml =
+        '<table><thead><tr><th><br></th></tr></thead>' +
+        '<tbody><tr><td>' +
+        '<ul><li>123<br></li><li>456<br></li><li>789<br></li></ul>' +
+        '</td></tr></tbody></table>';
 
       expect(wwe.get$Body().html()).toEqual(expectedHtml);
     });

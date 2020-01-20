@@ -39,6 +39,7 @@ describe('OL', () => {
 
   it('add OL', () => {
     const range = sq.getSelection().cloneRange();
+
     range.setStart(wwe.get$Body().find('div')[0], 0);
     range.collapse(true);
     sq.setSelection(range);
@@ -64,7 +65,12 @@ describe('OL', () => {
     expect(wwe.get$Body().find('ol li.task-list-item[data-te-task]').length).toEqual(0);
     expect(wwe.get$Body().find('ol').length).toEqual(1);
     expect(wwe.get$Body().find('li').length).toEqual(1);
-    expect(wwe.get$Body().find('li').text()).toEqual('test');
+    expect(
+      wwe
+        .get$Body()
+        .find('li')
+        .text()
+    ).toEqual('test');
   });
 
   it('add OL with selection', () => {
@@ -80,6 +86,7 @@ describe('OL', () => {
     $body.append($div4);
 
     const range = sq.getSelection();
+
     range.setStart($div1[0], 0);
     range.setEnd($div4[0], 1);
     sq.setSelection(range);
@@ -195,7 +202,9 @@ describe('OL', () => {
 
   it('change TASK to OL with selection', () => {
     const $body = sq.get$Body();
-    const $ul = $('<ul><li class="task-list-item">fine</li><li class="task-list-item">thank you</li></ul>');
+    const $ul = $(
+      '<ul><li class="task-list-item">fine</li><li class="task-list-item">thank you</li></ul>'
+    );
 
     $body.append($ul);
 
@@ -243,17 +252,13 @@ describe('OL', () => {
 
     $body.append($div);
 
-    const rangeContainer = $div.get(0).childNodes[2];
+    const [, , rangeContainer] = $div.get(0).childNodes;
     let range = sq.getSelection();
+
     range.setStart(rangeContainer, 11);
     range.setEnd(rangeContainer, 11);
     sq.setSelection(range);
-    let {
-      startContainer,
-      endContainer,
-      startOffset,
-      endOffset
-    } = range;
+    const { startContainer, endContainer, startOffset, endOffset } = range;
 
     OL.exec(wwe);
 

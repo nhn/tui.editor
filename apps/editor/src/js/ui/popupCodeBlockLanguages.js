@@ -17,16 +17,22 @@ const BUTTON_CLASS_PREFIX = 'te-popup-code-block-lang-';
 class PopupCodeBlockLanguages extends LayerPopup {
   constructor(options) {
     const popupButtonsHTML = [];
-    const {languages} = options;
-    languages.forEach(lang => (
-      popupButtonsHTML.push(`<button type="button" class="${BUTTON_CLASS_PREFIX}${lang}" data-lang="${lang}">${lang}</button>`)
-    ));
+    const { languages } = options;
 
-    options = util.extend({
-      header: false,
-      className: 'te-popup-code-block-languages',
-      content: popupButtonsHTML.join('')
-    }, options);
+    languages.forEach(lang =>
+      popupButtonsHTML.push(
+        `<button type="button" class="${BUTTON_CLASS_PREFIX}${lang}" data-lang="${lang}">${lang}</button>`
+      )
+    );
+
+    options = util.extend(
+      {
+        header: false,
+        className: 'te-popup-code-block-languages',
+        content: popupButtonsHTML.join('')
+      },
+      options
+    );
     super(options);
   }
 
@@ -73,11 +79,13 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
     const handler = event => {
       const language = $(event.target).data('lang');
+
       if (this._onSelectedLanguage) {
         this._onSelectedLanguage(language);
       }
       this.hide();
     };
+
     this._languages.forEach(lang => this.on(`mousedown .${BUTTON_CLASS_PREFIX}${lang}`, handler));
   }
 
@@ -92,6 +100,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
     this.eventManager.listen('openPopupCodeBlockLanguages', data => {
       this.show(data.callback);
       const elementStyle = this.$el.get(0).style;
+
       elementStyle.top = `${data.offset.top}px`;
       elementStyle.left = `${data.offset.left}px`;
       this.setCurrentLanguage(data.language);
@@ -124,6 +133,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
    */
   prev() {
     let index = this._$buttons.index(this._currentButton) - 1;
+
     if (index < 0) {
       index = this._$buttons.length - 1;
     }
@@ -135,6 +145,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
    */
   next() {
     let index = this._$buttons.index(this._currentButton) + 1;
+
     if (index >= this._$buttons.length) {
       index = 0;
     }
@@ -157,8 +168,10 @@ class PopupCodeBlockLanguages extends LayerPopup {
    */
   setCurrentLanguage(language) {
     const item = this._$buttons.filter(`.${BUTTON_CLASS_PREFIX}${language}`);
+
     if (item.length > 0) {
       const index = this._$buttons.index(item);
+
       this._activateButtonByIndex(index);
     }
   }

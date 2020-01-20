@@ -39,6 +39,7 @@ describe('UL', () => {
 
   it('add UL', () => {
     const range = sq.getSelection().cloneRange();
+
     range.setStart(wwe.get$Body().find('div')[0], 0);
     range.collapse(true);
     sq.setSelection(range);
@@ -61,6 +62,7 @@ describe('UL', () => {
     $body.append($div4);
 
     const range = sq.getSelection();
+
     range.setStart($div1[0], 0);
     range.setEnd($div4[0], 1);
     sq.setSelection(range);
@@ -177,7 +179,9 @@ describe('UL', () => {
 
   it('change TASK to UL with selection', () => {
     const $body = sq.get$Body();
-    const $ol = $('<ol><li class="task-list-item">fine</li><li class="task-list-item">thank you</li></ol>');
+    const $ol = $(
+      '<ol><li class="task-list-item">fine</li><li class="task-list-item">thank you</li></ol>'
+    );
 
     $body.append($ol);
 
@@ -225,17 +229,13 @@ describe('UL', () => {
 
     $body.append($div);
 
-    const rangeContainer = $div.get(0).childNodes[2];
+    const [, , rangeContainer] = $div.get(0).childNodes;
     let range = sq.getSelection();
+
     range.setStart(rangeContainer, 11);
     range.setEnd(rangeContainer, 11);
     sq.setSelection(range);
-    let {
-      startContainer,
-      endContainer,
-      startOffset,
-      endOffset
-    } = range;
+    const { startContainer, endContainer, startOffset, endOffset } = range;
 
     UL.exec(wwe);
 

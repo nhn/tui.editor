@@ -42,11 +42,13 @@ describe('WwTextObject', () => {
 
     it('if constructor has no range argument then use current range', () => {
       const range = sq.getSelection();
+
       expect(to._range).toEqual(range);
     });
 
     it('set with range', () => {
       const range = sq.getSelection();
+
       to.setRange(range);
       expect(to._range).toEqual(range);
     });
@@ -130,7 +132,12 @@ describe('WwTextObject', () => {
     });
     it('replace text', () => {
       to.replaceContent('12');
-      expect(wwe.get$Body().find('div').text()).toEqual('t12t textObject');
+      expect(
+        wwe
+          .get$Body()
+          .find('div')
+          .text()
+      ).toEqual('t12t textObject');
     });
   });
 
@@ -145,7 +152,12 @@ describe('WwTextObject', () => {
     });
     it('remove text', () => {
       to.deleteContent();
-      expect(wwe.get$Body().find('div').text()).toEqual('tt textObject');
+      expect(
+        wwe
+          .get$Body()
+          .find('div')
+          .text()
+      ).toEqual('tt textObject');
     });
   });
 

@@ -1,10 +1,10 @@
 /**
-* @fileoverview Implements Addlink markdown command
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
+ * @fileoverview Implements Addlink markdown command
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
 import CommandManager from '../commandManager';
 import ImportManager from '../importManager';
-const {decodeURIGraceful, encodeMarkdownCharacters, escapeMarkdownCharacters} = ImportManager;
+const { decodeURIGraceful, encodeMarkdownCharacters, escapeMarkdownCharacters } = ImportManager;
 
 /**
  * AddLink
@@ -13,40 +13,44 @@ const {decodeURIGraceful, encodeMarkdownCharacters, escapeMarkdownCharacters} = 
  * @module markdownCommands/AddLink
  * @ignore
  */
-const AddLink = CommandManager.command('markdown', /** @lends AddLink */{
-  name: 'AddLink',
-  /**
-   * command handler for AddLink
-   * @param {MarkdownEditor} mde - MarkdownEditor instance
-   * @param {object} data - data for image
-   */
-  exec(mde, data) {
-    const cm = mde.getEditor();
-    const doc = cm.getDoc();
+const AddLink = CommandManager.command(
+  'markdown',
+  /** @lends AddLink */ {
+    name: 'AddLink',
+    /**
+     * command handler for AddLink
+     * @param {MarkdownEditor} mde - MarkdownEditor instance
+     * @param {object} data - data for image
+     */
+    exec(mde, data) {
+      const cm = mde.getEditor();
+      const doc = cm.getDoc();
 
-    const range = mde.getCurrentRange();
+      const range = mde.getCurrentRange();
 
-    const from = {
-      line: range.from.line,
-      ch: range.from.ch
-    };
+      const from = {
+        line: range.from.line,
+        ch: range.from.ch
+      };
 
-    const to = {
-      line: range.to.line,
-      ch: range.to.ch
-    };
+      const to = {
+        line: range.to.line,
+        ch: range.to.ch
+      };
 
-    let {linkText, url} = data;
-    linkText = decodeURIGraceful(linkText);
-    linkText = escapeMarkdownCharacters(linkText);
-    url = encodeMarkdownCharacters(url);
+      let { linkText, url } = data;
 
-    const replaceText = `[${linkText}](${url})`;
+      linkText = decodeURIGraceful(linkText);
+      linkText = escapeMarkdownCharacters(linkText);
+      url = encodeMarkdownCharacters(url);
 
-    doc.replaceRange(replaceText, from, to);
+      const replaceText = `[${linkText}](${url})`;
 
-    cm.focus();
+      doc.replaceRange(replaceText, from, to);
+
+      cm.focus();
+    }
   }
-});
+);
 
 export default AddLink;

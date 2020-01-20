@@ -13,31 +13,35 @@ import domUtils from '../domUtils';
  * @module wysiwygCommands/Italic
  * @ignore
  */
-const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
-  name: 'Italic',
-  keyMap: ['CTRL+I', 'META+I'],
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe wysiwygEditor instance
-   */
-  exec(wwe) {
-    const sq = wwe.getEditor();
-    const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+const Italic = CommandManager.command(
+  'wysiwyg',
+  /** @lends Italic */ {
+    name: 'Italic',
+    keyMap: ['CTRL+I', 'META+I'],
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe wysiwygEditor instance
+     */
+    exec(wwe) {
+      const sq = wwe.getEditor();
+      const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
-    wwe.focus();
+      wwe.focus();
 
-    if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-      tableSelectionManager.styleToSelectedCells(styleItalic);
+      if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+        tableSelectionManager.styleToSelectedCells(styleItalic);
 
-      const range = sq.getSelection();
-      range.collapse(true);
-      sq.setSelection(range);
-    } else {
-      styleItalic(sq);
-      domUtils.optimizeRange(sq.getSelection(), 'I');
+        const range = sq.getSelection();
+
+        range.collapse(true);
+        sq.setSelection(range);
+      } else {
+        styleItalic(sq);
+        domUtils.optimizeRange(sq.getSelection(), 'I');
+      }
     }
   }
-});
+);
 
 /**
  * Style italic.
@@ -45,10 +49,10 @@ const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
  */
 function styleItalic(sq) {
   if (sq.hasFormat('i') || sq.hasFormat('em')) {
-    sq.changeFormat(null, {tag: 'i'});
+    sq.changeFormat(null, { tag: 'i' });
   } else if (!sq.hasFormat('PRE')) {
     if (sq.hasFormat('code')) {
-      sq.changeFormat(null, {tag: 'code'});
+      sq.changeFormat(null, { tag: 'code' });
     }
     sq.italic();
   }

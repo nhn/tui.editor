@@ -59,7 +59,14 @@ describe('HR', () => {
 
     HR.exec(wwe);
 
-    expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>test</div><div contenteditable="false"><hr contenteditable="false"></div><div></div>');
+    expect(
+      wwe
+        .getEditor()
+        .getHTML()
+        .replace(/<br \/>|<br>/g, '')
+    ).toEqual(
+      '<div>test</div><div contenteditable="false"><hr contenteditable="false"></div><div></div>'
+    );
   });
 
   it('append hr then cursor to next block', () => {

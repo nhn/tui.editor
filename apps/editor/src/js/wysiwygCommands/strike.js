@@ -13,31 +13,35 @@ import domUtils from '../domUtils';
  * @module wysiwygCommands/Strike
  * @ignore
  */
-const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
-  name: 'Strike',
-  keyMap: ['CTRL+S', 'META+S'],
-  /**
-   * command handler
-   * @param {WysiwygEditor} wwe WysiwygEditor instance
-   */
-  exec(wwe) {
-    const sq = wwe.getEditor();
-    const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+const Strike = CommandManager.command(
+  'wysiwyg',
+  /** @lends Strike */ {
+    name: 'Strike',
+    keyMap: ['CTRL+S', 'META+S'],
+    /**
+     * command handler
+     * @param {WysiwygEditor} wwe WysiwygEditor instance
+     */
+    exec(wwe) {
+      const sq = wwe.getEditor();
+      const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
-    wwe.focus();
+      wwe.focus();
 
-    if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-      tableSelectionManager.styleToSelectedCells(styleStrike);
+      if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+        tableSelectionManager.styleToSelectedCells(styleStrike);
 
-      const range = sq.getSelection();
-      range.collapse(true);
-      sq.setSelection(range);
-    } else {
-      styleStrike(sq);
-      domUtils.optimizeRange(sq.getSelection(), 'S');
+        const range = sq.getSelection();
+
+        range.collapse(true);
+        sq.setSelection(range);
+      } else {
+        styleStrike(sq);
+        domUtils.optimizeRange(sq.getSelection(), 'S');
+      }
     }
   }
-});
+);
 
 /**
  * Style strike.
@@ -45,10 +49,10 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
  */
 function styleStrike(sq) {
   if (sq.hasFormat('S')) {
-    sq.changeFormat(null, {tag: 'S'});
+    sq.changeFormat(null, { tag: 'S' });
   } else if (!sq.hasFormat('PRE')) {
     if (sq.hasFormat('code')) {
-      sq.changeFormat(null, {tag: 'code'});
+      sq.changeFormat(null, { tag: 'code' });
     }
     sq.strikethrough();
   }

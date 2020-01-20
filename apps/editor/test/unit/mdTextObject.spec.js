@@ -31,6 +31,7 @@ describe('MdTextObject', () => {
 
     it('if constructor has no range argument then use current range', () => {
       const range = mde.getRange();
+
       expect(range.start).toEqual(to._start);
       expect(range.end).toEqual(to._end);
     });
@@ -93,7 +94,7 @@ describe('MdTextObject', () => {
         ch: 6
       };
 
-      to.setEndBeforeRange({start: expected});
+      to.setEndBeforeRange({ start: expected });
 
       expect(to._end).toEqual(expected);
       expect(to.getTextContent()).toEqual('est t');

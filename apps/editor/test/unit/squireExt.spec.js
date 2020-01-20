@@ -5,7 +5,7 @@
 import $ from 'jquery';
 
 import SquireExt from '@/squireExt';
-import {isMac} from '@/util';
+import { isMac } from '@/util';
 
 describe('SquireExt', () => {
   let sqe;
@@ -14,8 +14,8 @@ describe('SquireExt', () => {
     const $container = $('<div />');
 
     $container.css({
-      'overflow': 'auto',
-      'height': 30
+      overflow: 'auto',
+      height: 30
     });
 
     $('body').append($container);
@@ -137,6 +137,7 @@ describe('SquireExt', () => {
   describe('replaceSelection()', () => {
     it('replace selection content with passed content', () => {
       const selection = sqe.getSelection();
+
       sqe.replaceSelection('test', selection);
       expect(sqe.getDocument().body.textContent).toEqual('test');
     });
@@ -148,10 +149,11 @@ describe('SquireExt', () => {
   });
 
   describe('replaceRelativeOffset', () => {
-    it('replace with current cursor\'s containers offset', () => {
+    it("replace with current cursor's containers offset", () => {
       sqe.setHTML('test');
 
       const selection = sqe.getSelection().cloneRange();
+
       selection.setStart(sqe.get$Body().find('div')[0].firstChild, 4);
       selection.collapse(true);
       sqe.setSelection(selection);
@@ -161,10 +163,11 @@ describe('SquireExt', () => {
       expect(sqe.get$Body()[0].textContent).toEqual('te123t');
     });
 
-    it('replace html with current cursor\'s containers offset', () => {
+    it("replace html with current cursor's containers offset", () => {
       sqe.setHTML('test');
 
       const selection = sqe.getSelection().cloneRange();
+
       selection.setStart(sqe.get$Body().find('div')[0].firstChild, 4);
       selection.collapse(true);
       sqe.setSelection(selection);
@@ -172,13 +175,19 @@ describe('SquireExt', () => {
       sqe.replaceRelativeOffset('<b>123</b>', -2, 1);
 
       expect(sqe.get$Body()[0].textContent).toEqual('te123t');
-      expect(sqe.get$Body().find('b').text()).toEqual('123');
+      expect(
+        sqe
+          .get$Body()
+          .find('b')
+          .text()
+      ).toEqual('123');
     });
 
     it('if current selection is not text than use previousSibling', () => {
       sqe.setHTML('<div>test<i>one</i><br></div>');
 
       const selection = sqe.getSelection().cloneRange();
+
       selection.selectNode(sqe.get$Body().find('i')[0]);
       selection.collapse(true);
       sqe.setSelection(selection);
@@ -186,72 +195,89 @@ describe('SquireExt', () => {
       sqe.replaceRelativeOffset('<b>123</b>', -2, 1);
 
       expect(sqe.get$Body()[0].textContent).toEqual('te123tone');
-      expect(sqe.get$Body().find('b').text()).toEqual('123');
+      expect(
+        sqe
+          .get$Body()
+          .find('b')
+          .text()
+      ).toEqual('123');
     });
 
-    it('if current selection has not address offset with passed relative offset then' +
-            ' insert current position', () => {
-      sqe.setHTML('<div><i> </i><br></div>');
+    it(
+      'if current selection has not address offset with passed relative offset then' +
+        ' insert current position',
+      () => {
+        sqe.setHTML('<div><i> </i><br></div>');
 
-      const selection = sqe.getSelection().cloneRange();
-      selection.selectNode(sqe.get$Body().find('i')[0]);
-      selection.collapse(true);
-      sqe.setSelection(selection);
+        const selection = sqe.getSelection().cloneRange();
 
-      sqe.replaceRelativeOffset('123', -2, 1);
+        selection.selectNode(sqe.get$Body().find('i')[0]);
+        selection.collapse(true);
+        sqe.setSelection(selection);
 
-      expect(sqe.get$Body()[0].textContent).toEqual('123');
-    });
+        sqe.replaceRelativeOffset('123', -2, 1);
+
+        expect(sqe.get$Body()[0].textContent).toEqual('123');
+      }
+    );
   });
 
-  describe('getSelectionInfoByOffset() find next element and next offset by passed element' +
-        ' and replative offset of splited text node', () => {
-    let firstBlock, secBlock;
+  describe(
+    'getSelectionInfoByOffset() find next element and next offset by passed element' +
+      ' and replative offset of splited text node',
+    () => {
+      let firstBlock, secBlock;
 
-    beforeEach(() => {
-      sqe.setHTML('<div>text1</div><div>text2</div>');
-      firstBlock = sqe.get$Body()[0].childNodes[0];
-      secBlock = sqe.get$Body()[0].childNodes[1];
-    });
-
-    it('offset is lower than passed element\'s length', () => {
-      expect(sqe.getSelectionInfoByOffset(firstBlock, 3)).toEqual({
-        element: firstBlock,
-        offset: 3
+      beforeEach(() => {
+        sqe.setHTML('<div>text1</div><div>text2</div>');
+        firstBlock = sqe.get$Body()[0].childNodes[0];
+        secBlock = sqe.get$Body()[0].childNodes[1];
       });
-    });
 
-    it('offset is higher than passed element\'s length', () => {
-      expect(sqe.getSelectionInfoByOffset(firstBlock, 7)).toEqual({
-        element: firstBlock.nextSibling,
-        offset: 2
+      it("offset is lower than passed element's length", () => {
+        expect(sqe.getSelectionInfoByOffset(firstBlock, 3)).toEqual({
+          element: firstBlock,
+          offset: 3
+        });
       });
-    });
 
-    it('offset is higher than exist content length', () => {
-      expect(sqe.getSelectionInfoByOffset(firstBlock, 11)).toEqual({
-        element: firstBlock.nextSibling,
-        offset: 5
+      it("offset is higher than passed element's length", () => {
+        expect(sqe.getSelectionInfoByOffset(firstBlock, 7)).toEqual({
+          element: firstBlock.nextSibling,
+          offset: 2
+        });
       });
-    });
 
-    it('if offset is minus, find element toward to previous', () => {
-      expect(sqe.getSelectionInfoByOffset(secBlock, -3)).toEqual({
-        element: firstBlock,
-        offset: 2
+      it('offset is higher than exist content length', () => {
+        expect(sqe.getSelectionInfoByOffset(firstBlock, 11)).toEqual({
+          element: firstBlock.nextSibling,
+          offset: 5
+        });
       });
-    });
-  });
+
+      it('if offset is minus, find element toward to previous', () => {
+        expect(sqe.getSelectionInfoByOffset(secBlock, -3)).toEqual({
+          element: firstBlock,
+          offset: 2
+        });
+      });
+    }
+  );
 
   describe('replaceParent()', () => {
-    it('replace li\'s parent ul to ol', () => {
+    it("replace li's parent ul to ol", () => {
       sqe.setHTML('<ul><li>test</li></ul>');
 
       sqe.replaceParent(sqe.get$Body().find('li'), 'UL', 'OL');
 
       expect(sqe.get$Body().find('ul').length).toEqual(0);
       expect(sqe.get$Body().find('ol').length).toEqual(1);
-      expect(sqe.get$Body().find('li').text()).toEqual('test');
+      expect(
+        sqe
+          .get$Body()
+          .find('li')
+          .text()
+      ).toEqual('test');
     });
   });
 
@@ -271,7 +297,9 @@ describe('SquireExt', () => {
 
   describe('scrollTop', () => {
     it('move scroll or get scrollTop value', () => {
-      sqe.setHTML('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+      sqe.setHTML(
+        'a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>'
+      );
       sqe.scrollTop(50);
       expect(sqe.scrollTop()).not.toEqual(0);
     });
@@ -279,7 +307,9 @@ describe('SquireExt', () => {
 
   describe('focus', () => {
     it('should preserve scrollTop especially in webket', () => {
-      sqe.setHTML('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+      sqe.setHTML(
+        'a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>'
+      );
       sqe.moveCursorToEnd();
 
       $('body').append('<input type="text" id="myInput" />');
@@ -302,6 +332,7 @@ describe('SquireExt', () => {
         keyCode: 66,
         preventDefault: spy
       };
+
       keyEvent[`${meta}Key`] = true;
 
       Object.getPrototypeOf(sqe._keyHandlers)[`${meta}-b`] = spyOriginal;

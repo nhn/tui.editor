@@ -10,8 +10,7 @@ import UIController from './uicontroller';
 const CLASS_PREFIX = 'tui-popup-';
 const CLASS_FIT_WINDOW = 'fit-window';
 
-const LAYOUT_TEMPLATE_MODELESS =
-    `<div class="${CLASS_PREFIX}header">
+const LAYOUT_TEMPLATE_MODELESS = `<div class="${CLASS_PREFIX}header">
         <span class="${CLASS_PREFIX}title"></span>
         <div class="${CLASS_PREFIX}header-buttons">
             <button type="button" class="${CLASS_PREFIX}close-button"></button>
@@ -19,8 +18,7 @@ const LAYOUT_TEMPLATE_MODELESS =
     </div>
     <div class="${CLASS_PREFIX}body"></div>`;
 
-const LAYOUT_TEMPLATE_MODAL =
-    `<div class="${CLASS_PREFIX}wrapper">
+const LAYOUT_TEMPLATE_MODAL = `<div class="${CLASS_PREFIX}wrapper">
         <div class="${CLASS_PREFIX}header">
             <span class="${CLASS_PREFIX}title"></span>
             <div class="${CLASS_PREFIX}header-buttons">
@@ -51,11 +49,14 @@ const LAYOUT_TEMPLATE_MODAL =
  */
 class LayerPopup extends UIController {
   constructor(options) {
-    options = util.extend({
-      header: true,
-      $target: $('body'),
-      textContent: ''
-    }, options);
+    options = util.extend(
+      {
+        header: true,
+        $target: $('body'),
+        textContent: ''
+      },
+      options
+    );
     super({
       tagName: 'div',
       className: options.modal ? `${CLASS_PREFIX}modal-background` : `${CLASS_PREFIX}wrapper`,
@@ -106,10 +107,12 @@ class LayerPopup extends UIController {
     }
 
     const buttons = this.options.headerButtons;
+
     if (buttons) {
       this.$el.find(`.${CLASS_PREFIX}close-button`).remove();
 
       const $buttonWrapper = this.$el.find(`.${CLASS_PREFIX}header-buttons`);
+
       $buttonWrapper.empty();
       $buttonWrapper.append($(buttons));
     }
@@ -124,7 +127,8 @@ class LayerPopup extends UIController {
    * @private
    */
   _initDOMEvent() {
-    const {openerCssQuery, closerCssQuery} = this.options;
+    const { openerCssQuery, closerCssQuery } = this.options;
+
     if (openerCssQuery) {
       $(openerCssQuery).on(`click.${this._id}`, () => this.show());
     }
@@ -143,10 +147,11 @@ class LayerPopup extends UIController {
   _initEditorEvent() {}
 
   _initLayout() {
-    const {options} = this;
+    const { options } = this;
 
     if (!this._isExternalHtmlUse) {
       const layout = options.modal ? LAYOUT_TEMPLATE_MODAL : LAYOUT_TEMPLATE_MODELESS;
+
       this.$el.html(layout);
       this.$el.addClass(options.className);
       this.hide();
@@ -220,7 +225,7 @@ class LayerPopup extends UIController {
    * remove popup content
    */
   remove() {
-    const {openerCssQuery, closerCssQuery} = this.options;
+    const { openerCssQuery, closerCssQuery } = this.options;
 
     this.trigger('remove', this);
     this.off();
@@ -264,6 +269,7 @@ class LayerPopup extends UIController {
    */
   toggleFitToWindow() {
     const fitToWindow = !this.isFitToWindow();
+
     this.setFitToWindow(fitToWindow);
 
     return fitToWindow;

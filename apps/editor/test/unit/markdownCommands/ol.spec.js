@@ -55,7 +55,7 @@ describe('OL', () => {
 
       expect(doc.getLine(4)).toEqual('1. mytext4');
     });
-    it('Don\'t add already have ol markdown text in line start', () => {
+    it("Don't add already have ol markdown text in line start", () => {
       doc.setCursor(0, 4);
 
       OL.exec(mde);
@@ -72,13 +72,16 @@ describe('OL', () => {
     });
 
     it('around selected area', () => {
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 2,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 2,
+          ch: 7
+        }
+      );
 
       OL.exec(mde);
 
@@ -88,7 +91,7 @@ describe('OL', () => {
       expect(doc.getLine(3)).toEqual('');
       expect(doc.getLine(4)).toEqual('mytext3');
     });
-    it('Don\'t add ol markdown text in heading', () => {
+    it("Don't add ol markdown text in heading", () => {
       doc.setCursor(5, 1);
 
       OL.exec(mde);
@@ -99,13 +102,16 @@ describe('OL', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '# myheading'];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 4,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 4,
+          ch: 7
+        }
+      );
 
       OL.exec(mde);
 
@@ -120,13 +126,16 @@ describe('OL', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '> myheading'];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 4,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 4,
+          ch: 7
+        }
+      );
 
       OL.exec(mde);
 
@@ -141,13 +150,16 @@ describe('OL', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '```', 'var a = 10;', '```'];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 4,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 4,
+          ch: 7
+        }
+      );
 
       OL.exec(mde);
 
@@ -159,16 +171,27 @@ describe('OL', () => {
       expect(doc.getLine(5)).toEqual('```');
     });
     it('add ol markdown text except table', () => {
-      const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '| hi | hello |', '| --- | --- |', '| bye | bye |'];
+      const sourceText = [
+        'mytext1',
+        'mytext2',
+        'mytext3',
+        'mytext4',
+        '| hi | hello |',
+        '| --- | --- |',
+        '| bye | bye |'
+      ];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 4,
-        ch: 7
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 4,
+          ch: 7
+        }
+      );
 
       OL.exec(mde);
 
@@ -211,13 +234,16 @@ describe('OL', () => {
       const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '# myheading'];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 1,
-        ch: 0
-      }, {
-        line: 2,
-        ch: 4
-      });
+      doc.setSelection(
+        {
+          line: 1,
+          ch: 0
+        },
+        {
+          line: 2,
+          ch: 4
+        }
+      );
       OL.exec(mde);
 
       expect(doc.getLine(0)).toEqual('mytext1');
@@ -232,13 +258,16 @@ describe('OL', () => {
       const sourceText = ['mytext1', '', '* mytext2', '* mytext3', '', 'mytext4', '# myheading'];
 
       cm.setValue(sourceText.join('\n'));
-      doc.setSelection({
-        line: 2,
-        ch: 0
-      }, {
-        line: 3,
-        ch: 4
-      });
+      doc.setSelection(
+        {
+          line: 2,
+          ch: 0
+        },
+        {
+          line: 3,
+          ch: 4
+        }
+      );
       OL.exec(mde);
 
       expect(doc.getLine(0)).toEqual('mytext1');
@@ -269,18 +298,18 @@ describe('OL', () => {
     });
 
     it('should remove task bracket of selected lines', () => {
-      cm.setValue([
-        '1. [ ] a task',
-        '* [ ] another task'
-      ].join('\n'));
+      cm.setValue(['1. [ ] a task', '* [ ] another task'].join('\n'));
 
-      doc.setSelection({
-        line: 0,
-        ch: 0
-      }, {
-        line: 1,
-        ch: 0
-      });
+      doc.setSelection(
+        {
+          line: 0,
+          ch: 0
+        },
+        {
+          line: 1,
+          ch: 0
+        }
+      );
       OL.exec(mde);
 
       expect(doc.getLine(0)).toEqual('1. a task');
@@ -290,11 +319,13 @@ describe('OL', () => {
 
   describe('change to ol', () => {
     it('should change same depth items to ol when item of same list change to ol', () => {
-      cm.setValue([
-        '* AAA',
-        '    * aaa',
-        '    * bbb' // cursor
-      ].join('\n'));
+      cm.setValue(
+        [
+          '* AAA',
+          '    * aaa',
+          '    * bbb' // cursor
+        ].join('\n')
+      );
 
       doc.setCursor(2, 0);
       OL.exec(mde);
@@ -305,12 +336,14 @@ describe('OL', () => {
     });
 
     it('should change all one depth items to ol when one depth item of the list change to ol', () => {
-      cm.setValue([
-        '* AAA',
-        '    * aaa',
-        '* BBB', // cursor
-        '    * bbb'
-      ].join('\n'));
+      cm.setValue(
+        [
+          '* AAA',
+          '    * aaa',
+          '* BBB', // cursor
+          '    * bbb'
+        ].join('\n')
+      );
 
       doc.setCursor(2, 0);
       OL.exec(mde);
@@ -322,22 +355,27 @@ describe('OL', () => {
     });
 
     it('should be correct numbering when select lines that is different depth', () => {
-      cm.setValue([
-        '* AAA',
-        '    * aaa',
-        '* BBB', // cursor start
-        '    * bbb',
-        '    * bbbb', // cursor end
-        '* CCC'
-      ].join('\n'));
+      cm.setValue(
+        [
+          '* AAA',
+          '    * aaa',
+          '* BBB', // cursor start
+          '    * bbb',
+          '    * bbbb', // cursor end
+          '* CCC'
+        ].join('\n')
+      );
 
-      doc.setSelection({
-        line: 2,
-        ch: 0
-      }, {
-        line: 4,
-        ch: 0
-      });
+      doc.setSelection(
+        {
+          line: 2,
+          ch: 0
+        },
+        {
+          line: 4,
+          ch: 0
+        }
+      );
       OL.exec(mde);
 
       expect(doc.getLine(0)).toEqual('1. AAA');
@@ -349,19 +387,24 @@ describe('OL', () => {
     });
 
     it('should be correct numbering when select lines that contain ol list', () => {
-      cm.setValue([
-        '* AAA',
-        '* BBB', // cursor start
-        '1. CCC' // cursor end
-      ].join('\n'));
+      cm.setValue(
+        [
+          '* AAA',
+          '* BBB', // cursor start
+          '1. CCC' // cursor end
+        ].join('\n')
+      );
 
-      doc.setSelection({
-        line: 1,
-        ch: 0
-      }, {
-        line: 2,
-        ch: 0
-      });
+      doc.setSelection(
+        {
+          line: 1,
+          ch: 0
+        },
+        {
+          line: 2,
+          ch: 0
+        }
+      );
       OL.exec(mde);
 
       expect(doc.getLine(0)).toEqual('1. AAA');
@@ -370,19 +413,24 @@ describe('OL', () => {
     });
 
     it('should be correct numbering when select lines that contain ul and plain text', () => {
-      cm.setValue([
-        '* AAA',
-        '* BBB', // cursor start
-        'CCC' // cursor end
-      ].join('\n'));
+      cm.setValue(
+        [
+          '* AAA',
+          '* BBB', // cursor start
+          'CCC' // cursor end
+        ].join('\n')
+      );
 
-      doc.setSelection({
-        line: 1,
-        ch: 0
-      }, {
-        line: 2,
-        ch: 0
-      });
+      doc.setSelection(
+        {
+          line: 1,
+          ch: 0
+        },
+        {
+          line: 2,
+          ch: 0
+        }
+      );
       OL.exec(mde);
 
       expect(doc.getLine(0)).toEqual('1. AAA');

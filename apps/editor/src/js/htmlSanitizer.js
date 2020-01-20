@@ -5,14 +5,18 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-const HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
+const HTML_ATTR_LIST_RX = new RegExp(
+  '^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
     'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' +
     'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' +
     'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' +
     'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' +
-    'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
+    'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)',
+  'g'
+);
 
-const SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' +
+const SVG_ATTR_LIST_RX = new RegExp(
+  '^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' +
     'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' +
     'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' +
     'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' +
@@ -26,10 +30,12 @@ const SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabe
     'stroke-width|systemLanguage|target|text-anchor|to|transform|type|u1|u2|underline-position|' +
     'underline-thickness|unicode|unicode-range|units-per-em|values|version|viewBox|visibility|' +
     'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' +
-    'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
+    'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)',
+  'g'
+);
 
 const ATTR_VALUE_BLACK_LIST_RX = {
-  'href': /^(javascript:).*/g
+  href: /^(javascript:).*/g
 };
 
 /**
@@ -59,7 +65,11 @@ function htmlSanitizer(html, needHtmlText) {
  * @param {jQuery} $html jQuery instance
  */
 function removeUnnecessaryTags($html) {
-  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title, embed, object, details, summary').remove();
+  $html
+    .find(
+      'script, iframe, textarea, form, button, select, meta, style, link, title, embed, object, details, summary'
+    )
+    .remove();
 }
 
 /**
@@ -99,6 +109,7 @@ function removeInvalidAttributeValues($html) {
         const attrs = node.attributes;
         const valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr];
         const attrItem = attrs.getNamedItem(attr);
+
         if (valueBlackListRX && attrItem && attrItem.value.toLowerCase().match(valueBlackListRX)) {
           attrs.removeNamedItem(attr);
         }
@@ -122,7 +133,7 @@ function finalizeHtml($html, needHtmlText) {
   } else {
     const frag = document.createDocumentFragment();
     const childNodes = util.toArray($html[0].childNodes);
-    const {length} = childNodes;
+    const { length } = childNodes;
 
     for (let i = 0; i < length; i += 1) {
       frag.appendChild(childNodes[i]);

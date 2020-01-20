@@ -33,7 +33,7 @@ const FIND_TABLE_AND_HEADING_RX = /^(TABLE|H[1-6])$/;
 const EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 const PLACEHOLDER_CSS_CLASSNAME = 'tui-editor-contents-placeholder';
 
-const canObserveMutations = (typeof MutationObserver !== 'undefined');
+const canObserveMutations = typeof MutationObserver !== 'undefined';
 
 /**
  * Class WysiwygEditor
@@ -72,7 +72,7 @@ class WysiwygEditor {
     this.editor = new SquireExt($editorBody[0], {
       blockTag: 'DIV',
       leafNodeNames: {
-        'HR': false
+        HR: false
       },
       allowedBlocks: useDefaultHTMLSanitizer ? [] : ['details', 'summary']
     });
@@ -98,7 +98,9 @@ class WysiwygEditor {
    * @private
    */
   _initEvent() {
-    this.eventManager.listen('wysiwygKeyEvent', ev => this._runKeyEventHandlers(ev.data, ev.keyMap));
+    this.eventManager.listen('wysiwygKeyEvent', ev =>
+      this._runKeyEventHandlers(ev.data, ev.keyMap)
+    );
     this.eventManager.listen('wysiwygRangeChangeAfter', () => this.scrollIntoCursor());
     this.eventManager.listen('contentChangedFromWysiwyg', () => {
       this._togglePlaceholder();
@@ -240,25 +242,28 @@ class WysiwygEditor {
     });
 
     // change event will fired after range has been updated
-    squire.addEventListener('input', util.debounce(() => {
-      if (!this.isEditorValid()) {
-        return;
-      }
+    squire.addEventListener(
+      'input',
+      util.debounce(() => {
+        if (!this.isEditorValid()) {
+          return;
+        }
 
-      if (!this._silentChange) {
-        const eventObj = {
-          source: 'wysiwyg'
-        };
+        if (!this._silentChange) {
+          const eventObj = {
+            source: 'wysiwyg'
+          };
 
-        this.eventManager.emit('changeFromWysiwyg', eventObj);
-        this.eventManager.emit('change', eventObj);
-        this.eventManager.emit('contentChangedFromWysiwyg', this);
-      } else {
-        this._silentChange = false;
-      }
+          this.eventManager.emit('changeFromWysiwyg', eventObj);
+          this.eventManager.emit('change', eventObj);
+          this.eventManager.emit('contentChangedFromWysiwyg', this);
+        } else {
+          this._silentChange = false;
+        }
 
-      this.getEditor().preserveLastLine();
-    }, 0));
+        this.getEditor().preserveLastLine();
+      }, 0)
+    );
 
     squire.addEventListener('keydown', keyboardEvent => {
       const range = this.getEditor().getSelection();
@@ -277,7 +282,7 @@ class WysiwygEditor {
 
     if (util.browser.firefox) {
       squire.addEventListener('keypress', keyboardEvent => {
-        const {keyCode} = keyboardEvent;
+        const { keyCode } = keyboardEvent;
 
         if (keyCode === 13 || keyCode === 9) {
           const range = this.getEditor().getSelection();
@@ -299,15 +304,21 @@ class WysiwygEditor {
       squire.addEventListener('keyup', () => {
         const range = this.getRange();
 
-        if (domUtils.isTextNode(range.commonAncestorContainer)
-                    && domUtils.isTextNode(range.commonAncestorContainer.previousSibling)) {
+        if (
+          domUtils.isTextNode(range.commonAncestorContainer) &&
+          domUtils.isTextNode(range.commonAncestorContainer.previousSibling)
+        ) {
           const prevLen = range.commonAncestorContainer.previousSibling.length;
           const curEl = range.commonAncestorContainer;
 
           range.commonAncestorContainer.previousSibling.appendData(
-            range.commonAncestorContainer.data);
+            range.commonAncestorContainer.data
+          );
 
-          range.setStart(range.commonAncestorContainer.previousSibling, prevLen + range.startOffset);
+          range.setStart(
+            range.commonAncestorContainer.previousSibling,
+            prevLen + range.startOffset
+          );
           range.collapse(true);
 
           curEl.parentNode.removeChild(curEl);
@@ -423,8 +434,10 @@ class WysiwygEditor {
 
   _togglePlaceholder() {
     const squire = this.getEditor();
+
     squire.modifyDocument(() => {
       const root = squire.getRoot();
+
       if (root.textContent || root.childNodes.length > 1) {
         root.classList.remove(PLACEHOLDER_CSS_CLASSNAME);
       } else {
@@ -497,8 +510,10 @@ class WysiwygEditor {
     this.addKeyEventHandler('TAB', ev => {
       const sq = this.getEditor();
       const range = sq.getSelection();
-      const isAbleToInput4Spaces = range.collapsed && this._isCursorNotInRestrictedAreaOfTabAction(sq);
-      const isTextSelection = !range.collapsed && domUtils.isTextNode(range.commonAncestorContainer);
+      const isAbleToInput4Spaces =
+        range.collapsed && this._isCursorNotInRestrictedAreaOfTabAction(sq);
+      const isTextSelection =
+        !range.collapsed && domUtils.isTextNode(range.commonAncestorContainer);
 
       ev.preventDefault();
       if (isAbleToInput4Spaces || isTextSelection) {
@@ -510,8 +525,12 @@ class WysiwygEditor {
       return true;
     });
 
-    this.addKeyEventHandler('BACK_SPACE', (ev, range, keymap) => this._handleRemoveKeyEvent(ev, range, keymap));
-    this.addKeyEventHandler('DELETE', (ev, range, keymap) => this._handleRemoveKeyEvent(ev, range, keymap));
+    this.addKeyEventHandler('BACK_SPACE', (ev, range, keymap) =>
+      this._handleRemoveKeyEvent(ev, range, keymap)
+    );
+    this.addKeyEventHandler('DELETE', (ev, range, keymap) =>
+      this._handleRemoveKeyEvent(ev, range, keymap)
+    );
   }
 
   _handleRemoveKeyEvent(ev, range, keyMap) {
@@ -531,15 +550,19 @@ class WysiwygEditor {
   }
 
   _isStartHeadingOrTableAndContainsThem(range) {
-    const {startContainer, startOffset, commonAncestorContainer, collapsed} = range;
+    const { startContainer, startOffset, commonAncestorContainer, collapsed } = range;
     const root = this.getEditor().getRoot();
     let result = false;
 
     if (!collapsed && commonAncestorContainer === root) {
       if (startContainer === root) {
-        result = FIND_TABLE_AND_HEADING_RX.test(domUtils.getChildNodeByOffset(startContainer, startOffset).nodeName);
+        result = FIND_TABLE_AND_HEADING_RX.test(
+          domUtils.getChildNodeByOffset(startContainer, startOffset).nodeName
+        );
       } else if (startOffset === 0) {
-        result = FIND_TABLE_AND_HEADING_RX.test(domUtils.getParentUntil(startContainer, root).nodeName);
+        result = FIND_TABLE_AND_HEADING_RX.test(
+          domUtils.getParentUntil(startContainer, root).nodeName
+        );
       }
     }
 
@@ -547,7 +570,9 @@ class WysiwygEditor {
   }
 
   _wrapDefaultBlockToOrphanTexts() {
-    const textNodes = this.get$Body().contents().filter(this.findTextNodeFilter);
+    const textNodes = this.get$Body()
+      .contents()
+      .filter(this.findTextNodeFilter);
 
     textNodes.each((i, node) => {
       if (node.nextSibling && node.nextSibling.tagName === 'BR') {
@@ -565,8 +590,10 @@ class WysiwygEditor {
    * @private
    */
   _isInOrphanText(range) {
-    return range.startContainer.nodeType === Node.TEXT_NODE
-            && range.startContainer.parentNode === this.get$Body()[0];
+    return (
+      range.startContainer.nodeType === Node.TEXT_NODE &&
+      range.startContainer.parentNode === this.get$Body()[0]
+    );
   }
 
   /**
@@ -589,6 +616,7 @@ class WysiwygEditor {
 
     // range for insert block
     const insertTargetNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
+
     if (insertTargetNode) {
       range.setStartBefore(insertTargetNode);
     } else {
@@ -622,7 +650,9 @@ class WysiwygEditor {
   _joinSplitedTextNodes() {
     let prevNode, lastGroup;
     const nodesToRemove = [];
-    const textNodes = this.get$Body().contents().filter(this.findTextNodeFilter);
+    const textNodes = this.get$Body()
+      .contents()
+      .filter(this.findTextNodeFilter);
 
     textNodes.each((i, node) => {
       if (prevNode === node.previousSibling) {
@@ -661,6 +691,7 @@ class WysiwygEditor {
   setSelectionByContainerAndOffset(startContainer, startOffset, endContainer, endOffset) {
     const sq = this.getEditor();
     const range = sq.getSelection();
+
     range.setStart(startContainer, startOffset);
     range.setEnd(endContainer, endOffset);
     sq.setSelection(range);
@@ -748,8 +779,13 @@ class WysiwygEditor {
     this.$editorContainerEl.css('height', '100%');
     this.$editorContainerEl.parent().height(height);
 
-    const paddingHeight = parseInt(this.$editorContainerEl.css('padding-top'), 10) - parseInt(this.$editorContainerEl.css('padding-bottom'), 10);
-    const marginHeight = parseInt(this.get$Body().css('margin-top'), 10) - parseInt(this.get$Body().css('margin-bottom'), 10);
+    const paddingHeight =
+      parseInt(this.$editorContainerEl.css('padding-top'), 10) -
+      parseInt(this.$editorContainerEl.css('padding-bottom'), 10);
+    const marginHeight =
+      parseInt(this.get$Body().css('margin-top'), 10) -
+      parseInt(this.get$Body().css('margin-bottom'), 10);
+
     this.get$Body().css('min-height', `${height - marginHeight - paddingHeight}px`);
   }
 
@@ -759,6 +795,7 @@ class WysiwygEditor {
    */
   setMinHeight(minHeight) {
     const editorBody = this.get$Body().get(0);
+
     editorBody.style.minHeight = `${minHeight}px`;
   }
 
@@ -768,7 +805,9 @@ class WysiwygEditor {
    */
   setPlaceholder(placeholder) {
     if (placeholder) {
-      this.getEditor().getRoot().setAttribute('data-placeholder', placeholder);
+      this.getEditor()
+        .getRoot()
+        .setAttribute('data-placeholder', placeholder);
     }
   }
 
@@ -955,7 +994,9 @@ class WysiwygEditor {
    * @returns {boolean} Match result
    */
   hasFormatWithRx(rx) {
-    return this.getEditor().getPath().match(rx);
+    return this.getEditor()
+      .getPath()
+      .match(rx);
   }
 
   /**
@@ -965,8 +1006,9 @@ class WysiwygEditor {
    */
   breakToNewDefaultBlock(range, where) {
     const div = this.editor.createDefaultBlock();
-    const currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset)
-            || domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
+    const currentNode =
+      domUtils.getChildNodeByOffset(range.startContainer, range.startOffset) ||
+      domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
     const appendBefore = domUtils.getParentUntil(currentNode, this.get$Body()[0]);
 
     if (where === 'before') {
@@ -988,6 +1030,7 @@ class WysiwygEditor {
    */
   replaceContentText(container, from, to) {
     const before = $(container).html();
+
     $(container).html(before.replace(from, to));
   }
 
@@ -1012,17 +1055,13 @@ class WysiwygEditor {
    */
   scrollIntoCursor() {
     const scrollTop = this.scrollTop();
-    const {
-      top: cursorTop,
-      height: cursorHeight
-    } = this.getEditor().getCursorPosition();
-    const {
-      top: editorTop,
-      height: editorHeight
-    } = this.$editorContainerEl.get(0).getBoundingClientRect();
+    const { top: cursorTop, height: cursorHeight } = this.getEditor().getCursorPosition();
+    const { top: editorTop, height: editorHeight } = this.$editorContainerEl
+      .get(0)
+      .getBoundingClientRect();
 
     const cursorAboveEditor = cursorTop - editorTop;
-    const cursorBelowEditor = (cursorTop + cursorHeight) - (editorTop + editorHeight);
+    const cursorBelowEditor = cursorTop + cursorHeight - (editorTop + editorHeight);
 
     if (cursorAboveEditor < 0) {
       this.scrollTop(scrollTop + cursorAboveEditor);
@@ -1097,7 +1136,9 @@ class WysiwygEditor {
    * @returns {Range}
    */
   getRange() {
-    return this.getEditor().getSelection().cloneRange();
+    return this.getEditor()
+      .getSelection()
+      .cloneRange();
   }
 
   /**
@@ -1170,12 +1211,14 @@ class WysiwygEditor {
   }
 
   isEditorValid() {
-    return this.getEditor() && $.contains(this.$editorContainerEl[0].ownerDocument, this.$editorContainerEl[0]);
+    return (
+      this.getEditor() &&
+      $.contains(this.$editorContainerEl[0].ownerDocument, this.$editorContainerEl[0])
+    );
   }
 
   _isCursorNotInRestrictedAreaOfTabAction(editor) {
-    return !editor.hasFormat('li')
-            && !editor.hasFormat('blockquote') && !editor.hasFormat('table');
+    return !editor.hasFormat('li') && !editor.hasFormat('blockquote') && !editor.hasFormat('table');
   }
 
   /**

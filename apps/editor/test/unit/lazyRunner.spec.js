@@ -22,6 +22,7 @@ describe('LazyRunner', () => {
   describe('invoke function after delay time', () => {
     it('function has not invoke immediately', () => {
       const func = jasmine.createSpy('func');
+
       lr.run(func, 100);
       expect(func).not.toHaveBeenCalled();
     });

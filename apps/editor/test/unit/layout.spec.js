@@ -13,10 +13,13 @@ describe('Layout', () => {
   beforeEach(() => {
     em = new EventManager();
 
-    layout = new Layout({
-      el: $('body'),
-      height: 100
-    }, em);
+    layout = new Layout(
+      {
+        el: $('body'),
+        height: 100
+      },
+      em
+    );
   });
 
   afterEach(() => {

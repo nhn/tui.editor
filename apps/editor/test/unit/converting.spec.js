@@ -2,7 +2,8 @@
  * @fileoverview test editor md to html converting
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-const mdInput = ['# HELLO\n\n',
+const mdInput = [
+  '# HELLO\n\n',
   '## HELLO\n\n',
   '### HELLO\n\n',
   '#### HELLO\n\n',
@@ -39,7 +40,7 @@ const mdInput = ['# HELLO\n\n',
   '| :-------------- | :---------------: | ---------------: |\n',
   '| _data_ | data | data |\n',
   '| ~~data~~ | data | data |\n' +
-  '| a<br>c | c<br>\nd |  |\n' +
+    '| a<br>c | c<br>\nd |  |\n' +
     '\\[link\\]\\(www\\.google\\.com\\)\n\n' +
     '\\| vertical bar\n\n' +
     '\\* list1\n\n' +
@@ -63,9 +64,11 @@ const mdInput = ['# HELLO\n\n',
   '<br>\n',
   '<br>\n',
   '<br>\n',
-  'end'].join('');
+  'end'
+].join('');
 
-const mdOutput = ['# HELLO\n\n',
+const mdOutput = [
+  '# HELLO\n\n',
   '## HELLO\n\n',
   '### HELLO\n\n',
   '#### HELLO\n\n',
@@ -105,7 +108,7 @@ const mdOutput = ['# HELLO\n\n',
   '| :-------------- | :---------------: | ---------------: |\n',
   '| _data_ | data | data |\n',
   '| ~~data~~ | data | data |\n' +
-  '| a<br>c | c<br>\nd |  |\n\n' +
+    '| a<br>c | c<br>\nd |  |\n\n' +
     '\\[link\\]\\(www\\.google\\.com\\)\n\n' +
     '\\| vertical bar\n\n' +
     '\\* list1\n\n' +
@@ -129,12 +132,14 @@ const mdOutput = ['# HELLO\n\n',
   '<br>\n',
   '<br>\n',
   '<br>\n',
-  'end'].join('');
+  'end'
+].join('');
 
 import Editor from '@/editor';
 
 describe('converting', () => {
   let editor, el;
+
   jasmine.getFixtures().fixturesPath = 'base/test/unit/fixtures/';
 
   beforeEach(() => {
@@ -178,7 +183,7 @@ describe('converting', () => {
  * @returns {boolean} true if match
  */
 function compare(resultString, expectedString) {
-  const length = expectedString.length;
+  const { length } = expectedString;
   let i = 0;
   let row = 0;
   let col = 0;
@@ -190,12 +195,17 @@ function compare(resultString, expectedString) {
       flag = resultString.charAt(i) !== expectedString.charAt(i);
       if (flag) {
         /* eslint-disable */
-                console.log(
-                    `"${expectedString.substring(i - 4, i)}^${expectedString.charAt(i)}^${expectedString.substring(i + 1, i + 5)}"`
-                    + ' expected but '
-                    + `"${resultString.substring(i - 4, i)}^${resultString.charAt(i)}^${resultString.substring(i + 1, i + 5)}"`);
-                console.log(`at -> ${row}:${col}`);
-                /* eslint-enable */
+        console.log(
+          `"${expectedString.substring(i - 4, i)}^${expectedString.charAt(
+            i
+          )}^${expectedString.substring(i + 1, i + 5)}"` +
+            ' expected but ' +
+            `"${resultString.substring(i - 4, i)}^${resultString.charAt(
+              i
+            )}^${resultString.substring(i + 1, i + 5)}"`
+        );
+        console.log(`at -> ${row}:${col}`);
+        /* eslint-enable */
         result = false;
         break;
       }

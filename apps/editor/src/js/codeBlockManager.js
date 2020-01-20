@@ -43,7 +43,9 @@ class CodeBlockManager {
     if (replacer) {
       html = replacer(codeText, language);
     } else {
-      html = hljs.getLanguage(language) ? hljs.highlight(language, codeText).value : escape(codeText, false);
+      html = hljs.getLanguage(language)
+        ? hljs.highlight(language, codeText).value
+        : escape(codeText, false);
     }
 
     return html;
@@ -66,14 +68,13 @@ class CodeBlockManager {
  * @ignore
  */
 function escape(html, encode) {
-  return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
+  return html
+    .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
 
-export {
-  CodeBlockManager
-};
+export { CodeBlockManager };
 export default new CodeBlockManager();

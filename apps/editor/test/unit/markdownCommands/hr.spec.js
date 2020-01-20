@@ -35,7 +35,9 @@ describe('HR', () => {
 
       HR.exec(mde);
 
-      expect(cm.getValue()).toEqual(['mytext1', '', 'mytext2', '\n* * *\n', '', 'mytext3'].join('\n'));
+      expect(cm.getValue()).toEqual(
+        ['mytext1', '', 'mytext2', '\n* * *\n', '', 'mytext3'].join('\n')
+      );
     });
 
     it('to a blank line', () => {
@@ -49,13 +51,16 @@ describe('HR', () => {
 
   describe('replace to hr', () => {
     it('from selected content', () => {
-      cm.setSelection({
-        line: 0,
-        ch: 1
-      }, {
-        line: 2,
-        ch: 2
-      });
+      cm.setSelection(
+        {
+          line: 0,
+          ch: 1
+        },
+        {
+          line: 2,
+          ch: 2
+        }
+      );
 
       HR.exec(mde);
 

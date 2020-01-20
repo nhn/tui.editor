@@ -25,8 +25,8 @@ class MarkdownEditor extends CodeMirrorExt {
       dragDrop: true,
       allowDropFileTypes: ['image'],
       extraKeys: {
-        'Enter': 'newlineAndIndentContinueMarkdownList',
-        'Tab': 'indentOrderedList',
+        Enter: 'newlineAndIndentContinueMarkdownList',
+        Tab: 'indentOrderedList',
         'Shift-Tab': 'indentLessOrderedList'
       },
       viewportMargin: options && options.height === 'auto' ? Infinity : 10
@@ -142,7 +142,7 @@ class MarkdownEditor extends CodeMirrorExt {
 
     this.cm.on('cursorActivity', () => {
       const token = this.cm.getTokenAt(this.cm.getCursor());
-      const {base} = token.state;
+      const { base } = token.state;
       const state = {
         bold: !!base.strong,
         italic: !!base.em,
