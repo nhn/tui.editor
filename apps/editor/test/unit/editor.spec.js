@@ -304,6 +304,37 @@ describe('Editor', () => {
       });
     });
 
+    describe('plugins', () => {
+      it('should invoke plugin functions', () => {
+        const fooPlugin = jasmine.createSpy('fooPlugin');
+        const barPlugin = jasmine.createSpy('barPlugin');
+
+        editor = new Editor({
+          el: container,
+          plugins: [fooPlugin, barPlugin]
+        });
+
+        expect(fooPlugin).toHaveBeenCalled();
+        expect(barPlugin).toHaveBeenCalled();
+      });
+
+      it('should invoke plugin function with options of plugin', () => {
+        const plugin = jasmine.createSpy(plugin);
+
+        editor = new Editor({
+          el: container,
+          plugins: [
+            {
+              plugin,
+              options: {}
+            }
+          ]
+        });
+
+        expect(plugin).toHaveBeenCalled();
+      });
+    });
+
     describe('usageStatistics', () => {
       it('should send request hostname in payload by default', () => {
         spyOn(util, 'sendHostname');

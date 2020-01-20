@@ -12,7 +12,6 @@ import WysiwygEditor from './wysiwygEditor';
 import Layout from './layout';
 import EventManager from './eventManager';
 import CommandManager from './commandManager';
-import extManager from './extManager';
 import ImportManager from './importManager';
 import WwCodeBlockManager from './wwCodeBlockManager';
 import Convertor from './convertor';
@@ -24,6 +23,7 @@ import WwTableManager from './wwTableManager';
 import WwTableSelectionManager from './wwTableSelectionManager';
 import codeBlockManager, { CodeBlockManager } from './codeBlockManager';
 import toMarkRenderer from './toMarkRenderer';
+import { invokePlugins } from './pluginHelper';
 
 // markdown commands
 import mdBold from './markdownCommands/bold';
@@ -128,7 +128,7 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  *     @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
  *     @param {string[]} [options.toolbarItems] - toolbar items.
  *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
- *     @param {string[]} [options.exts] - extensions
+ *     @param {string[]} [options.plugins] - plugins
  *     @param {object} [options.customConvertor] - convertor extention
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {string} [options.previewDelayTime] - the delay time for rendering preview
@@ -257,7 +257,9 @@ class ToastUIEditor {
       this.setHtml(this.initialHtml, false);
     }
 
-    extManager.applyExtension(this, this.options.exts);
+    if (this.options.plugins) {
+      invokePlugins(this.options.plugins, this);
+    }
 
     this.eventManager.emit('load', this);
 
@@ -808,15 +810,6 @@ class ToastUIEditor {
    */
   static getInstances() {
     return __nedInstance;
-  }
-
-  /**
-   * Define extension
-   * @param {string} name Extension name
-   * @param {function} ext extension
-   */
-  static defineExtension(name, ext) {
-    extManager.defineExtension(name, ext);
   }
 
   /**
