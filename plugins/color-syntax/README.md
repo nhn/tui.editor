@@ -8,7 +8,7 @@
 
 ```
 - dist/
-  - plugin.js
+  - toastui-editor-plugin-color-syntax.js
   - cdn/
     - toastui-editor-plugin-color-syntax.js
     - toastui-editor-plugin-color-syntax.min
@@ -21,7 +21,7 @@
   - @toast-ui/
     - editor-plugin-color-syntax/
       - dist/
-        - plugin.js
+        - toastui-editor-plugin-color-syntax.js
 ```
 
 ### Serve with CDN

@@ -10,7 +10,7 @@
     "color-syntax",
     "color-picker"
   ],
-  "main": "dist/plugin.js",
+  "main": "dist/toastui-editor-plugin-color-syntax.js",
   "files": [
     "dist/*.js"
   ],
