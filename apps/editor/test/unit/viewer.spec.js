@@ -128,4 +128,51 @@ describe('Viewer', () => {
 
     expect(viewer.preview.getHTML()).toBe(html);
   });
+
+  describe('plugins option', () => {
+    let container, viewer;
+
+    beforeEach(() => {
+      container = document.createElement('div');
+      document.body.appendChild(container);
+    });
+
+    afterEach(done => {
+      setTimeout(() => {
+        viewer.remove();
+        container.parentNode.removeChild(container);
+        done();
+      });
+    });
+
+    it('should invoke plugin functions', () => {
+      const fooPlugin = jasmine.createSpy('fooPlugin');
+      const barPlugin = jasmine.createSpy('barPlugin');
+
+      viewer = new ToastUIEditorViewer({
+        el: container,
+        plugins: [fooPlugin, barPlugin]
+      });
+
+      expect(fooPlugin).toHaveBeenCalledWith(viewer);
+      expect(barPlugin).toHaveBeenCalledWith(viewer);
+    });
+
+    it('should invoke plugin function with options of plugin', () => {
+      const plugin = jasmine.createSpy(plugin);
+      const options = {};
+
+      viewer = new ToastUIEditorViewer({
+        el: container,
+        plugins: [
+          {
+            plugin,
+            options
+          }
+        ]
+      });
+
+      expect(plugin).toHaveBeenCalledWith(viewer, options);
+    });
+  });
 });

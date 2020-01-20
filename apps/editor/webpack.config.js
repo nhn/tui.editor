@@ -27,7 +27,7 @@ const ENTRY_IMAGE_DIR = './src/image';
 const isProduction = process.argv.indexOf('--mode=production') >= 0;
 const isMinified = process.argv.indexOf('--minify') >= 0;
 
-const defaultConfigs = Array(isProduction ? 5 : 1)
+const defaultConfigs = Array(isProduction ? 2 : 1)
   .fill(0)
   .map(() => {
     return {
@@ -83,18 +83,6 @@ const defaultConfigs = Array(isProduction ? 5 : 1)
             amd: 'tui-code-snippet',
             root: ['tui', 'util']
           },
-          'tui-color-picker': {
-            commonjs: 'tui-color-picker',
-            commonjs2: 'tui-color-picker',
-            amd: 'tui-color-picker',
-            root: ['tui', 'colorPicker']
-          },
-          'tui-chart/dist/tui-chart-polyfill': {
-            commonjs: 'tui-chart',
-            commonjs2: 'tui-chart',
-            amd: 'tui-chart',
-            root: ['tui', 'chart']
-          },
           jquery: {
             commonjs: 'jquery',
             commonjs2: 'jquery',
@@ -124,12 +112,6 @@ const defaultConfigs = Array(isProduction ? 5 : 1)
             commonjs2: 'to-mark',
             amd: 'to-mark',
             root: ['toMark']
-          },
-          'plantuml-encoder': {
-            commonjs: 'plantuml-encoder',
-            commonjs2: 'plantuml-encoder',
-            amd: 'plantuml-encoder',
-            root: ['plantumlEncoder']
           },
           'highlight.js': {
             commonjs: 'highlight.js',
@@ -220,75 +202,6 @@ function setProductionConfig(config) {
   }
 }
 
-function setProductionConfigForEditorAll(config) {
-  config.entry = {
-    'Editor-all': ENTRY_MAIN_ALL
-  };
-
-  config.plugins.push(new webpack.IgnorePlugin(/viewer$/, /extensions/));
-
-  if (isMinified) {
-    addMinifyPlugin(config);
-    addAnalyzerPlugin(config, 'all');
-  }
-}
-
-function setProductionConfigForViewerAll(config) {
-  config.entry = {
-    'Viewer-all': ENTRY_VIEWER_ALL
-  };
-
-  config.plugins.push(new webpack.IgnorePlugin(/editor$/, /extensions/));
-
-  if (isMinified) {
-    addMinifyPlugin(config);
-    addAnalyzerPlugin(config, 'viewer-all');
-  }
-}
-
-function setProductionConfigForExtensions(config) {
-  config.entry = {
-    extChart: ENTRY_EXT_CHART,
-    extUML: ENTRY_EXT_UML,
-    extColorSyntax: ENTRY_EXT_COLOR_SYNTAX,
-    extScrollSync: ENTRY_EXT_SCROLL_SYNC,
-    extTable: ENTRY_EXT_TABLE
-  };
-
-  config.externals.push(function(context, request, callback) {
-    const dir = path.relative(__dirname, context);
-
-    if (dir.includes('extensions')) {
-      if (request.match(/editor$/)) {
-        callback(null, {
-          commonjs: 'tui-editor',
-          commonjs2: 'tui-editor',
-          amd: 'tui-editor',
-          root: ['tui', 'Editor']
-        });
-      } else if (request.match(/viewer$/)) {
-        callback(null, {
-          commonjs: 'tui-editor/dist/tui-editor-Viewer',
-          commonjs2: 'tui-editor/dist/tui-editor-Viewer',
-          amd: 'tui-editor/dist/tui-editor-Viewer',
-          root: ['tui', 'Editor']
-        });
-      } else {
-        callback();
-      }
-    } else {
-      callback();
-    }
-  });
-
-  delete config.output.library;
-
-  if (isMinified) {
-    addMinifyPlugin(config);
-    addAnalyzerPlugin(config, 'exts');
-  }
-}
-
 function setProductionConfigForFull(config) {
   config.entry = {
     'Editor-full': ENTRY_MAIN_ALL,
@@ -307,10 +220,7 @@ addCopyingAssetsPlugin(defaultConfigs[0]);
 
 if (isProduction) {
   setProductionConfig(defaultConfigs[0]);
-  setProductionConfigForEditorAll(defaultConfigs[1]);
-  setProductionConfigForViewerAll(defaultConfigs[2]);
-  setProductionConfigForExtensions(defaultConfigs[3]);
-  setProductionConfigForFull(defaultConfigs[4]);
+  setProductionConfigForFull(defaultConfigs[1]);
 } else {
   setDevelopConfig(defaultConfigs[0]);
 }
