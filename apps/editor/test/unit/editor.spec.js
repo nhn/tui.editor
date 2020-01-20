@@ -314,24 +314,25 @@ describe('Editor', () => {
           plugins: [fooPlugin, barPlugin]
         });
 
-        expect(fooPlugin).toHaveBeenCalled();
-        expect(barPlugin).toHaveBeenCalled();
+        expect(fooPlugin).toHaveBeenCalledWith(editor);
+        expect(barPlugin).toHaveBeenCalledWith(editor);
       });
 
       it('should invoke plugin function with options of plugin', () => {
         const plugin = jasmine.createSpy(plugin);
+        const options = {};
 
         editor = new Editor({
           el: container,
           plugins: [
             {
               plugin,
-              options: {}
+              options
             }
           ]
         });
 
-        expect(plugin).toHaveBeenCalled();
+        expect(plugin).toHaveBeenCalledWith(editor, options);
       });
     });
 
