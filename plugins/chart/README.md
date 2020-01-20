@@ -8,7 +8,7 @@
 
 ```
 - dist/
-  - plugin.js
+  - toastui-editor-plugin-chart.js
   - cdn/
     - toastui-editor-plugin-chart.js
     - toastui-editor-plugin-chart.min
@@ -21,7 +21,7 @@
   - @toast-ui/
     - editor-plugin-chart/
       - dist/
-        - plugin.js
+        - toastui-editor-plugin-chart.js
 ```
 
 ### Serve with CDN

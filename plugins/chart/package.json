@@ -9,7 +9,7 @@
     "plugin",
     "chart"
   ],
-  "main": "dist/plugin.js",
+  "main": "dist/toastui-editor-plugin-chart.js",
   "files": [
     "dist/*.js"
   ],
