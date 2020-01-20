@@ -9,7 +9,7 @@
     "plugin",
     "uml"
   ],
-  "main": "dist/plugin.js",
+  "main": "dist/toastui-editor-plugin-uml.js",
   "files": [
     "dist/*.js"
   ],

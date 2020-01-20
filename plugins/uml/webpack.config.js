@@ -9,13 +9,15 @@ const pkg = require('./package.json');
 const TerserPlugin = require('terser-webpack-plugin');
 
 function getOutputConfig(isCDN, isMinified) {
+  const filename = `toastui-${pkg.name.replace(/@toast-ui\//, '')}`;
+
   if (isCDN) {
     return {
       library: ['tui', 'Editor', 'plugin', 'uml'],
       libraryExport: 'default',
-      libraryTarget: 'window',
+      libraryTarget: 'umd',
       path: path.resolve(__dirname, 'dist/cdn'),
-      filename: `toastui-editor-plugin-uml${isMinified ? '.min' : ''}.js`
+      filename: `${filename}${isMinified ? '.min' : ''}.js`
     };
   }
 
@@ -23,7 +25,7 @@ function getOutputConfig(isCDN, isMinified) {
     libraryExport: 'default',
     libraryTarget: 'commonjs2',
     path: path.resolve(__dirname, 'dist'),
-    filename: 'plugin.js'
+    filename: `${filename}.js`
   };
 }
 
