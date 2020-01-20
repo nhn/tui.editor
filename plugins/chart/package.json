@@ -1,0 +1,52 @@
+{
+  "name": "@toast-ui/editor-plugin-chart",
+  "version": "1.0.0",
+  "description": "TOAST UI Editor : Chart Plugin",
+  "keywords": [
+    "nhn",
+    "toastui",
+    "editor",
+    "plugin",
+    "chart"
+  ],
+  "main": "dist/toastui-editor-plugin-chart.js",
+  "files": [
+    "dist/*.js"
+  ],
+  "author": "NHN. FE Development Lab",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhn/tui.editor.git",
+    "directory": "plugins/chart"
+  },
+  "scripts": {
+    "serve:editor": "npx lerna run --scope tui-editor serve",
+    "serve": "webpack-dev-server",
+    "build:cdn": "webpack --mode=production --cdn & webpack --mode=production --cdn --minify",
+    "build": "webpack --mode=production && npm run build:cdn"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-config-tui": "^3.0.0",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1",
+    "terser-webpack-plugin": "^2.3.1",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
+  },
+  "dependencies": {
+    "jquery": "^3.4.1",
+    "tui-chart": "^3.9.0",
+    "tui-code-snippet": "^2.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
