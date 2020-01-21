@@ -83,7 +83,7 @@ function isNumeric(str) {
  * @param {Function} callback - callback which provides json format data & options
  * @ignore
  */
-function parseCode2DataAndOptions(code, callback) {
+export function parseCode2DataAndOptions(code, callback) {
   code = trimKeepingTabs(code);
   const [firstCode, secondCode] = code.split(/\n{2,}/);
 
@@ -138,7 +138,7 @@ function _parseCode2DataAndOptions(dataCode, optionCode) {
  * @returns {string|RegExp} - detected delimiter
  * @ignore
  */
-function detectDelimiter(code) {
+export function detectDelimiter(code) {
   code = trimKeepingTabs(code);
 
   // chunk first max 10 lines to detect
@@ -206,7 +206,7 @@ function calcDSVDelta(code, delimiter) {
  * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
-function parseDSV2ChartData(code, delimiter) {
+export function parseDSV2ChartData(code, delimiter) {
   // trim all heading/trailing blank lines
   code = trimKeepingTabs(code);
 
@@ -254,27 +254,27 @@ function parseDSV2ChartData(code, delimiter) {
   };
 }
 
-function getLineValue(values) {
-  let value = values.join(OPTION_DELIMITER);
+/**
+ * Parse code from url
+ * @param {string} url - remote csv/tsv file url
+ * @param {Function} callback - callback function
+ * @ignore
+ */
+export function parseURL2ChartData(url, callback) {
+  const success = code => {
+    const chartData = parseDSV2ChartData(code);
 
-  if (value.length === 0) {
-    return '';
-  }
+    callback(chartData);
+  };
+  const fail = () => callback(null);
 
-  try {
-    value = JSON.parse(value.trim());
-  } catch (e) {
-    value = value.trim();
-  }
-
-  return value;
+  $.get(url)
+    .done(success)
+    .fail(fail);
 }
 
-function getLineKeys(keyString, reservedKeys) {
-  keyString = keyString.trim();
-
-  // parse keys
-  const [...keys] = keyString.split('.');
+function getChartKeys(keyString, reservedKeys) {
+  const [...keys] = keyString.trim().split('.');
   const [topKey] = keys;
 
   if (inArray(topKey, reservedKeys) >= 0) {
@@ -298,7 +298,7 @@ function getLineKeys(keyString, reservedKeys) {
  * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
-function parseCode2ChartOption(optionCode) {
+export function parseCode2ChartOption(optionCode) {
   const reservedKeys = ['type', 'url'];
   const options = {};
 
@@ -309,12 +309,22 @@ function parseCode2ChartOption(optionCode) {
   const optionLines = optionCode.split(REGEX_LINE_ENDING);
 
   optionLines.forEach(line => {
-    const lineValues = line.split(OPTION_DELIMITER);
-    const keyString = lineValues.shift();
+    const values = line.split(OPTION_DELIMITER);
+    const keyString = values.shift();
 
-    const value = getLineValue(lineValues);
-    const keys = getLineKeys(keyString, reservedKeys);
+    let value = values.join(OPTION_DELIMITER);
 
+    if (value.length === 0) {
+      return;
+    }
+
+    try {
+      value = JSON.parse(value.trim());
+    } catch (e) {
+      value = value.trim();
+    }
+
+    const keys = getChartKeys(keyString, reservedKeys);
     let option = options;
 
     for (let i = 0; i < keys.length; i += 1) {
@@ -328,30 +338,13 @@ function parseCode2ChartOption(optionCode) {
   return options;
 }
 
-function getDefaultChartWidth(
-  isWidthUndefined,
-  pluginOptionWidth,
-  chartOptionWidth,
-  containerWidth
-) {
-  const width = isWidthUndefined ? pluginOptionWidth : chartOptionWidth;
-
-  return width === 'auto' ? containerWidth : width;
-}
-
-function getDefaultChartHeight(
-  isHeightUndefined,
-  pluginOptionHeight,
-  chartOptionHeight,
-  containerWidth
-) {
-  const height = isHeightUndefined ? pluginOptionHeight : chartOptionHeight;
-
-  return height === 'auto' ? containerWidth : height;
+function getAdjustedDimension(value, containerWidth) {
+  return value === 'auto' ? containerWidth : value;
 }
 
 function getChartDimension(chartOptions, pluginOptions, chartContainer) {
   let { width, height } = chartOptions.chart;
+
   const isWidthUndefined = isUndefined(width);
   const isHeightUndefined = isUndefined(height);
 
@@ -359,8 +352,11 @@ function getChartDimension(chartOptions, pluginOptions, chartContainer) {
     // if no width or height specified, set width and height to container width
     const { width: containerWidth } = chartContainer.getBoundingClientRect();
 
-    width = getDefaultChartWidth(isWidthUndefined, pluginOptions.width, width, containerWidth);
-    width = getDefaultChartHeight(isWidthUndefined, pluginOptions.height, height, containerWidth);
+    width = isWidthUndefined ? pluginOptions.width : width;
+    height = isHeightUndefined ? pluginOptions.height : height;
+
+    width = getAdjustedDimension(width, containerWidth);
+    height = getAdjustedDimension(height, containerWidth);
   }
 
   width = Math.min(pluginOptions.maxWidth, width);
@@ -381,7 +377,7 @@ function getChartDimension(chartOptions, pluginOptions, chartContainer) {
  * @see https://nhn.github.io/tui.chart/latest/tui.chart.html
  * @ignore
  */
-function setDefaultOptions(chartOptions, pluginOptions, chartContainer) {
+export function setDefaultOptions(chartOptions, pluginOptions, chartContainer) {
   // chart options scaffolding
   chartOptions = extend(
     {
@@ -394,7 +390,7 @@ function setDefaultOptions(chartOptions, pluginOptions, chartContainer) {
   );
 
   // set default plugin options
-  pluginOptions = extend(DEFAULT_CHART_OPTIONS, pluginOptions);
+  pluginOptions = extend({}, DEFAULT_CHART_OPTIONS, pluginOptions);
 
   const { width, height } = getChartDimension(chartOptions, pluginOptions, chartContainer);
 
