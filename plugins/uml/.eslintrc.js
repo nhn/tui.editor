@@ -5,7 +5,11 @@ module.exports = {
     sourceType: 'module'
   },
   env: {
-    commonjs: true
+    commonjs: true,
+    jasmine: true
+  },
+  globals: {
+    fixture: true
   },
   rules: {
     'lines-around-directive': 0,
