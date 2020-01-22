@@ -26,9 +26,10 @@ module.exports = {
     'no-dupe-class-members': 0,
     'no-cond-assign': 0,
     'no-plusplus': 0,
-    'eqeqeq': 0,
+    eqeqeq: 0,
     'no-empty': 0,
     'max-depth': 0,
+    'max-nested-callbacks': 0,
     'no-useless-escape': 0,
     'no-control-regex': 0,
     'no-constant-condition': 0,
@@ -51,6 +52,6 @@ module.exports = {
     '@typescript-eslint/interface-name-prefix': 0,
     '@typescript-eslint/no-useless-constructor': 2,
     '@typescript-eslint/ban-ts-ignore': 0,
-    '@typescript-eslint/no-empty-function': 0,
-  },
+    '@typescript-eslint/no-empty-function': 0
+  }
 };

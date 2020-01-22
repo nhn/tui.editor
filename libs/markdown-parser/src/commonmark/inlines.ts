@@ -1,4 +1,4 @@
-import { Node, BlockNode, SourcePos, isHeading, LinkNode, createNode } from './node';
+import { Node, BlockNode, SourcePos, isHeading, LinkNode, createNode, text } from './node';
 import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY } from './common';
 import { reHtmlTag } from './rawHtml';
 import normalizeReference from './normalize-reference';
@@ -7,6 +7,7 @@ import { Options } from './blocks';
 
 import { decodeHTML } from 'entities';
 import NodeWalker from './nodeWalker';
+import { convertExtAutoLinks } from './gfm/autoLinks';
 
 export const C_NEWLINE = 10;
 const C_ASTERISK = 42;
@@ -59,12 +60,6 @@ const reLinkLabel = /^\[(?:[^\\\[\]]|\\.){0,1000}\]/;
 
 // Matches a string of non-special characters.
 const reMain = /^[^\n`\[\]\\!<&*_'"~]+/m;
-
-const text = function(s: string, sourcepos?: SourcePos) {
-  const node = createNode('text', sourcepos);
-  node.literal = s;
-  return node;
-};
 
 type DelimiterCC =
   | typeof C_ASTERISK
@@ -950,7 +945,6 @@ export class InlineParser {
       } else if (textNodes.length > 1) {
         const firstNode = textNodes[0];
         const lastNode = textNodes[textNodes.length - 1];
-        // @TODO Fix This
         if (firstNode.sourcepos && lastNode.sourcepos) {
           firstNode.sourcepos![1] = lastNode.sourcepos![1];
         }
@@ -1042,5 +1036,6 @@ export class InlineParser {
     block.stringContent = null; // allow raw string to be garbage collected
     this.processEmphasis(null);
     this.mergeTextNodes(block.walker());
+    convertExtAutoLinks(block.walker());
   }
 }
