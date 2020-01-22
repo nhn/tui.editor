@@ -117,7 +117,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 export function getWwAddRowCommand(editor) {
   const { CommandManager } = Object.getPrototypeOf(editor).constructor;
 
-  if (CommandManager) {
+  try {
     return CommandManager.command(
       'wysiwyg',
       /** @lends AddRow */ {
@@ -162,7 +162,7 @@ export function getWwAddRowCommand(editor) {
         }
       }
     );
+  } catch (e) {
+    console.warn('The command manager has not been created.');
   }
-
-  return null;
 }

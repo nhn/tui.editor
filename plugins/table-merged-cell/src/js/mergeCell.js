@@ -144,7 +144,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 export function getMergeCellCommand(editor) {
   const { CommandManager } = Object.getPrototypeOf(editor).constructor;
 
-  if (CommandManager) {
+  try {
     return CommandManager.command(
       'wysiwyg',
       /** @lends MergeCell */ {
@@ -195,7 +195,7 @@ export function getMergeCellCommand(editor) {
         }
       }
     );
+  } catch (e) {
+    console.warn('The command manager has not been created.');
   }
-
-  return null;
 }

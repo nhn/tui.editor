@@ -122,7 +122,7 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 export function getWwRemoveRowCommand(editor) {
   const { CommandManager } = Object.getPrototypeOf(editor).constructor;
 
-  if (CommandManager) {
+  try {
     return CommandManager.command(
       'wysiwyg',
       /** @lends RemoveRow */ {
@@ -172,7 +172,7 @@ export function getWwRemoveRowCommand(editor) {
         }
       }
     );
+  } catch (e) {
+    console.warn('The command manager has not been created.');
   }
-
-  return null;
 }

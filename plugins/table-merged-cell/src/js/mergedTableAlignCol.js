@@ -54,7 +54,7 @@ function _findFocusCell($newTable, $startContainer) {
 export function getWwAlignColumnCommand(editor) {
   const { CommandManager } = Object.getPrototypeOf(editor).constructor;
 
-  if (CommandManager) {
+  try {
     return CommandManager.command(
       'wysiwyg',
       /** @lends AlignCol */ {
@@ -95,7 +95,7 @@ export function getWwAlignColumnCommand(editor) {
         }
       }
     );
+  } catch (e) {
+    console.warn('The command manager has not been created.');
   }
-
-  return null;
 }

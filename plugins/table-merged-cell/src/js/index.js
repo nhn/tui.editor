@@ -94,43 +94,30 @@ function _changeHtml(html, onChangeTable) {
 /**
  * Snatch wysiwyg command.
  * @param {{command: object}} commandWrapper - wysiwyg command wrapper
- * @param {Editor} editor - editor instance
+ * @param {Object.<string, Object>} commandMap - map of command names and command instances
  * @private
  */
-function _snatchWysiwygCommand(commandWrapper, editor) {
+function _snatchWysiwygCommand(commandWrapper, commandMap) {
   const { command } = commandWrapper;
 
   if (!command.isWWType()) {
     return;
   }
 
-  switch (command.getName()) {
-    case 'AddRow':
-      commandWrapper.command = getWwAddRowCommand(editor);
-      break;
-    case 'AddCol':
-      commandWrapper.command = getWwAddColumnCommand(editor);
-      break;
-    case 'RemoveRow':
-      commandWrapper.command = getWwRemoveRowCommand(editor);
-      break;
-    case 'RemoveCol':
-      commandWrapper.command = getWwRemoveColumnCommand(editor);
-      break;
-    case 'AlignCol':
-      commandWrapper.command = getWwAlignColumnCommand(editor);
-      break;
-    default:
+  const commandName = command.getName();
+
+  if (commandMap[commandName]) {
+    commandWrapper.command = commandMap[commandName];
   }
 }
 
 /**
  * Bind events.
  * @param {object} eventManager - eventManager instance
- * @parma {Editor} editor - editor instance
+ * @param {Object.<string, Object>} commandMap - map of command names and command instances
  * @private
  */
-function _bindEvents(eventManager, editor) {
+function _bindEvents(eventManager, commandMap) {
   eventManager.listen('convertorAfterMarkdownToHtmlConverted', html =>
     _changeHtml(html, createMergedTable)
   );
@@ -138,7 +125,7 @@ function _bindEvents(eventManager, editor) {
     _changeHtml(html, prepareTableUnmerge)
   );
   eventManager.listen('addCommandBefore', commandWrapper => {
-    _snatchWysiwygCommand(commandWrapper, editor);
+    _snatchWysiwygCommand(commandWrapper, commandMap);
   });
 }
 
@@ -148,10 +135,17 @@ function _bindEvents(eventManager, editor) {
  */
 export default function tablePlugin(editor) {
   const { eventManager } = editor;
+  const commandMap = {
+    AddRow: getWwAddRowCommand(editor),
+    AddCol: getWwAddColumnCommand(editor),
+    RemoveRow: getWwRemoveRowCommand(editor),
+    RemoveCol: getWwRemoveColumnCommand(editor),
+    AlignCol: getWwAlignColumnCommand(editor)
+  };
 
   addLangs(editor);
 
-  _bindEvents(eventManager, editor);
+  _bindEvents(eventManager, commandMap);
 
   if (editor.isViewer()) {
     return;

@@ -106,7 +106,7 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 export function getUnmergeCellCommand(editor) {
   const { CommandManager } = Object.getPrototypeOf(editor).constructor;
 
-  if (CommandManager) {
+  try {
     return CommandManager.command(
       'wysiwyg',
       /** @lends UnmergeCell */ {
@@ -154,7 +154,7 @@ export function getUnmergeCellCommand(editor) {
         }
       }
     );
+  } catch (e) {
+    console.warn('The command manager has not been created.');
   }
-
-  return null;
 }
