@@ -109,11 +109,9 @@ export class Node {
     }
     sibling.next = this;
     this.prev = sibling;
-    if (this.parent) {
-      sibling.parent = this.parent;
-      if (!sibling.prev) {
-        sibling.parent.firstChild = sibling;
-      }
+    sibling.parent = this.parent;
+    if (!sibling.prev) {
+      sibling.parent!.firstChild = sibling;
     }
   }
 
@@ -249,4 +247,10 @@ export function isHtmlBlock(node: Node): node is HtmlBlockNode {
 
 export function isHeading(node: Node): node is HeadingNode {
   return node.type === 'heading';
+}
+
+export function text(s: string, sourcepos?: SourcePos) {
+  const node = createNode('text', sourcepos);
+  node.literal = s;
+  return node;
 }
