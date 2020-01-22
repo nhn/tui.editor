@@ -4,10 +4,7 @@
  */
 import $ from 'jquery';
 
-import tableDataHandler, {
-  createTableData,
-  createCellIndexData
-} from '@/extensions/table/tableDataHandler';
+import tableDataHandler, { createTableData, createCellIndexData } from '@/tableDataHandler';
 
 describe('tableDataHandler', () => {
   describe('createTableData()', () => {

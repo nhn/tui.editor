@@ -12,7 +12,7 @@ import createMergedTable, {
   _mergeByColspan,
   _getRemovalTdCountsByRowspan,
   _mergeByRowspan
-} from '@/extensions/table/mergedTableCreator';
+} from '@/mergedTableCreator';
 
 describe('mergedTableCreator', () => {
   describe('_extractPropertiesForMerge()', () => {

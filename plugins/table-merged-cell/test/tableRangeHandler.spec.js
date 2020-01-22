@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import tableRangeHandler from '@/extensions/table/tableRangeHandler';
-import tableDataHandler from '@/extensions/table/tableDataHandler';
+import tableRangeHandler from '@/tableRangeHandler';
+import tableDataHandler from '@/tableDataHandler';
 
 describe('tableRangeHandler', () => {
   describe('findSelectionRange()', () => {

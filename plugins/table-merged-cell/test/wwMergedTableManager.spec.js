@@ -5,15 +5,15 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import '@/extensions/table/langs';
-import WysiwygEditor from '@/wysiwygEditor';
-import EventManager from '@/eventManager';
-import WwMergedTableManager from '@/extensions/table/wwMergedTableManager';
-import WwTableMergedSelectionManager from '@/extensions/table/wwMergedTableSelectionManager';
-import tableDataHandler from '@/extensions/table/tableDataHandler';
+import Editor from 'tui-editor/src/js/editor';
+
+import { addLangs } from '@/langs';
+import { getWwMergedTableManager } from '@/wwMergedTableManager';
+import { getWwMergedTableSelectionManager } from '@/wwMergedTableSelectionManager';
+import tableDataHandler from '@/tableDataHandler';
 
 describe('WwMergedTableManager', () => {
-  let container, em, wwe, mgr;
+  let container, editor, wwe, mgr;
   const basicTableHtml = [
     '<table>',
     '<thead>',
@@ -32,13 +32,21 @@ describe('WwMergedTableManager', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    em = new EventManager();
+    editor = new Editor({
+      el: container,
+      height: '300px',
+      initialEditType: 'wysiwyg'
+    });
 
-    wwe = new WysiwygEditor($(container), em);
+    addLangs(editor);
 
-    wwe.init();
+    wwe = editor.getCurrentModeEditor();
+
+    const WwMergedTableManager = getWwMergedTableManager(editor);
+    const WwTableMergedSelectionManager = getWwMergedTableSelectionManager(editor);
 
     mgr = new WwMergedTableManager(wwe);
+
     wwe.componentManager.addManager('tableSelection', WwTableMergedSelectionManager);
     wwe.focus();
   });

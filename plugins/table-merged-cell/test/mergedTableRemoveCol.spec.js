@@ -5,12 +5,12 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import RemoveCol, { _removeColumns } from '@/extensions/table/mergedTableRemoveCol';
-import tableDataHandler from '@/extensions/table/tableDataHandler';
-import WwMergedTableSelectionManager from '@/extensions/table/wwMergedTableSelectionManager';
-import WwMergedTableManager from '@/extensions/table/wwMergedTableManager';
-import WysiwygEditor from '@/wysiwygEditor';
-import EventManager from '@/eventManager';
+import Editor from 'tui-editor/src/js/editor';
+
+import { getWwRemoveColumnCommand, _removeColumns } from '@/mergedTableRemoveCol';
+import tableDataHandler from '@/tableDataHandler';
+import { getWwMergedTableSelectionManager } from '@/wwMergedTableSelectionManager';
+import { getWwMergedTableManager } from '@/wwMergedTableManager';
 
 /* eslint-disable max-nested-callbacks */
 describe('mergedTableRemoveCol', () => {
@@ -163,16 +163,24 @@ describe('mergedTableRemoveCol', () => {
   });
 
   describe('RemoveCol command with browser selection', () => {
-    let wwe, container;
+    let editor, wwe, container;
 
     beforeEach(() => {
       container = document.createElement('div');
 
       document.body.appendChild(container);
 
-      wwe = new WysiwygEditor($(container), new EventManager());
+      editor = new Editor({
+        el: container,
+        height: '300px',
+        initialEditType: 'wysiwyg'
+      });
 
-      wwe.init();
+      wwe = editor.getCurrentModeEditor();
+
+      const WwMergedTableSelectionManager = getWwMergedTableSelectionManager(editor);
+      const WwMergedTableManager = getWwMergedTableManager(editor);
+
       wwe.componentManager.addManager('tableSelection', WwMergedTableSelectionManager);
       wwe.componentManager.addManager('table', WwMergedTableManager);
 
@@ -196,21 +204,23 @@ describe('mergedTableRemoveCol', () => {
 
       sq.setHTML(
         `<table>
-                    <thead>
-                        <tr><th>1</th><th>2</th><th>3</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td class="te-cell-selected">4</td><td class="te-cell-selected">5</td><td>6</td></tr>
-                        <tr><td>7</td><td>8</td><td>9</td></tr>
-                    </tbody>
-                </table>`
+            <thead>
+                <tr><th>1</th><th>2</th><th>3</th></tr>
+            </thead>
+            <tbody>
+                <tr><td class="te-cell-selected">4</td><td class="te-cell-selected">5</td><td>6</td></tr>
+                <tr><td>7</td><td>8</td><td>9</td></tr>
+            </tbody>
+        </table>`
       );
 
       range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
       range.setEndAfter(wwe.get$Body().find('tbody td')[1].firstChild);
       sq.setSelection(range);
 
-      RemoveCol.exec(wwe);
+      const commandManager = getWwRemoveColumnCommand(editor);
+
+      commandManager.exec(wwe);
 
       expect(wwe.get$Body().find('thead th').length).toBe(1);
       expect(wwe.get$Body().find('tbody td').length).toBe(2);

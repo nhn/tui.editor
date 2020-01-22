@@ -5,29 +5,28 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import RemoveRow, { _removeRow } from '@/extensions/table/mergedTableRemoveRow';
-import tableDataHandler from '@/extensions/table/tableDataHandler';
-import WwMergedTableSelectionManager from '@/extensions/table/wwMergedTableSelectionManager';
-import WwMergedTableManager from '@/extensions/table/wwMergedTableManager';
-import WysiwygEditor from '@/wysiwygEditor';
-import EventManager from '@/eventManager';
+import Editor from 'tui-editor/src/js/editor';
+
+import { getWwRemoveRowCommand, _removeRow } from '@/mergedTableRemoveRow';
+import tableDataHandler from '@/tableDataHandler';
+import { getWwMergedTableSelectionManager } from '@/wwMergedTableSelectionManager';
+import { getWwMergedTableManager } from '@/wwMergedTableManager';
 
 /* eslint-disable max-nested-callbacks */
 describe('mergedTableRemoveRow', () => {
   describe('_removeRow()', () => {
     const tableHtml = `
-            <table>
-                <thead>
-                    <tr><th>title1</th><th>title2</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td rowspan="3">content1-1</td><td
-                    >content1-2</td></tr>
-                    <tr><td>content2-2</td></tr>
-                    <tr><td>content3-2</td></tr>
-                <tbody>
-            </table>
-        `;
+      <table>
+          <thead>
+              <tr><th>title1</th><th>title2</th></tr>
+          </thead>
+          <tbody>
+              <tr><td rowspan="3">content1-1</td><td>content1-2</td></tr>
+              <tr><td>content2-2</td></tr>
+              <tr><td>content3-2</td></tr>
+          <tbody>
+      </table>
+    `;
     const $table = $(tableHtml);
     let tableData;
 
@@ -217,19 +216,28 @@ describe('mergedTableRemoveRow', () => {
   });
 
   describe('RemoveRow command with browser selection', () => {
-    let wwe, container;
+    let editor, wwe, container;
 
     beforeEach(() => {
       container = document.createElement('div');
       document.body.appendChild(container);
 
-      wwe = new WysiwygEditor($(container), new EventManager());
+      editor = new Editor({
+        el: container,
+        height: '300px',
+        initialEditType: 'wysiwyg'
+      });
 
-      wwe.init();
+      wwe = editor.getCurrentModeEditor();
+
+      const WwMergedTableSelectionManager = getWwMergedTableSelectionManager(editor);
+      const WwMergedTableManager = getWwMergedTableManager(editor);
+
       wwe.componentManager.addManager('tableSelection', WwMergedTableSelectionManager);
       wwe.componentManager.addManager('table', WwMergedTableManager);
 
       wwe.getEditor().focus();
+
       if (util.browser.firefox) {
         wwe.getEditor().fireEvent('focus'); // focus() does not work on firefox here. wired.
       }
@@ -243,28 +251,30 @@ describe('mergedTableRemoveRow', () => {
       });
     });
 
-    it('remove only one row at start rage even if there are multiple tds in selection range', () => {
+    it('remove only one row at start range even if there are multiple tds in selection range', () => {
       const sq = wwe.getEditor(),
         range = sq.getSelection().cloneRange();
 
       sq.setHTML(`
-                <table>
-                    <thead>
-                        <tr><th>1</th><th>2</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>3</td><td>4</td></tr>
-                        <tr><td>5</td><td>6</td></tr>
-                    </tbody>
-                </table>
-            `);
+          <table>
+              <thead>
+                  <tr><th>1</th><th>2</th></tr>
+              </thead>
+              <tbody>
+                  <tr><td>3</td><td>4</td></tr>
+                  <tr><td>5</td><td>6</td></tr>
+              </tbody>
+          </table>
+      `);
 
       range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
       range.setEndAfter(wwe.get$Body().find('tbody td')[3].firstChild);
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
-      RemoveRow.exec(wwe);
+      const commandManger = getWwRemoveRowCommand(editor);
+
+      commandManger.exec(wwe);
 
       expect(wwe.get$Body().find('tbody tr').length).toEqual(1);
       expect(wwe.get$Body().find('tbody td').length).toEqual(2);

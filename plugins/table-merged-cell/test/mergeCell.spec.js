@@ -4,8 +4,8 @@
  */
 import $ from 'jquery';
 
-import { _mergeCells } from '@/extensions/table/mergeCell';
-import tableDataHandler from '@/extensions/table/tableDataHandler';
+import { _mergeCells } from '@/mergeCell';
+import tableDataHandler from '@/tableDataHandler';
 
 describe('mergeCell', () => {
   describe('_mergeCells', () => {
