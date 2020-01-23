@@ -1,7 +1,6 @@
 import { Parser } from '../../blocks';
 import { HtmlRenderer } from '../../render/html';
 import { LinkNode } from '../../node';
-import { source, oneLineTrim } from 'common-tags';
 import { parseUrlLink, parseEmailLink } from '../autoLinks';
 
 describe('parseUrlLink()', () => {
@@ -190,7 +189,7 @@ describe('parseEmailLink', () => {
 
 // https://github.github.com/gfm/#example-621
 describe('GFM Examples', () => {
-  const reader = new Parser();
+  const reader = new Parser({ autoLink: true });
   const writer = new HtmlRenderer();
 
   it('621', () => {
