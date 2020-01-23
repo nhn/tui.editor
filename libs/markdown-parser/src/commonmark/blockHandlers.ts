@@ -13,7 +13,7 @@ import {
 } from './blockHelper';
 import { unescapeString } from './common';
 
-const enum Process {
+export const enum Process {
   Go = 0,
   Stop = 1,
   Finished = 2

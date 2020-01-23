@@ -1,7 +1,7 @@
 import { repeat } from './common';
 import { Node, BlockNode, BlockNodeType, isCodeBlock, isHtmlBlock, createNode } from './node';
 import { InlineParser, C_NEWLINE } from './inlines';
-import { blockHandlers } from './blockHandlers';
+import { blockHandlers, Process } from './blockHandlers';
 import { CODE_INDENT } from './blockHelper';
 import { blockStarts } from './blockStarts';
 
@@ -24,9 +24,16 @@ function document() {
   ]);
 }
 
+const defaultOptions = {
+  smart: false,
+  tagFilter: false,
+  autoLink: false
+};
+
 export interface Options {
-  smart?: boolean;
-  tagFilter?: boolean;
+  smart: boolean;
+  tagFilter: boolean;
+  autoLink: boolean;
 }
 
 export class Parser {
@@ -50,8 +57,8 @@ export class Parser {
   public inlineParser: InlineParser;
   private options: Options;
 
-  constructor(options?: Options) {
-    this.options = Object.assign({ smart: false }, options);
+  constructor(options?: Partial<Options>) {
+    this.options = { ...defaultOptions, ...options };
     this.doc = document();
     this.tip = this.doc;
     this.oldtip = this.doc;
@@ -214,9 +221,6 @@ export class Parser {
   // We parse markdown text by calling this on each line of input,
   // then finalizing the document.
   incorporateLine(ln: string) {
-    let allMatched = true;
-    let t: BlockNodeType;
-
     let container = this.doc;
     this.oldtip = this.tip;
     this.offset = 0;
@@ -235,6 +239,7 @@ export class Parser {
     // For each containing block, try to parse the associated line start.
     // Bail out on failure: container will point to the last matching block.
     // Set allMatched to false if not all containers match.
+    let allMatched = true;
     let lastChild: BlockNode;
     while ((lastChild = container.lastChild as BlockNode) && lastChild.open) {
       container = lastChild;
@@ -242,12 +247,12 @@ export class Parser {
       this.findNextNonspace();
 
       switch (blockHandlers[container.type]['continue'](this, container)) {
-        case 0: // we've matched, keep going
+        case Process.Go: // we've matched, keep going
           break;
-        case 1: // we've failed to match a block
+        case Process.Stop: // we've failed to match a block
           allMatched = false;
           break;
-        case 2: // we've hit end of line for fenced code close and can return
+        case Process.Finished: // we've hit end of line for fenced code close and can return
           this.lastLineLength = ln.length;
           return;
         default:
@@ -314,8 +319,7 @@ export class Parser {
         (container.lastChild as BlockNode).lastLineBlank = true;
       }
 
-      t = container.type;
-
+      const t = container.type;
       // Block quote lines are never blank as they start with >
       // and we don't count blanks in fenced code for purposes of tight/loose
       // lists or breaking out of lists.  We also don't set _lastLineBlank
