@@ -1,5 +1,5 @@
 /**
- * @fileoverview test merged table creator
+ * @fileoverview Test merged table creator
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -16,7 +16,7 @@ import createMergedTable, {
 
 describe('mergedTableCreator', () => {
   describe('_extractPropertiesForMerge()', () => {
-    it('Extract properties for merge, when type is "@cols" and value is "@cols=3:@rows=3:value"', () => {
+    it('extract properties for merge, when type is "@cols" and value is "@cols=3:@rows=3:value"', () => {
       const value = '@cols=3:@rows=3:value';
       const type = '@cols';
       const oppossitType = '@rows';
@@ -27,7 +27,7 @@ describe('mergedTableCreator', () => {
       expect(actual[1]).toBe('@rows=3:value');
     });
 
-    it('Extract properties for merge, when type is "@cols" and value is "@rows=3:@cols=3:value"', () => {
+    it('extract properties for merge, when type is "@cols" and value is "@rows=3:@cols=3:value"', () => {
       const value = '@rows=3:@cols=3:value';
       const type = '@cols';
       const oppossitType = '@rows';
@@ -38,7 +38,7 @@ describe('mergedTableCreator', () => {
       expect(actual[1]).toBe('@rows=3:value');
     });
 
-    it('Extract properties for merge, when type is "@rows" and value is "@cols=3:@rows=3:value"', () => {
+    it('extract properties for merge, when type is "@rows" and value is "@cols=3:@rows=3:value"', () => {
       const value = '@cols=3:@rows=3:value';
       const type = '@rows';
       const oppossitType = '@cols';
@@ -49,7 +49,7 @@ describe('mergedTableCreator', () => {
       expect(actual[1]).toBe('@cols=3:value');
     });
 
-    it('Extract properties for merge, when type is "@cols" and value is "@rows=3:@cols=3:value"', () => {
+    it('extract properties for merge, when type is "@cols" and value is "@rows=3:@cols=3:value"', () => {
       const value = '@rows=3:@cols=3:value';
       const type = '@rows';
       const oppossitType = '@cols';
@@ -60,7 +60,7 @@ describe('mergedTableCreator', () => {
       expect(actual[1]).toBe('@cols=3:value');
     });
 
-    it('Extract properties for merge, when type is "@cols" and value not has "@cols"', () => {
+    it('extract properties for merge, when type is "@cols" and value not has "@cols"', () => {
       const value = '@rows:value';
       const type = '@cols';
       const oppossitType = '@rows';
@@ -71,7 +71,7 @@ describe('mergedTableCreator', () => {
       expect(actual[1]).toBe('@rows:value');
     });
 
-    it('Extract properties for merge, when type is "@rows" and value not has "@rows"', () => {
+    it('extract properties for merge, when type is "@rows" and value not has "@rows"', () => {
       const value = '@rows:value';
       const type = '@cols';
       const oppossitType = '@rows';
@@ -84,7 +84,7 @@ describe('mergedTableCreator', () => {
   });
 
   describe('_parseTableCell()', () => {
-    it('Parse table cell value(innerHTML)', () => {
+    it('parse table cell value(innerHTML)', () => {
       const td = {
         nodeName: 'TD',
         innerHTML: '@rows=3:@cols=2:abcde',
@@ -99,7 +99,7 @@ describe('mergedTableCreator', () => {
       expect(actual.align).toBe('center');
     });
 
-    it('Parse table cell content, when has only value', () => {
+    it('parse table cell content, when has only value', () => {
       const th = {
         nodeName: 'TH',
         innerHTML: 'abcde'
@@ -114,7 +114,7 @@ describe('mergedTableCreator', () => {
   });
 
   describe('_createTableObjectFrom$Table()', () => {
-    it('Create json from jQuery table', () => {
+    it('create json from jQuery table', () => {
       const tableHtml = [
         '<table>',
         '<thead>',
@@ -179,7 +179,7 @@ describe('mergedTableCreator', () => {
   });
 
   describe('_divideTrs()', () => {
-    it('Divide tr list to thead and tbody', () => {
+    it('divide tr list to thead and tbody', () => {
       const table = [
         [
           {
@@ -225,7 +225,7 @@ describe('mergedTableCreator', () => {
   });
 
   describe('_mergeByColspan()', () => {
-    it('Merge by colspan', () => {
+    it('merge by colspan', () => {
       const trs = [
         [
           {
@@ -250,7 +250,7 @@ describe('mergedTableCreator', () => {
   });
 
   describe('_getRemovalTdCountsByRowspan()', () => {
-    it('Get removal td counts by rowspan', () => {
+    it('get removal td counts by rowspan', () => {
       const trs = [
         [
           {
@@ -311,7 +311,7 @@ describe('mergedTableCreator', () => {
       expect(actual[2]).toBe(2);
     });
 
-    it('Get removal td counts by rowspan, when td has both rowspan and colspan', () => {
+    it('get removal td counts by rowspan, when td has both rowspan and colspan', () => {
       const trs = [
         [
           {
@@ -370,7 +370,7 @@ describe('mergedTableCreator', () => {
   });
 
   describe('_mergeByRowspan()', () => {
-    it('Merge by rowspan', () => {
+    it('merge by rowspan', () => {
       const trs = [
         [
           {
@@ -460,7 +460,7 @@ describe('mergedTableCreator', () => {
   });
 
   describe('createMergedTable()', () => {
-    it('Create merged table by @cols, @rows value in td innerHTML', () => {
+    it('create merged table by @cols, @rows value in td innerHTML', () => {
       const tableHtml = [
         '<table>',
         '<thead>',

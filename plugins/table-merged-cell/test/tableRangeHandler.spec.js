@@ -1,5 +1,5 @@
 /**
- * @fileoverview test table range handler
+ * @fileoverview Test table range handler
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -25,7 +25,7 @@ describe('tableRangeHandler', () => {
     const $trs = $table.find('tr');
     const tableData = tableDataHandler.createTableData($table);
 
-    it('Find table range for selection, when has row merge', () => {
+    it('find table range for selection, when has row merge', () => {
       const $tds = $trs.eq(1).find('td');
       const $start = $tds.eq(0);
       const $end = $tds.eq(1);
@@ -37,7 +37,7 @@ describe('tableRangeHandler', () => {
       expect(actual.end.colIndex).toBe(1);
     });
 
-    it('Find table range for selection, when has column merge', () => {
+    it('find table range for selection, when has column merge', () => {
       const $ths = $trs.eq(0).find('th');
       const $start = $ths.eq(0);
       const $end = $ths.eq(1);
@@ -49,7 +49,7 @@ describe('tableRangeHandler', () => {
       expect(actual.end.colIndex).toBe(2);
     });
 
-    it('Find table range for selection, when has boath row merge and column merge', () => {
+    it('find table range for selection, when has boath row merge and column merge', () => {
       const $start = $trs
         .eq(1)
         .find('td')
@@ -66,7 +66,7 @@ describe('tableRangeHandler', () => {
       expect(actual.end.colIndex).toBe(1);
     });
 
-    it('Find table range for selection, when cells chained expanded cells by merge properties like colspan, rowspan', () => {
+    it('find table range for selection, when cells chained expanded cells by merge properties like colspan, rowspan', () => {
       const $start = $trs
         .eq(1)
         .find('td')
@@ -83,7 +83,7 @@ describe('tableRangeHandler', () => {
       expect(actual.end.colIndex).toBe(2);
     });
 
-    it('Find table range for selection, when revered $start and $end', () => {
+    it('find table range for selection, when revered $start and $end', () => {
       const $start = $trs
         .eq(2)
         .find('td')

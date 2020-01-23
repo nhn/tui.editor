@@ -1,5 +1,5 @@
 /**
- * @fileoverview test merged table remove col
+ * @fileoverview Test merged table remove col
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -23,7 +23,8 @@ describe('mergedTableRemoveCol', () => {
           <tr><td colspan="3">content1-1</td></tr>
           <tr><td>content2-1</td><td>content2-2</td><td>content2-3</td></tr>
         <tbody>
-      </table>`;
+      </table>
+    `;
     const $table = $(tableHtml);
     let tableData;
 
@@ -31,7 +32,7 @@ describe('mergedTableRemoveCol', () => {
       tableData = tableDataHandler.createTableData($table);
     });
 
-    it('Remove columns, when target cell data has start merge cell(has colspan)', () => {
+    it('remove columns, when target cell data has start merge cell(has colspan)', () => {
       const tableRange = {
         start: {
           rowIndex: 2,
@@ -68,7 +69,7 @@ describe('mergedTableRemoveCol', () => {
       });
     });
 
-    it('Remove columns, when target cell data has merged cell', () => {
+    it('remove columns, when target cell data has merged cell', () => {
       const tableRange = {
         start: {
           rowIndex: 2,
@@ -100,7 +101,7 @@ describe('mergedTableRemoveCol', () => {
       });
     });
 
-    it('Remove columns, when target cell data has last merged cell', () => {
+    it('remove columns, when target cell data has last merged cell', () => {
       const tableRange = {
         start: {
           rowIndex: 2,
@@ -132,7 +133,7 @@ describe('mergedTableRemoveCol', () => {
       });
     });
 
-    it('Remove columns, when has table selection', () => {
+    it('remove columns, when has table selection', () => {
       const tableRange = {
         start: {
           rowIndex: 2,
@@ -197,13 +198,13 @@ describe('mergedTableRemoveCol', () => {
 
       sq.setHTML(
         `<table>
-            <thead>
-                <tr><th>1</th><th>2</th><th>3</th></tr>
-            </thead>
-            <tbody>
-                <tr><td class="te-cell-selected">4</td><td class="te-cell-selected">5</td><td>6</td></tr>
-                <tr><td>7</td><td>8</td><td>9</td></tr>
-            </tbody>
+          <thead>
+            <tr><th>1</th><th>2</th><th>3</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="te-cell-selected">4</td><td class="te-cell-selected">5</td><td>6</td></tr>
+            <tr><td>7</td><td>8</td><td>9</td></tr>
+          </tbody>
         </table>`
       );
 

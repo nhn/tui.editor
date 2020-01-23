@@ -1,5 +1,5 @@
 /**
- * @fileoverview test table data handler
+ * @fileoverview Test table data handler
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -8,7 +8,7 @@ import tableDataHandler, { createTableData, createCellIndexData } from '@/tableD
 
 describe('tableDataHandler', () => {
   describe('createTableData()', () => {
-    it('Create table data from jQuery table Element', () => {
+    it('create table data from jQuery table Element', () => {
       const tableHtml = [
         '<table>',
         '<thead>',
@@ -75,7 +75,7 @@ describe('tableDataHandler', () => {
   });
 
   describe('createCellIndexData()', () => {
-    it('Create cell index data from table data', () => {
+    it('create cell index data from table data', () => {
       const tableData = [
         [
           {
@@ -169,7 +169,7 @@ describe('tableDataHandler', () => {
       ]
     ];
 
-    it('Find last index of row merged cells, when target cell is not merged cell', () => {
+    it('find last index of row merged cells, when target cell is not merged cell', () => {
       const rowIndex = 1;
       const colIndex = 0;
       const actual = tableDataHandler.findRowMergedLastIndex(tableData, rowIndex, colIndex);
@@ -177,7 +177,7 @@ describe('tableDataHandler', () => {
       expect(actual).toBe(1);
     });
 
-    it('Find last index of row merged cells, when target cell is meged cell', () => {
+    it('find last index of row merged cells, when target cell is meged cell', () => {
       const rowIndex = 1;
       const colIndex = 1;
       const actual = tableDataHandler.findRowMergedLastIndex(tableData, rowIndex, colIndex);
@@ -224,7 +224,7 @@ describe('tableDataHandler', () => {
       ]
     ];
 
-    it('Find last cell index of col merged cells, when target cell is not merged cell', () => {
+    it('find last cell index of col merged cells, when target cell is not merged cell', () => {
       const rowIndex = 2;
       const colIndex = 0;
       const actual = tableDataHandler.findColMergedLastIndex(tableData, rowIndex, colIndex);
@@ -232,7 +232,7 @@ describe('tableDataHandler', () => {
       expect(actual).toBe(0);
     });
 
-    it('Find last cell index of col merged cells, when target cell is meged cell', () => {
+    it('find last cell index of col merged cells, when target cell is meged cell', () => {
       const rowIndex = 1;
       const colIndex = 0;
       const actual = tableDataHandler.findColMergedLastIndex(tableData, rowIndex, colIndex);

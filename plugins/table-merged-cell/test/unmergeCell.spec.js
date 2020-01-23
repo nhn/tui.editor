@@ -1,5 +1,5 @@
 /**
- * @fileoverview test unmerge cell
+ * @fileoverview Test unmerge cell
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -30,7 +30,7 @@ describe('unmergeCell', () => {
   });
 
   describe('_hasMergedCell', () => {
-    it('Whether has merged cell, when has merged cell', () => {
+    it('whether has merged cell, when has merged cell', () => {
       const tableRange = {
         start: {
           rowIndex: 1,
@@ -46,7 +46,7 @@ describe('unmergeCell', () => {
       expect(actual).toBe(true);
     });
 
-    it('Whether has merged cell, when has not merged cell', () => {
+    it('whether has merged cell, when has not merged cell', () => {
       const tableRange = {
         start: {
           rowIndex: 2,
@@ -64,7 +64,7 @@ describe('unmergeCell', () => {
   });
 
   describe('_unmergeCells', () => {
-    it('Unmerge selected merged cells', () => {
+    it('unmerge selected merged cells', () => {
       const tableRange = {
         start: {
           rowIndex: 1,

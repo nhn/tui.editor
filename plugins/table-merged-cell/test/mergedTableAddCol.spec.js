@@ -1,5 +1,5 @@
 /**
- * @fileoverview test merged table add column
+ * @fileoverview Test merged table add column
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -75,7 +75,7 @@ describe('mergedTableAddCol', () => {
       ];
     });
 
-    it('Create new columns, when target col has merged cell', () => {
+    it('create new columns, when target col has merged cell', () => {
       const startColIndex = 1;
       const endColIndex = 1;
       const actual = _createNewColumns(tableData, startColIndex, endColIndex);
@@ -111,7 +111,7 @@ describe('mergedTableAddCol', () => {
       });
     });
 
-    it('Create new columns, when target col has start merge cell(has colspan)', () => {
+    it('create new columns, when target col has start merge cell(has colspan)', () => {
       const startColIndex = 0;
       const endColIndex = 0;
       const actual = _createNewColumns(tableData, startColIndex, endColIndex);
@@ -147,7 +147,7 @@ describe('mergedTableAddCol', () => {
       });
     });
 
-    it('Create new columns, when target row has last merged cell', () => {
+    it('create new columns, when target row has last merged cell', () => {
       const startColIndex = 2;
       const endColIndex = 2;
       const actual = _createNewColumns(tableData, startColIndex, endColIndex);
@@ -188,7 +188,7 @@ describe('mergedTableAddCol', () => {
       });
     });
 
-    it('Create new columns, when has table selection', () => {
+    it('create new columns, when has table selection', () => {
       const startColIndex = 1;
       const endColIndex = 2;
       const actual = _createNewColumns(tableData, startColIndex, endColIndex);
@@ -279,7 +279,7 @@ describe('mergedTableAddCol', () => {
       tableData = tableDataHandler.createTableData($table);
     });
 
-    it('Add columns, when target col has start merge cell(has colspan)', () => {
+    it('add columns, when target col has start merge cell(has colspan)', () => {
       const tableRange = {
         start: {
           rowIndex: 2,
@@ -311,7 +311,7 @@ describe('mergedTableAddCol', () => {
       });
     });
 
-    it('Add columns, when target col has merged cell', () => {
+    it('add columns, when target col has merged cell', () => {
       const tableRange = {
         start: {
           rowIndex: 2,
@@ -343,7 +343,7 @@ describe('mergedTableAddCol', () => {
       });
     });
 
-    it('Add columns, when target col has last merged cell', () => {
+    it('add columns, when target col has last merged cell', () => {
       const tableRange = {
         start: {
           rowIndex: 2,
@@ -381,7 +381,7 @@ describe('mergedTableAddCol', () => {
       });
     });
 
-    it('Add columns, when has table selction', () => {
+    it('add columns, when has table selction', () => {
       const tableRange = {
         start: {
           rowIndex: 2,

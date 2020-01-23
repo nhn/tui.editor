@@ -1,5 +1,5 @@
 /**
- * @fileoverview test table renderer function
+ * @fileoverview Test table renderer function
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';

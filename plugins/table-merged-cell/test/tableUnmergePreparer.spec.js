@@ -1,5 +1,5 @@
 /**
- * @fileoverview test unmerge preparer
+ * @fileoverview Test unmerge preparer
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -8,7 +8,7 @@ import prepareTableUnmerge, { _prependMergeSyntaxToContent } from '@/tableUnmerg
 
 describe('tableUnmergePreparer', () => {
   describe('_prependMergeSyntaxToContent()', () => {
-    it('Prepend merge syntax to content, when has colspan', () => {
+    it('prepend merge syntax to content, when has colspan', () => {
       const $td = $('<td colspan="2">value</td>');
 
       expect($td.html()).toBe('value');
@@ -18,7 +18,7 @@ describe('tableUnmergePreparer', () => {
       expect($td.html()).toBe('@cols=2:value');
     });
 
-    it('Prepend merge syntax to content, when has rowspan', () => {
+    it('prepend merge syntax to content, when has rowspan', () => {
       const $td = $('<td rowspan="2">value</td>');
 
       expect($td.html()).toBe('value');
@@ -28,7 +28,7 @@ describe('tableUnmergePreparer', () => {
       expect($td.html()).toBe('@rows=2:value');
     });
 
-    it('Prepend merge syntax to content, when has both colspan and rowspan', () => {
+    it('prepend merge syntax to content, when has both colspan and rowspan', () => {
       const $td = $('<td colspan="2" rowspan="2">value</td>');
 
       expect($td.html()).toBe('value');
@@ -38,7 +38,7 @@ describe('tableUnmergePreparer', () => {
       expect($td.html()).toBe('@rows=2:@cols=2:value');
     });
 
-    it('Prepend merge syntax to content, when has not both colspan and rowspan', () => {
+    it('prepend merge syntax to content, when has not both colspan and rowspan', () => {
       const $td = $('<td>value</td>');
 
       expect($td.html()).toBe('value');
@@ -50,7 +50,7 @@ describe('tableUnmergePreparer', () => {
   });
 
   describe('prepareTableUnmerge', () => {
-    it('Prepare table unmerge', () => {
+    it('prepare table unmerge', () => {
       const tableHtml = [
         '<table>',
         '<thead>',

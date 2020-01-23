@@ -1,5 +1,5 @@
 /**
- * @fileoverview test wysiwyg table manager
+ * @fileoverview Test wysiwyg table manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -72,7 +72,7 @@ describe('WwMergedTableManager', () => {
       spyOn(mgr, '_bookmarkLastTd');
     });
 
-    it('Paste to selected area, when exactly fit table selection by clipboard table data', () => {
+    it('paste to selected area, when exactly fit table selection by clipboard table data', () => {
       const $clipboardTable = $(
         [
           '<table>',
@@ -100,7 +100,7 @@ describe('WwMergedTableManager', () => {
       });
     });
 
-    it('Paste to selected area, when selection is lager than clipboard table data', () => {
+    it('paste to selected area, when selection is lager than clipboard table data', () => {
       const $clipboardTable = $(
         [
           '<table>',
@@ -132,7 +132,7 @@ describe('WwMergedTableManager', () => {
       });
     });
 
-    it('If selection is lager than clipboard table data and merged boundary of paste target, will not paste', () => {
+    it('if selection is lager than clipboard table data and merged boundary of paste target, will not paste', () => {
       const $clipboardTable = $(
         [
           '<table>',
@@ -170,7 +170,7 @@ describe('WwMergedTableManager', () => {
       expect(mgr._bookmarkLastTd).not.toHaveBeenCalled();
     });
 
-    it('Paste to selected area, when selection is smaller than clipboard tata', () => {
+    it('paste to selected area, when selection is smaller than clipboard tata', () => {
       const $clipboardTable = $(
         [
           '<table>',
@@ -202,7 +202,7 @@ describe('WwMergedTableManager', () => {
       });
     });
 
-    it('If selection is smaller than clipboard table data and merged boundary of data for paste in clipboard, will not paste', () => {
+    it('if selection is smaller than clipboard table data and merged boundary of data for paste in clipboard, will not paste', () => {
       const $clipboardTable = $(
         [
           '<table>',
@@ -242,7 +242,7 @@ describe('WwMergedTableManager', () => {
       spyOn(mgr, '_bookmarkLastTd');
     });
 
-    it('Paste all clipboard table data', () => {
+    it('paste all clipboard table data', () => {
       const $clipboardTable = $(
         [
           '<table>',
@@ -281,7 +281,7 @@ describe('WwMergedTableManager', () => {
       });
     });
 
-    it('If merged boundary of paste target, will not paste', () => {
+    it('if merged boundary of paste target, will not paste', () => {
       const $clipboardTable = $(
         [
           '<table>',

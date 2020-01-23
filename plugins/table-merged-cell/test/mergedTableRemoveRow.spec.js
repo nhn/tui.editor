@@ -1,5 +1,5 @@
 /**
- * @fileoverview test merged table remove row
+ * @fileoverview Test merged table remove row
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -33,7 +33,7 @@ describe('mergedTableRemoveRow', () => {
       tableData = tableDataHandler.createTableData($table);
     });
 
-    it('Remove row, when target row has start merge cell(has rowspan)', () => {
+    it('remove row, when target row has start merge cell(has rowspan)', () => {
       const tableRange = {
         start: {
           rowIndex: 1,
@@ -70,7 +70,7 @@ describe('mergedTableRemoveRow', () => {
       });
     });
 
-    it('Remove row, when target row has merged cell', () => {
+    it('remove row, when target row has merged cell', () => {
       const tableRange = {
         start: {
           rowIndex: 2,
@@ -102,7 +102,7 @@ describe('mergedTableRemoveRow', () => {
       });
     });
 
-    it('Remove row, when target row has last merged cell', () => {
+    it('remove row, when target row has last merged cell', () => {
       const tableRange = {
         start: {
           rowIndex: 3,
@@ -134,7 +134,7 @@ describe('mergedTableRemoveRow', () => {
       });
     });
 
-    it('Remove row, when has table selection', () => {
+    it('remove row, when has table selection', () => {
       const tableRange = {
         start: {
           rowIndex: 2,

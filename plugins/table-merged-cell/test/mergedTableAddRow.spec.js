@@ -1,5 +1,5 @@
 /**
- * @fileoverview test merged table add row
+ * @fileoverview Test merged table add row
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -61,7 +61,7 @@ describe('mergedTableAddRow', () => {
       ];
     });
 
-    it('Create new row, when target row has merged cell', () => {
+    it('create new row, when target row has merged cell', () => {
       const rowIndex = 2;
       const actual = _createNewRow(tableData, rowIndex);
 
@@ -81,7 +81,7 @@ describe('mergedTableAddRow', () => {
       });
     });
 
-    it('Create new row, when target row has start merge cell(has rowspan)', () => {
+    it('create new row, when target row has start merge cell(has rowspan)', () => {
       const rowIndex = 1;
       const actual = _createNewRow(tableData, rowIndex);
 
@@ -102,7 +102,7 @@ describe('mergedTableAddRow', () => {
       });
     });
 
-    it('Create new row, when target row has last merged cell', () => {
+    it('create new row, when target row has last merged cell', () => {
       const rowIndex = 3;
       const actual = _createNewRow(tableData, rowIndex);
 
@@ -129,7 +129,7 @@ describe('mergedTableAddRow', () => {
       });
     });
 
-    it('Create new row, when target row has not merged cell', () => {
+    it('create new row, when target row has not merged cell', () => {
       const rowIndex = 0;
       const actual = _createNewRow(tableData, rowIndex);
 
@@ -177,7 +177,7 @@ describe('mergedTableAddRow', () => {
       tableData = tableDataHandler.createTableData($table);
     });
 
-    it('Add row, when target row has start merge cell(has rowspan)', () => {
+    it('add row, when target row has start merge cell(has rowspan)', () => {
       const tableRange = {
         start: {
           rowIndex: 1,
@@ -209,7 +209,7 @@ describe('mergedTableAddRow', () => {
       });
     });
 
-    it('Add row, when target row has merged cell', () => {
+    it('add row, when target row has merged cell', () => {
       const tableRange = {
         start: {
           rowIndex: 2,
@@ -241,7 +241,7 @@ describe('mergedTableAddRow', () => {
       });
     });
 
-    it('Add row, when target row has last merged cell', () => {
+    it('add row, when target row has last merged cell', () => {
       const tableRange = {
         start: {
           rowIndex: 3,
@@ -279,7 +279,7 @@ describe('mergedTableAddRow', () => {
       });
     });
 
-    it('Add row, when table selection', () => {
+    it('add row, when table selection', () => {
       const tableRange = {
         start: {
           rowIndex: 2,

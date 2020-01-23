@@ -1,5 +1,5 @@
 /**
- * @fileoverview test merge cell
+ * @fileoverview Test merge cell
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
@@ -28,7 +28,7 @@ describe('mergeCell', () => {
       tableData = tableDataHandler.createTableData($table);
     });
 
-    it('Merge selected cells', () => {
+    it('merge selected cells', () => {
       const tableRange = {
         start: {
           rowIndex: 1,
@@ -60,7 +60,7 @@ describe('mergeCell', () => {
       expect(tableData[2][1].content).toBeUndefined();
     });
 
-    it('Merge selected cells, when has previously merged cells', () => {
+    it('merge selected cells, when has previously merged cells', () => {
       const tableRange = {
         start: {
           rowIndex: 0,
