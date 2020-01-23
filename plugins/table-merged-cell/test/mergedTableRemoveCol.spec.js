@@ -7,24 +7,23 @@ import util from 'tui-code-snippet';
 
 import Editor from 'tui-editor/src/js/editor';
 
-import { getWwRemoveColumnCommand, _removeColumns } from '@/mergedTableRemoveCol';
+import tableMergedCellPlugin from '@';
 import tableDataHandler from '@/tableDataHandler';
-import { getWwMergedTableSelectionManager } from '@/wwMergedTableSelectionManager';
-import { getWwMergedTableManager } from '@/wwMergedTableManager';
+import { getWwRemoveColumnCommand, _removeColumns } from '@/mergedTableRemoveCol';
 
 /* eslint-disable max-nested-callbacks */
 describe('mergedTableRemoveCol', () => {
   describe('_removeColumns()', () => {
     const tableHtml = `
-            <table>
-                <thead>
-                    <tr><th>title1</th><th>title2</th><th>title3</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="3">content1-1</td></tr>
-                    <tr><td>content2-1</td><td>content2-2</td><td>content2-3</td></tr>
-                <tbody>
-            </table>`;
+      <table>
+        <thead>
+          <tr><th>title1</th><th>title2</th><th>title3</th></tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="3">content1-1</td></tr>
+          <tr><td>content2-1</td><td>content2-2</td><td>content2-3</td></tr>
+        <tbody>
+      </table>`;
     const $table = $(tableHtml);
     let tableData;
 
@@ -167,24 +166,18 @@ describe('mergedTableRemoveCol', () => {
 
     beforeEach(() => {
       container = document.createElement('div');
-
       document.body.appendChild(container);
 
       editor = new Editor({
         el: container,
         height: '300px',
-        initialEditType: 'wysiwyg'
+        initialEditType: 'wysiwyg',
+        plugins: [tableMergedCellPlugin]
       });
 
       wwe = editor.getCurrentModeEditor();
-
-      const WwMergedTableSelectionManager = getWwMergedTableSelectionManager(editor);
-      const WwMergedTableManager = getWwMergedTableManager(editor);
-
-      wwe.componentManager.addManager('tableSelection', WwMergedTableSelectionManager);
-      wwe.componentManager.addManager('table', WwMergedTableManager);
-
       wwe.getEditor().focus();
+
       if (util.browser.firefox) {
         wwe.getEditor().fireEvent('focus'); // focus() does not work on firefox here. wired.
       }

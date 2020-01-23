@@ -7,24 +7,23 @@ import util from 'tui-code-snippet';
 
 import Editor from 'tui-editor/src/js/editor';
 
-import { getWwRemoveRowCommand, _removeRow } from '@/mergedTableRemoveRow';
+import tableMergedCellPlugin from '@';
 import tableDataHandler from '@/tableDataHandler';
-import { getWwMergedTableSelectionManager } from '@/wwMergedTableSelectionManager';
-import { getWwMergedTableManager } from '@/wwMergedTableManager';
+import { getWwRemoveRowCommand, _removeRow } from '@/mergedTableRemoveRow';
 
 /* eslint-disable max-nested-callbacks */
 describe('mergedTableRemoveRow', () => {
   describe('_removeRow()', () => {
     const tableHtml = `
       <table>
-          <thead>
-              <tr><th>title1</th><th>title2</th></tr>
-          </thead>
-          <tbody>
-              <tr><td rowspan="3">content1-1</td><td>content1-2</td></tr>
-              <tr><td>content2-2</td></tr>
-              <tr><td>content3-2</td></tr>
-          <tbody>
+        <thead>
+          <tr><th>title1</th><th>title2</th></tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="3">content1-1</td><td>content1-2</td></tr>
+          <tr><td>content2-2</td></tr>
+          <tr><td>content3-2</td></tr>
+        <tbody>
       </table>
     `;
     const $table = $(tableHtml);
@@ -225,17 +224,11 @@ describe('mergedTableRemoveRow', () => {
       editor = new Editor({
         el: container,
         height: '300px',
-        initialEditType: 'wysiwyg'
+        initialEditType: 'wysiwyg',
+        plugins: [tableMergedCellPlugin]
       });
 
       wwe = editor.getCurrentModeEditor();
-
-      const WwMergedTableSelectionManager = getWwMergedTableSelectionManager(editor);
-      const WwMergedTableManager = getWwMergedTableManager(editor);
-
-      wwe.componentManager.addManager('tableSelection', WwMergedTableSelectionManager);
-      wwe.componentManager.addManager('table', WwMergedTableManager);
-
       wwe.getEditor().focus();
 
       if (util.browser.firefox) {
@@ -256,15 +249,15 @@ describe('mergedTableRemoveRow', () => {
         range = sq.getSelection().cloneRange();
 
       sq.setHTML(`
-          <table>
-              <thead>
-                  <tr><th>1</th><th>2</th></tr>
-              </thead>
-              <tbody>
-                  <tr><td>3</td><td>4</td></tr>
-                  <tr><td>5</td><td>6</td></tr>
-              </tbody>
-          </table>
+        <table>
+          <thead>
+            <tr><th>1</th><th>2</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>3</td><td>4</td></tr>
+            <tr><td>5</td><td>6</td></tr>
+          </tbody>
+        </table>
       `);
 
       range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);

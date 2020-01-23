@@ -144,58 +144,51 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 export function getMergeCellCommand(editor) {
   const { CommandManager } = Object.getPrototypeOf(editor).constructor;
 
-  try {
-    return CommandManager.command(
-      'wysiwyg',
-      /** @lends MergeCell */ {
-        name: 'MergeCells',
-        /**
-         * Command handler.
-         * @param {WysiwygEditor} wwe - wysiwygEditor instance
-         */
-        exec(wwe) {
-          const sq = wwe.getEditor();
+  return CommandManager.command(
+    'wysiwyg',
+    /** @lends MergeCell */ {
+      name: 'MergeCells',
+      /**
+       * Command handler.
+       * @param {WysiwygEditor} wwe - wysiwygEditor instance
+       */
+      exec(wwe) {
+        const sq = wwe.getEditor();
 
-          wwe.focus();
+        wwe.focus();
 
-          if (!sq.hasFormat('TABLE')) {
-            return;
-          }
-
-          const selectionManager = wwe.componentManager.getManager('tableSelection');
-          const $selectedCells = selectionManager.getSelectedCells();
-
-          if (
-            $selectedCells.length < 2 ||
-            selectionManager.hasSelectedBothThAndTd($selectedCells)
-          ) {
-            return;
-          }
-
-          const range = sq.getSelection().cloneRange();
-          const $startContainer = $(range.startContainer);
-          const $table = $startContainer.closest('table');
-          const tableData = dataHandler.createTableData($table);
-          const tableRange = tableRangeHandler.getTableSelectionRange(
-            tableData,
-            $selectedCells,
-            $startContainer
-          );
-
-          _mergeCells(tableData, tableRange);
-
-          const $newTable = tableRenderer.replaceTable($table, tableData);
-          const focusCell = _findFocusCell(
-            $newTable,
-            tableRange.start.rowIndex,
-            tableRange.start.colIndex
-          );
-
-          tableRenderer.focusToCell(sq, range, focusCell);
+        if (!sq.hasFormat('TABLE')) {
+          return;
         }
+
+        const selectionManager = wwe.componentManager.getManager('tableSelection');
+        const $selectedCells = selectionManager.getSelectedCells();
+
+        if ($selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
+          return;
+        }
+
+        const range = sq.getSelection().cloneRange();
+        const $startContainer = $(range.startContainer);
+        const $table = $startContainer.closest('table');
+        const tableData = dataHandler.createTableData($table);
+        const tableRange = tableRangeHandler.getTableSelectionRange(
+          tableData,
+          $selectedCells,
+          $startContainer
+        );
+
+        _mergeCells(tableData, tableRange);
+
+        const $newTable = tableRenderer.replaceTable($table, tableData);
+        const focusCell = _findFocusCell(
+          $newTable,
+          tableRange.start.rowIndex,
+          tableRange.start.colIndex
+        );
+
+        tableRenderer.focusToCell(sq, range, focusCell);
       }
-    );
-  } catch (e) {
-    console.warn('The command manager has not been created.');
-  }
+    }
+  );
 }

@@ -115,57 +115,51 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 export function getWwRemoveColumnCommand(editor) {
   const { CommandManager } = Object.getPrototypeOf(editor).constructor;
 
-  try {
-    return CommandManager.command(
-      'wysiwyg',
-      /** @lends RemoveCol */ {
-        name: 'RemoveCol',
-        /**
-         * Command handler.
-         * @param {WysiwygEditor} wwe - wysiwygEditor instance
-         */
-        exec(wwe) {
-          const sq = wwe.getEditor();
-          const range = sq.getSelection().cloneRange();
+  return CommandManager.command(
+    'wysiwyg',
+    /** @lends RemoveCol */ {
+      name: 'RemoveCol',
+      /**
+       * Command handler.
+       * @param {WysiwygEditor} wwe - wysiwygEditor instance
+       */
+      exec(wwe) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
 
-          wwe.focus();
+        wwe.focus();
 
-          if (!sq.hasFormat('TABLE')) {
-            return;
-          }
+        if (!sq.hasFormat('TABLE')) {
+          return;
+        }
 
-          const $startContainer = $(range.startContainer);
-          const $table = $startContainer.closest('table');
-          const tableData = dataHandler.createTableData($table);
-          const $selectedCells = wwe.componentManager
-            .getManager('tableSelection')
-            .getSelectedCells();
-          const tableRange = tableRangeHandler.getTableSelectionRange(
-            tableData,
-            $selectedCells,
-            $startContainer
-          );
-          const beforeCellLength = tableData[0].length;
+        const $startContainer = $(range.startContainer);
+        const $table = $startContainer.closest('table');
+        const tableData = dataHandler.createTableData($table);
+        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const tableRange = tableRangeHandler.getTableSelectionRange(
+          tableData,
+          $selectedCells,
+          $startContainer
+        );
+        const beforeCellLength = tableData[0].length;
 
-          sq.saveUndoState(range);
-          _removeColumns(tableData, tableRange);
+        sq.saveUndoState(range);
+        _removeColumns(tableData, tableRange);
 
-          if (tableData[0].length === 0) {
-            $table.remove();
-          } else if (beforeCellLength !== tableData[0].length) {
-            const $newTable = tableRenderer.replaceTable($table, tableData);
+        if (tableData[0].length === 0) {
+          $table.remove();
+        } else if (beforeCellLength !== tableData[0].length) {
+          const $newTable = tableRenderer.replaceTable($table, tableData);
 
-            const startColIndex = tableRange.start.colIndex;
-            const focusColIndex =
-              startColIndex >= tableData[0].length ? startColIndex - 1 : startColIndex;
-            const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, focusColIndex);
+          const startColIndex = tableRange.start.colIndex;
+          const focusColIndex =
+            startColIndex >= tableData[0].length ? startColIndex - 1 : startColIndex;
+          const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, focusColIndex);
 
-            tableRenderer.focusToCell(sq, range, focusCell);
-          }
+          tableRenderer.focusToCell(sq, range, focusCell);
         }
       }
-    );
-  } catch (e) {
-    console.warn('The command manager has not been created.');
-  }
+    }
+  );
 }

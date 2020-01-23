@@ -8,9 +8,9 @@ import util from 'tui-code-snippet';
 import Editor from 'tui-editor/src/js/editor';
 
 import { addLangs } from '@/langs';
-import { getWwMergedTableManager } from '@/wwMergedTableManager';
-import { getWwMergedTableSelectionManager } from '@/wwMergedTableSelectionManager';
+import tableMergedCellPlugin from '@';
 import tableDataHandler from '@/tableDataHandler';
+import { getWwMergedTableManager } from '@/wwMergedTableManager';
 
 describe('WwMergedTableManager', () => {
   let container, editor, wwe, mgr;
@@ -35,7 +35,8 @@ describe('WwMergedTableManager', () => {
     editor = new Editor({
       el: container,
       height: '300px',
-      initialEditType: 'wysiwyg'
+      initialEditType: 'wysiwyg',
+      plugins: [tableMergedCellPlugin]
     });
 
     addLangs(editor);
@@ -43,11 +44,9 @@ describe('WwMergedTableManager', () => {
     wwe = editor.getCurrentModeEditor();
 
     const WwMergedTableManager = getWwMergedTableManager(editor);
-    const WwTableMergedSelectionManager = getWwMergedTableSelectionManager(editor);
 
     mgr = new WwMergedTableManager(wwe);
 
-    wwe.componentManager.addManager('tableSelection', WwTableMergedSelectionManager);
     wwe.focus();
   });
 

@@ -130,10 +130,10 @@ function _bindEvents(eventManager, commandMap) {
 }
 
 /**
- * Plant table plugin
+ * Plant table merged cell plugin
  * @param {Editor} editor - editor instance
  */
-export default function tablePlugin(editor) {
+export default function tableMergedCellPlugin(editor) {
   const { eventManager } = editor;
   const commandMap = {
     AddRow: getWwAddRowCommand(editor),

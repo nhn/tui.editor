@@ -106,55 +106,49 @@ function _findFocusCell($newTable, rowIndex, colIndex) {
 export function getUnmergeCellCommand(editor) {
   const { CommandManager } = Object.getPrototypeOf(editor).constructor;
 
-  try {
-    return CommandManager.command(
-      'wysiwyg',
-      /** @lends UnmergeCell */ {
-        name: 'UnmergeCells',
-        /**
-         * Command handler.
-         * @param {WysiwygEditor} wwe - wysiwygEditor instance
-         */
-        exec(wwe) {
-          const sq = wwe.getEditor();
-          const range = sq.getSelection().cloneRange();
+  return CommandManager.command(
+    'wysiwyg',
+    /** @lends UnmergeCell */ {
+      name: 'UnmergeCells',
+      /**
+       * Command handler.
+       * @param {WysiwygEditor} wwe - wysiwygEditor instance
+       */
+      exec(wwe) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
 
-          wwe.focus();
+        wwe.focus();
 
-          if (!sq.hasFormat('TABLE')) {
-            return;
-          }
-
-          const $startContainer = $(range.startContainer);
-          const $table = $startContainer.closest('table');
-          const tableData = dataHandler.createTableData($table);
-          const $selectedCells = wwe.componentManager
-            .getManager('tableSelection')
-            .getSelectedCells();
-          const tableRange = tableRangeHandler.getTableSelectionRange(
-            tableData,
-            $selectedCells,
-            $startContainer
-          );
-
-          if (!_hasMergedCell(tableData, tableRange)) {
-            return;
-          }
-
-          _unmergeCells(tableData, tableRange);
-
-          const $newTable = tableRenderer.replaceTable($table, tableData);
-          const focusCell = _findFocusCell(
-            $newTable,
-            tableRange.start.rowIndex,
-            tableRange.start.colIndex
-          );
-
-          tableRenderer.focusToCell(sq, range, focusCell);
+        if (!sq.hasFormat('TABLE')) {
+          return;
         }
+
+        const $startContainer = $(range.startContainer);
+        const $table = $startContainer.closest('table');
+        const tableData = dataHandler.createTableData($table);
+        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const tableRange = tableRangeHandler.getTableSelectionRange(
+          tableData,
+          $selectedCells,
+          $startContainer
+        );
+
+        if (!_hasMergedCell(tableData, tableRange)) {
+          return;
+        }
+
+        _unmergeCells(tableData, tableRange);
+
+        const $newTable = tableRenderer.replaceTable($table, tableData);
+        const focusCell = _findFocusCell(
+          $newTable,
+          tableRange.start.rowIndex,
+          tableRange.start.colIndex
+        );
+
+        tableRenderer.focusToCell(sq, range, focusCell);
       }
-    );
-  } catch (e) {
-    console.warn('The command manager has not been created.');
-  }
+    }
+  );
 }

@@ -122,57 +122,51 @@ function _findFocusTd($newTable, rowIndex, colIndex) {
 export function getWwRemoveRowCommand(editor) {
   const { CommandManager } = Object.getPrototypeOf(editor).constructor;
 
-  try {
-    return CommandManager.command(
-      'wysiwyg',
-      /** @lends RemoveRow */ {
-        name: 'RemoveRow',
-        /**
-         * Command handler.
-         * @param {WysiwygEditor} wwe - wysiwygEditor instance
-         */
-        exec(wwe) {
-          const sq = wwe.getEditor();
-          const range = sq.getSelection().cloneRange();
+  return CommandManager.command(
+    'wysiwyg',
+    /** @lends RemoveRow */ {
+      name: 'RemoveRow',
+      /**
+       * Command handler.
+       * @param {WysiwygEditor} wwe - wysiwygEditor instance
+       */
+      exec(wwe) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
 
-          wwe.focus();
+        wwe.focus();
 
-          if (!sq.hasFormat('TABLE')) {
-            return;
-          }
+        if (!sq.hasFormat('TABLE')) {
+          return;
+        }
 
-          const $startContainer = $(range.startContainer);
-          const $table = $startContainer.closest('table');
-          const tableData = dataHandler.createTableData($table);
-          const beforeRowLength = tableData.length;
-          const $selectedCells = wwe.componentManager
-            .getManager('tableSelection')
-            .getSelectedCells();
-          const tableRange = tableRangeHandler.getTableSelectionRange(
-            tableData,
-            $selectedCells,
-            $startContainer
-          );
+        const $startContainer = $(range.startContainer);
+        const $table = $startContainer.closest('table');
+        const tableData = dataHandler.createTableData($table);
+        const beforeRowLength = tableData.length;
+        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const tableRange = tableRangeHandler.getTableSelectionRange(
+          tableData,
+          $selectedCells,
+          $startContainer
+        );
 
-          sq.saveUndoState(range);
-          _removeRow(tableData, tableRange);
+        sq.saveUndoState(range);
+        _removeRow(tableData, tableRange);
 
-          if (tableData.length < 2) {
-            $table.remove();
-          } else if (beforeRowLength !== tableData.length) {
-            const $newTable = tableRenderer.replaceTable($table, tableData);
+        if (tableData.length < 2) {
+          $table.remove();
+        } else if (beforeRowLength !== tableData.length) {
+          const $newTable = tableRenderer.replaceTable($table, tableData);
 
-            const startRowIndex = tableRange.start.rowIndex;
-            const focusRowIndex =
-              startRowIndex < tableData.length ? startRowIndex : startRowIndex - 1;
-            const focusCell = _findFocusTd($newTable, focusRowIndex, tableRange.start.colIndex);
+          const startRowIndex = tableRange.start.rowIndex;
+          const focusRowIndex =
+            startRowIndex < tableData.length ? startRowIndex : startRowIndex - 1;
+          const focusCell = _findFocusTd($newTable, focusRowIndex, tableRange.start.colIndex);
 
-            tableRenderer.focusToCell(sq, range, focusCell);
-          }
+          tableRenderer.focusToCell(sq, range, focusCell);
         }
       }
-    );
-  } catch (e) {
-    console.warn('The command manager has not been created.');
-  }
+    }
+  );
 }
