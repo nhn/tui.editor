@@ -3,7 +3,10 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import range from 'tui-code-snippet/array/range';
+import forEach from 'tui-code-snippet/collection/forEach';
+import pluck from 'tui-code-snippet/collection/pluck';
 
 import tableDataHandler from './tableDataHandler';
 import tableRenderer from './tableRenderer';
@@ -22,7 +25,7 @@ const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 function any(arr, contition) {
   let result = false;
 
-  util.forEach(arr, item => {
+  forEach(arr, item => {
     result = contition(item);
 
     return !result;
@@ -53,11 +56,11 @@ export function getWwMergedTableManager(editor) {
     _updateCopyDataMergeWith(copyTableData, startRange) {
       copyTableData.forEach(rowData => {
         rowData.forEach(cellData => {
-          if (util.isExisty(cellData.rowMergeWith)) {
+          if (isExisty(cellData.rowMergeWith)) {
             cellData.rowMergeWith -= startRange.rowIndex;
           }
 
-          if (util.isExisty(cellData.colMergeWith)) {
+          if (isExisty(cellData.colMergeWith)) {
             cellData.colMergeWith -= startRange.colIndex;
           }
         });
@@ -241,7 +244,7 @@ export function getWwMergedTableManager(editor) {
       if (increaseRowCount > 1) {
         const originalData = JSON.parse(JSON.stringify(clipboardTableData));
 
-        util.range(0, increaseRowCount - 1).forEach(() => {
+        range(0, increaseRowCount - 1).forEach(() => {
           const newRows = JSON.parse(JSON.stringify(originalData));
 
           clipboardTableData.push(...newRows);
@@ -251,7 +254,7 @@ export function getWwMergedTableManager(editor) {
       if (increaseColCount > 1) {
         const originalData = JSON.parse(JSON.stringify(clipboardTableData));
 
-        util.range(0, increaseColCount - 1).forEach(() => {
+        range(0, increaseColCount - 1).forEach(() => {
           const newData = JSON.parse(JSON.stringify(originalData));
 
           clipboardTableData.forEach((rowData, rowIndex) => {
@@ -300,24 +303,24 @@ export function getWwMergedTableManager(editor) {
       const endColIndex = endCellIndex.colIndex;
       const filterdTableData = tableData.slice(startRowIndex, endRowIndex + 1);
       const firstRow = filterdTableData[0].slice(startColIndex, endColIndex + 1);
-      let isPossible = !any(firstRow, cellData => util.isExisty(cellData.rowMergeWith));
+      let isPossible = !any(firstRow, cellData => isExisty(cellData.rowMergeWith));
 
       if (isPossible) {
-        const firstCells = util.pluck(filterdTableData, startColIndex);
+        const firstCells = pluck(filterdTableData, startColIndex);
 
-        isPossible = !any(firstCells, cellData => util.isExisty(cellData.colMergeWith));
+        isPossible = !any(firstCells, cellData => isExisty(cellData.colMergeWith));
       }
 
       if (isPossible && tableData.length > endRowIndex + 1) {
         const nextRow = tableData[endRowIndex + 1].slice(startColIndex, endColIndex + 1);
 
-        isPossible = !any(nextRow, cellData => util.isExisty(cellData.rowMergeWith));
+        isPossible = !any(nextRow, cellData => isExisty(cellData.rowMergeWith));
       }
 
       if (isPossible && tableData[0].length > endColIndex + 1) {
-        const nextCells = util.pluck(filterdTableData, endColIndex + 1);
+        const nextCells = pluck(filterdTableData, endColIndex + 1);
 
-        isPossible = !any(nextCells, cellData => util.isExisty(cellData.colMergeWith));
+        isPossible = !any(nextCells, cellData => isExisty(cellData.colMergeWith));
       }
 
       return isPossible;
@@ -349,12 +352,8 @@ export function getWwMergedTableManager(editor) {
       const tableData = tableDataHandler.createTableData($bookmarkedTable);
       const lastCellData = tableData[endRowIndex][endColIndex];
 
-      endRowIndex = util.isExisty(lastCellData.rowMergeWith)
-        ? lastCellData.rowMergeWith
-        : endRowIndex;
-      endColIndex = util.isExisty(lastCellData.colMergeWith)
-        ? lastCellData.colMergeWith
-        : endColIndex;
+      endRowIndex = isExisty(lastCellData.rowMergeWith) ? lastCellData.rowMergeWith : endRowIndex;
+      endColIndex = isExisty(lastCellData.colMergeWith) ? lastCellData.colMergeWith : endColIndex;
 
       const lastCellIndex = tableData[endRowIndex][endColIndex].elementIndex;
       const lastTd = $bookmarkedTable
@@ -495,13 +494,9 @@ export function getWwMergedTableManager(editor) {
     _expandRow(tableData, expandCount) {
       const startRowIndex = tableData.length;
       const cellCount = tableData[0].length;
-      const newRows = util
-        .range(startRowIndex, startRowIndex + expandCount)
-        .map(rowIndex =>
-          util
-            .range(0, cellCount)
-            .map(colIndex => tableDataHandler.createBasicCell(rowIndex, colIndex))
-        );
+      const newRows = range(startRowIndex, startRowIndex + expandCount).map(rowIndex =>
+        range(0, cellCount).map(colIndex => tableDataHandler.createBasicCell(rowIndex, colIndex))
+      );
 
       tableData.push(...newRows);
     }
@@ -514,7 +509,7 @@ export function getWwMergedTableManager(editor) {
      */
     _expandCoumn(tableData, expandCount) {
       const startCellIndex = tableData[0].length;
-      const additionalCellRange = util.range(startCellIndex, startCellIndex + expandCount);
+      const additionalCellRange = range(startCellIndex, startCellIndex + expandCount);
 
       tableData.forEach((rowData, rowIndex) => {
         const [{ nodeName }] = rowData;

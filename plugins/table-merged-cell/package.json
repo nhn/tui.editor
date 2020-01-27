@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "jquery": "^3.4.1",
-    "tui-code-snippet": "^1.5.2"
+    "tui-code-snippet": "^2.2.0"
   },
   "publishConfig": {
     "access": "public"

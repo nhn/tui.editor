@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import range from 'tui-code-snippet/array/range';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -40,9 +40,9 @@ export function _hasMergedCell(tableData, { start: startRange, end: endRange }) 
 function _updateMergedCells(tableData, startRowIndex, startColIndex, rowspan, colspan) {
   const limitRowIndex = startRowIndex + rowspan;
   const limitColIndex = startColIndex + colspan;
-  const colRange = util.range(startColIndex, limitColIndex);
+  const colRange = range(startColIndex, limitColIndex);
 
-  util.range(startRowIndex, limitRowIndex).forEach(rowIndex => {
+  range(startRowIndex, limitRowIndex).forEach(rowIndex => {
     const rowData = tableData[rowIndex];
     const startIndex = rowIndex === startRowIndex ? 1 : 0;
 
@@ -64,9 +64,9 @@ function _updateMergedCells(tableData, startRowIndex, startColIndex, rowspan, co
  * @private
  */
 export function _unmergeCells(tableData, { start: startRange, end: endRange }) {
-  const colRange = util.range(startRange.colIndex, endRange.colIndex + 1);
+  const colRange = range(startRange.colIndex, endRange.colIndex + 1);
 
-  util.range(startRange.rowIndex, endRange.rowIndex + 1).forEach(rowIndex => {
+  range(startRange.rowIndex, endRange.rowIndex + 1).forEach(rowIndex => {
     colRange.forEach(colIndex => {
       const cellData = tableData[rowIndex][colIndex];
       const { colspan, rowspan } = cellData;
@@ -116,7 +116,7 @@ export function getUnmergeCellCommand(editor) {
        */
       exec(wwe) {
         const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
+        const selectionRange = sq.getSelection().cloneRange();
 
         wwe.focus();
 
@@ -124,7 +124,7 @@ export function getUnmergeCellCommand(editor) {
           return;
         }
 
-        const $startContainer = $(range.startContainer);
+        const $startContainer = $(selectionRange.startContainer);
         const $table = $startContainer.closest('table');
         const tableData = dataHandler.createTableData($table);
         const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
@@ -147,7 +147,7 @@ export function getUnmergeCellCommand(editor) {
           tableRange.start.colIndex
         );
 
-        tableRenderer.focusToCell(sq, range, focusCell);
+        tableRenderer.focusToCell(sq, selectionRange, focusCell);
       }
     }
   );

@@ -3,7 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import extend from 'tui-code-snippet/object/extend';
+import range from 'tui-code-snippet/array/range';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -40,16 +42,16 @@ function _createNewCell(rowData, rowIndex, colIndex, prevCell) {
   const cellData = rowData[colIndex];
   let newCell;
 
-  if (util.isExisty(cellData.colMergeWith)) {
+  if (isExisty(cellData.colMergeWith)) {
     const { colMergeWith } = cellData;
     const merger = rowData[colMergeWith];
     const lastMergedCellIndex = colMergeWith + merger.colspan - 1;
 
-    if (util.isExisty(merger.rowMergeWith) && prevCell) {
-      newCell = util.extend({}, prevCell);
+    if (isExisty(merger.rowMergeWith) && prevCell) {
+      newCell = extend({}, prevCell);
     } else if (lastMergedCellIndex > colIndex) {
       merger.colspan += 1;
-      newCell = util.extend({}, cellData);
+      newCell = extend({}, cellData);
     }
   } else if (cellData.colspan > 1) {
     cellData.colspan += 1;
@@ -72,7 +74,7 @@ function _createNewCell(rowData, rowIndex, colIndex, prevCell) {
  * @private
  */
 export function _createNewColumns(tableData, startColIndex, endColIndex) {
-  const colIndexes = util.range(startColIndex, endColIndex + 1);
+  const colIndexes = range(startColIndex, endColIndex + 1);
   const newColumns = [];
   let prevCells = null;
 
@@ -152,7 +154,7 @@ export function getWwAddColumnCommand(editor) {
          */
         exec(wwe) {
           const sq = wwe.getEditor();
-          const range = sq.getSelection().cloneRange();
+          const selectionRange = sq.getSelection().cloneRange();
 
           wwe.focus();
 
@@ -160,7 +162,7 @@ export function getWwAddColumnCommand(editor) {
             return;
           }
 
-          const $startContainer = $(range.startContainer);
+          const $startContainer = $(selectionRange.startContainer);
           const $table = $startContainer.closest('table');
           const tableData = dataHandler.createTableData($table);
           const $selectedCells = wwe.componentManager
@@ -172,7 +174,7 @@ export function getWwAddColumnCommand(editor) {
             $startContainer
           );
 
-          sq.saveUndoState(range);
+          sq.saveUndoState(selectionRange);
           _addColumns(tableData, tableRange);
 
           const $newTable = tableRenderer.replaceTable($table, tableData);
@@ -182,7 +184,7 @@ export function getWwAddColumnCommand(editor) {
             tableRange.end.colIndex
           );
 
-          tableRenderer.focusToCell(sq, range, focusCell);
+          tableRenderer.focusToCell(sq, selectionRange, focusCell);
         }
       }
     );

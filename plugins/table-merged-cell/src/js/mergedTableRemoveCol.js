@@ -3,7 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import extend from 'tui-code-snippet/object/extend';
+import range from 'tui-code-snippet/array/range';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -18,10 +20,10 @@ import tableRenderer from './tableRenderer';
  */
 function _updateColspan(tableData, startColIndex, endColIndex) {
   tableData.forEach(rowData => {
-    util.range(startColIndex, endColIndex + 1).forEach(colIndex => {
+    range(startColIndex, endColIndex + 1).forEach(colIndex => {
       const cellData = rowData[colIndex];
 
-      if (util.isExisty(cellData.colMergeWith)) {
+      if (isExisty(cellData.colMergeWith)) {
         const merger = rowData[cellData.colMergeWith];
 
         if (merger.colspan) {
@@ -33,7 +35,7 @@ function _updateColspan(tableData, startColIndex, endColIndex) {
         cellData.colspan -= endColIndex - colIndex + 1;
 
         if (lastMergedCellIndex > endColIndex) {
-          rowData[endColIndex + 1] = util.extend({}, cellData);
+          rowData[endColIndex + 1] = extend({}, cellData);
         }
       }
     });
@@ -50,7 +52,7 @@ function _updateColspan(tableData, startColIndex, endColIndex) {
 function _updateMergeStartIndex(tableData, startColIndex, endColIndex) {
   tableData.forEach(rowData => {
     rowData.slice(endColIndex + 1).forEach(cellData => {
-      if (util.isExisty(cellData.colMergeWith) && cellData.colMergeWith >= startColIndex) {
+      if (isExisty(cellData.colMergeWith) && cellData.colMergeWith >= startColIndex) {
         cellData.colMergeWith = endColIndex + 1;
       }
     });
@@ -125,7 +127,7 @@ export function getWwRemoveColumnCommand(editor) {
        */
       exec(wwe) {
         const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
+        const selectionRange = sq.getSelection().cloneRange();
 
         wwe.focus();
 
@@ -133,7 +135,7 @@ export function getWwRemoveColumnCommand(editor) {
           return;
         }
 
-        const $startContainer = $(range.startContainer);
+        const $startContainer = $(selectionRange.startContainer);
         const $table = $startContainer.closest('table');
         const tableData = dataHandler.createTableData($table);
         const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
@@ -144,7 +146,7 @@ export function getWwRemoveColumnCommand(editor) {
         );
         const beforeCellLength = tableData[0].length;
 
-        sq.saveUndoState(range);
+        sq.saveUndoState(selectionRange);
         _removeColumns(tableData, tableRange);
 
         if (tableData[0].length === 0) {
@@ -157,7 +159,7 @@ export function getWwRemoveColumnCommand(editor) {
             startColIndex >= tableData[0].length ? startColIndex - 1 : startColIndex;
           const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, focusColIndex);
 
-          tableRenderer.focusToCell(sq, range, focusCell);
+          tableRenderer.focusToCell(sq, selectionRange, focusCell);
         }
       }
     }

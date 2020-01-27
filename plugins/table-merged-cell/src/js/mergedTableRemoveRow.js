@@ -3,7 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import extend from 'tui-code-snippet/object/extend';
+import range from 'tui-code-snippet/array/range';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -16,9 +18,9 @@ import tableRenderer from './tableRenderer';
  * @private
  */
 function _updateRowspan(tableData, startRowIndex, endRowIndex) {
-  util.range(startRowIndex, endRowIndex + 1).forEach(rowIndex => {
+  range(startRowIndex, endRowIndex + 1).forEach(rowIndex => {
     tableData[rowIndex].forEach((cell, cellIndex) => {
-      if (util.isExisty(cell.rowMergeWith)) {
+      if (isExisty(cell.rowMergeWith)) {
         const merger = tableData[cell.rowMergeWith][cellIndex];
 
         if (merger.rowspan) {
@@ -30,7 +32,7 @@ function _updateRowspan(tableData, startRowIndex, endRowIndex) {
         cell.rowspan -= endRowIndex - rowIndex + 1;
 
         if (lastMergedRowIndex > endRowIndex) {
-          tableData[endRowIndex + 1][cellIndex] = util.extend({}, cell);
+          tableData[endRowIndex + 1][cellIndex] = extend({}, cell);
         }
       }
     });
@@ -47,7 +49,7 @@ function _updateRowspan(tableData, startRowIndex, endRowIndex) {
 function _updateMergeStartIndex(tableData, startRowIndex, endRowIndex) {
   tableData.slice(endRowIndex + 1).forEach(row => {
     row.forEach(cell => {
-      if (util.isExisty(cell.rowMergeWith) && cell.rowMergeWith >= startRowIndex) {
+      if (isExisty(cell.rowMergeWith) && cell.rowMergeWith >= startRowIndex) {
         cell.rowMergeWith = endRowIndex + 1;
       }
     });
@@ -132,7 +134,7 @@ export function getWwRemoveRowCommand(editor) {
        */
       exec(wwe) {
         const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
+        const selectionRange = sq.getSelection().cloneRange();
 
         wwe.focus();
 
@@ -140,7 +142,7 @@ export function getWwRemoveRowCommand(editor) {
           return;
         }
 
-        const $startContainer = $(range.startContainer);
+        const $startContainer = $(selectionRange.startContainer);
         const $table = $startContainer.closest('table');
         const tableData = dataHandler.createTableData($table);
         const beforeRowLength = tableData.length;
@@ -151,7 +153,7 @@ export function getWwRemoveRowCommand(editor) {
           $startContainer
         );
 
-        sq.saveUndoState(range);
+        sq.saveUndoState(selectionRange);
         _removeRow(tableData, tableRange);
 
         if (tableData.length < 2) {
@@ -164,7 +166,7 @@ export function getWwRemoveRowCommand(editor) {
             startRowIndex < tableData.length ? startRowIndex : startRowIndex - 1;
           const focusCell = _findFocusTd($newTable, focusRowIndex, tableRange.start.colIndex);
 
-          tableRenderer.focusToCell(sq, range, focusCell);
+          tableRenderer.focusToCell(sq, selectionRange, focusCell);
         }
       }
     }

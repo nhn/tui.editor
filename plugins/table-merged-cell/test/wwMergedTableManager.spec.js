@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import { msie } from 'tui-code-snippet/browser/browser';
 
 import Editor from 'tui-editor/src/js/editor';
 
@@ -267,7 +267,7 @@ describe('WwMergedTableManager', () => {
       const $trs = $(container)
         .first()
         .find('tr');
-      const cellContent = util.browser.msie ? '' : '<br>';
+      const cellContent = msie ? '' : '<br>';
 
       expect($trs.length).toBe(6);
       expect($trs.eq(0).children().length).toBe(5);

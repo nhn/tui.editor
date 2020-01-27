@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import range from 'tui-code-snippet/array/range';
 
 import tableDataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -50,10 +50,10 @@ export function getWwMergedTableSelectionManager(editor) {
     _addClassToSelectedCells($table, tableData, tableRange) {
       const startRange = tableRange.start;
       const endRange = tableRange.end;
-      const cellIndexRange = util.range(startRange.colIndex, endRange.colIndex + 1);
+      const cellIndexRange = range(startRange.colIndex, endRange.colIndex + 1);
       const $trs = $table.find('tr');
 
-      util.range(startRange.rowIndex, endRange.rowIndex + 1).forEach(rowIndex => {
+      range(startRange.rowIndex, endRange.rowIndex + 1).forEach(rowIndex => {
         const rowData = tableData[rowIndex];
         const $cells = $trs.eq(rowIndex).find('td, th');
 
@@ -109,8 +109,8 @@ export function getWwMergedTableSelectionManager(editor) {
      */
     styleToSelectedCells(onStyle, options) {
       const sq = this.wwe.getEditor();
-      const range = sq.getSelection().cloneRange();
-      const $table = $(range.startContainer).closest('[contenteditable=true] table');
+      const selectionRange = sq.getSelection().cloneRange();
+      const $table = $(selectionRange.startContainer).closest('[contenteditable=true] table');
 
       $table
         .find('tr')
@@ -124,9 +124,9 @@ export function getWwMergedTableSelectionManager(editor) {
             return;
           }
 
-          range.setStart(firstSelectedCell, 0);
-          range.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
-          sq.setSelection(range);
+          selectionRange.setStart(firstSelectedCell, 0);
+          selectionRange.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
+          sq.setSelection(selectionRange);
           onStyle(sq, options);
         });
     }

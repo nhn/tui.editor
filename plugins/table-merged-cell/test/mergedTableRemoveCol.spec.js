@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import { firefox } from 'tui-code-snippet/browser/browser';
 
 import Editor from 'tui-editor/src/js/editor';
 
@@ -179,7 +179,7 @@ describe('mergedTableRemoveCol', () => {
       wwe = editor.getCurrentModeEditor();
       wwe.getEditor().focus();
 
-      if (util.browser.firefox) {
+      if (firefox) {
         wwe.getEditor().fireEvent('focus'); // focus() does not work on firefox here. wired.
       }
     });

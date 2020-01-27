@@ -3,7 +3,11 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import extend from 'tui-code-snippet/object/extend';
+import range from 'tui-code-snippet/array/range';
+import { msie } from 'tui-code-snippet/browser/browser';
 
 /**
  * Parse cell like td or th.
@@ -67,10 +71,10 @@ function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
   const limitRowIndex = startRowIndex + rowspan;
   const limitCellIndex = startCellIndex + colspan;
 
-  util.range(startRowIndex, limitRowIndex).forEach(rowIndex => {
+  range(startRowIndex, limitRowIndex).forEach(rowIndex => {
     base[rowIndex] = base[rowIndex] || [];
 
-    util.range(startCellIndex, limitCellIndex).forEach(cellIndex => {
+    range(startCellIndex, limitCellIndex).forEach(cellIndex => {
       const mergedData = {
         nodeName
       };
@@ -146,7 +150,7 @@ export function createCellIndexData(tableData) {
     const mappingRow = [];
 
     row.forEach((cell, colIndex) => {
-      if (util.isUndefined(cell.colMergeWith) && util.isUndefined(cell.rowMergeWith)) {
+      if (isUndefined(cell.colMergeWith) && isUndefined(cell.rowMergeWith)) {
         mappingRow.push({
           rowIndex,
           colIndex
@@ -171,7 +175,7 @@ function _getHeaderAligns(tableData) {
   return headRowData.map(cellData => {
     let align;
 
-    if (util.isExisty(cellData.colMergeWith)) {
+    if (isExisty(cellData.colMergeWith)) {
       ({ align } = headRowData[cellData.colMergeWith]);
     } else {
       ({ align } = cellData);
@@ -192,7 +196,7 @@ function createRenderData(tableData, cellIndexData) {
   const headerAligns = _getHeaderAligns(tableData);
   const renderData = cellIndexData.map(row =>
     row.map(({ rowIndex, colIndex }) =>
-      util.extend(
+      extend(
         {
           align: headerAligns[colIndex]
         },
@@ -208,7 +212,7 @@ function createRenderData(tableData, cellIndexData) {
   return renderData;
 }
 
-const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
+const BASIC_CELL_CONTENT = msie ? '' : '<br>';
 
 /**
  * Create basic cell data.
@@ -326,8 +330,8 @@ function findColMergedLastIndex(tableData, rowIndex, colIndex) {
 function findElementIndex(tableData, rowIndex, colIndex) {
   const cellData = tableData[rowIndex][colIndex];
 
-  rowIndex = util.isExisty(cellData.rowMergeWith) ? cellData.rowMergeWith : rowIndex;
-  colIndex = util.isExisty(cellData.colMergeWith) ? cellData.colMergeWith : colIndex;
+  rowIndex = isExisty(cellData.rowMergeWith) ? cellData.rowMergeWith : rowIndex;
+  colIndex = isExisty(cellData.colMergeWith) ? cellData.colMergeWith : colIndex;
 
   return tableData[rowIndex][colIndex].elementIndex;
 }
@@ -345,7 +349,7 @@ function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
     if (startIndex) {
       const [{ nodeName }] = rowData;
 
-      util.range(startIndex, limitIndex).forEach(colIndex => {
+      range(startIndex, limitIndex).forEach(colIndex => {
         rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
       });
     }
@@ -364,11 +368,11 @@ function addTbodyOrTheadIfNeed(tableData) {
   let added = true;
 
   if (!cellCount && tableData[1]) {
-    util.range(0, tableData[1].length).forEach(colIndex => {
+    range(0, tableData[1].length).forEach(colIndex => {
       header.push(createBasicCell(0, colIndex, 'TH'));
     });
   } else if (tableData[0][0].nodeName !== 'TH') {
-    const newHeader = util.range(0, cellCount).map(colIndex => createBasicCell(0, colIndex, 'TH'));
+    const newHeader = range(0, cellCount).map(colIndex => createBasicCell(0, colIndex, 'TH'));
 
     [].concat(...tableData).forEach(cellData => {
       if (cellData.elementIndex) {
@@ -378,7 +382,7 @@ function addTbodyOrTheadIfNeed(tableData) {
 
     tableData.unshift(newHeader);
   } else if (tableData.length === 1) {
-    const newRow = util.range(0, cellCount).map(colIndex => createBasicCell(1, colIndex, 'TD'));
+    const newRow = range(0, cellCount).map(colIndex => createBasicCell(1, colIndex, 'TD'));
 
     tableData.push(newRow);
   } else {

@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import range from 'tui-code-snippet/array/range';
 
 const RX_COLS = /@cols=[0-9]+:/g;
 
@@ -15,8 +15,7 @@ const RX_COLS = /@cols=[0-9]+:/g;
  * @private
  */
 function _createRepeatString(str, count) {
-  return util
-    .range(0, count)
+  return range(0, count)
     .map(() => str)
     .join('');
 }

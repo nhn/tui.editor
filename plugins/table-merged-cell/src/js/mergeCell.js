@@ -3,13 +3,14 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import { msie } from 'tui-code-snippet/browser/browser';
+import forEach from 'tui-code-snippet/collection/forEach';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
-const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
+const BASIC_CELL_CONTENT = msie ? '' : '<br>';
 
 /**
  * Pick merger content from selected cells.
@@ -46,7 +47,7 @@ function _initCellData(targetRows, startColIndex, endColIndex) {
     .forEach(cellData => {
       const { nodeName } = cellData;
 
-      util.forEach(cellData, (value, name) => delete cellData[name]);
+      forEach(cellData, (value, name) => delete cellData[name]);
       cellData.nodeName = nodeName;
     });
 }

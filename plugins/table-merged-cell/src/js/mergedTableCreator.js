@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import forEach from 'tui-code-snippet/collection/forEach';
 
 import tableRenderer from './tableRenderer';
 
@@ -88,7 +88,7 @@ export function _createTableObjectFrom$Table($table) {
 function _findIndex(arr, onFind) {
   let foundIndex = -1;
 
-  util.forEach(arr, (item, index) => {
+  forEach(arr, (item, index) => {
     let nextFind = true;
 
     if (onFind(item, index)) {

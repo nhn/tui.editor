@@ -3,7 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import extend from 'tui-code-snippet/object/extend';
+import range from 'tui-code-snippet/array/range';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -38,16 +40,16 @@ export function _createNewRow(tableData, rowIndex) {
   return tableData[rowIndex].map((cellData, colIndex) => {
     let newCell;
 
-    if (util.isExisty(cellData.rowMergeWith)) {
+    if (isExisty(cellData.rowMergeWith)) {
       const { rowMergeWith } = cellData;
       const merger = tableData[rowMergeWith][colIndex];
       const lastMergedRowIndex = rowMergeWith + merger.rowspan - 1;
 
-      if (util.isExisty(merger.colMergeWith) && prevCell) {
-        newCell = util.extend({}, prevCell);
+      if (isExisty(merger.colMergeWith) && prevCell) {
+        newCell = extend({}, prevCell);
       } else if (lastMergedRowIndex > rowIndex) {
         merger.rowspan += 1;
-        newCell = util.extend({}, cellData);
+        newCell = extend({}, cellData);
       }
     } else if (cellData.rowspan > 1) {
       cellData.rowspan += 1;
@@ -83,9 +85,9 @@ export function _addRow(tableData, tableRange) {
     endRange.rowIndex,
     endRange.colIndex
   );
-  const newRows = util
-    .range(startRowIndex, endRowIndex + 1)
-    .map(() => _createNewRow(tableData, endRowIndex));
+  const newRows = range(startRowIndex, endRowIndex + 1).map(() =>
+    _createNewRow(tableData, endRowIndex)
+  );
 
   tableData.splice(...[endRowIndex + 1, 0].concat(newRows));
 }
@@ -127,7 +129,7 @@ export function getWwAddRowCommand(editor) {
        */
       exec(wwe) {
         const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
+        const selectionRange = sq.getSelection().cloneRange();
 
         wwe.focus();
 
@@ -135,7 +137,7 @@ export function getWwAddRowCommand(editor) {
           return;
         }
 
-        const $startContainer = $(range.startContainer);
+        const $startContainer = $(selectionRange.startContainer);
         const $table = $startContainer.closest('table');
         const tableData = dataHandler.createTableData($table);
         const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
@@ -145,13 +147,13 @@ export function getWwAddRowCommand(editor) {
           $startContainer
         );
 
-        sq.saveUndoState(range);
+        sq.saveUndoState(selectionRange);
         _addRow(tableData, tableRange);
 
         const $newTable = tableRenderer.replaceTable($table, tableData);
         const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
 
-        tableRenderer.focusToCell(sq, range, focusTd);
+        tableRenderer.focusToCell(sq, selectionRange, focusTd);
       }
     }
   );

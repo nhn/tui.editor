@@ -3,13 +3,13 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import { msie } from 'tui-code-snippet/browser/browser';
 
 import { _createNewColumns, _addColumns } from '@/mergedTableAddCol';
 import tableDataHandler from '@/tableDataHandler';
 
 describe('mergedTableAddCol', () => {
-  const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
+  const BASIC_CELL_CONTENT = msie ? '' : '<br>';
 
   describe('_createNewColumns()', () => {
     let tableData;

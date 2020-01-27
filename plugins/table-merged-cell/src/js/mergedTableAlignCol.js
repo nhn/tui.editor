@@ -3,7 +3,8 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import range from 'tui-code-snippet/array/range';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -18,10 +19,10 @@ import tableRenderer from './tableRenderer';
  * @private
  */
 function _align(headRowData, startColIndex, endColIndex, alignDirection) {
-  util.range(startColIndex, endColIndex + 1).forEach(colIndex => {
+  range(startColIndex, endColIndex + 1).forEach(colIndex => {
     const headCellData = headRowData[colIndex];
 
-    if (util.isExisty(headCellData.colMergeWith)) {
+    if (isExisty(headCellData.colMergeWith)) {
       headRowData[headCellData.colMergeWith].align = alignDirection;
     } else {
       headCellData.align = alignDirection;
@@ -65,7 +66,7 @@ export function getWwAlignColumnCommand(editor) {
        */
       exec(wwe, alignDirection) {
         const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
+        const selectionRange = sq.getSelection().cloneRange();
 
         wwe.focus();
 
@@ -73,7 +74,7 @@ export function getWwAlignColumnCommand(editor) {
           return;
         }
 
-        const $startContainer = $(range.startContainer);
+        const $startContainer = $(selectionRange.startContainer);
         const $table = $startContainer.closest('table');
         const tableData = dataHandler.createTableData($table);
         const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
@@ -88,7 +89,7 @@ export function getWwAlignColumnCommand(editor) {
         const $newTable = tableRenderer.replaceTable($table, tableData);
         const focusCell = _findFocusCell($newTable, $startContainer);
 
-        tableRenderer.focusToCell(sq, range, focusCell);
+        tableRenderer.focusToCell(sq, selectionRange, focusCell);
       }
     }
   );
