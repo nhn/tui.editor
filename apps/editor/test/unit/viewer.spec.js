@@ -164,12 +164,7 @@ describe('Viewer', () => {
 
       viewer = new ToastUIEditorViewer({
         el: container,
-        plugins: [
-          {
-            plugin,
-            options
-          }
-        ]
+        plugins: [[plugin, options]]
       });
 
       expect(plugin).toHaveBeenCalledWith(viewer, options);
