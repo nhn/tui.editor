@@ -28,7 +28,7 @@
 
 ```
 - uicdn.toast.com/
-  - tui-editor/
+  - editor-plugin-chart/
     - latest/
       - toastui-editor-plugin-chart.js
       - toastui-editor-plugin-chart.min.js
@@ -120,7 +120,7 @@ const instance = Editor.factory({
 <!-- CSS -->
 <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/latest/tui-chart.min.css" />
 <!-- Scripts -->
-<script src="https://uicdn.toast.com/tui-editor/latest/toastui-editor-plugin-chart.min.js"></script>
+<script src="https://uicdn.toast.com/editor-plugin-chart/latest/toastui-editor-plugin-chart.min.js"></script>
 ```
 
 ### Create Instance
@@ -129,9 +129,13 @@ const instance = Editor.factory({
 
 ```js
 const Editor = tui.Editor;
+const {
+  plugin: { chart }
+} = Editor;
+
 const instance = new Editor({
   // ...
-  plugins: [Editor.plugin.chart]
+  plugins: [chart]
 });
 ```
 
@@ -139,9 +143,13 @@ const instance = new Editor({
 
 ```js
 const Viewer = tui.Editor;
+const {
+  plugin: { chart }
+} = Viewer;
+
 const instance = new Viewer({
   // ...
-  plugins: [Editor.plugin.chart]
+  plugins: [chart]
 });
 ```
 
@@ -149,9 +157,13 @@ or
 
 ```js
 const Editor = tui.Editor;
+const {
+  plugin: { chart }
+} = Editor;
+
 const instance = Editor.factory({
   // ...
-  plugins: [Editor.plugin.chart]
+  plugins: [chart]
 });
 ```
 

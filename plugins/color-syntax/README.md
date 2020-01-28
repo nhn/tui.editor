@@ -28,7 +28,7 @@
 
 ```
 - uicdn.toast.com/
-  - tui-editor/
+  - editor-plugin-color-syntax/
     - latest/
       - toastui-editor-plugin-color-syntax.js
       - toastui-editor-plugin-color-syntax.min.js
@@ -95,7 +95,7 @@ const instance = new Editor({
   href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css"
 />
 <!-- Scripts -->
-<script src="https://uicdn.toast.com/tui-editor/latest/toastui-editor-plugin-color-syntax.min.js"></script>
+<script src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
 ```
 
 ### Create Instance
@@ -104,9 +104,13 @@ const instance = new Editor({
 
 ```js
 const Editor = tui.Editor;
+const {
+  plugin: { colorSyntax }
+} = Editor;
+
 const instance = new Editor({
   // ...
-  plugins: [Editor.plugin.colorSyntax]
+  plugins: [colorSyntax]
 });
 ```
 

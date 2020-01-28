@@ -28,7 +28,7 @@
 
 ```
 - uicdn.toast.com/
-  - tui-editor/
+  - editor-plugin-table-merged-cell/
     - latest/
       - toastui-editor-plugin-table-merged-cell.js
       - toastui-editor-plugin-table-merged-cell.min.js
@@ -106,7 +106,7 @@ const instance = Editor.factory({
 
 ```html
 <!-- Scripts -->
-<script src="https://uicdn.toast.com/editor/latest/toastui-editor-plugin-table-merged-cell.min.js"></script>
+<script src="https://uicdn.toast.com/editor-plugin-table-merged-cell/latest/toastui-editor-plugin-table-merged-cell.min.js"></script>
 ```
 
 ### Create Instance
@@ -115,7 +115,9 @@ const instance = Editor.factory({
 
 ```js
 const Editor = tui.Editor;
-const { plugin: { tableMergedCell } } = Editor;
+const {
+  plugin: { tableMergedCell }
+} = Editor;
 
 const instance = new Editor({
   // ...
@@ -127,7 +129,9 @@ const instance = new Editor({
 
 ```js
 const Viewer = tui.Editor;
-const { plugin: { tableMergedCell } } = Viewer;
+const {
+  plugin: { tableMergedCell }
+} = Viewer;
 
 const instance = new Viewer({
   // ...
@@ -139,7 +143,9 @@ or
 
 ```js
 const Editor = tui.Editor;
-const { plugin: { tableMergedCell } } = Editor;
+const {
+  plugin: { tableMergedCell }
+} = Editor;
 
 const instance = Editor.factory({
   // ...
