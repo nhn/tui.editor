@@ -109,3 +109,32 @@ const instance = new Editor({
   plugins: [Editor.plugin.colorSyntax]
 });
 ```
+
+## [Optional] Use Plugin with Options
+
+The `color-syntax` plugin can set options when used. Just add the plugin function and options related to the plugin to the array(`[${pluginFn}, ${pluginOptions}]`) and push them to the `plugins` option of the editor.
+
+The following options are available in the `color-syntax` plugin.
+The `useCustomSyntax` option is `false` by default, applying color syntax using the `span` tag. (e.g. `<span style="color:#ff00ff">foo</span>`) If enabled, it will use custom syntax instead of the `span` tag. (e.g. `{color:# ff00ff}test{color}`)
+
+| Name              | Type             | Default Value | Description                      |
+| ----------------- | ---------------- | ------------- | -------------------------------- |
+| `preset`          | `Array.<string>` |               | Preset for color palette         |
+| `useCustomSyntax` | `boolean`        | `false`       | Whether use custom syntax or not |
+
+```js
+// ...
+
+import Editor from 'tui-editor';
+import colorSyntaxPlugin from '@toast-ui/editor-plugin-color-syntax';
+
+const colorSyntaxOptions = {
+  preset: ['#181818', '#292929', '#393939'],
+  useCustomSyntax: true
+};
+
+const instance = new Editor({
+  // ...
+  plugins: [[colorSyntaxPlugin, colorSyntaxOptions]]
+});
+```

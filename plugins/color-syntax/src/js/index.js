@@ -249,10 +249,12 @@ function addDoubleZeroPad(numberStr) {
 /**
  * Color syntax plugin
  * @param {editor} editor - editor
+ * @param {Object} options - chart options
+ * @param {Array.<string>} [options.preset] - preset for color palette (ex: ['#181818', '#292929'])
+ * @param {boolean} [options.useCustomSyntax=false] - whether use custom syntax or not
  */
-export default function colorSyntaxPlugin(editor) {
-  const { colorSyntax = {} } = editor.options;
-  const { preset, useCustomSyntax = false } = colorSyntax;
+export default function colorSyntaxPlugin(editor, options = {}) {
+  const { preset, useCustomSyntax = false } = options;
 
   editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => {
     let replacement;

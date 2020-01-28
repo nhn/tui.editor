@@ -2,7 +2,8 @@
  * @fileoverview Test color syntax plugin
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import TuiEditor from 'tui-editor/src/js/editor';
+import Editor from 'tui-editor/src/js/editor';
+import colorPicker from 'tui-color-picker';
 import colorSyntaxPlugin from '@';
 
 describe('colorSyntax', () => {
@@ -22,19 +23,59 @@ describe('colorSyntax', () => {
     });
   });
 
+  describe('usageStatistics option', () => {
+    it('when setting false, GA of color picker is disabled', () => {
+      spyOn(colorPicker, 'create').and.callThrough();
+
+      ned = new Editor({
+        el: container,
+        previewStyle: 'vertical',
+        plugins: [colorSyntaxPlugin],
+        usageStatistics: false
+      });
+
+      expect(colorPicker.create).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          usageStatistics: false
+        })
+      );
+    });
+
+    it('when setting true, GA of color picker is enabled', () => {
+      spyOn(colorPicker, 'create').and.callThrough();
+
+      ned = new Editor({
+        el: container,
+        previewStyle: 'vertical',
+        plugins: [colorSyntaxPlugin],
+        usageStatistics: true
+      });
+
+      expect(colorPicker.create).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          usageStatistics: true
+        })
+      );
+    });
+  });
+
   describe('custom syntax conversion', () => {
     let actual, expected;
 
     beforeEach(() => {
-      ned = new TuiEditor({
+      ned = new Editor({
         el: container,
         previewStyle: 'vertical',
         height: '100px',
         initialEditType: 'markdown',
-        plugins: [colorSyntaxPlugin],
-        colorSyntax: {
-          useCustomSyntax: true
-        }
+        plugins: [
+          [
+            colorSyntaxPlugin,
+            {
+              useCustomSyntax: true
+            }
+          ]
+        ]
       });
 
       actual = null;
@@ -85,7 +126,7 @@ describe('colorSyntax', () => {
     let actual, expected;
 
     beforeEach(() => {
-      ned = new TuiEditor({
+      ned = new Editor({
         el: container,
         previewStyle: 'vertical',
         height: '100px',
@@ -97,7 +138,7 @@ describe('colorSyntax', () => {
       expected = null;
     });
 
-    it('do not convert color syntax to html when dont use custom syntax', () => {
+    it(`don't convert color syntax to html when don't use custom syntax`, () => {
       const src = '{color:#ff00ff}test{color}';
 
       actual = ned.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', src);
@@ -124,17 +165,22 @@ describe('colorSyntax', () => {
 
   describe('commands', () => {
     beforeEach(() => {
-      ned = new TuiEditor({
+      ned = new Editor({
         el: container,
         previewStyle: 'vertical',
         height: '100px',
         initialEditType: 'markdown',
-        plugins: [colorSyntaxPlugin],
-        colorSyntax: {
-          useCustomSyntax: true
-        }
+        plugins: [
+          [
+            colorSyntaxPlugin,
+            {
+              useCustomSyntax: true
+            }
+          ]
+        ]
       });
     });
+
     it('add color in markdown', () => {
       ned.setValue('text');
       ned.getCodeMirror().execCommand('selectAll');
@@ -143,7 +189,7 @@ describe('colorSyntax', () => {
       expect(ned.getValue()).toBe('{color:#f0f}text{color}');
     });
 
-    it("Don't add color if value isn't truthy in markdown", () => {
+    it(`don't add color if value isn't truthy in markdown`, () => {
       let falsyValue;
 
       ned.setValue('text');
@@ -174,7 +220,7 @@ describe('colorSyntax', () => {
       expect($span.css('color')).toBe('rgb(255, 0, 255)');
     });
 
-    it("Don't add color if value isn't truthy in wysiwyg", () => {
+    it(`don't add color if value isn't truthy in wysiwyg`, () => {
       let falsyValue;
 
       ned.changeMode('wysiwyg');
