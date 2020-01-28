@@ -568,10 +568,10 @@ function _onMDPasteBefore(cm, { source, data: eventData }) {
  * @param {Editor} editor - editor
  * @param {Object} options - chart options
  * @param {number} [options.minWidth=0] - minimum width
- * @param {number} [options.maxWidth=0] - maximum width
- * @param {number} [options.minHeight=Infinity] - minimum height
+ * @param {number} [options.minHeight=0] - minimum height
+ * @param {number} [options.maxWidth=Infinity] - maximum width
  * @param {number} [options.maxHeight=Infinity] - maximum height
- * @param {number|string} [options.width='auto'] - default height
+ * @param {number|string} [options.width='auto'] - default width
  * @param {number|string} [options.height='auto'] - default height
  */
 export default function chartPlugin(editor, options = {}) {

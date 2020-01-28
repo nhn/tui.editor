@@ -154,3 +154,38 @@ const instance = Editor.factory({
   plugins: [Editor.plugin.chart]
 });
 ```
+
+## [Optional] Use Plugin with Options
+
+The `chart` plugin can set options when used. Just add the plugin function and options related to the plugin to the array(`[${pluginFn}, ${pluginOptions}]`) and push them to the `plugins` option of the editor.
+
+The following options are available in the `chart` plugin.
+These options are used to set the dimensions of the chart drawn in the editor.
+
+| Name        | Type             | Default Value | Description          |
+| ----------- | ---------------- | ------------- | -------------------- |
+| `width`     | `number\|string` | `'auto'`      | Default width value  |
+| `height`    | `number\|string` | `'auto'`      | Default height value |
+| `minWidth`  | `number`         | `0`           | Minimum width value  |
+| `minHeight` | `number`         | `0`           | Minimum height value |
+| `maxWidth`  | `number`         | `Infinity`    | Maximum width value  |
+| `maxHeight` | `number`         | `Infinity`    | Maximum height value |
+
+```js
+// ...
+
+import Editor from 'tui-editor';
+import chartPlugin from '@toast-ui/editor-plugin-chart';
+
+const chartOptions = {
+  minWidth: 100,
+  maxWidth: 600,
+  minHeight: 100,
+  maxHeight: 300
+};
+
+const instance = new Editor({
+  // ...
+  plugins: [[chartPlugin, chartOptions]]
+});
+```
