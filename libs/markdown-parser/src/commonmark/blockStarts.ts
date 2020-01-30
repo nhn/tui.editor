@@ -20,13 +20,14 @@ import {
   C_SPACE
 } from './blockHelper';
 import { Parser } from './blocks';
+import { blockStart as table } from './gfm/table';
 
-const enum Matched {
+export const enum Matched {
   None = 0, // No Match
   Container, // Keep Going
   Leaf // No more block starts
 }
-interface BlockStart {
+export interface BlockStart {
   (parser: Parser, container: BlockNode): Matched;
 }
 
@@ -293,6 +294,7 @@ export const blockStarts = [
   atxHeading,
   fencedCodeBlock,
   htmlBlock,
+  table,
   seTextHeading,
   thematicBreak,
   listItem,

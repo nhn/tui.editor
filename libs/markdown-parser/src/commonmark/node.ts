@@ -9,7 +9,14 @@ export type BlockNodeType =
   | 'thematicBreak'
   | 'paragraph'
   | 'codeBlock'
-  | 'htmlBlock';
+  | 'htmlBlock'
+  | 'table'
+  | 'tableHead'
+  | 'tableBody'
+  | 'tableRow'
+  | 'tableCell'
+  | 'tableDelimRow'
+  | 'tableDelimCell';
 
 export type InlineNodeType =
   | 'code'
@@ -40,6 +47,12 @@ export function isContainer(node: Node) {
     case 'strike':
     case 'link':
     case 'image':
+    case 'table':
+    case 'tableHead':
+    case 'tableBody':
+    case 'tableRow':
+    case 'tableCell':
+    case 'tableDelimRow':
       return true;
     default:
       return false;
@@ -229,6 +242,11 @@ export function createNode(type: NodeType, sourcepos?: SourcePos) {
     case 'paragraph':
     case 'blockQuote':
     case 'thematicBreak':
+    case 'table':
+    case 'tableRow':
+    case 'tableBody':
+    case 'tableHead':
+    case 'tableCell':
       return new BlockNode(type, sourcepos);
     case 'code':
       return new CodeNode(type, sourcepos);
