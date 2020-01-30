@@ -1,5 +1,14 @@
 import { Parser } from './blocks';
 import { taskListItemFinalize } from './gfm/taskListItem';
+import {
+  table,
+  tableHead,
+  tableBody,
+  tableRow,
+  tableCell,
+  tableDelimRow,
+  tableDelimCell
+} from './gfm/tableBlockHandler';
 import { ListNode, BlockNode, CodeBlockNode, HtmlBlockNode } from './node';
 import {
   peek,
@@ -24,7 +33,7 @@ export const enum Process {
 // at a certain line and offset (e.g. whether a block quote
 // contains a `>`.  It returns 0 for matched, 1 for not matched,
 // and 2 for "we've dealt with this line completely, go to next."
-interface BlockHandler {
+export interface BlockHandler {
   continue(parser: Parser, container: BlockNode): Process;
   finalize(parser: Parser, block: BlockNode): void;
   canContain(type: string): boolean;
@@ -253,5 +262,12 @@ export const blockHandlers = {
   thematicBreak,
   codeBlock,
   htmlBlock,
-  paragraph
+  paragraph,
+  table,
+  tableBody,
+  tableHead,
+  tableRow,
+  tableCell,
+  tableDelimRow,
+  tableDelimCell
 };

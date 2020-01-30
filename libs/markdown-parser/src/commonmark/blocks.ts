@@ -3,7 +3,7 @@ import { Node, BlockNode, BlockNodeType, isCodeBlock, isHtmlBlock, createNode } 
 import { InlineParser, C_NEWLINE } from './inlines';
 import { blockHandlers, Process } from './blockHandlers';
 import { CODE_INDENT } from './blockHelper';
-import { blockStarts } from './blockStarts';
+import { blockStarts, Matched } from './blockStarts';
 
 const reHtmlBlockClose = [
   /./, // dummy for 0
@@ -268,8 +268,7 @@ export class Parser {
     this.lastMatchedContainer = container;
 
     let matchedLeaf = container.type !== 'paragraph' && blockHandlers[container.type].acceptsLines;
-    const starts = blockStarts;
-    const startsLen = starts.length;
+    const blockStartsLen = blockStarts.length;
     // Unless last matched container is a code block, try new container starts,
     // adding children to the last matched container:
     while (!matchedLeaf) {
@@ -282,12 +281,12 @@ export class Parser {
       }
 
       let i = 0;
-      while (i < startsLen) {
-        const res = starts[i](this, container);
-        if (res === 1) {
+      while (i < blockStartsLen) {
+        const res = blockStarts[i](this, container);
+        if (res === Matched.Container) {
           container = this.tip;
           break;
-        } else if (res === 2) {
+        } else if (res === Matched.Leaf) {
           container = this.tip;
           matchedLeaf = true;
           break;
@@ -296,7 +295,7 @@ export class Parser {
         }
       }
 
-      if (i === startsLen) {
+      if (i === blockStartsLen) {
         // nothing matched
         this.advanceNextNonspace();
         break;
@@ -322,7 +321,7 @@ export class Parser {
       const t = container.type;
       // Block quote lines are never blank as they start with >
       // and we don't count blanks in fenced code for purposes of tight/loose
-      // lists or breaking out of lists.  We also don't set _lastLineBlank
+      // lists or breaking out of lists. We also don't set _lastLineBlank
       // on an empty list item, or if we just closed a fenced block.
       const lastLineBlank =
         this.blank &&
