@@ -116,7 +116,7 @@ const instance = new Editor({
 
 ## [Optional] Use Plugin with Options
 
-The `color-syntax` plugin can set options when used. Just add the plugin function and options related to the plugin to the array(`[${pluginFn}, ${pluginOptions}]`) and push them to the `plugins` option of the editor.
+The `color-syntax` plugin can set options when used. Just add the plugin function and options related to the plugin to the array(`[pluginFn, pluginOptions]`) and push them to the `plugins` option of the editor.
 
 The following options are available in the `color-syntax` plugin.
 The `useCustomSyntax` option is `false` by default, applying color syntax using the `span` tag. (e.g. `<span style="color:#ff00ff">foo</span>`) If enabled, it will use custom syntax instead of the `span` tag. (e.g. `{color:# ff00ff}test{color}`)
