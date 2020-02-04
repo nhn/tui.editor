@@ -229,11 +229,6 @@ ToastUIEditorViewer.markdownit = Convertor.getMarkdownitRenderer();
 /**
  * @ignore
  */
-ToastUIEditorViewer.i18n = null;
-
-/**
- * @ignore
- */
 ToastUIEditorViewer.Button = null;
 
 /**

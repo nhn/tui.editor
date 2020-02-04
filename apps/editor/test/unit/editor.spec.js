@@ -32,9 +32,6 @@ describe('Editor', () => {
     it('codeBlockManager should be CodeBlockManager instance', () => {
       expect(Editor.codeBlockManager instanceof CodeBlockManager).toBe(true);
     });
-    it('i18n should be I18n instance', () => {
-      expect(Editor.i18n instanceof I18n).toBe(true);
-    });
     it('Button should be Button class', () => {
       expect(Editor.Button).toBe(Button);
     });

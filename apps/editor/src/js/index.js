@@ -4,7 +4,9 @@
  */
 import $ from 'jquery';
 
-const Editor = require('./editor');
+import Editor from './editor';
+
+import './i18n/en-us';
 
 // for jquery
 $.fn.tuiEditor = function(...args) {
@@ -31,4 +33,4 @@ $.fn.tuiEditor = function(...args) {
   return this;
 };
 
-module.exports = Editor;
+export default Editor;
