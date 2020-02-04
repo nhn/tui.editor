@@ -29,7 +29,7 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *         @param {function} options.events.blur It would be emitted when editor loose focus
  *     @param {object} options.hooks Hook list
  *     @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
- *     @param {string[]} [options.plugins] - plugins
+ *     @param {Array.<Function|Array>} plugins - list of plugin function only or plugin function with options
  */
 class ToastUIEditorViewer {
   constructor(options) {

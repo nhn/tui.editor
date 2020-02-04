@@ -128,7 +128,7 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  *     @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
  *     @param {string[]} [options.toolbarItems] - toolbar items.
  *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
- *     @param {string[]} [options.plugins] - plugins
+ *     @param {Array.<Function|Array>} plugins - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  *     @param {object} [options.customConvertor] - convertor extention
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {string} [options.previewDelayTime] - the delay time for rendering preview

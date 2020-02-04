@@ -28,7 +28,7 @@
 
 ```
 - uicdn.toast.com/
-  - tui-editor/
+  - editor-plugin-uml/
     - latest/
       - toastui-editor-plugin-uml.js
       - toastui-editor-plugin-uml.min.js
@@ -106,7 +106,7 @@ const instance = Editor.factory({
 
 ```html
 <!-- Scripts -->
-<script src="https://uicdn.toast.com/tui-editor/latest/toastui-editor-plugin-uml.min.js"></script>
+<script src="https://uicdn.toast.com/editor-plugin-uml/latest/toastui-editor-plugin-uml.min.js"></script>
 ```
 
 ### Create Instance
@@ -115,9 +115,13 @@ const instance = Editor.factory({
 
 ```js
 const Editor = tui.Editor;
+const {
+  plugin: { uml }
+} = Editor;
+
 const instance = new Editor({
   // ...
-  plugins: [Editor.plugin.uml]
+  plugins: [uml]
 });
 ```
 
@@ -125,9 +129,13 @@ const instance = new Editor({
 
 ```js
 const Viewer = tui.Editor;
+const {
+  plugin: { uml }
+} = Viewer;
+
 const instance = new Viewer({
   // ...
-  plugins: [Editor.plugin.uml]
+  plugins: [uml]
 });
 ```
 
@@ -135,8 +143,12 @@ or
 
 ```js
 const Editor = tui.Editor;
+const {
+  plugin: { uml }
+} = Editor;
+
 const instance = Editor.factory({
   // ...
-  plugins: [Editor.plugin.uml]
+  plugins: [uml]
 });
 ```

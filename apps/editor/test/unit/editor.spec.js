@@ -324,12 +324,7 @@ describe('Editor', () => {
 
         editor = new Editor({
           el: container,
-          plugins: [
-            {
-              plugin,
-              options
-            }
-          ]
+          plugins: [[plugin, options]]
         });
 
         expect(plugin).toHaveBeenCalledWith(editor, options);

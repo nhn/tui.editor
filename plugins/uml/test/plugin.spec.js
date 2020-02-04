@@ -2,7 +2,7 @@
  * @fileoverview Test uml plugin
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import TuiEditor from 'tui-editor/src/js/editor';
+import Editor from 'tui-editor/src/js/editor';
 import umlPlugin from '@';
 
 describe('uml plugin', () => {
@@ -25,7 +25,7 @@ describe('uml plugin', () => {
   it('create plant uml image in markdown preview', () => {
     const lang = 'uml';
 
-    editor = new TuiEditor({
+    editor = new Editor({
       el: wrapper,
       previewStyle: 'vertical',
       height: '100px',
@@ -48,7 +48,7 @@ describe('uml plugin', () => {
   it('create plant uml image for code block language plantuml', () => {
     const lang = 'plantuml';
 
-    editor = new TuiEditor({
+    editor = new Editor({
       el: wrapper,
       previewStyle: 'vertical',
       height: '100px',
@@ -69,7 +69,7 @@ describe('uml plugin', () => {
   });
 
   it('shows code in html in wysiwyg', () => {
-    editor = new TuiEditor({
+    editor = new Editor({
       el: wrapper,
       previewStyle: 'vertical',
       height: '100px',

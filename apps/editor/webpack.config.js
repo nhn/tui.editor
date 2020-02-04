@@ -15,11 +15,7 @@ const ENTRY_MAIN = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
 const ENTRY_MAIN_ALL = './src/js/indexAll.js';
 const ENTRY_VIEWER_ALL = './src/js/indexViewerAll.js';
-const ENTRY_EXT_CHART = './src/js/extensions/chart/chart.js';
-const ENTRY_EXT_UML = './src/js/extensions/uml.js';
-const ENTRY_EXT_COLOR_SYNTAX = './src/js/extensions/colorSyntax.js';
-const ENTRY_EXT_SCROLL_SYNC = './src/js/extensions/scrollSync/scrollSync.js';
-const ENTRY_EXT_TABLE = './src/js/extensions/table/table.js';
+
 const ENTRY_EDITOR_CSS = './src/css/tui-editor.css';
 const ENTRY_CONTENT_CSS = './src/css/tui-editor-contents.css';
 const ENTRY_IMAGE_DIR = './src/image';
@@ -36,6 +32,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
       output: {
         library: ['tui', 'Editor'],
         libraryTarget: 'umd',
+        libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/dist',
         filename: `tui-editor-[name]${isMinified ? '.min' : ''}.js`

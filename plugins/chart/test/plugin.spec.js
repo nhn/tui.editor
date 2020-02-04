@@ -11,7 +11,7 @@ import {
   setDefaultOptions
 } from '@';
 
-describe('CodeBlockChart', () => {
+describe('chart plugin', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -57,9 +57,9 @@ describe('CodeBlockChart', () => {
       // keyA & keyB ... -> chart.keyA, chart.keyB ...
       expect(
         parseCode2ChartOption(`
-                keyA: value1
-                keyB: value2
-            `)
+          keyA: value1
+          keyB: value2
+        `)
       ).toEqual({
         chart: {
           keyA: 'value1',
@@ -72,9 +72,9 @@ describe('CodeBlockChart', () => {
       // x & y keys should be translated to xAxis & yAxis
       expect(
         parseCode2ChartOption(`
-                x.keyA: value1
-                y.keyB: value2
-            `)
+          x.keyA: value1
+          y.keyB: value2
+        `)
       ).toEqual({
         xAxis: {
           keyA: 'value1'
@@ -88,9 +88,9 @@ describe('CodeBlockChart', () => {
     it('should parse option code into object with string numeric value', () => {
       expect(
         parseCode2ChartOption(`
-                key1.keyA: 1.234
-                key1.keyB: 12
-            `)
+          key1.keyA: 1.234
+          key1.keyB: 12
+        `)
       ).toEqual({
         key1: {
           keyA: 1.234,
@@ -102,9 +102,9 @@ describe('CodeBlockChart', () => {
     it('should parse option code into object with string array value', () => {
       expect(
         parseCode2ChartOption(`
-                key1.keyA: [1,2]
-                key1.keyB: ["a", "b"]
-            `)
+          key1.keyA: [1,2]
+          key1.keyB: ["a", "b"]
+        `)
       ).toEqual({
         key1: {
           keyA: [1, 2],
@@ -116,9 +116,9 @@ describe('CodeBlockChart', () => {
     it('should parse option code into object with string object value', () => {
       expect(
         parseCode2ChartOption(`
-                key1.keyA: {"k1": "v1"}
-                key1.keyB: {"k2": "v2"}
-            `)
+          key1.keyA: {"k1": "v1"}
+          key1.keyB: {"k2": "v2"}
+        `)
       ).toEqual({
         key1: {
           keyA: {
@@ -137,10 +137,10 @@ describe('CodeBlockChart', () => {
       expect(
         parseDSV2ChartData(
           `
-                ,series a,series b
-                category 1, 1.234, 2.345
-                category 2, 3.456, 4.567
-            `,
+            ,series a,series b
+            category 1, 1.234, 2.345
+            category 2, 3.456, 4.567
+          `,
           ','
         )
       ).toEqual({
@@ -162,10 +162,10 @@ describe('CodeBlockChart', () => {
       expect(
         parseDSV2ChartData(
           `
-                \tseries a\tseries b
-                category 1\t1.234\t2.345
-                category 2\t3.456\t4.567
-            `,
+            \tseries a\tseries b
+            category 1\t1.234\t2.345
+            category 2\t3.456\t4.567
+          `,
           '\t'
         )
       ).toEqual({
@@ -210,10 +210,10 @@ describe('CodeBlockChart', () => {
       expect(
         parseDSV2ChartData(
           `
-                series a,series b
-                1.234, 2.345
-                3.456, 4.567
-            `,
+            series a,series b
+            1.234, 2.345
+            3.456, 4.567
+          `,
           ','
         )
       ).toEqual({
@@ -235,9 +235,9 @@ describe('CodeBlockChart', () => {
       expect(
         parseDSV2ChartData(
           `
-                category 1, 1.234, 2.345
-                category 2, 3.456, 4.567
-            `,
+            category 1, 1.234, 2.345
+            category 2, 3.456, 4.567
+          `,
           ','
         )
       ).toEqual({
@@ -258,20 +258,20 @@ describe('CodeBlockChart', () => {
     it('should detect csv', () => {
       expect(
         detectDelimiter(`
-                ,series a,series b
-                category 1, 1.234, 2.345
-                category 2, 3.456, 4.567
-            `)
+          ,series a,series b
+          category 1, 1.234, 2.345
+          category 2, 3.456, 4.567
+        `)
       ).toEqual(',');
     });
 
     it('should detect tsv', () => {
       expect(
         detectDelimiter(`
-                \tseries a\tseries b
-                category 1\t1.234\t2.345
-                category 2\t3.456\t4.567
-            `)
+          \tseries a\tseries b
+          category 1\t1.234\t2.345
+          category 2\t3.456\t4.567
+        `)
       ).toEqual('\t');
     });
 
@@ -306,10 +306,10 @@ describe('CodeBlockChart', () => {
         status: 200,
         contentType: 'text/csv',
         responseText: `
-                    ,series a,series b
-                    category 1, 1.234, 2.345
-                    category 2, 3.456, 4.567
-                `
+          ,series a,series b
+          category 1, 1.234, 2.345
+          category 2, 3.456, 4.567
+        `
       });
 
       expect(callback).toHaveBeenCalledWith({
@@ -338,10 +338,10 @@ describe('CodeBlockChart', () => {
         status: 200,
         contentType: 'text/tsv',
         responseText: `
-                    \tseries a\tseries b
-                    category 1\t1.234\t2.345
-                    category 2\t3.456\t4.567
-                `
+          \tseries a\tseries b
+          category 1\t1.234\t2.345
+          category 2\t3.456\t4.567
+        `
       });
 
       expect(callback).toHaveBeenCalledWith({
@@ -389,12 +389,12 @@ describe('CodeBlockChart', () => {
 
       parseCode2DataAndOptions(
         `
-                \tseries a\tseries b
-                category 1\t1.234\t2.345
-                category 2\t3.456\t4.567
+          \tseries a\tseries b
+          category 1\t1.234\t2.345
+          category 2\t3.456\t4.567
 
-                title: hello
-            `,
+          title: hello
+        `,
         callback
       );
 
@@ -425,10 +425,10 @@ describe('CodeBlockChart', () => {
 
       parseCode2DataAndOptions(
         `
-                \tseries a\tseries b
-                category 1\t1.234\t2.345
-                category 2\t3.456\t4.567
-            `,
+          \tseries a\tseries b
+          category 1\t1.234\t2.345
+          category 2\t3.456\t4.567
+        `,
         callback
       );
 
@@ -455,8 +455,8 @@ describe('CodeBlockChart', () => {
 
       parseCode2DataAndOptions(
         `
-                url: http://url.to/chart-data.tsv
-            `,
+          url: http://url.to/chart-data.tsv
+        `,
         callback
       );
 
@@ -466,10 +466,10 @@ describe('CodeBlockChart', () => {
         status: 200,
         contentType: 'text/tsv',
         responseText: `
-                    \tseries a\tseries b
-                    category 1\t1.234\t2.345
-                    category 2\t3.456\t4.567
-            `
+          \tseries a\tseries b
+          category 1\t1.234\t2.345
+          category 2\t3.456\t4.567
+        `
       });
 
       expect(callback).toHaveBeenCalledWith({
