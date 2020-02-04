@@ -2,9 +2,9 @@
  * @fileoverview I18N for Korean
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['ko', 'ko_KR'], {
+Editor.setLanguage(['ko', 'ko-KR'], {
   Markdown: '마크다운',
   WYSIWYG: '위지윅',
   Write: '편집하기',

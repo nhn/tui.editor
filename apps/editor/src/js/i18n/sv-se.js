@@ -2,9 +2,9 @@
  * @fileoverview I18N for Swedish
  * @author Magnus Aspling <magnus@yug.se>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['sv', 'sv_SE'], {
+Editor.setLanguage(['sv', 'sv-SE'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Skriv',

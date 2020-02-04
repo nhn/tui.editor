@@ -2,9 +2,9 @@
  * @fileoverview I18N for Ukrainian
  * @author Nikolya <k_m_i@i.ua>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['uk', 'uk_UA'], {
+Editor.setLanguage(['uk', 'uk-UA'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Написати',

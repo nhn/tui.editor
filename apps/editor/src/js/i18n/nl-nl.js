@@ -2,9 +2,9 @@
  * @fileoverview I18N for Dutch
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['nl', 'nl_NL'], {
+Editor.setLanguage(['nl', 'nl-NL'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Opslaan',

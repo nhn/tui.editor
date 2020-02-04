@@ -2,9 +2,9 @@
  * @fileoverview I18N for Italian
  * @author Massimo Redaelli <massimo@typish.io>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['it', 'it_IT'], {
+Editor.setLanguage(['it', 'it-IT'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Scrivere',

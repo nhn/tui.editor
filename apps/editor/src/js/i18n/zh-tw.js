@@ -2,9 +2,9 @@
  * @fileoverview I18N for Traditional Chinese
  * @author Tzu-Ray Su <raysu3329@gmail.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['zhtw', 'zh_TW'], {
+Editor.setLanguage('zh-TW', {
   Markdown: 'Markdown',
   WYSIWYG: '所見即所得',
   Write: '編輯',

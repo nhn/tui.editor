@@ -2,9 +2,9 @@
  * @fileoverview I18N for German
  * @author Jann-Niklas Kiepert <jannkiepert@vivaldi.net>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['de', 'de_DE'], {
+Editor.setLanguage(['de', 'de-DE'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Verfassen',

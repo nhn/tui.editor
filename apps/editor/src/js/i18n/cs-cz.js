@@ -2,9 +2,9 @@
  * @fileoverview I18N for Czech
  * @author Dmitrij Tkačenko <dmitrij.tkacenko@scalesoft.cz>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['cs', 'cs_CZ'], {
+Editor.setLanguage(['cs', 'cs-CZ'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Napsat',

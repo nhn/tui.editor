@@ -2,9 +2,9 @@
  * @fileoverview I18N for Russian
  * @author Stepan Samko <stpnsamko@gmail.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['ru', 'ru_RU'], {
+Editor.setLanguage(['ru', 'ru-RU'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Написать',

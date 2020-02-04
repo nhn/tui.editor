@@ -2,9 +2,9 @@
  * @fileoverview I18N for Turkish
  * @author Mesut Gölcük <mesutgolcuk@gmail.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['tr', 'tr_TR'], {
+Editor.setLanguage(['tr', 'tr-TR'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Düzenle',

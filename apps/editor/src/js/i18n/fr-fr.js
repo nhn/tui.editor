@@ -2,9 +2,9 @@
  * @fileoverview I18N for French
  * @author Stanislas Michalak <stanislas.michalak@gmail.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['fr', 'fr_FR'], {
+Editor.setLanguage(['fr', 'fr-FR'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Écrire',

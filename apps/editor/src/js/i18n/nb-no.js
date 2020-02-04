@@ -2,9 +2,9 @@
  * @fileoverview I18N for Norwegian
  * @author Anton Reytarovskiy <reitarovskii.toh@gmail.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['nb', 'nb-NO'], {
+Editor.setLanguage(['nb', 'nb-NO'], {
   Markdown: 'Funksjonaliteter',
   WYSIWYG: 'WYSIWYG',
   Write: 'Skriv',
