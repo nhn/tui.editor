@@ -2,9 +2,9 @@
  * @fileoverview I18N for Chinese
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['zh', 'zh_CN'], {
+Editor.setLanguage('zh-CN', {
   Markdown: 'Markdown',
   WYSIWYG: '所见即所得',
   Write: '编辑',

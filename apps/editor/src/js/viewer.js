@@ -29,7 +29,7 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *         @param {function} options.events.blur It would be emitted when editor loose focus
  *     @param {object} options.hooks Hook list
  *     @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
- *     @param {Array.<Function|Array>} plugins - list of plugin function only or plugin function with options
+ *     @param {Array.<Function|Array>} plugins - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  */
 class ToastUIEditorViewer {
   constructor(options) {
@@ -225,11 +225,6 @@ ToastUIEditorViewer.markdownitHighlight = Convertor.getMarkdownitHighlightRender
  * @type {MarkdownIt}
  */
 ToastUIEditorViewer.markdownit = Convertor.getMarkdownitRenderer();
-
-/**
- * @ignore
- */
-ToastUIEditorViewer.i18n = null;
 
 /**
  * @ignore

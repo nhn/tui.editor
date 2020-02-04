@@ -2,9 +2,9 @@
  * @fileoverview I18N for English
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['en', 'en_US'], {
+Editor.setLanguage(['en', 'en-US'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Write',

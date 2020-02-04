@@ -2,9 +2,9 @@
  * @fileoverview I18N for Japanese
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['ja', 'ja_JP'], {
+Editor.setLanguage(['ja', 'ja-JP'], {
   Markdown: 'マークダウン',
   WYSIWYG: 'WYSIWYG',
   Write: '編集する',

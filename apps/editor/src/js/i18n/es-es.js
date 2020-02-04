@@ -2,9 +2,9 @@
  * @fileoverview I18N for Spanish
  * @author Enrico Lamperti <oss@elamperti.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['es', 'es_ES'], {
+Editor.setLanguage(['es', 'es-ES'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Escribir',

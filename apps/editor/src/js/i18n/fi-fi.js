@@ -2,9 +2,9 @@
  * @fileoverview I18N for Finnish
  * @author Tomi Mynttinen <pikseli@iki.fi>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['fi', 'fi_FI'], {
+Editor.setLanguage(['fi', 'fi-FI'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Kirjoita',

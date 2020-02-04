@@ -2,9 +2,9 @@
  * @fileoverview I18N for Arabic
  * @author Amira Salah <amira.salah@itworx.com>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['ar', 'ar_AR'], {
+Editor.setLanguage('ar', {
   Markdown: 'لغة ترميز',
   WYSIWYG: 'ما تراه هو ما تحصل عليه',
   Write: 'يكتب',

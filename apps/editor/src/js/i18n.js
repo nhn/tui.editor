@@ -4,9 +4,7 @@
  */
 import util from 'tui-code-snippet';
 
-let sharedInstance;
-
-const DEFAULT_CODE = 'en_US';
+const DEFAULT_CODE = 'en-US';
 
 /**
  * Class I18n
@@ -68,14 +66,6 @@ class I18n {
     }
 
     return text;
-  }
-
-  static getSharedInstance() {
-    if (!sharedInstance) {
-      sharedInstance = new I18n();
-    }
-
-    return sharedInstance;
   }
 }
 

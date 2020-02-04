@@ -69,28 +69,6 @@ import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
 
-// langs
-import './langs/en_US';
-import './langs/ko_KR';
-import './langs/zh_CN';
-import './langs/ja_JP';
-import './langs/nl_NL';
-import './langs/es_ES';
-import './langs/de_DE';
-import './langs/ru_RU';
-import './langs/fr_FR';
-import './langs/uk_UA';
-import './langs/tr_TR';
-import './langs/fi_FI';
-import './langs/cs_CZ';
-import './langs/ar_AR';
-import './langs/pl_PL';
-import './langs/zh_TW';
-import './langs/gl_ES';
-import './langs/sv_SE';
-import './langs/it_IT';
-import './langs/nb_NO';
-
 const __nedInstance = [];
 const gaTrackingId = 'UA-129966929-1';
 
@@ -121,7 +99,7 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  *     @param {object[]} [options.hooks] - Hook list
  *         @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
  *         @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
- *     @param {string} [options.language='en_US'] - language
+ *     @param {string} [options.language='en-US'] - language
  *     @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
  *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
  *     @param {string[]} [options.codeBlockLanguages] - supported code block languages to be listed. default is what highlight.js supports
@@ -145,7 +123,7 @@ class ToastUIEditor {
         initialEditType: 'markdown',
         height: '300px',
         minHeight: '200px',
-        language: 'en_US',
+        language: 'en-US',
         useDefaultHTMLSanitizer: true,
         useCommandShortcut: true,
         codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
@@ -828,6 +806,15 @@ class ToastUIEditor {
 
     return tuiEditor;
   }
+
+  /**
+   * Set language
+   * @param {string} code - code for I18N language
+   * @param {object} data - language set
+   */
+  static setLanguage(code, data) {
+    i18n.setLanguage(code, data);
+  }
 }
 
 /**
@@ -835,12 +822,6 @@ class ToastUIEditor {
  * @type {boolean}
  */
 ToastUIEditor.isViewer = false;
-
-/**
- * I18n instance
- * @type {I18n}
- */
-ToastUIEditor.i18n = i18n;
 
 /**
  * domUtil instance

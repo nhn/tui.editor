@@ -3,9 +3,9 @@
  * @author Aida Vidal <avidal@emapic.es>
  */
 
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['gl', 'gl_ES'], {
+Editor.setLanguage(['gl', 'gl-ES'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Escribir',

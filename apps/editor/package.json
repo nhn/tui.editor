@@ -31,6 +31,7 @@
     "e2e": "testcafe chrome 'test/e2e/**/*.spec.js'",
     "e2e:sl": "testcafe \"saucelabs:Chrome@65.0:Windows 10,saucelabs:Firefox@59.0:Windows 10,saucelabs:Safari@10.0:OS X 10.11,saucelabs:Internet Explorer@11.103:Windows 10,saucelabs:MicrosoftEdge@16.16299:Windows 10\" 'test/e2e/**/*.spec.js'",
     "serve": "webpack-dev-server",
+    "build:i18n": "cross-env webpack --config scripts/webpack.config.i18n.js && webpack --config scripts/webpack.config.i18n.js --minify",
     "build": "cross-env webpack --mode=production && webpack --mode=production --minify && node tsBannerGenerator.js",
     "note": "tui-note --tag=$(git describe --tags)",
     "tslint": "tslint index.d.ts",
@@ -75,7 +76,8 @@
     "webpack": "^4.40.2",
     "webpack-bundle-analyzer": "^3.6.0",
     "webpack-cli": "^3.3.9",
-    "webpack-dev-server": "^3.1.11"
+    "webpack-dev-server": "^3.1.11",
+    "webpack-glob-entry": "^2.1.1"
   },
   "dependencies": {
     "@types/codemirror": "0.0.71",

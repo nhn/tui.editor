@@ -136,6 +136,7 @@ const mdOutput = [
 ].join('');
 
 import Editor from '@/editor';
+import '@/i18n/en-us';
 
 describe('converting', () => {
   let editor, el;

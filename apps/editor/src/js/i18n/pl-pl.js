@@ -2,9 +2,9 @@
  * @fileoverview I18N for Polish
  * @author Marcin Mikołajczak <me@m4sk.in>
  */
-import i18n from '../i18n';
+import Editor from '../editor';
 
-i18n.setLanguage(['pl', 'pl_PL'], {
+Editor.setLanguage(['pl', 'pl-PL'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Napisz',
