@@ -35,7 +35,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
         libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/dist',
-        filename: `tui-editor-[name]${isMinified ? '.min' : ''}.js`
+        filename: `tui-[name]${isMinified ? '.min' : ''}.js`
       },
       module: {
         rules: [
@@ -189,8 +189,8 @@ function setDevelopConfig(config) {
 
 function setProductionConfig(config) {
   config.entry = {
-    Editor: ENTRY_MAIN,
-    Viewer: ENTRY_VIEWER
+    editor: ENTRY_MAIN,
+    'editor-viewer': ENTRY_VIEWER
   };
 
   if (isMinified) {
