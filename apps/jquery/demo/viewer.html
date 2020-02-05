@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Viewer</title>
+    <!-- Editor's Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+    <!-- Editor -->
+    <link rel="stylesheet" href="http://localhost:8080/dist/tui-editor.css" />
+    <!-- Plugin -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css" />
+  </head>
+  <body>
+    <div class="code-html">
+      <div id="viewer"></div>
+    </div>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <!-- Editor -->
+    <script src="../dist/cdn/toastui-jquery-editor-viewer.js"></script>
+    <script class="code-js">
+      var content = [
+        '![image](https://uicdn.toast.com/toastui/img/tui-editor-bi.png)',
+        '# Heading 1',
+        '## Heading 2',
+        '### Heading 3',
+        '#### Heading 4',
+        '##### Heading 5',
+        '###### Heading 6',
+        '    code block',
+        '```js',
+        'console.log("fenced code block");',
+        '```',
+        '<pre>**HTML block**</pre>',
+        '* list',
+        '    * list indented',
+        '1. ordered',
+        '2. list',
+        '    1. ordered list',
+        '    2. indented',
+        '',
+        '- [ ] task',
+        '- [x] list completed',
+        '',
+        '[link](https://nhn.github.io/tui.editor/)',
+        '> block quote',
+        '---',
+        'horizontal line',
+        '***',
+        '`code`, *italic*, **bold**, ~~strikethrough~~, <span style="color:#e11d21">Red color</span>',
+        '|table|head|',
+        '|---|---|',
+        '|table|body|'
+      ].join('\n');
+
+      $('#viewer').tuiEditor({
+        viewer: true,
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: content
+      });
+    </script>
+  </body>
+</html>
