@@ -25,7 +25,7 @@ export const tableBody: BlockHandler = {
 
 export const tableHead: BlockHandler = {
   continue() {
-    return Process.Go;
+    return Process.Stop;
   },
   finalize() {},
   canContain(t: NodeType) {
@@ -36,7 +36,7 @@ export const tableHead: BlockHandler = {
 
 export const tableDelimRow: BlockHandler = {
   continue() {
-    return Process.Go;
+    return Process.Stop;
   },
   finalize() {},
   canContain(t: NodeType) {
@@ -47,7 +47,7 @@ export const tableDelimRow: BlockHandler = {
 
 export const tableDelimCell: BlockHandler = {
   continue() {
-    return Process.Go;
+    return Process.Stop;
   },
   finalize() {},
   canContain() {
@@ -58,7 +58,7 @@ export const tableDelimCell: BlockHandler = {
 
 export const tableRow: BlockHandler = {
   continue() {
-    return Process.Go;
+    return Process.Stop;
   },
   finalize() {},
   canContain(t: NodeType) {

@@ -28,6 +28,7 @@ module.exports = {
     'no-plusplus': 0,
     eqeqeq: 0,
     'no-empty': 0,
+    'no-shadow': 0,
     'max-depth': 0,
     'max-nested-callbacks': 0,
     'no-useless-escape': 0,

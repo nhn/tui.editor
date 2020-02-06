@@ -20,7 +20,7 @@ import {
   C_SPACE
 } from './blockHelper';
 import { Parser } from './blocks';
-import { blockStart as table } from './gfm/table';
+import { tableHead, tableBody } from './gfm/tableBlockStart';
 
 export const enum Matched {
   None = 0, // No Match
@@ -294,9 +294,10 @@ export const blockStarts = [
   atxHeading,
   fencedCodeBlock,
   htmlBlock,
-  table,
   seTextHeading,
   thematicBreak,
   listItem,
-  indentedCodeBlock
+  indentedCodeBlock,
+  tableHead,
+  tableBody
 ];

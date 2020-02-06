@@ -216,6 +216,14 @@ export class CodeNode extends Node {
   public tickCount = 0;
 }
 
+interface TableColumn {
+  align: 'left' | 'center' | 'right';
+}
+
+export class TableNode extends BlockNode {
+  public columns: TableColumn[] = [];
+}
+
 export function createNode(type: 'heading', sourcepos?: SourcePos): HeadingNode;
 export function createNode(type: 'list' | 'item', sourcepos?: SourcePos): ListNode;
 export function createNode(type: 'codeBlock', sourcepos?: SourcePos): CodeBlockNode;
@@ -238,11 +246,12 @@ export function createNode(type: NodeType, sourcepos?: SourcePos) {
       return new CodeBlockNode(type, sourcepos);
     case 'htmlBlock':
       return new HtmlBlockNode(type, sourcepos);
+    case 'table':
+      return new TableNode(type, sourcepos);
     case 'document':
     case 'paragraph':
     case 'blockQuote':
     case 'thematicBreak':
-    case 'table':
     case 'tableRow':
     case 'tableBody':
     case 'tableHead':
