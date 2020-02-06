@@ -41,7 +41,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
         rules: [
           {
             test: /\.js$/,
-            exclude: /node_modules|dist/,
+            exclude: /node_modules|dist|build/,
             loader: 'eslint-loader',
             enforce: 'pre',
             options: {
@@ -52,7 +52,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
           },
           {
             test: /\.js$/,
-            exclude: /node_modules|dist/,
+            exclude: /node_modules|dist|build/,
             loader: 'babel-loader?cacheDirectory',
             options: {
               rootMode: 'upward'
@@ -92,23 +92,11 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
             amd: 'markdown-it',
             root: ['markdownit']
           },
-          'squire-rte': {
-            commonjs: 'squire-rte',
-            commonjs2: 'squire-rte',
-            amd: 'squire-rte',
-            root: ['Squire']
-          },
           codemirror: {
             commonjs: 'codemirror',
             commonjs2: 'codemirror',
             amd: 'codemirror',
             root: ['CodeMirror']
-          },
-          'to-mark': {
-            commonjs: 'to-mark',
-            commonjs2: 'to-mark',
-            amd: 'to-mark',
-            root: ['toMark']
           },
           'highlight.js': {
             commonjs: 'highlight.js',
@@ -184,7 +172,7 @@ function setDevelopConfig(config) {
     disableHostCheck: true
   };
 
-  config.plugins.push(new webpack.IgnorePlugin(/viewer$/, /extensions/));
+  config.plugins.push(new webpack.IgnorePlugin(/viewer$/));
 }
 
 function setProductionConfig(config) {
