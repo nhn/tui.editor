@@ -211,7 +211,7 @@ export class Parser {
     while ((event = walker.next())) {
       const node = event.node as BlockNode;
       const t = node.type;
-      if (!event.entering && (t === 'paragraph' || t === 'heading')) {
+      if (!event.entering && (t === 'paragraph' || t === 'heading' || t === 'tableCell')) {
         this.inlineParser.parse(node);
       }
     }
@@ -275,7 +275,12 @@ export class Parser {
       this.findNextNonspace();
 
       // this is a little performance optimization:
-      if (!this.indented && !reMaybeSpecial.test(ln.slice(this.nextNonspace))) {
+      if (
+        container.type !== 'table' &&
+        container.type !== 'tableBody' &&
+        !this.indented &&
+        !reMaybeSpecial.test(ln.slice(this.nextNonspace))
+      ) {
         this.advanceNextNonspace();
         break;
       }
