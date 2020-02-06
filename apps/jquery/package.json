@@ -19,6 +19,10 @@
     "url": "https://github.com/nhn/tui.editor.git",
     "directory": "apps/jquery"
   },
+  "bugs": {
+    "url": "https://github.com/nhn/tui.editor/issues"
+  },
+  "homepage": "https://ui.toast.com",
   "browserslist": "last 2 versions, not ie <= 10",
   "scripts": {
     "test": "karma start --no-single-run",
