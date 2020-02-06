@@ -1,0 +1,22 @@
+{
+  "name": "to-mark",
+  "authors": ["NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/to-mark/)"],
+  "moduleType": [
+    "globals",
+    "es6",
+    "amd",
+    "node"
+  ],
+  "main": [
+      "dist/to-mark.js"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "lib/",
+    "test",
+    "src"
+  ]
+}

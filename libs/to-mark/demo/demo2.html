@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta charset="UTF-8">
+        <title>TITLE HERE</title>
+        <script src="../build/bundle.js"></script>
+        <style>
+            #myHtml blockquote {
+                padding: 20px 25px;
+                border-left: 5px solid #ccc;
+                margin-bottom: 24px;
+                background: #eee;
+                position: relative
+            }
+            #myHtml pre {
+                padding-left: 30px;
+                border-left: 6px solid #558abb;
+            }
+            #myHtml code {
+                color: #4d4e53;
+                text-shadow: none;
+            }
+            pre br {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <div id='myHtml'>
+            <h1>HELLO</h1>
+            <h2>HELLO</h2>
+            <h3>HELLO</h3>
+            <h4>HELLO</h4>
+            <h5>HELLO</h5>
+            <h6>HELLO <em>word</em></h6>
+            <hr />
+            <ul>
+                <li>list1</li>
+                <li>list2</li>
+                <li>
+                    list3
+                    <ol>
+                        <li>list3-1</li>
+                        <li>list3-2</li>
+                    </ol>
+                </li>
+            </ul>
+            <div><p><strong>My Name</strong> is <em>toMark</em><br />and image <img src="https://www.google.co.kr/images/srpr/logo11w.png" alt="google logo" /> and link <a href="http://google.com">to google</a><br />this is <code>code</code></p></div>
+            <blockquote>
+                <ul>
+                    <li>list in blockquote</li>
+                    <li>list in blockquote2</li>
+                </ul>
+            </blockquote>
+
+            <blockquote>
+                <blockquote>blockquote in blockquote<br />and returned in blockquote</blockquote>
+                content!!!
+            </blockquote>
+
+            <pre><code data-language="javascript">function test() { <br />    var i = 123; <br />    return i; <br />}</code></pre>
+            <p>line break comes next this sentence<br />right?</p>
+
+            <p>Nulla metus metus, &nbsp;&nbsp;ullamcorper <code>vel,</code> tincidunt sed, euismod in, nibh. <strong>Quisque</strong> volutpat condimentum velit.<br /><em>Class</em> aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. Sed lectus.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th align="left">Left Align Head</th>
+                        <th align="center">Center Align Head</th>
+                        <th align="right">Right Align Head</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><em>data</em></td>
+                        <td>data</td>
+                        <td>data</td>
+                    </tr>
+                    <tr>
+                        <td><del>data</del></td>
+                        <td>data</td>
+                        <td>data</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <pre id='preview' style='display:block;margin-top:11px;border-top:3px solid #f00;white-space:pre;'></pre>
+        <script>
+            document.getElementById('preview').innerText = toMark(document.getElementById('myHtml'));
+        </script>
+    </body>
+</html>
