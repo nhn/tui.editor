@@ -1,11 +1,11 @@
 /**
- * @fileoverview Configs for i18n bundle file
+ * @fileoverview Configs for I18N bundle file
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 const path = require('path');
 const webpack = require('webpack');
-const pkg = require('../package.json');
 const entry = require('webpack-glob-entry');
+const pkg = require('../package.json');
 
 const TerserPlugin = require('terser-webpack-plugin');
 
@@ -33,13 +33,12 @@ module.exports = (env, argv) => {
     mode: 'production',
     entry: entry(filePath => {
       if (!/en-us.js$/g.test(filePath)) {
-        return path.basename(filePath);
+        return path.basename(filePath, path.extname(filePath));
       }
     }, './src/js/i18n/*.js'),
     output: {
       libraryTarget: 'umd',
-      path: path.resolve(__dirname, 'dist/i18n'),
-      publicPath: '/dist',
+      path: path.resolve(__dirname, '../dist/i18n'),
       filename: `[name]${isMinified ? '.min' : ''}.js`
     },
     externals: [
@@ -76,7 +75,7 @@ module.exports = (env, argv) => {
     plugins: [
       new webpack.BannerPlugin(
         [
-          'TOAST UI Editor : i18n',
+          'TOAST UI Editor : I18N',
           `@version ${pkg.version}`,
           `@author ${pkg.author}`,
           `@license ${pkg.license}`
