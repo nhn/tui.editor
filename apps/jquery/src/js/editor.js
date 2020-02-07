@@ -28,5 +28,3 @@ $.fn.tuiEditor = function(...args) {
 
   return this;
 };
-
-export default Editor;
