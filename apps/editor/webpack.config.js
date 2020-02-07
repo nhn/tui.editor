@@ -13,8 +13,6 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const ENTRY_MAIN = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
-const ENTRY_MAIN_ALL = './src/js/indexAll.js';
-const ENTRY_VIEWER_ALL = './src/js/indexViewerAll.js';
 
 const ENTRY_EDITOR_CSS = './src/css/tui-editor.css';
 const ENTRY_CONTENT_CSS = './src/css/tui-editor-contents.css';
@@ -199,17 +197,17 @@ function setProductionConfig(config) {
   }
 }
 
-function setProductionConfigForFull(config) {
+function setProductionConfigForAll(config) {
   config.entry = {
-    'Editor-full': ENTRY_MAIN_ALL,
-    'Viewer-full': ENTRY_VIEWER_ALL
+    'editor-all': ENTRY_MAIN,
+    'editor-viewer-all': ENTRY_VIEWER
   };
 
   config.externals = [];
 
   if (isMinified) {
     addMinifyPlugin(config);
-    addAnalyzerPlugin(config, 'full');
+    addAnalyzerPlugin(config, 'all');
   }
 }
 
@@ -217,7 +215,7 @@ addCopyingAssetsPlugin(defaultConfigs[0]);
 
 if (isProduction) {
   setProductionConfig(defaultConfigs[0]);
-  setProductionConfigForFull(defaultConfigs[1]);
+  setProductionConfigForAll(defaultConfigs[1]);
 } else {
   setDevelopConfig(defaultConfigs[0]);
 }

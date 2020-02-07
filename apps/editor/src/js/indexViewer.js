@@ -2,6 +2,6 @@
  * @fileoverview entry point for viewer
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-const Viewer = require('./viewer');
+import Viewer from './viewer';
 
 export default Viewer;
