@@ -4,6 +4,8 @@
 
 ### Build
 
+> Note : The bundle files under the `cdn` folder include TOAST UI Editor(`tui-editor`).
+
 ```
 - tui.editor/apps/jquery/
   - dist/
