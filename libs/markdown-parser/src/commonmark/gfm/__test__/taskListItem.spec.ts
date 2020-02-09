@@ -1,10 +1,10 @@
 import { Parser } from '../../blocks';
 import { ListNode } from '../../node';
-import { HtmlRenderer } from '../../render/html';
+import { GfmHtmlRenderer } from '../../render/gfm/html';
 import { source } from 'common-tags';
 
 const reader = new Parser();
-const writer = new HtmlRenderer();
+const writer = new GfmHtmlRenderer();
 
 describe('Task list item', () => {
   it('Parse', () => {

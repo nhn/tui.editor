@@ -62,3 +62,17 @@ export function repeat(str: string, count: number): string {
   }
   return arr.join('');
 }
+
+export function last<T>(arr: T[]) {
+  if (!arr.length) {
+    return null;
+  }
+  return arr[arr.length - 1];
+}
+
+export function isEmpty(str: string) {
+  if (!str) {
+    return true;
+  }
+  return !/[^ \t]+/.test(str);
+}

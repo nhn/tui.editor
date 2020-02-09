@@ -216,12 +216,17 @@ export class CodeNode extends Node {
   public tickCount = 0;
 }
 
-interface TableColumn {
+export interface TableColumn {
   align: 'left' | 'center' | 'right';
 }
 
 export class TableNode extends BlockNode {
   public columns: TableColumn[] = [];
+}
+
+export class TableCellNode extends BlockNode {
+  public columnIdx = 0;
+  public ignored = false;
 }
 
 export function createNode(type: 'heading', sourcepos?: SourcePos): HeadingNode;
@@ -230,6 +235,8 @@ export function createNode(type: 'codeBlock', sourcepos?: SourcePos): CodeBlockN
 export function createNode(type: 'htmlBlock', sourcepos?: SourcePos): HtmlBlockNode;
 export function createNode(type: 'link' | 'image', sourcepos?: SourcePos): LinkNode;
 export function createNode(type: 'code', sourcepos?: SourcePos): CodeNode;
+export function createNode(type: 'table', sourcepos?: SourcePos): TableNode;
+export function createNode(type: 'tableCell', sourcepos?: SourcePos): TableNode;
 export function createNode(type: BlockNodeType, sourcepos?: SourcePos): BlockNode;
 export function createNode(type: NodeType, sourcepos?: SourcePos): Node;
 export function createNode(type: NodeType, sourcepos?: SourcePos) {
@@ -248,6 +255,8 @@ export function createNode(type: NodeType, sourcepos?: SourcePos) {
       return new HtmlBlockNode(type, sourcepos);
     case 'table':
       return new TableNode(type, sourcepos);
+    case 'tableCell':
+      return new TableCellNode(type, sourcepos);
     case 'document':
     case 'paragraph':
     case 'blockQuote':
@@ -255,7 +264,6 @@ export function createNode(type: NodeType, sourcepos?: SourcePos) {
     case 'tableRow':
     case 'tableBody':
     case 'tableHead':
-    case 'tableCell':
       return new BlockNode(type, sourcepos);
     case 'code':
       return new CodeNode(type, sourcepos);
