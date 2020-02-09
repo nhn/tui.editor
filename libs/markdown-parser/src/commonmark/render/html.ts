@@ -44,8 +44,8 @@ const defaultOptions: Options = {
 };
 
 export class HtmlRenderer extends Renderer {
-  private options: Options;
-  private disableTags: number;
+  protected options: Options;
+  protected disableTags: number;
   private reDisallowedTag?: RegExp;
 
   // by default, soft breaks are rendered as newlines in HTML
@@ -126,10 +126,6 @@ export class HtmlRenderer extends Renderer {
 
   strong(_: Node, entering: boolean) {
     this.tag(entering ? 'strong' : '/strong');
-  }
-
-  strike(_: Node, entering: boolean) {
-    this.tag(entering ? 'del' : '/del');
   }
 
   paragraph(node: Node, entering: boolean) {
@@ -225,7 +221,6 @@ export class HtmlRenderer extends Renderer {
     const attrs = this.attrs(node);
     if (entering) {
       this.tag('li', attrs);
-      taskListItemRender(this, node);
     } else {
       this.tag('/li');
       this.cr();

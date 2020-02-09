@@ -1,10 +1,11 @@
 import { Parser } from '../../blocks';
-import { HtmlRenderer } from '../../render/html';
+import { GfmHtmlRenderer } from '../../render/gfm/html';
 import { convertToArrayTree } from '../../__test__/helper.spec';
-import { BlockNode } from 'src/commonmark/node';
+import { BlockNode, TableNode } from 'src/commonmark/node';
+import { source } from 'common-tags';
 
 const reader = new Parser();
-const writer = new HtmlRenderer({ tagFilter: true });
+const writer = new GfmHtmlRenderer();
 
 // Shortcut function to prevent prettier from adding linebreak beetween nested arrays
 const pos = (a: number, b: number, c: number, d: number) => [
@@ -135,5 +136,243 @@ describe('table', () => {
         }
       ]
     });
+
+    const html = writer.render(root);
+    const output = source`
+      <table>
+      <thead>
+      <tr>
+      <th>a</th>
+      <th>b</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td>c</td>
+      <td>d</td>
+      </tr>
+      <tr>
+      <td>e</td>
+      <td></td>
+      </tr>
+      </tbody>
+      </table>
+    `;
+    expect(html).toBe(`${output}\n`);
   });
+
+  it('with aligns', () => {
+    const root = reader.parse('left | center | right\n:--- | :---: | ---:\na | b | c');
+    const tableNode = root.firstChild as TableNode;
+
+    expect(tableNode.columns).toEqual([{ align: 'left' }, { align: 'center' }, { align: 'right' }]);
+  });
+});
+
+describe('GFM Exmaple', () => {
+  const examples = [
+    {
+      no: 198,
+      input: source`
+        | foo | bar |
+        | --- | --- |
+        | baz | bim |
+      `,
+      output: source`
+        <table>
+        <thead>
+        <tr>
+        <th>foo</th>
+        <th>bar</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>baz</td>
+        <td>bim</td>
+        </tr>
+        </tbody>
+        </table>
+      `
+    },
+    {
+      no: 199,
+      input: source`
+        | abc | defghi |
+        :-: | -----------:
+        bar | baz
+      `,
+      output: source`
+        <table>
+        <thead>
+        <tr>
+        <th align="center">abc</th>
+        <th align="right">defghi</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td align="center">bar</td>
+        <td align="right">baz</td>
+        </tr>
+        </tbody>
+        </table>
+      `
+    },
+    {
+      no: 200,
+      input: source`
+        | f\\|oo  |
+        | ------ |
+        | b \`\\|\` az |
+        | b **\\|** im |
+      `,
+      output: source`
+        <table>
+        <thead>
+        <tr>
+        <th>f|oo</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>b <code>|</code> az</td>
+        </tr>
+        <tr>
+        <td>b <strong>|</strong> im</td>
+        </tr>
+        </tbody>
+        </table>
+      `
+    },
+    {
+      no: 201,
+      input: source`
+        | abc | def |
+        | --- | --- |
+        | bar | baz |
+        > bar
+      `,
+      output: source`
+        <table>
+        <thead>
+        <tr>
+        <th>abc</th>
+        <th>def</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>bar</td>
+        <td>baz</td>
+        </tr>
+        </tbody>
+        </table>
+        <blockquote>
+        <p>bar</p>
+        </blockquote>
+      `
+    },
+    {
+      no: 202,
+      input: source`
+        | abc | def |
+        | --- | --- |
+        | bar | baz |
+        bar
+
+        bar
+      `,
+      output: source`
+        <table>
+        <thead>
+        <tr>
+        <th>abc</th>
+        <th>def</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>bar</td>
+        <td>baz</td>
+        </tr>
+        <tr>
+        <td>bar</td>
+        <td></td>
+        </tr>
+        </tbody>
+        </table>
+        <p>bar</p>
+      `
+    },
+    {
+      no: 203,
+      input: source`
+        | abc | def |
+        | --- |
+        | bar |
+      `,
+      output: source`
+        <p>| abc | def |
+        | --- |
+        | bar |</p>
+      `
+    },
+    {
+      no: 204,
+      input: source`
+        | abc | def |
+        | --- | --- |
+        | bar |
+        | bar | baz | boo |
+      `,
+      output: source`
+        <table>
+        <thead>
+        <tr>
+        <th>abc</th>
+        <th>def</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>bar</td>
+        <td></td>
+        </tr>
+        <tr>
+        <td>bar</td>
+        <td>baz</td>
+        </tr>
+        </tbody>
+        </table>
+      `
+    },
+    {
+      no: 205,
+      input: source`
+        | abc | def |
+        | --- | --- |
+      `,
+      output: source`
+        <table>
+        <thead>
+        <tr>
+        <th>abc</th>
+        <th>def</th>
+        </tr>
+        </thead>
+        </table>
+      `
+    }
+  ];
+
+  examples
+    .filter(({ no }) => no === 199)
+    .forEach(({ no, input, output }) => {
+      it(String(no), () => {
+        const root = reader.parse(input);
+        const html = writer.render(root);
+        expect(html).toBe(`${output}\n`);
+      });
+    });
 });

@@ -1,5 +1,13 @@
 import { repeat } from './common';
-import { Node, BlockNode, BlockNodeType, isCodeBlock, isHtmlBlock, createNode } from './node';
+import {
+  Node,
+  BlockNode,
+  BlockNodeType,
+  isCodeBlock,
+  isHtmlBlock,
+  createNode,
+  TableCellNode
+} from './node';
 import { InlineParser, C_NEWLINE } from './inlines';
 import { blockHandlers, Process } from './blockHandlers';
 import { CODE_INDENT } from './blockHelper';
@@ -211,7 +219,12 @@ export class Parser {
     while ((event = walker.next())) {
       const node = event.node as BlockNode;
       const t = node.type;
-      if (!event.entering && (t === 'paragraph' || t === 'heading' || t === 'tableCell')) {
+      if (
+        !event.entering &&
+        (t === 'paragraph' ||
+          t === 'heading' ||
+          (t === 'tableCell' && !(node as TableCellNode).ignored))
+      ) {
         this.inlineParser.parse(node);
       }
     }
@@ -278,6 +291,7 @@ export class Parser {
       if (
         container.type !== 'table' &&
         container.type !== 'tableBody' &&
+        container.type !== 'paragraph' &&
         !this.indented &&
         !reMaybeSpecial.test(ln.slice(this.nextNonspace))
       ) {

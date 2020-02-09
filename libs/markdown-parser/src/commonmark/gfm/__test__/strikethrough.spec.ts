@@ -1,9 +1,9 @@
 import { Parser } from '../../blocks';
-import { HtmlRenderer } from '../../render/html';
+import { GfmHtmlRenderer } from '../../render/gfm/html';
 import { source } from 'common-tags';
 
 const reader = new Parser({ smart: true });
-const writer = new HtmlRenderer();
+const writer = new GfmHtmlRenderer();
 
 describe('smart punctuation', () => {
   it('single quote', () => {
