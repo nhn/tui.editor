@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 import MarkdownIt from 'markdown-it';
-import toMark from 'to-mark';
+import toMark from '@toast-ui/to-mark';
 
 import htmlSanitizer from './htmlSanitizer';
 import taskList from './markdownItPlugins/markdownitTaskPlugin';

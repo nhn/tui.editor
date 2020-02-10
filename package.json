@@ -14,6 +14,9 @@
     "build:vue": "lerna run --scope @toast-ui/vue-editor build",
     "build:uml": "lerna run --scope @toast-ui/editor-plugin-uml build",
     "build:chart": "lerna run --scope @toast-ui/editor-plugin-chart build",
-    "build:color-syntax": "lerna run --scope @toast-ui/editor-plugin-color-syntax build"
+    "build:color-syntax": "lerna run --scope @toast-ui/editor-plugin-color-syntax build",
+    "build:table-merged-cell": "lerna run --scope @toast-ui/editor-plugin-table-merged-cell build",
+    "build:squire": "lerna run --scope @toast-ui/squire build",
+    "build:to-mark": "lerna run --scope @toast-ui/to-mark build"
   }
 }

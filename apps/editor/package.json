@@ -44,6 +44,8 @@
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
     "@toast-ui/release-notes": "^2.0.1",
+    "@toast-ui/squire": "file:../../libs/squire",
+    "@toast-ui/to-mark": "file:../../libs/to-mark",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "babel-plugin-istanbul": "^6.0.0",
@@ -88,8 +90,6 @@
     "jquery": "^3.3.1",
     "markdown-it": "^9.0.0",
     "resize-observer-polyfill": "^1.5.0",
-    "squire-rte": "github:seonim-ryu/Squire#fd40b4e3020845825701e9689f190bab3f4775d4",
-    "to-mark": "^1.1.9",
     "tui-code-snippet": "^1.5.0"
   }
 }

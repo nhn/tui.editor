@@ -21,6 +21,10 @@
     "url": "https://github.com/nhn/tui.editor.git",
     "directory": "plugins/table-merged-cell"
   },
+  "bugs": {
+    "url": "https://github.com/nhn/tui.editor/issues"
+  },
+  "homepage": "https://ui.toast.com",
   "browserslist": "last 2 versions, not ie <= 10",
   "scripts": {
     "test": "karma start --no-single-run",
@@ -54,7 +58,7 @@
     "karma-webpack": "^4.0.2",
     "prettier": "^1.19.1",
     "terser-webpack-plugin": "^2.3.1",
-    "tui-editor": "../../apps/editor",
+    "tui-editor": "file:../../apps/editor",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1"

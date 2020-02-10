@@ -1,4 +1,4 @@
-import toMark from 'to-mark';
+import toMark from '@toast-ui/to-mark';
 import domUtils from './domUtils';
 
 /**
