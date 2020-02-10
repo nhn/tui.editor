@@ -13,8 +13,6 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const ENTRY_MAIN = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
-const ENTRY_MAIN_ALL = './src/js/indexAll.js';
-const ENTRY_VIEWER_ALL = './src/js/indexViewerAll.js';
 
 const ENTRY_EDITOR_CSS = './src/css/tui-editor.css';
 const ENTRY_CONTENT_CSS = './src/css/tui-editor-contents.css';
@@ -35,7 +33,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
         libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/dist',
-        filename: `tui-editor-[name]${isMinified ? '.min' : ''}.js`
+        filename: `tui-[name]${isMinified ? '.min' : ''}.js`
       },
       module: {
         rules: [
@@ -177,8 +175,8 @@ function setDevelopConfig(config) {
 
 function setProductionConfig(config) {
   config.entry = {
-    Editor: ENTRY_MAIN,
-    Viewer: ENTRY_VIEWER
+    editor: ENTRY_MAIN,
+    'editor-viewer': ENTRY_VIEWER
   };
 
   if (isMinified) {
@@ -187,17 +185,17 @@ function setProductionConfig(config) {
   }
 }
 
-function setProductionConfigForFull(config) {
+function setProductionConfigForAll(config) {
   config.entry = {
-    'Editor-full': ENTRY_MAIN_ALL,
-    'Viewer-full': ENTRY_VIEWER_ALL
+    'editor-all': ENTRY_MAIN,
+    'editor-viewer-all': ENTRY_VIEWER
   };
 
   config.externals = [];
 
   if (isMinified) {
     addMinifyPlugin(config);
-    addAnalyzerPlugin(config, 'full');
+    addAnalyzerPlugin(config, 'all');
   }
 }
 
@@ -205,7 +203,7 @@ addCopyingAssetsPlugin(defaultConfigs[0]);
 
 if (isProduction) {
   setProductionConfig(defaultConfigs[0]);
-  setProductionConfigForFull(defaultConfigs[1]);
+  setProductionConfigForAll(defaultConfigs[1]);
 } else {
   setDevelopConfig(defaultConfigs[0]);
 }

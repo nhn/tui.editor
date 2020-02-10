@@ -38,7 +38,7 @@
     "doc:serve": "tuidoc --serv",
     "doc": "tuidoc"
   },
-  "main": "dist/tui-editor-Editor.js",
+  "main": "dist/tui-editor.js",
   "devDependencies": {
     "@babel/core": "^7.8.3",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
