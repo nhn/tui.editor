@@ -2,7 +2,7 @@
  * @fileoverview implements DefaultToolbar
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 import LayerPopup from './layerpopup';
 import Toolbar from './toolbar';
@@ -20,7 +20,7 @@ class PopupDropdownToolbar extends LayerPopup {
   static OPEN_EVENT = 'openDropdownToolbar';
 
   constructor(options) {
-    options = util.extend(
+    options = extend(
       {
         header: false,
         className: 'te-dropdown-toolbar'

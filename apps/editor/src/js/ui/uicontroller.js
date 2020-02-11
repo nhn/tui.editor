@@ -5,6 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import extend from 'tui-code-snippet/object/extend';
 
 let _uiInstanceId = -1;
 
@@ -53,7 +54,7 @@ class UIController {
   _id;
 
   constructor(options = {}) {
-    options = util.extend(
+    options = extend(
       {
         tagName: 'div'
       },

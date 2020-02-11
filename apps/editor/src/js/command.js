@@ -2,7 +2,7 @@
  * @fileoverview Implements Command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 /**
  * Class Command
@@ -93,7 +93,7 @@ Command.factory = function(typeStr, props) {
 
   const command = new Command(props.name, type);
 
-  util.extend(command, props);
+  extend(command, props);
 
   return command;
 };

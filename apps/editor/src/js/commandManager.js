@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 import Command from './command';
 import { isMac } from './util';
@@ -147,7 +148,7 @@ class CommandManager {
 CommandManager.command = function(type, props) {
   const command = Command.factory(type, props.name, props.keyMap);
 
-  util.extend(command, props);
+  extend(command, props);
 
   return command;
 };

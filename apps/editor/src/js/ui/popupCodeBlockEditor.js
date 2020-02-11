@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 import LayerPopup from './layerpopup';
 import ScrollSyncSplit from './scrollSyncSplit';
@@ -38,7 +38,7 @@ class PopupCodeBlockEditor extends LayerPopup {
             </div>
         `;
 
-    options = util.extend(
+    options = extend(
       {
         header: true,
         title: 'CodeBlock Editor',

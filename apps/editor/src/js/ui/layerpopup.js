@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 import UIController from './uicontroller';
 
@@ -49,7 +50,7 @@ const LAYOUT_TEMPLATE_MODAL = `<div class="${CLASS_PREFIX}wrapper">
  */
 class LayerPopup extends UIController {
   constructor(options) {
-    options = util.extend(
+    options = extend(
       {
         header: true,
         $target: $('body'),
