@@ -6,7 +6,7 @@ import hljs from 'highlight.js';
 import { registerHljsToEditor } from './helper';
 
 /**
- * Plant code-syntax-highlight plugin (import all languages)
+ * Code syntax highlight plugin to import all languages
  * @param {Editor|Viewer} editor - instance of Editor or Viewer
  */
 export default function codeSyntaxHighlightPlugin(editor) {

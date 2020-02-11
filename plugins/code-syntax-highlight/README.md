@@ -5,13 +5,14 @@
 ### Build
 
 ```
-- dist/
-  - toastui-editor-plugin-code-syntax-highlight.js
-  - cdn/
+- tui.editor/plugins/code-syntax-highlight/
+  - dist/
     - toastui-editor-plugin-code-syntax-highlight.js
-    - toastui-editor-plugin-code-syntax-highlight.min.js
-    - toastui-editor-plugin-code-syntax-highlight-all.js
-    - toastui-editor-plugin-code-syntax-highlight-all.min.js
+    - cdn/
+      - toastui-editor-plugin-code-syntax-highlight.js
+      - toastui-editor-plugin-code-syntax-highlight.min.js
+      - toastui-editor-plugin-code-syntax-highlight-all.js
+      - toastui-editor-plugin-code-syntax-highlight-all.min.js
 ```
 
 ### Serve with npm
@@ -145,7 +146,7 @@ const instance = Editor.factory({
 
 ### Include Files
 
-To use the plugin, CDN files(CSS, Script) of `@toast-ui/editor` must be included.
+To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be included.
 
 ### Create Instance
 

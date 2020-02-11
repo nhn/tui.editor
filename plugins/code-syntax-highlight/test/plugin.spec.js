@@ -2,7 +2,7 @@
  * @fileoverview Test code-syntax-highlight plugin
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 import codeSyntaxHighlightPlugin from '@';
 
 import hljs from 'highlight.js/lib/highlight';
@@ -10,7 +10,7 @@ import javascript from 'highlight.js/lib/languages/javascript';
 
 hljs.registerLanguage('javascript', javascript);
 
-describe('code-syntax-highlight plugin', () => {
+describe('codeSyntaxHighlightPlugin', () => {
   let editor, wrapper;
 
   beforeEach(() => {
