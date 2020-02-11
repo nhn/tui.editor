@@ -6,6 +6,7 @@ import util from 'tui-code-snippet';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isFalsy from 'tui-code-snippet/type/isFalsy';
+import Enum from 'tui-code-snippet/enum/enum';
 
 const eventList = [
   'previewBeforeHook',
@@ -85,7 +86,7 @@ const eventList = [
 class EventManager {
   constructor() {
     this.events = new util.Map();
-    this.TYPE = new util.Enum(eventList);
+    this.TYPE = new Enum(eventList);
   }
 
   /**
