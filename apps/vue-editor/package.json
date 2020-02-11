@@ -42,6 +42,6 @@
     "vue": "^2.5.0"
   },
   "dependencies": {
-    "tui-editor": "^1.3.0"
+    "@toast-ui/editor": "file:../editor"
   }
 }
