@@ -3,11 +3,15 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
+<<<<<<< HEAD
 
+=======
+>>>>>>> feat: change etc functions
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isNumber from 'tui-code-snippet/type/isNumber';
+import sendHostname from 'tui-code-snippet/request/sendHostname';
 
 import { sendHostName } from './util';
 
