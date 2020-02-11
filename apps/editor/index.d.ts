@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Editor v1.4.10
+// Type definitions for TOAST UI Editor v2.0.0-alpha
 // TypeScript Version: 3.2.2
 
 /// <reference types="jquery" />

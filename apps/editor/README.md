@@ -123,8 +123,8 @@ You can conveniently install it using the commands provided by the package manag
 #### npm
 
 ``` sh
-$ npm install --save tui-editor # Latest version
-$ npm install --save tui-editor@<version> # Specific version
+$ npm install --save @toast-ui/editor # Latest version
+$ npm install --save @toast-ui/editor@<version> # Specific version
 ```
 
 ### Via Contents Delivery Network (CDN)
@@ -188,18 +188,18 @@ Add the container element where TOAST UI Editor will be created.
 TOAST UI Editor can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following ways depending on your environment.
 
 ``` javascript
-const Editor = require('tui-editor'); /* CommonJS */
+const Editor = require('@toast-ui/editor'); /* CommonJS */
 ```
 
 ``` javascript
-import Editor from 'tui-editor'; /* ES6 */
+import Editor from '@toast-ui/editor'; /* ES6 */
 ```
 
 Then import styles of TOAST UI Editor and dependencies.
 
 ``` javascript
-import 'tui-editor/dist/tui-editor.css'; // editor's ui
-import 'tui-editor/dist/tui-editor-contents.css'; // editor's content
+import '@toast-ui/editor/dist/tui-editor.css'; // editor's ui
+import '@toast-ui/editor/dist/tui-editor-contents.css'; // editor's content
 import 'codemirror/lib/codemirror.css'; // codemirror
 import 'highlight.js/styles/github.css'; // code block highlight
 ```
@@ -208,11 +208,11 @@ Finally you can create an instance with options and call various API after creat
 
 ``` javascript
 import 'codemirror/lib/codemirror.css';
-import 'tui-editor/dist/tui-editor.css';
-import 'tui-editor/dist/tui-editor-contents.css';
+import '@toast-ui/editor/dist/tui-editor.css';
+import '@toast-ui/editor/dist/tui-editor-contents.css';
 import 'highlight.js/styles/github.css';
 
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 
 const instance = new Editor({
   el: document.querySelector('#editorSection'),
@@ -249,10 +249,10 @@ Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEdit
 TOAST UI Editor provides the **Viewer** in case you want to show *Markdown* content without loading the Editor. The Viewer is much **lighter** than the Editor.
 
 ``` javascript
-import 'tui-editor/dist/tui-editor-contents.css';
+import '@toast-ui/editor/dist/tui-editor-contents.css';
 import 'highlight.js/styles/github.css';
 
-import Viewer from 'tui-editor/dist/tui-editor-Viewer';
+import Viewer from '@toast-ui/editor/dist/tui-editor-Viewer';
 
 const instance = new Viewer({
   el: document.querySelector('#viewerSection'),
@@ -267,7 +267,7 @@ Be careful not to load both the Editor and the Viewer at the same time because t
 
 
 ``` javascript
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 
 const instance = Editor.factory({
   el: document.querySelector('#viewerSection'),
