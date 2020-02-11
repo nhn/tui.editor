@@ -8,7 +8,7 @@ We don't reply to the issue not following the template.
 
 <!-- BUG ISSUE TEMPLATE -->
 ## Version
-<!-- Write the version of the tui-editor you are currently using. -->
+<!-- Write the version of the @toast-ui/editor you are currently using. -->
 
 ## Test Environment
 <!-- Write the browser type, OS and so on -->
