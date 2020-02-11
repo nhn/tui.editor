@@ -133,13 +133,13 @@ The `useCustomSyntax` option is `false` by default, applying color syntax using 
 import Editor from '@toast-ui/editor';
 import colorSyntaxPlugin from '@toast-ui/editor-plugin-color-syntax';
 
-const colorSyntaxOptions = {
+const options = {
   preset: ['#181818', '#292929', '#393939'],
   useCustomSyntax: true
 };
 
 const instance = new Editor({
   // ...
-  plugins: [[colorSyntaxPlugin, colorSyntaxOptions]]
+  plugins: [[colorSyntaxPlugin, options]]
 });
 ```

@@ -248,8 +248,8 @@ function addDoubleZeroPad(numberStr) {
 
 /**
  * Color syntax plugin
- * @param {editor} editor - editor
- * @param {Object} options - chart options
+ * @param {Editor|Viewer} editor - instance of Editor or Viewer
+ * @param {Object} options - options for plugin
  * @param {Array.<string>} [options.preset] - preset for color palette (ex: ['#181818', '#292929'])
  * @param {boolean} [options.useCustomSyntax=false] - whether use custom syntax or not
  */

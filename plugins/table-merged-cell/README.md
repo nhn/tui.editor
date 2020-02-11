@@ -78,7 +78,7 @@ const instance = new Editor({
 #### With Viewer
 
 ```js
-import Viewer from '@toast-ui/editor/viewer';
+import Viewer from '@toast-ui/editor/dist/tui-editor-viewer';
 import tableMergedCellPlugin from '@toast-ui/editor-plugin-table-merged-cell';
 
 const instance = new Viewer({

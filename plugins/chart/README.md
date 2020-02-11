@@ -7,7 +7,7 @@
 > Note : The bundle files under the `cdn` folder include all dependencies.
 
 ```
-- tui.editor/plugins/chart
+- tui.editor/plugins/chart/
   - dist/
     - toastui-editor-plugin-chart.js
     - cdn/
@@ -88,7 +88,7 @@ const instance = new Editor({
 ```js
 // ...
 
-import Viewer from '@toast-ui/editor/viewer';
+import Viewer from '@toast-ui/editor/dist/tui-editor-viewer';
 import chartPlugin from '@toast-ui/editor-plugin-chart';
 
 const instance = new Viewer({
@@ -190,7 +190,7 @@ These options are used to set the dimensions of the chart drawn in the editor.
 import Editor from '@toast-ui/editor';
 import chartPlugin from '@toast-ui/editor-plugin-chart';
 
-const chartOptions = {
+const options = {
   minWidth: 100,
   maxWidth: 600,
   minHeight: 100,
@@ -199,6 +199,6 @@ const chartOptions = {
 
 const instance = new Editor({
   // ...
-  plugins: [[chartPlugin, chartOptions]]
+  plugins: [[chartPlugin, options]]
 });
 ```

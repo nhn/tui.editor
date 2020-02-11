@@ -78,7 +78,7 @@ const instance = new Editor({
 #### With Viewer
 
 ```js
-import Viewer from '@toast-ui/editor/viewer';
+import Viewer from '@toast-ui/editor/tui-editor-viewer';
 import umlPlugin from '@toast-ui/editor-plugin-uml';
 
 const instance = new Viewer({
@@ -150,5 +150,31 @@ const {
 const instance = Editor.factory({
   // ...
   plugins: [uml]
+});
+```
+
+## [Optional] Use Plugin with Options
+
+The `uml` plugin can set options when used. Just add the plugin function and options related to the plugin to the array(`[pluginFn, pluginOptions]`) and push them to the `plugins` option of the editor.
+
+The following option is available in the `uml` plugin.
+
+| Name              | Type             | Default Value | Description                      |
+| ----------------- | ---------------- | ------------- | -------------------------------- |
+| `rendererURL`          | `string` | `'http://www.plantuml.com/plantuml/png/'`            | URL of plant uml renderer         |
+
+```js
+// ...
+
+import Editor from '@toast-ui/editor';
+import umlPlugin from '@toast-ui/editor-plugin-uml';
+
+const options = {
+  rendererURL: // ...
+};
+
+const instance = new Editor({
+  // ...
+  plugins: [[colorSyntaxPlugin, options]]
 });
 ```
