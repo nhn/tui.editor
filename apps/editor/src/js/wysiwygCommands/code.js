@@ -27,7 +27,7 @@ const Code = CommandManager.command(
     exec(wwe) {
       const sq = wwe.getEditor();
       const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
-      const _styleCode = util.bind(styleCode, null, wwe.getEditor());
+      const _styleCode = styleCode.bind(null, wwe.getEditor());
 
       wwe.focus();
 
