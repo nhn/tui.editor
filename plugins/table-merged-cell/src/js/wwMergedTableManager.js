@@ -40,7 +40,8 @@ function any(arr, contition) {
  * @returns {WwMergedTableManager} class of table manager
  */
 export function getWwMergedTableManager(editor) {
-  const { WwTableManager, i18n } = Object.getPrototypeOf(editor).constructor;
+  const { WwTableManager } = Object.getPrototypeOf(editor).constructor;
+  const { i18n } = editor;
 
   /**
    * Class WwMergedTableManager

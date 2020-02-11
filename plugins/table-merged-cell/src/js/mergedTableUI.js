@@ -85,7 +85,7 @@ function _bindEvents(popupTableUtils, eventManager, selectionManager) {
  * @param {Editor} editor - editor instance
  */
 export function updateContextMenu(popupTableUtils, eventManager, selectionManager, editor) {
-  const { i18n } = Object.getPrototypeOf(editor).constructor;
+  const { i18n } = editor;
 
   _changeContent(popupTableUtils, i18n);
   _bindEvents(popupTableUtils, eventManager, selectionManager);
