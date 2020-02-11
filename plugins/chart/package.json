@@ -4,7 +4,9 @@
   "description": "TOAST UI Editor : Chart Plugin",
   "keywords": [
     "nhn",
+    "toast",
     "toastui",
+    "toast-ui",
     "editor",
     "plugin",
     "chart"
@@ -13,7 +15,7 @@
   "files": [
     "dist/*.js"
   ],
-  "author": "NHN. FE Development Lab",
+  "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,7 +30,6 @@
   "scripts": {
     "test": "karma start --no-single-run",
     "test:ne": "cross-env KARMA_SERVER=ne karma start",
-    "serve:editor": "npx lerna run --scope tui-editor serve",
     "serve": "webpack-dev-server",
     "build:cdn": "webpack --mode=production --cdn & webpack --mode=production --cdn --minify",
     "build": "webpack --mode=production && npm run build:cdn"
