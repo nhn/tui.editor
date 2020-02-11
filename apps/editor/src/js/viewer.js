@@ -10,7 +10,7 @@ import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import Convertor from './convertor';
 import domUtils from './domUtils';
-import codeBlockManager, { CodeBlockManager } from './codeBlockManager';
+import codeBlockManager from './codeBlockManager';
 import { invokePlugins } from './pluginHelper';
 
 const TASK_ATTR_NAME = 'data-te-task';
@@ -36,11 +36,12 @@ class ToastUIEditorViewer {
     this.options = $.extend(
       {
         useDefaultHTMLSanitizer: true,
-        codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
         customConvertor: null
       },
       options
     );
+
+    this.codeBlockLanguages = [];
 
     this.eventManager = new EventManager();
     this.commandManager = new CommandManager(this);

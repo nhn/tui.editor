@@ -95,12 +95,6 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
             commonjs2: 'codemirror',
             amd: 'codemirror',
             root: ['CodeMirror']
-          },
-          'highlight.js': {
-            commonjs: 'highlight.js',
-            commonjs2: 'highlight.js',
-            amd: 'highlight.js',
-            root: ['hljs']
           }
         }
       ],
