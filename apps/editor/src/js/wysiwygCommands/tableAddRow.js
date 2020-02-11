@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
 
 import CommandManager from '../commandManager';
 
@@ -87,7 +87,7 @@ function getSelectedRowsLength(wwe) {
  */
 function getNewRow($tr) {
   const cloned = $tr.clone();
-  const htmlString = util.browser.msie ? '' : '<br />';
+  const htmlString = browser.msie ? '' : '<br />';
 
   cloned.find('td').html(htmlString);
 

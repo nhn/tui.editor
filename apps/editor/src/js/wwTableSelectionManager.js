@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
 
 import domUtils from './domUtils';
 const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
@@ -35,7 +35,7 @@ class WwTableSelectionManager {
     this._initEvent();
 
     // For disable firefox's table tool UI and table resize handler
-    if (util.browser.firefox) {
+    if (browser.firefox) {
       document.execCommand('enableObjectResizing', false, 'false');
       document.execCommand('enableInlineTableEditing', false, 'false');
     }
@@ -86,7 +86,7 @@ class WwTableSelectionManager {
       if (this._isSelectionStarted && isEndsInTable && !isTextSelect) {
         window.getSelection().removeAllRanges();
         // For disable firefox's native table cell selection
-        if (util.browser.firefox && !this._removeSelectionTimer) {
+        if (browser.firefox && !this._removeSelectionTimer) {
           this._removeSelectionTimer = setInterval(() => {
             window.getSelection().removeAllRanges();
           }, 10);
@@ -129,7 +129,7 @@ class WwTableSelectionManager {
           range.setStart(selectionEnd, 0);
           // IE wont fire copy/cut event if there is no selected range.
           // trick IE to fire the event
-          if (util.browser.msie) {
+          if (browser.msie) {
             range.setEnd(selectionEnd, 1);
           } else {
             range.setEnd(selectionEnd, 0);
@@ -215,7 +215,7 @@ class WwTableSelectionManager {
   _clearTableSelectionTimerIfNeed() {
     clearTimeout(this._tableSelectionTimer);
     // For disable firefox's native table selection
-    if (util.browser.firefox && this._removeSelectionTimer) {
+    if (browser.firefox && this._removeSelectionTimer) {
       clearTimeout(this._removeSelectionTimer);
       this._removeSelectionTimer = null;
     }

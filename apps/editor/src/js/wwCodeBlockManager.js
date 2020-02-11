@@ -3,14 +3,14 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import toArray from 'tui-code-snippet/collection/toArray';
 import isTruthy from 'tui-code-snippet/type/isTruthy';
+import browser from 'tui-code-snippet/browser/browser';
 
 import domUtils from './domUtils';
 
-const isIE10 = util.browser.msie && util.browser.version === 10;
+const isIE10 = browser.msie && browser.version === 10;
 const brString = isIE10 ? '' : '<br>';
 
 const tagEntities = {

@@ -7,6 +7,7 @@ import util from 'tui-code-snippet';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isArray from 'tui-code-snippet/type/isArray';
+import browser from 'tui-code-snippet/browser/browser';
 
 import domUtils from './domUtils';
 import WwClipboardManager from './wwClipboardManager';
@@ -203,7 +204,7 @@ class WysiwygEditor {
       })();
     });
 
-    squire.addEventListener(util.browser.msie ? 'beforecut' : 'cut', clipboardEvent => {
+    squire.addEventListener(browser.msie ? 'beforecut' : 'cut', clipboardEvent => {
       this.eventManager.emit('cut', {
         source: 'wysiwyg',
         data: clipboardEvent
@@ -220,7 +221,7 @@ class WysiwygEditor {
       })();
     });
 
-    squire.addEventListener(util.browser.msie ? 'beforepaste' : 'paste', clipboardEvent => {
+    squire.addEventListener(browser.msie ? 'beforepaste' : 'paste', clipboardEvent => {
       this.eventManager.emit('paste', {
         source: 'wysiwyg',
         data: clipboardEvent
@@ -283,7 +284,7 @@ class WysiwygEditor {
       this._onKeyDown(keyboardEvent);
     });
 
-    if (util.browser.firefox) {
+    if (browser.firefox) {
       squire.addEventListener('keypress', keyboardEvent => {
         const { keyCode } = keyboardEvent;
 

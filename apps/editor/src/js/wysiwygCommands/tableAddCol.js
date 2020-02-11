@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
 
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
@@ -96,7 +96,7 @@ function addColToCellAfter($cell, numberOfCols = 1) {
     .find('tr')
     .each((n, tr) => {
       const isTBody = domUtils.getNodeName(tr.parentNode) === 'TBODY';
-      const isMSIE = util.browser.msie;
+      const isMSIE = browser.msie;
       const cell = tr.children[index];
 
       for (let i = 0; i < numberOfCols; i += 1) {
