@@ -5,6 +5,8 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isArray from 'tui-code-snippet/type/isArray';
 
 import domUtils from './domUtils';
 import WwClipboardManager from './wwClipboardManager';
@@ -119,7 +121,7 @@ class WysiwygEditor {
       keyMap = 'DEFAULT';
     }
 
-    if (!util.isArray(keyMap)) {
+    if (!isArray(keyMap)) {
       keyMap = [keyMap];
     }
 
@@ -1094,7 +1096,7 @@ class WysiwygEditor {
    * @returns {boolean}
    */
   scrollTop(value) {
-    if (util.isUndefined(value)) {
+    if (isUndefined(value)) {
       return this.$editorContainerEl.scrollTop();
     }
 

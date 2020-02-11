@@ -3,8 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isString from 'tui-code-snippet/type/isString';
 
 const FIND_ZWB = /\u200B/g;
 
@@ -206,7 +207,7 @@ const getParentUntilBy = function(node, matchCondition, stopCondition) {
 const getParentUntil = function(node, untilNode) {
   let foundedNode;
 
-  if (util.isString(untilNode)) {
+  if (isString(untilNode)) {
     foundedNode = getParentUntilBy(node, targetNode => untilNode === getNodeName(targetNode));
   } else {
     foundedNode = getParentUntilBy(node, targetNode => untilNode === targetNode);
@@ -367,7 +368,7 @@ const findOffsetNode = function(root, offsetList, textNodeFilter) {
       offset
     });
     offset = offsetList.shift();
-  } while (!util.isUndefined(offset));
+  } while (!isUndefined(offset));
 
   return result;
 };
@@ -414,7 +415,7 @@ const getPath = function(node, root) {
 const getTableCellByDirection = function(node, direction) {
   let targetElement = null;
 
-  if (!util.isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
+  if (!isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
     if (direction === 'next') {
       targetElement = node.nextElementSibling;
     } else {
@@ -442,7 +443,7 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
     $siblingContainer,
     isSiblingContainerExists;
 
-  if (!util.isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
+  if (!isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
     if (node) {
       $node = $(node);
 
@@ -464,7 +465,7 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
         index = node.parentNode.childNodes.length - 1;
       }
 
-      if (util.isUndefined(needEdgeCell) || !needEdgeCell) {
+      if (isUndefined(needEdgeCell) || !needEdgeCell) {
         index = getNodeOffsetOfParent(node);
       }
 

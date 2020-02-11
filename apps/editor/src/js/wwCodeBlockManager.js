@@ -6,6 +6,7 @@ import $ from 'jquery';
 import util from 'tui-code-snippet';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import toArray from 'tui-code-snippet/collection/toArray';
+import isTruthy from 'tui-code-snippet/type/isTruthy';
 
 import domUtils from './domUtils';
 
@@ -128,7 +129,7 @@ class WwCodeBlockManager {
     let str = '';
     let node = nodes.shift();
 
-    while (util.isTruthy(node)) {
+    while (isTruthy(node)) {
       const { childNodes } = node;
 
       if (childNodes && domUtils.isBlockNode(node)) {

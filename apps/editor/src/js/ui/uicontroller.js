@@ -3,9 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
+import isObject from 'tui-code-snippet/type/isObject';
 
 let _uiInstanceId = -1;
 
@@ -75,7 +75,7 @@ class UIController {
    * @param {function} aFn - event handler
    */
   on(aType, aFn) {
-    if (util.isObject(aType)) {
+    if (isObject(aType)) {
       forEachOwnProperties(aType, (fn, type) => {
         this._addEvent(type, fn);
       });

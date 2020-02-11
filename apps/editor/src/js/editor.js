@@ -5,6 +5,9 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isNumber from 'tui-code-snippet/type/isNumber';
 
 import Button from './ui/button';
 import MarkdownEditor from './markdownEditor';
@@ -261,7 +264,7 @@ class ToastUIEditor {
     const linkAttribute = {};
 
     availableLinkAttributes.forEach(key => {
-      if (!util.isUndefined(attribute[key])) {
+      if (!isUndefined(attribute[key])) {
         linkAttribute[key] = attribute[key];
       }
     });
@@ -542,7 +545,7 @@ class ToastUIEditor {
    * @returns {string} editor height
    */
   height(height) {
-    if (util.isExisty(height)) {
+    if (isExisty(height)) {
       if (height === 'auto') {
         $(this.options.el).addClass('auto-height');
         this.minHeight(this.minHeight());
@@ -550,7 +553,7 @@ class ToastUIEditor {
         $(this.options.el).removeClass('auto-height');
         this.minHeight(height);
       }
-      if (util.isNumber(height)) {
+      if (isNumber(height)) {
         height = `${height}px`;
       }
 
@@ -567,7 +570,7 @@ class ToastUIEditor {
    * @returns {string} - min height in pixel
    */
   minHeight(minHeight) {
-    if (util.isExisty(minHeight)) {
+    if (isExisty(minHeight)) {
       const editorHeight = this._ui.getEditorHeight();
       const editorSectionHeight = this._ui.getEditorSectionHeight();
       const diffHeight = editorHeight - editorSectionHeight;

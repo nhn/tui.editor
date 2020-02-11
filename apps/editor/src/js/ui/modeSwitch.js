@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
 
 import UIController from './uicontroller';
 import i18n from '../i18n';
@@ -58,7 +58,7 @@ class ModeSwitch extends UIController {
     });
 
     this._render($rootElement);
-    this._switchType(util.isExisty(initialType) ? initialType : MARKDOWN);
+    this._switchType(isExisty(initialType) ? initialType : MARKDOWN);
   }
 
   /**

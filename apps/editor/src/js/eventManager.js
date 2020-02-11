@@ -4,6 +4,8 @@
  */
 import util from 'tui-code-snippet';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isFalsy from 'tui-code-snippet/type/isFalsy';
 
 const eventList = [
   'previewBeforeHook',
@@ -123,7 +125,7 @@ class EventManager {
       forEachOwnProperties(eventHandlers, handler => {
         const result = handler(...args);
 
-        if (!util.isUndefined(result)) {
+        if (!isUndefined(result)) {
           results = results || [];
           results.push(result);
         }
@@ -147,7 +149,7 @@ class EventManager {
       forEachOwnProperties(eventHandlers, handler => {
         const result = handler(...args);
 
-        if (!util.isFalsy(result)) {
+        if (!isFalsy(result)) {
           args[0] = result;
         }
       });
@@ -178,7 +180,7 @@ class EventManager {
    * @private
    */
   _hasEventType(type) {
-    return !util.isUndefined(this.TYPE[this._getTypeInfo(type).type]);
+    return !isUndefined(this.TYPE[this._getTypeInfo(type).type]);
   }
 
   /**
