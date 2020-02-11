@@ -1,24 +1,24 @@
 import React from 'react';
 import 'codemirror/lib/codemirror.css';
 import 'highlight.js/styles/github.css';
-import 'tui-editor/dist/tui-editor.min.css';
-import 'tui-editor/dist/tui-editor-contents.min.css';
+import '@toast-ui/editor/dist/tui-editor.min.css';
+import '@toast-ui/editor/dist/tui-editor-contents.min.css';
 
-import 'tui-editor/dist/tui-editor-extScrollSync';
-import 'tui-editor/dist/tui-editor-extColorSyntax';
-import 'tui-editor/dist/tui-editor-extUML';
-import 'tui-editor/dist/tui-editor-extChart';
-import 'tui-editor/dist/tui-editor-extTable';
+import '@toast-ui/editor/dist/tui-editor-extScrollSync';
+import '@toast-ui/editor/dist/tui-editor-extColorSyntax';
+import '@toast-ui/editor/dist/tui-editor-extUML';
+import '@toast-ui/editor/dist/tui-editor-extChart';
+import '@toast-ui/editor/dist/tui-editor-extTable';
 
-import {storiesOf} from '@storybook/react';
-import {withKnobs} from '@storybook/addon-knobs';
-import {basicViewerDummy} from '../viewer/dummyData';
-import {Editor} from '../../src/index';
+import { storiesOf } from '@storybook/react';
+import { withKnobs } from '@storybook/addon-knobs';
+import { basicViewerDummy } from '../viewer/dummyData';
+import { Editor } from '../../src/index';
 
 const stories = storiesOf('Editor', module).addDecorator(withKnobs);
 
 stories.add('demo', () => {
-  const {content} = basicViewerDummy;
+  const { content } = basicViewerDummy;
 
   return (
     <Editor
@@ -120,7 +120,7 @@ stories.add('setValue programmatically', () => {
     ref = React.createRef();
 
     handleClick = () => {
-      const {content} = basicViewerDummy;
+      const { content } = basicViewerDummy;
 
       this.ref.current.getInstance().setValue(content);
     };
@@ -178,21 +178,21 @@ stories.add('dynamically change react state', () => {
     };
 
     toggleEditType = () => {
-      this.setState((prevState) => ({
+      this.setState(prevState => ({
         ...prevState,
         editType: prevState.editType === 'markdown' ? 'wysiwyg' : 'markdown'
       }));
     };
 
     togglePreviewStyle = () => {
-      this.setState((prevState) => ({
+      this.setState(prevState => ({
         ...prevState,
         previewStyle: prevState.previewStyle === 'vertical' ? 'tab' : 'vertical'
       }));
     };
 
     changeHeight = () => {
-      this.setState((prevState) => ({
+      this.setState(prevState => ({
         ...prevState,
         height: prevState.height + 100
       }));

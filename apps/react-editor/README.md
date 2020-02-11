@@ -51,14 +51,14 @@ npm install --save @toast-ui/react-editor
 
 ### Import
 
-You can use Toast UI Editor for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `tui-editor.css`, `tui-editor-contents.css` from `tui-editor` and `codemirror.css` from `codemirror.css` in the script. 
+You can use Toast UI Editor for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `tui-editor.css`, `tui-editor-contents.css` from `@toast-ui/editor` and `codemirror.css` from `codemirror.css` in the script. 
 
 * Using ECMAScript module
 
 ```js
 import 'codemirror/lib/codemirror.css';
-import 'tui-editor/dist/tui-editor.min.css';
-import 'tui-editor/dist/tui-editor-contents.min.css';
+import '@toast-ui/editor/dist/tui-editor.min.css';
+import '@toast-ui/editor/dist/tui-editor-contents.min.css';
 import { Editor } from '@toast-ui/react-editor'
 ```
 
@@ -66,8 +66,8 @@ import { Editor } from '@toast-ui/react-editor'
 
 ```js
 require('codemirror/lib/codemirror.css');
-require('tui-editor/dist/tui-editor.min.css');
-require('tui-editor/dist/tui-editor-contents.min.css');
+require('@toast-ui/editor/dist/tui-editor.min.css');
+require('@toast-ui/editor/dist/tui-editor-contents.min.css');
 const Editor = require('@toast-ui/react-editor');
 ```
 
