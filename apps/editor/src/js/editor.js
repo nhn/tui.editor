@@ -3,11 +3,11 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isNumber from 'tui-code-snippet/type/isNumber';
+import sendHostname from 'tui-code-snippet/request/sendHostname';
 
 import Button from './ui/button';
 import MarkdownEditor from './markdownEditor';
@@ -250,7 +250,7 @@ class ToastUIEditor {
     this._addDefaultCommands();
 
     if (this.options.usageStatistics) {
-      util.sendHostname('editor', gaTrackingId);
+      sendHostname('editor', gaTrackingId);
     }
   }
 

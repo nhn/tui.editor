@@ -3,11 +3,11 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isArray from 'tui-code-snippet/type/isArray';
 import browser from 'tui-code-snippet/browser/browser';
+import debounce from 'tui-code-snippet/tricks/debounce';
 
 import domUtils from './domUtils';
 import WwClipboardManager from './wwClipboardManager';
@@ -61,7 +61,7 @@ class WysiwygEditor {
     this._initEvent();
     this._initDefaultKeyEventHandler();
 
-    this.debouncedPostProcessForChange = util.debounce(() => this.postProcessForChange(), 0);
+    this.debouncedPostProcessForChange = debounce(() => this.postProcessForChange(), 0);
   }
 
   /**
@@ -192,7 +192,7 @@ class WysiwygEditor {
         source: 'wysiwyg',
         data: clipboardEvent
       });
-      util.debounce(() => {
+      debounce(() => {
         if (!this.isEditorValid()) {
           return;
         }
@@ -209,7 +209,7 @@ class WysiwygEditor {
         source: 'wysiwyg',
         data: clipboardEvent
       });
-      util.debounce(() => {
+      debounce(() => {
         if (!this.isEditorValid()) {
           return;
         }
@@ -248,7 +248,7 @@ class WysiwygEditor {
     // change event will fired after range has been updated
     squire.addEventListener(
       'input',
-      util.debounce(() => {
+      debounce(() => {
         if (!this.isEditorValid()) {
           return;
         }
