@@ -7,11 +7,12 @@
 > Note : The bundle files under the `cdn` folder include all dependencies.
 
 ```
-- dist/
-  - toastui-editor-plugin-uml.js
-  - cdn/
+- tui.editor/plugins/uml/
+  - dist/
     - toastui-editor-plugin-uml.js
-    - toastui-editor-plugin-uml.min
+    - cdn/
+      - toastui-editor-plugin-uml.js
+      - toastui-editor-plugin-uml.min
 ```
 
 ### Serve with npm
@@ -36,7 +37,7 @@
 
 ## Use npm
 
-> Note : To use the plugin, `tui-editor` must be installed.
+> Note : To use the plugin, `@toast-ui/editor` must be installed.
 
 ### Install
 
@@ -65,7 +66,7 @@ const umlPlugin = require('@toast-ui/editor-plugin-uml');
 #### Basic
 
 ```js
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 import umlPlugin from '@toast-ui/editor-plugin-uml';
 
 const instance = new Editor({
@@ -77,7 +78,7 @@ const instance = new Editor({
 #### With Viewer
 
 ```js
-import Viewer from 'tui-editor/viewer';
+import Viewer from '@toast-ui/editor/viewer';
 import umlPlugin from '@toast-ui/editor-plugin-uml';
 
 const instance = new Viewer({
@@ -89,7 +90,7 @@ const instance = new Viewer({
 or
 
 ```js
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 import umlPlugin from '@toast-ui/editor-plugin-uml';
 
 const instance = Editor.factory({
@@ -100,12 +101,11 @@ const instance = Editor.factory({
 
 ## Use CDN
 
-> Note : To use the plugin, `tui-editor`'s CDN files(css, scripts) must be included.
+> Note : To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be included.
 
 ### Include Files
 
 ```html
-<!-- Scripts -->
 <script src="https://uicdn.toast.com/editor-plugin-uml/latest/toastui-editor-plugin-uml.min.js"></script>
 ```
 
