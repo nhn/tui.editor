@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 const FIND_ZWB = /\u200B/g;
 
@@ -635,7 +636,7 @@ const isFirstLevelListItem = function(node) {
  */
 const mergeNode = function(node, targetNode) {
   if (node.hasChildNodes()) {
-    util.forEachArray(node.childNodes, () => {
+    forEachArray(node.childNodes, () => {
       targetNode.appendChild(node.firstChild);
     });
 

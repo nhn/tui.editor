@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
@@ -244,7 +245,7 @@ class WwClipboardManager {
   _preProcessPtag(node) {
     const pTags = node.querySelectorAll('p');
 
-    util.forEachArray(pTags, pTag => {
+    forEachArray(pTags, pTag => {
       if (pTag.lastChild && pTag.lastChild.nodeName !== 'BR') {
         pTag.appendChild(document.createElement('br'));
       }

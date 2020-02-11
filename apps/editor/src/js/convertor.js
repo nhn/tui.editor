@@ -3,7 +3,6 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
 import MarkdownIt from 'markdown-it';
 import toMark from '@toast-ui/to-mark';
 
@@ -243,7 +242,7 @@ class Convertor {
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
     markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
 
-    util.forEach(markdown.split('\n'), (line, index) => {
+    markdown.split('\n').forEach((line, index) => {
       const FIND_TABLE_RX = /^(<br>)+\||\|[^|]*\|/gi;
       const FIND_CODE_RX = /`[^`]*<br>[^`]*`/gi;
       const FIND_BRS_BEFORE_TABLE = /^(<br>)+\|/gi;

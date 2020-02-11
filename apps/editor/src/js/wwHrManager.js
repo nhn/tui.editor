@@ -2,7 +2,7 @@
  * @fileoverview Implements wysiwyg hr manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import domUtils from './domUtils';
 
 /**
@@ -67,7 +67,7 @@ class WwHrManager {
     const [editorContentBody] = this.wwe.get$Body();
     const hrNodes = editorContentBody.querySelectorAll('hr');
 
-    util.forEachArray(hrNodes, hrNode => {
+    forEachArray(hrNodes, hrNode => {
       const { parentNode } = hrNode;
 
       parentNode.replaceChild(domUtils.createHorizontalRule(), hrNode);

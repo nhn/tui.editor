@@ -3,8 +3,10 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
 import Squire from '@toast-ui/squire';
+import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import domUtils from './domUtils';
 import { isMac } from './util';
@@ -95,7 +97,7 @@ class SquireExt extends Squire {
             if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
               nextBlock = this.createDefaultBlock();
 
-              util.forEachArray(util.toArray(current.childNodes), appendChidToNextBlock);
+              forEachArray(toArray(current.childNodes), appendChidToNextBlock);
 
               lastNodeOfNextBlock = nextBlock.lastChild;
 

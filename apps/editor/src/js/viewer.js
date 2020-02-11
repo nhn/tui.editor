@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 
 import MarkdownPreview from './mdPreview';
 import EventManager from './eventManager';
@@ -56,13 +56,13 @@ class ToastUIEditorViewer {
     }
 
     if (this.options.hooks) {
-      util.forEach(this.options.hooks, (fn, key) => {
+      forEachOwnProperties(this.options.hooks, (fn, key) => {
         this.addHook(key, fn);
       });
     }
 
     if (this.options.events) {
-      util.forEach(this.options.events, (fn, key) => {
+      forEachOwnProperties(this.options.events, (fn, key) => {
         this.on(key, fn);
       });
     }

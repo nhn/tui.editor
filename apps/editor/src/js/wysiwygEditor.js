@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 import domUtils from './domUtils';
 import WwClipboardManager from './wwClipboardManager';
@@ -161,7 +162,7 @@ class WysiwygEditor {
     handlers = this._keyEventHandlers.DEFAULT;
 
     if (handlers) {
-      util.forEachArray(handlers, handler => {
+      forEachArray(handlers, handler => {
         isNeedNext = handler(event, range, keyMap);
 
         return isNeedNext;
@@ -171,7 +172,7 @@ class WysiwygEditor {
     handlers = this._keyEventHandlers[keyMap];
 
     if (handlers && isNeedNext !== false) {
-      util.forEachArray(handlers, handler => handler(event, range, keyMap));
+      forEachArray(handlers, handler => handler(event, range, keyMap));
     }
   }
 

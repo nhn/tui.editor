@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import CommandManager from '../commandManager';
 
@@ -84,7 +84,7 @@ function getCodeBlockBody(range, wwe) {
     codeBlock = '<br>';
   } else {
     const contents = range.extractContents();
-    const nodes = util.toArray(contents.childNodes);
+    const nodes = toArray(contents.childNodes);
     const tempDiv = $('<div>').append(mgr.prepareToPasteOnCodeblock(nodes));
 
     codeBlock = tempDiv.html();

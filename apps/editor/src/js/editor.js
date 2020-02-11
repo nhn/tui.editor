@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 
 import Button from './ui/button';
 import MarkdownEditor from './markdownEditor';
@@ -176,11 +177,11 @@ class ToastUIEditor {
     }
 
     if (this.options.hooks) {
-      util.forEach(this.options.hooks, (fn, key) => this.addHook(key, fn));
+      forEachOwnProperties(this.options.hooks, (fn, key) => this.addHook(key, fn));
     }
 
     if (this.options.events) {
-      util.forEach(this.options.events, (fn, key) => this.on(key, fn));
+      forEachOwnProperties(this.options.events, (fn, key) => this.on(key, fn));
     }
 
     this.layout = new Layout(options, this.eventManager);

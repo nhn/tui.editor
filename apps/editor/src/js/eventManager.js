@@ -3,6 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import util from 'tui-code-snippet';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 
 const eventList = [
   'previewBeforeHook',
@@ -119,7 +120,7 @@ class EventManager {
     let results;
 
     if (eventHandlers) {
-      util.forEach(eventHandlers, handler => {
+      forEachOwnProperties(eventHandlers, handler => {
         const result = handler(...args);
 
         if (!util.isUndefined(result)) {
@@ -143,7 +144,7 @@ class EventManager {
     const eventHandlers = this.events.get(type);
 
     if (eventHandlers) {
-      util.forEach(eventHandlers, handler => {
+      forEachOwnProperties(eventHandlers, handler => {
         const result = handler(...args);
 
         if (!util.isFalsy(result)) {

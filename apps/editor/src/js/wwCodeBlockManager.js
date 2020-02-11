@@ -4,6 +4,8 @@
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import domUtils from './domUtils';
 
@@ -68,7 +70,7 @@ class WwCodeBlockManager {
       }
     };
 
-    util.forEach(this._keyEventHandlers, (handler, key) =>
+    forEachOwnProperties(this._keyEventHandlers, (handler, key) =>
       this.wwe.addKeyEventHandler(key, handler)
     );
   }
@@ -130,7 +132,7 @@ class WwCodeBlockManager {
       const { childNodes } = node;
 
       if (childNodes && domUtils.isBlockNode(node)) {
-        str += this.convertNodesToText(util.toArray(node.childNodes));
+        str += this.convertNodesToText(toArray(node.childNodes));
       } else if (node.nodeName === 'BR') {
         str += '\n';
       } else {
@@ -158,7 +160,7 @@ class WwCodeBlockManager {
     if (domUtils.getNodeName(blockNode) === 'PRE') {
       const attrs = $(blockNode).prop('attributes');
 
-      util.forEach(attrs, attr => {
+      forEachOwnProperties(attrs, attr => {
         $(element).attr(attr.name, attr.value);
       });
     }
@@ -381,7 +383,8 @@ class WwCodeBlockManager {
   destroy() {
     this.eventManager.removeEventHandler('wysiwygSetValueAfter.codeblock');
     this.eventManager.removeEventHandler('wysiwygProcessHTMLText.codeblock');
-    util.forEach(this._keyEventHandlers, (handler, key) =>
+
+    forEachOwnProperties(this._keyEventHandlers, (handler, key) =>
       this.wwe.removeKeyEventHandler(key, handler)
     );
   }

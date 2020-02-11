@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 import domUtils from './domUtils';
 
@@ -679,7 +679,7 @@ class WwListManager {
         if (existingListNode.nodeName !== listNodeName) {
           const { childNodes } = existingListNode;
 
-          util.forEachArray(childNodes, () => {
+          forEachArray(childNodes, () => {
             listNode.appendChild(existingListNode.firstChild);
           });
 

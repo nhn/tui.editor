@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 
 let _uiInstanceId = -1;
 
@@ -74,7 +75,7 @@ class UIController {
    */
   on(aType, aFn) {
     if (util.isObject(aType)) {
-      util.forEach(aType, (fn, type) => {
+      forEachOwnProperties(aType, (fn, type) => {
         this._addEvent(type, fn);
       });
     } else {
@@ -182,7 +183,7 @@ class UIController {
   destroy() {
     this.remove();
 
-    util.forEachOwnProperties(this, (value, key) => {
+    forEachOwnProperties(this, (value, key) => {
       this[key] = null;
     });
   }
