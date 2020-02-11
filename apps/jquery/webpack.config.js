@@ -43,7 +43,7 @@ function getExternalsConfig(isProduction, isCDN) {
         }
       ];
     } else {
-      return ['jquery', 'tui-editor', 'tui-editor/dist/tui-editor-viewer'];
+      return ['jquery', '@toast-ui/editor', '@toast-ui/editor/dist/tui-editor-viewer'];
     }
   }
 
@@ -84,7 +84,7 @@ module.exports = (env, argv) => {
       rules: [
         {
           test: /\.js$/,
-          exclude: /node_modules/,
+          exclude: /node_modules|dist/,
           loader: 'eslint-loader',
           enforce: 'pre',
           options: {
