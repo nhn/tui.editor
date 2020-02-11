@@ -64,8 +64,8 @@ You can use Toast UI Editor for Vue as moudule format or namespace. Also you can
 * Using Ecmascript module
 
     ```js
-    import 'tui-editor/dist/tui-editor.css';
-    import 'tui-editor/dist/tui-editor-contents.css';
+    import '@toast-ui/editor/dist/tui-editor.css';
+    import '@toast-ui/editor/dist/tui-editor-contents.css';
     import 'codemirror/lib/codemirror.css';
     import { Editor } from '@toast-ui/vue-editor'
     ```
@@ -73,8 +73,8 @@ You can use Toast UI Editor for Vue as moudule format or namespace. Also you can
 * Using Commonjs module
 
     ```js
-    require('tui-editor/dist/tui-editor.css');
-    require('tui-editor/dist/tui-editor-contents.css');
+    require('@toast-ui/editor/dist/tui-editor.css');
+    require('@toast-ui/editor/dist/tui-editor-contents.css');
     require('codemirror/lib/codemirror.css');
     var toastui = require('@toast-ui/vue-editor');
     var Editor = toastui.Editor;
@@ -83,8 +83,8 @@ You can use Toast UI Editor for Vue as moudule format or namespace. Also you can
 * Using Single File Component
 
     ```js
-    import 'tui-editor/dist/tui-editor.css';
-    import 'tui-editor/dist/tui-editor-contents.css';
+    import '@toast-ui/editor/dist/tui-editor.css';
+    import '@toast-ui/editor/dist/tui-editor-contents.css';
     import 'codemirror/lib/codemirror.css';
     import Editor from '@toast-ui/vue-editor/src/Editor.vue'
     ```
@@ -318,7 +318,7 @@ export default {
 * Using Ecmascript module
 
     ```js
-    import 'tui-editor/dist/tui-editor-contents.css';
+    import '@toast-ui/editor/dist/tui-editor-contents.css';
     import 'highlight.js/styles/github.css';
     import { Viewer } from '@toast-ui/vue-editor'
     ```
@@ -326,7 +326,7 @@ export default {
 * Using Commonjs module
 
     ```js
-    require('tui-editor/dist/tui-editor-contents.css');
+    require('@toast-ui/editor/dist/tui-editor-contents.css');
     require('highlight.js/styles/github.css'); 
     var toastui = require('@toast-ui/vue-editor');
     var Viewer = toastui.Viewer;
@@ -335,7 +335,7 @@ export default {
 * Using Single File Component
 
     ```js
-    import 'tui-editor/dist/tui-editor-contents.css';
+    import '@toast-ui/editor/dist/tui-editor-contents.css';
     import 'highlight.js/styles/github.css';
     import Viewer from '@toast-ui/vue-editor/src/Viewer.vue'
     ```

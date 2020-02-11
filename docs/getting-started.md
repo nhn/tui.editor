@@ -2,7 +2,7 @@
 
 ## Install
 ```sh
-npm install --save tui-editor
+npm install --save @toast-ui/editor
 ```
 
 ## Editor
@@ -19,7 +19,7 @@ Place a `<div></div>` where you want TOAST UI Editor to render.
 ### javascript
 Initialize Editor class with given element to make an Editor.
 ```javascript
-var Editor = require('tui-editor');
+var Editor = require('@toast-ui/editor');
 ...
 var editor = new Editor({
     el: document.querySelector('#editSection'),
@@ -50,7 +50,7 @@ Find out more options [here](https://nhn.github.io/tui.editor/api/latest/ToastUI
 **TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** is much **lighter** than the editor.
 
 ```javascript
-var Viewer = require('tui-editor/dist/tui-editor-Viewer');
+var Viewer = require('@toast-ui/editor/dist/tui-editor-viewer');
 ...
 var editor = new Viewer({
     el: document.querySelector('#viewerSection'),
@@ -62,7 +62,7 @@ var editor = new Viewer({
 Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize editor [Editor.factory()]()(https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) and set the `viewer` option to value `true` in order to make the editor a viewer. You can also call [getHTML()]()(https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to render the HTML.
 
 ```javascript
-var Editor = require('tui-editor');
+var Editor = require('@toast-ui/editor');
 ...
 var editor = Editor.factory({
     el: document.querySelector('#viewerSection'),

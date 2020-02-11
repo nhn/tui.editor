@@ -130,8 +130,8 @@ function _bindEvents(eventManager, commandMap) {
 }
 
 /**
- * Plant table merged cell plugin
- * @param {Editor} editor - editor instance
+ * Table merged cell plugin
+ * @param {Editor|Viewer} editor - instance of Editor or Viewer
  */
 export default function tableMergedCellPlugin(editor) {
   const { eventManager } = editor;

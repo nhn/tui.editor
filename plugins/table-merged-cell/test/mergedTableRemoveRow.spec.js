@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import { firefox } from 'tui-code-snippet/browser/browser';
 
-import Editor from 'tui-editor/src/js/editor';
+import Editor from '@toast-ui/editor';
 
 import tableMergedCellPlugin from '@';
 import tableDataHandler from '@/tableDataHandler';
@@ -245,8 +245,8 @@ describe('mergedTableRemoveRow', () => {
     });
 
     it('remove only one row at start range even if there are multiple tds in selection range', () => {
-      const sq = wwe.getEditor(),
-        range = sq.getSelection().cloneRange();
+      const sq = wwe.getEditor();
+      const range = sq.getSelection().cloneRange();
 
       sq.setHTML(`
         <table>

@@ -15,19 +15,19 @@ module.exports = {
     }
   },
   externals: {
-    'tui-editor': {
-      commonjs: 'tui-editor',
-      commonjs2: 'tui-editor',
-      amd: 'tui-editor',
+    '@toast-ui/editor': {
+      commonjs: '@toast-ui/editor',
+      commonjs2: '@toast-ui/editor',
+      amd: '@toast-ui/editor',
       root: ['tui', 'Editor']
     },
-    'tui-editor/dist/tui-editor-Viewer': {
-      commonjs: 'tui-editor/dist/tui-editor-Viewer',
-      commonjs2: 'tui-editor/dist/tui-editor-Viewer',
-      amd: 'tui-editor/dist/tui-editor-Viewer',
+    '@toast-ui/editor/dist/tui-editor-viewer': {
+      commonjs: '@toast-ui/editor/dist/tui-editor-viewer',
+      commonjs2: '@toast-ui/editor/dist/tui-editor-viewer',
+      amd: '@toast-ui/editor/dist/tui-editor-viewer',
       root: ['tui', 'Editor']
     },
-    'jquery': {
+    jquery: {
       commonjs: 'jquery',
       commonjs2: 'jquery',
       amd: 'jquery',
@@ -82,7 +82,5 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new VueLoaderPlugin()
-  ]
+  plugins: [new VueLoaderPlugin()]
 };

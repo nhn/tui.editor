@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import { firefox } from 'tui-code-snippet/browser/browser';
 
-import Editor from 'tui-editor/src/js/editor';
+import Editor from '@toast-ui/editor';
 
 import tableMergedCellPlugin from '@';
 import tableDataHandler from '@/tableDataHandler';

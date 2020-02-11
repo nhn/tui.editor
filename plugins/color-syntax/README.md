@@ -7,11 +7,12 @@
 > Note : The bundle files under the `cdn` folder include all dependencies.
 
 ```
-- dist/
-  - toastui-editor-plugin-color-syntax.js
-  - cdn/
+- tui.editor/plugins/color-syntax/
+  - dist/
     - toastui-editor-plugin-color-syntax.js
-    - toastui-editor-plugin-color-syntax.min
+    - cdn/
+      - toastui-editor-plugin-color-syntax.js
+      - toastui-editor-plugin-color-syntax.min
 ```
 
 ### Serve with npm
@@ -36,7 +37,7 @@
 
 ## Use npm
 
-> Note : To use the plugin, `tui-editor` must be installed.
+> Note : To use the plugin, `@toast-ui/editor` must be installed.
 
 ### Install
 
@@ -73,7 +74,7 @@ const colorSyntaxPlugin = require('@toast-ui/editor-plugin-color-syntax');
 ```js
 // ...
 
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 import colorSyntaxPlugin from '@toast-ui/editor-plugin-color-syntax';
 
 const instance = new Editor({
@@ -84,7 +85,7 @@ const instance = new Editor({
 
 ## Use CDN
 
-> Note : To use the plugin, `tui-editor`'s CDN files(css, scripts) must be included.
+> Note : To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be included.
 
 ### Include Files
 
@@ -94,7 +95,7 @@ const instance = new Editor({
   rel="stylesheet"
   href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css"
 />
-<!-- Scripts -->
+<!-- Script -->
 <script src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
 ```
 
@@ -129,16 +130,16 @@ The `useCustomSyntax` option is `false` by default, applying color syntax using 
 ```js
 // ...
 
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 import colorSyntaxPlugin from '@toast-ui/editor-plugin-color-syntax';
 
-const colorSyntaxOptions = {
+const options = {
   preset: ['#181818', '#292929', '#393939'],
   useCustomSyntax: true
 };
 
 const instance = new Editor({
   // ...
-  plugins: [[colorSyntaxPlugin, colorSyntaxOptions]]
+  plugins: [[colorSyntaxPlugin, options]]
 });
 ```

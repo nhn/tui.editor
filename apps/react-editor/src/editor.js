@@ -1,5 +1,5 @@
 import React from 'react';
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 
 export default class extends React.Component {
   rootEl = React.createRef();
@@ -15,11 +15,11 @@ export default class extends React.Component {
 
   bindEventHandlers(props, prevProps) {
     Object.keys(props)
-      .filter((key) => /on[A-Z][a-zA-Z]+/.test(key))
-      .forEach((key) => {
+      .filter(key => /on[A-Z][a-zA-Z]+/.test(key))
+      .forEach(key => {
         const eventName = key[2].toLowerCase() + key.slice(3);
         // For <Editor onFocus={condition ? onFocus1 : onFocus2} />
-        if(prevProps && prevProps[key] !== props[key]) {
+        if (prevProps && prevProps[key] !== props[key]) {
           this.editorInst.off(eventName);
         }
         this.editorInst.on(eventName, props[key]);
@@ -37,7 +37,7 @@ export default class extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     const instance = this.getInstance();
-    const {height, previewStyle} = nextProps;
+    const { height, previewStyle } = nextProps;
 
     if (this.props.height !== height) {
       instance.height(height);

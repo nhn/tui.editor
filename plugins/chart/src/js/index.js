@@ -565,7 +565,7 @@ function _onMDPasteBefore(cm, { source, data: eventData }) {
 
 /**
  * Chart plugin
- * @param {Editor} editor - editor
+ * @param {Editor|Viewer} editor - instance of Editor or Viewer
  * @param {Object} options - chart options
  * @param {number} [options.minWidth=0] - minimum width
  * @param {number} [options.minHeight=0] - minimum height

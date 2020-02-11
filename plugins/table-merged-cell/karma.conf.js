@@ -61,7 +61,7 @@ function setConfig(defaultConfig, server) {
       // 'Safari-WebDriver' // active only when safari test is needed
     ];
   } else {
-    defaultConfig.browsers = ['ChromeHeadless'];
+    defaultConfig.browsers = ['Chrome'];
     defaultConfig.coverageIstanbulReporter = {
       fixWebpackSourcePaths: true,
       dir: 'report/coverage/',

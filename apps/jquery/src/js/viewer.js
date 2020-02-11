@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import Viewer from 'tui-editor/dist/tui-editor-viewer';
+import Viewer from '@toast-ui/editor/dist/tui-editor-viewer';
 
 $.fn.tuiEditor = function(...args) {
   let options, instance;

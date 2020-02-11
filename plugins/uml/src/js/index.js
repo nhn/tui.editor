@@ -8,10 +8,10 @@ const DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';
 const UML_LANGUAGES = ['uml', 'plantuml'];
 
 /**
- * Plant uml plugin
- * @param {Editor} editor - editor
- * @param {object} [options={}] - plugin options
- * @param {string} options.rendererURL - plant uml renderer url
+ * UML plugin
+ * @param {Editor|Viewer} editor - instance of Editor or Viewer
+ * @param {Object} options - options for plugin
+ * @param {string} [options.rendererURL] - url of plant uml renderer
  */
 export default function umlPlugin(editor, options = {}) {
   const { rendererURL = DEFAULT_RENDERER_URL } = options;

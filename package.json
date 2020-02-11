@@ -9,9 +9,10 @@
     "prettier": "^1.19.1"
   },
   "scripts": {
-    "build": "lerna run --scope tui-editor build",
+    "build": "lerna run --scope @toast-ui/editor build",
     "build:react": "lerna run --scope @toast-ui/react-editor build",
     "build:vue": "lerna run --scope @toast-ui/vue-editor build",
+    "build:jquery": "lerna run --scope @toast-ui/jquery-editor build",
     "build:uml": "lerna run --scope @toast-ui/editor-plugin-uml build",
     "build:chart": "lerna run --scope @toast-ui/editor-plugin-chart build",
     "build:color-syntax": "lerna run --scope @toast-ui/editor-plugin-color-syntax build",

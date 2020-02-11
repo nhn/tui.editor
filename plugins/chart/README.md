@@ -7,11 +7,12 @@
 > Note : The bundle files under the `cdn` folder include all dependencies.
 
 ```
-- dist/
-  - toastui-editor-plugin-chart.js
-  - cdn/
+- tui.editor/plugins/chart/
+  - dist/
     - toastui-editor-plugin-chart.js
-    - toastui-editor-plugin-chart.min
+    - cdn/
+      - toastui-editor-plugin-chart.js
+      - toastui-editor-plugin-chart.min
 ```
 
 ### Serve with npm
@@ -36,7 +37,7 @@
 
 ## Use npm
 
-> Note : To use the plugin, `tui-editor` must be installed.
+> Note : To use the plugin, `@toast-ui/editor` must be installed.
 
 ### Install
 
@@ -73,7 +74,7 @@ const chartPlugin = require('@toast-ui/editor-plugin-chart');
 ```js
 // ...
 
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 import chartPlugin from '@toast-ui/editor-plugin-chart';
 
 const instance = new Editor({
@@ -87,7 +88,7 @@ const instance = new Editor({
 ```js
 // ...
 
-import Viewer from 'tui-editor/viewer';
+import Viewer from '@toast-ui/editor/dist/tui-editor-viewer';
 import chartPlugin from '@toast-ui/editor-plugin-chart';
 
 const instance = new Viewer({
@@ -101,7 +102,7 @@ or
 ```js
 // ...
 
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 import chartPlugin from '@toast-ui/editor-plugin-chart';
 
 const instance = Editor.factory({
@@ -112,14 +113,14 @@ const instance = Editor.factory({
 
 ## Use CDN
 
-> Note : To use the plugin, `tui-editor`'s CDN files(css, scripts) must be included.
+> Note : To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be included.
 
 ### Include Files
 
 ```html
 <!-- CSS -->
 <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/latest/tui-chart.min.css" />
-<!-- Scripts -->
+<!-- Script -->
 <script src="https://uicdn.toast.com/editor-plugin-chart/latest/toastui-editor-plugin-chart.min.js"></script>
 ```
 
@@ -169,7 +170,7 @@ const instance = Editor.factory({
 
 ## [Optional] Use Plugin with Options
 
-The `chart` plugin can set options when used. Just add the plugin function and options related to the plugin to the array(`[${pluginFn}, ${pluginOptions}]`) and push them to the `plugins` option of the editor.
+The `chart` plugin can set options when used. Just add the plugin function and options related to the plugin to the array(`[pluginFn, pluginOptions]`) and push them to the `plugins` option of the editor.
 
 The following options are available in the `chart` plugin.
 These options are used to set the dimensions of the chart drawn in the editor.
@@ -186,10 +187,10 @@ These options are used to set the dimensions of the chart drawn in the editor.
 ```js
 // ...
 
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 import chartPlugin from '@toast-ui/editor-plugin-chart';
 
-const chartOptions = {
+const options = {
   minWidth: 100,
   maxWidth: 600,
   minHeight: 100,
@@ -198,6 +199,6 @@ const chartOptions = {
 
 const instance = new Editor({
   // ...
-  plugins: [[chartPlugin, chartOptions]]
+  plugins: [[chartPlugin, options]]
 });
 ```

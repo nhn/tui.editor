@@ -2,7 +2,7 @@
   <div ref="tuiEditor"></div>
 </template>
 <script>
-import Editor from 'tui-editor';
+import Editor from '@toast-ui/editor';
 import editorEvents from './editorEvents';
 import valueUpdateMethod from './valueUpdateMethod';
 

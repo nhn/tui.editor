@@ -2,7 +2,7 @@
  * @fileoverview Test uml plugin
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import Editor from 'tui-editor/src/js/editor';
+import Editor from '@toast-ui/editor';
 import umlPlugin from '@';
 
 describe('uml plugin', () => {

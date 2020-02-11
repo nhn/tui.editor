@@ -1,17 +1,16 @@
-
-import {storiesOf} from '@storybook/vue';
-import {html} from 'common-tags';
+import { storiesOf } from '@storybook/vue';
+import { html } from 'common-tags';
 import * as dummy from './dummyData';
 
 import 'codemirror/lib/codemirror.css';
 import 'highlight.js/styles/github.css';
-import 'tui-editor/dist/tui-editor.min.css';
-import 'tui-editor/dist/tui-editor-contents.min.css';
+import '@toast-ui/editor/dist/tui-editor.min.css';
+import '@toast-ui/editor/dist/tui-editor-contents.min.css';
 
-import 'tui-editor/dist/tui-editor-extColorSyntax';
-import 'tui-editor/dist/tui-editor-extUML';
-import 'tui-editor/dist/tui-editor-extChart';
-import 'tui-editor/dist/tui-editor-extTable';
+import '@toast-ui/editor/dist/tui-editor-extColorSyntax';
+import '@toast-ui/editor/dist/tui-editor-extUML';
+import '@toast-ui/editor/dist/tui-editor-extChart';
+import '@toast-ui/editor/dist/tui-editor-extTable';
 
 import Viewer from '../src/Viewer.vue';
 
@@ -47,10 +46,11 @@ stories.add('change value prop', () => ({
     Viewer
   },
   template: html`
-  <div>
-    <button @click="changeValue">changeValue</button>
-    <Viewer :value="content" :exts="exts" />
-  </div>`,
+    <div>
+      <button @click="changeValue">changeValue</button>
+      <Viewer :value="content" :exts="exts" />
+    </div>
+  `,
   data() {
     return {
       content: dummy.content,
@@ -81,10 +81,11 @@ stories.add('invoke method', () => ({
     Viewer
   },
   template: html`
-  <div>
-    <button @click="setValue">setValue</button>
-    <Viewer ref="viewer" :value="content" :exts="exts" />
-  </div>`,
+    <div>
+      <button @click="setValue">setValue</button>
+      <Viewer ref="viewer" :value="content" :exts="exts" />
+    </div>
+  `,
   data() {
     return {
       content: dummy.content,

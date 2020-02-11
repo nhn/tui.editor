@@ -8,13 +8,13 @@ const config = {
     libraryTarget: 'commonjs2'
   },
   externals: {
-    'tui-editor': {
-      commonjs: 'tui-editor',
-      commonjs2: 'tui-editor'
+    '@toast-ui/editor': {
+      commonjs: '@toast-ui/editor',
+      commonjs2: '@toast-ui/editor'
     },
-    'tui-editor/dist/tui-editor-Viewer': {
-      commonjs: 'tui-editor/dist/tui-editor-Viewer',
-      commonjs2: 'tui-editor/dist/tui-editor-Viewer'
+    '@toast-ui/editor/dist/tui-editor-viewer': {
+      commonjs: '@toast-ui/editor/dist/tui-editor-viewer',
+      commonjs2: '@toast-ui/editor/dist/tui-editor-viewer'
     },
     react: {
       commonjs: 'react',

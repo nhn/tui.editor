@@ -4,15 +4,18 @@
   "description": "TOAST UI Editor : jQuery Wrapper",
   "keywords": [
     "nhn",
+    "toast",
     "toastui",
+    "toast-ui",
     "editor",
+    "wrapper",
     "jquery"
   ],
   "main": "dist/toastui-jquery-editor.js",
   "files": [
     "dist/*.js"
   ],
-  "author": "NHN. FE Development Lab",
+  "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -59,8 +62,8 @@
     "webpack-dev-server": "^3.10.1"
   },
   "dependencies": {
-    "jquery": "^3.4.1",
-    "tui-editor": "^1.4.10"
+    "@toast-ui/editor": "file:../editor",
+    "jquery": "^3.4.1"
   },
   "publishConfig": {
     "access": "public"
