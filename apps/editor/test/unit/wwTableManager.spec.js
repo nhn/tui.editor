@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
 
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
@@ -50,8 +50,7 @@ describe('WwTableManager', () => {
         .find('br')
         .remove();
     });
-    const expectation =
-      util.browser.msie && (util.browser.version === 10 || util.browser.version === 11) ? 0 : 1;
+    const expectation = browser.msie && (browser.version === 10 || browser.version === 11) ? 0 : 1;
 
     it('append br if td or th does not have br as lastchild, td case', () => {
       const range = wwe
