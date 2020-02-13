@@ -3,7 +3,6 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';

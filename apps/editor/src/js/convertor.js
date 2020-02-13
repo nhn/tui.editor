@@ -6,6 +6,8 @@ import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
 import toMark from '@toast-ui/to-mark';
 
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+
 import htmlSanitizer from './htmlSanitizer';
 import taskList from './markdownItPlugins/markdownitTaskPlugin';
 import codeBlock from './markdownItPlugins/markdownitCodeBlockPlugin';
@@ -242,7 +244,7 @@ class Convertor {
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
     markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
 
-    markdown.split('\n').forEach((line, index) => {
+    forEachArray(markdown.split('\n'), (line, index) => {
       const FIND_TABLE_RX = /^(<br>)+\||\|[^|]*\|/gi;
       const FIND_CODE_RX = /`[^`]*<br>[^`]*`/gi;
       const FIND_BRS_BEFORE_TABLE = /^(<br>)+\|/gi;
