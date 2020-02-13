@@ -53,6 +53,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
             exclude: /node_modules|dist|build/,
             loader: 'babel-loader?cacheDirectory',
             options: {
+              envName: isProduction ? 'production' : 'development',
               rootMode: 'upward'
             }
           }

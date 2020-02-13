@@ -4,12 +4,13 @@
  */
 import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
-import util from 'tui-code-snippet';
+
+import * as util from '@/util';
 
 import Editor from '@/editor';
 import Convertor from '@/convertor';
 import { CodeBlockManager } from '@/codeBlockManager';
-import { I18n } from '@/i18n';
+
 import Button from '@/ui/button';
 import WwCodeBlockManager from '@/wwCodeBlockManager';
 import WwTableManager from '@/wwTableManager';
@@ -330,24 +331,24 @@ describe('Editor', () => {
 
     describe('usageStatistics', () => {
       it('should send request hostname in payload by default', () => {
-        spyOn(util, 'sendHostname');
+        spyOn(util, 'sendHostName');
 
         editor = new Editor({
           el: container
         });
 
-        expect(util.sendHostname).toHaveBeenCalled();
+        expect(util.sendHostName).toHaveBeenCalled();
       });
 
       it('should not send request if the option is set to false', () => {
-        spyOn(util, 'sendHostname');
+        spyOn(util, 'sendHostName');
 
         editor = new Editor({
           el: container,
           usageStatistics: false
         });
 
-        expect(util.sendHostname).not.toHaveBeenCalled();
+        expect(util.sendHostName).not.toHaveBeenCalled();
       });
     });
 

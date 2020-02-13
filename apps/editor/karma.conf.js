@@ -103,6 +103,7 @@ module.exports = function(config) {
             loader: 'babel-loader?cacheDirectory',
             exclude: /node_modules|dist/,
             options: {
+              envName: 'test',
               rootMode: 'upward'
             }
           },
