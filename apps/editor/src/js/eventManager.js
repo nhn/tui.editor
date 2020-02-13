@@ -2,11 +2,12 @@
  * @fileoverview Implements EventManager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isFalsy from 'tui-code-snippet/type/isFalsy';
 import Enum from 'tui-code-snippet/enum/enum';
+
+import Map from './utils/map';
 
 const eventList = [
   'previewBeforeHook',
@@ -85,7 +86,7 @@ const eventList = [
  */
 class EventManager {
   constructor() {
-    this.events = new util.Map();
+    this.events = new Map();
     this.TYPE = new Enum(eventList);
   }
 
