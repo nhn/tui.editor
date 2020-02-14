@@ -2,21 +2,18 @@
  * @fileoverview test markdown table
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import Table from '@/markdownCommands/table';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
 describe('Table', () => {
-  let cm, doc, mde;
+  let cm, doc, mde, container;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    mde = new MarkdownEditor($container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager());
 
     cm = mde.getEditor();
 
@@ -24,7 +21,7 @@ describe('Table', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   describe('Table', () => {

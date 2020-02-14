@@ -2,21 +2,18 @@
  * @fileoverview test markdown code
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import Code from '@/markdownCommands/code';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
 describe('Code', () => {
-  let cm, doc, mde, $container;
+  let cm, doc, mde, container;
 
   beforeEach(() => {
-    $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    mde = new MarkdownEditor($container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager());
 
     cm = mde.getEditor();
 
@@ -27,7 +24,7 @@ describe('Code', () => {
   });
 
   afterEach(() => {
-    $container.remove();
+    document.body.removeChild(container);
   });
 
   it('Add code', () => {

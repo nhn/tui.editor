@@ -2,31 +2,29 @@
  * @fileoverview test markdown code block
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import CodeBlock from '@/markdownCommands/codeBlock';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
 describe('CodeBlock', () => {
-  let cm, doc, mde;
+  let cm, doc, mde, container;
 
   beforeEach(() => {
-    const $container = $('<div />');
-    const sourceText = ['mytext1', 'mytext2', 'mytext3'].join('\n');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    mde = new MarkdownEditor($container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager());
 
     cm = mde.getEditor();
+
+    const sourceText = ['mytext1', 'mytext2', 'mytext3'].join('\n');
 
     cm.setValue(sourceText);
     doc = cm.getDoc();
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   it('Insert a code block into a cursor location', () => {

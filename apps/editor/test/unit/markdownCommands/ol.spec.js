@@ -2,22 +2,19 @@
  * @fileoverview test markdown ol
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import OL from '@/markdownCommands/ol';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 import mdListManager from '@/mdListManager';
 
 describe('OL', () => {
-  let cm, doc, mde;
+  let cm, doc, mde, container;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    mde = new MarkdownEditor($container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager());
 
     mde.componentManager.addManager(mdListManager);
 
@@ -30,7 +27,7 @@ describe('OL', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   describe('add ol', () => {

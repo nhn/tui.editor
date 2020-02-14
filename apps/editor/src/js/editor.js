@@ -197,7 +197,7 @@ class ToastUIEditor {
     this.setUI(this.options.UI || new DefaultUI(this));
 
     this.mdEditor = MarkdownEditor.factory(
-      this.layout.getMdEditorContainerEl(),
+      this.layout.getMdEditorContainerEl()[0],
       this.eventManager,
       this.options
     );

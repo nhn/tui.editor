@@ -21,7 +21,7 @@ describe('ComponentManager', () => {
     em = new EventManager();
 
     wwe = new WysiwygEditor($(container), em);
-    mde = new MarkdownEditor($(container2), em);
+    mde = new MarkdownEditor(container2, em);
 
     wwe.init();
 

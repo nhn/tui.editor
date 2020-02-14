@@ -2,8 +2,6 @@
  * @fileoverview test fix ordered list number
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
@@ -17,7 +15,7 @@ describe('fixOrderedListNumber', () => {
     document.body.appendChild(container);
 
     em = new EventManager();
-    mde = new MarkdownEditor($(container), em);
+    mde = new MarkdownEditor(container, em);
   });
 
   afterEach(() => {

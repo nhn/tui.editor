@@ -14,13 +14,13 @@ const keyMapper = KeyMapper.getSharedInstance();
 
 /**
  * Class MarkdownEditor
- * @param {jQuery} $el - container jquery element
+ * @param {HTMLElement} el - container element
  * @param {EventManager} eventManager - event manager
  * @param {Object} options - options of editor
  */
 class MarkdownEditor extends CodeMirrorExt {
-  constructor($el, eventManager, options) {
-    super($el.get(0), {
+  constructor(el, eventManager, options) {
+    super(el, {
       mode: 'gfm',
       dragDrop: true,
       allowDropFileTypes: ['image'],
@@ -234,16 +234,14 @@ class MarkdownEditor extends CodeMirrorExt {
 
   /**
    * MarkdownEditor factory method
-   * @param {jQuery} $el - Container element for editor
+   * @param {HTMLElement} el - Container element for editor
    * @param {EventManager} eventManager - EventManager instance
    * @param {Object} options - options of editor
    * @returns {MarkdownEditor} - MarkdownEditor
    * @ignore
    */
-  static factory($el, eventManager, options) {
-    const mde = new MarkdownEditor($el, eventManager, options);
-
-    return mde;
+  static factory(el, eventManager, options) {
+    return new MarkdownEditor(el, eventManager, options);
   }
 }
 
