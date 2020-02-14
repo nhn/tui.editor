@@ -203,7 +203,6 @@ export class Parser {
     const above = block.parent as BlockNode;
     block.open = false;
     block.sourcepos![1] = [lineNumber, this.lastLineLength];
-
     blockHandlers[block.type].finalize(this, block);
 
     this.tip = above;
@@ -400,6 +399,29 @@ export class Parser {
     }
     while (this.tip) {
       this.finalize(this.tip, len);
+    }
+    this.processInlines(this.doc);
+
+    return this.doc;
+  }
+
+  partialParse(lineNumber: number, lines: string[]) {
+    this.doc = document();
+    this.tip = this.doc;
+    this.refmap = {};
+    this.lineNumber = lineNumber - 1;
+    this.lastLineLength = 0;
+    this.offset = 0;
+    this.column = 0;
+    this.lastMatchedContainer = this.doc;
+    this.currentLine = '';
+    const len = lines.length;
+
+    for (let i = 0; i < len; i++) {
+      this.incorporateLine(lines[i]);
+    }
+    while (this.tip) {
+      this.finalize(this.tip, lineNumber - 1 + len);
     }
     this.processInlines(this.doc);
 
