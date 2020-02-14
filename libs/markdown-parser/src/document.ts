@@ -1,88 +1,18 @@
 import { Parser } from './commonmark/blocks';
-import { Node, NodeType } from './commonmark/node';
+import { Node } from './commonmark/node';
+import {
+  removeNextUntil,
+  findClosestCommonParent,
+  replaceNodeWithDocument,
+  findBlockByLine,
+  findChildNodeByLine
+} from './nodeHelper';
 
 const reLineEnding = /\r\n|\n|\r/;
 
 export type Position = [number, number];
+
 export type Range = [Position, Position];
-const enum Compare {
-  LT = -1,
-  EQ = 0,
-  GT = 1
-}
-
-function isContainerBlock(type: NodeType) {
-  switch (type) {
-    case 'document':
-    case 'blockQuote':
-    case 'list':
-    case 'item':
-      return true;
-    default:
-      return false;
-  }
-}
-
-function compareLine([startPos, endPos]: [Position, Position], line: number) {
-  if (endPos[0] < line) {
-    return Compare.LT;
-  }
-  if (startPos[0] > line) {
-    return Compare.GT;
-  }
-  return Compare.EQ;
-}
-
-function lastLeafBlock(parent: Node | null) {
-  if (!parent) {
-    return null;
-  }
-  let node = parent;
-  while (isContainerBlock(node.type) && node.lastChild) {
-    node = node.lastChild;
-  }
-  return node;
-}
-
-function findBlockByLine(parent: Node, line: number) {
-  let node: Node | null = parent;
-  let prevNode = null;
-  while (node) {
-    const comp = compareLine(node.sourcepos!, line);
-    if (comp === Compare.EQ) {
-      if (isContainerBlock(node.type)) {
-        prevNode = null;
-        node = node.firstChild;
-      } else {
-        return node;
-      }
-    } else if (comp === Compare.GT) {
-      return lastLeafBlock(prevNode);
-    } else {
-      prevNode = node;
-      node = node.next;
-    }
-  }
-  return lastLeafBlock(prevNode);
-}
-
-function replaceNodeWithDocument(target: Node, doc: Node) {
-  const nodes: Node[] = [];
-  const first = doc.firstChild!;
-  let next = first.next;
-  if (target) {
-    target.replaceWith(first);
-    nodes.push(first);
-  }
-  while (next) {
-    const temp = next.next;
-    first.insertAfter(next);
-    nodes.push(next);
-    next = temp;
-  }
-
-  return nodes;
-}
 
 interface EditResult {
   updated?: Node[];
@@ -105,6 +35,7 @@ export class MarkdownDocument {
     }
 
     let prevLine, prevEndCol, nextLine, nextStartCol;
+    let result: EditResult | null = null;
 
     if (!start || !end) {
       const position = (start || end) as Position;
@@ -117,26 +48,44 @@ export class MarkdownDocument {
       nextStartCol = end[1];
     }
 
-    const targetNode = findBlockByLine(this.root, prevLine);
-    if (targetNode) {
-      const startLine = targetNode.sourcepos![0][0];
-      const endLine = targetNode.sourcepos![1][0];
-      const newLines = newText.split(reLineEnding);
-      const newLineLen = newLines.length;
-      const prevLineText = this.lineTexts[prevLine - 1];
-      const nextLineText = this.lineTexts[nextLine - 1];
-      newLines[0] = prevLineText.slice(0, prevEndCol) + newLines[0];
-      newLines[newLineLen - 1] = newLines[newLineLen - 1] + nextLineText.slice(nextStartCol);
-
-      this.lineTexts.splice(prevLine - 1, nextLine - prevLine + 1, ...newLines);
-
-      const editedLines = this.lineTexts.slice(startLine - 1, endLine - startLine + newLineLen + 1);
-      const newDoc = this.parser.partialParse(startLine, editedLines);
-      const updated = replaceNodeWithDocument(targetNode, newDoc);
-
-      return { updated };
+    let startNode = findBlockByLine(this.root, prevLine)!;
+    let endNode: Node;
+    if (prevLine === nextLine || nextLine <= startNode.sourcepos![1][0]) {
+      endNode = startNode;
+    } else {
+      endNode = findBlockByLine(this.root, nextLine)!;
     }
-    return null;
+
+    const startLine = startNode.sourcepos![0][0];
+    const endLine = endNode.sourcepos![1][0];
+    const newLines = newText.split(reLineEnding);
+    const newLineLen = newLines.length;
+    const prevLineText = this.lineTexts[prevLine - 1];
+    const nextLineText = this.lineTexts[nextLine - 1];
+    newLines[0] = prevLineText.slice(0, prevEndCol) + newLines[0];
+    newLines[newLineLen - 1] = newLines[newLineLen - 1] + nextLineText.slice(nextStartCol);
+
+    this.lineTexts.splice(prevLine - 1, nextLine - prevLine + 1, ...newLines);
+
+    if (startNode !== endNode) {
+      const parent = findClosestCommonParent(startNode, endNode)!;
+      startNode = findChildNodeByLine(parent, prevLine)!;
+      endNode = findChildNodeByLine(parent, nextLine)!;
+      removeNextUntil(startNode, endNode);
+    }
+
+    const editedLines = this.lineTexts.slice(startLine - 1, endLine - startLine + newLineLen + 1);
+    const newDoc = this.parser.partialParse(startLine, editedLines);
+    const updated = replaceNodeWithDocument(startNode, newDoc);
+
+    result = { updated };
+
+    this.root.sourcepos![1] = [
+      this.lineTexts.length,
+      this.lineTexts[this.lineTexts.length - 1].length
+    ];
+
+    return result;
   }
 
   getLineTexts() {

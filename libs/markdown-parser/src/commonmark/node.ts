@@ -119,7 +119,7 @@ export class Node {
         node.parent.lastChild = node;
       }
     }
-    this.unlink();
+    this.prev = this.next = this.parent = null;
   }
 
   insertAfter(sibling: Node) {
