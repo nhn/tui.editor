@@ -2,28 +2,26 @@
  * @fileoverview test markdown preview
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import MarkdownPreview from '@/mdPreview';
 import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
 
 describe('Preview', () => {
-  let eventManager, convertor, $wrapper, preview;
+  let eventManager, convertor, wrapper, preview;
 
   beforeEach(() => {
-    $wrapper = $('<div>');
-    $('body').append($wrapper);
+    wrapper = document.createElement('div');
+    document.body.appendChild(wrapper);
 
     eventManager = new EventManager();
     convertor = new Convertor(eventManager);
-    preview = new MarkdownPreview($wrapper, eventManager, convertor, true);
+    preview = new MarkdownPreview(wrapper, eventManager, convertor, true);
 
     jasmine.clock().install();
   });
 
   afterEach(() => {
-    $wrapper.remove();
+    wrapper.parentNode.removeChild(wrapper);
     jasmine.clock().uninstall();
   });
 

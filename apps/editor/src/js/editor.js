@@ -2,12 +2,13 @@
  * @fileoverview Implements Editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isNumber from 'tui-code-snippet/type/isNumber';
+import extend from 'tui-code-snippet/object/extend';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import { sendHostName } from './util';
 
@@ -122,7 +123,7 @@ class ToastUIEditor {
     this.initialHtml = options.el.innerHTML;
     options.el.innerHTML = '';
 
-    this.options = $.extend(
+    this.options = extend(
       {
         previewStyle: 'tab',
         initialEditType: 'markdown',
@@ -201,7 +202,7 @@ class ToastUIEditor {
       this.options
     );
     this.preview = new MarkdownPreview(
-      this.layout.getPreviewEl(),
+      this.layout.getPreviewEl()[0],
       this.eventManager,
       this.convertor,
       false,
@@ -547,11 +548,13 @@ class ToastUIEditor {
    */
   height(height) {
     if (isExisty(height)) {
+      const { el } = this.options;
+
       if (height === 'auto') {
-        $(this.options.el).addClass('auto-height');
+        addClass(el, 'auto-height');
         this.minHeight(this.minHeight());
       } else {
-        $(this.options.el).removeClass('auto-height');
+        removeClass(el, 'auto-height');
         this.minHeight(height);
       }
       if (isNumber(height)) {

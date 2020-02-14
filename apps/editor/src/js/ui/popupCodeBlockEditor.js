@@ -152,7 +152,7 @@ class PopupCodeBlockEditor extends LayerPopup {
     const previewWrapper = document.createElement('div');
 
     this._codeBlockPreview = new CodeBlockPreview(
-      $(previewWrapper),
+      previewWrapper,
       this.eventManager,
       this.convertor,
       this._codeBlockEditor
