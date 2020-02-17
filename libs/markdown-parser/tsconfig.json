@@ -11,7 +11,7 @@
     "sourceMap": true,
     "typeRoots": ["./types", "node_modules/@types"],
     "baseUrl": ".",
-    "lib": ["esnext"]
+    "lib": ["esnext", "dom"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
