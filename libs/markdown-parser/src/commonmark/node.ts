@@ -99,27 +99,8 @@ export class Node {
   }
 
   replaceWith(node: Node) {
-    node.unlink();
-
-    if (this.prev) {
-      node.prev = this.prev;
-      node.prev.next = node;
-    }
-    if (this.next) {
-      node.next = this.next;
-      node.next.prev = node;
-    }
-
-    if (this.parent) {
-      node.parent = this.parent;
-      if (!node.prev) {
-        node.parent.firstChild = node;
-      }
-      if (!node.next) {
-        node.parent.lastChild = node;
-      }
-    }
-    this.prev = this.next = this.parent = null;
+    this.insertBefore(node);
+    this.unlink();
   }
 
   insertAfter(sibling: Node) {

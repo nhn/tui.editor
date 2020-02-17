@@ -34,6 +34,10 @@ export function findClosestCommonParent(node1: Node, node2: Node) {
 }
 
 export function removeNextUntil(node: Node, last: Node) {
+  if (node.parent !== last.parent || node === last) {
+    return;
+  }
+
   let next = node.next;
   while (next && next !== last) {
     const temp = next.next;
@@ -48,22 +52,44 @@ export function removeNextUntil(node: Node, last: Node) {
   }
 }
 
-export function replaceNodeWithDocument(target: Node, doc: Node) {
-  const nodes: Node[] = [];
-  const first = doc.firstChild!;
-  let next = first.next;
-  if (target) {
-    target.replaceWith(first);
-    nodes.push(first);
+export function getChildNodes(parent: Node) {
+  const nodes = [];
+  let curr: Node | null = parent.firstChild!;
+  while (curr) {
+    nodes.push(curr);
+    curr = curr.next;
   }
-  while (next) {
-    const temp = next.next;
-    first.insertAfter(next);
-    nodes.push(next);
-    next = temp;
+  return nodes;
+}
+
+export function insertNodesBefore(target: Node, nodes: Node[]) {
+  for (const node of nodes) {
+    target.insertBefore(node);
+  }
+}
+
+export function prependChildNodes(parent: Node, nodes: Node[]) {
+  for (let i = nodes.length - 1; i >= 0; i -= 1) {
+    parent.prependChild(nodes[i]);
+  }
+}
+
+export function updateNextLineNumbers(base: Node | null, diff: number) {
+  if (!base || !base.parent) {
+    return;
   }
 
-  return nodes;
+  const walker = base.parent.walker();
+  walker.resumeAt(base, true);
+
+  let event;
+  while ((event = walker.next())) {
+    const { node, entering } = event;
+    if (entering) {
+      node.sourcepos![0][0] += diff;
+      node.sourcepos![1][0] += diff;
+    }
+  }
 }
 
 function isContainerBlock(type: NodeType) {

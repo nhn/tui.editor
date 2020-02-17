@@ -1,11 +1,15 @@
 import { Parser } from './commonmark/blocks';
 import { Node } from './commonmark/node';
+import { last } from './helper';
 import {
   removeNextUntil,
   findClosestCommonParent,
-  replaceNodeWithDocument,
   findBlockByLine,
-  findChildNodeByLine
+  findChildNodeByLine,
+  getChildNodes,
+  insertNodesBefore,
+  prependChildNodes,
+  updateNextLineNumbers
 } from './nodeHelper';
 
 const reLineEnding = /\r\n|\n|\r/;
@@ -48,6 +52,16 @@ export class MarkdownDocument {
       nextStartCol = end[1];
     }
 
+    const newLines = newText.split(reLineEnding);
+    const newLineLen = newLines.length;
+    const prevLineText = this.lineTexts[prevLine - 1];
+    const nextLineText = this.lineTexts[nextLine - 1];
+    newLines[0] = prevLineText.slice(0, prevEndCol) + newLines[0];
+    newLines[newLineLen - 1] = newLines[newLineLen - 1] + nextLineText.slice(nextStartCol);
+
+    const removedLineLen = nextLine - prevLine + 1;
+    this.lineTexts.splice(prevLine - 1, removedLineLen, ...newLines);
+
     let startNode = findBlockByLine(this.root, prevLine)!;
     let endNode: Node;
     if (prevLine === nextLine || nextLine <= startNode.sourcepos![1][0]) {
@@ -56,34 +70,30 @@ export class MarkdownDocument {
       endNode = findBlockByLine(this.root, nextLine)!;
     }
 
-    const startLine = startNode.sourcepos![0][0];
-    const endLine = endNode.sourcepos![1][0];
-    const newLines = newText.split(reLineEnding);
-    const newLineLen = newLines.length;
-    const prevLineText = this.lineTexts[prevLine - 1];
-    const nextLineText = this.lineTexts[nextLine - 1];
-    newLines[0] = prevLineText.slice(0, prevEndCol) + newLines[0];
-    newLines[newLineLen - 1] = newLines[newLineLen - 1] + nextLineText.slice(nextStartCol);
+    const startLine = startNode ? startNode.sourcepos![0][0] : prevLine;
+    const endLine = endNode ? Math.max(endNode.sourcepos![1][0], prevLine) : nextLine;
+    const editedLines = this.lineTexts.slice(startLine - 1, endLine - removedLineLen + newLineLen);
+    const newNodes = getChildNodes(this.parser.partialParse(startLine, editedLines));
 
-    this.lineTexts.splice(prevLine - 1, nextLine - prevLine + 1, ...newLines);
-
-    if (startNode !== endNode) {
-      const parent = findClosestCommonParent(startNode, endNode)!;
-      startNode = findChildNodeByLine(parent, prevLine)!;
-      endNode = findChildNodeByLine(parent, nextLine)!;
+    if (!startNode && !endNode) {
+      prependChildNodes(this.root, newNodes);
+    } else {
+      if (startNode !== endNode) {
+        const parent = findClosestCommonParent(startNode, endNode)!;
+        startNode = findChildNodeByLine(parent, prevLine)!;
+        endNode = findChildNodeByLine(parent, nextLine)!;
+      }
+      insertNodesBefore(startNode, newNodes);
       removeNextUntil(startNode, endNode);
+      startNode.unlink();
     }
 
-    const editedLines = this.lineTexts.slice(startLine - 1, endLine - startLine + newLineLen + 1);
-    const newDoc = this.parser.partialParse(startLine, editedLines);
-    const updated = replaceNodeWithDocument(startNode, newDoc);
+    result = { updated: newNodes };
 
-    result = { updated };
+    const nextNode = newNodes.length ? last(newNodes).next : this.root.firstChild;
+    updateNextLineNumbers(nextNode, newLineLen - removedLineLen);
 
-    this.root.sourcepos![1] = [
-      this.lineTexts.length,
-      this.lineTexts[this.lineTexts.length - 1].length
-    ];
+    this.root.sourcepos![1] = [this.lineTexts.length, last(this.lineTexts).length];
 
     return result;
   }

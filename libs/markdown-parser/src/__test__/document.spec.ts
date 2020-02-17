@@ -193,6 +193,28 @@ describe('editText()', () => {
       expect(result.updated![0]).toBe(root.firstChild!);
     });
 
+    it('prepend newlines', () => {
+      const doc = new MarkdownDocument('\nHello World');
+      const result = doc.editMarkdown([1, 1], null, '\n')!;
+      const root = doc.getRootNode();
+
+      expect(doc.getLineTexts()).toEqual(['', '', 'Hello World']);
+      expect(root).toMatchObject({
+        type: 'document',
+        sourcepos: pos(1, 1, 3, 11),
+        firstChild: {
+          type: 'paragraph',
+          sourcepos: pos(3, 1, 3, 11),
+          firstChild: {
+            type: 'text',
+            literal: 'Hello World',
+            sourcepos: pos(3, 1, 3, 11)
+          },
+          next: null
+        }
+      });
+    });
+
     it('append characters with newline', () => {
       const doc = new MarkdownDocument('Hello World\n');
       const result = doc.editMarkdown([2, 1], null, '\nHi')!;
@@ -287,6 +309,65 @@ describe('editText()', () => {
       });
       expect(result.updated!.length).toBe(1);
       expect(result.updated![0]).toBe(root.firstChild!);
+    });
+
+    it('update sourcepos for every next nodes', () => {
+      const doc = new MarkdownDocument('Hello\n\nMy\n\nWorld *!!*');
+      const result = doc.editMarkdown([1, 1], null, 'Hey,\n')!;
+      const root = doc.getRootNode();
+
+      expect(result.updated!.length).toBe(1);
+      expect(result.updated![0]).toBe(root.firstChild!);
+      expect(doc.getLineTexts()).toEqual(['Hey,', 'Hello', '', 'My', '', 'World *!!*']);
+      expect(root).toMatchObject({
+        type: 'document',
+        sourcepos: pos(1, 1, 6, 10),
+        firstChild: {
+          type: 'paragraph',
+          sourcepos: pos(1, 1, 2, 5),
+          firstChild: {
+            type: 'text',
+            sourcepos: pos(1, 1, 1, 4),
+            literal: 'Hey,',
+            next: {
+              type: 'softbreak',
+              sourcepos: pos(1, 5, 1, 5),
+              next: {
+                type: 'text',
+                sourcepos: pos(2, 1, 2, 5),
+                literal: 'Hello'
+              }
+            }
+          },
+          next: {
+            type: 'paragraph',
+            sourcepos: pos(4, 1, 4, 2),
+            firstChild: {
+              type: 'text',
+              sourcepos: pos(4, 1, 4, 2),
+              literal: 'My'
+            },
+            next: {
+              type: 'paragraph',
+              sourcepos: pos(6, 1, 6, 10),
+              firstChild: {
+                type: 'text',
+                sourcepos: pos(6, 1, 6, 6),
+                literal: 'World ',
+                next: {
+                  type: 'emph',
+                  sourcepos: pos(6, 7, 6, 10),
+                  firstChild: {
+                    type: 'text',
+                    sourcepos: pos(6, 8, 6, 9),
+                    literal: '!!'
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
     });
   });
 });
