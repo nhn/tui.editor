@@ -2,24 +2,21 @@
  * @fileoverview test wysiwyg editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 import ListManager from '@/wwListManager';
 import { isMac } from '@/util';
 
 describe('WysiwygEditor', () => {
-  let $container, em, wwe;
+  let container, em, wwe;
 
   beforeEach(() => {
-    $container = $('<div />');
-
-    $('body').append($container);
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($container, em);
+    wwe = new WysiwygEditor(container, em);
 
     wwe.init();
     wwe.editor.focus();
@@ -28,7 +25,9 @@ describe('WysiwygEditor', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $container.remove();
+      if (container.parentNode) {
+        container.parentNode.removeChild(container);
+      }
       done();
     });
   });
@@ -403,36 +402,36 @@ describe('WysiwygEditor', () => {
   });
 
   describe('insertText()', () => {
-    let sqe, selection, $body;
+    let sqe, selection, body;
 
     beforeEach(() => {
       sqe = wwe.getEditor();
       selection = sqe.getSelection().cloneRange();
-      $body = sqe.get$Body();
+      body = sqe.getBody();
     });
 
     it('to cursor position', () => {
       sqe.setHTML('<div>text  here<br/></div>');
 
-      selection.setStart($body.find('div')[0].firstChild, 5);
+      selection.setStart(body.querySelector('div').firstChild, 5);
       selection.collapse(true);
       sqe.setSelection(selection);
 
       wwe.insertText('insert');
 
-      expect($body[0].textContent).toEqual('text insert here');
+      expect(body.textContent).toEqual('text insert here');
     });
 
     it('to selected area', () => {
       sqe.setHTML('<div>text here<br/></div>');
 
-      selection.setStart($body.find('div')[0].firstChild, 5);
-      selection.setEnd($body.find('div')[0].firstChild, 9);
+      selection.setStart(body.querySelector('div').firstChild, 5);
+      selection.setEnd(body.querySelector('div').firstChild, 9);
       sqe.setSelection(selection);
 
       wwe.insertText('replaced');
 
-      expect($body[0].textContent).toEqual('text replaced');
+      expect(body.textContent).toEqual('text replaced');
     });
   });
 
@@ -638,7 +637,9 @@ describe('WysiwygEditor', () => {
         fail('defer() callback has been called');
       });
 
-      wwe.$editorContainerEl.remove();
+      const element = wwe.editorContainerEl;
+
+      element.parentNode.removeChild(element);
     });
   });
 
@@ -689,9 +690,10 @@ describe('WysiwygEditor', () => {
       wwe.scrollIntoCursor();
 
       const { top: cursorTop, height: cursorHeight } = sqe.getCursorPosition();
-      const { top: editorTop, height: editorHeight } = wwe.$editorContainerEl
-        .get(0)
-        .getBoundingClientRect();
+      const {
+        top: editorTop,
+        height: editorHeight
+      } = wwe.editorContainerEl.getBoundingClientRect();
 
       expect(cursorTop >= 0).toBe(true);
       expect(cursorTop + cursorHeight <= editorTop + editorHeight).toBe(true);
@@ -712,9 +714,10 @@ describe('WysiwygEditor', () => {
       wwe.scrollIntoCursor();
 
       const { top: cursorTop, height: cursorHeight } = sqe.getCursorPosition();
-      const { top: editorTop, height: editorHeight } = wwe.$editorContainerEl
-        .get(0)
-        .getBoundingClientRect();
+      const {
+        top: editorTop,
+        height: editorHeight
+      } = wwe.editorContainerEl.getBoundingClientRect();
 
       expect(cursorTop - editorTop >= 0).toBe(true);
       expect(cursorTop + cursorHeight <= editorTop + editorHeight).toBe(true);

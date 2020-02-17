@@ -2,21 +2,18 @@
  * @fileoverview test wysiwyg add image command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import AddImage from '@/wysiwygCommands/addImage';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('AddImage', () => {
-  let wwe, $container;
+  let wwe, container;
 
   beforeEach(() => {
-    $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.getEditor().focus();
@@ -25,7 +22,7 @@ describe('AddImage', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $container.remove();
+      document.body.removeChild(container);
       done();
     });
   });

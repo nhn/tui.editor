@@ -16,7 +16,7 @@ describe('Outdent', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor($(container), new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
     wwe.init();
 
     sq = wwe.getEditor();
@@ -55,17 +55,15 @@ describe('Outdent', () => {
 
     Outdent.exec(wwe);
 
-    expect(sq.get$Body().find('ul > li').length).toEqual(3);
-    expect(sq.get$Body().find('ul > ul > li').length).toEqual(0);
+    expect($(sq.getBody()).find('ul > li').length).toEqual(3);
+    expect($(sq.getBody()).find('ul > ul > li').length).toEqual(0);
     expect(
-      sq
-        .get$Body()
+      $(sq.getBody())
         .find('ul > li')
         .hasClass('task-list-item')
     ).toBe(true);
     expect(
-      sq
-        .get$Body()
+      $(sq.getBody())
         .find('ul > li')
         .hasClass('checked')
     ).toBe(true);
@@ -83,11 +81,10 @@ describe('Outdent', () => {
 
     Outdent.exec(wwe);
 
-    expect(sq.get$Body().find('ul li').length).toEqual(2);
-    expect(sq.get$Body().find('ul ul li').length).toEqual(1);
+    expect($(sq.getBody()).find('ul li').length).toEqual(2);
+    expect($(sq.getBody()).find('ul ul li').length).toEqual(1);
     expect(
-      sq
-        .get$Body()
+      $(sq.getBody())
         .find('ul li')
         .hasClass('task-list-item')
     ).toBe(true);
@@ -115,7 +112,7 @@ describe('Outdent', () => {
 
     Outdent.exec(wwe);
 
-    const $Body = sq.get$Body();
+    const $Body = $(sq.getBody());
 
     expect($Body.find('ul li').length).toEqual(3);
     expect($Body.find('ul ul li').length).toEqual(0);
@@ -164,7 +161,7 @@ describe('Outdent', () => {
 
     Outdent.exec(wwe);
 
-    const $Body = sq.get$Body();
+    const $Body = $(sq.getBody());
 
     expect($Body.find('> ul > li').length).toEqual(1);
     expect($Body.find('> ul > ul > li').length).toEqual(1);
@@ -185,11 +182,10 @@ describe('Outdent', () => {
 
       Outdent.exec(wwe);
 
-      expect(sq.get$Body().find('ul > li').length).toEqual(3);
-      expect(sq.get$Body().find('ul ul li').length).toEqual(0);
+      expect($(sq.getBody()).find('ul > li').length).toEqual(3);
+      expect($(sq.getBody()).find('ul ul li').length).toEqual(0);
       expect(
-        sq
-          .get$Body()
+        $(sq.getBody())
           .find('ul > li')
           .hasClass('task-list-item')
       ).toBe(true);
@@ -207,11 +203,10 @@ describe('Outdent', () => {
 
       Outdent.exec(wwe);
 
-      expect(sq.get$Body().find('ul > li').length).toEqual(3);
-      expect(sq.get$Body().find('ul ul li').length).toEqual(0);
+      expect($(sq.getBody()).find('ul > li').length).toEqual(3);
+      expect($(sq.getBody()).find('ul ul li').length).toEqual(0);
       expect(
-        sq
-          .get$Body()
+        $(sq.getBody())
           .find('ul > li')
           .hasClass('task-list-item')
       ).toBe(true);

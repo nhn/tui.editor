@@ -2,22 +2,19 @@
  * @fileoverview test wysiwyg code command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import Code from '@/wysiwygCommands/code';
 import WysiwygEditor from '@/wysiwygEditor';
 import WwTableSelectionManager from '@/wwTableSelectionManager';
 import EventManager from '@/eventManager';
 
 describe('Code', () => {
-  let wwe;
+  let container, wwe;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -26,7 +23,7 @@ describe('Code', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   it('add code', () => {

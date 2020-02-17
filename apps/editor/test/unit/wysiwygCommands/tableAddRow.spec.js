@@ -2,8 +2,6 @@
  * @fileoverview test wysiwyg table add row command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import AddRow from '@/wysiwygCommands/tableAddRow';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
@@ -17,7 +15,7 @@ describe('Table - AddRow', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor($(container), new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.componentManager.addManager(WwTableManager);

@@ -897,6 +897,169 @@ const getSiblingNodeBy = function(node, direction, condition) {
   return node;
 };
 
+/**
+ * Gets closest node matching by selector
+ * @param {Node} node - target node
+ * @param {string} selector - selector to find node
+ * @returns {?Node} - found node
+ * @ignore
+ */
+const closest = (node, selector) => {
+  do {
+    const matches =
+      node.matches ||
+      node.webkitMatchesSelector ||
+      node.mozMatchesSelector ||
+      node.msMatchesSelector;
+
+    if (matches && matches.call(node, selector)) {
+      return node;
+    }
+
+    node = node.parentNode;
+  } while (isElemNode(node));
+
+  return null;
+};
+
+/**
+ * Insert new node in front of target node
+ * @param {Node} insertedNode - node to insert
+ * @param {Node} node - target node
+ * @ignore
+ */
+const insertBefore = (insertedNode, node) => {
+  if (node.parentNode) {
+    node.parentNode.insertBefore(insertedNode, node);
+  }
+};
+
+/**
+ * Inserts new node after target node
+ * @param {Node} insertedNode - node to insert
+ * @param {Node} node - target node
+ * @ignore
+ */
+const insertAfter = (insertedNode, node) => {
+  if (node.parentNode) {
+    node.parentNode.insertBefore(insertedNode, node.nextSibling);
+  }
+};
+
+/**
+ * Checks whether specific node is included in target node
+ * @param {Node} node - target node
+ * @param {Node} foundNode - node to find
+ * @returns {boolean} whether node is included or not
+ * @ignore
+ */
+const contains = (node, foundNode) => node !== foundNode && node.contains(foundNode);
+
+/**
+ * Gets offset value of target node
+ * @param {Node} node - target node
+ * @returns {Object.<string, number>} offset values
+ * @ignore
+ */
+const getOffset = node => {
+  const { top, left } = node.getBoundingClientRect();
+  const { scrollTop, scrollLeft } = document.body;
+
+  return {
+    top: top + scrollTop,
+    left: left + scrollLeft
+  };
+};
+
+/**
+ * Removes target node from parent node
+ * @param {Node} node - target node
+ * @ignore
+ */
+const removeNode = node => {
+  if (node.parentNode) {
+    node.parentNode.removeChild(node);
+  }
+};
+
+/**
+ * Removes all children of target node
+ * @param {Node} node - target node
+ * @ignore
+ */
+const empty = node => {
+  while (node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
+};
+
+/**
+ * Toggles class name of target element
+ * @param {Element} element - target element
+ * @param {string} className - class name to toggle
+ * @ignore
+ */
+const toggleClass = (element, className) => {
+  if (element) {
+    element.classList.toggle(className);
+  }
+};
+
+/**
+ * Adds parent element to target node(s)
+ * @param {Node|Array.<Node>} nodeList - target node(s)
+ * @param {string} nodeName - node name to change parent element
+ * @ignore
+ */
+const wrap = (nodeList, nodeName) => {
+  nodeList = nodeList.length ? [].slice.call(nodeList) : [nodeList];
+
+  nodeList.forEach(node => {
+    const wrapper = document.createElement(nodeName);
+
+    node.parentNode.insertBefore(wrapper, node);
+    wrapper.appendChild(node);
+  });
+};
+
+/**
+ * Adds child element to target node(s)
+ * @param {Node|Array.<Node>} nodeList - target node(s)
+ * @param {string} nodeName - node name to change child element
+ * @ignore
+ */
+const wrapInner = (nodeList, nodeName) => {
+  nodeList = nodeList.length ? [].slice.call(nodeList) : [nodeList];
+
+  nodeList.forEach(node => {
+    const wrapper = document.createElement(nodeName);
+
+    node.appendChild(wrapper);
+
+    while (node.firstChild !== wrapper) {
+      wrapper.appendChild(node.firstChild);
+    }
+  });
+};
+
+/**
+ * Removes parent element to target node(s)
+ * @param {Node|Array.<Node>} nodeList - target node(s)
+ * @ignore
+ */
+const unwrap = nodeList => {
+  nodeList = nodeList.length ? [].slice.call(nodeList) : [nodeList];
+
+  nodeList.forEach(node => {
+    const { parentNode } = node;
+
+    if (parentNode !== document.body) {
+      parentNode.parentNode.insertBefore(node, parentNode);
+      parentNode.parentNode.removeChild(parentNode);
+    }
+  });
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -939,5 +1102,16 @@ export default {
   isCellNode,
   getLastNodeBy,
   getParentNodeBy,
-  getSiblingNodeBy
+  getSiblingNodeBy,
+  closest,
+  insertBefore,
+  insertAfter,
+  contains,
+  getOffset,
+  removeNode,
+  empty,
+  toggleClass,
+  wrap,
+  wrapInner,
+  unwrap
 };

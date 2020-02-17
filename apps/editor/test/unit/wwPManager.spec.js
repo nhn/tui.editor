@@ -2,23 +2,20 @@
  * @fileoverview test wysiwyg P manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 import WwPManager from '@/wwPManager';
 
 describe('WwPManager', () => {
-  let $container, em, wwe;
+  let container, em, wwe;
 
   beforeEach(() => {
-    $container = $('<div />');
-
-    $('body').append($container);
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($container, em);
+    wwe = new WysiwygEditor(container, em);
 
     wwe.init();
 
@@ -28,7 +25,7 @@ describe('WwPManager', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });

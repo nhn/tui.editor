@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import LazyRunner from './lazyRunner';
-import { empty } from './utils/dom';
+import domUtils from './domUtils';
 
 /**
  * Class Preview
@@ -74,7 +74,7 @@ class Preview {
 
     html = this.eventManager.emit('previewBeforeHook', html) || html;
 
-    empty(_previewContent);
+    domUtils.empty(_previewContent);
     _previewContent.innerHTML = html;
   }
 

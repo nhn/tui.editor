@@ -1153,7 +1153,7 @@ class WwTableManager {
    * @private
    */
   _completeTableIfNeed() {
-    const $body = this.wwe.getEditor().get$Body();
+    const $body = $(this.wwe.getEditor().getBody());
 
     $body.children().each((index, node) => {
       const $node = $(node);

@@ -2,21 +2,18 @@
  * @fileoverview test wysiwyg text object
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import WwTextObject from '@/wwTextObject';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('WwTextObject', () => {
-  let wwe, sq, to;
+  let container, wwe, sq, to;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -30,7 +27,7 @@ describe('WwTextObject', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -130,6 +127,7 @@ describe('WwTextObject', () => {
 
       to = new WwTextObject(wwe, range);
     });
+
     it('replace text', () => {
       to.replaceContent('12');
       expect(

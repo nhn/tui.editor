@@ -300,8 +300,8 @@ class WwClipboardManager {
   _focusTableBookmark() {
     const sq = this.wwe.getEditor();
     const range = sq.getSelection().cloneRange();
-    const $bookmarkedTable = sq.get$Body().find(`.${PASTE_TABLE_BOOKMARK}`);
-    const $bookmarkedCell = sq.get$Body().find(`.${PASTE_TABLE_CELL_BOOKMARK}`);
+    const $bookmarkedTable = $(sq.getBody()).find(`.${PASTE_TABLE_BOOKMARK}`);
+    const $bookmarkedCell = $(sq.getBody()).find(`.${PASTE_TABLE_CELL_BOOKMARK}`);
 
     if ($bookmarkedTable.length) {
       $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);

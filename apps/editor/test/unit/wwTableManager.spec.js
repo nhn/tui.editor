@@ -11,16 +11,15 @@ import WwTableManager from '@/wwTableManager';
 import WwTableSelectionManager from '@/wwTableSelectionManager';
 
 describe('WwTableManager', () => {
-  let $container, em, wwe, mgr;
+  let container, em, wwe, mgr;
 
   beforeEach(() => {
-    $container = $('<div />');
-
-    $('body').append($container);
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($container, em);
+    wwe = new WysiwygEditor(container, em);
 
     wwe.init();
 
@@ -32,7 +31,7 @@ describe('WwTableManager', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -422,7 +421,7 @@ describe('WwTableManager', () => {
     });
   });
   describe('_completeTableIfNeed', () => {
-    it('shuold complete TR to TABLE', done => {
+    it('should complete TR to TABLE', done => {
       const html = '<tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr>';
 
       const $body = wwe.get$Body().html(html);

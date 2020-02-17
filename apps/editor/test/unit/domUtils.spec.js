@@ -566,7 +566,7 @@ describe('domUtils', () => {
     });
   });
 
-  it('getAllTextNode() returns all text node in root', () => {
+  it('getAllTextNode() returns all text nodes in root', () => {
     container.innerHTML = 'foo\nbar<div>baz<br>qux</div>';
 
     const nodes = domUtils.getAllTextNode(container);
@@ -575,5 +575,192 @@ describe('domUtils', () => {
     expect(nodes[0].nodeValue).toBe('foo\nbar');
     expect(nodes[1].nodeValue).toBe('baz');
     expect(nodes[2].nodeValue).toBe('qux');
+  });
+
+  describe('closest() finds node with', () => {
+    beforeEach(() => {
+      container.innerHTML = '<ul><li>foo</li><li class="test">bar</li></ul>';
+    });
+
+    it('type selector from text node', () => {
+      const selector = 'li';
+      const [target] = container.querySelectorAll('li');
+
+      const foundNode = domUtils.closest(target.childNodes[0], selector);
+      const result = container.querySelector(selector);
+
+      expect(foundNode).toBe(result);
+    });
+
+    it('attribute selector from text node', () => {
+      const selector = '.test';
+      const [, target] = container.querySelectorAll('li');
+
+      const foundNode = domUtils.closest(target.childNodes[0], selector);
+      const result = container.querySelector(selector);
+
+      expect(foundNode).toBe(result);
+    });
+
+    it('type selector from element node', () => {
+      const selector = 'UL';
+      const target = container.querySelector('li');
+
+      const foundNode = domUtils.closest(target, selector);
+      const result = container.querySelector(selector);
+
+      expect(foundNode).toBe(result);
+    });
+
+    it('wrong selector', () => {
+      const selector = 'wrong selector';
+      const target = container.querySelector('li');
+
+      const foundNode = domUtils.closest(target, selector);
+
+      expect(foundNode).toBeNull();
+    });
+  });
+
+  it('insertBefore() inserts node before target node', () => {
+    container.innerHTML = '<ul><li>foo</li><li>bar</li></ul>';
+
+    const [, target] = container.querySelectorAll('li');
+    const inserted = document.createElement('li');
+
+    inserted.innerHTML = 'baz';
+
+    domUtils.insertBefore(inserted, target);
+
+    expect(container.innerHTML).toBe('<ul><li>foo</li><li>baz</li><li>bar</li></ul>');
+  });
+
+  it('insertAfter() inserts node after target node', () => {
+    container.innerHTML = '<ul><li>foo</li><li>bar</li></ul>';
+
+    const [target] = container.querySelectorAll('li');
+    const inserted = document.createElement('li');
+
+    inserted.innerHTML = 'baz';
+
+    domUtils.insertAfter(inserted, target);
+
+    expect(container.innerHTML).toBe('<ul><li>foo</li><li>baz</li><li>bar</li></ul>');
+  });
+
+  it('contains() checks whether target node contains child node', () => {
+    container.innerHTML = '<div><p>foo</p></div>';
+
+    let childNode, result;
+
+    childNode = container.querySelector('p');
+    result = domUtils.contains(container, childNode);
+
+    expect(result).toBe(true);
+
+    childNode = container.querySelector('a');
+    result = domUtils.contains(container, childNode);
+
+    expect(result).toBe(false);
+  });
+
+  it('removeNode() removes target node', () => {
+    container.innerHTML = '<div><p>foo</p><p>bar</p></div>';
+
+    const [target] = container.querySelectorAll('p');
+
+    domUtils.removeNode(target);
+
+    expect(container.innerHTML).toBe('<div><p>bar</p></div>');
+  });
+
+  it('empty() removes all children from target node', () => {
+    container.innerHTML = '<div><p>foo</p><p>bar</p></div>';
+
+    const target = container.querySelector('div');
+
+    domUtils.empty(target);
+
+    expect(container.innerHTML).toBe('<div></div>');
+  });
+
+  it('toggleClass() adds or removes specific class name of element', () => {
+    container.innerHTML = '<div class="test">foo</div>';
+
+    const target = container.querySelector('div');
+
+    domUtils.toggleClass(target, 'active');
+
+    expect(target.className).toBe('test active');
+
+    domUtils.toggleClass(target, 'active');
+
+    expect(target.className).toBe('test');
+  });
+
+  describe('wrap() adds parent element', () => {
+    beforeEach(() => {
+      container.innerHTML = '<p><b>foo</b><b>bar</b></p>';
+    });
+
+    it('to only one target node', () => {
+      const target = container.querySelector('p');
+
+      domUtils.wrap(target, 'div');
+
+      expect(container.innerHTML).toBe('<div><p><b>foo</b><b>bar</b></p></div>');
+    });
+
+    it('to all target nodes', () => {
+      const targets = container.querySelectorAll('b');
+
+      domUtils.wrap(targets, 'i');
+
+      expect(container.innerHTML).toBe('<p><i><b>foo</b></i><i><b>bar</b></i></p>');
+    });
+  });
+
+  describe('wrapInner() adds child element', () => {
+    beforeEach(() => {
+      container.innerHTML = '<b>foo</b><b>bar</b>';
+    });
+
+    it('from only one target node', () => {
+      const [target] = container.querySelectorAll('b');
+
+      domUtils.wrapInner(target, 'i');
+
+      expect(container.innerHTML).toBe('<b><i>foo</i></b><b>bar</b>');
+    });
+
+    it('to all target nodes', () => {
+      const targets = container.querySelectorAll('b');
+
+      domUtils.wrapInner(targets, 'i');
+
+      expect(container.innerHTML).toBe('<b><i>foo</i></b><b><i>bar</i></b>');
+    });
+  });
+
+  describe('unwrap() removes parent element', () => {
+    beforeEach(() => {
+      container.innerHTML = '<b><i>foo</i></b><b><i>bar</i></b>';
+    });
+
+    it('from only one target node', () => {
+      const [target] = container.querySelectorAll('i');
+
+      domUtils.unwrap(target);
+
+      expect(container.innerHTML).toBe('<i>foo</i><b><i>bar</i></b>');
+    });
+
+    it('from all target nodes', () => {
+      const targets = container.querySelectorAll('i');
+
+      domUtils.unwrap(targets);
+
+      expect(container.innerHTML).toBe('<i>foo</i><i>bar</i>');
+    });
   });
 });

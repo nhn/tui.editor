@@ -208,9 +208,13 @@ class ToastUIEditor {
       false,
       this.options.previewDelayTime
     );
-    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
-      useDefaultHTMLSanitizer: this.options.useDefaultHTMLSanitizer
-    });
+    this.wwEditor = WysiwygEditor.factory(
+      this.layout.getWwEditorContainerEl()[0],
+      this.eventManager,
+      {
+        useDefaultHTMLSanitizer: this.options.useDefaultHTMLSanitizer
+      }
+    );
     this.toMarkOptions = {
       gfm: true,
       renderer: toMarkRenderer

@@ -17,7 +17,7 @@ describe('Indent', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor($(container), new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -56,13 +56,8 @@ describe('Indent', () => {
 
     Indent.exec(wwe);
 
-    expect(sq.get$Body().find('ul ul li').length).toEqual(1);
-    expect(
-      sq
-        .get$Body()
-        .find('ul ul li')
-        .hasClass('task-list-item')
-    ).toBe(true);
+    expect(sq.getBody().querySelectorAll('ul ul li').length).toEqual(1);
+    expect(sq.getBody().querySelector('ul ul li').className).toBe('task-list-item');
   });
   it('fail when it does not have previous li.', () => {
     const range = wwe
@@ -77,7 +72,7 @@ describe('Indent', () => {
 
     Indent.exec(wwe);
 
-    expect(sq.get$Body().find('ul ul li').length).toEqual(0);
+    expect(sq.getBody().querySelectorAll('ul ul li').length).toEqual(0);
   });
   describe('should indent when cursor', () => {
     it('at startOffset 0.', () => {
@@ -93,13 +88,8 @@ describe('Indent', () => {
 
       Indent.exec(wwe);
 
-      expect(sq.get$Body().find('ul ul li').length).toEqual(1);
-      expect(
-        sq
-          .get$Body()
-          .find('ul ul li')
-          .hasClass('task-list-item')
-      ).toBe(true);
+      expect(sq.getBody().querySelectorAll('ul ul li').length).toEqual(1);
+      expect(sq.getBody().querySelector('ul ul li').className).toBe('task-list-item');
     });
     it('at startOffset 1.', () => {
       const range = wwe
@@ -114,13 +104,8 @@ describe('Indent', () => {
 
       Indent.exec(wwe);
 
-      expect(sq.get$Body().find('ul ul li').length).toEqual(1);
-      expect(
-        sq
-          .get$Body()
-          .find('ul ul li')
-          .hasClass('task-list-item')
-      ).toBe(true);
+      expect(sq.getBody().querySelectorAll('ul ul li').length).toEqual(1);
+      expect(sq.getBody().querySelector('ul ul li').className).toBe('task-list-item');
     });
   });
   it('should indent ordinary list', () => {
@@ -149,15 +134,10 @@ describe('Indent', () => {
 
     Indent.exec(wwe);
 
-    expect(sq.get$Body().find('ul > li').length).toEqual(4);
-    expect(sq.get$Body().find('ul > ul > li').length).toEqual(3);
-    expect(sq.get$Body().find('ul > ul > ul > li').length).toEqual(1);
-    expect(
-      sq
-        .get$Body()
-        .find('ul > ul > ul > li')
-        .hasClass('task-list-item')
-    ).toBe(true);
+    expect(sq.getBody().querySelectorAll('ul > li').length).toEqual(4);
+    expect(sq.getBody().querySelectorAll('ul > ul > li').length).toEqual(3);
+    expect(sq.getBody().querySelectorAll('ul > ul > ul > li').length).toEqual(1);
+    expect(sq.getBody().querySelector('ul > ul > ul > li').className).toBe('task-list-item');
   });
 
   it('should merge prev/next list after outdent', () => {
@@ -187,9 +167,8 @@ describe('Indent', () => {
     sq.setSelection(range);
 
     Indent.exec(wwe);
-
-    expect(sq.get$Body().find('> ul > li').length).toEqual(1);
-    expect(sq.get$Body().find('> ul > ol > li').length).toEqual(5);
-    expect(sq.get$Body().find('> ul > ul > li').length).toEqual(0);
+    expect($(sq.getBody()).find('> ul > li').length).toEqual(1);
+    expect($(sq.getBody()).find('> ul > ol > li').length).toEqual(5);
+    expect($(sq.getBody()).find('> ul > ul > li').length).toEqual(0);
   });
 });

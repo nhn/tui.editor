@@ -11,14 +11,13 @@ import WwCodeBlockManager from '@/wwCodeBlockManager';
 import WwTableManager from '@/wwTableManager';
 
 describe('WwPasteContentHelper', () => {
-  let wwe, pch;
+  let container, wwe, pch;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -31,7 +30,7 @@ describe('WwPasteContentHelper', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   describe('paste data first aid', () => {
@@ -109,14 +108,14 @@ describe('WwPasteContentHelper', () => {
       expect(divs.eq(1).text()).toEqual('-simon');
     });
     it('_removeUnnecessaryBlocks should unwrap p', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
       const $node = $('<p><span>hello</span><span>-simon</span></p>');
 
-      $container.append($node);
+      element.append($node);
 
-      pch._removeUnnecessaryBlocks($container, blockTags);
+      pch._removeUnnecessaryBlocks(element, blockTags);
 
-      const spans = $container.find('span');
+      const spans = element.find('span');
 
       expect(spans.length).toEqual(2);
       expect($node.find('p').length).toEqual(0);
@@ -125,223 +124,223 @@ describe('WwPasteContentHelper', () => {
     });
 
     it('_removeUnnecessaryBlocks should insert br when unwraped block have not br at the last', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
       const $node = $('<article><span>hello</sapn></article>');
 
-      $container.append($node);
+      element.append($node);
 
-      pch._removeUnnecessaryBlocks($container, blockTags);
+      pch._removeUnnecessaryBlocks(element, blockTags);
 
       const expctedHtml = '<span>hello</span><br>';
 
-      expect($container.html()).toEqual(expctedHtml);
+      expect(element.html()).toEqual(expctedHtml);
     });
 
     it('_removeUnnecessaryBlocks should not unwrap div without block element child', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
       const $node = $('<div>asdasd<br></div><div><nav>asd</nav></div>');
 
-      $container.append($node);
+      element.append($node);
 
-      pch._removeUnnecessaryBlocks($container, blockTags);
+      pch._removeUnnecessaryBlocks(element, blockTags);
 
       const expectedHtml = '<div>asdasd<br></div><nav>asd</nav><br>';
 
-      expect($container.html()).toEqual(expectedHtml);
+      expect(element.html()).toEqual(expectedHtml);
     });
     it('_unwrapNestedBlocks should unwrap nested blockTags', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
       const $node = $('<article></article>');
 
       $node.append('<div>hello<br /></div>');
       $node.append('<nav>simon</nav>');
 
-      $container.append($node);
+      element.append($node);
 
-      pch._unwrapNestedBlocks($container, blockTags);
+      pch._unwrapNestedBlocks(element, blockTags);
 
-      expect($container.find('article').length).toEqual(0);
-      expect($container.find('div').length).toEqual(1);
-      expect($container.find('div').text()).toEqual('hello');
-      expect($container.find('nav').length).toEqual(1);
-      expect($container.find('nav').text()).toEqual('simon');
+      expect(element.find('article').length).toEqual(0);
+      expect(element.find('div').length).toEqual(1);
+      expect(element.find('div').text()).toEqual('hello');
+      expect(element.find('nav').length).toEqual(1);
+      expect(element.find('nav').text()).toEqual('simon');
     });
 
     it('_wrapOrphanNodeWithDiv should wrap orphan nodes with div element', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
 
-      $container.append($('<span>text1</span>text2<br>text3<code>text4</code>'));
+      element.append($('<span>text1</span>text2<br>text3<code>text4</code>'));
 
-      $container.html(pch._wrapOrphanNodeWithDiv($container));
+      element.html(pch._wrapOrphanNodeWithDiv(element));
 
-      expect($container.find('div').length).toEqual(2);
+      expect(element.find('div').length).toEqual(2);
     });
     it('_wrapOrphanNodeWithDiv should wrap orphan nodes with div element', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
 
-      $container.append(document.createTextNode('ip lorem sit amet'));
-      $container.append(document.createElement('br'));
-      $container.append(document.createTextNode('and so on'));
-      $container.append(document.createElement('br'));
+      element.append(document.createTextNode('ip lorem sit amet'));
+      element.append(document.createElement('br'));
+      element.append(document.createTextNode('and so on'));
+      element.append(document.createElement('br'));
 
-      $container.html(pch._wrapOrphanNodeWithDiv($container));
+      element.html(pch._wrapOrphanNodeWithDiv(element));
 
-      expect($container.find('div').length).toEqual(2);
-      expect($container.find('br').length).toEqual(2);
-      expect($container.find('div')[0].innerHTML).toEqual('ip lorem sit amet<br>');
-      expect($container.find('div')[1].innerHTML).toEqual('and so on<br>');
+      expect(element.find('div').length).toEqual(2);
+      expect(element.find('br').length).toEqual(2);
+      expect(element.find('div')[0].innerHTML).toEqual('ip lorem sit amet<br>');
+      expect(element.find('div')[1].innerHTML).toEqual('and so on<br>');
     });
 
     it('_wrapOrphanNodeWithDiv should wrap br node with div element', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
 
-      $container.append(document.createTextNode('text1'));
-      $container.append(document.createElement('br'));
-      $container.append(document.createElement('br'));
-      $container.append(document.createTextNode('text2'));
-      $container.append(document.createElement('br'));
+      element.append(document.createTextNode('text1'));
+      element.append(document.createElement('br'));
+      element.append(document.createElement('br'));
+      element.append(document.createTextNode('text2'));
+      element.append(document.createElement('br'));
 
-      $container.html(pch._wrapOrphanNodeWithDiv($container));
+      element.html(pch._wrapOrphanNodeWithDiv(element));
 
       const expectedHtml = '<div>text1<br></div><div><br></div><div>text2<br></div>';
 
-      expect($container.html()).toEqual(expectedHtml);
+      expect(element.html()).toEqual(expectedHtml);
     });
 
     it('_wrapOrphanNodeWithDiv should not wrap block element nodes', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
 
-      $container.html('<p>ip lorem sit amet</p><br><span>and so on</span>');
+      element.html('<p>ip lorem sit amet</p><br><span>and so on</span>');
 
-      $container.html(pch._wrapOrphanNodeWithDiv($container));
+      element.html(pch._wrapOrphanNodeWithDiv(element));
 
-      expect($container.find('div').length).toEqual(2);
-      expect($container.find('p').length).toEqual(1);
-      expect($container.find('span').length).toEqual(1);
-      expect($container.find('br').length).toEqual(1);
-      expect($container.find('p').text()).toEqual('ip lorem sit amet');
-      expect($container.find('span').text()).toEqual('and so on');
+      expect(element.find('div').length).toEqual(2);
+      expect(element.find('p').length).toEqual(1);
+      expect(element.find('span').length).toEqual(1);
+      expect(element.find('br').length).toEqual(1);
+      expect(element.find('p').text()).toEqual('ip lorem sit amet');
+      expect(element.find('span').text()).toEqual('and so on');
     });
     it('_unwrapIfNonBlockElementHasBr should unwrap span element with br', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
 
-      $container.html('<span>ip lorem sit amet<br /></span><span>and so on</span>');
+      element.html('<span>ip lorem sit amet<br /></span><span>and so on</span>');
 
-      pch._unwrapIfNonBlockElementHasBr($container);
+      pch._unwrapIfNonBlockElementHasBr(element);
 
-      expect($container.find('span').length).toEqual(1);
-      expect($container.find('br').length).toEqual(1);
-      expect($container.text()).toEqual('ip lorem sit ametand so on');
+      expect(element.find('span').length).toEqual(1);
+      expect(element.find('br').length).toEqual(1);
+      expect(element.text()).toEqual('ip lorem sit ametand so on');
       expect(
-        $container
+        element
           .find('span')
           .eq(0)
           .text()
       ).toEqual('and so on');
     });
     it('_unwrapIfNonBlockElementHasBr should unwrap b, i, em, s element with br', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
 
-      $container.html(
+      element.html(
         '<b>ip lorem sit amet<br /></b><i>and so on<br /></i>' +
           '<s>la vita dolce<br /></s><em>carpe diem<br /></em>'
       );
 
-      pch._unwrapIfNonBlockElementHasBr($container);
+      pch._unwrapIfNonBlockElementHasBr(element);
 
-      expect($container.find('i').length).toEqual(0);
-      expect($container.find('b').length).toEqual(0);
-      expect($container.find('s').length).toEqual(0);
-      expect($container.find('em').length).toEqual(0);
-      expect($container.find('br').length).toEqual(4);
-      expect($container.text()).toEqual('ip lorem sit ametand so onla vita dolcecarpe diem');
+      expect(element.find('i').length).toEqual(0);
+      expect(element.find('b').length).toEqual(0);
+      expect(element.find('s').length).toEqual(0);
+      expect(element.find('em').length).toEqual(0);
+      expect(element.find('br').length).toEqual(4);
+      expect(element.text()).toEqual('ip lorem sit ametand so onla vita dolcecarpe diem');
     });
     it('_tableElementAid should wrap TRs with TBODY', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
 
-      $container.html('<tr><td>1</td><td>2</td></tr>');
+      element.html('<tr><td>1</td><td>2</td></tr>');
 
-      pch._tableElementAid($container);
+      pch._tableElementAid(element);
 
-      expect($container.find('tbody').length).toEqual(1);
-      expect($container.find('tbody').text()).toEqual('12');
-      expect($container.find('table')[0].className).toEqual('te-content-table-0');
+      expect(element.find('tbody').length).toEqual(1);
+      expect(element.find('tbody').text()).toEqual('12');
+      expect(element.find('table')[0].className).toEqual('te-content-table-0');
     });
     it('_tableElementAid should wrap TDs with TR', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
 
-      $container.html('<td>1</td><td>2</td><td>3</td><td>4</td>');
+      element.html('<td>1</td><td>2</td><td>3</td><td>4</td>');
 
-      pch._tableElementAid($container);
+      pch._tableElementAid(element);
 
-      expect($container.find('thead').length).toEqual(1);
-      expect($container.find('tbody').length).toEqual(1);
-      expect($container.find('tr').length).toEqual(2);
-      expect($container.find('tr').text()).toEqual('1234');
-      expect($container.find('table')[0].className).toEqual('te-content-table-0');
+      expect(element.find('thead').length).toEqual(1);
+      expect(element.find('tbody').length).toEqual(1);
+      expect(element.find('tr').length).toEqual(2);
+      expect(element.find('tr').text()).toEqual('1234');
+      expect(element.find('table')[0].className).toEqual('te-content-table-0');
     });
     it('_tableElementAid should wrap THEAD and TBODY with TABLE', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
 
-      $container.html(
+      element.html(
         '<thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody>'
       );
 
-      pch._tableElementAid($container);
+      pch._tableElementAid(element);
 
-      expect($container.find('table').length).toEqual(1);
-      expect($container.find('thead').length).toEqual(1);
-      expect($container.find('tbody').length).toEqual(1);
-      expect($container.find('thead').text()).toEqual('12');
-      expect($container.find('tbody').text()).toEqual('ab');
-      expect($container.find('table')[0].className).toEqual('te-content-table-0');
+      expect(element.find('table').length).toEqual(1);
+      expect(element.find('thead').length).toEqual(1);
+      expect(element.find('tbody').length).toEqual(1);
+      expect(element.find('thead').text()).toEqual('12');
+      expect(element.find('tbody').text()).toEqual('ab');
+      expect(element.find('table')[0].className).toEqual('te-content-table-0');
     });
     it('_tableElementAid should remove colgroup', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
 
-      $container.html(
+      element.html(
         '<table><thead><tr><th>1</th><th>2</th></tr></thead><colgroup></colgroup><tbody><tr><td>a</td><td>b</td></tr></tbody></table>'
       );
 
-      pch._tableElementAid($container);
+      pch._tableElementAid(element);
 
-      expect($container.find('table').length).toEqual(1);
-      expect($container.find('colgroup').length).toEqual(0);
+      expect(element.find('table').length).toEqual(1);
+      expect(element.find('colgroup').length).toEqual(0);
     });
     it('_tableElementAid should update table ID class name', () => {
-      const $container = $('<div />');
+      const element = $('<div />');
 
-      $container.html(
+      element.html(
         '<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>'
       );
 
-      pch._tableElementAid($container);
+      pch._tableElementAid(element);
 
-      expect($container.find('table').length).toEqual(1);
-      expect($container.find('table')[0].className).toEqual('te-content-table-0');
+      expect(element.find('table').length).toEqual(1);
+      expect(element.find('table')[0].className).toEqual('te-content-table-0');
 
-      pch._tableElementAid($container);
+      pch._tableElementAid(element);
 
-      expect($container.find('table')[0].className).toEqual('te-content-table-1');
+      expect(element.find('table')[0].className).toEqual('te-content-table-1');
     });
-    it('_tableElementAid should update all table ID class name in container', () => {
-      const $container = $('<div />');
+    it('_tableElementAid should update all table ID class name in element', () => {
+      const element = $('<div />');
       const html =
         '<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>' +
         '<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>';
 
-      $container.html(html);
+      element.html(html);
 
-      pch._tableElementAid($container);
+      pch._tableElementAid(element);
 
-      expect($container.find('table').length).toEqual(2);
-      expect($container.find('table')[0].className).toEqual('te-content-table-0');
-      expect($container.find('table')[1].className).toEqual('te-content-table-1');
+      expect(element.find('table').length).toEqual(2);
+      expect(element.find('table')[0].className).toEqual('te-content-table-0');
+      expect(element.find('table')[1].className).toEqual('te-content-table-1');
 
-      pch._tableElementAid($container);
+      pch._tableElementAid(element);
 
-      expect($container.find('table')[0].className).toEqual('te-content-table-2');
-      expect($container.find('table')[1].className).toEqual('te-content-table-3');
+      expect(element.find('table')[0].className).toEqual('te-content-table-2');
+      expect(element.find('table')[1].className).toEqual('te-content-table-3');
     });
   });
 
@@ -352,9 +351,9 @@ describe('WwPasteContentHelper', () => {
       });
 
       it('if content have orphan list and has format li then make depth based on current selection', () => {
-        const $container = $('<div />');
+        const element = $('<div />');
 
-        $container.html('<li><div>text<br></div></li><li><div>text2<br></div></li>');
+        element.html('<li><div>text<br></div></li><li><div>text2<br></div></li>');
 
         wwe.getEditor().setHTML('<ul><li><div>list1</div></li><li>list2</li></ul>');
 
@@ -368,17 +367,17 @@ describe('WwPasteContentHelper', () => {
 
         wwe.getEditor().setSelection(range);
 
-        pch.preparePaste($container);
+        pch.preparePaste(element);
 
-        expect($container[0].childNodes.length).toEqual(1);
-        expect($container[0].childNodes[0].tagName).toEqual('UL');
-        expect($container[0].childNodes[0].childNodes.length).toEqual(2);
+        expect(element[0].childNodes.length).toEqual(1);
+        expect(element[0].childNodes[0].tagName).toEqual('UL');
+        expect(element[0].childNodes[0].childNodes.length).toEqual(2);
       });
 
       it('if content have complete list and has format li then make depth based on current selection', () => {
-        const $container = $('<div />');
+        const element = $('<div />');
 
-        $container.html('<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul>');
+        element.html('<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul>');
 
         wwe
           .getEditor()
@@ -398,17 +397,17 @@ describe('WwPasteContentHelper', () => {
 
         wwe.getEditor().setSelection(range);
 
-        pch.preparePaste($container);
+        pch.preparePaste(element);
 
-        expect($container[0].childNodes.length).toEqual(1);
-        expect($container[0].childNodes[0].tagName).toEqual('UL');
-        expect($($container[0].childNodes[0]).find('li > ul > li > ul > li').length).toEqual(2);
+        expect(element[0].childNodes.length).toEqual(1);
+        expect(element[0].childNodes[0].tagName).toEqual('UL');
+        expect($(element[0].childNodes[0]).find('li > ul > li > ul > li').length).toEqual(2);
       });
 
       it('if content have orphan list and hasnt format li then wrap list parent based on rangeInfo', () => {
-        const $container = $('<div />');
+        const element = $('<div />');
 
-        $container.html('<li><div>text<br></div></li><li><div>text2<br></div></li>');
+        element.html('<li><div>text<br></div></li><li><div>text2<br></div></li>');
 
         wwe.getEditor().setHTML('<div><br></div>');
 
@@ -422,17 +421,17 @@ describe('WwPasteContentHelper', () => {
 
         wwe.getEditor().setSelection(range);
 
-        pch.preparePaste($container);
+        pch.preparePaste(element);
 
-        expect($container[0].childNodes.length).toEqual(1);
-        expect($container[0].childNodes[0].tagName).toEqual('UL');
-        expect($container[0].childNodes[0].childNodes.length).toEqual(2);
+        expect(element[0].childNodes.length).toEqual(1);
+        expect(element[0].childNodes[0].tagName).toEqual('UL');
+        expect(element[0].childNodes[0].childNodes.length).toEqual(2);
       });
 
       it('if content have complete list and hasnt format li then do nothing', () => {
-        const $container = $('<div />');
+        const element = $('<div />');
 
-        $container.html('<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul>');
+        element.html('<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul>');
 
         wwe.getEditor().setHTML('<div><br></div>');
 
@@ -446,17 +445,17 @@ describe('WwPasteContentHelper', () => {
 
         wwe.getEditor().setSelection(range);
 
-        pch.preparePaste($container);
+        pch.preparePaste(element);
 
-        expect($container[0].childNodes.length).toEqual(1);
-        expect($container[0].childNodes[0].tagName).toEqual('UL');
-        expect($container[0].childNodes[0].childNodes.length).toEqual(2);
+        expect(element[0].childNodes.length).toEqual(1);
+        expect(element[0].childNodes[0].tagName).toEqual('UL');
+        expect(element[0].childNodes[0].childNodes.length).toEqual(2);
       });
 
       it('paste data have backward depth list then limit list depth level', () => {
-        const $container = $('<div />');
+        const element = $('<div />');
 
-        $container.html(
+        element.html(
           '<ul><li><div>text<br></div></li><li>' +
             '<div>text2<br></div></li></ul><li><div>myText<br></div></li>'
         );
@@ -473,11 +472,11 @@ describe('WwPasteContentHelper', () => {
 
         wwe.getEditor().setSelection(range);
 
-        pch.preparePaste($container);
+        pch.preparePaste(element);
 
-        expect($container[0].childNodes.length).toEqual(1);
-        expect($container[0].childNodes[0].tagName).toEqual('UL');
-        expect($($container[0].childNodes[0]).find('li > ul > li').length).toEqual(2);
+        expect(element[0].childNodes.length).toEqual(1);
+        expect(element[0].childNodes[0].tagName).toEqual('UL');
+        expect($(element[0].childNodes[0]).find('li > ul > li').length).toEqual(2);
       });
     });
   });

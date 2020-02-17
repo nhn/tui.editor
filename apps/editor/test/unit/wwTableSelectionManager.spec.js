@@ -10,16 +10,15 @@ import WwTableSelectionManager from '@/wwTableSelectionManager';
 import WwTableManager from '@/wwTableManager';
 
 describe('WwTableSelectionManager', () => {
-  let $container, em, wwe, mgr;
+  let container, em, wwe, mgr;
 
   beforeEach(() => {
-    $container = $('<div />');
-
-    $('body').append($container);
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($container, em);
+    wwe = new WysiwygEditor(container, em);
 
     wwe.init();
 
@@ -31,7 +30,7 @@ describe('WwTableSelectionManager', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -55,10 +54,7 @@ describe('WwTableSelectionManager', () => {
 
       const $tds = $('td');
       const reArrangedSelection = mgr._reArrangeSelectionIfneed(
-        sq
-          .get$Body()
-          .find('div')
-          .eq(0)[0],
+        sq.getBody().querySelector('div'),
         $tds[1]
       );
 
@@ -84,10 +80,7 @@ describe('WwTableSelectionManager', () => {
       const $tds = $('td');
       const reArrangedSelection = mgr._reArrangeSelectionIfneed(
         $tds[1],
-        sq
-          .get$Body()
-          .find('div')
-          .eq(0)[0]
+        sq.getBody().querySelector('div')
       );
 
       expect(reArrangedSelection.startContainer).toBe($tds[1]);

@@ -10,16 +10,15 @@ import EventManager from '@/eventManager';
 import WwCodeBlockManager from '@/wwCodeBlockManager';
 
 describe('WwCodeBlockManager', () => {
-  let $container, em, wwe, mgr;
+  let container, em, wwe, mgr;
 
   beforeEach(() => {
-    $container = $('<div />');
-
-    $('body').append($container);
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($container, em);
+    wwe = new WysiwygEditor(container, em);
 
     wwe.init();
 
@@ -30,7 +29,7 @@ describe('WwCodeBlockManager', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $container.remove();
+      document.body.removeChild(container);
       done();
     });
   });

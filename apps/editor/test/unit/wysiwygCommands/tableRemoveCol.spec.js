@@ -2,8 +2,6 @@
  * @fileoverview test wysiwyg table remove column command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import RemoveCol from '@/wysiwygCommands/tableRemoveCol';
 import WwTableManager from '@/wwTableManager';
 import WwTableSelectionManager from '@/wwTableSelectionManager';
@@ -17,7 +15,7 @@ describe('Table - RemoveCol', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor($(container), new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.componentManager.addManager(WwTableManager);

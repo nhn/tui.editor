@@ -2,22 +2,19 @@
  * @fileoverview test wysiwyg code block command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import CodeBlock from '@/wysiwygCommands/codeBlock';
 import WwCodeBlockManager from '@/wwCodeBlockManager';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('CodeBlock', () => {
-  let wwe, sq, $body;
+  let container, wwe, sq, $body;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.componentManager.addManager('codeblock', WwCodeBlockManager);
@@ -30,7 +27,7 @@ describe('CodeBlock', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });

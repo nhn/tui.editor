@@ -18,7 +18,7 @@ describe('OL', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor($(container), new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -74,7 +74,7 @@ describe('OL', () => {
   });
 
   it('add OL with selection', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $div1 = $('<div>hello</div>');
     const $div2 = $('<div>world</div>');
     const $div3 = $('<div>i`m</div>');
@@ -98,7 +98,7 @@ describe('OL', () => {
   });
 
   it('add OL with selection ol within', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $div1 = $('<div>hello</div>');
     const $div2 = $('<div>world</div>');
     const $div3 = $('<div>i`m</div>');
@@ -122,7 +122,7 @@ describe('OL', () => {
   });
 
   it('convert next element of OL with selection start ol within', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $div1 = $('<div>hello</div>');
     const $div2 = $('<div>world</div>');
     const $div3 = $('<div>i`m</div>');
@@ -146,7 +146,7 @@ describe('OL', () => {
   });
 
   it('change UL to OL', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $ul = $('<ul><li>fine</li></ul>');
 
     $body.append($ul);
@@ -164,7 +164,7 @@ describe('OL', () => {
   });
 
   it('change UL to OL with selection', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $ul = $('<ul><li>fine</li><li>thank you</li></ul>');
 
     $body.append($ul);
@@ -182,7 +182,7 @@ describe('OL', () => {
   });
 
   it('change TASK to OL', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $ul = $('<ul><li class="task-list-item">fine</li></ul>');
 
     $body.append($ul);
@@ -201,7 +201,7 @@ describe('OL', () => {
   });
 
   it('change TASK to OL with selection', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $ul = $(
       '<ul><li class="task-list-item">fine</li><li class="task-list-item">thank you</li></ul>'
     );
@@ -222,7 +222,7 @@ describe('OL', () => {
   });
 
   it('skip changing format to OL from PRE, TABLE element', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $div1 = $('<div>fine</div>');
     const $div2 = $('<div>thank you</div>');
     const $pre = $('<pre>haha</pre>');
@@ -247,7 +247,7 @@ describe('OL', () => {
   });
 
   it('should restore the stored selection', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $div = $('<div>text<em>text</em>longlongtext</div>');
 
     $body.append($div);

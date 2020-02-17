@@ -19,7 +19,7 @@ describe('WwListManager', () => {
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($(container), em);
+    wwe = new WysiwygEditor(container, em);
 
     wwe.init();
 

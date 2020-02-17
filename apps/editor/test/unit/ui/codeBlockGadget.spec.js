@@ -32,7 +32,7 @@ describe('code block gadget', () => {
     $('body').append($targetElement);
 
     em = new EventManager();
-    const wysiwygEditor = new WysiwygEditor($wysiwygContainer, em);
+    const wysiwygEditor = new WysiwygEditor($wysiwygContainer.get(0), em);
 
     wysiwygEditor.init();
     wysiwygEditor.focus();

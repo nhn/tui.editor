@@ -14,7 +14,6 @@ import Convertor from './convertor';
 import domUtils from './domUtils';
 import codeBlockManager, { CodeBlockManager } from './codeBlockManager';
 import { invokePlugins } from './pluginHelper';
-import { toggleClass } from './utils/dom';
 
 const TASK_ATTR_NAME = 'data-te-task';
 const TASK_CHECKED_CLASS_NAME = 'checked';
@@ -104,7 +103,7 @@ class ToastUIEditorViewer {
       ev.target.hasAttribute(TASK_ATTR_NAME) &&
       domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)
     ) {
-      toggleClass(ev.target, TASK_CHECKED_CLASS_NAME);
+      domUtils.toggleClass(ev.target, TASK_CHECKED_CLASS_NAME);
       this.eventManager.emit('change', {
         source: 'viewer',
         data: ev

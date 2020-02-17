@@ -2,20 +2,17 @@
  * @fileoverview test wysiwyg clipboard manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import EventManager from '@/eventManager';
 import WysiwygEditor from '@/wysiwygEditor';
 
 describe('WwClipboardManager', () => {
-  let wwe, cbm;
+  let container, wwe, cbm;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -23,7 +20,7 @@ describe('WwClipboardManager', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   describe('_extendRange', () => {
