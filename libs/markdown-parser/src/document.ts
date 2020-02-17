@@ -33,55 +33,45 @@ export class MarkdownDocument {
     this.root = this.parser.parse(contents);
   }
 
-  editMarkdown(start: Position | null, end: Position | null, newText: string): EditResult | null {
-    if (!start && !end) {
-      return null;
-    }
-
-    let prevLine, prevEndCol, nextLine, nextStartCol;
+  editMarkdown(
+    [startLine, startCol]: Position,
+    [endLine, endCol]: Position,
+    newText: string
+  ): EditResult | null {
     let result: EditResult | null = null;
-
-    if (!start || !end) {
-      const position = (start || end) as Position;
-      prevLine = nextLine = position[0];
-      prevEndCol = nextStartCol = position[1] - (start ? 1 : 0);
-    } else {
-      prevLine = start[0];
-      prevEndCol = start[1] - 1;
-      nextLine = end[0];
-      nextStartCol = end[1];
-    }
-
     const newLines = newText.split(reLineEnding);
     const newLineLen = newLines.length;
-    const prevLineText = this.lineTexts[prevLine - 1];
-    const nextLineText = this.lineTexts[nextLine - 1];
-    newLines[0] = prevLineText.slice(0, prevEndCol) + newLines[0];
-    newLines[newLineLen - 1] = newLines[newLineLen - 1] + nextLineText.slice(nextStartCol);
+    const startLineText = this.lineTexts[startLine - 1];
+    const endLineText = this.lineTexts[endLine - 1];
+    newLines[0] = startLineText.slice(0, startCol - 1) + newLines[0];
+    newLines[newLineLen - 1] = newLines[newLineLen - 1] + endLineText.slice(endCol - 1);
 
-    const removedLineLen = nextLine - prevLine + 1;
-    this.lineTexts.splice(prevLine - 1, removedLineLen, ...newLines);
+    const removedLineLen = endLine - startLine + 1;
+    this.lineTexts.splice(startLine - 1, removedLineLen, ...newLines);
 
-    let startNode = findBlockByLine(this.root, prevLine)!;
+    let startNode = findBlockByLine(this.root, startLine)!;
     let endNode: Node;
-    if (prevLine === nextLine || nextLine <= startNode.sourcepos![1][0]) {
+    if (startLine === endLine || endLine <= startNode.sourcepos![1][0]) {
       endNode = startNode;
     } else {
-      endNode = findBlockByLine(this.root, nextLine)!;
+      endNode = findBlockByLine(this.root, endLine)!;
     }
 
-    const startLine = startNode ? startNode.sourcepos![0][0] : prevLine;
-    const endLine = endNode ? Math.max(endNode.sourcepos![1][0], prevLine) : nextLine;
-    const editedLines = this.lineTexts.slice(startLine - 1, endLine - removedLineLen + newLineLen);
-    const newNodes = getChildNodes(this.parser.partialParse(startLine, editedLines));
+    const parseStartLine = startNode ? startNode.sourcepos![0][0] : startLine;
+    const parseEndLine = endNode ? Math.max(endNode.sourcepos![1][0], startLine) : endLine;
+    const editedLines = this.lineTexts.slice(
+      parseStartLine - 1,
+      parseEndLine - removedLineLen + newLineLen
+    );
+    const newNodes = getChildNodes(this.parser.partialParse(parseStartLine, editedLines));
 
     if (!startNode && !endNode) {
       prependChildNodes(this.root, newNodes);
     } else {
       if (startNode !== endNode) {
         const parent = findClosestCommonParent(startNode, endNode)!;
-        startNode = findChildNodeByLine(parent, prevLine)!;
-        endNode = findChildNodeByLine(parent, nextLine)!;
+        startNode = findChildNodeByLine(parent, startLine)!;
+        endNode = findChildNodeByLine(parent, endLine)!;
       }
       insertNodesBefore(startNode, newNodes);
       removeNextUntil(startNode, endNode);

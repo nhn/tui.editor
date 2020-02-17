@@ -10,7 +10,7 @@ describe('editText()', () => {
   describe('single paragraph', () => {
     it('insert character within a line', () => {
       const doc = new MarkdownDocument('Hello World');
-      const result = doc.editMarkdown([1, 6], [1, 6], ', ')!;
+      const result = doc.editMarkdown([1, 6], [1, 6], ',')!;
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hello, World']);
@@ -35,7 +35,7 @@ describe('editText()', () => {
 
     it('insert characters and newlines', () => {
       const doc = new MarkdownDocument('Hello World');
-      const result = doc.editMarkdown([1, 6], [1, 6], '!\n\nMy ')!;
+      const result = doc.editMarkdown([1, 6], [1, 7], '!\n\nMy ')!;
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hello!', '', 'My World']);
@@ -70,7 +70,7 @@ describe('editText()', () => {
 
     it('replace multiline text with characters', () => {
       const doc = new MarkdownDocument('Hello\nMy\nWorld');
-      const result = doc.editMarkdown([1, 5], [3, 2], 'ooo Wooo')!;
+      const result = doc.editMarkdown([1, 5], [3, 3], 'ooo Wooo')!;
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hellooo Wooorld']);
@@ -95,7 +95,7 @@ describe('editText()', () => {
 
     it('prepend characters', () => {
       const doc = new MarkdownDocument('Hello World');
-      const result = doc.editMarkdown([1, 1], null, 'Hi, ')!;
+      const result = doc.editMarkdown([1, 1], [1, 1], 'Hi, ')!;
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hi, Hello World']);
@@ -120,7 +120,7 @@ describe('editText()', () => {
 
     it('append character', () => {
       const doc = new MarkdownDocument('Hello World');
-      const result = doc.editMarkdown(null, [1, 12], '!!')!;
+      const result = doc.editMarkdown([1, 12], [1, 12], '!!')!;
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hello World!!']);
@@ -145,7 +145,7 @@ describe('editText()', () => {
 
     it('prepend newlines', () => {
       const doc = new MarkdownDocument('Hello World');
-      const result = doc.editMarkdown([1, 1], null, '\n\n\n')!;
+      const result = doc.editMarkdown([1, 1], [1, 1], '\n\n\n')!;
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['', '', '', 'Hello World']);
@@ -170,7 +170,7 @@ describe('editText()', () => {
 
     it('prepend characters (unmatched position)', () => {
       const doc = new MarkdownDocument('  Hello World');
-      const result = doc.editMarkdown([1, 1], null, 'Hi,')!;
+      const result = doc.editMarkdown([1, 1], [1, 1], 'Hi,')!;
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hi,  Hello World']);
@@ -195,10 +195,11 @@ describe('editText()', () => {
 
     it('prepend newlines', () => {
       const doc = new MarkdownDocument('\nHello World');
-      const result = doc.editMarkdown([1, 1], null, '\n')!;
+      const result = doc.editMarkdown([1, 1], [1, 1], '\n')!;
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['', '', 'Hello World']);
+      expect(result.updated!.length).toBe(0);
       expect(root).toMatchObject({
         type: 'document',
         sourcepos: pos(1, 1, 3, 11),
@@ -217,7 +218,7 @@ describe('editText()', () => {
 
     it('append characters with newline', () => {
       const doc = new MarkdownDocument('Hello World\n');
-      const result = doc.editMarkdown([2, 1], null, '\nHi')!;
+      const result = doc.editMarkdown([2, 1], [2, 1], '\nHi')!;
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hello World', '', 'Hi']);
@@ -254,7 +255,7 @@ describe('editText()', () => {
   describe('multiple paragraph', () => {
     it('insert paragraphs within multiple paragraphs', () => {
       const doc = new MarkdownDocument('Hello\n\nMy\n\nWorld');
-      const result = doc.editMarkdown([1, 6], [5, 1], ',\n\nMy W')!;
+      const result = doc.editMarkdown([1, 6], [5, 1], ',\n\nMy ')!;
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hello,', '', 'My World']);
@@ -289,7 +290,7 @@ describe('editText()', () => {
 
     it('replace multiple paragraphs with a heading', () => {
       const doc = new MarkdownDocument('Hello\n\nMy\n\nWorld');
-      const result = doc.editMarkdown([1, 1], [5, 1], '# Hello W')!;
+      const result = doc.editMarkdown([1, 1], [5, 1], '# Hello ')!;
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['# Hello World']);
@@ -313,7 +314,7 @@ describe('editText()', () => {
 
     it('update sourcepos for every next nodes', () => {
       const doc = new MarkdownDocument('Hello\n\nMy\n\nWorld *!!*');
-      const result = doc.editMarkdown([1, 1], null, 'Hey,\n')!;
+      const result = doc.editMarkdown([1, 1], [1, 1], 'Hey,\n')!;
       const root = doc.getRootNode();
 
       expect(result.updated!.length).toBe(1);
