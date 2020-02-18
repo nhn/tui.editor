@@ -2,10 +2,11 @@
  * @fileoverview DOM Utils
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import toArray from 'tui-code-snippet/collection/toArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isString from 'tui-code-snippet/type/isString';
+import matches from 'tui-code-snippet/domUtil/matches';
 
 const FIND_ZWB = /\u200B/g;
 
@@ -436,31 +437,22 @@ const getTableCellByDirection = function(node, direction) {
  */
 const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
   let tableCellElement = null;
-  let $node,
-    index,
-    $targetRowElement,
-    $currentContainer,
-    $siblingContainer,
-    isSiblingContainerExists;
+  let index, targetRowElement, currentContainer, siblingContainer, isSiblingContainerExists;
 
   if (!isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
     if (node) {
-      $node = $(node);
-
       if (direction === 'next') {
-        $targetRowElement = $node.parent().next();
-        $currentContainer = $node.parents('thead');
-        $siblingContainer = $currentContainer[0] && $currentContainer.next();
-        isSiblingContainerExists =
-          $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
+        targetRowElement = node.parentNode && node.parentNode.nextSibling;
+        currentContainer = parents(node, 'thead');
+        siblingContainer = currentContainer[0] && currentContainer[0].nextSibling;
+        isSiblingContainerExists = siblingContainer && getNodeName(siblingContainer) === 'TBODY';
 
         index = 0;
       } else {
-        $targetRowElement = $node.parent().prev();
-        $currentContainer = $node.parents('tbody');
-        $siblingContainer = $currentContainer[0] && $currentContainer.prev();
-        isSiblingContainerExists =
-          $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
+        targetRowElement = node.parentNode && node.parentNode.previousSibling;
+        currentContainer = parents(node, 'tbody');
+        siblingContainer = currentContainer[0] && currentContainer[0].previousSibling;
+        isSiblingContainerExists = siblingContainer && getNodeName(siblingContainer) === 'THEAD';
 
         index = node.parentNode.childNodes.length - 1;
       }
@@ -469,10 +461,10 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
         index = getNodeOffsetOfParent(node);
       }
 
-      if ($targetRowElement[0]) {
-        tableCellElement = $targetRowElement.children('td,th')[index];
-      } else if ($currentContainer[0] && isSiblingContainerExists) {
-        tableCellElement = $siblingContainer.find('td,th')[index];
+      if (targetRowElement) {
+        tableCellElement = children(targetRowElement, 'td,th')[index];
+      } else if (currentContainer[0] && isSiblingContainerExists) {
+        tableCellElement = siblingContainer.querySelectorAll('td,th')[index];
       }
     }
   }
@@ -506,22 +498,22 @@ const isStyledNode = function(node) {
 /**
  * remove node from 'start' node to 'end-1' node inside parent
  * if 'end' node is null, remove all child nodes after 'start' node.
- * @param {Node} parent - parent node
+ * @param {Node} parentNode - parent node
  * @param {Node} start - start node to remove
  * @param {Node} end - end node to remove
  * @ignore
  */
-const removeChildFromStartToEndNode = function(parent, start, end) {
+const removeChildFromStartToEndNode = function(parentNode, start, end) {
   let child = start;
 
-  if (!child || parent !== child.parentNode) {
+  if (!child || parentNode !== child.parentNode) {
     return;
   }
 
   while (child !== end) {
     const next = child.nextSibling;
 
-    parent.removeChild(child);
+    parentNode.removeChild(child);
     child = next;
   }
 };
@@ -905,19 +897,13 @@ const getSiblingNodeBy = function(node, direction, condition) {
  * @ignore
  */
 const closest = (node, selector) => {
-  do {
-    const matches =
-      node.matches ||
-      node.webkitMatchesSelector ||
-      node.mozMatchesSelector ||
-      node.msMatchesSelector;
-
-    if (matches && matches.call(node, selector)) {
+  while (node && node !== document) {
+    if (isElemNode(node) && matches(node, selector)) {
       return node;
     }
 
     node = node.parentNode;
-  } while (isElemNode(node));
+  }
 
   return null;
 };
@@ -1012,7 +998,7 @@ const toggleClass = (element, className) => {
  * @ignore
  */
 const wrap = (nodeList, nodeName) => {
-  nodeList = nodeList.length ? [].slice.call(nodeList) : [nodeList];
+  nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
 
   nodeList.forEach(node => {
     const wrapper = document.createElement(nodeName);
@@ -1029,7 +1015,7 @@ const wrap = (nodeList, nodeName) => {
  * @ignore
  */
 const wrapInner = (nodeList, nodeName) => {
-  nodeList = nodeList.length ? [].slice.call(nodeList) : [nodeList];
+  nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
 
   nodeList.forEach(node => {
     const wrapper = document.createElement(nodeName);
@@ -1059,6 +1045,53 @@ const unwrap = nodeList => {
     }
   });
 };
+
+/**
+ * Gets all parent nodes matching by selector from target node
+ * @param {Node} node - target node
+ * @param {string} selector - selector to find
+ * @returns {Array.<Node>} found nodes
+ * @ignore
+ */
+function parents(node, selector) {
+  const result = [];
+
+  while (node && node !== document) {
+    node = closest(node.parentNode, selector);
+
+    if (node) {
+      result.push(node);
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Gets parent node matching by selector from target node
+ * @param {Node} node - target node
+ * @param {string} selector - selector to find
+ * @returns {Node} found node
+ * @ignore
+ */
+function parent(node, selector) {
+  const { parentNode } = node;
+
+  return parentNode && matches(parentNode, selector) ? parentNode : null;
+}
+
+/**
+ * Gets child nodes matching by selector from target node
+ * @param {Node} node - target node
+ * @param {string} selector - selector to find
+ * @returns {Array.<Node>} found nodes
+ * @ignore
+ */
+function children(node, selector) {
+  const { childNodes } = node;
+
+  return toArray(childNodes).filter(childNode => matches(childNode, selector));
+}
 
 export default {
   getNodeName,
@@ -1113,5 +1146,8 @@ export default {
   toggleClass,
   wrap,
   wrapInner,
-  unwrap
+  unwrap,
+  parents,
+  parent,
+  children
 };

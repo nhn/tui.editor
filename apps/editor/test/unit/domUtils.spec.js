@@ -763,4 +763,31 @@ describe('domUtils', () => {
       expect(container.innerHTML).toBe('<i>foo</i><i>bar</i>');
     });
   });
+
+  it('parents() returns parent nodes matching by selector', () => {
+    container.innerHTML = '<b>foo<b>bar<i>baz</i></b></b>';
+
+    const result = domUtils.parents(container.querySelector('i'), 'b');
+
+    expect(result[0].firstChild.textContent).toBe('bar');
+    expect(result[1].firstChild.textContent).toBe('foo');
+  });
+
+  it('parent() returns parent node matching by selector', () => {
+    container.innerHTML = '<b>foo<b>bar<i>baz</i></b></b>';
+
+    const result = domUtils.parent(container.querySelector('i'), 'b');
+
+    expect(result.firstChild.textContent).toBe('bar');
+  });
+
+  it('children() returns child nodes matching by selector', () => {
+    container.innerHTML = '<b>foo</b><b>bar<i>baz</i></b><i>qux</i>';
+
+    const result = domUtils.children(container, 'b,i');
+
+    expect(result[0].firstChild.textContent).toBe('foo');
+    expect(result[1].firstChild.textContent).toBe('bar');
+    expect(result[2].firstChild.textContent).toBe('qux');
+  });
 });
