@@ -2,9 +2,11 @@
  * @fileoverview Implements htmlSanitizer
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import toArray from 'tui-code-snippet/collection/toArray';
+import isString from 'tui-code-snippet/type/isString';
+
+import domUtils from './domUtils';
 
 const HTML_ATTR_LIST_RX = new RegExp(
   '^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
@@ -47,39 +49,45 @@ const ATTR_VALUE_BLACK_LIST_RX = {
  * @ignore
  */
 function htmlSanitizer(html, needHtmlText) {
-  const $html = $('<div />');
+  const root = document.createElement('div');
 
-  html = html.replace(/<!--[\s\S]*?-->/g, '');
+  if (isString(html)) {
+    html = html.replace(/<!--[\s\S]*?-->/g, '');
+    root.innerHTML = html;
+  } else {
+    root.appendChild(html);
+  }
 
-  $html.append(html);
+  removeUnnecessaryTags(root);
+  leaveOnlyWhitelistAttribute(root);
+  removeInvalidAttributeValues(root);
 
-  removeUnnecessaryTags($html);
-  leaveOnlyWhitelistAttribute($html);
-  removeInvalidAttributeValues($html);
-
-  return finalizeHtml($html, needHtmlText);
+  return finalizeHtml(root, needHtmlText);
 }
 
 /**
  * Remove unnecessary tags
  * @private
- * @param {jQuery} $html jQuery instance
+ * @param {HTMLElement} html root element
  */
-function removeUnnecessaryTags($html) {
-  $html
-    .find(
+function removeUnnecessaryTags(html) {
+  forEachArray(
+    html.querySelectorAll(
       'script, iframe, textarea, form, button, select, meta, style, link, title, embed, object, details, summary'
-    )
-    .remove();
+    ),
+    node => {
+      domUtils.removeNode(node);
+    }
+  );
 }
 
 /**
  * Leave only white list attributes
  * @private
- * @param {jQuery} $html jQuery instance
+ * @param {HTMLElement} html root element
  */
-function leaveOnlyWhitelistAttribute($html) {
-  $html.find('*').each((index, node) => {
+function leaveOnlyWhitelistAttribute(html) {
+  forEachArray(html.querySelectorAll('*'), node => {
     const attrs = node.attributes;
     const blacklist = toArray(attrs).filter(attr => {
       const isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
@@ -101,12 +109,12 @@ function leaveOnlyWhitelistAttribute($html) {
 /**
  * Remove invalid attribute values
  * @private
- * @param {jQuery} $html jQuery instance
+ * @param {HTMLElement} html root element
  */
-function removeInvalidAttributeValues($html) {
+function removeInvalidAttributeValues(html) {
   for (const attr in ATTR_VALUE_BLACK_LIST_RX) {
     if (ATTR_VALUE_BLACK_LIST_RX.hasOwnProperty(attr)) {
-      $html.find(`[${attr}]`).each((index, node) => {
+      forEachArray(html.querySelectorAll(`[${attr}]`), node => {
         const attrs = node.attributes;
         const valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr];
         const attrItem = attrs.getNamedItem(attr);
@@ -122,18 +130,18 @@ function removeInvalidAttributeValues($html) {
 /**
  * Finalize html result
  * @private
- * @param {jQuery} $html jQuery instance
+ * @param {HTMLElement} html root element
  * @param {boolean} needHtmlText pass true if need html text
  * @returns {string|DocumentFragment} result
  */
-function finalizeHtml($html, needHtmlText) {
+function finalizeHtml(html, needHtmlText) {
   let returnValue;
 
   if (needHtmlText) {
-    returnValue = $html[0].innerHTML;
+    returnValue = html.innerHTML;
   } else {
     const frag = document.createDocumentFragment();
-    const childNodes = toArray($html[0].childNodes);
+    const childNodes = toArray(html.childNodes);
     const { length } = childNodes;
 
     for (let i = 0; i < length; i += 1) {
