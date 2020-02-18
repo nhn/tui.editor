@@ -75,7 +75,7 @@ export function prependChildNodes(parent: Node, nodes: Node[]) {
 }
 
 export function updateNextLineNumbers(base: Node | null, diff: number) {
-  if (!base || !base.parent) {
+  if (!base || !base.parent || diff === 0) {
     return;
   }
 

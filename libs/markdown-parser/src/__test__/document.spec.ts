@@ -10,7 +10,7 @@ describe('editText()', () => {
   describe('single paragraph', () => {
     it('insert character within a line', () => {
       const doc = new MarkdownDocument('Hello World');
-      const result = doc.editMarkdown([1, 6], [1, 6], ',')!;
+      const result = doc.editMarkdown([1, 6], [1, 6], ',');
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hello, World']);
@@ -29,13 +29,36 @@ describe('editText()', () => {
         }
       });
 
-      expect(result.updated!.length).toBe(1);
-      expect(result.updated![0]).toBe(root.firstChild!);
+      expect(result.nodes.length).toBe(1);
+      expect(result.nodes[0]).toBe(root.firstChild!);
+    });
+
+    it('remove last newline', () => {
+      const doc = new MarkdownDocument('Hello World\n');
+      const result = doc.editMarkdown([1, 12], [2, 1], '');
+      const root = doc.getRootNode();
+
+      expect(doc.getLineTexts()).toEqual(['Hello World']);
+      expect(result.nodes.length).toBe(1);
+      expect(result.nodes[0]).toBe(root.firstChild!);
+      expect(root).toMatchObject({
+        type: 'document',
+        sourcepos: pos(1, 1, 1, 11),
+        firstChild: {
+          type: 'paragraph',
+          sourcepos: pos(1, 1, 1, 11),
+          firstChild: {
+            type: 'text',
+            literal: 'Hello World',
+            sourcepos: pos(1, 1, 1, 11)
+          }
+        }
+      });
     });
 
     it('insert characters and newlines', () => {
       const doc = new MarkdownDocument('Hello World');
-      const result = doc.editMarkdown([1, 6], [1, 7], '!\n\nMy ')!;
+      const result = doc.editMarkdown([1, 6], [1, 7], '!\n\nMy ');
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hello!', '', 'My World']);
@@ -63,14 +86,14 @@ describe('editText()', () => {
         }
       });
 
-      expect(result.updated!.length).toBe(2);
-      expect(result.updated![0]).toBe(root.firstChild!);
-      expect(result.updated![1]).toBe(root.firstChild!.next!);
+      expect(result.nodes.length).toBe(2);
+      expect(result.nodes[0]).toBe(root.firstChild!);
+      expect(result.nodes[1]).toBe(root.firstChild!.next!);
     });
 
     it('replace multiline text with characters', () => {
       const doc = new MarkdownDocument('Hello\nMy\nWorld');
-      const result = doc.editMarkdown([1, 5], [3, 3], 'ooo Wooo')!;
+      const result = doc.editMarkdown([1, 5], [3, 3], 'ooo Wooo');
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hellooo Wooorld']);
@@ -89,13 +112,13 @@ describe('editText()', () => {
         }
       });
 
-      expect(result.updated!.length).toBe(1);
-      expect(result.updated![0]).toBe(root.firstChild!);
+      expect(result.nodes.length).toBe(1);
+      expect(result.nodes[0]).toBe(root.firstChild!);
     });
 
     it('prepend characters', () => {
       const doc = new MarkdownDocument('Hello World');
-      const result = doc.editMarkdown([1, 1], [1, 1], 'Hi, ')!;
+      const result = doc.editMarkdown([1, 1], [1, 1], 'Hi, ');
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hi, Hello World']);
@@ -114,13 +137,13 @@ describe('editText()', () => {
         }
       });
 
-      expect(result.updated!.length).toBe(1);
-      expect(result.updated![0]).toBe(root.firstChild!);
+      expect(result.nodes.length).toBe(1);
+      expect(result.nodes[0]).toBe(root.firstChild!);
     });
 
     it('append character', () => {
       const doc = new MarkdownDocument('Hello World');
-      const result = doc.editMarkdown([1, 12], [1, 12], '!!')!;
+      const result = doc.editMarkdown([1, 12], [1, 12], '!!');
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hello World!!']);
@@ -139,13 +162,13 @@ describe('editText()', () => {
         }
       });
 
-      expect(result.updated!.length).toBe(1);
-      expect(result.updated![0]).toBe(root.firstChild!);
+      expect(result.nodes.length).toBe(1);
+      expect(result.nodes[0]).toBe(root.firstChild!);
     });
 
     it('prepend newlines', () => {
       const doc = new MarkdownDocument('Hello World');
-      const result = doc.editMarkdown([1, 1], [1, 1], '\n\n\n')!;
+      const result = doc.editMarkdown([1, 1], [1, 1], '\n\n\n');
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['', '', '', 'Hello World']);
@@ -164,13 +187,13 @@ describe('editText()', () => {
         }
       });
 
-      expect(result.updated!.length).toBe(1);
-      expect(result.updated![0]).toBe(root.firstChild!);
+      expect(result.nodes.length).toBe(1);
+      expect(result.nodes[0]).toBe(root.firstChild!);
     });
 
     it('prepend characters (unmatched position)', () => {
       const doc = new MarkdownDocument('  Hello World');
-      const result = doc.editMarkdown([1, 1], [1, 1], 'Hi,')!;
+      const result = doc.editMarkdown([1, 1], [1, 1], 'Hi,');
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hi,  Hello World']);
@@ -189,17 +212,17 @@ describe('editText()', () => {
         }
       });
 
-      expect(result.updated!.length).toBe(1);
-      expect(result.updated![0]).toBe(root.firstChild!);
+      expect(result.nodes.length).toBe(1);
+      expect(result.nodes[0]).toBe(root.firstChild!);
     });
 
     it('prepend newlines', () => {
       const doc = new MarkdownDocument('\nHello World');
-      const result = doc.editMarkdown([1, 1], [1, 1], '\n')!;
+      const result = doc.editMarkdown([1, 1], [1, 1], '\n');
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['', '', 'Hello World']);
-      expect(result.updated!.length).toBe(0);
+      expect(result.nodes.length).toBe(0);
       expect(root).toMatchObject({
         type: 'document',
         sourcepos: pos(1, 1, 3, 11),
@@ -218,7 +241,7 @@ describe('editText()', () => {
 
     it('append characters with newline', () => {
       const doc = new MarkdownDocument('Hello World\n');
-      const result = doc.editMarkdown([2, 1], [2, 1], '\nHi')!;
+      const result = doc.editMarkdown([2, 1], [2, 1], '\nHi');
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hello World', '', 'Hi']);
@@ -246,16 +269,16 @@ describe('editText()', () => {
         }
       });
 
-      expect(result.updated!.length).toBe(2);
-      expect(result.updated![0]).toBe(root.firstChild!);
-      expect(result.updated![1]).toBe(root.firstChild!.next!);
+      expect(result.nodes.length).toBe(2);
+      expect(result.nodes[0]).toBe(root.firstChild!);
+      expect(result.nodes[1]).toBe(root.firstChild!.next!);
     });
   });
 
   describe('multiple paragraph', () => {
     it('insert paragraphs within multiple paragraphs', () => {
       const doc = new MarkdownDocument('Hello\n\nMy\n\nWorld');
-      const result = doc.editMarkdown([1, 6], [5, 1], ',\n\nMy ')!;
+      const result = doc.editMarkdown([1, 6], [5, 1], ',\n\nMy ');
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['Hello,', '', 'My World']);
@@ -283,14 +306,14 @@ describe('editText()', () => {
         }
       });
 
-      expect(result.updated!.length).toBe(2);
-      expect(result.updated![0]).toBe(root.firstChild!);
-      expect(result.updated![1]).toBe(root.firstChild!.next!);
+      expect(result.nodes.length).toBe(2);
+      expect(result.nodes[0]).toBe(root.firstChild!);
+      expect(result.nodes[1]).toBe(root.firstChild!.next!);
     });
 
     it('replace multiple paragraphs with a heading', () => {
       const doc = new MarkdownDocument('Hello\n\nMy\n\nWorld');
-      const result = doc.editMarkdown([1, 1], [5, 1], '# Hello ')!;
+      const result = doc.editMarkdown([1, 1], [5, 1], '# Hello ');
       const root = doc.getRootNode();
 
       expect(doc.getLineTexts()).toEqual(['# Hello World']);
@@ -308,17 +331,17 @@ describe('editText()', () => {
           }
         }
       });
-      expect(result.updated!.length).toBe(1);
-      expect(result.updated![0]).toBe(root.firstChild!);
+      expect(result.nodes.length).toBe(1);
+      expect(result.nodes[0]).toBe(root.firstChild!);
     });
 
     it('update sourcepos for every next nodes', () => {
       const doc = new MarkdownDocument('Hello\n\nMy\n\nWorld *!!*');
-      const result = doc.editMarkdown([1, 1], [1, 1], 'Hey,\n')!;
+      const result = doc.editMarkdown([1, 1], [1, 1], 'Hey,\n');
       const root = doc.getRootNode();
 
-      expect(result.updated!.length).toBe(1);
-      expect(result.updated![0]).toBe(root.firstChild!);
+      expect(result.nodes.length).toBe(1);
+      expect(result.nodes[0]).toBe(root.firstChild!);
       expect(doc.getLineTexts()).toEqual(['Hey,', 'Hello', '', 'My', '', 'World *!!*']);
       expect(root).toMatchObject({
         type: 'document',

@@ -7,21 +7,54 @@ const editorEl = document.createElement('div');
 editorEl.className = 'editor-area';
 document.body.appendChild(editorEl);
 
+const innerTextEl = document.createElement('textarea');
+innerTextEl.className = 'inner-text';
+document.body.appendChild(innerTextEl);
+
 const cm = codemirror(editorEl, { lineNumbers: true });
-const mdDoc = new MarkdownDocument();
+const doc = new MarkdownDocument();
 
-// @ts-ignore
-cm.on('change', ({ doc }, changeObj) => {
-  console.log('doc', doc);
-  console.log('changeObj', changeObj);
-  // refresh(doc);
+const tokenTypes = {
+  heading: 'header',
+  emph: 'em',
+  strong: 'strong',
+  item: 'variable-2',
+  image: 'variable-3',
+  blockQuote: 'quote' // eslint-disable-line
+};
+
+type TokenTypes = typeof tokenTypes;
+
+cm.on('change', (editor, changeObj) => {
+  const { from, to, text } = changeObj;
+
+  const { lineRange, nodes } = doc.editMarkdown(
+    [from.line + 1, from.ch + 1],
+    [to.line + 1, to.ch + 1],
+    text.join('\n')
+  );
+
+  innerTextEl.value = doc.lineTexts.join('[br]\n');
+
+  const marks = cm.findMarks({ line: lineRange[0] - 1, ch: 0 }, { line: lineRange[1], ch: 0 });
+  for (const mark of marks) {
+    mark.clear();
+  }
+
+  for (const parent of nodes) {
+    const walker = parent.walker();
+    let event;
+    while ((event = walker.next())) {
+      const { node, entering } = event;
+      if (entering) {
+        const [startLine, startCh] = node.sourcepos![0];
+        const [endLine, endCh] = node.sourcepos![1];
+        const start = { line: startLine - 1, ch: startCh - 1 };
+        const end = { line: endLine - 1, ch: endCh };
+        const token = tokenTypes[node.type as keyof TokenTypes];
+
+        cm.markText(start, end, { className: `cm-${token}` });
+      }
+    }
+  }
 });
-
-// function refresh(doc) {
-//   parse(doc.getValue());
-
-//   const root = getRootNode();
-//   highlight(doc, root);
-//   treeEl.innerText = xmlWriter.render(root);
-//   previewEl.innerHTML = htmlWriter.render(root);
-// }

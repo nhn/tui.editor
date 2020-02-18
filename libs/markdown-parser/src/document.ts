@@ -19,11 +19,12 @@ export type Position = [number, number];
 export type Range = [Position, Position];
 
 interface EditResult {
-  updated?: Node[];
+  nodes: Node[];
+  lineRange: [number, number];
 }
 
 export class MarkdownDocument {
-  private lineTexts: string[];
+  public lineTexts: string[];
   private parser: Parser;
   private root: Node;
 
@@ -37,8 +38,7 @@ export class MarkdownDocument {
     [startLine, startCol]: Position,
     [endLine, endCol]: Position,
     newText: string
-  ): EditResult | null {
-    let result: EditResult | null = null;
+  ): EditResult {
     const newLines = newText.split(reLineEnding);
     const newLineLen = newLines.length;
     const startLineText = this.lineTexts[startLine - 1];
@@ -49,27 +49,29 @@ export class MarkdownDocument {
     const removedLineLen = endLine - startLine + 1;
     this.lineTexts.splice(startLine - 1, removedLineLen, ...newLines);
 
-    let startNode = findBlockByLine(this.root, startLine)!;
-    let endNode: Node;
-    if (startLine === endLine || endLine <= startNode.sourcepos![1][0]) {
-      endNode = startNode;
-    } else {
-      endNode = findBlockByLine(this.root, endLine)!;
+    let startNode = findBlockByLine(this.root, startLine);
+    let endNode: Node | null = null;
+    if (startNode) {
+      if (startLine === endLine || endLine <= startNode.sourcepos![1][0]) {
+        endNode = startNode;
+      } else {
+        endNode = findBlockByLine(this.root, endLine);
+      }
     }
 
     const parseStartLine = startNode ? startNode.sourcepos![0][0] : startLine;
-    const parseEndLine = endNode ? Math.max(endNode.sourcepos![1][0], startLine) : endLine;
+    const parseEndLine = endNode ? Math.max(endNode.sourcepos![1][0], endLine) : endLine;
     const editedLines = this.lineTexts.slice(
       parseStartLine - 1,
       parseEndLine - removedLineLen + newLineLen
     );
     const newNodes = getChildNodes(this.parser.partialParse(parseStartLine, editedLines));
 
-    if (!startNode && !endNode) {
+    if (!startNode) {
       prependChildNodes(this.root, newNodes);
     } else {
       if (startNode !== endNode) {
-        const parent = findClosestCommonParent(startNode, endNode)!;
+        const parent = findClosestCommonParent(startNode, endNode!)!;
         startNode = findChildNodeByLine(parent, startLine)!;
         endNode = findChildNodeByLine(parent, endLine)!;
       }
@@ -78,14 +80,14 @@ export class MarkdownDocument {
       startNode.unlink();
     }
 
-    result = { updated: newNodes };
-
     const nextNode = newNodes.length ? last(newNodes).next : this.root.firstChild;
     updateNextLineNumbers(nextNode, newLineLen - removedLineLen);
-
     this.root.sourcepos![1] = [this.lineTexts.length, last(this.lineTexts).length];
 
-    return result;
+    return {
+      nodes: newNodes,
+      lineRange: [parseStartLine, parseEndLine]
+    };
   }
 
   getLineTexts() {

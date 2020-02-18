@@ -2,8 +2,21 @@
   width: 500px;
   height: 500px;
   border: 1px solid #ccc;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .editor-area .CodeMirror {
   height: 500px;
+}
+
+.inner-text {
+  position: absolute;
+  top: 0;
+  left: 500px;
+  width: 500px;
+  height: 500px;
+  position: absolute;
+  border: 1px solid #ccc;
 }
