@@ -1,6 +1,5 @@
 import { Parser } from './commonmark/blocks';
 import { Node } from './commonmark/node';
-import { last } from './helper';
 import {
   removeNextUntil,
   findClosestCommonParent,
@@ -51,12 +50,10 @@ export class MarkdownDocument {
 
     let startNode = findBlockByLine(this.root, startLine);
     let endNode: Node | null = null;
-    if (startNode) {
-      if (startLine === endLine || endLine <= startNode.sourcepos![1][0]) {
-        endNode = startNode;
-      } else {
-        endNode = findBlockByLine(this.root, endLine);
-      }
+    if (startNode && (startLine === endLine || endLine <= startNode.sourcepos![1][0])) {
+      endNode = startNode;
+    } else {
+      endNode = findBlockByLine(this.root, endLine);
     }
 
     const parseStartLine = startNode ? startNode.sourcepos![0][0] : startLine;
@@ -66,9 +63,15 @@ export class MarkdownDocument {
       parseEndLine - removedLineLen + newLineLen
     );
     const newNodes = getChildNodes(this.parser.partialParse(parseStartLine, editedLines));
+    const nextNode = endNode ? endNode.next : this.root.firstChild;
 
     if (!startNode) {
-      prependChildNodes(this.root, newNodes);
+      if (endNode) {
+        insertNodesBefore(endNode, newNodes);
+        endNode.unlink();
+      } else {
+        prependChildNodes(this.root, newNodes);
+      }
     } else {
       if (startNode !== endNode) {
         const parent = findClosestCommonParent(startNode, endNode!)!;
@@ -80,9 +83,12 @@ export class MarkdownDocument {
       startNode.unlink();
     }
 
-    const nextNode = newNodes.length ? last(newNodes).next : this.root.firstChild;
     updateNextLineNumbers(nextNode, newLineLen - removedLineLen);
-    this.root.sourcepos![1] = [this.lineTexts.length, last(this.lineTexts).length];
+    if (this.root.lastChild) {
+      this.root.sourcepos![1] = [...this.root.lastChild!.sourcepos![1]] as Position;
+    } else {
+      this.root.sourcepos![1] = [1, 1];
+    }
 
     return {
       nodes: newNodes,

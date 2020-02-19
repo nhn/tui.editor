@@ -159,5 +159,5 @@ export function findChildNodeByLine(parent: Node, line: number) {
     }
     node = node.next;
   }
-  return node;
+  return node || parent.lastChild;
 }

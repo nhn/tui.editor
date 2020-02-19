@@ -1,18 +1,36 @@
 import codemirror from 'codemirror';
 import { MarkdownDocument } from './document';
+import { GfmHtmlRenderer } from './commonmark/render/gfm/html';
 import 'codemirror/lib/codemirror.css';
 import './index.css';
 
-const editorEl = document.createElement('div');
-editorEl.className = 'editor-area';
-document.body.appendChild(editorEl);
+document.body.innerHTML = `
+  <section class="container">
+    <div class="editor"></div>
+    <div class="html"></div>
+    <div class="preview"></div>
+  </section>
+`;
 
-const innerTextEl = document.createElement('textarea');
-innerTextEl.className = 'inner-text';
-document.body.appendChild(innerTextEl);
+const editorEl = document.querySelector('.editor') as HTMLElement;
+const htmlEl = document.querySelector('.html') as HTMLElement;
+const previewEl = document.querySelector('.preview') as HTMLElement;
+
+// const editorEl = document.createElement('div');
+// editorEl.className = 'editor-area';
+// document.body.appendChild(editorEl);
+
+// const htmlEl = document.createElement('div');
+// htmlEl.className = 'html-area';
+// document.body.appendChild(htmlEl);
+
+// const previewEl = document.createElement('div');
+// previewEl.className = 'preview-area';
+// document.body.appendChild(previewEl);
 
 const cm = codemirror(editorEl, { lineNumbers: true });
 const doc = new MarkdownDocument();
+const writer = new GfmHtmlRenderer({ sourcepos: true });
 
 const tokenTypes = {
   heading: 'header',
@@ -20,21 +38,24 @@ const tokenTypes = {
   strong: 'strong',
   item: 'variable-2',
   image: 'variable-3',
-  blockQuote: 'quote' // eslint-disable-line
+  blockQuote: 'quote'
 };
 
 type TokenTypes = typeof tokenTypes;
 
 cm.on('change', (editor, changeObj) => {
   const { from, to, text } = changeObj;
-
   const { lineRange, nodes } = doc.editMarkdown(
     [from.line + 1, from.ch + 1],
     [to.line + 1, to.ch + 1],
     text.join('\n')
   );
+  console.log('lineRange', lineRange);
+  console.log('nodes', nodes);
 
-  innerTextEl.value = doc.lineTexts.join('[br]\n');
+  const html = writer.render(doc.getRootNode());
+  previewEl.innerHTML = html;
+  htmlEl.innerText = html;
 
   const marks = cm.findMarks({ line: lineRange[0] - 1, ch: 0 }, { line: lineRange[1], ch: 0 });
   for (const mark of marks) {

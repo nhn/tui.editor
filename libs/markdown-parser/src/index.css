@@ -1,22 +1,15 @@
-.editor-area {
-  width: 500px;
-  height: 500px;
-  border: 1px solid #ccc;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.editor-area .CodeMirror {
+.container {
+  display: flex;
   height: 500px;
 }
 
-.inner-text {
-  position: absolute;
-  top: 0;
-  left: 500px;
-  width: 500px;
-  height: 500px;
-  position: absolute;
+.container > div {
+  flex: 1;
   border: 1px solid #ccc;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.CodeMirror {
+  height: 500px;
 }

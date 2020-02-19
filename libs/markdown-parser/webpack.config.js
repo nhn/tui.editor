@@ -42,7 +42,7 @@ module.exports = (env, { mode = 'development' }) => {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        filename: 'dist/index.html'
+        filename: 'index.html'
       })
     ],
     devServer: {

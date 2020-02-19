@@ -33,6 +33,29 @@ describe('editText()', () => {
       expect(result.nodes[0]).toBe(root.firstChild!);
     });
 
+    it('remove preceding newline', () => {
+      const doc = new MarkdownDocument('\nHello World');
+      const result = doc.editMarkdown([1, 1], [2, 1], '');
+      const root = doc.getRootNode();
+
+      expect(result.nodes.length).toBe(1);
+      expect(result.nodes[0]).toBe(root.firstChild!);
+      expect(doc.getLineTexts()).toEqual(['Hello World']);
+      expect(root).toMatchObject({
+        type: 'document',
+        sourcepos: pos(1, 1, 1, 11),
+        firstChild: {
+          type: 'paragraph',
+          sourcepos: pos(1, 1, 1, 11),
+          firstChild: {
+            type: 'text',
+            literal: 'Hello World',
+            sourcepos: pos(1, 1, 1, 11)
+          }
+        }
+      });
+    });
+
     it('remove last newline', () => {
       const doc = new MarkdownDocument('Hello World\n');
       const result = doc.editMarkdown([1, 12], [2, 1], '');
@@ -333,6 +356,29 @@ describe('editText()', () => {
       });
       expect(result.nodes.length).toBe(1);
       expect(result.nodes[0]).toBe(root.firstChild!);
+    });
+
+    it('remove last block with newlines', () => {
+      const doc = new MarkdownDocument('Hello\n\nWorld\n');
+      const result = doc.editMarkdown([3, 1], [4, 1], '');
+      const root = doc.getRootNode();
+
+      expect(doc.getLineTexts()).toEqual(['Hello', '', '']);
+      expect(result.nodes.length).toBe(0);
+      expect(root).toMatchObject({
+        type: 'document',
+        sourcepos: pos(1, 1, 1, 5),
+        firstChild: {
+          type: 'paragraph',
+          sourcepos: pos(1, 1, 1, 5),
+          firstChild: {
+            type: 'text',
+            sourcepos: pos(1, 1, 1, 5),
+            literal: 'Hello'
+          },
+          next: null
+        }
+      });
     });
 
     it('update sourcepos for every next nodes', () => {
