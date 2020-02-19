@@ -90,7 +90,7 @@ class PopupAddImage extends LayerPopup {
     this.tab = new Tab({
       initName: i18n.get('File'),
       items: [i18n.get('File'), i18n.get('URL')],
-      sections: [$fileTypeSection, $urlTypeSection]
+      sections: [$fileTypeSection.get(0), $urlTypeSection.get(0)]
     });
     $tabSection.append(this.tab.$el);
   }

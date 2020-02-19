@@ -10,13 +10,13 @@ describe('ModeSwitch', () => {
   let $container, modeSwitch;
 
   beforeEach(() => {
-    $container = $('<div>');
+    $container = $('<div>').get(0);
     $('body').append($container);
   });
 
   afterEach(() => {
     modeSwitch.destroy();
-    $container.empty();
+    $($container).empty();
   });
 
   it('editorTypeControl should be exist', () => {
@@ -61,7 +61,7 @@ describe('ModeSwitch', () => {
       modeSwitch = new ModeSwitch($container);
       expect(modeSwitch.isShown()).toBe(true);
 
-      modeSwitch._$rootElement.css('display', 'none');
+      modeSwitch._rootElement.style.display = 'none';
       expect(modeSwitch.isShown()).toBe(false);
     });
   });
@@ -71,10 +71,10 @@ describe('ModeSwitch', () => {
       modeSwitch = new ModeSwitch($container);
 
       modeSwitch.hide();
-      expect(modeSwitch._$rootElement.css('display')).toBe('none');
+      expect(modeSwitch._rootElement.style.display).toBe('none');
 
       modeSwitch.show();
-      expect(modeSwitch._$rootElement.css('display')).toBe('block');
+      expect(modeSwitch._rootElement.style.display).toBe('block');
     });
   });
 });

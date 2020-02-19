@@ -197,24 +197,20 @@ class ToastUIEditor {
     this.setUI(this.options.UI || new DefaultUI(this));
 
     this.mdEditor = MarkdownEditor.factory(
-      this.layout.getMdEditorContainerEl()[0],
+      this.layout.getMdEditorContainerEl(),
       this.eventManager,
       this.options
     );
     this.preview = new MarkdownPreview(
-      this.layout.getPreviewEl()[0],
+      this.layout.getPreviewEl(),
       this.eventManager,
       this.convertor,
       false,
       this.options.previewDelayTime
     );
-    this.wwEditor = WysiwygEditor.factory(
-      this.layout.getWwEditorContainerEl()[0],
-      this.eventManager,
-      {
-        useDefaultHTMLSanitizer: this.options.useDefaultHTMLSanitizer
-      }
-    );
+    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
+      useDefaultHTMLSanitizer: this.options.useDefaultHTMLSanitizer
+    });
     this.toMarkOptions = {
       gfm: true,
       renderer: toMarkRenderer

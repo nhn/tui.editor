@@ -97,8 +97,8 @@ describe('Tab', () => {
     let tabSection1, tabSection2;
 
     beforeEach(() => {
-      tabSection1 = $('<div>tab1</div>');
-      tabSection2 = $('<div>tab2</div>');
+      tabSection1 = $('<div>tab1</div>').get(0);
+      tabSection2 = $('<div>tab2</div>').get(0);
 
       $('body').append(tabSection1);
       $('body').append(tabSection2);
@@ -130,8 +130,8 @@ describe('Tab', () => {
     let tabSection1, tabSection2;
 
     beforeEach(() => {
-      tabSection1 = $('<div>tab1</div>');
-      tabSection2 = $('<div>tab2</div>');
+      tabSection1 = $('<div>tab1</div>').get(0);
+      tabSection2 = $('<div>tab2</div>').get(0);
 
       $('body').append(tabSection1);
       $('body').append(tabSection2);
@@ -149,7 +149,7 @@ describe('Tab', () => {
       $('button')
         .eq(1)
         .trigger('click');
-      expect(tabSection2.hasClass('te-tab-active')).toBe(true);
+      expect($(tabSection2).hasClass('te-tab-active')).toBe(true);
     });
 
     it('click on the other tab button should result de-activating previously activated section', () => {
@@ -160,8 +160,8 @@ describe('Tab', () => {
         .eq(1)
         .trigger('click');
 
-      expect(tabSection1.hasClass('te-tab-active')).toBe(false);
-      expect(tabSection2.hasClass('te-tab-active')).toBe(true);
+      expect($(tabSection1).hasClass('te-tab-active')).toBe(false);
+      expect($(tabSection2).hasClass('te-tab-active')).toBe(true);
     });
   });
 

@@ -1093,6 +1093,33 @@ function children(node, selector) {
   return toArray(childNodes).filter(childNode => matches(childNode, selector));
 }
 
+function appendTo(node, domString) {
+  let tempElement = document.createElement('div');
+
+  tempElement.innerHTML = domString;
+
+  const appendedElement = tempElement.firstChild;
+
+  node.appendChild(appendedElement);
+  tempElement = null;
+
+  return appendedElement;
+}
+
+function show(element) {
+  element.style.display = '' | 'inline' | 'inline-block' | 'inline-table' | 'block';
+}
+
+function hide(element) {
+  element.style.display = 'none';
+}
+
+function containsSelector(element, selector, text) {
+  const nodeList = element.querySelectorAll(selector);
+
+  return toArray(nodeList).filter(node => new RegExp(text).test(node.textContent));
+}
+
 export default {
   getNodeName,
   isTextNode,
@@ -1149,5 +1176,9 @@ export default {
   unwrap,
   parents,
   parent,
-  children
+  children,
+  appendTo,
+  show,
+  hide,
+  containsSelector
 };
