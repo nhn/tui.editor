@@ -26,13 +26,17 @@ describe('Indent', () => {
     wwe.componentManager.addManager(WwListManager);
     sq.focus();
 
-    wwe.get$Body().html(`
-            <ul>
-                <li data-te-task class="task-list-item">abcdef</li>
-                <li data-te-task class="task-list-item">abcde</li>
-                <li data-te-task class="task-list-item"> </li>
-            </ul>
-        `);
+    wwe
+      .get$Body()
+      .html(
+        [
+          '<ul>',
+          '<li data-te-task class="task-list-item">abcdef</li>',
+          '<li data-te-task class="task-list-item">abcde</li>',
+          '<li data-te-task class="task-list-item"> </li>',
+          '</ul>'
+        ].join('')
+      );
   });
 
   // we need to wait squire input event process
@@ -59,6 +63,7 @@ describe('Indent', () => {
     expect(sq.getBody().querySelectorAll('ul ul li').length).toEqual(1);
     expect(sq.getBody().querySelector('ul ul li').className).toBe('task-list-item');
   });
+
   it('fail when it does not have previous li.', () => {
     const range = wwe
       .getEditor()
@@ -74,6 +79,7 @@ describe('Indent', () => {
 
     expect(sq.getBody().querySelectorAll('ul ul li').length).toEqual(0);
   });
+
   describe('should indent when cursor', () => {
     it('at startOffset 0.', () => {
       const range = wwe
@@ -91,6 +97,7 @@ describe('Indent', () => {
       expect(sq.getBody().querySelectorAll('ul ul li').length).toEqual(1);
       expect(sq.getBody().querySelector('ul ul li').className).toBe('task-list-item');
     });
+
     it('at startOffset 1.', () => {
       const range = wwe
         .getEditor()
@@ -108,24 +115,29 @@ describe('Indent', () => {
       expect(sq.getBody().querySelector('ul ul li').className).toBe('task-list-item');
     });
   });
+
   it('should indent ordinary list', () => {
     const range = wwe
       .getEditor()
       .getSelection()
       .cloneRange();
 
-    wwe.get$Body().html(`
-            <ul>
-                <li data-te-task class="task-list-item">abcdef</li>
-                <li data-te-task class="task-list-item">abcde</li>
-                <ul>
-                    <li data-te-task class="task-list-item"></li>
-                    <ul>
-                        <li data-te-task class="task-list-item">abcdef</li>
-                    </ul>
-                </ul>
-            </ul>
-        `);
+    wwe
+      .get$Body()
+      .html(
+        [
+          '<ul>',
+          '<li data-te-task class="task-list-item">abcdef</li>',
+          '<li data-te-task class="task-list-item">abcde</li>',
+          '<ul>',
+          '<li data-te-task class="task-list-item"></li>',
+          '<ul>',
+          '<li data-te-task class="task-list-item">abcdef</li>',
+          '</ul>',
+          '</ul>',
+          ' </ul>'
+        ].join('')
+      );
 
     range.setStart(wwe.get$Body().find('li')[1].firstChild, 1);
     range.collapse(true);
@@ -146,20 +158,24 @@ describe('Indent', () => {
       .getSelection()
       .cloneRange();
 
-    wwe.get$Body().html(`
-            <ul>
-                <li>list 1</li>
-                <ol>
-                    <li>list 2</li>
-                    <li>list 3</li>
-                </ol>
-                <li id="target">list 4</li>
-                <ul>
-                    <li>list 5</li>
-                    <li>list 6</li>
-                </ul>
-            </ul>
-        `);
+    wwe
+      .get$Body()
+      .html(
+        [
+          '<ul>',
+          '<li>list 1</li>',
+          '<ol>',
+          '<li>list 2</li>',
+          '<li>list 3</li>',
+          '</ol>',
+          '<li id="target">list 4</li>',
+          '<ul>',
+          '<li>list 5</li>',
+          '<li>list 6</li>',
+          '</ul>',
+          '</ul>'
+        ].join('')
+      );
 
     range.setStart(wwe.get$Body().find('#target')[0].firstChild, 1);
     range.collapse(true);

@@ -23,15 +23,19 @@ describe('Outdent', () => {
     wwe.componentManager.addManager(WwTaskManager);
     sq.focus();
 
-    wwe.get$Body().html(`
-            <ul>
-                <li data-te-task class="task-list-item">abcdef</li>
-                <ul>
-                    <li data-te-task class="task-list-item checked">abcde</li>
-                </ul>
-                <li data-te-task class="task-list-item"> </li>
-            </ul>
-        `);
+    wwe
+      .get$Body()
+      .html(
+        [
+          '<ul>',
+          '<li data-te-task class="task-list-item">abcdef</li>',
+          '<ul>',
+          '<li data-te-task class="task-list-item checked">abcde</li>',
+          '</ul>',
+          '<li data-te-task class="task-list-item"> </li>',
+          '</ul>'
+        ].join('')
+      );
   });
 
   // we need to wait squire input event process
@@ -68,6 +72,7 @@ describe('Outdent', () => {
         .hasClass('checked')
     ).toBe(true);
   });
+
   it('should break out list element and delete input.', () => {
     const range = wwe
       .getEditor()
@@ -89,21 +94,26 @@ describe('Outdent', () => {
         .hasClass('task-list-item')
     ).toBe(true);
   });
+
   it('should preserve original class(task / non-task)', () => {
     const range = wwe
       .getEditor()
       .getSelection()
       .cloneRange();
 
-    wwe.get$Body().html(`
-            <ul>
-                <li data-te-task class="task-list-item">abcdef</li>
-                <ul>
-                    <li>abcde</li>
-                </ul>
-                <li data-te-task class="task-list-item"> </li>
-            </ul>
-        `);
+    wwe
+      .get$Body()
+      .html(
+        [
+          '<ul>',
+          '<li data-te-task class="task-list-item">abcdef</li>',
+          '<ul>',
+          '<li>abcde</li>',
+          '</ul>',
+          '<li data-te-task class="task-list-item"> </li>',
+          '</ul>'
+        ].join('')
+      );
 
     range.setStart(wwe.get$Body().find('ul ul li')[0].firstChild, 0);
     range.collapse(true);
@@ -142,17 +152,21 @@ describe('Outdent', () => {
       .getSelection()
       .cloneRange();
 
-    wwe.get$Body().html(`
-            <ul>
-                <li>abcdef</li>
-                <ul>
-                    <li id="target">abcde</li>
-                    <ul>
-                        <li>abcde</li>
-                    </ul>
-                </ul>
-            </ul>
-        `);
+    wwe
+      .get$Body()
+      .html(
+        [
+          '<ul>',
+          '<li>abcdef</li>',
+          '<ul>',
+          '<li id="target">abcde</li>',
+          '<ul>',
+          '<li>abcde</li>',
+          '</ul>',
+          '</ul>',
+          '</ul>'
+        ].join('')
+      );
 
     range.setStart(wwe.get$Body().find('#target')[0].firstChild, 0);
     range.collapse(true);
@@ -190,6 +204,7 @@ describe('Outdent', () => {
           .hasClass('task-list-item')
       ).toBe(true);
     });
+
     it('at any offset.', () => {
       const range = wwe
         .getEditor()

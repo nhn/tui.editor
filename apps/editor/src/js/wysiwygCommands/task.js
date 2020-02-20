@@ -2,7 +2,7 @@
  * @fileoverview Implements Task WysiwygCommand
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import hasClass from 'tui-code-snippet/domUtil/hasClass';
 
 import CommandManager from '../commandManager';
 
@@ -75,7 +75,7 @@ const Task = CommandManager.command(
           target = sq.getSelection().startContainer;
         }
 
-        if ($(target).hasClass('task-list-item')) {
+        if (hasClass(target, 'task-list-item')) {
           taskManager.unformatTask(target);
         } else {
           taskManager.formatTask(target);

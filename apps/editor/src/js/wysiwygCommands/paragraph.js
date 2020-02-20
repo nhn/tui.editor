@@ -2,9 +2,10 @@
  * @fileoverview Implements Paragraph wysiwyg command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 /**
  * Paragraph
  * Convert selected contents to paragraph only heading and list
@@ -27,25 +28,21 @@ const Paragraph = CommandManager.command(
 
       if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
         sq.modifyBlocks(fragment => {
-          const $newFragment = $(document.createDocumentFragment());
+          const newFragment = document.createDocumentFragment();
 
-          $(fragment)
-            .children()
-            .each((index, block) => {
-              if (block.nodeName.match(/h\d/i)) {
-                $newFragment.append($(block).children());
-              } else if (block.nodeName.match(/ul|ol/i)) {
-                $(block)
-                  .find('li')
-                  .each((i, listItem) => {
-                    $newFragment.append($(listItem).children());
-                  });
-              } else {
-                $newFragment.append(block);
-              }
-            });
+          toArray(fragment.childNodes).forEach(block => {
+            if (block.nodeName.match(/h\d/i)) {
+              domUtils.appendChildren(block, newFragment);
+            } else if (block.nodeName.match(/ul|ol/i)) {
+              toArray(block.querySelectorAll('li')).forEach(listItem => {
+                domUtils.appendChildren(listItem, newFragment);
+              });
+            } else {
+              newFragment.appendChild(block);
+            }
+          });
 
-          return $newFragment[0];
+          return newFragment;
         });
       }
     }

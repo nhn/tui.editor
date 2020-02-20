@@ -2,8 +2,8 @@
  * @fileoverview Implements code block WysiwygCommand
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import toArray from 'tui-code-snippet/collection/toArray';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import CommandManager from '../commandManager';
 
@@ -42,7 +42,7 @@ const CodeBlock = CommandManager.command(
 
         sq.insertHTML(`<pre ${attr}>${codeBlockBody}</pre>`);
 
-        focusToFirstCode(wwe.get$Body().find(`.${CODEBLOCK_CLASS_TEMP}`), wwe);
+        focusToFirstCode(wwe.getBody().querySelector(`.${CODEBLOCK_CLASS_TEMP}`), wwe);
       }
 
       wwe.focus();
@@ -53,18 +53,18 @@ const CodeBlock = CommandManager.command(
 /**
  * focusToFirstCode
  * Focus to first code tag content of pre tag
- * @param {jQuery} $pre pre tag
+ * @param {HTMLElement} pre pre tag
  * @param {WysiwygEditor} wwe wysiwygEditor
  */
-function focusToFirstCode($pre, wwe) {
+function focusToFirstCode(pre, wwe) {
   const range = wwe
     .getEditor()
     .getSelection()
     .cloneRange();
 
-  $pre.removeClass(CODEBLOCK_CLASS_TEMP);
+  removeClass(pre, CODEBLOCK_CLASS_TEMP);
 
-  range.setStartBefore($pre.get(0).firstChild);
+  range.setStartBefore(pre.firstChild);
   range.collapse(true);
 
   wwe.getEditor().setSelection(range);
@@ -85,9 +85,11 @@ function getCodeBlockBody(range, wwe) {
   } else {
     const contents = range.extractContents();
     const nodes = toArray(contents.childNodes);
-    const tempDiv = $('<div>').append(mgr.prepareToPasteOnCodeblock(nodes));
+    const tempDiv = document.createElement('div');
 
-    codeBlock = tempDiv.html();
+    tempDiv.appendChild(mgr.prepareToPasteOnCodeblock(nodes));
+
+    codeBlock = tempDiv.innerHTML;
   }
 
   return codeBlock;

@@ -2,9 +2,11 @@
  * @fileoverview Implements Indent wysiwyg command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
+import matches from 'tui-code-snippet/domUtil/matches';
 
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * Indent
@@ -24,33 +26,48 @@ const Indent = CommandManager.command(
     exec(wwe) {
       const listManager = wwe.componentManager.getManager('list');
       const range = wwe.getEditor().getSelection();
-      const $node = $(range.startContainer).closest('li');
+      const node = domUtils.closest(range.startContainer, 'li');
       let prevClasses, nodeClasses, nextClasses;
 
-      const $prev = $node.prev();
+      const prev = node.previousSibling;
 
-      if ($prev.length && $node.length) {
-        const $next = $node.find('li').eq(0);
+      if (prev && node) {
+        const next = node.querySelector('li');
 
         wwe.getEditor().saveUndoState();
 
-        nodeClasses = $node.attr('class');
-        prevClasses = $prev.attr('class');
-        nextClasses = $next.attr('class');
+        nodeClasses = node.getAttribute('class');
+        prevClasses = prev.getAttribute('class');
 
-        $node.removeAttr('class');
-        $prev.removeAttr('class');
+        node.class = false;
+        prev.class = false;
 
-        if ($next.length && !$next.children('div').length) {
-          $next.removeAttr('class');
+        if (next) {
+          nextClasses = next.getAttribute('class');
+
+          const divElements = toArray(next.childNodes).filter(childNode =>
+            matches(childNode, 'div')
+          );
+
+          if (!divElements.length) {
+            next.class = false;
+          }
         }
 
         wwe.getEditor().increaseListLevel();
-        listManager.mergeList($node.get(0));
+        listManager.mergeList(node);
 
-        $node.attr('class', nodeClasses);
-        $prev.attr('class', prevClasses);
-        $next.attr('class', nextClasses);
+        if (nodeClasses) {
+          node.setAttribute('class', nodeClasses);
+        }
+
+        if (prevClasses) {
+          prev.setAttribute('class', prevClasses);
+        }
+
+        if (nextClasses) {
+          next.setAttribute('class', nextClasses);
+        }
       }
     }
   }
