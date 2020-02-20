@@ -2,7 +2,10 @@
  * @fileoverview implements DefaultToolbar
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import $ from 'jquery';
+
 import extend from 'tui-code-snippet/object/extend';
+import css from 'tui-code-snippet/domUtil/css';
 
 import LayerPopup from './layerpopup';
 import Toolbar from './toolbar';
@@ -153,17 +156,17 @@ class PopupDropdownToolbar extends LayerPopup {
       }
 
       // to give toolbar element enough width before the calculation
-      this.$el.css({
+      css(this.$el, {
         left: '-1000px'
       });
-      const $button = this._$button;
+      const $button = $(this._$button);
       const position = $button.position();
       const buttonOuterHeightWithMargin = $button.outerHeight(true);
       const buttonMarginBottom = (buttonOuterHeightWithMargin - $button.outerHeight()) / 2;
       const top = position.top + buttonOuterHeightWithMargin - buttonMarginBottom;
-      const left = position.left + $button.outerWidth(true) - this.$el.outerWidth(true);
+      const left = position.left + $button.outerWidth(true) - $(this.$el).outerWidth(true);
 
-      this.$el.css({
+      css(this.$el, {
         top,
         left
       });

@@ -74,7 +74,7 @@ class PopupCodeBlockEditor extends LayerPopup {
   _initDOM(options) {
     super._initDOM(options);
 
-    const el = this.$el.get(0);
+    const el = this.$el;
 
     this._body = el.querySelector(`.${CLASS_PREFIX}body`);
     this._toggleFitButton = el.querySelector(`.${CLASS_PREFIX}toggle-fit`);

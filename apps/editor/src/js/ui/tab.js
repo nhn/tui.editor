@@ -51,7 +51,7 @@ class Tab extends UIController {
     for (let i = 0, len = items.length; i < len; i += 1) {
       tabButtons.push(`<button type="button" data-index="${i}">${items[i]}</button>`);
     }
-    this.$el.get(0).innerHTML = tabButtons.join('');
+    this.$el.innerHTML = tabButtons.join('');
     this.activate(initName);
   }
 
@@ -60,7 +60,7 @@ class Tab extends UIController {
    * @param {string} name button name to activate
    */
   activate(name) {
-    const [button] = domUtils.containsSelector(this.$el.get(0), 'button', name);
+    const [button] = domUtils.containsSelector(this.$el, 'button', name);
 
     this._activateTabByButton(button);
   }

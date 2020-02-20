@@ -1120,6 +1120,14 @@ function containsSelector(element, selector, text) {
   return toArray(nodeList).filter(node => new RegExp(text).test(node.textContent));
 }
 
+function getWidth(element) {
+  return parseInt(window.getComputedStyle(element).width, 10);
+}
+
+function getHeight(element) {
+  return parseInt(window.getComputedStyle(element).height, 10);
+}
+
 export default {
   getNodeName,
   isTextNode,
@@ -1180,5 +1188,7 @@ export default {
   appendTo,
   show,
   hide,
-  containsSelector
+  containsSelector,
+  getWidth,
+  getHeight
 };

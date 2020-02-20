@@ -17,7 +17,7 @@ describe('popupDropdownToolbar', () => {
 
     popup = new PopupDropdownToolbar({
       eventManager,
-      $target,
+      target: $target.get(0),
       $button
     });
   });
@@ -29,8 +29,8 @@ describe('popupDropdownToolbar', () => {
 
   describe('constructor', () => {
     it('should initialize', () => {
-      expect(popup.$el.hasClass('te-dropdown-toolbar')).toBe(true);
-      expect(popup.$body.find('.tui-editor-defaultUI-toolbar').length).toBe(1);
+      expect($(popup.$el).hasClass('te-dropdown-toolbar')).toBe(true);
+      expect(popup.body.querySelectorAll('.tui-editor-defaultUI-toolbar').length).toBe(1);
       expect(popup._eventManager instanceof EventManager).toBe(true);
     });
   });

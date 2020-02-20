@@ -3,7 +3,12 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
+
+import inArray from 'tui-code-snippet/array/inArray';
+import toArray from 'tui-code-snippet/collection/toArray';
 import extend from 'tui-code-snippet/object/extend';
+import css from 'tui-code-snippet/domUtil/css';
+import matches from 'tui-code-snippet/domUtil/matches';
 
 import LayerPopup from './layerpopup';
 
@@ -63,9 +68,9 @@ class PopupCodeBlockLanguages extends LayerPopup {
   _initDOM(options) {
     super._initDOM(options);
 
-    this.$el.css('z-index', 10000);
+    css(this.$el, 'zIndex', 10000);
 
-    this._$buttons = this.$el.find('button');
+    this._$buttons = toArray(this.$el.querySelectorAll('button'));
     this._activateButtonByIndex(0);
   }
 
@@ -99,10 +104,11 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
     this.eventManager.listen('openPopupCodeBlockLanguages', data => {
       this.show(data.callback);
-      const elementStyle = this.$el.get(0).style;
+      const elementStyle = this.$el.style;
 
       elementStyle.top = `${data.offset.top}px`;
       elementStyle.left = `${data.offset.left}px`;
+
       this.setCurrentLanguage(data.language);
 
       return this;
@@ -123,7 +129,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
     if (this._currentButton) {
       $(this._currentButton).removeClass('active');
     }
-    this._currentButton = this._$buttons.get(index);
+    this._currentButton = this._$buttons[index];
     $(this._currentButton).addClass('active');
     this._currentButton.scrollIntoView();
   }
@@ -132,7 +138,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
    * move to prev language
    */
   prev() {
-    let index = this._$buttons.index(this._currentButton) - 1;
+    let index = inArray(this._currentButton, this._$buttons) - 1;
 
     if (index < 0) {
       index = this._$buttons.length - 1;
@@ -144,7 +150,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
    * move to next language
    */
   next() {
-    let index = this._$buttons.index(this._currentButton) + 1;
+    let index = inArray(this._currentButton, this._$buttons) + 1;
 
     if (index >= this._$buttons.length) {
       index = 0;
@@ -167,10 +173,12 @@ class PopupCodeBlockLanguages extends LayerPopup {
    * @param {string} language - current language
    */
   setCurrentLanguage(language) {
-    const item = this._$buttons.filter(`.${BUTTON_CLASS_PREFIX}${language}`);
+    const item = this._$buttons.filter(button =>
+      matches(button, `.${BUTTON_CLASS_PREFIX}${language}`)
+    );
 
     if (item.length > 0) {
-      const index = this._$buttons.index(item);
+      const index = inArray(item[0], this._$buttons);
 
       this._activateButtonByIndex(index);
     }

@@ -3,7 +3,10 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
+
 import extend from 'tui-code-snippet/object/extend';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
@@ -123,12 +126,12 @@ class PopupTableUtils extends LayerPopup {
   }
 
   _disableRemoveRowMenu(target) {
-    const $menu = this.$el.find(`.${REMOVE_ROW_MENU_CLASS_NAME}`);
+    const $menu = this.$el.querySelector(`.${REMOVE_ROW_MENU_CLASS_NAME}`);
 
     if (target.nodeName === 'TH') {
-      $menu.addClass(DISABLED_MENU_CLASS_NAME);
+      addClass($menu, DISABLED_MENU_CLASS_NAME);
     } else {
-      $menu.removeClass(DISABLED_MENU_CLASS_NAME);
+      removeClass($menu, DISABLED_MENU_CLASS_NAME);
     }
   }
 }

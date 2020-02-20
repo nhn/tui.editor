@@ -2,6 +2,7 @@
  * @fileoverview Implements PopupAddImage
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import extend from 'tui-code-snippet/object/extend';
 
 import LayerPopup from './layerpopup';
@@ -77,22 +78,22 @@ class PopupAddImage extends LayerPopup {
   _initDOM() {
     super._initDOM();
 
-    const $popup = this.$el;
+    const popup = this.$el;
 
-    this._$imageUrlInput = $popup.find(`.${CLASS_IMAGE_URL_INPUT}`);
-    this._$imageFileInput = $popup.find(`.${CLASS_IMAGE_FILE_INPUT}`);
-    this._$altTextInput = $popup.find(`.${CLASS_ALT_TEXT_INPUT}`);
+    this._$imageUrlInput = popup.querySelector(`.${CLASS_IMAGE_URL_INPUT}`);
+    this._$imageFileInput = popup.querySelector(`.${CLASS_IMAGE_FILE_INPUT}`);
+    this._$altTextInput = popup.querySelector(`.${CLASS_ALT_TEXT_INPUT}`);
 
-    const $fileTypeSection = $popup.find(`.${CLASS_FILE_TYPE}`);
-    const $urlTypeSection = $popup.find(`.${CLASS_URL_TYPE}`);
-    const $tabSection = this.$body.find(`.${CLASS_TAB_SECTION}`);
+    const fileTypeSection = popup.querySelector(`.${CLASS_FILE_TYPE}`);
+    const urlTypeSection = popup.querySelector(`.${CLASS_URL_TYPE}`);
+    const tabSection = this.body.querySelector(`.${CLASS_TAB_SECTION}`);
 
     this.tab = new Tab({
       initName: i18n.get('File'),
       items: [i18n.get('File'), i18n.get('URL')],
-      sections: [$fileTypeSection.get(0), $urlTypeSection.get(0)]
+      sections: [fileTypeSection, urlTypeSection]
     });
-    $tabSection.append(this.tab.$el);
+    tabSection.appendChild(this.tab.$el);
   }
 
   /**
@@ -117,13 +118,13 @@ class PopupAddImage extends LayerPopup {
 
     this.on(`click .${CLASS_CLOSE_BUTTON}`, () => this.hide());
     this.on(`click .${CLASS_OK_BUTTON}`, () => {
-      const imageUrl = this._$imageUrlInput.val();
-      const altText = this._$altTextInput.val();
+      const imageUrl = this._$imageUrlInput.value;
+      const altText = this._$altTextInput.value;
 
       if (imageUrl) {
         this._applyImage(imageUrl, altText);
       } else {
-        const { files } = this._$imageFileInput.get(0);
+        const { files } = this._$imageFileInput;
 
         if (files.length) {
           const imageFile = files.item(0);
@@ -165,7 +166,11 @@ class PopupAddImage extends LayerPopup {
   }
 
   _resetInputs() {
-    this.$el.find('input').val('');
+    const inputs = this.$el.querySelectorAll('input');
+
+    forEachArray(inputs, input => {
+      input.value = '';
+    });
   }
 
   /**

@@ -152,7 +152,7 @@ class DefaultUI {
     const toolbar = new DefaultToolbar(eventManager, toolbarItems);
 
     this._toolbar = toolbar;
-    this.el.querySelector(`.${CLASS_TOOLBAR}`).appendChild(toolbar.$el.get(0));
+    this.el.querySelector(`.${CLASS_TOOLBAR}`).appendChild(toolbar.$el);
   }
 
   _initModeSwitch(hideModeSwitch) {
@@ -179,7 +179,7 @@ class DefaultUI {
       sections: [editor.layout.getMdEditorContainerEl(), editor.layout.getPreviewEl()]
     });
     this._markdownTabSection = this.el.querySelector(`.${CLASS_MARKDOWN_TAB}`);
-    this._markdownTabSection.appendChild(this._markdownTab.$el.get(0));
+    this._markdownTabSection.appendChild(this._markdownTab.$el);
 
     this._markdownTab.on('itemClick', (ev, itemText) => {
       if (itemText === i18n.get('Preview')) {
@@ -205,7 +205,7 @@ class DefaultUI {
   _initPopupAddLink() {
     this._popups.push(
       new PopupAddLink({
-        $target: $(this.el),
+        target: this.el,
         editor: this._editor
       })
     );
@@ -214,7 +214,7 @@ class DefaultUI {
   _initPopupAddImage() {
     this._popups.push(
       new PopupAddImage({
-        $target: $(this.el),
+        target: this.el,
         eventManager: this._editor.eventManager
       })
     );
@@ -223,7 +223,7 @@ class DefaultUI {
   _initPopupAddTable() {
     this._popups.push(
       new PopupAddTable({
-        $target: this._toolbar.$el,
+        target: this._toolbar.$el,
         eventManager: this._editor.eventManager,
         $button: $(this.el.querySelector('button.tui-table')),
         css: {
@@ -236,7 +236,7 @@ class DefaultUI {
   _initPopupAddHeading() {
     this._popups.push(
       new PopupAddHeading({
-        $target: this._toolbar.$el,
+        target: this._toolbar.$el,
         eventManager: this._editor.eventManager,
         $button: $(this.el.querySelector('button.tui-heading')),
         css: {
@@ -256,7 +256,7 @@ class DefaultUI {
 
     this._popups.push(
       new PopupTableUtils({
-        $target: $(this.el),
+        target: this.el,
         eventManager: this._editor.eventManager
       })
     );
@@ -267,7 +267,7 @@ class DefaultUI {
 
     this._popups.push(
       new PopupCodeBlockLanguages({
-        $target: $(this.el),
+        target: this.el,
         eventManager: editor.eventManager,
         languages: editor.options.codeBlockLanguages
       })
@@ -277,7 +277,7 @@ class DefaultUI {
   _initPopupCodeBlockEditor() {
     this._popups.push(
       new PopupCodeBlockEditor({
-        $target: $(this.el),
+        target: this.el,
         eventManager: this._editor.eventManager,
         convertor: this._editor.convertor
       })

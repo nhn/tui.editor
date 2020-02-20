@@ -63,7 +63,7 @@ class PopupAddLink extends LayerPopup {
   _initDOM() {
     super._initDOM();
 
-    const el = this.$el.get(0);
+    const el = this.$el;
 
     this._inputText = el.querySelector('.te-link-text-input');
     this._inputURL = el.querySelector('.te-url-input');

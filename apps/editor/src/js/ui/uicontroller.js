@@ -3,9 +3,11 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
+
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
 import isObject from 'tui-code-snippet/type/isObject';
+import domUtils from '../domUtils';
 
 let _uiInstanceId = -1;
 
@@ -94,9 +96,9 @@ class UIController {
     const { event, selector } = this._parseEventType(type);
 
     if (selector) {
-      this.$el.on(event, selector, fn);
+      $(this.$el).on(event, selector, fn);
     } else {
-      this.$el.on(event, fn);
+      $(this.$el).on(event, fn);
     }
   }
 
@@ -110,12 +112,12 @@ class UIController {
       const { event, selector } = this._parseEventType(type);
 
       if (selector) {
-        this.$el.off(event, selector, fn);
+        $(this.$el).off(event, selector, fn);
       } else {
-        this.$el.off(event, fn);
+        $(this.$el).off(event, fn);
       }
     } else {
-      this.$el.off();
+      $(this.$el).off();
     }
   }
 
@@ -139,7 +141,7 @@ class UIController {
 
   /**
    * set root element
-   * @param {jQuery} $el - root jQuery element
+   * @param {HTMLElement} $el - root element
    * @private
    */
   _setRootElement($el) {
@@ -148,7 +150,12 @@ class UIController {
 
     if (!$el) {
       className = className || `uic${this._id}`;
-      $el = $(`<${tagName} class="${className}"/>`);
+
+      const element = document.createElement(tagName);
+
+      element.className = className;
+
+      $el = element;
     }
     this.$el = $el;
   }
@@ -158,15 +165,7 @@ class UIController {
    * @param {...object} args - event name & extra params
    */
   trigger(...args) {
-    this.$el.trigger(...args);
-  }
-
-  _getEventNameWithNamespace(event) {
-    const eventSplited = event.split(' ');
-
-    eventSplited[0] += `.uicEvent${this._id}`;
-
-    return eventSplited.join(' ');
+    $(this.$el).trigger(...args);
   }
 
   /**
@@ -174,7 +173,7 @@ class UIController {
    */
   remove() {
     if (this.$el) {
-      this.$el.remove();
+      domUtils.removeNode(this.$el);
     }
   }
 

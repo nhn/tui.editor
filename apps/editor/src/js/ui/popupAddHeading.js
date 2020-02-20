@@ -3,7 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
+
 import extend from 'tui-code-snippet/object/extend';
+import css from 'tui-code-snippet/domUtil/css';
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
@@ -82,7 +84,7 @@ class PopupAddHeading extends LayerPopup {
       const $button = this._$button;
       const { offsetTop, offsetLeft } = $button.get(0);
 
-      this.$el.css({
+      css(this.$el, {
         top: offsetTop + $button.outerHeight(),
         left: offsetLeft
       });

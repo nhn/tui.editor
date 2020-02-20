@@ -21,8 +21,8 @@ describe('Tab', () => {
 
     const buttons = $('button');
 
-    expect($(buttons[0]).text()).toEqual('tab1');
-    expect($(buttons[1]).text()).toEqual('tab2');
+    expect(buttons[0].textContent).toBe('tab1');
+    expect(buttons[1].textContent).toBe('tab2');
   });
 
   describe('tab button event', () => {

@@ -98,11 +98,11 @@ class ModeSwitch extends UIController {
     this._buttons.markdown = createButton('markdown', `${i18n.get('Markdown')}`);
     this._buttons.wysiwyg = createButton('wysiwyg', `${i18n.get('WYSIWYG')}`);
 
-    this.$el.get(0).appendChild(this._buttons.markdown);
-    this.$el.get(0).appendChild(this._buttons.wysiwyg);
+    this.$el.appendChild(this._buttons.markdown);
+    this.$el.appendChild(this._buttons.wysiwyg);
 
     if (rootElement) {
-      rootElement.appendChild(this.$el.get(0));
+      rootElement.appendChild(this.$el);
       this._rootElement = rootElement;
     }
 
