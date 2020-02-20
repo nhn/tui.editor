@@ -87,16 +87,16 @@ class WwTableManager {
       selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
     });
 
-    this.eventManager.listen('copyBefore.table', ({ $clipboardContainer }) =>
-      this.updateTableHtmlOfClipboardIfNeed($clipboardContainer)
+    this.eventManager.listen('copyBefore.table', ({ clipboardContainer }) =>
+      this.updateTableHtmlOfClipboardIfNeed(clipboardContainer)
     );
   }
 
   /**
    * Update table html of clipboard data, if has selected cells.
-   * @param {jQuery} $clipboardContainer - jQuery element
+   * @param {HTMLElement} clipboardContainer - clipboard element
    */
-  updateTableHtmlOfClipboardIfNeed($clipboardContainer) {
+  updateTableHtmlOfClipboardIfNeed(clipboardContainer) {
     const selectionManager = this.wwe.componentManager.getManager('tableSelection');
     const $selectedCells = selectionManager.getSelectedCells();
 
@@ -137,8 +137,8 @@ class WwTableManager {
           }
         });
 
-      $clipboardContainer.append(fragment);
-      $clipboardContainer
+      clipboardContainer.append(fragment);
+      clipboardContainer
         .find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`)
         .removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
     }

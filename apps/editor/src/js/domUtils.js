@@ -1043,19 +1043,26 @@ const wrapInner = (nodeList, nodeName) => {
 /**
  * Removes parent element to target node(s)
  * @param {Node|Array.<Node>} nodeList - target node(s)
+ * @returns {Node|Array.<Node>} unwrapped node list
  * @ignore
  */
 const unwrap = nodeList => {
-  nodeList = nodeList.length ? [].slice.call(nodeList) : [nodeList];
+  let result = [];
+
+  nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
 
   nodeList.forEach(node => {
     const { parentNode } = node;
 
-    if (parentNode !== document.body) {
+    if (parentNode !== document.body && parentNode.parentNode) {
+      result = result.concat(toArray(parentNode.cloneNode(true).childNodes));
+
       parentNode.parentNode.insertBefore(node, parentNode);
       parentNode.parentNode.removeChild(parentNode);
     }
   });
+
+  return result;
 };
 
 /**
@@ -1102,7 +1109,9 @@ function parent(node, selector) {
 function children(node, selector) {
   const { childNodes } = node;
 
-  return toArray(childNodes).filter(childNode => matches(childNode, selector));
+  return toArray(childNodes).filter(
+    childNode => isElemNode(childNode) && matches(childNode, selector)
+  );
 }
 
 function appendTo(node, domString) {
@@ -1161,6 +1170,16 @@ function outerHeight(element) {
 function appendChildren(parentNode, node) {
   forEachArray(parentNode.childNodes, childNode => {
     node.appendChild(childNode.cloneNode(true));
+  });
+}
+
+function replaceWith(nodeList, domString) {
+  nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
+
+  const replacedNode = document.createTextNode(domString);
+
+  toArray(nodeList).forEach(node => {
+    node.parentNode.replaceChild(replacedNode, node);
   });
 }
 
@@ -1230,5 +1249,6 @@ export default {
   getWidth,
   getHeight,
   outerWidth,
-  outerHeight
+  outerHeight,
+  replaceWith
 };

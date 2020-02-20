@@ -177,13 +177,13 @@ describe('WwListManager', () => {
             '<div>',
             '<ul>',
             '<li>',
-            '<ul>',
+            '<ul class="foo">',
             '<li><div>t1<br></div></li>',
-            '<li><div>t1<br></div></li>',
-            '<li><div>t1<br></div></li>',
+            '<li><div>t2<br></div></li>',
+            '<li><div>t3<br></div></li>',
             '</ul>',
             '</li>',
-            '<li><div>t2</div></li>',
+            '<li><div>t4</div></li>',
             '</ul>',
             '</div>'
           ].join('')

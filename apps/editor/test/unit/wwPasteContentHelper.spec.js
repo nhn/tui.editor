@@ -351,9 +351,9 @@ describe('WwPasteContentHelper', () => {
       });
 
       it('if content have orphan list and has format li then make depth based on current selection', () => {
-        const element = $('<div />');
+        const element = $('<div />').get(0);
 
-        element.html('<li><div>text<br></div></li><li><div>text2<br></div></li>');
+        element.innerHTML = '<li><div>text<br></div></li><li><div>text2<br></div></li>';
 
         wwe.getEditor().setHTML('<ul><li><div>list1</div></li><li>list2</li></ul>');
 
@@ -369,15 +369,15 @@ describe('WwPasteContentHelper', () => {
 
         pch.preparePaste(element);
 
-        expect(element[0].childNodes.length).toEqual(1);
-        expect(element[0].childNodes[0].tagName).toEqual('UL');
-        expect(element[0].childNodes[0].childNodes.length).toEqual(2);
+        expect(element.childNodes.length).toEqual(1);
+        expect(element.childNodes[0].tagName).toEqual('UL');
+        expect(element.childNodes[0].childNodes.length).toEqual(2);
       });
 
       it('if content have complete list and has format li then make depth based on current selection', () => {
-        const element = $('<div />');
+        const element = $('<div />').get(0);
 
-        element.html('<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul>');
+        element.innerHTML = '<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul>';
 
         wwe
           .getEditor()
@@ -399,15 +399,15 @@ describe('WwPasteContentHelper', () => {
 
         pch.preparePaste(element);
 
-        expect(element[0].childNodes.length).toEqual(1);
-        expect(element[0].childNodes[0].tagName).toEqual('UL');
-        expect($(element[0].childNodes[0]).find('li > ul > li > ul > li').length).toEqual(2);
+        expect(element.childNodes.length).toEqual(1);
+        expect(element.childNodes[0].tagName).toEqual('UL');
+        expect($(element.childNodes[0]).find('li > ul > li > ul > li').length).toEqual(2);
       });
 
       it('if content have orphan list and hasnt format li then wrap list parent based on rangeInfo', () => {
-        const element = $('<div />');
+        const element = $('<div />').get(0);
 
-        element.html('<li><div>text<br></div></li><li><div>text2<br></div></li>');
+        element.innerHTML = '<li><div>text<br></div></li><li><div>text2<br></div></li>';
 
         wwe.getEditor().setHTML('<div><br></div>');
 
@@ -423,15 +423,15 @@ describe('WwPasteContentHelper', () => {
 
         pch.preparePaste(element);
 
-        expect(element[0].childNodes.length).toEqual(1);
-        expect(element[0].childNodes[0].tagName).toEqual('UL');
-        expect(element[0].childNodes[0].childNodes.length).toEqual(2);
+        expect(element.childNodes.length).toEqual(1);
+        expect(element.childNodes[0].tagName).toEqual('UL');
+        expect(element.childNodes[0].childNodes.length).toEqual(2);
       });
 
-      it('if content have complete list and hasnt format li then do nothing', () => {
-        const element = $('<div />');
+      it('if content have complete list and has not format li then do nothing', () => {
+        const element = $('<div />').get(0);
 
-        element.html('<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul>');
+        element.innerHTML = '<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul>';
 
         wwe.getEditor().setHTML('<div><br></div>');
 
@@ -447,18 +447,17 @@ describe('WwPasteContentHelper', () => {
 
         pch.preparePaste(element);
 
-        expect(element[0].childNodes.length).toEqual(1);
-        expect(element[0].childNodes[0].tagName).toEqual('UL');
-        expect(element[0].childNodes[0].childNodes.length).toEqual(2);
+        expect(element.childNodes.length).toEqual(1);
+        expect(element.childNodes[0].tagName).toEqual('UL');
+        expect(element.childNodes[0].childNodes.length).toEqual(2);
       });
 
       it('paste data have backward depth list then limit list depth level', () => {
-        const element = $('<div />');
+        const element = $('<div />').get(0);
 
-        element.html(
+        element.innerHTML =
           '<ul><li><div>text<br></div></li><li>' +
-            '<div>text2<br></div></li></ul><li><div>myText<br></div></li>'
-        );
+          '<div>text2<br></div></li></ul><li><div>myText<br></div></li>';
 
         wwe.getEditor().setHTML('<ul><li><div>list1</div></li><li>list2</li></ul>');
 
@@ -474,9 +473,9 @@ describe('WwPasteContentHelper', () => {
 
         pch.preparePaste(element);
 
-        expect(element[0].childNodes.length).toEqual(1);
-        expect(element[0].childNodes[0].tagName).toEqual('UL');
-        expect($(element[0].childNodes[0]).find('li > ul > li').length).toEqual(2);
+        expect(element.childNodes.length).toEqual(1);
+        expect(element.childNodes[0].tagName).toEqual('UL');
+        expect($(element.childNodes[0]).find('li > ul > li').length).toEqual(2);
       });
     });
   });

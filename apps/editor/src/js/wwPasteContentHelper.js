@@ -21,7 +21,7 @@ class WwPasteContentHelper {
 
   /**
    * Process paste data before paste
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} $container - clipboard container
    */
   preparePaste($container) {
     const range = this.wwe
@@ -34,9 +34,9 @@ class WwPasteContentHelper {
 
     let nodeName, node, isPastingList;
 
-    this._pasteFirstAid($container);
+    this._pasteFirstAid($($container));
 
-    const childNodes = toArray($container[0].childNodes);
+    const childNodes = toArray($container.childNodes);
 
     while (childNodes.length) {
       [node] = childNodes;
@@ -53,7 +53,7 @@ class WwPasteContentHelper {
       }
     }
 
-    $container.html($tempContainer.html());
+    $container.innerHTML = $tempContainer.html();
   }
 
   /**
@@ -135,7 +135,7 @@ class WwPasteContentHelper {
   _preElementAid($container) {
     const wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
 
-    wwCodeblockManager.modifyCodeBlockForWysiwyg($container);
+    wwCodeblockManager.modifyCodeBlockForWysiwyg($container.get(0));
   }
 
   /**
