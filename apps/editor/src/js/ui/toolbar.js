@@ -2,8 +2,6 @@
  * @fileoverview Implements toolbar
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import isString from 'tui-code-snippet/type/isString';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import isArray from 'tui-code-snippet/type/isArray';
@@ -60,9 +58,9 @@ class Toolbar extends UIController {
       this._items.forEach(item => {
         if (item._state) {
           if (ev[item._state]) {
-            addClass(item.$el, 'active');
+            addClass(item.el, 'active');
           } else {
-            removeClass(item.$el, 'active');
+            removeClass(item.el, 'active');
           }
         }
       });
@@ -140,13 +138,13 @@ class Toolbar extends UIController {
       item = ToolbarItemFactory.create(item.type, item.options);
     }
 
-    const children = this.$el.childNodes;
+    const children = this.el.childNodes;
 
     if (index >= 0 && index < children.length) {
-      $(item.$el).insertBefore(children[index]);
+      domUtils.insertBefore(item.el, children[index]);
       this._items.splice(index, 0, item);
     } else {
-      this.$el.appendChild(item.$el);
+      this.el.appendChild(item.el);
       this._items.push(item);
     }
 
@@ -200,7 +198,7 @@ class Toolbar extends UIController {
       } else {
         removedItem.off('command', removedItem.onCommandHandler);
         removedItem.off('event', removedItem.onEventHandler);
-        domUtils.removeNode(removedItem.$el);
+        domUtils.removeNode(removedItem.el);
       }
     }
 
@@ -255,16 +253,16 @@ class Toolbar extends UIController {
    * @deprecated
    */
   _addButton(button, index) {
-    const btn = this._setButton(button, index).$el;
+    const btn = this._setButton(button, index).el;
 
     if (isNumber(index)) {
-      const buttons = this.$el.querySelectorAll(`.${Button.className}`);
+      const buttons = this.el.querySelectorAll(`.${Button.className}`);
 
       if (buttons.length) {
         domUtils.insertBefore(btn, buttons[index - 1]);
       }
     } else {
-      this.$el.appendChild(btn);
+      this.el.appendChild(btn);
     }
   }
 
@@ -278,7 +276,7 @@ class Toolbar extends UIController {
 
     element.className = ToolbarDivider.className;
 
-    this.$el.appendChild(element);
+    this.el.appendChild(element);
 
     return element;
   }

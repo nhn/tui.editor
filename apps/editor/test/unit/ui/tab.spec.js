@@ -17,7 +17,7 @@ describe('Tab', () => {
     tab = new Tab({
       items: ['tab1', 'tab2']
     });
-    $('body').append(tab.$el);
+    $('body').append(tab.el);
 
     const buttons = $('button');
 
@@ -34,7 +34,7 @@ describe('Tab', () => {
         onItemClick: handler
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
 
       $('button')
         .eq(0)
@@ -51,7 +51,7 @@ describe('Tab', () => {
         onItemClick: spy
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
 
       $('button')
         .eq(0)
@@ -70,7 +70,7 @@ describe('Tab', () => {
         onItemClick: handler
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
     });
 
     it('clicked button should have active class', () => {
@@ -109,7 +109,7 @@ describe('Tab', () => {
         sections: [tabSection1, tabSection2]
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
     });
     it('sets initial active tab button', () => {
       const buttons = $('button');
@@ -142,7 +142,7 @@ describe('Tab', () => {
         sections: [tabSection1, tabSection2]
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
     });
 
     it('click on tab button should result corresponding section activated', () => {
@@ -171,7 +171,7 @@ describe('Tab', () => {
         items: ['tab1', 'tab2']
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
     });
 
     it('activate a button having given name', () => {

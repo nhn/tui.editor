@@ -2,12 +2,12 @@
  * @fileoverview Implements popup code block languages
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import inArray from 'tui-code-snippet/array/inArray';
 import toArray from 'tui-code-snippet/collection/toArray';
 import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
 
 import LayerPopup from './layerpopup';
@@ -68,9 +68,9 @@ class PopupCodeBlockLanguages extends LayerPopup {
   _initDOM(options) {
     super._initDOM(options);
 
-    css(this.$el, 'zIndex', 10000);
+    css(this.el, 'zIndex', 10000);
 
-    this._$buttons = toArray(this.$el.querySelectorAll('button'));
+    this._$buttons = toArray(this.el.querySelectorAll('button'));
     this._activateButtonByIndex(0);
   }
 
@@ -83,7 +83,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
     super._initDOMEvent();
 
     const handler = event => {
-      const language = $(event.target).data('lang');
+      const language = event.target.getAttribute('data-lang');
 
       if (this._onSelectedLanguage) {
         this._onSelectedLanguage(language);
@@ -104,7 +104,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
     this.eventManager.listen('openPopupCodeBlockLanguages', data => {
       this.show(data.callback);
-      const elementStyle = this.$el.style;
+      const elementStyle = this.el.style;
 
       elementStyle.top = `${data.offset.top}px`;
       elementStyle.left = `${data.offset.left}px`;
@@ -127,10 +127,10 @@ class PopupCodeBlockLanguages extends LayerPopup {
    */
   _activateButtonByIndex(index) {
     if (this._currentButton) {
-      $(this._currentButton).removeClass('active');
+      removeClass(this._currentButton, 'active');
     }
     this._currentButton = this._$buttons[index];
-    $(this._currentButton).addClass('active');
+    addClass(this._currentButton, 'active');
     this._currentButton.scrollIntoView();
   }
 
@@ -163,7 +163,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
    * @returns {string} language
    */
   getCurrentLanguage() {
-    const language = $(this._currentButton).data('lang');
+    const language = this._currentButton.getAttribute('data-lang');
 
     return language;
   }

@@ -2,13 +2,12 @@
  * @fileoverview Implements PopupAddHeading
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
+import domUtils from '../domUtils';
 
 /**
  * Class PopupAddHeading
@@ -52,7 +51,7 @@ class PopupAddHeading extends LayerPopup {
     super._initInstance(options);
 
     this._eventManager = options.eventManager;
-    this._$button = options.$button;
+    this._button = options.button;
   }
 
   /**
@@ -64,9 +63,13 @@ class PopupAddHeading extends LayerPopup {
     super._initDOMEvent();
 
     this.on('click li', ev => {
-      const $li = $(ev.target).closest('li');
+      const li = domUtils.closest(ev.target, 'li');
 
-      this._eventManager.emit('command', $li.data('type'), $li.data('value'));
+      this._eventManager.emit(
+        'command',
+        li.getAttribute('data-type'),
+        li.getAttribute('data-value')
+      );
     });
   }
 
@@ -81,11 +84,11 @@ class PopupAddHeading extends LayerPopup {
     this._eventManager.listen('focus', this.hide.bind(this));
     this._eventManager.listen('closeAllPopup', this.hide.bind(this));
     this._eventManager.listen('openHeadingSelect', () => {
-      const $button = this._$button;
-      const { offsetTop, offsetLeft } = $button.get(0);
+      const button = this._button;
+      const { offsetTop, offsetLeft } = button;
 
-      css(this.$el, {
-        top: offsetTop + $button.outerHeight(),
+      css(this.el, {
+        top: offsetTop + domUtils.outerHeight(button),
         left: offsetLeft
       });
 

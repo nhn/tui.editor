@@ -31,19 +31,19 @@ describe('LayerPopup', () => {
       $('body').html(`<div class="${CLASS_PREFIX}wrapper" />`);
 
       popup = new LayerPopup({
-        $el: $(`.${CLASS_PREFIX}wrapper`).get(0)
+        el: $(`.${CLASS_PREFIX}wrapper`).get(0)
       });
     });
 
-    it('popup body takes given $el option', () => {
-      expect($(popup.$el).hasClass(`${CLASS_PREFIX}wrapper`)).toBe(true);
+    it('popup body takes given el option', () => {
+      expect($(popup.el).hasClass(`${CLASS_PREFIX}wrapper`)).toBe(true);
     });
 
-    it('$el option have priority over content option', () => {
+    it('el option have priority over content option', () => {
       $('body').html(LayerPopup.prototype.layoutTemplate);
 
       popup = new LayerPopup({
-        $el: $(`.${CLASS_PREFIX}wrapper`).get(0),
+        el: $(`.${CLASS_PREFIX}wrapper`).get(0),
         content: $('<p>test</p>').get(0)
       });
 
@@ -66,7 +66,7 @@ describe('LayerPopup', () => {
         className: 'myclass'
       });
 
-      expect($(popup.$el).hasClass('myclass')).toBe(true);
+      expect($(popup.el).hasClass('myclass')).toBe(true);
     });
 
     it('has text from textContent option', () => {
@@ -75,7 +75,7 @@ describe('LayerPopup', () => {
       });
 
       expect(
-        $(popup.$el)
+        $(popup.el)
           .find(`.${CLASS_PREFIX}body`)
           .text()
       ).toEqual('text');
@@ -89,7 +89,7 @@ describe('LayerPopup', () => {
       expect($(popup._target).find('p').length).toBe(1);
     });
 
-    it('has element from content option as jQuery element', () => {
+    it('has element from content option as element', () => {
       popup = new LayerPopup({
         content: $('<p>test</p>').get(0)
       });
@@ -133,7 +133,7 @@ describe('LayerPopup', () => {
     it('should set content', () => {
       popup.setContent('text');
       expect(
-        $(popup.$el)
+        $(popup.el)
           .find(`.${CLASS_PREFIX}body`)
           .text()
       ).toEqual('text');
@@ -142,7 +142,7 @@ describe('LayerPopup', () => {
       popup.setContent('text');
       popup.setContent('text');
       expect(
-        $(popup.$el)
+        $(popup.el)
           .find(`.${CLASS_PREFIX}body`)
           .text()
       ).toEqual('text');
@@ -212,7 +212,7 @@ describe('LayerPopup', () => {
   describe('show/hide', () => {
     beforeEach(() => {
       popup = new LayerPopup({
-        $el: $('<div class="container" />').get(0)
+        el: $('<div class="container" />').get(0)
       });
     });
 
@@ -220,7 +220,7 @@ describe('LayerPopup', () => {
       popup.hide();
       popup.show();
 
-      expect($(popup.$el).css('display')).toEqual('block');
+      expect($(popup.el).css('display')).toEqual('block');
       expect(popup.isShow()).toBe(true);
     });
 
@@ -228,7 +228,7 @@ describe('LayerPopup', () => {
       popup.show();
       popup.hide();
 
-      expect($(popup.$el).css('display')).toEqual('none');
+      expect($(popup.el).css('display')).toEqual('none');
       expect(popup.isShow()).toBe(false);
     });
   });
@@ -305,11 +305,11 @@ describe('LayerPopup', () => {
     });
 
     it('contains modal layout if modal option is true', () => {
-      expect($(popup.$el).hasClass('tui-popup-modal-background')).toBe(true);
+      expect($(popup.el).hasClass('tui-popup-modal-background')).toBe(true);
 
       popup = new LayerPopup();
 
-      expect($(popup.$el).hasClass('tui-popup-modal-background')).toBe(false);
+      expect($(popup.el).hasClass('tui-popup-modal-background')).toBe(false);
     });
 
     it('toggleFitToWindow should toggle style', () => {

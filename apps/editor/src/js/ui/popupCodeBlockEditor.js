@@ -2,8 +2,9 @@
  * @fileoverview Implements popup code block editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import extend from 'tui-code-snippet/object/extend';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import LayerPopup from './layerpopup';
 import ScrollSyncSplit from './scrollSyncSplit';
@@ -74,7 +75,7 @@ class PopupCodeBlockEditor extends LayerPopup {
   _initDOM(options) {
     super._initDOM(options);
 
-    const el = this.$el;
+    const { el } = this;
 
     this._body = el.querySelector(`.${CLASS_PREFIX}body`);
     this._toggleFitButton = el.querySelector(`.${CLASS_PREFIX}toggle-fit`);
@@ -178,11 +179,23 @@ class PopupCodeBlockEditor extends LayerPopup {
   }
 
   _updateFitWindowButton() {
-    $(this._toggleFitButton).toggleClass('active', this.isFitToWindow());
+    const fit = this.isFitToWindow();
+
+    if (fit) {
+      addClass(this._toggleFitButton, 'active');
+    } else {
+      removeClass(this._toggleFitButton, 'active');
+    }
   }
 
   _updatePreviewButton() {
-    $(this._togglePreviewButton).toggleClass('active', this._scrollSyncSplit.isSplitView());
+    const splitView = this._scrollSyncSplit.isSplitView();
+
+    if (splitView) {
+      addClass(this._togglePreviewButton, 'active');
+    } else {
+      removeClass(this._togglePreviewButton, 'active');
+    }
   }
 
   _updateScrollButton() {
@@ -191,7 +204,14 @@ class PopupCodeBlockEditor extends LayerPopup {
     } else {
       this._toggleScrollButton.style.display = 'none';
     }
-    $(this._toggleScrollButton).toggleClass('active', this._scrollSyncSplit.isScrollSynced());
+
+    const srollSynced = this._scrollSyncSplit.isScrollSynced();
+
+    if (srollSynced) {
+      addClass(this._toggleScrollButton, 'active');
+    } else {
+      removeClass(this._toggleScrollButton, 'active');
+    }
   }
 
   _focusEditor(cursorToEnd) {

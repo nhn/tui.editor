@@ -78,11 +78,11 @@ class PopupAddImage extends LayerPopup {
   _initDOM() {
     super._initDOM();
 
-    const popup = this.$el;
+    const popup = this.el;
 
-    this._$imageUrlInput = popup.querySelector(`.${CLASS_IMAGE_URL_INPUT}`);
-    this._$imageFileInput = popup.querySelector(`.${CLASS_IMAGE_FILE_INPUT}`);
-    this._$altTextInput = popup.querySelector(`.${CLASS_ALT_TEXT_INPUT}`);
+    this._imageUrlInput = popup.querySelector(`.${CLASS_IMAGE_URL_INPUT}`);
+    this._imageFileInput = popup.querySelector(`.${CLASS_IMAGE_FILE_INPUT}`);
+    this._altTextInput = popup.querySelector(`.${CLASS_ALT_TEXT_INPUT}`);
 
     const fileTypeSection = popup.querySelector(`.${CLASS_FILE_TYPE}`);
     const urlTypeSection = popup.querySelector(`.${CLASS_URL_TYPE}`);
@@ -93,7 +93,7 @@ class PopupAddImage extends LayerPopup {
       items: [i18n.get('File'), i18n.get('URL')],
       sections: [fileTypeSection, urlTypeSection]
     });
-    tabSection.appendChild(this.tab.$el);
+    tabSection.appendChild(this.tab.el);
   }
 
   /**
@@ -104,27 +104,27 @@ class PopupAddImage extends LayerPopup {
   _initDOMEvent() {
     super._initDOMEvent();
 
-    this.on('shown', () => this._$imageUrlInput.focus());
+    this.on('shown', () => this._imageUrlInput.focus());
     this.on('hidden', () => this._resetInputs());
 
     this.on(`change .${CLASS_IMAGE_FILE_INPUT}`, () => {
-      const filename = this._$imageFileInput
+      const filename = this._imageFileInput
         .val()
         .split('\\')
         .pop();
 
-      this._$altTextInput.val(filename);
+      this._altTextInput.val(filename);
     });
 
     this.on(`click .${CLASS_CLOSE_BUTTON}`, () => this.hide());
     this.on(`click .${CLASS_OK_BUTTON}`, () => {
-      const imageUrl = this._$imageUrlInput.value;
-      const altText = this._$altTextInput.value;
+      const imageUrl = this._imageUrlInput.value;
+      const altText = this._altTextInput.value;
 
       if (imageUrl) {
         this._applyImage(imageUrl, altText);
       } else {
-        const { files } = this._$imageFileInput;
+        const { files } = this._imageFileInput;
 
         if (files.length) {
           const imageFile = files.item(0);
@@ -166,7 +166,7 @@ class PopupAddImage extends LayerPopup {
   }
 
   _resetInputs() {
-    const inputs = this.$el.querySelectorAll('input');
+    const inputs = this.el.querySelectorAll('input');
 
     forEachArray(inputs, input => {
       input.value = '';

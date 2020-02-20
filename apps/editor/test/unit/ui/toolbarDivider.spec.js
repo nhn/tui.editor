@@ -16,8 +16,8 @@ describe('ToolbarDivider', () => {
     it('should have a div element with divider class', () => {
       const divider = new ToolbarDivider();
 
-      expect(divider.$el.nodeName).toBe('DIV');
-      expect(divider.$el.className).toBe(ToolbarDivider.className);
+      expect(divider.el.nodeName).toBe('DIV');
+      expect(divider.el.className).toBe(ToolbarDivider.className);
     });
   });
 });

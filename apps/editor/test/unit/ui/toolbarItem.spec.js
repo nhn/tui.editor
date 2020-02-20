@@ -17,7 +17,7 @@ describe('ToolbarItem', () => {
       toolbarItem = new ToolbarItem();
 
       expect(toolbarItem).toBeTruthy();
-      expect(toolbarItem.$el.className).toBe(ToolbarItem.className);
+      expect(toolbarItem.el.className).toBe(ToolbarItem.className);
     });
 
     it("getName() should return the name it's instance has been initialized with", () => {

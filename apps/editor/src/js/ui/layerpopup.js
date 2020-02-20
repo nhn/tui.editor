@@ -69,7 +69,7 @@ class LayerPopup extends UIController {
     super({
       tagName: 'div',
       className: options.modal ? `${CLASS_PREFIX}modal-background` : `${CLASS_PREFIX}wrapper`,
-      rootElement: options.$el
+      rootElement: options.el
     });
 
     this._initInstance(options);
@@ -87,8 +87,8 @@ class LayerPopup extends UIController {
   _initInstance(options) {
     this._target = options.target;
 
-    if (options.$el) {
-      this.$el = options.$el;
+    if (options.el) {
+      this.el = options.el;
       this._isExternalHtmlUse = true;
     }
 
@@ -126,18 +126,18 @@ class LayerPopup extends UIController {
     const buttons = this.options.headerButtons;
 
     if (buttons) {
-      forEachArray(this.$el.querySelectorAll(`.${CLASS_PREFIX}close-button`), button => {
+      forEachArray(this.el.querySelectorAll(`.${CLASS_PREFIX}close-button`), button => {
         domUtils.removeNode(button);
       });
 
-      const buttonWrapper = this.$el.querySelector(`.${CLASS_PREFIX}header-buttons`);
+      const buttonWrapper = this.el.querySelector(`.${CLASS_PREFIX}header-buttons`);
 
       domUtils.empty(buttonWrapper);
       buttonWrapper.innerHTML = buttons;
     }
 
     if (this.options.css) {
-      css(this.$el, this.options.css);
+      css(this.el, this.options.css);
     }
   }
 
@@ -171,21 +171,21 @@ class LayerPopup extends UIController {
     if (!this._isExternalHtmlUse) {
       const layout = options.modal ? LAYOUT_TEMPLATE_MODAL : LAYOUT_TEMPLATE_MODELESS;
 
-      this.$el.innerHTML = layout;
+      this.el.innerHTML = layout;
 
       if (options.className) {
-        addClass(this.$el, ...options.className.split(/\s+/g));
+        addClass(this.el, ...options.className.split(/\s+/g));
       }
       this.hide();
-      this._target.appendChild(this.$el);
-      this.body = this.$el.querySelector(`.${CLASS_PREFIX}body`);
+      this._target.appendChild(this.el);
+      this.body = this.el.querySelector(`.${CLASS_PREFIX}body`);
 
       if (!options.header) {
-        domUtils.removeNode(this.$el.querySelector(`.${CLASS_PREFIX}header`));
+        domUtils.removeNode(this.el.querySelector(`.${CLASS_PREFIX}header`));
       }
     } else {
       this.hide();
-      this._target.appendChild(this.$el);
+      this._target.appendChild(this.el);
     }
   }
 
@@ -208,7 +208,7 @@ class LayerPopup extends UIController {
    * @param {string} title - title text
    */
   setTitle(title) {
-    const titleWrapper = this.$el.querySelector(`.${CLASS_PREFIX}title`);
+    const titleWrapper = this.el.querySelector(`.${CLASS_PREFIX}title`);
 
     domUtils.empty(titleWrapper);
     titleWrapper.innerHTML = title;
@@ -219,14 +219,14 @@ class LayerPopup extends UIController {
    * @returns {HTMLElement} - title html element
    */
   getTitleElement() {
-    return this.$el.querySelector(`.${CLASS_PREFIX}title`);
+    return this.el.querySelector(`.${CLASS_PREFIX}title`);
   }
 
   /**
    * hide popup
    */
   hide() {
-    css(this.$el, 'display', 'none');
+    css(this.el, 'display', 'none');
     this._isShow = false;
     this.trigger('hidden', this);
   }
@@ -235,7 +235,7 @@ class LayerPopup extends UIController {
    * show popup
    */
   show() {
-    css(this.$el, 'display', 'block');
+    css(this.el, 'display', 'block');
     this._isShow = true;
     this.trigger('shown', this);
   }
@@ -264,8 +264,8 @@ class LayerPopup extends UIController {
       $(closerCssQuery).off(`.${this._id}`);
     }
 
-    domUtils.removeNode(this.$el);
-    this.$el = null;
+    domUtils.removeNode(this.el);
+    this.el = null;
   }
 
   /**
@@ -276,9 +276,9 @@ class LayerPopup extends UIController {
    */
   setFitToWindow(fit) {
     if (fit) {
-      addClass(this.$el, CLASS_FIT_WINDOW);
+      addClass(this.el, CLASS_FIT_WINDOW);
     } else {
-      removeClass(this.$el, CLASS_FIT_WINDOW);
+      removeClass(this.el, CLASS_FIT_WINDOW);
     }
   }
 
@@ -289,7 +289,7 @@ class LayerPopup extends UIController {
    * @ignore
    */
   isFitToWindow() {
-    return hasClass(this.$el, CLASS_FIT_WINDOW);
+    return hasClass(this.el, CLASS_FIT_WINDOW);
   }
 
   /**

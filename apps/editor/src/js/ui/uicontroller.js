@@ -25,7 +25,7 @@ function makeUIInstanceId() {
 /**
  * Class UIController
  * @param {Object} [options] - options
- *     @param {jQuery} [options.rootElement] - root element
+ *     @param {HTMLElement} [options.rootElement] - root element
  *     @param {string} [options.tagName] - tag name
  *     @param {string} [options.className] - class name
  */
@@ -43,10 +43,10 @@ class UIController {
   className;
 
   /**
-   * UI jQuery element
+   * UI element
    * @type {Object}
    */
-  $el;
+  el;
 
   /**
    * UI Id
@@ -96,9 +96,9 @@ class UIController {
     const { event, selector } = this._parseEventType(type);
 
     if (selector) {
-      $(this.$el).on(event, selector, fn);
+      $(this.el).on(event, selector, fn);
     } else {
-      $(this.$el).on(event, fn);
+      $(this.el).on(event, fn);
     }
   }
 
@@ -112,12 +112,12 @@ class UIController {
       const { event, selector } = this._parseEventType(type);
 
       if (selector) {
-        $(this.$el).off(event, selector, fn);
+        $(this.el).off(event, selector, fn);
       } else {
-        $(this.$el).off(event, fn);
+        $(this.el).off(event, fn);
       }
     } else {
-      $(this.$el).off();
+      $(this.el).off();
     }
   }
 
@@ -141,23 +141,23 @@ class UIController {
 
   /**
    * set root element
-   * @param {HTMLElement} $el - root element
+   * @param {HTMLElement} el - root element
    * @private
    */
-  _setRootElement($el) {
+  _setRootElement(el) {
     const { tagName } = this;
     let { className } = this;
 
-    if (!$el) {
+    if (!el) {
       className = className || `uic${this._id}`;
 
       const element = document.createElement(tagName);
 
       element.className = className;
 
-      $el = element;
+      el = element;
     }
-    this.$el = $el;
+    this.el = el;
   }
 
   /**
@@ -165,15 +165,15 @@ class UIController {
    * @param {...object} args - event name & extra params
    */
   trigger(...args) {
-    $(this.$el).trigger(...args);
+    $(this.el).trigger(...args);
   }
 
   /**
    * remove
    */
   remove() {
-    if (this.$el) {
-      domUtils.removeNode(this.$el);
+    if (this.el) {
+      domUtils.removeNode(this.el);
     }
   }
 

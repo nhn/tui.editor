@@ -43,10 +43,10 @@ const LAST_BORDER = 1;
 class PopupAddTable extends LayerPopup {
   /**
    * Toolbar Button which the Popup is bound to.
-   * @type {jQuery}
+   * @type {HTMLElement}
    * @private
    */
-  _$button;
+  _button;
 
   /**
    * EventManager instance
@@ -80,7 +80,7 @@ class PopupAddTable extends LayerPopup {
     this._selectedBound = {};
     this._tableBound = {};
     this._eventManager = options.eventManager;
-    this._$button = options.$button;
+    this._button = options.button;
   }
 
   /**
@@ -134,17 +134,17 @@ class PopupAddTable extends LayerPopup {
     this._eventManager.listen('closeAllPopup', () => this.hide());
 
     this._eventManager.listen('openPopupAddTable', () => {
-      const $button = this._$button;
-      const { offsetTop, offsetLeft } = $button.get(0);
+      const button = this._button;
+      const { offsetTop, offsetLeft } = button;
 
-      css(this.$el, {
-        top: offsetTop + $button.outerHeight(),
+      css(this.el, {
+        top: offsetTop + domUtils.outerHeight(button),
         left: offsetLeft
       });
       this._eventManager.emit('closeAllPopup');
       this.show();
       this._selectionOffset = domUtils.getOffset(
-        this.$el.querySelector(`.${CLASS_TABLE_SELECTION}`)
+        this.el.querySelector(`.${CLASS_TABLE_SELECTION}`)
       );
     });
   }
@@ -154,10 +154,10 @@ class PopupAddTable extends LayerPopup {
    * @private
    */
   _cacheElements() {
-    this.$header = this.$el.querySelector(`.${CLASS_TABLE_HEADER}`);
-    this.$body = this.$el.querySelector(`.${CLASS_TABLE_BODY}`);
-    this.$selection = this.$el.querySelector(`.${CLASS_SELECTION_AREA}`);
-    this.$desc = this.$el.querySelector(`.${CLASS_DESCRIPTION}`);
+    this.header = this.el.querySelector(`.${CLASS_TABLE_HEADER}`);
+    this.body = this.el.querySelector(`.${CLASS_TABLE_BODY}`);
+    this.selection = this.el.querySelector(`.${CLASS_SELECTION_AREA}`);
+    this.desc = this.el.querySelector(`.${CLASS_DESCRIPTION}`);
   }
 
   /**
@@ -332,7 +332,7 @@ class PopupAddTable extends LayerPopup {
    * @private
    */
   _setDisplayText(col, row) {
-    this.$desc.html(`${col + 1} x ${row + 1}`);
+    this.desc.innerHTML = `${col + 1} x ${row + 1}`;
   }
 
   /**
@@ -345,17 +345,17 @@ class PopupAddTable extends LayerPopup {
     x += LAST_BORDER;
     y += LAST_BORDER;
 
-    css(this.$header, {
+    css(this.header, {
       height: CELL_HEIGHT,
       width: x
     });
 
-    css(this.$body, {
+    css(this.body, {
       height: y,
       width: x
     });
 
-    css(this.$el, {
+    css(this.el, {
       width: x + 30
     });
   }
@@ -370,7 +370,7 @@ class PopupAddTable extends LayerPopup {
     x += LAST_BORDER;
     y += LAST_BORDER;
 
-    this.$selection.css({
+    css(this.selection, {
       height: y,
       width: x
     });

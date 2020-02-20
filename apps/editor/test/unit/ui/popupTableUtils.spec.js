@@ -27,7 +27,7 @@ describe('popupTableUtils', () => {
 
   describe(`'remove row' menu`, () => {
     it('is disabled when target element where created popup is table header', () => {
-      const $menu = $(popup.$el.querySelector(`.${REMOVE_ROW_MENU_CLASS_NAME}`));
+      const $menu = $(popup.el.querySelector(`.${REMOVE_ROW_MENU_CLASS_NAME}`));
 
       popup._disableRemoveRowMenu($('<th>')[0]);
       expect($menu.hasClass(DISABLED_MENU_CLASS_NAME)).toBe(true);
@@ -37,7 +37,7 @@ describe('popupTableUtils', () => {
     });
 
     it('is prevented click event when having disabled class name', () => {
-      const $menu = $(popup.$el.querySelector(`.${REMOVE_ROW_MENU_CLASS_NAME}`));
+      const $menu = $(popup.el.querySelector(`.${REMOVE_ROW_MENU_CLASS_NAME}`));
 
       spyOn(popup.eventManager, 'emit');
 

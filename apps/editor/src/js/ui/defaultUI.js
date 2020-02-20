@@ -2,8 +2,6 @@
  * @fileoverview default UI
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
@@ -86,7 +84,7 @@ class DefaultUI {
   _editor;
 
   /**
-   * markdown tab section jQuery element
+   * markdown tab section element
    * @private
    * @type {HTMLElement}
    */
@@ -152,7 +150,7 @@ class DefaultUI {
     const toolbar = new DefaultToolbar(eventManager, toolbarItems);
 
     this._toolbar = toolbar;
-    this.el.querySelector(`.${CLASS_TOOLBAR}`).appendChild(toolbar.$el);
+    this.el.querySelector(`.${CLASS_TOOLBAR}`).appendChild(toolbar.el);
   }
 
   _initModeSwitch(hideModeSwitch) {
@@ -179,7 +177,7 @@ class DefaultUI {
       sections: [editor.layout.getMdEditorContainerEl(), editor.layout.getPreviewEl()]
     });
     this._markdownTabSection = this.el.querySelector(`.${CLASS_MARKDOWN_TAB}`);
-    this._markdownTabSection.appendChild(this._markdownTab.$el);
+    this._markdownTabSection.appendChild(this._markdownTab.el);
 
     this._markdownTab.on('itemClick', (ev, itemText) => {
       if (itemText === i18n.get('Preview')) {
@@ -223,9 +221,9 @@ class DefaultUI {
   _initPopupAddTable() {
     this._popups.push(
       new PopupAddTable({
-        target: this._toolbar.$el,
+        target: this._toolbar.el,
         eventManager: this._editor.eventManager,
-        $button: $(this.el.querySelector('button.tui-table')),
+        button: this.el.querySelector('button.tui-table'),
         css: {
           position: 'absolute'
         }
@@ -236,9 +234,9 @@ class DefaultUI {
   _initPopupAddHeading() {
     this._popups.push(
       new PopupAddHeading({
-        target: this._toolbar.$el,
+        target: this._toolbar.el,
         eventManager: this._editor.eventManager,
-        $button: $(this.el.querySelector('button.tui-heading')),
+        button: this.el.querySelector('button.tui-heading'),
         css: {
           position: 'absolute'
         }

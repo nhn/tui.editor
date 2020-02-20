@@ -69,7 +69,7 @@ describe('Toolbar', () => {
         0
       );
 
-      expect(toolbar.getItems()[0].$el.textContent).toBe('test');
+      expect(toolbar.getItems()[0].el.textContent).toBe('test');
     });
 
     it('add multiple buttons via array', () => {
@@ -117,8 +117,8 @@ describe('Toolbar', () => {
 
       const buttons = toolbar.getItems();
 
-      expect(buttons[1].$el.textContent).toBe('test1');
-      expect(buttons[2].$el.textContent).toBe('test2');
+      expect(buttons[1].el.textContent).toBe('test1');
+      expect(buttons[2].el.textContent).toBe('test2');
     });
 
     it('click on added button emits given command', () => {
@@ -130,7 +130,7 @@ describe('Toolbar', () => {
         })
       );
 
-      $('body').append(toolbar.$el);
+      $('body').append(toolbar.el);
 
       const command = new Command('test', Command.TYPE.GB);
 
@@ -155,7 +155,7 @@ describe('Toolbar', () => {
         })
       );
 
-      $('body').append(toolbar.$el);
+      $('body').append(toolbar.el);
 
       em.listen('test', handler);
 
@@ -174,7 +174,7 @@ describe('Toolbar', () => {
         state: 'testState'
       })
     );
-    const buttonEl = toolbar.getItems()[0].$el;
+    const buttonEl = toolbar.getItems()[0].el;
 
     em.emit('stateChange', {
       testState: true
@@ -226,7 +226,7 @@ describe('Toolbar', () => {
       const outputItem = toolbar.getItem(0);
 
       expect(outputItem).toBe(inputItem);
-      expect(outputItem.$el.parentNode).toBe(toolbar.$el);
+      expect(outputItem.el.parentNode).toBe(toolbar.el);
     });
 
     it('should bind the item event', () => {
@@ -287,13 +287,13 @@ describe('Toolbar', () => {
       expect(toolbar._items[2]).toBe(inputItems[4]);
 
       // element index
-      const children = toolbar.$el.childNodes;
+      const children = toolbar.el.childNodes;
 
-      expect(children[4]).toBe(inputItems[0].$el);
-      expect(children[1]).toBe(inputItems[1].$el);
-      expect(children[0]).toBe(inputItems[2].$el);
-      expect(children[3]).toBe(inputItems[3].$el);
-      expect(children[2]).toBe(inputItems[4].$el);
+      expect(children[4]).toBe(inputItems[0].el);
+      expect(children[1]).toBe(inputItems[1].el);
+      expect(children[0]).toBe(inputItems[2].el);
+      expect(children[3]).toBe(inputItems[3].el);
+      expect(children[2]).toBe(inputItems[4].el);
     });
 
     it('should insert the item with given name for pre-defined items', () => {
@@ -546,19 +546,19 @@ describe('Toolbar', () => {
 
   describe('destroy', () => {
     beforeEach(() => {
-      $('body').append(toolbar.$el);
+      $('body').append(toolbar.el);
     });
 
     afterEach(() => {
-      if (toolbar.$el) {
-        toolbar.$el.remove();
+      if (toolbar.el) {
+        toolbar.el.remove();
       }
     });
 
     it('should free instance', () => {
       toolbar.destroy();
       expect(toolbar.buttons).toBeFalsy();
-      expect(toolbar.$el).toBeFalsy();
+      expect(toolbar.el).toBeFalsy();
       expect(toolbar.$buttonContainer).toBeFalsy();
     });
 
@@ -581,7 +581,7 @@ describe('Toolbar', () => {
 
   describe('constructor', () => {
     beforeEach(() => {
-      $('body').append(toolbar.$el);
+      $('body').append(toolbar.el);
     });
 
     it('should create a toolbar without an item', () => {

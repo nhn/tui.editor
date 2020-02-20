@@ -20,7 +20,7 @@ describe('PopupAddLink', () => {
       }
     });
 
-    const el = popup.$el;
+    const { el } = popup;
 
     okButton = el.querySelector('.te-ok-button');
     closeButton = el.querySelector('.te-close-button');

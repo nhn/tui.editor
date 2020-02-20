@@ -13,9 +13,9 @@ const TOOLTIP_CONTENT = '<div class="arrow"></div><span class="text"></span></sp
  */
 class Tooltip {
   constructor() {
-    this.$el = this.createTooltipElement();
+    this.el = this.createTooltipElement();
 
-    document.body.appendChild(this.$el);
+    document.body.appendChild(this.el);
 
     this.hide();
   }
@@ -35,23 +35,24 @@ class Tooltip {
    * @param {String} text - text to show
    */
   show(target, text) {
-    css(this.$el, {
-      top: target.offset().top + target.height() + 13, // below the button
-      left: target.offset().left + 3
+    const { top, left } = domUtils.getOffset(target);
+
+    css(this.el, {
+      top: top + domUtils.getHeight(target) + 13, // below the button
+      left: left + 3
     });
-    this.$el
-      .find('.text')
-      .html(text)
-      .end()
-      .show();
+
+    this.el.querySelector('.text').innerHTML = text;
+
+    domUtils.show(this.el);
   }
 
   hide() {
-    domUtils.hide(this.$el);
+    domUtils.hide(this.el);
   }
 
   remove() {
-    domUtils.removeNode(this.$el);
+    domUtils.removeNode(this.el);
   }
 }
 

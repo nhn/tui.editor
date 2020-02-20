@@ -958,6 +958,18 @@ const getOffset = node => {
 };
 
 /**
+ * Gets positon value of target node
+ * @param {Node} node - target node
+ * @returns {Object.<string, number>} offset values
+ * @ignore
+ */
+const getPosition = node => {
+  const { offsetLeft, offsetTop } = node;
+
+  return { left: offsetLeft, top: offsetTop };
+};
+
+/**
  * Removes target node from parent node
  * @param {Node} node - target node
  * @ignore
@@ -1128,6 +1140,30 @@ function getHeight(element) {
   return parseInt(window.getComputedStyle(element).height, 10);
 }
 
+function outerWidth(element) {
+  const { marginLeft, marginRight } = window.getComputedStyle(element);
+  let width = element.offsetWidth;
+
+  width += parseInt(marginLeft, 10) + parseInt(marginRight, 10);
+
+  return width;
+}
+
+function outerHeight(element) {
+  const { marginTop, marginBottom } = getComputedStyle(element);
+  let height = element.offsetHeight;
+
+  height += parseInt(marginTop, 10) + parseInt(marginBottom, 10);
+
+  return height;
+}
+
+function appendChildren(parentNode, node) {
+  forEachArray(parentNode.childNodes, childNode => {
+    node.appendChild(childNode.cloneNode(true));
+  });
+}
+
 export default {
   getNodeName,
   isTextNode,
@@ -1172,12 +1208,13 @@ export default {
   getParentNodeBy,
   getSiblingNodeBy,
   closest,
+  contains,
   insertBefore,
   insertAfter,
-  contains,
-  getOffset,
   removeNode,
   empty,
+  getOffset,
+  getPosition,
   toggleClass,
   wrap,
   wrapInner,
@@ -1185,10 +1222,13 @@ export default {
   parents,
   parent,
   children,
+  appendChildren,
   appendTo,
   show,
   hide,
   containsSelector,
   getWidth,
-  getHeight
+  getHeight,
+  outerWidth,
+  outerHeight
 };
