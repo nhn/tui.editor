@@ -108,33 +108,7 @@ describe('Markdown-it', () => {
           .hasClass('lang-javascript')
       ).toBe(true);
     });
-    it('rendering Codeblock element accurately with highlight', () => {
-      const codeblockHTML = convertor._markdownToHtmlWithCodeHighlight(codeblockText);
-      const $container = $('<div></div>');
 
-      $container.html(codeblockHTML);
-
-      expect($container.children('pre').length).toBe(1);
-      expect($container.children('pre').children('code').length).toBe(1);
-      expect(
-        $container
-          .children('pre')
-          .children('code')
-          .children('span').length
-      ).toBe(2);
-      expect(
-        $container
-          .children('pre')
-          .children('code')
-          .attr('data-language')
-      ).toBe('javascript');
-      expect(
-        $container
-          .children('pre')
-          .children('code')
-          .hasClass('lang-javascript')
-      ).toBe(true);
-    });
     it('rendering Codeblock element with invalid language name should escape html entity', () => {
       const codeblockHTML = convertor._markdownToHtmlWithCodeHighlight(wrongLanguageText);
       const $container = $('<div></div>');
@@ -174,6 +148,7 @@ describe('Markdown-it', () => {
           .hasClass('lang-korea')
       ).toBe(true);
     });
+
     it('rendering Codeblock element without language name should escape html entity', () => {
       const codeblockHTML = convertor._markdownToHtmlWithCodeHighlight(planeText);
       const $container = $('<div></div>');

@@ -27,7 +27,7 @@ import DefaultUI from './ui/defaultUI';
 import domUtils from './domUtils';
 import WwTableManager from './wwTableManager';
 import WwTableSelectionManager from './wwTableSelectionManager';
-import codeBlockManager, { CodeBlockManager } from './codeBlockManager';
+import codeBlockManager from './codeBlockManager';
 import toMarkRenderer from './toMarkRenderer';
 import { invokePlugins } from './pluginHelper';
 
@@ -107,7 +107,6 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  *     @param {string} [options.language='en-US'] - language
  *     @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
  *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
- *     @param {string[]} [options.codeBlockLanguages] - supported code block languages to be listed. default is what highlight.js supports
  *     @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
  *     @param {string[]} [options.toolbarItems] - toolbar items.
  *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
@@ -131,7 +130,6 @@ class ToastUIEditor {
         language: 'en-US',
         useDefaultHTMLSanitizer: true,
         useCommandShortcut: true,
-        codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages(),
         usageStatistics: true,
         toolbarItems: [
           'heading',
@@ -160,6 +158,8 @@ class ToastUIEditor {
       },
       options
     );
+
+    this.codeBlockLanguages = [];
 
     this.eventManager = new EventManager();
 

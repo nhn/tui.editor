@@ -575,7 +575,7 @@ function _onMDPasteBefore(cm, { source, data: eventData }) {
  * @param {number|string} [options.height='auto'] - default height
  */
 export default function chartPlugin(editor, options = {}) {
-  const optionLanguages = editor.options.codeBlockLanguages;
+  const optionLanguages = editor.codeBlockLanguages;
 
   if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
     optionLanguages.push(LANG);

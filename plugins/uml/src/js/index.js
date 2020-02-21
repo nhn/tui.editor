@@ -36,7 +36,7 @@ export default function umlPlugin(editor, options = {}) {
     return renderedHTML;
   }
 
-  const { codeBlockLanguages } = editor.options;
+  const { codeBlockLanguages } = editor;
 
   UML_LANGUAGES.forEach(umlLanguage => {
     if (codeBlockLanguages.indexOf(umlLanguage) < 0) {

@@ -123,9 +123,12 @@ class PopupCodeBlockLanguages extends LayerPopup {
     if (this._currentButton) {
       $(this._currentButton).removeClass('active');
     }
-    this._currentButton = this._$buttons.get(index);
-    $(this._currentButton).addClass('active');
-    this._currentButton.scrollIntoView();
+
+    if (this._$buttons.length) {
+      this._currentButton = this._$buttons.get(index);
+      $(this._currentButton).addClass('active');
+      this._currentButton.scrollIntoView();
+    }
   }
 
   /**

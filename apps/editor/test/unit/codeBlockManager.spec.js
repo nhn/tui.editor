@@ -39,15 +39,6 @@ describe('CodeBlockManager', () => {
       expect(actual).toBe(expected);
     });
 
-    it('Create code block html for highlight.js type without replacer.', () => {
-      const type = 'javascript';
-      const actual = codeBlockManager.createCodeBlockHtml(type, 'var a = 1;');
-      const expected =
-        '<span class="hljs-keyword">var</span> a = <span class="hljs-number">1</span>;';
-
-      expect(actual).toBe(expected);
-    });
-
     it('Create code block html if there is no registered replacer and not highlight.js type.', () => {
       const type = 'tui.grid';
       const actual = codeBlockManager.createCodeBlockHtml(type, 'var a = 1;');

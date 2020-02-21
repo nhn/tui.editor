@@ -2,12 +2,12 @@
  * @fileoverview Implements CodeBlockManager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import hljs from 'highlight.js';
-
 /**
  * Class Code Block Manager
  */
 class CodeBlockManager {
+  static hljs = null;
+
   constructor() {
     this._replacers = {};
   }
@@ -43,20 +43,23 @@ class CodeBlockManager {
     if (replacer) {
       html = replacer(codeText, language);
     } else {
-      html = hljs.getLanguage(language)
-        ? hljs.highlight(language, codeText).value
-        : escape(codeText, false);
+      const { hljs } = CodeBlockManager;
+
+      html =
+        hljs && hljs.getLanguage(language)
+          ? hljs.highlight(language, codeText).value
+          : escape(codeText, false);
     }
 
     return html;
   }
 
   /**
-   * get supported languages by highlight-js
-   * @returns {Array<string>} - supported languages by highlight-js
+   * Set highlight.js to code block manager
+   * @param {Object} hljs - instnace of highlight.js
    */
-  static getHighlightJSLanguages() {
-    return hljs.listLanguages();
+  setHighlightJS(hljs) {
+    CodeBlockManager.hljs = hljs;
   }
 }
 
