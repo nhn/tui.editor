@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
@@ -205,7 +205,7 @@ describe('WwCodeBlockManager', () => {
 
       $(fragment).append(pasteData);
 
-      const resultFragment = mgr.prepareToPasteOnCodeblock(util.toArray(fragment.childNodes));
+      const resultFragment = mgr.prepareToPasteOnCodeblock(toArray(fragment.childNodes));
 
       expect($(resultFragment).text()).toEqual('test1\ntest2');
     });

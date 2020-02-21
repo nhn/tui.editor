@@ -3,7 +3,8 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
+import isExisty from 'tui-code-snippet/type/isExisty';
 
 import UIController from './uicontroller';
 
@@ -49,7 +50,7 @@ const LAYOUT_TEMPLATE_MODAL = `<div class="${CLASS_PREFIX}wrapper">
  */
 class LayerPopup extends UIController {
   constructor(options) {
-    options = util.extend(
+    options = extend(
       {
         header: true,
         $target: $('body'),
@@ -100,7 +101,7 @@ class LayerPopup extends UIController {
     this._initLayout();
 
     if (!this._isExternalHtmlUse) {
-      if (util.isExisty(this.options.title)) {
+      if (isExisty(this.options.title)) {
         this.setTitle(this.options.title);
       }
       this.setContent(this.$content);

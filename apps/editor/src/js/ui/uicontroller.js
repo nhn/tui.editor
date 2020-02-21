@@ -3,7 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import extend from 'tui-code-snippet/object/extend';
+import isObject from 'tui-code-snippet/type/isObject';
 
 let _uiInstanceId = -1;
 
@@ -52,7 +54,7 @@ class UIController {
   _id;
 
   constructor(options = {}) {
-    options = util.extend(
+    options = extend(
       {
         tagName: 'div'
       },
@@ -73,8 +75,8 @@ class UIController {
    * @param {function} aFn - event handler
    */
   on(aType, aFn) {
-    if (util.isObject(aType)) {
-      util.forEach(aType, (fn, type) => {
+    if (isObject(aType)) {
+      forEachOwnProperties(aType, (fn, type) => {
         this._addEvent(type, fn);
       });
     } else {
@@ -182,7 +184,7 @@ class UIController {
   destroy() {
     this.remove();
 
-    util.forEachOwnProperties(this, (value, key) => {
+    forEachOwnProperties(this, (value, key) => {
       this[key] = null;
     });
   }

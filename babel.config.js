@@ -1,12 +1,12 @@
 module.exports = api => {
-  api.cache(false);
+  const env = api.env();
 
   return {
     presets: [
       [
         '@babel/preset-env',
         {
-          modules: false,
+          modules: env === 'test' ? 'commonjs' : false,
           loose: true
         }
       ]

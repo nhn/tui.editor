@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 const CLASS_SPLIT_SCROLL = 'tui-split-scroll';
 const CLASS_SINGLE_CONTENT = 'single-content';
@@ -33,7 +33,7 @@ const CLASS_CONTENT = {
  */
 class ScrollSyncSplit {
   constructor(baseElement, leftElement, rightElement, options = {}) {
-    options = util.extend(
+    options = extend(
       {
         showScrollSyncButton: false,
         scrollSync: true,

@@ -2,7 +2,7 @@
  * @fileoverview Implements PopupAddImage
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 import LayerPopup from './layerpopup';
 import Tab from './tab';
@@ -44,7 +44,7 @@ class PopupAddImage extends LayerPopup {
             </div>
         `;
 
-    options = util.extend(
+    options = extend(
       {
         header: true,
         title: i18n.get('Insert image'),

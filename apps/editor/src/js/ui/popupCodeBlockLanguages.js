@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 import LayerPopup from './layerpopup';
 
@@ -25,7 +25,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
       )
     );
 
-    options = util.extend(
+    options = extend(
       {
         header: false,
         className: 'te-popup-code-block-languages',

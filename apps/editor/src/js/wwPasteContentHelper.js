@@ -3,7 +3,8 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import domUtils from './domUtils';
 import htmlSanitizer from './htmlSanitizer';
@@ -35,7 +36,7 @@ class WwPasteContentHelper {
 
     this._pasteFirstAid($container);
 
-    const childNodes = util.toArray($container[0].childNodes);
+    const childNodes = toArray($container[0].childNodes);
 
     while (childNodes.length) {
       [node] = childNodes;
@@ -63,10 +64,10 @@ class WwPasteContentHelper {
    */
   _wrapOrphanNodeWithDiv($container) {
     const $tempContainer = $('<div />');
-    const array = util.toArray($container[0].childNodes);
+    const array = toArray($container[0].childNodes);
     let currentDiv;
 
-    util.forEachArray(array, node => {
+    forEachArray(array, node => {
       const isTextNode = node.nodeType === 3;
       /* eslint-disable max-len */
       const isInlineNode = /^(SPAN|A|CODE|EM|I|STRONG|B|S|U|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/gi.test(

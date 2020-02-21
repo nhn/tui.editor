@@ -2,7 +2,7 @@
  * @fileoverview Implements Toolbar Item
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 import UIController from './uicontroller';
 
 /**
@@ -32,7 +32,7 @@ class ToolbarItem extends UIController {
     }
   ) {
     super(
-      util.extend(
+      extend(
         {
           className: ToolbarItem.className
         },

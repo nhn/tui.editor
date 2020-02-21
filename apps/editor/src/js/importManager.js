@@ -2,7 +2,9 @@
  * @fileoverview Implement Module for managing import external data such as image
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import inArray from 'tui-code-snippet/array/inArray';
+
 const URLRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/g;
 
 /**
@@ -29,7 +31,7 @@ class ImportManager {
     const decodedURIs = [];
     let decodedURI;
 
-    util.forEachArray(uris, uri => {
+    forEachArray(uris, uri => {
       try {
         decodedURI = decodeURIComponent(uri);
         decodedURI = decodedURI.replace(/ /g, '%20');
@@ -190,12 +192,7 @@ class ImportManager {
     const blobItems = cbData && cbData.items;
     const { types } = cbData;
 
-    if (
-      blobItems &&
-      types &&
-      types.length === 1 &&
-      util.inArray('Files', [].slice.call(types)) !== -1
-    ) {
+    if (blobItems && types && types.length === 1 && inArray('Files', [].slice.call(types)) !== -1) {
       this._processBlobItems(blobItems, evData);
     }
   }
@@ -208,7 +205,7 @@ class ImportManager {
    */
   _processBlobItems(items, evData) {
     if (items) {
-      util.forEachArray(items, item => {
+      forEachArray(items, item => {
         if (item.type.indexOf('image') !== -1) {
           evData.preventDefault();
           evData.stopPropagation();

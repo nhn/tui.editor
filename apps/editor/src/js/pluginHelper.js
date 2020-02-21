@@ -1,4 +1,5 @@
-import util from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
+import isFunction from 'tui-code-snippet/type/isFunction';
 
 /**
  * Invoke plugins
@@ -8,9 +9,9 @@ import util from 'tui-code-snippet';
  */
 export function invokePlugins(plugins, editor) {
   plugins.forEach(plugin => {
-    if (util.isFunction(plugin)) {
+    if (isFunction(plugin)) {
       plugin(editor);
-    } else if (util.isArray(plugin)) {
+    } else if (isArray(plugin)) {
       const [pluginFn, options = {}] = plugin;
 
       pluginFn(editor, options);

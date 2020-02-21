@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 import EventManager from '@/eventManager';
 import ImportManager from '@/importManager';
@@ -51,7 +51,7 @@ function createWWImageClipboardEvent() {
 function createWWIEImageClipboardEvent(children) {
   const fragment = document.createDocumentFragment();
 
-  util.forEachArray(children, child => fragment.appendChild(child));
+  forEachArray(children, child => fragment.appendChild(child));
 
   return {
     source: 'wysiwyg',

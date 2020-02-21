@@ -3,7 +3,8 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 const HTML_ATTR_LIST_RX = new RegExp(
   '^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
@@ -80,14 +81,14 @@ function removeUnnecessaryTags($html) {
 function leaveOnlyWhitelistAttribute($html) {
   $html.find('*').each((index, node) => {
     const attrs = node.attributes;
-    const blacklist = util.toArray(attrs).filter(attr => {
+    const blacklist = toArray(attrs).filter(attr => {
       const isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
       const isSVGAttr = attr.name.match(SVG_ATTR_LIST_RX);
 
       return !isHTMLAttr && !isSVGAttr;
     });
 
-    util.forEachArray(blacklist, attr => {
+    forEachArray(blacklist, attr => {
       // Edge svg attribute name returns uppercase bug. error guard.
       // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5579311/
       if (attrs.getNamedItem(attr.name)) {
@@ -132,7 +133,7 @@ function finalizeHtml($html, needHtmlText) {
     returnValue = $html[0].innerHTML;
   } else {
     const frag = document.createDocumentFragment();
-    const childNodes = util.toArray($html[0].childNodes);
+    const childNodes = toArray($html[0].childNodes);
     const { length } = childNodes;
 
     for (let i = 0; i < length; i += 1) {

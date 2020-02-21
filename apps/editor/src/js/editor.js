@@ -3,7 +3,13 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isNumber from 'tui-code-snippet/type/isNumber';
+
+import { sendHostName } from './util';
 
 import Button from './ui/button';
 import MarkdownEditor from './markdownEditor';
@@ -70,7 +76,6 @@ import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
 
 const __nedInstance = [];
-const gaTrackingId = 'UA-129966929-1';
 
 const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang', 'type'];
 
@@ -176,11 +181,11 @@ class ToastUIEditor {
     }
 
     if (this.options.hooks) {
-      util.forEach(this.options.hooks, (fn, key) => this.addHook(key, fn));
+      forEachOwnProperties(this.options.hooks, (fn, key) => this.addHook(key, fn));
     }
 
     if (this.options.events) {
-      util.forEach(this.options.events, (fn, key) => this.on(key, fn));
+      forEachOwnProperties(this.options.events, (fn, key) => this.on(key, fn));
     }
 
     this.layout = new Layout(options, this.eventManager);
@@ -246,7 +251,7 @@ class ToastUIEditor {
     this._addDefaultCommands();
 
     if (this.options.usageStatistics) {
-      util.sendHostname('editor', gaTrackingId);
+      sendHostName();
     }
   }
 
@@ -260,7 +265,7 @@ class ToastUIEditor {
     const linkAttribute = {};
 
     availableLinkAttributes.forEach(key => {
-      if (!util.isUndefined(attribute[key])) {
+      if (!isUndefined(attribute[key])) {
         linkAttribute[key] = attribute[key];
       }
     });
@@ -541,7 +546,7 @@ class ToastUIEditor {
    * @returns {string} editor height
    */
   height(height) {
-    if (util.isExisty(height)) {
+    if (isExisty(height)) {
       if (height === 'auto') {
         $(this.options.el).addClass('auto-height');
         this.minHeight(this.minHeight());
@@ -549,7 +554,7 @@ class ToastUIEditor {
         $(this.options.el).removeClass('auto-height');
         this.minHeight(height);
       }
-      if (util.isNumber(height)) {
+      if (isNumber(height)) {
         height = `${height}px`;
       }
 
@@ -566,7 +571,7 @@ class ToastUIEditor {
    * @returns {string} - min height in pixel
    */
   minHeight(minHeight) {
-    if (util.isExisty(minHeight)) {
+    if (isExisty(minHeight)) {
       const editorHeight = this._ui.getEditorHeight();
       const editorSectionHeight = this._ui.getEditorSectionHeight();
       const diffHeight = editorHeight - editorSectionHeight;

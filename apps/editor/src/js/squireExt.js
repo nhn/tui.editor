@@ -3,8 +3,11 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
 import Squire from '@toast-ui/squire';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import toArray from 'tui-code-snippet/collection/toArray';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isFunction from 'tui-code-snippet/type/isFunction';
 
 import domUtils from './domUtils';
 import { isMac } from './util';
@@ -87,7 +90,7 @@ class SquireExt extends Squire {
         while (current !== frag) {
           ({ tagName } = current);
 
-          if (util.isFunction(srcCondition) ? srcCondition(tagName) : tagName === srcCondition) {
+          if (isFunction(srcCondition) ? srcCondition(tagName) : tagName === srcCondition) {
             nextBlock = current.childNodes.item(0);
 
             // there is no next blocktag
@@ -95,7 +98,7 @@ class SquireExt extends Squire {
             if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
               nextBlock = this.createDefaultBlock();
 
-              util.forEachArray(util.toArray(current.childNodes), appendChidToNextBlock);
+              forEachArray(toArray(current.childNodes), appendChidToNextBlock);
 
               lastNodeOfNextBlock = nextBlock.lastChild;
 
@@ -315,7 +318,7 @@ class SquireExt extends Squire {
   }
 
   scrollTop(top) {
-    if (util.isUndefined(top)) {
+    if (isUndefined(top)) {
       return this.get$Body().scrollTop();
     }
 

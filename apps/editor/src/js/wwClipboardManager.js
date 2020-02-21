@@ -3,7 +3,8 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import browser from 'tui-code-snippet/browser/browser';
 
 import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
@@ -164,7 +165,7 @@ class WwClipboardManager {
   }
 
   _setClipboardData(clipboardEvent, htmlContent, textContent) {
-    if (util.browser.msie) {
+    if (browser.msie) {
       clipboardEvent.squirePrevented = true;
       this._$clipboardArea = this._createClipboardArea();
       this._$clipboardArea.html(htmlContent);
@@ -244,7 +245,7 @@ class WwClipboardManager {
   _preProcessPtag(node) {
     const pTags = node.querySelectorAll('p');
 
-    util.forEachArray(pTags, pTag => {
+    forEachArray(pTags, pTag => {
       if (pTag.lastChild && pTag.lastChild.nodeName !== 'BR') {
         pTag.appendChild(document.createElement('br'));
       }

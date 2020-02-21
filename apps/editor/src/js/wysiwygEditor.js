@@ -3,7 +3,11 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isArray from 'tui-code-snippet/type/isArray';
+import browser from 'tui-code-snippet/browser/browser';
+import debounce from 'tui-code-snippet/tricks/debounce';
 
 import domUtils from './domUtils';
 import WwClipboardManager from './wwClipboardManager';
@@ -57,7 +61,7 @@ class WysiwygEditor {
     this._initEvent();
     this._initDefaultKeyEventHandler();
 
-    this.debouncedPostProcessForChange = util.debounce(() => this.postProcessForChange(), 0);
+    this.debouncedPostProcessForChange = debounce(() => this.postProcessForChange(), 0);
   }
 
   /**
@@ -118,7 +122,7 @@ class WysiwygEditor {
       keyMap = 'DEFAULT';
     }
 
-    if (!util.isArray(keyMap)) {
+    if (!isArray(keyMap)) {
       keyMap = [keyMap];
     }
 
@@ -161,7 +165,7 @@ class WysiwygEditor {
     handlers = this._keyEventHandlers.DEFAULT;
 
     if (handlers) {
-      util.forEachArray(handlers, handler => {
+      forEachArray(handlers, handler => {
         isNeedNext = handler(event, range, keyMap);
 
         return isNeedNext;
@@ -171,7 +175,7 @@ class WysiwygEditor {
     handlers = this._keyEventHandlers[keyMap];
 
     if (handlers && isNeedNext !== false) {
-      util.forEachArray(handlers, handler => handler(event, range, keyMap));
+      forEachArray(handlers, handler => handler(event, range, keyMap));
     }
   }
 
@@ -188,7 +192,7 @@ class WysiwygEditor {
         source: 'wysiwyg',
         data: clipboardEvent
       });
-      util.debounce(() => {
+      debounce(() => {
         if (!this.isEditorValid()) {
           return;
         }
@@ -200,12 +204,12 @@ class WysiwygEditor {
       })();
     });
 
-    squire.addEventListener(util.browser.msie ? 'beforecut' : 'cut', clipboardEvent => {
+    squire.addEventListener(browser.msie ? 'beforecut' : 'cut', clipboardEvent => {
       this.eventManager.emit('cut', {
         source: 'wysiwyg',
         data: clipboardEvent
       });
-      util.debounce(() => {
+      debounce(() => {
         if (!this.isEditorValid()) {
           return;
         }
@@ -217,7 +221,7 @@ class WysiwygEditor {
       })();
     });
 
-    squire.addEventListener(util.browser.msie ? 'beforepaste' : 'paste', clipboardEvent => {
+    squire.addEventListener(browser.msie ? 'beforepaste' : 'paste', clipboardEvent => {
       this.eventManager.emit('paste', {
         source: 'wysiwyg',
         data: clipboardEvent
@@ -244,7 +248,7 @@ class WysiwygEditor {
     // change event will fired after range has been updated
     squire.addEventListener(
       'input',
-      util.debounce(() => {
+      debounce(() => {
         if (!this.isEditorValid()) {
           return;
         }
@@ -280,7 +284,7 @@ class WysiwygEditor {
       this._onKeyDown(keyboardEvent);
     });
 
-    if (util.browser.firefox) {
+    if (browser.firefox) {
       squire.addEventListener('keypress', keyboardEvent => {
         const { keyCode } = keyboardEvent;
 
@@ -1093,7 +1097,7 @@ class WysiwygEditor {
    * @returns {boolean}
    */
   scrollTop(value) {
-    if (util.isUndefined(value)) {
+    if (isUndefined(value)) {
       return this.$editorContainerEl.scrollTop();
     }
 

@@ -2,7 +2,9 @@
  * @fileoverview Paste helper when past to table
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import toArray from 'tui-code-snippet/collection/toArray';
+
 import domUtils from './domUtils';
 import htmlSanitizer from './htmlSanitizer';
 
@@ -79,7 +81,7 @@ class WwTablePasteHelper {
     let textItem = null;
     let htmlItem = null;
 
-    util.forEachArray(items, item => {
+    forEachArray(items, item => {
       if (item.type === 'text/html') {
         htmlItem = item;
       } else if (item.type === 'text/plain') {
@@ -190,7 +192,7 @@ class WwTablePasteHelper {
    */
   _unwrapBlock(node) {
     const fragment = document.createDocumentFragment();
-    const childNodes = util.toArray(node.childNodes);
+    const childNodes = toArray(node.childNodes);
 
     while (childNodes.length) {
       const child = childNodes.shift();
@@ -295,7 +297,7 @@ class WwTablePasteHelper {
       resultFragment.appendChild(document.createTextNode(postText));
       parentNode.replaceChild(resultFragment, container);
 
-      const childNodesArray = util.toArray(parentNode.childNodes);
+      const childNodesArray = toArray(parentNode.childNodes);
       let index = 0;
 
       childNodesArray.forEach((child, i) => {

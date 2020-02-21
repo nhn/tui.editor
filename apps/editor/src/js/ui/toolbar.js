@@ -3,7 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import isString from 'tui-code-snippet/type/isString';
+import isNumber from 'tui-code-snippet/type/isNumber';
+import isArray from 'tui-code-snippet/type/isArray';
 
 import UIController from './uicontroller';
 import Button from './button';
@@ -128,9 +130,9 @@ class Toolbar extends UIController {
    * @param  {ToolbarItem|string|object} item - toolbar item
    */
   insertItem(index, item) {
-    if (util.isString(item)) {
+    if (isString(item)) {
       item = ToolbarItemFactory.create(item);
-    } else if (util.isString(item.type)) {
+    } else if (isString(item.type)) {
       item = ToolbarItemFactory.create(item.type, item.options);
     }
 
@@ -160,7 +162,7 @@ class Toolbar extends UIController {
 
     if (item instanceof ToolbarItem) {
       index = this._items.indexOf(item);
-    } else if (util.isString(item)) {
+    } else if (isString(item)) {
       const itemName = item;
 
       index = this._items.map(itemToTest => itemToTest.getName()).indexOf(itemName);
@@ -226,11 +228,11 @@ class Toolbar extends UIController {
    * @deprecated
    */
   addButton(button, index) {
-    if (util.isArray(button)) {
+    if (isArray(button)) {
       let arrayIndex = button.length - 1;
 
       for (; arrayIndex >= 0; arrayIndex -= 1) {
-        if (util.isNumber(index)) {
+        if (isNumber(index)) {
           this._addButton(button[arrayIndex], index);
         } else {
           this._addButton(button);
@@ -251,7 +253,7 @@ class Toolbar extends UIController {
   _addButton(button, index) {
     const $btn = this._setButton(button, index).$el;
 
-    if (util.isNumber(index)) {
+    if (isNumber(index)) {
       this.$el
         .find(`.${Button.className}`)
         .eq(index - 1)
@@ -291,7 +293,7 @@ class Toolbar extends UIController {
 
     button.on('command', (e, commandName) => ev.emit('command', commandName));
     button.on('event', (e, eventName) => ev.emit(eventName));
-    if (util.isNumber(index)) {
+    if (isNumber(index)) {
       this._items.splice(index, 0, button);
     } else {
       this._items.push(button);

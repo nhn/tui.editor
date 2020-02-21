@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
@@ -35,7 +35,7 @@ class PopupTableUtils extends LayerPopup {
             <button type="button" class="te-table-remove">${i18n.get('Remove table')}</button>
         `;
 
-    options = util.extend(
+    options = extend(
       {
         header: false,
         className: 'te-popup-table-utils',

@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 import CommandManager from '../commandManager';
 import ImportManager from '../importManager';
@@ -43,7 +43,7 @@ const AddLink = CommandManager.command(
         } else {
           const link = sq.createElement(
             'A',
-            util.extend(
+            extend(
               {
                 href: url
               },

@@ -2,7 +2,7 @@
  * @fileoverview Implements Heading markdown command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 import CommandManager from '../commandManager';
 
@@ -44,7 +44,7 @@ const Heading = CommandManager.command(
       const textToModify = doc.getRange(from, to);
       const textLinesToModify = textToModify.split('\n');
 
-      util.forEachArray(textLinesToModify, (line, index) => {
+      forEachArray(textLinesToModify, (line, index) => {
         textLinesToModify[index] = getHeadingMarkdown(line, size);
       });
 

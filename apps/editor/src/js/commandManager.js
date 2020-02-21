@@ -3,10 +3,11 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 import Command from './command';
 import { isMac } from './util';
+import Map from './utils/map';
 
 const KEYMAP_OS_INDEX = isMac ? 1 : 0;
 
@@ -19,9 +20,9 @@ const KEYMAP_OS_INDEX = isMac ? 1 : 0;
  */
 class CommandManager {
   constructor(base, options = {}) {
-    this._command = new util.Map();
-    this._mdCommand = new util.Map();
-    this._wwCommand = new util.Map();
+    this._command = new Map();
+    this._mdCommand = new Map();
+    this._wwCommand = new Map();
     this._options = $.extend(
       {
         useCommandShortcut: true
@@ -147,7 +148,7 @@ class CommandManager {
 CommandManager.command = function(type, props) {
   const command = Command.factory(type, props.name, props.keyMap);
 
-  util.extend(command, props);
+  extend(command, props);
 
   return command;
 };

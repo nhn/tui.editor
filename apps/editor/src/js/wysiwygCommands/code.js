@@ -3,7 +3,6 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
 
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
@@ -27,7 +26,7 @@ const Code = CommandManager.command(
     exec(wwe) {
       const sq = wwe.getEditor();
       const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
-      const _styleCode = util.bind(styleCode, null, wwe.getEditor());
+      const _styleCode = styleCode.bind(null, wwe.getEditor());
 
       wwe.focus();
 

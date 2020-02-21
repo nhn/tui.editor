@@ -2,7 +2,12 @@
  * @fileoverview Implements EventManager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isFalsy from 'tui-code-snippet/type/isFalsy';
+import Enum from 'tui-code-snippet/enum/enum';
+
+import Map from './utils/map';
 
 const eventList = [
   'previewBeforeHook',
@@ -81,8 +86,8 @@ const eventList = [
  */
 class EventManager {
   constructor() {
-    this.events = new util.Map();
-    this.TYPE = new util.Enum(eventList);
+    this.events = new Map();
+    this.TYPE = new Enum(eventList);
   }
 
   /**
@@ -119,10 +124,10 @@ class EventManager {
     let results;
 
     if (eventHandlers) {
-      util.forEach(eventHandlers, handler => {
+      forEachOwnProperties(eventHandlers, handler => {
         const result = handler(...args);
 
-        if (!util.isUndefined(result)) {
+        if (!isUndefined(result)) {
           results = results || [];
           results.push(result);
         }
@@ -143,10 +148,10 @@ class EventManager {
     const eventHandlers = this.events.get(type);
 
     if (eventHandlers) {
-      util.forEach(eventHandlers, handler => {
+      forEachOwnProperties(eventHandlers, handler => {
         const result = handler(...args);
 
-        if (!util.isFalsy(result)) {
+        if (!isFalsy(result)) {
           args[0] = result;
         }
       });
@@ -177,7 +182,7 @@ class EventManager {
    * @private
    */
   _hasEventType(type) {
-    return !util.isUndefined(this.TYPE[this._getTypeInfo(type).type]);
+    return !isUndefined(this.TYPE[this._getTypeInfo(type).type]);
   }
 
   /**

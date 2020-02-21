@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
@@ -29,7 +29,7 @@ class PopupAddLink extends LayerPopup {
             </div>
         `;
 
-    options = util.extend(
+    options = extend(
       {
         header: true,
         title: i18n.get('Insert link'),

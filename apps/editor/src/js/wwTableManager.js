@@ -3,15 +3,17 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import browser from 'tui-code-snippet/browser/browser';
 
 import domUtils from './domUtils';
 
-const isIE10 = util.browser.msie && util.browser.version === 10;
+const isIE10 = browser.msie && browser.version === 10;
 const TABLE_CLASS_PREFIX = 'te-content-table-';
-const isIE10And11 =
-  util.browser.msie && (util.browser.version === 10 || util.browser.version === 11);
-const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
+const isIE10And11 = browser.msie && (browser.version === 10 || browser.version === 11);
+const BASIC_CELL_CONTENT = browser.msie ? '' : '<br>';
 const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
@@ -222,7 +224,7 @@ class WwTableManager {
       DOWN: ev => this._moveCursorTo('next', 'row', ev)
     };
 
-    util.forEach(this.keyEventHandlers, (handler, key) =>
+    forEachOwnProperties(this.keyEventHandlers, (handler, key) =>
       this.wwe.addKeyEventHandler(key, handler)
     );
   }
@@ -1139,7 +1141,7 @@ class WwTableManager {
   _removeEmptyRows(table) {
     const trs = table.querySelectorAll('tr');
 
-    util.forEachArray(trs, tr => {
+    forEachArray(trs, tr => {
       if (!tr.cells.length) {
         tr.parentNode.removeChild(tr);
       }
@@ -1384,7 +1386,7 @@ class WwTableManager {
         return isNeedNext;
       }
 
-      if ((direction === 'previous' || interval === 'row') && !util.isUndefined(ev)) {
+      if ((direction === 'previous' || interval === 'row') && !isUndefined(ev)) {
         ev.preventDefault();
       }
 
@@ -1503,7 +1505,8 @@ class WwTableManager {
     this.eventManager.removeEventHandler('wysiwygProcessHTMLText.table');
     this.eventManager.removeEventHandler('cut.table');
     this.eventManager.removeEventHandler('copyBefore.table');
-    util.forEach(this.keyEventHandlers, (handler, key) =>
+
+    forEachOwnProperties(this.keyEventHandlers, (handler, key) =>
       this.wwe.removeKeyEventHandler(key, handler)
     );
   }

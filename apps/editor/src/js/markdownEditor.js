@@ -2,7 +2,7 @@
  * @fileoverview Implements markdown editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 
 import CodeMirrorExt from './codeMirrorExt';
 import KeyMapper from './keyMapper';
@@ -216,7 +216,7 @@ class MarkdownEditor extends CodeMirrorExt {
   _isStateChanged(previousState, currentState) {
     let result = false;
 
-    util.forEach(currentState, (currentStateTypeValue, stateType) => {
+    forEachOwnProperties(currentState, (currentStateTypeValue, stateType) => {
       result = previousState[stateType] !== currentStateTypeValue;
 
       return !result;

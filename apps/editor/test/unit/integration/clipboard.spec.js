@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import util from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
 
 import Editor from '@/editor';
 
@@ -60,7 +60,7 @@ describe('Clipboard', () => {
   let editor, se;
 
   // We can't simulate browser paste. skip IE & Edge browsers
-  if (util.browser.msie || util.browser.edge) {
+  if (browser.msie || browser.edge) {
     pending();
   }
 

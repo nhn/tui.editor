@@ -2,7 +2,7 @@
  * @fileoverview Implements LazyRunner
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import util from 'tui-code-snippet';
+import isString from 'tui-code-snippet/type/isString';
 
 /**
  * Class LazyRunner
@@ -17,7 +17,7 @@ class LazyRunner {
   run(fn, params, context, delay) {
     let TOID;
 
-    if (util.isString(fn)) {
+    if (isString(fn)) {
       TOID = this._runRegisteredRun(fn, params, context, delay);
     } else {
       TOID = this._runSingleRun(fn, params, context, delay, this.globalTOID);

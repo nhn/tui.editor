@@ -1,5 +1,7 @@
-const isMac = /Mac/.test(navigator.platform);
+import sendHostname from 'tui-code-snippet/request/sendHostname';
 
-module.exports = {
-  isMac
-};
+export const isMac = /Mac/.test(navigator.platform);
+
+export function sendHostName() {
+  sendHostname('editor', 'UA-129966929-1');
+}
