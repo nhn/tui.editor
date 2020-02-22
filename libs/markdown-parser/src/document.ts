@@ -47,21 +47,26 @@ export class MarkdownDocument {
   }
 
   private updateRootNodeState() {
+    if (this.lineTexts.length === 1 && this.lineTexts[0] === '') {
+      this.root.lastLineBlank = true;
+      this.root.sourcepos = [[1, 1] as Position, [1, 0] as Position];
+      return;
+    }
+
     if (this.root.lastChild) {
       this.root.lastLineBlank = (this.root.lastChild as BlockNode).lastLineBlank;
     }
 
     const { lineTexts } = this;
-    let i = lineTexts.length - 1;
-    while (lineTexts[i] === '') {
-      i -= 1;
+    let idx = lineTexts.length - 1;
+    while (lineTexts[idx] === '') {
+      idx -= 1;
+    }
+    if (lineTexts.length - 2 > idx) {
+      idx += 1;
     }
 
-    if (lineTexts.length - 2 > i) {
-      i += 1;
-    }
-
-    this.root.sourcepos![1] = [i + 1, lineTexts[i].length];
+    this.root.sourcepos![1] = [idx + 1, lineTexts[idx].length];
   }
 
   private replaceRangeNodes(startNode: Node | null, endNode: Node | null, newNodes: Node[]) {

@@ -29,6 +29,14 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
+    it('remove entire text', () => {
+      const doc = new MarkdownDocument('Hello World');
+      const result = doc.editMarkdown([1, 1], [1, 12], '');
+
+      assertParseResult(doc, ['']);
+      assertResultNodes(doc, result.nodes);
+    });
+
     it('remove preceding newline', () => {
       const doc = new MarkdownDocument('\nHello World');
       const result = doc.editMarkdown([1, 1], [2, 1], '');
