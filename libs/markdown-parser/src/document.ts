@@ -53,7 +53,7 @@ export class MarkdownDocument {
 
     const { lineTexts } = this;
     let i = lineTexts.length - 1;
-    while (!lineTexts[i]) {
+    while (lineTexts[i] === '') {
       i -= 1;
     }
 

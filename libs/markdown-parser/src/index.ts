@@ -1,5 +1,5 @@
 import codemirror from 'codemirror';
-import { Node } from './commonmark/node';
+import { Node, BlockNode } from './commonmark/node';
 import { MarkdownDocument } from './document';
 import { GfmHtmlRenderer } from './commonmark/render/gfm/html';
 import { last } from './helper';
@@ -61,7 +61,7 @@ cm.on('change', (editor, changeObj) => {
     } else {
       const d1NodeFrom = goToDepth1Node(nodes[0]);
       const d1NodeTo = goToDepth1Node(last(nodes));
-      nodes = getNodeArray(d1NodeFrom, d1NodeTo);
+      nodes = getNodeArray(d1NodeFrom, d1NodeTo) as BlockNode[];
     }
   }
 
@@ -89,11 +89,11 @@ cm.on('change', (editor, changeObj) => {
   }
 });
 
-function goToDepth1Node(node: Node) {
+function goToDepth1Node(node: Node): BlockNode {
   while (node.parent && node.parent.type !== 'document') {
     node = node.parent;
   }
-  return node;
+  return node as BlockNode;
 }
 
 function getNodeArray(from: Node, to: Node) {
