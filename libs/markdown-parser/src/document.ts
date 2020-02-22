@@ -1,14 +1,12 @@
 import { Parser } from './commonmark/blocks';
-import { Node } from './commonmark/node';
+import { Node, BlockNode } from './commonmark/node';
 import {
   removeNextUntil,
-  findClosestCommonParent,
-  findBlockByLine,
-  findChildNodeByLine,
   getChildNodes,
   insertNodesBefore,
   prependChildNodes,
-  updateNextLineNumbers
+  updateNextLineNumbers,
+  findChildNodeByLine
 } from './nodeHelper';
 
 const reLineEnding = /\r\n|\n|\r/;
@@ -18,14 +16,13 @@ export type Position = [number, number];
 export type Range = [Position, Position];
 
 interface EditResult {
-  nodes: Node[];
-  lineRange: [number, number];
+  nodes: BlockNode[];
 }
 
 export class MarkdownDocument {
   public lineTexts: string[];
   private parser: Parser;
-  private root: Node;
+  private root: BlockNode;
 
   constructor(contents = '') {
     this.lineTexts = contents.split(reLineEnding);
@@ -49,35 +46,37 @@ export class MarkdownDocument {
     return newLineLen - removedLineLen;
   }
 
-  private updateRootSourcepos() {
+  private updateRootNodeState() {
     if (this.root.lastChild) {
-      this.root.sourcepos![1] = [...this.root.lastChild!.sourcepos![1]] as Position;
-    } else {
-      this.root.sourcepos![1] = [1, 1];
+      this.root.lastLineBlank = (this.root.lastChild as BlockNode).lastLineBlank;
     }
+
+    const { lineTexts } = this;
+    let i = lineTexts.length - 1;
+    while (!lineTexts[i]) {
+      i -= 1;
+    }
+
+    if (lineTexts.length - 2 > i) {
+      i += 1;
+    }
+
+    this.root.sourcepos![1] = [i + 1, lineTexts[i].length];
   }
 
-  private getNodeRange(startLine: number, endLine: number) {
-    const startNode = findBlockByLine(this.root, startLine);
-    let endNode: Node | null = null;
-    if (startNode && (startLine === endLine || endLine <= startNode.sourcepos![1][0])) {
-      endNode = startNode;
+  private replaceRangeNodes(startNode: Node | null, endNode: Node | null, newNodes: Node[]) {
+    if (!startNode) {
+      if (endNode) {
+        insertNodesBefore(endNode, newNodes);
+        endNode.unlink();
+      } else {
+        prependChildNodes(this.root, newNodes);
+      }
     } else {
-      endNode = findBlockByLine(this.root, endLine);
+      insertNodesBefore(startNode, newNodes);
+      removeNextUntil(startNode, endNode!);
+      startNode.unlink();
     }
-
-    return [startNode, endNode];
-  }
-
-  private replaceRangeNodes(startNode: Node, endNode: Node, newNodes: Node[]) {
-    if (startNode !== endNode) {
-      const parent = findClosestCommonParent(startNode, endNode!)!;
-      startNode = findChildNodeByLine(parent, startNode.sourcepos![0][0])!;
-      endNode = findChildNodeByLine(parent, endNode.sourcepos![1][0])!;
-    }
-    insertNodesBefore(startNode, newNodes);
-    removeNextUntil(startNode, endNode);
-    startNode.unlink();
   }
 
   private parseRange(startLine: number, endLine: number) {
@@ -87,30 +86,31 @@ export class MarkdownDocument {
 
   public editMarkdown(start: Position, end: Position, newText: string): EditResult {
     const lineDiff = this.updateLineTexts(start, end, newText);
-    const [startNode, endNode] = this.getNodeRange(start[0], end[0]);
-    const parseStartLine = startNode ? startNode.sourcepos![0][0] : start[0];
-    const parseEndLine = endNode ? Math.max(endNode.sourcepos![1][0], end[0]) : end[0];
-    const newNodes = this.parseRange(parseStartLine, parseEndLine + lineDiff);
-    const nextNode = endNode ? endNode.next : this.root.firstChild;
+    const startNode = findChildNodeByLine(this.root, start[0]);
+    let endNode = findChildNodeByLine(this.root, end[0]);
+    let nextNode = endNode ? endNode.next : this.root.firstChild;
 
-    if (!startNode) {
-      if (endNode) {
-        insertNodesBefore(endNode, newNodes);
-        endNode.unlink();
-      } else {
-        prependChildNodes(this.root, newNodes);
-      }
-    } else {
-      this.replaceRangeNodes(startNode, endNode!, newNodes);
+    // extend node range to include a following block without preceding blank lines
+    if (nextNode && end[0] + 1 === nextNode.sourcepos![0][0]) {
+      endNode = nextNode;
+      nextNode = nextNode.next;
     }
 
-    updateNextLineNumbers(nextNode, lineDiff);
-    this.updateRootSourcepos();
+    const parseStartLine = startNode ? Math.min(startNode.sourcepos![0][0], start[0]) : start[0];
+    let parseEndLine = (endNode ? Math.max(endNode.sourcepos![1][0], end[0]) : end[0]) + lineDiff;
 
-    return {
-      nodes: newNodes,
-      lineRange: [parseStartLine, parseEndLine]
-    };
+    // extend line range to include following blank lines
+    while (this.lineTexts[parseEndLine] === '') {
+      parseEndLine += 1;
+    }
+
+    const newNodes = this.parseRange(parseStartLine, parseEndLine) as BlockNode[];
+
+    this.replaceRangeNodes(startNode, endNode!, newNodes);
+    updateNextLineNumbers(nextNode, lineDiff);
+    this.updateRootNodeState();
+
+    return { nodes: newNodes };
   }
 
   public getLineTexts() {

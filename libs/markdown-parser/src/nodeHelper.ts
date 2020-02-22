@@ -2,9 +2,9 @@ import { Node, NodeType } from './commonmark/node';
 import { Position } from './document';
 
 export const enum Compare {
-  LT = -1,
+  LT = 1,
   EQ = 0,
-  GT = 1
+  GT = -1
 }
 
 export function getAllParents(node: Node) {
@@ -104,11 +104,37 @@ function isContainerBlock(type: NodeType) {
   }
 }
 
-function compareLine([startPos, endPos]: [Position, Position], line: number) {
+function compareRangeAndLine([startPos, endPos]: [Position, Position], line: number) {
   if (endPos[0] < line) {
     return Compare.LT;
   }
   if (startPos[0] > line) {
+    return Compare.GT;
+  }
+  return Compare.EQ;
+}
+
+function comparePos(p1: Position, p2: Position) {
+  if (p1[0] < p2[0]) {
+    return Compare.LT;
+  }
+  if (p1[0] > p2[0]) {
+    return Compare.GT;
+  }
+  if (p1[1] < p2[1]) {
+    return Compare.LT;
+  }
+  if (p1[1] > p2[1]) {
+    return Compare.GT;
+  }
+  return Compare.EQ;
+}
+
+function compareRangeAndPos([startPos, endPos]: [Position, Position], pos: Position) {
+  if (comparePos(endPos, pos) === Compare.LT) {
+    return Compare.LT;
+  }
+  if (comparePos(startPos, pos) === Compare.GT) {
     return Compare.GT;
   }
   return Compare.EQ;
@@ -125,11 +151,33 @@ export function lastLeafBlock(parent: Node | null) {
   return node;
 }
 
+export function findBlockByPos(parent: Node, pos: Position) {
+  let node: Node | null = parent;
+  let prevNode = null;
+  while (node) {
+    const comp = compareRangeAndPos(node.sourcepos!, pos);
+    if (comp === Compare.EQ) {
+      if (isContainerBlock(node.type)) {
+        prevNode = null;
+        node = node.firstChild;
+      } else {
+        return node;
+      }
+    } else if (comp === Compare.GT) {
+      return lastLeafBlock(prevNode);
+    } else {
+      prevNode = node;
+      node = node.next;
+    }
+  }
+  return lastLeafBlock(prevNode);
+}
+
 export function findBlockByLine(parent: Node, line: number) {
   let node: Node | null = parent;
   let prevNode = null;
   while (node) {
-    const comp = compareLine(node.sourcepos!, line);
+    const comp = compareRangeAndLine(node.sourcepos!, line);
     if (comp === Compare.EQ) {
       if (isContainerBlock(node.type)) {
         prevNode = null;
@@ -150,7 +198,7 @@ export function findBlockByLine(parent: Node, line: number) {
 export function findChildNodeByLine(parent: Node, line: number) {
   let node = parent.firstChild;
   while (node) {
-    const comp = compareLine(node.sourcepos!, line);
+    const comp = compareRangeAndLine(node.sourcepos!, line);
     if (comp === Compare.EQ) {
       return node;
     }
@@ -159,5 +207,40 @@ export function findChildNodeByLine(parent: Node, line: number) {
     }
     node = node.next;
   }
-  return node || parent.lastChild;
+  return parent.lastChild;
+}
+
+export function updateParentSourcePos(node: Node) {
+  let curr = node;
+  while (curr) {
+    if (curr.parent && curr.parent.lastChild === curr) {
+      curr.parent.sourcepos![1] = [...curr.sourcepos![1]] as Position;
+      curr = curr.parent;
+    } else {
+      break;
+    }
+  }
+}
+
+export function goToSameDepth(source: Node, target: Node) {
+  let temp: Node = source;
+  let depth = 0;
+  while (temp.parent!.type !== 'document') {
+    temp = temp.parent!;
+    depth += 1;
+  }
+  temp = target;
+  for (let i = 0; i < depth; i += 1) {
+    temp = temp.firstChild!;
+  }
+  return temp;
+}
+
+export function toString(node: Node | null) {
+  if (!node) {
+    return 'null';
+  }
+  return `type: ${node.type}, sourcepos: ${node.sourcepos}, firstChild: ${node.firstChild &&
+    node.firstChild.type}, lastChild: ${node.lastChild && node.lastChild.type}, prev: ${node.prev &&
+    node.prev.type}, next: ${node.next && node.next.type}`;
 }

@@ -1,6 +1,8 @@
 import codemirror from 'codemirror';
+import { Node } from './commonmark/node';
 import { MarkdownDocument } from './document';
 import { GfmHtmlRenderer } from './commonmark/render/gfm/html';
+import { last } from './helper';
 import 'codemirror/lib/codemirror.css';
 import './index.css';
 
@@ -15,18 +17,6 @@ document.body.innerHTML = `
 const editorEl = document.querySelector('.editor') as HTMLElement;
 const htmlEl = document.querySelector('.html') as HTMLElement;
 const previewEl = document.querySelector('.preview') as HTMLElement;
-
-// const editorEl = document.createElement('div');
-// editorEl.className = 'editor-area';
-// document.body.appendChild(editorEl);
-
-// const htmlEl = document.createElement('div');
-// htmlEl.className = 'html-area';
-// document.body.appendChild(htmlEl);
-
-// const previewEl = document.createElement('div');
-// previewEl.className = 'preview-area';
-// document.body.appendChild(previewEl);
 
 const cm = codemirror(editorEl, { lineNumbers: true });
 const doc = new MarkdownDocument();
@@ -45,19 +35,36 @@ type TokenTypes = typeof tokenTypes;
 
 cm.on('change', (editor, changeObj) => {
   const { from, to, text } = changeObj;
-  const { lineRange, nodes } = doc.editMarkdown(
+  let { nodes } = doc.editMarkdown(
     [from.line + 1, from.ch + 1],
     [to.line + 1, to.ch + 1],
     text.join('\n')
   );
-  console.log('lineRange', lineRange);
-  console.log('nodes', nodes);
 
   const html = writer.render(doc.getRootNode());
   previewEl.innerHTML = html;
   htmlEl.innerText = html;
 
-  const marks = cm.findMarks({ line: lineRange[0] - 1, ch: 0 }, { line: lineRange[1], ch: 0 });
+  if (!nodes.length) {
+    return;
+  }
+
+  const editFromPos = nodes[0].sourcepos![0];
+  const editToPos = last(nodes).sourcepos![1];
+  const editFrom = { line: editFromPos[0] - 1, ch: editFromPos[1] - 1 };
+  const editTo = { line: editToPos[0] - 1, ch: editToPos[1] };
+  const marks = cm.findMarks(editFrom, editTo);
+
+  if (nodes[0].parent!.type !== 'document') {
+    if (nodes.length === 1) {
+      nodes = [goToDepth1Node(nodes[0])];
+    } else {
+      const d1NodeFrom = goToDepth1Node(nodes[0]);
+      const d1NodeTo = goToDepth1Node(last(nodes));
+      nodes = getNodeArray(d1NodeFrom, d1NodeTo);
+    }
+  }
+
   for (const mark of marks) {
     mark.clear();
   }
@@ -74,8 +81,35 @@ cm.on('change', (editor, changeObj) => {
         const end = { line: endLine - 1, ch: endCh };
         const token = tokenTypes[node.type as keyof TokenTypes];
 
-        cm.markText(start, end, { className: `cm-${token}` });
+        if (token) {
+          cm.markText(start, end, { className: `cm-${token}` });
+        }
       }
     }
   }
 });
+
+function goToDepth1Node(node: Node) {
+  while (node.parent && node.parent.type !== 'document') {
+    node = node.parent;
+  }
+  return node;
+}
+
+function getNodeArray(from: Node, to: Node) {
+  if (from === to) {
+    return [from];
+  }
+  let node: Node | null = from;
+  const result = [];
+  while (node && node !== to) {
+    result.push(node);
+    node = node.next;
+  }
+  if (node === to) {
+    result.push(node);
+    return result;
+  }
+
+  return [];
+}
