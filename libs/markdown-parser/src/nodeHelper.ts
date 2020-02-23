@@ -1,4 +1,4 @@
-import { Node, NodeType } from './commonmark/node';
+import { Node } from './commonmark/node';
 import { Position } from './document';
 
 export const enum Compare {
@@ -14,23 +14,6 @@ export function getAllParents(node: Node) {
     node = node.parent;
   }
   return parents.reverse();
-}
-
-export function findClosestCommonParent(node1: Node, node2: Node) {
-  const parents1 = getAllParents(node1);
-  const parents2 = getAllParents(node2);
-  const minLen = Math.min(parents1.length, parents2.length);
-
-  let parent: Node | null = null;
-  for (let i = 0; i < minLen; i += 1) {
-    if (parents1[i] === parents2[i]) {
-      parent = parents1[i];
-    } else {
-      break;
-    }
-  }
-
-  return parent;
 }
 
 export function removeNextUntil(node: Node, last: Node) {
@@ -92,18 +75,6 @@ export function updateNextLineNumbers(base: Node | null, diff: number) {
   }
 }
 
-function isContainerBlock(type: NodeType) {
-  switch (type) {
-    case 'document':
-    case 'blockQuote':
-    case 'list':
-    case 'item':
-      return true;
-    default:
-      return false;
-  }
-}
-
 function compareRangeAndLine([startPos, endPos]: [Position, Position], line: number) {
   if (endPos[0] < line) {
     return Compare.LT;
@@ -112,87 +83,6 @@ function compareRangeAndLine([startPos, endPos]: [Position, Position], line: num
     return Compare.GT;
   }
   return Compare.EQ;
-}
-
-function comparePos(p1: Position, p2: Position) {
-  if (p1[0] < p2[0]) {
-    return Compare.LT;
-  }
-  if (p1[0] > p2[0]) {
-    return Compare.GT;
-  }
-  if (p1[1] < p2[1]) {
-    return Compare.LT;
-  }
-  if (p1[1] > p2[1]) {
-    return Compare.GT;
-  }
-  return Compare.EQ;
-}
-
-function compareRangeAndPos([startPos, endPos]: [Position, Position], pos: Position) {
-  if (comparePos(endPos, pos) === Compare.LT) {
-    return Compare.LT;
-  }
-  if (comparePos(startPos, pos) === Compare.GT) {
-    return Compare.GT;
-  }
-  return Compare.EQ;
-}
-
-export function lastLeafBlock(parent: Node | null) {
-  if (!parent) {
-    return null;
-  }
-  let node = parent;
-  while (isContainerBlock(node.type) && node.lastChild) {
-    node = node.lastChild;
-  }
-  return node;
-}
-
-export function findBlockByPos(parent: Node, pos: Position) {
-  let node: Node | null = parent;
-  let prevNode = null;
-  while (node) {
-    const comp = compareRangeAndPos(node.sourcepos!, pos);
-    if (comp === Compare.EQ) {
-      if (isContainerBlock(node.type)) {
-        prevNode = null;
-        node = node.firstChild;
-      } else {
-        return node;
-      }
-    } else if (comp === Compare.GT) {
-      return lastLeafBlock(prevNode);
-    } else {
-      prevNode = node;
-      node = node.next;
-    }
-  }
-  return lastLeafBlock(prevNode);
-}
-
-export function findBlockByLine(parent: Node, line: number) {
-  let node: Node | null = parent;
-  let prevNode = null;
-  while (node) {
-    const comp = compareRangeAndLine(node.sourcepos!, line);
-    if (comp === Compare.EQ) {
-      if (isContainerBlock(node.type)) {
-        prevNode = null;
-        node = node.firstChild;
-      } else {
-        return node;
-      }
-    } else if (comp === Compare.GT) {
-      return lastLeafBlock(prevNode);
-    } else {
-      prevNode = node;
-      node = node.next;
-    }
-  }
-  return lastLeafBlock(prevNode);
 }
 
 export function findChildNodeByLine(parent: Node, line: number) {
@@ -208,32 +98,6 @@ export function findChildNodeByLine(parent: Node, line: number) {
     node = node.next;
   }
   return parent.lastChild;
-}
-
-export function updateParentSourcePos(node: Node) {
-  let curr = node;
-  while (curr) {
-    if (curr.parent && curr.parent.lastChild === curr) {
-      curr.parent.sourcepos![1] = [...curr.sourcepos![1]] as Position;
-      curr = curr.parent;
-    } else {
-      break;
-    }
-  }
-}
-
-export function goToSameDepth(source: Node, target: Node) {
-  let temp: Node = source;
-  let depth = 0;
-  while (temp.parent!.type !== 'document') {
-    temp = temp.parent!;
-    depth += 1;
-  }
-  temp = target;
-  for (let i = 0; i < depth; i += 1) {
-    temp = temp.firstChild!;
-  }
-  return temp;
 }
 
 export function toString(node: Node | null) {
