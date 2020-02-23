@@ -45,8 +45,8 @@ const reHtmlBlockOpen = [
 const reSetextHeadingLine = /^(?:=+|-+)[ \t]*$/;
 const reATXHeadingMarker = /^#{1,6}(?:[ \t]+|$)/;
 const reThematicBreak = /^(?:(?:\*[ \t]*){3,}|(?:_[ \t]*){3,}|(?:-[ \t]*){3,})[ \t]*$/;
-const reBulletListMarker = /^[*+-]/;
-const reOrderedListMarker = /^(\d{1,9})([.)])/;
+export const reBulletListMarker = /^[*+-]/;
+export const reOrderedListMarker = /^(\d{1,9})([.)])/;
 
 // Parse a list marker and return data on the marker (type,
 // start, delimiter, bullet character, padding) or null.

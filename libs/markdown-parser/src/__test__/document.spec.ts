@@ -184,5 +184,45 @@ describe('editText()', () => {
       assertParseResult(doc, ['- Hello', '- World']);
       assertResultNodes(doc, result.nodes);
     });
+
+    it('prepend a new list before an existing list', () => {
+      const doc = new MarkdownDocument('Hello\n\n- World');
+      const result = doc.editMarkdown([1, 1], [1, 1], '- ');
+
+      assertParseResult(doc, ['- Hello', '', '- World']);
+      assertResultNodes(doc, result.nodes);
+    });
+
+    it('prepend a new list before a padded paragraph', () => {
+      const doc = new MarkdownDocument('\n\n  World');
+      const result = doc.editMarkdown([1, 1], [1, 1], '- Hello');
+
+      assertParseResult(doc, ['- Hello', '', '  World']);
+      assertResultNodes(doc, result.nodes);
+    });
+
+    it('prepend a new list before a padded codeblock containing list-like text', () => {
+      const doc = new MarkdownDocument('\n\n    - World');
+      const result = doc.editMarkdown([1, 1], [1, 1], '- Hello');
+
+      assertParseResult(doc, ['- Hello', '', '    - World']);
+      assertResultNodes(doc, result.nodes);
+    });
+
+    it('convert a paragraph preceded by a list to a list ', () => {
+      const doc = new MarkdownDocument('- Hello\n\nWorld');
+      const result = doc.editMarkdown([3, 1], [3, 1], '- ');
+
+      assertParseResult(doc, ['- Hello', '', '- World']);
+      assertResultNodes(doc, result.nodes);
+    });
+
+    it('add paddings to a paragraph preceded by a list', () => {
+      const doc = new MarkdownDocument('- Hello\n\nWorld');
+      const result = doc.editMarkdown([3, 1], [3, 1], '  ');
+
+      assertParseResult(doc, ['- Hello', '', '  World']);
+      assertResultNodes(doc, result.nodes);
+    });
   });
 });

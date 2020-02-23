@@ -1,5 +1,5 @@
 import { Parser } from './commonmark/blocks';
-import { Node, BlockNode } from './commonmark/node';
+import { BlockNode, isList } from './commonmark/node';
 import {
   removeNextUntil,
   getChildNodes,
@@ -8,6 +8,7 @@ import {
   updateNextLineNumbers,
   findChildNodeByLine
 } from './nodeHelper';
+import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
 
 const reLineEnding = /\r\n|\n|\r/;
 
@@ -17,6 +18,16 @@ export type Range = [Position, Position];
 
 interface EditResult {
   nodes: BlockNode[];
+}
+
+function canBeContinuation(lineText: string) {
+  const spaceMatch = lineText.match(/^[ \t]+/);
+  if (spaceMatch && (spaceMatch[0].length >= 2 || /\t/.test(spaceMatch[0]))) {
+    return true;
+  }
+
+  const leftTrimmed = spaceMatch ? lineText.slice(spaceMatch.length) : lineText;
+  return reBulletListMarker.test(leftTrimmed) || reOrderedListMarker.test(leftTrimmed);
 }
 
 export class MarkdownDocument {
@@ -69,7 +80,11 @@ export class MarkdownDocument {
     this.root.sourcepos![1] = [idx + 1, lineTexts[idx].length];
   }
 
-  private replaceRangeNodes(startNode: Node | null, endNode: Node | null, newNodes: Node[]) {
+  private replaceRangeNodes(
+    startNode: BlockNode | null,
+    endNode: BlockNode | null,
+    newNodes: BlockNode[]
+  ) {
     if (!startNode) {
       if (endNode) {
         insertNodesBefore(endNode, newNodes);
@@ -84,34 +99,74 @@ export class MarkdownDocument {
     }
   }
 
-  private parseRange(startLine: number, endLine: number) {
+  private getNodeRange(start: Position, end: Position) {
+    const startNode = findChildNodeByLine(this.root, start[0]);
+    let endNode = findChildNodeByLine(this.root, end[0]);
+
+    // extend node range to include a following block which doesn't have preceding blank line
+    if (endNode && endNode.next && end[0] + 1 === endNode.next.sourcepos![0][0]) {
+      endNode = endNode.next;
+    }
+
+    return [startNode, endNode] as [BlockNode, BlockNode];
+  }
+
+  private parseRange(
+    startLine: number,
+    endLine: number,
+    startNode: BlockNode,
+    endNode: BlockNode | null
+  ) {
+    // extends starting range if the first node can be a continuation of the preceding node
+    const firstLineText = this.lineTexts[startLine - 1];
+    if (startNode && startNode.prev && isList(startNode.prev) && canBeContinuation(firstLineText)) {
+      startNode = startNode.prev;
+      startLine = startNode.sourcepos![0][0];
+    }
+
     const editedLines = this.lineTexts.slice(startLine - 1, endLine);
-    return getChildNodes(this.parser.partialParse(startLine, editedLines));
+    const root = this.parser.partialParseStart(startLine, editedLines);
+
+    // extends ending range if the following node can be a continuation of the last node
+    if (root.lastChild && isList(root.lastChild)) {
+      let nextNode = endNode ? endNode.next : this.root.firstChild;
+      while (nextNode) {
+        if (nextNode.type !== 'list' && nextNode.sourcepos![0][1] < 3) {
+          break;
+        }
+        let newEndLine = nextNode.sourcepos![1][0];
+        while (this.lineTexts[newEndLine] === '') {
+          newEndLine += 1;
+        }
+
+        this.parser.partialParseExtends(this.lineTexts.slice(endLine, newEndLine));
+        endLine = newEndLine;
+        endNode = nextNode as BlockNode;
+        nextNode = nextNode.next;
+      }
+    }
+
+    this.parser.partialParseFinish();
+
+    const newNodes = getChildNodes(root)! as BlockNode[];
+    return { newNodes, extStartNode: startNode, extEndNode: endNode };
   }
 
   public editMarkdown(start: Position, end: Position, newText: string): EditResult {
+    const [startNode, endNode] = this.getNodeRange(start, end);
     const lineDiff = this.updateLineTexts(start, end, newText);
-    const startNode = findChildNodeByLine(this.root, start[0]);
-    let endNode = findChildNodeByLine(this.root, end[0]);
-    let nextNode = endNode ? endNode.next : this.root.firstChild;
+    const startLine = startNode ? Math.min(startNode.sourcepos![0][0], start[0]) : start[0];
+    let endLine = (endNode ? Math.max(endNode.sourcepos![1][0], end[0]) : end[0]) + lineDiff;
 
-    // extend node range to include a following block without preceding blank lines
-    if (nextNode && end[0] + 1 === nextNode.sourcepos![0][0]) {
-      endNode = nextNode;
-      nextNode = nextNode.next;
+    while (this.lineTexts[endLine] === '') {
+      endLine += 1;
     }
 
-    const parseStartLine = startNode ? Math.min(startNode.sourcepos![0][0], start[0]) : start[0];
-    let parseEndLine = (endNode ? Math.max(endNode.sourcepos![1][0], end[0]) : end[0]) + lineDiff;
+    const parseResult = this.parseRange(startLine, endLine, startNode, endNode);
+    const { newNodes, extStartNode, extEndNode } = parseResult;
+    const nextNode = extEndNode ? extEndNode.next : this.root.firstChild;
 
-    // extend line range to include following blank lines
-    while (this.lineTexts[parseEndLine] === '') {
-      parseEndLine += 1;
-    }
-
-    const newNodes = this.parseRange(parseStartLine, parseEndLine) as BlockNode[];
-
-    this.replaceRangeNodes(startNode, endNode!, newNodes);
+    this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
     updateNextLineNumbers(nextNode, lineDiff);
     this.updateRootNodeState();
 

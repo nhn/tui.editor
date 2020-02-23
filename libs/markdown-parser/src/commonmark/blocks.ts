@@ -405,7 +405,7 @@ export class Parser {
     return this.doc;
   }
 
-  partialParse(lineNumber: number, lines: string[]) {
+  partialParseStart(lineNumber: number, lines: string[]) {
     this.doc = document();
     this.tip = this.doc;
     this.refmap = {};
@@ -420,11 +420,20 @@ export class Parser {
     for (let i = 0; i < len; i++) {
       this.incorporateLine(lines[i]);
     }
-    while (this.tip) {
-      this.finalize(this.tip, lineNumber - 1 + len);
-    }
-    this.processInlines(this.doc);
 
     return this.doc;
+  }
+
+  partialParseExtends(lines: string[]) {
+    for (let i = 0; i < lines.length; i++) {
+      this.incorporateLine(lines[i]);
+    }
+  }
+
+  partialParseFinish() {
+    while (this.tip) {
+      this.finalize(this.tip, this.lineNumber);
+    }
+    this.processInlines(this.doc);
   }
 }

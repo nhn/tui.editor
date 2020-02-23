@@ -289,6 +289,10 @@ export function isHeading(node: Node): node is HeadingNode {
   return node.type === 'heading';
 }
 
+export function isList(node: Node): node is ListNode {
+  return node.type === 'list';
+}
+
 export function text(s: string, sourcepos?: SourcePos) {
   const node = createNode('text', sourcepos);
   node.literal = s;
