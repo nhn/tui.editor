@@ -4,6 +4,7 @@
   "description": "Markdown Parser",
   "scripts": {
     "start": "webpack-dev-server",
+    "build": "webpack --mode=production",
     "test": "jest --watch"
   },
   "keywords": [],

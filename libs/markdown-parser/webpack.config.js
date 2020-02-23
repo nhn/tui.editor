@@ -30,6 +30,7 @@ module.exports = (env, { mode = 'development' }) => {
   }
 
   return merge(commonConfig, {
+    entry: './src/__sample__/index.ts',
     mode,
     devtool: 'inline-source-map',
     module: {
