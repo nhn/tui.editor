@@ -2,7 +2,7 @@
  * @fileoverview Implements Paragraph markdown command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import CommandManager from '../commandManager';
 
@@ -38,7 +38,7 @@ const Paragraph = CommandManager.command(
       const textToModify = doc.getRange(from, to);
       const textLines = textToModify.split('\n');
 
-      forEachArray(textLines, (line, index) => {
+      toArray(textLines).forEach((line, index) => {
         textLines[index] = getParagraphMarkdown(line);
       });
 

@@ -2,22 +2,19 @@
  * @fileoverview test markdown task
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import task from '@/markdownCommands/task';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 import mdListManager from '@/mdListManager';
 
 describe('task', () => {
-  let cm, doc, mde;
+  let cm, doc, mde, container;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    mde = new MarkdownEditor($container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager());
     mde.componentManager.addManager(mdListManager);
 
     cm = mde.getEditor();
@@ -39,7 +36,7 @@ describe('task', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   describe('add task', () => {

@@ -2,21 +2,18 @@
  * @fileoverview test markdown Outdent
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import Outdent from '@/markdownCommands/outdent';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
 describe('Outdent', () => {
-  let cm, mde, $container;
+  let cm, mde, container;
 
   beforeEach(() => {
-    $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    mde = new MarkdownEditor($container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager());
 
     cm = mde.getEditor();
 
@@ -26,7 +23,7 @@ describe('Outdent', () => {
   });
 
   afterEach(() => {
-    $container.remove();
+    document.body.removeChild(container);
   });
 
   describe('Outdent', () => {

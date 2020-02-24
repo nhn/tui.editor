@@ -2,21 +2,18 @@
  * @fileoverview test markdown hr
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import Indent from '@/markdownCommands/indent';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
 describe('Indent', () => {
-  let cm, mde, $container;
+  let cm, mde, container;
 
   beforeEach(() => {
-    $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    mde = new MarkdownEditor($container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager());
 
     cm = mde.getEditor();
 
@@ -26,7 +23,7 @@ describe('Indent', () => {
   });
 
   afterEach(() => {
-    $container.remove();
+    document.body.removeChild(container);
   });
 
   describe('Indent', () => {
