@@ -1,5 +1,4 @@
 import codemirror from 'codemirror';
-import { Node, BlockNode } from '../commonmark/node';
 import { MarkdownDocument } from '../document';
 import { GfmHtmlRenderer } from '../commonmark/render/gfm/html';
 import { last } from '../helper';
@@ -9,8 +8,8 @@ import './index.css';
 document.body.innerHTML = `
   <section class="container">
     <div class="editor"></div>
-    <div class="html"></div>
     <div class="preview"></div>
+    <div class="html"></div>
   </section>
 `;
 
@@ -26,6 +25,7 @@ const tokenTypes = {
   heading: 'header',
   emph: 'em',
   strong: 'strong',
+  strike: 'strikethrough',
   item: 'variable-2',
   image: 'variable-3',
   blockQuote: 'quote'
@@ -35,7 +35,7 @@ type TokenTypes = typeof tokenTypes;
 
 cm.on('change', (editor, changeObj) => {
   const { from, to, text } = changeObj;
-  let { nodes } = doc.editMarkdown(
+  const { nodes } = doc.editMarkdown(
     [from.line + 1, from.ch + 1],
     [to.line + 1, to.ch + 1],
     text.join('\n')
@@ -54,16 +54,6 @@ cm.on('change', (editor, changeObj) => {
   const editFrom = { line: editFromPos[0] - 1, ch: editFromPos[1] - 1 };
   const editTo = { line: editToPos[0] - 1, ch: editToPos[1] };
   const marks = cm.findMarks(editFrom, editTo);
-
-  if (nodes[0].parent!.type !== 'document') {
-    if (nodes.length === 1) {
-      nodes = [goToDepth1Node(nodes[0])];
-    } else {
-      const d1NodeFrom = goToDepth1Node(nodes[0]);
-      const d1NodeTo = goToDepth1Node(last(nodes));
-      nodes = getNodeArray(d1NodeFrom, d1NodeTo) as BlockNode[];
-    }
-  }
 
   for (const mark of marks) {
     mark.clear();
@@ -88,28 +78,3 @@ cm.on('change', (editor, changeObj) => {
     }
   }
 });
-
-function goToDepth1Node(node: Node): BlockNode {
-  while (node.parent && node.parent.type !== 'document') {
-    node = node.parent;
-  }
-  return node as BlockNode;
-}
-
-function getNodeArray(from: Node, to: Node) {
-  if (from === to) {
-    return [from];
-  }
-  let node: Node | null = from;
-  const result = [];
-  while (node && node !== to) {
-    result.push(node);
-    node = node.next;
-  }
-  if (node === to) {
-    result.push(node);
-    return result;
-  }
-
-  return [];
-}
