@@ -5,9 +5,26 @@ import { BlockNode } from '../commonmark/node';
 
 const reader = new Parser();
 
+function removeIdAttrFromAllNode(root: BlockNode) {
+  const walker = root.walker();
+  let event;
+  while ((event = walker.next())) {
+    const { entering, node } = event;
+    if (entering) {
+      delete node.id;
+    }
+  }
+}
+
 function assertParseResult(doc: MarkdownDocument, lineTexts: string[]) {
   expect(doc.getLineTexts()).toEqual(lineTexts);
-  expect(doc.getRootNode()).toEqual(reader.parse(lineTexts.join('\n')));
+
+  const root = doc.getRootNode();
+  const expectedRoot = reader.parse(lineTexts.join('\n'));
+
+  removeIdAttrFromAllNode(root);
+  removeIdAttrFromAllNode(expectedRoot);
+  expect(root).toEqual(expectedRoot);
 }
 
 function assertResultNodes(doc: MarkdownDocument, nodes: BlockNode[], startIdx = 0) {

@@ -1,7 +1,6 @@
 import { Node, ListNode, LinkNode, CodeBlockNode, HeadingNode } from '../node';
 import { Renderer } from './renderer';
 import { escapeXml } from '../common';
-import { taskListItemRender } from '../gfm/taskListItem';
 
 const reUnsafeProtocol = /^javascript:|vbscript:|file:|data:/i;
 const reSafeDataProtocol = /^data:image\/(?:png|gif|jpeg|webp)/i;
@@ -31,6 +30,7 @@ interface Options {
   safe: boolean;
   sourcepos: boolean;
   tagFilter: boolean;
+  nodeId: boolean;
 }
 
 type AttrPair = [string, string];
@@ -40,7 +40,8 @@ const defaultOptions: Options = {
   softbreak: '\n',
   safe: false,
   sourcepos: false,
-  tagFilter: false
+  tagFilter: false,
+  nodeId: false
 };
 
 export class HtmlRenderer extends Renderer {
@@ -102,11 +103,14 @@ export class HtmlRenderer extends Renderer {
   image(node: LinkNode, entering: boolean) {
     if (entering) {
       if (this.disableTags === 0) {
-        if (this.options.safe && potentiallyUnsafe(node.destination!)) {
-          this.lit('<img src="" alt="');
-        } else {
-          this.lit(`<img src="${this.esc(node.destination!)}" alt="`);
-        }
+        const attr = this.attrString(this.attrs(node));
+        const attrStr = attr ? ` ${attr}` : '';
+        const src =
+          this.options.safe && potentiallyUnsafe(node.destination!)
+            ? ''
+            : this.esc(node.destination!);
+
+        this.lit(`<img src="${src}"${attrStr} alt="`);
       }
       this.disableTags += 1;
     } else {
@@ -120,17 +124,24 @@ export class HtmlRenderer extends Renderer {
     }
   }
 
-  emph(_: Node, entering: boolean) {
-    this.tag(entering ? 'em' : '/em');
+  emph(node: Node, entering: boolean) {
+    if (entering) {
+      this.tag('em', this.attrs(node));
+    } else {
+      this.tag('/em');
+    }
   }
 
-  strong(_: Node, entering: boolean) {
-    this.tag(entering ? 'strong' : '/strong');
+  strong(node: Node, entering: boolean) {
+    if (entering) {
+      this.tag('strong', this.attrs(node));
+    } else {
+      this.tag('/strong');
+    }
   }
 
   paragraph(node: Node, entering: boolean) {
     const grandparent = node.parent?.parent;
-    const attrs = this.attrs(node);
     if (grandparent && grandparent.type === 'list') {
       if ((grandparent as ListNode).listData!.tight) {
         return;
@@ -138,7 +149,7 @@ export class HtmlRenderer extends Renderer {
     }
     if (entering) {
       this.cr();
-      this.tag('p', attrs);
+      this.tag('p', this.attrs(node));
     } else {
       this.tag('/p');
       this.cr();
@@ -147,10 +158,9 @@ export class HtmlRenderer extends Renderer {
 
   heading(node: HeadingNode, entering: boolean) {
     const tagname = `h${node.level}`;
-    const attrs = this.attrs(node);
     if (entering) {
       this.cr();
-      this.tag(tagname, attrs);
+      this.tag(tagname, this.attrs(node));
     } else {
       this.tag(`/${tagname}`);
       this.cr();
@@ -158,20 +168,20 @@ export class HtmlRenderer extends Renderer {
   }
 
   code(node: Node) {
-    this.tag('code');
+    this.tag('code', this.attrs(node));
     this.out(node.literal);
     this.tag('/code');
   }
 
   codeBlock(node: CodeBlockNode) {
-    const infoWords = node.info ? node.info.split(/\s+/) : [],
-      attrs = this.attrs(node);
+    const infoWords = node.info ? node.info.split(/\s+/) : [];
+    const codeAttrs: AttrPairs = [];
     if (infoWords.length > 0 && infoWords[0].length > 0) {
-      attrs.push(['class', `language-${this.esc(infoWords[0])}`]);
+      codeAttrs.push(['class', `language-${this.esc(infoWords[0])}`]);
     }
     this.cr();
-    this.tag('pre');
-    this.tag('code', attrs);
+    this.tag('pre', this.attrs(node));
+    this.tag('code', codeAttrs);
     this.out(node.literal);
     this.tag('/code');
     this.tag('/pre');
@@ -253,17 +263,20 @@ export class HtmlRenderer extends Renderer {
   }
 
   attrs(node: Node) {
-    const att: AttrPairs = [];
+    const attr: AttrPairs = [];
     if (this.options.sourcepos) {
       const pos = node.sourcepos;
       if (pos) {
-        att.push([
+        attr.push([
           'data-sourcepos',
           `${String(pos[0][0])}:${String(pos[0][1])}-${String(pos[1][0])}:${String(pos[1][1])}`
         ]);
       }
     }
-    return att;
+    if (this.options.nodeId) {
+      attr.push(['data-nodeid', String(node.id)]);
+    }
+    return attr;
   }
 
   esc(s: string) {
@@ -275,19 +288,19 @@ export class HtmlRenderer extends Renderer {
     if (this.disableTags > 0) {
       return;
     }
+
     this.buffer += `<${name}`;
     if (attrs && attrs.length > 0) {
-      let i = 0;
-      let attrib: [string, string];
-      while ((attrib = attrs[i]) !== undefined) {
-        this.buffer += ` ${attrib[0]}="${attrib[1]}"`;
-        i++;
-      }
+      this.buffer += ` ${this.attrString(attrs)}`;
     }
     if (selfclosing) {
       this.buffer += ' /';
     }
     this.buffer += '>';
     this.lastOut = '>';
+  }
+
+  attrString(attrs: AttrPairs) {
+    return attrs.map(([name, value]) => `${name}="${value}"`).join(' ');
   }
 }

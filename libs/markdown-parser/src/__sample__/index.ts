@@ -19,7 +19,7 @@ const previewEl = document.querySelector('.preview') as HTMLElement;
 
 const cm = codemirror(editorEl, { lineNumbers: true });
 const doc = new MarkdownDocument();
-const writer = new GfmHtmlRenderer({ sourcepos: true });
+const writer = new GfmHtmlRenderer({ sourcepos: true, nodeId: true });
 
 const tokenTypes = {
   heading: 'header',
