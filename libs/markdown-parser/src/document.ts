@@ -18,6 +18,7 @@ export type Range = [Position, Position];
 
 interface EditResult {
   nodes: BlockNode[];
+  removedNodeRange: [number, number] | null;
 }
 
 function canBeContinuation(lineText: string) {
@@ -100,12 +101,16 @@ export class MarkdownDocument {
   }
 
   private getNodeRange(start: Position, end: Position) {
-    const startNode = findChildNodeByLine(this.root, start[0]);
+    let startNode = findChildNodeByLine(this.root, start[0]);
     let endNode = findChildNodeByLine(this.root, end[0]);
 
     // extend node range to include a following block which doesn't have preceding blank line
     if (endNode && endNode.next && end[0] + 1 === endNode.next.sourcepos![0][0]) {
       endNode = endNode.next;
+    }
+
+    if (!startNode && endNode) {
+      startNode = endNode;
     }
 
     return [startNode, endNode] as [BlockNode, BlockNode];
@@ -140,7 +145,6 @@ export class MarkdownDocument {
         }
 
         this.parser.partialParseExtends(this.lineTexts.slice(endLine, newEndLine));
-        endLine = newEndLine;
         endNode = nextNode as BlockNode;
         nextNode = nextNode.next;
       }
@@ -170,7 +174,10 @@ export class MarkdownDocument {
     updateNextLineNumbers(nextNode, lineDiff);
     this.updateRootNodeState();
 
-    return { nodes: newNodes };
+    return {
+      nodes: newNodes,
+      removedNodeRange: !extStartNode ? null : [extStartNode.id, extEndNode!.id]
+    };
   }
 
   public getLineTexts() {
