@@ -3,9 +3,11 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
+
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
 import isObject from 'tui-code-snippet/type/isObject';
+import domUtils from '../domUtils';
 
 let _uiInstanceId = -1;
 
@@ -23,7 +25,7 @@ function makeUIInstanceId() {
 /**
  * Class UIController
  * @param {Object} [options] - options
- *     @param {jQuery} [options.rootElement] - root element
+ *     @param {HTMLElement} [options.rootElement] - root element
  *     @param {string} [options.tagName] - tag name
  *     @param {string} [options.className] - class name
  */
@@ -41,10 +43,10 @@ class UIController {
   className;
 
   /**
-   * UI jQuery element
+   * UI element
    * @type {Object}
    */
-  $el;
+  el;
 
   /**
    * UI Id
@@ -94,9 +96,9 @@ class UIController {
     const { event, selector } = this._parseEventType(type);
 
     if (selector) {
-      this.$el.on(event, selector, fn);
+      $(this.el).on(event, selector, fn);
     } else {
-      this.$el.on(event, fn);
+      $(this.el).on(event, fn);
     }
   }
 
@@ -110,12 +112,12 @@ class UIController {
       const { event, selector } = this._parseEventType(type);
 
       if (selector) {
-        this.$el.off(event, selector, fn);
+        $(this.el).off(event, selector, fn);
       } else {
-        this.$el.off(event, fn);
+        $(this.el).off(event, fn);
       }
     } else {
-      this.$el.off();
+      $(this.el).off();
     }
   }
 
@@ -139,18 +141,17 @@ class UIController {
 
   /**
    * set root element
-   * @param {jQuery} $el - root jQuery element
+   * @param {HTMLElement} el - root element
    * @private
    */
-  _setRootElement($el) {
-    const { tagName } = this;
-    let { className } = this;
+  _setRootElement(el) {
+    if (!el) {
+      const { tagName } = this;
 
-    if (!$el) {
-      className = className || `uic${this._id}`;
-      $el = $(`<${tagName} class="${className}"/>`);
+      el = document.createElement(tagName);
+      el.className = this.className || `uic${this._id}`;
     }
-    this.$el = $el;
+    this.el = el;
   }
 
   /**
@@ -158,23 +159,15 @@ class UIController {
    * @param {...object} args - event name & extra params
    */
   trigger(...args) {
-    this.$el.trigger(...args);
-  }
-
-  _getEventNameWithNamespace(event) {
-    const eventSplited = event.split(' ');
-
-    eventSplited[0] += `.uicEvent${this._id}`;
-
-    return eventSplited.join(' ');
+    $(this.el).trigger(...args);
   }
 
   /**
    * remove
    */
   remove() {
-    if (this.$el) {
-      this.$el.remove();
+    if (this.el) {
+      domUtils.remove(this.el);
     }
   }
 

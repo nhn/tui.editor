@@ -33,7 +33,7 @@ describe('UIController', () => {
 
       uic.on('click', spy);
 
-      uic.$el.trigger('click');
+      $(uic.el).trigger('click');
 
       expect(spy).toHaveBeenCalled();
     });
@@ -69,7 +69,7 @@ describe('UIController', () => {
 
       uic.on('click', spy);
       uic.off('click');
-      uic.$el.trigger('click');
+      $(uic.el).trigger('click');
 
       expect(spy).not.toHaveBeenCalled();
     });
@@ -83,7 +83,7 @@ describe('UIController', () => {
 
       uic.off();
 
-      uic.$el.trigger('click');
+      $(uic.el).trigger('click');
       uic.trigger('event!');
 
       expect(spy).not.toHaveBeenCalled();
@@ -92,17 +92,17 @@ describe('UIController', () => {
   });
 
   describe('_setRootElement()', () => {
-    it('should set root element with given jQuery element', () => {
+    it('should set root element with given element', () => {
       const elem = $('<div />');
 
       uic._setRootElement(elem);
 
-      expect(uic.$el).toBe(elem);
+      expect(uic.el).toBe(elem);
     });
 
     it('should set root element with div element if no parameter provided', () => {
       uic._setRootElement();
-      expect(uic.$el[0].tagName).toBe('DIV');
+      expect(uic.el.tagName).toBe('DIV');
     });
 
     it('should set root element according to tagName & className properties', () => {
@@ -110,8 +110,8 @@ describe('UIController', () => {
       uic.className = 'myclass';
       uic._setRootElement();
 
-      expect(uic.$el[0].tagName).toEqual('OL');
-      expect(uic.$el[0].className).toEqual('myclass');
+      expect(uic.el.tagName).toEqual('OL');
+      expect(uic.el.className).toEqual('myclass');
     });
   });
 });
