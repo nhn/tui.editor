@@ -2,7 +2,9 @@
  * @fileoverview Implements UI code block languages combo
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import hasClass from 'tui-code-snippet/domUtil/hasClass';
 
 import i18n from '../i18n';
 import KeyMapper from '../keyMapper';
@@ -21,10 +23,8 @@ class CodeBlockLanguagesCombo {
   }
 
   _initDOM() {
-    this._inputLanguage = $(
-      `<input type="text" maxlength="20" placeholder="${i18n.get('Choose language')}">`
-    ).get(0);
-    this._wrapper = $(`<span class="te-input-language">`).get(0);
+    this._inputLanguage = this._createInputElement();
+    this._wrapper = this._createWrapperElement();
     this._wrapper.appendChild(this._inputLanguage);
   }
 
@@ -41,6 +41,24 @@ class CodeBlockLanguagesCombo {
     });
   }
 
+  _createInputElement() {
+    const element = document.createElement('div');
+
+    element.innerHTML = `<input type="text" maxlength="20" placeholder="${i18n.get(
+      'Choose language'
+    )}" />`;
+
+    return element.firstChild;
+  }
+
+  _createWrapperElement() {
+    const element = document.createElement('span');
+
+    element.className = 'te-input-language';
+
+    return element;
+  }
+
   /**
    * show popup
    * @private
@@ -48,7 +66,7 @@ class CodeBlockLanguagesCombo {
   _showPopupCodeBlockLanguages() {
     const clientRect = this._inputLanguage.getBoundingClientRect();
 
-    $(this._wrapper).toggleClass('active', true);
+    addClass(this._wrapper, 'active');
     this.active = true;
 
     this._popupCodeBlockLanguages = this._eventManager.emitReduce('openPopupCodeBlockLanguages', {
@@ -69,7 +87,7 @@ class CodeBlockLanguagesCombo {
   _toggleFocus() {
     const inputLanguage = this._inputLanguage;
 
-    if ($(this._wrapper).hasClass('active')) {
+    if (hasClass(this._wrapper, 'active')) {
       inputLanguage.blur();
     } else {
       inputLanguage.focus();
@@ -77,7 +95,7 @@ class CodeBlockLanguagesCombo {
   }
 
   _onFocusOut() {
-    $(this._wrapper).toggleClass('active', false);
+    removeClass(this._wrapper, 'active');
     this._inputLanguage.value = this._prevStoredLanguage;
     this._hidePopupCodeBlockLanguages();
   }
