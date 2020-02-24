@@ -2,8 +2,6 @@
  * @fileoverview test wysiwyg table remove column command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import RemoveCol from '@/wysiwygCommands/tableRemoveCol';
 import WwTableManager from '@/wwTableManager';
 import WwTableSelectionManager from '@/wwTableSelectionManager';
@@ -17,7 +15,7 @@ describe('Table - RemoveCol', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor($(container), new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.componentManager.addManager(WwTableManager);
@@ -50,15 +48,15 @@ describe('Table - RemoveCol', () => {
             </table>`
     );
 
-    range.setStartBefore(wwe.get$Body().find('tbody td')[0].firstChild);
+    range.setStartBefore(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
     range.collapse(true);
 
     sq.setSelection(range);
 
     RemoveCol.exec(wwe);
 
-    expect(wwe.get$Body().find('thead th').length).toBe(1);
-    expect(wwe.get$Body().find('tbody td').length).toBe(2);
+    expect(wwe.getBody().querySelectorAll('thead th').length).toBe(1);
+    expect(wwe.getBody().querySelectorAll('tbody td').length).toBe(2);
   });
 
   it('dont remove col if there have only one col', () => {
@@ -77,15 +75,15 @@ describe('Table - RemoveCol', () => {
             </table>`
     );
 
-    range.setStartBefore(wwe.get$Body().find('tbody td')[0].firstChild);
+    range.setStartBefore(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
     range.collapse(true);
 
     sq.setSelection(range);
 
     RemoveCol.exec(wwe);
 
-    expect(wwe.get$Body().find('thead th').length).toBe(1);
-    expect(wwe.get$Body().find('tbody td').length).toBe(2);
+    expect(wwe.getBody().querySelectorAll('thead th').length).toBe(1);
+    expect(wwe.getBody().querySelectorAll('tbody td').length).toBe(2);
   });
 
   it('should not remove cols if selected all col', () => {
@@ -104,14 +102,14 @@ describe('Table - RemoveCol', () => {
       </table>`
     );
 
-    range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
-    range.setEndAfter(wwe.get$Body().find('tbody td')[1].firstChild);
+    range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
+    range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[1].firstChild);
     sq.setSelection(range);
 
     RemoveCol.exec(wwe);
 
-    expect(wwe.get$Body().find('thead th').length).toBe(2);
-    expect(wwe.get$Body().find('tbody td').length).toBe(4);
+    expect(wwe.getBody().querySelectorAll('thead th').length).toBe(2);
+    expect(wwe.getBody().querySelectorAll('tbody td').length).toBe(4);
   });
 
   it('should remove all columns if there are multiple tds in range', () => {
@@ -130,13 +128,13 @@ describe('Table - RemoveCol', () => {
             </table>`
     );
 
-    range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
-    range.setEndAfter(wwe.get$Body().find('tbody td')[1].firstChild);
+    range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
+    range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[1].firstChild);
     sq.setSelection(range);
 
     RemoveCol.exec(wwe);
 
-    expect(wwe.get$Body().find('thead th').length).toBe(1);
-    expect(wwe.get$Body().find('tbody td').length).toBe(2);
+    expect(wwe.getBody().querySelectorAll('thead th').length).toBe(1);
+    expect(wwe.getBody().querySelectorAll('tbody td').length).toBe(2);
   });
 });

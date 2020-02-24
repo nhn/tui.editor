@@ -2,8 +2,6 @@
  * @fileoverview test wysiwyg table add column command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import AddCol from '@/wysiwygCommands/tableAddCol';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
@@ -17,7 +15,7 @@ describe('Table - AddCol', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor($(container), new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.componentManager.addManager(WwTableManager);
@@ -39,17 +37,17 @@ describe('Table - AddCol', () => {
     const range = sq.getSelection().cloneRange();
 
     sq.setHTML(`
-            <table>
-                <thead>
-                    <tr><th>1</th><th>2</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>3</td><td>4</td></tr>
-                </tbody>
-            </table>
-        `);
+      <table>
+        <thead>
+          <tr><th>1</th><th>2</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>3</td><td>4</td></tr>
+        </tbody>
+      </table>
+    `);
 
-    range.setStartBefore(wwe.get$Body().find('tbody td')[1].firstChild);
+    range.setStartBefore(wwe.getBody().querySelectorAll('tbody td')[1].firstChild);
     range.collapse(true);
 
     sq.setSelection(range);
@@ -57,9 +55,9 @@ describe('Table - AddCol', () => {
 
     AddCol.exec(wwe);
 
-    expect(wwe.get$Body().find('thead th').length).toBe(3);
-    expect(wwe.get$Body().find('tbody td').length).toBe(3);
-    expect(sq.getSelection().startContainer).toBe(wwe.get$Body().find('tbody td')[2]);
+    expect(wwe.getBody().querySelectorAll('thead th').length).toBe(3);
+    expect(wwe.getBody().querySelectorAll('tbody td').length).toBe(3);
+    expect(sq.getSelection().startContainer).toBe(wwe.getBody().querySelectorAll('tbody td')[2]);
   });
 
   it('add multiple cols to current td cell right', () => {
@@ -67,26 +65,26 @@ describe('Table - AddCol', () => {
     const range = sq.getSelection().cloneRange();
 
     sq.setHTML(`
-            <table>
-                <thead>
-                    <tr><th>1</th><th>2</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td></tr>
-                </tbody>
-            </table>
-        `);
+      <table>
+        <thead>
+          <tr><th>1</th><th>2</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td></tr>
+        </tbody>
+      </table>
+    `);
 
-    range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
-    range.setEndAfter(wwe.get$Body().find('tbody td')[1].firstChild);
+    range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
+    range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[1].firstChild);
     sq.setSelection(range);
 
     sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
     AddCol.exec(wwe);
 
-    expect(wwe.get$Body().find('thead th').length).toBe(4);
-    expect(wwe.get$Body().find('tbody td').length).toBe(4);
+    expect(wwe.getBody().querySelectorAll('thead th').length).toBe(4);
+    expect(wwe.getBody().querySelectorAll('tbody td').length).toBe(4);
   });
 
   it('add col to current th cell right', () => {
@@ -94,17 +92,17 @@ describe('Table - AddCol', () => {
     const range = sq.getSelection().cloneRange();
 
     sq.setHTML(`
-            <table>
-                <thead>
-                    <tr><th>1</th><th>2</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>3</td><td>4</td></tr>
-                </tbody>
-            </table>
-        `);
+        <table>
+          <thead>
+            <tr><th>1</th><th>2</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>3</td><td>4</td></tr>
+          </tbody>
+        </table>
+      `);
 
-    range.setStartBefore(wwe.get$Body().find('thead th')[0].firstChild);
+    range.setStartBefore(wwe.getBody().querySelectorAll('thead th')[0].firstChild);
     range.collapse(true);
 
     sq.setSelection(range);
@@ -112,8 +110,8 @@ describe('Table - AddCol', () => {
 
     AddCol.exec(wwe);
 
-    expect(wwe.get$Body().find('thead th').length).toBe(3);
-    expect(wwe.get$Body().find('tbody td').length).toBe(3);
-    expect(sq.getSelection().startContainer).toBe(wwe.get$Body().find('thead th')[1]);
+    expect(wwe.getBody().querySelectorAll('thead th').length).toBe(3);
+    expect(wwe.getBody().querySelectorAll('tbody td').length).toBe(3);
+    expect(sq.getSelection().startContainer).toBe(wwe.getBody().querySelectorAll('thead th')[1]);
   });
 });

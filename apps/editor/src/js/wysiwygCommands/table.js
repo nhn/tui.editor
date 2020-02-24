@@ -43,7 +43,7 @@ const Table = CommandManager.command(
       wwe.focus();
 
       if (!data) {
-        focusToFirstTh(sq, wwe.get$Body().find(`.${tableIDClassName}`));
+        focusToFirstTh(sq, wwe.getBody().querySelector(`.${tableIDClassName}`));
       }
     }
   }
@@ -52,12 +52,12 @@ const Table = CommandManager.command(
 /**
  * Focus to first th
  * @param {Squire} sq Squire instance
- * @param {jQuery} $table jQuery wrapped table element
+ * @param {HTMLElement} table wrapped table element
  */
-function focusToFirstTh(sq, $table) {
+function focusToFirstTh(sq, table) {
   const range = sq.getSelection();
 
-  range.selectNodeContents($table.find('th')[0]);
+  range.selectNodeContents(table.querySelector('th'));
   range.collapse(true);
   sq.setSelection(range);
 }

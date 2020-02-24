@@ -10,14 +10,13 @@ import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('Table', () => {
-  let wwe;
+  let container, wwe;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.componentManager.addManager('table', tableManager);
@@ -27,7 +26,7 @@ describe('Table', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -35,10 +34,9 @@ describe('Table', () => {
   it('add Table 2x2', () => {
     Table.exec(wwe, 2, 2);
 
-    expect(wwe.get$Body().find('thead tr th').length).toEqual(2);
+    expect(wwe.getBody().querySelectorAll('thead tr th').length).toEqual(2);
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('tbody tr')
         .eq(0)
         .find('td').length
@@ -48,17 +46,15 @@ describe('Table', () => {
   it('add Table 4x3', () => {
     Table.exec(wwe, 4, 3);
 
-    expect(wwe.get$Body().find('thead tr th').length).toEqual(4);
+    expect(wwe.getBody().querySelectorAll('thead tr th').length).toEqual(4);
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('tbody tr')
         .eq(0)
         .find('td').length
     ).toEqual(4);
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('tbody tr')
         .eq(1)
         .find('td').length
@@ -69,8 +65,7 @@ describe('Table', () => {
     Table.exec(wwe, 4, 3);
 
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('table')
         .attr('class')
     ).toBeDefined();
@@ -79,14 +74,15 @@ describe('Table', () => {
   it('first th in table have focus', () => {
     Table.exec(wwe, 4, 3);
 
-    expect(wwe.getEditor().getSelection().startContainer).toBe(wwe.get$Body().find('th')[0]);
+    expect(wwe.getEditor().getSelection().startContainer).toBe(
+      wwe.getBody().querySelectorAll('th')[0]
+    );
   });
 
   it('add initial data', () => {
     Table.exec(wwe, 2, 3, ['a', 'b', 'c', 'd', 'e', 'f']);
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('thead tr')
         .eq(0)
         .find('th')
@@ -94,8 +90,7 @@ describe('Table', () => {
         .text()
     ).toEqual('a');
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('thead tr')
         .eq(0)
         .find('th')
@@ -103,8 +98,7 @@ describe('Table', () => {
         .text()
     ).toEqual('b');
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('tbody tr')
         .eq(0)
         .find('td')
@@ -112,8 +106,7 @@ describe('Table', () => {
         .text()
     ).toEqual('c');
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('tbody tr')
         .eq(0)
         .find('td')
@@ -121,8 +114,7 @@ describe('Table', () => {
         .text()
     ).toEqual('d');
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('tbody tr')
         .eq(1)
         .find('td')
@@ -130,14 +122,15 @@ describe('Table', () => {
         .text()
     ).toEqual('e');
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('tbody tr')
         .eq(1)
         .find('td')
         .eq(1)
         .text()
     ).toEqual('f');
-    expect(wwe.getEditor().getSelection().startContainer).not.toBe(wwe.get$Body().find('th')[0]);
+    expect(wwe.getEditor().getSelection().startContainer).not.toBe(
+      wwe.getBody().querySelectorAll('th')[0]
+    );
   });
 });
