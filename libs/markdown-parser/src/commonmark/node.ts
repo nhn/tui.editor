@@ -98,6 +98,11 @@ export class Node {
     this.prev = null;
   }
 
+  replaceWith(node: Node) {
+    this.insertBefore(node);
+    this.unlink();
+  }
+
   insertAfter(sibling: Node) {
     sibling.unlink();
     sibling.next = this.next;
@@ -282,6 +287,10 @@ export function isHtmlBlock(node: Node): node is HtmlBlockNode {
 
 export function isHeading(node: Node): node is HeadingNode {
   return node.type === 'heading';
+}
+
+export function isList(node: Node): node is ListNode {
+  return node.type === 'list';
 }
 
 export function text(s: string, sourcepos?: SourcePos) {
