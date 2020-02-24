@@ -2,11 +2,11 @@
  * @fileoverview Convertor have responsible to convert markdown and html
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
 import toMark from '@toast-ui/to-mark';
 
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import htmlSanitizer from './htmlSanitizer';
 import taskList from './markdownItPlugins/markdownitTaskPlugin';
@@ -155,17 +155,20 @@ class Convertor {
    * @private
    */
   _removeBrToMarkPassAttributeInCode(renderedHTML) {
-    const $wrapperDiv = $('<div />');
+    const wrapper = document.createElement('div');
 
-    $wrapperDiv.html(renderedHTML);
+    wrapper.innerHTML = renderedHTML;
 
-    $wrapperDiv.find('code, pre').each((i, codeOrPre) => {
-      const $code = $(codeOrPre);
+    toArray(wrapper.querySelectorAll('code, pre')).forEach(codeOrPre => {
+      const codeEelement = codeOrPre;
 
-      $code.html($code.html().replace(/\sdata-tomark-pass\s(\/?)&gt;/g, '$1&gt;'));
+      codeEelement.innerHTML = codeEelement.innerHTML.replace(
+        /\sdata-tomark-pass\s(\/?)&gt;/g,
+        '$1&gt;'
+      );
     });
 
-    renderedHTML = $wrapperDiv.html();
+    renderedHTML = wrapper.innerHTML;
 
     return renderedHTML;
   }
