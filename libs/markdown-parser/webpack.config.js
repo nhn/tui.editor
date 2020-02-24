@@ -19,6 +19,7 @@ const commonConfig = {
   },
   output: {
     filename: 'markdown-parser.js',
+    libraryTarget: 'commonjs',
     publicPath: '/dist',
     path: path.resolve(__dirname, 'dist')
   }
