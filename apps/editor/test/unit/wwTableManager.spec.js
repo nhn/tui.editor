@@ -11,16 +11,15 @@ import WwTableManager from '@/wwTableManager';
 import WwTableSelectionManager from '@/wwTableSelectionManager';
 
 describe('WwTableManager', () => {
-  let $container, em, wwe, mgr;
+  let container, em, wwe, mgr;
 
   beforeEach(() => {
-    $container = $('<div />');
-
-    $('body').append($container);
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($container, em);
+    wwe = new WysiwygEditor(container, em);
 
     wwe.init();
 
@@ -32,7 +31,7 @@ describe('WwTableManager', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -45,8 +44,7 @@ describe('WwTableManager', () => {
           '<table><thead><tr><th>1234</th></tr></thead>' +
             '<tbody><tr><td>1123</td></tr></tbody></table>'
         );
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('br')
         .remove();
     });
@@ -58,14 +56,13 @@ describe('WwTableManager', () => {
         .getSelection()
         .cloneRange();
 
-      range.setStart(wwe.get$Body().find('td')[0].childNodes[0], 2);
+      range.setStart(wwe.getBody().querySelectorAll('td')[0].childNodes[0], 2);
       range.collapse(true);
 
       mgr._appendBrIfTdOrThNotHaveAsLastChild(range);
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('td')
           .eq(0)
           .find('br').length
@@ -78,14 +75,13 @@ describe('WwTableManager', () => {
         .getSelection()
         .cloneRange();
 
-      range.setStart(wwe.get$Body().find('th')[0].childNodes[0], 2);
+      range.setStart(wwe.getBody().querySelectorAll('th')[0].childNodes[0], 2);
       range.collapse(true);
 
       mgr._appendBrIfTdOrThNotHaveAsLastChild(range);
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('th')
           .eq(0)
           .find('br').length
@@ -111,7 +107,7 @@ describe('WwTableManager', () => {
         .getSelection()
         .cloneRange();
 
-      range.setStart(wwe.get$Body().find('th')[0], 0);
+      range.setStart(wwe.getBody().querySelectorAll('th')[0], 0);
       range.collapse(true);
 
       mgr._recordUndoStateIfNeed(range);
@@ -128,7 +124,7 @@ describe('WwTableManager', () => {
         .getSelection()
         .cloneRange();
 
-      range.setStart(wwe.get$Body().find('th')[0], 0);
+      range.setStart(wwe.getBody().querySelectorAll('th')[0], 0);
       range.collapse(true);
 
       mgr._recordUndoStateAndResetCellNode(range);
@@ -197,7 +193,7 @@ describe('WwTableManager', () => {
       );
 
       wwe.getEditor().setHTML(table);
-      const $body = wwe.get$Body();
+      const $body = $(wwe.getBody());
 
       const range = wwe
         .getEditor()
@@ -225,7 +221,7 @@ describe('WwTableManager', () => {
       );
 
       wwe.getEditor().setHTML(table);
-      const $body = wwe.get$Body();
+      const $body = $(wwe.getBody());
 
       const range = wwe
         .getEditor()
@@ -249,7 +245,7 @@ describe('WwTableManager', () => {
       const pastingTable = $('<table><tbody><tr><td>a</td><td>b</td></tr></tbody></table>').get(0);
 
       wwe.getEditor().setHTML(table);
-      const $body = wwe.get$Body();
+      const $body = $(wwe.getBody());
       const range = wwe
         .getEditor()
         .getSelection()
@@ -275,7 +271,7 @@ describe('WwTableManager', () => {
         '</table>';
 
       wwe.getEditor().setHTML(table);
-      const $body = wwe.get$Body();
+      const $body = $(wwe.getBody());
       const range = wwe.getEditor().getSelection();
 
       range.setStart($body.find('th')[0], 0);
@@ -299,7 +295,7 @@ describe('WwTableManager', () => {
           '</table>';
 
         wwe.getEditor().setHTML(table);
-        const $body = wwe.get$Body();
+        const $body = $(wwe.getBody());
         const range = wwe.getEditor().getSelection();
 
         range.setStart($body.find('th')[0].firstChild, 0);
@@ -323,7 +319,7 @@ describe('WwTableManager', () => {
 
       wwe.getEditor().setHTML(html);
 
-      const $body = wwe.get$Body();
+      const $body = $(wwe.getBody());
       const range = wwe.getEditor().getSelection();
 
       range.setStart($body.find('th')[0], 0);
@@ -348,7 +344,7 @@ describe('WwTableManager', () => {
 
       $tableContainer.html(html);
 
-      const result = mgr.wrapTrsIntoTbodyIfNeed($tableContainer);
+      const result = mgr.wrapTrsIntoTbodyIfNeed($tableContainer.get(0));
       const $result = $(result);
 
       expect(result.nodeName).toBe('TBODY');
@@ -362,7 +358,7 @@ describe('WwTableManager', () => {
 
       $tableContainer.html(html);
 
-      const result = mgr.wrapTrsIntoTbodyIfNeed($tableContainer);
+      const result = mgr.wrapTrsIntoTbodyIfNeed($tableContainer.get(0));
       const $result = $(result);
 
       expect(result.nodeName).toBe('TBODY');
@@ -376,7 +372,7 @@ describe('WwTableManager', () => {
 
       $tableContainer.html(html);
 
-      const result = mgr.wrapDanglingTableCellsIntoTrIfNeed($tableContainer);
+      const result = mgr.wrapDanglingTableCellsIntoTrIfNeed($tableContainer.get(0));
       const $result = $(result);
 
       expect(result.nodeName).toBe('TR');
@@ -396,7 +392,7 @@ describe('WwTableManager', () => {
 
       $tableContainer.html(html);
 
-      const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($tableContainer);
+      const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($tableContainer.get(0));
       const $result = $(result);
 
       expect(result.nodeName).toBe('TABLE');
@@ -411,7 +407,7 @@ describe('WwTableManager', () => {
 
       $tableContainer.html(html);
 
-      const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($tableContainer);
+      const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($tableContainer.get(0));
       const $result = $(result);
 
       expect(result.nodeName).toBe('TABLE');
@@ -422,10 +418,10 @@ describe('WwTableManager', () => {
     });
   });
   describe('_completeTableIfNeed', () => {
-    it('shuold complete TR to TABLE', done => {
+    it('should complete TR to TABLE', done => {
       const html = '<tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       mgr._completeTableIfNeed();
 
@@ -440,7 +436,7 @@ describe('WwTableManager', () => {
     it('shuold complete TBODY to TABLE', done => {
       const html = '<tbody><tr><td>b</td><td>o</td></tr><tr><td>d</td><td>y</td></tr></tbody>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       mgr._completeTableIfNeed();
 
@@ -454,7 +450,7 @@ describe('WwTableManager', () => {
     it('shuold complete THEAD to TABLE', done => {
       const html = '<thead><tr><th>he</th><th>ad</th></tr></thead>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       mgr._completeTableIfNeed();
 
@@ -468,7 +464,7 @@ describe('WwTableManager', () => {
     it('shuold complete TR>TH to TABLE', done => {
       const html = '<tr><th>he</th><th>ad</th></tr>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       mgr._completeTableIfNeed();
 
@@ -490,7 +486,7 @@ describe('WwTableManager', () => {
         '</tbody>' +
         '</table>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       mgr._completeTableIfNeed();
 
@@ -514,7 +510,7 @@ describe('WwTableManager', () => {
         '</tbody>' +
         '</table>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       mgr._completeTableIfNeed();
 
@@ -538,7 +534,7 @@ describe('WwTableManager', () => {
         '</tbody>' +
         '</table>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       mgr._completeTableIfNeed();
 
@@ -563,7 +559,7 @@ describe('WwTableManager', () => {
         '</tbody>' +
         '</table>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       mgr._completeTableIfNeed();
 
@@ -586,7 +582,7 @@ describe('WwTableManager', () => {
         '<tbody>a<br></tbody>' +
         '</table>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       mgr._completeTableIfNeed();
 
@@ -613,7 +609,7 @@ describe('WwTableManager', () => {
         '</tbody>' +
         '</table>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       mgr._completeTableIfNeed();
 
@@ -628,7 +624,7 @@ describe('WwTableManager', () => {
     it('remove blank table element', done => {
       const html = '<table></table>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       mgr._completeTableIfNeed();
 
@@ -657,7 +653,7 @@ describe('WwTableManager', () => {
         '</table>'
       ].join('');
 
-      return wwe.get$Body().html(html);
+      return $(wwe.getBody()).html(html);
     }
 
     function setCursor(target, offset) {
@@ -684,7 +680,7 @@ describe('WwTableManager', () => {
         '<tr><td>5</td><td>6</td></tr>' +
         '</tbody>' +
         '</table>';
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       setCursor($body.find('th')[1], 0);
       mgr._moveCursorTo('previous', 'cell', eventMock);
@@ -703,7 +699,7 @@ describe('WwTableManager', () => {
         '<tr><td>5</td><td>6</td></tr>' +
         '</tbody>' +
         '</table>';
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       setCursor($body.find('th')[0], 0);
       mgr._moveCursorTo('next', 'cell', eventMock);
@@ -722,7 +718,7 @@ describe('WwTableManager', () => {
         '<tr><td>5</td><td>6</td></tr>' +
         '</tbody>' +
         '</table>';
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       setCursor($body.find('td')[1], 0);
       mgr._moveCursorTo('next', 'cell', eventMock);
@@ -741,12 +737,12 @@ describe('WwTableManager', () => {
         '<tr><td>5</td><td>6<br>7<br>8<br>9<br></td></tr>' +
         '</tbody>' +
         '</table>';
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       setCursor($body.find('th')[0].childNodes[0], 0);
       mgr._moveCursorTo('previous', 'row', eventMock);
 
-      expect(wwe.getEditor().getSelection().startContainer).toEqual(wwe.get$Body()[0]);
+      expect(wwe.getEditor().getSelection().startContainer).toEqual($(wwe.getBody())[0]);
     });
 
     it('should move to previous element of table when cursor in first th', () => {
@@ -761,7 +757,7 @@ describe('WwTableManager', () => {
         '</tbody>' +
         '</table>';
 
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       setCursor($body.find('th')[0].childNodes[0], 0);
       mgr._moveCursorTo('previous', 'row', eventMock);
@@ -780,7 +776,7 @@ describe('WwTableManager', () => {
         '<tr><td>5</td><td>6<br>7<br>8<br>9<br></td></tr>' +
         '</tbody>' +
         '</table><div>34</div>';
-      const $body = wwe.get$Body().html(html);
+      const $body = $(wwe.getBody()).html(html);
 
       setCursor($body.find('td')[3].childNodes[7], 0);
       mgr._moveCursorTo('next', 'row', eventMock);
@@ -1051,12 +1047,12 @@ describe('WwTableManager', () => {
         '</table><div>2</div>';
 
       wwe.focus();
-      wwe.get$Body().html(html);
+      $(wwe.getBody()).html(html);
 
       let range = wwe.getEditor().getSelection();
 
-      range.setStart(wwe.get$Body().find('th')[0], 0);
-      range.setEnd(wwe.get$Body().find('td')[1], 1);
+      range.setStart(wwe.getBody().querySelectorAll('th')[0], 0);
+      range.setEnd(wwe.getBody().querySelectorAll('td')[1], 1);
       wwe.getEditor().setSelection(range);
 
       mgr._removeContentsAndChangeSelectionIfNeed(range, 'DELETE', {
@@ -1067,25 +1063,22 @@ describe('WwTableManager', () => {
       });
 
       range = wwe.getEditor().getSelection();
-      expect(range.startContainer).toBe(wwe.get$Body().find('th')[0]);
+      expect(range.startContainer).toBe(wwe.getBody().querySelectorAll('th')[0]);
       expect(range.startContainer.textContent).toBe('');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('th')
           .eq(1)
           .text()
       ).toBe('');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('td')
           .eq(0)
           .text()
       ).toBe('');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('td')
           .eq(1)
           .text()
@@ -1105,12 +1098,12 @@ describe('WwTableManager', () => {
         '</table><div>2</div>';
 
       wwe.focus();
-      wwe.get$Body().html(html);
+      $(wwe.getBody()).html(html);
 
       let range = wwe.getEditor().getSelection();
 
-      range.setStart(wwe.get$Body().find('th')[0], 0);
-      range.setEnd(wwe.get$Body().find('td')[1], 1);
+      range.setStart(wwe.getBody().querySelectorAll('th')[0], 0);
+      range.setEnd(wwe.getBody().querySelectorAll('td')[1], 1);
       wwe.getEditor().setSelection(range);
 
       mgr._removeContentsAndChangeSelectionIfNeed(range, 'BACK_SPACE', {
@@ -1121,25 +1114,22 @@ describe('WwTableManager', () => {
       });
 
       range = wwe.getEditor().getSelection();
-      expect(range.startContainer).toBe(wwe.get$Body().find('th')[0]);
+      expect(range.startContainer).toBe(wwe.getBody().querySelectorAll('th')[0]);
       expect(range.startContainer.textContent).toBe('');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('th')
           .eq(1)
           .text()
       ).toBe('');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('td')
           .eq(0)
           .text()
       ).toBe('');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('td')
           .eq(1)
           .text()
@@ -1159,12 +1149,12 @@ describe('WwTableManager', () => {
         '</table><div>2</div>';
 
       wwe.focus();
-      wwe.get$Body().html(html);
+      $(wwe.getBody()).html(html);
 
       let range = wwe.getEditor().getSelection();
 
-      range.setStart(wwe.get$Body().find('th')[0], 0);
-      range.setEnd(wwe.get$Body().find('td')[1], 1);
+      range.setStart(wwe.getBody().querySelectorAll('th')[0], 0);
+      range.setEnd(wwe.getBody().querySelectorAll('td')[1], 1);
       wwe.getEditor().setSelection(range);
 
       mgr._removeContentsAndChangeSelectionIfNeed(range, 'A', {
@@ -1175,25 +1165,22 @@ describe('WwTableManager', () => {
       });
 
       range = wwe.getEditor().getSelection();
-      expect(range.startContainer).toBe(wwe.get$Body().find('th')[0]);
+      expect(range.startContainer).toBe(wwe.getBody().querySelectorAll('th')[0]);
       expect(range.startContainer.textContent).toBe('');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('th')
           .eq(1)
           .text()
       ).toBe('');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('td')
           .eq(0)
           .text()
       ).toBe('');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('td')
           .eq(1)
           .text()
@@ -1214,12 +1201,12 @@ describe('WwTableManager', () => {
         '</table><div>2</div>';
 
       wwe.focus();
-      wwe.get$Body().html(html);
+      $(wwe.getBody()).html(html);
 
       let range = wwe.getEditor().getSelection();
 
-      range.setStart(wwe.get$Body().find('th')[0], 0);
-      range.setEnd(wwe.get$Body().find('td')[1], 1);
+      range.setStart(wwe.getBody().querySelectorAll('th')[0], 0);
+      range.setEnd(wwe.getBody().querySelectorAll('td')[1], 1);
       wwe.getEditor().setSelection(range);
 
       mgr._removeContentsAndChangeSelectionIfNeed(range, 'ESC', {
@@ -1230,25 +1217,22 @@ describe('WwTableManager', () => {
       });
 
       range = wwe.getEditor().getSelection();
-      expect(range.startContainer).toBe(wwe.get$Body().find('th')[0]);
+      expect(range.startContainer).toBe(wwe.getBody().querySelectorAll('th')[0]);
       expect(range.startContainer.textContent).toBe('1');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('th')
           .eq(1)
           .text()
       ).toBe('2');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('td')
           .eq(0)
           .text()
       ).toBe('321');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('td')
           .eq(1)
           .text()
@@ -1280,12 +1264,12 @@ describe('WwTableManager', () => {
       spyOn(ev, 'preventDefault');
 
       wwe.focus();
-      wwe.get$Body().html(html);
+      $(wwe.getBody()).html(html);
 
       const range = wwe.getEditor().getSelection();
 
-      range.setStart(wwe.get$Body().find('td')[0], 0);
-      range.setEnd(wwe.get$Body().find('td')[0], 1);
+      range.setStart(wwe.getBody().querySelectorAll('td')[0], 0);
+      range.setEnd(wwe.getBody().querySelectorAll('td')[0], 1);
       wwe.getEditor().setSelection(range);
 
       const result = mgr._handleBackspaceAndDeleteKeyEvent(ev, range, 'BACK_SPACE');
@@ -1309,13 +1293,13 @@ describe('WwTableManager', () => {
         '</tbody>' +
         '</table>';
 
-      wwe.get$Body().html(html);
+      $(wwe.getBody()).html(html);
     });
 
     it('should check the last br as false', () => {
       const range = wwe.getEditor().getSelection();
 
-      range.setStart(wwe.get$Body().find('td')[0], 1);
+      range.setStart(wwe.getBody().querySelectorAll('td')[0], 1);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
@@ -1325,7 +1309,7 @@ describe('WwTableManager', () => {
     it('should check the br between br is as true', () => {
       const range = wwe.getEditor().getSelection();
 
-      range.setStart(wwe.get$Body().find('td')[1], 2);
+      range.setStart(wwe.getBody().querySelectorAll('td')[1], 2);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
@@ -1335,7 +1319,7 @@ describe('WwTableManager', () => {
     it('should check the text as false', () => {
       const range = wwe.getEditor().getSelection();
 
-      range.setStart(wwe.get$Body().find('td')[2], 0);
+      range.setStart(wwe.getBody().querySelectorAll('td')[2], 0);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
@@ -1371,7 +1355,7 @@ describe('WwTableManager', () => {
         .getEditor()
         .getSelection()
         .cloneRange();
-      range.setStart(wwe.get$Body().find('th')[0], 0);
+      range.setStart(wwe.getBody().querySelectorAll('th')[0], 0);
       range.collapse(true);
     });
 

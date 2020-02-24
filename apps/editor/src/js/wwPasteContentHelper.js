@@ -2,9 +2,10 @@
  * @fileoverview Implements WwPasteContentHelper
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import toArray from 'tui-code-snippet/collection/toArray';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import matches from 'tui-code-snippet/domUtil/matches';
 
 import domUtils from './domUtils';
 import htmlSanitizer from './htmlSanitizer';
@@ -21,22 +22,22 @@ class WwPasteContentHelper {
 
   /**
    * Process paste data before paste
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    */
-  preparePaste($container) {
+  preparePaste(container) {
     const range = this.wwe
       .getEditor()
       .getSelection()
       .cloneRange();
     const wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
     let firstBlockIsTaken = false;
-    const $tempContainer = $('<div />');
+    const tempContainer = document.createElement('div');
 
     let nodeName, node, isPastingList;
 
-    this._pasteFirstAid($container);
+    this._pasteFirstAid(container);
 
-    const childNodes = toArray($container[0].childNodes);
+    const childNodes = toArray(container.childNodes);
 
     while (childNodes.length) {
       [node] = childNodes;
@@ -44,30 +45,32 @@ class WwPasteContentHelper {
       isPastingList = nodeName === 'LI' || nodeName === 'UL' || nodeName === 'OL';
 
       if (wwCodeblockManager.isInCodeBlock(range)) {
-        $tempContainer.append(wwCodeblockManager.prepareToPasteOnCodeblock(childNodes));
+        domUtils.append(tempContainer, wwCodeblockManager.prepareToPasteOnCodeblock(childNodes));
       } else if (isPastingList) {
-        $tempContainer.append(this._prepareToPasteList(childNodes, range, firstBlockIsTaken));
+        domUtils.append(
+          tempContainer,
+          this._prepareToPasteList(childNodes, range, firstBlockIsTaken)
+        );
         firstBlockIsTaken = true;
       } else {
-        $tempContainer.append(childNodes.shift());
+        domUtils.append(tempContainer, childNodes.shift());
       }
     }
 
-    $container.html($tempContainer.html());
+    container.innerHTML = tempContainer.innerHTML;
   }
 
   /**
    * Wrap orphan node(inline, text) with div element
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @returns {DocumentFragment}
    * @private
    */
-  _wrapOrphanNodeWithDiv($container) {
-    const $tempContainer = $('<div />');
-    const array = toArray($container[0].childNodes);
+  _wrapOrphanNodeWithDiv(container) {
+    const tempContainer = document.createElement('div');
     let currentDiv;
 
-    forEachArray(array, node => {
+    toArray(container.childNodes).forEach(node => {
       const isTextNode = node.nodeType === 3;
       /* eslint-disable max-len */
       const isInlineNode = /^(SPAN|A|CODE|EM|I|STRONG|B|S|U|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/gi.test(
@@ -79,7 +82,7 @@ class WwPasteContentHelper {
       if (isTextNode || isInlineNode || isBR) {
         if (!currentDiv) {
           currentDiv = document.createElement('div');
-          $tempContainer.append(currentDiv);
+          tempContainer.appendChild(currentDiv);
         }
 
         currentDiv.appendChild(node);
@@ -89,91 +92,97 @@ class WwPasteContentHelper {
         }
       } else {
         if (currentDiv && currentDiv.lastChild.tagName !== 'BR') {
-          currentDiv.appendChild($('<br/>')[0]);
+          currentDiv.appendChild(document.createElement('br'));
         }
 
         currentDiv = null;
-        $tempContainer.append(node);
+        tempContainer.appendChild(node);
       }
     });
 
-    return $tempContainer.html();
+    return tempContainer.innerHTML;
   }
 
   /**
    * Processing paste data after paste
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @private
    */
-  _pasteFirstAid($container) {
+  _pasteFirstAid(container) {
     const blockTags = 'div, section, article, aside, nav, menus, p';
 
-    $container.html(htmlSanitizer($container.html(), true));
+    container.innerHTML = htmlSanitizer(container.innerHTML, true);
 
-    $container.find('*').each((i, node) => {
+    toArray(container.querySelectorAll('*')).forEach(node => {
       this._removeStyles(node);
     });
 
-    this._unwrapIfNonBlockElementHasBr($container);
-    this._unwrapNestedBlocks($container, blockTags);
-    this._removeUnnecessaryBlocks($container, blockTags);
+    this._unwrapIfNonBlockElementHasBr(container);
+    this._unwrapNestedBlocks(container, blockTags);
+    this._removeUnnecessaryBlocks(container, blockTags);
 
-    $container.html(this._wrapOrphanNodeWithDiv($container));
+    container.innerHTML = this._wrapOrphanNodeWithDiv(container);
 
-    this._preElementAid($container);
+    this._preElementAid(container);
 
-    this._tableElementAid($container);
+    this._tableElementAid(container);
 
-    $container.children('br').remove();
+    toArray(container.children).forEach(childNode => {
+      if (domUtils.getNodeName(childNode) === 'BR') {
+        domUtils.remove(childNode);
+      }
+    });
   }
 
   /**
    * PRE tag formatting
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @private
    */
-  _preElementAid($container) {
+  _preElementAid(container) {
     const wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
 
-    wwCodeblockManager.modifyCodeBlockForWysiwyg($container);
+    wwCodeblockManager.modifyCodeBlockForWysiwyg(container);
   }
 
   /**
    * Unwrap span children of document fragment with div element
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @private
    */
-  _unwrapIfNonBlockElementHasBr($container) {
-    const nonBlockElements = $container.find('span, a, b, em, i, s');
+  _unwrapIfNonBlockElementHasBr(container) {
+    const nonBlockElements = container.querySelectorAll('span, a, b, em, i, s');
 
-    nonBlockElements.each((i, node) => {
-      const brChildren = $(node).children('br');
+    toArray(nonBlockElements).forEach(node => {
+      const brChildren = domUtils.children(node, 'br');
 
       if (brChildren.length && node.nodeName !== 'LI' && node.nodeName !== 'UL') {
-        brChildren.eq(0).unwrap();
+        domUtils.unwrap(brChildren[0]);
       }
     });
   }
 
   /**
    * Unwrap nested block elements
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @param {string} blockTags - Tag names of block tag
    * @private
    */
-  _unwrapNestedBlocks($container, blockTags) {
-    const $leafElements = $container.find(':not(:has(*))').not('b,s,i,em,code,span,hr');
+  _unwrapNestedBlocks(container, blockTags) {
+    const leafElements = toArray(container.querySelectorAll('*')).filter(
+      node => !matches(node, 'b,s,i,em,code,span,hr') && !node.firstChild
+    );
 
-    $leafElements.each((i, node) => {
-      let leafElement = node.nodeName === 'BR' ? $(node.parentNode) : $(node);
+    toArray(leafElements).forEach(node => {
+      let leafElement = node.nodeName === 'BR' ? node.parentNode : node;
 
-      while (leafElement.parents(blockTags).length) {
-        const $parent = leafElement.parent(blockTags);
+      while (domUtils.parents(leafElement, blockTags).length) {
+        const parent = domUtils.parent(leafElement, blockTags);
 
-        if ($parent.length && $parent[0] !== $container[0]) {
-          leafElement.unwrap();
+        if (parent && parent !== container) {
+          domUtils.unwrap(leafElement);
         } else {
-          leafElement = leafElement.parent();
+          leafElement = leafElement.parentElement;
         }
       }
     });
@@ -181,28 +190,29 @@ class WwPasteContentHelper {
 
   /**
    * Remove unnecessary block element in pasting data
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @param {string} blockTags - Tag names of block tag
    * @private
    */
-  _removeUnnecessaryBlocks($container, blockTags) {
-    $container.find(blockTags).each((index, blockElement) => {
-      const $blockElement = $(blockElement);
+  _removeUnnecessaryBlocks(container, blockTags) {
+    const foundBlocks = container.querySelectorAll(blockTags);
+
+    toArray(foundBlocks).forEach(blockElement => {
       const { tagName } = blockElement;
       const isDivElement = tagName === 'DIV';
-      const isInListItem = $blockElement.parent('li').length !== 0;
-      const isInBlockquote = $blockElement.parent('blockquote').length !== 0;
-      const hasBlockChildElement = $blockElement.children(blockTags).length;
+      const isInListItem = !!domUtils.parent(blockElement, 'li');
+      const isInBlockquote = !!domUtils.parent(blockElement, 'blockquote');
+      const hasBlockChildElement = !!domUtils.children(blockElement, blockTags).length;
 
       if (isDivElement && (isInListItem || isInBlockquote || !hasBlockChildElement)) {
         return;
       }
 
       if (blockElement.lastChild && blockElement.lastChild.nodeName !== 'BR') {
-        $blockElement.append(document.createElement('br'));
+        blockElement.appendChild(document.createElement('br'));
       }
 
-      $blockElement.replaceWith($blockElement.html());
+      domUtils.replaceWith(blockElement, blockElement.innerHTML);
     });
   }
 
@@ -212,23 +222,22 @@ class WwPasteContentHelper {
    * @private
    */
   _removeStyles(node) {
-    const $node = $(node);
     let colorValue;
 
-    if (domUtils.getNodeName($node[0]) !== 'SPAN') {
-      $node.removeAttr('style');
+    if (domUtils.getNodeName(node) !== 'SPAN') {
+      node.removeAttribute('style');
     } else {
       // Most browser return computed color value even if without style attribute
-      if ($node.attr('style')) {
-        colorValue = $node.css('color');
+      if (node.getAttribute('style')) {
+        colorValue = node.style.color;
       }
 
-      $node.removeAttr('style');
+      node.removeAttribute('style');
 
       if (colorValue) {
-        $node.css('color', colorValue);
+        node.style.color = colorValue;
       } else {
-        $node.contents().unwrap();
+        domUtils.unwrap(node.childNodes);
       }
     }
   }
@@ -265,9 +274,9 @@ class WwPasteContentHelper {
     if (nodeName === 'OL' || nodeName === 'UL') {
       // ignore cursor if pasting data has block
       if (!firstBlockIsTaken && this.wwe.getEditor().hasFormat('LI')) {
-        $(newFragment).append(this._wrapCurrentFormat(node));
+        domUtils.append(newFragment, this._wrapCurrentFormat(node));
       } else {
-        $(newFragment).append(node);
+        newFragment.appendChild(node);
       }
     } else if (nodeName === 'LI') {
       // handle list group
@@ -285,12 +294,13 @@ class WwPasteContentHelper {
       // pasting list into list, we should care indentation
       // ignore cursor if pasting data has block
       if (!firstBlockIsTaken && this.wwe.getEditor().hasFormat('LI')) {
-        $(newFragment).append(this._wrapCurrentFormat(listGroup));
+        domUtils.append(newFragment, this._wrapCurrentFormat(listGroup));
       } else if (
         rangeInfo &&
         (rangeInfo.commonAncestorName === 'UL' || rangeInfo.commonAncestorName === 'OL')
       ) {
-        $(newFragment).append(
+        domUtils.append(
+          newFragment,
           this._makeNodeAndAppend(
             {
               tagName: rangeInfo.commonAncestorName
@@ -300,7 +310,8 @@ class WwPasteContentHelper {
         );
         // list from outside
       } else {
-        $(newFragment).append(
+        domUtils.append(
+          newFragment,
           this._makeNodeAndAppend(
             {
               tagName: 'UL'
@@ -321,9 +332,9 @@ class WwPasteContentHelper {
    * @private
    */
   _unwrapFragmentFirstChildForPasteAsInline(node) {
-    $(node)
-      .find('br')
-      .remove();
+    const brs = node.querySelectorAll('br');
+
+    toArray(brs).forEach(br => domUtils.remove(br));
 
     return node.childNodes;
   }
@@ -358,7 +369,7 @@ class WwPasteContentHelper {
   _eachCurrentPath(iteratee) {
     const paths = domUtils.getPath(
       this.wwe.getEditor().getSelection().startContainer,
-      this.wwe.get$Body()[0]
+      this.wwe.getBody()
     );
 
     for (let i = paths.length - 1; i > -1; i -= 1) {
@@ -374,83 +385,91 @@ class WwPasteContentHelper {
    * @private
    */
   _makeNodeAndAppend(pathInfo, content) {
-    const node = $(`<${pathInfo.tagName}/>`);
+    const node = document.createElement(`${pathInfo.tagName}`);
 
-    node.append(content);
+    node.appendChild(content);
 
     if (pathInfo.id) {
-      node.attr('id', pathInfo.id);
+      node.setAttribute('id', pathInfo.id);
     }
 
     if (pathInfo.className) {
-      node.addClass(pathInfo.className);
+      addClass(node, pathInfo.className);
     }
 
-    return node[0];
+    return node;
   }
 
   /**
    * Pasting table element pre-process
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @private
    */
-  _tableElementAid($container) {
-    this._removeColgroup($container);
-    this._completeTableIfNeed($container);
-    this._updateTableIDClassName($container);
+  _tableElementAid(container) {
+    this._removeColgroup(container);
+    this._completeTableIfNeed(container);
+    this._updateTableIDClassName(container);
   }
 
   /**
    * Remove colgroup tag
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @private
    **/
-  _removeColgroup($container) {
-    $container.find('colgroup').remove();
+  _removeColgroup(container) {
+    const colgroup = container.querySelector('colgroup');
+
+    if (colgroup) {
+      domUtils.remove(colgroup);
+    }
   }
 
   /**
    * Complete and append table to fragment
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @private
    */
-  _completeTableIfNeed($container) {
+  _completeTableIfNeed(container) {
     const tableManager = this.wwe.componentManager.getManager('table');
-    const wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed($container);
+    const wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed(container);
 
     if (wrapperTr) {
-      $container.append(wrapperTr);
+      domUtils.append(container, wrapperTr);
     }
 
-    const wrapperTbody = tableManager.wrapTrsIntoTbodyIfNeed($container);
+    const wrapperTbody = tableManager.wrapTrsIntoTbodyIfNeed(container);
 
     if (wrapperTbody) {
-      $container.append(wrapperTbody);
+      domUtils.append(container, wrapperTbody);
     }
 
-    const wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed($container);
+    const wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed(container);
 
     if (wrapperTable) {
-      $container.append(wrapperTable);
+      domUtils.append(container, wrapperTable);
     }
   }
 
   /**
    * Update table ID class name in fragment
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @private
    */
-  _updateTableIDClassName($container) {
+  _updateTableIDClassName(container) {
     const tableManager = this.wwe.componentManager.getManager('table');
 
-    $container.find('table').each((index, table) => {
-      $(table).removeClass((idx, className) =>
-        className.replace(/.*\s*(te-content-table-\d+)\s*.*/, '$1')
-      );
+    const tables = container.querySelectorAll('table');
+
+    toArray(tables).forEach(table => {
+      const foundClassName = table.className.match(/.*\s*(te-content-table-\d+)\s*.*/);
+
+      if (foundClassName) {
+        removeClass(table, foundClassName[0]);
+      }
     });
 
-    $container.find('table').each((index, table) => {
-      $(table).addClass(tableManager.getTableIDClassName());
+    toArray(tables).forEach(table => {
+      addClass(table, tableManager.getTableIDClassName());
     });
   }
 }

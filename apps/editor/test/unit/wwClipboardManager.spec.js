@@ -2,20 +2,17 @@
  * @fileoverview test wysiwyg clipboard manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import EventManager from '@/eventManager';
 import WysiwygEditor from '@/wysiwygEditor';
 
 describe('WwClipboardManager', () => {
-  let wwe, cbm;
+  let container, wwe, cbm;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -23,7 +20,7 @@ describe('WwClipboardManager', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   describe('_extendRange', () => {
@@ -37,8 +34,8 @@ describe('WwClipboardManager', () => {
         .getSelection()
         .cloneRange();
 
-      range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 0);
-      range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 3);
+      range.setStart(wwe.getBody().querySelectorAll('LI')[0].childNodes[0], 0);
+      range.setEnd(wwe.getBody().querySelectorAll('LI')[1].childNodes[0], 3);
 
       cbm._extendRange(range);
       range = wwe.getEditor().getSelection();
@@ -56,8 +53,8 @@ describe('WwClipboardManager', () => {
         .getSelection()
         .cloneRange();
 
-      range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 3);
-      range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 5);
+      range.setStart(wwe.getBody().querySelectorAll('LI')[0].childNodes[0], 3);
+      range.setEnd(wwe.getBody().querySelectorAll('LI')[1].childNodes[0], 5);
 
       cbm._extendRange(range);
       range = wwe.getEditor().getSelection();
@@ -75,8 +72,8 @@ describe('WwClipboardManager', () => {
         .getSelection()
         .cloneRange();
 
-      range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 0);
-      range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 5);
+      range.setStart(wwe.getBody().querySelectorAll('LI')[0].childNodes[0], 0);
+      range.setEnd(wwe.getBody().querySelectorAll('LI')[1].childNodes[0], 5);
 
       cbm._extendRange(range);
       range = wwe.getEditor().getSelection();
@@ -92,15 +89,15 @@ describe('WwClipboardManager', () => {
         .getSelection()
         .cloneRange();
 
-      range.setStart(wwe.get$Body().find('h1')[0].firstChild, 0);
-      range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);
+      range.setStart(wwe.getBody().querySelectorAll('h1')[0].firstChild, 0);
+      range.setEnd(wwe.getBody().querySelectorAll('h1')[0].firstChild, 11);
 
       cbm._extendRange(range);
       range = wwe.getEditor().getSelection();
 
-      expect(range.startContainer).toBe(wwe.get$Body()[0]);
+      expect(range.startContainer).toBe(wwe.getBody());
       expect(range.startOffset).toEqual(0);
-      expect(range.endContainer).toBe(wwe.get$Body()[0]);
+      expect(range.endContainer).toBe(wwe.getBody());
       expect(range.endOffset).toEqual(1);
     });
 
@@ -111,8 +108,8 @@ describe('WwClipboardManager', () => {
         .getSelection()
         .cloneRange();
 
-      range.setStart(wwe.get$Body().find('h1')[0].firstChild, 5);
-      range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);
+      range.setStart(wwe.getBody().querySelectorAll('h1')[0].firstChild, 5);
+      range.setEnd(wwe.getBody().querySelectorAll('h1')[0].firstChild, 11);
       wwe.getEditor().setSelection(range);
 
       cbm._extendRange(range);

@@ -10,16 +10,15 @@ import EventManager from '@/eventManager';
 import WwCodeBlockManager from '@/wwCodeBlockManager';
 
 describe('WwCodeBlockManager', () => {
-  let $container, em, wwe, mgr;
+  let container, em, wwe, mgr;
 
   beforeEach(() => {
-    $container = $('<div />');
-
-    $('body').append($container);
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($container, em);
+    wwe = new WysiwygEditor(container, em);
 
     wwe.init();
 
@@ -30,7 +29,7 @@ describe('WwCodeBlockManager', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $container.remove();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -44,7 +43,7 @@ describe('WwCodeBlockManager', () => {
 
       wwe.getEditor().setHTML('<pre><div>test</div></pre>');
 
-      range.setStart(wwe.get$Body().find('div')[0], 0);
+      range.setStart(wwe.getBody().querySelectorAll('div')[0], 0);
       range.collapse(true);
 
       expect(mgr.isInCodeBlock(range)).toBe(true);
@@ -61,7 +60,7 @@ describe('WwCodeBlockManager', () => {
 
         wwe.setValue('<pre>test</pre>');
 
-        range.setStart(wwe.get$Body().find('pre')[0].childNodes[0], 0);
+        range.setStart(wwe.getBody().querySelectorAll('pre')[0].childNodes[0], 0);
         range.collapse(true);
 
         wwe.getEditor().setSelection(range);
@@ -73,15 +72,9 @@ describe('WwCodeBlockManager', () => {
           }
         });
 
-        expect(wwe.get$Body().find('div').length).toEqual(2);
-        expect(
-          wwe
-            .get$Body()
-            .find('div')
-            .eq(0)
-            .text()
-        ).toEqual('test');
-        expect(wwe.get$Body().find('pre').length).toEqual(0);
+        expect(wwe.getBody().querySelectorAll('div').length).toEqual(2);
+        expect(wwe.getBody().querySelector('div').textContent).toEqual('test');
+        expect(wwe.getBody().querySelectorAll('pre').length).toEqual(0);
       });
 
       it('_onBackspaceKeyEvnetHandler() remove codeblock and make one empty line if there is no content', () => {
@@ -92,7 +85,7 @@ describe('WwCodeBlockManager', () => {
 
         wwe.setValue('<pre>\n</pre>');
 
-        range.setStart(wwe.get$Body().find('pre')[0], 0);
+        range.setStart(wwe.getBody().querySelectorAll('pre')[0], 0);
         range.collapse(true);
 
         wwe.getEditor().setSelection(range);
@@ -104,8 +97,8 @@ describe('WwCodeBlockManager', () => {
           }
         });
 
-        expect(wwe.get$Body().find('div').length).toEqual(2);
-        expect(wwe.get$Body().find('pre').length).toEqual(0);
+        expect(wwe.getBody().querySelectorAll('div').length).toEqual(2);
+        expect(wwe.getBody().querySelectorAll('pre').length).toEqual(0);
       });
 
       it('_onBackspaceKeyEventHandler() merge same codeblocks if backspace key is pressed in empty line between same codeblock', () => {
@@ -116,7 +109,7 @@ describe('WwCodeBlockManager', () => {
 
         wwe.setValue(['<pre>test1</pre>', '<div><br></div>', '<pre>test2</pre>'].join(''));
 
-        range.setStart(wwe.get$Body().find('div')[0], 0);
+        range.setStart(wwe.getBody().querySelectorAll('div')[0], 0);
         range.collapse(true);
 
         wwe.getEditor().setSelection(range);
@@ -128,14 +121,9 @@ describe('WwCodeBlockManager', () => {
           }
         });
 
-        expect(wwe.get$Body().find('div').length).toEqual(1);
-        expect(wwe.get$Body().find('pre').length).toEqual(1);
-        expect(
-          wwe
-            .get$Body()
-            .find('pre')
-            .text()
-        ).toEqual('test1\ntest2');
+        expect(wwe.getBody().querySelectorAll('div').length).toEqual(1);
+        expect(wwe.getBody().querySelectorAll('pre').length).toEqual(1);
+        expect(wwe.getBody().querySelector('pre').textContent).toEqual('test1\ntest2');
       });
 
       it('_onBackspaceKeyEventHandler() do not merge codeblocks that has different data-language attribute if backspace key is pressed in empty line between different codeblock', () => {
@@ -152,7 +140,7 @@ describe('WwCodeBlockManager', () => {
           ].join('')
         );
 
-        range.setStart(wwe.get$Body().find('div')[0], 0);
+        range.setStart(wwe.getBody().querySelectorAll('div')[0], 0);
         range.collapse(true);
 
         wwe.getEditor().setSelection(range);
@@ -164,8 +152,8 @@ describe('WwCodeBlockManager', () => {
           }
         });
 
-        expect(wwe.get$Body().find('div').length).toEqual(2);
-        expect(wwe.get$Body().find('pre').length).toEqual(2);
+        expect(wwe.getBody().querySelectorAll('div').length).toEqual(2);
+        expect(wwe.getBody().querySelectorAll('pre').length).toEqual(2);
       });
     });
   });
@@ -183,7 +171,7 @@ describe('WwCodeBlockManager', () => {
         .getSelection()
         .cloneRange();
 
-      range.setStart(wwe.get$Body().find('pre')[0], 1);
+      range.setStart(wwe.getBody().querySelectorAll('pre')[0], 1);
       range.collapse(true);
 
       mgr._copyCodeblockTypeFromRangeCodeblock(codeblock[0], range);
@@ -217,12 +205,12 @@ describe('WwCodeBlockManager', () => {
           'test\ntest2\n\ntest3\n</code></pre>'
       );
 
-      const codeblock = wwe.get$Body().find('pre');
+      const codeblock = wwe.getBody().querySelector('pre');
 
-      expect(codeblock.length).toEqual(1);
-      expect(codeblock.hasClass('lang-javascript')).toBe(true);
-      expect(codeblock.attr('data-language')).toEqual('javascript');
-      expect(codeblock.attr('data-te-codeblock')).toBeDefined();
+      expect(codeblock).not.toBeUndefined();
+      expect(codeblock.className).toBe('lang-javascript');
+      expect(codeblock.getAttribute('data-language')).toEqual('javascript');
+      expect(codeblock.getAttribute('data-te-codeblock')).toBeDefined();
     });
 
     it('join each line of code block to one codeblock on wysiwygProcessHTMLText', () => {

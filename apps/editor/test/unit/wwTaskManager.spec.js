@@ -9,16 +9,15 @@ import EventManager from '@/eventManager';
 import WwTaskManager from '@/wwTaskManager';
 
 describe('WwTaskManager', () => {
-  let $container, em, wwe, mgr;
+  let container, em, wwe, mgr;
 
   beforeEach(() => {
-    $container = $('<div />');
-
-    $('body').append($container);
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($container, em);
+    wwe = new WysiwygEditor(container, em);
 
     wwe.init();
 
@@ -28,7 +27,7 @@ describe('WwTaskManager', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -45,8 +44,7 @@ describe('WwTaskManager', () => {
         em.emit('wysiwygSetValueAfter');
 
         expect(
-          wwe
-            .get$Body()
+          $(wwe.getBody())
             .find('ul')
             .eq(0)
             .hasClass('task-list')
@@ -64,15 +62,14 @@ describe('WwTaskManager', () => {
 
       wwe.getEditor().setHTML('<ul><li><div><br></div></li></ul>');
 
-      range.setStart(wwe.get$Body().find('div')[0], 0);
+      range.setStart(wwe.getBody().querySelectorAll('div')[0], 0);
       range.collapse(true);
 
       mgr.formatTask(range.startContainer);
 
-      expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
+      expect(wwe.getBody().querySelectorAll('.task-list-item').length).toEqual(1);
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('li')
           .attr('data-te-task')
       ).toBeDefined();
@@ -85,15 +82,14 @@ describe('WwTaskManager', () => {
 
       wwe.getEditor().setHTML('<ul><li><br></li></ul>');
 
-      range.setStart(wwe.get$Body().find('li')[0], 0);
+      range.setStart(wwe.getBody().querySelectorAll('li')[0], 0);
       range.collapse(true);
 
       mgr.formatTask(range.startContainer);
 
-      expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
+      expect(wwe.getBody().querySelectorAll('.task-list-item').length).toEqual(1);
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('li')
           .attr('data-te-task')
       ).toBeDefined();
@@ -111,21 +107,19 @@ describe('WwTaskManager', () => {
         .getEditor()
         .setHTML('<ul><li data-te-task class="task-list-item"><div>test</div></li></ul>');
 
-      range.setStart(wwe.get$Body().find('li')[0], 0);
+      range.setStart(wwe.getBody().querySelectorAll('li')[0], 0);
       range.collapse(true);
 
       mgr.unformatTask(range.startContainer);
 
-      expect(wwe.get$Body().find('.task-list-item').length).toEqual(0);
+      expect(wwe.getBody().querySelectorAll('.task-list-item').length).toEqual(0);
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('div')
           .text()
       ).toEqual('test');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('li')
           .attr('data-te-task')
       ).not.toBeDefined();
@@ -145,22 +139,20 @@ describe('WwTaskManager', () => {
           ].join('')
         );
 
-      range.setStart(wwe.get$Body().find('li')[0], 0);
+      range.setStart(wwe.getBody().querySelectorAll('li')[0], 0);
       range.collapse(true);
 
       mgr.unformatTask(range.startContainer);
 
-      expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
+      expect(wwe.getBody().querySelectorAll('.task-list-item').length).toEqual(1);
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('div')
           .eq(0)
           .text()
       ).toEqual('test1');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('li')
           .attr('data-te-task')
       ).not.toBeDefined();

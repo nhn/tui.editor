@@ -2,7 +2,10 @@
  * @fileoverview Implements wysiwyg p tag manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
+import matches from 'tui-code-snippet/domUtil/matches';
+
+import domUtils from './domUtils';
 
 /**
  * Class WwPManager
@@ -44,10 +47,11 @@ class WwPManager {
    */
   _splitPtagContentLines(html) {
     if (html) {
-      const $wrapper = $('<div />');
+      const wrapper = document.createElement('div');
 
-      $wrapper.html(html);
-      $wrapper.find('p').each((pIndex, para) => {
+      wrapper.innerHTML = html;
+
+      toArray(wrapper.querySelectorAll('p')).forEach(para => {
         const content = para.innerHTML;
         const lines = content.split(/<br>/gi);
         const lastIndex = lines.length - 1;
@@ -73,10 +77,9 @@ class WwPManager {
         if (nextElement && nextElement.nodeName === 'P') {
           splitedContent.push('<div><br></div>');
         }
-
-        $(para).replaceWith($(splitedContent.join('')));
+        domUtils.replaceWith(para, splitedContent.join(''));
       });
-      html = $wrapper.html();
+      html = wrapper.innerHTML;
     }
 
     return html;
@@ -87,22 +90,17 @@ class WwPManager {
    * @private
    */
   _ensurePtagContentWrappedWithDiv() {
-    this.wwe
-      .get$Body()
-      .find('p')
-      .each((index, node) => {
-        if ($(node).find('div').length <= 0) {
-          $(node).wrapInner('<div />');
-        }
+    const pTags = this.wwe.getBody().querySelectorAll('p');
 
-        if (
-          $(node)
-            .next()
-            .is('p')
-        ) {
-          $(node).append('<div><br></div>');
-        }
-      });
+    toArray(pTags).forEach(node => {
+      if (!node.querySelectorAll('div').length) {
+        domUtils.wrapInner(node, 'div');
+      }
+
+      if (this._findNextParagraph(node, 'p')) {
+        domUtils.append(node, '<div><br></div>');
+      }
+    });
   }
 
   /**
@@ -110,18 +108,25 @@ class WwPManager {
    * @private
    */
   _unwrapPtags() {
-    this.wwe
-      .get$Body()
-      .find('div')
-      .each((index, node) => {
-        if (
-          $(node)
-            .parent()
-            .is('p')
-        ) {
-          $(node).unwrap();
-        }
-      });
+    const divTags = this.wwe.getBody().querySelectorAll('div');
+
+    toArray(divTags).forEach(node => {
+      if (domUtils.parent(node, 'p')) {
+        domUtils.unwrap(node);
+      }
+    });
+  }
+
+  _findNextParagraph(node, selector) {
+    const { nextElementSibling } = node;
+
+    if (selector) {
+      return nextElementSibling && matches(nextElementSibling, selector)
+        ? nextElementSibling
+        : null;
+    }
+
+    return nextElementSibling;
   }
 }
 
