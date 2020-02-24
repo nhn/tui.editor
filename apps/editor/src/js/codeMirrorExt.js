@@ -2,7 +2,8 @@
  * @fileoverview Implements CodeBlockExt
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import extend from 'tui-code-snippet/object/extend';
+
 import CodeMirror from 'codemirror';
 
 import './codemirror/fixOrderedListNumber';
@@ -42,8 +43,7 @@ class CodeMirrorExt {
 
     this.editorContainerEl.appendChild(cmTextarea);
 
-    options = $.extend(
-      true,
+    options = extend(
       {
         lineWrapping: true,
         theme: 'default',

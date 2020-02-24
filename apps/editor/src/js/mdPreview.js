@@ -4,9 +4,12 @@
  */
 import Preview from './preview';
 
+import on from 'tui-code-snippet/domEvent/on';
+import off from 'tui-code-snippet/domEvent/off';
+
 /**
  * Class Markdown Preview
- * @param {jQuery} $el - base jQuery element
+ * @param {HTMLElement} el - base element
  * @param {EventManager} eventManager - event manager
  * @param {Convertor} convertor - convertor
  * @param {boolean} isViewer - true for view only mode
@@ -14,8 +17,8 @@ import Preview from './preview';
  * @ignore
  */
 class MarkdownPreview extends Preview {
-  constructor($el, eventManager, convertor, isViewer, delayTime) {
-    super($el, eventManager, convertor, isViewer, delayTime);
+  constructor(el, eventManager, convertor, isViewer, delayTime) {
+    super(el, eventManager, convertor, isViewer, delayTime);
 
     this._initEvent();
   }
@@ -39,7 +42,7 @@ class MarkdownPreview extends Preview {
       this.refresh(value || latestMarkdownValue);
     });
 
-    this.$el.on('scroll', event => {
+    on(this.el, 'scroll', event => {
       this.eventManager.emit('scroll', {
         source: 'preview',
         data: event
@@ -59,8 +62,8 @@ class MarkdownPreview extends Preview {
   }
 
   remove() {
-    this.$el.off('scroll');
-    this.$el = null;
+    off(this.el, 'scroll');
+    this.el = null;
   }
 }
 
