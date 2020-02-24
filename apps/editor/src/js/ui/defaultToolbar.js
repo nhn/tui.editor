@@ -8,6 +8,7 @@ import i18n from '../i18n';
 import Toolbar from './toolbar';
 import PopupDropdownToolbar from './popupDropdownToolbar';
 import ToolbarItemFactory from './toolbarItemFactory';
+import domUtils from '../domUtils';
 
 const MORE_BUTTON_NAME = 'more';
 
@@ -66,8 +67,8 @@ class DefaultToolbar extends Toolbar {
 
     this._popupDropdownToolbar = new PopupDropdownToolbar({
       eventManager,
-      $target: this.$el,
-      $button: moreButton.$el
+      target: this.el,
+      button: moreButton.el
     });
 
     this.addItem(moreButton);
@@ -78,7 +79,7 @@ class DefaultToolbar extends Toolbar {
       this._popupDropdownToolbar.hide();
       this._balanceButtons();
     });
-    this._observer.observe(this.$el.get(0));
+    this._observer.observe(this.el);
   }
 
   _balanceButtons() {
@@ -95,11 +96,9 @@ class DefaultToolbar extends Toolbar {
     this.removeItem(this._moreButton, false);
     super.insertItem(0, this._moreButton);
 
-    const toolbarHeight = this.$el.height();
+    const toolbarHeight = domUtils.getHeight(this.el);
     const defaultToolbarItems = this.getItems();
-    const overflowItems = defaultToolbarItems.filter(
-      item => item.$el.position().top > toolbarHeight
-    );
+    const overflowItems = defaultToolbarItems.filter(item => item.el.offsetTop > toolbarHeight);
 
     overflowItems.forEach(item => {
       this.removeItem(item, false);

@@ -2,16 +2,18 @@
  * @fileoverview Implements toolbar
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import isString from 'tui-code-snippet/type/isString';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import isArray from 'tui-code-snippet/type/isArray';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import UIController from './uicontroller';
 import Button from './button';
 import ToolbarItem from './toolbarItem';
 import ToolbarDivider from './toolbarDivider';
 import ToolbarItemFactory from './toolbarItemFactory';
+import domUtils from '../domUtils';
 
 /**
  * Class Toolbar
@@ -56,9 +58,9 @@ class Toolbar extends UIController {
       this._items.forEach(item => {
         if (item._state) {
           if (ev[item._state]) {
-            item.$el.addClass('active');
+            addClass(item.el, 'active');
           } else {
-            item.$el.removeClass('active');
+            removeClass(item.el, 'active');
           }
         }
       });
@@ -136,13 +138,13 @@ class Toolbar extends UIController {
       item = ToolbarItemFactory.create(item.type, item.options);
     }
 
-    const children = this.$el.children();
+    const { children } = this.el;
 
     if (index >= 0 && index < children.length) {
-      item.$el.insertBefore(children.eq(index));
+      domUtils.insertBefore(item.el, children[index]);
       this._items.splice(index, 0, item);
     } else {
-      item.$el.appendTo(this.$el);
+      this.el.appendChild(item.el);
       this._items.push(item);
     }
 
@@ -196,7 +198,7 @@ class Toolbar extends UIController {
       } else {
         removedItem.off('command', removedItem.onCommandHandler);
         removedItem.off('event', removedItem.onEventHandler);
-        removedItem.$el.detach();
+        domUtils.remove(removedItem.el);
       }
     }
 
@@ -251,29 +253,32 @@ class Toolbar extends UIController {
    * @deprecated
    */
   _addButton(button, index) {
-    const $btn = this._setButton(button, index).$el;
+    const btn = this._setButton(button, index).el;
 
     if (isNumber(index)) {
-      this.$el
-        .find(`.${Button.className}`)
-        .eq(index - 1)
-        .before($btn);
+      const buttons = this.el.querySelectorAll(`.${Button.className}`);
+
+      if (buttons.length) {
+        domUtils.insertBefore(btn, buttons[index - 1]);
+      }
     } else {
-      this.$el.append($btn);
+      this.el.appendChild(btn);
     }
   }
 
   /**
    * add divider
-   * @returns {jQuery} - created divider jquery element
+   * @returns {HTMLElement} - created divider element
    * @deprecated
    */
   addDivider() {
-    const $el = $(`<div class="${ToolbarDivider.className}"></div>`);
+    const element = document.createElement('div');
 
-    this.$el.append($el);
+    element.className = ToolbarDivider.className;
 
-    return $el;
+    this.el.appendChild(element);
+
+    return element;
   }
 
   /**
@@ -293,6 +298,7 @@ class Toolbar extends UIController {
 
     button.on('command', (e, commandName) => ev.emit('command', commandName));
     button.on('event', (e, eventName) => ev.emit(eventName));
+
     if (isNumber(index)) {
       this._items.splice(index, 0, button);
     } else {

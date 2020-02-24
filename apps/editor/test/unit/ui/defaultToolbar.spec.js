@@ -43,7 +43,7 @@ describe('DefaultToolbar', () => {
     $('body').append($container);
     eventManager = new EventManager();
     toolbar = new DefaultToolbar(eventManager, items);
-    $container.append(toolbar.$el);
+    $container.append(toolbar.el);
   });
 
   afterEach(() => {

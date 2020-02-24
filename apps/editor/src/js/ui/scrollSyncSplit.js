@@ -3,7 +3,13 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
+
+import hasClass from 'tui-code-snippet/domUtil/hasClass';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
+
 import extend from 'tui-code-snippet/object/extend';
+import domUtils from '../domUtils';
 
 const CLASS_SPLIT_SCROLL = 'tui-split-scroll';
 const CLASS_SINGLE_CONTENT = 'single-content';
@@ -95,9 +101,9 @@ class ScrollSyncSplit {
 
     if (this.isScrollSynced()) {
       wrapperElement = this._contentWrapper;
-    } else if ($(element).parents(this._contentElements.left).length) {
+    } else if (domUtils.parents(element, this._contentElements.left).length) {
       wrapperElement = this._contentElements.left;
-    } else if ($(element).parents(this._contentElements.right).length) {
+    } else if (domUtils.parenets(element, this._contentElements.right).length) {
       wrapperElement = this._contentElements.right;
     } else {
       return;
@@ -127,7 +133,7 @@ class ScrollSyncSplit {
       $(contentElement).off(EVENT_REQUIRE_SCROLL_INTO_VIEW);
       this._contentWrapper.removeChild(contentElement);
     }
-    $(element).addClass(CLASS_CONTENT[side]);
+    addClass(element, CLASS_CONTENT[side]);
     this._contentWrapper.appendChild(element);
     $(element).on(EVENT_REQUIRE_SCROLL_INTO_VIEW, ev => this._requireScrollIntoView(ev));
     $(element).on(EVENT_REQUIRE_SCROLL_SYNC, () => this.sync());
@@ -156,25 +162,33 @@ class ScrollSyncSplit {
   }
 
   _setScrollSync(activate) {
-    $(this._el).toggleClass(CLASS_SCROLL_SYNC, activate);
+    if (activate) {
+      addClass(this._el, CLASS_SCROLL_SYNC);
+    } else {
+      removeClass(this._el, CLASS_SCROLL_SYNC);
+    }
   }
 
   /**
    * toggle multi scroll
    */
   toggleScrollSync() {
-    $(this._el).toggleClass(CLASS_SCROLL_SYNC);
+    domUtils.toggleClass(this._el, CLASS_SCROLL_SYNC);
   }
 
   setSplitView(activate) {
-    $(this._el).toggleClass(CLASS_SINGLE_CONTENT, !activate);
+    if (!activate) {
+      addClass(this._el, CLASS_SINGLE_CONTENT);
+    } else {
+      removeClass(this._el, CLASS_SINGLE_CONTENT);
+    }
   }
 
   /**
    * toggle split
    */
   toggleSplitView() {
-    $(this._el).toggleClass(CLASS_SINGLE_CONTENT);
+    domUtils.toggleClass(this._el, CLASS_SINGLE_CONTENT);
   }
 
   /**
@@ -182,7 +196,7 @@ class ScrollSyncSplit {
    * @returns {boolean} - true for synced, false for each scroll
    */
   isScrollSynced() {
-    return $(this._el).hasClass(CLASS_SCROLL_SYNC);
+    return hasClass(this._el, CLASS_SCROLL_SYNC);
   }
 
   /**
@@ -190,7 +204,7 @@ class ScrollSyncSplit {
    * @returns {boolean} - true for split view, false for single view
    */
   isSplitView() {
-    return !$(this._el).hasClass(CLASS_SINGLE_CONTENT);
+    return !hasClass(this._el, CLASS_SINGLE_CONTENT);
   }
 
   /**

@@ -17,12 +17,12 @@ describe('Tab', () => {
     tab = new Tab({
       items: ['tab1', 'tab2']
     });
-    $('body').append(tab.$el);
+    $('body').append(tab.el);
 
     const buttons = $('button');
 
-    expect($(buttons[0]).text()).toEqual('tab1');
-    expect($(buttons[1]).text()).toEqual('tab2');
+    expect(buttons[0].textContent).toBe('tab1');
+    expect(buttons[1].textContent).toBe('tab2');
   });
 
   describe('tab button event', () => {
@@ -34,7 +34,7 @@ describe('Tab', () => {
         onItemClick: handler
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
 
       $('button')
         .eq(0)
@@ -51,7 +51,7 @@ describe('Tab', () => {
         onItemClick: spy
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
 
       $('button')
         .eq(0)
@@ -70,7 +70,7 @@ describe('Tab', () => {
         onItemClick: handler
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
     });
 
     it('clicked button should have active class', () => {
@@ -97,8 +97,8 @@ describe('Tab', () => {
     let tabSection1, tabSection2;
 
     beforeEach(() => {
-      tabSection1 = $('<div>tab1</div>');
-      tabSection2 = $('<div>tab2</div>');
+      tabSection1 = $('<div>tab1</div>').get(0);
+      tabSection2 = $('<div>tab2</div>').get(0);
 
       $('body').append(tabSection1);
       $('body').append(tabSection2);
@@ -109,7 +109,7 @@ describe('Tab', () => {
         sections: [tabSection1, tabSection2]
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
     });
     it('sets initial active tab button', () => {
       const buttons = $('button');
@@ -130,8 +130,8 @@ describe('Tab', () => {
     let tabSection1, tabSection2;
 
     beforeEach(() => {
-      tabSection1 = $('<div>tab1</div>');
-      tabSection2 = $('<div>tab2</div>');
+      tabSection1 = $('<div>tab1</div>').get(0);
+      tabSection2 = $('<div>tab2</div>').get(0);
 
       $('body').append(tabSection1);
       $('body').append(tabSection2);
@@ -142,14 +142,14 @@ describe('Tab', () => {
         sections: [tabSection1, tabSection2]
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
     });
 
     it('click on tab button should result corresponding section activated', () => {
       $('button')
         .eq(1)
         .trigger('click');
-      expect(tabSection2.hasClass('te-tab-active')).toBe(true);
+      expect($(tabSection2).hasClass('te-tab-active')).toBe(true);
     });
 
     it('click on the other tab button should result de-activating previously activated section', () => {
@@ -160,8 +160,8 @@ describe('Tab', () => {
         .eq(1)
         .trigger('click');
 
-      expect(tabSection1.hasClass('te-tab-active')).toBe(false);
-      expect(tabSection2.hasClass('te-tab-active')).toBe(true);
+      expect($(tabSection1).hasClass('te-tab-active')).toBe(false);
+      expect($(tabSection2).hasClass('te-tab-active')).toBe(true);
     });
   });
 
@@ -171,7 +171,7 @@ describe('Tab', () => {
         items: ['tab1', 'tab2']
       });
 
-      $('body').append(tab.$el);
+      $('body').append(tab.el);
     });
 
     it('activate a button having given name', () => {
