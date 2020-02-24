@@ -3,9 +3,11 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import extend from 'tui-code-snippet/object/extend';
+import css from 'tui-code-snippet/domUtil/css';
 
 import LayerPopup from './layerpopup';
 import Toolbar from './toolbar';
+import domUtils from '../domUtils';
 
 /**
  * Class PopupDropdownToolbar
@@ -116,9 +118,9 @@ class PopupDropdownToolbar extends LayerPopup {
   _initInstance(options) {
     super._initInstance(options);
 
-    const { $button, eventManager } = options;
+    const { button, eventManager } = options;
 
-    this._$button = $button;
+    this._button = button;
     this._eventManager = eventManager;
     this._toolbar = new Toolbar(eventManager);
   }
@@ -131,7 +133,7 @@ class PopupDropdownToolbar extends LayerPopup {
   _initDOM() {
     super._initDOM();
 
-    this.setContent(this._toolbar.$el);
+    this.setContent(this._toolbar.el);
   }
 
   /**
@@ -153,17 +155,20 @@ class PopupDropdownToolbar extends LayerPopup {
       }
 
       // to give toolbar element enough width before the calculation
-      this.$el.css({
+      css(this.el, {
         left: '-1000px'
       });
-      const $button = this._$button;
-      const position = $button.position();
-      const buttonOuterHeightWithMargin = $button.outerHeight(true);
-      const buttonMarginBottom = (buttonOuterHeightWithMargin - $button.outerHeight()) / 2;
-      const top = position.top + buttonOuterHeightWithMargin - buttonMarginBottom;
-      const left = position.left + $button.outerWidth(true) - this.$el.outerWidth(true);
+      const button = this._button;
+      const position = domUtils.getPosition(button);
+      const buttonOuterHeightWithMargin = domUtils.getOuterHeight(button);
+      const buttonMarginBottom =
+        (buttonOuterHeightWithMargin - domUtils.getOuterHeight(button)) / 2;
+      const top = `${position.top + buttonOuterHeightWithMargin - buttonMarginBottom}px`;
+      const left = `${position.left +
+        domUtils.getOuterWidth(button) -
+        domUtils.getOuterWidth(this.el)}px`;
 
-      this.$el.css({
+      css(this.el, {
         top,
         left
       });

@@ -2,8 +2,9 @@
  * @fileoverview Implements PopupAddLink
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import extend from 'tui-code-snippet/object/extend';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
@@ -63,7 +64,7 @@ class PopupAddLink extends LayerPopup {
   _initDOM() {
     super._initDOM();
 
-    const el = this.$el.get(0);
+    const { el } = this;
 
     this._inputText = el.querySelector('.te-link-text-input');
     this._inputURL = el.querySelector('.te-url-input');
@@ -123,12 +124,12 @@ class PopupAddLink extends LayerPopup {
     this._clearValidationStyle();
 
     if (linkText.length < 1) {
-      $(this._inputText).addClass('wrong');
+      addClass(this._inputText, 'wrong');
 
       return;
     }
     if (url.length < 1) {
-      $(this._inputURL).addClass('wrong');
+      addClass(this._inputURL, 'wrong');
 
       return;
     }
@@ -151,8 +152,8 @@ class PopupAddLink extends LayerPopup {
   }
 
   _clearValidationStyle() {
-    $(this._inputURL).removeClass('wrong');
-    $(this._inputText).removeClass('wrong');
+    removeClass(this._inputURL, 'wrong');
+    removeClass(this._inputText, 'wrong');
   }
 
   _resetInputs() {

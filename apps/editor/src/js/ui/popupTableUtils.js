@@ -2,11 +2,15 @@
  * @fileoverview Implements PopupTableUtils
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import extend from 'tui-code-snippet/object/extend';
+import css from 'tui-code-snippet/domUtil/css';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import hasClass from 'tui-code-snippet/domUtil/hasClass';
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
+import domUtils from '../domUtils';
 
 export const REMOVE_ROW_MENU_CLASS_NAME = 'te-table-remove-row';
 export const DISABLED_MENU_CLASS_NAME = 'te-context-menu-disabled';
@@ -94,16 +98,16 @@ class PopupTableUtils extends LayerPopup {
     this.eventManager.listen('mousedown', () => this.hide());
     this.eventManager.listen('closeAllPopup', () => this.hide());
     this.eventManager.listen('openPopupTableUtils', ev => {
-      const offset = this.$el.parent().offset();
+      const offset = domUtils.getOffset(this.el.parentNode);
       const x = ev.clientX - offset.left;
-      const y = ev.clientY - offset.top + $(window).scrollTop();
+      const y = ev.clientY - offset.top + window.scrollTop;
 
       this._disableRemoveRowMenu(ev.target);
 
-      this.$el.css({
+      css(this.el, {
         position: 'absolute',
-        top: y + 5, // beside mouse pointer
-        left: x + 10
+        top: `${y + 5}px`, // beside mouse pointer
+        left: `${x + 10}px`
       });
       this.eventManager.emit('closeAllPopup');
       this.show();
@@ -114,7 +118,7 @@ class PopupTableUtils extends LayerPopup {
     this.on(`click .${REMOVE_ROW_MENU_CLASS_NAME}`, ev => {
       const { target } = ev;
 
-      if ($(target).hasClass(DISABLED_MENU_CLASS_NAME)) {
+      if (hasClass(target, DISABLED_MENU_CLASS_NAME)) {
         ev.preventDefault();
       } else {
         this.eventManager.emit('command', 'RemoveRow');
@@ -123,12 +127,12 @@ class PopupTableUtils extends LayerPopup {
   }
 
   _disableRemoveRowMenu(target) {
-    const $menu = this.$el.find(`.${REMOVE_ROW_MENU_CLASS_NAME}`);
+    const menu = this.el.querySelector(`.${REMOVE_ROW_MENU_CLASS_NAME}`);
 
     if (target.nodeName === 'TH') {
-      $menu.addClass(DISABLED_MENU_CLASS_NAME);
+      addClass(menu, DISABLED_MENU_CLASS_NAME);
     } else {
-      $menu.removeClass(DISABLED_MENU_CLASS_NAME);
+      removeClass(menu, DISABLED_MENU_CLASS_NAME);
     }
   }
 }

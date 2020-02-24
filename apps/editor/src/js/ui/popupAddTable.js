@@ -3,8 +3,10 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import extend from 'tui-code-snippet/object/extend';
+import css from 'tui-code-snippet/domUtil/css';
 
 import LayerPopup from './layerpopup';
+import domUtils from '../domUtils';
 
 const CLASS_TABLE_SELECTION = 'te-table-selection';
 const CLASS_TABLE_HEADER = 'te-table-header';
@@ -39,19 +41,19 @@ const LAST_BORDER = 1;
  * @ignore
  */
 class PopupAddTable extends LayerPopup {
-  /**
-   * Toolbar Button which the Popup is bound to.
-   * @type {jQuery}
-   * @private
-   */
-  _$button;
+  // /**
+  //  * Toolbar Button which the Popup is bound to.
+  //  * @type {HTMLElement}
+  //  * @private
+  //  */
+  // _button;
 
-  /**
-   * EventManager instance
-   * @type {EventManager}
-   * @private
-   */
-  _eventManager;
+  // /**
+  //  * EventManager instance
+  //  * @type {EventManager}
+  //  * @private
+  //  */
+  // _eventManager;
 
   constructor(options) {
     options = extend(
@@ -78,7 +80,7 @@ class PopupAddTable extends LayerPopup {
     this._selectedBound = {};
     this._tableBound = {};
     this._eventManager = options.eventManager;
-    this._$button = options.$button;
+    this._button = options.button;
   }
 
   /**
@@ -132,16 +134,18 @@ class PopupAddTable extends LayerPopup {
     this._eventManager.listen('closeAllPopup', () => this.hide());
 
     this._eventManager.listen('openPopupAddTable', () => {
-      const $button = this._$button;
-      const { offsetTop, offsetLeft } = $button.get(0);
+      const button = this._button;
+      const { offsetTop, offsetLeft } = button;
 
-      this.$el.css({
-        top: offsetTop + $button.outerHeight(),
-        left: offsetLeft
+      css(this.el, {
+        top: `${offsetTop + domUtils.getOuterHeight(button)}px`,
+        left: `${offsetLeft}px`
       });
       this._eventManager.emit('closeAllPopup');
       this.show();
-      this._selectionOffset = this.$el.find(`.${CLASS_TABLE_SELECTION}`).offset();
+      this._selectionOffset = domUtils.getOffset(
+        this.el.querySelector(`.${CLASS_TABLE_SELECTION}`)
+      );
     });
   }
 
@@ -150,10 +154,10 @@ class PopupAddTable extends LayerPopup {
    * @private
    */
   _cacheElements() {
-    this.$header = this.$el.find(`.${CLASS_TABLE_HEADER}`);
-    this.$body = this.$el.find(`.${CLASS_TABLE_BODY}`);
-    this.$selection = this.$el.find(`.${CLASS_SELECTION_AREA}`);
-    this.$desc = this.$el.find(`.${CLASS_DESCRIPTION}`);
+    this.header = this.el.querySelector(`.${CLASS_TABLE_HEADER}`);
+    this.body = this.el.querySelector(`.${CLASS_TABLE_BODY}`);
+    this.selection = this.el.querySelector(`.${CLASS_SELECTION_AREA}`);
+    this.desc = this.el.querySelector(`.${CLASS_DESCRIPTION}`);
   }
 
   /**
@@ -328,7 +332,7 @@ class PopupAddTable extends LayerPopup {
    * @private
    */
   _setDisplayText(col, row) {
-    this.$desc.html(`${col + 1} x ${row + 1}`);
+    this.desc.innerHTML = `${col + 1} x ${row + 1}`;
   }
 
   /**
@@ -341,18 +345,18 @@ class PopupAddTable extends LayerPopup {
     x += LAST_BORDER;
     y += LAST_BORDER;
 
-    this.$header.css({
-      height: CELL_HEIGHT,
-      width: x
+    css(this.header, {
+      height: `${CELL_HEIGHT}px`,
+      width: `${x}px`
     });
 
-    this.$body.css({
-      height: y,
-      width: x
+    css(this.body, {
+      height: `${y}px`,
+      width: `${x}px`
     });
 
-    this.$el.css({
-      width: x + 30
+    css(this.el, {
+      width: `${x + 30}px`
     });
   }
 
@@ -366,9 +370,9 @@ class PopupAddTable extends LayerPopup {
     x += LAST_BORDER;
     y += LAST_BORDER;
 
-    this.$selection.css({
-      height: y,
-      width: x
+    css(this.selection, {
+      height: `${y}px`,
+      width: `${x}px`
     });
   }
 }

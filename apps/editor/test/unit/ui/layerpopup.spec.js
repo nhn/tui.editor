@@ -20,10 +20,10 @@ describe('LayerPopup', () => {
     $('body').html('<div class="container" />');
 
     popup = new LayerPopup({
-      $target: $('.container')
+      target: $('.container').get(0)
     });
 
-    expect(popup._$target.hasClass('container')).toBe(true);
+    expect($(popup._target).hasClass('container')).toBe(true);
   });
 
   describe('factory', () => {
@@ -31,23 +31,23 @@ describe('LayerPopup', () => {
       $('body').html(`<div class="${CLASS_PREFIX}wrapper" />`);
 
       popup = new LayerPopup({
-        $el: $(`.${CLASS_PREFIX}wrapper`)
+        el: $(`.${CLASS_PREFIX}wrapper`).get(0)
       });
     });
 
-    it('popup body takes given $el option', () => {
-      expect(popup.$el.hasClass(`${CLASS_PREFIX}wrapper`)).toBe(true);
+    it('popup body takes given el option', () => {
+      expect($(popup.el).hasClass(`${CLASS_PREFIX}wrapper`)).toBe(true);
     });
 
-    it('$el option have priority over content option', () => {
+    it('el option have priority over content option', () => {
       $('body').html(LayerPopup.prototype.layoutTemplate);
 
       popup = new LayerPopup({
-        $el: $(`.${CLASS_PREFIX}wrapper`),
-        content: $('<p>test</p>')
+        el: $(`.${CLASS_PREFIX}wrapper`).get(0),
+        content: $('<p>test</p>').get(0)
       });
 
-      expect(popup._$target.find('p').length).toBe(0);
+      expect($(popup._target).find('p').length).toBe(0);
     });
   });
 
@@ -55,10 +55,10 @@ describe('LayerPopup', () => {
     it('has default elements and each of them have proper classe', () => {
       popup = new LayerPopup();
 
-      expect(popup._$target.find(`.${CLASS_PREFIX}wrapper`).length).toBe(1);
-      expect(popup._$target.find(`.${CLASS_PREFIX}header`).length).toBe(1);
-      expect(popup._$target.find(`.${CLASS_PREFIX}body`).length).toBe(1);
-      expect(popup._$target.find(`.${CLASS_PREFIX}close-button`).length).toBe(1);
+      expect($(popup._target).find(`.${CLASS_PREFIX}wrapper`).length).toBe(1);
+      expect($(popup._target).find(`.${CLASS_PREFIX}header`).length).toBe(1);
+      expect($(popup._target).find(`.${CLASS_PREFIX}body`).length).toBe(1);
+      expect($(popup._target).find(`.${CLASS_PREFIX}close-button`).length).toBe(1);
     });
 
     it('has class passed from className option', () => {
@@ -66,7 +66,7 @@ describe('LayerPopup', () => {
         className: 'myclass'
       });
 
-      expect(popup.$el.hasClass('myclass')).toBe(true);
+      expect($(popup.el).hasClass('myclass')).toBe(true);
     });
 
     it('has text from textContent option', () => {
@@ -74,7 +74,11 @@ describe('LayerPopup', () => {
         textContent: 'text'
       });
 
-      expect(popup.$el.find(`.${CLASS_PREFIX}body`).text()).toEqual('text');
+      expect(
+        $(popup.el)
+          .find(`.${CLASS_PREFIX}body`)
+          .text()
+      ).toEqual('text');
     });
 
     it('has html from content option as html string', () => {
@@ -82,15 +86,15 @@ describe('LayerPopup', () => {
         content: '<p>test</p>'
       });
 
-      expect(popup._$target.find('p').length).toBe(1);
+      expect($(popup._target).find('p').length).toBe(1);
     });
 
-    it('has element from content option as jQuery element', () => {
+    it('has element from content option as element', () => {
       popup = new LayerPopup({
-        content: $('<p>test</p>')
+        content: $('<p>test</p>').get(0)
       });
 
-      expect(popup._$target.find('p').length).toBe(1);
+      expect($(popup._target).find('p').length).toBe(1);
     });
 
     it('has title from title option', () => {
@@ -110,17 +114,15 @@ describe('LayerPopup', () => {
     });
   });
 
-  describe('css', () => {
-    it('css option can apply style to popup wrapper', () => {
-      popup = new LayerPopup({
-        content: '<p>test</p>',
-        css: {
-          width: 10
-        }
-      });
-
-      expect($(`.${CLASS_PREFIX}wrapper`).width()).toEqual(10);
+  it('css option can apply style to popup wrapper', () => {
+    popup = new LayerPopup({
+      content: '<p>test</p>',
+      css: {
+        width: '10px'
+      }
     });
+
+    expect($(`.${CLASS_PREFIX}wrapper`).width()).toEqual(10);
   });
 
   describe('setContent', () => {
@@ -130,12 +132,20 @@ describe('LayerPopup', () => {
 
     it('should set content', () => {
       popup.setContent('text');
-      expect(popup.$el.find(`.${CLASS_PREFIX}body`).text()).toEqual('text');
+      expect(
+        $(popup.el)
+          .find(`.${CLASS_PREFIX}body`)
+          .text()
+      ).toEqual('text');
     });
     it('should replace previous content', () => {
       popup.setContent('text');
       popup.setContent('text');
-      expect(popup.$el.find(`.${CLASS_PREFIX}body`).text()).toEqual('text');
+      expect(
+        $(popup.el)
+          .find(`.${CLASS_PREFIX}body`)
+          .text()
+      ).toEqual('text');
     });
   });
 
@@ -202,7 +212,7 @@ describe('LayerPopup', () => {
   describe('show/hide', () => {
     beforeEach(() => {
       popup = new LayerPopup({
-        $el: $('<div class="container" />')
+        el: $('<div class="container" />').get(0)
       });
     });
 
@@ -210,7 +220,7 @@ describe('LayerPopup', () => {
       popup.hide();
       popup.show();
 
-      expect(popup.$el.css('display')).toEqual('block');
+      expect($(popup.el).css('display')).toEqual('block');
       expect(popup.isShow()).toBe(true);
     });
 
@@ -218,7 +228,7 @@ describe('LayerPopup', () => {
       popup.show();
       popup.hide();
 
-      expect(popup.$el.css('display')).toEqual('none');
+      expect($(popup.el).css('display')).toEqual('none');
       expect(popup.isShow()).toBe(false);
     });
   });
@@ -295,11 +305,11 @@ describe('LayerPopup', () => {
     });
 
     it('contains modal layout if modal option is true', () => {
-      expect(popup.$el.hasClass('tui-popup-modal-background')).toBe(true);
+      expect($(popup.el).hasClass('tui-popup-modal-background')).toBe(true);
 
       popup = new LayerPopup();
 
-      expect(popup.$el.hasClass('tui-popup-modal-background')).toBe(false);
+      expect($(popup.el).hasClass('tui-popup-modal-background')).toBe(false);
     });
 
     it('toggleFitToWindow should toggle style', () => {
