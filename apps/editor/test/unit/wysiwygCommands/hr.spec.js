@@ -2,22 +2,19 @@
  * @fileoverview test wysiwyg hr command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import HR from '@/wysiwygCommands/hr';
 import WwTaskManager from '@/wwTaskManager';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('HR', () => {
-  let wwe, sq;
+  let container, wwe, sq;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -29,7 +26,7 @@ describe('HR', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -37,14 +34,14 @@ describe('HR', () => {
   it('add HR and if there is no next block then append default block', () => {
     const range = sq.getSelection().cloneRange();
 
-    range.setStart(wwe.get$Body().find('div')[0], 0);
+    range.setStart(wwe.getBody().querySelectorAll('div')[0], 0);
     range.collapse(true);
     sq.setSelection(range);
 
     HR.exec(wwe);
 
-    expect(wwe.get$Body().find('hr').length).toEqual(1);
-    expect(wwe.get$Body().find('div').length).toEqual(3);
+    expect(wwe.getBody().querySelectorAll('hr').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('div').length).toEqual(3);
   });
 
   it('add HR and if there is next block then dont make default block', () => {
@@ -52,7 +49,7 @@ describe('HR', () => {
 
     sq.setHTML('<div>test</div><div><br></div>');
 
-    range.setStart(wwe.get$Body().find('div')[0], 0);
+    range.setStart(wwe.getBody().querySelectorAll('div')[0], 0);
     range.collapse(true);
 
     sq.setSelection(range);
@@ -74,13 +71,13 @@ describe('HR', () => {
 
     sq.setHTML('<div>test</div><div><br></div>');
 
-    range.setStart(wwe.get$Body().find('div')[0], 0);
+    range.setStart(wwe.getBody().querySelectorAll('div')[0], 0);
     range.collapse(true);
 
     sq.setSelection(range);
 
     HR.exec(wwe);
 
-    expect(sq.getSelection().startContainer).toBe(wwe.get$Body().find('div')[2]);
+    expect(sq.getSelection().startContainer).toBe(wwe.getBody().querySelectorAll('div')[2]);
   });
 });

@@ -18,7 +18,7 @@ describe('UL', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor($(container), new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -40,17 +40,17 @@ describe('UL', () => {
   it('add UL', () => {
     const range = sq.getSelection().cloneRange();
 
-    range.setStart(wwe.get$Body().find('div')[0], 0);
+    range.setStart(wwe.getBody().querySelectorAll('div')[0], 0);
     range.collapse(true);
     sq.setSelection(range);
     UL.exec(wwe);
 
-    expect(wwe.get$Body().find('ul').length).toEqual(1);
-    expect(wwe.get$Body().find('li').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('ul').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('li').length).toEqual(1);
   });
 
   it('add UL with selection', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $div1 = $('<div>hello</div>');
     const $div2 = $('<div>world</div>');
     const $div3 = $('<div>i`m</div>');
@@ -69,12 +69,12 @@ describe('UL', () => {
 
     UL.exec(wwe);
 
-    expect(wwe.get$Body().find('ul').length).toEqual(1);
-    expect(wwe.get$Body().find('li').length).toEqual(4);
+    expect(wwe.getBody().querySelectorAll('ul').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('li').length).toEqual(4);
   });
 
   it('add UL with selection OL within', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $div1 = $('<div>hello</div>');
     const $div2 = $('<div>world</div>');
     const $div3 = $('<div>i`m</div>');
@@ -93,12 +93,12 @@ describe('UL', () => {
 
     UL.exec(wwe);
 
-    expect(wwe.get$Body().find('ul').length).toEqual(1);
-    expect(wwe.get$Body().find('li').length).toEqual(4);
+    expect(wwe.getBody().querySelectorAll('ul').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('li').length).toEqual(4);
   });
 
   it('add 1 UL and 1 LI with selection former OL within', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $div1 = $('<div>hello</div>');
     const $div2 = $('<div>world</div>');
     const $div3 = $('<div>i`m</div>');
@@ -117,12 +117,12 @@ describe('UL', () => {
 
     UL.exec(wwe);
 
-    expect(wwe.get$Body().find('ul').length).toEqual(1);
-    expect(wwe.get$Body().find('li').length).toEqual(2);
+    expect(wwe.getBody().querySelectorAll('ul').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('li').length).toEqual(2);
   });
 
   it('change OL to UL', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $ol = $('<ol><li>fine</li></ol>');
 
     $body.append($ol);
@@ -135,12 +135,12 @@ describe('UL', () => {
 
     UL.exec(wwe);
 
-    expect(wwe.get$Body().find('ul').length).toEqual(1);
-    expect(wwe.get$Body().find('li').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('ul').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('li').length).toEqual(1);
   });
 
   it('change OL to UL with selection', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $ol = $('<ol><li>fine</li><li>thank you</li></ol>');
 
     $body.append($ol);
@@ -153,12 +153,12 @@ describe('UL', () => {
 
     UL.exec(wwe);
 
-    expect(wwe.get$Body().find('ul').length).toEqual(1);
-    expect(wwe.get$Body().find('li').length).toEqual(2);
+    expect(wwe.getBody().querySelectorAll('ul').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('li').length).toEqual(2);
   });
 
   it('change TASK to UL', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $ol = $('<ol><li class="task-list-item">fine</li></ol>');
 
     $body.append($ol);
@@ -171,14 +171,14 @@ describe('UL', () => {
 
     UL.exec(wwe);
 
-    expect(wwe.get$Body().find('ol').length).toEqual(0);
-    expect(wwe.get$Body().find('ul').length).toEqual(1);
-    expect(wwe.get$Body().find('li.task-list-item').length).toEqual(0);
-    expect(wwe.get$Body().find('li').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('ol').length).toEqual(0);
+    expect(wwe.getBody().querySelectorAll('ul').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('li.task-list-item').length).toEqual(0);
+    expect(wwe.getBody().querySelectorAll('li').length).toEqual(1);
   });
 
   it('change TASK to UL with selection', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $ol = $(
       '<ol><li class="task-list-item">fine</li><li class="task-list-item">thank you</li></ol>'
     );
@@ -193,13 +193,13 @@ describe('UL', () => {
 
     UL.exec(wwe);
 
-    expect(wwe.get$Body().find('ul').length).toEqual(1);
-    expect(wwe.get$Body().find('li.task-list-item').length).toEqual(0);
-    expect(wwe.get$Body().find('li').length).toEqual(2);
+    expect(wwe.getBody().querySelectorAll('ul').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('li.task-list-item').length).toEqual(0);
+    expect(wwe.getBody().querySelectorAll('li').length).toEqual(2);
   });
 
   it('skip changing format to UL from TABLE/PRE element', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $div1 = $('<div>fine</div>');
     const $div2 = $('<div>thank you</div>');
     const $pre = $('<pre>haha</pre>');
@@ -218,13 +218,13 @@ describe('UL', () => {
 
     UL.exec(wwe);
 
-    expect(wwe.get$Body().find('ul').length).toEqual(2);
-    expect(wwe.get$Body().children('pre').length).toEqual(1);
-    expect(wwe.get$Body().find('li').length).toEqual(3);
+    expect(wwe.getBody().querySelectorAll('ul').length).toEqual(2);
+    expect($(wwe.getBody()).children('pre').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('li').length).toEqual(3);
   });
 
   it('should restore the stored selection', () => {
-    const $body = sq.get$Body();
+    const $body = $(sq.getBody());
     const $div = $('<div>text<em>text</em>longlongtext</div>');
 
     $body.append($div);

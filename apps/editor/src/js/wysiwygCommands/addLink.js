@@ -2,7 +2,6 @@
  * @fileoverview Implements AddLink wysiwyg command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import extend from 'tui-code-snippet/object/extend';
 
 import CommandManager from '../commandManager';
@@ -51,7 +50,7 @@ const AddLink = CommandManager.command(
             )
           );
 
-          $(link).text(linkText);
+          link.textContent = linkText;
           sq.insertElement(link);
         }
       }

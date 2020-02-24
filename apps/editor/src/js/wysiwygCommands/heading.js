@@ -2,9 +2,9 @@
  * @fileoverview Implements Heading wysiwyg command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
+import toArray from 'tui-code-snippet/collection/toArray';
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * Heading
@@ -30,22 +30,21 @@ const Heading = CommandManager.command(
 
       if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
         sq.modifyBlocks(fragment => {
-          $(fragment)
-            .children(blockTagName)
-            .each((index, block) => {
-              const headingHTML = `<H${size} />`;
-              const $block = $(block);
+          const blocks = domUtils.children(fragment, blockTagName);
 
-              if ($block.is('DIV')) {
-                $block.wrap(headingHTML);
-              } else {
-                const $wrapperHeading = $(headingHTML);
+          toArray(blocks).forEach(block => {
+            const headingHTML = `h${size}`;
 
-                $wrapperHeading.insertBefore(block);
-                $wrapperHeading.html($block.html());
-                $block.remove();
-              }
-            });
+            if (domUtils.getNodeName(block) === 'DIV') {
+              domUtils.wrap(block, headingHTML);
+            } else {
+              const wrapperHeading = document.createElement(headingHTML);
+
+              domUtils.insertBefore(wrapperHeading, block);
+              wrapperHeading.innerHTML = block.innerHTML;
+              domUtils.remove(block);
+            }
+          });
 
           return fragment;
         });

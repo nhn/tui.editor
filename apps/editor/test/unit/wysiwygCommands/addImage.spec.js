@@ -9,14 +9,13 @@ import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('AddImage', () => {
-  let wwe, $container;
+  let wwe, container;
 
   beforeEach(() => {
-    $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.getEditor().focus();
@@ -25,7 +24,7 @@ describe('AddImage', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $container.remove();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -38,7 +37,7 @@ describe('AddImage', () => {
 
     wwe.setValue('line');
 
-    range.selectNodeContents(wwe.get$Body().find('div')[0].firstChild);
+    range.selectNodeContents(wwe.getBody().querySelectorAll('div')[0].firstChild);
     wwe.getEditor().setSelection(range);
 
     AddImage.exec(wwe, {
@@ -46,16 +45,14 @@ describe('AddImage', () => {
       imageUrl: '#url'
     });
 
-    expect(wwe.get$Body().find('img').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('img').length).toEqual(1);
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('img')
         .attr('src')
     ).toEqual('#url');
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('img')
         .attr('alt')
     ).toEqual('altText');
@@ -67,16 +64,14 @@ describe('AddImage', () => {
       imageUrl: '#url'
     });
 
-    expect(wwe.get$Body().find('img').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('img').length).toEqual(1);
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('img')
         .attr('src')
     ).toEqual('#url');
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('img')
         .attr('alt')
     ).toEqual('altText');
@@ -89,8 +84,7 @@ describe('AddImage', () => {
     });
 
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('img')
         .attr('alt')
     ).toEqual('한글유니코드');
@@ -103,8 +97,7 @@ describe('AddImage', () => {
     });
 
     expect(
-      wwe
-        .get$Body()
+      $(wwe.getBody())
         .find('img')
         .attr('src')
     ).toEqual('%28%29%5B%5D%3C%3E');

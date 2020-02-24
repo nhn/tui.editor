@@ -2,21 +2,18 @@
  * @fileoverview test wysiwyg add link command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import AddLink from '@/wysiwygCommands/addLink';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('AddLink', () => {
-  let wwe;
+  let container, wwe;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.getEditor().focus();
@@ -25,7 +22,7 @@ describe('AddLink', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -38,7 +35,7 @@ describe('AddLink', () => {
 
     wwe.setValue('line');
 
-    range.selectNodeContents(wwe.get$Body().find('div')[0].firstChild);
+    range.selectNodeContents(wwe.getBody().querySelectorAll('div')[0].firstChild);
     wwe.getEditor().setSelection(range);
 
     AddLink.exec(wwe, {
@@ -46,19 +43,14 @@ describe('AddLink', () => {
       linkText: 'inputText'
     });
 
-    expect(wwe.get$Body().find('a').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('a').length).toEqual(1);
     expect(
       wwe
-        .get$Body()
-        .find('a')
-        .attr('href')
+        .getBody()
+        .querySelector('a')
+        .getAttribute('href')
     ).toEqual('#url');
-    expect(
-      wwe
-        .get$Body()
-        .find('a')
-        .text()
-    ).toEqual('line');
+    expect(wwe.getBody().querySelector('a').textContent).toEqual('line');
   });
 
   it('add link with no selection text', () => {
@@ -67,19 +59,14 @@ describe('AddLink', () => {
       linkText: 'inputText'
     });
 
-    expect(wwe.get$Body().find('a').length).toEqual(1);
+    expect(wwe.getBody().querySelectorAll('a').length).toEqual(1);
     expect(
       wwe
-        .get$Body()
-        .find('a')
-        .attr('href')
+        .getBody()
+        .querySelector('a')
+        .getAttribute('href')
     ).toEqual('#url');
-    expect(
-      wwe
-        .get$Body()
-        .find('a')
-        .text()
-    ).toEqual('inputText');
+    expect(wwe.getBody().querySelector('a').textContent).toEqual('inputText');
   });
 
   it('should add link with decoded text', () => {
@@ -88,12 +75,7 @@ describe('AddLink', () => {
       linkText: '%ED%95%9C%EA%B8%80%EC%9C%A0%EB%8B%88%EC%BD%94%EB%93%9C'
     });
 
-    expect(
-      wwe
-        .get$Body()
-        .find('a')
-        .text()
-    ).toEqual('한글유니코드');
+    expect(wwe.getBody().querySelector('a').textContent).toEqual('한글유니코드');
   });
 
   it('should add link markdown characters encoded url', () => {
@@ -104,9 +86,9 @@ describe('AddLink', () => {
 
     expect(
       wwe
-        .get$Body()
-        .find('a')
-        .attr('href')
+        .getBody()
+        .querySelector('a')
+        .getAttribute('href')
     ).toEqual('%28%29%5B%5D%3C%3E');
   });
 });

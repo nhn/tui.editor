@@ -2,22 +2,19 @@
  * @fileoverview test wysiwyg italic command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import Italic from '@/wysiwygCommands/italic';
 import WysiwygEditor from '@/wysiwygEditor';
 import WwTableSelectionManager from '@/wwTableSelectionManager';
 import EventManager from '@/eventManager';
 
 describe('Italic', () => {
-  let wwe;
+  let container, wwe;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -28,7 +25,7 @@ describe('Italic', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -41,7 +38,7 @@ describe('Italic', () => {
 
     wwe.setValue('line1<br />line2');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.getBody().children[0]);
     wwe.getEditor().setSelection(range);
 
     Italic.exec(wwe);
@@ -57,7 +54,7 @@ describe('Italic', () => {
 
     wwe.setValue('line1<br />line2');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.getBody().children[0]);
     wwe.getEditor().setSelection(range);
 
     Italic.exec(wwe);
@@ -74,7 +71,7 @@ describe('Italic', () => {
 
     wwe.setValue('<i>line</i>');
 
-    range.setStart(wwe.get$Body().find('i')[0].firstChild, 4);
+    range.setStart(wwe.getBody().querySelectorAll('i')[0].firstChild, 4);
     range.collapse(true);
     wwe.getEditor().setSelection(range);
 
@@ -92,7 +89,7 @@ describe('Italic', () => {
 
     wwe.setValue('<b>line</b>');
 
-    range.selectNodeContents(wwe.get$Body().children()[0].firstChild);
+    range.selectNodeContents(wwe.getBody().children[0].firstChild);
     wwe.getEditor().setSelection(range);
 
     Italic.exec(wwe);
@@ -108,7 +105,7 @@ describe('Italic', () => {
 
     wwe.setValue('<code>line</code>');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.getBody().children[0]);
     wwe.getEditor().setSelection(range);
 
     Italic.exec(wwe);
