@@ -25,7 +25,9 @@ function createMDTextClipboardEvent(texts) {
 function createWWLinkClipboardEvent(anchor) {
   return {
     source: 'wysiwyg',
-    $clipboardContainer: $('<div>').append(anchor)
+    clipboardContainer: $('<div>')
+      .append(anchor)
+      .get(0)
   };
 }
 
@@ -208,7 +210,7 @@ describe('ImportManager', () => {
 
           em.emit('pasteBefore', ev);
           expect(
-            ev.$clipboardContainer
+            $(ev.clipboardContainer)
               .children()
               .first()
               .text()
@@ -223,7 +225,7 @@ describe('ImportManager', () => {
 
           em.emit('pasteBefore', ev);
           expect(
-            ev.$clipboardContainer
+            $(ev.clipboardContainer)
               .children()
               .first()
               .text()
@@ -238,7 +240,7 @@ describe('ImportManager', () => {
 
           em.emit('pasteBefore', ev);
           expect(
-            ev.$clipboardContainer
+            $(ev.clipboardContainer)
               .children()
               .first()
               .attr('href')

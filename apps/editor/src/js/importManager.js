@@ -171,7 +171,7 @@ class ImportManager {
         ev.data.update(null, null, [text]);
       }
     } else if (ev.source === 'wysiwyg') {
-      const container = ev.$clipboardContainer.get(0);
+      const container = ev.clipboardContainer;
       const [firstChild] = container.childNodes;
       const text = firstChild.innerText;
 
