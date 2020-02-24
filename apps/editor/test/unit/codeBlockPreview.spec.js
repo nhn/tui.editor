@@ -2,33 +2,32 @@
  * @fileoverview test code block preview
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import CodeBlockPreview from '@/codeBlockPreview';
 import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
 import CodeBlockEditor from '@/codeBlockEditor';
 
 describe('Preview', () => {
-  let eventManager, convertor, $wrapper, $editorWrapper, codeBlockEditor, preview;
+  let eventManager, convertor, wrapper, editorWrapper, codeBlockEditor, preview;
 
   beforeEach(() => {
-    $editorWrapper = $('<div>');
-    $wrapper = $('<div>');
-    $('body').append($wrapper);
-    $('body').append($editorWrapper);
+    wrapper = document.createElement('div');
+    document.body.appendChild(wrapper);
+
+    editorWrapper = document.createElement('div');
+    document.body.appendChild(editorWrapper);
 
     eventManager = new EventManager();
     convertor = new Convertor(eventManager);
-    codeBlockEditor = new CodeBlockEditor($editorWrapper.get(0));
-    preview = new CodeBlockPreview($wrapper, eventManager, convertor, codeBlockEditor);
+    codeBlockEditor = new CodeBlockEditor(editorWrapper);
+    preview = new CodeBlockPreview(wrapper, eventManager, convertor, codeBlockEditor);
 
     jasmine.clock().install();
   });
 
   afterEach(() => {
-    $wrapper.remove();
-    $editorWrapper.remove();
+    wrapper.parentNode.removeChild(wrapper);
+    editorWrapper.parentNode.removeChild(editorWrapper);
     jasmine.clock().uninstall();
   });
 
@@ -43,12 +42,16 @@ describe('Preview', () => {
     codeBlockEditor.setLanguage('javascript');
     preview.refresh();
 
-    const $el = $(preview.getHTML()).find('code');
+    const previewWrapper = document.createElement('div');
 
-    expect($el.text()).toEqual('code text\n');
-    expect($el.attr('data-language')).toEqual('javascript');
-    expect($el.hasClass('lang-javascript')).toEqual(true);
-    // expect(preview.getHTML()).toEqual('<pre><code data-language="javascript" class="lang-javascript">code\n</code></pre>\n');
+    document.body.appendChild(previewWrapper);
+    previewWrapper.innerHTML = preview.getHTML();
+
+    const el = previewWrapper.querySelector('code');
+
+    expect(el.textContent).toBe('code text\n');
+    expect(el.getAttribute('data-language')).toBe('javascript');
+    expect(el.className).toBe('lang-javascript');
   });
 
   it('delayed refresh on editor change event', () => {
