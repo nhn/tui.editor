@@ -22,7 +22,6 @@ const keyMapper = KeyMapper.getSharedInstance();
 class MarkdownEditor extends CodeMirrorExt {
   constructor(el, eventManager, options) {
     super(el, {
-      mode: 'gfm',
       dragDrop: true,
       allowDropFileTypes: ['image'],
       extraKeys: {
