@@ -16,6 +16,12 @@ export type Position = [number, number];
 
 export type Range = [Position, Position];
 
+type EventName = 'change';
+
+type EventHandlerMap = {
+  [key in EventName]: Function[];
+};
+
 interface EditResult {
   nodes: BlockNode[];
   removedNodeRange: [number, number] | null;
@@ -35,9 +41,11 @@ export class MarkdownDocument {
   public lineTexts: string[];
   private parser: Parser;
   private root: BlockNode;
+  private eventHandlerMap: EventHandlerMap;
 
   constructor(contents = '') {
     this.lineTexts = contents.split(reLineEnding);
+    this.eventHandlerMap = { change: [] };
     this.parser = new Parser();
     this.root = this.parser.parse(contents);
   }
@@ -116,6 +124,12 @@ export class MarkdownDocument {
     return [startNode, endNode] as [BlockNode, BlockNode];
   }
 
+  private trigger(eventName: EventName, param: any) {
+    this.eventHandlerMap[eventName].forEach(handler => {
+      handler(param);
+    });
+  }
+
   private parseRange(
     startLine: number,
     endLine: number,
@@ -174,10 +188,14 @@ export class MarkdownDocument {
     updateNextLineNumbers(nextNode, lineDiff);
     this.updateRootNodeState();
 
-    return {
+    const result = {
       nodes: newNodes,
       removedNodeRange: !extStartNode ? null : [extStartNode.id, extEndNode!.id]
-    };
+    } as EditResult;
+
+    this.trigger('change', result);
+
+    return result;
   }
 
   public getLineTexts() {
@@ -186,5 +204,15 @@ export class MarkdownDocument {
 
   public getRootNode() {
     return this.root;
+  }
+
+  public on(eventName: EventName, callback: Function) {
+    this.eventHandlerMap[eventName].push(callback);
+  }
+
+  public off(eventName: EventName, callback: Function) {
+    const handlers = this.eventHandlerMap[eventName];
+    const idx = handlers.indexOf(callback);
+    handlers.splice(idx, 1);
   }
 }

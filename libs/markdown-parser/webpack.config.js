@@ -34,6 +34,9 @@ module.exports = (env, { mode = 'development' }) => {
     entry: './src/__sample__/index.ts',
     mode,
     devtool: 'inline-source-map',
+    output: {
+      libraryTarget: 'umd'
+    },
     module: {
       rules: [
         {
