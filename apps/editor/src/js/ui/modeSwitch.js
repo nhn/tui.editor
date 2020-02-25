@@ -9,6 +9,7 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import UIController from './uicontroller';
 import i18n from '../i18n';
+import domUtils from '../domUtils';
 
 const MARKDOWN = 'markdown';
 const WYSIWYG = 'wysiwyg';
@@ -75,28 +76,23 @@ class ModeSwitch extends UIController {
    * show switch tab bar
    */
   show() {
-    css(this._rootElement, 'display', 'block');
+    css(this._rootElement, { display: 'block' });
   }
 
   /**
    * hide switch tab bar
    */
   hide() {
-    css(this._rootElement, 'display', 'none');
+    css(this._rootElement, { display: 'none' });
   }
 
   _render(rootElement) {
-    const createButton = (className, value) => {
-      const button = document.createElement('button');
-
-      button.className = `te-switch-button ${className}`;
-      button.innerHTML = value;
-
-      return button;
-    };
-
-    this._buttons.markdown = createButton('markdown', `${i18n.get('Markdown')}`);
-    this._buttons.wysiwyg = createButton('wysiwyg', `${i18n.get('WYSIWYG')}`);
+    this._buttons.markdown = domUtils.createElementWith(
+      `<button class="te-switch-button markdown">${i18n.get('Markdown')}</button>`
+    );
+    this._buttons.wysiwyg = domUtils.createElementWith(
+      `<button class="te-switch-button wysiwyg">${i18n.get('WYSIWYG')}</button>`
+    );
 
     this.el.appendChild(this._buttons.markdown);
     this.el.appendChild(this._buttons.wysiwyg);

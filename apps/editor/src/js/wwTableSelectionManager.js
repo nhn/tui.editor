@@ -2,7 +2,6 @@
  * @fileoverview Implements wysiwyg table selection manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import toArray from 'tui-code-snippet/collection/toArray';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
@@ -351,19 +350,18 @@ class WwTableSelectionManager {
    * @param {HTMLElement} selectionEnd end element
    */
   highlightTableCellsBy(selectionStart, selectionEnd) {
-    const trs = domUtils
-      .parents(selectionStart, '[contenteditable=true] table')[0]
-      .querySelectorAll('tr');
+    const trs = domUtils.findAll(
+      domUtils.parents(selectionStart, '[contenteditable=true] table')[0],
+      'tr'
+    );
     const selection = this.getSelectionRangeFromTable(selectionStart, selectionEnd);
     const rowFrom = selection.from.row;
     const cellFrom = selection.from.cell;
     const rowTo = selection.to.row;
     const cellTo = selection.to.cell;
 
-    toArray(trs).forEach((row, rowIndex) => {
-      const cells = row.querySelectorAll('td,th');
-
-      toArray(cells).forEach((cell, cellIndex) => {
+    trs.forEach((row, rowIndex) => {
+      domUtils.findAll(row, 'td,th').forEach((cell, cellIndex) => {
         const isFromRow = rowIndex === rowFrom;
         const isToRow = rowIndex === rowTo;
 
@@ -385,13 +383,12 @@ class WwTableSelectionManager {
    * Remove '.te-cell-selected' class from all of table Cell
    */
   removeClassAttrbuteFromAllCellsIfNeed() {
-    const cells = this.wwe
-      .getBody()
-      .querySelectorAll(
-        `td.${TABLE_CELL_SELECTED_CLASS_NAME},th.${TABLE_CELL_SELECTED_CLASS_NAME}`
-      );
+    const cells = domUtils.findAll(
+      this.wwe.getBody(),
+      `td.${TABLE_CELL_SELECTED_CLASS_NAME},th.${TABLE_CELL_SELECTED_CLASS_NAME}`
+    );
 
-    toArray(cells).forEach(node => {
+    cells.forEach(node => {
       removeClass(node, TABLE_CELL_SELECTED_CLASS_NAME);
 
       if (!node.getAttribute('class')) {

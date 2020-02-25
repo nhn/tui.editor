@@ -13,20 +13,11 @@ const TOOLTIP_CONTENT = '<div class="arrow"></div><span class="text"></span></sp
  */
 class Tooltip {
   constructor() {
-    this.el = this.createTooltipElement();
+    this.el = domUtils.createElementWith(`<div class="tui-tooltip">${TOOLTIP_CONTENT}</div>`);
 
     document.body.appendChild(this.el);
 
     this.hide();
-  }
-
-  createTooltipElement() {
-    const wrapper = document.createElement('div');
-
-    wrapper.className = 'tui-tooltip';
-    wrapper.innerHTML = TOOLTIP_CONTENT;
-
-    return wrapper;
   }
 
   /**
@@ -38,17 +29,17 @@ class Tooltip {
     const { top, left } = domUtils.getOffset(target);
 
     css(this.el, {
-      top: `${top + domUtils.getHeight(target) + 13}px`, // below the button
+      top: `${top + target.clientHeight + 13}px`, // below the button
       left: `${left + 3}px`
     });
 
     this.el.querySelector('.text').innerHTML = text;
 
-    this.el.style.display = 'block';
+    css(this.el, { display: 'block' });
   }
 
   hide() {
-    this.el.style.display = 'none';
+    css(this.el, { display: 'none' });
   }
 
   remove() {

@@ -3,7 +3,6 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import inArray from 'tui-code-snippet/array/inArray';
-import toArray from 'tui-code-snippet/collection/toArray';
 import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
@@ -11,6 +10,7 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
 
 import LayerPopup from './layerpopup';
+import domUtils from '../domUtils';
 
 const BUTTON_CLASS_PREFIX = 'te-popup-code-block-lang-';
 
@@ -70,7 +70,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
     css(this.el, 'zIndex', 10000);
 
-    this._buttons = toArray(this.el.querySelectorAll('button'));
+    this._buttons = domUtils.findAll(this.el, 'button');
     this._activateButtonByIndex(0);
   }
 
@@ -104,10 +104,9 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
     this.eventManager.listen('openPopupCodeBlockLanguages', data => {
       this.show(data.callback);
-      const elementStyle = this.el.style;
 
-      elementStyle.top = `${data.offset.top}px`;
-      elementStyle.left = `${data.offset.left}px`;
+      css(this.el, { top: `${data.offset.top}px` });
+      css(this.el, { left: `${data.offset.left}px` });
 
       this.setCurrentLanguage(data.language);
 

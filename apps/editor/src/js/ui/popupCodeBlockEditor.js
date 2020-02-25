@@ -3,8 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import extend from 'tui-code-snippet/object/extend';
-import addClass from 'tui-code-snippet/domUtil/addClass';
-import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import css from 'tui-code-snippet/domUtil/css';
 
 import LayerPopup from './layerpopup';
 import ScrollSyncSplit from './scrollSyncSplit';
@@ -12,6 +11,7 @@ import CodeBlockEditor from '../codeBlockEditor';
 import CodeBlockPreview from '../codeBlockPreview';
 import CodeBlockLanguagesCombo from './codeBlockLanguagesCombo';
 import i18n from '../i18n';
+import domUtils from '../domUtils';
 
 const CLASS_PREFIX = 'popup-editor-';
 const CLASS_OK_BUTTON = 'te-ok-button';
@@ -179,39 +179,25 @@ class PopupCodeBlockEditor extends LayerPopup {
   }
 
   _updateFitWindowButton() {
-    const fit = this.isFitToWindow();
-
-    if (fit) {
-      addClass(this._toggleFitButton, 'active');
-    } else {
-      removeClass(this._toggleFitButton, 'active');
-    }
+    domUtils.toggleClass(this._toggleFitButton, 'active', this.isFitToWindow());
   }
 
   _updatePreviewButton() {
-    const splitView = this._scrollSyncSplit.isSplitView();
-
-    if (splitView) {
-      addClass(this._togglePreviewButton, 'active');
-    } else {
-      removeClass(this._togglePreviewButton, 'active');
-    }
+    domUtils.toggleClass(this._toggleFitButton, 'active', this._scrollSyncSplit.isSplitView());
   }
 
   _updateScrollButton() {
     if (this._scrollSyncSplit.isSplitView()) {
-      this._toggleScrollButton.style.display = 'inline-block';
+      css(this._toggleScrollButton, { display: 'inline-block' });
     } else {
-      this._toggleScrollButton.style.display = 'none';
+      css(this._toggleScrollButton, { display: 'none' });
     }
 
-    const srollSynced = this._scrollSyncSplit.isScrollSynced();
-
-    if (srollSynced) {
-      addClass(this._toggleScrollButton, 'active');
-    } else {
-      removeClass(this._toggleScrollButton, 'active');
-    }
+    domUtils.toggleClass(
+      this._toggleScrollButton,
+      'active',
+      this._scrollSyncSplit.isScrollSynced()
+    );
   }
 
   _focusEditor(cursorToEnd) {

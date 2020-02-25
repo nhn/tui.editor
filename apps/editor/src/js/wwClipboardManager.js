@@ -4,6 +4,7 @@
  */
 import toArray from 'tui-code-snippet/collection/toArray';
 import browser from 'tui-code-snippet/browser/browser';
+import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
@@ -191,10 +192,14 @@ class WwClipboardManager {
     const element = document.createElement('div');
 
     element.setAttribute('contenteditable', true);
-    element.setAttribute(
-      'style',
-      'position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;'
-    );
+    css(element, {
+      position: 'fixed',
+      overflow: 'hidden',
+      top: 0,
+      right: '100%',
+      width: '1px',
+      height: '1px'
+    });
 
     document.body.appendChild(element);
 
@@ -256,9 +261,7 @@ class WwClipboardManager {
    * @private
    */
   _preProcessPtag(node) {
-    const pTags = node.querySelectorAll('p');
-
-    toArray(pTags).forEach(pTag => {
+    domUtils.findAll(node, 'p').forEach(pTag => {
       if (pTag.lastChild && pTag.lastChild.nodeName !== 'BR') {
         pTag.appendChild(document.createElement('br'));
       }

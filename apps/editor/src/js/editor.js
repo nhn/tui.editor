@@ -7,6 +7,7 @@ import isExisty from 'tui-code-snippet/type/isExisty';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import extend from 'tui-code-snippet/object/extend';
+import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
@@ -561,7 +562,7 @@ class ToastUIEditor {
         height = `${height}px`;
       }
 
-      this.options.el.style.height = height;
+      css(this.options.el, { height });
       this._height = height;
     }
 

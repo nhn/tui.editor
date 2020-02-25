@@ -27,14 +27,14 @@ const Outdent = CommandManager.command(
       if (node && isExecutable(node)) {
         wwe.getEditor().saveUndoState();
 
-        const nodeClasses = node.getAttribute('class');
+        const nodeClasses = node.className;
 
         wwe.getEditor().decreaseListLevel();
 
         node = getCurrentLi(wwe);
 
         if (node && nodeClasses) {
-          node.setAttribute('class', nodeClasses);
+          node.className = nodeClasses;
         }
       }
     }
@@ -52,7 +52,7 @@ const Outdent = CommandManager.command(
 function isExecutable(currentLiNode) {
   const nodeName = domUtils.getNodeName(currentLiNode.nextSibling);
 
-  return !(nodeName === 'OL' || nodeName === 'UL');
+  return nodeName !== 'OL' && nodeName !== 'UL';
 }
 
 /**

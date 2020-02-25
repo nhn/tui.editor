@@ -36,35 +36,30 @@ const Indent = CommandManager.command(
 
         wwe.getEditor().saveUndoState();
 
-        nodeClasses = node.getAttribute('class');
-        prevClasses = prev.getAttribute('class');
+        nodeClasses = node.className;
+        prevClasses = prev.className;
 
-        node.class = false;
-        prev.class = false;
+        node.className = '';
+        prev.className = '';
 
         if (next) {
-          nextClasses = next.getAttribute('class');
+          nextClasses = next.className;
 
           const divElements = toArray(next.children).filter(child => matches(child, 'div'));
 
           if (!divElements.length) {
-            next.class = false;
+            next.className = '';
           }
         }
 
         wwe.getEditor().increaseListLevel();
         listManager.mergeList(node);
 
-        if (nodeClasses) {
-          node.setAttribute('class', nodeClasses);
-        }
+        node.className = nodeClasses;
+        prev.className = prevClasses;
 
-        if (prevClasses) {
-          prev.setAttribute('class', prevClasses);
-        }
-
-        if (nextClasses) {
-          next.setAttribute('class', nextClasses);
+        if (next) {
+          next.className = nextClasses;
         }
       }
     }

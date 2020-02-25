@@ -2,7 +2,6 @@
  * @fileoverview Implements wysiwyg task manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import toArray from 'tui-code-snippet/collection/toArray';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
@@ -157,9 +156,7 @@ class WwTaskManager {
    */
   _removeTaskListClass() {
     // because task-list class is block merge normal list and task list
-    const taskList = this.wwe.getBody().querySelectorAll('.task-list');
-
-    toArray(taskList).forEach(node => {
+    domUtils.findAll(this.wwe.getBody(), '.task-list').forEach(node => {
       removeClass(node, 'task-list');
     });
   }

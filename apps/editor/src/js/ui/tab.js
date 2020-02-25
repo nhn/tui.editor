@@ -2,11 +2,11 @@
  * @fileoverview Implements tab button ui
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import toArray from 'tui-code-snippet/collection/toArray';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import UIController from './uicontroller';
+import domUtils from '../domUtils';
 
 const CLASS_TAB_ACTIVE = 'te-tab-active';
 
@@ -56,9 +56,9 @@ class Tab extends UIController {
   }
 
   _findButtonContained(element, selector, text) {
-    const nodeList = element.querySelectorAll(selector);
-
-    return toArray(nodeList).filter(node => new RegExp(text).test(node.textContent));
+    return domUtils
+      .findAll(element, selector)
+      .filter(node => new RegExp(text).test(node.textContent));
   }
 
   /**

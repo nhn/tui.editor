@@ -76,7 +76,7 @@ const TableRemoveCol = CommandManager.command(
 function getCellByRange(range) {
   let cell = range.startContainer;
 
-  if (!(domUtils.getNodeName(cell) === 'TD' || domUtils.getNodeName(cell) === 'TH')) {
+  if (domUtils.getNodeName(cell) !== 'TD' && !domUtils.getNodeName(cell) === 'TH') {
     cell = domUtils.parentsUntil(cell, 'tr');
   }
 
@@ -107,10 +107,9 @@ function removeColByCell(cell) {
   const [table] = domUtils.parents(cell, 'table');
 
   if (table) {
-    const trs = table.querySelectorAll('tr');
     const index = inArray(cell, toArray(cell.parentNode.childNodes));
 
-    toArray(trs).forEach(tr => {
+    domUtils.findAll(table, 'tr').forEach(tr => {
       const td = tr.children[index];
 
       domUtils.remove(td);

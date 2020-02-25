@@ -26,9 +26,7 @@ const TableRemove = CommandManager.command(
 
       if (sq.hasFormat('TABLE')) {
         sq.saveUndoState(range);
-        const $table = domUtils.closest(range.startContainer, 'table');
-
-        domUtils.remove($table);
+        domUtils.remove(domUtils.closest(range.startContainer, 'table'));
       }
 
       wwe.focus();

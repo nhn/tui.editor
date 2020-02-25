@@ -2,7 +2,6 @@
  * @fileoverview Implements wysiwyg p tag manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import toArray from 'tui-code-snippet/collection/toArray';
 import matches from 'tui-code-snippet/domUtil/matches';
 
 import domUtils from './domUtils';
@@ -47,11 +46,9 @@ class WwPManager {
    */
   _splitPtagContentLines(html) {
     if (html) {
-      const wrapper = document.createElement('div');
+      const wrapper = domUtils.createElementWith(`<div>${html}</div>`);
 
-      wrapper.innerHTML = html;
-
-      toArray(wrapper.querySelectorAll('p')).forEach(para => {
+      domUtils.findAll(wrapper, 'p').forEach(para => {
         const content = para.innerHTML;
         const lines = content.split(/<br>/gi);
         const lastIndex = lines.length - 1;
@@ -90,9 +87,7 @@ class WwPManager {
    * @private
    */
   _ensurePtagContentWrappedWithDiv() {
-    const pTags = this.wwe.getBody().querySelectorAll('p');
-
-    toArray(pTags).forEach(node => {
+    domUtils.findAll(this.wwe.getBody(), 'p').forEach(node => {
       if (!node.querySelectorAll('div').length) {
         domUtils.wrapInner(node, 'div');
       }
@@ -108,9 +103,7 @@ class WwPManager {
    * @private
    */
   _unwrapPtags() {
-    const divTags = this.wwe.getBody().querySelectorAll('div');
-
-    toArray(divTags).forEach(node => {
+    domUtils.findAll(this.wwe.getBody(), 'div').forEach(node => {
       if (domUtils.parent(node, 'p')) {
         domUtils.unwrap(node);
       }

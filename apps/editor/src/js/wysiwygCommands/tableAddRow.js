@@ -2,7 +2,6 @@
  * @fileoverview Implements table add row WysiwygCommand
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import toArray from 'tui-code-snippet/collection/toArray';
 import browser from 'tui-code-snippet/browser/browser';
 import matches from 'tui-code-snippet/domUtil/matches';
 
@@ -95,9 +94,7 @@ function getNewRow(tr) {
   const cloned = tr.cloneNode(true);
   const htmlString = browser.msie ? '' : '<br />';
 
-  const tds = cloned.querySelectorAll('td');
-
-  toArray(tds).forEach(td => {
+  domUtils.findAll(cloned, 'td').forEach(td => {
     td.innerHTML = htmlString;
   });
 

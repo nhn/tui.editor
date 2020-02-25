@@ -73,8 +73,8 @@ function getNumberOfCols(wwe) {
 function getCellByRange(range) {
   let cell = range.startContainer;
 
-  if (!(domUtils.getNodeName(cell) === 'TD' || domUtils.getNodeName(cell) === 'TH')) {
-    cell = domUtils.getParentUntil(cell, 'TR');
+  if (domUtils.getNodeName(cell) !== 'TD' && domUtils.getNodeName(cell) !== 'TH') {
+    cell = domUtils.parentsUntil(cell, 'tr');
   }
 
   return cell;
@@ -90,11 +90,10 @@ function addColToCellAfter(cell, numberOfCols = 1) {
   const [table] = domUtils.parents(cell, 'table');
 
   if (table) {
-    const trs = table.querySelectorAll('tr');
     const index = inArray(cell, toArray(cell.parentNode.childNodes));
     let cellToAdd;
 
-    toArray(trs).forEach(tr => {
+    domUtils.findAll(table, 'tr').forEach(tr => {
       const isTBody = domUtils.getNodeName(tr.parentNode) === 'TBODY';
       const isMSIE = browser.msie;
       const currentCell = tr.children[index];

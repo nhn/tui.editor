@@ -5,6 +5,7 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * Paragraph
@@ -34,7 +35,7 @@ const Paragraph = CommandManager.command(
             if (block.nodeName.match(/h\d/i)) {
               appendChildrenTo(newFragment, block.children);
             } else if (block.nodeName.match(/ul|ol/i)) {
-              toArray(block.querySelectorAll('li')).forEach(listItem => {
+              domUtils.findAll(block, 'li').forEach(listItem => {
                 appendChildrenTo(newFragment, listItem.children);
               });
             } else {

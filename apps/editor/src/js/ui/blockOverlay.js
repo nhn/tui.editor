@@ -88,8 +88,8 @@ class BlockOverlay {
     const outerHeight = domUtils.getOuterHeight(this._attachedElement);
 
     domUtils.setOffset(this.el, offset);
-    domUtils.setWidth(this.el, outerWidth);
-    domUtils.setHeight(this.el, outerHeight);
+    css(this.el, { width: `${outerWidth}px` });
+    css(this.el, { height: `${outerHeight}px` });
   }
 
   /**
@@ -98,7 +98,7 @@ class BlockOverlay {
    * @returns {HTMLElement} - attached element
    */
   getAttachedElement() {
-    return this._attachedElement ? this._attachedElement : null;
+    return this._attachedElement || null;
   }
 
   /**
@@ -118,13 +118,13 @@ class BlockOverlay {
   setVisibility(visibility) {
     if (visibility && this._attachedElement) {
       if (!this.getVisibility()) {
-        this.el.style.display = 'block';
+        css(this.el, { display: 'block' });
         this.syncLayout();
         this.onShow();
       }
     } else if (!visibility) {
       if (this.getVisibility()) {
-        this.el.style.display = 'none';
+        css(this.el, { display: 'none' });
         this.onHide();
       }
     }

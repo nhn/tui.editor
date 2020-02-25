@@ -70,11 +70,12 @@ function htmlSanitizer(html, needHtmlText) {
  * @param {HTMLElement} html root element
  */
 function removeUnnecessaryTags(html) {
-  toArray(
-    html.querySelectorAll(
-      'script, iframe, textarea, form, button, select, meta, style, link, title, embed, object, details, summary'
-    )
-  ).forEach(node => {
+  const removedTags = domUtils.findAll(
+    html,
+    'script, iframe, textarea, form, button, select, meta, style, link, title, embed, object, details, summary'
+  );
+
+  removedTags.forEach(node => {
     domUtils.remove(node);
   });
 }
@@ -85,7 +86,7 @@ function removeUnnecessaryTags(html) {
  * @param {HTMLElement} html root element
  */
 function leaveOnlyWhitelistAttribute(html) {
-  toArray(html.querySelectorAll('*')).forEach(node => {
+  domUtils.findAll(html, '*').forEach(node => {
     const attrs = node.attributes;
     const blacklist = toArray(attrs).filter(attr => {
       const isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
@@ -112,7 +113,7 @@ function leaveOnlyWhitelistAttribute(html) {
 function removeInvalidAttributeValues(html) {
   for (const attr in ATTR_VALUE_BLACK_LIST_RX) {
     if (ATTR_VALUE_BLACK_LIST_RX.hasOwnProperty(attr)) {
-      toArray(html.querySelectorAll(`[${attr}]`)).forEach(node => {
+      domUtils.findAll(html, `[${attr}]`).forEach(node => {
         const attrs = node.attributes;
         const valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr];
         const attrItem = attrs.getNamedItem(attr);

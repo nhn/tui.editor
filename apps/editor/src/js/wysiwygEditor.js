@@ -778,7 +778,7 @@ class WysiwygEditor {
       overflow: 'auto',
       height: '100%'
     });
-    css(this.editorContainerEl.parentNode, 'height', isNumber(height) ? `${height}px` : height);
+    css(this.editorContainerEl.parentNode, { height: isNumber(height) ? `${height}px` : height });
 
     const containerStyles = this.editorContainerEl.style;
     const bodyStyles = this.getBody().style;
@@ -787,7 +787,7 @@ class WysiwygEditor {
       parseInt(containerStyles.paddingTop, 10) - parseInt(containerStyles.paddingBottom, 10);
     const marginHeight = parseInt(bodyStyles.marginTop, 10) - parseInt(bodyStyles.marginBottom, 10);
 
-    css(this.getBody(), 'minHeight', `${height - marginHeight - paddingHeight}px`);
+    css(this.getBody(), { minHeight: `${height - marginHeight - paddingHeight}px` });
   }
 
   /**

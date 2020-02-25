@@ -6,7 +6,6 @@ import MarkdownIt from 'markdown-it';
 import toMark from '@toast-ui/to-mark';
 
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
-import toArray from 'tui-code-snippet/collection/toArray';
 
 import htmlSanitizer from './htmlSanitizer';
 import taskList from './markdownItPlugins/markdownitTaskPlugin';
@@ -18,6 +17,7 @@ import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
 import codeBackticks from './markdownItPlugins/markdownitBackticksRenderer';
 import { linkAttribute } from './markdownItPlugins/markdownitInlinePlugin';
 import codeBlockManager from './codeBlockManager';
+import domUtils from './domUtils';
 
 const markdownitHighlight = new MarkdownIt({
   html: true,
@@ -155,11 +155,9 @@ class Convertor {
    * @private
    */
   _removeBrToMarkPassAttributeInCode(renderedHTML) {
-    const wrapper = document.createElement('div');
+    const wrapper = domUtils.createElementWith(`<div>${renderedHTML}</div>`);
 
-    wrapper.innerHTML = renderedHTML;
-
-    toArray(wrapper.querySelectorAll('code, pre')).forEach(codeOrPre => {
+    domUtils.findAll(wrapper, 'code, pre').forEach(codeOrPre => {
       const codeEelement = codeOrPre;
 
       codeEelement.innerHTML = codeEelement.innerHTML.replace(

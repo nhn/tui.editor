@@ -5,6 +5,7 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isString from 'tui-code-snippet/type/isString';
+import css from 'tui-code-snippet/domUtil/css';
 import matches from 'tui-code-snippet/domUtil/matches';
 
 const FIND_ZWB = /\u200B/g;
@@ -464,7 +465,7 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
       if (targetRowElement) {
         tableCellElement = children(targetRowElement, 'td,th')[index];
       } else if (currentContainer[0] && isSiblingContainerExists) {
-        tableCellElement = siblingContainer.querySelectorAll('td,th')[index];
+        tableCellElement = findAll(siblingContainer, 'td,th')[index];
       }
     }
   }
@@ -909,11 +910,26 @@ function createElementWith(contents, target) {
 
   if (target) {
     target.appendChild(firstChild);
-  } else {
-    document.body.appendChild(firstChild);
   }
 
   return firstChild;
+}
+
+/**
+ * Find nodes matching by selector
+ * @param {HTMLElement} element - target element
+ * @param {string} selector - selector to find nodes
+ * @returns {Array.<Node>} found nodes
+ * @ignore
+ */
+function findAll(element, selector) {
+  const nodeList = toArray(element.querySelectorAll(selector));
+
+  if (nodeList.length) {
+    return nodeList;
+  }
+
+  return [];
 }
 
 /**
@@ -1198,18 +1214,6 @@ function empty(node) {
 }
 
 /**
- * Gets positon value of target element
- * @param {HTMLElement} element - target element
- * @returns {Object.<string, number>} offset values
- * @ignore
- */
-function getPosition(element) {
-  const { offsetLeft, offsetTop } = element;
-
-  return { left: offsetLeft, top: offsetTop };
-}
-
-/**
  * Sets offset value of target element
  * @param {HTMLElement} element - target element
  * @returns {Object.<string, number>} offset values
@@ -1218,8 +1222,8 @@ function getPosition(element) {
 function setOffset(element, offset) {
   const { top, left } = element.parentNode.getBoundingClientRect();
 
-  element.style.top = `${offset.top - top - document.body.scrollTop}px`;
-  element.style.left = `${offset.left - left - document.body.scrollLeft}px`;
+  css(element, { top: `${offset.top - top - document.body.scrollTop}px` });
+  css(element, { left: `${offset.left - left - document.body.scrollLeft}px` });
 }
 
 /**
@@ -1239,63 +1243,6 @@ function getOffset(element) {
 }
 
 /**
- * Sets width value to target element
- * @param {HTMLElement} element - target element
- * @param {number} value - width value
- * @ignore
- */
-function setWidth(element, value) {
-  element.style.width = `${value}px`;
-}
-
-/**
- * Gets width value of target element
- * @param {HTMLElement} element - target element
- * @returns {number} width value
- * @ignore
- */
-function getWidth(element) {
-  const { width } = getComputedStyle(element);
-
-  return parseInt(width, 10);
-}
-
-/**
- * Sets height value to target element
- * @param {HTMLElement} element - target element
- * @param {number} value - height value
- * @ignore
- */
-function setHeight(element, value) {
-  element.style.height = `${value}px`;
-}
-
-/**
- * Gets height value of target element
- * @param {HTMLElement} element - target element
- * @returns {number} height value
- * @ignore
- */
-function getHeight(element) {
-  const { height } = getComputedStyle(element);
-
-  return parseInt(height, 10);
-}
-
-/**
- * Sets outer width value to target element
- * @param {HTMLElement} element - target element
- * @param {number} value - outer width value
- * @ignore
- */
-function setOuterWidth(element, value) {
-  const widthValue = parseInt(getComputedStyle(element).width, 10);
-  const padding = element.offsetWidth - widthValue;
-
-  element.style.width = `${value - padding}px`;
-}
-
-/**
  * Gets outer width value of target element
  * @param {HTMLElement} element - target element
  * @param {boolean} includedMargin - whether to include margir or not
@@ -1312,19 +1259,6 @@ function getOuterWidth(element, includedMargin) {
   }
 
   return widthValue;
-}
-
-/**
- * Sets outer height value to target element
- * @param {HTMLElement} element - target element
- * @param {number} value - outer height value
- * @ignore
- */
-function setOuterHeight(element, value) {
-  const heightValue = parseInt(getComputedStyle(element).height, 10);
-  const padding = element.offsetHeight - heightValue;
-
-  element.style.height = `${value - padding}px`;
 }
 
 /**
@@ -1350,11 +1284,12 @@ function getOuterHeight(element, includedMargin) {
  * Toggles class name of target element
  * @param {Element} element - target element
  * @param {string} className - class name to toggle
+ * @param {boolean} toggled - whether to toggle or not by condition
  * @ignore
  */
-const toggleClass = (element, className) => {
+const toggleClass = (element, className, toggled) => {
   if (element) {
-    element.classList.toggle(className);
+    element.classList.toggle(className, toggled);
   }
 };
 
@@ -1402,6 +1337,7 @@ export default {
   getParentNodeBy,
   getSiblingNodeBy,
   createElementWith,
+  findAll,
   isContain,
   closest,
   parent,
@@ -1418,16 +1354,9 @@ export default {
   unwrap,
   remove,
   empty,
-  getPosition,
   setOffset,
   getOffset,
-  setWidth,
-  getWidth,
-  setHeight,
-  getHeight,
-  setOuterWidth,
   getOuterWidth,
-  setOuterHeight,
   getOuterHeight,
   toggleClass
 };

@@ -2,6 +2,7 @@
  * @fileoverview default UI
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
@@ -193,10 +194,10 @@ class DefaultUI {
 
   _markdownTabControl() {
     if (this._editor.isMarkdownMode() && this._editor.getCurrentPreviewStyle() === 'tab') {
-      this._markdownTabSection.style.display = 'block';
+      css(this._markdownTabSection, { display: 'block' });
       this._markdownTab.activate(i18n.get('Write'));
     } else {
-      this._markdownTabSection.style.display = 'none';
+      css(this._markdownTabSection, { display: 'none' });
     }
   }
 

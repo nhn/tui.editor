@@ -136,9 +136,7 @@ class WwTableManager {
 
       clipboardContainer.appendChild(fragment);
 
-      const cells = clipboardContainer.querySelectorAll(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
-
-      toArray(cells).forEach(cell => {
+      domUtils.findAll(clipboardContainer, `.${TABLE_CELL_SELECTED_CLASS_NAME}`).forEach(cell => {
         removeClass(cell, TABLE_CELL_SELECTED_CLASS_NAME);
       });
     }
@@ -679,9 +677,9 @@ class WwTableManager {
    * @private
    */
   _unwrapBlockInTable() {
-    const blocks = this.wwe.getBody().querySelectorAll('td div,th div,tr>br,td>br,th>br');
+    const blocks = domUtils.findAll(this.wwe.getBody(), 'td div,th div,tr>br,td>br,th>br');
 
-    toArray(blocks).forEach(node => {
+    blocks.forEach(node => {
       if (domUtils.getNodeName(node) === 'BR') {
         const parentNodeName = domUtils.getNodeName(node.parentNode);
         const isInTableCell = /TD|TH/.test(parentNodeName);
@@ -702,9 +700,9 @@ class WwTableManager {
    * @private
    */
   _insertDefaultBlockBetweenTable() {
-    const tables = this.wwe.getBody().querySelectorAll('table');
+    const tables = domUtils.findAll(this.wwe.getBody(), 'table');
 
-    toArray(tables).forEach(node => {
+    tables.forEach(node => {
       if (node.nextElementSibling && node.nextElementSibling.nodeName === 'TABLE') {
         const insertedElement = document.createElement('div');
 
@@ -807,13 +805,11 @@ class WwTableManager {
    */
   _getTableDataFromTable(fragment) {
     const tableData = [];
-    const trs = fragment.querySelectorAll('tr');
 
-    toArray(trs).forEach(tr => {
+    domUtils.findAll(fragment, 'tr').forEach(tr => {
       const trData = [];
-      const tds = tr.children;
 
-      toArray(tds).forEach(cell => {
+      toArray(tr.children).forEach(cell => {
         trData.push(cell.textContent);
       });
 
@@ -1133,9 +1129,7 @@ class WwTableManager {
   }
 
   _removeEmptyRows(table) {
-    const trs = table.querySelectorAll('tr');
-
-    toArray(trs).forEach(tr => {
+    domUtils.findAll(table, 'tr').forEach(tr => {
       if (!tr.cells.length) {
         tr.parentNode.removeChild(tr);
       }
@@ -1254,9 +1248,8 @@ class WwTableManager {
 
   _appendCellForAllRow(table, columnDifference) {
     const brString = isIE10 ? '' : '<br />';
-    const trs = table.querySelectorAll('tr');
 
-    toArray(trs).forEach((row, i) => {
+    domUtils.findAll(table, 'tr').forEach((row, i) => {
       let tagName;
 
       for (let index = columnDifference; index < 0; index += 1) {
@@ -1275,9 +1268,7 @@ class WwTableManager {
     const newRow = trs[trs.length - 1].cloneNode();
     const brHTMLSting = isIE10 ? '' : '<br />';
 
-    const tds = newRow.querySelectorAll('td');
-
-    toArray(tds).forEach(td => {
+    domUtils.findAll(newRow, 'td').forEach(td => {
       td.innerHTML = brHTMLSting;
     });
 

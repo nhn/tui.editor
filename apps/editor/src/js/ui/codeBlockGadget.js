@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 
+import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
@@ -44,19 +45,19 @@ class CodeBlockGadget extends BlockOverlay {
     this._languageLabel = domUtils.createElementWith('<span>text</span>');
     domUtils.append(this.el, this._languageLabel);
 
-    this._$buttonOpenModalEditor = domUtils.createElementWith(
+    this._buttonOpenModalEditor = domUtils.createElementWith(
       `<button type="button">Editor</button>`
     );
-    domUtils.append(this.el, this._$buttonOpenModalEditor);
+    domUtils.append(this.el, this._buttonOpenModalEditor);
 
     this._eventManager.emit('removeEditor', () => {
-      off(this._$buttonOpenModalEditor, 'click');
-      this._$buttonOpenModalEditor = null;
+      off(this._buttonOpenModalEditor, 'click');
+      this._buttonOpenModalEditor = null;
     });
   }
 
   _initDOMEvent() {
-    on(this._$buttonOpenModalEditor, 'click', () => this._openPopupCodeBlockEditor());
+    on(this._buttonOpenModalEditor, 'click', () => this._openPopupCodeBlockEditor());
   }
 
   _openPopupCodeBlockEditor() {
@@ -83,8 +84,8 @@ class CodeBlockGadget extends BlockOverlay {
     offset.left = offset.left + (outerWidth - GADGET_WIDTH);
 
     domUtils.setOffset(this.el, offset);
-    domUtils.setHeight(this.el, GADGET_HEIGHT);
-    domUtils.setWidth(this.el, GADGET_WIDTH);
+    css(this.el, { height: `${GADGET_HEIGHT}px` });
+    css(this.el, { width: `${GADGET_WIDTH}px` });
   }
 
   /**

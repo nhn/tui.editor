@@ -133,9 +133,7 @@ class WwListManager {
    * @private
    */
   _findAndRemoveEmptyList() {
-    const list = this.wwe.getBody().querySelectorAll(UL_OR_OL);
-
-    toArray(list).forEach(node => {
+    domUtils.findAll(this.wwe.getBody(), UL_OR_OL).forEach(node => {
       if (!FIND_LI_ELEMENT.test(node.innerHTML)) {
         domUtils.remove(node);
       }
@@ -150,9 +148,7 @@ class WwListManager {
   _removeBranchListAll(root) {
     root = !root ? this.wwe.getBody() : root;
 
-    const listsInLi = root.querySelectorAll('li ul, li ol');
-
-    toArray(listsInLi).forEach(node => {
+    domUtils.findAll(root, 'li ul, li ol').forEach(node => {
       if (!node || node.previousSibling) {
         return;
       }
@@ -189,9 +185,7 @@ class WwListManager {
    */
   _convertToArbitraryNestingList(html) {
     const NESTED_LIST_QUERY = 'li > ul, li > ol';
-    const wrapper = document.createElement('div');
-
-    wrapper.innerHTML = html;
+    const wrapper = domUtils.createElementWith(`<div>${html}</div>`);
 
     let nestedList = wrapper.querySelector(NESTED_LIST_QUERY);
 
@@ -217,9 +211,7 @@ class WwListManager {
    */
   _convertFromArbitraryNestingList(html) {
     const NESTED_LIST_QUERY = 'ol > ol, ol > ul, ul > ol, ul > ul';
-    const wrapperDiv = document.createElement('div');
-
-    wrapperDiv.innerHTML = html;
+    const wrapperDiv = domUtils.createElementWith(`<div>${html}</div>`);
 
     let nestedList = wrapperDiv.querySelector(NESTED_LIST_QUERY);
 

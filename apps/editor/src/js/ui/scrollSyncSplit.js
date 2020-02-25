@@ -4,6 +4,7 @@
  */
 import $ from 'jquery';
 
+import css from 'tui-code-snippet/domUtil/css';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
@@ -162,11 +163,7 @@ class ScrollSyncSplit {
   }
 
   _setScrollSync(activate) {
-    if (activate) {
-      addClass(this._el, CLASS_SCROLL_SYNC);
-    } else {
-      removeClass(this._el, CLASS_SCROLL_SYNC);
-    }
+    domUtils.toggleClass(this._el, CLASS_SCROLL_SYNC, activate);
   }
 
   /**
@@ -229,9 +226,10 @@ class ScrollSyncSplit {
     const followingElementHeight = Math.max(followingElement.offsetHeight, wrapperHeight);
     const followingElementTopMax = scrollingElementHeight - followingElementHeight;
 
-    scrollingElement.style.top = '0px';
-    followingElement.style.top = `${(scrollTop / scrollingElementScrollMax) *
-      followingElementTopMax}px`;
+    css(scrollingElement, { top: 0 });
+    css(followingElement, {
+      top: `${(scrollTop / scrollingElementScrollMax) * followingElementTopMax}px`
+    });
   }
 
   /**

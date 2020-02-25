@@ -2,8 +2,6 @@
  * @fileoverview Implements wysiwyg heading manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import toArray from 'tui-code-snippet/collection/toArray';
-
 import domUtils from './domUtils';
 
 const FIND_HEADING_RX = /h[\d]/i;
@@ -73,9 +71,9 @@ class WwHeadingManager {
    * @private
    */
   _wrapDefaultBlockToHeadingInner() {
-    const headingTags = this.wwe.getBody().querySelectorAll('h1, h2, h3, h4, h5, h6');
+    const headingTags = domUtils.findAll(this.wwe.getBody(), 'h1, h2, h3, h4, h5, h6');
 
-    toArray(headingTags).forEach(headingTag => {
+    headingTags.forEach(headingTag => {
       const exceptedForWrapping = !domUtils.children(headingTag, 'div, p').length;
 
       if (exceptedForWrapping) {
@@ -119,9 +117,7 @@ class WwHeadingManager {
   _insertEmptyBlockToPrevious(range) {
     this.wwe.getEditor().saveUndoState(range);
 
-    const element = document.createElement('div');
-
-    element.appendChild(document.createElement('br'));
+    const element = domUtils.createElementWith('<div><br></div>');
 
     domUtils.insertBefore(
       domUtils.getParentUntil(range.startContainer, this.wwe.getBody()),

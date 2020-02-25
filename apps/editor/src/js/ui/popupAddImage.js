@@ -2,12 +2,12 @@
  * @fileoverview Implements PopupAddImage
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import toArray from 'tui-code-snippet/collection/toArray';
 import extend from 'tui-code-snippet/object/extend';
 
 import LayerPopup from './layerpopup';
 import Tab from './tab';
 import i18n from '../i18n';
+import domUtils from '../domUtils';
 
 const CLASS_IMAGE_URL_INPUT = 'te-image-url-input';
 const CLASS_IMAGE_FILE_INPUT = 'te-image-file-input';
@@ -163,9 +163,7 @@ class PopupAddImage extends LayerPopup {
   }
 
   _resetInputs() {
-    const inputs = this.el.querySelectorAll('input');
-
-    toArray(inputs).forEach(input => {
+    domUtils.findAll(this.el, 'input').forEach(input => {
       input.value = '';
     });
   }

@@ -2,8 +2,6 @@
  * @fileoverview Implements table remove row WysiwygCommand
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import toArray from 'tui-code-snippet/collection/toArray';
-
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
 
@@ -93,7 +91,7 @@ function getSelectedRows(firstSelectedCell, rangeInformation, table) {
     endRowIndex -= 1;
   }
 
-  return toArray(table.querySelectorAll('tr')).slice(startRowIndex, endRowIndex + 1);
+  return domUtils.findAll(table, 'tr').slice(startRowIndex, endRowIndex + 1);
 }
 
 /**

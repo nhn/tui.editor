@@ -3,6 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import extend from 'tui-code-snippet/object/extend';
+import css from 'tui-code-snippet/domUtil/css';
 
 import CodeMirror from 'codemirror';
 
@@ -201,7 +202,7 @@ class CodeMirrorExt {
   setHeight(height) {
     const contentWrapper = this.getWrapperElement();
 
-    contentWrapper.style.height = `${height}px`;
+    css(contentWrapper, { height: `${height}px` });
   }
 
   /**
@@ -211,7 +212,7 @@ class CodeMirrorExt {
   setMinHeight(minHeight) {
     const contentWrapper = this.getWrapperElement();
 
-    contentWrapper.style.minHeight = `${minHeight}px`;
+    css(contentWrapper, { minHeight: `${minHeight}px` });
   }
 
   /**

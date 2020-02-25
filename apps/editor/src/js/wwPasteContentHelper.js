@@ -3,6 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import toArray from 'tui-code-snippet/collection/toArray';
+import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
@@ -109,13 +110,13 @@ class WwPasteContentHelper {
    * @private
    */
   _pasteFirstAid(container) {
-    const blockTags = 'div, section, article, aside, nav, menus, p';
-
     container.innerHTML = htmlSanitizer(container.innerHTML, true);
 
-    toArray(container.querySelectorAll('*')).forEach(node => {
+    domUtils.findAll(container, '*').forEach(node => {
       this._removeStyles(node);
     });
+
+    const blockTags = 'div, section, article, aside, nav, menus, p';
 
     this._unwrapIfNonBlockElementHasBr(container);
     this._unwrapNestedBlocks(container, blockTags);
@@ -151,9 +152,9 @@ class WwPasteContentHelper {
    * @private
    */
   _unwrapIfNonBlockElementHasBr(container) {
-    const nonBlockElements = container.querySelectorAll('span, a, b, em, i, s');
+    const nonBlockElements = domUtils.findAll(container, 'span, a, b, em, i, s');
 
-    toArray(nonBlockElements).forEach(node => {
+    nonBlockElements.forEach(node => {
       const brChildren = domUtils.children(node, 'br');
 
       if (brChildren.length && node.nodeName !== 'LI' && node.nodeName !== 'UL') {
@@ -169,11 +170,11 @@ class WwPasteContentHelper {
    * @private
    */
   _unwrapNestedBlocks(container, blockTags) {
-    const leafElements = toArray(container.querySelectorAll('*')).filter(
-      node => !matches(node, 'b,s,i,em,code,span,hr') && !node.firstChild
-    );
+    const leafElements = domUtils
+      .findAll(container, '*')
+      .filter(node => !matches(node, 'b,s,i,em,code,span,hr') && !node.firstChild);
 
-    toArray(leafElements).forEach(node => {
+    leafElements.forEach(node => {
       let leafElement = node.nodeName === 'BR' ? node.parentNode : node;
 
       while (domUtils.parents(leafElement, blockTags).length) {
@@ -195,9 +196,7 @@ class WwPasteContentHelper {
    * @private
    */
   _removeUnnecessaryBlocks(container, blockTags) {
-    const foundBlocks = container.querySelectorAll(blockTags);
-
-    toArray(foundBlocks).forEach(blockElement => {
+    domUtils.findAll(container, blockTags).forEach(blockElement => {
       const { tagName } = blockElement;
       const isDivElement = tagName === 'DIV';
       const isInListItem = !!domUtils.parent(blockElement, 'li');
@@ -235,7 +234,7 @@ class WwPasteContentHelper {
       node.removeAttribute('style');
 
       if (colorValue) {
-        node.style.color = colorValue;
+        css(node, { color: colorValue });
       } else {
         domUtils.unwrap(node.childNodes);
       }
@@ -332,9 +331,7 @@ class WwPasteContentHelper {
    * @private
    */
   _unwrapFragmentFirstChildForPasteAsInline(node) {
-    const brs = node.querySelectorAll('br');
-
-    toArray(brs).forEach(br => domUtils.remove(br));
+    domUtils.findAll(node, 'br').forEach(br => domUtils.remove(br));
 
     return node.childNodes;
   }
@@ -458,9 +455,9 @@ class WwPasteContentHelper {
   _updateTableIDClassName(container) {
     const tableManager = this.wwe.componentManager.getManager('table');
 
-    const tables = container.querySelectorAll('table');
+    const tables = domUtils.findAll(container, 'table');
 
-    toArray(tables).forEach(table => {
+    tables.forEach(table => {
       const foundClassName = table.className.match(/.*\s*(te-content-table-\d+)\s*.*/);
 
       if (foundClassName) {
@@ -468,7 +465,7 @@ class WwPasteContentHelper {
       }
     });
 
-    toArray(tables).forEach(table => {
+    tables.forEach(table => {
       addClass(table, tableManager.getTableIDClassName());
     });
   }

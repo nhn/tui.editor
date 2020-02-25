@@ -2,6 +2,8 @@
  * @fileoverview Implements preview
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import css from 'tui-code-snippet/domUtil/css';
+
 import LazyRunner from './lazyRunner';
 import domUtils from './domUtils';
 
@@ -33,11 +35,7 @@ class Preview {
    * @private
    */
   _initContentSection() {
-    const el = document.createElement('div');
-
-    el.className = 'tui-editor-contents';
-
-    this._previewContent = el;
+    this._previewContent = domUtils.createElementWith(`<div class="tui-editor-contents"></div>`);
     this.el.appendChild(this._previewContent);
   }
 
@@ -83,7 +81,7 @@ class Preview {
    * @param {number} height - Height for preview container
    */
   setHeight(height) {
-    this.el.style.height = `${height}px`;
+    css(this.el, { height: `${height}px` });
   }
 
   /**
@@ -91,7 +89,7 @@ class Preview {
    * @param {number} minHeight - min height
    */
   setMinHeight(minHeight) {
-    this.el.style.minHeight = `${minHeight}px`;
+    css(this.el, { minHeight: `${minHeight}px` });
   }
 
   /**

@@ -8,7 +8,6 @@ import i18n from '../i18n';
 import Toolbar from './toolbar';
 import PopupDropdownToolbar from './popupDropdownToolbar';
 import ToolbarItemFactory from './toolbarItemFactory';
-import domUtils from '../domUtils';
 
 const MORE_BUTTON_NAME = 'more';
 
@@ -96,9 +95,10 @@ class DefaultToolbar extends Toolbar {
     this.removeItem(this._moreButton, false);
     super.insertItem(0, this._moreButton);
 
-    const toolbarHeight = domUtils.getHeight(this.el);
     const defaultToolbarItems = this.getItems();
-    const overflowItems = defaultToolbarItems.filter(item => item.el.offsetTop > toolbarHeight);
+    const overflowItems = defaultToolbarItems.filter(
+      item => item.el.offsetTop > this.el.clientHeight
+    );
 
     overflowItems.forEach(item => {
       this.removeItem(item, false);

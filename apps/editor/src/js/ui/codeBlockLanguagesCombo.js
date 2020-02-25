@@ -8,6 +8,7 @@ import hasClass from 'tui-code-snippet/domUtil/hasClass';
 
 import i18n from '../i18n';
 import KeyMapper from '../keyMapper';
+import domUtils from '../domUtils';
 
 /**
  * Class CodeBlockLanguagesCombo
@@ -23,8 +24,10 @@ class CodeBlockLanguagesCombo {
   }
 
   _initDOM() {
-    this._inputLanguage = this._createInputElement();
-    this._wrapper = this._createWrapperElement();
+    this._inputLanguage = domUtils.createElementWith(
+      `<div><input type="text" maxlength="20" placeholder="${i18n.get('Choose language')}" /></div>`
+    );
+    this._wrapper = domUtils.createElementWith(`<span clsss="te-input-language"></span>`);
     this._wrapper.appendChild(this._inputLanguage);
   }
 
@@ -39,24 +42,6 @@ class CodeBlockLanguagesCombo {
       ev.preventDefault();
       this._toggleFocus();
     });
-  }
-
-  _createInputElement() {
-    const element = document.createElement('div');
-
-    element.innerHTML = `<input type="text" maxlength="20" placeholder="${i18n.get(
-      'Choose language'
-    )}" />`;
-
-    return element.firstChild;
-  }
-
-  _createWrapperElement() {
-    const element = document.createElement('span');
-
-    element.className = 'te-input-language';
-
-    return element;
   }
 
   /**

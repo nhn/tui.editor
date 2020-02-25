@@ -4,8 +4,6 @@
  */
 import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
-import addClass from 'tui-code-snippet/domUtil/addClass';
-import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 
 import LayerPopup from './layerpopup';
@@ -23,21 +21,17 @@ export const DISABLED_MENU_CLASS_NAME = 'te-context-menu-disabled';
 class PopupTableUtils extends LayerPopup {
   constructor(options) {
     const POPUP_CONTENT = `
-            <button type="button" class="te-table-add-row">${i18n.get('Add row')}</button>
-            <button type="button" class="te-table-add-col">${i18n.get('Add col')}</button>
-            <button type="button" class="te-table-remove-row">${i18n.get('Remove row')}</button>
-            <button type="button" class="te-table-remove-col">${i18n.get('Remove col')}</button>
-            <hr/>
-            <button type="button" class="te-table-col-align-left">${i18n.get('Align left')}</button>
-            <button type="button" class="te-table-col-align-center">${i18n.get(
-              'Align center'
-            )}</button>
-            <button type="button" class="te-table-col-align-right">${i18n.get(
-              'Align right'
-            )}</button>
-            <hr/>
-            <button type="button" class="te-table-remove">${i18n.get('Remove table')}</button>
-        `;
+      <button type="button" class="te-table-add-row">${i18n.get('Add row')}</button>
+      <button type="button" class="te-table-add-col">${i18n.get('Add col')}</button>
+      <button type="button" class="te-table-remove-row">${i18n.get('Remove row')}</button>
+      <button type="button" class="te-table-remove-col">${i18n.get('Remove col')}</button>
+      <hr/>
+      <button type="button" class="te-table-col-align-left">${i18n.get('Align left')}</button>
+      <button type="button" class="te-table-col-align-center">${i18n.get('Align center')}</button>
+      <button type="button" class="te-table-col-align-right">${i18n.get('Align right')}</button>
+      <hr/>
+      <button type="button" class="te-table-remove">${i18n.get('Remove table')}</button>
+    `;
 
     options = extend(
       {
@@ -129,11 +123,7 @@ class PopupTableUtils extends LayerPopup {
   _disableRemoveRowMenu(target) {
     const menu = this.el.querySelector(`.${REMOVE_ROW_MENU_CLASS_NAME}`);
 
-    if (target.nodeName === 'TH') {
-      addClass(menu, DISABLED_MENU_CLASS_NAME);
-    } else {
-      removeClass(menu, DISABLED_MENU_CLASS_NAME);
-    }
+    domUtils.toggleClass(menu, DISABLED_MENU_CLASS_NAME, target.nodeName === 'TH');
   }
 }
 

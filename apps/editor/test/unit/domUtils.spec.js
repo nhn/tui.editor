@@ -604,6 +604,26 @@ describe('domUtils', () => {
     });
   });
 
+  describe('findAll() returns nodes matching by selector', () => {
+    beforeEach(() => {
+      container.innerHTML = '<div>foo</div><div>bar</div>';
+    });
+
+    it('to array when found', () => {
+      const result = domUtils.findAll(container, 'div');
+
+      expect(result.length).toBe(2);
+      expect(result[0].textContent).toBe('foo');
+      expect(result[1].textContent).toBe('bar');
+    });
+
+    it('to empty array when not found', () => {
+      const result = domUtils.findAll(container, '.s');
+
+      expect(result.length).toBe(0);
+    });
+  });
+
   it('isContain() checks whether target node contains child node', () => {
     container.innerHTML = '<div><p>foo</p></div>';
 

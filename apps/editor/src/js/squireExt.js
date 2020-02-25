@@ -96,7 +96,7 @@ class SquireExt extends Squire {
             if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
               nextBlock = this.createDefaultBlock();
 
-              toArray(current.childNodes).forEach(() => appendChidToNextBlock);
+              toArray(current.childNodes).forEach(appendChidToNextBlock);
 
               lastNodeOfNextBlock = nextBlock.lastChild;
 

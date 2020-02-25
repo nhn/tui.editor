@@ -5,13 +5,10 @@
 import isString from 'tui-code-snippet/type/isString';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import isArray from 'tui-code-snippet/type/isArray';
-import addClass from 'tui-code-snippet/domUtil/addClass';
-import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import UIController from './uicontroller';
 import Button from './button';
 import ToolbarItem from './toolbarItem';
-import ToolbarDivider from './toolbarDivider';
 import ToolbarItemFactory from './toolbarItemFactory';
 import domUtils from '../domUtils';
 
@@ -57,11 +54,7 @@ class Toolbar extends UIController {
     eventManager.listen('stateChange', ev => {
       this._items.forEach(item => {
         if (item._state) {
-          if (ev[item._state]) {
-            addClass(item.el, 'active');
-          } else {
-            removeClass(item.el, 'active');
-          }
+          domUtils.toggleClass(item.el, 'active', !!ev[item._state]);
         }
       });
     });
@@ -264,21 +257,6 @@ class Toolbar extends UIController {
     } else {
       this.el.appendChild(btn);
     }
-  }
-
-  /**
-   * add divider
-   * @returns {HTMLElement} - created divider element
-   * @deprecated
-   */
-  addDivider() {
-    const element = document.createElement('div');
-
-    element.className = ToolbarDivider.className;
-
-    this.el.appendChild(element);
-
-    return element;
   }
 
   /**

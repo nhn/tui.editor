@@ -188,9 +188,7 @@ class WwCodeBlockManager {
       node = this.wwe.getBody();
     }
 
-    const preTags = node.querySelectorAll('pre');
-
-    toArray(preTags).forEach(pre => {
+    domUtils.findAll(node, 'pre').forEach(pre => {
       const codeTag = pre.querySelector('code');
       let lang, numberOfBackticks;
 

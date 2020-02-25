@@ -4,12 +4,10 @@
  */
 import $ from 'jquery';
 
-import toArray from 'tui-code-snippet/collection/toArray';
 import extend from 'tui-code-snippet/object/extend';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isString from 'tui-code-snippet/type/isString';
 import addClass from 'tui-code-snippet/domUtil/addClass';
-import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import css from 'tui-code-snippet/domUtil/css';
 import domUtils from '../domUtils';
@@ -93,15 +91,7 @@ class LayerPopup extends UIController {
     }
 
     if (options.content) {
-      const element = document.createElement('div');
-      const { content } = options;
-
-      if (isString(content)) {
-        element.innerHTML = content;
-      } else {
-        element.appendChild(content);
-      }
-      this.content = element.innerHTML;
+      this.content = options.content;
     } else {
       this.content = options.textContent;
     }
@@ -126,9 +116,9 @@ class LayerPopup extends UIController {
     const buttons = this.options.headerButtons;
 
     if (buttons) {
-      const closeButtons = this.el.querySelectorAll(`.${CLASS_PREFIX}close-button`);
+      const closeButtons = domUtils.findAll(this.el, `.${CLASS_PREFIX}close-button`);
 
-      toArray(closeButtons).forEach(button => {
+      closeButtons.forEach(button => {
         domUtils.remove(button);
       });
 
@@ -228,7 +218,7 @@ class LayerPopup extends UIController {
    * hide popup
    */
   hide() {
-    css(this.el, 'display', 'none');
+    css(this.el, { display: 'none' });
     this._isShow = false;
     this.trigger('hidden', this);
   }
@@ -237,7 +227,7 @@ class LayerPopup extends UIController {
    * show popup
    */
   show() {
-    css(this.el, 'display', 'block');
+    css(this.el, { display: 'block' });
     this._isShow = true;
     this.trigger('shown', this);
   }
@@ -277,11 +267,7 @@ class LayerPopup extends UIController {
    * @ignore
    */
   setFitToWindow(fit) {
-    if (fit) {
-      addClass(this.el, CLASS_FIT_WINDOW);
-    } else {
-      removeClass(this.el, CLASS_FIT_WINDOW);
-    }
+    domUtils.toggleClass(this.el, CLASS_FIT_WINDOW, fit);
   }
 
   /**
