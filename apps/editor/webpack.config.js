@@ -18,6 +18,7 @@ const ENTRY_EDITOR_CSS = './src/css/tui-editor.css';
 const ENTRY_CONTENT_CSS = './src/css/tui-editor-contents.css';
 const ENTRY_IMAGE_DIR = './src/image';
 
+const isDevelopAll = process.argv.indexOf('--all') >= 0;
 const isProduction = process.argv.indexOf('--mode=production') >= 0;
 const isMinified = process.argv.indexOf('--minify') >= 0;
 
@@ -153,9 +154,12 @@ function addCopyingAssetsPlugin(config) {
 }
 
 function setDevelopConfig(config) {
-  config.entry = {
-    Editor: ENTRY_MAIN
-  };
+  if (isDevelopAll) {
+    config.entry = { editor: ENTRY_MAIN };
+  } else {
+    config.entry = { 'editor-all': ENTRY_MAIN };
+    config.externals = [];
+  }
 
   config.devtool = 'inline-source-map';
   config.devServer = {
@@ -164,8 +168,6 @@ function setDevelopConfig(config) {
     port: 8080,
     disableHostCheck: true
   };
-
-  config.plugins.push(new webpack.IgnorePlugin(/viewer$/));
 }
 
 function setProductionConfig(config) {
