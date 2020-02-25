@@ -3,8 +3,6 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import css from 'tui-code-snippet/domUtil/css';
-
-import LazyRunner from './lazyRunner';
 import domUtils from './domUtils';
 
 /**
@@ -17,17 +15,13 @@ import domUtils from './domUtils';
  * @ignore
  */
 class Preview {
-  constructor(el, eventManager, convertor, isViewer, delayTime = 800) {
+  constructor(el, eventManager, convertor, isViewer) {
     this.eventManager = eventManager;
     this.convertor = convertor;
     this.el = el;
     this.isViewer = !!isViewer;
 
     this._initContentSection();
-
-    this.lazyRunner = new LazyRunner();
-
-    this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, delayTime, this);
   }
 
   /**
