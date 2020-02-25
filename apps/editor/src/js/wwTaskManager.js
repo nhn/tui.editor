@@ -2,7 +2,9 @@
  * @fileoverview Implements wysiwyg task manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import hasClass from 'tui-code-snippet/domUtil/hasClass';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import domUtils from './domUtils';
 
@@ -46,7 +48,7 @@ class WwTaskManager {
       ) {
         // Prevent cursor focusing
         ev.preventDefault();
-        $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+        domUtils.toggleClass(ev.target, TASK_CHECKED_CLASS_NAME);
       }
     });
   }
@@ -70,9 +72,9 @@ class WwTaskManager {
       if (this.isInTaskList(range)) {
         this.wwe.defer(() => {
           const newRange = this.wwe.getRange();
-          const $li = $(newRange.startContainer).closest('li');
+          const li = domUtils.closest(newRange.startContainer, 'li');
 
-          $li.removeClass(TASK_CHECKED_CLASS_NAME);
+          removeClass(li, TASK_CHECKED_CLASS_NAME);
         });
       }
     });
@@ -99,12 +101,10 @@ class WwTaskManager {
     ) {
       li = range.startContainer;
     } else {
-      li = $(range.startContainer)
-        .parents('li')
-        .get(0);
+      [li] = domUtils.parents(range.startContainer, 'li');
     }
 
-    return $(li).hasClass(TASK_CLASS_NAME);
+    return hasClass(li, TASK_CLASS_NAME);
   }
 
   /**
@@ -112,15 +112,15 @@ class WwTaskManager {
    * @param {Node} node target
    */
   unformatTask(node) {
-    const $li = $(node).closest('li');
+    const li = domUtils.closest(node, 'li');
 
-    $li.removeClass(TASK_CLASS_NAME);
-    $li.removeClass(TASK_CHECKED_CLASS_NAME);
+    removeClass(li, TASK_CLASS_NAME);
+    removeClass(li, TASK_CHECKED_CLASS_NAME);
 
-    $li.removeAttr(TASK_ATTR_NAME);
+    li.removeAttribute(TASK_ATTR_NAME);
 
-    if (!$li.attr('class')) {
-      $li.removeAttr('class');
+    if (!li.getAttribute('class')) {
+      li.removeAttribute('class');
     }
   }
 
@@ -129,11 +129,10 @@ class WwTaskManager {
    * @param {Node} node target
    */
   formatTask(node) {
-    const $selected = $(node);
-    const $li = $selected.closest('li');
+    const li = domUtils.closest(node, 'li');
 
-    $li.addClass(TASK_CLASS_NAME);
-    $li.attr(TASK_ATTR_NAME, '');
+    addClass(li, TASK_CLASS_NAME);
+    li.setAttribute(TASK_ATTR_NAME, '');
   }
 
   /**
@@ -157,12 +156,9 @@ class WwTaskManager {
    */
   _removeTaskListClass() {
     // because task-list class is block merge normal list and task list
-    this.wwe
-      .get$Body()
-      .find('.task-list')
-      .each((index, node) => {
-        $(node).removeClass('task-list');
-      });
+    domUtils.findAll(this.wwe.getBody(), '.task-list').forEach(node => {
+      removeClass(node, 'task-list');
+    });
   }
 }
 

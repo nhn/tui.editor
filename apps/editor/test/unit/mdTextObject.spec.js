@@ -2,21 +2,18 @@
  * @fileoverview test markdown text object
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import MdTextObject from '@/mdTextObject';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
 describe('MdTextObject', () => {
-  let cm, doc, mde, to;
+  let cm, doc, mde, to, container;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    mde = new MarkdownEditor($container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager());
 
     cm = mde.getEditor();
 

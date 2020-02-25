@@ -3,8 +3,14 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
+
 import extend from 'tui-code-snippet/object/extend';
 import isExisty from 'tui-code-snippet/type/isExisty';
+import isString from 'tui-code-snippet/type/isString';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import hasClass from 'tui-code-snippet/domUtil/hasClass';
+import css from 'tui-code-snippet/domUtil/css';
+import domUtils from '../domUtils';
 
 import UIController from './uicontroller';
 
@@ -34,12 +40,12 @@ const LAYOUT_TEMPLATE_MODAL = `<div class="${CLASS_PREFIX}wrapper">
  * @typedef {object} LayerPopupOption
  * @property {string[]} [openerCssQuery] - Css Query list to bind clickevent that open popup
  * @property {string[]} [closerCssQuery] - Css Query list to bind clickevent that close popup
- * @property {jQuery} $el - popup root element
- * @property {jQuery|string} [content] - popup content that html string or jQuery element
+ * @property {HTMLElement} el - popup root element
+ * @property {HTMLElement|string} [content] - popup content that html string or element
  * @property {string} [textContent] - popup text content
  * @property {string} title - popup title
  * @property {boolean} [header] - whether to draw header
- * @property {jQuery} [$target] - element to append popup
+ * @property {HTMLElement} [target] - element to append popup
  * @property {boolean} modal - true: modal, false: modeless
  * @property {string} [headerButtons] - replace header(close) button
  */
@@ -53,7 +59,7 @@ class LayerPopup extends UIController {
     options = extend(
       {
         header: true,
-        $target: $('body'),
+        target: document.body,
         textContent: ''
       },
       options
@@ -61,7 +67,7 @@ class LayerPopup extends UIController {
     super({
       tagName: 'div',
       className: options.modal ? `${CLASS_PREFIX}modal-background` : `${CLASS_PREFIX}wrapper`,
-      rootElement: options.$el
+      rootElement: options.el
     });
 
     this._initInstance(options);
@@ -77,17 +83,17 @@ class LayerPopup extends UIController {
    * @private
    */
   _initInstance(options) {
-    this._$target = options.$target;
+    this._target = options.target;
 
-    if (options.$el) {
-      this.$el = options.$el;
+    if (options.el) {
+      this.el = options.el;
       this._isExternalHtmlUse = true;
     }
 
     if (options.content) {
-      this.$content = $(options.content);
+      this.content = options.content;
     } else {
-      this.$content = options.textContent;
+      this.content = options.textContent;
     }
 
     this.options = options;
@@ -104,22 +110,26 @@ class LayerPopup extends UIController {
       if (isExisty(this.options.title)) {
         this.setTitle(this.options.title);
       }
-      this.setContent(this.$content);
+      this.setContent(this.content);
     }
 
     const buttons = this.options.headerButtons;
 
     if (buttons) {
-      this.$el.find(`.${CLASS_PREFIX}close-button`).remove();
+      const closeButtons = domUtils.findAll(this.el, `.${CLASS_PREFIX}close-button`);
 
-      const $buttonWrapper = this.$el.find(`.${CLASS_PREFIX}header-buttons`);
+      closeButtons.forEach(button => {
+        domUtils.remove(button);
+      });
 
-      $buttonWrapper.empty();
-      $buttonWrapper.append($(buttons));
+      const buttonWrapper = this.el.querySelector(`.${CLASS_PREFIX}header-buttons`);
+
+      domUtils.empty(buttonWrapper);
+      buttonWrapper.innerHTML = buttons;
     }
 
     if (this.options.css) {
-      this.$el.css(this.options.css);
+      css(this.el, this.options.css);
     }
   }
 
@@ -153,28 +163,36 @@ class LayerPopup extends UIController {
     if (!this._isExternalHtmlUse) {
       const layout = options.modal ? LAYOUT_TEMPLATE_MODAL : LAYOUT_TEMPLATE_MODELESS;
 
-      this.$el.html(layout);
-      this.$el.addClass(options.className);
+      this.el.innerHTML = layout;
+
+      if (options.className) {
+        addClass(this.el, ...options.className.split(/\s+/g));
+      }
       this.hide();
-      this._$target.append(this.$el);
-      this.$body = this.$el.find(`.${CLASS_PREFIX}body`);
+      this._target.appendChild(this.el);
+      this.body = this.el.querySelector(`.${CLASS_PREFIX}body`);
 
       if (!options.header) {
-        this.$el.find(`.${CLASS_PREFIX}header`).remove();
+        domUtils.remove(this.el.querySelector(`.${CLASS_PREFIX}header`));
       }
     } else {
       this.hide();
-      this._$target.append(this.$el);
+      this._target.appendChild(this.el);
     }
   }
 
   /**
    * set popup content
-   * @param {jQuery|HTMLElement|string} $content - content
+   * @param {HTMLElement|string} content - content
    */
-  setContent($content) {
-    this.$body.empty();
-    this.$body.append($content);
+  setContent(content) {
+    domUtils.empty(this.body);
+
+    if (isString(content)) {
+      this.body.innerHTML = content;
+    } else {
+      this.body.appendChild(content);
+    }
   }
 
   /**
@@ -182,10 +200,10 @@ class LayerPopup extends UIController {
    * @param {string} title - title text
    */
   setTitle(title) {
-    const $title = this.$el.find(`.${CLASS_PREFIX}title`);
+    const titleWrapper = this.el.querySelector(`.${CLASS_PREFIX}title`);
 
-    $title.empty();
-    $title.append(title);
+    domUtils.empty(titleWrapper);
+    titleWrapper.innerHTML = title;
   }
 
   /**
@@ -193,14 +211,14 @@ class LayerPopup extends UIController {
    * @returns {HTMLElement} - title html element
    */
   getTitleElement() {
-    return this.$el.find(`.${CLASS_PREFIX}title`).get(0);
+    return this.el.querySelector(`.${CLASS_PREFIX}title`);
   }
 
   /**
    * hide popup
    */
   hide() {
-    this.$el.css('display', 'none');
+    css(this.el, { display: 'none' });
     this._isShow = false;
     this.trigger('hidden', this);
   }
@@ -209,7 +227,7 @@ class LayerPopup extends UIController {
    * show popup
    */
   show() {
-    this.$el.css('display', 'block');
+    css(this.el, { display: 'block' });
     this._isShow = true;
     this.trigger('shown', this);
   }
@@ -238,8 +256,8 @@ class LayerPopup extends UIController {
       $(closerCssQuery).off(`.${this._id}`);
     }
 
-    this.$el.remove();
-    this.$el = null;
+    domUtils.remove(this.el);
+    this.el = null;
   }
 
   /**
@@ -249,7 +267,7 @@ class LayerPopup extends UIController {
    * @ignore
    */
   setFitToWindow(fit) {
-    this.$el.toggleClass(CLASS_FIT_WINDOW, fit);
+    domUtils.toggleClass(this.el, CLASS_FIT_WINDOW, fit);
   }
 
   /**
@@ -259,7 +277,7 @@ class LayerPopup extends UIController {
    * @ignore
    */
   isFitToWindow() {
-    return this.$el.hasClass(CLASS_FIT_WINDOW);
+    return hasClass(this.el, CLASS_FIT_WINDOW);
   }
 
   /**

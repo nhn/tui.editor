@@ -2,8 +2,8 @@
  * @fileoverview Implements wysiwyg list manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import toArray from 'tui-code-snippet/collection/toArray';
+import matches from 'tui-code-snippet/domUtil/matches';
 
 import domUtils from './domUtils';
 
@@ -89,14 +89,13 @@ class WwListManager {
 
       if (this.wwe.getEditor().hasFormat('LI')) {
         ev.preventDefault();
-        const $ul = $(range.startContainer)
-          .closest('li')
-          .children(UL_OR_OL);
+
+        const ul = domUtils.children(domUtils.closest(range.startContainer, 'li'), UL_OR_OL);
 
         this.eventManager.emit('command', 'Outdent');
 
-        if ($ul.length && !$ul.prev().length) {
-          this._removeBranchList($ul);
+        if (ul.length && !ul.previousSibling) {
+          this._removeBranchList(ul);
         }
 
         isNeedNext = false;
@@ -110,11 +109,9 @@ class WwListManager {
         if (this.wwe.getEditor().hasFormat('LI')) {
           this.wwe.defer(() => {
             const afterRange = this.wwe.getRange();
-            const $li = $(afterRange.startContainer)
-              .parents('li')
-              .eq(0);
+            const [li] = domUtils.parents(afterRange.startContainer, 'li');
 
-            this._removeBranchListAll($li);
+            this._removeBranchListAll(li);
           });
         }
       }
@@ -136,25 +133,22 @@ class WwListManager {
    * @private
    */
   _findAndRemoveEmptyList() {
-    this.wwe
-      .get$Body()
-      .find(UL_OR_OL)
-      .each((index, node) => {
-        if (!FIND_LI_ELEMENT.test(node.innerHTML)) {
-          $(node).remove();
-        }
-      });
+    domUtils.findAll(this.wwe.getBody(), UL_OR_OL).forEach(node => {
+      if (!FIND_LI_ELEMENT.test(node.innerHTML)) {
+        domUtils.remove(node);
+      }
+    });
   }
 
   /**
    * Remove branch lists all from body
-   * @param {jQuery|HTMLElement} $root root to remove branch list
+   * @param {HTMLElement} root root to remove branch list
    * @private
    */
-  _removeBranchListAll($root) {
-    $root = !$root ? this.wwe.get$Body() : $($root);
+  _removeBranchListAll(root) {
+    root = !root ? this.wwe.getBody() : root;
 
-    $root.find('li ul, li ol').each((idx, node) => {
+    domUtils.findAll(root, 'li ul, li ol').forEach(node => {
       if (!node || node.previousSibling) {
         return;
       }
@@ -168,21 +162,17 @@ class WwListManager {
    * @private
    */
   _removeBranchList(list) {
-    const $list = $(list);
-    let $branchRoot = $list;
+    let branchRoot = list;
 
-    while (
-      !$branchRoot[0].previousSibling &&
-      $branchRoot[0].parentElement.tagName.match(/UL|OL|LI/g)
-    ) {
-      $branchRoot = $branchRoot.parent();
+    while (!branchRoot.previousSibling && branchRoot.parentElement.tagName.match(/UL|OL|LI/g)) {
+      branchRoot = branchRoot.parentElement;
     }
 
-    const $firstLi = $branchRoot.children('li').eq(0);
+    const [firstLi] = domUtils.children(branchRoot, 'li');
+    const unwrappedLIs = domUtils.unwrap(list.children);
 
-    $branchRoot.prepend($list.children().unwrap());
-
-    $firstLi.remove();
+    domUtils.prepend(branchRoot, unwrappedLIs);
+    domUtils.remove(firstLi);
   }
 
   /**
@@ -195,9 +185,7 @@ class WwListManager {
    */
   _convertToArbitraryNestingList(html) {
     const NESTED_LIST_QUERY = 'li > ul, li > ol';
-    const wrapper = document.createElement('div');
-
-    wrapper.innerHTML = html;
+    const wrapper = domUtils.createElementWith(`<div>${html}</div>`);
 
     let nestedList = wrapper.querySelector(NESTED_LIST_QUERY);
 
@@ -223,9 +211,7 @@ class WwListManager {
    */
   _convertFromArbitraryNestingList(html) {
     const NESTED_LIST_QUERY = 'ol > ol, ol > ul, ul > ol, ul > ul';
-    const wrapperDiv = document.createElement('div');
-
-    wrapperDiv.innerHTML = html;
+    const wrapperDiv = domUtils.createElementWith(`<div>${html}</div>`);
 
     let nestedList = wrapperDiv.querySelector(NESTED_LIST_QUERY);
 
@@ -290,21 +276,15 @@ class WwListManager {
     let nextLine;
 
     if (domUtils.isTextNode(start)) {
-      start = $(start)
-        .parents(DIV_OR_LI)
-        .first()
-        .get(0);
+      [start] = domUtils.parents(start, DIV_OR_LI);
     }
 
     if (domUtils.isTextNode(end)) {
-      end = $(end)
-        .parents(DIV_OR_LI)
-        .first()
-        .get(0);
+      [end] = domUtils.parents(end, DIV_OR_LI);
     }
 
     for (let line = start; needNext; line = nextLine) {
-      if ($(line).is(DIV_OR_LI)) {
+      if (matches(line, DIV_OR_LI)) {
         lines.push(line);
 
         if (line === end) {
@@ -335,12 +315,12 @@ class WwListManager {
       // current line was the last line in ul/ol
       // while we have lines those has not been processed yet.
       nextLine = currentLine.parentNode.nextElementSibling;
-    } else if ($(nextLine).is(UL_OR_OL)) {
+    } else if (matches(nextLine, UL_OR_OL)) {
       // we don't sure firstChild is LI. arbtrary list can have another ol/ul
       nextLine = nextLine.querySelector('li');
     }
 
-    if ($(nextLine).is(DIV_OR_LI) || nextLine === end) {
+    if (matches(nextLine, DIV_OR_LI) || nextLine === end) {
       return nextLine;
     }
 
@@ -358,14 +338,14 @@ class WwListManager {
     const nextList = currentList.nextElementSibling;
 
     if (currentList.firstElementChild === currentLine) {
-      if (prevList && $(prevList).is(UL_OR_OL)) {
+      if (prevList && matches(prevList, UL_OR_OL)) {
         this._mergeList(currentList, prevList);
         currentList = prevList;
       }
     }
 
     if (currentList.lastElementChild === currentLine) {
-      if (nextList && $(nextList).is(UL_OR_OL)) {
+      if (nextList && matches(nextList, UL_OR_OL)) {
         this._mergeList(nextList, currentList);
       }
     }
@@ -380,7 +360,7 @@ class WwListManager {
   _mergeList(list, targetList) {
     let listItem = list.firstElementChild;
 
-    if (targetList && $(targetList).is(UL_OR_OL)) {
+    if (targetList && matches(targetList, UL_OR_OL)) {
       while (listItem) {
         const temp = listItem.nextElementSibling;
 
@@ -398,15 +378,10 @@ class WwListManager {
    */
   isAvailableMakeListInTable() {
     const selectionManager = this.wwe.componentManager.getManager('tableSelection');
-    const $selectedCells = selectionManager.getSelectedCells();
+    const selectedCells = selectionManager.getSelectedCells();
     const sq = this.wwe.getEditor();
 
-    return (
-      $selectedCells.length === 0 &&
-      sq.hasFormat('table') &&
-      !sq.hasFormat('OL') &&
-      !sq.hasFormat('UL')
-    );
+    return selectedCells && sq.hasFormat('table') && !sq.hasFormat('OL') && !sq.hasFormat('UL');
   }
 
   /**
@@ -679,7 +654,7 @@ class WwListManager {
         if (existingListNode.nodeName !== listNodeName) {
           const { childNodes } = existingListNode;
 
-          forEachArray(childNodes, () => {
+          toArray(childNodes).forEach(() => {
             listNode.appendChild(existingListNode.firstChild);
           });
 

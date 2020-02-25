@@ -105,7 +105,7 @@ describe('PopupAddImage', () => {
       $('.te-image-url-input').val('imageUrlText');
       $('.te-alt-text-input').val('altText');
 
-      popup.$el
+      $(popup.el)
         .find('.te-tab button')
         .eq(1)
         .trigger('click');

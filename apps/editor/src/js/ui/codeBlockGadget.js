@@ -4,7 +4,13 @@
  */
 import $ from 'jquery';
 
+import css from 'tui-code-snippet/domUtil/css';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import on from 'tui-code-snippet/domEvent/on';
+import off from 'tui-code-snippet/domEvent/off';
+
 import BlockOverlay from './blockOverlay';
+import domUtils from '../domUtils';
 
 const EVENT_LANGUAGE_CHANGED = 'language-changed';
 const GADGET_WIDTH = 250;
@@ -34,19 +40,24 @@ class CodeBlockGadget extends BlockOverlay {
   }
 
   _initDOM() {
-    this.$el.addClass('code-block-header');
-    this._$languageLabel = $('<span>text</span>');
-    this.$el.append(this._$languageLabel);
-    this._$buttonOpenModalEditor = $(`<button type="button">Editor</button>`);
-    this.$el.append(this._$buttonOpenModalEditor);
+    addClass(this.el, 'code-block-header');
+
+    this._languageLabel = domUtils.createElementWith('<span>text</span>');
+    domUtils.append(this.el, this._languageLabel);
+
+    this._buttonOpenModalEditor = domUtils.createElementWith(
+      `<button type="button">Editor</button>`
+    );
+    domUtils.append(this.el, this._buttonOpenModalEditor);
+
     this._eventManager.emit('removeEditor', () => {
-      this._$buttonOpenModalEditor.off('click');
-      this._$buttonOpenModalEditor = null;
+      off(this._buttonOpenModalEditor, 'click');
+      this._buttonOpenModalEditor = null;
     });
   }
 
   _initDOMEvent() {
-    this._$buttonOpenModalEditor.on('click', () => this._openPopupCodeBlockEditor());
+    on(this._buttonOpenModalEditor, 'click', () => this._openPopupCodeBlockEditor());
   }
 
   _openPopupCodeBlockEditor() {
@@ -57,7 +68,7 @@ class CodeBlockGadget extends BlockOverlay {
     const attachedElement = this.getAttachedElement();
     const language = attachedElement ? attachedElement.getAttribute('data-language') : null;
 
-    this._$languageLabel.text(language ? language : 'text');
+    this._languageLabel.textContent = language ? language : 'text';
   }
 
   /**
@@ -66,14 +77,15 @@ class CodeBlockGadget extends BlockOverlay {
    * @override
    */
   syncLayout() {
-    const $attachedElement = $(this.getAttachedElement());
-    const offset = $attachedElement.offset();
+    const attachedElement = this.getAttachedElement();
+    const offset = domUtils.getOffset(attachedElement);
+    const outerWidth = domUtils.getOuterWidth(attachedElement);
 
-    offset.left = offset.left + ($attachedElement.outerWidth() - GADGET_WIDTH);
+    offset.left = offset.left + (outerWidth - GADGET_WIDTH);
 
-    this.$el.offset(offset);
-    this.$el.height(GADGET_HEIGHT);
-    this.$el.width(GADGET_WIDTH);
+    domUtils.setOffset(this.el, offset);
+    css(this.el, { height: `${GADGET_HEIGHT}px` });
+    css(this.el, { width: `${GADGET_WIDTH}px` });
   }
 
   /**

@@ -2,7 +2,6 @@
  * @fileoverview Convertor have responsible to convert markdown and html
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
 import toMark from '@toast-ui/to-mark';
 
@@ -18,6 +17,7 @@ import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
 import codeBackticks from './markdownItPlugins/markdownitBackticksRenderer';
 import { linkAttribute } from './markdownItPlugins/markdownitInlinePlugin';
 import codeBlockManager from './codeBlockManager';
+import domUtils from './domUtils';
 
 const markdownitHighlight = new MarkdownIt({
   html: true,
@@ -155,17 +155,18 @@ class Convertor {
    * @private
    */
   _removeBrToMarkPassAttributeInCode(renderedHTML) {
-    const $wrapperDiv = $('<div />');
+    const wrapper = domUtils.createElementWith(`<div>${renderedHTML}</div>`);
 
-    $wrapperDiv.html(renderedHTML);
+    domUtils.findAll(wrapper, 'code, pre').forEach(codeOrPre => {
+      const codeEelement = codeOrPre;
 
-    $wrapperDiv.find('code, pre').each((i, codeOrPre) => {
-      const $code = $(codeOrPre);
-
-      $code.html($code.html().replace(/\sdata-tomark-pass\s(\/?)&gt;/g, '$1&gt;'));
+      codeEelement.innerHTML = codeEelement.innerHTML.replace(
+        /\sdata-tomark-pass\s(\/?)&gt;/g,
+        '$1&gt;'
+      );
     });
 
-    renderedHTML = $wrapperDiv.html();
+    renderedHTML = wrapper.innerHTML;
 
     return renderedHTML;
   }

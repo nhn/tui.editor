@@ -2,8 +2,6 @@
  * @fileoverview test component manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import WysiwygEditor from '@/wysiwygEditor';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
@@ -20,8 +18,8 @@ describe('ComponentManager', () => {
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($(container), em);
-    mde = new MarkdownEditor($(container2), em);
+    wwe = new WysiwygEditor(container, em);
+    mde = new MarkdownEditor(container2, em);
 
     wwe.init();
 

@@ -2,25 +2,22 @@
  * @fileoverview test markdown editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
 describe('MarkdownEditor', () => {
-  let mde, em;
+  let mde, em, container;
 
   beforeEach(() => {
-    const $container = $('<div />');
-
-    $('body').append($container);
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     em = new EventManager();
-    mde = new MarkdownEditor($container, em);
+    mde = new MarkdownEditor(container, em);
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   it('when something change emit contentChangedFromMarkdown event', done => {

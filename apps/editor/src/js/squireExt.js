@@ -2,9 +2,7 @@
  * @fileoverview Implements squire extension
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import Squire from '@toast-ui/squire';
-import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import toArray from 'tui-code-snippet/collection/toArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isFunction from 'tui-code-snippet/type/isFunction';
@@ -27,10 +25,10 @@ class SquireExt extends Squire {
     this._decorateHandlerToCancelable(isIElt11 ? 'beforecut' : 'cut');
     this._decorateHandlerToCancelable(isIElt11 ? 'beforepaste' : 'paste');
 
-    this.get$Body = () => {
-      this.$body = this.$body || $(this.getRoot());
+    this.getBody = () => {
+      this.body = this.body || this.getRoot();
 
-      return this.$body;
+      return this.body;
     };
   }
 
@@ -98,7 +96,7 @@ class SquireExt extends Squire {
             if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
               nextBlock = this.createDefaultBlock();
 
-              forEachArray(toArray(current.childNodes), appendChidToNextBlock);
+              toArray(current.childNodes).forEach(appendChidToNextBlock);
 
               lastNodeOfNextBlock = nextBlock.lastChild;
 
@@ -272,10 +270,10 @@ class SquireExt extends Squire {
     this._ignoreChange = true;
     this.insertElement(marker, range);
 
-    const pos = $(marker).offset();
+    const pos = domUtils.getOffset(marker);
 
     if (style !== 'over') {
-      pos.top += $(marker).outerHeight();
+      pos.top += marker.offsetHeight;
     }
 
     marker.parentNode.removeChild(marker);
@@ -298,31 +296,30 @@ class SquireExt extends Squire {
   }
 
   replaceParent(node, from, to) {
-    const target = $(node).closest(from);
+    const target = domUtils.closest(node, from);
 
-    if (target.length) {
-      target.wrapInner(`<${to}/>`);
-      target.children().unwrap();
+    if (target) {
+      domUtils.wrapInner(target, to);
+      domUtils.unwrap(target.children);
     }
   }
 
   preserveLastLine() {
-    const lastBlock = this.get$Body()
-      .children()
-      .last();
+    const blocks = this.getBody().children;
+    const lastBlock = blocks[blocks.length - 1];
 
-    if (domUtils.getNodeName(lastBlock[0]) !== 'DIV') {
+    if (lastBlock && domUtils.getNodeName(lastBlock) !== 'DIV') {
       this._ignoreChange = true;
-      $(this.createDefaultBlock()).insertAfter(lastBlock);
+      domUtils.insertAfter(this.createDefaultBlock(), lastBlock);
     }
   }
 
   scrollTop(top) {
-    if (isUndefined(top)) {
-      return this.get$Body().scrollTop();
+    if (!isUndefined(top)) {
+      this.getBody().scrollTop = top;
     }
 
-    return this.get$Body().scrollTop(top);
+    return this.getBody().scrollTop;
   }
 
   isIgnoreChange() {

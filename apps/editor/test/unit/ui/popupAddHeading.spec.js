@@ -17,7 +17,7 @@ describe('PopupAddHeading', () => {
 
     popup = new PopupAddHeading({
       eventManager: em,
-      $button: $('button.tui-heading')
+      button: $('button.tui-heading').get(0)
     });
   });
 
@@ -27,7 +27,7 @@ describe('PopupAddHeading', () => {
 
   describe('init', () => {
     it('created element with opupAddHeading class', () => {
-      expect(popup.$el.hasClass('te-heading-add')).toBe(true);
+      expect($(popup.el).hasClass('te-heading-add')).toBe(true);
     });
   });
 
@@ -40,17 +40,17 @@ describe('PopupAddHeading', () => {
 
     it('emits event on selecting item', () => {
       em.listen('command', handler);
-      popup.$el
+      $(popup.el)
         .find('li')
         .eq(0)
         .trigger('click');
-      expect(handler).toHaveBeenCalledWith('Heading', 1);
+      expect(handler).toHaveBeenCalledWith('Heading', '1');
 
-      popup.$el
+      $(popup.el)
         .find('li')
         .eq(1)
         .trigger('click');
-      expect(handler).toHaveBeenCalledWith('Heading', 2);
+      expect(handler).toHaveBeenCalledWith('Heading', '2');
     });
 
     it('shows popup on openHeadingSelect event', () => {

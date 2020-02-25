@@ -2,11 +2,11 @@
  * @fileoverview Implements wysiwyg table manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
-import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import browser from 'tui-code-snippet/browser/browser';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import domUtils from './domUtils';
 
@@ -78,29 +78,31 @@ class WwTableManager {
 
     this.eventManager.listen('cut.table', () => {
       const selectionManager = this.wwe.componentManager.getManager('tableSelection');
-      const $selectedCells = selectionManager.getSelectedCells();
+      const selectedCells = selectionManager.getSelectedCells();
 
-      if ($selectedCells.length) {
-        $selectedCells.get().forEach(cell => $(cell).html(BASIC_CELL_CONTENT));
+      if (selectedCells.length) {
+        selectedCells.forEach(cell => {
+          cell.innerHTML = BASIC_CELL_CONTENT;
+        });
       }
 
       selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
     });
 
-    this.eventManager.listen('copyBefore.table', ({ $clipboardContainer }) =>
-      this.updateTableHtmlOfClipboardIfNeed($clipboardContainer)
+    this.eventManager.listen('copyBefore.table', ({ clipboardContainer }) =>
+      this.updateTableHtmlOfClipboardIfNeed(clipboardContainer)
     );
   }
 
   /**
    * Update table html of clipboard data, if has selected cells.
-   * @param {jQuery} $clipboardContainer - jQuery element
+   * @param {HTMLElement} clipboardContainer - clipboard element
    */
-  updateTableHtmlOfClipboardIfNeed($clipboardContainer) {
+  updateTableHtmlOfClipboardIfNeed(clipboardContainer) {
     const selectionManager = this.wwe.componentManager.getManager('tableSelection');
-    const $selectedCells = selectionManager.getSelectedCells();
+    const selectedCells = selectionManager.getSelectedCells();
 
-    if ($selectedCells.length) {
+    if (selectedCells.length) {
       selectionManager.createRangeBySelectedCells();
 
       const fragment = this.wwe
@@ -108,39 +110,35 @@ class WwTableManager {
         .getSelection()
         .cloneContents();
 
-      $(fragment)
-        .children()
-        .each((index, node) => {
-          const $node = $(node);
+      toArray(fragment.children).forEach(node => {
+        if (!this.isTableOrSubTableElement(node.nodeName)) {
+          return;
+        }
 
-          if (!this.isTableOrSubTableElement(node.nodeName)) {
-            return;
+        if (
+          node.nodeName === 'TABLE' &&
+          node.querySelector('thead') &&
+          node.querySelector('tbody')
+        ) {
+          domUtils.remove(node);
+        } else if (node.previousSibling && node.previousSibling.nodeName === 'TABLE') {
+          node.previousSibling.appendChild(node);
+        } else {
+          this._completeIncompleteTable(node);
+
+          if (node.nodeName !== 'TABLE' && node.nodeName !== 'THEAD') {
+            const thead = domUtils.closest(node, 'table').querySelector('thead');
+
+            domUtils.remove(thead);
           }
+        }
+      });
 
-          if (
-            node.nodeName === 'TABLE' &&
-            $node.find('thead').length === 0 &&
-            $node.find('tbody').length === 0
-          ) {
-            $node.remove();
-          } else if (node.previousSibling && node.previousSibling.nodeName === 'TABLE') {
-            node.previousSibling.appendChild(node);
-          } else {
-            this._completeIncompleteTable(node);
+      clipboardContainer.appendChild(fragment);
 
-            if (node.nodeName !== 'TABLE' && node.nodeName !== 'THEAD') {
-              $(node)
-                .closest('table')
-                .find('thead')
-                .remove();
-            }
-          }
-        });
-
-      $clipboardContainer.append(fragment);
-      $clipboardContainer
-        .find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`)
-        .removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
+      domUtils.findAll(clipboardContainer, `.${TABLE_CELL_SELECTED_CLASS_NAME}`).forEach(cell => {
+        removeClass(cell, TABLE_CELL_SELECTED_CLASS_NAME);
+      });
     }
   }
 
@@ -149,10 +147,8 @@ class WwTableManager {
    * @param {Node} clipboardTable - table element of clipboard
    */
   pasteTableData(clipboardTable) {
-    const $clipboardTable = $(clipboardTable);
-
-    this._expandTableIfNeed($clipboardTable);
-    this._pasteDataIntoTable($clipboardTable);
+    this._expandTableIfNeed(clipboardTable);
+    this._pasteDataIntoTable(clipboardTable);
   }
 
   /**
@@ -401,7 +397,7 @@ class WwTableManager {
 
     return (
       domUtils.getNodeName(prevElem) === 'TABLE' &&
-      range.commonAncestorContainer === this.wwe.get$Body()[0]
+      range.commonAncestorContainer === this.wwe.getBody()
     );
   }
 
@@ -416,7 +412,7 @@ class WwTableManager {
   _handleBackspaceAndDeleteKeyEvent(ev, range, keymap) {
     const isBackspace = keymap === 'BACK_SPACE';
     const selectionManager = this.wwe.componentManager.getManager('tableSelection');
-    const $selectedCells = selectionManager.getSelectedCells();
+    const selectedCells = selectionManager.getSelectedCells();
     let isNeedNext = true;
 
     if (range.collapsed) {
@@ -440,7 +436,7 @@ class WwTableManager {
         isNeedNext = false;
       }
     } else if (this.wwe.isInTable(range)) {
-      if ($selectedCells.length > 0) {
+      if (selectedCells.length > 0) {
         const removed = this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
 
         if (removed) {
@@ -522,7 +518,7 @@ class WwTableManager {
 
       if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
         event.preventDefault();
-        $(prevNode).remove();
+        domUtils.remove(prevNode);
       }
     }
   }
@@ -657,7 +653,7 @@ class WwTableManager {
     if (startContainerNodeName === 'TD' || startContainerNodeName === 'TH') {
       tdOrTh = range.startContainer;
     } else {
-      const paths = $(range.startContainer).parentsUntil('tr');
+      const paths = domUtils.parentsUntil(range.startContainer, 'tr');
 
       tdOrTh = paths[paths.length - 1];
     }
@@ -671,7 +667,7 @@ class WwTableManager {
       nodeName !== 'OL' &&
       !isIE10And11
     ) {
-      $(tdOrTh).append($('<br />')[0]);
+      domUtils.append(tdOrTh, '<br />');
     }
   }
 
@@ -681,25 +677,22 @@ class WwTableManager {
    * @private
    */
   _unwrapBlockInTable() {
-    this.wwe
-      .get$Body()
-      .find('td div,th div,tr>br,td>br,th>br')
-      .each((index, node) => {
-        if (domUtils.getNodeName(node) === 'BR') {
-          const parentNodeName = domUtils.getNodeName(node.parentNode);
-          const isInTableCell = /TD|TH/.test(parentNodeName);
-          const isEmptyTableCell = node.parentNode.textContent.length === 0;
-          const isLastBR = node.parentNode.lastChild === node;
+    const blocks = domUtils.findAll(this.wwe.getBody(), 'td div,th div,tr>br,td>br,th>br');
 
-          if (parentNodeName === 'TR' || (isInTableCell && !isEmptyTableCell && isLastBR)) {
-            $(node).remove();
-          }
-        } else {
-          $(node)
-            .children()
-            .unwrap();
+    blocks.forEach(node => {
+      if (domUtils.getNodeName(node) === 'BR') {
+        const parentNodeName = domUtils.getNodeName(node.parentNode);
+        const isInTableCell = /TD|TH/.test(parentNodeName);
+        const isEmptyTableCell = node.parentNode.textContent.length === 0;
+        const isLastBR = node.parentNode.lastChild === node;
+
+        if (parentNodeName === 'TR' || (isInTableCell && !isEmptyTableCell && isLastBR)) {
+          domUtils.remove(node);
         }
-      });
+      } else {
+        domUtils.unwrap(node.children);
+      }
+    });
   }
 
   /**
@@ -707,14 +700,16 @@ class WwTableManager {
    * @private
    */
   _insertDefaultBlockBetweenTable() {
-    this.wwe
-      .get$Body()
-      .find('table')
-      .each((index, node) => {
-        if (node.nextElementSibling && node.nextElementSibling.nodeName === 'TABLE') {
-          $('<div><br /></div>').insertAfter(node);
-        }
-      });
+    const tables = domUtils.findAll(this.wwe.getBody(), 'table');
+
+    tables.forEach(node => {
+      if (node.nextElementSibling && node.nextElementSibling.nodeName === 'TABLE') {
+        const insertedElement = document.createElement('div');
+
+        insertedElement.appendChild(document.createElement('br'));
+        domUtils.insertAfter(insertedElement, node);
+      }
+    });
   }
 
   /**
@@ -727,7 +722,7 @@ class WwTableManager {
     if (table.tagName === 'TABLE') {
       this.wwe.getEditor().saveUndoState(range);
       this.wwe.saveSelection(range);
-      $(table).remove();
+      domUtils.remove(table);
       this.wwe.restoreSavedSelection();
     }
   }
@@ -764,7 +759,7 @@ class WwTableManager {
   _pasteDataIntoTable(fragment) {
     const { startContainer } = this.wwe.getEditor().getSelection();
     const tableData = this._getTableDataFromTable(fragment);
-    const isTableCell = startContainer.tagName === 'TD' || startContainer.tagName === 'TH';
+    const isTableCell = startContainer.nodeName === 'TD' || startContainer.nodeName === 'TH';
     const brString = isIE10 ? '' : '<br />';
     let anchorElement, td, tr, tdContent;
 
@@ -773,17 +768,13 @@ class WwTableManager {
     } else {
       anchorElement = domUtils.getParentUntilBy(
         startContainer,
-        node => node.tagName === 'TD' || node.tagName === 'TH',
-        node => $(node).closest('table').length === 0
+        node => node && (node.nodeName === 'TD' || node.nodeName === 'TH'),
+        node => !!domUtils.closest(node, 'table')
       );
       anchorElement = anchorElement ? anchorElement.parentNode : null;
     }
 
-    anchorElement = anchorElement
-      ? anchorElement
-      : $(startContainer)
-          .find('th,td')
-          .get(0);
+    anchorElement = anchorElement ? anchorElement : startContainer.querySelector('th,td');
 
     td = anchorElement;
     while (tableData.length) {
@@ -813,15 +804,12 @@ class WwTableManager {
    * @private
    */
   _getTableDataFromTable(fragment) {
-    const $fragment = $(fragment);
     const tableData = [];
-    const trs = $fragment.find('tr');
 
-    trs.each((i, tr) => {
+    domUtils.findAll(fragment, 'tr').forEach(tr => {
       const trData = [];
-      const tds = $(tr).children();
 
-      tds.each((index, cell) => {
+      toArray(tr.children).forEach(cell => {
         trData.push(cell.textContent);
       });
 
@@ -835,36 +823,36 @@ class WwTableManager {
 
   /**
    * Remove selected table contents
-   * @param {jQuery} $selectedCells Selected cells wrapped by jQuery
+   * @param {HTMLElement} selectedCells Selected cells
    * @private
    */
-  _removeTableContents($selectedCells) {
+  _removeTableContents(selectedCells) {
     this.wwe.getEditor().saveUndoState();
 
-    $selectedCells.each((i, cell) => {
+    toArray(selectedCells).forEach(cell => {
       const brHTMLString = isIE10 ? '' : '<br />';
 
-      $(cell).html(brHTMLString);
+      cell.innerHTML = brHTMLString;
     });
   }
 
   /**
    * Wrap dangling table cells with new TR
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @returns {HTMLElement|null}
    */
-  wrapDanglingTableCellsIntoTrIfNeed($container) {
-    const danglingTableCells = $container.children('td,th');
+  wrapDanglingTableCellsIntoTrIfNeed(container) {
+    const danglingTableCells = domUtils.children(container, 'td,th');
     let tr;
 
     if (danglingTableCells.length) {
-      const $wrapperTr = $('<tr></tr>');
+      const wrapperTr = document.createElement('tr');
 
-      danglingTableCells.each((i, cell) => {
-        $wrapperTr.append(cell);
+      toArray(danglingTableCells).forEach(cell => {
+        domUtils.append(wrapperTr, cell);
       });
 
-      tr = $wrapperTr.get(0);
+      tr = wrapperTr;
     }
 
     return tr;
@@ -872,34 +860,38 @@ class WwTableManager {
 
   /**
    * Wrap TRs with new TBODY
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @returns {HTMLElement|null}
    */
-  wrapTrsIntoTbodyIfNeed($container) {
-    const danglingTrs = $container.children('tr');
-    const ths = danglingTrs.find('th');
+  wrapTrsIntoTbodyIfNeed(container) {
+    const danglingTrs = domUtils.children(container, 'tr');
+    let ths = [];
+
+    toArray(danglingTrs).forEach(tr => {
+      ths = ths.concat(tr.querySelectorAll('th'));
+    });
+
     let tbody;
 
     if (ths.length) {
-      ths.each((i, node) => {
-        const $node = $(node);
-        const td = $('<td></td>');
+      toArray(ths).forEach(node => {
+        const td = document.createElement('td');
 
-        td.html($node.html());
-        td.insertBefore(node);
+        td.innerHTML = node.innerHTML;
+        domUtils.insertBefore(node, td);
 
-        $node.detach();
+        domUtils.remove(node);
       });
     }
 
     if (danglingTrs.length) {
-      const $wrapperTableBody = $('<tbody></tbody>');
+      const wrapperTableBody = document.createElement('tbody');
 
-      danglingTrs.each((i, tr) => {
-        $wrapperTableBody.append(tr);
+      toArray(danglingTrs).forEach(tr => {
+        domUtils.append(wrapperTableBody, tr);
       });
 
-      tbody = $wrapperTableBody.get(0);
+      tbody = wrapperTableBody;
     }
 
     return tbody;
@@ -907,27 +899,27 @@ class WwTableManager {
 
   /**
    * Wrap THEAD followed by TBODY both into Table
-   * @param {jQuery} $container - clipboard container
+   * @param {HTMLElement} container - clipboard container
    * @returns {HTMLElement|null}
    */
-  wrapTheadAndTbodyIntoTableIfNeed($container) {
-    const danglingThead = $container.children('thead');
-    const danglingTbody = $container.children('tbody');
-    const $wrapperTable = $('<table></table>');
+  wrapTheadAndTbodyIntoTableIfNeed(container) {
+    const danglingThead = domUtils.children(container, 'thead');
+    const danglingTbody = domUtils.children(container, 'tbody');
+    const wrapperTable = document.createElement('table');
     let table;
 
     if (!danglingTbody.length && danglingThead.length) {
-      $wrapperTable.append(danglingThead[0]);
-      $wrapperTable.append('<tbody><tr></tr></tbody>');
-      table = $wrapperTable.get(0);
+      domUtils.append(wrapperTable, danglingThead[0]);
+      domUtils.append(wrapperTable, this._createTheadOrTboday('tbody'));
+      table = wrapperTable;
     } else if (danglingTbody.length && !danglingThead.length) {
-      $wrapperTable.append('<thead><tr></tr></thead>');
-      $wrapperTable.append(danglingTbody[0]);
-      table = $wrapperTable.get(0);
+      domUtils.append(wrapperTable, this._createTheadOrTboday('thead'));
+      domUtils.append(wrapperTable, danglingTbody[0]);
+      table = wrapperTable;
     } else if (danglingTbody.length && danglingThead.length) {
-      $wrapperTable.append(danglingThead[0]);
-      $wrapperTable.append(danglingTbody[0]);
-      table = $wrapperTable.get(0);
+      domUtils.append(wrapperTable, danglingThead[0]);
+      domUtils.append(wrapperTable, danglingTbody[0]);
+      table = wrapperTable;
     }
 
     return table;
@@ -948,36 +940,44 @@ class WwTableManager {
     );
   }
 
+  _createTheadOrTboday(type) {
+    const theadOrTbody = document.createElement(type);
+    const tr = document.createElement('tr');
+
+    theadOrTbody.appendChild(tr);
+
+    return theadOrTbody;
+  }
+
   /**
    * Stuff table cells into incomplete rows
-   * @param {jQuery} $trs jQuery wrapped TRs
+   * @param {HTMLElement} trs HTMLElement wrapped TRs
    * @param {number} maximumCellLength maximum cell length of table
    * @private
    */
-  _stuffTableCellsIntoIncompleteRow($trs, maximumCellLength) {
-    $trs.each((rowIndex, row) => {
-      const $row = $(row);
-      const tableCells = $row.find('th,td');
-      const parentNodeName = domUtils.getNodeName($row.parent()[0]);
+  _stuffTableCellsIntoIncompleteRow(trs, maximumCellLength) {
+    toArray(trs).forEach(row => {
+      const tableCells = row.querySelectorAll('th,td');
+      const parentNodeName = domUtils.getNodeName(row.parentNode);
       const cellTagName = parentNodeName === 'THEAD' ? 'th' : 'td';
 
       for (let cellLength = tableCells.length; cellLength < maximumCellLength; cellLength += 1) {
-        $row.append($(tableCellGenerator(1, cellTagName))[0]);
+        domUtils.append(row, tableCellGenerator(1, cellTagName));
       }
     });
   }
 
   /**
    * Prepare to table cell stuffing
-   * @param {jQuery} $trs jQuery wrapped TRs
+   * @param {HTMLElement} trs wrapped TRs
    * @returns {{maximumCellLength: *, needTableCellStuffingAid: boolean}}
    */
-  prepareToTableCellStuffing($trs) {
-    let maximumCellLength = $trs.eq(0).find('th,td').length;
+  prepareToTableCellStuffing(trs) {
+    let maximumCellLength = trs[0].querySelectorAll('th,td').length;
     let needTableCellStuffingAid = false;
 
-    $trs.each((i, row) => {
-      const cellCount = $(row).find('th,td').length;
+    toArray(trs).forEach(row => {
+      const cellCount = row.querySelectorAll('th,td').length;
 
       if (maximumCellLength !== cellCount) {
         needTableCellStuffingAid = true;
@@ -996,39 +996,34 @@ class WwTableManager {
 
   /**
    * Add TBODY or THEAD if need
-   * @param {jQuery} $table - Table jQuery element
+   * @param {HTMLElement} table - Table HTMLElement element
    * @private
    */
-  _addTbodyOrTheadIfNeed($table) {
-    const isTheadNotExists = !$table.find('thead').length;
-    const isTbodyNotExists = !$table.find('tbody').length;
-    let absentNode;
+  _addTbodyOrTheadIfNeed(table) {
+    const isTheadNotExists = !table.querySelector('thead');
+    const isTbodyNotExists = !table.querySelector('tbody');
 
     if (isTheadNotExists) {
-      absentNode = $('<thead><tr></tr></thead>').get(0);
-      $table.prepend(absentNode);
+      domUtils.prepend(table, '<thead><tr></tr></thead>');
     } else if (isTbodyNotExists) {
-      absentNode = $('<tbody><tr></tr></tbody>').get(0);
-      $table.append(absentNode);
+      domUtils.append(table, '<tbody><tr></tr></tbody>');
     }
   }
 
   /**
    * Append table cells
-   * @param {HTMLElement} node Table element
+   * @param {HTMLElement} table Table element
    */
-  tableCellAppendAidForTableElement(node) {
-    const $table = $(node);
+  tableCellAppendAidForTableElement(table) {
+    this._addTbodyOrTheadIfNeed(table);
+    this._addTrIntoContainerIfNeed(table);
 
-    this._addTbodyOrTheadIfNeed($table);
-    this._addTrIntoContainerIfNeed($table);
-
-    const $trs = $table.find('tr');
-    const tableAidInformation = this.prepareToTableCellStuffing($trs);
+    const trs = table.querySelectorAll('tr');
+    const tableAidInformation = this.prepareToTableCellStuffing(trs);
     const { maximumCellLength, needTableCellStuffingAid } = tableAidInformation;
 
     if (needTableCellStuffingAid) {
-      this._stuffTableCellsIntoIncompleteRow($trs, maximumCellLength);
+      this._stuffTableCellsIntoIncompleteRow(trs, maximumCellLength);
     }
   }
 
@@ -1039,22 +1034,14 @@ class WwTableManager {
    * @private
    */
   _generateTheadAndTbodyFromTbody(node) {
-    const tr = $('<tr></tr>');
-    const thead = $('<thead></thead>');
+    const tr = document.createElement('tr');
+    const thead = document.createElement('thead');
 
-    tr.append(
-      tableCellGenerator(
-        $(node)
-          .find('tr')
-          .eq(0)
-          .find('td').length,
-        'th'
-      )
-    );
-    thead.append(tr);
+    domUtils.append(tr, tableCellGenerator(node.querySelector('tr > td').length, 'th'));
+    domUtils.append(thead, tr);
 
     return {
-      thead: thead[0],
+      thead,
       tbody: node
     };
   }
@@ -1066,15 +1053,15 @@ class WwTableManager {
    * @private
    */
   _generateTheadAndTbodyFromThead(node) {
-    const tr = $('<tr></tr>');
-    const tbody = $('<tbody></tbody>');
+    const tr = document.createElement('tr');
+    const tbody = document.createElement('tbody');
 
-    tr.append(tableCellGenerator($(node).find('th').length, 'td'));
-    tbody.append(tr);
+    domUtils.append(tr, tableCellGenerator(node.querySelectorAll('th').length, 'td'));
+    domUtils.append(tbody, tr);
 
     return {
       thead: node,
-      tbody: tbody[0]
+      tbody
     };
   }
 
@@ -1085,25 +1072,28 @@ class WwTableManager {
    * @private
    */
   _generateTheadAndTbodyFromTr(node) {
-    const $node = $(node);
-    const thead = $('<thead></thead>');
-    const tbody = $('<tbody></tbody>');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
     let theadRow, tbodyRow;
 
-    if ($node.children()[0].tagName === 'TH') {
+    if (node.children[0].tagName === 'TH') {
       theadRow = node;
-      tbodyRow = $(`<tr>${tableCellGenerator($node.find('th').length, 'td')}</tr>`).get(0);
+      tbodyRow = domUtils.createElementWith(
+        `<tr>${tableCellGenerator(node.querySelectorAll('th').length, 'td')}</tr>`
+      );
     } else {
-      theadRow = $(`<tr>${tableCellGenerator($node.find('td').length, 'th')}</tr>`).get(0);
+      theadRow = domUtils.createElementWith(
+        `<tr>${tableCellGenerator(node.querySelectorAll('td').length, 'th')}</tr>`
+      );
       tbodyRow = node;
     }
 
-    thead.append(theadRow);
-    tbody.append(tbodyRow);
+    domUtils.append(thead, theadRow);
+    domUtils.append(tbody, tbodyRow);
 
     return {
-      thead: thead[0],
-      tbody: tbody[0]
+      thead,
+      tbody
     };
   }
 
@@ -1139,9 +1129,7 @@ class WwTableManager {
   }
 
   _removeEmptyRows(table) {
-    const trs = table.querySelectorAll('tr');
-
-    forEachArray(trs, tr => {
+    domUtils.findAll(table, 'tr').forEach(tr => {
       if (!tr.cells.length) {
         tr.parentNode.removeChild(tr);
       }
@@ -1153,17 +1141,15 @@ class WwTableManager {
    * @private
    */
   _completeTableIfNeed() {
-    const $body = this.wwe.getEditor().get$Body();
+    const body = this.wwe.getEditor().getBody();
 
-    $body.children().each((index, node) => {
-      const $node = $(node);
-
+    toArray(body.children).forEach(node => {
       if (!this.isTableOrSubTableElement(node.nodeName)) {
         return;
       }
 
-      if (node.nodeName === 'TABLE' && $node.find('tbody').length === 0) {
-        $node.remove();
+      if (node.nodeName === 'TABLE' && !node.querySelector('tbody')) {
+        domUtils.remove(node);
       } else {
         this._completeIncompleteTable(node);
       }
@@ -1207,17 +1193,15 @@ class WwTableManager {
 
   /**
    * Add one row into empty TBODY
-   * @param {jQuery} $table Currently processing table
+   * @param {HTMLElement} table Currently processing table
    * @private
    */
-  _addTrIntoContainerIfNeed($table) {
-    const $trContainers = $table.children();
-
-    $trContainers.each((i, container) => {
-      const hasNoRows = $(container).find('tr').length === 0;
+  _addTrIntoContainerIfNeed(table) {
+    toArray(table.children).forEach(container => {
+      const hasNoRows = container.querySelectorAll('tr').length === 0;
 
       if (hasNoRows) {
-        $(container).append($('<tr></tr>')[0]);
+        domUtils.append(container, '<tr></tr>');
       }
     });
   }
@@ -1227,15 +1211,15 @@ class WwTableManager {
       .getEditor()
       .getSelection()
       .cloneRange();
-    const $table = $(range.startContainer).parents('table');
+    const [table] = domUtils.parents(range.startContainer, 'table');
     const difference = this._getColumnAndRowDifference(fragment, range);
 
     if (difference.column < 0) {
-      this._appendCellForAllRow($table, difference.column);
+      this._appendCellForAllRow(table, difference.column);
     }
 
     if (difference.row < 0) {
-      this._appendRow($table, difference.row);
+      this._appendRow(table, difference.row);
     }
   }
 
@@ -1243,17 +1227,14 @@ class WwTableManager {
     const tableData = this._getTableDataFromTable(fragment);
     const rowLength = tableData.length;
     const columnLength = tableData[0].length;
-    const $currentCell = $(range.startContainer).closest('th,td');
-    const $currentRow = $currentCell.parent();
-    const currentColumnIndex = domUtils.getNodeOffsetOfParent($currentCell[0]);
-    let currentRowIndex = domUtils.getNodeOffsetOfParent($currentCell[0].parentNode);
-    const $table = $currentRow.parents('table');
-    const tableColumnLength = $table
-      .find('tr')
-      .eq(0)
-      .children().length;
-    const tableRowLength = $table.find('tr').length;
-    const isInTbody = $currentRow.parents('tbody').length;
+    const currentCell = domUtils.closest(range.startContainer, 'th,td');
+    const currentRow = currentCell.parentNode;
+    const currentColumnIndex = domUtils.getNodeOffsetOfParent(currentCell);
+    let currentRowIndex = domUtils.getNodeOffsetOfParent(currentCell.parentNode);
+    const table = domUtils.parents(currentRow, 'table');
+    const tableColumnLength = table.querySelector('tr').children.length;
+    const tableRowLength = table.querySelectorAll('tr').length;
+    const isInTbody = !!domUtils.parents(currentRow, 'tbody').length;
 
     if (isInTbody) {
       currentRowIndex += 1;
@@ -1265,10 +1246,10 @@ class WwTableManager {
     };
   }
 
-  _appendCellForAllRow($table, columnDifference) {
+  _appendCellForAllRow(table, columnDifference) {
     const brString = isIE10 ? '' : '<br />';
 
-    $table.find('tr').each((i, row) => {
+    domUtils.findAll(table, 'tr').forEach((row, i) => {
       let tagName;
 
       for (let index = columnDifference; index < 0; index += 1) {
@@ -1277,22 +1258,22 @@ class WwTableManager {
         } else {
           tagName = 'td';
         }
-        $(row).append($(`<${tagName}>${brString}</${tagName}>`)[0]);
+        domUtils.append(row, `<${tagName}>${brString}</${tagName}>`);
       }
     });
   }
 
-  _appendRow($table, rowDifference) {
-    const newRow = $table
-      .find('tr')
-      .last()
-      .clone();
+  _appendRow(table, rowDifference) {
+    const trs = table.querySelectorAll('tr');
+    const newRow = trs[trs.length - 1].cloneNode();
     const brHTMLSting = isIE10 ? '' : '<br />';
 
-    newRow.find('td').html(brHTMLSting);
+    domUtils.findAll(newRow, 'td').forEach(td => {
+      td.innerHTML = brHTMLSting;
+    });
 
     for (; rowDifference < 0; rowDifference += 1) {
-      $table.find('tbody').append(newRow.clone()[0]);
+      domUtils.append(table.querySelector('tbody'), newRow.cloneNode());
     }
   }
 
@@ -1326,9 +1307,8 @@ class WwTableManager {
       }
       range.collapse(true);
     } else {
-      target = $(currentCell)
-        .parents('table')
-        .get(0);
+      [target] = domUtils.parents(currentCell, 'table');
+
       if (isNext) {
         range.setStart(target.nextElementSibling, 0);
       } else if (
@@ -1376,9 +1356,7 @@ class WwTableManager {
   _moveCursorTo(direction, interval, ev) {
     const sq = this.wwe.getEditor();
     const range = sq.getSelection().cloneRange();
-    const currentCell = $(range.startContainer)
-      .closest('td,th')
-      .get(0);
+    const currentCell = domUtils.closest(range.startContainer, 'td,th');
     let isNeedNext;
 
     if (range.collapsed && this.wwe.isInTable(range) && currentCell) {
@@ -1457,21 +1435,19 @@ class WwTableManager {
   _removeContentsAndChangeSelectionIfNeed(range, keymap, ev) {
     const isTextInput = keymap.length <= 1;
     const isDeleteOperation = keymap === 'BACK_SPACE' || keymap === 'DELETE';
-    const $selectedCells = this.wwe.componentManager
-      .getManager('tableSelection')
-      .getSelectedCells();
-    const firstSelectedCell = $selectedCells.first().get(0);
+    const selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
+    const [firstSelectedCell] = selectedCells;
     let processed = false;
 
     if (
       (isTextInput || isDeleteOperation) &&
       !this._isModifierKeyPushed(ev) &&
-      $selectedCells.length
+      selectedCells.length
     ) {
       if (isDeleteOperation) {
         this._recordUndoStateIfNeed(range);
       }
-      this._removeTableContents($selectedCells);
+      this._removeTableContents(selectedCells);
 
       this._lastCellNode = firstSelectedCell;
 

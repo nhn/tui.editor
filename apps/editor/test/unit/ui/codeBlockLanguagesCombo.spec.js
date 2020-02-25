@@ -20,7 +20,7 @@ describe('CodeBlockLanguagesCombo', () => {
     eventManager = new EventManager();
 
     popupLanguages = new PopupCodeBlockLanguages({
-      $target: $popupWrapper,
+      target: $popupWrapper.get(0),
       eventManager,
       languages: ['java', 'javascript', 'uml']
     });

@@ -2,7 +2,8 @@
  * @fileoverview Implements table add column WysiwygCommand
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
+import inArray from 'tui-code-snippet/array/inArray';
 import browser from 'tui-code-snippet/browser/browser';
 
 import CommandManager from '../commandManager';
@@ -27,17 +28,17 @@ const TableAddCol = CommandManager.command(
       const sq = wwe.getEditor();
       const range = sq.getSelection().cloneRange();
       const numberOfCols = getNumberOfCols(wwe);
-      let $cell;
+      let cell;
 
       wwe.focus();
 
       if (sq.hasFormat('TR')) {
         sq.saveUndoState(range);
 
-        $cell = getCellByRange(range);
-        addColToCellAfter($cell, numberOfCols);
+        cell = getCellByRange(range);
+        addColToCellAfter(cell, numberOfCols);
 
-        focusToNextCell(sq, $cell);
+        focusToNextCell(sq, cell);
       }
     }
   }
@@ -51,13 +52,13 @@ const TableAddCol = CommandManager.command(
  */
 function getNumberOfCols(wwe) {
   const selectionMgr = wwe.componentManager.getManager('tableSelection');
-  const $selectedCells = selectionMgr.getSelectedCells();
+  const selectedCells = selectionMgr.getSelectedCells();
   let length = 1;
 
-  if ($selectedCells.length > 0) {
-    const maxLength = $selectedCells.get(0).parentNode.querySelectorAll('td, th').length;
+  if (selectedCells.length > 0) {
+    const maxLength = selectedCells[0].parentNode.querySelectorAll('td, th').length;
 
-    length = Math.min(maxLength, $selectedCells.length);
+    length = Math.min(maxLength, selectedCells.length);
   }
 
   return length;
@@ -66,16 +67,14 @@ function getNumberOfCols(wwe) {
 /**
  * Get cell by range object
  * @param {Range} range - range
- * @returns {jQuery} - jQuery html element
+ * @returns {HTMLElement} - html element
  * @ignore
  */
 function getCellByRange(range) {
   let cell = range.startContainer;
 
-  if (domUtils.getNodeName(cell) === 'TD' || domUtils.getNodeName(cell) === 'TH') {
-    cell = $(cell);
-  } else {
-    cell = $(cell).parentsUntil('tr');
+  if (domUtils.getNodeName(cell) !== 'TD' && domUtils.getNodeName(cell) !== 'TH') {
+    cell = domUtils.parentsUntil(cell, 'tr');
   }
 
   return cell;
@@ -83,21 +82,21 @@ function getCellByRange(range) {
 
 /**
  * Add column to after the current cell
- * @param {jQuery} $cell - jQuery wrapped table cell
+ * @param {HTMLElement} cell - wrapped table cell
  * @param {number} [numberOfCols=1] - number of cols
  * @ignore
  */
-function addColToCellAfter($cell, numberOfCols = 1) {
-  const index = $cell.index();
-  let cellToAdd;
+function addColToCellAfter(cell, numberOfCols = 1) {
+  const [table] = domUtils.parents(cell, 'table');
 
-  $cell
-    .parents('table')
-    .find('tr')
-    .each((n, tr) => {
+  if (table) {
+    const index = inArray(cell, toArray(cell.parentNode.childNodes));
+    let cellToAdd;
+
+    domUtils.findAll(table, 'tr').forEach(tr => {
       const isTBody = domUtils.getNodeName(tr.parentNode) === 'TBODY';
       const isMSIE = browser.msie;
-      const cell = tr.children[index];
+      const currentCell = tr.children[index];
 
       for (let i = 0; i < numberOfCols; i += 1) {
         if (isTBody) {
@@ -108,21 +107,22 @@ function addColToCellAfter($cell, numberOfCols = 1) {
         if (!isMSIE) {
           cellToAdd.appendChild(document.createElement('br'));
         }
-        $(cellToAdd).insertAfter(cell);
+        domUtils.insertAfter(cellToAdd, currentCell);
       }
     });
+  }
 }
 
 /**
  * Focus to next cell
  * @param {Squire} sq - Squire instance
- * @param {jQuery} $cell - jQuery wrapped table cell
+ * @param {HTMLElement} cell - wrapped table cell
  * @ignore
  */
-function focusToNextCell(sq, $cell) {
+function focusToNextCell(sq, cell) {
   const range = sq.getSelection();
 
-  range.selectNodeContents($cell.next()[0]);
+  range.selectNodeContents(cell.nextSibling);
   range.collapse(true);
 
   sq.setSelection(range);

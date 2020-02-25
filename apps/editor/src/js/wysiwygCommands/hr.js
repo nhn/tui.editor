@@ -28,7 +28,7 @@ const HR = CommandManager.command(
       if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
         const hr = document.createElement('hr');
         const currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
-        let nextBlockNode = domUtils.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
+        let nextBlockNode = domUtils.getTopNextNodeUnder(currentNode, wwe.getBody());
 
         // If nextBlockNode is div that has hr and has contenteditable as false,
         // nextBlockNode should be set as nextSibling that is normal block.
@@ -40,7 +40,7 @@ const HR = CommandManager.command(
 
         if (!nextBlockNode) {
           nextBlockNode = domUtils.createEmptyLine();
-          wwe.get$Body().append(nextBlockNode);
+          domUtils.append(wwe.getBody(), nextBlockNode);
         }
 
         sq.modifyBlocks(frag => {

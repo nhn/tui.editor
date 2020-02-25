@@ -2,8 +2,6 @@
  * @fileoverview Implements code WysiwygCommand
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
 
@@ -54,7 +52,7 @@ function removeUnnecessaryCodeInNextToRange(range) {
     domUtils.getNodeName(range.startContainer.nextSibling) === 'CODE' &&
     domUtils.getTextLength(range.startContainer.nextSibling) === 0
   ) {
-    $(range.startContainer.nextSibling).remove();
+    domUtils.remove(range.startContainer.nextSibling);
   }
 }
 

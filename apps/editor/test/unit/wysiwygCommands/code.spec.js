@@ -2,22 +2,19 @@
  * @fileoverview test wysiwyg code command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import Code from '@/wysiwygCommands/code';
 import WysiwygEditor from '@/wysiwygEditor';
 import WwTableSelectionManager from '@/wwTableSelectionManager';
 import EventManager from '@/eventManager';
 
 describe('Code', () => {
-  let wwe;
+  let container, wwe;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -26,7 +23,7 @@ describe('Code', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   it('add code', () => {
@@ -37,7 +34,7 @@ describe('Code', () => {
 
     wwe.setValue('line');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.getBody().children[0]);
     wwe.getEditor().setSelection(range);
 
     Code.exec(wwe);
@@ -53,7 +50,7 @@ describe('Code', () => {
 
     wwe.setValue('line');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.getBody().children[0]);
     wwe.getEditor().setSelection(range);
 
     Code.exec(wwe);
@@ -69,7 +66,7 @@ describe('Code', () => {
 
     wwe.setValue('<b>line</b>');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.getBody().children[0]);
     wwe.getEditor().setSelection(range);
 
     Code.exec(wwe);
@@ -85,7 +82,7 @@ describe('Code', () => {
 
     wwe.setValue('<i>line</i>');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.getBody().children[0]);
     wwe.getEditor().setSelection(range);
 
     Code.exec(wwe);
@@ -101,7 +98,7 @@ describe('Code', () => {
 
     wwe.setValue('<code>line&#8203;</code>');
 
-    range.setStart(wwe.get$Body().find('code')[0].firstChild, 4);
+    range.setStart(wwe.getBody().querySelector('code').firstChild, 4);
     range.collapse(true);
 
     wwe.getEditor().setSelection(range);

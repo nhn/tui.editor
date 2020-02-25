@@ -186,7 +186,7 @@ describe('Editor', () => {
         editor.changePreviewStyle('tab');
         editor.setMarkdown('1\n2');
         editor.changePreviewStyle('vertical');
-        expect(editor.preview.$el.text()).toEqual('1\n2\n');
+        expect(editor.preview.el.textContent).toEqual('1\n2\n');
       });
     });
 
@@ -229,7 +229,7 @@ describe('Editor', () => {
 
         const { wwEditor } = editor;
         const selection = wwEditor.editor.getSelection().cloneRange();
-        const textElement = wwEditor.get$Body().find('div')[0].firstChild;
+        const textElement = wwEditor.getBody().querySelector('div').firstChild;
 
         selection.setStart(textElement, 9);
         selection.setEnd(textElement, 13);
@@ -317,7 +317,7 @@ describe('Editor', () => {
       });
 
       it('should invoke plugin function with options of plugin', () => {
-        const plugin = jasmine.createSpy(plugin);
+        const plugin = jasmine.createSpy('plugin');
         const options = {};
 
         editor = new Editor({

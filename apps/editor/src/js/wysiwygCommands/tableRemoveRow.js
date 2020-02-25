@@ -2,9 +2,8 @@
  * @fileoverview Implements table remove row WysiwygCommand
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * RemoveRow
@@ -24,22 +23,27 @@ const TableRemoveRow = CommandManager.command(
     exec(wwe) {
       const sq = wwe.getEditor();
       const range = sq.getSelection().cloneRange();
-      const $table = $(range.startContainer).parents('table');
+      const [table] = domUtils.parents(range.startContainer, 'table');
       const selectionMgr = wwe.componentManager.getManager('tableSelection');
       const tableMgr = wwe.componentManager.getManager('table');
-      const $tr = getTrs(range, selectionMgr, $table);
-      const tbodyRowLength = $table.find('tbody tr').length;
+      const trs = getTrs(range, selectionMgr, table);
+      const tbodyRowLength = table.querySelectorAll('tbody tr').length;
 
       wwe.focus();
 
       if ((sq.hasFormat('TD') || sq.hasFormat('TABLE')) && tbodyRowLength > 1) {
         sq.saveUndoState(range);
-        const $nextFocus = $tr.last().next()[0] ? $tr.last().next() : $tr.first().prev();
 
-        if ($nextFocus.length) {
-          focusToFirstTd(sq, range, $nextFocus, tableMgr);
+        const [firstTr] = trs;
+        const lastTr = trs[trs.length - 1];
+        const nextFocus =
+          lastTr && lastTr.nextSibling ? lastTr.nextSibling : firstTr && firstTr.previousSibling;
+
+        if (nextFocus) {
+          focusToFirstTd(sq, range, nextFocus, tableMgr);
         }
-        $tr.remove();
+
+        trs.forEach(tr => domUtils.remove(tr));
       }
       selectionMgr.removeClassAttrbuteFromAllCellsIfNeed();
     }
@@ -50,11 +54,11 @@ const TableRemoveRow = CommandManager.command(
  * Focus to first TD in given TR
  * @param {SquireExt} sq Squire instance
  * @param {Range} range Range object
- * @param {jQuery} $tr jQuery wrapped TR
+ * @param {HTMLElement} tr HTMLElement wrapped TR
  * @param {object} tableMgr Table manager
  */
-function focusToFirstTd(sq, range, $tr, tableMgr) {
-  const nextFocusCell = $tr.find('td').get(0);
+function focusToFirstTd(sq, range, tr, tableMgr) {
+  const nextFocusCell = tr.querySelector('td');
 
   range.setStart(nextFocusCell, 0);
   range.collapse(true);
@@ -67,12 +71,12 @@ function focusToFirstTd(sq, range, $tr, tableMgr) {
  * Get start, end row index from current range
  * @param {HTMLElement} firstSelectedCell Range object
  * @param {object} rangeInformation Range information object
- * @param {jQuery} $table jquery wrapped TABLE
- * @returns {jQuery}
+ * @param {HTMLElement} table HTMLElement wrapped TABLE
+ * @returns {HTMLElement}
  */
-function getSelectedRows(firstSelectedCell, rangeInformation, $table) {
-  const tbodyRowLength = $table.find('tbody tr').length;
-  const isStartContainerInThead = $(firstSelectedCell).parents('thead').length;
+function getSelectedRows(firstSelectedCell, rangeInformation, table) {
+  const tbodyRowLength = table.querySelectorAll('tbody tr').length;
+  const isStartContainerInThead = domUtils.parents(firstSelectedCell, 'thead').length;
   let startRowIndex = rangeInformation.from.row;
   let endRowIndex = rangeInformation.to.row;
 
@@ -87,33 +91,31 @@ function getSelectedRows(firstSelectedCell, rangeInformation, $table) {
     endRowIndex -= 1;
   }
 
-  return $table.find('tr').slice(startRowIndex, endRowIndex + 1);
+  return domUtils.findAll(table, 'tr').slice(startRowIndex, endRowIndex + 1);
 }
 
 /**
  * Get TRs
  * @param {Range} range Range object
  * @param {object} selectionMgr Table selection manager
- * @param {jQuery} $table current table
- * @returns {jQuery}
+ * @param {HTMLElement} table current table
+ * @returns {Array.<HTMLElement>}
  */
-function getTrs(range, selectionMgr, $table) {
-  const $selectedCells = selectionMgr.getSelectedCells();
+function getTrs(range, selectionMgr, table) {
+  const selectedCells = selectionMgr.getSelectedCells();
   let rangeInformation, trs;
 
-  if ($selectedCells.length) {
+  if (selectedCells.length) {
     rangeInformation = selectionMgr.getSelectionRangeFromTable(
-      $selectedCells.first().get(0),
-      $selectedCells.last().get(0)
+      selectedCells[0],
+      selectedCells[selectedCells.length - 1]
     );
-    trs = getSelectedRows($selectedCells.first()[0], rangeInformation, $table);
+    trs = getSelectedRows(selectedCells[0], rangeInformation, table);
   } else {
-    const cell = $(range.startContainer)
-      .closest('td,th')
-      .get(0);
+    const cell = domUtils.closest(range.startContainer, 'td,th');
 
     rangeInformation = selectionMgr.getSelectionRangeFromTable(cell, cell);
-    trs = getSelectedRows(cell, rangeInformation, $table);
+    trs = getSelectedRows(cell, rangeInformation, table);
   }
 
   return trs;

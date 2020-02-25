@@ -2,9 +2,8 @@
  * @fileoverview Implements Outdent wysiwyg command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * Outdent
@@ -23,17 +22,20 @@ const Outdent = CommandManager.command(
      * @param {WysiwygEditor} wwe WysiwygEditor instance
      */
     exec(wwe) {
-      let $node = getCurrent$Li(wwe);
+      let node = getCurrentLi(wwe);
 
-      if ($node.length && isExecutable($node)) {
+      if (node && isExecutable(node)) {
         wwe.getEditor().saveUndoState();
 
-        const nodeClasses = $node.attr('class');
+        const nodeClasses = node.className;
 
         wwe.getEditor().decreaseListLevel();
 
-        $node = getCurrent$Li(wwe);
-        $node.attr('class', nodeClasses);
+        node = getCurrentLi(wwe);
+
+        if (node && nodeClasses) {
+          node.className = nodeClasses;
+        }
       }
     }
   }
@@ -43,24 +45,26 @@ const Outdent = CommandManager.command(
  * test if outdent the given list item
  * arbitrary list allows list item to be in any position
  * while markdown spec does not
- * @param {jQuery} $currentLiNode - jQuery list item element
+ * @param {HTMLElement} currentLiNode - list item element
  * @returns {boolean} - true to executable
  * @ignore
  */
-function isExecutable($currentLiNode) {
-  return !$currentLiNode.next().is('OL,UL');
+function isExecutable(currentLiNode) {
+  const nodeName = domUtils.getNodeName(currentLiNode.nextSibling);
+
+  return nodeName !== 'OL' && nodeName !== 'UL';
 }
 
 /**
  * Get list item element of current selection
  * @param {object} wwe Wysiwyg editor instance
- * @returns {jQuery}
+ * @returns {HTMLElement}
  * @ignore
  */
-function getCurrent$Li(wwe) {
+function getCurrentLi(wwe) {
   const range = wwe.getEditor().getSelection();
 
-  return $(range.startContainer).closest('li');
+  return domUtils.closest(range.startContainer, 'li');
 }
 
 export default Outdent;

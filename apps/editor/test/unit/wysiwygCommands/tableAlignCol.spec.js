@@ -10,14 +10,13 @@ import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('Table - AlignCol', () => {
-  let wwe;
+  let container, wwe;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.componentManager.addManager(WwTableSelectionManager);
@@ -27,7 +26,7 @@ describe('Table - AlignCol', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -50,7 +49,7 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
       range.collapse(true);
 
       sq.setSelection(range);
@@ -59,30 +58,26 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'center');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
@@ -106,7 +101,7 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('thead th')[0].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('thead th')[0].firstChild);
       range.collapse(true);
 
       sq.setSelection(range);
@@ -115,30 +110,26 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'center');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
@@ -163,8 +154,8 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[2].firstChild);
 
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
@@ -172,58 +163,50 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'center');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(2)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(3)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(2)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(3)
           .attr('align')
@@ -248,8 +231,8 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[1].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[1].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[2].firstChild);
 
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
@@ -257,58 +240,50 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'center');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(2)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(3)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(2)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(3)
           .attr('align')
@@ -333,8 +308,8 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[3].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[4].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[3].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[4].firstChild);
 
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
@@ -342,58 +317,50 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'center');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(2)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(3)
           .attr('align')
       ).toEqual('center');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('center');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(2)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(3)
           .attr('align')
@@ -419,7 +386,7 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
       range.collapse(true);
 
       sq.setSelection(range);
@@ -428,30 +395,26 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'left');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
@@ -475,7 +438,7 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('thead th')[0].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('thead th')[0].firstChild);
       range.collapse(true);
 
       sq.setSelection(range);
@@ -484,30 +447,26 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'left');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
@@ -531,8 +490,8 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('thead th')[0].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[1].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('thead th')[0].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[1].firstChild);
 
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
@@ -540,30 +499,26 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'left');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).toEqual('left');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
@@ -588,8 +543,8 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[2].firstChild);
 
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
@@ -597,58 +552,50 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'left');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(2)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(3)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(2)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(3)
           .attr('align')
@@ -673,8 +620,8 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[1].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[1].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[2].firstChild);
 
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
@@ -682,58 +629,50 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'left');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(2)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(3)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(2)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(3)
           .attr('align')
@@ -758,8 +697,8 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[3].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[4].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[3].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[4].firstChild);
 
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
@@ -767,58 +706,50 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'left');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(2)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(3)
           .attr('align')
       ).toEqual('left');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('left');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(2)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(3)
           .attr('align')
@@ -844,7 +775,7 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
       range.collapse(true);
 
       sq.setSelection(range);
@@ -853,30 +784,26 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'right');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
@@ -900,7 +827,7 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('thead th')[0].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('thead th')[0].firstChild);
       range.collapse(true);
 
       sq.setSelection(range);
@@ -909,30 +836,26 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'right');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
@@ -957,8 +880,8 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[2].firstChild);
 
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
@@ -966,58 +889,50 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'right');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(2)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(3)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(2)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(3)
           .attr('align')
@@ -1042,8 +957,8 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[1].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[1].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[2].firstChild);
 
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
@@ -1051,58 +966,50 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'right');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(2)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(3)
           .attr('align')
       ).not.toBeDefined();
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(2)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(3)
           .attr('align')
@@ -1127,8 +1034,8 @@ describe('Table - AlignCol', () => {
         ].join('\n')
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[3].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[4].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[3].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[4].firstChild);
 
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
@@ -1136,58 +1043,50 @@ describe('Table - AlignCol', () => {
       AlignCol.exec(wwe, 'right');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(0)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(2)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('thead th')
           .eq(3)
           .attr('align')
       ).toEqual('right');
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(0)
           .attr('align')
       ).toEqual('right');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(1)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(2)
           .attr('align')
       ).not.toBeDefined();
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('tbody td')
           .eq(3)
           .attr('align')

@@ -2,11 +2,11 @@
  * @fileoverview Implements wysiwyg code block manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import toArray from 'tui-code-snippet/collection/toArray';
 import isTruthy from 'tui-code-snippet/type/isTruthy';
 import browser from 'tui-code-snippet/browser/browser';
+import addClass from 'tui-code-snippet/domUtil/addClass';
 
 import domUtils from './domUtils';
 
@@ -153,16 +153,13 @@ class WwCodeBlockManager {
    * @private
    */
   _copyCodeblockTypeFromRangeCodeblock(element, range) {
-    const blockNode = domUtils.getParentUntil(
-      range.commonAncestorContainer,
-      this.wwe.get$Body()[0]
-    );
+    const blockNode = domUtils.getParentUntil(range.commonAncestorContainer, this.wwe.getBody());
 
     if (domUtils.getNodeName(blockNode) === 'PRE') {
-      const attrs = $(blockNode).prop('attributes');
+      const attrs = blockNode.attributes;
 
       forEachOwnProperties(attrs, attr => {
-        $(element).attr(attr.name, attr.value);
+        element.setAttribute(attr.name, attr.value);
       });
     }
 
@@ -188,43 +185,50 @@ class WwCodeBlockManager {
    */
   modifyCodeBlockForWysiwyg(node) {
     if (!node) {
-      node = this.wwe.get$Body();
+      node = this.wwe.getBody();
     }
 
-    $(node)
-      .find('pre')
-      .each((index, pre) => {
-        const $pre = $(pre);
-        const lang = $pre.find('code').attr('data-language');
-        const numberOfBackticks = $pre.find('code').attr('data-backticks');
+    domUtils.findAll(node, 'pre').forEach(pre => {
+      const codeTag = pre.querySelector('code');
+      let lang, numberOfBackticks;
 
-        // if this pre can have lines
-        if ($pre.children().length > 1) {
-          $pre.children().each((idx, childNode) => {
-            if (
-              (childNode.nodeName === 'DIV' || childNode.nodeName === 'P') &&
-              !$(childNode).find('br').length
-            ) {
-              $(childNode).append('\n');
-            }
-          });
-        }
-        $pre.find('br').replaceWith('\n');
+      if (codeTag) {
+        lang = codeTag.getAttribute('data-language');
+        numberOfBackticks = codeTag.getAttribute('data-backticks');
+      }
 
-        const resultText = $pre.text().replace(/\s+$/, '');
+      // if this pre can have lines
+      if (pre.children.length > 1) {
+        toArray(pre.children).forEach(childNode => {
+          if (
+            (childNode.nodeName === 'DIV' || childNode.nodeName === 'P') &&
+            !childNode.querySelectorAll('br').length
+          ) {
+            childNode.innerHTML += `${childNode.innerHTML}\n`;
+          }
+        });
+      }
 
-        $pre.empty();
-        $pre.html(resultText ? sanitizeHtmlCode(resultText) : brString);
+      const brs = pre.querySelectorAll('br');
 
-        if (lang) {
-          $pre.attr('data-language', lang);
-          $pre.addClass(`lang-${lang}`);
-        }
-        if (numberOfBackticks) {
-          $pre.attr('data-backticks', numberOfBackticks);
-        }
-        $pre.attr(CODEBLOCK_ATTR_NAME, '');
-      });
+      if (brs.length) {
+        domUtils.replaceWith(brs, '\n');
+      }
+
+      const resultText = pre.textContent.replace(/\s+$/, '');
+
+      domUtils.empty(pre);
+      pre.innerHTML = resultText ? sanitizeHtmlCode(resultText) : brString;
+
+      if (lang) {
+        pre.setAttribute('data-language', lang);
+        addClass(pre, `lang-${lang}`);
+      }
+      if (numberOfBackticks) {
+        pre.setAttribute('data-backticks', numberOfBackticks);
+      }
+      pre.setAttribute(CODEBLOCK_ATTR_NAME, '');
+    });
   }
 
   /**
@@ -375,7 +379,7 @@ class WwCodeBlockManager {
       target = range.commonAncestorContainer;
     }
 
-    return !!$(target).closest('pre').length;
+    return !!domUtils.closest(target, 'pre');
   }
 
   /**

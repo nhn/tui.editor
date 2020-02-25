@@ -15,7 +15,7 @@ import tooltip from './tooltip';
  *     @param {string} options.tooltip - text on tooltip
  *     @param {string} options.style - button style
  *     @param {string} options.state - button state
- * @param {jquery} $el - button rootElement
+ * @param {HTMLElement} el - button rootElement
  * @deprecated
  */
 class Button extends ToolbarItem {
@@ -43,7 +43,7 @@ class Button extends ToolbarItem {
       name: options.name,
       tagName: 'button',
       className: `${options.className} ${Button.className}`,
-      rootElement: options.$el
+      rootElement: options.el
     });
 
     this._setOptions(options);
@@ -74,11 +74,11 @@ class Button extends ToolbarItem {
   }
 
   _render() {
-    this.$el.text(this._text);
-    this.$el.attr('type', 'button');
+    this.el.textContent = this._text;
+    this.el.setAttribute('type', 'button');
 
     if (this._style) {
-      this.$el.attr('style', this._style);
+      this.el.setAttribute('style', this._style);
     }
   }
 
@@ -101,7 +101,7 @@ class Button extends ToolbarItem {
       return;
     }
 
-    tooltip.show(this.$el, this._tooltip);
+    tooltip.show(this.el, this._tooltip);
   }
 
   _onOut() {
@@ -112,14 +112,14 @@ class Button extends ToolbarItem {
    * enable button
    */
   enable() {
-    this.$el.attr('disabled', false);
+    this.el.disabled = false;
   }
 
   /**
    * disable button
    */
   disable() {
-    this.$el.attr('disabled', true);
+    this.el.disabled = true;
   }
 
   /**
@@ -127,7 +127,7 @@ class Button extends ToolbarItem {
    * @returns {Boolean} - true for enabled
    */
   isEnabled() {
-    return !this.$el.attr('disabled');
+    return !this.el.disabled;
   }
 }
 

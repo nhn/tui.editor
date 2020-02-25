@@ -2,8 +2,10 @@
  * @fileoverview Implements editor preivew
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import extend from 'tui-code-snippet/object/extend';
+import on from 'tui-code-snippet/domEvent/on';
+import off from 'tui-code-snippet/domEvent/off';
 
 import MarkdownPreview from './mdPreview';
 import EventManager from './eventManager';
@@ -33,7 +35,7 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  */
 class ToastUIEditorViewer {
   constructor(options) {
-    this.options = $.extend(
+    this.options = extend(
       {
         useDefaultHTMLSanitizer: true,
         customConvertor: null
@@ -73,9 +75,9 @@ class ToastUIEditorViewer {
 
     el.innerHTML = '';
 
-    this.preview = new MarkdownPreview($(el), this.eventManager, this.convertor, true);
+    this.preview = new MarkdownPreview(el, this.eventManager, this.convertor, true);
 
-    this.preview.$el.on('mousedown', $.proxy(this._toggleTask, this));
+    on(this.preview.el, 'mousedown', this._toggleTask.bind(this));
 
     if (this.options.plugins) {
       invokePlugins(this.options.plugins, this);
@@ -102,7 +104,7 @@ class ToastUIEditorViewer {
       ev.target.hasAttribute(TASK_ATTR_NAME) &&
       domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)
     ) {
-      $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+      domUtils.toggleClass(ev.target, TASK_CHECKED_CLASS_NAME);
       this.eventManager.emit('change', {
         source: 'viewer',
         data: ev
@@ -152,7 +154,7 @@ class ToastUIEditorViewer {
    */
   remove() {
     this.eventManager.emit('removeEditor');
-    this.preview.$el.off('mousedown', $.proxy(this._toggleTask, this));
+    off(this.preview.el, 'mousedown', this._toggleTask.bind(this));
     this.preview.remove();
     this.options = null;
     this.eventManager = null;

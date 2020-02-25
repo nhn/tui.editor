@@ -2,10 +2,10 @@
  * @fileoverview Implements tooltip
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import css from 'tui-code-snippet/domUtil/css';
+import domUtils from '../domUtils';
 
-const TOOLTIP_CONTENT =
-  '<div class="tui-tooltip"><div class="arrow"></div><span class="text"></span></span></div>';
+const TOOLTIP_CONTENT = '<div class="arrow"></div><span class="text"></span></span>';
 
 /**
  * Class Tooltip
@@ -13,34 +13,37 @@ const TOOLTIP_CONTENT =
  */
 class Tooltip {
   constructor() {
-    this.$el = $(TOOLTIP_CONTENT);
-    this.$el.appendTo('body');
+    this.el = domUtils.createElementWith(`<div class="tui-tooltip">${TOOLTIP_CONTENT}</div>`);
+
+    document.body.appendChild(this.el);
+
     this.hide();
   }
 
   /**
    * show tooltop
-   * @param {jQuery} target - target jQuery element to bind
+   * @param {HTMLElement} target - target element to bind
    * @param {String} text - text to show
    */
   show(target, text) {
-    this.$el
-      .css({
-        top: target.offset().top + target.height() + 13, // below the button
-        left: target.offset().left + 3
-      })
-      .find('.text')
-      .html(text)
-      .end()
-      .show();
+    const { top, left } = domUtils.getOffset(target);
+
+    css(this.el, {
+      top: `${top + target.clientHeight + 13}px`, // below the button
+      left: `${left + 3}px`
+    });
+
+    this.el.querySelector('.text').innerHTML = text;
+
+    css(this.el, { display: 'block' });
   }
 
   hide() {
-    this.$el.hide();
+    css(this.el, { display: 'none' });
   }
 
   remove() {
-    this.$el.remove();
+    domUtils.remove(this.el);
   }
 }
 

@@ -2,7 +2,6 @@
  * @fileoverview Paste helper when past to table
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import toArray from 'tui-code-snippet/collection/toArray';
 
 import domUtils from './domUtils';
@@ -81,7 +80,7 @@ class WwTablePasteHelper {
     let textItem = null;
     let htmlItem = null;
 
-    forEachArray(items, item => {
+    toArray(items).forEach(item => {
       if (item.type === 'text/html') {
         htmlItem = item;
       } else if (item.type === 'text/plain') {

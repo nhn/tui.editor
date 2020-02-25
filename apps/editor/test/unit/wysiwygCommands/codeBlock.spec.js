@@ -10,27 +10,26 @@ import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('CodeBlock', () => {
-  let wwe, sq, $body;
+  let container, wwe, sq, $body;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.componentManager.addManager('codeblock', WwCodeBlockManager);
 
     sq = wwe.getEditor();
-    $body = wwe.get$Body();
+    $body = $(wwe.getBody());
     sq.focus();
   });
 
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -51,20 +50,8 @@ describe('CodeBlock', () => {
 
     const range = wwe.getEditor().getSelection();
 
-    range.setStart(
-      wwe
-        .get$Body()
-        .children()
-        .eq(0)[0].firstChild,
-      0
-    );
-    range.setEnd(
-      wwe
-        .get$Body()
-        .children()
-        .eq(0)[0].firstChild,
-      5
-    );
+    range.setStart(wwe.getBody().children[0].firstChild, 0);
+    range.setEnd(wwe.getBody().children[0].firstChild, 5);
 
     sq.setSelection(range);
 

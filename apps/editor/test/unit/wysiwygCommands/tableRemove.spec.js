@@ -2,21 +2,18 @@
  * @fileoverview test wysiwyg table remove command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import RemoveTable from '@/wysiwygCommands/tableRemove';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('Table - Remove', () => {
-  let wwe;
+  let container, wwe;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.getEditor().focus();
@@ -25,7 +22,7 @@ describe('Table - Remove', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -48,13 +45,13 @@ describe('Table - Remove', () => {
       ].join('\n')
     );
 
-    range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+    range.setStartAfter(wwe.getBody().querySelector('tbody td').firstChild);
     range.collapse(true);
 
     sq.setSelection(range);
 
     RemoveTable.exec(wwe);
 
-    expect(wwe.get$Body().find('table').length).toEqual(0);
+    expect(wwe.getBody().querySelectorAll('table').length).toEqual(0);
   });
 });

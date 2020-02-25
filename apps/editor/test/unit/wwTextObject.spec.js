@@ -2,21 +2,18 @@
  * @fileoverview test wysiwyg text object
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import WwTextObject from '@/wwTextObject';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('WwTextObject', () => {
-  let wwe, sq, to;
+  let container, wwe, sq, to;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -30,7 +27,7 @@ describe('WwTextObject', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -58,7 +55,7 @@ describe('WwTextObject', () => {
     it('get text', () => {
       const range = wwe.getRange();
 
-      range.selectNodeContents(wwe.get$Body().find('div')[0].firstChild);
+      range.selectNodeContents(wwe.getBody().querySelectorAll('div')[0].firstChild);
       range.setStart(range.startContainer, range.startOffset + 1);
 
       to = new WwTextObject(wwe, range);
@@ -71,7 +68,7 @@ describe('WwTextObject', () => {
 
       wwe.getEditor().setHTML('한글입니다.');
 
-      range.selectNodeContents(wwe.get$Body().find('div')[0].firstChild);
+      range.selectNodeContents(wwe.getBody().querySelectorAll('div')[0].firstChild);
       range.setStart(range.startContainer, range.startOffset + 1);
 
       to = new WwTextObject(wwe, range);
@@ -84,8 +81,8 @@ describe('WwTextObject', () => {
     beforeEach(() => {
       const range = wwe.getRange();
 
-      range.setStart(wwe.get$Body().find('div')[0].firstChild, 1);
-      range.setEnd(wwe.get$Body().find('div')[0].firstChild, 3);
+      range.setStart(wwe.getBody().querySelectorAll('div')[0].firstChild, 1);
+      range.setEnd(wwe.getBody().querySelectorAll('div')[0].firstChild, 3);
 
       to = new WwTextObject(wwe, range);
     });
@@ -105,8 +102,8 @@ describe('WwTextObject', () => {
     beforeEach(() => {
       const range = wwe.getRange();
 
-      range.setStart(wwe.get$Body().find('div')[0].firstChild, 1);
-      range.setEnd(wwe.get$Body().find('div')[0].firstChild, 3);
+      range.setStart(wwe.getBody().querySelectorAll('div')[0].firstChild, 1);
+      range.setEnd(wwe.getBody().querySelectorAll('div')[0].firstChild, 3);
 
       to = new WwTextObject(wwe, range);
     });
@@ -125,19 +122,15 @@ describe('WwTextObject', () => {
     beforeEach(() => {
       const range = wwe.getRange();
 
-      range.setStart(wwe.get$Body().find('div')[0].firstChild, 1);
-      range.setEnd(wwe.get$Body().find('div')[0].firstChild, 3);
+      range.setStart(wwe.getBody().querySelectorAll('div')[0].firstChild, 1);
+      range.setEnd(wwe.getBody().querySelectorAll('div')[0].firstChild, 3);
 
       to = new WwTextObject(wwe, range);
     });
+
     it('replace text', () => {
       to.replaceContent('12');
-      expect(
-        wwe
-          .get$Body()
-          .find('div')
-          .text()
-      ).toEqual('t12t textObject');
+      expect(wwe.getBody().querySelector('div').textContent).toEqual('t12t textObject');
     });
   });
 
@@ -145,19 +138,14 @@ describe('WwTextObject', () => {
     beforeEach(() => {
       const range = wwe.getRange();
 
-      range.setStart(wwe.get$Body().find('div')[0].firstChild, 1);
-      range.setEnd(wwe.get$Body().find('div')[0].firstChild, 3);
+      range.setStart(wwe.getBody().querySelectorAll('div')[0].firstChild, 1);
+      range.setEnd(wwe.getBody().querySelectorAll('div')[0].firstChild, 3);
 
       to = new WwTextObject(wwe, range);
     });
     it('remove text', () => {
       to.deleteContent();
-      expect(
-        wwe
-          .get$Body()
-          .find('div')
-          .text()
-      ).toEqual('tt textObject');
+      expect(wwe.getBody().querySelector('div').textContent).toEqual('tt textObject');
     });
   });
 
@@ -165,8 +153,8 @@ describe('WwTextObject', () => {
     beforeEach(() => {
       const range = wwe.getRange();
 
-      range.setStart(wwe.get$Body().find('div')[0].firstChild, 7);
-      range.setEnd(wwe.get$Body().find('div')[0].firstChild, 10);
+      range.setStart(wwe.getBody().querySelectorAll('div')[0].firstChild, 7);
+      range.setEnd(wwe.getBody().querySelectorAll('div')[0].firstChild, 10);
 
       to = new WwTextObject(wwe, range);
     });

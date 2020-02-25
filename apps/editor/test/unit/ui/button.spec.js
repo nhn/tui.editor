@@ -2,6 +2,8 @@
  * @fileoverview test button
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import $ from 'jquery';
+
 import Button from '@/ui/button';
 
 describe('Button', () => {
@@ -10,14 +12,14 @@ describe('Button', () => {
   describe('creation', () => {
     it('should make button element', () => {
       button = new Button({});
-      expect(button.$el.prop('tagName')).toEqual('BUTTON');
+      expect(button.el.tagName).toEqual('BUTTON');
     });
 
     it('should have an element containing given class on className option', () => {
       button = new Button({
         className: 'myclass'
       });
-      expect(button.$el.hasClass('myclass')).toBe(true);
+      expect($(button.el).hasClass('myclass')).toBe(true);
     });
 
     it('should have text given by text option', () => {
@@ -25,7 +27,7 @@ describe('Button', () => {
         text: 'buttonText'
       });
 
-      expect(button.$el.text()).toEqual('buttonText');
+      expect($(button.el).text()).toEqual('buttonText');
     });
 
     it('should have applied given style on style option', () => {
@@ -33,7 +35,7 @@ describe('Button', () => {
         style: 'display:none'
       });
 
-      expect(button.$el.css('display')).toEqual('none');
+      expect($(button.el).css('display')).toEqual('none');
     });
   });
 
@@ -49,7 +51,7 @@ describe('Button', () => {
         passedCommand = command;
       });
 
-      button.$el.trigger('click');
+      $(button.el).trigger('click');
 
       expect(passedCommand).toEqual('mycommand');
     });
@@ -65,7 +67,7 @@ describe('Button', () => {
         passedEvent = event;
       });
 
-      button.$el.trigger('click');
+      $(button.el).trigger('click');
 
       expect(passedEvent).toEqual('myevent');
     });
@@ -82,7 +84,7 @@ describe('Button', () => {
         passedEvent = event;
       });
 
-      button.$el.trigger('click');
+      $(button.el).trigger('click');
 
       expect(passedEvent).toBeFalsy();
     });
@@ -99,7 +101,7 @@ describe('Button', () => {
       button.on('command', commandHandler);
       button.on('event', eventHandler);
 
-      button.$el.trigger('click');
+      $(button.el).trigger('click');
 
       expect(commandHandler).toHaveBeenCalled();
       expect(eventHandler).not.toHaveBeenCalled();
@@ -111,10 +113,10 @@ describe('Button', () => {
       button = new Button({});
 
       button.disable();
-      expect(button.$el.attr('disabled')).toBeTruthy();
+      expect(button.el.disabled).toBeTruthy();
 
       button.enable();
-      expect(button.$el.attr('disabled')).toBeFalsy();
+      expect(button.el.disabled).toBeFalsy();
     });
   });
 });

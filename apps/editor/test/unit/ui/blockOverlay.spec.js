@@ -39,7 +39,7 @@ describe('BlockOverlay', () => {
     em = new EventManager();
     blockOverlay = new BlockOverlay({
       eventManager: em,
-      container: $container[0],
+      container: $container.get(0),
       attachedSelector: 'pre'
     });
   });
@@ -49,7 +49,7 @@ describe('BlockOverlay', () => {
   });
 
   it('should match position & size to attachedElement on change event', () => {
-    blockOverlay._$attachedElement = $targetElement;
+    blockOverlay._attachedElement = $($targetElement).get(0);
     blockOverlay.setVisibility(true);
 
     $targetElement.css('top', '1px');
@@ -59,7 +59,7 @@ describe('BlockOverlay', () => {
       source: 'wysiwyg'
     });
 
-    expect(blockOverlay.$el.offset()).toEqual($targetElement.offset());
+    expect($(blockOverlay.el).offset()).toEqual($targetElement.offset());
 
     $targetElement.width('10px');
     $targetElement.height('10px');
@@ -68,25 +68,25 @@ describe('BlockOverlay', () => {
       source: 'wysiwyg'
     });
 
-    expect(blockOverlay.$el.width()).toBe($targetElement.width());
-    expect(blockOverlay.$el.height()).toBe($targetElement.height());
+    expect($(blockOverlay.el).width()).toBe($targetElement.width());
+    expect($(blockOverlay.el).height()).toBe($targetElement.height());
   });
 
   it('show on mouseover', () => {
     em.emit('mouseover', {
       source: 'wysiwyg',
       data: {
-        target: $targetElement[0]
+        target: $targetElement.get(0)
       }
     });
     expect(blockOverlay.getVisibility()).toBe(true);
 
     blockOverlay.setVisibility(false);
-    blockOverlay._$attachedElement = $targetElement;
+    blockOverlay._attachedElement = $targetElement.get(0);
     em.emit('mouseover', {
       source: 'wysiwyg',
       data: {
-        target: blockOverlay.$el.get(0)
+        target: blockOverlay.el
       }
     });
 
@@ -97,7 +97,7 @@ describe('BlockOverlay', () => {
     em.emit('mouseout', {
       source: 'wysiwyg',
       data: {
-        target: $targetElement2[0]
+        target: $targetElement2
       }
     });
 
@@ -105,7 +105,7 @@ describe('BlockOverlay', () => {
   });
 
   it('hide on attached element destroyed', () => {
-    blockOverlay._$attachedElement = $targetElement;
+    blockOverlay._attachedElement = $targetElement.get(0);
     blockOverlay.setVisibility(true);
     $targetElement.remove();
 

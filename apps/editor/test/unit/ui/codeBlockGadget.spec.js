@@ -29,10 +29,11 @@ describe('code block gadget', () => {
       width: '200px',
       height: '100px'
     });
+
     $('body').append($targetElement);
 
     em = new EventManager();
-    const wysiwygEditor = new WysiwygEditor($wysiwygContainer, em);
+    const wysiwygEditor = new WysiwygEditor($wysiwygContainer.get(0), em);
 
     wysiwygEditor.init();
     wysiwygEditor.focus();
@@ -43,7 +44,7 @@ describe('code block gadget', () => {
       languages: ['java', 'javascript', 'cs']
     });
 
-    gadget._$attachedElement = $targetElement;
+    gadget._attachedElement = $($targetElement).get(0);
   });
 
   afterEach(() => {
@@ -63,15 +64,15 @@ describe('code block gadget', () => {
   it('_updateLanguage() should update label', () => {
     $targetElement.removeAttr('data-language');
     gadget._updateLanguage();
-    expect(gadget._$languageLabel.text()).toBe('text');
+    expect(gadget._languageLabel.textContent).toBe('text');
 
     $targetElement.attr('data-language', 'changedLang');
     gadget._updateLanguage();
-    expect(gadget._$languageLabel.text()).toBe('changedLang');
+    expect(gadget._languageLabel.textContent).toBe('changedLang');
 
     gadget.onHide();
     gadget._updateLanguage();
-    expect(gadget._$languageLabel.text()).toBe('text');
+    expect(gadget._languageLabel.textContent).toBe('text');
   });
 
   describe('language label should be updated', () => {
@@ -80,7 +81,7 @@ describe('code block gadget', () => {
 
       gadget.onShow();
 
-      expect(gadget._$languageLabel.text()).toBe('changedLang');
+      expect(gadget._languageLabel.textContent).toBe('changedLang');
     });
 
     it('on language-changed event', () => {
@@ -90,14 +91,14 @@ describe('code block gadget', () => {
 
       $targetElement.trigger('language-changed');
 
-      expect(gadget._$languageLabel.text()).toBe('changedLang');
+      expect(gadget._languageLabel.textContent).toBe('changedLang');
     });
   });
 
   it('syncLayout() should fix its size', () => {
     gadget.syncLayout();
 
-    expect(gadget.$el.height()).toBe(GADGET_HEIGHT);
-    expect(gadget.$el.width()).toBe(GADGET_WIDTH);
+    expect($(gadget.el).height()).toBe(GADGET_HEIGHT);
+    expect($(gadget.el).width()).toBe(GADGET_WIDTH);
   });
 });

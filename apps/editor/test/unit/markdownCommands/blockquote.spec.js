@@ -2,21 +2,18 @@
  * @fileoverview test markdown block quote
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import Blockquote from '@/markdownCommands/blockquote';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
 describe('Blockquote', () => {
-  let cm, doc, mde;
+  let cm, doc, mde, container;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    mde = new MarkdownEditor($container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager());
 
     cm = mde.getEditor();
 
@@ -27,7 +24,7 @@ describe('Blockquote', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   describe('adding > in first column', () => {

@@ -9,14 +9,13 @@ import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('Heading', () => {
-  let wwe;
+  let container, wwe;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
     wwe.getEditor().focus();
@@ -25,7 +24,7 @@ describe('Heading', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -38,7 +37,7 @@ describe('Heading', () => {
 
     wwe.setValue('text');
 
-    range.selectNodeContents(wwe.get$Body()[0].childNodes[0]);
+    range.selectNodeContents(wwe.getBody().childNodes[0]);
     range.collapse(true);
 
     wwe.getEditor().setSelection(range);
@@ -51,28 +50,28 @@ describe('Heading', () => {
   it('set heading tag 1~6 rotation', () => {
     const range = wwe.getRange();
 
-    wwe.get$Body().html('<div>text</div><div>text2</div>');
+    $(wwe.getBody()).html('<div>text</div><div>text2</div>');
 
-    range.setStart(wwe.get$Body().children('div')[0], 0);
-    range.setEnd(wwe.get$Body().children('div')[1], 1);
+    range.setStart($(wwe.getBody()).children('div')[0], 0);
+    range.setEnd($(wwe.getBody()).children('div')[1], 1);
     wwe.getEditor().setSelection(range);
 
     Heading.exec(wwe, 1);
-    expect(wwe.get$Body().find('h1').length).toBe(2);
+    expect(wwe.getBody().querySelectorAll('h1').length).toBe(2);
   });
 
   it('set heading tag', () => {
     const range = wwe.getRange();
 
-    wwe.get$Body().html('<h2><div>text</div></h2><h2><div>text2</div></h2>');
+    $(wwe.getBody()).html('<h2><div>text</div></h2><h2><div>text2</div></h2>');
 
-    range.setStart(wwe.get$Body().find('h2 div')[0], 0);
-    range.setEnd(wwe.get$Body().find('h2 div')[1], 1);
+    range.setStart(wwe.getBody().querySelectorAll('h2 div')[0], 0);
+    range.setEnd(wwe.getBody().querySelectorAll('h2 div')[1], 1);
     wwe.getEditor().setSelection(range);
 
     Heading.exec(wwe, 1);
-    expect(wwe.get$Body().find('h1').length).toBe(2);
-    expect(wwe.get$Body().find('h2').length).toBe(0);
+    expect(wwe.getBody().querySelectorAll('h1').length).toBe(2);
+    expect(wwe.getBody().querySelectorAll('h2').length).toBe(0);
   });
 
   it('set heading tag 1~6 rotation', () => {
@@ -83,7 +82,7 @@ describe('Heading', () => {
 
     wwe.setValue('text');
 
-    range.selectNodeContents(wwe.get$Body()[0].childNodes[0]);
+    range.selectNodeContents(wwe.getBody().childNodes[0]);
     range.collapse(true);
     wwe.getEditor().setSelection(range);
 
@@ -109,23 +108,19 @@ describe('Heading', () => {
   it('pass converting on list element', () => {
     const range = wwe.getRange();
 
-    wwe
-      .get$Body()
-      .html(
-        [
-          '<h2><div>text</div></h2>',
-          '<ul><li><div>hi</div></li></ul>',
-          '<h2><div>text2</div></h2>'
-        ].join('')
-      );
+    wwe.getBody().innerHTML = [
+      '<h2><div>text</div></h2>',
+      '<ul><li><div>hi</div></li></ul>',
+      '<h2><div>text2</div></h2>'
+    ].join('');
 
-    range.setStart(wwe.get$Body().find('h2 div')[0], 0);
-    range.setEnd(wwe.get$Body().find('h2 div')[1], 1);
+    range.setStart(wwe.getBody().querySelectorAll('h2 div')[0], 0);
+    range.setEnd(wwe.getBody().querySelectorAll('h2 div')[1], 1);
     wwe.getEditor().setSelection(range);
 
     Heading.exec(wwe, 1);
-    expect(wwe.get$Body().find('h1').length).toBe(2);
-    expect(wwe.get$Body().find('h2').length).toBe(0);
-    expect(wwe.get$Body().find('ul').length).toBe(1);
+    expect(wwe.getBody().querySelectorAll('h1').length).toBe(2);
+    expect(wwe.getBody().querySelectorAll('h2').length).toBe(0);
+    expect(wwe.getBody().querySelectorAll('ul').length).toBe(1);
   });
 });

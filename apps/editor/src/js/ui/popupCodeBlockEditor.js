@@ -2,8 +2,8 @@
  * @fileoverview Implements popup code block editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import extend from 'tui-code-snippet/object/extend';
+import css from 'tui-code-snippet/domUtil/css';
 
 import LayerPopup from './layerpopup';
 import ScrollSyncSplit from './scrollSyncSplit';
@@ -11,6 +11,7 @@ import CodeBlockEditor from '../codeBlockEditor';
 import CodeBlockPreview from '../codeBlockPreview';
 import CodeBlockLanguagesCombo from './codeBlockLanguagesCombo';
 import i18n from '../i18n';
+import domUtils from '../domUtils';
 
 const CLASS_PREFIX = 'popup-editor-';
 const CLASS_OK_BUTTON = 'te-ok-button';
@@ -74,7 +75,7 @@ class PopupCodeBlockEditor extends LayerPopup {
   _initDOM(options) {
     super._initDOM(options);
 
-    const el = this.$el.get(0);
+    const { el } = this;
 
     this._body = el.querySelector(`.${CLASS_PREFIX}body`);
     this._toggleFitButton = el.querySelector(`.${CLASS_PREFIX}toggle-fit`);
@@ -152,7 +153,7 @@ class PopupCodeBlockEditor extends LayerPopup {
     const previewWrapper = document.createElement('div');
 
     this._codeBlockPreview = new CodeBlockPreview(
-      $(previewWrapper),
+      previewWrapper,
       this.eventManager,
       this.convertor,
       this._codeBlockEditor
@@ -178,20 +179,25 @@ class PopupCodeBlockEditor extends LayerPopup {
   }
 
   _updateFitWindowButton() {
-    $(this._toggleFitButton).toggleClass('active', this.isFitToWindow());
+    domUtils.toggleClass(this._toggleFitButton, 'active', this.isFitToWindow());
   }
 
   _updatePreviewButton() {
-    $(this._togglePreviewButton).toggleClass('active', this._scrollSyncSplit.isSplitView());
+    domUtils.toggleClass(this._toggleFitButton, 'active', this._scrollSyncSplit.isSplitView());
   }
 
   _updateScrollButton() {
     if (this._scrollSyncSplit.isSplitView()) {
-      this._toggleScrollButton.style.display = 'inline-block';
+      css(this._toggleScrollButton, { display: 'inline-block' });
     } else {
-      this._toggleScrollButton.style.display = 'none';
+      css(this._toggleScrollButton, { display: 'none' });
     }
-    $(this._toggleScrollButton).toggleClass('active', this._scrollSyncSplit.isScrollSynced());
+
+    domUtils.toggleClass(
+      this._toggleScrollButton,
+      'active',
+      this._scrollSyncSplit.isScrollSynced()
+    );
   }
 
   _focusEditor(cursorToEnd) {

@@ -45,60 +45,60 @@ describe('SquireExt', () => {
     it('change block format', () => {
       const range = sqe.getSelection().cloneRange();
 
-      sqe.get$Body().html('<h1><div>test<br></div></h1>');
+      sqe.getBody().innerHTML = '<h1><div>test<br></div></h1>';
 
-      range.selectNode(sqe.get$Body().find('div')[0].firstChild);
+      range.selectNode(sqe.getBody().querySelector('div').firstChild);
       range.collapse(true);
       sqe.setSelection(range);
 
       sqe.changeBlockFormat('H1', 'P');
 
-      expect(sqe.get$Body().find('p').length).toEqual(1);
-      expect(sqe.get$Body().find('h1').length).toEqual(0);
+      expect(sqe.getBody().querySelectorAll('p').length).toEqual(1);
+      expect(sqe.getBody().querySelectorAll('h1').length).toEqual(0);
     });
 
     it('unwrap block format', () => {
       const range = sqe.getSelection().cloneRange();
 
-      sqe.get$Body().html('<h1><div>test<br></div></h1>');
+      sqe.getBody().innerHTML = '<h1><div>test<br></div></h1>';
 
-      range.selectNode(sqe.get$Body().find('div')[0].firstChild);
+      range.selectNode(sqe.getBody().querySelector('div').firstChild);
       range.collapse(true);
       sqe.setSelection(range);
 
       sqe.changeBlockFormat('H1');
 
-      expect(sqe.get$Body().find('H1').length).toEqual(0);
+      expect(sqe.getBody().querySelectorAll('H1').length).toEqual(0);
     });
 
     it('unwrap block format list', () => {
       const range = sqe.getSelection().cloneRange();
 
-      sqe.get$Body().html('<ul><li><div>test<br></div></li></ul>');
+      sqe.getBody().innerHTML = '<ul><li><div>test<br></div></li></ul>';
 
-      range.selectNode(sqe.get$Body().find('div')[0].firstChild);
+      range.selectNode(sqe.getBody().querySelector('div').firstChild);
       range.collapse(true);
       sqe.setSelection(range);
 
       sqe.changeBlockFormat('UL', 'OL');
 
-      expect(sqe.get$Body().find('ul').length).toEqual(0);
-      expect(sqe.get$Body().find('ol').length).toEqual(1);
+      expect(sqe.getBody().querySelectorAll('ul').length).toEqual(0);
+      expect(sqe.getBody().querySelectorAll('ol').length).toEqual(1);
     });
 
     it('if not mached any condition, wrap targetTagName node to first div node', () => {
       const range = sqe.getSelection().cloneRange();
 
-      sqe.get$Body().html('<div>test<br></div>');
+      sqe.getBody().innerHTML = '<div>test<br></div>';
 
-      range.selectNode(sqe.get$Body().find('div')[0].firstChild);
+      range.selectNode(sqe.getBody().querySelector('div').firstChild);
       range.collapse(true);
       sqe.setSelection(range);
 
       sqe.changeBlockFormat('UL', 'P');
 
-      expect(sqe.get$Body().find('ul').length).toEqual(0);
-      expect(sqe.get$Body().find('p').length).toEqual(1);
+      expect(sqe.getBody().querySelectorAll('ul').length).toEqual(0);
+      expect(sqe.getBody().querySelectorAll('p').length).toEqual(1);
     });
   });
 
@@ -106,31 +106,31 @@ describe('SquireExt', () => {
     it('change any block for to passed tagName', () => {
       const range = sqe.getSelection().cloneRange();
 
-      sqe.get$Body().html('<h1><div>test<br></div></h1>');
+      sqe.getBody().innerHTML = '<h1><div>test<br></div></h1>';
 
-      range.selectNode(sqe.get$Body().find('div')[0].firstChild);
+      range.selectNode(sqe.getBody().querySelector('div').firstChild);
       range.collapse(true);
       sqe.setSelection(range);
 
       sqe.changeBlockFormatTo('P');
 
-      expect(sqe.get$Body().find('h1').length).toEqual(0);
-      expect(sqe.get$Body().find('p').length).toEqual(1);
+      expect(sqe.getBody().querySelectorAll('h1').length).toEqual(0);
+      expect(sqe.getBody().querySelectorAll('p').length).toEqual(1);
     });
 
     it('remove unused inputbox when change from task to another', () => {
       const range = sqe.getSelection().cloneRange();
 
-      sqe.get$Body().html('<ul><li><div><input type="checkbox" />test<br></div></li></ul>');
+      sqe.getBody().innerHTML = '<ul><li><div><input type="checkbox" />test<br></div></li></ul>';
 
-      range.selectNode(sqe.get$Body().find('div')[0].firstChild);
+      range.selectNode(sqe.getBody().querySelector('div').firstChild);
       range.collapse(true);
       sqe.setSelection(range);
 
       sqe.changeBlockFormatTo('H1');
 
-      expect(sqe.get$Body().find('ul').length).toEqual(0);
-      expect(sqe.get$Body().find('h1').length).toEqual(1);
+      expect(sqe.getBody().querySelectorAll('ul').length).toEqual(0);
+      expect(sqe.getBody().querySelectorAll('h1').length).toEqual(1);
     });
   });
 
@@ -154,13 +154,13 @@ describe('SquireExt', () => {
 
       const selection = sqe.getSelection().cloneRange();
 
-      selection.setStart(sqe.get$Body().find('div')[0].firstChild, 4);
+      selection.setStart(sqe.getBody().querySelector('div').firstChild, 4);
       selection.collapse(true);
       sqe.setSelection(selection);
 
       sqe.replaceRelativeOffset('123', -2, 1);
 
-      expect(sqe.get$Body()[0].textContent).toEqual('te123t');
+      expect(sqe.getBody().textContent).toEqual('te123t');
     });
 
     it("replace html with current cursor's containers offset", () => {
@@ -168,19 +168,14 @@ describe('SquireExt', () => {
 
       const selection = sqe.getSelection().cloneRange();
 
-      selection.setStart(sqe.get$Body().find('div')[0].firstChild, 4);
+      selection.setStart(sqe.getBody().querySelector('div').firstChild, 4);
       selection.collapse(true);
       sqe.setSelection(selection);
 
       sqe.replaceRelativeOffset('<b>123</b>', -2, 1);
 
-      expect(sqe.get$Body()[0].textContent).toEqual('te123t');
-      expect(
-        sqe
-          .get$Body()
-          .find('b')
-          .text()
-      ).toEqual('123');
+      expect(sqe.getBody().textContent).toEqual('te123t');
+      expect(sqe.getBody().querySelector('b').textContent).toEqual('123');
     });
 
     it('if current selection is not text than use previousSibling', () => {
@@ -188,19 +183,14 @@ describe('SquireExt', () => {
 
       const selection = sqe.getSelection().cloneRange();
 
-      selection.selectNode(sqe.get$Body().find('i')[0]);
+      selection.selectNode(sqe.getBody().querySelector('i'));
       selection.collapse(true);
       sqe.setSelection(selection);
 
       sqe.replaceRelativeOffset('<b>123</b>', -2, 1);
 
-      expect(sqe.get$Body()[0].textContent).toEqual('te123tone');
-      expect(
-        sqe
-          .get$Body()
-          .find('b')
-          .text()
-      ).toEqual('123');
+      expect(sqe.getBody().textContent).toEqual('te123tone');
+      expect(sqe.getBody().querySelector('b').textContent).toEqual('123');
     });
 
     it(
@@ -211,13 +201,13 @@ describe('SquireExt', () => {
 
         const selection = sqe.getSelection().cloneRange();
 
-        selection.selectNode(sqe.get$Body().find('i')[0]);
+        selection.selectNode(sqe.getBody().querySelector('i'));
         selection.collapse(true);
         sqe.setSelection(selection);
 
         sqe.replaceRelativeOffset('123', -2, 1);
 
-        expect(sqe.get$Body()[0].textContent).toEqual('123');
+        expect(sqe.getBody().textContent).toEqual('123');
       }
     );
   });
@@ -230,8 +220,8 @@ describe('SquireExt', () => {
 
       beforeEach(() => {
         sqe.setHTML('<div>text1</div><div>text2</div>');
-        firstBlock = sqe.get$Body()[0].childNodes[0];
-        secBlock = sqe.get$Body()[0].childNodes[1];
+        firstBlock = sqe.getBody().childNodes[0];
+        secBlock = sqe.getBody().childNodes[1];
       });
 
       it("offset is lower than passed element's length", () => {
@@ -268,16 +258,11 @@ describe('SquireExt', () => {
     it("replace li's parent ul to ol", () => {
       sqe.setHTML('<ul><li>test</li></ul>');
 
-      sqe.replaceParent(sqe.get$Body().find('li'), 'UL', 'OL');
+      sqe.replaceParent(sqe.getBody().querySelector('li'), 'UL', 'OL');
 
-      expect(sqe.get$Body().find('ul').length).toEqual(0);
-      expect(sqe.get$Body().find('ol').length).toEqual(1);
-      expect(
-        sqe
-          .get$Body()
-          .find('li')
-          .text()
-      ).toEqual('test');
+      expect(sqe.getBody().querySelectorAll('ul').length).toEqual(0);
+      expect(sqe.getBody().querySelectorAll('ol').length).toEqual(1);
+      expect(sqe.getBody().querySelector('li').textContent).toEqual('test');
     });
   });
 
@@ -285,13 +270,13 @@ describe('SquireExt', () => {
     it('insert new emtpy line if dont have any default line in bottom', () => {
       sqe.setHTML('<h1>HELLO WORLD</h1>');
       sqe.preserveLastLine();
-      expect(sqe.get$Body().find('div').length).toEqual(1);
+      expect(sqe.getBody().querySelectorAll('div').length).toEqual(1);
     });
 
     it('dont insert new emtpy line if have default line in bottom', () => {
       sqe.setHTML('<h1>HELLO WORLD</h1><div>test<br></div>');
       sqe.preserveLastLine();
-      expect(sqe.get$Body().find('div').length).toEqual(1);
+      expect(sqe.getBody().querySelectorAll('div').length).toEqual(1);
     });
   });
 

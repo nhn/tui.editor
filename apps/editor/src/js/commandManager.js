@@ -2,7 +2,6 @@
  * @fileoverview Implements CommandManager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import extend from 'tui-code-snippet/object/extend';
 
 import Command from './command';
@@ -23,7 +22,7 @@ class CommandManager {
     this._command = new Map();
     this._mdCommand = new Map();
     this._wwCommand = new Map();
-    this._options = $.extend(
+    this._options = extend(
       {
         useCommandShortcut: true
       },

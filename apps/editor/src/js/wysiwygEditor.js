@@ -2,12 +2,17 @@
  * @fileoverview Implments wysiwygEditor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isNumber from 'tui-code-snippet/type/isNumber';
 import isArray from 'tui-code-snippet/type/isArray';
 import browser from 'tui-code-snippet/browser/browser';
 import debounce from 'tui-code-snippet/tricks/debounce';
+import css from 'tui-code-snippet/domUtil/css';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import on from 'tui-code-snippet/domEvent/on';
+import off from 'tui-code-snippet/domEvent/off';
 
 import domUtils from './domUtils';
 import WwClipboardManager from './wwClipboardManager';
@@ -41,14 +46,14 @@ const canObserveMutations = typeof MutationObserver !== 'undefined';
 
 /**
  * Class WysiwygEditor
- * @param {jQuery} $el element to insert editor
- * @param {EventManager} eventManager EventManager instance
+ * @param {HTMLElement} el - element to insert editor
+ * @param {EventManager} eventManager - EventManager instance
  */
 class WysiwygEditor {
-  constructor($el, eventManager) {
+  constructor(el, eventManager) {
     this.componentManager = new ComponentManager(this);
     this.eventManager = eventManager;
-    this.$editorContainerEl = $el;
+    this.editorContainerEl = el;
 
     this._height = 0;
 
@@ -69,11 +74,11 @@ class WysiwygEditor {
    * @param {boolean} useDefaultHTMLSanitizer - whether to use default html sanitizer
    */
   init(useDefaultHTMLSanitizer) {
-    const $editorBody = $('<div />');
+    const editorBody = document.createElement('div');
 
-    this.$editorContainerEl.append($editorBody);
+    this.editorContainerEl.appendChild(editorBody);
 
-    this.editor = new SquireExt($editorBody[0], {
+    this.editor = new SquireExt(editorBody, {
       blockTag: 'DIV',
       leafNodeNames: {
         HR: false
@@ -86,13 +91,13 @@ class WysiwygEditor {
     this._initSquireEvent();
     this._clipboardManager.init();
 
-    this.get$Body().addClass(EDITOR_CONTENT_CSS_CLASSNAME);
-    this.$editorContainerEl.css('position', 'relative');
+    addClass(this.getBody(), EDITOR_CONTENT_CSS_CLASSNAME);
+    css(this.editorContainerEl, 'position', 'relative');
     this._togglePlaceholder();
 
     this.codeBlockGadget = new CodeBlockGadget({
       eventManager: this.eventManager,
-      container: this.$editorContainerEl,
+      container: this.editorContainerEl,
       wysiwygEditor: this
     });
   }
@@ -325,7 +330,7 @@ class WysiwygEditor {
           );
           range.collapse(true);
 
-          curEl.parentNode.removeChild(curEl);
+          domUtils.remove(curEl);
 
           this.setRange(range);
           range.detach();
@@ -345,7 +350,7 @@ class WysiwygEditor {
       });
     });
 
-    this.$editorContainerEl.on('scroll', ev => {
+    on(this.editorContainerEl, 'scroll', ev => {
       this.eventManager.emit('scroll', {
         source: 'wysiwyg',
         data: ev
@@ -574,16 +579,16 @@ class WysiwygEditor {
   }
 
   _wrapDefaultBlockToOrphanTexts() {
-    const textNodes = this.get$Body()
-      .contents()
-      .filter(this.findTextNodeFilter);
+    const textNodes = toArray(this.getBody().childNodes).filter(node => domUtils.isTextNode(node));
 
-    textNodes.each((i, node) => {
+    domUtils.getAllTextNode(this.getBody());
+
+    textNodes.forEach(node => {
       if (node.nextSibling && node.nextSibling.tagName === 'BR') {
-        $(node.nextSibling).remove();
+        domUtils.remove(node.nextSibling);
       }
 
-      $(node).wrap('<div />');
+      domUtils.wrap(node, document.createElement('div'));
     });
   }
 
@@ -596,7 +601,7 @@ class WysiwygEditor {
   _isInOrphanText(range) {
     return (
       range.startContainer.nodeType === Node.TEXT_NODE &&
-      range.startContainer.parentNode === this.get$Body()[0]
+      range.startContainer.parentNode === this.getBody()
     );
   }
 
@@ -640,25 +645,15 @@ class WysiwygEditor {
   }
 
   /**
-   * findTextNodeFilter
-   * @returns {boolean} true or not
-   */
-  findTextNodeFilter() {
-    return this.nodeType === Node.TEXT_NODE;
-  }
-
-  /**
    * Join spliated text nodes
    * @private
    */
   _joinSplitedTextNodes() {
     let prevNode, lastGroup;
     const nodesToRemove = [];
-    const textNodes = this.get$Body()
-      .contents()
-      .filter(this.findTextNodeFilter);
+    const textNodes = toArray(this.getBody().childNodes).filter(node => domUtils.isTextNode(node));
 
-    textNodes.each((i, node) => {
+    textNodes.forEach(node => {
       if (prevNode === node.previousSibling) {
         lastGroup.nodeValue += node.nodeValue;
         nodesToRemove.push(node);
@@ -669,7 +664,7 @@ class WysiwygEditor {
       prevNode = node;
     });
 
-    $(nodesToRemove).remove();
+    domUtils.remove(nodesToRemove);
   }
 
   /**
@@ -765,10 +760,10 @@ class WysiwygEditor {
    * Remove wysiwyg editor
    */
   remove() {
-    this.$editorContainerEl.off('scroll');
+    off(this.editorContainerEl, 'scroll');
     this.getEditor().destroy();
     this.editor = null;
-    this.$body = null;
+    this.body = null;
     this.eventManager = null;
   }
 
@@ -779,18 +774,20 @@ class WysiwygEditor {
   setHeight(height) {
     this._height = height;
 
-    this.$editorContainerEl.css('overflow', 'auto');
-    this.$editorContainerEl.css('height', '100%');
-    this.$editorContainerEl.parent().height(height);
+    css(this.editorContainerEl, {
+      overflow: 'auto',
+      height: '100%'
+    });
+    css(this.editorContainerEl.parentNode, { height: isNumber(height) ? `${height}px` : height });
+
+    const containerStyles = this.editorContainerEl.style;
+    const bodyStyles = this.getBody().style;
 
     const paddingHeight =
-      parseInt(this.$editorContainerEl.css('padding-top'), 10) -
-      parseInt(this.$editorContainerEl.css('padding-bottom'), 10);
-    const marginHeight =
-      parseInt(this.get$Body().css('margin-top'), 10) -
-      parseInt(this.get$Body().css('margin-bottom'), 10);
+      parseInt(containerStyles.paddingTop, 10) - parseInt(containerStyles.paddingBottom, 10);
+    const marginHeight = parseInt(bodyStyles.marginTop, 10) - parseInt(bodyStyles.marginBottom, 10);
 
-    this.get$Body().css('min-height', `${height - marginHeight - paddingHeight}px`);
+    css(this.getBody(), { minHeight: `${height - marginHeight - paddingHeight}px` });
   }
 
   /**
@@ -798,9 +795,9 @@ class WysiwygEditor {
    * @param {number} minHeight - min height in px
    */
   setMinHeight(minHeight) {
-    const editorBody = this.get$Body().get(0);
+    const editorBody = this.getBody();
 
-    editorBody.style.minHeight = `${minHeight}px`;
+    css(editorBody, 'minHeight', `${minHeight}px`);
   }
 
   /**
@@ -973,23 +970,23 @@ class WysiwygEditor {
    */
   addWidget(range, node, style, offset) {
     const pos = this.getEditor().getSelectionPosition(range, style, offset);
-    const editorContainerPos = this.$editorContainerEl.offset();
+    const editorContainerPos = domUtils.getOffset(this.editorContainerEl);
 
-    this.$editorContainerEl.append(node);
+    this.editorContainerEl.appendChild(node);
 
-    $(node).css({
+    css(node, {
       position: 'absolute',
-      top: pos.top - editorContainerPos.top + this.scrollTop(),
-      left: pos.left - editorContainerPos.left
+      top: `${pos.top - editorContainerPos.top + this.scrollTop()}px`,
+      left: `${pos.left - editorContainerPos.left}px`
     });
   }
 
   /**
-   * Get jQuery wrapped body container of Squire
-   * @returns {JQuery} jquery body
+   * Get body container of Squire
+   * @returns {HTMLElement} body element
    */
-  get$Body() {
-    return this.getEditor().get$Body();
+  getBody() {
+    return this.getEditor().getBody();
   }
 
   /**
@@ -1013,12 +1010,12 @@ class WysiwygEditor {
     const currentNode =
       domUtils.getChildNodeByOffset(range.startContainer, range.startOffset) ||
       domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
-    const appendBefore = domUtils.getParentUntil(currentNode, this.get$Body()[0]);
+    const appendBefore = domUtils.getParentUntil(currentNode, this.getBody());
 
     if (where === 'before') {
-      $(appendBefore).before(div);
+      domUtils.insertBefore(div, appendBefore);
     } else {
-      $(appendBefore).after(div);
+      domUtils.insertAfter(div, appendBefore);
     }
 
     range.setStart(div, 0);
@@ -1033,9 +1030,9 @@ class WysiwygEditor {
    * @param {string} to Replacement text
    */
   replaceContentText(container, from, to) {
-    const before = $(container).html();
+    const beforeText = container.innerHTML;
 
-    $(container).html(before.replace(from, to));
+    container.innerHTML = beforeText.replace(from, to);
   }
 
   /**
@@ -1060,9 +1057,7 @@ class WysiwygEditor {
   scrollIntoCursor() {
     const scrollTop = this.scrollTop();
     const { top: cursorTop, height: cursorHeight } = this.getEditor().getCursorPosition();
-    const { top: editorTop, height: editorHeight } = this.$editorContainerEl
-      .get(0)
-      .getBoundingClientRect();
+    const { top: editorTop, height: editorHeight } = this.editorContainerEl.getBoundingClientRect();
 
     const cursorAboveEditor = cursorTop - editorTop;
     const cursorBelowEditor = cursorTop + cursorHeight - (editorTop + editorHeight);
@@ -1094,14 +1089,14 @@ class WysiwygEditor {
   /**
    * Set cursor position to start
    * @param {number} value Scroll amount
-   * @returns {boolean}
+   * @returns {number} value of scrollTop
    */
   scrollTop(value) {
-    if (isUndefined(value)) {
-      return this.$editorContainerEl.scrollTop();
+    if (!isUndefined(value)) {
+      this.editorContainerEl.scrollTop = value;
     }
 
-    return this.$editorContainerEl.scrollTop(value);
+    return this.editorContainerEl.scrollTop;
   }
 
   /**
@@ -1111,7 +1106,7 @@ class WysiwygEditor {
    */
   _correctRangeAfterMoveCursor(direction) {
     const range = this.getRange();
-    let cursorContainer = this.get$Body().get(0);
+    let cursorContainer = this.getBody();
 
     if (direction === 'start') {
       while (cursorContainer.firstChild) {
@@ -1171,8 +1166,15 @@ class WysiwygEditor {
     const range = this.getIMERange();
 
     // range exists and it's an WYSIWYG editor content
-    if (range && $(range.commonAncestorContainer).closest(this.$editorContainerEl).length) {
-      this.setRange(range);
+    if (range) {
+      const foundEditorElement = !!domUtils.getParentUntil(
+        range.commonAncestorContainer,
+        this.editorContainerEl
+      ).parentNode;
+
+      if (foundEditorElement) {
+        this.setRange(range);
+      }
     }
   }
 
@@ -1192,7 +1194,7 @@ class WysiwygEditor {
   isInTable(range) {
     const target = range.collapsed ? range.startContainer : range.commonAncestorContainer;
 
-    return !!$(target).closest('[contenteditable=true] table').length;
+    return !!domUtils.closest(target, '[contenteditable=true] table');
   }
 
   /**
@@ -1215,10 +1217,7 @@ class WysiwygEditor {
   }
 
   isEditorValid() {
-    return (
-      this.getEditor() &&
-      $.contains(this.$editorContainerEl[0].ownerDocument, this.$editorContainerEl[0])
-    );
+    return this.getEditor() && domUtils.isContain(document.body, this.editorContainerEl);
   }
 
   _isCursorNotInRestrictedAreaOfTabAction(editor) {
@@ -1227,15 +1226,15 @@ class WysiwygEditor {
 
   /**
    * WysiwygEditor factory method
-   * @param {jQuery} $el Container element for editor
+   * @param {HTMLElement} el Container element for editor
    * @param {EventManager} eventManager EventManager instance
    * @param {object} [options={}] - option object
    *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - whether to use default html sanitizer
    * @returns {WysiwygEditor} wysiwygEditor
    * @ignore
    */
-  static factory($el, eventManager, options) {
-    const wwe = new WysiwygEditor($el, eventManager, options);
+  static factory(el, eventManager, options) {
+    const wwe = new WysiwygEditor(el, eventManager, options);
 
     wwe.init(options.useDefaultHTMLSanitizer);
 

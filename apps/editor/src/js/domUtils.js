@@ -2,12 +2,14 @@
  * @fileoverview DOM Utils
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import toArray from 'tui-code-snippet/collection/toArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isString from 'tui-code-snippet/type/isString';
+import css from 'tui-code-snippet/domUtil/css';
+import matches from 'tui-code-snippet/domUtil/matches';
 
 const FIND_ZWB = /\u200B/g;
+const { getComputedStyle } = window;
 
 /**
  * Check if node is text node
@@ -299,8 +301,8 @@ const getPrevTextNode = function(node) {
 
 /**
  * test whether root contains the given node
- * @param {HTMLNode} root - root node
- * @param {HTMLNode} node - node to test
+ * @param {HTMLNode|string} root - root node
+ * @param {HTMLNode} found - node to test
  * @returns {Boolean} true if root contains node
  * @ignore
  */
@@ -436,31 +438,22 @@ const getTableCellByDirection = function(node, direction) {
  */
 const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
   let tableCellElement = null;
-  let $node,
-    index,
-    $targetRowElement,
-    $currentContainer,
-    $siblingContainer,
-    isSiblingContainerExists;
+  let index, targetRowElement, currentContainer, siblingContainer, isSiblingContainerExists;
 
   if (!isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
     if (node) {
-      $node = $(node);
-
       if (direction === 'next') {
-        $targetRowElement = $node.parent().next();
-        $currentContainer = $node.parents('thead');
-        $siblingContainer = $currentContainer[0] && $currentContainer.next();
-        isSiblingContainerExists =
-          $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
+        targetRowElement = node.parentNode && node.parentNode.nextSibling;
+        currentContainer = parents(node, 'thead');
+        siblingContainer = currentContainer[0] && currentContainer[0].nextSibling;
+        isSiblingContainerExists = siblingContainer && getNodeName(siblingContainer) === 'TBODY';
 
         index = 0;
       } else {
-        $targetRowElement = $node.parent().prev();
-        $currentContainer = $node.parents('tbody');
-        $siblingContainer = $currentContainer[0] && $currentContainer.prev();
-        isSiblingContainerExists =
-          $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
+        targetRowElement = node.parentNode && node.parentNode.previousSibling;
+        currentContainer = parents(node, 'tbody');
+        siblingContainer = currentContainer[0] && currentContainer[0].previousSibling;
+        isSiblingContainerExists = siblingContainer && getNodeName(siblingContainer) === 'THEAD';
 
         index = node.parentNode.childNodes.length - 1;
       }
@@ -469,10 +462,10 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
         index = getNodeOffsetOfParent(node);
       }
 
-      if ($targetRowElement[0]) {
-        tableCellElement = $targetRowElement.children('td,th')[index];
-      } else if ($currentContainer[0] && isSiblingContainerExists) {
-        tableCellElement = $siblingContainer.find('td,th')[index];
+      if (targetRowElement) {
+        tableCellElement = children(targetRowElement, 'td,th')[index];
+      } else if (currentContainer[0] && isSiblingContainerExists) {
+        tableCellElement = findAll(siblingContainer, 'td,th')[index];
       }
     }
   }
@@ -506,23 +499,23 @@ const isStyledNode = function(node) {
 /**
  * remove node from 'start' node to 'end-1' node inside parent
  * if 'end' node is null, remove all child nodes after 'start' node.
- * @param {Node} parent - parent node
+ * @param {Node} parentNode - parent node
  * @param {Node} start - start node to remove
  * @param {Node} end - end node to remove
  * @ignore
  */
-const removeChildFromStartToEndNode = function(parent, start, end) {
+const removeChildFromStartToEndNode = function(parentNode, start, end) {
   let child = start;
 
-  if (!child || parent !== child.parentNode) {
+  if (!child || parentNode !== child.parentNode) {
     return;
   }
 
   while (child !== end) {
-    const next = child.nextSibling;
+    const nextNode = child.nextSibling;
 
-    parent.removeChild(child);
-    child = next;
+    parentNode.removeChild(child);
+    child = nextNode;
   }
 };
 
@@ -534,19 +527,19 @@ const removeChildFromStartToEndNode = function(parent, start, end) {
  * @ignore
  */
 const removeNodesByDirection = function(targetParent, node, isForward) {
-  let parent = node;
+  let parentNode = node;
 
-  while (parent !== targetParent) {
-    const nextParent = parent.parentNode;
-    const { nextSibling, previousSibling } = parent;
+  while (parentNode !== targetParent) {
+    const nextParent = parentNode.parentNode;
+    const { nextSibling, previousSibling } = parentNode;
 
     if (!isForward && nextSibling) {
       removeChildFromStartToEndNode(nextParent, nextSibling, null);
     } else if (isForward && previousSibling) {
-      removeChildFromStartToEndNode(nextParent, nextParent.childNodes[0], parent);
+      removeChildFromStartToEndNode(nextParent, nextParent.childNodes[0], parentNode);
     }
 
-    parent = nextParent;
+    parentNode = nextParent;
   }
 };
 
@@ -637,7 +630,7 @@ const isFirstLevelListItem = function(node) {
  */
 const mergeNode = function(node, targetNode) {
   if (node.hasChildNodes()) {
-    forEachArray(node.childNodes, () => {
+    toArray(node.childNodes).forEach(() => {
       targetNode.appendChild(node.firstChild);
     });
 
@@ -897,6 +890,409 @@ const getSiblingNodeBy = function(node, direction, condition) {
   return node;
 };
 
+/**
+ * Create element with contents
+ * @param {string|Node} contents - contents to appended
+ * @param {HTMLElement} [target] - container element to append contents
+ * @returns {Node} created node
+ * @ignore
+ */
+function createElementWith(contents, target) {
+  const container = document.createElement('div');
+
+  if (isString(contents)) {
+    container.innerHTML = contents;
+  } else {
+    container.appendChild(contents);
+  }
+
+  const { firstChild } = container;
+
+  if (target) {
+    target.appendChild(firstChild);
+  }
+
+  return firstChild;
+}
+
+/**
+ * Find nodes matching by selector
+ * @param {HTMLElement} element - target element
+ * @param {string} selector - selector to find nodes
+ * @returns {Array.<Node>} found nodes
+ * @ignore
+ */
+function findAll(element, selector) {
+  const nodeList = toArray(element.querySelectorAll(selector));
+
+  if (nodeList.length) {
+    return nodeList;
+  }
+
+  return [];
+}
+
+/**
+ * Checks whether specific node is included in target node
+ * @param {HTMLElement} element - target to find
+ * @param {Node} containedNode - node to find
+ * @returns {boolean} whether node is contained or not
+ * @ignore
+ */
+function isContain(element, contained) {
+  return element !== contained && element.contains(contained);
+}
+
+/**
+ * Gets closest node matching by selector
+ * @param {Node} node - target node
+ * @param {string|Node} found - selector or element to find node
+ * @returns {?Node} - found node
+ * @ignore
+ */
+function closest(node, found) {
+  let condition;
+
+  if (isString(found)) {
+    condition = target => matches(target, found);
+  } else {
+    condition = target => target === found;
+  }
+
+  while (node && node !== document) {
+    if (isElemNode(node) && condition(node)) {
+      return node;
+    }
+
+    node = node.parentNode;
+  }
+
+  return null;
+}
+
+/**
+ * Gets parent node matching by selector from target node
+ * @param {Node} node - target node
+ * @param {string} [selector] - selector to find
+ * @returns {Node} found node
+ * @ignore
+ */
+function parent(node, selector) {
+  const { parentNode } = node;
+
+  if (selector) {
+    return parentNode && matches(parentNode, selector) ? parentNode : null;
+  }
+
+  return parentNode;
+}
+
+/**
+ * Gets ancestor nodes matching by selector from target node
+ * @param {Node} node - target node
+ * @param {string|Node} found - selector or node to find
+ * @returns {Array.<Node>} found nodes
+ * @ignore
+ */
+function parents(node, found) {
+  const result = [];
+
+  while (node && node !== document) {
+    node = closest(node.parentNode, found);
+
+    if (node) {
+      result.push(node);
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Gets ancestor nodes until matching by selector from target node
+ * @param {Node} node - target node
+ * @param {string} selector - selector to find
+ * @param {Array.<Node>} found nodes
+ * @ignore
+ */
+function parentsUntil(node, selector) {
+  const result = [];
+
+  while (node.parentNode && !matches(node.parentNode, selector)) {
+    node = node.parentNode;
+
+    if (node) {
+      result.push(node);
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Gets child nodes matching by selector from target node
+ * @param {Node} node - target node
+ * @param {string} selector - selector to find
+ * @returns {Array.<Node>} found nodes
+ * @ignore
+ */
+function children(node, selector) {
+  let foundChildren;
+
+  if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+    foundChildren = node.childNodes;
+  } else {
+    foundChildren = node.children;
+  }
+
+  return toArray(foundChildren).filter(child => matches(child, selector));
+}
+
+/**
+ * Appends node(s) on target node
+ * @param {Node} node - target node
+ * @param {string|Node} appended - html string or node to append
+ * @ignore
+ */
+function append(node, appended) {
+  if (isString(appended)) {
+    node.insertAdjacentHTML('beforeEnd', appended);
+  } else {
+    appended = appended.length ? toArray(appended) : [appended];
+
+    for (let i = 0, len = appended.length; i < len; i += 1) {
+      node.appendChild(appended[i]);
+    }
+  }
+}
+
+/**
+ * Prepends node(s) on target node
+ * @param {Node} node - target node
+ * @param {string|Node} appended - html string or node to append
+ * @ignore
+ */
+function prepend(node, appended) {
+  if (isString(appended)) {
+    node.insertAdjacentHTML('afterBegin', appended);
+  } else {
+    appended = appended.length ? toArray(appended) : [appended];
+
+    for (let i = appended.length - 1, len = 0; i >= len; i -= 1) {
+      node.insertBefore(appended[i], node.firstChild);
+    }
+  }
+}
+
+/**
+ * Inserts new node in front of target node
+ * @param {Node} insertedNode - node to insert
+ * @param {Node} node - target node
+ * @ignore
+ */
+function insertBefore(insertedNode, node) {
+  const { parentNode } = node;
+
+  if (parentNode) {
+    parentNode.insertBefore(insertedNode, node);
+  }
+}
+
+/**
+ * Inserts new node after target node
+ * @param {Node} insertedNode - node to insert
+ * @param {Node} node - target node
+ * @ignore
+ */
+function insertAfter(insertedNode, node) {
+  const { parentNode } = node;
+
+  if (parentNode) {
+    parentNode.insertBefore(insertedNode, node.nextSibling);
+  }
+}
+
+/**
+ * Replaces target node(s) with html
+ * @param {Node} nodeList - target node(s) to replace
+ * @param {string} html - replaced html
+ * @ignore
+ */
+function replaceWith(nodeList, html) {
+  nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
+
+  nodeList.forEach(node => {
+    node.insertAdjacentHTML('afterEnd', html);
+    node.parentNode.removeChild(node);
+  });
+}
+
+/**
+ * Adds parent element to target node(s)
+ * @param {Node|Array.<Node>} nodeList - target node(s)
+ * @param {string} nodeName - node name to change parent element
+ * @ignore
+ */
+function wrap(nodeList, nodeName) {
+  nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
+
+  nodeList.forEach(node => {
+    const wrapper = document.createElement(nodeName);
+
+    node.parentNode.insertBefore(wrapper, node);
+    wrapper.appendChild(node);
+  });
+}
+
+/**
+ * Adds child element to target node(s)
+ * @param {Node|Array.<Node>} nodeList - target node(s)
+ * @param {string} nodeName - node name to change child element
+ * @ignore
+ */
+function wrapInner(nodeList, nodeName) {
+  nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
+
+  nodeList.forEach(node => {
+    const wrapper = document.createElement(nodeName);
+
+    node.appendChild(wrapper);
+
+    while (node.firstChild !== wrapper) {
+      wrapper.appendChild(node.firstChild);
+    }
+  });
+}
+
+/**
+ * Removes parent element to target node
+ * @param {Node|Array.<Node>} node - target node
+ * @returns {Node} unwrapped node
+ * @ignore
+ */
+function unwrap(nodeList) {
+  nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
+
+  const result = [];
+
+  nodeList.forEach(node => {
+    const target = node.parentNode;
+
+    if (target) {
+      while (target.firstChild) {
+        result.push(target.firstChild);
+        target.parentNode.insertBefore(target.firstChild, target);
+      }
+
+      target.parentNode.removeChild(target);
+    }
+  });
+
+  return result;
+}
+
+/**
+ * Removes target node from parent node
+ * @param {Node} node - target node
+ * @ignore
+ */
+function remove(node) {
+  if (node.parentNode) {
+    node.parentNode.removeChild(node);
+  }
+}
+
+/**
+ * Removes all children of target node
+ * @param {Node} node - target node
+ * @ignore
+ */
+function empty(node) {
+  while (node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
+}
+
+/**
+ * Sets offset value of target element
+ * @param {HTMLElement} element - target element
+ * @returns {Object.<string, number>} offset values
+ * @ignore
+ */
+function setOffset(element, offset) {
+  const { top, left } = element.parentNode.getBoundingClientRect();
+
+  css(element, { top: `${offset.top - top - document.body.scrollTop}px` });
+  css(element, { left: `${offset.left - left - document.body.scrollLeft}px` });
+}
+
+/**
+ * Gets offset value of target element
+ * @param {HTMLElement} element - target element
+ * @returns {Object.<string, number>} offset values
+ * @ignore
+ */
+function getOffset(element) {
+  const { top, left } = element.getBoundingClientRect();
+  const { scrollTop, scrollLeft } = document.body;
+
+  return {
+    top: top + scrollTop,
+    left: left + scrollLeft
+  };
+}
+
+/**
+ * Gets outer width value of target element
+ * @param {HTMLElement} element - target element
+ * @param {boolean} includedMargin - whether to include margir or not
+ * @returns {number} outer width value
+ * @ignore
+ */
+function getOuterWidth(element, includedMargin) {
+  let widthValue = element.offsetWidth;
+
+  if (includedMargin) {
+    const { marginLeft, marginRight } = getComputedStyle(element);
+
+    widthValue += parseInt(marginLeft, 10) + parseInt(marginRight, 10);
+  }
+
+  return widthValue;
+}
+
+/**
+ * Gets outer height value of target element
+ * @param {HTMLElement} element - target element
+ * @param {boolean} includedMargin - whether to include margir or not
+ * @returns {number} outer height value
+ * @ignore
+ */
+function getOuterHeight(element, includedMargin) {
+  let heightValue = element.offsetHeight;
+
+  if (includedMargin) {
+    const { marginTop, marginBottom } = getComputedStyle(element);
+
+    heightValue += parseInt(marginTop, 10) + parseInt(marginBottom, 10);
+  }
+
+  return heightValue;
+}
+
+/**
+ * Toggles class name of target element
+ * @param {Element} element - target element
+ * @param {string} className - class name to toggle
+ * @param {boolean} toggled - whether to toggle or not by condition
+ * @ignore
+ */
+const toggleClass = (element, className, toggled) => {
+  if (element) {
+    element.classList.toggle(className, toggled);
+  }
+};
+
 export default {
   getNodeName,
   isTextNode,
@@ -939,5 +1335,28 @@ export default {
   isCellNode,
   getLastNodeBy,
   getParentNodeBy,
-  getSiblingNodeBy
+  getSiblingNodeBy,
+  createElementWith,
+  findAll,
+  isContain,
+  closest,
+  parent,
+  parents,
+  parentsUntil,
+  children,
+  append,
+  prepend,
+  insertBefore,
+  insertAfter,
+  replaceWith,
+  wrap,
+  wrapInner,
+  unwrap,
+  remove,
+  empty,
+  setOffset,
+  getOffset,
+  getOuterWidth,
+  getOuterHeight,
+  toggleClass
 };

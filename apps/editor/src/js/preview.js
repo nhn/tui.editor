@@ -2,24 +2,25 @@
  * @fileoverview Implements preview
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import css from 'tui-code-snippet/domUtil/css';
 
 import LazyRunner from './lazyRunner';
+import domUtils from './domUtils';
 
 /**
  * Class Preview
- * @param {jQuery} $el Container element for preview
- * @param {EventManager} eventManager Event manager instance
- * @param {Convertor} convertor Convertor instance
+ * @param {HTMLElement} el - Container element for preview
+ * @param {EventManager} eventManager -  Event manager instance
+ * @param {Convertor} convertor - Convertor instance
  * @param {boolean} isViewer - whether viewer mode or not
  * @param {Number} delayTime - lazyRunner delay time
  * @ignore
  */
 class Preview {
-  constructor($el, eventManager, convertor, isViewer, delayTime = 800) {
+  constructor(el, eventManager, convertor, isViewer, delayTime = 800) {
     this.eventManager = eventManager;
     this.convertor = convertor;
-    this.$el = $el;
+    this.el = el;
     this.isViewer = !!isViewer;
 
     this._initContentSection();
@@ -34,8 +35,8 @@ class Preview {
    * @private
    */
   _initContentSection() {
-    this._$previewContent = $('<div class="tui-editor-contents" />');
-    this.$el.append(this._$previewContent);
+    this._previewContent = domUtils.createElementWith(`<div class="tui-editor-contents"></div>`);
+    this.el.appendChild(this._previewContent);
   }
 
   /**
@@ -51,7 +52,7 @@ class Preview {
    * @returns {string} - html preview string
    */
   getHTML() {
-    return this._$previewContent.html();
+    return this._previewContent.innerHTML;
   }
 
   /**
@@ -59,7 +60,7 @@ class Preview {
    * @param {string} html - html preview string
    */
   setHTML(html) {
-    this._$previewContent.html(html);
+    this._previewContent.innerHTML = html;
   }
 
   /**
@@ -67,12 +68,12 @@ class Preview {
    * @param {string} html HTML string
    */
   render(html) {
-    const { _$previewContent } = this;
+    const { _previewContent } = this;
 
     html = this.eventManager.emit('previewBeforeHook', html) || html;
 
-    _$previewContent.empty();
-    _$previewContent.html(html);
+    domUtils.empty(_previewContent);
+    _previewContent.innerHTML = html;
   }
 
   /**
@@ -80,7 +81,7 @@ class Preview {
    * @param {number} height - Height for preview container
    */
   setHeight(height) {
-    this.$el.get(0).style.height = `${height}px`;
+    css(this.el, { height: `${height}px` });
   }
 
   /**
@@ -88,7 +89,7 @@ class Preview {
    * @param {number} minHeight - min height
    */
   setMinHeight(minHeight) {
-    this.$el.get(0).style.minHeight = `${minHeight}px`;
+    css(this.el, { minHeight: `${minHeight}px` });
   }
 
   /**
@@ -96,7 +97,7 @@ class Preview {
    * @returns {boolean} result
    */
   isVisible() {
-    return this.$el.css('display') !== 'none';
+    return this.el.style.display !== 'none';
   }
 }
 

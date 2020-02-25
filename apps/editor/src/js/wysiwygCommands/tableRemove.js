@@ -2,9 +2,8 @@
  * @fileoverview Implements table remove WysiwygCommand
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * RemoveTable
@@ -27,9 +26,7 @@ const TableRemove = CommandManager.command(
 
       if (sq.hasFormat('TABLE')) {
         sq.saveUndoState(range);
-        const $table = $(range.startContainer).closest('table');
-
-        $table.remove();
+        domUtils.remove(domUtils.closest(range.startContainer, 'table'));
       }
 
       wwe.focus();

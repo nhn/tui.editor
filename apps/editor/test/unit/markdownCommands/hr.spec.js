@@ -2,21 +2,18 @@
  * @fileoverview test markdown hr
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import HR from '@/markdownCommands/hr';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
 describe('HR', () => {
-  let cm, mde;
+  let cm, mde, container;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    mde = new MarkdownEditor($container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager());
 
     cm = mde.getEditor();
 
@@ -26,7 +23,7 @@ describe('HR', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.removeChild(container);
   });
 
   describe('add HR line', () => {

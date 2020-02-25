@@ -2,7 +2,9 @@
  * @fileoverview default UI
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import css from 'tui-code-snippet/domUtil/css';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import DefaultToolbar from './defaultToolbar';
 import Tab from './tab';
@@ -17,18 +19,19 @@ import PopupCodeBlockLanguages from './popupCodeBlockLanguages';
 import PopupCodeBlockEditor from './popupCodeBlockEditor';
 import i18n from '../i18n.js';
 import tooltip from './tooltip';
+import domUtils from '../domUtils';
 
 const CLASS_TOOLBAR = 'te-toolbar-section';
 const CLASS_MARKDOWN_TAB = 'te-markdown-tab-section';
 const CLASS_EDITOR = 'te-editor-section';
 const CLASS_MODE_SWITCH = 'te-mode-switch-section';
-const CONTAINER_TEMPLATE = `
-    <div class="tui-editor-defaultUI">
-        <div class="${CLASS_TOOLBAR}"><div class="${CLASS_MARKDOWN_TAB}"></div></div>
-        <div class="${CLASS_EDITOR}"></div>
-        <div class="${CLASS_MODE_SWITCH}"></div>
-    </div>
-`;
+const CONTAINER_TEMPLATE = [
+  '<div class="tui-editor-defaultUI">',
+  `<div class="${CLASS_TOOLBAR}"><div class="${CLASS_MARKDOWN_TAB}"></div></div>`,
+  `<div class="${CLASS_EDITOR}"></div>`,
+  `<div class="${CLASS_MODE_SWITCH}"></div>`,
+  '</div>'
+].join('');
 
 /**
  * Class DefaultUI
@@ -43,9 +46,9 @@ class DefaultUI {
 
   /**
    * DefaultToolbar wrapper element
-   * @type {jQuery}
+   * @type {HTMLElement}
    */
-  $el;
+  el;
 
   /**
    * DefaultToolbar instance
@@ -82,11 +85,11 @@ class DefaultUI {
   _editor;
 
   /**
-   * markdown tab section jQuery element
+   * markdown tab section element
    * @private
    * @type {HTMLElement}
    */
-  _$markdownTabSection;
+  _markdownTabSection;
 
   /**
    * markdown tab
@@ -118,10 +121,10 @@ class DefaultUI {
   }
 
   _init({ el: container, toolbarItems, hideModeSwitch }) {
-    this.$el = $(CONTAINER_TEMPLATE).appendTo(container);
+    this.el = domUtils.createElementWith(CONTAINER_TEMPLATE, container);
     this._container = container;
-    this._editorSection = this.$el.find(`.${CLASS_EDITOR}`).get(0);
-    this._editorSection.appendChild(this._editor.layout.getEditorEl().get(0));
+    this._editorSection = this.el.querySelector(`.${CLASS_EDITOR}`);
+    this._editorSection.appendChild(this._editor.layout.getEditorEl());
 
     this._initToolbar(this._editor.eventManager, toolbarItems);
     this._initModeSwitch(hideModeSwitch);
@@ -148,11 +151,11 @@ class DefaultUI {
     const toolbar = new DefaultToolbar(eventManager, toolbarItems);
 
     this._toolbar = toolbar;
-    this.$el.find(`.${CLASS_TOOLBAR}`).append(toolbar.$el);
+    this.el.querySelector(`.${CLASS_TOOLBAR}`).appendChild(toolbar.el);
   }
 
   _initModeSwitch(hideModeSwitch) {
-    const modeSwitchTabBar = this.$el.find(`.${CLASS_MODE_SWITCH}`);
+    const modeSwitchTabBar = this.el.querySelector(`.${CLASS_MODE_SWITCH}`);
     const editType =
       this._initialEditType === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG;
     const modeSwitch = new ModeSwitch(modeSwitchTabBar, editType);
@@ -174,8 +177,8 @@ class DefaultUI {
       items: [i18n.get('Write'), i18n.get('Preview')],
       sections: [editor.layout.getMdEditorContainerEl(), editor.layout.getPreviewEl()]
     });
-    this._$markdownTabSection = this.$el.find(`.${CLASS_MARKDOWN_TAB}`);
-    this._$markdownTabSection.append(this._markdownTab.$el);
+    this._markdownTabSection = this.el.querySelector(`.${CLASS_MARKDOWN_TAB}`);
+    this._markdownTabSection.appendChild(this._markdownTab.el);
 
     this._markdownTab.on('itemClick', (ev, itemText) => {
       if (itemText === i18n.get('Preview')) {
@@ -191,17 +194,17 @@ class DefaultUI {
 
   _markdownTabControl() {
     if (this._editor.isMarkdownMode() && this._editor.getCurrentPreviewStyle() === 'tab') {
-      this._$markdownTabSection.show();
+      css(this._markdownTabSection, { display: 'block' });
       this._markdownTab.activate(i18n.get('Write'));
     } else {
-      this._$markdownTabSection.hide();
+      css(this._markdownTabSection, { display: 'none' });
     }
   }
 
   _initPopupAddLink() {
     this._popups.push(
       new PopupAddLink({
-        $target: this.$el,
+        target: this.el,
         editor: this._editor
       })
     );
@@ -210,7 +213,7 @@ class DefaultUI {
   _initPopupAddImage() {
     this._popups.push(
       new PopupAddImage({
-        $target: this.$el,
+        target: this.el,
         eventManager: this._editor.eventManager
       })
     );
@@ -219,9 +222,9 @@ class DefaultUI {
   _initPopupAddTable() {
     this._popups.push(
       new PopupAddTable({
-        $target: this._toolbar.$el,
+        target: this._toolbar.el,
         eventManager: this._editor.eventManager,
-        $button: this.$el.find('button.tui-table'),
+        button: this.el.querySelector('button.tui-table'),
         css: {
           position: 'absolute'
         }
@@ -232,9 +235,9 @@ class DefaultUI {
   _initPopupAddHeading() {
     this._popups.push(
       new PopupAddHeading({
-        $target: this._toolbar.$el,
+        target: this._toolbar.el,
         eventManager: this._editor.eventManager,
-        $button: this.$el.find('button.tui-heading'),
+        button: this.el.querySelector('button.tui-heading'),
         css: {
           position: 'absolute'
         }
@@ -244,7 +247,7 @@ class DefaultUI {
 
   _initPopupTableUtils() {
     this._editor.eventManager.listen('contextmenu', ev => {
-      if ($(ev.data.target).parents('[contenteditable=true] table').length > 0) {
+      if (domUtils.parents(ev.data.target, '[contenteditable=true] table').length > 0) {
         ev.data.preventDefault();
         this._editor.eventManager.emit('openPopupTableUtils', ev.data);
       }
@@ -252,7 +255,7 @@ class DefaultUI {
 
     this._popups.push(
       new PopupTableUtils({
-        $target: this.$el,
+        target: this.el,
         eventManager: this._editor.eventManager
       })
     );
@@ -263,7 +266,7 @@ class DefaultUI {
 
     this._popups.push(
       new PopupCodeBlockLanguages({
-        $target: this.$el,
+        target: this.el,
         eventManager: editor.eventManager,
         languages: editor.codeBlockLanguages
       })
@@ -273,7 +276,7 @@ class DefaultUI {
   _initPopupCodeBlockEditor() {
     this._popups.push(
       new PopupCodeBlockEditor({
-        $target: this.$el,
+        target: this.el,
         eventManager: this._editor.eventManager,
         convertor: this._editor.convertor
       })
@@ -345,21 +348,21 @@ class DefaultUI {
    * hide
    */
   hide() {
-    this.$el.addClass('te-hide');
+    addClass(this.el, 'te-hide');
   }
 
   /**
    * show
    */
   show() {
-    this.$el.removeClass('te-hide');
+    removeClass(this.el, 'te-hide');
   }
 
   /**
    * remove
    */
   remove() {
-    this.$el.remove();
+    domUtils.remove(this.el);
     this._markdownTab.remove();
     this._modeSwitch.remove();
     this._toolbar.destroy();

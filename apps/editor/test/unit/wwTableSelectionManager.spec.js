@@ -10,16 +10,15 @@ import WwTableSelectionManager from '@/wwTableSelectionManager';
 import WwTableManager from '@/wwTableManager';
 
 describe('WwTableSelectionManager', () => {
-  let $container, em, wwe, mgr;
+  let container, em, wwe, mgr;
 
   beforeEach(() => {
-    $container = $('<div />');
-
-    $('body').append($container);
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($container, em);
+    wwe = new WysiwygEditor(container, em);
 
     wwe.init();
 
@@ -31,7 +30,7 @@ describe('WwTableSelectionManager', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -55,10 +54,7 @@ describe('WwTableSelectionManager', () => {
 
       const $tds = $('td');
       const reArrangedSelection = mgr._reArrangeSelectionIfneed(
-        sq
-          .get$Body()
-          .find('div')
-          .eq(0)[0],
+        sq.getBody().querySelector('div'),
         $tds[1]
       );
 
@@ -84,10 +80,7 @@ describe('WwTableSelectionManager', () => {
       const $tds = $('td');
       const reArrangedSelection = mgr._reArrangeSelectionIfneed(
         $tds[1],
-        sq
-          .get$Body()
-          .find('div')
-          .eq(0)[0]
+        sq.getBody().querySelector('div')
       );
 
       expect(reArrangedSelection.startContainer).toBe($tds[1]);
@@ -396,19 +389,19 @@ describe('WwTableSelectionManager', () => {
         '</table>';
 
       wwe.focus();
-      wwe.get$Body().html(html);
+      $(wwe.getBody()).html(html);
 
       let range = wwe.getEditor().getSelection();
 
-      range.setStart(wwe.get$Body().find('th')[0], 0);
+      range.setStart($(wwe.getBody()).find('th')[0], 0);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
       mgr.createRangeBySelectedCells();
       range = wwe.getEditor().getSelection();
 
-      expect(range.startContainer).toBe(wwe.get$Body().find('th')[0]);
-      expect(range.endContainer).toBe(wwe.get$Body().find('td')[1]);
+      expect(range.startContainer).toBe($(wwe.getBody()).find('th')[0]);
+      expect(range.endContainer).toBe($(wwe.getBody()).find('td')[1]);
     });
     it('do not selection on table when current selection is not in table', () => {
       const html =
@@ -423,18 +416,18 @@ describe('WwTableSelectionManager', () => {
         '</table><div>2</div>';
 
       wwe.focus();
-      wwe.get$Body().html(html);
+      $(wwe.getBody()).html(html);
 
       let range = wwe.getEditor().getSelection();
 
-      range.setStart(wwe.get$Body().find('div')[0], 0);
+      range.setStart($(wwe.getBody()).find('div')[0], 0);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
       mgr.createRangeBySelectedCells();
       range = wwe.getEditor().getSelection();
 
-      expect(range.startContainer).toBe(wwe.get$Body().find('div')[0]);
+      expect(range.startContainer).toBe($(wwe.getBody()).find('div')[0]);
     });
   });
 });

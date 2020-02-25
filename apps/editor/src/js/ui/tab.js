@@ -2,9 +2,11 @@
  * @fileoverview Implements tab button ui
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import UIController from './uicontroller';
+import domUtils from '../domUtils';
 
 const CLASS_TAB_ACTIVE = 'te-tab-active';
 
@@ -26,7 +28,7 @@ class Tab extends UIController {
 
     this.sections = options.sections;
 
-    this._$activeButton = null;
+    this._activeButton = null;
 
     this._render(options);
     this._initEvent(options);
@@ -49,8 +51,14 @@ class Tab extends UIController {
     for (let i = 0, len = items.length; i < len; i += 1) {
       tabButtons.push(`<button type="button" data-index="${i}">${items[i]}</button>`);
     }
-    this.$el.html(tabButtons.join(''));
+    this.el.innerHTML = tabButtons.join('');
     this.activate(initName);
+  }
+
+  _findButtonContained(element, selector, text) {
+    return domUtils
+      .findAll(element, selector)
+      .filter(node => new RegExp(text).test(node.textContent));
   }
 
   /**
@@ -58,49 +66,51 @@ class Tab extends UIController {
    * @param {string} name button name to activate
    */
   activate(name) {
-    const $button = this.$el.find(`button:contains("${name}")`);
+    const [button] = this._findButtonContained(this.el, 'button', name);
 
-    this._activateTabByButton($button);
+    this._activateTabByButton(button);
   }
 
   _onTabButton(ev) {
-    const $button = $(ev.target);
+    const button = ev.target;
 
-    this._activateTabByButton($button);
-    this.trigger('itemClick', $button.text());
+    this._activateTabByButton(button);
+    this.trigger('itemClick', button.textContent);
   }
 
-  _activateTabByButton($button) {
-    if (this._isActivatedButton($button)) {
+  _activateTabByButton(button) {
+    if (this._isActivatedButton(button)) {
       return;
     }
 
-    this._updateClassByButton($button);
+    this._updateClassByButton(button);
   }
 
-  _updateClassByButton($activeButton) {
+  _updateClassByButton(activeButton) {
     // deactivate previously activated button
-    if (this._$activeButton) {
-      const sectionIndex = this._$activeButton.attr('data-index');
+    if (this._activeButton) {
+      const sectionIndex = this._activeButton.getAttribute('data-index');
 
-      this._$activeButton.removeClass(CLASS_TAB_ACTIVE);
+      removeClass(this._activeButton, CLASS_TAB_ACTIVE);
+
       if (this.sections) {
-        this.sections[sectionIndex].removeClass(CLASS_TAB_ACTIVE);
+        removeClass(this.sections[sectionIndex], CLASS_TAB_ACTIVE);
       }
     }
 
     // activate new button
-    $activeButton.addClass(CLASS_TAB_ACTIVE);
-    this._$activeButton = $activeButton;
-    const index = $activeButton.attr('data-index');
+    addClass(activeButton, CLASS_TAB_ACTIVE);
+
+    this._activeButton = activeButton;
+    const index = activeButton.getAttribute('data-index');
 
     if (this.sections) {
-      this.sections[index].addClass(CLASS_TAB_ACTIVE);
+      addClass(this.sections[index], CLASS_TAB_ACTIVE);
     }
   }
 
-  _isActivatedButton($button) {
-    return this._$activeButton && this._$activeButton.text() === $button.text();
+  _isActivatedButton(button) {
+    return this._activeButton && this._activeButton.textContent === button.textContent;
   }
 }
 

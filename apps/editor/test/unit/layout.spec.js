@@ -15,7 +15,7 @@ describe('Layout', () => {
 
     layout = new Layout(
       {
-        el: $('body'),
+        el: $('body').get(0),
         height: 100
       },
       em

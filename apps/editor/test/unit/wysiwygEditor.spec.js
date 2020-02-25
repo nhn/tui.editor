@@ -10,16 +10,15 @@ import ListManager from '@/wwListManager';
 import { isMac } from '@/util';
 
 describe('WysiwygEditor', () => {
-  let $container, em, wwe;
+  let container, em, wwe;
 
   beforeEach(() => {
-    $container = $('<div />');
-
-    $('body').append($container);
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor($container, em);
+    wwe = new WysiwygEditor(container, em);
 
     wwe.init();
     wwe.editor.focus();
@@ -28,7 +27,9 @@ describe('WysiwygEditor', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $container.remove();
+      if (container.parentNode) {
+        container.parentNode.removeChild(container);
+      }
       done();
     });
   });
@@ -132,8 +133,7 @@ describe('WysiwygEditor', () => {
       });
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('div')
           .text()
       ).toBe('\u00a0\u00a0\u00a0\u00a0');
@@ -144,7 +144,7 @@ describe('WysiwygEditor', () => {
 
       wwe.getEditor().setHTML('<ul><li><div><br></div></li></ul>');
 
-      range.setStart(wwe.get$Body().find('li>div')[0], 0);
+      range.setStart(wwe.getBody().querySelectorAll('li>div')[0], 0);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
@@ -156,8 +156,7 @@ describe('WysiwygEditor', () => {
       });
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('div')
           .text()
       ).toBe('');
@@ -172,7 +171,7 @@ describe('WysiwygEditor', () => {
           '<ul><li class="task-list-item"><div><input type="checkbox"/><br></div></li></ul>'
         );
 
-      range.setStartAfter(wwe.get$Body().find('div>input')[0]);
+      range.setStartAfter(wwe.getBody().querySelectorAll('div>input')[0]);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
@@ -184,8 +183,7 @@ describe('WysiwygEditor', () => {
       });
 
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('div')
           .text()
       ).toBe('');
@@ -329,17 +327,15 @@ describe('WysiwygEditor', () => {
 
       wwe.setValue(html);
 
-      expect(wwe.get$Body().find('div').length).toEqual(3);
+      expect(wwe.getBody().querySelectorAll('div').length).toEqual(3);
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('div')
           .eq(0)
           .text()
       ).toEqual('test');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('div')
           .eq(1)
           .find('img').length
@@ -348,17 +344,15 @@ describe('WysiwygEditor', () => {
       html = 'test<br>\n<img src="" alt="image">';
       wwe.setValue(html);
 
-      expect(wwe.get$Body().find('div').length).toEqual(2);
+      expect(wwe.getBody().querySelectorAll('div').length).toEqual(2);
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('div')
           .eq(0)
           .text()
       ).toEqual('test');
       expect(
-        wwe
-          .get$Body()
+        $(wwe.getBody())
           .find('div')
           .eq(1)
           .find('img').length
@@ -369,7 +363,7 @@ describe('WysiwygEditor', () => {
       const html = '<ul><li>test</li></ul>';
 
       em.listen('wysiwygSetValueAfter', () => {
-        wwe.get$Body().html('<h2>test<br></h2>');
+        wwe.getBody().innerHTML = '<h2>test<br></h2>';
       });
 
       wwe.setValue(html);
@@ -378,8 +372,8 @@ describe('WysiwygEditor', () => {
         wwe.getEditor().insertHTML('<h1>test</h1>');
         setTimeout(() => {
           wwe.getEditor().undo();
-          expect(wwe.get$Body().find('h1').length).toEqual(0);
-          expect(wwe.get$Body().find('h2').length).toEqual(1);
+          expect(wwe.getBody().querySelectorAll('h1').length).toEqual(0);
+          expect(wwe.getBody().querySelectorAll('h2').length).toEqual(1);
           done();
         }, 0);
       }, 0);
@@ -389,7 +383,7 @@ describe('WysiwygEditor', () => {
       wwe.setValue('<ul><li><div>test</div></li></ul><div>test2<br></div>');
       const range = wwe.getRange();
 
-      expect(range.startContainer).toBe(wwe.get$Body().find('div')[1]);
+      expect(range.startContainer).toBe(wwe.getBody().querySelectorAll('div')[1]);
       expect(range.startOffset).toEqual(1);
     });
 
@@ -397,49 +391,49 @@ describe('WysiwygEditor', () => {
       wwe.setValue('<ul><li><div>test</div></li></ul><div>test2<br></div>', false);
       const range = wwe.getRange();
 
-      expect(range.startContainer).not.toBe(wwe.get$Body().find('div')[1]);
+      expect(range.startContainer).not.toBe(wwe.getBody().querySelectorAll('div')[1]);
       expect(range.startOffset).not.toEqual(1);
     });
   });
 
   describe('insertText()', () => {
-    let sqe, selection, $body;
+    let sqe, selection, body;
 
     beforeEach(() => {
       sqe = wwe.getEditor();
       selection = sqe.getSelection().cloneRange();
-      $body = sqe.get$Body();
+      body = sqe.getBody();
     });
 
     it('to cursor position', () => {
       sqe.setHTML('<div>text  here<br/></div>');
 
-      selection.setStart($body.find('div')[0].firstChild, 5);
+      selection.setStart(body.querySelector('div').firstChild, 5);
       selection.collapse(true);
       sqe.setSelection(selection);
 
       wwe.insertText('insert');
 
-      expect($body[0].textContent).toEqual('text insert here');
+      expect(body.textContent).toEqual('text insert here');
     });
 
     it('to selected area', () => {
       sqe.setHTML('<div>text here<br/></div>');
 
-      selection.setStart($body.find('div')[0].firstChild, 5);
-      selection.setEnd($body.find('div')[0].firstChild, 9);
+      selection.setStart(body.querySelector('div').firstChild, 5);
+      selection.setEnd(body.querySelector('div').firstChild, 9);
       sqe.setSelection(selection);
 
       wwe.insertText('replaced');
 
-      expect($body[0].textContent).toEqual('text replaced');
+      expect(body.textContent).toEqual('text replaced');
     });
   });
 
-  it('get$Body() get current wysiwyg iframe body that wrapped jquery', () => {
-    expect(wwe.get$Body().length).toEqual(1);
-    expect(wwe.get$Body().prop('tagName')).toEqual('DIV');
-    expect(wwe.get$Body().hasClass('tui-editor-contents')).toBe(true);
+  it('getBody() get current wysiwyg iframe body that wrapped jquery', () => {
+    expect(wwe.getBody()).not.toBeUndefined();
+    expect(wwe.getBody().tagName).toEqual('DIV');
+    expect($(wwe.getBody()).hasClass('tui-editor-contents')).toBe(true);
   });
 
   it('hasFormatWithRx() check hasFormat with RegExp', () => {
@@ -454,9 +448,9 @@ describe('WysiwygEditor', () => {
         .getSelection()
         .cloneRange();
 
-      wwe.get$Body().html('abcdef');
+      wwe.getBody().innerHTML = 'abcdef';
 
-      range.setStart(wwe.get$Body()[0].firstChild, 4);
+      range.setStart(wwe.getBody().firstChild, 4);
       range.collapse(true);
       wwe._wrapDefaultBlockTo(range);
 
@@ -472,14 +466,14 @@ describe('WysiwygEditor', () => {
 
   describe('breakToNewDefaultBlock()', () => {
     it('make new defulatBlock then move selection to it', () => {
-      wwe.get$Body().html('<div>aef<br></div>');
+      wwe.getBody().innerHTML = '<div>aef<br></div>';
 
       const range = wwe
         .getEditor()
         .getSelection()
         .cloneRange();
 
-      range.setStart(wwe.get$Body()[0], 0);
+      range.setStart(wwe.getBody(), 0);
       range.collapse(true);
       wwe.breakToNewDefaultBlock(range);
 
@@ -489,7 +483,7 @@ describe('WysiwygEditor', () => {
     });
 
     it('make new defulatBlock to body child then move selection to it', () => {
-      wwe.get$Body().html('<h1><div>aef<br></div></h1>');
+      wwe.getBody().innerHTML = '<h1><div>aef<br></div></h1>';
 
       const range = wwe
         .getEditor()
@@ -497,7 +491,7 @@ describe('WysiwygEditor', () => {
         .cloneRange();
 
       // select text node
-      range.setStart(wwe.get$Body().find('div')[0], 0);
+      range.setStart(wwe.getBody().querySelectorAll('div')[0], 0);
       range.collapse(true);
       wwe.breakToNewDefaultBlock(range);
 
@@ -514,9 +508,9 @@ describe('WysiwygEditor', () => {
         .getSelection()
         .cloneRange();
 
-      wwe.get$Body().html('<h1><div>test<br></div></h1>');
+      wwe.getBody().innerHTML = '<h1><div>test<br></div></h1>';
 
-      range.selectNode(wwe.get$Body().find('div')[0].firstChild);
+      range.selectNode(wwe.getBody().querySelectorAll('div')[0].firstChild);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
       wwe.unwrapBlockTag('H1');
@@ -530,9 +524,9 @@ describe('WysiwygEditor', () => {
         .getSelection()
         .cloneRange();
 
-      wwe.get$Body().html('<h1><div>test<br></div></h1>');
+      wwe.getBody().innerHTML = '<h1><div>test<br></div></h1>';
 
-      range.selectNode(wwe.get$Body().find('div')[0].firstChild);
+      range.selectNode(wwe.getBody().querySelectorAll('div')[0].firstChild);
       range.collapse(true);
       wwe.getEditor().setSelection(range);
 
@@ -544,9 +538,9 @@ describe('WysiwygEditor', () => {
 
   describe("replace node's content text", () => {
     it('replace text without affect tags', () => {
-      wwe.get$Body().html('<ul><li class="custom-class">list1</li><li>list2</li></ul>');
+      wwe.getBody().innerHTML = '<ul><li class="custom-class">list1</li><li>list2</li></ul>';
 
-      wwe.replaceContentText(wwe.get$Body().find('li')[0], 'list1', 'list2');
+      wwe.replaceContentText(wwe.getBody().querySelectorAll('li')[0], 'list1', 'list2');
 
       expect(wwe.getValue().replace(/<br \/>/g, '')).toBe(
         '<ul><li class="custom-class">list2</li><li>list2</li></ul>'
@@ -575,7 +569,7 @@ describe('WysiwygEditor', () => {
       const range = wwe.getRange();
 
       expect(wwe.scrollTop()).not.toEqual(0);
-      expect(range.startContainer).toEqual(wwe.get$Body()[0].lastChild);
+      expect(range.startContainer).toEqual(wwe.getBody().lastChild);
       expect(range.startOffset).toEqual(1);
     });
     it('move cursor to start and scroll to top', () => {
@@ -588,7 +582,7 @@ describe('WysiwygEditor', () => {
       const range = wwe.getRange();
 
       expect(wwe.scrollTop()).toEqual(0);
-      expect(range.startContainer).toEqual(wwe.get$Body().find('div')[0].firstChild);
+      expect(range.startContainer).toEqual(wwe.getBody().querySelectorAll('div')[0].firstChild);
       expect(range.startOffset).toEqual(0);
     });
   });
@@ -638,7 +632,9 @@ describe('WysiwygEditor', () => {
         fail('defer() callback has been called');
       });
 
-      wwe.$editorContainerEl.remove();
+      const element = wwe.editorContainerEl;
+
+      element.parentNode.removeChild(element);
     });
   });
 
@@ -689,9 +685,10 @@ describe('WysiwygEditor', () => {
       wwe.scrollIntoCursor();
 
       const { top: cursorTop, height: cursorHeight } = sqe.getCursorPosition();
-      const { top: editorTop, height: editorHeight } = wwe.$editorContainerEl
-        .get(0)
-        .getBoundingClientRect();
+      const {
+        top: editorTop,
+        height: editorHeight
+      } = wwe.editorContainerEl.getBoundingClientRect();
 
       expect(cursorTop >= 0).toBe(true);
       expect(cursorTop + cursorHeight <= editorTop + editorHeight).toBe(true);
@@ -712,9 +709,10 @@ describe('WysiwygEditor', () => {
       wwe.scrollIntoCursor();
 
       const { top: cursorTop, height: cursorHeight } = sqe.getCursorPosition();
-      const { top: editorTop, height: editorHeight } = wwe.$editorContainerEl
-        .get(0)
-        .getBoundingClientRect();
+      const {
+        top: editorTop,
+        height: editorHeight
+      } = wwe.editorContainerEl.getBoundingClientRect();
 
       expect(cursorTop - editorTop >= 0).toBe(true);
       expect(cursorTop + cursorHeight <= editorTop + editorHeight).toBe(true);
@@ -734,7 +732,7 @@ describe('WysiwygEditor', () => {
           '<table><thead><tr><th><br></th><th><br></th></tr></thead>' +
             '<tbody><tr><td><br></td><td><br></td></tr></tbody></table>'
         );
-      range.setStart(wwe.get$Body().find('td')[0], 0);
+      range.setStart(wwe.getBody().querySelectorAll('td')[0], 0);
       range.collapse(true);
 
       expect(wwe.isInTable(range)).toEqual(true);

@@ -2,7 +2,6 @@
  * @fileoverview test wysiwyg bold command
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 
 import Bold from '@/wysiwygCommands/bold';
 import WwTableSelectionManager from '@/wwTableSelectionManager';
@@ -10,14 +9,13 @@ import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 
 describe('Bold', () => {
-  let wwe;
+  let container, wwe;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    $('body').append($container);
-
-    wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager());
 
     wwe.init();
 
@@ -28,7 +26,7 @@ describe('Bold', () => {
   // we need to wait squire input event process
   afterEach(done => {
     setTimeout(() => {
-      $('body').empty();
+      document.body.removeChild(container);
       done();
     });
   });
@@ -41,7 +39,7 @@ describe('Bold', () => {
 
     wwe.setValue('line1<br />line2');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.getBody().children[0]);
     wwe.getEditor().setSelection(range);
 
     Bold.exec(wwe);
@@ -57,7 +55,7 @@ describe('Bold', () => {
 
     wwe.setValue('line1<br />line2');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.getBody().children[0]);
     wwe.getEditor().setSelection(range);
 
     Bold.exec(wwe);
@@ -74,7 +72,7 @@ describe('Bold', () => {
 
     wwe.setValue('<b>line</b>');
 
-    range.setStart(wwe.get$Body().find('b')[0].firstChild, 4);
+    range.setStart(wwe.getBody().querySelectorAll('b')[0].firstChild, 4);
     range.collapse(true);
     wwe.getEditor().setSelection(range);
 
@@ -92,7 +90,7 @@ describe('Bold', () => {
 
     wwe.setValue('<i>line</i>');
 
-    range.selectNodeContents(wwe.get$Body().children()[0].firstChild);
+    range.selectNodeContents(wwe.getBody().children[0].firstChild);
     wwe.getEditor().setSelection(range);
 
     Bold.exec(wwe);
@@ -108,7 +106,7 @@ describe('Bold', () => {
 
     wwe.setValue('<code>line</code>');
 
-    range.selectNodeContents(wwe.get$Body().children()[0]);
+    range.selectNodeContents(wwe.getBody().children[0]);
     wwe.getEditor().setSelection(range);
 
     Bold.exec(wwe);

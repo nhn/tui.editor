@@ -2,7 +2,11 @@
  * @fileoverview editor layout
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import css from 'tui-code-snippet/domUtil/css';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
+
+import domUtils from './domUtils';
 
 /**
  * Editor container template
@@ -12,12 +16,12 @@ import $ from 'jquery';
 const containerTmpl = [
   '<div class="tui-editor">',
   '<div class="te-md-container">',
-  '<div class="te-editor" />',
-  '<div class="te-md-splitter" />',
-  '<div class="te-preview" />',
+  '<div class="te-editor"></div>',
+  '<div class="te-md-splitter"></div>',
+  '<div class="te-preview"></div>',
   '</div>',
   '<div class="te-ww-container">',
-  '<div class="te-editor" />',
+  '<div class="te-editor"></div>',
   '</div>',
   '</div>'
 ].join('');
@@ -30,7 +34,7 @@ const containerTmpl = [
  */
 class Layout {
   constructor(options, eventManager) {
-    this.$el = $(options.el);
+    this.el = options.el;
     this.height = options.height;
     this.type = options.initialEditType;
     this.eventManager = eventManager;
@@ -64,24 +68,27 @@ class Layout {
    * @private
    */
   _renderLayout() {
-    this.$el.css('box-sizing', 'border-box');
-    this.$containerEl = $(containerTmpl).appendTo(this.$el);
+    css(this.el, {
+      boxSizing: 'border-box'
+    });
+
+    this.containerEl = domUtils.createElementWith(containerTmpl, this.el);
   }
 
   /**
    * Switch editor mode to WYSIWYG
    */
   switchToWYSIWYG() {
-    this.$containerEl.removeClass('te-md-mode');
-    this.$containerEl.addClass('te-ww-mode');
+    removeClass(this.containerEl, 'te-md-mode');
+    addClass(this.containerEl, 'te-ww-mode');
   }
 
   /**
    * Switch editor mode to Markdown
    */
   switchToMarkdown() {
-    this.$containerEl.removeClass('te-ww-mode');
-    this.$containerEl.addClass('te-md-mode');
+    removeClass(this.containerEl, 'te-ww-mode');
+    addClass(this.containerEl, 'te-md-mode');
   }
 
   /**
@@ -89,8 +96,8 @@ class Layout {
    * @private
    */
   _initMarkdownAndPreviewSection() {
-    this.$mdEditorContainerEl = this.$containerEl.find('.te-md-container .te-editor');
-    this.$previewEl = this.$containerEl.find('.te-md-container .te-preview');
+    this.mdEditorContainerEl = this.containerEl.querySelector('.te-md-container .te-editor');
+    this.previewEl = this.containerEl.querySelector('.te-md-container .te-preview');
   }
 
   /**
@@ -98,7 +105,7 @@ class Layout {
    * @private
    */
   _initWysiwygSection() {
-    this.$wwEditorContainerEl = this.$containerEl.find('.te-ww-container .te-editor');
+    this.wwEditorContainerEl = this.containerEl.querySelector('.te-ww-container .te-editor');
   }
 
   /**
@@ -106,8 +113,10 @@ class Layout {
    * @private
    */
   _verticalSplitStyle() {
-    this.$containerEl.find('.te-md-container').removeClass('te-preview-style-tab');
-    this.$containerEl.find('.te-md-container').addClass('te-preview-style-vertical');
+    const mdContainer = this.containerEl.querySelector('.te-md-container');
+
+    removeClass(mdContainer, 'te-preview-style-tab');
+    addClass(mdContainer, 'te-preview-style-vertical');
   }
 
   /**
@@ -115,8 +124,10 @@ class Layout {
    * @private
    */
   _tabStyle() {
-    this.$containerEl.find('.te-md-container').removeClass('te-preview-style-vertical');
-    this.$containerEl.find('.te-md-container').addClass('te-preview-style-tab');
+    const mdContainer = this.containerEl.querySelector('.te-md-container');
+
+    removeClass(mdContainer, 'te-preview-style-vertical');
+    addClass(mdContainer, 'te-preview-style-tab');
   }
 
   /**
@@ -135,53 +146,53 @@ class Layout {
    * Hide Editor
    */
   hide() {
-    this.$el.find('.tui-editor').addClass('te-hide');
+    addClass(this.el.querySelector('.tui-editor'), 'te-hide');
   }
 
   /**
    * Show Editor
    */
   show() {
-    this.$el.find('.tui-editor').removeClass('te-hide');
+    removeClass(this.el.querySelector('.tui-editor'), 'te-hide');
   }
 
   /**
    * Remove Editor
    */
   remove() {
-    this.$el.find('.tui-editor').remove();
+    domUtils.remove(this.el.querySelector('.tui-editor'));
   }
 
   /**
-   * Get jQuery wrapped editor container element
-   * @returns {jQuery}
+   * Get wrapped editor container element
+   * @returns {HTMLElement}
    */
   getEditorEl() {
-    return this.$containerEl;
+    return this.containerEl;
   }
 
   /**
-   * Get jQuery wrapped preview element
-   * @returns {jQuery}
+   * Get wrapped preview element
+   * @returns {HTMLElement}
    */
   getPreviewEl() {
-    return this.$previewEl;
+    return this.previewEl;
   }
 
   /**
-   * Get jQuery wrapped Markdown editor element
-   * @returns {jQuery}
+   * Get wrapped Markdown editor element
+   * @returns {HTMLElement}
    */
   getMdEditorContainerEl() {
-    return this.$mdEditorContainerEl;
+    return this.mdEditorContainerEl;
   }
 
   /**
-   * Get jQuery wrapped WYSIWYG editor element
-   * @returns {jQuery}
+   * Get wrapped WYSIWYG editor element
+   * @returns {HTMLElement}
    */
   getWwEditorContainerEl() {
-    return this.$wwEditorContainerEl;
+    return this.wwEditorContainerEl;
   }
 }
 

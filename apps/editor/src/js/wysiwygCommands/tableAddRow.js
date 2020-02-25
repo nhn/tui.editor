@@ -2,10 +2,11 @@
  * @fileoverview Implements table add row WysiwygCommand
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import browser from 'tui-code-snippet/browser/browser';
+import matches from 'tui-code-snippet/domUtil/matches';
 
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * AddRow
@@ -26,32 +27,36 @@ const TableAddRow = CommandManager.command(
       const sq = wwe.getEditor();
       const range = sq.getSelection().cloneRange();
       const selectedRowLength = getSelectedRowsLength(wwe);
-      let $tr, $newRow;
+      let tr, newRow;
 
       wwe.focus();
 
       if (sq.hasFormat('TD')) {
         sq.saveUndoState(range);
-        $tr = $(range.startContainer).closest('tr');
+        tr = domUtils.closest(range.startContainer, 'tr');
         for (let i = 0; i < selectedRowLength; i += 1) {
-          $newRow = getNewRow($tr);
-          $newRow.insertAfter($tr);
+          newRow = getNewRow(tr);
+          domUtils.insertAfter(newRow, tr);
         }
 
-        focusToFirstTd(sq, $newRow);
+        focusToFirstTd(sq, newRow);
       } else if (sq.hasFormat('TH')) {
         sq.saveUndoState(range);
-        $tr = $(range.startContainer)
-          .parents('thead')
-          .next('tbody')
-          .children('tr')
-          .eq(0);
-        for (let i = 0; i < selectedRowLength; i += 1) {
-          $newRow = getNewRow($tr);
-          $newRow.insertBefore($tr);
+        tr = domUtils.closest(range.startContainer, 'tr');
+
+        const [thead] = domUtils.parents(tr, 'thead');
+        const tbody = thead.nextSibling;
+
+        if (matches(tbody, 'tbody')) {
+          [tr] = domUtils.children(tbody, 'tr');
         }
 
-        focusToFirstTd(sq, $newRow);
+        for (let i = 0; i < selectedRowLength; i += 1) {
+          newRow = getNewRow(tr);
+          domUtils.insertBefore(newRow, tr);
+        }
+
+        focusToFirstTd(sq, newRow);
       }
     }
   }
@@ -65,12 +70,12 @@ const TableAddRow = CommandManager.command(
  */
 function getSelectedRowsLength(wwe) {
   const selectionMgr = wwe.componentManager.getManager('tableSelection');
-  const $selectedCells = selectionMgr.getSelectedCells();
+  const selectedCells = selectionMgr.getSelectedCells();
   let length = 1;
 
-  if ($selectedCells.length > 1) {
-    const first = $selectedCells.first().get(0);
-    const last = $selectedCells.last().get(0);
+  if (selectedCells.length > 1) {
+    const [first] = selectedCells;
+    const last = selectedCells[selectedCells.length - 1];
     const range = selectionMgr.getSelectionRangeFromTable(first, last);
 
     length = range.to.row - range.from.row + 1;
@@ -81,15 +86,17 @@ function getSelectedRowsLength(wwe) {
 
 /**
  * Get new row of given row
- * @param {jQuery} $tr - jQuery wrapped table row
- * @returns {jQuery} - new cloned jquery element
+ * @param {HTMLElement} tr - wrapped table row
+ * @returns {HTMLElement} - new cloned element
  * @ignore
  */
-function getNewRow($tr) {
-  const cloned = $tr.clone();
+function getNewRow(tr) {
+  const cloned = tr.cloneNode(true);
   const htmlString = browser.msie ? '' : '<br />';
 
-  cloned.find('td').html(htmlString);
+  domUtils.findAll(cloned, 'td').forEach(td => {
+    td.innerHTML = htmlString;
+  });
 
   return cloned;
 }
@@ -97,13 +104,13 @@ function getNewRow($tr) {
 /**
  * Focus to first table cell
  * @param {Squire} sq - Squire instance
- * @param {jQuery} $tr - jQuery wrapped table row
+ * @param {HTMLElement} tr - wrapped table row
  * @ignore
  */
-function focusToFirstTd(sq, $tr) {
+function focusToFirstTd(sq, tr) {
   const range = sq.getSelection();
 
-  range.selectNodeContents($tr.find('td')[0]);
+  range.selectNodeContents(tr.querySelector('td'));
   range.collapse(true);
   sq.setSelection(range);
 }

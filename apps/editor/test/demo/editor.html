@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>All Features Demo</title>
+    <!-- Editor's Dependencies -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
+    />
+    <!-- Editor's Extension Dependencies -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css" />
+    <link
+      rel="stylesheet"
+      href="https://uicdn.toast.com/tui-color-picker/v2.2.1/tui-color-picker.css"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="../../dist/tui-editor.css" />
+    <link rel="stylesheet" href="../../dist/tui-editor-contents.css" />
+  </head>
+  <body>
+    <div class="code-html">
+      <div id="editSection"></div>
+    </div>
+    <!-- Editor Dependencies -->
+    <script src="../../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../../node_modules/markdown-it/dist/markdown-it.js"></script>
+    <script src="../../node_modules/codemirror/lib/codemirror.js"></script>
+    <!-- Editor -->
+    <script src="../../dist/tui-editor.js"></script>
+    <script class="code-js">
+      var editor = new tui.Editor({
+        el: document.querySelector('#editSection'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        useCommandShortcut: true
+      });
+    </script>
+  </body>
+</html>

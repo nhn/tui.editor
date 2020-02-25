@@ -2,11 +2,14 @@
  * @fileoverview Implements ui mode switch
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import isExisty from 'tui-code-snippet/type/isExisty';
+import css from 'tui-code-snippet/domUtil/css';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import UIController from './uicontroller';
 import i18n from '../i18n';
+import domUtils from '../domUtils';
 
 const MARKDOWN = 'markdown';
 const WYSIWYG = 'wysiwyg';
@@ -14,7 +17,7 @@ const WYSIWYG = 'wysiwyg';
 /**
  * Class ModeSwitch
  * UI Control for switch between Markdown and WYSIWYG
- * @param {jQuery} $rootElement - root jquery element
+ * @param {HTMLElement} rootElement - root element
  * @param {string} initialType - initial type of editor
  */
 class ModeSwitch extends UIController {
@@ -46,18 +49,18 @@ class ModeSwitch extends UIController {
 
   /**
    * root element
-   * @type {jQuery}
+   * @type {HTMLElement}
    * @private
    */
-  _$rootElement;
+  _rootElement;
 
-  constructor($rootElement, initialType) {
+  constructor(rootElement, initialType) {
     super({
       tagName: 'div',
       className: 'te-mode-switch'
     });
 
-    this._render($rootElement);
+    this._render(rootElement);
     this._switchType(isExisty(initialType) ? initialType : MARKDOWN);
   }
 
@@ -66,36 +69,37 @@ class ModeSwitch extends UIController {
    * @returns {Boolean} - showing status
    */
   isShown() {
-    return this._$rootElement.css('display') === 'block';
+    return this._rootElement.style.display === 'block';
   }
 
   /**
    * show switch tab bar
    */
   show() {
-    this._$rootElement.css('display', 'block');
+    css(this._rootElement, { display: 'block' });
   }
 
   /**
    * hide switch tab bar
    */
   hide() {
-    this._$rootElement.css('display', 'none');
+    css(this._rootElement, { display: 'none' });
   }
 
-  _render($rootElement) {
-    this._buttons.$markdown = $(
-      `<button class="te-switch-button markdown" type="button">${i18n.get('Markdown')}</button>`
+  _render(rootElement) {
+    this._buttons.markdown = domUtils.createElementWith(
+      `<button class="te-switch-button markdown">${i18n.get('Markdown')}</button>`
     );
-    this._buttons.$wysiwyg = $(
-      `<button class="te-switch-button wysiwyg" type="button">${i18n.get('WYSIWYG')}</button>`
+    this._buttons.wysiwyg = domUtils.createElementWith(
+      `<button class="te-switch-button wysiwyg">${i18n.get('WYSIWYG')}</button>`
     );
-    this.$el.append(this._buttons.$markdown);
-    this.$el.append(this._buttons.$wysiwyg);
 
-    if ($rootElement) {
-      $rootElement.append(this.$el);
-      this._$rootElement = $rootElement;
+    this.el.appendChild(this._buttons.markdown);
+    this.el.appendChild(this._buttons.wysiwyg);
+
+    if (rootElement) {
+      rootElement.appendChild(this.el);
+      this._rootElement = rootElement;
     }
 
     this.on('click .markdown', this._changeMarkdown.bind(this));
@@ -113,9 +117,9 @@ class ModeSwitch extends UIController {
   }
 
   _setActiveButton(type) {
-    this._buttons.$markdown.removeClass('active');
-    this._buttons.$wysiwyg.removeClass('active');
-    this._buttons[`$${type}`].addClass('active');
+    removeClass(this._buttons.markdown, 'active');
+    removeClass(this._buttons.wysiwyg, 'active');
+    addClass(this._buttons[`${type}`], 'active');
   }
 
   _switchType(type) {

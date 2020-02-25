@@ -2,9 +2,8 @@
  * @fileoverview Implements wysiwyg heading manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import domUtils from './domUtils';
+
 const FIND_HEADING_RX = /h[\d]/i;
 
 /**
@@ -72,14 +71,15 @@ class WwHeadingManager {
    * @private
    */
   _wrapDefaultBlockToHeadingInner() {
-    this.wwe
-      .get$Body()
-      .find('h1, h2, h3, h4, h5, h6')
-      .each((index, node) => {
-        if ($(node).children('div, p').length <= 0) {
-          $(node).wrapInner('<div />');
-        }
-      });
+    const headingTags = domUtils.findAll(this.wwe.getBody(), 'h1, h2, h3, h4, h5, h6');
+
+    headingTags.forEach(headingTag => {
+      const exceptedForWrapping = !domUtils.children(headingTag, 'div, p').length;
+
+      if (exceptedForWrapping) {
+        domUtils.wrapInner(headingTag, 'div');
+      }
+    });
   }
 
   /**
@@ -116,8 +116,12 @@ class WwHeadingManager {
    */
   _insertEmptyBlockToPrevious(range) {
     this.wwe.getEditor().saveUndoState(range);
-    $('<div><br></div>').insertBefore(
-      domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0])
+
+    const element = domUtils.createElementWith('<div><br></div>');
+
+    domUtils.insertBefore(
+      domUtils.getParentUntil(range.startContainer, this.wwe.getBody()),
+      element
     );
   }
 
@@ -133,7 +137,7 @@ class WwHeadingManager {
 
     if (range.collapsed && range.startOffset === 0) {
       const { startContainer } = range;
-      const prevTopNode = domUtils.getTopPrevNodeUnder(startContainer, this.wwe.get$Body()[0]);
+      const prevTopNode = domUtils.getTopPrevNodeUnder(startContainer, this.wwe.getBody());
       const isPrevTopNodeEmpty = prevTopNode && prevTopNode.textContent.length === 0;
       const sq = this.wwe.getEditor();
 
@@ -143,7 +147,7 @@ class WwHeadingManager {
         event.preventDefault();
         sq.saveUndoState(range);
 
-        $(prevTopNode).remove();
+        domUtils.remove(prevTopNode);
         isHandled = true;
       }
     }
@@ -162,11 +166,11 @@ class WwHeadingManager {
   _removeHedingAndChangeSelection(event, range, prevTopNode) {
     const { startContainer } = range;
     const sq = this.wwe.getEditor();
-    const $Body = this.wwe.get$Body();
+    const body = this.wwe.getBody();
     const isHeading = FIND_HEADING_RX.test(domUtils.getNodeName(startContainer));
     const headingElement = isHeading
       ? startContainer
-      : $(startContainer).parents('h1,h2,h3,h4,h5,h6')[0];
+      : domUtils.parents(startContainer, 'h1,h2,h3,h4,h5,h6')[0];
     let targetNode = prevTopNode;
     let offset = 1;
 
@@ -175,13 +179,10 @@ class WwHeadingManager {
       sq.saveUndoState(range);
     }
 
-    $(headingElement).remove();
+    domUtils.remove(headingElement);
 
     if (!prevTopNode) {
-      targetNode = $Body
-        .children('div')
-        .first()
-        .get(0);
+      [targetNode] = domUtils.children(body, 'div');
       offset = 0;
     }
 

@@ -34,6 +34,6 @@ describe('PopupCodeBlockEditor', () => {
 
   it('should open popup as modal', () => {
     eventManager.emit('openPopupCodeBlockEditor', pre);
-    expect(popup.$el.hasClass('tui-popup-modal-background')).toBe(true);
+    expect($(popup.el).hasClass('tui-popup-modal-background')).toBe(true);
   });
 });

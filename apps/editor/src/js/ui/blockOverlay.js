@@ -2,7 +2,8 @@
  * @fileoverview Implements UI block overlay
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import css from 'tui-code-snippet/domUtil/css';
+import domUtils from '../domUtils';
 
 /**
  * Class BlockOverlay
@@ -16,8 +17,8 @@ class BlockOverlay {
   constructor({ eventManager, container, attachedSelector }) {
     this._eventManager = eventManager;
     this._attachedSelector = `[contenteditable=true] ${attachedSelector}`;
-    this._$container = $(container);
-    this._$attachedElement = null;
+    this._container = container;
+    this._attachedElement = null;
 
     /**
      * is activated.
@@ -32,13 +33,14 @@ class BlockOverlay {
   }
 
   _createElement() {
-    this.$el = $('<div class="te-ww-block-overlay">');
-    this.$el.css({
+    this.el = domUtils.createElementWith('<div class="te-ww-block-overlay"></div>');
+    css(this.el, {
       position: 'absolute',
       display: 'none',
-      'z-index': 1
+      zIndex: 1
     });
-    this._$container.append(this.$el);
+
+    domUtils.append(this._container, this.el);
   }
 
   _initEvent() {
@@ -53,7 +55,7 @@ class BlockOverlay {
   }
 
   _onChange() {
-    if (this._$attachedElement && $.contains(document, this._$attachedElement[0])) {
+    if (this._attachedElement && domUtils.isContain(document.body, this._attachedElement)) {
       this.syncLayout();
     } else {
       this.setVisibility(false);
@@ -62,13 +64,13 @@ class BlockOverlay {
 
   _onMouseOver(ev) {
     const originalEvent = ev.data;
-    const $eventTarget = $(originalEvent.target);
-    const $attachedElement = $eventTarget.closest(this._attachedSelector);
+    const eventTarget = originalEvent.target;
+    const attachedElement = domUtils.closest(eventTarget, this._attachedSelector);
 
-    if ($attachedElement.length) {
-      this._$attachedElement = $attachedElement;
+    if (attachedElement) {
+      this._attachedElement = attachedElement;
       this.setVisibility(true);
-    } else if ($eventTarget.closest(this.$el).length) {
+    } else if (domUtils.closest(eventTarget, this.el)) {
       this.setVisibility(true);
     } else if (!this.active) {
       this.setVisibility(false);
@@ -81,9 +83,13 @@ class BlockOverlay {
    * @protected
    */
   syncLayout() {
-    this.$el.offset(this._$attachedElement.offset());
-    this.$el.width(this._$attachedElement.outerWidth());
-    this.$el.height(this._$attachedElement.outerHeight());
+    const offset = domUtils.getOffset(this._attachedElement);
+    const outerWidth = domUtils.getOuterWidth(this._attachedElement);
+    const outerHeight = domUtils.getOuterHeight(this._attachedElement);
+
+    domUtils.setOffset(this.el, offset);
+    css(this.el, { width: `${outerWidth}px` });
+    css(this.el, { height: `${outerHeight}px` });
   }
 
   /**
@@ -92,7 +98,7 @@ class BlockOverlay {
    * @returns {HTMLElement} - attached element
    */
   getAttachedElement() {
-    return this._$attachedElement ? this._$attachedElement.get(0) : null;
+    return this._attachedElement || null;
   }
 
   /**
@@ -101,7 +107,7 @@ class BlockOverlay {
    * @returns {boolean} visibility
    */
   getVisibility() {
-    return this.$el.css('display') === 'block';
+    return this.el.style.display === 'block';
   }
 
   /**
@@ -110,15 +116,15 @@ class BlockOverlay {
    * @protected
    */
   setVisibility(visibility) {
-    if (visibility && this._$attachedElement) {
+    if (visibility && this._attachedElement) {
       if (!this.getVisibility()) {
-        this.$el.css('display', 'block');
+        css(this.el, { display: 'block' });
         this.syncLayout();
         this.onShow();
       }
     } else if (!visibility) {
       if (this.getVisibility()) {
-        this.$el.css('display', 'none');
+        css(this.el, { display: 'none' });
         this.onHide();
       }
     }
@@ -137,7 +143,7 @@ class BlockOverlay {
    */
   onHide() {
     this.active = false;
-    this._$attachedElement = null;
+    this._attachedElement = null;
   }
 }
 

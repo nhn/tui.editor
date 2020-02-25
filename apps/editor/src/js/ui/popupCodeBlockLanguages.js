@@ -2,10 +2,15 @@
  * @fileoverview Implements popup code block languages
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import inArray from 'tui-code-snippet/array/inArray';
 import extend from 'tui-code-snippet/object/extend';
+import css from 'tui-code-snippet/domUtil/css';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import matches from 'tui-code-snippet/domUtil/matches';
 
 import LayerPopup from './layerpopup';
+import domUtils from '../domUtils';
 
 const BUTTON_CLASS_PREFIX = 'te-popup-code-block-lang-';
 
@@ -49,7 +54,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
     this._onSelectedLanguage = null;
     this._onDismissed = null;
     this._currentButton = null;
-    this._$buttons = null;
+    this._buttons = null;
     this._languages = options.languages;
 
     this.eventManager = options.eventManager;
@@ -63,9 +68,9 @@ class PopupCodeBlockLanguages extends LayerPopup {
   _initDOM(options) {
     super._initDOM(options);
 
-    this.$el.css('z-index', 10000);
+    css(this.el, 'zIndex', 10000);
 
-    this._$buttons = this.$el.find('button');
+    this._buttons = domUtils.findAll(this.el, 'button');
     this._activateButtonByIndex(0);
   }
 
@@ -78,7 +83,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
     super._initDOMEvent();
 
     const handler = event => {
-      const language = $(event.target).data('lang');
+      const language = event.target.getAttribute('data-lang');
 
       if (this._onSelectedLanguage) {
         this._onSelectedLanguage(language);
@@ -99,10 +104,10 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
     this.eventManager.listen('openPopupCodeBlockLanguages', data => {
       this.show(data.callback);
-      const elementStyle = this.$el.get(0).style;
 
-      elementStyle.top = `${data.offset.top}px`;
-      elementStyle.left = `${data.offset.left}px`;
+      css(this.el, { top: `${data.offset.top}px` });
+      css(this.el, { left: `${data.offset.left}px` });
+
       this.setCurrentLanguage(data.language);
 
       return this;
@@ -121,12 +126,12 @@ class PopupCodeBlockLanguages extends LayerPopup {
    */
   _activateButtonByIndex(index) {
     if (this._currentButton) {
-      $(this._currentButton).removeClass('active');
+      removeClass(this._currentButton, 'active');
     }
 
-    if (this._$buttons.length) {
-      this._currentButton = this._$buttons.get(index);
-      $(this._currentButton).addClass('active');
+    if (this._buttons.length) {
+      this._currentButton = this._buttons[index];
+      addClass(this._currentButton, 'active');
       this._currentButton.scrollIntoView();
     }
   }
@@ -135,10 +140,10 @@ class PopupCodeBlockLanguages extends LayerPopup {
    * move to prev language
    */
   prev() {
-    let index = this._$buttons.index(this._currentButton) - 1;
+    let index = inArray(this._currentButton, this._buttons) - 1;
 
     if (index < 0) {
-      index = this._$buttons.length - 1;
+      index = this._buttons.length - 1;
     }
     this._activateButtonByIndex(index);
   }
@@ -147,9 +152,9 @@ class PopupCodeBlockLanguages extends LayerPopup {
    * move to next language
    */
   next() {
-    let index = this._$buttons.index(this._currentButton) + 1;
+    let index = inArray(this._currentButton, this._buttons) + 1;
 
-    if (index >= this._$buttons.length) {
+    if (index >= this._buttons.length) {
       index = 0;
     }
     this._activateButtonByIndex(index);
@@ -160,7 +165,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
    * @returns {string} language
    */
   getCurrentLanguage() {
-    const language = $(this._currentButton).data('lang');
+    const language = this._currentButton.getAttribute('data-lang');
 
     return language;
   }
@@ -170,10 +175,12 @@ class PopupCodeBlockLanguages extends LayerPopup {
    * @param {string} language - current language
    */
   setCurrentLanguage(language) {
-    const item = this._$buttons.filter(`.${BUTTON_CLASS_PREFIX}${language}`);
+    const item = this._buttons.filter(button =>
+      matches(button, `.${BUTTON_CLASS_PREFIX}${language}`)
+    );
 
     if (item.length > 0) {
-      const index = this._$buttons.index(item);
+      const index = inArray(item[0], this._buttons);
 
       this._activateButtonByIndex(index);
     }

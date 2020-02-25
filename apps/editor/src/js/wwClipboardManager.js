@@ -2,9 +2,11 @@
  * @fileoverview Implements wysiwyg editor clipboard manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import toArray from 'tui-code-snippet/collection/toArray';
 import browser from 'tui-code-snippet/browser/browser';
+import css from 'tui-code-snippet/domUtil/css';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
@@ -24,7 +26,7 @@ class WwClipboardManager {
     this._pch = new WwPasteContentHelper(this.wwe);
     this._tablePasteHelper = new WwTablePasteHelper(this.wwe);
     this._selectedSellCount = 0;
-    this._$clipboardArea = null;
+    this._clipboardArea = null;
   }
 
   /**
@@ -72,30 +74,34 @@ class WwClipboardManager {
     const editor = this.wwe.getEditor();
     const clipboardEvent = event.data;
     const range = editor.getSelection().cloneRange();
-    const $clipboardContainer = $('<div />');
+    const clipboardContainer = document.createElement('div');
 
     this._extendRange(range);
-    $clipboardContainer.append(range.cloneContents());
-    this._updateCopyDataForListTypeIfNeed(range, $clipboardContainer);
+    clipboardContainer.innerHTML = range.cloneContents();
+    this._updateCopyDataForListTypeIfNeed(range, clipboardContainer);
     this.wwe.eventManager.emit('copyBefore', {
       source: 'wysiwyg',
-      $clipboardContainer
+      clipboardContainer
     });
 
-    this._setClipboardData(clipboardEvent, $clipboardContainer.html(), $clipboardContainer.text());
+    this._setClipboardData(
+      clipboardEvent,
+      clipboardContainer.innerHTML,
+      clipboardContainer.textContent
+    );
   }
 
   _clearClipboardArea() {
-    if (this._$clipboardArea) {
-      this._$clipboardArea.remove();
-      this._$clipboardArea = null;
+    if (this._clipboardArea) {
+      domUtils.remove(this._clipboardArea);
+      this._clipboardArea = null;
     }
   }
 
   _onCopyAfter() {
     this.wwe
       .getEditor()
-      .get$Body()
+      .getBody()
       .focus();
     this._clearClipboardArea();
   }
@@ -144,13 +150,16 @@ class WwClipboardManager {
 
   _onWillPaste(event) {
     const { data: pasteData } = event;
-    const $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
+    const clipboardContainer = document.createElement('div');
 
-    this._preparePaste($clipboardContainer);
-    this._setTableBookmark($clipboardContainer);
+    clipboardContainer.appendChild(pasteData.fragment.cloneNode(true));
+
+    this._preparePaste(clipboardContainer);
+    this._setTableBookmark(clipboardContainer);
 
     pasteData.fragment = document.createDocumentFragment();
-    $clipboardContainer.contents().each((index, element) => {
+
+    toArray(clipboardContainer.childNodes).forEach(element => {
       pasteData.fragment.appendChild(element);
     });
 
@@ -167,10 +176,10 @@ class WwClipboardManager {
   _setClipboardData(clipboardEvent, htmlContent, textContent) {
     if (browser.msie) {
       clipboardEvent.squirePrevented = true;
-      this._$clipboardArea = this._createClipboardArea();
-      this._$clipboardArea.html(htmlContent);
-      this._$clipboardArea.focus();
-      window.getSelection().selectAllChildren(this._$clipboardArea[0]);
+      this._clipboardArea = this._createClipboardArea();
+      this._clipboardArea.innerHTML = htmlContent;
+      this._clipboardArea.focus();
+      window.getSelection().selectAllChildren(this._clipboardArea);
     } else {
       clipboardEvent.preventDefault();
       clipboardEvent.stopPropagation();
@@ -180,46 +189,55 @@ class WwClipboardManager {
   }
 
   _createClipboardArea() {
-    return $('<DIV>')
-      .attr({
-        contenteditable: 'true',
-        style: 'position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;'
-      })
-      .appendTo(document.body);
+    const element = document.createElement('div');
+
+    element.setAttribute('contenteditable', true);
+    css(element, {
+      position: 'fixed',
+      overflow: 'hidden',
+      top: 0,
+      right: '100%',
+      width: '1px',
+      height: '1px'
+    });
+
+    document.body.appendChild(element);
+
+    return element;
   }
 
   /**
    * Update copy data, when commonAncestorContainer nodeName is list type like UL or OL.
    * @param {object} range - text range
-   * @param {jQuery} $clipboardContainer - clibpard container jQuery element
+   * @param {HTMLElement} clipboardContainer - clibpard container element
    * @private
    */
-  _updateCopyDataForListTypeIfNeed(range, $clipboardContainer) {
+  _updateCopyDataForListTypeIfNeed(range, clipboardContainer) {
     const commonAncestorNodeName = range.commonAncestorContainer.nodeName;
 
     if (commonAncestorNodeName !== 'UL' && commonAncestorNodeName !== 'OL') {
       return;
     }
 
-    const $newParent = $(`<${commonAncestorNodeName} />`);
+    const newParent = document.createElement(commonAncestorNodeName);
 
-    $newParent.append($clipboardContainer.html());
-    $clipboardContainer.html('');
-    $clipboardContainer.append($newParent);
+    newParent.appendChild(clipboardContainer);
+    clipboardContainer.innerHTML = '';
+    clipboardContainer.appendChild(newParent);
   }
 
   /**
    * Remove empty font elements.
-   * @param {jQuery} $clipboardContainer - cliboard jQuery container
+   * @param {HTMLElement} clipboardContainer - cliboard container
    * @private
    */
-  _removeEmptyFontElement($clipboardContainer) {
+  _removeEmptyFontElement(clipboardContainer) {
     // clipboard data from ms word tend to have unneccesary font tags
-    $clipboardContainer.children('font').each((index, element) => {
-      const $element = $(element);
+    const children = domUtils.children(clipboardContainer, 'font');
 
-      if (!$element.text().trim()) {
-        $element.remove();
+    children.forEach(element => {
+      if (!element.textContent.trim()) {
+        domUtils.remove(element);
       }
     });
   }
@@ -243,9 +261,7 @@ class WwClipboardManager {
    * @private
    */
   _preProcessPtag(node) {
-    const pTags = node.querySelectorAll('p');
-
-    forEachArray(pTags, pTag => {
+    domUtils.findAll(node, 'p').forEach(pTag => {
       if (pTag.lastChild && pTag.lastChild.nodeName !== 'BR') {
         pTag.appendChild(document.createElement('br'));
       }
@@ -256,39 +272,39 @@ class WwClipboardManager {
 
   /**
    * Prepare paste.
-   * @param {jQuery} $clipboardContainer - temporary jQuery container for clipboard contents
+   * @param {HTMLElement} clipboardContainer - temporary container for clipboard contents
    * @private
    */
-  _preparePaste($clipboardContainer) {
+  _preparePaste(clipboardContainer) {
     // When pasting text, the empty line processing differ our viewer and MS Office.
     // In our viewer case, <p>aaa</p><p>bbb<p> have empty line becuase P tags have margin.
     // In MS Office case, <p>aaa</p><p>bbb<p> do not have empty line becuase P tags means just one line.
-    if (!this._isFromMs($clipboardContainer.html())) {
-      this._preProcessPtag($clipboardContainer.get(0));
+    if (!this._isFromMs(clipboardContainer.innerText)) {
+      this._preProcessPtag(clipboardContainer);
     }
 
-    this._replaceNewLineToBr($clipboardContainer.get(0));
-    this._removeEmptyFontElement($clipboardContainer);
+    this._replaceNewLineToBr(clipboardContainer);
+    this._removeEmptyFontElement(clipboardContainer);
 
-    this._pch.preparePaste($clipboardContainer);
+    this._pch.preparePaste(clipboardContainer);
 
     this.wwe.eventManager.emit('pasteBefore', {
       source: 'wysiwyg',
-      $clipboardContainer
+      clipboardContainer
     });
   }
 
   /**
    * set table bookmark which will gain focus after document modification ends.
-   * @param {jQuery} $clipboardContainer - clipboard container
+   * @param {HTMLElement} clipboardContainer - clipboard container
    * @private
    */
-  _setTableBookmark($clipboardContainer) {
-    const $lastNode = $($clipboardContainer[0].childNodes).last();
-    const isLastNodeTable = $lastNode[0] && $lastNode[0].nodeName === 'TABLE';
+  _setTableBookmark(clipboardContainer) {
+    const lastNode = clipboardContainer.lastChild;
+    const isLastNodeTable = lastNode && lastNode.nodeName === 'TABLE';
 
     if (isLastNodeTable) {
-      $lastNode.addClass(PASTE_TABLE_BOOKMARK);
+      addClass(lastNode, PASTE_TABLE_BOOKMARK);
     }
   }
 
@@ -300,18 +316,18 @@ class WwClipboardManager {
   _focusTableBookmark() {
     const sq = this.wwe.getEditor();
     const range = sq.getSelection().cloneRange();
-    const $bookmarkedTable = sq.get$Body().find(`.${PASTE_TABLE_BOOKMARK}`);
-    const $bookmarkedCell = sq.get$Body().find(`.${PASTE_TABLE_CELL_BOOKMARK}`);
+    const bookmarkedTable = sq.getBody().querySelector(`.${PASTE_TABLE_BOOKMARK}`);
+    const bookmarkedCell = sq.getBody().querySelector(`.${PASTE_TABLE_CELL_BOOKMARK}`);
 
-    if ($bookmarkedTable.length) {
-      $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
-      range.setEndAfter($bookmarkedTable[0]);
+    if (bookmarkedTable) {
+      removeClass(bookmarkedTable, PASTE_TABLE_BOOKMARK);
+      range.setEndAfter(bookmarkedTable);
       range.collapse(false);
       sq.setSelection(range);
     }
-    if ($bookmarkedCell.length) {
-      $bookmarkedCell.removeClass(PASTE_TABLE_CELL_BOOKMARK);
-      range.selectNodeContents($bookmarkedCell[0]);
+    if (bookmarkedCell) {
+      removeClass(bookmarkedCell, PASTE_TABLE_CELL_BOOKMARK);
+      range.selectNodeContents(bookmarkedCell);
       range.collapse(false);
       sq.setSelection(range);
     }
@@ -360,7 +376,7 @@ class WwClipboardManager {
     // expand range
     while (
       newBound.parentNode !== range.commonAncestorContainer &&
-      newBound.parentNode !== this.wwe.get$Body()[0] &&
+      newBound.parentNode !== this.wwe.getBody() &&
       !newBound.previousSibling
     ) {
       newBound = newBound.parentNode;
@@ -385,7 +401,7 @@ class WwClipboardManager {
     // expand range
     while (
       newBound.parentNode !== range.commonAncestorContainer &&
-      newBound.parentNode !== this.wwe.get$Body()[0] &&
+      newBound.parentNode !== this.wwe.getBody() &&
       (!boundNext ||
         (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))
     ) {
@@ -408,7 +424,7 @@ class WwClipboardManager {
   _isWholeCommonAncestorContainerSelected(range) {
     return (
       range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE &&
-      range.commonAncestorContainer !== this.wwe.get$Body()[0] &&
+      range.commonAncestorContainer !== this.wwe.getBody() &&
       range.startOffset === 0 &&
       range.endOffset === range.commonAncestorContainer.childNodes.length &&
       range.commonAncestorContainer === range.startContainer &&
