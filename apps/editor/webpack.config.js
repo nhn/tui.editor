@@ -155,10 +155,10 @@ function addCopyingAssetsPlugin(config) {
 
 function setDevelopConfig(config) {
   if (isDevelopAll) {
-    config.entry = { editor: ENTRY_MAIN };
-  } else {
     config.entry = { 'editor-all': ENTRY_MAIN };
     config.externals = [];
+  } else {
+    config.entry = { editor: ENTRY_MAIN };
   }
 
   config.devtool = 'inline-source-map';
