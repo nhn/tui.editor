@@ -7,6 +7,7 @@ import {
   prependChildNodes,
   updateNextLineNumbers,
   findChildNodeAtLine,
+  findFirstNodeAtLine,
   findNodeAtPosition
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
@@ -213,6 +214,10 @@ export class MarkdownDocument {
       return null;
     }
     return node;
+  }
+
+  public findFirstNodeAtLine(line: number) {
+    return findFirstNodeAtLine(this.root, line);
   }
 
   public on(eventName: EventName, callback: Function) {

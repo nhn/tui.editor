@@ -126,6 +126,49 @@ export function findChildNodeAtLine(parent: Node, line: number) {
   return parent.lastChild;
 }
 
+function lastLeafNode(node: Node) {
+  while (node.lastChild) {
+    node = node.lastChild;
+  }
+  return node;
+}
+
+function sameLineTopAncestor(node: Node) {
+  while (
+    node.parent &&
+    node.parent.type !== 'document' &&
+    node.parent.sourcepos![0][0] === node.sourcepos![0][0]
+  ) {
+    node = node.parent;
+  }
+  return node;
+}
+
+export function findFirstNodeAtLine(parent: Node, line: number) {
+  let node = parent.firstChild;
+  let prev: Node | null = null;
+  while (node) {
+    const comp = compareRangeAndLine(node.sourcepos!, line);
+    if (comp === Compare.EQ) {
+      if (node.sourcepos![0][0] === line || !node.firstChild) {
+        return node;
+      }
+      prev = node;
+      node = node.firstChild;
+    } else if (comp === Compare.GT) {
+      break;
+    } else {
+      prev = node;
+      node = node.next;
+    }
+  }
+
+  if (prev) {
+    return sameLineTopAncestor(lastLeafNode(prev));
+  }
+  return null;
+}
+
 export function findNodeAtPosition(parent: Node, pos: Position) {
   let node: Node | null = parent;
   let prev: Node | null = null;

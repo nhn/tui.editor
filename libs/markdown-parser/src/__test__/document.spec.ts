@@ -98,6 +98,51 @@ describe('findNodeAtPosition()', () => {
   });
 });
 
+describe('findFirstNodeAtLine()', () => {
+  const markdown = [
+    '# Hello *World*',
+    '',
+    '- Item D1',
+    '  - Item D2',
+    '![Image](URL)',
+    '',
+    'Paragraph'
+  ].join('\n');
+
+  it('returns the first node at the given line', () => {
+    const doc = new MarkdownDocument(markdown);
+
+    expect(doc.findFirstNodeAtLine(1)).toMatchObject({ type: 'heading' });
+    expect(doc.findFirstNodeAtLine(3)).toMatchObject({
+      type: 'list',
+      prev: { type: 'heading' }
+    });
+    expect(doc.findFirstNodeAtLine(4)).toMatchObject({
+      type: 'list',
+      parent: { type: 'item' }
+    });
+    expect(doc.findFirstNodeAtLine(5)).toMatchObject({ type: 'image' });
+    expect(doc.findFirstNodeAtLine(7)).toMatchObject({ type: 'paragraph' });
+  });
+
+  it('if the given line is blank, returns the first node at the previous line', () => {
+    const doc = new MarkdownDocument(markdown);
+
+    expect(doc.findFirstNodeAtLine(2)).toMatchObject({ type: 'heading' });
+    expect(doc.findFirstNodeAtLine(6)).toMatchObject({ type: 'image' });
+    expect(doc.findFirstNodeAtLine(8)).toMatchObject({ type: 'paragraph' });
+  });
+
+  it('returns null if nothing mathces', () => {
+    const doc = new MarkdownDocument('\n\n');
+
+    expect(doc.findFirstNodeAtLine(0)).toBeNull();
+    expect(doc.findFirstNodeAtLine(1)).toBeNull();
+    expect(doc.findFirstNodeAtLine(2)).toBeNull();
+    expect(doc.findFirstNodeAtLine(3)).toBeNull();
+  });
+});
+
 describe('editText()', () => {
   describe('single paragraph', () => {
     it('insert character within a line', () => {
