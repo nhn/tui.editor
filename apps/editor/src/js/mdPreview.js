@@ -3,6 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import Preview from './preview';
+import { GfmHtmlRenderer } from '@toast-ui/markdown-parser';
+
+const htmlRenderer = new GfmHtmlRenderer({ nodeId: true });
 
 import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
@@ -28,18 +31,9 @@ class MarkdownPreview extends Preview {
    * @private
    */
   _initEvent() {
-    let latestMarkdownValue = '';
-
-    this.eventManager.listen('contentChangedFromMarkdown', markdownEditor => {
-      latestMarkdownValue = markdownEditor.getValue();
-
-      if (this.isVisible()) {
-        this.lazyRunner.run('refresh', latestMarkdownValue);
-      }
-    });
-
+    this.eventManager.listen('contentChangedFromMarkdown', this.update.bind(this));
     this.eventManager.listen('previewNeedsRefresh', value => {
-      this.refresh(value || latestMarkdownValue);
+      this.refresh(value || '');
     });
 
     on(this.el, 'scroll', event => {
@@ -48,6 +42,33 @@ class MarkdownPreview extends Preview {
         data: event
       });
     });
+  }
+
+  update(changed) {
+    const { nodes, removedNodeRange } = changed;
+    const [contentEl] = this._$previewContent;
+    const newHtml = nodes.map(node => htmlRenderer.render(node)).join('');
+
+    if (!removedNodeRange) {
+      contentEl.insertAdjacentHTML('afterbegin', newHtml);
+    } else {
+      const [startNodeId, endNodeId] = removedNodeRange;
+      const startEl = contentEl.querySelector(`[data-nodeid="${startNodeId}"]`);
+      const endEl = contentEl.querySelector(`[data-nodeid="${endNodeId}"]`);
+
+      if (startEl) {
+        startEl.insertAdjacentHTML('beforebegin', newHtml);
+        let el = startEl;
+
+        while (el !== endEl) {
+          const nextEl = el.nextElementSibling;
+
+          el.parentNode.removeChild(el);
+          el = nextEl;
+        }
+        el.remove();
+      }
+    }
   }
 
   /**

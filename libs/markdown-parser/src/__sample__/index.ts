@@ -19,7 +19,7 @@ const previewEl = document.querySelector('.preview') as HTMLElement;
 
 const cm = codemirror(editorEl, { lineNumbers: true });
 const doc = new MarkdownDocument();
-const writer = new GfmHtmlRenderer({ sourcepos: true });
+const writer = new GfmHtmlRenderer({ sourcepos: true, nodeId: true });
 
 const tokenTypes = {
   heading: 'header',
@@ -35,15 +35,34 @@ type TokenTypes = typeof tokenTypes;
 
 cm.on('change', (editor, changeObj) => {
   const { from, to, text } = changeObj;
-  const { nodes } = doc.editMarkdown(
+  const { nodes, removedNodeRange } = doc.editMarkdown(
     [from.line + 1, from.ch + 1],
     [to.line + 1, to.ch + 1],
     text.join('\n')
   );
 
   const html = writer.render(doc.getRootNode());
-  previewEl.innerHTML = html;
   htmlEl.innerText = html;
+
+  if (!removedNodeRange) {
+    previewEl.innerHTML = html;
+  } else {
+    const [startNodeId, endNodeId] = removedNodeRange;
+    const startEl = previewEl.querySelector(`[data-nodeid="${startNodeId}"]`);
+    const endEl = previewEl.querySelector(`[data-nodeid="${endNodeId}"]`);
+    const newHtml = nodes.map(node => writer.render(node)).join('');
+
+    if (startEl) {
+      startEl.insertAdjacentHTML('beforebegin', newHtml);
+      let el: Element = startEl;
+      while (el !== endEl) {
+        const nextEl: Element | null = el.nextElementSibling;
+        el.remove();
+        el = nextEl!;
+      }
+      el.remove();
+    }
+  }
 
   if (!nodes.length) {
     return;

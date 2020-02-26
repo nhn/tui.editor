@@ -9,8 +9,6 @@ import CodeMirror from 'codemirror';
 
 import './codemirror/fixOrderedListNumber';
 import './codemirror/overlay';
-import './codemirror/markdown';
-import './codemirror/gfm';
 import './codemirror/continuelist';
 import './codemirror/arrowKeyFunction';
 import './codemirror/placeholder';

@@ -19,6 +19,7 @@ const commonConfig = {
   },
   output: {
     filename: 'markdown-parser.js',
+    libraryTarget: 'commonjs',
     publicPath: '/dist',
     path: path.resolve(__dirname, 'dist')
   }
@@ -33,6 +34,9 @@ module.exports = (env, { mode = 'development' }) => {
     entry: './src/__sample__/index.ts',
     mode,
     devtool: 'inline-source-map',
+    output: {
+      libraryTarget: 'umd'
+    },
     module: {
       rules: [
         {

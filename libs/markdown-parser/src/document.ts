@@ -16,8 +16,15 @@ export type Position = [number, number];
 
 export type Range = [Position, Position];
 
+type EventName = 'change';
+
+type EventHandlerMap = {
+  [key in EventName]: Function[];
+};
+
 interface EditResult {
   nodes: BlockNode[];
+  removedNodeRange: [number, number] | null;
 }
 
 function canBeContinuation(lineText: string) {
@@ -34,9 +41,11 @@ export class MarkdownDocument {
   public lineTexts: string[];
   private parser: Parser;
   private root: BlockNode;
+  private eventHandlerMap: EventHandlerMap;
 
   constructor(contents = '') {
     this.lineTexts = contents.split(reLineEnding);
+    this.eventHandlerMap = { change: [] };
     this.parser = new Parser();
     this.root = this.parser.parse(contents);
   }
@@ -100,7 +109,7 @@ export class MarkdownDocument {
   }
 
   private getNodeRange(start: Position, end: Position) {
-    const startNode = findChildNodeByLine(this.root, start[0]);
+    let startNode = findChildNodeByLine(this.root, start[0]);
     let endNode = findChildNodeByLine(this.root, end[0]);
 
     // extend node range to include a following block which doesn't have preceding blank line
@@ -108,7 +117,17 @@ export class MarkdownDocument {
       endNode = endNode.next;
     }
 
+    if (!startNode && endNode) {
+      startNode = endNode;
+    }
+
     return [startNode, endNode] as [BlockNode, BlockNode];
+  }
+
+  private trigger(eventName: EventName, param: any) {
+    this.eventHandlerMap[eventName].forEach(handler => {
+      handler(param);
+    });
   }
 
   private parseRange(
@@ -140,7 +159,6 @@ export class MarkdownDocument {
         }
 
         this.parser.partialParseExtends(this.lineTexts.slice(endLine, newEndLine));
-        endLine = newEndLine;
         endNode = nextNode as BlockNode;
         nextNode = nextNode.next;
       }
@@ -170,7 +188,14 @@ export class MarkdownDocument {
     updateNextLineNumbers(nextNode, lineDiff);
     this.updateRootNodeState();
 
-    return { nodes: newNodes };
+    const result = {
+      nodes: newNodes,
+      removedNodeRange: !extStartNode ? null : [extStartNode.id, extEndNode!.id]
+    } as EditResult;
+
+    this.trigger('change', result);
+
+    return result;
   }
 
   public getLineTexts() {
@@ -179,5 +204,15 @@ export class MarkdownDocument {
 
   public getRootNode() {
     return this.root;
+  }
+
+  public on(eventName: EventName, callback: Function) {
+    this.eventHandlerMap[eventName].push(callback);
+  }
+
+  public off(eventName: EventName, callback: Function) {
+    const handlers = this.eventHandlerMap[eventName];
+    const idx = handlers.indexOf(callback);
+    handlers.splice(idx, 1);
   }
 }

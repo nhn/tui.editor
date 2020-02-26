@@ -59,8 +59,11 @@ export function isContainer(node: Node) {
   }
 }
 
+let lastNodeId = 1;
+
 export class Node {
   public type: NodeType;
+  public id: number;
   public parent: Node | null = null;
   public prev: Node | null = null;
   public next: Node | null = null;
@@ -74,6 +77,11 @@ export class Node {
   public literal: string | null = null;
 
   constructor(nodeType: NodeType, sourcepos?: SourcePos) {
+    if (nodeType === 'document') {
+      this.id = -1;
+    } else {
+      this.id = lastNodeId++;
+    }
     this.type = nodeType;
     this.sourcepos = sourcepos;
   }
