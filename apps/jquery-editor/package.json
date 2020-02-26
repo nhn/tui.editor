@@ -20,7 +20,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/nhn/tui.editor.git",
-    "directory": "apps/jquery"
+    "directory": "apps/jquery-editor"
   },
   "bugs": {
     "url": "https://github.com/nhn/tui.editor/issues"
