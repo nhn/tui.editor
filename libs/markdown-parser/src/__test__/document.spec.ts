@@ -36,6 +36,68 @@ function assertResultNodes(doc: MarkdownDocument, nodes: BlockNode[], startIdx =
   }
 }
 
+describe('findNodeAtPosition()', () => {
+  it('returns a node at the given position', () => {
+    const doc = new MarkdownDocument('# Hello *World*\n\n- Item 1\n- Item **2**');
+
+    expect(doc.findNodeAtPosition([1, 1])).toMatchObject({
+      type: 'heading'
+    });
+
+    expect(doc.findNodeAtPosition([1, 3])).toMatchObject({
+      type: 'text',
+      literal: 'Hello '
+    });
+
+    expect(doc.findNodeAtPosition([1, 9])).toMatchObject({
+      type: 'emph',
+      firstChild: {
+        type: 'text',
+        literal: 'World'
+      }
+    });
+
+    expect(doc.findNodeAtPosition([1, 10])).toMatchObject({
+      type: 'text',
+      literal: 'World'
+    });
+
+    expect(doc.findNodeAtPosition([3, 1])).toMatchObject({
+      type: 'item'
+    });
+
+    expect(doc.findNodeAtPosition([3, 3])).toMatchObject({
+      type: 'text',
+      literal: 'Item 1'
+    });
+
+    expect(doc.findNodeAtPosition([4, 8])).toMatchObject({
+      type: 'strong',
+      firstChild: {
+        type: 'text',
+        literal: '2'
+      }
+    });
+
+    expect(doc.findNodeAtPosition([4, 10])).toMatchObject({
+      type: 'text',
+      literal: '2'
+    });
+
+    expect(doc.findNodeAtPosition([5, 1])).toBeNull();
+  });
+
+  it('returns null if matched node does not exist', () => {
+    const doc = new MarkdownDocument('# Hello\n\nWorld');
+
+    // position in between two node (blank line)
+    expect(doc.findNodeAtPosition([2, 1])).toBeNull();
+
+    // position out of document range
+    expect(doc.findNodeAtPosition([4, 1])).toBeNull();
+  });
+});
+
 describe('editText()', () => {
   describe('single paragraph', () => {
     it('insert character within a line', () => {
