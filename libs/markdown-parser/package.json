@@ -1,5 +1,5 @@
 {
-  "name": "markdown-parser",
+  "name": "@toast-ui/markdown-parser",
   "version": "0.0.1",
   "description": "Markdown Parser",
   "scripts": {
