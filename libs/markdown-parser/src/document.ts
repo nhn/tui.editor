@@ -6,7 +6,9 @@ import {
   insertNodesBefore,
   prependChildNodes,
   updateNextLineNumbers,
-  findChildNodeByLine
+  findChildNodeAtLine,
+  findFirstNodeAtLine,
+  findNodeAtPosition
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
 
@@ -109,8 +111,8 @@ export class MarkdownDocument {
   }
 
   private getNodeRange(start: Position, end: Position) {
-    let startNode = findChildNodeByLine(this.root, start[0]);
-    let endNode = findChildNodeByLine(this.root, end[0]);
+    let startNode = findChildNodeAtLine(this.root, start[0]);
+    let endNode = findChildNodeAtLine(this.root, end[0]);
 
     // extend node range to include a following block which doesn't have preceding blank line
     if (endNode && endNode.next && end[0] + 1 === endNode.next.sourcepos![0][0]) {
@@ -204,6 +206,18 @@ export class MarkdownDocument {
 
   public getRootNode() {
     return this.root;
+  }
+
+  public findNodeAtPosition(pos: Position) {
+    const node = findNodeAtPosition(this.root, pos);
+    if (!node || node === this.root) {
+      return null;
+    }
+    return node;
+  }
+
+  public findFirstNodeAtLine(line: number) {
+    return findFirstNodeAtLine(this.root, line);
   }
 
   public on(eventName: EventName, callback: Function) {

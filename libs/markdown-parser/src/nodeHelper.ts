@@ -7,6 +7,32 @@ export const enum Compare {
   GT = -1
 }
 
+function comparePos(p1: Position, p2: Position) {
+  if (p1[0] < p2[0]) {
+    return Compare.LT;
+  }
+  if (p1[0] > p2[0]) {
+    return Compare.GT;
+  }
+  if (p1[1] < p2[1]) {
+    return Compare.LT;
+  }
+  if (p1[1] > p2[1]) {
+    return Compare.GT;
+  }
+  return Compare.EQ;
+}
+
+function compareRangeAndPos([startPos, endPos]: [Position, Position], pos: Position) {
+  if (comparePos(endPos, pos) === Compare.LT) {
+    return Compare.LT;
+  }
+  if (comparePos(startPos, pos) === Compare.GT) {
+    return Compare.GT;
+  }
+  return Compare.EQ;
+}
+
 export function getAllParents(node: Node) {
   const parents = [];
   while (node.parent) {
@@ -85,7 +111,7 @@ function compareRangeAndLine([startPos, endPos]: [Position, Position], line: num
   return Compare.EQ;
 }
 
-export function findChildNodeByLine(parent: Node, line: number) {
+export function findChildNodeAtLine(parent: Node, line: number) {
   let node = parent.firstChild;
   while (node) {
     const comp = compareRangeAndLine(node.sourcepos!, line);
@@ -98,6 +124,71 @@ export function findChildNodeByLine(parent: Node, line: number) {
     node = node.next;
   }
   return parent.lastChild;
+}
+
+function lastLeafNode(node: Node) {
+  while (node.lastChild) {
+    node = node.lastChild;
+  }
+  return node;
+}
+
+function sameLineTopAncestor(node: Node) {
+  while (
+    node.parent &&
+    node.parent.type !== 'document' &&
+    node.parent.sourcepos![0][0] === node.sourcepos![0][0]
+  ) {
+    node = node.parent;
+  }
+  return node;
+}
+
+export function findFirstNodeAtLine(parent: Node, line: number) {
+  let node = parent.firstChild;
+  let prev: Node | null = null;
+  while (node) {
+    const comp = compareRangeAndLine(node.sourcepos!, line);
+    if (comp === Compare.EQ) {
+      if (node.sourcepos![0][0] === line || !node.firstChild) {
+        return node;
+      }
+      prev = node;
+      node = node.firstChild;
+    } else if (comp === Compare.GT) {
+      break;
+    } else {
+      prev = node;
+      node = node.next;
+    }
+  }
+
+  if (prev) {
+    return sameLineTopAncestor(lastLeafNode(prev));
+  }
+  return null;
+}
+
+export function findNodeAtPosition(parent: Node, pos: Position) {
+  let node: Node | null = parent;
+  let prev: Node | null = null;
+
+  while (node) {
+    const comp = compareRangeAndPos(node.sourcepos!, pos);
+    if (comp === Compare.EQ) {
+      if (node.firstChild) {
+        prev = node;
+        node = node.firstChild;
+      } else {
+        return node;
+      }
+    } else if (comp === Compare.GT) {
+      return prev;
+    } else {
+      node = node.next;
+    }
+  }
+  return node;
 }
 
 export function toString(node: Node | null) {
