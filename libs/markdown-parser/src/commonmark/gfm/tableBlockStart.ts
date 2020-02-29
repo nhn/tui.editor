@@ -1,4 +1,4 @@
-import { last, isEmpty } from '../common';
+import { isEmpty } from '../common';
 import { BlockStart, Matched } from '../blockStarts';
 import { createNode, SourcePos, TableNode, TableColumn, TableCellNode } from '../node';
 
@@ -9,7 +9,7 @@ function parseRowContent(content: string): [number, string[]] {
   for (let i = 0; i < content.length; i += 1) {
     if (content[i] === '|' && content[i - 1] !== '\\') {
       const cell = content.substring(startIdx, i);
-      if (!cells.length && isEmpty(cell)) {
+      if (startIdx === 0 && isEmpty(cell)) {
         offset = i + 1;
       } else {
         cells.push(cell);
@@ -17,13 +17,12 @@ function parseRowContent(content: string): [number, string[]] {
       startIdx = i + 1;
     }
   }
-  if (startIdx < content.length) {
-    cells.push(content.substring(startIdx, content.length));
-  }
 
-  const lastCell = last(cells);
-  if (lastCell !== null && isEmpty(lastCell)) {
-    cells.pop();
+  if (startIdx < content.length) {
+    const cell = content.substring(startIdx, content.length);
+    if (!isEmpty(cell)) {
+      cells.push(cell);
+    }
   }
 
   return [offset, cells];
