@@ -4,80 +4,23 @@
  */
 import MarkdownIt from 'markdown-it';
 import toMark from '@toast-ui/to-mark';
-
-import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import { Parser, GfmHtmlRenderer } from '@toast-ui/markdown-parser';
 
 import htmlSanitizer from './htmlSanitizer';
-import taskList from './markdownItPlugins/markdownitTaskPlugin';
-import codeBlock from './markdownItPlugins/markdownitCodeBlockPlugin';
-import code from './markdownItPlugins/markdownitCodeRenderer';
-import blockQuote from './markdownItPlugins/markdownitBlockQuoteRenderer';
-import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
 import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
-import codeBackticks from './markdownItPlugins/markdownitBackticksRenderer';
 import { linkAttribute } from './markdownItPlugins/markdownitInlinePlugin';
 import codeBlockManager from './codeBlockManager';
 import domUtils from './domUtils';
 
-const markdownitHighlight = new MarkdownIt({
-  html: true,
-  breaks: true,
-  quotes: '“”‘’',
-  langPrefix: 'lang-',
-  highlight(codeText, type) {
-    return codeBlockManager.createCodeBlockHtml(type, codeText);
-  }
-});
-const markdownit = new MarkdownIt({
-  html: true,
-  breaks: true,
-  quotes: '“”‘’',
-  langPrefix: 'lang-'
-});
-
-// markdownitHighlight
-markdownitHighlight.block.ruler.at('code', code);
-markdownitHighlight.block.ruler.at('table', tableRenderer, {
-  alt: ['paragraph', 'reference']
-});
-markdownitHighlight.block.ruler.at('blockquote', blockQuote, {
-  alt: ['paragraph', 'reference', 'blockquote', 'list']
-});
-markdownitHighlight.block.ruler.at('html_block', htmlBlock, {
-  alt: ['paragraph', 'reference', 'blockquote']
-});
-markdownitHighlight.inline.ruler.at('backticks', codeBackticks);
-markdownitHighlight.use(taskList);
-markdownitHighlight.use(codeBlock);
-
-markdownitHighlight.renderer.rules.softbreak = (tokens, idx, options) => {
-  if (!options.breaks) {
-    return '\n';
-  }
-
-  const prevToken = tokens[idx - 1];
-
-  if (prevToken && prevToken.type === 'html_inline' && prevToken.content === '<br>') {
-    return '';
-  }
-
-  return options.xhtmlOut ? '<br />\n' : '<br>\n';
-};
-
-// markdownit
-markdownit.block.ruler.at('code', code);
-markdownit.block.ruler.at('table', tableRenderer, {
-  alt: ['paragraph', 'reference']
-});
-markdownit.block.ruler.at('blockquote', blockQuote, {
-  alt: ['paragraph', 'reference', 'blockquote', 'list']
-});
-markdownit.block.ruler.at('html_block', htmlBlock, {
-  alt: ['paragraph', 'reference', 'blockquote']
-});
-markdownit.inline.ruler.at('backticks', codeBackticks);
-markdownit.use(taskList);
-markdownit.use(codeBlock);
+// const markdownitHighlight = new MarkdownIt({
+//   html: true,
+//   breaks: true,
+//   quotes: '“”‘’',
+//   langPrefix: 'lang-',
+//   highlight(codeText, type) {
+//     return codeBlockManager.createCodeBlockHtml(type, codeText);
+//   }
+// });
 
 // This regular expression refere markdownIt.
 // https://github.com/markdown-it/markdown-it/blob/master/lib/common/html_re.js
@@ -89,6 +32,68 @@ const attrValue = `(?:${unquoted}|${singleQuoted}|${doubleQuoted})`;
 const attribute = `(?:\\s+${attrName}(?:\\s*=\\s*${attrValue})?)*\\s*`;
 const openingTag = `(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*${attribute})(\\/?>)`;
 const HTML_TAG_RX = new RegExp(openingTag, 'g');
+
+class CustomRenderer extends GfmHtmlRenderer {
+  softbreak(node) {
+    const isPrevNodeHTML = node.prev && node.prev.type === 'htmlInline';
+
+    if (isPrevNodeHTML && /<br ?\/?>/.test(node.prev.literal)) {
+      this.lit('\n');
+    } else {
+      this.lit('<br>\n');
+    }
+  }
+
+  item(node, entering) {
+    const attrs = this.attrs(node);
+
+    if (entering) {
+      if (node.listData.task) {
+        const classNames = ['task-list-item'];
+
+        if (node.listData.checked) {
+          classNames.push('checked');
+        }
+        attrs.push(['class', classNames.join(' ')], ['data-te-task', '']);
+      }
+      this.tag('li', attrs);
+    } else {
+      this.tag('/li');
+      this.cr();
+    }
+  }
+
+  code(node) {
+    const attrs = this.attrs(node);
+
+    attrs.push(['data-backticks', node.tickCount]);
+    this.tag('code', attrs);
+    this.out(node.literal);
+    this.tag('/code');
+  }
+
+  codeBlock(node) {
+    const infoWords = node.info ? node.info.split(/\s+/) : [];
+    const codeAttrs = [];
+
+    if (node.fenceLength > 3) {
+      codeAttrs.push(['data-backticks', node.fenceLength]);
+    }
+    if (infoWords.length > 0 && infoWords[0].length > 0) {
+      codeAttrs.push(['class', `language-${this.esc(infoWords[0])}`]);
+    }
+    this.cr();
+    this.tag('pre', this.attrs(node));
+    this.tag('code', codeAttrs);
+    this.out(node.literal);
+    this.tag('/code');
+    this.tag('/pre');
+    this.cr();
+  }
+}
+
+const reader = new Parser();
+const writer = new CustomRenderer();
 
 /**
  * Class Convertor
@@ -104,14 +109,13 @@ class Convertor {
    * _markdownToHtmlWithCodeHighlight
    * Convert markdown to html with Codehighlight
    * @param {string} markdown markdown text
-   * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
    * @private
    */
-  _markdownToHtmlWithCodeHighlight(markdown, env) {
+  _markdownToHtmlWithCodeHighlight(markdown) {
     markdown = this._replaceImgAttrToDataProp(markdown);
 
-    return markdownitHighlight.render(markdown, env);
+    return writer.render(reader.parse(markdown));
   }
 
   /**
@@ -122,14 +126,13 @@ class Convertor {
    * @returns {string} html text
    * @private
    */
-  _markdownToHtml(markdown, env) {
+  _markdownToHtml(markdown) {
     markdown = markdown.replace(HTML_TAG_RX, (match, $1, $2, $3) =>
       match[0] !== '\\' ? `${$1}${$2} data-tomark-pass ${$3}` : match
     );
-
     markdown = this._replaceImgAttrToDataProp(markdown);
 
-    return markdownit.render(markdown, env);
+    return writer.render(reader.parse(markdown));
   }
 
   /**
@@ -221,8 +224,8 @@ class Convertor {
       });
     };
 
-    markdownitHighlight.use(linkAttribute, setAttributeToToken);
-    markdownit.use(linkAttribute, setAttributeToToken);
+    // markdownitHighlight.use(linkAttribute, setAttributeToToken);
+    // markdownit.use(linkAttribute, setAttributeToToken);
   }
 
   /**
@@ -245,7 +248,7 @@ class Convertor {
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
     markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
 
-    forEachArray(markdown.split('\n'), (line, index) => {
+    markdown.split('\n').forEach((line, index) => {
       const FIND_TABLE_RX = /^(<br>)+\||\|[^|]*\|/gi;
       const FIND_CODE_RX = /`[^`]*<br>[^`]*`/gi;
       const FIND_BRS_BEFORE_TABLE = /^(<br>)+\|/gi;
@@ -320,7 +323,7 @@ class Convertor {
    * @static
    */
   static getMarkdownitHighlightRenderer() {
-    return markdownitHighlight;
+    // return markdownitHighlight;
   }
 
   /**
@@ -329,7 +332,7 @@ class Convertor {
    * @static
    */
   static getMarkdownitRenderer() {
-    return markdownit;
+    // return markdownit;
   }
 }
 
