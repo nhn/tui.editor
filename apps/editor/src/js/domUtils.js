@@ -7,6 +7,7 @@ import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isString from 'tui-code-snippet/type/isString';
 import css from 'tui-code-snippet/domUtil/css';
 import matches from 'tui-code-snippet/domUtil/matches';
+import { includes } from './util';
 
 const FIND_ZWB = /\u200B/g;
 const { getComputedStyle } = window;
@@ -1293,6 +1294,55 @@ const toggleClass = (element, className, toggled) => {
   }
 };
 
+function getTotalOffsetTop(el, root) {
+  const nestedTagNames = ['UL', 'BLOCKQUOTE'];
+  let offsetTop = 0;
+
+  while (el) {
+    if (el === root) {
+      break;
+    }
+    if (!includes(nestedTagNames, el.tagName)) {
+      offsetTop += el.offsetTop;
+    }
+    el = el.parentElement;
+  }
+  return offsetTop;
+}
+
+function findLastSiblingElementToScrollTop(el, scrollTop, offsetTop) {
+  if (el && scrollTop > offsetTop + el.offsetTop) {
+    return findLastSiblingElementToScrollTop(el.nextElementSibling, scrollTop, offsetTop) || el;
+  }
+
+  return null;
+}
+
+function findAdjacentElementToScrollTop(scrollTop, root) {
+  let el = root;
+  let prev = null;
+
+  while (el) {
+    const { firstElementChild } = el;
+
+    if (!firstElementChild) {
+      break;
+    }
+    const lastSibling = findLastSiblingElementToScrollTop(
+      firstElementChild,
+      scrollTop,
+      getTotalOffsetTop(el, root)
+    );
+
+    prev = el;
+    el = lastSibling;
+  }
+
+  const adjacentEl = el || prev;
+
+  return adjacentEl === root ? null : adjacentEl;
+}
+
 export default {
   getNodeName,
   isTextNode,
@@ -1358,5 +1408,7 @@ export default {
   getOffset,
   getOuterWidth,
   getOuterHeight,
-  toggleClass
+  toggleClass,
+  getTotalOffsetTop,
+  findAdjacentElementToScrollTop
 };

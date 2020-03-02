@@ -3,7 +3,6 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
-import { MarkdownDocument } from '@toast-ui/markdown-parser';
 
 import CodeMirrorExt from './codeMirrorExt';
 import KeyMapper from './keyMapper';
@@ -20,7 +19,7 @@ const keyMapper = KeyMapper.getSharedInstance();
  * @param {Object} options - options of editor
  */
 class MarkdownEditor extends CodeMirrorExt {
-  constructor(el, eventManager, options) {
+  constructor(el, eventManager, mdDocument, options) {
     super(el, {
       dragDrop: true,
       allowDropFileTypes: ['image'],
@@ -33,7 +32,7 @@ class MarkdownEditor extends CodeMirrorExt {
     });
     this.eventManager = eventManager;
     this.componentManager = new ComponentManager(this);
-    this.mdDocument = new MarkdownDocument();
+    this.mdDocument = mdDocument;
     this.componentManager.addManager(MdListManager);
 
     /**
@@ -302,8 +301,8 @@ class MarkdownEditor extends CodeMirrorExt {
    * @returns {MarkdownEditor} - MarkdownEditor
    * @ignore
    */
-  static factory(el, eventManager, options) {
-    return new MarkdownEditor(el, eventManager, options);
+  static factory(el, eventManager, mdDocument, options) {
+    return new MarkdownEditor(el, eventManager, mdDocument, options);
   }
 }
 
