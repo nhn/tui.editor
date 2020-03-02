@@ -13,6 +13,16 @@ import MdTextObject from './mdTextObject';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
+const tokenTypes = {
+  strong: 'strong',
+  emph: 'em',
+  strike: 'strikethrough',
+  thematicBreak: 'hr',
+  blockQuote: 'quote',
+  code: 'comment',
+  codeBlock: 'comment'
+};
+
 /**
  * Class MarkdownEditor
  * @param {HTMLElement} el - container element
@@ -209,14 +219,6 @@ class MarkdownEditor extends CodeMirrorExt {
   }
 
   _refreshCodeMirrorMarks(e) {
-    const tokenTypes = {
-      heading: 'header',
-      emph: 'em',
-      strong: 'strong',
-      strike: 'strikethrough',
-      blockQuote: 'quote'
-    };
-
     const { from, to, text } = e;
     const editResult = this.mdDocument.editMarkdown(
       [from.line + 1, from.ch + 1],
@@ -232,9 +234,9 @@ class MarkdownEditor extends CodeMirrorExt {
       return;
     }
 
-    /* eslint-disable prefer-destructuring, max-depth */
-    const editFromPos = nodes[0].sourcepos[0];
-    const editToPos = nodes[nodes.length - 1].sourcepos[1];
+    /* eslint-disable max-depth */
+    const [editFromPos] = nodes[0].sourcepos;
+    const [, editToPos] = nodes[nodes.length - 1].sourcepos;
     const editFrom = { line: editFromPos[0] - 1, ch: editFromPos[1] - 1 };
     const editTo = { line: editToPos[0] - 1, ch: editToPos[1] };
     const marks = this.cm.findMarks(editFrom, editTo);
@@ -251,21 +253,110 @@ class MarkdownEditor extends CodeMirrorExt {
         const { node, entering } = event;
 
         if (entering) {
-          const [startLine, startCh] = node.sourcepos[0];
-          const [endLine, endCh] = node.sourcepos[1];
+          const { type, sourcepos } = node;
+          const [startPosition, endPosition] = sourcepos;
+          const [startLine, startCh] = startPosition;
+          const [endLine, endCh] = endPosition;
           const start = { line: startLine - 1, ch: startCh - 1 };
           const end = { line: endLine - 1, ch: endCh };
-          const token = tokenTypes[node.type];
+          const extraNode = tokenTypes[type];
 
-          if (token) {
-            this.cm.markText(start, end, { className: `cm-${token}` });
+          if (type === 'heading') {
+            this.cm.markText(start, end, { className: `cm-header cm-header-${node.level}` });
+          } else if (extraNode) {
+            this.cm.markText(start, end, { className: `cm-${extraNode}` });
+          } else if (type === 'image' || type === 'link') {
+            this._markTextInLinkOrImage(type, startPosition, endPosition, node.destination);
+          } else if (this._isListNode(node)) {
+            this._markTextInList(node.parent, startPosition, endPosition);
           }
         }
         event = walker.next();
       }
     }
+    /* eslint-enable max-depth */
+  }
 
-    /* eslint-enable prefer-destructuring, max-depth */
+  _isListNode(node) {
+    const { type, parent } = node;
+
+    return type === 'paragraph' && !!parent && parent.type === 'item';
+  }
+
+  _markTextInLinkOrImage(type, startPositon, endPosition, destination) {
+    const [startLine, startCh] = startPositon;
+    const [endLine, endCh] = endPosition;
+
+    const urlStart = { line: endLine - 1, ch: endCh - destination.length - 2 };
+    const urlEnd = { line: endLine - 1, ch: endCh + 1 };
+
+    if (type === 'image') {
+      const markerStart = { line: startLine - 1, ch: endCh - 1 };
+      const markerEnd = { line: startLine - 1, ch: startCh };
+
+      this.cm.markText(markerStart, markerEnd, { className: 'cm-image cm-image-marker' });
+      this.cm.markText({ line: startLine - 1, ch: startCh }, urlStart, {
+        className: 'cm-link cm-image cm-image-alt-text'
+      });
+    } else {
+      this.cm.markText({ line: startLine - 1, ch: startCh - 1 }, urlStart, {
+        className: 'cm-link'
+      });
+    }
+
+    this.cm.markText(urlStart, urlEnd, { className: 'cm-string cm-url' });
+  }
+
+  _getClassNameOfListItem(node) {
+    let depth = 0;
+
+    while (node.parent.parent.type === 'item' && node.parent.parent.type !== 'document') {
+      node = node.parent.parent;
+      depth += 1;
+    }
+
+    const reminder = depth % 3;
+    let className;
+
+    if (reminder === 0) {
+      className = 'variable-2';
+    } else if (reminder === 1) {
+      className = 'variable-3';
+    } else {
+      className = 'keyword';
+    }
+
+    return `cm-${className}`;
+  }
+
+  _markTextInList(node, startPosition, endPosition) {
+    const className = this._getClassNameOfListItem(node);
+    const { padding, task } = node.listData;
+    const [startLine, startCh] = startPosition;
+    const [endLine, endCh] = endPosition;
+
+    let startListItem = { line: startLine - 1, ch: startCh - 1 };
+    const endListItem = { line: endLine - 1, ch: endCh };
+    const indent = startCh - padding;
+
+    if (task) {
+      const meta = indent - 3;
+
+      this.cm.markText(
+        { line: startLine - 1, ch: meta - 2 },
+        { line: endLine - 1, ch: meta },
+        { className }
+      );
+      this.cm.markText(
+        { line: startLine - 1, ch: meta },
+        { line: endLine - 1, ch: indent },
+        { className: 'cm-meta' }
+      );
+    } else {
+      startListItem = { line: startLine - 1, ch: indent - 1 };
+    }
+
+    this.cm.markText(startListItem, endListItem, { className });
   }
 
   /**
