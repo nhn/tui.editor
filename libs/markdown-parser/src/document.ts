@@ -1,5 +1,5 @@
 import { Parser } from './commonmark/blocks';
-import { BlockNode, isList } from './commonmark/node';
+import { BlockNode, isList, removeAllNode } from './commonmark/node';
 import {
   removeNextUntil,
   getChildNodes,
@@ -8,7 +8,9 @@ import {
   updateNextLineNumbers,
   findChildNodeAtLine,
   findFirstNodeAtLine,
-  findNodeAtPosition
+  findNodeAtPosition,
+  findLineById,
+  findNodeById
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
 
@@ -228,5 +230,17 @@ export class MarkdownDocument {
     const handlers = this.eventHandlerMap[eventName];
     const idx = handlers.indexOf(callback);
     handlers.splice(idx, 1);
+  }
+
+  public findLineById(id: number) {
+    return findLineById(id);
+  }
+
+  public findNodeById(id: number) {
+    return findNodeById(id);
+  }
+
+  public destroy() {
+    removeAllNode();
   }
 }

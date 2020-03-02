@@ -60,6 +60,21 @@ export function isContainer(node: Node) {
 }
 
 let lastNodeId = 1;
+let nodeMap: { [key: number]: Node } | null = {};
+
+export function getNodeById(id: number) {
+  return nodeMap && (nodeMap![id] as Node);
+}
+
+export function removeNodeById(id: number) {
+  if (nodeMap) {
+    delete nodeMap![id];
+  }
+}
+
+export function removeAllNode() {
+  nodeMap = null;
+}
 
 export class Node {
   public type: NodeType;
@@ -82,8 +97,10 @@ export class Node {
     } else {
       this.id = lastNodeId++;
     }
+
     this.type = nodeType;
     this.sourcepos = sourcepos;
+    nodeMap![this.id] = this;
   }
 
   isContainer() {
