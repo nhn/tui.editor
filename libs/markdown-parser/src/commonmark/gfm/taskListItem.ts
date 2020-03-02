@@ -2,7 +2,7 @@ import { Parser } from '../blocks';
 import { ListNode, BlockNode } from '../node';
 import { HtmlRenderer, AttrPairs } from '../render/html';
 
-const reTaskListItemMarker = /^\[([ \tx])\][ \t]+/;
+const reTaskListItemMarker = /^\[([ \txX])\][ \t]+/;
 
 // finalize for block handler
 export function taskListItemFinalize(_: Parser, block: ListNode) {
@@ -15,7 +15,7 @@ export function taskListItemFinalize(_: Parser, block: ListNode) {
       p.sourcepos![0][1] += mLen;
       p.lineOffsets![0] += mLen;
       block.listData!.task = true;
-      block.listData!.checked = m[1] === 'x';
+      block.listData!.checked = /[xX]/.test(m[1]);
     }
   }
 }
