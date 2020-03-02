@@ -1,5 +1,12 @@
 import { Node, BlockNode, createNode } from '../node';
 
+export function pos(line1: number, col1: number, line2: number, col2: number) {
+  return [
+    [line1, col1],
+    [line2, col2]
+  ];
+}
+
 export function convertToArrayTree(root: BlockNode, attrs: (keyof BlockNode)[]) {
   function recur(node: Node) {
     const newNode: any = {};

@@ -1009,9 +1009,10 @@ export class InlineParser {
         res = this.parseString(block);
         break;
     }
+
     if (!res) {
       this.pos += 1;
-      block.appendChild(text(fromCodePoint(c)));
+      block.appendChild(text(fromCodePoint(c), this.sourcepos(this.pos, this.pos + 1)));
     }
 
     return true;

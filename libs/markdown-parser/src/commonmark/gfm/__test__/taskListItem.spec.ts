@@ -1,16 +1,10 @@
+import { source } from 'common-tags';
 import { Parser } from '../../blocks';
 import { GfmHtmlRenderer } from '../../render/gfm/html';
-import { source } from 'common-tags';
+import { pos } from '../../__test__/helper.spec';
 
 const reader = new Parser();
 const writer = new GfmHtmlRenderer();
-
-function pos(line1: number, col1: number, line2: number, col2: number) {
-  return [
-    [line1, col1],
-    [line2, col2]
-  ];
-}
 
 describe('Task list item', () => {
   it('Parse', () => {
