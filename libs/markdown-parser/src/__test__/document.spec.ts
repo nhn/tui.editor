@@ -350,3 +350,24 @@ describe('editText()', () => {
     });
   });
 });
+
+it('return the line - findLineById()', () => {
+  const doc = new MarkdownDocument('# Hello *World*\n\n- Item 1\n- Item **2**');
+
+  expect(doc.findLineById(1)).toEqual(1);
+});
+
+it('return the node - findNodeById()', () => {
+  const doc = new MarkdownDocument('# Hello *World*\n\n- Item 1\n- Item **2**');
+
+  expect(doc.findNodeById(1)).toMatchObject({
+    type: 'heading'
+  });
+});
+
+it('remove all node in the map - destroy()', () => {
+  const doc = new MarkdownDocument('# Hello *World*\n\n- Item 1\n- Item **2**');
+
+  doc.destroy();
+  expect(doc.findNodeById(1)).toEqual(null);
+});
