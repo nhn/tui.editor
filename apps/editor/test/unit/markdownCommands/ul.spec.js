@@ -7,7 +7,7 @@ import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 import mdListManager from '@/mdListManager';
 
-describe('UL', () => {
+xdescribe('UL', () => {
   let cm, doc, mde, container;
 
   beforeEach(() => {

@@ -8,7 +8,7 @@ import PopupCodeBlockEditor from '@/ui/popupCodeBlockEditor';
 import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
 
-describe('PopupCodeBlockEditor', () => {
+xdescribe('PopupCodeBlockEditor', () => {
   let eventManager, popup, pre;
 
   beforeEach(() => {
