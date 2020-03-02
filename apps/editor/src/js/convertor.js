@@ -2,25 +2,12 @@
  * @fileoverview Convertor have responsible to convert markdown and html
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import MarkdownIt from 'markdown-it';
 import toMark from '@toast-ui/to-mark';
 import { Parser, GfmHtmlRenderer } from '@toast-ui/markdown-parser';
 
 import htmlSanitizer from './htmlSanitizer';
-import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
-import { linkAttribute } from './markdownItPlugins/markdownitInlinePlugin';
 import codeBlockManager from './codeBlockManager';
 import domUtils from './domUtils';
-
-// const markdownitHighlight = new MarkdownIt({
-//   html: true,
-//   breaks: true,
-//   quotes: '“”‘’',
-//   langPrefix: 'lang-',
-//   highlight(codeText, type) {
-//     return codeBlockManager.createCodeBlockHtml(type, codeText);
-//   }
-// });
 
 // This regular expression refere markdownIt.
 // https://github.com/markdown-it/markdown-it/blob/master/lib/common/html_re.js
@@ -92,16 +79,24 @@ class CustomRenderer extends GfmHtmlRenderer {
   }
 }
 
-const reader = new Parser();
-const writer = new CustomRenderer();
-
 /**
  * Class Convertor
  * @param {EventManager} em - EventManager instance
  * @ignore
  */
 class Convertor {
-  constructor(em) {
+  constructor(em, options = {}) {
+    const { linkAttribute } = options;
+    const linkAttrs = [];
+
+    if (linkAttribute) {
+      Object.keys(linkAttribute).forEach(attrName => {
+        linkAttrs.push([attrName, linkAttribute[attrName]]);
+      });
+    }
+
+    this.mdReader = new Parser();
+    this.htmlWriter = new CustomRenderer({ linkAttrs });
     this.eventManager = em;
   }
 
@@ -115,7 +110,7 @@ class Convertor {
   _markdownToHtmlWithCodeHighlight(markdown) {
     markdown = this._replaceImgAttrToDataProp(markdown);
 
-    return writer.render(reader.parse(markdown));
+    return this.htmlWriter.render(this.mdReader.parse(markdown));
   }
 
   /**
@@ -132,7 +127,7 @@ class Convertor {
     );
     markdown = this._replaceImgAttrToDataProp(markdown);
 
-    return writer.render(reader.parse(markdown));
+    return this.htmlWriter.render(this.mdReader.parse(markdown));
   }
 
   /**
@@ -209,23 +204,6 @@ class Convertor {
     this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html =>
       htmlSanitizer(html, true)
     );
-  }
-
-  /**
-   * set link attribute to markdownitHighlight, markdownit
-   * using linkAttribute of markdownItInlinePlugin
-   * @param {object} attr markdown text
-   */
-  setLinkAttribute(attr) {
-    const keys = Object.keys(attr);
-    const setAttributeToToken = (tokens, idx) => {
-      keys.forEach(key => {
-        tokens[idx].attrPush([key, attr[key]]);
-      });
-    };
-
-    // markdownitHighlight.use(linkAttribute, setAttributeToToken);
-    // markdownit.use(linkAttribute, setAttributeToToken);
   }
 
   /**

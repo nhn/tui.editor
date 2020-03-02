@@ -171,11 +171,13 @@ class ToastUIEditor {
       useCommandShortcut: this.options.useCommandShortcut
     });
 
+    const linkAttribute = this._sanitizeLinkAttribute(this.options.linkAttribute);
+
     if (this.options.customConvertor) {
       // eslint-disable-next-line new-cap
-      this.convertor = new this.options.customConvertor(this.eventManager);
+      this.convertor = new this.options.customConvertor(this.eventManager, { linkAttribute });
     } else {
-      this.convertor = new Convertor(this.eventManager);
+      this.convertor = new Convertor(this.eventManager, { linkAttribute });
     }
 
     if (this.options.useDefaultHTMLSanitizer) {
@@ -209,20 +211,15 @@ class ToastUIEditor {
       false,
       this.options.previewDelayTime
     );
+
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
-      useDefaultHTMLSanitizer: this.options.useDefaultHTMLSanitizer
+      useDefaultHTMLSanitizer: this.options.useDefaultHTMLSanitizer,
+      linkAttribute
     });
     this.toMarkOptions = {
       gfm: true,
       renderer: toMarkRenderer
     };
-
-    if (this.options.linkAttribute) {
-      const attribute = this._sanitizeLinkAttribute(this.options.linkAttribute);
-
-      this.convertor.setLinkAttribute(attribute);
-      this.wwEditor.setLinkAttribute(attribute);
-    }
 
     this.changePreviewStyle(this.options.previewStyle);
 
@@ -264,6 +261,10 @@ class ToastUIEditor {
    * @private
    */
   _sanitizeLinkAttribute(attribute) {
+    if (!attribute) {
+      return null;
+    }
+
     const linkAttribute = {};
 
     availableLinkAttributes.forEach(key => {
