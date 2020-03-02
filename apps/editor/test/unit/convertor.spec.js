@@ -6,7 +6,7 @@ import Convertor from '@/convertor';
 import EventManager from '@/eventManager';
 import toMarkRenderer from '@/toMarkRenderer';
 
-fdescribe('Convertor', () => {
+describe('Convertor', () => {
   let convertor, em;
 
   beforeEach(() => {
@@ -644,7 +644,7 @@ fdescribe('Convertor', () => {
     });
   });
 
-  xdescribe('should not convert to', () => {
+  describe('should not convert to', () => {
     it('code in list', () => {
       const markdown = [
         '*    codeblock',
@@ -689,45 +689,6 @@ fdescribe('Convertor', () => {
       expect(convertor.toMarkdown(result)).toBe(expectedMarkdown);
     });
 
-    it('blockquote in list', () => {
-      const markdown = [
-        '* > blockquote',
-        '',
-        '1. > blockquote',
-        '',
-        'paragraph',
-        '',
-        '> blockquote'
-      ].join('\n');
-      const html = [
-        '<ul>',
-        '<li>&gt; blockquote</li>',
-        '</ul>',
-        '<ol>',
-        '<li>&gt; blockquote</li>',
-        '</ol>',
-        '<p>paragraph</p>',
-        '<blockquote>',
-        '<p>blockquote</p>',
-        '</blockquote>',
-        ''
-      ].join('\n');
-      const resultMarkdown = [
-        '* \\> blockquote',
-        '',
-        '1. \\> blockquote',
-        '',
-        'paragraph',
-        '',
-        '> blockquote'
-      ].join('\n');
-
-      const result = convertor.toHTML(markdown);
-
-      expect(result).toBe(html);
-      expect(convertor.toMarkdown(convertor.toHTML(markdown))).toBe(resultMarkdown);
-    });
-
     it('< & > in codeblock', () => {
       const markdown = ['```', '<span>', '```'].join('\n');
       const html = ['<pre><code>&lt;span&gt;', '</code></pre>', ''].join('\n');
@@ -749,7 +710,7 @@ fdescribe('Convertor', () => {
         '<table data-tomark-pass=""><tbody data-tomark-pass="">',
         '<tr data-tomark-pass=""><td data-tomark-pass="">123</td></tr>',
         '<tr data-tomark-pass=""><td data-tomark-pass="">123</td></tr>',
-        '</tbody></table>'
+        '</tbody></table>\n'
       ].join('');
 
       expect(convertor.toHTML(markdown)).toBe(html);
@@ -759,7 +720,7 @@ fdescribe('Convertor', () => {
     it('raw ul element in markdown', () => {
       const markdown = '<ul><li>123</li><li>123</li></ul>';
       const html =
-        '<ul data-tomark-pass=""><li data-tomark-pass="">123</li><li data-tomark-pass="">123</li></ul>';
+        '<ul data-tomark-pass=""><li data-tomark-pass="">123</li><li data-tomark-pass="">123</li></ul>\n';
 
       expect(convertor.toHTML(markdown)).toBe(html);
       expect(convertor.toMarkdown(html)).toBe(markdown);
