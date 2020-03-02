@@ -91,10 +91,8 @@
   "dependencies": {
     "@types/codemirror": "0.0.71",
     "@types/jquery": "^3.3.29",
-    "@types/markdown-it": "0.0.7",
     "codemirror": "^5.48.4",
     "jquery": "^3.3.1",
-    "markdown-it": "^9.0.0",
     "resize-observer-polyfill": "^1.5.0",
     "tui-code-snippet": "^2.3.1"
   }
