@@ -67,7 +67,10 @@ class CustomRenderer extends GfmHtmlRenderer {
       codeAttrs.push(['data-backticks', node.fenceLength]);
     }
     if (infoWords.length > 0 && infoWords[0].length > 0) {
-      codeAttrs.push(['class', `language-${this.esc(infoWords[0])}`]);
+      const lang = this.esc(infoWords[0]);
+
+      codeAttrs.push(['data-language', lang]);
+      codeAttrs.push(['class', `lang-${lang}`]);
     }
     this.cr();
     this.tag('pre', this.attrs(node));

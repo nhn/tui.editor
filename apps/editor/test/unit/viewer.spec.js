@@ -2,18 +2,12 @@
  * @fileoverview test viewer
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-import MarkdownIt from 'markdown-it';
-
+// import domUtils from '@/domUtils.js';
 import ToastUIEditorViewer from '@/viewer';
 import Convertor from '@/convertor';
 import { CodeBlockManager } from '@/codeBlockManager';
 
 describe('Viewer', () => {
-  it('markdownitHighlight should be MarkdownIt instance', () => {
-    expect(ToastUIEditorViewer.markdownitHighlight instanceof MarkdownIt).toBe(true);
-  });
-
   it("domUtils should have it' functions", () => {
     expect(typeof ToastUIEditorViewer.domUtils.getNodeName).toBe('function');
   });
@@ -27,7 +21,7 @@ describe('Viewer', () => {
 
     beforeEach(() => {
       viewer = new ToastUIEditorViewer({
-        el: $('<div>')[0]
+        el: document.createElement('div')
       });
     });
 
@@ -37,7 +31,7 @@ describe('Viewer', () => {
       viewer.setValue(xss);
       const content = viewer.preview.getHTML();
 
-      expect(content).toBe('');
+      expect(content).toBe('\n');
     });
 
     it('details, summary', () => {
@@ -46,7 +40,7 @@ describe('Viewer', () => {
       viewer.setValue(html);
       const content = viewer.preview.getHTML();
 
-      expect(content).toBe('');
+      expect(content).toBe('\n');
     });
   });
 
@@ -55,13 +49,13 @@ describe('Viewer', () => {
 
     beforeEach(() => {
       viewer = new ToastUIEditorViewer({
-        el: $('<div>')[0],
+        el: document.createElement('div'),
         useDefaultHTMLSanitizer: false
       });
     });
 
     it('xss', () => {
-      const xss = '<script>alert("xss");</script>';
+      const xss = '<script>alert("xss");</script>\n';
 
       viewer.setValue(xss);
       const content = viewer.preview.getHTML();
@@ -70,7 +64,7 @@ describe('Viewer', () => {
     });
 
     it('details, summary', () => {
-      const html = '<details><summary>foo</summary></details>';
+      const html = '<details><summary>foo</summary></details>\n';
 
       viewer.setValue(html);
       const content = viewer.preview.getHTML();
@@ -80,7 +74,7 @@ describe('Viewer', () => {
   });
 
   it('should use default convertor if the option value is not set', () => {
-    const [el] = $('<div>');
+    const el = document.createElement('div');
     const viewer = new ToastUIEditorViewer({ el });
 
     expect(viewer.convertor instanceof Convertor).toBe(true);
@@ -90,7 +84,7 @@ describe('Viewer', () => {
     const CustomConvertor = class extends Convertor {};
 
     const viewer = new ToastUIEditorViewer({
-      el: $('<div>')[0],
+      el: document.createElement('div'),
       customConvertor: CustomConvertor
     });
 
@@ -101,11 +95,11 @@ describe('Viewer', () => {
   it('should render initialValue', () => {
     const initialValue = 'Initial **Value**';
     const viewerForInitialValue = new ToastUIEditorViewer({
-      el: $(`<div>`)[0],
+      el: document.createElement('div'),
       initialValue
     });
     const viewerForSetValue = new ToastUIEditorViewer({
-      el: $(`<div>`)[0]
+      el: document.createElement('div')
     });
 
     viewerForSetValue.setValue(initialValue);
@@ -114,10 +108,11 @@ describe('Viewer', () => {
   });
 
   it('should use existing html as initial value', () => {
+    const el = document.createElement('div');
     const html = 'Existing <b>HTML</b>';
-    const viewer = new ToastUIEditorViewer({
-      el: $(`<div>${html}</div>`)[0]
-    });
+
+    el.innerHTML = html;
+    const viewer = new ToastUIEditorViewer({ el });
 
     expect(viewer.preview.getHTML()).toBe(html);
   });
@@ -152,7 +147,7 @@ describe('Viewer', () => {
     });
 
     it('should invoke plugin function with options of plugin', () => {
-      const plugin = jasmine.createSpy(plugin);
+      const plugin = jasmine.createSpy();
       const options = {};
 
       viewer = new ToastUIEditorViewer({
