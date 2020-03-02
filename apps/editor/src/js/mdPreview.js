@@ -46,7 +46,7 @@ class MarkdownPreview extends Preview {
 
   update(changed) {
     const { nodes, removedNodeRange } = changed;
-    const [contentEl] = this._$previewContent;
+    const contentEl = this._previewContent;
     const newHtml = nodes.map(node => htmlRenderer.render(node)).join('');
 
     if (!removedNodeRange) {

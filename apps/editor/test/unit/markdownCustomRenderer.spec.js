@@ -7,7 +7,7 @@ import EventManager from '@/eventManager';
 import domUtils from '@/domUtils';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 
-describe('Markdown-it', () => {
+describe('MarkdownRenderer', () => {
   let convertor;
 
   beforeEach(() => {

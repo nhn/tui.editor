@@ -3,8 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import toMark from '@toast-ui/to-mark';
-import { Parser, GfmHtmlRenderer } from '@toast-ui/markdown-parser';
+import { Parser } from '@toast-ui/markdown-parser';
 
+import MarkdownRenderer from './markdownRenderer';
 import htmlSanitizer from './htmlSanitizer';
 import codeBlockManager from './codeBlockManager';
 import domUtils from './domUtils';
@@ -19,68 +20,6 @@ const attrValue = `(?:${unquoted}|${singleQuoted}|${doubleQuoted})`;
 const attribute = `(?:\\s+${attrName}(?:\\s*=\\s*${attrValue})?)*\\s*`;
 const openingTag = `(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*${attribute})(\\/?>)`;
 const HTML_TAG_RX = new RegExp(openingTag, 'g');
-
-class CustomRenderer extends GfmHtmlRenderer {
-  softbreak(node) {
-    const isPrevNodeHTML = node.prev && node.prev.type === 'htmlInline';
-
-    if (isPrevNodeHTML && /<br ?\/?>/.test(node.prev.literal)) {
-      this.lit('\n');
-    } else {
-      this.lit('<br>\n');
-    }
-  }
-
-  item(node, entering) {
-    const attrs = this.attrs(node);
-
-    if (entering) {
-      if (node.listData.task) {
-        const classNames = ['task-list-item'];
-
-        if (node.listData.checked) {
-          classNames.push('checked');
-        }
-        attrs.push(['class', classNames.join(' ')], ['data-te-task', '']);
-      }
-      this.tag('li', attrs);
-    } else {
-      this.tag('/li');
-      this.cr();
-    }
-  }
-
-  code(node) {
-    const attrs = this.attrs(node);
-
-    attrs.push(['data-backticks', node.tickCount]);
-    this.tag('code', attrs);
-    this.out(node.literal);
-    this.tag('/code');
-  }
-
-  codeBlock(node) {
-    const infoWords = node.info ? node.info.split(/\s+/) : [];
-    const codeAttrs = [];
-
-    if (node.fenceLength > 3) {
-      codeAttrs.push(['data-backticks', node.fenceLength]);
-    }
-    if (infoWords.length > 0 && infoWords[0].length > 0) {
-      const lang = this.esc(infoWords[0]);
-
-      codeAttrs.push(['data-language', lang]);
-      codeAttrs.push(['class', `lang-${lang}`]);
-    }
-    this.cr();
-    this.tag('pre', this.attrs(node));
-    this.tag('code', codeAttrs);
-    this.out(node.literal);
-    this.tag('/code');
-    this.tag('/pre');
-    this.cr();
-  }
-}
 
 /**
  * Class Convertor
@@ -99,7 +38,7 @@ class Convertor {
     }
 
     this.mdReader = new Parser();
-    this.htmlWriter = new CustomRenderer({ linkAttrs });
+    this.htmlWriter = new MarkdownRenderer({ linkAttrs });
     this.eventManager = em;
   }
 
