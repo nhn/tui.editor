@@ -3,12 +3,11 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import Preview from './preview';
-import { GfmHtmlRenderer } from '@toast-ui/markdown-parser';
-
-const htmlRenderer = new GfmHtmlRenderer({ nodeId: true });
-
+import MarkdownRenderer from './markdownRenderer';
 import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
+
+const htmlRenderer = new MarkdownRenderer({ nodeId: true });
 
 /**
  * Class Markdown Preview
@@ -46,7 +45,7 @@ class MarkdownPreview extends Preview {
 
   update(changed) {
     const { nodes, removedNodeRange } = changed;
-    const [contentEl] = this._$previewContent;
+    const contentEl = this._previewContent;
     const newHtml = nodes.map(node => htmlRenderer.render(node)).join('');
 
     if (!removedNodeRange) {

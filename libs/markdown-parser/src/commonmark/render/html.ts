@@ -25,23 +25,25 @@ function createTagRegexp(tags: string[]) {
   return new RegExp(`<(\/?(?:${tags.join('|')})[^>]*>)`, 'ig');
 }
 
+type AttrPair = [string, string];
+export type AttrPairs = AttrPair[];
+
 interface Options {
   softbreak: string;
   safe: boolean;
   sourcepos: boolean;
   tagFilter: boolean;
   nodeId: boolean;
+  linkAttrs: AttrPairs;
 }
-
-type AttrPair = [string, string];
-export type AttrPairs = AttrPair[];
 
 const defaultOptions: Options = {
   softbreak: '\n',
   safe: false,
   sourcepos: false,
   tagFilter: false,
-  nodeId: false
+  nodeId: false,
+  linkAttrs: []
 };
 
 export class HtmlRenderer extends Renderer {
@@ -87,6 +89,7 @@ export class HtmlRenderer extends Renderer {
 
   link(node: LinkNode, entering: boolean) {
     const attrs = this.attrs(node);
+    attrs.push(...this.options.linkAttrs);
     if (entering) {
       if (!(this.options.safe && potentiallyUnsafe(node.destination!))) {
         attrs.push(['href', this.esc(node.destination!)]);

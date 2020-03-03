@@ -5,7 +5,7 @@
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
-describe('MarkdownEditor', () => {
+xdescribe('MarkdownEditor', () => {
   let mde, em, container;
 
   beforeEach(() => {

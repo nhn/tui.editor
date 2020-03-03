@@ -1,7 +1,7 @@
-import { Parser } from '../../blocks';
-import { ListNode } from '../../node';
-import { GfmHtmlRenderer } from '../../render/gfm/html';
 import { source } from 'common-tags';
+import { Parser } from '../../blocks';
+import { GfmHtmlRenderer } from '../../render/gfm/html';
+import { pos } from '../../__test__/helper.spec';
 
 const reader = new Parser();
 const writer = new GfmHtmlRenderer();
@@ -9,40 +9,48 @@ const writer = new GfmHtmlRenderer();
 describe('Task list item', () => {
   it('Parse', () => {
     const root = reader.parse(source`
-      -  [ ] Hello
-      - [x]   World
+      - [ ] Item1
+      -  [x] Item2
+      -   [X]  Item3
     `);
-    const list = root.firstChild!;
-    const item1 = list.firstChild as ListNode;
-    const itemPara1 = item1.firstChild!;
-    const itemText1 = itemPara1.firstChild!;
-    const item2 = item1.next as ListNode;
-    const itemPara2 = item2.firstChild!;
-    const itemText2 = itemPara2.firstChild!;
-
-    expect(item1.listData!.task).toBe(true);
-    expect(item1.listData!.checked).toBe(false);
-    expect(itemText1.literal).toBe('Hello');
-    expect(itemPara1.sourcepos).toEqual([
-      [1, 8],
-      [1, 12]
-    ]);
-    expect(itemText1.sourcepos).toEqual([
-      [1, 8],
-      [1, 12]
-    ]);
-
-    expect(item2.listData!.task).toBe(true);
-    expect(item2.listData!.checked).toBe(true);
-    expect(itemText2.literal).toBe('World');
-    expect(itemPara2.sourcepos).toEqual([
-      [2, 9],
-      [2, 13]
-    ]);
-    expect(itemText2.sourcepos).toEqual([
-      [2, 9],
-      [2, 13]
-    ]);
+    expect(root).toMatchObject({
+      firstChild: {
+        type: 'list',
+        firstChild: {
+          type: 'item',
+          listData: {
+            task: true,
+            checked: false
+          },
+          firstChild: {
+            type: 'paragraph',
+            sourcepos: pos(1, 7, 1, 11)
+          },
+          next: {
+            type: 'item',
+            listData: {
+              task: true,
+              checked: true
+            },
+            firstChild: {
+              type: 'paragraph',
+              sourcepos: pos(2, 8, 2, 12)
+            },
+            next: {
+              type: 'item',
+              listData: {
+                task: true,
+                checked: true
+              },
+              firstChild: {
+                type: 'paragraph',
+                sourcepos: pos(3, 10, 3, 14)
+              }
+            }
+          }
+        }
+      }
+    });
   });
 
   // https://github.github.com/gfm/#example-279

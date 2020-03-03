@@ -22,8 +22,8 @@ describe('Convertor', () => {
     });
 
     it('sanitize script tags', () => {
-      expect(convertor.toHTML('<script>alert("test");</script>')).toBe('');
-      expect(convertor.toHTMLWithCodeHightlight('<script>alert("test");</script>')).toBe('');
+      expect(convertor.toHTML('<script>alert("test");</script>')).toBe('\n');
+      expect(convertor.toHTMLWithCodeHightlight('<script>alert("test");</script>')).toBe('\n');
     });
 
     it('escape vertical bar', () => {
@@ -36,36 +36,24 @@ describe('Convertor', () => {
       ).toBe(2);
     });
 
-    it('<br> is added between lines', () => {
-      const expected = ['1', '\n', '<br>', '<br>', '2', '\n', '<br>', '<br>', '<br>', '3'].join(
-        '\n'
-      );
-      const result = ['<p>1</p>', '<p><br><br>2</p>', '<p><br><br><br>3</p>\n'].join('\n');
+    it('softbreaks should be converted to <br> tags', () => {
+      const markdown = ['1', '2', '3'].join('\n');
+      const result = ['<p>1<br>', '2<br>', '3</p>', ''].join('\n');
 
-      expect(convertor.toHTMLWithCodeHightlight(expected)).toBe(result);
+      expect(convertor.toHTMLWithCodeHightlight(markdown)).toBe(result);
     });
 
-    it('Avoid hidden last cell in table', () => {
-      expect(
-        convertor
-          .toHTML('| a |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext')
-          .match(/\/td/g).length
-      ).toBe(6);
+    it('softbreaks preceded by <br> should not be converted to <br> tags', () => {
+      const markdown = ['1', '<br/>', '2', '<br />', '3', '<br>', '4'].join('\n');
+      const result = ['<p>1<br>', '<br>', '2<br>', '<br>', '3<br>', '<br>', '4</p>', ''].join('\n');
+
+      expect(convertor.toHTMLWithCodeHightlight(markdown)).toBe(result);
     });
+
     it('Avoid hidden last cell in table', () => {
       expect(convertor.toHTML('first\n\n<br>first\n\n```\nsecond\n\n\nsecond\n```\n\n')).toBe(
         '<p>first</p>\n<p><br data-tomark-pass="">first</p>\n<pre><code>second\n\n\nsecond\n</code></pre>\n'
       );
-    });
-
-    it('do not add line breaks in table before and after image syntax', () => {
-      expect(
-        convertor
-          ._markdownToHtmlWithCodeHighlight(
-            '\n| ![nhn](http://www.nhn.com/) |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext'
-          )
-          .match(/\/td/g).length
-      ).toBe(6);
     });
 
     it('do not add line breaks in list before and after image syntax', () => {
@@ -147,7 +135,7 @@ describe('Convertor', () => {
       const imgTag =
         '<img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png">';
       const expectedHTML =
-        '<p><img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png" data-tomark-pass=""></p>';
+        '<img src="https://user-images.githubusercontent.com/1215767/34336735-e7c9c4b0-e99c-11e7-853b-2449b51f0bab.png" data-tomark-pass="">';
 
       expect(convertor.toHTML(imgTag).replace(/\n/g, '')).toBe(expectedHTML);
     });
@@ -171,6 +159,19 @@ describe('Convertor', () => {
       const expectedHTML = `<pre><code>&lt;br/&gt;&lt;br /&gt;&lt;input type="text" /&gt;</code></pre>`;
 
       expect(convertor.toHTML(codeBlockMd).replace(/\n/g, '')).toBe(expectedHTML);
+    });
+
+    it('task list item should have data-te-task attr and task-list-item class', () => {
+      const taskItemMd = ['- [ ] Task1', '- [x] Task2'].join('\n');
+      const expectedHTML = [
+        '<ul>',
+        '<li class="task-list-item" data-te-task="">Task1</li>',
+        '<li class="task-list-item checked" data-te-task="">Task2</li>',
+        '</ul>',
+        ''
+      ].join('\n');
+
+      expect(convertor.toHTML(taskItemMd)).toBe(expectedHTML);
     });
   });
 
@@ -665,6 +666,7 @@ describe('Convertor', () => {
         '```',
         'code',
         'block',
+        '',
         '```'
       ].join('\n');
       const expectedHTML = [
@@ -676,7 +678,8 @@ describe('Convertor', () => {
         '</ol>',
         '<p>paragraph</p>',
         '<pre><code>code',
-        'block</code></pre>',
+        'block',
+        '</code></pre>',
         ''
       ].join('\n');
 
@@ -684,45 +687,6 @@ describe('Convertor', () => {
 
       expect(result).toBe(expectedHTML);
       expect(convertor.toMarkdown(result)).toBe(expectedMarkdown);
-    });
-
-    it('blockquote in list', () => {
-      const markdown = [
-        '* > blockquote',
-        '',
-        '1. > blockquote',
-        '',
-        'paragraph',
-        '',
-        '> blockquote'
-      ].join('\n');
-      const html = [
-        '<ul>',
-        '<li>&gt; blockquote</li>',
-        '</ul>',
-        '<ol>',
-        '<li>&gt; blockquote</li>',
-        '</ol>',
-        '<p>paragraph</p>',
-        '<blockquote>',
-        '<p>blockquote</p>',
-        '</blockquote>',
-        ''
-      ].join('\n');
-      const resultMarkdown = [
-        '* \\> blockquote',
-        '',
-        '1. \\> blockquote',
-        '',
-        'paragraph',
-        '',
-        '> blockquote'
-      ].join('\n');
-
-      const result = convertor.toHTML(markdown);
-
-      expect(result).toBe(html);
-      expect(convertor.toMarkdown(convertor.toHTML(markdown))).toBe(resultMarkdown);
     });
 
     it('< & > in codeblock', () => {
@@ -746,7 +710,7 @@ describe('Convertor', () => {
         '<table data-tomark-pass=""><tbody data-tomark-pass="">',
         '<tr data-tomark-pass=""><td data-tomark-pass="">123</td></tr>',
         '<tr data-tomark-pass=""><td data-tomark-pass="">123</td></tr>',
-        '</tbody></table>'
+        '</tbody></table>\n'
       ].join('');
 
       expect(convertor.toHTML(markdown)).toBe(html);
@@ -756,7 +720,7 @@ describe('Convertor', () => {
     it('raw ul element in markdown', () => {
       const markdown = '<ul><li>123</li><li>123</li></ul>';
       const html =
-        '<ul data-tomark-pass=""><li data-tomark-pass="">123</li><li data-tomark-pass="">123</li></ul>';
+        '<ul data-tomark-pass=""><li data-tomark-pass="">123</li><li data-tomark-pass="">123</li></ul>\n';
 
       expect(convertor.toHTML(markdown)).toBe(html);
       expect(convertor.toMarkdown(html)).toBe(markdown);

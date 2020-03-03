@@ -7,7 +7,7 @@ import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
 import CodeBlockEditor from '@/codeBlockEditor';
 
-describe('Preview', () => {
+xdescribe('Preview', () => {
   let eventManager, convertor, wrapper, editorWrapper, codeBlockEditor, preview;
 
   beforeEach(() => {

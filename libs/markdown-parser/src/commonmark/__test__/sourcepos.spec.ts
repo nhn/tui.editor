@@ -14,6 +14,16 @@ describe('paragraph', () => {
     ]);
   });
 
+  it('simple delimiter text', () => {
+    const root = reader.parse('<hi');
+    const text = root.firstChild!.firstChild!;
+
+    expect(text.sourcepos).toEqual([
+      [1, 1],
+      [1, 3]
+    ]);
+  });
+
   it('multiple offset', () => {
     const root = reader.parse('  Hello  \n  World');
     const text1 = root.firstChild!.firstChild!;

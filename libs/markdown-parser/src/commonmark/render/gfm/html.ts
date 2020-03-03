@@ -1,4 +1,4 @@
-import { HtmlRenderer, AttrPairs } from '../html';
+import { HtmlRenderer } from '../html';
 import { Node, ListNode, TableNode, TableCellNode } from '../../node';
 import { taskListItemRender } from '../../gfm/taskListItem';
 
@@ -14,29 +14,45 @@ export class GfmHtmlRenderer extends HtmlRenderer {
     }
   }
 
-  strike(_: Node, entering: boolean) {
-    this.tag(entering ? 'del' : '/del');
+  strike(node: Node, entering: boolean) {
+    if (entering) {
+      this.tag('del', this.attrs(node));
+    } else {
+      this.tag('/del');
+    }
   }
 
-  table(_: Node, entering: boolean) {
+  table(node: Node, entering: boolean) {
     this.cr();
-    this.tag(`${entering ? '' : '/'}table`);
+    if (entering) {
+      this.tag('table', this.attrs(node));
+    } else {
+      this.tag('/table');
+    }
     this.cr();
   }
 
-  tableHead(_: Node, entering: boolean) {
-    this.tag(`${entering ? '' : '/'}thead`);
+  tableHead(node: Node, entering: boolean) {
+    if (entering) {
+      this.tag('thead', this.attrs(node));
+    } else {
+      this.tag('/thead');
+    }
     this.cr();
   }
 
-  tableBody(_: Node, entering: boolean) {
-    this.tag(`${entering ? '' : '/'}tbody`);
+  tableBody(node: Node, entering: boolean) {
+    if (entering) {
+      this.tag('tbody', this.attrs(node));
+    } else {
+      this.tag('/tbody');
+    }
     this.cr();
   }
 
   tableRow(node: Node, entering: boolean) {
     if (entering) {
-      this.tag('tr');
+      this.tag('tr', this.attrs(node));
     } else {
       const table = node.parent!.parent as TableNode;
       const lastCell = node.lastChild as TableCellNode;
@@ -57,7 +73,7 @@ export class GfmHtmlRenderer extends HtmlRenderer {
     const tablePart = node.parent!.parent!;
     const tagName = tablePart.type === 'tableHead' ? 'th' : 'td';
     const table = tablePart.parent as TableNode;
-    const attrs: AttrPairs = [];
+    const attrs = this.attrs(node);
     const { align } = table.columns[node.columnIdx];
     if (align !== 'left') {
       attrs.push(['align', align]);

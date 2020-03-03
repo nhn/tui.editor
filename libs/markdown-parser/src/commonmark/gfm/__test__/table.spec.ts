@@ -167,6 +167,42 @@ describe('table', () => {
 
     expect(tableNode.columns).toEqual([{ align: 'left' }, { align: 'center' }, { align: 'right' }]);
   });
+
+  it('with empty cells', () => {
+    const input = source`
+      | a |  |  |
+      | - | - | - |
+      |  | b |  |
+      |  |  | c |
+    `;
+    const output = source`
+      <table>
+      <thead>
+      <tr>
+      <th>a</th>
+      <th></th>
+      <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td></td>
+      <td>b</td>
+      <td></td>
+      </tr>
+      <tr>
+      <td></td>
+      <td></td>
+      <td>c</td>
+      </tr>
+      </tbody>
+      </table>
+    `;
+
+    const root = reader.parse(input);
+    const html = writer.render(root);
+    expect(html).toBe(`${output}\n`);
+  });
 });
 
 describe('GFM Exmaple', () => {
@@ -366,13 +402,11 @@ describe('GFM Exmaple', () => {
     }
   ];
 
-  examples
-    .filter(({ no }) => no === 199)
-    .forEach(({ no, input, output }) => {
-      it(String(no), () => {
-        const root = reader.parse(input);
-        const html = writer.render(root);
-        expect(html).toBe(`${output}\n`);
-      });
+  examples.forEach(({ no, input, output }) => {
+    it(String(no), () => {
+      const root = reader.parse(input);
+      const html = writer.render(root);
+      expect(html).toBe(`${output}\n`);
     });
+  });
 });

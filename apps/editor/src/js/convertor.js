@@ -2,82 +2,13 @@
  * @fileoverview Convertor have responsible to convert markdown and html
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import MarkdownIt from 'markdown-it';
 import toMark from '@toast-ui/to-mark';
+import { Parser } from '@toast-ui/markdown-parser';
 
-import forEachArray from 'tui-code-snippet/collection/forEachArray';
-
+import MarkdownRenderer from './markdownRenderer';
 import htmlSanitizer from './htmlSanitizer';
-import taskList from './markdownItPlugins/markdownitTaskPlugin';
-import codeBlock from './markdownItPlugins/markdownitCodeBlockPlugin';
-import code from './markdownItPlugins/markdownitCodeRenderer';
-import blockQuote from './markdownItPlugins/markdownitBlockQuoteRenderer';
-import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
-import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
-import codeBackticks from './markdownItPlugins/markdownitBackticksRenderer';
-import { linkAttribute } from './markdownItPlugins/markdownitInlinePlugin';
 import codeBlockManager from './codeBlockManager';
 import domUtils from './domUtils';
-
-const markdownitHighlight = new MarkdownIt({
-  html: true,
-  breaks: true,
-  quotes: '“”‘’',
-  langPrefix: 'lang-',
-  highlight(codeText, type) {
-    return codeBlockManager.createCodeBlockHtml(type, codeText);
-  }
-});
-const markdownit = new MarkdownIt({
-  html: true,
-  breaks: true,
-  quotes: '“”‘’',
-  langPrefix: 'lang-'
-});
-
-// markdownitHighlight
-markdownitHighlight.block.ruler.at('code', code);
-markdownitHighlight.block.ruler.at('table', tableRenderer, {
-  alt: ['paragraph', 'reference']
-});
-markdownitHighlight.block.ruler.at('blockquote', blockQuote, {
-  alt: ['paragraph', 'reference', 'blockquote', 'list']
-});
-markdownitHighlight.block.ruler.at('html_block', htmlBlock, {
-  alt: ['paragraph', 'reference', 'blockquote']
-});
-markdownitHighlight.inline.ruler.at('backticks', codeBackticks);
-markdownitHighlight.use(taskList);
-markdownitHighlight.use(codeBlock);
-
-markdownitHighlight.renderer.rules.softbreak = (tokens, idx, options) => {
-  if (!options.breaks) {
-    return '\n';
-  }
-
-  const prevToken = tokens[idx - 1];
-
-  if (prevToken && prevToken.type === 'html_inline' && prevToken.content === '<br>') {
-    return '';
-  }
-
-  return options.xhtmlOut ? '<br />\n' : '<br>\n';
-};
-
-// markdownit
-markdownit.block.ruler.at('code', code);
-markdownit.block.ruler.at('table', tableRenderer, {
-  alt: ['paragraph', 'reference']
-});
-markdownit.block.ruler.at('blockquote', blockQuote, {
-  alt: ['paragraph', 'reference', 'blockquote', 'list']
-});
-markdownit.block.ruler.at('html_block', htmlBlock, {
-  alt: ['paragraph', 'reference', 'blockquote']
-});
-markdownit.inline.ruler.at('backticks', codeBackticks);
-markdownit.use(taskList);
-markdownit.use(codeBlock);
 
 // This regular expression refere markdownIt.
 // https://github.com/markdown-it/markdown-it/blob/master/lib/common/html_re.js
@@ -96,7 +27,18 @@ const HTML_TAG_RX = new RegExp(openingTag, 'g');
  * @ignore
  */
 class Convertor {
-  constructor(em) {
+  constructor(em, options = {}) {
+    const { linkAttribute } = options;
+    const linkAttrs = [];
+
+    if (linkAttribute) {
+      Object.keys(linkAttribute).forEach(attrName => {
+        linkAttrs.push([attrName, linkAttribute[attrName]]);
+      });
+    }
+
+    this.mdReader = new Parser();
+    this.htmlWriter = new MarkdownRenderer({ linkAttrs });
     this.eventManager = em;
   }
 
@@ -104,14 +46,13 @@ class Convertor {
    * _markdownToHtmlWithCodeHighlight
    * Convert markdown to html with Codehighlight
    * @param {string} markdown markdown text
-   * @param {object} env environment sandbox for markdownit
    * @returns {string} html text
    * @private
    */
-  _markdownToHtmlWithCodeHighlight(markdown, env) {
+  _markdownToHtmlWithCodeHighlight(markdown) {
     markdown = this._replaceImgAttrToDataProp(markdown);
 
-    return markdownitHighlight.render(markdown, env);
+    return this.htmlWriter.render(this.mdReader.parse(markdown));
   }
 
   /**
@@ -122,14 +63,13 @@ class Convertor {
    * @returns {string} html text
    * @private
    */
-  _markdownToHtml(markdown, env) {
+  _markdownToHtml(markdown) {
     markdown = markdown.replace(HTML_TAG_RX, (match, $1, $2, $3) =>
       match[0] !== '\\' ? `${$1}${$2} data-tomark-pass ${$3}` : match
     );
-
     markdown = this._replaceImgAttrToDataProp(markdown);
 
-    return markdownit.render(markdown, env);
+    return this.htmlWriter.render(this.mdReader.parse(markdown));
   }
 
   /**
@@ -209,23 +149,6 @@ class Convertor {
   }
 
   /**
-   * set link attribute to markdownitHighlight, markdownit
-   * using linkAttribute of markdownItInlinePlugin
-   * @param {object} attr markdown text
-   */
-  setLinkAttribute(attr) {
-    const keys = Object.keys(attr);
-    const setAttributeToToken = (tokens, idx) => {
-      keys.forEach(key => {
-        tokens[idx].attrPush([key, attr[key]]);
-      });
-    };
-
-    markdownitHighlight.use(linkAttribute, setAttributeToToken);
-    markdownit.use(linkAttribute, setAttributeToToken);
-  }
-
-  /**
    * toMarkdown
    * Convert html to markdown
    * emit convertorAfterHtmlToMarkdownConverted
@@ -245,7 +168,7 @@ class Convertor {
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
     markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
 
-    forEachArray(markdown.split('\n'), (line, index) => {
+    markdown.split('\n').forEach((line, index) => {
       const FIND_TABLE_RX = /^(<br>)+\||\|[^|]*\|/gi;
       const FIND_CODE_RX = /`[^`]*<br>[^`]*`/gi;
       const FIND_BRS_BEFORE_TABLE = /^(<br>)+\|/gi;
@@ -320,7 +243,7 @@ class Convertor {
    * @static
    */
   static getMarkdownitHighlightRenderer() {
-    return markdownitHighlight;
+    // return markdownitHighlight;
   }
 
   /**
@@ -329,7 +252,7 @@ class Convertor {
    * @static
    */
   static getMarkdownitRenderer() {
-    return markdownit;
+    // return markdownit;
   }
 }
 

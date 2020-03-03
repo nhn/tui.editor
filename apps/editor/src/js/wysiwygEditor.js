@@ -50,12 +50,13 @@ const canObserveMutations = typeof MutationObserver !== 'undefined';
  * @param {EventManager} eventManager - EventManager instance
  */
 class WysiwygEditor {
-  constructor(el, eventManager) {
+  constructor(el, eventManager, options = {}) {
     this.componentManager = new ComponentManager(this);
     this.eventManager = eventManager;
     this.editorContainerEl = el;
 
     this._height = 0;
+    this._linkAttribute = options.linkAttribute;
 
     this._silentChange = false;
 
@@ -810,14 +811,6 @@ class WysiwygEditor {
         .getRoot()
         .setAttribute('data-placeholder', placeholder);
     }
-  }
-
-  /**
-   * Set attribute of link for wysiwyg
-   * @param {object} attribute - attribute of anchor tag
-   */
-  setLinkAttribute(attribute) {
-    this._linkAttribute = attribute;
   }
 
   /**

@@ -86,12 +86,6 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
             amd: 'jquery',
             root: ['$']
           },
-          'markdown-it': {
-            commonjs: 'markdown-it',
-            commonjs2: 'markdown-it',
-            amd: 'markdown-it',
-            root: ['markdownit']
-          },
           codemirror: {
             commonjs: 'codemirror',
             commonjs2: 'codemirror',
@@ -158,6 +152,7 @@ function setDevelopConfig(config) {
     config.entry = { 'editor-all': ENTRY_MAIN };
     config.externals = [];
   } else {
+    config.module.rules = config.module.rules.slice(1);
     config.entry = { editor: ENTRY_MAIN };
   }
 
