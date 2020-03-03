@@ -2,35 +2,35 @@ import domUtils from '../domUtils';
 import { animate } from './animation';
 import {
   hasNodeToBeCalculated,
-  getCmCodeBlockHeight,
-  getAdditionalScrollTop,
+  getAdditionalTopPos,
   getOffsetHeight,
-  setOffsetHeight
+  setOffsetHeight,
+  getParentNodeObj,
+  getCmRangeHeight,
+  isEmptyLineNode,
+  getMdStartLine,
+  getMdEndLine,
+  isCodeBlockNode
 } from './helper';
 
 let blockedPreviewScrollEvent = false;
 
-/* eslint-disable no-return-assign */
-function getParentNodeObj(node, mdNode) {
-  while (!node) {
-    mdNode = mdNode.parent;
-    node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
-  }
-
-  return { mdNode, node };
-}
-
-function getAndSaveOffsetHeight(node, mdNodeId, isScrollEvent) {
-  const offsetHeight = isScrollEvent
-    ? getOffsetHeight(mdNodeId) || node.offsetHeight
-    : node.offsetHeight;
+/* eslint-disable no-return-assign, prefer-destructuring */
+function getAndSaveOffsetHeight(node, mdNodeId) {
+  const offsetHeight = getOffsetHeight(mdNodeId) || node.offsetHeight;
 
   setOffsetHeight(mdNodeId, offsetHeight);
 
   return offsetHeight;
 }
 
-export function syncPreviewScrollTopToMarkdown(editor, preview, isScrollEvent) {
+function getAdditionalTopPosForEmptyLine(mdNode, node, offsetHeight) {
+  return mdNode.type === 'item' && node.firstElementChild
+    ? node.firstElementChild.offsetHeight
+    : offsetHeight;
+}
+
+export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
   const { _previewContent: root, el: previewEl } = preview;
   const { cm, mdDocument } = editor;
   const { left, top: scrollTop } = cm.getScrollInfo();
@@ -39,38 +39,31 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, isScrollEvent) {
   let targetScrollTop = 0;
 
   if (scrollTop !== 0) {
-    const cmTopLine = isScrollEvent
-      ? cm.coordsChar({ left, top: scrollTop }, 'local').line
-      : cm.getCursor('from').line;
-    let mdNode = mdDocument.findFirstNodeAtLine(cmTopLine + 1);
-    let { id: mdNodeId, type: mdNodeType } = mdNode;
+    const { line: startLine } = scrollEvent
+      ? cm.coordsChar({ left, top: scrollTop }, 'local')
+      : cm.getCursor('from');
+    const firstMdNode = mdDocument.findFirstNodeAtLine(startLine + 1);
 
     // if DOM element does not exist, should get its parent node using markdown node
     // in case of text node, rendererd DOM element is not matched to markdown node
-    const nodeObj = getParentNodeObj(document.querySelector(`[data-nodeid="${mdNodeId}"]`), mdNode);
-    const { node } = nodeObj;
-
-    mdNode = nodeObj.mdNode;
-    mdNodeId = mdNode.id;
-    mdNodeType = mdNode.type;
-
-    const mdNodeStartLine = mdDocument.findLineById(mdNodeId);
-    let cmNodeHeight = cm.lineInfo(mdNodeStartLine - 1).handle.height;
+    const nodeObj = getParentNodeObj(firstMdNode);
+    const { node, mdNode } = nodeObj;
 
     targetScrollTop = domUtils.getTotalOffsetTop(node, root) || node.offsetTop;
 
-    if (hasNodeToBeCalculated(mdNode, cmNodeHeight)) {
+    if (scrollEvent && hasNodeToBeCalculated(mdNode)) {
+      const mdNodeStartLine = getMdStartLine(mdNode);
+      const { text, height } = cm.lineInfo(startLine).handle;
+      const offsetHeight = getAndSaveOffsetHeight(node, mdNode.id);
       const offsetTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
-      const offsetHeight = getAndSaveOffsetHeight(node, mdNodeId, isScrollEvent);
+      const cmNodeHeight = isCodeBlockNode(mdNode)
+        ? (getMdEndLine(mdNode) - mdNodeStartLine) * height
+        : getCmRangeHeight(startLine, mdNode, cm);
 
-      if (mdNodeType === 'codeBlock') {
-        cmNodeHeight = getCmCodeBlockHeight(node.textContent, cmTopLine, cm);
-      }
-
-      targetScrollTop += getAdditionalScrollTop(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
-    } else if (!cm.lineInfo(cmTopLine).text.trim()) {
-      // const offsetHeight = getAndSaveOffsetHeight(node, mdNodeId, isScrollEvent);
-      // targetScrollTop += offsetHeight;
+      // if the node is empty line in code mirror, add the height of most adjacent node
+      targetScrollTop += isEmptyLineNode(text, mdNode)
+        ? getAdditionalTopPosForEmptyLine(mdNode, node, offsetHeight)
+        : getAdditionalTopPos(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
     }
   }
 

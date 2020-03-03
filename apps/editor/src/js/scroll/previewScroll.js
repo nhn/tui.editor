@@ -2,55 +2,57 @@ import domUtils from '../domUtils';
 import { animate } from './animation';
 import {
   hasNodeToBeCalculated,
-  getCmCodeBlockHeight,
-  getAdditionalScrollTop,
+  getAdditionalTopPos,
   getOffsetHeight,
   setOffsetHeight,
   getOffsetTop,
-  setOffsetTop
+  setOffsetTop,
+  getCmRangeHeight,
+  getMdStartLine,
+  getMdEndLine,
+  isCodeBlockNode
 } from './helper';
 
 let blockedMarkdownScrollEvent = false;
 
+/* eslint-disable no-return-assign, prefer-destructuring */
 function getAndSaveOffsetInfo(node, mdNodeId, root) {
-  const offestHeight = getOffsetHeight(mdNodeId) || node.offsetHeight;
+  const offsetHeight = getOffsetHeight(mdNodeId) || node.offsetHeight;
   const offsetTop =
     getOffsetTop(mdNodeId) || domUtils.getTotalOffsetTop(node, root) || node.offsetTop;
 
-  setOffsetHeight(mdNodeId, offestHeight);
+  setOffsetHeight(mdNodeId, offsetHeight);
   setOffsetTop(mdNodeId, offsetTop);
 
-  return { offestHeight, offsetTop };
+  return { offsetHeight, offsetTop };
 }
 
-/* eslint-disable no-return-assign */
 export function syncMarkdownScrollTopToPreview(editor, preview, node) {
   const { mdDocument, cm } = editor;
   const { scrollTop } = preview.el;
+  const root = preview._previewContent;
 
   const sourceScrollTop = cm.getScrollInfo().top;
   let targetScrollTop = 0;
 
-  if (node && scrollTop !== 0) {
+  if (scrollTop !== 0 && node) {
+    while (!node.getAttribute('data-nodeid')) {
+      node = node.parentElement;
+    }
     const mdNodeId = Number(node.getAttribute('data-nodeid'));
     const mdNode = mdDocument.findNodeById(mdNodeId);
-    const mdNodeStartLine = mdDocument.findLineById(mdNodeId);
-
-    const { offestHeight, offsetTop } = getAndSaveOffsetInfo(
-      node,
-      mdNodeId,
-      preview._previewContent
-    );
+    const mdNodeStartLine = getMdStartLine(mdNode);
 
     targetScrollTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
 
-    if (hasNodeToBeCalculated(mdNode, offestHeight)) {
-      let cmNodeHeight = cm.lineInfo(mdNodeStartLine - 1).handle.height;
+    if (hasNodeToBeCalculated(mdNode)) {
+      const { offsetHeight, offsetTop } = getAndSaveOffsetInfo(node, mdNodeId, root);
+      const height = cm.lineInfo(mdNodeStartLine - 1).handle.height;
+      const cmNodeHeight = isCodeBlockNode(mdNode)
+        ? (getMdEndLine(mdNode) - mdNodeStartLine) * height
+        : getCmRangeHeight(mdNodeStartLine - 1, mdNode, cm);
 
-      if (mdNode.type === 'codeBlock') {
-        cmNodeHeight = getCmCodeBlockHeight(node.textContent, mdNodeStartLine - 1, cm);
-      }
-      targetScrollTop += getAdditionalScrollTop(scrollTop, offsetTop, offestHeight, cmNodeHeight);
+      targetScrollTop += getAdditionalTopPos(scrollTop, offsetTop, offsetHeight, cmNodeHeight);
     }
   }
 
