@@ -3,12 +3,11 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import Preview from './preview';
-import { GfmHtmlRenderer } from '@toast-ui/markdown-parser';
-
-const htmlRenderer = new GfmHtmlRenderer({ nodeId: true });
-
+import MarkdownRenderer from './markdownRenderer';
 import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
+
+const htmlRenderer = new MarkdownRenderer({ nodeId: true });
 
 /**
  * Class Markdown Preview
