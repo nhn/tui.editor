@@ -7,7 +7,7 @@ export function isActive() {
 }
 
 export function createButton(editor) {
-  if (editor.isViewer() || !editor.getUI().name === 'default') {
+  if (editor.isViewer() || editor.getUI().name !== 'default') {
     return;
   }
 
