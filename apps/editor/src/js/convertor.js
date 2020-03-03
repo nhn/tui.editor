@@ -7,7 +7,6 @@ import { Parser } from '@toast-ui/markdown-parser';
 
 import MarkdownRenderer from './markdownRenderer';
 import htmlSanitizer from './htmlSanitizer';
-import codeBlockManager from './codeBlockManager';
 import domUtils from './domUtils';
 
 // This regular expression refere markdownIt.
@@ -32,8 +31,8 @@ class Convertor {
     const linkAttrs = [];
 
     if (linkAttribute) {
-      Object.keys(linkAttribute).forEach(attrName => {
-        linkAttrs.push([attrName, linkAttribute[attrName]]);
+      Object.keys(linkAttribute).forEach(linkAttrName => {
+        linkAttrs.push([linkAttrName, linkAttribute[linkAttrName]]);
       });
     }
 
