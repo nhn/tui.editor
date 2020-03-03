@@ -67,6 +67,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "istanbul-instrumenter-loader": "^3.0.1",
     "jasmine-core": "^2.99.1",
+    "jquery": "^3.4.1",
     "karma": "^4.4.1",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage-istanbul-reporter": "^2.1.1",
@@ -92,7 +93,6 @@
     "@types/codemirror": "0.0.71",
     "@types/jquery": "^3.3.29",
     "codemirror": "^5.48.4",
-    "jquery": "^3.3.1",
     "resize-observer-polyfill": "^1.5.0",
     "tui-code-snippet": "^2.3.1"
   }

@@ -80,12 +80,6 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
             amd: 'tui-code-snippet',
             root: ['tui', 'util']
           },
-          jquery: {
-            commonjs: 'jquery',
-            commonjs2: 'jquery',
-            amd: 'jquery',
-            root: ['$']
-          },
           codemirror: {
             commonjs: 'codemirror',
             commonjs2: 'codemirror',
