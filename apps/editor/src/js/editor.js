@@ -259,7 +259,7 @@ class ToastUIEditor {
       sendHostName();
     }
 
-    register(this.mdEditor, this.preview);
+    register(this);
   }
 
   /**
