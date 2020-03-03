@@ -2,17 +2,17 @@
  * @fileoverview Implements LayerPopup
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import extend from 'tui-code-snippet/object/extend';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isString from 'tui-code-snippet/type/isString';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import css from 'tui-code-snippet/domUtil/css';
-import domUtils from '../domUtils';
+import on from 'tui-code-snippet/domEvent/on';
+import off from 'tui-code-snippet/domEvent/off';
 
 import UIController from './uicontroller';
+import domUtils from '../domUtils';
 
 const CLASS_PREFIX = 'tui-popup-';
 const CLASS_FIT_WINDOW = 'fit-window';
@@ -69,6 +69,9 @@ class LayerPopup extends UIController {
       className: options.modal ? `${CLASS_PREFIX}modal-background` : `${CLASS_PREFIX}wrapper`,
       rootElement: options.el
     });
+
+    this._clickEventMap = {};
+    this._onClickCloseButton = this.hide.bind(this);
 
     this._initInstance(options);
     this._initDOM(options);
@@ -139,15 +142,27 @@ class LayerPopup extends UIController {
    */
   _initDOMEvent() {
     const { openerCssQuery, closerCssQuery } = this.options;
+    const { body } = document;
 
     if (openerCssQuery) {
-      $(openerCssQuery).on(`click.${this._id}`, () => this.show());
-    }
-    if (closerCssQuery) {
-      $(closerCssQuery).on(`click.${this._id}`, () => this.hide());
+      domUtils.findAll(body, openerCssQuery).forEach(el => {
+        const eventKey = `click.${this._id}`;
+
+        this._clickEventMap[eventKey] = this.show.bind(this);
+        on(el, 'click', this._clickEventMap[eventKey]);
+      });
     }
 
-    this.on(`click .${CLASS_PREFIX}close-button`, () => this.hide());
+    if (closerCssQuery) {
+      domUtils.findAll(body, closerCssQuery).forEach(el => {
+        const eventKey = `click.${this._id}`;
+
+        this._clickEventMap[eventKey] = this.hide.bind(this);
+        on(el, 'click', this._clickEventMap[eventKey]);
+      });
+    }
+
+    this.on(`click .${CLASS_PREFIX}close-button`, this._onClickCloseButton);
   }
 
   /**
@@ -245,15 +260,22 @@ class LayerPopup extends UIController {
    */
   remove() {
     const { openerCssQuery, closerCssQuery } = this.options;
+    const { body } = document;
 
     this.trigger('remove', this);
-    this.off();
+    this.off(`click .${CLASS_PREFIX}close-button`, this._onClickCloseButton);
 
     if (openerCssQuery) {
-      $(openerCssQuery).off(`.${this._id}`);
+      domUtils.findAll(body, openerCssQuery).forEach(opener => {
+        off(opener, 'click', this._clickEventMap[`click.${this._id}`]);
+        delete this._clickEventMap[`click.${this._id}`];
+      });
     }
     if (closerCssQuery) {
-      $(closerCssQuery).off(`.${this._id}`);
+      domUtils.findAll(body, closerCssQuery).forEach(closer => {
+        off(closer, 'click', this._clickEventMap[`click.${this._id}`]);
+        delete this._clickEventMap[`click.${this._id}`];
+      });
     }
 
     domUtils.remove(this.el);

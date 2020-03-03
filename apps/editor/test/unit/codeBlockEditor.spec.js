@@ -4,6 +4,7 @@
  */
 /* eslint new-cap:0 */
 import CodeBlockEditor from '@/codeBlockEditor';
+import EventManager from '@/eventManager';
 
 describe('CodeBlockEditor', () => {
   let codeBlockEditor, pre;
@@ -12,7 +13,9 @@ describe('CodeBlockEditor', () => {
     pre = document.createElement('pre');
     const container = document.createElement('div');
 
-    codeBlockEditor = new CodeBlockEditor(container);
+    const eventManager = new EventManager();
+
+    codeBlockEditor = new CodeBlockEditor(container, eventManager);
   });
 
   it('should load code as same text of code block element', () => {

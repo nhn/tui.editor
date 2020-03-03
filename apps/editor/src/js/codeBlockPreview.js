@@ -2,7 +2,6 @@
  * @fileoverview Implements CodeBlockPreview
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import Preview from './preview';
 
 const EVENT_REQUIRE_SCROLL_SYNC = 'requireScrollSync';
@@ -37,7 +36,7 @@ class CodeBlockPreview extends Preview {
     const codeText = this._codeBlockEditor.getEditorCodeText();
 
     super.refresh(`\`\`\`${language}\n${codeText}\n\`\`\``);
-    $(this.el).trigger(EVENT_REQUIRE_SCROLL_SYNC);
+    this.eventManager.emit(EVENT_REQUIRE_SCROLL_SYNC);
   }
 
   /**

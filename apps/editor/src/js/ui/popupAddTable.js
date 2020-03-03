@@ -41,20 +41,6 @@ const LAST_BORDER = 1;
  * @ignore
  */
 class PopupAddTable extends LayerPopup {
-  // /**
-  //  * Toolbar Button which the Popup is bound to.
-  //  * @type {HTMLElement}
-  //  * @private
-  //  */
-  // _button;
-
-  // /**
-  //  * EventManager instance
-  //  * @type {EventManager}
-  //  * @private
-  //  */
-  // _eventManager;
-
   constructor(options) {
     options = extend(
       {
@@ -81,6 +67,10 @@ class PopupAddTable extends LayerPopup {
     this._tableBound = {};
     this._eventManager = options.eventManager;
     this._button = options.button;
+    this._eventHandlers = {
+      onMousedown: this._selectTableRange.bind(this),
+      onClick: this._fireCommandEvent.bind(this)
+    };
   }
 
   /**
@@ -103,23 +93,26 @@ class PopupAddTable extends LayerPopup {
   _initDOMEvent(options) {
     super._initDOMEvent(options);
 
-    this.on(`mousemove .${CLASS_TABLE_SELECTION}`, ev => {
-      const x = ev.pageX - this._selectionOffset.left;
-      const y = ev.pageY - this._selectionOffset.top;
-      const bound = this._getSelectionBoundByOffset(x, y);
+    this.on(`mousemove .${CLASS_TABLE_SELECTION}`, this._eventHandlers.onMousedown);
+    this.on(`click .${CLASS_TABLE_SELECTION}`, this._eventHandlers.onClick);
+  }
 
-      this._resizeTableBySelectionIfNeed(bound.col, bound.row);
+  _selectTableRange(ev) {
+    const x = ev.pageX - this._selectionOffset.left;
+    const y = ev.pageY - this._selectionOffset.top;
+    const bound = this._getSelectionBoundByOffset(x, y);
 
-      this._setSelectionAreaByBound(bound.col, bound.row);
-      this._setDisplayText(bound.col, bound.row);
-      this._setSelectedBound(bound.col, bound.row);
-    });
+    this._resizeTableBySelectionIfNeed(bound.col, bound.row);
 
-    this.on(`click .${CLASS_TABLE_SELECTION}`, () => {
-      const tableSize = this._getSelectedTableSize();
+    this._setSelectionAreaByBound(bound.col, bound.row);
+    this._setDisplayText(bound.col, bound.row);
+    this._setSelectedBound(bound.col, bound.row);
+  }
 
-      this._eventManager.emit('command', 'Table', tableSize.col, tableSize.row);
-    });
+  _fireCommandEvent() {
+    const tableSize = this._getSelectedTableSize();
+
+    this._eventManager.emit('command', 'Table', tableSize.col, tableSize.row);
   }
 
   /**
@@ -374,6 +367,13 @@ class PopupAddTable extends LayerPopup {
       height: `${y}px`,
       width: `${x}px`
     });
+  }
+
+  remove() {
+    this.off(`mousemove .${CLASS_TABLE_SELECTION}`, this._eventHandlers.onMousedown);
+    this.off(`click .${CLASS_TABLE_SELECTION}`, this._eventHandlers.onClick);
+
+    super.remove();
   }
 }
 

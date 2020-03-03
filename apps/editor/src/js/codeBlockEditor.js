@@ -2,11 +2,9 @@
  * @fileoverview Implements code block editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import CodeMirrorExt from './codeMirrorExt';
 
-const EVENT_LANGUAGE_CHANGED = 'language-changed';
+const EVENT_LANGUAGE_CHANGED = 'changeLanguage';
 
 /**
  * Class Code Block Editor
@@ -48,7 +46,9 @@ class CodeBlockEditor extends CodeMirrorExt {
     setTimeout(() => {
       const lineElement = wrapper.querySelector(`pre:nth-child(${cursor.line + 1})`);
 
-      $(lineElement).trigger('requireScrollIntoView');
+      if (lineElement) {
+        this._eventManager.emit('requireScrollIntoView');
+      }
     }, 0);
   }
 
@@ -71,7 +71,8 @@ class CodeBlockEditor extends CodeMirrorExt {
     codeBlockElement.innerHTML = '';
     codeBlockElement.textContent = this.getEditorCodeText();
     codeBlockElement.setAttribute('data-language', this._language);
-    $(codeBlockElement).trigger(EVENT_LANGUAGE_CHANGED);
+
+    this._eventManager.emit(EVENT_LANGUAGE_CHANGED);
   }
 
   /**

@@ -3,6 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import ScrollSyncSplit from '@/ui/scrollSyncSplit';
+import EventManager from '@/eventManager';
 
 describe('ScrollSyncSplit', () => {
   let scrollSyncSplit, leftElement, rightElement, container;
@@ -20,7 +21,9 @@ describe('ScrollSyncSplit', () => {
     container.style.width = '100px';
     container.style.height = '100px';
 
-    scrollSyncSplit = new ScrollSyncSplit(container, leftElement, rightElement);
+    scrollSyncSplit = new ScrollSyncSplit(container, leftElement, rightElement, {
+      eventManager: new EventManager()
+    });
 
     // IE scrollTop fix
     setTimeout(done, 100);

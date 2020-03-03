@@ -77,7 +77,10 @@ const eventList = [
   'cutAfter',
   'drop',
   'show',
-  'hide'
+  'hide',
+  'changeLanguage',
+  'requireScrollSync',
+  'requireScrollIntoView'
 ];
 
 /**

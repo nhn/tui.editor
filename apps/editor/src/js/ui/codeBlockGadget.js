@@ -2,8 +2,6 @@
  * @fileoverview Implements UI code block gadget
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import on from 'tui-code-snippet/domEvent/on';
@@ -12,7 +10,7 @@ import off from 'tui-code-snippet/domEvent/off';
 import BlockOverlay from './blockOverlay';
 import domUtils from '../domUtils';
 
-const EVENT_LANGUAGE_CHANGED = 'language-changed';
+const EVENT_LANGUAGE_CHANGED = 'changeLanguage';
 const GADGET_WIDTH = 250;
 const GADGET_HEIGHT = 30;
 
@@ -68,7 +66,7 @@ class CodeBlockGadget extends BlockOverlay {
     const attachedElement = this.getAttachedElement();
     const language = attachedElement ? attachedElement.getAttribute('data-language') : null;
 
-    this._languageLabel.textContent = language ? language : 'text';
+    this._languageLabel.textContent = language || 'text';
   }
 
   /**
@@ -97,7 +95,7 @@ class CodeBlockGadget extends BlockOverlay {
     super.onShow();
 
     this._onAttachedElementChange = () => this._updateLanguage();
-    $(this.getAttachedElement()).on(EVENT_LANGUAGE_CHANGED, this._onAttachedElementChange);
+    this._eventManager.listen(EVENT_LANGUAGE_CHANGED, this._onAttachedElementChange);
 
     this._updateLanguage();
   }
@@ -108,7 +106,7 @@ class CodeBlockGadget extends BlockOverlay {
    * @override
    */
   onHide() {
-    $(this.getAttachedElement()).off(EVENT_LANGUAGE_CHANGED, this._onAttachedElementChange);
+    this._eventManager.removeEventHandler(EVENT_LANGUAGE_CHANGED, this._onAttachedElementChange);
 
     super.onHide();
   }
