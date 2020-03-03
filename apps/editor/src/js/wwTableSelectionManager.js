@@ -145,7 +145,8 @@ class WwTableSelectionManager {
       const MOUSE_RIGHT_BUTTON = 2;
 
       selectionStart = domUtils.closest(ev.data.target, '[contenteditable=true] td,th');
-      const isSelectedCell = hasClass(selectionStart, TABLE_CELL_SELECTED_CLASS_NAME);
+      const isSelectedCell =
+        !!selectionStart && hasClass(selectionStart, TABLE_CELL_SELECTED_CLASS_NAME);
 
       selectionEnd = null;
 

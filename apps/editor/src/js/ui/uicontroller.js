@@ -2,13 +2,25 @@
  * @fileoverview Implements ui controller
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
+import inArray from 'tui-code-snippet/array/inArray';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
 import isObject from 'tui-code-snippet/type/isObject';
+import on from 'tui-code-snippet/domEvent/on';
+import off from 'tui-code-snippet/domEvent/off';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
+
 import domUtils from '../domUtils';
 
+const DOM_EVENTS = [
+  'click',
+  'mousedown',
+  'mousemove',
+  'mouseup',
+  'mouseover',
+  'mouseout',
+  'scroll'
+];
 let _uiInstanceId = -1;
 
 /**
@@ -69,6 +81,8 @@ class UIController {
 
     this._id = makeUIInstanceId();
 
+    this.customEventManager = new CustomEvents();
+
     this._setRootElement(options.rootElement);
   }
 
@@ -86,6 +100,16 @@ class UIController {
     }
   }
 
+  _bindDomEvent(event, selector, fn) {
+    if (selector) {
+      domUtils.findAll(this.el, selector).forEach(el => {
+        on(el, event, fn);
+      });
+    } else {
+      on(this.el, event, fn);
+    }
+  }
+
   /**
    * bind event
    * @param {string} type - event name and selector
@@ -95,10 +119,20 @@ class UIController {
   _addEvent(type, fn) {
     const { event, selector } = this._parseEventType(type);
 
-    if (selector) {
-      $(this.el).on(event, selector, fn);
+    if (inArray(event, DOM_EVENTS) > -1) {
+      this._bindDomEvent(event, selector, fn);
     } else {
-      $(this.el).on(event, fn);
+      this.customEventManager.on(event, fn);
+    }
+  }
+
+  _unbindDomEvent(event, selector, fn) {
+    if (selector) {
+      domUtils.findAll(this.el, selector).forEach(el => {
+        off(el, event, fn);
+      });
+    } else {
+      off(this.el, event, fn);
     }
   }
 
@@ -108,22 +142,18 @@ class UIController {
    * @param {function} fn - handler function
    */
   off(type, fn) {
-    if (type) {
-      const { event, selector } = this._parseEventType(type);
+    const { event, selector } = this._parseEventType(type);
 
-      if (selector) {
-        $(this.el).off(event, selector, fn);
-      } else {
-        $(this.el).off(event, fn);
-      }
+    if (inArray(event, DOM_EVENTS) > -1) {
+      this._unbindDomEvent(event, selector, fn);
     } else {
-      $(this.el).off();
+      this.customEventManager.off(event, fn);
     }
   }
 
   /**
    * parse string into event name & selector
-   * 'click td' => ['click', 'td]
+   * 'click td' => ['click', 'td']
    * @param {string} type - string to be parsed
    * @returns {Object} event, selector
    * @private
@@ -156,10 +186,11 @@ class UIController {
 
   /**
    * trigger event
-   * @param {...object} args - event name & extra params
+   * @param {string} eventName - event name
+   * @param {*} eventData - event data
    */
-  trigger(...args) {
-    $(this.el).trigger(...args);
+  trigger(eventName, eventData) {
+    this.customEventManager.fire(eventName, eventData);
   }
 
   /**

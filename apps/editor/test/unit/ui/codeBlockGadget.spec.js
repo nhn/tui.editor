@@ -84,12 +84,12 @@ describe('code block gadget', () => {
       expect(gadget._languageLabel.textContent).toBe('changedLang');
     });
 
-    it('on language-changed event', () => {
+    it('on "changeLanguage" event', () => {
       gadget.onShow();
 
       $targetElement.attr('data-language', 'changedLang');
 
-      $targetElement.trigger('language-changed');
+      em.emit('changeLanguage');
 
       expect(gadget._languageLabel.textContent).toBe('changedLang');
     });

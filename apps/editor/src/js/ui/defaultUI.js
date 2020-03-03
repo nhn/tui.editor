@@ -166,7 +166,7 @@ class DefaultUI {
       modeSwitch.hide();
     }
 
-    modeSwitch.on('modeSwitched', (ev, type) => this._editor.changeMode(type));
+    modeSwitch.on('modeSwitched', type => this._editor.changeMode(type));
   }
 
   _initMarkdownTab() {
@@ -180,7 +180,7 @@ class DefaultUI {
     this._markdownTabSection = this.el.querySelector(`.${CLASS_MARKDOWN_TAB}`);
     this._markdownTabSection.appendChild(this._markdownTab.el);
 
-    this._markdownTab.on('itemClick', (ev, itemText) => {
+    this._markdownTab.on('itemClick', itemText => {
       if (itemText === i18n.get('Preview')) {
         editor.eventManager.emit('previewNeedsRefresh');
         editor.eventManager.emit('changePreviewTabPreview');

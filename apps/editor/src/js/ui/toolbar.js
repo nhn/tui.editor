@@ -141,8 +141,8 @@ class Toolbar extends UIController {
       this._items.push(item);
     }
 
-    item.onCommandHandler = (e, commandName) => this._eventManager.emit('command', commandName);
-    item.onEventHandler = (e, eventName) => this._eventManager.emit(eventName);
+    item.onCommandHandler = commandName => this._eventManager.emit('command', commandName);
+    item.onEventHandler = eventName => this._eventManager.emit(eventName);
     item.on('command', item.onCommandHandler);
     item.on('event', item.onEventHandler);
   }
@@ -274,8 +274,8 @@ class Toolbar extends UIController {
       button = new Button(button);
     }
 
-    button.on('command', (e, commandName) => ev.emit('command', commandName));
-    button.on('event', (e, eventName) => ev.emit(eventName));
+    button.on('command', commandName => ev.emit('command', commandName));
+    button.on('event', eventName => ev.emit(eventName));
 
     if (isNumber(index)) {
       this._items.splice(index, 0, button);

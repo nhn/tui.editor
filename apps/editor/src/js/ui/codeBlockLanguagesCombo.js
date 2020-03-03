@@ -25,9 +25,9 @@ class CodeBlockLanguagesCombo {
 
   _initDOM() {
     this._inputLanguage = domUtils.createElementWith(
-      `<div><input type="text" maxlength="20" placeholder="${i18n.get('Choose language')}" /></div>`
+      `<input type="text" maxlength="20" placeholder="${i18n.get('Choose language')}" />`
     );
-    this._wrapper = domUtils.createElementWith(`<span clsss="te-input-language"></span>`);
+    this._wrapper = domUtils.createElementWith(`<span class="te-input-language"></span>`);
     this._wrapper.appendChild(this._inputLanguage);
   }
 

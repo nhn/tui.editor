@@ -75,7 +75,7 @@ class PopupCodeBlockEditor extends LayerPopup {
   _initDOM(options) {
     super._initDOM(options);
 
-    const { el } = this;
+    const { el, eventManager } = this;
 
     this._body = el.querySelector(`.${CLASS_PREFIX}body`);
     this._toggleFitButton = el.querySelector(`.${CLASS_PREFIX}toggle-fit`);
@@ -89,7 +89,8 @@ class PopupCodeBlockEditor extends LayerPopup {
     this._scrollSyncSplit = new ScrollSyncSplit(
       this._body,
       this._codeMirrorWrapper,
-      this._previewWrapper
+      this._previewWrapper,
+      { eventManager }
     );
 
     this._updateFitWindowButton();

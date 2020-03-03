@@ -162,14 +162,15 @@ class PopupDropdownToolbar extends LayerPopup {
       const buttonOuterHeightWithMargin = domUtils.getOuterHeight(button, true);
       const buttonMarginBottom =
         (buttonOuterHeightWithMargin - domUtils.getOuterHeight(button)) / 2;
-      const top = `${button.offsetLeft + buttonOuterHeightWithMargin - buttonMarginBottom}px`;
-      const left = `${button.offsetTop +
+      const top = button.offsetTop + buttonOuterHeightWithMargin - buttonMarginBottom;
+      const left =
+        button.offsetLeft +
         domUtils.getOuterWidth(button, true) -
-        domUtils.getOuterWidth(this.el, true)}px`;
+        domUtils.getOuterWidth(this.el, true);
 
       css(this.el, {
-        top,
-        left
+        top: `${top}px`,
+        left: `${left}px`
       });
     });
   }

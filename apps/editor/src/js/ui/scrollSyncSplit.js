@@ -2,8 +2,6 @@
  * @fileoverview Implements scroll sync split
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import css from 'tui-code-snippet/domUtil/css';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
@@ -18,7 +16,6 @@ const CLASS_SCROLL_SYNC = 'scroll-sync';
 const CLASS_SCROLL_WRAPPER = 'tui-split-scroll-wrapper';
 const CLASS_SCROLL_CONTENT = 'tui-split-scroll-content';
 const CLASS_SPLITTER = 'tui-splitter';
-const EVENT_REQUIRE_SCROLL_SYNC = 'requireScrollSync';
 const EVENT_REQUIRE_SCROLL_INTO_VIEW = 'requireScrollIntoView';
 const CLASS_CONTENT_LEFT = 'tui-split-content-left';
 const CLASS_CONTENT_RIGHT = 'tui-split-content-right';
@@ -49,6 +46,7 @@ class ScrollSyncSplit {
       options
     );
     this._baseElement = baseElement;
+    this._eventManager = options.eventManager;
 
     /**
      * left, right side content elements
@@ -131,14 +129,15 @@ class ScrollSyncSplit {
     const contentElement = this._contentElements[side];
 
     if (contentElement) {
-      $(contentElement).off(EVENT_REQUIRE_SCROLL_INTO_VIEW);
+      this._eventManager.removeEventHandler(EVENT_REQUIRE_SCROLL_INTO_VIEW);
       this._contentWrapper.removeChild(contentElement);
     }
     addClass(element, CLASS_CONTENT[side]);
     this._contentWrapper.appendChild(element);
-    $(element).on(EVENT_REQUIRE_SCROLL_INTO_VIEW, ev => this._requireScrollIntoView(ev));
-    $(element).on(EVENT_REQUIRE_SCROLL_SYNC, () => this.sync());
-
+    this._eventManager.listen(EVENT_REQUIRE_SCROLL_INTO_VIEW, ev =>
+      this._requireScrollIntoView(ev)
+    );
+    this._eventManager.listen('requireScrollSync', () => this.sync());
     this._contentElements[side] = element;
 
     this.sync();

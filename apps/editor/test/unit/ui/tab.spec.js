@@ -57,7 +57,7 @@ describe('Tab', () => {
         .eq(0)
         .trigger('click');
 
-      expect(spy.calls.mostRecent().args[1]).toEqual('tab1');
+      expect(spy.calls.mostRecent().args[0]).toEqual('tab1');
     });
   });
 

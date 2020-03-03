@@ -73,22 +73,6 @@ describe('UIController', () => {
 
       expect(spy).not.toHaveBeenCalled();
     });
-
-    it('should unbind all event handlers if no event specified', () => {
-      const spy = jasmine.createSpy();
-      const spy2 = jasmine.createSpy();
-
-      uic.on('click', spy);
-      uic.on('event!', spy);
-
-      uic.off();
-
-      $(uic.el).trigger('click');
-      uic.trigger('event!');
-
-      expect(spy).not.toHaveBeenCalled();
-      expect(spy2).not.toHaveBeenCalled();
-    });
   });
 
   describe('_setRootElement()', () => {
