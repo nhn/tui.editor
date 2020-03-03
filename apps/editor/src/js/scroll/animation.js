@@ -1,3 +1,4 @@
+const ANIMATION_TIME = 200;
 const SCROLL_BOCKING_RESET_DELAY = 15;
 let currentTimeoutId = null;
 let releaseTimer = null;
@@ -21,7 +22,7 @@ export function animate(sourceScrollTop, targetScrollTop, callbackObjForSync) {
    */
   const step = () => {
     const stepTime = Date.now();
-    const progress = (stepTime - startTime) / 200; // 200 is animation time
+    const progress = (stepTime - startTime) / ANIMATION_TIME;
     let deltaValue;
 
     // if already doing animation

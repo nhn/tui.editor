@@ -353,8 +353,9 @@ describe('editText()', () => {
 
 it('return the node - findNodeById()', () => {
   const doc = new MarkdownDocument('# Hello *World*\n\n- Item 1\n- Item **2**');
+  const firstNode = doc.findFirstNodeAtLine(1)!.id;
 
-  expect(doc.findNodeById(1)).toMatchObject({
+  expect(doc.findNodeById(firstNode)).toMatchObject({
     type: 'heading'
   });
 });

@@ -1,3 +1,5 @@
+import css from 'tui-code-snippet/domUtil/css';
+
 const className = 'tui-scrollsync';
 const activeClassName = 'tui-scrollsync active';
 let active = true;
@@ -66,10 +68,10 @@ function addEditorCommand(editor, button, tooltip) {
 
 function changeButtonVisiblityStateIfNeed(editor, button, divider) {
   if (editor.mdPreviewStyle === 'vertical' && editor.currentMode === 'markdown') {
-    button.el.style.display = 'inline-block';
-    divider.style.display = 'inline-block';
+    css(button.el, { display: 'inline-block' });
+    css(divider, { display: 'inline-block' });
   } else {
-    button.el.style.display = 'none';
-    divider.style.display = 'none';
+    css(button.el, { display: 'none' });
+    css(divider, { display: 'none' });
   }
 }

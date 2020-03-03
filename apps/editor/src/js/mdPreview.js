@@ -8,7 +8,7 @@ import off from 'tui-code-snippet/domEvent/off';
 import Preview from './preview';
 import MarkdownRenderer from './markdownRenderer';
 import domUtils from './domUtils';
-import { removeOffsetInfoByNode } from './scroll/helper';
+import { removeOffsetInfoByNode, findAdjacentElementToScrollTop } from './scroll/helper';
 
 const htmlRenderer = new MarkdownRenderer({ nodeId: true });
 
@@ -41,10 +41,7 @@ class MarkdownPreview extends Preview {
     on(this.el, 'scroll', event => {
       this.eventManager.emit('scroll', {
         source: 'preview',
-        data: domUtils.findAdjacentElementToScrollTop(
-          event.srcElement.scrollTop,
-          this._previewContent
-        )
+        data: findAdjacentElementToScrollTop(event.target.scrollTop, this._previewContent)
       });
     });
   }
@@ -73,7 +70,7 @@ class MarkdownPreview extends Preview {
           el = nextEl;
         }
         if (el.parentNode) {
-          el.parentNode.removeChild(el);
+          domUtils.remove(el);
           removeOffsetInfoByNode(el);
         }
       }

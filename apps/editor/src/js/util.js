@@ -7,10 +7,5 @@ export function sendHostName() {
 }
 
 export function includes(arr, targetItem) {
-  for (const item of arr) {
-    if (item === targetItem) {
-      return true;
-    }
-  }
-  return false;
+  return arr.indexOf(targetItem) !== -1;
 }
