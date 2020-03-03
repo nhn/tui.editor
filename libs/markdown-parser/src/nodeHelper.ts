@@ -208,9 +208,3 @@ export function toString(node: Node | null) {
 export function findNodeById(id: number) {
   return getNodeById(id) || null;
 }
-
-export function findLineById(id: number) {
-  const node = findNodeById(id);
-  const sourcePos = node && node.sourcepos;
-  return sourcePos ? sourcePos[0][0] : null;
-}
