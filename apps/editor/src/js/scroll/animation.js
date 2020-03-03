@@ -12,7 +12,7 @@ function run(deltaScrollTop, { syncScrollTop, releaseEventBlock }) {
   }, SCROLL_BOCKING_RESET_DELAY);
 }
 
-export function animate(sourceScrollTop, targetScrollTop, stepCB) {
+export function animate(sourceScrollTop, targetScrollTop, callbackObjForSync) {
   const diff = targetScrollTop - sourceScrollTop;
   const startTime = Date.now();
 
@@ -31,10 +31,10 @@ export function animate(sourceScrollTop, targetScrollTop, stepCB) {
 
     if (progress < 1) {
       deltaValue = sourceScrollTop + diff * Math.cos(((1 - progress) * Math.PI) / 2);
-      run(Math.ceil(deltaValue), stepCB);
+      run(Math.ceil(deltaValue), callbackObjForSync);
       currentTimeoutId = setTimeout(step, 1);
     } else {
-      run(targetScrollTop, stepCB);
+      run(targetScrollTop, callbackObjForSync);
       currentTimeoutId = null;
     }
   };
