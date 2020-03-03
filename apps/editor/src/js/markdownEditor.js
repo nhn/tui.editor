@@ -266,9 +266,9 @@ class MarkdownEditor extends CodeMirrorExt {
           } else if (extraNode) {
             this.cm.markText(start, end, { className: `cm-${extraNode}` });
           } else if (type === 'image' || type === 'link') {
-            this._markTextInLinkOrImage(type, startPosition, endPosition, node.destination);
-          } else if (this._isListNode(node)) {
-            this._markTextInList(node.parent, startPosition, endPosition);
+            this._markTextInLinkOrImage(node, start, end);
+          } else if (type === 'item') {
+            this._markTextInListItem(node, start, end);
           }
         }
         event = walker.next();
@@ -277,29 +277,25 @@ class MarkdownEditor extends CodeMirrorExt {
     /* eslint-enable max-depth */
   }
 
-  _isListNode(node) {
-    const { type, parent } = node;
+  _markTextInLinkOrImage(node, start, end) {
+    const { type, destination } = node;
+    const { line: startLine, ch: startCh } = start;
+    const { ch: endCh } = end;
 
-    return type === 'paragraph' && !!parent && parent.type === 'item';
-  }
-
-  _markTextInLinkOrImage(type, startPositon, endPosition, destination) {
-    const [startLine, startCh] = startPositon;
-    const [endLine, endCh] = endPosition;
-
-    const urlStart = { line: endLine - 1, ch: endCh - destination.length - 2 };
-    const urlEnd = { line: endLine - 1, ch: endCh + 1 };
+    const urlStart = { line: end.line, ch: endCh - destination.length - 2 };
+    const urlEnd = { line: end.line, ch: endCh };
 
     if (type === 'image') {
-      const markerStart = { line: startLine - 1, ch: endCh - 1 };
-      const markerEnd = { line: startLine - 1, ch: startCh };
+      const descStart = { line: startLine, ch: startCh + 1 };
 
-      this.cm.markText(markerStart, markerEnd, { className: 'cm-image cm-image-marker' });
-      this.cm.markText({ line: startLine - 1, ch: startCh }, urlStart, {
-        className: 'cm-link cm-image cm-image-alt-text'
+      this.cm.markText({ line: startLine, ch: startCh }, descStart, {
+        className: 'cm-image cm-image-marker'
+      });
+      this.cm.markText(descStart, urlStart, {
+        className: 'cm-image cm-image-alt-text cm-link'
       });
     } else {
-      this.cm.markText({ line: startLine - 1, ch: startCh - 1 }, urlStart, {
+      this.cm.markText(start, urlStart, {
         className: 'cm-link'
       });
     }
@@ -310,53 +306,53 @@ class MarkdownEditor extends CodeMirrorExt {
   _getClassNameOfListItem(node) {
     let depth = 0;
 
-    while (node.parent.parent.type === 'item' && node.parent.parent.type !== 'document') {
+    while (node.parent.parent.type === 'item') {
       node = node.parent.parent;
       depth += 1;
     }
 
-    const reminder = depth % 3;
-    let className;
-
-    if (reminder === 0) {
-      className = 'variable-2';
-    } else if (reminder === 1) {
-      className = 'variable-3';
-    } else {
-      className = 'keyword';
-    }
+    const listItemTokens = ['variable-2', 'variable-3', 'keyword'];
+    const className = listItemTokens[depth % 3];
 
     return `cm-${className}`;
   }
 
-  _markTextInList(node, startPosition, endPosition) {
+  _markTextInListItem(node, start, end) {
     const className = this._getClassNameOfListItem(node);
-    const { padding, task } = node.listData;
-    const [startLine, startCh] = startPosition;
-    const [endLine, endCh] = endPosition;
+    const { markerOffset, padding, task } = node.listData;
+    const { firstChild } = node;
 
-    let startListItem = { line: startLine - 1, ch: startCh - 1 };
-    const endListItem = { line: endLine - 1, ch: endCh };
-    const indent = startCh - padding;
+    if (firstChild && firstChild.type === 'paragraph') {
+      const [childStartPos, childEndPos] = firstChild.sourcepos;
+      const childStart = { line: childStartPos[0] - 1, ch: childStartPos[1] - 1 };
+      const childEnd = { line: childEndPos[0] - 1, ch: childEndPos[1] };
+      const { line: childStartLine, ch: childStartCh } = childStart;
 
-    if (task) {
-      const meta = indent - 3;
+      if (task) {
+        const metaLen = 3;
+        const metaStart = childStartCh - metaLen - 1;
 
-      this.cm.markText(
-        { line: startLine - 1, ch: meta - 2 },
-        { line: endLine - 1, ch: meta },
-        { className }
-      );
-      this.cm.markText(
-        { line: startLine - 1, ch: meta },
-        { line: endLine - 1, ch: indent },
-        { className: 'cm-meta' }
-      );
+        this.cm.markText(
+          { line: childStartLine, ch: metaStart - padding },
+          { line: childStartLine, ch: metaStart },
+          { className }
+        );
+        this.cm.markText(
+          { line: childStartLine, ch: metaStart },
+          { line: childStartLine, ch: metaStart + metaLen },
+          { className: 'cm-meta' }
+        );
+        this.cm.markText(childStart, childEnd, { className });
+      } else {
+        this.cm.markText({ line: childStartLine, ch: childStartCh - padding }, childEnd, {
+          className
+        });
+      }
     } else {
-      startListItem = { line: startLine - 1, ch: indent - 1 };
+      this.cm.markText({ line: start.line, ch: markerOffset }, end, {
+        className
+      });
     }
-
-    this.cm.markText(startListItem, endListItem, { className });
   }
 
   /**
