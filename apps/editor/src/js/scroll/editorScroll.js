@@ -1,4 +1,3 @@
-import domUtils from '../domUtils';
 import { animate } from './animation';
 import {
   hasNodeToBeCalculated,
@@ -10,16 +9,20 @@ import {
   isEmptyLineNode,
   getMdStartLine,
   getMdEndLine,
-  isCodeBlockNode
+  isMultiLineNode,
+  getTotalOffsetTop
 } from './helper';
 
 let blockedPreviewScrollEvent = false;
 
 /* eslint-disable no-return-assign, prefer-destructuring */
 function getAndSaveOffsetHeight(node, mdNodeId) {
-  const offsetHeight = getOffsetHeight(mdNodeId) || node.offsetHeight;
+  const cachedHeight = getOffsetHeight(mdNodeId);
+  const offsetHeight = cachedHeight || node.offsetHeight;
 
-  setOffsetHeight(mdNodeId, offsetHeight);
+  if (!cachedHeight) {
+    setOffsetHeight(mdNodeId, offsetHeight);
+  }
 
   return offsetHeight;
 }
@@ -38,7 +41,7 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
   const sourceScrollTop = previewEl.scrollTop;
   let targetScrollTop = 0;
 
-  if (scrollTop !== 0) {
+  if (scrollTop) {
     const { line: startLine } = scrollEvent
       ? cm.coordsChar({ left, top: scrollTop }, 'local')
       : cm.getCursor('from');
@@ -49,15 +52,15 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
     const nodeObj = getParentNodeObj(firstMdNode);
     const { node, mdNode } = nodeObj;
 
-    targetScrollTop = domUtils.getTotalOffsetTop(node, root) || node.offsetTop;
+    targetScrollTop = getTotalOffsetTop(node, root) || node.offsetTop;
 
     if (scrollEvent && hasNodeToBeCalculated(mdNode)) {
       const mdNodeStartLine = getMdStartLine(mdNode);
       const { text, height } = cm.lineInfo(startLine).handle;
       const offsetHeight = getAndSaveOffsetHeight(node, mdNode.id);
       const offsetTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
-      const cmNodeHeight = isCodeBlockNode(mdNode)
-        ? (getMdEndLine(mdNode) - mdNodeStartLine) * height
+      const cmNodeHeight = isMultiLineNode(mdNode)
+        ? (getMdEndLine(mdNode) - mdNodeStartLine + 1) * height
         : getCmRangeHeight(startLine, mdNode, cm);
 
       // if the node is empty line in code mirror, add the height of most adjacent node

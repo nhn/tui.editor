@@ -3,6 +3,8 @@ import { includes } from '../util';
 
 const offsetInfoMap = {};
 const nestableTypes = ['list', 'blockQuote'];
+const nestableTagNames = ['UL', 'OL', 'BLOCKQUOTE'];
+const tableElementTagNames = ['TR', 'TH', 'TBODY', 'TD'];
 
 export function setOffsetHeight(id, height) {
   offsetInfoMap[id] = offsetInfoMap[id] || {};
@@ -60,11 +62,27 @@ export function getParentNodeObj(mdNode) {
     node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
   }
 
+  while (includes(tableElementTagNames, mdNode.type) || hasSameLineParent(mdNode)) {
+    mdNode = mdNode.parent;
+    node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
+  }
+
+  return getNonNestableNodeObj(mdNode, node);
+}
+
+function hasSameLineParent(mdNode) {
+  return (
+    mdNode.parent &&
+    mdNode.parent.type !== 'document' &&
+    mdNode.parent.sourcepos[0][0] === mdNode.sourcepos[0][0]
+  );
+}
+
+function getNonNestableNodeObj(mdNode, node) {
   while (includes(nestableTypes, mdNode.type)) {
     mdNode = mdNode.firstChild;
     node = node.firstElementChild;
   }
-
   return { mdNode, node };
 }
 
@@ -91,8 +109,8 @@ export function getMdEndLine(mdNode) {
   return mdNode.sourcepos[1][0];
 }
 
-export function isCodeBlockNode(mdNode) {
-  return mdNode.type === 'codeBlock';
+export function isMultiLineNode(mdNode) {
+  return mdNode.type === 'codeBlock' || mdNode.type === 'paragraph';
 }
 
 function getEmptyLineHeight(start, end, cm) {
@@ -113,4 +131,49 @@ function getLastLeafNode(mdNode) {
     mdNode = mdNode.lastChild;
   }
   return mdNode;
+}
+
+export function getTotalOffsetTop(el, root) {
+  let offsetTop = 0;
+
+  while (el && el !== root) {
+    if (!includes(nestableTagNames, el.tagName)) {
+      offsetTop += el.offsetTop;
+    }
+    el = el.parentElement;
+  }
+  return offsetTop;
+}
+
+export function findAdjacentElementToScrollTop(scrollTop, root) {
+  let el = root;
+  let prev = null;
+
+  while (el) {
+    const { firstElementChild } = el;
+
+    if (!firstElementChild) {
+      break;
+    }
+    const lastSibling = findLastSiblingElementToScrollTop(
+      firstElementChild,
+      scrollTop,
+      getTotalOffsetTop(el, root)
+    );
+
+    prev = el;
+    el = lastSibling;
+  }
+
+  const adjacentEl = el || prev;
+
+  return adjacentEl === root ? null : adjacentEl;
+}
+
+function findLastSiblingElementToScrollTop(el, scrollTop, offsetTop) {
+  if (el && scrollTop > offsetTop + el.offsetTop) {
+    return findLastSiblingElementToScrollTop(el.nextElementSibling, scrollTop, offsetTop) || el;
+  }
+
+  return null;
 }
