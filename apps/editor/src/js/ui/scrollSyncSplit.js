@@ -16,7 +16,6 @@ const CLASS_SCROLL_SYNC = 'scroll-sync';
 const CLASS_SCROLL_WRAPPER = 'tui-split-scroll-wrapper';
 const CLASS_SCROLL_CONTENT = 'tui-split-scroll-content';
 const CLASS_SPLITTER = 'tui-splitter';
-const EVENT_REQUIRE_SCROLL_SYNC = 'requireScrollSync';
 const EVENT_REQUIRE_SCROLL_INTO_VIEW = 'requireScrollIntoView';
 const CLASS_CONTENT_LEFT = 'tui-split-content-left';
 const CLASS_CONTENT_RIGHT = 'tui-split-content-right';
@@ -138,7 +137,7 @@ class ScrollSyncSplit {
     this._eventManager.listen(EVENT_REQUIRE_SCROLL_INTO_VIEW, ev =>
       this._requireScrollIntoView(ev)
     );
-    this._eventManager.listen(EVENT_REQUIRE_SCROLL_SYNC, () => this.sync());
+    this._eventManager.listen('requireScrollSync', () => this.sync());
     this._contentElements[side] = element;
 
     this.sync();

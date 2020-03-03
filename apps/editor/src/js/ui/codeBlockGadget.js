@@ -10,7 +10,6 @@ import off from 'tui-code-snippet/domEvent/off';
 import BlockOverlay from './blockOverlay';
 import domUtils from '../domUtils';
 
-const EVENT_LANGUAGE_CHANGED = 'changeLanguage';
 const GADGET_WIDTH = 250;
 const GADGET_HEIGHT = 30;
 
@@ -95,7 +94,7 @@ class CodeBlockGadget extends BlockOverlay {
     super.onShow();
 
     this._onAttachedElementChange = () => this._updateLanguage();
-    this._eventManager.listen(EVENT_LANGUAGE_CHANGED, this._onAttachedElementChange);
+    this._eventManager.listen('changeLanguage', this._onAttachedElementChange);
 
     this._updateLanguage();
   }
@@ -106,7 +105,7 @@ class CodeBlockGadget extends BlockOverlay {
    * @override
    */
   onHide() {
-    this._eventManager.removeEventHandler(EVENT_LANGUAGE_CHANGED, this._onAttachedElementChange);
+    this._eventManager.removeEventHandler('changeLanguage', this._onAttachedElementChange);
 
     super.onHide();
   }

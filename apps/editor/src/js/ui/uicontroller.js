@@ -81,7 +81,6 @@ class UIController {
 
     this._id = makeUIInstanceId();
 
-    this.domEventMap = {};
     this.customEventManager = new CustomEvents();
 
     this._setRootElement(options.rootElement);
@@ -187,12 +186,11 @@ class UIController {
 
   /**
    * trigger event
-   * @param {...object} args - event name & extra params
+   * @param {string} eventName - event name
+   * @param {*} eventData - event data
    */
-  trigger(...args) {
-    const [eventName] = args;
-
-    this.customEventManager.fire(eventName, ...args);
+  trigger(eventName, eventData) {
+    this.customEventManager.fire(eventName, eventData);
   }
 
   /**

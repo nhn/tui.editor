@@ -47,7 +47,7 @@ describe('Button', () => {
         command: 'mycommand'
       });
 
-      button.on('command', (e, command) => {
+      button.on('command', command => {
         passedCommand = command;
       });
 
@@ -63,7 +63,7 @@ describe('Button', () => {
         event: 'myevent'
       });
 
-      button.on('event', (e, event) => {
+      button.on('event', event => {
         passedEvent = event;
       });
 
