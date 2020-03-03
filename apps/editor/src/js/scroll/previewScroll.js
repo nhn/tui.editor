@@ -2,10 +2,6 @@ import { animate } from './animation';
 import {
   hasNodeToBeCalculated,
   getAdditionalTopPos,
-  getOffsetHeight,
-  setOffsetHeight,
-  getOffsetTop,
-  setOffsetTop,
   getCmRangeHeight,
   getMdStartLine,
   getMdEndLine,
@@ -13,6 +9,7 @@ import {
   getTotalOffsetTop,
   getParentNodeObj
 } from './helper';
+import { getOffsetHeight, setOffsetHeight, getOffsetTop, setOffsetTop } from './cache/offsetInfo';
 
 let blockedMarkdownScrollEvent = false;
 

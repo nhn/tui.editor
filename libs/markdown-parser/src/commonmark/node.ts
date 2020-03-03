@@ -60,20 +60,18 @@ export function isContainer(node: Node) {
 }
 
 let lastNodeId = 1;
-let nodeMap: { [key: number]: Node } | null = {};
+let nodeMap: { [key: number]: Node } = {};
 
 export function getNodeById(id: number) {
-  return nodeMap && (nodeMap![id] as Node);
+  return nodeMap[id];
 }
 
 export function removeNodeById(id: number) {
-  if (nodeMap) {
-    delete nodeMap![id];
-  }
+  delete nodeMap[id];
 }
 
 export function removeAllNode() {
-  nodeMap = null;
+  nodeMap = {};
 }
 
 export class Node {

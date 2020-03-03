@@ -1,38 +1,8 @@
-import toArray from 'tui-code-snippet/collection/toArray';
 import { includes } from '../util';
 
-const offsetInfoMap = {};
 const nestableTypes = ['list', 'blockQuote'];
 const nestableTagNames = ['UL', 'OL', 'BLOCKQUOTE'];
 const tableElementTagNames = ['TR', 'TH', 'TBODY', 'TD'];
-
-export function setOffsetHeight(id, height) {
-  offsetInfoMap[id] = offsetInfoMap[id] || {};
-  offsetInfoMap[id].height = height;
-}
-
-export function setOffsetTop(id, offsetTop) {
-  offsetInfoMap[id] = offsetInfoMap[id] || {};
-  offsetInfoMap[id].offsetTop = offsetTop;
-}
-
-export function getOffsetHeight(id) {
-  return offsetInfoMap[id] && offsetInfoMap[id].height;
-}
-
-export function getOffsetTop(id) {
-  return offsetInfoMap[id] && offsetInfoMap[id].offsetTop;
-}
-
-export function removeOffsetInfoByNode(node) {
-  if (node) {
-    delete offsetInfoMap[node.getAttribute('data-nodeid')];
-    toArray(node.children).forEach(child => {
-      removeOffsetInfoByNode(child);
-      removeOffsetInfoByNode(child.nextElementSibling);
-    });
-  }
-}
 
 export function hasImageOrCodeBlockNode(mdNode) {
   while (mdNode) {

@@ -44,6 +44,7 @@ function addScrollEvent(editor, preview) {
       if (source === 'markdown' && !isBlockedMarkdownScrollEvent()) {
         syncPreviewScrollTopToMarkdown(editor, preview, true);
       } else if (source === 'preview' && !isBlockedPreviewScrollEvent()) {
+        console.log(123);
         syncMarkdownScrollTopToPreview(editor, preview, data);
       }
     }

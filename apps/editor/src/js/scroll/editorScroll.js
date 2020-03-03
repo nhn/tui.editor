@@ -2,8 +2,6 @@ import { animate } from './animation';
 import {
   hasNodeToBeCalculated,
   getAdditionalTopPos,
-  getOffsetHeight,
-  setOffsetHeight,
   getParentNodeObj,
   getCmRangeHeight,
   isEmptyLineNode,
@@ -12,6 +10,7 @@ import {
   isMultiLineNode,
   getTotalOffsetTop
 } from './helper';
+import { getOffsetHeight, setOffsetHeight } from './cache/offsetInfo';
 
 let blockedPreviewScrollEvent = false;
 

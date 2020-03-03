@@ -8,7 +8,8 @@ import off from 'tui-code-snippet/domEvent/off';
 import Preview from './preview';
 import MarkdownRenderer from './markdownRenderer';
 import domUtils from './domUtils';
-import { removeOffsetInfoByNode, findAdjacentElementToScrollTop } from './scroll/helper';
+import { findAdjacentElementToScrollTop } from './scroll/helper';
+import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
 
 const htmlRenderer = new MarkdownRenderer({ nodeId: true });
 
