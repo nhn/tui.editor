@@ -1,6 +1,6 @@
 import { animate } from './animation';
 import {
-  hasNodeToBeCalculated,
+  isNodeToBeCalculated,
   getAdditionalTopPos,
   getParentNodeObj,
   getCmRangeHeight,
@@ -8,7 +8,8 @@ import {
   getMdStartLine,
   getMdEndLine,
   isMultiLineNode,
-  getTotalOffsetTop
+  getTotalOffsetTop,
+  isHtmlNode
 } from './helper';
 import { getOffsetHeight, setOffsetHeight } from './cache/offsetInfo';
 
@@ -46,6 +47,10 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
       : cm.getCursor('from');
     const firstMdNode = mdDocument.findFirstNodeAtLine(startLine + 1);
 
+    if (isHtmlNode(firstMdNode)) {
+      return;
+    }
+
     // if DOM element does not exist, should get its parent node using markdown node
     // in case of text node, rendererd DOM element is not matched to markdown node
     const nodeObj = getParentNodeObj(firstMdNode);
@@ -53,7 +58,7 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
 
     targetScrollTop = getTotalOffsetTop(node, root) || node.offsetTop;
 
-    if (scrollEvent && hasNodeToBeCalculated(mdNode)) {
+    if (scrollEvent && isNodeToBeCalculated(mdNode)) {
       const mdNodeStartLine = getMdStartLine(mdNode);
       const { text, height } = cm.lineInfo(startLine).handle;
       const offsetHeight = getAndSaveOffsetHeight(node, mdNode.id);

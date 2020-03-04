@@ -1,6 +1,6 @@
 import { animate } from './animation';
 import {
-  hasNodeToBeCalculated,
+  isNodeToBeCalculated,
   getAdditionalTopPos,
   getCmRangeHeight,
   getMdStartLine,
@@ -31,6 +31,13 @@ function getAndSaveOffsetInfo(node, mdNodeId, root) {
   return { offsetHeight, offsetTop };
 }
 
+function getAncestorHavingId(node, root) {
+  while (!node.getAttribute('data-nodeid') && node.parentElement !== root) {
+    node = node.parentElement;
+  }
+  return node;
+}
+
 export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
   const { mdDocument, cm } = editor;
   const { scrollTop } = preview.el;
@@ -40,8 +47,9 @@ export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
   let targetScrollTop = 0;
 
   if (scrollTop && targetNode) {
-    while (!targetNode.getAttribute('data-nodeid')) {
-      targetNode = targetNode.parentElement;
+    targetNode = getAncestorHavingId(targetNode, root);
+    if (!targetNode.getAttribute('data-nodeid')) {
+      return;
     }
 
     const mdNodeId = Number(targetNode.getAttribute('data-nodeid'));
@@ -50,7 +58,7 @@ export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
 
     targetScrollTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
 
-    if (hasNodeToBeCalculated(mdNode)) {
+    if (isNodeToBeCalculated(mdNode)) {
       const { offsetHeight, offsetTop } = getAndSaveOffsetInfo(node, mdNodeId, root);
       const height = cm.lineInfo(mdNodeStartLine - 1).handle.height;
       const cmNodeHeight = isMultiLineNode(mdNode)

@@ -1,6 +1,7 @@
 import { includes } from '../util';
 
 const nestableTypes = ['list', 'blockQuote'];
+const htmlTypes = ['htmlBlock', 'htmlInline'];
 const nestableTagNames = ['UL', 'OL', 'BLOCKQUOTE'];
 const tableElementTagNames = ['TR', 'TH', 'TBODY', 'TD'];
 
@@ -14,8 +15,12 @@ export function hasImageOrCodeBlockNode(mdNode) {
   return false;
 }
 
-export function hasNodeToBeCalculated(mdNode) {
+export function isNodeToBeCalculated(mdNode) {
   return !includes(nestableTypes, mdNode.type);
+}
+
+export function isHtmlNode(mdNode) {
+  return includes(htmlTypes, mdNode.type);
 }
 
 export function getAdditionalTopPos(scrollTop, offsetTop, currentNodeHeight, targetNodeHeight) {
