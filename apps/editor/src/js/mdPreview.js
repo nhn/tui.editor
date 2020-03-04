@@ -2,10 +2,14 @@
  * @fileoverview Implements markdown preview
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import Preview from './preview';
-import MarkdownRenderer from './markdownRenderer';
 import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
+
+import Preview from './preview';
+import MarkdownRenderer from './markdownRenderer';
+import domUtils from './domUtils';
+import { findAdjacentElementToScrollTop } from './scroll/helper';
+import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
 
 const htmlRenderer = new MarkdownRenderer({ nodeId: true });
 
@@ -38,7 +42,7 @@ class MarkdownPreview extends Preview {
     on(this.el, 'scroll', event => {
       this.eventManager.emit('scroll', {
         source: 'preview',
-        data: event
+        data: findAdjacentElementToScrollTop(event.target.scrollTop, this._previewContent)
       });
     });
   }
@@ -63,11 +67,16 @@ class MarkdownPreview extends Preview {
           const nextEl = el.nextElementSibling;
 
           el.parentNode.removeChild(el);
+          removeOffsetInfoByNode(el);
           el = nextEl;
         }
-        el.remove();
+        if (el.parentNode) {
+          domUtils.remove(el);
+          removeOffsetInfoByNode(el);
+        }
       }
     }
+    this.eventManager.emit('previewRenderAfter', this);
   }
 
   /**

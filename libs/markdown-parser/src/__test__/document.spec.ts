@@ -350,3 +350,20 @@ describe('editText()', () => {
     });
   });
 });
+
+it('return the node - findNodeById()', () => {
+  const doc = new MarkdownDocument('# Hello *World*\n\n- Item 1\n- Item **2**');
+  const firstNodeId = doc.findFirstNodeAtLine(1)!.id;
+
+  expect(doc.findNodeById(firstNodeId)).toMatchObject({
+    type: 'heading'
+  });
+});
+
+it('remove all node in the map - destroy()', () => {
+  const doc = new MarkdownDocument('# Hello *World*\n\n- Item 1\n- Item **2**');
+  const firstNodeId = doc.findFirstNodeAtLine(1)!.id;
+
+  doc.destroy();
+  expect(doc.findNodeById(firstNodeId)).toEqual(null);
+});

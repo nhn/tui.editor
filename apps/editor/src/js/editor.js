@@ -77,6 +77,9 @@ import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
 
+import { MarkdownDocument } from '@toast-ui/markdown-parser';
+import { register } from './scroll/sync';
+
 const __nedInstance = [];
 
 const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang', 'type'];
@@ -199,9 +202,12 @@ class ToastUIEditor {
 
     this.setUI(this.options.UI || new DefaultUI(this));
 
+    this.mdDocument = new MarkdownDocument();
+
     this.mdEditor = MarkdownEditor.factory(
       this.layout.getMdEditorContainerEl(),
       this.eventManager,
+      this.mdDocument,
       this.options
     );
     this.preview = new MarkdownPreview(
@@ -252,6 +258,8 @@ class ToastUIEditor {
     if (this.options.usageStatistics) {
       sendHostName();
     }
+
+    register(this);
   }
 
   /**

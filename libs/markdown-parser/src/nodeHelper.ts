@@ -1,4 +1,4 @@
-import { Node } from './commonmark/node';
+import { Node, getNodeById, removeNodeById } from './commonmark/node';
 import { Position } from './document';
 
 export const enum Compare {
@@ -50,7 +50,12 @@ export function removeNextUntil(node: Node, last: Node) {
   let next = node.next;
   while (next && next !== last) {
     const temp = next.next;
-    next.parent = next.prev = next.next = null;
+    for (const type of ['parent', 'prev', 'next'] as const) {
+      if (next[type]) {
+        removeNodeById(next[type]!.id);
+        next[type] = null;
+      }
+    }
     next = temp;
   }
   node.next = last.next;
@@ -198,4 +203,8 @@ export function toString(node: Node | null) {
   return `type: ${node.type}, sourcepos: ${node.sourcepos}, firstChild: ${node.firstChild &&
     node.firstChild.type}, lastChild: ${node.lastChild && node.lastChild.type}, prev: ${node.prev &&
     node.prev.type}, next: ${node.next && node.next.type}`;
+}
+
+export function findNodeById(id: number) {
+  return getNodeById(id) || null;
 }
