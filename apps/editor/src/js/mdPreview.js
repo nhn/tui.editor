@@ -7,11 +7,14 @@ import off from 'tui-code-snippet/domEvent/off';
 
 import Preview from './preview';
 import MarkdownRenderer from './markdownRenderer';
+import codeBlockManager from './codeBlockManager';
 import domUtils from './domUtils';
+import LazyRunner from './lazyRunner';
 import { findAdjacentElementToScrollTop } from './scroll/helper';
 import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
 
 const htmlRenderer = new MarkdownRenderer({ nodeId: true });
+const DELAY_CODEBLOCK_PLUGIN = 500;
 
 /**
  * Class Markdown Preview
@@ -26,6 +29,13 @@ class MarkdownPreview extends Preview {
   constructor(el, eventManager, convertor, isViewer, delayTime) {
     super(el, eventManager, convertor, isViewer, delayTime);
 
+    this.lazyRunner = new LazyRunner();
+    this.lazyRunner.registerLazyRunFunction(
+      'invokeCodeBlock',
+      this._invokeCodeBlockPlugins,
+      DELAY_CODEBLOCK_PLUGIN,
+      this
+    );
     this._initEvent();
   }
 
@@ -44,6 +54,18 @@ class MarkdownPreview extends Preview {
         source: 'preview',
         data: findAdjacentElementToScrollTop(event.target.scrollTop, this._previewContent)
       });
+    });
+  }
+
+  _invokeCodeBlockPlugins(codeBlockNodes) {
+    const contentEl = this._previewContent;
+
+    codeBlockNodes.forEach(node => {
+      const codeEl = contentEl.querySelector(`[data-nodeid="${node.id}"] > code`);
+      const lang = codeEl.getAttribute('data-language');
+      const html = codeBlockManager.createCodeBlockHtml(lang, codeEl.textContent);
+
+      codeEl.innerHTML = html;
     });
   }
 
@@ -77,6 +99,10 @@ class MarkdownPreview extends Preview {
       }
     }
     this.eventManager.emit('previewRenderAfter', this);
+    this.lazyRunner.run(
+      'invokeCodeBlock',
+      nodes.filter(node => node.type === 'codeBlock')
+    );
   }
 
   /**

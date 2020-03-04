@@ -7,7 +7,6 @@ import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isString from 'tui-code-snippet/type/isString';
 import css from 'tui-code-snippet/domUtil/css';
 import matches from 'tui-code-snippet/domUtil/matches';
-import { includes } from './util';
 
 const FIND_ZWB = /\u200B/g;
 const { getComputedStyle } = window;

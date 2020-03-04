@@ -227,6 +227,10 @@ class ToastUIEditor {
       renderer: toMarkRenderer
     };
 
+    if (this.options.plugins) {
+      invokePlugins(this.options.plugins, this);
+    }
+
     this.changePreviewStyle(this.options.previewStyle);
 
     this.changeMode(this.options.initialEditType, true);
@@ -243,10 +247,6 @@ class ToastUIEditor {
 
     if (!this.options.initialValue) {
       this.setHtml(this.initialHtml, false);
-    }
-
-    if (this.options.plugins) {
-      invokePlugins(this.options.plugins, this);
     }
 
     this.eventManager.emit('load', this);
