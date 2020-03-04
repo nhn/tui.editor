@@ -12,6 +12,16 @@ import MdTextObject from './mdTextObject';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
+const tokenTypes = {
+  strong: 'strong',
+  emph: 'em',
+  strike: 'strikethrough',
+  thematicBreak: 'hr',
+  blockQuote: 'quote',
+  code: 'comment',
+  codeBlock: 'comment'
+};
+
 /**
  * Class MarkdownEditor
  * @param {HTMLElement} el - container element
@@ -208,14 +218,6 @@ class MarkdownEditor extends CodeMirrorExt {
   }
 
   _refreshCodeMirrorMarks(e) {
-    const tokenTypes = {
-      heading: 'header',
-      emph: 'em',
-      strong: 'strong',
-      strike: 'strikethrough',
-      blockQuote: 'quote'
-    };
-
     const { from, to, text } = e;
     const editResult = this.mdDocument.editMarkdown(
       [from.line + 1, from.ch + 1],
@@ -231,9 +233,9 @@ class MarkdownEditor extends CodeMirrorExt {
       return;
     }
 
-    /* eslint-disable prefer-destructuring, max-depth */
-    const editFromPos = nodes[0].sourcepos[0];
-    const editToPos = nodes[nodes.length - 1].sourcepos[1];
+    /* eslint-disable max-depth */
+    const [editFromPos] = nodes[0].sourcepos;
+    const [, editToPos] = nodes[nodes.length - 1].sourcepos;
     const editFrom = { line: editFromPos[0] - 1, ch: editFromPos[1] - 1 };
     const editTo = { line: editToPos[0] - 1, ch: editToPos[1] };
     const marks = this.cm.findMarks(editFrom, editTo);
@@ -250,21 +252,106 @@ class MarkdownEditor extends CodeMirrorExt {
         const { node, entering } = event;
 
         if (entering) {
-          const [startLine, startCh] = node.sourcepos[0];
-          const [endLine, endCh] = node.sourcepos[1];
+          const { type, sourcepos } = node;
+          const [startPosition, endPosition] = sourcepos;
+          const [startLine, startCh] = startPosition;
+          const [endLine, endCh] = endPosition;
           const start = { line: startLine - 1, ch: startCh - 1 };
           const end = { line: endLine - 1, ch: endCh };
-          const token = tokenTypes[node.type];
+          const extraNode = tokenTypes[type];
 
-          if (token) {
-            this.cm.markText(start, end, { className: `cm-${token}` });
+          if (type === 'heading') {
+            this.cm.markText(start, end, { className: `cm-header cm-header-${node.level}` });
+          } else if (extraNode) {
+            this.cm.markText(start, end, { className: `cm-${extraNode}` });
+          } else if (type === 'image' || type === 'link') {
+            this._markTextInLinkOrImage(node, start, end);
+          } else if (type === 'item') {
+            this._markTextInListItem(node, start, end);
           }
         }
         event = walker.next();
       }
     }
+    /* eslint-enable max-depth */
+  }
 
-    /* eslint-enable prefer-destructuring, max-depth */
+  _markTextInLinkOrImage(node, start, end) {
+    const { type, destination } = node;
+    const { line: startLine, ch: startCh } = start;
+    const { ch: endCh } = end;
+
+    const urlStart = { line: end.line, ch: endCh - destination.length - 2 };
+    const urlEnd = { line: end.line, ch: endCh };
+
+    if (type === 'image') {
+      const descStart = { line: startLine, ch: startCh + 1 };
+
+      this.cm.markText({ line: startLine, ch: startCh }, descStart, {
+        className: 'cm-image cm-image-marker'
+      });
+      this.cm.markText(descStart, urlStart, {
+        className: 'cm-image cm-image-alt-text cm-link'
+      });
+    } else {
+      this.cm.markText(start, urlStart, {
+        className: 'cm-link'
+      });
+    }
+
+    this.cm.markText(urlStart, urlEnd, { className: 'cm-string cm-url' });
+  }
+
+  _getClassNameOfListItem(node) {
+    let depth = 0;
+
+    while (node.parent.parent.type === 'item') {
+      node = node.parent.parent;
+      depth += 1;
+    }
+
+    const listItemTokens = ['variable-2', 'variable-3', 'keyword'];
+    const className = listItemTokens[depth % 3];
+
+    return `cm-${className}`;
+  }
+
+  _markTextInListItem(node, start, end) {
+    const className = this._getClassNameOfListItem(node);
+    const { markerOffset, padding, task } = node.listData;
+    const { firstChild } = node;
+
+    if (firstChild && firstChild.type === 'paragraph') {
+      const [childStartPos, childEndPos] = firstChild.sourcepos;
+      const childStart = { line: childStartPos[0] - 1, ch: childStartPos[1] - 1 };
+      const childEnd = { line: childEndPos[0] - 1, ch: childEndPos[1] };
+      const { line: childStartLine, ch: childStartCh } = childStart;
+
+      if (task) {
+        const metaLen = 3;
+        const metaStart = childStartCh - metaLen - 1;
+
+        this.cm.markText(
+          { line: childStartLine, ch: metaStart - padding },
+          { line: childStartLine, ch: metaStart },
+          { className }
+        );
+        this.cm.markText(
+          { line: childStartLine, ch: metaStart },
+          { line: childStartLine, ch: metaStart + metaLen },
+          { className: 'cm-meta' }
+        );
+        this.cm.markText(childStart, childEnd, { className });
+      } else {
+        this.cm.markText({ line: childStartLine, ch: childStartCh - padding }, childEnd, {
+          className
+        });
+      }
+    } else {
+      this.cm.markText({ line: start.line, ch: markerOffset }, end, {
+        className
+      });
+    }
   }
 
   /**
