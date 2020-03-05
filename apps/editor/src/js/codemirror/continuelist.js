@@ -33,8 +33,6 @@ CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
     replacements = [];
   for (var i = 0; i < ranges.length; i++) {
     var pos = ranges[i].head;
-
-    var eolState = cm.getStateAfter(pos.line);
     var line = cm.getLine(pos.line),
       match = listRE.exec(line);
     var cursorBeforeBullet = /^\s*$/.test(line.slice(0, pos.ch));
