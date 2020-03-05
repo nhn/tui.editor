@@ -5,7 +5,7 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 
 import CommandManager from '../commandManager';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 /**
  * Paragraph

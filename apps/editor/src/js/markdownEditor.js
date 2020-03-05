@@ -10,7 +10,7 @@ import KeyMapper from './keyMapper';
 import MdListManager from './mdListManager';
 import ComponentManager from './componentManager';
 import MdTextObject from './mdTextObject';
-import { hasSameLineParent } from './utils/markdown';
+import { traverseParentNodes } from './utils/markdown';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -22,6 +22,21 @@ const tokenTypes = {
   blockQuote: 'quote',
   code: 'comment',
   codeBlock: 'comment'
+};
+const defaultState = {
+  strong: false,
+  emph: false,
+  strike: false,
+  thematicBreak: false,
+  blockQuote: false,
+  code: false,
+  codeBlock: false,
+  list: false,
+  taskList: false,
+  orderedList: false,
+  heading: false,
+  table: false,
+  source: 'markdown'
 };
 
 /**
@@ -152,9 +167,7 @@ class MarkdownEditor extends CodeMirrorExt {
       });
     });
 
-    this.cm.on('cursorActivity', () => {
-      this._changeToolbarItemState();
-    });
+    this.cm.on('cursorActivity', () => this._changeToolbarItemState());
   }
 
   /**
@@ -357,11 +370,10 @@ class MarkdownEditor extends CodeMirrorExt {
   }
 
   _changeToolbarItemState() {
-    const state = this._createInitState();
+    const state = { ...defaultState };
     const { line, ch } = this.cm.getCursor();
-    const text = this.cm.getLine(line);
     const setNodeTypeToState = mdNode => {
-      const type = this._getConvertedMdNodeType(mdNode);
+      const type = this._getToolbarItemStateName(mdNode);
 
       if (isBoolean(state[type])) {
         state[type] = true;
@@ -377,11 +389,10 @@ class MarkdownEditor extends CodeMirrorExt {
     }
 
     setNodeTypeToState(mdNode);
-    this._traverseSameLineParentNodes(mdNode, setNodeTypeToState);
+    traverseParentNodes(mdNode, setNodeTypeToState);
 
-    if (/^\* \[\s\]/.test(text.trim())) {
+    if (state.taskList) {
       state.list = state.orderedList = false;
-      state.taskList = true;
     }
 
     if (!this._latestState || this._isStateChanged(this._latestState, state)) {
@@ -390,42 +401,17 @@ class MarkdownEditor extends CodeMirrorExt {
     }
   }
 
-  _getConvertedMdNodeType({ type, listData }) {
-    let convertedType = type;
-
+  _getToolbarItemStateName({ type, listData }) {
     if (type === 'list' || type === 'item') {
-      convertedType = listData.type === 'ordered' ? 'orderedList' : 'list';
-    } else if (type.indexOf('table') !== -1) {
-      convertedType = 'table';
-    } else if (type === 'thematicBreak') {
-      convertedType = 'hr';
+      if (listData.task) {
+        return 'taskList';
+      }
+      return listData.type === 'ordered' ? 'orderedList' : 'list';
     }
-    return convertedType;
-  }
-
-  _traverseSameLineParentNodes(mdNode, iteratee) {
-    while (hasSameLineParent(mdNode)) {
-      mdNode = mdNode.parent;
-      iteratee(mdNode);
+    if (type.indexOf('table') !== -1) {
+      return 'table';
     }
-  }
-
-  _createInitState() {
-    return {
-      strong: false,
-      emph: false,
-      strike: false,
-      hr: false,
-      blockQuote: false,
-      code: false,
-      codeBlock: false,
-      list: false,
-      taskList: false,
-      orderedList: false,
-      heading: false,
-      table: false,
-      source: 'markdown'
-    };
+    return type;
   }
 
   /**

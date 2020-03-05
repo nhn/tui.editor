@@ -4,7 +4,7 @@
  */
 import matches from 'tui-code-snippet/domUtil/matches';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 
 /**
  * Class WwPManager

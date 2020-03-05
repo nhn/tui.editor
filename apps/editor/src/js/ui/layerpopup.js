@@ -12,7 +12,7 @@ import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
 
 import UIController from './uicontroller';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 const CLASS_PREFIX = 'tui-popup-';
 const CLASS_FIT_WINDOW = 'fit-window';

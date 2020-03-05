@@ -5,7 +5,7 @@
 import extend from 'tui-code-snippet/object/extend';
 
 import Command from './command';
-import { isMac } from './util';
+import { isMac } from './utils/common';
 import Map from './utils/map';
 
 const KEYMAP_OS_INDEX = isMac ? 1 : 0;

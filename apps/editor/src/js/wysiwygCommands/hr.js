@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import CommandManager from '../commandManager';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 /**
  * HR

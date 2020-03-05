@@ -8,7 +8,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import extend from 'tui-code-snippet/object/extend';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 const CLASS_SPLIT_SCROLL = 'tui-split-scroll';
 const CLASS_SINGLE_CONTENT = 'single-content';

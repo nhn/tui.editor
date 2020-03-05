@@ -7,8 +7,8 @@ import toArray from 'tui-code-snippet/collection/toArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isFunction from 'tui-code-snippet/type/isFunction';
 
-import domUtils from './domUtils';
-import { isMac } from './util';
+import domUtils from './utils/dom';
+import { isMac } from './utils/common';
 
 const FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
 const isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);

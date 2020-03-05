@@ -8,7 +8,7 @@ import isUndefined from 'tui-code-snippet/type/isUndefined';
 import browser from 'tui-code-snippet/browser/browser';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 
 const isIE10 = browser.msie && browser.version === 10;
 const TABLE_CLASS_PREFIX = 'te-content-table-';

@@ -1,4 +1,4 @@
-import { includes } from '../util';
+import { includes } from './common';
 
 const nestableTagNames = ['UL', 'OL', 'BLOCKQUOTE'];
 
@@ -69,6 +69,13 @@ export function getLastLeafNode(mdNode) {
     mdNode = mdNode.lastChild;
   }
   return mdNode;
+}
+
+export function traverseParentNodes(mdNode, iteratee) {
+  while (mdNode.parent && mdNode.parent.type !== 'document') {
+    mdNode = mdNode.parent;
+    iteratee(mdNode);
+  }
 }
 
 export function getTotalOffsetTop(el, root) {

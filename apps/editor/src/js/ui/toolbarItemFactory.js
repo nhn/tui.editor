@@ -67,7 +67,7 @@ class ToolbarItemFactory {
           className: 'tui-hrline',
           command: 'HR',
           tooltip: i18n.get('Line'),
-          state: 'hr'
+          state: 'thematicBreak'
         });
         break;
       case 'quote':

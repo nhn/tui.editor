@@ -6,7 +6,7 @@ import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 
 const TASK_CLASS_NAME = 'task-list-item';
 const TASK_ATTR_NAME = 'data-te-task';

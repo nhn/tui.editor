@@ -6,7 +6,7 @@ import toArray from 'tui-code-snippet/collection/toArray';
 import matches from 'tui-code-snippet/domUtil/matches';
 
 import CommandManager from '../commandManager';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 /**
  * Indent

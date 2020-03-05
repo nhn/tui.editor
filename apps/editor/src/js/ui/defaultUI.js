@@ -19,7 +19,7 @@ import PopupCodeBlockLanguages from './popupCodeBlockLanguages';
 import PopupCodeBlockEditor from './popupCodeBlockEditor';
 import i18n from '../i18n.js';
 import tooltip from './tooltip';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 const CLASS_TOOLBAR = 'te-toolbar-section';
 const CLASS_MARKDOWN_TAB = 'te-markdown-tab-section';

@@ -192,7 +192,7 @@ export function findNodeAtPosition(parent: Node, pos: Position) {
     } else if (node.next) {
       node = node.next;
     } else {
-      return node;
+      return prev;
     }
   }
   return node;

@@ -1,4 +1,4 @@
-import { includes } from '../util';
+import { includes } from '../utils/common';
 import {
   hasSameLineParent,
   getMdEndLine,

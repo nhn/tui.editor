@@ -14,7 +14,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 import WwClipboardManager from './wwClipboardManager';
 import WwListManager from './wwListManager';
 import WwTaskManager from './wwTaskManager';

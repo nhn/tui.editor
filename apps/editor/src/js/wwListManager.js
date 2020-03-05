@@ -5,7 +5,7 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 import matches from 'tui-code-snippet/domUtil/matches';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 
 const FIND_LI_ELEMENT = /<li/i;
 const DIV_OR_LI = 'DIV,LI';

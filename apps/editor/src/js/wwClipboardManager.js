@@ -8,7 +8,7 @@ import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 import WwPasteContentHelper from './wwPasteContentHelper';
 import WwTablePasteHelper from './wwTablePasteHelper';
 
