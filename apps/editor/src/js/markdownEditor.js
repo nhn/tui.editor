@@ -3,12 +3,14 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import isBoolean from 'tui-code-snippet/type/isBoolean';
 
 import CodeMirrorExt from './codeMirrorExt';
 import KeyMapper from './keyMapper';
 import MdListManager from './mdListManager';
 import ComponentManager from './componentManager';
 import MdTextObject from './mdTextObject';
+import { hasSameLineParent } from './utils/markdown';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -150,26 +152,9 @@ class MarkdownEditor extends CodeMirrorExt {
       });
     });
 
-    // this.cm.on('cursorActivity', () => {
-    //   const token = this.cm.getTokenAt(this.cm.getCursor());
-    //   const { base } = token.state;
-    //   const state = {
-    //     bold: !!base.strong,
-    //     italic: !!base.em,
-    //     strike: !!base.strikethrough,
-    //     code: base.code > 0,
-    //     codeBlock: base.code === -1,
-    //     quote: !!base.quote,
-    //     list: !!base.list,
-    //     task: !!base.taskList,
-    //     source: 'markdown'
-    //   };
-
-    //   if (!this._latestState || this._isStateChanged(this._latestState, state)) {
-    //     this.eventManager.emit('stateChange', state);
-    //     this._latestState = state;
-    //   }
-    // });
+    this.cm.on('cursorActivity', () => {
+      this._changeToolbarItemState();
+    });
   }
 
   /**
@@ -369,6 +354,78 @@ class MarkdownEditor extends CodeMirrorExt {
     });
 
     return result;
+  }
+
+  _changeToolbarItemState() {
+    const state = this._createInitState();
+    const { line, ch } = this.cm.getCursor();
+    const text = this.cm.getLine(line);
+    const setNodeTypeToState = mdNode => {
+      const type = this._getConvertedMdNodeType(mdNode);
+
+      if (isBoolean(state[type])) {
+        state[type] = true;
+      }
+    };
+
+    const mdNode = this.mdDocument.findNodeAtPosition([line + 1, ch + 1]);
+
+    if (!mdNode) {
+      this.eventManager.emit('stateChange', state);
+      this.resetState();
+      return;
+    }
+
+    setNodeTypeToState(mdNode);
+    this._traverseSameLineParentNodes(mdNode, setNodeTypeToState);
+
+    if (/^\* \[\s\]/.test(text.trim())) {
+      state.list = state.orderedList = false;
+      state.taskList = true;
+    }
+
+    if (!this._latestState || this._isStateChanged(this._latestState, state)) {
+      this.eventManager.emit('stateChange', state);
+      this._latestState = state;
+    }
+  }
+
+  _getConvertedMdNodeType({ type, listData }) {
+    let convertedType = type;
+
+    if (type === 'list' || type === 'item') {
+      convertedType = listData.type === 'ordered' ? 'orderedList' : 'list';
+    } else if (type.indexOf('table') !== -1) {
+      convertedType = 'table';
+    } else if (type === 'thematicBreak') {
+      convertedType = 'hr';
+    }
+    return convertedType;
+  }
+
+  _traverseSameLineParentNodes(mdNode, iteratee) {
+    while (hasSameLineParent(mdNode)) {
+      mdNode = mdNode.parent;
+      iteratee(mdNode);
+    }
+  }
+
+  _createInitState() {
+    return {
+      strong: false,
+      emph: false,
+      strike: false,
+      hr: false,
+      blockQuote: false,
+      code: false,
+      codeBlock: false,
+      list: false,
+      taskList: false,
+      orderedList: false,
+      heading: false,
+      table: false,
+      source: 'markdown'
+    };
   }
 
   /**
