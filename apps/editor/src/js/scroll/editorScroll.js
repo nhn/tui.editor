@@ -49,7 +49,7 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
       : cm.getCursor('from');
     const firstMdNode = mdDocument.findFirstNodeAtLine(startLine + 1);
 
-    if (isHtmlNode(firstMdNode)) {
+    if (!firstMdNode || isHtmlNode(firstMdNode)) {
       return;
     }
 
