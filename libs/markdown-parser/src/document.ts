@@ -9,7 +9,8 @@ import {
   findChildNodeAtLine,
   findFirstNodeAtLine,
   findNodeAtPosition,
-  findNodeById
+  findNodeById,
+  findNodeAtCursorPosition
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
 
@@ -235,7 +236,15 @@ export class MarkdownDocument {
     return findNodeById(id);
   }
 
-  public destroy() {
+  public removeAllNode() {
     removeAllNode();
+  }
+
+  public findNodeAtCursorPosition(pos: Position) {
+    const node = findNodeAtCursorPosition(this.root, pos);
+    if (!node || node === this.root) {
+      return null;
+    }
+    return node;
   }
 }

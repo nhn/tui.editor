@@ -210,3 +210,84 @@ export function toString(node: Node | null) {
 export function findNodeById(id: number) {
   return getNodeById(id) || null;
 }
+
+function findFirstTopNodeAtLine(parent: Node, line: number) {
+  let node: Node | null = parent;
+  let prev: Node | null = null;
+
+  while (node) {
+    const start = node.sourcepos![0][0];
+    const end = node.sourcepos![1][0];
+    if (start === line || end === line || (start <= line && end >= line)) {
+      return node;
+    }
+    if (end < line && node.next) {
+      prev = node;
+      node = node.next;
+    } else if (start > line || !node.next) {
+      return prev;
+    }
+  }
+  return node;
+}
+
+function findLeafNodeAtLine(parent: Node, line: number): Node | null {
+  let node: Node | null = parent;
+  let prev: Node | null = null;
+
+  while (node) {
+    const topNode = findFirstTopNodeAtLine(node, line);
+    if (topNode) {
+      prev = node;
+      if (topNode.firstChild) {
+        node = topNode.firstChild;
+      } else {
+        return topNode;
+      }
+    } else {
+      return prev && prev.sourcepos![0][0] <= line && prev.sourcepos![1][0] >= line ? prev : null;
+    }
+  }
+  return node;
+}
+
+function findFirstNodeAtCh(parent: Node | null, pos: Position) {
+  const [line, ch] = pos;
+  let node: Node | null = parent;
+  let prev: Node | null = null;
+
+  while (node) {
+    const start = node.sourcepos![0][1];
+    const end = node.sourcepos![1][1];
+    if (node.sourcepos![0][0] > line) {
+      return prev;
+    }
+    if (start <= ch && end >= ch) {
+      return node;
+    }
+    if (end < ch && node.next) {
+      prev = node;
+      node = node.next;
+    } else {
+      prev = node;
+      node = node.parent;
+    }
+  }
+  return node || prev;
+}
+
+export function findNodeAtCursorPosition(parent: Node, pos: Position) {
+  let node: Node | null = findFirstNodeAtCh(findLeafNodeAtLine(parent, pos[0]), pos);
+  let prev: Node | null = null;
+
+  while (node) {
+    if (node.sourcepos![0][1] <= pos[1] && node.sourcepos![1][1] >= pos[1]) {
+      prev = node;
+      node = node.firstChild;
+    } else {
+      return prev;
+    }
+  }
+
+  return node || prev;
+}
