@@ -10,7 +10,7 @@ import KeyMapper from './keyMapper';
 import MdListManager from './mdListManager';
 import ComponentManager from './componentManager';
 import MdTextObject from './mdTextObject';
-import { traverseParentNodes } from './utils/markdown';
+import { traverseParentNodes, isInlineNode } from './utils/markdown';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -370,29 +370,47 @@ class MarkdownEditor extends CodeMirrorExt {
   }
 
   _changeToolbarItemState() {
+    let listDepth = 1;
     const state = { ...defaultState };
     const { line, ch } = this.cm.getCursor();
+    const mdLine = line + 1;
+    const mdCh = this.cm.getLine(line).length === ch ? ch : ch + 1;
     const setNodeTypeToState = mdNode => {
       const type = this._getToolbarItemStateName(mdNode);
 
       if (isBoolean(state[type])) {
-        state[type] = true;
+        if (/list|List/.test(type)) {
+          if (listDepth === 1) {
+            listDepth += 1;
+            state[type] = true;
+          }
+        } else {
+          state[type] = true;
+        }
       }
     };
 
-    const mdNode = this.mdDocument.findNodeAtPosition([line + 1, ch + 1]);
+    let mdNode = this.mdDocument.findNodeAtCursorPosition([mdLine, mdCh]);
 
     if (!mdNode) {
       this.eventManager.emit('stateChange', state);
       this.resetState();
       return;
     }
+    mdNode = mdNode.type === 'text' ? mdNode.parent : mdNode;
+    const { type, sourcepos } = mdNode;
 
     setNodeTypeToState(mdNode);
     traverseParentNodes(mdNode, setNodeTypeToState);
 
-    if (state.taskList) {
-      state.list = state.orderedList = false;
+    // if position is matched to start, end position of inline node, highlighting is ignored
+    if (
+      isInlineNode(mdNode) &&
+      ((mdCh === ch && sourcepos[1][0] === mdLine) ||
+        (mdCh === sourcepos[1][1] + 1 && mdLine === sourcepos[1][0]) ||
+        (mdCh === sourcepos[0][1] && mdLine === sourcepos[0][0]))
+    ) {
+      state[type] = false;
     }
 
     if (!this._latestState || this._isStateChanged(this._latestState, state)) {
