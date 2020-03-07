@@ -74,12 +74,6 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
       ],
       externals: [
         {
-          'tui-code-snippet': {
-            commonjs: 'tui-code-snippet',
-            commonjs2: 'tui-code-snippet',
-            amd: 'tui-code-snippet',
-            root: ['tui', 'util']
-          },
           codemirror: {
             commonjs: 'codemirror',
             commonjs2: 'codemirror',
