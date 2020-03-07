@@ -13,7 +13,6 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import { sendHostName } from './utils/common';
 
-import Button from './ui/button';
 import MarkdownEditor from './markdownEditor';
 import MarkdownPreview from './mdPreview';
 import WysiwygEditor from './wysiwygEditor';
@@ -836,7 +835,7 @@ class ToastUIEditor {
 }
 
 /**
- * check whther is viewer
+ * Check whether is viewer (using in plugins)
  * @type {boolean}
  */
 ToastUIEditor.isViewer = false;
@@ -849,56 +848,38 @@ ToastUIEditor.isViewer = false;
 ToastUIEditor.domUtils = domUtils;
 
 /**
- * CodeBlockManager instance
+ * CodeBlockManager instance using in plugins
  * @type {CodeBlockManager}
+ * @ignore
  */
 ToastUIEditor.codeBlockManager = codeBlockManager;
 
 /**
- * Button class
- * @type {Class.<Button>}
- * @deprecated
- */
-ToastUIEditor.Button = Button;
-
-/**
- * WwCodeBlockManager class
+ * WwCodeBlockManager class using in plugins
  * @type {Class.<WwCodeBlockManager>}
  * @ignore
  */
 ToastUIEditor.WwCodeBlockManager = WwCodeBlockManager;
 
 /**
- * WwTableManager class
+ * WwTableManager class using in plugins
  * @type {Class.<WwTableManager>}
  * @ignore
  */
 ToastUIEditor.WwTableManager = WwTableManager;
 
 /**
- * WwTableManager class
+ * WwTableManager class using in plugins
  * @type {Class.<WwTableSelectionManager>}
  * @ignore
  */
 ToastUIEditor.WwTableSelectionManager = WwTableSelectionManager;
 
 /**
- * CommandManager class
+ * CommandManager class using in plugins
  * @type {Class.<CommandManager>}
  * @ignore
  */
 ToastUIEditor.CommandManager = CommandManager;
-
-/**
- * MarkdownIt hightlight instance
- * @type {MarkdownIt}
- */
-ToastUIEditor.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
-
-/**
- * MarkdownIt instance
- * @type {MarkdownIt}
- */
-ToastUIEditor.markdownit = Convertor.getMarkdownitRenderer();
 
 export default ToastUIEditor;

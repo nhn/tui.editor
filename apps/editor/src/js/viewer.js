@@ -199,8 +199,9 @@ class ToastUIEditorViewer {
 }
 
 /**
- * check whther is viewer
+ * Check whether is viewer (using in plugins)
  * @type {boolean}
+ * @ignore
  */
 ToastUIEditorViewer.isViewer = true;
 
@@ -212,39 +213,29 @@ ToastUIEditorViewer.isViewer = true;
 ToastUIEditorViewer.domUtils = domUtils;
 
 /**
- * CodeBlockManager instance
+ * CodeBlockManager instance using in plugins
  * @type {CodeBlockManager}
+ * @ignore
  */
 ToastUIEditorViewer.codeBlockManager = codeBlockManager;
 
 /**
- * MarkdownIt hightlight instance
- * @type {MarkdownIt}
- */
-ToastUIEditorViewer.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
-
-/**
- * MarkdownIt instance
- * @type {MarkdownIt}
- */
-ToastUIEditorViewer.markdownit = Convertor.getMarkdownitRenderer();
-
-/**
- * @ignore
- */
-ToastUIEditorViewer.Button = null;
-
-/**
+ * WwCodeBlockManager class using in plugins
+ * @type {Class.<WwCodeBlockManager>}
  * @ignore
  */
 ToastUIEditorViewer.WwCodeBlockManager = null;
 
 /**
+ * WwTableManager class using in plugins
+ * @type {Class.<WwTableManager>}
  * @ignore
  */
 ToastUIEditorViewer.WwTableManager = null;
 
 /**
+ * WwTableManager class using in plugins
+ * @type {Class.<WwTableSelectionManager>}
  * @ignore
  */
 ToastUIEditorViewer.WwTableSelectionManager = null;
