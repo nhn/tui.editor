@@ -19,22 +19,6 @@ const config = {
     react: {
       commonjs: 'react',
       commonjs2: 'react'
-    },
-    jquery: {
-      commonjs: 'jquery',
-      commonjs2: 'jquery'
-    },
-    'highlight.js': {
-      commonjs: 'highlight.js',
-      commonjs2: 'highlight.js'
-    },
-    'markdown-it': {
-      commonjs: 'markdown-it',
-      commonjs2: 'markdown-it'
-    },
-    'to-mark': {
-      commonjs: 'to-mark',
-      commonjs2: 'to-mark'
     }
   },
   module: {
