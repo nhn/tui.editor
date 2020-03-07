@@ -45,7 +45,7 @@ class CodeBlockEditor extends CodeMirrorExt {
       const lineElement = wrapper.querySelector(`pre:nth-child(${cursor.line + 1})`);
 
       if (lineElement) {
-        this._eventManager.emit('requireScrollIntoView');
+        this._eventManager.emit('requireScrollIntoView', lineElement);
       }
     }, 0);
   }

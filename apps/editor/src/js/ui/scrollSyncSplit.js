@@ -93,8 +93,7 @@ class ScrollSyncSplit {
     this._contentWrapper.addEventListener('scroll', this.sync.bind(this));
   }
 
-  _requireScrollIntoView(event) {
-    const element = event.target;
+  _requireScrollIntoView(element) {
     const { top: targetTop, bottom: targetBottom } = element.getBoundingClientRect();
     let wrapperElement;
 
