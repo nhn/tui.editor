@@ -37,7 +37,7 @@ function getOutputConfig(isProduction, isCDN, minify) {
 
 function getExternalsConfig(isProduction, isCDN) {
   if (isProduction && !isCDN) {
-    return ['jquery', 'tui-code-snippet'];
+    return ['jquery'];
   }
 
   return [];

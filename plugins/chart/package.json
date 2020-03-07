@@ -58,14 +58,14 @@
     "karma-webpack": "^4.0.2",
     "prettier": "^1.19.1",
     "terser-webpack-plugin": "^2.3.1",
+    "tui-code-snippet": "^2.3.1",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1"
   },
   "dependencies": {
     "jquery": "^3.4.1",
-    "tui-chart": "^3.9.0",
-    "tui-code-snippet": "^2.2.0"
+    "tui-chart": "^3.9.0"
   },
   "publishConfig": {
     "access": "public"

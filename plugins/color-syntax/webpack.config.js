@@ -8,7 +8,7 @@ const pkg = require('./package.json');
 
 const TerserPlugin = require('terser-webpack-plugin');
 
-function getOutputConfig(isCDN, minify) {
+function getOutputConfig(isProduction, isCDN, minify) {
   const filename = `toastui-${pkg.name.replace(/@toast-ui\//, '')}`;
 
   if (!isProduction || isCDN) {
