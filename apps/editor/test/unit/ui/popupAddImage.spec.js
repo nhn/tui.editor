@@ -2,10 +2,21 @@
  * @fileoverview test popup add image
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
+import '@/i18n/en-us';
 import PopupAddImage from '@/ui/popupAddImage';
 import EventManager from '@/eventManager';
+
+function clickBtn(className) {
+  document.querySelector(`.te-${className}`).click();
+}
+
+function setInputValue(className, value) {
+  document.querySelector(`.te-${className}`).value = value;
+}
+
+function getInputValue(className) {
+  return document.querySelector(`.te-${className}`).value;
+}
 
 describe('PopupAddImage', () => {
   let popup, em;
@@ -19,7 +30,7 @@ describe('PopupAddImage', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.innerHTML = '';
   });
 
   describe('button events', () => {
@@ -28,13 +39,13 @@ describe('PopupAddImage', () => {
     });
 
     it('hide on ok button', () => {
-      $('.te-ok-button').trigger('click');
+      clickBtn('ok-button');
 
       expect(popup.hide).toHaveBeenCalled();
     });
 
     it('hide on close button', () => {
-      $('.te-close-button').trigger('click');
+      clickBtn('close-button');
 
       expect(popup.hide).toHaveBeenCalled();
     });
@@ -55,10 +66,10 @@ describe('PopupAddImage', () => {
 
       em.listen('command', handler);
 
-      $('.te-image-url-input').val(value.imageUrl);
-      $('.te-alt-text-input').val(value.altText);
+      setInputValue('image-url-input', value.imageUrl);
+      setInputValue('alt-text-input', value.altText);
 
-      $('.te-ok-button').trigger('click');
+      clickBtn('ok-button');
 
       expect(handler).toHaveBeenCalledWith('AddImage', value);
     });
@@ -84,34 +95,31 @@ describe('PopupAddImage', () => {
         altText: 'altText'
       };
 
-      $('.te-image-url-input').val('imageUrlText');
-      $('.te-alt-text-input').val('altText');
+      setInputValue('image-url-input', 'imageUrlText');
+      setInputValue('alt-text-input', 'altText');
 
-      expect($('.te-image-url-input').val()).toEqual(value.imageUrl);
-      expect($('.te-alt-text-input').val()).toEqual(value.altText);
+      expect(getInputValue('image-url-input')).toEqual(value.imageUrl);
+      expect(getInputValue('alt-text-input')).toEqual(value.altText);
     });
 
     it('clear input values on hide', () => {
-      $('.te-image-url-input').val('imageUrlText');
-      $('.te-alt-text-input').val('altText');
+      setInputValue('image-url-input', 'imageUrlText');
+      setInputValue('alt-text-input', 'altText');
 
       popup.hide();
 
-      expect($('.te-image-url-input').val()).toEqual('');
-      expect($('.te-alt-text-input').val()).toEqual('');
+      expect(getInputValue('image-url-input')).toEqual('');
+      expect(getInputValue('alt-text-input')).toEqual('');
     });
 
     it('when tab has changed then reset inputs', () => {
-      $('.te-image-url-input').val('imageUrlText');
-      $('.te-alt-text-input').val('altText');
+      setInputValue('image-url-input', 'imageUrlText');
+      setInputValue('alt-text-input', 'altText');
 
-      $(popup.el)
-        .find('.te-tab button')
-        .eq(1)
-        .trigger('click');
+      popup.el.querySelectorAll('.te-tab button')[1].click();
 
-      expect($('.te-image-url-input').val()).toEqual('');
-      expect($('.te-alt-text-input').val()).toEqual('');
+      expect(getInputValue('image-url-input')).toEqual('');
+      expect(getInputValue('alt-text-input')).toEqual('');
     });
   });
 
@@ -123,7 +131,7 @@ describe('PopupAddImage', () => {
 
       em.listen('addImageBlobHook', hook);
 
-      $('.te-ok-button').trigger('click');
+      clickBtn('ok-button');
 
       expect(hook).toHaveBeenCalled();
     });
@@ -133,9 +141,9 @@ describe('PopupAddImage', () => {
         expect(from).toEqual('ui');
       });
 
-      $('.te-alt-text-input').val('image');
+      setInputValue('alt-text-input', 'image');
 
-      $('.te-ok-button').trigger('click');
+      clickBtn('ok-button');
     });
 
     xit('image url can be modified on addImageBlobHook callback', done => {
@@ -158,9 +166,9 @@ describe('PopupAddImage', () => {
         }, 0);
       });
 
-      $('.te-alt-text-input').val(value.altText);
+      setInputValue('alt-text-input', value.altText);
 
-      $('.te-ok-button').trigger('click');
+      clickBtn('ok-button');
     });
   });
 });
