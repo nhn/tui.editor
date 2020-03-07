@@ -5,15 +5,8 @@ import { html } from 'common-tags';
 import * as dummy from './dummyData';
 
 import 'codemirror/lib/codemirror.css';
-import 'highlight.js/styles/github.css';
-import '@toast-ui/editor/dist/tui-editor.min.css';
-import '@toast-ui/editor/dist/tui-editor-contents.min.css';
-
-import '@toast-ui/editor/dist/tui-editor-extScrollSync';
-import '@toast-ui/editor/dist/tui-editor-extColorSyntax';
-import '@toast-ui/editor/dist/tui-editor-extUML';
-import '@toast-ui/editor/dist/tui-editor-extChart';
-import '@toast-ui/editor/dist/tui-editor-extTable';
+import '@toast-ui/editor/dist/toastui-editor.min.css';
+import '@toast-ui/editor/dist/toastui-editor-contents.min.css';
 
 import Editor from '../src/Editor.vue';
 
@@ -27,22 +20,7 @@ stories.add('Demo', () => ({
   data() {
     return {
       content: dummy.content,
-      editorOptions: {
-        exts: [
-          {
-            name: 'chart',
-            minWidth: 100,
-            maxWidth: 600,
-            minHeight: 100,
-            maxHeight: 300
-          },
-          'scrollSync',
-          'colorSyntax',
-          'uml',
-          'mark',
-          'table'
-        ]
-      }
+      editorOptions: {}
     };
   }
 }));
@@ -90,22 +68,7 @@ stories.add('change props', () => ({
   data() {
     return {
       content: dummy.content,
-      editorOptions: {
-        exts: [
-          {
-            name: 'chart',
-            minWidth: 100,
-            maxWidth: 600,
-            minHeight: 100,
-            maxHeight: 300
-          },
-          'scrollSync',
-          'colorSyntax',
-          'uml',
-          'mark',
-          'table'
-        ]
-      },
+      editorOptions: {},
       mode: 'markdown',
       previewStyle: 'tab'
     };
@@ -156,22 +119,7 @@ stories.add('invoke method', () => ({
   data() {
     return {
       content: dummy.content,
-      editorOptions: {
-        exts: [
-          {
-            name: 'chart',
-            minWidth: 100,
-            maxWidth: 600,
-            minHeight: 100,
-            maxHeight: 300
-          },
-          'scrollSync',
-          'colorSyntax',
-          'uml',
-          'mark',
-          'table'
-        ]
-      },
+      editorOptions: {},
       mode: 'markdown',
       previewStyle: 'tab',
       html: ''

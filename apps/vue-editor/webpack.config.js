@@ -19,13 +19,13 @@ module.exports = {
       commonjs: '@toast-ui/editor',
       commonjs2: '@toast-ui/editor',
       amd: '@toast-ui/editor',
-      root: ['tui', 'Editor']
+      root: ['toastui', 'Editor']
     },
-    '@toast-ui/editor/dist/tui-editor-viewer': {
-      commonjs: '@toast-ui/editor/dist/tui-editor-viewer',
-      commonjs2: '@toast-ui/editor/dist/tui-editor-viewer',
-      amd: '@toast-ui/editor/dist/tui-editor-viewer',
-      root: ['tui', 'Editor']
+    '@toast-ui/editor/dist/toastui-editor-viewer': {
+      commonjs: '@toast-ui/editor/dist/toastui-editor-viewer',
+      commonjs2: '@toast-ui/editor/dist/toastui-editor-viewer',
+      amd: '@toast-ui/editor/dist/toastui-editor-viewer',
+      root: ['toastui', 'Editor']
     },
     jquery: {
       commonjs: 'jquery',
@@ -37,7 +37,7 @@ module.exports = {
       commonjs: 'tui-code-snippet',
       commonjs2: 'tui-code-snippet',
       amd: 'tui-code-snippet',
-      root: ['tui', 'util']
+      root: ['toastui', 'util']
     },
     'highlight.js': {
       commonjs: 'highlight.js',
