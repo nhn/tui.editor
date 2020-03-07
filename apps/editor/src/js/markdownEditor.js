@@ -316,62 +316,40 @@ class MarkdownEditor extends CodeMirrorExt {
     return `cm-${className}`;
   }
 
-  _markTextInTaskItem(node, className, padding) {
-    const [startPosistion, endPosition] = node.sourcepos;
-    const start = { line: startPosistion[0] - 1, ch: startPosistion[1] - 1 };
-    const end = { line: endPosition[0] - 1, ch: endPosition[1] };
-    const { line: startLine, ch: startCh } = start;
-
-    const metaLen = 3;
-    const metaStart = startCh - metaLen - 1;
-
-    this.cm.markText(
-      { line: startLine, ch: metaStart - padding },
-      { line: startLine, ch: metaStart },
-      { className }
-    );
-
-    this.cm.markText(
-      { line: startLine, ch: metaStart },
-      { line: startLine, ch: metaStart + metaLen },
-      { className: 'cm-meta' }
-    );
-
-    this.cm.markText(start, end, { className });
-  }
-
   _markTextInListItemChildren(node, className, padding) {
     while (node) {
-      if (node.type === 'paragraph' || node.type === 'codeBlock') {
-        const [startPosistion, endPosition] = node.sourcepos;
+      const { type, sourcepos } = node;
+
+      if (type === 'paragraph' || type === 'codeBlock') {
+        const [startPosistion, endPosition] = sourcepos;
         const start = { line: startPosistion[0] - 1, ch: startPosistion[1] - 1 };
         const end = { line: endPosition[0] - 1, ch: endPosition[1] };
-        const { line: startLine, ch: startCh } = start;
 
-        this.cm.markText({ line: startLine, ch: startCh - padding }, end, {
-          className
-        });
+        this.cm.markText(start, end, { className });
       }
       node = node.next;
     }
   }
 
-  _markTextInListItem(node, start, end) {
+  _markTextInListItem(node, start) {
     const className = this._getClassNameOfListItem(node);
-    const { markerOffset, padding, task } = node.listData;
+    const { padding, task } = node.listData;
+
+    this.cm.markText(
+      { line: start.line, ch: start.ch },
+      { line: start.line, ch: start.ch + padding },
+      { className }
+    );
 
     if (task) {
-      this._markTextInTaskItem(node.firstChild, className, padding);
-    } else {
-      const child = node.firstChild;
-
-      if (!child) {
-        this.cm.markText({ line: start.line, ch: markerOffset }, end, {
-          className
-        });
-      }
-      this._markTextInListItemChildren(child, className, padding);
+      this.cm.markText(
+        { line: start.line, ch: start.ch + padding },
+        { line: start.line, ch: start.ch + padding + 3 },
+        { className: 'cm-meta' }
+      );
     }
+
+    this._markTextInListItemChildren(node.firstChild, className);
   }
 
   /**
