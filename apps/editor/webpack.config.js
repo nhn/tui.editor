@@ -6,17 +6,13 @@ const path = require('path');
 const webpack = require('webpack');
 const pkg = require('./package.json');
 
-const CleanCSS = require('clean-css');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const ENTRY_EDITOR = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
-
-const ENTRY_EDITOR_CSS = './src/css/toastui-editor.css';
-const ENTRY_CONTENT_CSS = './src/css/toastui-editor-contents.css';
-const ENTRY_IMAGE_DIR = './src/image';
 
 const isDevelopAll = process.argv.indexOf('--all') >= 0;
 const isProduction = process.argv.indexOf('--mode=production') >= 0;
@@ -30,7 +26,6 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
       cache: false,
       output: {
         library: ['toastui', 'Editor'],
-        libraryTarget: 'umd',
         libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/dist',
@@ -57,10 +52,22 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
               envName: isProduction ? 'production' : 'development',
               rootMode: 'upward'
             }
+          },
+          {
+            test: /\.css$/,
+            use: [MiniCssExtractPlugin.loader, 'css-loader']
+          },
+          {
+            test: /\.png$/i,
+            use: 'url-loader'
           }
         ]
       },
       plugins: [
+        new MiniCssExtractPlugin({
+          moduleFilename: ({ name }) =>
+            `toastui-${name.replace('-all', '')}${minify ? '.min' : ''}.css`
+        }),
         new webpack.BannerPlugin({
           banner: [
             pkg.name,
@@ -99,7 +106,8 @@ function addMinifyPlugin(config) {
         parallel: true,
         sourceMap: false,
         extractComments: false
-      })
+      }),
+      new OptimizeCSSAssetsPlugin()
     ]
   };
 }
@@ -111,28 +119,6 @@ function addAnalyzerPlugin(config, type) {
       reportFilename: `../report/webpack/stats-${pkg.version}-${type}.html`
     })
   );
-}
-
-function addCopyingAssetsPlugin(config) {
-  config.plugins.push(
-    new CopyWebpackPlugin([
-      {
-        // style
-        from: ENTRY_EDITOR_CSS,
-        transform: content =>
-          minify ? new CleanCSS({ compatibility: '*' }).minify(content).styles : content,
-        to: `toastui-editor${minify ? '.min' : ''}.css`
-      },
-      {
-        from: ENTRY_CONTENT_CSS,
-        transform: content =>
-          minify ? new CleanCSS({ compatibility: '*' }).minify(content).styles : content,
-        to: `toastui-editor-contents${minify ? '.min' : ''}.css`
-      }
-    ])
-  );
-
-  config.plugins.push(new CopyWebpackPlugin([ENTRY_IMAGE_DIR])); // image
 }
 
 function setDevelopConfig(config) {
@@ -177,8 +163,6 @@ function setProductionConfigForAll(config) {
     addAnalyzerPlugin(config, 'all');
   }
 }
-
-addCopyingAssetsPlugin(defaultConfigs[0]);
 
 if (isProduction) {
   setProductionConfig(defaultConfigs[0]);

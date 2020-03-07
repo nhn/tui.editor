@@ -1,9 +1,4 @@
-@charset "UTF-8";
-/**
-* @fileoverview style for editor ui
-* @author NHN FE Development Lab <dl_javascript@nhn.com>
-*/
-
+@charset "utf-8";
 /* height */
 .auto-height,
 .auto-height .tui-editor-defaultUI {
@@ -767,7 +762,7 @@
 }
 
 .tui-toolbar-icons {
-  background: url('toastui-editor.png');
+  background: url('../img/toastui-editor.png');
   background-size: 218px 188px;
   display: inline-block;
 }
@@ -779,7 +774,7 @@
   only screen and (min-resolution: 192dpi),
   only screen and (min-resolution: 2dppx) {
   .tui-toolbar-icons {
-    background: url('toastui-editor-2x.png');
+    background: url('../img/toastui-editor-2x.png');
     background-size: 218px 188px;
     display: inline-block;
   }
