@@ -235,24 +235,6 @@ class Convertor {
 
     return html;
   }
-
-  /**
-   * get markdownit with code highlight
-   * @returns {markdownit} - markdownit instance
-   * @static
-   */
-  static getMarkdownitHighlightRenderer() {
-    // return markdownitHighlight;
-  }
-
-  /**
-   * get markdownit
-   * @returns {markdownit} - markdownit instance
-   * @static
-   */
-  static getMarkdownitRenderer() {
-    // return markdownit;
-  }
 }
 
 export default Convertor;
