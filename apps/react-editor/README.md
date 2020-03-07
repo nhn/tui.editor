@@ -9,32 +9,34 @@
 [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## 🚩 Table of Contents
-* [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
-* [Install](#-install)
-    * [Using npm](#using-npm)
-* [Usage](#-usage)
-    * [Import](#import)
-    * [Props](#props)
-    * [Instance Methods](#instance-methods)
-    * [Getting the root element](#getting-the-root-element)
-    * [Events](#events)
-* [Pull Request Steps](#-pull-request-steps)
-* [Documents](#-documents)
-* [Contributing](#-contributing)
-* [License](#-license)
+
+- [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
+- [Install](#-install)
+  - [Using npm](#using-npm)
+- [Usage](#-usage)
+  - [Import](#import)
+  - [Props](#props)
+  - [Instance Methods](#instance-methods)
+  - [Getting the root element](#getting-the-root-element)
+  - [Events](#events)
+- [Pull Request Steps](#-pull-request-steps)
+- [Documents](#-documents)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## Collect statistics on the use of open source
 
 React Wrapper of TOAST UI Editor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Editor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the `usageStatistics` props like the example below.
 
 ```js
-<Editor 
+<Editor
   ...
-  usageStatistics={false} 
+  usageStatistics={false}
 />
 ```
 
 Or, import `tui-code-snippet.js` (**v1.4.0** or **later**) and then immediately write the options as follows:
+
 ```js
 tui.usageStatistics = false;
 ```
@@ -51,23 +53,23 @@ npm install --save @toast-ui/react-editor
 
 ### Import
 
-You can use Toast UI Editor for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `tui-editor.css`, `tui-editor-contents.css` from `@toast-ui/editor` and `codemirror.css` from `codemirror.css` in the script. 
+You can use Toast UI Editor for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `toastui-editor.css`, `toastui-editor-contents.css` from `@toast-ui/editor` and `codemirror.css` from `codemirror.css` in the script.
 
-* Using ECMAScript module
+- Using ECMAScript module
 
 ```js
 import 'codemirror/lib/codemirror.css';
-import '@toast-ui/editor/dist/tui-editor.min.css';
-import '@toast-ui/editor/dist/tui-editor-contents.min.css';
-import { Editor } from '@toast-ui/react-editor'
+import '@toast-ui/editor/dist/toastui-editor.min.css';
+import '@toast-ui/editor/dist/toastui-editor-contents.min.css';
+import { Editor } from '@toast-ui/react-editor';
 ```
 
-* Using CommonJS module
+- Using CommonJS module
 
 ```js
 require('codemirror/lib/codemirror.css');
-require('@toast-ui/editor/dist/tui-editor.min.css');
-require('@toast-ui/editor/dist/tui-editor-contents.min.css');
+require('@toast-ui/editor/dist/toastui-editor.min.css');
+require('@toast-ui/editor/dist/toastui-editor-contents.min.css');
 const Editor = require('@toast-ui/react-editor');
 ```
 
@@ -83,20 +85,6 @@ const MyComponent = () => (
     height="600px"
     initialEditType="markdown"
     useCommandShortcut={true}
-    exts={[
-      {
-        name: 'chart',
-        minWidth: 100,
-        maxWidth: 600,
-        minHeight: 100,
-        maxHeight: 300
-      },
-      'scrollSync',
-      'colorSyntax',
-      'uml',
-      'mark',
-      'table'
-    ]}
   />
 );
 ```
@@ -137,10 +125,10 @@ An instance of the wrapper component also provides a handy method for getting th
 ```js
 class MyComponent extends React.Component {
   editorRef = React.createRef();
-  
+
   handleClickButton = () => {
     this.editorRef.current.getRootElement().classList.add('my-editor-root');
-  }
+  };
 
   render() {
     return (
@@ -160,18 +148,19 @@ class MyComponent extends React.Component {
 ```
 
 ### Events
+
 [All the events of TOAST UI Editor](https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#focus) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `focus` event you can use `onFocus` prop like the example below.
 
 ```js
 class MyComponent extends React.Component {
   handleFocus = () => {
     console.log('focus!!');
-  }
+  };
 
   render() {
     return (
-      <Editor 
-        data={data} 
+      <Editor
+        data={data}
         previewStyle="vertical"
         height="400px"
         initialEditType="markdown"
@@ -195,7 +184,7 @@ Fork `master` branch into your personal repository.
 Clone it to local computer. Install node modules.
 Before starting development, you should check to have any errors.
 
-``` sh
+```sh
 $ git clone https://github.com/{your-personal-repo}/[[repo name]].git
 $ cd [[repo name]]
 $ npm install
@@ -213,9 +202,11 @@ If it has no error, commit and then push it!
 For more information on PR's step, please see links of Contributing section.
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhn/toast-ui.react-editor/blob/master/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhn/toast-ui.react-editor/blob/master/CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhn/toast-ui.react-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+
+- [Code of Conduct](https://github.com/nhn/toast-ui.react-editor/blob/master/CODE_OF_CONDUCT.md)
+- [Contributing guideline](https://github.com/nhn/toast-ui.react-editor/blob/master/CONTRIBUTING.md)
+- [Commit convention](https://github.com/nhn/toast-ui.react-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
+
 This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhn)

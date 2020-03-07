@@ -3,6 +3,7 @@ import Editor from '@toast-ui/editor';
 
 export default class extends React.Component {
   rootEl = React.createRef();
+
   editorInst = null;
 
   getRootElement() {

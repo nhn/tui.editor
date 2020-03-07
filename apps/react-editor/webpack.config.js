@@ -12,9 +12,9 @@ const config = {
       commonjs: '@toast-ui/editor',
       commonjs2: '@toast-ui/editor'
     },
-    '@toast-ui/editor/dist/tui-editor-viewer': {
-      commonjs: '@toast-ui/editor/dist/tui-editor-viewer',
-      commonjs2: '@toast-ui/editor/dist/tui-editor-viewer'
+    '@toast-ui/editor/dist/toastui-editor-viewer': {
+      commonjs: '@toast-ui/editor/dist/toastui-editor-viewer',
+      commonjs2: '@toast-ui/editor/dist/toastui-editor-viewer'
     },
     react: {
       commonjs: 'react',
