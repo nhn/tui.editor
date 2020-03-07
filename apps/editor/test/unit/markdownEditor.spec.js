@@ -2,10 +2,11 @@
  * @fileoverview test markdown editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import { MarkdownDocument } from '@toast-ui/markdown-parser';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
-xdescribe('MarkdownEditor', () => {
+describe('MarkdownEditor', () => {
   let mde, em, container;
 
   beforeEach(() => {
@@ -13,7 +14,7 @@ xdescribe('MarkdownEditor', () => {
     document.body.appendChild(container);
 
     em = new EventManager();
-    mde = new MarkdownEditor(container, em);
+    mde = new MarkdownEditor(container, em, new MarkdownDocument());
   });
 
   afterEach(() => {
@@ -21,8 +22,11 @@ xdescribe('MarkdownEditor', () => {
   });
 
   it('when something change emit contentChangedFromMarkdown event', done => {
-    em.listen('contentChangedFromMarkdown', editor => {
-      expect(editor).toEqual(mde);
+    em.listen('contentChangedFromMarkdown', ({ nodes, removedNodeRange }) => {
+      const expectedMdNode = mde.getMdDocument().findFirstNodeAtLine(1);
+
+      expect(nodes[0]).toEqual(expectedMdNode);
+      expect(removedNodeRange).toBeNull();
       done();
     });
 
@@ -49,7 +53,7 @@ xdescribe('MarkdownEditor', () => {
     mde.getEditor().replaceSelection('comment');
   });
 
-  xit('when editor gain focus, emit focus event', done => {
+  it('when editor gain focus, emit focus event', done => {
     em.listen('focus', ev => {
       expect(ev.source).toEqual('markdown');
 
@@ -59,7 +63,7 @@ xdescribe('MarkdownEditor', () => {
     mde.focus();
   });
 
-  xit('when editor lost focus, emit blur event', done => {
+  it('when editor lost focus, emit blur event', done => {
     em.listen('blur', ev => {
       expect(ev.source).toEqual('markdown');
 
