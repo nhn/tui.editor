@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <title>Viewer</title>
     <!-- Editor's Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
+    />
     <!-- Editor -->
-    <link rel="stylesheet" href="http://localhost:8080/dist/tui-editor-contents.css" />
+    <link rel="stylesheet" href="http://localhost:8080/dist/toastui-editor-contents.css" />
   </head>
   <body>
     <div class="code-html">
@@ -16,7 +19,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <!-- Editor's Viewer -->
-    <script src="http://localhost:8080/dist/tui-editor-viewer.js"></script>
+    <script src="http://localhost:8080/dist/toastui-editor-viewer.js"></script>
     <!-- Plugin -->
     <script src="../dist/cdn/toastui-editor-plugin-code-syntax-highlight.js"></script>
     <script class="code-js">
@@ -45,7 +48,7 @@
         '```'
       ].join('\n');
 
-      var Viewer = tui.Editor;
+      var Viewer = toastui.Editor;
 
       var instance = new Viewer({
         el: document.querySelector('#viewer'),

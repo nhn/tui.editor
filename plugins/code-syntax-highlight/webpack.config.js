@@ -16,17 +16,23 @@ function getEntryConfig(isAll) {
   return './src/js/index.js';
 }
 
-function getOutputConfig(isCDN, isMinified, isAll) {
+function getOutputConfig(isProduction, isCDN, isAll, minify) {
   let filename = `toastui-${pkg.name.replace(/@toast-ui\//, '')}`;
 
-  if (isCDN) {
-    return {
-      library: ['tui', 'Editor', 'plugin', 'codeSyntaxHighlight'],
+  if (!isProduction || isCDN) {
+    const config = {
+      library: ['toastui', 'Editor', 'plugin', 'codeSyntaxHighlight'],
       libraryExport: 'default',
       libraryTarget: 'umd',
       path: path.resolve(__dirname, 'dist/cdn'),
-      filename: `${filename}${isAll ? '-all' : ''}${isMinified ? '.min' : ''}.js`
+      filename: `${filename}${isAll ? '-all' : ''}${minify ? '.min' : ''}.js`
     };
+
+    if (!isProduction) {
+      config.publicPath = 'dist/cdn';
+    }
+
+    return config;
   }
 
   return {
@@ -58,10 +64,10 @@ function getExternalsConfig(isProduction, isCDN, isAll) {
   return [];
 }
 
-function getOptimizationConfig(isProduction, isMinified) {
+function getOptimizationConfig(isProduction, minify) {
   let minimizer = [];
 
-  if (isProduction && isMinified) {
+  if (isProduction && minify) {
     minimizer.push(
       new TerserPlugin({
         cache: true,
@@ -77,14 +83,14 @@ function getOptimizationConfig(isProduction, isMinified) {
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
-  const isMinified = !!argv.minify;
+  const minify = !!argv.minify;
   const isCDN = !!argv.cdn;
   const isAll = !!argv.all;
 
   return {
     mode: isProduction ? 'production' : 'development',
     entry: getEntryConfig(isAll),
-    output: getOutputConfig(isCDN, isMinified, isAll),
+    output: getOutputConfig(isProduction, isCDN, isAll, minify),
     externals: getExternalsConfig(isProduction, isCDN, isAll),
     module: {
       rules: [
@@ -117,12 +123,13 @@ module.exports = (env, argv) => {
         ].join('\n')
       )
     ],
-    optimization: getOptimizationConfig(isProduction, isMinified),
+    optimization: getOptimizationConfig(isProduction, minify),
     devServer: {
-      historyApiFallback: false,
-      progress: true,
+      inline: true,
       host: '0.0.0.0',
+      port: 8081,
       disableHostCheck: true
-    }
+    },
+    devtool: 'inline-source-map'
   };
 };
