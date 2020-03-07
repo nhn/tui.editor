@@ -30,7 +30,6 @@
   "scripts": {
     "test": "karma start --no-single-run",
     "test:ne": "cross-env KARMA_SERVER=ne karma start",
-    "serve:editor": "npx lerna run --scope tui-editor serve",
     "serve": "webpack-dev-server",
     "build:cdn": "webpack --mode=production --cdn & webpack --mode=production --cdn --minify",
     "build": "webpack --mode=production && npm run build:cdn"

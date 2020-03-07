@@ -8,17 +8,23 @@ const pkg = require('./package.json');
 
 const TerserPlugin = require('terser-webpack-plugin');
 
-function getOutputConfig(isCDN, isMinified) {
+function getOutputConfig(isProduction, isCDN, minify) {
   const filename = 'toastui-jquery-[name]';
 
-  if (isCDN) {
-    return {
-      library: ['tui', 'Editor'],
+  if (!isProduction || isCDN) {
+    const config = {
+      library: ['toastui', 'Editor'],
       libraryExport: 'default',
       libraryTarget: 'umd',
       path: path.resolve(__dirname, 'dist/cdn'),
-      filename: `${filename}${isMinified ? '.min' : ''}.js`
+      filename: `${filename}${minify ? '.min' : ''}.js`
     };
+
+    if (!isProduction) {
+      config.publicPath = 'dist/cdn';
+    }
+
+    return config;
   }
 
   return {
@@ -43,17 +49,17 @@ function getExternalsConfig(isProduction, isCDN) {
         }
       ];
     } else {
-      return ['jquery', '@toast-ui/editor', '@toast-ui/editor/dist/tui-editor-viewer'];
+      return ['jquery', '@toast-ui/editor', '@toast-ui/editor/dist/toastui-editor-viewer'];
     }
   }
 
   return [];
 }
 
-function getOptimizationConfig(isProduction, isMinified) {
+function getOptimizationConfig(isProduction, minify) {
   let minimizer = [];
 
-  if (isProduction && isMinified) {
+  if (isProduction && minify) {
     minimizer.push(
       new TerserPlugin({
         cache: true,
@@ -69,7 +75,7 @@ function getOptimizationConfig(isProduction, isMinified) {
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
-  const isMinified = !!argv.minify;
+  const minify = !!argv.minify;
   const isCDN = !!argv.cdn;
 
   return {
@@ -78,7 +84,7 @@ module.exports = (env, argv) => {
       editor: './src/js/editor.js',
       'editor-viewer': './src/js/viewer.js'
     },
-    output: getOutputConfig(isCDN, isMinified),
+    output: getOutputConfig(isProduction, isCDN, minify),
     externals: getExternalsConfig(isProduction, isCDN),
     module: {
       rules: [
@@ -111,12 +117,13 @@ module.exports = (env, argv) => {
         ].join('\n')
       )
     ],
-    optimization: getOptimizationConfig(isProduction, isMinified),
+    optimization: getOptimizationConfig(isProduction, minify),
     devServer: {
-      historyApiFallback: false,
-      progress: true,
+      inline: true,
       host: '0.0.0.0',
+      port: 8080,
       disableHostCheck: true
-    }
+    },
+    devtool: 'inline-source-map'
   };
 };
