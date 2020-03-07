@@ -4,4 +4,6 @@
  */
 import Viewer from './viewer';
 
+import '../css/toastui-editor.css';
+
 export default Viewer;
