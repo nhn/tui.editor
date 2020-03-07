@@ -4,6 +4,10 @@
  */
 import ColorPicker from 'tui-color-picker';
 
+import css from 'tui-code-snippet/domUtil/css';
+import on from 'tui-code-snippet/domEvent/on';
+import off from 'tui-code-snippet/domEvent/off';
+
 const colorSyntaxRx = /\{color:(.+?)}(.*?)\{color}/g;
 const colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g;
 const colorHtmlCompleteRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g;
@@ -81,7 +85,7 @@ function initUI(editor, preset) {
     }
   });
   const colorSyntaxButtonIndex = toolbar.indexOfItem(name);
-  const { $el: $button } = toolbar.getItem(colorSyntaxButtonIndex);
+  const { el: button } = toolbar.getItem(colorSyntaxButtonIndex);
 
   const colorPickerContainer = document.createElement('div');
 
@@ -103,10 +107,10 @@ function initUI(editor, preset) {
 
   const popup = editor.getUI().createPopup({
     header: false,
-    title: false,
+    title: null,
     content: colorPickerContainer,
     className: 'tui-popup-color',
-    $target: editor.getUI().getToolbar().$el,
+    target: editor.getUI().getToolbar().el,
     css: {
       width: 'auto',
       position: 'absolute'
@@ -129,11 +133,11 @@ function initUI(editor, preset) {
       return;
     }
 
-    const { offsetTop, offsetLeft } = $button.get(0);
+    const { offsetTop, offsetLeft, offsetHeight } = button;
 
-    popup.$el.css({
-      top: offsetTop + $button.outerHeight(),
-      left: offsetLeft
+    css(popup.el, {
+      top: `${offsetTop + offsetHeight}px`,
+      left: `${offsetLeft}px`
     });
     colorPicker.slider.toggle(true);
 
@@ -147,7 +151,7 @@ function initUI(editor, preset) {
 
   editor.eventManager.listen('removeEditor', () => {
     colorPicker.off('selectColor');
-    popup.$el.find('.te-apply-button').off('click');
+    off(popup.el.querySelector('.te-apply-button'), 'click');
     popup.remove();
   });
 
@@ -160,7 +164,7 @@ function initUI(editor, preset) {
     }
   });
 
-  popup.$el.find('.te-apply-button').on('click', () => {
+  on(popup.el.querySelector('.te-apply-button'), 'click', () => {
     editor.exec('color', selectedColor);
   });
 }

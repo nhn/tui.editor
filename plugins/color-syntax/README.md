@@ -104,7 +104,7 @@ const instance = new Editor({
 #### Basic
 
 ```js
-const Editor = tui.Editor;
+const Editor = toastui.Editor;
 const {
   plugin: { colorSyntax }
 } = Editor;
