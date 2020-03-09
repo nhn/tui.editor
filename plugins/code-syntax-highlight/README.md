@@ -167,10 +167,8 @@ By including the **all** version of the plugin, all languages ​​of `highligh
 ```
 
 ```js
-const Editor = toastui.Editor;
-const {
-  plugin: { codeSyntaxHightlight }
-} = Editor;
+const { Editor } = toastui;
+const { codeSyntaxHightlight } = Editor.plugin;
 
 const instance = new Editor({
   // ...
@@ -200,10 +198,8 @@ The way to include the plugin and the language files of `highlight.js` is the sa
 ##### Use Option of Editor
 
 ```js
-const Editor = tosatui.Editor;
-const {
-  plugin: { codeSyntaxHightlight }
-} = Editor;
+const { Editor } = tosatui;
+const { codeSyntaxHightlight } = Editor.plugin;
 
 const instance = Editor.factory({
   // ...
@@ -223,9 +219,7 @@ Include the viewer file instead of the editor.
 
 ```js
 const Viewer = toastui.Editor;
-const {
-  plugin: { codeSyntaxHightlight }
-} = Viewer;
+const { codeSyntaxHightlight } = Viewer.plugin;
 
 const instance = new Viewer({
   // ...

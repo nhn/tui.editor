@@ -44,28 +44,34 @@ function getOutputConfig(isProduction, isCDN, isAll, minify) {
 }
 
 function getExternalsConfig(isProduction, isCDN, isAll) {
-  if (isProduction && !isAll) {
-    if (isCDN) {
-      return [
-        {
-          'highlight.js/lib/highlight': {
-            commonjs: 'highlight.js',
-            commonjs2: 'highlight.js',
-            amd: 'highlight.js',
-            root: ['hljs']
-          }
+  const cdnBundle = isProduction && isCDN && !isAll;
+  const npmBundle = isProduction && !isCDN;
+  const demoBundle = !isProduction && !isAll;
+
+  // Only the code-syntax-highlight provide a bundle file
+  // with an external dependency on cdn
+  if (cdnBundle || demoBundle) {
+    return [
+      {
+        'highlight.js/lib/highlight': {
+          commonjs: 'highlight.js',
+          commonjs2: 'highlight.js',
+          amd: 'highlight.js',
+          root: ['hljs']
         }
-      ];
-    } else {
-      return ['highlight.js/lib/highlight'];
-    }
+      }
+    ];
+  }
+
+  if (npmBundle) {
+    return ['highlight.js/lib/highlight'];
   }
 
   return [];
 }
 
 function getOptimizationConfig(isProduction, minify) {
-  let minimizer = [];
+  const minimizer = [];
 
   if (isProduction && minify) {
     minimizer.push(

@@ -33,14 +33,7 @@ describe('codeSyntaxHighlightPlugin', () => {
       previewStyle: 'vertical',
       height: '100px',
       initialEditType: 'markdown',
-      plugins: [
-        [
-          codeSyntaxHighlightPlugin,
-          {
-            hljs
-          }
-        ]
-      ]
+      plugins: [[codeSyntaxHighlightPlugin, { hljs }]]
     });
 
     const codeblockText = ['\n```javascript', '\nconst a = 100;', '\n```'].join('');
@@ -49,7 +42,7 @@ describe('codeSyntaxHighlightPlugin', () => {
 
     jasmine.clock().tick(800);
 
-    const conatiner = editor.preview.$el.get(0);
+    const conatiner = editor.preview.el;
 
     expect(conatiner.querySelectorAll('pre').length).toBe(1);
     expect(conatiner.querySelectorAll('pre code').length).toBe(1);
@@ -65,14 +58,7 @@ describe('codeSyntaxHighlightPlugin', () => {
       previewStyle: 'vertical',
       height: '100px',
       initialEditType: 'markdown',
-      plugins: [
-        [
-          codeSyntaxHighlightPlugin,
-          {
-            hljs
-          }
-        ]
-      ]
+      plugins: [[codeSyntaxHighlightPlugin, { hljs }]]
     });
 
     const codeblockText = ['\n```javascript', '\nconst a = 100;', '\n```'].join('');
@@ -81,7 +67,7 @@ describe('codeSyntaxHighlightPlugin', () => {
 
     jasmine.clock().tick(800);
 
-    const conatiner = editor.preview.$el.get(0);
+    const conatiner = editor.preview.el;
 
     expect(conatiner.querySelectorAll('pre').length).toBe(1);
     expect(conatiner.querySelectorAll('pre code').length).toBe(1);
@@ -96,25 +82,13 @@ describe('codeSyntaxHighlightPlugin', () => {
       previewStyle: 'vertical',
       height: '100px',
       initialEditType: 'wysiwyg',
-      plugins: [
-        [
-          codeSyntaxHighlightPlugin,
-          {
-            hljs
-          }
-        ]
-      ]
+      plugins: [[codeSyntaxHighlightPlugin, { hljs }]]
     });
 
     const codeblockText = ['\n```javascript', '\nconst a = 1;', '\n```'].join('');
 
     editor.setValue(codeblockText);
 
-    expect(
-      editor.wwEditor
-        .get$Body()
-        .get(0)
-        .querySelector('pre').innerHTML
-    ).toBe('const a = 1;');
+    expect(editor.wwEditor.getBody().querySelector('pre').innerHTML).toBe('const a = 1;');
   });
 });
