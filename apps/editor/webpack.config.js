@@ -11,7 +11,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-const ENTRY_MAIN = './src/js/index.js';
+const ENTRY_EDITOR = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
 
 const ENTRY_EDITOR_CSS = './src/css/toastui-editor.css';
@@ -20,7 +20,7 @@ const ENTRY_IMAGE_DIR = './src/image';
 
 const isDevelopAll = process.argv.indexOf('--all') >= 0;
 const isProduction = process.argv.indexOf('--mode=production') >= 0;
-const isMinified = process.argv.indexOf('--minify') >= 0;
+const minify = process.argv.indexOf('--minify') >= 0;
 
 const defaultConfigs = Array(isProduction ? 2 : 1)
   .fill(0)
@@ -34,7 +34,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
         libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/dist',
-        filename: `toastui-[name]${isMinified ? '.min' : ''}.js`
+        filename: `toastui-[name]${minify ? '.min' : ''}.js`
       },
       module: {
         rules: [
@@ -120,14 +120,14 @@ function addCopyingAssetsPlugin(config) {
         // style
         from: ENTRY_EDITOR_CSS,
         transform: content =>
-          isMinified ? new CleanCSS({ compatibility: '*' }).minify(content).styles : content,
-        to: `toastui-editor${isMinified ? '.min' : ''}.css`
+          minify ? new CleanCSS({ compatibility: '*' }).minify(content).styles : content,
+        to: `toastui-editor${minify ? '.min' : ''}.css`
       },
       {
         from: ENTRY_CONTENT_CSS,
         transform: content =>
-          isMinified ? new CleanCSS({ compatibility: '*' }).minify(content).styles : content,
-        to: `toastui-editor-contents${isMinified ? '.min' : ''}.css`
+          minify ? new CleanCSS({ compatibility: '*' }).minify(content).styles : content,
+        to: `toastui-editor-contents${minify ? '.min' : ''}.css`
       }
     ])
   );
@@ -137,11 +137,11 @@ function addCopyingAssetsPlugin(config) {
 
 function setDevelopConfig(config) {
   if (isDevelopAll) {
-    config.entry = { 'editor-all': ENTRY_MAIN };
+    config.entry = { 'editor-all': ENTRY_EDITOR };
     config.externals = [];
   } else {
     config.module.rules = config.module.rules.slice(1);
-    config.entry = { editor: ENTRY_MAIN };
+    config.entry = { editor: ENTRY_EDITOR };
   }
 
   config.devtool = 'inline-source-map';
@@ -155,11 +155,11 @@ function setDevelopConfig(config) {
 
 function setProductionConfig(config) {
   config.entry = {
-    editor: ENTRY_MAIN,
+    editor: ENTRY_EDITOR,
     'editor-viewer': ENTRY_VIEWER
   };
 
-  if (isMinified) {
+  if (minify) {
     addMinifyPlugin(config);
     addAnalyzerPlugin(config, 'normal');
   }
@@ -167,13 +167,12 @@ function setProductionConfig(config) {
 
 function setProductionConfigForAll(config) {
   config.entry = {
-    'editor-all': ENTRY_MAIN,
-    'editor-viewer-all': ENTRY_VIEWER
+    'editor-all': ENTRY_EDITOR
   };
 
   config.externals = [];
 
-  if (isMinified) {
+  if (minify) {
     addMinifyPlugin(config);
     addAnalyzerPlugin(config, 'all');
   }
