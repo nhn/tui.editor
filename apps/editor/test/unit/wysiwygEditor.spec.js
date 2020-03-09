@@ -7,7 +7,7 @@ import $ from 'jquery';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 import ListManager from '@/wwListManager';
-import { isMac } from '@/util';
+import { isMac } from '@/utils/common';
 
 describe('WysiwygEditor', () => {
   let container, em, wwe;
@@ -250,7 +250,7 @@ describe('WysiwygEditor', () => {
 
     it('fire stateChange event when state changed', () => {
       em.listen('stateChange', data => {
-        expect(data.bold).toBe(true);
+        expect(data.strong).toBe(true);
       });
 
       wwe.editor.modifyDocument(() => {

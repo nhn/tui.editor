@@ -321,7 +321,7 @@ class MarkdownEditor extends CodeMirrorExt {
     return `cm-${className}`;
   }
 
-  _markTextInListItemChildren(node, className, padding) {
+  _markTextInListItemChildren(node, className) {
     while (node) {
       const { type, sourcepos } = node;
 
