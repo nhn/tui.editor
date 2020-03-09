@@ -104,10 +104,8 @@ const instance = new Editor({
 #### Basic
 
 ```js
-const Editor = toastui.Editor;
-const {
-  plugin: { colorSyntax }
-} = Editor;
+const { Editor } = toastui;
+const { colorSyntax } = Editor.plugin;
 
 const instance = new Editor({
   // ...

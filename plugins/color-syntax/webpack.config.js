@@ -44,7 +44,7 @@ function getExternalsConfig(isProduction, isCDN) {
 }
 
 function getOptimizationConfig(isProduction, minify) {
-  let minimizer = [];
+  const minimizer = [];
 
   if (isProduction && minify) {
     minimizer.push(
