@@ -2,13 +2,11 @@
  * @fileoverview test ui popup code block editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import PopupCodeBlockEditor from '@/ui/popupCodeBlockEditor';
 import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
 
-xdescribe('PopupCodeBlockEditor', () => {
+describe('PopupCodeBlockEditor', () => {
   let eventManager, popup, pre;
 
   beforeEach(() => {
@@ -23,7 +21,7 @@ xdescribe('PopupCodeBlockEditor', () => {
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.innerHTML = '';
   });
 
   it('should not be opened without code block element', () => {
@@ -34,6 +32,6 @@ xdescribe('PopupCodeBlockEditor', () => {
 
   it('should open popup as modal', () => {
     eventManager.emit('openPopupCodeBlockEditor', pre);
-    expect($(popup.el).hasClass('tui-popup-modal-background')).toBe(true);
+    expect(popup.el).toHaveClass('tui-popup-modal-background');
   });
 });

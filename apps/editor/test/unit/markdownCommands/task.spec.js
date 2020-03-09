@@ -2,6 +2,7 @@
  * @fileoverview test markdown task
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import { MarkdownDocument } from '@toast-ui/markdown-parser';
 import task from '@/markdownCommands/task';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
@@ -14,7 +15,7 @@ describe('task', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    mde = new MarkdownEditor(container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager(), new MarkdownDocument());
     mde.componentManager.addManager(mdListManager);
 
     cm = mde.getEditor();

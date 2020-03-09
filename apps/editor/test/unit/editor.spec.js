@@ -2,8 +2,6 @@
  * @fileoverview test editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import * as util from '@/util';
 
 import Editor from '@/editor';
@@ -124,11 +122,13 @@ describe('Editor', () => {
     describe('height(pixel)', () => {
       it('set editor height', () => {
         editor.height('500px');
+
         expect(container.offsetHeight).toEqual(500);
       });
 
       it('set editor height as pixel if given argument is a number', () => {
         editor.height(500);
+
         expect(container.offsetHeight).toEqual(500);
       });
 
@@ -139,25 +139,30 @@ describe('Editor', () => {
 
     describe('height("auto") and minHeight()', () => {
       it('set editor height "auto" to fit contents height of wysiwyg', () => {
-        const height = $('.te-ww-container .te-editor').height();
+        const height = document.querySelector('.te-ww-container .te-editor').clientHeight;
 
         editor.height('auto');
         editor.changeMode('wysiwyg');
         editor.setMarkdown('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
-        expect($('.te-ww-container .tui-editor-contents').height()).not.toEqual(height);
+
+        expect(
+          document.querySelector('.te-ww-container .tui-editor-contents').clientHeight
+        ).not.toEqual(height);
       });
 
       it('set editor height "auto" to fit contents height of markdown', () => {
-        const height = $('.te-md-container .te-editor').height();
+        const height = document.querySelector('.te-md-container .te-editor').clientHeight;
 
         editor.height('auto');
         editor.setMarkdown('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
-        expect($('.te-md-container .te-editor').height()).not.toEqual(height);
+
+        expect(
+          document.querySelector('.te-md-container .tui-editor-contents').clientHeight
+        ).not.toEqual(height);
       });
 
       it('default minHeight should be applied to editor height', () => {
         editor.height('auto');
-
         const rect = container.getBoundingClientRect();
 
         expect(rect.bottom - rect.top).toBeGreaterThan(100);
@@ -166,7 +171,6 @@ describe('Editor', () => {
       it('should applied to editor height', () => {
         editor.height('auto');
         editor.minHeight('300px');
-
         const rect = container.getBoundingClientRect();
 
         expect(rect.bottom - rect.top).toEqual(300);
@@ -180,25 +184,28 @@ describe('Editor', () => {
       });
     });
 
-    xdescribe('changePreviewStyle()', () => {
-      it('Preview should refreash after preview style is changed', () => {
-        editor.changePreviewStyle('tab');
-        editor.setMarkdown('1\n2');
-        editor.changePreviewStyle('vertical');
-        expect(editor.preview.el.textContent).toEqual('1\n2\n');
-      });
-    });
+    // describe('changePreviewStyle()', () => {
+    //   it('Preview should refreash after preview style is changed', () => {
+    //     editor.changePreviewStyle('tab');
+    //     editor.setMarkdown('1\n2');
+    //     editor.changePreviewStyle('vertical');
+
+    //     expect(editor.preview.el.textContent).toEqual('1\n2\n');
+    //   });
+    // });
 
     describe('insertText()', () => {
       it('insert text on markdown mode', () => {
         editor.changeMode('markdown');
         editor.insertText('text');
+
         expect(editor.getValue()).toEqual('text');
       });
 
       it('insert text on wysiwyg mode', () => {
         editor.changeMode('wysiwyg');
         editor.insertText('text');
+
         expect(editor.getValue()).toEqual('text');
       });
     });
@@ -239,7 +246,7 @@ describe('Editor', () => {
     });
   });
 
-  xdescribe('xss', () => {
+  describe('xss', () => {
     beforeEach(() => {
       container = document.createElement('div');
       document.body.appendChild(container);
@@ -264,7 +271,7 @@ describe('Editor', () => {
 
       editor.setValue(xss);
 
-      const content = editor.preview.getHTML();
+      const content = editor.preview.getHTML().trim();
 
       expect(content).toBe('');
     });
@@ -281,7 +288,7 @@ describe('Editor', () => {
 
       editor.setValue(xss);
 
-      const content = editor.getHtml();
+      const content = editor.getHtml().trim();
 
       expect(content).toBe('<script data-tomark-pass="">alert("xss");</script>');
     });

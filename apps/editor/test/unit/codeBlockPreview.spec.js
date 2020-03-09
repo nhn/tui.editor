@@ -7,7 +7,7 @@ import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
 import CodeBlockEditor from '@/codeBlockEditor';
 
-xdescribe('Preview', () => {
+describe('Preview', () => {
   let eventManager, convertor, wrapper, editorWrapper, codeBlockEditor, preview;
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ xdescribe('Preview', () => {
 
     eventManager = new EventManager();
     convertor = new Convertor(eventManager);
-    codeBlockEditor = new CodeBlockEditor(editorWrapper);
+    codeBlockEditor = new CodeBlockEditor(editorWrapper, eventManager);
     preview = new CodeBlockPreview(wrapper, eventManager, convertor, codeBlockEditor);
 
     jasmine.clock().install();
@@ -59,7 +59,7 @@ xdescribe('Preview', () => {
 
     expect(preview.getHTML()).toEqual('');
 
-    jasmine.clock().tick(800);
+    jasmine.clock().tick(500);
 
     expect(preview.getHTML()).toEqual('<pre><code>changed!\n</code></pre>\n');
   });

@@ -2,20 +2,22 @@
  * @fileoverview test markdown
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import { MarkdownDocument } from '@toast-ui/markdown-parser';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
 import '@/codemirror/markdown';
 
 describe('codemirror addon markdown', () => {
-  let mde, em, container;
+  let mde, em, container, mdDocument;
 
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
     em = new EventManager();
-    mde = new MarkdownEditor(container, em);
+    mdDocument = new MarkdownDocument();
+    mde = new MarkdownEditor(container, em, mdDocument);
   });
 
   afterEach(() => {

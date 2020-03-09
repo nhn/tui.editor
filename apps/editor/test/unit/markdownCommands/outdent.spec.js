@@ -2,6 +2,7 @@
  * @fileoverview test markdown Outdent
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import { MarkdownDocument } from '@toast-ui/markdown-parser';
 import Outdent from '@/markdownCommands/outdent';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
@@ -13,7 +14,7 @@ describe('Outdent', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    mde = new MarkdownEditor(container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager(), new MarkdownDocument());
 
     cm = mde.getEditor();
 

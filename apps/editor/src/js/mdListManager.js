@@ -28,6 +28,7 @@ class MdListManager {
   constructor(mde) {
     this.cm = mde.getEditor();
     this.doc = this.cm.getDoc();
+    this.mdDocument = mde.getMdDocument();
 
     /**
      * Name property
@@ -205,9 +206,20 @@ class MdListManager {
   }
 
   _getListDepth(lineNumber) {
-    return this.doc.getLine(lineNumber)
-      ? this.doc.cm.getStateAfter(lineNumber).base.listStack.length
-      : 0;
+    let depth = 0;
+    const text = this.doc.getLine(lineNumber);
+
+    if (text) {
+      let mdNode = this.mdDocument.findFirstNodeAtLine(lineNumber + 1);
+
+      while (mdNode && mdNode.type !== 'document') {
+        if (mdNode.type === 'list') {
+          depth += 1;
+        }
+        mdNode = mdNode.parent;
+      }
+    }
+    return depth;
   }
 
   _findSameDepthList(listNumber, depth, isIncrease) {

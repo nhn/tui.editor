@@ -19,6 +19,7 @@ class CodeBlockPreview extends Preview {
     this._codeBlockEditor = codeBlockEditor;
 
     this._initEvent();
+    this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, this.delayCodeBlockTime, this);
   }
 
   _initEvent() {

@@ -2,11 +2,12 @@
  * @fileoverview test markdown preview
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import { MarkdownDocument } from '@toast-ui/markdown-parser';
 import MarkdownPreview from '@/mdPreview';
 import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
 
-xdescribe('Preview', () => {
+describe('Preview', () => {
   let eventManager, convertor, wrapper, preview;
 
   beforeEach(() => {
@@ -41,15 +42,12 @@ xdescribe('Preview', () => {
     expect(preview.getHTML()).toEqual('<p>content</p>\n');
   });
 
-  it('listen to contentChangedFromMarkdown and delayed refresh', () => {
-    eventManager.emit('contentChangedFromMarkdown', {
-      getValue: () => 'changed'
-    });
+  it('listen to contentChangedFromMarkdown and update', () => {
+    const doc = new MarkdownDocument();
+    const editResult = doc.editMarkdown([1, 7], [1, 7], 'changed');
 
-    expect(preview.getHTML()).toEqual('');
+    eventManager.emit('contentChangedFromMarkdown', editResult);
 
-    jasmine.clock().tick(800);
-
-    expect(preview.getHTML()).toEqual('<p>changed</p>\n');
+    expect(preview.getHTML()).toEqual(`<p data-nodeid="${editResult.nodes[0].id}">changed</p>\n`);
   });
 });

@@ -9,12 +9,10 @@ import Preview from './preview';
 import MarkdownRenderer from './markdownRenderer';
 import codeBlockManager from './codeBlockManager';
 import domUtils from './domUtils';
-import LazyRunner from './lazyRunner';
 import { findAdjacentElementToScrollTop } from './scroll/helper';
 import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
 
 const htmlRenderer = new MarkdownRenderer({ nodeId: true });
-const DELAY_CODEBLOCK_PLUGIN = 500;
 
 /**
  * Class Markdown Preview
@@ -28,15 +26,13 @@ const DELAY_CODEBLOCK_PLUGIN = 500;
 class MarkdownPreview extends Preview {
   constructor(el, eventManager, convertor, isViewer, delayTime) {
     super(el, eventManager, convertor, isViewer, delayTime);
-
-    this.lazyRunner = new LazyRunner();
+    this._initEvent();
     this.lazyRunner.registerLazyRunFunction(
       'invokeCodeBlock',
       this._invokeCodeBlockPlugins,
-      DELAY_CODEBLOCK_PLUGIN,
+      this.delayCodeBlockTime,
       this
     );
-    this._initEvent();
   }
 
   /**
@@ -72,7 +68,10 @@ class MarkdownPreview extends Preview {
   update(changed) {
     const { nodes, removedNodeRange } = changed;
     const contentEl = this._previewContent;
-    const newHtml = nodes.map(node => htmlRenderer.render(node)).join('');
+    const newHtml = this.eventManager.emitReduce(
+      'convertorAfterMarkdownToHtmlConverted',
+      nodes.map(node => htmlRenderer.render(node)).join('')
+    );
 
     if (!removedNodeRange) {
       contentEl.insertAdjacentHTML('afterbegin', newHtml);

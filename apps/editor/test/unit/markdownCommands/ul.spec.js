@@ -2,19 +2,20 @@
  * @fileoverview test markdown ul
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import { MarkdownDocument } from '@toast-ui/markdown-parser';
 import UL from '@/markdownCommands/ul';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 import mdListManager from '@/mdListManager';
 
-xdescribe('UL', () => {
+describe('UL', () => {
   let cm, doc, mde, container;
 
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    mde = new MarkdownEditor(container, new EventManager());
+    mde = new MarkdownEditor(container, new EventManager(), new MarkdownDocument());
 
     mde.componentManager.addManager(mdListManager);
 

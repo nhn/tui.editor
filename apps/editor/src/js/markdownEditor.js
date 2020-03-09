@@ -378,6 +378,10 @@ class MarkdownEditor extends CodeMirrorExt {
     this._latestState = null;
   }
 
+  getMdDocument() {
+    return this.mdDocument;
+  }
+
   /**
    * MarkdownEditor factory method
    * @param {HTMLElement} el - Container element for editor

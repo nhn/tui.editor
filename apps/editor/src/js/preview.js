@@ -4,6 +4,7 @@
  */
 import css from 'tui-code-snippet/domUtil/css';
 import domUtils from './domUtils';
+import LazyRunner from './lazyRunner';
 
 /**
  * Class Preview
@@ -20,8 +21,10 @@ class Preview {
     this.convertor = convertor;
     this.el = el;
     this.isViewer = !!isViewer;
+    this.delayCodeBlockTime = 500;
 
     this._initContentSection();
+    this.lazyRunner = new LazyRunner();
   }
 
   /**
