@@ -638,19 +638,6 @@ describe('WysiwygEditor', () => {
     });
   });
 
-  describe('_getLastListString ', () => {
-    it('should get last list string', () => {
-      expect(wwe._getLastLiString('UL>LI>UL>LI>OL>LI>DIV')).toEqual('LI>DIV');
-      expect(wwe._getLastLiString('UL>LI>UL>LI>OL>LI.te-task-list>DIV')).toEqual(
-        'LI.te-task-list>DIV'
-      );
-    });
-    it('should return empty string when Last LI not exists', () => {
-      expect(wwe._getLastLiString('DIV')).toEqual('');
-      expect(wwe._getLastLiString('BLOCKQUOTE>DIV')).toEqual('');
-    });
-  });
-
   it('should blocks squire default key handlers', () => {
     const sqe = wwe.getEditor();
     const meta = isMac ? 'meta' : 'ctrl';

@@ -1,26 +1,18 @@
-import { includes } from '../util';
+import { includes } from '../utils/common';
+import {
+  hasSameLineParent,
+  getMdEndLine,
+  getLastLeafNode,
+  isStyledTextNode,
+  hasSpecificTypeAncestor
+} from '../utils/markdown';
 
 const nestableTypes = ['list', 'blockQuote'];
-const htmlTypes = ['htmlBlock', 'htmlInline'];
 const nestableTagNames = ['UL', 'OL', 'BLOCKQUOTE'];
 const tableElementTagNames = ['TR', 'TH', 'TBODY', 'TD'];
 
-export function hasImageOrCodeBlockNode(mdNode) {
-  while (mdNode) {
-    if (includes(['image', 'codeBlock'], mdNode.type)) {
-      return true;
-    }
-    mdNode = mdNode.firstChild;
-  }
-  return false;
-}
-
 export function isNodeToBeCalculated(mdNode) {
   return !includes(nestableTypes, mdNode.type);
-}
-
-export function isHtmlNode(mdNode) {
-  return includes(htmlTypes, mdNode.type);
 }
 
 export function getAdditionalTopPos(scrollTop, offsetTop, currentNodeHeight, targetNodeHeight) {
@@ -32,12 +24,12 @@ export function getAdditionalTopPos(scrollTop, offsetTop, currentNodeHeight, tar
 export function getParentNodeObj(mdNode) {
   let node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
 
-  while (!node && mdNode) {
-    mdNode = mdNode.parent;
-    node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
-  }
-
-  while (includes(tableElementTagNames, mdNode.type) || hasSameLineParent(mdNode)) {
+  while (
+    (!node && mdNode) ||
+    includes(tableElementTagNames, mdNode.type) ||
+    hasSameLineParent(mdNode) ||
+    (isStyledTextNode(mdNode) && !hasSpecificTypeAncestor(mdNode, 'item'))
+  ) {
     mdNode = mdNode.parent;
     node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
   }
@@ -45,16 +37,8 @@ export function getParentNodeObj(mdNode) {
   return getNonNestableNodeObj(mdNode, node);
 }
 
-function hasSameLineParent(mdNode) {
-  return (
-    mdNode.parent &&
-    mdNode.parent.type !== 'document' &&
-    mdNode.parent.sourcepos[0][0] === mdNode.sourcepos[0][0]
-  );
-}
-
 function getNonNestableNodeObj(mdNode, node) {
-  while (includes(nestableTypes, mdNode.type)) {
+  while (includes(nestableTypes, mdNode.type) && mdNode.firstChild) {
     mdNode = mdNode.firstChild;
     node = node.firstElementChild;
   }
@@ -72,22 +56,6 @@ export function getCmRangeHeight(start, mdNode, cm) {
   return height <= 0 ? cmNodeHeight : height;
 }
 
-export function isEmptyLineNode(text, mdNode) {
-  return !text.trim() && !hasImageOrCodeBlockNode(mdNode);
-}
-
-export function getMdStartLine(mdNode) {
-  return mdNode.sourcepos[0][0];
-}
-
-export function getMdEndLine(mdNode) {
-  return mdNode.sourcepos[1][0];
-}
-
-export function isMultiLineNode(mdNode) {
-  return mdNode.type === 'codeBlock' || mdNode.type === 'paragraph';
-}
-
 function getEmptyLineHeight(start, end, cm) {
   let emptyLineHeight = 0;
 
@@ -99,13 +67,6 @@ function getEmptyLineHeight(start, end, cm) {
     }
   }
   return emptyLineHeight;
-}
-
-function getLastLeafNode(mdNode) {
-  while (mdNode.lastChild) {
-    mdNode = mdNode.lastChild;
-  }
-  return mdNode;
 }
 
 export function getTotalOffsetTop(el, root) {

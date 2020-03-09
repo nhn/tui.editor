@@ -6,7 +6,7 @@ import browser from 'tui-code-snippet/browser/browser';
 import matches from 'tui-code-snippet/domUtil/matches';
 
 import CommandManager from '../commandManager';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 /**
  * AddRow

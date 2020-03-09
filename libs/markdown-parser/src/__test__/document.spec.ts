@@ -360,10 +360,10 @@ it('return the node - findNodeById()', () => {
   });
 });
 
-it('remove all node in the map - destroy()', () => {
+it('remove all node in the map - removeAllNode()', () => {
   const doc = new MarkdownDocument('# Hello *World*\n\n- Item 1\n- Item **2**');
   const firstNodeId = doc.findFirstNodeAtLine(1)!.id;
 
-  doc.destroy();
+  doc.removeAllNode();
   expect(doc.findNodeById(firstNodeId)).toEqual(null);
 });

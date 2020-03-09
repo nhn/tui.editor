@@ -11,7 +11,7 @@ import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
-import { sendHostName } from './util';
+import { sendHostName } from './utils/common';
 
 import Button from './ui/button';
 import MarkdownEditor from './markdownEditor';
@@ -26,7 +26,7 @@ import Convertor from './convertor';
 import Viewer from './viewer';
 import i18n from './i18n';
 import DefaultUI from './ui/defaultUI';
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 import WwTableManager from './wwTableManager';
 import WwTableSelectionManager from './wwTableSelectionManager';
 import codeBlockManager from './codeBlockManager';

@@ -1,5 +1,5 @@
 import toMark from '@toast-ui/to-mark';
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 
 /**
  * Check if given node is valid delimiter run.

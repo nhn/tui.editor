@@ -4,13 +4,15 @@ import {
   getAdditionalTopPos,
   getParentNodeObj,
   getCmRangeHeight,
-  isEmptyLineNode,
+  getTotalOffsetTop
+} from './helper';
+import {
+  isHtmlNode,
   getMdStartLine,
   getMdEndLine,
   isMultiLineNode,
-  getTotalOffsetTop,
-  isHtmlNode
-} from './helper';
+  isEmptyLineNode
+} from '../utils/markdown';
 import { getOffsetHeight, setOffsetHeight } from './cache/offsetInfo';
 
 let blockedPreviewScrollEvent = false;
@@ -47,7 +49,7 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
       : cm.getCursor('from');
     const firstMdNode = mdDocument.findFirstNodeAtLine(startLine + 1);
 
-    if (isHtmlNode(firstMdNode)) {
+    if (!firstMdNode || isHtmlNode(firstMdNode)) {
       return;
     }
 
@@ -63,6 +65,7 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
       const { text, height } = cm.lineInfo(startLine).handle;
       const offsetHeight = getAndSaveOffsetHeight(node, mdNode.id);
       const offsetTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
+
       const cmNodeHeight = isMultiLineNode(mdNode)
         ? (getMdEndLine(mdNode) - mdNodeStartLine + 1) * height
         : getCmRangeHeight(startLine, mdNode, cm);

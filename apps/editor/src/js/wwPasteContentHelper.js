@@ -8,7 +8,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 import htmlSanitizer from './htmlSanitizer';
 
 /**

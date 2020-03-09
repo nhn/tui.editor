@@ -8,7 +8,7 @@ import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
 
 import BlockOverlay from './blockOverlay';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 const GADGET_WIDTH = 250;
 const GADGET_HEIGHT = 30;

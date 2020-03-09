@@ -3,12 +3,21 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import isBoolean from 'tui-code-snippet/type/isBoolean';
 
 import CodeMirrorExt from './codeMirrorExt';
 import KeyMapper from './keyMapper';
 import MdListManager from './mdListManager';
 import ComponentManager from './componentManager';
 import MdTextObject from './mdTextObject';
+import {
+  traverseParentNodes,
+  isStyledTextNode,
+  getMdStartLine,
+  getMdEndLine,
+  getMdStartCh,
+  getMdEndCh
+} from './utils/markdown';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -20,6 +29,21 @@ const tokenTypes = {
   blockQuote: 'quote',
   code: 'comment',
   codeBlock: 'comment'
+};
+const defaultState = {
+  strong: false,
+  emph: false,
+  strike: false,
+  thematicBreak: false,
+  blockQuote: false,
+  code: false,
+  codeBlock: false,
+  list: false,
+  taskList: false,
+  orderedList: false,
+  heading: false,
+  table: false,
+  source: 'markdown'
 };
 
 /**
@@ -150,26 +174,7 @@ class MarkdownEditor extends CodeMirrorExt {
       });
     });
 
-    // this.cm.on('cursorActivity', () => {
-    //   const token = this.cm.getTokenAt(this.cm.getCursor());
-    //   const { base } = token.state;
-    //   const state = {
-    //     bold: !!base.strong,
-    //     italic: !!base.em,
-    //     strike: !!base.strikethrough,
-    //     code: base.code > 0,
-    //     codeBlock: base.code === -1,
-    //     quote: !!base.quote,
-    //     list: !!base.list,
-    //     task: !!base.taskList,
-    //     source: 'markdown'
-    //   };
-
-    //   if (!this._latestState || this._isStateChanged(this._latestState, state)) {
-    //     this.eventManager.emit('stateChange', state);
-    //     this._latestState = state;
-    //   }
-    // });
+    this.cm.on('cursorActivity', () => this._changeToolbarItemState());
   }
 
   /**
@@ -369,6 +374,68 @@ class MarkdownEditor extends CodeMirrorExt {
     });
 
     return result;
+  }
+
+  _changeToolbarItemState() {
+    let listDepth = 1;
+    const state = { ...defaultState };
+    const { line, ch } = this.cm.getCursor();
+    const mdLine = line + 1;
+    const mdCh = this.cm.getLine(line).length === ch ? ch : ch + 1;
+    const setNodeTypeToState = mdNode => {
+      const type = this._getToolbarItemStateName(mdNode);
+
+      if (isBoolean(state[type])) {
+        if (/list|List/.test(type)) {
+          if (listDepth === 1) {
+            listDepth += 1;
+            state[type] = true;
+          }
+        } else {
+          state[type] = true;
+        }
+      }
+    };
+
+    let mdNode = this.mdDocument.findNodeAtPosition([mdLine, mdCh]);
+
+    if (!mdNode) {
+      this.eventManager.emit('stateChange', state);
+      this.resetState();
+      return;
+    }
+    mdNode = mdNode.type === 'text' ? mdNode.parent : mdNode;
+
+    setNodeTypeToState(mdNode);
+    traverseParentNodes(mdNode, setNodeTypeToState);
+
+    // if position is matched to start, end position of inline node, highlighting is ignored
+    if (
+      isStyledTextNode(mdNode) &&
+      ((mdCh === ch && getMdEndLine(mdNode) === mdLine) ||
+        (mdCh === getMdEndCh(mdNode) + 1 && mdLine === getMdEndLine(mdNode)) ||
+        (mdCh === getMdStartCh(mdNode) && mdLine === getMdStartLine(mdNode)))
+    ) {
+      state[mdNode.type] = false;
+    }
+
+    if (!this._latestState || this._isStateChanged(this._latestState, state)) {
+      this.eventManager.emit('stateChange', state);
+      this._latestState = state;
+    }
+  }
+
+  _getToolbarItemStateName({ type, listData }) {
+    if (type === 'list' || type === 'item') {
+      if (listData.task) {
+        return 'taskList';
+      }
+      return listData.type === 'ordered' ? 'orderedList' : 'list';
+    }
+    if (type.indexOf('table') !== -1) {
+      return 'table';
+    }
+    return type;
   }
 
   /**

@@ -7,7 +7,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import browser from 'tui-code-snippet/browser/browser';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**

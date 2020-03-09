@@ -3,12 +3,10 @@ import {
   isNodeToBeCalculated,
   getAdditionalTopPos,
   getCmRangeHeight,
-  getMdStartLine,
-  getMdEndLine,
-  isMultiLineNode,
   getTotalOffsetTop,
   getParentNodeObj
 } from './helper';
+import { getMdStartLine, getMdEndLine, isMultiLineNode } from '../utils/markdown';
 import { getOffsetHeight, setOffsetHeight, getOffsetTop, setOffsetTop } from './cache/offsetInfo';
 
 let blockedMarkdownScrollEvent = false;

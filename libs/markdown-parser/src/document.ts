@@ -235,7 +235,7 @@ export class MarkdownDocument {
     return findNodeById(id);
   }
 
-  public destroy() {
+  public removeAllNode() {
     removeAllNode();
   }
 }

@@ -6,7 +6,7 @@ import toArray from 'tui-code-snippet/collection/toArray';
 import inArray from 'tui-code-snippet/array/inArray';
 
 import CommandManager from '../commandManager';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 /**
  * RemoveCol

@@ -4,7 +4,7 @@
  */
 import toArray from 'tui-code-snippet/collection/toArray';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 import htmlSanitizer from './htmlSanitizer';
 
 /**

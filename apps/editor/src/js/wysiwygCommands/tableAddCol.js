@@ -7,7 +7,7 @@ import inArray from 'tui-code-snippet/array/inArray';
 import browser from 'tui-code-snippet/browser/browser';
 
 import CommandManager from '../commandManager';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 /**
  * AddCol

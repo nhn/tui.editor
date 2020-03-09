@@ -8,7 +8,7 @@ import off from 'tui-code-snippet/domEvent/off';
 import Preview from './preview';
 import MarkdownRenderer from './markdownRenderer';
 import codeBlockManager from './codeBlockManager';
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 import { findAdjacentElementToScrollTop } from './scroll/helper';
 import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
 

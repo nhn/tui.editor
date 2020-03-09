@@ -10,7 +10,7 @@ import UIController from './uicontroller';
 import Button from './button';
 import ToolbarItem from './toolbarItem';
 import ToolbarItemFactory from './toolbarItemFactory';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 /**
  * Class Toolbar

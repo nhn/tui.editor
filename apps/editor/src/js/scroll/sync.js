@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { syncPreviewScrollTopToMarkdown, isBlockedPreviewScrollEvent } from './editorScroll';
 import { syncMarkdownScrollTopToPreview, isBlockedMarkdownScrollEvent } from './previewScroll';
 import { createButton, isActive } from './ui/button';
@@ -17,8 +16,6 @@ export function register(editor) {
 
 function addPreviewRenderedEvent(editor, preview) {
   editor.eventManager.listen('previewRenderAfter', () => {
-    const { cm } = editor;
-
     // Immediately after the 'previewRenderAfter' event has occurred,
     // browser rendering is not yet complete.
     // So the size of elements can not be accurately measured.
@@ -33,7 +30,7 @@ function addPreviewRenderedEvent(editor, preview) {
 }
 
 function addScrollEvent(editor, preview) {
-  const { cm, eventManager } = editor;
+  const { eventManager } = editor;
 
   eventManager.listen('scroll', ({ source, data }) => {
     if (!isActive()) {

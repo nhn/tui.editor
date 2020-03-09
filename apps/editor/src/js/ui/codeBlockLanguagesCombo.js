@@ -8,7 +8,7 @@ import hasClass from 'tui-code-snippet/domUtil/hasClass';
 
 import i18n from '../i18n';
 import KeyMapper from '../keyMapper';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 /**
  * Class CodeBlockLanguagesCombo

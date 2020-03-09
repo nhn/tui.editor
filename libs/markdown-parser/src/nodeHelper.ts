@@ -189,8 +189,10 @@ export function findNodeAtPosition(parent: Node, pos: Position) {
       }
     } else if (comp === Compare.GT) {
       return prev;
-    } else {
+    } else if (node.next) {
       node = node.next;
+    } else {
+      return prev;
     }
   }
   return node;

@@ -7,7 +7,7 @@ import extend from 'tui-code-snippet/object/extend';
 import LayerPopup from './layerpopup';
 import Tab from './tab';
 import i18n from '../i18n';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 const CLASS_IMAGE_URL_INPUT = 'te-image-url-input';
 const CLASS_IMAGE_FILE_INPUT = 'te-image-file-input';

@@ -2,7 +2,7 @@
  * @fileoverview Implements wysiwyg heading manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 
 const FIND_HEADING_RX = /h[\d]/i;
 

@@ -8,7 +8,7 @@ import isTruthy from 'tui-code-snippet/type/isTruthy';
 import browser from 'tui-code-snippet/browser/browser';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 
 const isIE10 = browser.msie && browser.version === 10;
 const brString = isIE10 ? '' : '<br>';

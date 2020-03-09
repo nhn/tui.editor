@@ -7,7 +7,7 @@ import css from 'tui-code-snippet/domUtil/css';
 
 import LayerPopup from './layerpopup';
 import Toolbar from './toolbar';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 /**
  * Class PopupDropdownToolbar

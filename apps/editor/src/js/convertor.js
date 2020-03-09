@@ -7,7 +7,7 @@ import { Parser } from '@toast-ui/markdown-parser';
 
 import MarkdownRenderer from './markdownRenderer';
 import htmlSanitizer from './htmlSanitizer';
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 
 // This regular expression refere markdownIt.
 // https://github.com/markdown-it/markdown-it/blob/master/lib/common/html_re.js

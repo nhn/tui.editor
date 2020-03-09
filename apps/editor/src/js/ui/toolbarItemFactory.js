@@ -30,7 +30,8 @@ class ToolbarItemFactory {
           name: 'heading',
           className: 'tui-heading',
           event: 'openHeadingSelect',
-          tooltip: i18n.get('Headings')
+          tooltip: i18n.get('Headings'),
+          state: 'heading'
         });
         break;
       case 'bold':
@@ -39,7 +40,7 @@ class ToolbarItemFactory {
           className: 'tui-bold',
           command: 'Bold',
           tooltip: i18n.get('Bold'),
-          state: 'bold'
+          state: 'strong'
         });
         break;
       case 'italic':
@@ -48,7 +49,7 @@ class ToolbarItemFactory {
           className: 'tui-italic',
           command: 'Italic',
           tooltip: i18n.get('Italic'),
-          state: 'italic'
+          state: 'emph'
         });
         break;
       case 'strike':
@@ -65,7 +66,8 @@ class ToolbarItemFactory {
           name: 'hr',
           className: 'tui-hrline',
           command: 'HR',
-          tooltip: i18n.get('Line')
+          tooltip: i18n.get('Line'),
+          state: 'thematicBreak'
         });
         break;
       case 'quote':
@@ -74,7 +76,7 @@ class ToolbarItemFactory {
           className: 'tui-quote',
           command: 'Blockquote',
           tooltip: i18n.get('Blockquote'),
-          state: 'quote'
+          state: 'blockQuote'
         });
         break;
       case 'ul':
@@ -82,7 +84,8 @@ class ToolbarItemFactory {
           name: 'ul',
           className: 'tui-ul',
           command: 'UL',
-          tooltip: i18n.get('Unordered list')
+          tooltip: i18n.get('Unordered list'),
+          state: 'list'
         });
         break;
       case 'ol':
@@ -90,7 +93,8 @@ class ToolbarItemFactory {
           name: 'ol',
           className: 'tui-ol',
           command: 'OL',
-          tooltip: i18n.get('Ordered list')
+          tooltip: i18n.get('Ordered list'),
+          state: 'orderedList'
         });
         break;
       case 'task':
@@ -98,7 +102,8 @@ class ToolbarItemFactory {
           name: 'task',
           className: 'tui-task',
           command: 'Task',
-          tooltip: i18n.get('Task')
+          tooltip: i18n.get('Task'),
+          state: 'taskList'
         });
         break;
       case 'table':
@@ -106,7 +111,8 @@ class ToolbarItemFactory {
           name: 'table',
           className: 'tui-table',
           event: 'openPopupAddTable',
-          tooltip: i18n.get('Insert table')
+          tooltip: i18n.get('Insert table'),
+          state: 'table'
         });
         break;
       case 'image':

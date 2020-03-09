@@ -2,7 +2,7 @@
  * @fileoverview Implements wysiwyg hr manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 
 /**
  * Class WwHrManager

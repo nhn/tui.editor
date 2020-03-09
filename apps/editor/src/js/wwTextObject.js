@@ -4,7 +4,7 @@
  */
 import browser from 'tui-code-snippet/browser/browser';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 const isIE11 = browser.msie && browser.version === 11;
 const isWindowChrome = navigator.appVersion.indexOf('Win') !== -1 && browser.chrome;
 const isWindows10 = /Windows (NT )?10/g.test(navigator.appVersion);

@@ -5,7 +5,7 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 import isString from 'tui-code-snippet/type/isString';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 
 const HTML_ATTR_LIST_RX = new RegExp(
   '^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +

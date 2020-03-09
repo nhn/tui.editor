@@ -11,7 +11,7 @@ import MarkdownPreview from './mdPreview';
 import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import Convertor from './convertor';
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 import codeBlockManager from './codeBlockManager';
 import { invokePlugins } from './pluginHelper';
 

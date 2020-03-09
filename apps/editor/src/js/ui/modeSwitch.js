@@ -9,7 +9,7 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import UIController from './uicontroller';
 import i18n from '../i18n';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 const MARKDOWN = 'markdown';
 const WYSIWYG = 'wysiwyg';

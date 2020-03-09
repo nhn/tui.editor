@@ -10,7 +10,7 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
 
 import LayerPopup from './layerpopup';
-import domUtils from '../domUtils';
+import domUtils from '../utils/dom';
 
 const BUTTON_CLASS_PREFIX = 'te-popup-code-block-lang-';
 

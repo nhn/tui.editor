@@ -14,7 +14,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
 
-import domUtils from './domUtils';
+import domUtils from './utils/dom';
 import WwClipboardManager from './wwClipboardManager';
 import WwListManager from './wwListManager';
 import WwTaskManager from './wwTaskManager';
@@ -416,14 +416,17 @@ class WysiwygEditor {
     // Toolbar status active/inactive
     squire.addEventListener('pathChange', data => {
       const state = {
-        bold: /(>B|>STRONG|^B$|^STRONG$)/.test(data.path),
-        italic: /(>I|>EM|^I$|^EM$)/.test(data.path),
-        strike: /(^S>|>S$|>S>|^S$)/.test(data.path),
+        strong: /(>B|>STRONG|^B$|^STRONG$)/.test(data.path),
+        emph: /(>I|>EM|^I$|^EM$)/.test(data.path),
+        strike: /(^S>|>S$|>S>|^S$|DEL)/.test(data.path),
         code: /CODE/.test(data.path),
         codeBlock: /PRE/.test(data.path),
-        quote: /BLOCKQUOTE/.test(data.path),
-        list: /LI(?!.task-list-item)/.test(this._getLastLiString(data.path)),
-        task: /LI.task-list-item/.test(this._getLastLiString(data.path)),
+        blockQuote: /BLOCKQUOTE/.test(data.path),
+        table: /TABLE/.test(data.path),
+        heading: /H[1-6]/.test(data.path),
+        list: /UL>LI(?!.task-list-item)/.test(data.path),
+        orderedList: /OL>LI(?!.task-list-item)/.test(data.path),
+        taskList: /[UL|OL]>LI.task-list-item/.test(data.path),
         source: 'wysiwyg'
       };
 
@@ -454,25 +457,6 @@ class WysiwygEditor {
         root.classList.add(PLACEHOLDER_CSS_CLASSNAME);
       }
     });
-  }
-
-  /**
-   * Return last matched list item path string matched index to end
-   * @param {string} path Full path string of current selection
-   * @returns {string}
-   * @private
-   */
-  _getLastLiString(path) {
-    const foundedListItem = /LI[^UO]*$/.exec(path);
-    let result;
-
-    if (foundedListItem) {
-      [result] = foundedListItem;
-    } else {
-      result = '';
-    }
-
-    return result;
   }
 
   /**
