@@ -3,14 +3,8 @@ import { html } from 'common-tags';
 import * as dummy from './dummyData';
 
 import 'codemirror/lib/codemirror.css';
-import 'highlight.js/styles/github.css';
-import '@toast-ui/editor/dist/tui-editor.min.css';
-import '@toast-ui/editor/dist/tui-editor-contents.min.css';
-
-import '@toast-ui/editor/dist/tui-editor-extColorSyntax';
-import '@toast-ui/editor/dist/tui-editor-extUML';
-import '@toast-ui/editor/dist/tui-editor-extChart';
-import '@toast-ui/editor/dist/tui-editor-extTable';
+import '@toast-ui/editor/dist/toastui-editor.min.css';
+import '@toast-ui/editor/dist/toastui-editor-contents.min.css';
 
 import Viewer from '../src/Viewer.vue';
 
@@ -20,23 +14,10 @@ stories.add('demo', () => ({
   components: {
     Viewer
   },
-  template: `<Viewer :value="content" :exts="exts" />`,
+  template: `<Viewer :value="content" />`,
   data() {
     return {
-      content: dummy.content,
-      exts: [
-        {
-          name: 'chart',
-          minWidth: 100,
-          maxWidth: 600,
-          minHeight: 100,
-          maxHeight: 300
-        },
-        'colorSyntax',
-        'uml',
-        'mark',
-        'table'
-      ]
+      content: dummy.content
     };
   }
 }));
@@ -48,25 +29,12 @@ stories.add('change value prop', () => ({
   template: html`
     <div>
       <button @click="changeValue">changeValue</button>
-      <Viewer :value="content" :exts="exts" />
+      <Viewer :value="content" />
     </div>
   `,
   data() {
     return {
-      content: dummy.content,
-      exts: [
-        {
-          name: 'chart',
-          minWidth: 100,
-          maxWidth: 600,
-          minHeight: 100,
-          maxHeight: 300
-        },
-        'colorSyntax',
-        'uml',
-        'mark',
-        'table'
-      ]
+      content: dummy.content
     };
   },
   methods: {
@@ -83,25 +51,12 @@ stories.add('invoke method', () => ({
   template: html`
     <div>
       <button @click="setValue">setValue</button>
-      <Viewer ref="viewer" :value="content" :exts="exts" />
+      <Viewer ref="viewer" :value="content" />
     </div>
   `,
   data() {
     return {
-      content: dummy.content,
-      exts: [
-        {
-          name: 'chart',
-          minWidth: 100,
-          maxWidth: 600,
-          minHeight: 100,
-          maxHeight: 300
-        },
-        'colorSyntax',
-        'uml',
-        'mark',
-        'table'
-      ]
+      content: dummy.content
     };
   },
   methods: {

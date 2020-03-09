@@ -44,10 +44,10 @@ module.exports = (env, argv) => {
     externals: [
       {
         '../editor': {
-          commonjs: 'tui-editor',
-          commonjs2: 'tui-editor',
-          amd: 'tui-editor',
-          root: ['tui', 'Editor']
+          commonjs: 'toastui-editor',
+          commonjs2: 'toastui-editor',
+          amd: 'toastui-editor',
+          root: ['toastui', 'Editor']
         }
       }
     ],

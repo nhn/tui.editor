@@ -78,7 +78,7 @@ const instance = new Editor({
 #### With Viewer
 
 ```js
-import Viewer from '@toast-ui/editor/tui-editor-viewer';
+import Viewer from '@toast-ui/editor/dist/toustui-editor-viewer';
 import umlPlugin from '@toast-ui/editor-plugin-uml';
 
 const instance = new Viewer({
@@ -114,7 +114,7 @@ const instance = Editor.factory({
 #### Basic
 
 ```js
-const Editor = tui.Editor;
+const Editor = toastui.Editor;
 const {
   plugin: { uml }
 } = Editor;
@@ -128,7 +128,7 @@ const instance = new Editor({
 #### With Viewer
 
 ```js
-const Viewer = tui.Editor;
+const Viewer = toastui.Editor;
 const {
   plugin: { uml }
 } = Viewer;
@@ -142,7 +142,7 @@ const instance = new Viewer({
 or
 
 ```js
-const Editor = tui.Editor;
+const Editor = toastui.Editor;
 const {
   plugin: { uml }
 } = Editor;
@@ -159,9 +159,9 @@ The `uml` plugin can set options when used. Just add the plugin function and opt
 
 The following option is available in the `uml` plugin.
 
-| Name              | Type             | Default Value | Description                      |
-| ----------------- | ---------------- | ------------- | -------------------------------- |
-| `rendererURL`          | `string` | `'http://www.plantuml.com/plantuml/png/'`            | URL of plant uml renderer         |
+| Name          | Type     | Default Value                             | Description               |
+| ------------- | -------- | ----------------------------------------- | ------------------------- |
+| `rendererURL` | `string` | `'http://www.plantuml.com/plantuml/png/'` | URL of plant uml renderer |
 
 ```js
 // ...

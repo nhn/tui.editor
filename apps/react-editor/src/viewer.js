@@ -1,5 +1,5 @@
 import React from 'react';
-import Viewer from '@toast-ui/editor/dist/tui-editor-viewer';
+import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
 
 export default class ViewerComponent extends React.Component {
   rootEl = React.createRef();

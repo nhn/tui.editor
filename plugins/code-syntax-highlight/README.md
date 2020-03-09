@@ -152,12 +152,12 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
 
 #### Basic
 
-First, include the editor file. And include the plugin file as needed. 
+First, include the editor file. And include the plugin file as needed.
 If you want to include all language files provided by `highlight.js`, see the first title(`Import All Languages`). If you want to register and use only the languages ​​you need, see the second title(`Import Only Languages ​​You Need`).
 
 ##### Import All Languages
 
-By including the **all** version of the plugin, all languages ​​of ` highlight.js` are available in the code block.
+By including the **all** version of the plugin, all languages ​​of `highlight.js` are available in the code block.
 
 ```html
 <!-- Editor -->
@@ -167,7 +167,7 @@ By including the **all** version of the plugin, all languages ​​of ` highlig
 ```
 
 ```js
-const Editor = tui.Editor;
+const Editor = toastui.Editor;
 const {
   plugin: { codeSyntaxHightlight }
 } = Editor;
@@ -200,7 +200,7 @@ The way to include the plugin and the language files of `highlight.js` is the sa
 ##### Use Option of Editor
 
 ```js
-const Editor = tui.Editor;
+const Editor = tosatui.Editor;
 const {
   plugin: { codeSyntaxHightlight }
 } = Editor;
@@ -222,7 +222,7 @@ Include the viewer file instead of the editor.
 ```
 
 ```js
-const Viewer = tui.Editor;
+const Viewer = toastui.Editor;
 const {
   plugin: { codeSyntaxHightlight }
 } = Viewer;

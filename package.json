@@ -9,14 +9,16 @@
     "prettier": "^1.19.1"
   },
   "scripts": {
-    "build": "lerna run --scope @toast-ui/editor build",
+    "build:editor": "lerna run --scope @toast-ui/editor build",
+    "build:jquery": "lerna run --scope @toast-ui/jquery-editor build",
     "build:react": "lerna run --scope @toast-ui/react-editor build",
     "build:vue": "lerna run --scope @toast-ui/vue-editor build",
-    "build:jquery": "lerna run --scope @toast-ui/jquery-editor build",
-    "build:uml": "lerna run --scope @toast-ui/editor-plugin-uml build",
     "build:chart": "lerna run --scope @toast-ui/editor-plugin-chart build",
     "build:color-syntax": "lerna run --scope @toast-ui/editor-plugin-color-syntax build",
+    "build:code-syntax-highlight": "lerna run --scope @toast-ui/editor-plugin-code-syntax-highlight build",
     "build:table-merged-cell": "lerna run --scope @toast-ui/editor-plugin-table-merged-cell build",
+    "build:uml": "lerna run --scope @toast-ui/editor-plugin-uml build",
+    "build:md-parser": "lerna run --scope @toast-ui/markdown-parser build",
     "build:squire": "lerna run --scope @toast-ui/squire build",
     "build:to-mark": "lerna run --scope @toast-ui/to-mark build"
   }

@@ -78,7 +78,7 @@ const instance = new Editor({
 #### With Viewer
 
 ```js
-import Viewer from '@toast-ui/editor/dist/tui-editor-viewer';
+import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
 import tableMergedCellPlugin from '@toast-ui/editor-plugin-table-merged-cell';
 
 const instance = new Viewer({
@@ -114,7 +114,7 @@ const instance = Editor.factory({
 #### Basic
 
 ```js
-const Editor = tui.Editor;
+const Editor = toastui.Editor;
 const {
   plugin: { tableMergedCell }
 } = Editor;
@@ -128,7 +128,7 @@ const instance = new Editor({
 #### With Viewer
 
 ```js
-const Viewer = tui.Editor;
+const Viewer = toastui.Editor;
 const {
   plugin: { tableMergedCell }
 } = Viewer;
@@ -142,7 +142,7 @@ const instance = new Viewer({
 or
 
 ```js
-const Editor = tui.Editor;
+const Editor = toastui.Editor;
 const {
   plugin: { tableMergedCell }
 } = Editor;

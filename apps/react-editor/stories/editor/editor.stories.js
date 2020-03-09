@@ -1,14 +1,7 @@
 import React from 'react';
 import 'codemirror/lib/codemirror.css';
-import 'highlight.js/styles/github.css';
-import '@toast-ui/editor/dist/tui-editor.min.css';
-import '@toast-ui/editor/dist/tui-editor-contents.min.css';
-
-import '@toast-ui/editor/dist/tui-editor-extScrollSync';
-import '@toast-ui/editor/dist/tui-editor-extColorSyntax';
-import '@toast-ui/editor/dist/tui-editor-extUML';
-import '@toast-ui/editor/dist/tui-editor-extChart';
-import '@toast-ui/editor/dist/tui-editor-extTable';
+import '@toast-ui/editor/dist/toastui-editor.min.css';
+import '@toast-ui/editor/dist/toastui-editor-contents.min.css';
 
 import { storiesOf } from '@storybook/react';
 import { withKnobs } from '@storybook/addon-knobs';
@@ -27,20 +20,6 @@ stories.add('demo', () => {
       height="600px"
       initialEditType="markdown"
       useCommandShortcut={true}
-      exts={[
-        {
-          name: 'chart',
-          minWidth: 100,
-          maxWidth: 600,
-          minHeight: 100,
-          maxHeight: 300
-        },
-        'scrollSync',
-        'colorSyntax',
-        'uml',
-        'mark',
-        'table'
-      ]}
     />
   );
 });
@@ -133,20 +112,6 @@ stories.add('setValue programmatically', () => {
             height="400px"
             initialEditType="markdown"
             initialValue="before"
-            exts={[
-              {
-                name: 'chart',
-                minWidth: 100,
-                maxWidth: 600,
-                minHeight: 100,
-                maxHeight: 300
-              },
-              'scrollSync',
-              'colorSyntax',
-              'uml',
-              'mark',
-              'table'
-            ]}
             ref={this.ref}
           />
           <button onClick={this.handleClick}>change content programmatically</button>
@@ -207,20 +172,6 @@ stories.add('dynamically change react state', () => {
             initialEditType={this.state.editType}
             initialContent={this.state.content}
             onChange={this.handleChange}
-            exts={[
-              {
-                name: 'chart',
-                minWidth: 100,
-                maxWidth: 600,
-                minHeight: 100,
-                maxHeight: 300
-              },
-              'scrollSync',
-              'colorSyntax',
-              'uml',
-              'mark',
-              'table'
-            ]}
             ref={this.ref}
           />
           <button onClick={this.toggleEditType}>toggle edit type</button>

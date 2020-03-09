@@ -14,8 +14,8 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ENTRY_MAIN = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
 
-const ENTRY_EDITOR_CSS = './src/css/tui-editor.css';
-const ENTRY_CONTENT_CSS = './src/css/tui-editor-contents.css';
+const ENTRY_EDITOR_CSS = './src/css/toastui-editor.css';
+const ENTRY_CONTENT_CSS = './src/css/toastui-editor-contents.css';
 const ENTRY_IMAGE_DIR = './src/image';
 
 const isDevelopAll = process.argv.indexOf('--all') >= 0;
@@ -29,12 +29,12 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
       mode: isProduction ? 'production' : 'development',
       cache: false,
       output: {
-        library: ['tui', 'Editor'],
+        library: ['toastui', 'Editor'],
         libraryTarget: 'umd',
         libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/dist',
-        filename: `tui-[name]${isMinified ? '.min' : ''}.js`
+        filename: `toastui-[name]${isMinified ? '.min' : ''}.js`
       },
       module: {
         rules: [
@@ -74,12 +74,6 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
       ],
       externals: [
         {
-          'tui-code-snippet': {
-            commonjs: 'tui-code-snippet',
-            commonjs2: 'tui-code-snippet',
-            amd: 'tui-code-snippet',
-            root: ['tui', 'util']
-          },
           codemirror: {
             commonjs: 'codemirror',
             commonjs2: 'codemirror',
@@ -127,13 +121,13 @@ function addCopyingAssetsPlugin(config) {
         from: ENTRY_EDITOR_CSS,
         transform: content =>
           isMinified ? new CleanCSS({ compatibility: '*' }).minify(content).styles : content,
-        to: `tui-editor${isMinified ? '.min' : ''}.css`
+        to: `toastui-editor${isMinified ? '.min' : ''}.css`
       },
       {
         from: ENTRY_CONTENT_CSS,
         transform: content =>
           isMinified ? new CleanCSS({ compatibility: '*' }).minify(content).styles : content,
-        to: `tui-editor-contents${isMinified ? '.min' : ''}.css`
+        to: `toastui-editor-contents${isMinified ? '.min' : ''}.css`
       }
     ])
   );

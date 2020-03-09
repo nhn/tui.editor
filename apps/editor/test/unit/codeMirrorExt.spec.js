@@ -11,7 +11,7 @@ describe('CodeMirrorExt', () => {
 
   beforeEach(() => {
     jasmine.getStyleFixtures().fixturesPath = '/base';
-    loadStyleFixtures('src/css/tui-editor.css');
+    loadStyleFixtures('src/css/toastui-editor.css');
     loadStyleFixtures('node_modules/codemirror/lib/codemirror.css');
 
     container = document.createElement('div');

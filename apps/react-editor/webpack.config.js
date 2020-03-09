@@ -12,29 +12,13 @@ const config = {
       commonjs: '@toast-ui/editor',
       commonjs2: '@toast-ui/editor'
     },
-    '@toast-ui/editor/dist/tui-editor-viewer': {
-      commonjs: '@toast-ui/editor/dist/tui-editor-viewer',
-      commonjs2: '@toast-ui/editor/dist/tui-editor-viewer'
+    '@toast-ui/editor/dist/toastui-editor-viewer': {
+      commonjs: '@toast-ui/editor/dist/toastui-editor-viewer',
+      commonjs2: '@toast-ui/editor/dist/toastui-editor-viewer'
     },
     react: {
       commonjs: 'react',
       commonjs2: 'react'
-    },
-    jquery: {
-      commonjs: 'jquery',
-      commonjs2: 'jquery'
-    },
-    'highlight.js': {
-      commonjs: 'highlight.js',
-      commonjs2: 'highlight.js'
-    },
-    'markdown-it': {
-      commonjs: 'markdown-it',
-      commonjs2: 'markdown-it'
-    },
-    'to-mark': {
-      commonjs: 'to-mark',
-      commonjs2: 'to-mark'
     }
   },
   module: {

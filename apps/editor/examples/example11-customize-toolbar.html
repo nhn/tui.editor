@@ -1,17 +1,28 @@
 <!DOCTYPE html>
 <html>
   <head lang="en">
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>11. Customize Toolbar</title>
-    <link rel="stylesheet" href="./css/tuidoc-example-style.css">
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
     <!-- Editor's Dependencies -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
+    />
     <!-- Editor -->
-    <link rel="stylesheet" href="../dist/tui-editor.css">
-    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+    <link rel="stylesheet" href="../dist/toastui-editor.css" />
+    <link rel="stylesheet" href="../dist/toastui-editor-contents.css" />
     <!-- Using Service (Import "Font Awesome 5") -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"
+      integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
+      crossorigin="anonymous"
+    />
     <style type="text/css">
       .custom-button {
         float: left;
@@ -37,11 +48,11 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="../dist/tui-editor-Editor-full.js"></script>
+    <script src="../dist/toastui-editor-all.js"></script>
     <script class="code-js">
       var content = 'FIRST and LAST button are custom';
 
-      var editor = new tui.Editor({
+      var editor = new toastui.Editor({
         el: document.querySelector('#editSection'),
         previewStyle: 'vertical',
         height: '400px',
@@ -92,13 +103,16 @@
         // Do some other thing...
       });
 
-      toolbar.addButton({
-        name: 'customize',
-        className: 'fab fa-accessible-icon',
-        event: 'Event1',
-        tooltip: 'Apple!!!',
-        $el: $('<div class="custom-button"><i class="fab fa-apple"></i></div>')
-      }, 1);
+      toolbar.addButton(
+        {
+          name: 'customize',
+          className: 'fab fa-accessible-icon',
+          event: 'Event1',
+          tooltip: 'Apple!!!',
+          $el: $('<div class="custom-button"><i class="fab fa-apple"></i></div>')
+        },
+        1
+      );
     </script>
   </body>
 </html>
