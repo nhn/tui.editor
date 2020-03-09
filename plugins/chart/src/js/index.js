@@ -7,30 +7,30 @@
 /**
  * @example
  * ```chart
- * \tcat1\tcat2           => tsv, csv format chart data
+ * \tcat1\tcat2                => tsv, csv format chart data
  * jan\t21\t23
  * feb\t351\t45
- *                          => space required as a separator
- * type: area               => tui.chart.areaChart()
- * url: http://url.to/csv   => fetch data from the url
- * width: 700               => chart.width
- * height: 300              => chart.height
- * title: Monthly Revenue   => chart.title
- * format: 1000             => chart.format
- * x.title: Amount          => xAxis.title
- * x.min: 0                 => xAxis.min
- * x.max 9000               => xAxis.max
- * x.suffix: $              => xAxis.suffix
- * y.title: Month           => yAxis.title
+ * // url: http://url.to/csv   => fetch data from the url when not using plain data
+ *                             => space required as a separator
+ * type: area                  => tui.chart.areaChart()
+ * width: 700                  => chart.width
+ * height: 300                 => chart.height
+ * title: Monthly Revenue      => chart.title
+ * format: 1000                => chart.format
+ * x.title: Amount             => xAxis.title
+ * x.min: 0                    => xAxis.min
+ * x.max 9000                  => xAxis.max
+ * x.suffix: $                 => xAxis.suffix
+ * y.title: Month              => yAxis.title
  * ```
  */
-import $ from 'jquery';
 import chart from 'tui-chart/dist/tui-chart-polyfill';
 
 import isString from 'tui-code-snippet/type/isString';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import inArray from 'tui-code-snippet/array/inArray';
 import extend from 'tui-code-snippet/object/extend';
+import ajax from 'tui-code-snippet/ajax/index.js';
 
 import csv from './csv';
 
@@ -97,16 +97,13 @@ export function parseCode2DataAndOptions(code, callback) {
   if (isString(url)) {
     // url option provided
     // fetch data from url
-    const success = dataCode => {
-      dataAndOptions = _parseCode2DataAndOptions(dataCode, firstCode);
+    const success = ({ data }) => {
+      dataAndOptions = _parseCode2DataAndOptions(data, firstCode);
       callback(dataAndOptions);
     };
     const fail = () => callback(null);
 
-    // @TODO change to ajax module of tui-code-snippet
-    $.get(url)
-      .done(success)
-      .fail(fail);
+    ajax.get(url, { success, error: fail });
   } else {
     // else first block is `data`
     dataAndOptions = _parseCode2DataAndOptions(firstCode, secondCode);
@@ -261,16 +258,14 @@ export function parseDSV2ChartData(code, delimiter) {
  * @ignore
  */
 export function parseURL2ChartData(url, callback) {
-  const success = code => {
-    const chartData = parseDSV2ChartData(code);
+  const success = ({ data }) => {
+    const chartData = parseDSV2ChartData(data);
 
     callback(chartData);
   };
   const fail = () => callback(null);
 
-  $.get(url)
-    .done(success)
-    .fail(fail);
+  ajax.get(url, { success, error: fail });
 }
 
 function getChartKeys(keyString, reservedKeys) {
