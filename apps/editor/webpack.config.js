@@ -26,6 +26,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
       cache: false,
       output: {
         library: ['toastui', 'Editor'],
+        libraryTarget: 'umd',
         libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/dist',
