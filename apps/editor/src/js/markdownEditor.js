@@ -390,7 +390,7 @@ class MarkdownEditor extends CodeMirrorExt {
       }
     };
 
-    let mdNode = this.mdDocument.findNodeAtCursorPosition([mdLine, mdCh]);
+    let mdNode = this.mdDocument.findNodeAtPosition([mdLine, mdCh]);
 
     if (!mdNode) {
       this.eventManager.emit('stateChange', state);
