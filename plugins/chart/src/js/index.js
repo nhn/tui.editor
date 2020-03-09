@@ -30,7 +30,7 @@ import isString from 'tui-code-snippet/type/isString';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import inArray from 'tui-code-snippet/array/inArray';
 import extend from 'tui-code-snippet/object/extend';
-import ajax from 'tui-code-snippet/ajax/index';
+import ajax from 'tui-code-snippet/ajax/index.js';
 
 import csv from './csv';
 
@@ -103,9 +103,7 @@ export function parseCode2DataAndOptions(code, callback) {
     };
     const fail = () => callback(null);
 
-    ajax.defaults.success = success;
-    ajax.defaults.error = fail;
-    ajax.get(url);
+    ajax.get(url, { success, error: fail });
   } else {
     // else first block is `data`
     dataAndOptions = _parseCode2DataAndOptions(firstCode, secondCode);
@@ -267,9 +265,7 @@ export function parseURL2ChartData(url, callback) {
   };
   const fail = () => callback(null);
 
-  ajax.defaults.success = success;
-  ajax.defaults.error = fail;
-  ajax.get(url);
+  ajax.get(url, { success, error: fail });
 }
 
 function getChartKeys(keyString, reservedKeys) {
