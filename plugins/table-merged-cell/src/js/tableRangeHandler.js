@@ -155,16 +155,16 @@ function _expandMergedRange(tableData, tableRange) {
 /**
  * Find table range for selection.
  * @param {Array.<Array.<object>>} tableData - table data
- * @param {jQuery} $start - start jQuery element
- * @param {jQuery} $end - end jQuery element
+ * @param {HTMLElement} start - start element
+ * @param {HTMLElement} end - end element
  * @returns {{
  *   start: {rowIndex: number, colIndex: number},
  *   end: {rowIndex: number, colIndex: number}
  * }}
  * @ignore
  */
-function findSelectionRange(tableData, $start, $end) {
-  const unmergedRange = _findUnmergedRange(tableData, $start.get(0), $end.get(0));
+function findSelectionRange(tableData, start, end) {
+  const unmergedRange = _findUnmergedRange(tableData, start, end);
 
   return _expandMergedRange(tableData, unmergedRange);
 }
@@ -173,14 +173,14 @@ function findSelectionRange(tableData, $start, $end) {
  * Get table selection range.
  * @param {Array.<Array.<object>>} tableData - table data
  * @param {HTMLElement} selectedCells - selected cells elements
- * @param {jQuery} $startContainer - start container jQuery element of text range
+ * @param {HTMLElement} startContainer - start container element of text range
  * @returns {{
  *   start: {rowIndex: number, colIndex: number},
  *   end: {rowIndex: number, colIndex: number}
  *}}
  * @ignore
  */
-function getTableSelectionRange(tableData, selectedCells, $startContainer) {
+function getTableSelectionRange(tableData, selectedCells, startContainer) {
   const cellIndexData = tableDataHandler.createCellIndexData(tableData);
   const tableRange = {};
 
@@ -201,7 +201,7 @@ function getTableSelectionRange(tableData, selectedCells, $startContainer) {
     tableRange.start = startRange;
     tableRange.end = endRange;
   } else {
-    const cellIndex = tableDataHandler.findCellIndex(cellIndexData, $startContainer.get(0));
+    const cellIndex = tableDataHandler.findCellIndex(cellIndexData, startContainer);
 
     tableRange.start = cellIndex;
     tableRange.end = extend({}, cellIndex);

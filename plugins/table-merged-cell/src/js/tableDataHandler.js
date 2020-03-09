@@ -2,8 +2,7 @@
  * @fileoverview Implements tableDataHandler
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
+import toArray from 'tui-code-snippet/collection/toArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import extend from 'tui-code-snippet/object/extend';
@@ -27,9 +26,8 @@ import closest from 'tui-code-snippet/domUtil/closest';
  */
 /* eslint-disable complexity */
 function _parseCell(cell, rowIndex, colIndex) {
-  const $cell = $(cell);
-  const colspan = $cell.attr('colspan');
-  const rowspan = $cell.attr('rowspan');
+  const colspan = cell.getAttribute('colspan');
+  const rowspan = cell.getAttribute('rowspan');
   const { nodeName } = cell;
 
   if (nodeName !== 'TH' && nodeName !== 'TD') {
@@ -40,7 +38,7 @@ function _parseCell(cell, rowIndex, colIndex) {
     nodeName: cell.nodeName,
     colspan: colspan ? parseInt(colspan, 10) : 1,
     rowspan: rowspan ? parseInt(rowspan, 10) : 1,
-    content: $cell.html(),
+    content: cell.innerHTML,
     elementIndex: {
       rowIndex,
       colIndex
@@ -100,41 +98,40 @@ function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
 }
 
 /**
- * Create table data from jQuery table Element.
- * @param {jQuery} $table - jQuery table element
+ * Create table data from table Element.
+ * @param {HTMLElement} table - table element
  * @returns {Array.<Array.<object>>}
  * @ignore
  */
-export function createTableData($table) {
+export function createTableData(table) {
   const tableData = [];
+  const trs = toArray(table.querySelectorAll('tr'));
 
-  $table.find('tr').each((rowIndex, tr) => {
+  trs.forEach((tr, rowIndex) => {
     let stackedColCount = 0;
 
     tableData[rowIndex] = tableData[rowIndex] || [];
 
-    $(tr)
-      .children()
-      .each((colIndex, cell) => {
-        const cellData = _parseCell(cell, rowIndex, colIndex);
+    toArray(tr.children).forEach((cell, colIndex) => {
+      const cellData = _parseCell(cell, rowIndex, colIndex);
 
-        if (!cellData) {
-          return;
-        }
-        let dataColIndex = colIndex + stackedColCount;
+      if (!cellData) {
+        return;
+      }
+      let dataColIndex = colIndex + stackedColCount;
 
-        while (tableData[rowIndex][dataColIndex]) {
-          dataColIndex += 1;
-          stackedColCount += 1;
-        }
+      while (tableData[rowIndex][dataColIndex]) {
+        dataColIndex += 1;
+        stackedColCount += 1;
+      }
 
-        tableData[rowIndex][dataColIndex] = cellData;
-        _addMergedCell(tableData, cellData, rowIndex, dataColIndex);
-      });
+      tableData[rowIndex][dataColIndex] = cellData;
+      _addMergedCell(tableData, cellData, rowIndex, dataColIndex);
+    });
   });
 
-  if ($table[0].className) {
-    tableData.className = $table[0].className;
+  if (table.className) {
+    tableData.className = table.className;
   }
 
   return tableData;
