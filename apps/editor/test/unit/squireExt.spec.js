@@ -5,7 +5,7 @@
 import $ from 'jquery';
 
 import SquireExt from '@/squireExt';
-import { isMac } from '@/util';
+import { isMac } from '@/utils/common';
 
 describe('SquireExt', () => {
   let sqe;

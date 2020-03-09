@@ -29,11 +29,13 @@ describe('UIController', () => {
     });
 
     it('should bind event handler on element', () => {
+      document.body.appendChild(uic.el);
+
       const spy = jasmine.createSpy();
 
       uic.on('click', spy);
 
-      $(uic.el).trigger('click');
+      uic.el.click();
 
       expect(spy).toHaveBeenCalled();
     });

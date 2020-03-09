@@ -2,7 +2,7 @@
  * @fileoverview test editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import * as util from '@/util';
+import * as util from '@/utils/common';
 
 import Editor from '@/editor';
 import Convertor from '@/convertor';
@@ -24,10 +24,6 @@ describe('Editor', () => {
 
     it('codeBlockManager should be CodeBlockManager instance', () => {
       expect(Editor.codeBlockManager instanceof CodeBlockManager).toBe(true);
-    });
-
-    it('Button should be Button class', () => {
-      expect(Editor.Button).toBe(Button);
     });
 
     it('WwCodeBlockManager should be WwCodeBlockManager class', () => {

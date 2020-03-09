@@ -2,7 +2,6 @@
  * @fileoverview test viewer
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-// import domUtils from '@/domUtils.js';
 import ToastUIEditorViewer from '@/viewer';
 import Convertor from '@/convertor';
 import { CodeBlockManager } from '@/codeBlockManager';
