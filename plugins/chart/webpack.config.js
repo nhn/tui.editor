@@ -37,7 +37,7 @@ function getOutputConfig(isProduction, isCDN, minify) {
 
 function getExternalsConfig(isProduction, isCDN) {
   if (isProduction && !isCDN) {
-    return ['jquery', 'tui-chart/dist/tui-chart-polyfill'];
+    return ['tui-chart/dist/tui-chart-polyfill'];
   }
 
   return [];

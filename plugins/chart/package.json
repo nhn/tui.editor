@@ -64,7 +64,6 @@
     "webpack-dev-server": "^3.10.1"
   },
   "dependencies": {
-    "jquery": "^3.4.1",
     "tui-chart": "^3.9.0"
   },
   "publishConfig": {
