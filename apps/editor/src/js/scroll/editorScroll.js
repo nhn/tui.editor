@@ -4,14 +4,15 @@ import {
   getAdditionalTopPos,
   getParentNodeObj,
   getCmRangeHeight,
-  getTotalOffsetTop
+  getTotalOffsetTop,
+  getNextEmptyLineHeight
 } from './helper';
 import {
   isHtmlNode,
   getMdStartLine,
   getMdEndLine,
-  isMultiLineNode,
-  isEmptyLineNode
+  isMultiLineNode
+  // isEmptyLineNode
 } from '../utils/markdown';
 import { getOffsetHeight, setOffsetHeight } from './cache/offsetInfo';
 
@@ -29,11 +30,11 @@ function getAndSaveOffsetHeight(node, mdNodeId) {
   return offsetHeight;
 }
 
-function getAdditionalTopPosForEmptyLine(mdNode, node, offsetHeight) {
-  return mdNode.type === 'item' && node.firstElementChild
-    ? node.firstElementChild.offsetHeight
-    : offsetHeight;
-}
+// function getAdditionalTopPosForEmptyLine(mdNode, node, offsetHeight) {
+//   return mdNode.type === 'item' && node.firstElementChild
+//     ? node.firstElementChild.offsetHeight
+//     : offsetHeight;
+// }
 
 export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
   const { _previewContent: root, el: previewEl } = preview;
@@ -49,6 +50,7 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
       : cm.getCursor('from');
     const firstMdNode = mdDocument.findFirstNodeAtLine(startLine + 1);
 
+    ㅁ;
     if (!firstMdNode || isHtmlNode(firstMdNode)) {
       return;
     }
@@ -62,18 +64,21 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
 
     if (scrollEvent && isNodeToBeCalculated(mdNode)) {
       const mdNodeStartLine = getMdStartLine(mdNode);
-      const { text, height } = cm.lineInfo(startLine).handle;
+      const { height } = cm.lineInfo(startLine).handle;
       const offsetHeight = getAndSaveOffsetHeight(node, mdNode.id);
       const offsetTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
 
-      const cmNodeHeight = isMultiLineNode(mdNode)
-        ? (getMdEndLine(mdNode) - mdNodeStartLine + 1) * height
-        : getCmRangeHeight(startLine, mdNode, cm);
+      const cmNodeHeight =
+        (isMultiLineNode(mdNode)
+          ? (getMdEndLine(mdNode) - mdNodeStartLine + 1) * height
+          : getCmRangeHeight(mdNodeStartLine - 1, mdNode, cm)) + getNextEmptyLineHeight(mdNode, cm);
 
+      // console.log(cmNodeHeight, offsetHeight);
       // if the node is empty line in code mirror, add the height of most adjacent node
-      targetScrollTop += isEmptyLineNode(text, mdNode)
-        ? getAdditionalTopPosForEmptyLine(mdNode, node, offsetHeight)
-        : getAdditionalTopPos(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
+      // targetScrollTop += isEmptyLineNode(text, mdNode)
+      //   ? getAdditionalTopPosForEmptyLine(mdNode, node, offsetHeight)
+      //   : getAdditionalTopPos(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
+      targetScrollTop += getAdditionalTopPos(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
     }
   }
 

@@ -4,7 +4,8 @@ import {
   getAdditionalTopPos,
   getCmRangeHeight,
   getTotalOffsetTop,
-  getParentNodeObj
+  getParentNodeObj,
+  getNextEmptyLineHeight
 } from './helper';
 import { getMdStartLine, getMdEndLine, isMultiLineNode } from '../utils/markdown';
 import { getOffsetHeight, setOffsetHeight, getOffsetTop, setOffsetTop } from './cache/offsetInfo';
@@ -59,9 +60,10 @@ export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
     if (isNodeToBeCalculated(mdNode)) {
       const { offsetHeight, offsetTop } = getAndSaveOffsetInfo(node, mdNodeId, root);
       const height = cm.lineInfo(mdNodeStartLine - 1).handle.height;
-      const cmNodeHeight = isMultiLineNode(mdNode)
-        ? (getMdEndLine(mdNode) - mdNodeStartLine + 1) * height
-        : getCmRangeHeight(mdNodeStartLine - 1, mdNode, cm);
+      const cmNodeHeight =
+        (isMultiLineNode(mdNode)
+          ? (getMdEndLine(mdNode) - mdNodeStartLine + 1) * height
+          : getCmRangeHeight(mdNodeStartLine - 1, mdNode, cm)) + getNextEmptyLineHeight(mdNode, cm);
 
       targetScrollTop += getAdditionalTopPos(scrollTop, offsetTop, offsetHeight, cmNodeHeight);
     }

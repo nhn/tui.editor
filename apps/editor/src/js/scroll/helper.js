@@ -3,6 +3,7 @@ import {
   hasSameLineParent,
   getMdEndLine,
   getLastLeafNode,
+  getMdStartLine,
   isStyledTextNode,
   hasSpecificTypeAncestor
 } from '../utils/markdown';
@@ -48,25 +49,48 @@ function getNonNestableNodeObj(mdNode, node) {
 export function getCmRangeHeight(start, mdNode, cm) {
   const cmNodeHeight = cm.lineInfo(start).handle.height;
   const end = getMdEndLine(getLastLeafNode(mdNode));
-  const height =
-    cm.heightAtLine(end, 'local') -
-    cm.heightAtLine(start, 'local') -
-    getEmptyLineHeight(start, end, cm);
+  const height = cm.heightAtLine(end, 'local') - cm.heightAtLine(start, 'local');
+  // getEmptyLineHeight(start, end, cm);
 
   return height <= 0 ? cmNodeHeight : height;
 }
 
-function getEmptyLineHeight(start, end, cm) {
-  let emptyLineHeight = 0;
+export function getCmRangeHeight2(start, mdNode, cm) {
+  const cmNodeHeight = cm.lineInfo(start).handle.height;
+  const pStart = getMdStartLine(mdNode);
+  const height = cm.heightAtLine(start, 'local') - cm.heightAtLine(pStart, 'local');
 
-  for (let i = start; i < end; i += 1) {
-    const { text, height } = cm.lineInfo(i).handle;
+  return height <= 0 ? cmNodeHeight : height;
+}
 
-    if (!text.trim()) {
-      emptyLineHeight += height;
+// function getEmptyLineHeight(start, end, cm) {
+//   let emptyLineHeight = 0;
+
+//   for (let i = start; i < end; i += 1) {
+//     const { text, height } = cm.lineInfo(i).handle;
+
+//     if (!text.trim()) {
+//       emptyLineHeight += height;
+//     }
+//   }
+//   return emptyLineHeight;
+// }
+
+export function getNextEmptyLineHeight(mdNode, cm) {
+  let height = 0;
+  let end = getMdEndLine(mdNode);
+
+  while (end >= 0) {
+    const lineInfo = cm.lineInfo(end).handle;
+
+    if (!lineInfo.text.trim()) {
+      height += lineInfo.height;
+      end += 1;
+    } else {
+      break;
     }
   }
-  return emptyLineHeight;
+  return height;
 }
 
 export function getTotalOffsetTop(el, root) {
