@@ -206,10 +206,10 @@ class MdListManager {
   }
 
   _getListDepth(lineNumber) {
+    let depth = 0;
     const text = this.doc.getLine(lineNumber);
 
     if (text) {
-      let depth = 0;
       let mdNode = this.mdDocument.findFirstNodeAtLine(lineNumber + 1);
 
       while (mdNode && mdNode.type !== 'document') {
@@ -218,9 +218,8 @@ class MdListManager {
         }
         mdNode = mdNode.parent;
       }
-      return depth;
     }
-    return 0;
+    return depth;
   }
 
   _findSameDepthList(listNumber, depth, isIncrease) {
