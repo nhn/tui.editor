@@ -133,13 +133,16 @@ export function getWwMergedTableSelectionManager(editor) {
 
     /**
      * Whether has selected both TH and TD.
-     * @param {jQuery} $selectedCells - selected cells jQuery element
+     * @param {HTMLElement} selectedCells - selected cells jQuery element
      * @returns {boolean}
      */
-    hasSelectedBothThAndTd($selectedCells) {
-      $selectedCells = $selectedCells || this.getSelectedCells();
+    hasSelectedBothThAndTd(selectedCells) {
+      selectedCells = selectedCells || this.getSelectedCells();
 
-      return $selectedCells.first()[0].nodeName !== $selectedCells.last()[0].nodeName;
+      const [firstCell] = selectedCells;
+      const lastCell = selectedCells[selectedCells.length - 1];
+
+      return firstCell.nodeName !== lastCell.nodeName;
     }
   };
 }

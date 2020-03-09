@@ -185,14 +185,14 @@ export function getWwMergedTableManager(editor) {
     /**
      * Find start cell index.
      * @param {Array.<Array.<object>>} tableData - table data
-     * @param {jQuery} $startCell - start jQuery element like td, th
+     * @param {HTMLElement} startCell - start element like td, th
      * @returns {{rowIndex: number, colIndex: number}}
      * @private
      */
-    _findStartCellIndex(tableData, $startCell) {
+    _findStartCellIndex(tableData, startCell) {
       const cellIndexData = tableDataHandler.createCellIndexData(tableData);
 
-      return tableDataHandler.findCellIndex(cellIndexData, $startCell);
+      return tableDataHandler.findCellIndex(cellIndexData, startCell);
     }
 
     /**
@@ -412,6 +412,7 @@ export function getWwMergedTableManager(editor) {
      * @param {jQuery} $selectedCells - selected jQuery elements like td, th
      * @private
      */
+    /* eslint-disable complexity */
     _pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells) {
       const { start: startRange, end: endRange } = tableRangeHandler.getTableSelectionRange(
         tableData,
@@ -582,10 +583,10 @@ export function getWwMergedTableManager(editor) {
       const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
       const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
       const $selectedCells = tableSelectionManager.getSelectedCells();
-      const $startCell = $(this._findStartCell($selectedCells));
-      const $table = $startCell.closest('table');
+      const startCell = this._findStartCell($selectedCells);
+      const $table = $(startCell).closest('table');
       const tableData = tableDataHandler.createTableData($table);
-      const startCellIndex = this._findStartCellIndex(tableData, $startCell);
+      const startCellIndex = this._findStartCellIndex(tableData, startCell);
 
       if ($selectedCells.length > 1) {
         // selection

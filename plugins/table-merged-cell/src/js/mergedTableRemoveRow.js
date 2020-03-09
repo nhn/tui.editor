@@ -146,10 +146,10 @@ export function getWwRemoveRowCommand(editor) {
         const $table = $startContainer.closest('table');
         const tableData = dataHandler.createTableData($table);
         const beforeRowLength = tableData.length;
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const tableRange = tableRangeHandler.getTableSelectionRange(
           tableData,
-          $selectedCells,
+          selectedCells,
           $startContainer
         );
 

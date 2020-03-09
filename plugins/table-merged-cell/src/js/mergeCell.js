@@ -163,9 +163,9 @@ export function getMergeCellCommand(editor) {
         }
 
         const selectionManager = wwe.componentManager.getManager('tableSelection');
-        const $selectedCells = selectionManager.getSelectedCells();
+        const selectedCells = selectionManager.getSelectedCells();
 
-        if ($selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
+        if (selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd(selectedCells)) {
           return;
         }
 
@@ -175,7 +175,7 @@ export function getMergeCellCommand(editor) {
         const tableData = dataHandler.createTableData($table);
         const tableRange = tableRangeHandler.getTableSelectionRange(
           tableData,
-          $selectedCells,
+          selectedCells,
           $startContainer
         );
 
