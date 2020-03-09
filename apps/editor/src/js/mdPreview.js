@@ -68,7 +68,8 @@ class MarkdownPreview extends Preview {
   update(changed) {
     const { nodes, removedNodeRange } = changed;
     const contentEl = this._previewContent;
-    const newHtml = this.convertor.toHTMLWithCodeHightlight(
+    const newHtml = this.eventManager.emitReduce(
+      'convertorAfterMarkdownToHtmlConverted',
       nodes.map(node => htmlRenderer.render(node)).join('')
     );
 
