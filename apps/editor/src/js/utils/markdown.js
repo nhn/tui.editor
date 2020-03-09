@@ -42,6 +42,14 @@ export function getMdEndLine(mdNode) {
   return mdNode.sourcepos[1][0];
 }
 
+export function getMdStartCh(mdNode) {
+  return mdNode.sourcepos[0][1];
+}
+
+export function getMdEndCh(mdNode) {
+  return mdNode.sourcepos[1][1];
+}
+
 export function isMultiLineNode(mdNode) {
   const { type } = mdNode;
 
@@ -54,7 +62,7 @@ export function isHtmlNode(mdNode) {
   return type === 'htmlBlock' || type === 'htmlInline';
 }
 
-export function isInlineNode(mdNode) {
+export function isStyledTextNode(mdNode) {
   const { type } = mdNode;
 
   return type === 'strike' || type === 'strong' || type === 'emph';

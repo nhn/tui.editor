@@ -10,7 +10,14 @@ import KeyMapper from './keyMapper';
 import MdListManager from './mdListManager';
 import ComponentManager from './componentManager';
 import MdTextObject from './mdTextObject';
-import { traverseParentNodes, isInlineNode } from './utils/markdown';
+import {
+  traverseParentNodes,
+  isStyledTextNode,
+  getMdStartLine,
+  getMdEndLine,
+  getMdStartCh,
+  getMdEndCh
+} from './utils/markdown';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -398,19 +405,18 @@ class MarkdownEditor extends CodeMirrorExt {
       return;
     }
     mdNode = mdNode.type === 'text' ? mdNode.parent : mdNode;
-    const { type, sourcepos } = mdNode;
 
     setNodeTypeToState(mdNode);
     traverseParentNodes(mdNode, setNodeTypeToState);
 
     // if position is matched to start, end position of inline node, highlighting is ignored
     if (
-      isInlineNode(mdNode) &&
-      ((mdCh === ch && sourcepos[1][0] === mdLine) ||
-        (mdCh === sourcepos[1][1] + 1 && mdLine === sourcepos[1][0]) ||
-        (mdCh === sourcepos[0][1] && mdLine === sourcepos[0][0]))
+      isStyledTextNode(mdNode) &&
+      ((mdCh === ch && getMdEndLine(mdNode) === mdLine) ||
+        (mdCh === getMdEndCh(mdNode) + 1 && mdLine === getMdEndLine(mdNode)) ||
+        (mdCh === getMdStartCh(mdNode) && mdLine === getMdStartLine(mdNode)))
     ) {
-      state[type] = false;
+      state[mdNode.type] = false;
     }
 
     if (!this._latestState || this._isStateChanged(this._latestState, state)) {

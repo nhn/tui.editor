@@ -3,7 +3,7 @@ import {
   hasSameLineParent,
   getMdEndLine,
   getLastLeafNode,
-  isInlineNode,
+  isStyledTextNode,
   hasSpecificTypeAncestor
 } from '../utils/markdown';
 
@@ -28,7 +28,7 @@ export function getParentNodeObj(mdNode) {
     (!node && mdNode) ||
     includes(tableElementTagNames, mdNode.type) ||
     hasSameLineParent(mdNode) ||
-    (isInlineNode(mdNode) && !hasSpecificTypeAncestor(mdNode, 'item'))
+    (isStyledTextNode(mdNode) && !hasSpecificTypeAncestor(mdNode, 'item'))
   ) {
     mdNode = mdNode.parent;
     node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
