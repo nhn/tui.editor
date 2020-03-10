@@ -25,15 +25,16 @@
     <!-- Plugin -->
     <script src="../dist/cdn/toastui-editor-plugin-color-syntax.js"></script>
     <script class="code-js">
-      var Editor = toastui.Editor;
+      const { Editor } = toastui;
+      const { colorSyntax } = Editor.plugin;
 
-      var editor = new Editor({
+      const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
         initialEditType: 'wysiwyg',
         initialValue: 'Select some text and choose a color from the toolbar.',
-        plugins: [Editor.plugin.colorSyntax]
+        plugins: [colorSyntax]
       });
     </script>
   </body>
