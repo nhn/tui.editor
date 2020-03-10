@@ -50,7 +50,7 @@ function getExternalsConfig(isProduction, isCDN, isAll) {
   const isDevSolo = !isProduction && !isAll;
 
   // The code-syntax-highlight plugin should provide a CDN bundle without the highlight.js dependency
-  // so that users can inject their own highlight.js instance 뒤에 when using only selected languages.
+  // so that users can inject their own highlight.js instance when using only selected languages.
   if (isProdCdnSolo || isDevSolo) {
     return [
       {
