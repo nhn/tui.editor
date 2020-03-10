@@ -7,12 +7,12 @@ import {
   getTotalOffsetTop,
   getFallbackScrollTop
 } from './helper';
-import { isHtmlNode, getMdStartLine, getMdEndLine, isMultiLineNode } from '../utils/markdown';
+import { isHtmlNode, getMdStartLine, isMultiLineNode } from '../utils/markdown';
 import { getOffsetHeight, setOffsetHeight } from './cache/offsetInfo';
 
 const EDITING_POSITION_RATIO = 0.5;
 let blockedPreviewScrollEvent = false;
-let latestScrollTop = 0;
+let latestScrollTop = null;
 
 /* eslint-disable no-return-assign */
 function getAndSaveOffsetHeight(node, mdNodeId) {
@@ -24,6 +24,24 @@ function getAndSaveOffsetHeight(node, mdNodeId) {
   }
 
   return offsetHeight;
+}
+
+function getTopInfo(cm, startLine, mdNode, node, previewEl) {
+  const mdNodeStartLine = getMdStartLine(mdNode);
+  const { height } = cm.lineInfo(startLine).handle;
+  const previewElHeight = getAndSaveOffsetHeight(previewEl, 0);
+  let top = node.getBoundingClientRect().top - previewEl.getBoundingClientRect().top;
+  // position editing node on middle of preview as default
+  let additionalScrollTop = -previewElHeight * EDITING_POSITION_RATIO;
+
+  if (isMultiLineNode(mdNode)) {
+    const additionalTopPos = (startLine - mdNodeStartLine + 1) * height;
+
+    additionalScrollTop = additionalTopPos;
+    top += additionalTopPos;
+  }
+
+  return { top, additionalScrollTop };
 }
 
 export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
@@ -47,41 +65,33 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
     // if DOM element does not exist, should get its parent node using markdown node
     // in case of text node, rendererd DOM element is not matched to markdown node
     const nodeObj = getParentNodeObj(firstMdNode);
-    const previewElHeight = getAndSaveOffsetHeight(previewEl, 0);
     const { node, mdNode } = nodeObj;
-    let { top } = node.getBoundingClientRect();
-    let additionalTop = 0;
-
-    if (isMultiLineNode(mdNode)) {
-      additionalTop +=
-        (startLine - getMdStartLine(mdNode) + 1) * cm.lineInfo(startLine).handle.height;
-      top += additionalTop;
-    }
+    const mdNodeStartLine = getMdStartLine(mdNode);
 
     targetScrollTop = getTotalOffsetTop(node, root) || node.offsetTop;
 
-    if (!scrollEvent && top > 0 && top < previewElHeight) {
-      return;
-    }
+    if (!scrollEvent) {
+      const previewElHeight = getAndSaveOffsetHeight(previewEl, 0);
+      const { top, additionalScrollTop } = getTopInfo(cm, startLine, mdNode, node, previewEl);
 
-    if (isNodeToBeCalculated(mdNode)) {
-      if (!scrollEvent) {
-        targetScrollTop += isMultiLineNode(mdNode)
-          ? additionalTop
-          : -previewElHeight * EDITING_POSITION_RATIO;
-      } else {
-        const mdNodeStartLine = getMdStartLine(mdNode);
-        const offsetHeight = getAndSaveOffsetHeight(node, mdNode.id);
-        const offsetTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
-        const cmNodeHeight = getCmRangeHeight(mdNode, cm);
-
-        targetScrollTop += getAdditionalTopPos(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
-
-        const scrollTopInfo = { latestScrollTop, scrollTop, targetScrollTop, sourceScrollTop };
-
-        targetScrollTop = getFallbackScrollTop(scrollTopInfo);
-        latestScrollTop = scrollTop;
+      if (top > 0 && top < previewElHeight) {
+        return;
       }
+
+      targetScrollTop += additionalScrollTop;
+      // assign the null to sync scrollTop position when scrolling
+      latestScrollTop = null;
+    } else if (scrollEvent && isNodeToBeCalculated(mdNode)) {
+      const offsetHeight = getAndSaveOffsetHeight(node, mdNode.id);
+      const offsetTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
+      const cmNodeHeight = getCmRangeHeight(mdNode, cm);
+
+      targetScrollTop += getAdditionalTopPos(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
+
+      const scrollTopInfo = { latestScrollTop, scrollTop, targetScrollTop, sourceScrollTop };
+
+      targetScrollTop = getFallbackScrollTop(scrollTopInfo);
+      latestScrollTop = scrollTop;
     }
   }
 

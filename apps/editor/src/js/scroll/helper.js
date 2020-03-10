@@ -119,8 +119,11 @@ function findLastSiblingElementToScrollTop(el, scrollTop, offsetTop) {
 export function getFallbackScrollTop(scrollInfo) {
   const { latestScrollTop, scrollTop, targetScrollTop, sourceScrollTop } = scrollInfo;
 
-  if (latestScrollTop < scrollTop) {
-    return Math.max(targetScrollTop, sourceScrollTop);
+  if (latestScrollTop === null) {
+    return targetScrollTop;
   }
-  return Math.min(targetScrollTop, sourceScrollTop);
+
+  return latestScrollTop < scrollTop
+    ? Math.max(targetScrollTop, sourceScrollTop)
+    : Math.min(targetScrollTop, sourceScrollTop);
 }

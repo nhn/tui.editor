@@ -5,14 +5,13 @@ import {
   getCmRangeHeight,
   getTotalOffsetTop,
   getParentNodeObj,
-  getFallbackScrollTop,
-  getNextEmptyLineHeight
+  getFallbackScrollTop
 } from './helper';
 import { getMdStartLine } from '../utils/markdown';
 import { getOffsetHeight, setOffsetHeight, getOffsetTop, setOffsetTop } from './cache/offsetInfo';
 
 let blockedMarkdownScrollEvent = false;
-let latestScrollTop = 0;
+let latestScrollTop = null;
 
 /* eslint-disable no-return-assign */
 function getAndSaveOffsetInfo(node, mdNodeId, root) {
