@@ -104,7 +104,7 @@ class WwTaskManager {
       [li] = domUtils.parents(range.startContainer, 'li');
     }
 
-    return hasClass(li, TASK_CLASS_NAME);
+    return !!li && hasClass(li, TASK_CLASS_NAME);
   }
 
   /**
