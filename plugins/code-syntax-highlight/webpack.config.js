@@ -17,7 +17,7 @@ function getEntryConfig(isAll) {
 }
 
 function getOutputConfig(isProduction, isCDN, isAll, minify) {
-  let filename = `toastui-${pkg.name.replace(/@toast-ui\//, '')}`;
+  const filename = `toastui-${pkg.name.replace(/@toast-ui\//, '')}`;
 
   if (!isProduction || isCDN) {
     const config = {
@@ -43,14 +43,15 @@ function getOutputConfig(isProduction, isCDN, isAll, minify) {
   };
 }
 
+/* eslint-disable complexity */
 function getExternalsConfig(isProduction, isCDN, isAll) {
-  const cdnBundle = isProduction && isCDN && !isAll;
-  const npmBundle = isProduction && !isCDN;
-  const demoBundle = !isProduction && !isAll;
+  const isProdCdnSolo = isProduction && isCDN && !isAll;
+  const isProdNpm = isProduction && !isCDN;
+  const isDevSolo = !isProduction && !isAll;
 
-  // Only the code-syntax-highlight provide a bundle file
-  // with an external dependency on cdn
-  if (cdnBundle || demoBundle) {
+  // The code-syntax-highlight plugin should provide a CDN bundle without the highlight.js dependency
+  // so that users can inject their own highlight.js instance 뒤에 when using only selected languages.
+  if (isProdCdnSolo || isDevSolo) {
     return [
       {
         'highlight.js/lib/highlight': {
@@ -63,7 +64,7 @@ function getExternalsConfig(isProduction, isCDN, isAll) {
     ];
   }
 
-  if (npmBundle) {
+  if (isProdNpm) {
     return ['highlight.js/lib/highlight'];
   }
 
