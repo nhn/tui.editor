@@ -35,13 +35,15 @@ function document() {
 const defaultOptions = {
   smart: false,
   tagFilter: false,
-  autoLink: false
+  autoLink: false,
+  disallowedHtmlBlockTags: []
 };
 
 export interface Options {
   smart: boolean;
   tagFilter: boolean;
   autoLink: boolean;
+  disallowedHtmlBlockTags: string[];
 }
 
 export class Parser {
@@ -63,7 +65,7 @@ export class Parser {
   public refmap: any;
   private lastLineLength: number;
   public inlineParser: InlineParser;
-  private options: Options;
+  public options: Options;
 
   constructor(options?: Partial<Options>) {
     this.options = { ...defaultOptions, ...options };
