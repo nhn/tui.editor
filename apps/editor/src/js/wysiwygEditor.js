@@ -416,7 +416,7 @@ class WysiwygEditor {
     // Toolbar status active/inactive
     squire.addEventListener('pathChange', data => {
       const state = {
-        strong: /(>B|>STRONG|^B$|^STRONG$)/.test(data.path),
+        strong: /(^B>|>B$|>B>|^B$|STRONG)/.test(data.path),
         emph: /(>I|>EM|^I$|^EM$)/.test(data.path),
         strike: /(^S>|>S$|>S>|^S$|DEL)/.test(data.path),
         code: /CODE/.test(data.path),
