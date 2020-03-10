@@ -2,7 +2,7 @@
  * @fileoverview Implements tableUnmergePreparer.
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 /**
  * Prepend merge syntax to content.
@@ -10,10 +10,9 @@ import $ from 'jquery';
  * @private
  */
 export function _prependMergeSyntaxToContent(cell) {
-  const $cell = $(cell);
-  const colspan = $cell.attr('colspan') || '';
-  const rowspan = $cell.attr('rowspan') || '';
-  let content = $cell.html();
+  const colspan = cell.getAttribute('colspan') || '';
+  const rowspan = cell.getAttribute('rowspan') || '';
+  let content = cell.innerHTML;
 
   if (colspan) {
     content = `@cols=${colspan}:${content}`;
@@ -24,7 +23,7 @@ export function _prependMergeSyntaxToContent(cell) {
   }
 
   if (content) {
-    $cell.html(content);
+    cell.innerHTML = content;
   }
 }
 
@@ -34,10 +33,9 @@ export function _prependMergeSyntaxToContent(cell) {
  * @returns {HTMLElement}
  */
 export default function prepareTableUnmerge(tableElement) {
-  $(tableElement)
-    .find('td, th')
-    .get()
-    .forEach(_prependMergeSyntaxToContent);
+  const cells = tableElement.querySelectorAll('td, th');
+
+  toArray(cells).forEach(_prependMergeSyntaxToContent);
 
   return tableElement;
 }

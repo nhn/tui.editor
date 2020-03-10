@@ -69,9 +69,10 @@ function createTableHtml(renderData) {
 function replaceTable(table, tableData) {
   const cellIndexData = tableDataHandler.createCellIndexData(tableData);
   const renderData = tableDataHandler.createRenderData(tableData, cellIndexData);
-  const newTable = createTableHtml(renderData);
+  const tempDiv = document.createElement('div');
 
-  table.parentNode.innerHTML = newTable;
+  tempDiv.innerHTML = createTableHtml(renderData);
+  table.innerHTML = tempDiv.innerHTML;
 
   return table;
 }

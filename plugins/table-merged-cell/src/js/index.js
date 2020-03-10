@@ -2,7 +2,7 @@
  * @fileoverview Implements table plugin
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import { addLangs } from './langs';
 
@@ -71,21 +71,24 @@ function _changeWysiwygManagers(wwComponentManager, editor) {
  * @private
  */
 function _changeHtml(html, onChangeTable) {
-  const $tempDiv = $(`<div>${html}</div>`);
-  const $tables = $tempDiv.find('table');
+  const tempDiv = document.createElement('div');
 
-  if ($tables.length) {
-    $tables.get().forEach(tableElement => {
+  tempDiv.innerHTML = html;
+
+  const tables = tempDiv.querySelectorAll('table');
+
+  if (tables.length) {
+    toArray(tables).forEach(tableElement => {
       const changedTableElement = onChangeTable(tableElement);
 
       if (tableElement.hasAttribute('data-tomark-pass')) {
         changedTableElement.setAttribute('data-tomark-pass', '');
       }
 
-      $(tableElement).replaceWith(changedTableElement);
+      tableElement.parentNode.innerHTML = changedTableElement.outerHTML;
     });
 
-    html = $tempDiv.html();
+    html = tempDiv.innerHTML;
   }
 
   return html;
