@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>2. Editor With Horizontal Preview</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
+    <!-- Editor's Dependencies -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/toastui-editor.css" />
+  </head>
+  <body>
+    <div class="code-html contents">
+      <div id="editor"></div>
+    </div>
+    <script src="./data/md-default.js"></script>
+    <!-- Editor -->
+    <script src="../dist/toastui-editor-all.js"></script>
+    <script class="code-js">
+      const editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'horizontal',
+        height: '500px',
+        initialValue: content
+      });
+    </script>
+  </body>
+</html>

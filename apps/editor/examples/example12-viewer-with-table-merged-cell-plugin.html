@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>12. Viewer with Table Merged Cell Plugin</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
+    <!-- Viewer -->
+    <link rel="stylesheet" href="../dist/toastui-editor-viewer.css" />
+  </head>
+  <body>
+    <div class="code-html contents">
+      <!-- Viewer -->
+      <div id="viewer"></div>
+    </div>
+    <script src="./data/md-plugins.js"></script>
+    <!-- Editor -->
+    <script src="../dist/toastui-editor-viewer.js"></script>
+    <!-- Editor's Plugin -->
+    <script src="http://localhost:8081/dist/cdn/toastui-editor-plugin-table-merged-cell.js"></script>
+    <script class="code-js">
+      const Viewer = toastui.Editor;
+      const { tableMergedCell } = Viewer.plugin;
+
+      const instance = new Viewer({
+        el: document.querySelector('#viewer'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: tableContent,
+        plugins: [tableMergedCell]
+      });
+    </script>
+  </body>
+</html>
