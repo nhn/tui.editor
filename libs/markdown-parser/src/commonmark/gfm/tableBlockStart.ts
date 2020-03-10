@@ -1,6 +1,7 @@
 import { isEmpty } from '../common';
 import { BlockStart, Matched } from '../blockStarts';
 import { createNode, SourcePos, TableNode, TableColumn, TableCellNode } from '../node';
+import { last } from '../../helper';
 
 function parseRowContent(content: string): [number, string[]] {
   let startIdx = 0;
@@ -70,13 +71,10 @@ function getColumnFromDelimCell(cellNode: TableCellNode) {
 
 export const tableHead: BlockStart = (parser, container) => {
   const stringContent = container.stringContent!;
-  if (
-    container.type === 'paragraph' &&
-    !parser.indented &&
-    !parser.blank &&
-    stringContent.indexOf('\n') === stringContent.length - 1 // check if existing content is one line
-  ) {
-    const headerContent = stringContent.slice(0, stringContent.length - 1);
+  if (container.type === 'paragraph' && !parser.indented && !parser.blank) {
+    const lastNewLineIdx = stringContent.length - 1;
+    const lastLineStartIdx = stringContent.lastIndexOf('\n', lastNewLineIdx - 1) + 1;
+    const headerContent = stringContent.slice(lastLineStartIdx, lastNewLineIdx);
     const delimContent = parser.currentLine.slice(parser.nextNonspace);
     const [headerOffset, headerCells] = parseRowContent(headerContent);
     const [delimOffset, delimCells] = parseRowContent(delimContent);
@@ -91,15 +89,28 @@ export const tableHead: BlockStart = (parser, container) => {
       return Matched.None;
     }
 
-    const firstLineNum = container.sourcepos![0][0];
-    const firstLineStart = container.sourcepos![0][1];
+    const lineOffsets = container.lineOffsets!;
+    const firstLineNum = parser.lineNumber - 1;
+    const firstLineStart = last(lineOffsets) + 1;
     const table = createNode('table', [
       [firstLineNum, firstLineStart],
       [parser.lineNumber, parser.offset]
     ]);
     table.columns = delimCells.map(() => ({ align: 'left' }));
+
     container.insertAfter(table);
-    container.unlink();
+    if (lineOffsets.length === 1) {
+      container.unlink();
+    } else {
+      container.stringContent = stringContent.slice(0, lastLineStartIdx);
+      const paraLastLineStartIdx = stringContent.lastIndexOf('\n', lastLineStartIdx - 2) + 1;
+      const paraLastLineLen = lastLineStartIdx - paraLastLineStartIdx - 1;
+      parser.finalize(
+        container,
+        firstLineNum - 1,
+        lineOffsets[lineOffsets.length - 2] + paraLastLineLen
+      );
+    }
     parser.advanceOffset(parser.currentLine.length - parser.offset, false);
 
     const tableHead = createNode('tableHead', [

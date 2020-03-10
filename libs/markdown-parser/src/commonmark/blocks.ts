@@ -195,14 +195,14 @@ export class Parser {
   }
 
   // Finalize a block.  Close it and do any necessary postprocessing,
-  // e.g. creating string_content from strings, setting the 'tight'
+  // e.g. creating stringContent from strings, setting the 'tight'
   // or 'loose' status of a list, and parsing the beginnings
   // of paragraphs for reference definitions.  Reset the tip to the
   // parent of the closed block.
-  finalize(block: BlockNode, lineNumber: number) {
+  finalize(block: BlockNode, lineNumber: number, column = this.lastLineLength) {
     const above = block.parent as BlockNode;
     block.open = false;
-    block.sourcepos![1] = [lineNumber, this.lastLineLength];
+    block.sourcepos![1] = [lineNumber, column];
     blockHandlers[block.type].finalize(this, block);
 
     this.tip = above;
