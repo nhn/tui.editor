@@ -203,21 +203,21 @@ describe('colorSyntax', () => {
       editor.changeMode('wysiwyg');
 
       const sq = editor.getSquire();
-      const $body = editor.wwEditor.get$Body();
+      const body = editor.wwEditor.getBody();
 
       sq.setHTML('text');
 
       const selection = sq.getSelection().cloneRange();
 
-      selection.selectNodeContents($body.find('div')[0].childNodes[0]);
+      selection.selectNodeContents(body.querySelector('div').childNodes[0]);
       sq.setSelection(selection);
 
       editor.exec('color', '#f0f');
 
-      const $span = editor.wwEditor.get$Body().find('span');
+      const span = editor.wwEditor.getBody().querySelector('span');
 
-      expect($span.hasClass('colour')).toBe(true);
-      expect($span.css('color')).toBe('rgb(255, 0, 255)');
+      expect(span.className).toBe('colour');
+      expect(span.style.color).toBe('rgb(255, 0, 255)');
     });
 
     it(`don't add color if value isn't truthy in wysiwyg`, () => {
@@ -226,20 +226,20 @@ describe('colorSyntax', () => {
       editor.changeMode('wysiwyg');
 
       const sq = editor.getSquire();
-      const $body = editor.wwEditor.get$Body();
+      const body = editor.wwEditor.getBody();
 
       sq.setHTML('text');
 
       const selection = sq.getSelection().cloneRange();
 
-      selection.selectNodeContents($body.find('div')[0].childNodes[0]);
+      selection.selectNodeContents(body.querySelector('div').childNodes[0]);
       sq.setSelection(selection);
 
       editor.exec('color', falsyValue);
 
-      const $span = editor.wwEditor.get$Body().find('span');
+      const span = editor.wwEditor.getBody().querySelector('span');
 
-      expect($span.hasClass('colour')).toBe(false);
+      expect(span).toBeNull();
     });
 
     it('add color in selected table cell in wysiwyg', () => {
@@ -263,18 +263,18 @@ describe('colorSyntax', () => {
 
       const range = sq.getSelection();
 
-      range.setStart(wwe.get$Body().find('th')[0], 0);
+      range.setStart(wwe.getBody().querySelector('th'), 0);
       range.collapse(true);
       sq.setSelection(range);
 
       editor.exec('color', '#f0f');
 
-      const $span = wwe.get$Body().find('span');
+      const span = wwe.getBody().querySelectorAll('span');
 
-      expect($span.eq(0).hasClass('colour')).toBe(true);
-      expect($span.eq(0).css('color')).toBe('rgb(255, 0, 255)');
-      expect($span.eq(1).hasClass('colour')).toBe(true);
-      expect($span.eq(1).css('color')).toBe('rgb(255, 0, 255)');
+      expect(span[0].className).toBe('colour');
+      expect(span[0].style.color).toBe('rgb(255, 0, 255)');
+      expect(span[1].className).toBe('colour');
+      expect(span[1].style.color).toBe('rgb(255, 0, 255)');
     });
   });
 });

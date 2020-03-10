@@ -17,7 +17,7 @@ function getEntryConfig(isAll) {
 }
 
 function getOutputConfig(isProduction, isCDN, isAll, minify) {
-  let filename = `toastui-${pkg.name.replace(/@toast-ui\//, '')}`;
+  const filename = `toastui-${pkg.name.replace(/@toast-ui\//, '')}`;
 
   if (!isProduction || isCDN) {
     const config = {
@@ -43,29 +43,36 @@ function getOutputConfig(isProduction, isCDN, isAll, minify) {
   };
 }
 
+/* eslint-disable complexity */
 function getExternalsConfig(isProduction, isCDN, isAll) {
-  if (isProduction && !isAll) {
-    if (isCDN) {
-      return [
-        {
-          'highlight.js/lib/highlight': {
-            commonjs: 'highlight.js',
-            commonjs2: 'highlight.js',
-            amd: 'highlight.js',
-            root: ['hljs']
-          }
+  const isProdCdnSolo = isProduction && isCDN && !isAll;
+  const isProdNpm = isProduction && !isCDN;
+  const isDevSolo = !isProduction && !isAll;
+
+  // The code-syntax-highlight plugin should provide a CDN bundle without the highlight.js dependency
+  // so that users can inject their own highlight.js instance when using only selected languages.
+  if (isProdCdnSolo || isDevSolo) {
+    return [
+      {
+        'highlight.js/lib/highlight': {
+          commonjs: 'highlight.js',
+          commonjs2: 'highlight.js',
+          amd: 'highlight.js',
+          root: ['hljs']
         }
-      ];
-    } else {
-      return ['highlight.js/lib/highlight'];
-    }
+      }
+    ];
+  }
+
+  if (isProdNpm) {
+    return ['highlight.js/lib/highlight'];
   }
 
   return [];
 }
 
 function getOptimizationConfig(isProduction, minify) {
-  let minimizer = [];
+  const minimizer = [];
 
   if (isProduction && minify) {
     minimizer.push(

@@ -11,7 +11,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 function getOutputConfig(isProduction, isCDN, minify) {
   const filename = `toastui-${pkg.name.replace(/@toast-ui\//, '')}`;
 
-  if (isCDN) {
+  if (!isProduction || isCDN) {
     const config = {
       library: ['toastui', 'Editor', 'plugin', 'chart'],
       libraryExport: 'default',
@@ -44,7 +44,7 @@ function getExternalsConfig(isProduction, isCDN) {
 }
 
 function getOptimizationConfig(isProduction, minify) {
-  let minimizer = [];
+  const minimizer = [];
 
   if (isProduction && minify) {
     minimizer.push(

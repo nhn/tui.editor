@@ -31,6 +31,7 @@
   "scripts": {
     "test": "karma start --no-single-run",
     "test:ne": "cross-env KARMA_SERVER=ne karma start",
+    "serve:all": "webpack-dev-server --all",
     "serve": "webpack-dev-server",
     "build:cdn": "webpack --mode=production --cdn & webpack --mode=production --cdn --minify",
     "build:cdn-all": "webpack --mode=production --cdn --all & webpack --mode=production --cdn --all --minify",

@@ -37,12 +37,9 @@ describe('uml plugin', () => {
 
     jasmine.clock().tick(800);
 
-    expect(
-      editor.preview.$el
-        .get(0)
-        .querySelector('pre img')
-        .getAttribute('src')
-    ).toBe('http://www.plantuml.com/plantuml/png/Syp9J4vLqBLJSCfFibBmICt9oUS20000');
+    expect(editor.preview.el.querySelector('pre img').getAttribute('src')).toBe(
+      'http://www.plantuml.com/plantuml/png/Syp9J4vLqBLJSCfFibBmICt9oUS20000'
+    );
   });
 
   it('create plant uml image for code block language plantuml', () => {
@@ -60,12 +57,9 @@ describe('uml plugin', () => {
 
     jasmine.clock().tick(800);
 
-    expect(
-      editor.preview.$el
-        .get(0)
-        .querySelector('pre img')
-        .getAttribute('src')
-    ).toBe('http://www.plantuml.com/plantuml/png/Syp9J4vLqBLJSCfFibBmICt9oUS20000');
+    expect(editor.preview.el.querySelector('pre img').getAttribute('src')).toBe(
+      'http://www.plantuml.com/plantuml/png/Syp9J4vLqBLJSCfFibBmICt9oUS20000'
+    );
   });
 
   it('shows code in html in wysiwyg', () => {
@@ -79,11 +73,6 @@ describe('uml plugin', () => {
 
     editor.setValue(`\`\`\`uml\nAlice -> Bob: Hello\n\`\`\``);
 
-    expect(
-      editor.wwEditor
-        .get$Body()
-        .get(0)
-        .querySelector('pre').innerHTML
-    ).toBe('Alice -&gt; Bob: Hello');
+    expect(editor.wwEditor.getBody().querySelector('pre').innerHTML).toBe('Alice -&gt; Bob: Hello');
   });
 });

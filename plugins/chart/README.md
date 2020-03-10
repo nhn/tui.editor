@@ -129,10 +129,8 @@ const instance = Editor.factory({
 #### Basic
 
 ```js
-const Editor = toastui.Editor;
-const {
-  plugin: { chart }
-} = Editor;
+const { Editor } = toastui;
+const { chart } = Editor.plugin;
 
 const instance = new Editor({
   // ...
@@ -144,9 +142,7 @@ const instance = new Editor({
 
 ```js
 const Viewer = toastui.Editor;
-const {
-  plugin: { chart }
-} = Viewer;
+const { chart } = Viewer.plugin;
 
 const instance = new Viewer({
   // ...
@@ -157,10 +153,8 @@ const instance = new Viewer({
 or
 
 ```js
-const Editor = toastui.Editor;
-const {
-  plugin: { chart }
-} = Editor;
+const { Editor } = toastui;
+const { chart } = Editor.plugin;
 
 const instance = Editor.factory({
   // ...
