@@ -85,7 +85,10 @@ function _changeHtml(html, onChangeTable) {
         changedTableElement.setAttribute('data-tomark-pass', '');
       }
 
-      tableElement.parentNode.innerHTML = changedTableElement.outerHTML;
+      const { parentNode } = tableElement;
+
+      parentNode.appendChild(changedTableElement);
+      parentNode.removeChild(tableElement);
     });
 
     html = tempDiv.innerHTML;
@@ -127,9 +130,12 @@ function _bindEvents(eventManager, commandMap) {
   eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html =>
     _changeHtml(html, prepareTableUnmerge)
   );
-  eventManager.listen('addCommandBefore', commandWrapper => {
-    _snatchWysiwygCommand(commandWrapper, commandMap);
-  });
+
+  if (commandMap) {
+    eventManager.listen('addCommandBefore', commandWrapper => {
+      _snatchWysiwygCommand(commandWrapper, commandMap);
+    });
+  }
 }
 
 /**
@@ -139,15 +145,15 @@ function _bindEvents(eventManager, commandMap) {
 export default function tableMergedCellPlugin(editor) {
   const { eventManager } = editor;
   const isViewer = editor.isViewer();
-  const commandMap = !isViewer
-    ? {
+  const commandMap = isViewer
+    ? null
+    : {
         AddRow: getWwAddRowCommand(editor),
         AddCol: getWwAddColumnCommand(editor),
         RemoveRow: getWwRemoveRowCommand(editor),
         RemoveCol: getWwRemoveColumnCommand(editor),
         AlignCol: getWwAlignColumnCommand(editor)
-      }
-    : null;
+      };
 
   _bindEvents(eventManager, commandMap);
 
