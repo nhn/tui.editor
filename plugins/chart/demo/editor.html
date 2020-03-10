@@ -27,9 +27,9 @@
     <!-- Plugin -->
     <script src="../dist/cdn/toastui-editor-plugin-chart.js"></script>
     <script class="code-js">
-      var content = [
+      const content = [
         '```chart',
-        ',category1,category2',
+        'category1,category2',
         'Jan,21,23',
         'Feb,31,17',
         '',
@@ -43,24 +43,23 @@
         '```'
       ].join('\n');
 
-      var Editor = toastui.Editor;
-      var chartPlugin = Editor.plugin.chart;
+      const { Editor } = toastui;
+      const { chart } = Editor.plugin;
 
-      var editor = new Editor({
+      const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
-        initialEditType: 'markdown',
         initialValue: content,
-        plugins: [chartPlugin]
+        plugins: [chart]
       });
 
-      var viewer = Editor.factory({
+      const viewer = Editor.factory({
         el: document.querySelector('#viewer'),
         viewer: true,
         height: '500px',
         initialValue: content,
-        plugins: [chartPlugin]
+        plugins: [chart]
       });
     </script>
   </body>
