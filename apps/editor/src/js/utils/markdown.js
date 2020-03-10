@@ -83,16 +83,3 @@ export function traverseParentNodes(mdNode, iteratee) {
     iteratee(mdNode);
   }
 }
-
-export function getParentListMdNode(orgMdNode) {
-  const mdNode = orgMdNode;
-
-  while (orgMdNode && orgMdNode !== 'document') {
-    if (orgMdNode.type === 'item') {
-      return orgMdNode;
-    }
-    orgMdNode = orgMdNode.parent;
-  }
-
-  return mdNode;
-}

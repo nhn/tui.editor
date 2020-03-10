@@ -5,9 +5,10 @@ import {
   getCmRangeHeight,
   getTotalOffsetTop,
   getParentNodeObj,
-  getFallbackScrollTop
+  getFallbackScrollTop,
+  getNextEmptyLineHeight
 } from './helper';
-import { getMdStartLine } from '../utils/markdown';
+import { getMdStartLine, isListItemNode } from '../utils/markdown';
 import { getOffsetHeight, setOffsetHeight, getOffsetTop, setOffsetTop } from './cache/offsetInfo';
 
 let blockedMarkdownScrollEvent = false;
@@ -43,20 +44,25 @@ export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
   const { scrollTop } = preview.el;
   const root = preview._previewContent;
 
-  const sourceScrollTop = cm.getScrollInfo().top;
+  const { left, top: sourceScrollTop } = cm.getScrollInfo();
   let targetScrollTop = 0;
 
   if (scrollTop && targetNode) {
     targetNode = getAncestorHavingId(targetNode, root);
+
     if (!targetNode.getAttribute('data-nodeid')) {
       return;
     }
 
+    const { line: startLine } = cm.coordsChar({ left, top: sourceScrollTop }, 'local');
     const mdNodeId = Number(targetNode.getAttribute('data-nodeid'));
     const { mdNode, node } = getParentNodeObj(mdDocument.findNodeById(mdNodeId));
     const mdNodeStartLine = getMdStartLine(mdNode);
 
     targetScrollTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
+    if (isListItemNode(mdNode)) {
+      targetScrollTop += getNextEmptyLineHeight(cm, mdNodeStartLine, startLine);
+    }
 
     if (isNodeToBeCalculated(mdNode)) {
       const cmNodeHeight = getCmRangeHeight(mdNode, cm);

@@ -1,10 +1,5 @@
 import { includes } from '../utils/common';
-import {
-  getMdEndLine,
-  getMdStartLine,
-  isStyledTextNode,
-  getParentListMdNode
-} from '../utils/markdown';
+import { getMdEndLine, getMdStartLine, isStyledTextNode } from '../utils/markdown';
 
 const nestableTypes = ['list', 'blockQuote'];
 const nestableTagNames = ['UL', 'OL', 'BLOCKQUOTE'];
@@ -23,21 +18,29 @@ export function getAdditionalTopPos(scrollTop, offsetTop, currentNodeHeight, tar
 export function getParentNodeObj(mdNode) {
   let node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
 
-  while (
-    (!node && mdNode) ||
-    includes(tableElementTagNames, mdNode.type) ||
-    isStyledTextNode(mdNode)
-  ) {
+  while (!node || includes(tableElementTagNames, mdNode.type) || isStyledTextNode(mdNode)) {
     mdNode = mdNode.parent;
     node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
   }
-  mdNode = getParentListMdNode(mdNode);
-  node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
 
-  return getNonNestableNodeObj(mdNode, node);
+  return getNonNestableNodeObj(getParentListItemObj(mdNode));
 }
 
-function getNonNestableNodeObj(mdNode, node) {
+function getParentListItemObj(orgMdNode) {
+  let mdNode = orgMdNode;
+
+  while (orgMdNode && orgMdNode !== 'document') {
+    if (orgMdNode.type === 'item') {
+      mdNode = orgMdNode;
+      break;
+    }
+    orgMdNode = orgMdNode.parent;
+  }
+
+  return { mdNode, node: document.querySelector(`[data-nodeid="${mdNode.id}"]`) };
+}
+
+function getNonNestableNodeObj({ mdNode, node }) {
   while (includes(nestableTypes, mdNode.type) && mdNode.firstChild) {
     mdNode = mdNode.firstChild;
     node = node.firstElementChild;
@@ -51,22 +54,17 @@ export function getCmRangeHeight(mdNode, cm) {
   const cmNodeHeight = cm.lineInfo(start - 1).handle.height;
   const height = cm.heightAtLine(end, 'local') - cm.heightAtLine(start - 1, 'local');
 
-  return height <= 0 ? cmNodeHeight : height + getNextEmptyLineHeight(mdNode, cm);
+  return height <= 0 ? cmNodeHeight : height + getNextEmptyLineHeight(cm, getMdEndLine(mdNode));
 }
 
-export function getNextEmptyLineHeight(mdNode, cm) {
+export function getNextEmptyLineHeight(cm, start, end = Number.MAX_VALUE) {
+  let lineInfo = cm.lineInfo(start).handle;
   let height = 0;
-  let end = getMdEndLine(mdNode);
 
-  while (end >= 0) {
-    const lineInfo = cm.lineInfo(end).handle;
-
-    if (!lineInfo.text.trim()) {
-      height += lineInfo.height;
-      end += 1;
-    } else {
-      break;
-    }
+  while (start <= end && !lineInfo.text.trim()) {
+    height += lineInfo.height;
+    start += 1;
+    lineInfo = cm.lineInfo(start).handle;
   }
   return height;
 }
