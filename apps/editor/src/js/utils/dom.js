@@ -1233,13 +1233,19 @@ function setOffset(element, offset) {
  * @ignore
  */
 function getOffset(element) {
-  const { top, left } = element.getBoundingClientRect();
-  const { scrollTop, scrollLeft } = document.body;
+  const { offsetTop, offsetLeft } = element;
+  const offset = { top: offsetTop, left: offsetLeft };
 
-  return {
-    top: top + scrollTop,
-    left: left + scrollLeft
-  };
+  let parentNode = element.offsetParent;
+
+  while (parentNode && parentNode !== document.body) {
+    offset.left += parentNode.offsetLeft;
+    offset.top += parentNode.offsetTop;
+
+    parentNode = parentNode.offsetParent;
+  }
+
+  return offset;
 }
 
 /**
