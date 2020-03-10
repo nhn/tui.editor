@@ -4,7 +4,7 @@
  */
 const path = require('path');
 const webpack = require('webpack');
-const pkg = require('./package.json');
+const { name, version, author, license } = require('./package.json');
 
 const TerserPlugin = require('terser-webpack-plugin');
 
@@ -17,7 +17,7 @@ function getEntryConfig(isAll) {
 }
 
 function getOutputConfig(isProduction, isCDN, isAll, minify) {
-  const filename = `toastui-${pkg.name.replace(/@toast-ui\//, '')}`;
+  const filename = `toastui-${name.replace(/@toast-ui\//, '')}`;
 
   if (!isProduction || isCDN) {
     const config = {
@@ -93,8 +93,7 @@ module.exports = (env, argv) => {
   const minify = !!argv.minify;
   const isCDN = !!argv.cdn;
   const isAll = !!argv.all;
-
-  return {
+  const config = {
     mode: isProduction ? 'production' : 'development',
     entry: getEntryConfig(isAll),
     output: getOutputConfig(isProduction, isCDN, isAll, minify),
@@ -120,23 +119,27 @@ module.exports = (env, argv) => {
         }
       ]
     },
-    plugins: [
+    optimization: getOptimizationConfig(isProduction, minify)
+  };
+
+  if (isProduction) {
+    config.plugins = [
       new webpack.BannerPlugin(
         [
           'TOAST UI Editor : Code Syntax Highlight Plugin',
-          `@version ${pkg.version}`,
-          `@author ${pkg.author}`,
-          `@license ${pkg.license}`
+          `@version ${version} | ${new Date().toDateString()}`,
+          `@author ${author}`,
+          `@license ${license}`
         ].join('\n')
       )
-    ],
-    optimization: getOptimizationConfig(isProduction, minify),
-    devServer: {
+    ];
+  } else {
+    config.devServer = {
       inline: true,
-      host: '0.0.0.0',
-      port: 8081,
-      disableHostCheck: true
-    },
-    devtool: 'inline-source-map'
-  };
+      host: '0.0.0.0'
+    };
+    config.devtool = 'inline-source-map';
+  }
+
+  return config;
 };
