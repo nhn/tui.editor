@@ -138,21 +138,24 @@ function _bindEvents(eventManager, commandMap) {
  */
 export default function tableMergedCellPlugin(editor) {
   const { eventManager } = editor;
-  const commandMap = {
-    AddRow: getWwAddRowCommand(editor),
-    AddCol: getWwAddColumnCommand(editor),
-    RemoveRow: getWwRemoveRowCommand(editor),
-    RemoveCol: getWwRemoveColumnCommand(editor),
-    AlignCol: getWwAlignColumnCommand(editor)
-  };
-
-  addLangs(editor);
+  const isViewer = editor.isViewer();
+  const commandMap = !isViewer
+    ? {
+        AddRow: getWwAddRowCommand(editor),
+        AddCol: getWwAddColumnCommand(editor),
+        RemoveRow: getWwRemoveRowCommand(editor),
+        RemoveCol: getWwRemoveColumnCommand(editor),
+        AlignCol: getWwAlignColumnCommand(editor)
+      }
+    : null;
 
   _bindEvents(eventManager, commandMap);
 
-  if (editor.isViewer()) {
+  if (isViewer) {
     return;
   }
+
+  addLangs(editor);
 
   const wwComponentManager = editor.wwEditor.componentManager;
   const popupTableUtils = editor.getUI().getPopupTableUtils();
