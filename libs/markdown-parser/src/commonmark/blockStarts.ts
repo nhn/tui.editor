@@ -199,11 +199,16 @@ const htmlBlock: BlockStart = (parser, container) => {
 
     for (blockType = 1; blockType <= 7; blockType++) {
       const matched = s.match(reHtmlBlockOpen[blockType]);
-      if (matched && (blockType < 7 || container.type !== 'paragraph')) {
-        if (blockType >= 6 && disallowedTags.length > 0) {
-          const reDisallowedTags = new RegExp(`<\/?(?:${disallowedTags.join('|')})`, 'i');
-          if (reDisallowedTags.test(matched[0])) {
+      if (matched) {
+        if (blockType === 7) {
+          if (container.type === 'paragraph') {
             return Matched.None;
+          }
+          if (disallowedTags.length > 0) {
+            const reDisallowedTags = new RegExp(`<\/?(?:${disallowedTags.join('|')})`, 'i');
+            if (reDisallowedTags.test(matched[0])) {
+              return Matched.None;
+            }
           }
         }
 

@@ -1,4 +1,4 @@
-import { Parser } from './commonmark/blocks';
+import { Parser, Options } from './commonmark/blocks';
 import { BlockNode, isList, removeAllNode } from './commonmark/node';
 import {
   removeNextUntil,
@@ -46,10 +46,12 @@ export class MarkdownDocument {
   private root: BlockNode;
   private eventHandlerMap: EventHandlerMap;
 
-  constructor(contents = '') {
-    this.lineTexts = contents.split(reLineEnding);
+  constructor(contents?: string, options?: Partial<Options>) {
+    this.parser = new Parser(options);
     this.eventHandlerMap = { change: [] };
-    this.parser = new Parser();
+
+    contents = contents || '';
+    this.lineTexts = contents.split(reLineEnding);
     this.root = this.parser.parse(contents);
   }
 
