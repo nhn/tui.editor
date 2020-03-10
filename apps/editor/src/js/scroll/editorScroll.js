@@ -5,20 +5,16 @@ import {
   getParentNodeObj,
   getCmRangeHeight,
   getTotalOffsetTop,
-  getNextEmptyLineHeight
+  getFallbackScrollTop
 } from './helper';
-import {
-  isHtmlNode,
-  getMdStartLine,
-  getMdEndLine,
-  isMultiLineNode
-  // isEmptyLineNode
-} from '../utils/markdown';
+import { isHtmlNode, getMdStartLine, getMdEndLine, isMultiLineNode } from '../utils/markdown';
 import { getOffsetHeight, setOffsetHeight } from './cache/offsetInfo';
 
+const EDITING_POSITION_RATIO = 0.5;
 let blockedPreviewScrollEvent = false;
+let latestScrollTop = 0;
 
-/* eslint-disable no-return-assign, prefer-destructuring */
+/* eslint-disable no-return-assign */
 function getAndSaveOffsetHeight(node, mdNodeId) {
   const cachedHeight = getOffsetHeight(mdNodeId);
   const offsetHeight = cachedHeight || node.offsetHeight;
@@ -29,12 +25,6 @@ function getAndSaveOffsetHeight(node, mdNodeId) {
 
   return offsetHeight;
 }
-
-// function getAdditionalTopPosForEmptyLine(mdNode, node, offsetHeight) {
-//   return mdNode.type === 'item' && node.firstElementChild
-//     ? node.firstElementChild.offsetHeight
-//     : offsetHeight;
-// }
 
 export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
   const { _previewContent: root, el: previewEl } = preview;
@@ -50,7 +40,6 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
       : cm.getCursor('from');
     const firstMdNode = mdDocument.findFirstNodeAtLine(startLine + 1);
 
-    ㅁ;
     if (!firstMdNode || isHtmlNode(firstMdNode)) {
       return;
     }
@@ -58,27 +47,41 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
     // if DOM element does not exist, should get its parent node using markdown node
     // in case of text node, rendererd DOM element is not matched to markdown node
     const nodeObj = getParentNodeObj(firstMdNode);
+    const previewElHeight = getAndSaveOffsetHeight(previewEl, 0);
     const { node, mdNode } = nodeObj;
+    let { top } = node.getBoundingClientRect();
+    let additionalTop = 0;
+
+    if (isMultiLineNode(mdNode)) {
+      additionalTop +=
+        (startLine - getMdStartLine(mdNode) + 1) * cm.lineInfo(startLine).handle.height;
+      top += additionalTop;
+    }
 
     targetScrollTop = getTotalOffsetTop(node, root) || node.offsetTop;
 
-    if (scrollEvent && isNodeToBeCalculated(mdNode)) {
-      const mdNodeStartLine = getMdStartLine(mdNode);
-      const { height } = cm.lineInfo(startLine).handle;
-      const offsetHeight = getAndSaveOffsetHeight(node, mdNode.id);
-      const offsetTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
+    if (!scrollEvent && top > 0 && top < previewElHeight) {
+      return;
+    }
 
-      const cmNodeHeight =
-        (isMultiLineNode(mdNode)
-          ? (getMdEndLine(mdNode) - mdNodeStartLine + 1) * height
-          : getCmRangeHeight(mdNodeStartLine - 1, mdNode, cm)) + getNextEmptyLineHeight(mdNode, cm);
+    if (isNodeToBeCalculated(mdNode)) {
+      if (!scrollEvent) {
+        targetScrollTop += isMultiLineNode(mdNode)
+          ? additionalTop
+          : -previewElHeight * EDITING_POSITION_RATIO;
+      } else {
+        const mdNodeStartLine = getMdStartLine(mdNode);
+        const offsetHeight = getAndSaveOffsetHeight(node, mdNode.id);
+        const offsetTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
+        const cmNodeHeight = getCmRangeHeight(mdNode, cm);
 
-      // console.log(cmNodeHeight, offsetHeight);
-      // if the node is empty line in code mirror, add the height of most adjacent node
-      // targetScrollTop += isEmptyLineNode(text, mdNode)
-      //   ? getAdditionalTopPosForEmptyLine(mdNode, node, offsetHeight)
-      //   : getAdditionalTopPos(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
-      targetScrollTop += getAdditionalTopPos(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
+        targetScrollTop += getAdditionalTopPos(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
+
+        const scrollTopInfo = { latestScrollTop, scrollTop, targetScrollTop, sourceScrollTop };
+
+        targetScrollTop = getFallbackScrollTop(scrollTopInfo);
+        latestScrollTop = scrollTop;
+      }
     }
   }
 

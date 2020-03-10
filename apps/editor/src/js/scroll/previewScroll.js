@@ -5,14 +5,16 @@ import {
   getCmRangeHeight,
   getTotalOffsetTop,
   getParentNodeObj,
+  getFallbackScrollTop,
   getNextEmptyLineHeight
 } from './helper';
-import { getMdStartLine, getMdEndLine, isMultiLineNode } from '../utils/markdown';
+import { getMdStartLine } from '../utils/markdown';
 import { getOffsetHeight, setOffsetHeight, getOffsetTop, setOffsetTop } from './cache/offsetInfo';
 
 let blockedMarkdownScrollEvent = false;
+let latestScrollTop = 0;
 
-/* eslint-disable no-return-assign, prefer-destructuring */
+/* eslint-disable no-return-assign */
 function getAndSaveOffsetInfo(node, mdNodeId, root) {
   const cachedHeight = getOffsetHeight(mdNodeId);
   const cachedTop = getOffsetTop(mdNodeId);
@@ -58,14 +60,14 @@ export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
     targetScrollTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
 
     if (isNodeToBeCalculated(mdNode)) {
+      const cmNodeHeight = getCmRangeHeight(mdNode, cm);
       const { offsetHeight, offsetTop } = getAndSaveOffsetInfo(node, mdNodeId, root);
-      const height = cm.lineInfo(mdNodeStartLine - 1).handle.height;
-      const cmNodeHeight =
-        (isMultiLineNode(mdNode)
-          ? (getMdEndLine(mdNode) - mdNodeStartLine + 1) * height
-          : getCmRangeHeight(mdNodeStartLine - 1, mdNode, cm)) + getNextEmptyLineHeight(mdNode, cm);
 
       targetScrollTop += getAdditionalTopPos(scrollTop, offsetTop, offsetHeight, cmNodeHeight);
+      const scrollTopInfo = { latestScrollTop, scrollTop, targetScrollTop, sourceScrollTop };
+
+      targetScrollTop = getFallbackScrollTop(scrollTopInfo);
+      latestScrollTop = scrollTop;
     }
   }
 

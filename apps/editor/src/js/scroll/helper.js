@@ -1,11 +1,9 @@
 import { includes } from '../utils/common';
 import {
-  hasSameLineParent,
   getMdEndLine,
-  getLastLeafNode,
   getMdStartLine,
   isStyledTextNode,
-  hasSpecificTypeAncestor
+  getParentListMdNode
 } from '../utils/markdown';
 
 const nestableTypes = ['list', 'blockQuote'];
@@ -28,12 +26,13 @@ export function getParentNodeObj(mdNode) {
   while (
     (!node && mdNode) ||
     includes(tableElementTagNames, mdNode.type) ||
-    hasSameLineParent(mdNode) ||
-    (isStyledTextNode(mdNode) && !hasSpecificTypeAncestor(mdNode, 'item'))
+    isStyledTextNode(mdNode)
   ) {
     mdNode = mdNode.parent;
     node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
   }
+  mdNode = getParentListMdNode(mdNode);
+  node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
 
   return getNonNestableNodeObj(mdNode, node);
 }
@@ -46,35 +45,14 @@ function getNonNestableNodeObj(mdNode, node) {
   return { mdNode, node };
 }
 
-export function getCmRangeHeight(start, mdNode, cm) {
-  const cmNodeHeight = cm.lineInfo(start).handle.height;
-  const end = getMdEndLine(getLastLeafNode(mdNode));
-  const height = cm.heightAtLine(end, 'local') - cm.heightAtLine(start, 'local');
-  // getEmptyLineHeight(start, end, cm);
+export function getCmRangeHeight(mdNode, cm) {
+  const start = getMdStartLine(mdNode);
+  const end = getMdEndLine(mdNode);
+  const cmNodeHeight = cm.lineInfo(start - 1).handle.height;
+  const height = cm.heightAtLine(end, 'local') - cm.heightAtLine(start - 1, 'local');
 
-  return height <= 0 ? cmNodeHeight : height;
+  return height <= 0 ? cmNodeHeight : height + getNextEmptyLineHeight(mdNode, cm);
 }
-
-export function getCmRangeHeight2(start, mdNode, cm) {
-  const cmNodeHeight = cm.lineInfo(start).handle.height;
-  const pStart = getMdStartLine(mdNode);
-  const height = cm.heightAtLine(start, 'local') - cm.heightAtLine(pStart, 'local');
-
-  return height <= 0 ? cmNodeHeight : height;
-}
-
-// function getEmptyLineHeight(start, end, cm) {
-//   let emptyLineHeight = 0;
-
-//   for (let i = start; i < end; i += 1) {
-//     const { text, height } = cm.lineInfo(i).handle;
-
-//     if (!text.trim()) {
-//       emptyLineHeight += height;
-//     }
-//   }
-//   return emptyLineHeight;
-// }
 
 export function getNextEmptyLineHeight(mdNode, cm) {
   let height = 0;
@@ -136,4 +114,13 @@ function findLastSiblingElementToScrollTop(el, scrollTop, offsetTop) {
   }
 
   return null;
+}
+
+export function getFallbackScrollTop(scrollInfo) {
+  const { latestScrollTop, scrollTop, targetScrollTop, sourceScrollTop } = scrollInfo;
+
+  if (latestScrollTop < scrollTop) {
+    return Math.max(targetScrollTop, sourceScrollTop);
+  }
+  return Math.min(targetScrollTop, sourceScrollTop);
 }
