@@ -51,7 +51,7 @@ function hide(element) {
 function _bindEvents(popupTableUtils, eventManager, selectionManager) {
   const { body } = popupTableUtils;
   const [, , , , mergeBtn, unmergeBtn] = body.querySelectorAll('button');
-  const $separator = body.querySelector('hr');
+  const separator = body.querySelector('hr');
 
   popupTableUtils.on('click .te-table-merge', () => {
     eventManager.emit('command', 'MergeCells');
@@ -81,11 +81,11 @@ function _bindEvents(popupTableUtils, eventManager, selectionManager) {
       } else {
         hide(unmergeBtn);
       }
-      show($separator);
+      show(separator);
     } else {
       hide(mergeBtn);
       hide(unmergeBtn);
-      hide($separator);
+      hide(separator);
     }
   });
 }

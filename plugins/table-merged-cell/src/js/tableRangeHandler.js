@@ -12,8 +12,8 @@ import tableDataHandler from './tableDataHandler';
 /**
  * Find unmerged table range.
  * @param {Array.<Array.<object>>} tableData - table data
- * @param {HTMLElement} start - start talbe cell jQuery element
- * @param {HTMLElement} end - end table cell jQuery element
+ * @param {HTMLElement} start - start talbe cell element
+ * @param {HTMLElement} end - end table cell element
  * @returns {{
  *   start: {rowIndex: number, colIndex: number},
  *   end: {rowIndex: number, colIndex: number}

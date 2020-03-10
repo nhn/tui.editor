@@ -178,9 +178,9 @@ export function getWwAddColumnCommand(editor) {
           sq.saveUndoState(selectionRange);
           _addColumns(tableData, tableRange);
 
-          const $newTable = tableRenderer.replaceTable(table, tableData);
+          const newTable = tableRenderer.replaceTable(table, tableData);
           const focusCell = _findFocusCell(
-            $newTable,
+            newTable,
             tableRange.start.rowIndex,
             tableRange.end.colIndex
           );

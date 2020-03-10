@@ -159,12 +159,12 @@ export function getWwRemoveRowCommand(editor) {
         if (tableData.length < 2) {
           table.parentNode.removeChild(table);
         } else if (beforeRowLength !== tableData.length) {
-          const $newTable = tableRenderer.replaceTable(table, tableData);
+          const newTable = tableRenderer.replaceTable(table, tableData);
 
           const startRowIndex = tableRange.start.rowIndex;
           const focusRowIndex =
             startRowIndex < tableData.length ? startRowIndex : startRowIndex - 1;
-          const focusCell = _findFocusTd($newTable, focusRowIndex, tableRange.start.colIndex);
+          const focusCell = _findFocusTd(newTable, focusRowIndex, tableRange.start.colIndex);
 
           tableRenderer.focusToCell(sq, selectionRange, focusCell);
         }

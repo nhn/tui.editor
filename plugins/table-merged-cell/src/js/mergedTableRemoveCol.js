@@ -152,12 +152,12 @@ export function getWwRemoveColumnCommand(editor) {
         if (tableData[0].length === 0) {
           table.parentNode.removeChild(table);
         } else if (beforeCellLength !== tableData[0].length) {
-          const $newTable = tableRenderer.replaceTable(table, tableData);
+          const newTable = tableRenderer.replaceTable(table, tableData);
 
           const startColIndex = tableRange.start.colIndex;
           const focusColIndex =
             startColIndex >= tableData[0].length ? startColIndex - 1 : startColIndex;
-          const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, focusColIndex);
+          const focusCell = _findFocusCell(newTable, tableRange.start.rowIndex, focusColIndex);
 
           tableRenderer.focusToCell(sq, selectionRange, focusCell);
         }

@@ -2,8 +2,8 @@
  * @fileoverview Implements mergedTableCreator.
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import forEach from 'tui-code-snippet/collection/forEach';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import tableRenderer from './tableRenderer';
 
@@ -61,21 +61,19 @@ export function _parseTableCell(cell) {
 }
 
 /**
- * Create table object from jQuery table.
- * @param {jQuery} $table - jQuery table
+ * Create table object from table.
+ * @param {HTMLElement} table - table element
  * @returns {Array.<Array.<object>>}
  * @private
  */
-export function _createTableObjectFrom$Table($table) {
-  return $table
-    .find('tr')
-    .get()
-    .map(tr =>
-      $(tr)
-        .find('td, th')
-        .get()
-        .map(_parseTableCell)
-    );
+export function _createTableObjectFromTable(table) {
+  const trs = toArray(table.querySelectorAll('tr'));
+
+  return trs.map(tr => {
+    const cells = toArray(tr.querySelectorAll('td, th'));
+
+    return cells.map(_parseTableCell);
+  });
 }
 
 /**
@@ -178,12 +176,16 @@ export function _mergeByRowspan(trs) {
  * @returns {HTMLElement}
  */
 export default function createMergedTable(tableElement) {
-  const table = _createTableObjectFrom$Table($(tableElement));
+  const table = _createTableObjectFromTable(tableElement);
   const [thead, tbody] = _divideTrs(table);
 
   _mergeByColspan(thead);
   _mergeByColspan(tbody);
   _mergeByRowspan(tbody);
 
-  return $(tableRenderer.createTableHtml(table))[0];
+  const tempDiv = document.createElement('div');
+
+  tempDiv.innerHTML = tableRenderer.createTableHtml(table);
+
+  return tempDiv.firstChild;
 }

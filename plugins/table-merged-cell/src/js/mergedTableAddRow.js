@@ -151,8 +151,8 @@ export function getWwAddRowCommand(editor) {
         sq.saveUndoState(selectionRange);
         _addRow(tableData, tableRange);
 
-        const $newTable = tableRenderer.replaceTable(table, tableData);
-        const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
+        const newTable = tableRenderer.replaceTable(table, tableData);
+        const focusTd = _findFocusTd(newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
 
         tableRenderer.focusToCell(sq, selectionRange, focusTd);
       }
