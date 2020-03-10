@@ -30,6 +30,7 @@ function _changeContent(popupTableUtils, i18n) {
   ].join('');
 
   popupTableUtils.setContent(POPUP_CONTENT);
+  popupTableUtils._initDOMEvent();
 }
 
 function show(element) {
