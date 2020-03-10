@@ -4,20 +4,17 @@ import {
   getAdditionalTopPos,
   getParentNodeObj,
   getCmRangeHeight,
-  getTotalOffsetTop
+  getTotalOffsetTop,
+  getFallbackScrollTop
 } from './helper';
-import {
-  isHtmlNode,
-  getMdStartLine,
-  getMdEndLine,
-  isMultiLineNode,
-  isEmptyLineNode
-} from '../utils/markdown';
+import { isHtmlNode, getMdStartLine, isMultiLineNode } from '../utils/markdown';
 import { getOffsetHeight, setOffsetHeight } from './cache/offsetInfo';
 
+const EDITING_POSITION_RATIO = 0.5;
 let blockedPreviewScrollEvent = false;
+let latestScrollTop = null;
 
-/* eslint-disable no-return-assign, prefer-destructuring */
+/* eslint-disable no-return-assign */
 function getAndSaveOffsetHeight(node, mdNodeId) {
   const cachedHeight = getOffsetHeight(mdNodeId);
   const offsetHeight = cachedHeight || node.offsetHeight;
@@ -29,10 +26,22 @@ function getAndSaveOffsetHeight(node, mdNodeId) {
   return offsetHeight;
 }
 
-function getAdditionalTopPosForEmptyLine(mdNode, node, offsetHeight) {
-  return mdNode.type === 'item' && node.firstElementChild
-    ? node.firstElementChild.offsetHeight
-    : offsetHeight;
+function getTopInfo(cm, startLine, mdNode, node, previewEl) {
+  const mdNodeStartLine = getMdStartLine(mdNode);
+  const { height } = cm.lineInfo(startLine).handle;
+  const previewElHeight = getAndSaveOffsetHeight(previewEl, 0);
+  let top = node.getBoundingClientRect().top - previewEl.getBoundingClientRect().top;
+  // position editing node on middle of preview as default
+  let additionalScrollTop = -previewElHeight * EDITING_POSITION_RATIO;
+
+  if (isMultiLineNode(mdNode)) {
+    const additionalTopPos = (startLine - mdNodeStartLine + 1) * height;
+
+    additionalScrollTop = additionalTopPos;
+    top += additionalTopPos;
+  }
+
+  return { top, additionalScrollTop };
 }
 
 export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
@@ -57,23 +66,32 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
     // in case of text node, rendererd DOM element is not matched to markdown node
     const nodeObj = getParentNodeObj(firstMdNode);
     const { node, mdNode } = nodeObj;
+    const mdNodeStartLine = getMdStartLine(mdNode);
 
     targetScrollTop = getTotalOffsetTop(node, root) || node.offsetTop;
 
-    if (scrollEvent && isNodeToBeCalculated(mdNode)) {
-      const mdNodeStartLine = getMdStartLine(mdNode);
-      const { text, height } = cm.lineInfo(startLine).handle;
+    if (!scrollEvent) {
+      const previewElHeight = getAndSaveOffsetHeight(previewEl, 0);
+      const { top, additionalScrollTop } = getTopInfo(cm, startLine, mdNode, node, previewEl);
+
+      if (top > 0 && top < previewElHeight) {
+        return;
+      }
+
+      targetScrollTop += additionalScrollTop;
+      // assign the null to sync scrollTop position when scrolling
+      latestScrollTop = null;
+    } else if (isNodeToBeCalculated(mdNode)) {
       const offsetHeight = getAndSaveOffsetHeight(node, mdNode.id);
       const offsetTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
+      const cmNodeHeight = getCmRangeHeight(mdNode, cm);
 
-      const cmNodeHeight = isMultiLineNode(mdNode)
-        ? (getMdEndLine(mdNode) - mdNodeStartLine + 1) * height
-        : getCmRangeHeight(startLine, mdNode, cm);
+      targetScrollTop += getAdditionalTopPos(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
 
-      // if the node is empty line in code mirror, add the height of most adjacent node
-      targetScrollTop += isEmptyLineNode(text, mdNode)
-        ? getAdditionalTopPosForEmptyLine(mdNode, node, offsetHeight)
-        : getAdditionalTopPos(scrollTop, offsetTop, cmNodeHeight, offsetHeight);
+      const scrollTopInfo = { latestScrollTop, scrollTop, targetScrollTop, sourceScrollTop };
+
+      targetScrollTop = getFallbackScrollTop(scrollTopInfo);
+      latestScrollTop = scrollTop;
     }
   }
 

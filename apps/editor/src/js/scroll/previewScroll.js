@@ -4,14 +4,17 @@ import {
   getAdditionalTopPos,
   getCmRangeHeight,
   getTotalOffsetTop,
-  getParentNodeObj
+  getParentNodeObj,
+  getFallbackScrollTop,
+  getNextEmptyLineHeight
 } from './helper';
-import { getMdStartLine, getMdEndLine, isMultiLineNode } from '../utils/markdown';
+import { getMdStartLine, isListItemNode } from '../utils/markdown';
 import { getOffsetHeight, setOffsetHeight, getOffsetTop, setOffsetTop } from './cache/offsetInfo';
 
 let blockedMarkdownScrollEvent = false;
+let latestScrollTop = null;
 
-/* eslint-disable no-return-assign, prefer-destructuring */
+/* eslint-disable no-return-assign */
 function getAndSaveOffsetInfo(node, mdNodeId, root) {
   const cachedHeight = getOffsetHeight(mdNodeId);
   const cachedTop = getOffsetTop(mdNodeId);
@@ -41,29 +44,35 @@ export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
   const { scrollTop } = preview.el;
   const root = preview._previewContent;
 
-  const sourceScrollTop = cm.getScrollInfo().top;
+  const { left, top: sourceScrollTop } = cm.getScrollInfo();
   let targetScrollTop = 0;
 
   if (scrollTop && targetNode) {
     targetNode = getAncestorHavingId(targetNode, root);
+
     if (!targetNode.getAttribute('data-nodeid')) {
       return;
     }
 
+    const { line: startLine } = cm.coordsChar({ left, top: sourceScrollTop }, 'local');
     const mdNodeId = Number(targetNode.getAttribute('data-nodeid'));
     const { mdNode, node } = getParentNodeObj(mdDocument.findNodeById(mdNodeId));
     const mdNodeStartLine = getMdStartLine(mdNode);
 
     targetScrollTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
+    if (isListItemNode(mdNode)) {
+      targetScrollTop += getNextEmptyLineHeight(cm, mdNodeStartLine, startLine);
+    }
 
     if (isNodeToBeCalculated(mdNode)) {
+      const cmNodeHeight = getCmRangeHeight(mdNode, cm);
       const { offsetHeight, offsetTop } = getAndSaveOffsetInfo(node, mdNodeId, root);
-      const height = cm.lineInfo(mdNodeStartLine - 1).handle.height;
-      const cmNodeHeight = isMultiLineNode(mdNode)
-        ? (getMdEndLine(mdNode) - mdNodeStartLine + 1) * height
-        : getCmRangeHeight(mdNodeStartLine - 1, mdNode, cm);
 
       targetScrollTop += getAdditionalTopPos(scrollTop, offsetTop, offsetHeight, cmNodeHeight);
+      const scrollTopInfo = { latestScrollTop, scrollTop, targetScrollTop, sourceScrollTop };
+
+      targetScrollTop = getFallbackScrollTop(scrollTopInfo);
+      latestScrollTop = scrollTop;
     }
   }
 

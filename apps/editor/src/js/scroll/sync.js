@@ -21,7 +21,7 @@ function addPreviewRenderedEvent(editor, preview) {
     // So the size of elements can not be accurately measured.
     setTimeout(() => {
       if (isActive()) {
-        syncPreviewScrollTopToMarkdown(editor, preview, false);
+        syncPreviewScrollTopToMarkdown(editor, preview);
       }
 
       isScrollable = true;

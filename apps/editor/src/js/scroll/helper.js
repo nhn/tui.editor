@@ -1,11 +1,5 @@
 import { includes } from '../utils/common';
-import {
-  hasSameLineParent,
-  getMdEndLine,
-  getLastLeafNode,
-  isStyledTextNode,
-  hasSpecificTypeAncestor
-} from '../utils/markdown';
+import { getMdEndLine, getMdStartLine, isStyledTextNode } from '../utils/markdown';
 
 const nestableTypes = ['list', 'blockQuote'];
 const nestableTagNames = ['UL', 'OL', 'BLOCKQUOTE'];
@@ -24,20 +18,29 @@ export function getAdditionalTopPos(scrollTop, offsetTop, currentNodeHeight, tar
 export function getParentNodeObj(mdNode) {
   let node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
 
-  while (
-    (!node && mdNode) ||
-    includes(tableElementTagNames, mdNode.type) ||
-    hasSameLineParent(mdNode) ||
-    (isStyledTextNode(mdNode) && !hasSpecificTypeAncestor(mdNode, 'item'))
-  ) {
+  while (!node || includes(tableElementTagNames, mdNode.type) || isStyledTextNode(mdNode)) {
     mdNode = mdNode.parent;
     node = document.querySelector(`[data-nodeid="${mdNode.id}"]`);
   }
 
-  return getNonNestableNodeObj(mdNode, node);
+  return getNonNestableNodeObj(getParentListItemObj(mdNode));
 }
 
-function getNonNestableNodeObj(mdNode, node) {
+function getParentListItemObj(orgMdNode) {
+  let mdNode = orgMdNode;
+
+  while (orgMdNode && orgMdNode !== 'document') {
+    if (orgMdNode.type === 'item') {
+      mdNode = orgMdNode;
+      break;
+    }
+    orgMdNode = orgMdNode.parent;
+  }
+
+  return { mdNode, node: document.querySelector(`[data-nodeid="${mdNode.id}"]`) };
+}
+
+function getNonNestableNodeObj({ mdNode, node }) {
   while (includes(nestableTypes, mdNode.type) && mdNode.firstChild) {
     mdNode = mdNode.firstChild;
     node = node.firstElementChild;
@@ -45,28 +48,31 @@ function getNonNestableNodeObj(mdNode, node) {
   return { mdNode, node };
 }
 
-export function getCmRangeHeight(start, mdNode, cm) {
-  const cmNodeHeight = cm.lineInfo(start).handle.height;
-  const end = getMdEndLine(getLastLeafNode(mdNode));
-  const height =
-    cm.heightAtLine(end, 'local') -
-    cm.heightAtLine(start, 'local') -
-    getEmptyLineHeight(start, end, cm);
+export function getCmRangeHeight(mdNode, cm) {
+  const start = getMdStartLine(mdNode);
+  const end = getMdEndLine(mdNode);
+  const cmNodeHeight = cm.lineInfo(start - 1).handle.height;
+  const height = cm.heightAtLine(end, 'local') - cm.heightAtLine(start - 1, 'local');
 
-  return height <= 0 ? cmNodeHeight : height;
+  return height <= 0 ? cmNodeHeight : height + getNextEmptyLineHeight(cm, getMdEndLine(mdNode));
 }
 
-function getEmptyLineHeight(start, end, cm) {
-  let emptyLineHeight = 0;
+export function getNextEmptyLineHeight(cm, start, end = Number.MAX_VALUE) {
+  const lineInfo = cm.lineInfo(start);
 
-  for (let i = start; i < end; i += 1) {
-    const { text, height } = cm.lineInfo(i).handle;
-
-    if (!text.trim()) {
-      emptyLineHeight += height;
-    }
+  if (!lineInfo) {
+    return 0;
   }
-  return emptyLineHeight;
+
+  let detailLineInfo = lineInfo.handle;
+  let height = 0;
+
+  while (start <= end && !detailLineInfo.text.trim()) {
+    height += detailLineInfo.height;
+    start += 1;
+    detailLineInfo = cm.lineInfo(start).handle;
+  }
+  return height;
 }
 
 export function getTotalOffsetTop(el, root) {
@@ -112,4 +118,16 @@ function findLastSiblingElementToScrollTop(el, scrollTop, offsetTop) {
   }
 
   return null;
+}
+
+export function getFallbackScrollTop(scrollInfo) {
+  const { latestScrollTop, scrollTop, targetScrollTop, sourceScrollTop } = scrollInfo;
+
+  if (latestScrollTop === null) {
+    return targetScrollTop;
+  }
+
+  return latestScrollTop < scrollTop
+    ? Math.max(targetScrollTop, sourceScrollTop)
+    : Math.min(targetScrollTop, sourceScrollTop);
 }
