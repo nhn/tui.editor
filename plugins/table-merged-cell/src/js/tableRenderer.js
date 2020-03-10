@@ -2,8 +2,6 @@
  * @fileoverview Implements tableRenderer
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import tableDataHandler from './tableDataHandler';
 
 /**
@@ -63,19 +61,20 @@ function createTableHtml(renderData) {
 
 /**
  * Replace table.
- * @param {jQuery} $table - table jQuery element
+ * @param {HTMLElement} table - table element
  * @param {Array.<Array.<object>>} tableData - table data
- * @returns {jQuery}
+ * @returns {HTMLElement}
  * @ignore
  */
-function replaceTable($table, tableData) {
+function replaceTable(table, tableData) {
   const cellIndexData = tableDataHandler.createCellIndexData(tableData);
   const renderData = tableDataHandler.createRenderData(tableData, cellIndexData);
-  const $newTable = $(createTableHtml(renderData));
+  const tempDiv = document.createElement('div');
 
-  $table.replaceWith($newTable);
+  tempDiv.innerHTML = createTableHtml(renderData);
+  table.innerHTML = tempDiv.innerHTML;
 
-  return $newTable;
+  return table;
 }
 
 /**

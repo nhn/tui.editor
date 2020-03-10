@@ -7,7 +7,7 @@ import $ from 'jquery';
 import createMergedTable, {
   _extractPropertiesForMerge,
   _parseTableCell,
-  _createTableObjectFrom$Table,
+  _createTableObjectFromTable,
   _divideTrs,
   _mergeByColspan,
   _getRemovalTdCountsByRowspan,
@@ -113,7 +113,7 @@ describe('mergedTableCreator', () => {
     });
   });
 
-  describe('_createTableObjectFrom$Table()', () => {
+  describe('_createTableObjectFromTable()', () => {
     it('create json from jQuery table', () => {
       const tableHtml = [
         '<table>',
@@ -127,7 +127,7 @@ describe('mergedTableCreator', () => {
         '</table>'
       ].join('');
       const $table = $(tableHtml);
-      const actual = _createTableObjectFrom$Table($table);
+      const actual = _createTableObjectFromTable($table.get(0));
 
       expect(actual.length).toBe(3);
       expect(actual[0].length).toBe(2);

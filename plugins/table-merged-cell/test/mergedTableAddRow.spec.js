@@ -174,7 +174,7 @@ describe('mergedTableAddRow', () => {
     let tableData;
 
     beforeEach(() => {
-      tableData = tableDataHandler.createTableData($table);
+      tableData = tableDataHandler.createTableData($table.get(0));
     });
 
     it('add row, when target row has start merge cell(has rowspan)', () => {

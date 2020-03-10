@@ -30,7 +30,7 @@ describe('mergedTableRemoveRow', () => {
     let tableData;
 
     beforeEach(() => {
-      tableData = tableDataHandler.createTableData($table);
+      tableData = tableDataHandler.createTableData($table.get(0));
     });
 
     it('remove row, when target row has start merge cell(has rowspan)', () => {
@@ -260,8 +260,8 @@ describe('mergedTableRemoveRow', () => {
         </table>
       `);
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[3].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[3].firstChild);
       sq.setSelection(range);
       sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
@@ -269,8 +269,8 @@ describe('mergedTableRemoveRow', () => {
 
       commandManger.exec(wwe);
 
-      expect(wwe.get$Body().find('tbody tr').length).toEqual(1);
-      expect(wwe.get$Body().find('tbody td').length).toEqual(2);
+      expect(wwe.getBody().querySelectorAll('tbody tr').length).toEqual(1);
+      expect(wwe.getBody().querySelectorAll('tbody td').length).toEqual(2);
     });
   });
 });

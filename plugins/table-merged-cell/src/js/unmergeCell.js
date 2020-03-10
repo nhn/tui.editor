@@ -2,8 +2,8 @@
  * @fileoverview Implements UnmergeCell
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import range from 'tui-code-snippet/array/range';
+import closest from 'tui-code-snippet/domUtil/closest';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -82,20 +82,18 @@ export function _unmergeCells(tableData, { start: startRange, end: endRange }) {
 
 /**
  * Find focus cell element like td or th.
- * @param {jQuery} $newTable - changed table jQuery element
+ * @param {HTMLElement} newTable - changed table element
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
  * @private
  */
-function _findFocusCell($newTable, rowIndex, colIndex) {
-  const tableData = dataHandler.createTableData($newTable);
+function _findFocusCell(newTable, rowIndex, colIndex) {
+  const tableData = dataHandler.createTableData(newTable);
   const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, colIndex);
+  const foundTr = newTable.querySelectorAll('tr')[cellElementIndex.rowIndex];
 
-  return $newTable
-    .find('tr')
-    .eq(cellElementIndex.rowIndex)
-    .find('td, th')[cellElementIndex.colIndex];
+  return foundTr.querySelectorAll('td, th')[cellElementIndex.colIndex];
 }
 
 /**
@@ -124,14 +122,16 @@ export function getUnmergeCellCommand(editor) {
           return;
         }
 
-        const $startContainer = $(selectionRange.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const { startContainer } = selectionRange;
+        const startElement =
+          startContainer.nodeType !== 1 ? startContainer.parentNode : startContainer;
+        const table = closest(startElement, 'table');
+        const tableData = dataHandler.createTableData(table);
+        const selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const tableRange = tableRangeHandler.getTableSelectionRange(
           tableData,
-          $selectedCells,
-          $startContainer
+          selectedCells,
+          startContainer
         );
 
         if (!_hasMergedCell(tableData, tableRange)) {
@@ -140,9 +140,9 @@ export function getUnmergeCellCommand(editor) {
 
         _unmergeCells(tableData, tableRange);
 
-        const $newTable = tableRenderer.replaceTable($table, tableData);
+        const newTable = tableRenderer.replaceTable(table, tableData);
         const focusCell = _findFocusCell(
-          $newTable,
+          newTable,
           tableRange.start.rowIndex,
           tableRange.start.colIndex
         );

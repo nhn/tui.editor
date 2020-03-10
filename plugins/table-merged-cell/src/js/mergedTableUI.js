@@ -2,7 +2,9 @@
  * @fileoverview Implements table extension ui
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
+import css from 'tui-code-snippet/domUtil/css';
+import matches from 'tui-code-snippet/domUtil/matches';
 
 /**
  * Change contextmenu content.
@@ -26,9 +28,17 @@ function _changeContent(popupTableUtils, i18n) {
     '<hr/>',
     `<button type="button" class="te-table-remove">${i18n.get('Remove table')}</button>`
   ].join('');
-  const $popupContent = $(POPUP_CONTENT);
 
-  popupTableUtils.setContent($popupContent);
+  popupTableUtils.setContent(POPUP_CONTENT);
+  popupTableUtils._initDOMEvent();
+}
+
+function show(element) {
+  css(element, { display: 'block' });
+}
+
+function hide(element) {
+  css(element, { display: 'none' });
 }
 
 /**
@@ -39,10 +49,9 @@ function _changeContent(popupTableUtils, i18n) {
  * @private
  */
 function _bindEvents(popupTableUtils, eventManager, selectionManager) {
-  const $popupContent = popupTableUtils.$content;
-  const $mergeBtn = $($popupContent[5]);
-  const $unmergeBtn = $($popupContent[6]);
-  const $separator = $($popupContent[7]);
+  const { body } = popupTableUtils;
+  const [, , , , mergeBtn, unmergeBtn] = body.querySelectorAll('button');
+  const separator = body.querySelector('hr');
 
   popupTableUtils.on('click .te-table-merge', () => {
     eventManager.emit('command', 'MergeCells');
@@ -53,26 +62,30 @@ function _bindEvents(popupTableUtils, eventManager, selectionManager) {
   });
 
   eventManager.listen('openPopupTableUtils', () => {
-    const $selectedCells = selectionManager.getSelectedCells();
-    const selectedCellCount = $selectedCells.length;
+    const selectedCells = selectionManager.getSelectedCells();
+    const selectedCellCount = selectedCells.length;
 
     if (selectedCellCount) {
-      if (selectedCellCount < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
-        $mergeBtn.hide();
+      if (selectedCellCount < 2 || selectionManager.hasSelectedBothThAndTd(selectedCells)) {
+        hide(mergeBtn);
       } else {
-        $mergeBtn.show();
+        show(mergeBtn);
       }
 
-      if ($selectedCells.is('[rowspan], [colspan]')) {
-        $unmergeBtn.show();
+      const mergedCells = toArray(selectedCells).filter(selectedCell =>
+        matches(selectedCell, '[rowspan], [colspan')
+      );
+
+      if (mergedCells.length) {
+        show(unmergeBtn);
       } else {
-        $unmergeBtn.hide();
+        hide(unmergeBtn);
       }
-      $separator.show();
+      show(separator);
     } else {
-      $mergeBtn.hide();
-      $unmergeBtn.hide();
-      $separator.hide();
+      hide(mergeBtn);
+      hide(unmergeBtn);
+      hide(separator);
     }
   });
 }

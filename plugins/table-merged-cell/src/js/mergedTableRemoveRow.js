@@ -2,10 +2,10 @@
  * @fileoverview Implements mergedTableRemoveRow
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import extend from 'tui-code-snippet/object/extend';
 import range from 'tui-code-snippet/array/range';
+import closest from 'tui-code-snippet/domUtil/closest';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -95,25 +95,23 @@ export function _removeRow(tableData, tableRange) {
 
 /**
  * Find focus td element.
- * @param {jQuery} $newTable - changed table jQuery element
+ * @param {HTMLElement} newTable - changed table element
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
  * @private
  */
-function _findFocusTd($newTable, rowIndex, colIndex) {
-  const tableData = dataHandler.createTableData($newTable);
+function _findFocusTd(newTable, rowIndex, colIndex) {
+  const tableData = dataHandler.createTableData(newTable);
 
   if (tableData.length - 1 < rowIndex) {
     rowIndex -= 1;
   }
 
   const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, colIndex);
+  const foundTr = newTable.querySelectorAll('tr')[cellElementIndex.rowIndex];
 
-  return $newTable
-    .find('tr')
-    .eq(cellElementIndex.rowIndex)
-    .find('th,td')[cellElementIndex.colIndex];
+  return foundTr.querySelectorAll('th,td')[cellElementIndex.colIndex];
 }
 
 /**
@@ -142,29 +140,31 @@ export function getWwRemoveRowCommand(editor) {
           return;
         }
 
-        const $startContainer = $(selectionRange.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
+        const { startContainer } = selectionRange;
+        const startElement =
+          startContainer.nodeType !== 1 ? startContainer.parentNode : startContainer;
+        const table = closest(startElement, 'table');
+        const tableData = dataHandler.createTableData(table);
         const beforeRowLength = tableData.length;
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const tableRange = tableRangeHandler.getTableSelectionRange(
           tableData,
-          $selectedCells,
-          $startContainer
+          selectedCells,
+          startContainer
         );
 
         sq.saveUndoState(selectionRange);
         _removeRow(tableData, tableRange);
 
         if (tableData.length < 2) {
-          $table.remove();
+          table.parentNode.removeChild(table);
         } else if (beforeRowLength !== tableData.length) {
-          const $newTable = tableRenderer.replaceTable($table, tableData);
+          const newTable = tableRenderer.replaceTable(table, tableData);
 
           const startRowIndex = tableRange.start.rowIndex;
           const focusRowIndex =
             startRowIndex < tableData.length ? startRowIndex : startRowIndex - 1;
-          const focusCell = _findFocusTd($newTable, focusRowIndex, tableRange.start.colIndex);
+          const focusCell = _findFocusTd(newTable, focusRowIndex, tableRange.start.colIndex);
 
           tableRenderer.focusToCell(sq, selectionRange, focusCell);
         }

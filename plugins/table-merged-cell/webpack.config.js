@@ -35,14 +35,6 @@ function getOutputConfig(isProduction, isCDN, minify) {
   };
 }
 
-function getExternalsConfig(isProduction, isCDN) {
-  if (isProduction && !isCDN) {
-    return ['jquery'];
-  }
-
-  return [];
-}
-
 function getOptimizationConfig(isProduction, minify) {
   const minimizer = [];
 
@@ -69,7 +61,6 @@ module.exports = (env, argv) => {
     mode: isProduction ? 'production' : 'development',
     entry: './src/js/index.js',
     output: getOutputConfig(isProduction, isCDN, minify),
-    externals: getExternalsConfig(isProduction, isCDN),
     module: {
       rules: [
         {

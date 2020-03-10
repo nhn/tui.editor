@@ -26,7 +26,7 @@ describe('unmergeCell', () => {
   beforeEach(function() {
     const $table = $(tableHtml);
 
-    tableData = tableDataHandler.createTableData($table);
+    tableData = tableDataHandler.createTableData($table.get(0));
   });
 
   describe('_hasMergedCell', () => {

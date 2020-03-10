@@ -2,7 +2,7 @@
  * @fileoverview Implements table plugin
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import { addLangs } from './langs';
 
@@ -71,21 +71,27 @@ function _changeWysiwygManagers(wwComponentManager, editor) {
  * @private
  */
 function _changeHtml(html, onChangeTable) {
-  const $tempDiv = $(`<div>${html}</div>`);
-  const $tables = $tempDiv.find('table');
+  const tempDiv = document.createElement('div');
 
-  if ($tables.length) {
-    $tables.get().forEach(tableElement => {
+  tempDiv.innerHTML = html;
+
+  const tables = tempDiv.querySelectorAll('table');
+
+  if (tables.length) {
+    toArray(tables).forEach(tableElement => {
       const changedTableElement = onChangeTable(tableElement);
 
       if (tableElement.hasAttribute('data-tomark-pass')) {
         changedTableElement.setAttribute('data-tomark-pass', '');
       }
 
-      $(tableElement).replaceWith(changedTableElement);
+      const { parentNode } = tableElement;
+
+      parentNode.appendChild(changedTableElement);
+      parentNode.removeChild(tableElement);
     });
 
-    html = $tempDiv.html();
+    html = tempDiv.innerHTML;
   }
 
   return html;
@@ -124,9 +130,12 @@ function _bindEvents(eventManager, commandMap) {
   eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html =>
     _changeHtml(html, prepareTableUnmerge)
   );
-  eventManager.listen('addCommandBefore', commandWrapper => {
-    _snatchWysiwygCommand(commandWrapper, commandMap);
-  });
+
+  if (commandMap) {
+    eventManager.listen('addCommandBefore', commandWrapper => {
+      _snatchWysiwygCommand(commandWrapper, commandMap);
+    });
+  }
 }
 
 /**
@@ -135,21 +144,24 @@ function _bindEvents(eventManager, commandMap) {
  */
 export default function tableMergedCellPlugin(editor) {
   const { eventManager } = editor;
-  const commandMap = {
-    AddRow: getWwAddRowCommand(editor),
-    AddCol: getWwAddColumnCommand(editor),
-    RemoveRow: getWwRemoveRowCommand(editor),
-    RemoveCol: getWwRemoveColumnCommand(editor),
-    AlignCol: getWwAlignColumnCommand(editor)
-  };
-
-  addLangs(editor);
+  const isViewer = editor.isViewer();
+  const commandMap = isViewer
+    ? null
+    : {
+        AddRow: getWwAddRowCommand(editor),
+        AddCol: getWwAddColumnCommand(editor),
+        RemoveRow: getWwRemoveRowCommand(editor),
+        RemoveCol: getWwRemoveColumnCommand(editor),
+        AlignCol: getWwAlignColumnCommand(editor)
+      };
 
   _bindEvents(eventManager, commandMap);
 
-  if (editor.isViewer()) {
+  if (isViewer) {
     return;
   }
+
+  addLangs(editor);
 
   const wwComponentManager = editor.wwEditor.componentManager;
   const popupTableUtils = editor.getUI().getPopupTableUtils();

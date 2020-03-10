@@ -2,7 +2,7 @@
  * @fileoverview Implements tableRangeHandler
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import extend from 'tui-code-snippet/object/extend';
 import range from 'tui-code-snippet/array/range';
@@ -12,18 +12,18 @@ import tableDataHandler from './tableDataHandler';
 /**
  * Find unmerged table range.
  * @param {Array.<Array.<object>>} tableData - table data
- * @param {jQuery} $start - start talbe cell jQuery element
- * @param {jQuery} $end - end table cell jQuery element
+ * @param {HTMLElement} start - start talbe cell element
+ * @param {HTMLElement} end - end table cell element
  * @returns {{
  *   start: {rowIndex: number, colIndex: number},
  *   end: {rowIndex: number, colIndex: number}
  * }}
  * @private
  */
-function _findUnmergedRange(tableData, $start, $end) {
+function _findUnmergedRange(tableData, start, end) {
   const cellIndexData = tableDataHandler.createCellIndexData(tableData);
-  const startCellIndex = tableDataHandler.findCellIndex(cellIndexData, $start);
-  const endCellIndex = tableDataHandler.findCellIndex(cellIndexData, $end);
+  const startCellIndex = tableDataHandler.findCellIndex(cellIndexData, start);
+  const endCellIndex = tableDataHandler.findCellIndex(cellIndexData, end);
   let startRowIndex, endRowIndex, startColIndex, endColIndex;
 
   if (startCellIndex.rowIndex > endCellIndex.rowIndex) {
@@ -155,16 +155,16 @@ function _expandMergedRange(tableData, tableRange) {
 /**
  * Find table range for selection.
  * @param {Array.<Array.<object>>} tableData - table data
- * @param {jQuery} $start - start jQuery element
- * @param {jQuery} $end - end jQuery element
+ * @param {HTMLElement} start - start element
+ * @param {HTMLElement} end - end element
  * @returns {{
  *   start: {rowIndex: number, colIndex: number},
  *   end: {rowIndex: number, colIndex: number}
  * }}
  * @ignore
  */
-function findSelectionRange(tableData, $start, $end) {
-  const unmergedRange = _findUnmergedRange(tableData, $start, $end);
+function findSelectionRange(tableData, start, end) {
+  const unmergedRange = _findUnmergedRange(tableData, start, end);
 
   return _expandMergedRange(tableData, unmergedRange);
 }
@@ -172,24 +172,24 @@ function findSelectionRange(tableData, $start, $end) {
 /**
  * Get table selection range.
  * @param {Array.<Array.<object>>} tableData - table data
- * @param {jQuery} $selectedCells - selected cells jQuery elements
- * @param {jQuery} $startContainer - start container jQuery element of text range
+ * @param {HTMLElement} selectedCells - selected cells elements
+ * @param {HTMLElement} startContainer - start container element of text range
  * @returns {{
  *   start: {rowIndex: number, colIndex: number},
  *   end: {rowIndex: number, colIndex: number}
  *}}
  * @ignore
  */
-function getTableSelectionRange(tableData, $selectedCells, $startContainer) {
+function getTableSelectionRange(tableData, selectedCells, startContainer) {
   const cellIndexData = tableDataHandler.createCellIndexData(tableData);
   const tableRange = {};
 
-  if ($selectedCells.length) {
-    const startRange = tableDataHandler.findCellIndex(cellIndexData, $selectedCells.first());
+  if (selectedCells.length) {
+    const startRange = tableDataHandler.findCellIndex(cellIndexData, selectedCells[0]);
     const endRange = extend({}, startRange);
 
-    $selectedCells.each((index, cell) => {
-      const cellIndex = tableDataHandler.findCellIndex(cellIndexData, $(cell));
+    toArray(selectedCells).forEach(cell => {
+      const cellIndex = tableDataHandler.findCellIndex(cellIndexData, cell);
       const cellData = tableData[cellIndex.rowIndex][cellIndex.colIndex];
       const lastRowMergedIndex = cellIndex.rowIndex + cellData.rowspan - 1;
       const lastColMergedIndex = cellIndex.colIndex + cellData.colspan - 1;
@@ -201,7 +201,7 @@ function getTableSelectionRange(tableData, $selectedCells, $startContainer) {
     tableRange.start = startRange;
     tableRange.end = endRange;
   } else {
-    const cellIndex = tableDataHandler.findCellIndex(cellIndexData, $startContainer);
+    const cellIndex = tableDataHandler.findCellIndex(cellIndexData, startContainer);
 
     tableRange.start = cellIndex;
     tableRange.end = extend({}, cellIndex);

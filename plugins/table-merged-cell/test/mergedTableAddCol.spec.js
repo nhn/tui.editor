@@ -276,7 +276,7 @@ describe('mergedTableAddCol', () => {
     let tableData;
 
     beforeEach(() => {
-      tableData = tableDataHandler.createTableData($table);
+      tableData = tableDataHandler.createTableData($table.get(0));
     });
 
     it('add columns, when target col has start merge cell(has colspan)', () => {

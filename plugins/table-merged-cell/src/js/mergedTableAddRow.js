@@ -2,10 +2,10 @@
  * @fileoverview Implements mergedTableAddRow. Add Row to selected table
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import extend from 'tui-code-snippet/object/extend';
 import range from 'tui-code-snippet/array/range';
+import closest from 'tui-code-snippet/domUtil/closest';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -34,6 +34,7 @@ function _createRowMergedCell(rowMergeWith) {
  * @returns {object}
  * @private
  */
+/* eslint-disable complexity */
 export function _createNewRow(tableData, rowIndex) {
   let prevCell = null;
 
@@ -94,21 +95,19 @@ export function _addRow(tableData, tableRange) {
 
 /**
  * Find focus td element.
- * @param {jQuery} $newTable - changed table jQuery element
+ * @param {HTMLElement} newTable - changed table element
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
  * @private
  */
-function _findFocusTd($newTable, rowIndex, colIndex) {
-  const tableData = dataHandler.createTableData($newTable);
+function _findFocusTd(newTable, rowIndex, colIndex) {
+  const tableData = dataHandler.createTableData(newTable);
   const newRowIndex = dataHandler.findRowMergedLastIndex(tableData, rowIndex, colIndex) + 1;
   const cellElementIndex = dataHandler.findElementIndex(tableData, newRowIndex, colIndex);
+  const foundTr = newTable.querySelectorAll('tr')[cellElementIndex.rowIndex];
 
-  return $newTable
-    .find('tr')
-    .eq(cellElementIndex.rowIndex)
-    .find('td')[cellElementIndex.colIndex];
+  return foundTr.querySelectorAll('td')[cellElementIndex.colIndex];
 }
 
 /**
@@ -137,21 +136,23 @@ export function getWwAddRowCommand(editor) {
           return;
         }
 
-        const $startContainer = $(selectionRange.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const { startContainer } = selectionRange;
+        const startElement =
+          startContainer.nodeType !== 1 ? startContainer.parentNode : startContainer;
+        const table = closest(startElement, 'table');
+        const tableData = dataHandler.createTableData(table);
+        const selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const tableRange = tableRangeHandler.getTableSelectionRange(
           tableData,
-          $selectedCells,
-          $startContainer
+          selectedCells,
+          startContainer
         );
 
         sq.saveUndoState(selectionRange);
         _addRow(tableData, tableRange);
 
-        const $newTable = tableRenderer.replaceTable($table, tableData);
-        const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
+        const newTable = tableRenderer.replaceTable(table, tableData);
+        const focusTd = _findFocusTd(newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
 
         tableRenderer.focusToCell(sq, selectionRange, focusTd);
       }

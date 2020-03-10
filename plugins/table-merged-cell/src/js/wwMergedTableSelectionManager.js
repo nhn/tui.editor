@@ -2,8 +2,10 @@
  * @fileoverview Implements wysiwyg merged table selection manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
 import range from 'tui-code-snippet/array/range';
+import closest from 'tui-code-snippet/domUtil/closest';
+import addClass from 'tui-code-snippet/domUtil/addClass';
 
 import tableDataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -39,7 +41,7 @@ export function getWwMergedTableSelectionManager(editor) {
 
     /**
      * Add css class for selected cells.
-     * @param {jQuery} $table - table jQuery element
+     * @param {HTMLElement} table - table element
      * @param {Array.<Array.<object>>} tableData - table data
      * @param {{
      *   start: {rowIndex: number, colIndex: number},
@@ -47,23 +49,24 @@ export function getWwMergedTableSelectionManager(editor) {
      * }} tableRange - table selected range
      * @private
      */
-    _addClassToSelectedCells($table, tableData, tableRange) {
+    _addClassToSelectedCells(table, tableData, tableRange) {
       const startRange = tableRange.start;
       const endRange = tableRange.end;
       const cellIndexRange = range(startRange.colIndex, endRange.colIndex + 1);
-      const $trs = $table.find('tr');
+      const trs = table.querySelectorAll('tr');
 
       range(startRange.rowIndex, endRange.rowIndex + 1).forEach(rowIndex => {
         const rowData = tableData[rowIndex];
-        const $cells = $trs.eq(rowIndex).find('td, th');
+        const cells = trs[rowIndex].querySelectorAll('td, th');
 
         return cellIndexRange.forEach(colIndex => {
           const cellData = rowData[colIndex];
 
           if (cellData.elementIndex) {
-            $cells
-              .eq(rowData[colIndex].elementIndex.colIndex)
-              .addClass(TABLE_CELL_SELECTED_CLASS_NAME);
+            addClass(
+              cells[rowData[colIndex].elementIndex.colIndex],
+              TABLE_CELL_SELECTED_CLASS_NAME
+            );
           }
         });
       });
@@ -74,9 +77,9 @@ export function getWwMergedTableSelectionManager(editor) {
      * @param {HTMLElement} selectionStart - start element
      */
     onDragStart(selectionStart) {
-      const $table = $(selectionStart).closest('[contenteditable=true] table');
+      const table = closest(selectionStart, '[contenteditable=true] table');
 
-      this._tableData = tableDataHandler.createTableData($table);
+      this._tableData = tableDataHandler.createTableData(table);
     }
 
     /**
@@ -93,13 +96,14 @@ export function getWwMergedTableSelectionManager(editor) {
      * @override
      */
     highlightTableCellsBy(selectionStart, selectionEnd) {
-      const $start = $(selectionStart);
-      const $end = $(selectionEnd);
-      const $table = $start.closest('[contenteditable=true] table');
-      const tableRange = tableRangeHandler.findSelectionRange(this._tableData, $start, $end);
+      const start = selectionStart;
+      const end = selectionEnd;
+
+      const table = closest(start, '[contenteditable=true] table');
+      const tableRange = tableRangeHandler.findSelectionRange(this._tableData, start, end);
 
       this.removeClassAttrbuteFromAllCellsIfNeed();
-      this._addClassToSelectedCells($table, this._tableData, tableRange);
+      this._addClassToSelectedCells(table, this._tableData, tableRange);
     }
 
     /**
@@ -110,36 +114,38 @@ export function getWwMergedTableSelectionManager(editor) {
     styleToSelectedCells(onStyle, options) {
       const sq = this.wwe.getEditor();
       const selectionRange = sq.getSelection().cloneRange();
-      const $table = $(selectionRange.startContainer).closest('[contenteditable=true] table');
+      const table = closest(selectionRange.startContainer, '[contenteditable=true] table');
+      const trs = toArray(table.querySelectorAll('tr'));
 
-      $table
-        .find('tr')
-        .get()
-        .forEach(tr => {
-          const $cells = $(tr).find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
-          const firstSelectedCell = $cells.first().get(0);
-          const lastSelectedCell = $cells.last().get(0);
+      trs.forEach(tr => {
+        const cells = tr.querySelectorAll(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
 
-          if (!$cells.length) {
-            return;
-          }
+        if (!cells.length) {
+          return;
+        }
 
-          selectionRange.setStart(firstSelectedCell, 0);
-          selectionRange.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
-          sq.setSelection(selectionRange);
-          onStyle(sq, options);
-        });
+        const [firstSelectedCell] = cells;
+        const lastSelectedCell = cells[cells.length - 1];
+
+        selectionRange.setStart(firstSelectedCell, 0);
+        selectionRange.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
+        sq.setSelection(selectionRange);
+        onStyle(sq, options);
+      });
     }
 
     /**
      * Whether has selected both TH and TD.
-     * @param {jQuery} $selectedCells - selected cells jQuery element
+     * @param {HTMLElement} selectedCells - selected cells element
      * @returns {boolean}
      */
-    hasSelectedBothThAndTd($selectedCells) {
-      $selectedCells = $selectedCells || this.getSelectedCells();
+    hasSelectedBothThAndTd(selectedCells) {
+      selectedCells = selectedCells || this.getSelectedCells();
 
-      return $selectedCells.first()[0].nodeName !== $selectedCells.last()[0].nodeName;
+      const [firstCell] = selectedCells;
+      const lastCell = selectedCells[selectedCells.length - 1];
+
+      return firstCell.nodeName !== lastCell.nodeName;
     }
   };
 }

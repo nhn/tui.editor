@@ -21,7 +21,7 @@ describe('tableRenderer', () => {
         '</table>'
       ].join('');
       const $table = $(tableHtml);
-      const renderData = tableDataHandler.createTableData($table);
+      const renderData = tableDataHandler.createTableData($table.get(0));
       const result = tableRenderer.createTableHtml(renderData);
 
       expect(result.toLowerCase()).toBe(tableHtml);
@@ -30,7 +30,7 @@ describe('tableRenderer', () => {
     it('when wrong contents in table tag, returns only table tag', () => {
       const tableHtml = ['<table>', '<!-- header>', '</table>'].join('');
       const $table = $(tableHtml);
-      const renderData = tableDataHandler.createTableData($table);
+      const renderData = tableDataHandler.createTableData($table.get(0));
       const result = tableRenderer.createTableHtml(renderData);
 
       expect(result).toBe('<table></table>');

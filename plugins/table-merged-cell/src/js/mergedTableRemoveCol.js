@@ -2,10 +2,10 @@
  * @fileoverview Implements mergedTableRemoveCol. Remove col to selected table
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import extend from 'tui-code-snippet/object/extend';
 import range from 'tui-code-snippet/array/range';
+import closest from 'tui-code-snippet/domUtil/closest';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -88,25 +88,23 @@ export function _removeColumns(tableData, tableRange) {
 
 /**
  * Find focus cell element like td or th.
- * @param {jQuery} $newTable - changed table jQuery element
+ * @param {HTMLElement} newTable - changed table element
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
  * @private
  */
-function _findFocusCell($newTable, rowIndex, colIndex) {
-  const tableData = dataHandler.createTableData($newTable);
+function _findFocusCell(newTable, rowIndex, colIndex) {
+  const tableData = dataHandler.createTableData(newTable);
 
   if (tableData[0].length - 1 < colIndex) {
     colIndex -= 1;
   }
 
   const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, colIndex);
+  const foundTr = newTable.querySelectorAll('tr')[cellElementIndex.rowIndex];
 
-  return $newTable
-    .find('tr')
-    .eq(cellElementIndex.rowIndex)
-    .find('td, th')[cellElementIndex.colIndex];
+  return foundTr.querySelectorAll('td')[cellElementIndex.colIndex];
 }
 
 /**
@@ -135,14 +133,16 @@ export function getWwRemoveColumnCommand(editor) {
           return;
         }
 
-        const $startContainer = $(selectionRange.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const { startContainer } = selectionRange;
+        const startElement =
+          startContainer.nodeType !== 1 ? startContainer.parentNode : startContainer;
+        const table = closest(startElement, 'table');
+        const tableData = dataHandler.createTableData(table);
+        const selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const tableRange = tableRangeHandler.getTableSelectionRange(
           tableData,
-          $selectedCells,
-          $startContainer
+          selectedCells,
+          startContainer
         );
         const beforeCellLength = tableData[0].length;
 
@@ -150,14 +150,14 @@ export function getWwRemoveColumnCommand(editor) {
         _removeColumns(tableData, tableRange);
 
         if (tableData[0].length === 0) {
-          $table.remove();
+          table.parentNode.removeChild(table);
         } else if (beforeCellLength !== tableData[0].length) {
-          const $newTable = tableRenderer.replaceTable($table, tableData);
+          const newTable = tableRenderer.replaceTable(table, tableData);
 
           const startColIndex = tableRange.start.colIndex;
           const focusColIndex =
             startColIndex >= tableData[0].length ? startColIndex - 1 : startColIndex;
-          const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, focusColIndex);
+          const focusCell = _findFocusCell(newTable, tableRange.start.rowIndex, focusColIndex);
 
           tableRenderer.focusToCell(sq, selectionRange, focusCell);
         }

@@ -2,9 +2,9 @@
  * @fileoverview Implements MergeCell
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import { msie } from 'tui-code-snippet/browser/browser';
 import forEach from 'tui-code-snippet/collection/forEach';
+import closest from 'tui-code-snippet/domUtil/closest';
 
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
@@ -121,20 +121,18 @@ export function _mergeCells(tableData, { start: startRange, end: endRange }) {
 
 /**
  * Find focus cell element like td or th.
- * @param {jQuery} $newTable - changed table jQuery element
+ * @param {HTMLElement} newTable - changed table element
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
  * @private
  */
-function _findFocusCell($newTable, rowIndex, colIndex) {
-  const tableData = dataHandler.createTableData($newTable);
+function _findFocusCell(newTable, rowIndex, colIndex) {
+  const tableData = dataHandler.createTableData(newTable);
   const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, colIndex);
+  const foundTr = newTable.querySelectorAll('tr')[cellElementIndex.rowIndex];
 
-  return $newTable
-    .find('tr')
-    .eq(cellElementIndex.rowIndex)
-    .find('td, th')[cellElementIndex.colIndex];
+  return foundTr.querySelectorAll('td, th')[cellElementIndex.colIndex];
 }
 
 /**
@@ -163,27 +161,29 @@ export function getMergeCellCommand(editor) {
         }
 
         const selectionManager = wwe.componentManager.getManager('tableSelection');
-        const $selectedCells = selectionManager.getSelectedCells();
+        const selectedCells = selectionManager.getSelectedCells();
 
-        if ($selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
+        if (selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd(selectedCells)) {
           return;
         }
 
         const range = sq.getSelection().cloneRange();
-        const $startContainer = $(range.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
+        const { startContainer } = range;
+        const startElement =
+          startContainer.nodeType !== 1 ? startContainer.parentNode : startContainer;
+        const table = closest(startElement, 'table');
+        const tableData = dataHandler.createTableData(table);
         const tableRange = tableRangeHandler.getTableSelectionRange(
           tableData,
-          $selectedCells,
-          $startContainer
+          selectedCells,
+          startContainer
         );
 
         _mergeCells(tableData, tableRange);
 
-        const $newTable = tableRenderer.replaceTable($table, tableData);
+        const newTable = tableRenderer.replaceTable(table, tableData);
         const focusCell = _findFocusCell(
-          $newTable,
+          newTable,
           tableRange.start.rowIndex,
           tableRange.start.colIndex
         );

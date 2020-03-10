@@ -2,8 +2,8 @@
  * @fileoverview Implements toMarkRendererCreator.
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
 import range from 'tui-code-snippet/array/range';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 const RX_COLS = /@cols=[0-9]+:/g;
 
@@ -63,9 +63,9 @@ export function _getAdditionalThCount(ths) {
   let additionalThCount = 0;
 
   ths
-    .filter(th => $(th).attr('colspan'))
+    .filter(th => th.getAttribute('colspan'))
     .forEach(th => {
-      additionalThCount += parseInt($(th).attr('colspan'), 10) - 1;
+      additionalThCount += parseInt(th.getAttribute('colspan'), 10) - 1;
     });
 
   return additionalThCount;
@@ -79,9 +79,7 @@ export function _getAdditionalThCount(ths) {
  * @private
  */
 export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
-  const ths = $(theadElement)
-    .find('th')
-    .get();
+  const ths = toArray(theadElement.querySelectorAll('th'));
   let align = ths.map(th => ` ${_makeTableHeadAlignText(th)} |`).join('');
 
   align += _createRepeatString(' --- |', _getAdditionalThCount(ths));

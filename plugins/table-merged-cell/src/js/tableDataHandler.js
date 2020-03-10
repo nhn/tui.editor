@@ -2,12 +2,13 @@
  * @fileoverview Implements tableDataHandler
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
+import toArray from 'tui-code-snippet/collection/toArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import extend from 'tui-code-snippet/object/extend';
 import range from 'tui-code-snippet/array/range';
 import { msie } from 'tui-code-snippet/browser/browser';
+import closest from 'tui-code-snippet/domUtil/closest';
 
 /**
  * Parse cell like td or th.
@@ -23,10 +24,10 @@ import { msie } from 'tui-code-snippet/browser/browser';
  * }}
  * @private
  */
+/* eslint-disable complexity */
 function _parseCell(cell, rowIndex, colIndex) {
-  const $cell = $(cell);
-  const colspan = $cell.attr('colspan');
-  const rowspan = $cell.attr('rowspan');
+  const colspan = cell.getAttribute('colspan');
+  const rowspan = cell.getAttribute('rowspan');
   const { nodeName } = cell;
 
   if (nodeName !== 'TH' && nodeName !== 'TD') {
@@ -37,7 +38,7 @@ function _parseCell(cell, rowIndex, colIndex) {
     nodeName: cell.nodeName,
     colspan: colspan ? parseInt(colspan, 10) : 1,
     rowspan: rowspan ? parseInt(rowspan, 10) : 1,
-    content: $cell.html(),
+    content: cell.innerHTML,
     elementIndex: {
       rowIndex,
       colIndex
@@ -97,41 +98,40 @@ function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
 }
 
 /**
- * Create table data from jQuery table Element.
- * @param {jQuery} $table - jQuery table element
+ * Create table data from table Element.
+ * @param {HTMLElement} table - table element
  * @returns {Array.<Array.<object>>}
  * @ignore
  */
-export function createTableData($table) {
+export function createTableData(table) {
   const tableData = [];
+  const trs = toArray(table.querySelectorAll('tr'));
 
-  $table.find('tr').each((rowIndex, tr) => {
+  trs.forEach((tr, rowIndex) => {
     let stackedColCount = 0;
 
     tableData[rowIndex] = tableData[rowIndex] || [];
 
-    $(tr)
-      .children()
-      .each((colIndex, cell) => {
-        const cellData = _parseCell(cell, rowIndex, colIndex);
+    toArray(tr.children).forEach((cell, colIndex) => {
+      const cellData = _parseCell(cell, rowIndex, colIndex);
 
-        if (!cellData) {
-          return;
-        }
-        let dataColIndex = colIndex + stackedColCount;
+      if (!cellData) {
+        return;
+      }
+      let dataColIndex = colIndex + stackedColCount;
 
-        while (tableData[rowIndex][dataColIndex]) {
-          dataColIndex += 1;
-          stackedColCount += 1;
-        }
+      while (tableData[rowIndex][dataColIndex]) {
+        dataColIndex += 1;
+        stackedColCount += 1;
+      }
 
-        tableData[rowIndex][dataColIndex] = cellData;
-        _addMergedCell(tableData, cellData, rowIndex, dataColIndex);
-      });
+      tableData[rowIndex][dataColIndex] = cellData;
+      _addMergedCell(tableData, cellData, rowIndex, dataColIndex);
+    });
   });
 
-  if ($table[0].className) {
-    tableData.className = $table[0].className;
+  if (table.className) {
+    tableData.className = table.className;
   }
 
   return tableData;
@@ -240,17 +240,33 @@ function createBasicCell(rowIndex, colIndex, nodeName) {
   };
 }
 
+function getPreviousSiblingsCount(element) {
+  const previousSiblings = [];
+  let current = element.previousSibling;
+
+  while (current) {
+    if (current.nodeType === 1) {
+      previousSiblings.push(current);
+    }
+    current = current.previousSibling;
+  }
+
+  return previousSiblings.length;
+}
+
 /**
  * Find element row index.
- * @param {jQuery} $cell - cell jQuery element like td or th
+ * @param {HTMLElement} cell - cell element like td or th
  * @returns {number}
  * @ignore
  */
-function findElementRowIndex($cell) {
-  const $tr = $cell.closest('tr');
-  let rowIndex = $tr.prevAll().length;
+function findElementRowIndex(cell) {
+  cell = cell.nodeType !== 1 ? cell.parentNode : cell;
 
-  if ($tr.parent()[0].nodeName === 'TBODY') {
+  const tr = closest(cell, 'tr');
+  let rowIndex = getPreviousSiblingsCount(tr);
+
+  if (tr.parentNode.nodeName === 'TBODY') {
     rowIndex += 1;
   }
 
@@ -259,24 +275,29 @@ function findElementRowIndex($cell) {
 
 /**
  * Find element col index.
- * @param {jQuery} $cell - cell jQuery element like td or th
+ * @param {HTMLElement} cell - cell element like td or th
  * @returns {number}
  * @ignore
  */
-function findElementColIndex($cell) {
-  return $cell.closest('td, th').prevAll().length;
+function findElementColIndex(cell) {
+  cell = cell.nodeType !== 1 ? cell.parentNode : cell;
+
+  const td = closest(cell, 'td, th');
+  const columnsCount = getPreviousSiblingsCount(td);
+
+  return columnsCount;
 }
 
 /**
  * Find indexes of base table data from mappin data.
  * @param {Array.<Array.<object>>} cellIndexData - cell index data
- * @param {jQuery} $cell - cell jQuery element like td or th
+ * @param {HTMLElement} cell - cell element like td or th
  * @returns {{rowIndex: number, cellIndex: number}}
  * @ignore
  */
-function findCellIndex(cellIndexData, $cell) {
-  const elementRowIndex = findElementRowIndex($cell);
-  const elementColIndex = findElementColIndex($cell);
+function findCellIndex(cellIndexData, cell) {
+  const elementRowIndex = findElementRowIndex(cell);
+  const elementColIndex = findElementColIndex(cell);
 
   return cellIndexData[elementRowIndex][elementColIndex];
 }

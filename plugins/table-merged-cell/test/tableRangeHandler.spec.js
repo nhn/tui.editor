@@ -2,8 +2,6 @@
  * @fileoverview Test table range handler
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
 import tableRangeHandler from '@/tableRangeHandler';
 import tableDataHandler from '@/tableDataHandler';
 
@@ -21,15 +19,19 @@ describe('tableRangeHandler', () => {
       '</tbody>',
       '</table>'
     ].join('');
-    const $table = $(tableHtml);
-    const $trs = $table.find('tr');
-    const tableData = tableDataHandler.createTableData($table);
+    const tempDiv = document.createElement('div');
+
+    tempDiv.innerHTML = tableHtml;
+
+    const table = tempDiv.firstChild;
+    const trs = table.querySelectorAll('tr');
+    const tableData = tableDataHandler.createTableData(table);
 
     it('find table range for selection, when has row merge', () => {
-      const $tds = $trs.eq(1).find('td');
-      const $start = $tds.eq(0);
-      const $end = $tds.eq(1);
-      const actual = tableRangeHandler.findSelectionRange(tableData, $start, $end);
+      const tds = trs[1].querySelectorAll('td');
+      const start = tds[0];
+      const end = tds[1];
+      const actual = tableRangeHandler.findSelectionRange(tableData, start, end);
 
       expect(actual.start.rowIndex).toBe(1);
       expect(actual.start.colIndex).toBe(0);
@@ -38,10 +40,10 @@ describe('tableRangeHandler', () => {
     });
 
     it('find table range for selection, when has column merge', () => {
-      const $ths = $trs.eq(0).find('th');
-      const $start = $ths.eq(0);
-      const $end = $ths.eq(1);
-      const actual = tableRangeHandler.findSelectionRange(tableData, $start, $end);
+      const ths = trs[0].querySelectorAll('th');
+      const start = ths[0];
+      const end = ths[1];
+      const actual = tableRangeHandler.findSelectionRange(tableData, start, end);
 
       expect(actual.start.rowIndex).toBe(0);
       expect(actual.start.colIndex).toBe(0);
@@ -50,15 +52,9 @@ describe('tableRangeHandler', () => {
     });
 
     it('find table range for selection, when has boath row merge and column merge', () => {
-      const $start = $trs
-        .eq(1)
-        .find('td')
-        .eq(1);
-      const $end = $trs
-        .eq(3)
-        .find('td')
-        .eq(0);
-      const actual = tableRangeHandler.findSelectionRange(tableData, $start, $end);
+      const start = trs[1].querySelectorAll('td')[1];
+      const end = trs[3].querySelectorAll('td')[0];
+      const actual = tableRangeHandler.findSelectionRange(tableData, start, end);
 
       expect(actual.start.rowIndex).toBe(1);
       expect(actual.start.colIndex).toBe(0);
@@ -67,15 +63,9 @@ describe('tableRangeHandler', () => {
     });
 
     it('find table range for selection, when cells chained expanded cells by merge properties like colspan, rowspan', () => {
-      const $start = $trs
-        .eq(1)
-        .find('td')
-        .eq(1);
-      const $end = $trs
-        .eq(2)
-        .find('td')
-        .eq(1);
-      const actual = tableRangeHandler.findSelectionRange(tableData, $start, $end);
+      const start = trs[1].querySelectorAll('td')[1];
+      const end = trs[2].querySelectorAll('td')[1];
+      const actual = tableRangeHandler.findSelectionRange(tableData, start, end);
 
       expect(actual.start.rowIndex).toBe(1);
       expect(actual.start.colIndex).toBe(0);
@@ -83,16 +73,10 @@ describe('tableRangeHandler', () => {
       expect(actual.end.colIndex).toBe(2);
     });
 
-    it('find table range for selection, when revered $start and $end', () => {
-      const $start = $trs
-        .eq(2)
-        .find('td')
-        .eq(1);
-      const $end = $trs
-        .eq(1)
-        .find('td')
-        .eq(1);
-      const actual = tableRangeHandler.findSelectionRange(tableData, $start, $end);
+    it('find table range for selection, when revered start and end', () => {
+      const start = trs[2].querySelectorAll('td')[1];
+      const end = trs[1].querySelectorAll('td')[1];
+      const actual = tableRangeHandler.findSelectionRange(tableData, start, end);
 
       expect(actual.start.rowIndex).toBe(1);
       expect(actual.start.colIndex).toBe(0);
