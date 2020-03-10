@@ -1,7 +1,5 @@
 import { includes } from './common';
 
-const nestableTagNames = ['UL', 'OL', 'BLOCKQUOTE'];
-
 export function hasImageOrCodeBlockNode(mdNode) {
   while (mdNode) {
     if (includes(['image', 'codeBlock'], mdNode.type)) {
@@ -86,47 +84,15 @@ export function traverseParentNodes(mdNode, iteratee) {
   }
 }
 
-export function getTotalOffsetTop(el, root) {
-  let offsetTop = 0;
+export function getParentListMdNode(orgMdNode) {
+  const mdNode = orgMdNode;
 
-  while (el && el !== root) {
-    if (!includes(nestableTagNames, el.tagName)) {
-      offsetTop += el.offsetTop;
+  while (orgMdNode && orgMdNode !== 'document') {
+    if (orgMdNode.type === 'item') {
+      return orgMdNode;
     }
-    el = el.parentElement;
-  }
-  return offsetTop;
-}
-
-export function findAdjacentElementToScrollTop(scrollTop, root) {
-  let el = root;
-  let prev = null;
-
-  while (el) {
-    const { firstElementChild } = el;
-
-    if (!firstElementChild) {
-      break;
-    }
-    const lastSibling = findLastSiblingElementToScrollTop(
-      firstElementChild,
-      scrollTop,
-      getTotalOffsetTop(el, root)
-    );
-
-    prev = el;
-    el = lastSibling;
+    orgMdNode = orgMdNode.parent;
   }
 
-  const adjacentEl = el || prev;
-
-  return adjacentEl === root ? null : adjacentEl;
-}
-
-function findLastSiblingElementToScrollTop(el, scrollTop, offsetTop) {
-  if (el && scrollTop > offsetTop + el.offsetTop) {
-    return findLastSiblingElementToScrollTop(el.nextElementSibling, scrollTop, offsetTop) || el;
-  }
-
-  return null;
+  return mdNode;
 }
