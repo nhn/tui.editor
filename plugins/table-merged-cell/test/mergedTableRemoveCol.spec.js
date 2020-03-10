@@ -29,7 +29,7 @@ describe('mergedTableRemoveCol', () => {
     let tableData;
 
     beforeEach(() => {
-      tableData = tableDataHandler.createTableData($table);
+      tableData = tableDataHandler.createTableData($table.get(0));
     });
 
     it('remove columns, when target cell data has start merge cell(has colspan)', () => {
@@ -208,16 +208,16 @@ describe('mergedTableRemoveCol', () => {
         </table>`
       );
 
-      range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
-      range.setEndAfter(wwe.get$Body().find('tbody td')[1].firstChild);
+      range.setStartAfter(wwe.getBody().querySelectorAll('tbody td')[0].firstChild);
+      range.setEndAfter(wwe.getBody().querySelectorAll('tbody td')[1].firstChild);
       sq.setSelection(range);
 
       const commandManager = getWwRemoveColumnCommand(editor);
 
       commandManager.exec(wwe);
 
-      expect(wwe.get$Body().find('thead th').length).toBe(1);
-      expect(wwe.get$Body().find('tbody td').length).toBe(2);
+      expect(wwe.getBody().querySelectorAll('thead th').length).toBe(1);
+      expect(wwe.getBody().querySelectorAll('tbody td').length).toBe(2);
     });
   });
 });

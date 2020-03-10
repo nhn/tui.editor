@@ -82,11 +82,11 @@ describe('WwMergedTableManager', () => {
         ].join('')
       );
 
-      const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
-      const tableData = tableDataHandler.createTableData($table);
+      const clipboardTableData = tableDataHandler.createTableData($clipboardTable.get(0));
+      const tableData = tableDataHandler.createTableData($table.get(0));
       const $selectedCells = $table.find('tbody td');
 
-      mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
+      mgr._pasteToSelectedArea($table.get(0), clipboardTableData, tableData, $selectedCells);
 
       const $trs = $(container).find('tbody tr');
 
@@ -110,14 +110,14 @@ describe('WwMergedTableManager', () => {
         ].join('')
       );
 
-      const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
-      const tableData = tableDataHandler.createTableData($table);
+      const clipboardTableData = tableDataHandler.createTableData($clipboardTable.get(0));
+      const tableData = tableDataHandler.createTableData($table.get(0));
       const $selectedCells = $table
         .find('tbody')
         .find('tr:nth-child(1), tr:nth-child(2), tr:nth-child(3)')
         .find('td:nth-child(1), td:nth-child(2), td:nth-child(3)');
 
-      mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
+      mgr._pasteToSelectedArea($table.get(0), clipboardTableData, tableData, $selectedCells);
 
       const $trs = $(container)
         .first()
@@ -156,8 +156,8 @@ describe('WwMergedTableManager', () => {
         .find('td:nth-child(3)')
         .remove();
 
-      const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
-      const tableData = tableDataHandler.createTableData($table);
+      const clipboardTableData = tableDataHandler.createTableData($clipboardTable.get(0));
+      const tableData = tableDataHandler.createTableData($table.get(0));
       const $selectedCells = $table
         .find('tbody')
         .find('tr:nth-child(1), tr:nth-child(2), tr:nth-child(3)')
@@ -180,14 +180,14 @@ describe('WwMergedTableManager', () => {
         ].join('')
       );
 
-      const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
-      const tableData = tableDataHandler.createTableData($table);
+      const clipboardTableData = tableDataHandler.createTableData($clipboardTable.get(0));
+      const tableData = tableDataHandler.createTableData($table.get(0));
       const $selectedCells = $table
         .find('tbody')
         .find('tr:nth-child(1), tr:nth-child(2)')
         .find('td:nth-child(2)');
 
-      mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
+      mgr._pasteToSelectedArea($table.get(0), clipboardTableData, tableData, $selectedCells);
 
       const $trs = $(container)
         .first()
@@ -215,8 +215,8 @@ describe('WwMergedTableManager', () => {
       spyOn(window, 'alert');
       spyOn(wwe, 'focus');
 
-      const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
-      const tableData = tableDataHandler.createTableData($table);
+      const clipboardTableData = tableDataHandler.createTableData($clipboardTable.get(0));
+      const tableData = tableDataHandler.createTableData($table.get(0));
       const $selectedCells = $table
         .find('tbody')
         .find('tr:nth-child(1), tr:nth-child(2)')
@@ -252,8 +252,8 @@ describe('WwMergedTableManager', () => {
         ].join('')
       );
 
-      const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
-      const tableData = tableDataHandler.createTableData($table);
+      const clipboardTableData = tableDataHandler.createTableData($clipboardTable.get(0));
+      const tableData = tableDataHandler.createTableData($table.get(0));
       const startCellIndex = {
         rowIndex: 4,
         colIndex: 3
@@ -262,7 +262,7 @@ describe('WwMergedTableManager', () => {
       expect($table.find('tbody tr').length).toBe(4);
       expect($table.find('thead th').length).toBe(4);
 
-      mgr._pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex);
+      mgr._pasteAllClipboardTableData($table.get(0), clipboardTableData, tableData, startCellIndex);
 
       const $trs = $(container)
         .first()
@@ -304,8 +304,8 @@ describe('WwMergedTableManager', () => {
         .find('td:nth-child(3)')
         .remove();
 
-      const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
-      const tableData = tableDataHandler.createTableData($table);
+      const clipboardTableData = tableDataHandler.createTableData($clipboardTable.get(0));
+      const tableData = tableDataHandler.createTableData($table.get(0));
       const startCellIndex = {
         rowIndex: 1,
         colIndex: 0

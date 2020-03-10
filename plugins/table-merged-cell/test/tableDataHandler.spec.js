@@ -21,7 +21,7 @@ describe('tableDataHandler', () => {
         '</table>'
       ].join('');
       const $table = $(tableHtml);
-      const actual = createTableData($table);
+      const actual = createTableData($table.get(0));
 
       expect(actual[0][0]).toEqual({
         nodeName: 'TH',

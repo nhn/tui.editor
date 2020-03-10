@@ -25,7 +25,7 @@ describe('mergeCell', () => {
     beforeEach(function() {
       const $table = $(tableHtml);
 
-      tableData = tableDataHandler.createTableData($table);
+      tableData = tableDataHandler.createTableData($table.get(0));
     });
 
     it('merge selected cells', () => {
