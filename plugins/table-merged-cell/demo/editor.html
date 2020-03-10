@@ -10,7 +10,6 @@
     />
     <!-- Editor -->
     <link rel="stylesheet" href="http://localhost:8080/dist/toastui-editor.css" />
-    <link rel="stylesheet" href="http://localhost:8080/dist/toastui-editor-contents.css" />
   </head>
   <body>
     <div class="code-html">
@@ -40,13 +39,13 @@
         plugins: [tableMergedCellPlugin]
       });
 
-      // var viewer = Editor.factory({
-      //   el: document.querySelector('#viewer'),
-      //   viewer: true,
-      //   height: '500px',
-      //   initialValue: content,
-      //   plugins: [tableMergedCellPlugin]
-      // });
+      var viewer = Editor.factory({
+        el: document.querySelector('#viewer'),
+        viewer: true,
+        height: '500px',
+        initialValue: content,
+        plugins: [tableMergedCellPlugin]
+      });
     </script>
   </body>
 </html>
