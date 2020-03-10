@@ -261,6 +261,8 @@ function getPreviousSiblingsCount(element) {
  * @ignore
  */
 function findElementRowIndex(cell) {
+  cell = cell.nodeType !== 1 ? cell.parentNode : cell;
+
   const tr = closest(cell, 'tr');
   let rowIndex = getPreviousSiblingsCount(tr);
 
@@ -278,6 +280,8 @@ function findElementRowIndex(cell) {
  * @ignore
  */
 function findElementColIndex(cell) {
+  cell = cell.nodeType !== 1 ? cell.parentNode : cell;
+
   const td = closest(cell, 'td, th');
   const columnsCount = getPreviousSiblingsCount(td);
 
