@@ -81,7 +81,7 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
       targetScrollTop += additionalScrollTop;
       // assign the null to sync scrollTop position when scrolling
       latestScrollTop = null;
-    } else if (scrollEvent && isNodeToBeCalculated(mdNode)) {
+    } else if (isNodeToBeCalculated(mdNode)) {
       const offsetHeight = getAndSaveOffsetHeight(node, mdNode.id);
       const offsetTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
       const cmNodeHeight = getCmRangeHeight(mdNode, cm);

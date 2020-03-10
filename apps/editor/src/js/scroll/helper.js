@@ -58,13 +58,19 @@ export function getCmRangeHeight(mdNode, cm) {
 }
 
 export function getNextEmptyLineHeight(cm, start, end = Number.MAX_VALUE) {
-  let lineInfo = cm.lineInfo(start).handle;
+  const lineInfo = cm.lineInfo(start);
+
+  if (!lineInfo) {
+    return 0;
+  }
+
+  let detailLineInfo = lineInfo.handle;
   let height = 0;
 
-  while (start <= end && !lineInfo.text.trim()) {
-    height += lineInfo.height;
+  while (start <= end && !detailLineInfo.text.trim()) {
+    height += detailLineInfo.height;
     start += 1;
-    lineInfo = cm.lineInfo(start).handle;
+    detailLineInfo = cm.lineInfo(start).handle;
   }
   return height;
 }
