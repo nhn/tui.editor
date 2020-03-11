@@ -31,7 +31,7 @@ const Indent = CommandManager.command(
 
       const prev = node && node.previousSibling;
 
-      if (prev && node) {
+      if (prev) {
         const next = node.querySelector('li');
 
         wwe.getEditor().saveUndoState();
