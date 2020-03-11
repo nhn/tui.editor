@@ -58,10 +58,13 @@ class MarkdownPreview extends Preview {
 
     codeBlockNodes.forEach(node => {
       const codeEl = contentEl.querySelector(`[data-nodeid="${node.id}"] > code`);
-      const lang = codeEl.getAttribute('data-language');
-      const html = codeBlockManager.createCodeBlockHtml(lang, codeEl.textContent);
 
-      codeEl.innerHTML = html;
+      if (codeEl) {
+        const lang = codeEl.getAttribute('data-language');
+        const html = codeBlockManager.createCodeBlockHtml(lang, codeEl.textContent);
+
+        codeEl.innerHTML = html;
+      }
     });
   }
 
@@ -98,10 +101,12 @@ class MarkdownPreview extends Preview {
       }
     }
     this.eventManager.emit('previewRenderAfter', this);
-    this.lazyRunner.run(
-      'invokeCodeBlock',
-      nodes.filter(node => node.type === 'codeBlock')
-    );
+
+    const codeBlockNodes = nodes.filter(node => node.type === 'codeBlock');
+
+    if (codeBlockNodes.length > 0) {
+      this.lazyRunner.run('invokeCodeBlock', codeBlockNodes);
+    }
   }
 
   /**
