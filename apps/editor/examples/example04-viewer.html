@@ -11,10 +11,12 @@
     <div class="code-html contents">
       <div id="viewer"></div>
     </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
     <script src="./data/md-default.js"></script>
     <!-- Viewer -->
     <script src="../dist/toastui-editor-viewer.js"></script>
-    <script class="code-js">
+    <script type="text/babel" class="code-js">
       const instance = new toastui.Editor({
         el: document.querySelector('#viewer'),
         height: '500px',
