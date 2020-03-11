@@ -101,7 +101,7 @@ class ScrollSyncSplit {
       wrapperElement = this._contentWrapper;
     } else if (domUtils.parents(element, this._contentElements.left).length) {
       wrapperElement = this._contentElements.left;
-    } else if (domUtils.parenets(element, this._contentElements.right).length) {
+    } else if (domUtils.parents(element, this._contentElements.right).length) {
       wrapperElement = this._contentElements.right;
     } else {
       return;
