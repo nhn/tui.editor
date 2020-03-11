@@ -1233,19 +1233,16 @@ function setOffset(element, offset) {
  * @ignore
  */
 function getOffset(element) {
-  const { offsetTop, offsetLeft } = element;
-  const offset = { top: offsetTop, left: offsetLeft };
+  let top = 0;
+  let left = 0;
 
-  let parentNode = element.offsetParent;
-
-  while (parentNode && parentNode !== document.body) {
-    offset.left += parentNode.offsetLeft;
-    offset.top += parentNode.offsetTop;
-
-    parentNode = parentNode.offsetParent;
+  while (element !== document.body) {
+    top += element.offsetTop;
+    left += element.offsetLeft;
+    element = element.offsetParent;
   }
 
-  return offset;
+  return { top, left };
 }
 
 /**
