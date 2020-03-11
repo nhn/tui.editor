@@ -256,7 +256,7 @@ describe('Editor', () => {
       });
     });
 
-    it('should sanitize html', () => {
+    xit('should sanitize html', () => {
       editor = new Editor({
         el: container,
         height: '300px',

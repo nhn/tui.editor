@@ -36,7 +36,7 @@ class Convertor {
       });
     }
 
-    this.mdReader = new Parser();
+    this.mdReader = new Parser({ disallowedHtmlBlockTags: ['br'] });
     this.htmlWriter = new MarkdownRenderer({ linkAttrs });
     this.eventManager = em;
   }

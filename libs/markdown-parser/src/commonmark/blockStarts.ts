@@ -194,10 +194,24 @@ const fencedCodeBlock: BlockStart = parser => {
 const htmlBlock: BlockStart = (parser, container) => {
   if (!parser.indented && peek(parser.currentLine, parser.nextNonspace) === C_LESSTHAN) {
     const s = parser.currentLine.slice(parser.nextNonspace);
+    const disallowedTags = parser.options.disallowedHtmlBlockTags;
     let blockType;
 
     for (blockType = 1; blockType <= 7; blockType++) {
-      if (reHtmlBlockOpen[blockType].test(s) && (blockType < 7 || container.type !== 'paragraph')) {
+      const matched = s.match(reHtmlBlockOpen[blockType]);
+      if (matched) {
+        if (blockType === 7) {
+          if (container.type === 'paragraph') {
+            return Matched.None;
+          }
+          if (disallowedTags.length > 0) {
+            const reDisallowedTags = new RegExp(`<\/?(?:${disallowedTags.join('|')})`, 'i');
+            if (reDisallowedTags.test(matched[0])) {
+              return Matched.None;
+            }
+          }
+        }
+
         parser.closeUnmatchedBlocks();
         // We don't adjust parser.offset;
         // spaces are part of the HTML block:

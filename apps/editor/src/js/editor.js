@@ -201,7 +201,9 @@ class ToastUIEditor {
 
     this.setUI(this.options.UI || new DefaultUI(this));
 
-    this.mdDocument = new MarkdownDocument();
+    this.mdDocument = new MarkdownDocument('', {
+      disallowedHtmlBlockTags: ['br']
+    });
 
     this.mdEditor = MarkdownEditor.factory(
       this.layout.getMdEditorContainerEl(),

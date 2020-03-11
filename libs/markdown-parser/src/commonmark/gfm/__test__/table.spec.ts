@@ -161,6 +161,32 @@ describe('table', () => {
     expect(html).toBe(`${output}\n`);
   });
 
+  it('preceded by non-empty line', () => {
+    const input = source`
+      Hello
+      World
+      | a | b |
+      | - | - |
+      | c | d |
+    `;
+    const root = reader.parse(input);
+    const result = convertToArrayTree(root, ['type', 'sourcepos'] as (keyof BlockNode)[]);
+
+    expect(result).toMatchObject({
+      type: 'document',
+      children: [
+        {
+          type: 'paragraph',
+          sourcepos: pos(1, 1, 2, 5)
+        },
+        {
+          type: 'table',
+          sourcepos: pos(3, 1, 5, 9)
+        }
+      ]
+    });
+  });
+
   it('with aligns', () => {
     const root = reader.parse('left | center | right\n:--- | :---: | ---:\na | b | c');
     const tableNode = root.firstChild as TableNode;

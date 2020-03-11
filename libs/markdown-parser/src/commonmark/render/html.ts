@@ -253,7 +253,13 @@ export class HtmlRenderer extends Renderer {
     if (this.options.safe) {
       this.lit('<!-- raw HTML omitted -->');
     } else {
+      if (this.options.nodeId) {
+        this.tag('div', this.attrs(node));
+      }
       this.lit(this.filterDisallowedTags(node.literal!));
+      if (this.options.nodeId) {
+        this.tag('/div');
+      }
     }
     this.cr();
   }
