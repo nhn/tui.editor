@@ -82,6 +82,9 @@ export function getTotalOffsetTop(el, root) {
     if (!includes(nestableTagNames, el.tagName)) {
       offsetTop += el.offsetTop;
     }
+    if (el.offsetParent === root.offsetParent) {
+      break;
+    }
     el = el.parentElement;
   }
   return offsetTop;
