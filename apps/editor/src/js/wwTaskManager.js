@@ -74,7 +74,9 @@ class WwTaskManager {
           const newRange = this.wwe.getRange();
           const li = domUtils.closest(newRange.startContainer, 'li');
 
-          removeClass(li, TASK_CHECKED_CLASS_NAME);
+          if (li) {
+            removeClass(li, TASK_CHECKED_CLASS_NAME);
+          }
         });
       }
     });

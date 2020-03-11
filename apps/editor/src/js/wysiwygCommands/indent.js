@@ -29,9 +29,9 @@ const Indent = CommandManager.command(
       const node = domUtils.closest(range.startContainer, 'li');
       let prevClasses, nodeClasses, nextClasses;
 
-      const prev = node.previousSibling;
+      const prev = node && node.previousSibling;
 
-      if (prev && node) {
+      if (prev) {
         const next = node.querySelector('li');
 
         wwe.getEditor().saveUndoState();
