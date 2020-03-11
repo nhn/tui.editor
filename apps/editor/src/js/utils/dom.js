@@ -1290,21 +1290,16 @@ function getOuterHeight(element, includedMargin) {
  * Toggles class name of target element
  * @param {HTMLElement} element - target element
  * @param {string} className - class name to toggle
- * @param {boolean} [toggled] - whether to toggle or not by condition
+ * @param {boolean} [state] - whether to toggle or not by condition
  * @ignore
  */
-const toggleClass = (element, className, toggled) => {
-  if (isUndefined(toggled)) {
-    if (hasClass(element, className)) {
-      removeClass(element, className);
-    } else {
-      addClass(element, className);
-    }
-  } else if (toggled) {
-    addClass(element, className);
-  } else {
-    removeClass(element, className);
+const toggleClass = (element, className, state) => {
+  if (isUndefined(state)) {
+    state = !hasClass(element, className);
   }
+  const toggleFn = state ? addClass : removeClass;
+
+  toggleFn(element, className);
 };
 
 export default {
