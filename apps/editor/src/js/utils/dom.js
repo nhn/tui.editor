@@ -6,6 +6,9 @@ import toArray from 'tui-code-snippet/collection/toArray';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isString from 'tui-code-snippet/type/isString';
 import css from 'tui-code-snippet/domUtil/css';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import matches from 'tui-code-snippet/domUtil/matches';
 
 const FIND_ZWB = /\u200B/g;
@@ -1285,14 +1288,22 @@ function getOuterHeight(element, includedMargin) {
 
 /**
  * Toggles class name of target element
- * @param {Element} element - target element
+ * @param {HTMLElement} element - target element
  * @param {string} className - class name to toggle
- * @param {boolean} toggled - whether to toggle or not by condition
+ * @param {boolean} [toggled] - whether to toggle or not by condition
  * @ignore
  */
 const toggleClass = (element, className, toggled) => {
-  if (element) {
-    element.classList.toggle(className, toggled);
+  if (isUndefined(toggled)) {
+    if (hasClass(element, className)) {
+      removeClass(element, className);
+    } else {
+      addClass(element, className);
+    }
+  } else if (toggled) {
+    addClass(element, className);
+  } else {
+    removeClass(element, className);
   }
 };
 
