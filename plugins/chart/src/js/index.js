@@ -513,16 +513,21 @@ function _setWwCodeBlockManagerForChart(editor) {
 
 /**
  * Determine the event is from codeblock in markdown/codeblock editor
- * @param {CodeMirror} cm - markdown codemirror editor
+ * @param {CodeMirror} cm - codemirror instance of editor
+ * @param {MarkdownDocument} mdDocument - markdown document instance of editor
  * @param {string} source - event source
- * @param {Object} eventData - event data
  * @returns {boolean} - true for the event from codeblock in markdown/codeblock editor
  * @ignore
  */
-function _isFromCodeBlockInCodeMirror(cm, source, eventData) {
+function _isFromCodeBlockInCodeMirror(cm, mdDocument, source) {
+  const { line, ch } = cm.getCursor();
+  const mdLine = line + 1;
+  const mdCh = cm.getLine(line).length === ch ? ch : ch + 1;
+  const mdNode = mdDocument.findNodeAtPosition([mdLine, mdCh]);
+  const isInMdCodeBlock = mdNode && mdNode.type === 'codeBlock';
+
   // cursor in codeblock in markdown editor
-  let fromCodeBlockInCodeMirror =
-    source === 'markdown' && cm.getTokenAt(eventData.from).state.overlay.codeBlock;
+  let fromCodeBlockInCodeMirror = source === 'markdown' && isInMdCodeBlock;
 
   // or codeblock editor
   fromCodeBlockInCodeMirror = fromCodeBlockInCodeMirror || source === 'codeblock';
@@ -537,13 +542,14 @@ function _isFromCodeBlockInCodeMirror(cm, source, eventData) {
  * wysiwyg event should be treated separately.
  * because pasteBefore event from wysiwyg has been already processed table data to string,
  * on the other hand we need a table element
- * @param {CodeMirror} cm - markdown codemirror editor
+ * @param {CodeMirror} cm - codemirror instance of editor
+ * @param {MarkdownDocument} mdDocument - markdown document instance of editor
  * @param {string} source - event source
  * @param {Object} data - event data
  * @ignore
  */
-function _onMDPasteBefore(cm, { source, data: eventData }) {
-  if (!_isFromCodeBlockInCodeMirror(cm, source, eventData)) {
+function _onMDPasteBefore(cm, mdDocument, { source, data: eventData }) {
+  if (!_isFromCodeBlockInCodeMirror(cm, mdDocument, source, eventData)) {
     return;
   }
 
@@ -593,7 +599,9 @@ export default function chartPlugin(editor, options = {}) {
     // treat wysiwyg paste event
     _setWwCodeBlockManagerForChart(editor);
 
+    const { cm, mdDocument } = editor.mdEditor;
+
     // treat markdown paste event
-    editor.eventManager.listen('pasteBefore', ev => _onMDPasteBefore(editor.mdEditor.cm, ev));
+    editor.eventManager.listen('pasteBefore', ev => _onMDPasteBefore(cm, mdDocument, ev));
   }
 }
