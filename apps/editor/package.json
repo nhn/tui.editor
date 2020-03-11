@@ -38,7 +38,8 @@
     "e2e": "testcafe chrome 'test/e2e/**/*.spec.js'",
     "e2e:sl": "testcafe \"saucelabs:Chrome@65.0:Windows 10,saucelabs:Firefox@59.0:Windows 10,saucelabs:Safari@10.0:OS X 10.11,saucelabs:Internet Explorer@11.103:Windows 10,saucelabs:MicrosoftEdge@16.16299:Windows 10\" 'test/e2e/**/*.spec.js'",
     "serve": "webpack-dev-server",
-    "serve:examples": "webpack-dev-server --all",
+    "serve:viewer": "webpack-dev-server --viewer",
+    "serve:all": "webpack-dev-server --all",
     "build:i18n": "cross-env webpack --config scripts/webpack.config.i18n.js && webpack --config scripts/webpack.config.i18n.js --minify",
     "build": "cross-env webpack --mode=production && webpack --mode=production --minify && node tsBannerGenerator.js",
     "note": "tui-note --tag=$(git describe --tags)",
@@ -81,6 +82,7 @@
     "mini-css-extract-plugin": "^0.9.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "prettier": "^1.19.1",
+    "resize-observer-polyfill": "^1.5.1",
     "terser-webpack-plugin": "^2.2.1",
     "testcafe": "^0.23.3",
     "testcafe-browser-provider-saucelabs": "^1.3.0",
@@ -97,7 +99,6 @@
   "dependencies": {
     "@types/codemirror": "0.0.71",
     "@types/jquery": "^3.3.29",
-    "codemirror": "^5.48.4",
-    "resize-observer-polyfill": "^1.5.0"
+    "codemirror": "^5.48.4"
   }
 }

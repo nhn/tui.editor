@@ -2,47 +2,33 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
-    <title>Editor</title>
+    <title>6. Editor with Chart Plugin</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
     <!-- Editor's Dependencies -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
     />
     <!-- Editor -->
-    <link rel="stylesheet" href="http://localhost:8080/dist/toastui-editor.css" />
-    <!-- Plugin -->
+    <link rel="stylesheet" href="../dist/toastui-editor.css" />
+    <!-- Editor's Plugin -->
     <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css" />
   </head>
   <body>
-    <div class="code-html">
+    <div class="code-html contents">
       <!-- Editor -->
       <h2>Editor</h2>
       <div id="editor"></div>
-      <!-- Editor's Viewer -->
+      <!-- Viewer Using Editor -->
       <h2>Viewer</h2>
       <div id="viewer"></div>
     </div>
+    <script src="./data/md-plugins.js"></script>
     <!-- Editor -->
-    <script src="http://localhost:8080/dist/toastui-editor-all.js"></script>
-    <!-- Plugin -->
-    <script src="../dist/cdn/toastui-editor-plugin-chart.js"></script>
+    <script src="../dist/toastui-editor-all.js"></script>
+    <!-- Editor's Plugin -->
+    <script src="http://localhost:8081/dist/cdn/toastui-editor-plugin-chart.js"></script>
     <script class="code-js">
-      const content = [
-        '```chart',
-        'category1,category2',
-        'Jan,21,23',
-        'Feb,31,17',
-        '',
-        'type: column',
-        'title: Monthly Revenue',
-        'x.title: Amount',
-        'y.title: Month',
-        'y.min: 1',
-        'y.max: 40',
-        'y.suffix: $',
-        '```'
-      ].join('\n');
-
       const { Editor } = toastui;
       const { chart } = Editor.plugin;
 
@@ -50,7 +36,7 @@
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
-        initialValue: content,
+        initialValue: chartContent,
         plugins: [chart]
       });
 
@@ -58,7 +44,7 @@
         el: document.querySelector('#viewer'),
         viewer: true,
         height: '500px',
-        initialValue: content,
+        initialValue: chartContent,
         plugins: [chart]
       });
     </script>

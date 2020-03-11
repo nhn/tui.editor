@@ -15,6 +15,7 @@ const ENTRY_EDITOR = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
 
 const isDevelopAll = process.argv.indexOf('--all') >= 0;
+const isDevelopViewer = process.argv.indexOf('--viewer') >= 0;
 const isProduction = process.argv.indexOf('--mode=production') >= 0;
 const minify = process.argv.indexOf('--minify') >= 0;
 
@@ -72,7 +73,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
         new webpack.BannerPlugin({
           banner: [
             pkg.name,
-            `@version ${pkg.version}`,
+            `@version ${pkg.version} | ${new Date().toDateString()}`,
             `@author ${pkg.author}`,
             `@license ${pkg.license}`
           ].join('\n'),
@@ -126,6 +127,8 @@ function setDevelopConfig(config) {
   if (isDevelopAll) {
     config.entry = { 'editor-all': ENTRY_EDITOR };
     config.externals = [];
+  } else if (isDevelopViewer) {
+    config.entry = { 'editor-viewer': ENTRY_VIEWER };
   } else {
     config.module.rules = config.module.rules.slice(1);
     config.entry = { editor: ENTRY_EDITOR };

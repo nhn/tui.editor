@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>5. Viewer Using Editor's Factory</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
+    <!-- Viewer -->
+    <link rel="stylesheet" href="../dist/toastui-editor-viewer.css" />
+  </head>
+  <body>
+    <div class="code-html contents">
+      <div id="viewer"></div>
+    </div>
+    <script src="./data/md-default.js"></script>
+    <!-- Editor -->
+    <script src="../dist/toastui-editor-all.js"></script>
+    <script class="code-js">
+      const instance = toastui.Editor.factory({
+        el: document.querySelector('#viewer'),
+        viewer: true,
+        height: '500px',
+        initialValue: content
+      });
+    </script>
+  </body>
+</html>

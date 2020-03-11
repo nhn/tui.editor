@@ -3,19 +3,19 @@
   <head lang="en">
     <meta charset="UTF-8" />
     <title>Viewer</title>
-    <!-- Editor's Dependencies -->
+    <!-- Editor -->
+    <link rel="stylesheet" href="http://localhost:8080/dist/toastui-editor-viewer.css" />
+    <!-- Plugin -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
     />
-    <!-- Editor -->
-    <link rel="stylesheet" href="http://localhost:8080/dist/toastui-editor-viewer.css" />
   </head>
   <body>
     <div class="code-html">
       <div id="viewer"></div>
     </div>
-    <!-- highlight.js -->
+    <!-- highlight.js Languages -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <!-- Editor's Viewer -->
@@ -23,7 +23,7 @@
     <!-- Plugin -->
     <script src="../dist/cdn/toastui-editor-plugin-code-syntax-highlight.js"></script>
     <script class="code-js">
-      var content = [
+      const content = [
         '```js',
         `console.log('foo')`,
         '```',
@@ -41,14 +41,15 @@
         '```'
       ].join('\n');
 
-      var Viewer = toastui.Editor;
+      const Viewer = toastui.Editor;
+      const { codeSyntaxHighlight } = Viewer.plugin;
 
-      var instance = new Viewer({
+      const instance = new Viewer({
         el: document.querySelector('#viewer'),
         previewStyle: 'vertical',
         height: '500px',
         initialValue: content,
-        plugins: [Viewer.plugin.codeSyntaxHighlight]
+        plugins: [codeSyntaxHighlight]
       });
     </script>
   </body>

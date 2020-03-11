@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>16. Viewer with All Plugins</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
+    <!-- Viewer -->
+    <link rel="stylesheet" href="../dist/toastui-editor-viewer.css" />
+    <!-- Editor's Plugin -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.css"
+    />
+  </head>
+  <body>
+    <div class="code-html contents">
+      <!-- Viewer -->
+      <div id="viewer"></div>
+    </div>
+    <script src="./data/md-plugins.js"></script>
+    <!-- Editor -->
+    <script src="../dist/toastui-editor-viewer.js"></script>
+    <!-- Editor's Plugin -->
+    <script src="http://localhost:8081/dist/cdn/toastui-editor-plugin-chart.js"></script>
+    <script src="http://localhost:8082/dist/cdn/toastui-editor-plugin-code-syntax-highlight-all.js"></script>
+    <script src="http://localhost:8083/dist/cdn/toastui-editor-plugin-color-syntax.js"></script>
+    <script src="http://localhost:8084/dist/cdn/toastui-editor-plugin-table-merged-cell.js"></script>
+    <script src="http://localhost:8085/dist/cdn/toastui-editor-plugin-uml.js"></script>
+    <script class="code-js">
+      const Viewer = toastui.Editor;
+      const { chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml } = Viewer.plugin;
+
+      const instance = new Viewer({
+        el: document.querySelector('#viewer'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: allPluginsContent,
+        plugins: [chart, codeSyntaxHighlight, tableMergedCell, uml]
+      });
+    </script>
+  </body>
+</html>

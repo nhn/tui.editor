@@ -2,31 +2,31 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
-    <title>Editor</title>
+    <title>11. Editor with Table Merged Cell Plugin</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
     <!-- Editor's Dependencies -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
     />
     <!-- Editor -->
-    <link rel="stylesheet" href="http://localhost:8080/dist/toastui-editor.css" />
+    <link rel="stylesheet" href="../dist/toastui-editor.css" />
   </head>
   <body>
-    <div class="code-html">
+    <div class="code-html contents">
       <!-- Editor -->
       <h2>Editor</h2>
       <div id="editor"></div>
-      <!-- Editor's Viewer -->
+      <!-- Viewer Using Editor -->
       <h2>Viewer</h2>
       <div id="viewer"></div>
     </div>
+    <script src="./data/md-plugins.js"></script>
     <!-- Editor -->
-    <script src="http://localhost:8080/dist/toastui-editor-all.js"></script>
-    <!-- Plugin -->
-    <script src="../dist/cdn/toastui-editor-plugin-table-merged-cell.js"></script>
+    <script src="../dist/toastui-editor-all.js"></script>
+    <!-- Editor's Plugin -->
+    <script src="http://localhost:8081/dist/cdn/toastui-editor-plugin-table-merged-cell.js"></script>
     <script class="code-js">
-      const content = ['| @cols=2:merged | |', '| --- | --- |', '| table | table2 |'].join('\n');
-
       const { Editor } = toastui;
       const { tableMergedCell } = Editor.plugin;
 
@@ -35,7 +35,7 @@
         previewStyle: 'vertical',
         height: '500px',
         initialEditType: 'wysiwyg',
-        initialValue: content,
+        initialValue: tableContent,
         plugins: [tableMergedCell]
       });
 
@@ -43,7 +43,7 @@
         el: document.querySelector('#viewer'),
         viewer: true,
         height: '500px',
-        initialValue: content,
+        initialValue: tableContent,
         plugins: [tableMergedCell]
       });
     </script>

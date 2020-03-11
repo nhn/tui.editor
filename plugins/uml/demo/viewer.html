@@ -20,7 +20,7 @@
     <!-- Plugin -->
     <script src="../dist/cdn/toastui-editor-plugin-uml.js"></script>
     <script class="code-js">
-      var content = [
+      const content = [
         '```uml',
         'partition Conductor {',
         '  (*) --> "Climbs on Platform"',
@@ -45,14 +45,15 @@
         '```'
       ].join('\n');
 
-      var Viewer = toastui.Editor;
+      const Viewer = toastui.Editor;
+      const { uml } = Viewer.plugin;
 
-      var instance = new Viewer({
+      const instance = new Viewer({
         el: document.querySelector('#viewer'),
         previewStyle: 'vertical',
         height: '500px',
         initialValue: content,
-        plugins: [Viewer.plugin.uml]
+        plugins: [uml]
       });
     </script>
   </body>

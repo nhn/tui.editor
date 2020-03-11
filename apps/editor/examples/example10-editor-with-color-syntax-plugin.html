@@ -2,28 +2,30 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
-    <title>Editor</title>
+    <title>10. Editor with Color Syntax Plugin</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
     <!-- Editor's Dependencies -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
     />
     <!-- Editor -->
-    <link rel="stylesheet" href="http://localhost:8080/dist/toastui-editor.css" />
-    <!-- Plugin -->
+    <link rel="stylesheet" href="../dist/toastui-editor.css" />
+    <!-- Editor's Plugin -->
     <link
       rel="stylesheet"
       href="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.css"
     />
   </head>
   <body>
-    <div class="code-html">
+    <div class="code-html contents">
       <div id="editor"></div>
     </div>
+    <script src="./data/md-plugins.js"></script>
     <!-- Editor -->
-    <script src="http://localhost:8080/dist/toastui-editor-all.js"></script>
-    <!-- Plugin -->
-    <script src="../dist/cdn/toastui-editor-plugin-color-syntax.js"></script>
+    <script src="../dist/toastui-editor-all.js"></script>
+    <!-- Editor's Plugin -->
+    <script src="http://localhost:8081/dist/cdn/toastui-editor-plugin-color-syntax.js"></script>
     <script class="code-js">
       const { Editor } = toastui;
       const { colorSyntax } = Editor.plugin;
