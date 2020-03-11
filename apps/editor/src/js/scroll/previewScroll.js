@@ -73,6 +73,10 @@ export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
 
       targetScrollTop = getFallbackScrollTop(scrollTopInfo);
       latestScrollTop = scrollTop;
+
+      if (targetScrollTop === sourceScrollTop) {
+        return;
+      }
     }
   }
 
