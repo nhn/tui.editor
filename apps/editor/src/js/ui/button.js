@@ -74,7 +74,7 @@ class Button extends ToolbarItem {
   }
 
   _render() {
-    this.el.textContent = this._text;
+    this.el.textContent = this._text || '';
     this.el.setAttribute('type', 'button');
 
     if (this._style) {
