@@ -22,6 +22,8 @@
       <!-- Viewer -->
       <div id="viewer"></div>
     </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
     <script src="./data/md-plugins.js"></script>
     <!-- Editor -->
     <script src="../dist/toastui-editor-viewer.js"></script>
@@ -31,7 +33,7 @@
     <script src="http://localhost:8083/dist/cdn/toastui-editor-plugin-color-syntax.js"></script>
     <script src="http://localhost:8084/dist/cdn/toastui-editor-plugin-table-merged-cell.js"></script>
     <script src="http://localhost:8085/dist/cdn/toastui-editor-plugin-uml.js"></script>
-    <script class="code-js">
+    <script type="text/babel" class="code-js">
       const Viewer = toastui.Editor;
       const { chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml } = Viewer.plugin;
 

@@ -936,17 +936,32 @@ describe('domUtils', () => {
     expect(container.innerHTML).toBe('<div></div>');
   });
 
-  it('toggleClass() adds or removes specific class name of element', () => {
-    container.innerHTML = '<div class="test">foo</div>';
+  describe('toggleClass() adds or removes specific class name of element', () => {
+    beforeEach(() => {
+      container.innerHTML = '<div class="test">foo</div>';
+    });
 
-    const target = container.querySelector('div');
+    it('only toggle class', () => {
+      const target = container.querySelector('div');
 
-    domUtils.toggleClass(target, 'active');
+      domUtils.toggleClass(target, 'active');
+      expect(target.className).toBe('test active');
 
-    expect(target.className).toBe('test active');
+      domUtils.toggleClass(target, 'active');
+      expect(target.className).toBe('test');
+    });
 
-    domUtils.toggleClass(target, 'active');
+    it('add or remove class by condition', () => {
+      const target = container.querySelector('div');
 
-    expect(target.className).toBe('test');
+      domUtils.toggleClass(target, 'active', true);
+      expect(target.className).toBe('test active');
+
+      domUtils.toggleClass(target, 'active1', false);
+      expect(target.className).toBe('test active');
+
+      domUtils.toggleClass(target, 'active', false);
+      expect(target.className).toBe('test');
+    });
   });
 });

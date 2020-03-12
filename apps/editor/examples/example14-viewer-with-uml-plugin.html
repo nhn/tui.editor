@@ -12,12 +12,14 @@
       <!-- Viewer -->
       <div id="viewer"></div>
     </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
     <script src="./data/md-plugins.js"></script>
     <!-- Editor -->
     <script src="../dist/toastui-editor-viewer.js"></script>
     <!-- Editor's Plugin -->
     <script src="http://localhost:8081/dist/cdn/toastui-editor-plugin-uml.js"></script>
-    <script class="code-js">
+    <script type="text/babel" class="code-js">
       const Viewer = toastui.Editor;
       const { uml } = Viewer.plugin;
 

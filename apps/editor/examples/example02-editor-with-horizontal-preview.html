@@ -16,10 +16,12 @@
     <div class="code-html contents">
       <div id="editor"></div>
     </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
     <script src="./data/md-default.js"></script>
     <!-- Editor -->
     <script src="../dist/toastui-editor-all.js"></script>
-    <script class="code-js">
+    <script type="text/babel" class="code-js">
       const editor = new toastui.Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'horizontal',
