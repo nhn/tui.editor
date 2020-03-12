@@ -46,13 +46,15 @@ function getTopInfo(cm, startLine, mdNode, node, previewEl) {
 
 export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
   const { _previewContent: root, el: previewEl } = preview;
+  const previewElHeight = getAndSaveOffsetHeight(previewEl, 0);
   const { cm, mdDocument } = editor;
-  const { left, top: scrollTop } = cm.getScrollInfo();
+  const { left, top: scrollTop, height, clientHeight } = cm.getScrollInfo();
+  const isBottomPos = height - top <= clientHeight;
 
   const sourceScrollTop = previewEl.scrollTop;
-  let targetScrollTop = 0;
+  let targetScrollTop = isBottomPos ? previewElHeight : 0;
 
-  if (scrollTop) {
+  if (scrollTop && !isBottomPos) {
     const { line: startLine } = scrollEvent
       ? cm.coordsChar({ left, top: scrollTop }, 'local')
       : cm.getCursor('from');
@@ -71,7 +73,6 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
     targetScrollTop = getTotalOffsetTop(node, root) || node.offsetTop;
 
     if (!scrollEvent) {
-      const previewElHeight = getAndSaveOffsetHeight(previewEl, 0);
       const { top, additionalScrollTop } = getTopInfo(cm, startLine, mdNode, node, previewEl);
 
       if (top > 0 && top < previewElHeight) {
@@ -92,6 +93,10 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
 
       targetScrollTop = getFallbackScrollTop(scrollTopInfo);
       latestScrollTop = scrollTop;
+
+      if (targetScrollTop === sourceScrollTop) {
+        return;
+      }
     }
   }
 

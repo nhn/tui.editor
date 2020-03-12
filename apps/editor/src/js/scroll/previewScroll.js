@@ -41,13 +41,14 @@ function getAncestorHavingId(node, root) {
 
 export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
   const { mdDocument, cm } = editor;
-  const { scrollTop } = preview.el;
+  const { scrollTop, clientHeight, scrollHeight } = preview.el;
   const root = preview._previewContent;
+  const isBottomPos = scrollHeight - scrollTop <= clientHeight;
 
-  const { left, top: sourceScrollTop } = cm.getScrollInfo();
-  let targetScrollTop = 0;
+  const { left, top: sourceScrollTop, height } = cm.getScrollInfo();
+  let targetScrollTop = isBottomPos ? height : 0;
 
-  if (scrollTop && targetNode) {
+  if (scrollTop && targetNode && !isBottomPos) {
     targetNode = getAncestorHavingId(targetNode, root);
 
     if (!targetNode.getAttribute('data-nodeid')) {
@@ -73,6 +74,10 @@ export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
 
       targetScrollTop = getFallbackScrollTop(scrollTopInfo);
       latestScrollTop = scrollTop;
+
+      if (targetScrollTop === sourceScrollTop) {
+        return;
+      }
     }
   }
 
