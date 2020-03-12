@@ -46,13 +46,12 @@ function getTopInfo(cm, startLine, mdNode, node, previewEl) {
 
 export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
   const { _previewContent: root, el: previewEl } = preview;
-  const previewElHeight = getAndSaveOffsetHeight(previewEl, 0);
   const { cm, mdDocument } = editor;
   const { left, top: scrollTop, height, clientHeight } = cm.getScrollInfo();
-  const isBottomPos = height - top <= clientHeight;
+  const isBottomPos = height - scrollTop <= clientHeight;
 
   const sourceScrollTop = previewEl.scrollTop;
-  let targetScrollTop = isBottomPos ? previewElHeight : 0;
+  let targetScrollTop = isBottomPos ? previewEl.scrollHeight : 0;
 
   if (scrollTop && !isBottomPos) {
     const { line: startLine } = scrollEvent
@@ -69,6 +68,7 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
     const nodeObj = getParentNodeObj(firstMdNode);
     const { node, mdNode } = nodeObj;
     const mdNodeStartLine = getMdStartLine(mdNode);
+    const previewElHeight = getAndSaveOffsetHeight(previewEl, 0);
 
     targetScrollTop = getTotalOffsetTop(node, root) || node.offsetTop;
 
