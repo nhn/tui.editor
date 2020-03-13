@@ -4,15 +4,16 @@
 /// <reference types="jquery" />
 /// <reference types="codemirror" />
 
-declare namespace tuiEditor {
+declare namespace toastuiEditor {
   type SquireExt = any;
   type HandlerFunc = (...args: any[]) => void;
   type ReplacerFunc = (inputString: string) => string;
   type CodeMirrorType = CodeMirror.EditorFromTextArea;
   type CommandManagerExecFunc = (name: string, ...args: any[]) => any;
-  type TriggerExtraParameterType = any[] | JQuery.PlainObject | string | number | boolean;
   type RangeType = Range | IRangeType;
   type PopupTableUtils = ILayerPopup;
+  type AddImageBlobHook = (fileOrBlob: File|Blob, callback: Function, source: string) => void;
+  type Plugin = (editor: Editor | Viewer, options: any) => void;
 
   interface IEvent {
     [propName: string]: HandlerFunc;
@@ -29,35 +30,35 @@ declare namespace tuiEditor {
     toHTMLWithCodeHightlight(markdown: string): string;
     toMarkdown(html: string, toMarkdownOptions: IToMarkOptions): string;
   }
-
   interface IEditorOptions {
     el: Element;
     height?: string;
     minHeight?: string;
     initialValue?: string;
-    previewStyle?: string;
+    previewStyle?: 'tab'|'vertical';
     initialEditType?: string;
-    events?: IEvent[];
-    hooks?: IEvent[];
+    events?: IEvent;
+    hooks?: (IEvent | { addImageBlobHook: AddImageBlobHook });
     language?: string;
     useCommandShortcut?: boolean;
     useDefaultHTMLSanitizer?: boolean;
-    codeBlockLanguages?: string[];
     usageStatistics?: boolean;
     toolbarItems?: string[];
     hideModeSwitch?: boolean;
-    exts?: string[];
+    plugins?: Plugin[];
     customConvertor?: IConvertor;
     placeholder?: string;
-    viewer?: boolean
+    previewDelayTime?: string;
+    linkAttribute?: object;
   }
 
   interface IViewerOptions {
-    el: Element;
+    el: HTMLElement;
     exts?: string[];
     initialValue?: string;
-    events?: IEvent[];
-    hooks?: IEvent[];
+    events?: IEvent;
+    hooks?: (IEvent  | { previewBeforeHook: Function });
+    plugins?: Function[];
   }
 
   interface ILanguageData {
@@ -77,7 +78,7 @@ declare namespace tuiEditor {
 
   interface IButtonOptions {
     className: string;
-    $el: JQuery;
+    el: HTMLElement;
     command?: string;
     event?: string;
     text?: string;
@@ -89,12 +90,12 @@ declare namespace tuiEditor {
   class UIController {
     public tagName: string;
     public className: string;
-    public $el: JQuery;
+    public el: HTMLElement;
 
     public on(aType: string | object, aFn: (...args: any[]) => void): void;
     public off(type: string, fn: (...args: any[]) => void): void;
     public remove(): void;
-    public trigger(eventTypeEvent: string | JQuery.Event, extraParameters?: TriggerExtraParameterType): JQuery;
+    public trigger(eventTypeEvent: string, eventData?: any): void;
     public destroy(): void;
   }
 
@@ -146,29 +147,29 @@ declare namespace tuiEditor {
   interface ILayerPopupOptions {
     openerCssQuery?: string[];
     closerCssQuery?: string[];
-    $el: JQuery;
-    content?: JQuery | string;
+    el: HTMLElement;
+    content?: HTMLElement | string;
     textContent?: string;
     title: string;
     header?: boolean;
-    $target?: JQuery;
+    target?: HTMLElement;
     modal: boolean;
     headerButtons?: string;
   }
 
   interface IUIController {
-    $el: JQuery;
+    el: HTMLElement;
     className: string;
     tagName: string;
     destroy(): void;
     on(aType: string | object, aFn: (...args: any[]) => void): void;
     off(type: string, fn: (...args: any[]) => void): void;
     remove(): void;
-    trigger(eventTypeEvent: string | JQuery.Event, extraParameters?: TriggerExtraParameterType): JQuery;
+    trigger(eventTypeEvent: string, eventData: any): void;
   }
 
   interface ILayerPopup extends IUIController {
-    setContent($content: JQuery): void;
+    setContent(content: HTMLElement): void;
     setTitle(title: string): void;
     getTitleElement(): Element;
     hide(): void;
@@ -204,7 +205,6 @@ declare namespace tuiEditor {
     public removeItem(item: ToolbarItem | number, destroy?: boolean): ToolbarItem | undefined;
     public removeAllItems(): void;
     public addButton(button: Button, index?: number): void;
-    public addDivider(): JQuery;
   }
 
   class DefaultToolbar extends Toolbar {}
@@ -293,13 +293,13 @@ declare namespace tuiEditor {
   }
 
   class WwCodeBlockManager {
-    public static convertNodesToText(nodes: Node[]): string;
-
     constructor(wwe: WysiwygEditor);
-
+    
     public destroy(): void;
+    public convertNodesToText(nodes: Node[]): string;
     public isInCodeBlock(range: Range): boolean;
     public prepareToPasteOnCodeblock(nodes: Node[]): DocumentFragment;
+    public modifyCodeBlockForWysiwyg(node: HTMLElement): void;
   }
 
   class WwTableManager {
@@ -309,16 +309,16 @@ declare namespace tuiEditor {
     public getTableIDClassName(): string;
     public isInTable(range: Range): boolean;
     public isNonTextDeleting(range: Range): boolean;
-    public isTableOrSubTableElement(pastingNodeName: string): string;
-    public pasteClipboardData($clipboardTable: JQuery): boolean;
-    public prepareToTableCellStuffing($trs: JQuery): object;
+    public isTableOrSubTableElement(pastingNodeName: string): boolean;
+    public pasteClipboardData(clipboardTable: Node): boolean;
+    public prepareToTableCellStuffing(trs: HTMLElement): object;
     public resetLastCellNode(): void;
-    public setLastCellNode(node: Element): void;
-    public tableCellAppendAidForTableElement(node: Element): void;
-    public updateTableHtmlOfClipboardIfNeed($clipboardContainer: JQuery): void;
-    public wrapDanglingTableCellsIntoTrIfNeed($container: JQuery): Element | null;
-    public wrapTheadAndTbodyIntoTableIfNeed($container: JQuery): Element | null;
-    public wrapTrsIntoTbodyIfNeed($container: JQuery): Element | null;
+    public setLastCellNode(node: HTMLElement): void;
+    public tableCellAppendAidForTableElement(node: HTMLElement): void;
+    public updateTableHtmlOfClipboardIfNeed(clipboardContainer: HTMLElement): void;
+    public wrapDanglingTableCellsIntoTrIfNeed(container: HTMLElement): HTMLElement | null;
+    public wrapTheadAndTbodyIntoTableIfNeed(container: HTMLElement): HTMLElement | null;
+    public wrapTrsIntoTbodyIfNeed(container: HTMLElement): HTMLElement | null;
   }
 
   class WwTableSelectionManager {
@@ -326,22 +326,30 @@ declare namespace tuiEditor {
 
     public createRangeBySelectedCells(): void;
     public destroy(): void;
-    public getSelectedCells(): JQuery;
-    public getSelectionRangeFromTable(selectionStart: Element, selectionEnd: Element): object;
-    public highlightTableCellsBy(selectionStart: Element, selectionEnd: Element): void;
+    public getSelectedCells(): HTMLElement;
+    //@TODO
+    public getSelectionRangeFromTable(selectionStart: HTMLElement, selectionEnd: HTMLElement): object;
+    public highlightTableCellsBy(selectionStart: HTMLElement, selectionEnd: HTMLElement): void;
     public removeClassAttrbuteFromAllCellsIfNeed(): void;
     public setTableSelectionTimerIfNeed(selectionStart: Element): void;
     public styleToSelectedCells(onStyle: SquireExt, options?: any): void;
   }
 
+  // @TODO
   class MarkDownEditor {
-    constructor($el: JQuery, eventManager: EventManager);
+    constructor(el: HTMLElement, eventManager: EventManager, mdDocument: any, options: any);
 
     public getTextObject(range: IRangeType): IMdTextObject;
     public setValue(markdown: string, cursorToEnd?: boolean): void;
+    public resetState(): void;
+    // @TODO
+    public getMdDocument(): void;
   }
+  // @TODO
   class WysiwygEditor {
-    constructor($el: JQuery, eventManager: EventManager);
+    static factory(el: HTMLElement, eventManager: EventManager, options: any): WysiwygEditor;
+
+    constructor(el: HtmlElement, eventManager: EventManager, options: any);
 
     public addKeyEventHandler(keyMap: string | string[], handler: HandlerFunc): void;
     public addWidget(range: Range, node: Node, style: string, offset?: number): void;
@@ -351,14 +359,13 @@ declare namespace tuiEditor {
     public findTextNodeFilter(): boolean;
     public fixIMERange(): void;
     public focus(): void;
-    public get$Body(): JQuery;
     public getEditor(): SquireExt;
     public getIMERange(): Range;
     public getRange(): Range;
     public getTextObject(range: Range): IWwTextObject;
     public getValue(): string;
     public hasFormatWithRx(rx: RegExp): boolean;
-    public init(): void;
+    public init(useDefaultHTMLSanitizer: boolean): void;
     public insertText(text: string): void;
     public makeEmptyBlockCurrentSelection(): void;
     public moveCursorToEnd(): void;
@@ -375,12 +382,20 @@ declare namespace tuiEditor {
     public saveSelection(range: Range): void;
     public scrollTop(value: number): boolean;
     public setHeight(height: number | string): void;
+    public setPlaceholder(placeholder: string): void;
     public setMinHeight(minHeight: number): void;
     public setRange(range: Range): void;
+    public setValue(html: string, cursorToEnd?: boolean): void;
+    //@TODO
+    public getLinkAttribute(): object
     public setSelectionByContainerAndOffset(startContainer: Node, startOffset: number,
                                             endContainer: Node, endOffset: number): Range;
     public setValue(html: string, cursorToEnd?: boolean): void;
     public unwrapBlockTag(condition?: (tagName: string) => boolean): void;
+    public addWidget(range: Range, node: Node, style: string, offset?: number): void;
+    public getBody(): HTMLElement;
+    public scrollIntoCursor(): void;
+    public isInTable(range: Range): boolean;
   }
 
   class EventManager {
@@ -417,19 +432,18 @@ declare namespace tuiEditor {
   }
 
   class Editor {
-    public static Button: typeof Button;
     public static codeBlockManager: CodeBlockManager;
-    public static CommandManager: typeof CommandManager;
+    public static CommandManager: CommandManager;
     public static domUtils: IDomUtil;
     public static i18n: I18n;
     public static isViewer: boolean;
-    public static WwCodeBlockManager: typeof WwCodeBlockManager;
-    public static WwTableManager: typeof WwTableManager;
-    public static WwTableSelectionManager: typeof WwTableSelectionManager;
+    public static WwCodeBlockManager: WwCodeBlockManager;
+    public static WwTableManager: WwTableManager;
+    public static WwTableSelectionManager: WwTableSelectionManager;
 
-    public static defineExtension(name: string, ext: HandlerFunc): void;
     public static factory(options: IEditorOptions): Editor | Viewer;
     public static getInstances(): Editor[];
+    public static setLanguage(code: string, data: ILanguageData): void;
 
     constructor(options: IEditorOptions);
 
@@ -438,12 +452,12 @@ declare namespace tuiEditor {
     public afterAddedCommand(): void;
     public blur(): void;
     public changeMode(mode: string, isWithoutFocus?: boolean): void;
-    public changePreviewStyle(style: string): void;
+    public changePreviewStyle(style: 'tab'|'vertical'): void;
     public exec(name: string, ...args: any[]): void;
     public focus(): void;
     public getCodeMirror(): CodeMirrorType;
     public getCurrentModeEditor(): MarkDownEditor | WysiwygEditor;
-    public getCurrentPreviewStyle(): string;
+    public getCurrentPreviewStyle(): 'tab'|'vertical';
     public getHtml(): string;
     public getMarkdown(): string;
     public getRange(): RangeType;
@@ -472,14 +486,16 @@ declare namespace tuiEditor {
     public setUI(UI: IUI): void;
     public setValue(value: string, cursorToEnd?: boolean): void;
     public show(): void;
+    public setCodeBlockLanguages(languages?: string[]): void;
   }
 
   class Viewer {
-    public static codeBlockManager: CodeBlockManager;
-    public static domUtils: IDomUtil;
     public static isViewer: boolean;
-
-    public static defineExtension(name: string, ext: HandlerFunc): void;
+    public static domUtils: IDomUtil;
+    public static codeBlockManager: CodeBlockManager;
+    public static WwCodeBlockManager: null;
+    public static WwTableManager: null;
+    public static WwTableSelectionManager: null;
 
     constructor(options: IViewerOptions);
 
@@ -492,21 +508,18 @@ declare namespace tuiEditor {
     public remove(): void;
     public setMarkdown(markdown: string): void;
     public setValue(markdown: string): void;
+    public setCodeBlockLanguages(languages?: string[]): void;
   }
 }
 
-declare module 'tui-editor' {
-  export default tuiEditor.Editor;
+declare module 'toastui-editor' {
+  export default toastuiEditor.Editor;
 }
 
-declare module 'tui-editor/dist/tui-editor-Editor-all' {
-  export default tuiEditor.Editor;
+declare module 'toastui-editor/dist/toastui-editor-all' {
+  export default toastuiEditor.Editor;
 }
 
-declare module 'tui-editor/dist/tui-editor-Viewer' {
-  export default tuiEditor.Viewer;
-}
-
-declare module 'tui-editor/dist/tui-editor-Viewer-all' {
-  export default tuiEditor.Viewer;
+declare module 'toastui-editor/dist/toastui-editor-viewer' {
+  export default toastuiEditor.Viewer;
 }
