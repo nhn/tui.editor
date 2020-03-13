@@ -158,7 +158,7 @@ class WwPasteContentHelper {
       const brChildren = domUtils.children(node, 'br');
 
       if (brChildren.length && node.nodeName !== 'LI' && node.nodeName !== 'UL') {
-        domUtils.unwrap(brChildren[0]);
+        domUtils.unwrap(node);
       }
     });
   }
@@ -181,7 +181,7 @@ class WwPasteContentHelper {
         const parent = domUtils.parent(leafElement, blockTags);
 
         if (parent && parent !== container) {
-          domUtils.unwrap(leafElement);
+          domUtils.unwrap(parent);
         } else {
           leafElement = leafElement.parentElement;
         }
@@ -236,7 +236,7 @@ class WwPasteContentHelper {
       if (colorValue) {
         css(node, { color: colorValue });
       } else {
-        domUtils.unwrap(node.childNodes);
+        domUtils.unwrap(node);
       }
     }
   }

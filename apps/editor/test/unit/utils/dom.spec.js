@@ -894,26 +894,13 @@ describe('domUtils', () => {
     });
   });
 
-  describe('unwrap() removes parent element from', () => {
-    beforeEach(() => {
-      container.innerHTML = '<b><i>foo</i></b><b><i>bar</i></b>';
-    });
+  it('unwrap() removes given element and insert children at the same position', () => {
+    const childrenHTML = '<i>emph1</i> text <i>emph2</i>';
 
-    it('only one target node', () => {
-      const target = container.querySelector('i');
+    container.innerHTML = `<p><b>${childrenHTML}</b></p>`;
+    domUtils.unwrap(container.querySelector('b'));
 
-      domUtils.unwrap(target);
-
-      expect(container.innerHTML).toBe('<i>foo</i><b><i>bar</i></b>');
-    });
-
-    it('all target nodes', () => {
-      const targets = container.querySelectorAll('i');
-
-      domUtils.unwrap(targets);
-
-      expect(container.innerHTML).toBe('<i>foo</i><i>bar</i>');
-    });
+    expect(container.innerHTML).toBe(`<p>${childrenHTML}</p>`);
   });
 
   it('remove() removes target node', () => {

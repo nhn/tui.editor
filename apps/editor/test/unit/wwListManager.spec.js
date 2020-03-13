@@ -178,7 +178,7 @@ describe('WwListManager', () => {
 
       mgr._removeBranchListAll();
 
-      expect(wwe.getBody().querySelectorAll('ul').length).toEqual(0);
+      expect(wwe.getBody().querySelectorAll('ul').length).toEqual(1);
       expect(
         $(wwe.getBody())
           .find('ul li ul')

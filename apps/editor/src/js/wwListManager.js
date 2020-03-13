@@ -169,7 +169,7 @@ class WwListManager {
     }
 
     const [firstLi] = domUtils.children(branchRoot, 'li');
-    const unwrappedLIs = domUtils.unwrap(list.children);
+    const unwrappedLIs = domUtils.unwrap(list);
 
     domUtils.prepend(branchRoot, unwrappedLIs);
     domUtils.remove(firstLi);
