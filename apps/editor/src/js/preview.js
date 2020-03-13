@@ -5,6 +5,7 @@
 import css from 'tui-code-snippet/domUtil/css';
 import LazyRunner from './lazyRunner';
 import domUtils from './utils/dom';
+import codeBlockManager from './codeBlockManager';
 
 /**
  * Class Preview
@@ -36,12 +37,37 @@ class Preview {
     this.el.appendChild(this._previewContent);
   }
 
+  invokeCodeBlockPlugins(mdNodeIds) {
+    const contentEl = this._previewContent;
+    let targetEls;
+
+    if (mdNodeIds) {
+      targetEls = mdNodeIds
+        .map(id => contentEl.querySelector(`[data-nodeid="${id}"]`))
+        .filter(Boolean);
+    } else {
+      targetEls = [contentEl];
+    }
+
+    targetEls.forEach(targetEl => {
+      const codeEls = domUtils.findAll(targetEl, 'code[data-language]');
+
+      codeEls.forEach(codeEl => {
+        const lang = codeEl.getAttribute('data-language');
+        const html = codeBlockManager.createCodeBlockHtml(lang, codeEl.textContent);
+
+        codeEl.innerHTML = html;
+      });
+    });
+  }
+
   /**
    * Refresh rendering
    * @param {string} markdown Markdown text
    */
-  refresh(markdown) {
+  refresh(markdown = '') {
     this.render(this.convertor.toHTMLWithCodeHightlight(markdown));
+    this.invokeCodeBlockPlugins();
   }
 
   /**
