@@ -278,7 +278,8 @@ class DefaultUI {
       new PopupCodeBlockEditor({
         target: this.el,
         eventManager: this._editor.eventManager,
-        convertor: this._editor.convertor
+        convertor: this._editor.convertor,
+        languages: this._editor.codeBlockLanguages
       })
     );
   }
