@@ -42,13 +42,13 @@ describe('codeSyntaxHighlightPlugin', () => {
 
     jasmine.clock().tick(800);
 
-    const conatiner = editor.preview.el;
+    const container = editor.preview.el;
 
-    expect(conatiner.querySelectorAll('pre').length).toBe(1);
-    expect(conatiner.querySelectorAll('pre code').length).toBe(1);
-    expect(conatiner.querySelectorAll('pre code span').length).toBe(2);
-    expect(conatiner.querySelector('pre code').getAttribute('data-language')).toBe('javascript');
-    expect(conatiner.querySelector('pre code').className).toBe('lang-javascript');
+    expect(container.querySelectorAll('pre').length).toBe(1);
+    expect(container.querySelectorAll('pre code').length).toBe(1);
+    expect(container.querySelectorAll('pre code span').length).toBe(2);
+    expect(container.querySelector('pre code').getAttribute('data-language')).toBe('javascript');
+    expect(container.querySelector('pre code').className).toBe('lang-javascript');
   });
 
   it('render codeblock element in viewer', () => {
@@ -67,13 +67,13 @@ describe('codeSyntaxHighlightPlugin', () => {
 
     jasmine.clock().tick(800);
 
-    const conatiner = editor.preview.el;
+    const container = editor.preview.el;
 
-    expect(conatiner.querySelectorAll('pre').length).toBe(1);
-    expect(conatiner.querySelectorAll('pre code').length).toBe(1);
-    expect(conatiner.querySelectorAll('pre code span').length).toBe(2);
-    expect(conatiner.querySelector('pre code').getAttribute('data-language')).toBe('javascript');
-    expect(conatiner.querySelector('pre code').className).toBe('lang-javascript');
+    expect(container.querySelectorAll('pre').length).toBe(1);
+    expect(container.querySelectorAll('pre code').length).toBe(1);
+    expect(container.querySelectorAll('pre code span').length).toBe(2);
+    expect(container.querySelector('pre code').getAttribute('data-language')).toBe('javascript');
+    expect(container.querySelector('pre code').className).toBe('lang-javascript');
   });
 
   it('render code in wysiwyg', () => {

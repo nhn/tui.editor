@@ -15,7 +15,8 @@ export function registerCodeBlockReplacer(editor, hljs) {
   editor.setCodeBlockLanguages(languages);
   languages.forEach(type => {
     const convertor = codeText => hljs.highlight(type, codeText).value;
-    const langTypes = [type, ...hljs.getLanguage(type).aliases];
+    const aliases = hljs.getLanguage(type).aliases || [];
+    const langTypes = [type, ...aliases];
 
     langTypes.forEach(lang => {
       codeBlockManager.setReplacer(lang, convertor);
