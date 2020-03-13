@@ -2,6 +2,7 @@
  * @fileoverview Implements UI code block languages combo
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
@@ -16,8 +17,9 @@ import domUtils from '../utils/dom';
  * @ignore
  */
 class CodeBlockLanguagesCombo {
-  constructor(eventManager) {
+  constructor(eventManager, languages) {
     this._eventManager = eventManager;
+    this._languages = languages;
 
     this._initDOM();
     this._initDOMEvent();
@@ -29,6 +31,9 @@ class CodeBlockLanguagesCombo {
     );
     this._wrapper = domUtils.createElementWith(`<span class="te-input-language"></span>`);
     this._wrapper.appendChild(this._inputLanguage);
+    if (!this._languages || !this._languages.length) {
+      css(this._wrapper, { display: 'none' });
+    }
   }
 
   _initDOMEvent() {

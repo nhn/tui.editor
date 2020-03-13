@@ -65,6 +65,7 @@ class PopupCodeBlockEditor extends LayerPopup {
 
     this.eventManager = options.eventManager;
     this.convertor = options.convertor;
+    this.languages = options.languages;
   }
 
   /**
@@ -165,7 +166,7 @@ class PopupCodeBlockEditor extends LayerPopup {
 
   _createCodeBlockLanguagesCombo() {
     const titleElement = this.getTitleElement();
-    const codeBlockLanguagesCombo = new CodeBlockLanguagesCombo(this.eventManager);
+    const codeBlockLanguagesCombo = new CodeBlockLanguagesCombo(this.eventManager, this.languages);
 
     codeBlockLanguagesCombo.setOnLanguageSelected(selectedLanguage => {
       this._codeBlockEditor.setLanguage(selectedLanguage);
@@ -184,7 +185,7 @@ class PopupCodeBlockEditor extends LayerPopup {
   }
 
   _updatePreviewButton() {
-    domUtils.toggleClass(this._toggleFitButton, 'active', this._scrollSyncSplit.isSplitView());
+    domUtils.toggleClass(this._togglePreviewButton, 'active', this._scrollSyncSplit.isSplitView());
   }
 
   _updateScrollButton() {

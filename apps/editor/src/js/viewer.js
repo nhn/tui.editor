@@ -196,6 +196,18 @@ class ToastUIEditorViewer {
   isWysiwygMode() {
     return false;
   }
+
+  /**
+   * Set code block languages
+   * @param {Array} languages - code lauguage list
+   */
+  setCodeBlockLanguages(languages = []) {
+    languages.forEach(lang => {
+      if (this.codeBlockLanguages.indexOf(lang) < 0) {
+        this.codeBlockLanguages.push(lang);
+      }
+    });
+  }
 }
 
 /**

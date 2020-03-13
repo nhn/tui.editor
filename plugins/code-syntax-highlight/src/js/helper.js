@@ -9,15 +9,10 @@
  * @param {Object} [hljs] - object of highlight.js
  */
 export function registerHljsToEditor(editor, hljs) {
-  const { codeBlockLanguages } = editor;
   const { codeBlockManager } = Object.getPrototypeOf(editor).constructor;
   const languages = hljs.listLanguages();
 
-  languages.forEach(type => {
-    if (codeBlockLanguages.indexOf(type) < 0) {
-      codeBlockLanguages.push(type);
-    }
-  });
+  editor.setCodeBlockLanguages(languages);
 
   codeBlockManager.setHighlightJS(hljs);
 }
