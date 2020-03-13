@@ -40,10 +40,22 @@ describe('Button', () => {
   });
 
   describe('event', () => {
+    let buttonElement;
+
+    beforeEach(() => {
+      buttonElement = document.createElement('button');
+      document.body.appendChild(buttonElement);
+    });
+
+    afterEach(() => {
+      document.body.removeChild(buttonElement);
+    });
+
     it('should emit the command event which name is given by command option when the button is clicked', () => {
       let passedCommand;
 
       button = new Button({
+        el: buttonElement,
         command: 'mycommand'
       });
 
@@ -51,7 +63,7 @@ describe('Button', () => {
         passedCommand = command;
       });
 
-      $(button.el).trigger('click');
+      button.el.click();
 
       expect(passedCommand).toEqual('mycommand');
     });
@@ -60,6 +72,7 @@ describe('Button', () => {
       let passedEvent;
 
       button = new Button({
+        el: buttonElement,
         event: 'myevent'
       });
 
@@ -67,7 +80,7 @@ describe('Button', () => {
         passedEvent = event;
       });
 
-      $(button.el).trigger('click');
+      button.el.click();
 
       expect(passedEvent).toEqual('myevent');
     });
@@ -76,6 +89,7 @@ describe('Button', () => {
       let passedEvent;
 
       button = new Button({
+        el: buttonElement,
         event: 'myevent'
       });
       button.disable();
@@ -84,7 +98,7 @@ describe('Button', () => {
         passedEvent = event;
       });
 
-      $(button.el).trigger('click');
+      button.el.click();
 
       expect(passedEvent).toBeFalsy();
     });
@@ -94,6 +108,7 @@ describe('Button', () => {
       const commandHandler = jasmine.createSpy('commandHandler');
 
       button = new Button({
+        el: buttonElement,
         command: 'mycommand',
         event: 'myevent'
       });
@@ -101,7 +116,7 @@ describe('Button', () => {
       button.on('command', commandHandler);
       button.on('event', eventHandler);
 
-      $(button.el).trigger('click');
+      button.el.click();
 
       expect(commandHandler).toHaveBeenCalled();
       expect(eventHandler).not.toHaveBeenCalled();

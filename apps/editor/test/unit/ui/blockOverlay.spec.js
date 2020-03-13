@@ -7,6 +7,8 @@ import $ from 'jquery';
 import BlockOverlay from '@/ui/blockOverlay';
 import EventManager from '@/eventManager';
 
+import domUtils from '@/utils/dom';
+
 describe('BlockOverlay', () => {
   let blockOverlay, $container, $targetElement, $targetElement2, em;
 
@@ -49,7 +51,7 @@ describe('BlockOverlay', () => {
   });
 
   it('should match position & size to attachedElement on change event', () => {
-    blockOverlay._attachedElement = $($targetElement).get(0);
+    blockOverlay._attachedElement = $targetElement.get(0);
     blockOverlay.setVisibility(true);
 
     $targetElement.css('top', '1px');
@@ -59,7 +61,7 @@ describe('BlockOverlay', () => {
       source: 'wysiwyg'
     });
 
-    expect($(blockOverlay.el).offset()).toEqual($targetElement.offset());
+    expect(domUtils.getOffset(blockOverlay.el)).toEqual(domUtils.getOffset($targetElement.get(0)));
 
     $targetElement.width('10px');
     $targetElement.height('10px');

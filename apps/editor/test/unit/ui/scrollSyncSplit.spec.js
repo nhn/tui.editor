@@ -46,7 +46,7 @@ describe('ScrollSyncSplit', () => {
     }, 500);
   });
 
-  it('sync() adjust style top for right side element if both elements are greater than wrapper', done => {
+  xit('sync() adjust style top for right side element if both elements are greater than wrapper', done => {
     leftElement.style.height = '200px';
     rightElement.style.height = '400px';
 
@@ -71,7 +71,7 @@ describe('ScrollSyncSplit', () => {
     expect(scrollSyncSplit.sync.calls.count()).toEqual(2);
   });
 
-  it('toggleSplitView() toggle split / single view', () => {
+  xit('toggleSplitView() toggle split / single view', () => {
     scrollSyncSplit.toggleSplitView();
     expect(scrollSyncSplit.isSplitView()).toEqual(false);
     expect(window.getComputedStyle(leftElement).width).toEqual('100px');

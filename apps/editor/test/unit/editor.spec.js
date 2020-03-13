@@ -159,17 +159,15 @@ describe('Editor', () => {
 
       it('default minHeight should be applied to editor height', () => {
         editor.height('auto');
-        const rect = container.getBoundingClientRect();
 
-        expect(rect.bottom - rect.top).toBeGreaterThan(100);
+        expect(container.offsetHeight).toBeGreaterThan(100);
       });
 
       it('should applied to editor height', () => {
         editor.height('auto');
         editor.minHeight('300px');
-        const rect = container.getBoundingClientRect();
 
-        expect(rect.bottom - rect.top).toEqual(300);
+        expect(container.offsetHeight).toEqual(300);
       });
     });
 
@@ -180,15 +178,15 @@ describe('Editor', () => {
       });
     });
 
-    // describe('changePreviewStyle()', () => {
-    //   it('Preview should refreash after preview style is changed', () => {
-    //     editor.changePreviewStyle('tab');
-    //     editor.setMarkdown('1\n2');
-    //     editor.changePreviewStyle('vertical');
+    describe('changePreviewStyle()', () => {
+      it('Preview should refreash after preview style is changed', () => {
+        editor.changePreviewStyle('tab');
+        editor.setMarkdown('1\n2');
+        editor.changePreviewStyle('vertical');
 
-    //     expect(editor.preview.el.textContent).toEqual('1\n2\n');
-    //   });
-    // });
+        expect(editor.preview.el.textContent).toEqual('1\n2\n');
+      });
+    });
 
     describe('insertText()', () => {
       it('insert text on markdown mode', () => {

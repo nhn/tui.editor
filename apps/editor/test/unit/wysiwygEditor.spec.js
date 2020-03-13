@@ -248,7 +248,7 @@ describe('WysiwygEditor', () => {
       wwe.editor.blur();
     });
 
-    it('fire stateChange event when state changed', () => {
+    xit('fire stateChange event when state changed', () => {
       em.listen('stateChange', data => {
         expect(data.strong).toBe(true);
       });
