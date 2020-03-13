@@ -25,7 +25,7 @@ describe('CodeBlockLanguagesCombo', () => {
       languages: ['java', 'javascript', 'uml']
     });
 
-    combo = new CodeBlockLanguagesCombo(eventManager);
+    combo = new CodeBlockLanguagesCombo(eventManager, ['java', 'javascript', 'uml']);
     document.body.appendChild(combo.getElement());
   });
 

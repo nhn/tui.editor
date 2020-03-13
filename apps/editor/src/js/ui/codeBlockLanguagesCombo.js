@@ -31,7 +31,7 @@ class CodeBlockLanguagesCombo {
     );
     this._wrapper = domUtils.createElementWith(`<span class="te-input-language"></span>`);
     this._wrapper.appendChild(this._inputLanguage);
-    if (!this._languages.length) {
+    if (!this._languages || !this._languages.length) {
       css(this._wrapper, { display: 'none' });
     }
   }
@@ -176,20 +176,6 @@ class CodeBlockLanguagesCombo {
    */
   getElement() {
     return this._wrapper;
-  }
-
-  /**
-   * show code block combo box
-   */
-  show() {
-    css(this._wrapper, { display: 'inline-block' });
-  }
-
-  /**
-   * hide code block combo box
-   */
-  hide() {
-    css(this._wrapper, { display: 'none' });
   }
 }
 
