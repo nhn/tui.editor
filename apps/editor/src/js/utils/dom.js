@@ -1168,28 +1168,20 @@ function wrapInner(nodeList, nodeName) {
 }
 
 /**
- * Removes parent element to target node
- * @param {Node|Array.<Node>} node - target node
- * @returns {Node} unwrapped node
+ * Removes target element and insert children at the same position
+ * @param {Node} node - parent node
+ * @returns {Array.<Node>} unwrapped nodes
  * @ignore
  */
-function unwrap(nodeList) {
-  nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
-
+function unwrap(node) {
   const result = [];
 
-  nodeList.forEach(node => {
-    const target = node.parentNode;
+  while (node.firstChild) {
+    result.push(node.firstChild);
+    node.parentNode.insertBefore(node.firstChild, node);
+  }
 
-    if (target) {
-      while (target.firstChild) {
-        result.push(target.firstChild);
-        target.parentNode.insertBefore(target.firstChild, target);
-      }
-
-      target.parentNode.removeChild(target);
-    }
-  });
+  remove(node);
 
   return result;
 }

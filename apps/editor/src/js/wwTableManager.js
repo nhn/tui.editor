@@ -690,7 +690,7 @@ class WwTableManager {
           domUtils.remove(node);
         }
       } else {
-        domUtils.unwrap(node.children);
+        domUtils.unwrap(node);
       }
     });
   }

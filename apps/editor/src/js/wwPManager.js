@@ -104,8 +104,10 @@ class WwPManager {
    */
   _unwrapPtags() {
     domUtils.findAll(this.wwe.getBody(), 'div').forEach(node => {
-      if (domUtils.parent(node, 'p')) {
-        domUtils.unwrap(node);
+      const parent = node.parentNode;
+
+      if (parent.tagName === 'P') {
+        domUtils.unwrap(parent);
       }
     });
   }

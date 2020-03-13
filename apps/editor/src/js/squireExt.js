@@ -300,7 +300,7 @@ class SquireExt extends Squire {
 
     if (target) {
       domUtils.wrapInner(target, to);
-      domUtils.unwrap(target.children);
+      domUtils.unwrap(target);
     }
   }
 
