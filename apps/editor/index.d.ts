@@ -3,7 +3,6 @@
 
 /// <reference types="jquery" />
 /// <reference types="codemirror" />
-/// <reference types="markdown-it" />
 
 declare namespace tuiEditor {
   type SquireExt = any;
@@ -25,7 +24,6 @@ declare namespace tuiEditor {
   }
 
   interface IConvertor {
-    getMarkdownitHighlightRenderer(): markdownit;
     initHtmlSanitizer(): void;
     toHTML(makrdown: string): string;
     toHTMLWithCodeHightlight(markdown: string): string;
@@ -244,8 +242,6 @@ declare namespace tuiEditor {
   }
 
   class CodeBlockManager {
-    public static getHighlightJSLanguages(): string[];
-
     public createCodeBlockHtml(language: string, codeText: string): string;
     public getReplacer(language: string): ReplacerFunc;
     public setReplacer(language: string, replacer: ReplacerFunc): void;
@@ -427,8 +423,6 @@ declare namespace tuiEditor {
     public static domUtils: IDomUtil;
     public static i18n: I18n;
     public static isViewer: boolean;
-    public static markdownit: markdownit;
-    public static markdownitHighlight: markdownit;
     public static WwCodeBlockManager: typeof WwCodeBlockManager;
     public static WwTableManager: typeof WwTableManager;
     public static WwTableSelectionManager: typeof WwTableSelectionManager;
@@ -484,7 +478,6 @@ declare namespace tuiEditor {
     public static codeBlockManager: CodeBlockManager;
     public static domUtils: IDomUtil;
     public static isViewer: boolean;
-    public static markdownitHighlight: markdownit;
 
     public static defineExtension(name: string, ext: HandlerFunc): void;
 
