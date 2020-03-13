@@ -7,7 +7,6 @@ import off from 'tui-code-snippet/domEvent/off';
 
 import Preview from './preview';
 import MarkdownRenderer from './markdownRenderer';
-import codeBlockManager from './codeBlockManager';
 import domUtils from './utils/dom';
 import { findAdjacentElementToScrollTop } from './scroll/helper';
 import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
@@ -29,7 +28,7 @@ class MarkdownPreview extends Preview {
     this._initEvent();
     this.lazyRunner.registerLazyRunFunction(
       'invokeCodeBlock',
-      this._invokeCodeBlockPlugins,
+      this.invokeCodeBlockPlugins,
       this.delayCodeBlockTime,
       this
     );
@@ -41,9 +40,8 @@ class MarkdownPreview extends Preview {
    */
   _initEvent() {
     this.eventManager.listen('contentChangedFromMarkdown', this.update.bind(this));
-    this.eventManager.listen('previewNeedsRefresh', value => {
-      this.refresh(value || '');
-    });
+    // need to implement a listener function for 'previewNeedsRefresh' event
+    // to support third-party plugins which requires re-executing script for every re-render
 
     on(this.el, 'scroll', event => {
       this.eventManager.emit('scroll', {
@@ -53,23 +51,9 @@ class MarkdownPreview extends Preview {
     });
   }
 
-  _invokeCodeBlockPlugins(codeBlockNodes) {
-    const contentEl = this._previewContent;
-
-    codeBlockNodes.forEach(node => {
-      const codeEl = contentEl.querySelector(`[data-nodeid="${node.id}"] > code`);
-
-      if (codeEl) {
-        const lang = codeEl.getAttribute('data-language');
-        const html = codeBlockManager.createCodeBlockHtml(lang, codeEl.textContent);
-
-        codeEl.innerHTML = html;
-      }
-    });
-  }
-
   update(changed) {
     const { nodes, removedNodeRange } = changed;
+    const nodeIds = nodes.map(node => node.id);
     const contentEl = this._previewContent;
     const newHtml = this.eventManager.emitReduce(
       'convertorAfterMarkdownToHtmlConverted',
@@ -101,12 +85,7 @@ class MarkdownPreview extends Preview {
       }
     }
     this.eventManager.emit('previewRenderAfter', this);
-
-    const codeBlockNodes = nodes.filter(node => node.type === 'codeBlock');
-
-    if (codeBlockNodes.length > 0) {
-      this.lazyRunner.run('invokeCodeBlock', codeBlockNodes);
-    }
+    this.lazyRunner.run('invokeCodeBlock', nodeIds);
   }
 
   /**

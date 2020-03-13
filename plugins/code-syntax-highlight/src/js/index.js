@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import hljs from 'highlight.js/lib/highlight';
-import { registerHljsToEditor } from './helper';
+import { registerCodeBlockReplacer } from './helper';
 
 /**
  * Code syntax highlight plugin to import selected languages
@@ -12,10 +12,9 @@ import { registerHljsToEditor } from './helper';
  * @param {Object} [options.hljs] - object of highlight.js
  */
 export default function codeSyntaxHighlightPlugin(editor, options = {}) {
-  const { hljs: externalHljs } = options;
-  const editorHljs = externalHljs || hljs;
+  const editorHljs = options.hljs || hljs;
 
   if (editorHljs) {
-    registerHljsToEditor(editor, editorHljs);
+    registerCodeBlockReplacer(editor, editorHljs);
   }
 }

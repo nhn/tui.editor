@@ -6,8 +6,6 @@
  * Class Code Block Manager
  */
 class CodeBlockManager {
-  static hljs = null;
-
   constructor() {
     this._replacers = {};
   }
@@ -38,28 +36,11 @@ class CodeBlockManager {
    */
   createCodeBlockHtml(language, codeText) {
     const replacer = this.getReplacer(language);
-    let html;
 
     if (replacer) {
-      html = replacer(codeText, language);
-    } else {
-      const { hljs } = CodeBlockManager;
-
-      html =
-        hljs && hljs.getLanguage(language)
-          ? hljs.highlight(language, codeText).value
-          : escape(codeText, false);
+      return replacer(codeText, language);
     }
-
-    return html;
-  }
-
-  /**
-   * Set highlight.js to code block manager
-   * @param {Object} hljs - instnace of highlight.js
-   */
-  setHighlightJS(hljs) {
-    CodeBlockManager.hljs = hljs;
+    return escape(codeText, false);
   }
 }
 

@@ -36,12 +36,6 @@ describe('Preview', () => {
     expect(listener).toHaveBeenCalled();
   });
 
-  it('listen to previewNeedsRefresh and fresh', () => {
-    eventManager.emit('previewNeedsRefresh', 'content');
-
-    expect(preview.getHTML()).toEqual('<p>content</p>\n');
-  });
-
   it('listen to contentChangedFromMarkdown and update', () => {
     const doc = new MarkdownDocument();
     const editResult = doc.editMarkdown([1, 7], [1, 7], 'changed');
