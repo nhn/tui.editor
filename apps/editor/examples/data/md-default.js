@@ -9,7 +9,7 @@ const content = [
   '##### Heading 5',
   '###### Heading 6',
   '',
-  '**bold* *italic* ~~strikethrough~~',
+  '**bold** *italic* ~~strikethrough~~',
   '<span style="color:#e11d21;">Color Syntax</span>',
   '[link](https://nhn.github.io/tui.editor/)',
   '',
