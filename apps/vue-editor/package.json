@@ -5,7 +5,8 @@
   "main": "dist/toastui-vue-editor.js",
   "files": [
     "dist",
-    "src"
+    "src",
+    "index.d.ts"
   ],
   "scripts": {
     "lint": "eslint src/**",

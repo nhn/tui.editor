@@ -1,5 +1,5 @@
 <template>
-  <div ref="tuiEditorViewer"></div>
+  <div ref="toastuiEditorViewer"></div>
 </template>
 <script>
 import Editor from '@toast-ui/editor';
@@ -7,7 +7,7 @@ import Editor from '@toast-ui/editor';
 import editorEvents from './editorEvents';
 
 export default {
-  name: 'TuiEditorViewer',
+  name: 'ToastuiEditorViewer',
   props: {
     height: {
       type: String
@@ -37,7 +37,7 @@ export default {
     });
 
     this.editor = Editor.factory({
-      el: this.$refs.tuiEditorViewer,
+      el: this.$refs.toastuiEditorViewer,
       events: eventOption,
       initialValue: this.value,
       height: this.height,
@@ -58,6 +58,9 @@ export default {
       }
 
       return result;
+    },
+    getRootElement() {
+      return this.$refs.toastuiEditorViewer;
     }
   }
 };

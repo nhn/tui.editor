@@ -1,5 +1,5 @@
 <template>
-  <div ref="tuiEditor"></div>
+  <div ref="toastuiEditor"></div>
 </template>
 <script>
 import Editor from '@toast-ui/editor';
@@ -7,7 +7,7 @@ import editorEvents from './editorEvents';
 import valueUpdateMethod from './valueUpdateMethod';
 
 export default {
-  name: 'TuiEditor',
+  name: 'ToastuiEditor',
   props: {
     previewStyle: {
       type: String
@@ -84,7 +84,7 @@ export default {
     });
 
     const options = Object.assign(this.editorOptions, {
-      el: this.$refs.tuiEditor,
+      el: this.$refs.toastuiEditor,
       events: eventOption
     });
 
@@ -112,6 +112,9 @@ export default {
       }
 
       return result;
+    },
+    getRootElement() {
+      return this.$refs.toastuiEditor;
     }
   }
 };
