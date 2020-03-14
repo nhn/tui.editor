@@ -16,13 +16,10 @@ export default class ViewerComponent extends React.Component {
 
   bindEventHandlers(props, prevProps) {
     Object.keys(this.props)
-      .filter(key => /on[A-Z][a-zA-Z]+/.test(key))
+      .filter(key => /^on[A-Z][a-zA-Z]+/.test(key))
       .forEach(key => {
         const eventName = key[2].toLowerCase() + key.slice(3);
-        // For <Viewer onFocus={condition ? onFocus1 : onFocus2} />
-        if (prevProps && prevProps[key] !== props[key]) {
-          this.viewerInst.off(eventName);
-        }
+        this.viewerInst.off(eventName);
         this.viewerInst.on(eventName, props[key]);
       });
   }

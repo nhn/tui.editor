@@ -15,14 +15,11 @@ export default class extends React.Component {
   }
 
   bindEventHandlers(props, prevProps) {
-    Object.keys(props)
-      .filter(key => /on[A-Z][a-zA-Z]+/.test(key))
+    Object.keys(this.props)
+      .filter(key => /^on[A-Z][a-zA-Z]+/.test(key))
       .forEach(key => {
         const eventName = key[2].toLowerCase() + key.slice(3);
-        // For <Editor onFocus={condition ? onFocus1 : onFocus2} />
-        if (prevProps && prevProps[key] !== props[key]) {
-          this.editorInst.off(eventName);
-        }
+        this.editorInst.off(eventName);
         this.editorInst.on(eventName, props[key]);
       });
   }
