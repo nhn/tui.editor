@@ -1,44 +1,54 @@
 // Type definitions for TOAST UI Editor v2.0.0-alpha
 // TypeScript Version: 3.2.2
 
-/// <reference types="jquery" />
 /// <reference types="codemirror" />
 
-declare namespace toastuiEditor {
+declare namespace toastui {
   type SquireExt = any;
   type HandlerFunc = (...args: any[]) => void;
   type ReplacerFunc = (inputString: string) => string;
   type CodeMirrorType = CodeMirror.EditorFromTextArea;
   type CommandManagerExecFunc = (name: string, ...args: any[]) => any;
-  type RangeType = Range | IRangeType;
-  type PopupTableUtils = ILayerPopup;
+  type PopupTableUtils = LayerPopup;
   type AddImageBlobHook = (fileOrBlob: File|Blob, callback: Function, source: string) => void;
   type Plugin = (editor: Editor | Viewer, options: any) => void;
+  type PreviewStyle = 'tab' | 'vertical';
 
-  interface IEvent {
+  interface SelectionRange {
+    from: {
+      row: number;
+      cell: number;
+    };
+    to: {
+      row: number;
+      cell: number;
+    };
+  }
+
+  interface EventMap {
     [propName: string]: HandlerFunc;
   }
 
-  interface IToMarkOptions {
+  interface ToMarkOptions {
     gfm?: boolean;
     renderer?: any;
   }
 
-  interface IConvertor {
+  interface Convertor {
     initHtmlSanitizer(): void;
     toHTML(makrdown: string): string;
     toHTMLWithCodeHightlight(markdown: string): string;
-    toMarkdown(html: string, toMarkdownOptions: IToMarkOptions): string;
+    toMarkdown(html: string, toMarkdownOptions: ToMarkOptions): string;
   }
-  interface IEditorOptions {
-    el: Element;
+  interface EditorOptions {
+    el: HTMLElement;
     height?: string;
     minHeight?: string;
     initialValue?: string;
-    previewStyle?: 'tab'|'vertical';
+    previewStyle?: PreviewStyle;
     initialEditType?: string;
-    events?: IEvent;
-    hooks?: (IEvent | { addImageBlobHook: AddImageBlobHook });
+    events?: EventMap;
+    hooks?: (EventMap | { addImageBlobHook: AddImageBlobHook });
     language?: string;
     useCommandShortcut?: boolean;
     useDefaultHTMLSanitizer?: boolean;
@@ -46,37 +56,46 @@ declare namespace toastuiEditor {
     toolbarItems?: string[];
     hideModeSwitch?: boolean;
     plugins?: Plugin[];
-    customConvertor?: IConvertor;
+    customConvertor?: Convertor;
     placeholder?: string;
     previewDelayTime?: string;
     linkAttribute?: object;
   }
 
-  interface IViewerOptions {
+  interface ViewerOptions {
     el: HTMLElement;
     exts?: string[];
     initialValue?: string;
-    events?: IEvent;
-    hooks?: (IEvent  | { previewBeforeHook: Function });
-    plugins?: Function[];
+    events?: EventMap;
+    hooks?: (EventMap  | { previewBeforeHook: Function });
+    plugins?: Plugin[];
   }
 
-  interface ILanguageData {
+  interface MarkdownEditorOptions {
+    height?: string;
+  }
+
+  interface WysiwygEditorOptions {
+    useDefaultHTMLSanitizer?: boolean;
+    linkAttribute?: object;
+  }
+
+  interface LanguageData {
     [propType: string]: string;
   }
 
   class I18n {
     public get(key: string, code: string): string;
     public setCode(code: string): void;
-    public setLanguage(codes: string | string[], data: ILanguageData): void;
+    public setLanguage(codes: string | string[], data: LanguageData): void;
   }
 
-  interface IButtonItem {
+  interface ButtonItem {
     name: string;
-    options: IButtonOptions;
+    options: ButtonOptions;
   }
 
-  interface IButtonOptions {
+  interface ButtonOptions {
     className: string;
     el: HTMLElement;
     command?: string;
@@ -110,7 +129,7 @@ declare namespace toastuiEditor {
     public static className: string;
     public static name: string;
 
-    constructor(options?: IButtonOptions);
+    constructor(options?: ButtonOptions);
 
     public disable(): void;
     public enable(): void;
@@ -119,20 +138,20 @@ declare namespace toastuiEditor {
     public setTooltip(text: string): void;
   }
 
-  interface ICommandType {
+  interface CommandType {
     MD: 0;
     WW: 1;
     GB: 2;
   }
 
-  interface ICommandProps {
+  interface CommandProps {
     name: string;
     type: number;
   }
 
   class Command {
-    public static TYPE: ICommandType;
-    public static factory(typeStr: string, props: ICommandProps): Command;
+    public static TYPE: CommandType;
+    public static factory(typeStr: string, props: CommandProps): Command;
 
     constructor(name: string, type: number, keyMap?: string[]);
 
@@ -144,7 +163,7 @@ declare namespace toastuiEditor {
     public setKeyMap(win: string, mac: string): void;
   }
 
-  interface ILayerPopupOptions {
+  interface LayerPopupOptions {
     openerCssQuery?: string[];
     closerCssQuery?: string[];
     el: HTMLElement;
@@ -157,21 +176,10 @@ declare namespace toastuiEditor {
     headerButtons?: string;
   }
 
-  interface IUIController {
-    el: HTMLElement;
-    className: string;
-    tagName: string;
-    destroy(): void;
-    on(aType: string | object, aFn: (...args: any[]) => void): void;
-    off(type: string, fn: (...args: any[]) => void): void;
-    remove(): void;
-    trigger(eventTypeEvent: string, eventData: any): void;
-  }
-
-  interface ILayerPopup extends IUIController {
+  interface LayerPopup extends UIController {
     setContent(content: HTMLElement): void;
     setTitle(title: string): void;
-    getTitleElement(): Element;
+    getTitleElement(): HTMLElement;
     hide(): void;
     show(): void;
     isShow(): boolean;
@@ -181,13 +189,13 @@ declare namespace toastuiEditor {
     toggleFitToWindow(): boolean;
   }
 
-  interface IModeSwitchType {
+  interface ModeSwitchType {
     MARKDOWN: 'markdown';
     WYSIWYG: 'wysiwyg';
   }
 
-  interface IModeSwitch extends IUIController {
-    TYPE: IModeSwitchType;
+  interface ModeSwitch extends UIController {
+    TYPE: ModeSwitchType;
     isShown(): boolean;
     show(): void;
     hide(): void;
@@ -199,21 +207,19 @@ declare namespace toastuiEditor {
     public getItems(): ToolbarItem[];
     public getItem(index: number): ToolbarItem;
     public setItems(items: ToolbarItem[]): void;
-    public addItem(item: ToolbarItem | IButtonItem | string): void;
-    public insertItem(index: number, item: ToolbarItem | IButtonItem | string): void;
+    public addItem(item: ToolbarItem | ButtonItem | string): void;
+    public insertItem(index: number, item: ToolbarItem | ButtonItem | string): void;
     public indexOfItem(item: ToolbarItem): number;
     public removeItem(item: ToolbarItem | number, destroy?: boolean): ToolbarItem | undefined;
     public removeAllItems(): void;
     public addButton(button: Button, index?: number): void;
   }
 
-  class DefaultToolbar extends Toolbar {}
-
-  interface IUI {
-    createPopup(options: ILayerPopupOptions): ILayerPopup;
+  interface UI {
+    createPopup(options: LayerPopupOptions): LayerPopup;
     getEditorHeight(): number;
     getEditorSectionHeight(): number;
-    getModeSwitch(): IModeSwitch;
+    getModeSwitch(): ModeSwitch;
     getPopupTableUtils(): PopupTableUtils;
     getToolbar(): Toolbar;
     hide(): void;
@@ -222,20 +228,20 @@ declare namespace toastuiEditor {
     show(): void;
   }
 
-  interface ICommandManagerOptions {
+  interface CommandManagerOptions {
     useCommandShortcut?: boolean;
   }
 
-  interface ICommandPropsOptions {
+  interface CommandPropsOptions {
     name: string;
     keyMap?: string[];
     exec?: CommandManagerExecFunc;
   }
 
   class CommandManager {
-    public static command(type: string, props: ICommandPropsOptions): Command;
+    public static command(type: string, props: CommandPropsOptions): Command;
 
-    constructor(base: Editor, options?: ICommandManagerOptions);
+    constructor(base: Editor, options?: CommandManagerOptions);
 
     public addCommand(command: Command): Command;
     public exec(name: string, ...args: any[]): any;
@@ -247,7 +253,7 @@ declare namespace toastuiEditor {
     public setReplacer(language: string, replacer: ReplacerFunc): void;
   }
 
-  interface IRangeType {
+  interface RangeType {
     start: {
       line: number;
       ch: number;
@@ -258,18 +264,18 @@ declare namespace toastuiEditor {
     };
   }
 
-  interface IMdTextObject {
-    setRange(range: IRangeType): void;
-    setEndBeforeRange(range: IRangeType): void;
+  interface MdTextObject {
+    setRange(range: RangeType): void;
+    setEndBeforeRange(range: RangeType): void;
     expandStartOffset(): void;
     expandEndOffset(): void;
-    getTextContent(): IRangeType;
+    getTextContent(): RangeType;
     replaceContent(content: string): void;
     deleteContent(): void;
-    peekStartBeforeOffset(offset: number): IRangeType;
+    peekStartBeforeOffset(offset: number): RangeType;
   }
 
-  interface IWwTextObject {
+  interface WwTextObject {
     deleteContent(): void;
     expandEndOffset(): void;
     expandStartOffset(): void;
@@ -280,13 +286,13 @@ declare namespace toastuiEditor {
     setRange(range: Range): void;
   }
 
-  interface IFindOffsetNodeInfo {
+  interface FindOffsetNodeInfo {
     container: Node;
     offsetInContainer: number;
     offset: number;
   }
 
-  interface INodeInfo {
+  interface NodeInfo {
     id?: string;
     tagName: string;
     className?: string;
@@ -327,29 +333,29 @@ declare namespace toastuiEditor {
     public createRangeBySelectedCells(): void;
     public destroy(): void;
     public getSelectedCells(): HTMLElement;
-    //@TODO
-    public getSelectionRangeFromTable(selectionStart: HTMLElement, selectionEnd: HTMLElement): object;
+    public getSelectionRangeFromTable(selectionStart: HTMLElement, selectionEnd: HTMLElement): SelectionRange;
     public highlightTableCellsBy(selectionStart: HTMLElement, selectionEnd: HTMLElement): void;
     public removeClassAttrbuteFromAllCellsIfNeed(): void;
-    public setTableSelectionTimerIfNeed(selectionStart: Element): void;
-    public styleToSelectedCells(onStyle: SquireExt, options?: any): void;
+    public setTableSelectionTimerIfNeed(selectionStart: HTMLElement): void;
+    public styleToSelectedCells(onStyle: SquireExt, options?: object): void;
   }
 
-  // @TODO
+  // @TODO: change mdDocument type definition to markdown-parser type file through importing
   class MarkDownEditor {
-    constructor(el: HTMLElement, eventManager: EventManager, mdDocument: any, options: any);
-
-    public getTextObject(range: IRangeType): IMdTextObject;
+    static factory(el: HTMLElement, eventManager: EventManager, mdDocument: any, options: MarkdownEditorOptions): MarkDownEditor; 
+    
+    constructor(el: HTMLElement, eventManager: EventManager, mdDocument: any, options: MarkdownEditorOptions);
+    
+    public getTextObject(range: Range | RangeType): MdTextObject;
     public setValue(markdown: string, cursorToEnd?: boolean): void;
     public resetState(): void;
-    // @TODO
-    public getMdDocument(): void;
+    public getMdDocument(): any;
   }
-  // @TODO
+  
   class WysiwygEditor {
-    static factory(el: HTMLElement, eventManager: EventManager, options: any): WysiwygEditor;
+    static factory(el: HTMLElement, eventManager: EventManager, options: WysiwygEditorOptions): WysiwygEditor;
 
-    constructor(el: HtmlElement, eventManager: EventManager, options: any);
+    constructor(el: HTMLElement, eventManager: EventManager, options: WysiwygEditorOptions);
 
     public addKeyEventHandler(keyMap: string | string[], handler: HandlerFunc): void;
     public addWidget(range: Range, node: Node, style: string, offset?: number): void;
@@ -362,7 +368,7 @@ declare namespace toastuiEditor {
     public getEditor(): SquireExt;
     public getIMERange(): Range;
     public getRange(): Range;
-    public getTextObject(range: Range): IWwTextObject;
+    public getTextObject(range: Range): WwTextObject;
     public getValue(): string;
     public hasFormatWithRx(rx: RegExp): boolean;
     public init(useDefaultHTMLSanitizer: boolean): void;
@@ -385,14 +391,10 @@ declare namespace toastuiEditor {
     public setPlaceholder(placeholder: string): void;
     public setMinHeight(minHeight: number): void;
     public setRange(range: Range): void;
-    public setValue(html: string, cursorToEnd?: boolean): void;
-    //@TODO
     public getLinkAttribute(): object
-    public setSelectionByContainerAndOffset(startContainer: Node, startOffset: number,
-                                            endContainer: Node, endOffset: number): Range;
+    public setSelectionByContainerAndOffset(startContainer: Node, startOffset: number, endContainer: Node, endOffset: number): Range;
     public setValue(html: string, cursorToEnd?: boolean): void;
     public unwrapBlockTag(condition?: (tagName: string) => boolean): void;
-    public addWidget(range: Range, node: Node, style: string, offset?: number): void;
     public getBody(): HTMLElement;
     public scrollIntoCursor(): void;
     public isInTable(range: Range): boolean;
@@ -406,7 +408,7 @@ declare namespace toastuiEditor {
     public removeEventHandler(typeStr: string, handler?: HandlerFunc): void;
   }
 
-  interface IDomUtil {
+  interface DomUtil {
     getNodeName(node: Node): string;
     isTextNode(node: Node): boolean;
     isElemNode(node: Node): boolean;
@@ -419,52 +421,52 @@ declare namespace toastuiEditor {
     getTopPrevNodeUnder(node: Node, underNode: Node): Node;
     getTopNextNodeUnder(node: Node, underNode: Node): Node;
     getParentUntilBy(node: Node, matchCondition: (node: Node) => boolean,
-                     stopCondition: (node: Node) => boolean): Node;
+    stopCondition: (node: Node) => boolean): Node;
     getParentUntil(node: Node, untilNode: string | Node): Node;
     getTopBlockNode(node: Node): Node;
     getPrevTextNode(node: Node): Node;
     findOffsetNode(root: Element, offsetList: number[],
-                   textNodeFilter: (text: string) => string): IFindOffsetNodeInfo[];
-    getPath(node: Node, root: Node): INodeInfo[];
-    getNodeInfo(node: Node): INodeInfo;
+    textNodeFilter: (text: string) => string): FindOffsetNodeInfo[];
+    getPath(node: Node, root: Node): NodeInfo[];
+    getNodeInfo(node: Node): NodeInfo;
     getTableCellByDirection(node: Element, direction: string): Element | null;
     getSiblingRowCellByDirection(node: Element, direction: string, needEdgeCell?: boolean): Element | null;
   }
 
-  class Editor {
+  export class Editor {
     public static codeBlockManager: CodeBlockManager;
     public static CommandManager: CommandManager;
-    public static domUtils: IDomUtil;
+    public static domUtils: DomUtil;
     public static i18n: I18n;
     public static isViewer: boolean;
     public static WwCodeBlockManager: WwCodeBlockManager;
     public static WwTableManager: WwTableManager;
     public static WwTableSelectionManager: WwTableSelectionManager;
 
-    public static factory(options: IEditorOptions): Editor | Viewer;
+    public static factory(options: EditorOptions): Editor | Viewer;
     public static getInstances(): Editor[];
-    public static setLanguage(code: string, data: ILanguageData): void;
+    public static setLanguage(code: string, data: LanguageData): void;
 
-    constructor(options: IEditorOptions);
+    constructor(options: EditorOptions);
 
     public addHook(type: string, handler: HandlerFunc): void;
     public addWidget(selection: Range, node: Node, style: string, offset?: number): void;
     public afterAddedCommand(): void;
     public blur(): void;
     public changeMode(mode: string, isWithoutFocus?: boolean): void;
-    public changePreviewStyle(style: 'tab'|'vertical'): void;
+    public changePreviewStyle(style: PreviewStyle): void;
     public exec(name: string, ...args: any[]): void;
     public focus(): void;
     public getCodeMirror(): CodeMirrorType;
     public getCurrentModeEditor(): MarkDownEditor | WysiwygEditor;
-    public getCurrentPreviewStyle(): 'tab'|'vertical';
+    public getCurrentPreviewStyle(): PreviewStyle;
     public getHtml(): string;
     public getMarkdown(): string;
-    public getRange(): RangeType;
+    public getRange(): Range | RangeType;
     public getSelectedText(): string;
     public getSquire(): SquireExt;
-    public getTextObject(range: RangeType): IMdTextObject | IWwTextObject;
-    public getUI(): IUI;
+    public getTextObject(range: Range | RangeType): MdTextObject | WwTextObject;
+    public getUI(): UI;
     public getValue(): string;
     public height(height: string): string;
     public hide(): void;
@@ -483,21 +485,21 @@ declare namespace toastuiEditor {
     public scrollTop(value: number): number;
     public setHtml(html: string, cursorToEnd?: boolean): void;
     public setMarkdown(markdown: string, cursorToEnd?: boolean): void;
-    public setUI(UI: IUI): void;
+    public setUI(UI: UI): void;
     public setValue(value: string, cursorToEnd?: boolean): void;
     public show(): void;
     public setCodeBlockLanguages(languages?: string[]): void;
   }
 
-  class Viewer {
+  export class Viewer {
     public static isViewer: boolean;
-    public static domUtils: IDomUtil;
+    public static domUtils: DomUtil;
     public static codeBlockManager: CodeBlockManager;
     public static WwCodeBlockManager: null;
     public static WwTableManager: null;
     public static WwTableSelectionManager: null;
 
-    constructor(options: IViewerOptions);
+    constructor(options: ViewerOptions);
 
     public addHook(type: string, handler: HandlerFunc): void;
     public isMarkdownMode(): boolean;
@@ -513,13 +515,13 @@ declare namespace toastuiEditor {
 }
 
 declare module 'toastui-editor' {
-  export default toastuiEditor.Editor;
+  export default toastui.Editor;
 }
 
 declare module 'toastui-editor/dist/toastui-editor-all' {
-  export default toastuiEditor.Editor;
+  export default toastui.Editor;
 }
 
 declare module 'toastui-editor/dist/toastui-editor-viewer' {
-  export default toastuiEditor.Viewer;
+  export default toastui.Viewer;
 }
