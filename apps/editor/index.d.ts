@@ -40,7 +40,8 @@ declare namespace toastui {
     toHTMLWithCodeHightlight(markdown: string): string;
     toMarkdown(html: string, toMarkdownOptions: ToMarkOptions): string;
   }
-  interface EditorOptions {
+  
+  export interface EditorOptions {
     el: HTMLElement;
     height?: string;
     minHeight?: string;
@@ -62,7 +63,7 @@ declare namespace toastui {
     linkAttribute?: object;
   }
 
-  interface ViewerOptions {
+  export interface ViewerOptions {
     el: HTMLElement;
     exts?: string[];
     initialValue?: string;
@@ -514,14 +515,18 @@ declare namespace toastui {
   }
 }
 
-declare module 'toastui-editor' {
+declare module '@toast-ui/editor' {
+  export type EditorOptions = toastui.EditorOptions;
   export default toastui.Editor;
 }
 
-declare module 'toastui-editor/dist/toastui-editor-all' {
+declare module '@toast-ui/editor/dist/toastui-editor-all' {
+  export type EditorOptions = toastui.EditorOptions;
+  export type ViewerOptions = toastui.ViewerOptions;
   export default toastui.Editor;
 }
 
-declare module 'toastui-editor/dist/toastui-editor-viewer' {
+declare module '@toast-ui/editor/dist/toastui-editor-viewer' {
+  export type ViewerOptions = toastui.ViewerOptions;
   export default toastui.Viewer;
 }
