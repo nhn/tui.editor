@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
-    <title>1. Editor</title>
+    <title>18. Use Command</title>
     <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
     <!-- Editor's Dependencies -->
     <link
@@ -15,11 +15,11 @@
   <body>
     <div class="tui-doc-description"></div>
     <div class="code-html tui-doc-contents">
+      <button id="btn" class="btn">Execute the "Bold" command</button>
       <div id="editor"></div>
     </div>
     <!-- Added to check demo page in Internet Explorer -->
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
-    <script src="./data/md-default.js"></script>
     <!-- Editor -->
     <script src="../dist/toastui-editor-all.js"></script>
     <script type="text/babel" class="code-js">
@@ -27,7 +27,11 @@
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
-        initialValue: content
+        initialValue: 'Select this line and click the button above.'
+      });
+
+      document.getElementById('btn').addEventListener('click', () => {
+        instance.exec('Bold');
       });
     </script>
   </body>

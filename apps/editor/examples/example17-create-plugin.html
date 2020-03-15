@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
-    <title>10. Editor with Color Syntax Plugin</title>
+    <title>17. Create Plugin</title>
     <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
     <!-- Editor's Dependencies -->
     <link
@@ -11,11 +11,6 @@
     />
     <!-- Editor -->
     <link rel="stylesheet" href="../dist/toastui-editor.css" />
-    <!-- Editor's Plugin -->
-    <link
-      rel="stylesheet"
-      href="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.css"
-    />
   </head>
   <body>
     <div class="tui-doc-description"></div>
@@ -24,22 +19,41 @@
     </div>
     <!-- Added to check demo page in Internet Explorer -->
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
-    <script src="./data/md-plugins.js"></script>
     <!-- Editor -->
     <script src="../dist/toastui-editor-all.js"></script>
-    <!-- Editor's Plugin -->
-    <script src="http://localhost:8081/dist/cdn/toastui-editor-plugin-color-syntax.js"></script>
     <script type="text/babel" class="code-js">
       const { Editor } = toastui;
-      const { colorSyntax } = Editor.plugin;
+
+      // Step 1: Define the user plugin function
+      function youtubePlugin() {
+        Editor.codeBlockManager.setReplacer('youtube', function(youtubeId) {
+          // Indentify multiple code blocks
+          const wrapperId = `yt${Math.random()
+            .toString(36)
+            .substr(2, 10)}`;
+
+          // Avoid sanitizing iframe tag
+          setTimeout(renderYoutube.bind(null, wrapperId, youtubeId), 0);
+
+          return `<div id="${wrapperId}"></div>`;
+        });
+      }
+
+      function renderYoutube(wrapperId, youtubeId) {
+        const el = document.querySelector(`#${wrapperId}`);
+
+        el.innerHTML = `<iframe width="420" height="315" src="https://www.youtube.com/embed/${youtubeId}"></iframe>`;
+      }
+
+      const content = ['```youtube', 'XyenY12fzAk', '```'].join('\n');
 
       const instance = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
-        initialEditType: 'wysiwyg',
-        initialValue: 'Select some text and choose a color from the toolbar.',
-        plugins: [colorSyntax]
+        initialValue: content,
+        // Step 2: Set the defined plugin function as an option value
+        plugins: [youtubePlugin]
       });
     </script>
   </body>

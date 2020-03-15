@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="../dist/toastui-editor.css" />
   </head>
   <body>
-    <div class="code-html contents">
+    <div class="tui-doc-description"></div>
+    <div class="code-html tui-doc-contents">
       <div id="editor"></div>
     </div>
     <!-- Added to check demo page in Internet Explorer -->
@@ -22,7 +23,7 @@
     <!-- Editor -->
     <script src="../dist/toastui-editor-all.js"></script>
     <script type="text/babel" class="code-js">
-      const editor = new toastui.Editor({
+      const instance = new toastui.Editor({
         el: document.querySelector('#editor'),
         height: '500px',
         initialValue: content,

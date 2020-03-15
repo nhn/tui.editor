@@ -15,7 +15,9 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css" />
   </head>
   <body>
-    <div class="code-html contents">
+    <div class="tui-doc-description">
+    </div>
+    <div class="code-html tui-doc-contents">
       <!-- Editor -->
       <h2>Editor</h2>
       <div id="editor"></div>
@@ -37,7 +39,7 @@
       const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
-        height: '500px',
+        height: '5000px',
         initialValue: chartContent,
         plugins: [chart]
       });
@@ -47,7 +49,17 @@
         viewer: true,
         height: '500px',
         initialValue: chartContent,
-        plugins: [chart]
+        plugins: [
+          [
+            chart,
+            {
+              minWidth: 100,
+              maxWidth: 600,
+              minHeight: 100,
+              maxHeight: 300
+            }
+          ]
+        ]
       });
     </script>
   </body>
