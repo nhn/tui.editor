@@ -84,7 +84,7 @@ class ToastUIEditorViewer {
     }
 
     if (initialValue) {
-      this.setValue(initialValue);
+      this.setMarkdown(initialValue);
     } else if (existingHTML) {
       this.preview.setHTML(existingHTML);
     }
@@ -121,15 +121,6 @@ class ToastUIEditorViewer {
 
     this.preview.refresh(this.markdownValue);
     this.eventManager.emit('setMarkdownAfter', this.markdownValue);
-  }
-
-  /**
-   * Set content for preview
-   * @param {string} markdown Markdown text
-   * @deprecated
-   */
-  setValue(markdown) {
-    this.setMarkdown(markdown);
   }
 
   /**

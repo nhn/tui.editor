@@ -162,7 +162,7 @@ describe('converting', () => {
     it('converting markdown to html', () => {
       const htmlOutput = readFixtures('HTMLOutput.html');
 
-      editor.setValue(mdInput);
+      editor.setMarkdown(mdInput);
       expect(compare(editor.wwEditor.getValue(), htmlOutput)).toEqual(true);
     });
   });
@@ -172,7 +172,7 @@ describe('converting', () => {
       const htmlInput = readFixtures('HTMLInput.html');
 
       editor.wwEditor.setValue(htmlInput);
-      expect(compare(editor.getValue(), mdOutput)).toEqual(true);
+      expect(compare(editor.getHtml(), mdOutput)).toEqual(true);
     });
   });
 });

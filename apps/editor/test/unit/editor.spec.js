@@ -193,21 +193,21 @@ describe('Editor', () => {
         editor.changeMode('markdown');
         editor.insertText('text');
 
-        expect(editor.getValue()).toEqual('text');
+        expect(editor.getMarkdown()).toEqual('text');
       });
 
       it('insert text on wysiwyg mode', () => {
         editor.changeMode('wysiwyg');
         editor.insertText('text');
 
-        expect(editor.getValue()).toEqual('text');
+        expect(editor.getMarkdown()).toEqual('text');
       });
     });
 
     describe('getSelectedText()', () => {
       it('retrieve selected text on markdown', () => {
         editor.changeMode('markdown');
-        editor.setValue('selected text');
+        editor.setMarkdown('selected text');
 
         editor.mdEditor.cm.setSelection(
           {
@@ -225,7 +225,7 @@ describe('Editor', () => {
 
       it('retrieve selected text on wysiwyg', () => {
         editor.changeMode('wysiwyg');
-        editor.setValue('selected text');
+        editor.setHtml('selected text');
 
         const { wwEditor } = editor;
         const selection = wwEditor.editor.getSelection().cloneRange();
@@ -263,7 +263,7 @@ describe('Editor', () => {
 
       const xss = '<script>alert("xss");</script>';
 
-      editor.setValue(xss);
+      editor.setMarkdown(xss);
 
       const content = editor.preview.getHTML().trim();
 
@@ -280,7 +280,7 @@ describe('Editor', () => {
 
       const xss = '<script>alert("xss");</script>';
 
-      editor.setValue(xss);
+      editor.setMarkdown(xss);
 
       const content = editor.getHtml().trim();
 
