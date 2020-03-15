@@ -5,7 +5,7 @@
 ```
 <Type>: Short description (fix #1234)
 
-Logger description here if necessary
+Longer description here if necessary
 
 BREAKING CHANGE: only contain breaking change
 ```
