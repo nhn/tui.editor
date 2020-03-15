@@ -344,6 +344,23 @@ describe('block quote', () => {
   });
 });
 
+describe('code block', () => {
+  it('empty line', () => {
+    const root = reader.parse('```\n\n```\nHello');
+    const codeblock = root.firstChild!;
+    const para = codeblock.next!;
+
+    expect(codeblock.sourcepos).toEqual([
+      [1, 1],
+      [3, 3]
+    ]);
+    expect(para.sourcepos).toEqual([
+      [4, 1],
+      [4, 5]
+    ]);
+  });
+});
+
 describe('merge text nodes', () => {
   it('tokens', () => {
     const root = reader.parse(['\\ Text *', '[ Text !', '![ Text ]'].join('\n'));
