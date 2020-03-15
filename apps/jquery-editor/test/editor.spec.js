@@ -15,11 +15,11 @@ describe('jQuery wrapper for editor', () => {
   });
 
   afterEach(() => {
-    $container.tuiEditor('remove');
+    $container.toastuiEditor('remove');
   });
 
   it('is created', () => {
-    $container.tuiEditor();
+    $container.toastuiEditor();
 
     const [editor] = Editor.getInstances();
 
@@ -27,7 +27,7 @@ describe('jQuery wrapper for editor', () => {
   });
 
   it('call api', () => {
-    $container.tuiEditor({
+    $container.toastuiEditor({
       initialEditType: 'markdown'
     });
 
@@ -35,7 +35,7 @@ describe('jQuery wrapper for editor', () => {
 
     spyOn(editor, 'isMarkdownMode').and.callThrough();
 
-    const result = $container.tuiEditor('isMarkdownMode');
+    const result = $container.toastuiEditor('isMarkdownMode');
 
     expect(editor.isMarkdownMode).toHaveBeenCalled();
     expect(result).toBe(true);

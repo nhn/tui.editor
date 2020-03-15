@@ -75,7 +75,7 @@ require('@toast-ui/jquery-editor');
 import $ from 'jquery';
 import '@toast-ui/jquery-editor';
 
-$('#editor').tuiEditor({
+$('#editor').toastuiEditor({
   // ...
 });
 ```
@@ -86,7 +86,7 @@ $('#editor').tuiEditor({
 import $ from 'jquery';
 import '@toast-ui/jquery-editor/dist/toastui-jquery-editor-viewer';
 
-$('#viewer').tuiEditor({
+$('#viewer').toastuiEditor({
   // ...
 });
 ```
@@ -97,7 +97,7 @@ or
 import $ from 'jquery';
 import '@toast-ui/jquery-editor';
 
-$('#editor').tuiEditor({
+$('#editor').toastuiEditor({
   // ...
   viewer: true
 });
@@ -126,7 +126,7 @@ Before creating the instance, add the element that will create the editor.
 
 ```js
 $(document).ready(() => {
-  $('#editor').tuiEditor({
+  $('#editor').toastuiEditor({
     // ...
   });
 });
@@ -136,7 +136,7 @@ The `viewer` option allows you to use it as a viewer.
 
 ```js
 $(document).ready(() => {
-  $('#viewer').tuiEditor({
+  $('#viewer').toastuiEditor({
     // ...
     viewer: true
   });
@@ -153,7 +153,7 @@ If you want to use only the viewer, include the following file:
 
 ```js
 $(document).ready(() => {
-  $('#viewer').tuiEditor({
+  $('#viewer').toastuiEditor({
     // ...
   });
 });
