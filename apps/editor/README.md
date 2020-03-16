@@ -49,18 +49,6 @@ $ npm install --save @toast-ui/editor # Latest Version
 $ npm install --save @toast-ui/editor@<version> # Specific Version
 ```
 
-When installed and used with npm, the list of files that can be imported is as follows:
-
-```
-- node_modules/
-   ├─ @toast-ui/editor/
-   │     ├─ dist/
-   │     │    ├─ toastui-editor.js
-   │     │    ├─ toastui-editor-viewer.js
-   │     │    ├─ toastui-editor-editor.css
-   │     │    └─ toastui-editor-viewer.css
-```
-
 ### Via Contents Delivery Network (CDN)
 
 TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
@@ -68,20 +56,12 @@ TOAST UI products are available over the CDN powered by [TOAST Cloud](https://ww
 You can use the CDN as below.
 
 ```html
-<head>
-  ...
-  <!-- Editor's Dependecy Style -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
-  />
-  <!-- Editor's Style -->
-  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css" />
-</head>
+...
 <body>
   ...
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor.js"></script>
 </body>
+...
 ```
 
 If you want to use a specific version, use the tag name instead of `latest` in the url's path.
@@ -108,43 +88,59 @@ The CDN directory has the following structure:
 
 ## 🔨 Usage
 
-### Basic : Using the Editor
-
-#### HTML
-
-Add the container element where TOAST UI Editor will be created.
+First, you need to add the container element where TOAST UI Editor will be created.
 
 ```html
-<div id="editor"></div>
+...
+<body>
+  <div id="editor"></div>
+</body>
+...
 ```
-
-#### JavaScript
 
 TOAST UI Editor can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following ways depending on your environment.
 
-```javascript
-import Editor from '@toast-ui/editor'; /* ES6 Modules */
-```
+#### Using module format in node environment
 
 ```javascript
-const Editor = require('@toast-ui/editor'); /* CommonJS */
+import Editor from '@toast-ui/editor'; /* ES6 Module */
 ```
 
-Then import styles of TOAST UI Editor and [CodeMirror](https://codemirror.net/) dependency.
+#### Using namespace in browser environment
+
+```javascript
+const Editor = toastui.Editor;
+```
+
+Then, you need to add the CSS files needed for the editor. Import CSS files in node environment, and add it to html file when using CDN. When creating a basic editor, you need to add a style for the [CodeMirror](https://codemirror.net/).
+
+#### Using in node environment
 
 ```javascript
 import 'codemirror/lib/codemirror.css'; // Editor's Dependency Style
 import '@toast-ui/editor/dist/toastui-editor.css'; // Editor's Style
 ```
 
+#### Using in browser environment by CDN
+
+```html
+...
+<head>
+  ...
+  <!-- Editor's Dependecy Style -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
+  />
+  <!-- Editor's Style -->
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css" />
+</head>
+...
+```
+
 Finally you can create an instance with options and call various API after creating an instance.
 
 ```javascript
-import 'codemirror/lib/codemirror.css';
-import '@toast-ui/editor/dist/toastui-editor.css';
-
-import Editor from '@toast-ui/editor';
-
 const instance = new Editor({
   el: document.querySelector('#editor'),
   height: '500px',
@@ -152,7 +148,7 @@ const instance = new Editor({
   previewStyle: 'vertical'
 });
 
-instance.getMarkdown();
+instance.getHtml();
 ```
 
 #### Default Options
@@ -164,36 +160,3 @@ instance.getMarkdown();
 - `usageStatistics`: Let us know the _hostname_. We want to learn from you how you are using the Editor. You are free to disable it. `true` | `false`
 
 Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEditor)
-
-### Using the Viewer
-
-TOAST UI Editor provides the **Viewer** in case you want to show _Markdown_ content without loading the Editor. The Viewer is much **lighter** than the Editor.
-
-```javascript
-import '@toast-ui/editor/dist/toastui-editor-viewer.css';
-
-import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
-
-const instance = new Viewer({
-  el: document.querySelector('#viewer'),
-  height: '500px',
-  initialValue: '# content to be rendered'
-});
-
-instance.getHtml();
-```
-
-Be careful not to load both the Editor and the Viewer at the same time because the Editor already contains the Viewer function, you can initialize editor [`Editor.factory()`](https://nhn.github.io/tui.editor/latest/ToastUIEditor#factory) and set the `viewer` option to value `true` in order to make the editor a viewer.
-
-```javascript
-import Editor from '@toast-ui/editor';
-
-const instance = Editor.factory({
-  el: document.querySelector('#viewerSection'),
-  viewer: true,
-  height: '500px',
-  initialValue: '# content to be rendered'
-});
-
-instance.getHtml();
-```
