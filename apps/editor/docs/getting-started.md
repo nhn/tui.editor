@@ -1,52 +1,30 @@
-# ![TOAST UI Editor](https://uicdn.toast.com/toastui/img/tui-editor-bi.png)
+# Getting Started 🚀
 
-[![npm](https://img.shields.io/npm/v/@toast-ui/editor.svg)](https://www.npmjs.com/package/@toast-ui/editor)
-
-## 🚩 Table of Contents
-
-- [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
-- [Documents](#-documents)
-- [Install](#-install)
-- [Usage](#-usage)
-
-## Collect statistics on the use of open source
-
-TOAST UI Editor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Editor is used throughout the world. It also serves as important index to determine the future course of projects. `location.hostname` (e.g. > "ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
-
-To disable GA, use the following `usageStatistics` option when creating the instance.
-
-```js
-const options = {
-  // ...
-  usageStatistics: false
-};
-
-const instance = new Editor(options);
-```
-
-## 📙 Documents
-
-- [Getting Started]()
-- v2.0 Migration Guide
-  - [English]()
-  - [한국어]()
-- [APIs](https://nhn.github.io/tui.editor/latest/)
-
-You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.editor/releases).
-
-## 💾 Install
+## The Project Setup
 
 TOAST UI products can be used by using the package manager or downloading the source directly. However, we highly recommend using the package manager.
 
 ### Via Package Manager
 
-TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/). You can conveniently install it using the commands provided by the package manager. When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/en/) is installed.
+You can conveniently install it using the commands provided by each package manager. When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/en/) is installed.
 
-#### npm
+### npm
 
 ```sh
-$ npm install --save @toast-ui/editor # Latest Version
+$ npm install --save @toast-ui/editor # Latest version
 $ npm install --save @toast-ui/editor@<version> # Specific Version
+```
+
+When installed and used with npm, the list of files that can be imported is as follows:
+
+```
+- node_modules/
+   ├─ @toast-ui/editor/
+   │     ├─ dist/
+   │     │    ├─ toastui-editor.js
+   │     │    ├─ toastui-editor-viewer.js
+   │     │    ├─ toastui-editor-editor.css
+   │     │    └─ toastui-editor-viewer.css
 ```
 
 ### Via Contents Delivery Network (CDN)
@@ -82,13 +60,11 @@ The CDN directory has the following structure:
    │     │    └─ ...
 ```
 
-### Download Source Files
+## Create Your First Editor
 
-- [Download all sources for each version](https://github.com/nhn/tui.editor/releases)
+### Adding the Wrapper Element
 
-## 🔨 Usage
-
-First, you need to add the container element where TOAST UI Editor will be created.
+You need to add the container element where TOAST UI Editor will be created.
 
 ```html
 ...
@@ -98,12 +74,22 @@ First, you need to add the container element where TOAST UI Editor will be creat
 ...
 ```
 
+### Importing the Editor's Constructor Function
+
 TOAST UI Editor can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following ways depending on your environment.
 
 #### Using module format in node environment
 
+- ES6 Module
+
 ```javascript
-import Editor from '@toast-ui/editor'; /* ES6 Module */
+import Editor from '@toast-ui/editor';
+```
+
+- CommonJS
+
+```javascript
+const Editor = require('@toast-ui/editor');
 ```
 
 #### Using namespace in browser environment
@@ -112,13 +98,24 @@ import Editor from '@toast-ui/editor'; /* ES6 Module */
 const Editor = toastui.Editor;
 ```
 
-Then, you need to add the CSS files needed for the editor. Import CSS files in node environment, and add it to html file when using CDN. When creating a basic editor, you need to add a style for the [CodeMirror](https://codemirror.net/).
+### Adding CSS Files
+
+You need to add the CSS files needed for the editor. Import CSS files in node environment, and add it to html file when using CDN. When creating a basic editor, you need to add a style for the [CodeMirror](https://codemirror.net/).
 
 #### Using in node environment
+
+- ES6 Module
 
 ```javascript
 import 'codemirror/lib/codemirror.css'; // Editor's Dependency Style
 import '@toast-ui/editor/dist/toastui-editor.css'; // Editor's Style
+```
+
+- CommonJS
+
+```javascript
+require('codemirror/lib/codemirror.css');
+require('@toast-ui/editor/dist/toastui-editor.css');
 ```
 
 #### Using in browser environment by CDN
@@ -138,20 +135,32 @@ import '@toast-ui/editor/dist/toastui-editor.css'; // Editor's Style
 ...
 ```
 
-Finally you can create an instance with options and call various API after creating an instance.
+### Creating an Instance
 
-```javascript
+You can create an instance with options and call various API after creating an instance.
+
+```js
+const instance = new Editor({
+  el: document.querySelector('#editor')
+});
+```
+
+![getting-started-01](https://user-images.githubusercontent.com/18183560/76715294-159f1780-676f-11ea-9107-e334d4ef0eb8.png)
+
+```js
 const instance = new Editor({
   el: document.querySelector('#editor'),
-  height: '500px',
+  height: '600px',
   initialEditType: 'markdown',
   previewStyle: 'vertical'
 });
 
-instance.getHtml();
+instance.getMarkdown();
 ```
 
-#### Default Options
+![getting-started-02](https://user-images.githubusercontent.com/18183560/76715295-1768db00-676f-11ea-8a94-0ffff3fbe99d.png)
+
+The basic options available are:
 
 - `height`: Height in string or auto ex) `300px` | `auto`
 - `initialEditType`: Initial type to show `markdown` | `wysiwyg`
@@ -159,4 +168,8 @@ instance.getHtml();
 - `previewType`: Preview style of Markdown mode `tab` | `vertical`
 - `usageStatistics`: Let us know the _hostname_. We want to learn from you how you are using the Editor. You are free to disable it. `true` | `false`
 
-Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEditor)
+Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEditor).
+
+## Example
+
+You can see the basic example [here](https://nhn.github.io/tui.editor/latest/tutorial-example01-basic).
