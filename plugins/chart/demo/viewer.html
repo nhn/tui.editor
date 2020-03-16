@@ -19,7 +19,7 @@
     <script class="code-js">
       const content = [
         '```chart',
-        'category1,category2',
+        ',category1,category2',
         'Jan,21,23',
         'Feb,31,17',
         '',
@@ -36,12 +36,19 @@
       const Viewer = toastui.Editor;
       const { chart } = Viewer.plugin;
 
-      const instance = new Viewer({
+      const chartOptions = {
+        minWidth: 100,
+        maxWidth: 600,
+        minHeight: 100,
+        maxHeight: 300
+      };
+
+      const viewer = new Viewer({
         el: document.querySelector('#viewer'),
         previewStyle: 'vertical',
         height: '500px',
         initialValue: content,
-        plugins: [chart]
+        plugins: [chart, chartOptions]
       });
     </script>
   </body>

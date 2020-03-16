@@ -29,7 +29,7 @@
     <script class="code-js">
       const content = [
         '```chart',
-        'category1,category2',
+        ',category1,category2',
         'Jan,21,23',
         'Feb,31,17',
         '',
@@ -46,12 +46,19 @@
       const { Editor } = toastui;
       const { chart } = Editor.plugin;
 
+      const chartOptions = {
+        minWidth: 100,
+        maxWidth: 600,
+        minHeight: 100,
+        maxHeight: 300
+      };
+
       const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
         initialValue: content,
-        plugins: [chart]
+        plugins: [chart, chartOptions]
       });
 
       const viewer = Editor.factory({
@@ -59,7 +66,7 @@
         viewer: true,
         height: '500px',
         initialValue: content,
-        plugins: [chart]
+        plugins: [chart, chartOptions]
       });
     </script>
   </body>
