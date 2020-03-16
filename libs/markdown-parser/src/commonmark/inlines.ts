@@ -4,10 +4,10 @@ import { reHtmlTag } from './rawHtml';
 import normalizeReference from './normalize-reference';
 import fromCodePoint from './from-code-point';
 import { Options } from './blocks';
-
 import { decodeHTML } from 'entities';
 import NodeWalker from './nodeWalker';
 import { convertExtAutoLinks } from './gfm/autoLinks';
+import { last } from '../helper';
 
 export const C_NEWLINE = 10;
 const C_ASTERISK = 42;
@@ -121,6 +121,7 @@ export class InlineParser {
     const linePosOffset = this.linePosOffset + this.lineOffsets[this.lineIdx];
     const lineNum = this.lineStartNum + this.lineIdx;
     const startpos = [lineNum, start + linePosOffset];
+
     if (typeof end === 'number') {
       return [startpos, [lineNum, end + linePosOffset]] as SourcePos;
     }
@@ -174,10 +175,18 @@ export class InlineParser {
     let matched: string | null;
     while ((matched = this.match(reTicks)) !== null) {
       if (matched === ticks) {
-        const node = createNode('code', this.sourcepos(startpos, this.pos));
-        const contents = this.subject
-          .slice(afterOpenTicks, this.pos - ticks.length)
-          .replace(/\n/gm, ' ');
+        let contents = this.subject.slice(afterOpenTicks, this.pos - ticks.length);
+        const sourcepos = this.sourcepos(startpos, this.pos);
+        const lines = contents.split('\n');
+        if (lines.length > 1) {
+          const lastLine = last(lines);
+          this.lineIdx += lines.length - 1;
+          this.linePosOffset = -(this.pos - lastLine.length - ticks.length);
+          sourcepos[1] = this.sourcepos(this.pos);
+          contents = lines.join(' ');
+        }
+        const node = createNode('code', sourcepos);
+
         if (
           contents.length > 0 &&
           contents.match(/[^ ]/) !== null &&

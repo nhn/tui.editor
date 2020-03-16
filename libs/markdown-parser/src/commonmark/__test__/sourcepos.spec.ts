@@ -361,6 +361,29 @@ describe('code block', () => {
   });
 });
 
+describe('inlline code', () => {
+  it('multi line', () => {
+    const root = reader.parse('`a\n  b\n   c`\n d');
+    const para = root.firstChild!;
+    const code = para.firstChild!;
+    const linebreak = code.next!;
+    const text = linebreak.next!;
+
+    expect(code.sourcepos).toEqual([
+      [1, 1],
+      [3, 5]
+    ]);
+    expect(linebreak.sourcepos).toEqual([
+      [3, 6],
+      [3, 6]
+    ]);
+    expect(text.sourcepos).toEqual([
+      [4, 2],
+      [4, 2]
+    ]);
+  });
+});
+
 describe('merge text nodes', () => {
   it('tokens', () => {
     const root = reader.parse(['\\ Text *', '[ Text !', '![ Text ]'].join('\n'));
