@@ -240,7 +240,7 @@ class ToastUIEditor {
 
     this.height(this.options.height);
 
-    this.setValue(this.options.initialValue, false);
+    this.setMarkdown(this.options.initialValue, false);
 
     if (this.options.placeholder) {
       this.setPlaceholder(this.options.placeholder);
@@ -481,16 +481,6 @@ class ToastUIEditor {
   }
 
   /**
-   * Set markdown syntax text.
-   * @param {string} value - markdown syntax text
-   * @param {boolean} [cursorToEnd=true] - move cursor to contents end
-   * @deprecated
-   */
-  setValue(value, cursorToEnd = true) {
-    this.setMarkdown(value, cursorToEnd);
-  }
-
-  /**
    * Get markdown syntax text.
    * @returns {string}
    */
@@ -518,15 +508,6 @@ class ToastUIEditor {
     }
 
     return this.convertor.toHTML(this.mdEditor.getValue());
-  }
-
-  /**
-   * Get editor value.
-   * @returns {string}
-   * @deprecated
-   */
-  getValue() {
-    return this.getMarkdown();
   }
 
   /**

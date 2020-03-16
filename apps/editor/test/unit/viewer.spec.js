@@ -27,7 +27,7 @@ describe('Viewer', () => {
     it('xss', () => {
       const xss = '<script>alert("xss");</script>';
 
-      viewer.setValue(xss);
+      viewer.setMarkdown(xss);
       const content = viewer.preview.getHTML();
 
       expect(content).toBe('\n');
@@ -36,7 +36,7 @@ describe('Viewer', () => {
     it('details, summary', () => {
       const html = '<details><summary>foo</summary></details>';
 
-      viewer.setValue(html);
+      viewer.setMarkdown(html);
       const content = viewer.preview.getHTML();
 
       expect(content).toBe('\n');
@@ -56,7 +56,7 @@ describe('Viewer', () => {
     it('xss', () => {
       const xss = '<script>alert("xss");</script>\n';
 
-      viewer.setValue(xss);
+      viewer.setMarkdown(xss);
       const content = viewer.preview.getHTML();
 
       expect(content).toBe(xss);
@@ -65,7 +65,7 @@ describe('Viewer', () => {
     it('details, summary', () => {
       const html = '<details><summary>foo</summary></details>\n';
 
-      viewer.setValue(html);
+      viewer.setMarkdown(html);
       const content = viewer.preview.getHTML();
 
       expect(content).toBe(html);
@@ -101,7 +101,7 @@ describe('Viewer', () => {
       el: document.createElement('div')
     });
 
-    viewerForSetValue.setValue(initialValue);
+    viewerForSetValue.setMarkdown(initialValue);
 
     expect(viewerForInitialValue.preview.getHTML()).toBe(viewerForSetValue.preview.getHTML());
   });
