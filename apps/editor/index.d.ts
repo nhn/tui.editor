@@ -65,7 +65,9 @@ declare namespace toastui {
 
   export interface ViewerOptions {
     el: HTMLElement;
-    exts?: string[];
+    height?: string;
+    minHeight?: string;
+    previewStyle?: PreviewStyle;
     initialValue?: string;
     events?: EventMap;
     hooks?: (EventMap  | { previewBeforeHook: Function });
