@@ -23,6 +23,7 @@ class CodeBlockLanguagesCombo {
 
     this._initDOM();
     this._initDOMEvent();
+    this._initEvent();
   }
 
   _initDOM() {
@@ -31,9 +32,7 @@ class CodeBlockLanguagesCombo {
     );
     this._wrapper = domUtils.createElementWith(`<span class="te-input-language"></span>`);
     this._wrapper.appendChild(this._inputLanguage);
-    if (!this._languages || !this._languages.length) {
-      css(this._wrapper, { display: 'none' });
-    }
+    this._hide();
   }
 
   _initDOMEvent() {
@@ -46,6 +45,17 @@ class CodeBlockLanguagesCombo {
       }
       ev.preventDefault();
       this._toggleFocus();
+    });
+  }
+
+  _initEvent() {
+    this._eventManager.listen('setCodeBlockLanguages', languages => {
+      this._languages = languages;
+      if (languages && languages.length) {
+        this._show();
+      } else {
+        this._hide();
+      }
     });
   }
 
@@ -176,6 +186,14 @@ class CodeBlockLanguagesCombo {
    */
   getElement() {
     return this._wrapper;
+  }
+
+  _show() {
+    css(this._wrapper, { display: 'inline-block' });
+  }
+
+  _hide() {
+    css(this._wrapper, { display: 'none' });
   }
 }
 
