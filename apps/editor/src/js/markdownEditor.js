@@ -282,29 +282,31 @@ class MarkdownEditor extends CodeMirrorExt {
   }
 
   _markTextInLinkOrImage(node, start, end) {
-    const { type, destination } = node;
+    const { type, lastChild } = node;
     const { line: startLine, ch: startCh } = start;
-    const { ch: endCh } = end;
+    const { line: endLine } = end;
 
-    const urlStart = { line: end.line, ch: endCh - destination.length - 2 };
-    const urlEnd = { line: end.line, ch: endCh };
+    const descStart = { line: startLine, ch: startCh };
+    let lastChildCh;
 
     if (type === 'image') {
-      const descStart = { line: startLine, ch: startCh + 1 };
+      const descEnd = { line: startLine, ch: startCh + 1 };
 
-      this.cm.markText({ line: startLine, ch: startCh }, descStart, {
-        className: 'cm-image cm-image-marker'
-      });
-      this.cm.markText(descStart, urlStart, {
-        className: 'cm-image cm-image-alt-text cm-link'
-      });
+      lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 3; // 3: length of '![]'
+
+      this.cm.markText(descStart, descEnd, { className: 'cm-image cm-image-marker' });
+      this.cm.markText(
+        descEnd,
+        { line: endLine, ch: lastChildCh },
+        { className: 'cm-image cm-image-alt-text cm-link' }
+      );
     } else {
-      this.cm.markText(start, urlStart, {
-        className: 'cm-link'
-      });
+      lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 2; // 2: length of '[]'
+
+      this.cm.markText(descStart, { line: endLine, ch: lastChildCh }, { className: 'cm-link' });
     }
 
-    this.cm.markText(urlStart, urlEnd, { className: 'cm-string cm-url' });
+    this.cm.markText({ line: endLine, ch: lastChildCh }, end, { className: 'cm-string cm-url' });
   }
 
   _getClassNameOfListItem(node) {
