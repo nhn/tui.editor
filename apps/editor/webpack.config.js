@@ -30,7 +30,6 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
         libraryTarget: 'umd',
         libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
-        publicPath: '/dist',
         filename: `toastui-[name]${minify ? '.min' : ''}.js`
       },
       module: {
@@ -124,6 +123,8 @@ function addAnalyzerPlugin(config, type) {
 }
 
 function setDevelopConfig(config) {
+  config.output.publicPath = 'dist/cdn';
+
   if (isDevelopAll) {
     config.entry = { 'editor-all': ENTRY_EDITOR };
     config.externals = [];
