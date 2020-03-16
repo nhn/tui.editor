@@ -19,7 +19,7 @@
     <script class="code-js">
       const content = [
         '```chart',
-        'category1,category2',
+        ',category1,category2',
         'Jan,21,23',
         'Feb,31,17',
         '',
@@ -41,7 +41,15 @@
         previewStyle: 'vertical',
         height: '500px',
         initialValue: content,
-        plugins: [chart]
+        plugins: [
+          chart,
+          {
+            minWidth: 100,
+            maxWidth: 600,
+            minHeight: 100,
+            maxHeight: 300
+          }
+        ]
       });
     </script>
   </body>
