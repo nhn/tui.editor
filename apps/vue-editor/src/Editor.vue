@@ -15,21 +15,14 @@ export default {
     height: {
       type: String
     },
-    value: {
+    initialEditType: {
       type: String
     },
-    mode: {
+    initialValue: {
       type: String
     },
     options: {
       type: Object
-    },
-    html: {
-      type: String
-    },
-    visible: {
-      type: Boolean,
-      default: true
     }
   },
   data() {
@@ -40,8 +33,8 @@ export default {
   computed: {
     editorOptions() {
       const options = Object.assign({}, this.options);
-      options.initialValue = this.value;
-      options.initialEditType = this.mode;
+      options.initialEditType = this.initialEditType || 'markdown';
+      options.initialValue = this.initialValue || '';
       options.height = this.height;
       options.previewStyle = this.previewStyle;
 
@@ -52,27 +45,8 @@ export default {
     previewStyle(newValue) {
       this.editor.changePreviewStyle(newValue);
     },
-    value(newValue, preValue) {
-      if (newValue !== preValue && newValue !== this.editor.getValue()) {
-        this.editor.setValue(newValue);
-      }
-    },
     height(newValue) {
       this.editor.height(newValue);
-    },
-    mode(newValue) {
-      this.editor.changeMode(newValue);
-    },
-    html(newValue) {
-      this.editor.setHtml(newValue);
-      this.$emit('input', this.editor.getValue());
-    },
-    visible(newValue) {
-      if (newValue) {
-        this.editor.show();
-      } else {
-        this.editor.hide();
-      }
     }
   },
   mounted() {

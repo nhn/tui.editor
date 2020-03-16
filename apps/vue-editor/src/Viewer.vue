@@ -12,7 +12,7 @@ export default {
     height: {
       type: String
     },
-    value: {
+    initialValue: {
       type: String
     }
   },
@@ -20,13 +20,6 @@ export default {
     return {
       editor: null
     };
-  },
-  watch: {
-    value(val, preVal) {
-      if (val !== preVal) {
-        this.editor.setValue(val);
-      }
-    }
   },
   mounted() {
     const eventOption = {};
@@ -39,7 +32,7 @@ export default {
     this.editor = Editor.factory({
       el: this.$refs.toastuiEditorViewer,
       events: eventOption,
-      initialValue: this.value,
+      initialValue: this.initialValue,
       height: this.height,
       viewer: true
     });
