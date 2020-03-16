@@ -13,7 +13,8 @@
   ],
   "main": "dist/toastui-editor-plugin-chart.js",
   "files": [
-    "dist/*.js"
+    "dist/*.js",
+    "index.d.ts"
   ],
   "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
