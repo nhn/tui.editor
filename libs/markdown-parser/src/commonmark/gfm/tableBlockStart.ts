@@ -83,8 +83,9 @@ export const tableHead: BlockStart = (parser, container) => {
     if (
       !headerCells.length ||
       !delimCells.length ||
-      delimCells.some(cell => !reValidDelimCell.test(cell)) ||
-      headerCells.length !== delimCells.length
+      delimCells.some(cell => !reValidDelimCell.test(cell))
+      // not checking if the number of header cells and delimiter cells are the same
+      // to consider the case of merged-column (via plugin)
     ) {
       return Matched.None;
     }

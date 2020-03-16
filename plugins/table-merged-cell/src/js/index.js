@@ -81,14 +81,18 @@ function _changeHtml(html, onChangeTable) {
     toArray(tables).forEach(tableElement => {
       const changedTableElement = onChangeTable(tableElement);
 
-      if (tableElement.hasAttribute('data-tomark-pass')) {
-        changedTableElement.setAttribute('data-tomark-pass', '');
+      if (changedTableElement !== tableElement) {
+        if (tableElement.hasAttribute('data-tomark-pass')) {
+          changedTableElement.setAttribute('data-tomark-pass', '');
+        }
+        if (tableElement.hasAttribute('data-nodeid')) {
+          changedTableElement.setAttribute('data-nodeid', tableElement.getAttribute('data-nodeid'));
+        }
+        const { parentNode } = tableElement;
+
+        parentNode.insertBefore(changedTableElement, tableElement);
+        parentNode.removeChild(tableElement);
       }
-
-      const { parentNode } = tableElement;
-
-      parentNode.appendChild(changedTableElement);
-      parentNode.removeChild(tableElement);
     });
 
     html = tempDiv.innerHTML;
@@ -127,6 +131,7 @@ function _bindEvents(eventManager, commandMap) {
   eventManager.listen('convertorAfterMarkdownToHtmlConverted', html =>
     _changeHtml(html, createMergedTable)
   );
+
   eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html =>
     _changeHtml(html, prepareTableUnmerge)
   );
