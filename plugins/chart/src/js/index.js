@@ -35,6 +35,7 @@ import ajax from 'tui-code-snippet/ajax/index.js';
 import csv from './csv';
 
 const LANG = 'chart';
+const CHART_TOOLTIP_CLASS_NAME = 'tui-chart-tooltip-area';
 
 // csv configuration
 csv.IGNORE_QUOTE_WHITESPACE = false;
@@ -433,6 +434,7 @@ function chartReplacer(codeBlockChartDataAndOptions, pluginOptions) {
           chartContainer.innerHTML = 'invalid chart data';
         } else {
           chart[chartType](chartContainer, data, chartOptions);
+          chartContainer.querySelector(`.${CHART_TOOLTIP_CLASS_NAME}`).style.whiteSpace = 'normal';
         }
       });
     } catch (e) {
