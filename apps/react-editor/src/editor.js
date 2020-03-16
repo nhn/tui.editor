@@ -14,7 +14,7 @@ export default class extends React.Component {
     return this.editorInst;
   }
 
-  bindEventHandlers(props, prevProps) {
+  bindEventHandlers(props) {
     Object.keys(this.props)
       .filter(key => /^on[A-Z][a-zA-Z]+/.test(key))
       .forEach(key => {
