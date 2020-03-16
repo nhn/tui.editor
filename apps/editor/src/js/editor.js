@@ -787,7 +787,6 @@ class ToastUIEditor {
    * @param {Array} languages - code lauguage list
    */
   setCodeBlockLanguages(languages = []) {
-    this.codeBlockLanguages = this.codeBlockLanguages || [];
     languages.forEach(lang => {
       if (this.codeBlockLanguages.indexOf(lang) < 0) {
         this.codeBlockLanguages.push(lang);
