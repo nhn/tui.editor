@@ -66,7 +66,7 @@
         return button;
       }
 
-      const instance = new toastui.Editor({
+      const editor = new toastui.Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
@@ -107,10 +107,10 @@
       });
 
       // Using Method: Customize the first button
-      const toolbar = instance.getUI().getToolbar();
+      const toolbar = editor.getUI().getToolbar();
 
-      instance.eventManager.addEventType('clickCustomButton');
-      instance.eventManager.listen('clickCustomButton', function() {
+      editor.eventManager.addEventType('clickCustomButton');
+      editor.eventManager.listen('clickCustomButton', function() {
         alert('Click!');
       });
 

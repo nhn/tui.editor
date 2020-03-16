@@ -8,8 +8,7 @@
     <link rel="stylesheet" href="../dist/toastui-editor-viewer.css" />
   </head>
   <body>
-    <div class="tui-doc-description">
-    </div>
+    <div class="tui-doc-description"></div>
     <div class="code-html tui-doc-contents">
       <div id="viewer"></div>
     </div>
@@ -24,7 +23,7 @@
       const Viewer = toastui.Editor;
       const { tableMergedCell } = Viewer.plugin;
 
-      const instance = new Viewer({
+      const viewer = new Viewer({
         el: document.querySelector('#viewer'),
         previewStyle: 'vertical',
         height: '500px',
