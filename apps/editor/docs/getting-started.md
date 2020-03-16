@@ -1,76 +1,175 @@
-# Getting Started
+# Getting Started 🚀
 
-## Install
+## The Project Setup
+
+TOAST UI products can be used by using the package manager or downloading the source directly. However, we highly recommend using the package manager.
+
+### Via Package Manager
+
+You can conveniently install it using the commands provided by each package manager. When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/en/) is installed.
+
+### npm
+
 ```sh
-npm install --save @toast-ui/editor
+$ npm install --save @toast-ui/editor # Latest version
+$ npm install --save @toast-ui/editor@<version> # Specific Version
 ```
 
-## Editor
-### HTML
-Place a `<div></div>` where you want TOAST UI Editor to render.
+When installed and used with npm, the list of files that can be imported is as follows:
+
+```
+- node_modules/
+   ├─ @toast-ui/editor/
+   │     ├─ dist/
+   │     │    ├─ toastui-editor.js
+   │     │    ├─ toastui-editor-viewer.js
+   │     │    ├─ toastui-editor-editor.css
+   │     │    └─ toastui-editor-viewer.css
+```
+
+### Via Contents Delivery Network (CDN)
+
+TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
+
+You can use the CDN as below.
+
 ```html
+...
 <body>
-...
-<div id="editSection"></div>
-...
+  ...
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor.js"></script>
 </body>
+...
 ```
 
-### javascript
-Initialize Editor class with given element to make an Editor.
-```javascript
-var Editor = require('@toast-ui/editor');
+If you want to use a specific version, use the tag name instead of `latest` in the url's path.
+
+The CDN directory has the following structure:
+
+```
+- uicdn.toast.com/
+   ├─ editor/
+   │     ├─ latest/
+   │     │    ├─ toastui-editor-all.js
+   │     │    ├─ toastui-editor-all.min.js
+   │     │    ├─ toastui-editor-viewer.js
+   │     │    ├─ toastui-editor-viewer.min.js
+   │     │    ├─ toastui-editor-editor.css
+   │     │    └─ toastui-editor-viewer.css
+   │     ├─ 2.0.0/
+   │     │    └─ ...
+```
+
+## Create Your First Editor
+
+### Adding the Wrapper Element
+
+You need to add the container element where TOAST UI Editor will be created.
+
+```html
 ...
-var editor = new Editor({
-    el: document.querySelector('#editSection'),
-    initialEditType: 'markdown',
-    previewStyle: 'vertical',
-    height: '300px'
+<body>
+  <div id="editor"></div>
+</body>
+...
+```
+
+### Importing the Editor's Constructor Function
+
+TOAST UI Editor can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following ways depending on your environment.
+
+#### Using module format in node environment
+
+- ES6 Module
+
+```javascript
+import Editor from '@toast-ui/editor';
+```
+
+- CommonJS
+
+```javascript
+const Editor = require('@toast-ui/editor');
+```
+
+#### Using namespace in browser environment
+
+```javascript
+const Editor = toastui.Editor;
+```
+
+### Adding CSS Files
+
+You need to add the CSS files needed for the editor. Import CSS files in node environment, and add it to html file when using CDN. When creating a basic editor, you need to add a style for the [CodeMirror](https://codemirror.net/).
+
+#### Using in node environment
+
+- ES6 Module
+
+```javascript
+import 'codemirror/lib/codemirror.css'; // Editor's Dependency Style
+import '@toast-ui/editor/dist/toastui-editor.css'; // Editor's Style
+```
+
+- CommonJS
+
+```javascript
+require('codemirror/lib/codemirror.css');
+require('@toast-ui/editor/dist/toastui-editor.css');
+```
+
+#### Using in browser environment by CDN
+
+```html
+...
+<head>
+  ...
+  <!-- Editor's Dependecy Style -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
+  />
+  <!-- Editor's Style -->
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css" />
+</head>
+...
+```
+
+### Creating an Instance
+
+You can create an instance with options and call various API after creating an instance.
+
+```js
+const instance = new Editor({
+  el: document.querySelector('#editor')
 });
 ```
 
-or you can use jquery plugin.
-```javascript
-$('#editSection').tuiEditor({
-    initialEditType: 'markdown',
-    previewStyle: 'vertical',
-    height: '300px'
+![getting-started-01](https://user-images.githubusercontent.com/18183560/76715294-159f1780-676f-11ea-9107-e334d4ef0eb8.png)
+
+```js
+const instance = new Editor({
+  el: document.querySelector('#editor'),
+  height: '600px',
+  initialEditType: 'markdown',
+  previewStyle: 'vertical'
 });
+
+instance.getMarkdown();
 ```
 
-### options
-* **height**: Height in string or auto ex) `300px` | `auto`
-* **initialValue**: Initial value. Set Markdown string
-* **initialEditType**: Initial type to show `markdown` | `wysiwyg`
-* **previewType**: Preview style of Markdown mode `tab` | `vertical`
+![getting-started-02](https://user-images.githubusercontent.com/18183560/76715295-1768db00-676f-11ea-8a94-0ffff3fbe99d.png)
 
-Find out more options [here](https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#ToastUIEditor)
+The basic options available are:
 
-## Viewer
-**TOAST UI Editor** provides a **Viewer** in case you want to show *Markdown* content without loading the editor. The **Viewer** is much **lighter** than the editor.
+- `height`: Height in string or auto ex) `300px` | `auto`
+- `initialEditType`: Initial type to show `markdown` | `wysiwyg`
+- `initialValue`: Initial value. Set Markdown string
+- `previewType`: Preview style of Markdown mode `tab` | `vertical`
+- `usageStatistics`: Let us know the _hostname_. We want to learn from you how you are using the Editor. You are free to disable it. `true` | `false`
 
-```javascript
-var Viewer = require('@toast-ui/editor/dist/tui-editor-viewer');
-...
-var editor = new Viewer({
-    el: document.querySelector('#viewerSection'),
-    height: '500px',
-    initialValue: '# content to be rendered'
-});
-...
-```
-Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize editor [Editor.factory()]()(https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#.factory) and set the `viewer` option to value `true` in order to make the editor a viewer. You can also call [getHTML()]()(https://nhn.github.io/tui.editor/api/latest/ToastUIEditor.html#getHtml) to render the HTML.
+Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEditor).
 
-```javascript
-var Editor = require('@toast-ui/editor');
-...
-var editor = Editor.factory({
-    el: document.querySelector('#viewerSection'),
-    viewer: true,
-    height: '500px',
-    initialValue: '# content to be rendered'
-});
-...
-```
+## Example
 
-**TOAST UI Editor** respects *CommonMark* and *GFM*. So any *Markdown* renderer including [markdownit](https://github.com/markdown-it/markdown-it) can handle the content made using TOAST UI Editor. You can also use any of these renderer in place of TOAST UI Editor **Viewer**.
+You can see the basic example [here](https://nhn.github.io/tui.editor/latest/tutorial-example01-basic).
