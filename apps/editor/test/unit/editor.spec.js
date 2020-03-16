@@ -8,7 +8,6 @@ import Editor from '@/editor';
 import Convertor from '@/convertor';
 import { CodeBlockManager } from '@/codeBlockManager';
 
-import Button from '@/ui/button';
 import WwCodeBlockManager from '@/wwCodeBlockManager';
 import WwTableManager from '@/wwTableManager';
 import WwTableSelectionManager from '@/wwTableSelectionManager';

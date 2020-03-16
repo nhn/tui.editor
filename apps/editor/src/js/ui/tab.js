@@ -14,8 +14,8 @@ const CLASS_TAB_ACTIVE = 'te-tab-active';
  * Class Tab
  * @param {object} options - options
  *     @param {string} [options.initName] - name of the default activated button
- *     @param {string[]} options.items - Button names to be created
- *     @param {DOMElement[]} options.sections - Dom elements for tab
+ *     @param {string[]} options.items - button names to be created
+ *     @param {DOMElement[]} options.sections - dom elements for tab
  *     @param {function} [options.onItemClick] - when button is clicked pass button name to function
  * @ignore
  */
@@ -62,7 +62,7 @@ class Tab extends UIController {
   }
 
   /**
-   * Activate Section & Button
+   * Activate section & button
    * @param {string} name button name to activate
    */
   activate(name) {

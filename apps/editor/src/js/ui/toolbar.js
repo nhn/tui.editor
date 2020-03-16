@@ -3,11 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import isString from 'tui-code-snippet/type/isString';
-import isNumber from 'tui-code-snippet/type/isNumber';
-import isArray from 'tui-code-snippet/type/isArray';
 
 import UIController from './uicontroller';
-import Button from './button';
+import ToolbarButton from './toolbarButton';
 import ToolbarItem from './toolbarItem';
 import ToolbarItemFactory from './toolbarItemFactory';
 import domUtils from '../utils/dom';
@@ -68,7 +66,7 @@ class Toolbar extends UIController {
    */
   disableAllButton() {
     this._items.forEach(item => {
-      if (item instanceof Button) {
+      if (item instanceof ToolbarButton) {
         item.disable();
       }
     });
@@ -79,7 +77,7 @@ class Toolbar extends UIController {
    */
   enableAllButton() {
     this._items.forEach(item => {
-      if (item instanceof Button) {
+      if (item instanceof ToolbarButton) {
         item.enable();
       }
     });
@@ -214,76 +212,6 @@ class Toolbar extends UIController {
   destroy() {
     this.removeAllItems();
     super.destroy();
-  }
-
-  /**
-   * add button
-   * @param {Button} button - button instance
-   * @param {Number} [index] - location the button will be placed
-   * @deprecated
-   */
-  addButton(button, index) {
-    if (isArray(button)) {
-      let arrayIndex = button.length - 1;
-
-      for (; arrayIndex >= 0; arrayIndex -= 1) {
-        if (isNumber(index)) {
-          this._addButton(button[arrayIndex], index);
-        } else {
-          this._addButton(button);
-        }
-      }
-    } else {
-      this._addButton(button, index);
-    }
-  }
-
-  /**
-   * _addButton
-   * @param {Button} button - button instance
-   * @param {Number} index - location the button will be placed
-   * @private
-   * @deprecated
-   */
-  _addButton(button, index) {
-    const btn = this._setButton(button, index).el;
-
-    if (isNumber(index)) {
-      const buttons = this.el.querySelectorAll(`.${Button.className}`);
-
-      if (buttons.length) {
-        domUtils.insertBefore(btn, buttons[index - 1]);
-      }
-    } else {
-      this.el.appendChild(btn);
-    }
-  }
-
-  /**
-   * _setButton
-   * @param {Button} button - button instance
-   * @param {Number} index - location the button will be placed
-   * @returns {Button} - button instance
-   * @private
-   * @deprecated
-   */
-  _setButton(button, index) {
-    const ev = this._eventManager;
-
-    if (!(button instanceof Button)) {
-      button = new Button(button);
-    }
-
-    button.on('command', commandName => ev.emit('command', commandName));
-    button.on('event', eventName => ev.emit(eventName));
-
-    if (isNumber(index)) {
-      this._items.splice(index, 0, button);
-    } else {
-      this._items.push(button);
-    }
-
-    return button;
   }
 }
 

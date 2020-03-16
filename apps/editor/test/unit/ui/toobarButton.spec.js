@@ -4,26 +4,26 @@
  */
 import $ from 'jquery';
 
-import Button from '@/ui/button';
+import ToolbarButton from '@/ui/toolbarButton';
 
-describe('Button', () => {
+describe('ToolbarButton', () => {
   let button;
 
   describe('creation', () => {
     it('should make button element', () => {
-      button = new Button({});
+      button = new ToolbarButton({});
       expect(button.el.tagName).toEqual('BUTTON');
     });
 
     it('should have an element containing given class on className option', () => {
-      button = new Button({
+      button = new ToolbarButton({
         className: 'myclass'
       });
       expect($(button.el).hasClass('myclass')).toBe(true);
     });
 
     it('should have text given by text option', () => {
-      button = new Button({
+      button = new ToolbarButton({
         text: 'buttonText'
       });
 
@@ -31,7 +31,7 @@ describe('Button', () => {
     });
 
     it('should have applied given style on style option', () => {
-      button = new Button({
+      button = new ToolbarButton({
         style: 'display:none'
       });
 
@@ -54,7 +54,7 @@ describe('Button', () => {
     it('should emit the command event which name is given by command option when the button is clicked', () => {
       let passedCommand;
 
-      button = new Button({
+      button = new ToolbarButton({
         el: buttonElement,
         command: 'mycommand'
       });
@@ -71,7 +71,7 @@ describe('Button', () => {
     it('should emit the event which name is given by event option when the button is clicked', () => {
       let passedEvent;
 
-      button = new Button({
+      button = new ToolbarButton({
         el: buttonElement,
         event: 'myevent'
       });
@@ -88,7 +88,7 @@ describe('Button', () => {
     it('should not emmit clicked if disabled', () => {
       let passedEvent;
 
-      button = new Button({
+      button = new ToolbarButton({
         el: buttonElement,
         event: 'myevent'
       });
@@ -107,7 +107,7 @@ describe('Button', () => {
       const eventHandler = jasmine.createSpy('eventHandler');
       const commandHandler = jasmine.createSpy('commandHandler');
 
-      button = new Button({
+      button = new ToolbarButton({
         el: buttonElement,
         command: 'mycommand',
         event: 'myevent'
@@ -125,7 +125,7 @@ describe('Button', () => {
 
   describe('enable/disable', () => {
     it('should remove/add disabled attr', () => {
-      button = new Button({});
+      button = new ToolbarButton({});
 
       button.disable();
       expect(button.el.disabled).toBeTruthy();

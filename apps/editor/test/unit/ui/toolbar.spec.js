@@ -10,7 +10,6 @@ import ToolbarButton from '@/ui/toolbarButton';
 import CommandManager from '@/commandManager';
 import Command from '@/command';
 import EventManager from '@/eventManager';
-import Button from '@/ui/button';
 
 describe('Toolbar', () => {
   let toolbar, em, cm;
@@ -28,152 +27,16 @@ describe('Toolbar', () => {
     toolbar.destroy();
   });
 
-  describe('addButton()', () => {
-    it('add a button on toolbar', () => {
-      let buttons = toolbar.getItems();
-      const len = buttons.length;
-
-      toolbar.addButton(
-        new Button({
-          className: 'test',
-          command: 'test',
-          text: 'test'
-        })
-      );
-
-      buttons = toolbar.getItems();
-      expect(buttons.length).toBe(len + 1);
-    });
-
-    it('if addButton param is not a button make button with props', () => {
-      let buttons = toolbar.getItems();
-      const len = buttons.length;
-
-      toolbar.addButton({
-        className: 'test',
-        command: 'test',
-        text: 'test'
-      });
-
-      buttons = toolbar.getItems();
-      expect(buttons.length).toBe(len + 1);
-    });
-
-    it('addButton with index should insert button into given position', () => {
-      toolbar.addButton(
-        {
-          className: 'test',
-          command: 'test',
-          text: 'test'
-        },
-        0
-      );
-
-      expect(toolbar.getItems()[0].el.textContent).toBe('test');
-    });
-
-    it('add multiple buttons via array', () => {
-      let buttons = toolbar.getItems();
-      const len = buttons.length;
-
-      toolbar.addButton([
-        {
-          className: 'test',
-          command: 'test',
-          text: 'test'
-        },
-        {
-          className: 'test2',
-          command: 'test2',
-          text: 'test2'
-        }
-      ]);
-
-      buttons = toolbar.getItems();
-      expect(buttons.length).toBe(len + 2);
-    });
-
-    it('add multiple buttons via array with index should insert buttons into given position', () => {
-      toolbar.addButton({
-        className: 'test0',
-        command: 'test0',
-        text: 'test0'
-      });
-      toolbar.addButton(
-        [
-          {
-            className: 'test1',
-            command: 'test1',
-            text: 'test1'
-          },
-          {
-            className: 'test2',
-            command: 'test2',
-            text: 'test2'
-          }
-        ],
-        1
-      );
-
-      const buttons = toolbar.getItems();
-
-      expect(buttons[1].el.textContent).toBe('test1');
-      expect(buttons[2].el.textContent).toBe('test2');
-    });
-
-    it('click on added button emits given command', () => {
-      toolbar.addButton(
-        new Button({
-          className: 'test',
-          command: 'test',
-          text: 'test'
-        })
-      );
-
-      $('body').append(toolbar.el);
-
-      const command = new Command('test', Command.TYPE.GB);
-
-      command.setup = function() {};
-      command.exec = jasmine.createSpy('exec');
-
-      cm.addCommand(command);
-
-      $('.test').trigger('click');
-
-      expect(command.exec).toHaveBeenCalled();
-    });
-
-    it('click on button calls handler through command', () => {
-      const handler = jasmine.createSpy('exec');
-
-      toolbar.addButton(
-        new Button({
-          className: 'test',
-          event: 'test',
-          text: 'test'
-        })
-      );
-
-      $('body').append(toolbar.el);
-
-      em.listen('test', handler);
-
-      $('.test').trigger('click');
-
-      expect(handler).toHaveBeenCalled();
-    });
-  });
-
   it('button state should be (de)activated on stateChange event', () => {
-    toolbar.addItem(
-      new Button({
+    toolbar.addItem({
+      type: 'button',
+      options: {
         className: 'testButton',
         event: 'testEvent',
         text: 'textText',
         state: 'testState'
-      })
-    );
+      }
+    });
     const buttonEl = toolbar.getItems()[0].el;
 
     em.emit('stateChange', {
@@ -470,18 +333,22 @@ describe('Toolbar', () => {
 
   describe('enableAllButton', () => {
     it('should call the enable of all the button in the toolbar', () => {
-      toolbar.addButton([
-        {
+      toolbar.addItem({
+        type: 'button',
+        options: {
           className: 'test',
           command: 'test',
           text: 'test'
-        },
-        {
+        }
+      });
+      toolbar.addItem({
+        type: 'button',
+        options: {
           className: 'test2',
           command: 'test2',
           text: 'test2'
         }
-      ]);
+      });
       const buttons = toolbar.getItems();
 
       spyOn(buttons[0], 'enable');
@@ -512,18 +379,22 @@ describe('Toolbar', () => {
 
   describe('disableAllButton', () => {
     it('should call the disable of all the button in the toolbar', () => {
-      toolbar.addButton([
-        {
+      toolbar.addItem({
+        type: 'button',
+        options: {
           className: 'test',
           command: 'test',
           text: 'test'
-        },
-        {
+        }
+      });
+      toolbar.addItem({
+        type: 'button',
+        options: {
           className: 'test2',
           command: 'test2',
           text: 'test2'
         }
-      ]);
+      });
       const buttons = toolbar.getItems();
 
       spyOn(buttons[0], 'disable');
