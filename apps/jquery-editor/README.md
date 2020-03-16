@@ -1,24 +1,18 @@
-# TOAST UI Editor : jQuery Wrapper
+# TOAST UI Editor for jQuery
 
-## Files Structure
+> This is a [jQuery](https://jquery.com/) component wrapping [TOAST UI Editor](https://github.com/nhn/tui.editor/apps/editor).
 
-### Build
+[![npm version](https://img.shields.io/npm/v/@toast-ui/jquery-editor.svg)](https://www.npmjs.com/package/@toast-ui/jquery-editor)
 
-> Note : The bundle files under the `cdn` folder include TOAST UI Editor(`@toast-ui/editor`).
+## 🚩 Table of Contents
 
-```
-- tui.editor/apps/jquery/
-  - dist/
-    - toastui-jquery-editor.js
-    - toastui-jquery-editor-viewer.js
-    - cdn/
-      - toastui-jquery-editor.js
-      - toastui-jquery-editor.min.js
-      - toastui-jquery-editor-viewer.js
-      - toastui-jquery-editor-viewer.min.js
-```
+- [Bundle File Structure](#-bundle-file-structure)
+- [Using npm](#-using-npm)
+- [Using CDN](#-using-cdn)
 
-### Serve with npm
+## 📁 Bundle File Structure
+
+### Files distributed on npm
 
 ```
 - node_modules/
@@ -29,7 +23,9 @@
         - toastui-jquery-editor-viewer.js
 ```
 
-### Serve with CDN
+### Files distributed on CDN
+
+The bundle files provided by CDN include TOAST UI Editor([`@toast-ui/editor`](https://github.com/nhn/tui.editor/apps/editor)).
 
 ```
 - uicdn.toast.com/
@@ -41,9 +37,9 @@
       - toastui-jquery-editor-viewer.min.js
 ```
 
-## Use npm
+## 📦 Using npm
 
-> Note : To use the wrapper, `jQuery` must be installed.
+When you install the wrapper, jQuery is installed.
 
 ### Install
 
@@ -51,7 +47,7 @@
 $ npm install @toast-ui/jquery-editor
 ```
 
-### Import Wrapper
+### Importing the Wrapper
 
 #### ES Modules
 
@@ -67,83 +63,93 @@ or
 require('@toast-ui/jquery-editor');
 ```
 
-### Create Instance
+### Creating an Instance
 
-#### Basic
+Before creating the instance, add the element that will create the editor. And you must import jQuery before the wrapper.
+
+```html
+<body>
+  <div id="editor"></div>
+  ...
+</body>
+```
+
+#### Using the Editor
 
 ```js
 import $ from 'jquery';
 import '@toast-ui/jquery-editor';
 
-$('#editor').tuiEditor({
+$('#editor').toastuiEditor({
   // ...
-});
-```
-
-#### With Viewer
-
-```js
-import $ from 'jquery';
-import '@toast-ui/jquery-editor/dist/toastui-jquery-editor-viewer';
-
-$('#viewer').tuiEditor({
-  // ...
-});
-```
-
-or
-
-```js
-import $ from 'jquery';
-import '@toast-ui/jquery-editor';
-
-$('#editor').tuiEditor({
-  // ...
-  viewer: true
-});
-```
-
-## Use CDN
-
-> Note : To use the plugin, the `jQuery`'s CDN file must be included.
-
-### Include Files
-
-```html
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://uicdn.toast.com/editor/latest/toastui-jquery-editor.min.js"></script>
-```
-
-### Create Instance
-
-Before creating the instance, add the element that will create the editor.
-
-```html
-<div id="editor"></div>
-```
-
-#### Basic
-
-```js
-$(document).ready(() => {
-  $('#editor').tuiEditor({
-    // ...
-  });
 });
 ```
 
 The `viewer` option allows you to use it as a viewer.
 
 ```js
-$(document).ready(() => {
-  $('#viewer').tuiEditor({
-    // ...
-    viewer: true
-  });
+$('#viewer').toastuiEditor({
+  // ...
+  viewer: true
 });
 ```
 
-#### With Viewer
+#### Using the Viewer
+
+If you want to use only the viewer, import the bundle file corresponding to the viewer.
+
+```js
+import $ from 'jquery';
+import '@toast-ui/jquery-editor/dist/toastui-jquery-editor-viewer';
+
+$('#viewer').toastuiEditor({
+  // ...
+});
+```
+
+## 🗂 Using CDN
+
+To use the wrapper, the jQuery's CDN file must be included.
+
+### Including Files
+
+```html
+<body>
+  ...
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://uicdn.toast.com/editor/latest/toastui-jquery-editor.min.js"></script>
+</body>
+```
+
+### Creating an Instance
+
+Before creating the instance, add the element that will create the editor.
+
+```html
+<body>
+  <div id="editor"></div>
+  ...
+</body>
+```
+
+#### Using the Editor
+
+```js
+$('#editor').toastuiEditor({
+  // ...
+});
+```
+
+The `viewer` option allows you to use it as a viewer.
+
+```js
+$('#viewer').toastuiEditor({
+  // ...
+  viewer: true
+});
+```
+
+#### Using the Viewer
 
 If you want to use only the viewer, include the following file:
 
@@ -152,9 +158,7 @@ If you want to use only the viewer, include the following file:
 ```
 
 ```js
-$(document).ready(() => {
-  $('#viewer').tuiEditor({
-    // ...
-  });
+$('#viewer').toastuiEditor({
+  // ...
 });
 ```

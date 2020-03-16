@@ -4,7 +4,7 @@
  */
 const path = require('path');
 const webpack = require('webpack');
-const pkg = require('./package.json');
+const { version, author, license } = require('./package.json');
 
 const TerserPlugin = require('terser-webpack-plugin');
 
@@ -36,28 +36,32 @@ function getOutputConfig(isProduction, isCDN, minify) {
 }
 
 function getExternalsConfig(isProduction, isCDN) {
-  if (isProduction) {
-    if (isCDN) {
-      return [
-        {
-          jquery: {
-            commonjs: 'jquery',
-            commonjs2: 'jquery',
-            amd: 'jquery',
-            root: ['$']
-          }
+  const isDev = !isProduction;
+  const isProdCdn = isProduction && isCDN;
+  const isProdNpm = isProduction && !isCDN;
+
+  if (isDev || isProdCdn) {
+    return [
+      {
+        jquery: {
+          commonjs: 'jquery',
+          commonjs2: 'jquery',
+          amd: 'jquery',
+          root: ['$']
         }
-      ];
-    } else {
-      return ['jquery', '@toast-ui/editor', '@toast-ui/editor/dist/toastui-editor-viewer'];
-    }
+      }
+    ];
+  }
+
+  if (isProdNpm) {
+    return ['jquery', '@toast-ui/editor', '@toast-ui/editor/dist/toastui-editor-viewer'];
   }
 
   return [];
 }
 
 function getOptimizationConfig(isProduction, minify) {
-  let minimizer = [];
+  const minimizer = [];
 
   if (isProduction && minify) {
     minimizer.push(
@@ -77,8 +81,7 @@ module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
   const minify = !!argv.minify;
   const isCDN = !!argv.cdn;
-
-  return {
+  const config = {
     mode: isProduction ? 'production' : 'development',
     entry: {
       editor: './src/js/editor.js',
@@ -107,23 +110,27 @@ module.exports = (env, argv) => {
         }
       ]
     },
-    plugins: [
+    optimization: getOptimizationConfig(isProduction, minify)
+  };
+
+  if (isProduction) {
+    config.plugins = [
       new webpack.BannerPlugin(
         [
           'TOAST UI Editor : jQuery Wrapper',
-          `@version ${pkg.version}`,
-          `@author ${pkg.author}`,
-          `@license ${pkg.license}`
+          `@version ${version} | ${new Date().toDateString()}`,
+          `@author ${author}`,
+          `@license ${license}`
         ].join('\n')
       )
-    ],
-    optimization: getOptimizationConfig(isProduction, minify),
-    devServer: {
+    ];
+  } else {
+    config.devServer = {
       inline: true,
-      host: '0.0.0.0',
-      port: 8080,
-      disableHostCheck: true
-    },
-    devtool: 'inline-source-map'
-  };
+      host: '0.0.0.0'
+    };
+    config.devtool = 'inline-source-map';
+  }
+
+  return config;
 };

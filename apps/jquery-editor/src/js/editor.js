@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import Editor from '@toast-ui/editor';
 
-$.fn.tuiEditor = function(...args) {
+$.fn.toastuiEditor = function(...args) {
   let options, instance;
 
   const el = this.get(0);
@@ -13,7 +13,7 @@ $.fn.tuiEditor = function(...args) {
   if (el) {
     options = args[0] || {};
 
-    instance = $.data(el, 'tuiEditor');
+    instance = $.data(el, 'toastuiEditor');
 
     if (instance) {
       if (typeof options === 'string') {
@@ -22,7 +22,7 @@ $.fn.tuiEditor = function(...args) {
     } else {
       options.el = el;
       instance = Editor.factory(options);
-      $.data(el, 'tuiEditor', instance);
+      $.data(el, 'toastuiEditor', instance);
     }
   }
 
