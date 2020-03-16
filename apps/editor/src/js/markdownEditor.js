@@ -292,7 +292,7 @@ class MarkdownEditor extends CodeMirrorExt {
     if (type === 'image') {
       const descEnd = { line: startLine, ch: startCh + 1 };
 
-      lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 3;
+      lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 3; // 3: length of '![]'
 
       this.cm.markText(descStart, descEnd, { className: 'cm-image cm-image-marker' });
       this.cm.markText(
@@ -301,7 +301,7 @@ class MarkdownEditor extends CodeMirrorExt {
         { className: 'cm-image cm-image-alt-text cm-link' }
       );
     } else {
-      lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 2;
+      lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 2; // 2: length of '[]'
 
       this.cm.markText(descStart, { line: endLine, ch: lastChildCh }, { className: 'cm-link' });
     }
