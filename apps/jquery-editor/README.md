@@ -6,9 +6,21 @@
 
 ## 🚩 Table of Contents
 
+- [Collect Statistics on the Use of Open Source](#collect-statistics-on-the-use-of-open-source)
 - [Bundle File Structure](#-bundle-file-structure)
-- [Using npm](#-using-npm)
-- [Using CDN](#-using-cdn)
+- [Usage npm](#-usage-npm)
+- [Usage CDN](#-usage-cdn)
+
+## Collect Statistics on the Use of Open Source
+
+jQuery Wrapper of TOAST UI Editor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Editor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. ui.toast.com) is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` options when declare Vue Wrapper compoent.
+
+```js
+const options = {
+  ...
+  usageStatistics: false
+}
+```
 
 ## 📁 Bundle File Structure
 
@@ -37,9 +49,7 @@ The bundle files provided by CDN include TOAST UI Editor([`@toast-ui/editor`](ht
       - toastui-jquery-editor-viewer.min.js
 ```
 
-## 📦 Using npm
-
-When you install the wrapper, jQuery is installed.
+## 📦 Usage npm
 
 ### Install
 
@@ -47,23 +57,29 @@ When you install the wrapper, jQuery is installed.
 $ npm install @toast-ui/jquery-editor
 ```
 
-### Importing the Wrapper
+### Import
 
-#### ES Modules
+You can use TOAST UI Editor for jQuery as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `toastui-editor.css` from `@toast-ui/editor` and `codemirror.css` from `CodeMirror` in the script.
+
+- ES Modules
 
 ```js
+import 'codemirror/lib/codemirror.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
+
 import '@toast-ui/jquery-editor';
 ```
 
-or
-
-#### CommonJS
+- CommonJS
 
 ```js
+require('codemirror/lib/codemirror.css');
+require('@toast-ui/editor/dist/toastui-editor.css');
+
 require('@toast-ui/jquery-editor');
 ```
 
-### Creating an Instance
+### Creating Component
 
 Before creating the instance, add the element that will create the editor. And you must import jQuery before the wrapper.
 
@@ -107,7 +123,7 @@ $('#viewer').toastuiEditor({
 });
 ```
 
-## 🗂 Using CDN
+## 🗂 Usage CDN
 
 To use the wrapper, the jQuery's CDN file must be included.
 
@@ -121,7 +137,7 @@ To use the wrapper, the jQuery's CDN file must be included.
 </body>
 ```
 
-### Creating an Instance
+### Creating Component
 
 Before creating the instance, add the element that will create the editor.
 
@@ -132,7 +148,7 @@ Before creating the instance, add the element that will create the editor.
 </body>
 ```
 
-#### Using the Editor
+#### Using Editor
 
 ```js
 $('#editor').toastuiEditor({
@@ -149,7 +165,7 @@ $('#viewer').toastuiEditor({
 });
 ```
 
-#### Using the Viewer
+#### Using Viewer
 
 If you want to use only the viewer, include the following file:
 
