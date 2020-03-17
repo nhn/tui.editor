@@ -344,6 +344,46 @@ describe('block quote', () => {
   });
 });
 
+describe('code block', () => {
+  it('empty line', () => {
+    const root = reader.parse('```\n\n```\nHello');
+    const codeblock = root.firstChild!;
+    const para = codeblock.next!;
+
+    expect(codeblock.sourcepos).toEqual([
+      [1, 1],
+      [3, 3]
+    ]);
+    expect(para.sourcepos).toEqual([
+      [4, 1],
+      [4, 5]
+    ]);
+  });
+});
+
+describe('inlline code', () => {
+  it('multi line', () => {
+    const root = reader.parse('`a\n  b\n   c`\n d');
+    const para = root.firstChild!;
+    const code = para.firstChild!;
+    const linebreak = code.next!;
+    const text = linebreak.next!;
+
+    expect(code.sourcepos).toEqual([
+      [1, 1],
+      [3, 5]
+    ]);
+    expect(linebreak.sourcepos).toEqual([
+      [3, 6],
+      [3, 6]
+    ]);
+    expect(text.sourcepos).toEqual([
+      [4, 2],
+      [4, 2]
+    ]);
+  });
+});
+
 describe('merge text nodes', () => {
   it('tokens', () => {
     const root = reader.parse(['\\ Text *', '[ Text !', '![ Text ]'].join('\n'));
