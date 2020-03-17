@@ -15,7 +15,9 @@
   ],
   "main": "dist/toastui-editor.js",
   "files": [
-    "dist",
+    "dist/*.js",
+    "dist/*.css",
+    "dist/i18n",
     "index.d.ts"
   ],
   "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
@@ -40,9 +42,10 @@
     "serve": "webpack-dev-server",
     "serve:viewer": "webpack-dev-server --viewer",
     "serve:all": "webpack-dev-server --all",
-    "build": "cross-env webpack --mode=production && webpack --mode=production --minify && node tsBannerGenerator.js",
     "build:i18n": "cross-env webpack --config scripts/webpack.config.i18n.js && webpack --config scripts/webpack.config.i18n.js --minify",
-    "build:all": "npm run build && npm run build:i18n",
+    "build:prod": "cross-env webpack --mode=production && webpack --mode=production --minify && node tsBannerGenerator.js",
+    "build:copy": "cd dist && rm -rf cdn && mkdir cdn && mv *.min.* *all.js cdn/ && cp -r *viewer.* *.css cdn/ && cp -r i18n cdn/i18n/ && rm -rf cdn/*editor.min.js",
+    "build": "npm run build:i18n && npm run build:prod && npm run build:copy",
     "note": "tui-note --tag=$(git describe --tags)",
     "tslint": "tslint index.d.ts",
     "doc:serve": "tuidoc --serv",
