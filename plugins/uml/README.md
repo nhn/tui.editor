@@ -1,21 +1,20 @@
 # TOAST UI Editor : UML Plugin
 
-## Files Structure
+> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/apps/editor) to render UML.
 
-### Build
+[![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-uml.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-uml)
 
-> Note : The bundle files under the `cdn` folder include all dependencies.
+![uml](https://user-images.githubusercontent.com/18183560/76829637-f5eb1a80-6866-11ea-95cf-99e07c92031d.png)
 
-```
-- tui.editor/plugins/uml/
-  - dist/
-    - toastui-editor-plugin-uml.js
-    - cdn/
-      - toastui-editor-plugin-uml.js
-      - toastui-editor-plugin-uml.min
-```
+## 🚩 Table of Contents
 
-### Serve with npm
+- [Bundle File Structure](#-bundle-file-structure)
+- [Usage npm](#-usage-npm)
+- [Usage CDN](#-usage-cdn)
+
+## 📁 Bundle File Structure
+
+### Files Distributed on npm
 
 ```
 - node_modules/
@@ -25,7 +24,9 @@
         - toastui-editor-plugin-uml.js
 ```
 
-### Serve with CDN
+### Files Distributed on CDN
+
+The bundle files under the `cdn` folder include all dependencies.
 
 ```
 - uicdn.toast.com/
@@ -35,9 +36,11 @@
       - toastui-editor-plugin-uml.min.js
 ```
 
-## Use npm
+## 📦 Usage npm
 
-> Note : To use the plugin, `@toast-ui/editor` must be installed.
+To use the plugin, `@toast-ui/editor` must be installed.
+
+> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
 
 ### Install
 
@@ -50,15 +53,13 @@ $ npm install @toast-ui/editor-plugin-uml
 #### ES Modules
 
 ```js
-import umlPlugin from '@toast-ui/editor-plugin-uml';
+import uml from '@toast-ui/editor-plugin-uml';
 ```
-
-or
 
 #### CommonJS
 
 ```js
-const umlPlugin = require('@toast-ui/editor-plugin-uml');
+const uml = require('@toast-ui/editor-plugin-uml');
 ```
 
 ### Create Instance
@@ -67,11 +68,11 @@ const umlPlugin = require('@toast-ui/editor-plugin-uml');
 
 ```js
 import Editor from '@toast-ui/editor';
-import umlPlugin from '@toast-ui/editor-plugin-uml';
+import uml from '@toast-ui/editor-plugin-uml';
 
 const instance = new Editor({
   // ...
-  plugins: [umlPlugin]
+  plugins: [uml]
 });
 ```
 
@@ -79,11 +80,11 @@ const instance = new Editor({
 
 ```js
 import Viewer from '@toast-ui/editor/dist/toustui-editor-viewer';
-import umlPlugin from '@toast-ui/editor-plugin-uml';
+import uml from '@toast-ui/editor-plugin-uml';
 
 const instance = new Viewer({
   // ...
-  plugins: [umlPlugin]
+  plugins: [uml]
 });
 ```
 
@@ -91,15 +92,15 @@ or
 
 ```js
 import Editor from '@toast-ui/editor';
-import umlPlugin from '@toast-ui/editor-plugin-uml';
+import uml from '@toast-ui/editor-plugin-uml';
 
 const instance = Editor.factory({
   // ...
-  plugins: [umlPlugin]
+  plugins: [uml]
 });
 ```
 
-## Use CDN
+## 🗂 Usage CDN
 
 > Note : To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be included.
 
@@ -147,7 +148,7 @@ const instance = Editor.factory({
 });
 ```
 
-## [Optional] Use Plugin with Options
+### [Optional] Use Plugin with Options
 
 The `uml` plugin can set options when used. Just add the plugin function and options related to the plugin to the array(`[pluginFn, pluginOptions]`) and push them to the `plugins` option of the editor.
 
@@ -161,14 +162,14 @@ The following option is available in the `uml` plugin.
 // ...
 
 import Editor from '@toast-ui/editor';
-import umlPlugin from '@toast-ui/editor-plugin-uml';
+import uml from '@toast-ui/editor-plugin-uml';
 
-const options = {
+const umlOptions = {
   rendererURL: // ...
 };
 
 const instance = new Editor({
   // ...
-  plugins: [[colorSyntaxPlugin, options]]
+  plugins: [[uml, umlOptions]]
 });
 ```
