@@ -1,17 +1,15 @@
-# Getting Started 🚀
+# 🚀 Getting Started
 
 ## The Project Setup
 
-TOAST UI products can be used by using the package manager or downloading the source directly. However, we highly recommend using the package manager.
+TOAST UI Editor can be used by using the package manager or downloading the source directly. However, we highly recommend using the package manager.
 
-### Via Package Manager
+### Via Package Manager (npm)
 
 You can conveniently install it using the commands provided by each package manager. When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/en/) is installed.
 
-### npm
-
 ```sh
-$ npm install --save @toast-ui/editor # Latest version
+$ npm install --save @toast-ui/editor # Latest Version
 $ npm install --save @toast-ui/editor@<version> # Specific Version
 ```
 
@@ -29,15 +27,13 @@ When installed and used with npm, the list of files that can be imported is as f
 
 ### Via Contents Delivery Network (CDN)
 
-TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
-
-You can use the CDN as below.
+TOAST UI Editor is available over the CDN powered by [TOAST Cloud](https://www.toast.com). You can use the CDN as below.
 
 ```html
 ...
 <body>
   ...
-  <script src="https://uicdn.toast.com/editor/latest/toastui-editor.js"></script>
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor.min.js"></script>
 </body>
 ...
 ```
@@ -64,7 +60,7 @@ The CDN directory has the following structure:
 
 ### Adding the Wrapper Element
 
-You need to add the container element where TOAST UI Editor will be created.
+You need to add the container element where TOAST UI Editor (henceforth referred to as 'Editor') will be created.
 
 ```html
 ...
@@ -76,11 +72,11 @@ You need to add the container element where TOAST UI Editor will be created.
 
 ### Importing the Editor's Constructor Function
 
-TOAST UI Editor can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following ways depending on your environment.
+The editor can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following ways depending on your environment.
 
-#### Using module format in node environment
+#### Using Module Format in Node Environment
 
-- ES6 Module
+- ES6 Modules
 
 ```javascript
 import Editor from '@toast-ui/editor';
@@ -92,7 +88,7 @@ import Editor from '@toast-ui/editor';
 const Editor = require('@toast-ui/editor');
 ```
 
-#### Using namespace in browser environment
+#### Using Namespace in Browser Environment
 
 ```javascript
 const Editor = toastui.Editor;
@@ -100,11 +96,11 @@ const Editor = toastui.Editor;
 
 ### Adding CSS Files
 
-You need to add the CSS files needed for the editor. Import CSS files in node environment, and add it to html file when using CDN. When creating a basic editor, you need to add a style for the [CodeMirror](https://codemirror.net/).
+You need to add the CSS files needed for the Editor. Import CSS files in node environment, and add it to html file when using CDN. When using the markdown editor, you need to add a style for the [CodeMirror](https://codemirror.net/).
 
-#### Using in node environment
+#### Using in Node Environment
 
-- ES6 Module
+- ES6 Modules
 
 ```javascript
 import 'codemirror/lib/codemirror.css'; // Editor's Dependency Style
@@ -118,7 +114,7 @@ require('codemirror/lib/codemirror.css');
 require('@toast-ui/editor/dist/toastui-editor.css');
 ```
 
-#### Using in browser environment by CDN
+#### Using in Browser Environment by CDN
 
 ```html
 ...
@@ -135,12 +131,12 @@ require('@toast-ui/editor/dist/toastui-editor.css');
 ...
 ```
 
-### Creating an Instance
+### Creating Instance
 
 You can create an instance with options and call various API after creating an instance.
 
 ```js
-const instance = new Editor({
+const editor = new Editor({
   el: document.querySelector('#editor')
 });
 ```
@@ -148,14 +144,14 @@ const instance = new Editor({
 ![getting-started-01](https://user-images.githubusercontent.com/18183560/76715294-159f1780-676f-11ea-9107-e334d4ef0eb8.png)
 
 ```js
-const instance = new Editor({
+const editor = new Editor({
   el: document.querySelector('#editor'),
   height: '600px',
   initialEditType: 'markdown',
   previewStyle: 'vertical'
 });
 
-instance.getMarkdown();
+editor.getHtml();
 ```
 
 ![getting-started-02](https://user-images.githubusercontent.com/18183560/76715295-1768db00-676f-11ea-8a94-0ffff3fbe99d.png)
@@ -166,10 +162,10 @@ The basic options available are:
 - `initialEditType`: Initial type to show `markdown` | `wysiwyg`
 - `initialValue`: Initial value. Set Markdown string
 - `previewType`: Preview style of Markdown mode `tab` | `vertical`
-- `usageStatistics`: Let us know the _hostname_. We want to learn from you how you are using the Editor. You are free to disable it. `true` | `false`
+- `usageStatistics`: Let us know the _hostname_. We want to learn from you how you are using the editor. You are free to disable it. `true` | `false`
 
 Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEditor).
 
 ## Example
 
-You can see the basic example [here](https://nhn.github.io/tui.editor/latest/tutorial-example01-basic).
+You can see the example [here](https://nhn.github.io/tui.editor/latest/tutorial-example01-basic).

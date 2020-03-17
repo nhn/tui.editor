@@ -5,7 +5,7 @@
 - [🚀 Getting Started](./getting-started.md)
 - [👀 Viewer](./viewer.md)
 - [🧩 Plugins](./plugins.md)
-- [🌏 Internationalization(I18N)](./i18n.md)
+- [🌏 Internationalization (I18N)](./i18n.md)
 
 ### Migration Guide
 

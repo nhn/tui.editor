@@ -11,7 +11,7 @@
 
 - [Packages](#-packages)
 - [TOAST UI Editor Is a Powerful Markdown and WYSIWYG Editor](#-toast-ui-editor-is-a-powerful-markdown-and-wysiwyg-editor)
-- [Other Features](#-other-features)
+- [Features](#-features)
 - [Examples](#-examples)
 - [Browser Support](#-browser-support)
 - [Pull Request Steps](#-pull-request-steps)
@@ -79,7 +79,7 @@ Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Ma
 * **Toolbar** : Through the toolbar, you can style or add elements to the document you are editing.
 * **Copy and Paste** : Paste anything from browser, screenshot, excel, powerpoint, etc.
 
-### Use of various extended functions : Plugins
+### Use of Various Extended Functions - Plugins
 
 ![plugin](https://user-images.githubusercontent.com/18183560/76677622-c8f2f980-6613-11ea-8410-71844042aeec.png)
 
@@ -95,20 +95,19 @@ Using [TOAST UI ColorPicker](https://github.com/nhn/tui.color-picker, you can ch
 You can merge columns of the table header and body area.
 * [**`uml`**](https://github.com/nhn/tui.editor/tree/master/plugins/uml) : A code block marked as an 'uml' will render [UML diagrams](http://plantuml.com/screenshot).
 
-
-## 🎨 Other features
+## 🎨 Features
 
 * [**Viewer**](https://github.com/nhn/tui.editor/tree/master/apps/editor/docs/viewer.md) : Supports a mode to display only markdown data without an editing area.
-* [**Internationalization(I18N)**](https://github.com/nhn/tui.editor/tree/master/apps/editor/docs/i18n.md) : Supports English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian, Turkish, Finnish, Czech, Arabic, Polish, Galician, Swedish, Italian, Norwegian + language and you can extend.
+* [**Internationalization (I18N)**](https://github.com/nhn/tui.editor/tree/master/apps/editor/docs/i18n.md) : Supports English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian, Turkish, Finnish, Czech, Arabic, Polish, Galician, Swedish, Italian, Norwegian + language and you can extend.
 
 ## 🐾 Examples
 
-* [Basic]()
-* [Viewer]()
-* [Using All Plugins]()
-* [Creating the User's Plugin]()
-* [Customizing the Toobar]()
-* [Internationalization(I18N)]()
+* [Basic](https://nhn.github.io/tui.editor/latest/tutorial-example01-editor-basic)
+* [Viewer](https://nhn.github.io/tui.editor/latest/tutorial-example04-viewer.html)
+* [Using All Plugins](https://nhn.github.io/tui.editor/latest/tutorial-example15-editor-with-all-plugins.html)
+* [Creating the User's Plugin](https://nhn.github.io/tui.editor/latest/tutorial-example17-creating-plugin.html)
+* [Customizing the Toobar Buttons](https://nhn.github.io/tui.editor/latest/tutorial-example19-customizing-toolbar-buttons.html)
+* [Internationalization (I18N)](https://nhn.github.io/tui.editor/latest/tutorial-example20-i18n.html)
 
 Here are more [examples](https://nhn.github.io/tui.editor/latest/) and play with TOAST UI Editor!
 

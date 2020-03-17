@@ -4,14 +4,15 @@
 
 ## 🚩 Table of Contents
 
-- [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
+- [Collect Statistics on the Use of Open Source](#Collect-statistics-on-the-use-of-open-source)
 - [Documents](#-documents)
 - [Install](#-install)
 - [Usage](#-usage)
+- [Tutorials](#-tutorials)
 
-## Collect statistics on the use of open source
+## Collect Statistics on the Use of Open Source
 
-TOAST UI Editor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Editor is used throughout the world. It also serves as important index to determine the future course of projects. `location.hostname` (e.g. > "ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
+TOAST UI products apply Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Editor is used throughout the world. It also serves as important index to determine the future course of projects. `location.hostname` (e.g. ui.toast.com) is to be collected and the sole purpose is nothing but to measure statistics on the usage.
 
 To disable GA, use the following `usageStatistics` option when creating the instance.
 
@@ -21,15 +22,15 @@ const options = {
   usageStatistics: false
 };
 
-const instance = new Editor(options);
+const editor = new Editor(options);
 ```
 
 ## 📙 Documents
 
-- [Getting Started]()
+- [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
 - v2.0 Migration Guide
-  - [English]()
-  - [한국어]()
+  - [English](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/v2.0-migration-guid.md)
+  - [한국어](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/v2.0-migration-guid-ko.md)
 - [APIs](https://nhn.github.io/tui.editor/latest/)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.editor/releases).
@@ -76,8 +77,10 @@ The CDN directory has the following structure:
    │     │    ├─ toastui-editor-all.min.js
    │     │    ├─ toastui-editor-viewer.js
    │     │    ├─ toastui-editor-viewer.min.js
-   │     │    ├─ toastui-editor-editor.css
-   │     │    └─ toastui-editor-viewer.css
+   │     │    ├─ toastui-editor.css
+   │     │    └─ toastui-editor.min.css
+   │     │    ├─ toastui-editor-viewer.css
+   │     │    └─ toastui-editor-viewer.min.css
    │     ├─ 2.0.0/
    │     │    └─ ...
 ```
@@ -88,7 +91,7 @@ The CDN directory has the following structure:
 
 ## 🔨 Usage
 
-First, you need to add the container element where TOAST UI Editor will be created.
+First, you need to add the container element where TOAST UI Editor (henceforth referred to as 'Editor') will be created.
 
 ```html
 ...
@@ -98,30 +101,38 @@ First, you need to add the container element where TOAST UI Editor will be creat
 ...
 ```
 
-TOAST UI Editor can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following ways depending on your environment.
+The editor can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following ways depending on your environment.
 
-#### Using module format in node environment
+### Using Module Format in Node Environment
+
+- ES6 Modules
 
 ```javascript
-import Editor from '@toast-ui/editor'; /* ES6 Module */
+import Editor from '@toast-ui/editor';
 ```
 
-#### Using namespace in browser environment
+- CommonJS
+
+```javascript
+const Editor = require('@toast-ui/editor');
+```
+
+### Using Namespace in Browser Environment
 
 ```javascript
 const Editor = toastui.Editor;
 ```
 
-Then, you need to add the CSS files needed for the editor. Import CSS files in node environment, and add it to html file when using CDN. When creating a basic editor, you need to add a style for the [CodeMirror](https://codemirror.net/).
+Then, you need to add the CSS files needed for the Editor. Import CSS files in node environment, and add it to html file when using CDN. When using the markdown editor, you need to add a style for the [CodeMirror](https://codemirror.net/).
 
-#### Using in node environment
+### Using in Node Environment
 
 ```javascript
 import 'codemirror/lib/codemirror.css'; // Editor's Dependency Style
 import '@toast-ui/editor/dist/toastui-editor.css'; // Editor's Style
 ```
 
-#### Using in browser environment by CDN
+### Using in Browser Environment by CDN
 
 ```html
 ...
@@ -141,17 +152,17 @@ import '@toast-ui/editor/dist/toastui-editor.css'; // Editor's Style
 Finally you can create an instance with options and call various API after creating an instance.
 
 ```javascript
-const instance = new Editor({
+const editor = new Editor({
   el: document.querySelector('#editor'),
   height: '500px',
   initialEditType: 'markdown',
   previewStyle: 'vertical'
 });
 
-instance.getHtml();
+editor.getHtml();
 ```
 
-#### Default Options
+### Default Options
 
 - `height`: Height in string or auto ex) `300px` | `auto`
 - `initialEditType`: Initial type to show `markdown` | `wysiwyg`
@@ -159,4 +170,10 @@ instance.getHtml();
 - `previewType`: Preview style of Markdown mode `tab` | `vertical`
 - `usageStatistics`: Let us know the _hostname_. We want to learn from you how you are using the Editor. You are free to disable it. `true` | `false`
 
-Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEditor)
+Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEditor).
+
+## 🦄 Tutorials
+
+- [Viewer](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/viewer.md)
+- [Plugins](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/plugins.md)
+- [Internationalization (I18N)](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/i18n.md)
