@@ -25,7 +25,6 @@ import Convertor from './convertor';
 import Viewer from './viewer';
 import i18n from './i18n';
 import DefaultUI from './ui/defaultUI';
-import domUtils from './utils/dom';
 import WwTableManager from './wwTableManager';
 import WwTableSelectionManager from './wwTableSelectionManager';
 import codeBlockManager from './codeBlockManager';
