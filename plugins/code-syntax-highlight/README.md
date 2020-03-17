@@ -1,21 +1,22 @@
 # TOAST UI Editor : Code Syntax Highlight Plugin
 
-## Files Structure
+> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/apps/editor) to highlight code syntax.
 
-### Build
+[![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-code-syntax-highlight.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-code-syntax-highlight)
 
-```
-- tui.editor/plugins/code-syntax-highlight/
-  - dist/
-    - toastui-editor-plugin-code-syntax-highlight.js
-    - cdn/
-      - toastui-editor-plugin-code-syntax-highlight.js
-      - toastui-editor-plugin-code-syntax-highlight.min.js
-      - toastui-editor-plugin-code-syntax-highlight-all.js
-      - toastui-editor-plugin-code-syntax-highlight-all.min.js
-```
+![code-syntax-highlight](https://user-images.githubusercontent.com/18183560/76829633-f4215700-6866-11ea-9a78-a116a97577a7.png)
+
+## 🚩 Table of Contents
+
+- [Bundle File Structure](#-bundle-file-structure)
+- [Usage npm](#-usage-npm)
+- [Usage CDN](#-usage-cdn)
+
+## 📁 Bundle File Structure
 
 ### Serve with npm
+
+### Files Distributed on npm
 
 ```
 - node_modules/
@@ -25,7 +26,7 @@
         - toastui-editor-plugin-code-syntax-highlight.js
 ```
 
-### Serve with CDN
+### Files Distributed on CDN
 
 ```
 - uicdn.toast.com/
@@ -37,9 +38,11 @@
       - toastui-editor-plugin-code-syntax-highlight-all.min.js
 ```
 
-## Use npm
+## 📦 Usage npm
 
 To use the plugin, `@toast-ui/editor` must be installed.
+
+> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
 
 ### Install
 
@@ -52,7 +55,7 @@ $ npm install @toast-ui/editor-plugin-code-syntax-highlight
 #### ES Modules
 
 ```js
-import codeSyntaxHightlightPlugin from '@toast-ui/editor-plugin-code-syntax-highlight';
+import codeSyntaxHightlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 ```
 
 or
@@ -60,7 +63,7 @@ or
 #### CommonJS
 
 ```js
-const codeSyntaxHightlightPlugin = require('@toast-ui/editor-plugin-code-syntax-highlight');
+const codeSyntaxHightlight = require('@toast-ui/editor-plugin-code-syntax-highlight');
 ```
 
 ### Create Instance
@@ -75,13 +78,13 @@ The main bundle file of `highlight.js` contains all the language pack it support
 
 ```js
 import Editor from '@toast-ui/editor';
-import codeSyntaxHightlightPlugin from '@toast-ui/editor-plugin-code-syntax-highlight';
+import codeSyntaxHightlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 
 import hljs from 'highlight.js';
 
 const instance = new Editor({
   // ...
-  plugins: [[codeSyntaxHightlightPlugin, { hljs }]]
+  plugins: [[codeSyntaxHightlight, { hljs }]]
 });
 ```
 
@@ -91,7 +94,7 @@ You need to import the language files you want to use in the code block and regi
 
 ```js
 import Editor from '@toast-ui/editor';
-import codeSyntaxHightlightPlugin from '@toast-ui/editor-plugin-code-syntax-highlight';
+import codeSyntaxHightlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 
 // Step 1. Import highlight.js
 import hljs from 'highlight.js/lib/highlight';
@@ -106,7 +109,7 @@ hljs.registerLanguage('clojure', clojure);
 
 const instance = new Editor({
   // ...
-  plugins: [[codeSyntaxHightlightPlugin, { hljs }]]
+  plugins: [[codeSyntaxHightlight, { hljs }]]
 });
 ```
 
@@ -116,14 +119,14 @@ As with creating an editor instance, you need to import `highlight.js` and pass 
 
 ```js
 import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
-import codeSyntaxHightlightPlugin from '@toast-ui/editor-plugin-code-syntax-highlight';
+import codeSyntaxHightlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 
 // Import highlgiht.js
 // ...
 
 const instance = new Viewer({
   // ...
-  plugins: [[codeSyntaxHightlightPlugin, { hljs }]]
+  plugins: [[codeSyntaxHightlight, { hljs }]]
 });
 ```
 
@@ -131,18 +134,18 @@ or
 
 ```js
 import Editor from '@toast-ui/editor';
-import codeSyntaxHightlightPlugin from '@toast-ui/editor-plugin-code-syntax-highlight';
+import codeSyntaxHightlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 
 // Import highlgiht.js
 // ...
 
 const instance = Editor.factory({
   // ...
-  plugins: [[codeSyntaxHightlightPlugin, { hljs }]]
+  plugins: [[codeSyntaxHightlight, { hljs }]]
 });
 ```
 
-## Use CDN
+## 🗂 Usage CDN
 
 ### Include Files
 

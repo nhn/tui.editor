@@ -1,21 +1,20 @@
 # TOAST UI Editor : Chart Plugin
 
-## Files Structure
+> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/apps/editor) to render chart.
 
-### Build
+[![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-chart.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-chart)
 
-> Note : The bundle files under the `cdn` folder include all dependencies.
+![chart](https://user-images.githubusercontent.com/18183560/76829631-f2f02a00-6866-11ea-8bb0-c3c923d70399.png)
 
-```
-- tui.editor/plugins/chart/
-  - dist/
-    - toastui-editor-plugin-chart.js
-    - cdn/
-      - toastui-editor-plugin-chart.js
-      - toastui-editor-plugin-chart.min
-```
+## 🚩 Table of Contents
 
-### Serve with npm
+- [Bundle File Structure](#-bundle-file-structure)
+- [Usage npm](#-usage-npm)
+- [Usage CDN](#-usage-cdn)
+
+## 📁 Bundle File Structure
+
+### Files Distributed on npm
 
 ```
 - node_modules/
@@ -25,7 +24,9 @@
         - toastui-editor-plugin-chart.js
 ```
 
-### Serve with CDN
+### Files Distributed on CDN
+
+The bundle files under the `cdn` folder include all dependencies.
 
 ```
 - uicdn.toast.com/
@@ -35,9 +36,11 @@
       - toastui-editor-plugin-chart.min.js
 ```
 
-## Use npm
+## 📦 Usage npm
 
-> Note : To use the plugin, `@toast-ui/editor` must be installed.
+To use the plugin, `@toast-ui/editor` must be installed.
+
+> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
 
 ### Install
 
@@ -47,24 +50,22 @@ $ npm install @toast-ui/editor-plugin-chart
 
 ### Import Plugin
 
-> Note : Along with the plugin, the plugin's dependency style must be imported.
+Along with the plugin, the plugin's dependency style must be imported.
 
 #### ES Modules
 
 ```js
 import 'tui-chart/dist/tui-chart.css';
 
-import chartPlugin from '@toast-ui/editor-plugin-chart';
+import chart from '@toast-ui/editor-plugin-chart';
 ```
-
-or
 
 #### CommonJS
 
 ```js
 require('tui-chart/dist/tui-chart.css');
 
-const chartPlugin = require('@toast-ui/editor-plugin-chart');
+const chart = require('@toast-ui/editor-plugin-chart');
 ```
 
 ### Create Instance
@@ -75,11 +76,11 @@ const chartPlugin = require('@toast-ui/editor-plugin-chart');
 // ...
 
 import Editor from '@toast-ui/editor';
-import chartPlugin from '@toast-ui/editor-plugin-chart';
+import chart from '@toast-ui/editor-plugin-chart';
 
 const instance = new Editor({
   // ...
-  plugins: [chartPlugin]
+  plugins: [chart]
 });
 ```
 
@@ -89,11 +90,11 @@ const instance = new Editor({
 // ...
 
 import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
-import chartPlugin from '@toast-ui/editor-plugin-chart';
+import chart from '@toast-ui/editor-plugin-chart';
 
 const instance = new Viewer({
   // ...
-  plugins: [chartPlugin]
+  plugins: [chart]
 });
 ```
 
@@ -103,17 +104,17 @@ or
 // ...
 
 import Editor from '@toast-ui/editor';
-import chartPlugin from '@toast-ui/editor-plugin-chart';
+import chart from '@toast-ui/editor-plugin-chart';
 
 const instance = Editor.factory({
   // ...
-  plugins: [chartPlugin]
+  plugins: [chart]
 });
 ```
 
-## Use CDN
+## 🗂 Usage CDN
 
-> Note : To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be included.
+To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be included.
 
 ### Include Files
 
@@ -162,7 +163,7 @@ const instance = Editor.factory({
 });
 ```
 
-## [Optional] Use Plugin with Options
+### [Optional] Use Plugin with Options
 
 The `chart` plugin can set options when used. Just add the plugin function and options related to the plugin to the array(`[pluginFn, pluginOptions]`) and push them to the `plugins` option of the editor.
 
@@ -182,9 +183,9 @@ These options are used to set the dimensions of the chart drawn in the editor.
 // ...
 
 import Editor from '@toast-ui/editor';
-import chartPlugin from '@toast-ui/editor-plugin-chart';
+import chart from '@toast-ui/editor-plugin-chart';
 
-const options = {
+const chartOptions = {
   minWidth: 100,
   maxWidth: 600,
   minHeight: 100,
@@ -193,6 +194,6 @@ const options = {
 
 const instance = new Editor({
   // ...
-  plugins: [[chartPlugin, options]]
+  plugins: [[chart, chartOptions]]
 });
 ```

@@ -1,21 +1,20 @@
 # TOAST UI Editor : Table Merged Cell Plugin
 
-## Files Structure
+> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/apps/editor) to merge table columns.
 
-### Build
+[![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-table-merged-cell.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-table-merged-cell)
 
-> Note : The bundle files under the `cdn` folder include all dependencies.
+![table-merged-cell](https://user-images.githubusercontent.com/18183560/76829635-f5528400-6866-11ea-99e6-1f70596f34de.png)
 
-```
-- tui.editor/plugins/table-merged-cell/
-  - dist/
-    - toastui-editor-plugin-table-merged-cell.js
-    - cdn/
-      - toastui-editor-plugin-table-merged-cell.js
-      - toastui-editor-plugin-table-merged-cell.min
-```
+## 🚩 Table of Contents
 
-### Serve with npm
+- [Bundle File Structure](#-bundle-file-structure)
+- [Usage npm](#-usage-npm)
+- [Usage CDN](#-usage-cdn)
+
+## 📁 Bundle File Structure
+
+### Files Distributed on npm
 
 ```
 - node_modules/
@@ -25,7 +24,9 @@
         - toastui-editor-plugin-table-merged-cell.js
 ```
 
-### Serve with CDN
+### Files Distributed on CDN
+
+The bundle files under the `cdn` folder include all dependencies.
 
 ```
 - uicdn.toast.com/
@@ -35,9 +36,11 @@
       - toastui-editor-plugin-table-merged-cell.min.js
 ```
 
-## Use npm
+## 📦 Usage npm
 
-> Note : To use the plugin, `@toast-ui/editor` must be installed.
+To use the plugin, `@toast-ui/editor` must be installed.
+
+> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
 
 ### Install
 
@@ -50,15 +53,13 @@ $ npm install @toast-ui/editor-plugin-table-merged-cell
 #### ES Modules
 
 ```js
-import tableMergedCellPlugin from '@toast-ui/editor-plugin-table-merged-cell';
+import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell';
 ```
-
-or
 
 #### CommonJS
 
 ```js
-const tableMergedCellPlugin = require('@toast-ui/editor-plugin-table-merged-cell');
+const tableMergedCell = require('@toast-ui/editor-plugin-table-merged-cell');
 ```
 
 ### Create Instance
@@ -67,11 +68,11 @@ const tableMergedCellPlugin = require('@toast-ui/editor-plugin-table-merged-cell
 
 ```js
 import Editor from '@toast-ui/editor';
-import tableMergedCellPlugin from '@toast-ui/editor-plugin-table-merged-cell';
+import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell';
 
 const instance = new Editor({
   // ...
-  plugins: [tableMergedCellPlugin]
+  plugins: [tableMergedCell]
 });
 ```
 
@@ -79,11 +80,11 @@ const instance = new Editor({
 
 ```js
 import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
-import tableMergedCellPlugin from '@toast-ui/editor-plugin-table-merged-cell';
+import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell';
 
 const instance = new Viewer({
   // ...
-  plugins: [tableMergedCellPlugin]
+  plugins: [tableMergedCell]
 });
 ```
 
@@ -91,17 +92,17 @@ or
 
 ```js
 import Editor from '@toast-ui/editor';
-import tableMergedCellPlugin from '@toast-ui/editor-plugin-table-merged-cell';
+import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell';
 
 const instance = Editor.factory({
   // ...
-  plugins: [tableMergedCellPlugin]
+  plugins: [tableMergedCell]
 });
 ```
 
-## Use CDN
+## 🗂 Usage CDN
 
-> Note : To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be included.
+To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be included.
 
 ### Include Files
 
