@@ -40,7 +40,7 @@ function canBeContinuation(lineText: string) {
   return reBulletListMarker.test(leftTrimmed) || reOrderedListMarker.test(leftTrimmed);
 }
 
-export class MarkdownDocument {
+export class ToastMark {
   public lineTexts: string[];
   private parser: Parser;
   private root: BlockNode;

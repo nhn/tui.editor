@@ -1,5 +1,5 @@
 import codemirror from 'codemirror';
-import { MarkdownDocument } from '../document';
+import { ToastMark } from '../toastmark';
 import { GfmHtmlRenderer } from '../commonmark/render/gfm/html';
 import { last } from '../helper';
 import 'codemirror/lib/codemirror.css';
@@ -18,7 +18,7 @@ const htmlEl = document.querySelector('.html') as HTMLElement;
 const previewEl = document.querySelector('.preview') as HTMLElement;
 
 const cm = codemirror(editorEl, { lineNumbers: true });
-const doc = new MarkdownDocument();
+const doc = new ToastMark();
 const writer = new GfmHtmlRenderer({ sourcepos: true, nodeId: true });
 
 const tokenTypes = {

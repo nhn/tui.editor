@@ -1,5 +1,5 @@
 import { Node, getNodeById, removeNodeById } from './commonmark/node';
-import { Position } from './document';
+import { Position } from './toastmark';
 
 export const enum Compare {
   LT = 1,

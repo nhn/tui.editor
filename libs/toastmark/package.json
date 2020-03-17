@@ -1,16 +1,19 @@
 {
-  "name": "@toast-ui/markdown-parser",
-  "version": "0.0.1",
-  "description": "Markdown Parser",
+  "name": "@toast-ui/toastmark",
+  "version": "0.1.0",
+  "description": "ToastMark - Incremental markdown parser extended from CommonMark.js",
   "scripts": {
-    "start": "webpack-dev-server",
+    "serve": "webpack-dev-server",
     "build": "webpack --mode=production",
     "test": "jest --watch"
   },
-  "keywords": [],
-  "author": "",
-  "main": "dist/markdown-parser.js",
-  "module": "dist/markdown-parser.js",
+  "keywords": [
+    "markdown",
+    "parser"
+  ],
+  "author": "NHN",
+  "main": "dist/toastmark.js",
+  "module": "dist/toastmark.js",
   "license": "MIT",
   "devDependencies": {
     "@types/codemirror": "0.0.85",
@@ -39,6 +42,5 @@
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3",
     "webpack-merge": "^4.2.2"
-  },
-  "dependencies": {}
+  }
 }
