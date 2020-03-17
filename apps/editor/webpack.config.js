@@ -123,16 +123,20 @@ function addAnalyzerPlugin(config, type) {
 }
 
 function setDevelopConfig(config) {
-  config.output.publicPath = 'dist/cdn';
-
   if (isDevelopAll) {
+    // check in examples
     config.entry = { 'editor-all': ENTRY_EDITOR };
+    config.output.publicPath = 'dist/cdn';
     config.externals = [];
   } else if (isDevelopViewer) {
+    // check in examples
     config.entry = { 'editor-viewer': ENTRY_VIEWER };
+    config.output.publicPath = 'dist/cdn';
   } else {
+    // check in demo
     config.module.rules = config.module.rules.slice(1);
     config.entry = { editor: ENTRY_EDITOR };
+    config.output.publicPath = 'dist/';
   }
 
   config.devtool = 'inline-source-map';
