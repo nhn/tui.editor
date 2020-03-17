@@ -835,13 +835,6 @@ class ToastUIEditor {
 ToastUIEditor.isViewer = false;
 
 /**
- * domUtil instance
- * @type {DomUtil}
- * @ignore
- */
-ToastUIEditor.domUtils = domUtils;
-
-/**
  * CodeBlockManager instance using in plugins
  * @type {CodeBlockManager}
  * @ignore

@@ -10,7 +10,7 @@ declare namespace toastui {
   type CodeMirrorType = CodeMirror.EditorFromTextArea;
   type CommandManagerExecFunc = (name: string, ...args: any[]) => any;
   type PopupTableUtils = LayerPopup;
-  type AddImageBlobHook = (fileOrBlob: File|Blob, callback: Function, source: string) => void;
+  type AddImageBlobHook = (fileOrBlob: File | Blob, callback: Function, source: string) => void;
   type Plugin = (editor: Editor | Viewer, options: any) => void;
   type PreviewStyle = 'tab' | 'vertical';
 
@@ -40,7 +40,7 @@ declare namespace toastui {
     toHTMLWithCodeHightlight(markdown: string): string;
     toMarkdown(html: string, toMarkdownOptions: ToMarkOptions): string;
   }
-  
+
   export interface EditorOptions {
     el: HTMLElement;
     height?: string;
@@ -49,7 +49,7 @@ declare namespace toastui {
     previewStyle?: PreviewStyle;
     initialEditType?: string;
     events?: EventMap;
-    hooks?: (EventMap | { addImageBlobHook: AddImageBlobHook });
+    hooks?: EventMap | { addImageBlobHook: AddImageBlobHook };
     language?: string;
     useCommandShortcut?: boolean;
     useDefaultHTMLSanitizer?: boolean;
@@ -69,7 +69,7 @@ declare namespace toastui {
     previewStyle?: PreviewStyle;
     initialValue?: string;
     events?: EventMap;
-    hooks?: (EventMap  | { previewBeforeHook: Function });
+    hooks?: EventMap | { previewBeforeHook: Function };
     plugins?: Plugin[];
   }
 
@@ -84,12 +84,6 @@ declare namespace toastui {
 
   interface LanguageData {
     [propType: string]: string;
-  }
-
-  class I18n {
-    public get(key: string, code: string): string;
-    public setCode(code: string): void;
-    public setLanguage(codes: string | string[], data: LanguageData): void;
   }
 
   interface ButtonItem {
@@ -110,18 +104,25 @@ declare namespace toastui {
 
   class UIController {
     public tagName: string;
+
     public className: string;
+
     public el: HTMLElement;
 
     public on(aType: string | object, aFn: (...args: any[]) => void): void;
+
     public off(type: string, fn: (...args: any[]) => void): void;
+
     public remove(): void;
+
     public trigger(eventTypeEvent: string, eventData?: any): void;
+
     public destroy(): void;
   }
 
   class ToolbarItem extends UIController {
     public static name: string;
+
     public static className: string;
 
     public getName(): string;
@@ -129,14 +130,19 @@ declare namespace toastui {
 
   class Button extends ToolbarItem {
     public static className: string;
+
     public static name: string;
 
     constructor(options?: ButtonOptions);
 
     public disable(): void;
+
     public enable(): void;
+
     public getName(): string;
+
     public isEnabled(): boolean;
+
     public setTooltip(text: string): void;
   }
 
@@ -153,15 +159,21 @@ declare namespace toastui {
 
   class Command {
     public static TYPE: CommandType;
+
     public static factory(typeStr: string, props: CommandProps): Command;
 
     constructor(name: string, type: number, keyMap?: string[]);
 
     public getName(): string;
+
     public getType(): number;
+
     public isGlobalType(): boolean;
+
     public isMDType(): boolean;
+
     public isWWType(): boolean;
+
     public setKeyMap(win: string, mac: string): void;
   }
 
@@ -205,15 +217,25 @@ declare namespace toastui {
 
   class Toolbar extends UIController {
     public disableAllButton(): void;
+
     public enableAllButton(): void;
+
     public getItems(): ToolbarItem[];
+
     public getItem(index: number): ToolbarItem;
+
     public setItems(items: ToolbarItem[]): void;
+
     public addItem(item: ToolbarItem | ButtonItem | string): void;
+
     public insertItem(index: number, item: ToolbarItem | ButtonItem | string): void;
+
     public indexOfItem(item: ToolbarItem): number;
+
     public removeItem(item: ToolbarItem | number, destroy?: boolean): ToolbarItem | undefined;
+
     public removeAllItems(): void;
+
     public addButton(button: Button, index?: number): void;
   }
 
@@ -246,12 +268,15 @@ declare namespace toastui {
     constructor(base: Editor, options?: CommandManagerOptions);
 
     public addCommand(command: Command): Command;
+
     public exec(name: string, ...args: any[]): any;
   }
 
   class CodeBlockManager {
     public createCodeBlockHtml(language: string, codeText: string): string;
+
     public getReplacer(language: string): ReplacerFunc;
+
     public setReplacer(language: string, replacer: ReplacerFunc): void;
   }
 
@@ -302,11 +327,15 @@ declare namespace toastui {
 
   class WwCodeBlockManager {
     constructor(wwe: WysiwygEditor);
-    
+
     public destroy(): void;
+
     public convertNodesToText(nodes: Node[]): string;
+
     public isInCodeBlock(range: Range): boolean;
+
     public prepareToPasteOnCodeblock(nodes: Node[]): DocumentFragment;
+
     public modifyCodeBlockForWysiwyg(node: HTMLElement): void;
   }
 
@@ -314,18 +343,31 @@ declare namespace toastui {
     constructor(wwe: WysiwygEditor);
 
     public destroy(): void;
+
     public getTableIDClassName(): string;
+
     public isInTable(range: Range): boolean;
+
     public isNonTextDeleting(range: Range): boolean;
+
     public isTableOrSubTableElement(pastingNodeName: string): boolean;
+
     public pasteClipboardData(clipboardTable: Node): boolean;
+
     public prepareToTableCellStuffing(trs: HTMLElement): object;
+
     public resetLastCellNode(): void;
+
     public setLastCellNode(node: HTMLElement): void;
+
     public tableCellAppendAidForTableElement(node: HTMLElement): void;
+
     public updateTableHtmlOfClipboardIfNeed(clipboardContainer: HTMLElement): void;
+
     public wrapDanglingTableCellsIntoTrIfNeed(container: HTMLElement): HTMLElement | null;
+
     public wrapTheadAndTbodyIntoTableIfNeed(container: HTMLElement): HTMLElement | null;
+
     public wrapTrsIntoTbodyIfNeed(container: HTMLElement): HTMLElement | null;
   }
 
@@ -333,197 +375,298 @@ declare namespace toastui {
     constructor(wwe: WysiwygEditor);
 
     public createRangeBySelectedCells(): void;
+
     public destroy(): void;
+
     public getSelectedCells(): HTMLElement;
-    public getSelectionRangeFromTable(selectionStart: HTMLElement, selectionEnd: HTMLElement): SelectionRange;
+
+    public getSelectionRangeFromTable(
+      selectionStart: HTMLElement,
+      selectionEnd: HTMLElement
+    ): SelectionRange;
+
     public highlightTableCellsBy(selectionStart: HTMLElement, selectionEnd: HTMLElement): void;
+
     public removeClassAttrbuteFromAllCellsIfNeed(): void;
+
     public setTableSelectionTimerIfNeed(selectionStart: HTMLElement): void;
+
     public styleToSelectedCells(onStyle: SquireExt, options?: object): void;
   }
 
   // @TODO: change mdDocument type definition to markdown-parser type file through importing
-  class MarkDownEditor {
-    static factory(el: HTMLElement, eventManager: EventManager, mdDocument: any, options: MarkdownEditorOptions): MarkDownEditor; 
-    
-    constructor(el: HTMLElement, eventManager: EventManager, mdDocument: any, options: MarkdownEditorOptions);
-    
+  class MarkdownEditor {
+    static factory(
+      el: HTMLElement,
+      eventManager: EventManager,
+      mdDocument: any,
+      options: MarkdownEditorOptions
+    ): MarkdownEditor;
+
+    constructor(
+      el: HTMLElement,
+      eventManager: EventManager,
+      mdDocument: any,
+      options: MarkdownEditorOptions
+    );
+
     public getTextObject(range: Range | RangeType): MdTextObject;
+
     public setValue(markdown: string, cursorToEnd?: boolean): void;
+
     public resetState(): void;
+
     public getMdDocument(): any;
   }
-  
+
   class WysiwygEditor {
-    static factory(el: HTMLElement, eventManager: EventManager, options: WysiwygEditorOptions): WysiwygEditor;
+    static factory(
+      el: HTMLElement,
+      eventManager: EventManager,
+      options: WysiwygEditorOptions
+    ): WysiwygEditor;
 
     constructor(el: HTMLElement, eventManager: EventManager, options: WysiwygEditorOptions);
 
     public addKeyEventHandler(keyMap: string | string[], handler: HandlerFunc): void;
+
     public addWidget(range: Range, node: Node, style: string, offset?: number): void;
+
     public blur(): void;
+
     public breakToNewDefaultBlock(range: Range, where?: string): void;
+
     public changeBlockFormatTo(targetTagName: string): void;
+
     public findTextNodeFilter(): boolean;
+
     public fixIMERange(): void;
+
     public focus(): void;
+
     public getEditor(): SquireExt;
+
     public getIMERange(): Range;
+
     public getRange(): Range;
+
     public getTextObject(range: Range): WwTextObject;
+
     public getValue(): string;
+
     public hasFormatWithRx(rx: RegExp): boolean;
+
     public init(useDefaultHTMLSanitizer: boolean): void;
+
     public insertText(text: string): void;
+
     public makeEmptyBlockCurrentSelection(): void;
+
     public moveCursorToEnd(): void;
+
     public moveCursorToStart(): void;
+
     public postProcessForChange(): void;
+
     public readySilentChange(): void;
+
     public remove(): void;
+
     public removeKeyEventHandler(keyMap: string, handler: HandlerFunc): void;
+
     public replaceContentText(container: Node, from: string, to: string): void;
+
     public replaceRelativeOffset(content: string, offset: number, overwriteLength: number): void;
+
     public replaceSelection(content: string, range: Range): void;
+
     public reset(): void;
+
     public restoreSavedSelection(): void;
+
     public saveSelection(range: Range): void;
+
     public scrollTop(value: number): boolean;
+
     public setHeight(height: number | string): void;
+
     public setPlaceholder(placeholder: string): void;
+
     public setMinHeight(minHeight: number): void;
+
     public setRange(range: Range): void;
-    public getLinkAttribute(): object
-    public setSelectionByContainerAndOffset(startContainer: Node, startOffset: number, endContainer: Node, endOffset: number): Range;
+
+    public getLinkAttribute(): object;
+
+    public setSelectionByContainerAndOffset(
+      startContainer: Node,
+      startOffset: number,
+      endContainer: Node,
+      endOffset: number
+    ): Range;
+
     public setValue(html: string, cursorToEnd?: boolean): void;
+
     public unwrapBlockTag(condition?: (tagName: string) => boolean): void;
+
     public getBody(): HTMLElement;
+
     public scrollIntoCursor(): void;
+
     public isInTable(range: Range): boolean;
   }
 
   class EventManager {
     public addEventType(type: string): void;
-    public emit(eventName: string): any[];
-    public emitReduce(eventName: string, sourceText: string): string;
-    public listen(typeStr: string, handler: HandlerFunc): void;
-    public removeEventHandler(typeStr: string, handler?: HandlerFunc): void;
-  }
 
-  interface DomUtil {
-    getNodeName(node: Node): string;
-    isTextNode(node: Node): boolean;
-    isElemNode(node: Node): boolean;
-    getTextLength(node: Node): number;
-    getOffsetLength(node: Node): number;
-    getPrevOffsetNodeUntil(node: Node, index: number, untilNodeName: string): Node;
-    getNodeOffsetOfParent(node: Node): number;
-    getChildNodeByOffset(node: Node, index: number): Node;
-    containsNode(root: Node, node: Node): boolean;
-    getTopPrevNodeUnder(node: Node, underNode: Node): Node;
-    getTopNextNodeUnder(node: Node, underNode: Node): Node;
-    getParentUntilBy(node: Node, matchCondition: (node: Node) => boolean,
-    stopCondition: (node: Node) => boolean): Node;
-    getParentUntil(node: Node, untilNode: string | Node): Node;
-    getTopBlockNode(node: Node): Node;
-    getPrevTextNode(node: Node): Node;
-    findOffsetNode(root: Element, offsetList: number[],
-    textNodeFilter: (text: string) => string): FindOffsetNodeInfo[];
-    getPath(node: Node, root: Node): NodeInfo[];
-    getNodeInfo(node: Node): NodeInfo;
-    getTableCellByDirection(node: Element, direction: string): Element | null;
-    getSiblingRowCellByDirection(node: Element, direction: string, needEdgeCell?: boolean): Element | null;
+    public emit(eventName: string): any[];
+
+    public emitReduce(eventName: string, sourceText: string): string;
+
+    public listen(typeStr: string, handler: HandlerFunc): void;
+
+    public removeEventHandler(typeStr: string, handler?: HandlerFunc): void;
   }
 
   export class Editor {
     public static codeBlockManager: CodeBlockManager;
+
     public static CommandManager: CommandManager;
-    public static domUtils: DomUtil;
-    public static i18n: I18n;
+
     public static isViewer: boolean;
+
     public static WwCodeBlockManager: WwCodeBlockManager;
+
     public static WwTableManager: WwTableManager;
+
     public static WwTableSelectionManager: WwTableSelectionManager;
 
     public static factory(options: EditorOptions): Editor | Viewer;
+
     public static getInstances(): Editor[];
+
     public static setLanguage(code: string, data: LanguageData): void;
 
     constructor(options: EditorOptions);
 
     public addHook(type: string, handler: HandlerFunc): void;
+
     public addWidget(selection: Range, node: Node, style: string, offset?: number): void;
+
     public afterAddedCommand(): void;
+
     public blur(): void;
+
     public changeMode(mode: string, isWithoutFocus?: boolean): void;
+
     public changePreviewStyle(style: PreviewStyle): void;
+
     public exec(name: string, ...args: any[]): void;
+
     public focus(): void;
+
     public getCodeMirror(): CodeMirrorType;
-    public getCurrentModeEditor(): MarkDownEditor | WysiwygEditor;
+
+    public getCurrentModeEditor(): MarkdownEditor | WysiwygEditor;
+
     public getCurrentPreviewStyle(): PreviewStyle;
+
     public getHtml(): string;
+
     public getMarkdown(): string;
+
     public getRange(): Range | RangeType;
+
     public getSelectedText(): string;
+
     public getSquire(): SquireExt;
+
     public getTextObject(range: Range | RangeType): MdTextObject | WwTextObject;
+
     public getUI(): UI;
+
     public getValue(): string;
+
     public height(height: string): string;
+
     public hide(): void;
+
     public insertText(text: string): void;
+
     public isMarkdownMode(): boolean;
+
     public isViewer(): boolean;
+
     public isWysiwygMode(): boolean;
+
     public minHeight(minHeight: string): string;
+
     public moveCursorToEnd(): void;
+
     public moveCursorToStart(): void;
+
     public off(type: string): void;
+
     public on(type: string, handler: HandlerFunc): void;
+
     public remove(): void;
+
     public removeHook(type: string): void;
+
     public reset(): void;
+
     public scrollTop(value: number): number;
+
     public setHtml(html: string, cursorToEnd?: boolean): void;
+
     public setMarkdown(markdown: string, cursorToEnd?: boolean): void;
+
     public setUI(UI: UI): void;
+
     public setValue(value: string, cursorToEnd?: boolean): void;
+
     public show(): void;
+
     public setCodeBlockLanguages(languages?: string[]): void;
   }
 
   export class Viewer {
     public static isViewer: boolean;
-    public static domUtils: DomUtil;
+
     public static codeBlockManager: CodeBlockManager;
+
     public static WwCodeBlockManager: null;
+
     public static WwTableManager: null;
+
     public static WwTableSelectionManager: null;
 
     constructor(options: ViewerOptions);
 
     public addHook(type: string, handler: HandlerFunc): void;
+
     public isMarkdownMode(): boolean;
+
     public isViewer(): boolean;
+
     public isWysiwygMode(): boolean;
+
     public off(type: string): void;
+
     public on(type: string, handler: HandlerFunc): void;
+
     public remove(): void;
+
     public setMarkdown(markdown: string): void;
+
     public setValue(markdown: string): void;
+
     public setCodeBlockLanguages(languages?: string[]): void;
   }
 }
 
 declare module '@toast-ui/editor' {
   export type EditorOptions = toastui.EditorOptions;
-  export default toastui.Editor;
-}
-
-declare module '@toast-ui/editor/dist/toastui-editor-all' {
-  export type EditorOptions = toastui.EditorOptions;
-  export type ViewerOptions = toastui.ViewerOptions;
   export default toastui.Editor;
 }
 
