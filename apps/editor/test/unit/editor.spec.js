@@ -17,10 +17,6 @@ describe('Editor', () => {
   let editor, container;
 
   describe('module export', () => {
-    it("domUtils should have it' functions", () => {
-      expect(typeof Editor.domUtils.getNodeName).toBe('function');
-    });
-
     it('codeBlockManager should be CodeBlockManager instance', () => {
       expect(Editor.codeBlockManager instanceof CodeBlockManager).toBe(true);
     });
