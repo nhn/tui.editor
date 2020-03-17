@@ -1,4 +1,4 @@
-# Documents 📄
+# 📄 Documents
 
 ## Tutorials
 
@@ -9,8 +9,8 @@
 
 ### Migration Guide
 
-- [✈️ v2.0 Migration Guide](v2.0-migration-guide.md)
-- [✈️ v2.0 Migration Guide (Koerean Version)](v2.0-migration-guide-ko.md)
+- [✈️ v2.0 Migration Guide](./v2.0-migration-guide.md)
+- [✈️ v2.0 Migration Guide (Koerean Version)](./v2.0-migration-guide-ko.md)
 
 ## Etc
 
