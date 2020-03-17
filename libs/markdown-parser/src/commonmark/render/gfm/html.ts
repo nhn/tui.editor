@@ -74,9 +74,9 @@ export class GfmHtmlRenderer extends HtmlRenderer {
     const tagName = tablePart.type === 'tableHead' ? 'th' : 'td';
     const table = tablePart.parent as TableNode;
     const attrs = this.attrs(node);
-    const { align } = table.columns[node.columnIdx];
-    if (align !== 'left') {
-      attrs.push(['align', align]);
+    const columnInfo = table.columns[node.columnIdx];
+    if (columnInfo && columnInfo.align !== 'left') {
+      attrs.push(['align', columnInfo.align]);
     }
 
     if (entering) {

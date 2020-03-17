@@ -131,7 +131,7 @@ function _findFocusCell(newTable, rowIndex, colIndex) {
   const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, newColIndex);
   const foundTr = newTable.querySelectorAll('tr')[cellElementIndex.rowIndex];
 
-  return foundTr.querySelectorAll('td')[cellElementIndex.colIndex];
+  return foundTr.querySelectorAll('td, th')[cellElementIndex.colIndex];
 }
 
 /**
