@@ -394,19 +394,19 @@ declare namespace toastui {
     public styleToSelectedCells(onStyle: SquireExt, options?: object): void;
   }
 
-  // @TODO: change mdDocument type definition to markdown-parser type file through importing
+  // @TODO: change toastMark type definition to @toast-ui/toastmark type file through importing
   class MarkdownEditor {
     static factory(
       el: HTMLElement,
       eventManager: EventManager,
-      mdDocument: any,
+      toastMark: any,
       options: MarkdownEditorOptions
     ): MarkdownEditor;
 
     constructor(
       el: HTMLElement,
       eventManager: EventManager,
-      mdDocument: any,
+      toastMark: any,
       options: MarkdownEditorOptions
     );
 
