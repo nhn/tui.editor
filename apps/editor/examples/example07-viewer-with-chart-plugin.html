@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css" />
   </head>
   <body>
-    <div class="code-html contents">
-      <!-- Viewer -->
+    <div class="tui-doc-description"></div>
+    <div class="code-html tui-doc-contents">
       <div id="viewer"></div>
     </div>
     <!-- Added to check demo page in Internet Explorer -->
@@ -25,12 +25,19 @@
       const Viewer = toastui.Editor;
       const { chart } = Viewer.plugin;
 
-      const instance = new Viewer({
+      const chartOptions = {
+        minWidth: 100,
+        maxWidth: 600,
+        minHeight: 100,
+        maxHeight: 300
+      };
+
+      const viewer = new Viewer({
         el: document.querySelector('#viewer'),
         previewStyle: 'vertical',
         height: '500px',
         initialValue: chartContent,
-        plugins: [chart]
+        plugins: [[chart, chartOptions]]
       });
     </script>
   </body>

@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
-    <title>3. Editor With WYSIWYG Mode</title>
+    <title>20. Internationalization (I18N)</title>
     <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
     <!-- Editor's Dependencies -->
     <link
@@ -19,15 +19,16 @@
     </div>
     <!-- Added to check demo page in Internet Explorer -->
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
-    <script src="./data/md-default.js"></script>
     <!-- Editor -->
     <script src="../dist/toastui-editor-all.js"></script>
+    <script src="../dist/i18n/ko-kr.js"></script>
     <script type="text/babel" class="code-js">
       const editor = new toastui.Editor({
         el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
         height: '500px',
-        initialValue: content,
-        initialEditType: 'wysiwyg'
+        initialValue: 'Hover on item above show different language tooltips.',
+        language: 'ko'
       });
     </script>
   </body>

@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
-    <title>8. Editor with Code Syntax Highlight Plugin</title>
+    <title>17. Creating Plugin</title>
     <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
     <!-- Editor's Dependencies -->
     <link
@@ -11,47 +11,49 @@
     />
     <!-- Editor -->
     <link rel="stylesheet" href="../dist/toastui-editor.css" />
-    <!-- Editor's Plugin -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
-    />
   </head>
   <body>
     <div class="tui-doc-description"></div>
     <div class="code-html tui-doc-contents">
-      <!-- Editor -->
-      <h2>Editor</h2>
       <div id="editor"></div>
-      <!-- Viewer Using Editor -->
-      <h2>Viewer</h2>
-      <div id="viewer"></div>
     </div>
     <!-- Added to check demo page in Internet Explorer -->
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
-    <script src="./data/md-plugins.js"></script>
     <!-- Editor -->
     <script src="../dist/toastui-editor-all.js"></script>
-    <!-- Editor's Plugin -->
-    <script src="http://localhost:8082/dist/cdn/toastui-editor-plugin-code-syntax-highlight-all.js"></script>
     <script type="text/babel" class="code-js">
       const { Editor } = toastui;
-      const { codeSyntaxHighlight } = Editor.plugin;
+
+      // Step 1: Define the user plugin function
+      function youtubePlugin() {
+        Editor.codeBlockManager.setReplacer('youtube', function(youtubeId) {
+          // Indentify multiple code blocks
+          const wrapperId = `yt${Math.random()
+            .toString(36)
+            .substr(2, 10)}`;
+
+          // Avoid sanitizing iframe tag
+          setTimeout(renderYoutube.bind(null, wrapperId, youtubeId), 0);
+
+          return `<div id="${wrapperId}"></div>`;
+        });
+      }
+
+      function renderYoutube(wrapperId, youtubeId) {
+        const el = document.querySelector(`#${wrapperId}`);
+
+        el.innerHTML = `<iframe width="420" height="315" src="https://www.youtube.com/embed/${youtubeId}"></iframe>`;
+      }
+
+      const content = ['```youtube', 'XyenY12fzAk', '```'].join('\n');
 
       const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
-        initialValue: codeContent,
-        plugins: [codeSyntaxHighlight]
-      });
-
-      const viewer = Editor.factory({
-        el: document.querySelector('#viewer'),
-        viewer: true,
-        height: '500px',
-        initialValue: codeContent,
-        plugins: [codeSyntaxHighlight]
+        initialValue: content,
+        // Step 2: Set the defined plugin function as an option value
+        plugins: [youtubePlugin]
       });
     </script>
   </body>

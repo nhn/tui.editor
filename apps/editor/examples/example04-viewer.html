@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="../dist/toastui-editor-viewer.css" />
   </head>
   <body>
-    <div class="code-html contents">
+    <div class="tui-doc-description"></div>
+    <div class="code-html tui-doc-contents">
       <div id="viewer"></div>
     </div>
     <!-- Added to check demo page in Internet Explorer -->
@@ -17,7 +18,7 @@
     <!-- Viewer -->
     <script src="../dist/toastui-editor-viewer.js"></script>
     <script type="text/babel" class="code-js">
-      const instance = new toastui.Editor({
+      const viewer = new toastui.Editor({
         el: document.querySelector('#viewer'),
         height: '500px',
         initialValue: content

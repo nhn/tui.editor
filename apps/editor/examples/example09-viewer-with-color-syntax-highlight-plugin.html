@@ -13,8 +13,8 @@
     />
   </head>
   <body>
-    <div class="code-html contents">
-      <!-- Viewer -->
+    <div class="tui-doc-description"></div>
+    <div class="code-html tui-doc-contents">
       <div id="viewer"></div>
     </div>
     <!-- Added to check demo page in Internet Explorer -->
@@ -28,7 +28,7 @@
       const Viewer = toastui.Editor;
       const { codeSyntaxHighlight } = Viewer.plugin;
 
-      const instance = new Viewer({
+      const viewer = new Viewer({
         el: document.querySelector('#viewer'),
         previewStyle: 'vertical',
         height: '500px',

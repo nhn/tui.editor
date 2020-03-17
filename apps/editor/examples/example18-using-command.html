@@ -2,7 +2,7 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
-    <title>3. Editor With WYSIWYG Mode</title>
+    <title>18. Using Command</title>
     <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
     <!-- Editor's Dependencies -->
     <link
@@ -15,19 +15,23 @@
   <body>
     <div class="tui-doc-description"></div>
     <div class="code-html tui-doc-contents">
+      <button id="btn" class="btn">Execute the "Bold" command</button>
       <div id="editor"></div>
     </div>
     <!-- Added to check demo page in Internet Explorer -->
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
-    <script src="./data/md-default.js"></script>
     <!-- Editor -->
     <script src="../dist/toastui-editor-all.js"></script>
     <script type="text/babel" class="code-js">
       const editor = new toastui.Editor({
         el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
         height: '500px',
-        initialValue: content,
-        initialEditType: 'wysiwyg'
+        initialValue: 'Select this line and click the button above.'
+      });
+
+      document.getElementById('btn').addEventListener('click', () => {
+        editor.exec('Bold');
       });
     </script>
   </body>

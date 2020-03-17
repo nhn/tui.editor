@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 const chartContent = [
   '```chart',
-  'category1,category2',
+  ',category1,category2',
   'Jan,21,23',
   'Feb,31,17',
   '',
