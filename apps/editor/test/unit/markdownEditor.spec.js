@@ -23,7 +23,7 @@ describe('MarkdownEditor', () => {
 
   it('when something change emit contentChangedFromMarkdown event', done => {
     em.listen('contentChangedFromMarkdown', ({ nodes, removedNodeRange }) => {
-      const expectedMdNode = mde.getMdDocument().findFirstNodeAtLine(1);
+      const expectedMdNode = mde.getToastMark().findFirstNodeAtLine(1);
 
       expect(nodes[0]).toEqual(expectedMdNode);
       expect(removedNodeRange).toBeNull();

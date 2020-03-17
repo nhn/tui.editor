@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import toMark from '@toast-ui/to-mark';
-import { Parser } from '@toast-ui/markdown-parser';
+import { Parser } from '@toast-ui/toastmark';
 
 import MarkdownRenderer from './markdownRenderer';
 import htmlSanitizer from './htmlSanitizer';

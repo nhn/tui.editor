@@ -46,7 +46,7 @@ function getTopInfo(cm, startLine, mdNode, node, previewEl) {
 
 export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
   const { _previewContent: root, el: previewEl } = preview;
-  const { cm, mdDocument } = editor;
+  const { cm, toastMark } = editor;
   const { left, top: scrollTop, height, clientHeight } = cm.getScrollInfo();
   const isBottomPos = height - scrollTop <= clientHeight;
 
@@ -57,7 +57,7 @@ export function syncPreviewScrollTopToMarkdown(editor, preview, scrollEvent) {
     const { line: startLine } = scrollEvent
       ? cm.coordsChar({ left, top: scrollTop }, 'local')
       : cm.getCursor('from');
-    const firstMdNode = mdDocument.findFirstNodeAtLine(startLine + 1);
+    const firstMdNode = toastMark.findFirstNodeAtLine(startLine + 1);
 
     if (!firstMdNode || isHtmlNode(firstMdNode)) {
       return;

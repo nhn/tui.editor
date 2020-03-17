@@ -199,14 +199,14 @@ class ToastUIEditor {
 
     this.setUI(this.options.UI || new DefaultUI(this));
 
-    this.mdDocument = new ToastMark('', {
+    this.toastMark = new ToastMark('', {
       disallowedHtmlBlockTags: ['br']
     });
 
     this.mdEditor = MarkdownEditor.factory(
       this.layout.getMdEditorContainerEl(),
       this.eventManager,
-      this.mdDocument,
+      this.toastMark,
       this.options
     );
     this.preview = new MarkdownPreview(

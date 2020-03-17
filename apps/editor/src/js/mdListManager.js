@@ -28,7 +28,7 @@ class MdListManager {
   constructor(mde) {
     this.cm = mde.getEditor();
     this.doc = this.cm.getDoc();
-    this.mdDocument = mde.getMdDocument();
+    this.toastMark = mde.getToastMark();
 
     /**
      * Name property
@@ -210,7 +210,7 @@ class MdListManager {
     const text = this.doc.getLine(lineNumber);
 
     if (text) {
-      let mdNode = this.mdDocument.findFirstNodeAtLine(lineNumber + 1);
+      let mdNode = this.toastMark.findFirstNodeAtLine(lineNumber + 1);
 
       while (mdNode && mdNode.type !== 'document') {
         if (mdNode.type === 'list') {
