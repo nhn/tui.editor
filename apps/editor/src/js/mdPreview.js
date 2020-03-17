@@ -52,7 +52,6 @@ class MarkdownPreview extends Preview {
 
   update(changed) {
     const { nodes, removedNodeRange } = changed;
-    const nodeIds = nodes.map(node => node.id);
     const contentEl = this._previewContent;
     const newHtml = this.eventManager.emitReduce(
       'convertorAfterMarkdownToHtmlConverted',
@@ -84,7 +83,12 @@ class MarkdownPreview extends Preview {
       }
     }
     this.eventManager.emit('previewRenderAfter', this);
-    this.lazyRunner.run('invokeCodeBlock', nodeIds);
+
+    const codeBlockEls = this.getCodeBlockElements(nodes.map(node => node.id));
+
+    if (codeBlockEls.length) {
+      this.lazyRunner.run('invokeCodeBlock', codeBlockEls);
+    }
   }
 
   /**
