@@ -25,7 +25,6 @@ import Convertor from './convertor';
 import Viewer from './viewer';
 import i18n from './i18n';
 import DefaultUI from './ui/defaultUI';
-import domUtils from './utils/dom';
 import WwTableManager from './wwTableManager';
 import WwTableSelectionManager from './wwTableSelectionManager';
 import codeBlockManager from './codeBlockManager';
@@ -117,7 +116,6 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  *     @param {Array.<Function|Array>} plugins - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  *     @param {object} [options.customConvertor] - convertor extention
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
- *     @param {string} [options.previewDelayTime] - the delay time for rendering preview
  *     @param {object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
  */
 class ToastUIEditor {
@@ -215,8 +213,7 @@ class ToastUIEditor {
       this.layout.getPreviewEl(),
       this.eventManager,
       this.convertor,
-      false,
-      this.options.previewDelayTime
+      false
     );
 
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
@@ -835,13 +832,6 @@ class ToastUIEditor {
  * @type {boolean}
  */
 ToastUIEditor.isViewer = false;
-
-/**
- * domUtil instance
- * @type {DomUtil}
- * @ignore
- */
-ToastUIEditor.domUtils = domUtils;
 
 /**
  * CodeBlockManager instance using in plugins

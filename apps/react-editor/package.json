@@ -3,6 +3,11 @@
   "version": "1.0.1",
   "description": "TOAST UI Editor for React",
   "main": "dist/toastui-react-editor.js",
+  "files": [
+    "dist",
+    "src",
+    "index.d.ts"
+  ],
   "scripts": {
     "lint": "eslint src/**",
     "build": "webpack -p --progress",

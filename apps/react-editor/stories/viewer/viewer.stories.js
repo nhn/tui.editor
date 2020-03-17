@@ -1,7 +1,6 @@
 import React from 'react';
 import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
-import '@toast-ui/editor/dist/toastui-editor-contents.min.css';
 
 import { storiesOf } from '@storybook/react';
 import { withKnobs } from '@storybook/addon-knobs';

@@ -2,7 +2,7 @@ import { syncPreviewScrollTopToMarkdown, isBlockedPreviewScrollEvent } from './e
 import { syncMarkdownScrollTopToPreview, isBlockedMarkdownScrollEvent } from './previewScroll';
 import { createButton, isActive } from './ui/button';
 
-let isScrollable = false;
+let isScrollable = true;
 
 /* eslint-disable no-return-assign */
 export function register(editor) {

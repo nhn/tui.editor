@@ -102,7 +102,6 @@
   },
   "dependencies": {
     "@types/codemirror": "0.0.71",
-    "@types/jquery": "^3.3.29",
     "codemirror": "^5.48.4"
   }
 }

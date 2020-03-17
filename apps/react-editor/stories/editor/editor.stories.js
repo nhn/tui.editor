@@ -1,7 +1,6 @@
 import React from 'react';
 import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.min.css';
-import '@toast-ui/editor/dist/toastui-editor-contents.min.css';
 
 import { storiesOf } from '@storybook/react';
 import { withKnobs } from '@storybook/addon-knobs';
@@ -24,38 +23,36 @@ stories.add('demo', () => {
   );
 });
 
-stories.add('customize toolbar', () => {
-  return (
-    <Editor
-      previewStyle="vertical"
-      height="400px"
-      initialEditType="markdown"
-      initialValue="hello customize toolbar"
-      toolbarItems={[
-        'heading',
-        'bold',
-        'italic'
-        // 'strike',
-        // 'divider',
-        // 'hr',
-        // 'quote',
-        // 'divider',
-        // 'ul',
-        // 'ol',
-        // 'task',
-        // 'indent',
-        // 'outdent',
-        // 'divider',
-        // 'table',
-        // 'image',
-        // 'link',
-        // 'divider',
-        // 'code',
-        // 'codeblock'
-      ]}
-    />
-  );
-});
+stories.add('customize toolbar', () => (
+  <Editor
+    previewStyle="vertical"
+    height="400px"
+    initialEditType="markdown"
+    initialValue="hello customize toolbar"
+    toolbarItems={[
+      'heading',
+      'bold',
+      'italic'
+      // 'strike',
+      // 'divider',
+      // 'hr',
+      // 'quote',
+      // 'divider',
+      // 'ul',
+      // 'ol',
+      // 'task',
+      // 'indent',
+      // 'outdent',
+      // 'divider',
+      // 'table',
+      // 'image',
+      // 'link',
+      // 'divider',
+      // 'code',
+      // 'codeblock'
+    ]}
+  />
+));
 
 stories.add('customize feature', () => {
   class Story extends React.Component {
@@ -126,6 +123,7 @@ stories.add('setValue programmatically', () => {
 stories.add('dynamically change react state', () => {
   class Story extends React.Component {
     ref = React.createRef();
+
     state = {
       content: '',
       height: 400,
@@ -140,13 +138,6 @@ stories.add('dynamically change react state', () => {
         ...this.state,
         content: value
       });
-    };
-
-    toggleEditType = () => {
-      this.setState(prevState => ({
-        ...prevState,
-        editType: prevState.editType === 'markdown' ? 'wysiwyg' : 'markdown'
-      }));
     };
 
     togglePreviewStyle = () => {
@@ -174,7 +165,6 @@ stories.add('dynamically change react state', () => {
             onChange={this.handleChange}
             ref={this.ref}
           />
-          <button onClick={this.toggleEditType}>toggle edit type</button>
           <button onClick={this.togglePreviewStyle}>toggle preview style</button>
           <button onClick={this.changeHeight}>change height</button>
         </>
