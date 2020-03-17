@@ -516,16 +516,16 @@ function _setWwCodeBlockManagerForChart(editor) {
 /**
  * Determine the event is from codeblock in markdown/codeblock editor
  * @param {CodeMirror} cm - codemirror instance of editor
- * @param {MarkdownDocument} mdDocument - markdown document instance of editor
+ * @param {ToastMark} toastMark - markdown document instance of editor
  * @param {string} source - event source
  * @returns {boolean} - true for the event from codeblock in markdown/codeblock editor
  * @ignore
  */
-function _isFromCodeBlockInCodeMirror(cm, mdDocument, source) {
+function _isFromCodeBlockInCodeMirror(cm, toastMark, source) {
   const { line, ch } = cm.getCursor();
   const mdLine = line + 1;
   const mdCh = cm.getLine(line).length === ch ? ch : ch + 1;
-  const mdNode = mdDocument.findNodeAtPosition([mdLine, mdCh]);
+  const mdNode = toastMark.findNodeAtPosition([mdLine, mdCh]);
   const isInMdCodeBlock = mdNode && mdNode.type === 'codeBlock';
 
   // cursor in codeblock in markdown editor
@@ -545,13 +545,13 @@ function _isFromCodeBlockInCodeMirror(cm, mdDocument, source) {
  * because pasteBefore event from wysiwyg has been already processed table data to string,
  * on the other hand we need a table element
  * @param {CodeMirror} cm - codemirror instance of editor
- * @param {MarkdownDocument} mdDocument - markdown document instance of editor
+ * @param {ToastMark} toastMark - markdown document instance of editor
  * @param {string} source - event source
  * @param {Object} data - event data
  * @ignore
  */
-function _onMDPasteBefore(cm, mdDocument, { source, data: eventData }) {
-  if (!_isFromCodeBlockInCodeMirror(cm, mdDocument, source, eventData)) {
+function _onMDPasteBefore(cm, toastMark, { source, data: eventData }) {
+  if (!_isFromCodeBlockInCodeMirror(cm, toastMark, source, eventData)) {
     return;
   }
 
@@ -597,9 +597,9 @@ export default function chartPlugin(editor, options = {}) {
     // treat wysiwyg paste event
     _setWwCodeBlockManagerForChart(editor);
 
-    const { cm, mdDocument } = editor.mdEditor;
+    const { cm, toastMark } = editor.mdEditor;
 
     // treat markdown paste event
-    editor.eventManager.listen('pasteBefore', ev => _onMDPasteBefore(cm, mdDocument, ev));
+    editor.eventManager.listen('pasteBefore', ev => _onMDPasteBefore(cm, toastMark, ev));
   }
 }
