@@ -19,12 +19,11 @@ const htmlRenderer = new MarkdownRenderer({ nodeId: true });
  * @param {EventManager} eventManager - event manager
  * @param {Convertor} convertor - convertor
  * @param {boolean} isViewer - true for view only mode
- * @param {Number} delayTime - lazyRunner delay time
  * @ignore
  */
 class MarkdownPreview extends Preview {
-  constructor(el, eventManager, convertor, isViewer, delayTime) {
-    super(el, eventManager, convertor, isViewer, delayTime);
+  constructor(el, eventManager, convertor, isViewer) {
+    super(el, eventManager, convertor, isViewer);
     this._initEvent();
     this.lazyRunner.registerLazyRunFunction(
       'invokeCodeBlock',

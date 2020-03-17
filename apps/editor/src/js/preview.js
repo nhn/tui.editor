@@ -13,7 +13,6 @@ import codeBlockManager from './codeBlockManager';
  * @param {EventManager} eventManager -  Event manager instance
  * @param {Convertor} convertor - Convertor instance
  * @param {boolean} isViewer - whether viewer mode or not
- * @param {Number} delayTime - lazyRunner delay time
  * @ignore
  */
 class Preview {

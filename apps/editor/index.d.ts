@@ -59,7 +59,6 @@ declare namespace toastui {
     plugins?: Plugin[];
     customConvertor?: Convertor;
     placeholder?: string;
-    previewDelayTime?: string;
     linkAttribute?: object;
   }
 
