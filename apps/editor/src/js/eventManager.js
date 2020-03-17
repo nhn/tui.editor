@@ -80,7 +80,8 @@ const eventList = [
   'hide',
   'changeLanguage',
   'requireScrollSync',
-  'requireScrollIntoView'
+  'requireScrollIntoView',
+  'setCodeBlockLanguages'
 ];
 
 /**

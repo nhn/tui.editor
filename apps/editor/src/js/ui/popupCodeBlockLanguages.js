@@ -14,6 +14,15 @@ import domUtils from '../utils/dom';
 
 const BUTTON_CLASS_PREFIX = 'te-popup-code-block-lang-';
 
+function getButtonsHTML(languages) {
+  return languages
+    .map(
+      lang =>
+        `<button type="button" class="${BUTTON_CLASS_PREFIX}${lang}" data-lang="${lang}">${lang}</button>`
+    )
+    .join('');
+}
+
 /**
  * Class Popup code block languages select list
  * @param {LayerPopupOption} options - layer popup option
@@ -21,20 +30,13 @@ const BUTTON_CLASS_PREFIX = 'te-popup-code-block-lang-';
  */
 class PopupCodeBlockLanguages extends LayerPopup {
   constructor(options) {
-    const popupButtonsHTML = [];
     const { languages } = options;
-
-    languages.forEach(lang =>
-      popupButtonsHTML.push(
-        `<button type="button" class="${BUTTON_CLASS_PREFIX}${lang}" data-lang="${lang}">${lang}</button>`
-      )
-    );
 
     options = extend(
       {
         header: false,
         className: 'te-popup-code-block-languages',
-        content: popupButtonsHTML.join('')
+        content: getButtonsHTML(languages)
       },
       options
     );
@@ -51,13 +53,20 @@ class PopupCodeBlockLanguages extends LayerPopup {
   _initInstance(options) {
     super._initInstance(options);
 
+    this.eventManager = options.eventManager;
     this._onSelectedLanguage = null;
     this._onDismissed = null;
     this._currentButton = null;
     this._buttons = null;
     this._languages = options.languages;
+    this._btnMousedownHandler = event => {
+      const language = event.target.getAttribute('data-lang');
 
-    this.eventManager = options.eventManager;
+      if (this._onSelectedLanguage) {
+        this._onSelectedLanguage(language);
+      }
+      this.hide();
+    };
   }
 
   /**
@@ -82,16 +91,7 @@ class PopupCodeBlockLanguages extends LayerPopup {
   _initDOMEvent() {
     super._initDOMEvent();
 
-    const handler = event => {
-      const language = event.target.getAttribute('data-lang');
-
-      if (this._onSelectedLanguage) {
-        this._onSelectedLanguage(language);
-      }
-      this.hide();
-    };
-
-    this._languages.forEach(lang => this.on(`mousedown .${BUTTON_CLASS_PREFIX}${lang}`, handler));
+    this._addBtnMouseDownHandler();
   }
 
   /**
@@ -117,6 +117,9 @@ class PopupCodeBlockLanguages extends LayerPopup {
     this.eventManager.listen('closeAllPopup', () => this.hide());
     this.eventManager.listen('closePopupCodeBlockLanguages', () => this.hide());
     this.eventManager.listen('scroll', () => this.hide());
+    this.eventManager.listen('setCodeBlockLanguages', languages =>
+      this._changeLanguageButtons(languages)
+    );
   }
 
   /**
@@ -208,6 +211,25 @@ class PopupCodeBlockLanguages extends LayerPopup {
     this._onSelectedLanguage = null;
     this._onDismissed = null;
     super.hide();
+  }
+
+  _addBtnMouseDownHandler() {
+    this._languages.forEach(lang => {
+      this.off(`mousedown .${BUTTON_CLASS_PREFIX}${lang}`, this._btnMousedownHandler);
+      this.on(`mousedown .${BUTTON_CLASS_PREFIX}${lang}`, this._btnMousedownHandler);
+    });
+  }
+
+  _changeLanguageButtons(languages) {
+    this._languages = languages;
+    if (languages && languages.length) {
+      this.content = getButtonsHTML(languages);
+      this.setContent(this.content);
+      this._addBtnMouseDownHandler();
+
+      this._buttons = domUtils.findAll(this.el, 'button');
+      this._activateButtonByIndex(0);
+    }
   }
 }
 

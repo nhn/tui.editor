@@ -54,14 +54,16 @@ class ModeSwitch extends UIController {
    */
   _rootElement;
 
-  constructor(rootElement, initialType) {
+  constructor(rootElement, initialType, eventManager) {
     super({
       tagName: 'div',
       className: 'te-mode-switch'
     });
 
+    this._eventManager = eventManager;
     this._render(rootElement);
     this._switchType(isExisty(initialType) ? initialType : MARKDOWN);
+    this._initEvent();
   }
 
   /**
@@ -130,6 +132,15 @@ class ModeSwitch extends UIController {
     this._type = type;
     this._setActiveButton(type);
     this.trigger('modeSwitched', this._type);
+  }
+
+  _initEvent() {
+    this._eventManager.listen('changeMode', type => {
+      if (this._type !== type) {
+        this._type = type;
+        this._setActiveButton(type);
+      }
+    });
   }
 }
 

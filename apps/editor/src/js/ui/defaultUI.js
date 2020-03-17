@@ -127,7 +127,7 @@ class DefaultUI {
     this._editorSection.appendChild(this._editor.layout.getEditorEl());
 
     this._initToolbar(this._editor.eventManager, toolbarItems);
-    this._initModeSwitch(hideModeSwitch);
+    this._initModeSwitch(this._editor.eventManager, hideModeSwitch);
 
     this._initPopupAddLink();
     this._initPopupAddImage();
@@ -154,11 +154,11 @@ class DefaultUI {
     this.el.querySelector(`.${CLASS_TOOLBAR}`).appendChild(toolbar.el);
   }
 
-  _initModeSwitch(hideModeSwitch) {
+  _initModeSwitch(eventManager, hideModeSwitch) {
     const modeSwitchTabBar = this.el.querySelector(`.${CLASS_MODE_SWITCH}`);
     const editType =
       this._initialEditType === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG;
-    const modeSwitch = new ModeSwitch(modeSwitchTabBar, editType);
+    const modeSwitch = new ModeSwitch(modeSwitchTabBar, editType, eventManager);
 
     this._modeSwitch = modeSwitch;
 

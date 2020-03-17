@@ -199,6 +199,8 @@ class ToastUIEditor {
     this.i18n = i18n;
     this.i18n.setCode(this.options.language);
 
+    this.setUI(this.options.UI || new DefaultUI(this));
+
     this.mdDocument = new MarkdownDocument('', {
       disallowedHtmlBlockTags: ['br']
     });
@@ -229,8 +231,6 @@ class ToastUIEditor {
     if (this.options.plugins) {
       invokePlugins(this.options.plugins, this);
     }
-
-    this.setUI(this.options.UI || new DefaultUI(this));
 
     this.changePreviewStyle(this.options.previewStyle);
 
@@ -792,6 +792,7 @@ class ToastUIEditor {
         this.codeBlockLanguages.push(lang);
       }
     });
+    this.eventManager.emit('setCodeBlockLanguages', languages);
   }
 
   /**
