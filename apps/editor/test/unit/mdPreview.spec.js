@@ -2,7 +2,7 @@
  * @fileoverview test markdown preview
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import { MarkdownDocument } from '@toast-ui/markdown-parser';
+import { ToastMark } from '@toast-ui/toastmark';
 import MarkdownPreview from '@/mdPreview';
 import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
@@ -37,7 +37,7 @@ describe('Preview', () => {
   });
 
   it('listen to contentChangedFromMarkdown and update', () => {
-    const doc = new MarkdownDocument();
+    const doc = new ToastMark();
     const editResult = doc.editMarkdown([1, 7], [1, 7], 'changed');
 
     eventManager.emit('contentChangedFromMarkdown', editResult);

@@ -2,7 +2,7 @@
  * @fileoverview test markdown editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import { MarkdownDocument } from '@toast-ui/markdown-parser';
+import { ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 
@@ -14,7 +14,7 @@ describe('MarkdownEditor', () => {
     document.body.appendChild(container);
 
     em = new EventManager();
-    mde = new MarkdownEditor(container, em, new MarkdownDocument());
+    mde = new MarkdownEditor(container, em, new ToastMark());
   });
 
   afterEach(() => {
