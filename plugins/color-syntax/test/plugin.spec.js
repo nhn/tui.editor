@@ -182,7 +182,7 @@ describe('colorSyntax', () => {
     });
 
     it('add color in markdown', () => {
-      editor.setValue('text');
+      editor.setMarkdown('text');
       editor.getCodeMirror().execCommand('selectAll');
       editor.exec('color', '#f0f');
 
@@ -192,7 +192,7 @@ describe('colorSyntax', () => {
     it(`don't add color if value isn't truthy in markdown`, () => {
       let falsyValue;
 
-      editor.setValue('text');
+      editor.setMarkdown('text');
       editor.getCodeMirror().execCommand('selectAll');
       editor.exec('color', falsyValue);
 

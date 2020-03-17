@@ -33,7 +33,7 @@ describe('uml plugin', () => {
       plugins: [umlPlugin]
     });
 
-    editor.setValue(`\`\`\`${lang}\nAlice -> Bob: Hello\n\`\`\``);
+    editor.setMarkdown(`\`\`\`${lang}\nAlice -> Bob: Hello\n\`\`\``);
 
     jasmine.clock().tick(800);
 
@@ -53,7 +53,7 @@ describe('uml plugin', () => {
       plugins: [umlPlugin]
     });
 
-    editor.setValue(`\`\`\`${lang}\nAlice -> Bob: Hello\n\`\`\``);
+    editor.setMarkdown(`\`\`\`${lang}\nAlice -> Bob: Hello\n\`\`\``);
 
     jasmine.clock().tick(800);
 
@@ -71,7 +71,7 @@ describe('uml plugin', () => {
       plugins: [umlPlugin]
     });
 
-    editor.setValue(`\`\`\`uml\nAlice -> Bob: Hello\n\`\`\``);
+    editor.setMarkdown(`\`\`\`uml\nAlice -> Bob: Hello\n\`\`\``);
 
     expect(editor.wwEditor.getBody().querySelector('pre').innerHTML).toBe('Alice -&gt; Bob: Hello');
   });

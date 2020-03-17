@@ -41,6 +41,7 @@
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
+    "@toast-ui/editor": "^2.0.0-alpha",
     "babel-loader": "^8.0.6",
     "babel-plugin-istanbul": "^6.0.0",
     "cross-env": "^6.0.3",
@@ -62,7 +63,6 @@
     "karma-webpack": "^4.0.2",
     "prettier": "^1.19.1",
     "terser-webpack-plugin": "^2.3.1",
-    "@toast-ui/editor": "file:../../apps/editor",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1"
