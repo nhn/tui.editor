@@ -2,7 +2,7 @@
  * @fileoverview test component manager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import { MarkdownDocument } from '@toast-ui/markdown-parser';
+import { ToastMark } from '@toast-ui/toastmark';
 import WysiwygEditor from '@/wysiwygEditor';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
@@ -20,7 +20,7 @@ describe('ComponentManager', () => {
     em = new EventManager();
 
     wwe = new WysiwygEditor(container, em);
-    mde = new MarkdownEditor(container2, em, new MarkdownDocument());
+    mde = new MarkdownEditor(container2, em, new ToastMark());
 
     wwe.init();
 

@@ -53,7 +53,7 @@ const defaultState = {
  * @param {Object} options - options of editor
  */
 class MarkdownEditor extends CodeMirrorExt {
-  constructor(el, eventManager, mdDocument, options) {
+  constructor(el, eventManager, toastMark, options) {
     super(el, {
       dragDrop: true,
       allowDropFileTypes: ['image'],
@@ -66,7 +66,7 @@ class MarkdownEditor extends CodeMirrorExt {
     });
     this.eventManager = eventManager;
     this.componentManager = new ComponentManager(this);
-    this.mdDocument = mdDocument;
+    this.toastMark = toastMark;
     this.componentManager.addManager(MdListManager);
 
     /**
@@ -224,7 +224,7 @@ class MarkdownEditor extends CodeMirrorExt {
 
   _refreshCodeMirrorMarks(e) {
     const { from, to, text } = e;
-    const editResult = this.mdDocument.editMarkdown(
+    const editResult = this.toastMark.editMarkdown(
       [from.line + 1, from.ch + 1],
       [to.line + 1, to.ch + 1],
       text.join('\n')
@@ -399,7 +399,7 @@ class MarkdownEditor extends CodeMirrorExt {
       }
     };
 
-    let mdNode = this.mdDocument.findNodeAtPosition([mdLine, mdCh]);
+    let mdNode = this.toastMark.findNodeAtPosition([mdLine, mdCh]);
 
     if (!mdNode) {
       this.eventManager.emit('stateChange', state);
@@ -447,8 +447,8 @@ class MarkdownEditor extends CodeMirrorExt {
     this._latestState = null;
   }
 
-  getMdDocument() {
-    return this.mdDocument;
+  getToastMark() {
+    return this.toastMark;
   }
 
   /**
@@ -459,8 +459,8 @@ class MarkdownEditor extends CodeMirrorExt {
    * @returns {MarkdownEditor} - MarkdownEditor
    * @ignore
    */
-  static factory(el, eventManager, mdDocument, options) {
-    return new MarkdownEditor(el, eventManager, mdDocument, options);
+  static factory(el, eventManager, toastMark, options) {
+    return new MarkdownEditor(el, eventManager, toastMark, options);
   }
 }
 

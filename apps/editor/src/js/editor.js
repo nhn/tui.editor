@@ -75,7 +75,7 @@ import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
 
-import { MarkdownDocument } from '@toast-ui/markdown-parser';
+import { ToastMark } from '@toast-ui/toastmark';
 import { register } from './scroll/sync';
 
 const __nedInstance = [];
@@ -199,14 +199,14 @@ class ToastUIEditor {
 
     this.setUI(this.options.UI || new DefaultUI(this));
 
-    this.mdDocument = new MarkdownDocument('', {
+    this.toastMark = new ToastMark('', {
       disallowedHtmlBlockTags: ['br']
     });
 
     this.mdEditor = MarkdownEditor.factory(
       this.layout.getMdEditorContainerEl(),
       this.eventManager,
-      this.mdDocument,
+      this.toastMark,
       this.options
     );
     this.preview = new MarkdownPreview(

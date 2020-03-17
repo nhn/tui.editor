@@ -18,7 +18,7 @@ const commonConfig = {
     extensions: ['.ts', '.js']
   },
   output: {
-    filename: 'markdown-parser.js',
+    filename: 'toastmark.js',
     libraryTarget: 'commonjs',
     publicPath: '/dist',
     path: path.resolve(__dirname, 'dist')

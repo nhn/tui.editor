@@ -1,4 +1,4 @@
-import { GfmHtmlRenderer } from '@toast-ui/markdown-parser';
+import { GfmHtmlRenderer } from '@toast-ui/toastmark';
 
 export default class MarkdownRenderer extends GfmHtmlRenderer {
   softbreak(node) {

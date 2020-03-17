@@ -40,7 +40,7 @@ function getAncestorHavingId(node, root) {
 }
 
 export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
-  const { mdDocument, cm } = editor;
+  const { toastMark, cm } = editor;
   const { scrollTop, clientHeight, scrollHeight } = preview.el;
   const root = preview._previewContent;
   const isBottomPos = scrollHeight - scrollTop <= clientHeight;
@@ -57,7 +57,7 @@ export function syncMarkdownScrollTopToPreview(editor, preview, targetNode) {
 
     const { line: startLine } = cm.coordsChar({ left, top: sourceScrollTop }, 'local');
     const mdNodeId = Number(targetNode.getAttribute('data-nodeid'));
-    const { mdNode, node } = getParentNodeObj(mdDocument.findNodeById(mdNodeId));
+    const { mdNode, node } = getParentNodeObj(toastMark.findNodeById(mdNodeId));
     const mdNodeStartLine = getMdStartLine(mdNode);
 
     targetScrollTop = cm.heightAtLine(mdNodeStartLine - 1, 'local');
