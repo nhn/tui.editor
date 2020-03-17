@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/editor-plugin-chart",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha",
   "description": "TOAST UI Editor : Chart Plugin",
   "keywords": [
     "nhn",
