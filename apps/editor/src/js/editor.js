@@ -789,7 +789,7 @@ class ToastUIEditor {
         this.codeBlockLanguages.push(lang);
       }
     });
-    this.eventManager.emit('setCodeBlockLanguages', languages);
+    this.eventManager.emit('setCodeBlockLanguages', this.codeBlockLanguages);
   }
 
   /**
