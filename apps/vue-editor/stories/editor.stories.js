@@ -1,9 +1,7 @@
 import {storiesOf} from '@storybook/vue';
 import {withKnobs} from '@storybook/addon-knobs';
-import {action} from '@storybook/addon-actions';
 import {html} from 'common-tags';
 import * as dummy from './dummyData';
-import chartPlugin from '@toast-ui/editor-chart-plugin';
 
 import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.min.css';
@@ -16,13 +14,10 @@ stories.add('Demo', () => ({
   components: {
     Editor
   },
-  template: `<editor :options="editorOptions" :initialValue="initialValue" previewStyle="tab" height="600px"" />`,
+  template: `<editor :initialValue="initialValue" previewStyle="tab" height="600px"" />`,
   data() {
     return {
-      initialValue: dummy.content,
-      editorOptions: {
-        plugins: [chartPlugin]
-      }
+      initialValue: dummy.content
     };
   }
 }));
