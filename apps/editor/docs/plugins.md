@@ -1,18 +1,18 @@
 # 🧩 Plugins
 
-## What Is the Plugin?
+## What Is Plugin?
 
-TOAST UI Editor provides a plugin. Plugin is an extension that can be added as needed. There are a total of 5 plugins provided by TOAST UI Editor.
+TOAST UI Editor (henceforth referred to as 'Editor') provides a plugin. Plugin is an extension that can be added as needed. There are a total of 5 plugins provided by the Editor.
 
 | Plugin Name                                                                                            | Package Name                                                                                                                   | Description                     |
 | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------- |
 | [`chart`](https://github.com/nhn/tui.editor/tree/master/plugins/chart)                                 | [`@toast-ui/editor-plugin-chart`](https://www.npmjs.com/package/@toast-ui/editor-plugin-chart)                                 | Plugin to render chart          |
 | [`code-syntax-highlight`](https://github.com/nhn/tui.editor/tree/master/plugins/code-syntax-highlight) | [`@toast-ui/editor-plugin-code-syntax-highlight`](https://www.npmjs.com/package/@toast-ui/editor-plugin-code-syntax-highlight) | Plugin to highlight code syntax |
 | [`plugin-color-syntax`](https://github.com/nhn/tui.editor/tree/master/plugins/color-syntax)            | [`@toast-ui/editor-plugin-color-syntax`](https://www.npmjs.com/package/@toast-ui/editor-plugin-color-syntax)                   | Plugin to color editing text    |
-| [`table-merged-cell`](ttps://github.com/nhn/tui.editor/tree/master/plugins/table-merged-cell)          | [`@toast-ui/editor-plugin-table-merged-cell`](https://www.npmjs.com/package/@toast-ui/editor-plugin-table-merged-cell)         | Plugin to merge table columns   |
+| [`table-merged-cell`](https://github.com/nhn/tui.editor/tree/master/plugins/table-merged-cell)         | [`@toast-ui/editor-plugin-table-merged-cell`](https://www.npmjs.com/package/@toast-ui/editor-plugin-table-merged-cell)         | Plugin to merge table columns   |
 | [`uml`](https://github.com/nhn/tui.editor/tree/master/plugins/uml)                                     | [`@toast-ui/editor-plugin-uml`](https://www.npmjs.com/package/@toast-ui/editor-plugin-uml)                                     | Plugin to render UML            |
 
-## How to Use the Plugin
+## How to Use Plugin
 
 To use the plugin, you must first have [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor) installed.
 
@@ -70,11 +70,11 @@ The CDN directory has the following structure:
 
 > Note: Each plugin's CDN file contains all dependencies depending on the situation, or provides different types of bundled files. For more information, please check the each plugin repository.
 
-### Importing the Plugin
+### Importing Plugin
 
 To activate the plugin, you need to import the plugin. You should import the module using one of the following ways depending on your environment.
 
-#### Using module format in node environment
+#### Using Module Format in Node Environment
 
 - ES6 Modules
 
@@ -94,7 +94,7 @@ After importing the plugin, use the plugin function exported from the plugin. Fo
 import chart from '@toast-ui/editor-plugin-chart';
 ```
 
-#### Using namespace in browser environment
+#### Using Namespace in Browser Environment
 
 ```javascript
 const pluginFn = toastui.Editor.plugin[${pluginName}];
@@ -106,9 +106,9 @@ When importing the plugin into the namespace, use the plugin's namespace registe
 const { chart } = toastui.Editor.plugin;
 ```
 
-### Using the Plugin in the Editor
+### Using the Plugin in Editor
 
-To use a plugin imported from TOAST UI Editor, use the editor's `plugins` option. You can add each plugin function you imported to this option. The type of `plugins` option is `Array.<function>`.
+To use a plugin imported from the Editor, use an editor's `plugins` option. You can add each plugin function you imported to this option. The type of `plugins` option is `Array.<function>`.
 
 ```javascript
 const editor = new Editor({
@@ -119,7 +119,7 @@ const editor = new Editor({
 
 For example, if you add the `chart` and `uml` plugin, you can do something like this:
 
-#### Using module format in node environment
+#### Using Module Format in Node Environment
 
 ```javascript
 import Editor from '@toast-ui/editor';
@@ -132,7 +132,7 @@ const editor = new Editor({
 });
 ```
 
-#### Using namespace in browser environment
+#### Using Namespace in Browser Environment
 
 ```javascript
 const { Editor } = toastui;
@@ -170,7 +170,7 @@ function customPlugin() {
 }
 ```
 
-As with other plugins, add custom plugin functions defined through the editor's `plugins` option.
+As with other plugins, add custom plugin functions defined through an editor's `plugins` option.
 
 ```js
 const editor = new Editor({
@@ -179,7 +179,7 @@ const editor = new Editor({
 });
 ```
 
-The following is an example of creating the plugin that plays a YouTube video using the code block in the editor. The `youtubePlugin` function is the user's plugin.
+The following is an example of creating the plugin that plays a YouTube video using the code block in the Editor. The `youtubePlugin` function is the user's plugin.
 
 ````javascript
 // Step 1: Define the user plugin function
@@ -219,8 +219,8 @@ const editor = new Editor({
 
 You can see examples of the plugin usage in the link below.
 
-- [Using all plugins in the editor](https://nhn.github.io/tui.editor/latest/tutorial-example15-editor-with-all-plugins.html)
-- [Using all plugins in the viewer](https://nhn.github.io/tui.editor/latest/tutorial-example16-viewer-with-all-plugins.html)
+- [Using all plugins in the Editor](https://nhn.github.io/tui.editor/latest/tutorial-example15-editor-with-all-plugins.html)
+- [Using all plugins in the Viewer](https://nhn.github.io/tui.editor/latest/tutorial-example16-viewer-with-all-plugins.html)
 - [Creating the user's plugin](https://nhn.github.io/tui.editor/latest/tutorial-example17-creating-plugin.html)
 
 ```

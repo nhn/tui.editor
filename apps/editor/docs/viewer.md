@@ -1,18 +1,18 @@
 # 👀 Viewer
 
-## What Is the Viewer?
+## What Is Viewer?
 
-TOAST UI Editor provides the **viewer** in case you want to show _Markdown_ content without loading the editor. The Viewer is much **lighter** than the editor.
+TOAST UI Editor (henceforth referred to as 'Editor') provides the **viewer** in case you want to show _Markdown_ content without loading the Editor. The Viewer is much **lighter** than the Editor.
 
-## Creating the Viewer
+## Creating Viewer
 
-The method of creating the viewer is similar to that of the editor.
+The method of creating the Viewer is similar to that of the Editor.
 
 > Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
 
-### Adding the Wrapper Element
+### Adding Wrapper Element
 
-You need to add the container element where the viewer will be created.
+You need to add the container element where the Viewer will be created.
 
 ```html
 ...
@@ -22,11 +22,11 @@ You need to add the container element where the viewer will be created.
 ...
 ```
 
-### Importing the Viewer's Constructor Function
+### Importing Viewer's Constructor Function
 
-The viewer can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following ways depending on your environment.
+The Viewer can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following ways depending on your environment.
 
-#### Using module format in node environment
+#### Using Module Format in Node Environment
 
 - ES6 Modules
 
@@ -40,13 +40,13 @@ import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
 const Viewer = require('@toast-ui/dist/toastui-editor-viewer');
 ```
 
-#### Using namespace in browser environment
+#### Using Namespace in Browser Environment
 
 ```javascript
 const Viewer = toastui.Editor;
 ```
 
-Note that the CDN file of the viewer should use the following:
+Note that the CDN file of the Viewer should use the following:
 
 ```html
 ...
@@ -59,9 +59,9 @@ Note that the CDN file of the viewer should use the following:
 
 ### Adding CSS Files
 
-You need to add the CSS files needed for the viewer. Import CSS files in node environment, and add it to html file when using CDN.
+You need to add the CSS files needed for the Viewer. Import CSS files in node environment, and add it to html file when using CDN.
 
-#### Using in node environment
+#### Using in Node Environment
 
 - ES6 Modules
 
@@ -75,7 +75,7 @@ import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 require('@toast-ui/editor/dist/toastui-editor-viewer.css');
 ```
 
-#### Using in browser environment by CDN
+#### Using in Browser Environment by CDN
 
 ```html
 ...
@@ -86,7 +86,7 @@ require('@toast-ui/editor/dist/toastui-editor-viewer.css');
 ...
 ```
 
-### Creating an Instance
+### Creating Instance
 
 You can create an instance with options and call various API after creating an instance.
 
@@ -109,9 +109,9 @@ The basic options available are:
 
 Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEditorViewer).
 
-## Another Way to Create the Viewer
+## Another Way to Create Viewer
 
-Be careful not to load both the editor and the viewer at the same time because the editor already contains the viewer function, you can initialize with `Editor.factory()` of the editor and set the `viewer` option to value `true` in order to make the the viewer. You can also call `getHtml()` to render the HTML.
+Be careful not to load both an editor and a viewer at the same time because an editor already contains a viewer function, you can initialize with `Editor.factory()` of an editor and set the `viewer` option to value `true` in order to make the a viewer. You can also call `getHtml()` to render the HTML.
 
 ```js
 import Editor from '@toast-ui/editor';

@@ -60,7 +60,7 @@ The CDN directory has the following structure:
 
 ### Adding the Wrapper Element
 
-You need to add the container element where TOAST UI Editor(the editor) will be created.
+You need to add the container element where TOAST UI Editor (henceforth referred to as 'Editor') will be created.
 
 ```html
 ...
@@ -74,7 +74,7 @@ You need to add the container element where TOAST UI Editor(the editor) will be 
 
 The editor can be used by creating an instance with the constructor function. To get the constructor function, you should import the module using one of the following ways depending on your environment.
 
-#### Using module format in node environment
+#### Using Module Format in Node Environment
 
 - ES6 Modules
 
@@ -88,7 +88,7 @@ import Editor from '@toast-ui/editor';
 const Editor = require('@toast-ui/editor');
 ```
 
-#### Using namespace in browser environment
+#### Using Namespace in Browser Environment
 
 ```javascript
 const Editor = toastui.Editor;
@@ -96,9 +96,9 @@ const Editor = toastui.Editor;
 
 ### Adding CSS Files
 
-You need to add the CSS files needed for the editor. Import CSS files in node environment, and add it to html file when using CDN. When using the markdown editor, you need to add a style for the [CodeMirror](https://codemirror.net/).
+You need to add the CSS files needed for the Editor. Import CSS files in node environment, and add it to html file when using CDN. When using the markdown editor, you need to add a style for the [CodeMirror](https://codemirror.net/).
 
-#### Using in node environment
+#### Using in Node Environment
 
 - ES6 Modules
 
@@ -114,7 +114,7 @@ require('codemirror/lib/codemirror.css');
 require('@toast-ui/editor/dist/toastui-editor.css');
 ```
 
-#### Using in browser environment by CDN
+#### Using in Browser Environment by CDN
 
 ```html
 ...
@@ -131,7 +131,7 @@ require('@toast-ui/editor/dist/toastui-editor.css');
 ...
 ```
 
-### Creating an Instance
+### Creating Instance
 
 You can create an instance with options and call various API after creating an instance.
 
