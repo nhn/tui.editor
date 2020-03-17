@@ -26,7 +26,7 @@
 
 ### Files Distributed on CDN
 
-The bundle files under the `cdn` folder include all dependencies.
+The bundle files include all dependencies of this plugin.
 
 ```
 - uicdn.toast.com/
@@ -38,7 +38,7 @@ The bundle files under the `cdn` folder include all dependencies.
 
 ## 📦 Usage npm
 
-To use the plugin, `@toast-ui/editor` must be installed.
+To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/master/apps/editor) must be installed.
 
 > Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
 
@@ -50,7 +50,7 @@ $ npm install @toast-ui/editor-plugin-color-syntax
 
 ### Import Plugin
 
-Along with the plugin, the plugin's dependency style must be imported.
+Along with the plugin, the plugin's dependency style must be imported. The `color-syntax` plugin has [TOAST UI Color Picker](https://github.com/nhn/tui.color-picker) as a dependency, and you need to add a CSS file of TOAST UI Color Picker.
 
 #### ES Modules
 
@@ -78,7 +78,7 @@ const colorSyntax = require('@toast-ui/editor-plugin-color-syntax');
 import Editor from '@toast-ui/editor';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 
-const instance = new Editor({
+const editor = new Editor({
   // ...
   plugins: [colorSyntax]
 });
@@ -91,13 +91,24 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
 ### Include Files
 
 ```html
-<!-- CSS -->
-<link
-  rel="stylesheet"
-  href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css"
-/>
-<!-- Script -->
-<script src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
+...
+<head>
+  ...
+  <link
+    rel="stylesheet"
+    href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css"
+  />
+  ...
+</head>
+<body>
+  ...
+  <!-- Editor -->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor.min.js"></script>
+  <!-- Editor's Plugin -->
+  <script src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
+  ...
+</body>
+...
 ```
 
 ### Create Instance
@@ -108,7 +119,7 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
 const { Editor } = toastui;
 const { colorSyntax } = Editor.plugin;
 
-const instance = new Editor({
+const editor = new Editor({
   // ...
   plugins: [colorSyntax]
 });
@@ -137,7 +148,7 @@ const colorSyntaxOptions = {
   useCustomSyntax: true
 };
 
-const instance = new Editor({
+const editor = new Editor({
   // ...
   plugins: [[colorSyntax, colorSyntaxOptions]]
 });

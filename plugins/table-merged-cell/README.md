@@ -26,7 +26,7 @@
 
 ### Files Distributed on CDN
 
-The bundle files under the `cdn` folder include all dependencies.
+The bundle files include all dependencies of this plugin.
 
 ```
 - uicdn.toast.com/
@@ -38,7 +38,7 @@ The bundle files under the `cdn` folder include all dependencies.
 
 ## 📦 Usage npm
 
-To use the plugin, `@toast-ui/editor` must be installed.
+To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/master/apps/editor) must be installed.
 
 > Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
 
@@ -70,7 +70,7 @@ const tableMergedCell = require('@toast-ui/editor-plugin-table-merged-cell');
 import Editor from '@toast-ui/editor';
 import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell';
 
-const instance = new Editor({
+const editor = new Editor({
   // ...
   plugins: [tableMergedCell]
 });
@@ -82,7 +82,7 @@ const instance = new Editor({
 import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
 import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell';
 
-const instance = new Viewer({
+const viewer = new Viewer({
   // ...
   plugins: [tableMergedCell]
 });
@@ -94,8 +94,9 @@ or
 import Editor from '@toast-ui/editor';
 import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell';
 
-const instance = Editor.factory({
+const viewer = Editor.factory({
   // ...
+  viewer: true,
   plugins: [tableMergedCell]
 });
 ```
@@ -107,7 +108,16 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
 ### Include Files
 
 ```html
-<script src="https://uicdn.toast.com/editor-plugin-table-merged-cell/latest/toastui-editor-plugin-table-merged-cell.min.js"></script>
+...
+<body>
+  ...
+  <!-- Editor -->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor.min.js"></script>
+  <!-- Editor's Plugin -->
+  <script src="https://uicdn.toast.com/editor-plugin-table-merged-cell/latest/toastui-editor-plugin-table-merged-cell.min.js"></script>
+  ...
+</body>
+...
 ```
 
 ### Create Instance
@@ -118,7 +128,7 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
 const { Editor } = toastui;
 const { tableMergedCell } = Editor.plugin;
 
-const instance = new Editor({
+const editor = new Editor({
   // ...
   plugins: [tableMergedCell]
 });
@@ -130,7 +140,7 @@ const instance = new Editor({
 const Viewer = toastui.Editor;
 const { tableMergedCell } = Viewer.plugin;
 
-const instance = new Viewer({
+const viewer = new Viewer({
   // ...
   plugins: [tableMergedCell]
 });
@@ -142,8 +152,9 @@ or
 const { Editor } = toastui;
 const { tableMergedCell } = Editor.plugin;
 
-const instance = Editor.factory({
+const viewer = Editor.factory({
   // ...
+  viewer: true,
   plugins: [tableMergedCell]
 });
 ```

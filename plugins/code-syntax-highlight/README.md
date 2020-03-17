@@ -40,7 +40,7 @@
 
 ## 📦 Usage npm
 
-To use the plugin, `@toast-ui/editor` must be installed.
+To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/master/apps/editor) must be installed.
 
 > Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
 
@@ -52,17 +52,22 @@ $ npm install @toast-ui/editor-plugin-code-syntax-highlight
 
 ### Import Plugin
 
+Along with the plugin, the plugin's dependency style must be imported. 
+The `code-syntax-highlight` plugin has [`highlight.js`](https://highlightjs.org/) as a dependency, and you need to add a CSS file of `highlight.js`.
+
 #### ES Modules
 
 ```js
+import 'highlight.js/styles/github.css';
+
 import codeSyntaxHightlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 ```
-
-or
 
 #### CommonJS
 
 ```js
+require('highlight.js/styles/github.css');
+
 const codeSyntaxHightlight = require('@toast-ui/editor-plugin-code-syntax-highlight');
 ```
 
@@ -77,12 +82,14 @@ The main bundle file of `highlight.js` contains all the language pack it support
 ##### Import All Languages
 
 ```js
+// ...
+
 import Editor from '@toast-ui/editor';
 import codeSyntaxHightlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 
 import hljs from 'highlight.js';
 
-const instance = new Editor({
+const editor = new Editor({
   // ...
   plugins: [[codeSyntaxHightlight, { hljs }]]
 });
@@ -93,6 +100,8 @@ const instance = new Editor({
 You need to import the language files you want to use in the code block and register them in the `hightlight.js` object. A list of available language files can be found [here](https://github.com/highlightjs/highlight.js/tree/master/src/languages).
 
 ```js
+// ...
+
 import Editor from '@toast-ui/editor';
 import codeSyntaxHightlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 
@@ -107,7 +116,7 @@ import clojure from 'highlight.js/lib/languages/clojure';
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('clojure', clojure);
 
-const instance = new Editor({
+const editor = new Editor({
   // ...
   plugins: [[codeSyntaxHightlight, { hljs }]]
 });
@@ -118,13 +127,15 @@ const instance = new Editor({
 As with creating an editor instance, you need to import `highlight.js` and pass it to the `hljs` option.
 
 ```js
+// ...
+
 import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
 import codeSyntaxHightlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 
 // Import highlgiht.js
 // ...
 
-const instance = new Viewer({
+const viewer = new Viewer({
   // ...
   plugins: [[codeSyntaxHightlight, { hljs }]]
 });
@@ -133,14 +144,17 @@ const instance = new Viewer({
 or
 
 ```js
+// ...
+
 import Editor from '@toast-ui/editor';
 import codeSyntaxHightlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 
 // Import highlgiht.js
 // ...
 
-const instance = Editor.factory({
+const viewer = Editor.factory({
   // ...
+  viewer: true,
   plugins: [[codeSyntaxHightlight, { hljs }]]
 });
 ```
@@ -155,18 +169,28 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
 
 #### Basic
 
-First, include the editor file. And include the plugin file as needed.
-If you want to include all language files provided by `highlight.js`, see the first title(`Import All Languages`). If you want to register and use only the languages ​​you need, see the second title(`Import Only Languages ​​You Need`).
+First, include the editor file. And include the plugin file as needed. If you want to include all language files provided by `highlight.js`, see the first title(_Include All Languages_). If you want to register and use only the languages ​​you need, see the second title(_Include Only Languages ​​You Need_).
 
-##### Import All Languages
+##### Include All Languages
 
 By including the **all** version of the plugin, all languages ​​of `highlight.js` are available in the code block.
 
 ```html
-<!-- Editor -->
-<script src="https://uicdn.toast.com/editor/latest/toastui-editor.min.js"></script>
-<!-- Editor's Plugin -->
-<script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
+...
+<head>
+  ...
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/github.min.css" />
+  ...
+</head>
+<body>
+  ...
+  <!-- Editor -->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor.min.js"></script>
+  <!-- Editor's Plugin -->
+  <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
+  ...
+</body>
+...
 ```
 
 ```js
@@ -179,19 +203,30 @@ const instance = new Editor({
 });
 ```
 
-##### Import Only Languages ​​You Need
+##### Include Only Languages ​​You Need
 
 If you include the **normal** version of the plugin, only the languages ​​you need are available. At this time, you should also include the language files of `hightlight.js`, and if you only include it, the languages ​​available to the plugin are registered.
 
 > Note : The CDN provided by `highlight.js` contains only 34 language files. If you want to add other language files, you can use [cdnjs](https://cdnjs.com/libraries/highlight.js/) to add each language file or upload a file containing only the language you need on [this page](https://highlightjs.org/download/).
 
 ```html
-<!-- Editor -->
-<script src="https://uicdn.toast.com/editor/latest/toastui-editor.min.js"></script>
-<!-- highlight.js Languages -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
-<!-- Editor's Plugin -->
-<script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight.min.js"></script>
+...
+<head>
+  ...
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/github.min.css" />
+  ...
+</head>
+<body>
+  ...
+  <!-- Editor -->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor.min.js"></script>
+  <!-- highlight.js Languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+  <!-- Editor's Plugin -->
+  <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight.min.js"></script>
+  ...
+</body>
+...
 ```
 
 #### With Viewer
@@ -204,19 +239,24 @@ The way to include the plugin and the language files of `highlight.js` is the sa
 const { Editor } = tosatui;
 const { codeSyntaxHightlight } = Editor.plugin;
 
-const instance = Editor.factory({
+const editor = Editor.factory({
   // ...
+  viewer: true,
   plugins: [codeSyntaxHightlight]
 });
 ```
 
 ##### Use Viewer
 
-Include the viewer file instead of the editor.
+Include the Viewer file instead of the Editor.
 
 ```html
-<!-- Editor -->
-<script src="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.min.js"></script>
+...
+<body>
+  ...
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.min.js"></script>
+  ...
+</body>
 ...
 ```
 
@@ -224,7 +264,7 @@ Include the viewer file instead of the editor.
 const Viewer = toastui.Editor;
 const { codeSyntaxHightlight } = Viewer.plugin;
 
-const instance = new Viewer({
+const viewer = new Viewer({
   // ...
   plugins: [codeSyntaxHightlight]
 });
