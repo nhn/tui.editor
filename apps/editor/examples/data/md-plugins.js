@@ -33,7 +33,7 @@ const codeContent = [
   '```'
 ].join('\n');
 
-const tableContent = ['| @cols=2:merged | |', '| --- | --- |', '| table | table2 |'].join('\n');
+const tableContent = ['| @cols=2:merged |', '| --- | --- |', '| table | table2 |'].join('\n');
 
 const umlContent = [
   '```uml',

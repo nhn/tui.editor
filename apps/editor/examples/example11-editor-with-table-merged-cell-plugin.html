@@ -40,7 +40,7 @@
     <!-- Editor -->
     <script src="../dist/cdn/toastui-editor-all.js"></script>
     <!-- Editor's Plugin -->
-    <script src="http://localhost:8081/dist/cdn/toastui-editor-plugin-table-merged-cell.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-table-merged-cell/1.0.0/toastui-editor-plugin-table-merged-cell.min.js"></script>
     <script type="text/babel" class="code-js">
       const { Editor } = toastui;
       const { tableMergedCell } = Editor.plugin;
@@ -49,7 +49,6 @@
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
-        initialEditType: 'wysiwyg',
         initialValue: tableContent,
         plugins: [tableMergedCell]
       });

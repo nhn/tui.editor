@@ -60,7 +60,7 @@ You can use the CDN as below.
 ...
 <body>
   ...
-  <script src="https://uicdn.toast.com/editor/latest/toastui-editor.js"></script>
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 </body>
 ...
 ```
@@ -141,10 +141,10 @@ import '@toast-ui/editor/dist/toastui-editor.css'; // Editor's Style
   <!-- Editor's Dependecy Style -->
   <link
     rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css"
   />
   <!-- Editor's Style -->
-  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css" />
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 </head>
 ...
 ```
