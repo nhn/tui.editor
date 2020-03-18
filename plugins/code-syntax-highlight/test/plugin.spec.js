@@ -38,7 +38,7 @@ describe('codeSyntaxHighlightPlugin', () => {
 
     const codeblockText = ['\n```javascript', '\nconst a = 100;', '\n```'].join('');
 
-    editor.setValue(codeblockText);
+    editor.setMarkdown(codeblockText);
 
     jasmine.clock().tick(800);
 
@@ -63,7 +63,7 @@ describe('codeSyntaxHighlightPlugin', () => {
 
     const codeblockText = ['\n```javascript', '\nconst a = 100;', '\n```'].join('');
 
-    editor.setValue(codeblockText);
+    editor.setMarkdown(codeblockText);
 
     jasmine.clock().tick(800);
 
@@ -87,7 +87,7 @@ describe('codeSyntaxHighlightPlugin', () => {
 
     const codeblockText = ['\n```javascript', '\nconst a = 1;', '\n```'].join('');
 
-    editor.setValue(codeblockText);
+    editor.setMarkdown(codeblockText);
 
     expect(editor.wwEditor.getBody().querySelector('pre').innerHTML).toBe('const a = 1;');
   });
