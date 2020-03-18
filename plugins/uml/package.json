@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/editor-plugin-uml",
-  "version": "1.0.0-alpha",
+  "version": "1.0.0",
   "description": "TOAST UI Editor : UML Plugin",
   "keywords": [
     "nhn",
@@ -38,7 +38,7 @@
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
-    "@toast-ui/editor": "^2.0.0-alpha",
+    "@toast-ui/editor": "^2.0.0",
     "babel-loader": "^8.0.6",
     "babel-plugin-istanbul": "^6.0.0",
     "cross-env": "^6.0.3",
