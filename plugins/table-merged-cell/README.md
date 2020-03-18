@@ -112,7 +112,7 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
 <body>
   ...
   <!-- Editor -->
-  <script src="https://uicdn.toast.com/editor/latest/toastui-editor.min.js"></script>
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
   <!-- Editor's Plugin -->
   <script src="https://uicdn.toast.com/editor-plugin-table-merged-cell/latest/toastui-editor-plugin-table-merged-cell.min.js"></script>
   ...
