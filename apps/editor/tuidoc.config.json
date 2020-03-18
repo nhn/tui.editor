@@ -17,7 +17,7 @@
     },
     {
       "title": "FE Development Lab",
-      "linkUrl": "https://github.com/nhn/fe.javascript"
+      "linkUrl": "https://ui.toast.com"
     }
   ],
   "main": {
@@ -33,22 +33,27 @@
   "examples": {
     "filePath": "examples",
     "titles": {
-      "example01-editor-basic": "1. Editor Basic",
-      "example02-viewer-basic": "2. Viewer Basic",
-      "example03-editor-extensions": "3. Editor with All Extensions",
-      "example04-viewer-extensions": "4. Viewer with All Extensions",
-      "example05-scroll-sync": "5. Scroll Sync Extension",
-      "example06-color-syntax": "6. Color Syntax Extension",
-      "example07-table": "7. Table Extension",
-      "example08-uml": "8. UML Extension",
-      "example09-chart": "9. Chart Extension",
-      "example10-make-new-extension": "10. Make New Extension",
-      "example11-customize-toolbar": "11. Customize Toolbar",
-      "example12-use-command": "12. Use Command",
-      "example13-change-content": "13. Change Content Dynamically",
-      "example14-custom-convertor": "14. Custom Convertor",
-      "example15-i18n": "15. Internationalization(i18n)",
-      "example16-placeholder": "16. Placeholder"
+      "example01-editor": "1. Editor",
+      "example02-editor-with-horizontal-preview": "2. Editor With Horizontal Preview",
+      "example03-editor-with-wysiwyg-mode": "3. Editor With WYSIWYG Mode",
+      "example04-viewer": "4. Viewer",
+      "example05-viewer-using-editor-factory": "5. Viewer Using Editor's Factory",
+      "example06-editor-with-chart-plugin": "6. Editor with Chart Plugin",
+      "example07-viewer-with-chart-plugin": "7. Viewer with Chart Plugin",
+      "example08-editor-with-code-syntax-highlight-plugin": "8. Editor with Code Syntax Highlight Plugin",
+      "example09-viewer-with-color-syntax-highlight-plugin": "9. Viewer with Color Syntax Highlight Plugin",
+      "example10-editor-with-color-syntax-plugin": "10. Editor with Color Syntax Plugin",
+      "example11-editor-with-table-merged-cell-plugin": "11. Editor with Table Merged Cell Plugin",
+      "example12-viewer-with-table-merged-cell-plugin": "12. Viewer with Table Merged Cell Plugin",
+      "example13-editor-with-uml-plugin": "13. Editor with UML Plugin",
+      "example14-viewer-with-uml-plugin": "14. Viewer with UML Plugin",
+      "example15-editor-with-all-plugins": "15. Editor with All Plugins",
+      "example16-viewer-with-all-plugins": "16. Viewer with All Plugins",
+      "example17-creating-plugin": "17. Creating Plugin",
+      "example18-using-command": "18. Using Command",
+      "example19-customizing-toolbar-buttons": "19. Customizing Toolbar Buttons",
+      "example20-i18n": "20. Internationalization (I18N)",
+      "example21-placeholder": "21. Placeholder"
     }
   },
   "pathPrefix": "tui.editor"
