@@ -28,10 +28,10 @@ const editor = new Editor(options);
 ## 📙 Documents
 
 - [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
-- v2.0 Migration Guide
-  - [English](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/v2.0-migration-guid.md)
-  - [한국어](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/v2.0-migration-guid-ko.md)
 - [APIs](https://nhn.github.io/tui.editor/latest/)
+- v2.0 Migration Guide
+  - [English](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/v2.0-migration-guide.md)
+  - [한국어](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/v2.0-migration-guide-ko.md)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.editor/releases).
 
@@ -176,4 +176,4 @@ Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEdit
 
 - [Viewer](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/viewer.md)
 - [Plugins](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/plugins.md)
-- [Internationalization (I18N)](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/i18n.md)
+- [Internationalization (i18n)](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/i18n.md)

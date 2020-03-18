@@ -1,16 +1,16 @@
-# Documents 📄
+# 📄 Documents
 
 ## Tutorials
 
 - [🚀 Getting Started](./getting-started.md)
 - [👀 Viewer](./viewer.md)
 - [🧩 Plugins](./plugins.md)
-- [🌏 Internationalization (I18N)](./i18n.md)
+- [🌏 Internationalization (i18n)](./i18n.md)
 
 ### Migration Guide
 
-- [✈️ v2.0 Migration Guide](v2.0-migration-guide.md)
-- [✈️ v2.0 Migration Guide (Koerean Version)](v2.0-migration-guide-ko.md)
+- [✈️ v2.0 Migration Guide](./v2.0-migration-guide.md)
+- [✈️ v2.0 Migration Guide (Koerean Version)](./v2.0-migration-guide-ko.md)
 
 ## Etc
 

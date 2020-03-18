@@ -26,7 +26,7 @@
 
 ### Files Distributed on CDN
 
-The bundle files under the `cdn` folder include all dependencies.
+The bundle files include all dependencies of this plugin.
 
 ```
 - uicdn.toast.com/
@@ -38,7 +38,7 @@ The bundle files under the `cdn` folder include all dependencies.
 
 ## 📦 Usage npm
 
-To use the plugin, `@toast-ui/editor` must be installed.
+To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/master/apps/editor) must be installed.
 
 > Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
 
@@ -70,7 +70,7 @@ const uml = require('@toast-ui/editor-plugin-uml');
 import Editor from '@toast-ui/editor';
 import uml from '@toast-ui/editor-plugin-uml';
 
-const instance = new Editor({
+const editor = new Editor({
   // ...
   plugins: [uml]
 });
@@ -82,7 +82,7 @@ const instance = new Editor({
 import Viewer from '@toast-ui/editor/dist/toustui-editor-viewer';
 import uml from '@toast-ui/editor-plugin-uml';
 
-const instance = new Viewer({
+const viewer = new Viewer({
   // ...
   plugins: [uml]
 });
@@ -94,20 +94,30 @@ or
 import Editor from '@toast-ui/editor';
 import uml from '@toast-ui/editor-plugin-uml';
 
-const instance = Editor.factory({
+const viewer = Editor.factory({
   // ...
+  viewer: true,
   plugins: [uml]
 });
 ```
 
 ## 🗂 Usage CDN
 
-> Note : To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be included.
+To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be included.
 
 ### Include Files
 
 ```html
-<script src="https://uicdn.toast.com/editor-plugin-uml/latest/toastui-editor-plugin-uml.min.js"></script>
+...
+<body>
+  ...
+  <!-- Editor -->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor.min.js"></script>
+  <!-- Editor's Plugin -->
+  <script src="https://uicdn.toast.com/editor-plugin-uml/latest/toastui-editor-plugin-uml.min.js"></script>
+  ...
+</body>
+...
 ```
 
 ### Create Instance
@@ -118,7 +128,7 @@ const instance = Editor.factory({
 const { Editor } = toastui;
 const { uml } = Editor.plugin;
 
-const instance = new Editor({
+const editor = new Editor({
   // ...
   plugins: [uml]
 });
@@ -130,7 +140,7 @@ const instance = new Editor({
 const Viewer = toastui.Editor;
 const { uml } = Viewer.plugin;
 
-const instance = new Viewer({
+const viewer = new Viewer({
   // ...
   plugins: [uml]
 });
@@ -142,8 +152,9 @@ or
 const { Editor } = toastui;
 const { uml } = Editor.plugin;
 
-const instance = Editor.factory({
+const viewer = Editor.factory({
   // ...
+  viewer: true,
   plugins: [uml]
 });
 ```
@@ -168,7 +179,7 @@ const umlOptions = {
   rendererURL: // ...
 };
 
-const instance = new Editor({
+const editor = new Editor({
   // ...
   plugins: [[uml, umlOptions]]
 });
