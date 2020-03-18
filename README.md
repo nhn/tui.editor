@@ -10,7 +10,7 @@
 ## 🚩 Table of Contents
 
 - [Packages](#-packages)
-- [Why TOAST UI Editor?](#why-toast-ui-editor?)
+- [Why TOAST UI Editor?](#-why-toast-ui-editor)
 - [Features](#-features)
 - [Examples](#-examples)
 - [Browser Support](#-browser-support)
@@ -34,7 +34,7 @@
 | Name | Description |
 | --- | --- |
 | [`@toast-ui/jquery-editor`](https://github.com/nhn/tui.editor/tree/master/apps/jquery-editor) | [jQuery](https://jquery.com/) wrapper component |
-| [`@toast-ui/react-editor`](https://github.com/nhn/tui.editor/tree/mater/apps/react-editor) | [React](https://reactjs.org/) wrapper component |
+| [`@toast-ui/react-editor`](https://github.com/nhn/tui.editor/tree/master/apps/react-editor) | [React](https://reactjs.org/) wrapper component |
 | [`@toast-ui/vue-editor`](https://github.com/nhn/tui.editor/tree/master/apps/vue-editor) | [Vue](https://vuejs.org/) wrapper component |
 
 ### TOAST UI Editor's Plugins
@@ -90,7 +90,7 @@ CommonMark and GFM are great, but we often need more abstraction. The TOAST UI E
 * [**`chart`**](https://github.com/nhn/tui.editor/tree/master/plugins/chart) : A code block marked as a 'chart' will render [TOAST UI Chart](https://github.com/nhn/tui.chart).
 * [**`code-syntax-highlight`**](https://github.com/nhn/tui.editor/tree/master/plugins/code-syntax-highlight) : Highlight the code block area corresponding to the language provided by [highlight.js](https://highlightjs.org/).
 * [**`color-syntax`**](https://github.com/nhn/tui.editor/tree/master/plugins/color-syntax) : 
-Using [TOAST UI ColorPicker](https://github.com/nhn/tui.color-picker, you can change the color of the editing text with the GUI.
+Using [TOAST UI ColorPicker](https://github.com/nhn/tui.color-picker), you can change the color of the editing text with the GUI.
 * [**`table-merged-cell`**](https://github.com/nhn/tui.editor/tree/master/plugins/table-merged-cell) : 
 You can merge columns of the table header and body area.
 * [**`uml`**](https://github.com/nhn/tui.editor/tree/master/plugins/uml) : A code block marked as an 'uml' will render [UML diagrams](http://plantuml.com/screenshot).
@@ -103,13 +103,13 @@ You can merge columns of the table header and body area.
 ## 🐾 Examples
 
 * [Basic](https://nhn.github.io/tui.editor/latest/tutorial-example01-editor-basic)
-* [Viewer](https://nhn.github.io/tui.editor/latest/tutorial-example04-viewer.html)
-* [Using All Plugins](https://nhn.github.io/tui.editor/latest/tutorial-example15-editor-with-all-plugins.html)
-* [Creating the User's Plugin](https://nhn.github.io/tui.editor/latest/tutorial-example17-creating-plugin.html)
-* [Customizing the Toobar Buttons](https://nhn.github.io/tui.editor/latest/tutorial-example19-customizing-toolbar-buttons.html)
-* [Internationalization (i18n)](https://nhn.github.io/tui.editor/latest/tutorial-example20-i18n.html)
+* [Viewer](https://nhn.github.io/tui.editor/latest/tutorial-example04-viewer)
+* [Using All Plugins](https://nhn.github.io/tui.editor/latest/tutorial-example15-editor-with-all-plugins)
+* [Creating the User's Plugin](https://nhn.github.io/tui.editor/latest/tutorial-example17-creating-plugin)
+* [Customizing the Toobar Buttons](https://nhn.github.io/tui.editor/latest/tutorial-example19-customizing-toolbar-buttons)
+* [Internationalization (i18n)](https://nhn.github.io/tui.editor/latest/tutorial-example20-i18n)
 
-Here are more [examples](https://nhn.github.io/tui.editor/latest/) and play with TOAST UI Editor!
+Here are more [examples](https://nhn.github.io/tui.editor/latest/tutorial-example01-editor-basic) and play with TOAST UI Editor!
 
 
 ## 🌏 Browser Support
@@ -157,6 +157,7 @@ Before creating a PR, test and check for any errors. If there are no errors, the
 
 For more information, please refer to the Contributing section.
 
+## 💬 Contributing
 
 * [Code of Conduct](https://github.com/nhn/tui.editor/blob/master/CODE_OF_CONDUCT.md)
 * [Contributing Guideline](https://github.com/nhn/tui.editor/blob/master/CONTRIBUTING.md)
