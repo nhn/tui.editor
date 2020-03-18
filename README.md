@@ -10,7 +10,7 @@
 ## 🚩 Table of Contents
 
 - [Packages](#-packages)
-- [TOAST UI Editor Is a Powerful Markdown and WYSIWYG Editor](#-toast-ui-editor-is-a-powerful-markdown-and-wysiwyg-editor)
+- [Why TOAST UI Editor?](#why-toast-ui-editor?)
 - [Features](#-features)
 - [Examples](#-examples)
 - [Browser Support](#-browser-support)
@@ -48,7 +48,7 @@
 | [`@toast-ui/editor-plugin-uml`](https://github.com/nhn/tui.editor/tree/master/plugins/uml) | Plugin to render UML |
 
 
-## 🤖 TOAST UI Editor Is a Powerful Markdown and WYSIWYG Editor
+## 🤖 Why TOAST UI Editor?
 
 TOAST UI Editor provides **Markdown mode** and **WYSIWYG mode**. Depending on the type of use you want like production of *Markdown* or maybe to just edit the *Markdown*. The TOAST UI Editor can be helpful for both the usage. It offers **Markdown mode** and **WYSIWYG mode**, which can be switched any point in time.
 
@@ -61,7 +61,7 @@ TOAST UI Editor provides **Markdown mode** and **WYSIWYG mode**. Depending on th
 Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Markdown)* is another popular specification based on *CommonMark* - maintained by *GitHub*, which is the *Markdown* mostly used. TOAST UI Editor follows both [*CommonMark*](http://commonmark.org/) and [*GFM*](https://github.github.com/gfm/) specifications. Write documents with ease using productive tools provided by TOAST UI Editor and you can easily open the produced document wherever the specifications are supported.
 
 * **Live Preview** : Edit Markdown while keeping an eye on the rendered HTML. Your edits will be applied immediately.
-* **Scrolling Sync** : Synchronous scrolling between Markdown and Preview. You don't need to scroll through each one separately.
+* **Scroll Sync** : Synchronous scrolling between Markdown and Preview. You don't need to scroll through each one separately.
 * **Auto Indent** : The cursor will always be where you want it to be.
 * **Syntax Highlight** : You can check broken Markdown syntax immediately.
 
@@ -70,7 +70,7 @@ Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Ma
 ![wysiwyg-1024](https://user-images.githubusercontent.com/18183560/76675616-84109800-65fe-11ea-8bba-0e7775957fe9.png)
 
 * **Table** : Through the context menu of the table, you can add or delete columns or rows of the table, and you can also arrange text in cells.
-* **Codeblock Editor** : The code block area can be edited through the layer popup editor.
+* **Code Block Editor** : The code block area can be edited through the layer popup editor.
 
 ### Usability Common UI
 
@@ -98,7 +98,7 @@ You can merge columns of the table header and body area.
 ## 🎨 Features
 
 * [**Viewer**](https://github.com/nhn/tui.editor/tree/master/apps/editor/docs/viewer.md) : Supports a mode to display only markdown data without an editing area.
-* [**Internationalization (I18N)**](https://github.com/nhn/tui.editor/tree/master/apps/editor/docs/i18n.md) : Supports English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian, Turkish, Finnish, Czech, Arabic, Polish, Galician, Swedish, Italian, Norwegian + language and you can extend.
+* [**Internationalization (i18n)**](https://github.com/nhn/tui.editor/tree/master/apps/editor/docs/i18n.md) : Supports English, Dutch, Korean, Japanese, Chinese, Spanish, German, Russian, French, Ukrainian, Turkish, Finnish, Czech, Arabic, Polish, Galician, Swedish, Italian, Norwegian + language and you can extend.
 
 ## 🐾 Examples
 
@@ -107,7 +107,7 @@ You can merge columns of the table header and body area.
 * [Using All Plugins](https://nhn.github.io/tui.editor/latest/tutorial-example15-editor-with-all-plugins.html)
 * [Creating the User's Plugin](https://nhn.github.io/tui.editor/latest/tutorial-example17-creating-plugin.html)
 * [Customizing the Toobar Buttons](https://nhn.github.io/tui.editor/latest/tutorial-example19-customizing-toolbar-buttons.html)
-* [Internationalization (I18N)](https://nhn.github.io/tui.editor/latest/tutorial-example20-i18n.html)
+* [Internationalization (i18n)](https://nhn.github.io/tui.editor/latest/tutorial-example20-i18n.html)
 
 Here are more [examples](https://nhn.github.io/tui.editor/latest/) and play with TOAST UI Editor!
 
