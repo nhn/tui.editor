@@ -1,6 +1,6 @@
 # TOAST UI Editor for jQuery
 
-> This is a [jQuery](https://jquery.com/) component wrapping [TOAST UI Editor](https://github.com/nhn/tui.editor/apps/editor).
+> This is a [jQuery](https://jquery.com/) component wrapping [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor).
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/jquery-editor.svg)](https://www.npmjs.com/package/@toast-ui/jquery-editor)
 
@@ -39,7 +39,7 @@ const editor = $('#editor').toastuiEditor(options);
 
 ### Files distributed on CDN
 
-The bundle files provided by CDN include TOAST UI Editor([`@toast-ui/editor`](https://github.com/nhn/tui.editor/apps/editor)).
+The bundle files provided by CDN include TOAST UI Editor([`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/master/apps/editor)).
 
 ```
 - uicdn.toast.com/

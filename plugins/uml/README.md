@@ -1,6 +1,6 @@
 # TOAST UI Editor : UML Plugin
 
-> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/apps/editor) to render UML.
+> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor) to render UML.
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-uml.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-uml)
 

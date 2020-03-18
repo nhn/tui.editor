@@ -1,6 +1,6 @@
 # TOAST UI Editor : Color Syntax Plugin
 
-> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/apps/editor) to color editing text.
+> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor) to color editing text.
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-color-syntax.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-color-syntax)
 

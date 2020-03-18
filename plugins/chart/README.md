@@ -1,6 +1,6 @@
 # TOAST UI Editor : Chart Plugin
 
-> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/apps/editor) to render chart.
+> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor) to render chart.
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-chart.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-chart)
 
