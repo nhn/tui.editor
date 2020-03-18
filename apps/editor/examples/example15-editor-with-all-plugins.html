@@ -50,21 +50,28 @@
     <!-- Editor -->
     <script src="../dist/cdn/toastui-editor-all.js"></script>
     <!-- Editor's Plugin -->
-    <script src="http://localhost:8081/dist/cdn/toastui-editor-plugin-chart.js"></script>
-    <script src="http://localhost:8082/dist/cdn/toastui-editor-plugin-code-syntax-highlight-all.js"></script>
-    <script src="http://localhost:8083/dist/cdn/toastui-editor-plugin-color-syntax.js"></script>
-    <script src="http://localhost:8084/dist/cdn/toastui-editor-plugin-table-merged-cell.js"></script>
-    <script src="http://localhost:8085/dist/cdn/toastui-editor-plugin-uml.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-chart/1.0.0/toastui-editor-plugin-chart.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/1.0.0/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-color-syntax/1.0.0/toastui-editor-plugin-color-syntax.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-table-merged-cell/1.0.0/toastui-editor-plugin-table-merged-cell.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-uml/1.0.0/toastui-editor-plugin-uml.min.js"></script>
     <script type="text/babel" class="code-js">
       const { Editor } = toastui;
       const { chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml } = Editor.plugin;
+
+      const chartOptions = {
+        minWidth: 100,
+        maxWidth: 600,
+        minHeight: 100,
+        maxHeight: 300
+      };
 
       const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
         initialValue: allPluginsContent,
-        plugins: [chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml]
+        plugins: [[chart, chartOptions], codeSyntaxHighlight, colorSyntax, tableMergedCell, uml]
       });
 
       const viewer = Editor.factory({
@@ -72,7 +79,7 @@
         viewer: true,
         height: '500px',
         initialValue: allPluginsContent,
-        plugins: [chart, codeSyntaxHighlight, tableMergedCell, uml]
+        plugins: [[chart, chartOptions], codeSyntaxHighlight, tableMergedCell, uml]
       });
     </script>
   </body>
