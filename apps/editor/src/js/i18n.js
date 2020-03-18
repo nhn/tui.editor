@@ -10,6 +10,7 @@ const DEFAULT_CODE = 'en-US';
 
 /**
  * Class I18n
+ * @ignore
  */
 class I18n {
   constructor() {

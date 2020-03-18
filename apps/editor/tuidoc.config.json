@@ -24,7 +24,7 @@
     "filePath": "README.md"
   },
   "api": {
-    "filePath": "src/js/**/*",
+    "filePath": ["src/js/*.js", "src/js/**/*.js"],
     "permalink": {
       "repository": "https://github.com/nhn/tui.editor",
       "ref": "master"
