@@ -168,4 +168,4 @@ Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEdit
 
 ## Example
 
-You can see the example [here](https://nhn.github.io/tui.editor/latest/tutorial-example01-basic).
+You can see the example [here](https://nhn.github.io/tui.editor/latest/tutorial-example01-editor-basic).

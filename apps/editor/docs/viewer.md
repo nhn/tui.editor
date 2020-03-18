@@ -128,4 +128,4 @@ viewer.getHtml();
 
 ## Example
 
-You can see the example [here](https://nhn.github.io/tui.editor/latest/tutorial-example04-viewer.html).
+You can see the example [here](https://nhn.github.io/tui.editor/latest/tutorial-example04-viewer).

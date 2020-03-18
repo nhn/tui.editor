@@ -219,9 +219,9 @@ const editor = new Editor({
 
 You can see examples of the plugin usage in the link below.
 
-- [Using all plugins in the Editor](https://nhn.github.io/tui.editor/latest/tutorial-example15-editor-with-all-plugins.html)
-- [Using all plugins in the Viewer](https://nhn.github.io/tui.editor/latest/tutorial-example16-viewer-with-all-plugins.html)
-- [Creating the user's plugin](https://nhn.github.io/tui.editor/latest/tutorial-example17-creating-plugin.html)
+- [Using all plugins in the Editor](https://nhn.github.io/tui.editor/latest/tutorial-example15-editor-with-all-plugins)
+- [Using all plugins in the Viewer](https://nhn.github.io/tui.editor/latest/tutorial-example16-viewer-with-all-plugins)
+- [Creating the user's plugin](https://nhn.github.io/tui.editor/latest/tutorial-example17-creating-plugin)
 
 ```
 
