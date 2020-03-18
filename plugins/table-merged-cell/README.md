@@ -96,8 +96,8 @@ import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell';
 
 const viewer = Editor.factory({
   // ...
-  viewer: true,
-  plugins: [tableMergedCell]
+  plugins: [tableMergedCell],
+  viewer: true
 });
 ```
 
@@ -154,7 +154,7 @@ const { tableMergedCell } = Editor.plugin;
 
 const viewer = Editor.factory({
   // ...
-  viewer: true,
-  plugins: [tableMergedCell]
+  plugins: [tableMergedCell],
+  viewer: true
 });
 ```

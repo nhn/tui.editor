@@ -32,8 +32,8 @@ export default {
     this.editor = Editor.factory({
       el: this.$refs.toastuiEditorViewer,
       events: eventOption,
-      initialValue: this.initialValue,
-      height: this.height,
+      initialValue: this.initialValue || '',
+      height: this.height || '300px',
       viewer: true
     });
   },

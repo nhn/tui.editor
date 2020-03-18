@@ -13,13 +13,15 @@
 
 ## Collect Statistics on the Use of Open Source
 
-jQuery Wrapper of TOAST UI Editor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Editor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. ui.toast.com) is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` options when declare Vue Wrapper compoent.
+jQuery Wrapper of TOAST UI Editor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Editor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. ui.toast.com) is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` options when declare jquery Wrapper compoent.
 
 ```js
 const options = {
   ...
   usageStatistics: false
 }
+
+const editor = $('#editor').toastuiEditor(options);
 ```
 
 ## 📁 Bundle File Structure
@@ -54,7 +56,7 @@ The bundle files provided by CDN include TOAST UI Editor([`@toast-ui/editor`](ht
 ### Install
 
 ```sh
-$ npm install @toast-ui/jquery-editor
+$ npm install --save @toast-ui/jquery-editor
 ```
 
 ### Import
@@ -93,6 +95,9 @@ Before creating the instance, add the element that will create the editor. And y
 #### Using the Editor
 
 ```js
+import 'codemirror/lib/codemirror.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
+
 import $ from 'jquery';
 import '@toast-ui/jquery-editor';
 
@@ -115,6 +120,9 @@ $('#viewer').toastuiEditor({
 If you want to use only the viewer, import the bundle file corresponding to the viewer.
 
 ```js
+import 'codemirror/lib/codemirror.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
+
 import $ from 'jquery';
 import '@toast-ui/jquery-editor/dist/toastui-jquery-editor-viewer';
 

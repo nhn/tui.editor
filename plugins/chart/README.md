@@ -74,6 +74,7 @@ const chart = require('@toast-ui/editor-plugin-chart');
 
 ```js
 // ...
+import 'tui-chart/dist/tui-chart.css';
 
 import Editor from '@toast-ui/editor';
 import chart from '@toast-ui/editor-plugin-chart';
@@ -88,6 +89,7 @@ const editor = new Editor({
 
 ```js
 // ...
+import 'tui-chart/dist/tui-chart.css';
 
 import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
 import chart from '@toast-ui/editor-plugin-chart';
@@ -102,14 +104,15 @@ or
 
 ```js
 // ...
+import 'tui-chart/dist/tui-chart.css';
 
 import Editor from '@toast-ui/editor';
 import chart from '@toast-ui/editor-plugin-chart';
 
 const viewer = Editor.factory({
   // ...
-  viewer: true,
-  plugins: [chart]
+  plugins: [chart],
+  viewer: true
 });
 ```
 
@@ -170,8 +173,8 @@ const { chart } = Editor.plugin;
 
 const viewer = Editor.factory({
   // ...
-  viewer: true,
-  plugins: [chart]
+  plugins: [chart],
+  viewer: true
 });
 ```
 
@@ -193,6 +196,7 @@ These options are used to set the dimensions of the chart drawn in the editor.
 
 ```js
 // ...
+import 'tui-chart/dist/tui-chart.css';
 
 import Editor from '@toast-ui/editor';
 import chart from '@toast-ui/editor-plugin-chart';

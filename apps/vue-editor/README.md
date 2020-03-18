@@ -67,6 +67,9 @@ First implement `<editor/>` in the template.
 And then add `Editor` to the `components` in your component or Vue instance like this:
 
 ```js
+import 'codemirror/lib/codemirror.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
+
 import { Editor } from '@toast-ui/vue-editor';
 
 export default {
@@ -79,6 +82,9 @@ export default {
 or
 
 ```js
+import 'codemirror/lib/codemirror.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
+
 import { Editor } from '@toast-ui/vue-editor';
 
 new Vue({
@@ -100,6 +106,9 @@ In the example below, `editorText` is binding to the text of the editor.
   <editor v-model="editorText" />
 </template>
 <script>
+  import 'codemirror/lib/codemirror.css';
+  import '@toast-ui/editor/dist/toastui-editor.css';
+
   import { Editor } from '@toast-ui/vue-editor';
 
   export default {
@@ -119,10 +128,11 @@ In the example below, `editorText` is binding to the text of the editor.
 
 | Name            | Type   | Default                    | Description                                               |
 | --------------- | ------ | -------------------------- | --------------------------------------------------------- |
-| initialValue    | String | ''                         | Editor's initial value                                    |
-| initialEditType | String | 'markdown'                 | Initial editor type (markdown, wysiwyg)                   |
+| initialValue    | String | ''                         | Editor's initial value       .                             |
+| initialEditType | String | 'markdown'                 | Initial editor type (markdown, wysiwyg).                   |
 | options         | Object | following `defaultOptions` | Options of tui.editor. This is for initailize tui.editor. |
 | height          | String | '300px'                    | This prop can control the height of the editor.           |
+| previewStyle          | String | 'vertical'           | Markdown editor's preview style (tab, vertical).           |
 
 ```js
 const defaultOptions = {
@@ -168,6 +178,9 @@ const defaultOptions = {
   />
 </template>
 <script>
+  import 'codemirror/lib/codemirror.css';
+  import '@toast-ui/editor/dist/toastui-editor.css';
+
   import { Editor } from '@toast-ui/vue-editor';
 
   export default {
@@ -188,15 +201,18 @@ const defaultOptions = {
 
 ### Instance Methods
 
-If you want to more manipulate the Editor, you can use `invoke` method to call the method of tui.editor. For more information of method, see [instance methods of TOAST UI Editor](https://nhn.github.io/tui.editor/latest/ToastUIEditor#addHook).
+If you want to more manipulate the Editor, you can use `invoke` method to call the method of toastui.editor. For more information of method, see [instance methods of TOAST UI Editor](https://nhn.github.io/tui.editor/latest/ToastUIEditor#addHook).
 
 First, you need to assign `ref` attribute of `<editor/>` and then you can use `invoke` method through `this.$refs` like this:
 
 ```html
 <template>
-  <editor ref="tuiEditor" />
+  <editor ref="toastuiEditor" />
 </template>
 <script>
+  import 'codemirror/lib/codemirror.css';
+  import '@toast-ui/editor/dist/toastui-editor.css';
+
   import { Editor } from '@toast-ui/vue-editor';
 
   export default {
@@ -205,13 +221,13 @@ First, you need to assign `ref` attribute of `<editor/>` and then you can use `i
     },
     methods: {
       scroll() {
-        this.$refs.tuiEditor.invoke('scrollTop', 10);
+        this.$refs.toastuiEditor.invoke('scrollTop', 10);
       },
       moveTop() {
-        this.$refs.tuiEditor.invoke('moveCursorToStart');
+        this.$refs.toastuiEditor.invoke('moveCursorToStart');
       },
       getHtml() {
-        let html = this.$refs.tuiEditor.invoke('getHtml');
+        let html = this.$refs.toastuiEditor.invoke('getHtml');
       }
     }
   };
@@ -297,6 +313,8 @@ First implement `<viewer />` in the template.
 And then add `Viewer` to the `components` in your component or Vue instance like this:
 
 ```js
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+
 import { Viewer } from '@toast-ui/vue-editor';
 
 export default {
@@ -309,6 +327,8 @@ export default {
 or
 
 ```js
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+
 import { Viewer } from '@toast-ui/vue-editor';
 
 new Vue({
@@ -328,9 +348,11 @@ new Vue({
 
 ```html
 <template>
-  <viewer :value="viewerText" height="500px" />
+  <viewer :initialValue="viewerText" height="500px" />
 </template>
 <script>
+  import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+
   import { Viewer } from '@toast-ui/vue-editor';
 
   export default {
@@ -356,21 +378,23 @@ new Vue({
 
 ```html
 <template>
-    <viewer
+  <viewer
     @load="onEditorLoad"
     @focus="onEditorFocus"
     @blur="onEditorBlur"
     @change="onEditorChange"
     @stateChange="onEditorStateChange"
-    />
+  />
 </template>
 
 <script>
-import { Viewer } from '@toast-ui/vue-editor'
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+
+import { Viewer } from '@toast-ui/vue-editor';
 
 export default {
     components: {
-        'viewer': Viewer
+        viewer: Viewer
     },
     methods: {
         onEditorLoad() {
@@ -390,4 +414,5 @@ export default {
         },
     }
 };
+</script>
 ```

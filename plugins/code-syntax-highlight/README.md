@@ -21,7 +21,7 @@
 ```
 - node_modules/
   - @toast-ui/
-    - editor-plugin-color-syntax-highlight/
+    - editor-plugin-code-syntax-highlight/
       - dist/
         - toastui-editor-plugin-code-syntax-highlight.js
 ```
@@ -241,8 +241,8 @@ const { codeSyntaxHightlight } = Editor.plugin;
 
 const editor = Editor.factory({
   // ...
-  viewer: true,
-  plugins: [codeSyntaxHightlight]
+  plugins: [codeSyntaxHightlight],
+  viewer: true
 });
 ```
 

@@ -96,8 +96,8 @@ import uml from '@toast-ui/editor-plugin-uml';
 
 const viewer = Editor.factory({
   // ...
-  viewer: true,
-  plugins: [uml]
+  plugins: [uml],
+  viewer: true
 });
 ```
 
@@ -154,8 +154,8 @@ const { uml } = Editor.plugin;
 
 const viewer = Editor.factory({
   // ...
-  viewer: true,
-  plugins: [uml]
+  plugins: [uml],
+  viewer: true
 });
 ```
 
