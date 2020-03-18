@@ -33,7 +33,7 @@
   "examples": {
     "filePath": "examples",
     "titles": {
-      "example01-editor": "1. Editor",
+      "example01-editor-basic": "1. Editor",
       "example02-editor-with-horizontal-preview": "2. Editor With Horizontal Preview",
       "example03-editor-with-wysiwyg-mode": "3. Editor With WYSIWYG Mode",
       "example04-viewer": "4. Viewer",
