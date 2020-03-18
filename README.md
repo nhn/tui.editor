@@ -74,7 +74,7 @@ Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Ma
 
 ### Usability Common UI
 
-![UI](https://user-images.githubusercontent.com/18183560/76676249-e8365a80-6604-11ea-8b79-d978ab1e8189.gif)
+![UI](https://user-images.githubusercontent.com/18183560/76941970-4bdfc100-6940-11ea-9a60-94124237fa1e.gif)
 
 * **Toolbar** : Through the toolbar, you can style or add elements to the document you are editing.
 * **Copy and Paste** : Paste anything from browser, screenshot, excel, powerpoint, etc.
