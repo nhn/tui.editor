@@ -8,7 +8,6 @@
 
 - [Collect Statistics on the Use of Open Source](#collect-statistics-on-the-use-of-open-source)
 - [Install](#-install)
-- [Install](#-install)
 - [Editor Usage](#-editor-usage)
 - [Viewer Usage](#-viewer-usage)
 
