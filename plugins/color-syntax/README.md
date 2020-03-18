@@ -74,6 +74,7 @@ const colorSyntax = require('@toast-ui/editor-plugin-color-syntax');
 
 ```js
 // ...
+import 'tui-color-picker/dist/tui-color-picker.css';
 
 import Editor from '@toast-ui/editor';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
@@ -139,6 +140,7 @@ The `useCustomSyntax` option is `false` by default, applying color syntax using 
 
 ```js
 // ...
+import 'tui-color-picker/dist/tui-color-picker.css';
 
 import Editor from '@toast-ui/editor';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';

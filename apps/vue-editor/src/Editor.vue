@@ -35,8 +35,8 @@ export default {
       const options = Object.assign({}, this.options);
       options.initialEditType = this.initialEditType || 'markdown';
       options.initialValue = this.initialValue || '';
-      options.height = this.height;
-      options.previewStyle = this.previewStyle;
+      options.height = this.height || '300px';
+      options.previewStyle = this.previewStyle || 'vertical';
 
       return options;
     }

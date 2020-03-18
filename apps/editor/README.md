@@ -167,7 +167,7 @@ editor.getHtml();
 - `height`: Height in string or auto ex) `300px` | `auto`
 - `initialEditType`: Initial type to show `markdown` | `wysiwyg`
 - `initialValue`: Initial value. Set Markdown string
-- `previewType`: Preview style of Markdown mode `tab` | `vertical`
+- `previewStyle`: Preview style of Markdown mode `tab` | `vertical`
 - `usageStatistics`: Let us know the _hostname_. We want to learn from you how you are using the Editor. You are free to disable it. `true` | `false`
 
 Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEditor).
