@@ -14,12 +14,24 @@ export default {
     },
     initialValue: {
       type: String
+    },
+    options: {
+      type: Object
     }
   },
   data() {
     return {
       editor: null
     };
+  },
+  computed: {
+    viewerOptions() {
+      const options = Object.assign({}, this.options);
+      options.initialValue = this.initialValue || '';
+      options.height = this.height || '300px';
+
+      return options;
+    }
   },
   mounted() {
     const eventOption = {};
@@ -29,13 +41,13 @@ export default {
       };
     });
 
-    this.editor = Editor.factory({
+    const options = Object.assign(this.viewerOptions, {
       el: this.$refs.toastuiEditorViewer,
       events: eventOption,
-      initialValue: this.initialValue || '',
-      height: this.height || '300px',
       viewer: true
     });
+
+    this.editor = Editor.factory(options);
   },
   destroyed() {
     editorEvents.forEach(event => {
