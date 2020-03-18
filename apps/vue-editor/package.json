@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/vue-editor",
-  "version": "2.0.0-alpha",
+  "version": "2.0.0",
   "description": "TOAST UI Editor for Vue",
   "main": "dist/toastui-vue-editor.js",
   "files": [
@@ -14,10 +14,16 @@
     "build:dev": "webpack --mode development",
     "storybook": "start-storybook -p 6006"
   },
-  "homepage": "https://github.com/nhn/toast-ui.vue-editor",
-  "bugs": "https://github.com/nhn/toast-ui.vue-editor/issues",
+  "homepage": "https://ui.toast.com",
+  "bugs": {
+    "url": "https://github.com/nhn/tui.editor/issues"
+  },
   "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
-  "repository": "https://github.com/nhn/toast-ui.vue-editor.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhn/tui.editor.git",
+    "directory": "apps/vue-editor"
+  },
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.1.0",
@@ -43,6 +49,6 @@
     "vue": "^2.5.0"
   },
   "dependencies": {
-    "@toast-ui/editor": "^2.0.0-alpha"
+    "@toast-ui/editor": "^2.0.0"
   }
 }
