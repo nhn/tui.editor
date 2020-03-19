@@ -65,7 +65,7 @@ export default {
     this.editor = new Editor(options);
     if (this.$listeners.input) {
       this.editor.on('change', () => {
-        this.$emit('input', this.editor.getValue());
+        this.$emit('input', this.editor.getMarkdown());
       });
     }
   },
@@ -81,7 +81,7 @@ export default {
       if (this.editor[methodName]) {
         result = this.editor[methodName](...args);
         if (valueUpdateMethod.indexOf(methodName) > -1) {
-          this.$emit('input', this.editor.getValue());
+          this.$emit('input', this.editor.getMarkdown());
         }
       }
 
