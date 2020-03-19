@@ -1,6 +1,6 @@
 # ToastMark
 
-ToastMark is a markdown parser extended from commonmark.js, with more advanced features to be used within TOAST UI Editor. 
+ToastMark is a markdown parser extended from [commonmark.js](https://github.com/commonmark/commonmark.js), with more advanced features to be used within TOAST UI Editor. 
 
 > Currently, ToastMark is for interal usage only as the API's are supposed to be changed frequently. We are planning to register this as a separate npm package when API's are stabilized.
 
