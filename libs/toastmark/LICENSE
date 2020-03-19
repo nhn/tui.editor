@@ -77,7 +77,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The test examples in src/commonmark/__test__/base-examples.json is
+The test cases in src/commonmark/__test__/base-examples.json are
 copied from commonmark spec.
 
 Copyright (C) 2014-15 John MacFarlane
