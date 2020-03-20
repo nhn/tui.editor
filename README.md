@@ -130,7 +130,7 @@ Fork `master` branch into your personal repository. Clone it to local computer. 
 ```sh
 $ git clone https://github.com/{your-personal-repo}/tui.editor.git
 $ npm install
-$ cd apss/editor
+$ cd apps/editor
 $ npm install
 $ npm run test
 ```
