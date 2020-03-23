@@ -3,9 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
-import Editor from '@toast-ui/editor';
-
-import '@/editor';
+import Editor from '@/editor';
 
 describe('jQuery wrapper for editor', () => {
   let $container;
