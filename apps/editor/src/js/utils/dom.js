@@ -1234,7 +1234,7 @@ function getOffset(element) {
   while (element !== document.body) {
     top += element.offsetTop;
     left += element.offsetLeft;
-    element = element.offsetParent;
+    element = element.offsetParent || element.parentElement;
   }
 
   return { top, left };
