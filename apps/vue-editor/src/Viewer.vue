@@ -26,11 +26,10 @@ export default {
   },
   computed: {
     viewerOptions() {
-      const options = Object.assign({}, this.options);
-      options.initialValue = this.initialValue || '';
-      options.height = this.height || '300px';
-
-      return options;
+      return Object.assign({}, this.options, {
+        initialValue: this.initialValue || '',
+        height: this.height || '300px'
+      });
     }
   },
   mounted() {
