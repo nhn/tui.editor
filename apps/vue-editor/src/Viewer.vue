@@ -3,11 +3,11 @@
 </template>
 <script>
 import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
-import {mixin} from './mixin/option';
+import {optionsMixin} from './mixin/option';
 
 export default {
   name: 'ToastuiEditorViewer',
-  mixins: [mixin],
+  mixins: [optionsMixin],
   props: {
     height: {
       type: String

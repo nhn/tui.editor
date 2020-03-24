@@ -3,11 +3,11 @@
 </template>
 <script>
 import Editor from '@toast-ui/editor';
-import {mixin} from './mixin/option';
+import {optionsMixin} from './mixin/option';
 
 export default {
   name: 'ToastuiEditor',
-  mixins: [mixin],
+  mixins: [optionsMixin],
   props: {
     previewStyle: {
       type: String

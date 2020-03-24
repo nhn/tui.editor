@@ -12,11 +12,11 @@ const defaultValueMap = {
   previewStyle: 'vertical'
 };
 
-export const mixin = {
+export const optionsMixin = {
   data() {
-    const eventOption = {};
+    const eventOptions = {};
     editorEvents.forEach(event => {
-      eventOption[event] = (...args) => {
+      eventOptions[event] = (...args) => {
         this.$emit(event, ...args);
       };
     });
@@ -26,7 +26,7 @@ export const mixin = {
       initialValue: this.initialValue,
       height: this.height,
       previewStyle: this.previewStyle,
-      events: eventOption
+      events: eventOptions
     };
     Object.keys(defaultValueMap).forEach(key => {
       if (!options[key]) {
