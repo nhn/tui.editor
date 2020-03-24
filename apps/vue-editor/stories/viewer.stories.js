@@ -3,7 +3,7 @@ import {html} from 'common-tags';
 import * as dummy from './dummyData';
 
 import 'codemirror/lib/codemirror.css';
-import '@toast-ui/editor/dist/toastui-editor.min.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
 
 import Viewer from '../src/Viewer.vue';
 
