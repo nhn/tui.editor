@@ -63,7 +63,7 @@ export class Parser {
   private allClosed: boolean;
   private lastMatchedContainer: Node;
   public refmap: any;
-  private lastLineLength: number;
+  public lastLineLength: number;
   public inlineParser: InlineParser;
   public options: Options;
 
@@ -201,10 +201,10 @@ export class Parser {
   // or 'loose' status of a list, and parsing the beginnings
   // of paragraphs for reference definitions.  Reset the tip to the
   // parent of the closed block.
-  finalize(block: BlockNode, lineNumber: number, column = this.lastLineLength) {
+  finalize(block: BlockNode, lineNumber: number) {
     const above = block.parent as BlockNode;
     block.open = false;
-    block.sourcepos![1] = [lineNumber, column];
+    block.sourcepos![1] = [lineNumber, this.lastLineLength];
     blockHandlers[block.type].finalize(this, block);
 
     this.tip = above;
@@ -367,6 +367,7 @@ export class Parser {
           container.htmlBlockType <= 5 &&
           reHtmlBlockClose[container.htmlBlockType].test(this.currentLine.slice(this.offset))
         ) {
+          this.lastLineLength = ln.length;
           this.finalize(container, this.lineNumber);
         }
       } else if (this.offset < ln.length && !this.blank) {
