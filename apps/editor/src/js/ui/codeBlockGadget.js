@@ -78,7 +78,8 @@ class CodeBlockGadget extends BlockOverlay {
     const offset = domUtils.getOffset(attachedElement);
     const outerWidth = domUtils.getOuterWidth(attachedElement);
 
-    offset.left = offset.left + (outerWidth - GADGET_WIDTH);
+    offset.left = offset.left + outerWidth - GADGET_WIDTH - window.scrollX;
+    offset.top = offset.top - window.scrollY;
 
     domUtils.setOffset(this.el, offset);
     css(this.el, { height: `${GADGET_HEIGHT}px` });
