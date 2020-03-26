@@ -1231,11 +1231,11 @@ function getOffset(element) {
   let top = 0;
   let left = 0;
 
-  while (element !== document.body) {
-    top += element.offsetTop;
-    left += element.offsetLeft;
+  do {
+    top += element.offsetTop || 0;
+    left += element.offsetLeft || 0;
     element = element.offsetParent;
-  }
+  } while (element);
 
   return { top, left };
 }
