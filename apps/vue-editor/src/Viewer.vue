@@ -2,56 +2,28 @@
   <div ref="toastuiEditorViewer"></div>
 </template>
 <script>
-import Editor from '@toast-ui/editor';
-
-import editorEvents from './editorEvents';
+import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
+import {optionsMixin} from './mixin/option';
 
 export default {
   name: 'ToastuiEditorViewer',
+  mixins: [optionsMixin],
   props: {
     height: {
       type: String
     },
     initialValue: {
       type: String
+    },
+    options: {
+      type: Object
     }
   },
-  data() {
-    return {
-      editor: null
-    };
-  },
   mounted() {
-    const eventOption = {};
-    editorEvents.forEach(event => {
-      eventOption[event] = (...args) => {
-        this.$emit(event, ...args);
-      };
-    });
-
-    this.editor = Editor.factory({
-      el: this.$refs.toastuiEditorViewer,
-      events: eventOption,
-      initialValue: this.initialValue || '',
-      height: this.height || '300px',
-      viewer: true
-    });
-  },
-  destroyed() {
-    editorEvents.forEach(event => {
-      this.editor.off(event);
-    });
-    this.editor.remove();
+    const options = {...this.computedOptions, el: this.$refs.toastuiEditorViewer};
+    this.editor = new Viewer(options);
   },
   methods: {
-    invoke(methodName, ...args) {
-      let result = null;
-      if (this.editor[methodName]) {
-        result = this.editor[methodName](...args);
-      }
-
-      return result;
-    },
     getRootElement() {
       return this.$refs.toastuiEditorViewer;
     }

@@ -10,5 +10,8 @@
     },
     "plugins": [
         "vue"
-    ]
+    ],
+    "rules": {
+        "object-property-newline": 0
+    }
 }

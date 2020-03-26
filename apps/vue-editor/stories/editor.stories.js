@@ -4,7 +4,7 @@ import {html} from 'common-tags';
 import * as dummy from './dummyData';
 
 import 'codemirror/lib/codemirror.css';
-import '@toast-ui/editor/dist/toastui-editor.min.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
 
 import Editor from '../src/Editor.vue';
 
@@ -14,7 +14,7 @@ stories.add('Demo', () => ({
   components: {
     Editor
   },
-  template: `<editor :initialValue="initialValue" previewStyle="tab" height="600px"" />`,
+  template: `<editor :initialValue="initialValue" previewStyle="tab" height="600px" />`,
   data() {
     return {
       initialValue: dummy.content
@@ -83,23 +83,6 @@ stories.add('change props', () => ({
     changePreviewStyle() {
       this.previewStyle = this.previewStyle === 'tab' ? 'vertical' : 'tab';
     }
-  }
-}));
-
-stories.add('v-model', () => ({
-  components: {
-    Editor
-  },
-  template: html`
-    <div>
-      <editor v-model="content" height="300px" />
-      <p style="white-space: pre-line">Editor Input Data {{ content }}</p>
-    </div>
-  `,
-  data() {
-    return {
-      content: ''
-    };
   }
 }));
 

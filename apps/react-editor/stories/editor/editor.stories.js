@@ -1,6 +1,6 @@
 import React from 'react';
 import 'codemirror/lib/codemirror.css';
-import '@toast-ui/editor/dist/toastui-editor.min.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { storiesOf } from '@storybook/react';
 import { withKnobs } from '@storybook/addon-knobs';
@@ -29,28 +29,7 @@ stories.add('customize toolbar', () => (
     height="400px"
     initialEditType="markdown"
     initialValue="hello customize toolbar"
-    toolbarItems={[
-      'heading',
-      'bold',
-      'italic'
-      // 'strike',
-      // 'divider',
-      // 'hr',
-      // 'quote',
-      // 'divider',
-      // 'ul',
-      // 'ol',
-      // 'task',
-      // 'indent',
-      // 'outdent',
-      // 'divider',
-      // 'table',
-      // 'image',
-      // 'link',
-      // 'divider',
-      // 'code',
-      // 'codeblock'
-    ]}
+    toolbarItems={['heading', 'bold', 'italic']}
   />
 ));
 
@@ -91,35 +70,6 @@ stories.add('i18n', () => (
   />
 ));
 
-stories.add('setValue programmatically', () => {
-  class Story extends React.Component {
-    ref = React.createRef();
-
-    handleClick = () => {
-      const { content } = basicViewerDummy;
-
-      this.ref.current.getInstance().setValue(content);
-    };
-
-    render() {
-      return (
-        <>
-          <Editor
-            previewStyle="vertical"
-            height="400px"
-            initialEditType="markdown"
-            initialValue="before"
-            ref={this.ref}
-          />
-          <button onClick={this.handleClick}>change content programmatically</button>
-        </>
-      );
-    }
-  }
-
-  return <Story />;
-});
-
 stories.add('dynamically change react state', () => {
   class Story extends React.Component {
     ref = React.createRef();
@@ -129,15 +79,6 @@ stories.add('dynamically change react state', () => {
       height: 400,
       previewStyle: 'vertical',
       editType: 'markdown'
-    };
-
-    handleChange = () => {
-      const value = this.ref.current.getInstance().getValue();
-
-      this.setState({
-        ...this.state,
-        content: value
-      });
     };
 
     togglePreviewStyle = () => {
@@ -162,7 +103,6 @@ stories.add('dynamically change react state', () => {
             height={`${this.state.height}px`}
             initialEditType={this.state.editType}
             initialContent={this.state.content}
-            onChange={this.handleChange}
             ref={this.ref}
           />
           <button onClick={this.togglePreviewStyle}>toggle preview style</button>

@@ -95,35 +95,6 @@ new Vue({
 });
 ```
 
-### Using v-model
-
-If you use v-model, you have to declare a `data` for binding. (❗️ When using the editor in `wysiwyg` mode, `v-model` can cause performance degradation.)
-
-In the example below, `editorText` is binding to the text of the editor.
-
-```html
-<template>
-  <editor v-model="editorText" />
-</template>
-<script>
-  import 'codemirror/lib/codemirror.css';
-  import '@toast-ui/editor/dist/toastui-editor.css';
-
-  import { Editor } from '@toast-ui/vue-editor';
-
-  export default {
-    components: {
-      editor: Editor
-    },
-    data() {
-      return {
-        editorText: ''
-      };
-    }
-  };
-</script>
-```
-
 ### Props
 
 | Name            | Type   | Default                    | Description                                               |

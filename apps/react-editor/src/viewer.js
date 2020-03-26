@@ -34,13 +34,6 @@ export default class ViewerComponent extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const currentValue = this.props.initialValue;
-    const nextValue = nextProps.initialValue;
-
-    if (currentValue !== nextValue) {
-      this.getInstance().setValue(nextValue);
-    }
-
     this.bindEventHandlers(nextProps, this.props);
 
     return false;
