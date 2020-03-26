@@ -28,3 +28,5 @@ $.fn.toastuiEditor = function(...args) {
 
   return this;
 };
+
+export default Viewer;
