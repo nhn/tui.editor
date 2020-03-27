@@ -3,7 +3,7 @@ import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY } from './commo
 import { reHtmlTag } from './rawHtml';
 import fromCodePoint from './from-code-point';
 import { Options } from './blocks';
-import { decodeHTML } from 'entities';
+import { decodeHTML } from 'entities/lib/decode';
 import NodeWalker from './nodeWalker';
 import { convertExtAutoLinks } from './gfm/autoLinks';
 import { last, normalizeReference } from '../helper';

@@ -1,5 +1,5 @@
 import encode from 'mdurl/encode';
-import { decodeHTML } from 'entities';
+import { decodeHTML } from 'entities/lib/decode';
 
 export const ENTITY = '&(?:#x[a-f0-9]{1,6}|#[0-9]{1,7}|[a-z][a-z0-9]{1,31});';
 const C_BACKSLASH = 92;
