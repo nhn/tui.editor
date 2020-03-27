@@ -161,7 +161,8 @@ const codeBlock: BlockHandler = {
         ln.slice(parser.nextNonspace).match(reClosingCodeFence);
       if (match && match[0].length >= container.fenceLength) {
         // closing fence - we're at end of line, so we can return
-        parser.finalize(container as BlockNode, parser.lineNumber, match[0].length);
+        parser.lastLineLength = parser.offset + indent + match[0].length;
+        parser.finalize(container as BlockNode, parser.lineNumber);
         return Process.Finished;
       }
       // skip optional spaces of fence offset

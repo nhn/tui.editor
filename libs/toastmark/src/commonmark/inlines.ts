@@ -1,13 +1,12 @@
 import { Node, BlockNode, SourcePos, isHeading, LinkNode, createNode, text } from './node';
 import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY } from './common';
 import { reHtmlTag } from './rawHtml';
-import normalizeReference from './normalize-reference';
 import fromCodePoint from './from-code-point';
 import { Options } from './blocks';
 import { decodeHTML } from 'entities';
 import NodeWalker from './nodeWalker';
 import { convertExtAutoLinks } from './gfm/autoLinks';
-import { last } from '../helper';
+import { last, normalizeReference } from '../helper';
 
 export const C_NEWLINE = 10;
 const C_ASTERISK = 42;

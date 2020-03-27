@@ -106,11 +106,8 @@ export const tableHead: BlockStart = (parser, container) => {
       container.stringContent = stringContent.slice(0, lastLineStartIdx);
       const paraLastLineStartIdx = stringContent.lastIndexOf('\n', lastLineStartIdx - 2) + 1;
       const paraLastLineLen = lastLineStartIdx - paraLastLineStartIdx - 1;
-      parser.finalize(
-        container,
-        firstLineNum - 1,
-        lineOffsets[lineOffsets.length - 2] + paraLastLineLen
-      );
+      parser.lastLineLength = lineOffsets[lineOffsets.length - 2] + paraLastLineLen;
+      parser.finalize(container, firstLineNum - 1);
     }
     parser.advanceOffset(parser.currentLine.length - parser.offset, false);
 

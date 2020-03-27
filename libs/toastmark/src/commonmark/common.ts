@@ -1,5 +1,4 @@
 import encode from 'mdurl/encode';
-import decode from 'mdurl/decode';
 import { decodeHTML } from 'entities';
 
 export const ENTITY = '&(?:#x[a-f0-9]{1,6}|#[0-9]{1,7}|[a-z][a-z0-9]{1,31});';
@@ -27,7 +26,7 @@ export function unescapeString(s: string) {
 
 export function normalizeURI(uri: string) {
   try {
-    return encode(decode(uri));
+    return encode(uri);
   } catch (err) {
     return uri;
   }
