@@ -1,9 +1,7 @@
-import Editor from 'tui-editor';
-import EditorAll from 'tui-editor/dist/tui-editor-Editor-all';
-import Viewer from 'tui-editor/dist/tui-editor-Viewer';
-import ViewerAll from 'tui-editor/dist/tui-editor-Viewer-all';
+import Editor from '@toast-ui/editor';
+import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
 
-const editor2 = new EditorAll({
+const editor2 = new Editor({
   el: document.getElementById('editor'),
   height: '200px',
   minHeight: '100px',
@@ -13,25 +11,21 @@ const editor2 = new EditorAll({
 
 editor2.changeMode('wysiwyg', true);
 
-const editor:Editor = new Editor({
+const editor: Editor = new Editor({
   el: document.querySelector('#el'),
   initialValue: '# HELLO TOAST UI EDITOR!'
 });
 
-new Editor.Button({
-  className: 'editor-btn',
-  $el: $('#container')
-});
 Editor.codeBlockManager;
 Editor.codeBlockManager.createCodeBlockHtml('en_US', 'Hello World');
 Editor.codeBlockManager.getReplacer('youtube');
-const cm = new Editor.CommandManager(editor);
-const tuiCommand = tuiEditor.Command;
+const cm = new toastui.CommandManager(editor);
+const tuiCommand = toastui.Command;
 tuiCommand.TYPE.GB;
 tuiCommand.TYPE.MD;
 tuiCommand.TYPE.WW;
 const cmd = new tuiCommand('enter', 13);
-const tuiCmdManagerCmd = Editor.CommandManager.command('shift', {name: 'shift'});
+const tuiCmdManagerCmd = toastui.CommandManager.command('shift', { name: 'shift' });
 const command = cm.addCommand(cmd);
 command.getName();
 command.getType();
@@ -39,24 +33,19 @@ command.isGlobalType();
 command.isMDType();
 command.isWWType();
 
-Editor.domUtils;
-Editor.i18n;
 Editor.isViewer;
-Editor.markdownitHighlight;
-const wwe = editor.getCurrentModeEditor() as tuiEditor.WysiwygEditor;
-new Editor.WwCodeBlockManager(wwe);
-new Editor.WwTableManager(wwe);
-new Editor.WwTableSelectionManager(wwe);
+const wwe = editor.getCurrentModeEditor() as toastui.WysiwygEditorOptions;
 
 const node = new Node();
 Editor.WwCodeBlockManager.convertNodesToText([node]);
-Editor.defineExtension('youtube', () => { return '<div></div>'});
-Editor.factory({el: document.querySelector('#editorSectoin')});
+Editor.factory({ el: document.querySelector('#editorSection') });
 Editor.getInstances().length == 1;
 
-editor.addHook('click', () => { console.log('click Handler!')});
+editor.addHook('click', () => {
+  console.log('click Handler!');
+});
 const selection = new Range();
-editor.addWidget(selection, document.querySelector('#editorSectoin'), 'bottom', 20);
+editor.addWidget(selection, document.querySelector('#editorSection'), 'bottom', 20);
 editor.afterAddedCommand();
 editor.blur();
 editor.changeMode('markdown', false);
@@ -95,37 +84,37 @@ editor.setUI(editor.getUI());
 editor.setValue('* using TOAST UI');
 editor.show();
 
-Editor.i18n.setLanguage(['en', 'en_US'], {
-  'Markdown': 'Markdown',
-  'WYSIWYG': 'WYSIWYG',
-  'Write': 'Write',
-  'Preview': 'Preview',
-  'Headings': 'Headings',
-  'Paragraph': 'Paragraph',
-  'Bold': 'Bold',
-  'Italic': 'Italic',
-  'Strike': 'Strike',
-  'Code': 'Inline code',
-  'Line': 'Line',
-  'Blockquote': 'Blockquote',
+Editor.setLanguage('en', {
+  Markdown: 'Markdown',
+  WYSIWYG: 'WYSIWYG',
+  Write: 'Write',
+  Preview: 'Preview',
+  Headings: 'Headings',
+  Paragraph: 'Paragraph',
+  Bold: 'Bold',
+  Italic: 'Italic',
+  Strike: 'Strike',
+  Code: 'Inline code',
+  Line: 'Line',
+  Blockquote: 'Blockquote',
   'Unordered list': 'Unordered list',
   'Ordered list': 'Ordered list',
-  'Task': 'Task',
-  'Indent': 'Indent',
-  'Outdent': 'Outdent',
+  Task: 'Task',
+  Indent: 'Indent',
+  Outdent: 'Outdent',
   'Insert link': 'Insert link',
   'Insert CodeBlock': 'Insert codeBlock',
   'Insert table': 'Insert table',
   'Insert image': 'Insert image',
-  'Heading': 'Heading',
+  Heading: 'Heading',
   'Image URL': 'Image URL',
   'Select image file': 'Select image file',
-  'Description': 'Description',
-  'OK': 'OK',
-  'More': 'More',
-  'Cancel': 'Cancel',
-  'File': 'File',
-  'URL': 'URL',
+  Description: 'Description',
+  OK: 'OK',
+  More: 'More',
+  Cancel: 'Cancel',
+  File: 'File',
+  URL: 'URL',
   'Link text': 'Link text',
   'Add row': 'Add row',
   'Add col': 'Add col',
@@ -142,30 +131,24 @@ Editor.i18n.setLanguage(['en', 'en_US'], {
   'Choose language': 'Choose language'
 });
 
-const viewer:Viewer = new Viewer({
-  el: document.querySelector('#el'),
-  exts: ['chart', 'youtube']
+const viewer: Viewer = new Viewer({
+  el: document.querySelector('#el')
 });
 
 Viewer.codeBlockManager;
-Viewer.domUtils;
 Viewer.isViewer;
-Viewer.markdownitHighlight;
 
-Viewer.defineExtension('youtube', () => {});
-
-viewer.addHook('click', () => { return 1; });
+viewer.addHook('click', () => {
+  return 1;
+});
 viewer.isMarkdownMode();
 viewer.isViewer();
 viewer.isWysiwygMode();
 viewer.off('click');
-viewer.on('click', e => { return 1; });
+viewer.on('click', e => {
+  return 1;
+});
 viewer.remove();
 viewer.setMarkdown('### I am Viewer!');
 viewer.setValue('### I am setValue method!');
 Editor.getInstances().length == 1;
-
-const viewer2 = new ViewerAll({
-  el: document.querySelector('#el')
-});
-viewer2.isViewer();
