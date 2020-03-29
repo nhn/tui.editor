@@ -776,10 +776,9 @@ const optimizeRange = function(range, tagName) {
 
     if (startContainer !== endContainer) {
       const startNode = getParentUntil(startContainer, commonAncestorContainer);
+      const endNode = getParentUntil(endContainer, commonAncestorContainer);
 
-      if (startNode) {
-        const endNode = getParentUntil(endContainer, commonAncestorContainer);
-
+      if (startNode && endNode) {
         mergeSameNodes(startNode, endNode, tagName);
       }
 
