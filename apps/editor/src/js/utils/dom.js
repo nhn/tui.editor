@@ -775,11 +775,12 @@ const optimizeRange = function(range, tagName) {
     let optimizedNode = null;
 
     if (startContainer !== endContainer) {
-      mergeSameNodes(
-        getParentUntil(startContainer, commonAncestorContainer),
-        getParentUntil(endContainer, commonAncestorContainer),
-        tagName
-      );
+      const startNode = getParentUntil(startContainer, commonAncestorContainer);
+      const endNode = getParentUntil(endContainer, commonAncestorContainer);
+
+      if (startNode && endNode) {
+        mergeSameNodes(startNode, endNode, tagName);
+      }
 
       optimizedNode = commonAncestorContainer;
     } else if (isTextNode(startContainer)) {

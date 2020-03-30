@@ -112,4 +112,20 @@ describe('Italic', () => {
 
     expect(wwe.getValue()).toEqual('<i>line</i><br />');
   });
+
+  it('when some of the text is selected, the italic already applied should be removed', () => {
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
+
+    wwe.setValue('<i>foo b</i>ar');
+
+    range.selectNodeContents(wwe.getBody().children[0].firstChild);
+    wwe.getEditor().setSelection(range);
+
+    Italic.exec(wwe);
+
+    expect(wwe.getValue()).toEqual('foo bar<br />');
+  });
 });

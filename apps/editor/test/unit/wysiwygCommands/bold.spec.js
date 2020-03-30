@@ -113,4 +113,20 @@ describe('Bold', () => {
 
     expect(wwe.getValue()).toEqual('<b>line</b><br />');
   });
+
+  it('when some of the text is selected, the bold already applied should be removed', () => {
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
+
+    wwe.setValue('<b>foo b</b>ar');
+
+    range.selectNodeContents(wwe.getBody().children[0].firstChild);
+    wwe.getEditor().setSelection(range);
+
+    Bold.exec(wwe);
+
+    expect(wwe.getValue()).toEqual('foo bar<br />');
+  });
 });

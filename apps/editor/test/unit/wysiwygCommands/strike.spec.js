@@ -160,4 +160,20 @@ describe('Strike', () => {
 
     expect(wwe.getValue()).toEqual('<s>line</s><br />');
   });
+
+  it('when some of the text is selected, the strike already applied should be removed', () => {
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
+
+    wwe.setValue('<s>foo b</s>ar');
+
+    range.selectNodeContents(wwe.getBody().children[0].firstChild);
+    wwe.getEditor().setSelection(range);
+
+    Strike.exec(wwe);
+
+    expect(wwe.getValue()).toEqual('foo bar<br />');
+  });
 });
