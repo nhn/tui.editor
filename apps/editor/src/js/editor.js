@@ -98,9 +98,13 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
 /**
  * @typedef {object} toolbarButtonOptions
  * @property {HTMLElement} el - target element
- * @property {string} tooltip - text on tooltip
+ * @property {string} className - class name
  * @property {string} command - command name to execute on click
  * @property {string} event - event name to trigger on click
+ * @property {string} text - text on button
+ * @property {string} tooltip - text on tooltip
+ * @property {string} style - button style
+ * @property {string} state - button state
  */
 
 /**
