@@ -6,6 +6,7 @@ import { storiesOf } from '@storybook/react';
 import { withKnobs } from '@storybook/addon-knobs';
 import { basicViewerDummy } from '../viewer/dummyData';
 import { Editor } from '../../src/index';
+import '@toast-ui/editor/dist/i18n/ko-kr';
 
 const stories = storiesOf('Editor', module).addDecorator(withKnobs);
 
@@ -65,8 +66,8 @@ stories.add('i18n', () => (
     previewStyle="vertical"
     height="400px"
     initialEditType="markdown"
-    initialValue="i18n zh"
-    language="zh"
+    initialValue="i18n ko"
+    language="ko-KR"
   />
 ));
 
