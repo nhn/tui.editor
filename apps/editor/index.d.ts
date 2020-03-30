@@ -54,7 +54,7 @@ declare namespace toastui {
     useCommandShortcut?: boolean;
     useDefaultHTMLSanitizer?: boolean;
     usageStatistics?: boolean;
-    toolbarItems?: string[];
+    toolbarItems?: (string | ToolbarButton)[];
     hideModeSwitch?: boolean;
     plugins?: Plugin[];
     customConvertor?: Convertor;
@@ -86,14 +86,14 @@ declare namespace toastui {
     [propType: string]: string;
   }
 
-  interface ButtonItem {
-    name: string;
+  interface ToolbarButton {
+    type: string;
     options: ButtonOptions;
   }
 
   interface ButtonOptions {
-    className: string;
-    el: HTMLElement;
+    el?: HTMLElement;
+    className?: string;
     command?: string;
     event?: string;
     text?: string;
@@ -126,24 +126,6 @@ declare namespace toastui {
     public static className: string;
 
     public getName(): string;
-  }
-
-  class Button extends ToolbarItem {
-    public static className: string;
-
-    public static name: string;
-
-    constructor(options?: ButtonOptions);
-
-    public disable(): void;
-
-    public enable(): void;
-
-    public getName(): string;
-
-    public isEnabled(): boolean;
-
-    public setTooltip(text: string): void;
   }
 
   interface CommandType {
@@ -226,17 +208,15 @@ declare namespace toastui {
 
     public setItems(items: ToolbarItem[]): void;
 
-    public addItem(item: ToolbarItem | ButtonItem | string): void;
+    public addItem(item: ToolbarItem | ToolbarButton | string): void;
 
-    public insertItem(index: number, item: ToolbarItem | ButtonItem | string): void;
+    public insertItem(index: number, item: ToolbarItem | ToolbarButton | string): void;
 
     public indexOfItem(item: ToolbarItem): number;
 
     public removeItem(item: ToolbarItem | number, destroy?: boolean): ToolbarItem | undefined;
 
     public removeAllItems(): void;
-
-    public addButton(button: Button, index?: number): void;
   }
 
   interface UI {

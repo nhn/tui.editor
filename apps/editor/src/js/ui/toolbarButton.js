@@ -7,16 +7,26 @@ import ToolbarItem from './toolbarItem';
 import tooltip from './tooltip';
 
 /**
+ * @typedef {object} toolbarItemsValue
+ * @property {string} type - type of toolbar item (default value is 'button')
+ * @property {toolbarButtonOptions} options - options of toolbar item
+ */
+
+/**
+ * @typedef {object} toolbarButtonOptions
+ * @property {HTMLElement} el - target element
+ * @property {string} className - button's class name
+ * @property {string} command - command name to execute on click
+ * @property {string} event - event name to trigger on click
+ * @property {string} text - text on button
+ * @property {string} tooltip - text on tooltip
+ * @property {string} style - button's style
+ * @property {string} state - button's state
+ */
+
+/**
  * Class ToolbarButton UI
- * @param {object} options - button options
- *     @param {string} options.className - button class name
- *     @param {string} options.command - command name to execute on click
- *     @param {string} options.event - event name to trigger on click
- *     @param {string} options.text - text on button
- *     @param {string} options.tooltip - text on tooltip
- *     @param {string} options.style - button style
- *     @param {string} options.state - button state
- * @param {HTMLElement} el - button rootElement
+ * @param {toolbarButtonOptions} options - button options
  * @ignore
  */
 class ToolbarButton extends ToolbarItem {
