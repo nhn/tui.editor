@@ -13,37 +13,12 @@
     <link rel="stylesheet" href="../dist/cdn/toastui-editor.css" />
     <!-- Customizing Button's Style in Example -->
     <style type="text/css">
-      button.custom-button {
-        float: left;
-        box-sizing: border-box;
-        font-weight: bold;
-        outline: none;
-        cursor: pointer;
-        background-color: #fff;
-        width: 22px;
-        height: 22px;
-        border-radius: 0;
-        margin: 5px 3px;
-        border: 1px solid #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .first {
+      .tui-editor-defaultUI button.first {
         color: lime;
       }
 
-      .first:before {
-        content: '@';
-      }
-
-      .last {
+      .tui-editor-defaultUI button.last {
         color: orange;
-      }
-
-      .last:before {
-        content: 'B';
       }
     </style>
   </head>
@@ -62,11 +37,11 @@
     <!-- Editor -->
     <script src="../dist/cdn/toastui-editor-all.js"></script>
     <script type="text/babel" class="code-js">
-      function createButton(iconClassName) {
+      function createLastButton() {
         const button = document.createElement('button');
 
-        button.className = 'custom-button';
-        button.innerHTML = `<i class="${iconClassName}"></i>`;
+        button.className = 'last';
+        button.innerHTML = `<i>B</i>`;
 
         return button;
       }
@@ -102,10 +77,9 @@
           {
             type: 'button',
             options: {
-              el: createButton('last'),
-              name: 'Custom Button 1',
-              tooltip: 'Custom Bold',
-              command: 'Bold'
+              el: createLastButton(),
+              command: 'Bold',
+              tooltip: 'Custom Bold'
             }
           }
         ]
@@ -122,10 +96,11 @@
       toolbar.insertItem(0, {
         type: 'button',
         options: {
-          el: createButton('first'),
-          name: 'Custom Button 2',
-          tooltip: 'Apple',
-          event: 'clickCustomButton'
+          className: 'first',
+          event: 'clickCustomButton',
+          tooltip: 'Custom Button',
+          text: '@',
+          style: 'background:none;border-color:lime;'
         }
       });
     </script>
