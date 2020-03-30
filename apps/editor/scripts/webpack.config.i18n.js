@@ -1,5 +1,5 @@
 /**
- * @fileoverview Configs for I18N bundle file
+ * @fileoverview Configs for i18n bundle file
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 const path = require('path');
@@ -10,7 +10,7 @@ const pkg = require('../package.json');
 const TerserPlugin = require('terser-webpack-plugin');
 
 function getOptimizationConfig(isMinified) {
-  let minimizer = [];
+  const minimizer = [];
 
   if (isMinified) {
     minimizer.push(
@@ -75,7 +75,7 @@ module.exports = (env, argv) => {
     plugins: [
       new webpack.BannerPlugin(
         [
-          'TOAST UI Editor : I18N',
+          'TOAST UI Editor : i18n',
           `@version ${pkg.version}`,
           `@author ${pkg.author}`,
           `@license ${pkg.license}`
