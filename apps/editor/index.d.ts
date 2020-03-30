@@ -92,7 +92,7 @@ declare namespace toastui {
   }
 
   interface ButtonOptions {
-    el: HTMLElement;
+    el?: HTMLElement;
     className?: string;
     command?: string;
     event?: string;
