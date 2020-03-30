@@ -1,4 +1,4 @@
-import { HTMLAttributes, Component } from 'react';
+import { Component } from 'react';
 import ToastuiEditor, { EditorOptions } from '@toast-ui/editor';
 import ToastuiEditorViewer, { ViewerOptions } from '@toast-ui/editor/dist/toastui-editor-viewer';
 
