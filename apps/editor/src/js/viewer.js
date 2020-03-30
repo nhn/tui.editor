@@ -31,7 +31,6 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *         @param {function} [options.events.blur] - It would be emitted when editor loose focus
  *     @param {Object} [options.hooks] - Hooks
  *         @param {function} [options.hooks.previewBeforeHook] - Submit preview to hook URL before preview be shown
- *         @param {addImageBlobHook} [options.hooks.addImageBlobHook] - hook for image upload
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  */
 class ToastUIEditorViewer {
