@@ -131,7 +131,7 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  *     @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
  *     @param {Array.<string|toolbarItemsValue>} [options.toolbarItems] - toolbar items.
  *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
- *     @param {Array.<Function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
+ *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
