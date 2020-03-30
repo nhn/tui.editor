@@ -90,24 +90,6 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  */
 
 /**
- * @typedef {object} toolbarItemsValue
- * @property {string} type - type of toolbar item (default value is 'button')
- * @property {toolbarButtonOptions} options - options of toolbar item
- */
-
-/**
- * @typedef {object} toolbarButtonOptions
- * @property {HTMLElement} el - target element
- * @property {string} className - class name
- * @property {string} command - command name to execute on click
- * @property {string} event - event name to trigger on click
- * @property {string} text - text on button
- * @property {string} tooltip - text on tooltip
- * @property {string} style - button style
- * @property {string} state - button state
- */
-
-/**
  * ToastUI Editor
  * @param {Object} options Option object
  *     @param {HTMLElement} options.el - container element
