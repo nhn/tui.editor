@@ -91,32 +91,32 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
 
 /**
  * ToastUI Editor
- * @param {object} options Option object
+ * @param {Object} options Option object
  *     @param {HTMLElement} options.el - container element
  *     @param {string} [options.height='300px'] - Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
  *     @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
  *     @param {string} [options.initialValue] - Editor's initial value
  *     @param {string} [options.previewStyle] - Markdown editor's preview style (tab, vertical)
  *     @param {string} [options.initialEditType] - Initial editor type (markdown, wysiwyg)
- *     @param {object[]} [options.events] - eventlist Event list
- *         @param {function} options.events.load - It would be emitted when editor fully load
- *         @param {function} options.events.change - It would be emitted when content changed
- *         @param {function} options.events.stateChange - It would be emitted when format change by cursor position
- *         @param {function} options.events.focus - It would be emitted when editor get focus
- *         @param {function} options.events.blur - It would be emitted when editor loose focus
- *     @param {object[]} [options.hooks] - Hook list
- *         @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
- *         @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
+ *     @param {Object} [options.events] - Events
+ *         @param {function} [options.events.load] - It would be emitted when editor fully load
+ *         @param {function} [options.events.change] - It would be emitted when content changed
+ *         @param {function} [options.events.stateChange] - It would be emitted when format change by cursor position
+ *         @param {function} [options.events.focus] - It would be emitted when editor get focus
+ *         @param {function} [options.events.blur] - It would be emitted when editor loose focus
+ *     @param {Object} [options.hooks] - Hooks
+ *         @param {function} [options.hooks.previewBeforeHook] - Submit preview to hook URL before preview be shown
+ *         @param {addImageBlobHook} [options.hooks.addImageBlobHook] - hook for image upload
  *     @param {string} [options.language='en-US'] - language
  *     @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
  *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
  *     @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
- *     @param {string[]} [options.toolbarItems] - toolbar items.
+ *     @param {Array.<string|toolbarItemsValue>} [options.toolbarItems] - toolbar items.
  *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
- *     @param {Array.<Function|Array>} plugins - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
- *     @param {object} [options.customConvertor] - convertor extention
+ *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
+ *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
- *     @param {object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
+ *     @param {Object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
  */
 class ToastUIEditor {
   constructor(options) {
