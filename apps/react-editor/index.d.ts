@@ -2,8 +2,8 @@ import { HTMLAttributes, Component } from 'react';
 import ToastuiEditor, { EditorOptions } from '@toast-ui/editor';
 import ToastuiEditorViewer, { ViewerOptions } from '@toast-ui/editor/dist/toastui-editor-viewer';
 
-type EditorProps = EditorOptions & HTMLAttributes<HTMLElement>;
-type ViewerProps = ViewerOptions & HTMLAttributes<HTMLElement>;
+type EditorProps = Omit<EditorOptions, 'el'>;
+type ViewerProps = Omit<ViewerOptions, 'el'>;
 
 export class Editor extends Component<EditorProps> {
   public getInstance(): ToastuiEditor;
