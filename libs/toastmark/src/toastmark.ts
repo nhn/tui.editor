@@ -30,7 +30,7 @@ interface EditResult {
   removedNodeRange: [number, number] | null;
 }
 
-function canBeContinuation(lineText: string) {
+function canBeContinuedListItem(lineText: string) {
   const spaceMatch = lineText.match(/^[ \t]+/);
   if (spaceMatch && (spaceMatch[0].length >= 2 || /\t/.test(spaceMatch[0]))) {
     return true;
@@ -55,9 +55,9 @@ export class ToastMark {
     this.root = this.parser.parse(contents);
   }
 
-  private updateLineTexts(start: Position, end: Position, newText: string) {
-    const [startLine, startCol] = start;
-    const [endLine, endCol] = end;
+  private updateLineTexts(startPos: Position, endPos: Position, newText: string) {
+    const [startLine, startCol] = startPos;
+    const [endLine, endCol] = endPos;
     const newLines = newText.split(reLineEnding);
     const newLineLen = newLines.length;
     const startLineText = this.lineTexts[startLine - 1];
@@ -113,17 +113,13 @@ export class ToastMark {
     }
   }
 
-  private getNodeRange(start: Position, end: Position) {
-    let startNode = findChildNodeAtLine(this.root, start[0]);
-    let endNode = findChildNodeAtLine(this.root, end[0]);
+  private getNodeRange(startPos: Position, endPos: Position) {
+    const startNode = findChildNodeAtLine(this.root, startPos[0]);
+    let endNode = findChildNodeAtLine(this.root, endPos[0]);
 
     // extend node range to include a following block which doesn't have preceding blank line
-    if (endNode && endNode.next && end[0] + 1 === endNode.next.sourcepos![0][0]) {
+    if (endNode && endNode.next && endPos[0] + 1 === endNode.next.sourcepos![0][0]) {
       endNode = endNode.next;
-    }
-
-    if (!startNode && endNode) {
-      startNode = endNode;
     }
 
     return [startNode, endNode] as [BlockNode, BlockNode];
@@ -135,15 +131,26 @@ export class ToastMark {
     });
   }
 
+  private extendEndLine(line: number) {
+    while (this.lineTexts[line] === '') {
+      line += 1;
+    }
+    return line;
+  }
+
   private parseRange(
+    startNode: BlockNode | null,
+    endNode: BlockNode | null,
     startLine: number,
-    endLine: number,
-    startNode: BlockNode,
-    endNode: BlockNode | null
+    endLine: number
   ) {
-    // extends starting range if the first node can be a continuation of the preceding node
-    const firstLineText = this.lineTexts[startLine - 1];
-    if (startNode && startNode.prev && isList(startNode.prev) && canBeContinuation(firstLineText)) {
+    // extends starting range if the first node can be a continued list item
+    if (
+      startNode &&
+      startNode.prev &&
+      isList(startNode.prev) &&
+      canBeContinuedListItem(this.lineTexts[startLine - 1])
+    ) {
       startNode = startNode.prev;
       startLine = startNode.sourcepos![0][0];
     }
@@ -151,22 +158,23 @@ export class ToastMark {
     const editedLines = this.lineTexts.slice(startLine - 1, endLine);
     const root = this.parser.partialParseStart(startLine, editedLines);
 
-    // extends ending range if the following node can be a continuation of the last node
-    if (root.lastChild && isList(root.lastChild)) {
-      let nextNode = endNode ? endNode.next : this.root.firstChild;
-      while (nextNode) {
-        if (nextNode.type !== 'list' && nextNode.sourcepos![0][1] < 3) {
-          break;
-        }
-        let newEndLine = nextNode.sourcepos![1][0];
-        while (this.lineTexts[newEndLine] === '') {
-          newEndLine += 1;
-        }
+    // extends ending range if the following node can be a continued list item
+    let nextNode = endNode ? endNode.next : this.root.firstChild;
+    while (
+      root.lastChild &&
+      isList(root.lastChild) &&
+      nextNode &&
+      (nextNode.type === 'list' || nextNode.sourcepos![0][1] >= 2)
+    ) {
+      const newEndLine = this.extendEndLine(nextNode.sourcepos![1][0]);
+      this.parser.partialParseExtends(this.lineTexts.slice(endLine, newEndLine));
 
-        this.parser.partialParseExtends(this.lineTexts.slice(endLine, newEndLine));
-        endNode = nextNode as BlockNode;
-        nextNode = nextNode.next;
+      if (!startNode) {
+        startNode = endNode;
       }
+      endNode = nextNode as BlockNode;
+      endLine = newEndLine;
+      nextNode = nextNode.next;
     }
 
     this.parser.partialParseFinish();
@@ -175,18 +183,15 @@ export class ToastMark {
     return { newNodes, extStartNode: startNode, extEndNode: endNode };
   }
 
-  public editMarkdown(start: Position, end: Position, newText: string): EditResult {
-    const [startNode, endNode] = this.getNodeRange(start, end);
-    const lineDiff = this.updateLineTexts(start, end, newText);
-    const startLine = startNode ? Math.min(startNode.sourcepos![0][0], start[0]) : start[0];
-    let endLine = (endNode ? Math.max(endNode.sourcepos![1][0], end[0]) : end[0]) + lineDiff;
-
-    while (this.lineTexts[endLine] === '') {
-      endLine += 1;
-    }
-
-    const parseResult = this.parseRange(startLine, endLine, startNode, endNode);
-    const { newNodes, extStartNode, extEndNode } = parseResult;
+  public editMarkdown(startPos: Position, endPos: Position, newText: string): EditResult {
+    const [startNode, endNode] = this.getNodeRange(startPos, endPos);
+    const lineDiff = this.updateLineTexts(startPos, endPos, newText);
+    const startLine = startNode ? Math.min(startNode.sourcepos![0][0], startPos[0]) : startPos[0];
+    const endLine = this.extendEndLine(
+      (endNode ? Math.max(endNode.sourcepos![1][0], endPos[0]) : endPos[0]) + lineDiff
+    );
+    const parseResult = this.parseRange(startNode, endNode, startLine, endLine);
+    const { extStartNode, extEndNode, newNodes } = parseResult;
     const nextNode = extEndNode ? extEndNode.next : this.root.firstChild;
 
     this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
