@@ -353,6 +353,22 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
   });
+
+  describe('Reference Def', () => {
+    it('should parse reference link nodes when modifying url of Reference Def node', () => {
+      const doc = new ToastMark('[foo]: /test\n\n[foo]\n\n[foo]');
+      doc.editMarkdown([1, 1], [1, 13], '[foo]: /test2');
+
+      assertParseResult(doc, ['[foo]: /test2', '', '[foo]', '', '[foo]']);
+    });
+
+    it('should change reference link nodes to paragraph nodes when modifying label of Reference Def node', () => {
+      const doc = new ToastMark('[foo]: /test\n\n[foo]\n\n[foo]');
+      doc.editMarkdown([1, 1], [1, 13], '[food]: /test2');
+
+      assertParseResult(doc, ['[food]: /test2', '', '[foo]', '', '[foo]']);
+    });
+  });
 });
 
 it('return the node - findNodeById()', () => {
