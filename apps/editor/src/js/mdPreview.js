@@ -58,44 +58,46 @@ class MarkdownPreview extends Preview {
   }
 
   update(changed) {
-    const { nodes, removedNodeRange } = changed;
-    const contentEl = this._previewContent;
-    const newHtml = this.eventManager.emitReduce(
-      'convertorAfterMarkdownToHtmlConverted',
-      nodes.map(node => this.renderHTML(node)).join('')
-    );
+    changed.forEach(editResult => {
+      const { nodes, removedNodeRange } = editResult;
+      const contentEl = this._previewContent;
+      const newHtml = this.eventManager.emitReduce(
+        'convertorAfterMarkdownToHtmlConverted',
+        nodes.map(node => this.renderHTML(node)).join('')
+      );
 
-    if (!removedNodeRange) {
-      contentEl.insertAdjacentHTML('afterbegin', newHtml);
-    } else {
-      const [startNodeId, endNodeId] = removedNodeRange;
-      const startEl = contentEl.querySelector(`[data-nodeid="${startNodeId}"]`);
-      const endEl = contentEl.querySelector(`[data-nodeid="${endNodeId}"]`);
+      if (!removedNodeRange) {
+        contentEl.insertAdjacentHTML('afterbegin', newHtml);
+      } else {
+        const [startNodeId, endNodeId] = removedNodeRange;
+        const startEl = contentEl.querySelector(`[data-nodeid="${startNodeId}"]`);
+        const endEl = contentEl.querySelector(`[data-nodeid="${endNodeId}"]`);
 
-      if (startEl) {
-        startEl.insertAdjacentHTML('beforebegin', newHtml);
-        let el = startEl;
+        if (startEl) {
+          startEl.insertAdjacentHTML('beforebegin', newHtml);
+          let el = startEl;
 
-        while (el !== endEl) {
-          const nextEl = el.nextElementSibling;
+          while (el !== endEl) {
+            const nextEl = el.nextElementSibling;
 
-          el.parentNode.removeChild(el);
-          removeOffsetInfoByNode(el);
-          el = nextEl;
-        }
-        if (el.parentNode) {
-          domUtils.remove(el);
-          removeOffsetInfoByNode(el);
+            el.parentNode.removeChild(el);
+            removeOffsetInfoByNode(el);
+            el = nextEl;
+          }
+          if (el.parentNode) {
+            domUtils.remove(el);
+            removeOffsetInfoByNode(el);
+          }
         }
       }
-    }
+
+      const codeBlockEls = this.getCodeBlockElements(nodes.map(node => node.id));
+
+      if (codeBlockEls.length) {
+        this.lazyRunner.run('invokeCodeBlock', codeBlockEls);
+      }
+    });
     this.eventManager.emit('previewRenderAfter', this);
-
-    const codeBlockEls = this.getCodeBlockElements(nodes.map(node => node.id));
-
-    if (codeBlockEls.length) {
-      this.lazyRunner.run('invokeCodeBlock', codeBlockEls);
-    }
   }
 
   /**
