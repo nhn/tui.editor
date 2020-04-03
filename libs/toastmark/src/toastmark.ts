@@ -199,21 +199,25 @@ export class ToastMark {
     const [startNode, endNode] = this.getNodeRange(start, end);
     const startLine = startNode ? Math.min(startNode.sourcepos![0][0], start[0]) : start[0];
     let endLine = (endNode ? Math.max(endNode.sourcepos![1][0], end[0]) : end[0]) + lineDiff;
+    let nextNode = findFirstNodeAtLine(this.root, endLine + 1);
 
     while (this.lineTexts[endLine] === '') {
       endLine += 1;
     }
+    if (nextNode && nextNode.hasReferenceDefs && nextNode !== startNode && nextNode !== endNode) {
+      endLine = nextNode.sourcepos![1][0];
+    }
 
     const parseResult = this.parseRange(startNode, endNode, startLine, endLine);
     const { newNodes, extStartNode, extEndNode } = parseResult;
-    const nextNode = extEndNode ? extEndNode.next : this.root.firstChild;
+    nextNode = extEndNode ? extEndNode.next : this.root.firstChild;
 
     this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
 
     return {
       nodes: newNodes,
       removedNodeRange:
-        !extStartNode || extStartNode.hasReferenceDefs || extEndNode?.hasReferenceDefs
+        !extStartNode || extStartNode.hasReferenceDefs || extEndNode!.hasReferenceDefs
           ? null
           : [extStartNode.id, extEndNode!.id],
       nextNode
@@ -231,6 +235,7 @@ export class ToastMark {
     iterateObject(refMap, (label, refMap) => {
       const { containerId, modified } = refMap[label];
       const unlinked = !getNodeById(containerId);
+
       if (unlinked || modified) {
         if (unlinked) {
           delete refMap[label];

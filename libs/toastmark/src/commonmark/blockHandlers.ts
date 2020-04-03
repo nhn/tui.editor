@@ -40,6 +40,9 @@ export interface BlockHandler {
   acceptsLines: boolean;
 }
 
+const reSpaceAndLineChar = /\r\n|\n|\r|\s|\t| /g;
+const reReferenceDefChar = /\[(\S+)\]\:+.+/gi;
+
 const document: BlockHandler = {
   continue() {
     return Process.Go;
@@ -246,6 +249,14 @@ const paragraph: BlockHandler = {
     }
     if (hasReferenceDefs && isBlank(block.stringContent)) {
       block.hasReferenceDefs = true;
+    } else {
+      const contents = block.stringContent.replace(reSpaceAndLineChar, '').split('[');
+      contents.forEach(content => {
+        const matched = reReferenceDefChar.exec(`[${content}`);
+        if (matched) {
+          delete parser.refMap[matched[1].toUpperCase()];
+        }
+      });
     }
   },
   canContain() {
