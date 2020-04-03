@@ -212,7 +212,10 @@ export class ToastMark {
 
     return {
       nodes: newNodes,
-      removedNodeRange: !extStartNode ? null : [extStartNode.id, extEndNode!.id],
+      removedNodeRange:
+        !extStartNode || extStartNode.hasReferenceDefs || extEndNode?.hasReferenceDefs
+          ? null
+          : [extStartNode.id, extEndNode!.id],
       nextNode
     };
   }
