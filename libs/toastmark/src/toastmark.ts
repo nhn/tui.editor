@@ -1,5 +1,12 @@
 import { Parser, Options } from './commonmark/blocks';
-import { BlockNode, isList, removeAllNode } from './commonmark/node';
+import {
+  BlockNode,
+  isList,
+  removeAllNode,
+  removeNodeById,
+  getNodeById,
+  Node
+} from './commonmark/node';
 import {
   removeNextUntil,
   getChildNodes,
@@ -12,6 +19,7 @@ import {
   findNodeById
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
+import { iterateObject, omit } from './helper';
 
 const reLineEnding = /\r\n|\n|\r/;
 
@@ -29,6 +37,8 @@ interface EditResult {
   nodes: BlockNode[];
   removedNodeRange: [number, number] | null;
 }
+
+type ParseResult = EditResult & { nextNode: Node | null };
 
 function canBeContinuedListItem(lineText: string) {
   const spaceMatch = lineText.match(/^[ \t]+/);
@@ -102,6 +112,7 @@ export class ToastMark {
     if (!startNode) {
       if (endNode) {
         insertNodesBefore(endNode, newNodes);
+        removeNodeById(endNode.id);
         endNode.unlink();
       } else {
         prependChildNodes(this.root, newNodes);
@@ -109,6 +120,7 @@ export class ToastMark {
     } else {
       insertNodesBefore(startNode, newNodes);
       removeNextUntil(startNode, endNode!);
+      removeNodeById(startNode.id);
       startNode.unlink();
     }
   }
@@ -183,25 +195,71 @@ export class ToastMark {
     return { newNodes, extStartNode: startNode, extEndNode: endNode };
   }
 
-  public editMarkdown(startPos: Position, endPos: Position, newText: string): EditResult {
-    const [startNode, endNode] = this.getNodeRange(startPos, endPos);
-    const lineDiff = this.updateLineTexts(startPos, endPos, newText);
-    const startLine = startNode ? Math.min(startNode.sourcepos![0][0], startPos[0]) : startPos[0];
-    const endLine = this.extendEndLine(
-      (endNode ? Math.max(endNode.sourcepos![1][0], endPos[0]) : endPos[0]) + lineDiff
-    );
+  private parse(start: Position, end: Position, lineDiff = 0): ParseResult {
+    const [startNode, endNode] = this.getNodeRange(start, end);
+    const startLine = startNode ? Math.min(startNode.sourcepos![0][0], start[0]) : start[0];
+    let endLine = (endNode ? Math.max(endNode.sourcepos![1][0], end[0]) : end[0]) + lineDiff;
+
+    while (this.lineTexts[endLine] === '') {
+      endLine += 1;
+    }
+
     const parseResult = this.parseRange(startNode, endNode, startLine, endLine);
-    const { extStartNode, extEndNode, newNodes } = parseResult;
+    const { newNodes, extStartNode, extEndNode } = parseResult;
     const nextNode = extEndNode ? extEndNode.next : this.root.firstChild;
 
     this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
-    updateNextLineNumbers(nextNode, lineDiff);
-    this.updateRootNodeState();
 
-    const result = {
+    return {
       nodes: newNodes,
-      removedNodeRange: !extStartNode ? null : [extStartNode.id, extEndNode!.id]
-    } as EditResult;
+      removedNodeRange: !extStartNode ? null : [extStartNode.id, extEndNode!.id],
+      nextNode
+    };
+  }
+
+  private parseRefLink() {
+    const result: EditResult[] = [];
+    const { refMap, refLinkCandidteMap } = this.parser;
+
+    if (!Object.keys(refMap).length) {
+      return result;
+    }
+
+    iterateObject(refMap, (label, refMap) => {
+      const { containerId, modified } = refMap[label];
+      const unlinked = !getNodeById(containerId);
+      if (unlinked || modified) {
+        if (unlinked) {
+          delete refMap[label];
+        } else if (modified) {
+          refMap[label].modified = false;
+        }
+        iterateObject(refLinkCandidteMap, (id, candidate) => {
+          const { block, refLabel } = candidate[id];
+          if (refLabel === label) {
+            result.push(this.parse(block.sourcepos![0], block.sourcepos![1]));
+          }
+        });
+      }
+    });
+
+    return result;
+  }
+
+  public editMarkdown(start: Position, end: Position, newText: string) {
+    const lineDiff = this.updateLineTexts(start, end, newText);
+    const parseResult = this.parse(start, end, lineDiff);
+    const editResult = omit(parseResult, 'nextNode');
+
+    updateNextLineNumbers(parseResult.nextNode, lineDiff);
+    this.updateRootNodeState();
+    this.parser.removeUnlinkedCandidate();
+
+    let result: EditResult[] = [editResult];
+    const refLink = this.parseRefLink();
+    if (refLink.length) {
+      result = result.concat(refLink);
+    }
 
     this.trigger('change', result);
 
