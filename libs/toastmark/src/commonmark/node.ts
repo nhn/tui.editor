@@ -16,7 +16,8 @@ export type BlockNodeType =
   | 'tableRow'
   | 'tableCell'
   | 'tableDelimRow'
-  | 'tableDelimCell';
+  | 'tableDelimCell'
+  | 'referenceDef';
 
 export type InlineNodeType =
   | 'code'
@@ -88,6 +89,7 @@ export class Node {
 
   // only for leaf node
   public literal: string | null = null;
+  public hasReferenceDefs = false;
 
   constructor(nodeType: NodeType, sourcepos?: SourcePos) {
     if (nodeType === 'document') {
@@ -257,6 +259,11 @@ export class TableCellNode extends BlockNode {
   public ignored = false;
 }
 
+export class ReferenceDefNode extends Node {
+  public title = '';
+  public dest = '';
+}
+
 export function createNode(type: 'heading', sourcepos?: SourcePos): HeadingNode;
 export function createNode(type: 'list' | 'item', sourcepos?: SourcePos): ListNode;
 export function createNode(type: 'codeBlock', sourcepos?: SourcePos): CodeBlockNode;
@@ -265,6 +272,7 @@ export function createNode(type: 'link' | 'image', sourcepos?: SourcePos): LinkN
 export function createNode(type: 'code', sourcepos?: SourcePos): CodeNode;
 export function createNode(type: 'table', sourcepos?: SourcePos): TableNode;
 export function createNode(type: 'tableCell', sourcepos?: SourcePos): TableNode;
+export function createNode(type: 'referenceDef', sourcepos?: SourcePos): ReferenceDefNode;
 export function createNode(type: BlockNodeType, sourcepos?: SourcePos): BlockNode;
 export function createNode(type: NodeType, sourcepos?: SourcePos): Node;
 export function createNode(type: NodeType, sourcepos?: SourcePos) {
@@ -295,6 +303,8 @@ export function createNode(type: NodeType, sourcepos?: SourcePos) {
       return new BlockNode(type, sourcepos);
     case 'code':
       return new CodeNode(type, sourcepos);
+    case 'referenceDef':
+      return new ReferenceDefNode(type, sourcepos);
     default:
       return new Node(type, sourcepos) as Node;
   }

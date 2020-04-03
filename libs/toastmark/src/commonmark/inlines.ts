@@ -2,7 +2,7 @@ import { Node, BlockNode, SourcePos, isHeading, LinkNode, createNode, text } fro
 import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY } from './common';
 import { reHtmlTag } from './rawHtml';
 import fromCodePoint from './from-code-point';
-import { Options } from './blocks';
+import { Options, RefMap, RefLinkCandidteMap } from './blocks';
 import { decodeHTML } from 'entities/lib/decode';
 import NodeWalker from './nodeWalker';
 import { convertExtAutoLinks } from './gfm/autoLinks';
@@ -89,13 +89,6 @@ type Bracket = {
   startpos: [number, number];
 };
 
-type RefMap = {
-  [k: string]: {
-    destination: string;
-    title: string;
-  };
-};
-
 export class InlineParser {
   // An InlineParser keeps track of a subject (a string to be parsed)
   // and a position in that subject.
@@ -107,7 +100,8 @@ export class InlineParser {
   private lineIdx = 0;
   private lineOffsets: number[] = [0];
   private linePosOffset = 0;
-  public refmap: RefMap = {};
+  public refMap: RefMap = {};
+  public refLinkCandidteMap: RefLinkCandidteMap = {};
   public options: Options;
 
   constructor(options: Options) {
@@ -697,26 +691,28 @@ export class InlineParser {
       }
     }
 
+    let refLabel = '';
+
     if (!matched) {
-      let reflabel;
       // Next, see if there's a link label
       const beforelabel = this.pos;
       const n = this.parseLinkLabel();
       if (n > 2) {
-        reflabel = this.subject.slice(beforelabel, beforelabel + n);
+        refLabel = this.subject.slice(beforelabel, beforelabel + n);
       } else if (!opener.bracketAfter) {
         // Empty or missing second label means to use the first label as the reference.
         // The reference must not contain a bracket. If we know there's a bracket, we don't even bother checking it.
-        reflabel = this.subject.slice(opener.index, startpos);
+        refLabel = this.subject.slice(opener.index, startpos);
       }
       if (n === 0) {
         // If shortcut reference link, rewind before spaces we skipped.
         this.pos = savepos;
       }
 
-      if (reflabel) {
-        // lookup rawlabel in refmap
-        const link = this.refmap[normalizeReference(reflabel)];
+      if (refLabel) {
+        refLabel = normalizeReference(refLabel);
+        // lookup rawlabel in refMap
+        const link = this.refMap[refLabel];
         if (link) {
           dest = link.destination;
           title = link.title;
@@ -757,12 +753,14 @@ export class InlineParser {
         }
       }
 
+      this.refLinkCandidteMap[block.id] = { block, refLabel };
       return true;
     } // no match
 
     this.removeBracket(); // remove this opener from stack
     this.pos = startpos;
     block.appendChild(text(']', this.sourcepos(startpos, startpos)));
+    this.refLinkCandidteMap[block.id] = { block, refLabel };
     return true;
   }
 
@@ -864,8 +862,8 @@ export class InlineParser {
   }
 
   // Attempt to parse a link reference, modifying refmap.
-  parseReference(s: string, refmap: RefMap) {
-    this.subject = s;
+  parseReference(block: BlockNode, refMap: RefMap) {
+    this.subject = block.stringContent!;
     this.pos = 0;
     let title = null;
     const startpos = this.pos;
@@ -927,16 +925,27 @@ export class InlineParser {
       return 0;
     }
 
-    const normlabel = normalizeReference(rawlabel);
-    if (normlabel === '') {
+    const normaLabel = normalizeReference(rawlabel);
+    if (normaLabel === '') {
       // label must contain non-whitespace characters
       this.pos = startpos;
       return 0;
     }
 
-    if (!refmap[normlabel]) {
-      refmap[normlabel] = { destination: dest, title };
+    const node = createNode('referenceDef', block.sourcepos);
+    node.title = title;
+    node.dest = dest;
+    block.appendChild(node);
+
+    if (!refMap[normaLabel]) {
+      refMap[normaLabel] = {
+        destination: dest,
+        containerId: block.id,
+        modified: true,
+        title
+      };
     }
+
     return this.pos - startpos;
   }
 
