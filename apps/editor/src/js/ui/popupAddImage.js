@@ -35,7 +35,7 @@ class PopupAddImage extends LayerPopup {
             </div>
             <form enctype="multipart/form-data" class="${CLASS_FILE_TYPE}">
                 <label for="">${i18n.get('Select image file')}</label>
-                <input type="file" class="${CLASS_IMAGE_FILE_INPUT}" accept="image/*" />
+                <input type="file" class="${CLASS_IMAGE_FILE_INPUT}" accept="image/*" multiple />
             </form>
             <label for="url">${i18n.get('Description')}</label>
             <input type="text" class="${CLASS_ALT_TEXT_INPUT}" />
@@ -108,7 +108,9 @@ class PopupAddImage extends LayerPopup {
     this.on('hidden', () => this._resetInputs());
 
     this.on(`change .${CLASS_IMAGE_FILE_INPUT}`, () => {
-      const filename = this._imageFileInput.value.split('\\').pop();
+      const filename = Array.prototype.map
+        .call(this._imageFileInput.files, file => file.name)
+        .join('、');
 
       this._altTextInput.value = filename;
     });
@@ -116,18 +118,20 @@ class PopupAddImage extends LayerPopup {
     this.on(`click .${CLASS_CLOSE_BUTTON}`, () => this.hide());
     this.on(`click .${CLASS_OK_BUTTON}`, () => {
       const imageUrl = this._imageUrlInput.value;
-      const altText = this._altTextInput.value;
 
       if (imageUrl) {
+        const altText = this._altTextInput.value;
+
         this._applyImage(imageUrl, altText);
       } else {
-        const { files } = this._imageFileInput;
+        const files = Array.prototype.slice.call(this._imageFileInput.files);
 
         if (files.length) {
-          const imageFile = files.item(0);
-          const hookCallback = (url, text) => this._applyImage(url, text || altText);
+          files.forEach(imageFile => {
+            const hookCallback = (url, text) => this._applyImage(url, text || imageFile.name);
 
-          this.eventManager.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
+            this.eventManager.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
+          });
         }
       }
 
