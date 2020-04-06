@@ -8,11 +8,12 @@ const entry = require('webpack-glob-entry');
 const pkg = require('../package.json');
 
 const TerserPlugin = require('terser-webpack-plugin');
+const FileManagerPlugin = require('filemanager-webpack-plugin');
 
-function getOptimizationConfig(isMinified) {
+function getOptimizationConfig(minify) {
   const minimizer = [];
 
-  if (isMinified) {
+  if (minify) {
     minimizer.push(
       new TerserPlugin({
         cache: true,
@@ -26,20 +27,24 @@ function getOptimizationConfig(isMinified) {
   return { minimizer };
 }
 
+function getEntries() {
+  const entries = entry('./src/js/i18n/*.js');
+
+  delete entries['en-us'];
+
+  return entries;
+}
+
 module.exports = (env, argv) => {
-  const isMinified = !!argv.minify;
+  const minify = !!argv.minify;
 
   return {
     mode: 'production',
-    entry: entry(filePath => {
-      if (!/en-us.js$/g.test(filePath)) {
-        return path.basename(filePath, path.extname(filePath));
-      }
-    }, './src/js/i18n/*.js'),
+    entry: getEntries(),
     output: {
       libraryTarget: 'umd',
-      path: path.resolve(__dirname, '../dist/i18n'),
-      filename: `[name]${isMinified ? '.min' : ''}.js`
+      path: path.resolve(__dirname, minify ? '../dist/cdn/i18n' : '../dist/i18n'),
+      filename: `[name]${minify ? '.min' : ''}.js`
     },
     externals: [
       {
@@ -80,8 +85,13 @@ module.exports = (env, argv) => {
           `@author ${pkg.author}`,
           `@license ${pkg.license}`
         ].join('\n')
-      )
+      ),
+      new FileManagerPlugin({
+        onEnd: {
+          copy: [{ source: './dist/i18n/*.js', destination: './dist/cdn/i18n' }]
+        }
+      })
     ],
-    optimization: getOptimizationConfig(isMinified)
+    optimization: getOptimizationConfig(minify)
   };
 };

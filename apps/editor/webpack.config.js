@@ -10,7 +10,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const CopyPlugin = require('copy-webpack-plugin');
+const FileManagerPlugin = require('filemanager-webpack-plugin');
 
 const ENTRY_EDITOR = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
@@ -30,7 +30,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
         library: ['toastui', 'Editor'],
         libraryTarget: 'umd',
         libraryExport: 'default',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, minify ? 'dist/cdn' : 'dist'),
         filename: `toastui-[name]${minify ? '.min' : ''}.js`
       },
       module: {
@@ -100,6 +100,21 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
     };
   });
 
+function addFileManagerPlugin(config) {
+  let options;
+
+  if (minify) {
+    options = { delete: ['./dist/cdn/toastui-editor-layout.min.js'] };
+  } else {
+    options = {
+      copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }],
+      delete: ['./dist/toastui-editor-layout.js', './dist/cdn/toastui-editor-layout.js']
+    };
+  }
+
+  config.plugins.push(new FileManagerPlugin({ onEnd: options }));
+}
+
 function addMinifyPlugin(config) {
   config.optimization = {
     minimizer: [
@@ -118,7 +133,7 @@ function addAnalyzerPlugin(config, type) {
   config.plugins.push(
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
-      reportFilename: `../report/webpack/stats-${pkg.version}-${type}.html`
+      reportFilename: `../../report/webpack/stats-${pkg.version}-${type}.html`
     })
   );
 }
@@ -152,24 +167,21 @@ function setDevelopConfig(config) {
 function setProductionConfig(config) {
   config.entry = {
     editor: ENTRY_EDITOR,
-    'editor-viewer': ENTRY_VIEWER
+    'editor-viewer': ENTRY_VIEWER,
+    'editor-layout': './src/css/toastui-editor.css'
   };
+
+  addFileManagerPlugin(config);
 
   if (minify) {
     addMinifyPlugin(config);
     addAnalyzerPlugin(config, 'normal');
-  } else {
-    config.plugins.push(
-      new CopyPlugin([{ from: 'src/css/toastui-editor.css', to: '[name]-layout.css' }])
-    );
   }
 }
 
 function setProductionConfigForAll(config) {
-  config.entry = {
-    'editor-all': ENTRY_EDITOR
-  };
-
+  config.entry = { 'editor-all': ENTRY_EDITOR };
+  config.output.path = path.resolve(__dirname, 'dist/cdn');
   config.externals = [];
 
   if (minify) {
