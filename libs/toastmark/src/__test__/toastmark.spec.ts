@@ -368,6 +368,13 @@ describe('editText()', () => {
 
       assertParseResult(doc, ['[food]: /test2', '', '[foo]', '', '[foo]']);
     });
+
+    it('should merge the Reference Def node as paragraph', () => {
+      const doc = new ToastMark('test\n\n[foo]: /test');
+      doc.editMarkdown([2, 1], [2, 1], 'test');
+
+      assertParseResult(doc, ['test', 'test', '[foo]: /test']);
+    });
   });
 });
 
