@@ -53,6 +53,7 @@ export type RefMap = {
     destination: string;
     title: string;
     modified: boolean;
+    deleted: boolean;
     containerId: number;
   };
 };

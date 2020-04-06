@@ -925,8 +925,8 @@ export class InlineParser {
       return 0;
     }
 
-    const normaLabel = normalizeReference(rawlabel);
-    if (normaLabel === '') {
+    const normalLabel = normalizeReference(rawlabel);
+    if (normalLabel === '') {
       // label must contain non-whitespace characters
       this.pos = startpos;
       return 0;
@@ -937,11 +937,12 @@ export class InlineParser {
     node.dest = dest;
     block.appendChild(node);
 
-    if (!refMap[normaLabel]) {
-      refMap[normaLabel] = {
+    if (!refMap[normalLabel] || (refMap[normalLabel] && !refMap[normalLabel].deleted)) {
+      refMap[normalLabel] = {
         destination: dest,
         containerId: block.id,
         modified: true,
+        deleted: false,
         title
       };
     }

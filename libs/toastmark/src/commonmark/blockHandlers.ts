@@ -253,8 +253,8 @@ const paragraph: BlockHandler = {
       const contents = block.stringContent.replace(reSpaceAndLineChar, '').split('[');
       contents.forEach(content => {
         const matched = reReferenceDefChar.exec(`[${content}`);
-        if (matched) {
-          delete parser.refMap[matched[1].toUpperCase()];
+        if (matched && parser.refMap[matched[1].toUpperCase()]) {
+          parser.refMap[matched[1].toUpperCase()].deleted = true;
         }
       });
     }

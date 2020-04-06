@@ -233,8 +233,8 @@ export class ToastMark {
     }
 
     iterateObject(refMap, (label, refMap) => {
-      const { containerId, modified } = refMap[label];
-      const unlinked = !getNodeById(containerId);
+      const { containerId, modified, deleted } = refMap[label];
+      const unlinked = deleted || !getNodeById(containerId);
 
       if (unlinked || modified) {
         if (unlinked) {
