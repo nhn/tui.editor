@@ -249,7 +249,7 @@ const paragraph: BlockHandler = {
     }
     if (hasReferenceDefs && isBlank(block.stringContent)) {
       block.hasReferenceDefs = true;
-    } else {
+    } else if (Object.keys(parser.refMap).length) {
       const contents = block.stringContent.replace(reSpaceAndLineChar, '').split('[');
       contents.forEach(content => {
         const matched = reReferenceDefChar.exec(`[${content}`);
