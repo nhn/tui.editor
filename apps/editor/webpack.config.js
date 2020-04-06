@@ -10,6 +10,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const ENTRY_EDITOR = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
@@ -157,6 +158,10 @@ function setProductionConfig(config) {
   if (minify) {
     addMinifyPlugin(config);
     addAnalyzerPlugin(config, 'normal');
+  } else {
+    config.plugins.push(
+      new CopyPlugin([{ from: 'src/css/toastui-editor.css', to: '[name]-layout.css' }])
+    );
   }
 }
 
