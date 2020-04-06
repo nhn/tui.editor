@@ -235,11 +235,6 @@ class MarkdownEditor extends CodeMirrorExt {
 
     this._emitMarkdownEditorContentChangedEvent(changed);
 
-    // const { nodes } = editResult;
-
-    // if (!nodes.length) {
-    //   return;
-    // }
     if (!changed.length) {
       return;
     }
