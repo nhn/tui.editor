@@ -101,16 +101,12 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
   });
 
 function addFileManagerPlugin(config) {
-  let options;
-
-  if (minify) {
-    options = { delete: ['./dist/cdn/toastui-editor-layout.min.js'] };
-  } else {
-    options = {
-      copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }],
-      delete: ['./dist/toastui-editor-layout.js', './dist/cdn/toastui-editor-layout.js']
-    };
-  }
+  const options = minify
+    ? { delete: ['./dist/cdn/toastui-editor-layout.min.js'] }
+    : {
+        copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }],
+        delete: ['./dist/toastui-editor-layout.js', './dist/cdn/toastui-editor-layout.js']
+      };
 
   config.plugins.push(new FileManagerPlugin({ onEnd: options }));
 }
