@@ -101,12 +101,15 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
   });
 
 function addFileManagerPlugin(config) {
+  // When an entry option's value is set to a CSS file,
+  // empty JavaScript files are created. (e.g. toastui-editor-layout.js)
+  // These files are unnecessary, so use the FileManager plugin to delete them.
   const options = minify
-    ? { delete: ['./dist/cdn/toastui-editor-layout.min.js'] }
-    : {
-        copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }],
-        delete: ['./dist/toastui-editor-layout.js', './dist/cdn/toastui-editor-layout.js']
-      };
+    ? [{ delete: ['./dist/cdn/toastui-editor-layout.min.js'] }]
+    : [
+        { delete: ['./dist/toastui-editor-layout.js'] },
+        { copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }] }
+      ];
 
   config.plugins.push(new FileManagerPlugin({ onEnd: options }));
 }
