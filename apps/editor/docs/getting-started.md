@@ -51,7 +51,9 @@ The CDN directory has the following structure:
    │     │    ├─ toastui-editor-viewer.js
    │     │    ├─ toastui-editor-viewer.min.js
    │     │    ├─ toastui-editor-editor.css
-   │     │    └─ toastui-editor-viewer.css
+   │     │    ├─ toastui-editor-editor.min.css
+   │     │    ├─ toastui-editor-viewer.css
+   │     │    └─ toastui-editor-viewer.min.css
    │     ├─ 2.0.0/
    │     │    └─ ...
 ```
@@ -123,10 +125,10 @@ require('@toast-ui/editor/dist/toastui-editor.css');
   <!-- Editor's Dependecy Style -->
   <link
     rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css"
   />
   <!-- Editor's Style -->
-  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css" />
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 </head>
 ...
 ```
