@@ -1,16 +1,16 @@
 /*!
- * TOAST UI Editor : I18N
- * @version 2.0.0
+ * TOAST UI Editor : i18n
+ * @version 2.0.1
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("toastui-editor"));
+		module.exports = factory(require("@toast-ui/editor"));
 	else if(typeof define === 'function' && define.amd)
-		define(["toastui-editor"], factory);
+		define(["@toast-ui/editor"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("toastui-editor")) : factory(root["toastui"]["Editor"]);
+		var a = typeof exports === 'object' ? factory(require("@toast-ui/editor")) : factory(root["toastui"]["Editor"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
 })(window, function(__WEBPACK_EXTERNAL_MODULE__0__) {
