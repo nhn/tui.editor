@@ -120,8 +120,8 @@ class WwHeadingManager {
     const element = domUtils.createElementWith('<div><br></div>');
 
     domUtils.insertBefore(
-      domUtils.getParentUntil(range.startContainer, this.wwe.getBody()),
-      element
+      element,
+      domUtils.getParentUntil(range.startContainer, this.wwe.getBody())
     );
   }
 
