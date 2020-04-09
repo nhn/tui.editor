@@ -10,19 +10,31 @@ interface Context {
   childText?: string;
 }
 
-export type HTMLConvertor = (node: Node, context: Context) => HTMLNode;
+export type HTMLConvertor = (node: Node, context: Context) => HTMLNode | HTMLNode[];
 
 export type HTMLConvertorMap = Partial<Record<NodeType, HTMLConvertor>>;
 
 interface TagNode {
-  type: 'tag';
+  tagName: string;
+  outerNewLine?: boolean;
+  innerNewLine?: boolean;
+}
+
+export interface OpenTagNode extends TagNode {
+  type: 'openTag';
   tagName: string;
   classNames?: string[];
   attributes?: Record<string, string>;
   outerNewLine?: boolean;
   innerNewLine?: boolean;
   selfClose?: boolean;
-  children?: HTMLNode[];
+}
+
+export interface CloseTagNode extends TagNode {
+  type: 'closeTag';
+  tagName: string;
+  outerNewLine?: boolean;
+  innerNewLine?: boolean;
 }
 
 interface TextNode {
@@ -36,7 +48,7 @@ interface RawHTMLNode {
   outerNewLine?: boolean;
 }
 
-export type HTMLNode = TagNode | TextNode | RawHTMLNode;
+export type HTMLNode = OpenTagNode | CloseTagNode | TextNode | RawHTMLNode;
 
 interface Options {
   softbreak: string;
@@ -67,7 +79,7 @@ export function createHTMLRender(options?: Partial<Options>) {
   return (node: Node) => render(node, convertors);
 }
 
-function generateOpenTagString(node: TagNode): string {
+function generateOpenTagString(node: OpenTagNode): string {
   const buffer = [];
   const { tagName, classNames, attributes } = node;
 
@@ -92,10 +104,7 @@ function generateOpenTagString(node: TagNode): string {
   return buffer.join('');
 }
 
-function generateCloseTagString({ selfClose, tagName }: TagNode) {
-  if (selfClose) {
-    return '';
-  }
+function generateCloseTagString({ tagName }: CloseTagNode) {
   return `</${tagName}>`;
 }
 
@@ -118,7 +127,6 @@ function addInnerNewLine(node: TagNode, buffer: string[]) {
 }
 
 function render(rootNode: Node, convertors: HTMLConvertorMap): string {
-  const htmlNodeMap: Record<number, HTMLNode> = {};
   const buffer: string[] = [];
 
   const walker = rootNode.walker();
@@ -140,7 +148,7 @@ function render(rootNode: Node, convertors: HTMLConvertorMap): string {
     if (blockingNodeId > 0) {
       if (blockingNodeId === node.id) {
         context.childText = childText;
-        const htmlNode = convertor(node, context) as TagNode;
+        const htmlNode = convertor(node, context) as OpenTagNode;
         buffer.push(generateOpenTagString(htmlNode));
         blockingNodeId = -1;
       } else if (node.type === 'text') {
@@ -149,35 +157,27 @@ function render(rootNode: Node, convertors: HTMLConvertorMap): string {
       continue;
     }
 
-    let htmlNode: HTMLNode;
-    if (entering) {
-      if (node.type === 'image') {
-        blockingNodeId = node.id;
-        childText = '';
-        blockingNodeId = node.id;
-      } else {
-        htmlNode = convertor(node, context);
-        htmlNodeMap[node.id] = htmlNode;
-
-        renderHTMLNode(htmlNode, buffer, !isContainer(node));
-      }
-    } else {
-      const htmlNode = htmlNodeMap[node.id];
-      if (htmlNode.type === 'tag') {
-        buffer.push(generateCloseTagString(htmlNode));
-        addOuterNewLine(htmlNode, buffer);
-      }
+    if (node.type === 'image') {
+      blockingNodeId = node.id;
+      childText = '';
+      continue;
     }
+
+    const converted = convertor(node, context);
+    const htmlNodes = Array.isArray(converted) ? converted : [converted];
+
+    htmlNodes.forEach(htmlNode => renderHTMLNode(htmlNode, buffer));
   }
   addNewLine(buffer);
 
   return buffer.join('');
 }
 
-function renderHTMLNode(node: HTMLNode, buffer: string[], close: boolean) {
+function renderHTMLNode(node: HTMLNode, buffer: string[]) {
   switch (node.type) {
-    case 'tag':
-      renderElementNode(node, buffer, close);
+    case 'openTag':
+    case 'closeTag':
+      renderElementNode(node, buffer);
       break;
     case 'text':
       renderTextNode(node, buffer);
@@ -198,16 +198,16 @@ function renderRawHtmlNode(node: RawHTMLNode, buffer: string[]) {
   addOuterNewLine(node, buffer);
 }
 
-function renderElementNode(node: TagNode, buffer: string[], close: boolean) {
-  addOuterNewLine(node, buffer);
-  buffer.push(generateOpenTagString(node));
-  addInnerNewLine(node, buffer);
-  if (node.children) {
-    for (const childNode of node.children) {
-      renderHTMLNode(childNode, buffer, true);
+function renderElementNode(node: OpenTagNode | CloseTagNode, buffer: string[]) {
+  if (node.type === 'openTag') {
+    addOuterNewLine(node, buffer);
+    buffer.push(generateOpenTagString(node));
+    if (node.selfClose) {
+      addOuterNewLine(node, buffer);
+    } else {
+      addInnerNewLine(node, buffer);
     }
-  }
-  if (close) {
+  } else {
     addInnerNewLine(node, buffer);
     buffer.push(generateCloseTagString(node));
     addOuterNewLine(node, buffer);

@@ -3,9 +3,9 @@ import { escapeXml } from '../commonmark/common';
 import { HTMLConvertorMap } from './render';
 
 export const baseConvertors: HTMLConvertorMap = {
-  heading(node: Node) {
+  heading(node: Node, { entering }) {
     return {
-      type: 'tag',
+      type: entering ? 'openTag' : 'closeTag',
       tagName: `h${(node as HeadingNode).level}`,
       outerNewLine: true
     };
@@ -32,21 +32,21 @@ export const baseConvertors: HTMLConvertorMap = {
     };
   },
 
-  emph() {
+  emph(_, { entering }) {
     return {
-      type: 'tag',
+      type: entering ? 'openTag' : 'closeTag',
       tagName: 'em'
     };
   },
 
-  strong() {
+  strong(_, { entering }) {
     return {
-      type: 'tag',
+      type: entering ? 'openTag' : 'closeTag',
       tagName: 'strong'
     };
   },
 
-  paragraph(node: Node) {
+  paragraph(node, { entering }) {
     const grandparent = node.parent?.parent;
     if (grandparent && grandparent.type === 'list') {
       if ((grandparent as ListNode).listData!.tight) {
@@ -58,7 +58,7 @@ export const baseConvertors: HTMLConvertorMap = {
     }
 
     return {
-      type: 'tag',
+      type: entering ? 'openTag' : 'closeTag',
       tagName: 'p',
       outerNewLine: true
     };
@@ -66,23 +66,23 @@ export const baseConvertors: HTMLConvertorMap = {
 
   thematicBreak() {
     return {
-      type: 'tag',
+      type: 'openTag',
       tagName: 'hr',
       outerNewLine: true,
       selfClose: true
     };
   },
 
-  blockQuote() {
+  blockQuote(_, { entering }) {
     return {
-      type: 'tag',
+      type: entering ? 'openTag' : 'closeTag',
       tagName: 'blockquote',
       outerNewLine: true,
       innerNewLine: true
     };
   },
 
-  list(node: Node) {
+  list(node: Node, { entering }) {
     const { type, start } = (node as ListNode).listData!;
     const tagName = type === 'bullet' ? 'ul' : 'ol';
     const attributes: Record<string, string> = {};
@@ -91,16 +91,16 @@ export const baseConvertors: HTMLConvertorMap = {
     }
 
     return {
-      type: 'tag',
+      type: entering ? 'openTag' : 'closeTag',
       tagName,
       attributes,
       outerNewLine: true
     };
   },
 
-  item() {
+  item(_, { entering }) {
     return {
-      type: 'tag',
+      type: entering ? 'openTag' : 'closeTag',
       tagName: 'li',
       outerNewLine: true
     };
@@ -122,16 +122,20 @@ export const baseConvertors: HTMLConvertorMap = {
   },
 
   code(node: Node) {
-    return {
-      type: 'tag',
-      tagName: 'code',
-      children: [
-        {
-          type: 'text',
-          content: node.literal!
-        }
-      ]
-    };
+    return [
+      {
+        type: 'openTag',
+        tagName: 'code'
+      },
+      {
+        type: 'text',
+        content: node.literal!
+      },
+      {
+        type: 'closeTag',
+        tagName: 'code'
+      }
+    ];
   },
 
   codeBlock(node: Node) {
@@ -142,36 +146,49 @@ export const baseConvertors: HTMLConvertorMap = {
       codeClassNames.push(`language-${escapeXml(infoWords[0])}`);
     }
 
-    return {
-      type: 'tag',
-      tagName: 'pre',
-      outerNewLine: true,
-      children: [
-        {
-          type: 'tag',
-          tagName: 'code',
-          classNames: codeClassNames,
-          children: [
-            {
-              type: 'text',
-              content: node.literal!
-            }
-          ]
-        }
-      ]
-    };
+    return [
+      {
+        type: 'openTag',
+        tagName: 'pre',
+        outerNewLine: true
+      },
+      {
+        type: 'openTag',
+        tagName: 'code',
+        classNames: codeClassNames
+      },
+      {
+        type: 'text',
+        content: node.literal!
+      },
+      {
+        type: 'closeTag',
+        tagName: 'code'
+      },
+      {
+        type: 'closeTag',
+        tagName: 'pre',
+        outerNewLine: true
+      }
+    ];
   },
 
-  link(node: Node) {
-    const { title, destination } = node as LinkNode;
+  link(node: Node, { entering }) {
+    if (entering) {
+      const { title, destination } = node as LinkNode;
 
+      return {
+        type: 'openTag',
+        tagName: 'a',
+        attributes: {
+          href: escapeXml(destination!),
+          ...(title && { title: escapeXml(title) })
+        }
+      };
+    }
     return {
-      type: 'tag',
-      tagName: 'a',
-      attributes: {
-        href: escapeXml(destination!),
-        ...(title && { title: escapeXml(title) })
-      }
+      type: 'closeTag',
+      tagName: 'a'
     };
   },
 
@@ -179,7 +196,7 @@ export const baseConvertors: HTMLConvertorMap = {
     const { title, destination } = node as LinkNode;
 
     return {
-      type: 'tag',
+      type: 'openTag',
       tagName: 'img',
       selfClose: true,
       attributes: {

@@ -1,10 +1,8 @@
 import { Parser } from '../../blocks';
-// import { GfmHtmlRenderer } from '../../render/gfm/html';
 import { createHTMLRender } from '../../../html/render';
 import { source } from 'common-tags';
 
 const reader = new Parser({ smart: true });
-// const writer = new GfmHtmlRenderer();
 const render = createHTMLRender({ gfm: true });
 
 describe('smart punctuation', () => {
