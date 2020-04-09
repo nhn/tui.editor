@@ -2,7 +2,7 @@ import { Node, HeadingNode, CodeBlockNode, ListNode, LinkNode } from '../commonm
 import { escapeXml } from '../commonmark/common';
 import { HTMLConvertorMap } from './render';
 
-export const convertors: HTMLConvertorMap = {
+export const baseConvertors: HTMLConvertorMap = {
   heading(node: Node) {
     return {
       type: 'tag',
@@ -175,7 +175,7 @@ export const convertors: HTMLConvertorMap = {
     };
   },
 
-  image(node: Node) {
+  image(node: Node, { childText }) {
     const { title, destination } = node as LinkNode;
 
     return {
@@ -184,10 +184,9 @@ export const convertors: HTMLConvertorMap = {
       selfClose: true,
       attributes: {
         src: escapeXml(destination!),
+        alt: childText!,
         ...(title && { title: escapeXml(title) })
-      },
-      attributeOrders: ['src', 'alt', 'title'],
-      childNodeTextAttrName: 'alt'
+      }
     };
   }
 };

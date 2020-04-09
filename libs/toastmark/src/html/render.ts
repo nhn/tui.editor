@@ -1,8 +1,16 @@
 import { Node, NodeType, isContainer } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
-import { convertors } from './convertors';
+import { baseConvertors } from './baseConvertors';
+import { gfmConvertors } from './gfmConvertors';
 
-export type HTMLConvertor = (node: Node) => HTMLNode;
+interface Context {
+  entering: boolean;
+  leaf: boolean;
+  origin?: HTMLConvertor;
+  childText?: string;
+}
+
+export type HTMLConvertor = (node: Node, context: Context) => HTMLNode;
 
 export type HTMLConvertorMap = Partial<Record<NodeType, HTMLConvertor>>;
 
@@ -11,11 +19,9 @@ interface TagNode {
   tagName: string;
   classNames?: string[];
   attributes?: Record<string, string>;
-  attributeOrders?: string[];
   outerNewLine?: boolean;
   innerNewLine?: boolean;
   selfClose?: boolean;
-  childNodeTextAttrName?: string;
   children?: HTMLNode[];
 }
 
@@ -36,15 +42,34 @@ interface Options {
   softbreak: string;
   sourcepos: boolean;
   nodeId: boolean;
+  gfm: boolean;
 }
 
-export function createHTMLRender() {
+export function createHTMLRender(options?: Partial<Options>) {
+  const convertors = { ...baseConvertors };
+
+  if (options && options.gfm) {
+    const nodeTypes = Object.keys(gfmConvertors) as NodeType[];
+    nodeTypes.forEach(nodeType => {
+      const orgConvertor = convertors[nodeType];
+      const extConvertor = gfmConvertors[nodeType]!;
+      if (orgConvertor) {
+        convertors[nodeType] = (node, context) => {
+          context.origin = orgConvertor;
+          return extConvertor(node, context);
+        };
+      } else {
+        convertors[nodeType] = gfmConvertors[nodeType];
+      }
+    });
+  }
+
   return (node: Node) => render(node, convertors);
 }
 
 function generateOpenTagString(node: TagNode): string {
   const buffer = [];
-  const { tagName, classNames, attributes, attributeOrders } = node;
+  const { tagName, classNames, attributes } = node;
 
   buffer.push(`<${tagName}`);
 
@@ -53,12 +78,9 @@ function generateOpenTagString(node: TagNode): string {
   }
 
   if (attributes) {
-    const attrNames = attributeOrders || Object.keys(attributes);
-    attrNames.forEach(attrName => {
+    Object.keys(attributes).forEach(attrName => {
       const attrValue = attributes[attrName];
-      if (attrValue !== undefined) {
-        buffer.push(` ${attrName}="${attrValue}"`);
-      }
+      buffer.push(` ${attrName}="${attrValue}"`);
     });
   }
 
@@ -102,6 +124,7 @@ function render(rootNode: Node, convertors: HTMLConvertorMap): string {
   const walker = rootNode.walker();
   let event: ReturnType<typeof walker.next> = null;
   let blockingNodeId = -1;
+  let childText = '';
   while ((event = walker.next())) {
     const { node, entering } = event;
     const convertor = convertors[node.type];
@@ -109,29 +132,33 @@ function render(rootNode: Node, convertors: HTMLConvertorMap): string {
       continue;
     }
 
+    const context: Context = {
+      entering,
+      leaf: isContainer(node)
+    };
+
     if (blockingNodeId > 0) {
-      const htmlNode = htmlNodeMap[blockingNodeId] as TagNode;
       if (blockingNodeId === node.id) {
+        context.childText = childText;
+        const htmlNode = convertor(node, context) as TagNode;
         buffer.push(generateOpenTagString(htmlNode));
         blockingNodeId = -1;
       } else if (node.type === 'text') {
-        const attrName = htmlNode.childNodeTextAttrName!;
-        htmlNode.attributes![attrName] += node.literal;
+        childText += node.literal;
       }
       continue;
     }
 
     let htmlNode: HTMLNode;
     if (entering) {
-      htmlNode = convertor(node);
-      htmlNodeMap[node.id] = htmlNode;
-      if (htmlNode.type === 'tag' && htmlNode.childNodeTextAttrName) {
+      if (node.type === 'image') {
         blockingNodeId = node.id;
-        if (!htmlNode.attributes) {
-          htmlNode.attributes = {};
-        }
-        htmlNode.attributes[htmlNode.childNodeTextAttrName] = '';
+        childText = '';
+        blockingNodeId = node.id;
       } else {
+        htmlNode = convertor(node, context);
+        htmlNodeMap[node.id] = htmlNode;
+
         renderHTMLNode(htmlNode, buffer, !isContainer(node));
       }
     } else {
