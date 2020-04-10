@@ -755,14 +755,14 @@ export class InlineParser {
         }
       }
 
-      this.refLinkCandidteMap[block.id] = { block, refLabel };
+      this.refLinkCandidteMap[block.id] = { node: block, refLabel };
       return true;
     } // no match
 
     this.removeBracket(); // remove this opener from stack
     this.pos = startpos;
     block.appendChild(text(']', this.sourcepos(startpos, startpos)));
-    this.refLinkCandidteMap[block.id] = { block, refLabel };
+    this.refLinkCandidteMap[block.id] = { node: block, refLabel };
     return true;
   }
 
@@ -985,25 +985,30 @@ export class InlineParser {
 
   getReferenceDefSourcepos(block: BlockNode): [[number, number], [number, number]] {
     const lines = block.stringContent!.split(/\n|\r\n/);
-    let colonCount = 0;
+    let passedUrlLine = false;
+    let quotationCount = 0;
     let lastLineOffset = { line: 0, ch: 0 };
 
     for (let i = 0; i < lines.length; i += 1) {
       const line = lines[i];
 
-      if (!line.trim()) {
+      if (reWhitespaceChar.test(line)) {
         break;
       }
-      if (line.indexOf(':') !== -1 && colonCount === 0) {
+      if (/\:/.test(line) && quotationCount === 0) {
+        if (passedUrlLine) {
+          break;
+        }
         const lineOffset = line.indexOf(':') === line.length - 1 ? i + 1 : i;
         lastLineOffset = { line: lineOffset, ch: lines[lineOffset].length };
+        passedUrlLine = true;
       }
-      // To consider extendable title
+      // should consider extendable title
       const matched = line.match(/'|"/g);
       if (matched) {
-        colonCount += matched.length;
+        quotationCount += matched.length;
       }
-      if (colonCount === 2) {
+      if (quotationCount === 2) {
         lastLineOffset = { line: i, ch: line.length };
         break;
       }
