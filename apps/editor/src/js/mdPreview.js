@@ -58,9 +58,7 @@ class MarkdownPreview extends Preview {
   }
 
   update(changed) {
-    changed.forEach(editResult => {
-      this.replaceRangeNodes(editResult);
-    });
+    changed.forEach(editResult => this.replaceRangeNodes(editResult));
     this.eventManager.emit('previewRenderAfter', this);
   }
 

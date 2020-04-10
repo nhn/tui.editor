@@ -164,7 +164,7 @@ export class ToastMark {
     } else {
       insertNodesBefore(startNode, newNodes);
       removeNextUntil(startNode, endNode!);
-      [startNode.id, endNode!.id].forEach(removeNodeById);
+      [startNode.id, endNode!.id].forEach(id => removeNodeById(id));
       startNode.unlink();
     }
   }
