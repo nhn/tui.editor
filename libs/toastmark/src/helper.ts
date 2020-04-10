@@ -34,3 +34,7 @@ export function omit<T extends object, K extends keyof T>(obj: T, ...propNames: 
   });
   return resultMap;
 }
+
+export function isEmptyObj<T extends object>(obj: T) {
+  return !Object.keys(obj).length;
+}
