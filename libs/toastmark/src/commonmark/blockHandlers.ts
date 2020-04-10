@@ -262,7 +262,7 @@ const refDef: BlockHandler = {
   canContain() {
     return false;
   },
-  acceptsLines: false
+  acceptsLines: true
 };
 
 export const blockHandlers = {
