@@ -40,9 +40,6 @@ export interface BlockHandler {
   acceptsLines: boolean;
 }
 
-const reSpaceAndLineChar = /\r\n|\n|\r|\s|\t| /g;
-const reReferenceDefChar = /\[(\S+)\]\:+.+/gi;
-
 const document: BlockHandler = {
   continue() {
     return Process.Go;
@@ -248,15 +245,7 @@ const paragraph: BlockHandler = {
       hasReferenceDefs = true;
     }
     if (hasReferenceDefs && isBlank(block.stringContent)) {
-      block.hasReferenceDefs = true;
-    } else if (Object.keys(parser.refMap).length) {
-      const contents = block.stringContent.replace(reSpaceAndLineChar, '').split('[');
-      contents.forEach(content => {
-        const matched = reReferenceDefChar.exec(`[${content}`);
-        if (matched && parser.refMap[matched[1].toUpperCase()]) {
-          parser.refMap[matched[1].toUpperCase()].deleted = true;
-        }
-      });
+      block.unlink();
     }
   },
   canContain() {
@@ -265,9 +254,9 @@ const paragraph: BlockHandler = {
   acceptsLines: true
 };
 
-const referenceDef: BlockHandler = {
+const refDef: BlockHandler = {
   continue() {
-    return Process.Go;
+    return Process.Stop;
   },
   finalize() {},
   canContain() {
@@ -293,5 +282,5 @@ export const blockHandlers = {
   tableCell,
   tableDelimRow,
   tableDelimCell,
-  referenceDef
+  refDef
 };
