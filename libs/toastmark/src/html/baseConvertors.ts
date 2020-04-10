@@ -18,10 +18,10 @@ export const baseConvertors: HTMLConvertorMap = {
     };
   },
 
-  softbreak() {
+  softbreak(_, { options }) {
     return {
       type: 'html',
-      content: '\n'
+      content: options.softbreak
     };
   },
 
@@ -50,10 +50,7 @@ export const baseConvertors: HTMLConvertorMap = {
     const grandparent = node.parent?.parent;
     if (grandparent && grandparent.type === 'list') {
       if ((grandparent as ListNode).listData!.tight) {
-        return {
-          type: 'text',
-          content: ''
-        };
+        return null;
       }
     }
 
@@ -113,10 +110,29 @@ export const baseConvertors: HTMLConvertorMap = {
     };
   },
 
-  htmlBlock(node: Node) {
+  htmlBlock(node: Node, { options }) {
+    if (options.nodeId) {
+      return [
+        {
+          type: 'openTag',
+          tagName: 'div',
+          outerNewLine: true
+        },
+        {
+          type: 'html',
+          content: node.literal!
+        },
+        {
+          type: 'closeTag',
+          tagName: 'div',
+          outerNewLine: true
+        }
+      ];
+    }
+
     return {
       type: 'html',
-      content: `${node.literal!}`,
+      content: node.literal!,
       outerNewLine: true
     };
   },

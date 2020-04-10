@@ -1,5 +1,26 @@
 import { Node, ListNode, TableNode, TableCellNode } from '../commonmark/node';
-import { HTMLConvertorMap, OpenTagNode, HTMLNode } from './render';
+import { HTMLConvertorMap, OpenTagNode, RawHTMLNode, HTMLNode } from './render';
+
+const disallowedTags = [
+  'title',
+  'textarea',
+  'style',
+  'xmp',
+  'iframe',
+  'noembed',
+  'noframes',
+  'script',
+  'plaintext'
+];
+
+const reDisallowedTag = new RegExp(`<(\/?(?:${disallowedTags.join('|')})[^>]*>)`, 'ig');
+
+function filterDisallowedTags(str: string) {
+  if (reDisallowedTag.test(str)) {
+    return str.replace(reDisallowedTag, (_, group) => `&lt;${group}`);
+  }
+  return str;
+}
 
 export const gfmConvertors: HTMLConvertorMap = {
   strike(_, { entering }) {
@@ -48,7 +69,43 @@ export const gfmConvertors: HTMLConvertorMap = {
     };
   },
 
-  table(node: Node, { entering }) {
+  htmlInline(node: Node) {
+    return {
+      type: 'html',
+      content: filterDisallowedTags(node.literal!)
+    };
+  },
+
+  htmlBlock(node, { options }) {
+    const htmlContent = filterDisallowedTags(node.literal!);
+
+    if (options.nodeId) {
+      return [
+        {
+          type: 'openTag',
+          tagName: 'div',
+          outerNewLine: true
+        },
+        {
+          type: 'html',
+          content: htmlContent
+        },
+        {
+          type: 'closeTag',
+          tagName: 'div',
+          outerNewLine: true
+        }
+      ];
+    }
+
+    return {
+      type: 'html',
+      content: htmlContent,
+      outerNewLine: true
+    };
+  },
+
+  table(_, { entering }) {
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: 'table',
@@ -56,7 +113,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     };
   },
 
-  tableHead(node: Node, { entering }) {
+  tableHead(_, { entering }) {
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: 'thead',
@@ -64,7 +121,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     };
   },
 
-  tableBody(node: Node, { entering }) {
+  tableBody(_, { entering }) {
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: 'tbody',

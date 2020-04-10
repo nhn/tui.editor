@@ -1,16 +1,25 @@
 import { Node, NodeType, isContainer } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
+import { last } from '../helper';
 import { baseConvertors } from './baseConvertors';
 import { gfmConvertors } from './gfmConvertors';
+
+interface Options {
+  gfm: boolean;
+  softbreak: string;
+  nodeId: boolean;
+  convertors?: HTMLConvertorMap;
+}
 
 interface Context {
   entering: boolean;
   leaf: boolean;
-  origin?: HTMLConvertor;
+  options: Omit<Options, 'gfm'>;
+  origin?: () => ReturnType<HTMLConvertor>;
   childText?: string;
 }
 
-export type HTMLConvertor = (node: Node, context: Context) => HTMLNode | HTMLNode[];
+export type HTMLConvertor = (node: Node, context: Context) => HTMLNode | HTMLNode[] | null;
 
 export type HTMLConvertorMap = Partial<Record<NodeType, HTMLConvertor>>;
 
@@ -22,19 +31,13 @@ interface TagNode {
 
 export interface OpenTagNode extends TagNode {
   type: 'openTag';
-  tagName: string;
   classNames?: string[];
   attributes?: Record<string, string>;
-  outerNewLine?: boolean;
-  innerNewLine?: boolean;
   selfClose?: boolean;
 }
 
 export interface CloseTagNode extends TagNode {
   type: 'closeTag';
-  tagName: string;
-  outerNewLine?: boolean;
-  innerNewLine?: boolean;
 }
 
 interface TextNode {
@@ -42,7 +45,7 @@ interface TextNode {
   content: string;
 }
 
-interface RawHTMLNode {
+export interface RawHTMLNode {
   type: 'html';
   content: string;
   outerNewLine?: boolean;
@@ -50,33 +53,39 @@ interface RawHTMLNode {
 
 export type HTMLNode = OpenTagNode | CloseTagNode | TextNode | RawHTMLNode;
 
-interface Options {
-  softbreak: string;
-  sourcepos: boolean;
-  nodeId: boolean;
-  gfm: boolean;
-}
+const defaultOptions: Options = {
+  softbreak: '\n',
+  gfm: false,
+  nodeId: false
+};
 
-export function createHTMLRender(options?: Partial<Options>) {
+export function createHTMLRender(customOptions?: Partial<Options>) {
+  const options = { ...defaultOptions, ...customOptions };
   const convertors = { ...baseConvertors };
 
-  if (options && options.gfm) {
-    const nodeTypes = Object.keys(gfmConvertors) as NodeType[];
+  if (options.gfm) {
+    Object.assign(convertors, gfmConvertors);
+  }
+
+  if (options.convertors) {
+    const customConvertors = options.convertors;
+    const nodeTypes = Object.keys(customConvertors) as NodeType[];
     nodeTypes.forEach(nodeType => {
       const orgConvertor = convertors[nodeType];
-      const extConvertor = gfmConvertors[nodeType]!;
+      const extConvertor = customConvertors[nodeType]!;
       if (orgConvertor) {
         convertors[nodeType] = (node, context) => {
-          context.origin = orgConvertor;
+          context.origin = () => orgConvertor(node, context);
           return extConvertor(node, context);
         };
       } else {
-        convertors[nodeType] = gfmConvertors[nodeType];
+        convertors[nodeType] = extConvertor;
       }
     });
+    delete options.convertors;
   }
 
-  return (node: Node) => render(node, convertors);
+  return (node: Node) => render(node, convertors, options);
 }
 
 function generateOpenTagString(node: OpenTagNode): string {
@@ -109,7 +118,7 @@ function generateCloseTagString({ tagName }: CloseTagNode) {
 }
 
 function addNewLine(buffer: string[]) {
-  if (buffer.length && buffer[buffer.length - 1] !== '\n') {
+  if (buffer.length && last(last(buffer)) !== '\n') {
     buffer.push('\n');
   }
 }
@@ -126,13 +135,13 @@ function addInnerNewLine(node: TagNode, buffer: string[]) {
   }
 }
 
-function render(rootNode: Node, convertors: HTMLConvertorMap): string {
+function render(rootNode: Node, convertors: HTMLConvertorMap, options: Options): string {
   const buffer: string[] = [];
-
   const walker = rootNode.walker();
   let event: ReturnType<typeof walker.next> = null;
-  let blockingNodeId = -1;
+  let currImageNodeId = -1;
   let childText = '';
+
   while ((event = walker.next())) {
     const { node, entering } = event;
     const convertor = convertors[node.type];
@@ -142,15 +151,16 @@ function render(rootNode: Node, convertors: HTMLConvertorMap): string {
 
     const context: Context = {
       entering,
-      leaf: isContainer(node)
+      leaf: isContainer(node),
+      options
     };
 
-    if (blockingNodeId > 0) {
-      if (blockingNodeId === node.id) {
+    if (currImageNodeId > 0) {
+      if (currImageNodeId === node.id) {
         context.childText = childText;
         const htmlNode = convertor(node, context) as OpenTagNode;
         buffer.push(generateOpenTagString(htmlNode));
-        blockingNodeId = -1;
+        currImageNodeId = -1;
       } else if (node.type === 'text') {
         childText += node.literal;
       }
@@ -158,15 +168,24 @@ function render(rootNode: Node, convertors: HTMLConvertorMap): string {
     }
 
     if (node.type === 'image') {
-      blockingNodeId = node.id;
+      currImageNodeId = node.id;
       childText = '';
       continue;
     }
 
     const converted = convertor(node, context);
-    const htmlNodes = Array.isArray(converted) ? converted : [converted];
-
-    htmlNodes.forEach(htmlNode => renderHTMLNode(htmlNode, buffer));
+    if (converted) {
+      const htmlNodes = Array.isArray(converted) ? converted : [converted];
+      htmlNodes.forEach((htmlNode, index) => {
+        if (htmlNode.type === 'openTag' && options.nodeId && index === 0) {
+          if (!htmlNode.attributes) {
+            htmlNode.attributes = {};
+          }
+          htmlNode.attributes['data-nodeId'] = String(node.id);
+        }
+        renderHTMLNode(htmlNode, buffer);
+      });
+    }
   }
   addNewLine(buffer);
 
