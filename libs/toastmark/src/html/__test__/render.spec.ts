@@ -17,7 +17,7 @@ describe('softbreak options', () => {
 describe('nodeId options', () => {
   const render = createHTMLRender({ nodeId: true });
 
-  it('every html tag corresponds to container node should contain data-nodeId', () => {
+  it('every html tag corresponds to container node should contain data-nodeid', () => {
     const root = parser.parse('*Hello* **World**');
     const para = root.firstChild!;
     const emph = para.firstChild!;
@@ -25,26 +25,26 @@ describe('nodeId options', () => {
 
     expect(render(root)).toBe(
       [
-        `<p data-nodeId="${para.id}">`,
-        `<em data-nodeId="${emph.id}">Hello</em> `,
-        `<strong data-nodeId="${strong.id}">World</strong>`,
+        `<p data-nodeid="${para.id}">`,
+        `<em data-nodeid="${emph.id}">Hello</em> `,
+        `<strong data-nodeid="${strong.id}">World</strong>`,
         '</p>\n'
       ].join('')
     );
   });
 
-  it('htmlBlock should be wrapped by div to contain data-nodeId', () => {
+  it('htmlBlock should be wrapped by div to contain data-nodeid', () => {
     const root = parser.parse('<li>Hi</li>');
     const htmlBlock = root.firstChild!;
 
-    expect(render(root)).toBe(`<div data-nodeId="${htmlBlock.id}"><li>Hi</li></div>\n`);
+    expect(render(root)).toBe(`<div data-nodeid="${htmlBlock.id}"><li>Hi</li></div>\n`);
   });
 
-  it('only top-level tag for each node should contain data-nodeId', () => {
+  it('only top-level tag for each node should contain data-nodeid', () => {
     const root = parser.parse('```\nHello\n```');
     const codeBlock = root.firstChild!;
 
-    expect(render(root)).toBe(`<pre data-nodeId="${codeBlock.id}"><code>Hello\n</code></pre>\n`);
+    expect(render(root)).toBe(`<pre data-nodeid="${codeBlock.id}"><code>Hello\n</code></pre>\n`);
   });
 });
 

@@ -181,7 +181,7 @@ function render(rootNode: Node, convertors: HTMLConvertorMap, options: Options):
           if (!htmlNode.attributes) {
             htmlNode.attributes = {};
           }
-          htmlNode.attributes['data-nodeId'] = String(node.id);
+          htmlNode.attributes['data-nodeid'] = String(node.id);
         }
         renderHTMLNode(htmlNode, buffer);
       });

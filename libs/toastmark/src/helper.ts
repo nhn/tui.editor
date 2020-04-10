@@ -1,3 +1,6 @@
+export function last<T>(arr: T[]): T;
+export function last(arr: string): string;
+
 export function last<T>(arr: T[] | string) {
   return arr[arr.length - 1];
 }
