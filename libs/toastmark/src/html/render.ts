@@ -8,6 +8,7 @@ interface Options {
   gfm: boolean;
   softbreak: string;
   nodeId: boolean;
+  tagFilter: boolean;
   convertors?: HTMLConvertorMap;
 }
 
@@ -56,6 +57,7 @@ export type HTMLNode = OpenTagNode | CloseTagNode | TextNode | RawHTMLNode;
 const defaultOptions: Options = {
   softbreak: '\n',
   gfm: false,
+  tagFilter: false,
   nodeId: false
 };
 

@@ -1,9 +1,10 @@
 import { Node, HeadingNode, CodeBlockNode, ListNode, LinkNode } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
 import { HTMLConvertorMap } from './render';
+import { filterDisallowedTags } from './tagFilter';
 
 export const baseConvertors: HTMLConvertorMap = {
-  heading(node: Node, { entering }) {
+  heading(node, { entering }) {
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: `h${(node as HeadingNode).level}`,
@@ -11,7 +12,7 @@ export const baseConvertors: HTMLConvertorMap = {
     };
   },
 
-  text(node: Node) {
+  text(node) {
     return {
       type: 'text',
       content: node.literal!
@@ -79,7 +80,7 @@ export const baseConvertors: HTMLConvertorMap = {
     };
   },
 
-  list(node: Node, { entering }) {
+  list(node, { entering }) {
     const { type, start } = (node as ListNode).listData!;
     const tagName = type === 'bullet' ? 'ul' : 'ol';
     const attributes: Record<string, string> = {};
@@ -103,58 +104,35 @@ export const baseConvertors: HTMLConvertorMap = {
     };
   },
 
-  htmlInline(node: Node) {
-    return {
-      type: 'html',
-      content: node.literal!
-    };
+  htmlInline(node, { options }) {
+    const content = options.tagFilter ? filterDisallowedTags(node.literal!) : node.literal!;
+
+    return { type: 'html', content };
   },
 
-  htmlBlock(node: Node, { options }) {
+  htmlBlock(node, { options }) {
+    const content = options.tagFilter ? filterDisallowedTags(node.literal!) : node.literal!;
+
     if (options.nodeId) {
       return [
-        {
-          type: 'openTag',
-          tagName: 'div',
-          outerNewLine: true
-        },
-        {
-          type: 'html',
-          content: node.literal!
-        },
-        {
-          type: 'closeTag',
-          tagName: 'div',
-          outerNewLine: true
-        }
+        { type: 'openTag', tagName: 'div', outerNewLine: true },
+        { type: 'html', content },
+        { type: 'closeTag', tagName: 'div', outerNewLine: true }
       ];
     }
 
-    return {
-      type: 'html',
-      content: node.literal!,
-      outerNewLine: true
-    };
+    return { type: 'html', content, outerNewLine: true };
   },
 
-  code(node: Node) {
+  code(node) {
     return [
-      {
-        type: 'openTag',
-        tagName: 'code'
-      },
-      {
-        type: 'text',
-        content: node.literal!
-      },
-      {
-        type: 'closeTag',
-        tagName: 'code'
-      }
+      { type: 'openTag', tagName: 'code' },
+      { type: 'text', content: node.literal! },
+      { type: 'closeTag', tagName: 'code' }
     ];
   },
 
-  codeBlock(node: Node) {
+  codeBlock(node) {
     const infoStr = (node as CodeBlockNode).info;
     const infoWords = infoStr ? infoStr.split(/\s+/) : [];
     const codeClassNames = [];
@@ -163,29 +141,11 @@ export const baseConvertors: HTMLConvertorMap = {
     }
 
     return [
-      {
-        type: 'openTag',
-        tagName: 'pre',
-        outerNewLine: true
-      },
-      {
-        type: 'openTag',
-        tagName: 'code',
-        classNames: codeClassNames
-      },
-      {
-        type: 'text',
-        content: node.literal!
-      },
-      {
-        type: 'closeTag',
-        tagName: 'code'
-      },
-      {
-        type: 'closeTag',
-        tagName: 'pre',
-        outerNewLine: true
-      }
+      { type: 'openTag', tagName: 'pre', outerNewLine: true },
+      { type: 'openTag', tagName: 'code', classNames: codeClassNames },
+      { type: 'text', content: node.literal! },
+      { type: 'closeTag', tagName: 'code' },
+      { type: 'closeTag', tagName: 'pre', outerNewLine: true }
     ];
   },
 
@@ -202,10 +162,7 @@ export const baseConvertors: HTMLConvertorMap = {
         }
       };
     }
-    return {
-      type: 'closeTag',
-      tagName: 'a'
-    };
+    return { type: 'closeTag', tagName: 'a' };
   },
 
   image(node: Node, { childText }) {

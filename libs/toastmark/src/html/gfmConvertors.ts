@@ -1,26 +1,5 @@
 import { Node, ListNode, TableNode, TableCellNode } from '../commonmark/node';
-import { HTMLConvertorMap, OpenTagNode, RawHTMLNode, HTMLNode } from './render';
-
-const disallowedTags = [
-  'title',
-  'textarea',
-  'style',
-  'xmp',
-  'iframe',
-  'noembed',
-  'noframes',
-  'script',
-  'plaintext'
-];
-
-const reDisallowedTag = new RegExp(`<(\/?(?:${disallowedTags.join('|')})[^>]*>)`, 'ig');
-
-function filterDisallowedTags(str: string) {
-  if (reDisallowedTag.test(str)) {
-    return str.replace(reDisallowedTag, (_, group) => `&lt;${group}`);
-  }
-  return str;
-}
+import { HTMLConvertorMap, OpenTagNode, HTMLNode } from './render';
 
 export const gfmConvertors: HTMLConvertorMap = {
   strike(_, { entering }) {
@@ -65,42 +44,6 @@ export const gfmConvertors: HTMLConvertorMap = {
     return {
       type: 'closeTag',
       tagName: 'li',
-      outerNewLine: true
-    };
-  },
-
-  htmlInline(node: Node) {
-    return {
-      type: 'html',
-      content: filterDisallowedTags(node.literal!)
-    };
-  },
-
-  htmlBlock(node, { options }) {
-    const htmlContent = filterDisallowedTags(node.literal!);
-
-    if (options.nodeId) {
-      return [
-        {
-          type: 'openTag',
-          tagName: 'div',
-          outerNewLine: true
-        },
-        {
-          type: 'html',
-          content: htmlContent
-        },
-        {
-          type: 'closeTag',
-          tagName: 'div',
-          outerNewLine: true
-        }
-      ];
-    }
-
-    return {
-      type: 'html',
-      content: htmlContent,
       outerNewLine: true
     };
   },
