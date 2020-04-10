@@ -47,7 +47,7 @@ type RefDefState = {
   id: number;
   destination: string;
   title: string;
-  deleted: boolean;
+  unlinked: boolean;
   sourcepos: SourcePos;
 };
 
@@ -82,7 +82,7 @@ export function createRefDefState(node: RefDefNode) {
     id,
     title,
     sourcepos: sourcepos!,
-    deleted: false,
+    unlinked: false,
     destination: dest
   };
 }
@@ -256,7 +256,7 @@ export class ToastMark {
         if (isRefDef(node)) {
           const refDefState = this.refMap[node.label];
           if (refDefState && node.id === refDefState.id) {
-            refDefState.deleted = true;
+            refDefState.unlinked = true;
           }
         }
       };
@@ -282,7 +282,7 @@ export class ToastMark {
       if (isRefDef(node)) {
         const { label } = node;
         const refDefState = refMap[label];
-        if (!refDefState || refDefState.deleted) {
+        if (!refDefState || refDefState.unlinked) {
           refMap[label] = createRefDefState(node);
         }
       }
@@ -303,7 +303,11 @@ export class ToastMark {
         const { label, sourcepos } = node;
         const refDefState = refMap[label];
 
-        if (!refDefState || refDefState.deleted || refDefState.sourcepos[0][0] > sourcepos![0][0]) {
+        if (
+          !refDefState ||
+          refDefState.unlinked ||
+          refDefState.sourcepos[0][0] > sourcepos![0][0]
+        ) {
           refMap[label] = createRefDefState(node);
         }
       });
@@ -368,10 +372,7 @@ export class ToastMark {
     const result: EditResult[] = [];
 
     iterateObject(refMap, (label, obj) => {
-      const { id, deleted } = obj[label];
-      const unlinked = deleted || isUnlinked(id);
-
-      if (unlinked) {
+      if (obj[label].unlinked) {
         delete refMap[label];
       }
       iterateObject(refLinkCandidateMap, (id, candidate) => {
