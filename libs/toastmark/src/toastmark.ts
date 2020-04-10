@@ -313,20 +313,20 @@ export class ToastMark {
     });
   }
 
-  private parse(start: Position, end: Position, lineDiff = 0): ParseResult {
-    const range = this.getNodeRange(start, end);
+  private parse(startPos: Position, endPos: Position, lineDiff = 0): ParseResult {
+    const range = this.getNodeRange(startPos, endPos);
     const startNode = range[0];
     let endNode = range[1];
-    const startLine = startNode ? Math.min(startNode.sourcepos![0][0], start[0]) : start[0];
-    let endLine = (endNode ? Math.max(endNode.sourcepos![1][0], end[0]) : end[0]) + lineDiff;
+    const startLine = startNode ? Math.min(startNode.sourcepos![0][0], startPos[0]) : startPos[0];
+    let endLine = this.extendEndLine(
+      (endNode ? Math.max(endNode.sourcepos![1][0], endPos[0]) : endPos[0]) + lineDiff
+    );
+
     let nextNode = findChildNodeAtLine(this.root, endLine + 1);
 
     if (nextNode && isRefDef(nextNode) && nextNode !== startNode && nextNode !== endNode) {
       endNode = nextNode;
-      endLine = endNode.sourcepos![1][0] + lineDiff;
-    }
-    while (this.lineTexts[endLine] === '') {
-      endLine += 1;
+      endLine = this.extendEndLine(endNode.sourcepos![1][0] + lineDiff);
     }
 
     const parseResult = this.parseRange(startNode, endNode, startLine, endLine);
@@ -379,9 +379,9 @@ export class ToastMark {
     });
   }
 
-  public editMarkdown(start: Position, end: Position, newText: string) {
-    const lineDiff = this.updateLineTexts(start, end, newText);
-    const parseResult = this.parse(start, end, lineDiff);
+  public editMarkdown(startPos: Position, endPos: Position, newText: string) {
+    const lineDiff = this.updateLineTexts(startPos, endPos, newText);
+    const parseResult = this.parse(startPos, endPos, lineDiff);
     const editResult = omit(parseResult, 'nextNode');
 
     updateNextLineNumbers(parseResult.nextNode, lineDiff);

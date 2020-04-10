@@ -239,55 +239,59 @@ class MarkdownEditor extends CodeMirrorExt {
       return;
     }
 
-    /* eslint-disable max-depth */
     changed.forEach(editResult => {
-      const { nodes } = editResult;
+      this._markNodes(editResult);
+    });
+  }
 
-      if (nodes.length) {
-        const [editFromPos] = nodes[0].sourcepos;
-        const [, editToPos] = nodes[nodes.length - 1].sourcepos;
-        const editFrom = { line: editFromPos[0] - 1, ch: editFromPos[1] - 1 };
-        const editTo = { line: editToPos[0] - 1, ch: editToPos[1] };
-        const marks = this.cm.findMarks(editFrom, editTo);
+  _markNodes(editResult) {
+    const { nodes } = editResult;
 
-        for (const mark of marks) {
-          if (mark.attributes && ATTR_NAME_MARK in mark.attributes) {
-            mark.clear();
-          }
-        }
+    if (nodes.length) {
+      const [editFromPos] = nodes[0].sourcepos;
+      const [, editToPos] = nodes[nodes.length - 1].sourcepos;
+      const editFrom = { line: editFromPos[0] - 1, ch: editFromPos[1] - 1 };
+      const editTo = { line: editToPos[0] - 1, ch: editToPos[1] };
+      const marks = this.cm.findMarks(editFrom, editTo);
 
-        for (const parent of nodes) {
-          const walker = parent.walker();
-          let event = walker.next();
-
-          while (event) {
-            const { node, entering } = event;
-
-            if (entering) {
-              const { type, sourcepos } = node;
-              const [startPosition, endPosition] = sourcepos;
-              const [startLine, startCh] = startPosition;
-              const [endLine, endCh] = endPosition;
-              const start = { line: startLine - 1, ch: startCh - 1 };
-              const end = { line: endLine - 1, ch: endCh };
-              const extraNode = tokenTypes[type];
-
-              if (type === 'heading') {
-                this._markText(start, end, `cm-header cm-header-${node.level}`);
-              } else if (extraNode) {
-                this._markText(start, end, `cm-${extraNode}`);
-              } else if (type === 'image' || type === 'link') {
-                this._markTextInLinkOrImage(node, start, end);
-              } else if (type === 'item') {
-                this._markTextInListItem(node, start, end);
-              }
-            }
-            event = walker.next();
-          }
+      for (const mark of marks) {
+        if (mark.attributes && ATTR_NAME_MARK in mark.attributes) {
+          mark.clear();
         }
       }
-    });
-    /* eslint-enable max-depth */
+
+      /* eslint-disable max-depth */
+      for (const parent of nodes) {
+        const walker = parent.walker();
+        let event = walker.next();
+
+        while (event) {
+          const { node, entering } = event;
+
+          if (entering) {
+            const { type, sourcepos } = node;
+            const [startPosition, endPosition] = sourcepos;
+            const [startLine, startCh] = startPosition;
+            const [endLine, endCh] = endPosition;
+            const start = { line: startLine - 1, ch: startCh - 1 };
+            const end = { line: endLine - 1, ch: endCh };
+            const extraNode = tokenTypes[type];
+
+            if (type === 'heading') {
+              this._markText(start, end, `cm-header cm-header-${node.level}`);
+            } else if (extraNode) {
+              this._markText(start, end, `cm-${extraNode}`);
+            } else if (type === 'image' || type === 'link') {
+              this._markTextInLinkOrImage(node, start, end);
+            } else if (type === 'item') {
+              this._markTextInListItem(node, start, end);
+            }
+          }
+          event = walker.next();
+        }
+      }
+      /* eslint-enable max-depth */
+    }
   }
 
   _markText(start, end, className) {
