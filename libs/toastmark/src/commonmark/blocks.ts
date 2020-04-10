@@ -6,14 +6,13 @@ import {
   isCodeBlock,
   isHtmlBlock,
   createNode,
-  TableCellNode,
-  getNodeById
+  TableCellNode
 } from './node';
 import { InlineParser, C_NEWLINE } from './inlines';
 import { blockHandlers, Process } from './blockHandlers';
 import { CODE_INDENT } from './blockHelper';
 import { blockStarts, Matched } from './blockStarts';
-import { iterateObject } from '../helper';
+import { RefMap, RefLinkCandidateMap, RefDefCandidateMap } from '../toastmark';
 
 const reHtmlBlockClose = [
   /./, // dummy for 0
@@ -48,23 +47,6 @@ export interface Options {
   disallowedHtmlBlockTags: string[];
 }
 
-export type RefMap = {
-  [k: string]: {
-    destination: string;
-    title: string;
-    modified: boolean;
-    deleted: boolean;
-    containerId: number;
-  };
-};
-
-export type RefLinkCandidteMap = {
-  [k: number]: {
-    block: BlockNode;
-    refLabel: string;
-  };
-};
-
 export class Parser {
   public doc: BlockNode;
   public tip: BlockNode;
@@ -82,7 +64,8 @@ export class Parser {
   private allClosed: boolean;
   private lastMatchedContainer: Node;
   public refMap: RefMap;
-  public refLinkCandidteMap: RefLinkCandidteMap;
+  public refLinkCandidteMap: RefLinkCandidateMap;
+  public refDefCandidteMap: RefDefCandidateMap;
   public lastLineLength: number;
   public inlineParser: InlineParser;
   public options: Options;
@@ -106,6 +89,7 @@ export class Parser {
     this.lastMatchedContainer = this.doc;
     this.refMap = {};
     this.refLinkCandidteMap = {};
+    this.refDefCandidteMap = {};
     this.lastLineLength = 0;
     this.inlineParser = new InlineParser(this.options);
   }
@@ -238,6 +222,7 @@ export class Parser {
     const walker = block.walker();
     this.inlineParser.refMap = this.refMap;
     this.inlineParser.refLinkCandidteMap = this.refLinkCandidteMap;
+    this.inlineParser.refDefCandidteMap = this.refDefCandidteMap;
     this.inlineParser.options = this.options;
     while ((event = walker.next())) {
       const node = event.node as BlockNode;
@@ -403,10 +388,14 @@ export class Parser {
   }
 
   // The main parsing function.  Returns a parsed document AST.
-  parse(input: string) {
+  parse(input: string, initRefMap = true) {
     this.doc = document();
     this.tip = this.doc;
-    this.refMap = {};
+    if (initRefMap) {
+      this.refMap = {};
+      this.refLinkCandidteMap = {};
+      this.refDefCandidteMap = {};
+    }
     this.lineNumber = 0;
     this.lastLineLength = 0;
     this.offset = 0;
@@ -461,11 +450,13 @@ export class Parser {
     this.processInlines(this.doc);
   }
 
-  removeUnlinkedCandidate() {
-    iterateObject(this.refLinkCandidteMap, (id, obj) => {
-      if (!getNodeById(id)) {
-        delete obj[id];
-      }
-    });
+  setRefMaps(
+    refMap: RefMap,
+    refLinkCandidteMap: RefLinkCandidateMap,
+    refDefCandidteMap: RefDefCandidateMap
+  ) {
+    this.refMap = refMap;
+    this.refLinkCandidteMap = refLinkCandidteMap;
+    this.refDefCandidteMap = refDefCandidteMap;
   }
 }
