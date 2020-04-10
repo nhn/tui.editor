@@ -1,4 +1,4 @@
-import { ToastMark, Position } from '../toastmark';
+import { ToastMark } from '../toastmark';
 import { Parser } from '../commonmark/blocks';
 import { getChildNodes } from '../nodeHelper';
 import { BlockNode } from '../commonmark/node';
@@ -318,7 +318,7 @@ describe('editText()', () => {
     });
 
     it('prepend a new list before a padded paragraph', () => {
-      const doc = new ToastMark('\n\n  World');
+      const doc = new ToastMark('\n\n  My\n\n  World');
       const result = doc.editMarkdown([1, 1], [1, 1], '- Hello')[0];
 
       assertParseResult(doc, ['- Hello', '', '  My', '', '  World']);
