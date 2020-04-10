@@ -5,7 +5,10 @@ import {
   removeAllNode,
   removeNodeById,
   getNodeById,
-  Node
+  Node,
+  SourcePos,
+  isRefDef,
+  RefDefNode
 } from './commonmark/node';
 import {
   removeNextUntil,
@@ -16,10 +19,11 @@ import {
   findChildNodeAtLine,
   findFirstNodeAtLine,
   findNodeAtPosition,
-  findNodeById
+  findNodeById,
+  invokeNextUntil
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
-import { iterateObject, omit } from './helper';
+import { iterateObject, omit, isEmptyObj } from './helper';
 
 const reLineEnding = /\r\n|\n|\r/;
 
@@ -39,6 +43,28 @@ interface EditResult {
 }
 
 type ParseResult = EditResult & { nextNode: Node | null };
+type RefDefState = {
+  id: number;
+  destination: string;
+  title: string;
+  deleted: boolean;
+  sourcepos: SourcePos;
+};
+
+export type RefMap = {
+  [k: string]: RefDefState;
+};
+
+export type RefLinkCandidateMap = {
+  [k: number]: {
+    block: BlockNode;
+    refLabel: string;
+  };
+};
+
+export type RefDefCandidateMap = {
+  [k: number]: RefDefNode;
+};
 
 function canBeContinuedListItem(lineText: string) {
   const spaceMatch = lineText.match(/^[ \t]+/);
@@ -50,19 +76,37 @@ function canBeContinuedListItem(lineText: string) {
   return reBulletListMarker.test(leftTrimmed) || reOrderedListMarker.test(leftTrimmed);
 }
 
+export function createRefDefState(node: RefDefNode) {
+  const { id, title, sourcepos, dest } = node;
+  return {
+    id,
+    title,
+    sourcepos: sourcepos!,
+    deleted: false,
+    destination: dest
+  };
+}
+
 export class ToastMark {
   public lineTexts: string[];
   private parser: Parser;
   private root: BlockNode;
   private eventHandlerMap: EventHandlerMap;
+  private refMap: RefMap;
+  private refLinkCandidateMap: RefLinkCandidateMap;
+  private refDefCandidateMap: RefDefCandidateMap;
 
   constructor(contents?: string, options?: Partial<Options>) {
+    this.refMap = {};
+    this.refLinkCandidateMap = {};
+    this.refDefCandidateMap = {};
     this.parser = new Parser(options);
+    this.parser.setRefMaps(this.refMap, this.refLinkCandidateMap, this.refDefCandidateMap);
     this.eventHandlerMap = { change: [] };
 
     contents = contents || '';
     this.lineTexts = contents.split(reLineEnding);
-    this.root = this.parser.parse(contents);
+    this.root = this.parser.parse(contents, false);
   }
 
   private updateLineTexts(startPos: Position, endPos: Position, newText: string) {
@@ -120,7 +164,7 @@ export class ToastMark {
     } else {
       insertNodesBefore(startNode, newNodes);
       removeNextUntil(startNode, endNode!);
-      removeNodeById(startNode.id);
+      [startNode.id, endNode!.id].forEach(removeNodeById);
       startNode.unlink();
     }
   }
@@ -195,63 +239,144 @@ export class ToastMark {
     return { newNodes, extStartNode: startNode, extEndNode: endNode };
   }
 
+  private getRemovedNodeRange(
+    extStartNode: BlockNode | null,
+    extEndNode: BlockNode | null
+  ): [number, number] | null {
+    return !extStartNode ||
+      (extStartNode && isRefDef(extStartNode)) ||
+      (extEndNode && isRefDef(extEndNode))
+      ? null
+      : [extStartNode.id, extEndNode!.id];
+  }
+
+  private markDeletedRefMap(extStartNode: BlockNode | null, extEndNode: BlockNode | null) {
+    if (isEmptyObj(this.refMap)) {
+      return;
+    }
+    const callback = (node: BlockNode) => {
+      if (isRefDef(node)) {
+        const refDefState = this.refMap[node.label];
+        if (refDefState && node.id === refDefState.id) {
+          refDefState.deleted = true;
+        }
+      }
+    };
+    if (extStartNode) {
+      const walker = extStartNode.parent!.walker();
+      walker.resumeAt(extStartNode, true);
+      invokeNextUntil(walker, callback, extStartNode, extEndNode);
+    }
+    if (extEndNode) {
+      invokeNextUntil(extEndNode.walker(), callback, extEndNode);
+    }
+  }
+
+  private assignNewRefDefState(nodes: BlockNode[]) {
+    const { refMap } = this;
+
+    if (isEmptyObj(refMap)) {
+      return;
+    }
+
+    const callback = (node: BlockNode) => {
+      if (isRefDef(node)) {
+        const { label } = node;
+        const refDefState = refMap[label];
+        if (!refDefState || refDefState.deleted) {
+          refMap[label] = createRefDefState(node);
+        }
+      }
+    };
+    nodes.forEach(node => {
+      const walker = node.walker();
+      walker.resumeAt(node.firstChild!, true);
+      invokeNextUntil(walker, callback, node);
+    });
+  }
+
+  private assignRefDefCandidate() {
+    const { refMap, refDefCandidateMap } = this;
+
+    if (isEmptyObj(refDefCandidateMap)) {
+      return;
+    }
+
+    iterateObject(refDefCandidateMap, (id, candidate) => {
+      const node = candidate[id];
+      const { label, sourcepos } = node;
+      const refDefState = refMap[label];
+
+      if (!refDefState || refDefState.deleted || refDefState.sourcepos[0][0] > sourcepos![0][0]) {
+        refMap[label] = createRefDefState(node);
+      }
+    });
+  }
+
   private parse(start: Position, end: Position, lineDiff = 0): ParseResult {
-    const [startNode, endNode] = this.getNodeRange(start, end);
+    const range = this.getNodeRange(start, end);
+    const startNode = range[0];
+    let endNode = range[1];
     const startLine = startNode ? Math.min(startNode.sourcepos![0][0], start[0]) : start[0];
     let endLine = (endNode ? Math.max(endNode.sourcepos![1][0], end[0]) : end[0]) + lineDiff;
-    let nextNode = findFirstNodeAtLine(this.root, endLine + 1);
+    let nextNode = findChildNodeAtLine(this.root, endLine + 1);
 
+    if (nextNode && isRefDef(nextNode) && nextNode !== startNode && nextNode !== endNode) {
+      endNode = nextNode;
+      endLine = endNode.sourcepos![1][0] + lineDiff;
+    }
     while (this.lineTexts[endLine] === '') {
       endLine += 1;
-    }
-    if (nextNode && nextNode.hasReferenceDefs && nextNode !== startNode && nextNode !== endNode) {
-      endLine = nextNode.sourcepos![1][0];
     }
 
     const parseResult = this.parseRange(startNode, endNode, startLine, endLine);
     const { newNodes, extStartNode, extEndNode } = parseResult;
+    const removedNodeRange = this.getRemovedNodeRange(extStartNode, extEndNode);
+
     nextNode = extEndNode ? extEndNode.next : this.root.firstChild;
 
+    this.markDeletedRefMap(extStartNode, extEndNode);
     this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
+    this.assignNewRefDefState(newNodes);
 
-    return {
-      nodes: newNodes,
-      removedNodeRange:
-        !extStartNode || extStartNode.hasReferenceDefs || extEndNode!.hasReferenceDefs
-          ? null
-          : [extStartNode.id, extEndNode!.id],
-      nextNode
-    };
+    return { nodes: newNodes, removedNodeRange, nextNode };
   }
 
   private parseRefLink() {
-    const result: EditResult[] = [];
-    const { refMap, refLinkCandidteMap } = this.parser;
+    const { refMap, refLinkCandidateMap } = this;
 
-    if (!Object.keys(refMap).length) {
-      return result;
+    if (isEmptyObj(refMap)) {
+      return null;
     }
 
-    iterateObject(refMap, (label, refMap) => {
-      const { containerId, modified, deleted } = refMap[label];
-      const unlinked = deleted || !getNodeById(containerId);
+    const result: EditResult[] = [];
 
-      if (unlinked || modified) {
-        if (unlinked) {
-          delete refMap[label];
-        } else if (modified) {
-          refMap[label].modified = false;
-        }
-        iterateObject(refLinkCandidteMap, (id, candidate) => {
-          const { block, refLabel } = candidate[id];
-          if (refLabel === label) {
-            result.push(this.parse(block.sourcepos![0], block.sourcepos![1]));
-          }
-        });
+    iterateObject(refMap, (label, obj) => {
+      const { id, deleted } = obj[label];
+      const unlinked = deleted || !getNodeById(id);
+
+      if (unlinked) {
+        delete refMap[label];
       }
+      iterateObject(refLinkCandidateMap, (id, candidate) => {
+        const { block, refLabel } = candidate[id];
+        if (refLabel === label) {
+          result.push(this.parse(block.sourcepos![0], block.sourcepos![1]));
+        }
+      });
     });
 
     return result;
+  }
+
+  private removeUnlinkedCandidate() {
+    [this.refLinkCandidateMap, this.refDefCandidateMap].forEach(candidateMap => {
+      iterateObject(candidateMap, (id, obj) => {
+        if (!getNodeById(id)) {
+          delete obj[id];
+        }
+      });
+    });
   }
 
   public editMarkdown(start: Position, end: Position, newText: string) {
@@ -261,13 +386,13 @@ export class ToastMark {
 
     updateNextLineNumbers(parseResult.nextNode, lineDiff);
     this.updateRootNodeState();
-    this.parser.removeUnlinkedCandidate();
+    this.removeUnlinkedCandidate();
+    this.assignRefDefCandidate();
 
     let result: EditResult[] = [editResult];
+
     const refLink = this.parseRefLink();
-    if (refLink.length) {
-      result = result.concat(refLink);
-    }
+    result = refLink ? result.concat(refLink) : result;
 
     this.trigger('change', result);
 
