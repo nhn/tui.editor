@@ -228,3 +228,8 @@ export function invokeNextUntil(
     }
   }
 }
+
+export function isUnlinked(id: number) {
+  const node = findNodeById(id);
+  return !node || (['parent', 'prev', 'next'] as const).every(type => node![type] === null);
+}

@@ -4,7 +4,6 @@ import {
   isList,
   removeAllNode,
   removeNodeById,
-  getNodeById,
   Node,
   SourcePos,
   isRefDef,
@@ -20,7 +19,8 @@ import {
   findFirstNodeAtLine,
   findNodeAtPosition,
   findNodeById,
-  invokeNextUntil
+  invokeNextUntil,
+  isUnlinked
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
 import { iterateObject, omit, isEmptyObj } from './helper';
@@ -353,7 +353,7 @@ export class ToastMark {
 
     iterateObject(refMap, (label, obj) => {
       const { id, deleted } = obj[label];
-      const unlinked = deleted || !getNodeById(id);
+      const unlinked = deleted || isUnlinked(id);
 
       if (unlinked) {
         delete refMap[label];
@@ -372,7 +372,7 @@ export class ToastMark {
   private removeUnlinkedCandidate() {
     [this.refLinkCandidateMap, this.refDefCandidateMap].forEach(candidateMap => {
       iterateObject(candidateMap, (id, obj) => {
-        if (!getNodeById(id)) {
+        if (isUnlinked(id)) {
           delete obj[id];
         }
       });
