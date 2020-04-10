@@ -2,11 +2,12 @@ import { Node, BlockNode, SourcePos, isHeading, LinkNode, createNode, text } fro
 import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY } from './common';
 import { reHtmlTag } from './rawHtml';
 import fromCodePoint from './from-code-point';
-import { Options, RefMap, RefLinkCandidteMap } from './blocks';
+import { Options } from './blocks';
 import { decodeHTML } from 'entities/lib/decode';
 import NodeWalker from './nodeWalker';
 import { convertExtAutoLinks } from './gfm/autoLinks';
 import { last, normalizeReference } from '../helper';
+import { RefMap, RefLinkCandidateMap, RefDefCandidateMap, createRefDefState } from '../toastmark';
 
 export const C_NEWLINE = 10;
 const C_ASTERISK = 42;
@@ -101,7 +102,8 @@ export class InlineParser {
   private lineOffsets: number[] = [0];
   private linePosOffset = 0;
   public refMap: RefMap = {};
-  public refLinkCandidteMap: RefLinkCandidteMap = {};
+  public refLinkCandidteMap: RefLinkCandidateMap = {};
+  public refDefCandidteMap: RefDefCandidateMap = {};
   public options: Options;
 
   constructor(options: Options) {
@@ -932,19 +934,20 @@ export class InlineParser {
       return 0;
     }
 
-    const node = createNode('referenceDef', block.sourcepos);
+    const sourcepos = this.getReferenceDefSourcepos(block);
+    block.sourcepos![0][0] = sourcepos[1][0] + 1;
+
+    const node = createNode('refDef', sourcepos);
     node.title = title;
     node.dest = dest;
-    block.appendChild(node);
+    node.label = normalLabel;
 
-    if (!refMap[normalLabel] || (refMap[normalLabel] && !refMap[normalLabel].deleted)) {
-      refMap[normalLabel] = {
-        destination: dest,
-        containerId: block.id,
-        modified: true,
-        deleted: false,
-        title
-      };
+    block.insertBefore(node);
+
+    if (!refMap[normalLabel]) {
+      refMap[normalLabel] = createRefDefState(node);
+    } else {
+      this.refDefCandidteMap[node.id] = node;
     }
 
     return this.pos - startpos;
@@ -978,6 +981,37 @@ export class InlineParser {
         textNodes = [];
       }
     }
+  }
+
+  getReferenceDefSourcepos(block: BlockNode): [[number, number], [number, number]] {
+    const lines = block.stringContent!.split(/\n|\r\n/);
+    let colonCount = 0;
+    let lastLineOffset = { line: 0, ch: 0 };
+
+    for (let i = 0; i < lines.length; i += 1) {
+      const line = lines[i];
+
+      if (!line.trim()) {
+        break;
+      }
+      if (line.indexOf(':') !== -1 && colonCount === 0) {
+        const lineOffset = line.indexOf(':') === line.length - 1 ? i + 1 : i;
+        lastLineOffset = { line: lineOffset, ch: lines[lineOffset].length };
+      }
+      // To consider extendable title
+      const matched = line.match(/'|"/g);
+      if (matched) {
+        colonCount += matched.length;
+      }
+      if (colonCount === 2) {
+        lastLineOffset = { line: i, ch: line.length };
+        break;
+      }
+    }
+    return [
+      [block.sourcepos![0][0], block.sourcepos![0][1]],
+      [block.sourcepos![0][0] + lastLineOffset.line, lastLineOffset.ch]
+    ];
   }
 
   // Parse the next inline element in subject, advancing subject position.
