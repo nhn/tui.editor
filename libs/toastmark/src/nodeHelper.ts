@@ -230,6 +230,19 @@ export function invokeNextUntil(
 }
 
 export function isUnlinked(id: number) {
-  const node = findNodeById(id);
-  return !node || (['parent', 'prev', 'next'] as const).every(type => node![type] === null);
+  let node = findNodeById(id);
+
+  if (!node) {
+    return true;
+  }
+
+  while (node && node.type !== 'document') {
+    // eslint-disable-next-line no-loop-func
+    const unlinked = (['parent', 'prev', 'next'] as const).every(type => node[type] === null);
+    if (unlinked) {
+      return true;
+    }
+    node = node.parent!;
+  }
+  return false;
 }
