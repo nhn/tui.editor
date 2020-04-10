@@ -251,24 +251,23 @@ export class ToastMark {
   }
 
   private markDeletedRefMap(extStartNode: BlockNode | null, extEndNode: BlockNode | null) {
-    if (isEmptyObj(this.refMap)) {
-      return;
-    }
-    const markDeleted = (node: BlockNode) => {
-      if (isRefDef(node)) {
-        const refDefState = this.refMap[node.label];
-        if (refDefState && node.id === refDefState.id) {
-          refDefState.deleted = true;
+    if (!isEmptyObj(this.refMap)) {
+      const markDeleted = (node: BlockNode) => {
+        if (isRefDef(node)) {
+          const refDefState = this.refMap[node.label];
+          if (refDefState && node.id === refDefState.id) {
+            refDefState.deleted = true;
+          }
         }
+      };
+      if (extStartNode) {
+        const walker = extStartNode.parent!.walker();
+        walker.resumeAt(extStartNode, true);
+        invokeNextUntil(walker, markDeleted, extStartNode, extEndNode);
       }
-    };
-    if (extStartNode) {
-      const walker = extStartNode.parent!.walker();
-      walker.resumeAt(extStartNode, true);
-      invokeNextUntil(walker, markDeleted, extStartNode, extEndNode);
-    }
-    if (extEndNode) {
-      invokeNextUntil(extEndNode.walker(), markDeleted, extEndNode);
+      if (extEndNode) {
+        invokeNextUntil(extEndNode.walker(), markDeleted, extEndNode);
+      }
     }
   }
 
@@ -298,42 +297,59 @@ export class ToastMark {
   private replaceWithRefDefCandidate() {
     const { refMap, refDefCandidateMap } = this;
 
-    if (isEmptyObj(refDefCandidateMap)) {
-      return;
+    if (!isEmptyObj(refDefCandidateMap)) {
+      iterateObject(refDefCandidateMap, (id, candidate) => {
+        const node = candidate[id];
+        const { label, sourcepos } = node;
+        const refDefState = refMap[label];
+
+        if (!refDefState || refDefState.deleted || refDefState.sourcepos[0][0] > sourcepos![0][0]) {
+          refMap[label] = createRefDefState(node);
+        }
+      });
+    }
+  }
+
+  private getRangeWithRefDef(
+    startLine: number,
+    endLine: number,
+    startNode: BlockNode,
+    endNode: BlockNode,
+    lineDiff: number
+  ) {
+    if (!isEmptyObj(this.refMap)) {
+      const prevNode = findChildNodeAtLine(this.root, startLine - 1);
+      const nextNode = findChildNodeAtLine(this.root, endLine + 1);
+
+      if (prevNode && isRefDef(prevNode) && prevNode !== startNode && prevNode !== endNode) {
+        startNode = prevNode;
+        startLine = startNode.sourcepos![0][0];
+      }
+
+      if (nextNode && isRefDef(nextNode) && nextNode !== startNode && nextNode !== endNode) {
+        endNode = nextNode;
+        endLine = this.extendEndLine(endNode.sourcepos![1][0] + lineDiff);
+      }
     }
 
-    iterateObject(refDefCandidateMap, (id, candidate) => {
-      const node = candidate[id];
-      const { label, sourcepos } = node;
-      const refDefState = refMap[label];
-
-      if (!refDefState || refDefState.deleted || refDefState.sourcepos[0][0] > sourcepos![0][0]) {
-        refMap[label] = createRefDefState(node);
-      }
-    });
+    return [startNode, endNode, startLine, endLine] as const;
   }
 
   private parse(startPos: Position, endPos: Position, lineDiff = 0): ParseResult {
     const range = this.getNodeRange(startPos, endPos);
-    const startNode = range[0];
-    let endNode = range[1];
+    const [startNode, endNode] = range;
     const startLine = startNode ? Math.min(startNode.sourcepos![0][0], startPos[0]) : startPos[0];
-    let endLine = this.extendEndLine(
+    const endLine = this.extendEndLine(
       (endNode ? Math.max(endNode.sourcepos![1][0], endPos[0]) : endPos[0]) + lineDiff
     );
 
-    let nextNode = findChildNodeAtLine(this.root, endLine + 1);
-
-    if (nextNode && isRefDef(nextNode) && nextNode !== startNode && nextNode !== endNode) {
-      endNode = nextNode;
-      endLine = this.extendEndLine(endNode.sourcepos![1][0] + lineDiff);
-    }
-
-    const parseResult = this.parseRange(startNode, endNode, startLine, endLine);
+    const parseResult = this.parseRange(
+      ...this.getRangeWithRefDef(startLine, endLine, startNode, endNode, lineDiff)
+    );
     const { newNodes, extStartNode, extEndNode } = parseResult;
     const removedNodeRange = this.getRemovedNodeRange(extStartNode, extEndNode);
 
-    nextNode = extEndNode ? extEndNode.next : this.root.firstChild;
+    const nextNode = extEndNode ? extEndNode.next : this.root.firstChild;
 
     this.markDeletedRefMap(extStartNode, extEndNode);
     this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
