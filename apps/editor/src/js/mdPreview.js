@@ -4,14 +4,19 @@
  */
 import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
+import { createHTMLRender } from '@toast-ui/toastmark';
 
 import Preview from './preview';
-import MarkdownRenderer from './markdownRenderer';
 import domUtils from './utils/dom';
+import { getHTMLRenderConvertors } from './htmlRenderConvertors';
 import { findAdjacentElementToScrollTop } from './scroll/helper';
 import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
 
-const htmlRenderer = new MarkdownRenderer({ nodeId: true });
+const renderHTML = createHTMLRender({
+  gfm: true,
+  nodeId: true,
+  convertors: getHTMLRenderConvertors()
+});
 
 /**
  * Class Markdown Preview
@@ -55,7 +60,7 @@ class MarkdownPreview extends Preview {
     const contentEl = this._previewContent;
     const newHtml = this.eventManager.emitReduce(
       'convertorAfterMarkdownToHtmlConverted',
-      nodes.map(node => htmlRenderer.render(node)).join('')
+      nodes.map(node => renderHTML(node)).join('')
     );
 
     if (!removedNodeRange) {
