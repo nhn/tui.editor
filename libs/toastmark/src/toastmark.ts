@@ -57,7 +57,7 @@ export type RefMap = {
 
 export type RefLinkCandidateMap = {
   [k: number]: {
-    block: BlockNode;
+    node: BlockNode;
     refLabel: string;
   };
 };
@@ -254,7 +254,7 @@ export class ToastMark {
     if (isEmptyObj(this.refMap)) {
       return;
     }
-    const callback = (node: BlockNode) => {
+    const markDeleted = (node: BlockNode) => {
       if (isRefDef(node)) {
         const refDefState = this.refMap[node.label];
         if (refDefState && node.id === refDefState.id) {
@@ -265,21 +265,21 @@ export class ToastMark {
     if (extStartNode) {
       const walker = extStartNode.parent!.walker();
       walker.resumeAt(extStartNode, true);
-      invokeNextUntil(walker, callback, extStartNode, extEndNode);
+      invokeNextUntil(walker, markDeleted, extStartNode, extEndNode);
     }
     if (extEndNode) {
-      invokeNextUntil(extEndNode.walker(), callback, extEndNode);
+      invokeNextUntil(extEndNode.walker(), markDeleted, extEndNode);
     }
   }
 
-  private assignNewRefDefState(nodes: BlockNode[]) {
+  private replaceWithNewRefDefState(nodes: BlockNode[]) {
     const { refMap } = this;
 
     if (isEmptyObj(refMap)) {
       return;
     }
 
-    const callback = (node: BlockNode) => {
+    const replaceWith = (node: BlockNode) => {
       if (isRefDef(node)) {
         const { label } = node;
         const refDefState = refMap[label];
@@ -291,11 +291,11 @@ export class ToastMark {
     nodes.forEach(node => {
       const walker = node.walker();
       walker.resumeAt(node.firstChild!, true);
-      invokeNextUntil(walker, callback, node);
+      invokeNextUntil(walker, replaceWith, node);
     });
   }
 
-  private assignRefDefCandidate() {
+  private replaceWithRefDefCandidate() {
     const { refMap, refDefCandidateMap } = this;
 
     if (isEmptyObj(refDefCandidateMap)) {
@@ -337,7 +337,7 @@ export class ToastMark {
 
     this.markDeletedRefMap(extStartNode, extEndNode);
     this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
-    this.assignNewRefDefState(newNodes);
+    this.replaceWithNewRefDefState(newNodes);
 
     return { nodes: newNodes, removedNodeRange, nextNode };
   }
@@ -359,9 +359,9 @@ export class ToastMark {
         delete refMap[label];
       }
       iterateObject(refLinkCandidateMap, (id, candidate) => {
-        const { block, refLabel } = candidate[id];
+        const { node, refLabel } = candidate[id];
         if (refLabel === label) {
-          result.push(this.parse(block.sourcepos![0], block.sourcepos![1]));
+          result.push(this.parse(node.sourcepos![0], node.sourcepos![1]));
         }
       });
     });
@@ -387,7 +387,7 @@ export class ToastMark {
     updateNextLineNumbers(parseResult.nextNode, lineDiff);
     this.updateRootNodeState();
     this.removeUnlinkedCandidate();
-    this.assignRefDefCandidate();
+    this.replaceWithRefDefCandidate();
 
     let result: EditResult[] = [editResult];
 
