@@ -1,5 +1,6 @@
-import { Node, getNodeById, removeNodeById } from './commonmark/node';
+import { Node, getNodeById, removeNodeById, BlockNode } from './commonmark/node';
 import { Position } from './toastmark';
+import NodeWalker from './commonmark/nodeWalker';
 
 export const enum Compare {
   LT = 1,
@@ -209,4 +210,21 @@ export function toString(node: Node | null) {
 
 export function findNodeById(id: number) {
   return getNodeById(id) || null;
+}
+
+export function invokeNextUntil(
+  walker: NodeWalker,
+  callback: Function,
+  start: BlockNode | null,
+  end: BlockNode | null = null
+) {
+  while (start && start !== end) {
+    callback(start);
+    const next = walker.next();
+    if (next) {
+      start = next.node as BlockNode;
+    } else {
+      break;
+    }
+  }
 }
