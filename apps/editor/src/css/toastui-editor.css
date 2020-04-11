@@ -505,6 +505,7 @@
 
 .te-popup-add-image .te-url-type {
   display: none;
+  position: relative;
 }
 
 .te-popup-add-image .te-file-type {
@@ -527,6 +528,32 @@
 
 .te-popup-add-image .te-tab button.te-tab-active {
   background: #fff;
+}
+
+.te-popup-add-image .te-image-url-item {
+  position: relative;
+}
+
+.te-popup-add-image .te-image-url-item+.te-image-url-item {
+  margin-top: 8px;
+}
+
+.te-popup-add-image .te-add-image-url-item {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  font-size: 14px;
+  color: #4b96e6;
+  cursor: pointer;
+}
+
+.te-popup-add-image .te-remove-image-url-item {
+  position: absolute;
+  top: 3px;
+  right: -10px;
+  font-size: 16px;
+  color: #f56c6c;
+  cursor: pointer;
 }
 
 .te-popup-add-table .te-table-selection {

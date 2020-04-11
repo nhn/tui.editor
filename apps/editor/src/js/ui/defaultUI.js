@@ -120,7 +120,7 @@ class DefaultUI {
     this._initEvent();
   }
 
-  _init({ el: container, toolbarItems, hideModeSwitch }) {
+  _init({ el: container, toolbarItems, hideModeSwitch, multipleImageUpload }) {
     this.el = domUtils.createElementWith(CONTAINER_TEMPLATE, container);
     this._container = container;
     this._editorSection = this.el.querySelector(`.${CLASS_EDITOR}`);
@@ -130,7 +130,7 @@ class DefaultUI {
     this._initModeSwitch(this._editor.eventManager, hideModeSwitch);
 
     this._initPopupAddLink();
-    this._initPopupAddImage();
+    this._initPopupAddImage(multipleImageUpload);
     this._initPopupAddTable();
     this._initPopupAddHeading();
     this._initPopupTableUtils();
@@ -210,11 +210,12 @@ class DefaultUI {
     );
   }
 
-  _initPopupAddImage() {
+  _initPopupAddImage(multipleImageUpload) {
     this._popups.push(
       new PopupAddImage({
         target: this.el,
-        eventManager: this._editor.eventManager
+        eventManager: this._editor.eventManager,
+        multipleImageUpload
       })
     );
   }

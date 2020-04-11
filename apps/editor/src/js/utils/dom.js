@@ -523,6 +523,29 @@ const removeChildFromStartToEndNode = function(parentNode, start, end) {
 };
 
 /**
+ * remove node from 'end' node to 'start+1' node inside parent
+ * if 'start' node is null, remove all child nodes before 'end' node.
+ * @param {Node} parentNode - parent node
+ * @param {Node} end - end node to remove
+ * @param {Node} start - start node to remove
+ * @ignore
+ */
+const removeChildFromEndToStartNode = function(parentNode, end, start) {
+  let child = end;
+
+  if (!child || parentNode !== child.parentNode) {
+    return;
+  }
+
+  while (child !== start) {
+    const previousNode = child.previousSibling;
+
+    parentNode.removeChild(child);
+    child = previousNode;
+  }
+};
+
+/**
  * remove nodes along the direction from the node to reach targetParent node
  * @param {Node} targetParent - stop removing when reach target parent node
  * @param {Node} node - start node
@@ -1321,6 +1344,7 @@ export default {
   isMDSupportInlineNode,
   isStyledNode,
   removeChildFromStartToEndNode,
+  removeChildFromEndToStartNode,
   removeNodesByDirection,
   getLeafNode,
   isInsideTaskBox,

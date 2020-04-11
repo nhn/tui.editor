@@ -117,6 +117,7 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
+ *     @param {boolean} [options.multipleImageUpload=false] - whether upload multiple image
  */
 class ToastUIEditor {
   constructor(options) {
@@ -156,7 +157,8 @@ class ToastUIEditor {
           'codeblock'
         ],
         hideModeSwitch: false,
-        customConvertor: null
+        customConvertor: null,
+        multipleImageUpload: false
       },
       options
     );

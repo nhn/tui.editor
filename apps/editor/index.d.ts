@@ -60,6 +60,7 @@ declare namespace toastui {
     customConvertor?: Convertor;
     placeholder?: string;
     linkAttribute?: object;
+    multipleImageUpload?: boolean;
   }
 
   export interface ViewerOptions {
