@@ -70,20 +70,37 @@ const baseConvertors = {
   }
 };
 
-export function getHTMLRenderConvertors(linkAttrs) {
-  if (!linkAttrs) {
-    return baseConvertors;
-  }
+export function getHTMLRenderConvertors(linkAttribute, customConvertors) {
+  const convertors = { ...baseConvertors };
 
-  return {
-    ...baseConvertors,
-    link(node, { entering, origin }) {
+  if (linkAttribute) {
+    convertors.link = (_, { entering, origin }) => {
       const result = origin();
 
       if (entering) {
-        Object.assign(result.atttibutes, linkAttrs);
+        Object.assign(result.attributes, linkAttribute);
       }
       return result;
-    }
-  };
+    };
+  }
+
+  if (customConvertors) {
+    Object.keys(customConvertors).forEach(nodeType => {
+      const orgConvertor = convertors[nodeType];
+      const extConvertor = customConvertors[nodeType];
+
+      if (orgConvertor) {
+        convertors[nodeType] = (node, context) => {
+          const newContext = { ...context };
+
+          newContext.origin = () => orgConvertor(node, context);
+          return extConvertor(node, newContext);
+        };
+      } else {
+        convertors[nodeType] = extConvertor;
+      }
+    });
+  }
+
+  return convertors;
 }

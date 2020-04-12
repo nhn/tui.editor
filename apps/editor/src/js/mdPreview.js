@@ -12,12 +12,6 @@ import { getHTMLRenderConvertors } from './htmlRenderConvertors';
 import { findAdjacentElementToScrollTop } from './scroll/helper';
 import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
 
-const renderHTML = createHTMLRender({
-  gfm: true,
-  nodeId: true,
-  convertors: getHTMLRenderConvertors()
-});
-
 /**
  * Class Markdown Preview
  * @param {HTMLElement} el - base element
@@ -27,8 +21,8 @@ const renderHTML = createHTMLRender({
  * @ignore
  */
 class MarkdownPreview extends Preview {
-  constructor(el, eventManager, convertor, isViewer) {
-    super(el, eventManager, convertor, isViewer);
+  constructor(el, eventManager, convertor, options) {
+    super(el, eventManager, convertor, options.isViewer);
     this._initEvent();
     this.lazyRunner.registerLazyRunFunction(
       'invokeCodeBlock',
@@ -36,6 +30,14 @@ class MarkdownPreview extends Preview {
       this.delayCodeBlockTime,
       this
     );
+
+    const { linkAttribute, customHTMLRenderer } = options;
+
+    this.renderHTML = createHTMLRender({
+      gfm: true,
+      nodeId: true,
+      convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer)
+    });
   }
 
   /**
@@ -60,7 +62,7 @@ class MarkdownPreview extends Preview {
     const contentEl = this._previewContent;
     const newHtml = this.eventManager.emitReduce(
       'convertorAfterMarkdownToHtmlConverted',
-      nodes.map(node => renderHTML(node)).join('')
+      nodes.map(node => this.renderHTML(node)).join('')
     );
 
     if (!removedNodeRange) {
