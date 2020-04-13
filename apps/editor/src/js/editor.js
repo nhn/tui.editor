@@ -4,14 +4,13 @@
  */
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import isExisty from 'tui-code-snippet/type/isExisty';
-import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
-import { sendHostName } from './utils/common';
+import { sendHostName, sanitizeLinkAttribute } from './utils/common';
 
 import MarkdownEditor from './markdownEditor';
 import MarkdownPreview from './mdPreview';
@@ -80,8 +79,6 @@ import { register } from './scroll/sync';
 
 const __nedInstance = [];
 
-const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang', 'type'];
-
 /**
  * @callback addImageBlobHook
  * @param {File|Blob} fileOrBlob - image blob
@@ -116,7 +113,8 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
- *     @param {Object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
+ *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
+ *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
  */
 class ToastUIEditor {
   constructor(options) {
@@ -156,7 +154,9 @@ class ToastUIEditor {
           'codeblock'
         ],
         hideModeSwitch: false,
-        customConvertor: null
+        linkAttribute: null,
+        customConvertor: null,
+        customHTMLRenderer: null
       },
       options
     );
@@ -171,13 +171,15 @@ class ToastUIEditor {
       useCommandShortcut: this.options.useCommandShortcut
     });
 
-    const linkAttribute = this._sanitizeLinkAttribute(this.options.linkAttribute);
+    const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
+    const { customHTMLRenderer } = this.options;
+    const rendererOptions = { linkAttribute, customHTMLRenderer };
 
     if (this.options.customConvertor) {
       // eslint-disable-next-line new-cap
-      this.convertor = new this.options.customConvertor(this.eventManager, { linkAttribute });
+      this.convertor = new this.options.customConvertor(this.eventManager, rendererOptions);
     } else {
-      this.convertor = new Convertor(this.eventManager, { linkAttribute });
+      this.convertor = new Convertor(this.eventManager, rendererOptions);
     }
 
     if (this.options.useDefaultHTMLSanitizer) {
@@ -209,17 +211,19 @@ class ToastUIEditor {
       this.toastMark,
       this.options
     );
+
     this.preview = new MarkdownPreview(
       this.layout.getPreviewEl(),
       this.eventManager,
       this.convertor,
-      false
+      { ...rendererOptions, isViewer: false }
     );
 
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
       useDefaultHTMLSanitizer: this.options.useDefaultHTMLSanitizer,
       linkAttribute
     });
+
     this.toMarkOptions = {
       gfm: true,
       renderer: toMarkRenderer
@@ -258,28 +262,6 @@ class ToastUIEditor {
     }
 
     register(this);
-  }
-
-  /**
-   * sanitize attribute for link
-   * @param {object} attribute - attribute for link
-   * @returns {object} sanitized attribute
-   * @private
-   */
-  _sanitizeLinkAttribute(attribute) {
-    if (!attribute) {
-      return null;
-    }
-
-    const linkAttribute = {};
-
-    availableLinkAttributes.forEach(key => {
-      if (!isUndefined(attribute[key])) {
-        linkAttribute[key] = attribute[key];
-      }
-    });
-
-    return linkAttribute;
   }
 
   /**

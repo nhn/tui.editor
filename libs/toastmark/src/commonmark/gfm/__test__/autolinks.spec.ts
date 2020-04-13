@@ -1,5 +1,5 @@
 import { Parser } from '../../blocks';
-import { HtmlRenderer } from '../../render/html';
+import { createRenderHTML } from '../../../html/render';
 import { LinkNode } from '../../node';
 import { parseUrlLink, parseEmailLink } from '../autoLinks';
 
@@ -190,7 +190,7 @@ describe('parseEmailLink', () => {
 // https://github.github.com/gfm/#example-621
 describe('GFM Examples', () => {
   const reader = new Parser({ autoLink: true });
-  const writer = new HtmlRenderer();
+  const render = createRenderHTML();
 
   it('621', () => {
     const root = reader.parse('www.commonmark.org');
@@ -210,7 +210,7 @@ describe('GFM Examples', () => {
       [1, 18]
     ]);
 
-    const html = writer.render(root);
+    const html = render(root);
     expect(html).toBe('<p><a href="http://www.commonmark.org">www.commonmark.org</a></p>\n');
   });
 
@@ -241,7 +241,7 @@ describe('GFM Examples', () => {
       [1, 51]
     ]);
 
-    const html = writer.render(root);
+    const html = render(root);
     expect(html).toBe(
       '<p>Visit <a href="http://www.commonmark.org/help">www.commonmark.org/help</a> for more information.</p>\n'
     );
@@ -341,7 +341,7 @@ describe('GFM Examples', () => {
   examples.forEach(({ no, input, output }) => {
     it(String(no), () => {
       const root = reader.parse(input);
-      const html = writer.render(root);
+      const html = render(root);
       expect(html).toBe(output);
     });
   });

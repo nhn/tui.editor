@@ -1,10 +1,10 @@
 import { source } from 'common-tags';
 import { Parser } from '../../blocks';
-import { GfmHtmlRenderer } from '../../render/gfm/html';
+import { createRenderHTML } from '../../../html/render';
 import { pos } from '../../__test__/helper.spec';
 
 const reader = new Parser();
-const writer = new GfmHtmlRenderer();
+const render = createRenderHTML({ gfm: true });
 
 describe('Task list item', () => {
   it('Parse', () => {
@@ -61,13 +61,13 @@ describe('Task list item', () => {
     `;
     const output = source`
       <ul>
-      <li><input disabled="" type="checkbox"> foo</li>
-      <li><input checked="" disabled="" type="checkbox"> bar</li>
+      <li><input disabled="" type="checkbox" /> foo</li>
+      <li><input checked="" disabled="" type="checkbox" /> bar</li>
       </ul>
     `;
 
     const root = reader.parse(input);
-    const html = writer.render(root);
+    const html = render(root);
 
     expect(html).toEqual(`${output}\n`);
   });
@@ -82,18 +82,18 @@ describe('Task list item', () => {
     `;
     const output = source`
       <ul>
-      <li><input checked="" disabled="" type="checkbox"> foo
+      <li><input checked="" disabled="" type="checkbox" /> foo
       <ul>
-      <li><input disabled="" type="checkbox"> bar</li>
-      <li><input checked="" disabled="" type="checkbox"> baz</li>
+      <li><input disabled="" type="checkbox" /> bar</li>
+      <li><input checked="" disabled="" type="checkbox" /> baz</li>
       </ul>
       </li>
-      <li><input disabled="" type="checkbox"> bim</li>
+      <li><input disabled="" type="checkbox" /> bim</li>
       </ul>
     `;
 
     const root = reader.parse(input);
-    const html = writer.render(root);
+    const html = render(root);
 
     expect(html).toEqual(`${output}\n`);
   });

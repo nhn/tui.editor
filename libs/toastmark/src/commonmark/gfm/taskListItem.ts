@@ -1,6 +1,5 @@
 import { Parser } from '../blocks';
 import { ListNode, BlockNode } from '../node';
-import { HtmlRenderer, AttrPairs } from '../render/html';
 
 const reTaskListItemMarker = /^\[([ \txX])\][ \t]+/;
 
@@ -17,18 +16,5 @@ export function taskListItemFinalize(_: Parser, block: ListNode) {
       block.listData!.task = true;
       block.listData!.checked = /[xX]/.test(m[1]);
     }
-  }
-}
-
-// for HTML Renderer
-export function taskListItemRender(renderer: HtmlRenderer, node: ListNode) {
-  if (node.listData!.task) {
-    const inputAttrs: AttrPairs = [];
-    if (node.listData!.checked) {
-      inputAttrs.push(['checked', '']);
-    }
-    inputAttrs.push(['disabled', ''], ['type', 'checkbox']);
-    renderer.tag('input', inputAttrs);
-    renderer.lit(' ');
   }
 }

@@ -3,9 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import toMark from '@toast-ui/to-mark';
-import { Parser } from '@toast-ui/toastmark';
+import { Parser, createRenderHTML } from '@toast-ui/toastmark';
 
-import MarkdownRenderer from './markdownRenderer';
+import { getHTMLRenderConvertors } from './htmlRenderConvertors';
 import htmlSanitizer from './htmlSanitizer';
 import domUtils from './utils/dom';
 
@@ -27,17 +27,13 @@ const HTML_TAG_RX = new RegExp(openingTag, 'g');
  */
 class Convertor {
   constructor(em, options = {}) {
-    const { linkAttribute } = options;
-    const linkAttrs = [];
-
-    if (linkAttribute) {
-      Object.keys(linkAttribute).forEach(linkAttrName => {
-        linkAttrs.push([linkAttrName, linkAttribute[linkAttrName]]);
-      });
-    }
+    const { linkAttribute, customHTMLRenderer } = options;
 
     this.mdReader = new Parser({ disallowedHtmlBlockTags: ['br'] });
-    this.htmlWriter = new MarkdownRenderer({ linkAttrs });
+    this.renderHTML = createRenderHTML({
+      gfm: true,
+      convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer)
+    });
     this.eventManager = em;
   }
 
@@ -51,7 +47,7 @@ class Convertor {
   _markdownToHtmlWithCodeHighlight(markdown) {
     markdown = this._replaceImgAttrToDataProp(markdown);
 
-    return this.htmlWriter.render(this.mdReader.parse(markdown));
+    return this.renderHTML(this.mdReader.parse(markdown));
   }
 
   /**
@@ -68,7 +64,7 @@ class Convertor {
     );
     markdown = this._replaceImgAttrToDataProp(markdown);
 
-    return this.htmlWriter.render(this.mdReader.parse(markdown));
+    return this.renderHTML(this.mdReader.parse(markdown));
   }
 
   /**
