@@ -1,11 +1,11 @@
 import { Parser } from '../../blocks';
-import { GfmHtmlRenderer } from '../../render/gfm/html';
+import { createRenderHTML } from '../../../html/render';
 import { convertToArrayTree } from '../../__test__/helper.spec';
 import { BlockNode, TableNode } from 'src/commonmark/node';
 import { source } from 'common-tags';
 
 const reader = new Parser();
-const writer = new GfmHtmlRenderer();
+const render = createRenderHTML({ gfm: true });
 
 // Shortcut function to prevent prettier from adding linebreak beetween nested arrays
 const pos = (a: number, b: number, c: number, d: number) => [
@@ -137,7 +137,7 @@ describe('table', () => {
       ]
     });
 
-    const html = writer.render(root);
+    const html = render(root);
     const output = source`
       <table>
       <thead>
@@ -226,7 +226,7 @@ describe('table', () => {
     `;
 
     const root = reader.parse(input);
-    const html = writer.render(root);
+    const html = render(root);
     expect(html).toBe(`${output}\n`);
   });
 });
@@ -432,7 +432,7 @@ describe('GFM Exmaple', () => {
   examples.forEach(({ no, input, output }) => {
     it(String(no), () => {
       const root = reader.parse(input);
-      const html = writer.render(root);
+      const html = render(root);
       expect(html).toBe(`${output}\n`);
     });
   });

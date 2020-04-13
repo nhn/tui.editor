@@ -455,5 +455,42 @@ describe('Editor', () => {
         expect(editor.convertor instanceof CustomConvertor).toBe(true);
       });
     });
+
+    describe('customHTMLRenderer', () => {
+      it('should pass customHTMLRender option for creating convertor instance', () => {
+        editor = new Editor({
+          el: container,
+          initialValue: 'Hello World',
+          customHTMLRenderer: {
+            paragraph(_, { entering, origin }) {
+              const result = origin();
+
+              if (entering) {
+                result.classNames = ['my-class'];
+              }
+
+              return result;
+            }
+          }
+        });
+
+        expect(editor.getHtml()).toBe('<p class="my-class">Hello World</p>\n');
+      });
+
+      it('linkAttribute options should be applied to original renderer', () => {
+        editor = new Editor({
+          el: container,
+          initialValue: '[Hello](nhn.com)',
+          linkAttribute: { target: '_blank' },
+          customHTMLRenderer: {
+            link(_, { origin }) {
+              return origin();
+            }
+          }
+        });
+
+        expect(editor.getHtml()).toBe('<p><a href="nhn.com" target="_blank">Hello</a></p>\n');
+      });
+    });
   });
 });

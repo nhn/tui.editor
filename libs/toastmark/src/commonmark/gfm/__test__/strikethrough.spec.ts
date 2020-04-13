@@ -1,21 +1,21 @@
 import { Parser } from '../../blocks';
-import { GfmHtmlRenderer } from '../../render/gfm/html';
+import { createRenderHTML } from '../../../html/render';
 import { source } from 'common-tags';
 
 const reader = new Parser({ smart: true });
-const writer = new GfmHtmlRenderer();
+const render = createRenderHTML({ gfm: true });
 
 describe('smart punctuation', () => {
   it('single quote', () => {
     const root = reader.parse(`Hello *'World'*`);
-    const html = writer.render(root);
+    const html = render(root);
 
     expect(html).toBe('<p>Hello <em>\u2018World\u2019</em></p>\n');
   });
 
   it('double quote', () => {
     const root = reader.parse(`Hello "*World*"`);
-    const html = writer.render(root);
+    const html = render(root);
 
     expect(html).toBe('<p>Hello \u201C<em>World</em>\u201D</p>\n');
   });
@@ -25,7 +25,7 @@ describe('strikethrough', () => {
   // https://github.github.com/gfm/#example-491
   it('GFM Example 491', () => {
     const root = reader.parse('~~Hi~~ Hello, world!');
-    const html = writer.render(root);
+    const html = render(root);
 
     expect(html).toBe('<p><del>Hi</del> Hello, world!</p>\n');
   });
@@ -42,7 +42,7 @@ describe('strikethrough', () => {
     `;
 
     const root = reader.parse(input);
-    const html = writer.render(root);
+    const html = render(root);
 
     expect(html).toEqual(`${output}\n`);
   });
@@ -65,7 +65,7 @@ describe('strikethrough', () => {
       [1, 13]
     ]);
 
-    const html = writer.render(root);
+    const html = render(root);
 
     expect(html).toBe('<p>Hello <del>World</del></p>\n');
   });
@@ -101,7 +101,7 @@ describe('strikethrough', () => {
       [1, 21]
     ]);
 
-    const html = writer.render(root);
+    const html = render(root);
 
     expect(html).toBe('<p><del>Hello</del>~~<del>World</del>~</p>\n');
   });
@@ -135,7 +135,7 @@ describe('strikethrough', () => {
       [1, 21]
     ]);
 
-    const html = writer.render(root);
+    const html = render(root);
 
     expect(html).toBe('<p>Hello~~<del><del>World</del></del>~</p>\n');
   });
@@ -165,7 +165,7 @@ describe('strikethrough', () => {
       [1, 22]
     ]);
 
-    const html = writer.render(root);
+    const html = render(root);
 
     expect(html).toBe('<p><del><em>Hello</em></del><strong><del>World</del></strong></p>\n');
   });

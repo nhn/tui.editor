@@ -14,6 +14,7 @@ import Convertor from './convertor';
 import domUtils from './utils/dom';
 import codeBlockManager from './codeBlockManager';
 import { invokePlugins } from './pluginHelper';
+import { sanitizeLinkAttribute } from './utils/common';
 
 const TASK_ATTR_NAME = 'data-te-task';
 const TASK_CHECKED_CLASS_NAME = 'checked';
@@ -32,13 +33,18 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {Object} [options.hooks] - Hooks
  *         @param {function} [options.hooks.previewBeforeHook] - Submit preview to hook URL before preview be shown
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
+ *     @param {Object} [options.customConvertor] - convertor extention
+ *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
+ *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
  */
 class ToastUIEditorViewer {
   constructor(options) {
     this.options = extend(
       {
         useDefaultHTMLSanitizer: true,
-        customConvertor: null
+        linkAttribute: null,
+        customConvertor: null,
+        customHTMLRenderer: null
       },
       options
     );
@@ -47,11 +53,16 @@ class ToastUIEditorViewer {
 
     this.eventManager = new EventManager();
     this.commandManager = new CommandManager(this);
+
+    const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
+    const { customHTMLRenderer } = this.options;
+    const rendererOptions = { linkAttribute, customHTMLRenderer };
+
     if (this.options.customConvertor) {
       // eslint-disable-next-line new-cap
-      this.convertor = new this.options.customConvertor(this.eventManager);
+      this.convertor = new this.options.customConvertor(this.eventManager, rendererOptions);
     } else {
-      this.convertor = new Convertor(this.eventManager);
+      this.convertor = new Convertor(this.eventManager, rendererOptions);
     }
 
     if (this.options.useDefaultHTMLSanitizer) {
@@ -75,7 +86,10 @@ class ToastUIEditorViewer {
 
     el.innerHTML = '';
 
-    this.preview = new MarkdownPreview(el, this.eventManager, this.convertor, true);
+    this.preview = new MarkdownPreview(el, this.eventManager, this.convertor, {
+      ...rendererOptions,
+      isViewer: true
+    });
 
     on(this.preview.el, 'mousedown', this._toggleTask.bind(this));
 

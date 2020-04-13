@@ -4,14 +4,13 @@
  */
 import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
+import { createRenderHTML } from '@toast-ui/toastmark';
 
 import Preview from './preview';
-import MarkdownRenderer from './markdownRenderer';
 import domUtils from './utils/dom';
+import { getHTMLRenderConvertors } from './htmlRenderConvertors';
 import { findAdjacentElementToScrollTop } from './scroll/helper';
 import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
-
-const htmlRenderer = new MarkdownRenderer({ nodeId: true });
 
 /**
  * Class Markdown Preview
@@ -22,8 +21,8 @@ const htmlRenderer = new MarkdownRenderer({ nodeId: true });
  * @ignore
  */
 class MarkdownPreview extends Preview {
-  constructor(el, eventManager, convertor, isViewer) {
-    super(el, eventManager, convertor, isViewer);
+  constructor(el, eventManager, convertor, options) {
+    super(el, eventManager, convertor, options.isViewer);
     this._initEvent();
     this.lazyRunner.registerLazyRunFunction(
       'invokeCodeBlock',
@@ -31,6 +30,14 @@ class MarkdownPreview extends Preview {
       this.delayCodeBlockTime,
       this
     );
+
+    const { linkAttribute, customHTMLRenderer } = options;
+
+    this.renderHTML = createRenderHTML({
+      gfm: true,
+      nodeId: true,
+      convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer)
+    });
   }
 
   /**
@@ -55,7 +62,7 @@ class MarkdownPreview extends Preview {
     const contentEl = this._previewContent;
     const newHtml = this.eventManager.emitReduce(
       'convertorAfterMarkdownToHtmlConverted',
-      nodes.map(node => htmlRenderer.render(node)).join('')
+      nodes.map(node => this.renderHTML(node)).join('')
     );
 
     if (!removedNodeRange) {

@@ -4,6 +4,7 @@
  */
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import isBoolean from 'tui-code-snippet/type/isBoolean';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 import CodeMirrorExt from './codeMirrorExt';
 import KeyMapper from './keyMapper';
@@ -30,6 +31,7 @@ const tokenTypes = {
   code: 'comment',
   codeBlock: 'comment'
 };
+
 const defaultState = {
   strong: false,
   emph: false,
@@ -45,6 +47,8 @@ const defaultState = {
   table: false,
   source: 'markdown'
 };
+
+const ATTR_NAME_MARK = 'data-tui-mark';
 
 /**
  * Class MarkdownEditor
@@ -246,7 +250,9 @@ class MarkdownEditor extends CodeMirrorExt {
     const marks = this.cm.findMarks(editFrom, editTo);
 
     for (const mark of marks) {
-      mark.clear();
+      if (mark.attributes && ATTR_NAME_MARK in mark.attributes) {
+        mark.clear();
+      }
     }
 
     for (const parent of nodes) {
@@ -266,9 +272,9 @@ class MarkdownEditor extends CodeMirrorExt {
           const extraNode = tokenTypes[type];
 
           if (type === 'heading') {
-            this.cm.markText(start, end, { className: `cm-header cm-header-${node.level}` });
+            this._markText(start, end, `cm-header cm-header-${node.level}`);
           } else if (extraNode) {
-            this.cm.markText(start, end, { className: `cm-${extraNode}` });
+            this._markText(start, end, `cm-${extraNode}`);
           } else if (type === 'image' || type === 'link') {
             this._markTextInLinkOrImage(node, start, end);
           } else if (type === 'item') {
@@ -279,6 +285,12 @@ class MarkdownEditor extends CodeMirrorExt {
       }
     }
     /* eslint-enable max-depth */
+  }
+
+  _markText(start, end, className) {
+    const attributes = { [ATTR_NAME_MARK]: '' };
+
+    this.cm.markText(start, end, { className, attributes });
   }
 
   _markTextInLinkOrImage(node, start, end) {
@@ -294,19 +306,19 @@ class MarkdownEditor extends CodeMirrorExt {
 
       lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 3; // 3: length of '![]'
 
-      this.cm.markText(descStart, descEnd, { className: 'cm-image cm-image-marker' });
-      this.cm.markText(
+      this._markText(descStart, descEnd, 'cm-image cm-image-marker');
+      this._markText(
         descEnd,
         { line: endLine, ch: lastChildCh },
-        { className: 'cm-image cm-image-alt-text cm-link' }
+        'cm-image cm-image-alt-text cm-link'
       );
     } else {
       lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 2; // 2: length of '[]'
 
-      this.cm.markText(descStart, { line: endLine, ch: lastChildCh }, { className: 'cm-link' });
+      this._markText(descStart, { line: endLine, ch: lastChildCh }, 'cm-link');
     }
 
-    this.cm.markText({ line: endLine, ch: lastChildCh }, end, { className: 'cm-string cm-url' });
+    this._markText({ line: endLine, ch: lastChildCh }, end, 'cm-string cm-url');
   }
 
   _getClassNameOfListItem(node) {
@@ -332,7 +344,7 @@ class MarkdownEditor extends CodeMirrorExt {
         const start = { line: startPosistion[0] - 1, ch: startPosistion[1] - 1 };
         const end = { line: endPosition[0] - 1, ch: endPosition[1] };
 
-        this.cm.markText(start, end, { className });
+        this._markText(start, end, className);
       }
       node = node.next;
     }
@@ -342,17 +354,17 @@ class MarkdownEditor extends CodeMirrorExt {
     const className = this._getClassNameOfListItem(node);
     const { padding, task } = node.listData;
 
-    this.cm.markText(
+    this._markText(
       { line: start.line, ch: start.ch },
       { line: start.line, ch: start.ch + padding },
-      { className }
+      className
     );
 
     if (task) {
-      this.cm.markText(
+      this._markText(
         { line: start.line, ch: start.ch + padding },
         { line: start.line, ch: start.ch + padding + 3 },
-        { className: 'cm-meta' }
+        'cm-meta'
       );
     }
 

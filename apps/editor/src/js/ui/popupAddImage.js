@@ -37,10 +37,10 @@ class PopupAddImage extends LayerPopup {
             <div class="${CLASS_URL_TYPE}">
                 <label for="">${i18n.get('Image URL')}</label>
             </div>
-            <form enctype="multipart/form-data" class="${CLASS_FILE_TYPE}">
+            <div class="${CLASS_FILE_TYPE}">
                 <label for="">${i18n.get('Select image file')}</label>
                 <input type="file" class="${CLASS_IMAGE_FILE_INPUT}" accept="image/*" />
-            </form>
+            </div>
             <label for="url">${i18n.get('Description')}</label>
             <input type="text" class="${CLASS_ALT_TEXT_INPUT}" />
             <div class="te-button-section">

@@ -10,6 +10,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const FileManagerPlugin = require('filemanager-webpack-plugin');
 
 const ENTRY_EDITOR = './src/js/index.js';
 const ENTRY_VIEWER = './src/js/indexViewer.js';
@@ -29,7 +30,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
         library: ['toastui', 'Editor'],
         libraryTarget: 'umd',
         libraryExport: 'default',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, minify ? 'dist/cdn' : 'dist'),
         filename: `toastui-[name]${minify ? '.min' : ''}.js`
       },
       module: {
@@ -99,6 +100,20 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
     };
   });
 
+function addFileManagerPlugin(config) {
+  // When an entry option's value is set to a CSS file,
+  // empty JavaScript files are created. (e.g. toastui-editor-layout.js)
+  // These files are unnecessary, so use the FileManager plugin to delete them.
+  const options = minify
+    ? [{ delete: ['./dist/cdn/toastui-editor-layout.min.js'] }]
+    : [
+        { delete: ['./dist/toastui-editor-layout.js'] },
+        { copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }] }
+      ];
+
+  config.plugins.push(new FileManagerPlugin({ onEnd: options }));
+}
+
 function addMinifyPlugin(config) {
   config.optimization = {
     minimizer: [
@@ -117,7 +132,7 @@ function addAnalyzerPlugin(config, type) {
   config.plugins.push(
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
-      reportFilename: `../report/webpack/stats-${pkg.version}-${type}.html`
+      reportFilename: `../../report/webpack/stats-${pkg.version}-${type}.html`
     })
   );
 }
@@ -151,8 +166,11 @@ function setDevelopConfig(config) {
 function setProductionConfig(config) {
   config.entry = {
     editor: ENTRY_EDITOR,
-    'editor-viewer': ENTRY_VIEWER
+    'editor-viewer': ENTRY_VIEWER,
+    'editor-layout': './src/css/toastui-editor.css'
   };
+
+  addFileManagerPlugin(config);
 
   if (minify) {
     addMinifyPlugin(config);
@@ -161,10 +179,8 @@ function setProductionConfig(config) {
 }
 
 function setProductionConfigForAll(config) {
-  config.entry = {
-    'editor-all': ENTRY_EDITOR
-  };
-
+  config.entry = { 'editor-all': ENTRY_EDITOR };
+  config.output.path = path.resolve(__dirname, 'dist/cdn');
   config.externals = [];
 
   if (minify) {

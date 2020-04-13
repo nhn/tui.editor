@@ -94,6 +94,8 @@ Before creating the instance, add the element that will create the editor. And y
 
 #### Using the Editor
 
+It can be used by using the `toastuiEditor` function. If the first parameter type is an object, you can create an instance of the Editor using this object as an option. And if the parameter type is string, you can call API function. The options and method APIs are the same as [those of the editor](https://nhn.github.io/tui.editor/latest/ToastUIEditor).
+
 ```js
 import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
@@ -102,8 +104,14 @@ import $ from 'jquery';
 import '@toast-ui/jquery-editor';
 
 $('#editor').toastuiEditor({
-  // ...
+  height: '500px',
+  initialEditType: 'markdown',
+  previewStyle: 'vertical'
 });
+
+const content = $('#editor').toastuiEditor('getHtml');
+
+console.log(content);
 ```
 
 The `viewer` option allows you to use it as a viewer.
@@ -127,7 +135,8 @@ import $ from 'jquery';
 import '@toast-ui/jquery-editor/dist/toastui-jquery-editor-viewer';
 
 $('#viewer').toastuiEditor({
-  // ...
+  height: '500px',
+  initialValue: '# hello'
 });
 ```
 
@@ -160,7 +169,9 @@ Before creating the instance, add the element that will create the editor.
 
 ```js
 $('#editor').toastuiEditor({
-  // ...
+  height: '500px',
+  initialEditType: 'markdown',
+  previewStyle: 'vertical'
 });
 ```
 
@@ -183,6 +194,7 @@ If you want to use only the viewer, include the following file:
 
 ```js
 $('#viewer').toastuiEditor({
-  // ...
+  height: '500px',
+  initialValue: '# hello'
 });
 ```

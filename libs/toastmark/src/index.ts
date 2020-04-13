@@ -1,3 +1,3 @@
 export { ToastMark } from './toastmark';
-export { GfmHtmlRenderer } from './commonmark/render/gfm/html';
+export { createRenderHTML } from './html/render';
 export { Parser } from './commonmark/blocks';
