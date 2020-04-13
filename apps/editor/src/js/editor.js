@@ -9,6 +9,7 @@ import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import { createMarkdownToHTML } from './markdownToHTML';
 
 import { sendHostName, sanitizeLinkAttribute } from './utils/common';
 
@@ -808,6 +809,10 @@ class ToastUIEditor {
     i18n.setLanguage(code, data);
   }
 }
+
+// (Not an official API)
+// Create a function converting markdown to HTML using the internal parser and renderer.
+ToastUIEditor._createMarkdownToHTML = createMarkdownToHTML;
 
 /**
  * Check whether is viewer (using in plugins)
