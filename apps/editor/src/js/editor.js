@@ -113,7 +113,7 @@ const __nedInstance = [];
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
- *     @param {Object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
+ *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
  */
 class ToastUIEditor {

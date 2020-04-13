@@ -4,7 +4,7 @@
  */
 import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
-import { createHTMLRender } from '@toast-ui/toastmark';
+import { createRenderHTML } from '@toast-ui/toastmark';
 
 import Preview from './preview';
 import domUtils from './utils/dom';
@@ -33,7 +33,7 @@ class MarkdownPreview extends Preview {
 
     const { linkAttribute, customHTMLRenderer } = options;
 
-    this.renderHTML = createHTMLRender({
+    this.renderHTML = createRenderHTML({
       gfm: true,
       nodeId: true,
       convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer)

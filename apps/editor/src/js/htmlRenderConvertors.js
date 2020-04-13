@@ -14,7 +14,7 @@ const baseConvertors = {
 
       if (node.listData.task) {
         attributes['data-te-task'] = '';
-        classNames.push(['task-list-item']);
+        classNames.push('task-list-item');
         if (node.listData.checked) {
           classNames.push('checked');
         }
@@ -87,17 +87,17 @@ export function getHTMLRenderConvertors(linkAttribute, customConvertors) {
   if (customConvertors) {
     Object.keys(customConvertors).forEach(nodeType => {
       const orgConvertor = convertors[nodeType];
-      const extConvertor = customConvertors[nodeType];
+      const customConvertor = customConvertors[nodeType];
 
       if (orgConvertor) {
         convertors[nodeType] = (node, context) => {
           const newContext = { ...context };
 
           newContext.origin = () => orgConvertor(node, context);
-          return extConvertor(node, newContext);
+          return customConvertor(node, newContext);
         };
       } else {
-        convertors[nodeType] = extConvertor;
+        convertors[nodeType] = customConvertor;
       }
     });
   }

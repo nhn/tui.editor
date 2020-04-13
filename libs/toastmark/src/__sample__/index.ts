@@ -1,6 +1,6 @@
 import codemirror from 'codemirror';
 import { ToastMark } from '../toastmark';
-import { createHTMLRender } from '../html/render';
+import { createRenderHTML } from '../html/render';
 import { last } from '../helper';
 import 'codemirror/lib/codemirror.css';
 import './index.css';
@@ -19,7 +19,7 @@ const previewEl = document.querySelector('.preview') as HTMLElement;
 
 const cm = codemirror(editorEl, { lineNumbers: true });
 const doc = new ToastMark();
-const render = createHTMLRender({ gfm: true, nodeId: true });
+const render = createRenderHTML({ gfm: true, nodeId: true });
 
 const tokenTypes = {
   heading: 'header',

@@ -1,11 +1,11 @@
 import { Parser } from '../../commonmark/blocks';
-import { createHTMLRender, OpenTagNode } from '../render';
+import { createRenderHTML, OpenTagNode } from '../render';
 
 const parser = new Parser();
 
 describe('softbreak options', () => {
   it('softbreak option value should be used as a raw HTML string', () => {
-    const render = createHTMLRender({
+    const render = createRenderHTML({
       softbreak: '\n<br />\n'
     });
     const html = render(parser.parse('Hello\nWorld'));
@@ -15,7 +15,7 @@ describe('softbreak options', () => {
 });
 
 describe('nodeId options', () => {
-  const render = createHTMLRender({ nodeId: true });
+  const render = createRenderHTML({ nodeId: true });
 
   it('every html tag corresponds to container node should contain data-nodeid', () => {
     const root = parser.parse('*Hello* **World**');
@@ -56,7 +56,7 @@ describe('convertors options', () => {
       softbreak: '<br />\n',
       nodeId: true
     };
-    const render = createHTMLRender({
+    const render = createRenderHTML({
       ...options,
       convertors: {
         paragraph: spy
@@ -85,7 +85,7 @@ describe('convertors options', () => {
   });
 
   it('context object has origin convertor', () => {
-    const render = createHTMLRender({
+    const render = createRenderHTML({
       convertors: {
         paragraph(_, { entering, origin }) {
           const result = origin!();

@@ -34,7 +34,7 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *         @param {function} [options.hooks.previewBeforeHook] - Submit preview to hook URL before preview be shown
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  *     @param {Object} [options.customConvertor] - convertor extention
- *     @param {Object} [options.linkAttribute] - Attributes of anchor element that shold be rel, target, contenteditable, hreflang, type
+ *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
  */
 class ToastUIEditorViewer {

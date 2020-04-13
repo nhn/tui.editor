@@ -1,9 +1,9 @@
 import { Parser } from '../../blocks';
-import { createHTMLRender } from '../../../html/render';
+import { createRenderHTML } from '../../../html/render';
 import { source } from 'common-tags';
 
 const reader = new Parser();
-const render = createHTMLRender({ gfm: true, tagFilter: true });
+const render = createRenderHTML({ gfm: true, tagFilter: true });
 
 // https://github.github.com/gfm/#example-653
 it('GFM Example 653', () => {

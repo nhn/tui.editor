@@ -61,7 +61,7 @@ const defaultOptions: Options = {
   nodeId: false
 };
 
-export function createHTMLRender(customOptions?: Partial<Options>) {
+export function createRenderHTML(customOptions?: Partial<Options>) {
   const options = { ...defaultOptions, ...customOptions };
   const convertors = { ...baseConvertors };
 

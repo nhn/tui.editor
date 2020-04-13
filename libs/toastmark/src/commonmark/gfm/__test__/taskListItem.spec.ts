@@ -1,10 +1,10 @@
 import { source } from 'common-tags';
 import { Parser } from '../../blocks';
-import { createHTMLRender } from '../../../html/render';
+import { createRenderHTML } from '../../../html/render';
 import { pos } from '../../__test__/helper.spec';
 
 const reader = new Parser();
-const render = createHTMLRender({ gfm: true });
+const render = createRenderHTML({ gfm: true });
 
 describe('Task list item', () => {
   it('Parse', () => {

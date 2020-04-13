@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import toMark from '@toast-ui/to-mark';
-import { Parser, createHTMLRender } from '@toast-ui/toastmark';
+import { Parser, createRenderHTML } from '@toast-ui/toastmark';
 
 import { getHTMLRenderConvertors } from './htmlRenderConvertors';
 import htmlSanitizer from './htmlSanitizer';
@@ -30,7 +30,7 @@ class Convertor {
     const { linkAttribute, customHTMLRenderer } = options;
 
     this.mdReader = new Parser({ disallowedHtmlBlockTags: ['br'] });
-    this.renderHTML = createHTMLRender({
+    this.renderHTML = createRenderHTML({
       gfm: true,
       convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer)
     });

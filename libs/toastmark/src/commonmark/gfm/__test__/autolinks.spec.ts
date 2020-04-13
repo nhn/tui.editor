@@ -1,5 +1,5 @@
 import { Parser } from '../../blocks';
-import { createHTMLRender } from '../../../html/render';
+import { createRenderHTML } from '../../../html/render';
 import { LinkNode } from '../../node';
 import { parseUrlLink, parseEmailLink } from '../autoLinks';
 
@@ -190,7 +190,7 @@ describe('parseEmailLink', () => {
 // https://github.github.com/gfm/#example-621
 describe('GFM Examples', () => {
   const reader = new Parser({ autoLink: true });
-  const render = createHTMLRender();
+  const render = createRenderHTML();
 
   it('621', () => {
     const root = reader.parse('www.commonmark.org');

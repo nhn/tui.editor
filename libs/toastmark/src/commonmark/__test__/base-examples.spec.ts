@@ -1,9 +1,9 @@
 import { Parser } from '../blocks';
-import { createHTMLRender } from '../../html/render';
+import { createRenderHTML } from '../../html/render';
 import specs from './base-examples.json';
 
 const reader = new Parser();
-const render = createHTMLRender();
+const render = createRenderHTML();
 
 specs.forEach(spec => {
   const { example, section, markdown, html } = spec;
