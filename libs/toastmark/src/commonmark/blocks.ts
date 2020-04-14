@@ -35,14 +35,14 @@ function document() {
 const defaultOptions = {
   smart: false,
   tagFilter: false,
-  autoLink: false,
+  extendedAutolinks: false,
   disallowedHtmlBlockTags: []
 };
 
 export interface Options {
   smart: boolean;
   tagFilter: boolean;
-  autoLink: boolean;
+  extendedAutolinks: boolean;
   disallowedHtmlBlockTags: string[];
 }
 
