@@ -189,7 +189,7 @@ describe('parseEmailLink', () => {
 
 // https://github.github.com/gfm/#example-621
 describe('GFM Examples', () => {
-  const reader = new Parser({ autoLink: true });
+  const reader = new Parser({ extendedAutolinks: true });
   const render = createRenderHTML();
 
   it('621', () => {

@@ -4,7 +4,6 @@
  */
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import isBoolean from 'tui-code-snippet/type/isBoolean';
-import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 import CodeMirrorExt from './codeMirrorExt';
 import KeyMapper from './keyMapper';

@@ -1045,7 +1045,7 @@ export class InlineParser {
     block.stringContent = null; // allow raw string to be garbage collected
     this.processEmphasis(null);
     this.mergeTextNodes(block.walker());
-    if (this.options.autoLink) {
+    if (this.options.extendedAutolinks) {
       convertExtAutoLinks(block.walker());
     }
   }

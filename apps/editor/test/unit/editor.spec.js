@@ -492,5 +492,17 @@ describe('Editor', () => {
         expect(editor.getHtml()).toBe('<p><a href="nhn.com" target="_blank">Hello</a></p>\n');
       });
     });
+
+    describe('extendedAutolinks option', () => {
+      it('should convert url-like strings to anchor tags', () => {
+        editor = new Editor({
+          el: container,
+          initialValue: 'http://nhn.com',
+          extendedAutolinks: true
+        });
+
+        expect(editor.getHtml()).toBe('<p><a href="http://nhn.com">http://nhn.com</a></p>\n');
+      });
+    });
   });
 });
