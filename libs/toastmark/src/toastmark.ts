@@ -243,11 +243,14 @@ export class ToastMark {
     extStartNode: BlockNode | null,
     extEndNode: BlockNode | null
   ): [number, number] | null {
-    return !extStartNode ||
+    if (
+      !extStartNode ||
       (extStartNode && isRefDef(extStartNode)) ||
       (extEndNode && isRefDef(extEndNode))
-      ? null
-      : [extStartNode.id, extEndNode!.id];
+    ) {
+      return null;
+    }
+    return [extStartNode.id, extEndNode!.id];
   }
 
   private markDeletedRefMap(extStartNode: BlockNode | null, extEndNode: BlockNode | null) {
@@ -261,12 +264,10 @@ export class ToastMark {
         }
       };
       if (extStartNode) {
-        const walker = extStartNode.parent!.walker();
-        walker.resumeAt(extStartNode, true);
-        invokeNextUntil(walker, markDeleted, extStartNode, extEndNode);
+        invokeNextUntil(markDeleted, extStartNode.parent!, extEndNode);
       }
       if (extEndNode) {
-        invokeNextUntil(extEndNode.walker(), markDeleted, extEndNode);
+        invokeNextUntil(markDeleted, extEndNode);
       }
     }
   }
@@ -288,9 +289,7 @@ export class ToastMark {
       }
     };
     nodes.forEach(node => {
-      const walker = node.walker();
-      walker.resumeAt(node.firstChild!, true);
-      invokeNextUntil(walker, replaceWith, node);
+      invokeNextUntil(replaceWith, node);
     });
   }
 
@@ -298,9 +297,8 @@ export class ToastMark {
     const { refMap, refDefCandidateMap } = this;
 
     if (!isEmptyObj(refDefCandidateMap)) {
-      iterateObject(refDefCandidateMap, (id, candidate) => {
-        const node = candidate[id];
-        const { label, sourcepos } = node;
+      iterateObject(refDefCandidateMap, (_, candidate) => {
+        const { label, sourcepos } = candidate;
         const refDefState = refMap[label];
 
         if (
@@ -308,7 +306,7 @@ export class ToastMark {
           refDefState.unlinked ||
           refDefState.sourcepos[0][0] > sourcepos![0][0]
         ) {
-          refMap[label] = createRefDefState(node);
+          refMap[label] = createRefDefState(candidate);
         }
       });
     }
@@ -371,12 +369,12 @@ export class ToastMark {
 
     const result: EditResult[] = [];
 
-    iterateObject(refMap, (label, obj) => {
-      if (obj[label].unlinked) {
+    iterateObject(refMap, (label, value) => {
+      if (value.unlinked) {
         delete refMap[label];
       }
-      iterateObject(refLinkCandidateMap, (id, candidate) => {
-        const { node, refLabel } = candidate[id];
+      iterateObject(refLinkCandidateMap, (_, candidate) => {
+        const { node, refLabel } = candidate;
         if (refLabel === label) {
           result.push(this.parse(node.sourcepos![0], node.sourcepos![1]));
         }
@@ -388,9 +386,9 @@ export class ToastMark {
 
   private removeUnlinkedCandidate() {
     [this.refLinkCandidateMap, this.refDefCandidateMap].forEach(candidateMap => {
-      iterateObject(candidateMap, (id, obj) => {
+      iterateObject(candidateMap, id => {
         if (isUnlinked(id)) {
-          delete obj[id];
+          delete candidateMap[id];
         }
       });
     });

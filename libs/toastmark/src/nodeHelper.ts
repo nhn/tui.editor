@@ -212,19 +212,17 @@ export function findNodeById(id: number) {
   return getNodeById(id) || null;
 }
 
-export function invokeNextUntil(
-  walker: NodeWalker,
-  callback: Function,
-  start: BlockNode | null,
-  end: BlockNode | null = null
-) {
-  while (start && start !== end) {
-    callback(start);
-    const next = walker.next();
-    if (next) {
-      start = next.node as BlockNode;
-    } else {
-      break;
+export function invokeNextUntil(callback: Function, start: Node | null, end: Node | null = null) {
+  if (start) {
+    const walker = start.walker();
+    while (start && start !== end) {
+      callback(start);
+      const next = walker.next();
+      if (next) {
+        start = next.node;
+      } else {
+        break;
+      }
     }
   }
 }
@@ -238,10 +236,15 @@ export function isUnlinked(id: number) {
 
   while (node && node.type !== 'document') {
     // eslint-disable-next-line no-loop-func
-    const unlinked = (['parent', 'prev', 'next'] as const).every(type => node[type] === null);
-    if (unlinked) {
+    if (!node.parent && !node.prev && !node.next) {
       return true;
     }
+
+    // const unlinked = (['parent', 'prev', 'next'] as const).every(type => node[type] === null);
+
+    // if (unlinked) {
+    //   return true;
+    // }
     node = node.parent!;
   }
   return false;

@@ -64,8 +64,8 @@ export class Parser {
   private allClosed: boolean;
   private lastMatchedContainer: Node;
   public refMap: RefMap;
-  public refLinkCandidteMap: RefLinkCandidateMap;
-  public refDefCandidteMap: RefDefCandidateMap;
+  public refLinkCandidateMap: RefLinkCandidateMap;
+  public refDefCandidateMap: RefDefCandidateMap;
   public lastLineLength: number;
   public inlineParser: InlineParser;
   public options: Options;
@@ -88,8 +88,8 @@ export class Parser {
     this.allClosed = true;
     this.lastMatchedContainer = this.doc;
     this.refMap = {};
-    this.refLinkCandidteMap = {};
-    this.refDefCandidteMap = {};
+    this.refLinkCandidateMap = {};
+    this.refDefCandidateMap = {};
     this.lastLineLength = 0;
     this.inlineParser = new InlineParser(this.options);
   }
@@ -221,8 +221,8 @@ export class Parser {
     let event;
     const walker = block.walker();
     this.inlineParser.refMap = this.refMap;
-    this.inlineParser.refLinkCandidteMap = this.refLinkCandidteMap;
-    this.inlineParser.refDefCandidteMap = this.refDefCandidteMap;
+    this.inlineParser.refLinkCandidateMap = this.refLinkCandidateMap;
+    this.inlineParser.refDefCandidateMap = this.refDefCandidateMap;
     this.inlineParser.options = this.options;
     while ((event = walker.next())) {
       const node = event.node as BlockNode;
@@ -393,8 +393,8 @@ export class Parser {
     this.tip = this.doc;
     if (initRefMap) {
       this.refMap = {};
-      this.refLinkCandidteMap = {};
-      this.refDefCandidteMap = {};
+      this.refLinkCandidateMap = {};
+      this.refDefCandidateMap = {};
     }
     this.lineNumber = 0;
     this.lastLineLength = 0;
@@ -452,11 +452,11 @@ export class Parser {
 
   setRefMaps(
     refMap: RefMap,
-    refLinkCandidteMap: RefLinkCandidateMap,
-    refDefCandidteMap: RefDefCandidateMap
+    refLinkCandidateMap: RefLinkCandidateMap,
+    refDefCandidateMap: RefDefCandidateMap
   ) {
     this.refMap = refMap;
-    this.refLinkCandidteMap = refLinkCandidteMap;
-    this.refDefCandidteMap = refDefCandidteMap;
+    this.refLinkCandidateMap = refLinkCandidateMap;
+    this.refDefCandidateMap = refDefCandidateMap;
   }
 }

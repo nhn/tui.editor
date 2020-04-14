@@ -102,8 +102,8 @@ export class InlineParser {
   private lineOffsets: number[] = [0];
   private linePosOffset = 0;
   public refMap: RefMap = {};
-  public refLinkCandidteMap: RefLinkCandidateMap = {};
-  public refDefCandidteMap: RefDefCandidateMap = {};
+  public refLinkCandidateMap: RefLinkCandidateMap = {};
+  public refDefCandidateMap: RefDefCandidateMap = {};
   public options: Options;
 
   constructor(options: Options) {
@@ -755,14 +755,14 @@ export class InlineParser {
         }
       }
 
-      this.refLinkCandidteMap[block.id] = { node: block, refLabel };
+      this.refLinkCandidateMap[block.id] = { node: block, refLabel };
       return true;
     } // no match
 
     this.removeBracket(); // remove this opener from stack
     this.pos = startpos;
     block.appendChild(text(']', this.sourcepos(startpos, startpos)));
-    this.refLinkCandidteMap[block.id] = { node: block, refLabel };
+    this.refLinkCandidateMap[block.id] = { node: block, refLabel };
     return true;
   }
 
@@ -947,7 +947,7 @@ export class InlineParser {
     if (!refMap[normalLabel]) {
       refMap[normalLabel] = createRefDefState(node);
     } else {
-      this.refDefCandidteMap[node.id] = node;
+      this.refDefCandidateMap[node.id] = node;
     }
 
     return this.pos - startpos;
@@ -983,7 +983,7 @@ export class InlineParser {
     }
   }
 
-  getReferenceDefSourcepos(block: BlockNode): [[number, number], [number, number]] {
+  getReferenceDefSourcepos(block: BlockNode): SourcePos {
     const lines = block.stringContent!.split(/\n|\r\n/);
     let passedUrlLine = false;
     let quotationCount = 0;

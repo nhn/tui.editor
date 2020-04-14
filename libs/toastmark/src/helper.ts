@@ -19,18 +19,16 @@ export function normalizeReference(str: string) {
     .toUpperCase();
 }
 
-export function iterateObject<T>(obj: T, iteratee: (key: any, obj: T) => void) {
+export function iterateObject<T>(obj: T, iteratee: (key: keyof T, value: T[keyof T]) => void) {
   Object.keys(obj).forEach(key => {
-    iteratee(key, obj);
+    iteratee(key as keyof T, obj[key as keyof T]);
   });
 }
 
-export function omit<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
-  const resultMap = {} as Omit<T, K>;
-  Object.keys(obj).forEach(key => {
-    if (propNames.indexOf(key as K) === -1) {
-      resultMap[key as OmitedKey<T, K>] = obj[key as OmitedKey<T, K>];
-    }
+export function omit<T extends object>(obj: T, ...propNames: (keyof T)[]) {
+  const resultMap = { ...obj };
+  propNames.forEach(key => {
+    delete resultMap[key];
   });
   return resultMap;
 }

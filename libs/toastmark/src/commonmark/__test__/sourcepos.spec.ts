@@ -409,3 +409,55 @@ describe('merge text nodes', () => {
     ]);
   });
 });
+
+describe('reference link definition', () => {
+  it('single line without title', () => {
+    const root = reader.parse('[foo]: test');
+    const refDef = root.firstChild!;
+
+    expect(refDef.sourcepos).toEqual([
+      [1, 1],
+      [1, 11]
+    ]);
+  });
+
+  it('single line with title', () => {
+    const root = reader.parse('[foo]: test "title"');
+    const refDef = root.firstChild!;
+
+    expect(refDef.sourcepos).toEqual([
+      [1, 1],
+      [1, 19]
+    ]);
+  });
+
+  it('multi line without title', () => {
+    const root = reader.parse('[foo]:\n  test');
+    const refDef = root.firstChild!;
+
+    expect(refDef.sourcepos).toEqual([
+      [1, 1],
+      [2, 4]
+    ]);
+  });
+
+  it('multi line with title', () => {
+    const root = reader.parse('[foo]:\n  test "title"');
+    const refDef = root.firstChild!;
+
+    expect(refDef.sourcepos).toEqual([
+      [1, 1],
+      [2, 12]
+    ]);
+  });
+
+  it('multi line title which has multi line', () => {
+    const root = reader.parse('[foo]:\n  test "\n  tit  \n  l  \n  e"');
+    const refDef = root.firstChild!;
+
+    expect(refDef.sourcepos).toEqual([
+      [1, 1],
+      [5, 2]
+    ]);
+  });
+});
