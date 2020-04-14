@@ -71,7 +71,7 @@ describe('convertors options', () => {
     expect(firstCall[0]).toBe(root.firstChild);
     expect(firstCall[1]).toMatchObject({
       entering: true,
-      leaf: true,
+      leaf: false,
       options
     });
 
@@ -79,7 +79,7 @@ describe('convertors options', () => {
     expect(secondCall[0]).toBe(root.firstChild);
     expect(secondCall[1]).toMatchObject({
       entering: false,
-      leaf: true,
+      leaf: false,
       options
     });
   });

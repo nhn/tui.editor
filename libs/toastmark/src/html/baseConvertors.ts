@@ -165,7 +165,7 @@ export const baseConvertors: HTMLConvertorMap = {
     return { type: 'closeTag', tagName: 'a' };
   },
 
-  image(node: Node, { childText }) {
+  image(node: Node, { getChildText }) {
     const { title, destination } = node as LinkNode;
 
     return {
@@ -174,7 +174,7 @@ export const baseConvertors: HTMLConvertorMap = {
       selfClose: true,
       attributes: {
         src: escapeXml(destination!),
-        alt: childText!,
+        alt: getChildText(node),
         ...(title && { title: escapeXml(title) })
       }
     };

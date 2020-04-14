@@ -16,8 +16,8 @@ interface Context {
   entering: boolean;
   leaf: boolean;
   options: Omit<Options, 'gfm'>;
+  getChildText: (node: Node) => string;
   origin?: () => ReturnType<HTMLConvertor>;
-  childText?: string;
 }
 
 export type HTMLConvertor = (node: Node, context: Context) => HTMLNode | HTMLNode[] | null;
@@ -137,12 +137,24 @@ function addInnerNewLine(node: TagNode, buffer: string[]) {
   }
 }
 
+function getChildText(node: Node) {
+  const buffer: string[] = [];
+  const walker = node.walker();
+  let event: ReturnType<typeof walker.next> = null;
+
+  while ((event = walker.next())) {
+    const { node } = event;
+    if (node.type === 'text') {
+      buffer.push(node.literal!);
+    }
+  }
+  return buffer.join('');
+}
+
 function render(rootNode: Node, convertors: HTMLConvertorMap, options: Options): string {
   const buffer: string[] = [];
   const walker = rootNode.walker();
   let event: ReturnType<typeof walker.next> = null;
-  let currImageNodeId = -1;
-  let childText = '';
 
   while ((event = walker.next())) {
     const { node, entering } = event;
@@ -153,27 +165,10 @@ function render(rootNode: Node, convertors: HTMLConvertorMap, options: Options):
 
     const context: Context = {
       entering,
-      leaf: isContainer(node),
+      leaf: !isContainer(node),
+      getChildText,
       options
     };
-
-    if (currImageNodeId > 0) {
-      if (currImageNodeId === node.id) {
-        context.childText = childText;
-        const htmlNode = convertor(node, context) as OpenTagNode;
-        buffer.push(generateOpenTagString(htmlNode));
-        currImageNodeId = -1;
-      } else if (node.type === 'text') {
-        childText += node.literal;
-      }
-      continue;
-    }
-
-    if (node.type === 'image') {
-      currImageNodeId = node.id;
-      childText = '';
-      continue;
-    }
 
     const converted = convertor(node, context);
     if (converted) {
@@ -187,6 +182,11 @@ function render(rootNode: Node, convertors: HTMLConvertorMap, options: Options):
         }
         renderHTMLNode(htmlNode, buffer);
       });
+    }
+
+    if (node.type === 'image') {
+      walker.resumeAt(node, false);
+      walker.next();
     }
   }
   addNewLine(buffer);
