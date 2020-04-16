@@ -16,7 +16,8 @@ interface Context {
   entering: boolean;
   leaf: boolean;
   options: Omit<Options, 'gfm'>;
-  getChildText: (node: Node) => string;
+  getChildrenText: (node: Node) => string;
+  skipChildren: () => void;
   origin?: () => ReturnType<HTMLConvertor>;
 }
 
@@ -137,7 +138,7 @@ function addInnerNewLine(node: TagNode, buffer: string[]) {
   }
 }
 
-function getChildText(node: Node) {
+function getChildrenText(node: Node) {
   const buffer: string[] = [];
   const walker = node.walker();
   let event: ReturnType<typeof walker.next> = null;
@@ -163,11 +164,15 @@ function render(rootNode: Node, convertors: HTMLConvertorMap, options: Options):
       continue;
     }
 
+    let skipped = false;
     const context: Context = {
       entering,
       leaf: !isContainer(node),
-      getChildText,
-      options
+      options,
+      getChildrenText,
+      skipChildren: () => {
+        skipped = true;
+      }
     };
 
     const converted = convertor(node, context);
@@ -182,11 +187,11 @@ function render(rootNode: Node, convertors: HTMLConvertorMap, options: Options):
         }
         renderHTMLNode(htmlNode, buffer);
       });
-    }
 
-    if (node.type === 'image') {
-      walker.resumeAt(node, false);
-      walker.next();
+      if (skipped) {
+        walker.resumeAt(node, false);
+        walker.next();
+      }
     }
   }
   addNewLine(buffer);
