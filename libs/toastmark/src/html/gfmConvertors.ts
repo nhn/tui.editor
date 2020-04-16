@@ -1,5 +1,5 @@
 import { Node, ListNode, TableNode, TableCellNode } from '../commonmark/node';
-import { HTMLConvertorMap, OpenTagNode, HTMLNode } from './render';
+import { HTMLConvertorMap, OpenTagToken, HTMLToken } from './render';
 
 export const gfmConvertors: HTMLConvertorMap = {
   strike(_, { entering }) {
@@ -13,7 +13,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     const { checked, task } = (node as ListNode).listData!;
 
     if (entering) {
-      const itemTag: OpenTagNode = {
+      const itemTag: OpenTagToken = {
         type: 'openTag',
         tagName: 'li',
         outerNewLine: true
@@ -81,7 +81,7 @@ export const gfmConvertors: HTMLConvertorMap = {
       };
     }
 
-    const result: HTMLNode[] = [];
+    const result: HTMLToken[] = [];
     const table = node.parent!.parent as TableNode;
     const lastCell = node.lastChild as TableCellNode;
     for (let i = lastCell.columnIdx + 1; i < table.columns.length; i += 1) {

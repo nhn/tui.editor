@@ -21,39 +21,39 @@ interface Context {
   origin?: () => ReturnType<HTMLConvertor>;
 }
 
-export type HTMLConvertor = (node: Node, context: Context) => HTMLNode | HTMLNode[] | null;
+export type HTMLConvertor = (node: Node, context: Context) => HTMLToken | HTMLToken[] | null;
 
 export type HTMLConvertorMap = Partial<Record<NodeType, HTMLConvertor>>;
 
-interface TagNode {
+interface TagToken {
   tagName: string;
   outerNewLine?: boolean;
   innerNewLine?: boolean;
 }
 
-export interface OpenTagNode extends TagNode {
+export interface OpenTagToken extends TagToken {
   type: 'openTag';
   classNames?: string[];
   attributes?: Record<string, string>;
   selfClose?: boolean;
 }
 
-export interface CloseTagNode extends TagNode {
+export interface CloseTagToken extends TagToken {
   type: 'closeTag';
 }
 
-interface TextNode {
+interface TextToken {
   type: 'text';
   content: string;
 }
 
-export interface RawHTMLNode {
+export interface RawHTMLToken {
   type: 'html';
   content: string;
   outerNewLine?: boolean;
 }
 
-export type HTMLNode = OpenTagNode | CloseTagNode | TextNode | RawHTMLNode;
+export type HTMLToken = OpenTagToken | CloseTagToken | TextToken | RawHTMLToken;
 
 const defaultOptions: Options = {
   softbreak: '\n',
@@ -91,7 +91,7 @@ export function createRenderHTML(customOptions?: Partial<Options>) {
   return (node: Node) => render(node, convertors, options);
 }
 
-function generateOpenTagString(node: OpenTagNode): string {
+function generateOpenTagString(node: OpenTagToken): string {
   const buffer = [];
   const { tagName, classNames, attributes } = node;
 
@@ -116,7 +116,7 @@ function generateOpenTagString(node: OpenTagNode): string {
   return buffer.join('');
 }
 
-function generateCloseTagString({ tagName }: CloseTagNode) {
+function generateCloseTagString({ tagName }: CloseTagToken) {
   return `</${tagName}>`;
 }
 
@@ -126,13 +126,13 @@ function addNewLine(buffer: string[]) {
   }
 }
 
-function addOuterNewLine(node: TagNode | RawHTMLNode, buffer: string[]) {
+function addOuterNewLine(node: TagToken | RawHTMLToken, buffer: string[]) {
   if (node.outerNewLine) {
     addNewLine(buffer);
   }
 }
 
-function addInnerNewLine(node: TagNode, buffer: string[]) {
+function addInnerNewLine(node: TagToken, buffer: string[]) {
   if (node.innerNewLine) {
     addNewLine(buffer);
   }
@@ -199,7 +199,7 @@ function render(rootNode: Node, convertors: HTMLConvertorMap, options: Options):
   return buffer.join('');
 }
 
-function renderHTMLNode(node: HTMLNode, buffer: string[]) {
+function renderHTMLNode(node: HTMLToken, buffer: string[]) {
   switch (node.type) {
     case 'openTag':
     case 'closeTag':
@@ -214,17 +214,17 @@ function renderHTMLNode(node: HTMLNode, buffer: string[]) {
   }
 }
 
-function renderTextNode(node: TextNode, buffer: string[]) {
+function renderTextNode(node: TextToken, buffer: string[]) {
   buffer.push(escapeXml(node.content));
 }
 
-function renderRawHtmlNode(node: RawHTMLNode, buffer: string[]) {
+function renderRawHtmlNode(node: RawHTMLToken, buffer: string[]) {
   addOuterNewLine(node, buffer);
   buffer.push(node.content);
   addOuterNewLine(node, buffer);
 }
 
-function renderElementNode(node: OpenTagNode | CloseTagNode, buffer: string[]) {
+function renderElementNode(node: OpenTagToken | CloseTagToken, buffer: string[]) {
   if (node.type === 'openTag') {
     addOuterNewLine(node, buffer);
     buffer.push(generateOpenTagString(node));

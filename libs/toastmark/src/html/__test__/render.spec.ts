@@ -1,5 +1,5 @@
 import { Parser } from '../../commonmark/blocks';
-import { createRenderHTML, OpenTagNode } from '../render';
+import { createRenderHTML, OpenTagToken } from '../render';
 
 const parser = new Parser();
 
@@ -90,7 +90,7 @@ describe('convertors options', () => {
         paragraph(_, { entering, origin }) {
           const result = origin!();
           if (entering) {
-            (result as OpenTagNode).classNames = ['my-class'];
+            (result as OpenTagToken).classNames = ['my-class'];
             return result;
           }
           return result;
