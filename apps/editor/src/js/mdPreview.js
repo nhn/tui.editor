@@ -13,18 +13,7 @@ import domUtils from './utils/dom';
 import { getHTMLRenderConvertors } from './htmlRenderConvertors';
 import { findAdjacentElementToScrollTop } from './scroll/helper';
 import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
-import { isInvisibleParagraphNode, isInlineNode, findClosestNode } from './utils/markdown';
-
-function findClosestBlockNode(srcNode) {
-  if (!srcNode) {
-    return null;
-  }
-
-  return findClosestNode(
-    srcNode,
-    mdNode => !isInvisibleParagraphNode(mdNode) && !isInlineNode(mdNode)
-  );
-}
+import { isInlineNode, findClosestNode } from './utils/markdown';
 
 /**
  * Class Markdown Preview
@@ -79,7 +68,9 @@ class MarkdownPreview extends Preview {
   }
 
   _updateCursorNode(cursorNode) {
-    cursorNode = findClosestBlockNode(cursorNode);
+    if (cursorNode) {
+      cursorNode = findClosestNode(cursorNode, mdNode => !isInlineNode(mdNode));
+    }
     const cursorNodeId = cursorNode ? cursorNode.id : null;
 
     if (this._cursorNodeId === cursorNodeId) {

@@ -70,14 +70,6 @@ export function isListItemNode(mdNode) {
   return mdNode.type === 'item';
 }
 
-export function isTightListItemNode(mdNode) {
-  return isListItemNode(mdNode) && mdNode.parent.listData.tight;
-}
-
-export function isInvisibleParagraphNode(mdNode) {
-  return mdNode.type === 'paragraph' && isTightListItemNode(mdNode.parent);
-}
-
 export function isInlineNode(mdNode) {
   switch (mdNode.type) {
     case 'code':
