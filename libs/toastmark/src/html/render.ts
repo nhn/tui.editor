@@ -211,6 +211,8 @@ function renderHTMLNode(node: HTMLToken, buffer: string[]) {
     case 'html':
       renderRawHtmlNode(node, buffer);
       break;
+    default:
+    // no-defualt-case
   }
 }
 
