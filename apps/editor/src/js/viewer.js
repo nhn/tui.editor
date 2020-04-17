@@ -36,6 +36,7 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
+ *     @param {boolean} [options.useReferenceDefinition=false] - whether use the specification of link reference definition
  */
 class ToastUIEditorViewer {
   constructor(options) {
