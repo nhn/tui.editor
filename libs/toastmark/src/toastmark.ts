@@ -256,7 +256,7 @@ export class ToastMark {
   }
 
   private markDeletedRefMap(extStartNode: BlockNode | null, extEndNode: BlockNode | null) {
-    if (this.useReferenceDefinition && !isEmptyObj(this.refMap)) {
+    if (!isEmptyObj(this.refMap)) {
       const markDeleted = (node: BlockNode) => {
         if (isRefDef(node)) {
           const refDefState = this.refMap[node.label];
@@ -275,7 +275,7 @@ export class ToastMark {
   }
 
   private replaceWithNewRefDefState(nodes: BlockNode[]) {
-    if (this.useReferenceDefinition && !isEmptyObj(this.refMap)) {
+    if (!isEmptyObj(this.refMap)) {
       const replaceWith = (node: BlockNode) => {
         if (isRefDef(node)) {
           const { label } = node;
@@ -292,7 +292,7 @@ export class ToastMark {
   }
 
   private replaceWithRefDefCandidate() {
-    if (this.useReferenceDefinition && !isEmptyObj(this.refDefCandidateMap)) {
+    if (!isEmptyObj(this.refDefCandidateMap)) {
       iterateObject(this.refDefCandidateMap, (_, candidate) => {
         const { label, sourcepos } = candidate;
         const refDefState = this.refMap[label];
@@ -349,9 +349,13 @@ export class ToastMark {
 
     const nextNode = extEndNode ? extEndNode.next : this.root.firstChild;
 
-    this.markDeletedRefMap(extStartNode, extEndNode);
-    this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
-    this.replaceWithNewRefDefState(newNodes);
+    if (this.useReferenceDefinition) {
+      this.markDeletedRefMap(extStartNode, extEndNode);
+      this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
+      this.replaceWithNewRefDefState(newNodes);
+    } else {
+      this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
+    }
 
     return { nodes: newNodes, removedNodeRange, nextNode };
   }
@@ -359,7 +363,7 @@ export class ToastMark {
   private parseRefLink() {
     const result: EditResult[] = [];
 
-    if (this.useReferenceDefinition && !isEmptyObj(this.refMap)) {
+    if (!isEmptyObj(this.refMap)) {
       iterateObject(this.refMap, (label, value) => {
         if (value.unlinked) {
           delete this.refMap[label];
@@ -377,7 +381,7 @@ export class ToastMark {
   }
 
   private removeUnlinkedCandidate() {
-    if (this.useReferenceDefinition && !isEmptyObj(this.refDefCandidateMap)) {
+    if (!isEmptyObj(this.refDefCandidateMap)) {
       [this.refLinkCandidateMap, this.refDefCandidateMap].forEach(candidateMap => {
         iterateObject(candidateMap, id => {
           if (isUnlinked(id)) {
@@ -395,12 +399,14 @@ export class ToastMark {
 
     updateNextLineNumbers(parseResult.nextNode, lineDiff);
     this.updateRootNodeState();
-    this.removeUnlinkedCandidate();
-    this.replaceWithRefDefCandidate();
 
-    const result: EditResult[] = this.useReferenceDefinition
-      ? [editResult].concat(this.parseRefLink())
-      : [editResult];
+    let result: EditResult[] = [editResult];
+
+    if (this.useReferenceDefinition) {
+      this.removeUnlinkedCandidate();
+      this.replaceWithRefDefCandidate();
+      result = result.concat(this.parseRefLink());
+    }
 
     this.trigger('change', result);
 

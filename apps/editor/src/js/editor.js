@@ -117,6 +117,7 @@ const __nedInstance = [];
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
+ *     @param {boolean} [options.useReferenceDefinition=false] - whether use the specification of link reference definition
  */
 class ToastUIEditor {
   constructor(options) {
