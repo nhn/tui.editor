@@ -2,11 +2,12 @@ import { Parser, createRenderHTML } from '@toast-ui/toastmark';
 import { getHTMLRenderConvertors } from './htmlRenderConvertors';
 
 export function createMarkdownToHTML(options) {
-  const { extendedAutolinks, customHTMLRenderer } = options;
+  const { extendedAutolinks, customHTMLRenderer, useReferenceDefinition } = options;
 
   const parser = new Parser({
     disallowedHtmlBlockTags: ['br'],
-    extendedAutolinks
+    extendedAutolinks,
+    useReferenceDefinition
   });
 
   const renderHTML = createRenderHTML({

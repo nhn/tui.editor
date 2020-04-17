@@ -117,6 +117,7 @@ const __nedInstance = [];
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
+ *     @param {boolean} [options.useReferenceDefinition=false] - whether use the specification of link reference definition
  */
 class ToastUIEditor {
   constructor(options) {
@@ -159,7 +160,8 @@ class ToastUIEditor {
         linkAttribute: null,
         extendedAutolinks: false,
         customConvertor: null,
-        customHTMLRenderer: null
+        customHTMLRenderer: null,
+        useReferenceDefinition: false
       },
       options
     );
@@ -175,8 +177,13 @@ class ToastUIEditor {
     });
 
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
-    const { customHTMLRenderer, extendedAutolinks } = this.options;
-    const rendererOptions = { linkAttribute, customHTMLRenderer, extendedAutolinks };
+    const { customHTMLRenderer, extendedAutolinks, useReferenceDefinition } = this.options;
+    const rendererOptions = {
+      linkAttribute,
+      customHTMLRenderer,
+      extendedAutolinks,
+      useReferenceDefinition
+    };
 
     if (this.options.customConvertor) {
       // eslint-disable-next-line new-cap
@@ -206,7 +213,8 @@ class ToastUIEditor {
 
     this.toastMark = new ToastMark('', {
       disallowedHtmlBlockTags: ['br'],
-      extendedAutolinks
+      extendedAutolinks,
+      useReferenceDefinition
     });
 
     this.mdEditor = MarkdownEditor.factory(

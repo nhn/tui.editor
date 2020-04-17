@@ -12,6 +12,8 @@ import { InlineParser, C_NEWLINE } from './inlines';
 import { blockHandlers, Process } from './blockHandlers';
 import { CODE_INDENT } from './blockHelper';
 import { blockStarts, Matched } from './blockStarts';
+import { RefMap, RefLinkCandidateMap, RefDefCandidateMap } from '../toastmark';
+import { clearObj } from '../helper';
 
 const reHtmlBlockClose = [
   /./, // dummy for 0
@@ -36,7 +38,8 @@ const defaultOptions = {
   smart: false,
   tagFilter: false,
   extendedAutolinks: false,
-  disallowedHtmlBlockTags: []
+  disallowedHtmlBlockTags: [],
+  useReferenceDefinition: false
 };
 
 export interface Options {
@@ -44,6 +47,7 @@ export interface Options {
   tagFilter: boolean;
   extendedAutolinks: boolean;
   disallowedHtmlBlockTags: string[];
+  useReferenceDefinition: boolean;
 }
 
 export class Parser {
@@ -62,7 +66,9 @@ export class Parser {
   private partiallyConsumedTab: boolean;
   private allClosed: boolean;
   private lastMatchedContainer: Node;
-  public refmap: any;
+  public refMap: RefMap;
+  public refLinkCandidateMap: RefLinkCandidateMap;
+  public refDefCandidateMap: RefDefCandidateMap;
   public lastLineLength: number;
   public inlineParser: InlineParser;
   public options: Options;
@@ -84,7 +90,9 @@ export class Parser {
     this.partiallyConsumedTab = false;
     this.allClosed = true;
     this.lastMatchedContainer = this.doc;
-    this.refmap = {};
+    this.refMap = {};
+    this.refLinkCandidateMap = {};
+    this.refDefCandidateMap = {};
     this.lastLineLength = 0;
     this.inlineParser = new InlineParser(this.options);
   }
@@ -215,7 +223,9 @@ export class Parser {
   processInlines(block: BlockNode) {
     let event;
     const walker = block.walker();
-    this.inlineParser.refmap = this.refmap;
+    this.inlineParser.refMap = this.refMap;
+    this.inlineParser.refLinkCandidateMap = this.refLinkCandidateMap;
+    this.inlineParser.refDefCandidateMap = this.refDefCandidateMap;
     this.inlineParser.options = this.options;
     while ((event = walker.next())) {
       const node = event.node as BlockNode;
@@ -384,7 +394,6 @@ export class Parser {
   parse(input: string) {
     this.doc = document();
     this.tip = this.doc;
-    this.refmap = {};
     this.lineNumber = 0;
     this.lastLineLength = 0;
     this.offset = 0;
@@ -393,6 +402,9 @@ export class Parser {
     this.currentLine = '';
     const lines = input.split(reLineEnding);
     let len = lines.length;
+    if (this.options.useReferenceDefinition) {
+      this.clearRefMaps();
+    }
     if (input.charCodeAt(input.length - 1) === C_NEWLINE) {
       // ignore last blank line created by final newline
       len -= 1;
@@ -411,7 +423,6 @@ export class Parser {
   partialParseStart(lineNumber: number, lines: string[]) {
     this.doc = document();
     this.tip = this.doc;
-    this.refmap = {};
     this.lineNumber = lineNumber - 1;
     this.lastLineLength = 0;
     this.offset = 0;
@@ -438,5 +449,21 @@ export class Parser {
       this.finalize(this.tip, this.lineNumber);
     }
     this.processInlines(this.doc);
+  }
+
+  setRefMaps(
+    refMap: RefMap,
+    refLinkCandidateMap: RefLinkCandidateMap,
+    refDefCandidateMap: RefDefCandidateMap
+  ) {
+    this.refMap = refMap;
+    this.refLinkCandidateMap = refLinkCandidateMap;
+    this.refDefCandidateMap = refDefCandidateMap;
+  }
+
+  clearRefMaps() {
+    [this.refMap, this.refLinkCandidateMap, this.refDefCandidateMap].forEach(map => {
+      clearObj(map);
+    });
   }
 }

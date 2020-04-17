@@ -1,5 +1,14 @@
 import { Parser, Options } from './commonmark/blocks';
-import { BlockNode, isList, removeAllNode } from './commonmark/node';
+import {
+  BlockNode,
+  isList,
+  removeAllNode,
+  removeNodeById,
+  Node,
+  SourcePos,
+  isRefDef,
+  RefDefNode
+} from './commonmark/node';
 import {
   removeNextUntil,
   getChildNodes,
@@ -9,9 +18,12 @@ import {
   findChildNodeAtLine,
   findFirstNodeAtLine,
   findNodeAtPosition,
-  findNodeById
+  findNodeById,
+  invokeNextUntil,
+  isUnlinked
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
+import { iterateObject, omit, isEmptyObj } from './helper';
 
 const reLineEnding = /\r\n|\n|\r/;
 
@@ -30,6 +42,30 @@ interface EditResult {
   removedNodeRange: [number, number] | null;
 }
 
+type ParseResult = EditResult & { nextNode: Node | null };
+type RefDefState = {
+  id: number;
+  destination: string;
+  title: string;
+  unlinked: boolean;
+  sourcepos: SourcePos;
+};
+
+export type RefMap = {
+  [k: string]: RefDefState;
+};
+
+export type RefLinkCandidateMap = {
+  [k: number]: {
+    node: BlockNode;
+    refLabel: string;
+  };
+};
+
+export type RefDefCandidateMap = {
+  [k: number]: RefDefNode;
+};
+
 function canBeContinuedListItem(lineText: string) {
   const spaceMatch = lineText.match(/^[ \t]+/);
   if (spaceMatch && (spaceMatch[0].length >= 2 || /\t/.test(spaceMatch[0]))) {
@@ -40,14 +76,34 @@ function canBeContinuedListItem(lineText: string) {
   return reBulletListMarker.test(leftTrimmed) || reOrderedListMarker.test(leftTrimmed);
 }
 
+export function createRefDefState(node: RefDefNode) {
+  const { id, title, sourcepos, dest } = node;
+  return {
+    id,
+    title,
+    sourcepos: sourcepos!,
+    unlinked: false,
+    destination: dest
+  };
+}
+
 export class ToastMark {
   public lineTexts: string[];
   private parser: Parser;
   private root: BlockNode;
   private eventHandlerMap: EventHandlerMap;
+  private refMap: RefMap;
+  private refLinkCandidateMap: RefLinkCandidateMap;
+  private refDefCandidateMap: RefDefCandidateMap;
+  private useReferenceDefinition: boolean;
 
   constructor(contents?: string, options?: Partial<Options>) {
+    this.refMap = {};
+    this.refLinkCandidateMap = {};
+    this.refDefCandidateMap = {};
+    this.useReferenceDefinition = !!options?.useReferenceDefinition;
     this.parser = new Parser(options);
+    this.parser.setRefMaps(this.refMap, this.refLinkCandidateMap, this.refDefCandidateMap);
     this.eventHandlerMap = { change: [] };
 
     contents = contents || '';
@@ -102,6 +158,7 @@ export class ToastMark {
     if (!startNode) {
       if (endNode) {
         insertNodesBefore(endNode, newNodes);
+        removeNodeById(endNode.id);
         endNode.unlink();
       } else {
         prependChildNodes(this.root, newNodes);
@@ -109,6 +166,7 @@ export class ToastMark {
     } else {
       insertNodesBefore(startNode, newNodes);
       removeNextUntil(startNode, endNode!);
+      [startNode.id, endNode!.id].forEach(id => removeNodeById(id));
       startNode.unlink();
     }
   }
@@ -183,25 +241,172 @@ export class ToastMark {
     return { newNodes, extStartNode: startNode, extEndNode: endNode };
   }
 
-  public editMarkdown(startPos: Position, endPos: Position, newText: string): EditResult {
-    const [startNode, endNode] = this.getNodeRange(startPos, endPos);
-    const lineDiff = this.updateLineTexts(startPos, endPos, newText);
+  private getRemovedNodeRange(
+    extStartNode: BlockNode | null,
+    extEndNode: BlockNode | null
+  ): [number, number] | null {
+    if (
+      !extStartNode ||
+      (extStartNode && isRefDef(extStartNode)) ||
+      (extEndNode && isRefDef(extEndNode))
+    ) {
+      return null;
+    }
+    return [extStartNode.id, extEndNode!.id];
+  }
+
+  private markDeletedRefMap(extStartNode: BlockNode | null, extEndNode: BlockNode | null) {
+    if (!isEmptyObj(this.refMap)) {
+      const markDeleted = (node: BlockNode) => {
+        if (isRefDef(node)) {
+          const refDefState = this.refMap[node.label];
+          if (refDefState && node.id === refDefState.id) {
+            refDefState.unlinked = true;
+          }
+        }
+      };
+      if (extStartNode) {
+        invokeNextUntil(markDeleted, extStartNode.parent!, extEndNode);
+      }
+      if (extEndNode) {
+        invokeNextUntil(markDeleted, extEndNode);
+      }
+    }
+  }
+
+  private replaceWithNewRefDefState(nodes: BlockNode[]) {
+    if (!isEmptyObj(this.refMap)) {
+      const replaceWith = (node: BlockNode) => {
+        if (isRefDef(node)) {
+          const { label } = node;
+          const refDefState = this.refMap[label];
+          if (!refDefState || refDefState.unlinked) {
+            this.refMap[label] = createRefDefState(node);
+          }
+        }
+      };
+      nodes.forEach(node => {
+        invokeNextUntil(replaceWith, node);
+      });
+    }
+  }
+
+  private replaceWithRefDefCandidate() {
+    if (!isEmptyObj(this.refDefCandidateMap)) {
+      iterateObject(this.refDefCandidateMap, (_, candidate) => {
+        const { label, sourcepos } = candidate;
+        const refDefState = this.refMap[label];
+
+        if (
+          !refDefState ||
+          refDefState.unlinked ||
+          refDefState.sourcepos[0][0] > sourcepos![0][0]
+        ) {
+          this.refMap[label] = createRefDefState(candidate);
+        }
+      });
+    }
+  }
+
+  private getRangeWithRefDef(
+    startLine: number,
+    endLine: number,
+    startNode: BlockNode,
+    endNode: BlockNode,
+    lineDiff: number
+  ) {
+    if (this.useReferenceDefinition && !isEmptyObj(this.refMap)) {
+      const prevNode = findChildNodeAtLine(this.root, startLine - 1);
+      const nextNode = findChildNodeAtLine(this.root, endLine + 1);
+
+      if (prevNode && isRefDef(prevNode) && prevNode !== startNode && prevNode !== endNode) {
+        startNode = prevNode;
+        startLine = startNode.sourcepos![0][0];
+      }
+
+      if (nextNode && isRefDef(nextNode) && nextNode !== startNode && nextNode !== endNode) {
+        endNode = nextNode;
+        endLine = this.extendEndLine(endNode.sourcepos![1][0] + lineDiff);
+      }
+    }
+
+    return [startNode, endNode, startLine, endLine] as const;
+  }
+
+  private parse(startPos: Position, endPos: Position, lineDiff = 0): ParseResult {
+    const range = this.getNodeRange(startPos, endPos);
+    const [startNode, endNode] = range;
     const startLine = startNode ? Math.min(startNode.sourcepos![0][0], startPos[0]) : startPos[0];
     const endLine = this.extendEndLine(
       (endNode ? Math.max(endNode.sourcepos![1][0], endPos[0]) : endPos[0]) + lineDiff
     );
-    const parseResult = this.parseRange(startNode, endNode, startLine, endLine);
-    const { extStartNode, extEndNode, newNodes } = parseResult;
+
+    const parseResult = this.parseRange(
+      ...this.getRangeWithRefDef(startLine, endLine, startNode, endNode, lineDiff)
+    );
+    const { newNodes, extStartNode, extEndNode } = parseResult;
+    const removedNodeRange = this.getRemovedNodeRange(extStartNode, extEndNode);
+
     const nextNode = extEndNode ? extEndNode.next : this.root.firstChild;
 
-    this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
-    updateNextLineNumbers(nextNode, lineDiff);
+    if (this.useReferenceDefinition) {
+      this.markDeletedRefMap(extStartNode, extEndNode);
+      this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
+      this.replaceWithNewRefDefState(newNodes);
+    } else {
+      this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
+    }
+
+    return { nodes: newNodes, removedNodeRange, nextNode };
+  }
+
+  private parseRefLink() {
+    const result: EditResult[] = [];
+
+    if (!isEmptyObj(this.refMap)) {
+      iterateObject(this.refMap, (label, value) => {
+        if (value.unlinked) {
+          delete this.refMap[label];
+        }
+        iterateObject(this.refLinkCandidateMap, (_, candidate) => {
+          const { node, refLabel } = candidate;
+          if (refLabel === label) {
+            result.push(this.parse(node.sourcepos![0], node.sourcepos![1]));
+          }
+        });
+      });
+    }
+
+    return result;
+  }
+
+  private removeUnlinkedCandidate() {
+    if (!isEmptyObj(this.refDefCandidateMap)) {
+      [this.refLinkCandidateMap, this.refDefCandidateMap].forEach(candidateMap => {
+        iterateObject(candidateMap, id => {
+          if (isUnlinked(id)) {
+            delete candidateMap[id];
+          }
+        });
+      });
+    }
+  }
+
+  public editMarkdown(startPos: Position, endPos: Position, newText: string) {
+    const lineDiff = this.updateLineTexts(startPos, endPos, newText);
+    const parseResult = this.parse(startPos, endPos, lineDiff);
+    const editResult: EditResult = omit(parseResult, 'nextNode');
+
+    updateNextLineNumbers(parseResult.nextNode, lineDiff);
     this.updateRootNodeState();
 
-    const result = {
-      nodes: newNodes,
-      removedNodeRange: !extStartNode ? null : [extStartNode.id, extEndNode!.id]
-    } as EditResult;
+    let result: EditResult[] = [editResult];
+
+    if (this.useReferenceDefinition) {
+      this.removeUnlinkedCandidate();
+      this.replaceWithRefDefCandidate();
+      result = result.concat(this.parseRefLink());
+    }
 
     this.trigger('change', result);
 

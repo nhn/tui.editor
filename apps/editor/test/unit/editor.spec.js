@@ -504,5 +504,26 @@ describe('Editor', () => {
         expect(editor.getHtml()).toBe('<p><a href="http://nhn.com">http://nhn.com</a></p>\n');
       });
     });
+
+    describe('useReferenceDefinition option', () => {
+      it('useReferenceDefinition: false(default) - should not parse refererence definition node', () => {
+        editor = new Editor({
+          el: container,
+          initialValue: '[foo]: test \n [foo]'
+        });
+
+        expect(editor.getHtml()).toBe('<p>[foo]: test<br>\n[foo]</p>\n');
+      });
+
+      it('useReferenceDefinition: true - should parse refererence definition node', () => {
+        editor = new Editor({
+          el: container,
+          initialValue: '[foo]: test \n [foo]',
+          useReferenceDefinition: true
+        });
+
+        expect(editor.getHtml()).toBe('<p><a href="test">foo</a></p>\n');
+      });
+    });
   });
 });

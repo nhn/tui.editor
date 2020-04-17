@@ -35,65 +35,68 @@ type TokenTypes = typeof tokenTypes;
 
 cm.on('change', (editor, changeObj) => {
   const { from, to, text } = changeObj;
-  const { nodes, removedNodeRange } = doc.editMarkdown(
+  const changed = doc.editMarkdown(
     [from.line + 1, from.ch + 1],
     [to.line + 1, to.ch + 1],
     text.join('\n')
   );
 
-  const html = render(doc.getRootNode());
-  htmlEl.innerText = html;
+  changed.forEach(result => {
+    const { nodes, removedNodeRange } = result;
+    const html = render(doc.getRootNode());
+    htmlEl.innerText = html;
 
-  if (!removedNodeRange) {
-    previewEl.innerHTML = html;
-  } else {
-    const [startNodeId, endNodeId] = removedNodeRange;
-    const startEl = previewEl.querySelector(`[data-nodeid="${startNodeId}"]`);
-    const endEl = previewEl.querySelector(`[data-nodeid="${endNodeId}"]`);
-    const newHtml = nodes.map(node => render(node)).join('');
+    if (!removedNodeRange) {
+      previewEl.innerHTML = html;
+    } else {
+      const [startNodeId, endNodeId] = removedNodeRange;
+      const startEl = previewEl.querySelector(`[data-nodeid="${startNodeId}"]`);
+      const endEl = previewEl.querySelector(`[data-nodeid="${endNodeId}"]`);
+      const newHtml = nodes.map(node => render(node)).join('');
 
-    if (startEl) {
-      startEl.insertAdjacentHTML('beforebegin', newHtml);
-      let el: Element = startEl;
-      while (el !== endEl) {
-        const nextEl: Element | null = el.nextElementSibling;
+      if (startEl) {
+        startEl.insertAdjacentHTML('beforebegin', newHtml);
+        let el: Element = startEl;
+        while (el !== endEl) {
+          const nextEl: Element | null = el.nextElementSibling;
+          el.remove();
+          el = nextEl!;
+        }
         el.remove();
-        el = nextEl!;
       }
-      el.remove();
     }
-  }
 
-  if (!nodes.length) {
-    return;
-  }
+    if (!nodes.length) {
+      return;
+    }
 
-  const editFromPos = nodes[0].sourcepos![0];
-  const editToPos = last(nodes).sourcepos![1];
-  const editFrom = { line: editFromPos[0] - 1, ch: editFromPos[1] - 1 };
-  const editTo = { line: editToPos[0] - 1, ch: editToPos[1] };
-  const marks = cm.findMarks(editFrom, editTo);
+    const editFromPos = nodes[0].sourcepos![0];
+    const editToPos = last(nodes).sourcepos![1];
+    const editFrom = { line: editFromPos[0] - 1, ch: editFromPos[1] - 1 };
+    const editTo = { line: editToPos[0] - 1, ch: editToPos[1] };
+    const marks = cm.findMarks(editFrom, editTo);
 
-  for (const mark of marks) {
-    mark.clear();
-  }
+    for (const mark of marks) {
+      mark.clear();
+    }
 
-  for (const parent of nodes) {
-    const walker = parent.walker();
-    let event;
-    while ((event = walker.next())) {
-      const { node, entering } = event;
-      if (entering) {
-        const [startLine, startCh] = node.sourcepos![0];
-        const [endLine, endCh] = node.sourcepos![1];
-        const start = { line: startLine - 1, ch: startCh - 1 };
-        const end = { line: endLine - 1, ch: endCh };
-        const token = tokenTypes[node.type as keyof TokenTypes];
+    for (const parent of nodes) {
+      const walker = parent.walker();
+      let event;
+      while ((event = walker.next())) {
+        const { node, entering } = event;
+        if (entering) {
+          const [startLine, startCh] = node.sourcepos![0];
+          const [endLine, endCh] = node.sourcepos![1];
+          const start = { line: startLine - 1, ch: startCh - 1 };
+          const end = { line: endLine - 1, ch: endCh };
+          const token = tokenTypes[node.type as keyof TokenTypes];
 
-        if (token) {
-          cm.markText(start, end, { className: `cm-${token}` });
+          if (token) {
+            cm.markText(start, end, { className: `cm-${token}` });
+          }
         }
       }
     }
-  }
+  });
 });

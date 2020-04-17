@@ -237,7 +237,7 @@ const seTextHeading: BlockStart = (parser, container) => {
     let pos;
     while (
       peek(container.stringContent, 0) === C_OPEN_BRACKET &&
-      (pos = parser.inlineParser.parseReference(container.stringContent, parser.refmap))
+      (pos = parser.inlineParser.parseReference(container, parser.refMap))
     ) {
       container.stringContent = container.stringContent.slice(pos);
     }

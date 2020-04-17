@@ -36,6 +36,7 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
+ *     @param {boolean} [options.useReferenceDefinition=false] - whether use the specification of link reference definition
  */
 class ToastUIEditorViewer {
   constructor(options) {
@@ -45,7 +46,8 @@ class ToastUIEditorViewer {
         linkAttribute: null,
         extendedAutolinks: false,
         customConvertor: null,
-        customHTMLRenderer: null
+        customHTMLRenderer: null,
+        useReferenceDefinition: false
       },
       options
     );
@@ -56,8 +58,13 @@ class ToastUIEditorViewer {
     this.commandManager = new CommandManager(this);
 
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
-    const { customHTMLRenderer, extendedAutolinks } = this.options;
-    const rendererOptions = { linkAttribute, customHTMLRenderer, extendedAutolinks };
+    const { customHTMLRenderer, extendedAutolinks, useReferenceDefinition } = this.options;
+    const rendererOptions = {
+      linkAttribute,
+      customHTMLRenderer,
+      extendedAutolinks,
+      useReferenceDefinition
+    };
 
     if (this.options.customConvertor) {
       // eslint-disable-next-line new-cap

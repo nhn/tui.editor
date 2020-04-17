@@ -227,63 +227,69 @@ class MarkdownEditor extends CodeMirrorExt {
 
   _refreshCodeMirrorMarks(e) {
     const { from, to, text } = e;
-    const editResult = this.toastMark.editMarkdown(
+    const changed = this.toastMark.editMarkdown(
       [from.line + 1, from.ch + 1],
       [to.line + 1, to.ch + 1],
       text.join('\n')
     );
 
-    this._emitMarkdownEditorContentChangedEvent(editResult);
+    this._emitMarkdownEditorContentChangedEvent(changed);
 
-    const { nodes } = editResult;
-
-    if (!nodes.length) {
+    if (!changed.length) {
       return;
     }
 
-    /* eslint-disable max-depth */
-    const [editFromPos] = nodes[0].sourcepos;
-    const [, editToPos] = nodes[nodes.length - 1].sourcepos;
-    const editFrom = { line: editFromPos[0] - 1, ch: editFromPos[1] - 1 };
-    const editTo = { line: editToPos[0] - 1, ch: editToPos[1] };
-    const marks = this.cm.findMarks(editFrom, editTo);
+    changed.forEach(editResult => this._markNodes(editResult));
+  }
 
-    for (const mark of marks) {
-      if (mark.attributes && ATTR_NAME_MARK in mark.attributes) {
-        mark.clear();
-      }
-    }
+  _markNodes(editResult) {
+    const { nodes } = editResult;
 
-    for (const parent of nodes) {
-      const walker = parent.walker();
-      let event = walker.next();
+    if (nodes.length) {
+      const [editFromPos] = nodes[0].sourcepos;
+      const [, editToPos] = nodes[nodes.length - 1].sourcepos;
+      const editFrom = { line: editFromPos[0] - 1, ch: editFromPos[1] - 1 };
+      const editTo = { line: editToPos[0] - 1, ch: editToPos[1] };
+      const marks = this.cm.findMarks(editFrom, editTo);
 
-      while (event) {
-        const { node, entering } = event;
-
-        if (entering) {
-          const { type, sourcepos } = node;
-          const [startPosition, endPosition] = sourcepos;
-          const [startLine, startCh] = startPosition;
-          const [endLine, endCh] = endPosition;
-          const start = { line: startLine - 1, ch: startCh - 1 };
-          const end = { line: endLine - 1, ch: endCh };
-          const extraNode = tokenTypes[type];
-
-          if (type === 'heading') {
-            this._markText(start, end, `cm-header cm-header-${node.level}`);
-          } else if (extraNode) {
-            this._markText(start, end, `cm-${extraNode}`);
-          } else if (type === 'image' || type === 'link') {
-            this._markTextInLinkOrImage(node, start, end);
-          } else if (type === 'item') {
-            this._markTextInListItem(node, start, end);
-          }
+      for (const mark of marks) {
+        if (mark.attributes && ATTR_NAME_MARK in mark.attributes) {
+          mark.clear();
         }
-        event = walker.next();
       }
+
+      /* eslint-disable max-depth */
+      for (const parent of nodes) {
+        const walker = parent.walker();
+        let event = walker.next();
+
+        while (event) {
+          const { node, entering } = event;
+
+          if (entering) {
+            const { type, sourcepos } = node;
+            const [startPosition, endPosition] = sourcepos;
+            const [startLine, startCh] = startPosition;
+            const [endLine, endCh] = endPosition;
+            const start = { line: startLine - 1, ch: startCh - 1 };
+            const end = { line: endLine - 1, ch: endCh };
+            const extraNode = tokenTypes[type];
+
+            if (type === 'heading') {
+              this._markText(start, end, `cm-header cm-header-${node.level}`);
+            } else if (extraNode) {
+              this._markText(start, end, `cm-${extraNode}`);
+            } else if (type === 'image' || type === 'link') {
+              this._markTextInLinkOrImage(node, start, end);
+            } else if (type === 'item') {
+              this._markTextInListItem(node, start, end);
+            }
+          }
+          event = walker.next();
+        }
+      }
+      /* eslint-enable max-depth */
     }
-    /* eslint-enable max-depth */
   }
 
   _markText(start, end, className) {
@@ -323,7 +329,7 @@ class MarkdownEditor extends CodeMirrorExt {
   _getClassNameOfListItem(node) {
     let depth = 0;
 
-    while (node.parent.parent.type === 'item') {
+    while (node.parent.parent && node.parent.parent.type === 'item') {
       node = node.parent.parent;
       depth += 1;
     }
