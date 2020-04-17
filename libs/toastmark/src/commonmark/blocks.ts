@@ -13,6 +13,7 @@ import { blockHandlers, Process } from './blockHandlers';
 import { CODE_INDENT } from './blockHelper';
 import { blockStarts, Matched } from './blockStarts';
 import { RefMap, RefLinkCandidateMap, RefDefCandidateMap } from '../toastmark';
+import { clearObj } from '../helper';
 
 const reHtmlBlockClose = [
   /./, // dummy for 0
@@ -390,14 +391,9 @@ export class Parser {
   }
 
   // The main parsing function.  Returns a parsed document AST.
-  parse(input: string, initRefMap = true) {
+  parse(input: string) {
     this.doc = document();
     this.tip = this.doc;
-    if (initRefMap) {
-      this.refMap = {};
-      this.refLinkCandidateMap = {};
-      this.refDefCandidateMap = {};
-    }
     this.lineNumber = 0;
     this.lastLineLength = 0;
     this.offset = 0;
@@ -406,6 +402,9 @@ export class Parser {
     this.currentLine = '';
     const lines = input.split(reLineEnding);
     let len = lines.length;
+    if (this.options.useReferenceDefinition) {
+      this.clearRefMaps();
+    }
     if (input.charCodeAt(input.length - 1) === C_NEWLINE) {
       // ignore last blank line created by final newline
       len -= 1;
@@ -460,5 +459,11 @@ export class Parser {
     this.refMap = refMap;
     this.refLinkCandidateMap = refLinkCandidateMap;
     this.refDefCandidateMap = refDefCandidateMap;
+  }
+
+  clearRefMaps() {
+    [this.refMap, this.refLinkCandidateMap, this.refDefCandidateMap].forEach(map => {
+      clearObj(map);
+    });
   }
 }

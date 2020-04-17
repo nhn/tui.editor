@@ -108,7 +108,7 @@ export class ToastMark {
 
     contents = contents || '';
     this.lineTexts = contents.split(reLineEnding);
-    this.root = this.parser.parse(contents, false);
+    this.root = this.parser.parse(contents);
   }
 
   private updateLineTexts(startPos: Position, endPos: Position, newText: string) {

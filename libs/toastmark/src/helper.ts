@@ -34,3 +34,9 @@ export function omit<T extends object>(obj: T, ...propNames: (keyof T)[]) {
 export function isEmptyObj<T extends object>(obj: T) {
   return !Object.keys(obj).length;
 }
+
+export function clearObj<T extends object>(obj: T) {
+  Object.keys(obj).forEach(key => {
+    delete obj[key as keyof T];
+  });
+}
