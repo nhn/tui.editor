@@ -1,6 +1,5 @@
-import { Node, getNodeById, removeNodeById, BlockNode } from './commonmark/node';
+import { Node, getNodeById, removeNodeById } from './commonmark/node';
 import { Position } from './toastmark';
-import NodeWalker from './commonmark/nodeWalker';
 
 export const enum Compare {
   LT = 1,
@@ -239,12 +238,6 @@ export function isUnlinked(id: number) {
     if (!node.parent && !node.prev && !node.next) {
       return true;
     }
-
-    // const unlinked = (['parent', 'prev', 'next'] as const).every(type => node[type] === null);
-
-    // if (unlinked) {
-    //   return true;
-    // }
     node = node.parent!;
   }
   return false;

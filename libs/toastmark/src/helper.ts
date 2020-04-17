@@ -5,8 +5,6 @@ export function last<T>(arr: T[] | string) {
   return arr[arr.length - 1];
 }
 
-type OmitedKey<T, K extends keyof T> = keyof Omit<T, K>;
-
 // normalize a reference in reference link (remove []s, trim,
 // collapse internal space, unicode case fold.
 // See commonmark/commonmark.js#168.
