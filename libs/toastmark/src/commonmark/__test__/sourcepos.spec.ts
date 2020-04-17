@@ -1,7 +1,7 @@
 import { Parser } from '../blocks';
 import { Node, CodeNode } from '../node';
 
-const reader = new Parser();
+let reader = new Parser();
 
 describe('paragraph', () => {
   it('simple text', () => {
@@ -411,6 +411,12 @@ describe('merge text nodes', () => {
 });
 
 describe('reference link definition', () => {
+  reader = new Parser({ useReferenceDefinition: true });
+
+  afterAll(() => {
+    reader = new Parser();
+  });
+
   it('single line without title', () => {
     const root = reader.parse('[foo]: test');
     const refDef = root.firstChild!;
