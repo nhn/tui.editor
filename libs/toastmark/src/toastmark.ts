@@ -95,11 +95,13 @@ export class ToastMark {
   private refMap: RefMap;
   private refLinkCandidateMap: RefLinkCandidateMap;
   private refDefCandidateMap: RefDefCandidateMap;
+  private useReferenceDefinition: boolean;
 
   constructor(contents?: string, options?: Partial<Options>) {
     this.refMap = {};
     this.refLinkCandidateMap = {};
     this.refDefCandidateMap = {};
+    this.useReferenceDefinition = !!options?.useReferenceDefinition;
     this.parser = new Parser(options);
     this.parser.setRefMaps(this.refMap, this.refLinkCandidateMap, this.refDefCandidateMap);
     this.eventHandlerMap = { change: [] };
@@ -254,7 +256,7 @@ export class ToastMark {
   }
 
   private markDeletedRefMap(extStartNode: BlockNode | null, extEndNode: BlockNode | null) {
-    if (!isEmptyObj(this.refMap)) {
+    if (this.useReferenceDefinition && !isEmptyObj(this.refMap)) {
       const markDeleted = (node: BlockNode) => {
         if (isRefDef(node)) {
           const refDefState = this.refMap[node.label];
@@ -273,40 +275,34 @@ export class ToastMark {
   }
 
   private replaceWithNewRefDefState(nodes: BlockNode[]) {
-    const { refMap } = this;
-
-    if (isEmptyObj(refMap)) {
-      return;
-    }
-
-    const replaceWith = (node: BlockNode) => {
-      if (isRefDef(node)) {
-        const { label } = node;
-        const refDefState = refMap[label];
-        if (!refDefState || refDefState.unlinked) {
-          refMap[label] = createRefDefState(node);
+    if (this.useReferenceDefinition && !isEmptyObj(this.refMap)) {
+      const replaceWith = (node: BlockNode) => {
+        if (isRefDef(node)) {
+          const { label } = node;
+          const refDefState = this.refMap[label];
+          if (!refDefState || refDefState.unlinked) {
+            this.refMap[label] = createRefDefState(node);
+          }
         }
-      }
-    };
-    nodes.forEach(node => {
-      invokeNextUntil(replaceWith, node);
-    });
+      };
+      nodes.forEach(node => {
+        invokeNextUntil(replaceWith, node);
+      });
+    }
   }
 
   private replaceWithRefDefCandidate() {
-    const { refMap, refDefCandidateMap } = this;
-
-    if (!isEmptyObj(refDefCandidateMap)) {
-      iterateObject(refDefCandidateMap, (_, candidate) => {
+    if (this.useReferenceDefinition && !isEmptyObj(this.refDefCandidateMap)) {
+      iterateObject(this.refDefCandidateMap, (_, candidate) => {
         const { label, sourcepos } = candidate;
-        const refDefState = refMap[label];
+        const refDefState = this.refMap[label];
 
         if (
           !refDefState ||
           refDefState.unlinked ||
           refDefState.sourcepos[0][0] > sourcepos![0][0]
         ) {
-          refMap[label] = createRefDefState(candidate);
+          this.refMap[label] = createRefDefState(candidate);
         }
       });
     }
@@ -319,7 +315,7 @@ export class ToastMark {
     endNode: BlockNode,
     lineDiff: number
   ) {
-    if (!isEmptyObj(this.refMap)) {
+    if (this.useReferenceDefinition && !isEmptyObj(this.refMap)) {
       const prevNode = findChildNodeAtLine(this.root, startLine - 1);
       const nextNode = findChildNodeAtLine(this.root, endLine + 1);
 
@@ -361,53 +357,50 @@ export class ToastMark {
   }
 
   private parseRefLink() {
-    const { refMap, refLinkCandidateMap } = this;
-
-    if (isEmptyObj(refMap)) {
-      return null;
-    }
-
     const result: EditResult[] = [];
 
-    iterateObject(refMap, (label, value) => {
-      if (value.unlinked) {
-        delete refMap[label];
-      }
-      iterateObject(refLinkCandidateMap, (_, candidate) => {
-        const { node, refLabel } = candidate;
-        if (refLabel === label) {
-          result.push(this.parse(node.sourcepos![0], node.sourcepos![1]));
+    if (this.useReferenceDefinition && !isEmptyObj(this.refMap)) {
+      iterateObject(this.refMap, (label, value) => {
+        if (value.unlinked) {
+          delete this.refMap[label];
         }
+        iterateObject(this.refLinkCandidateMap, (_, candidate) => {
+          const { node, refLabel } = candidate;
+          if (refLabel === label) {
+            result.push(this.parse(node.sourcepos![0], node.sourcepos![1]));
+          }
+        });
       });
-    });
+    }
 
     return result;
   }
 
   private removeUnlinkedCandidate() {
-    [this.refLinkCandidateMap, this.refDefCandidateMap].forEach(candidateMap => {
-      iterateObject(candidateMap, id => {
-        if (isUnlinked(id)) {
-          delete candidateMap[id];
-        }
+    if (this.useReferenceDefinition && !isEmptyObj(this.refDefCandidateMap)) {
+      [this.refLinkCandidateMap, this.refDefCandidateMap].forEach(candidateMap => {
+        iterateObject(candidateMap, id => {
+          if (isUnlinked(id)) {
+            delete candidateMap[id];
+          }
+        });
       });
-    });
+    }
   }
 
   public editMarkdown(startPos: Position, endPos: Position, newText: string) {
     const lineDiff = this.updateLineTexts(startPos, endPos, newText);
     const parseResult = this.parse(startPos, endPos, lineDiff);
-    const editResult = omit(parseResult, 'nextNode');
+    const editResult: EditResult = omit(parseResult, 'nextNode');
 
     updateNextLineNumbers(parseResult.nextNode, lineDiff);
     this.updateRootNodeState();
     this.removeUnlinkedCandidate();
     this.replaceWithRefDefCandidate();
 
-    let result: EditResult[] = [editResult];
-
-    const refLink = this.parseRefLink();
-    result = refLink ? result.concat(refLink) : result;
+    const result: EditResult[] = this.useReferenceDefinition
+      ? [editResult].concat(this.parseRefLink())
+      : [editResult];
 
     this.trigger('change', result);
 

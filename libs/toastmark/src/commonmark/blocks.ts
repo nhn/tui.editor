@@ -37,7 +37,8 @@ const defaultOptions = {
   smart: false,
   tagFilter: false,
   extendedAutolinks: false,
-  disallowedHtmlBlockTags: []
+  disallowedHtmlBlockTags: [],
+  useReferenceDefinition: false
 };
 
 export interface Options {
@@ -45,6 +46,7 @@ export interface Options {
   tagFilter: boolean;
   extendedAutolinks: boolean;
   disallowedHtmlBlockTags: string[];
+  useReferenceDefinition: boolean;
 }
 
 export class Parser {

@@ -755,14 +755,19 @@ export class InlineParser {
         }
       }
 
-      this.refLinkCandidateMap[block.id] = { node: block, refLabel };
+      if (this.options.useReferenceDefinition) {
+        this.refLinkCandidateMap[block.id] = { node: block, refLabel };
+      }
       return true;
     } // no match
 
     this.removeBracket(); // remove this opener from stack
     this.pos = startpos;
     block.appendChild(text(']', this.sourcepos(startpos, startpos)));
-    this.refLinkCandidateMap[block.id] = { node: block, refLabel };
+
+    if (this.options.useReferenceDefinition) {
+      this.refLinkCandidateMap[block.id] = { node: block, refLabel };
+    }
     return true;
   }
 
@@ -865,6 +870,10 @@ export class InlineParser {
 
   // Attempt to parse a link reference, modifying refmap.
   parseReference(block: BlockNode, refMap: RefMap) {
+    if (!this.options.useReferenceDefinition) {
+      return 0;
+    }
+
     this.subject = block.stringContent!;
     this.pos = 0;
     let title = null;
