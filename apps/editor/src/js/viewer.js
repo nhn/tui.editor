@@ -45,7 +45,8 @@ class ToastUIEditorViewer {
         linkAttribute: null,
         extendedAutolinks: false,
         customConvertor: null,
-        customHTMLRenderer: null
+        customHTMLRenderer: null,
+        useReferenceDefinition: false
       },
       options
     );
@@ -56,8 +57,13 @@ class ToastUIEditorViewer {
     this.commandManager = new CommandManager(this);
 
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
-    const { customHTMLRenderer, extendedAutolinks } = this.options;
-    const rendererOptions = { linkAttribute, customHTMLRenderer, extendedAutolinks };
+    const { customHTMLRenderer, extendedAutolinks, useReferenceDefinition } = this.options;
+    const rendererOptions = {
+      linkAttribute,
+      customHTMLRenderer,
+      extendedAutolinks,
+      useReferenceDefinition
+    };
 
     if (this.options.customConvertor) {
       // eslint-disable-next-line new-cap

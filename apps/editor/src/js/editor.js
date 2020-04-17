@@ -159,7 +159,8 @@ class ToastUIEditor {
         linkAttribute: null,
         extendedAutolinks: false,
         customConvertor: null,
-        customHTMLRenderer: null
+        customHTMLRenderer: null,
+        useReferenceDefinition: false
       },
       options
     );
@@ -175,8 +176,13 @@ class ToastUIEditor {
     });
 
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
-    const { customHTMLRenderer, extendedAutolinks } = this.options;
-    const rendererOptions = { linkAttribute, customHTMLRenderer, extendedAutolinks };
+    const { customHTMLRenderer, extendedAutolinks, useReferenceDefinition } = this.options;
+    const rendererOptions = {
+      linkAttribute,
+      customHTMLRenderer,
+      extendedAutolinks,
+      useReferenceDefinition
+    };
 
     if (this.options.customConvertor) {
       // eslint-disable-next-line new-cap
@@ -206,7 +212,8 @@ class ToastUIEditor {
 
     this.toastMark = new ToastMark('', {
       disallowedHtmlBlockTags: ['br'],
-      extendedAutolinks
+      extendedAutolinks,
+      useReferenceDefinition
     });
 
     this.mdEditor = MarkdownEditor.factory(
