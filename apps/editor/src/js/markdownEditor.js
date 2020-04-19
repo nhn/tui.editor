@@ -373,6 +373,12 @@ class MarkdownEditor extends CodeMirrorExt {
     this._markText(closeDelimStart, end, 'tui-md-delimiter');
   }
 
+  _markCodeBlockLine(startLine, endLine) {
+    for (let index = startLine; index <= endLine; index += 1) {
+      this.cm.addLineClass(index, 'background', 'tui-md-code-block');
+    }
+  }
+
   _markCodeBlock(node, start, end) {
     const { fenceOffset, fenceLength, fenceChar, info } = node;
     const { line: startLine, ch: startCh } = start;
@@ -404,6 +410,7 @@ class MarkdownEditor extends CodeMirrorExt {
     }
 
     this._markText(openDelimEnd, closeDelimStart, 'tui-md-marked-text');
+    this._markCodeBlockLine(startLine, endLine);
   }
 
   _markTextInListItemChildren(node, className) {

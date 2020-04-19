@@ -81,6 +81,12 @@
   background-color: #f9f2f4;
 }
 
+.tui-md-code-block.CodeMirror-linebackground {
+  left: 20px;
+  right: 20px;
+  background-color: #f5f7f8;
+}
+
 .tui-md-code.tui-md-marked-text,
 .tui-md-code-block.tui-md-marked-text {
   font-family: Consolas, Courier, 'Apple SD 산돌고딕 Neo', -apple-system, 'Lucida Grande',
