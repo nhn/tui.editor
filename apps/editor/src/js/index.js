@@ -4,8 +4,9 @@
  */
 import Editor from './editor';
 
-import '../css/toastui-editor.css';
-import '../css/toastui-editor-contents.css';
+import '../css/editor.css';
+import '../css/contents.css';
+import '../css/md-syntax-highlighting.css';
 
 import './i18n/en-us';
 

@@ -21,16 +21,6 @@ import {
 
 const keyMapper = KeyMapper.getSharedInstance();
 
-const tokenTypes = {
-  strong: 'strong',
-  emph: 'em',
-  strike: 'strikethrough',
-  thematicBreak: 'hr',
-  blockQuote: 'quote',
-  code: 'comment',
-  codeBlock: 'comment'
-};
-
 const defaultState = {
   strong: false,
   emph: false,
@@ -48,6 +38,11 @@ const defaultState = {
 };
 
 const ATTR_NAME_MARK = 'data-tui-mark';
+const MARKED_DELIM_SIZE = {
+  strong: 2,
+  emph: 1,
+  strike: 2
+};
 
 /**
  * Class MarkdownEditor
@@ -273,16 +268,27 @@ class MarkdownEditor extends CodeMirrorExt {
             const [endLine, endCh] = endPosition;
             const start = { line: startLine - 1, ch: startCh - 1 };
             const end = { line: endLine - 1, ch: endCh };
-            const extraNode = tokenTypes[type];
 
             if (type === 'heading') {
-              this._markText(start, end, `cm-header cm-header-${node.level}`);
-            } else if (extraNode) {
-              this._markText(start, end, `cm-${extraNode}`);
+              this._markHeading(node, start, end);
+            } else if (type === 'thematicBreak') {
+              this._markText(start, end, 'tui-md-thematic-break');
+            } else if (type === 'strong' || type === 'emph' || type === 'strike') {
+              this._markEmphasisAndStrikethrough(node, start, end);
             } else if (type === 'image' || type === 'link') {
-              this._markTextInLinkOrImage(node, start, end);
+              this._markLinkOrImage(node, start, end);
+            } else if (type === 'table') {
+              this._markText(start, end, 'tui-md-table');
+            } else if (type === 'tableCell') {
+              this._markText(start, end, 'tui-md-marked-text');
+            } else if (type === 'code') {
+              this._markCode(node, start, end);
+            } else if (type === 'codeBlock') {
+              this._markCodeBlock(node, start, end);
+            } else if (type === 'blockQuote') {
+              this._markBlockQuote(node, start, end);
             } else if (type === 'item') {
-              this._markTextInListItem(node, start, end);
+              this._markListItem(node, start, end);
             }
           }
           event = walker.next();
@@ -298,32 +304,131 @@ class MarkdownEditor extends CodeMirrorExt {
     this.cm.markText(start, end, { className, attributes });
   }
 
-  _markTextInLinkOrImage(node, start, end) {
+  _markHeading(node, start, end) {
+    const { level } = node;
+    const { line: startLine, ch: startCh } = start;
+    const delimEnd = { line: startLine, ch: startCh + level };
+
+    this._markText(start, end, `tui-md-heading tui-md-heading${level}`);
+    this._markText(start, delimEnd, 'tui-md-delimiter');
+  }
+
+  _markEmphasisAndStrikethrough(node, start, end) {
+    const { type } = node;
+    const { line: startLine, ch: startCh } = start;
+    const { line: endLine, ch: endCh } = end;
+
+    const openDelimEnd = { line: startLine, ch: startCh + MARKED_DELIM_SIZE[type] };
+    const closeDelimStart = { line: endLine, ch: endCh - MARKED_DELIM_SIZE[type] };
+
+    this._markText(start, end, `tui-md-${type}`);
+    this._markText(start, openDelimEnd, 'tui-md-delimiter');
+    this._markText(closeDelimStart, end, 'tui-md-delimiter');
+  }
+
+  _markLinkOrImage(node, start, end) {
     const { type, lastChild } = node;
     const { line: startLine, ch: startCh } = start;
-    const { line: endLine } = end;
+    const { line: endLine, ch: endCh } = end;
 
-    const descStart = { line: startLine, ch: startCh };
-    let lastChildCh;
+    let descStart = { line: startLine, ch: startCh };
+    let lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 2; // 2: length of '[]'
+
+    this._markText(start, end, `tui-md-link`);
 
     if (type === 'image') {
       const descEnd = { line: startLine, ch: startCh + 1 };
 
+      this._markText(descStart, descEnd, 'tui-md-meta');
+
+      descStart = descEnd;
       lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 3; // 3: length of '![]'
-
-      this._markText(descStart, descEnd, 'cm-image cm-image-marker');
-      this._markText(
-        descEnd,
-        { line: endLine, ch: lastChildCh },
-        'cm-image cm-image-alt-text cm-link'
-      );
-    } else {
-      lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 2; // 2: length of '[]'
-
-      this._markText(descStart, { line: endLine, ch: lastChildCh }, 'cm-link');
     }
 
-    this._markText({ line: endLine, ch: lastChildCh }, end, 'cm-string cm-url');
+    this._markText(descStart, { line: endLine, ch: lastChildCh }, 'tui-md-link-desc');
+    this._markText(
+      { line: startLine, ch: descStart.ch + 1 },
+      { line: endLine, ch: lastChildCh - 1 },
+      'tui-md-marked-text'
+    );
+
+    this._markText({ line: endLine, ch: lastChildCh }, end, 'tui-md-link-url');
+    this._markText(
+      { line: endLine, ch: lastChildCh + 1 },
+      { line: endLine, ch: endCh - 1 },
+      'tui-md-marked-text'
+    );
+  }
+
+  _markCode(node, start, end) {
+    const { tickCount } = node;
+    const { line: startLine, ch: startCh } = start;
+    const { line: endLine, ch: endCh } = end;
+    const openDelimEnd = { line: startLine, ch: startCh + tickCount };
+    const closeDelimStart = { line: endLine, ch: endCh - tickCount };
+
+    this._markText(start, end, 'tui-md-code');
+    this._markText(start, openDelimEnd, 'tui-md-delimiter');
+    this._markText(openDelimEnd, closeDelimStart, 'tui-md-marked-text');
+    this._markText(closeDelimStart, end, 'tui-md-delimiter');
+  }
+
+  _markCodeBlock(node, start, end) {
+    const { fenceOffset, fenceLength, fenceChar, info } = node;
+    const { line: startLine, ch: startCh } = start;
+    const { line: endLine } = end;
+
+    const fenceEnd = fenceOffset + fenceLength;
+    const openDelimEnd = { line: startLine, ch: startCh + fenceEnd };
+
+    this._markText(start, end, `tui-md-code-block`);
+    this._markText(start, openDelimEnd, `tui-md-delimiter`);
+
+    if (info) {
+      this._markText(
+        { line: startLine, ch: fenceEnd },
+        { line: startLine, ch: fenceEnd + info.length },
+        'tui-md-meta'
+      );
+    }
+
+    const lastLineChars = this.cm.getLine(endLine);
+    const codeBlockEnd = `^(\\s{0,${fenceOffset}})(${fenceChar}{${fenceLength},})`;
+    const CLOSED_RX = new RegExp(codeBlockEnd);
+
+    let closeDelimStart = end;
+
+    if (CLOSED_RX.test(lastLineChars)) {
+      closeDelimStart = { line: endLine, ch: 0 };
+      this._markText(closeDelimStart, end, `tui-md-delimiter`);
+    }
+
+    this._markText(openDelimEnd, closeDelimStart, 'tui-md-marked-text');
+  }
+
+  _markTextInListItemChildren(node, className) {
+    while (node) {
+      const { type, sourcepos } = node;
+
+      if (type === 'paragraph' || type === 'codeBlock') {
+        const [startPosition, endPosition] = sourcepos;
+        const start = { line: startPosition[0] - 1, ch: startPosition[1] - 1 };
+        const end = { line: endPosition[0] - 1, ch: endPosition[1] };
+
+        this._markText(start, end, className);
+      }
+      node = node.next;
+    }
+  }
+
+  _markBlockQuote(node, start, end) {
+    if (node.parent && node.parent.type !== 'blockQuote') {
+      this._markText(start, end, `tui-md-block-quote`);
+    }
+
+    if (node.firstChild) {
+      this._markTextInListItemChildren(node.firstChild, 'tui-md-marked-text');
+    }
   }
 
   _getClassNameOfListItem(node) {
@@ -334,46 +439,40 @@ class MarkdownEditor extends CodeMirrorExt {
       depth += 1;
     }
 
-    const listItemTokens = ['variable-2', 'variable-3', 'keyword'];
-    const className = listItemTokens[depth % 3];
+    const newClassNames = ['tui-md-list-item-odd', 'tui-md-list-item-even'];
+    const newClassName = newClassNames[depth % 2];
 
-    return `cm-${className}`;
+    // @TODO remove it in the next major version
+    // these class names are for the legacy style 'old.css'
+    const oldClassNames = ['first', 'second', 'third'];
+    const oldClassName = oldClassNames[depth % 3];
+
+    return `tui-md-list-item ${newClassName} ${oldClassName}`;
   }
 
-  _markTextInListItemChildren(node, className) {
-    while (node) {
-      const { type, sourcepos } = node;
-
-      if (type === 'paragraph' || type === 'codeBlock') {
-        const [startPosistion, endPosition] = sourcepos;
-        const start = { line: startPosistion[0] - 1, ch: startPosistion[1] - 1 };
-        const end = { line: endPosition[0] - 1, ch: endPosition[1] };
-
-        this._markText(start, end, className);
-      }
-      node = node.next;
-    }
-  }
-
-  _markTextInListItem(node, start) {
+  _markListItem(node, start) {
     const className = this._getClassNameOfListItem(node);
     const { padding, task } = node.listData;
 
-    this._markText(
-      { line: start.line, ch: start.ch },
-      { line: start.line, ch: start.ch + padding },
-      className
-    );
+    const { line, ch } = start;
+    const chWithPadding = ch + padding;
+
+    this._markText(start, { line, ch: chWithPadding }, `${className} tui-md-list-item-bullet`);
 
     if (task) {
       this._markText(
-        { line: start.line, ch: start.ch + padding },
-        { line: start.line, ch: start.ch + padding + 3 },
-        'cm-meta'
+        { line, ch: chWithPadding },
+        { line, ch: chWithPadding + 3 },
+        `${className} tui-md-delimiter`
+      );
+      this._markText(
+        { line, ch: chWithPadding + 1 },
+        { line, ch: chWithPadding + 2 },
+        'tui-md-meta'
       );
     }
 
-    this._markTextInListItemChildren(node.firstChild, className);
+    this._markTextInListItemChildren(node.firstChild, `${className} tui-md-marked-text`);
   }
 
   /**

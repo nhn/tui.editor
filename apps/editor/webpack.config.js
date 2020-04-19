@@ -105,9 +105,23 @@ function addFileManagerPlugin(config) {
   // empty JavaScript files are created. (e.g. toastui-editor-layout.js)
   // These files are unnecessary, so use the FileManager plugin to delete them.
   const options = minify
-    ? [{ delete: ['./dist/cdn/toastui-editor-layout.min.js'] }]
+    ? [
+        {
+          delete: [
+            './dist/cdn/toastui-editor-layout.min.js',
+            './dist/cdn/toastui-editor-old.min.js',
+            './dist/cdn/toastui-editor-viewer-old.min.js'
+          ]
+        }
+      ]
     : [
-        { delete: ['./dist/toastui-editor-layout.js'] },
+        {
+          delete: [
+            './dist/toastui-editor-layout.js',
+            './dist/toastui-editor-old.js',
+            './dist/toastui-editor-viewer-old.js'
+          ]
+        },
         { copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }] }
       ];
 
@@ -167,7 +181,10 @@ function setProductionConfig(config) {
   config.entry = {
     editor: ENTRY_EDITOR,
     'editor-viewer': ENTRY_VIEWER,
-    'editor-layout': './src/css/toastui-editor.css'
+    'editor-layout': './src/css/editor.css',
+    // legacy styles
+    'editor-old': './src/js/indexOldStyle.js',
+    'editor-viewer-old': './src/css/old/contents.css'
   };
 
   addFileManagerPlugin(config);
