@@ -85,7 +85,7 @@ module.exports = function(config) {
     frameworks: ['jasmine-ajax', 'jasmine-jquery', 'jasmine'],
     files: [
       'node_modules/codemirror/lib/codemirror.css',
-      'src/css/toastui-editor.css',
+      'src/css/editor.css',
       'test/unit/fixtures/*.html',
       'test/unit/index.js'
     ],

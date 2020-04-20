@@ -9,7 +9,7 @@ describe('Editor', () => {
 
   beforeEach(() => {
     jasmine.getStyleFixtures().fixturesPath = '/base';
-    loadStyleFixtures('node_modules/codemirror/lib/codemirror.css', 'src/css/toastui-editor.css');
+    loadStyleFixtures('node_modules/codemirror/lib/codemirror.css', 'src/css/editor.css');
     container = document.createElement('div');
     document.body.appendChild(container);
   });

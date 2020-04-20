@@ -10,7 +10,7 @@ describe('ScrollSyncSplit', () => {
 
   beforeEach(done => {
     jasmine.getStyleFixtures().fixturesPath = '/base';
-    loadStyleFixtures('src/css/toastui-editor.css');
+    loadStyleFixtures('src/css/editor.css');
 
     container = document.createElement('div');
     container.style.position = 'relative';

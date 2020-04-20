@@ -37,7 +37,7 @@ describe('DefaultToolbar', () => {
 
   beforeEach(() => {
     jasmine.getStyleFixtures().fixturesPath = '/base';
-    loadStyleFixtures('src/css/toastui-editor.css');
+    loadStyleFixtures('src/css/editor.css');
 
     $container = $('<div style="width: 500px;">');
     $('body').append($container);
