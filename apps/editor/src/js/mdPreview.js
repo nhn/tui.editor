@@ -13,7 +13,22 @@ import domUtils from './utils/dom';
 import { getHTMLRenderConvertors } from './htmlRenderConvertors';
 import { findAdjacentElementToScrollTop } from './scroll/helper';
 import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
-import { isInlineNode, findClosestNode } from './utils/markdown';
+import { isInlineNode, findClosestNode, getMdStartCh } from './utils/markdown';
+
+export const CLASS_HIGHLIGHT = 'te-preview-highlight';
+
+function findTableCell(tableRow, { ch }) {
+  let cell = tableRow.firstChild;
+
+  while (cell && cell.next) {
+    if (getMdStartCh(cell.next) > ch + 1) {
+      break;
+    }
+    cell = cell.next;
+  }
+
+  return cell;
+}
 
 /**
  * Class Markdown Preview
@@ -55,8 +70,8 @@ class MarkdownPreview extends Preview {
     // need to implement a listener function for 'previewNeedsRefresh' event
     // to support third-party plugins which requires re-executing script for every re-render
 
-    this.eventManager.listen('cursorActivity', ({ markdownNode }) => {
-      this._updateCursorNode(markdownNode);
+    this.eventManager.listen('cursorActivity', ({ markdownNode, cursor }) => {
+      this._updateCursorNode(markdownNode, cursor);
     });
 
     on(this.el, 'scroll', event => {
@@ -67,10 +82,15 @@ class MarkdownPreview extends Preview {
     });
   }
 
-  _updateCursorNode(cursorNode) {
+  _updateCursorNode(cursorNode, cursorPos) {
     if (cursorNode) {
       cursorNode = findClosestNode(cursorNode, mdNode => !isInlineNode(mdNode));
+
+      if (cursorNode.type === 'tableRow') {
+        cursorNode = findTableCell(cursorNode, cursorPos);
+      }
     }
+
     const cursorNodeId = cursorNode ? cursorNode.id : null;
 
     if (this._cursorNodeId === cursorNodeId) {
@@ -81,10 +101,10 @@ class MarkdownPreview extends Preview {
     const newEL = this._getElementByNodeId(cursorNodeId);
 
     if (oldEL) {
-      removeClass(oldEL, 'highlight-node');
+      removeClass(oldEL, CLASS_HIGHLIGHT);
     }
     if (newEL) {
-      addClass(newEL, 'highlight-node');
+      addClass(newEL, CLASS_HIGHLIGHT);
     }
 
     this._cursorNodeId = cursorNodeId;

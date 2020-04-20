@@ -2,6 +2,7 @@ const baseConvertors = {
   paragraph(_, { entering }) {
     return {
       type: entering ? 'openTag' : 'closeTag',
+      outerNewLine: true,
       tagName: 'p'
     };
   },

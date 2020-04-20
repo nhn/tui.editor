@@ -38,16 +38,30 @@ function generateTableCells(
   const cells = [];
   for (const content of contents) {
     const preSpaces = content.match(/^[ \t]+/);
-    const offset = preSpaces ? preSpaces[0].length : 0;
-    const trimmed = content.trim();
-    const chPosStart = chPos + offset;
+    let paddingLeft = preSpaces ? preSpaces[0].length : 0;
+    let paddingRight, trimmed;
+
+    if (paddingLeft === content.length) {
+      paddingLeft = 0;
+      paddingRight = 0;
+      trimmed = '';
+    } else {
+      const postSpaces = content.match(/[ \t]+$/);
+      paddingRight = postSpaces ? postSpaces[0].length : 0;
+      trimmed = content.slice(paddingLeft, content.length - paddingRight);
+    }
+
+    const chPosStart = chPos + paddingLeft;
     const tableCell = createNode(cellType, [
-      [lineNum, chPosStart],
-      [lineNum, chPosStart + trimmed.length - 1]
+      [lineNum, chPos],
+      [lineNum, chPos + content.length - 1]
     ]) as TableCellNode;
+
     tableCell.stringContent = trimmed.replace(/\\\|/g, '|'); // replace esacped pipe(\|)
     tableCell.columnIdx = cells.length;
     tableCell.lineOffsets = [chPosStart - 1];
+    tableCell.paddingLeft = paddingLeft;
+    tableCell.paddingRight = paddingRight;
     cells.push(tableCell);
 
     chPos += content.length + 1;
