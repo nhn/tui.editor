@@ -334,10 +334,18 @@ describe('SquireExt', () => {
   });
 
   describe('sanitize content', () => {
-    it('empty figure element should be remove', () => {
-      sqe.insertHTML('<figure class="custom"></figure>Hello');
+    it('empty figure element should be removed', () => {
+      sqe.insertHTML('<p>Hello</p><figure class="custom"></figure><p>Hello</p>', true);
 
-      expect(sqe.getHTML()).toBe('<div>Hello<br></div>');
+      expect(sqe.getHTML()).toBe('<div>Hello<br></div><p>Hello<br></p><div><br></div>');
+    });
+
+    it('non-empty figure element should not be removed', () => {
+      sqe.insertHTML('<p>Hello</p><figure><img src="url" /></figure><p>World</p>', true);
+
+      expect(sqe.getHTML()).toBe(
+        '<div>Hello<br></div><figure><img src="url"><br></figure><p>World<br></p><div><br></div>'
+      );
     });
   });
 });
