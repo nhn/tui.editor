@@ -9,6 +9,7 @@ import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import { createMarkdownToHTML } from './markdownToHTML';
 
 import { sendHostName, sanitizeLinkAttribute } from './utils/common';
 
@@ -111,10 +112,12 @@ const __nedInstance = [];
  *     @param {Array.<string|toolbarItemsValue>} [options.toolbarItems] - toolbar items.
  *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
+ *     @param {Object} [options.extendedAutolinks] - Using extended Autolinks specified in GFM spec
  *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
+ *     @param {boolean} [options.useReferenceDefinition=false] - whether use the specification of link reference definition
  *     @param {boolean} [options.multipleImageUpload=false] - whether upload multiple image
  */
 class ToastUIEditor {
@@ -156,8 +159,10 @@ class ToastUIEditor {
         ],
         hideModeSwitch: false,
         linkAttribute: null,
+        extendedAutolinks: false,
         customConvertor: null,
         customHTMLRenderer: null,
+        useReferenceDefinition: false,
         multipleImageUpload: false
       },
       options
@@ -174,8 +179,13 @@ class ToastUIEditor {
     });
 
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
-    const { customHTMLRenderer } = this.options;
-    const rendererOptions = { linkAttribute, customHTMLRenderer };
+    const { customHTMLRenderer, extendedAutolinks, useReferenceDefinition } = this.options;
+    const rendererOptions = {
+      linkAttribute,
+      customHTMLRenderer,
+      extendedAutolinks,
+      useReferenceDefinition
+    };
 
     if (this.options.customConvertor) {
       // eslint-disable-next-line new-cap
@@ -204,7 +214,9 @@ class ToastUIEditor {
     this.setUI(this.options.UI || new DefaultUI(this));
 
     this.toastMark = new ToastMark('', {
-      disallowedHtmlBlockTags: ['br']
+      disallowedHtmlBlockTags: ['br'],
+      extendedAutolinks,
+      useReferenceDefinition
     });
 
     this.mdEditor = MarkdownEditor.factory(
@@ -810,6 +822,10 @@ class ToastUIEditor {
     i18n.setLanguage(code, data);
   }
 }
+
+// (Not an official API)
+// Create a function converting markdown to HTML using the internal parser and renderer.
+ToastUIEditor._createMarkdownToHTML = createMarkdownToHTML;
 
 /**
  * Check whether is viewer (using in plugins)

@@ -239,7 +239,7 @@ const paragraph: BlockHandler = {
     // try parsing the beginning as link reference definitions:
     while (
       peek(block.stringContent, 0) === C_OPEN_BRACKET &&
-      (pos = parser.inlineParser.parseReference(block.stringContent, parser.refmap))
+      (pos = parser.inlineParser.parseReference(block, parser.refMap))
     ) {
       block.stringContent = block.stringContent.slice(pos);
       hasReferenceDefs = true;
@@ -248,6 +248,17 @@ const paragraph: BlockHandler = {
       block.unlink();
     }
   },
+  canContain() {
+    return false;
+  },
+  acceptsLines: true
+};
+
+const refDef: BlockHandler = {
+  continue() {
+    return Process.Stop;
+  },
+  finalize() {},
   canContain() {
     return false;
   },
@@ -270,5 +281,6 @@ export const blockHandlers = {
   tableRow,
   tableCell,
   tableDelimRow,
-  tableDelimCell
+  tableDelimCell,
+  refDef
 };

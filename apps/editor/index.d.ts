@@ -60,6 +60,8 @@ declare namespace toastui {
     customConvertor?: Convertor;
     placeholder?: string;
     linkAttribute?: object;
+    extendedAutolinks?: boolean;
+    useReferenceDefinition?: boolean;
     multipleImageUpload?: boolean;
   }
 
@@ -72,6 +74,8 @@ declare namespace toastui {
     events?: EventMap;
     hooks?: EventMap | { previewBeforeHook: Function };
     plugins?: Plugin[];
+    extendedAutolinks?: boolean;
+    useReferenceDefinition?: boolean;
   }
 
   interface MarkdownEditorOptions {

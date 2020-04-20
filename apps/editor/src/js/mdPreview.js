@@ -58,7 +58,12 @@ class MarkdownPreview extends Preview {
   }
 
   update(changed) {
-    const { nodes, removedNodeRange } = changed;
+    changed.forEach(editResult => this.replaceRangeNodes(editResult));
+    this.eventManager.emit('previewRenderAfter', this);
+  }
+
+  replaceRangeNodes(editResult) {
+    const { nodes, removedNodeRange } = editResult;
     const contentEl = this._previewContent;
     const newHtml = this.eventManager.emitReduce(
       'convertorAfterMarkdownToHtmlConverted',
@@ -89,7 +94,6 @@ class MarkdownPreview extends Preview {
         }
       }
     }
-    this.eventManager.emit('previewRenderAfter', this);
 
     const codeBlockEls = this.getCodeBlockElements(nodes.map(node => node.id));
 

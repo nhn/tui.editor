@@ -16,19 +16,19 @@ if (String.fromCodePoint) {
 } else {
   const stringFromCharCode = String.fromCharCode;
   const floor = Math.floor;
-  fromCodePoint = function() {
+  fromCodePoint = function(...args) {
     const MAX_SIZE = 0x4000;
     const codeUnits = [];
     let highSurrogate: number;
     let lowSurrogate: number;
     let index = -1;
-    const length = arguments.length;
+    const length = args.length;
     if (!length) {
       return '';
     }
     let result = '';
     while (++index < length) {
-      let codePoint = Number(arguments[index]);
+      let codePoint = Number(args[index]);
       if (
         !isFinite(codePoint) || // `NaN`, `+Infinity`, or `-Infinity`
         codePoint < 0 || // not a valid Unicode code point
@@ -49,7 +49,7 @@ if (String.fromCodePoint) {
         codeUnits.push(highSurrogate, lowSurrogate);
       }
       if (index + 1 === length || codeUnits.length > MAX_SIZE) {
-        result += stringFromCharCode.apply(null, codeUnits);
+        result += stringFromCharCode(...codeUnits);
         codeUnits.length = 0;
       }
     }

@@ -210,3 +210,35 @@ export function toString(node: Node | null) {
 export function findNodeById(id: number) {
   return getNodeById(id) || null;
 }
+
+export function invokeNextUntil(callback: Function, start: Node | null, end: Node | null = null) {
+  if (start) {
+    const walker = start.walker();
+    while (start && start !== end) {
+      callback(start);
+      const next = walker.next();
+      if (next) {
+        start = next.node;
+      } else {
+        break;
+      }
+    }
+  }
+}
+
+export function isUnlinked(id: number) {
+  let node = findNodeById(id);
+
+  if (!node) {
+    return true;
+  }
+
+  while (node && node.type !== 'document') {
+    // eslint-disable-next-line no-loop-func
+    if (!node.parent && !node.prev && !node.next) {
+      return true;
+    }
+    node = node.parent!;
+  }
+  return false;
+}
