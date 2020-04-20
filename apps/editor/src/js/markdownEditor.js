@@ -38,7 +38,7 @@ const defaultState = {
 };
 
 const ATTR_NAME_MARK = 'data-tui-mark';
-const MARKED_DELIM_SIZE = {
+const delimSize = {
   strong: 2,
   emph: 1,
   strike: 2
@@ -306,20 +306,15 @@ class MarkdownEditor extends CodeMirrorExt {
 
   _markHeading(node, start, end) {
     const { level } = node;
-    const { line: startLine, ch: startCh } = start;
-    const delimEnd = { line: startLine, ch: startCh + level };
 
     this._markText(start, end, `tui-md-heading tui-md-heading${level}`);
-    this._markText(start, delimEnd, 'tui-md-delimiter');
+    this._markText(start, { line: start.line, ch: start.ch + level }, 'tui-md-delimiter');
   }
 
   _markEmphasisAndStrikethrough(node, start, end) {
     const { type } = node;
-    const { line: startLine, ch: startCh } = start;
-    const { line: endLine, ch: endCh } = end;
-
-    const openDelimEnd = { line: startLine, ch: startCh + MARKED_DELIM_SIZE[type] };
-    const closeDelimStart = { line: endLine, ch: endCh - MARKED_DELIM_SIZE[type] };
+    const openDelimEnd = { line: start.line, ch: start.ch + delimSize[type] };
+    const closeDelimStart = { line: end.line, ch: end.ch - delimSize[type] };
 
     this._markText(start, end, `tui-md-${type}`);
     this._markText(start, openDelimEnd, 'tui-md-delimiter');
@@ -328,34 +323,32 @@ class MarkdownEditor extends CodeMirrorExt {
 
   _markLinkOrImage(node, start, end) {
     const { type, lastChild } = node;
-    const { line: startLine, ch: startCh } = start;
-    const { line: endLine, ch: endCh } = end;
 
-    let descStart = { line: startLine, ch: startCh };
-    let lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 2; // 2: length of '[]'
+    let linkTextStart = start;
+    let lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 2; // 2: length of '[]'
 
     this._markText(start, end, `tui-md-link`);
 
     if (type === 'image') {
-      const descEnd = { line: startLine, ch: startCh + 1 };
+      const linkTextEnd = { line: start.line, ch: start.ch + 1 };
 
-      this._markText(descStart, descEnd, 'tui-md-meta');
+      this._markText(linkTextStart, linkTextEnd, 'tui-md-meta');
 
-      descStart = descEnd;
-      lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 3; // 3: length of '![]'
+      linkTextStart = linkTextEnd;
+      lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 3; // 3: length of '![]'
     }
 
-    this._markText(descStart, { line: endLine, ch: lastChildCh }, 'tui-md-link-desc');
+    this._markText(linkTextStart, { line: end.line, ch: lastChildCh }, 'tui-md-link-desc');
     this._markText(
-      { line: startLine, ch: descStart.ch + 1 },
-      { line: endLine, ch: lastChildCh - 1 },
+      { line: start.line, ch: linkTextStart.ch + 1 },
+      { line: end.line, ch: lastChildCh - 1 },
       'tui-md-marked-text'
     );
 
-    this._markText({ line: endLine, ch: lastChildCh }, end, 'tui-md-link-url');
+    this._markText({ line: end.line, ch: lastChildCh }, end, 'tui-md-link-url');
     this._markText(
-      { line: endLine, ch: lastChildCh + 1 },
-      { line: endLine, ch: endCh - 1 },
+      { line: end.line, ch: lastChildCh + 1 },
+      { line: end.line, ch: end.ch - 1 },
       'tui-md-marked-text'
     );
   }
@@ -415,14 +408,14 @@ class MarkdownEditor extends CodeMirrorExt {
 
   _markTextInListItemChildren(node, className) {
     while (node) {
-      const { type, sourcepos } = node;
+      const { type } = node;
 
       if (type === 'paragraph' || type === 'codeBlock') {
-        const [startPosition, endPosition] = sourcepos;
-        const start = { line: startPosition[0] - 1, ch: startPosition[1] - 1 };
-        const end = { line: endPosition[0] - 1, ch: endPosition[1] };
-
-        this._markText(start, end, className);
+        this._markText(
+          { line: getMdStartLine(node) - 1, ch: getMdStartCh(node) - 1 },
+          { line: getMdEndLine(node) - 1, ch: getMdEndCh(node) },
+          className
+        );
       }
       node = node.next;
     }
