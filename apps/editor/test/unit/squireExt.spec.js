@@ -297,10 +297,10 @@ describe('SquireExt', () => {
       );
       sqe.moveCursorToEnd();
 
-      const inputEL = domUtil.createElementWith('<input type="text" id="myInput" />');
-
-      document.body.appendChild(inputEL);
-
+      const inputEL = domUtil.createElementWith(
+        '<input type="text" id="myInput" />',
+        document.body
+      );
       const scrollTop = sqe.scrollTop();
 
       inputEL.focus();
