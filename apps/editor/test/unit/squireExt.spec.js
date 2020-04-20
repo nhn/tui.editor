@@ -2,32 +2,32 @@
  * @fileoverview test squire extension
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import $ from 'jquery';
-
+import css from 'tui-code-snippet/domUtil/css';
 import SquireExt from '@/squireExt';
 import { isMac } from '@/utils/common';
+import domUtil from '@/utils/dom';
 
 describe('SquireExt', () => {
   let sqe;
 
   beforeEach(() => {
-    const $container = $('<div />');
+    const container = document.createElement('div');
 
-    $container.css({
+    css(container, {
       overflow: 'auto',
-      height: 30
+      height: '30px'
     });
 
-    $('body').append($container);
+    document.body.appendChild(container);
 
-    sqe = new SquireExt($container[0], {
+    sqe = new SquireExt(container, {
       blockTag: 'DIV'
     });
     sqe.focus();
   });
 
   afterEach(() => {
-    $('body').empty();
+    document.body.innerHTML = '';
     sqe = null;
   });
 
@@ -297,11 +297,13 @@ describe('SquireExt', () => {
       );
       sqe.moveCursorToEnd();
 
-      $('body').append('<input type="text" id="myInput" />');
-
+      const inputEL = domUtil.createElementWith(
+        '<input type="text" id="myInput" />',
+        document.body
+      );
       const scrollTop = sqe.scrollTop();
 
-      $('#myInput').focus();
+      inputEL.focus();
       sqe.focus();
 
       expect(sqe.scrollTop()).toEqual(scrollTop);

@@ -725,4 +725,26 @@ describe('WysiwygEditor', () => {
       expect(wwe.isInTable(range)).toEqual(true);
     });
   });
+
+  describe('inside code-block ', () => {
+    it('enter key should not add link elements for URL-like string', () => {
+      const sqe = wwe.getEditor();
+      const range = sqe.getSelection().cloneRange();
+
+      sqe.setHTML('<pre data-te-codeblock="">http://nhn.com</pre>');
+
+      const codeBlock = wwe.getBody().querySelector('pre');
+      const urlText = codeBlock.firstChild;
+
+      range.setStartAfter(urlText);
+      sqe.setSelection(range);
+
+      sqe.fireEvent('keydown', {
+        keyCode: 13,
+        preventDefault: () => {}
+      });
+
+      expect(codeBlock.firstChild).toBe(urlText);
+    });
+  });
 });

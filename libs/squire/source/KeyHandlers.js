@@ -157,7 +157,12 @@ var keyHandlers = {
         // Remove any zws so we don't think there's content in an empty
         // block.
         self._recordUndoState( range );
-        addLinks( range.startContainer, root, self );
+
+        // TOAST-UI Editor: prevent adding links inside code-block element
+        if (!getNearest(range.startContainer, root, 'PRE', { 'data-te-codeblock': '' })) {
+            addLinks( range.startContainer, root, self );
+        }
+
         self._removeZWS();
         self._getRangeAndRemoveBookmark( range );
 
