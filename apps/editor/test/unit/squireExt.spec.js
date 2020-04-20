@@ -332,4 +332,12 @@ describe('SquireExt', () => {
       }, 1);
     });
   });
+
+  describe('sanitize content', () => {
+    it('empty figure element should be remove', () => {
+      sqe.insertHTML('<figure class="custom"></figure>Hello');
+
+      expect(sqe.getHTML()).toBe('<div>Hello<br></div>');
+    });
+  });
 });
