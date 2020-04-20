@@ -308,7 +308,11 @@ var removeEmptyInlines = function removeEmptyInlines ( node ) {
         child = children[l];
         if ( child.nodeType === ELEMENT_NODE && !isLeaf( child ) ) {
             removeEmptyInlines( child );
-            if ( isInline( child ) && !child.firstChild ) {
+
+            // TOAST-UI Editor: remove empty blocks (only consider 'figure' tag currently)
+            var invalidEmptyBlock = child.tagName === 'FIGURE';
+
+            if ( (isInline( child ) || invalidEmptyBlock) && !child.firstChild ) {
                 node.removeChild( child );
             }
         } else if ( child.nodeType === TEXT_NODE && !child.data ) {
