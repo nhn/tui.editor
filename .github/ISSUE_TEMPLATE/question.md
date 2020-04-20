@@ -1,6 +1,6 @@
 ---
 name: Question
-about: Create a question about grid
+about: Create a question about the Editor
 title: ''
 labels: Question
 assignees: ''
@@ -23,7 +23,7 @@ A clear and concise description of what the question is.
 If applicable, add screenshots to help explain your question.
 
 ## Version
-Write the version of the grid you are currently using.
+Write the version of the Editor you are currently using.
 
 ## Additional context
 Add any other context about the problem here.
