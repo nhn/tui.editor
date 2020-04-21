@@ -116,16 +116,6 @@ function code(node, start, end) {
   };
 }
 
-function getClassNamesOfCodeBlockLine(startLine, endLine) {
-  const classNames = [];
-
-  for (let index = startLine; index <= endLine; index += 1) {
-    classNames.push({ line: index, className: classNameMap.CODE_BLOCK });
-  }
-
-  return classNames;
-}
-
 function codeBlock(node, start, end, endLine) {
   const { fenceOffset, fenceLength, fenceChar, info } = node;
   const fenceEnd = fenceOffset + fenceLength;
@@ -151,11 +141,14 @@ function codeBlock(node, start, end, endLine) {
     marks.push(markInfo(closeDelimStart, end, classNameMap.DELIM));
   }
 
-  marks.push(markInfo(openDelimEnd, closeDelimStart, classNameMap.TEXT));
-
-  const lineClassNames = getClassNamesOfCodeBlockLine(start.line, end.line);
-
-  return { marks, lineClassNames };
+  return {
+    marks: [...marks, markInfo(openDelimEnd, closeDelimStart, classNameMap.TEXT)],
+    lineBackground: {
+      start: start.line,
+      end: end.line,
+      className: classNameMap.CODE_BLOCK
+    }
+  };
 }
 
 function markListItemChildren(node, className) {

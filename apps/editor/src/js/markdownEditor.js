@@ -71,11 +71,11 @@ class MarkdownEditor extends CodeMirrorExt {
     this._latestState = null;
 
     /**
-     * informations of marked lines
-     * @type {Array.<Object>}
+     * map of marked lines
+     * @type {Object.<number, boolean}
      * @private
      */
-    this._markedLines = [];
+    this._markedLines = {};
 
     this._initEvent();
   }
@@ -277,11 +277,11 @@ class MarkdownEditor extends CodeMirrorExt {
   }
 
   _removeBackgroundOfLines() {
-    this._markedLines.forEach(({ line, className }) => {
-      this.cm.removeLineClass(line, 'background', className);
+    // @TODO: change from 'this._markedLines' to 'removedNodeRange' of ToastMark
+    Object.keys(this._markedLines).forEach(line => {
+      this.cm.removeLineClass(Number(line), 'background', 'tui-md-code-block');
+      this._markedLines[line] = false;
     });
-
-    this._markedLines = [];
   }
 
   _markNode(node) {
@@ -290,7 +290,8 @@ class MarkdownEditor extends CodeMirrorExt {
     const markInfo = getMarkInfo(node, from, to, this.cm.getLine(to.line));
 
     if (markInfo) {
-      const { marks = [], lineClassNames = [] } = markInfo;
+      const { marks = [], lineBackground } = markInfo;
+      const { start: startLine, end: endLine, className: lineClassName } = lineBackground;
 
       marks.forEach(({ start, end, className }) => {
         const attributes = { [ATTR_NAME_MARK]: '' };
@@ -298,10 +299,10 @@ class MarkdownEditor extends CodeMirrorExt {
         this.cm.markText(start, end, { className, attributes });
       });
 
-      lineClassNames.forEach(({ line, className }) => {
-        this.cm.addLineClass(line, 'background', className);
-        this._markedLines.push({ line, className });
-      });
+      for (let index = startLine; index <= endLine; index += 1) {
+        this.cm.addLineClass(index, 'background', lineClassName);
+        this._markedLines[index] = true;
+      }
     }
   }
 
