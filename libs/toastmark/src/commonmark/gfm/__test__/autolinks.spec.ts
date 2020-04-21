@@ -1,33 +1,34 @@
 import { Parser } from '../../blocks';
 import { createRenderHTML } from '../../../html/render';
 import { LinkNode } from '../../node';
+import { pos } from '../../__test__/helper.spec';
 import { parseUrlLink, parseEmailLink } from '../autoLinks';
 
 describe('parseUrlLink()', () => {
   // https://github.github.com/gfm/#extended-www-autolink
   // https://github.github.com/gfm/#extended-url-autolink
   it('domain not preceeded by www is invalid', () => {
-    expect(parseUrlLink('nhn.com')).toBeNull();
-    expect(parseUrlLink('ui.toast.com')).toBeNull();
+    expect(parseUrlLink('nhn.com')).toEqual([]);
+    expect(parseUrlLink('ui.toast.com')).toEqual([]);
   });
 
   it('domain preceeded by www with less than 2 periods(.) is invalid', () => {
-    expect(parseUrlLink('www.nhn')).toBeNull();
+    expect(parseUrlLink('www.nhn')).toEqual([]);
   });
 
   it('domain preceeded by www is valid', () => {
     expect(parseUrlLink('www.nhn.com')).toEqual([
       {
-        linkText: 'www.nhn.com',
-        destination: `http://www.nhn.com`,
+        text: 'www.nhn.com',
+        url: `http://www.nhn.com`,
         range: [0, 10]
       }
     ]);
 
     expect(parseUrlLink('Visit www.nhn.com Now!')).toEqual([
       {
-        linkText: 'www.nhn.com',
-        destination: `http://www.nhn.com`,
+        text: 'www.nhn.com',
+        url: `http://www.nhn.com`,
         range: [6, 16]
       }
     ]);
@@ -36,16 +37,16 @@ describe('parseUrlLink()', () => {
   it('domain preceeded by http(s):// is valid', () => {
     expect(parseUrlLink('http://nhn.com')).toEqual([
       {
-        linkText: 'http://nhn.com',
-        destination: `http://nhn.com`,
+        text: 'http://nhn.com',
+        url: `http://nhn.com`,
         range: [0, 13]
       }
     ]);
 
     expect(parseUrlLink('https://nhn.com')).toEqual([
       {
-        linkText: 'https://nhn.com',
-        destination: `https://nhn.com`,
+        text: 'https://nhn.com',
+        url: `https://nhn.com`,
         range: [0, 14]
       }
     ]);
@@ -54,8 +55,8 @@ describe('parseUrlLink()', () => {
   it('zero or more non-space non-< characters may follow', () => {
     expect(parseUrlLink('www.nhn.com/help<me')).toEqual([
       {
-        linkText: 'www.nhn.com/help',
-        destination: `http://www.nhn.com/help`,
+        text: 'www.nhn.com/help',
+        url: `http://www.nhn.com/help`,
         range: [0, 15]
       }
     ]);
@@ -74,8 +75,8 @@ describe('parseUrlLink()', () => {
       ['https://nhn.com/~help~', 'https://nhn.com/~help']
     ];
 
-    pairs.forEach(([input, linkText]) => {
-      expect(parseUrlLink(input)![0].linkText).toBe(linkText);
+    pairs.forEach(([input, text]) => {
+      expect(parseUrlLink(input)![0].text).toBe(text);
     });
   });
 
@@ -91,8 +92,8 @@ describe('parseUrlLink()', () => {
       ['(https://nhn.com/)))(ui))', 'https://nhn.com/)))(ui)']
     ];
 
-    pairs.forEach(([input, linkText]) => {
-      expect(parseUrlLink(input)![0].linkText).toBe(linkText);
+    pairs.forEach(([input, text]) => {
+      expect(parseUrlLink(input)![0].text).toBe(text);
     });
   });
 
@@ -105,21 +106,21 @@ describe('parseUrlLink()', () => {
       ['https://nhn.com/ui&?grid;', 'https://nhn.com/ui&?grid;']
     ];
 
-    pairs.forEach(([input, linkText]) => {
-      expect(parseUrlLink(input)![0].linkText).toBe(linkText);
+    pairs.forEach(([input, text]) => {
+      expect(parseUrlLink(input)![0].text).toBe(text);
     });
   });
 
   it('should handle multiple occurrences', () => {
     expect(parseUrlLink('Hello www.nhn.com and http://toast.com')).toEqual([
       {
-        linkText: 'www.nhn.com',
-        destination: 'http://www.nhn.com',
+        text: 'www.nhn.com',
+        url: 'http://www.nhn.com',
         range: [6, 16]
       },
       {
-        linkText: 'http://toast.com',
-        destination: 'http://toast.com',
+        text: 'http://toast.com',
+        url: 'http://toast.com',
         range: [22, 37]
       }
     ]);
@@ -130,27 +131,27 @@ describe('parseEmailLink', () => {
   it('simple example', () => {
     expect(parseEmailLink('ui@toast.com')).toEqual([
       {
-        linkText: 'ui@toast.com',
-        destination: 'mailto:ui@toast.com',
+        text: 'ui@toast.com',
+        url: 'mailto:ui@toast.com',
         range: [0, 11]
       }
     ]);
 
     expect(parseEmailLink('Hello ui@toast.com guys')).toEqual([
       {
-        linkText: 'ui@toast.com',
-        destination: 'mailto:ui@toast.com',
+        text: 'ui@toast.com',
+        url: 'mailto:ui@toast.com',
         range: [6, 17]
       }
     ]);
   });
 
   it('+ can occur before the @, but not after.', () => {
-    expect(parseEmailLink('ui@to+ast.com')).toBeNull();
+    expect(parseEmailLink('ui@to+ast.com')).toEqual([]);
     expect(parseEmailLink('u+i@toast.com')).toEqual([
       {
-        linkText: 'u+i@toast.com',
-        destination: 'mailto:u+i@toast.com',
+        text: 'u+i@toast.com',
+        url: 'mailto:u+i@toast.com',
         range: [0, 12]
       }
     ]);
@@ -163,27 +164,73 @@ describe('parseEmailLink', () => {
     ];
     const invalids = ['a.b-c_d@a.b-', 'a.b-c_d@a.b_'];
 
-    pairs.forEach(([input, linkText]) => {
-      expect(parseEmailLink(input)![0].linkText).toBe(linkText);
+    pairs.forEach(([input, text]) => {
+      expect(parseEmailLink(input)![0].text).toBe(text);
     });
     invalids.forEach(input => {
-      expect(parseEmailLink(input)).toBeNull();
+      expect(parseEmailLink(input)).toEqual([]);
     });
   });
 
   it('should handle multiple occurrences', () => {
     expect(parseEmailLink('Hello ui@toast.com and file@toast.com')).toEqual([
       {
-        linkText: 'ui@toast.com',
-        destination: 'mailto:ui@toast.com',
+        text: 'ui@toast.com',
+        url: 'mailto:ui@toast.com',
         range: [6, 17]
       },
       {
-        linkText: 'file@toast.com',
-        destination: 'mailto:file@toast.com',
+        text: 'file@toast.com',
+        url: 'mailto:file@toast.com',
         range: [23, 36]
       }
     ]);
+  });
+});
+
+describe('custom autolink parser', () => {
+  const render = createRenderHTML();
+  const reader = new Parser({
+    extendedAutolinks: content => {
+      const regex = /\d{3}/g;
+      const result = [];
+      let matched;
+
+      while ((matched = regex.exec(content))) {
+        const { index } = matched;
+        const text = matched[0];
+        const range: [number, number] = [index, index + text.length - 1];
+        const url = `num:${text}`;
+
+        result.push({ text, url, range });
+      }
+      return result;
+    }
+  });
+
+  it('should parse custom pattern', () => {
+    const root = reader.parse('A 111 B 222');
+    const para = root.firstChild!;
+    const link1 = para.firstChild!.next!;
+    const link2 = link1.next!.next!;
+
+    expect(link1).toMatchObject({
+      destination: 'num:111',
+      sourcepos: pos(1, 3, 1, 5),
+      firstChild: {
+        literal: '111'
+      }
+    });
+
+    expect(link2).toMatchObject({
+      destination: 'num:222',
+      sourcepos: pos(1, 9, 1, 11),
+      firstChild: {
+        literal: '222'
+      }
+    });
+
+    expect(render(root)).toBe('<p>A <a href="num:111">111</a> B <a href="num:222">222</a></p>\n');
   });
 });
 
