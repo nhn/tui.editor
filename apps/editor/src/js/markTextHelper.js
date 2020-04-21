@@ -1,9 +1,10 @@
 import isArray from 'tui-code-snippet/type/isArray';
+import isFunction from 'tui-code-snippet/type/isFunction';
 import { getMdStartLine, getMdStartCh, getMdEndLine, getMdEndCh } from './utils/markdown';
 
 const CLS_PREFIX = 'tui-md-';
 
-const classNamesMap = applyValueToCls({
+const classNameMap = applyValueToCls({
   DELIM: 'delimiter',
   META: 'meta',
   TEXT: 'marked-text',
@@ -11,12 +12,6 @@ const classNamesMap = applyValueToCls({
   CODE_BLOCK: 'code-block',
   TABLE: 'table'
 });
-
-const simpleMarkNode = {
-  thematicBreak: classNamesMap.THEMATIC_BREAK,
-  table: classNamesMap.TABLE,
-  tableCell: classNamesMap.TEXT
-};
 
 const delimSize = {
   strong: 2,
@@ -42,55 +37,37 @@ function createMarkInfo(start, end, className) {
   return { start, end, className };
 }
 
-function getHeadingInfo(node, start, end) {
+function heading(node, start, end) {
   const marks = [];
   const { level } = node;
 
   marks.push(createMarkInfo(start, end, cls(['heading', `heading${level}`])));
-  marks.push(
-    createMarkInfo(start, { line: start.line, ch: start.ch + level }, classNamesMap.DELIM)
-  );
+  marks.push(createMarkInfo(start, { line: start.line, ch: start.ch + level }, classNameMap.DELIM));
 
   return { marks };
 }
 
-function getEmphasisAndStrikethroughInfo(node, start, end) {
+function emphasisAndStrikethrough(node, start, end) {
   const marks = [];
   const { type } = node;
   const openDelimEnd = { line: start.line, ch: start.ch + delimSize[type] };
   const closeDelimStart = { line: end.line, ch: end.ch - delimSize[type] };
 
   marks.push(createMarkInfo(start, end, cls(`${type}`)));
-  marks.push(createMarkInfo(start, openDelimEnd, classNamesMap.DELIM));
-  marks.push(createMarkInfo(closeDelimStart, end, classNamesMap.DELIM));
+  marks.push(createMarkInfo(start, openDelimEnd, classNameMap.DELIM));
+  marks.push(createMarkInfo(closeDelimStart, end, classNameMap.DELIM));
 
   return { marks };
 }
 
-function getLinkOrImageInfo(node, start, end) {
-  const marks = [];
-  const { type, lastChild } = node;
-
-  let linkTextStart = start;
-  let lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 2; // 2: length of '[]'
-
+function addMarkInfoOfLink(start, end, linkTextStart, lastChildCh, marks) {
   marks.push(createMarkInfo(start, end, cls('link')));
-
-  if (type === 'image') {
-    const linkTextEnd = { line: start.line, ch: start.ch + 1 };
-
-    marks.push(createMarkInfo(linkTextStart, linkTextEnd, classNamesMap.META));
-
-    linkTextStart = linkTextEnd;
-    lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 3; // 3: length of '![]'
-  }
-
   marks.push(createMarkInfo(linkTextStart, { line: end.line, ch: lastChildCh }, cls('link-desc')));
   marks.push(
     createMarkInfo(
       { line: start.line, ch: linkTextStart.ch + 1 },
       { line: end.line, ch: lastChildCh - 1 },
-      classNamesMap.TEXT
+      classNameMap.TEXT
     )
   );
 
@@ -99,23 +76,44 @@ function getLinkOrImageInfo(node, start, end) {
     createMarkInfo(
       { line: end.line, ch: lastChildCh + 1 },
       { line: end.line, ch: end.ch - 1 },
-      classNamesMap.TEXT
+      classNameMap.TEXT
     )
   );
+}
+
+function image(node, start, end) {
+  const marks = [];
+  const { lastChild } = node;
+  const lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 3; // 3: length of '![]'
+  const linkTextEnd = { line: start.line, ch: start.ch + 1 };
+
+  marks.push(createMarkInfo(start, linkTextEnd, classNameMap.META));
+
+  addMarkInfoOfLink(start, end, linkTextEnd, lastChildCh, marks);
 
   return { marks };
 }
 
-function getCodeInfo(node, start, end) {
+function link(node, start, end) {
+  const marks = [];
+  const { lastChild } = node;
+  const lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 2; // 2: length of '[]'
+
+  addMarkInfoOfLink(start, end, start, lastChildCh, marks);
+
+  return { marks };
+}
+
+function code(node, start, end) {
   const marks = [];
   const { tickCount } = node;
   const openDelimEnd = { line: start.line, ch: start.ch + tickCount };
   const closeDelimStart = { line: end.line, ch: end.ch - tickCount };
 
   marks.push(createMarkInfo(start, end, cls('code')));
-  marks.push(createMarkInfo(start, openDelimEnd, classNamesMap.DELIM));
-  marks.push(createMarkInfo(openDelimEnd, closeDelimStart, classNamesMap.TEXT));
-  marks.push(createMarkInfo(closeDelimStart, end, classNamesMap.DELIM));
+  marks.push(createMarkInfo(start, openDelimEnd, classNameMap.DELIM));
+  marks.push(createMarkInfo(openDelimEnd, closeDelimStart, classNameMap.TEXT));
+  marks.push(createMarkInfo(closeDelimStart, end, classNameMap.DELIM));
 
   return { marks };
 }
@@ -124,7 +122,7 @@ function getCodeBlockLineClasses(startLine, endLine) {
   const lineClasses = [];
 
   for (let index = startLine; index <= endLine; index += 1) {
-    lineClasses.push({ line: index, className: classNamesMap.CODE_BLOCK });
+    lineClasses.push({ line: index, className: classNameMap.CODE_BLOCK });
   }
 
   return lineClasses;
@@ -139,15 +137,15 @@ function codeBlock(node, start, end, endLineInfo) {
   const fenceEnd = fenceOffset + fenceLength;
   const openDelimEnd = { line: startLine, ch: startCh + fenceEnd };
 
-  marks.push(createMarkInfo(start, end, classNamesMap.CODE_BLOCK));
-  marks.push(createMarkInfo(start, openDelimEnd, classNamesMap.DELIM));
+  marks.push(createMarkInfo(start, end, classNameMap.CODE_BLOCK));
+  marks.push(createMarkInfo(start, openDelimEnd, classNameMap.DELIM));
 
   if (info) {
     marks.push(
       createMarkInfo(
         { line: startLine, ch: fenceEnd },
         { line: startLine, ch: fenceEnd + info.length },
-        classNamesMap.META
+        classNameMap.META
       )
     );
   }
@@ -159,10 +157,10 @@ function codeBlock(node, start, end, endLineInfo) {
 
   if (CLOSED_RX.test(endLineInfo)) {
     closeDelimStart = { line: endLine, ch: 0 };
-    marks.push(createMarkInfo(closeDelimStart, end, classNamesMap.DELIM));
+    marks.push(createMarkInfo(closeDelimStart, end, classNameMap.DELIM));
   }
 
-  marks.push(createMarkInfo(openDelimEnd, closeDelimStart, classNamesMap.TEXT));
+  marks.push(createMarkInfo(openDelimEnd, closeDelimStart, classNameMap.TEXT));
 
   return { marks, lineClasses: getCodeBlockLineClasses(startLine, endLine) };
 }
@@ -184,7 +182,7 @@ function addMarkInfokOfListItemChildren(node, className, marks) {
   }
 }
 
-function getBlockQuoteInfo(node, start, end) {
+function blockQuote(node, start, end) {
   const marks = [];
 
   if (node.parent && node.parent.type !== 'blockQuote') {
@@ -192,7 +190,7 @@ function getBlockQuoteInfo(node, start, end) {
   }
 
   if (node.firstChild) {
-    addMarkInfokOfListItemChildren(node.firstChild, classNamesMap.TEXT, marks);
+    addMarkInfokOfListItemChildren(node.firstChild, classNameMap.TEXT, marks);
   }
 
   return { marks };
@@ -201,23 +199,23 @@ function getBlockQuoteInfo(node, start, end) {
 function getClassNameOfListItem(node) {
   let depth = 0;
 
+  const createClassName = classNames => classNames[depth % classNames.length];
+
   while (node.parent.parent && node.parent.parent.type === 'item') {
     node = node.parent.parent;
     depth += 1;
   }
 
-  const newClassNames = ['list-item-odd', 'list-item-even'];
-  const newClassName = newClassNames[depth % 2];
+  const newClassName = createClassName(['list-item-odd', 'list-item-even']);
 
   // @TODO remove it in the next major version
   // these class names are for the legacy style 'old.css'
-  const oldClassNames = ['first', 'second', 'third'];
-  const oldClassName = oldClassNames[depth % 3];
+  const oldClassName = createClassName(['first', 'second', 'third']);
 
   return `${cls(['list-item', `${newClassName}`])} ${oldClassName}`;
 }
 
-function getListItemInfo(node, start) {
+function item(node, start) {
   const marks = [];
   const itemClassName = getClassNameOfListItem(node);
   const { padding, task } = node.listData;
@@ -238,22 +236,41 @@ function getListItemInfo(node, start) {
       createMarkInfo(
         { line, ch: chWithPadding },
         { line, ch: chWithPadding + 3 },
-        `${itemClassName} ${classNamesMap.DELIM}`
+        `${itemClassName} ${classNameMap.DELIM}`
       )
     );
     marks.push(
       createMarkInfo(
         { line, ch: chWithPadding + 1 },
         { line, ch: chWithPadding + 2 },
-        classNamesMap.META
+        classNameMap.META
       )
     );
   }
 
-  addMarkInfokOfListItemChildren(node.firstChild, `${itemClassName} ${classNamesMap.TEXT}`, marks);
+  addMarkInfokOfListItemChildren(node.firstChild, `${itemClassName} ${classNameMap.TEXT}`, marks);
 
   return { marks };
 }
+
+const markNodeFuncMap = {
+  heading,
+  strong: emphasisAndStrikethrough,
+  emph: emphasisAndStrikethrough,
+  strike: emphasisAndStrikethrough,
+  link,
+  image,
+  code,
+  codeBlock,
+  blockQuote,
+  item
+};
+
+const simpleMarkNode = {
+  thematicBreak: classNameMap.THEMATIC_BREAK,
+  table: classNameMap.TABLE,
+  tableCell: classNameMap.TEXT
+};
 
 /**
  * Gets mark information to the markdown node.
@@ -261,32 +278,19 @@ function getListItemInfo(node, start) {
  * @param {Object} start - start node's data
  * @param {Object} end - end node's data
  * @param {Object} endLine - end line's data
+ * @returns {?Object} mark information
  * @ignore
  */
 export function getMarkInfo(node, start, end, endLine) {
   const { type } = node;
 
-  switch (type) {
-    case 'heading':
-      return getHeadingInfo(node, start, end);
-    case 'strong':
-    case 'emph':
-    case 'strike':
-      return getEmphasisAndStrikethroughInfo(node, start, end);
-    case 'link':
-    case 'image':
-      return getLinkOrImageInfo(node, start, end);
-    case 'code':
-      return getCodeInfo(node, start, end);
-    case 'codeBlock':
-      return codeBlock(node, start, end, endLine);
-    case 'blockQuote':
-      return getBlockQuoteInfo(node, start, end);
-    case 'item':
-      return getListItemInfo(node, start, end);
-    default:
-      return simpleMarkNode[type]
-        ? { marks: [createMarkInfo(start, end, simpleMarkNode[type])] }
-        : null;
+  if (isFunction(markNodeFuncMap[type])) {
+    return markNodeFuncMap[type].apply(this, [node, start, end, endLine]);
   }
+
+  if (simpleMarkNode[type]) {
+    return { marks: [createMarkInfo(start, end, simpleMarkNode[type])] };
+  }
+
+  return null;
 }
