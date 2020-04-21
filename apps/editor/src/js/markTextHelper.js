@@ -1,4 +1,3 @@
-import isArray from 'tui-code-snippet/type/isArray';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import {
@@ -27,10 +26,8 @@ const delimSize = {
   strike: 2
 };
 
-function cls(names) {
-  const classNames = isArray(names) ? names : [names];
-
-  return classNames.map(className => `${CLS_PREFIX}${className}`).join(' ');
+function cls(...names) {
+  return names.map(className => `${CLS_PREFIX}${className}`).join(' ');
 }
 
 function applyClsToValue(obj) {
@@ -48,7 +45,7 @@ function markInfo(start, end, className) {
 function heading({ level }, start, end) {
   return {
     marks: [
-      markInfo(start, end, cls(['heading', `heading${level}`])),
+      markInfo(start, end, cls('heading', `heading${level}`)),
       markInfo(start, addChPos(start, level), classNameMap.DELIM)
     ]
   };
@@ -218,7 +215,7 @@ function getClassNameOfListItem(node) {
   // these class names are for the legacy style 'old.css'
   const oldClassName = ['fisrt', 'second', 'third'][depth % 3];
 
-  return `${cls(['list-item', `${newClassName}`])} ${oldClassName}`;
+  return `${cls('list-item', `${newClassName}`)} ${oldClassName}`;
 }
 
 function item(node, start) {
@@ -256,7 +253,7 @@ const markNodeFuncMap = {
   item
 };
 
-const simpleMarkClass = {
+const simpleMarkClassNameMap = {
   thematicBreak: classNameMap.THEMATIC_BREAK,
   table: classNameMap.TABLE,
   tableCell: classNameMap.TEXT
@@ -278,8 +275,8 @@ export function getMarkInfo(node, start, end, endLine) {
     return markNodeFuncMap[type](node, start, end, endLine);
   }
 
-  if (simpleMarkClass[type]) {
-    return { marks: [markInfo(start, end, simpleMarkClass[type])] };
+  if (simpleMarkClassNameMap[type]) {
+    return { marks: [markInfo(start, end, simpleMarkClassNameMap[type])] };
   }
 
   return null;
