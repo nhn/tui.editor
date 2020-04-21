@@ -1,9 +1,21 @@
+import isArray from 'tui-code-snippet/type/isArray';
 import { getMdStartLine, getMdStartCh, getMdEndLine, getMdEndCh } from './utils/markdown';
 
+const CLS_PREFIX = 'tui-md-';
+
+const classNamesMap = applyValueToCls({
+  DELIM: 'delimiter',
+  META: 'meta',
+  TEXT: 'marked-text',
+  THEMATIC_BREAK: 'thematic-break',
+  CODE_BLOCK: 'code-block',
+  TABLE: 'table'
+});
+
 const simpleMarkNode = {
-  thematicBreak: 'tui-md-thematic-break',
-  table: 'tui-md-table',
-  tableCell: 'tui-md-marked-text'
+  thematicBreak: classNamesMap.THEMATIC_BREAK,
+  table: classNamesMap.TABLE,
+  tableCell: classNamesMap.TEXT
 };
 
 const delimSize = {
@@ -11,6 +23,20 @@ const delimSize = {
   emph: 1,
   strike: 2
 };
+
+function cls(names) {
+  const classNames = isArray(names) ? names : [names];
+
+  return classNames.map(className => `${CLS_PREFIX}${className}`).join(' ');
+}
+
+function applyValueToCls(obj) {
+  Object.keys(obj).forEach(key => {
+    obj[key] = cls(obj[key]);
+  });
+
+  return obj;
+}
 
 function createMarkInfo(start, end, className) {
   return { start, end, className };
@@ -20,8 +46,10 @@ function getHeadingInfo(node, start, end) {
   const marks = [];
   const { level } = node;
 
-  marks.push(createMarkInfo(start, end, `tui-md-heading tui-md-heading${level}`));
-  marks.push(createMarkInfo(start, { line: start.line, ch: start.ch + level }, 'tui-md-delimiter'));
+  marks.push(createMarkInfo(start, end, cls(['heading', `heading${level}`])));
+  marks.push(
+    createMarkInfo(start, { line: start.line, ch: start.ch + level }, classNamesMap.DELIM)
+  );
 
   return { marks };
 }
@@ -32,9 +60,9 @@ function getEmphasisAndStrikethroughInfo(node, start, end) {
   const openDelimEnd = { line: start.line, ch: start.ch + delimSize[type] };
   const closeDelimStart = { line: end.line, ch: end.ch - delimSize[type] };
 
-  marks.push(createMarkInfo(start, end, `tui-md-${type}`));
-  marks.push(createMarkInfo(start, openDelimEnd, 'tui-md-delimiter'));
-  marks.push(createMarkInfo(closeDelimStart, end, 'tui-md-delimiter'));
+  marks.push(createMarkInfo(start, end, cls(`${type}`)));
+  marks.push(createMarkInfo(start, openDelimEnd, classNamesMap.DELIM));
+  marks.push(createMarkInfo(closeDelimStart, end, classNamesMap.DELIM));
 
   return { marks };
 }
@@ -46,34 +74,32 @@ function getLinkOrImageInfo(node, start, end) {
   let linkTextStart = start;
   let lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 2; // 2: length of '[]'
 
-  marks.push(createMarkInfo(start, end, `tui-md-link`));
+  marks.push(createMarkInfo(start, end, cls('link')));
 
   if (type === 'image') {
     const linkTextEnd = { line: start.line, ch: start.ch + 1 };
 
-    marks.push(createMarkInfo(linkTextStart, linkTextEnd, 'tui-md-meta'));
+    marks.push(createMarkInfo(linkTextStart, linkTextEnd, classNamesMap.META));
 
     linkTextStart = linkTextEnd;
     lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 3; // 3: length of '![]'
   }
 
-  marks.push(
-    createMarkInfo(linkTextStart, { line: end.line, ch: lastChildCh }, 'tui-md-link-desc')
-  );
+  marks.push(createMarkInfo(linkTextStart, { line: end.line, ch: lastChildCh }, cls('link-desc')));
   marks.push(
     createMarkInfo(
       { line: start.line, ch: linkTextStart.ch + 1 },
       { line: end.line, ch: lastChildCh - 1 },
-      'tui-md-marked-text'
+      classNamesMap.TEXT
     )
   );
 
-  marks.push(createMarkInfo({ line: end.line, ch: lastChildCh }, end, 'tui-md-link-url'));
+  marks.push(createMarkInfo({ line: end.line, ch: lastChildCh }, end, cls('link-url')));
   marks.push(
     createMarkInfo(
       { line: end.line, ch: lastChildCh + 1 },
       { line: end.line, ch: end.ch - 1 },
-      'tui-md-marked-text'
+      classNamesMap.TEXT
     )
   );
 
@@ -86,10 +112,10 @@ function getCodeInfo(node, start, end) {
   const openDelimEnd = { line: start.line, ch: start.ch + tickCount };
   const closeDelimStart = { line: end.line, ch: end.ch - tickCount };
 
-  marks.push(createMarkInfo(start, end, 'tui-md-code'));
-  marks.push(createMarkInfo(start, openDelimEnd, 'tui-md-delimiter'));
-  marks.push(createMarkInfo(openDelimEnd, closeDelimStart, 'tui-md-marked-text'));
-  marks.push(createMarkInfo(closeDelimStart, end, 'tui-md-delimiter'));
+  marks.push(createMarkInfo(start, end, cls('code')));
+  marks.push(createMarkInfo(start, openDelimEnd, classNamesMap.DELIM));
+  marks.push(createMarkInfo(openDelimEnd, closeDelimStart, classNamesMap.TEXT));
+  marks.push(createMarkInfo(closeDelimStart, end, classNamesMap.DELIM));
 
   return { marks };
 }
@@ -98,7 +124,7 @@ function getCodeBlockLineClasses(startLine, endLine) {
   const lineClasses = [];
 
   for (let index = startLine; index <= endLine; index += 1) {
-    lineClasses.push({ line: index, className: 'tui-md-code-block' });
+    lineClasses.push({ line: index, className: classNamesMap.CODE_BLOCK });
   }
 
   return lineClasses;
@@ -113,15 +139,15 @@ function codeBlock(node, start, end, endLineInfo) {
   const fenceEnd = fenceOffset + fenceLength;
   const openDelimEnd = { line: startLine, ch: startCh + fenceEnd };
 
-  marks.push(createMarkInfo(start, end, 'tui-md-code-block'));
-  marks.push(createMarkInfo(start, openDelimEnd, 'tui-md-delimiter'));
+  marks.push(createMarkInfo(start, end, classNamesMap.CODE_BLOCK));
+  marks.push(createMarkInfo(start, openDelimEnd, classNamesMap.DELIM));
 
   if (info) {
     marks.push(
       createMarkInfo(
         { line: startLine, ch: fenceEnd },
         { line: startLine, ch: fenceEnd + info.length },
-        'tui-md-meta'
+        classNamesMap.META
       )
     );
   }
@@ -133,10 +159,10 @@ function codeBlock(node, start, end, endLineInfo) {
 
   if (CLOSED_RX.test(endLineInfo)) {
     closeDelimStart = { line: endLine, ch: 0 };
-    marks.push(createMarkInfo(closeDelimStart, end, 'tui-md-delimiter'));
+    marks.push(createMarkInfo(closeDelimStart, end, classNamesMap.DELIM));
   }
 
-  marks.push(createMarkInfo(openDelimEnd, closeDelimStart, 'tui-md-marked-text'));
+  marks.push(createMarkInfo(openDelimEnd, closeDelimStart, classNamesMap.TEXT));
 
   return { marks, lineClasses: getCodeBlockLineClasses(startLine, endLine) };
 }
@@ -162,11 +188,11 @@ function getBlockQuoteInfo(node, start, end) {
   const marks = [];
 
   if (node.parent && node.parent.type !== 'blockQuote') {
-    marks.push(createMarkInfo(start, end, 'tui-md-block-quote'));
+    marks.push(createMarkInfo(start, end, cls('block-quote')));
   }
 
   if (node.firstChild) {
-    addMarkInfokOfListItemChildren(node.firstChild, 'tui-md-marked-text', marks);
+    addMarkInfokOfListItemChildren(node.firstChild, classNamesMap.TEXT, marks);
   }
 
   return { marks };
@@ -180,7 +206,7 @@ function getClassNameOfListItem(node) {
     depth += 1;
   }
 
-  const newClassNames = ['tui-md-list-item-odd', 'tui-md-list-item-even'];
+  const newClassNames = ['list-item-odd', 'list-item-even'];
   const newClassName = newClassNames[depth % 2];
 
   // @TODO remove it in the next major version
@@ -188,19 +214,23 @@ function getClassNameOfListItem(node) {
   const oldClassNames = ['first', 'second', 'third'];
   const oldClassName = oldClassNames[depth % 3];
 
-  return `tui-md-list-item ${newClassName} ${oldClassName}`;
+  return `${cls(['list-item', `${newClassName}`])} ${oldClassName}`;
 }
 
 function getListItemInfo(node, start) {
   const marks = [];
-  const className = getClassNameOfListItem(node);
+  const itemClassName = getClassNameOfListItem(node);
   const { padding, task } = node.listData;
 
   const { line, ch } = start;
   const chWithPadding = ch + padding;
 
   marks.push(
-    createMarkInfo(start, { line, ch: chWithPadding }, `${className} tui-md-list-item-bullet`)
+    createMarkInfo(
+      start,
+      { line, ch: chWithPadding },
+      `${itemClassName} ${cls('list-item-bullet')}`
+    )
   );
 
   if (task) {
@@ -208,19 +238,19 @@ function getListItemInfo(node, start) {
       createMarkInfo(
         { line, ch: chWithPadding },
         { line, ch: chWithPadding + 3 },
-        `${className} tui-md-delimiter`
+        `${itemClassName} ${classNamesMap.DELIM}`
       )
     );
     marks.push(
       createMarkInfo(
         { line, ch: chWithPadding + 1 },
         { line, ch: chWithPadding + 2 },
-        'tui-md-meta'
+        classNamesMap.META
       )
     );
   }
 
-  addMarkInfokOfListItemChildren(node.firstChild, `${className} tui-md-marked-text`, marks);
+  addMarkInfokOfListItemChildren(node.firstChild, `${itemClassName} ${classNamesMap.TEXT}`, marks);
 
   return { marks };
 }
@@ -228,9 +258,9 @@ function getListItemInfo(node, start) {
 /**
  * Gets mark information to the markdown node.
  * @param {Object} node - node returned from ToastMark
- * @param {Object} start - start node's information
- * @param {Object} end - end node's information
- * @param {Object} endLine - end line's information
+ * @param {Object} start - start node's data
+ * @param {Object} end - end node's data
+ * @param {Object} endLine - end line's data
  * @ignore
  */
 export function getMarkInfo(node, start, end, endLine) {
