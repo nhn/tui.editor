@@ -290,7 +290,7 @@ class MarkdownEditor extends CodeMirrorExt {
     const markInfo = getMarkInfo(node, from, to, this.cm.getLine(to.line));
 
     if (markInfo) {
-      const { marks = [], lineBackground } = markInfo;
+      const { marks = [], lineBackground = {} } = markInfo;
       const { start: startLine, end: endLine, className: lineClassName } = lineBackground;
 
       marks.forEach(({ start, end, className }) => {

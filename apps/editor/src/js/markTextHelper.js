@@ -1,7 +1,14 @@
 import isArray from 'tui-code-snippet/type/isArray';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
-import { getMdStartLine, getMdStartCh, getMdEndLine, getMdEndCh } from './utils/markdown';
+import {
+  getMdStartLine,
+  getMdStartCh,
+  getMdEndLine,
+  getMdEndCh,
+  addChPos,
+  setChPos
+} from './utils/markdown';
 
 const CLS_PREFIX = 'tui-md-';
 
@@ -38,27 +45,21 @@ function markInfo(start, end, className) {
   return { start, end, className };
 }
 
-function heading(node, start, end) {
-  const { level } = node;
-
+function heading({ level }, start, end) {
   return {
     marks: [
       markInfo(start, end, cls(['heading', `heading${level}`])),
-      markInfo(start, { line: start.line, ch: start.ch + level }, classNameMap.DELIM)
+      markInfo(start, addChPos(start, level), classNameMap.DELIM)
     ]
   };
 }
 
-function emphasisAndStrikethrough(node, start, end) {
-  const { type } = node;
-  const openDelimEnd = { line: start.line, ch: start.ch + delimSize[type] };
-  const closeDelimStart = { line: end.line, ch: end.ch - delimSize[type] };
-
+function emphasisAndStrikethrough({ type }, start, end) {
   return {
     marks: [
       markInfo(start, end, cls(`${type}`)),
-      markInfo(start, openDelimEnd, classNameMap.DELIM),
-      markInfo(closeDelimStart, end, classNameMap.DELIM)
+      markInfo(start, addChPos(start, delimSize[type]), classNameMap.DELIM),
+      markInfo(addChPos(end, -delimSize[type]), end, classNameMap.DELIM)
     ]
   };
 }
@@ -66,25 +67,20 @@ function emphasisAndStrikethrough(node, start, end) {
 function markLink(start, end, linkTextStart, lastChildCh) {
   return [
     markInfo(start, end, cls('link')),
-    markInfo(linkTextStart, { line: end.line, ch: lastChildCh }, cls('link-desc')),
+    markInfo(linkTextStart, setChPos(end, lastChildCh), cls('link-desc')),
     markInfo(
-      { line: start.line, ch: linkTextStart.ch + 1 },
-      { line: end.line, ch: lastChildCh - 1 },
+      setChPos(start, linkTextStart.ch + 1),
+      setChPos(end, lastChildCh - 1),
       classNameMap.TEXT
     ),
-    markInfo({ line: end.line, ch: lastChildCh }, end, cls('link-url')),
-    markInfo(
-      { line: end.line, ch: lastChildCh + 1 },
-      { line: end.line, ch: end.ch - 1 },
-      classNameMap.TEXT
-    )
+    markInfo(setChPos(end, lastChildCh), end, cls('link-url')),
+    markInfo(setChPos(end, lastChildCh + 1), addChPos(end, -1), classNameMap.TEXT)
   ];
 }
 
-function image(node, start, end) {
-  const { lastChild } = node;
+function image({ lastChild }, start, end) {
   const lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 3; // 3: length of '![]'
-  const linkTextEnd = { line: start.line, ch: start.ch + 1 };
+  const linkTextEnd = addChPos(start, 1);
 
   return {
     marks: [
@@ -94,17 +90,15 @@ function image(node, start, end) {
   };
 }
 
-function link(node, start, end) {
-  const { lastChild } = node;
+function link({ lastChild }, start, end) {
   const lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 2; // 2: length of '[]'
 
   return { marks: markLink(start, end, start, lastChildCh) };
 }
 
-function code(node, start, end) {
-  const { tickCount } = node;
-  const openDelimEnd = { line: start.line, ch: start.ch + tickCount };
-  const closeDelimStart = { line: end.line, ch: end.ch - tickCount };
+function code({ tickCount }, start, end) {
+  const openDelimEnd = addChPos(start, tickCount);
+  const closeDelimStart = addChPos(end, -tickCount);
 
   return {
     marks: [
@@ -119,7 +113,7 @@ function code(node, start, end) {
 function codeBlock(node, start, end, endLine) {
   const { fenceOffset, fenceLength, fenceChar, info } = node;
   const fenceEnd = fenceOffset + fenceLength;
-  let openDelimEnd = { line: start.line, ch: start.ch + fenceEnd };
+  let openDelimEnd = addChPos(start, fenceEnd);
 
   const marks = [
     markInfo(start, end, classNameMap.CODE_BLOCK),
@@ -127,8 +121,8 @@ function codeBlock(node, start, end, endLine) {
   ];
 
   if (info) {
-    openDelimEnd = { line: start.line, ch: fenceEnd + info.length };
-    marks.push(markInfo({ line: start.line, ch: fenceEnd }, openDelimEnd, classNameMap.META));
+    openDelimEnd = setChPos(start, fenceEnd + info.length);
+    marks.push(markInfo(setChPos(start, fenceEnd), openDelimEnd, classNameMap.META));
   }
 
   const codeBlockEnd = `^(\\s{0,${fenceOffset}})(${fenceChar}{${fenceLength},})`;
@@ -137,7 +131,7 @@ function codeBlock(node, start, end, endLine) {
   let closeDelimStart = end;
 
   if (CLOSED_RX.test(endLine)) {
-    closeDelimStart = { line: end.line, ch: 0 };
+    closeDelimStart = setChPos(end, 0);
     marks.push(markInfo(closeDelimStart, end, classNameMap.DELIM));
   }
 
@@ -230,24 +224,18 @@ function getClassNameOfListItem(node) {
 function item(node, start) {
   const itemClassName = getClassNameOfListItem(node);
   const { padding, task } = node.listData;
-  const { line, ch } = start;
-  const chWithPadding = ch + padding;
 
   return {
     marks: [
-      markInfo(start, { line, ch: chWithPadding }, `${itemClassName} ${cls('list-item-bullet')}`),
+      markInfo(start, addChPos(start, padding), `${itemClassName} ${cls('list-item-bullet')}`),
       ...(task
         ? [
             markInfo(
-              { line, ch: chWithPadding },
-              { line, ch: chWithPadding + 3 },
+              addChPos(start, padding),
+              addChPos(start, padding + 3),
               `${itemClassName} ${classNameMap.DELIM}`
             ),
-            markInfo(
-              { line, ch: chWithPadding + 1 },
-              { line, ch: chWithPadding + 2 },
-              classNameMap.META
-            )
+            markInfo(addChPos(start, padding + 1), addChPos(start, padding + 2), classNameMap.META)
           ]
         : []),
       ...markListItemChildren(node.firstChild, `${itemClassName} ${classNameMap.TEXT}`)
