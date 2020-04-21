@@ -1,10 +1,11 @@
 import isArray from 'tui-code-snippet/type/isArray';
 import isFunction from 'tui-code-snippet/type/isFunction';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import { getMdStartLine, getMdStartCh, getMdEndLine, getMdEndCh } from './utils/markdown';
 
 const CLS_PREFIX = 'tui-md-';
 
-const classNameMap = applyValueToCls({
+const classNameMap = applyClsToValue({
   DELIM: 'delimiter',
   META: 'meta',
   TEXT: 'marked-text',
@@ -25,9 +26,9 @@ function cls(names) {
   return classNames.map(className => `${CLS_PREFIX}${className}`).join(' ');
 }
 
-function applyValueToCls(obj) {
-  Object.keys(obj).forEach(key => {
-    obj[key] = cls(obj[key]);
+function applyClsToValue(obj) {
+  forEachOwnProperties(obj, (value, key) => {
+    obj[key] = cls(value);
   });
 
   return obj;
@@ -118,36 +119,29 @@ function code(node, start, end) {
   return { marks };
 }
 
-function getCodeBlockLineClasses(startLine, endLine) {
-  const lineClasses = [];
+function getClassNamesOfCodeBlockLine(startLine, endLine) {
+  const classNames = [];
 
   for (let index = startLine; index <= endLine; index += 1) {
-    lineClasses.push({ line: index, className: classNameMap.CODE_BLOCK });
+    classNames.push({ line: index, className: classNameMap.CODE_BLOCK });
   }
 
-  return lineClasses;
+  return classNames;
 }
 
-function codeBlock(node, start, end, endLineInfo) {
+function codeBlock(node, start, end, endLine) {
   const marks = [];
   const { fenceOffset, fenceLength, fenceChar, info } = node;
-  const { line: startLine, ch: startCh } = start;
-  const { line: endLine } = end;
 
   const fenceEnd = fenceOffset + fenceLength;
-  const openDelimEnd = { line: startLine, ch: startCh + fenceEnd };
+  let openDelimEnd = { line: start.line, ch: start.ch + fenceEnd };
 
   marks.push(createMarkInfo(start, end, classNameMap.CODE_BLOCK));
   marks.push(createMarkInfo(start, openDelimEnd, classNameMap.DELIM));
 
   if (info) {
-    marks.push(
-      createMarkInfo(
-        { line: startLine, ch: fenceEnd },
-        { line: startLine, ch: fenceEnd + info.length },
-        classNameMap.META
-      )
-    );
+    openDelimEnd = { line: start.line, ch: fenceEnd + info.length };
+    marks.push(createMarkInfo({ line: start.line, ch: fenceEnd }, openDelimEnd, classNameMap.META));
   }
 
   const codeBlockEnd = `^(\\s{0,${fenceOffset}})(${fenceChar}{${fenceLength},})`;
@@ -155,14 +149,16 @@ function codeBlock(node, start, end, endLineInfo) {
 
   let closeDelimStart = end;
 
-  if (CLOSED_RX.test(endLineInfo)) {
-    closeDelimStart = { line: endLine, ch: 0 };
+  if (CLOSED_RX.test(endLine)) {
+    closeDelimStart = { line: end.line, ch: 0 };
     marks.push(createMarkInfo(closeDelimStart, end, classNameMap.DELIM));
   }
 
   marks.push(createMarkInfo(openDelimEnd, closeDelimStart, classNameMap.TEXT));
 
-  return { marks, lineClasses: getCodeBlockLineClasses(startLine, endLine) };
+  const lineClassNames = getClassNamesOfCodeBlockLine(start.line, end.line);
+
+  return { marks, lineClassNames };
 }
 
 function addMarkInfokOfListItemChildren(node, className, marks) {
@@ -182,6 +178,19 @@ function addMarkInfokOfListItemChildren(node, className, marks) {
   }
 }
 
+function addMarkInfoOfParagraphInBlockQuote(node, className, marks) {
+  while (node) {
+    marks.push(
+      createMarkInfo(
+        { line: getMdStartLine(node) - 1, ch: getMdStartCh(node) - 1 },
+        { line: getMdEndLine(node) - 1, ch: getMdEndCh(node) },
+        classNameMap.TEXT
+      )
+    );
+    node = node.next;
+  }
+}
+
 function blockQuote(node, start, end) {
   const marks = [];
 
@@ -190,7 +199,11 @@ function blockQuote(node, start, end) {
   }
 
   if (node.firstChild) {
-    addMarkInfokOfListItemChildren(node.firstChild, classNameMap.TEXT, marks);
+    if (node.firstChild.type === 'paragraph') {
+      addMarkInfoOfParagraphInBlockQuote(node.firstChild.firstChild, classNameMap.TEXT, marks);
+    } else if (node.firstChild.type === 'list') {
+      addMarkInfokOfListItemChildren(node.firstChild, classNameMap.TEXT, marks);
+    }
   }
 
   return { marks };

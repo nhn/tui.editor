@@ -70,6 +70,13 @@ class MarkdownEditor extends CodeMirrorExt {
      */
     this._latestState = null;
 
+    /**
+     * informations of marked lines
+     * @type {Array.<Object>}
+     * @private
+     */
+    this._markedLines = [];
+
     this._initEvent();
   }
 
@@ -249,6 +256,8 @@ class MarkdownEditor extends CodeMirrorExt {
         }
       }
 
+      this._removeBackgroundOfLines();
+
       /* eslint-disable max-depth */
       for (const parent of nodes) {
         const walker = parent.walker();
@@ -267,13 +276,21 @@ class MarkdownEditor extends CodeMirrorExt {
     }
   }
 
+  _removeBackgroundOfLines() {
+    this._markedLines.forEach(({ line, className }) => {
+      this.cm.removeLineClass(line, 'background', className);
+    });
+
+    this._markedLines = [];
+  }
+
   _markNode(node) {
     const from = { line: getMdStartLine(node) - 1, ch: getMdStartCh(node) - 1 };
     const to = { line: getMdEndLine(node) - 1, ch: getMdEndCh(node) };
     const markInfo = getMarkInfo(node, from, to, this.cm.getLine(to.line));
 
     if (markInfo) {
-      const { marks = [], lineClasses = [] } = markInfo;
+      const { marks = [], lineClassNames = [] } = markInfo;
 
       marks.forEach(({ start, end, className }) => {
         const attributes = { [ATTR_NAME_MARK]: '' };
@@ -281,8 +298,9 @@ class MarkdownEditor extends CodeMirrorExt {
         this.cm.markText(start, end, { className, attributes });
       });
 
-      lineClasses.forEach(({ line, className }) => {
+      lineClassNames.forEach(({ line, className }) => {
         this.cm.addLineClass(line, 'background', className);
+        this._markedLines.push({ line, className });
       });
     }
   }
