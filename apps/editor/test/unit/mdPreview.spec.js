@@ -50,7 +50,7 @@ describe('Preview', () => {
 });
 
 describe('listen cursorActivity event', () => {
-  let setValue, setCursor, getHighlightedElementsAll, getHighlightedElement;
+  let setValue, setCursor, getHighlightedCount, assertHighlighted;
   let previewEl;
 
   beforeEach(() => {
@@ -71,31 +71,26 @@ describe('listen cursorActivity event', () => {
 
     setValue = val => editor.setValue(val);
     setCursor = pos => doc.setCursor(pos);
-    getHighlightedElementsAll = () => preview.el.querySelectorAll(`.${CLASS_HIGHLIGHT}`);
-    getHighlightedElement = () => preview.el.querySelector(`.${CLASS_HIGHLIGHT}`);
-  });
+    getHighlightedCount = () => preview.el.querySelectorAll(`.${CLASS_HIGHLIGHT}`).length;
+    assertHighlighted = (tagName, innerHTML) => {
+      const el = preview.el.querySelector(`.${CLASS_HIGHLIGHT}`);
 
-  it('heading', () => {
-    setValue('# Hello World');
-    setCursor({ line: 0, ch: 0 });
-
-    expect(getHighlightedElement().tagName).toBe('H1');
+      expect(el.tagName).toBe(tagName);
+      expect(el.innerHTML).toBe(innerHTML);
+    };
   });
 
   it('only one highlighted element should exist at a time', () => {
     setValue('# Hello\n\nWorld');
     setCursor({ line: 0, ch: 0 });
 
-    let elements = getHighlightedElementsAll();
-
-    expect(elements.length).toBe(1);
-    expect(elements[0].tagName).toBe('H1');
+    expect(getHighlightedCount()).toBe(1);
+    assertHighlighted('H1', 'Hello');
 
     setCursor({ line: 2, ch: 0 });
 
-    elements = getHighlightedElementsAll();
-    expect(elements.length).toBe(1);
-    expect(elements[0].tagName).toBe('P');
+    expect(getHighlightedCount()).toBe(1);
+    assertHighlighted('P', 'World');
   });
 
   describe('table cell', () => {
@@ -105,41 +100,42 @@ describe('listen cursorActivity event', () => {
 
     it('whitespace and delimiter should be considered as a table cell', () => {
       setCursor({ line: 0, ch: 1 });
-      expect(getHighlightedElement().innerHTML).toBe('a');
+      assertHighlighted('TH', 'a');
 
       setCursor({ line: 0, ch: 4 });
-      expect(getHighlightedElement().innerHTML).toBe('a');
+      assertHighlighted('TH', 'a');
 
       setCursor({ line: 0, ch: 5 });
-      expect(getHighlightedElement().innerHTML).toBe('b');
+      assertHighlighted('TH', 'b');
 
       setCursor({ line: 0, ch: 7 });
-      expect(getHighlightedElement().innerHTML).toBe('b');
+      assertHighlighted('TH', 'b');
 
       setCursor({ line: 2, ch: 0 });
-      expect(getHighlightedElement().innerHTML).toBe('c');
+      assertHighlighted('TD', 'c');
 
       setCursor({ line: 2, ch: 4 });
-      expect(getHighlightedElement().innerHTML).toBe('c');
+      assertHighlighted('TD', 'c');
 
       setCursor({ line: 2, ch: 5 });
-      expect(getHighlightedElement().innerHTML).toBe('d');
+      assertHighlighted('TD', 'd');
 
       setCursor({ line: 2, ch: 7 });
-      expect(getHighlightedElement().innerHTML).toBe('d');
+
+      assertHighlighted('TD', 'd');
     });
 
     it('delimiter row should not highlight any element', () => {
       setValue('| a | b \n| - | - |\n| c | d |');
 
       setCursor({ line: 1, ch: 1 });
-      expect(getHighlightedElement()).toBe(null);
+      expect(getHighlightedCount()).toBe(0);
 
       setCursor({ line: 1, ch: 3 });
-      expect(getHighlightedElement()).toBe(null);
+      expect(getHighlightedCount()).toBe(0);
 
       setCursor({ line: 1, ch: 5 });
-      expect(getHighlightedElement()).toBe(null);
+      expect(getHighlightedCount()).toBe(0);
     });
   });
 });
