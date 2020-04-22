@@ -90,9 +90,10 @@
   margin: 14px 0;
   border-left: 4px solid #e5e5e5;
   padding: 0 12px;
+  color: #999;
 }
 
-.tui-editor-contents blockquote,
+.tui-editor-contents blockquote p,
 .tui-editor-contents blockquote ul,
 .tui-editor-contents blockquote ol {
   color: #999;
