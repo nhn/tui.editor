@@ -28,7 +28,7 @@ export function createButton(editor) {
     type: 'button',
     options: {
       command: 'scrollSyncToggle',
-      tooltip: tooltip.active,
+      tooltip: tooltip.ACTIVE,
       el: buttonEl
     }
   });
