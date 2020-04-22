@@ -39,6 +39,7 @@
 
 .tui-editor-contents h1 {
   font-size: 24px;
+  min-height: 28px;
   line-height: 28px;
   border-bottom: 3px double #999;
   margin: 52px 0 15px 0;
@@ -47,6 +48,7 @@
 
 .tui-editor-contents h2 {
   font-size: 22px;
+  min-height: 23px;
   line-height: 23px;
   border-bottom: 1px solid #dbdbdb;
   margin: 20px 0 13px 0;
@@ -90,6 +92,7 @@
   margin: 14px 0;
   border-left: 4px solid #e5e5e5;
   padding: 0 12px;
+  min-height: 20px;
   color: #999;
 }
 
@@ -149,6 +152,7 @@
 }
 
 .tui-editor-contents table {
+  border: 1px solid rgba(0, 0, 0, 0.1);
   margin: 2px 0 14px;
   color: #222;
   width: auto;
@@ -158,17 +162,12 @@
 
 .tui-editor-contents table th,
 .tui-editor-contents table td {
-  height: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 5px 14px 5px 12px;
-}
-
-.tui-editor-contents table td {
-  border: 1px solid #e5e5e5;
+  height: 32px;
 }
 
 .tui-editor-contents table th {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-top: 0;
   background-color: #555;
   font-weight: 300;
   color: #fff;
@@ -184,6 +183,10 @@
   padding-left: 15px;
   margin: 6px 0 10px;
   color: #222;
+}
+
+.tui-editor-contents li {
+  min-height: 20px;
 }
 
 .tui-editor-contents ol {

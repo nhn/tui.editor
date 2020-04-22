@@ -14,10 +14,9 @@
   bottom: -4px;
 }
 
-.tui-editor-contents th.te-preview-highlight {
-  background-color: transparent;
-  border-color: #eaeaea;
-  color: #222;
+.tui-editor-contents h1.te-preview-highlight::after,
+.tui-editor-contents h2.te-preview-highlight::after {
+  bottom: 0;
 }
 
 .tui-editor-contents td.te-preview-highlight::after,
@@ -26,6 +25,11 @@
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+.tui-editor-contents th.te-preview-highlight {
+  background-color: transparent;
+  color: #222;
 }
 
 .tui-editor-contents pre.te-preview-highlight {

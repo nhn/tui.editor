@@ -95,7 +95,7 @@ describe('listen cursorActivity event', () => {
 
   describe('table cell', () => {
     beforeEach(() => {
-      setValue('| a | b \n| - | - |\n| c | d |');
+      setValue('| a | b |\n| - | - |\n| c | d |\n\n');
     });
 
     it('whitespace and delimiter should be considered as a table cell', () => {
@@ -121,13 +121,10 @@ describe('listen cursorActivity event', () => {
       assertHighlighted('TD', 'd');
 
       setCursor({ line: 2, ch: 7 });
-
       assertHighlighted('TD', 'd');
     });
 
     it('delimiter row should not highlight any element', () => {
-      setValue('| a | b \n| - | - |\n| c | d |');
-
       setCursor({ line: 1, ch: 1 });
       expect(getHighlightedCount()).toBe(0);
 
@@ -135,6 +132,11 @@ describe('listen cursorActivity event', () => {
       expect(getHighlightedCount()).toBe(0);
 
       setCursor({ line: 1, ch: 5 });
+      expect(getHighlightedCount()).toBe(0);
+    });
+
+    it('empty line next to table should not highlight any element ', () => {
+      setCursor({ line: 3, ch: 0 });
       expect(getHighlightedCount()).toBe(0);
     });
   });
