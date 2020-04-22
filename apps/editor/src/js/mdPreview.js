@@ -4,6 +4,8 @@
  */
 import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import { createRenderHTML } from '@toast-ui/toastmark';
 
 import Preview from './preview';
@@ -11,6 +13,22 @@ import domUtils from './utils/dom';
 import { getHTMLRenderConvertors } from './htmlRenderConvertors';
 import { findAdjacentElementToScrollTop } from './scroll/helper';
 import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
+import { isInlineNode, findClosestNode, getMdStartCh } from './utils/markdown';
+
+export const CLASS_HIGHLIGHT = 'te-preview-highlight';
+
+function findTableCell(tableRow, { ch }) {
+  let cell = tableRow.firstChild;
+
+  while (cell && cell.next) {
+    if (getMdStartCh(cell.next) > ch + 1) {
+      break;
+    }
+    cell = cell.next;
+  }
+
+  return cell;
+}
 
 /**
  * Class Markdown Preview
@@ -23,7 +41,6 @@ import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
 class MarkdownPreview extends Preview {
   constructor(el, eventManager, convertor, options) {
     super(el, eventManager, convertor, options.isViewer);
-    this._initEvent();
     this.lazyRunner.registerLazyRunFunction(
       'invokeCodeBlock',
       this.invokeCodeBlockPlugins,
@@ -38,6 +55,10 @@ class MarkdownPreview extends Preview {
       nodeId: true,
       convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer)
     });
+
+    this._cursorNodeId = null;
+
+    this._initEvent();
   }
 
   /**
@@ -49,12 +70,51 @@ class MarkdownPreview extends Preview {
     // need to implement a listener function for 'previewNeedsRefresh' event
     // to support third-party plugins which requires re-executing script for every re-render
 
+    this.eventManager.listen('cursorActivity', ({ markdownNode, cursor }) => {
+      this._updateCursorNode(markdownNode, cursor);
+    });
+
     on(this.el, 'scroll', event => {
       this.eventManager.emit('scroll', {
         source: 'preview',
         data: findAdjacentElementToScrollTop(event.target.scrollTop, this._previewContent)
       });
     });
+  }
+
+  _updateCursorNode(cursorNode, cursorPos) {
+    if (cursorNode) {
+      cursorNode = findClosestNode(cursorNode, mdNode => !isInlineNode(mdNode));
+
+      if (cursorNode.type === 'tableRow') {
+        cursorNode = findTableCell(cursorNode, cursorPos);
+      }
+    }
+
+    const cursorNodeId = cursorNode ? cursorNode.id : null;
+
+    if (this._cursorNodeId === cursorNodeId) {
+      return;
+    }
+
+    const oldEL = this._getElementByNodeId(this._cursorNodeId);
+    const newEL = this._getElementByNodeId(cursorNodeId);
+
+    if (oldEL) {
+      removeClass(oldEL, CLASS_HIGHLIGHT);
+    }
+    if (newEL) {
+      addClass(newEL, CLASS_HIGHLIGHT);
+    }
+
+    this._cursorNodeId = cursorNodeId;
+  }
+
+  _getElementByNodeId(nodeId) {
+    if (!nodeId) {
+      return null;
+    }
+    return this._previewContent.querySelector(`[data-nodeid="${nodeId}"]`);
   }
 
   update(changed) {
@@ -73,9 +133,9 @@ class MarkdownPreview extends Preview {
     if (!removedNodeRange) {
       contentEl.insertAdjacentHTML('afterbegin', newHtml);
     } else {
-      const [startNodeId, endNodeId] = removedNodeRange;
-      const startEl = contentEl.querySelector(`[data-nodeid="${startNodeId}"]`);
-      const endEl = contentEl.querySelector(`[data-nodeid="${endNodeId}"]`);
+      const [startNodeId, endNodeId] = removedNodeRange.id;
+      const startEl = this._getElementByNodeId(startNodeId);
+      const endEl = this._getElementByNodeId(endNodeId);
 
       if (startEl) {
         startEl.insertAdjacentHTML('beforebegin', newHtml);

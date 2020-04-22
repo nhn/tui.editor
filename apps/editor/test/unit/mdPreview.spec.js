@@ -3,7 +3,8 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import { ToastMark } from '@toast-ui/toastmark';
-import MarkdownPreview from '@/mdPreview';
+import MarkdownPreview, { CLASS_HIGHLIGHT } from '@/mdPreview';
+import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
 import Convertor from '@/convertor';
 
@@ -45,5 +46,96 @@ describe('Preview', () => {
     expect(preview.getHTML()).toEqual(
       `<p data-nodeid="${editResult[0].nodes[0].id}">changed</p>\n`
     );
+  });
+});
+
+describe('listen cursorActivity event', () => {
+  let setValue, setCursor, getHighlightedCount, assertHighlighted;
+  let previewEl;
+
+  beforeEach(() => {
+    const editorEl = document.createElement('div');
+
+    previewEl = document.createElement('div');
+
+    document.body.innerHTML = '';
+    document.body.appendChild(editorEl);
+    document.body.appendChild(previewEl);
+
+    const eventManager = new EventManager();
+    const convertor = new Convertor(eventManager);
+    const toastMark = new ToastMark();
+    const preview = new MarkdownPreview(previewEl, eventManager, convertor, true);
+    const editor = new MarkdownEditor(editorEl, eventManager, toastMark);
+    const doc = editor.getEditor().getDoc();
+
+    setValue = val => editor.setValue(val);
+    setCursor = pos => doc.setCursor(pos);
+    getHighlightedCount = () => preview.el.querySelectorAll(`.${CLASS_HIGHLIGHT}`).length;
+    assertHighlighted = (tagName, innerHTML) => {
+      const el = preview.el.querySelector(`.${CLASS_HIGHLIGHT}`);
+
+      expect(el.tagName).toBe(tagName);
+      expect(el.innerHTML).toBe(innerHTML);
+    };
+  });
+
+  it('only one highlighted element should exist at a time', () => {
+    setValue('# Hello\n\nWorld');
+    setCursor({ line: 0, ch: 0 });
+
+    expect(getHighlightedCount()).toBe(1);
+    assertHighlighted('H1', 'Hello');
+
+    setCursor({ line: 2, ch: 0 });
+
+    expect(getHighlightedCount()).toBe(1);
+    assertHighlighted('P', 'World');
+  });
+
+  describe('table cell', () => {
+    beforeEach(() => {
+      setValue('| a | b \n| - | - |\n| c | d |');
+    });
+
+    it('whitespace and delimiter should be considered as a table cell', () => {
+      setCursor({ line: 0, ch: 1 });
+      assertHighlighted('TH', 'a');
+
+      setCursor({ line: 0, ch: 4 });
+      assertHighlighted('TH', 'a');
+
+      setCursor({ line: 0, ch: 5 });
+      assertHighlighted('TH', 'b');
+
+      setCursor({ line: 0, ch: 7 });
+      assertHighlighted('TH', 'b');
+
+      setCursor({ line: 2, ch: 0 });
+      assertHighlighted('TD', 'c');
+
+      setCursor({ line: 2, ch: 4 });
+      assertHighlighted('TD', 'c');
+
+      setCursor({ line: 2, ch: 5 });
+      assertHighlighted('TD', 'd');
+
+      setCursor({ line: 2, ch: 7 });
+
+      assertHighlighted('TD', 'd');
+    });
+
+    it('delimiter row should not highlight any element', () => {
+      setValue('| a | b \n| - | - |\n| c | d |');
+
+      setCursor({ line: 1, ch: 1 });
+      expect(getHighlightedCount()).toBe(0);
+
+      setCursor({ line: 1, ch: 3 });
+      expect(getHighlightedCount()).toBe(0);
+
+      setCursor({ line: 1, ch: 5 });
+      expect(getHighlightedCount()).toBe(0);
+    });
   });
 });

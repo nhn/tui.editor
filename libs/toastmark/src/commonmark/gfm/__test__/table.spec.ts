@@ -15,11 +15,13 @@ const pos = (a: number, b: number, c: number, d: number) => [
 
 describe('table', () => {
   it('basic', () => {
-    const root = reader.parse('  a |  b\n --|---\nc | d|\n e');
+    const root = reader.parse('  a |  b\n --| ---\n|  c |  |\n e');
     const result = convertToArrayTree(root, [
       'type',
       'sourcepos',
       'stringContent',
+      'paddingLeft',
+      'paddingRight',
       'literal'
     ] as (keyof BlockNode)[]);
 
@@ -33,7 +35,7 @@ describe('table', () => {
           children: [
             {
               type: 'tableHead',
-              sourcepos: pos(1, 3, 2, 7),
+              sourcepos: pos(1, 3, 2, 8),
               children: [
                 {
                   type: 'tableRow',
@@ -41,7 +43,9 @@ describe('table', () => {
                   children: [
                     {
                       type: 'tableCell',
-                      sourcepos: pos(1, 3, 1, 3),
+                      paddingLeft: 0,
+                      paddingRight: 1,
+                      sourcepos: pos(1, 3, 1, 4),
                       children: [
                         {
                           type: 'text',
@@ -52,7 +56,9 @@ describe('table', () => {
                     },
                     {
                       type: 'tableCell',
-                      sourcepos: pos(1, 8, 1, 8),
+                      paddingLeft: 2,
+                      paddingRight: 0,
+                      sourcepos: pos(1, 6, 1, 8),
                       children: [
                         {
                           type: 'text',
@@ -65,17 +71,21 @@ describe('table', () => {
                 },
                 {
                   type: 'tableDelimRow',
-                  sourcepos: pos(2, 2, 2, 7),
+                  sourcepos: pos(2, 2, 2, 8),
                   children: [
                     {
                       type: 'tableDelimCell',
+                      paddingLeft: 0,
+                      paddingRight: 0,
                       stringContent: '--',
                       sourcepos: pos(2, 2, 2, 3)
                     },
                     {
                       type: 'tableDelimCell',
+                      paddingLeft: 1,
+                      paddingRight: 0,
                       stringContent: '---',
-                      sourcepos: pos(2, 5, 2, 7)
+                      sourcepos: pos(2, 5, 2, 8)
                     }
                   ]
                 }
@@ -87,29 +97,26 @@ describe('table', () => {
               children: [
                 {
                   type: 'tableRow',
-                  sourcepos: pos(3, 1, 3, 6),
+                  sourcepos: pos(3, 1, 3, 9),
                   children: [
                     {
                       type: 'tableCell',
-                      sourcepos: pos(3, 1, 3, 1),
+                      paddingLeft: 2,
+                      paddingRight: 1,
+                      sourcepos: pos(3, 2, 3, 5),
                       children: [
                         {
                           type: 'text',
                           literal: 'c',
-                          sourcepos: pos(3, 1, 3, 1)
+                          sourcepos: pos(3, 4, 3, 4)
                         }
                       ]
                     },
                     {
                       type: 'tableCell',
-                      sourcepos: pos(3, 5, 3, 5),
-                      children: [
-                        {
-                          type: 'text',
-                          literal: 'd',
-                          sourcepos: pos(3, 5, 3, 5)
-                        }
-                      ]
+                      paddingLeft: 0,
+                      paddingRight: 0,
+                      sourcepos: pos(3, 7, 3, 8)
                     }
                   ]
                 },
@@ -119,6 +126,8 @@ describe('table', () => {
                   children: [
                     {
                       type: 'tableCell',
+                      paddingLeft: 0,
+                      paddingRight: 0,
                       sourcepos: pos(4, 2, 4, 2),
                       children: [
                         {
@@ -149,7 +158,7 @@ describe('table', () => {
       <tbody>
       <tr>
       <td>c</td>
-      <td>d</td>
+      <td></td>
       </tr>
       <tr>
       <td>e</td>

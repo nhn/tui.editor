@@ -56,7 +56,7 @@ describe('Convertor', () => {
       );
     });
 
-    it('do not add line breaks in list before and after image syntax', () => {
+    xit('do not add line breaks in list before and after image syntax', () => {
       expect(
         convertor
           ._markdownToHtmlWithCodeHighlight(
@@ -165,8 +165,12 @@ describe('Convertor', () => {
       const taskItemMd = ['- [ ] Task1', '- [x] Task2'].join('\n');
       const expectedHTML = [
         '<ul>',
-        '<li class="task-list-item" data-te-task="">Task1</li>',
-        '<li class="task-list-item checked" data-te-task="">Task2</li>',
+        '<li class="task-list-item" data-te-task="">',
+        '<p>Task1</p>',
+        '</li>',
+        '<li class="task-list-item checked" data-te-task="">',
+        '<p>Task2</p>',
+        '</li>',
         '</ul>',
         ''
       ].join('\n');
@@ -671,10 +675,14 @@ describe('Convertor', () => {
       ].join('\n');
       const expectedHTML = [
         '<ul>',
-        '<li>codeblock</li>',
+        '<li>',
+        '<p>codeblock</p>',
+        '</li>',
         '</ul>',
         '<ol>',
-        '<li>codeblock</li>',
+        '<li>',
+        '<p>codeblock</p>',
+        '</li>',
         '</ol>',
         '<p>paragraph</p>',
         '<pre><code>code',

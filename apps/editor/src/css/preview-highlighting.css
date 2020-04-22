@@ -1,0 +1,37 @@
+.tui-editor-contents .te-preview-highlight {
+  position: relative;
+}
+
+.tui-editor-contents .te-preview-highlight::after {
+  content: '';
+  background-color: #fffac1;
+  border-radius: 4px;
+  z-index: -1;
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  left: -4px;
+  bottom: -4px;
+}
+
+.tui-editor-contents th.te-preview-highlight {
+  background-color: transparent;
+  border-color: #eaeaea;
+  color: #222;
+}
+
+.tui-editor-contents td.te-preview-highlight::after,
+.tui-editor-contents th.te-preview-highlight::after {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.tui-editor-contents pre.te-preview-highlight {
+  background-color: #fffac1;
+}
+
+.tui-editor-contents pre.te-preview-highlight::after {
+  background-color: #fff8bd;
+}

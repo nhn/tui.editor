@@ -70,6 +70,24 @@ export function isListItemNode(mdNode) {
   return mdNode.type === 'item';
 }
 
+export function isInlineNode(mdNode) {
+  switch (mdNode.type) {
+    case 'code':
+    case 'text':
+    case 'emph':
+    case 'strong':
+    case 'strike':
+    case 'link':
+    case 'image':
+    case 'htmlInline':
+    case 'linebreak':
+    case 'softbreak':
+      return true;
+    default:
+      return false;
+  }
+}
+
 export function getLastLeafNode(mdNode) {
   while (mdNode.lastChild) {
     mdNode = mdNode.lastChild;
@@ -77,10 +95,24 @@ export function getLastLeafNode(mdNode) {
   return mdNode;
 }
 
-export function traverseParentNodes(mdNode, iteratee) {
-  while (mdNode.parent && mdNode.parent.type !== 'document') {
+export function findClosestNode(mdNode, condition, includeSelf = true) {
+  mdNode = includeSelf ? mdNode : mdNode.parent;
+
+  while (mdNode && mdNode.type !== 'document') {
+    if (condition(mdNode)) {
+      return mdNode;
+    }
     mdNode = mdNode.parent;
+  }
+  return null;
+}
+
+export function traverseParentNodes(mdNode, iteratee, includeSelf = true) {
+  mdNode = includeSelf ? mdNode : mdNode.parent;
+
+  while (mdNode && mdNode.type !== 'document') {
     iteratee(mdNode);
+    mdNode = mdNode.parent;
   }
 }
 

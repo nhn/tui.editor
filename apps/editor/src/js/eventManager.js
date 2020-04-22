@@ -79,6 +79,7 @@ const eventList = [
   'show',
   'hide',
   'changeLanguage',
+  'cursorActivity',
   'requireScrollSync',
   'requireScrollIntoView',
   'setCodeBlockLanguages'

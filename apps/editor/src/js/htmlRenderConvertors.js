@@ -1,4 +1,12 @@
 const baseConvertors = {
+  paragraph(_, { entering }) {
+    return {
+      type: entering ? 'openTag' : 'closeTag',
+      outerNewLine: true,
+      tagName: 'p'
+    };
+  },
+
   softbreak(node) {
     const isPrevNodeHTML = node.prev && node.prev.type === 'htmlInline';
     const isPrevBR = isPrevNodeHTML && /<br ?\/?>/.test(node.prev.literal);
