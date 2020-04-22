@@ -2,7 +2,6 @@
  * @fileoverview Implements markdown editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import isBoolean from 'tui-code-snippet/type/isBoolean';
 
 import CodeMirrorExt from './codeMirrorExt';
@@ -22,7 +21,7 @@ import { getMarkInfo } from './markTextHelper';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
-const defaultState = {
+const defaultToolbarState = {
   strong: false,
   emph: false,
   strike: false,
@@ -34,9 +33,74 @@ const defaultState = {
   taskList: false,
   orderedList: false,
   heading: false,
-  table: false,
-  source: 'markdown'
+  table: false
 };
+
+function getToolbarStateType({ type, listData }) {
+  if (type === 'list' || type === 'item') {
+    if (listData.task) {
+      return 'taskList';
+    }
+    return listData.type === 'ordered' ? 'orderedList' : 'list';
+  }
+  if (type.indexOf('table') !== -1) {
+    return 'table';
+  }
+  return type;
+}
+
+function getToolbarState(targetNode, ch, mdLine, mdCh) {
+  const state = { ...defaultToolbarState };
+  let listEnabled = false;
+
+  traverseParentNodes(targetNode, mdNode => {
+    const type = getToolbarStateType(mdNode);
+
+    if (!isBoolean(state[type])) {
+      return;
+    }
+
+    if (type === 'list' || type === 'orderedList') {
+      if (!listEnabled) {
+        state[type] = true;
+        listEnabled = true;
+      }
+    } else {
+      state[type] = true;
+    }
+  });
+
+  // if position is matched to start, end position of inline node, highlighting is ignored
+  if (
+    isStyledTextNode(targetNode) &&
+    ((mdCh === ch && getMdEndLine(targetNode) === mdLine) ||
+      (mdCh === getMdEndCh(targetNode) + 1 && mdLine === getMdEndLine(targetNode)) ||
+      (mdCh === getMdStartCh(targetNode) && mdLine === getMdStartLine(targetNode)))
+  ) {
+    state[targetNode.type] = false;
+  }
+
+  return state;
+}
+
+/**
+ * Return whether state changed or not
+ * @param {object} previousState - Previous state
+ * @param {object} currentState - Current state
+ * @returns {boolean} - changed state
+ * @private
+ */
+function isToolbarStateChanged(previousState, currentState) {
+  if (!previousState && !currentState) {
+    return false;
+  }
+
+  if ((!previousState && currentState) || (previousState && !currentState)) {
+    return true;
+  }
+
+  return Object.keys(currentState).some(type => previousState[type] !== currentState[type]);
+}
 
 const ATTR_NAME_MARK = 'data-tui-mark';
 
@@ -175,7 +239,7 @@ class MarkdownEditor extends CodeMirrorExt {
       });
     });
 
-    this.cm.on('cursorActivity', () => this._changeToolbarItemState());
+    this.cm.on('cursorActivity', () => this._onChangeCursorActivity());
   }
 
   /**
@@ -186,7 +250,6 @@ class MarkdownEditor extends CodeMirrorExt {
    */
   setValue(markdown, cursorToEnd) {
     super.setValue(markdown, cursorToEnd);
-    // this._emitMarkdownEditorContentChangedEvent();
   }
 
   /**
@@ -311,85 +374,38 @@ class MarkdownEditor extends CodeMirrorExt {
     }
   }
 
-  /**
-   * Return whether state changed or not
-   * @param {object} previousState - Previous state
-   * @param {object} currentState - Current state
-   * @returns {boolean} - changed state
-   * @private
-   */
-  _isStateChanged(previousState, currentState) {
-    let result = false;
+  _setToolbarState(state) {
+    if (isToolbarStateChanged(this._latestState, state)) {
+      const eventObj = {
+        source: 'markdown',
+        ...(state ? state : defaultToolbarState)
+      };
 
-    forEachOwnProperties(currentState, (currentStateTypeValue, stateType) => {
-      result = previousState[stateType] !== currentStateTypeValue;
+      this.eventManager.emit('stateChange', eventObj);
+    }
 
-      return !result;
-    });
-
-    return result;
+    this._latestState = state;
   }
 
-  _changeToolbarItemState() {
-    let listDepth = 1;
-    const state = { ...defaultState };
+  _onChangeCursorActivity() {
     const { line, ch } = this.cm.getCursor();
     const mdLine = line + 1;
     const mdCh = this.cm.getLine(line).length === ch ? ch : ch + 1;
-    const setNodeTypeToState = mdNode => {
-      const type = this._getToolbarItemStateName(mdNode);
-
-      if (isBoolean(state[type])) {
-        if (/list|List/.test(type)) {
-          if (listDepth === 1) {
-            listDepth += 1;
-            state[type] = true;
-          }
-        } else {
-          state[type] = true;
-        }
-      }
-    };
-
     let mdNode = this.toastMark.findNodeAtPosition([mdLine, mdCh]);
+    let state = null;
 
-    if (!mdNode) {
-      this.eventManager.emit('stateChange', state);
-      this.resetState();
-      return;
-    }
-    mdNode = mdNode.type === 'text' ? mdNode.parent : mdNode;
+    this.eventManager.emit('cursorActivity', {
+      source: 'markdown',
+      cursor: { line, ch },
+      markdownNode: mdNode
+    });
 
-    setNodeTypeToState(mdNode);
-    traverseParentNodes(mdNode, setNodeTypeToState);
-
-    // if position is matched to start, end position of inline node, highlighting is ignored
-    if (
-      isStyledTextNode(mdNode) &&
-      ((mdCh === ch && getMdEndLine(mdNode) === mdLine) ||
-        (mdCh === getMdEndCh(mdNode) + 1 && mdLine === getMdEndLine(mdNode)) ||
-        (mdCh === getMdStartCh(mdNode) && mdLine === getMdStartLine(mdNode)))
-    ) {
-      state[mdNode.type] = false;
+    if (mdNode) {
+      mdNode = mdNode.type === 'text' ? mdNode.parent : mdNode;
+      state = getToolbarState(mdNode, ch, mdLine, mdCh);
     }
 
-    if (!this._latestState || this._isStateChanged(this._latestState, state)) {
-      this.eventManager.emit('stateChange', state);
-      this._latestState = state;
-    }
-  }
-
-  _getToolbarItemStateName({ type, listData }) {
-    if (type === 'list' || type === 'item') {
-      if (listData.task) {
-        return 'taskList';
-      }
-      return listData.type === 'ordered' ? 'orderedList' : 'list';
-    }
-    if (type.indexOf('table') !== -1) {
-      return 'table';
-    }
-    return type;
+    this._setToolbarState(state);
   }
 
   /**
