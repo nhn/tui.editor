@@ -199,6 +199,7 @@
 .tui-editor-contents ol li::before {
   color: #aaa;
   display: inline-block;
+  position: absolute;
   width: 1em;
   margin-left: -1em;
 }
@@ -225,7 +226,7 @@
 }
 
 .tui-editor-contents ul p,
-ol p {
+.tui-editor-contents ol p {
   margin: 0;
 }
 
