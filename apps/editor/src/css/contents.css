@@ -194,25 +194,33 @@
   counter-reset: li;
 }
 
-.tui-editor-contents ol li {
+.tui-editor-contents ol > li {
   counter-increment: li;
 }
 
-.tui-editor-contents ul li::before,
-.tui-editor-contents ol li::before {
-  color: #aaa;
+.tui-editor-contents ul > li::before,
+.tui-editor-contents ol > li::before {
   display: inline-block;
   position: absolute;
   width: 1em;
+}
+
+.tui-editor-contents ul > li::before {
+  content: '';
+  margin-top: 6px;
   margin-left: -1em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #ccc;
 }
 
-.tui-editor-contents ul li::before {
-  content: '\2022';
-}
-
-.tui-editor-contents ol li::before {
-  content: counter(li) '.';
+.tui-editor-contents ol > li::before {
+  content: '.' counter(li);
+  margin-left: -1.2em;
+  text-align: right;
+  direction: rtl;
+  color: #aaa;
 }
 
 .tui-editor-contents ul ul,
@@ -272,8 +280,10 @@
   background-size: 16px 16px;
   background-position: center;
   content: '';
-  height: 18px;
-  width: 18px;
+  margin-top: 0;
+  border-radius: 0;
+  height: 16px;
+  width: 16px;
   position: absolute;
   left: 14px;
   top: 1px;
