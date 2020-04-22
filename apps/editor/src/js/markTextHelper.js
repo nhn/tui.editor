@@ -42,13 +42,16 @@ function markInfo(start, end, className) {
   return { start, end, className };
 }
 
-function heading({ level }, start, end) {
-  return {
-    marks: [
-      markInfo(start, end, cls('heading', `heading${level}`)),
-      markInfo(start, addChPos(start, level), classNameMap.DELIM)
-    ]
-  };
+function heading({ level, headingType }, start, end) {
+  const marks = [markInfo(start, end, cls('heading', `heading${level}`))];
+
+  if (headingType === 'atx') {
+    marks.push(markInfo(start, addChPos(start, level), classNameMap.DELIM));
+  } else {
+    marks.push(markInfo(setChPos(end, 0), end, `${classNameMap.DELIM} setext`));
+  }
+
+  return { marks };
 }
 
 function emphasisAndStrikethrough({ type }, start, end) {

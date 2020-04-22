@@ -28,6 +28,10 @@
   font-size: 14px;
 }
 
+.tui-md-heading.tui-md-delimiter.setext {
+  line-height: 15px;
+}
+
 .tui-md-strong,
 .tui-md-heading,
 .tui-md-list-item.tui-md-list-item-bullet,
