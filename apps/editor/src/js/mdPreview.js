@@ -88,6 +88,9 @@ class MarkdownPreview extends Preview {
 
       if (cursorNode.type === 'tableRow') {
         cursorNode = findTableCell(cursorNode, cursorPos);
+      } else if (cursorNode.type === 'tableBody') {
+        // empty line next to table
+        cursorNode = null;
       }
     }
 

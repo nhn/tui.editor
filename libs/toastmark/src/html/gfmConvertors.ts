@@ -82,22 +82,25 @@ export const gfmConvertors: HTMLConvertorMap = {
     }
 
     const result: HTMLToken[] = [];
-    const table = node.parent!.parent as TableNode;
-    const lastCell = node.lastChild as TableCellNode;
-    for (let i = lastCell.columnIdx + 1; i < table.columns.length; i += 1) {
-      result.push(
-        {
-          type: 'openTag',
-          tagName: 'td',
-          outerNewLine: true
-        },
-        {
-          type: 'closeTag',
-          tagName: 'td',
-          outerNewLine: true
-        }
-      );
+    if (node.lastChild) {
+      const columnLen = (node.parent!.parent as TableNode).columns.length;
+      const lastColIdx = (node.lastChild as TableCellNode).columnIdx;
+      for (let i = lastColIdx + 1; i < columnLen; i += 1) {
+        result.push(
+          {
+            type: 'openTag',
+            tagName: 'td',
+            outerNewLine: true
+          },
+          {
+            type: 'closeTag',
+            tagName: 'td',
+            outerNewLine: true
+          }
+        );
+      }
     }
+
     result.push({
       type: 'closeTag',
       tagName: 'tr',
