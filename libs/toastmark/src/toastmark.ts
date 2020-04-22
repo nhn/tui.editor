@@ -37,9 +37,14 @@ type EventHandlerMap = {
   [key in EventName]: Function[];
 };
 
+type RemovedNodeRange = {
+  id: [number, number];
+  line: [number, number];
+};
+
 interface EditResult {
   nodes: BlockNode[];
-  removedNodeRange: [number, number] | null;
+  removedNodeRange: RemovedNodeRange | null;
 }
 
 type ParseResult = EditResult & { nextNode: Node | null };
@@ -244,7 +249,7 @@ export class ToastMark {
   private getRemovedNodeRange(
     extStartNode: BlockNode | null,
     extEndNode: BlockNode | null
-  ): [number, number] | null {
+  ): RemovedNodeRange | null {
     if (
       !extStartNode ||
       (extStartNode && isRefDef(extStartNode)) ||
@@ -252,7 +257,10 @@ export class ToastMark {
     ) {
       return null;
     }
-    return [extStartNode.id, extEndNode!.id];
+    return {
+      id: [extStartNode.id, extEndNode!.id],
+      line: [extStartNode.sourcepos![0][0] - 1, extEndNode!.sourcepos![1][0] - 1]
+    };
   }
 
   private markDeletedRefMap(extStartNode: BlockNode | null, extEndNode: BlockNode | null) {

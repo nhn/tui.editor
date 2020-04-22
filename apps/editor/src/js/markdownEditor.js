@@ -241,7 +241,11 @@ class MarkdownEditor extends CodeMirrorExt {
   }
 
   _markNodes(editResult) {
-    const { nodes } = editResult;
+    const { nodes, removedNodeRange } = editResult;
+
+    if (removedNodeRange) {
+      this._removeBackgroundOfLines(removedNodeRange);
+    }
 
     if (nodes.length) {
       const [editFromPos] = nodes[0].sourcepos;
@@ -255,8 +259,6 @@ class MarkdownEditor extends CodeMirrorExt {
           mark.clear();
         }
       }
-
-      this._removeBackgroundOfLines();
 
       /* eslint-disable max-depth */
       for (const parent of nodes) {
@@ -276,12 +278,15 @@ class MarkdownEditor extends CodeMirrorExt {
     }
   }
 
-  _removeBackgroundOfLines() {
-    // @TODO: change from 'this._markedLines' to 'removedNodeRange' of ToastMark
-    Object.keys(this._markedLines).forEach(line => {
-      this.cm.removeLineClass(Number(line), 'background', 'tui-md-code-block');
-      this._markedLines[line] = false;
-    });
+  _removeBackgroundOfLines(removedNodeRange) {
+    const [startLine, endLine] = removedNodeRange.line;
+
+    for (let index = startLine; index <= endLine; index += 1) {
+      if (this._markedLines[index]) {
+        this.cm.removeLineClass(index, 'background');
+        this._markedLines[index] = false;
+      }
+    }
   }
 
   _markNode(node) {
