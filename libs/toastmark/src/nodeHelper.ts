@@ -124,7 +124,8 @@ export function findChildNodeAtLine(parent: Node, line: number) {
       return node;
     }
     if (comp === Compare.GT) {
-      return node.prev;
+      // To consider that top line is blank line
+      return node.prev || node;
     }
     node = node.next;
   }
