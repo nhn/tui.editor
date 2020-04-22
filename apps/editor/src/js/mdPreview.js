@@ -133,7 +133,7 @@ class MarkdownPreview extends Preview {
     if (!removedNodeRange) {
       contentEl.insertAdjacentHTML('afterbegin', newHtml);
     } else {
-      const [startNodeId, endNodeId] = removedNodeRange;
+      const [startNodeId, endNodeId] = removedNodeRange.id;
       const startEl = this._getElementByNodeId(startNodeId);
       const endEl = this._getElementByNodeId(endNodeId);
 
