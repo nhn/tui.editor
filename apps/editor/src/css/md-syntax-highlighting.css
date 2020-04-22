@@ -1,0 +1,94 @@
+.te-md-container .CodeMirror {
+  color: #000;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.tui-md-heading1 {
+  font-size: 24px;
+}
+
+.tui-md-heading2 {
+  font-size: 22px;
+}
+
+.tui-md-heading3 {
+  font-size: 20px;
+}
+
+.tui-md-heading4 {
+  font-size: 18px;
+}
+
+.tui-md-heading5 {
+  font-size: 16px;
+}
+
+.tui-md-heading6 {
+  font-size: 14px;
+}
+
+.tui-md-strong,
+.tui-md-heading,
+.tui-md-list-item.tui-md-list-item-bullet,
+.tui-md-list-item.tui-md-meta {
+  font-weight: bold;
+}
+
+.tui-md-emph {
+  font-style: italic;
+}
+
+.tui-md-strike {
+  text-decoration: line-through;
+}
+
+.tui-md-strike.tui-md-delimiter {
+  text-decoration: none;
+}
+
+.tui-md-delimiter,
+.tui-md-thematic-break,
+.tui-md-link,
+.tui-md-table,
+.tui-md-block-quote {
+  color: #ccc;
+}
+
+.tui-md-meta,
+.tui-md-link.tui-md-link-url.tui-md-marked-text {
+  color: #999;
+}
+
+.tui-md-block-quote.tui-md-marked-text {
+  color: #555;
+}
+
+.tui-md-table.tui-md-marked-text {
+  color: #000;
+}
+
+.tui-md-link.tui-md-link-desc.tui-md-marked-text,
+.tui-md-list-item-odd.tui-md-list-item-bullet {
+  color: #5182b6;
+}
+
+.tui-md-code.tui-md-marked-text,
+.tui-md-list-item-even.tui-md-list-item-bullet {
+  color: #c1788b;
+}
+
+.tui-md-code {
+  background-color: #f9f2f4;
+}
+
+.tui-md-code-block.CodeMirror-linebackground {
+  left: 20px;
+  right: 20px;
+  background-color: #f5f7f8;
+}
+
+.tui-md-code.tui-md-marked-text,
+.tui-md-code-block.tui-md-marked-text {
+  font-family: Consolas, Courier, 'Apple SD 산돌고딕 Neo', -apple-system, 'Lucida Grande',
+    'Apple SD Gothic Neo', '맑은 고딕', 'Malgun Gothic', 'Segoe UI', '돋움', dotum, sans-serif;
+}

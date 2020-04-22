@@ -83,3 +83,17 @@ export function traverseParentNodes(mdNode, iteratee) {
     iteratee(mdNode);
   }
 }
+
+export function addChPos(originPos, addedCh) {
+  return {
+    line: originPos.line,
+    ch: originPos.ch + addedCh
+  };
+}
+
+export function setChPos(originPos, newCh) {
+  return {
+    line: originPos.line,
+    ch: newCh
+  };
+}

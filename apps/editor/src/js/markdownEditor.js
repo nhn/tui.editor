@@ -18,18 +18,9 @@ import {
   getMdStartCh,
   getMdEndCh
 } from './utils/markdown';
+import { getMarkInfo } from './markTextHelper';
 
 const keyMapper = KeyMapper.getSharedInstance();
-
-const tokenTypes = {
-  strong: 'strong',
-  emph: 'em',
-  strike: 'strikethrough',
-  thematicBreak: 'hr',
-  blockQuote: 'quote',
-  code: 'comment',
-  codeBlock: 'comment'
-};
 
 const defaultState = {
   strong: false,
@@ -78,6 +69,13 @@ class MarkdownEditor extends CodeMirrorExt {
      * @private
      */
     this._latestState = null;
+
+    /**
+     * map of marked lines
+     * @type {Object.<number, boolean}
+     * @private
+     */
+    this._markedLines = {};
 
     this._initEvent();
   }
@@ -258,6 +256,8 @@ class MarkdownEditor extends CodeMirrorExt {
         }
       }
 
+      this._removeBackgroundOfLines();
+
       /* eslint-disable max-depth */
       for (const parent of nodes) {
         const walker = parent.walker();
@@ -267,23 +267,7 @@ class MarkdownEditor extends CodeMirrorExt {
           const { node, entering } = event;
 
           if (entering) {
-            const { type, sourcepos } = node;
-            const [startPosition, endPosition] = sourcepos;
-            const [startLine, startCh] = startPosition;
-            const [endLine, endCh] = endPosition;
-            const start = { line: startLine - 1, ch: startCh - 1 };
-            const end = { line: endLine - 1, ch: endCh };
-            const extraNode = tokenTypes[type];
-
-            if (type === 'heading') {
-              this._markText(start, end, `cm-header cm-header-${node.level}`);
-            } else if (extraNode) {
-              this._markText(start, end, `cm-${extraNode}`);
-            } else if (type === 'image' || type === 'link') {
-              this._markTextInLinkOrImage(node, start, end);
-            } else if (type === 'item') {
-              this._markTextInListItem(node, start, end);
-            }
+            this._markNode(node);
           }
           event = walker.next();
         }
@@ -292,88 +276,34 @@ class MarkdownEditor extends CodeMirrorExt {
     }
   }
 
-  _markText(start, end, className) {
-    const attributes = { [ATTR_NAME_MARK]: '' };
-
-    this.cm.markText(start, end, { className, attributes });
+  _removeBackgroundOfLines() {
+    // @TODO: change from 'this._markedLines' to 'removedNodeRange' of ToastMark
+    Object.keys(this._markedLines).forEach(line => {
+      this.cm.removeLineClass(Number(line), 'background', 'tui-md-code-block');
+      this._markedLines[line] = false;
+    });
   }
 
-  _markTextInLinkOrImage(node, start, end) {
-    const { type, lastChild } = node;
-    const { line: startLine, ch: startCh } = start;
-    const { line: endLine } = end;
+  _markNode(node) {
+    const from = { line: getMdStartLine(node) - 1, ch: getMdStartCh(node) - 1 };
+    const to = { line: getMdEndLine(node) - 1, ch: getMdEndCh(node) };
+    const markInfo = getMarkInfo(node, from, to, this.cm.getLine(to.line));
 
-    const descStart = { line: startLine, ch: startCh };
-    let lastChildCh;
+    if (markInfo) {
+      const { marks = [], lineBackground = {} } = markInfo;
+      const { start: startLine, end: endLine, className: lineClassName } = lineBackground;
 
-    if (type === 'image') {
-      const descEnd = { line: startLine, ch: startCh + 1 };
+      marks.forEach(({ start, end, className }) => {
+        const attributes = { [ATTR_NAME_MARK]: '' };
 
-      lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 3; // 3: length of '![]'
+        this.cm.markText(start, end, { className, attributes });
+      });
 
-      this._markText(descStart, descEnd, 'cm-image cm-image-marker');
-      this._markText(
-        descEnd,
-        { line: endLine, ch: lastChildCh },
-        'cm-image cm-image-alt-text cm-link'
-      );
-    } else {
-      lastChildCh = lastChild ? lastChild.sourcepos[1][1] + 1 : 2; // 2: length of '[]'
-
-      this._markText(descStart, { line: endLine, ch: lastChildCh }, 'cm-link');
-    }
-
-    this._markText({ line: endLine, ch: lastChildCh }, end, 'cm-string cm-url');
-  }
-
-  _getClassNameOfListItem(node) {
-    let depth = 0;
-
-    while (node.parent.parent && node.parent.parent.type === 'item') {
-      node = node.parent.parent;
-      depth += 1;
-    }
-
-    const listItemTokens = ['variable-2', 'variable-3', 'keyword'];
-    const className = listItemTokens[depth % 3];
-
-    return `cm-${className}`;
-  }
-
-  _markTextInListItemChildren(node, className) {
-    while (node) {
-      const { type, sourcepos } = node;
-
-      if (type === 'paragraph' || type === 'codeBlock') {
-        const [startPosistion, endPosition] = sourcepos;
-        const start = { line: startPosistion[0] - 1, ch: startPosistion[1] - 1 };
-        const end = { line: endPosition[0] - 1, ch: endPosition[1] };
-
-        this._markText(start, end, className);
+      for (let index = startLine; index <= endLine; index += 1) {
+        this.cm.addLineClass(index, 'background', lineClassName);
+        this._markedLines[index] = true;
       }
-      node = node.next;
     }
-  }
-
-  _markTextInListItem(node, start) {
-    const className = this._getClassNameOfListItem(node);
-    const { padding, task } = node.listData;
-
-    this._markText(
-      { line: start.line, ch: start.ch },
-      { line: start.line, ch: start.ch + padding },
-      className
-    );
-
-    if (task) {
-      this._markText(
-        { line: start.line, ch: start.ch + padding },
-        { line: start.line, ch: start.ch + padding + 3 },
-        'cm-meta'
-      );
-    }
-
-    this._markTextInListItemChildren(node.firstChild, className);
   }
 
   /**
