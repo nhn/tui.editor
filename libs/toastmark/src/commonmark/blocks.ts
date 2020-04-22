@@ -13,6 +13,7 @@ import { blockHandlers, Process } from './blockHandlers';
 import { CODE_INDENT } from './blockHelper';
 import { blockStarts, Matched } from './blockStarts';
 import { RefMap, RefLinkCandidateMap, RefDefCandidateMap } from '../toastmark';
+import { AutolinkParser } from './gfm/autoLinks';
 import { clearObj } from '../helper';
 
 const reHtmlBlockClose = [
@@ -45,7 +46,7 @@ const defaultOptions = {
 export interface Options {
   smart: boolean;
   tagFilter: boolean;
-  extendedAutolinks: boolean;
+  extendedAutolinks: boolean | AutolinkParser;
   disallowedHtmlBlockTags: string[];
   useReferenceDefinition: boolean;
 }

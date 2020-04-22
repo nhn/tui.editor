@@ -5,6 +5,14 @@ const DOMAIN = '(?:[w-]+.)*[A-Za-z0-9-]+.[A-Za-z0-9-]+';
 const PATH = '[^<\\s]*[^<?!.,:*_?~\\s]';
 const EMAIL = '[\\w.+-]+@(?:[\\w-]+\\.)+[\\w-]+';
 
+export type AutolinkParser = (
+  content: string
+) => {
+  url: string;
+  text: string;
+  range: [number, number];
+}[];
+
 function trimUnmatchedTrailingParens(source: string) {
   const trailingParen = /\)+$/.exec(source);
   if (trailingParen) {
@@ -34,8 +42,8 @@ function trimTrailingEntity(source: string) {
 }
 
 interface LinkInfo {
-  linkText: string;
-  destination: string;
+  text: string;
+  url: string;
   range: [number, number];
 }
 
@@ -44,17 +52,17 @@ export function parseEmailLink(source: string) {
   const result: LinkInfo[] = [];
   let m;
   while ((m = reEmailLink.exec(source))) {
-    const linkText = m[0];
-    if (!/[_-]+$/.test(linkText)) {
+    const text = m[0];
+    if (!/[_-]+$/.test(text)) {
       result.push({
-        linkText,
-        range: [m.index, m.index + linkText.length - 1],
-        destination: `mailto:${linkText}`
+        text,
+        range: [m.index, m.index + text.length - 1],
+        url: `mailto:${text}`
       });
     }
   }
 
-  return result.length ? result : null;
+  return result;
 }
 
 export function parseUrlLink(source: string) {
@@ -63,29 +71,37 @@ export function parseUrlLink(source: string) {
   let m;
 
   while ((m = reWwwAutolink.exec(source))) {
-    const linkText = trimTrailingEntity(trimUnmatchedTrailingParens(m[0]));
+    const text = trimTrailingEntity(trimUnmatchedTrailingParens(m[0]));
     const scheme = m[1] === 'www' ? 'http://' : '';
     result.push({
-      linkText,
-      range: [m.index, m.index + linkText.length - 1],
-      destination: `${scheme}${linkText}`
+      text,
+      range: [m.index, m.index + text.length - 1],
+      url: `${scheme}${text}`
     });
   }
 
-  return result.length ? result : null;
+  return result;
 }
 
-export function convertExtAutoLinks(walker: NodeWalker) {
+function baseAutolinkParser(source: string) {
+  return [...parseUrlLink(source), ...parseEmailLink(source)].sort(
+    (a, b) => a.range[0] - b.range[0]
+  );
+}
+
+export function convertExtAutoLinks(walker: NodeWalker, autolinkParser: boolean | AutolinkParser) {
+  if (typeof autolinkParser === 'boolean') {
+    autolinkParser = baseAutolinkParser;
+  }
+
   let event;
   while ((event = walker.next())) {
     const { entering, node } = event;
-    if (entering && node.type === 'text') {
+    if (entering && node.type === 'text' && node.parent!.type !== 'link') {
       const literal = node.literal!;
-      const linkInfos = [...(parseUrlLink(literal) || []), ...(parseEmailLink(literal) || [])].sort(
-        (a, b) => a.range[0] - b.range[0]
-      );
+      const linkInfos = autolinkParser(literal);
 
-      if (!linkInfos.length) {
+      if (!linkInfos || !linkInfos.length) {
         continue;
       }
 
@@ -96,7 +112,7 @@ export function convertExtAutoLinks(walker: NodeWalker) {
         [lineNum, chPos + endIdx]
       ];
       const newNodes = [];
-      for (const { range, destination, linkText } of linkInfos) {
+      for (const { range, url, text: linkText } of linkInfos) {
         if (range[0] > lastIdx) {
           newNodes.push(
             text(literal.substring(lastIdx, range[0]), sourcepos(lastIdx, range[0] - 1))
@@ -104,7 +120,7 @@ export function convertExtAutoLinks(walker: NodeWalker) {
         }
         const linkNode = createNode('link', sourcepos(...range));
         linkNode.appendChild(text(linkText, sourcepos(...range)));
-        linkNode.destination = destination;
+        linkNode.destination = url;
         newNodes.push(linkNode);
         lastIdx = range[1] + 1;
       }
