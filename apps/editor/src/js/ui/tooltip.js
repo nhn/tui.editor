@@ -6,6 +6,7 @@ import css from 'tui-code-snippet/domUtil/css';
 import domUtils from '../utils/dom';
 
 const TOOLTIP_CONTENT = '<div class="arrow"></div><span class="text"></span></span>';
+const TOOLTIP_TOP_INDENT = 7;
 
 /**
  * Class Tooltip
@@ -26,10 +27,12 @@ class Tooltip {
    * @param {String} text - text to show
    */
   show(target, text) {
-    const { top, left } = domUtils.getOffset(target);
+    const targetRect = target.getBoundingClientRect();
+    const left = targetRect.left + window.pageXOffset;
+    const top = targetRect.top + window.pageYOffset;
 
     css(this.el, {
-      top: `${top + target.clientHeight + 13}px`, // below the button
+      top: `${top + target.clientHeight + TOOLTIP_TOP_INDENT}px`,
       left: `${left + 3}px`
     });
 
