@@ -62,7 +62,8 @@
   color: #ccc;
 }
 
-.tui-md-code-block.tui-md-meta {
+.tui-md-code-block.tui-md-meta,
+.tui-md-code.tui-md-delimiter {
   color: #aaa;
 }
 
@@ -97,7 +98,7 @@
 }
 
 .tui-md-code {
-  background-color: #f9f2f4;
+  background-color: rgba(193, 121, 139, 0.1);
   padding: 2px 0;
   letter-spacing: -0.3px;
 }
@@ -120,8 +121,8 @@
   background-color: #f5f7f8;
 }
 
-.tui-md-code.tui-md-marked-text,
-.tui-md-code-block.tui-md-marked-text {
-  font-family: Consolas, Courier, 'Apple SD 산돌고딕 Neo', -apple-system, 'Lucida Grande',
-    'Apple SD Gothic Neo', '맑은 고딕', 'Malgun Gothic', 'Segoe UI', '돋움', dotum, sans-serif;
+.tui-md-code,
+.tui-md-code-block {
+  font-family: Consolas, Courier, 'Lucida Grande', '나눔바른고딕', 'Nanum Barun Gothic', '맑은고딕',
+    'Malgun Gothic', sans-serif;
 }
