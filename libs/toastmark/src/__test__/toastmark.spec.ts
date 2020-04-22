@@ -240,6 +240,14 @@ describe('editText()', () => {
       assertParseResult(doc, ['Hello World', '', 'Hi']);
       assertResultNodes(doc, result.nodes);
     });
+
+    it('remove lines with top blank line', () => {
+      const doc = new ToastMark('\n\nabove linebreak\n\nHello World');
+      const result = doc.editMarkdown([1, 1], [5, 12], '')[0];
+
+      assertParseResult(doc, ['']);
+      assertResultNodes(doc, result.nodes);
+    });
   });
 
   describe('multiple paragraph', () => {
