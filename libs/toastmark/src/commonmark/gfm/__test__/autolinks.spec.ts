@@ -216,6 +216,7 @@ describe('custom autolink parser', () => {
 
     expect(link1).toMatchObject({
       destination: 'num:111',
+      extendedAutolink: true,
       sourcepos: pos(1, 3, 1, 5),
       firstChild: {
         literal: '111'
@@ -224,6 +225,7 @@ describe('custom autolink parser', () => {
 
     expect(link2).toMatchObject({
       destination: 'num:222',
+      extendedAutolink: true,
       sourcepos: pos(1, 9, 1, 11),
       firstChild: {
         literal: '222'
@@ -244,18 +246,17 @@ describe('GFM Examples', () => {
     const link = root.firstChild!.firstChild as LinkNode;
     const linkText = link.firstChild!;
 
-    expect(link.type).toBe('link');
-    expect(link.destination).toBe('http://www.commonmark.org');
-    expect(link.sourcepos).toEqual([
-      [1, 1],
-      [1, 18]
-    ]);
+    expect(link).toMatchObject({
+      type: 'link',
+      destination: 'http://www.commonmark.org',
+      extendedAutolink: true,
+      sourcepos: pos(1, 1, 1, 18)
+    });
 
-    expect(linkText.literal).toBe('www.commonmark.org');
-    expect(linkText.sourcepos).toEqual([
-      [1, 1],
-      [1, 18]
-    ]);
+    expect(linkText).toMatchObject({
+      literal: 'www.commonmark.org',
+      sourcepos: pos(1, 1, 1, 18)
+    });
 
     const html = render(root);
     expect(html).toBe('<p><a href="http://www.commonmark.org">www.commonmark.org</a></p>\n');
@@ -269,24 +270,18 @@ describe('GFM Examples', () => {
     const text2 = link.next!;
 
     expect(text1.literal).toBe('Visit ');
-    expect(link.type).toBe('link');
-    expect(link.destination).toBe('http://www.commonmark.org/help');
-    expect(link.sourcepos).toEqual([
-      [1, 7],
-      [1, 29]
-    ]);
+    expect(link).toMatchObject({
+      type: 'link',
+      extendedAutolink: true,
+      destination: 'http://www.commonmark.org/help',
+      sourcepos: pos(1, 7, 1, 29)
+    });
 
     expect(linkText.literal).toBe('www.commonmark.org/help');
-    expect(linkText.sourcepos).toEqual([
-      [1, 7],
-      [1, 29]
-    ]);
+    expect(linkText.sourcepos).toEqual(pos(1, 7, 1, 29));
 
     expect(text2.literal).toBe(' for more information.');
-    expect(text2.sourcepos).toEqual([
-      [1, 30],
-      [1, 51]
-    ]);
+    expect(text2.sourcepos).toEqual(pos(1, 30, 1, 51));
 
     const html = render(root);
     expect(html).toBe(

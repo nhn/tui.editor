@@ -90,10 +90,13 @@ function image({ lastChild }, start, end) {
   };
 }
 
-function link({ lastChild }, start, end) {
+function link({ lastChild, extendedAutolink }, start, end) {
   const lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 2; // 2: length of '[]'
+  const marks = extendedAutolink
+    ? [markInfo(start, end, `${cls('link', 'link-desc')} ${classNameMap.TEXT}`)]
+    : markLink(start, end, start, lastChildCh);
 
-  return { marks: markLink(start, end, start, lastChildCh) };
+  return { marks };
 }
 
 function code({ tickCount }, start, end) {

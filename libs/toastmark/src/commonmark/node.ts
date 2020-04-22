@@ -228,6 +228,7 @@ export class HeadingNode extends BlockNode {
 export class LinkNode extends Node {
   public destination: string | null = null;
   public title: string | null = null;
+  public extendedAutolink = false;
 }
 
 export class CodeBlockNode extends BlockNode {
