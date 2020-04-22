@@ -6,8 +6,8 @@
 import CodeMirror from 'codemirror';
 
 /*eslint-disable */
-var listRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]\s|[*+-]\s|(\d+)([.)]))(\s*)/,
-  emptyListRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]|[*+-]|(\d+)[.)])(\s*)$/,
+var listRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]\s|[*+-]\s|(\d+)([.)]\s))(\s*)/,
+  emptyListRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]|[*+-]|(\d+)[.)]\s)(\s*)$/,
   unorderedListRE = /[*+-]\s/;
 
 CodeMirror.commands.indentOrderedList = function(cm) {
