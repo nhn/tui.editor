@@ -283,7 +283,7 @@ class MarkdownEditor extends CodeMirrorExt {
 
     for (let index = startLine; index <= endLine; index += 1) {
       if (this._markedLines[index]) {
-        this.cm.removeLineClass(index, 'background', 'tui-md-code-block');
+        this.cm.removeLineClass(index, 'background');
         this._markedLines[index] = false;
       }
     }
