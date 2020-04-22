@@ -100,9 +100,9 @@ function code({ tickCount }, start, end) {
   return {
     marks: [
       markInfo(start, end, cls('code')),
-      markInfo(start, openDelimEnd, classNameMap.DELIM),
+      markInfo(start, openDelimEnd, `${classNameMap.DELIM} start`),
       markInfo(openDelimEnd, closeDelimStart, classNameMap.TEXT),
-      markInfo(closeDelimStart, end, classNameMap.DELIM)
+      markInfo(closeDelimStart, end, `${classNameMap.DELIM} end`)
     ]
   };
 }
