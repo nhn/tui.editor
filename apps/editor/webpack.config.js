@@ -181,7 +181,7 @@ function setProductionConfig(config) {
   config.entry = {
     editor: ENTRY_EDITOR,
     'editor-viewer': ENTRY_VIEWER,
-    'editor-layout': './src/css/editor.css',
+    'editor-layout': './src/js/indexLayoutStyle.js',
     // legacy styles
     'editor-old': './src/js/indexOldStyle.js',
     'editor-viewer-old': './src/css/old/contents.css'
