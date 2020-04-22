@@ -222,6 +222,7 @@ export class ListNode extends BlockNode {
 
 export class HeadingNode extends BlockNode {
   public level = 0;
+  public headingType: 'atx' | 'setext' = 'atx';
 }
 
 export class LinkNode extends Node {
