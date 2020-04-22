@@ -49,7 +49,7 @@ cm.on('change', (editor, changeObj) => {
     if (!removedNodeRange) {
       previewEl.innerHTML = html;
     } else {
-      const [startNodeId, endNodeId] = removedNodeRange;
+      const [startNodeId, endNodeId] = removedNodeRange.id;
       const startEl = previewEl.querySelector(`[data-nodeid="${startNodeId}"]`);
       const endEl = previewEl.querySelector(`[data-nodeid="${endNodeId}"]`);
       const newHtml = nodes.map(node => render(node)).join('');
