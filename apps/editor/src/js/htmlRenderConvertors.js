@@ -56,6 +56,7 @@ const baseConvertors = {
 
   codeBlock(node) {
     const infoWords = node.info ? node.info.split(/\s+/) : [];
+    const preClasses = [];
     const codeAttrs = {};
 
     if (node.fenceLength > 3) {
@@ -64,12 +65,12 @@ const baseConvertors = {
     if (infoWords.length > 0 && infoWords[0].length > 0) {
       const [lang] = infoWords;
 
+      preClasses.push(`lang-${lang}`);
       codeAttrs['data-language'] = lang;
-      codeAttrs.class = `lang-${lang}`;
     }
 
     return [
-      { type: 'openTag', tagName: 'pre' },
+      { type: 'openTag', tagName: 'pre', classNames: preClasses },
       { type: 'openTag', tagName: 'code', attributes: codeAttrs },
       { type: 'text', content: node.literal },
       { type: 'closeTag', tagName: 'code' },

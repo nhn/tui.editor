@@ -87,9 +87,9 @@ describe('Custom HTMLRender', () => {
       const codeEl = preEl.firstChild;
 
       expect(preEl.nodeName).toBe('PRE');
+      expect(hasClass(preEl, 'lang-javascript')).toBe(true);
       expect(codeEl.nodeName).toBe('CODE');
       expect(codeEl.getAttribute('data-language')).toBe('javascript');
-      expect(hasClass(codeEl, 'lang-javascript')).toBe(true);
     });
 
     it('rendering Codeblock element with invalid language name should escape html entity', () => {
@@ -102,12 +102,12 @@ describe('Custom HTMLRender', () => {
       const codeEl = preEl.firstChild;
 
       expect(preEl.nodeName).toBe('PRE');
+      expect(hasClass(preEl, 'lang-korea')).toBe(true);
       expect(codeEl.nodeName).toBe('CODE');
       expect(codeEl.querySelector('span')).toBe(null);
       expect(codeEl.querySelector('div')).toBe(null);
       expect(codeEl.textContent).toBe('<div>asd</div>\n');
       expect(codeEl.getAttribute('data-language')).toBe('korea');
-      expect(hasClass(codeEl, 'lang-korea')).toBe(true);
     });
 
     it('rendering Codeblock element without language name should escape html entity', () => {
