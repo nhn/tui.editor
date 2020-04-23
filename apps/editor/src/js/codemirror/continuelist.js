@@ -18,7 +18,7 @@ CodeMirror.commands.indentOrderedList = function(cm) {
     var line = cm.getLine(pos.line);
     var cursorBeforeTextInline = line.substr(0, pos.ch);
 
-    if (!cm.state.disableContinue && (listRE.test(cursorBeforeTextInline) || cm.somethingSelected())) {
+    if (!cm.state.isCursorInCodeBlock && (listRE.test(cursorBeforeTextInline) || cm.somethingSelected())) {
       cm.indentSelection('add');
     } else {
       cm.execCommand('insertSoftTab');
@@ -28,7 +28,7 @@ CodeMirror.commands.indentOrderedList = function(cm) {
 };
 
 CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
-  if (cm.getOption('disableInput') || !!cm.state.disableContinue) return CodeMirror.Pass;
+  if (cm.getOption('disableInput') || !!cm.state.isCursorInCodeBlock) return CodeMirror.Pass;
   var ranges = cm.listSelections(),
   replacements = [];
   
