@@ -159,7 +159,7 @@ const atxHeading: BlockStart = (parser, container) => {
     !parser.indented &&
     (match = parser.currentLine.slice(parser.nextNonspace).match(reATXHeadingMarker))
   ) {
-    // The nested Heading is disallowed in list and blockquote with 'disallowedDeepHeading' option
+    // The nested Heading is disallowed in list and blockquote with 'disallowDeepHeading' option
     if (isDisallowedDeepHeading(parser, container)) {
       return Matched.Skip;
     }
@@ -242,7 +242,7 @@ const seTextHeading: BlockStart = (parser, container) => {
     container.type === 'paragraph' &&
     (match = parser.currentLine.slice(parser.nextNonspace).match(reSetextHeadingLine))
   ) {
-    // The nested Heading is disallowed in list and blockquote with 'disallowedDeepHeading' option
+    // The nested Heading is disallowed in list and blockquote with 'disallowDeepHeading' option
     if (isDisallowedDeepHeading(parser, container.parent as BlockNode)) {
       return Matched.Skip;
     }
