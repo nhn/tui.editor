@@ -31,7 +31,7 @@ CodeMirror.commands.indentLessOrderedList = cm => {
  * @ignore
  */
 CodeMirror.commands.fixOrderedListNumber = cm => {
-  if (cm.getOption('disableInput')) {
+  if (cm.getOption('disableInput') || !!cm.state.isCursorInCodeBlock) {
     return CodeMirror.Pass;
   }
 

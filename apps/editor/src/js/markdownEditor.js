@@ -394,6 +394,8 @@ class MarkdownEditor extends CodeMirrorExt {
     let mdNode = this.toastMark.findNodeAtPosition([mdLine, mdCh]);
     let state = null;
 
+    // To prevent to execute codemirror command in codeblock
+    this.cm.state.isCursorInCodeBlock = mdNode && mdNode.type === 'codeBlock';
     this.eventManager.emit('cursorActivity', {
       source: 'markdown',
       cursor: { line, ch },

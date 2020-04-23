@@ -6,7 +6,7 @@
 import CodeMirror from 'codemirror';
 
 /*eslint-disable */
-var listRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]\s|[*+-]\s|(\d+)([.)]))(\s*)/,
+var listRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]\s|[*+-]\s|(\d+)([.)]\s))(\s*)/,
   emptyListRE = /^(\s*)(>[> ]*|[*+-] \[[x ]\]|[*+-]|(\d+)[.)])(\s*)$/,
   unorderedListRE = /[*+-]\s/;
 
@@ -18,7 +18,7 @@ CodeMirror.commands.indentOrderedList = function(cm) {
     var line = cm.getLine(pos.line);
     var cursorBeforeTextInline = line.substr(0, pos.ch);
 
-    if (listRE.test(cursorBeforeTextInline) || cm.somethingSelected()) {
+    if (!cm.state.isCursorInCodeBlock && (listRE.test(cursorBeforeTextInline) || cm.somethingSelected())) {
       cm.indentSelection('add');
     } else {
       cm.execCommand('insertSoftTab');
@@ -28,9 +28,10 @@ CodeMirror.commands.indentOrderedList = function(cm) {
 };
 
 CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
-  if (cm.getOption('disableInput')) return CodeMirror.Pass;
+  if (cm.getOption('disableInput') || !!cm.state.isCursorInCodeBlock) return CodeMirror.Pass;
   var ranges = cm.listSelections(),
     replacements = [];
+  
   for (var i = 0; i < ranges.length; i++) {
     var pos = ranges[i].head;
     var line = cm.getLine(pos.line),
