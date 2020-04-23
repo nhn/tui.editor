@@ -25,7 +25,8 @@ import { tableHead, tableBody } from './gfm/tableBlockStart';
 export const enum Matched {
   None = 0, // No Match
   Container, // Keep Going
-  Leaf // No more block starts
+  Leaf, // No more block starts
+  Skip // Skip the block
 }
 export interface BlockStart {
   (parser: Parser, container: BlockNode): Matched;
@@ -133,6 +134,10 @@ function listsMatch(listData: ListNodeData, itemData: ListNodeData) {
   );
 }
 
+function isDisallowedDeepHeading(parser: Parser, node: BlockNode) {
+  return parser.options.disallowDeepHeading && (node.type === 'blockQuote' || node.type === 'item');
+}
+
 const blockQuote: BlockStart = parser => {
   if (!parser.indented && peek(parser.currentLine, parser.nextNonspace) === C_GREATERTHAN) {
     parser.advanceNextNonspace();
@@ -148,21 +153,25 @@ const blockQuote: BlockStart = parser => {
   return Matched.None;
 };
 
-const atxHeading: BlockStart = parser => {
+const atxHeading: BlockStart = (parser, container) => {
   let match;
   if (
     !parser.indented &&
     (match = parser.currentLine.slice(parser.nextNonspace).match(reATXHeadingMarker))
   ) {
+    // The nested Heading is disallowed in list and blockquote with 'disallowedDeepHeading' option
+    if (isDisallowedDeepHeading(parser, container)) {
+      return Matched.Skip;
+    }
     parser.advanceNextNonspace();
     parser.advanceOffset(match[0].length, false);
     parser.closeUnmatchedBlocks();
 
-    const container = parser.addChild('heading', parser.nextNonspace) as HeadingNode;
-    container.level = match[0].trim().length; // number of #s
-    container.headingType = 'atx';
+    const heading = parser.addChild('heading', parser.nextNonspace) as HeadingNode;
+    heading.level = match[0].trim().length; // number of #s
+    heading.headingType = 'atx';
     // remove trailing ###s:
-    container.stringContent = parser.currentLine
+    heading.stringContent = parser.currentLine
       .slice(parser.offset)
       .replace(/^[ \t]*#+[ \t]*$/, '')
       .replace(/[ \t]+#+[ \t]*$/, '');
@@ -233,8 +242,12 @@ const seTextHeading: BlockStart = (parser, container) => {
     container.type === 'paragraph' &&
     (match = parser.currentLine.slice(parser.nextNonspace).match(reSetextHeadingLine))
   ) {
+    // The nested Heading is disallowed in list and blockquote with 'disallowedDeepHeading' option
+    if (isDisallowedDeepHeading(parser, container.parent as BlockNode)) {
+      return Matched.Skip;
+    }
     parser.closeUnmatchedBlocks();
-    // resolve reference link definitiosn
+    // resolve reference link definitions
     let pos;
     while (
       peek(container.stringContent, 0) === C_OPEN_BRACKET &&

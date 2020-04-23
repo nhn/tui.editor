@@ -40,7 +40,8 @@ const defaultOptions = {
   tagFilter: false,
   extendedAutolinks: false,
   disallowedHtmlBlockTags: [],
-  useReferenceDefinition: false
+  useReferenceDefinition: false,
+  disallowDeepHeading: false
 };
 
 export interface Options {
@@ -49,6 +50,7 @@ export interface Options {
   extendedAutolinks: boolean | AutolinkParser;
   disallowedHtmlBlockTags: string[];
   useReferenceDefinition: boolean;
+  disallowDeepHeading: boolean;
 }
 
 export class Parser {
@@ -312,9 +314,13 @@ export class Parser {
       }
 
       let i = 0;
+      let skipped = false;
       while (i < blockStartsLen) {
         const res = blockStarts[i](this, container);
-        if (res === Matched.Container) {
+        if (res === Matched.Skip) {
+          skipped = true;
+          break;
+        } else if (res === Matched.Container) {
           container = this.tip;
           break;
         } else if (res === Matched.Leaf) {
@@ -326,7 +332,7 @@ export class Parser {
         }
       }
 
-      if (i === blockStartsLen) {
+      if (skipped || i === blockStartsLen) {
         // nothing matched
         this.advanceNextNonspace();
         break;
