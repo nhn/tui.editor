@@ -47,11 +47,12 @@ describe('Preview', () => {
     document.body.appendChild(previewWrapper);
     previewWrapper.innerHTML = preview.getHTML();
 
-    const el = previewWrapper.querySelector('code');
+    const preEl = previewWrapper.querySelector('pre');
+    const codeEl = previewWrapper.querySelector('code');
 
-    expect(el.textContent).toBe('code text\n');
-    expect(el.getAttribute('data-language')).toBe('javascript');
-    expect(el.className).toBe('lang-javascript');
+    expect(preEl.className).toBe('lang-javascript');
+    expect(codeEl.textContent).toBe('code text\n');
+    expect(codeEl.getAttribute('data-language')).toBe('javascript');
   });
 
   it('delayed refresh on editor change event', () => {
