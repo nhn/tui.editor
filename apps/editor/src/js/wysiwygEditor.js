@@ -56,13 +56,11 @@ class WysiwygEditor {
     this.editorContainerEl = el;
 
     this._height = 0;
-    this._linkAttribute = options.linkAttribute;
-
     this._silentChange = false;
 
     this._keyEventHandlers = {};
     this._managers = {};
-    this._linkAttribute = {};
+    this._linkAttribute = options.linkAttribute || {};
 
     this._initEvent();
     this._initDefaultKeyEventHandler();

@@ -10,10 +10,12 @@ describe('AddLink', () => {
   let container, wwe;
 
   beforeEach(() => {
+    const linkAttribute = { target: '_blank' };
+
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor(container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager(), { linkAttribute });
 
     wwe.init();
     wwe.getEditor().focus();
@@ -90,5 +92,19 @@ describe('AddLink', () => {
         .querySelector('a')
         .getAttribute('href')
     ).toEqual('%28%29%5B%5D%3C%3E');
+  });
+
+  it('should apply linkAttribute option to link node', () => {
+    AddLink.exec(wwe, {
+      url: 'https://www.google.com',
+      linkText: 'google'
+    });
+
+    expect(
+      wwe
+        .getBody()
+        .querySelector('a')
+        .getAttribute('target')
+    ).toEqual('_blank');
   });
 });
