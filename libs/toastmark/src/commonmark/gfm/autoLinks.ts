@@ -121,6 +121,7 @@ export function convertExtAutoLinks(walker: NodeWalker, autolinkParser: boolean 
         const linkNode = createNode('link', sourcepos(...range));
         linkNode.appendChild(text(linkText, sourcepos(...range)));
         linkNode.destination = url;
+        linkNode.extendedAutolink = true;
         newNodes.push(linkNode);
         lastIdx = range[1] + 1;
       }
