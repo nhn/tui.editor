@@ -60,7 +60,7 @@ class WysiwygEditor {
 
     this._keyEventHandlers = {};
     this._managers = {};
-    this._linkAttribute = options.linkAttribute;
+    this._linkAttribute = options.linkAttribute || {};
 
     this._initEvent();
     this._initDefaultKeyEventHandler();
