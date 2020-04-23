@@ -54,10 +54,7 @@
 .tui-md-delimiter,
 .tui-md-thematic-break,
 .tui-md-link,
-.tui-md-table {
-  color: #ddd;
-}
-
+.tui-md-table,
 .tui-md-block-quote {
   color: #ccc;
 }
@@ -98,7 +95,7 @@
 }
 
 .tui-md-code {
-  background-color: rgba(193, 121, 139, 0.1);
+  background-color: rgba(243, 229, 233, 0.5);
   padding: 2px 0;
   letter-spacing: -0.3px;
 }
