@@ -92,8 +92,8 @@
 
 .tui-editor-contents pre,
 .tui-editor-contents code {
-  font-family: Consolas, Courier, 'Apple SD 산돌고딕 Neo', -apple-system, 'Lucida Grande',
-    'Apple SD Gothic Neo', '맑은 고딕', 'Malgun Gothic', 'Segoe UI', '돋움', dotum, sans-serif;
+  font-family: Consolas, Courier, 'Lucida Grande', '나눔바른고딕', 'Nanum Barun Gothic', '맑은고딕',
+    'Malgun Gothic', sans-serif;
   border: 0;
   border-radius: 0;
 }
