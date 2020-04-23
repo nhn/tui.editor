@@ -37,7 +37,8 @@ class Convertor {
     this.mdReader = new Parser({
       extendedAutolinks,
       disallowedHtmlBlockTags: ['br'],
-      useReferenceDefinition
+      useReferenceDefinition,
+      disallowDeepHeading: true
     });
 
     this.renderHTML = createRenderHTML({

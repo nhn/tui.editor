@@ -214,7 +214,8 @@ class ToastUIEditor {
     this.toastMark = new ToastMark('', {
       disallowedHtmlBlockTags: ['br'],
       extendedAutolinks,
-      useReferenceDefinition
+      useReferenceDefinition,
+      disallowDeepHeading: true
     });
 
     this.mdEditor = MarkdownEditor.factory(
