@@ -208,7 +208,7 @@
 .tui-editor-contents ul > li::before {
   content: '';
   margin-top: 6px;
-  margin-left: -1em;
+  margin-left: -0.9em;
   width: 5px;
   height: 5px;
   border-radius: 50%;
