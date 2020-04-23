@@ -525,5 +525,43 @@ describe('Editor', () => {
         expect(editor.getHtml()).toBe('<p><a href="test">foo</a></p>\n');
       });
     });
+
+    describe('disallowDeepHeading internal parsing option', () => {
+      it('should disallow the nested seTextHeading in list', () => {
+        editor = new Editor({
+          el: container,
+          initialValue: '- item1\n\t-'
+        });
+
+        expect(editor.getHtml()).toBe('<ul>\n<li>\n<p>item1<br>\n-</p>\n</li>\n</ul>\n');
+      });
+
+      it('should disallow the nested atxHeading in list', () => {
+        editor = new Editor({
+          el: container,
+          initialValue: '- # item1'
+        });
+
+        expect(editor.getHtml()).toBe('<ul>\n<li>\n<p># item1</p>\n</li>\n</ul>\n');
+      });
+    });
+
+    it('should disallow the nested seTextHeading in blockquote', () => {
+      editor = new Editor({
+        el: container,
+        initialValue: '> item1\n> -'
+      });
+
+      expect(editor.getHtml()).toBe('<blockquote>\n<p>item1<br>\n-</p>\n</blockquote>\n');
+    });
+
+    it('should disallow the nested atxHeading in blockquote', () => {
+      editor = new Editor({
+        el: container,
+        initialValue: '> # item1'
+      });
+
+      expect(editor.getHtml()).toBe('<blockquote>\n<p># item1</p>\n</blockquote>\n');
+    });
   });
 });
