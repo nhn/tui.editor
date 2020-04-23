@@ -30,7 +30,7 @@ CodeMirror.commands.indentOrderedList = function(cm) {
 CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
   if (cm.getOption('disableInput') || !!cm.state.isCursorInCodeBlock) return CodeMirror.Pass;
   var ranges = cm.listSelections(),
-  replacements = [];
+    replacements = [];
   
   for (var i = 0; i < ranges.length; i++) {
     var pos = ranges[i].head;
