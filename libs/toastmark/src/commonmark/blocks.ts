@@ -40,7 +40,8 @@ const defaultOptions = {
   tagFilter: false,
   extendedAutolinks: false,
   disallowedHtmlBlockTags: [],
-  useReferenceDefinition: false
+  useReferenceDefinition: false,
+  disallowDeepHeading: false
 };
 
 export interface Options {
@@ -49,6 +50,7 @@ export interface Options {
   extendedAutolinks: boolean | AutolinkParser;
   disallowedHtmlBlockTags: string[];
   useReferenceDefinition: boolean;
+  disallowDeepHeading: boolean;
 }
 
 export class Parser {

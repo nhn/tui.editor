@@ -7,7 +7,8 @@ export function createMarkdownToHTML(options) {
   const parser = new Parser({
     disallowedHtmlBlockTags: ['br'],
     extendedAutolinks,
-    useReferenceDefinition
+    useReferenceDefinition,
+    disallowDeepHeading: true
   });
 
   const renderHTML = createRenderHTML({
