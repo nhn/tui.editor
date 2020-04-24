@@ -156,12 +156,10 @@ const atxHeading: BlockStart = (parser, container) => {
   let match;
   if (
     !parser.indented &&
+    // The nested Heading is disallowed in list and blockquote with 'disallowDeepHeading' option
+    !isDisallowedDeepHeading(parser, container) &&
     (match = parser.currentLine.slice(parser.nextNonspace).match(reATXHeadingMarker))
   ) {
-    // The nested Heading is disallowed in list and blockquote with 'disallowDeepHeading' option
-    if (isDisallowedDeepHeading(parser, container)) {
-      return Matched.None;
-    }
     parser.advanceNextNonspace();
     parser.advanceOffset(match[0].length, false);
     parser.closeUnmatchedBlocks();
@@ -239,12 +237,10 @@ const seTextHeading: BlockStart = (parser, container) => {
     container.stringContent !== null &&
     !parser.indented &&
     container.type === 'paragraph' &&
+    // The nested Heading is disallowed in list and blockquote with 'disallowDeepHeading' option
+    !isDisallowedDeepHeading(parser, container.parent as BlockNode) &&
     (match = parser.currentLine.slice(parser.nextNonspace).match(reSetextHeadingLine))
   ) {
-    // The nested Heading is disallowed in list and blockquote with 'disallowDeepHeading' option
-    if (isDisallowedDeepHeading(parser, container.parent as BlockNode)) {
-      return Matched.None;
-    }
     parser.closeUnmatchedBlocks();
     // resolve reference link definitions
     let pos;
