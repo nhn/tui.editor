@@ -54,10 +54,7 @@
 .tui-md-delimiter,
 .tui-md-thematic-break,
 .tui-md-link,
-.tui-md-table {
-  color: #ddd;
-}
-
+.tui-md-table,
 .tui-md-block-quote {
   color: #ccc;
 }
@@ -81,12 +78,9 @@
   color: #222;
 }
 
-.tui-md-link.tui-md-link-desc.tui-md-marked-text {
-  color: #00a9ff;
-}
-
+.tui-md-link.tui-md-link-desc.tui-md-marked-text,
 .tui-md-list-item-odd.tui-md-list-item-bullet {
-  color: #2885b5;
+  color: #4b96e6;
 }
 
 .tui-md-list-item-even.tui-md-list-item-bullet {
@@ -98,7 +92,7 @@
 }
 
 .tui-md-code {
-  background-color: rgba(193, 121, 139, 0.1);
+  background-color: rgba(243, 229, 233, 0.5);
   padding: 2px 0;
   letter-spacing: -0.3px;
 }

@@ -153,7 +153,7 @@
 
 .tui-editor-contents table {
   border: 1px solid rgba(0, 0, 0, 0.1);
-  margin: 2px 0 14px;
+  margin: 12px 0 14px;
   color: #222;
   width: auto;
   border-collapse: collapse;
@@ -180,7 +180,7 @@
 .tui-editor-contents dir {
   display: block;
   list-style-type: none;
-  padding-left: 15px;
+  padding-left: 12px;
   margin: 6px 0 10px;
   color: #222;
 }
@@ -192,6 +192,11 @@
 .tui-editor-contents ol {
   list-style-type: none;
   counter-reset: li;
+}
+
+.tui-editor-contents > ol,
+.tui-editor-contents > ul {
+  margin-left: 10px;
 }
 
 .tui-editor-contents ol > li {
@@ -207,8 +212,8 @@
 
 .tui-editor-contents ul > li::before {
   content: '';
-  margin-top: 6px;
-  margin-left: -0.9em;
+  margin-top: 0.5em;
+  margin-left: -0.8em;
   width: 5px;
   height: 5px;
   border-radius: 50%;
@@ -241,6 +246,11 @@
   margin: 0;
 }
 
+.tui-editor-contents ul > li.task-list-item:before,
+.tui-editor-contents ol > li.task-list-item:before {
+  margin-left: -0.8em;
+}
+
 .tui-editor-contents ul li.task-list-item:before,
 .tui-editor-contents ol li.task-list-item:before,
 .tui-editor-contents pre ul li:before {
@@ -254,11 +264,11 @@
 
 .tui-editor-contents a {
   text-decoration: underline;
-  color: #00a9ff;
+  color: #4b96e6;
 }
 
 .tui-editor-contents a:hover {
-  color: #00a9ff;
+  color: #1f70de;
 }
 
 .tui-editor-contents {
@@ -271,7 +281,7 @@
   border: 0;
   list-style: none;
   padding-left: 23px;
-  margin-left: -18px;
+  margin-left: -23px;
   min-height: 20px;
 }
 
