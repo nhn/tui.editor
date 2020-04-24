@@ -64,10 +64,10 @@ const defaultOptions: Options = {
 
 export function createRenderHTML(customOptions?: Partial<Options>) {
   const options = { ...defaultOptions, ...customOptions };
-  const convertors = { ...baseConvertors };
+  let convertors = { ...baseConvertors };
 
   if (options.gfm) {
-    Object.assign(convertors, gfmConvertors);
+    convertors = { ...convertors, ...gfmConvertors };
   }
 
   if (options.convertors) {

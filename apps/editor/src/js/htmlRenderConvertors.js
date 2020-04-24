@@ -87,7 +87,7 @@ export function getHTMLRenderConvertors(linkAttribute, customConvertors) {
       const result = origin();
 
       if (entering) {
-        Object.assign(result.attributes, linkAttribute);
+        result.attributes = { ...result.attributes, ...linkAttribute };
       }
       return result;
     };
