@@ -314,13 +314,9 @@ export class Parser {
       }
 
       let i = 0;
-      let skipped = false;
       while (i < blockStartsLen) {
         const res = blockStarts[i](this, container);
-        if (res === Matched.Skip) {
-          skipped = true;
-          break;
-        } else if (res === Matched.Container) {
+        if (res === Matched.Container) {
           container = this.tip;
           break;
         } else if (res === Matched.Leaf) {
@@ -332,7 +328,7 @@ export class Parser {
         }
       }
 
-      if (skipped || i === blockStartsLen) {
+      if (i === blockStartsLen) {
         // nothing matched
         this.advanceNextNonspace();
         break;

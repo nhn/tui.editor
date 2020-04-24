@@ -25,8 +25,7 @@ import { tableHead, tableBody } from './gfm/tableBlockStart';
 export const enum Matched {
   None = 0, // No Match
   Container, // Keep Going
-  Leaf, // No more block starts
-  Skip // Skip the block
+  Leaf // No more block starts
 }
 export interface BlockStart {
   (parser: Parser, container: BlockNode): Matched;
@@ -161,7 +160,7 @@ const atxHeading: BlockStart = (parser, container) => {
   ) {
     // The nested Heading is disallowed in list and blockquote with 'disallowDeepHeading' option
     if (isDisallowedDeepHeading(parser, container)) {
-      return Matched.Skip;
+      return Matched.None;
     }
     parser.advanceNextNonspace();
     parser.advanceOffset(match[0].length, false);
@@ -244,7 +243,7 @@ const seTextHeading: BlockStart = (parser, container) => {
   ) {
     // The nested Heading is disallowed in list and blockquote with 'disallowDeepHeading' option
     if (isDisallowedDeepHeading(parser, container.parent as BlockNode)) {
-      return Matched.Skip;
+      return Matched.None;
     }
     parser.closeUnmatchedBlocks();
     // resolve reference link definitions

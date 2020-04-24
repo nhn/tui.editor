@@ -95,11 +95,13 @@ export const tableHead: BlockStart = (parser, container) => {
     const reValidDelimCell = /^[ \t]*:?-+:?[ \t]*$/;
 
     if (
-      !headerCells.length ||
-      !delimCells.length ||
-      delimCells.some(cell => !reValidDelimCell.test(cell))
       // not checking if the number of header cells and delimiter cells are the same
       // to consider the case of merged-column (via plugin)
+      !headerCells.length ||
+      !delimCells.length ||
+      delimCells.some(cell => !reValidDelimCell.test(cell)) ||
+      // to prevent to regard setTextHeading as tabel delim cell with 'disallowDeepHeading' option
+      (delimCells.length === 1 && delimContent.indexOf('|') !== 0)
     ) {
       return Matched.None;
     }
