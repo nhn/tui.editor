@@ -78,12 +78,9 @@
   color: #222;
 }
 
-.tui-md-link.tui-md-link-desc.tui-md-marked-text {
-  color: #00a9ff;
-}
-
+.tui-md-link.tui-md-link-desc.tui-md-marked-text,
 .tui-md-list-item-odd.tui-md-list-item-bullet {
-  color: #2885b5;
+  color: #4b96e6;
 }
 
 .tui-md-list-item-even.tui-md-list-item-bullet {

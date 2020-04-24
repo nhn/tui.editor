@@ -210,7 +210,8 @@
   position: relative;
   border: 1px solid #e5e5e5;
   height: 100%;
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
+    'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
 }
 
 .tui-editor-defaultUI button {
@@ -1112,8 +1113,8 @@
 }
 
 .tui-popup-code-block-editor .CodeMirror-line {
-  font-family: Consolas, Courier, 'Apple SD 산돌고딕 Neo', -apple-system, 'Lucida Grande',
-    'Apple SD Gothic Neo', '맑은 고딕', 'Malgun Gothic', 'Segoe UI', '돋움', dotum, sans-serif;
+  font-family: Consolas, Courier, 'Lucida Grande', '나눔바른고딕', 'Nanum Barun Gothic', '맑은고딕',
+    'Malgun Gothic', sans-serif;
   font-size: 13px;
   line-height: 160%;
   letter-spacing: -0.3px;
