@@ -262,7 +262,8 @@ const markNodeFuncMap = {
 const simpleMarkClassNameMap = {
   thematicBreak: classNameMap.THEMATIC_BREAK,
   table: classNameMap.TABLE,
-  tableCell: classNameMap.TEXT
+  tableCell: classNameMap.TEXT,
+  htmlInline: classNameMap.META
 };
 
 /**
