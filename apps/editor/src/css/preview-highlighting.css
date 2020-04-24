@@ -22,14 +22,14 @@
 
 .tui-editor-contents td.te-preview-highlight::after,
 .tui-editor-contents th.te-preview-highlight::after {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 0;
+  display: none;
+}
+
+.tui-editor-contents th.te-preview-highlight,
+.tui-editor-contents td.te-preview-highlight {
+  background-color: rgba(255, 245, 131, 0.5);
 }
 
 .tui-editor-contents th.te-preview-highlight {
-  background-color: transparent;
   color: #222;
 }
