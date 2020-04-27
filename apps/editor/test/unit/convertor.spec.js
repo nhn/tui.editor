@@ -19,12 +19,12 @@ describe('Convertor', () => {
   describe('markdown to html', () => {
     it('converting markdown to html', () => {
       expect(convertor.toHTML('# HELLO WORLD')).toBe('<h1>HELLO WORLD</h1>\n');
-      expect(convertor.toHTMLWithCodeHightlight('# HELLO WORLD')).toBe('<h1>HELLO WORLD</h1>\n');
+      expect(convertor.toHTMLWithCodeHighlight('# HELLO WORLD')).toBe('<h1>HELLO WORLD</h1>\n');
     });
 
     it('sanitize script tags', () => {
       expect(convertor.toHTML('<script>alert("test");</script>')).toBe('\n');
-      expect(convertor.toHTMLWithCodeHightlight('<script>alert("test");</script>')).toBe('\n');
+      expect(convertor.toHTMLWithCodeHighlight('<script>alert("test");</script>')).toBe('\n');
     });
 
     it('escape vertical bar', () => {
@@ -32,7 +32,7 @@ describe('Convertor', () => {
         convertor.toHTML('| 1 | 2 |\n| -- | -- |\n| 4\\|5 | 6 |\n').match(/\/td/g).length
       ).toBe(2);
       expect(
-        convertor.toHTMLWithCodeHightlight('| 1 | 2 |\n| -- | -- |\n| 3 | 4\\|4 |\n').match(/\/td/g)
+        convertor.toHTMLWithCodeHighlight('| 1 | 2 |\n| -- | -- |\n| 3 | 4\\|4 |\n').match(/\/td/g)
           .length
       ).toBe(2);
     });
@@ -41,14 +41,14 @@ describe('Convertor', () => {
       const markdown = ['1', '2', '3'].join('\n');
       const result = ['<p>1<br>', '2<br>', '3</p>', ''].join('\n');
 
-      expect(convertor.toHTMLWithCodeHightlight(markdown)).toBe(result);
+      expect(convertor.toHTMLWithCodeHighlight(markdown)).toBe(result);
     });
 
     it('softbreaks preceded by <br> should not be converted to <br> tags', () => {
       const markdown = ['1', '<br/>', '2', '<br />', '3', '<br>', '4'].join('\n');
       const result = ['<p>1<br>', '<br>', '2<br>', '<br>', '3<br>', '<br>', '4</p>', ''].join('\n');
 
-      expect(convertor.toHTMLWithCodeHightlight(markdown)).toBe(result);
+      expect(convertor.toHTMLWithCodeHighlight(markdown)).toBe(result);
     });
 
     it('Avoid hidden last cell in table', () => {
@@ -74,10 +74,10 @@ describe('Convertor', () => {
       expect(convertor.toHTML('```code span```').trim()).toBe(
         '<p><code data-backticks="3">code span</code></p>'
       );
-      expect(convertor.toHTMLWithCodeHightlight('`code span`').trim()).toBe(
+      expect(convertor.toHTMLWithCodeHighlight('`code span`').trim()).toBe(
         '<p><code data-backticks="1">code span</code></p>'
       );
-      expect(convertor.toHTMLWithCodeHightlight('```code span```').trim()).toBe(
+      expect(convertor.toHTMLWithCodeHighlight('```code span```').trim()).toBe(
         '<p><code data-backticks="3">code span</code></p>'
       );
     });

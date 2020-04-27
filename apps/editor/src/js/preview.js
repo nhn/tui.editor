@@ -70,7 +70,7 @@ class Preview {
    * @param {string} markdown Markdown text
    */
   refresh(markdown = '') {
-    this.render(this.convertor.toHTMLWithCodeHightlight(markdown));
+    this.render(this.convertor.toHTMLWithCodeHighlight(markdown));
     this.invokeCodeBlockPlugins(this.getCodeBlockElements());
   }
 

@@ -15,7 +15,7 @@ interface Options {
 interface Context {
   entering: boolean;
   leaf: boolean;
-  options: Omit<Options, 'gfm'>;
+  options: Omit<Options, 'gfm' | 'convertors'>;
   getChildrenText: (node: Node) => string;
   skipChildren: () => void;
   origin?: () => ReturnType<HTMLConvertor>;

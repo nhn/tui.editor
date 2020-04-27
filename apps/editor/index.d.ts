@@ -138,7 +138,7 @@ declare namespace toastui {
   interface Context {
     entering: boolean;
     leaf: boolean;
-    options: Omit<ContextOptions, 'gfm'>;
+    options: Omit<ContextOptions, 'gfm' | 'convertors'>;
     getChildrenText: (node: Node) => string;
     skipChildren: () => void;
     origin?: () => ReturnType<CustomHTMLRenderer>;
@@ -211,7 +211,7 @@ declare namespace toastui {
   export interface Convertor {
     initHtmlSanitizer(sanitizer: Sanitizer): void;
     toHTML(makrdown: string): string;
-    toHTMLWithCodeHightlight(markdown: string): string;
+    toHTMLWithCodeHighlight(markdown: string): string;
     toMarkdown(html: string, toMarkdownOptions: ToMarkOptions): string;
   }
 

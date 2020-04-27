@@ -113,13 +113,13 @@ class Convertor {
   }
 
   /**
-   * toHTMLWithCodeHightlight
+   * toHTMLWithCodeHighlight
    * Convert markdown to html with Codehighlight
    * emit convertorAfterMarkdownToHtmlConverted
    * @param {string} markdown markdown text
    * @returns {string} html text
    */
-  toHTMLWithCodeHightlight(markdown) {
+  toHTMLWithCodeHighlight(markdown) {
     let html = this._markdownToHtmlWithCodeHighlight(markdown);
 
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
