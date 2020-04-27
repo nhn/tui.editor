@@ -54,7 +54,7 @@ TOAST UI Editor provides **Markdown mode** and **WYSIWYG mode**. Depending on th
 
 ### Productive Markdown Mode
 
-![markdown](https://user-images.githubusercontent.com/18183560/76675614-7f4be400-65fe-11ea-9c28-94f4501a4325.png)
+![markdown](https://user-images.githubusercontent.com/37766175/80378283-6447e180-88d7-11ea-9684-ce6742053481.png)
 
 **CommonMark + GFM Specifications**
 
@@ -67,21 +67,21 @@ Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Ma
 
 ### Easy WYSIWYG Mode
 
-![wysiwyg-1024](https://user-images.githubusercontent.com/18183560/76675616-84109800-65fe-11ea-8bba-0e7775957fe9.png)
+![wysiwyg-1024](https://user-images.githubusercontent.com/37766175/80378091-1af79200-88d7-11ea-8a16-a7dd311f9a02.png)
 
 * **Table** : Through the context menu of the table, you can add or delete columns or rows of the table, and you can also arrange text in cells.
 * **Code Block Editor** : The code block area can be edited through the layer popup editor.
 
 ### Usability Common UI
 
-![UI](https://user-images.githubusercontent.com/18183560/76941970-4bdfc100-6940-11ea-9a60-94124237fa1e.gif)
+![UI](https://user-images.githubusercontent.com/37766175/80378125-28ad1780-88d7-11ea-972c-946d44f65aff.gif)
 
 * **Toolbar** : Through the toolbar, you can style or add elements to the document you are editing.
 * **Copy and Paste** : Paste anything from browser, screenshot, excel, powerpoint, etc.
 
 ### Use of Various Extended Functions - Plugins
 
-![plugin](https://user-images.githubusercontent.com/18183560/76677622-c8f2f980-6613-11ea-8410-71844042aeec.png)
+![plugin](https://user-images.githubusercontent.com/37766175/80378108-22b73680-88d7-11ea-8ac3-5d51aac61718.png)
 
 CommonMark and GFM are great, but we often need more abstraction. The TOAST UI Editor comes with powerful **Plugins** in compliance with the Markdown syntax.
 
