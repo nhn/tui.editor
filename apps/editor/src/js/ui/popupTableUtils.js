@@ -92,16 +92,14 @@ class PopupTableUtils extends LayerPopup {
     this.eventManager.listen('mousedown', () => this.hide());
     this.eventManager.listen('closeAllPopup', () => this.hide());
     this.eventManager.listen('openPopupTableUtils', ev => {
-      const offset = domUtils.getOffset(this.el.parentNode);
-      const x = ev.clientX - offset.left + window.scrollX;
-      const y = ev.clientY - offset.top + window.scrollY;
+      const { left, top } = this.el.parentNode.getBoundingClientRect();
 
       this._disableRemoveRowMenu(ev.target);
 
       css(this.el, {
         position: 'absolute',
-        top: `${y + 5}px`, // beside mouse pointer
-        left: `${x + 10}px`
+        top: `${ev.clientY - top + 5}px`, // beside mouse pointer
+        left: `${ev.clientX - left + 10}px`
       });
       this.eventManager.emit('closeAllPopup');
       this.show();

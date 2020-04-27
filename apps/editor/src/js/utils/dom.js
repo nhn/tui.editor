@@ -1225,10 +1225,11 @@ function setOffset(element, offset) {
 /**
  * Gets offset value of target element
  * @param {HTMLElement} element - target element
+ * @param {string} [selector] - selector to stop finding node
  * @returns {Object.<string, number>} offset values
  * @ignore
  */
-function getOffset(element) {
+function getOffset(element, selector = 'document') {
   let top = 0;
   let left = 0;
 
@@ -1236,7 +1237,7 @@ function getOffset(element) {
     top += element.offsetTop || 0;
     left += element.offsetLeft || 0;
     element = element.offsetParent;
-  } while (element);
+  } while (element && !element.matches(selector));
 
   return { top, left };
 }
