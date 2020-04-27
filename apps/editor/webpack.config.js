@@ -102,13 +102,13 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
 
 function addFileManagerPlugin(config) {
   // When an entry option's value is set to a CSS file,
-  // empty JavaScript files are created. (e.g. toastui-editor-layout.js)
+  // empty JavaScript files are created. (e.g. toastui-editor-only.js)
   // These files are unnecessary, so use the FileManager plugin to delete them.
   const options = minify
     ? [
         {
           delete: [
-            './dist/cdn/toastui-editor-layout.min.js',
+            './dist/cdn/toastui-editor-only.min.js',
             './dist/cdn/toastui-editor-old.min.js',
             './dist/cdn/toastui-editor-viewer-old.min.js'
           ]
@@ -117,7 +117,7 @@ function addFileManagerPlugin(config) {
     : [
         {
           delete: [
-            './dist/toastui-editor-layout.js',
+            './dist/toastui-editor-only.js',
             './dist/toastui-editor-old.js',
             './dist/toastui-editor-viewer-old.js'
           ]
@@ -181,7 +181,7 @@ function setProductionConfig(config) {
   config.entry = {
     editor: ENTRY_EDITOR,
     'editor-viewer': ENTRY_VIEWER,
-    'editor-layout': './src/js/indexLayoutStyle.js',
+    'editor-only': './src/js/indexEditorOnlyStyle.js',
     // legacy styles
     'editor-old': './src/js/indexOldStyle.js',
     'editor-viewer-old': './src/css/old/contents.css'

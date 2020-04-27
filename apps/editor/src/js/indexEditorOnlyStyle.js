@@ -1,5 +1,5 @@
 /**
- * @fileoverview entry point to extract old.css files
+ * @fileoverview entry point to create editor-only.css files
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 
