@@ -75,14 +75,12 @@ class CodeBlockGadget extends BlockOverlay {
    */
   syncLayout() {
     const attachedElement = this.getAttachedElement();
-    const offset = domUtils.getOffset(attachedElement, '.te-editor');
+    const { left, top } = domUtils.getOffset(attachedElement, '.te-editor');
     const outerWidth = domUtils.getOuterWidth(attachedElement);
 
-    offset.left = offset.left + outerWidth - GADGET_WIDTH - window.scrollX;
-
     css(this.el, {
-      left: `${offset.left}px`,
-      top: `${offset.top}px`,
+      left: `${left + outerWidth - GADGET_WIDTH - window.scrollX}px`,
+      top: `${top}px`,
       width: `${GADGET_WIDTH}px`,
       height: `${GADGET_HEIGHT}px`
     });
