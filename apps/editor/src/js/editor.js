@@ -129,6 +129,7 @@ class ToastUIEditor {
     this.options = extend(
       {
         previewStyle: 'tab',
+        previewHighlight: true,
         initialEditType: 'markdown',
         height: '300px',
         minHeight: '200px',
@@ -235,7 +236,11 @@ class ToastUIEditor {
       this.layout.getPreviewEl(),
       this.eventManager,
       this.convertor,
-      { ...rendererOptions, isViewer: false }
+      {
+        ...rendererOptions,
+        isViewer: false,
+        highlight: this.options.previewHighlight
+      }
     );
 
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
