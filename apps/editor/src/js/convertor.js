@@ -6,7 +6,6 @@ import toMark from '@toast-ui/to-mark';
 import { Parser, createRenderHTML } from '@toast-ui/toastmark';
 
 import { getHTMLRenderConvertors } from './htmlRenderConvertors';
-import htmlSanitizer from './htmlSanitizer';
 import domUtils from './utils/dom';
 
 // This regular expression refere markdownIt.
@@ -149,9 +148,9 @@ class Convertor {
     return html;
   }
 
-  initHtmlSanitizer() {
+  initHtmlSanitizer(sanitizer) {
     this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html =>
-      htmlSanitizer(html, true)
+      sanitizer(html, true)
     );
   }
 

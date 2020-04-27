@@ -30,6 +30,7 @@ import WwTableSelectionManager from './wwTableSelectionManager';
 import codeBlockManager from './codeBlockManager';
 import toMarkRenderer from './toMarkRenderer';
 import { invokePlugins } from './pluginHelper';
+import htmlSanitizer from './htmlSanitizer';
 
 // markdown commands
 import mdBold from './markdownCommands/bold';
@@ -118,6 +119,7 @@ const __nedInstance = [];
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
  *     @param {boolean} [options.useReferenceDefinition=false] - whether use the specification of link reference definition
+ *     @param {function} [options.customSanitizer=null] - custom sanitizer
  */
 class ToastUIEditor {
   constructor(options) {
@@ -161,7 +163,8 @@ class ToastUIEditor {
         extendedAutolinks: false,
         customConvertor: null,
         customHTMLRenderer: null,
-        useReferenceDefinition: false
+        useReferenceDefinition: false,
+        customSanitizer: null
       },
       options
     );
@@ -177,7 +180,8 @@ class ToastUIEditor {
     });
 
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
-    const { customHTMLRenderer, extendedAutolinks, useReferenceDefinition } = this.options;
+    // eslint-disable-next-line prettier/prettier
+    const { customHTMLRenderer, customSanitizer, extendedAutolinks, useReferenceDefinition, useDefaultHTMLSanitizer } = this.options;
     const rendererOptions = {
       linkAttribute,
       customHTMLRenderer,
@@ -192,8 +196,10 @@ class ToastUIEditor {
       this.convertor = new Convertor(this.eventManager, rendererOptions);
     }
 
-    if (this.options.useDefaultHTMLSanitizer) {
-      this.convertor.initHtmlSanitizer();
+    if (customSanitizer) {
+      this.convertor.initHtmlSanitizer(customSanitizer);
+    } else if (useDefaultHTMLSanitizer) {
+      this.convertor.initHtmlSanitizer(htmlSanitizer);
     }
 
     if (this.options.hooks) {
@@ -233,7 +239,8 @@ class ToastUIEditor {
     );
 
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
-      useDefaultHTMLSanitizer: this.options.useDefaultHTMLSanitizer,
+      useDefaultHTMLSanitizer,
+      customSanitizer,
       linkAttribute
     });
 
