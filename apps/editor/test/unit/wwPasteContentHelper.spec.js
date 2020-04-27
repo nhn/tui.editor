@@ -487,7 +487,7 @@ describe('WwPasteContentHelper', () => {
     });
   });
 
-  it('use custom sanitizer', () => {
+  it('should use sanitizer passed by wysiwyg editor', () => {
     const element = $('<div />').get(0);
 
     pch.preparePaste(element);
