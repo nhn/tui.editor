@@ -40,7 +40,7 @@ const defaultOptions = {
   tagFilter: false,
   extendedAutolinks: false,
   disallowedHtmlBlockTags: [],
-  useReferenceDefinition: false,
+  referenceDefinition: false,
   disallowDeepHeading: false
 };
 
@@ -49,7 +49,7 @@ export interface Options {
   tagFilter: boolean;
   extendedAutolinks: boolean | AutolinkParser;
   disallowedHtmlBlockTags: string[];
-  useReferenceDefinition: boolean;
+  referenceDefinition: boolean;
   disallowDeepHeading: boolean;
 }
 
@@ -405,7 +405,7 @@ export class Parser {
     this.currentLine = '';
     const lines = input.split(reLineEnding);
     let len = lines.length;
-    if (this.options.useReferenceDefinition) {
+    if (this.options.referenceDefinition) {
       this.clearRefMaps();
     }
     if (input.charCodeAt(input.length - 1) === C_NEWLINE) {
