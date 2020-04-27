@@ -53,7 +53,7 @@ class MarkdownPreview extends Preview {
       this
     );
 
-    const { linkAttribute, customHTMLRenderer, highlight } = options;
+    const { linkAttribute, customHTMLRenderer, highlight = false } = options;
 
     this.renderHTML = createRenderHTML({
       gfm: true,
@@ -63,7 +63,7 @@ class MarkdownPreview extends Preview {
 
     this.cursorNodeId = null;
 
-    this._initEvent(!!highlight);
+    this._initEvent(highlight);
   }
 
   /**
