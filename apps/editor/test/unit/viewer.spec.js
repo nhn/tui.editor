@@ -72,6 +72,21 @@ describe('Viewer', () => {
     });
   });
 
+  describe('customSanitizer option', () => {
+    it('should replace default sanitizer with custom sanitizer', () => {
+      const customSanitizer = jasmine.createSpy('sanitizer');
+      const viewer = new ToastUIEditorViewer({
+        el: document.createElement('div'),
+        customSanitizer
+      });
+      const content = '<div>custom</div>';
+
+      viewer.setMarkdown(content);
+
+      expect(customSanitizer).toHaveBeenCalled();
+    });
+  });
+
   it('should use default convertor if the option value is not set', () => {
     const el = document.createElement('div');
     const viewer = new ToastUIEditorViewer({ el });

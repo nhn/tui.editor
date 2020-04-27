@@ -544,24 +544,37 @@ describe('Editor', () => {
 
         expect(editor.getHtml()).toBe('<ul>\n<li>\n<p># item1</p>\n</li>\n</ul>\n');
       });
-    });
+      it('should disallow the nested seTextHeading in blockquote', () => {
+        editor = new Editor({
+          el: container,
+          initialValue: '> item1\n> -'
+        });
 
-    it('should disallow the nested seTextHeading in blockquote', () => {
-      editor = new Editor({
-        el: container,
-        initialValue: '> item1\n> -'
+        expect(editor.getHtml()).toBe('<blockquote>\n<p>item1<br>\n-</p>\n</blockquote>\n');
       });
 
-      expect(editor.getHtml()).toBe('<blockquote>\n<p>item1<br>\n-</p>\n</blockquote>\n');
+      it('should disallow the nested atxHeading in blockquote', () => {
+        editor = new Editor({
+          el: container,
+          initialValue: '> # item1'
+        });
+
+        expect(editor.getHtml()).toBe('<blockquote>\n<p># item1</p>\n</blockquote>\n');
+      });
     });
 
-    it('should disallow the nested atxHeading in blockquote', () => {
-      editor = new Editor({
-        el: container,
-        initialValue: '> # item1'
-      });
+    describe('customSanitizer option', () => {
+      it('should replace default sanitizer with custom sanitizer', () => {
+        const customSanitizer = jasmine.createSpy('sanitizer');
 
-      expect(editor.getHtml()).toBe('<blockquote>\n<p># item1</p>\n</blockquote>\n');
+        editor = new Editor({
+          el: container,
+          customSanitizer
+        });
+        editor.changeMode('wysiwyg');
+
+        expect(customSanitizer).toHaveBeenCalled();
+      });
     });
   });
 });
