@@ -136,9 +136,15 @@ class PopupAddTable extends LayerPopup {
       });
       this._eventManager.emit('closeAllPopup');
       this.show();
-      this._selectionOffset = domUtils.getOffset(
-        this.el.querySelector(`.${CLASS_TABLE_SELECTION}`)
-      );
+
+      const { left, top } = this.el
+        .querySelector(`.${CLASS_TABLE_SELECTION}`)
+        .getBoundingClientRect();
+
+      this._selectionOffset = {
+        left: left + window.pageXOffset,
+        top: top + window.pageYOffset
+      };
     });
   }
 
