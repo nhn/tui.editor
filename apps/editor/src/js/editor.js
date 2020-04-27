@@ -96,6 +96,7 @@ const __nedInstance = [];
  *     @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
  *     @param {string} [options.initialValue] - Editor's initial value
  *     @param {string} [options.previewStyle] - Markdown editor's preview style (tab, vertical)
+ *     @param {boolean} [options.previewHighlight = true] - Highlight a preview element corresponds to the cursor position in the markdwon editor
  *     @param {string} [options.initialEditType] - Initial editor type (markdown, wysiwyg)
  *     @param {Object} [options.events] - Events
  *         @param {function} [options.events.load] - It would be emitted when editor fully load
