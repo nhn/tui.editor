@@ -505,8 +505,8 @@ describe('Editor', () => {
       });
     });
 
-    describe('useReferenceDefinition option', () => {
-      it('useReferenceDefinition: false(default) - should not parse refererence definition node', () => {
+    describe('referenceDefinition option', () => {
+      it('referenceDefinition: false(default) - should not parse refererence definition node', () => {
         editor = new Editor({
           el: container,
           initialValue: '[foo]: test \n [foo]'
@@ -515,11 +515,11 @@ describe('Editor', () => {
         expect(editor.getHtml()).toBe('<p>[foo]: test<br>\n[foo]</p>\n');
       });
 
-      it('useReferenceDefinition: true - should parse refererence definition node', () => {
+      it('referenceDefinition: true - should parse refererence definition node', () => {
         editor = new Editor({
           el: container,
           initialValue: '[foo]: test \n [foo]',
-          useReferenceDefinition: true
+          referenceDefinition: true
         });
 
         expect(editor.getHtml()).toBe('<p><a href="test">foo</a></p>\n');
@@ -563,17 +563,17 @@ describe('Editor', () => {
       });
     });
 
-    describe('customSanitizer option', () => {
+    describe('customHTMLSanitizer option', () => {
       it('should replace default sanitizer with custom sanitizer', () => {
-        const customSanitizer = jasmine.createSpy('sanitizer');
+        const customHTMLSanitizer = jasmine.createSpy('sanitizer');
 
         editor = new Editor({
           el: container,
-          customSanitizer
+          customHTMLSanitizer
         });
         editor.changeMode('wysiwyg');
 
-        expect(customSanitizer).toHaveBeenCalled();
+        expect(customHTMLSanitizer).toHaveBeenCalled();
       });
     });
   });

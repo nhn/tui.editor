@@ -16,7 +16,7 @@ describe('WwPasteContentHelper', () => {
 
   beforeEach(() => {
     spy = jasmine.createSpy('sanitizer');
-    const customSanitizer = (content, nested) => {
+    const sanitizer = (content, nested) => {
       spy();
       return htmlSanitizer(content, nested);
     };
@@ -24,7 +24,7 @@ describe('WwPasteContentHelper', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor(container, new EventManager(), { customSanitizer });
+    wwe = new WysiwygEditor(container, new EventManager(), { sanitizer });
 
     wwe.init();
 
@@ -488,7 +488,7 @@ describe('WwPasteContentHelper', () => {
   });
 
   it('should use sanitizer passed by wysiwyg editor', () => {
-    const element = $('<div />').get(0);
+    const element = document.createElement('div');
 
     pch.preparePaste(element);
 

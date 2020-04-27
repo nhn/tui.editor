@@ -72,18 +72,18 @@ describe('Viewer', () => {
     });
   });
 
-  describe('customSanitizer option', () => {
+  describe('customHTMLSanitizer option', () => {
     it('should replace default sanitizer with custom sanitizer', () => {
-      const customSanitizer = jasmine.createSpy('sanitizer');
+      const customHTMLSanitizer = jasmine.createSpy('sanitizer');
       const viewer = new ToastUIEditorViewer({
         el: document.createElement('div'),
-        customSanitizer
+        customHTMLSanitizer
       });
       const content = '<div>custom</div>';
 
       viewer.setMarkdown(content);
 
-      expect(customSanitizer).toHaveBeenCalled();
+      expect(customHTMLSanitizer).toHaveBeenCalled();
     });
   });
 

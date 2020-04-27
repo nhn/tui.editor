@@ -26,17 +26,12 @@ const HTML_TAG_RX = new RegExp(openingTag, 'g');
  */
 class Convertor {
   constructor(em, options = {}) {
-    const {
-      linkAttribute,
-      customHTMLRenderer,
-      extendedAutolinks,
-      useReferenceDefinition
-    } = options;
+    const { linkAttribute, customHTMLRenderer, extendedAutolinks, referenceDefinition } = options;
 
     this.mdReader = new Parser({
       extendedAutolinks,
       disallowedHtmlBlockTags: ['br'],
-      useReferenceDefinition,
+      referenceDefinition,
       disallowDeepHeading: true
     });
 

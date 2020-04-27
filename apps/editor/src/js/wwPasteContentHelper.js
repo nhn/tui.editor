@@ -111,7 +111,9 @@ class WwPasteContentHelper {
   _pasteFirstAid(container) {
     const sanitizer = this.wwe.getSanitizer();
 
-    container.innerHTML = sanitizer(container.innerHTML, true);
+    if (sanitizer) {
+      container.innerHTML = sanitizer(container.innerHTML, true);
+    }
 
     domUtils.findAll(container, '*').forEach(node => {
       this._removeStyles(node);

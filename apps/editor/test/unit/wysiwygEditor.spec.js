@@ -9,7 +9,7 @@ import EventManager from '@/eventManager';
 import ListManager from '@/wwListManager';
 import { isMac } from '@/utils/common';
 
-const customSanitizer = jasmine.createSpy('customSanitizer');
+const sanitizer = jasmine.createSpy('sanitizer');
 
 describe('WysiwygEditor', () => {
   let container, em, wwe;
@@ -20,7 +20,7 @@ describe('WysiwygEditor', () => {
 
     em = new EventManager();
 
-    wwe = new WysiwygEditor(container, em, { customSanitizer });
+    wwe = new WysiwygEditor(container, em, { sanitizer });
 
     wwe.init();
     wwe.editor.focus();
@@ -751,6 +751,6 @@ describe('WysiwygEditor', () => {
   });
 
   it('getSanitizer()', () => {
-    expect(wwe.getSanitizer()).toEqual(customSanitizer);
+    expect(wwe.getSanitizer()).toEqual(sanitizer);
   });
 });

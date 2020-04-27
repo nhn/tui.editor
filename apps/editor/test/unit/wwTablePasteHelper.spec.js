@@ -131,7 +131,7 @@ describe('WwTablePasteHelper - sanitizer', () => {
   beforeEach(() => {
     spy = jasmine.createSpy('sanitizer');
 
-    const customSanitizer = (content, nested) => {
+    const sanitizer = (content, nested) => {
       spy();
       return htmlSanitizer(content, nested);
     };
@@ -139,7 +139,7 @@ describe('WwTablePasteHelper - sanitizer', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor(container, new EventManager(), { customSanitizer });
+    wwe = new WysiwygEditor(container, new EventManager(), { sanitizer });
 
     wwe.init();
 

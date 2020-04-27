@@ -126,7 +126,7 @@ class WwTablePasteHelper {
       html = `<TABLE>${html}</TABLE>`;
     }
 
-    container.appendChild(sanitizer(html));
+    container.appendChild(sanitizer ? sanitizer(html) : html);
     this._pasteClipboardContainer(container);
   }
 
