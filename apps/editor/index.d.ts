@@ -132,7 +132,7 @@ declare namespace toastui {
     softbreak: string;
     nodeId: boolean;
     tagFilter: boolean;
-    convertors?: HTMLConvertorMap;
+    convertors?: CustomHTMLRendererMap;
   }
 
   interface Context {
@@ -141,12 +141,12 @@ declare namespace toastui {
     options: Omit<ContextOptions, 'gfm'>;
     getChildrenText: (node: Node) => string;
     skipChildren: () => void;
-    origin?: () => ReturnType<HTMLConvertor>;
+    origin?: () => ReturnType<CustomHTMLRenderer>;
   }
 
-  export type HTMLConvertor = (node: Node, context: Context) => HTMLToken | HTMLToken[] | null;
+  export type CustomHTMLRenderer = (node: Node, context: Context) => HTMLToken | HTMLToken[] | null;
 
-  type HTMLConvertorMap = Partial<Record<NodeType, HTMLConvertor>>;
+  type CustomHTMLRendererMap = Partial<Record<NodeType, CustomHTMLRenderer>>;
   // Toastmark custom renderer type end
   interface SelectionRange {
     from: {
@@ -248,7 +248,7 @@ declare namespace toastui {
     referenceDefinition?: boolean;
     customHTMLSanitizer?: CustomHTMLSanitizer;
     linkAttribute?: LinkAttribute;
-    customHTMLRenderer?: HTMLConvertor;
+    customHTMLRenderer?: CustomHTMLRenderer;
     previewHighlight?: boolean;
   }
 
@@ -263,7 +263,7 @@ declare namespace toastui {
     extendedAutolinks?: ExtendedAutolinks;
     customConvertor?: ConvertorClass;
     linkAttribute?: LinkAttribute;
-    customHTMLRenderer?: HTMLConvertor;
+    customHTMLRenderer?: CustomHTMLRenderer;
   }
 
   interface MarkdownEditorOptions {
@@ -842,10 +842,22 @@ declare namespace toastui {
 
 declare module '@toast-ui/editor' {
   export type EditorOptions = toastui.EditorOptions;
+  export type CustomConvertor = toastui.ConvertorClass;
+  export type EventMap = toastui.EventMap;
+  export type EditorHookMap = toastui.EditorHookMap;
+  export type CustomHTMLRenderer = toastui.CustomHTMLRenderer;
+  export type ExtendedAutolinks = toastui.ExtendedAutolinks;
+  export type LinkAttribute = toastui.LinkAttribute;
   export default toastui.Editor;
 }
 
 declare module '@toast-ui/editor/dist/toastui-editor-viewer' {
   export type ViewerOptions = toastui.ViewerOptions;
+  export type CustomConvertor = toastui.ConvertorClass;
+  export type EventMap = toastui.EventMap;
+  export type ViewerHookMap = toastui.ViewerHookMap;
+  export type CustomHTMLRenderer = toastui.CustomHTMLRenderer;
+  export type ExtendedAutolinks = toastui.ExtendedAutolinks;
+  export type LinkAttribute = toastui.LinkAttribute;
   export default toastui.Viewer;
 }
