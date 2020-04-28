@@ -18,7 +18,7 @@ CodeMirror.commands.indentOrderedList = function(cm) {
     var line = cm.getLine(pos.line);
     var cursorBeforeTextInline = line.substr(0, pos.ch);
 
-    if (!cm.state.isCursorInCodeBlock && (listRE.test(cursorBeforeTextInline) || cm.somethingSelected())) {
+    if ((listRE.test(cursorBeforeTextInline) || cm.somethingSelected())) {
       cm.indentSelection('add');
     } else {
       cm.execCommand('insertSoftTab');
