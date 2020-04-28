@@ -176,22 +176,13 @@ export const tableHead: BlockStart = (parser, container) => {
 export const tableBody: BlockStart = (parser, container) => {
   if (
     (container.type !== 'table' && container.type !== 'tableBody') ||
-    (!parser.blank && parser.currentLine.indexOf('|') === -1)
+    parser.blank ||
+    parser.currentLine.indexOf('|') === -1
   ) {
     return Matched.None;
   }
 
   parser.advanceOffset(parser.currentLine.length - parser.offset, false);
-
-  if (parser.blank) {
-    let table = container;
-    if (container.type === 'tableBody') {
-      table = container.parent as TableNode;
-      parser.finalize(container, parser.lineNumber);
-    }
-    parser.finalize(table, parser.lineNumber);
-    return Matched.None;
-  }
 
   let tableBody = container;
   if (container.type === 'table') {

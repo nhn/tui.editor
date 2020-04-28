@@ -25,6 +25,7 @@ import {
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
 import { iterateObject, omit, isEmptyObj } from './helper';
+import { isBlank } from './commonmark/blockHelper';
 
 const reLineEnding = /\r\n|\n|\r/;
 
@@ -80,6 +81,10 @@ function canBeContinuedListItem(lineText: string) {
 
   const leftTrimmed = spaceMatch ? lineText.slice(spaceMatch.length) : lineText;
   return reBulletListMarker.test(leftTrimmed) || reOrderedListMarker.test(leftTrimmed);
+}
+
+function canBeContinuedTableBody(lineText: string) {
+  return !isBlank(lineText) && lineText.indexOf('|') !== -1;
 }
 
 export function createRefDefState(node: RefDefNode) {
@@ -213,7 +218,7 @@ export class ToastMark {
       startNode &&
       startNode.prev &&
       ((isList(startNode.prev) && canBeContinuedListItem(this.lineTexts[startLine - 1])) ||
-        isTable(startNode.prev))
+        (isTable(startNode.prev) && canBeContinuedTableBody(this.lineTexts[startLine - 1])))
     ) {
       startNode = startNode.prev;
       startLine = startNode.sourcepos![0][0];
