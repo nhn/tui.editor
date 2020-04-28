@@ -115,7 +115,7 @@ function code({ tickCount }, start, end) {
 }
 
 function codeBlock(node, start, end, endLine) {
-  const { fenceOffset, fenceLength, fenceChar, info } = node;
+  const { fenceOffset, fenceLength, fenceChar, info, parent } = node;
   const fenceEnd = fenceOffset + fenceLength;
   let openDelimEnd = addChPos(start, fenceEnd);
 
@@ -139,13 +139,18 @@ function codeBlock(node, start, end, endLine) {
     marks.push(markInfo(closeDelimStart, end, classNameMap.DELIM));
   }
 
+  const lineBackground =
+    parent.type !== 'item' && parent.type !== 'blockQuote'
+      ? {
+          start: start.line,
+          end: end.line,
+          className: classNameMap.CODE_BLOCK
+        }
+      : null;
+
   return {
     marks: [...marks, markInfo(openDelimEnd, closeDelimStart, classNameMap.TEXT)],
-    lineBackground: {
-      start: start.line,
-      end: end.line,
-      className: classNameMap.CODE_BLOCK
-    }
+    lineBackground: { ...lineBackground }
   };
 }
 
