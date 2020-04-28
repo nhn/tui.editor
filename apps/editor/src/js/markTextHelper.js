@@ -17,7 +17,8 @@ const classNameMap = applyClsToValue({
   TEXT: 'marked-text',
   THEMATIC_BREAK: 'thematic-break',
   CODE_BLOCK: 'code-block',
-  TABLE: 'table'
+  TABLE: 'table',
+  HTML: 'html'
 });
 
 const delimSize = {
@@ -263,7 +264,7 @@ const simpleMarkClassNameMap = {
   thematicBreak: classNameMap.THEMATIC_BREAK,
   table: classNameMap.TABLE,
   tableCell: classNameMap.TEXT,
-  htmlInline: classNameMap.META
+  htmlInline: classNameMap.HTML
 };
 
 /**
