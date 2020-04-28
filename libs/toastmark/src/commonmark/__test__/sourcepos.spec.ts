@@ -105,6 +105,16 @@ describe('paragraph', () => {
     ]);
   });
 
+  it('text with ampersand code ', () => {
+    const root = reader.parse('&#91; Hello &#93;');
+    const text = root.firstChild!.firstChild!;
+
+    expect(text.sourcepos).toEqual([
+      [1, 1],
+      [1, 17]
+    ]);
+  });
+
   it('text and link', () => {
     const root = reader.parse('Hello [World](http://nhn.com)');
     const text = root.firstChild!.firstChild!;
