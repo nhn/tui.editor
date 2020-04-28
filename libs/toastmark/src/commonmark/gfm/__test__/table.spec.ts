@@ -31,7 +31,7 @@ describe('table', () => {
       children: [
         {
           type: 'table',
-          sourcepos: pos(1, 3, 4, 2),
+          sourcepos: pos(1, 3, 3, 9),
           children: [
             {
               type: 'tableHead',
@@ -93,7 +93,7 @@ describe('table', () => {
             },
             {
               type: 'tableBody',
-              sourcepos: pos(3, 1, 4, 2),
+              sourcepos: pos(3, 1, 3, 9),
               children: [
                 {
                   type: 'tableRow',
@@ -119,27 +119,19 @@ describe('table', () => {
                       sourcepos: pos(3, 7, 3, 8)
                     }
                   ]
-                },
-                {
-                  type: 'tableRow',
-                  sourcepos: pos(4, 2, 4, 2),
-                  children: [
-                    {
-                      type: 'tableCell',
-                      paddingLeft: 0,
-                      paddingRight: 0,
-                      sourcepos: pos(4, 2, 4, 2),
-                      children: [
-                        {
-                          type: 'text',
-                          literal: 'e',
-                          sourcepos: pos(4, 2, 4, 2)
-                        }
-                      ]
-                    }
-                  ]
                 }
               ]
+            }
+          ]
+        },
+        {
+          type: 'paragraph',
+          sourcepos: pos(4, 2, 4, 2),
+          children: [
+            {
+              type: 'text',
+              sourcepos: pos(4, 2, 4, 2),
+              literal: 'e'
             }
           ]
         }
@@ -160,12 +152,9 @@ describe('table', () => {
       <td>c</td>
       <td></td>
       </tr>
-      <tr>
-      <td>e</td>
-      <td></td>
-      </tr>
       </tbody>
       </table>
+      <p>e</p>
     `;
     expect(html).toBe(`${output}\n`);
   });
@@ -367,12 +356,9 @@ describe('GFM Exmaple', () => {
         <td>bar</td>
         <td>baz</td>
         </tr>
-        <tr>
-        <td>bar</td>
-        <td></td>
-        </tr>
         </tbody>
         </table>
+        <p>bar</p>
         <p>bar</p>
       `
     },

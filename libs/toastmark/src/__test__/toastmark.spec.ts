@@ -248,6 +248,14 @@ describe('editText()', () => {
       assertParseResult(doc, ['']);
       assertResultNodes(doc, result.nodes);
     });
+
+    it('parse the table with including prev line', () => {
+      const doc = new ToastMark('| a | b\n--| ---\n c');
+      const result = doc.editMarkdown([3, 1], [3, 3], '|c|')[0];
+
+      assertParseResult(doc, ['| a | b', '--| ---', '|c|']);
+      assertResultNodes(doc, result.nodes);
+    });
   });
 
   describe('multiple paragraph', () => {
