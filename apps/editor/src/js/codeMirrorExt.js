@@ -2,9 +2,7 @@
  * @fileoverview Implements CodeBlockExt
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
-
 import CodeMirror from 'codemirror';
 
 import './codemirror/fixOrderedListNumber';
