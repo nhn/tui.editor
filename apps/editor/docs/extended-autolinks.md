@@ -13,7 +13,7 @@ The functionality is available in TOAST UI Editor (henceforth referred to as 'Ed
 
 ### Extended Autolinks
 
-The Extended Autolinks is the specification which is supported by [GFM](https://github.github.com/gfm). It is possible to make the Autolinks be recognised in a greater number of conditions. For example, if the text has `www.` with a valid domain, it will be recognized as the Autolinks like as below.
+The Extended Autolinks is the specification which is supported by [GFM](https://github.github.com/gfm). The specification makes the Autolinks be recognized in a greater number of conditions. For example, if the text has `www.` with a valid domain, it will be recognized as the Autolinks like as below.
 
 ![image](https://user-images.githubusercontent.com/37766175/80473018-7f226080-8980-11ea-8e4c-e1ff2ccd6a67.png)
 
@@ -23,7 +23,7 @@ More examples related with the Extended Autolinks can be found [here](https://gi
 ## Extended Autolinks Configuration
 The Extended Autolinks on Editor can be used by configuring the `extendedAutoLinks` option. If the `extendedAutoLinks` option is not otherwise defined, Editor will automatically configure the `false` value to make the Extended Autolinks be not worked internally.
 
-When we set the `extendedAutoLinks` value to explicitly declare it `true` value, the nodes which follow the Extended Autolinks specification can be parsed as link node on Editor.
+When we set the `extendedAutoLinks` value to explicitly declare it `true` value, the nodes which follow the Extended Autolinks specification can be parsed as the link node on Editor.
 
 ```js
 const editor = new toastui.Editor({
@@ -57,7 +57,7 @@ const editor = new toastui.Editor({
   }
 });
 ```
-As the code above demonstrates, the `content` parameter which has the editing content is passed to the `extendedAutoLinks` callback function. When there are desired link formats in the content, the result should be the array, and each element has `text`, `url` and `range` properties for the information of link.
+As the code above demonstrates, the `content` parameter which has the editing content is passed to the `extendedAutoLinks` callback function. If the desired link formats are found in the content, the result should be the array, and each element has `text`, `url` and `range` properties for the information of link.
 
 * `text`: The link label
 * `url`: The link destination
