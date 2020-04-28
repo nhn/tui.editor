@@ -329,6 +329,9 @@ export function isHeading(node: Node): node is HeadingNode {
 export function isList(node: Node): node is ListNode {
   return node.type === 'list';
 }
+export function isTable(node: Node): node is TableNode {
+  return node.type === 'table';
+}
 
 export function isRefDef(node: Node): node is RefDefNode {
   return node.type === 'refDef';

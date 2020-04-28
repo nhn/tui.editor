@@ -7,7 +7,8 @@ import {
   Node,
   SourcePos,
   isRefDef,
-  RefDefNode
+  RefDefNode,
+  isTable
 } from './commonmark/node';
 import {
   removeNextUntil,
@@ -211,8 +212,8 @@ export class ToastMark {
     if (
       startNode &&
       startNode.prev &&
-      isList(startNode.prev) &&
-      canBeContinuedListItem(this.lineTexts[startLine - 1])
+      ((isList(startNode.prev) && canBeContinuedListItem(this.lineTexts[startLine - 1])) ||
+        isTable(startNode.prev))
     ) {
       startNode = startNode.prev;
       startLine = startNode.sourcepos![0][0];
