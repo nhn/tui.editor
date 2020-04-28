@@ -795,8 +795,9 @@ export class InlineParser {
   // Attempt to parse an entity.
   parseEntity(block: BlockNode) {
     let m;
+    const startpos = this.pos + 1;
     if ((m = this.match(reEntityHere))) {
-      block.appendChild(text(decodeHTML(m)));
+      block.appendChild(text(decodeHTML(m), this.sourcepos(startpos, this.pos)));
       return true;
     }
     return false;
