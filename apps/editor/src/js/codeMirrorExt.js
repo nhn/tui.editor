@@ -42,21 +42,20 @@ class CodeMirrorExt {
 
     this.editorContainerEl.appendChild(cmTextarea);
 
-    options = extend(
-      {
-        lineWrapping: true,
-        theme: 'default',
-        extraKeys: {
-          'Shift-Tab': 'indentLess',
-          'Alt-Up': 'replaceLineTextToUpper',
-          'Alt-Down': 'replaceLineTextToLower'
-        },
-        indentUnit: 4,
-        cursorScrollMargin: 12,
-        specialCharPlaceholder: () => document.createElement('span')
+    options = {
+      ...options,
+      lineWrapping: true,
+      theme: 'default',
+      extraKeys: {
+        ...options.extraKeys,
+        'Shift-Tab': 'indentLess',
+        'Alt-Up': 'replaceLineTextToUpper',
+        'Alt-Down': 'replaceLineTextToLower'
       },
-      options
-    );
+      indentUnit: 4,
+      cursorScrollMargin: 12,
+      specialCharPlaceholder: () => document.createElement('span')
+    };
 
     this.cm = CodeMirror.fromTextArea(cmTextarea, options);
   }
