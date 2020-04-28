@@ -21,8 +21,9 @@ When installed and used with npm, the list of files that can be imported is as f
    │     ├─ dist/
    │     │    ├─ toastui-editor.js
    │     │    ├─ toastui-editor-viewer.js
-   │     │    ├─ toastui-editor-editor.css
-   │     │    └─ toastui-editor-viewer.css
+   │     │    ├─ toastui-editor.css
+   │     │    ├─ toastui-editor-viewer.css
+   │     │    └─ toastui-editor-only.css
 ```
 
 ### Via Contents Delivery Network (CDN)
