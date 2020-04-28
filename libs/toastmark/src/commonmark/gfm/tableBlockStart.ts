@@ -174,7 +174,10 @@ export const tableHead: BlockStart = (parser, container) => {
 };
 
 export const tableBody: BlockStart = (parser, container) => {
-  if (container.type !== 'table' && container.type !== 'tableBody') {
+  if (
+    (container.type !== 'table' && container.type !== 'tableBody') ||
+    (!parser.blank && parser.currentLine.indexOf('|') === -1)
+  ) {
     return Matched.None;
   }
 
