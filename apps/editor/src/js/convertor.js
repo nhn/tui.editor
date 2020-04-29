@@ -6,7 +6,6 @@ import toMark from '@toast-ui/to-mark';
 import { Parser, createRenderHTML } from '@toast-ui/toastmark';
 
 import { getHTMLRenderConvertors } from './htmlRenderConvertors';
-import htmlSanitizer from './htmlSanitizer';
 import domUtils from './utils/dom';
 
 // This regular expression refere markdownIt.
@@ -27,17 +26,12 @@ const HTML_TAG_RX = new RegExp(openingTag, 'g');
  */
 class Convertor {
   constructor(em, options = {}) {
-    const {
-      linkAttribute,
-      customHTMLRenderer,
-      extendedAutolinks,
-      useReferenceDefinition
-    } = options;
+    const { linkAttribute, customHTMLRenderer, extendedAutolinks, referenceDefinition } = options;
 
     this.mdReader = new Parser({
       extendedAutolinks,
       disallowedHtmlBlockTags: ['br'],
-      useReferenceDefinition,
+      referenceDefinition,
       disallowDeepHeading: true
     });
 
@@ -149,9 +143,9 @@ class Convertor {
     return html;
   }
 
-  initHtmlSanitizer() {
+  initHtmlSanitizer(sanitizer) {
     this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html =>
-      htmlSanitizer(html, true)
+      sanitizer(html, true)
     );
   }
 

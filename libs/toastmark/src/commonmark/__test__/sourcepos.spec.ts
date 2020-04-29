@@ -421,7 +421,7 @@ describe('merge text nodes', () => {
 });
 
 describe('reference link definition', () => {
-  reader = new Parser({ useReferenceDefinition: true });
+  reader = new Parser({ referenceDefinition: true });
 
   afterAll(() => {
     reader = new Parser();

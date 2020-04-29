@@ -5,7 +5,6 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 
 import domUtils from './utils/dom';
-import htmlSanitizer from './htmlSanitizer';
 
 /**
  * Class WwTablePasteHelper
@@ -105,6 +104,7 @@ class WwTablePasteHelper {
    * @private
    */
   _pasteClipboardHtml(html) {
+    const sanitizer = this.wwe.getSanitizer();
     const container = document.createDocumentFragment();
     const startFramgmentStr = '<!--StartFragment-->';
     const endFragmentStr = '<!--EndFragment-->';
@@ -126,7 +126,7 @@ class WwTablePasteHelper {
       html = `<TABLE>${html}</TABLE>`;
     }
 
-    container.appendChild(htmlSanitizer(html));
+    container.appendChild(sanitizer ? sanitizer(html) : html);
     this._pasteClipboardContainer(container);
   }
 

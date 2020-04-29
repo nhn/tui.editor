@@ -755,7 +755,7 @@ export class InlineParser {
         }
       }
 
-      if (this.options.useReferenceDefinition) {
+      if (this.options.referenceDefinition) {
         this.refLinkCandidateMap[block.id] = { node: block, refLabel };
       }
       return true;
@@ -765,7 +765,7 @@ export class InlineParser {
     this.pos = startpos;
     block.appendChild(text(']', this.sourcepos(startpos, startpos)));
 
-    if (this.options.useReferenceDefinition) {
+    if (this.options.referenceDefinition) {
       this.refLinkCandidateMap[block.id] = { node: block, refLabel };
     }
     return true;
@@ -871,7 +871,7 @@ export class InlineParser {
 
   // Attempt to parse a link reference, modifying refmap.
   parseReference(block: BlockNode, refMap: RefMap) {
-    if (!this.options.useReferenceDefinition) {
+    if (!this.options.referenceDefinition) {
       return 0;
     }
 

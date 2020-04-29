@@ -30,6 +30,7 @@ import WwTableSelectionManager from './wwTableSelectionManager';
 import codeBlockManager from './codeBlockManager';
 import toMarkRenderer from './toMarkRenderer';
 import { invokePlugins } from './pluginHelper';
+import htmlSanitizer from './htmlSanitizer';
 
 // markdown commands
 import mdBold from './markdownCommands/bold';
@@ -117,7 +118,8 @@ const __nedInstance = [];
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
- *     @param {boolean} [options.useReferenceDefinition=false] - whether use the specification of link reference definition
+ *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
+ *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
  */
 class ToastUIEditor {
   constructor(options) {
@@ -161,7 +163,8 @@ class ToastUIEditor {
         extendedAutolinks: false,
         customConvertor: null,
         customHTMLRenderer: null,
-        useReferenceDefinition: false
+        referenceDefinition: false,
+        customHTMLSanitizer: null
       },
       options
     );
@@ -177,12 +180,13 @@ class ToastUIEditor {
     });
 
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
-    const { customHTMLRenderer, extendedAutolinks, useReferenceDefinition } = this.options;
+    // eslint-disable-next-line prettier/prettier
+    const { customHTMLRenderer, customHTMLSanitizer, extendedAutolinks, referenceDefinition, useDefaultHTMLSanitizer } = this.options;
     const rendererOptions = {
       linkAttribute,
       customHTMLRenderer,
       extendedAutolinks,
-      useReferenceDefinition
+      referenceDefinition
     };
 
     if (this.options.customConvertor) {
@@ -192,8 +196,10 @@ class ToastUIEditor {
       this.convertor = new Convertor(this.eventManager, rendererOptions);
     }
 
-    if (this.options.useDefaultHTMLSanitizer) {
-      this.convertor.initHtmlSanitizer();
+    const sanitizer = customHTMLSanitizer || (useDefaultHTMLSanitizer ? htmlSanitizer : null);
+
+    if (sanitizer) {
+      this.convertor.initHtmlSanitizer(sanitizer);
     }
 
     if (this.options.hooks) {
@@ -214,7 +220,7 @@ class ToastUIEditor {
     this.toastMark = new ToastMark('', {
       disallowedHtmlBlockTags: ['br'],
       extendedAutolinks,
-      useReferenceDefinition,
+      referenceDefinition,
       disallowDeepHeading: true
     });
 
@@ -233,7 +239,7 @@ class ToastUIEditor {
     );
 
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
-      useDefaultHTMLSanitizer: this.options.useDefaultHTMLSanitizer,
+      sanitizer,
       linkAttribute
     });
 

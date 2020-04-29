@@ -13,6 +13,7 @@ declare namespace toastui {
   type AddImageBlobHook = (fileOrBlob: File | Blob, callback: Function, source: string) => void;
   type Plugin = (editor: Editor | Viewer, options: any) => void;
   type PreviewStyle = 'tab' | 'vertical';
+  type CustomHTMLSanitizer = (content: string) => string | DocumentFragment;
 
   interface SelectionRange {
     from: {
@@ -61,7 +62,8 @@ declare namespace toastui {
     placeholder?: string;
     linkAttribute?: object;
     extendedAutolinks?: boolean;
-    useReferenceDefinition?: boolean;
+    referenceDefinition?: boolean;
+    customHTMLSanitizer?: CustomHTMLSanitizer;
   }
 
   export interface ViewerOptions {
@@ -74,7 +76,8 @@ declare namespace toastui {
     hooks?: EventMap | { previewBeforeHook: Function };
     plugins?: Plugin[];
     extendedAutolinks?: boolean;
-    useReferenceDefinition?: boolean;
+    referenceDefinition?: boolean;
+    customHTMLSanitizer?: CustomHTMLSanitizer;
   }
 
   interface MarkdownEditorOptions {

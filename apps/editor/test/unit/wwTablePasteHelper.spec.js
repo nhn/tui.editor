@@ -3,6 +3,9 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import WwTablePasteHelper from '@/wwTablePasteHelper';
+import WysiwygEditor from '@/wysiwygEditor';
+import EventManager from '@/eventManager';
+import htmlSanitizer from '@/htmlSanitizer';
 
 function createElement(tag, textContent) {
   const element = document.createElement(tag);
@@ -119,5 +122,39 @@ describe('WwTablePasteHelper', () => {
         expect(target.innerHTML).toBe(expectedHtml);
       });
     });
+  });
+});
+
+describe('WwTablePasteHelper - sanitizer', () => {
+  let container, wwe, tph, spy;
+
+  beforeEach(() => {
+    spy = jasmine.createSpy('sanitizer');
+
+    const sanitizer = (content, nested) => {
+      spy();
+      return htmlSanitizer(content, nested);
+    };
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    wwe = new WysiwygEditor(container, new EventManager(), { sanitizer });
+
+    wwe.init();
+
+    wwe.getEditor().focus();
+
+    tph = new WwTablePasteHelper(wwe);
+  });
+
+  afterEach(() => {
+    document.body.removeChild(container);
+  });
+
+  it('should use sanitizer passed by wysiwyg editor', () => {
+    tph._pasteClipboardHtml('<div>custom</div>');
+
+    expect(spy).toHaveBeenCalled();
   });
 });

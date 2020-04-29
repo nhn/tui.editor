@@ -15,6 +15,7 @@ import domUtils from './utils/dom';
 import codeBlockManager from './codeBlockManager';
 import { invokePlugins } from './pluginHelper';
 import { sanitizeLinkAttribute } from './utils/common';
+import htmlSanitizer from './htmlSanitizer';
 
 const TASK_ATTR_NAME = 'data-te-task';
 const TASK_CHECKED_CLASS_NAME = 'checked';
@@ -36,7 +37,8 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
- *     @param {boolean} [options.useReferenceDefinition=false] - whether use the specification of link reference definition
+ *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
+ *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
  */
 class ToastUIEditorViewer {
   constructor(options) {
@@ -47,7 +49,8 @@ class ToastUIEditorViewer {
         extendedAutolinks: false,
         customConvertor: null,
         customHTMLRenderer: null,
-        useReferenceDefinition: false
+        referenceDefinition: false,
+        customHTMLSanitizer: null
       },
       options
     );
@@ -58,12 +61,13 @@ class ToastUIEditorViewer {
     this.commandManager = new CommandManager(this);
 
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
-    const { customHTMLRenderer, extendedAutolinks, useReferenceDefinition } = this.options;
+    // eslint-disable-next-line prettier/prettier
+    const { customHTMLRenderer, customHTMLSanitizer, extendedAutolinks, referenceDefinition } = this.options;
     const rendererOptions = {
       linkAttribute,
       customHTMLRenderer,
       extendedAutolinks,
-      useReferenceDefinition
+      referenceDefinition
     };
 
     if (this.options.customConvertor) {
@@ -73,8 +77,11 @@ class ToastUIEditorViewer {
       this.convertor = new Convertor(this.eventManager, rendererOptions);
     }
 
-    if (this.options.useDefaultHTMLSanitizer) {
-      this.convertor.initHtmlSanitizer();
+    const sanitizer =
+      customHTMLSanitizer || (this.options.useDefaultHTMLSanitizer ? htmlSanitizer : null);
+
+    if (sanitizer) {
+      this.convertor.initHtmlSanitizer(sanitizer);
     }
 
     if (this.options.hooks) {

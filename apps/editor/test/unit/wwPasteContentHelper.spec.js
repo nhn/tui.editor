@@ -9,15 +9,22 @@ import EventManager from '@/eventManager';
 import WwPasteContentHelper from '@/wwPasteContentHelper';
 import WwCodeBlockManager from '@/wwCodeBlockManager';
 import WwTableManager from '@/wwTableManager';
+import htmlSanitizer from '@/htmlSanitizer';
 
 describe('WwPasteContentHelper', () => {
-  let container, wwe, pch;
+  let container, wwe, pch, spy;
 
   beforeEach(() => {
+    spy = jasmine.createSpy('sanitizer');
+    const sanitizer = (content, nested) => {
+      spy();
+      return htmlSanitizer(content, nested);
+    };
+
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor(container, new EventManager());
+    wwe = new WysiwygEditor(container, new EventManager(), { sanitizer });
 
     wwe.init();
 
@@ -478,5 +485,13 @@ describe('WwPasteContentHelper', () => {
         expect($(element.childNodes[0]).find('li > ul > li').length).toEqual(2);
       });
     });
+  });
+
+  it('should use sanitizer passed by wysiwyg editor', () => {
+    const element = document.createElement('div');
+
+    pch.preparePaste(element);
+
+    expect(spy).toHaveBeenCalled();
   });
 });

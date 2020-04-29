@@ -29,6 +29,7 @@ import KeyMapper from './keyMapper';
 import WwTextObject from './wwTextObject';
 import ComponentManager from './componentManager';
 import CodeBlockGadget from './ui/codeBlockGadget';
+import htmlSanitizer from './htmlSanitizer';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -61,6 +62,7 @@ class WysiwygEditor {
     this._keyEventHandlers = {};
     this._managers = {};
     this._linkAttribute = options.linkAttribute || {};
+    this._sanitizer = options.sanitizer;
 
     this._initEvent();
     this._initDefaultKeyEventHandler();
@@ -70,9 +72,8 @@ class WysiwygEditor {
 
   /**
    * init
-   * @param {boolean} useDefaultHTMLSanitizer - whether to use default html sanitizer
    */
-  init(useDefaultHTMLSanitizer) {
+  init() {
     const editorBody = document.createElement('div');
 
     this.editorContainerEl.appendChild(editorBody);
@@ -82,7 +83,7 @@ class WysiwygEditor {
       leafNodeNames: {
         HR: false
       },
-      allowedBlocks: useDefaultHTMLSanitizer ? [] : ['details', 'summary']
+      allowedBlocks: this._sanitizer ? [] : ['details', 'summary']
     });
     this.editor.blockCommandShortcuts();
 
@@ -1199,19 +1200,22 @@ class WysiwygEditor {
     return !editor.hasFormat('li') && !editor.hasFormat('blockquote') && !editor.hasFormat('table');
   }
 
+  getSanitizer() {
+    return this._sanitizer;
+  }
+
   /**
    * WysiwygEditor factory method
    * @param {HTMLElement} el Container element for editor
    * @param {EventManager} eventManager EventManager instance
    * @param {object} [options={}] - option object
-   *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - whether to use default html sanitizer
    * @returns {WysiwygEditor} wysiwygEditor
    * @ignore
    */
   static factory(el, eventManager, options) {
     const wwe = new WysiwygEditor(el, eventManager, options);
 
-    wwe.init(options.useDefaultHTMLSanitizer);
+    wwe.init();
 
     wwe.componentManager.addManager(WwListManager);
     wwe.componentManager.addManager(WwTaskManager);

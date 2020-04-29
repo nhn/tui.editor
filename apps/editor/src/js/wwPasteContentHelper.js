@@ -9,7 +9,6 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
 
 import domUtils from './utils/dom';
-import htmlSanitizer from './htmlSanitizer';
 
 /**
  * Class WwPasteContentHelper
@@ -110,7 +109,11 @@ class WwPasteContentHelper {
    * @private
    */
   _pasteFirstAid(container) {
-    container.innerHTML = htmlSanitizer(container.innerHTML, true);
+    const sanitizer = this.wwe.getSanitizer();
+
+    if (sanitizer) {
+      container.innerHTML = sanitizer(container.innerHTML, true);
+    }
 
     domUtils.findAll(container, '*').forEach(node => {
       this._removeStyles(node);

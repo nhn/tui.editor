@@ -367,28 +367,28 @@ describe('editText()', () => {
   });
 
   describe('Reference Def', () => {
-    reader = new Parser({ useReferenceDefinition: true });
+    reader = new Parser({ referenceDefinition: true });
 
     afterAll(() => {
       reader = new Parser();
     });
 
     it('should parse reference link nodes when modifying url of Reference Def node', () => {
-      const doc = new ToastMark('[foo]: /test\n\n[foo]\n\n[foo]', { useReferenceDefinition: true });
+      const doc = new ToastMark('[foo]: /test\n\n[foo]\n\n[foo]', { referenceDefinition: true });
       doc.editMarkdown([1, 1], [1, 13], '[foo]: /test2');
 
       assertParseResult(doc, ['[foo]: /test2', '', '[foo]', '', '[foo]']);
     });
 
     it('should change reference link nodes to paragraph nodes when modifying label of Reference Def node', () => {
-      const doc = new ToastMark('[foo]: /test\n\n[foo]\n\n[foo]', { useReferenceDefinition: true });
+      const doc = new ToastMark('[foo]: /test\n\n[foo]\n\n[foo]', { referenceDefinition: true });
       doc.editMarkdown([1, 1], [1, 13], '[food]: /test2');
 
       assertParseResult(doc, ['[food]: /test2', '', '[foo]', '', '[foo]']);
     });
 
     it('should merge the Reference Def node as paragraph', () => {
-      const doc = new ToastMark('test\n\n[foo]: /test', { useReferenceDefinition: true });
+      const doc = new ToastMark('test\n\n[foo]: /test', { referenceDefinition: true });
       doc.editMarkdown([2, 1], [2, 1], 'test');
 
       assertParseResult(doc, ['test', 'test', '[foo]: /test']);

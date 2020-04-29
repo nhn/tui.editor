@@ -106,13 +106,13 @@ export class ToastMark {
   private refMap: RefMap;
   private refLinkCandidateMap: RefLinkCandidateMap;
   private refDefCandidateMap: RefDefCandidateMap;
-  private useReferenceDefinition: boolean;
+  private referenceDefinition: boolean;
 
   constructor(contents?: string, options?: Partial<Options>) {
     this.refMap = {};
     this.refLinkCandidateMap = {};
     this.refDefCandidateMap = {};
-    this.useReferenceDefinition = !!options?.useReferenceDefinition;
+    this.referenceDefinition = !!options?.referenceDefinition;
     this.parser = new Parser(options);
     this.parser.setRefMaps(this.refMap, this.refLinkCandidateMap, this.refDefCandidateMap);
     this.eventHandlerMap = { change: [] };
@@ -329,7 +329,7 @@ export class ToastMark {
     endNode: BlockNode,
     lineDiff: number
   ) {
-    if (this.useReferenceDefinition && !isEmptyObj(this.refMap)) {
+    if (this.referenceDefinition && !isEmptyObj(this.refMap)) {
       const prevNode = findChildNodeAtLine(this.root, startLine - 1);
       const nextNode = findChildNodeAtLine(this.root, endLine + 1);
 
@@ -363,7 +363,7 @@ export class ToastMark {
 
     const nextNode = extEndNode ? extEndNode.next : this.root.firstChild;
 
-    if (this.useReferenceDefinition) {
+    if (this.referenceDefinition) {
       this.markDeletedRefMap(extStartNode, extEndNode);
       this.replaceRangeNodes(extStartNode, extEndNode, newNodes);
       this.replaceWithNewRefDefState(newNodes);
@@ -416,7 +416,7 @@ export class ToastMark {
 
     let result: EditResult[] = [editResult];
 
-    if (this.useReferenceDefinition) {
+    if (this.referenceDefinition) {
       this.removeUnlinkedCandidate();
       this.replaceWithRefDefCandidate();
       result = result.concat(this.parseRefLink());

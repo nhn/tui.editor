@@ -5,6 +5,7 @@
 import Convertor from '@/convertor';
 import EventManager from '@/eventManager';
 import toMarkRenderer from '@/toMarkRenderer';
+import htmlSanitizer from '@/htmlSanitizer';
 
 describe('Convertor', () => {
   let convertor, em;
@@ -12,7 +13,7 @@ describe('Convertor', () => {
   beforeEach(() => {
     em = new EventManager();
     convertor = new Convertor(em);
-    convertor.initHtmlSanitizer();
+    convertor.initHtmlSanitizer(htmlSanitizer);
   });
 
   describe('markdown to html', () => {
