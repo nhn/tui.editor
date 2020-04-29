@@ -14,7 +14,140 @@ declare namespace toastui {
   type Plugin = (editor: Editor | Viewer, options: any) => void;
   type PreviewStyle = 'tab' | 'vertical';
   type CustomHTMLSanitizer = (content: string) => string | DocumentFragment;
+  type LinkAttribute = Partial<{
+    rel: string;
+    target: string;
+    contenteditable: boolean | 'true' | 'false';
+    hreflang: string;
+    type: string;
+  }>;
+  type AutolinkParser = (
+    content: string
+  ) => {
+    url: string;
+    text: string;
+    range: [number, number];
+  }[];
+  type ExtendedAutolinks = boolean | AutolinkParser;
+  type Sanitizer = (content: string) => string | DocumentFragment;
 
+  // @TODO: change toastMark type definition to @toast-ui/toastmark type file through importing
+  // Toastmark custom renderer type
+  type BlockNodeType =
+    | 'document'
+    | 'list'
+    | 'blockQuote'
+    | 'item'
+    | 'heading'
+    | 'thematicBreak'
+    | 'paragraph'
+    | 'codeBlock'
+    | 'htmlBlock'
+    | 'table'
+    | 'tableHead'
+    | 'tableBody'
+    | 'tableRow'
+    | 'tableCell'
+    | 'tableDelimRow'
+    | 'tableDelimCell'
+    | 'refDef';
+
+  type InlineNodeType =
+    | 'code'
+    | 'text'
+    | 'emph'
+    | 'strong'
+    | 'strike'
+    | 'link'
+    | 'image'
+    | 'htmlInline'
+    | 'linebreak'
+    | 'softbreak';
+
+  type NodeType = BlockNodeType | InlineNodeType;
+  type SourcePos = [[number, number], [number, number]];
+
+  interface NodeWalker {
+    current: Node | null;
+    root: Node;
+    entering: boolean;
+
+    next(): { entering: boolean; node: Node } | null;
+    resumeAt(node: Node, entering: boolean): void;
+  }
+
+  interface Node {
+    type: NodeType;
+    id: number;
+    parent: Node | null;
+    prev: Node | null;
+    next: Node | null;
+    sourcepos?: SourcePos;
+    firstChild: Node | null;
+    lastChild: Node | null;
+    literal: string | null;
+
+    isContainer(): boolean;
+    unlink(): void;
+    replaceWith(node: Node): void;
+    insertAfter(node: Node): void;
+    insertBefore(node: Node): void;
+    appendChild(child: Node): void;
+    prependChild(child: Node): void;
+    walker(): NodeWalker;
+  }
+
+  interface TagToken {
+    tagName: string;
+    outerNewLine?: boolean;
+    innerNewLine?: boolean;
+  }
+
+  interface OpenTagToken extends TagToken {
+    type: 'openTag';
+    classNames?: string[];
+    attributes?: Record<string, string>;
+    selfClose?: boolean;
+  }
+
+  interface CloseTagToken extends TagToken {
+    type: 'closeTag';
+  }
+
+  interface TextToken {
+    type: 'text';
+    content: string;
+  }
+
+  interface RawHTMLToken {
+    type: 'html';
+    content: string;
+    outerNewLine?: boolean;
+  }
+
+  type HTMLToken = OpenTagToken | CloseTagToken | TextToken | RawHTMLToken;
+
+  interface ContextOptions {
+    gfm: boolean;
+    softbreak: string;
+    nodeId: boolean;
+    tagFilter: boolean;
+    convertors?: CustomHTMLRendererMap;
+  }
+
+  interface Context {
+    entering: boolean;
+    leaf: boolean;
+    options: Omit<ContextOptions, 'gfm' | 'convertors'>;
+    getChildrenText: (node: Node) => string;
+    skipChildren: () => void;
+    origin?: () => ReturnType<CustomHTMLRenderer>;
+  }
+
+  export type CustomHTMLRenderer = (node: Node, context: Context) => HTMLToken | HTMLToken[] | null;
+
+  type CustomHTMLRendererMap = Partial<Record<NodeType, CustomHTMLRenderer>>;
+  // Toastmark custom renderer type end
   interface SelectionRange {
     from: {
       row: number;
@@ -26,20 +159,71 @@ declare namespace toastui {
     };
   }
 
-  interface EventMap {
-    [propName: string]: HandlerFunc;
+  interface ToolbarState {
+    strong: boolean;
+    emph: boolean;
+    strike: boolean;
+    code: boolean;
+    codeBlock: boolean;
+    blockQuote: boolean;
+    table: boolean;
+    heading: boolean;
+    list: boolean;
+    orderedList: boolean;
+    taskList: boolean;
   }
+
+  type WysiwygToolbarState = ToolbarState & {
+    source: 'wysiwyg';
+  };
+
+  type MarkdownToolbarState = ToolbarState & {
+    thematicBreak: boolean;
+    source: 'markdown';
+  };
+
+  type SourceType = 'wysiwyg' | 'markdown';
+
+  interface EventMap {
+    load?: (param: Editor) => void;
+    change?: (param: { source: SourceType | 'viewer'; data: MouseEvent }) => void;
+    stateChange?: (param: MarkdownToolbarState | WysiwygToolbarState) => void;
+    focus?: (param: { source: SourceType }) => void;
+    blur?: (param: { source: SourceType }) => void;
+  }
+
+  interface ViewerHookMap {
+    previewBeforeHook?: (html: string) => void | string;
+  }
+
+  type EditorHookMap = ViewerHookMap & {
+    addImageBlobHook?: (
+      blob: Blob | File,
+      callback: (url: string, altText: string) => void
+    ) => void;
+  };
 
   interface ToMarkOptions {
     gfm?: boolean;
     renderer?: any;
   }
 
-  interface Convertor {
-    initHtmlSanitizer(): void;
+  export interface Convertor {
+    initHtmlSanitizer(sanitizer: Sanitizer): void;
     toHTML(makrdown: string): string;
-    toHTMLWithCodeHightlight(markdown: string): string;
+    toHTMLWithCodeHighlight(markdown: string): string;
     toMarkdown(html: string, toMarkdownOptions: ToMarkOptions): string;
+  }
+
+  export interface ConvertorClass {
+    new (em: EventManager, options: ConvertorOptions): Convertor;
+  }
+
+  export interface ConvertorOptions {
+    linkAttribute: LinkAttribute;
+    customHTMLRenderer: CustomHTMLRenderer;
+    extendedAutolinks: boolean | AutolinkParser;
+    referenceDefinition: boolean;
   }
 
   export interface EditorOptions {
@@ -50,7 +234,7 @@ declare namespace toastui {
     previewStyle?: PreviewStyle;
     initialEditType?: string;
     events?: EventMap;
-    hooks?: EventMap | { addImageBlobHook: AddImageBlobHook };
+    hooks?: EditorHookMap;
     language?: string;
     useCommandShortcut?: boolean;
     useDefaultHTMLSanitizer?: boolean;
@@ -58,24 +242,27 @@ declare namespace toastui {
     toolbarItems?: (string | ToolbarButton)[];
     hideModeSwitch?: boolean;
     plugins?: Plugin[];
-    customConvertor?: Convertor;
+    extendedAutolinks?: ExtendedAutolinks;
+    customConvertor?: ConvertorClass;
     placeholder?: string;
-    linkAttribute?: object;
-    extendedAutolinks?: boolean;
+    linkAttribute?: LinkAttribute;
+    customHTMLRenderer?: CustomHTMLRenderer;
     referenceDefinition?: boolean;
     customHTMLSanitizer?: CustomHTMLSanitizer;
+    previewHighlight?: boolean;
   }
 
   export interface ViewerOptions {
     el: HTMLElement;
-    height?: string;
-    minHeight?: string;
-    previewStyle?: PreviewStyle;
     initialValue?: string;
     events?: EventMap;
-    hooks?: EventMap | { previewBeforeHook: Function };
+    hooks?: ViewerHookMap;
     plugins?: Plugin[];
-    extendedAutolinks?: boolean;
+    useDefaultHTMLSanitizer?: boolean;
+    extendedAutolinks?: ExtendedAutolinks;
+    customConvertor?: ConvertorClass;
+    linkAttribute?: LinkAttribute;
+    customHTMLRenderer?: CustomHTMLRenderer;
     referenceDefinition?: boolean;
     customHTMLSanitizer?: CustomHTMLSanitizer;
   }
@@ -86,7 +273,7 @@ declare namespace toastui {
 
   interface WysiwygEditorOptions {
     useDefaultHTMLSanitizer?: boolean;
-    linkAttribute?: object;
+    linkAttribute?: LinkAttribute;
   }
 
   interface LanguageData {
@@ -341,7 +528,9 @@ declare namespace toastui {
 
     public pasteClipboardData(clipboardTable: Node): boolean;
 
-    public prepareToTableCellStuffing(trs: HTMLElement): object;
+    public prepareToTableCellStuffing(
+      trs: HTMLElement
+    ): { maximumCellLength: number; needTableCellStuffingAid: boolean };
 
     public resetLastCellNode(): void;
 
@@ -483,7 +672,7 @@ declare namespace toastui {
 
     public setRange(range: Range): void;
 
-    public getLinkAttribute(): object;
+    public getLinkAttribute(): LinkAttribute;
 
     public setSelectionByContainerAndOffset(
       startContainer: Node,
@@ -654,10 +843,22 @@ declare namespace toastui {
 
 declare module '@toast-ui/editor' {
   export type EditorOptions = toastui.EditorOptions;
+  export type CustomConvertor = toastui.ConvertorClass;
+  export type EventMap = toastui.EventMap;
+  export type EditorHookMap = toastui.EditorHookMap;
+  export type CustomHTMLRenderer = toastui.CustomHTMLRenderer;
+  export type ExtendedAutolinks = toastui.ExtendedAutolinks;
+  export type LinkAttribute = toastui.LinkAttribute;
   export default toastui.Editor;
 }
 
 declare module '@toast-ui/editor/dist/toastui-editor-viewer' {
   export type ViewerOptions = toastui.ViewerOptions;
+  export type CustomConvertor = toastui.ConvertorClass;
+  export type EventMap = toastui.EventMap;
+  export type ViewerHookMap = toastui.ViewerHookMap;
+  export type CustomHTMLRenderer = toastui.CustomHTMLRenderer;
+  export type ExtendedAutolinks = toastui.ExtendedAutolinks;
+  export type LinkAttribute = toastui.LinkAttribute;
   export default toastui.Viewer;
 }
