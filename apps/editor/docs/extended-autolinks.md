@@ -21,9 +21,9 @@ More examples related with the Extended Autolinks can be found [here](https://gi
 
 
 ## Extended Autolinks Configuration
-The Extended Autolinks on Editor can be used by configuring the `extendedAutoLinks` option. If the `extendedAutoLinks` option is not otherwise defined, Editor will automatically configure the `false` value to make the Extended Autolinks be not worked internally.
+The Extended Autolinks on Editor can be used by configuring the `extendedAutolinks` option. If the `extendedAutolinks` option is not otherwise defined, Editor will automatically configure the `false` value to make the Extended Autolinks be not worked internally.
 
-When we set the `extendedAutoLinks` value to explicitly declare it `true` value, the nodes which follow the Extended Autolinks specification can be parsed as the link node on Editor.
+When we set the `extendedAutolinks` value to explicitly declare it `true` value, the nodes which follow the Extended Autolinks specification can be parsed as the link node on Editor.
 
 ```js
 const editor = new toastui.Editor({
@@ -35,12 +35,12 @@ const editor = new toastui.Editor({
 ## Customizing the Extended Autolinks
 Editor enables users to define their own Extended Autolinks by providing the callback function option. This option can be useful when you want to support the specific link format.
 
-To customize the Extended Autolinks, `extendedAutoLinks` option should be `function`. The following is a simple example snippet for configuring the option.
+To customize the Extended Autolinks, `extendedAutolinks` option should be `function`. The following is a simple example snippet for configuring the option.
 
 ```js
 const reToastuiEditorRepo = /tui\.editor/g;
 
-const editor = new toastui.Editor({
+const editor = new Editor({
   el: document.querySelector('#editor'),
   extendedAutolinks: (content) => {
     const matched = content.match(reToastuiEditorRepo);
@@ -57,7 +57,7 @@ const editor = new toastui.Editor({
   }
 });
 ```
-As the code above demonstrates, the `content` parameter which has the editing content is passed to the `extendedAutoLinks` callback function. If the desired link formats are found in the content, the result should be the array, and each element has `text`, `url` and `range` properties for the information of link.
+As the code above demonstrates, the `content` parameter which has the editing content is passed to the `extendedAutolinks` callback function. If the desired link formats are found in the content, the result should be the array, and each element has `text`, `url` and `range` properties for the information of link.
 
 * `text`: The link label
 * `url`: The link destination
