@@ -257,3 +257,125 @@ Finally, the array of token is converted to HTML string.
 <h1>TOAST UI</h1>
 ```
 
+## getChildrenText()
+
+In a normal situation, a node doesn't need to care about it's children as their content will be handled by thier own convertor functions. However, sometimes a node needs to get the children content to set the value of it's attribute. For this use case, a `context` object provides the `getChildrenText()` function.
+
+For example, if a heading element wants to set it's `id` based on its children content, we can use the `getChildrenText()` function like the code below.
+
+```js
+const editor = new Editor({
+  el: document.querySelector('#editor'),
+  customHTMLRenderer: {
+    heading({ level }, { entering, getChildrenText }) {
+      const tagName = `h${level}`;
+      
+      if (entering) {
+        return {
+          type: 'openTag',
+          tagName,
+          attributes: { 
+            id: getChildrenText().trim().replace(/\s+/g, '-')
+          }        
+        }
+      }
+      return { type: 'closeTag', tagName };
+    }
+  }
+});
+```
+
+Now, if we set the markdown text below,
+
+```markdown
+# Hello *World*
+```
+
+The return value of `getChildrenText()` inside the `heading` convertor function will be `Hello World`. As we are replacing white spaces into `-`, the final HTML string through the custom renderer will be like below.
+
+```html
+<h1 id="Hello-World">Hello <em>World</em></h1>
+```
+
+## skipChildren()
+
+The `skipChildren()` function skips traversal of child nodes. This function is useful when we want to use the content of children only for the attribute of current node, instead of generating child elements. 
+
+For example, `image` node has children which represents the description of the image. However, if we want to use an  `img` element for representing a `image` node, we can't use child elements as an `img` element cannot have children. In this case, we need to invoke `skipChildren()` to prevent child nodes from being converted to additional HTML string. Instead, we can use `getChildrenText()` to get the text content of children, and set it to the `alt` attribute.
+
+The following code example is an simplified version of built-in convertor function for an `image` type node.
+
+```js
+function image(node, context) {
+  const { destination } = node;
+  const { getChildrenText, skipChildren } = context;
+
+  skipChildren();
+
+  return {
+    type: 'openTag',
+    tagName: 'img',
+    selfClose: true,
+    attributes: {
+      src: destination,
+      alt: getChildrenText(),
+    }
+  }
+}
+```
+
+## origin()
+
+If we want to use original convertor function inside the overriding function, we can use `origin()` function. 
+
+For example, if the return value of original convertor function for `link` node is like below,
+
+#### entering: true
+```js
+{
+  type: 'openTag',
+  tagName: 'a',
+  attributes: {
+    href: 'http://ui.toast.com',
+    title: 'TOAST UI'
+  }
+}
+```
+#### entering: false
+```js
+{
+  type: 'closeTag',
+  tagName: 'a'
+}
+```
+
+The following code will set `target="_blank"` attribute to the result object only when `entering` state is `true`.
+
+```js
+const editor = new Editor({
+  el: document.querySelector('#editor'),
+  customHTMLRenderer: {
+    link(node, context) {
+      const { origin, entering } = context;
+      const result = origin();
+      if (entering) {
+        result.attributes.target = '_blank';
+      }
+      return result;
+    }
+  },
+}
+```
+
+#### entering: true
+```js
+{
+  type: 'openTag',
+  tagName: 'a',
+  attributes: {
+    href: 'http://ui.toast.com',
+    target: '_blank',
+    title: 'TOAST UI'  
+  }
+}
+```
