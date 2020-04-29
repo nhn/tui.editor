@@ -533,7 +533,7 @@ describe('Editor', () => {
           initialValue: '- item1\n\t-'
         });
 
-        expect(editor.getHtml()).toBe('<ul>\n<li>\n<p>item1<br>\n-</p>\n</li>\n</ul>\n');
+        expect(editor.getHtml()).toBe('<ul>\n<li>item1<br>\n-</li>\n</ul>\n');
       });
 
       it('should disallow the nested atxHeading in list', () => {
@@ -542,7 +542,7 @@ describe('Editor', () => {
           initialValue: '- # item1'
         });
 
-        expect(editor.getHtml()).toBe('<ul>\n<li>\n<p># item1</p>\n</li>\n</ul>\n');
+        expect(editor.getHtml()).toBe('<ul>\n<li># item1</li>\n</ul>\n');
       });
     });
 

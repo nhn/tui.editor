@@ -1,10 +1,16 @@
 const baseConvertors = {
-  paragraph(_, { entering }) {
-    return {
-      type: entering ? 'openTag' : 'closeTag',
-      outerNewLine: true,
-      tagName: 'p'
-    };
+  paragraph(_, { entering, origin, options }) {
+    // prevent paragraph from being removed when it's child of tight list item
+    // to show highlight style in live-preview mode
+    if (options.nodeId) {
+      return {
+        type: entering ? 'openTag' : 'closeTag',
+        outerNewLine: true,
+        tagName: 'p'
+      };
+    }
+
+    return origin();
   },
 
   softbreak(node) {

@@ -165,12 +165,8 @@ describe('Convertor', () => {
       const taskItemMd = ['- [ ] Task1', '- [x] Task2'].join('\n');
       const expectedHTML = [
         '<ul>',
-        '<li class="task-list-item" data-te-task="">',
-        '<p>Task1</p>',
-        '</li>',
-        '<li class="task-list-item checked" data-te-task="">',
-        '<p>Task2</p>',
-        '</li>',
+        '<li class="task-list-item" data-te-task="">Task1</li>',
+        '<li class="task-list-item checked" data-te-task="">Task2</li>',
         '</ul>',
         ''
       ].join('\n');
@@ -675,14 +671,10 @@ describe('Convertor', () => {
       ].join('\n');
       const expectedHTML = [
         '<ul>',
-        '<li>',
-        '<p>codeblock</p>',
-        '</li>',
+        '<li>codeblock</li>',
         '</ul>',
         '<ol>',
-        '<li>',
-        '<p>codeblock</p>',
-        '</li>',
+        '<li>codeblock</li>',
         '</ol>',
         '<p>paragraph</p>',
         '<pre><code>code',
