@@ -1231,7 +1231,7 @@ class WwTableManager {
     const currentRow = currentCell.parentNode;
     const currentColumnIndex = domUtils.getNodeOffsetOfParent(currentCell);
     let currentRowIndex = domUtils.getNodeOffsetOfParent(currentCell.parentNode);
-    const table = domUtils.parents(currentRow, 'table');
+    const [table] = domUtils.parents(currentRow, 'table');
     const tableColumnLength = table.querySelector('tr').children.length;
     const tableRowLength = table.querySelectorAll('tr').length;
     const isInTbody = !!domUtils.parents(currentRow, 'tbody').length;
@@ -1265,7 +1265,7 @@ class WwTableManager {
 
   _appendRow(table, rowDifference) {
     const trs = table.querySelectorAll('tr');
-    const newRow = trs[trs.length - 1].cloneNode();
+    const newRow = trs[trs.length - 1].cloneNode(true);
     const brHTMLSting = isIE10 ? '' : '<br />';
 
     domUtils.findAll(newRow, 'td').forEach(td => {
@@ -1273,7 +1273,7 @@ class WwTableManager {
     });
 
     for (; rowDifference < 0; rowDifference += 1) {
-      domUtils.append(table.querySelector('tbody'), newRow.cloneNode());
+      domUtils.append(table.querySelector('tbody'), newRow.cloneNode(true));
     }
   }
 
