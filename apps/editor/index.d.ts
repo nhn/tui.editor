@@ -68,32 +68,32 @@ declare namespace toastui {
   type SourcePos = [[number, number], [number, number]];
 
   interface NodeWalker {
-    current: Node | null;
-    root: Node;
+    current: MdNode | null;
+    root: MdNode;
     entering: boolean;
 
-    next(): { entering: boolean; node: Node } | null;
-    resumeAt(node: Node, entering: boolean): void;
+    next(): { entering: boolean; node: MdNode } | null;
+    resumeAt(node: MdNode, entering: boolean): void;
   }
 
-  interface Node {
+  interface MdNode {
     type: NodeType;
     id: number;
-    parent: Node | null;
-    prev: Node | null;
-    next: Node | null;
+    parent: MdNode | null;
+    prev: MdNode | null;
+    next: MdNode | null;
     sourcepos?: SourcePos;
-    firstChild: Node | null;
-    lastChild: Node | null;
+    firstChild: MdNode | null;
+    lastChild: MdNode | null;
     literal: string | null;
 
     isContainer(): boolean;
     unlink(): void;
-    replaceWith(node: Node): void;
-    insertAfter(node: Node): void;
-    insertBefore(node: Node): void;
-    appendChild(child: Node): void;
-    prependChild(child: Node): void;
+    replaceWith(node: MdNode): void;
+    insertAfter(node: MdNode): void;
+    insertBefore(node: MdNode): void;
+    appendChild(child: MdNode): void;
+    prependChild(child: MdNode): void;
     walker(): NodeWalker;
   }
 
@@ -139,12 +139,12 @@ declare namespace toastui {
     entering: boolean;
     leaf: boolean;
     options: Omit<ContextOptions, 'gfm' | 'convertors'>;
-    getChildrenText: (node: Node) => string;
+    getChildrenText: (node: MdNode) => string;
     skipChildren: () => void;
     origin?: () => ReturnType<CustomHTMLRenderer>;
   }
 
-  export type CustomHTMLRenderer = (node: Node, context: Context) => HTMLToken | HTMLToken[] | null;
+  export type CustomHTMLRenderer = (node: MdNode, context: Context) => HTMLToken | HTMLToken[] | null;
 
   type CustomHTMLRendererMap = Partial<Record<NodeType, CustomHTMLRenderer>>;
   // Toastmark custom renderer type end
