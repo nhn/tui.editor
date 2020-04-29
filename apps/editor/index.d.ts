@@ -221,7 +221,7 @@ declare namespace toastui {
 
   export interface ConvertorOptions {
     linkAttribute: LinkAttribute;
-    customHTMLRenderer: boolean;
+    customHTMLRenderer: CustomHTMLRenderer;
     extendedAutolinks: boolean | AutolinkParser;
     referenceDefinition: boolean;
   }
