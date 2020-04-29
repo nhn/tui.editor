@@ -1237,7 +1237,7 @@ function getOffset(element, selector = 'document') {
     top += element.offsetTop || 0;
     left += element.offsetLeft || 0;
     element = element.offsetParent;
-  } while (element && !element.matches(selector));
+  } while (element && !matches(element, selector));
 
   return { top, left };
 }
