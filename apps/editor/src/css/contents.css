@@ -91,7 +91,7 @@
 .tui-editor-contents blockquote {
   margin: 14px 0;
   border-left: 4px solid #e5e5e5;
-  padding: 0 12px;
+  padding: 0 16px;
   min-height: 20px;
   color: #999;
 }
@@ -180,23 +180,18 @@
 .tui-editor-contents dir {
   display: block;
   list-style-type: none;
-  padding-left: 12px;
+  padding-left: 24px;
   margin: 6px 0 10px;
   color: #222;
 }
 
 .tui-editor-contents li {
-  min-height: 20px;
+  min-height: 22px;
 }
 
 .tui-editor-contents ol {
   list-style-type: none;
   counter-reset: li;
-}
-
-.tui-editor-contents > ol,
-.tui-editor-contents > ul {
-  margin-left: 10px;
 }
 
 .tui-editor-contents ol > li {
@@ -207,13 +202,12 @@
 .tui-editor-contents ol > li::before {
   display: inline-block;
   position: absolute;
-  width: 1em;
 }
 
 .tui-editor-contents ul > li::before {
   content: '';
-  margin-top: 0.5em;
-  margin-left: -0.8em;
+  margin-top: 6px;
+  margin-left: -17px;
   width: 5px;
   height: 5px;
   border-radius: 50%;
@@ -222,7 +216,8 @@
 
 .tui-editor-contents ol > li::before {
   content: '.' counter(li);
-  margin-left: -1.2em;
+  margin-left: -28px;
+  width: 24px;
   text-align: right;
   direction: rtl;
   color: #aaa;
@@ -244,11 +239,6 @@
 .tui-editor-contents ul p,
 .tui-editor-contents ol p {
   margin: 0;
-}
-
-.tui-editor-contents ul > li.task-list-item:before,
-.tui-editor-contents ol > li.task-list-item:before {
-  margin-left: -0.8em;
 }
 
 .tui-editor-contents ul li.task-list-item:before,
@@ -280,29 +270,30 @@
 .tui-editor-contents .task-list-item {
   border: 0;
   list-style: none;
-  padding-left: 23px;
-  margin-left: -23px;
-  min-height: 20px;
+  padding-left: 24px;
+  margin-left: -24px;
+  min-height: 22px;
 }
 
 .tui-editor-contents .task-list-item:before {
   background-repeat: no-repeat;
-  background-size: 16px 16px;
+  background-size: 18px 18px;
   background-position: center;
   content: '';
+  margin-left: 0;
   margin-top: 0;
   border-radius: 0;
-  height: 16px;
-  width: 16px;
+  height: 18px;
+  width: 18px;
   position: absolute;
-  left: 14px;
+  left: 0;
   top: 1px;
   cursor: pointer;
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAADdJREFUKBVjvHv37n8GMgALSI+SkhJJWu/du8fARJIOJMWjGpECA505GjjoIYLEB6dVUNojFQAA/1MJUFWet/4AAAAASUVORK5CYII=');
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAEqADAAQAAAABAAAAEgAAAACaqbJVAAAAQklEQVQ4EWM8c+bMfwYqABaQGcbGxhQZdfbsWQYmikxA0jxqEFJg4GCOhhGOgEESHg0jpMDAwRx8YQQuj0DlCaUAAEdBCPJ7TaEPAAAAAElFTkSuQmCC');
 }
 
 .tui-editor-contents .task-list-item.checked:before {
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAMpJREFUKBVjjJ/64D8DGYCJDD1gLbTVyM3OxJDiJMzAxcYIdyALnIWDAdJU7i/OICfCxsDMxMgwc88bwk5F1vTs/W+GFUffwY2H+1FBlI2hLliCQYCbGSyJrqlzwwuGj9//YWoMtRBgUBJnZ6gMEGeQFWaFOw9kE7omkG5GWDyCPF7mJ86gIMbO8P//fwZGRkYGXJpAGuFO/fbrP0PXppcMD179JKgJRSOIA9N8/NZXrM4DqYEBjOgAaYYFOUwRNhruVGyS+MTI1ggAx8NTGcUtFVQAAAAASUVORK5CYII=');
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAEqADAAQAAAABAAAAEgAAAACaqbJVAAAA1ElEQVQ4EWP0nvbsPwMVABMVzAAbMWoQIiT5OJgYvLS5EAJQFguGCB4BkCHt/kIM8kKsYFXbrn6DqyY6sJENefjuN8ORuz/ghoAYWA0COR2kEQbQDanc+I7h049/MGkwjVANFQYZkmXHD/YCyABiDAFpxQgjkJO9dbjA4QAKDxAAhQnIO9hcAlYAJDBcBHIySANII8gAYgwBGYZhEEgQZFjVJohhhFwCUg8CjPgyLT8nE8N/YJZGD1iIVlQSI4yQpT9+R40ZZDl0NlavoSsihj/4DAIAR+hZHUj727YAAAAASUVORK5CYII=');
 }
 
 .tui-editor-contents .task-list-item input[type='checkbox'],
