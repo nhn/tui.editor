@@ -257,74 +257,7 @@ Finally, the array of token is converted to HTML string.
 <h1>TOAST UI</h1>
 ```
 
-## getChildrenText()
-
-In a normal situation, a node doesn't need to care about it's children as their content will be handled by thier own convertor functions. However, sometimes a node needs to get the children content to set the value of it's attribute. For this use case, a `context` object provides the `getChildrenText()` function.
-
-For example, if a heading element wants to set it's `id` based on its children content, we can use the `getChildrenText()` function like the code below.
-
-```js
-const editor = new Editor({
-  el: document.querySelector('#editor'),
-  customHTMLRenderer: {
-    heading({ level }, { entering, getChildrenText }) {
-      const tagName = `h${level}`;
-      
-      if (entering) {
-        return {
-          type: 'openTag',
-          tagName,
-          attributes: { 
-            id: getChildrenText().trim().replace(/\s+/g, '-')
-          }        
-        }
-      }
-      return { type: 'closeTag', tagName };
-    }
-  }
-});
-```
-
-Now, if we set the markdown text below,
-
-```markdown
-# Hello *World*
-```
-
-The return value of `getChildrenText()` inside the `heading` convertor function will be `Hello World`. As we are replacing white spaces into `-`, the final HTML string through the custom renderer will be like below.
-
-```html
-<h1 id="Hello-World">Hello <em>World</em></h1>
-```
-
-## skipChildren()
-
-The `skipChildren()` function skips traversal of child nodes. This function is useful when we want to use the content of children only for the attribute of current node, instead of generating child elements. 
-
-For example, `image` node has children which represents the description of the image. However, if we want to use an  `img` element for representing a `image` node, we can't use child elements as an `img` element cannot have children. In this case, we need to invoke `skipChildren()` to prevent child nodes from being converted to additional HTML string. Instead, we can use `getChildrenText()` to get the text content of children, and set it to the `alt` attribute.
-
-The following code example is an simplified version of built-in convertor function for an `image` type node.
-
-```js
-function image(node, context) {
-  const { destination } = node;
-  const { getChildrenText, skipChildren } = context;
-
-  skipChildren();
-
-  return {
-    type: 'openTag',
-    tagName: 'img',
-    selfClose: true,
-    attributes: {
-      src: destination,
-      alt: getChildrenText(),
-    }
-  }
-}
-```
-
-## origin()
+### origin()
 
 If we want to use original convertor function inside the overriding function, we can use `origin()` function. 
 
@@ -379,3 +312,134 @@ const editor = new Editor({
   }
 }
 ```
+
+## Advanced Usage
+
+### getChildrenText()
+
+In a normal situation, a node doesn't need to care about it's children as their content will be handled by thier own convertor functions. However, sometimes a node needs to get the children content to set the value of it's attribute. For this use case, a `context` object provides the `getChildrenText()` function.
+
+For example, if a heading element wants to set it's `id` based on its children content, we can use the `getChildrenText()` function like the code below.
+
+```js
+const editor = new Editor({
+  el: document.querySelector('#editor'),
+  customHTMLRenderer: {
+    heading({ level }, { entering, getChildrenText }) {
+      const tagName = `h${level}`;
+      
+      if (entering) {
+        return {
+          type: 'openTag',
+          tagName,
+          attributes: { 
+            id: getChildrenText().trim().replace(/\s+/g, '-')
+          }        
+        }
+      }
+      return { type: 'closeTag', tagName };
+    }
+  }
+});
+```
+
+Now, if we set the markdown text below,
+
+```markdown
+# Hello *World*
+```
+
+The return value of `getChildrenText()` inside the `heading` convertor function will be `Hello World`. As we are replacing white spaces into `-`, the final HTML string through the custom renderer will be like below.
+
+```html
+<h1 id="Hello-World">Hello <em>World</em></h1>
+```
+
+### skipChildren()
+
+The `skipChildren()` function skips traversal of child nodes. This function is useful when we want to use the content of children only for the attribute of current node, instead of generating child elements. 
+
+For example, `image` node has children which represents the description of the image. However, if we want to use an  `img` element for representing a `image` node, we can't use child elements as an `img` element cannot have children. In this case, we need to invoke `skipChildren()` to prevent child nodes from being converted to additional HTML string. Instead, we can use `getChildrenText()` to get the text content of children, and set it to the `alt` attribute.
+
+The following code example is an simplified version of built-in convertor function for an `image` type node.
+
+```js
+function image(node, context) {
+  const { destination } = node;
+  const { getChildrenText, skipChildren } = context;
+
+  skipChildren();
+
+  return {
+    type: 'openTag',
+    tagName: 'img',
+    selfClose: true,
+    attributes: {
+      src: destination,
+      alt: getChildrenText(),
+    }
+  }
+}
+```
+
+### Using Multiple Tags for a Node
+
+A convertor function can also returns an array of token object. This is useful when we want to convert a node to nested elements. The following code example shows how to convert a `codeBlock` node to `<pre><code>...</code></pre>` tag string.
+
+```js
+function codeBlock(node) {
+  return [
+    { type: 'openTag', tagName: 'pre' classNames: ['code-block'] },
+    { type: 'openTag', tagName: 'code' },
+    { type: 'text', content: node.literal },
+    { type: 'closeTag', tagName: 'code' },
+    { type: 'closeTag', tagName: 'pre' }
+  ];
+}
+```
+
+### Controlling Newlines
+
+In a normal situation, we don't need to care about formatting of converted HTML string. However, as the ToastMark support [CommonMark Spec](https://spec.commonmark.org/0.29/), the renderer supports an option to controll new-lines to pass the [official test cases](https://spec.commonmark.org/0.29/spec.json).
+
+The `outerNewline` and `innerNewline` property can be added to token objects to control white spaces. The following example will help you understand how to use these properties.
+
+#### Token Array
+```js
+[
+  {
+    type: 'text',
+    content: 'Hello'
+  },
+  { 
+    type: 'openTag',
+    tagName: 'p',
+    outerNewLine: true,
+    innerNewLine: true
+  },
+  {
+    type: 'html',
+    content: '<strong>My</strong>'
+    outerNewLine: true,
+  },
+  {
+    type: 'closeTag',
+    tagName: 'p',
+    innerNewLine: true
+  },
+  {
+    type: 'text',
+    content: 'World'
+  }
+]
+```
+
+#### Converted HTML string
+```html
+Hello
+<p>
+<strong>My</strong>
+</p>World
+```
+
+As you can see in the exmaple above, `outerNewLine` of `openTag` adds `\n` before the tag string, whereas one of `closeTag` adds `\n` after the tag string. In contrast, `innerNewLine` of `openTag` adds `\n` after the tag string, whereas one of `closeTag` adds `\n` before the tag string. In addition, consecutive newlines are merged into one newline to prevent duplication.
