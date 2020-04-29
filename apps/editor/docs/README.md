@@ -6,6 +6,8 @@
 - [👀 Viewer](./viewer.md)
 - [🧩 Plugins](./plugins.md)
 - [🌏 Internationalization (i18n)](./i18n.md)
+- [🎨Custom HTML Renderer](./custom-html-renderer.md)
+- [🔗 Extended Autolinks](./extended-autolinks.md)
 
 ### Migration Guide
 
