@@ -245,10 +245,10 @@ declare namespace toastui {
     extendedAutolinks?: ExtendedAutolinks;
     customConvertor?: ConvertorClass;
     placeholder?: string;
-    referenceDefinition?: boolean;
-    customHTMLSanitizer?: CustomHTMLSanitizer;
     linkAttribute?: LinkAttribute;
     customHTMLRenderer?: CustomHTMLRenderer;
+    referenceDefinition?: boolean;
+    customHTMLSanitizer?: CustomHTMLSanitizer;
     previewHighlight?: boolean;
   }
 
@@ -258,12 +258,13 @@ declare namespace toastui {
     events?: EventMap;
     hooks?: ViewerHookMap;
     plugins?: Plugin[];
-    referenceDefinition?: boolean;
-    customHTMLSanitizer?: CustomHTMLSanitizer;
+    useDefaultHTMLSanitizer?: boolean;
     extendedAutolinks?: ExtendedAutolinks;
     customConvertor?: ConvertorClass;
     linkAttribute?: LinkAttribute;
     customHTMLRenderer?: CustomHTMLRenderer;
+    referenceDefinition?: boolean;
+    customHTMLSanitizer?: CustomHTMLSanitizer;
   }
 
   interface MarkdownEditorOptions {
