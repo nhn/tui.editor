@@ -35,7 +35,12 @@ function findTableCell(tableRow, { ch }) {
  * @param {HTMLElement} el - base element
  * @param {EventManager} eventManager - event manager
  * @param {Convertor} convertor - convertor
- * @param {boolean} isViewer - true for view only mode
+ * @param {object} options
+ * @param {boolean} options.isViewer - true for view-only mode
+ * @param {boolean} options.highlight - true for using live-highlight feature
+ * @param {object} opitons.linkAttribute - attributes for link element
+ * @param {object} opitons.customHTMLRenderer - map of custom HTML render functions
+
  * @ignore
  */
 class MarkdownPreview extends Preview {
@@ -48,7 +53,7 @@ class MarkdownPreview extends Preview {
       this
     );
 
-    const { linkAttribute, customHTMLRenderer } = options;
+    const { linkAttribute, customHTMLRenderer, highlight = false } = options;
 
     this.renderHTML = createRenderHTML({
       gfm: true,
@@ -56,23 +61,25 @@ class MarkdownPreview extends Preview {
       convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer)
     });
 
-    this._cursorNodeId = null;
+    this.cursorNodeId = null;
 
-    this._initEvent();
+    this._initEvent(highlight);
   }
 
   /**
    * Initialize event
    * @private
    */
-  _initEvent() {
+  _initEvent(highlight) {
     this.eventManager.listen('contentChangedFromMarkdown', this.update.bind(this));
     // need to implement a listener function for 'previewNeedsRefresh' event
     // to support third-party plugins which requires re-executing script for every re-render
 
-    this.eventManager.listen('cursorActivity', ({ markdownNode, cursor }) => {
-      this._updateCursorNode(markdownNode, cursor);
-    });
+    if (highlight) {
+      this.eventManager.listen('cursorActivity', ({ markdownNode, cursor }) => {
+        this._updateCursorNode(markdownNode, cursor);
+      });
+    }
 
     on(this.el, 'scroll', event => {
       this.eventManager.emit('scroll', {
@@ -96,11 +103,11 @@ class MarkdownPreview extends Preview {
 
     const cursorNodeId = cursorNode ? cursorNode.id : null;
 
-    if (this._cursorNodeId === cursorNodeId) {
+    if (this.cursorNodeId === cursorNodeId) {
       return;
     }
 
-    const oldEL = this._getElementByNodeId(this._cursorNodeId);
+    const oldEL = this._getElementByNodeId(this.cursorNodeId);
     const newEL = this._getElementByNodeId(cursorNodeId);
 
     if (oldEL) {
@@ -110,7 +117,7 @@ class MarkdownPreview extends Preview {
       addClass(newEL, CLASS_HIGHLIGHT);
     }
 
-    this._cursorNodeId = cursorNodeId;
+    this.cursorNodeId = cursorNodeId;
   }
 
   _getElementByNodeId(nodeId) {

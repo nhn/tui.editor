@@ -96,6 +96,7 @@ const __nedInstance = [];
  *     @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
  *     @param {string} [options.initialValue] - Editor's initial value
  *     @param {string} [options.previewStyle] - Markdown editor's preview style (tab, vertical)
+ *     @param {boolean} [options.previewHighlight = true] - Highlight a preview element corresponds to the cursor position in the markdwon editor
  *     @param {string} [options.initialEditType] - Initial editor type (markdown, wysiwyg)
  *     @param {Object} [options.events] - Events
  *         @param {function} [options.events.load] - It would be emitted when editor fully load
@@ -129,6 +130,7 @@ class ToastUIEditor {
     this.options = extend(
       {
         previewStyle: 'tab',
+        previewHighlight: true,
         initialEditType: 'markdown',
         height: '300px',
         minHeight: '200px',
@@ -235,7 +237,11 @@ class ToastUIEditor {
       this.layout.getPreviewEl(),
       this.eventManager,
       this.convertor,
-      { ...rendererOptions, isViewer: false }
+      {
+        ...rendererOptions,
+        isViewer: false,
+        highlight: this.options.previewHighlight
+      }
     );
 
     this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {

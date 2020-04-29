@@ -53,7 +53,7 @@ describe('listen cursorActivity event', () => {
   let setValue, setCursor, getHighlightedCount, assertHighlighted;
   let previewEl;
 
-  beforeEach(() => {
+  function init(highlight) {
     const editorEl = document.createElement('div');
 
     previewEl = document.createElement('div');
@@ -65,7 +65,7 @@ describe('listen cursorActivity event', () => {
     const eventManager = new EventManager();
     const convertor = new Convertor(eventManager);
     const toastMark = new ToastMark();
-    const preview = new MarkdownPreview(previewEl, eventManager, convertor, true);
+    const preview = new MarkdownPreview(previewEl, eventManager, convertor, { highlight });
     const editor = new MarkdownEditor(editorEl, eventManager, toastMark);
     const doc = editor.getEditor().getDoc();
 
@@ -78,9 +78,10 @@ describe('listen cursorActivity event', () => {
       expect(el.tagName).toBe(tagName);
       expect(el.innerHTML).toBe(innerHTML);
     };
-  });
+  }
 
   it('only one highlighted element should exist at a time', () => {
+    init(true);
     setValue('# Hello\n\nWorld');
     setCursor({ line: 0, ch: 0 });
 
@@ -93,7 +94,19 @@ describe('listen cursorActivity event', () => {
     assertHighlighted('P', 'World');
   });
 
+  it('nothing happen when highlight option is false', () => {
+    init(false);
+    setValue('# Hello\n\nWorld');
+    setCursor({ line: 0, ch: 0 });
+
+    expect(getHighlightedCount()).toBe(0);
+
+    setCursor({ line: 2, ch: 0 });
+    expect(getHighlightedCount()).toBe(0);
+  });
+
   it('paragraph inside tight list item should not be removed', () => {
+    init(true);
     setValue('- Item1\n- Item2');
 
     setCursor({ line: 0, ch: 3 });
@@ -105,6 +118,7 @@ describe('listen cursorActivity event', () => {
 
   describe('table cell', () => {
     beforeEach(() => {
+      init(true);
       setValue('| a | b |\n| - | - |\n| c | d |\n\n');
     });
 
