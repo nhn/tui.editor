@@ -56,16 +56,16 @@ describe('Custom HTMLRender', () => {
       expect(container.querySelectorAll('ul').length).toBe(1);
       expect(lis.length).toBe(3);
       expect(li0.getAttribute('data-te-task')).toBe('');
-      expect(li0.firstElementChild.textContent).toBe('study');
+      expect(li0.textContent).toBe('study');
       expect(hasClass(li0, 'task-list-item')).toBe(true);
       expect(hasClass(li0, 'checked')).toBe(false);
 
-      expect(li1.firstElementChild.textContent).toBe('workout');
+      expect(li1.textContent).toBe('workout');
       expect(li1.getAttribute('data-te-task')).toBe('');
       expect(hasClass(li1, 'task-list-item')).toBe(true);
       expect(hasClass(li1, 'checked')).toBe(true);
 
-      expect(li2.firstElementChild.textContent).toBe('eat breakfast');
+      expect(li2.textContent).toBe('eat breakfast');
       expect(li2.getAttribute('data-te-task')).toBe('');
       expect(hasClass(li2, 'task-list-item')).toBe(true);
       expect(hasClass(li2, 'checked')).toBe(true);

@@ -93,6 +93,16 @@ describe('listen cursorActivity event', () => {
     assertHighlighted('P', 'World');
   });
 
+  it('paragraph inside tight list item should not be removed', () => {
+    setValue('- Item1\n- Item2');
+
+    setCursor({ line: 0, ch: 3 });
+    expect(assertHighlighted('P', 'Item1'));
+
+    setCursor({ line: 1, ch: 3 });
+    expect(assertHighlighted('P', 'Item2'));
+  });
+
   describe('table cell', () => {
     beforeEach(() => {
       setValue('| a | b |\n| - | - |\n| c | d |\n\n');
