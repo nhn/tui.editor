@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Editor : i18n
- * @version 2.0.1
+ * @version 2.1.0
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -97,19 +97,20 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__0__;
 
 /***/ }),
-
-/***/ 5:
+/* 1 */,
+/* 2 */,
+/* 3 */,
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -169,6 +170,5 @@ _editor__WEBPACK_IMPORTED_MODULE_0___default.a.setLanguage(['es', 'es-ES'], {
 });
 
 /***/ })
-
-/******/ });
+/******/ ]);
 });

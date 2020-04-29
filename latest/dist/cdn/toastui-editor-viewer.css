@@ -1,14 +1,10 @@
 /*!
  * @toast-ui/editor
- * @version 2.0.1 | Tue Apr 07 2020
+ * @version 2.1.0 | Wed Apr 29 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 @charset "utf-8";
-.CodeMirror {
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
 .tui-editor-contents *:not(table) {
   line-height: 160%;
   box-sizing: content-box;
@@ -29,7 +25,7 @@
 
 .tui-editor-contents p {
   margin: 10px 0;
-  color: #555;
+  color: #222;
 }
 
 .tui-editor-contents > h1:first-of-type,
@@ -40,52 +36,76 @@
 .tui-editor-contents h1,
 .tui-editor-contents h2,
 .tui-editor-contents h3,
-.tui-editor-contents h5 {
+.tui-editor-contents h4,
+.tui-editor-contents h5,
+.tui-editor-contents h6 {
   font-weight: bold;
+  color: #222;
 }
 
 .tui-editor-contents h1 {
-  font-size: 1.6rem;
+  font-size: 24px;
+  min-height: 28px;
   line-height: 28px;
   border-bottom: 3px double #999;
   margin: 52px 0 15px 0;
   padding-bottom: 7px;
-  color: #000;
 }
 
 .tui-editor-contents h2 {
-  font-size: 1.3rem;
+  font-size: 22px;
+  min-height: 23px;
   line-height: 23px;
   border-bottom: 1px solid #dbdbdb;
-  margin: 30px 0 13px 0;
+  margin: 20px 0 13px 0;
   padding-bottom: 7px;
-  color: #333;
+}
+
+.tui-editor-contents h3 {
+  font-size: 20px;
+  margin: 18px 0 2px;
+}
+
+.tui-editor-contents h4 {
+  font-size: 18px;
+  margin: 10px 0 2px;
 }
 
 .tui-editor-contents h3,
 .tui-editor-contents h4 {
-  font-size: 1.2rem;
   line-height: 18px;
-  margin: 20px 0 2px;
-  color: #333;
+}
+
+.tui-editor-contents h5 {
+  font-size: 16px;
+}
+
+.tui-editor-contents h6 {
+  font-size: 14px;
 }
 
 .tui-editor-contents h5,
 .tui-editor-contents h6 {
-  font-size: 1rem;
   line-height: 17px;
-  margin: 10px 0 -4px;
-  color: #333;
+  margin: 9px 0 -4px;
+}
+
+.tui-editor-contents del {
+  color: #999;
 }
 
 .tui-editor-contents blockquote {
-  margin: 15px 0;
+  margin: 14px 0;
+  border-left: 4px solid #e5e5e5;
+  padding: 0 16px;
+  min-height: 20px;
+  color: #999;
 }
 
-.tui-editor-contents blockquote {
-  border-left: 4px solid #dddddd;
-  padding: 0 15px;
-  color: #777777;
+.tui-editor-contents blockquote p,
+.tui-editor-contents blockquote ul,
+.tui-editor-contents blockquote ol {
+  color: #999;
 }
 
 .tui-editor-contents blockquote > :first-child {
@@ -111,9 +131,11 @@
 }
 
 .tui-editor-contents code {
-  color: #c1788b;
-  padding: 4px 4px 2px 0;
+  color: #c1798b;
+  background-color: #f9f2f4;
+  padding: 2px 3px;
   letter-spacing: -0.3px;
+  border-radius: 2px;
 }
 
 .tui-editor-contents pre code {
@@ -136,8 +158,9 @@
 }
 
 .tui-editor-contents table {
-  margin: 2px 0 14px;
-  color: #555;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 12px 0 14px;
+  color: #222;
   width: auto;
   border-collapse: collapse;
   box-sizing: border-box;
@@ -145,18 +168,13 @@
 
 .tui-editor-contents table th,
 .tui-editor-contents table td {
-  height: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 5px 14px 5px 12px;
-}
-
-.tui-editor-contents table td {
-  border: 1px solid #eaeaea;
+  height: 32px;
 }
 
 .tui-editor-contents table th {
-  border: 1px solid #72777b;
-  border-top: 0;
-  background-color: #7b8184;
+  background-color: #555;
   font-weight: 300;
   color: #fff;
   padding-top: 6px;
@@ -167,14 +185,48 @@
 .tui-editor-contents ol,
 .tui-editor-contents dir {
   display: block;
-  list-style-type: disc;
-  padding-left: 17px;
+  list-style-type: none;
+  padding-left: 24px;
   margin: 6px 0 10px;
-  color: #555;
+  color: #222;
+}
+
+.tui-editor-contents li {
+  min-height: 22px;
 }
 
 .tui-editor-contents ol {
-  list-style-type: decimal;
+  list-style-type: none;
+  counter-reset: li;
+}
+
+.tui-editor-contents ol > li {
+  counter-increment: li;
+}
+
+.tui-editor-contents ul > li::before,
+.tui-editor-contents ol > li::before {
+  display: inline-block;
+  position: absolute;
+}
+
+.tui-editor-contents ul > li::before {
+  content: '';
+  margin-top: 6px;
+  margin-left: -17px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #ccc;
+}
+
+.tui-editor-contents ol > li::before {
+  content: '.' counter(li);
+  margin-left: -28px;
+  width: 24px;
+  text-align: right;
+  direction: rtl;
+  color: #aaa;
 }
 
 .tui-editor-contents ul ul,
@@ -191,7 +243,7 @@
 }
 
 .tui-editor-contents ul p,
-ol p {
+.tui-editor-contents ol p {
   margin: 0;
 }
 
@@ -208,11 +260,11 @@ ol p {
 
 .tui-editor-contents a {
   text-decoration: underline;
-  color: #5286bc;
+  color: #4b96e6;
 }
 
 .tui-editor-contents a:hover {
-  color: #007cff;
+  color: #1f70de;
 }
 
 .tui-editor-contents {
@@ -224,27 +276,30 @@ ol p {
 .tui-editor-contents .task-list-item {
   border: 0;
   list-style: none;
-  padding-left: 22px;
-  margin-left: -22px;
-  min-height: 20px;
+  padding-left: 24px;
+  margin-left: -24px;
+  min-height: 22px;
 }
 
 .tui-editor-contents .task-list-item:before {
   background-repeat: no-repeat;
-  background-size: 16px 16px;
+  background-size: 18px 18px;
   background-position: center;
   content: '';
+  margin-left: 0;
+  margin-top: 0;
+  border-radius: 0;
   height: 18px;
   width: 18px;
   position: absolute;
   left: 0;
   top: 1px;
   cursor: pointer;
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAADdJREFUKBVjvHv37n8GMgALSI+SkhJJWu/du8fARJIOJMWjGpECA505GjjoIYLEB6dVUNojFQAA/1MJUFWet/4AAAAASUVORK5CYII=');
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAEqADAAQAAAABAAAAEgAAAACaqbJVAAAAQklEQVQ4EWM8c+bMfwYqABaQGcbGxhQZdfbsWQYmikxA0jxqEFJg4GCOhhGOgEESHg0jpMDAwRx8YQQuj0DlCaUAAEdBCPJ7TaEPAAAAAElFTkSuQmCC');
 }
 
 .tui-editor-contents .task-list-item.checked:before {
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAMpJREFUKBVjjJ/64D8DGYCJDD1gLbTVyM3OxJDiJMzAxcYIdyALnIWDAdJU7i/OICfCxsDMxMgwc88bwk5F1vTs/W+GFUffwY2H+1FBlI2hLliCQYCbGSyJrqlzwwuGj9//YWoMtRBgUBJnZ6gMEGeQFWaFOw9kE7omkG5GWDyCPF7mJ86gIMbO8P//fwZGRkYGXJpAGuFO/fbrP0PXppcMD179JKgJRSOIA9N8/NZXrM4DqYEBjOgAaYYFOUwRNhruVGyS+MTI1ggAx8NTGcUtFVQAAAAASUVORK5CYII=');
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAEqADAAQAAAABAAAAEgAAAACaqbJVAAAA1ElEQVQ4EWP0nvbsPwMVABMVzAAbMWoQIiT5OJgYvLS5EAJQFguGCB4BkCHt/kIM8kKsYFXbrn6DqyY6sJENefjuN8ORuz/ghoAYWA0COR2kEQbQDanc+I7h049/MGkwjVANFQYZkmXHD/YCyABiDAFpxQgjkJO9dbjA4QAKDxAAhQnIO9hcAlYAJDBcBHIySANII8gAYgwBGYZhEEgQZFjVJohhhFwCUg8CjPgyLT8nE8N/YJZGD1iIVlQSI4yQpT9+R40ZZDl0NlavoSsihj/4DAIAR+hZHUj727YAAAAASUVORK5CYII=');
 }
 
 .tui-editor-contents .task-list-item input[type='checkbox'],
