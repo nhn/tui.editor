@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>8. Editor with Code Syntax Highlight Plugin</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
+    <!-- Editor's Dependencies -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/cdn/toastui-editor.css" />
+    <!-- Editor's Plugin -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
+    />
+  </head>
+  <body>
+    <div class="tui-doc-description">
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+      <br />
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/plugins.md"
+         rel="noopener noreferrer" target="_blank"
+        >here</a
+      >.
+    </div>
+    <div class="code-html tui-doc-contents">
+      <!-- Editor -->
+      <h2>Editor</h2>
+      <div id="editor"></div>
+      <!-- Viewer Using Editor -->
+      <h2>Viewer</h2>
+      <div id="viewer"></div>
+    </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="./data/md-plugins.js"></script>
+    <!-- Editor -->
+    <script src="../dist/cdn/toastui-editor-all.js"></script>
+    <!-- Editor's Plugin -->
+    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/1.0.0/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
+    <script type="text/babel" class="code-js">
+      const { Editor } = toastui;
+      const { codeSyntaxHighlight } = Editor.plugin;
+
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: codeContent,
+        plugins: [codeSyntaxHighlight]
+      });
+
+      const viewer = Editor.factory({
+        el: document.querySelector('#viewer'),
+        viewer: true,
+        height: '500px',
+        initialValue: codeContent,
+        plugins: [codeSyntaxHighlight]
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>7. Viewer with Chart Plugin</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
+    <!-- Viewer -->
+    <link rel="stylesheet" href="../dist/cdn/toastui-editor-viewer.css" />
+    <!-- Editor's Plugin -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css" />
+  </head>
+  <body>
+    <div class="tui-doc-description">
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+      <br />
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/plugins.md"
+        rel="noopener noreferrer" target="_blank"
+        >here</a
+      >.
+    </div>
+    <div class="code-html tui-doc-contents">
+      <div id="viewer"></div>
+    </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="./data/md-plugins.js"></script>
+    <!-- Editor -->
+    <script src="../dist/cdn/toastui-editor-viewer.js"></script>
+    <!-- Editor's Plugin -->
+    <script src="https://uicdn.toast.com/editor-plugin-chart/1.0.0/toastui-editor-plugin-chart.min.js"></script>
+    <script type="text/babel" class="code-js">
+      const Viewer = toastui.Editor;
+      const { chart } = Viewer.plugin;
+
+      const chartOptions = {
+        minWidth: 100,
+        maxWidth: 600,
+        minHeight: 100,
+        maxHeight: 300
+      };
+
+      const viewer = new Viewer({
+        el: document.querySelector('#viewer'),
+        initialValue: chartContent,
+        plugins: [[chart, chartOptions]]
+      });
+    </script>
+  </body>
+</html>

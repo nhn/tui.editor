@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>4. Viewer</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
+    <!-- Viewer -->
+    <link rel="stylesheet" href="../dist/cdn/toastui-editor-viewer.css" />
+  </head>
+  <body>
+    <div class="tui-doc-description">
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+      <br />
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/viewer.md"
+        rel="noopener noreferrer" target="_blank"
+        >here</a>.
+    </div>
+    <div class="code-html tui-doc-contents">
+      <div id="viewer">
+        <strong
+          >The example code can be slower than your environment because the code is transpiled by
+          babel-standalone in runtime.</strong
+        >
+      </div>
+    </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="./data/md-default.js"></script>
+    <!-- Viewer -->
+    <script src="../dist/cdn/toastui-editor-viewer.js"></script>
+    <script type="text/babel" class="code-js">
+      const viewer = new toastui.Editor({
+        el: document.querySelector('#viewer'),
+        initialValue: content
+      });
+    </script>
+  </body>
+</html>
