@@ -835,8 +835,6 @@ declare namespace toastui {
 
     public setMarkdown(markdown: string): void;
 
-    public setValue(markdown: string): void;
-
     public setCodeBlockLanguages(languages?: string[]): void;
   }
 }
