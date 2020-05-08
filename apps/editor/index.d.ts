@@ -8,7 +8,7 @@ declare namespace toastui {
   type HandlerFunc = (...args: any[]) => void;
   type ReplacerFunc = (inputString: string) => string;
   type CodeMirrorType = CodeMirror.EditorFromTextArea;
-  type CommandManagerExecFunc = (name: string, ...args: any[]) => any;
+  type CommandManagerExecFunc = (editor: Editor | MarkdownEditor | WysiwygEditor, ...args: any[]) => any;
   type PopupTableUtils = LayerPopup;
   type AddImageBlobHook = (fileOrBlob: File | Blob, callback: Function, source: string) => void;
   type Plugin = (editor: Editor | Viewer, options: any) => void;
