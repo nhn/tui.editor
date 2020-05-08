@@ -148,7 +148,7 @@ class WwListManager {
   _removeBranchListAll(root) {
     root = !root ? this.wwe.getBody() : root;
 
-    domUtils.findAll(root, 'li ul, li ol').forEach(node => {
+    domUtils.findAll(root, 'li > ul, li > ol').forEach(node => {
       if (!node || node.previousSibling) {
         return;
       }
