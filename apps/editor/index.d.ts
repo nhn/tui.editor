@@ -570,8 +570,19 @@ declare namespace toastui {
     public styleToSelectedCells(onStyle: SquireExt, options?: object): void;
   }
 
+  interface MarkdownRange {
+    from: CodeMirror.Position;
+    to: CodeMirror.Position;
+    ollapsed: boolean;
+  }
+
+  class CodeMirrorExt {
+    getCurrentRange(): MarkdownRange;
+    getEditor(): CodeMirrorType;
+  }
+
   // @TODO: change toastMark type definition to @toast-ui/toastmark type file through importing
-  class MarkdownEditor {
+  class MarkdownEditor extends CodeMirrorExt {
     static factory(
       el: HTMLElement,
       eventManager: EventManager,
