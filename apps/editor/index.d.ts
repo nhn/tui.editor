@@ -695,7 +695,7 @@ declare namespace toastui {
   class EventManager {
     public addEventType(type: string): void;
 
-    public emit(eventName: string): any[];
+    public emit(eventName: string, ...args: any): any[];
 
     public emitReduce(eventName: string, sourceText: string): string;
 
