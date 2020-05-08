@@ -365,6 +365,14 @@ class ToastUIEditor {
   }
 
   /**
+   * Add event type when given event not exists
+   * @param {string} type Event type name
+   */
+  addEventType(type) {
+    this.eventManager.addEventType(type);
+  }
+
+  /**
    * After added command.
    */
   afterAddedCommand() {

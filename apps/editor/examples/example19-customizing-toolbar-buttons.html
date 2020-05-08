@@ -88,8 +88,8 @@
       // Using Method: Customize the first button
       const toolbar = editor.getUI().getToolbar();
 
-      editor.eventManager.addEventType('clickCustomButton');
-      editor.eventManager.listen('clickCustomButton', function() {
+      editor.addEventType('clickCustomButton');
+      editor.on('clickCustomButton', function() {
         alert('Click!');
       });
 
