@@ -1296,6 +1296,32 @@ const toggleClass = (element, className, state) => {
   toggleFn(element, className);
 };
 
+/**
+ * Finalize html result
+ * @private
+ * @param {HTMLElement} html root element
+ * @param {boolean} needHtmlText pass true if need html text
+ * @returns {string|DocumentFragment} result
+ */
+function finalizeHtml(html, needHtmlText) {
+  let returnValue;
+
+  if (needHtmlText) {
+    returnValue = html.innerHTML;
+  } else {
+    const frag = document.createDocumentFragment();
+    const childNodes = toArray(html.childNodes);
+    const { length } = childNodes;
+
+    for (let i = 0; i < length; i += 1) {
+      frag.appendChild(childNodes[i]);
+    }
+    returnValue = frag;
+  }
+
+  return returnValue;
+}
+
 export default {
   getNodeName,
   isTextNode,
@@ -1361,5 +1387,6 @@ export default {
   getOffset,
   getOuterWidth,
   getOuterHeight,
-  toggleClass
+  toggleClass,
+  finalizeHtml
 };
