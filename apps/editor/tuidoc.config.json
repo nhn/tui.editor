@@ -53,7 +53,8 @@
       "example18-using-command": "18. Using Command",
       "example19-customizing-toolbar-buttons": "19. Customizing Toolbar Buttons",
       "example20-i18n": "20. Internationalization (i18n)",
-      "example21-placeholder": "21. Placeholder"
+      "example21-placeholder": "21. Placeholder",
+      "example22-using-custom-sanitizer": "22. Using Custom HTML Sanitizer"
     }
   },
   "pathPrefix": "tui.editor"

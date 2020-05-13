@@ -494,4 +494,43 @@ describe('WwPasteContentHelper', () => {
 
     expect(spy).toHaveBeenCalled();
   });
+
+  describe('_sanitizeHtml() sanitizes content of container', () => {
+    function createPasteContentHelper(sanitizer) {
+      container = document.createElement('div');
+      document.body.appendChild(container);
+
+      wwe = new WysiwygEditor(container, new EventManager(), { sanitizer });
+      pch = new WwPasteContentHelper(wwe);
+    }
+
+    let customSanitizer;
+
+    beforeEach(() => {
+      customSanitizer = html => {
+        spy();
+        return html.replace('<br>', '');
+      };
+    });
+
+    it('to run only default sanitizer', () => {
+      createPasteContentHelper();
+
+      container.innerHTML = '<meta><div>foo</div>';
+      pch._sanitizeHtml(container);
+
+      expect(spy).not.toHaveBeenCalled();
+      expect(container.innerHTML).toBe('<div>foo</div>');
+    });
+
+    it('to run custom sanitizer', () => {
+      createPasteContentHelper(customSanitizer);
+
+      container.innerHTML = '<br><meta><div>foo</div>';
+      pch._sanitizeHtml(container);
+
+      expect(spy).toHaveBeenCalled();
+      expect(container.innerHTML).toBe('<div>foo</div>');
+    });
+  });
 });

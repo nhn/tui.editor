@@ -9,6 +9,7 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
 
 import domUtils from './utils/dom';
+import defaultSanitizer from './htmlSanitizer';
 
 /**
  * Class WwPasteContentHelper
@@ -104,16 +105,29 @@ class WwPasteContentHelper {
   }
 
   /**
+   * Sanitize content of element
+   * @param {HTMLElement} container - root element of content to sanitize
+   * @private
+   */
+  _sanitizeHtml(container) {
+    const sanitizer = this.wwe.getSanitizer();
+
+    let html = defaultSanitizer(container.innerHTML, true);
+
+    if (sanitizer && sanitizer !== defaultSanitizer) {
+      html = sanitizer(html);
+    }
+
+    container.innerHTML = html;
+  }
+
+  /**
    * Processing paste data after paste
    * @param {HTMLElement} container - clipboard container
    * @private
    */
   _pasteFirstAid(container) {
-    const sanitizer = this.wwe.getSanitizer();
-
-    if (sanitizer) {
-      container.innerHTML = sanitizer(container.innerHTML, true);
-    }
+    this._sanitizeHtml(container);
 
     domUtils.findAll(container, '*').forEach(node => {
       this._removeStyles(node);
