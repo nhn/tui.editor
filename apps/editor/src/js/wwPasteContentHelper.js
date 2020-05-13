@@ -110,12 +110,12 @@ class WwPasteContentHelper {
    * @private
    */
   _sanitizeHtml(container) {
-    const optSanitizer = this.wwe.getSanitizer();
+    const sanitizer = this.wwe.getSanitizer();
 
     let html = defaultSanitizer(container.innerHTML, true);
 
-    if (optSanitizer && optSanitizer !== defaultSanitizer) {
-      html = optSanitizer(container.innerHTML, true);
+    if (sanitizer && sanitizer !== defaultSanitizer) {
+      html = sanitizer(container.innerHTML, true);
     }
 
     container.innerHTML = html;

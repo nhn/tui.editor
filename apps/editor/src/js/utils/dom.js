@@ -1304,10 +1304,10 @@ const toggleClass = (element, className, state) => {
  * @returns {string|DocumentFragment} result
  */
 function finalizeHtml(html, needHtmlText) {
-  let returnValue;
+  let result;
 
   if (needHtmlText) {
-    returnValue = html.innerHTML;
+    result = html.innerHTML;
   } else {
     const frag = document.createDocumentFragment();
     const childNodes = toArray(html.childNodes);
@@ -1316,10 +1316,10 @@ function finalizeHtml(html, needHtmlText) {
     for (let i = 0; i < length; i += 1) {
       frag.appendChild(childNodes[i]);
     }
-    returnValue = frag;
+    result = frag;
   }
 
-  return returnValue;
+  return result;
 }
 
 export default {

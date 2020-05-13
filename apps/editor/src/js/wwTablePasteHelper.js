@@ -106,12 +106,12 @@ class WwTablePasteHelper {
    * @private
    */
   _getSanitizedHtml(html) {
-    const optSanitizer = this.wwe.getSanitizer();
+    const sanitizer = this.wwe.getSanitizer();
 
     html = defaultSanitizer(html, true);
 
-    if (optSanitizer && optSanitizer !== defaultSanitizer) {
-      html = optSanitizer(html);
+    if (sanitizer && sanitizer !== defaultSanitizer) {
+      html = sanitizer(html);
     }
 
     const container = document.createElement('div');
