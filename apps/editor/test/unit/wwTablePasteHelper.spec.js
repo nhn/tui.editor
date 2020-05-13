@@ -18,10 +18,15 @@ function createElement(tag, textContent) {
 }
 
 describe('WwTablePasteHelper', () => {
-  let tph;
+  let container, wwe, tph;
 
   beforeEach(() => {
-    tph = new WwTablePasteHelper();
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    wwe = new WysiwygEditor(container, new EventManager());
+
+    tph = new WwTablePasteHelper(wwe);
   });
 
   afterEach(() => {
@@ -156,5 +161,38 @@ describe('WwTablePasteHelper - sanitizer', () => {
     tph._pasteClipboardHtml('<div>custom</div>');
 
     expect(spy).toHaveBeenCalled();
+  });
+
+  describe('_getSanitizedHtml()', () => {
+    it('runs default sanitizer', () => {
+      spyOn(tph.wwe, 'getSanitizer').and.returnValue(htmlSanitizer);
+
+      tph._getSanitizedHtml('<div></div>');
+
+      expect(tph.wwe.getSanitizer).toHaveBeenCalled();
+    });
+
+    it('runs custom sanitizer', () => {
+      const customSanitizer = jasmine.createSpy('custom sanitizer');
+
+      spyOn(tph.wwe, 'getSanitizer').and.returnValue(customSanitizer);
+
+      tph._getSanitizedHtml('<div></div>');
+
+      expect(tph.wwe.getSanitizer).toHaveBeenCalled();
+    });
+
+    it('returns html string as sanitized dom (DocumentFragment)', () => {
+      spyOn(tph.wwe, 'getSanitizer').and.returnValue(htmlSanitizer);
+
+      const wrapper = document.createElement('div');
+      const table =
+        '<table><thead><tr><th>foo</th></tr></thead><tbody><tr><td>bar</td></tr></tbody></table>';
+      const result = tph._getSanitizedHtml(`<meta charset='utf-8'>${table}`);
+
+      wrapper.appendChild(result);
+
+      expect(wrapper.innerHTML).toBe(table);
+    });
   });
 });

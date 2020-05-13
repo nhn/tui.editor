@@ -494,4 +494,33 @@ describe('WwPasteContentHelper', () => {
 
     expect(spy).toHaveBeenCalled();
   });
+
+  describe('_sanitizeHtml()', () => {
+    it('sanitizes by default sanitizer', () => {
+      spyOn(pch.wwe, 'getSanitizer').and.returnValue(htmlSanitizer);
+
+      pch._sanitizeHtml(container);
+
+      expect(pch.wwe.getSanitizer).toHaveBeenCalled();
+    });
+
+    it('sanitize by custom sanitizer', () => {
+      const customSanitizer = jasmine.createSpy('custom sanitizer');
+
+      spyOn(pch.wwe, 'getSanitizer').and.returnValue(customSanitizer);
+
+      pch._sanitizeHtml(container);
+
+      expect(pch.wwe.getSanitizer).toHaveBeenCalled();
+    });
+
+    it('sanitizes content of container', () => {
+      spyOn(pch.wwe, 'getSanitizer').and.returnValue(htmlSanitizer);
+
+      container.innerHTML = `<meta charset='utf-8'><div>foo</div>`;
+      pch._sanitizeHtml(container);
+
+      expect(container.innerHTML).toBe('<div>foo</div>');
+    });
+  });
 });

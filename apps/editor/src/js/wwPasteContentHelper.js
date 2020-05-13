@@ -106,10 +106,10 @@ class WwPasteContentHelper {
 
   /**
    * Sanitize content of element
-   * @param {HTMLElement} container - root element
+   * @param {HTMLElement} container - root element of content to sanitize
    * @private
    */
-  _sanitizedHtml(container) {
+  _sanitizeHtml(container) {
     const optSanitizer = this.wwe.getSanitizer();
 
     let html = defaultSanitizer(container.innerHTML, true);
@@ -127,7 +127,7 @@ class WwPasteContentHelper {
    * @private
    */
   _pasteFirstAid(container) {
-    this._sanitizedHtml(container);
+    this._sanitizeHtml(container);
 
     domUtils.findAll(container, '*').forEach(node => {
       this._removeStyles(node);
