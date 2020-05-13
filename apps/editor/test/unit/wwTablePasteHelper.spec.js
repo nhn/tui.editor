@@ -18,15 +18,10 @@ function createElement(tag, textContent) {
 }
 
 describe('WwTablePasteHelper', () => {
-  let container, wwe, tph;
+  let tph;
 
   beforeEach(() => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
-
-    wwe = new WysiwygEditor(container, new EventManager());
-
-    tph = new WwTablePasteHelper(wwe);
+    tph = new WwTablePasteHelper();
   });
 
   afterEach(() => {
@@ -164,35 +159,46 @@ describe('WwTablePasteHelper - sanitizer', () => {
   });
 
   describe('_getSanitizedHtml() returns html string as sanitized dom (DocumentFragment)', () => {
+    function createTablePasteHelper(sanitizer) {
+      container = document.createElement('div');
+      document.body.appendChild(container);
+
+      wwe = new WysiwygEditor(container, new EventManager(), { sanitizer });
+      tph = new WwTablePasteHelper(wwe);
+    }
+
     const table =
       '<table><thead><tr><th>foo</th></tr></thead><tbody><tr><td>bar</td></tr></tbody></table>';
-    let sanitized;
+    let customSanitizer;
 
     beforeEach(() => {
-      sanitized = `<meta>${table}`;
+      customSanitizer = html => {
+        spy();
+        return html.replace('<br>', '');
+      };
     });
 
-    it('by default sanitizer', () => {
-      spyOn(tph.wwe, 'getSanitizer').and.returnValue(htmlSanitizer);
+    it('to run only default sanitizer', () => {
+      createTablePasteHelper();
 
-      const result = tph._getSanitizedHtml(sanitized);
+      const result = tph._getSanitizedHtml(`<meta>${table}`);
       const wrapper = document.createElement('div');
 
       wrapper.appendChild(result);
 
+      expect(spy).not.toHaveBeenCalled();
       expect(wrapper.innerHTML).toBe(table);
     });
 
-    it('by custom sanitizer', () => {
-      const customSanitizer = html => html.replace(`<meta>`, '');
+    it('to run custom sanitizer', () => {
+      createTablePasteHelper(customSanitizer);
 
-      spyOn(tph.wwe, 'getSanitizer').and.returnValue(customSanitizer);
-
-      const result = tph._getSanitizedHtml(sanitized);
+      const result = tph._getSanitizedHtml(`<br><meta>${table}`);
       const wrapper = document.createElement('div');
 
       wrapper.appendChild(result);
 
+      expect(spy).toHaveBeenCalled();
       expect(wrapper.innerHTML).toBe(table);
     });
   });

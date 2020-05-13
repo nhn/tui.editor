@@ -115,7 +115,7 @@ class WwPasteContentHelper {
     let html = defaultSanitizer(container.innerHTML, true);
 
     if (sanitizer && sanitizer !== defaultSanitizer) {
-      html = sanitizer(container.innerHTML, true);
+      html = sanitizer(html, true);
     }
 
     container.innerHTML = html;
