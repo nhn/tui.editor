@@ -163,32 +163,33 @@ describe('WwTablePasteHelper - sanitizer', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  describe('_getSanitizedHtml()', () => {
-    it('runs default sanitizer', () => {
-      spyOn(tph.wwe, 'getSanitizer').and.returnValue(htmlSanitizer);
+  describe('_getSanitizedHtml() returns html string as sanitized dom (DocumentFragment)', () => {
+    const table =
+      '<table><thead><tr><th>foo</th></tr></thead><tbody><tr><td>bar</td></tr></tbody></table>';
+    let sanitized;
 
-      tph._getSanitizedHtml('<div></div>');
-
-      expect(tph.wwe.getSanitizer).toHaveBeenCalled();
+    beforeEach(() => {
+      sanitized = `<meta>${table}`;
     });
 
-    it('runs custom sanitizer', () => {
-      const customSanitizer = jasmine.createSpy('custom sanitizer');
+    it('by default sanitizer', () => {
+      spyOn(tph.wwe, 'getSanitizer').and.returnValue(htmlSanitizer);
+
+      const result = tph._getSanitizedHtml(sanitized);
+      const wrapper = document.createElement('div');
+
+      wrapper.appendChild(result);
+
+      expect(wrapper.innerHTML).toBe(table);
+    });
+
+    it('by custom sanitizer', () => {
+      const customSanitizer = html => html.replace(`<meta>`, '');
 
       spyOn(tph.wwe, 'getSanitizer').and.returnValue(customSanitizer);
 
-      tph._getSanitizedHtml('<div></div>');
-
-      expect(tph.wwe.getSanitizer).toHaveBeenCalled();
-    });
-
-    it('returns html string as sanitized dom (DocumentFragment)', () => {
-      spyOn(tph.wwe, 'getSanitizer').and.returnValue(htmlSanitizer);
-
+      const result = tph._getSanitizedHtml(sanitized);
       const wrapper = document.createElement('div');
-      const table =
-        '<table><thead><tr><th>foo</th></tr></thead><tbody><tr><td>bar</td></tr></tbody></table>';
-      const result = tph._getSanitizedHtml(`<meta charset='utf-8'>${table}`);
 
       wrapper.appendChild(result);
 
