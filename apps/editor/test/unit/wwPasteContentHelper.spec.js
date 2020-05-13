@@ -16,9 +16,9 @@ describe('WwPasteContentHelper', () => {
 
   beforeEach(() => {
     spy = jasmine.createSpy('sanitizer');
-    const sanitizer = (content, nested) => {
+    const sanitizer = content => {
       spy();
-      return htmlSanitizer(content, nested);
+      return htmlSanitizer(content, true);
     };
 
     container = document.createElement('div');
