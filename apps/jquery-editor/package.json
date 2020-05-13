@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/jquery-editor",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "TOAST UI Editor : jQuery Wrapper",
   "keywords": [
     "nhn",
@@ -62,7 +62,7 @@
     "webpack-dev-server": "^3.10.1"
   },
   "dependencies": {
-    "@toast-ui/editor": "^2.1.1",
+    "@toast-ui/editor": "^2.1.2",
     "jquery": "^3.5.0"
   },
   "publishConfig": {
