@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>22. Using Custom HTML Sanitizer</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
+    <!-- Editor's Dependencies -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/cdn/toastui-editor.css" />
+  </head>
+  <body>
+    <div class="tui-doc-description">
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+      <br />
+      As an example of using 'customHTMLSanitizer' option, and
+      <a href="https://github.com/cure53/DOMPurify" rel="noopener noreferrer" target="_blank"
+        >DOMPurify</a
+      >
+      is used as the external sanitizer module used.
+    </div>
+    <div class="code-html tui-doc-contents">
+      <div id="editor"></div>
+    </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <!-- Editor -->
+    <script src="../dist/cdn/toastui-editor-all.js"></script>
+    <!-- DOMPurify -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.0.11/purify.js"></script>
+    <script type="text/babel" class="code-js">
+      const content = [
+        '<img src=x onerror=alert(1)//>',
+        '<svg><g/onload=alert(2)//<p>',
+        '<p>abc<iframe//src=jAva&Tab;script:alert(3)>def</p>'
+      ].join('\n');
+
+      const editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: content,
+        customHTMLSanitizer: html => {
+          return DOMPurify.sanitize(html);
+        }
+      });
+    </script>
+  </body>
+</html>
