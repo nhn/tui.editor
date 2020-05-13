@@ -1298,10 +1298,10 @@ const toggleClass = (element, className, state) => {
 
 /**
  * Finalize html result
- * @private
  * @param {HTMLElement} html root element
  * @param {boolean} needHtmlText pass true if need html text
  * @returns {string|DocumentFragment} result
+ * @private
  */
 function finalizeHtml(html, needHtmlText) {
   let result;
