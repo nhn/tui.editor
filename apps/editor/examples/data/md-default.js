@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-const content = [
+/* eslint-disable no-var */
+var content = [
   '![image](https://uicdn.toast.com/toastui/img/tui-editor-bi.png)',
   '',
   '# Awesome Editor!',
@@ -24,10 +25,10 @@ const content = [
   '## Features',
   '',
   '* CommonMark + GFM Specifications',
-  '    * Live Preview',
+  '   * Live Preview',
   '   * Scroll Sync',
   '   * Auto Indent',
-  '    * Syntax Highlight',
+  '   * Syntax Highlight',
   '        1. Markdown',
   '        2. Preview',
   '',

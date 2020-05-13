@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-const chartContent = [
+/* eslint-disable no-var */
+var chartContent = [
   '```chart',
   ',category1,category2',
   'Jan,21,23',
@@ -15,12 +16,12 @@ const chartContent = [
   '```'
 ].join('\n');
 
-const codeContent = [
+var codeContent = [
   '```js',
   `console.log('foo')`,
   '```',
   '```javascript',
-  `console.log('bar')`,
+  "console.log('bar')",
   '```',
   '```html',
   '<div id="editor"><span>baz</span></div>',
@@ -33,9 +34,9 @@ const codeContent = [
   '```'
 ].join('\n');
 
-const tableContent = ['| @cols=2:merged |', '| --- | --- |', '| table | table2 |'].join('\n');
+var tableContent = ['| @cols=2:merged |', '| --- | --- |', '| table | table2 |'].join('\n');
 
-const umlContent = [
+var umlContent = [
   '```uml',
   'partition Conductor {',
   '  (*) --> "Climbs on Platform"',
