@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 2.1.0 | Wed Apr 29 2020
+ * @version 2.1.2 | Wed May 13 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -1482,6 +1482,34 @@ var toggleClass = function toggleClass(element, className, state) {
   var toggleFn = state ? tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_4___default.a : tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_5___default.a;
   toggleFn(element, className);
 };
+/**
+ * Finalize html result
+ * @param {HTMLElement} html root element
+ * @param {boolean} needHtmlText pass true if need html text
+ * @returns {string|DocumentFragment} result
+ * @private
+ */
+
+
+function finalizeHtml(html, needHtmlText) {
+  var result;
+
+  if (needHtmlText) {
+    result = html.innerHTML;
+  } else {
+    var frag = document.createDocumentFragment();
+    var childNodes = tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default()(html.childNodes);
+    var length = childNodes.length;
+
+    for (var i = 0; i < length; i += 1) {
+      frag.appendChild(childNodes[i]);
+    }
+
+    result = frag;
+  }
+
+  return result;
+}
 
 /* harmony default export */ __webpack_exports__["a"] = ({
   getNodeName: getNodeName,
@@ -1548,7 +1576,8 @@ var toggleClass = function toggleClass(element, className, state) {
   getOffset: getOffset,
   getOuterWidth: getOuterWidth,
   getOuterHeight: getOuterHeight,
-  toggleClass: toggleClass
+  toggleClass: toggleClass,
+  finalizeHtml: finalizeHtml
 });
 
 /***/ }),
@@ -1928,7 +1957,7 @@ module.exports = toArray;
 
 
 var isString = __webpack_require__(9);
-var forEach = __webpack_require__(25);
+var forEach = __webpack_require__(26);
 
 /**
  * Setting element style
@@ -2117,9 +2146,9 @@ function setChPos(originPos, newCh) {
 
 
 
-var forEach = __webpack_require__(25);
+var forEach = __webpack_require__(26);
 var inArray = __webpack_require__(14);
-var getClass = __webpack_require__(31);
+var getClass = __webpack_require__(32);
 var setClassName = __webpack_require__(39);
 
 /**
@@ -2179,7 +2208,7 @@ module.exports = addClass;
 
 var forEachArray = __webpack_require__(20);
 var inArray = __webpack_require__(14);
-var getClass = __webpack_require__(31);
+var getClass = __webpack_require__(32);
 var setClassName = __webpack_require__(39);
 
 /**
@@ -2638,7 +2667,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__15__;
 
 
 var inArray = __webpack_require__(14);
-var getClass = __webpack_require__(31);
+var getClass = __webpack_require__(32);
 
 /**
  * Check element has specific css class
@@ -2834,7 +2863,7 @@ function getFallbackScrollTop(scrollInfo) {
 
 
 var isString = __webpack_require__(9);
-var forEach = __webpack_require__(25);
+var forEach = __webpack_require__(26);
 
 var safeEvent = __webpack_require__(40);
 
@@ -2955,7 +2984,7 @@ module.exports = on;
 
 
 var isString = __webpack_require__(9);
-var forEach = __webpack_require__(25);
+var forEach = __webpack_require__(26);
 
 var safeEvent = __webpack_require__(40);
 
@@ -3267,6 +3296,117 @@ function removeOffsetInfoByNode(node) {
 
 /***/ }),
 /* 25 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
+/* harmony import */ var tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0);
+/**
+ * @fileoverview Implements htmlSanitizer
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
+var SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' + 'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' + 'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' + 'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' + 'height|horiz-adv-x|horiz-origin-x|ideographic|k|keyPoints|keySplines|keyTimes|lang|' + 'marker-end|marker-mid|marker-start|markerHeight|markerUnits|markerWidth|mathematical|' + 'max|min|offset|opacity|orient|origin|overline-position|overline-thickness|panose-1|' + 'path|pathLength|points|preserveAspectRatio|r|refX|refY|repeatCount|repeatDur|' + 'requiredExtensions|requiredFeatures|restart|rotate|rx|ry|slope|stemh|stemv|stop-color|' + 'stop-opacity|strikethrough-position|strikethrough-thickness|stroke|stroke-dasharray|' + 'stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|' + 'stroke-width|systemLanguage|target|text-anchor|to|transform|type|u1|u2|underline-position|' + 'underline-thickness|unicode|unicode-range|units-per-em|values|version|viewBox|visibility|' + 'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' + 'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
+var ATTR_VALUE_BLACK_LIST_RX = {
+  href: /^(javascript:).*/g
+};
+/**
+ * htmlSanitizer
+ * @param {string|Node} html html or Node
+ * @param {boolean} [needHtmlText] pass true if need html text
+ * @returns {string|DocumentFragment} result
+ * @ignore
+ */
+
+function htmlSanitizer(html, needHtmlText) {
+  var root = document.createElement('div');
+
+  if (tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_1___default()(html)) {
+    html = html.replace(/<!--[\s\S]*?-->/g, '');
+    root.innerHTML = html;
+  } else {
+    root.appendChild(html);
+  }
+
+  removeUnnecessaryTags(root);
+  leaveOnlyWhitelistAttribute(root);
+  removeInvalidAttributeValues(root);
+  return _utils_dom__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].finalizeHtml(root, needHtmlText);
+}
+/**
+ * Remove unnecessary tags
+ * @private
+ * @param {HTMLElement} html root element
+ */
+
+
+function removeUnnecessaryTags(html) {
+  var removedTags = _utils_dom__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].findAll(html, 'script, iframe, textarea, form, button, select, meta, style, link, title, embed, object, details, summary');
+  removedTags.forEach(function (node) {
+    _utils_dom__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].remove(node);
+  });
+}
+/**
+ * Leave only white list attributes
+ * @private
+ * @param {HTMLElement} html root element
+ */
+
+
+function leaveOnlyWhitelistAttribute(html) {
+  _utils_dom__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].findAll(html, '*').forEach(function (node) {
+    var attrs = node.attributes;
+    var blacklist = tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default()(attrs).filter(function (attr) {
+      var isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
+      var isSVGAttr = attr.name.match(SVG_ATTR_LIST_RX);
+      return !isHTMLAttr && !isSVGAttr;
+    });
+    tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default()(blacklist).forEach(function (attr) {
+      // Edge svg attribute name returns uppercase bug. error guard.
+      // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5579311/
+      if (attrs.getNamedItem(attr.name)) {
+        attrs.removeNamedItem(attr.name);
+      }
+    });
+  });
+}
+/**
+ * Remove invalid attribute values
+ * @private
+ * @param {HTMLElement} html root element
+ */
+
+
+function removeInvalidAttributeValues(html) {
+  var _loop = function _loop(attr) {
+    if (ATTR_VALUE_BLACK_LIST_RX.hasOwnProperty(attr)) {
+      _utils_dom__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].findAll(html, "[" + attr + "]").forEach(function (node) {
+        var attrs = node.attributes;
+        var valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr];
+        var attrItem = attrs.getNamedItem(attr);
+
+        if (valueBlackListRX && attrItem && attrItem.value.toLowerCase().match(valueBlackListRX)) {
+          attrs.removeNamedItem(attr);
+        }
+      });
+    }
+  };
+
+  for (var attr in ATTR_VALUE_BLACK_LIST_RX) {
+    _loop(attr);
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (htmlSanitizer);
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3325,7 +3465,7 @@ module.exports = forEach;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3363,7 +3503,7 @@ module.exports = isExisty;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3521,7 +3661,7 @@ function getHTMLRenderConvertors(linkAttribute, customConvertors) {
 }
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3597,7 +3737,7 @@ function escape(html, encode) {
 /* harmony default export */ __webpack_exports__["a"] = (new CodeBlockManager());
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3623,7 +3763,7 @@ module.exports = isFunction;
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -4984,7 +5124,7 @@ module.exports = toDom;
 });
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5019,7 +5159,7 @@ module.exports = getClass;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5045,7 +5185,7 @@ module.exports = isNumber;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5062,7 +5202,7 @@ module.exports = isNumber;
 /* harmony import */ var _toast_ui_toastmark__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_toast_ui_toastmark__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _preview__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(38);
 /* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(0);
-/* harmony import */ var _htmlRenderConvertors__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(27);
+/* harmony import */ var _htmlRenderConvertors__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(28);
 /* harmony import */ var _scroll_helper__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(17);
 /* harmony import */ var _scroll_cache_offsetInfo__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(24);
 /* harmony import */ var _utils_markdown__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(4);
@@ -5295,7 +5435,7 @@ var MarkdownPreview = /*#__PURE__*/function (_Preview) {
 /* harmony default export */ __webpack_exports__["a"] = (MarkdownPreview);
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5527,15 +5667,15 @@ var EventManager = /*#__PURE__*/function () {
 /* harmony default export */ __webpack_exports__["a"] = (EventManager);
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _toast_ui_to_mark__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(30);
+/* harmony import */ var _toast_ui_to_mark__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(31);
 /* harmony import */ var _toast_ui_to_mark__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_toast_ui_to_mark__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _toast_ui_toastmark__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(22);
 /* harmony import */ var _toast_ui_toastmark__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_toast_ui_toastmark__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _htmlRenderConvertors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(27);
+/* harmony import */ var _htmlRenderConvertors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(28);
 /* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(0);
 /**
  * @fileoverview Convertor have responsible to convert markdown and html
@@ -5764,14 +5904,14 @@ var Convertor = /*#__PURE__*/function () {
 /* harmony default export */ __webpack_exports__["a"] = (Convertor);
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return invokePlugins; });
 /* harmony import */ var tui_code_snippet_type_isArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(21);
 /* harmony import */ var tui_code_snippet_type_isArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_type_isArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var tui_code_snippet_type_isFunction__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
+/* harmony import */ var tui_code_snippet_type_isFunction__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(30);
 /* harmony import */ var tui_code_snippet_type_isFunction__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_type_isFunction__WEBPACK_IMPORTED_MODULE_1__);
 
 
@@ -5794,145 +5934,6 @@ function invokePlugins(plugins, editor) {
     }
   });
 }
-
-/***/ }),
-/* 37 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
-/* harmony import */ var tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0);
-/**
- * @fileoverview Implements htmlSanitizer
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-
-
-
-var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
-var SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' + 'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' + 'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' + 'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' + 'height|horiz-adv-x|horiz-origin-x|ideographic|k|keyPoints|keySplines|keyTimes|lang|' + 'marker-end|marker-mid|marker-start|markerHeight|markerUnits|markerWidth|mathematical|' + 'max|min|offset|opacity|orient|origin|overline-position|overline-thickness|panose-1|' + 'path|pathLength|points|preserveAspectRatio|r|refX|refY|repeatCount|repeatDur|' + 'requiredExtensions|requiredFeatures|restart|rotate|rx|ry|slope|stemh|stemv|stop-color|' + 'stop-opacity|strikethrough-position|strikethrough-thickness|stroke|stroke-dasharray|' + 'stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|' + 'stroke-width|systemLanguage|target|text-anchor|to|transform|type|u1|u2|underline-position|' + 'underline-thickness|unicode|unicode-range|units-per-em|values|version|viewBox|visibility|' + 'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' + 'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
-var ATTR_VALUE_BLACK_LIST_RX = {
-  href: /^(javascript:).*/g
-};
-/**
- * htmlSanitizer
- * @param {string|Node} html html or Node
- * @param {boolean} [needHtmlText] pass true if need html text
- * @returns {string|DocumentFragment} result
- * @ignore
- */
-
-function htmlSanitizer(html, needHtmlText) {
-  var root = document.createElement('div');
-
-  if (tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_1___default()(html)) {
-    html = html.replace(/<!--[\s\S]*?-->/g, '');
-    root.innerHTML = html;
-  } else {
-    root.appendChild(html);
-  }
-
-  removeUnnecessaryTags(root);
-  leaveOnlyWhitelistAttribute(root);
-  removeInvalidAttributeValues(root);
-  return finalizeHtml(root, needHtmlText);
-}
-/**
- * Remove unnecessary tags
- * @private
- * @param {HTMLElement} html root element
- */
-
-
-function removeUnnecessaryTags(html) {
-  var removedTags = _utils_dom__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].findAll(html, 'script, iframe, textarea, form, button, select, meta, style, link, title, embed, object, details, summary');
-  removedTags.forEach(function (node) {
-    _utils_dom__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].remove(node);
-  });
-}
-/**
- * Leave only white list attributes
- * @private
- * @param {HTMLElement} html root element
- */
-
-
-function leaveOnlyWhitelistAttribute(html) {
-  _utils_dom__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].findAll(html, '*').forEach(function (node) {
-    var attrs = node.attributes;
-    var blacklist = tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default()(attrs).filter(function (attr) {
-      var isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
-      var isSVGAttr = attr.name.match(SVG_ATTR_LIST_RX);
-      return !isHTMLAttr && !isSVGAttr;
-    });
-    tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default()(blacklist).forEach(function (attr) {
-      // Edge svg attribute name returns uppercase bug. error guard.
-      // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5579311/
-      if (attrs.getNamedItem(attr.name)) {
-        attrs.removeNamedItem(attr.name);
-      }
-    });
-  });
-}
-/**
- * Remove invalid attribute values
- * @private
- * @param {HTMLElement} html root element
- */
-
-
-function removeInvalidAttributeValues(html) {
-  var _loop = function _loop(attr) {
-    if (ATTR_VALUE_BLACK_LIST_RX.hasOwnProperty(attr)) {
-      _utils_dom__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].findAll(html, "[" + attr + "]").forEach(function (node) {
-        var attrs = node.attributes;
-        var valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr];
-        var attrItem = attrs.getNamedItem(attr);
-
-        if (valueBlackListRX && attrItem && attrItem.value.toLowerCase().match(valueBlackListRX)) {
-          attrs.removeNamedItem(attr);
-        }
-      });
-    }
-  };
-
-  for (var attr in ATTR_VALUE_BLACK_LIST_RX) {
-    _loop(attr);
-  }
-}
-/**
- * Finalize html result
- * @private
- * @param {HTMLElement} html root element
- * @param {boolean} needHtmlText pass true if need html text
- * @returns {string|DocumentFragment} result
- */
-
-
-function finalizeHtml(html, needHtmlText) {
-  var returnValue;
-
-  if (needHtmlText) {
-    returnValue = html.innerHTML;
-  } else {
-    var frag = document.createDocumentFragment();
-    var childNodes = tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default()(html.childNodes);
-    var length = childNodes.length;
-
-    for (var i = 0; i < length; i += 1) {
-      frag.appendChild(childNodes[i]);
-    }
-
-    returnValue = frag;
-  }
-
-  return returnValue;
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (htmlSanitizer);
 
 /***/ }),
 /* 38 */
@@ -6024,7 +6025,7 @@ var lazyRunner_LazyRunner = /*#__PURE__*/function () {
 var dom = __webpack_require__(0);
 
 // EXTERNAL MODULE: ./src/js/codeBlockManager.js
-var codeBlockManager = __webpack_require__(28);
+var codeBlockManager = __webpack_require__(29);
 
 // CONCATENATED MODULE: ./src/js/preview.js
 /**
@@ -6272,7 +6273,7 @@ module.exports = safeEvent;
 
 
 
-var isExisty = __webpack_require__(26);
+var isExisty = __webpack_require__(27);
 
 /**
  * Check whether the given variable is truthy or not.
@@ -6407,10 +6408,10 @@ module.exports = isFalsy;
 
 
 
-var isNumber = __webpack_require__(32);
+var isNumber = __webpack_require__(33);
 var isArray = __webpack_require__(21);
 var toArray = __webpack_require__(2);
-var forEach = __webpack_require__(25);
+var forEach = __webpack_require__(26);
 
 /**
  * Check whether the defineProperty() method is supported.
@@ -6570,15 +6571,15 @@ module.exports = Enum;
 /* harmony import */ var tui_code_snippet_domEvent_on__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domEvent_on__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var tui_code_snippet_domEvent_off__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(19);
 /* harmony import */ var tui_code_snippet_domEvent_off__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domEvent_off__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _mdPreview__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(33);
-/* harmony import */ var _eventManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(34);
+/* harmony import */ var _mdPreview__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(34);
+/* harmony import */ var _eventManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(35);
 /* harmony import */ var _commandManager__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1);
-/* harmony import */ var _convertor__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(35);
+/* harmony import */ var _convertor__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(36);
 /* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(0);
-/* harmony import */ var _codeBlockManager__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(28);
-/* harmony import */ var _pluginHelper__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(36);
+/* harmony import */ var _codeBlockManager__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(29);
+/* harmony import */ var _pluginHelper__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(37);
 /* harmony import */ var _utils_common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(11);
-/* harmony import */ var _htmlSanitizer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(37);
+/* harmony import */ var _htmlSanitizer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(25);
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 /**
@@ -8040,12 +8041,12 @@ var index = (function () {
 
 
 var extend = __webpack_require__(7);
-var isExisty = __webpack_require__(26);
+var isExisty = __webpack_require__(27);
 var isString = __webpack_require__(9);
 var isObject = __webpack_require__(54);
 var isArray = __webpack_require__(21);
-var isFunction = __webpack_require__(29);
-var forEach = __webpack_require__(25);
+var isFunction = __webpack_require__(30);
+var forEach = __webpack_require__(26);
 
 var R_EVENTNAME_SPLIT = /\s+/g;
 
@@ -8647,11 +8648,11 @@ var forEachOwnProperties = __webpack_require__(10);
 var forEachOwnProperties_default = /*#__PURE__*/__webpack_require__.n(forEachOwnProperties);
 
 // EXTERNAL MODULE: ./node_modules/tui-code-snippet/type/isExisty.js
-var isExisty = __webpack_require__(26);
+var isExisty = __webpack_require__(27);
 var isExisty_default = /*#__PURE__*/__webpack_require__.n(isExisty);
 
 // EXTERNAL MODULE: ./node_modules/tui-code-snippet/type/isNumber.js
-var isNumber = __webpack_require__(32);
+var isNumber = __webpack_require__(33);
 var isNumber_default = /*#__PURE__*/__webpack_require__.n(isNumber);
 
 // EXTERNAL MODULE: ./node_modules/tui-code-snippet/object/extend.js
@@ -8674,7 +8675,7 @@ var removeClass_default = /*#__PURE__*/__webpack_require__.n(removeClass);
 var toastmark = __webpack_require__(22);
 
 // EXTERNAL MODULE: ./src/js/htmlRenderConvertors.js
-var htmlRenderConvertors = __webpack_require__(27);
+var htmlRenderConvertors = __webpack_require__(28);
 
 // CONCATENATED MODULE: ./src/js/markdownToHTML.js
 
@@ -10521,7 +10522,7 @@ var MdTextObject = /*#__PURE__*/function () {
 var markdown = __webpack_require__(4);
 
 // EXTERNAL MODULE: ./node_modules/tui-code-snippet/type/isFunction.js
-var isFunction = __webpack_require__(29);
+var isFunction = __webpack_require__(30);
 var isFunction_default = /*#__PURE__*/__webpack_require__.n(isFunction);
 
 // CONCATENATED MODULE: ./src/js/markTextHelper.js
@@ -11307,7 +11308,7 @@ var markdownEditor_MarkdownEditor = /*#__PURE__*/function (_CodeMirrorExt) {
 
 /* harmony default export */ var markdownEditor = (markdownEditor_MarkdownEditor);
 // EXTERNAL MODULE: ./src/js/mdPreview.js
-var mdPreview = __webpack_require__(33);
+var mdPreview = __webpack_require__(34);
 
 // EXTERNAL MODULE: ./node_modules/tui-code-snippet/collection/toArray.js
 var toArray = __webpack_require__(2);
@@ -11348,11 +11349,15 @@ var dom = __webpack_require__(0);
 var matches = __webpack_require__(12);
 var matches_default = /*#__PURE__*/__webpack_require__.n(matches);
 
+// EXTERNAL MODULE: ./src/js/htmlSanitizer.js
+var htmlSanitizer = __webpack_require__(25);
+
 // CONCATENATED MODULE: ./src/js/wwPasteContentHelper.js
 /**
  * @fileoverview Implements WwPasteContentHelper
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+
 
 
 
@@ -11447,6 +11452,23 @@ var wwPasteContentHelper_WwPasteContentHelper = /*#__PURE__*/function () {
     return tempContainer.innerHTML;
   }
   /**
+   * Sanitize content of element
+   * @param {HTMLElement} container - root element of content to sanitize
+   * @private
+   */
+  ;
+
+  _proto._sanitizeHtml = function _sanitizeHtml(container) {
+    var sanitizer = this.wwe.getSanitizer();
+    var html = Object(htmlSanitizer["a" /* default */])(container.innerHTML, true);
+
+    if (sanitizer && sanitizer !== htmlSanitizer["a" /* default */]) {
+      html = sanitizer(html);
+    }
+
+    container.innerHTML = html;
+  }
+  /**
    * Processing paste data after paste
    * @param {HTMLElement} container - clipboard container
    * @private
@@ -11456,11 +11478,7 @@ var wwPasteContentHelper_WwPasteContentHelper = /*#__PURE__*/function () {
   _proto._pasteFirstAid = function _pasteFirstAid(container) {
     var _this = this;
 
-    var sanitizer = this.wwe.getSanitizer();
-
-    if (sanitizer) {
-      container.innerHTML = sanitizer(container.innerHTML, true);
-    }
+    this._sanitizeHtml(container);
 
     dom["a" /* default */].findAll(container, '*').forEach(function (node) {
       _this._removeStyles(node);
@@ -11813,6 +11831,7 @@ var wwPasteContentHelper_WwPasteContentHelper = /*#__PURE__*/function () {
  */
 
 
+
 /**
  * Class WwTablePasteHelper
  * @param {WysiwygEditor} wwe - WysiwygEditor instance
@@ -11912,6 +11931,26 @@ var wwTablePasteHelper_WwTablePasteHelper = /*#__PURE__*/function () {
     }
   }
   /**
+   * Get sanitized html as dom fragment
+   * @param {string} html - html string to sanitize
+   * @returns {DocumentFragment} sanitized html
+   * @private
+   */
+  ;
+
+  _proto._getSanitizedHtml = function _getSanitizedHtml(html) {
+    var sanitizer = this.wwe.getSanitizer();
+    html = Object(htmlSanitizer["a" /* default */])(html, true);
+
+    if (sanitizer && sanitizer !== htmlSanitizer["a" /* default */]) {
+      html = sanitizer(html);
+    }
+
+    var container = document.createElement('div');
+    container.innerHTML = html;
+    return dom["a" /* default */].finalizeHtml(container);
+  }
+  /**
    * Paste html of clipboard
    * @param {string} html - html
    * @private
@@ -11919,7 +11958,6 @@ var wwTablePasteHelper_WwTablePasteHelper = /*#__PURE__*/function () {
   ;
 
   _proto._pasteClipboardHtml = function _pasteClipboardHtml(html) {
-    var sanitizer = this.wwe.getSanitizer();
     var container = document.createDocumentFragment();
     var startFramgmentStr = '<!--StartFragment-->';
     var endFragmentStr = '<!--EndFragment-->';
@@ -11942,7 +11980,7 @@ var wwTablePasteHelper_WwTablePasteHelper = /*#__PURE__*/function () {
       html = "<TABLE>" + html + "</TABLE>";
     }
 
-    container.appendChild(sanitizer ? sanitizer(html) : html);
+    container.appendChild(this._getSanitizedHtml(html));
 
     this._pasteClipboardContainer(container);
   }
@@ -12851,7 +12889,7 @@ var wwListManager_WwListManager = /*#__PURE__*/function () {
     var _this3 = this;
 
     root = !root ? this.wwe.getBody() : root;
-    dom["a" /* default */].findAll(root, 'li ul, li ol').forEach(function (node) {
+    dom["a" /* default */].findAll(root, 'li > ul, li > ol').forEach(function (node) {
       if (!node || node.previousSibling) {
         return;
       }
@@ -18692,7 +18730,7 @@ var layout_Layout = /*#__PURE__*/function () {
 
 /* harmony default export */ var js_layout = (layout_Layout);
 // EXTERNAL MODULE: ./src/js/eventManager.js
-var js_eventManager = __webpack_require__(34);
+var js_eventManager = __webpack_require__(35);
 
 // EXTERNAL MODULE: ./src/js/commandManager.js + 1 modules
 var commandManager = __webpack_require__(1);
@@ -18948,7 +18986,7 @@ function dataURItoBlob(dataURI) {
 
 /* harmony default export */ var importManager = (importManager_ImportManager);
 // EXTERNAL MODULE: ./src/js/convertor.js
-var convertor = __webpack_require__(35);
+var convertor = __webpack_require__(36);
 
 // EXTERNAL MODULE: ./src/js/viewer.js
 var viewer = __webpack_require__(46);
@@ -23901,10 +23939,10 @@ var defaultUI_DefaultUI = /*#__PURE__*/function () {
 
 /* harmony default export */ var defaultUI = (defaultUI_DefaultUI);
 // EXTERNAL MODULE: ./src/js/codeBlockManager.js
-var codeBlockManager = __webpack_require__(28);
+var codeBlockManager = __webpack_require__(29);
 
 // EXTERNAL MODULE: /Users/nhn/Desktop/project/tui.editor/libs/to-mark/dist/to-mark.js
-var to_mark = __webpack_require__(30);
+var to_mark = __webpack_require__(31);
 var to_mark_default = /*#__PURE__*/__webpack_require__.n(to_mark);
 
 // CONCATENATED MODULE: ./src/js/toMarkRenderer.js
@@ -23973,10 +24011,7 @@ function convertEmphasis(node, subContent, delimiter) {
   }
 }));
 // EXTERNAL MODULE: ./src/js/pluginHelper.js
-var pluginHelper = __webpack_require__(36);
-
-// EXTERNAL MODULE: ./src/js/htmlSanitizer.js
-var htmlSanitizer = __webpack_require__(37);
+var pluginHelper = __webpack_require__(37);
 
 // CONCATENATED MODULE: ./src/js/markdownCommands/emphasisCommon.js
 /**
