@@ -729,6 +729,10 @@ declare namespace toastui {
 
     public addWidget(selection: Range, node: Node, style: string, offset?: number): void;
 
+    public addCommand(type: Command): void;
+
+    public addCommand(type: string, props: CommandPropsOptions): void;
+
     public afterAddedCommand(): void;
 
     public blur(): void;
