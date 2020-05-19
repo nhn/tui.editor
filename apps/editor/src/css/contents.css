@@ -317,3 +317,30 @@
 .te-preview .tui-editor-contents li {
   min-height: 22px;
 }
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /* IE10 */
+  .te-ww-container .tui-editor-contents li {
+    vertical-align: middle;
+  }
+
+  .te-ww-container .tui-editor-contents ul > li::before,
+  .te-ww-container .tui-editor-contents ol > li::before,
+  .te-ww-container .tui-editor-contents .task-list-item:before {
+    position: static;
+    vertical-align: middle;
+  }
+
+  .te-ww-container .tui-editor-contents ul > li::before {
+    margin-top: -3px;
+    margin-right: 12px;
+  }
+
+  .te-ww-container .tui-editor-contents ol > li::before {
+    margin-right: 6px;
+  }
+
+  .te-ww-container .tui-editor-contents .task-list-item {
+    padding-left: 2px;
+  }
+}
