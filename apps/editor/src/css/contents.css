@@ -39,7 +39,6 @@
 
 .tui-editor-contents h1 {
   font-size: 24px;
-  min-height: 28px;
   line-height: 28px;
   border-bottom: 3px double #999;
   margin: 52px 0 15px 0;
@@ -48,7 +47,6 @@
 
 .tui-editor-contents h2 {
   font-size: 22px;
-  min-height: 23px;
   line-height: 23px;
   border-bottom: 1px solid #dbdbdb;
   margin: 20px 0 13px 0;
@@ -92,7 +90,6 @@
   margin: 14px 0;
   border-left: 4px solid #e5e5e5;
   padding: 0 16px;
-  min-height: 20px;
   color: #999;
 }
 
@@ -185,10 +182,6 @@
   color: #222;
 }
 
-.tui-editor-contents li {
-  min-height: 22px;
-}
-
 .tui-editor-contents ol {
   list-style-type: none;
   counter-reset: li;
@@ -272,7 +265,6 @@
   list-style: none;
   padding-left: 24px;
   margin-left: -24px;
-  min-height: 22px;
 }
 
 .tui-editor-contents .task-list-item:before {
@@ -308,4 +300,20 @@
   color: grey;
   line-height: 160%;
   position: absolute;
+}
+
+.te-preview .tui-editor-contents h1 {
+  min-height: 28px;
+}
+
+.te-preview .tui-editor-contents h2 {
+  min-height: 23px;
+}
+
+.te-preview .tui-editor-contents blockquote {
+  min-height: 20px;
+}
+
+.te-preview .tui-editor-contents li {
+  min-height: 22px;
 }
