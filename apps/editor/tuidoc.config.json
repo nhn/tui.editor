@@ -55,7 +55,8 @@
       "example20-i18n": "20. Internationalization (i18n)",
       "example21-placeholder": "21. Placeholder",
       "example22-using-custom-sanitizer": "22. Using Custom HTML Sanitizer"
-    }
+    },
+    "globalErrorLogVariable": true
   },
   "pathPrefix": "tui.editor"
 }
