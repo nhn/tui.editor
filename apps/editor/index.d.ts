@@ -799,8 +799,6 @@ declare namespace toastui {
 
     public setUI(UI: UI): void;
 
-    public setValue(value: string, cursorToEnd?: boolean): void;
-
     public show(): void;
 
     public setCodeBlockLanguages(languages?: string[]): void;
@@ -834,8 +832,6 @@ declare namespace toastui {
     public remove(): void;
 
     public setMarkdown(markdown: string): void;
-
-    public setValue(markdown: string): void;
 
     public setCodeBlockLanguages(languages?: string[]): void;
   }
