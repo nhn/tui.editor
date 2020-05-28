@@ -12,7 +12,7 @@ describe('CodeBlockManager', () => {
   });
 
   describe('setReplacer', () => {
-    it('set replacer for code block element', () => {
+    it('sets replacer for code block element', () => {
       const type = 'tui.grid';
       const replacer = {
         viewer: true
@@ -24,10 +24,20 @@ describe('CodeBlockManager', () => {
 
       expect(codeBlockManager.getReplacer(type)).toBe(replacer);
     });
+
+    it('saves the replacer name in lowercase', () => {
+      const replacer = {};
+
+      codeBlockManager.setReplacer('UML', replacer);
+      expect(codeBlockManager.getReplacer('uml')).toBe(replacer);
+
+      codeBlockManager.setReplacer('Uml', replacer);
+      expect(codeBlockManager.getReplacer('uml')).toBe(replacer);
+    });
   });
 
   describe('createCodeBlockHtml', () => {
-    it('Create a code block html when there is a registered replacer.', () => {
+    it('creates a code block html when there is a registered replacer', () => {
       const type = 'awesome-languages';
       const replacer = codeText => `replaced ${codeText} here`;
 
@@ -39,12 +49,22 @@ describe('CodeBlockManager', () => {
       expect(actual).toBe(expected);
     });
 
-    it('Create code block html if there is no registered replacer and not highlight.js type.', () => {
+    it('creates code block html if there is no registered replacer and not highlight.js type', () => {
       const type = 'tui.grid';
       const actual = codeBlockManager.createCodeBlockHtml(type, 'var a = 1;');
       const expected = 'var a = 1;';
 
       expect(actual).toBe(expected);
+    });
+
+    it('converts the language name to lowercase and call the replacer with it', () => {
+      const language = 'PlantUML';
+      const replacer = jasmine.createSpy('replacer');
+
+      codeBlockManager.setReplacer(language, replacer);
+      codeBlockManager.createCodeBlockHtml(language, 'foo');
+
+      expect(replacer.calls.mostRecent().args[1]).toBe('plantuml');
     });
   });
 });

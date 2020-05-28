@@ -16,6 +16,8 @@ class CodeBlockManager {
    * @param {function} replacer - replacer function to code block element
    */
   setReplacer(language, replacer) {
+    language = language.toLowerCase();
+
     this._replacers[language] = replacer;
   }
 
@@ -35,6 +37,8 @@ class CodeBlockManager {
    * @returns {string}
    */
   createCodeBlockHtml(language, codeText) {
+    language = language.toLowerCase();
+
     const replacer = this.getReplacer(language);
 
     if (replacer) {
