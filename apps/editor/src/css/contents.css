@@ -39,7 +39,6 @@
 
 .tui-editor-contents h1 {
   font-size: 24px;
-  min-height: 28px;
   line-height: 28px;
   border-bottom: 3px double #999;
   margin: 52px 0 15px 0;
@@ -48,7 +47,6 @@
 
 .tui-editor-contents h2 {
   font-size: 22px;
-  min-height: 23px;
   line-height: 23px;
   border-bottom: 1px solid #dbdbdb;
   margin: 20px 0 13px 0;
@@ -92,7 +90,6 @@
   margin: 14px 0;
   border-left: 4px solid #e5e5e5;
   padding: 0 16px;
-  min-height: 20px;
   color: #999;
 }
 
@@ -185,10 +182,6 @@
   color: #222;
 }
 
-.tui-editor-contents li {
-  min-height: 22px;
-}
-
 .tui-editor-contents ol {
   list-style-type: none;
   counter-reset: li;
@@ -241,9 +234,9 @@
   margin: 0;
 }
 
-.tui-editor-contents ul li.task-list-item:before,
-.tui-editor-contents ol li.task-list-item:before,
-.tui-editor-contents pre ul li:before {
+.tui-editor-contents ul li.task-list-item::before,
+.tui-editor-contents ol li.task-list-item::before,
+.tui-editor-contents pre ul li::before {
   content: '';
 }
 
@@ -272,10 +265,9 @@
   list-style: none;
   padding-left: 24px;
   margin-left: -24px;
-  min-height: 22px;
 }
 
-.tui-editor-contents .task-list-item:before {
+.tui-editor-contents .task-list-item::before {
   background-repeat: no-repeat;
   background-size: 18px 18px;
   background-position: center;
@@ -292,7 +284,7 @@
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAEqADAAQAAAABAAAAEgAAAACaqbJVAAAAQklEQVQ4EWM8c+bMfwYqABaQGcbGxhQZdfbsWQYmikxA0jxqEFJg4GCOhhGOgEESHg0jpMDAwRx8YQQuj0DlCaUAAEdBCPJ7TaEPAAAAAElFTkSuQmCC');
 }
 
-.tui-editor-contents .task-list-item.checked:before {
+.tui-editor-contents .task-list-item.checked::before {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAEqADAAQAAAABAAAAEgAAAACaqbJVAAAA1ElEQVQ4EWP0nvbsPwMVABMVzAAbMWoQIiT5OJgYvLS5EAJQFguGCB4BkCHt/kIM8kKsYFXbrn6DqyY6sJENefjuN8ORuz/ghoAYWA0COR2kEQbQDanc+I7h049/MGkwjVANFQYZkmXHD/YCyABiDAFpxQgjkJO9dbjA4QAKDxAAhQnIO9hcAlYAJDBcBHIySANII8gAYgwBGYZhEEgQZFjVJohhhFwCUg8CjPgyLT8nE8N/YJZGD1iIVlQSI4yQpT9+R40ZZDl0NlavoSsihj/4DAIAR+hZHUj727YAAAAASUVORK5CYII=');
 }
 
@@ -303,9 +295,52 @@
   margin-top: 3px;
 }
 
-.tui-editor-contents-placeholder:before {
+.tui-editor-contents-placeholder::before {
   content: attr(data-placeholder);
   color: grey;
   line-height: 160%;
   position: absolute;
+}
+
+.te-preview .tui-editor-contents h1 {
+  min-height: 28px;
+}
+
+.te-preview .tui-editor-contents h2 {
+  min-height: 23px;
+}
+
+.te-preview .tui-editor-contents blockquote {
+  min-height: 20px;
+}
+
+.te-preview .tui-editor-contents li {
+  min-height: 22px;
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /* IE10+11 */
+  .te-ww-container .tui-editor-contents li {
+    vertical-align: middle;
+  }
+
+  .te-ww-container .tui-editor-contents ul > li::before,
+  .te-ww-container .tui-editor-contents ol > li::before,
+  .te-ww-container .tui-editor-contents .task-list-item:before {
+    position: static;
+    vertical-align: middle;
+  }
+
+  .te-ww-container .tui-editor-contents ul > li::before {
+    margin-top: -3px;
+    margin-right: 12px;
+  }
+
+  .te-ww-container .tui-editor-contents ol > li::before {
+    margin-right: 6px;
+  }
+
+  .te-ww-container .tui-editor-contents .task-list-item {
+    padding-left: 2px;
+  }
 }
