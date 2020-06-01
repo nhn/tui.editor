@@ -459,7 +459,6 @@ describe('should render the merged table properly', () => {
     ];
 
     examples.forEach(({ no, content, result }) => {
-      // eslint-disable-next-line max-nested-callbacks
       it(`example1${no}`, () => {
         const root = parser.parse(content);
         const html = renderHTML(root);

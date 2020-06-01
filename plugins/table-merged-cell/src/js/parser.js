@@ -20,11 +20,13 @@ function parserTableCellWithRowspanMap(node, parent, rowspan) {
     for (let i = node.startIdx; i < columnLen; i += 1) {
       const prevRowspanCount = prevRow.rowspanMap[i];
 
-      parent.rowspanMap[i] = prevRowspanCount - 1;
+      if (prevRowspanCount && prevRowspanCount > 1) {
+        parent.rowspanMap[i] = prevRowspanCount - 1;
 
-      if (prevRowspanCount && prevRowspanCount > 1 && i <= node.endIdx) {
-        node.startIdx += 1;
-        node.endIdx += 1;
+        if (i <= node.endIdx) {
+          node.startIdx += 1;
+          node.endIdx += 1;
+        }
       }
     }
   }
