@@ -40,6 +40,6 @@ module.exports = {
     ],
     'arrow-body-style': ['error', 'as-needed', { requireReturnForObjectLiteral: true }],
     'object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }],
-    'complexity': ["error", 7]
+    'complexity': ["error", 8]
   }
 };
