@@ -1105,9 +1105,20 @@ export class InlineParser {
     this.processEmphasis(null);
     this.mergeTextNodes(block.walker());
 
-    const { extendedAutolinks } = this.options;
+    const { extendedAutolinks, customParser } = this.options;
     if (extendedAutolinks) {
       convertExtAutoLinks(block.walker(), extendedAutolinks);
+    }
+    if (customParser && block.firstChild) {
+      let event;
+      const walker = block.firstChild.walker();
+
+      while ((event = walker.next())) {
+        const { node, entering } = event;
+        if (customParser[node.type]) {
+          customParser[node.type]!(node, { entering });
+        }
+      }
     }
   }
 }

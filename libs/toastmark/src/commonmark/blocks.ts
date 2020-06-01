@@ -6,7 +6,8 @@ import {
   isCodeBlock,
   isHtmlBlock,
   createNode,
-  TableCellNode
+  TableCellNode,
+  NodeType
 } from './node';
 import { InlineParser, C_NEWLINE } from './inlines';
 import { blockHandlers, Process } from './blockHandlers';
@@ -41,8 +42,12 @@ const defaultOptions = {
   extendedAutolinks: false,
   disallowedHtmlBlockTags: [],
   referenceDefinition: false,
-  disallowDeepHeading: false
+  disallowDeepHeading: false,
+  customParser: null
 };
+
+export type CustomParser = (node: Node, context: { entering: boolean }) => void;
+export type CustomParserMap = Partial<Record<NodeType, CustomParser>>;
 
 export interface Options {
   smart: boolean;
@@ -51,6 +56,7 @@ export interface Options {
   disallowedHtmlBlockTags: string[];
   referenceDefinition: boolean;
   disallowDeepHeading: boolean;
+  customParser: CustomParserMap | null;
 }
 
 export class Parser {
@@ -225,6 +231,7 @@ export class Parser {
   // into inline content where appropriate.
   processInlines(block: BlockNode) {
     let event;
+    const { customParser } = this.options;
     const walker = block.walker();
     this.inlineParser.refMap = this.refMap;
     this.inlineParser.refLinkCandidateMap = this.refLinkCandidateMap;
@@ -233,6 +240,11 @@ export class Parser {
     while ((event = walker.next())) {
       const node = event.node as BlockNode;
       const t = node.type;
+
+      if (customParser && customParser[t]) {
+        customParser[t]!(node, { entering: event.entering });
+      }
+
       if (
         !event.entering &&
         (t === 'paragraph' ||
