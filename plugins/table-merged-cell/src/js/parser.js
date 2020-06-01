@@ -13,20 +13,22 @@ function extractPropertiesForMerge(value, type, oppossitType) {
 
 function parserTableCellWithRowspanMap(node, parent, rowspan) {
   const prevRow = parent.prev;
+  const columnLen = parent.parent.parent.columns.length;
 
   if (prevRow) {
     // increment the index when prev row has the rowspan count.
-    for (let i = node.startIdx; i <= node.endIdx; i += 1) {
+    for (let i = node.startIdx; i < columnLen; i += 1) {
       const prevRowspanCount = prevRow.rowspanMap[i];
 
-      if (!prevRowspanCount || prevRowspanCount <= 1) {
-        break;
-      }
       parent.rowspanMap[i] = prevRowspanCount - 1;
-      node.startIdx += 1;
-      node.endIdx += 1;
+
+      if (prevRowspanCount && prevRowspanCount > 1 && i <= node.endIdx) {
+        node.startIdx += 1;
+        node.endIdx += 1;
+      }
     }
   }
+
   if (rowspan > 1) {
     for (let i = node.startIdx; i <= node.endIdx; i += 1) {
       parent.rowspanMap[i] = rowspan;
@@ -43,7 +45,7 @@ export const parser = {
   tableCell(node, { entering }) {
     const { parent, prev, stringContent } = node;
 
-    if (entering) {
+    if (!entering) {
       let content = stringContent;
       let [colspan, rowspan] = [null, null];
 
