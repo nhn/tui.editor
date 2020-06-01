@@ -13,24 +13,24 @@ function extractPropertiesForMerge(value, type, oppossitType) {
 
 function parserTableCellWithRowspanMap(node, parent, rowspan) {
   const prevRow = parent.prev;
-  const tablePart = parent.parent;
-  const columnLen = tablePart.parent.columns.length;
-  let spanCount = rowspan;
 
   if (prevRow) {
-    for (let i = node.startIdx; i < columnLen; i += 1) {
+    // increment the index when prev row has the rowspan count.
+    for (let i = node.startIdx; i <= node.endIdx; i += 1) {
       const prevRowspanCount = prevRow.rowspanMap[i];
 
       if (!prevRowspanCount || prevRowspanCount <= 1) {
         break;
       }
-      spanCount = prevRowspanCount - 1;
+      parent.rowspanMap[i] = prevRowspanCount - 1;
       node.startIdx += 1;
       node.endIdx += 1;
     }
   }
-  for (let i = node.startIdx; i <= node.endIdx; i += 1) {
-    parent.rowspanMap[i] = Math.max(spanCount, rowspan);
+  if (rowspan > 1) {
+    for (let i = node.startIdx; i <= node.endIdx; i += 1) {
+      parent.rowspanMap[i] = rowspan;
+    }
   }
 }
 

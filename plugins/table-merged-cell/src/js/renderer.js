@@ -49,10 +49,10 @@ export const renderer = {
       if (node.orgStringContent) {
         attributes['data-org-content'] = node.orgStringContent;
       }
-      if (node.colspan > 1) {
+      if (node.colspan) {
         attributes.colspan = node.colspan;
       }
-      if (node.rowspan > 1) {
+      if (node.rowspan) {
         attributes.rowspan = node.rowspan;
       }
       result.attributes = attributes;
