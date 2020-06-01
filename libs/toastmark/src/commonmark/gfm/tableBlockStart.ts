@@ -58,7 +58,8 @@ function generateTableCells(
     ]) as TableCellNode;
 
     tableCell.stringContent = trimmed.replace(/\\\|/g, '|'); // replace esacped pipe(\|)
-    tableCell.columnIdx = cells.length;
+    tableCell.startIdx = cells.length;
+    tableCell.endIdx = cells.length;
     tableCell.lineOffsets = [chPosStart - 1];
     tableCell.paddingLeft = paddingLeft;
     tableCell.paddingRight = paddingRight;

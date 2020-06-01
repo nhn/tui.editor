@@ -84,7 +84,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     const result: HTMLToken[] = [];
     if (node.lastChild) {
       const columnLen = (node.parent!.parent as TableNode).columns.length;
-      const lastColIdx = (node.lastChild as TableCellNode).columnIdx;
+      const lastColIdx = (node.lastChild as TableCellNode).endIdx;
       for (let i = lastColIdx + 1; i < columnLen; i += 1) {
         result.push(
           {
@@ -121,7 +121,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     const tablePart = node.parent!.parent!;
     const tagName = tablePart.type === 'tableHead' ? 'th' : 'td';
     const table = tablePart.parent as TableNode;
-    const columnInfo = table.columns[(node as TableCellNode).columnIdx];
+    const columnInfo = table.columns[(node as TableCellNode).startIdx];
     const align = columnInfo && columnInfo.align !== 'left' ? columnInfo.align : null;
     const attributes = align ? { align } : null;
 
