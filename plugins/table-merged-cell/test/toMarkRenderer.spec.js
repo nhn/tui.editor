@@ -46,7 +46,7 @@ describe('toMarkRendererCreator', () => {
       const theadContent = '|@cols=2:title1|title2|\n';
       const actual = _createTheadMarkdown(theadElement, theadContent);
 
-      expect(actual).toBe('|@cols=2:title1|title2|\n| ------ | ------ | --- |\n');
+      expect(actual).toBe('|@cols=2:title1|title2|\n| --- | --- | --- |\n');
     });
 
     it('create thead markdown, when all th has not colspan', () => {
@@ -55,7 +55,7 @@ describe('toMarkRendererCreator', () => {
       const theadContent = '|title1|title2|\n';
       const actual = _createTheadMarkdown(theadElement, theadContent);
 
-      expect(actual).toBe('|title1|title2|\n| ------ | ------ |\n');
+      expect(actual).toBe('|title1|title2|\n| --- | --- |\n');
     });
   });
 });
