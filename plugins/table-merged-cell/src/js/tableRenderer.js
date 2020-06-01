@@ -11,10 +11,23 @@ import tableDataHandler from './tableDataHandler';
  * @private
  */
 function _createCellHtml(cell) {
-  let attrs = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : '';
+  let orgContent = '';
+  let attrs = '';
 
-  attrs += cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
+  if (cell.colspan > 1) {
+    attrs = ` colspan="${cell.colspan}"`;
+    orgContent = `@cols=${cell.colspan}:`;
+  }
+  if (cell.rowspan > 1) {
+    attrs += ` rowspan="${cell.rowspan}"`;
+    orgContent += `@rows=${cell.rowspan}:`;
+  }
   attrs += cell.align ? ` align="${cell.align}"` : '';
+
+  if (orgContent) {
+    orgContent += cell.content;
+    attrs += ` data-org-content="${orgContent}"`;
+  }
 
   return `<${cell.nodeName}${attrs}>${cell.content}</${cell.nodeName}>`;
 }
