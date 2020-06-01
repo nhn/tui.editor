@@ -39,6 +39,7 @@ module.exports = {
       }
     ],
     'arrow-body-style': ['error', 'as-needed', { requireReturnForObjectLiteral: true }],
-    'object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }]
+    'object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }],
+    'complexity': ["error", 7]
   }
 };

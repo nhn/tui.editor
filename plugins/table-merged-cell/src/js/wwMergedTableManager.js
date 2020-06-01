@@ -412,7 +412,6 @@ export function getWwMergedTableManager(editor) {
      * @param {HTMLElement} selectedCells - selected elements like td, th
      * @private
      */
-    /* eslint-disable complexity */
     _pasteToSelectedArea(table, clipboardTableData, tableData, selectedCells) {
       const { start: startRange, end: endRange } = tableRangeHandler.getTableSelectionRange(
         tableData,
