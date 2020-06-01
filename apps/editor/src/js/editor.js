@@ -29,7 +29,7 @@ import WwTableManager from './wwTableManager';
 import WwTableSelectionManager from './wwTableSelectionManager';
 import codeBlockManager from './codeBlockManager';
 import toMarkRenderer from './toMarkRenderer';
-import { invokePlugins } from './pluginHelper';
+import { invokePlugins, getPluginInfo } from './pluginHelper';
 import htmlSanitizer from './htmlSanitizer';
 
 // markdown commands
@@ -182,13 +182,20 @@ class ToastUIEditor {
     });
 
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
-    // eslint-disable-next-line prettier/prettier
-    const { customHTMLRenderer, customHTMLSanitizer, extendedAutolinks, referenceDefinition, useDefaultHTMLSanitizer } = this.options;
+    const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
+    const {
+      customHTMLRenderer,
+      customHTMLSanitizer,
+      extendedAutolinks,
+      referenceDefinition,
+      useDefaultHTMLSanitizer
+    } = this.options;
     const rendererOptions = {
       linkAttribute,
-      customHTMLRenderer,
+      customHTMLRenderer: { ...renderer, ...customHTMLRenderer },
       extendedAutolinks,
-      referenceDefinition
+      referenceDefinition,
+      customParser: parser
     };
 
     if (this.options.customConvertor) {
@@ -223,7 +230,8 @@ class ToastUIEditor {
       disallowedHtmlBlockTags: ['br'],
       extendedAutolinks,
       referenceDefinition,
-      disallowDeepHeading: true
+      disallowDeepHeading: true,
+      customParser: parser
     });
 
     this.mdEditor = MarkdownEditor.factory(
@@ -254,8 +262,8 @@ class ToastUIEditor {
       renderer: toMarkRenderer
     };
 
-    if (this.options.plugins) {
-      invokePlugins(this.options.plugins, this);
+    if (plugins) {
+      invokePlugins(plugins, this);
     }
 
     this.changePreviewStyle(this.options.previewStyle);

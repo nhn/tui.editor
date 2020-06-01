@@ -13,7 +13,7 @@ import CommandManager from './commandManager';
 import Convertor from './convertor';
 import domUtils from './utils/dom';
 import codeBlockManager from './codeBlockManager';
-import { invokePlugins } from './pluginHelper';
+import { invokePlugins, getPluginInfo } from './pluginHelper';
 import { sanitizeLinkAttribute } from './utils/common';
 import htmlSanitizer from './htmlSanitizer';
 
@@ -63,13 +63,19 @@ class ToastUIEditorViewer {
     this.commandManager = new CommandManager(this);
 
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
-    // eslint-disable-next-line prettier/prettier
-    const { customHTMLRenderer, customHTMLSanitizer, extendedAutolinks, referenceDefinition } = this.options;
-    const rendererOptions = {
-      linkAttribute,
+    const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
+    const {
       customHTMLRenderer,
+      customHTMLSanitizer,
       extendedAutolinks,
       referenceDefinition
+    } = this.options;
+    const rendererOptions = {
+      linkAttribute,
+      customHTMLRenderer: { ...renderer, ...customHTMLRenderer },
+      extendedAutolinks,
+      referenceDefinition,
+      customParser: parser
     };
 
     if (this.options.customConvertor) {
@@ -110,8 +116,8 @@ class ToastUIEditorViewer {
 
     on(this.preview.el, 'mousedown', this._toggleTask.bind(this));
 
-    if (this.options.plugins) {
-      invokePlugins(this.options.plugins, this);
+    if (plugins) {
+      invokePlugins(plugins, this);
     }
 
     if (initialValue) {
