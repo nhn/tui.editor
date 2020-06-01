@@ -322,6 +322,19 @@ describe('Editor', () => {
 
         expect(plugin).toHaveBeenCalledWith(editor, options);
       });
+
+      it('should extract plugin function with options of plugin object', () => {
+        const plugin = jasmine.createSpy('plugin');
+        const options = {};
+        const pluginInfo = { pluginFn: plugin };
+
+        editor = new Editor({
+          el: container,
+          plugins: [[pluginInfo, options]]
+        });
+
+        expect(plugin).toHaveBeenCalledWith(editor, options);
+      });
     });
 
     describe('usageStatistics', () => {
