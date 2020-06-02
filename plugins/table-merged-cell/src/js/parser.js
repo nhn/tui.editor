@@ -47,7 +47,7 @@ export const parser = {
   tableCell(node, { entering }) {
     const { parent, prev, stringContent } = node;
 
-    if (!entering) {
+    if (entering) {
       let content = stringContent;
       let [colspan, rowspan] = [null, null];
 
