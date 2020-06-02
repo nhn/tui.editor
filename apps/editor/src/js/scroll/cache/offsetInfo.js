@@ -25,7 +25,6 @@ export function removeOffsetInfoByNode(node) {
     delete offsetInfoMap[node.getAttribute('data-nodeid')];
     toArray(node.children).forEach(child => {
       removeOffsetInfoByNode(child);
-      removeOffsetInfoByNode(child.nextElementSibling);
     });
   }
 }
