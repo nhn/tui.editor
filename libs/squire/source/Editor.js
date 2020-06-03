@@ -410,6 +410,7 @@ proto.getCursorPosition = function ( range ) {
         parent = node.parentNode;
         parent.removeChild( node );
         mergeInlines( parent, range );
+        this._ignoreChange = false;
     }
     return rect;
 };
