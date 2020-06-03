@@ -1,4 +1,6 @@
 const path = require('path');
+const webpack = require('webpack');
+const { version, author, license } = require('./package.json');
 
 const config = {
   entry: './src/index.js',
@@ -34,7 +36,17 @@ const config = {
         }
       }
     ]
-  }
+  },
+  plugins: [
+    new webpack.BannerPlugin({
+      banner: [
+        'TOAST UI Editor : React Wrapper',
+        `@version ${version} | ${new Date().toDateString()}`,
+        `@author ${author}`,
+        `@license ${license}`
+      ].join('\n')
+    })
+  ]
 };
 
 module.exports = () => config;
