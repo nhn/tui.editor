@@ -1,10 +1,4 @@
-const editorEvents = [
-  'load',
-  'change',
-  'stateChange',
-  'focus',
-  'blur'
-];
+const editorEvents = ['load', 'change', 'stateChange', 'focus', 'blur'];
 const defaultValueMap = {
   initialEditType: 'markdown',
   initialValue: '',
@@ -34,7 +28,7 @@ export const optionsMixin = {
       }
     });
 
-    return {editor: null, computedOptions: options};
+    return { editor: null, computedOptions: options };
   },
   methods: {
     invoke(methodName, ...args) {
