@@ -3,7 +3,7 @@
 </template>
 <script>
 import Editor from '@toast-ui/editor';
-import {optionsMixin} from './mixin/option';
+import { optionsMixin } from './mixin/option';
 
 export default {
   name: 'ToastuiEditor',
@@ -34,7 +34,7 @@ export default {
     }
   },
   mounted() {
-    const options = {...this.computedOptions, el: this.$refs.toastuiEditor};
+    const options = { ...this.computedOptions, el: this.$refs.toastuiEditor };
     this.editor = new Editor(options);
   },
   methods: {
