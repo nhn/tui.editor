@@ -51,8 +51,6 @@ class Convertor {
    * @private
    */
   _markdownToHtmlWithCodeHighlight(markdown) {
-    markdown = this._replaceImgAttrToDataProp(markdown);
-
     return this.renderHTML(this.mdReader.parse(markdown));
   }
 
@@ -68,25 +66,8 @@ class Convertor {
     markdown = markdown.replace(HTML_TAG_RX, (match, $1, $2, $3) =>
       match[0] !== '\\' ? `${$1}${$2} data-tomark-pass ${$3}` : match
     );
-    markdown = this._replaceImgAttrToDataProp(markdown);
 
     return this.renderHTML(this.mdReader.parse(markdown));
-  }
-
-  /**
-   * Replace 'onerror' attribute of img tag to data property string
-   * @param {string} markdown markdown text
-   * @returns {string} replaced markdown text
-   * @private
-   */
-  _replaceImgAttrToDataProp(markdown) {
-    const onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\\"']?[^\\"']*[\\"']?)(.*)/i;
-
-    while (onerrorStripeRegex.exec(markdown)) {
-      markdown = markdown.replace(onerrorStripeRegex, '$1$3');
-    }
-
-    return markdown;
   }
 
   /**

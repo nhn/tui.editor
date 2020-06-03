@@ -36,15 +36,14 @@ const SVG_ATTR_LIST_RX = new RegExp(
   'g'
 );
 
-const ATTR_VALUE_BLACK_LIST_RX = {
-  href: /^(javascript:).*/g
-};
+const XSS_ATTR_RX = /href|src|background/gi;
+const XSS_VALUE_RX = /((java|vb|live)script|x):/gi;
 
 /**
  * htmlSanitizer
- * @param {string|Node} html html or Node
- * @param {boolean} [needHtmlText] pass true if need html text
- * @returns {string|DocumentFragment} result
+ * @param {string|Node} html - html or Node
+ * @param {boolean} [needHtmlText] - pass true if need html text
+ * @returns {string|DocumentFragment} - result
  * @ignore
  */
 function htmlSanitizer(html, needHtmlText) {
@@ -59,20 +58,19 @@ function htmlSanitizer(html, needHtmlText) {
 
   removeUnnecessaryTags(root);
   leaveOnlyWhitelistAttribute(root);
-  removeInvalidAttributeValues(root);
 
   return domUtils.finalizeHtml(root, needHtmlText);
 }
 
 /**
- * Remove unnecessary tags
+ * Removes unnecessary tags.
+ * @param {HTMLElement} html - root element
  * @private
- * @param {HTMLElement} html root element
  */
 function removeUnnecessaryTags(html) {
   const removedTags = domUtils.findAll(
     html,
-    'script, iframe, textarea, form, button, select, meta, style, link, title, embed, object, details, summary'
+    'script, iframe, textarea, form, button, select, input, meta, style, link, title, embed, object, details, summary'
   );
 
   removedTags.forEach(node => {
@@ -81,49 +79,51 @@ function removeUnnecessaryTags(html) {
 }
 
 /**
- * Leave only white list attributes
+ * Checks whether the attribute and value that causing XSS or not.
+ * @param {string} attrName - name of attribute
+ * @param {string} attrValue - value of attirbute
+ * @param {boolean} state
  * @private
- * @param {HTMLElement} html root element
  */
-function leaveOnlyWhitelistAttribute(html) {
-  domUtils.findAll(html, '*').forEach(node => {
-    const attrs = node.attributes;
-    const blacklist = toArray(attrs).filter(attr => {
-      const isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
-      const isSVGAttr = attr.name.match(SVG_ATTR_LIST_RX);
+function isXSSAttribute(attrName, attrValue) {
+  return attrName.match(XSS_ATTR_RX) && attrValue.match(XSS_VALUE_RX);
+}
 
-      return !isHTMLAttr && !isSVGAttr;
-    });
-
-    toArray(blacklist).forEach(attr => {
-      // Edge svg attribute name returns uppercase bug. error guard.
-      // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5579311/
-      if (attrs.getNamedItem(attr.name)) {
-        attrs.removeNamedItem(attr.name);
-      }
-    });
+/**
+ * Removes attributes of blacklist.
+ * @param {NamedNodeMap} nodeAttrs - all attributes of node
+ * @param {NamedNodeMap} blacklistAttrs - attributes of blacklist
+ * @private
+ */
+function removeBlacklistAttributes(nodeAttrs, blacklistAttrs) {
+  toArray(blacklistAttrs).forEach(({ name }) => {
+    // Edge svg attribute name returns uppercase bug. error guard.
+    // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5579311/
+    if (nodeAttrs.getNamedItem(name)) {
+      nodeAttrs.removeNamedItem(name);
+    }
   });
 }
 
 /**
- * Remove invalid attribute values
+ * Leaves only white list attributes.
+ * @param {HTMLElement} html - root element
  * @private
- * @param {HTMLElement} html root element
  */
-function removeInvalidAttributeValues(html) {
-  for (const attr in ATTR_VALUE_BLACK_LIST_RX) {
-    if (ATTR_VALUE_BLACK_LIST_RX.hasOwnProperty(attr)) {
-      domUtils.findAll(html, `[${attr}]`).forEach(node => {
-        const attrs = node.attributes;
-        const valueBlackListRX = ATTR_VALUE_BLACK_LIST_RX[attr];
-        const attrItem = attrs.getNamedItem(attr);
+function leaveOnlyWhitelistAttribute(html) {
+  domUtils.findAll(html, '*').forEach(node => {
+    const { attributes } = node;
+    const blacklist = toArray(attributes).filter(attr => {
+      const { name, value } = attr;
+      const htmlAttr = name.match(HTML_ATTR_LIST_RX);
+      const svgAttr = name.match(SVG_ATTR_LIST_RX);
+      const xssAttr = htmlAttr && isXSSAttribute(name, value);
 
-        if (valueBlackListRX && attrItem && attrItem.value.toLowerCase().match(valueBlackListRX)) {
-          attrs.removeNamedItem(attr);
-        }
-      });
-    }
-  }
+      return (!htmlAttr && !svgAttr) || xssAttr;
+    });
+
+    removeBlacklistAttributes(attributes, blacklist);
+  });
 }
 
 export default htmlSanitizer;
