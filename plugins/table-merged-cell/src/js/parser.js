@@ -1,5 +1,14 @@
-function extractPropertiesForMerge(value, type, oppossitType) {
-  const regex = new RegExp(`^((?:${oppossitType}=[0-9]+:)?)${type}=([0-9]+):(.*)`);
+/**
+ * Extract properties for merge.
+ * @param {string} value - value
+ * @param {string} type - merge type like colspan, rowspan
+ * @param {string} oppositeType - opposite merge type
+ *                                if merge type is colspan, opposite merge type is rowspan
+ * @returns {Array.<number|string>} - returns merge count and value
+ * @private
+ */
+function extractPropertiesForMerge(value, type, oppositeType) {
+  const regex = new RegExp(`^((?:${oppositeType}=[0-9]+:)?)${type}=([0-9]+):(.*)`);
   const regexResult = regex.exec(value);
   let mergeCount = 1;
 

@@ -459,7 +459,7 @@ describe('should render the merged table properly', () => {
     ];
 
     examples.forEach(({ no, content, result }) => {
-      it(`example1${no}`, () => {
+      it(`example${no}`, () => {
         const root = parser.parse(content);
         const html = renderHTML(root);
 

@@ -41,7 +41,7 @@ function _makeTableHeadAlignText(thElement) {
     }
   }
 
-  return leftAlignValue + _createRepeatString('-', 3) + rightAlignValue;
+  return `${leftAlignValue}${_createRepeatString('-', 3)}${rightAlignValue}`;
 }
 
 /**

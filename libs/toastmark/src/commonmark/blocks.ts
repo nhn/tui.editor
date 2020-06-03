@@ -238,20 +238,20 @@ export class Parser {
     this.inlineParser.refDefCandidateMap = this.refDefCandidateMap;
     this.inlineParser.options = this.options;
     while ((event = walker.next())) {
-      const node = event.node as BlockNode;
+      const { node, entering } = event;
       const t = node.type;
 
       if (customParser && customParser[t]) {
-        customParser[t]!(node, { entering: event.entering });
+        customParser[t]!(node, { entering });
       }
 
       if (
-        !event.entering &&
+        !entering &&
         (t === 'paragraph' ||
           t === 'heading' ||
           (t === 'tableCell' && !(node as TableCellNode).ignored))
       ) {
-        this.inlineParser.parse(node);
+        this.inlineParser.parse(node as BlockNode);
       }
     }
   }

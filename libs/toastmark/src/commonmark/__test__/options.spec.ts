@@ -166,11 +166,8 @@ it('should apply the custom parser', () => {
   let inEmph = false;
   const customParser: CustomParserMap = {
     emph(node: Node, { entering }) {
-      if (entering) {
-        inEmph = true;
-      } else {
-        inEmph = false;
-      }
+      inEmph = entering;
+
       while (node.firstChild) {
         node.insertBefore(node.firstChild);
       }

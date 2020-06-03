@@ -11,25 +11,26 @@ import tableDataHandler from './tableDataHandler';
  * @private
  */
 function _createCellHtml(cell) {
+  const { colspan, rowspan, align, nodeName, content } = cell;
   let orgContent = '';
   let attrs = '';
 
-  if (cell.colspan > 1) {
-    attrs = ` colspan="${cell.colspan}"`;
-    orgContent = `@cols=${cell.colspan}:`;
+  if (colspan > 1) {
+    attrs = ` colspan="${colspan}"`;
+    orgContent = `@cols=${colspan}:`;
   }
-  if (cell.rowspan > 1) {
-    attrs += ` rowspan="${cell.rowspan}"`;
-    orgContent += `@rows=${cell.rowspan}:`;
+  if (rowspan > 1) {
+    attrs += ` rowspan="${rowspan}"`;
+    orgContent += `@rows=${rowspan}:`;
   }
-  attrs += cell.align ? ` align="${cell.align}"` : '';
+  attrs += align ? ` align="${align}"` : '';
 
   if (orgContent) {
-    orgContent += cell.content;
+    orgContent += content;
     attrs += ` data-org-content="${orgContent}"`;
   }
 
-  return `<${cell.nodeName}${attrs}>${cell.content}</${cell.nodeName}>`;
+  return `<${nodeName}${attrs}>${content}</${nodeName}>`;
 }
 
 /**
