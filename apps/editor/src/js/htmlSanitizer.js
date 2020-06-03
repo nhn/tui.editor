@@ -85,7 +85,7 @@ function removeUnnecessaryTags(html) {
  * @param {boolean} state
  * @private
  */
-function isXSSValueWithAttribute(attrName, attrValue) {
+function isXSSAttribute(attrName, attrValue) {
   return attrName.match(XSS_ATTR_RX) && attrValue.match(XSS_VALUE_RX);
 }
 
@@ -117,9 +117,9 @@ function leaveOnlyWhitelistAttribute(html) {
       const { name, value } = attr;
       const htmlAttr = name.match(HTML_ATTR_LIST_RX);
       const svgAttr = name.match(SVG_ATTR_LIST_RX);
-      const xssValueWithAttr = htmlAttr && isXSSValueWithAttribute(name, value);
+      const xssAttr = htmlAttr && isXSSAttribute(name, value);
 
-      return (!htmlAttr && !svgAttr) || xssValueWithAttr;
+      return (!htmlAttr && !svgAttr) || xssAttr;
     });
 
     removeBlacklistAttributes(attributes, blacklist);
