@@ -557,7 +557,8 @@
 }
 
 .te-popup-table-utils {
-  width: 120px;
+  width: auto;
+  min-width: 120px;
 }
 
 .te-popup-table-utils .tui-popup-body {
@@ -565,6 +566,7 @@
 }
 
 .te-popup-table-utils button {
+  display: block;
   width: 100%;
   background-color: #fff;
   border: none;
@@ -581,6 +583,7 @@
 }
 
 .te-popup-table-utils hr {
+  margin: 0;
   background-color: #cacaca;
   border-style: none;
   height: 1px;
