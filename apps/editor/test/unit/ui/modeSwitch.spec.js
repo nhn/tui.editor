@@ -79,4 +79,16 @@ describe('ModeSwitch', () => {
       expect(modeSwitch._rootElement.style.display).toBe('block');
     });
   });
+
+  it('form interaction should not trigger form submit on click', () => {
+    const $form = $('<form action="javascript:void(0)">').get(0);
+    spyOnEvent($form, 'submit');
+
+    $container.append($form);
+
+    modeSwitch = new ModeSwitch($form, null, eventManager);
+
+    $('button').trigger('click');
+    expect('submit').not.toHaveBeenTriggeredOn($form);
+  });
 });
