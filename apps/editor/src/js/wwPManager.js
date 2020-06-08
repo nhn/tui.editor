@@ -49,11 +49,12 @@ class WwPManager {
       const wrapper = domUtils.createElementWith(`<div>${html}</div>`);
 
       domUtils.findAll(wrapper, 'p').forEach(para => {
+        const { attributes, nextElementSibling, nextSibling } = para;
         const content = para.innerHTML;
         const lines = content.split(/<br>/gi);
         const lastIndex = lines.length - 1;
         // cross browsing: old browser not has nextElementSibling attribute
-        const nextElement = para.nextElementSibling || para.nextSibling;
+        const nextElement = nextElementSibling || nextSibling;
         let splitedContent = '';
 
         splitedContent = lines.map((line, index) => {
@@ -64,14 +65,20 @@ class WwPManager {
           }
 
           if (line) {
-            result = `<div>${line}</div>`;
+            const block = document.createElement('div');
+
+            for (const { name, value } of attributes) {
+              block.setAttribute(name, value);
+            }
+            block.innerHTML = line;
+            result = block.outerHTML;
           }
 
           return result;
         });
 
         // For paragraph, we add empty line
-        if (nextElement && nextElement.nodeName === 'P') {
+        if ((nextElement && nextElement.nodeName === 'P') || this._isNotEditable(para)) {
           splitedContent.push('<div><br></div>');
         }
         domUtils.replaceWith(para, splitedContent.join(''));
@@ -122,6 +129,10 @@ class WwPManager {
     }
 
     return nextElementSibling;
+  }
+
+  _isNotEditable(node) {
+    return node.getAttribute('contenteditable') === 'false';
   }
 }
 
