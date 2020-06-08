@@ -114,29 +114,27 @@ function code({ tickCount }, start, end) {
   };
 }
 
-function codeBlock(node, start, end, endLine) {
-  const { fenceOffset, fenceLength, fenceChar, info, parent } = node;
+function codeBlock(node, start, end) {
+  const { fenceOffset, fenceLength, fenceChar, fenceClosed, info, parent } = node;
   const fenceEnd = fenceOffset + fenceLength;
-  let openDelimEnd = addChPos(start, fenceEnd);
+  const marks = [markInfo(start, end, classNameMap.CODE_BLOCK)];
 
-  const marks = [
-    markInfo(start, end, classNameMap.CODE_BLOCK),
-    markInfo(start, openDelimEnd, classNameMap.DELIM)
-  ];
-
-  if (info) {
-    openDelimEnd = setChPos(start, fenceEnd + info.length);
-    marks.push(markInfo(setChPos(start, fenceEnd), openDelimEnd, classNameMap.META));
+  if (fenceChar) {
+    marks.push(markInfo(start, addChPos(start, fenceEnd), classNameMap.DELIM));
   }
 
-  const codeBlockEnd = `^(\\s{0,${fenceOffset}})(${fenceChar}{${fenceLength},})`;
-  const CLOSED_RX = new RegExp(codeBlockEnd);
+  if (info) {
+    marks.push(
+      markInfo(
+        setChPos(start, fenceEnd),
+        setChPos(start, fenceEnd + info.length),
+        classNameMap.META
+      )
+    );
+  }
 
-  let closeDelimStart = end;
-
-  if (CLOSED_RX.test(endLine)) {
-    closeDelimStart = setChPos(end, 0);
-    marks.push(markInfo(closeDelimStart, end, classNameMap.DELIM));
+  if (fenceClosed) {
+    marks.push(markInfo(setChPos(end, 0), end, classNameMap.DELIM));
   }
 
   const lineBackground =
@@ -149,7 +147,7 @@ function codeBlock(node, start, end, endLine) {
       : null;
 
   return {
-    marks: [...marks, markInfo(openDelimEnd, closeDelimStart, classNameMap.TEXT)],
+    marks,
     lineBackground: { ...lineBackground }
   };
 }
@@ -281,11 +279,11 @@ const simpleMarkClassNameMap = {
  * @returns {?Object} mark information
  * @ignore
  */
-export function getMarkInfo(node, start, end, endLine) {
+export function getMarkInfo(node, start, end) {
   const { type } = node;
 
   if (isFunction(markNodeFuncMap[type])) {
-    return markNodeFuncMap[type](node, start, end, endLine);
+    return markNodeFuncMap[type](node, start, end);
   }
 
   if (simpleMarkClassNameMap[type]) {
