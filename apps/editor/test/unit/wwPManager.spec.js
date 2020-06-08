@@ -57,7 +57,7 @@ describe('WwPManager', () => {
     );
   });
 
-  it('should add the empth line when paragraph has contenteditable="false"', () => {
+  it('should add the empty line when paragraph has contenteditable="false"', () => {
     const html = em.emitReduce(
       'wysiwygSetValueBefore',
       '<p contenteditable="false">text<br><br><a href="#">link</a><br></p>'
