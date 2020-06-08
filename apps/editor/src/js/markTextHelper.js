@@ -117,7 +117,7 @@ function code({ tickCount }, start, end) {
 function codeBlock(node, start, end) {
   const { fenceOffset, fenceLength, fenceChar, fenceClosed, info, infoPadding, parent } = node;
   const fenceEnd = fenceOffset + fenceLength;
-  const marks = [markInfo(start, end, classNameMap.CODE_BLOCK)];
+  const marks = [markInfo(setChPos(start, 0), end, classNameMap.CODE_BLOCK)];
 
   if (fenceChar) {
     marks.push(markInfo(start, addChPos(start, fenceEnd), classNameMap.DELIM));
