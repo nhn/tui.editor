@@ -12,13 +12,14 @@ import EventManager from '@/eventManager';
 import WwTableSelectionManager from '@/wwTableSelectionManager';
 
 describe('UL', () => {
-  let wwe, sq, container;
+  let wwe, sq, container, eventManager;
 
-  beforeEach(() => {
+  beforeEach(done => {
     container = document.createElement('div');
+    eventManager = new EventManager();
     document.body.appendChild(container);
 
-    wwe = new WysiwygEditor(container, new EventManager());
+    wwe = new WysiwygEditor(container, eventManager);
 
     wwe.init();
 
@@ -27,6 +28,11 @@ describe('UL', () => {
     wwe.componentManager.addManager('list', WwListManager);
     wwe.componentManager.addManager('tableSelection', WwTableSelectionManager);
     sq.focus();
+
+    // wait for squire events routine
+    setTimeout(() => {
+      done();
+    }, 0);
   });
 
   // we need to wait squire input event process
@@ -244,5 +250,13 @@ describe('UL', () => {
     expect(range.endContainer).toBe(endContainer);
     expect(range.startOffset).toBe(startOffset);
     expect(range.endOffset).toBe(endOffset);
+  });
+
+  it('should emit change event', () => {
+    eventManager.listen('change', editor => {
+      expect(editor).toBe(wwe);
+    });
+
+    UL.exec(wwe);
   });
 });
