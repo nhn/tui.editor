@@ -114,8 +114,8 @@ function code({ tickCount }, start, end) {
   };
 }
 
-function codeBlock(node, start, end) {
-  const { fenceOffset, fenceLength, fenceChar, fenceClosed, info, infoPadding, parent } = node;
+function codeBlock(node, start, end, endLine) {
+  const { fenceOffset, fenceLength, fenceChar, info, infoPadding, parent } = node;
   const fenceEnd = fenceOffset + fenceLength;
   const marks = [markInfo(setChPos(start, 0), end, classNameMap.CODE_BLOCK)];
 
@@ -133,7 +133,10 @@ function codeBlock(node, start, end) {
     );
   }
 
-  if (fenceClosed) {
+  const codeBlockEnd = `^(\\s{0,${fenceOffset}})(${fenceChar}{${fenceLength},})`;
+  const CLOSED_RX = new RegExp(codeBlockEnd);
+
+  if (CLOSED_RX.test(endLine)) {
     marks.push(markInfo(setChPos(end, 0), end, classNameMap.DELIM));
   }
 
@@ -279,11 +282,11 @@ const simpleMarkClassNameMap = {
  * @returns {?Object} mark information
  * @ignore
  */
-export function getMarkInfo(node, start, end) {
+export function getMarkInfo(node, start, end, endLine) {
   const { type } = node;
 
   if (isFunction(markNodeFuncMap[type])) {
-    return markNodeFuncMap[type](node, start, end);
+    return markNodeFuncMap[type](node, start, end, endLine);
   }
 
   if (simpleMarkClassNameMap[type]) {

@@ -236,7 +236,6 @@ export class CodeBlockNode extends BlockNode {
   public fenceChar: string | null = null;
   public fenceLength = 0;
   public fenceOffset = -1;
-  public fenceClosed = false;
   public info: string | null = null;
   public infoPadding = 0;
 }

@@ -161,7 +161,6 @@ const codeBlock: BlockHandler = {
         ln.slice(parser.nextNonspace).match(reClosingCodeFence);
       if (match && match[0].length >= container.fenceLength) {
         // closing fence - we're at end of line, so we can return
-        container.fenceClosed = true;
         parser.lastLineLength = parser.offset + indent + match[0].length;
         parser.finalize(container as BlockNode, parser.lineNumber);
         return Process.Finished;
@@ -195,12 +194,10 @@ const codeBlock: BlockHandler = {
       const newlinePos = content.indexOf('\n');
       const firstLine = content.slice(0, newlinePos);
       const rest = content.slice(newlinePos + 1);
-      const infoPadding = content.match(/^\s+/);
-      block.info = unescapeString(firstLine.trim());
+      const infoString = firstLine.match(/^(\s*)(.*)(?:\s)*$/);
+      block.infoPadding = infoString![1].length;
+      block.info = unescapeString(infoString![2]);
       block.literal = rest;
-      if (infoPadding) {
-        block.infoPadding = infoPadding[0].length;
-      }
     } else {
       // indented
       block.literal = block.stringContent?.replace(/(\n *)+$/, '\n');

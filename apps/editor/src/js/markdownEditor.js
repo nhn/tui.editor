@@ -354,18 +354,17 @@ class MarkdownEditor extends CodeMirrorExt {
 
   _markCodeBlockBackground(lineBackground) {
     const { start, end, className } = lineBackground;
-    let addedClassName;
 
     for (let index = start; index <= end; index += 1) {
-      addedClassName = '';
+      let lineClassName = className;
 
       if (index === start) {
-        addedClassName = ' start';
+        lineClassName += ' start';
       } else if (index === end) {
-        addedClassName = ' end';
+        lineClassName += ' end';
       }
 
-      this.cm.addLineClass(index, 'background', `${className}${addedClassName}`);
+      this.cm.addLineClass(index, 'background', lineClassName);
       this._markedLines[index] = true;
     }
   }
@@ -373,7 +372,7 @@ class MarkdownEditor extends CodeMirrorExt {
   _markNode(node) {
     const from = { line: getMdStartLine(node) - 1, ch: getMdStartCh(node) - 1 };
     const to = { line: getMdEndLine(node) - 1, ch: getMdEndCh(node) };
-    const markInfo = getMarkInfo(node, from, to);
+    const markInfo = getMarkInfo(node, from, to, this.cm.getLine(to.line));
 
     if (markInfo) {
       const { marks = [], lineBackground = {} } = markInfo;
