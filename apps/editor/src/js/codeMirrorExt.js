@@ -45,10 +45,10 @@ class CodeMirrorExt {
       lineWrapping: true,
       theme: 'default',
       extraKeys: {
-        ...options.extraKeys,
         'Shift-Tab': 'indentLess',
         'Alt-Up': 'replaceLineTextToUpper',
-        'Alt-Down': 'replaceLineTextToLower'
+        'Alt-Down': 'replaceLineTextToLower',
+        ...options.extraKeys
       },
       indentUnit: 4,
       cursorScrollMargin: 12,
