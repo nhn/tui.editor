@@ -194,7 +194,9 @@ const codeBlock: BlockHandler = {
       const newlinePos = content.indexOf('\n');
       const firstLine = content.slice(0, newlinePos);
       const rest = content.slice(newlinePos + 1);
-      block.info = unescapeString(firstLine.trim());
+      const infoString = firstLine.match(/^(\s*)(.*)/);
+      block.infoPadding = infoString![1].length;
+      block.info = unescapeString(infoString![2].trim());
       block.literal = rest;
     } else {
       // indented

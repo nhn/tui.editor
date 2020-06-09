@@ -237,6 +237,7 @@ export class CodeBlockNode extends BlockNode {
   public fenceLength = 0;
   public fenceOffset = -1;
   public info: string | null = null;
+  public infoPadding = 0;
 }
 
 export class HtmlBlockNode extends BlockNode {

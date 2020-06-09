@@ -115,28 +115,29 @@ function code({ tickCount }, start, end) {
 }
 
 function codeBlock(node, start, end, endLine) {
-  const { fenceOffset, fenceLength, fenceChar, info, parent } = node;
+  const { fenceOffset, fenceLength, fenceChar, info, infoPadding, parent } = node;
   const fenceEnd = fenceOffset + fenceLength;
-  let openDelimEnd = addChPos(start, fenceEnd);
+  const marks = [markInfo(setChPos(start, 0), end, classNameMap.CODE_BLOCK)];
 
-  const marks = [
-    markInfo(start, end, classNameMap.CODE_BLOCK),
-    markInfo(start, openDelimEnd, classNameMap.DELIM)
-  ];
-
-  if (info) {
-    openDelimEnd = setChPos(start, fenceEnd + info.length);
-    marks.push(markInfo(setChPos(start, fenceEnd), openDelimEnd, classNameMap.META));
+  if (fenceChar) {
+    marks.push(markInfo(start, addChPos(start, fenceEnd), classNameMap.DELIM));
   }
 
-  const codeBlockEnd = `^(\\s{0,${fenceOffset}})(${fenceChar}{${fenceLength},})`;
+  if (info) {
+    marks.push(
+      markInfo(
+        setChPos(start, fenceEnd),
+        setChPos(start, fenceEnd + infoPadding + info.length),
+        classNameMap.META
+      )
+    );
+  }
+
+  const codeBlockEnd = `^(\\s{0,3})(${fenceChar}{${fenceLength},})`;
   const CLOSED_RX = new RegExp(codeBlockEnd);
 
-  let closeDelimStart = end;
-
   if (CLOSED_RX.test(endLine)) {
-    closeDelimStart = setChPos(end, 0);
-    marks.push(markInfo(closeDelimStart, end, classNameMap.DELIM));
+    marks.push(markInfo(setChPos(end, 0), end, classNameMap.DELIM));
   }
 
   const lineBackground =
@@ -149,7 +150,7 @@ function codeBlock(node, start, end, endLine) {
       : null;
 
   return {
-    marks: [...marks, markInfo(openDelimEnd, closeDelimStart, classNameMap.TEXT)],
+    marks,
     lineBackground: { ...lineBackground }
   };
 }
