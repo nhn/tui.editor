@@ -69,6 +69,16 @@ describe('WwPasteContentHelper', () => {
       expect($node.find('span').length).toEqual(0);
     });
 
+    it('_removeStyles should unwrap span with default color (#222) style', () => {
+      const $node = $(
+        '<div><span style="color:#222;"><span style="color:red;">TEST</span></span></div>'
+      );
+
+      pch._removeStyles($node.find('span').get(0));
+
+      expect($node.find('span').length).toEqual(1);
+    });
+
     it('_removeUnnecessaryBlocks should unwrap unnecessary blocks', () => {
       const $node = $('<div><div><span>TEST</span></div></div>');
 
