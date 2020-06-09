@@ -455,6 +455,50 @@ describe('should render the merged table properly', () => {
         </tbody>
         </table>
       `
+      },
+      {
+        no: 7,
+        content: source`
+        | @cols=2:mergedHead1 | @cols=3:mergedHead2 |
+        | --- | --- | --- | --- | --- |
+        | @cols=2:mergedCell1-1 | @rows=3:mergedCell1-2 | @cols=2:@rows=5:mergedCell1-3 |
+        | @rows=2:mergedCell2-1 | @rows=2:mergedCell2-2 |
+        |
+        | cell4-1 | cell4-2 |  |
+        | cell5-1 | cell5-2 | cell5-3 |
+      `,
+        result: source`
+        <table>
+        <thead>
+        <tr>
+        <th data-org-content="@cols=2:mergedHead1" colspan="2">mergedHead1</th>
+        <th data-org-content="@cols=3:mergedHead2" colspan="3">mergedHead2</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td data-org-content="@cols=2:mergedCell1-1" colspan="2">mergedCell1-1</td>
+        <td data-org-content="@rows=3:mergedCell1-2" rowspan="3">mergedCell1-2</td>
+        <td data-org-content="@cols=2:@rows=5:mergedCell1-3" colspan="2" rowspan="5">mergedCell1-3</td>
+        </tr>
+        <tr>
+        <td data-org-content="@rows=2:mergedCell2-1" rowspan="2">mergedCell2-1</td>
+        <td data-org-content="@rows=2:mergedCell2-2" rowspan="2">mergedCell2-2</td>
+        </tr>
+        <tr></tr>
+        <tr>
+        <td data-org-content="cell4-1">cell4-1</td>
+        <td data-org-content="cell4-2">cell4-2</td>
+        <td></td>
+        </tr>
+        <tr>
+        <td data-org-content="cell5-1">cell5-1</td>
+        <td data-org-content="cell5-2">cell5-2</td>
+        <td data-org-content="cell5-3">cell5-3</td>
+        </tr>
+        </tbody>
+        </table>
+      `
       }
     ];
 

@@ -51,6 +51,16 @@ export const parser = {
   tableRow(node, { entering }) {
     if (entering) {
       node.rowspanMap = {};
+
+      if (node.prev && !node.firstChild) {
+        const prevRowspanMap = node.prev.rowspanMap;
+
+        Object.keys(prevRowspanMap).forEach(key => {
+          if (prevRowspanMap[key] > 1) {
+            node.rowspanMap[key] = prevRowspanMap[key] - 1;
+          }
+        });
+      }
     }
   },
   tableCell(node, { entering }) {
