@@ -24,7 +24,6 @@ import closest from 'tui-code-snippet/domUtil/closest';
  * }}
  * @private
  */
-/* eslint-disable complexity */
 function _parseCell(cell, rowIndex, colIndex) {
   const colspan = cell.getAttribute('colspan');
   const rowspan = cell.getAttribute('rowspan');

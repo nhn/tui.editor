@@ -2,12 +2,8 @@
  * @fileoverview Implements table plugin
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import toArray from 'tui-code-snippet/collection/toArray';
-
 import { addLangs } from './langs';
 
-import createMergedTable from './mergedTableCreator';
-import prepareTableUnmerge from './tableUnmergePreparer';
 import { createToMarkRenderer } from './toMarkRenderer';
 
 import { getWwMergedTableManager } from './wwMergedTableManager';
@@ -23,6 +19,8 @@ import { getMergeCellCommand } from './mergeCell';
 import { getUnmergeCellCommand } from './unmergeCell';
 
 import { updateContextMenu } from './mergedTableUI';
+import { renderer } from './renderer';
+import { parser } from './parser';
 
 function getExtendedToMarkOptions(toMarkOptions) {
   const extendedOptions = toMarkOptions || {};
@@ -64,44 +62,6 @@ function _changeWysiwygManagers(wwComponentManager, editor) {
 }
 
 /**
- * Change html by onChangeTable function.
- * @param {string} html - original html
- * @param {function} onChangeTable - function for changing html
- * @returns {string}
- * @private
- */
-function _changeHtml(html, onChangeTable) {
-  const tempDiv = document.createElement('div');
-
-  tempDiv.innerHTML = html;
-
-  const tables = tempDiv.querySelectorAll('table');
-
-  if (tables.length) {
-    toArray(tables).forEach(tableElement => {
-      const changedTableElement = onChangeTable(tableElement);
-
-      if (changedTableElement !== tableElement) {
-        if (tableElement.hasAttribute('data-tomark-pass')) {
-          changedTableElement.setAttribute('data-tomark-pass', '');
-        }
-        if (tableElement.hasAttribute('data-nodeid')) {
-          changedTableElement.setAttribute('data-nodeid', tableElement.getAttribute('data-nodeid'));
-        }
-        const { parentNode } = tableElement;
-
-        parentNode.insertBefore(changedTableElement, tableElement);
-        parentNode.removeChild(tableElement);
-      }
-    });
-
-    html = tempDiv.innerHTML;
-  }
-
-  return html;
-}
-
-/**
  * Snatch wysiwyg command.
  * @param {{command: object}} commandWrapper - wysiwyg command wrapper
  * @param {Object.<string, Object>} commandMap - map of command names and command instances
@@ -128,14 +88,6 @@ function _snatchWysiwygCommand(commandWrapper, commandMap) {
  * @private
  */
 function _bindEvents(eventManager, commandMap) {
-  eventManager.listen('convertorAfterMarkdownToHtmlConverted', html =>
-    _changeHtml(html, createMergedTable)
-  );
-
-  eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html =>
-    _changeHtml(html, prepareTableUnmerge)
-  );
-
   if (commandMap) {
     eventManager.listen('addCommandBefore', commandWrapper => {
       _snatchWysiwygCommand(commandWrapper, commandMap);
@@ -147,7 +99,7 @@ function _bindEvents(eventManager, commandMap) {
  * Table merged cell plugin
  * @param {Editor|Viewer} editor - instance of Editor or Viewer
  */
-export default function tableMergedCellPlugin(editor) {
+function tableMergedCellPlugin(editor) {
   const { eventManager } = editor;
   const isViewer = editor.isViewer();
   const commandMap = isViewer
@@ -185,3 +137,5 @@ export default function tableMergedCellPlugin(editor) {
     );
   }
 }
+
+export default { renderer, parser, pluginFn: tableMergedCellPlugin };

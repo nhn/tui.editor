@@ -1,5 +1,6 @@
-import { Parser } from '../blocks';
+import { Parser, CustomParserMap } from '../blocks';
 import { pos } from './helper.spec';
+import { Node } from '../node';
 
 it('tags in disallowedHtmlBlockTags should not be parsed as a HTML block', () => {
   const reader = new Parser({ disallowedHtmlBlockTags: ['br', 'span'] });
@@ -158,5 +159,39 @@ describe('disallowDeepHeading: true', () => {
         }
       }
     });
+  });
+});
+
+it('should apply the custom parser', () => {
+  let inEmph = false;
+  const customParser: CustomParserMap = {
+    emph(node: Node, { entering }) {
+      inEmph = entering;
+
+      while (node.firstChild) {
+        node.insertBefore(node.firstChild);
+      }
+      node.unlink();
+    },
+    text(node: Node) {
+      if (inEmph) {
+        node.literal = node.literal!.toUpperCase();
+      }
+    }
+  };
+  const reader = new Parser({ customParser });
+  const root = reader.parse('*test*');
+
+  expect(root).toMatchObject({
+    type: 'document',
+    firstChild: {
+      type: 'paragraph',
+      sourcepos: pos(1, 1, 1, 6),
+      firstChild: {
+        type: 'text',
+        sourcepos: pos(1, 2, 1, 5),
+        literal: 'TEST'
+      }
+    }
   });
 });

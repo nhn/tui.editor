@@ -257,7 +257,8 @@ export class TableNode extends BlockNode {
 }
 
 export class TableCellNode extends BlockNode {
-  public columnIdx = 0;
+  public startIdx = 0;
+  public endIdx = 0;
   public paddingLeft = 0;
   public paddingRight = 0;
   public ignored = false;

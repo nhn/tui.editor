@@ -5,8 +5,6 @@
 import range from 'tui-code-snippet/array/range';
 import toArray from 'tui-code-snippet/collection/toArray';
 
-const RX_COLS = /@cols=[0-9]+:/g;
-
 /**
  * Create repeat string.
  * @param {string} str - target string
@@ -29,28 +27,21 @@ function _createRepeatString(str, count) {
  */
 function _makeTableHeadAlignText(thElement) {
   const { align } = thElement;
-  const textContent = (thElement.textContent || thElement.innerText).replace(RX_COLS, '');
-  let textLength = textContent.length;
   let leftAlignValue = '';
   let rightAlignValue = '';
 
   if (align) {
     if (align === 'left') {
       leftAlignValue = ':';
-      textLength -= 1;
     } else if (align === 'right') {
       rightAlignValue = ':';
-      textLength -= 1;
     } else if (align === 'center') {
       rightAlignValue = ':';
       leftAlignValue = ':';
-      textLength -= 2;
     }
   }
 
-  textLength = Math.max(textLength, 3);
-
-  return leftAlignValue + _createRepeatString('-', textLength) + rightAlignValue;
+  return `${leftAlignValue}${_createRepeatString('-', 3)}${rightAlignValue}`;
 }
 
 /**
@@ -87,10 +78,25 @@ export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
   return theadContentMarkdown ? `${theadContentMarkdown}|${align}\n` : '';
 }
 
+/**
+ * Create table cell markdown.
+ * @param {HTMLElement} cellElement - table cell element
+ * @param {string} cellContentMarkdown - table cell markdown content
+ * @returns {string}
+ * @private
+ */
+function _createTableCellMarkdown(cellElement, cellContentMarkdown) {
+  cellContentMarkdown = cellElement.getAttribute('data-org-content') || cellContentMarkdown;
+  cellContentMarkdown = cellContentMarkdown.replace(/(\r\n)|(\r)|(\n)/g, '');
+
+  return ` ${cellContentMarkdown} |`;
+}
+
 export function createToMarkRenderer(baseRenderer) {
   const Renderer = Object.getPrototypeOf(baseRenderer).constructor;
 
   return Renderer.factory(baseRenderer, {
-    THEAD: _createTheadMarkdown
+    THEAD: _createTheadMarkdown,
+    'TR TD, TR TH': _createTableCellMarkdown
   });
 }

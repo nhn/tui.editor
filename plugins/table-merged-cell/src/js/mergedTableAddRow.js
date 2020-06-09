@@ -34,7 +34,6 @@ function _createRowMergedCell(rowMergeWith) {
  * @returns {object}
  * @private
  */
-/* eslint-disable complexity */
 export function _createNewRow(tableData, rowIndex) {
   let prevCell = null;
 
