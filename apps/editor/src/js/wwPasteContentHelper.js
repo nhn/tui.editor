@@ -11,6 +11,8 @@ import matches from 'tui-code-snippet/domUtil/matches';
 import domUtils from './utils/dom';
 import defaultSanitizer from './htmlSanitizer';
 
+const DEFAULT_COLOR = 'rgb(34, 34, 34)';
+
 /**
  * Class WwPasteContentHelper
  * @param {WysiwygEditor} wwe - wysiwygEditor instance
@@ -250,7 +252,7 @@ class WwPasteContentHelper {
 
       node.removeAttribute('style');
 
-      if (colorValue) {
+      if (colorValue && colorValue !== DEFAULT_COLOR) {
         css(node, { color: colorValue });
       } else {
         domUtils.unwrap(node);
