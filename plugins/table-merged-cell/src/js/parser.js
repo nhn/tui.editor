@@ -67,13 +67,15 @@ export const parser = {
     const { parent, prev, stringContent } = node;
 
     if (entering) {
-      let content = stringContent;
+      const replaced = stringContent.replace(/\sdata-tomark-pass\s(\/?)>/gi, '$1>');
+
+      let content = replaced;
       let [colspan, rowspan] = [null, null];
 
       [colspan, content] = extractPropertiesForMerge(content, '@cols', '@rows');
       [rowspan, content] = extractPropertiesForMerge(content, '@rows', '@cols');
 
-      node.orgStringContent = stringContent;
+      node.orgStringContent = replaced;
       node.stringContent = content;
 
       if (prev) {
