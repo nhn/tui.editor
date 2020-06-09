@@ -351,7 +351,7 @@ class WwCodeBlockManager {
       const firstDiv = document.createElement('div');
       const firstLine = strArray.shift();
 
-      firstDiv.innerHTML = `${firstLine}${brString}`;
+      firstDiv.innerHTML = `${sanitizeHtmlCode(firstLine)}${brString}`;
       newFrag.appendChild(firstDiv);
 
       if (strArray.length) {

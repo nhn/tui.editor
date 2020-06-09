@@ -156,6 +156,31 @@ describe('WwCodeBlockManager', () => {
         expect(wwe.getBody().querySelectorAll('pre').length).toEqual(2);
       });
     });
+
+    it('_onBackspaceKeyEventHandler() sanitize HTML properly when removing codeblock ', () => {
+      const range = wwe
+        .getEditor()
+        .getSelection()
+        .cloneRange();
+
+      wwe.setValue('<pre><svg></svg></pre>');
+
+      range.setStart(wwe.getBody().querySelectorAll('pre')[0].childNodes[0], 0);
+      range.collapse(true);
+
+      wwe.getEditor().setSelection(range);
+
+      em.emit('wysiwygKeyEvent', {
+        keyMap: 'BACK_SPACE',
+        data: {
+          preventDefault: () => {}
+        }
+      });
+
+      expect(wwe.getBody().querySelectorAll('div').length).toEqual(2);
+      expect(wwe.getBody().querySelectorAll('svg').length).toEqual(0);
+      expect(wwe.getBody().querySelectorAll('pre').length).toEqual(0);
+    });
   });
 
   describe('_copyCodeblockTypeFromRangeCodeblock', () => {
