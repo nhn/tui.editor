@@ -45,4 +45,26 @@ describe('WwPManager', () => {
 
     expect(html).toEqual('<div>text</div><div><br></div><div><a href="#">link</a></div>');
   });
+
+  it('should keep the attributes when wysiwygSetValueBefore event is triggered', () => {
+    const html = em.emitReduce(
+      'wysiwygSetValueBefore',
+      '<p data-custom="custom">text<br><br><a href="#">link</a><br></p>'
+    );
+
+    expect(html).toEqual(
+      '<div data-custom="custom">text</div><div data-custom="custom"><br></div><div data-custom="custom"><a href="#">link</a></div>'
+    );
+  });
+
+  it('should add the empty line when paragraph has contenteditable="false"', () => {
+    const html = em.emitReduce(
+      'wysiwygSetValueBefore',
+      '<p contenteditable="false">text<br><br><a href="#">link</a><br></p>'
+    );
+
+    expect(html).toEqual(
+      '<div contenteditable="false">text</div><div contenteditable="false"><br></div><div contenteditable="false"><a href="#">link</a></div><div><br></div>'
+    );
+  });
 });
