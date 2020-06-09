@@ -19,18 +19,25 @@ describe('headingType ', () => {
   });
 });
 
-describe(`CodeBlockNode's infoPadding`, () => {
-  it('none', () => {
+describe('CodeBlockNode', () => {
+  it('infoPadding is none', () => {
     const root = parser.parse('```js');
     const codeBlock = root.firstChild as CodeBlockNode;
 
     expect(codeBlock.infoPadding).toBe(0);
   });
 
-  it('more than zero', () => {
+  it('infoPadding is more than zero', () => {
     const root = parser.parse('```   js');
     const codeBlock = root.firstChild as CodeBlockNode;
 
     expect(codeBlock.infoPadding).toBe(3);
+  });
+
+  it('info string', () => {
+    const root = parser.parse('```   javascript  ');
+    const codeBlock = root.firstChild as CodeBlockNode;
+
+    expect(codeBlock.info).toBe('javascript');
   });
 });
