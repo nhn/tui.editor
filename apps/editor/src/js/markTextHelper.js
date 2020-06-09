@@ -133,7 +133,7 @@ function codeBlock(node, start, end, endLine) {
     );
   }
 
-  const codeBlockEnd = `^(\\s{0,${fenceOffset}})(${fenceChar}{${fenceLength},})`;
+  const codeBlockEnd = `^(\\s{0,3})(${fenceChar}{${fenceLength},})`;
   const CLOSED_RX = new RegExp(codeBlockEnd);
 
   if (CLOSED_RX.test(endLine)) {
