@@ -7,7 +7,7 @@ import EventManager from '@/eventManager';
 import WwHeadingManager from '@/wwHeadingManager';
 
 describe('WwHeadingManager', () => {
-  let container, em, wwe;
+  let container, em, wwe, mgr;
 
   beforeEach(() => {
     container = document.createElement('div');
@@ -19,7 +19,7 @@ describe('WwHeadingManager', () => {
 
     wwe.init();
 
-    wwe._headingMgr = new WwHeadingManager(wwe);
+    mgr = new WwHeadingManager(wwe);
   });
 
   // we need to wait squire input event process
@@ -36,5 +36,18 @@ describe('WwHeadingManager', () => {
     expect(wwe.getBody().querySelectorAll('h1').length).toEqual(1);
     expect(wwe.getBody().querySelectorAll('h1 div').length).toEqual(1);
     expect(wwe.getBody().querySelectorAll('h1 div')[0].textContent).toEqual('text1');
+  });
+
+  it('_addBrToEmptyBlock()', () => {
+    wwe.getEditor().setHTML('<h1><div></div></h1>');
+
+    const range = wwe.getEditor().getSelection();
+
+    range.setStart(wwe.getBody().querySelector('h1'), 1);
+    range.collapse(true);
+
+    mgr._addBrToEmptyBlock(range);
+
+    expect(wwe.getBody().querySelector('h1').innerHTML).toBe('<div><br></div>');
   });
 });
