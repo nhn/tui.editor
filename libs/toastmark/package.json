@@ -1,12 +1,16 @@
 {
   "name": "@toast-ui/toastmark",
-  "version": "0.1.0",
+  "version": "0.0.1-alpha.0",
   "description": "ToastMark - Incremental markdown parser extended from CommonMark.js",
   "scripts": {
     "serve": "webpack-dev-server",
     "build": "webpack --mode=production",
     "test": "jest --watch"
   },
+  "files": [
+    "dist",
+    "types"
+  ],
   "keywords": [
     "markdown",
     "parser"
