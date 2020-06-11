@@ -160,6 +160,9 @@ class WwClipboardManager {
     pasteData.fragment = document.createDocumentFragment();
 
     toArray(clipboardContainer.childNodes).forEach(element => {
+      if (domUtils.getNodeName(element) === 'DIV') {
+        this._replaceNewLineToBr(element);
+      }
       pasteData.fragment.appendChild(element);
     });
 
@@ -283,7 +286,6 @@ class WwClipboardManager {
       this._preProcessPtag(clipboardContainer);
     }
 
-    this._replaceNewLineToBr(clipboardContainer);
     this._removeEmptyFontElement(clipboardContainer);
 
     this._pch.preparePaste(clipboardContainer);
