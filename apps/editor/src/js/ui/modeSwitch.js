@@ -90,10 +90,10 @@ class ModeSwitch extends UIController {
 
   _render(rootElement) {
     this._buttons.markdown = domUtils.createElementWith(
-      `<button class="te-switch-button markdown">${i18n.get('Markdown')}</button>`
+      `<button class="te-switch-button markdown" type="button">${i18n.get('Markdown')}</button>`
     );
     this._buttons.wysiwyg = domUtils.createElementWith(
-      `<button class="te-switch-button wysiwyg">${i18n.get('WYSIWYG')}</button>`
+      `<button class="te-switch-button wysiwyg" type="button">${i18n.get('WYSIWYG')}</button>`
     );
 
     this.el.appendChild(this._buttons.markdown);
