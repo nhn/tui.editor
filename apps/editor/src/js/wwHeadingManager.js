@@ -57,6 +57,7 @@ class WwHeadingManager {
 
     this.wwe.addKeyEventHandler('BACK_SPACE', (ev, range) => {
       if (this.wwe.hasFormatWithRx(FIND_HEADING_RX)) {
+        this._addBrToEmptyBlock(range);
         this._removePrevTopNodeIfNeed(ev, range);
 
         return false;
@@ -155,6 +156,27 @@ class WwHeadingManager {
     return isHandled;
   }
 
+  _getHeadingElement(element) {
+    const isHeading = FIND_HEADING_RX.test(domUtils.getNodeName(element));
+
+    return isHeading ? element : domUtils.parents(element, 'h1,h2,h3,h4,h5,h6')[0];
+  }
+
+  _addBrToEmptyBlock(range) {
+    const { collapsed, startOffset, startContainer } = range;
+
+    if (collapsed && startOffset === 1) {
+      const headingElement = this._getHeadingElement(startContainer);
+      const brs = domUtils.children(headingElement.firstChild, 'br');
+
+      if (!brs.length) {
+        const br = document.createElement('br');
+
+        startContainer.parentNode.appendChild(br);
+      }
+    }
+  }
+
   /**
    * Remove heading and change selection
    * @param {object} event Event object
@@ -167,10 +189,7 @@ class WwHeadingManager {
     const { startContainer } = range;
     const sq = this.wwe.getEditor();
     const body = this.wwe.getBody();
-    const isHeading = FIND_HEADING_RX.test(domUtils.getNodeName(startContainer));
-    const headingElement = isHeading
-      ? startContainer
-      : domUtils.parents(startContainer, 'h1,h2,h3,h4,h5,h6')[0];
+    const headingElement = this._getHeadingElement(startContainer);
     let targetNode = prevTopNode;
     let offset = 1;
 
