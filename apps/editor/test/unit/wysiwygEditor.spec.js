@@ -324,6 +324,46 @@ describe('WysiwygEditor', () => {
       expect(wwe.getValue()).toEqual(`${expectedHtml}<br />`);
     });
 
+    it('should replace space(32) to &nbsp; in the front/back b tag', () => {
+      const html = [
+        '<b>foo </b><br />',
+        '<b>foo </b><i>bar</i>',
+        '<b class="foo">bar </b><i>baz</i>',
+        '<b class="foo"> bar</b><i>baz</i>'
+      ].join('');
+
+      wwe.setValue(html);
+
+      const expectedHtml = [
+        '<b>foo&nbsp;</b><br />',
+        '<b>foo&nbsp;</b><i>bar</i>',
+        '<b class="foo">bar&nbsp;</b><i>baz</i>',
+        '<b class="foo">&nbsp;bar</b><i>baz</i>'
+      ].join('');
+
+      expect(wwe.getValue()).toEqual(`${expectedHtml}<br />`);
+    });
+
+    it('should replace space(32) to &nbsp; in the front/back i tag', () => {
+      const html = [
+        '<i>bar </i><br />',
+        '<i>bar </i><b>foo</b>',
+        '<i class="foo">bar </i><b>baz</b>',
+        '<i class="foo"> bar</i><b>baz</b>'
+      ].join('');
+
+      wwe.setValue(html);
+
+      const expectedHtml = [
+        '<i>bar&nbsp;</i><br />',
+        '<i>bar&nbsp;</i><b>foo</b>',
+        '<i class="foo">bar&nbsp;</i><b>baz</b>',
+        '<i class="foo">&nbsp;bar</i><b>baz</b>'
+      ].join('');
+
+      expect(wwe.getValue()).toEqual(`${expectedHtml}<br />`);
+    });
+
     it('the line break is working between <br> to <img>.', () => {
       let html = '<p>test<br><img src="" alt="image"></p>';
 

@@ -35,8 +35,6 @@ const keyMapper = KeyMapper.getSharedInstance();
 const FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi;
 const FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi;
 const FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
-const FIND_OPENING_SPAN_WITH_SPACE = /<span([^>]*)>[\u0020]/g;
-const FIND_CLOSING_SPAN_WITH_SPACE = /[\u0020]<\/span>/g;
 const FIND_TABLE_AND_HEADING_RX = /^(TABLE|H[1-6])$/;
 
 const EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
@@ -860,9 +858,9 @@ class WysiwygEditor {
       return result;
     });
 
-    // replace a space of the first and end in sapn tag to &nbsp;.
-    html = html.replace(FIND_OPENING_SPAN_WITH_SPACE, '<span$1>&nbsp;');
-    html = html.replace(FIND_CLOSING_SPAN_WITH_SPACE, '&nbsp;</span>');
+    // replace a space of the first and end in b, i, span to &nbsp;.
+    html = html.replace(/<(b|i|span)([^>]*)>[\u0020]/g, '<$1$2>&nbsp;');
+    html = html.replace(/[\u0020]<\/(b|i|span)>/g, '&nbsp;</$1>');
 
     // remove unnecessary brs
     html = html.replace(FIND_UNNECESSARY_BR, '</$1>');
