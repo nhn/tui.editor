@@ -4,7 +4,7 @@
 
 [![github release version](https://img.shields.io/github/v/release/nhn/tui.editor.svg?include_prereleases)](https://github.com/nhn/tui.editor/releases/latest) [![npm version](https://img.shields.io/npm/v/@toast-ui/editor.svg)](https://www.npmjs.com/package/@toast-ui/editor) [![license](https://img.shields.io/github/license/nhn/tui.editor.svg)](https://github.com/nhn/tui.editor/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
-<img src="https://user-images.githubusercontent.com/1215767/34356204-4c03be8a-ea7f-11e7-9aa9-0d84f9e912ec.gif" />
+<img src="https://user-images.githubusercontent.com/18183560/84614193-59392700-af00-11ea-9a55-4a90a6ab5fe8.gif" />
 
 
 ## 🚩 Table of Contents
@@ -54,7 +54,7 @@ TOAST UI Editor provides **Markdown mode** and **WYSIWYG mode**. Depending on th
 
 ### Productive Markdown Mode
 
-![markdown](https://user-images.githubusercontent.com/18183560/76675614-7f4be400-65fe-11ea-9c28-94f4501a4325.png)
+![markdown](https://user-images.githubusercontent.com/18183560/84381972-d3c62600-ac24-11ea-99e2-9640b0a2bfe8.png)
 
 **CommonMark + GFM Specifications**
 
@@ -67,21 +67,21 @@ Today *CommonMark* is the de-facto *Markdown* standard. *GFM (GitHub Flavored Ma
 
 ### Easy WYSIWYG Mode
 
-![wysiwyg-1024](https://user-images.githubusercontent.com/18183560/76675616-84109800-65fe-11ea-8bba-0e7775957fe9.png)
+![wysiwyg](https://user-images.githubusercontent.com/18183560/84381978-d88ada00-ac24-11ea-8655-3208cb46a8ae.png)
 
 * **Table** : Through the context menu of the table, you can add or delete columns or rows of the table, and you can also arrange text in cells.
 * **Code Block Editor** : The code block area can be edited through the layer popup editor.
 
 ### Usability Common UI
 
-![UI](https://user-images.githubusercontent.com/18183560/76941970-4bdfc100-6940-11ea-9a60-94124237fa1e.gif)
+![UI](https://user-images.githubusercontent.com/18183560/84381975-d6c11680-ac24-11ea-9816-9cf2aecbdf06.gif)
 
 * **Toolbar** : Through the toolbar, you can style or add elements to the document you are editing.
 * **Copy and Paste** : Paste anything from browser, screenshot, excel, powerpoint, etc.
 
 ### Use of Various Extended Functions - Plugins
 
-![plugin](https://user-images.githubusercontent.com/18183560/76677622-c8f2f980-6613-11ea-8410-71844042aeec.png)
+![plugin](https://user-images.githubusercontent.com/18183560/84381966-cf9a0880-ac24-11ea-9bb4-1e8a8ca186de.png)
 
 CommonMark and GFM are great, but we often need more abstraction. The TOAST UI Editor comes with powerful **Plugins** in compliance with the Markdown syntax.
 

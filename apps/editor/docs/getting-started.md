@@ -144,7 +144,7 @@ const editor = new Editor({
 });
 ```
 
-![getting-started-01](https://user-images.githubusercontent.com/18183560/76715294-159f1780-676f-11ea-9107-e334d4ef0eb8.png)
+![getting-started-01](https://user-images.githubusercontent.com/37766175/80378030-074c2b80-88d7-11ea-9ade-ac806f34dc8c.png)
 
 ```js
 const editor = new Editor({
@@ -157,7 +157,7 @@ const editor = new Editor({
 editor.getHtml();
 ```
 
-![getting-started-02](https://user-images.githubusercontent.com/18183560/76715295-1768db00-676f-11ea-8a94-0ffff3fbe99d.png)
+![getting-started-02](https://user-images.githubusercontent.com/37766175/80378283-6447e180-88d7-11ea-9684-ce6742053481.png)
 
 The basic options available are:
 
