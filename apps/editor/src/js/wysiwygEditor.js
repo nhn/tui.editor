@@ -1142,10 +1142,12 @@ class WysiwygEditor {
 
     // range exists and it's an WYSIWYG editor content
     if (range) {
-      const foundEditorElement = !!domUtils.getParentUntil(
+      const contentElement = domUtils.getParentUntil(
         range.commonAncestorContainer,
         this.editorContainerEl
-      ).parentNode;
+      );
+
+      const foundEditorElement = !!(contentElement && contentElement.parentNode);
 
       if (foundEditorElement) {
         this.setRange(range);
