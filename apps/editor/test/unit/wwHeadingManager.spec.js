@@ -5,6 +5,7 @@
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
 import WwHeadingManager from '@/wwHeadingManager';
+import browser from 'tui-code-snippet/browser/browser';
 
 describe('WwHeadingManager', () => {
   let container, em, wwe, mgr;
@@ -39,6 +40,8 @@ describe('WwHeadingManager', () => {
   });
 
   it('_addBrToEmptyBlock()', () => {
+    const expected = browser.msie && browser.version === 10 ? 0 : 1;
+
     wwe.getEditor().setHTML('<h1><div></div></h1>');
 
     const range = wwe.getEditor().getSelection();
@@ -48,6 +51,11 @@ describe('WwHeadingManager', () => {
 
     mgr._addBrToEmptyBlock(range);
 
-    expect(wwe.getBody().querySelector('h1').innerHTML).toBe('<div><br></div>');
+    expect(
+      wwe
+        .getBody()
+        .querySelector('h1')
+        .querySelectorAll('br').length
+    ).toBe(expected);
   });
 });
