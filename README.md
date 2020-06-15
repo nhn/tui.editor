@@ -4,7 +4,7 @@
 
 [![github release version](https://img.shields.io/github/v/release/nhn/tui.editor.svg?include_prereleases)](https://github.com/nhn/tui.editor/releases/latest) [![npm version](https://img.shields.io/npm/v/@toast-ui/editor.svg)](https://www.npmjs.com/package/@toast-ui/editor) [![license](https://img.shields.io/github/license/nhn/tui.editor.svg)](https://github.com/nhn/tui.editor/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
-<img src="https://user-images.githubusercontent.com/18183560/84591551-41b75b00-ae7a-11ea-9019-78834b8a20f2.gif" />
+<img src="https://user-images.githubusercontent.com/18183560/84614193-59392700-af00-11ea-9a55-4a90a6ab5fe8.gif" />
 
 
 ## 🚩 Table of Contents
