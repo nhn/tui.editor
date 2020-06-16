@@ -62,7 +62,6 @@ editor.getSelectedText();
 editor.getSquire();
 editor.getTextObject(selection);
 editor.getUI();
-editor.getValue();
 editor.height('300px');
 editor.hide();
 editor.insertText('TYPE CHECKING!');
@@ -81,7 +80,6 @@ editor.scrollTop(0);
 editor.setHtml('<div>HELLO</div>');
 editor.setMarkdown('### Delicious Web!', true);
 editor.setUI(editor.getUI());
-editor.setValue('* using TOAST UI');
 editor.show();
 
 Editor.setLanguage('en', {
@@ -150,5 +148,4 @@ viewer.on('click', e => {
 });
 viewer.remove();
 viewer.setMarkdown('### I am Viewer!');
-viewer.setValue('### I am setValue method!');
 Editor.getInstances().length == 1;
