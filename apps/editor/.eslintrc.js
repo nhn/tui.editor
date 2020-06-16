@@ -10,7 +10,8 @@ module.exports = {
     jasmine: true
   },
   globals: {
-    fixture: true
+    fixture: true,
+    spyOnEvent: true
   },
   rules: {
     'lines-around-directive': 0,

@@ -3,8 +3,10 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import domUtils from './utils/dom';
+import browser from 'tui-code-snippet/browser/browser';
 
 const FIND_HEADING_RX = /h[\d]/i;
+const isIE10 = browser.msie && browser.version === 10;
 
 /**
  * Class WwHeadingManager
@@ -169,7 +171,7 @@ class WwHeadingManager {
       const headingElement = this._getHeadingElement(startContainer);
       const brs = domUtils.children(headingElement.firstChild, 'br');
 
-      if (!brs.length) {
+      if (!isIE10 && !brs.length) {
         const br = document.createElement('br');
 
         startContainer.parentNode.appendChild(br);

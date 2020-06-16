@@ -163,7 +163,7 @@ describe('WwCodeBlockManager', () => {
         .getSelection()
         .cloneRange();
 
-      wwe.setValue('<pre><svg></svg></pre>');
+      wwe.setValue('<pre>&lt;svg&gt;&lt;/svg&gt;</pre>');
 
       range.setStart(wwe.getBody().querySelectorAll('pre')[0].childNodes[0], 0);
       range.collapse(true);
