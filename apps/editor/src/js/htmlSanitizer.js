@@ -38,6 +38,7 @@ const SVG_ATTR_LIST_RX = new RegExp(
 
 const XSS_ATTR_RX = /href|src|background/gi;
 const XSS_VALUE_RX = /((java|vb|live)script|x):/gi;
+const ON_EVENT_RX = /^on\S+/;
 
 /**
  * htmlSanitizer
@@ -90,17 +91,19 @@ function isXSSAttribute(attrName, attrValue) {
 }
 
 /**
- * Removes attributes of blacklist.
- * @param {NamedNodeMap} nodeAttrs - all attributes of node
+ * Removes attributes of blacklist from node.
+ * @param {HTMLElement} node - node to remove attributes
  * @param {NamedNodeMap} blacklistAttrs - attributes of blacklist
  * @private
  */
-function removeBlacklistAttributes(nodeAttrs, blacklistAttrs) {
+function removeBlacklistAttributes(node, blacklistAttrs) {
   toArray(blacklistAttrs).forEach(({ name }) => {
-    // Edge svg attribute name returns uppercase bug. error guard.
-    // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5579311/
-    if (nodeAttrs.getNamedItem(name)) {
-      nodeAttrs.removeNamedItem(name);
+    if (ON_EVENT_RX.test(name)) {
+      node[name] = null;
+    }
+
+    if (node.getAttribute(name)) {
+      node.removeAttribute(name);
     }
   });
 }
@@ -122,7 +125,7 @@ function leaveOnlyWhitelistAttribute(html) {
       return (!htmlAttr && !svgAttr) || xssAttr;
     });
 
-    removeBlacklistAttributes(attributes, blacklist);
+    removeBlacklistAttributes(node, blacklist);
   });
 }
 

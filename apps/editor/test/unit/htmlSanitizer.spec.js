@@ -54,7 +54,7 @@ describe('htmlSanitizer', function() {
         expect(htmlSanitizer(`<TABLE BACKGROUND="javascript:alert('XSS')">`, true)).toBe(
           '<table></table>'
         );
-        expect(htmlSanitizer(`<TABLE><TD BACKGROUND="javascript:alert('XSS')">`, true)).toBe(
+        expect(htmlSanitizer(`<TABLE><TD BACKGROUND="javascript:alert('XSS')"></TD>`, true)).toBe(
           '<table><tbody><tr><td></td></tr></tbody></table>'
         );
       });
