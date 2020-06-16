@@ -61,4 +61,4 @@ var umlContent = [
   '```'
 ].join('\n');
 
-const allPluginsContent = [chartContent, codeContent, tableContent, umlContent].join('\n');
+var allPluginsContent = [chartContent, codeContent, tableContent, umlContent].join('\n');
