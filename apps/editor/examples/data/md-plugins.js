@@ -18,7 +18,7 @@ var chartContent = [
 
 var codeContent = [
   '```js',
-  `console.log('foo')`,
+  "console.log('foo')",
   '```',
   '```javascript',
   "console.log('bar')",
