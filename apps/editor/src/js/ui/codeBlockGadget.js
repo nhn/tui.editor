@@ -10,6 +10,7 @@ import off from 'tui-code-snippet/domEvent/off';
 import BlockOverlay from './blockOverlay';
 import domUtils from '../utils/dom';
 
+const GADGET_RIGHT = 26;
 const GADGET_WIDTH = 250;
 const GADGET_HEIGHT = 30;
 
@@ -75,12 +76,11 @@ class CodeBlockGadget extends BlockOverlay {
    */
   syncLayout() {
     const attachedElement = this.getAttachedElement();
-    const { left, top } = domUtils.getOffset(attachedElement, '.te-editor');
-    const outerWidth = domUtils.getOuterWidth(attachedElement);
+    const { top } = domUtils.getOffset(attachedElement, '.te-editor');
 
     css(this.el, {
-      left: `${left + outerWidth - GADGET_WIDTH - window.scrollX}px`,
       top: `${top}px`,
+      right: `${GADGET_RIGHT}px`,
       width: `${GADGET_WIDTH}px`,
       height: `${GADGET_HEIGHT}px`
     });
