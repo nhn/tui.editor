@@ -85,8 +85,15 @@ export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
  * @returns {string}
  * @private
  */
-function _createTableCellMarkdown(cellElement, cellContentMarkdown) {
-  cellContentMarkdown = cellElement.getAttribute('data-org-content') || cellContentMarkdown;
+export function _createTableCellMarkdown(cellElement, cellContentMarkdown) {
+  const orgContent = cellElement.getAttribute('data-org-content');
+
+  if (orgContent) {
+    const matched = orgContent.match(/(@cols=[0-9]+:)|(@rows=[0-9]+:)/g);
+
+    cellContentMarkdown = matched ? matched.join('') + cellContentMarkdown : cellContentMarkdown;
+  }
+
   cellContentMarkdown = cellContentMarkdown.replace(/(\r\n)|(\r)|(\n)/g, '');
 
   return ` ${cellContentMarkdown} |`;
