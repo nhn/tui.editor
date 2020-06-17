@@ -66,42 +66,42 @@ describe('toMarkRendererCreator', () => {
     });
   });
 
-  describe('_createTableCellMarkdown()', () => {
-    it('should create table cell markdown properly - basic cell ', () => {
+  describe('_createTableCellMarkdown() should create table cell markdown properly', () => {
+    it('basic cell ', () => {
       const cellHtml = '<th colspan="2" data-org-content="title1">title1</th>';
       const [cellElement] = createElement(cellHtml, 'th');
       const cellContent = 'title1';
       const actual = _createTableCellMarkdown(cellElement, cellContent);
 
-      expect(actual).toEqual(' title1 |');
+      expect(actual).toBe(' title1 |');
     });
 
-    it('should create table cell markdown properly - with colspan', () => {
+    it('with colspan', () => {
       const cellHtml = '<th colspan="2" data-org-content="@cols=2:title1">title1</th>';
       const [cellElement] = createElement(cellHtml, 'th');
       const cellContent = 'title1';
       const actual = _createTableCellMarkdown(cellElement, cellContent);
 
-      expect(actual).toEqual(' @cols=2:title1 |');
+      expect(actual).toBe(' @cols=2:title1 |');
     });
 
-    it('should create table cell markdown properly - with colspan, rowspan', () => {
+    it('with colspan, rowspan', () => {
       const cellHtml = '<th colspan="2" data-org-content="@rows=2:@cols=2:title1">title1</th>';
       const [cellElement] = createElement(cellHtml, 'th');
       const cellContent = 'title1';
       const actual = _createTableCellMarkdown(cellElement, cellContent);
 
-      expect(actual).toEqual(' @rows=2:@cols=2:title1 |');
+      expect(actual).toBe(' @rows=2:@cols=2:title1 |');
     });
 
-    it('should create table cell markdown properly - with changed cell content', () => {
+    it('with changed cell content', () => {
       const cellHtml =
         '<th colspan="2" data-org-content="@rows=2:@cols=2:title1">changed-title1</th>';
       const [cellElement] = createElement(cellHtml, 'th');
       const cellContent = 'changed-title1';
       const actual = _createTableCellMarkdown(cellElement, cellContent);
 
-      expect(actual).toEqual(' @rows=2:@cols=2:changed-title1 |');
+      expect(actual).toBe(' @rows=2:@cols=2:changed-title1 |');
     });
   });
 });
