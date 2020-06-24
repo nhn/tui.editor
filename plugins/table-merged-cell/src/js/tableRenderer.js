@@ -2,6 +2,8 @@
  * @fileoverview Implements tableRenderer
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import encodeHTMLEntity from 'tui-code-snippet/string/encodeHTMLEntity';
+
 import tableDataHandler from './tableDataHandler';
 
 /**
@@ -27,7 +29,7 @@ function _createCellHtml(cell) {
 
   if (orgContent) {
     orgContent += content;
-    attrs += ` data-org-content="${orgContent}"`;
+    attrs += ` data-org-content="${encodeHTMLEntity(orgContent)}"`;
   }
 
   return `<${nodeName}${attrs}>${content}</${nodeName}>`;
