@@ -3,6 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import $ from 'jquery';
+import { source } from 'common-tags';
 
 import tableDataHandler from '@/tableDataHandler';
 import tableRenderer from '@/tableRenderer';
@@ -45,16 +46,16 @@ describe('tableRenderer', () => {
     });
 
     it('if the html entities (", <, >) are included in the cell data, the table is created correctly', () => {
-      const tableHtml = [
-        '<table>',
-        '<thead>',
-        '<tr><th colspan="2">foo"bar"</th></tr>',
-        '</thead>',
-        '<tbody>',
-        '<tr><td colspan="2"><span style="color:red;">baz</span></td></tr>',
-        '</tbody>',
-        '</table>'
-      ].join('');
+      const tableHtml = source`
+        <table>
+        <thead>
+        <tr><th colspan="2">foo"bar"</th></tr>
+        </thead>
+        <tbody>
+        <tr><td colspan="2"><span style="color: red;">baz</span></td></tr>
+        </tbody>
+        </table>
+      `;
       const renderData = tableDataHandler.createTableData(createElement(tableHtml));
       const result = tableRenderer.createTableHtml(renderData);
       const tableElement = createElement(result);
@@ -63,7 +64,7 @@ describe('tableRenderer', () => {
         '@cols=2:foo"bar"'
       );
       expect(tableElement.querySelector('td').getAttribute('data-org-content')).toBe(
-        '@cols=2:<span style="color:red;">baz</span>'
+        '@cols=2:<span style="color: red;">baz</span>'
       );
     });
   });
