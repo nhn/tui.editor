@@ -2,22 +2,18 @@
  * @fileoverview Implements toMark
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+import DomRunner from './domRunner';
+import toDom from './toDom';
+import basicRenderer from './renderer.basic';
+import gfmRenderer from './renderer.gfm';
 
-'use strict';
-
-var DomRunner = require('./domRunner'),
-    toDom = require('./toDom'),
-    basicRenderer = require('./renderer.basic'),
-    gfmRenderer = require('./renderer.gfm');
-
-var FIND_UNUSED_BRS_RX = /[ \xA0]+(\n\n)/g,
-    FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX = /^[\n]+|[\s\n]+$/g,
-    FIND_MULTIPLE_BRS_RX = /([ \xA0]+\n){2,}/g,
-    FIND_RETURNS_RX = /([ \xA0]){2,}\n/g,
-    FIND_RETURNS_AND_SPACE_RX = /[ \xA0\n]+/g;
+const FIND_UNUSED_BRS_RX = /[ \xA0]+(\n\n)/g;
+const FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX = /^[\n]+|[\s\n]+$/g;
+const FIND_MULTIPLE_BRS_RX = /([ \xA0]+\n){2,}/g;
+const FIND_RETURNS_RX = /([ \xA0]){2,}\n/g;
+const FIND_RETURNS_AND_SPACE_RX = /[ \xA0\n]+/g;
 
 /**
- * toMark
  * @exports toMark
  * @param {string} htmlStr html string to convert
  * @param {object} options option
@@ -29,51 +25,48 @@ var FIND_UNUSED_BRS_RX = /[ \xA0]+(\n\n)/g,
  * toMark('<del>strike</del>'); // "~~strike~~"
  * toMark('<del>strike</del>', {gfm: false}); // "strike"
  */
-function toMark(htmlStr, options) {
-    var runner,
-        isGfm = true,
-        renderer;
+export default function toMark(htmlStr, options) {
+  let isGfm = true;
+  let renderer;
 
-    if (!htmlStr) {
-        return '';
+  if (!htmlStr) {
+    return '';
+  }
+
+  renderer = gfmRenderer;
+
+  if (options) {
+    isGfm = options.gfm;
+
+    if (isGfm === false) {
+      renderer = basicRenderer;
     }
 
-    renderer = gfmRenderer;
+    renderer = options.renderer || renderer;
+  }
 
-    if (options) {
-        isGfm = options.gfm;
+  const runner = new DomRunner(toDom(htmlStr));
 
-        if (isGfm === false) {
-            renderer = basicRenderer;
-        }
-
-        renderer = options.renderer || renderer;
-    }
-
-    runner = new DomRunner(toDom(htmlStr));
-
-    return finalize(parse(runner, renderer), isGfm, renderer.lineFeedReplacement);
+  return finalize(parse(runner, renderer), isGfm, renderer.lineFeedReplacement);
 }
 
 /**
- * parse
  * Parse dom to markdown
  * @param {DomRunner} runner runner
  * @param {Renderer} renderer renderer
  * @returns {string} markdown text
  */
 function parse(runner, renderer) {
-    var markdownContent = '';
+  let markdownContent = '';
 
-    while (runner.next()) {
-        markdownContent += tracker(runner, renderer);
-    }
+  while (runner.next()) {
+    markdownContent += tracker(runner, renderer);
+  }
 
-    return markdownContent;
+  return markdownContent;
 }
 
 /**
- * finalize
  * Remove first and last return character
  * @param {string} text text to finalize
  * @param {boolean} isGfm isGfm flag
@@ -81,69 +74,52 @@ function parse(runner, renderer) {
  * @returns {string} result
  */
 function finalize(text, isGfm, lineFeedReplacement) {
-    //collapse return and <br>
-    //BR뒤에 바로 \n이 이어지면 BR은 불필요하다
-    text = text.replace(FIND_UNUSED_BRS_RX, '\n');
-    //console.log(2, JSON.stringify(text));
+  // collapse return and <br>
+  text = text.replace(FIND_UNUSED_BRS_RX, '\n');
 
-    //collapse multiple br
-    //두개 이상의 BR개행은 한개로
-    text = text.replace(FIND_MULTIPLE_BRS_RX, '\n\n');
-    //console.log(3, JSON.stringify(text));
+  // collapse multiple br
+  text = text.replace(FIND_MULTIPLE_BRS_RX, '\n\n');
 
-    text = text.replace(FIND_RETURNS_AND_SPACE_RX, function(matched) {
-        var returnCount = (matched.match(/\n/g) || []).length;
+  text = text.replace(FIND_RETURNS_AND_SPACE_RX, matched => {
+    const returnCount = (matched.match(/\n/g) || []).length;
 
-        if (returnCount >= 3) {
-            return '\n\n';
-        } else if (matched >= 1) {
-            return '\n';
-        }
-
-        return matched;
-    });
-    //console.log(3, JSON.stringify(text));
-
-    //remove first and last \n
-    //시작과 마지막 개행제거
-    text = text.replace(FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX, '');
-    //console.log(JSON.stringify(text));
-
-    text = text.replace(new RegExp(lineFeedReplacement, 'g'), '\n');
-    //in gfm replace '  \n' make by <br> to '\n'
-    //gfm모드인경우 임의 개행에 스페이스를 제거
-    if (isGfm) {
-        text = text.replace(FIND_RETURNS_RX, '\n');
+    if (returnCount >= 3) {
+      return '\n\n';
     }
-    //console.log(7, JSON.stringify(text));
+    if (matched >= 1) {
+      return '\n';
+    }
 
-    return text;
+    return matched;
+  });
+
+  // remove first and last \n
+  text = text.replace(FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX, '');
+
+  text = text.replace(new RegExp(lineFeedReplacement, 'g'), '\n');
+  // in gfm replace '  \n' make by <br> to '\n'
+  if (isGfm) {
+    text = text.replace(FIND_RETURNS_RX, '\n');
+  }
+
+  return text;
 }
 
-
 /**
- * tracker
  * Iterate childNodes and process conversion using recursive call
  * @param {DomRunner} runner dom runner
  * @param {Renderer} renderer renderer to use
  * @returns {string} processed text
  */
 function tracker(runner, renderer) {
-    var i,
-        t,
-        subContent = '',
-        content;
+  let subContent = '';
 
-    var node = runner.getNode();
+  const node = runner.getNode();
 
-    for (i = 0, t = node.childNodes.length; i < t; i += 1) {
-        runner.next();
-        subContent += tracker(runner, renderer);
-    }
+  for (let i = 0, t = node.childNodes.length; i < t; i += 1) {
+    runner.next();
+    subContent += tracker(runner, renderer);
+  }
 
-    content = renderer.convert(node, subContent);
-
-    return content;
+  return renderer.convert(node, subContent);
 }
-
-module.exports = toMark;
