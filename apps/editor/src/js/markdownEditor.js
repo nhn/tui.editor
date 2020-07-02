@@ -10,6 +10,7 @@ import MdListManager from './mdListManager';
 import ComponentManager from './componentManager';
 import MdTextObject from './mdTextObject';
 import {
+  findClosestNode,
   traverseParentNodes,
   isStyledTextNode,
   getMdStartLine,
@@ -35,6 +36,8 @@ const defaultToolbarState = {
   heading: false,
   table: false
 };
+
+const TASK_META_RX = /^\[(\s*)(x?)(\s*)\](?:\s+)/i;
 
 function getToolbarStateType({ type, listData }) {
   if (type === 'list' || type === 'item') {
@@ -400,6 +403,42 @@ class MarkdownEditor extends CodeMirrorExt {
     this._latestState = state;
   }
 
+  _test() {
+    const { line, ch } = this.cm.getCursor();
+    const mdLine = line + 1;
+    const currentLine = this.cm.getLine(line);
+    const mdCh = currentLine.length === ch ? ch : ch + 1;
+    const cursorNode = this.toastMark.findNodeAtPosition([mdLine, mdCh]);
+    const itemNode = cursorNode && findClosestNode(cursorNode, ({ type }) => type === 'item');
+
+    if (itemNode) {
+      this._test2(itemNode, line);
+    }
+  }
+
+  _test2(node, line) {
+    const { literal, sourcepos } = node.firstChild.firstChild;
+    const matched = literal.match(TASK_META_RX);
+
+    if (matched) {
+      const [, beforeSpaces, stateChar, afterSpaces] = matched;
+      const spaces = beforeSpaces.length + afterSpaces.length;
+      const metaLen = spaces + stateChar.length;
+      const [[, startCh]] = sourcepos;
+
+      if (metaLen > 1 && !stateChar) {
+        return;
+      }
+
+      this.cm.replaceRange(
+        metaLen ? stateChar : ' ',
+        { line, ch: startCh },
+        { line, ch: startCh + (spaces ? spaces + 1 : 0) }
+      );
+      this.cm.setCursor({ line, ch: startCh + 1 });
+    }
+  }
+
   _onChangeCursorActivity() {
     const { line, ch } = this.cm.getCursor();
     const mdLine = line + 1;
@@ -421,6 +460,8 @@ class MarkdownEditor extends CodeMirrorExt {
     }
 
     this._setToolbarState(state);
+
+    this._test();
   }
 
   /**
