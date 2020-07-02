@@ -25,8 +25,8 @@
         "build": "make build"
     },
     "devDependencies": {
-        "mocha": "2.2.5",
+        "mocha": "^8.0.0",
         "uglify-js": "^2.4.15",
-        "unexpected": "8.2.0"
+        "unexpected": "^11.14.0"
     }
 }

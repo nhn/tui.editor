@@ -82,7 +82,7 @@ function setConfig(defaultConfig, server) {
 module.exports = function(config) {
   const defaultConfig = {
     basePath: './',
-    frameworks: ['jasmine-ajax', 'jasmine-jquery', 'jasmine'],
+    frameworks: ['jasmine-ajax', 'jasmine'],
     files: ['test/index.js'],
     preprocessors: {
       'test/index.js': ['webpack', 'sourcemap']

@@ -48,7 +48,7 @@ describe('codeSyntaxHighlightPlugin', () => {
     expect(container.querySelectorAll('pre code').length).toBe(1);
     expect(container.querySelectorAll('pre code span').length).toBe(2);
     expect(container.querySelector('pre code').getAttribute('data-language')).toBe('javascript');
-    expect(container.querySelector('pre code').className).toBe('lang-javascript');
+    expect(container.querySelector('pre').classList[0]).toBe('lang-javascript');
   });
 
   it('render codeblock element in viewer', () => {
@@ -73,7 +73,7 @@ describe('codeSyntaxHighlightPlugin', () => {
     expect(container.querySelectorAll('pre code').length).toBe(1);
     expect(container.querySelectorAll('pre code span').length).toBe(2);
     expect(container.querySelector('pre code').getAttribute('data-language')).toBe('javascript');
-    expect(container.querySelector('pre code').className).toBe('lang-javascript');
+    expect(container.querySelector('pre').classList[0]).toBe('lang-javascript');
   });
 
   it('render code in wysiwyg', () => {
