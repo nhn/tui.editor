@@ -122,7 +122,7 @@ class MarkdownEditor extends CodeMirrorExt {
         Enter: 'newlineAndIndentContinueMarkdownList',
         Tab: 'indentOrderedList',
         'Shift-Tab': 'indentLessOrderedList',
-        'Shift-T': () => this._toggleTaskStates()
+        'Shift-Ctrl-X': () => this._toggleTaskStates()
       },
       viewportMargin: options && options.height === 'auto' ? Infinity : 10
     });
@@ -437,14 +437,6 @@ class MarkdownEditor extends CodeMirrorExt {
 
   getToastMark() {
     return this.toastMark;
-  }
-
-  _getNodeByCursorInfo(line, ch) {
-    const mdLine = line + 1;
-    const currentLine = this.cm.getLine(line);
-    const mdCh = currentLine.length === ch ? ch : ch + 1;
-
-    return this.toastMark.findNodeAtPosition([mdLine, mdCh]);
   }
 
   _toggleTaskStates() {
