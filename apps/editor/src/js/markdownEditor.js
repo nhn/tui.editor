@@ -15,10 +15,10 @@ import {
   getMdStartLine,
   getMdEndLine,
   getMdStartCh,
-  getMdEndCh,
-  getParentListItemNode
+  getMdEndCh
 } from './utils/markdown';
 import { getMarkInfo } from './markTextHelper';
+import { toggleTaskStates, changeTextToTaskMarker } from './codemirror/tasklist';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -36,8 +36,6 @@ const defaultToolbarState = {
   heading: false,
   table: false
 };
-
-const TASK_META_RX = /^\[(\s*)(x?)(\s*)\](?:\s+)/i;
 
 function getToolbarStateType({ type, listData }) {
   if (type === 'list' || type === 'item') {
@@ -122,7 +120,7 @@ class MarkdownEditor extends CodeMirrorExt {
         Enter: 'newlineAndIndentContinueMarkdownList',
         Tab: 'indentOrderedList',
         'Shift-Tab': 'indentLessOrderedList',
-        'Shift-Ctrl-X': () => this._toggleTaskStates()
+        'Shift-Ctrl-X': cm => toggleTaskStates(cm, this.toastMark)
       },
       viewportMargin: options && options.height === 'auto' ? Infinity : 10
     });
@@ -172,7 +170,7 @@ class MarkdownEditor extends CodeMirrorExt {
     this.cm.on('change', (cm, cmEvent) => {
       this._refreshCodeMirrorMarks(cmEvent);
       this._emitMarkdownEditorChangeEvent(cmEvent);
-      this._changeTextToTaskMeta();
+      changeTextToTaskMarker(cm, this.toastMark);
     });
 
     this.cm.on('focus', () => {
@@ -437,69 +435,6 @@ class MarkdownEditor extends CodeMirrorExt {
 
   getToastMark() {
     return this.toastMark;
-  }
-
-  _toggleTaskStates() {
-    const ranges = this.cm.listSelections();
-
-    ranges.forEach(range => {
-      const { anchor, head } = range;
-      const startLine = anchor.line;
-      const endLine = head.line;
-      let mdNode;
-
-      for (let index = startLine, len = endLine; index <= len; index += 1) {
-        mdNode = this.toastMark.findFirstNodeAtLine(index + 1);
-
-        const { type } = mdNode;
-
-        if (type === 'list' || type === 'item') {
-          this._changeTaskState(mdNode, index);
-        }
-      }
-    });
-  }
-
-  _changeTaskState(mdNode, line) {
-    const { listData, sourcepos } = mdNode;
-    const { task, checked, padding } = listData;
-
-    if (task) {
-      const [[, startCh]] = sourcepos;
-      const ch = startCh + padding;
-      const stateChar = checked ? ' ' : 'x';
-
-      this.cm.replaceRange(stateChar, { line, ch }, { line, ch: ch + 1 });
-    }
-  }
-
-  _changeTextToTaskMeta() {
-    const { line, ch } = this.cm.getCursor();
-    const mdCh = this.cm.getLine(line).length === ch ? ch : ch + 1;
-    const cursorNode = this.toastMark.findNodeAtPosition([line + 1, mdCh]);
-    const foundNode = getParentListItemNode(cursorNode);
-
-    if (foundNode && foundNode.firstChild) {
-      const { literal, sourcepos } = foundNode.firstChild;
-      const matched = literal && literal.match(TASK_META_RX);
-
-      if (matched) {
-        const [, beforeSpaces, stateChar, afterSpaces] = matched;
-        const spaces = beforeSpaces.length + afterSpaces.length;
-        const taskMetaLen = spaces + stateChar.length;
-        const hasOnlySpaces = taskMetaLen > 1 && !stateChar;
-
-        if (!hasOnlySpaces) {
-          const [[, startCh]] = sourcepos;
-
-          this.cm.replaceRange(
-            taskMetaLen ? stateChar : ' ',
-            { line, ch: startCh },
-            { line, ch: startCh + (spaces ? spaces + 1 : 0) }
-          );
-        }
-      }
-    }
   }
 
   /**
