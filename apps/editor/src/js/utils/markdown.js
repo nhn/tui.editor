@@ -129,3 +129,13 @@ export function setChPos(originPos, newCh) {
     ch: newCh
   };
 }
+
+export function getParentListItemNode(mdNode) {
+  return findClosestNode(
+    mdNode,
+    node =>
+      (node.type === 'paragraph' || node.type === 'codeBlock') &&
+      node.parent &&
+      node.parent.type === 'item'
+  );
+}

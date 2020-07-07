@@ -10,13 +10,13 @@ import MdListManager from './mdListManager';
 import ComponentManager from './componentManager';
 import MdTextObject from './mdTextObject';
 import {
-  findClosestNode,
   traverseParentNodes,
   isStyledTextNode,
   getMdStartLine,
   getMdEndLine,
   getMdStartCh,
-  getMdEndCh
+  getMdEndCh,
+  getParentListItemNode
 } from './utils/markdown';
 import { getMarkInfo } from './markTextHelper';
 
@@ -121,7 +121,8 @@ class MarkdownEditor extends CodeMirrorExt {
       extraKeys: {
         Enter: 'newlineAndIndentContinueMarkdownList',
         Tab: 'indentOrderedList',
-        'Shift-Tab': 'indentLessOrderedList'
+        'Shift-Tab': 'indentLessOrderedList',
+        'Shift-T': () => this._toggleTaskStates()
       },
       viewportMargin: options && options.height === 'auto' ? Infinity : 10
     });
@@ -171,6 +172,7 @@ class MarkdownEditor extends CodeMirrorExt {
     this.cm.on('change', (cm, cmEvent) => {
       this._refreshCodeMirrorMarks(cmEvent);
       this._emitMarkdownEditorChangeEvent(cmEvent);
+      this._changeTextToTaskState();
     });
 
     this.cm.on('focus', () => {
@@ -403,42 +405,6 @@ class MarkdownEditor extends CodeMirrorExt {
     this._latestState = state;
   }
 
-  _test() {
-    const { line, ch } = this.cm.getCursor();
-    const mdLine = line + 1;
-    const currentLine = this.cm.getLine(line);
-    const mdCh = currentLine.length === ch ? ch : ch + 1;
-    const cursorNode = this.toastMark.findNodeAtPosition([mdLine, mdCh]);
-    const itemNode = cursorNode && findClosestNode(cursorNode, ({ type }) => type === 'item');
-
-    if (itemNode) {
-      this._test2(itemNode, line);
-    }
-  }
-
-  _test2(node, line) {
-    const { literal, sourcepos } = node.firstChild.firstChild;
-    const matched = literal.match(TASK_META_RX);
-
-    if (matched) {
-      const [, beforeSpaces, stateChar, afterSpaces] = matched;
-      const spaces = beforeSpaces.length + afterSpaces.length;
-      const metaLen = spaces + stateChar.length;
-      const [[, startCh]] = sourcepos;
-
-      if (metaLen > 1 && !stateChar) {
-        return;
-      }
-
-      this.cm.replaceRange(
-        metaLen ? stateChar : ' ',
-        { line, ch: startCh },
-        { line, ch: startCh + (spaces ? spaces + 1 : 0) }
-      );
-      this.cm.setCursor({ line, ch: startCh + 1 });
-    }
-  }
-
   _onChangeCursorActivity() {
     const { line, ch } = this.cm.getCursor();
     const mdLine = line + 1;
@@ -460,8 +426,6 @@ class MarkdownEditor extends CodeMirrorExt {
     }
 
     this._setToolbarState(state);
-
-    this._test();
   }
 
   /**
@@ -473,6 +437,77 @@ class MarkdownEditor extends CodeMirrorExt {
 
   getToastMark() {
     return this.toastMark;
+  }
+
+  _getNodeByCursorInfo(line, ch) {
+    const mdLine = line + 1;
+    const currentLine = this.cm.getLine(line);
+    const mdCh = currentLine.length === ch ? ch : ch + 1;
+
+    return this.toastMark.findNodeAtPosition([mdLine, mdCh]);
+  }
+
+  _toggleTaskStates() {
+    const ranges = this.cm.listSelections();
+
+    ranges.forEach(range => {
+      const { anchor, head } = range;
+      const startLine = anchor.line;
+      const endLine = head.line;
+      let mdNode;
+
+      for (let index = startLine, len = endLine; index <= len; index += 1) {
+        mdNode = this.toastMark.findFirstNodeAtLine(index + 1);
+
+        const { type } = mdNode;
+
+        if (type === 'list' || type === 'item') {
+          this._changeTaskState(mdNode, index);
+        }
+      }
+    });
+  }
+
+  _changeTaskState(mdNode, line) {
+    const { listData, sourcepos } = mdNode;
+    const { task, checked, padding } = listData;
+
+    if (task) {
+      const [[, startCh]] = sourcepos;
+      const ch = startCh + padding;
+      const stateChar = checked ? ' ' : 'x';
+
+      this.cm.replaceRange(stateChar, { line, ch }, { line, ch: ch + 1 });
+    }
+  }
+
+  _changeTextToTaskState() {
+    const { line, ch } = this.cm.getCursor();
+    const mdCh = this.cm.getLine(line).length === ch ? ch : ch + 1;
+    const cursorNode = this.toastMark.findNodeAtPosition([line + 1, mdCh]);
+    const foundNode = getParentListItemNode(cursorNode);
+
+    if (foundNode && foundNode.firstChild) {
+      const { literal, sourcepos } = foundNode.firstChild;
+      const matched = literal && literal.match(TASK_META_RX);
+
+      if (matched) {
+        const [, beforeSpaces, stateChar, afterSpaces] = matched;
+        const spaces = beforeSpaces.length + afterSpaces.length;
+        const taskMetaLen = spaces + stateChar.length;
+        const hasOnlySpaces = taskMetaLen > 1 && !stateChar;
+
+        if (!hasOnlySpaces) {
+          const [[, startCh]] = sourcepos;
+
+          this.cm.replaceRange(
+            taskMetaLen ? stateChar : ' ',
+            { line, ch: startCh },
+            { line, ch: startCh + (spaces ? spaces + 1 : 0) }
+          );
+        }
+      }
+    }
   }
 
   /**
