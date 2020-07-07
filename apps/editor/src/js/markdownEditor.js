@@ -172,7 +172,7 @@ class MarkdownEditor extends CodeMirrorExt {
     this.cm.on('change', (cm, cmEvent) => {
       this._refreshCodeMirrorMarks(cmEvent);
       this._emitMarkdownEditorChangeEvent(cmEvent);
-      this._changeTextToTaskState();
+      this._changeTextToTaskMeta();
     });
 
     this.cm.on('focus', () => {
@@ -473,7 +473,7 @@ class MarkdownEditor extends CodeMirrorExt {
     }
   }
 
-  _changeTextToTaskState() {
+  _changeTextToTaskMeta() {
     const { line, ch } = this.cm.getCursor();
     const mdCh = this.cm.getLine(line).length === ch ? ch : ch + 1;
     const cursorNode = this.toastMark.findNodeAtPosition([line + 1, mdCh]);
