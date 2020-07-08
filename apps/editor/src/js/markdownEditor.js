@@ -37,6 +37,9 @@ const defaultToolbarState = {
   table: false
 };
 
+const LIST_RX = /^[ \t]*([-*+]|[\d]+\.)\s/;
+const LIST_TEXT_RX = /^(\s{0,3})\[(\s*x\s*)?\]\s/i;
+
 function getToolbarStateType({ type, listData }) {
   if (type === 'list' || type === 'item') {
     if (listData.task) {
@@ -160,6 +163,7 @@ class MarkdownEditor extends CodeMirrorExt {
 
     this.cm.on('beforeChange', (cm, ev) => {
       if (ev.origin === 'paste') {
+        this._changeTaskMarkerBeforePaste(ev);
         this.eventManager.emit('pasteBefore', {
           source: 'markdown',
           data: ev
@@ -287,6 +291,29 @@ class MarkdownEditor extends CodeMirrorExt {
       this.eventManager.emit('changeFromMarkdown', eventObj);
       this.eventManager.emit('change', eventObj);
     }
+  }
+
+  _changeTaskMarkerBeforePaste(ev) {
+    const { from, to, text } = ev;
+
+    const changed = text.map(line => {
+      const list = LIST_RX.exec(line);
+
+      if (list) {
+        const [bullet] = list;
+        const originText = line.replace(bullet, '');
+        const replacedText = originText.replace(
+          LIST_TEXT_RX,
+          (match, padding, stateChar) => `${padding}[${stateChar ? stateChar.trim() : ' '}] `
+        );
+
+        return `${bullet}${replacedText}`;
+      }
+
+      return line;
+    });
+
+    ev.update(from, to, changed);
   }
 
   _refreshCodeMirrorMarks(e) {
