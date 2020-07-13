@@ -165,3 +165,41 @@ describe('listen cursorActivity event', () => {
     });
   });
 });
+
+describe('listen blur event', () => {
+  let setValue, blur, getHighlightedCount;
+  let previewEl;
+
+  function init(highlight) {
+    const editorEl = document.createElement('div');
+
+    previewEl = document.createElement('div');
+
+    document.body.innerHTML = '';
+    document.body.appendChild(editorEl);
+    document.body.appendChild(previewEl);
+
+    const eventManager = new EventManager();
+    const convertor = new Convertor(eventManager);
+    const toastMark = new ToastMark();
+    const preview = new MarkdownPreview(previewEl, eventManager, convertor, { highlight });
+    const editor = new MarkdownEditor(editorEl, eventManager, toastMark);
+
+    setValue = val => {
+      editor.setValue(val);
+      editor.focus();
+    };
+    blur = () => editor.blur();
+    getHighlightedCount = () => preview.el.querySelectorAll(`.${CLASS_HIGHLIGHT}`).length;
+  }
+
+  it('the highlighting element disappears from the preview', () => {
+    init(true);
+
+    setValue('# Heading');
+    expect(getHighlightedCount()).toBe(1);
+
+    blur();
+    expect(getHighlightedCount()).toBe(0);
+  });
+});
