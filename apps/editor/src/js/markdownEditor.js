@@ -15,10 +15,10 @@ import {
   getMdStartLine,
   getMdEndLine,
   getMdStartCh,
-  getMdEndCh
+  getMdEndCh,
+  addChPos
 } from './utils/markdown';
 import { getMarkInfo } from './markTextHelper';
-import { toggleTaskStates, changeTextToTaskMarker } from './codemirror/tasklist';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -36,9 +36,6 @@ const defaultToolbarState = {
   heading: false,
   table: false
 };
-
-const LIST_RX = /^[ \t]*([-*+]|[\d]+\.)\s/;
-const LIST_TEXT_RX = /^(\s{0,3})\[(\s*x\s*)?\]\s/i;
 
 function getToolbarStateType({ type, listData }) {
   if (type === 'list' || type === 'item') {
@@ -106,7 +103,29 @@ function isToolbarStateChanged(previousState, currentState) {
   return Object.keys(currentState).some(type => previousState[type] !== currentState[type]);
 }
 
+function findParagraphFromFirstChild(node) {
+  node = node.firstChild;
+
+  while (node) {
+    if (node.type === 'paragraph') {
+      break;
+    }
+    node = node.firstChild;
+  }
+
+  return node;
+}
+
+function isChangedSpace(e) {
+  const { origin, text, removed } = e;
+  const inputSpace = origin === '+input' && /\s/.test(text[0]);
+  const removedSpace = origin === '+delete' && /\s/.test(removed[0]);
+
+  return inputSpace || removedSpace;
+}
+
 const ATTR_NAME_MARK = 'data-tui-mark';
+const TASK_MARKER_RX = /^\[(\s*)(x?)(\s*)\](?:\s+)/i;
 
 /**
  * Class MarkdownEditor
@@ -123,7 +142,7 @@ class MarkdownEditor extends CodeMirrorExt {
         Enter: 'newlineAndIndentContinueMarkdownList',
         Tab: 'indentOrderedList',
         'Shift-Tab': 'indentLessOrderedList',
-        'Shift-Ctrl-X': cm => toggleTaskStates(cm, this.toastMark)
+        'Shift-Ctrl-X': () => this._toggleTaskStates()
       },
       viewportMargin: options && options.height === 'auto' ? Infinity : 10
     });
@@ -146,6 +165,13 @@ class MarkdownEditor extends CodeMirrorExt {
      */
     this._markedLines = {};
 
+    /**
+     * map of replaced range lines for pasting
+     * @type {Object.<number, boolean}
+     * @private
+     */
+    this._replacedRangeLines = null;
+
     this._initEvent();
   }
 
@@ -163,7 +189,6 @@ class MarkdownEditor extends CodeMirrorExt {
 
     this.cm.on('beforeChange', (cm, ev) => {
       if (ev.origin === 'paste') {
-        this._changeTaskMarkerBeforePaste(ev);
         this.eventManager.emit('pasteBefore', {
           source: 'markdown',
           data: ev
@@ -172,9 +197,8 @@ class MarkdownEditor extends CodeMirrorExt {
     });
 
     this.cm.on('change', (cm, cmEvent) => {
-      this._refreshCodeMirrorMarks(cmEvent);
+      this._refreshCodeMirror(cmEvent);
       this._emitMarkdownEditorChangeEvent(cmEvent);
-      changeTextToTaskMarker(cm, this.toastMark);
     });
 
     this.cm.on('focus', () => {
@@ -293,31 +317,41 @@ class MarkdownEditor extends CodeMirrorExt {
     }
   }
 
-  _changeTaskMarkerBeforePaste(ev) {
-    const { from, to, text } = ev;
+  _changeTaskState(mdNode, line) {
+    const { listData, sourcepos } = mdNode;
+    const { task, checked, padding } = listData;
 
-    const changed = text.map(line => {
-      const list = LIST_RX.exec(line);
+    if (task) {
+      const stateChar = checked ? ' ' : 'x';
+      const [[, startCh]] = sourcepos;
+      const startPos = { line, ch: startCh + padding };
 
-      if (list) {
-        const [bullet] = list;
-        const originText = line.replace(bullet, '');
-        const replacedText = originText.replace(
-          LIST_TEXT_RX,
-          (match, padding, stateChar) => `${padding}[${stateChar ? stateChar.trim() : ' '}] `
-        );
-
-        return `${bullet}${replacedText}`;
-      }
-
-      return line;
-    });
-
-    ev.update(from, to, changed);
+      this.cm.replaceRange(stateChar, startPos, addChPos(startPos, 1));
+    }
   }
 
-  _refreshCodeMirrorMarks(e) {
-    const { from, to, text } = e;
+  _toggleTaskStates() {
+    const ranges = this.cm.listSelections();
+
+    ranges.forEach(range => {
+      const { anchor, head } = range;
+      const startLine = Math.min(anchor.line, head.line);
+      const endLine = Math.max(anchor.line, head.line);
+      let mdNode;
+
+      for (let index = startLine, len = endLine; index <= len; index += 1) {
+        mdNode = this.toastMark.findFirstNodeAtLine(index + 1);
+
+        if (mdNode.type === 'list' || mdNode.type === 'item') {
+          this._changeTaskState(mdNode, index);
+        }
+      }
+    });
+  }
+
+  _refreshCodeMirror(e) {
+    const { from, to, text, origin } = e;
+    const changedSpace = isChangedSpace(e);
     const changed = this.toastMark.editMarkdown(
       [from.line + 1, from.ch + 1],
       [to.line + 1, to.ch + 1],
@@ -330,7 +364,13 @@ class MarkdownEditor extends CodeMirrorExt {
       return;
     }
 
-    changed.forEach(editResult => this._markNodes(editResult));
+    changed.forEach(editResult => {
+      this._markNodes(editResult);
+
+      if (!changedSpace) {
+        this._changeTaskMarker(editResult, origin);
+      }
+    });
   }
 
   _markNodes(editResult) {
@@ -353,7 +393,6 @@ class MarkdownEditor extends CodeMirrorExt {
         }
       }
 
-      /* eslint-disable max-depth */
       for (const parent of nodes) {
         const walker = parent.walker();
         let event = walker.next();
@@ -361,13 +400,80 @@ class MarkdownEditor extends CodeMirrorExt {
         while (event) {
           const { node, entering } = event;
 
+          // eslint-disable-next-line max-depth
           if (entering) {
             this._markNode(node);
           }
           event = walker.next();
         }
       }
-      /* eslint-enable max-depth */
+    }
+  }
+
+  _changeTaskMarker(editResult, eventType) {
+    const { nodes } = editResult;
+
+    if (eventType === 'paste') {
+      this._replacedRangeLines = {};
+    } else if (eventType !== 'replacedRange') {
+      this._replacedRangeLines = null;
+    }
+
+    const customEventType = eventType === 'paste' ? 'replacedRange' : '';
+
+    if (nodes.length) {
+      for (const parent of nodes) {
+        const walker = parent.walker();
+        let event = walker.next();
+
+        while (event) {
+          const { node, entering } = event;
+
+          // eslint-disable-next-line max-depth
+          if (entering && node.type === 'item' && !node.listData.task) {
+            const paraNode = findParagraphFromFirstChild(node);
+
+            this._changeTextToTaskMarker(paraNode, customEventType);
+          }
+          event = walker.next();
+        }
+      }
+    }
+  }
+
+  _changeTextToTaskMarker(paraNode, eventType) {
+    const paraTextNode = paraNode && paraNode.firstChild;
+
+    if (paraTextNode) {
+      const { literal, sourcepos } = paraTextNode;
+      const [[line, ch]] = sourcepos;
+
+      if (!literal || (this._replacedRangeLines && this._replacedRangeLines[line])) {
+        return;
+      }
+
+      const matched = literal.match(TASK_MARKER_RX);
+
+      if (matched) {
+        const [, startSpaces, stateChar, lastSpaces] = matched;
+        const spaces = startSpaces.length + lastSpaces.length;
+        const startPos = { line: line - 1, ch };
+
+        if (eventType) {
+          this._replacedRangeLines[line] = true;
+        }
+
+        if (stateChar) {
+          this.cm.replaceRange(
+            stateChar,
+            startPos,
+            addChPos(startPos, spaces ? spaces + 1 : 0),
+            eventType
+          );
+        } else if (!spaces) {
+          this.cm.replaceRange(' ', startPos, startPos, eventType);
+        }
+      }
     }
   }
 
