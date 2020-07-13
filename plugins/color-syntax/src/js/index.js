@@ -54,6 +54,7 @@ function getScrollTopForReFocus(sq) {
 function createApplyButton(text) {
   const button = document.createElement('button');
 
+  button.setAttribute('type', 'button');
   button.className = 'te-apply-button';
   button.innerHTML = text;
 
