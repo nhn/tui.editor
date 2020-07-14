@@ -97,7 +97,7 @@ describe('MarkdownEditor', () => {
       init();
     });
 
-    describe('when setting value', () => {
+    describe('changeTextToTaskMarker()', () => {
       it('spaces before state character in marker are removed', () => {
         setValue('* [  x] list');
         setCursor({ line: 0, ch: 3 });
