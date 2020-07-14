@@ -78,18 +78,19 @@ describe('MarkdownEditor', () => {
 
   describe('tasklist', () => {
     let setValue, setCursor, setSelection, getValue;
-    let toggleTaskStates;
+    let changeTextToTaskMarker, toggleTaskStates;
 
     function init() {
       const doc = mde.getEditor().getDoc();
 
       setValue = val => mde.setValue(val);
       setCursor = pos => doc.setCursor(pos);
-      setSelection = (anchor, head) => {
-        doc.setSelection(anchor, head);
+      setSelection = (from, to) => {
+        doc.setSelection(from, to);
       };
       getValue = () => mde.getValue();
       toggleTaskStates = () => mde._toggleTaskStates();
+      changeTextToTaskMarker = () => mde._changeTextToTaskMarker();
     }
 
     beforeEach(() => {
@@ -100,6 +101,7 @@ describe('MarkdownEditor', () => {
       it('spaces before state character in marker are removed', () => {
         setValue('* [  x] list');
         setCursor({ line: 0, ch: 3 });
+        changeTextToTaskMarker();
 
         expect(getValue()).toBe('* [x] list');
       });
@@ -107,6 +109,7 @@ describe('MarkdownEditor', () => {
       it('spaces after state character in marker are removed', () => {
         setValue('* [x  ] list');
         setCursor({ line: 0, ch: 5 });
+        changeTextToTaskMarker();
 
         expect(getValue()).toBe('* [x] list');
       });
@@ -114,6 +117,7 @@ describe('MarkdownEditor', () => {
       it('all spaces in marker are removed', () => {
         setValue('* [    x  ] list');
         setCursor({ line: 0, ch: 3 });
+        changeTextToTaskMarker();
 
         expect(getValue()).toBe('* [x] list');
       });
@@ -121,6 +125,7 @@ describe('MarkdownEditor', () => {
       it('space is added if marker has no spaces', () => {
         setValue('* [] list');
         setCursor({ line: 0, ch: 3 });
+        changeTextToTaskMarker();
 
         expect(getValue()).toBe('* [ ] list');
       });

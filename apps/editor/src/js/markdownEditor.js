@@ -16,7 +16,8 @@ import {
   getMdEndLine,
   getMdStartCh,
   getMdEndCh,
-  addChPos
+  addChPos,
+  findClosestNode
 } from './utils/markdown';
 import { getMarkInfo } from './markTextHelper';
 
@@ -103,29 +104,9 @@ function isToolbarStateChanged(previousState, currentState) {
   return Object.keys(currentState).some(type => previousState[type] !== currentState[type]);
 }
 
-function findParagraphFromFirstChild(node) {
-  node = node.firstChild;
-
-  while (node) {
-    if (node.type === 'paragraph') {
-      break;
-    }
-    node = node.firstChild;
-  }
-
-  return node;
-}
-
-function isChangedSpace(e) {
-  const { origin, text, removed } = e;
-  const inputSpace = origin === '+input' && /\s/.test(text[0]);
-  const removedSpace = origin === '+delete' && /\s/.test(removed[0]);
-
-  return inputSpace || removedSpace;
-}
-
 const ATTR_NAME_MARK = 'data-tui-mark';
 const TASK_MARKER_RX = /^\[(\s*)(x?)(\s*)\](?:\s+)/i;
+const TASK_MARKER_KEY_RX = /x|backspace/i;
 
 /**
  * Class MarkdownEditor
@@ -165,13 +146,6 @@ class MarkdownEditor extends CodeMirrorExt {
      */
     this._markedLines = {};
 
-    /**
-     * map of replaced range lines for pasting
-     * @type {Object.<number, boolean}
-     * @private
-     */
-    this._replacedRangeLines = null;
-
     this._initEvent();
   }
 
@@ -197,7 +171,7 @@ class MarkdownEditor extends CodeMirrorExt {
     });
 
     this.cm.on('change', (cm, cmEvent) => {
-      this._refreshCodeMirror(cmEvent);
+      this._refreshCodeMirrorMarks(cmEvent);
       this._emitMarkdownEditorChangeEvent(cmEvent);
     });
 
@@ -238,6 +212,12 @@ class MarkdownEditor extends CodeMirrorExt {
         source: 'markdown',
         data: keyboardEvent
       });
+
+      const { key } = keyboardEvent;
+
+      if (TASK_MARKER_KEY_RX.test(key)) {
+        this._changeTextToTaskMarker(keyboardEvent);
+      }
     });
 
     this.cm.on('copy', (cm, ev) => {
@@ -349,9 +329,8 @@ class MarkdownEditor extends CodeMirrorExt {
     });
   }
 
-  _refreshCodeMirror(e) {
-    const { from, to, text, origin } = e;
-    const changedSpace = isChangedSpace(e);
+  _refreshCodeMirrorMarks(e) {
+    const { from, to, text } = e;
     const changed = this.toastMark.editMarkdown(
       [from.line + 1, from.ch + 1],
       [to.line + 1, to.ch + 1],
@@ -364,13 +343,7 @@ class MarkdownEditor extends CodeMirrorExt {
       return;
     }
 
-    changed.forEach(editResult => {
-      this._markNodes(editResult);
-
-      if (!changedSpace) {
-        this._changeTaskMarker(editResult, origin);
-      }
-    });
+    changed.forEach(editResult => this._markNodes(editResult));
   }
 
   _markNodes(editResult) {
@@ -410,68 +383,29 @@ class MarkdownEditor extends CodeMirrorExt {
     }
   }
 
-  _changeTaskMarker(editResult, eventType) {
-    const { nodes } = editResult;
+  _changeTextToTaskMarker() {
+    const { line, ch } = this.cm.getCursor();
+    const mdCh = this.cm.getLine(line).length === ch ? ch : ch + 1;
+    const mdNode = this.toastMark.findNodeAtPosition([line + 1, mdCh]);
+    const paraNode = findClosestNode(
+      mdNode,
+      node => node.type === 'paragraph' && node.parent && node.parent.type === 'item'
+    );
 
-    if (eventType === 'paste') {
-      this._replacedRangeLines = {};
-    } else if (eventType !== 'replacedRange') {
-      this._replacedRangeLines = null;
-    }
-
-    const customEventType = eventType === 'paste' ? 'replacedRange' : '';
-
-    if (nodes.length) {
-      for (const parent of nodes) {
-        const walker = parent.walker();
-        let event = walker.next();
-
-        while (event) {
-          const { node, entering } = event;
-
-          // eslint-disable-next-line max-depth
-          if (entering && node.type === 'item' && !node.listData.task) {
-            const paraNode = findParagraphFromFirstChild(node);
-
-            this._changeTextToTaskMarker(paraNode, customEventType);
-          }
-          event = walker.next();
-        }
-      }
-    }
-  }
-
-  _changeTextToTaskMarker(paraNode, eventType) {
-    const paraTextNode = paraNode && paraNode.firstChild;
-
-    if (paraTextNode) {
-      const { literal, sourcepos } = paraTextNode;
-      const [[line, ch]] = sourcepos;
-
-      if (!literal || (this._replacedRangeLines && this._replacedRangeLines[line])) {
-        return;
-      }
-
+    if (paraNode && paraNode.firstChild) {
+      const { literal, sourcepos } = paraNode.firstChild;
+      const [[startLine, startCh]] = sourcepos;
       const matched = literal.match(TASK_MARKER_RX);
 
       if (matched) {
         const [, startSpaces, stateChar, lastSpaces] = matched;
         const spaces = startSpaces.length + lastSpaces.length;
-        const startPos = { line: line - 1, ch };
-
-        if (eventType) {
-          this._replacedRangeLines[line] = true;
-        }
+        const startPos = { line: startLine - 1, ch: startCh };
 
         if (stateChar) {
-          this.cm.replaceRange(
-            stateChar,
-            startPos,
-            addChPos(startPos, spaces ? spaces + 1 : 0),
-            eventType
-          );
+          this.cm.replaceRange(stateChar, startPos, addChPos(startPos, spaces ? spaces + 1 : 0));
         } else if (!spaces) {
-          this.cm.replaceRange(' ', startPos, startPos, eventType);
+          this.cm.replaceRange(' ', startPos, startPos);
         }
       }
     }
