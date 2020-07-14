@@ -94,9 +94,28 @@ class WwTablePasteHelper {
       });
     } else if (textItem) {
       textItem.getAsString(text => {
-        this._pasteClipboardContainer(document.createTextNode(text));
+        const fragment = this._getReplacedFragmentNewLineToBr(text);
+
+        this._pasteClipboardContainer(fragment);
       });
     }
+  }
+
+  _getReplacedFragmentNewLineToBr(text) {
+    const fragment = document.createDocumentFragment();
+    const texts = text.split('\n');
+
+    texts.forEach((plainText, index) => {
+      const textNode = document.createTextNode(plainText);
+
+      fragment.appendChild(textNode);
+
+      if (index < texts.length - 1) {
+        fragment.appendChild(document.createElement('br'));
+      }
+    });
+
+    return fragment;
   }
 
   /**
