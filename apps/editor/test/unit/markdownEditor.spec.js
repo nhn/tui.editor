@@ -76,7 +76,7 @@ describe('MarkdownEditor', () => {
     mde.blur();
   });
 
-  describe('tasklist', () => {
+  describe('task', () => {
     let setValue, setCursor, setSelection, getValue;
     let changeTextToTaskMarker, toggleTaskStates;
 
@@ -85,9 +85,7 @@ describe('MarkdownEditor', () => {
 
       setValue = val => mde.setValue(val);
       setCursor = pos => doc.setCursor(pos);
-      setSelection = (from, to) => {
-        doc.setSelection(from, to);
-      };
+      setSelection = (from, to) => doc.setSelection(from, to);
       getValue = () => mde.getValue();
       toggleTaskStates = () => mde._toggleTaskStates();
       changeTextToTaskMarker = () => mde._changeTextToTaskMarker();
