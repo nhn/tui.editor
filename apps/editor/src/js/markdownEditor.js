@@ -15,7 +15,9 @@ import {
   getMdStartLine,
   getMdEndLine,
   getMdStartCh,
-  getMdEndCh
+  getMdEndCh,
+  addChPos,
+  findClosestNode
 } from './utils/markdown';
 import { getMarkInfo } from './markTextHelper';
 
@@ -103,6 +105,8 @@ function isToolbarStateChanged(previousState, currentState) {
 }
 
 const ATTR_NAME_MARK = 'data-tui-mark';
+const TASK_MARKER_RX = /^\[(\s*)(x?)(\s*)\](?:\s+)/i;
+const TASK_MARKER_KEY_RX = /x|backspace/i;
 
 /**
  * Class MarkdownEditor
@@ -118,7 +122,8 @@ class MarkdownEditor extends CodeMirrorExt {
       extraKeys: {
         Enter: 'newlineAndIndentContinueMarkdownList',
         Tab: 'indentOrderedList',
-        'Shift-Tab': 'indentLessOrderedList'
+        'Shift-Tab': 'indentLessOrderedList',
+        'Shift-Ctrl-X': () => this._toggleTaskStates()
       },
       viewportMargin: options && options.height === 'auto' ? Infinity : 10
     });
@@ -207,6 +212,12 @@ class MarkdownEditor extends CodeMirrorExt {
         source: 'markdown',
         data: keyboardEvent
       });
+
+      const { key } = keyboardEvent;
+
+      if (TASK_MARKER_KEY_RX.test(key)) {
+        this._changeTextToTaskMarker(keyboardEvent);
+      }
     });
 
     this.cm.on('copy', (cm, ev) => {
@@ -286,6 +297,38 @@ class MarkdownEditor extends CodeMirrorExt {
     }
   }
 
+  _changeTaskState(mdNode, line) {
+    const { listData, sourcepos } = mdNode;
+    const { task, checked, padding } = listData;
+
+    if (task) {
+      const stateChar = checked ? ' ' : 'x';
+      const [[, startCh]] = sourcepos;
+      const startPos = { line, ch: startCh + padding };
+
+      this.cm.replaceRange(stateChar, startPos, addChPos(startPos, 1));
+    }
+  }
+
+  _toggleTaskStates() {
+    const ranges = this.cm.listSelections();
+
+    ranges.forEach(range => {
+      const { anchor, head } = range;
+      const startLine = Math.min(anchor.line, head.line);
+      const endLine = Math.max(anchor.line, head.line);
+      let mdNode;
+
+      for (let index = startLine, len = endLine; index <= len; index += 1) {
+        mdNode = this.toastMark.findFirstNodeAtLine(index + 1);
+
+        if (mdNode.type === 'list' || mdNode.type === 'item') {
+          this._changeTaskState(mdNode, index);
+        }
+      }
+    });
+  }
+
   _refreshCodeMirrorMarks(e) {
     const { from, to, text } = e;
     const changed = this.toastMark.editMarkdown(
@@ -323,7 +366,6 @@ class MarkdownEditor extends CodeMirrorExt {
         }
       }
 
-      /* eslint-disable max-depth */
       for (const parent of nodes) {
         const walker = parent.walker();
         let event = walker.next();
@@ -331,13 +373,41 @@ class MarkdownEditor extends CodeMirrorExt {
         while (event) {
           const { node, entering } = event;
 
+          // eslint-disable-next-line max-depth
           if (entering) {
             this._markNode(node);
           }
           event = walker.next();
         }
       }
-      /* eslint-enable max-depth */
+    }
+  }
+
+  _changeTextToTaskMarker() {
+    const { line, ch } = this.cm.getCursor();
+    const mdCh = this.cm.getLine(line).length === ch ? ch : ch + 1;
+    const mdNode = this.toastMark.findNodeAtPosition([line + 1, mdCh]);
+    const paraNode = findClosestNode(
+      mdNode,
+      node => node.type === 'paragraph' && node.parent && node.parent.type === 'item'
+    );
+
+    if (paraNode && paraNode.firstChild) {
+      const { literal, sourcepos } = paraNode.firstChild;
+      const [[startLine, startCh]] = sourcepos;
+      const matched = literal.match(TASK_MARKER_RX);
+
+      if (matched) {
+        const [, startSpaces, stateChar, lastSpaces] = matched;
+        const spaces = startSpaces.length + lastSpaces.length;
+        const startPos = { line: startLine - 1, ch: startCh };
+
+        if (stateChar) {
+          this.cm.replaceRange(stateChar, startPos, addChPos(startPos, spaces ? spaces + 1 : 0));
+        } else if (!spaces) {
+          this.cm.replaceRange(' ', startPos, startPos);
+        }
+      }
     }
   }
 

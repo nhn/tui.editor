@@ -75,4 +75,128 @@ describe('MarkdownEditor', () => {
     mde.focus();
     mde.blur();
   });
+
+  describe('task', () => {
+    let setValue, setCursor, setSelection, getValue;
+    let changeTextToTaskMarker, toggleTaskStates;
+
+    function init() {
+      const doc = mde.getEditor().getDoc();
+
+      setValue = val => mde.setValue(val);
+      setCursor = pos => doc.setCursor(pos);
+      setSelection = (from, to) => doc.setSelection(from, to);
+      getValue = () => mde.getValue();
+      toggleTaskStates = () => mde._toggleTaskStates();
+      changeTextToTaskMarker = () => mde._changeTextToTaskMarker();
+    }
+
+    beforeEach(() => {
+      init();
+    });
+
+    describe('changeTextToTaskMarker()', () => {
+      it('spaces before state character in marker are removed', () => {
+        setValue('* [  x] list');
+        setCursor({ line: 0, ch: 3 });
+        changeTextToTaskMarker();
+
+        expect(getValue()).toBe('* [x] list');
+      });
+
+      it('spaces after state character in marker are removed', () => {
+        setValue('* [x  ] list');
+        setCursor({ line: 0, ch: 5 });
+        changeTextToTaskMarker();
+
+        expect(getValue()).toBe('* [x] list');
+      });
+
+      it('all spaces in marker are removed', () => {
+        setValue('* [    x  ] list');
+        setCursor({ line: 0, ch: 3 });
+        changeTextToTaskMarker();
+
+        expect(getValue()).toBe('* [x] list');
+      });
+
+      it('space is added if marker has no spaces', () => {
+        setValue('* [] list');
+        setCursor({ line: 0, ch: 3 });
+        changeTextToTaskMarker();
+
+        expect(getValue()).toBe('* [ ] list');
+      });
+    });
+
+    it('toggle task state according to cursor position', () => {
+      setValue('1. [ ] list1\n\t* [x] list2');
+
+      setCursor({ line: 1, ch: 0 }); // in list node
+      toggleTaskStates();
+
+      expect(getValue()).toBe('1. [ ] list1\n\t* [ ] list2');
+
+      setCursor({ line: 0, ch: 3 }); // in item node
+      toggleTaskStates();
+
+      expect(getValue()).toBe('1. [x] list1\n\t* [ ] list2');
+
+      setCursor({ line: 1, ch: 5 }); // in marker syntax
+      toggleTaskStates();
+
+      expect(getValue()).toBe('1. [x] list1\n\t* [x] list2');
+
+      setCursor({ line: 0, ch: 10 }); // in text node
+      toggleTaskStates();
+
+      expect(getValue()).toBe('1. [ ] list1\n\t* [x] list2');
+
+      setValue('1. [x] li **st** 1'); // in text node with inline style
+      setCursor({ line: 0, ch: 13 });
+      toggleTaskStates();
+
+      expect(getValue()).toBe('1. [ ] li **st** 1');
+    });
+
+    describe('toggle task state according to selection', () => {
+      let list;
+
+      beforeEach(() => {
+        list = '1. [ ] list1\n\t* [ ] list2\n\t\t* [x] list3';
+      });
+
+      it('when all from start line to last line is selected', () => {
+        setValue(list);
+        setSelection({ line: 0, ch: 0 }, { line: 2, ch: 19 });
+        toggleTaskStates();
+
+        expect(getValue()).toBe('1. [x] list1\n\t* [x] list2\n\t\t* [ ] list3');
+      });
+
+      it('when text of start line to text of last line is selected', () => {
+        setValue(list);
+        setSelection({ line: 1, ch: 11 }, { line: 2, ch: 15 });
+        toggleTaskStates();
+
+        expect(getValue()).toBe('1. [ ] list1\n\t* [x] list2\n\t\t* [ ] list3');
+      });
+
+      it('when marker of start line to list of last line is selected', () => {
+        setValue(list);
+        setSelection({ line: 0, ch: 4 }, { line: 1, ch: 0 });
+        toggleTaskStates();
+
+        expect(getValue()).toBe('1. [x] list1\n\t* [x] list2\n\t\t* [x] list3');
+      });
+
+      it('when selecting from bottom cursor to top cursor', () => {
+        setValue(list);
+        setSelection({ line: 1, ch: 0 }, { line: 0, ch: 4 });
+        toggleTaskStates();
+
+        expect(getValue()).toBe('1. [x] list1\n\t* [x] list2\n\t\t* [x] list3');
+      });
+    });
+  });
 });
