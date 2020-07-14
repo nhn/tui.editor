@@ -49,24 +49,28 @@ describe('Preview', () => {
   });
 });
 
+function getEditorAndPreview(highlight) {
+  const editorEl = document.createElement('div');
+  const previewEl = document.createElement('div');
+
+  document.body.innerHTML = '';
+  document.body.appendChild(editorEl);
+  document.body.appendChild(previewEl);
+
+  const eventManager = new EventManager();
+  const convertor = new Convertor(eventManager);
+  const toastMark = new ToastMark();
+  const editor = new MarkdownEditor(editorEl, eventManager, toastMark);
+  const preview = new MarkdownPreview(previewEl, eventManager, convertor, { highlight });
+
+  return { editor, preview };
+}
+
 describe('listen cursorActivity event', () => {
   let setValue, setCursor, getHighlightedCount, assertHighlighted;
-  let previewEl;
 
   function init(highlight) {
-    const editorEl = document.createElement('div');
-
-    previewEl = document.createElement('div');
-
-    document.body.innerHTML = '';
-    document.body.appendChild(editorEl);
-    document.body.appendChild(previewEl);
-
-    const eventManager = new EventManager();
-    const convertor = new Convertor(eventManager);
-    const toastMark = new ToastMark();
-    const preview = new MarkdownPreview(previewEl, eventManager, convertor, { highlight });
-    const editor = new MarkdownEditor(editorEl, eventManager, toastMark);
+    const { editor, preview } = getEditorAndPreview(highlight);
     const doc = editor.getEditor().getDoc();
 
     setValue = val => editor.setValue(val);
@@ -163,5 +167,32 @@ describe('listen cursorActivity event', () => {
       setCursor({ line: 3, ch: 0 });
       expect(getHighlightedCount()).toBe(0);
     });
+  });
+});
+
+describe('listen blur event', () => {
+  let setValue, blur, getHighlightedCount;
+
+  function init(highlight) {
+    const { editor, preview } = getEditorAndPreview(highlight);
+
+    setValue = val => {
+      editor.setValue(val);
+      editor.focus();
+    };
+    blur = () => editor.blur();
+    getHighlightedCount = () => preview.el.querySelectorAll(`.${CLASS_HIGHLIGHT}`).length;
+  }
+
+  it('the highlighting element disappears from the preview', () => {
+    init(true);
+
+    setValue('# Heading');
+    expect(getHighlightedCount()).toBe(1);
+
+    blur();
+    setTimeout(() => {
+      expect(getHighlightedCount()).toBe(0);
+    }, 7); // the test is executed before the blur event occurs on IE
   });
 });

@@ -79,6 +79,10 @@ class MarkdownPreview extends Preview {
       this.eventManager.listen('cursorActivity', ({ markdownNode, cursor }) => {
         this._updateCursorNode(markdownNode, cursor);
       });
+
+      this.eventManager.listen('blur', () => {
+        this._removeHighlight();
+      });
     }
 
     on(this.el, 'scroll', event => {
@@ -87,6 +91,16 @@ class MarkdownPreview extends Preview {
         data: findAdjacentElementToScrollTop(event.target.scrollTop, this._previewContent)
       });
     });
+  }
+
+  _removeHighlight() {
+    if (this.cursorNodeId) {
+      const currentEl = this._getElementByNodeId(this.cursorNodeId);
+
+      if (currentEl) {
+        removeClass(currentEl, CLASS_HIGHLIGHT);
+      }
+    }
   }
 
   _updateCursorNode(cursorNode, cursorPos) {
