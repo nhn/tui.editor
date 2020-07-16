@@ -953,9 +953,7 @@ describe('domUtils', () => {
   });
 
   it('getFragmentReplacedByNewlineToBr() returns fragment replaced by newline to br', () => {
-    container.innerHTML = 'foo\nbar\nbaz';
-
-    const result = domUtils.getFragmentReplacedByNewlineToBr(container.innerHTML);
+    const result = domUtils.getFragmentReplacedByNewlineToBr('foo\nbar\nbaz');
     const div = document.createElement('div');
 
     div.appendChild(result.cloneNode(true));
