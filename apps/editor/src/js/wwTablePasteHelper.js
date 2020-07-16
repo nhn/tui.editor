@@ -94,7 +94,9 @@ class WwTablePasteHelper {
       });
     } else if (textItem) {
       textItem.getAsString(text => {
-        this._pasteClipboardContainer(document.createTextNode(text));
+        const fragment = domUtils.getFragmentReplacedByNewlineToBr(text);
+
+        this._pasteClipboardContainer(fragment);
       });
     }
   }
