@@ -1301,7 +1301,7 @@ const toggleClass = (element, className, state) => {
  * @param {HTMLElement} html root element
  * @param {boolean} needHtmlText pass true if need html text
  * @returns {string|DocumentFragment} result
- * @private
+ * @ignore
  */
 function finalizeHtml(html, needHtmlText) {
   let result;
@@ -1320,6 +1320,29 @@ function finalizeHtml(html, needHtmlText) {
   }
 
   return result;
+}
+
+/**
+ * Get fragment replaced by newline to br tag
+ * @param {string} text original text
+ * @returns {DocumentFragment} fragment
+ * @ignore
+ */
+function getFragmentReplacedByNewlineToBr(text) {
+  const fragment = document.createDocumentFragment();
+  const texts = text.split('\n');
+
+  texts.forEach((plainText, index) => {
+    const textNode = document.createTextNode(plainText);
+
+    fragment.appendChild(textNode);
+
+    if (index < texts.length - 1) {
+      fragment.appendChild(document.createElement('br'));
+    }
+  });
+
+  return fragment;
 }
 
 export default {
@@ -1388,5 +1411,6 @@ export default {
   getOuterWidth,
   getOuterHeight,
   toggleClass,
-  finalizeHtml
+  finalizeHtml,
+  getFragmentReplacedByNewlineToBr
 };

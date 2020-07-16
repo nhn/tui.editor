@@ -94,28 +94,11 @@ class WwTablePasteHelper {
       });
     } else if (textItem) {
       textItem.getAsString(text => {
-        const fragment = this._getReplacedFragmentNewLineToBr(text);
+        const fragment = domUtils.getFragmentReplacedByNewlineToBr(text);
 
         this._pasteClipboardContainer(fragment);
       });
     }
-  }
-
-  _getReplacedFragmentNewLineToBr(text) {
-    const fragment = document.createDocumentFragment();
-    const texts = text.split('\n');
-
-    texts.forEach((plainText, index) => {
-      const textNode = document.createTextNode(plainText);
-
-      fragment.appendChild(textNode);
-
-      if (index < texts.length - 1) {
-        fragment.appendChild(document.createElement('br'));
-      }
-    });
-
-    return fragment;
   }
 
   /**

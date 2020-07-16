@@ -951,4 +951,15 @@ describe('domUtils', () => {
       expect(target.className).toBe('test');
     });
   });
+
+  it('getFragmentReplacedByNewlineToBr() returns fragment replaced by newline to br', () => {
+    container.innerHTML = 'foo\nbar\nbaz';
+
+    const result = domUtils.getFragmentReplacedByNewlineToBr(container.innerHTML);
+    const div = document.createElement('div');
+
+    div.appendChild(result.cloneNode(true));
+
+    expect(div.innerHTML).toBe('foo<br>bar<br>baz');
+  });
 });
