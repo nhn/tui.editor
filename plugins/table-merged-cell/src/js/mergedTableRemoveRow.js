@@ -154,6 +154,10 @@ export function getWwRemoveRowCommand(editor) {
         );
 
         sq.saveUndoState(selectionRange);
+
+        selectionRange.collapse(true);
+        sq.setSelection(selectionRange);
+
         _removeRow(tableData, tableRange);
 
         if (tableData.length < 2) {

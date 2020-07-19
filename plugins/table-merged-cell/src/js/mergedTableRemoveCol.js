@@ -147,6 +147,10 @@ export function getWwRemoveColumnCommand(editor) {
         const beforeCellLength = tableData[0].length;
 
         sq.saveUndoState(selectionRange);
+
+        selectionRange.collapse(true);
+        sq.setSelection(selectionRange);
+
         _removeColumns(tableData, tableRange);
 
         if (tableData[0].length === 0) {
