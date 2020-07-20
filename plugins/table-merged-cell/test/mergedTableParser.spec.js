@@ -499,6 +499,53 @@ describe('should render the merged table properly', () => {
         </tbody>
         </table>
       `
+      },
+      {
+        no: 8,
+        content: source`
+        | @cols=2:foo"bar" | @cols=2:<span style="color: red;">baz</span> |
+        | --- | --- | --- | --- |
+        | @cols=2:foo"bar" | cell1-2 | cell1-3 |
+        | @rows=2:<span style="color: red;">baz</span> | cell2-2 | cell2-3 | cell2-4 |
+        | cell3-1 | cell3-2 | cell3-3 | cell3-4 |
+        | @cols=3:@rows=2:foo"bar"<span style="color: red;">baz</span> | cell4-2 | cell4-3 | cell4-4 |
+        | cell5-1 | cell5-2 | cell5-3 | cell5-4 |
+      `,
+        result: source`
+        <table>
+        <thead>
+        <tr>
+        <th data-org-content="@cols=2:foo&quot;bar&quot;" colspan="2">foo&quot;bar&quot;</th>
+        <th data-org-content="@cols=2:&lt;span style=&quot;color: red;&quot;&gt;baz&lt;/span&gt;" colspan="2"><span style="color: red;">baz</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td data-org-content="@cols=2:foo&quot;bar&quot;" colspan="2">foo&quot;bar&quot;</td>
+        <td data-org-content="cell1-2">cell1-2</td>
+        <td data-org-content="cell1-3">cell1-3</td>
+        </tr>
+        <tr>
+        <td data-org-content="@rows=2:&lt;span style=&quot;color: red;&quot;&gt;baz&lt;/span&gt;" rowspan="2"><span style="color: red;">baz</span></td>
+        <td data-org-content="cell2-2">cell2-2</td>
+        <td data-org-content="cell2-3">cell2-3</td>
+        <td data-org-content="cell2-4">cell2-4</td>
+        </tr>
+        <tr>
+        <td data-org-content="cell3-1">cell3-1</td>
+        <td data-org-content="cell3-2">cell3-2</td>
+        <td data-org-content="cell3-3">cell3-3</td>
+        </tr>
+        <tr>
+        <td data-org-content="@cols=3:@rows=2:foo&quot;bar&quot;&lt;span style=&quot;color: red;&quot;&gt;baz&lt;/span&gt;" colspan="3" rowspan="2">foo&quot;bar&quot;<span style="color: red;">baz</span></td>
+        <td data-org-content="cell4-2">cell4-2</td>
+        </tr>
+        <tr>
+        <td data-org-content="cell5-1">cell5-1</td>
+        </tr>
+        </tbody>
+        </table>
+      `
       }
     ];
 
