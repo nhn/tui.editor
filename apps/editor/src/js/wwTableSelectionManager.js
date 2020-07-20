@@ -89,8 +89,11 @@ class WwTableSelectionManager {
             window.getSelection().removeAllRanges();
           }, 10);
         }
-        this.highlightTableCellsBy(selectionStart, selectionEnd);
-        validSelectionEnd = selectionEnd;
+
+        if (selectionStart && selectionEnd) {
+          this.highlightTableCellsBy(selectionStart, selectionEnd);
+          validSelectionEnd = selectionEnd;
+        }
       }
     };
 

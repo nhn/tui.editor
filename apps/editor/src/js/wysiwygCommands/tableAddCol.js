@@ -74,7 +74,7 @@ function getCellByRange(range) {
   let cell = range.startContainer;
 
   if (domUtils.getNodeName(cell) !== 'TD' && domUtils.getNodeName(cell) !== 'TH') {
-    cell = domUtils.parentsUntil(cell, 'tr');
+    cell = domUtils.closest(cell, 'td, th');
   }
 
   return cell;
