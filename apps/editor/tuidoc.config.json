@@ -41,7 +41,7 @@
       "example06-editor-with-chart-plugin": "6. Editor with Chart Plugin",
       "example07-viewer-with-chart-plugin": "7. Viewer with Chart Plugin",
       "example08-editor-with-code-syntax-highlight-plugin": "8. Editor with Code Syntax Highlight Plugin",
-      "example09-viewer-with-color-syntax-highlight-plugin": "9. Viewer with Color Syntax Highlight Plugin",
+      "example09-viewer-with-code-syntax-highlight-plugin": "9. Viewer with Code Syntax Highlight Plugin",
       "example10-editor-with-color-syntax-plugin": "10. Editor with Color Syntax Plugin",
       "example11-editor-with-table-merged-cell-plugin": "11. Editor with Table Merged Cell Plugin",
       "example12-viewer-with-table-merged-cell-plugin": "12. Viewer with Table Merged Cell Plugin",
