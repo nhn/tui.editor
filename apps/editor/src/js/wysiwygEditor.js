@@ -951,7 +951,7 @@ class WysiwygEditor {
 
     css(node, {
       position: 'absolute',
-      top: `${pos.top - editorContainerPos.top + this.scrollTop()}px`,
+      top: `${pos.top - editorContainerPos.top}px`,
       left: `${pos.left - editorContainerPos.left}px`
     });
   }
