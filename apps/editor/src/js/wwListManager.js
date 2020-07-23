@@ -250,10 +250,7 @@ class WwListManager {
 
   _insertDataToMarkPassForListInTable(html) {
     const replacedHtml = html.replace(FIND_CELL_TAG_RX, (match, tdStart, tdContent, tdEnd) => {
-      const content = tdContent.replace(
-        FIND_LIST_OR_LIST_ITEM_TAG_RX,
-        '<$1 data-tomark-pass="" $2>'
-      );
+      const content = tdContent.replace(FIND_LIST_OR_LIST_ITEM_TAG_RX, '<$1 data-tomark-pass $2>');
 
       return `${tdStart}${content}${tdEnd}`;
     });
