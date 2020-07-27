@@ -198,8 +198,7 @@ describe('MarkdownEditor', () => {
   });
 
   describe('table', () => {
-    let getCursor;
-    let onPressTabKey, onPressShiftTabKey, onPressEnterKey;
+    let getCursor, onPressTabKey, onPressShiftTabKey, onPressEnterKey;
 
     beforeEach(() => {
       init();
