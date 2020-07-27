@@ -2,6 +2,7 @@
  * @fileoverview test markdown editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import { source } from 'common-tags';
 import { ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdownEditor';
 import EventManager from '@/eventManager';
@@ -76,23 +77,25 @@ describe('MarkdownEditor', () => {
     mde.blur();
   });
 
+  let doc, setValue, getValue, setCursor;
+
+  function init() {
+    doc = mde.getEditor().getDoc();
+
+    setValue = val => mde.setValue(val);
+    getValue = () => mde.getValue();
+    setCursor = pos => doc.setCursor(pos);
+  }
+
   describe('task', () => {
-    let setValue, setCursor, setSelection, getValue;
-    let changeTextToTaskMarker, toggleTaskStates;
-
-    function init() {
-      const doc = mde.getEditor().getDoc();
-
-      setValue = val => mde.setValue(val);
-      setCursor = pos => doc.setCursor(pos);
-      setSelection = (from, to) => doc.setSelection(from, to);
-      getValue = () => mde.getValue();
-      toggleTaskStates = () => mde._toggleTaskStates();
-      changeTextToTaskMarker = () => mde._changeTextToTaskMarker();
-    }
+    let setSelection, changeTextToTaskMarker, toggleTaskStates;
 
     beforeEach(() => {
       init();
+
+      setSelection = (from, to) => doc.setSelection(from, to);
+      toggleTaskStates = () => mde._toggleTaskStates();
+      changeTextToTaskMarker = () => mde._changeTextToTaskMarker();
     });
 
     describe('changeTextToTaskMarker()', () => {
@@ -160,14 +163,11 @@ describe('MarkdownEditor', () => {
     });
 
     describe('toggle task state according to selection', () => {
-      let list;
-
       beforeEach(() => {
-        list = '1. [ ] list1\n\t* [ ] list2\n\t\t* [x] list3';
+        setValue('1. [ ] list1\n\t* [ ] list2\n\t\t* [x] list3');
       });
 
       it('when all from start line to last line is selected', () => {
-        setValue(list);
         setSelection({ line: 0, ch: 0 }, { line: 2, ch: 19 });
         toggleTaskStates();
 
@@ -175,7 +175,6 @@ describe('MarkdownEditor', () => {
       });
 
       it('when text of start line to text of last line is selected', () => {
-        setValue(list);
         setSelection({ line: 1, ch: 11 }, { line: 2, ch: 15 });
         toggleTaskStates();
 
@@ -183,7 +182,6 @@ describe('MarkdownEditor', () => {
       });
 
       it('when marker of start line to list of last line is selected', () => {
-        setValue(list);
         setSelection({ line: 0, ch: 4 }, { line: 1, ch: 0 });
         toggleTaskStates();
 
@@ -191,11 +189,154 @@ describe('MarkdownEditor', () => {
       });
 
       it('when selecting from bottom cursor to top cursor', () => {
-        setValue(list);
         setSelection({ line: 1, ch: 0 }, { line: 0, ch: 4 });
         toggleTaskStates();
 
         expect(getValue()).toBe('1. [x] list1\n\t* [x] list2\n\t\t* [x] list3');
+      });
+    });
+  });
+
+  describe('table', () => {
+    let getCursor;
+    let onPressTabKey, onPressShiftTabKey, onPressEnterKey;
+
+    beforeEach(() => {
+      init();
+
+      getCursor = () => doc.getCursor();
+      onPressTabKey = () => mde._onPressTabKey();
+      onPressShiftTabKey = () => mde._onPressShiftTabKey();
+      onPressEnterKey = () => mde._onPressEnterKey();
+
+      const table = source`
+        | head | head |
+        | --- | --- |
+        | body | body |
+      `;
+
+      setValue(table);
+    });
+
+    describe('_onPressTabKey() move cursor', () => {
+      it('to next cell', () => {
+        setCursor({ line: 0, ch: 1 });
+        onPressTabKey();
+        expect(getCursor()).toEqual({ line: 0, ch: 13 });
+
+        setCursor({ line: 1, ch: 3 });
+        onPressTabKey();
+        expect(getCursor()).toEqual({ line: 1, ch: 11 });
+
+        setCursor({ line: 2, ch: 6 });
+        onPressTabKey();
+        expect(getCursor()).toEqual({ line: 2, ch: 13 });
+      });
+
+      it('from last cell to first cell of next row', () => {
+        setCursor({ line: 0, ch: 8 });
+        onPressTabKey();
+        expect(getCursor()).toEqual({ line: 1, ch: 5 });
+
+        setCursor({ line: 1, ch: 9 });
+        onPressTabKey();
+        expect(getCursor()).toEqual({ line: 2, ch: 6 });
+      });
+
+      it('from last cell of last row to end of table', () => {
+        setCursor({ line: 2, ch: 8 });
+        onPressTabKey();
+        expect(getCursor()).toEqual({ line: 2, ch: 15 });
+      });
+    });
+
+    describe('_onPressShiftTabKey() move cursor', () => {
+      it('to previous cell', () => {
+        setCursor({ line: 0, ch: 9 });
+        onPressShiftTabKey();
+        expect(getCursor()).toEqual({ line: 0, ch: 6 });
+
+        setCursor({ line: 1, ch: 8 });
+        onPressShiftTabKey();
+        expect(getCursor()).toEqual({ line: 1, ch: 5 });
+
+        setCursor({ line: 2, ch: 13 });
+        onPressShiftTabKey();
+        expect(getCursor()).toEqual({ line: 2, ch: 6 });
+      });
+
+      it('from first cell to last cell of previous row', () => {
+        setCursor({ line: 1, ch: 3 });
+        onPressShiftTabKey();
+        expect(getCursor()).toEqual({ line: 0, ch: 13 });
+
+        setCursor({ line: 2, ch: 1 });
+        onPressShiftTabKey();
+        expect(getCursor()).toEqual({ line: 1, ch: 11 });
+      });
+
+      it('from first cell of row in thead to first of table', () => {
+        setCursor({ line: 0, ch: 3 });
+        onPressShiftTabKey();
+        expect(getCursor()).toEqual({ line: 0, ch: 0 });
+      });
+    });
+
+    describe('_onPressEnterKey()', () => {
+      it('add newline when cursor is in cell of thead', () => {
+        setCursor({ line: 0, ch: 3 });
+        onPressEnterKey();
+
+        const expected = source`
+          | h
+          ead | head |
+          | --- | --- |
+          | body | body |
+        `;
+
+        expect(getValue()).toBe(expected);
+      });
+
+      it('add new row when cursor is in cell of delimiter row', () => {
+        setCursor({ line: 1, ch: 3 });
+        onPressEnterKey();
+
+        const expected = source`
+          | head | head |
+          | --- | --- |
+          |  |  |
+          | body | body |
+        `;
+
+        expect(getValue()).toBe(expected);
+      });
+
+      it('add new row when cursor is in cell of last row', () => {
+        setCursor({ line: 2, ch: 13 });
+        onPressEnterKey();
+
+        const expected = source`
+          | head | head |
+          | --- | --- |
+          | body | body |
+          |  |  |
+        `;
+
+        expect(getValue()).toBe(expected);
+      });
+
+      it('remove last row when all cells of last row are empty', () => {
+        setCursor({ line: 2, ch: 13 });
+        onPressEnterKey();
+        onPressEnterKey();
+
+        const expected = source`
+          | head | head |
+          | --- | --- |
+          | body | body |
+        `;
+
+        expect(getValue()).toBe(`${expected}\n`);
       });
     });
   });
