@@ -387,9 +387,7 @@ class MarkdownEditor extends CodeMirrorExt {
   }
 
   _changeTextToTaskMarker() {
-    const { line, ch } = this.cm.getCursor();
-    const mdCh = this.cm.getLine(line).length === ch ? ch : ch + 1;
-    const mdNode = this.toastMark.findNodeAtPosition([line + 1, mdCh]);
+    const mdNode = this._getNodeByCursor();
     const paraNode = findClosestNode(
       mdNode,
       node => node.type === 'paragraph' && node.parent && node.parent.type === 'item'
@@ -537,9 +535,7 @@ class MarkdownEditor extends CodeMirrorExt {
   }
 
   _onPressTabKey() {
-    const { line, ch } = this.cm.getCursor();
-    const mdCh = this.cm.getLine(line).length === ch ? ch : ch + 1;
-    const mdNode = this.toastMark.findNodeAtPosition([line + 1, mdCh]);
+    const mdNode = this._getNodeByCursor();
     const cellNode = findClosestNode(mdNode, node => isTableCellNode(node));
 
     if (cellNode) {
