@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 2.3.0 | Mon Jul 20 2020
+ * @version 2.3.1 | Wed Jul 29 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -3867,7 +3867,7 @@ function getPluginInfo(plugins) {
 
 /*!
  * to-mark
- * @version 1.0.1 | Mon Jul 20 2020
+ * @version 1.0.1 | Wed Jul 29 2020
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
@@ -13070,7 +13070,7 @@ var wwListManager_WwListManager = /*#__PURE__*/function () {
 
   _proto._insertDataToMarkPassForListInTable = function _insertDataToMarkPassForListInTable(html) {
     var replacedHtml = html.replace(FIND_CELL_TAG_RX, function (match, tdStart, tdContent, tdEnd) {
-      var content = tdContent.replace(FIND_LIST_OR_LIST_ITEM_TAG_RX, '<$1 data-tomark-pass="" $2>');
+      var content = tdContent.replace(FIND_LIST_OR_LIST_ITEM_TAG_RX, '<$1 data-tomark-pass $2>');
       return "" + tdStart + content + tdEnd;
     });
     return replacedHtml;
@@ -18340,7 +18340,7 @@ var wysiwygEditor_WysiwygEditor = /*#__PURE__*/function () {
     this.editorContainerEl.appendChild(node);
     css_default()(node, {
       position: 'absolute',
-      top: pos.top - editorContainerPos.top + this.scrollTop() + "px",
+      top: pos.top - editorContainerPos.top + "px",
       left: pos.left - editorContainerPos.left + "px"
     });
   }

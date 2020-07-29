@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 2.3.0 | Mon Jul 20 2020
+ * @version 2.3.1 | Wed Jul 29 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -3748,7 +3748,7 @@ function getPluginInfo(plugins) {
 
 /*!
  * to-mark
- * @version 1.0.1 | Mon Jul 20 2020
+ * @version 1.0.1 | Wed Jul 29 2020
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
