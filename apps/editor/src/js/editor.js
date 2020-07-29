@@ -50,6 +50,11 @@ import mdTable from './markdownCommands/table';
 import mdTask from './markdownCommands/task';
 import mdCode from './markdownCommands/code';
 import mdCodeBlock from './markdownCommands/codeBlock';
+import mdChangeTaskMarker from './markdownCommands/changeTaskMarker';
+import mdToggleTaskMarker from './markdownCommands/toggleTaskMarker';
+import mdMoveNextCursorOrIndent from './markdownCommands/moveNextCursorOrIndent';
+import mdMovePrevCursorOrOutdent from './markdownCommands/movePrevCursorOrOutdent';
+import mdAddLine from './markdownCommands/addLine';
 
 // wysiwyg Commands
 import wwBold from './wysiwygCommands/bold';
@@ -338,6 +343,11 @@ class ToastUIEditor {
     this.addCommand(mdCode);
     this.addCommand(mdCodeBlock);
     this.addCommand(mdStrike);
+    this.addCommand(mdChangeTaskMarker);
+    this.addCommand(mdToggleTaskMarker);
+    this.addCommand(mdMoveNextCursorOrIndent);
+    this.addCommand(mdMovePrevCursorOrOutdent);
+    this.addCommand(mdAddLine);
 
     this.addCommand(wwBold);
     this.addCommand(wwItalic);

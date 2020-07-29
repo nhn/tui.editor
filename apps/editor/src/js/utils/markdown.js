@@ -70,12 +70,6 @@ export function isListItemNode(mdNode) {
   return mdNode.type === 'item';
 }
 
-export function isTableRowNode(mdNode) {
-  const { type } = mdNode;
-
-  return type === 'tableRow' || type === 'tableDelimRow';
-}
-
 export function isTableCellNode(mdNode) {
   const { type } = mdNode;
 
@@ -140,18 +134,4 @@ export function setChPos(originPos, newCh) {
     line: originPos.line,
     ch: newCh
   };
-}
-
-export function createTableRow(row) {
-  let cell = row.firstChild;
-  let result = '|';
-
-  while (cell) {
-    if (isTableCellNode(cell)) {
-      result += '  |';
-    }
-    cell = cell.next;
-  }
-
-  return result;
 }

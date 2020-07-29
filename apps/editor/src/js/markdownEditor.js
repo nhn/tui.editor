@@ -12,15 +12,10 @@ import MdTextObject from './mdTextObject';
 import {
   traverseParentNodes,
   isStyledTextNode,
-  isTableRowNode,
-  isTableCellNode,
   getMdStartLine,
   getMdEndLine,
   getMdStartCh,
-  getMdEndCh,
-  addChPos,
-  findClosestNode,
-  createTableRow
+  getMdEndCh
 } from './utils/markdown';
 import { getMarkInfo } from './markTextHelper';
 
@@ -108,7 +103,6 @@ function isToolbarStateChanged(previousState, currentState) {
 }
 
 const ATTR_NAME_MARK = 'data-tui-mark';
-const TASK_MARKER_RX = /^\[(\s*)(x?)(\s*)\](?:\s+)/i;
 const TASK_MARKER_KEY_RX = /x|backspace/i;
 
 /**
@@ -122,12 +116,6 @@ class MarkdownEditor extends CodeMirrorExt {
     super(el, {
       dragDrop: true,
       allowDropFileTypes: ['image'],
-      extraKeys: {
-        Enter: () => this._onPressEnterKey(),
-        Tab: () => this._onPressTabKey(),
-        'Shift-Tab': () => this._onPressShiftTabKey(),
-        'Shift-Ctrl-X': () => this._toggleTaskStates()
-      },
       viewportMargin: options && options.height === 'auto' ? Infinity : 10
     });
     this.eventManager = eventManager;
@@ -219,7 +207,7 @@ class MarkdownEditor extends CodeMirrorExt {
       const { key } = keyboardEvent;
 
       if (TASK_MARKER_KEY_RX.test(key)) {
-        this._changeTextToTaskMarker(keyboardEvent);
+        this.eventManager.emit('command', 'ChangeTaskMarker');
       }
     });
 
@@ -300,38 +288,6 @@ class MarkdownEditor extends CodeMirrorExt {
     }
   }
 
-  _changeTaskState(mdNode, line) {
-    const { listData, sourcepos } = mdNode;
-    const { task, checked, padding } = listData;
-
-    if (task) {
-      const stateChar = checked ? ' ' : 'x';
-      const [[, startCh]] = sourcepos;
-      const startPos = { line, ch: startCh + padding };
-
-      this.cm.replaceRange(stateChar, startPos, addChPos(startPos, 1));
-    }
-  }
-
-  _toggleTaskStates() {
-    const ranges = this.cm.listSelections();
-
-    ranges.forEach(range => {
-      const { anchor, head } = range;
-      const startLine = Math.min(anchor.line, head.line);
-      const endLine = Math.max(anchor.line, head.line);
-      let mdNode;
-
-      for (let index = startLine, len = endLine; index <= len; index += 1) {
-        mdNode = this.toastMark.findFirstNodeAtLine(index + 1);
-
-        if (mdNode.type === 'list' || mdNode.type === 'item') {
-          this._changeTaskState(mdNode, index);
-        }
-      }
-    });
-  }
-
   _refreshCodeMirrorMarks(e) {
     const { from, to, text } = e;
     const changed = this.toastMark.editMarkdown(
@@ -381,32 +337,6 @@ class MarkdownEditor extends CodeMirrorExt {
             this._markNode(node);
           }
           event = walker.next();
-        }
-      }
-    }
-  }
-
-  _changeTextToTaskMarker() {
-    const mdNode = this._getNodeByCursor();
-    const paraNode = findClosestNode(
-      mdNode,
-      node => node.type === 'paragraph' && node.parent && node.parent.type === 'item'
-    );
-
-    if (paraNode && paraNode.firstChild) {
-      const { literal, sourcepos } = paraNode.firstChild;
-      const [[startLine, startCh]] = sourcepos;
-      const matched = literal.match(TASK_MARKER_RX);
-
-      if (matched) {
-        const [, startSpaces, stateChar, lastSpaces] = matched;
-        const spaces = startSpaces.length + lastSpaces.length;
-        const startPos = { line: startLine - 1, ch: startCh };
-
-        if (stateChar) {
-          this.cm.replaceRange(stateChar, startPos, addChPos(startPos, spaces ? spaces + 1 : 0));
-        } else if (!spaces) {
-          this.cm.replaceRange(' ', startPos, startPos);
         }
       }
     }
@@ -492,104 +422,6 @@ class MarkdownEditor extends CodeMirrorExt {
     }
 
     this._setToolbarState(state);
-  }
-
-  _getNodeByCursor() {
-    const { line, ch } = this.cm.getCursor();
-    const mdCh = this.cm.getLine(line).length === ch ? ch : ch + 1;
-
-    return this.toastMark.findNodeAtPosition([line + 1, mdCh]);
-  }
-
-  _onPressEnterKey() {
-    const mdNode = this._getNodeByCursor();
-    const cellNode = findClosestNode(
-      mdNode,
-      node =>
-        isTableCellNode(node) &&
-        (node.parent.type === 'tableDelimRow' || node.parent.parent.type === 'tableBody')
-    );
-
-    if (cellNode) {
-      this._addTableRowByCell(cellNode);
-    } else {
-      this.cm.execCommand('newlineAndIndentContinueMarkdownList');
-    }
-  }
-
-  _addTableRowByCell(cell) {
-    const { cm } = this;
-    const line = getMdStartLine(cell);
-    const nextRow = this.toastMark.findNodeAtPosition([line + 1, 1]);
-
-    const currentLineText = cm.getLine(line - 1);
-    const rowStr = createTableRow(cell.parent);
-
-    if ((nextRow && nextRow.type === 'tableRow') || currentLineText !== rowStr) {
-      cm.setCursor(line - 1, getMdEndCh(cell.parent));
-      cm.replaceSelection(`\n${rowStr}`);
-      cm.setCursor(line, 2);
-    } else {
-      cm.execCommand('deleteLine');
-    }
-  }
-
-  _onPressTabKey() {
-    const mdNode = this._getNodeByCursor();
-    const cellNode = findClosestNode(mdNode, node => isTableCellNode(node));
-
-    if (cellNode) {
-      this._moveCursorNextCell(cellNode);
-    } else {
-      this.cm.execCommand('indentOrderedList');
-    }
-  }
-
-  _onPressShiftTabKey() {
-    const mdNode = this._getNodeByCursor();
-    const cellNode = findClosestNode(mdNode, node => isTableCellNode(node));
-
-    if (cellNode) {
-      this._moveCursorPrevCell(cellNode);
-    } else {
-      this.cm.execCommand('indentLessOrderedList');
-    }
-  }
-
-  _moveCursorNextCell(cell) {
-    let line = getMdStartLine(cell);
-    let ch = getMdEndCh(cell) + 2;
-
-    if (cell.next) {
-      ch = getMdEndCh(cell.next);
-    } else {
-      const nextRow = this.toastMark.findNodeAtPosition([line + 1, 1]);
-
-      if (nextRow && isTableRowNode(nextRow)) {
-        line = line + 1;
-        ch = getMdEndCh(nextRow.firstChild);
-      }
-    }
-
-    this.cm.setCursor({ line: line - 1, ch: ch - 1 });
-  }
-
-  _moveCursorPrevCell(cell) {
-    let line = getMdStartLine(cell);
-    let ch = 1;
-
-    if (cell.prev) {
-      ch = getMdEndCh(cell.prev);
-    } else {
-      const prevRow = this.toastMark.findNodeAtPosition([line - 1, 1]);
-
-      if (prevRow && isTableRowNode(prevRow)) {
-        line = line - 1;
-        ch = getMdEndCh(prevRow.lastChild);
-      }
-    }
-
-    this.cm.setCursor({ line: line - 1, ch: ch - 1 });
   }
 
   /**
