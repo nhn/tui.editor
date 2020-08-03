@@ -15,7 +15,6 @@ const MoveNextCursorOrIndent = CommandManager.command(
   'markdown',
   /** @lends MoveNextCursorOrIndent */ {
     name: 'MoveNextCursorOrIndent',
-    keyMap: ['TAB', 'TAB'],
     exec(mde) {
       const cm = mde.getEditor();
       const { line, ch } = cm.getCursor();

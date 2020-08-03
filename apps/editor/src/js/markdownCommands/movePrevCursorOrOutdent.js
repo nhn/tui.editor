@@ -15,7 +15,6 @@ const MovePrevCursorOrOutdent = CommandManager.command(
   'markdown',
   /** @lends MovePrevCursorOrOutdent */ {
     name: 'MovePrevCursorOrOutdent',
-    keyMap: ['SHIFT+TAB', 'SHIFT+TAB'],
     exec(mde) {
       const cm = mde.getEditor();
       const { line, ch } = cm.getCursor();

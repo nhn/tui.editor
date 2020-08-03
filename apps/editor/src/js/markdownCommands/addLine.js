@@ -26,7 +26,6 @@ const AddLine = CommandManager.command(
   'markdown',
   /** @lends AddLine */ {
     name: 'AddLine',
-    keyMap: ['ENTER', 'ENTER'],
     exec(mde) {
       const cm = mde.getEditor();
       const { line, ch } = cm.getCursor();

@@ -15,7 +15,6 @@ const ToggleTaskMarker = CommandManager.command(
   'markdown',
   /** @lends ToggleTaskMarker */ {
     name: 'ToggleTaskMarker',
-    keyMap: ['SHIFT+CTRL+X', 'SHIFT+CTRL+X'],
     exec(mde) {
       const cm = mde.getEditor();
       const ranges = cm.listSelections();

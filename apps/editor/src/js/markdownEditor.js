@@ -116,6 +116,12 @@ class MarkdownEditor extends CodeMirrorExt {
     super(el, {
       dragDrop: true,
       allowDropFileTypes: ['image'],
+      extraKeys: {
+        Enter: () => this.eventManager.emit('command', 'AddLine'),
+        Tab: () => this.eventManager.emit('command', 'MoveNextCursorOrIndent'),
+        'Shift-Tab': () => this.eventManager.emit('command', 'MovePrevCursorOrOutdent'),
+        'Shift-Ctrl-X': () => this.eventManager.emit('command', 'ToggleTaskMarker')
+      },
       viewportMargin: options && options.height === 'auto' ? Infinity : 10
     });
     this.eventManager = eventManager;
