@@ -860,7 +860,7 @@ class WysiwygEditor {
       return result;
     });
 
-    // replace a space of the first and end in sapn tag to &nbsp;.
+    // replace a space of the first and end in span tag to &nbsp;.
     html = html.replace(FIND_OPENING_SPAN_WITH_SPACE, '<span$1>&nbsp;');
     html = html.replace(FIND_CLOSING_SPAN_WITH_SPACE, '&nbsp;</span>');
 
