@@ -144,6 +144,7 @@ class WwPasteContentHelper {
     container.innerHTML = this._wrapOrphanNodeWithDiv(container);
 
     this._preElementAid(container);
+    this._listElementAid(container);
 
     this._tableElementAid(container);
 
@@ -152,6 +153,12 @@ class WwPasteContentHelper {
         domUtils.remove(childNode);
       }
     });
+  }
+
+  _listElementAid(container) {
+    const wwListManager = this.wwe.componentManager.getManager('list');
+
+    container.innerHTML = wwListManager.convertToArbitraryNestingList(container.innerHTML);
   }
 
   /**

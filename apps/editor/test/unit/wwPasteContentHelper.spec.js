@@ -9,6 +9,7 @@ import EventManager from '@/eventManager';
 import WwPasteContentHelper from '@/wwPasteContentHelper';
 import WwCodeBlockManager from '@/wwCodeBlockManager';
 import WwTableManager from '@/wwTableManager';
+import WwListManager from '@/wwListManager';
 import htmlSanitizer from '@/htmlSanitizer';
 
 describe('WwPasteContentHelper', () => {
@@ -32,6 +33,7 @@ describe('WwPasteContentHelper', () => {
 
     wwe.componentManager.addManager(WwCodeBlockManager);
     wwe.componentManager.addManager(WwTableManager);
+    wwe.componentManager.addManager(WwListManager);
 
     pch = new WwPasteContentHelper(wwe);
   });
