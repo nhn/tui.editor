@@ -39,6 +39,8 @@ const SVG_ATTR_LIST_RX = new RegExp(
 const XSS_ATTR_RX = /href|src|background/gi;
 const XSS_VALUE_RX = /((java|vb|live)script|x):/gi;
 const ON_EVENT_RX = /^on\S+/;
+const COMMENT_RX = /<!--[\s\S]*?-->/g;
+const MSO_NAMESPACE_RX = /<\/?o:p>/g;
 
 /**
  * htmlSanitizer
@@ -51,7 +53,8 @@ function htmlSanitizer(html, needHtmlText) {
   const root = document.createElement('div');
 
   if (isString(html)) {
-    html = html.replace(/<!--[\s\S]*?-->/g, '');
+    html = html.replace(COMMENT_RX, '');
+    html = html.replace(MSO_NAMESPACE_RX, '');
     root.innerHTML = html;
   } else {
     root.appendChild(html);
