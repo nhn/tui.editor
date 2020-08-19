@@ -2,6 +2,8 @@
  * @fileoverview test clipboard integration
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import { source } from 'common-tags';
+
 import $ from 'jquery';
 import browser from 'tui-code-snippet/browser/browser';
 
@@ -154,6 +156,41 @@ describe('Clipboard', () => {
           '<div>text<br></div>' +
           '<div>text<br></div>' +
           '<div>text<br></div>';
+
+        se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
+
+        expect(se.getHTML()).toEqual(outputHtml);
+      });
+
+      it('list paragraph copied from ms office should be changed to list', () => {
+        const inputHtml = source`
+          <p class="MsoListParagraph" style="margin-left:40.0pt;mso-para-margin-left:0gd;
+          text-indent:-20.0pt;mso-list:l0 level1 lfo1">
+            <span class="font" style="font-family:Wingdings">
+              <span style="mso-list:Ignore">l
+                <span class="font" style="font-family:&quot;Times New Roman&quot;">
+                  <span class="size" style="font-size:7pt">&nbsp; </span>
+                </span>
+              </span>
+            </span>
+            <span lang="KO">foo</span>
+          </p>
+          <p class="MsoListParagraph" style="margin-left:60.0pt;mso-para-margin-left:0gd;
+text-indent:-20.0pt;mso-list:l0 level2 lfo1">
+            <span lang="KO" style="mso-fareast-font-family:&quot;맑은 고딕&quot;;mso-fareast-theme-font:minor-latin;
+mso-bidi-font-family:&quot;맑은 고딕&quot;;mso-bidi-theme-font:minor-latin">
+              <span style="mso-list:Ignore">1.
+                <span class="font" style="font-family:&quot;Times New Roman&quot;">
+                  <span class="size" style="font-size:7pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+                </span>
+              </span>
+            </span>
+            <span lang="KO">bar</span>
+          </p>
+        `;
+        const outputHtml = source`
+          <div><br></div><ul><li>foo<br></li><ol><li>bar<br></li></ol></ul><div><br></div>
+        `;
 
         se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
 
