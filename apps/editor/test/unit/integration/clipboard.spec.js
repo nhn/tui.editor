@@ -181,15 +181,15 @@ text-indent:-20.0pt;mso-list:l0 level2 lfo1">
 mso-bidi-font-family:&quot;맑은 고딕&quot;;mso-bidi-theme-font:minor-latin">
               <span style="mso-list:Ignore">1.
                 <span class="font" style="font-family:&quot;Times New Roman&quot;">
-                  <span class="size" style="font-size:7pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+                  <span class="size" style="font-size:7pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 </span>
               </span>
             </span>
-            <span lang="KO">bar</span>
+            <span lang="KO">가나다</span>
           </p>
         `;
         const outputHtml = source`
-          <div><br></div><ul><li>foo<br></li><ol><li>bar<br></li></ol></ul><div><br></div>
+          <div><br></div><ul><li>foo<br></li><ol><li>가나다<br></li></ol></ul><div><br></div>
         `;
 
         se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));

@@ -2,10 +2,11 @@ import toArray from 'tui-code-snippet/collection/toArray';
 
 import domUtils from './dom';
 
-const MS_CLASS_NAME_LIST_RX = /MsoListParagraph/;
-const MS_CLASS_NAME_NORMAL_RX = /MsoNormal/;
-const MS_PREFIX_RX = /style=.*mso-/;
-const MS_LIST_STYLE_RX = /mso-list:(.*)/;
+const MSO_CLASS_NAME_LIST_RX = /MsoListParagraph/;
+const MSO_CLASS_NAME_NORMAL_RX = /MsoNormal/;
+const MSO_PREFIX_RX = /style=.*mso-/;
+const MSO_LIST_STYLE_RX = /mso-list:(.*)/;
+const MSO_TAG_NAME_RX = /O:P/;
 const UNORDERED_LIST_BULLET_RX = /^(n|u|l)/;
 
 /**
@@ -15,24 +16,32 @@ const UNORDERED_LIST_BULLET_RX = /^(n|u|l)/;
  * @returns {boolean}
  */
 export function isCopiedFromMso(html) {
-  return MS_PREFIX_RX.test(html);
+  return MSO_PREFIX_RX.test(html);
 }
 
-function getContents(pTag) {
-  let html = '';
+function getListItemContents(pTag) {
+  const removedNodes = [];
+  const walker = document.createTreeWalker(pTag, 1, null, false);
 
-  toArray(pTag.children).forEach((childNode, index) => {
-    if (index) {
-      html += childNode.outerHTML;
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+
+    if (
+      domUtils.isElemNode(node) &&
+      (MSO_PREFIX_RX.test(node.outerHTML) || MSO_TAG_NAME_RX.test(node.nodeName))
+    ) {
+      removedNodes.push(node);
     }
-  });
+  }
 
-  return html;
+  removedNodes.forEach(domUtils.remove);
+
+  return pTag.innerHTML.trim();
 }
 
 function getListItemDefaultData(pTag, index) {
   const styleAttr = pTag.getAttribute('style');
-  const [, listItemInfo] = styleAttr.match(MS_LIST_STYLE_RX);
+  const [, listItemInfo] = styleAttr.match(MSO_LIST_STYLE_RX);
   const [, levelStr] = listItemInfo.trim().split(' ');
   const level = parseInt(levelStr.replace('level', ''), 10);
   const unorderedListItem = UNORDERED_LIST_BULLET_RX.test(pTag.textContent);
@@ -44,7 +53,7 @@ function getListItemDefaultData(pTag, index) {
     parent: null,
     children: [],
     unorderedListItem,
-    contents: getContents(pTag)
+    contents: getListItemContents(pTag)
   };
 }
 
@@ -124,10 +133,10 @@ export function convertMsoParagraphToList(container) {
   domUtils.findAll(container, 'p').forEach(pTag => {
     const { className, nextSibling } = pTag;
 
-    if (MS_CLASS_NAME_LIST_RX.test(className)) {
+    if (MSO_CLASS_NAME_LIST_RX.test(className)) {
       pTags.push(pTag);
 
-      if (!nextSibling || (nextSibling && MS_CLASS_NAME_NORMAL_RX.test(nextSibling.className))) {
+      if (!nextSibling || (nextSibling && MSO_CLASS_NAME_NORMAL_RX.test(nextSibling.className))) {
         const listElem = getListElement(pTags);
         const target = nextSibling || container;
 
@@ -137,7 +146,7 @@ export function convertMsoParagraphToList(container) {
           domUtils.append(target, listElem);
         }
 
-        pTags.forEach(p => domUtils.remove(p));
+        pTags.forEach(domUtils.remove);
         pTags = [];
       }
     }
