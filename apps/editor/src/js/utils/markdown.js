@@ -70,6 +70,12 @@ export function isListItemNode(mdNode) {
   return mdNode.type === 'item';
 }
 
+export function isTableCellNode(mdNode) {
+  const { type } = mdNode;
+
+  return type === 'tableCell' || type === 'tableDelimCell';
+}
+
 export function isInlineNode(mdNode) {
   switch (mdNode.type) {
     case 'code':
