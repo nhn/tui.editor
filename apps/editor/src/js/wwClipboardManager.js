@@ -9,7 +9,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import domUtils from './utils/dom';
-import { isCopiedFromMso, convertMsoParagraphToList } from './utils/wwPasteMsoList';
+import { isFromMso, convertMsoParagraphToList } from './utils/wwPasteMsoList';
 
 import WwPasteContentHelper from './wwPasteContentHelper';
 import WwTablePasteHelper from './wwTablePasteHelper';
@@ -270,7 +270,7 @@ class WwClipboardManager {
    * @private
    */
   _preparePaste(clipboardContainer) {
-    if (isCopiedFromMso(clipboardContainer.innerHTML)) {
+    if (isFromMso(clipboardContainer.innerHTML)) {
       convertMsoParagraphToList(clipboardContainer);
     } else {
       // When pasting text, the empty line processing differ our viewer and MS Office.

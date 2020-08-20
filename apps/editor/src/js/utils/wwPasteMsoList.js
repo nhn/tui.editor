@@ -4,8 +4,8 @@ import domUtils from './dom';
 
 const MSO_CLASS_NAME_LIST_RX = /MsoListParagraph/;
 const MSO_CLASS_NAME_NORMAL_RX = /MsoNormal/;
-const MSO_PREFIX_RX = /style=.*mso-/;
-const MSO_LIST_STYLE_RX = /mso-list:(.*)/;
+const MSO_STYLE_PREFIX_RX = /style=.*mso-/;
+const MSO_STYLE_LIST_RX = /mso-list:(.*)/;
 const MSO_TAG_NAME_RX = /O:P/;
 const UNORDERED_LIST_BULLET_RX = /^(n|u|l)/;
 
@@ -15,8 +15,8 @@ const UNORDERED_LIST_BULLET_RX = /^(n|u|l)/;
  * @param {string} html - html string
  * @returns {boolean}
  */
-export function isCopiedFromMso(html) {
-  return MSO_PREFIX_RX.test(html);
+export function isFromMso(html) {
+  return MSO_STYLE_PREFIX_RX.test(html);
 }
 
 function getListItemContents(pTag) {
@@ -28,7 +28,7 @@ function getListItemContents(pTag) {
 
     if (
       domUtils.isElemNode(node) &&
-      (MSO_PREFIX_RX.test(node.outerHTML) || MSO_TAG_NAME_RX.test(node.nodeName))
+      (isFromMso(node.outerHTML) || MSO_TAG_NAME_RX.test(node.nodeName))
     ) {
       removedNodes.push(node);
     }
@@ -41,7 +41,7 @@ function getListItemContents(pTag) {
 
 function getListItemDefaultData(pTag, index) {
   const styleAttr = pTag.getAttribute('style');
-  const [, listItemInfo] = styleAttr.match(MSO_LIST_STYLE_RX);
+  const [, listItemInfo] = styleAttr.match(MSO_STYLE_LIST_RX);
   const [, levelStr] = listItemInfo.trim().split(' ');
   const level = parseInt(levelStr.replace('level', ''), 10);
   const unorderedListItem = UNORDERED_LIST_BULLET_RX.test(pTag.textContent);

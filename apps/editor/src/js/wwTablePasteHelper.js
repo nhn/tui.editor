@@ -5,7 +5,7 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 
 import domUtils from './utils/dom';
-import { isCopiedFromMso, convertMsoParagraphToList } from './utils/wwPasteMsoList';
+import { isFromMso, convertMsoParagraphToList } from './utils/wwPasteMsoList';
 import defaultSanitizer from './htmlSanitizer';
 
 /**
@@ -156,7 +156,7 @@ class WwTablePasteHelper {
       html = html.slice(startFragmentIndex + startFramgmentStr.length, endFragmentIndex);
     }
 
-    if (isCopiedFromMso(html)) {
+    if (isFromMso(html)) {
       html = this._convertToMsoList(html);
     }
 
