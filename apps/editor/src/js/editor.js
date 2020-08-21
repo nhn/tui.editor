@@ -806,7 +806,7 @@ class ToastUIEditor {
 
   /**
    * Set code block languages
-   * @param {Array} languages - code lauguage list
+   * @param {Array} languages - code language list
    */
   setCodeBlockLanguages(languages = []) {
     languages.forEach(lang => {
