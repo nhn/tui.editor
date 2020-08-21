@@ -1,5 +1,3 @@
-import toArray from 'tui-code-snippet/collection/toArray';
-
 import domUtils from './dom';
 
 const MSO_CLASS_NAME_LIST_RX = /MsoListParagraph/;
@@ -39,7 +37,7 @@ function getListItemContents(pTag) {
   return pTag.innerHTML.trim();
 }
 
-function getListItemDefaultData(pTag, index) {
+function createListItemDataFromPTag(pTag, index) {
   const styleAttr = pTag.getAttribute('style');
   const [, listItemInfo] = styleAttr.match(MSO_STYLE_LIST_RX);
   const [, levelStr] = listItemInfo.trim().split(' ');
@@ -57,7 +55,7 @@ function getListItemDefaultData(pTag, index) {
   };
 }
 
-function adjustListItemData(data, prevData) {
+function addListItemDetailData(data, prevData) {
   if (prevData.level < data.level) {
     prevData.children.push(data);
     data.parent = prevData;
@@ -85,10 +83,10 @@ function createListData(pTags) {
 
   pTags.forEach((pTag, index) => {
     const prevListItemData = listData[index - 1];
-    const listItemData = getListItemDefaultData(pTag, index);
+    const listItemData = createListItemDataFromPTag(pTag, index);
 
     if (prevListItemData) {
-      adjustListItemData(listItemData, prevListItemData);
+      addListItemDetailData(listItemData, prevListItemData);
     }
 
     listData.push(listItemData);
@@ -97,30 +95,30 @@ function createListData(pTags) {
   return listData;
 }
 
-function createListElement(list) {
-  const listTagName = list[0].unorderedListItem ? 'ul' : 'ol';
-  const listElem = document.createElement(listTagName);
+function makeList(listData) {
+  const listTagName = listData[0].unorderedListItem ? 'ul' : 'ol';
+  const list = document.createElement(listTagName);
 
-  list.forEach(listItem => {
-    const { children, contents } = listItem;
-    const listItemElem = document.createElement('li');
+  listData.forEach(data => {
+    const { children, contents } = data;
+    const listItem = document.createElement('li');
 
-    listItemElem.innerHTML = contents;
-    listElem.appendChild(listItemElem);
+    listItem.innerHTML = contents;
+    list.appendChild(listItem);
 
     if (children.length) {
-      listElem.appendChild(createListElement(children));
+      list.appendChild(makeList(children));
     }
   });
 
-  return listElem;
+  return list;
 }
 
-function getListElement(pTags) {
+function makeListFromPTags(pTags) {
   const listData = createListData(pTags);
   const rootChildren = listData.filter(({ parent }) => !parent);
 
-  return createListElement(rootChildren);
+  return makeList(rootChildren);
 }
 
 /**
@@ -137,13 +135,13 @@ export function convertMsoParagraphToList(container) {
       pTags.push(pTag);
 
       if (!nextSibling || (nextSibling && MSO_CLASS_NAME_NORMAL_RX.test(nextSibling.className))) {
-        const listElem = getListElement(pTags);
+        const list = makeListFromPTags(pTags);
         const target = nextSibling || container;
 
         if (nextSibling) {
-          domUtils.prepend(target, listElem);
+          domUtils.prepend(target, list);
         } else {
-          domUtils.append(target, listElem);
+          domUtils.append(target, list);
         }
 
         pTags.forEach(domUtils.remove);
