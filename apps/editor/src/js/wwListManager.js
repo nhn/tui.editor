@@ -47,7 +47,7 @@ class WwListManager {
    */
   _initEvent() {
     this.eventManager.listen('wysiwygSetValueBefore', html =>
-      this._convertToArbitraryNestingList(html)
+      this.convertToArbitraryNestingList(html)
     );
 
     this.eventManager.listen('wysiwygRangeChangeAfter', () => {
@@ -181,9 +181,8 @@ class WwListManager {
    * `<ul><li>text</li><ul><li>text2</li></ul></ul>`
    * @param {string} html string to convert
    * @returns {string} converted HTML text
-   * @private
    */
-  _convertToArbitraryNestingList(html) {
+  convertToArbitraryNestingList(html) {
     const NESTED_LIST_QUERY = 'li > ul, li > ol';
     const wrapper = domUtils.createElementWith(`<div>${html}</div>`);
 

@@ -143,9 +143,10 @@ class WwPasteContentHelper {
 
     container.innerHTML = this._wrapOrphanNodeWithDiv(container);
 
-    this._preElementAid(container);
+    this._preprocessPreElement(container);
+    this._preprocessListElement(container);
 
-    this._tableElementAid(container);
+    this._preprocessTableElement(container);
 
     toArray(container.children).forEach(childNode => {
       if (domUtils.getNodeName(childNode) === 'BR') {
@@ -154,12 +155,18 @@ class WwPasteContentHelper {
     });
   }
 
+  _preprocessListElement(container) {
+    const wwListManager = this.wwe.componentManager.getManager('list');
+
+    container.innerHTML = wwListManager.convertToArbitraryNestingList(container.innerHTML);
+  }
+
   /**
    * PRE tag formatting
    * @param {HTMLElement} container - clipboard container
    * @private
    */
-  _preElementAid(container) {
+  _preprocessPreElement(container) {
     const wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
 
     wwCodeblockManager.modifyCodeBlockForWysiwyg(container);
@@ -421,7 +428,7 @@ class WwPasteContentHelper {
    * @param {HTMLElement} container - clipboard container
    * @private
    */
-  _tableElementAid(container) {
+  _preprocessTableElement(container) {
     this._removeColgroup(container);
     this._completeTableIfNeed(container);
     this._updateTableIDClassName(container);

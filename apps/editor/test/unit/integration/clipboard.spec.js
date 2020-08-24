@@ -2,6 +2,8 @@
  * @fileoverview test clipboard integration
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import { source, oneLineTrim } from 'common-tags';
+
 import $ from 'jquery';
 import browser from 'tui-code-snippet/browser/browser';
 
@@ -158,6 +160,117 @@ describe('Clipboard', () => {
         se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
 
         expect(se.getHTML()).toEqual(outputHtml);
+      });
+
+      describe('list paragraph copied from ms office should be changed to', () => {
+        it('normal list', () => {
+          const inputHtml = source`
+            <p class="MsoListParagraph" style="margin-left:40.0pt;mso-para-margin-left:0gd;text-indent:-20.0pt;mso-list:l0 level1 lfo1">
+              <span class="font" style="font-family:Wingdings">
+                <span style="mso-list:Ignore">l
+                  <span class="font" style="font-family:&quot;Times New Roman&quot;">
+                    <span class="size" style="font-size:7pt">&nbsp; </span>
+                  </span>
+                </span>
+              </span>
+              <span lang="KO">foo</span>
+            </p>
+            <p class="MsoListParagraph" style="margin-left:40.0pt;mso-para-margin-left:0gd;text-indent:-20.0pt;mso-list:l0 level1 lfo1">
+              <span class="font" style="font-family:Wingdings">
+                <span style="mso-list:Ignore">l
+                  <span class="font" style="font-family:&quot;Times New Roman&quot;">
+                    <span class="size" style="font-size:7pt">&nbsp; </span>
+                  </span>
+                </span>
+              </span>
+              <span lang="KO">bar</span>
+            </p>
+            <p class="MsoNormal">
+              <span lang="KO">&nbsp;</span>
+            </p>
+            <p class="MsoListParagraph" style="margin-left:40.0pt;mso-para-margin-left:0gd;text-indent:-20.0pt;mso-list:l1 level1 lfo2">
+              <span lang="KO" style="mso-fareast-font-family:&quot;맑은 고딕&quot;;mso-fareast-theme-font:minor-latin;mso-bidi-font-family:&quot;맑은 고딕&quot;;mso-bidi-theme-font:minor-latin">
+                <span style="mso-list:Ignore">1.
+                  <span class="font" style="font-family:&quot;Times New Roman&quot;">
+                    <span class="size" style="font-size:7pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+                  </span>
+                </span>
+              </span>
+              <span lang="KO">가</span>
+            </p>
+            <p class="MsoListParagraph" style="margin-left:40.0pt;mso-para-margin-left:0gd;
+            text-indent:-20.0pt;mso-list:l1 level1 lfo2">
+              <span lang="KO" style="mso-fareast-font-family:&quot;맑은 고딕&quot;;mso-fareast-theme-font:minor-latin;
+            mso-bidi-font-family:&quot;맑은 고딕&quot;;mso-bidi-theme-font:minor-latin">
+                <span style="mso-list:Ignore">2.
+                  <span class="font" style="font-family:&quot;Times New Roman&quot;">
+                    <span class="size" style="font-size:7pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+                  </span>
+                </span>
+              </span>
+              <span lang="KO">나</span>
+            </p>
+          `;
+          const outputHtml = oneLineTrim`
+            <div><br></div>
+            <ul>
+              <li>foo<br></li>
+              <li>bar<br></li>
+            </ul>
+            <div>&nbsp;<br></div>
+            <ol>
+              <li>가<br></li>
+              <li>나<br></li>
+            </ol>
+            <div><br></div>
+          `;
+
+          se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
+
+          expect(se.getHTML()).toEqual(outputHtml);
+        });
+
+        it('nested list', () => {
+          const inputHtml = source`
+            <p class="MsoListParagraph" style="margin-left:40.0pt;mso-para-margin-left:0gd;
+            text-indent:-20.0pt;mso-list:l0 level1 lfo1">
+              <span class="font" style="font-family:Wingdings">
+                <span style="mso-list:Ignore">l
+                  <span class="font" style="font-family:&quot;Times New Roman&quot;">
+                    <span class="size" style="font-size:7pt">&nbsp; </span>
+                  </span>
+                </span>
+              </span>
+              <span lang="KO">foo</span>
+            </p>
+            <p class="MsoListParagraph" style="margin-left:60.0pt;mso-para-margin-left:0gd;
+  text-indent:-20.0pt;mso-list:l0 level2 lfo1">
+              <span lang="KO" style="mso-fareast-font-family:&quot;맑은 고딕&quot;;mso-fareast-theme-font:minor-latin;
+  mso-bidi-font-family:&quot;맑은 고딕&quot;;mso-bidi-theme-font:minor-latin">
+                <span style="mso-list:Ignore">1.
+                  <span class="font" style="font-family:&quot;Times New Roman&quot;">
+                    <span class="size" style="font-size:7pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  </span>
+                </span>
+              </span>
+              <span lang="KO">가나다</span>
+            </p>
+          `;
+          const outputHtml = oneLineTrim`
+            <div><br></div>
+            <ul>
+              <li>foo<br></li>
+              <ol>
+                <li>가나다<br></li>
+              </ol>
+            </ul>
+            <div><br></div>
+          `;
+
+          se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
+
+          expect(se.getHTML()).toEqual(outputHtml);
+        });
       });
     });
 

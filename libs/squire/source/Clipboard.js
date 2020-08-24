@@ -153,21 +153,6 @@ var onPaste = function ( event ) {
     // Current HTML5 Clipboard interface
     // ---------------------------------
     // https://html.spec.whatwg.org/multipage/interaction.html
-
-    // Edge only provides access to plain text as of 2016-03-11 and gives no
-    // indication there should be an HTML part. However, it does support access
-    // to image data, so check if this is present and use if so.
-    if ( isEdge && items ) {
-        l = items.length;
-        while ( l-- ) {
-            if ( !choosePlain && /^image\/.*/.test( items[l].type ) ) {
-                hasImage = true;
-            }
-        }
-        if ( !hasImage ) {
-            items = null;
-        }
-    }
     if ( items ) {
         event.preventDefault();
         l = items.length;

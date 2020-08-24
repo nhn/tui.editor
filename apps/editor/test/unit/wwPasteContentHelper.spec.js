@@ -9,6 +9,7 @@ import EventManager from '@/eventManager';
 import WwPasteContentHelper from '@/wwPasteContentHelper';
 import WwCodeBlockManager from '@/wwCodeBlockManager';
 import WwTableManager from '@/wwTableManager';
+import WwListManager from '@/wwListManager';
 import htmlSanitizer from '@/htmlSanitizer';
 
 describe('WwPasteContentHelper', () => {
@@ -32,6 +33,7 @@ describe('WwPasteContentHelper', () => {
 
     wwe.componentManager.addManager(WwCodeBlockManager);
     wwe.componentManager.addManager(WwTableManager);
+    wwe.componentManager.addManager(WwListManager);
 
     pch = new WwPasteContentHelper(wwe);
   });
@@ -272,23 +274,23 @@ describe('WwPasteContentHelper', () => {
       expect(element.find('br').length).toEqual(4);
       expect(element.text()).toEqual('ip lorem sit ametand so onla vita dolcecarpe diem');
     });
-    it('_tableElementAid should wrap TRs with TBODY', () => {
+    it('_preprocessTableElement should wrap TRs with TBODY', () => {
       const element = $('<div />');
 
       element.html('<tr><td>1</td><td>2</td></tr>');
 
-      pch._tableElementAid(element.get(0));
+      pch._preprocessTableElement(element.get(0));
 
       expect(element.find('tbody').length).toEqual(1);
       expect(element.find('tbody').text()).toEqual('12');
       expect(element.find('table')[0].className).toEqual('te-content-table-0');
     });
-    it('_tableElementAid should wrap TDs with TR', () => {
+    it('_preprocessTableElement should wrap TDs with TR', () => {
       const element = $('<div />');
 
       element.html('<td>1</td><td>2</td><td>3</td><td>4</td>');
 
-      pch._tableElementAid(element.get(0));
+      pch._preprocessTableElement(element.get(0));
 
       expect(element.find('thead').length).toEqual(1);
       expect(element.find('tbody').length).toEqual(1);
@@ -296,14 +298,14 @@ describe('WwPasteContentHelper', () => {
       expect(element.find('tr').text()).toEqual('1234');
       expect(element.find('table')[0].className).toEqual('te-content-table-0');
     });
-    it('_tableElementAid should wrap THEAD and TBODY with TABLE', () => {
+    it('_preprocessTableElement should wrap THEAD and TBODY with TABLE', () => {
       const element = $('<div />');
 
       element.html(
         '<thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody>'
       );
 
-      pch._tableElementAid(element.get(0));
+      pch._preprocessTableElement(element.get(0));
 
       expect(element.find('table').length).toEqual(1);
       expect(element.find('thead').length).toEqual(1);
@@ -312,35 +314,35 @@ describe('WwPasteContentHelper', () => {
       expect(element.find('tbody').text()).toEqual('ab');
       expect(element.find('table')[0].className).toEqual('te-content-table-0');
     });
-    it('_tableElementAid should remove colgroup', () => {
+    it('_preprocessTableElement should remove colgroup', () => {
       const element = $('<div />');
 
       element.html(
         '<table><thead><tr><th>1</th><th>2</th></tr></thead><colgroup></colgroup><tbody><tr><td>a</td><td>b</td></tr></tbody></table>'
       );
 
-      pch._tableElementAid(element.get(0));
+      pch._preprocessTableElement(element.get(0));
 
       expect(element.find('table').length).toEqual(1);
       expect(element.find('colgroup').length).toEqual(0);
     });
-    it('_tableElementAid should update table ID class name', () => {
+    it('_preprocessTableElement should update table ID class name', () => {
       const element = $('<div />');
 
       element.html(
         '<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>'
       );
 
-      pch._tableElementAid(element.get(0));
+      pch._preprocessTableElement(element.get(0));
 
       expect(element.find('table').length).toEqual(1);
       expect(element.find('table')[0].className).toEqual('te-content-table-0');
 
-      pch._tableElementAid(element.get(0));
+      pch._preprocessTableElement(element.get(0));
 
       expect(element.find('table')[0].className).toEqual('te-content-table-1');
     });
-    it('_tableElementAid should update all table ID class name in element', () => {
+    it('_preprocessTableElement should update all table ID class name in element', () => {
       const element = $('<div />');
       const html =
         '<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>' +
@@ -348,13 +350,13 @@ describe('WwPasteContentHelper', () => {
 
       element.html(html);
 
-      pch._tableElementAid(element.get(0));
+      pch._preprocessTableElement(element.get(0));
 
       expect(element.find('table').length).toEqual(2);
       expect(element.find('table')[0].className).toEqual('te-content-table-0');
       expect(element.find('table')[1].className).toEqual('te-content-table-1');
 
-      pch._tableElementAid(element.get(0));
+      pch._preprocessTableElement(element.get(0));
 
       expect(element.find('table')[0].className).toEqual('te-content-table-2');
       expect(element.find('table')[1].className).toEqual('te-content-table-3');

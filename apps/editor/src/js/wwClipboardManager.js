@@ -9,6 +9,8 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import domUtils from './utils/dom';
+import { isFromMso, convertMsoParagraphsToList } from './utils/wwPasteMsoList';
+
 import WwPasteContentHelper from './wwPasteContentHelper';
 import WwTablePasteHelper from './wwTablePasteHelper';
 
@@ -246,17 +248,6 @@ class WwClipboardManager {
   }
 
   /**
-   * MS Office use specific CSS attributes with mso- prefix.
-   * But safari does not support mso- prefix.
-   * @param {string} html - html string
-   * @returns {boolean}
-   * @private
-   */
-  _isFromMs(html) {
-    return /<p style="[^>]*mso-/.test(html);
-  }
-
-  /**
    * P tags append 'BR' to make blank line.
    * Our viewer renders new line as P tag with margin.
    * When pasting text from viewer, insert BR between P tags.
@@ -279,10 +270,12 @@ class WwClipboardManager {
    * @private
    */
   _preparePaste(clipboardContainer) {
-    // When pasting text, the empty line processing differ our viewer and MS Office.
-    // In our viewer case, <p>aaa</p><p>bbb<p> have empty line becuase P tags have margin.
-    // In MS Office case, <p>aaa</p><p>bbb<p> do not have empty line becuase P tags means just one line.
-    if (!this._isFromMs(clipboardContainer.innerText)) {
+    if (isFromMso(clipboardContainer.innerHTML)) {
+      convertMsoParagraphsToList(clipboardContainer);
+    } else {
+      // When pasting text, the empty line processing differ our viewer and MS Office.
+      // In our viewer case, <p>aaa</p><p>bbb</p> have empty line becuase P tags have margin.
+      // In MS Office case, <p>aaa</p><p>bbb</p> do not have empty line becuase P tags means just one line.
       this._preProcessPtag(clipboardContainer);
     }
 

@@ -72,9 +72,9 @@ describe('WwListManager', () => {
   });
 
   describe('convert from/to arbitrary nesting list', () => {
-    it('_convertToArbitraryNestingList should convert nested ul to arbitrary nested ul', () => {
+    it('convertToArbitraryNestingList should convert nested ul to arbitrary nested ul', () => {
       expect(
-        mgr._convertToArbitraryNestingList('<ul><li>text<ul><li>text2</li></ul></li></ul>')
+        mgr.convertToArbitraryNestingList('<ul><li>text<ul><li>text2</li></ul></li></ul>')
       ).toBe('<ul><li>text</li><ul><li>text2</li></ul></ul>');
     });
 
@@ -84,7 +84,7 @@ describe('WwListManager', () => {
       ).toBe('<ul><li>text<ul><li>text2</li></ul></li></ul>');
     });
 
-    it('should be called _convertToArbitraryNestingList on wysiwygSetValueBefore', () => {
+    it('should be called convertToArbitraryNestingList on wysiwygSetValueBefore', () => {
       const standardList = '<ul><li>text<ul><li>text2</li></ul></li></ul>';
 
       const arbitraryList = em.emitReduce('wysiwygSetValueBefore', standardList);

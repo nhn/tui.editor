@@ -5,6 +5,7 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 
 import domUtils from './utils/dom';
+import { isFromMso, convertMsoParagraphsToList } from './utils/wwPasteMsoList';
 import defaultSanitizer from './htmlSanitizer';
 
 /**
@@ -123,6 +124,22 @@ class WwTablePasteHelper {
     return domUtils.finalizeHtml(container);
   }
 
+  _convertToMsoList(html) {
+    const container = document.createElement('div');
+
+    container.innerHTML = html;
+
+    const pTagsContainer = document.createElement('div');
+
+    domUtils.findAll(container, 'p').forEach(pTag => {
+      pTagsContainer.appendChild(pTag);
+    });
+
+    convertMsoParagraphsToList(pTagsContainer);
+
+    return pTagsContainer.innerHTML;
+  }
+
   /**
    * Paste html of clipboard
    * @param {string} html - html
@@ -137,6 +154,10 @@ class WwTablePasteHelper {
 
     if (startFragmentIndex > -1 && endFragmentIndex > -1) {
       html = html.slice(startFragmentIndex + startFramgmentStr.length, endFragmentIndex);
+    }
+
+    if (isFromMso(html)) {
+      html = this._convertToMsoList(html);
     }
 
     // Wrap with <tr> if html contains dangling <td> tags
