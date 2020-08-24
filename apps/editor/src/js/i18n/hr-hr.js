@@ -1,0 +1,52 @@
+/**
+ * @fileoverview I18N for Croatian
+ * @author Hrvoje A. <hrvoj3e@gmail.com>
+ */
+import Editor from '../editor';
+
+Editor.setLanguage(['hr', 'hr-HR'], {
+  Markdown: 'Markdown',
+  WYSIWYG: 'WYSIWYG',
+  Write: 'Piši',
+  Preview: 'Pregled',
+  Headings: 'Naslovi',
+  Paragraph: 'Paragraf',
+  Bold: 'podebljano',
+  Italic: 'kurziv',
+  Strike: 'prcrtano',
+  Code: 'Uklopljeni kôd',
+  Line: 'Linija',
+  Blockquote: 'Blok citat',
+  'Unordered list': 'Neporedana lista',
+  'Ordered list': 'Poredana lista',
+  Task: 'Task',
+  Indent: 'Povećaj uvlaku',
+  Outdent: 'Smanji uvlaku',
+  'Insert link': 'Umetni link',
+  'Insert CodeBlock': 'Umetni blok kôda',
+  'Insert table': 'Umetni tablicu',
+  'Insert image': 'Umetni sliku',
+  Heading: 'Naslov',
+  'Image URL': 'URL slike',
+  'Select image file': 'Odaberi slikovnu datoteku',
+  Description: 'Opis',
+  OK: 'OK',
+  More: 'Više',
+  Cancel: 'Odustani',
+  File: 'Datoteka',
+  URL: 'URL',
+  'Link text': 'Tekst linka',
+  'Add row': 'Dodaj redak',
+  'Add col': 'Dodaj stupac',
+  'Remove row': 'Ukloni redak',
+  'Remove col': 'Remove stupac',
+  'Align left': 'Poravnaj lijevo',
+  'Align center': 'Poravnaj centrirano',
+  'Align right': 'Poravnaj desno',
+  'Remove table': 'Ukloni tablicu',
+  'Would you like to paste as table?': 'Zalite li zalijepiti kao tablicu?',
+  'Text color': 'Boja teksta',
+  'Auto scroll enabled': 'Omogući auto klizanje',
+  'Auto scroll disabled': 'Onemogući auto klizanje',
+  'Choose language': 'Odabir jezika'
+});
