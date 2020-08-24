@@ -5,7 +5,7 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 
 import domUtils from './utils/dom';
-import { isFromMso, convertMsoParagraphToList } from './utils/wwPasteMsoList';
+import { isFromMso, convertMsoParagraphsToList } from './utils/wwPasteMsoList';
 import defaultSanitizer from './htmlSanitizer';
 
 /**
@@ -135,7 +135,7 @@ class WwTablePasteHelper {
       pTagsContainer.appendChild(pTag);
     });
 
-    convertMsoParagraphToList(pTagsContainer);
+    convertMsoParagraphsToList(pTagsContainer);
 
     return pTagsContainer.innerHTML;
   }

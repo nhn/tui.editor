@@ -17,9 +17,9 @@ export function isFromMso(html) {
   return MSO_STYLE_PREFIX_RX.test(html);
 }
 
-function getListItemContents(pTag) {
+function getListItemContents(para) {
   const removedNodes = [];
-  const walker = document.createTreeWalker(pTag, 1, null, false);
+  const walker = document.createTreeWalker(para, 1, null, false);
 
   while (walker.nextNode()) {
     const node = walker.currentNode;
@@ -34,15 +34,15 @@ function getListItemContents(pTag) {
 
   removedNodes.forEach(domUtils.remove);
 
-  return pTag.innerHTML.trim();
+  return para.innerHTML.trim();
 }
 
-function createListItemDataFromPTag(pTag, index) {
-  const styleAttr = pTag.getAttribute('style');
+function createListItemDataFromParagraph(para, index) {
+  const styleAttr = para.getAttribute('style');
   const [, listItemInfo] = styleAttr.match(MSO_STYLE_LIST_RX);
   const [, levelStr] = listItemInfo.trim().split(' ');
   const level = parseInt(levelStr.replace('level', ''), 10);
-  const unorderedListItem = UNORDERED_LIST_BULLET_RX.test(pTag.textContent);
+  const unorderedListItem = UNORDERED_LIST_BULLET_RX.test(para.textContent);
 
   return {
     id: index,
@@ -51,7 +51,7 @@ function createListItemDataFromPTag(pTag, index) {
     parent: null,
     children: [],
     unorderedListItem,
-    contents: getListItemContents(pTag)
+    contents: getListItemContents(para)
   };
 }
 
@@ -78,12 +78,12 @@ function addListItemDetailData(data, prevData) {
   }
 }
 
-function createListData(pTags) {
+function createListData(paras) {
   const listData = [];
 
-  pTags.forEach((pTag, index) => {
+  paras.forEach((para, index) => {
     const prevListItemData = listData[index - 1];
-    const listItemData = createListItemDataFromPTag(pTag, index);
+    const listItemData = createListItemDataFromParagraph(para, index);
 
     if (prevListItemData) {
       addListItemDetailData(listItemData, prevListItemData);
@@ -114,8 +114,8 @@ function makeList(listData) {
   return list;
 }
 
-function makeListFromPTags(pTags) {
-  const listData = createListData(pTags);
+function makeListFromParagraphs(paras) {
+  const listData = createListData(paras);
   const rootChildren = listData.filter(({ parent }) => !parent);
 
   return makeList(rootChildren);
@@ -125,17 +125,17 @@ function makeListFromPTags(pTags) {
  * Convert pargraphs of ms office to standard list element
  * @param {HTMLElement} container - container element to convert to list
  */
-export function convertMsoParagraphToList(container) {
-  let pTags = [];
+export function convertMsoParagraphsToList(container) {
+  let paras = [];
 
-  domUtils.findAll(container, 'p').forEach(pTag => {
-    const { className, nextSibling } = pTag;
+  domUtils.findAll(container, 'p').forEach(para => {
+    const { className, nextSibling } = para;
 
     if (MSO_CLASS_NAME_LIST_RX.test(className)) {
-      pTags.push(pTag);
+      paras.push(para);
 
       if (!nextSibling || (nextSibling && MSO_CLASS_NAME_NORMAL_RX.test(nextSibling.className))) {
-        const list = makeListFromPTags(pTags);
+        const list = makeListFromParagraphs(paras);
         const target = nextSibling || container;
 
         if (nextSibling) {
@@ -144,8 +144,8 @@ export function convertMsoParagraphToList(container) {
           domUtils.append(target, list);
         }
 
-        pTags.forEach(domUtils.remove);
-        pTags = [];
+        paras.forEach(domUtils.remove);
+        paras = [];
       }
     }
   });

@@ -9,7 +9,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import domUtils from './utils/dom';
-import { isFromMso, convertMsoParagraphToList } from './utils/wwPasteMsoList';
+import { isFromMso, convertMsoParagraphsToList } from './utils/wwPasteMsoList';
 
 import WwPasteContentHelper from './wwPasteContentHelper';
 import WwTablePasteHelper from './wwTablePasteHelper';
@@ -271,7 +271,7 @@ class WwClipboardManager {
    */
   _preparePaste(clipboardContainer) {
     if (isFromMso(clipboardContainer.innerHTML)) {
-      convertMsoParagraphToList(clipboardContainer);
+      convertMsoParagraphsToList(clipboardContainer);
     } else {
       // When pasting text, the empty line processing differ our viewer and MS Office.
       // In our viewer case, <p>aaa</p><p>bbb</p> have empty line becuase P tags have margin.
