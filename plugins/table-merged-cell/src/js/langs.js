@@ -166,5 +166,13 @@ export function addLangs(editor) {
       'Cannot paste row merged cells into the table header':
         'Kan ikke lime inn rad med sammenslåtte celler'
     });
+
+    Editor.setLanguage(['hr', 'hr-HR'], {
+      'Merge cells': 'Spoji ćelije',
+      'Unmerge cells': 'Odspoji ćelije',
+      'Cannot change part of merged cell': 'Ne mogu mijenjati dio spojene ćelije.',
+      'Cannot paste row merged cells into the table header':
+        'Ne mogu zaljepiti redak spojenih ćelija u zaglavlje tablice'
+    });
   }
 }
