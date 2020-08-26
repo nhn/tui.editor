@@ -144,7 +144,10 @@ declare namespace toastui {
     origin?: () => ReturnType<CustomHTMLRenderer>;
   }
 
-  export type CustomHTMLRenderer = (node: MdNode, context: Context) => HTMLToken | HTMLToken[] | null;
+  export type CustomHTMLRenderer = (
+    node: MdNode,
+    context: Context
+  ) => HTMLToken | HTMLToken[] | null;
 
   type CustomHTMLRendererMap = Partial<Record<NodeType, CustomHTMLRenderer>>;
   // Toastmark custom renderer type end
@@ -208,6 +211,15 @@ declare namespace toastui {
     renderer?: any;
   }
 
+  type CustomParser = (node: MdNode, context: { entering: boolean }) => void;
+  type CustomParserMap = Partial<Record<NodeType, CustomParser>>;
+
+  interface PluginInfo {
+    pluginFn: Plugin;
+    renderer: CustomHTMLRendererMap;
+    parser: CustomParserMap;
+  }
+
   export interface Convertor {
     initHtmlSanitizer(sanitizer: Sanitizer): void;
     toHTML(makrdown: string): string;
@@ -241,7 +253,7 @@ declare namespace toastui {
     usageStatistics?: boolean;
     toolbarItems?: (string | ToolbarButton)[];
     hideModeSwitch?: boolean;
-    plugins?: Plugin[];
+    plugins?: (Plugin | PluginInfo)[];
     extendedAutolinks?: ExtendedAutolinks;
     customConvertor?: ConvertorClass;
     placeholder?: string;
