@@ -16,6 +16,7 @@ import { blockStarts, Matched } from './blockStarts';
 import { RefMap, RefLinkCandidateMap, RefDefCandidateMap } from '../toastmark';
 import { AutolinkParser } from './gfm/autoLinks';
 import { clearObj } from '../helper';
+import { replaceFrontMatterInput, frontMatterParser } from './frontMatter/frontMatter';
 
 const reHtmlBlockClose = [
   /./, // dummy for 0
@@ -43,10 +44,11 @@ const defaultOptions = {
   disallowedHtmlBlockTags: [],
   referenceDefinition: false,
   disallowDeepHeading: false,
-  customParser: null
+  customParser: null,
+  frontMatter: false
 };
 
-export type CustomParser = (node: Node, context: { entering: boolean }) => void;
+export type CustomParser = (node: Node, context: { entering: boolean; options: Options }) => void;
 export type CustomParserMap = Partial<Record<NodeType, CustomParser>>;
 
 export interface Options {
@@ -56,6 +58,7 @@ export interface Options {
   disallowedHtmlBlockTags: string[];
   referenceDefinition: boolean;
   disallowDeepHeading: boolean;
+  frontMatter: boolean;
   customParser: CustomParserMap | null;
 }
 
@@ -237,16 +240,18 @@ export class Parser {
     this.inlineParser.refLinkCandidateMap = this.refLinkCandidateMap;
     this.inlineParser.refDefCandidateMap = this.refDefCandidateMap;
     this.inlineParser.options = this.options;
+
     while ((event = walker.next())) {
       const { node, entering } = event;
       const t = node.type;
 
       if (customParser && customParser[t]) {
-        customParser[t]!(node, { entering });
+        customParser[t]!(node, { entering, options: this.options });
       }
 
       if (
         !entering &&
+        !(node as BlockNode).customType &&
         (t === 'paragraph' ||
           t === 'heading' ||
           (t === 'tableCell' && !(node as TableCellNode).ignored))
@@ -407,6 +412,10 @@ export class Parser {
 
   // The main parsing function.  Returns a parsed document AST.
   parse(input: string) {
+    if (this.options.frontMatter) {
+      this.options.customParser = { ...this.options.customParser, ...frontMatterParser };
+      input = replaceFrontMatterInput(input);
+    }
     this.doc = document();
     this.tip = this.doc;
     this.lineNumber = 0;
