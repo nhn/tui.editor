@@ -18,6 +18,7 @@ const attrValue = `(?:${unquoted}|${singleQuoted}|${doubleQuoted})`;
 const attribute = `(?:\\s+${attrName}(?:\\s*=\\s*${attrValue})?)*\\s*`;
 const openingTag = `(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*${attribute})(\\/?>)`;
 const HTML_TAG_RX = new RegExp(openingTag, 'g');
+const FRONT_MATTER_RX = /^\s?---[\s\S]+?---/;
 
 /**
  * Class Convertor
@@ -242,11 +243,10 @@ class Convertor {
   }
 
   _spliceAndSaveFrontMatter(markdown) {
-    const frontMatterRegex = /^---$[\s\S]*^---$/m;
-    const matched = markdown.match(frontMatterRegex);
+    const matched = markdown.match(FRONT_MATTER_RX);
 
     if (matched) {
-      markdown = markdown.replace(frontMatterRegex, '');
+      markdown = markdown.replace(FRONT_MATTER_RX, '');
       this.frontMatterContents = matched[0];
     } else {
       this.frontMatterContents = '';
