@@ -31,15 +31,18 @@ class Convertor {
       customHTMLRenderer,
       extendedAutolinks,
       referenceDefinition,
-      customParser
+      customParser,
+      frontMatter
     } = options;
 
+    this.options = options;
     this.mdReader = new Parser({
       extendedAutolinks,
       disallowedHtmlBlockTags: ['br'],
       referenceDefinition,
       disallowDeepHeading: true,
-      customParser
+      customParser,
+      frontMatter
     });
 
     this.renderHTML = createRenderHTML({
@@ -48,6 +51,7 @@ class Convertor {
     });
 
     this.eventManager = em;
+    this.frontMatterContents = '';
   }
 
   /**
@@ -58,6 +62,9 @@ class Convertor {
    * @private
    */
   _markdownToHtmlWithCodeHighlight(markdown) {
+    if (this.options.frontMatter) {
+      markdown = this._spliceAndSaveFrontMatter(markdown);
+    }
     return this.renderHTML(this.mdReader.parse(markdown));
   }
 
@@ -73,6 +80,10 @@ class Convertor {
     markdown = markdown.replace(HTML_TAG_RX, (match, $1, $2, $3) =>
       match[0] !== '\\' ? `${$1}${$2} data-tomark-pass ${$3}` : match
     );
+
+    if (this.options.frontMatter) {
+      markdown = this._spliceAndSaveFrontMatter(markdown);
+    }
 
     return this.renderHTML(this.mdReader.parse(markdown));
   }
@@ -170,6 +181,10 @@ class Convertor {
       resultArray[index] = line;
     });
 
+    if (this.frontMatterContents) {
+      resultArray.unshift(`${this.frontMatterContents}\n`);
+    }
+
     return resultArray.join('\n');
   }
 
@@ -224,6 +239,20 @@ class Convertor {
     );
 
     return html;
+  }
+
+  _spliceAndSaveFrontMatter(markdown) {
+    const frontMatterRegex = /^---$[\s\S]*^---$/m;
+    const matched = markdown.match(frontMatterRegex);
+
+    if (matched) {
+      markdown = markdown.replace(frontMatterRegex, '');
+      this.frontMatterContents = matched[0];
+    } else {
+      this.frontMatterContents = '';
+    }
+
+    return markdown;
   }
 }
 
