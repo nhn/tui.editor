@@ -21,12 +21,13 @@ import {
   findNodeAtPosition,
   findNodeById,
   invokeNextUntil,
-  isUnlinked
+  isUnlinked,
+  getRangeForCustomType
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
 import { iterateObject, omit, isEmptyObj } from './helper';
 import { isBlank } from './commonmark/blockHelper';
-import { getFrontMatterPos } from './commonmark/frontMatter/frontMatter';
+import { getFrontMatterPos } from './commonmark/frontMatter/helper';
 
 export const reLineEnding = /\r\n|\n|\r/;
 
@@ -194,7 +195,8 @@ export class ToastMark {
       endNode = endNode.next;
     }
 
-    return [startNode, endNode] as [BlockNode, BlockNode];
+    // extend node range to include the custom node
+    return getRangeForCustomType(startNode, endNode);
   }
 
   private trigger(eventName: EventName, param: any) {

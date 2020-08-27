@@ -18,8 +18,13 @@ const htmlEl = document.querySelector('.html') as HTMLElement;
 const previewEl = document.querySelector('.preview') as HTMLElement;
 
 const cm = codemirror(editorEl, { lineNumbers: true });
-const doc = new ToastMark();
+const doc = new ToastMark('---\nadf\n\n---\n\npara', { frontMatter: true });
+cm.setValue('---\nadf\n\n---\n\npara');
 const render = createRenderHTML({ gfm: true, nodeId: true });
+
+const html = render(doc.getRootNode());
+htmlEl.innerText = html;
+previewEl.innerHTML = html;
 
 const tokenTypes = {
   heading: 'header',

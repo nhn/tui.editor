@@ -16,7 +16,8 @@ import { blockStarts, Matched } from './blockStarts';
 import { RefMap, RefLinkCandidateMap, RefDefCandidateMap } from '../toastmark';
 import { AutolinkParser } from './gfm/autoLinks';
 import { clearObj } from '../helper';
-import { replaceFrontMatterInput, frontMatterParser } from './frontMatter/frontMatter';
+import { replaceFrontMatter } from './frontMatter/helper';
+import { frontMatterParser } from './frontMatter/parser';
 
 const reHtmlBlockClose = [
   /./, // dummy for 0
@@ -414,7 +415,7 @@ export class Parser {
   parse(input: string) {
     if (this.options.frontMatter) {
       this.options.customParser = { ...this.options.customParser, ...frontMatterParser };
-      input = replaceFrontMatterInput(input);
+      input = replaceFrontMatter(input);
     }
     this.doc = document();
     this.tip = this.doc;
