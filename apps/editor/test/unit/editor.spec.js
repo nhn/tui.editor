@@ -589,5 +589,17 @@ describe('Editor', () => {
         expect(customHTMLSanitizer).toHaveBeenCalled();
       });
     });
+
+    describe('frontMatter option', () => {
+      it('should parse the front matter as empty string', () => {
+        editor = new Editor({
+          el: container,
+          frontMatter: true,
+          initialValue: '---\ntitle: front matter\n---'
+        });
+
+        expect(editor.getHtml()).toBe('');
+      });
+    });
   });
 });
