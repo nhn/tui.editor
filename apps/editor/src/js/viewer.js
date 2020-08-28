@@ -18,6 +18,7 @@ import { sanitizeLinkAttribute } from './utils/common';
 import htmlSanitizer from './htmlSanitizer';
 
 const TASK_ATTR_NAME = 'data-te-task';
+const DISABLED_TASK_ATTR_NAME = 'data-te-task-disabled';
 const TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
@@ -138,6 +139,7 @@ class ToastUIEditorViewer {
     const style = getComputedStyle(ev.target, ':before');
 
     if (
+      !ev.target.hasAttribute(DISABLED_TASK_ATTR_NAME) &&
       ev.target.hasAttribute(TASK_ATTR_NAME) &&
       domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)
     ) {
