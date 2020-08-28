@@ -8,7 +8,8 @@ import {
   SourcePos,
   isRefDef,
   RefDefNode,
-  isTable
+  isTable,
+  isCodeBlock
 } from './commonmark/node';
 import {
   removeNextUntil,
@@ -227,13 +228,15 @@ export class ToastMark {
     const editedLines = this.lineTexts.slice(startLine - 1, endLine);
     const root = this.parser.partialParseStart(startLine, editedLines);
 
-    // extends ending range if the following node can be a continued list item
+    // extends ending range if the following node can be a fenced code block or a continued list item
     let nextNode = endNode ? endNode.next : this.root.firstChild;
+    const { lastChild } = root;
+    const isLastChildCodeBlock = lastChild && isCodeBlock(lastChild);
+    const isLastChildList = lastChild && isList(lastChild);
+
     while (
-      root.lastChild &&
-      isList(root.lastChild) &&
-      nextNode &&
-      (nextNode.type === 'list' || nextNode.sourcepos![0][1] >= 2)
+      (isLastChildCodeBlock && nextNode) ||
+      (isLastChildList && nextNode && (nextNode.type === 'list' || nextNode.sourcepos![0][1] >= 2))
     ) {
       const newEndLine = this.extendEndLine(nextNode.sourcepos![1][0]);
       this.parser.partialParseExtends(this.lineTexts.slice(endLine, newEndLine));

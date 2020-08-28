@@ -298,6 +298,14 @@ describe('editText()', () => {
       assertParseResult(doc, ['Hey,', 'Hello', '', 'My', '', 'World *!!*']);
       assertResultNodes(doc, result.nodes);
     });
+
+    it('update to fenced code blocks to the end of the document', () => {
+      const doc = new ToastMark('``\nHello\n\nMy World');
+      const result = doc.editMarkdown([1, 3], [1, 3], '`')[0];
+
+      assertParseResult(doc, ['```', 'Hello', '', 'My World']);
+      assertResultNodes(doc, result.nodes);
+    });
   });
 
   describe('list item', () => {
