@@ -1,10 +1,10 @@
 import { BlockNode, createNode } from '../node';
 import { CustomParserMap } from '../blocks';
 import { reLineEnding } from '../../toastmark';
+import { frontMatterClose } from './helper';
 
-const frontMatterClose = ':}';
 const reFrontMatterOpen = /{:f/;
-const reFrontMatterClose = /:}/;
+const reFrontMatterClose = /f:}/;
 
 let inFrontMatter = false;
 
@@ -15,14 +15,18 @@ export const frontMatterParser: CustomParserMap = {
 
     if (options.frontMatter && entering && type === 'paragraph') {
       const content = (stringContent || '').trim();
+      const [hasOpen, hasClose] = [
+        reFrontMatterOpen.test(content),
+        reFrontMatterClose.test(content)
+      ];
 
-      if (reFrontMatterOpen.test(content) || reFrontMatterClose.test(content)) {
+      if (hasOpen || hasClose) {
         inFrontMatter = true;
       }
       if (inFrontMatter) {
         node.customType = 'frontMatter';
       }
-      if (reFrontMatterClose.test(content)) {
+      if (hasClose) {
         inFrontMatter = false;
 
         /**
@@ -34,7 +38,7 @@ export const frontMatterParser: CustomParserMap = {
          * I'm normal paragraph
          */
         if (!content.endsWith(frontMatterClose)) {
-          const frontMatterContent = content.substring(0, content.indexOf(frontMatterClose) + 2);
+          const frontMatterContent = content.substring(0, content.indexOf(frontMatterClose) + 3);
           const frontMatterLineLen = frontMatterContent.split(reLineEnding).length;
 
           // overwrite front matter position and content excluding the following paragraph
@@ -45,7 +49,7 @@ export const frontMatterParser: CustomParserMap = {
           const offsets = (node as BlockNode).lineOffsets?.splice(frontMatterLineLen);
           const frontMatterLineNum = node.sourcepos![1][0];
 
-          const paraContent = content.substring(content.indexOf(frontMatterClose) + 3);
+          const paraContent = content.substring(content.indexOf(frontMatterClose) + 4);
           const paraLines = paraContent.split(reLineEnding);
           const paraLineLen = paraLines.length;
 

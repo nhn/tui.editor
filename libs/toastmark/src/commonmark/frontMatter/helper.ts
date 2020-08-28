@@ -1,3 +1,5 @@
+export const frontMatterOpen = '{:f';
+export const frontMatterClose = 'f:}';
 const reFrontMatter = /(^---$)([\s\S]*)(^---$)/m;
 
 function hasFrontMatter(input: string) {
@@ -8,7 +10,10 @@ export function replaceFrontMatter(input: string) {
   const trimmed = input.trim();
 
   if (trimmed.startsWith('---') && hasFrontMatter(trimmed)) {
-    return input.replace(reFrontMatter, (match, _, $2) => `{:f${$2}:}`);
+    return input.replace(
+      reFrontMatter,
+      (match, _, $2) => `${frontMatterOpen}${$2}${frontMatterClose}`
+    );
   }
 
   return input;

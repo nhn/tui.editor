@@ -27,7 +27,11 @@ import {
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
 import { iterateObject, omit, isEmptyObj } from './helper';
 import { isBlank } from './commonmark/blockHelper';
-import { getFrontMatterPos } from './commonmark/frontMatter/helper';
+import {
+  getFrontMatterPos,
+  frontMatterOpen,
+  frontMatterClose
+} from './commonmark/frontMatter/helper';
 
 export const reLineEnding = /\r\n|\n|\r/;
 
@@ -357,8 +361,9 @@ export class ToastMark {
     const [start, end] = getFrontMatterPos(this.lineTexts);
 
     if (start > -1 && end > -1) {
-      this.lineTexts[start] = '{:f';
-      this.lineTexts[end] = ':}';
+      // replace the front matter open, close with custom syntax in our parser
+      this.lineTexts[start] = frontMatterOpen;
+      this.lineTexts[end] = frontMatterClose;
 
       if (start >= endPos[0] - 1) {
         endPos[0] = end + 1;
