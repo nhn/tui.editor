@@ -107,6 +107,11 @@ export class Parser {
     this.refLinkCandidateMap = {};
     this.refDefCandidateMap = {};
     this.lastLineLength = 0;
+
+    if (this.options.frontMatter) {
+      this.options.customParser = { ...frontMatterParser, ...this.options.customParser };
+    }
+
     this.inlineParser = new InlineParser(this.options);
   }
 
@@ -414,7 +419,6 @@ export class Parser {
   // The main parsing function.  Returns a parsed document AST.
   parse(input: string) {
     if (this.options.frontMatter) {
-      this.options.customParser = { ...this.options.customParser, ...frontMatterParser };
       input = replaceFrontMatter(input);
     }
     this.doc = document();
