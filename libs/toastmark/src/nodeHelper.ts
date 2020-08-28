@@ -249,13 +249,18 @@ export function getRangeForCustomType(startNode: Node | null, endNode: Node | nu
 
   const range = [startNode, endNode];
   const start: NodeInfo = { node: startNode, type: 'prev' };
-  const end: NodeInfo = { node: startNode, type: 'next' };
+  const end: NodeInfo = { node: endNode, type: 'next' };
 
   [start, end].forEach(({ node, type }, index) => {
     while (node && (node as BlockNode).customType && node[type]) {
       const targetNode = node[type] as BlockNode;
+      const { sourcepos, customType } = targetNode;
+      const extendable =
+        type === 'prev'
+          ? compareRangeAndLine(sourcepos!, node.sourcepos![0][0]) === Compare.LT
+          : compareRangeAndLine(sourcepos!, node.sourcepos![1][0]) === Compare.GT;
 
-      if (targetNode.customType) {
+      if (customType && extendable) {
         node = targetNode;
         range[index] = node;
       } else {
