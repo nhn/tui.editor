@@ -72,9 +72,10 @@ export const frontMatterParser: CustomParserMap = {
 
       // set original text after parsing
       if (hasOpen || hasClose) {
-        node.stringContent = node
-          .stringContent!.replace(reFrontMatterOpen, '---')
-          .replace(frontMatterClose, '---');
+        node.stringContent = node.stringContent!.replace(
+          new RegExp(`${frontMatterOpen}|${frontMatterClose}`, 'g'),
+          '---'
+        );
       }
     }
   }

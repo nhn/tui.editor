@@ -11,7 +11,7 @@ export function replaceFrontMatter(input: string) {
   const trimmed = input.trim();
 
   if (trimmed.startsWith('---') && hasFrontMatter(trimmed)) {
-    return input.replace(reFrontMatter, (_, $1) => `${frontMatterOpen}${$1}${frontMatterClose}`);
+    return input.replace(reFrontMatter, `${frontMatterOpen}$1${frontMatterClose}`);
   }
 
   return input;

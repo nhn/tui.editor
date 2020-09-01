@@ -159,7 +159,7 @@ class Convertor {
     let markdown = toMark(html, toMarkOptions);
 
     if (this.options.frontMatter) {
-      markdown = markdown.replace(FRONT_MATTER_RX, (match, $1) => `---${$1}---`);
+      markdown = markdown.replace(FRONT_MATTER_RX, '---$1---');
     }
 
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
