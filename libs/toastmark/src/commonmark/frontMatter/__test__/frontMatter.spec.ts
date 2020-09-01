@@ -14,11 +14,40 @@ describe('front matter parsing', () => {
       firstChild: {
         type: 'paragraph',
         customType: 'frontMatter',
-        stringContent: '{:f\ntitle: front matter\nf:}\n',
         sourcepos: [
           [1, 1],
           [3, 3]
-        ]
+        ],
+        firstChild: {
+          type: 'text',
+          literal: '---',
+          sourcepos: [
+            [1, 1],
+            [1, 3]
+          ],
+          next: {
+            type: 'softbreak',
+            next: {
+              type: 'text',
+              literal: 'title: front matter',
+              sourcepos: [
+                [2, 1],
+                [2, 19]
+              ],
+              next: {
+                type: 'softbreak',
+                next: {
+                  literal: '---',
+                  next: null,
+                  sourcepos: [
+                    [3, 1],
+                    [3, 3]
+                  ]
+                }
+              }
+            }
+          }
+        }
       }
     });
   });
@@ -31,16 +60,31 @@ describe('front matter parsing', () => {
       firstChild: {
         type: 'paragraph',
         customType: 'frontMatter',
-        stringContent: '{:f\n',
+        stringContent: null,
         lastLineBlank: true,
         sourcepos: [
           [1, 1],
           [1, 3]
         ],
+        firstChild: {
+          type: 'text',
+          literal: '---',
+          sourcepos: [
+            [1, 1],
+            [1, 3]
+          ]
+        },
         next: {
           type: 'paragraph',
           customType: 'frontMatter',
-          stringContent: 'title: front matter\n',
+          firstChild: {
+            type: 'text',
+            literal: 'title: front matter',
+            sourcepos: [
+              [3, 1],
+              [3, 19]
+            ]
+          },
           lastLineBlank: true,
           sourcepos: [
             [3, 1],
@@ -49,7 +93,14 @@ describe('front matter parsing', () => {
           next: {
             type: 'paragraph',
             customType: 'frontMatter',
-            stringContent: 'description: with empty line\n',
+            firstChild: {
+              type: 'text',
+              literal: 'description: with empty line',
+              sourcepos: [
+                [5, 1],
+                [5, 28]
+              ]
+            },
             lastLineBlank: true,
             sourcepos: [
               [5, 1],
@@ -58,7 +109,14 @@ describe('front matter parsing', () => {
             next: {
               type: 'paragraph',
               customType: 'frontMatter',
-              stringContent: 'f:}\n',
+              firstChild: {
+                type: 'text',
+                literal: '---',
+                sourcepos: [
+                  [7, 1],
+                  [7, 3]
+                ]
+              },
               lastLineBlank: false,
               sourcepos: [
                 [7, 1],
@@ -79,11 +137,40 @@ describe('front matter parsing', () => {
       firstChild: {
         type: 'paragraph',
         customType: 'frontMatter',
-        stringContent: '{:f\ntitle: front matter\nf:}\n',
         sourcepos: [
           [2, 1],
           [4, 3]
-        ]
+        ],
+        firstChild: {
+          type: 'text',
+          literal: '---',
+          sourcepos: [
+            [2, 1],
+            [2, 3]
+          ],
+          next: {
+            type: 'softbreak',
+            next: {
+              type: 'text',
+              literal: 'title: front matter',
+              sourcepos: [
+                [3, 1],
+                [3, 19]
+              ],
+              next: {
+                type: 'softbreak',
+                next: {
+                  literal: '---',
+                  next: null,
+                  sourcepos: [
+                    [4, 1],
+                    [4, 3]
+                  ]
+                }
+              }
+            }
+          }
+        }
       }
     });
   });
@@ -96,11 +183,40 @@ describe('front matter parsing', () => {
       firstChild: {
         type: 'paragraph',
         customType: 'frontMatter',
-        stringContent: '{:f\ntitle: front matter\nf:}',
         sourcepos: [
           [1, 1],
           [3, 3]
         ],
+        firstChild: {
+          type: 'text',
+          literal: '---',
+          sourcepos: [
+            [1, 1],
+            [1, 3]
+          ],
+          next: {
+            type: 'softbreak',
+            next: {
+              type: 'text',
+              literal: 'title: front matter',
+              sourcepos: [
+                [2, 1],
+                [2, 19]
+              ],
+              next: {
+                type: 'softbreak',
+                next: {
+                  literal: '---',
+                  next: null,
+                  sourcepos: [
+                    [3, 1],
+                    [3, 3]
+                  ]
+                }
+              }
+            }
+          }
+        },
         next: {
           type: 'paragraph',
           customType: null,
