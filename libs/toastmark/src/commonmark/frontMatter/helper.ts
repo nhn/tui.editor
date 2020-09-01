@@ -1,5 +1,6 @@
 export const frontMatterOpen = '{:f';
 export const frontMatterClose = 'f:}';
+const reFrontMatterOpen = /^---$/;
 const reFrontMatter = /(^---$)([\s\S]*)(^---$)/m;
 
 function hasFrontMatter(input: string) {
@@ -25,10 +26,10 @@ export function getFrontMatterPos(lineTexts: string[]) {
 
   for (let i = 0; i < lineTexts.length; i += 1) {
     const text = lineTexts[i].trim();
-    if ((startLine < 0 && text && !/^---$/.test(text)) || endLine > 0) {
+    if ((startLine < 0 && text && !reFrontMatterOpen.test(text)) || endLine > 0) {
       break;
     }
-    if (/^---$/.test(text)) {
+    if (reFrontMatterOpen.test(text)) {
       if (startLine < 0) {
         startLine = i;
       } else {

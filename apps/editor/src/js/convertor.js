@@ -158,7 +158,7 @@ class Convertor {
    * @returns {string} markdown text
    */
   toMarkdown(html, toMarkOptions) {
-    const resultArray = [];
+    const result = [];
 
     html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
     html = this._appendAttributeForLinkIfNeed(html);
@@ -179,14 +179,14 @@ class Convertor {
       } else if (!FIND_CODE_RX.test(line)) {
         line = line.replace(/<br>/gi, '<br>\n');
       }
-      resultArray[index] = line;
+      result[index] = line;
     });
 
     if (this.frontMatterContents) {
-      resultArray.unshift(`${this.frontMatterContents}\n`);
+      result.unshift(`${this.frontMatterContents}\n`);
     }
 
-    return resultArray.join('\n');
+    return result.join('\n');
   }
 
   _removeNewlinesBeforeAfterAndBlockElement(markdown) {

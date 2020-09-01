@@ -1,10 +1,10 @@
 import { BlockNode, createNode } from '../node';
 import { CustomParserMap } from '../blocks';
 import { reLineEnding } from '../../toastmark';
-import { frontMatterClose } from './helper';
+import { frontMatterOpen, frontMatterClose } from './helper';
 
-const reFrontMatterOpen = /{:f/;
-const reFrontMatterClose = /f:}/;
+const reFrontMatterOpen = new RegExp(frontMatterOpen);
+const reFrontMatterClose = new RegExp(frontMatterClose);
 
 let inFrontMatter = false;
 
@@ -38,7 +38,9 @@ export const frontMatterParser: CustomParserMap = {
          * I'm normal paragraph
          */
         if (!content.endsWith(frontMatterClose)) {
-          const frontMatterContent = content.substring(0, content.indexOf(frontMatterClose) + 3);
+          const closeLen = frontMatterClose.length;
+          const frontMatterClosePos = content.indexOf(frontMatterClose);
+          const frontMatterContent = content.substring(0, frontMatterClosePos + closeLen);
           const frontMatterLineLen = frontMatterContent.split(reLineEnding).length;
 
           // overwrite front matter position and content excluding the following paragraph
@@ -49,7 +51,7 @@ export const frontMatterParser: CustomParserMap = {
           const offsets = (node as BlockNode).lineOffsets?.splice(frontMatterLineLen);
           const frontMatterLineNum = node.sourcepos![1][0];
 
-          const paraContent = content.substring(content.indexOf(frontMatterClose) + 4);
+          const paraContent = content.substring(frontMatterClosePos + closeLen + 1);
           const paraLines = paraContent.split(reLineEnding);
           const paraLineLen = paraLines.length;
 
