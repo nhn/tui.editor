@@ -1,9 +1,7 @@
 import { ToastMark } from '../toastmark';
-import { Parser } from '../commonmark/blocks';
+import { Parser, Options } from '../commonmark/blocks';
 import { getChildNodes } from '../nodeHelper';
 import { BlockNode } from '../commonmark/node';
-
-let reader = new Parser();
 
 function removeIdAttrFromAllNode(root: BlockNode) {
   const walker = root.walker();
@@ -16,9 +14,10 @@ function removeIdAttrFromAllNode(root: BlockNode) {
   }
 }
 
-function assertParseResult(doc: ToastMark, lineTexts: string[]) {
+function assertParseResult(doc: ToastMark, lineTexts: string[], options?: Partial<Options>) {
   expect(doc.getLineTexts()).toEqual(lineTexts);
 
+  const reader = new Parser(options);
   const root = doc.getRootNode();
   const expectedRoot = reader.parse(lineTexts.join('\n'));
 
@@ -375,31 +374,31 @@ describe('editText()', () => {
   });
 
   describe('Reference Def', () => {
-    reader = new Parser({ referenceDefinition: true });
-
-    afterAll(() => {
-      reader = new Parser();
-    });
-
     it('should parse reference link nodes when modifying url of Reference Def node', () => {
       const doc = new ToastMark('[foo]: /test\n\n[foo]\n\n[foo]', { referenceDefinition: true });
       doc.editMarkdown([1, 1], [1, 13], '[foo]: /test2');
 
-      assertParseResult(doc, ['[foo]: /test2', '', '[foo]', '', '[foo]']);
+      assertParseResult(doc, ['[foo]: /test2', '', '[foo]', '', '[foo]'], {
+        referenceDefinition: true
+      });
     });
 
     it('should change reference link nodes to paragraph nodes when modifying label of Reference Def node', () => {
       const doc = new ToastMark('[foo]: /test\n\n[foo]\n\n[foo]', { referenceDefinition: true });
       doc.editMarkdown([1, 1], [1, 13], '[food]: /test2');
 
-      assertParseResult(doc, ['[food]: /test2', '', '[foo]', '', '[foo]']);
+      assertParseResult(doc, ['[food]: /test2', '', '[foo]', '', '[foo]'], {
+        referenceDefinition: true
+      });
     });
 
     it('should merge the Reference Def node as paragraph', () => {
       const doc = new ToastMark('test\n\n[foo]: /test', { referenceDefinition: true });
       doc.editMarkdown([2, 1], [2, 1], 'test');
 
-      assertParseResult(doc, ['test', 'test', '[foo]: /test']);
+      assertParseResult(doc, ['test', 'test', '[foo]: /test'], {
+        referenceDefinition: true
+      });
     });
   });
 });
@@ -419,4 +418,34 @@ it('remove all node in the map - removeAllNode()', () => {
 
   doc.removeAllNode();
   expect(doc.findNodeById(firstNodeId)).toEqual(null);
+});
+
+describe('front matter', () => {
+  it('should change normal paragraph to front matter ', () => {
+    const doc = new ToastMark('---\ntitle: front matter\n--', { frontMatter: true });
+    doc.editMarkdown([3, 3], [3, 3], '-');
+
+    assertParseResult(doc, ['---', 'title: front matter', '---'], { frontMatter: true });
+  });
+
+  it('should change front matter to normal paragraph', () => {
+    const doc = new ToastMark('---\ntitle: front matter\n---', { frontMatter: true });
+    doc.editMarkdown([3, 2], [3, 3], '');
+
+    assertParseResult(doc, ['---', 'title: front matter', '--'], { frontMatter: true });
+  });
+
+  it('should change front matter to setext heading', () => {
+    const doc = new ToastMark('---\ntitle: front matter\n---', { frontMatter: true });
+    doc.editMarkdown([1, 1], [1, 1], 'heading\n');
+
+    assertParseResult(doc, ['heading', '---', 'title: front matter', '---'], { frontMatter: true });
+  });
+
+  it('following paragraph should be changed properly', () => {
+    const doc = new ToastMark('---\ntitle: front matter\n---\npara', { frontMatter: true });
+    doc.editMarkdown([4, 1], [4, 5], 'changed');
+
+    assertParseResult(doc, ['---', 'title: front matter', '---', 'changed'], { frontMatter: true });
+  });
 });

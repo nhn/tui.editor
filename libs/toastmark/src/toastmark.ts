@@ -22,13 +22,19 @@ import {
   findNodeAtPosition,
   findNodeById,
   invokeNextUntil,
-  isUnlinked
+  isUnlinked,
+  getRangeForCustomType
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
 import { iterateObject, omit, isEmptyObj } from './helper';
 import { isBlank } from './commonmark/blockHelper';
+import {
+  getFrontMatterPos,
+  frontMatterOpen,
+  frontMatterClose
+} from './commonmark/frontMatter/helper';
 
-const reLineEnding = /\r\n|\n|\r/;
+export const reLineEnding = /\r\n|\n|\r/;
 
 export type Position = [number, number];
 
@@ -108,12 +114,14 @@ export class ToastMark {
   private refLinkCandidateMap: RefLinkCandidateMap;
   private refDefCandidateMap: RefDefCandidateMap;
   private referenceDefinition: boolean;
+  private frontMatter: boolean;
 
   constructor(contents?: string, options?: Partial<Options>) {
     this.refMap = {};
     this.refLinkCandidateMap = {};
     this.refDefCandidateMap = {};
     this.referenceDefinition = !!options?.referenceDefinition;
+    this.frontMatter = !!options?.frontMatter;
     this.parser = new Parser(options);
     this.parser.setRefMaps(this.refMap, this.refLinkCandidateMap, this.refDefCandidateMap);
     this.eventHandlerMap = { change: [] };
@@ -192,7 +200,8 @@ export class ToastMark {
       endNode = endNode.next;
     }
 
-    return [startNode, endNode] as [BlockNode, BlockNode];
+    // extend node range to include the custom node
+    return getRangeForCustomType(startNode, endNode);
   }
 
   private trigger(eventName: EventName, param: any) {
@@ -350,6 +359,30 @@ export class ToastMark {
     return [startNode, endNode, startLine, endLine] as const;
   }
 
+  private parseWithFrontMatter(startPos: Position, endPos: Position, lineDiff = 0): ParseResult {
+    const originTexts = [...this.lineTexts];
+    const [start, end] = getFrontMatterPos(this.lineTexts);
+
+    if (start > -1 && end > -1) {
+      // replace the front matter open, close with custom syntax in our parser
+      this.lineTexts[start] = frontMatterOpen;
+      this.lineTexts[end] = frontMatterClose;
+
+      if (start >= endPos[0] - 1) {
+        endPos[0] = end + 1;
+      }
+      if (start <= startPos[0] - 1 && end >= endPos[0] - 1) {
+        startPos[0] = start + 1;
+        endPos[0] = end + 1;
+      }
+    }
+
+    const editResult = this.parse(startPos, endPos, lineDiff);
+    this.lineTexts = originTexts;
+
+    return editResult;
+  }
+
   private parse(startPos: Position, endPos: Position, lineDiff = 0): ParseResult {
     const range = this.getNodeRange(startPos, endPos);
     const [startNode, endNode] = range;
@@ -411,7 +444,9 @@ export class ToastMark {
 
   public editMarkdown(startPos: Position, endPos: Position, newText: string) {
     const lineDiff = this.updateLineTexts(startPos, endPos, newText);
-    const parseResult = this.parse(startPos, endPos, lineDiff);
+    const parseResult = this.frontMatter
+      ? this.parseWithFrontMatter(startPos, endPos, lineDiff)
+      : this.parse(startPos, endPos, lineDiff);
     const editResult: EditResult = omit(parseResult, 'nextNode');
 
     updateNextLineNumbers(parseResult.nextNode, lineDiff);

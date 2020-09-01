@@ -1116,7 +1116,7 @@ export class InlineParser {
       while ((event = walker.next())) {
         const { node, entering } = event;
         if (customParser[node.type]) {
-          customParser[node.type]!(node, { entering });
+          customParser[node.type]!(node, { entering, options: this.options });
         }
       }
     }

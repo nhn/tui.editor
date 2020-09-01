@@ -1,8 +1,8 @@
 const baseConvertors = {
-  paragraph(_, { entering, origin, options }) {
+  paragraph(node, { entering, origin, options }) {
     // prevent paragraph from being removed when it's child of tight list item
     // to show highlight style in live-preview mode
-    if (options.nodeId) {
+    if ((options.nodeId && !node.customType) || (!options.nodeId && node.customType)) {
       return {
         type: entering ? 'openTag' : 'closeTag',
         outerNewLine: true,

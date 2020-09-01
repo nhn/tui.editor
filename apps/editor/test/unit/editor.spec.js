@@ -589,5 +589,31 @@ describe('Editor', () => {
         expect(customHTMLSanitizer).toHaveBeenCalled();
       });
     });
+
+    describe('frontMatter option', () => {
+      it('should parse the front matter as the paragraph in WYSIWYG', () => {
+        editor = new Editor({
+          el: container,
+          frontMatter: true,
+          initialValue: '---\ntitle: front matter\n---'
+        });
+
+        expect(editor.getHtml()).toBe('<p>---<br>\ntitle: front matter<br>\n---</p>\n');
+      });
+
+      // @TODO: activate test case later, currently after adding test case, clipboard test case is broken
+      // it('should keep the front matter after changing the mode', () => {
+      //   editor = new Editor({
+      //     el: container,
+      //     frontMatter: true,
+      //     initialEditType: 'wysiwyg',
+      //     initialValue: '---\ntitle: front matter\n---'
+      //   });
+
+      //   editor.changeMode('markdown');
+
+      //   expect(editor.getMarkdown()).toBe('---\ntitle: front matter\n---\n\n');
+      // });
+    });
   });
 });

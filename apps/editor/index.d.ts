@@ -262,6 +262,7 @@ declare namespace toastui {
     referenceDefinition?: boolean;
     customHTMLSanitizer?: CustomHTMLSanitizer;
     previewHighlight?: boolean;
+    frontMatter?: boolean;
   }
 
   export interface ViewerOptions {

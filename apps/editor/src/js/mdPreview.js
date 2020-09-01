@@ -121,13 +121,14 @@ class MarkdownPreview extends Preview {
       return;
     }
 
+    const inFrontMatter = cursorNode && cursorNode.customType === 'frontMatter';
     const oldEL = this._getElementByNodeId(this.cursorNodeId);
     const newEL = this._getElementByNodeId(cursorNodeId);
 
     if (oldEL) {
       removeClass(oldEL, CLASS_HIGHLIGHT);
     }
-    if (newEL) {
+    if (newEL && !inFrontMatter) {
       addClass(newEL, CLASS_HIGHLIGHT);
     }
 

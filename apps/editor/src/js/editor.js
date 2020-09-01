@@ -193,14 +193,16 @@ class ToastUIEditor {
       customHTMLSanitizer,
       extendedAutolinks,
       referenceDefinition,
-      useDefaultHTMLSanitizer
+      useDefaultHTMLSanitizer,
+      frontMatter
     } = this.options;
     const rendererOptions = {
       linkAttribute,
       customHTMLRenderer: { ...renderer, ...customHTMLRenderer },
       extendedAutolinks,
       referenceDefinition,
-      customParser: parser
+      customParser: parser,
+      frontMatter
     };
 
     if (this.options.customConvertor) {
@@ -236,7 +238,8 @@ class ToastUIEditor {
       extendedAutolinks,
       referenceDefinition,
       disallowDeepHeading: true,
-      customParser: parser
+      customParser: parser,
+      frontMatter
     });
 
     this.mdEditor = MarkdownEditor.factory(

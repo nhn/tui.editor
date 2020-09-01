@@ -16,6 +16,8 @@ import { blockStarts, Matched } from './blockStarts';
 import { RefMap, RefLinkCandidateMap, RefDefCandidateMap } from '../toastmark';
 import { AutolinkParser } from './gfm/autoLinks';
 import { clearObj } from '../helper';
+import { replaceFrontMatter } from './frontMatter/helper';
+import { frontMatterParser } from './frontMatter/parser';
 
 const reHtmlBlockClose = [
   /./, // dummy for 0
@@ -43,10 +45,11 @@ const defaultOptions = {
   disallowedHtmlBlockTags: [],
   referenceDefinition: false,
   disallowDeepHeading: false,
-  customParser: null
+  customParser: null,
+  frontMatter: false
 };
 
-export type CustomParser = (node: Node, context: { entering: boolean }) => void;
+export type CustomParser = (node: Node, context: { entering: boolean; options: Options }) => void;
 export type CustomParserMap = Partial<Record<NodeType, CustomParser>>;
 
 export interface Options {
@@ -56,6 +59,7 @@ export interface Options {
   disallowedHtmlBlockTags: string[];
   referenceDefinition: boolean;
   disallowDeepHeading: boolean;
+  frontMatter: boolean;
   customParser: CustomParserMap | null;
 }
 
@@ -103,6 +107,11 @@ export class Parser {
     this.refLinkCandidateMap = {};
     this.refDefCandidateMap = {};
     this.lastLineLength = 0;
+
+    if (this.options.frontMatter) {
+      this.options.customParser = { ...frontMatterParser, ...this.options.customParser };
+    }
+
     this.inlineParser = new InlineParser(this.options);
   }
 
@@ -237,12 +246,13 @@ export class Parser {
     this.inlineParser.refLinkCandidateMap = this.refLinkCandidateMap;
     this.inlineParser.refDefCandidateMap = this.refDefCandidateMap;
     this.inlineParser.options = this.options;
+
     while ((event = walker.next())) {
       const { node, entering } = event;
       const t = node.type;
 
       if (customParser && customParser[t]) {
-        customParser[t]!(node, { entering });
+        customParser[t]!(node, { entering, options: this.options });
       }
 
       if (
@@ -407,6 +417,9 @@ export class Parser {
 
   // The main parsing function.  Returns a parsed document AST.
   parse(input: string) {
+    if (this.options.frontMatter) {
+      input = replaceFrontMatter(input);
+    }
     this.doc = document();
     this.tip = this.doc;
     this.lineNumber = 0;

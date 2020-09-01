@@ -36,6 +36,7 @@ export interface OpenTagToken extends TagToken {
   classNames?: string[];
   attributes?: Record<string, string>;
   selfClose?: boolean;
+  finalize?: boolean;
 }
 
 export interface CloseTagToken extends TagToken {
@@ -112,6 +113,10 @@ function generateOpenTagString(node: OpenTagToken): string {
     buffer.push(' /');
   }
   buffer.push('>');
+
+  if (node.finalize) {
+    buffer.push(`</${tagName}>`);
+  }
 
   return buffer.join('');
 }

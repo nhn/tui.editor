@@ -18,6 +18,7 @@ const attrValue = `(?:${unquoted}|${singleQuoted}|${doubleQuoted})`;
 const attribute = `(?:\\s+${attrName}(?:\\s*=\\s*${attrValue})?)*\\s*`;
 const openingTag = `(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*${attribute})(\\/?>)`;
 const HTML_TAG_RX = new RegExp(openingTag, 'g');
+const FRONT_MATTER_RX = /^\s?\\-\\-\\-([\s\S]+?)\\-\\-\\-/;
 
 /**
  * Class Convertor
@@ -31,15 +32,18 @@ class Convertor {
       customHTMLRenderer,
       extendedAutolinks,
       referenceDefinition,
-      customParser
+      customParser,
+      frontMatter
     } = options;
 
+    this.options = options;
     this.mdReader = new Parser({
       extendedAutolinks,
       disallowedHtmlBlockTags: ['br'],
       referenceDefinition,
       disallowDeepHeading: true,
-      customParser
+      customParser,
+      frontMatter
     });
 
     this.renderHTML = createRenderHTML({
@@ -146,13 +150,17 @@ class Convertor {
    * @returns {string} markdown text
    */
   toMarkdown(html, toMarkOptions) {
-    const resultArray = [];
+    const result = [];
 
     html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
     html = this._appendAttributeForLinkIfNeed(html);
     html = this._appendAttributeForBrIfNeed(html);
 
     let markdown = toMark(html, toMarkOptions);
+
+    if (this.options.frontMatter) {
+      markdown = markdown.replace(FRONT_MATTER_RX, '---$1---');
+    }
 
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
     markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
@@ -167,10 +175,10 @@ class Convertor {
       } else if (!FIND_CODE_RX.test(line)) {
         line = line.replace(/<br>/gi, '<br>\n');
       }
-      resultArray[index] = line;
+      result[index] = line;
     });
 
-    return resultArray.join('\n');
+    return result.join('\n');
   }
 
   _removeNewlinesBeforeAfterAndBlockElement(markdown) {
