@@ -69,6 +69,13 @@ export const frontMatterParser: CustomParserMap = {
           node.insertAfter(paraNode);
         }
       }
+
+      // set original text after parsing
+      if (hasOpen || hasClose) {
+        node.stringContent = node
+          .stringContent!.replace(reFrontMatterOpen, '---')
+          .replace(frontMatterClose, '---');
+      }
     }
   }
 };

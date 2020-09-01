@@ -1,4 +1,11 @@
-import { Node, HeadingNode, CodeBlockNode, ListNode, LinkNode } from '../commonmark/node';
+import {
+  Node,
+  HeadingNode,
+  CodeBlockNode,
+  ListNode,
+  LinkNode,
+  BlockNode
+} from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
 import { HTMLConvertorMap } from './render';
 import { filterDisallowedTags } from './tagFilter';
@@ -47,18 +54,25 @@ export const baseConvertors: HTMLConvertorMap = {
     };
   },
 
-  paragraph(node, { entering }) {
+  paragraph(node, { entering, skipChildren }) {
     const grandparent = node.parent?.parent;
+    let finalize = false;
     if (grandparent && grandparent.type === 'list') {
       if ((grandparent as ListNode).listData!.tight) {
         return null;
       }
     }
 
+    if ((node as BlockNode).customType) {
+      finalize = true;
+      skipChildren();
+    }
+
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: 'p',
-      outerNewLine: true
+      outerNewLine: true,
+      finalize
     };
   },
 

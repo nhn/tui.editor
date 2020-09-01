@@ -257,7 +257,6 @@ export class Parser {
 
       if (
         !entering &&
-        !(node as BlockNode).customType &&
         (t === 'paragraph' ||
           t === 'heading' ||
           (t === 'tableCell' && !(node as TableCellNode).ignored))
