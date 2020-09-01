@@ -18,7 +18,7 @@ const attrValue = `(?:${unquoted}|${singleQuoted}|${doubleQuoted})`;
 const attribute = `(?:\\s+${attrName}(?:\\s*=\\s*${attrValue})?)*\\s*`;
 const openingTag = `(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*${attribute})(\\/?>)`;
 const HTML_TAG_RX = new RegExp(openingTag, 'g');
-const FRONT_MATTER_RX = /^\s?---[\s\S]+?---/;
+const FRONT_MATTER_RX = /^\s?\\-\\-\\-([\s\S]+?)\\-\\-\\-/;
 
 /**
  * Class Convertor
@@ -52,7 +52,6 @@ class Convertor {
     });
 
     this.eventManager = em;
-    this.frontMatterContents = '';
   }
 
   /**
@@ -63,9 +62,6 @@ class Convertor {
    * @private
    */
   _markdownToHtmlWithCodeHighlight(markdown) {
-    if (this.options.frontMatter) {
-      markdown = this._spliceAndSaveFrontMatter(markdown);
-    }
     return this.renderHTML(this.mdReader.parse(markdown));
   }
 
@@ -81,10 +77,6 @@ class Convertor {
     markdown = markdown.replace(HTML_TAG_RX, (match, $1, $2, $3) =>
       match[0] !== '\\' ? `${$1}${$2} data-tomark-pass ${$3}` : match
     );
-
-    if (this.options.frontMatter) {
-      markdown = this._spliceAndSaveFrontMatter(markdown);
-    }
 
     return this.renderHTML(this.mdReader.parse(markdown));
   }
@@ -166,6 +158,10 @@ class Convertor {
 
     let markdown = toMark(html, toMarkOptions);
 
+    if (this.options.frontMatter) {
+      markdown = markdown.replace(FRONT_MATTER_RX, (match, $1) => `---${$1}---`);
+    }
+
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
     markdown = this._removeNewlinesBeforeAfterAndBlockElement(markdown);
 
@@ -181,10 +177,6 @@ class Convertor {
       }
       result[index] = line;
     });
-
-    if (this.frontMatterContents) {
-      result.unshift(`${this.frontMatterContents}\n`);
-    }
 
     return result.join('\n');
   }
@@ -240,19 +232,6 @@ class Convertor {
     );
 
     return html;
-  }
-
-  _spliceAndSaveFrontMatter(markdown) {
-    const matched = markdown.match(FRONT_MATTER_RX);
-
-    if (matched) {
-      markdown = markdown.replace(FRONT_MATTER_RX, '');
-      this.frontMatterContents = matched[0];
-    } else {
-      this.frontMatterContents = '';
-    }
-
-    return markdown;
   }
 }
 
