@@ -11,6 +11,16 @@
     />
     <!-- Editor -->
     <link rel="stylesheet" href="../dist/cdn/toastui-editor.css" />
+    <style type="text/css">
+      .te-editor .tui-editor-contents {
+        display: none;
+      }
+
+      .ProseMirror {
+        padding: 20px;
+        min-height: 400px;
+      }
+    </style>
   </head>
   <body>
     <div class="tui-doc-description">
@@ -22,10 +32,14 @@
       You can see the tutorial
       <a
         href="https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md"
-        rel="noopener noreferrer" target="_blank"
-        >here</a>
+        rel="noopener noreferrer"
+        target="_blank"
+        >here</a
+      >
     </div>
     <div class="code-html tui-doc-contents">
+      <button id="btn-update-doc">update doc</button>
+      <button id="btn-empty-doc">empty doc</button>
       <div id="editor"></div>
     </div>
     <!-- Added to check demo page in Internet Explorer -->
@@ -38,7 +52,27 @@
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
-        initialValue: content
+        initialEditType: 'wysiwyg'
+      });
+
+      const btnUpdateDoc = document.getElementById('btn-update-doc');
+      const btnEmptyDoc = document.getElementById('btn-empty-doc');
+      const content = document.createElement('div');
+
+      btnUpdateDoc.addEventListener('click', () => {
+        const wwe = editor.getCurrentModeEditor();
+
+        content.innerHTML = '<p>boo</p>';
+
+        wwe.editorNew.updateDoc(content);
+      });
+
+      btnEmptyDoc.addEventListener('click', () => {
+        const wwe = editor.getCurrentModeEditor();
+
+        content.innerHTML = '';
+
+        wwe.editorNew.updateDoc(content);
       });
     </script>
   </body>

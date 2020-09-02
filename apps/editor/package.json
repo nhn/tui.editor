@@ -101,6 +101,12 @@
   },
   "dependencies": {
     "@types/codemirror": "0.0.71",
-    "codemirror": "^5.48.4"
+    "codemirror": "^5.48.4",
+    "prosemirror-commands": "^1.1.4",
+    "prosemirror-keymap": "^1.1.4",
+    "prosemirror-model": "^1.11.0",
+    "prosemirror-schema-basic": "^1.1.2",
+    "prosemirror-state": "^1.3.3",
+    "prosemirror-view": "^1.15.5"
   }
 }
