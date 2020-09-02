@@ -14,13 +14,10 @@ jobs:
           node ../apps/editor/scripts/createConfigVariable.js
       - name: set global error variable
         run: |
-          errorVariable=`cat ./errorVariable.txt`
-          echo ::set-env name=ERROR_VARIABLE::$errorVariable
+          echo ::set-env name=ERROR_VARIABLE::$(head -n 1 ./errorVariable.txt)
       - name: set url
-        shell: bash
         run: |
-          url=`cat ./url.txt`
-          echo ::set-env name=URLS::$url
+          echo ::set-env name=URLS::$(head -n 1 ./url.txt)
       - name: detect runtime error
         uses: nhn/toast-ui.detect-runtime-error-actions@master
         with:
