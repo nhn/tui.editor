@@ -6,16 +6,21 @@ on:
 jobs:
   makeUrl:
     runs-on: ubuntu-latest
+    env:
+      WORKING_DIRECTORY: ./apps/editor
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
       - name: create config variable
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          node ../apps/editor/scripts/createConfigVariable.js
+          node scripts/createConfigVariable.js
       - name: set global error variable
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           echo ::set-env name=ERROR_VARIABLE::$(head -n 1 ./errorVariable.txt)
       - name: set url
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           echo ::set-env name=URLS::$(head -n 1 ./url.txt)
       - name: detect runtime error
@@ -23,6 +28,7 @@ jobs:
         with:
           global-error-log-variable: ${{ env.ERROR_VARIABLE }}
           urls: ${{ env.URLS }}
+          browserlist: ie9, ie10, ie11, safari, edge, firefox, chrome
         env:
           BROWSERSTACK_USERNAME: ${{secrets.BROWSERSTACK_USERNAME}}
           BROWSERSTACK_ACCESS_KEY: ${{secrets.BROWSERSTACK_ACCESS_KEY}}

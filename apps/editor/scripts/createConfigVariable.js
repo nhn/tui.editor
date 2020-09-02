@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const config = require(path.resolve(process.cwd(), '../apps/editor/tuidoc.config.json'));
+const config = require(path.resolve(__dirname, '../tuidoc.config.json'));
 const examples = config.examples || {};
 const { filePath, globalErrorLogVariable } = examples;
 
