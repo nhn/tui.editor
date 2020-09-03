@@ -4,9 +4,9 @@ import { DOMParser } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 
-import { createBasicSchema } from './basicSchema';
+import { createGfmSchema } from './gfmSchema';
 
-const schema = createBasicSchema();
+const schema = createGfmSchema();
 const baseStates = {
   schema,
   plugins: [keymap(baseKeymap)]
