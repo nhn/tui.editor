@@ -30,6 +30,8 @@ import WwTextObject from './wwTextObject';
 import ComponentManager from './componentManager';
 import CodeBlockGadget from './ui/codeBlockGadget';
 
+import ProseMirrorView from './prosemirror/view';
+
 const keyMapper = KeyMapper.getSharedInstance();
 
 const FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi;
@@ -99,6 +101,9 @@ class WysiwygEditor {
       container: this.editorContainerEl,
       wysiwygEditor: this
     });
+
+    // @TODO remove for v3.0 prototyping
+    this.editorNew = new ProseMirrorView(this.editorContainerEl);
   }
 
   /**

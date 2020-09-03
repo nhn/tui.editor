@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Demo</title>
+    <!-- Editor's Dependencies -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="../../dist/toastui-editor.css" />
+    <style type="text/css">
+      .te-editor .tui-editor-contents {
+        display: none;
+      }
+
+      .ProseMirror {
+        padding: 20px;
+        height: 100%;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="btn-update-doc">update doc</button>
+    <button id="btn-empty-doc">empty doc</button>
+
+    <div id="editor"></div>
+    <!-- Editor Dependencies -->
+    <script src="../../node_modules/codemirror/lib/codemirror.js"></script>
+    <!-- Editor -->
+    <script src="../../dist/toastui-editor.js"></script>
+    <script class="code-js">
+      const editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'wysiwyg'
+      });
+
+      const wwe = editor.getCurrentModeEditor();
+
+      const btnUpdateDoc = document.getElementById('btn-update-doc');
+      const btnEmptyDoc = document.getElementById('btn-empty-doc');
+
+      const content = document.createElement('div');
+
+      btnUpdateDoc.addEventListener('click', () => {
+        content.innerHTML = '<p>foo</p><p>bar</p><p>baz</p>';
+
+        wwe.editorNew.updateDoc(content);
+      });
+
+      btnEmptyDoc.addEventListener('click', () => {
+        content.innerHTML = '';
+
+        wwe.editorNew.updateDoc(content);
+      });
+    </script>
+  </body>
+</html>
