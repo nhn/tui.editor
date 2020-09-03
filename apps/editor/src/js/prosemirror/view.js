@@ -4,10 +4,11 @@ import { DOMParser } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 
-import { basicSchema } from './basicSchema';
+import { createBasicSchema } from './basicSchema';
 
+const schema = createBasicSchema();
 const baseStates = {
-  schema: basicSchema,
+  schema,
   plugins: [keymap(baseKeymap)]
 };
 
@@ -27,7 +28,7 @@ export default class ProseMirrorView {
    */
   updateDoc(content) {
     const addedStates = {
-      doc: DOMParser.fromSchema(basicSchema).parse(content)
+      doc: DOMParser.fromSchema(schema).parse(content)
     };
     const newState = EditorState.create({ ...baseStates, ...addedStates });
 
