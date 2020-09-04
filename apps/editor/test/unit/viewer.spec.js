@@ -172,4 +172,23 @@ describe('Viewer', () => {
       expect(plugin).toHaveBeenCalledWith(viewer, options);
     });
   });
+
+  describe('frontMatter option', () => {
+    let container, viewer;
+
+    beforeEach(() => {
+      container = document.createElement('div');
+      document.body.appendChild(container);
+    });
+
+    it('should parse the front matter as the empty paragraph', () => {
+      viewer = new ToastUIEditorViewer({
+        el: container,
+        frontMatter: true,
+        initialValue: '---\ntitle: front matter\n---'
+      });
+
+      expect(viewer.preview.getHTML()).toBe('<p></p>\n');
+    });
+  });
 });
