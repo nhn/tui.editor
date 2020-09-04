@@ -69,14 +69,17 @@ class ToastUIEditorViewer {
       customHTMLRenderer,
       customHTMLSanitizer,
       extendedAutolinks,
-      referenceDefinition
+      referenceDefinition,
+      frontMatter
     } = this.options;
+
     const rendererOptions = {
       linkAttribute,
       customHTMLRenderer: { ...renderer, ...customHTMLRenderer },
       extendedAutolinks,
       referenceDefinition,
-      customParser: parser
+      customParser: parser,
+      frontMatter
     };
 
     if (this.options.customConvertor) {
