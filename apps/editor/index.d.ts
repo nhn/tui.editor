@@ -133,6 +133,7 @@ declare namespace toastui {
     nodeId: boolean;
     tagFilter: boolean;
     convertors?: CustomHTMLRendererMap;
+    customProp: Record<string, any>;
   }
 
   interface Context {

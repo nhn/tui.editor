@@ -202,7 +202,8 @@ class ToastUIEditor {
       extendedAutolinks,
       referenceDefinition,
       customParser: parser,
-      frontMatter
+      frontMatter,
+      customProp: { showFrontMatter: true }
     };
 
     if (this.options.customConvertor) {
