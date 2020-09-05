@@ -6,7 +6,7 @@ This is useful for converting initial WYSIWYG content into markdown. They WYSIWY
 
 ## Basic Usage
 
-The Editor accepts the `customMarkdownRenderer` option, which is a key-value object. The keys of the object is types of node of the AST, and the values are convertor functions to be used for converting a node to string that will be used in the final markdown. 
+The Editor accepts the `customMarkdownRenderer` option, which is a key-value object. The keys of the object are types of node of the AST, and the values are convertor functions to be used for converting a node to string that will be used in the final markdown. 
 
 The following code is a basic example of using `customMarkdownRenderer` option.
 
@@ -28,7 +28,7 @@ If we set the following wysiwyg content,
 Hello World
 ```
 
-The final markdown content will be like below.
+The final markdown content will be
 
 ```markdown
 Hello World!
