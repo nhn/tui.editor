@@ -506,6 +506,38 @@ describe('Editor', () => {
       });
     });
 
+    describe('customMarkdownRenderer', () => {
+      it('should pass customMarkdownRenderer option for creating convertor instance', () => {
+        editor = new Editor({
+          el: container,
+          initialValue: 'Hello World',
+          initialEditType: 'wysiwyg',
+          customMarkdownRenderer: {
+            TEXT_NODE(node) {
+              return `${node.nodeValue}!`;
+            }
+          }
+        });
+
+        expect(editor.getMarkdown()).toBe('Hello World!');
+      });
+
+      it('should properly parse line breaks in Markdown', () => {
+        editor = new Editor({
+          el: container,
+          initialValue: 'a\na',
+          initialEditType: 'wysiwyg',
+          customMarkdownRenderer: {
+            BR() {
+              return '\n\n';
+            }
+          }
+        });
+
+        expect(editor.getMarkdown()).toBe('a\n\na');
+      });
+    });
+
     describe('extendedAutolinks option', () => {
       it('should convert url-like strings to anchor tags', () => {
         editor = new Editor({

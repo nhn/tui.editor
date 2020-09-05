@@ -124,6 +124,7 @@ const __nedInstance = [];
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
+ *     @param {Object} [options.customMarkdownRenderer] - Object containing custom renderer functions correspond to HTML node
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
  *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
  */
@@ -170,6 +171,7 @@ class ToastUIEditor {
         extendedAutolinks: false,
         customConvertor: null,
         customHTMLRenderer: null,
+        customMarkdownRenderer: null,
         referenceDefinition: false,
         customHTMLSanitizer: null
       },
@@ -190,6 +192,7 @@ class ToastUIEditor {
     const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
     const {
       customHTMLRenderer,
+      customMarkdownRenderer,
       customHTMLSanitizer,
       extendedAutolinks,
       referenceDefinition,
@@ -267,7 +270,9 @@ class ToastUIEditor {
 
     this.toMarkOptions = {
       gfm: true,
-      renderer: toMarkRenderer
+      renderer: customMarkdownRenderer 
+        ? toMarkRenderer.constructor.factory(toMarkRenderer, customMarkdownRenderer)
+        : toMarkRenderer
     };
 
     if (plugins) {

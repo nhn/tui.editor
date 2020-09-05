@@ -48,7 +48,8 @@
     "note": "tui-note --tag=$(git describe --tags)",
     "tslint": "tslint index.d.ts",
     "doc:serve": "tuidoc --serv",
-    "doc": "tuidoc"
+    "doc": "tuidoc",
+    "debug": "karma run --grep=customMarkdownRenderer"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",
