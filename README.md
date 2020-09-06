@@ -125,12 +125,13 @@ TOAST UI products are open source, so you can create a pull request(PR) after yo
 
 ### Setup
 
-Fork `master` branch into your personal repository. Clone it to local computer. Install node modules. Before starting development, you should check to haveany errors.
+Fork `master` branch into your personal repository. Clone it to local computer. Install node modules. Before starting development, you should check to see if there are any errors.
 
 ```sh
 $ git clone https://github.com/{your-personal-repo}/tui.editor.git
 $ cd [project-name]
 $ npm install
+$ npm run setup:libs
 $ cd [project-name]/apps/editor
 $ npm install
 $ npm run test
