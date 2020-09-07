@@ -279,6 +279,7 @@ declare namespace toastui {
     customHTMLRenderer?: CustomHTMLRenderer;
     referenceDefinition?: boolean;
     customHTMLSanitizer?: CustomHTMLSanitizer;
+    frontMatter?: boolean
   }
 
   interface MarkdownEditorOptions {
