@@ -133,6 +133,7 @@ declare namespace toastui {
     nodeId: boolean;
     tagFilter: boolean;
     convertors?: CustomHTMLRendererMap;
+    customProp: Record<string, any>;
   }
 
   interface Context {
@@ -278,6 +279,7 @@ declare namespace toastui {
     customHTMLRenderer?: CustomHTMLRenderer;
     referenceDefinition?: boolean;
     customHTMLSanitizer?: CustomHTMLSanitizer;
+    frontMatter?: boolean
   }
 
   interface MarkdownEditorOptions {

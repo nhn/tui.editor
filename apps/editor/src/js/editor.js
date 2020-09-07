@@ -126,6 +126,7 @@ const __nedInstance = [];
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
  *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
+ *     @param {boolean} [options.frontMatter=false] - whether use the front matter
  */
 class ToastUIEditor {
   constructor(options) {
@@ -171,7 +172,8 @@ class ToastUIEditor {
         customConvertor: null,
         customHTMLRenderer: null,
         referenceDefinition: false,
-        customHTMLSanitizer: null
+        customHTMLSanitizer: null,
+        frontMatter: false
       },
       options
     );
@@ -202,7 +204,8 @@ class ToastUIEditor {
       extendedAutolinks,
       referenceDefinition,
       customParser: parser,
-      frontMatter
+      frontMatter,
+      customProp: { showFrontMatter: frontMatter }
     };
 
     if (this.options.customConvertor) {

@@ -42,6 +42,7 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
  *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
+ *     @param {boolean} [options.frontMatter=false] - whether use the front matter
  */
 class ToastUIEditorViewer {
   constructor(options) {
@@ -53,7 +54,8 @@ class ToastUIEditorViewer {
         customConvertor: null,
         customHTMLRenderer: null,
         referenceDefinition: false,
-        customHTMLSanitizer: null
+        customHTMLSanitizer: null,
+        frontMatter: false
       },
       options
     );
@@ -69,14 +71,17 @@ class ToastUIEditorViewer {
       customHTMLRenderer,
       customHTMLSanitizer,
       extendedAutolinks,
-      referenceDefinition
+      referenceDefinition,
+      frontMatter
     } = this.options;
+
     const rendererOptions = {
       linkAttribute,
       customHTMLRenderer: { ...renderer, ...customHTMLRenderer },
       extendedAutolinks,
       referenceDefinition,
-      customParser: parser
+      customParser: parser,
+      frontMatter
     };
 
     if (this.options.customConvertor) {

@@ -33,7 +33,8 @@ class Convertor {
       extendedAutolinks,
       referenceDefinition,
       customParser,
-      frontMatter
+      frontMatter,
+      customProp
     } = options;
 
     this.options = options;
@@ -48,7 +49,8 @@ class Convertor {
 
     this.renderHTML = createRenderHTML({
       gfm: true,
-      convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer)
+      convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer),
+      customProp
     });
 
     this.eventManager = em;

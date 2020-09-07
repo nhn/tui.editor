@@ -1,8 +1,11 @@
 const baseConvertors = {
   paragraph(node, { entering, origin, options }) {
+    const { nodeId, customProp = {} } = options;
+    const showFrontMatter = customProp.showFrontMatter && node.customType;
+
     // prevent paragraph from being removed when it's child of tight list item
     // to show highlight style in live-preview mode
-    if ((options.nodeId && !node.customType) || (!options.nodeId && node.customType)) {
+    if ((nodeId && !node.customType) || showFrontMatter) {
       return {
         type: entering ? 'openTag' : 'closeTag',
         outerNewLine: true,

@@ -10,6 +10,7 @@ interface Options {
   nodeId: boolean;
   tagFilter: boolean;
   convertors?: HTMLConvertorMap;
+  customProp: Record<string, any>;
 }
 
 interface Context {
@@ -60,7 +61,8 @@ const defaultOptions: Options = {
   softbreak: '\n',
   gfm: false,
   tagFilter: false,
-  nodeId: false
+  nodeId: false,
+  customProp: {}
 };
 
 export function createRenderHTML(customOptions?: Partial<Options>) {
