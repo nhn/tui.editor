@@ -10,7 +10,7 @@ function hasFrontMatter(input: string) {
 export function replaceFrontMatter(input: string) {
   const trimmed = input.trim();
 
-  if (trimmed.startsWith('---') && hasFrontMatter(trimmed)) {
+  if (/^---/.test(trimmed) && hasFrontMatter(trimmed)) {
     return input.replace(reFrontMatter, `${frontMatterOpen}$1${frontMatterClose}`);
   }
 
