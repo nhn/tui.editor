@@ -5,6 +5,7 @@ import { frontMatterOpen, frontMatterClose } from './helper';
 
 const reFrontMatterOpen = new RegExp(frontMatterOpen);
 const reFrontMatterClose = new RegExp(frontMatterClose);
+const reEndFrontMatterClose = new RegExp(`${frontMatterClose}$`);
 
 let inFrontMatter = false;
 
@@ -37,7 +38,7 @@ export const frontMatterParser: CustomParserMap = {
          * ---
          * I'm normal paragraph
          */
-        if (!content.endsWith(frontMatterClose)) {
+        if (!reEndFrontMatterClose.test(content)) {
           const closeLen = frontMatterClose.length;
           const frontMatterClosePos = content.indexOf(frontMatterClose);
           const frontMatterContent = content.substring(0, frontMatterClosePos + closeLen);
