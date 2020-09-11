@@ -46,7 +46,7 @@
 }
 
 .te-md-container {
-  display: none;
+  /* display: none; */
   overflow: hidden;
   height: 100%;
 }
@@ -62,10 +62,20 @@
   height: inherit;
 }
 
-.te-md-container .CodeMirror {
+.te-md-container .ProseMirror {
   font-size: 13px;
   height: inherit;
 }
+
+.te-md-container .ProseMirror {
+  overflow: auto;
+  height: 100%;
+}
+
+.te-md-container .ProseMirror:focus {
+  outline: none;
+}
+
 
 .te-md-container .te-preview {
   overflow: auto;
@@ -171,14 +181,8 @@
   display: none;
 }
 
-.tui-editor-defaultUI .CodeMirror-lines {
-  padding-top: 18px;
-  padding-bottom: 18px;
-}
-
-.tui-editor-defaultUI pre.CodeMirror-line {
-  padding-left: 25px;
-  padding-right: 25px;
+.tui-editor-defaultUI .ProseMirror {
+  padding: 18px 25px;
 }
 
 .tui-editor-defaultUI .CodeMirror pre.CodeMirror-placeholder {
