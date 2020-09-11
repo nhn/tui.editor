@@ -1345,6 +1345,13 @@ function getFragmentReplacedByNewlineToBr(text) {
   return fragment;
 }
 
+const CLS_PREFIX = 'tui-md-';
+
+export function cls(...names) {
+  return names.map(className => `${CLS_PREFIX}${className}`).join(' ');
+}
+
+// @TODO: change named export
 export default {
   getNodeName,
   isTextNode,

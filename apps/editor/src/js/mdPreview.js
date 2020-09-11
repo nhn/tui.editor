@@ -76,8 +76,8 @@ class MarkdownPreview extends Preview {
     // to support third-party plugins which requires re-executing script for every re-render
 
     if (highlight) {
-      this.eventManager.listen('cursorActivity', ({ markdownNode, cursor }) => {
-        this._updateCursorNode(markdownNode, cursor);
+      this.eventManager.listen('cursorActivity', ({ markdownNode, cursorPos }) => {
+        this._updateCursorNode(markdownNode, cursorPos);
       });
 
       this.eventManager.listen('blur', () => {
@@ -108,7 +108,7 @@ class MarkdownPreview extends Preview {
       cursorNode = findClosestNode(cursorNode, mdNode => !isInlineNode(mdNode));
 
       if (cursorNode.type === 'tableRow') {
-        cursorNode = findTableCell(cursorNode, cursorPos);
+        cursorNode = findTableCell(cursorNode, cursorPos[1]);
       } else if (cursorNode.type === 'tableBody') {
         // empty line next to table
         cursorNode = null;
