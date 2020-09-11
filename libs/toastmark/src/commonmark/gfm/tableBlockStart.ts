@@ -189,6 +189,7 @@ export const tableBody: BlockStart = (parser, container) => {
     if (container.type === 'tableBody') {
       table = container.parent as TableNode;
       parser.finalize(container, parser.lineNumber);
+      parser.finalize(container, parser.lineNumber - 1);
     }
     parser.finalize(table, parser.lineNumber);
     return Matched.None;
