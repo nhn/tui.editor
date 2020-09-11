@@ -13,7 +13,7 @@ import { createMarkdownToHTML } from './markdownToHTML';
 
 import { sendHostName, sanitizeLinkAttribute } from './utils/common';
 
-import MarkdownEditor from './markdownEditor';
+import MarkdownEditor from './markdown/mdEditor';
 import MarkdownPreview from './mdPreview';
 import WysiwygEditor from './wysiwygEditor';
 import Layout from './layout';
@@ -82,7 +82,7 @@ import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
 
 import { ToastMark } from '@toast-ui/toastmark';
-import { register } from './scroll/sync';
+// import { register } from './scroll/sync';
 
 const __nedInstance = [];
 
@@ -245,11 +245,10 @@ class ToastUIEditor {
       frontMatter
     });
 
-    this.mdEditor = MarkdownEditor.factory(
+    this.mdEditor = new MarkdownEditor(
       this.layout.getMdEditorContainerEl(),
-      this.eventManager,
       this.toastMark,
-      this.options
+      this.eventManager
     );
 
     this.preview = new MarkdownPreview(
@@ -305,7 +304,8 @@ class ToastUIEditor {
       sendHostName();
     }
 
-    register(this);
+    // @TODO: should change for prosemirror
+    // register(this);
   }
 
   /**
@@ -680,12 +680,10 @@ class ToastUIEditor {
       this.eventManager.emit('changeModeToWysiwyg');
     } else {
       this.layout.switchToMarkdown();
-      this.mdEditor.resetState();
       this.mdEditor.setValue(
         this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions),
         !isWithoutFocus
       );
-      this.getCodeMirror().refresh();
       this.eventManager.emit('changeModeToMarkdown');
     }
 
