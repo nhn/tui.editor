@@ -20,6 +20,12 @@
     "build:uml": "lerna run --scope @toast-ui/editor-plugin-uml build",
     "build:toastmark": "lerna run --scope @toast-ui/toastmark build",
     "build:squire": "lerna run --scope @toast-ui/squire build",
-    "build:to-mark": "lerna run --scope @toast-ui/to-mark build"
+    "build:to-mark": "lerna run --scope @toast-ui/to-mark build",
+    "install:toastmark": "cd libs/toastmark && npm install",
+    "install:squire": "cd libs/squire && npm install",
+    "install:to-mark": "cd libs/to-mark && npm install",
+    "install:libs": "npm run install:toastmark && npm run install:squire && npm run install:to-mark",
+    "build:libs": "npm run build:toastmark && npm run build:squire && npm run build:to-mark",
+    "setup:libs": "npm run install:libs && npm run build:libs"
   }
 }
