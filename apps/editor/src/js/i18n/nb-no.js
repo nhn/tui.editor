@@ -5,15 +5,15 @@
 import Editor from '../editor';
 
 Editor.setLanguage(['nb', 'nb-NO'], {
-  Markdown: 'Funksjonaliteter',
+  Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Skriv',
-  Preview: 'Forhåndsvisning',
-  Headings: 'Overskrift',
-  Paragraph: 'Paragraf',
+  Preview: 'Forhåndsvis',
+  Headings: 'Overskrifter',
+  Paragraph: 'Avsnitt',
   Bold: 'Fet skrift',
-  Italic: 'Italic',
-  Strike: 'Strike',
+  Italic: 'Kursiv',
+  Strike: 'Gjennomstrek',
   Code: 'Kode',
   Line: 'Linje',
   Blockquote: 'Blokksitat',
@@ -36,7 +36,7 @@ Editor.setLanguage(['nb', 'nb-NO'], {
   File: 'Fil',
   URL: 'URL',
   'Link text': 'Lenketekst',
-  'Add row': 'Legg til linje',
+  'Add row': 'Legg til rad',
   'Add col': 'Legg til kolonne',
   'Remove row': 'Fjern rad',
   'Remove col': 'Fjern kolonne',
@@ -44,9 +44,9 @@ Editor.setLanguage(['nb', 'nb-NO'], {
   'Align center': 'Senterorienter',
   'Align right': 'Høyreorienter',
   'Remove table': 'Fjern diagram',
-  'Would you like to paste as table?': 'Ønsker du å lime inn som et diagram?',
+  'Would you like to paste as table?': 'Ønsker du å lime inn som en tabell?',
   'Text color': 'Tekstfarge',
   'Auto scroll enabled': 'Auto-scroll aktivert',
   'Auto scroll disabled': 'Auto-scroll deaktivert',
-  'Choose language': 'Velg språl'
+  'Choose language': 'Velg språk'
 });
