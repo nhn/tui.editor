@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>19. Customizing Toolbar Buttons</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
+    <!-- Editor's Dependencies -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/cdn/toastui-editor.css" />
+    <!-- Customizing Button's Style in Example -->
+    <style type="text/css">
+      .tui-editor-defaultUI button.first {
+        color: lime;
+      }
+
+      .tui-editor-defaultUI button.last {
+        color: orange;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tui-doc-description">
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+    </div>
+    <div class="code-html tui-doc-contents">
+      <div id="editor"></div>
+    </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <!-- Editor -->
+    <script src="../dist/cdn/toastui-editor-all.js"></script>
+    <script type="text/babel" class="code-js">
+      function createLastButton() {
+        const button = document.createElement('button');
+
+        button.className = 'last';
+        button.innerHTML = `<i>B</i>`;
+
+        return button;
+      }
+
+      const editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: 'The first and last buttons are customized.',
+        toolbarItems: [
+          'heading',
+          'bold',
+          'italic',
+          'strike',
+          'divider',
+          'hr',
+          'quote',
+          'divider',
+          'ul',
+          'ol',
+          'task',
+          'indent',
+          'outdent',
+          'divider',
+          'table',
+          'image',
+          'link',
+          'divider',
+          'code',
+          'codeblock',
+          'divider',
+          // Using Option: Customize the last button
+          {
+            type: 'button',
+            options: {
+              el: createLastButton(),
+              command: 'Bold',
+              tooltip: 'Custom Bold'
+            }
+          }
+        ]
+      });
+
+      // Using Method: Customize the first button
+      const toolbar = editor.getUI().getToolbar();
+
+      editor.eventManager.addEventType('clickCustomButton');
+      editor.eventManager.listen('clickCustomButton', function() {
+        alert('Click!');
+      });
+
+      toolbar.insertItem(0, {
+        type: 'button',
+        options: {
+          className: 'first',
+          event: 'clickCustomButton',
+          tooltip: 'Custom Button',
+          text: '@',
+          style: 'background:none;border-color:lime;'
+        }
+      });
+    </script>
+  </body>
+</html>

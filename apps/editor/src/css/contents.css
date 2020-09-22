@@ -1,0 +1,348 @@
+@charset "utf-8";
+.tui-editor-contents {
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
+    'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
+}
+
+.tui-editor-contents *:not(table) {
+  line-height: 160%;
+  box-sizing: content-box;
+}
+
+.tui-editor-contents i,
+.tui-editor-contents cite,
+.tui-editor-contents em,
+.tui-editor-contents var,
+.tui-editor-contents address,
+.tui-editor-contents dfn {
+  font-style: italic;
+}
+
+.tui-editor-contents strong {
+  font-weight: bold;
+}
+
+.tui-editor-contents p {
+  margin: 10px 0;
+  color: #222;
+}
+
+.tui-editor-contents > h1:first-of-type,
+.tui-editor-contents > div > div:first-of-type h1 {
+  margin-top: 14px;
+}
+
+.tui-editor-contents h1,
+.tui-editor-contents h2,
+.tui-editor-contents h3,
+.tui-editor-contents h4,
+.tui-editor-contents h5,
+.tui-editor-contents h6 {
+  font-weight: bold;
+  color: #222;
+}
+
+.tui-editor-contents h1 {
+  font-size: 24px;
+  line-height: 28px;
+  border-bottom: 3px double #999;
+  margin: 52px 0 15px 0;
+  padding-bottom: 7px;
+}
+
+.tui-editor-contents h2 {
+  font-size: 22px;
+  line-height: 23px;
+  border-bottom: 1px solid #dbdbdb;
+  margin: 20px 0 13px 0;
+  padding-bottom: 7px;
+}
+
+.tui-editor-contents h3 {
+  font-size: 20px;
+  margin: 18px 0 2px;
+}
+
+.tui-editor-contents h4 {
+  font-size: 18px;
+  margin: 10px 0 2px;
+}
+
+.tui-editor-contents h3,
+.tui-editor-contents h4 {
+  line-height: 18px;
+}
+
+.tui-editor-contents h5 {
+  font-size: 16px;
+}
+
+.tui-editor-contents h6 {
+  font-size: 14px;
+}
+
+.tui-editor-contents h5,
+.tui-editor-contents h6 {
+  line-height: 17px;
+  margin: 9px 0 -4px;
+}
+
+.tui-editor-contents del {
+  color: #999;
+}
+
+.tui-editor-contents blockquote {
+  margin: 14px 0;
+  border-left: 4px solid #e5e5e5;
+  padding: 0 16px;
+  color: #999;
+}
+
+.tui-editor-contents blockquote p,
+.tui-editor-contents blockquote ul,
+.tui-editor-contents blockquote ol {
+  color: #999;
+}
+
+.tui-editor-contents blockquote > :first-child {
+  margin-top: 0;
+}
+
+.tui-editor-contents blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.tui-editor-contents pre,
+.tui-editor-contents code {
+  font-family: Consolas, Courier, 'Apple SD 산돌고딕 Neo', -apple-system, 'Lucida Grande',
+    'Apple SD Gothic Neo', '맑은 고딕', 'Malgun Gothic', 'Segoe UI', '돋움', dotum, sans-serif;
+  border: 0;
+  border-radius: 0;
+}
+
+.tui-editor-contents pre {
+  margin: 2px 0 8px;
+  padding: 18px;
+  background-color: #f5f7f8;
+}
+
+.tui-editor-contents code {
+  color: #c1798b;
+  background-color: #f9f2f4;
+  padding: 2px 3px;
+  letter-spacing: -0.3px;
+  border-radius: 2px;
+}
+
+.tui-editor-contents pre code {
+  padding: 0;
+  color: inherit;
+  white-space: pre-wrap;
+  background-color: transparent;
+}
+
+.tui-editor-contents pre.addon {
+  border: 1px solid #e8ebed;
+  background-color: #fff;
+}
+
+.tui-editor-contents img {
+  margin: 4px 0 10px;
+  box-sizing: border-box;
+  vertical-align: top;
+  max-width: 100%;
+}
+
+.tui-editor-contents table {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 12px 0 14px;
+  color: #222;
+  width: auto;
+  border-collapse: collapse;
+  box-sizing: border-box;
+}
+
+.tui-editor-contents table th,
+.tui-editor-contents table td {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 5px 14px 5px 12px;
+  height: 32px;
+}
+
+.tui-editor-contents table th {
+  background-color: #555;
+  font-weight: 300;
+  color: #fff;
+  padding-top: 6px;
+}
+
+.tui-editor-contents ul,
+.tui-editor-contents menu,
+.tui-editor-contents ol,
+.tui-editor-contents dir {
+  display: block;
+  list-style-type: none;
+  padding-left: 24px;
+  margin: 6px 0 10px;
+  color: #222;
+}
+
+.tui-editor-contents ol {
+  list-style-type: none;
+  counter-reset: li;
+}
+
+.tui-editor-contents ol > li {
+  counter-increment: li;
+}
+
+.tui-editor-contents ul > li::before,
+.tui-editor-contents ol > li::before {
+  display: inline-block;
+  position: absolute;
+}
+
+.tui-editor-contents ul > li::before {
+  content: '';
+  margin-top: 6px;
+  margin-left: -17px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #ccc;
+}
+
+.tui-editor-contents ol > li::before {
+  content: '.' counter(li);
+  margin-left: -28px;
+  width: 24px;
+  text-align: right;
+  direction: rtl;
+  color: #aaa;
+}
+
+.tui-editor-contents ul ul,
+.tui-editor-contents ul ol,
+.tui-editor-contents ol ol,
+.tui-editor-contents ol ul {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.tui-editor-contents ul li,
+.tui-editor-contents ol li {
+  position: relative;
+}
+
+.tui-editor-contents ul p,
+.tui-editor-contents ol p {
+  margin: 0;
+}
+
+.tui-editor-contents ul li.task-list-item::before,
+.tui-editor-contents ol li.task-list-item::before,
+.tui-editor-contents pre ul li::before {
+  content: '';
+}
+
+.tui-editor-contents hr {
+  border-top: 1px solid #eee;
+  margin: 16px 0;
+}
+
+.tui-editor-contents a {
+  text-decoration: underline;
+  color: #4b96e6;
+}
+
+.tui-editor-contents a:hover {
+  color: #1f70de;
+}
+
+.tui-editor-contents .task-list-item {
+  border: 0;
+  list-style: none;
+  padding-left: 24px;
+  margin-left: -24px;
+}
+
+.tui-editor-contents .task-list-item::before {
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+  background-position: center;
+  content: '';
+  margin-left: 0;
+  margin-top: 0;
+  border-radius: 0;
+  height: 18px;
+  width: 18px;
+  position: absolute;
+  left: 0;
+  top: 1px;
+  cursor: pointer;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAEqADAAQAAAABAAAAEgAAAACaqbJVAAAAQklEQVQ4EWM8c+bMfwYqABaQGcbGxhQZdfbsWQYmikxA0jxqEFJg4GCOhhGOgEESHg0jpMDAwRx8YQQuj0DlCaUAAEdBCPJ7TaEPAAAAAElFTkSuQmCC');
+}
+
+.tui-editor-contents .task-list-item.checked::before {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAEqADAAQAAAABAAAAEgAAAACaqbJVAAAA1ElEQVQ4EWP0nvbsPwMVABMVzAAbMWoQIiT5OJgYvLS5EAJQFguGCB4BkCHt/kIM8kKsYFXbrn6DqyY6sJENefjuN8ORuz/ghoAYWA0COR2kEQbQDanc+I7h049/MGkwjVANFQYZkmXHD/YCyABiDAFpxQgjkJO9dbjA4QAKDxAAhQnIO9hcAlYAJDBcBHIySANII8gAYgwBGYZhEEgQZFjVJohhhFwCUg8CjPgyLT8nE8N/YJZGD1iIVlQSI4yQpT9+R40ZZDl0NlavoSsihj/4DAIAR+hZHUj727YAAAAASUVORK5CYII=');
+}
+
+.tui-editor-contents .task-list-item input[type='checkbox'],
+.tui-editor-contents .task-list-item .task-list-item-checkbox {
+  margin-left: -17px;
+  margin-right: 3.8px;
+  margin-top: 3px;
+}
+
+.tui-editor-contents-placeholder::before {
+  content: attr(data-placeholder);
+  color: grey;
+  line-height: 160%;
+  position: absolute;
+}
+
+.te-preview .tui-editor-contents h1 {
+  min-height: 28px;
+}
+
+.te-preview .tui-editor-contents h2 {
+  min-height: 23px;
+}
+
+.te-preview .tui-editor-contents blockquote {
+  min-height: 20px;
+}
+
+.te-preview .tui-editor-contents li {
+  min-height: 22px;
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /* IE10+11 */
+  .te-ww-container .tui-editor-contents li {
+    vertical-align: middle;
+  }
+
+  .te-ww-container .tui-editor-contents ul > li::before,
+  .te-ww-container .tui-editor-contents ol > li::before,
+  .te-ww-container .tui-editor-contents .task-list-item:before {
+    position: static;
+    vertical-align: middle;
+  }
+
+  .te-ww-container .tui-editor-contents ul > li::before {
+    margin-top: -3px;
+    margin-right: 12px;
+  }
+
+  .te-ww-container .tui-editor-contents ol > li::before {
+    margin-right: 6px;
+  }
+
+  .te-ww-container .tui-editor-contents .task-list-item {
+    padding-left: 2px;
+  }
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Editor</title>
+    <!-- Editor's Dependencies -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor.css" />
+    <!-- Plugin -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
+    />
+  </head>
+  <body>
+    <div class="code-html">
+      <!-- Editor -->
+      <h2>Editor</h2>
+      <div id="editor"></div>
+      <!-- Editor's Viewer -->
+      <h2>Viewer</h2>
+      <div id="viewer"></div>
+    </div>
+    <!-- highlight.js Languages -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
+    <!-- Editor -->
+    <script src="http://localhost:8080/dist/cdn/toastui-editor-all.js"></script>
+    <!-- Plugin -->
+    <script src="../dist/cdn/toastui-editor-plugin-code-syntax-highlight.js"></script>
+    <script class="code-js">
+      const content = [
+        '```js',
+        `console.log('foo')`,
+        '```',
+        '```javascript',
+        `console.log('bar')`,
+        '```',
+        '```html',
+        '<div id="editor"><span>baz</span></div>',
+        '```',
+        '```wrong',
+        '[1 2 3]',
+        '```',
+        '```clojure',
+        '[1 2 3]',
+        '```'
+      ].join('\n');
+
+      const { Editor } = toastui;
+      const { codeSyntaxHighlight } = Editor.plugin;
+
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: content,
+        plugins: [codeSyntaxHighlight]
+      });
+
+      const viewer = Editor.factory({
+        el: document.querySelector('#viewer'),
+        viewer: true,
+        height: '500px',
+        initialValue: content,
+        plugins: [codeSyntaxHighlight]
+      });
+    </script>
+  </body>
+</html>

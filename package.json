@@ -1,0 +1,25 @@
+{
+  "name": "root",
+  "private": true,
+  "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "lerna": "^3.20.2",
+    "prettier": "^2.1.2"
+  },
+  "scripts": {
+    "build:editor": "lerna run --scope @toast-ui/editor build",
+    "build:jquery": "lerna run --scope @toast-ui/jquery-editor build",
+    "build:react": "lerna run --scope @toast-ui/react-editor build",
+    "build:vue": "lerna run --scope @toast-ui/vue-editor build",
+    "build:chart": "lerna run --scope @toast-ui/editor-plugin-chart build",
+    "build:color-syntax": "lerna run --scope @toast-ui/editor-plugin-color-syntax build",
+    "build:code-syntax-highlight": "lerna run --scope @toast-ui/editor-plugin-code-syntax-highlight build",
+    "build:table-merged-cell": "lerna run --scope @toast-ui/editor-plugin-table-merged-cell build",
+    "build:uml": "lerna run --scope @toast-ui/editor-plugin-uml build",
+    "build:toastmark": "lerna run --scope @toast-ui/toastmark build",
+    "build:squire": "lerna run --scope @toast-ui/squire build",
+    "build:to-mark": "lerna run --scope @toast-ui/to-mark build"
+  }
+}

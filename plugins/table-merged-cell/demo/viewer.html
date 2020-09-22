@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Viewer</title>
+    <!-- Editor -->
+    <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor-viewer.css" />
+  </head>
+  <body>
+    <div class="code-html">
+      <div id="viewer"></div>
+    </div>
+    <!-- Editor's Viewer -->
+    <script src="http://localhost:8080/dist/cdn/toastui-editor-viewer.js"></script>
+    <!-- Plugin -->
+    <script src="../dist/cdn/toastui-editor-plugin-table-merged-cell.js"></script>
+    <script class="code-js">
+      const content = ['| @cols=2:merged | |', '| --- | --- |', '| table | table2 |'].join('\n');
+
+      const Viewer = toastui.Editor;
+      const { tableMergedCell } = Viewer.plugin;
+
+      const instance = new Viewer({
+        el: document.querySelector('#viewer'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: content,
+        plugins: [tableMergedCell]
+      });
+    </script>
+  </body>
+</html>

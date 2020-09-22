@@ -1,0 +1,32 @@
+{
+    "name": "@toast-ui/squire",
+    "version": "1.0.0",
+    "description": "Squire is an HTML5 rich text editor, which provides powerful cross-browser normalisation, whilst being supremely lightweight and flexible.",
+    "keywords": [
+        "wysiwyg",
+        "editor",
+        "text",
+        "html",
+        "squire"
+    ],
+    "main": "build/squire.js",
+    "author": "NHN. FE Development Lab",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nhn/tui.editor.git",
+        "directory": "libs/squire"
+    },
+    "bugs": {
+        "url": "https://github.com/nhn/tui.editor/issues"
+    },
+    "homepage": "https://ui.toast.com",
+    "scripts": {
+        "build": "make build"
+    },
+    "devDependencies": {
+        "mocha": "^8.0.0",
+        "uglify-js": "^2.4.15",
+        "unexpected": "^11.14.0"
+    }
+}

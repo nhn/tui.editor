@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Viewer</title>
+    <!-- Editor's Dependencies -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor-viewer.css" />
+  </head>
+  <body>
+    <div class="code-html">
+      <div id="viewer"></div>
+    </div>
+    <!-- Editor's Viewer -->
+    <script src="http://localhost:8080/dist/cdn/toastui-editor-viewer.js"></script>
+    <!-- Plugin -->
+    <script src="../dist/cdn/toastui-editor-plugin-uml.js"></script>
+    <script class="code-js">
+      const content = [
+        '```uml',
+        'partition Conductor {',
+        '  (*) --> "Climbs on Platform"',
+        '  --> === S1 ===',
+        '  --> Bows',
+        '}',
+        '',
+        'partition Audience #LightSkyBlue {',
+        '  === S1 === --> Applauds',
+        '}',
+        '',
+        'partition Conductor {',
+        '  Bows --> === S2 ===',
+        '  --> WavesArmes',
+        '  Applauds --> === S2 ===',
+        '}',
+        '',
+        'partition Orchestra #CCCCEE {',
+        '  WavesArmes --> Introduction',
+        '  --> "Play music"',
+        '}',
+        '```'
+      ].join('\n');
+
+      const Viewer = toastui.Editor;
+      const { uml } = Viewer.plugin;
+
+      const instance = new Viewer({
+        el: document.querySelector('#viewer'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: content,
+        plugins: [uml]
+      });
+    </script>
+  </body>
+</html>

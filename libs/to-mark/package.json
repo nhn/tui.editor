@@ -1,0 +1,60 @@
+{
+  "name": "@toast-ui/to-mark",
+  "version": "1.0.1",
+  "description": "Library to convert to Markdown",
+  "keywords": [
+    "nhn",
+    "toastui",
+    "library",
+    "markdown"
+  ],
+  "main": "dist/to-mark.js",
+  "files": [
+    "dist"
+  ],
+  "author": "NHN. FE Development Lab",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhn/tui.editor.git",
+    "directory": "libs/to-mark"
+  },
+  "bugs": {
+    "url": "https://github.com/nhn/tui.editor/issues"
+  },
+  "homepage": "https://ui.toast.com",
+  "scripts": {
+    "test": "karma start --no-single-run",
+    "test:ne": "cross-env KARMA_SERVER=ne karma start",
+    "serve": "webpack-dev-server",
+    "build": "cross-env webpack --mode=production && webpack --mode=production --minify"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@toast-ui/editor": "^2.0.0",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-istanbul": "^6.0.0",
+    "cross-env": "^6.0.3",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-config-tui": "^3.0.0",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "istanbul-instrumenter-loader": "^3.0.1",
+    "jasmine-core": "^3.5.0",
+    "karma": "^4.4.1",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage-istanbul-reporter": "^2.1.1",
+    "karma-jasmine": "^3.1.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webdriver-launcher": "github:nhn/karma-webdriver-launcher#v1.2.0",
+    "karma-webpack": "^4.0.2",
+    "prettier": "^1.19.1",
+    "terser-webpack-plugin": "^2.3.1",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
+  }
+}

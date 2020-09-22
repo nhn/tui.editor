@@ -1,0 +1,129 @@
+.te-md-container .ProseMirror {
+  font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
+    'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
+  color: #222;
+}
+
+.tui-md-heading1 {
+  font-size: 24px;
+}
+
+.tui-md-heading2 {
+  font-size: 22px;
+}
+
+.tui-md-heading3 {
+  font-size: 20px;
+}
+
+.tui-md-heading4 {
+  font-size: 18px;
+}
+
+.tui-md-heading5 {
+  font-size: 16px;
+}
+
+.tui-md-heading6 {
+  font-size: 14px;
+}
+
+.tui-md-heading.tui-md-delimiter.setext {
+  line-height: 15px;
+}
+
+.tui-md-strong,
+.tui-md-heading,
+.tui-md-list-item-style,
+.tui-md-list-item .tui-md-meta {
+  font-weight: bold;
+}
+
+.tui-md-emph {
+  font-style: italic;
+}
+
+.tui-md-strike {
+  text-decoration: line-through;
+}
+
+.tui-md-strike.tui-md-delimiter {
+  text-decoration: none;
+}
+
+.tui-md-delimiter,
+.tui-md-thematic-break,
+.tui-md-link,
+.tui-md-table,
+.tui-md-block-quote {
+  color: #ccc;
+}
+
+.tui-md-code-block.tui-md-meta,
+.tui-md-code.tui-md-delimiter {
+  color: #aaa;
+}
+
+.tui-md-meta,
+.tui-md-html,
+.tui-md-link.tui-md-link-url.tui-md-marked-text {
+  color: #999;
+}
+
+.tui-md-block-quote .tui-md-marked-text,
+.tui-md-list-item.tui-md-meta {
+  color: #555;
+}
+
+.tui-md-table .tui-md-marked-text {
+  color: #222;
+}
+
+.tui-md-link.tui-md-link-desc.tui-md-marked-text,
+.tui-md-list-item-style.tui-md-list-item-odd {
+  color: #4b96e6;
+}
+
+.tui-md-list-item-style.tui-md-list-item-even {
+  color: #cb4848;
+}
+
+.tui-md-code.tui-md-marked-text {
+  color: #c1798b;
+}
+
+.tui-md-code {
+  background-color: rgba(243, 229, 233, 0.5);
+  padding: 2px 0;
+  letter-spacing: -0.3px;
+}
+
+.tui-md-code.tui-md-start {
+  padding-left: 2px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+.tui-md-code.tui-md-end {
+  padding-right: 2px;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.tui-md-code-block-line-background {
+  background-color: #f5f7f8;
+}
+
+.tui-md-code-block.CodeMirror-linebackground.start {
+  top: 2px;
+}
+
+.tui-md-code-block.CodeMirror-linebackground.end {
+  bottom: 2px;
+}
+
+.tui-md-code,
+.tui-md-code-block {
+  font-family: Consolas, Courier, 'Lucida Grande', '나눔바른고딕', 'Nanum Barun Gothic', '맑은고딕',
+    'Malgun Gothic', sans-serif;
+}

@@ -1,0 +1,19 @@
+{
+    "curly": true,
+    "eqeqeq": true,
+    "es3": true,
+    "immed": true,
+    "latedef": true,
+    "newcap": true,
+    "noarg": true,
+    "quotmark": false,
+    "unused": true,
+    "undef": true,
+
+    "boss": true,
+    "eqnull": true,
+    "strict": true,
+
+    "browser": true,
+    "devel": true
+}

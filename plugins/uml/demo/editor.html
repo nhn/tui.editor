@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Editor</title>
+    <!-- Editor's Dependencies -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor.css" />
+  </head>
+  <body>
+    <div class="code-html">
+      <!-- Editor -->
+      <h2>Editor</h2>
+      <div id="editor"></div>
+      <!-- Editor's Viewer -->
+      <h2>Viewer</h2>
+      <div id="viewer"></div>
+    </div>
+    <!-- Editor -->
+    <script src="http://localhost:8080/dist/cdn/toastui-editor-all.js"></script>
+    <!-- Plugin -->
+    <script src="../dist/cdn/toastui-editor-plugin-uml.js"></script>
+    <script class="code-js">
+      const content = [
+        '```uml',
+        'partition Conductor {',
+        '  (*) --> "Climbs on Platform"',
+        '  --> === S1 ===',
+        '  --> Bows',
+        '}',
+        '',
+        'partition Audience #LightSkyBlue {',
+        '  === S1 === --> Applauds',
+        '}',
+        '',
+        'partition Conductor {',
+        '  Bows --> === S2 ===',
+        '  --> WavesArmes',
+        '  Applauds --> === S2 ===',
+        '}',
+        '',
+        'partition Orchestra #CCCCEE {',
+        '  WavesArmes --> Introduction',
+        '  --> "Play music"',
+        '}',
+        '```'
+      ].join('\n');
+
+      const { Editor } = toastui;
+      const { uml } = Editor.plugin;
+
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: content,
+        plugins: [uml]
+      });
+
+      const viewer = Editor.factory({
+        el: document.querySelector('#viewer'),
+        viewer: true,
+        height: '500px',
+        initialValue: content,
+        plugins: [uml]
+      });
+    </script>
+  </body>
+</html>

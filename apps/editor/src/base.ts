@@ -1,0 +1,82 @@
+import { Schema } from 'prosemirror-model';
+import { Plugin } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+import { Emitter } from '@t/event';
+import { CommandMap, Context } from '@t/spec';
+import SpecManager from './spec/specManager';
+
+export default abstract class EditorBase {
+  el: HTMLElement;
+
+  eventEmitter: Emitter;
+
+  context!: Context;
+
+  schema!: Schema;
+
+  keymaps!: Plugin[];
+
+  view!: EditorView;
+
+  commands!: CommandMap;
+
+  specs!: SpecManager;
+
+  constructor(el: HTMLElement, eventEmitter: Emitter) {
+    this.el = el;
+    this.eventEmitter = eventEmitter;
+  }
+
+  // abstract addWidget(range: Range, node: Node, style: string, offset?: number): void;
+
+  abstract createSpecs(): SpecManager;
+
+  abstract createContext(): Context;
+
+  abstract createState(): void;
+
+  abstract createView(): EditorView;
+
+  createSchema() {
+    return new Schema({
+      nodes: this.specs.nodes,
+      marks: this.specs.marks
+    });
+  }
+
+  createKeymaps() {
+    return this.specs.keymaps(this.context);
+  }
+
+  createCommands() {
+    return this.specs.commands({ ...this.context, view: this.view });
+  }
+
+  focus() {
+    this.view.focus();
+  }
+
+  abstract blur(): void;
+
+  abstract getRange(): any;
+
+  abstract insertText(text: string): void;
+
+  abstract moveCursorToEnd(): void;
+
+  abstract moveCursorToStart(): void;
+
+  abstract replaceRelativeOffset(content: string, offset: number, overwriteLength: number): void;
+
+  abstract replaceSelection(content: string, range: Range): void;
+
+  abstract scrollTop(value: number): boolean;
+
+  abstract setHeight(height: number): void;
+
+  abstract setMinHeight(minHeight: number): void;
+
+  abstract setPlaceholder(placeholder: string): void;
+
+  abstract destroy(): void;
+}

@@ -1,0 +1,78 @@
+.te-md-container .CodeMirror {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #000;
+}
+
+.tui-md-heading1 {
+  font-size: 24px;
+}
+
+.tui-md-heading2 {
+  font-size: 22px;
+}
+
+.tui-md-heading3 {
+  font-size: 20px;
+}
+
+.tui-md-heading4 {
+  font-size: 18px;
+}
+
+.tui-md-heading5 {
+  font-size: 16px;
+}
+
+.tui-md-heading6 {
+  font-size: 14px;
+}
+
+.tui-md-strong,
+.tui-md-heading {
+  font-weight: bold;
+}
+
+.tui-md-emph {
+  font-style: italic;
+}
+
+.tui-md-strike {
+  text-decoration: line-through;
+}
+
+.tui-md-thematic-break {
+  color: #ccc;
+}
+
+.tui-md-link.tui-md-link-desc {
+  color: #00c;
+}
+
+.tui-md-link.tui-md-link-url {
+  color: #a11;
+}
+
+.tui-md-block-quote {
+  color: #090;
+}
+
+.tui-md-code,
+.tui-md-code-block {
+  color: #a50;
+}
+
+.tui-md-list-item.first {
+  color: #000;
+}
+
+.tui-md-list-item.second {
+  color: #085;
+}
+
+.tui-md-list-item.third {
+  color: #708;
+}
+
+.tui-md-list-item.tui-md-delimiter {
+  color: #555;
+}

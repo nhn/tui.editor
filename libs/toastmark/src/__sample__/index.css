@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  height: 500px;
+}
+
+.container > div {
+  flex: 1;
+  border: 1px solid #ccc;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.CodeMirror {
+  height: 500px;
+}

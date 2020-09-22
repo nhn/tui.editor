@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Editor</title>
+    <!-- Editor's Dependencies -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="http://localhost:8080/dist/toastui-editor.css" />
+  </head>
+  <body>
+    <div class="code-html">
+      <!-- Editor -->
+      <h2>Editor</h2>
+      <div id="editor"></div>
+      <!-- Editor's Viewer -->
+      <h2>Viewer</h2>
+      <div id="viewer"></div>
+    </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <!-- jQuery Wrapper of Editor -->
+    <script src="../dist/cdn/toastui-jquery-editor.js"></script>
+    <script class="code-js">
+      const content = [
+        '![image](https://uicdn.toast.com/toastui/img/tui-editor-bi.png)',
+        '',
+        '# Heading 1',
+        '## Heading 2',
+        '### Heading 3',
+        '#### Heading 4',
+        '##### Heading 5',
+        '###### Heading 6',
+        '',
+        '**bold** *italic* ~~strikethrough~~',
+        '<span style="color:#e11d21;">Color Syntax</span>',
+        '[link](https://nhn.github.io/tui.editor/)',
+        '',
+        '---',
+        'horizontal line',
+        '***',
+        '',
+        '> block quote',
+        '>> block quote (2 depth)',
+        '>>> block quote (3 depth)',
+        '',
+        '* list',
+        '    * list indented',
+        '1. ordered',
+        '2. list',
+        '    1. ordered list',
+        '    2. indented',
+        '',
+        '- [ ] task',
+        '- [x] list completed',
+        '',
+        '`inline code`',
+        '',
+        '    code block',
+        '```js',
+        'console.log("fenced code block");',
+        '```',
+        '<pre>**HTML block**</pre>',
+        '',
+        '| table | head |',
+        '| ----  | ---- |',
+        '| table | body |'
+      ].join('\n');
+
+      $('#editor').toastuiEditor({
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: content
+      });
+
+      $('#viewer').toastuiEditor({
+        viewer: true,
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: content
+      });
+    </script>
+  </body>
+</html>

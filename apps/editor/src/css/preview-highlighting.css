@@ -1,0 +1,35 @@
+.tui-editor-contents .te-preview-highlight {
+  position: relative;
+  z-index: 0;
+}
+
+.tui-editor-contents .te-preview-highlight::after {
+  content: '';
+  background-color: rgba(255, 245, 131, 0.5);
+  border-radius: 4px;
+  z-index: -1;
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  left: -4px;
+  bottom: -4px;
+}
+
+.tui-editor-contents h1.te-preview-highlight::after,
+.tui-editor-contents h2.te-preview-highlight::after {
+  bottom: 0;
+}
+
+.tui-editor-contents td.te-preview-highlight::after,
+.tui-editor-contents th.te-preview-highlight::after {
+  display: none;
+}
+
+.tui-editor-contents th.te-preview-highlight,
+.tui-editor-contents td.te-preview-highlight {
+  background-color: rgba(255, 245, 131, 0.5);
+}
+
+.tui-editor-contents th.te-preview-highlight {
+  color: #222;
+}

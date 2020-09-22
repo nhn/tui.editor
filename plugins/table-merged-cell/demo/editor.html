@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Editor</title>
+    <!-- Editor's Dependencies -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor.css" />
+  </head>
+  <body>
+    <div class="code-html">
+      <!-- Editor -->
+      <h2>Editor</h2>
+      <div id="editor"></div>
+      <!-- Editor's Viewer -->
+      <h2>Viewer</h2>
+      <div id="viewer"></div>
+    </div>
+    <!-- Editor -->
+    <script src="http://localhost:8080/dist/cdn/toastui-editor-all.js"></script>
+    <!-- Plugin -->
+    <script src="../dist/cdn/toastui-editor-plugin-table-merged-cell.js"></script>
+    <script class="code-js">
+      const content = ['| @cols=2:merged |', '| --- | --- |', '| table | table2 |'].join('\n');
+
+      const { Editor } = toastui;
+      const { tableMergedCell } = Editor.plugin;
+
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialEditType: 'wysiwyg',
+        initialValue: content,
+        plugins: [tableMergedCell]
+      });
+
+      const viewer = Editor.factory({
+        el: document.querySelector('#viewer'),
+        viewer: true,
+        height: '500px',
+        initialValue: content,
+        plugins: [tableMergedCell]
+      });
+    </script>
+  </body>
+</html>
