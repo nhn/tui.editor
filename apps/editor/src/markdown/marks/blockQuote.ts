@@ -4,7 +4,7 @@ import { Transaction } from 'prosemirror-state';
 import { Context } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from './helper/pos';
+import { interpolatePos } from '../helper/pos';
 
 type TransactionCallback = (tr: Transaction) => Transaction;
 
@@ -44,9 +44,7 @@ export class BlockQuote extends Mark {
             ? node.textContent.replace(reBlockQuoteSyntax, '').trim()
             : `> ${node.textContent.trim()}`;
 
-          transations.unshift(newTr =>
-            newTr.replaceRangeWith(start + 1, end, schema.text(textContent))
-          );
+          transations.unshift(newTr => newTr.replaceWith(start + 1, end, schema.text(textContent)));
         }
       });
       transations.forEach(fn => {

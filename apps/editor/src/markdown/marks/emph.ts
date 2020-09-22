@@ -3,7 +3,7 @@ import { TextSelection } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from './helper/pos';
+import { interpolatePos } from '../helper/pos';
 
 const reEmph = /^(\*|_).*([\s\S]*)\1$/m;
 const emphSyntax = '*';
@@ -37,7 +37,7 @@ export class Emph extends Mark {
       if (reEmph.test(textContent)) {
         tr = tr.delete(to - 1, to).delete(from, from + 1);
       } else {
-        tr = tr.insertText(emphSyntax, to, to).insertText(emphSyntax, from, from);
+        tr = tr.insertText(emphSyntax, to).insertText(emphSyntax, from);
         const selection = empty
           ? TextSelection.create(tr.doc, from + 1, from + 1)
           : TextSelection.create(tr.doc, from, to + 2);

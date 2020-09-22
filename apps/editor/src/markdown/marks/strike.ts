@@ -3,7 +3,7 @@ import { TextSelection } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from './helper/pos';
+import { interpolatePos } from '../helper/pos';
 
 const reStrike = /^(~{2}).*([\s\S]*)\1$/m;
 const strikeSyntax = '~~';
@@ -33,7 +33,7 @@ export class Strike extends Mark {
       if (reStrike.test(textContent)) {
         tr = tr.delete(to - 2, to).delete(from, from + 2);
       } else {
-        tr = tr.insertText(strikeSyntax, to, to).insertText(strikeSyntax, from, from);
+        tr = tr.insertText(strikeSyntax, to).insertText(strikeSyntax, from);
         const selection = empty
           ? TextSelection.create(tr.doc, from + 2, from + 2)
           : TextSelection.create(tr.doc, from, to + 4);
