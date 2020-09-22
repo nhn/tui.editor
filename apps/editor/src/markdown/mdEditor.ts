@@ -1,12 +1,13 @@
-import { EditorState, Transaction } from 'prosemirror-state';
+import { EditorState, Transaction, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { DOMParser, Schema } from 'prosemirror-model';
+import { DOMParser, Schema, Slice } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import css from 'tui-code-snippet/domUtil/css';
 import { Emitter } from '@t/event';
+import { MdPos } from '@t/markdown';
 import EditorBase from '@/base';
 import KeyMapper from '@/keymaps/keyMapper';
 import SpecManager from '@/spec/specManager';
@@ -28,6 +29,7 @@ import { Code } from './marks/code';
 import { Link } from './marks/link';
 import { Delimiter, TaskDelimiter, MarkedText, Meta } from './marks/simpleMark';
 import { Html } from './marks/html';
+import { getMdToEditorPos } from './helper/pos';
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
@@ -132,13 +134,7 @@ export default class MdEditor extends EditorBase {
       tr.steps.forEach(step => {
         // @ts-ignore
         const { from, to, slice } = step;
-        let changed = slice.content.textBetween(0, slice.content.size, '\n');
-
-        if (KeyMapper.keyCode('ENTER') === this.keyCode) {
-          changed = '\n';
-          this.keyCode = null;
-        }
-        changed = changed.replace(/\u00a0/g, ' ');
+        const changed = this.getChanged(slice);
 
         const fragment = state.doc.content;
         // @ts-ignore
@@ -159,6 +155,37 @@ export default class MdEditor extends EditorBase {
         tr.setMeta('editResult', editResult);
       });
     }
+  }
+
+  private getChanged(slice: Slice) {
+    if (KeyMapper.keyCode('ENTER') === this.keyCode) {
+      this.keyCode = null;
+      return '\n';
+    }
+
+    let changed = '';
+    let separated = true;
+    const from = 0;
+    const to = slice.content.size;
+
+    slice.content.nodesBetween(from, to, (node, pos) => {
+      if (node.isText) {
+        changed += node.text!.slice(Math.max(from, pos) - pos, to - pos);
+        separated = false;
+      } else if ((!separated || !node.content.size) && node.isBlock) {
+        changed += '\n';
+        separated = true;
+      }
+    });
+
+    return changed.replace(/\u00a0/g, ' ');
+  }
+
+  setSelection(start: MdPos, end: MdPos) {
+    const { tr } = this.view.state;
+    const [from, to] = getMdToEditorPos(start, end, this.toastMark.getLineTexts());
+
+    this.view.dispatch(tr.setSelection(TextSelection.create(tr.doc, from, to)));
   }
 
   // @TODO: should implement markdown editor API
