@@ -134,7 +134,7 @@ describe('blockQuote command', () => {
     expect(getTextContent(mde)).toEqual('> blockQuote\n> text');
   });
 
-  it('should remove unnecessary space when adding the blockQuote syntax', () => {
+  it('should remove unnecessary space when adding the blockQuote command', () => {
     mde.setMarkdown('  blockQuote');
 
     cmd.exec('markdown', 'selectAll');
@@ -150,5 +150,25 @@ describe('blockQuote command', () => {
     cmd.exec('markdown', 'blockQuote');
 
     expect(getTextContent(mde)).toEqual('blockQuote');
+  });
+});
+
+describe('hr command', () => {
+  it('should add thematicBreak(hr) syntax', () => {
+    mde.setMarkdown('');
+
+    mde.focus();
+    cmd.exec('markdown', 'hr');
+
+    expect(getTextContent(mde)).toEqual('***\n');
+  });
+
+  it('should split the paragraph when adding thematicBreak(hr) syntax', () => {
+    mde.setMarkdown('paragraph');
+
+    mde.setSelection([0, 2], [0, 4]);
+    cmd.exec('markdown', 'hr');
+
+    expect(getTextContent(mde)).toEqual('pa\n***\ngraph');
   });
 });

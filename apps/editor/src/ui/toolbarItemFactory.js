@@ -65,7 +65,7 @@ class ToolbarItemFactory {
         toolbarItem = new ToolbarButton({
           name: 'hr',
           className: 'tui-hrline',
-          command: 'HR',
+          command: 'hr',
           tooltip: i18n.get('Line'),
           state: 'thematicBreak'
         });
