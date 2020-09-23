@@ -2,7 +2,7 @@ import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { Context, EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from '../helper/pos';
+import { resolveSelectionPos } from '../helper/pos';
 
 function decodeURIGraceful(uri: string) {
   const uriList = uri.split(' ');
@@ -42,6 +42,8 @@ function escapeMarkdownText(text: string) {
     .replace(/>/g, '\\>');
 }
 
+type CommandType = 'image' | 'link';
+
 export class Link extends Mark {
   get name() {
     return 'link';
@@ -69,26 +71,36 @@ export class Link extends Mark {
     };
   }
 
-  get commandName() {
-    return 'addImage';
-  }
-
-  commands({ schema }: Context): EditorCommand {
+  private addLinkOrImage({ schema }: Context, commandType: CommandType): EditorCommand {
     return payload => (state, dispatch) => {
-      const [from, to] = interpolatePos(state.selection);
+      const [from, to] = resolveSelectionPos(state.selection);
+      const { linkText, altText, url: linkUrl, imageUrl } = payload!;
+      let text = linkText;
+      let url = linkUrl;
+      let syntax = '';
 
-      let { altText, imageUrl } = payload!;
+      if (commandType === 'image') {
+        text = altText;
+        url = imageUrl;
+        syntax = '!';
+      }
 
-      altText = decodeURIGraceful(altText);
-      altText = escapeMarkdownText(altText);
-      imageUrl = encodeMarkdownText(imageUrl);
+      text = escapeMarkdownText(decodeURIGraceful(text));
+      url = encodeMarkdownText(url);
+      syntax += `[${text}](${url})`;
 
-      const imageSyntax = `![${altText}](${imageUrl})`;
-      const tr = state.tr.replaceWith(from, to, schema.text(imageSyntax));
+      const tr = state.tr.replaceWith(from, to, schema.text(syntax));
 
       dispatch!(tr);
 
       return true;
+    };
+  }
+
+  commands(context: Context) {
+    return {
+      addImage: this.addLinkOrImage(context, 'image'),
+      addLink: this.addLinkOrImage(context, 'link')
     };
   }
 }

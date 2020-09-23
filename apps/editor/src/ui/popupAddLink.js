@@ -134,7 +134,7 @@ class PopupAddLink extends LayerPopup {
       return;
     }
 
-    this._eventEmitter.emit('command', 'AddLink', {
+    this._eventEmitter.emit('command', 'addLink', {
       linkText,
       url
     });
