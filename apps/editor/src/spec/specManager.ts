@@ -1,16 +1,15 @@
 import { EditorView } from 'prosemirror-view';
-import { Command } from 'prosemirror-commands';
 import { keymap } from 'prosemirror-keymap';
-import { CommandMap, Context } from '@t/spec';
+import { EditorCommandMap, Context, EditorCommand } from '@t/spec';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import Mark from '@/spec/mark';
 import Node from '@/spec/node';
 
 type Spec = Node | Mark;
 
-function execCommand(view: EditorView, command: Command) {
+function execCommand(view: EditorView, command: EditorCommand, payload?: Record<string, any>) {
   view.focus();
-  return command(view.state, view.dispatch, view);
+  return command(payload)(view.state, view.dispatch, view);
 }
 
 export default class SpecManager {
@@ -43,14 +42,14 @@ export default class SpecManager {
   }
 
   commands(context: Context) {
-    const specCommands: CommandMap = this.specs
+    const specCommands: EditorCommandMap = this.specs
       .filter(({ commands }) => commands)
       .reduce((allCommands, spec) => {
         const { commandName } = spec;
-        const commands: CommandMap = {};
+        const commands: EditorCommandMap = {};
         const command = spec.commands!(context);
 
-        commands[commandName] = () => execCommand(context.view!, command);
+        commands[commandName] = payload => execCommand(context.view!, command, payload);
 
         return {
           ...allCommands,
@@ -58,10 +57,10 @@ export default class SpecManager {
         };
       }, {});
 
-    const defaultCommands: CommandMap = getDefaultCommands();
+    const defaultCommands = getDefaultCommands();
 
     Object.keys(defaultCommands).forEach(name => {
-      specCommands[name] = () => execCommand(context.view!, defaultCommands[name]);
+      specCommands[name] = payload => execCommand(context.view!, defaultCommands[name], payload);
     });
 
     return specCommands;

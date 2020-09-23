@@ -146,7 +146,7 @@ export class Editor {
 
   changePreviewStyle(style: PreviewStyle): void;
 
-  exec(type: EditorType, name: string, ...args: any[]): void;
+  exec(type: EditorType, name: string, ...payload: any[]): void;
 
   addCommand(type: EditorType, name: string, command: Command): void;
 

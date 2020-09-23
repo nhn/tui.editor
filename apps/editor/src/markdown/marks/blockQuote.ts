@@ -1,7 +1,6 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { Command } from 'prosemirror-commands';
 import { Transaction } from 'prosemirror-state';
-import { Context } from '@t/spec';
+import { Context, EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { interpolatePos } from '../helper/pos';
@@ -23,8 +22,8 @@ export class BlockQuote extends Mark {
     };
   }
 
-  commands({ schema }: Context): Command {
-    return (state, dispatch) => {
+  commands({ schema }: Context): EditorCommand {
+    return () => (state, dispatch) => {
       const { selection, doc } = state;
       const [from, to] = interpolatePos(selection);
       const { empty } = state.selection;
@@ -59,6 +58,8 @@ export class BlockQuote extends Mark {
   }
 
   keymaps(context: Context) {
-    return { 'alt-q': this.commands(context), 'alt-Q': this.commands(context) };
+    const commandResult = this.commands(context)();
+
+    return { 'alt-q': commandResult, 'alt-Q': commandResult };
   }
 }

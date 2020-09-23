@@ -1,6 +1,6 @@
-import { Keymap, Command } from 'prosemirror-commands';
+import { Keymap } from 'prosemirror-commands';
 import { NodeSpec } from 'prosemirror-model';
-import { Context } from '@t/spec';
+import { Context, EditorCommand } from '@t/spec';
 
 export default abstract class Node {
   get type() {
@@ -15,7 +15,7 @@ export default abstract class Node {
     return this.name;
   }
 
-  commands?(context: Context): Command;
+  commands?(context: Context): EditorCommand;
 
   keymaps?(context: Context): Keymap<any>;
 }

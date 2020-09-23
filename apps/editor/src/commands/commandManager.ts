@@ -18,8 +18,8 @@ export default class CommandManager {
   }
 
   private initEvent() {
-    this.eventEmitter.listen('command', ({ type, command }) => {
-      this.exec(type, command);
+    this.eventEmitter.listen('command', ({ type, command }, payload) => {
+      this.exec(type, command, payload);
     });
   }
 
@@ -39,11 +39,11 @@ export default class CommandManager {
     }
   }
 
-  exec(type: EditorType, name: string, ...args: any[]) {
+  exec(type: EditorType, name: string, payload?: Record<string, string>) {
     if (type === 'markdown') {
-      this.mdCommands[name](...args);
+      this.mdCommands[name](payload);
     } else {
-      this.wwCommands[name](...args);
+      this.wwCommands[name](payload);
     }
   }
 }

@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
-import { Command } from 'prosemirror-commands';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { interpolatePos } from '../helper/pos';
@@ -25,8 +25,8 @@ export class Strong extends Mark {
     return 'bold';
   }
 
-  commands(): Command {
-    return (state, dispatch) => {
+  commands(): EditorCommand {
+    return () => (state, dispatch) => {
       const [from, to] = interpolatePos(state.selection);
       const { empty } = state.selection;
       const slice = state.selection.content();
@@ -51,6 +51,8 @@ export class Strong extends Mark {
   }
 
   keymaps() {
-    return { 'Mod-b': this.commands(), 'Mod-B': this.commands() };
+    const commandResult = this.commands()();
+
+    return { 'Mod-b': commandResult, 'Mod-B': commandResult };
   }
 }

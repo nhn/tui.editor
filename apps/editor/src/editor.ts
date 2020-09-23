@@ -301,8 +301,8 @@ class ToastUIEditor {
    * call commandManager's exec method
    * @param {*} ...args Command argument
    */
-  exec(type: EditorType, name: string, ...args: any[]) {
-    this.commandManager.exec(type, name, ...args);
+  exec(type: EditorType, name: string, payload: Record<string, any>) {
+    this.commandManager.exec(type, name, payload);
   }
 
   addCommand(type: EditorType, name: string, command: Command) {
