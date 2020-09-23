@@ -1,6 +1,7 @@
 import { EditorState, Transaction, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { DOMParser, Schema, Slice } from 'prosemirror-model';
+import { Step } from 'prosemirror-transform';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 // @ts-ignore
@@ -132,9 +133,9 @@ export default class MdEditor extends EditorBase {
 
     if (tr.docChanged) {
       tr.steps.forEach(step => {
+        const [from, to] = this.getResolvedRange(tr, step);
         // @ts-ignore
-        const { from, to, slice } = step;
-        const changed = this.getChanged(slice);
+        const changed = this.getChanged(step.slice);
 
         const fragment = state.doc.content;
         // @ts-ignore
@@ -155,6 +156,13 @@ export default class MdEditor extends EditorBase {
         tr.setMeta('editResult', editResult);
       });
     }
+  }
+
+  private getResolvedRange(tr: Transaction, step: Step) {
+    const resolvedPos = tr.getMeta('resolvedPos');
+
+    // @ts-ignore
+    return resolvedPos || [step.from, step.to];
   }
 
   private getChanged(slice: Slice) {
