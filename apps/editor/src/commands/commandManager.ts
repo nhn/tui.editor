@@ -42,7 +42,7 @@ export default class CommandManager {
     }
   }
 
-  exec(type: EditorType, name: string, payload?: Record<string, string>) {
+  exec(type: EditorType, name: string, payload?: Record<string, any>) {
     if (type === 'markdown') {
       this.mdCommands[name](payload);
     } else {

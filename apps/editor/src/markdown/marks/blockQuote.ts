@@ -19,6 +19,13 @@ export class BlockQuote extends Mark {
     };
   }
 
+  private getChangedText(text: string, isBlockQuote: boolean) {
+    if (isBlockQuote) {
+      return text.replace(reBlockQuoteSyntax, '').trim();
+    }
+    return text.trim() ? `> ${text.trim()}` : `>\u00a0`;
+  }
+
   commands({ schema }: Context): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, doc, tr } = state;
@@ -35,24 +42,24 @@ export class BlockQuote extends Mark {
         const { isBlock, textContent } = node;
 
         if (isBlock) {
-          const result = isBlockQuote
-            ? textContent.replace(reBlockQuoteSyntax, '').trim()
-            : // insert the nbsp to preserve the space for markdown parser
-              `>\u00a0${textContent.trim()}`;
+          const result = this.getChangedText(textContent, isBlockQuote);
 
           nodes.push(schema.nodes.paragraph.create(null, schema.text(result)));
         }
       });
 
-      // @TODO: set caret position
-      dispatch!(
-        tr
-          .replaceWith(startOffset - 1, endOffset + 1, nodes)
-          // To prevent incorrect calculation of the position for markdown parser
-          .setMeta('resolvedPos', [startOffset, endOffset])
-      );
+      if (nodes.length) {
+        // @TODO: set caret position
+        dispatch!(
+          tr
+            .replaceWith(startOffset - 1, endOffset + 1, nodes)
+            // To prevent incorrect calculation of the position for markdown parser
+            .setMeta('resolvedPos', [startOffset, endOffset])
+        );
+        return true;
+      }
 
-      return true;
+      return false;
     };
   }
 

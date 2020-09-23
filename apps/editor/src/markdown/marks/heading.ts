@@ -33,7 +33,7 @@ export class Heading extends Mark {
     };
   }
 
-  private getHeading(level: number, text: string, curHeadingSyntax: string) {
+  private getChangedText(level: number, text: string, curHeadingSyntax: string) {
     const textContent = text.replace(curHeadingSyntax, '');
     let newLevel = '';
 
@@ -43,7 +43,7 @@ export class Heading extends Mark {
     }
 
     // insert the nbsp to preserve the space for markdown parser
-    return `${newLevel}\u00a0${textContent}`;
+    return textContent ? `${newLevel} ${textContent}` : `${newLevel}\u00a0`;
   }
 
   commands({ schema }: Context): EditorCommand {
@@ -67,21 +67,24 @@ export class Heading extends Mark {
           const curLevel = curHeadingSyntax.trim().length;
 
           if (!curLevel || curLevel !== level) {
-            const result = this.getHeading(level, textContent, curHeadingSyntax);
+            const result = this.getChangedText(level, textContent, curHeadingSyntax);
 
             nodes.push(schema.nodes.paragraph.create(null, schema.text(result)));
           }
         }
       });
 
-      dispatch!(
-        tr
-          .replaceWith(startOffset - 1, endOffset + 1, nodes)
-          // To prevent incorrect calculation of the position for markdown parser
-          .setMeta('resolvedPos', [startOffset, endOffset])
-      );
+      if (nodes.length) {
+        dispatch!(
+          tr
+            .replaceWith(startOffset - 1, endOffset + 1, nodes)
+            // To prevent incorrect calculation of the position for markdown parser
+            .setMeta('resolvedPos', [startOffset, endOffset])
+        );
+        return true;
+      }
 
-      return true;
+      return false;
     };
   }
 }
