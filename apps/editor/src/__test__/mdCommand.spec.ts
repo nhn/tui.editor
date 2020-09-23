@@ -140,7 +140,7 @@ describe('blockQuote command', () => {
     expect(getTextContent(mde)).toEqual('> blockQuote\n> text');
   });
 
-  it('should remove unnecessary space when adding the blockQuote command', () => {
+  it('should remove unnecessary space when adding the blockQuote syntax', () => {
     mde.setMarkdown('  blockQuote');
 
     cmd.exec('markdown', 'selectAll');
