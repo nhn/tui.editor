@@ -162,7 +162,7 @@ export function addLangs(editor) {
     Editor.setLanguage(['nb', 'nb-NO'], {
       'Merge cells': 'Slå sammen celler',
       'Unmerge cells': 'Del celler',
-      'Cannot change part of merged cell': 'Kan ikke endre deler av sammenslåtte celle',
+      'Cannot change part of merged cell': 'Kan ikke endre deler av sammenslått celle',
       'Cannot paste row merged cells into the table header':
         'Kan ikke lime inn rad med sammenslåtte celler i tabellens topptekst'
     });
