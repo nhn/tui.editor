@@ -67,8 +67,10 @@ class PopupAddHeading extends LayerPopup {
 
       this._eventEmitter.emit(
         'command',
-        li.getAttribute('data-type'),
-        li.getAttribute('data-value')
+        { type: 'markdown', command: 'heading' },
+        {
+          level: Number(li.getAttribute('data-value'))
+        }
       );
     });
   }
