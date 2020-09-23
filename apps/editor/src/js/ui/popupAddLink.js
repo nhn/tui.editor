@@ -41,7 +41,7 @@ class PopupAddLink extends LayerPopup {
     );
     super(options);
 
-    this._disabledTextInput = false;
+    this._disabledLinkText = false;
   }
 
   /**
@@ -84,12 +84,13 @@ class PopupAddLink extends LayerPopup {
     this.on('click .te-ok-button', () => this._addLink());
 
     this.on('shown', () => {
+      this._disabledLinkText = this._editor.isWysiwygMode() && !this._editor.getRange().collapsed;
+      this._disableLinkTextInput();
+
       const inputText = this._inputText;
       const inputURL = this._inputURL;
 
       const selectedText = this._editor.getSelectedText().trim();
-
-      this._disableLinkTextInput();
 
       inputText.value = selectedText;
       if (URL_REGEX.exec(selectedText)) {
@@ -119,8 +120,6 @@ class PopupAddLink extends LayerPopup {
     eventManager.listen('openPopupAddLink', imageLinkData => {
       eventManager.emit('closeAllPopup');
 
-      this._disabledTextInput = this._editor.isWysiwygMode() && !this._editor.getRange().collapsed;
-
       if (imageLinkData) {
         this._inputURL.value = imageLinkData.url;
       }
@@ -131,7 +130,7 @@ class PopupAddLink extends LayerPopup {
 
   _disableLinkTextInput() {
     const input = this._inputText;
-    const disabled = this._disableLinkTextInput;
+    const disabled = this._disabledLinkText;
 
     if (disabled) {
       input.setAttribute('disabled', 'disabled');
@@ -147,7 +146,7 @@ class PopupAddLink extends LayerPopup {
 
     this._clearValidationStyle();
 
-    if (!this._disabledTextInput && linkText.length < 1) {
+    if (!this._disabledLinkText && linkText.length < 1) {
       addClass(this._inputText, 'wrong');
 
       return;

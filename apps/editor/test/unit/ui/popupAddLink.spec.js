@@ -17,7 +17,7 @@ describe('PopupAddLink', () => {
       editor: {
         getSelectedText: () => selectedText || '',
         isWysiwygMode: () => true,
-        getRange: () => range || { collapse: false },
+        getRange: () => range || { collapsed: false },
         eventManager: em
       }
     });
@@ -165,17 +165,17 @@ describe('PopupAddLink', () => {
 
   describe('the state of the text link input changes in the wysiwyg editor', () => {
     it('to be disabled when there is a selection', () => {
-      range = { collapse: false };
-      popup._disableLinkTextInput();
+      range = { collapsed: false };
+      popup.show();
 
       expect(linkTextInput.hasAttribute('disabled')).toBe(true);
     });
 
     it('to be enbled when there is no selection', () => {
-      range = { collapse: true };
-      popup._disableLinkTextInput();
+      range = { collapsed: true };
+      popup.show();
 
-      expect(linkTextInput.hasAttribute('disabled')).toBe(true);
+      expect(linkTextInput.hasAttribute('disabled')).toBe(false);
     });
   });
 });
