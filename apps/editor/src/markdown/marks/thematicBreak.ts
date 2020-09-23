@@ -20,10 +20,6 @@ export class ThematicBreak extends Mark {
     };
   }
 
-  get commandName() {
-    return 'hr';
-  }
-
   private line({ schema }: Context): EditorCommand {
     return () => (state, dispatch) => {
       const [from, to] = resolveSelectionPos(state.selection);
