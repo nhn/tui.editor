@@ -155,10 +155,14 @@ class PopupAddImage extends LayerPopup {
   }
 
   _applyImage(imageUrl, altText) {
-    this.eventEmitter.emit('command', 'AddImage', {
-      imageUrl,
-      altText: altText || 'image'
-    });
+    this.eventEmitter.emit(
+      'command',
+      { type: 'markdown', command: 'addImage' },
+      {
+        imageUrl,
+        altText: altText || 'image'
+      }
+    );
     this.hide();
   }
 
