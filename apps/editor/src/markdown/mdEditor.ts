@@ -183,7 +183,12 @@ export default class MdEditor extends EditorBase {
 
   setSelection(start: MdPos, end: MdPos) {
     const { tr } = this.view.state;
-    const [from, to] = getMdToEditorPos(start, end, this.toastMark.getLineTexts());
+    const [from, to] = getMdToEditorPos(
+      start,
+      end,
+      this.toastMark.getLineTexts(),
+      tr.doc.content.size
+    );
 
     this.view.dispatch(tr.setSelection(TextSelection.create(tr.doc, from, to)));
   }

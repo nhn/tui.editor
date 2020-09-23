@@ -51,7 +51,7 @@ function removeMark(nodes: MdNode[], lineTexts: string[], newTr: Transaction) {
   const [, end] = nodes[nodes.length - 1].sourcepos!;
   const startPos: MdPos = [start[0] - 1, start[1] - 1];
   const endPos: MdPos = [end[0] - 1, end[1]];
-  const pos = getMdToEditorPos(startPos, endPos, lineTexts);
+  const pos = getMdToEditorPos(startPos, endPos, lineTexts, newTr.doc.content.size);
 
   return newTr.removeMark(pos[0], pos[1]);
 }
@@ -66,13 +66,13 @@ function addMark(node: MdNode, lineTexts: string[], newTr: Transaction, schema: 
 
     if (lineBackground) {
       const { start, end, spec } = lineBackground;
-      const pos = getMdToEditorPos(start, end, lineTexts);
+      const pos = getMdToEditorPos(start, end, lineTexts, newTr.doc.content.size);
 
       newTr = newTr.setBlockType(pos[0], pos[1], schema.nodes.paragraph, spec.attrs);
     }
 
     marks.forEach(({ start, end, spec }) => {
-      const pos = getMdToEditorPos(start, end, lineTexts);
+      const pos = getMdToEditorPos(start, end, lineTexts, newTr.doc.content.size);
       const { type, attrs } = spec;
 
       newTr = newTr.addMark(pos[0], pos[1], schema.mark(type!, attrs));

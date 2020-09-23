@@ -11,7 +11,12 @@ export function interpolatePos(selection: Selection) {
   return [from, to];
 }
 
-export function getMdToEditorPos(startPos: MdPos, endPos: MdPos, lineTexts: string[]) {
+export function getMdToEditorPos(
+  startPos: MdPos,
+  endPos: MdPos,
+  lineTexts: string[],
+  docSize: number
+) {
   let from = 0;
   let to = 0;
 
@@ -28,5 +33,5 @@ export function getMdToEditorPos(startPos: MdPos, endPos: MdPos, lineTexts: stri
   from += startPos[1] + 1;
   to += endPos[1] + 1;
 
-  return [from, to];
+  return [from, Math.min(to, docSize)];
 }
