@@ -485,6 +485,11 @@
   width: 100%;
 }
 
+.tui-editor-popup .tui-popup-body input[type='text'].disabled {
+  border: 1px solid #eee;
+  color: #bfbfbf;
+}
+
 .tui-editor-popup .tui-popup-body input.wrong {
   border-color: #ff0000;
 }

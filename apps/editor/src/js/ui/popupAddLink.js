@@ -40,6 +40,8 @@ class PopupAddLink extends LayerPopup {
       options
     );
     super(options);
+
+    this._disabledTextInput = false;
   }
 
   /**
@@ -87,6 +89,8 @@ class PopupAddLink extends LayerPopup {
 
       const selectedText = this._editor.getSelectedText().trim();
 
+      this._disableLinkTextInput();
+
       inputText.value = selectedText;
       if (URL_REGEX.exec(selectedText)) {
         inputURL.value = selectedText;
@@ -112,10 +116,30 @@ class PopupAddLink extends LayerPopup {
 
     eventManager.listen('focus', () => this.hide());
     eventManager.listen('closeAllPopup', () => this.hide());
-    eventManager.listen('openPopupAddLink', () => {
+    eventManager.listen('openPopupAddLink', imageLinkData => {
       eventManager.emit('closeAllPopup');
+
+      this._disabledTextInput = this._editor.isWysiwygMode() && !this._editor.getRange().collapsed;
+
+      if (imageLinkData) {
+        this._inputURL.value = imageLinkData.url;
+      }
+
       this.show();
     });
+  }
+
+  _disableLinkTextInput() {
+    const input = this._inputText;
+    const disabled = this._disableLinkTextInput;
+
+    if (disabled) {
+      input.setAttribute('disabled', 'disabled');
+      addClass(input, 'disabled');
+    } else {
+      input.removeAttribute('disabled');
+      removeClass(input, 'disabled');
+    }
   }
 
   _addLink() {
@@ -123,7 +147,7 @@ class PopupAddLink extends LayerPopup {
 
     this._clearValidationStyle();
 
-    if (linkText.length < 1) {
+    if (!this._disabledTextInput && linkText.length < 1) {
       addClass(this._inputText, 'wrong');
 
       return;
@@ -152,11 +176,12 @@ class PopupAddLink extends LayerPopup {
   }
 
   _clearValidationStyle() {
-    removeClass(this._inputURL, 'wrong');
+    removeClass(this._inputURL, 'wrong', 'disabled');
     removeClass(this._inputText, 'wrong');
   }
 
   _resetInputs() {
+    this._inputText.removeAttribute('disabled');
     this._inputText.value = '';
     this._inputURL.value = '';
     this._clearValidationStyle();
