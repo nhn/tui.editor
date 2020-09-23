@@ -39,7 +39,7 @@ export default class WwLinkManager {
 
       if (
         hasClass(target, CLASS_NAME_IMAGE_LINK) &&
-        domUtils.isInsideTaskBox(popupButton, offsetX, offsetY)
+        domUtils.isInsideButtonBox(popupButton, offsetX, offsetY)
       ) {
         this._selectImageLink(target.parentNode);
 

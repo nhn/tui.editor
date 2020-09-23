@@ -146,7 +146,7 @@ class ToastUIEditorViewer {
     if (
       !ev.target.hasAttribute(DISABLED_TASK_ATTR_NAME) &&
       ev.target.hasAttribute(TASK_ATTR_NAME) &&
-      domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)
+      domUtils.isInsideButtonBox(style, ev.offsetX, ev.offsetY)
     ) {
       domUtils.toggleClass(ev.target, TASK_CHECKED_CLASS_NAME);
       this.eventManager.emit('change', {
