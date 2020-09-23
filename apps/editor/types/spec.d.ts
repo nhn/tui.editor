@@ -14,4 +14,5 @@ export interface Context {
 }
 export type Dispatch = (tr: Transaction) => void;
 export type EditorCommand = (payload?: Record<string, any>) => Command;
-export type EditorCommandMap = Record<string, (payload?: Record<string, any>) => boolean>;
+export type EditorCommandMap = Record<string, EditorCommand>;
+export type EditorAllCommandMap = Record<string, (payload?: Record<string, any>) => boolean>;

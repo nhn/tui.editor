@@ -3,7 +3,7 @@ import { TextSelection } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from '../helper/pos';
+import { resolveSelectionPos } from '../helper/pos';
 
 const reStrike = /^(~{2}).*([\s\S]*)\1$/m;
 const strikeSyntax = '~~';
@@ -23,7 +23,7 @@ export class Strike extends Mark {
 
   commands(): EditorCommand {
     return () => (state, dispatch) => {
-      const [from, to] = interpolatePos(state.selection);
+      const [from, to] = resolveSelectionPos(state.selection);
       const { empty } = state.selection;
       const slice = state.selection.content();
       // @ts-ignore

@@ -3,7 +3,7 @@ import { TextSelection } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from '../helper/pos';
+import { resolveSelectionPos } from '../helper/pos';
 
 const reEmph = /^(\*|_).*([\s\S]*)\1$/m;
 const emphSyntax = '*';
@@ -21,13 +21,9 @@ export class Emph extends Mark {
     };
   }
 
-  get commandName() {
-    return 'italic';
-  }
-
-  commands(): EditorCommand {
+  private italic(): EditorCommand {
     return () => (state, dispatch) => {
-      const [from, to] = interpolatePos(state.selection);
+      const [from, to] = resolveSelectionPos(state.selection);
       const { empty } = state.selection;
       const slice = state.selection.content();
       // @ts-ignore
@@ -50,8 +46,12 @@ export class Emph extends Mark {
     };
   }
 
+  commands() {
+    return { italic: this.italic() };
+  }
+
   keymaps() {
-    const commandResult = this.commands()();
+    const commandResult = this.italic()();
 
     return { 'Mod-i': commandResult, 'Mod-I': commandResult };
   }

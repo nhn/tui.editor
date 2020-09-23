@@ -3,7 +3,7 @@ import { TextSelection } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from '../helper/pos';
+import { resolveSelectionPos } from '../helper/pos';
 
 const reStrong = /^(\*{2}|_{2}).*([\s\S]*)\1$/m;
 const strongSyntax = '**';
@@ -21,13 +21,9 @@ export class Strong extends Mark {
     };
   }
 
-  get commandName() {
-    return 'bold';
-  }
-
-  commands(): EditorCommand {
+  private bold(): EditorCommand {
     return () => (state, dispatch) => {
-      const [from, to] = interpolatePos(state.selection);
+      const [from, to] = resolveSelectionPos(state.selection);
       const { empty } = state.selection;
       const slice = state.selection.content();
       // @ts-ignore
@@ -50,8 +46,12 @@ export class Strong extends Mark {
     };
   }
 
+  commands() {
+    return { bold: this.bold() };
+  }
+
   keymaps() {
-    const commandResult = this.commands()();
+    const commandResult = this.bold()();
 
     return { 'Mod-b': commandResult, 'Mod-B': commandResult };
   }

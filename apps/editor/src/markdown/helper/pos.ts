@@ -1,14 +1,17 @@
 import { AllSelection, Selection } from 'prosemirror-state';
 import { MdPos } from '@t/markdown';
 
-export function interpolatePos(selection: Selection) {
+export function resolveSelectionPos(selection: Selection) {
   let { from, to } = selection;
 
   if (selection instanceof AllSelection) {
-    from += 1;
-    to -= 1;
+    [from, to] = resolvePos(from, to);
   }
   return [from, to];
+}
+
+export function resolvePos(from: number, to: number) {
+  return [from + 1, to - 1];
 }
 
 export function getMdToEditorPos(

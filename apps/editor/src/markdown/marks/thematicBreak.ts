@@ -3,7 +3,7 @@ import { TextSelection } from 'prosemirror-state';
 import { Context, EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from '../helper/pos';
+import { resolveSelectionPos } from '../helper/pos';
 
 const thematicBreakSyntax = '***';
 
@@ -24,9 +24,9 @@ export class ThematicBreak extends Mark {
     return 'hr';
   }
 
-  commands({ schema }: Context): EditorCommand {
+  private line({ schema }: Context): EditorCommand {
     return () => (state, dispatch) => {
-      const [from, to] = interpolatePos(state.selection);
+      const [from, to] = resolveSelectionPos(state.selection);
       const tr = state.tr.replaceWith(from, to, [
         schema.nodes.paragraph.create(null, schema.text(thematicBreakSyntax)),
         schema.nodes.paragraph.create(null)
@@ -40,8 +40,12 @@ export class ThematicBreak extends Mark {
     };
   }
 
+  commands(context: Context) {
+    return { hr: this.line(context) };
+  }
+
   keymaps(context: Context) {
-    const commandResult = this.commands(context)();
+    const commandResult = this.line(context)();
 
     return { 'Mod-l': commandResult, 'Mod-L': commandResult };
   }
