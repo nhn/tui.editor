@@ -2,7 +2,6 @@
  * @fileoverview Implements Editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import { Command } from 'prosemirror-commands';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
@@ -11,6 +10,7 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import { Emitter, EventTypes, Handler } from '@t/event';
 import { EditorOptions, EditorType, PreviewStyle, ViewerOptions } from '@t/editor';
+import { EditorCommandFn } from '@t/spec';
 
 import { sendHostName, sanitizeLinkAttribute } from './utils/common';
 
@@ -305,7 +305,7 @@ class ToastUIEditor {
     this.commandManager.exec(type, name, payload);
   }
 
-  addCommand(type: EditorType, name: string, command: Command) {
+  addCommand(type: EditorType, name: string, command: EditorCommandFn) {
     this.commandManager.addCommand(type, name, command);
   }
 

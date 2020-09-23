@@ -1,16 +1,19 @@
-import { Command } from 'prosemirror-commands';
 import { EditorType } from '@t/editor';
-import { CommandMap } from '@t/spec';
+import { EditorAllCommandMap, EditorCommandFn } from '@t/spec';
 import { Emitter } from '@t/event';
 
 export default class CommandManager {
   private eventEmitter: Emitter;
 
-  private mdCommands: CommandMap;
+  private mdCommands: EditorAllCommandMap;
 
-  private wwCommands: CommandMap;
+  private wwCommands: EditorAllCommandMap;
 
-  constructor(eventEmitter: Emitter, mdCommands: CommandMap, wwCommands: CommandMap) {
+  constructor(
+    eventEmitter: Emitter,
+    mdCommands: EditorAllCommandMap,
+    wwCommands: EditorAllCommandMap
+  ) {
     this.eventEmitter = eventEmitter;
     this.mdCommands = mdCommands;
     this.wwCommands = wwCommands;
@@ -23,7 +26,7 @@ export default class CommandManager {
     });
   }
 
-  addCommand(type: EditorType, name: string, command: Command) {
+  addCommand(type: EditorType, name: string, command: EditorCommandFn) {
     if (type === 'markdown') {
       this.mdCommands[name] = command;
     } else {
