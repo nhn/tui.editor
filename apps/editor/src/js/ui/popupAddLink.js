@@ -117,11 +117,11 @@ class PopupAddLink extends LayerPopup {
 
     eventManager.listen('focus', () => this.hide());
     eventManager.listen('closeAllPopup', () => this.hide());
-    eventManager.listen('openPopupAddLink', imageLinkData => {
+    eventManager.listen('openPopupAddLink', linkData => {
       eventManager.emit('closeAllPopup');
 
-      if (imageLinkData) {
-        this._inputURL.value = imageLinkData.url;
+      if (linkData) {
+        this._inputURL.value = linkData.url;
       }
 
       this.show();

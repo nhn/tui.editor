@@ -69,7 +69,7 @@ const AddLink = CommandManager.command(
       if (!range.collapsed) {
         const { startContainer, endContainer } = range;
 
-        if (startContainer && endContainer && startContainer === endContainer) {
+        if (startContainer && startContainer === endContainer) {
           return (
             domUtils.isElemNode(startContainer) && startContainer.firstChild.nodeName === 'IMG'
           );
