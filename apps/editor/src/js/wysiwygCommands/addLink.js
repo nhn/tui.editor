@@ -28,7 +28,7 @@ const AddLink = CommandManager.command(
      */
     exec(wwe, data) {
       const sq = wwe.getEditor();
-      const linkAttibute = wwe.getLinkAttribute();
+      const linkAttribute = wwe.getLinkAttribute();
       let { url, linkText } = data;
 
       const linkManager = wwe.componentManager.getManager('link');
@@ -45,7 +45,7 @@ const AddLink = CommandManager.command(
         const selectedImageOnly = this._isSelectedImageOnly(sq.getSelection());
 
         if (selectedText || selectedImageOnly) {
-          sq.makeLink(url, linkAttibute);
+          sq.makeLink(url, linkAttribute);
         } else {
           const link = sq.createElement(
             'A',
@@ -53,7 +53,7 @@ const AddLink = CommandManager.command(
               {
                 href: url
               },
-              linkAttibute
+              linkAttribute
             )
           );
 
