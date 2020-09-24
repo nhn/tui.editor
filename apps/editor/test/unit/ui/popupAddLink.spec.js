@@ -171,7 +171,7 @@ describe('PopupAddLink', () => {
       expect(linkTextInput.hasAttribute('disabled')).toBe(true);
     });
 
-    it('to be enbled when there is no selection', () => {
+    it('to be enabled when there is no selection', () => {
       range = { collapsed: true };
       popup.show();
 
