@@ -16,6 +16,7 @@ import off from 'tui-code-snippet/domEvent/off';
 
 import domUtils from './utils/dom';
 import WwClipboardManager from './wwClipboardManager';
+import WwLinkManager from './wwLinkManager';
 import WwListManager from './wwListManager';
 import WwTaskManager from './wwTaskManager';
 import WwTableManager from './wwTableManager';
@@ -1217,7 +1218,7 @@ class WysiwygEditor {
     const wwe = new WysiwygEditor(el, eventManager, options);
 
     wwe.init();
-
+    wwe.componentManager.addManager(WwLinkManager);
     wwe.componentManager.addManager(WwListManager);
     wwe.componentManager.addManager(WwTaskManager);
     wwe.componentManager.addManager(WwTableSelectionManager);

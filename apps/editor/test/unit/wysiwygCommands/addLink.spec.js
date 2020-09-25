@@ -5,6 +5,7 @@
 import AddLink from '@/wysiwygCommands/addLink';
 import WysiwygEditor from '@/wysiwygEditor';
 import EventManager from '@/eventManager';
+import linkManager, { CLASS_NAME_IMAGE_LINK } from '@/wwLinkManager';
 
 describe('AddLink', () => {
   let container, wwe;
@@ -18,6 +19,7 @@ describe('AddLink', () => {
     wwe = new WysiwygEditor(container, new EventManager(), { linkAttribute });
 
     wwe.init();
+    wwe.componentManager.addManager('link', linkManager);
     wwe.getEditor().focus();
   });
 
@@ -106,5 +108,77 @@ describe('AddLink', () => {
         .querySelector('a')
         .getAttribute('target')
     ).toEqual('_blank');
+  });
+
+  it('should add a link when only an image is selected', () => {
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
+
+    wwe.setValue('<img src="" />');
+
+    range.selectNode(wwe.getBody().querySelector('img'));
+    wwe.getEditor().setSelection(range);
+
+    AddLink.exec(wwe, {
+      url: 'link-url',
+      linkText: ''
+    });
+
+    const links = wwe.getBody().querySelectorAll('a');
+
+    expect(links.length).toBe(1);
+    expect(links[0].getAttribute('href')).toBe('link-url');
+    expect(links[0].firstChild.nodeName).toBe('IMG');
+  });
+
+  it('should add links when the image and the link are selected', () => {
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
+
+    wwe.setValue('<img src="" />foo');
+
+    range.selectNode(wwe.getBody().querySelector('div'));
+    wwe.getEditor().setSelection(range);
+
+    AddLink.exec(wwe, {
+      url: 'link-url',
+      linkText: 'link-text'
+    });
+
+    const links = wwe.getBody().querySelectorAll('a');
+
+    expect(links.length).toBe(2);
+    expect(links[0].getAttribute('href')).toBe('link-url');
+    expect(links[0].firstChild.nodeName).toBe('IMG');
+    expect(links[1].getAttribute('href')).toBe('link-url');
+    expect(links[1].textContent).toBe('foo');
+  });
+
+  it('should add the class name for each image link', () => {
+    const range = wwe
+      .getEditor()
+      .getSelection()
+      .cloneRange();
+
+    wwe.setValue('<img src="" />foo<img src="" />');
+
+    range.selectNode(wwe.getBody().querySelector('div'));
+    wwe.getEditor().setSelection(range);
+
+    AddLink.exec(wwe, {
+      url: 'link-url',
+      linkText: ''
+    });
+
+    const links = wwe.getBody().querySelectorAll('a');
+
+    expect(links[0].firstChild.nodeName).toBe('IMG');
+    expect(links[0].className).toBe(CLASS_NAME_IMAGE_LINK);
+    expect(links[2].firstChild.nodeName).toBe('IMG');
+    expect(links[2].className).toBe(CLASS_NAME_IMAGE_LINK);
   });
 });

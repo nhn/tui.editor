@@ -44,7 +44,7 @@ class WwTaskManager {
 
       if (
         ev.target.hasAttribute(TASK_ATTR_NAME) &&
-        domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)
+        domUtils.isInsideButtonBox(style, ev.offsetX, ev.offsetY)
       ) {
         // Prevent cursor focusing
         ev.preventDefault();

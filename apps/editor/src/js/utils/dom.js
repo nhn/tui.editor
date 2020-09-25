@@ -563,14 +563,14 @@ const getLeafNode = function(node) {
   return result;
 };
 /**
- * check if a coordinates is inside a task box
+ * check if a coordinates is inside a button box
  * @param {object} style - computed style of task box
  * @param {number} offsetX - event x offset
  * @param {number} offsetY - event y offset
  * @returns {boolean}
  * @ignore
  */
-const isInsideTaskBox = function(style, offsetX, offsetY) {
+const isInsideButtonBox = function(style, offsetX, offsetY) {
   const rect = {
     left: parseInt(style.left, 10),
     top: parseInt(style.top, 10),
@@ -1373,7 +1373,7 @@ export default {
   removeChildFromStartToEndNode,
   removeNodesByDirection,
   getLeafNode,
-  isInsideTaskBox,
+  isInsideButtonBox,
   isListNode,
   isFirstListItem,
   isFirstLevelListItem,

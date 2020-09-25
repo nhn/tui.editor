@@ -90,5 +90,14 @@ describe('AddLink', () => {
       expect(doc.getLine(0)).toEqual(`[${data.linkText}](${data.url})`);
       expect(doc.getLine(1)).toEqual('mytext3');
     });
+
+    it('and the valid image syntax is not escaped', () => {
+      doc.setCursor(1, 0);
+
+      data.linkText = '![alt](imgUrl)';
+      AddLink.exec(mde, data);
+
+      expect(doc.getLine(1)).toBe(`[${data.linkText}](${data.url})`);
+    });
   });
 });

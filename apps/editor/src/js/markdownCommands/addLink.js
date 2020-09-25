@@ -4,7 +4,29 @@
  */
 import CommandManager from '../commandManager';
 import ImportManager from '../importManager';
-const { decodeURIGraceful, encodeMarkdownCharacters, escapeMarkdownCharacters } = ImportManager;
+const { decodeURIGraceful, encodeMarkdownCharacters } = ImportManager;
+
+const FIND_MARKDOWN_IMAGE_SYNTAX_RX = /!\[.*\]\(.*\)/g;
+const FIND_ESCAPED_CHARS_RX = /\(|\)|\[|\]|<|>/g;
+
+function escapeLinkTextExceptImageSyntax(linkText) {
+  const imageSyntaxRanges = [];
+
+  let result = FIND_MARKDOWN_IMAGE_SYNTAX_RX.exec(linkText);
+
+  while (result) {
+    const { index } = result;
+
+    imageSyntaxRanges.push([index, index + result[0].length]);
+    result = FIND_MARKDOWN_IMAGE_SYNTAX_RX.exec(linkText);
+  }
+
+  return linkText.replace(FIND_ESCAPED_CHARS_RX, (matched, offset) => {
+    const isDelimiter = imageSyntaxRanges.some(range => offset > range[0] && offset < range[1]);
+
+    return isDelimiter ? matched : `\\${matched}`;
+  });
+}
 
 /**
  * AddLink
@@ -41,7 +63,8 @@ const AddLink = CommandManager.command(
       let { linkText, url } = data;
 
       linkText = decodeURIGraceful(linkText);
-      linkText = escapeMarkdownCharacters(linkText);
+      linkText = escapeLinkTextExceptImageSyntax(linkText);
+
       url = encodeMarkdownCharacters(url);
 
       const replaceText = `[${linkText}](${url})`;

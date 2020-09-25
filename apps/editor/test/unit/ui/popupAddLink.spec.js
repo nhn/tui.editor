@@ -8,7 +8,7 @@ import PopupAddLink from '@/ui/popupAddLink';
 import EventManager from '@/eventManager';
 
 describe('PopupAddLink', () => {
-  let popup, em, selectedText, okButton, closeButton, linkTextInput, urlInput;
+  let popup, em, selectedText, okButton, closeButton, linkTextInput, urlInput, range;
 
   beforeEach(() => {
     em = new EventManager();
@@ -16,6 +16,8 @@ describe('PopupAddLink', () => {
     popup = new PopupAddLink({
       editor: {
         getSelectedText: () => selectedText || '',
+        isWysiwygMode: () => true,
+        getRange: () => range || { collapsed: false },
         eventManager: em
       }
     });
@@ -158,6 +160,22 @@ describe('PopupAddLink', () => {
 
       expect(value.linkText).toEqual(selectedText);
       expect(value.url).toEqual(selectedText);
+    });
+  });
+
+  describe('the state of the text link input changes in the wysiwyg editor', () => {
+    it('to be disabled when there is a selection', () => {
+      range = { collapsed: false };
+      popup.show();
+
+      expect(linkTextInput.hasAttribute('disabled')).toBe(true);
+    });
+
+    it('to be enabled when there is no selection', () => {
+      range = { collapsed: true };
+      popup.show();
+
+      expect(linkTextInput.hasAttribute('disabled')).toBe(false);
     });
   });
 });
