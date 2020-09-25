@@ -130,9 +130,8 @@ class PopupAddLink extends LayerPopup {
 
   _disableLinkTextInput() {
     const input = this._inputText;
-    const disabled = this._disabledLinkText;
 
-    if (disabled) {
+    if (this._disabledLinkText) {
       input.setAttribute('disabled', 'disabled');
       addClass(input, 'disabled');
     } else {
