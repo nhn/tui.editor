@@ -58,9 +58,8 @@ export class Heading extends Mark {
 
       const nodes: ProsemirrorNode[] = [];
 
-      state.doc.nodesBetween(startOffset, endOffset, node => {
-        if (node.isBlock) {
-          const { textContent } = node;
+      state.doc.nodesBetween(startOffset, endOffset, ({ isBlock, textContent }) => {
+        if (isBlock) {
           const matchedHeading = textContent.match(reHeading);
 
           const curHeadingSyntax = matchedHeading ? matchedHeading[0] : '';

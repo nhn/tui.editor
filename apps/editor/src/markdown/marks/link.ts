@@ -4,11 +4,15 @@ import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { resolveSelectionPos } from '../helper/pos';
 
+const encodingRegExps = [/\(/g, /\)/g, /\[/g, /\]/g, /</g, />/g];
+const encodedList = ['%28', '%29', '%5B', '%5D', '%3C', '%3E'];
+const escapedList = ['\\(', '\\)', '\\[', '\\]', '\\<', '\\>'];
+
 function decodeURIGraceful(uri: string) {
   const uriList = uri.split(' ');
 
   return uriList
-    .reduce((decodedURIList, targetUri) => {
+    .reduce<string[]>((decodedURIList, targetUri) => {
       let decodedURI = '';
 
       try {
@@ -18,28 +22,17 @@ function decodeURIGraceful(uri: string) {
       }
 
       return decodedURIList.concat(decodedURI);
-    }, [] as string[])
+    }, [])
     .join(' ');
 }
 
-function encodeMarkdownText(text: string) {
-  return text
-    .replace(/\(/g, '%28')
-    .replace(/\)/g, '%29')
-    .replace(/\[/g, '%5B')
-    .replace(/\]/g, '%5D')
-    .replace(/</g, '%3C')
-    .replace(/>/g, '%3E');
-}
+function replaceMarkdownText(text: string, encode: boolean) {
+  const expectedValues = encode ? encodedList : escapedList;
 
-function escapeMarkdownText(text: string) {
-  return text
-    .replace(/\(/g, '\\(')
-    .replace(/\)/g, '\\)')
-    .replace(/\[/g, '\\[')
-    .replace(/\]/g, '\\]')
-    .replace(/</g, '\\<')
-    .replace(/>/g, '\\>');
+  return encodingRegExps.reduce(
+    (result, regExp, index) => result.replace(regExp, expectedValues[index]),
+    text
+  );
 }
 
 type CommandType = 'image' | 'link';
@@ -85,8 +78,8 @@ export class Link extends Mark {
         syntax = '!';
       }
 
-      text = escapeMarkdownText(decodeURIGraceful(text));
-      url = encodeMarkdownText(url);
+      text = replaceMarkdownText(decodeURIGraceful(text), false);
+      url = replaceMarkdownText(url, true);
       syntax += `[${text}](${url})`;
 
       const tr = state.tr.replaceWith(from, to, schema.text(syntax));

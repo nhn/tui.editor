@@ -2,10 +2,10 @@ import { AllSelection, Selection } from 'prosemirror-state';
 import { MdPos } from '@t/markdown';
 
 export function resolveSelectionPos(selection: Selection) {
-  let { from, to } = selection;
+  const { from, to } = selection;
 
   if (selection instanceof AllSelection) {
-    [from, to] = resolvePos(from, to);
+    return resolvePos(from, to);
   }
   return [from, to];
 }
