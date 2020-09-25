@@ -2,7 +2,7 @@ import { Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Emitter } from '@t/event';
-import { CommandMap, Context } from '@t/spec';
+import { Context, EditorAllCommandMap } from '@t/spec';
 import SpecManager from './spec/specManager';
 
 export default abstract class EditorBase {
@@ -18,7 +18,7 @@ export default abstract class EditorBase {
 
   view!: EditorView;
 
-  commands!: CommandMap;
+  commands!: EditorAllCommandMap;
 
   specs!: SpecManager;
 

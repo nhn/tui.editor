@@ -1,9 +1,9 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
-import { Command } from 'prosemirror-commands';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from './helper/pos';
+import { resolveSelectionPos } from '../helper/pos';
 
 const reCode = /^(`).*([\s\S]*)\1$/m;
 const codeSyntax = '`';
@@ -39,9 +39,9 @@ export class Code extends Mark {
     };
   }
 
-  commands(): Command {
-    return (state, dispatch) => {
-      const [from, to] = interpolatePos(state.selection);
+  commands(): EditorCommand {
+    return () => (state, dispatch) => {
+      const [from, to] = resolveSelectionPos(state.selection);
       const { empty } = state.selection;
       const slice = state.selection.content();
       // @ts-ignore
@@ -51,7 +51,7 @@ export class Code extends Mark {
       if (reCode.test(textContent)) {
         tr = tr.delete(to - 1, to).delete(from, from + 1);
       } else {
-        tr = tr.insertText(codeSyntax, to, to).insertText(codeSyntax, from, from);
+        tr = tr.insertText(codeSyntax, to).insertText(codeSyntax, from);
         const selection = empty
           ? TextSelection.create(tr.doc, from + 1, from + 1)
           : TextSelection.create(tr.doc, from, to + 2);

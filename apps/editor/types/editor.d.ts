@@ -1,6 +1,6 @@
 import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap } from './markdown';
-import { Command } from 'prosemirror-commands';
 import { EventTypes, Handler } from './event';
+import { EditorCommandFn } from './spec';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -146,9 +146,9 @@ export class Editor {
 
   changePreviewStyle(style: PreviewStyle): void;
 
-  exec(type: EditorType, name: string, ...args: any[]): void;
+  exec(type: EditorType, name: string, payload: Record<string, any>): void;
 
-  addCommand(type: EditorType, name: string, command: Command): void;
+  addCommand(type: EditorType, name: string, command: EditorCommandFn): void;
 
   on(type: EventTypes, handler: Handler): void;
 

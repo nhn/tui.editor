@@ -1,9 +1,9 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
-import { Command } from 'prosemirror-commands';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from './helper/pos';
+import { resolveSelectionPos } from '../helper/pos';
 
 const reStrike = /^(~{2}).*([\s\S]*)\1$/m;
 const strikeSyntax = '~~';
@@ -21,9 +21,9 @@ export class Strike extends Mark {
     };
   }
 
-  commands(): Command {
-    return (state, dispatch) => {
-      const [from, to] = interpolatePos(state.selection);
+  commands(): EditorCommand {
+    return () => (state, dispatch) => {
+      const [from, to] = resolveSelectionPos(state.selection);
       const { empty } = state.selection;
       const slice = state.selection.content();
       // @ts-ignore
@@ -33,7 +33,7 @@ export class Strike extends Mark {
       if (reStrike.test(textContent)) {
         tr = tr.delete(to - 2, to).delete(from, from + 2);
       } else {
-        tr = tr.insertText(strikeSyntax, to, to).insertText(strikeSyntax, from, from);
+        tr = tr.insertText(strikeSyntax, to).insertText(strikeSyntax, from);
         const selection = empty
           ? TextSelection.create(tr.doc, from + 2, from + 2)
           : TextSelection.create(tr.doc, from, to + 4);

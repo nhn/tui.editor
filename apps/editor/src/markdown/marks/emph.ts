@@ -1,9 +1,9 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
-import { Command } from 'prosemirror-commands';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from './helper/pos';
+import { resolveSelectionPos } from '../helper/pos';
 
 const reEmph = /^(\*|_).*([\s\S]*)\1$/m;
 const emphSyntax = '*';
@@ -21,13 +21,9 @@ export class Emph extends Mark {
     };
   }
 
-  get commandName() {
-    return 'italic';
-  }
-
-  commands(): Command {
-    return (state, dispatch) => {
-      const [from, to] = interpolatePos(state.selection);
+  private italic(): EditorCommand {
+    return () => (state, dispatch) => {
+      const [from, to] = resolveSelectionPos(state.selection);
       const { empty } = state.selection;
       const slice = state.selection.content();
       // @ts-ignore
@@ -37,7 +33,7 @@ export class Emph extends Mark {
       if (reEmph.test(textContent)) {
         tr = tr.delete(to - 1, to).delete(from, from + 1);
       } else {
-        tr = tr.insertText(emphSyntax, to, to).insertText(emphSyntax, from, from);
+        tr = tr.insertText(emphSyntax, to).insertText(emphSyntax, from);
         const selection = empty
           ? TextSelection.create(tr.doc, from + 1, from + 1)
           : TextSelection.create(tr.doc, from, to + 2);
@@ -50,7 +46,13 @@ export class Emph extends Mark {
     };
   }
 
+  commands() {
+    return { italic: this.italic() };
+  }
+
   keymaps() {
-    return { 'Mod-i': this.commands(), 'Mod-I': this.commands() };
+    const commandResult = this.italic()();
+
+    return { 'Mod-i': commandResult, 'Mod-I': commandResult };
   }
 }

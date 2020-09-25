@@ -1,12 +1,8 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
-import { Command } from 'prosemirror-commands';
-import { Transaction } from 'prosemirror-state';
-import { Context } from '@t/spec';
+import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
+import { Context, EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from './helper/pos';
-
-type TransactionCallback = (tr: Transaction) => Transaction;
+import { resolveSelectionPos } from '../helper/pos';
 
 const reBlockQuoteSyntax = /^> ?/;
 
@@ -23,44 +19,53 @@ export class BlockQuote extends Mark {
     };
   }
 
-  commands({ schema }: Context): Command {
-    return (state, dispatch) => {
-      const { selection, doc } = state;
-      const [from, to] = interpolatePos(selection);
-      const { empty } = state.selection;
-      let { tr } = state;
+  private getChangedText(text: string, isBlockQuote: boolean) {
+    if (isBlockQuote) {
+      return text.replace(reBlockQuoteSyntax, '').trim();
+    }
+    return text.trim() ? `> ${text.trim()}` : `>\u00a0`;
+  }
+
+  commands({ schema }: Context): EditorCommand {
+    return () => (state, dispatch) => {
+      const { selection, doc, tr } = state;
+      const [from, to] = resolveSelectionPos(selection);
 
       const startResolvedPos = doc.resolve(from);
       const startOffset = startResolvedPos.start();
-      const endOffset = empty ? startResolvedPos.end() : doc.resolve(to).end();
+      const endOffset = selection.empty ? startResolvedPos.end() : doc.resolve(to).end();
       const isBlockQuote = reBlockQuoteSyntax.test(startResolvedPos.node().textContent);
 
-      const transations: TransactionCallback[] = [];
+      const nodes: ProsemirrorNode[] = [];
 
-      state.doc.nodesBetween(startOffset, endOffset, (node, start) => {
-        if (node.isBlock) {
-          const end = start + node.nodeSize - 1;
-          const textContent = isBlockQuote
-            ? node.textContent.replace(reBlockQuoteSyntax, '').trim()
-            : `> ${node.textContent.trim()}`;
+      state.doc.nodesBetween(startOffset, endOffset, node => {
+        const { isBlock, textContent } = node;
 
-          transations.unshift(newTr =>
-            newTr.replaceRangeWith(start + 1, end, schema.text(textContent))
-          );
+        if (isBlock) {
+          const result = this.getChangedText(textContent, isBlockQuote);
+
+          nodes.push(schema.nodes.paragraph.create(null, schema.text(result)));
         }
       });
-      transations.forEach(fn => {
-        tr = fn(tr);
-      });
 
-      // @TODO: set caret position
-      dispatch!(tr);
+      if (nodes.length) {
+        // @TODO: set caret position
+        dispatch!(
+          tr
+            .replaceWith(startOffset - 1, endOffset + 1, nodes)
+            // To prevent incorrect calculation of the position for markdown parser
+            .setMeta('resolvedPos', [startOffset, endOffset])
+        );
+        return true;
+      }
 
-      return true;
+      return false;
     };
   }
 
   keymaps(context: Context) {
-    return { 'alt-q': this.commands(context), 'alt-Q': this.commands(context) };
+    const commandResult = this.commands(context)();
+
+    return { 'alt-q': commandResult, 'alt-Q': commandResult };
   }
 }

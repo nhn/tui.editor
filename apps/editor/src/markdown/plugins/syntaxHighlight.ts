@@ -4,6 +4,7 @@ import { Context } from '@t/spec';
 import { EditResult, MdNode, MdPos } from '@t/markdown';
 import { getMdStartLine, getMdEndLine, getMdStartCh, getMdEndCh } from '@/utils/markdown';
 import { getMarkInfo } from './helper/markInfo';
+import { getMdToEditorPos } from '../helper/pos';
 
 export function syntaxHighlight({ toastMark, schema }: Context) {
   return new Plugin({
@@ -50,7 +51,7 @@ function removeMark(nodes: MdNode[], lineTexts: string[], newTr: Transaction) {
   const [, end] = nodes[nodes.length - 1].sourcepos!;
   const startPos: MdPos = [start[0] - 1, start[1] - 1];
   const endPos: MdPos = [end[0] - 1, end[1]];
-  const pos = getMarkTargetPos(startPos, endPos, lineTexts);
+  const pos = getMdToEditorPos(startPos, endPos, lineTexts, newTr.doc.content.size);
 
   return newTr.removeMark(pos[0], pos[1]);
 }
@@ -65,37 +66,17 @@ function addMark(node: MdNode, lineTexts: string[], newTr: Transaction, schema: 
 
     if (lineBackground) {
       const { start, end, spec } = lineBackground;
-      const pos = getMarkTargetPos(start, end, lineTexts);
+      const pos = getMdToEditorPos(start, end, lineTexts, newTr.doc.content.size);
 
       newTr = newTr.setBlockType(pos[0], pos[1], schema.nodes.paragraph, spec.attrs);
     }
 
     marks.forEach(({ start, end, spec }) => {
-      const pos = getMarkTargetPos(start, end, lineTexts);
+      const pos = getMdToEditorPos(start, end, lineTexts, newTr.doc.content.size);
       const { type, attrs } = spec;
 
       newTr = newTr.addMark(pos[0], pos[1], schema.mark(type!, attrs));
     });
   }
   return newTr;
-}
-
-function getMarkTargetPos(startPos: MdPos, endPos: MdPos, lineTexts: string[]) {
-  let from = 0;
-  let to = 0;
-
-  for (let i = 0; i < endPos[0]; i += 1) {
-    const len = lineTexts[i].length;
-
-    // should plus 2(end tag, start tag) to consider line breaking
-    if (i < startPos[0]) {
-      from += len + 2;
-    }
-    to += len + 2;
-  }
-  // should plus 1 to position to consider the start tag position
-  from += startPos[1] + 1;
-  to += endPos[1] + 1;
-
-  return [from, to];
 }

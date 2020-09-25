@@ -116,6 +116,12 @@ describe('blockQuote command', () => {
     expect(getTextContent(mde)).toEqual('> blockQuote');
   });
 
+  it('should add blockQuote syntax on empty node', () => {
+    cmd.exec('markdown', 'blockQuote');
+
+    expect(getTextContent(mde)).toEqual('>\u00a0');
+  });
+
   it('should remove blockQuote syntax', () => {
     mde.setMarkdown('> blockQuote');
 
@@ -150,5 +156,116 @@ describe('blockQuote command', () => {
     cmd.exec('markdown', 'blockQuote');
 
     expect(getTextContent(mde)).toEqual('blockQuote');
+  });
+});
+
+describe('hr command', () => {
+  it('should add thematicBreak(hr) syntax', () => {
+    cmd.exec('markdown', 'hr');
+
+    expect(getTextContent(mde)).toEqual('***\n');
+  });
+
+  it('should split the paragraph when adding thematicBreak(hr) syntax', () => {
+    mde.setMarkdown('paragraph');
+
+    mde.setSelection([0, 2], [0, 4]);
+    cmd.exec('markdown', 'hr');
+
+    expect(getTextContent(mde)).toEqual('pa\n***\ngraph');
+  });
+});
+
+describe('addImage command', () => {
+  it('should add image syntax', () => {
+    cmd.exec('markdown', 'addImage', { altText: 'image', imageUrl: 'https://picsum.photos/200' });
+
+    expect(getTextContent(mde)).toEqual('![image](https://picsum.photos/200)');
+  });
+
+  it('should escape image altText', () => {
+    cmd.exec('markdown', 'addImage', {
+      altText: 'mytext ()[]<>',
+      imageUrl: 'https://picsum.photos/200'
+    });
+
+    expect(getTextContent(mde)).toEqual('![mytext \\(\\)\\[\\]\\<\\>](https://picsum.photos/200)');
+  });
+
+  it('should encode image url', () => {
+    cmd.exec('markdown', 'addImage', {
+      altText: 'image',
+      imageUrl: 'myurl ()[]<>'
+    });
+
+    expect(getTextContent(mde)).toEqual('![image](myurl %28%29%5B%5D%3C%3E)');
+  });
+});
+
+describe('addLink command', () => {
+  it('should add link syntax', () => {
+    cmd.exec('markdown', 'addLink', { linkText: 'TOAST UI', url: 'https://ui.toast.com' });
+
+    expect(getTextContent(mde)).toEqual('[TOAST UI](https://ui.toast.com)');
+  });
+
+  it('should escape link Text', () => {
+    cmd.exec('markdown', 'addLink', {
+      linkText: 'mytext ()[]<>',
+      url: 'https://ui.toast.com'
+    });
+
+    expect(getTextContent(mde)).toEqual('[mytext \\(\\)\\[\\]\\<\\>](https://ui.toast.com)');
+  });
+
+  it('should encode link url', () => {
+    cmd.exec('markdown', 'addLink', {
+      linkText: 'TOAST UI',
+      url: 'myurl ()[]<>'
+    });
+
+    expect(getTextContent(mde)).toEqual('[TOAST UI](myurl %28%29%5B%5D%3C%3E)');
+  });
+});
+
+describe('heading command', () => {
+  it('should add heading syntax', () => {
+    mde.setMarkdown('heading');
+    cmd.exec('markdown', 'heading', { level: 1 });
+
+    expect(getTextContent(mde)).toEqual('# heading');
+  });
+
+  it('should add heading syntax on empty node', () => {
+    cmd.exec('markdown', 'heading', { level: 1 });
+
+    expect(getTextContent(mde)).toEqual('#\u00a0');
+  });
+
+  it('should maintain the heading syntax on same heading level', () => {
+    mde.setMarkdown('## heading2');
+
+    cmd.exec('markdown', 'selectAll');
+    cmd.exec('markdown', 'heading', { level: 2 });
+
+    expect(getTextContent(mde)).toEqual('## heading2');
+  });
+
+  it('should change the heading syntax on different heading level', () => {
+    mde.setMarkdown('## heading2');
+
+    cmd.exec('markdown', 'selectAll');
+    cmd.exec('markdown', 'heading', { level: 1 });
+
+    expect(getTextContent(mde)).toEqual('# heading2');
+  });
+
+  it('should add heading syntax on multi line', () => {
+    mde.setMarkdown('heading1\n# heading2');
+
+    cmd.exec('markdown', 'selectAll');
+    cmd.exec('markdown', 'heading', { level: 2 });
+
+    expect(getTextContent(mde)).toEqual('## heading1\n## heading2');
   });
 });

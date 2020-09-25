@@ -38,7 +38,7 @@ export function getPluginInfo(plugins: (EditorPlugin | EditorPluginInfo)[]) {
     return {} as PluginInfoResult;
   }
 
-  return plugins.reduce(
+  return plugins.reduce<PluginInfoResult>(
     (acc, plugin) => {
       const pluginInfo = isArray(plugin) ? plugin[0] : plugin;
 
@@ -58,6 +58,6 @@ export function getPluginInfo(plugins: (EditorPlugin | EditorPluginInfo)[]) {
 
       return acc;
     },
-    { plugins: [], renderer: {}, parser: {} } as PluginInfoResult
+    { plugins: [], renderer: {}, parser: {} }
   );
 }

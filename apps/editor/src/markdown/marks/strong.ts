@@ -1,9 +1,9 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
-import { Command } from 'prosemirror-commands';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { interpolatePos } from './helper/pos';
+import { resolveSelectionPos } from '../helper/pos';
 
 const reStrong = /^(\*{2}|_{2}).*([\s\S]*)\1$/m;
 const strongSyntax = '**';
@@ -21,13 +21,9 @@ export class Strong extends Mark {
     };
   }
 
-  get commandName() {
-    return 'bold';
-  }
-
-  commands(): Command {
-    return (state, dispatch) => {
-      const [from, to] = interpolatePos(state.selection);
+  private bold(): EditorCommand {
+    return () => (state, dispatch) => {
+      const [from, to] = resolveSelectionPos(state.selection);
       const { empty } = state.selection;
       const slice = state.selection.content();
       // @ts-ignore
@@ -37,7 +33,7 @@ export class Strong extends Mark {
       if (reStrong.test(textContent)) {
         tr = tr.delete(to - 2, to).delete(from, from + 2);
       } else {
-        tr = tr.insertText(strongSyntax, to, to).insertText(strongSyntax, from, from);
+        tr = tr.insertText(strongSyntax, to).insertText(strongSyntax, from);
         const selection = empty
           ? TextSelection.create(tr.doc, from + 2, from + 2)
           : TextSelection.create(tr.doc, from, to + 4);
@@ -50,7 +46,13 @@ export class Strong extends Mark {
     };
   }
 
+  commands() {
+    return { bold: this.bold() };
+  }
+
   keymaps() {
-    return { 'Mod-b': this.commands(), 'Mod-B': this.commands() };
+    const commandResult = this.bold()();
+
+    return { 'Mod-b': commandResult, 'Mod-B': commandResult };
   }
 }
