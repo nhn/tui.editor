@@ -30,7 +30,7 @@ import { Code } from './marks/code';
 import { Link } from './marks/link';
 import { Delimiter, TaskDelimiter, MarkedText, Meta } from './marks/simpleMark';
 import { Html } from './marks/html';
-import { getMdToEditorPos } from './helper/pos';
+import { getMdToEditorPos, nbspToSpace } from './helper/pos';
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
@@ -172,21 +172,18 @@ export default class MdEditor extends EditorBase {
     }
 
     let changed = '';
-    let separated = true;
     const from = 0;
     const to = slice.content.size;
 
     slice.content.nodesBetween(from, to, (node, pos) => {
       if (node.isText) {
         changed += node.text!.slice(Math.max(from, pos) - pos, to - pos);
-        separated = false;
-      } else if ((!separated || !node.content.size) && node.isBlock) {
+      } else if (node.isBlock && pos > 0) {
         changed += '\n';
-        separated = true;
       }
     });
 
-    return changed.replace(/\u00a0/g, ' ');
+    return nbspToSpace(changed);
   }
 
   setSelection(start: MdPos, end: MdPos) {
