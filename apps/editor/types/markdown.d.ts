@@ -75,7 +75,13 @@ export interface CodeBlockMdNode extends MdNode {
 }
 
 export interface ListItemMdNode extends MdNode {
-  listData: { padding: number; task: boolean; checked: boolean };
+  listData: {
+    padding: number;
+    task: boolean;
+    checked: boolean;
+    type: 'bullet' | 'ordered';
+    start: number;
+  };
 }
 
 export interface HeadingMdNode extends MdNode {
