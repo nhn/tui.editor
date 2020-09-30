@@ -55,7 +55,6 @@ export class BlockQuote extends Mark {
       });
 
       if (nodes.length) {
-        // @TODO: set caret position
         dispatch!(replaceBlockNodes(tr, startOffset, endOffset, nodes));
         return true;
       }

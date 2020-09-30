@@ -22,15 +22,18 @@ export class ThematicBreak extends Mark {
 
   private line({ schema }: Context): EditorCommand {
     return () => (state, dispatch) => {
-      const [, to] = resolveSelectionPos(state.selection);
-      const endOffset = state.doc.resolve(to).end();
+      const [from, to] = resolveSelectionPos(state.selection);
+      const emptyNode = schema.nodes.paragraph.create(null);
+      const lineNode = schema.nodes.paragraph.create(null, schema.text(thematicBreakSyntax));
+      const nodes = [lineNode];
 
-      const tr = state.tr.insert(endOffset, [
-        schema.nodes.paragraph.create(null, schema.text(thematicBreakSyntax)),
-        schema.nodes.paragraph.create(null)
-      ]);
+      if (to >= state.doc.resolve(to).end()) {
+        nodes.push(emptyNode);
+      }
+
+      const tr = state.tr.replaceWith(from, to, nodes);
       // add 3(`***` length) and 3(start, end block tag position)
-      const selection = TextSelection.create(tr.doc, Math.min(endOffset + 6, tr.doc.content.size));
+      const selection = TextSelection.create(tr.doc, Math.min(from + 6, tr.doc.content.size));
 
       dispatch!(tr.setSelection(selection));
 
