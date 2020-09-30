@@ -30,7 +30,7 @@ import { Code } from './marks/code';
 import { Link } from './marks/link';
 import { Delimiter, TaskDelimiter, MarkedText, Meta } from './marks/simpleMark';
 import { Html } from './marks/html';
-import { getMdToEditorPos, nbspToSpace } from './helper/pos';
+import { getEditorToMdPos, getMdToEditorPos, nbspToSpace } from './helper/pos';
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
@@ -136,18 +136,7 @@ export default class MdEditor extends EditorBase {
         const [from, to] = this.getResolvedRange(tr, step);
         // @ts-ignore
         const changed = this.getChanged(step.slice);
-
-        const fragment = state.doc.content;
-        // @ts-ignore
-        const startLine = fragment.findIndex(from).index + 1;
-        // @ts-ignore
-        const endLine = from === to ? startLine : fragment.findIndex(to - 1).index + 1;
-
-        const startChOffset = state.doc.resolve(from).start();
-        const endChOffset = from === to ? startChOffset : state.doc.resolve(to).start();
-
-        const startPos = [startLine, from - startChOffset + 1];
-        const endPos = [endLine, to - endChOffset + 1];
+        const [startPos, endPos] = getEditorToMdPos(from, to, state.doc);
 
         const editResult = this.toastMark.editMarkdown(startPos, endPos, changed);
 
