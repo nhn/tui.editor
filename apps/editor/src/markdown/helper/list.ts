@@ -1,4 +1,4 @@
-import { Fragment } from 'prosemirror-model';
+import { Node as ProsemirrorNode } from 'prosemirror-model';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { isListNode } from '@/utils/markdown';
@@ -9,14 +9,19 @@ interface CurNodeInfo {
   toastMark: ToastMark;
   mdNode: MdNode;
   line: number;
-  fragment: Fragment;
+  doc: ProsemirrorNode;
+  range: [number, number];
 }
 
 type ListType = 'bullet' | 'ordered';
 type ToListFn = (
   curNodeInfo: CurNodeInfo
-) => { changedTexts: string[]; firstSameLine?: number; lastSameLine?: number };
-
+) => {
+  changedTexts: string[];
+  firstListOffset?: number;
+  lastListOffset?: number;
+  lastListLine?: number;
+};
 interface ToList {
   bullet: ToListFn;
   ordered: ToListFn;
@@ -101,51 +106,58 @@ function textToOrdered(text: string, mdNode: ListItemMdNode, ordinalNum: number)
 
   if (type === 'bullet' || (type === 'ordered' && task)) {
     text = nbspToSpace(text).replace(reCanBeTaskList, `${ordinalNum}. `);
-  } else if (type === 'ordered') {
-    if (parseInt(RegExp.$1, 10) !== ordinalNum) {
-      text = nbspToSpace(text).replace(reOrderedList, `${ordinalNum}. `);
-    }
+  } else if (type === 'ordered' && parseInt(RegExp.$1, 10) !== ordinalNum) {
+    text = nbspToSpace(text).replace(reOrderedList, `${ordinalNum}. `);
   }
 
   return text;
 }
 
-function getTextByMdLine(fragment: Fragment, mdLine: number) {
-  return fragment.child(mdLine - 1).textContent;
+function getTextByMdLine(doc: ProsemirrorNode, mdLine: number) {
+  return doc.content.child(mdLine - 1).textContent;
 }
 
-function toBulletOrOrdered(type: ListType, { toastMark, mdNode, fragment, line }: CurNodeInfo) {
+function toBulletOrOrdered(type: ListType, { toastMark, mdNode, doc, line }: CurNodeInfo) {
   const changedTexts: string[] = [];
-  let firstSameLine = line;
-  let lastSameLine = line;
+  let firstListOffset = Number.MAX_VALUE;
+  let lastListOffset = 0;
+  let lastListLine = line;
 
   const sameDepthListInfo = getSameDepthListInfo(toastMark, mdNode, line);
 
   sameDepthListInfo.forEach(({ line: targetLine, mdNode: targetNode }, index) => {
-    let text = getTextByMdLine(fragment, targetLine);
+    let text = getTextByMdLine(doc, targetLine);
+
+    // @ts-ignore
+    doc.descendants((node, pos, _, lineOffset) => {
+      if (node.isBlock && targetLine === lineOffset + 1) {
+        firstListOffset = Math.min(pos + 1, firstListOffset);
+        lastListOffset = Math.max(pos + 1, lastListOffset);
+      }
+      return lineOffset + 1 <= targetLine;
+    });
 
     text =
       type === 'bullet'
         ? textToBullet(text, targetNode)
         : textToOrdered(text, targetNode, index + 1);
     changedTexts.push(text);
-    firstSameLine = Math.min(targetLine, firstSameLine);
-    lastSameLine = Math.max(targetLine, lastSameLine);
+    lastListLine = Math.max(targetLine, lastListLine);
   });
 
-  return { changedTexts, firstSameLine, lastSameLine };
+  return { changedTexts, firstListOffset, lastListOffset, lastListLine };
 }
 
 export const otherListToList: ToList = {
-  bullet({ toastMark, mdNode, fragment, line }) {
-    return toBulletOrOrdered('bullet', { toastMark, mdNode, fragment, line });
+  bullet(currentLineInfo) {
+    return toBulletOrOrdered('bullet', currentLineInfo);
   },
-  ordered({ toastMark, mdNode, fragment, line }) {
-    return toBulletOrOrdered('ordered', { toastMark, mdNode, fragment, line });
+  ordered(currentLineInfo) {
+    return toBulletOrOrdered('ordered', currentLineInfo);
   },
-  task({ mdNode, fragment, line }) {
+  task({ mdNode, doc, line }) {
     const changedTexts: string[] = [];
-    let text = fragment.child(line - 1).textContent;
+    let text = getTextByMdLine(doc, line);
 
     if ((mdNode as ListItemMdNode).listData.task) {
       text = nbspToSpace(text).replace(reTaskList, '$1');
@@ -159,34 +171,42 @@ export const otherListToList: ToList = {
 };
 
 export const otherToList: ToList = {
-  bullet({ fragment, line }) {
-    const text = getTextByMdLine(fragment, line);
-    const changedTexts: string[] = [`* ${text}`];
+  bullet({ doc, line }) {
+    const text = getTextByMdLine(doc, line);
+    const changedTexts = [`* ${text}`];
 
     return { changedTexts };
   },
-  ordered({ toastMark, fragment, line }) {
+  ordered({ toastMark, doc, line, range }) {
     let ordinalNum = 1;
-    const text = getTextByMdLine(fragment, line);
+    const [startLine] = range;
+    const text = getTextByMdLine(doc, line);
+    let ordinalStartNum = 1;
+    let ordinalStartLine = startLine;
 
-    for (let i = line - 1; i >= 0; i -= 1) {
+    for (let i = startLine - 1; i > 0; i -= 1) {
       const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(i);
+      const { listData } = mdNode;
       const depth = getListDepth(mdNode);
 
       if (depth === 0) {
+        ordinalStartLine = i;
         break;
       }
-      if (depth === 1 && mdNode.listData.type === 'ordered') {
-        ordinalNum = mdNode.listData.start + 1;
+      if (depth === 1 && listData && listData.type === 'ordered') {
+        ordinalStartNum = listData.start;
+        ordinalStartLine = i;
         break;
       }
     }
+    ordinalNum = ordinalStartNum + line - ordinalStartLine;
+
     const changedTexts = [`${ordinalNum}. ${text}`];
 
     return { changedTexts };
   },
-  task({ fragment, line }) {
-    const text = getTextByMdLine(fragment, line);
+  task({ doc, line }) {
+    const text = getTextByMdLine(doc, line);
     const changedTexts = [`* [ ] ${text}`];
 
     return { changedTexts };

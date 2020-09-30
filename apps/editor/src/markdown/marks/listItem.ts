@@ -1,14 +1,17 @@
-import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
+import {
+  DOMOutputSpecArray,
+  Mark as ProsemirrorMark,
+  Node as ProsemirrorNode
+} from 'prosemirror-model';
 import isNumber from 'tui-code-snippet/type/isNumber';
-// @ts-ignore
 import { Context, EditorCommand } from '@t/spec';
 import { MdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
 import {
-  getEditorToMdPos,
-  getMdToEditorPos,
+  getEditorToMdLine,
+  getExtendedRangeOffset,
   replaceBlockNodes,
   resolveSelectionPos,
   spaceToNbsp
@@ -16,6 +19,12 @@ import {
 import { otherListToList, otherToList } from '../helper/list';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
+
+function canNotBeListNode(mdNode: MdNode) {
+  const { type } = mdNode;
+
+  return type === 'codeBlock' || type === 'heading' || type.indexOf('table') !== -1;
+}
 
 export class ListItem extends Mark {
   get name() {
@@ -51,39 +60,51 @@ export class ListItem extends Mark {
     return () => (state, dispatch) => {
       const { selection, doc, tr } = state;
       const [from, to] = resolveSelectionPos(selection);
-      const fragment = doc.content;
 
-      const [startPos, endPos] = getEditorToMdPos(from, to, doc, selection.empty);
-      const [startLine, startOffset] = startPos;
-      const [endLine, endOffset] = endPos;
+      const [startLine, endLine] = getEditorToMdLine(from, to, doc);
+      let [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
 
-      let result: string[] = [];
+      let nodes: ProsemirrorNode[] = [];
 
       for (let line = startLine; line <= endLine; line += 1) {
         const mdNode: MdNode = toastMark.findFirstNodeAtLine(line);
-        const { type } = mdNode;
 
-        if (type === 'codeBlock' || type === 'heading' || type === 'table') {
+        if (mdNode && canNotBeListNode(mdNode)) {
           break;
         }
 
-        const curNodeInfo = { toastMark, mdNode, fragment, line };
-
-        const { firstSameLine, lastSameLine, changedTexts } = isListNode(mdNode)
-          ? otherListToList[commandType](curNodeInfo)
-          : otherToList[commandType](curNodeInfo);
+        const curNodeInfo = { toastMark, mdNode, doc, line, range: [startLine, endLine] };
+        const { firstListOffset, lastListOffset, lastListLine, changedTexts } = isListNode(mdNode)
+          ? // @ts-ignore
+            otherListToList[commandType](curNodeInfo)
+          : // @ts-ignore
+            otherToList[commandType](curNodeInfo);
 
         // To skip unnecessary processing
-        if (lastSameLine && lastSameLine > line) {
-          line = lastSameLine;
+        if (lastListLine && lastListLine > line) {
+          line = lastListLine;
         }
 
-        result = result.concat(changedTexts);
-      }
+        // resolve start offset to change forward same depth list
+        if (isNumber(firstListOffset) && firstListOffset < startOffset) {
+          startOffset = firstListOffset;
+        }
 
-      const nodes = result.map(text =>
-        schema.nodes.paragraph.create(null, schema.text(spaceToNbsp(text)))
-      );
+        // resolve end offset to change backward same depth list
+        if (isNumber(lastListOffset)) {
+          const offset = doc.resolve(lastListOffset).end();
+
+          if (offset > endOffset) {
+            endOffset = offset;
+          }
+        }
+
+        nodes = nodes.concat(
+          changedTexts.map(text =>
+            schema.nodes.paragraph.create(null, schema.text(spaceToNbsp(text)))
+          )
+        );
+      }
 
       if (nodes.length) {
         dispatch!(replaceBlockNodes(tr, startOffset, endOffset, nodes));

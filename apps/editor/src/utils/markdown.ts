@@ -68,7 +68,7 @@ export function isStyledTextNode(mdNode: MdNode) {
 }
 
 export function isListNode(mdNode: MdNode) {
-  return mdNode.type === 'item' || mdNode.type === 'list';
+  return mdNode && (mdNode.type === 'item' || mdNode.type === 'list');
 }
 
 export function isTableCellNode(mdNode: MdNode) {
