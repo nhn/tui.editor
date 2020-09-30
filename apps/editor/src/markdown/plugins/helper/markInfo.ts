@@ -161,9 +161,9 @@ function codeBlock(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
   }
 
   const codeBlockEnd = `^(\\s{0,3})(${fenceChar}{${fenceLength},})`;
-  const CLOSED_RX = new RegExp(codeBlockEnd);
+  const reCodeBlockEnd = new RegExp(codeBlockEnd);
 
-  if (CLOSED_RX.test(endLine)) {
+  if (reCodeBlockEnd.test(endLine)) {
     marks.push(markInfo(setOffsetPos(end, 0), end, DELIM));
   }
 
@@ -191,8 +191,8 @@ function markListItemChildren(node: MdNode, markType: MarkType) {
     if (type === 'paragraph' || type === 'codeBlock') {
       marks.push(
         markInfo(
-          [getMdStartLine(node) - 1, getMdStartCh(node) - 1],
-          [getMdEndLine(node) - 1, getMdEndCh(node)],
+          [getMdStartLine(node), getMdStartCh(node) - 1],
+          [getMdEndLine(node), getMdEndCh(node)],
           markType
         )
       );
@@ -209,8 +209,8 @@ function markParagraphInBlockQuote(node: MdNode) {
   while (node) {
     marks.push(
       markInfo(
-        [getMdStartLine(node) - 1, getMdStartCh(node) - 1],
-        [getMdEndLine(node) - 1, getMdEndCh(node)],
+        [getMdStartLine(node), getMdStartCh(node) - 1],
+        [getMdEndLine(node), getMdEndCh(node)],
         TEXT
       )
     );
