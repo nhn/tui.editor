@@ -15,24 +15,30 @@ export function resolvePos(from: number, to: number) {
   return [from + 1, to - 1];
 }
 
-export function getEditorToMdPos(
-  from: number,
-  to: number,
-  doc: ProsemirrorNode,
-  collapsed: boolean
-): MdSourcepos {
+export function getEditorToMdLine(from: number, to: number, doc: ProsemirrorNode) {
   const fragment = doc.content;
-  const startResolvedPos = doc.resolve(from);
   // @ts-ignore
   const startLine = fragment.findIndex(from).index + 1;
-  // @ts-ignore
-  const endLine = from === to ? startLine : fragment.findIndex(to).index + 1;
+  const endLine =
+    from === to
+      ? startLine
+      : // @ts-ignore
+        Math.min(fragment.findIndex(to).index + 1, fragment.content.length);
+
+  return [startLine, endLine];
+}
+
+export function getEditorToMdPos(from: number, to: number, doc: ProsemirrorNode): MdSourcepos {
+  const collapsed = from === to;
+  const startResolvedPos = doc.resolve(from);
+
+  const [startLine, endLine] = getEditorToMdLine(from, to, doc);
   const startOffset = startResolvedPos.start();
-  const endOffset = collapsed ? startResolvedPos.end() : doc.resolve(to).end();
+  const endOffset = collapsed ? startOffset : doc.resolve(to).start();
 
   return [
-    [startLine, startOffset],
-    [endLine, endOffset]
+    [startLine, from - startOffset + 1],
+    [endLine, to - endOffset + 1]
   ];
 }
 
@@ -45,11 +51,11 @@ export function getMdToEditorPos(
   let from = 0;
   let to = 0;
 
-  for (let i = 0; i < endPos[0]; i += 1) {
+  for (let i = 0; i < endPos[0] - 1; i += 1) {
     const len = lineTexts[i].length;
 
     // should plus 2(end tag, start tag) to consider line breaking
-    if (i < startPos[0]) {
+    if (i < startPos[0] - 1) {
       from += len + 2;
     }
     to += len + 2;
