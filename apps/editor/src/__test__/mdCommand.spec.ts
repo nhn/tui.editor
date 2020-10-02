@@ -3,7 +3,7 @@ import { ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
 import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
-import { nbspToSpace } from '@/markdown/helper/pos';
+import { nbspToSpace } from '@/markdown/helper/manipulation';
 
 function getTextContent(editor: MarkdownEditor) {
   const { doc } = editor.view.state;
@@ -214,7 +214,7 @@ describe('addImage command', () => {
 
 describe('addLink command', () => {
   it('should add link syntax', () => {
-    cmd.exec('markdown', 'addLink', { linkText: 'TOAST UI', url: 'https://ui.toast.com' });
+    cmd.exec('markdown', 'addLink', { linkText: 'TOAST UI', linkUrl: 'https://ui.toast.com' });
 
     expect(getTextContent(mde)).toEqual('[TOAST UI](https://ui.toast.com)');
   });
@@ -222,7 +222,7 @@ describe('addLink command', () => {
   it('should escape link Text', () => {
     cmd.exec('markdown', 'addLink', {
       linkText: 'mytext ()[]<>',
-      url: 'https://ui.toast.com'
+      linkUrl: 'https://ui.toast.com'
     });
 
     expect(getTextContent(mde)).toEqual('[mytext \\(\\)\\[\\]\\<\\>](https://ui.toast.com)');
@@ -231,7 +231,7 @@ describe('addLink command', () => {
   it('should encode link url', () => {
     cmd.exec('markdown', 'addLink', {
       linkText: 'TOAST UI',
-      url: 'myurl ()[]<>'
+      linkUrl: 'myurl ()[]<>'
     });
 
     expect(getTextContent(mde)).toEqual('[TOAST UI](myurl %28%29%5B%5D%3C%3E)');
@@ -419,5 +419,22 @@ describe('task command', () => {
     cmd.exec('markdown', 'task');
 
     expect(getTextContent(mde)).toEqual('* bullet1\n* bullet2\n* bullet3');
+  });
+});
+
+describe('table command', () => {
+  it('should add table syntax', () => {
+    cmd.exec('markdown', 'table', { colLen: 2, rowLen: 3 });
+
+    expect(getTextContent(mde)).toEqual('\n|  |  |\n| --- | --- |\n|  |  |\n|  |  |');
+  });
+
+  it('should add table syntax to next line', () => {
+    mde.setMarkdown('text');
+
+    cmd.exec('markdown', 'selectAll');
+    cmd.exec('markdown', 'table', { colLen: 2, rowLen: 3 });
+
+    expect(getTextContent(mde)).toEqual('text\n|  |  |\n| --- | --- |\n|  |  |\n|  |  |');
   });
 });

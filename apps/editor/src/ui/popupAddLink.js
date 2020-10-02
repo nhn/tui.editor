@@ -119,7 +119,7 @@ class PopupAddLink extends LayerPopup {
   }
 
   _addLink() {
-    const { url, linkText } = this._getValue();
+    const { linkUrl, linkText } = this._getValue();
 
     this._clearValidationStyle();
 
@@ -128,7 +128,7 @@ class PopupAddLink extends LayerPopup {
 
       return;
     }
-    if (url.length < 1) {
+    if (linkUrl.length < 1) {
       addClass(this._inputURL, 'wrong');
 
       return;
@@ -136,17 +136,17 @@ class PopupAddLink extends LayerPopup {
 
     this._eventEmitter.emit('command', 'addLink', {
       linkText,
-      url
+      linkUrl
     });
     this.hide();
   }
 
   _getValue() {
-    const url = this._inputURL.value;
+    const linkUrl = this._inputURL.value;
     const linkText = this._inputText.value;
 
     return {
-      url,
+      linkUrl,
       linkText
     };
   }
