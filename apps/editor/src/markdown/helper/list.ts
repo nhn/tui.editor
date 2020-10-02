@@ -3,7 +3,7 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { ToastMark } from '@toast-ui/toastmark';
 import { isListNode } from '@/utils/markdown';
 import { ListItemMdNode, MdNode } from '@t/markdown';
-import { nbspToSpace } from './pos';
+import { nbspToSpace } from './manipulation';
 
 interface CurNodeInfo {
   toastMark: ToastMark;

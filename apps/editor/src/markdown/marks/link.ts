@@ -37,6 +37,13 @@ function replaceMarkdownText(text: string, encode: boolean) {
 
 type CommandType = 'image' | 'link';
 
+interface Payload {
+  linkText: string;
+  altText: string;
+  linkUrl: string;
+  imageUrl: string;
+}
+
 export class Link extends Mark {
   get name() {
     return 'link';
@@ -67,7 +74,7 @@ export class Link extends Mark {
   private addLinkOrImage({ schema }: Context, commandType: CommandType): EditorCommand {
     return payload => (state, dispatch) => {
       const [from, to] = resolveSelectionPos(state.selection);
-      const { linkText, altText, url: linkUrl, imageUrl } = payload!;
+      const { linkText, altText, linkUrl, imageUrl } = payload as Payload;
       let text = linkText;
       let url = linkUrl;
       let syntax = '';

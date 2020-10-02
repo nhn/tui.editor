@@ -30,7 +30,8 @@ import { Code } from './marks/code';
 import { Link } from './marks/link';
 import { Delimiter, TaskDelimiter, MarkedText, Meta } from './marks/simpleMark';
 import { Html } from './marks/html';
-import { getEditorToMdPos, getMdToEditorPos, nbspToSpace } from './helper/pos';
+import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
+import { nbspToSpace } from './helper/manipulation';
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;

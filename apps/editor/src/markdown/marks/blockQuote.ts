@@ -2,12 +2,8 @@ import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
 import { Context, EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import {
-  getExtendedRangeOffset,
-  replaceBlockNodes,
-  resolveSelectionPos,
-  spaceToNbsp
-} from '../helper/pos';
+import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
+import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
 
 const reBlockQuoteSyntax = /^> ?/;
 
@@ -48,9 +44,7 @@ export class BlockQuote extends Mark {
         if (isBlock) {
           const result = this.getChangedText(textContent, isBlockQuote);
 
-          nodes.push(
-            schema.nodes.paragraph.create(null, result ? schema.text(spaceToNbsp(result)) : [])
-          );
+          nodes.push(createParagraph(schema, result));
         }
       });
 

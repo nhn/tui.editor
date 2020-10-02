@@ -6,14 +6,14 @@ import {
 import { EditorCommand, Context } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import {
-  getExtendedRangeOffset,
-  replaceBlockNodes,
-  resolveSelectionPos,
-  spaceToNbsp
-} from '../helper/pos';
+import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
+import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
 
 const reHeading = /^#+\s/;
+
+interface Payload {
+  level: number;
+}
 
 export class Heading extends Mark {
   get name() {
@@ -52,7 +52,7 @@ export class Heading extends Mark {
 
   commands({ schema }: Context): EditorCommand {
     return payload => (state, dispatch) => {
-      const { level } = payload!;
+      const { level } = payload as Payload;
       const { selection, doc, tr } = state;
       const [from, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
@@ -69,7 +69,7 @@ export class Heading extends Mark {
           if (!curLevel || curLevel !== level) {
             const result = this.getChangedText(level, textContent, curHeadingSyntax);
 
-            nodes.push(schema.nodes.paragraph.create(null, schema.text(spaceToNbsp(result))));
+            nodes.push(createParagraph(schema, result));
           }
         }
       });

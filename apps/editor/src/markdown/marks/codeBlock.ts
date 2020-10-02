@@ -3,12 +3,8 @@ import { TextSelection } from 'prosemirror-state';
 import { Context, EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import {
-  getExtendedRangeOffset,
-  resolveSelectionPos,
-  replaceBlockNodes,
-  spaceToNbsp
-} from '../helper/pos';
+import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
+import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
 
 const fencedSyntax = '```';
 
@@ -31,21 +27,15 @@ export class CodeBlock extends Mark {
       const [from, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
 
-      const nodes: ProsemirrorNode[] = [
-        schema.nodes.paragraph.create(null, schema.text(fencedSyntax))
-      ];
+      const fencedNode = createParagraph(schema, fencedSyntax);
+      const nodes: ProsemirrorNode[] = [fencedNode];
 
       state.doc.nodesBetween(startOffset, endOffset, ({ isBlock, textContent }) => {
         if (isBlock) {
-          nodes.push(
-            schema.nodes.paragraph.create(
-              null,
-              textContent ? schema.text(spaceToNbsp(textContent)) : []
-            )
-          );
+          nodes.push(createParagraph(schema, textContent));
         }
       });
-      nodes.push(schema.nodes.paragraph.create(null, schema.text(fencedSyntax)));
+      nodes.push(fencedNode);
 
       const tr = replaceBlockNodes(state.tr, startOffset, endOffset, nodes);
 

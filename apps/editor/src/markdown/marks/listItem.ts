@@ -9,13 +9,8 @@ import { MdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
-import {
-  getEditorToMdLine,
-  getExtendedRangeOffset,
-  replaceBlockNodes,
-  resolveSelectionPos,
-  spaceToNbsp
-} from '../helper/pos';
+import { getEditorToMdLine, getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
+import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
 import { otherListToList, otherToList } from '../helper/list';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
@@ -99,11 +94,7 @@ export class ListItem extends Mark {
           }
         }
 
-        nodes = nodes.concat(
-          changedTexts.map(text =>
-            schema.nodes.paragraph.create(null, schema.text(spaceToNbsp(text)))
-          )
-        );
+        nodes = nodes.concat(changedTexts.map(text => createParagraph(schema, text)));
       }
 
       if (nodes.length) {

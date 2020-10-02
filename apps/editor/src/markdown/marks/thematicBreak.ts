@@ -4,6 +4,7 @@ import { Context, EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { resolveSelectionPos } from '../helper/pos';
+import { createParagraph } from '../helper/manipulation';
 
 const thematicBreakSyntax = '***';
 
@@ -23,8 +24,8 @@ export class ThematicBreak extends Mark {
   private line({ schema }: Context): EditorCommand {
     return () => (state, dispatch) => {
       const [from, to] = resolveSelectionPos(state.selection);
-      const emptyNode = schema.nodes.paragraph.create(null);
-      const lineNode = schema.nodes.paragraph.create(null, schema.text(thematicBreakSyntax));
+      const emptyNode = createParagraph(schema);
+      const lineNode = createParagraph(schema, thematicBreakSyntax);
       const nodes = [lineNode];
 
       if (to >= state.doc.resolve(to).end()) {

@@ -1,4 +1,4 @@
-import { AllSelection, Selection, Transaction } from 'prosemirror-state';
+import { AllSelection, Selection } from 'prosemirror-state';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { MdPos, MdSourcepos } from '@t/markdown';
 
@@ -73,26 +73,4 @@ export function getExtendedRangeOffset(from: number, to: number, doc: Prosemirro
   const endOffset = from === to ? startResolvedPos.end() : doc.resolve(to).end();
 
   return [startOffset, endOffset];
-}
-
-export function replaceBlockNodes(
-  tr: Transaction,
-  from: number,
-  to: number,
-  nodes: ProsemirrorNode[]
-) {
-  return (
-    tr
-      .replaceWith(from - 1, to + 1, nodes)
-      // To prevent incorrect calculation of the position for markdown parser
-      .setMeta('resolvedPos', [from, to])
-  );
-}
-
-export function nbspToSpace(text: string) {
-  return text.replace(/\u00a0/g, ' ');
-}
-
-export function spaceToNbsp(text: string) {
-  return text.replace(/ /g, '\u00a0');
 }
