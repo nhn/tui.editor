@@ -102,6 +102,22 @@ export interface CodeMdNode extends MdNode {
   tickCount: number;
 }
 
+export interface TableColumn {
+  align: 'left' | 'center' | 'right';
+}
+
+export interface TableCellNode extends MdNode {
+  startIdx: number;
+  endIdx: number;
+  paddingLeft: number;
+  paddingRight: number;
+  ignored: boolean;
+}
+
+export interface TableMdNode extends MdNode {
+  columns: TableColumn[];
+}
+
 /* ToastMark Parser type */
 export type CustomParser = (node: MdNode, context: { entering: boolean }) => void;
 export type CustomParserMap = Partial<Record<MdNodeType, CustomParser>>;
