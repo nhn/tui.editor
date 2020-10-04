@@ -58,8 +58,8 @@ export class BlockQuote extends Mark {
   }
 
   keymaps(context: Context) {
-    const commandResult = this.commands(context)();
+    const blockQuoteCommand = this.commands(context)();
 
-    return { 'alt-q': commandResult, 'alt-Q': commandResult };
+    return { 'alt-q': blockQuoteCommand, 'alt-Q': blockQuoteCommand };
   }
 }

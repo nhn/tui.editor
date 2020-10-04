@@ -44,4 +44,10 @@ export class CodeBlock extends Mark {
       return true;
     };
   }
+
+  keymaps(context: Context) {
+    const codeBlockCommand = this.commands(context)();
+
+    return { 'Shift-Mod-p': codeBlockCommand, 'Shift-Mod-P': codeBlockCommand };
+  }
 }

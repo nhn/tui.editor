@@ -51,8 +51,8 @@ export class Strong extends Mark {
   }
 
   keymaps() {
-    const commandResult = this.bold()();
+    const boldCommand = this.bold()();
 
-    return { 'Mod-b': commandResult, 'Mod-B': commandResult };
+    return { 'Mod-b': boldCommand, 'Mod-B': boldCommand };
   }
 }

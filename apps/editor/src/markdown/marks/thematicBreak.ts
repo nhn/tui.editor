@@ -47,8 +47,8 @@ export class ThematicBreak extends Mark {
   }
 
   keymaps(context: Context) {
-    const commandResult = this.line(context)();
+    const lineCommand = this.line(context)();
 
-    return { 'Mod-l': commandResult, 'Mod-L': commandResult };
+    return { 'Mod-l': lineCommand, 'Mod-L': lineCommand };
   }
 }

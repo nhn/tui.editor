@@ -63,4 +63,10 @@ export class Code extends Mark {
       return true;
     };
   }
+
+  keymaps() {
+    const codeCommand = this.commands()();
+
+    return { 'Shift-Mod-c': codeCommand, 'Shift-Mod-C': codeCommand };
+  }
 }

@@ -45,4 +45,10 @@ export class Strike extends Mark {
       return true;
     };
   }
+
+  keymaps() {
+    const strikeCommand = this.commands()();
+
+    return { 'Mod-s': strikeCommand, 'Mod-S': strikeCommand };
+  }
 }

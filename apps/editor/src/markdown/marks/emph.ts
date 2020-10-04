@@ -51,8 +51,8 @@ export class Emph extends Mark {
   }
 
   keymaps() {
-    const commandResult = this.italic()();
+    const italicCommand = this.italic()();
 
-    return { 'Mod-i': commandResult, 'Mod-I': commandResult };
+    return { 'Mod-i': italicCommand, 'Mod-I': italicCommand };
   }
 }
