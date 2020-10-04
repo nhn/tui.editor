@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { Context, EditorCommand } from '@t/spec';

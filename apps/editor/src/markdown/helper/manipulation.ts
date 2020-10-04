@@ -1,5 +1,5 @@
 import { Transaction } from 'prosemirror-state';
-import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { ProsemirrorNode, Schema } from 'prosemirror-model';
 
 export function replaceBlockNodes(
   tr: Transaction,

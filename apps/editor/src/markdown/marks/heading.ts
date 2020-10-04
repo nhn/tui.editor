@@ -1,8 +1,4 @@
-import {
-  DOMOutputSpecArray,
-  Mark as ProsemirrorMark,
-  Node as ProsemirrorNode
-} from 'prosemirror-model';
+import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'prosemirror-model';
 import { EditorCommand, Context } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';

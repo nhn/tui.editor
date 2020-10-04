@@ -156,3 +156,13 @@ export function addOffsetPos(originPos: MdPos, offset: number): MdPos {
 export function setOffsetPos(originPos: MdPos, newOffset: number): MdPos {
   return [originPos[0], newOffset];
 }
+
+export function getListText(mdNode: MdNode) {
+  while (mdNode) {
+    if (mdNode.type === 'text') {
+      return mdNode.literal;
+    }
+    mdNode = mdNode.firstChild!;
+  }
+  return '';
+}

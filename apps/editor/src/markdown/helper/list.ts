@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode } from 'prosemirror-model';
+import { ProsemirrorNode } from 'prosemirror-model';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { isListNode } from '@/utils/markdown';
@@ -130,13 +130,12 @@ function toBulletOrOrdered(type: ListType, { toastMark, mdNode, doc, line }: Cur
   const sameDepthListInfo = getSameDepthListInfo(toastMark, mdNode, line);
 
   sameDepthListInfo.forEach(({ line: targetLine, mdNode: targetNode }, index) => {
-    // @ts-ignore
     doc.descendants((node, pos, _, lineOffset) => {
-      if (node.isBlock && targetLine === lineOffset + 1) {
+      if (node.isBlock && targetLine === lineOffset! + 1) {
         firstListOffset = Math.min(pos + 1, firstListOffset);
         lastListOffset = Math.max(pos + 1, lastListOffset);
       }
-      return lineOffset + 1 <= targetLine;
+      return lineOffset! + 1 <= targetLine;
     });
     let text = getTextByMdLine(doc, targetLine);
 

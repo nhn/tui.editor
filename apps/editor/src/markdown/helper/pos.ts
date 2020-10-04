@@ -1,5 +1,5 @@
 import { AllSelection, Selection } from 'prosemirror-state';
-import { Node as ProsemirrorNode } from 'prosemirror-model';
+import { ProsemirrorNode } from 'prosemirror-model';
 import { MdPos, MdSourcepos } from '@t/markdown';
 
 export function resolveSelectionPos(selection: Selection) {
@@ -21,13 +21,9 @@ export function getEditorToMdLine(
   doc: ProsemirrorNode
 ): [number, number] {
   const fragment = doc.content;
-  // @ts-ignore
   const startLine = fragment.findIndex(from).index + 1;
   const endLine =
-    from === to
-      ? startLine
-      : // @ts-ignore
-        Math.min(fragment.findIndex(to).index + 1, fragment.content.length);
+    from === to ? startLine : Math.min(fragment.findIndex(to).index + 1, fragment.childCount);
 
   return [startLine, endLine];
 }

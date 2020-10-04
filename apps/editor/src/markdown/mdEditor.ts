@@ -138,7 +138,6 @@ export default class MdEditor extends EditorBase {
     if (tr.docChanged) {
       tr.steps.forEach(step => {
         const [from, to] = this.getResolvedRange(tr, step);
-        // @ts-ignore
         const changed = this.getChanged(step.slice);
         const [startPos, endPos] = getEditorToMdPos(from, to, state.doc);
 
@@ -154,7 +153,6 @@ export default class MdEditor extends EditorBase {
   private getResolvedRange(tr: Transaction, step: Step) {
     const resolvedPos = tr.getMeta('resolvedPos');
 
-    // @ts-ignore
     return resolvedPos || [step.from, step.to];
   }
 

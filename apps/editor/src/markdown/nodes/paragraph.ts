@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { cls } from '@/utils/dom';
 import Node from '@/spec/node';
 
