@@ -60,7 +60,7 @@ export class Table extends Mark {
       const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
       const [startPos] = getEditorToMdPos(to, to, doc);
       const lineText = toastMark.getLineTexts()[startPos[0] - 1];
-      const isEmptyTableRow = !lineText.replace(reEmptyTable, '').length;
+      const isEmpty = !lineText.replace(reEmptyTable, '');
 
       const mdNode: MdNode = toastMark.findNodeAtPosition(startPos);
       const cellNode = findClosestNode(
@@ -75,7 +75,7 @@ export class Table extends Mark {
         const colLen = (parent!.parent!.parent as TableMdNode).columns.length;
         const row = createTableRow(colLen);
 
-        if (isEmptyTableRow) {
+        if (isEmpty) {
           dispatch!(state.tr.replaceWith(startOffset, endOffset, createParagraph(schema)));
         } else {
           const tr = state.tr.insert(endOffset, createParagraph(schema, row));
