@@ -31,7 +31,7 @@ import { Link } from './marks/link';
 import { Delimiter, TaskDelimiter, MarkedText, Meta } from './marks/simpleMark';
 import { Html } from './marks/html';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
-import { nbspToSpace } from './helper/manipulation';
+import { createParagraph, nbspToSpace } from './helper/manipulation';
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
@@ -45,22 +45,25 @@ export default class MdEditor extends EditorBase {
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
-    this.keymaps = this.createKeymaps();
     this.view = this.createView();
+    this.keymaps = this.createKeymaps();
     this.commands = this.createCommands();
     this.keyCode = null;
+
+    this.view.updateState(this.createState());
   }
 
   createContext() {
     return {
       toastMark: this.toastMark,
       schema: this.schema,
-      eventEmitter: this.eventEmitter
+      eventEmitter: this.eventEmitter,
+      view: this.view
     };
   }
 
   createKeymaps() {
-    return this.specs.keymaps(this.context);
+    return this.specs.keymaps({ ...this.context, view: this.view });
   }
 
   createSpecs() {
@@ -108,7 +111,7 @@ export default class MdEditor extends EditorBase {
 
   createView() {
     return new EditorView(this.el, {
-      state: this.createState(),
+      state: EditorState.create({ doc: DOMParser.fromSchema(this.schema).parse(this.el) }),
       dispatchTransaction: tr => {
         this.updateMarkdown(tr);
 
@@ -116,7 +119,7 @@ export default class MdEditor extends EditorBase {
 
         this.view.updateState(state);
       },
-      handleKeyDown: (_, event) => {
+      handleKeyPress: (_, event) => {
         // @TODO: change the keyCode
         this.keyCode = event.keyCode;
 
@@ -219,7 +222,6 @@ export default class MdEditor extends EditorBase {
   setPlaceholder(placeholder: string) {}
 
   destroy() {}
-
   /* eslint-enable @typescript-eslint/no-empty-function */
 
   setMarkdown(markdown: string, cursorToEnd?: boolean) {
@@ -227,10 +229,7 @@ export default class MdEditor extends EditorBase {
       const contents = markdown.split('\n');
       const { state, dispatch } = this.view;
       const { tr, doc } = state;
-      const newNodes = contents.map(content =>
-        // @ts-ignore
-        this.schema.node('paragraph', null, [this.schema.text(content)])
-      );
+      const newNodes = contents.map(content => createParagraph(this.schema, content));
 
       dispatch(tr.replaceWith(0, doc.content.size, newNodes));
     }

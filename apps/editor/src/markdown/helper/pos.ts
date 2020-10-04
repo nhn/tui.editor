@@ -15,7 +15,11 @@ export function resolvePos(from: number, to: number) {
   return [from + 1, to - 1];
 }
 
-export function getEditorToMdLine(from: number, to: number, doc: ProsemirrorNode) {
+export function getEditorToMdLine(
+  from: number,
+  to: number,
+  doc: ProsemirrorNode
+): [number, number] {
   const fragment = doc.content;
   // @ts-ignore
   const startLine = fragment.findIndex(from).index + 1;
@@ -60,9 +64,8 @@ export function getMdToEditorPos(
     }
     to += len + 2;
   }
-  // should plus 1 to position to consider the start tag position
-  from += startPos[1] + 1;
-  to += endPos[1] + 1;
+  from += startPos[1];
+  to += endPos[1];
 
   return [from, Math.min(to, docSize)];
 }

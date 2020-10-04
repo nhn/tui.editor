@@ -95,10 +95,10 @@ function emphasisAndStrikethrough(
 function markLink(start: MdPos, end: MdPos, linkTextStart: MdPos, lastChildCh: number) {
   return [
     markInfo(start, end, LINK),
-    markInfo(setOffsetPos(start, linkTextStart[1] + 1), setOffsetPos(end, lastChildCh - 1), LINK, {
+    markInfo(setOffsetPos(start, linkTextStart[1] + 1), setOffsetPos(end, lastChildCh), LINK, {
       desc: true
     }),
-    markInfo(setOffsetPos(end, lastChildCh + 1), addOffsetPos(end, -1), LINK, { url: true })
+    markInfo(setOffsetPos(end, lastChildCh + 2), addOffsetPos(end, -1), LINK, { url: true })
   ];
 }
 
@@ -153,8 +153,8 @@ function codeBlock(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
   if (info) {
     marks.push(
       markInfo(
-        setOffsetPos(start, fenceEnd),
-        setOffsetPos(start, fenceEnd + infoPadding + info.length),
+        setOffsetPos(start, fenceEnd + 1),
+        setOffsetPos(start, fenceEnd + infoPadding + info.length + 1),
         META
       )
     );
@@ -209,8 +209,8 @@ function markParagraphInBlockQuote(node: MdNode) {
   while (node) {
     marks.push(
       markInfo(
-        [getMdStartLine(node), getMdStartCh(node) - 1],
-        [getMdEndLine(node), getMdEndCh(node)],
+        [getMdStartLine(node), getMdStartCh(node)],
+        [getMdEndLine(node), getMdEndCh(node) + 1],
         TEXT
       )
     );
