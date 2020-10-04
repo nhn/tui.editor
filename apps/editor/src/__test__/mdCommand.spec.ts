@@ -182,7 +182,7 @@ describe('hr command', () => {
     mde.setSelection([1, 2], [1, 4]);
     cmd.exec('markdown', 'hr');
 
-    expect(getTextContent(mde)).toEqual('pa\n***\ngraph');
+    expect(getTextContent(mde)).toEqual('p\n***\nagraph');
   });
 });
 
@@ -304,6 +304,15 @@ describe('ul command', () => {
     expect(getTextContent(mde)).toEqual('* ');
   });
 
+  it('should add bullet list syntax to empty line', () => {
+    mde.setMarkdown('\n');
+
+    mde.setSelection([2, 1], [2, 1]);
+    cmd.exec('markdown', 'ul');
+
+    expect(getTextContent(mde)).toEqual('\n* ');
+  });
+
   it('should add bullet list syntax on multi line', () => {
     mde.setMarkdown('bullet1\nbullet2');
 
@@ -339,6 +348,15 @@ describe('ol command', () => {
     expect(getTextContent(mde)).toEqual('1. ');
   });
 
+  it('should add ordered list syntax to empty line', () => {
+    mde.setMarkdown('\n');
+
+    mde.setSelection([2, 1], [2, 1]);
+    cmd.exec('markdown', 'ol');
+
+    expect(getTextContent(mde)).toEqual('\n1. ');
+  });
+
   it('should add ordered list syntax on multi line', () => {
     mde.setMarkdown('ordered1\nordered2');
 
@@ -358,13 +376,13 @@ describe('ol command', () => {
   });
 
   it('should change bullet list to ordered list with depth', () => {
-    mde.setMarkdown('* bullet1\n* bullet2\n* bullet3\n   * sub1\n   * sub2');
+    mde.setMarkdown('* bullet1\n   * sub1\n   * sub2\n* bullet2\n* bullet3');
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'ol');
 
     expect(getTextContent(mde)).toEqual(
-      '1. bullet1\n2. bullet2\n3. bullet3\n   1. sub1\n   2. sub2'
+      '1. bullet1\n   1. sub1\n   2. sub2\n2. bullet2\n3. bullet3'
     );
   });
 });

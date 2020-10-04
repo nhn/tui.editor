@@ -5,7 +5,7 @@ import { isListNode } from '@/utils/markdown';
 import { ListItemMdNode, MdNode } from '@t/markdown';
 import { nbspToSpace } from './manipulation';
 
-interface CurNodeInfo {
+export interface CurNodeInfo {
   toastMark: ToastMark;
   mdNode: MdNode;
   line: number;
@@ -13,14 +13,18 @@ interface CurNodeInfo {
   range: [number, number];
 }
 
+export interface ChangedInfo {
+  line: number;
+  text: string;
+}
+
 type ListType = 'bullet' | 'ordered';
 type ToListFn = (
   curNodeInfo: CurNodeInfo
 ) => {
-  changedTexts: string[];
+  changedInfo: ChangedInfo[];
   firstListOffset?: number;
   lastListOffset?: number;
-  lastListLine?: number;
 };
 interface ToList {
   bullet: ToListFn;
@@ -52,7 +56,8 @@ function findSameDepthList(
   depth: number,
   backward: boolean
 ) {
-  const lineLen = toastMark.getLineTexts().length;
+  const lineTexts = toastMark.getLineTexts();
+  const lineLen = lineTexts.length;
   const result = [];
   let line = currentLine;
 
@@ -61,11 +66,11 @@ function findSameDepthList(
     const mdNode = toastMark.findFirstNodeAtLine(line);
     const currentListDepth = getListDepth(mdNode);
 
-    if (currentListDepth !== depth) {
+    if (currentListDepth === depth) {
+      result.push({ line, depth, mdNode });
+    } else if (currentListDepth < depth) {
       break;
     }
-
-    result.push({ line, depth, mdNode });
   }
 
   return result;
@@ -74,15 +79,15 @@ function findSameDepthList(
 function getSameDepthListInfo(toastMark: ToastMark, mdNode: MdNode, line: number) {
   const depth = getListDepth(mdNode);
 
-  const backwardList = findSameDepthList(toastMark, line, depth, false).reverse();
-  const forwardList = findSameDepthList(toastMark, line, depth, true);
-  const sameDepthListInfo = backwardList.concat([{ line, depth, mdNode }]).concat(forwardList);
+  const forwardList = findSameDepthList(toastMark, line, depth, false).reverse();
+  const backwardList = findSameDepthList(toastMark, line, depth, true);
+  const sameDepthListInfo = forwardList.concat([{ line, depth, mdNode }]).concat(backwardList);
 
   return sameDepthListInfo;
 }
 
 function textToBullet(text: string, mdNode: ListItemMdNode) {
-  if (!isListNode(mdNode)) {
+  if (!reList.test(nbspToSpace(text))) {
     return `* ${text.trim()}`;
   }
 
@@ -98,7 +103,7 @@ function textToBullet(text: string, mdNode: ListItemMdNode) {
 }
 
 function textToOrdered(text: string, mdNode: ListItemMdNode, ordinalNum: number) {
-  if (!isListNode(mdNode)) {
+  if (!reList.test(nbspToSpace(text))) {
     return `${ordinalNum}. ${text.trim()}`;
   }
 
@@ -118,16 +123,13 @@ function getTextByMdLine(doc: ProsemirrorNode, mdLine: number) {
 }
 
 function toBulletOrOrdered(type: ListType, { toastMark, mdNode, doc, line }: CurNodeInfo) {
-  const changedTexts: string[] = [];
+  const changedInfo: ChangedInfo[] = [];
   let firstListOffset = Number.MAX_VALUE;
   let lastListOffset = 0;
-  let lastListLine = line;
 
   const sameDepthListInfo = getSameDepthListInfo(toastMark, mdNode, line);
 
   sameDepthListInfo.forEach(({ line: targetLine, mdNode: targetNode }, index) => {
-    let text = getTextByMdLine(doc, targetLine);
-
     // @ts-ignore
     doc.descendants((node, pos, _, lineOffset) => {
       if (node.isBlock && targetLine === lineOffset + 1) {
@@ -136,16 +138,16 @@ function toBulletOrOrdered(type: ListType, { toastMark, mdNode, doc, line }: Cur
       }
       return lineOffset + 1 <= targetLine;
     });
+    let text = getTextByMdLine(doc, targetLine);
 
     text =
       type === 'bullet'
         ? textToBullet(text, targetNode)
         : textToOrdered(text, targetNode, index + 1);
-    changedTexts.push(text);
-    lastListLine = Math.max(targetLine, lastListLine);
+    changedInfo.push({ text, line: targetLine });
   });
 
-  return { changedTexts, firstListOffset, lastListOffset, lastListLine };
+  return { changedInfo, firstListOffset, lastListOffset };
 }
 
 export const otherListToList: ToList = {
@@ -156,7 +158,7 @@ export const otherListToList: ToList = {
     return toBulletOrOrdered('ordered', currentLineInfo);
   },
   task({ mdNode, doc, line }) {
-    const changedTexts: string[] = [];
+    const changedInfo = [];
     let text = getTextByMdLine(doc, line);
 
     if ((mdNode as ListItemMdNode).listData.task) {
@@ -164,18 +166,18 @@ export const otherListToList: ToList = {
     } else if (isListNode(mdNode)) {
       text = nbspToSpace(text).replace(reList, '$1[ ] ');
     }
-    changedTexts.push(text);
+    changedInfo.push({ text, line });
 
-    return { changedTexts };
+    return { changedInfo };
   }
 };
 
 export const otherToList: ToList = {
   bullet({ doc, line }) {
     const text = getTextByMdLine(doc, line);
-    const changedTexts = [`* ${text}`];
+    const changedInfo = [{ text: `* ${text}`, line }];
 
-    return { changedTexts };
+    return { changedInfo };
   },
   ordered({ toastMark, doc, line, range }) {
     let ordinalNum = 1;
@@ -186,29 +188,31 @@ export const otherToList: ToList = {
 
     for (let i = startLine - 1; i > 0; i -= 1) {
       const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(i);
-      const { listData } = mdNode;
-      const depth = getListDepth(mdNode);
 
-      if (depth === 0) {
-        ordinalStartLine = i;
-        break;
-      }
-      if (depth === 1 && listData && listData.type === 'ordered') {
-        ordinalStartNum = listData.start;
-        ordinalStartLine = i;
-        break;
+      if (mdNode) {
+        const { listData } = mdNode;
+        const depth = getListDepth(mdNode);
+
+        if (depth === 0) {
+          break;
+        }
+        if (depth === 1 && listData && listData.type === 'ordered') {
+          ordinalStartNum = listData.start;
+          ordinalStartLine = i;
+          break;
+        }
       }
     }
     ordinalNum = ordinalStartNum + line - ordinalStartLine;
 
-    const changedTexts = [`${ordinalNum}. ${text}`];
+    const changedInfo = [{ text: `${ordinalNum}. ${text}`, line }];
 
-    return { changedTexts };
+    return { changedInfo };
   },
   task({ doc, line }) {
     const text = getTextByMdLine(doc, line);
-    const changedTexts = [`* [ ] ${text}`];
+    const changedInfo = [{ text: `* [ ] ${text}`, line }];
 
-    return { changedTexts };
+    return { changedInfo };
   }
 };

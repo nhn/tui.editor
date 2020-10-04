@@ -1,8 +1,5 @@
-import {
-  DOMOutputSpecArray,
-  Mark as ProsemirrorMark,
-  Node as ProsemirrorNode
-} from 'prosemirror-model';
+import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
+import { EditorState } from 'prosemirror-state';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import { Context, EditorCommand } from '@t/spec';
 import { MdNode } from '@t/markdown';
@@ -11,7 +8,7 @@ import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
 import { getEditorToMdLine, getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
 import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
-import { otherListToList, otherToList } from '../helper/list';
+import { ChangedInfo, CurNodeInfo, otherListToList, otherToList } from '../helper/list';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
 
@@ -19,6 +16,15 @@ function canNotBeListNode(mdNode: MdNode) {
   const { type } = mdNode;
 
   return type === 'codeBlock' || type === 'heading' || type.indexOf('table') !== -1;
+}
+
+function getPosInfo(state: EditorState) {
+  const { selection, doc } = state;
+  const [from, to] = resolveSelectionPos(selection);
+  const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
+  const [startLine, endLine] = getEditorToMdLine(from, to, doc);
+
+  return { startOffset, endOffset, startLine, endLine };
 }
 
 export class ListItem extends Mark {
@@ -53,31 +59,36 @@ export class ListItem extends Mark {
 
   private toList({ schema, toastMark }: Context, commandType: CommandType): EditorCommand {
     return () => (state, dispatch) => {
-      const { selection, doc, tr } = state;
-      const [from, to] = resolveSelectionPos(selection);
-
-      const [startLine, endLine] = getEditorToMdLine(from, to, doc);
-      let [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
-
-      let nodes: ProsemirrorNode[] = [];
+      const { doc, tr } = state;
+      let skipLines: number[] = [];
+      // eslint-disable-next-line prefer-const
+      let { startOffset, endOffset, startLine, endLine } = getPosInfo(state);
+      let changed: ChangedInfo[] = [];
 
       for (let line = startLine; line <= endLine; line += 1) {
         const mdNode: MdNode = toastMark.findFirstNodeAtLine(line);
 
+        // To skip unnecessary processing
+        if (skipLines.indexOf(line) !== -1) {
+          continue;
+        }
         if (mdNode && canNotBeListNode(mdNode)) {
           break;
         }
 
-        const curNodeInfo = { toastMark, mdNode, doc, line, range: [startLine, endLine] };
-        const { firstListOffset, lastListOffset, lastListLine, changedTexts } = isListNode(mdNode)
-          ? // @ts-ignore
-            otherListToList[commandType](curNodeInfo)
-          : // @ts-ignore
-            otherToList[commandType](curNodeInfo);
+        const curNodeInfo: CurNodeInfo = {
+          toastMark,
+          mdNode,
+          doc,
+          line,
+          range: [startLine, endLine]
+        };
+        const { firstListOffset, lastListOffset, changedInfo } = isListNode(mdNode)
+          ? otherListToList[commandType](curNodeInfo)
+          : otherToList[commandType](curNodeInfo);
 
-        // To skip unnecessary processing
-        if (lastListLine && lastListLine > line) {
-          line = lastListLine;
+        if (changedInfo) {
+          skipLines = skipLines.concat(changedInfo.map(info => info.line));
         }
 
         // resolve start offset to change forward same depth list
@@ -94,10 +105,13 @@ export class ListItem extends Mark {
           }
         }
 
-        nodes = nodes.concat(changedTexts.map(text => createParagraph(schema, text)));
+        changed = changed.concat(changedInfo);
       }
 
-      if (nodes.length) {
+      if (changed.length) {
+        changed.sort((a, b) => (a.line < b.line ? -1 : 1));
+        const nodes = changed.map(info => createParagraph(schema, info.text));
+
         dispatch!(replaceBlockNodes(tr, startOffset, endOffset, nodes));
         return true;
       }
@@ -111,6 +125,21 @@ export class ListItem extends Mark {
       ul: this.toList(context, 'bullet'),
       ol: this.toList(context, 'ordered'),
       task: this.toList(context, 'task')
+    };
+  }
+
+  keymaps(context: Context) {
+    const ulCommand = this.toList(context, 'bullet')();
+    const olCommand = this.toList(context, 'ordered')();
+    const taskCommand = this.toList(context, 'task')();
+
+    return {
+      'Mod-u': ulCommand,
+      'Mod-U': ulCommand,
+      'Mod-o': olCommand,
+      'Mod-O': olCommand,
+      'alt-t': taskCommand,
+      'alt-T': taskCommand
     };
   }
 }
