@@ -118,7 +118,7 @@ function textToOrdered(text: string, mdNode: ListItemMdNode, ordinalNum: number)
 }
 
 function getTextByMdLine(doc: ProsemirrorNode, mdLine: number) {
-  return doc.content.child(mdLine - 1).textContent;
+  return nbspToSpace(doc.content.child(mdLine - 1).textContent);
 }
 
 function toBulletOrOrdered(type: ListType, curNodeInfo: CurNodeInfo) {
@@ -137,7 +137,7 @@ function toBulletOrOrdered(type: ListType, curNodeInfo: CurNodeInfo) {
       }
       return lineOffset! + 1 <= targetLine;
     });
-    let text = nbspToSpace(getTextByMdLine(doc, targetLine));
+    let text = getTextByMdLine(doc, targetLine);
 
     text =
       type === 'bullet'
@@ -158,7 +158,7 @@ export const otherListToList: ToList = {
   },
   task({ mdNode, doc, line }) {
     const changedInfo = [];
-    let text = nbspToSpace(getTextByMdLine(doc, line));
+    let text = getTextByMdLine(doc, line);
 
     if ((mdNode as ListItemMdNode).listData.task) {
       text = text.replace(reTaskList, '$1');
