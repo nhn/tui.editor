@@ -76,9 +76,8 @@ function findSameDepthList(
   return result;
 }
 
-function getSameDepthListInfo(toastMark: ToastMark, mdNode: MdNode, line: number) {
+function getSameDepthListInfo({ toastMark, mdNode, line }: CurNodeInfo) {
   const depth = getListDepth(mdNode);
-
   const forwardList = findSameDepthList(toastMark, line, depth, false).reverse();
   const backwardList = findSameDepthList(toastMark, line, depth, true);
   const sameDepthListInfo = forwardList.concat([{ line, depth, mdNode }]).concat(backwardList);
@@ -87,7 +86,6 @@ function getSameDepthListInfo(toastMark: ToastMark, mdNode: MdNode, line: number
 }
 
 function textToBullet(text: string, mdNode: ListItemMdNode) {
-  text = nbspToSpace(text);
   if (!reList.test(text)) {
     return `* ${text.trim()}`;
   }
@@ -104,7 +102,6 @@ function textToBullet(text: string, mdNode: ListItemMdNode) {
 }
 
 function textToOrdered(text: string, mdNode: ListItemMdNode, ordinalNum: number) {
-  text = nbspToSpace(text);
   if (!reList.test(text)) {
     return `${ordinalNum}. ${text.trim()}`;
   }
@@ -124,12 +121,13 @@ function getTextByMdLine(doc: ProsemirrorNode, mdLine: number) {
   return doc.content.child(mdLine - 1).textContent;
 }
 
-function toBulletOrOrdered(type: ListType, { toastMark, mdNode, doc, line }: CurNodeInfo) {
+function toBulletOrOrdered(type: ListType, curNodeInfo: CurNodeInfo) {
+  const { doc } = curNodeInfo;
   const changedInfo: ChangedInfo[] = [];
   let firstListOffset = Number.MAX_VALUE;
   let lastListOffset = 0;
 
-  const sameDepthListInfo = getSameDepthListInfo(toastMark, mdNode, line);
+  const sameDepthListInfo = getSameDepthListInfo(curNodeInfo);
 
   sameDepthListInfo.forEach(({ line: targetLine, mdNode: targetNode }, index) => {
     doc.descendants((node, pos, _, lineOffset) => {
@@ -139,7 +137,7 @@ function toBulletOrOrdered(type: ListType, { toastMark, mdNode, doc, line }: Cur
       }
       return lineOffset! + 1 <= targetLine;
     });
-    let text = getTextByMdLine(doc, targetLine);
+    let text = nbspToSpace(getTextByMdLine(doc, targetLine));
 
     text =
       type === 'bullet'
