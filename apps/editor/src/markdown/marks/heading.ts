@@ -46,9 +46,9 @@ export class Heading extends Mark {
     return textContent ? `${newLevel} ${textContent}` : `${newLevel} `;
   }
 
-  commands({ schema }: Context): EditorCommand {
+  commands({ schema }: Context): EditorCommand<Payload> {
     return payload => (state, dispatch) => {
-      const { level } = payload as Payload;
+      const { level } = payload!;
       const { selection, doc, tr } = state;
       const [from, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);

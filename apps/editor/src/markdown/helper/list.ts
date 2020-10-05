@@ -80,9 +80,8 @@ function getSameDepthListInfo({ toastMark, mdNode, line }: CurNodeInfo) {
   const depth = getListDepth(mdNode);
   const forwardList = findSameDepthList(toastMark, line, depth, false).reverse();
   const backwardList = findSameDepthList(toastMark, line, depth, true);
-  const sameDepthListInfo = forwardList.concat([{ line, depth, mdNode }]).concat(backwardList);
 
-  return sameDepthListInfo;
+  return forwardList.concat([{ line, depth, mdNode }]).concat(backwardList);
 }
 
 function textToBullet(text: string, mdNode: ListItemMdNode) {
@@ -171,7 +170,7 @@ export const otherListToList: ToList = {
   }
 };
 
-export const otherToList: ToList = {
+export const otherNodeToList: ToList = {
   bullet({ doc, line }) {
     const text = getTextByMdLine(doc, line);
     const changedInfo = [{ text: `* ${text}`, line }];

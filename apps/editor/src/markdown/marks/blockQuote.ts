@@ -45,7 +45,7 @@ export class BlockQuote extends Mark {
       const isBlockQuote = reBlockQuoteSyntax.test(lineText);
 
       const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
-      const isEmpty = !lineText.replace(reBlockQuoteSyntax, '');
+      const isEmpty = !lineText.replace(reBlockQuoteSyntax, '').trim();
 
       if (isBlockQuote) {
         if (isEmpty) {

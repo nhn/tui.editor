@@ -71,10 +71,10 @@ export class Link extends Mark {
     };
   }
 
-  private addLinkOrImage({ schema }: Context, commandType: CommandType): EditorCommand {
+  private addLinkOrImage({ schema }: Context, commandType: CommandType): EditorCommand<Payload> {
     return payload => (state, dispatch) => {
       const [from, to] = resolveSelectionPos(state.selection);
-      const { linkText, altText, linkUrl, imageUrl } = payload as Payload;
+      const { linkText, altText, linkUrl, imageUrl } = payload!;
       let text = linkText;
       let url = linkUrl;
       let syntax = '';

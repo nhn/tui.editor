@@ -8,7 +8,7 @@ declare module 'prosemirror-model' {
 
   export interface ProsemirrorNode extends Model.Node {
     descendants(
-      f: (
+      fn: (
         node: Model.Node,
         pos: number,
         parent: Model.Node,

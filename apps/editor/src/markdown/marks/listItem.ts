@@ -8,7 +8,7 @@ import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
 import { getEditorToMdLine, getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
 import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
-import { ChangedInfo, CurNodeInfo, otherListToList, otherToList } from '../helper/list';
+import { ChangedInfo, CurNodeInfo, otherListToList, otherNodeToList } from '../helper/list';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
 
@@ -60,9 +60,11 @@ export class ListItem extends Mark {
   private toList({ schema, toastMark }: Context, commandType: CommandType): EditorCommand {
     return () => (state, dispatch) => {
       const { doc, tr } = state;
+      const posInfo = getPosInfo(state);
+      const { startLine, endLine } = posInfo;
+      let { startOffset, endOffset } = posInfo;
+
       let skipLines: number[] = [];
-      // eslint-disable-next-line prefer-const
-      let { startOffset, endOffset, startLine, endLine } = getPosInfo(state);
       let changed: ChangedInfo[] = [];
 
       for (let line = startLine; line <= endLine; line += 1) {
@@ -85,7 +87,7 @@ export class ListItem extends Mark {
         };
         const { firstListOffset, lastListOffset, changedInfo } = isListNode(mdNode)
           ? otherListToList[commandType](curNodeInfo)
-          : otherToList[commandType](curNodeInfo);
+          : otherNodeToList[commandType](curNodeInfo);
 
         if (changedInfo) {
           skipLines = skipLines.concat(changedInfo.map(info => info.line));
@@ -122,9 +124,9 @@ export class ListItem extends Mark {
 
   commands(context: Context) {
     return {
-      ul: this.toList(context, 'bullet'),
-      ol: this.toList(context, 'ordered'),
-      task: this.toList(context, 'task')
+      bulletList: this.toList(context, 'bullet'),
+      orderedList: this.toList(context, 'ordered'),
+      taskList: this.toList(context, 'task')
     };
   }
 

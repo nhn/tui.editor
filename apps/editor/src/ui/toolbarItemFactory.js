@@ -83,7 +83,7 @@ class ToolbarItemFactory {
         toolbarItem = new ToolbarButton({
           name: 'ul',
           className: 'tui-ul',
-          command: 'ul',
+          command: 'bulletList',
           tooltip: i18n.get('Unordered list'),
           state: 'list'
         });
@@ -92,7 +92,7 @@ class ToolbarItemFactory {
         toolbarItem = new ToolbarButton({
           name: 'ol',
           className: 'tui-ol',
-          command: 'ol',
+          command: 'orderedList',
           tooltip: i18n.get('Ordered list'),
           state: 'orderedList'
         });
@@ -101,7 +101,7 @@ class ToolbarItemFactory {
         toolbarItem = new ToolbarButton({
           name: 'task',
           className: 'tui-task',
-          command: 'task',
+          command: 'taskList',
           tooltip: i18n.get('Task'),
           state: 'taskList'
         });

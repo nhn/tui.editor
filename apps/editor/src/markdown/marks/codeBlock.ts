@@ -6,8 +6,6 @@ import Mark from '@/spec/mark';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
 import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
 
-const fencedSyntax = '```';
-
 export class CodeBlock extends Mark {
   get name() {
     return 'codeBlock';
@@ -27,7 +25,7 @@ export class CodeBlock extends Mark {
       const [from, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
 
-      const fencedNode = createParagraph(schema, fencedSyntax);
+      const fencedNode = createParagraph(schema, '```');
       const nodes: ProsemirrorNode[] = [fencedNode];
 
       state.doc.nodesBetween(startOffset, endOffset, ({ isBlock, textContent }) => {

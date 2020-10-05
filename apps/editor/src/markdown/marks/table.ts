@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpecArray } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { Context, EditorCommand } from '@t/spec';
@@ -60,7 +60,7 @@ export class Table extends Mark {
       const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
       const [startPos] = getEditorToMdPos(to, to, doc);
       const lineText = toastMark.getLineTexts()[startPos[0] - 1];
-      const isEmpty = !lineText.replace(reEmptyTable, '');
+      const isEmpty = !lineText.replace(reEmptyTable, '').trim();
 
       const mdNode: MdNode = toastMark.findNodeAtPosition(startPos);
       const cellNode = findClosestNode(
@@ -93,23 +93,16 @@ export class Table extends Mark {
     };
   }
 
-  commands({ schema }: Context): EditorCommand {
+  commands({ schema }: Context): EditorCommand<Payload> {
     return payload => ({ selection, doc, tr }, dispatch) => {
-      const { colLen, rowLen } = payload as Payload;
+      const { colLen, rowLen } = payload!;
       const [, to] = resolveSelectionPos(selection);
       const endOffset = doc.resolve(to).end();
 
       const headerRows = createTableHeader(colLen);
       const bodyRows = createTableBody(colLen, rowLen - 1);
 
-      const nodes: ProsemirrorNode[] = [];
-
-      headerRows.forEach(row => {
-        nodes.push(createParagraph(schema, row));
-      });
-      bodyRows.forEach(row => {
-        nodes.push(createParagraph(schema, row));
-      });
+      const nodes = [...headerRows, ...bodyRows].map(row => createParagraph(schema, row));
 
       const newTr = insertBlockNodes(tr, endOffset, nodes);
       const newSelection = TextSelection.create(newTr.doc, endOffset + 4);
