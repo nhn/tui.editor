@@ -9,8 +9,7 @@ import {
   createParagraph,
   insertBlockNodes,
   nbspToSpace,
-  replaceBlockNodes,
-  spaceToNbsp
+  replaceBlockNodes
 } from '../helper/manipulation';
 
 const reBlockQuoteSyntax = /^> ?/;
@@ -33,7 +32,7 @@ export class BlockQuote extends Mark {
     if (isBlockQuote) {
       return text.replace(reBlockQuoteSyntax, '').trim();
     }
-    return spaceToNbsp(text.trim() ? `> ${text.trim()}` : `> `);
+    return text.trim() ? `> ${text.trim()}` : `> `;
   }
 
   private extendBlockQuote(context: Context): Command {

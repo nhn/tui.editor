@@ -87,32 +87,34 @@ function getSameDepthListInfo(toastMark: ToastMark, mdNode: MdNode, line: number
 }
 
 function textToBullet(text: string, mdNode: ListItemMdNode) {
-  if (!reList.test(nbspToSpace(text))) {
+  text = nbspToSpace(text);
+  if (!reList.test(text)) {
     return `* ${text.trim()}`;
   }
 
   const { type, task } = mdNode.listData;
 
   if (type === 'bullet' && task) {
-    text = nbspToSpace(text).replace(reBulletTaskList, '$1 ');
+    text = text.replace(reBulletTaskList, '$1 ');
   } else if (type === 'ordered') {
-    text = nbspToSpace(text).replace(reOrderedList, '* ');
+    text = text.replace(reOrderedList, '* ');
   }
 
   return text;
 }
 
 function textToOrdered(text: string, mdNode: ListItemMdNode, ordinalNum: number) {
-  if (!reList.test(nbspToSpace(text))) {
+  text = nbspToSpace(text);
+  if (!reList.test(text)) {
     return `${ordinalNum}. ${text.trim()}`;
   }
 
   const { type, task } = mdNode.listData;
 
   if (type === 'bullet' || (type === 'ordered' && task)) {
-    text = nbspToSpace(text).replace(reCanBeTaskList, `${ordinalNum}. `);
+    text = text.replace(reCanBeTaskList, `${ordinalNum}. `);
   } else if (type === 'ordered' && parseInt(RegExp.$1, 10) !== ordinalNum) {
-    text = nbspToSpace(text).replace(reOrderedList, `${ordinalNum}. `);
+    text = text.replace(reOrderedList, `${ordinalNum}. `);
   }
 
   return text;
@@ -158,12 +160,12 @@ export const otherListToList: ToList = {
   },
   task({ mdNode, doc, line }) {
     const changedInfo = [];
-    let text = getTextByMdLine(doc, line);
+    let text = nbspToSpace(getTextByMdLine(doc, line));
 
     if ((mdNode as ListItemMdNode).listData.task) {
-      text = nbspToSpace(text).replace(reTaskList, '$1');
+      text = text.replace(reTaskList, '$1');
     } else if (isListNode(mdNode)) {
-      text = nbspToSpace(text).replace(reList, '$1[ ] ');
+      text = text.replace(reList, '$1[ ] ');
     }
     changedInfo.push({ text, line });
 
