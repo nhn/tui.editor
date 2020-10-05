@@ -5,13 +5,27 @@ export function replaceBlockNodes(
   tr: Transaction,
   from: number,
   to: number,
-  nodes: ProsemirrorNode[]
+  nodes: ProsemirrorNode | ProsemirrorNode[],
+  diff: { from: number; to: number } = { from: 1, to: 1 }
 ) {
   return (
     tr
-      .replaceWith(from - 1, to + 1, nodes)
+      .replaceWith(from - diff.from, to + diff.to, nodes)
       // To prevent incorrect calculation of the position for markdown parser
       .setMeta('resolvedPos', [from, to])
+  );
+}
+
+export function insertBlockNodes(
+  tr: Transaction,
+  pos: number,
+  nodes: ProsemirrorNode | ProsemirrorNode[]
+) {
+  return (
+    tr
+      .insert(pos, nodes)
+      // To prevent incorrect calculation of the position for markdown parser
+      .setMeta('resolvedPos', [pos, pos])
   );
 }
 

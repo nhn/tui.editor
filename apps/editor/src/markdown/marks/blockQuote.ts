@@ -2,17 +2,16 @@ import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
 import { TextSelection } from 'prosemirror-state';
 import { Context, EditorCommand } from '@t/spec';
-import { MdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { getEditorToMdLine, getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
+import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
 import {
   createParagraph,
+  insertBlockNodes,
   nbspToSpace,
   replaceBlockNodes,
   spaceToNbsp
 } from '../helper/manipulation';
-import { isBlockQuoteNode } from '@/utils/markdown';
 
 const reBlockQuoteSyntax = /^> ?/;
 
@@ -38,9 +37,8 @@ export class BlockQuote extends Mark {
   }
 
   private extendBlockQuote(context: Context): Command {
-    return (state, dispatch) => {
+    return ({ selection, doc, tr }, dispatch) => {
       const { schema } = context;
-      const { selection, doc, tr } = state;
       const [, to] = resolveSelectionPos(selection);
       const startResolvedPos = doc.resolve(to);
 
@@ -52,14 +50,18 @@ export class BlockQuote extends Mark {
 
       if (isBlockQuote) {
         if (isEmpty) {
-          dispatch!(tr.replaceWith(startOffset, endOffset, createParagraph(schema)));
+          const emptyNode = createParagraph(schema);
+
+          dispatch!(replaceBlockNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
         } else {
           const nextLineText = lineText.slice(to - startOffset).trim();
           const node = createParagraph(schema, this.getChangedText(nextLineText));
-          const newTr = nextLineText ? tr.replaceWith(to, endOffset, node) : tr.insert(to, node);
-          const caretSelection = TextSelection.create(newTr.doc, to + 4);
+          const newTr = nextLineText
+            ? replaceBlockNodes(tr, to, endOffset, node, { from: 0, to: 1 })
+            : insertBlockNodes(tr, endOffset, node);
+          const newSelection = TextSelection.create(newTr.doc, to + 4);
 
-          dispatch!(newTr.setSelection(caretSelection));
+          dispatch!(newTr.setSelection(newSelection));
         }
 
         return true;

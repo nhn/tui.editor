@@ -7,7 +7,7 @@ import { cls } from '@/utils/dom';
 import { findClosestNode, isTableCellNode } from '@/utils/markdown';
 import Mark from '@/spec/mark';
 import { getEditorToMdPos, getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import { createParagraph } from '../helper/manipulation';
+import { createParagraph, insertBlockNodes, replaceBlockNodes } from '../helper/manipulation';
 
 interface Payload {
   colLen: number;
@@ -55,7 +55,7 @@ export class Table extends Mark {
   private extendTable(context: Context): Command {
     return (state, dispatch) => {
       const { schema, toastMark } = context;
-      const { selection, doc } = state;
+      const { selection, doc, tr } = state;
       const [, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
       const [startPos] = getEditorToMdPos(to, to, doc);
@@ -76,12 +76,14 @@ export class Table extends Mark {
         const row = createTableRow(colLen);
 
         if (isEmpty) {
-          dispatch!(state.tr.replaceWith(startOffset, endOffset, createParagraph(schema)));
-        } else {
-          const tr = state.tr.insert(endOffset, createParagraph(schema, row));
-          const caretSelection = TextSelection.create(tr.doc, endOffset + 4);
+          const emptyNode = createParagraph(schema);
 
-          dispatch!(tr.setSelection(caretSelection));
+          dispatch!(replaceBlockNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
+        } else {
+          const newTr = insertBlockNodes(tr, endOffset, createParagraph(schema, row));
+          const caretSelection = TextSelection.create(newTr.doc, endOffset + 4);
+
+          dispatch!(newTr.setSelection(caretSelection));
         }
 
         return true;
@@ -92,10 +94,10 @@ export class Table extends Mark {
   }
 
   commands({ schema }: Context): EditorCommand {
-    return payload => (state, dispatch) => {
+    return payload => ({ selection, doc, tr }, dispatch) => {
       const { colLen, rowLen } = payload as Payload;
-      const [, to] = resolveSelectionPos(state.selection);
-      const endOffset = state.doc.resolve(to).end();
+      const [, to] = resolveSelectionPos(selection);
+      const endOffset = doc.resolve(to).end();
 
       const headerRows = createTableHeader(colLen);
       const bodyRows = createTableBody(colLen, rowLen - 1);
@@ -109,10 +111,10 @@ export class Table extends Mark {
         nodes.push(createParagraph(schema, row));
       });
 
-      const tr = state.tr.insert(endOffset, nodes);
-      const selection = TextSelection.create(tr.doc, endOffset + 4);
+      const newTr = insertBlockNodes(tr, endOffset, nodes);
+      const newSelection = TextSelection.create(newTr.doc, endOffset + 4);
 
-      dispatch!(tr.setSelection(selection));
+      dispatch!(tr.setSelection(newSelection));
 
       return true;
     };
