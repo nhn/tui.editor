@@ -1,14 +1,15 @@
-import { EditorState, StateOptions } from 'prosemirror-state';
+import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Schema, Node } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 
-import EditorBase from '@/base';
+import EditorBase, { StateOptions } from '@/base';
 import { Emitter } from '@t/event';
 
 import { createSpecs } from './specCreator';
-import { stylingContainer } from './plugins/stylingContainer.js';
+
+const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
 export default class WysiwygEditor extends EditorBase {
   constructor(el: HTMLElement, eventEmitter: Emitter) {
@@ -48,14 +49,15 @@ export default class WysiwygEditor extends EditorBase {
   createState(addedStates?: StateOptions) {
     return EditorState.create({
       schema: this.schema,
-      plugins: [...this.keymaps, keymap(baseKeymap), stylingContainer()],
+      plugins: [...this.keymaps, keymap(baseKeymap)],
       ...addedStates
     });
   }
 
   createView() {
     return new EditorView(this.el, {
-      state: this.createState()
+      state: this.createState(),
+      attributes: { class: CONTENTS_CLASS_NAME }
     });
   }
 
