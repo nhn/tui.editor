@@ -14,7 +14,6 @@ export function previewHighlight({ toastMark, eventEmitter }: Context) {
           }
           const { from } = selection;
           const startChOffset = state.doc.resolve(from).start();
-          // @ts-ignore
           const line = state.doc.content.findIndex(from).index + 1;
           let ch = from - startChOffset;
 

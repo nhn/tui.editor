@@ -75,7 +75,13 @@ export interface CodeBlockMdNode extends MdNode {
 }
 
 export interface ListItemMdNode extends MdNode {
-  listData: { padding: number; task: boolean; checked: boolean };
+  listData: {
+    padding: number;
+    task: boolean;
+    checked: boolean;
+    type: 'bullet' | 'ordered';
+    start: number;
+  };
 }
 
 export interface HeadingMdNode extends MdNode {
@@ -94,6 +100,22 @@ export interface LinkMdNode extends MdNode {
 
 export interface CodeMdNode extends MdNode {
   tickCount: number;
+}
+
+export interface TableColumn {
+  align: 'left' | 'center' | 'right';
+}
+
+export interface TableCellNode extends MdNode {
+  startIdx: number;
+  endIdx: number;
+  paddingLeft: number;
+  paddingRight: number;
+  ignored: boolean;
+}
+
+export interface TableMdNode extends MdNode {
+  columns: TableColumn[];
 }
 
 /* ToastMark Parser type */

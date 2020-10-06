@@ -112,7 +112,7 @@ class PopupAddTable extends LayerPopup {
   _fireCommandEvent() {
     const tableSize = this._getSelectedTableSize();
 
-    this._eventEmitter.emit('command', 'Table', tableSize.col, tableSize.row);
+    this._eventEmitter.emit('command', { type: 'markdown', command: 'table' }, tableSize);
   }
 
   /**
@@ -197,8 +197,8 @@ class PopupAddTable extends LayerPopup {
 
     if (this._isNeedResizeTable(resizedCol, resizedRow)) {
       resizedBound = {
-        row: resizedRow || this._tableBound.row,
-        col: resizedCol || this._tableBound.col
+        rowLen: resizedRow || this._tableBound.row,
+        colLen: resizedCol || this._tableBound.col
       };
     }
 
@@ -319,8 +319,8 @@ class PopupAddTable extends LayerPopup {
    */
   _getSelectedTableSize() {
     return {
-      row: this._selectedBound.row + 1,
-      col: this._selectedBound.col + 1
+      rowLen: this._selectedBound.row + 1,
+      colLen: this._selectedBound.col + 1
     };
   }
 

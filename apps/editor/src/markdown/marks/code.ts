@@ -44,7 +44,6 @@ export class Code extends Mark {
       const [from, to] = resolveSelectionPos(state.selection);
       const { empty } = state.selection;
       const slice = state.selection.content();
-      // @ts-ignore
       const textContent = slice.content.textBetween(0, slice.content.size, '\n');
       let { tr } = state;
 
@@ -62,5 +61,11 @@ export class Code extends Mark {
 
       return true;
     };
+  }
+
+  keymaps() {
+    const codeCommand = this.commands()();
+
+    return { 'Shift-Mod-c': codeCommand, 'Shift-Mod-C': codeCommand };
   }
 }

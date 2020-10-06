@@ -4,6 +4,7 @@ import { Context, EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { resolveSelectionPos } from '../helper/pos';
+import { createParagraph } from '../helper/manipulation';
 
 const thematicBreakSyntax = '***';
 
@@ -23,12 +24,17 @@ export class ThematicBreak extends Mark {
   private line({ schema }: Context): EditorCommand {
     return () => (state, dispatch) => {
       const [from, to] = resolveSelectionPos(state.selection);
-      const tr = state.tr.replaceWith(from, to, [
-        schema.nodes.paragraph.create(null, schema.text(thematicBreakSyntax)),
-        schema.nodes.paragraph.create(null)
-      ]);
+      const emptyNode = createParagraph(schema);
+      const lineNode = createParagraph(schema, thematicBreakSyntax);
+      const nodes = [lineNode];
+
+      if (to >= state.doc.resolve(to).end()) {
+        nodes.push(emptyNode);
+      }
+
+      const tr = state.tr.replaceWith(from, to, nodes);
       // add 3(`***` length) and 3(start, end block tag position)
-      const selection = TextSelection.create(tr.doc, Math.min(to + 6, tr.doc.content.size));
+      const selection = TextSelection.create(tr.doc, Math.min(from + 6, tr.doc.content.size));
 
       dispatch!(tr.setSelection(selection));
 
@@ -41,8 +47,8 @@ export class ThematicBreak extends Mark {
   }
 
   keymaps(context: Context) {
-    const commandResult = this.line(context)();
+    const lineCommand = this.line(context)();
 
-    return { 'Mod-l': commandResult, 'Mod-L': commandResult };
+    return { 'Mod-l': lineCommand, 'Mod-L': lineCommand };
   }
 }

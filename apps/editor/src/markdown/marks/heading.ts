@@ -1,14 +1,15 @@
-import {
-  DOMOutputSpecArray,
-  Mark as ProsemirrorMark,
-  Node as ProsemirrorNode
-} from 'prosemirror-model';
+import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'prosemirror-model';
 import { EditorCommand, Context } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { resolveSelectionPos } from '../helper/pos';
+import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
+import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
 
 const reHeading = /^#+\s/;
+
+interface Payload {
+  level: number;
+}
 
 export class Heading extends Mark {
   get name() {
@@ -42,19 +43,15 @@ export class Heading extends Mark {
       level -= 1;
     }
 
-    // insert the nbsp to preserve the space for markdown parser
-    return textContent ? `${newLevel} ${textContent}` : `${newLevel}\u00a0`;
+    return textContent ? `${newLevel} ${textContent}` : `${newLevel} `;
   }
 
-  commands({ schema }: Context): EditorCommand {
+  commands({ schema }: Context): EditorCommand<Payload> {
     return payload => (state, dispatch) => {
       const { level } = payload!;
       const { selection, doc, tr } = state;
       const [from, to] = resolveSelectionPos(selection);
-
-      const startResolvedPos = doc.resolve(from);
-      const startOffset = startResolvedPos.start();
-      const endOffset = selection.empty ? startResolvedPos.end() : doc.resolve(to).end();
+      const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
 
       const nodes: ProsemirrorNode[] = [];
 
@@ -68,18 +65,13 @@ export class Heading extends Mark {
           if (!curLevel || curLevel !== level) {
             const result = this.getChangedText(level, textContent, curHeadingSyntax);
 
-            nodes.push(schema.nodes.paragraph.create(null, schema.text(result)));
+            nodes.push(createParagraph(schema, result));
           }
         }
       });
 
       if (nodes.length) {
-        dispatch!(
-          tr
-            .replaceWith(startOffset - 1, endOffset + 1, nodes)
-            // To prevent incorrect calculation of the position for markdown parser
-            .setMeta('resolvedPos', [startOffset, endOffset])
-        );
+        dispatch!(replaceBlockNodes(tr, startOffset, endOffset, nodes));
         return true;
       }
 

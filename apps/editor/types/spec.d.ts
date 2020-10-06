@@ -12,8 +12,15 @@ export interface Context {
   eventEmitter: Emitter;
   view?: EditorView;
 }
+
 export type Dispatch = (tr: Transaction) => void;
-export type EditorCommand = (payload?: Record<string, any>) => Command;
-export type EditorCommandMap = Record<string, EditorCommand>;
-export type EditorCommandFn = (payload?: Record<string, any>) => boolean;
-export type EditorAllCommandMap = Record<string, EditorCommandFn>;
+export type EditorCommand<T extends Record<string, any> = any> = (payload?: T) => Command;
+export type EditorCommandMap<T extends Record<string, any> = any> = Record<
+  string,
+  EditorCommand<T>
+>;
+export type EditorCommandFn<T extends Record<string, any> = any> = (payload?: T) => boolean;
+export type EditorAllCommandMap<T extends Record<string, any> = any> = Record<
+  string,
+  EditorCommandFn<T>
+>;

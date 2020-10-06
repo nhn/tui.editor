@@ -26,7 +26,6 @@ export class Emph extends Mark {
       const [from, to] = resolveSelectionPos(state.selection);
       const { empty } = state.selection;
       const slice = state.selection.content();
-      // @ts-ignore
       const textContent = slice.content.textBetween(0, slice.content.size, '\n');
       let { tr } = state;
 
@@ -51,8 +50,8 @@ export class Emph extends Mark {
   }
 
   keymaps() {
-    const commandResult = this.italic()();
+    const italicCommand = this.italic()();
 
-    return { 'Mod-i': commandResult, 'Mod-I': commandResult };
+    return { 'Mod-i': italicCommand, 'Mod-I': italicCommand };
   }
 }

@@ -30,7 +30,8 @@ import { Code } from './marks/code';
 import { Link } from './marks/link';
 import { Delimiter, TaskDelimiter, MarkedText, Meta } from './marks/simpleMark';
 import { Html } from './marks/html';
-import { getMdToEditorPos } from './helper/pos';
+import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
+import { createParagraph, nbspToSpace } from './helper/manipulation';
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
@@ -44,22 +45,25 @@ export default class MdEditor extends EditorBase {
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
-    this.keymaps = this.createKeymaps();
     this.view = this.createView();
+    this.keymaps = this.createKeymaps();
     this.commands = this.createCommands();
     this.keyCode = null;
+
+    this.view.updateState(this.createState());
   }
 
   createContext() {
     return {
       toastMark: this.toastMark,
       schema: this.schema,
-      eventEmitter: this.eventEmitter
+      eventEmitter: this.eventEmitter,
+      view: this.view
     };
   }
 
   createKeymaps() {
-    return this.specs.keymaps(this.context);
+    return this.specs.keymaps({ ...this.context, view: this.view });
   }
 
   createSpecs() {
@@ -107,7 +111,7 @@ export default class MdEditor extends EditorBase {
 
   createView() {
     return new EditorView(this.el, {
-      state: this.createState(),
+      state: EditorState.create({ doc: DOMParser.fromSchema(this.schema).parse(this.el) }),
       dispatchTransaction: tr => {
         this.updateMarkdown(tr);
 
@@ -115,7 +119,7 @@ export default class MdEditor extends EditorBase {
 
         this.view.updateState(state);
       },
-      handleKeyDown: (_, event) => {
+      handleKeyPress: (_, event) => {
         // @TODO: change the keyCode
         this.keyCode = event.keyCode;
 
@@ -134,20 +138,8 @@ export default class MdEditor extends EditorBase {
     if (tr.docChanged) {
       tr.steps.forEach(step => {
         const [from, to] = this.getResolvedRange(tr, step);
-        // @ts-ignore
         const changed = this.getChanged(step.slice);
-
-        const fragment = state.doc.content;
-        // @ts-ignore
-        const startLine = fragment.findIndex(from).index + 1;
-        // @ts-ignore
-        const endLine = from === to ? startLine : fragment.findIndex(to - 1).index + 1;
-
-        const startChOffset = state.doc.resolve(from).start();
-        const endChOffset = from === to ? startChOffset : state.doc.resolve(to).start();
-
-        const startPos = [startLine, from - startChOffset + 1];
-        const endPos = [endLine, to - endChOffset + 1];
+        const [startPos, endPos] = getEditorToMdPos(from, to, state.doc);
 
         const editResult = this.toastMark.editMarkdown(startPos, endPos, changed);
 
@@ -161,7 +153,6 @@ export default class MdEditor extends EditorBase {
   private getResolvedRange(tr: Transaction, step: Step) {
     const resolvedPos = tr.getMeta('resolvedPos');
 
-    // @ts-ignore
     return resolvedPos || [step.from, step.to];
   }
 
@@ -172,21 +163,18 @@ export default class MdEditor extends EditorBase {
     }
 
     let changed = '';
-    let separated = true;
     const from = 0;
     const to = slice.content.size;
 
     slice.content.nodesBetween(from, to, (node, pos) => {
       if (node.isText) {
         changed += node.text!.slice(Math.max(from, pos) - pos, to - pos);
-        separated = false;
-      } else if ((!separated || !node.content.size) && node.isBlock) {
+      } else if (node.isBlock && pos > 0) {
         changed += '\n';
-        separated = true;
       }
     });
 
-    return changed.replace(/\u00a0/g, ' ');
+    return nbspToSpace(changed);
   }
 
   setSelection(start: MdPos, end: MdPos) {
@@ -232,7 +220,6 @@ export default class MdEditor extends EditorBase {
   setPlaceholder(placeholder: string) {}
 
   destroy() {}
-
   /* eslint-enable @typescript-eslint/no-empty-function */
 
   setMarkdown(markdown: string, cursorToEnd?: boolean) {
@@ -240,10 +227,7 @@ export default class MdEditor extends EditorBase {
       const contents = markdown.split('\n');
       const { state, dispatch } = this.view;
       const { tr, doc } = state;
-      const newNodes = contents.map(content =>
-        // @ts-ignore
-        this.schema.node('paragraph', null, [this.schema.text(content)])
-      );
+      const newNodes = contents.map(content => createParagraph(this.schema, content));
 
       dispatch(tr.replaceWith(0, doc.content.size, newNodes));
     }

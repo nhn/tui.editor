@@ -67,8 +67,8 @@ export function isStyledTextNode(mdNode: MdNode) {
   return type === 'strike' || type === 'strong' || type === 'emph';
 }
 
-export function isListItemNode(mdNode: MdNode) {
-  return mdNode.type === 'item';
+export function isListNode(mdNode: MdNode) {
+  return mdNode && (mdNode.type === 'item' || mdNode.type === 'list');
 }
 
 export function isTableCellNode(mdNode: MdNode) {
@@ -155,4 +155,14 @@ export function addOffsetPos(originPos: MdPos, offset: number): MdPos {
 
 export function setOffsetPos(originPos: MdPos, newOffset: number): MdPos {
   return [originPos[0], newOffset];
+}
+
+export function getListText(mdNode: MdNode) {
+  while (mdNode) {
+    if (mdNode.type === 'text') {
+      return mdNode.literal;
+    }
+    mdNode = mdNode.firstChild!;
+  }
+  return '';
 }

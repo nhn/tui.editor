@@ -26,7 +26,6 @@ export class Strike extends Mark {
       const [from, to] = resolveSelectionPos(state.selection);
       const { empty } = state.selection;
       const slice = state.selection.content();
-      // @ts-ignore
       const textContent = slice.content.textBetween(0, slice.content.size, '\n');
       let { tr } = state;
 
@@ -44,5 +43,11 @@ export class Strike extends Mark {
 
       return true;
     };
+  }
+
+  keymaps() {
+    const strikeCommand = this.commands()();
+
+    return { 'Mod-s': strikeCommand, 'Mod-S': strikeCommand };
   }
 }

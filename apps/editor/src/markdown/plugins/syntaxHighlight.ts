@@ -49,17 +49,17 @@ export function syntaxHighlight({ toastMark, schema }: Context) {
 function removeMark(nodes: MdNode[], lineTexts: string[], newTr: Transaction) {
   const [start] = nodes[0].sourcepos!;
   const [, end] = nodes[nodes.length - 1].sourcepos!;
-  const startPos: MdPos = [start[0] - 1, start[1] - 1];
-  const endPos: MdPos = [end[0] - 1, end[1]];
+  const startPos: MdPos = [start[0], start[1]];
+  const endPos: MdPos = [end[0], end[1] + 1];
   const pos = getMdToEditorPos(startPos, endPos, lineTexts, newTr.doc.content.size);
 
   return newTr.removeMark(pos[0], pos[1]);
 }
 
 function addMark(node: MdNode, lineTexts: string[], newTr: Transaction, schema: Schema) {
-  const startPos: MdPos = [getMdStartLine(node) - 1, getMdStartCh(node) - 1];
-  const endPos: MdPos = [getMdEndLine(node) - 1, getMdEndCh(node)];
-  const markInfo = getMarkInfo(node, startPos, endPos, lineTexts[endPos[0]]);
+  const startPos: MdPos = [getMdStartLine(node), getMdStartCh(node)];
+  const endPos: MdPos = [getMdEndLine(node), getMdEndCh(node) + 1];
+  const markInfo = getMarkInfo(node, startPos, endPos, lineTexts[endPos[0] - 1]);
 
   if (markInfo) {
     const { marks = [], lineBackground } = markInfo;
