@@ -51,6 +51,7 @@
     "@toast-ui/release-notes": "^2.0.1",
     "@toast-ui/to-mark": "file:../../libs/to-mark",
     "@toast-ui/toastmark": "file:../../libs/toastmark",
+    "@types/common-tags": "^1.8.0",
     "@types/jest": "^26.0.14",
     "@types/node": "^14.11.1",
     "@types/prosemirror-commands": "^1.0.3",

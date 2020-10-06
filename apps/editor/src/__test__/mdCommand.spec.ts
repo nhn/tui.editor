@@ -1,3 +1,4 @@
+import { source } from 'common-tags';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
@@ -282,18 +283,30 @@ describe('heading command', () => {
 
 describe('codeBlock command', () => {
   it('should add code block syntax', () => {
+    const result = source`
+      \`\`\`
+
+      \`\`\`
+    `;
+
     cmd.exec('markdown', 'codeBlock');
 
-    expect(getTextContent(mde)).toBe('```\n\n```');
+    expect(getTextContent(mde)).toBe(result);
   });
 
   it('should wrap the selection with code block syntax', () => {
+    const result = source`
+      \`\`\`
+      console.log('codeBlock');
+      \`\`\`
+    `;
+
     mde.setMarkdown(`console.log('codeBlock');`);
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'codeBlock');
 
-    expect(getTextContent(mde)).toBe("```\nconsole.log('codeBlock');\n```");
+    expect(getTextContent(mde)).toBe(result);
   });
 });
 
@@ -314,30 +327,65 @@ describe('bulletList command', () => {
   });
 
   it('should add bullet list syntax on multi line', () => {
-    mde.setMarkdown('bullet1\nbullet2');
+    const input = source`
+      bullet1
+      bullet2
+    `;
+    const result = source`
+      * bullet1
+      * bullet2
+    `;
+
+    mde.setMarkdown(input);
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'bulletList');
 
-    expect(getTextContent(mde)).toBe('* bullet1\n* bullet2');
+    expect(getTextContent(mde)).toBe(result);
   });
 
   it('should change ordered list to bullet list', () => {
-    mde.setMarkdown('1. ordered1\n2. ordered2\n3. ordered3');
+    const input = source`
+      1. ordered1
+      2. ordered2
+      3. ordered3
+    `;
+    const result = source`
+      * ordered1
+      * ordered2
+      * ordered3
+    `;
+
+    mde.setMarkdown(input);
 
     mde.setSelection([2, 1], [2, 1]);
     cmd.exec('markdown', 'bulletList');
 
-    expect(getTextContent(mde)).toBe('* ordered1\n* ordered2\n* ordered3');
+    expect(getTextContent(mde)).toBe(result);
   });
 
   it('should change ordered list to bullet list with depth', () => {
-    mde.setMarkdown('1. ordered1\n2. ordered2\n3. ordered3\n   1. sub1\n   1. sub2');
+    const input = source`
+      1. ordered1
+      2. ordered2
+      3. ordered3
+         1. sub1
+         2. sub2
+    `;
+    const result = source`
+      * ordered1
+      * ordered2
+      * ordered3
+         * sub1
+         * sub2
+    `;
+
+    mde.setMarkdown(input);
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'bulletList');
 
-    expect(getTextContent(mde)).toBe('* ordered1\n* ordered2\n* ordered3\n   * sub1\n   * sub2');
+    expect(getTextContent(mde)).toBe(result);
   });
 });
 
@@ -358,30 +406,65 @@ describe('orderedList command', () => {
   });
 
   it('should add ordered list syntax on multi line', () => {
-    mde.setMarkdown('ordered1\nordered2');
+    const input = source`
+      ordered1
+      ordered2
+    `;
+    const result = source`
+      1. ordered1
+      2. ordered2
+    `;
+
+    mde.setMarkdown(input);
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'orderedList');
 
-    expect(getTextContent(mde)).toBe('1. ordered1\n2. ordered2');
+    expect(getTextContent(mde)).toBe(result);
   });
 
   it('should change bullet list to ordered list', () => {
-    mde.setMarkdown('* bullet1\n* bullet2\n* bullet3');
+    const input = source`
+      * bullet1
+      * bullet2
+      * bullet3
+    `;
+    const result = source`
+      1. bullet1
+      2. bullet2
+      3. bullet3
+    `;
+
+    mde.setMarkdown(input);
 
     mde.setSelection([2, 1], [2, 1]);
     cmd.exec('markdown', 'orderedList');
 
-    expect(getTextContent(mde)).toBe('1. bullet1\n2. bullet2\n3. bullet3');
+    expect(getTextContent(mde)).toBe(result);
   });
 
   it('should change bullet list to ordered list with depth', () => {
-    mde.setMarkdown('* bullet1\n   * sub1\n   * sub2\n* bullet2\n* bullet3');
+    const input = source`
+      * bullet1
+         * sub1
+         * sub2
+      * bullet2
+      * bullet3
+    `;
+    const result = source`
+      1. bullet1
+         1. sub1
+         2. sub2
+      2. bullet2
+      3. bullet3
+    `;
+
+    mde.setMarkdown(input);
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'orderedList');
 
-    expect(getTextContent(mde)).toBe('1. bullet1\n   1. sub1\n   2. sub2\n2. bullet2\n3. bullet3');
+    expect(getTextContent(mde)).toBe(result);
   });
 });
 
@@ -393,64 +476,132 @@ describe('taskList command', () => {
   });
 
   it('should add task list syntax on multi line', () => {
-    mde.setMarkdown('task1\ntask2');
+    const input = source`
+      task1
+      task2
+    `;
+    const result = source`
+      * [ ] task1
+      * [ ] task2
+    `;
+
+    mde.setMarkdown(input);
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'taskList');
 
-    expect(getTextContent(mde)).toBe('* [ ] task1\n* [ ] task2');
+    expect(getTextContent(mde)).toBe(result);
   });
 
   it('should add task syntax to ordered list', () => {
-    mde.setMarkdown('1. ordered1\n2. ordered2\n3. ordered3');
+    const input = source`
+      1. ordered1
+      2. ordered2
+      3. ordered3
+    `;
+    const result = source`
+      1. [ ] ordered1
+      2. [ ] ordered2
+      3. [ ] ordered3
+    `;
+
+    mde.setMarkdown(input);
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'taskList');
 
-    expect(getTextContent(mde)).toBe('1. [ ] ordered1\n2. [ ] ordered2\n3. [ ] ordered3');
+    expect(getTextContent(mde)).toBe(result);
   });
 
   it('should add task syntax to bullet list', () => {
-    mde.setMarkdown('* bullet1\n* bullet2\n* bullet3');
+    const input = source`
+      * bullet1
+      * bullet2
+      * bullet3
+    `;
+    const result = source`
+      * [ ] bullet1
+      * [ ] bullet2
+      * [ ] bullet3
+    `;
+
+    mde.setMarkdown(input);
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'taskList');
 
-    expect(getTextContent(mde)).toBe('* [ ] bullet1\n* [ ] bullet2\n* [ ] bullet3');
+    expect(getTextContent(mde)).toBe(result);
   });
 
   it('should remove task syntax on ordered task list', () => {
-    mde.setMarkdown('1. [ ] ordered1\n2. [ ] ordered2\n3. [ ] ordered3');
+    const input = source`
+      1. [ ] ordered1
+      2. [ ] ordered2
+      3. [ ] ordered3
+    `;
+    const result = source`
+      1. ordered1
+      2. ordered2
+      3. ordered3
+    `;
+
+    mde.setMarkdown(input);
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'taskList');
 
-    expect(getTextContent(mde)).toBe('1. ordered1\n2. ordered2\n3. ordered3');
+    expect(getTextContent(mde)).toBe(result);
   });
 
   it('should remove task syntax on bullet task list', () => {
-    mde.setMarkdown('* [ ] bullet1\n* [ ] bullet2\n* [ ] bullet3');
+    const input = source`
+      * [ ] bullet1
+      * [ ] bullet2
+      * [ ] bullet3
+    `;
+    const result = source`
+      * bullet1
+      * bullet2
+      * bullet3
+    `;
+
+    mde.setMarkdown(input);
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'taskList');
 
-    expect(getTextContent(mde)).toBe('* bullet1\n* bullet2\n* bullet3');
+    expect(getTextContent(mde)).toBe(result);
   });
 });
 
 describe('table command', () => {
   it('should add table syntax', () => {
+    const result = `\n${source`
+      |  |  |
+      | --- | --- |
+      |  |  |
+      |  |  |
+    `}`;
+
     cmd.exec('markdown', 'table', { colLen: 2, rowLen: 3 });
 
-    expect(getTextContent(mde)).toBe('\n|  |  |\n| --- | --- |\n|  |  |\n|  |  |');
+    expect(getTextContent(mde)).toBe(result);
   });
 
   it('should add table syntax to next line', () => {
+    const result = source`
+      text
+      |  |  |
+      | --- | --- |
+      |  |  |
+      |  |  |
+    `;
+
     mde.setMarkdown('text');
 
     cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'table', { colLen: 2, rowLen: 3 });
 
-    expect(getTextContent(mde)).toBe('text\n|  |  |\n| --- | --- |\n|  |  |\n|  |  |');
+    expect(getTextContent(mde)).toBe(result);
   });
 });
