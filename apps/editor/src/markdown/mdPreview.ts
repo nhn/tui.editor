@@ -44,7 +44,6 @@ interface Options {
  * Class Markdown Preview
  * @param {HTMLElement} el - base element
  * @param {eventEmitter} eventEmitter - event manager
- * @param {Convertor} convertor - convertor
  * @param {object} options
  * @param {boolean} options.isViewer - true for view-only mode
  * @param {boolean} options.highlight - true for using live-highlight feature
@@ -58,8 +57,8 @@ class MarkdownPreview extends Preview {
 
   private renderHTML: (node: MdNode) => string;
 
-  constructor(el: HTMLElement, eventEmitter: Emitter, convertor: any, options: Options) {
-    super(el, eventEmitter, convertor, options.isViewer);
+  constructor(el: HTMLElement, eventEmitter: Emitter, options: Options) {
+    super(el, eventEmitter, options.isViewer);
     this.lazyRunner.registerLazyRunFunction(
       'invokeCodeBlock',
       this.invokeCodeBlockPlugins,

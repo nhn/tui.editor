@@ -10,11 +10,9 @@ import off from 'tui-code-snippet/domEvent/off';
 import { ViewerOptions } from '@t/editor';
 import { Emitter, EventTypes, Handler } from '@t/event';
 import MarkdownPreview from './markdown/mdPreview';
-import Convertor from './convertor/convertor';
 import domUtils from './utils/dom';
 import { invokePlugins, getPluginInfo } from './pluginHelper';
 import { sanitizeLinkAttribute } from './utils/common';
-import htmlSanitizer from './sanitizer/htmlSanitizer';
 import EventEmitter from './event/eventEmitter';
 
 const TASK_ATTR_NAME = 'data-te-task';
@@ -51,8 +49,6 @@ class ToastUIEditorViewer {
 
   private eventEmitter: Emitter;
 
-  private convertor: Convertor;
-
   private preview: MarkdownPreview;
 
   constructor(options: ViewerOptions) {
@@ -78,7 +74,6 @@ class ToastUIEditorViewer {
     const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
     const {
       customHTMLRenderer,
-      customHTMLSanitizer,
       extendedAutolinks,
       referenceDefinition,
       frontMatter
@@ -92,16 +87,6 @@ class ToastUIEditorViewer {
       customParser: parser,
       frontMatter
     };
-
-    // @TODO: should change convertor
-    this.convertor = new Convertor(this.eventEmitter, rendererOptions);
-
-    const sanitizer =
-      customHTMLSanitizer || (this.options.useDefaultHTMLSanitizer ? htmlSanitizer : null);
-
-    if (sanitizer) {
-      this.convertor.initHtmlSanitizer(sanitizer);
-    }
 
     if (this.options.hooks) {
       forEachOwnProperties(this.options.hooks, (fn, key) => {
@@ -120,7 +105,7 @@ class ToastUIEditorViewer {
 
     el.innerHTML = '';
 
-    this.preview = new MarkdownPreview(el, this.eventEmitter, this.convertor, {
+    this.preview = new MarkdownPreview(el, this.eventEmitter, {
       ...rendererOptions,
       isViewer: true
     });
@@ -178,7 +163,7 @@ class ToastUIEditorViewer {
   setMarkdown(markdown: string) {
     markdown = markdown || '';
 
-    this.preview.refresh(markdown);
+    this.preview.refresh();
     this.eventEmitter.emit('setMarkdownAfter', markdown);
   }
 
