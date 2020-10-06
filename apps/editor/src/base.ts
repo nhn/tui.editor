@@ -1,5 +1,5 @@
 import { Schema } from 'prosemirror-model';
-import { Plugin } from 'prosemirror-state';
+import { Plugin, StateOptions } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Emitter } from '@t/event';
 import { Context, EditorAllCommandMap } from '@t/spec';
@@ -33,7 +33,7 @@ export default abstract class EditorBase {
 
   abstract createContext(): Context;
 
-  abstract createState(): void;
+  abstract createState(state?: StateOptions): void;
 
   abstract createView(): EditorView;
 
