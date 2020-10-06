@@ -566,8 +566,6 @@ class ToastUIEditor {
       const wwNode = this.wwEditor.getModel();
 
       this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), !isWithoutFocus);
-      this.mdEditor.setMarkdown('', !isWithoutFocus);
-
       this.eventEmitter.emit('changeModeToMarkdown');
     }
 

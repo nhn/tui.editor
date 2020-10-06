@@ -16,7 +16,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     state.addText(node.literal || '');
   },
 
-  paragraph(state, node, { entering }) {
+  paragraph(state, _, { entering }) {
     const { paragraph } = state.schema.nodes;
 
     if (entering) {
@@ -77,7 +77,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  blockQuote(state, node, { entering }) {
+  blockQuote(state, _, { entering }) {
     const { blockQuote } = state.schema.nodes;
 
     if (entering) {
@@ -106,7 +106,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     state.addNode(state.schema.nodes.thematicBreak);
   },
 
-  strong(state, node, { entering }) {
+  strong(state, _, { entering }) {
     const { strong } = state.schema.marks;
 
     if (entering) {
@@ -116,7 +116,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  emph(state, node, { entering }) {
+  emph(state, _, { entering }) {
     const { emph } = state.schema.marks;
 
     if (entering) {
@@ -163,7 +163,7 @@ export const toWwConvertors: ToWwConvertorMap = {
   htmlBlock() {},
 
   // GFM specifications node
-  table(state, node, { entering }) {
+  table(state, _, { entering }) {
     const { table } = state.schema.nodes;
 
     if (entering) {
@@ -173,7 +173,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  tableHead(state, node, { entering }) {
+  tableHead(state, _, { entering }) {
     const { tableHead } = state.schema.nodes;
 
     if (entering) {
@@ -183,7 +183,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  tableBody(state, node, { entering }) {
+  tableBody(state, _, { entering }) {
     const { tableBody } = state.schema.nodes;
 
     if (entering) {
@@ -193,7 +193,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  tableRow(state, node, { entering }) {
+  tableRow(state, _, { entering }) {
     const { tableRow } = state.schema.nodes;
 
     if (entering) {
@@ -215,7 +215,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  strike(state, node, { entering }) {
+  strike(state, _, { entering }) {
     const { strike } = state.schema.marks;
 
     if (entering) {

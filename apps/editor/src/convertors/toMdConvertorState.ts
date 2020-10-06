@@ -127,7 +127,7 @@ export default class ToMdConvertorState {
     const active: Mark[] = [];
     let trailing = '';
 
-    const progress = (node: Node | null, offset: number | null, index: number) => {
+    const progress = (node: Node | null, _: number | null, index: number) => {
       let marks = node ? node.marks : [];
 
       // Remove marks from `hard_break` that are the last node inside
@@ -283,12 +283,12 @@ export default class ToMdConvertorState {
       this.flushClose(1);
     }
 
-    const tight = typeof node.attrs.tight !== 'undefined' ? node.attrs.tight : true;
+    const tight = node.attrs.tight ?? true;
     const prevTight = this.tightList;
 
     this.tightList = tight;
 
-    node.forEach((child, offset, index) => {
+    node.forEach((child, _, index) => {
       if (index && tight) {
         this.flushClose(1);
       }
@@ -300,7 +300,7 @@ export default class ToMdConvertorState {
   }
 
   convertNode(parent: Node) {
-    parent.forEach((node, offset, index) => this.convertBlock(node, parent, index));
+    parent.forEach((node, _, index) => this.convertBlock(node, parent, index));
 
     return this.result;
   }

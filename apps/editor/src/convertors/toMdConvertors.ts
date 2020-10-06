@@ -54,7 +54,7 @@ function isPlainURL(link: Mark, parent: Node, index: number, side: number) {
 
 const nodes: ToMdNodeConvertorMap = {
   text(state, node) {
-    state.text(node.text || '');
+    state.text(node.text ?? '');
   },
 
   paragraph(state, node) {
@@ -119,7 +119,7 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   thematicBreak(state, node) {
-    state.write(node.attrs.markup || '---');
+    state.write('***');
     state.closeBlock(node);
   },
 
@@ -146,11 +146,11 @@ const nodes: ToMdNodeConvertorMap = {
     state.convertNode(node);
 
     if (row) {
-      for (let i = 0, len = row.childCount; i < len; i += 1) {
-        const { textContent } = row.child(i);
+      row.forEach(column => {
+        const { textContent } = column;
 
-        result += `| ${state.repeat('-', textContent.length)} `;
-      }
+        result += `| ${state.repeat('-', textContent.length || 3)} `;
+      });
     }
 
     state.write(`${result}|\n`);
@@ -186,7 +186,7 @@ const marks: ToMdMarkConvertorMap = {
   strike: { open: '~~', close: '~~', mixable: true, removedEnclosingWhitespace: true },
 
   link: {
-    open(state: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
+    open(_: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
       return isPlainURL(mark, parent, index, 1) ? '<' : '[';
     },
     close(state: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {

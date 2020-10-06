@@ -1,4 +1,3 @@
-// @ts-ignore
 import { source } from 'common-tags';
 
 // @ts-ignore
@@ -30,14 +29,18 @@ describe('Convertor', () => {
   });
 
   describe('convert between markdown and wysiwyg node to', () => {
-    it('paragrpah', () => {
-      const markdown = 'foo';
-
+    function assertConverting(markdown: string, expected: string) {
       const mdNode = parser.parse(markdown);
       const wwNode = convertor.toWysiwygModel(mdNode);
       const result = convertor.toMarkdownText(wwNode!);
 
-      expect(result).toBe(markdown);
+      expect(result).toBe(expected);
+    }
+
+    it('paragraph', () => {
+      const markdown = 'foo';
+
+      assertConverting(markdown, markdown);
     });
 
     it('headings', () => {
@@ -49,7 +52,7 @@ describe('Convertor', () => {
         ##### heading5
         ###### heading6
       `;
-      const expceted = source`
+      const expected = source`
         # heading1
         
         ## heading2
@@ -63,11 +66,7 @@ describe('Convertor', () => {
         ###### heading6
       `;
 
-      const mdNode = parser.parse(markdown);
-      const wwNode = convertor.toWysiwygModel(mdNode);
-      const result = convertor.toMarkdownText(wwNode!);
-
-      expect(result).toBe(expceted);
+      assertConverting(markdown, expected);
     });
 
     it('codeBlock', () => {
@@ -77,11 +76,7 @@ describe('Convertor', () => {
         \`\`\`
       `;
 
-      const mdNode = parser.parse(markdown);
-      const wwNode = convertor.toWysiwygModel(mdNode);
-      const result = convertor.toMarkdownText(wwNode!);
-
-      expect(result).toBe(markdown);
+      assertConverting(markdown, markdown);
     });
 
     it('bullet list', () => {
@@ -92,11 +87,7 @@ describe('Convertor', () => {
         * baz
     	`;
 
-      const mdNode = parser.parse(markdown);
-      const wwNode = convertor.toWysiwygModel(mdNode);
-      const result = convertor.toMarkdownText(wwNode!);
-
-      expect(result).toBe(markdown);
+      assertConverting(markdown, markdown);
     });
 
     it('ordered list', () => {
@@ -106,11 +97,7 @@ describe('Convertor', () => {
         3. baz
     	`;
 
-      const mdNode = parser.parse(markdown);
-      const wwNode = convertor.toWysiwygModel(mdNode);
-      const result = convertor.toMarkdownText(wwNode!);
-
-      expect(result).toBe(markdown);
+      assertConverting(markdown, markdown);
     });
 
     it('blockQuote', () => {
@@ -129,11 +116,7 @@ describe('Convertor', () => {
         > > > quxx
       `;
 
-      const mdNode = parser.parse(markdown);
-      const wwNode = convertor.toWysiwygModel(mdNode);
-      const result = convertor.toMarkdownText(wwNode!);
-
-      expect(result).toBe(expected);
+      assertConverting(markdown, expected);
     });
 
     it('thematicBreak', () => {
@@ -144,20 +127,16 @@ describe('Convertor', () => {
         * * * *
     	`;
       const expected = source`
-        ---
+        ***
         
-        ---
+        ***
         
-        ---
+        ***
         
-        ---
+        ***
       `;
 
-      const mdNode = parser.parse(markdown);
-      const wwNode = convertor.toWysiwygModel(mdNode);
-      const result = convertor.toMarkdownText(wwNode!);
-
-      expect(result).toBe(expected);
+      assertConverting(markdown, expected);
     });
 
     it('image', () => {
@@ -172,11 +151,7 @@ describe('Convertor', () => {
         ![altText](img\\*Url)
     	`;
 
-      const mdNode = parser.parse(markdown);
-      const wwNode = convertor.toWysiwygModel(mdNode);
-      const result = convertor.toMarkdownText(wwNode!);
-
-      expect(result).toBe(expected);
+      assertConverting(markdown, expected);
     });
 
     it('link', () => {
@@ -191,21 +166,13 @@ describe('Convertor', () => {
         [text](ur\\*l)
     	`;
 
-      const mdNode = parser.parse(markdown);
-      const wwNode = convertor.toWysiwygModel(mdNode);
-      const result = convertor.toMarkdownText(wwNode!);
-
-      expect(result).toBe(expected);
+      assertConverting(markdown, expected);
     });
 
     it('code', () => {
       const markdown = '`foo bar baz`';
 
-      const mdNode = parser.parse(markdown);
-      const wwNode = convertor.toWysiwygModel(mdNode);
-      const result = convertor.toMarkdownText(wwNode!);
-
-      expect(result).toBe(markdown);
+      assertConverting(markdown, markdown);
     });
 
     it('emphasis (strong, italic) syntax', () => {
@@ -222,90 +189,80 @@ describe('Convertor', () => {
         *qux*
     	`;
 
-      const mdNode = parser.parse(markdown);
-      const wwNode = convertor.toWysiwygModel(mdNode);
-      const result = convertor.toMarkdownText(wwNode!);
-
-      expect(result).toBe(expected);
+      assertConverting(markdown, expected);
     });
-  });
 
-  it('strike', () => {
-    const markdown = '~~strike~~';
+    it('strike', () => {
+      const markdown = '~~strike~~';
 
-    const mdNode = parser.parse(markdown);
-    const wwNode = convertor.toWysiwygModel(mdNode);
-    const result = convertor.toMarkdownText(wwNode!);
+      assertConverting(markdown, markdown);
+    });
 
-    expect(result).toBe(markdown);
-  });
+    it('table', () => {
+      const markdown = source`
+        | thead | thead |
+        | --- | --- |
+        | tbody | tbody |
 
-  it('table', () => {
-    const markdown = source`
-      | thead | thead |
-      | --- | --- |
-      | tbody | tbody |
+        | thead |thead |
+        | -- | ----- |
+        | tbody|tbody|
+        | tbody|tbody|
 
-      | thead |thead |
-      | -- | ----- |
-      | tbody|tbody|
-      | tbody|tbody|
-    `;
-    const expected = source`
-      | thead | thead |
-      | ----- | ----- |
-      | tbody | tbody |
+        |||
+        |-|-|
+        |||
+      `;
+      const expected = source`
+        | thead | thead |
+        | ----- | ----- |
+        | tbody | tbody |
 
-      | thead | thead |
-      | ----- | ----- |
-      | tbody | tbody |
-      | tbody | tbody |
-    `;
+        | thead | thead |
+        | ----- | ----- |
+        | tbody | tbody |
+        | tbody | tbody |
 
-    const mdNode = parser.parse(markdown);
-    const wwNode = convertor.toWysiwygModel(mdNode);
-    const result = convertor.toMarkdownText(wwNode!);
+        |  |  |
+        | --- | --- |
+        |  |  |
+      `;
 
-    expect(result).toBe(`${expected}\n`);
-  });
+      assertConverting(markdown, `${expected}\n`);
+    });
 
-  it('task', () => {
-    const markdown = source`
-      * [ ] foo
-        * [x] baz
-      * [x] bar
-      
-      1. [x] foo
-      2. [ ] bar
-    `;
+    it('task', () => {
+      const markdown = source`
+        * [ ] foo
+          * [x] baz
+        * [x] bar
+        
+        1. [x] foo
+        2. [ ] bar
+      `;
 
-    const mdNode = parser.parse(markdown);
-    const wwNode = convertor.toWysiwygModel(mdNode);
-    const result = convertor.toMarkdownText(wwNode!);
+      assertConverting(markdown, markdown);
+    });
 
-    expect(result).toBe(markdown);
-  });
+    it('list in blockQuote', () => {
+      const markdown = source`
+        > * foo
+        >   * baz
+        > * bar
+        >> 1. qux
+        > > 2. quxx 
+      `;
+      const expected = source`
+        > * foo
+        >   * baz
+        > * bar
+        > > 1. qux
+        > > 2. quxx 
+      `;
 
-  it('list in blockQuote', () => {
-    const markdown = source`
-      > * foo
-      >   * baz
-      > * bar
-      >> 1. qux
-      > > 2. quxx 
-    `;
-    const expected = source`
-      > * foo
-      >   * baz
-      > * bar
-      > > 1. qux
-      > > 2. quxx 
-    `;
+      assertConverting(markdown, expected);
+    });
 
-    const mdNode = parser.parse(markdown);
-    const wwNode = convertor.toWysiwygModel(mdNode);
-    const result = convertor.toMarkdownText(wwNode!);
-
-    expect(result).toBe(expected);
+    // @TODO test hardBreak
   });
 });
