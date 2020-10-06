@@ -36,13 +36,13 @@ class CodeBlockManager {
    * @param {string} codeText - code text
    * @returns {string}
    */
-  createCodeBlockHtml(language, codeText) {
+  createCodeBlockHtml(language, codeText, codeBlock) {
     language = language.toLowerCase();
 
     const replacer = this.getReplacer(language);
 
     if (replacer) {
-      return replacer(codeText, language);
+      return replacer(codeText, language, codeBlock);
     }
     return escape(codeText, false);
   }

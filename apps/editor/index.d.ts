@@ -6,7 +6,7 @@
 declare namespace toastui {
   type SquireExt = any;
   type HandlerFunc = (...args: any[]) => void;
-  type ReplacerFunc = (inputString: string) => string;
+  type ReplacerFunc = (inputString: string, language: string, codeBlockElement: Element) => (string | Element);
   type CodeMirrorType = CodeMirror.EditorFromTextArea;
   type CommandManagerExecFunc = (name: string, ...args: any[]) => any;
   type PopupTableUtils = LayerPopup;
