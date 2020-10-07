@@ -45,12 +45,10 @@ export default class MdEditor extends EditorBase {
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
-    this.view = this.createView();
     this.keymaps = this.createKeymaps();
+    this.view = this.createView();
     this.commands = this.createCommands();
     this.keyCode = null;
-
-    this.view.updateState(this.createState());
   }
 
   createContext() {
@@ -63,7 +61,7 @@ export default class MdEditor extends EditorBase {
   }
 
   createKeymaps() {
-    return this.specs.keymaps({ ...this.context, view: this.view });
+    return this.specs.keymaps(this.context);
   }
 
   createSpecs() {
@@ -111,7 +109,7 @@ export default class MdEditor extends EditorBase {
 
   createView() {
     return new EditorView(this.el, {
-      state: EditorState.create({ doc: DOMParser.fromSchema(this.schema).parse(this.el) }),
+      state: this.createState(),
       dispatchTransaction: tr => {
         this.updateMarkdown(tr);
 
