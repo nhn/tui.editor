@@ -53,12 +53,12 @@ export class BlockQuote extends Mark {
 
           dispatch!(replaceBlockNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
         } else {
-          const nextLineText = lineText.slice(to - startOffset).trim();
-          const node = createParagraph(schema, this.getChangedText(nextLineText));
-          const newTr = nextLineText
+          const slicedText = lineText.slice(to - startOffset).trim();
+          const node = createParagraph(schema, this.getChangedText(slicedText));
+          const newTr = slicedText
             ? replaceBlockNodes(tr, to, endOffset, node, { from: 0, to: 1 })
             : insertBlockNodes(tr, endOffset, node);
-          const newSelection = TextSelection.create(newTr.doc, to + 4);
+          const newSelection = TextSelection.create(newTr.doc, to + slicedText.length + 4);
 
           dispatch!(newTr.setSelection(newSelection));
         }
