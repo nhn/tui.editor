@@ -3,6 +3,7 @@ import { Context, EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { resolveSelectionPos } from '../helper/pos';
+import { createText } from '../helper/manipulation';
 
 const encodingRegExps = [/\(/g, /\)/g, /\[/g, /\]/g, /</g, />/g];
 const encodedList = ['%28', '%29', '%5B', '%5D', '%3C', '%3E'];
@@ -89,7 +90,7 @@ export class Link extends Mark {
       url = replaceMarkdownText(url, true);
       syntax += `[${text}](${url})`;
 
-      const tr = state.tr.replaceWith(from, to, schema.text(syntax));
+      const tr = state.tr.replaceWith(from, to, createText(schema, syntax));
 
       dispatch!(tr);
 

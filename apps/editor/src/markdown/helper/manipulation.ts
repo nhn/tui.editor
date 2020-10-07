@@ -40,3 +40,7 @@ export function spaceToNbsp(text: string) {
 export function createParagraph(schema: Schema, text?: string) {
   return schema.nodes.paragraph.create(null, text ? schema.text(spaceToNbsp(text)) : []);
 }
+
+export function createText(schema: Schema, text: string) {
+  return schema.text(spaceToNbsp(text));
+}
