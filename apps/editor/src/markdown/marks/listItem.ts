@@ -18,12 +18,12 @@ import {
   extendList,
   ExtendListContext,
   getListType,
-  getTextByMdLine,
   otherListToList,
   otherNodeToList,
   reList,
   ToListContext
 } from '../helper/list';
+import { getTextByMdLine } from '../helper/query';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
 

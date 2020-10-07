@@ -3,7 +3,7 @@ import { ProsemirrorNode } from 'prosemirror-model';
 import { ToastMark } from '@toast-ui/toastmark';
 import { isListNode } from '@/utils/markdown';
 import { ListItemMdNode, MdNode } from '@t/markdown';
-import { nbspToSpace } from './manipulation';
+import { getTextByMdLine } from './query';
 
 export interface ToListContext<T = ListItemMdNode> {
   mdNode: T;
@@ -69,10 +69,6 @@ const reCanBeTaskList = /([-*]|[\d]+\.)( \[[ xX]])? /;
 
 export function getListType(text: string): ListType {
   return reOrderedList.test(text) ? 'ordered' : 'bullet';
-}
-
-export function getTextByMdLine(doc: ProsemirrorNode, mdLine: number) {
-  return nbspToSpace(doc.content.child(mdLine - 1).textContent);
 }
 
 function getListDepth(mdNode: MdNode) {
