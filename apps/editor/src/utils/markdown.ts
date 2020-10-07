@@ -1,4 +1,4 @@
-import { MdNode, MdNodeType, MdPos } from '@t/markdown';
+import { ListItemMdNode, MdNode, MdNodeType, MdPos, TableCellMdNode } from '@t/markdown';
 import { includes } from './common';
 
 export function hasImageOrCodeBlockNode(mdNode: MdNode) {
@@ -67,11 +67,11 @@ export function isStyledTextNode(mdNode: MdNode) {
   return type === 'strike' || type === 'strong' || type === 'emph';
 }
 
-export function isListNode(mdNode: MdNode) {
+export function isListNode(mdNode: MdNode): mdNode is ListItemMdNode {
   return mdNode && (mdNode.type === 'item' || mdNode.type === 'list');
 }
 
-export function isTableCellNode(mdNode: MdNode) {
+export function isTableCellNode(mdNode: MdNode): mdNode is TableCellMdNode {
   const { type } = mdNode;
 
   return type === 'tableCell' || type === 'tableDelimCell';

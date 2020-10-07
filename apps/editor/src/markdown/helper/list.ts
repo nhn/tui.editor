@@ -5,15 +5,15 @@ import { isListNode } from '@/utils/markdown';
 import { ListItemMdNode, MdNode } from '@t/markdown';
 import { nbspToSpace } from './manipulation';
 
-export type ToListContext = {
-  mdNode: ListItemMdNode;
+export interface ToListContext<T = ListItemMdNode> {
+  mdNode: T;
   line: number;
   toastMark: ToastMark;
   doc: ProsemirrorNode;
-  range: [number, number];
-};
+  startLine: number;
+}
 
-export type ExtendListContext = Omit<ToListContext, 'range'>;
+export type ExtendListContext = Omit<ToListContext, 'startLine'>;
 
 export interface ChangedListInfo {
   line: number;
@@ -34,7 +34,8 @@ type ExtendedResult = {
 
 type ListType = 'bullet' | 'ordered';
 
-type ToListFn = (context: ToListContext) => ToListResult;
+type ListToListFn = (context: ToListContext) => ToListResult;
+type NodeToListFn = (context: ToListContext<MdNode>) => ToListResult;
 type ExtendListFn = (context: ExtendListContext) => ExtendedResult;
 
 interface ItemInfo {
@@ -43,10 +44,16 @@ interface ItemInfo {
   mdNode: ListItemMdNode;
 }
 
-interface ToList {
-  bullet: ToListFn;
-  ordered: ToListFn;
-  task: ToListFn;
+interface ListToList {
+  bullet: ListToListFn;
+  ordered: ListToListFn;
+  task: ListToListFn;
+}
+
+interface NodeToList {
+  bullet: NodeToListFn;
+  ordered: NodeToListFn;
+  task: NodeToListFn;
 }
 
 interface ExtendList {
@@ -183,7 +190,7 @@ function toBulletOrOrdered(type: ListType, context: ToListContext) {
   return getChangedInfo(context.doc, sameDepthListInfo, type);
 }
 
-export const otherListToList: ToList = {
+export const otherListToList: ListToList = {
   bullet(context) {
     return toBulletOrOrdered('bullet', context);
   },
@@ -205,17 +212,16 @@ export const otherListToList: ToList = {
   }
 };
 
-export const otherNodeToList: ToList = {
+export const otherNodeToList: NodeToList = {
   bullet({ doc, line }) {
     const text = getTextByMdLine(doc, line);
     const changedResults = [{ text: `* ${text}`, line }];
 
     return { changedResults };
   },
-  ordered({ toastMark, doc, line, range }) {
-    let ordinalNum = 1;
-    const [startLine] = range;
+  ordered({ toastMark, doc, line, startLine }) {
     const text = getTextByMdLine(doc, line);
+    let ordinalNum = 1;
     let ordinalStartNum = 1;
     let ordinalStartLine = startLine;
 

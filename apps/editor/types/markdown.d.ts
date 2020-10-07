@@ -110,7 +110,7 @@ export interface TableColumn {
   align: 'left' | 'center' | 'right';
 }
 
-export interface TableCellNode extends MdNode {
+export interface TableCellMdNode extends MdNode {
   startIdx: number;
   endIdx: number;
   paddingLeft: number;

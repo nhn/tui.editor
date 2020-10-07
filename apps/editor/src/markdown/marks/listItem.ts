@@ -145,15 +145,9 @@ export class ListItem extends Mark {
           continue;
         }
 
-        const context: ToListContext = {
-          toastMark,
-          mdNode,
-          doc,
-          line,
-          range: [startLine, endLine]
-        };
+        const context: ToListContext<MdNode> = { toastMark, mdNode, doc, line, startLine };
         const { firstListOffset, lastListOffset, changedResults } = isListNode(mdNode)
-          ? otherListToList[commandType](context)
+          ? otherListToList[commandType](context as ToListContext<ListItemMdNode>)
           : otherNodeToList[commandType](context);
 
         if (changedResults) {
