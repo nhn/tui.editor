@@ -1,9 +1,13 @@
-import { Schema } from 'prosemirror-model';
+import { Node, Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Emitter } from '@t/event';
 import { Context, EditorAllCommandMap } from '@t/spec';
 import SpecManager from './spec/specManager';
+
+export interface StateOptions {
+  doc: Node | null;
+}
 
 export default abstract class EditorBase {
   el: HTMLElement;
@@ -33,7 +37,7 @@ export default abstract class EditorBase {
 
   abstract createContext(): Context;
 
-  abstract createState(): void;
+  abstract createState(state?: StateOptions): void;
 
   abstract createView(): EditorView;
 

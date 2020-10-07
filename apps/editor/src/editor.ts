@@ -16,15 +16,18 @@ import { sendHostName, sanitizeLinkAttribute } from './utils/common';
 
 import MarkdownEditor from './markdown/mdEditor';
 import MarkdownPreview from './markdown/mdPreview';
+
+import WysiwygEditor from './wysiwyg/wwEditor';
+
 import Layout from './ui/layout';
 import EventEmitter from './event/eventEmitter';
 import CommandManager from './commands/commandManager';
-import Convertor from './convertor/convertor';
+import Convertor from './convertors/convertor';
 import Viewer from './viewer';
 import i18n, { I18n } from './i18n';
 import DefaultUI from './ui/defaultUI';
 import { invokePlugins, getPluginInfo } from './pluginHelper';
-import htmlSanitizer from './sanitizer/htmlSanitizer';
+
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import isString from 'tui-code-snippet/type/isString';
@@ -160,10 +163,8 @@ class ToastUIEditor {
     const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
     const {
       customHTMLRenderer,
-      customHTMLSanitizer,
       extendedAutolinks,
       referenceDefinition,
-      useDefaultHTMLSanitizer,
       frontMatter
     } = this.options;
     const rendererOptions = {
@@ -175,16 +176,6 @@ class ToastUIEditor {
       frontMatter,
       customProp: { showFrontMatter: frontMatter }
     };
-
-    // @TODO: should change convertor
-    this.convertor = new Convertor(this.eventEmitter, rendererOptions);
-
-    // @TODO: should change the sanitizer
-    const sanitizer = customHTMLSanitizer || (useDefaultHTMLSanitizer ? htmlSanitizer : null);
-
-    if (sanitizer) {
-      this.convertor.initHtmlSanitizer(sanitizer);
-    }
 
     if (this.options.hooks) {
       forEachOwnProperties(this.options.hooks, (fn, key) => this.addHook(key, fn));
@@ -216,22 +207,15 @@ class ToastUIEditor {
       this.eventEmitter
     );
 
-    this.preview = new MarkdownPreview(
-      this.layout.getPreviewEl(),
-      this.eventEmitter,
-      this.convertor,
-      {
-        ...rendererOptions,
-        isViewer: false,
-        highlight: this.options.previewHighlight
-      }
-    );
+    this.preview = new MarkdownPreview(this.layout.getPreviewEl(), this.eventEmitter, {
+      ...rendererOptions,
+      isViewer: false,
+      highlight: this.options.previewHighlight
+    });
 
-    // @TODO: should add wysiwyg editor
-    // this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventEmitter, {
-    //   sanitizer,
-    //   linkAttribute
-    // });
+    this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.eventEmitter);
+
+    this.convertor = new Convertor(this.wwEditor.getSchema());
 
     if (plugins) {
       invokePlugins(plugins, this);
@@ -380,10 +364,13 @@ class ToastUIEditor {
   setMarkdown(markdown: string, cursorToEnd = true) {
     markdown = markdown ?? '';
 
-    if (this.isMarkdownMode()) {
-      this.mdEditor.setMarkdown(markdown, cursorToEnd);
-    } else {
-      this.wwEditor.setValue(this.convertor.toHTML(markdown), cursorToEnd);
+    this.mdEditor.setMarkdown(markdown, cursorToEnd);
+
+    if (this.isWysiwygMode()) {
+      const mdNode = this.toastMark.getRootNode();
+      const wwNode = this.convertor.toWysiwygModel(mdNode);
+
+      this.wwEditor.setModel(wwNode, cursorToEnd);
     }
 
     this.eventEmitter.emit('setMarkdownAfter', markdown);
@@ -408,9 +395,7 @@ class ToastUIEditor {
     if (this.isMarkdownMode()) {
       markdown = this.mdEditor.getMarkdown();
     } else {
-      // @TODO: should remove `toMarkOptions`
-      // @ts-ignore
-      markdown = this.convertor.toMarkdown('', this.toMarkOptions);
+      markdown = this.convertor.toMarkdownText(this.wwEditor.getModel());
     }
 
     return markdown;
@@ -422,14 +407,10 @@ class ToastUIEditor {
    */
   getHtml() {
     if (this.isWysiwygMode()) {
-      this.mdEditor.setMarkdown(
-        // @TODO: should remove `toMarkOptions`
-        // @ts-ignore
-        this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions)
-      );
+      this.mdEditor.setMarkdown(this.convertor.toMarkdownText(this.wwEditor.getModel()));
     }
 
-    return this.convertor.toHTML(this.mdEditor.getMarkdown());
+    return '';
   }
 
   /**
@@ -572,16 +553,19 @@ class ToastUIEditor {
 
     if (this.isWysiwygMode()) {
       this.layout.switchToWYSIWYG();
-      this.wwEditor.setValue(this.convertor.toHTML(this.mdEditor.getMarkdown()), !isWithoutFocus);
+
+      const mdNode = this.toastMark.getRootNode();
+      const wwNode = this.convertor.toWysiwygModel(mdNode);
+
+      this.wwEditor.setModel(wwNode);
+
       this.eventEmitter.emit('changeModeToWysiwyg');
     } else {
       this.layout.switchToMarkdown();
-      this.mdEditor.setMarkdown(
-        // @TODO: should remove `toMarkOptions`
-        // @ts-ignore
-        this.convertor.toMarkdown('', this.toMarkOptions),
-        !isWithoutFocus
-      );
+
+      const wwNode = this.wwEditor.getModel();
+
+      this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), !isWithoutFocus);
       this.eventEmitter.emit('changeModeToMarkdown');
     }
 

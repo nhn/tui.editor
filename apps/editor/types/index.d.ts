@@ -37,3 +37,4 @@ export {
 };
 export * from './markdown';
 export * from './event';
+export * from './convertor';

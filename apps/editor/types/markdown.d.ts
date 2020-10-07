@@ -91,11 +91,15 @@ export interface HeadingMdNode extends MdNode {
 
 export interface ImageMdNode extends MdNode {
   lastChild: MdNode;
+  destination: string;
+  title: string;
 }
 
 export interface LinkMdNode extends MdNode {
   lastChild: MdNode;
   extendedAutolink: boolean;
+  destination: string;
+  title: string;
 }
 
 export interface CodeMdNode extends MdNode {

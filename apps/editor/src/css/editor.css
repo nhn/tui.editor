@@ -46,7 +46,7 @@
 }
 
 .te-md-container {
-  /* display: none; */
+  display: none;
   overflow: hidden;
   height: 100%;
 }
@@ -75,7 +75,6 @@
 .te-md-container .ProseMirror:focus {
   outline: none;
 }
-
 
 .te-md-container .te-preview {
   overflow: auto;

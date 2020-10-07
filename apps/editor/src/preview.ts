@@ -12,7 +12,6 @@ import codeBlockManager from './codeBlockManager';
  * Class Preview
  * @param {HTMLElement} el - Container element for preview
  * @param {eventEmitter} eventEmitter -  Event manager instance
- * @param {Convertor} convertor - Convertor instance
  * @param {boolean} isViewer - whether viewer mode or not
  * @ignore
  */
@@ -20,9 +19,6 @@ class Preview {
   el: HTMLElement | null;
 
   eventEmitter: Emitter;
-
-  // @TODO: change convertor type
-  convertor: any;
 
   previewContent!: HTMLElement;
 
@@ -32,10 +28,9 @@ class Preview {
 
   private isViewer: boolean;
 
-  constructor(el: HTMLElement, eventEmitter: Emitter, convertor: any, isViewer: boolean) {
+  constructor(el: HTMLElement, eventEmitter: Emitter, isViewer: boolean) {
     this.el = el;
     this.eventEmitter = eventEmitter;
-    this.convertor = convertor;
     this.isViewer = !!isViewer;
     this.delayCodeBlockTime = 500;
 
@@ -79,8 +74,7 @@ class Preview {
     });
   }
 
-  refresh(markdown = '') {
-    this.render(this.convertor.toHTMLWithCodeHighlight(markdown));
+  refresh() {
     this.invokeCodeBlockPlugins(this.getCodeBlockElements());
   }
 
