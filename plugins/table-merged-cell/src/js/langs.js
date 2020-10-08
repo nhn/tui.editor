@@ -174,5 +174,13 @@ export function addLangs(editor) {
       'Cannot paste row merged cells into the table header':
         'Ne mogu zaljepiti redak spojenih ćelija u zaglavlje tablice'
     });
+
+    Editor.setLanguage(['pt', 'pt-BR'], {
+      'Merge cells': 'Mesclar células',
+      'Unmerge cells': 'Desmembrar células',
+      'Cannot change part of merged cell': 'Não é possível alterar parte da célula mesclada',
+      'Cannot paste row merged cells into the table header':
+        'Não é possivel colar células mescladas dentro do cabeçalho da tabela'
+    });
   }
 }
