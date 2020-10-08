@@ -484,8 +484,9 @@
 }
 
 .tui-editor-popup .tui-popup-body input[type='text'].disabled {
-  border: 1px solid #eee;
-  color: #bfbfbf;
+  border-color: #e5e5e5;
+  background-color: #eee;
+  color: #e5e5e5;
 }
 
 .tui-editor-popup .tui-popup-body input.wrong {
