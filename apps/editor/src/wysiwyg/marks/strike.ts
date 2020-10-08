@@ -21,4 +21,13 @@ export class Strike extends Mark {
   commands({ schema }: Context): EditorCommand {
     return () => toggleMark(schema.marks.strike);
   }
+
+  keymaps(context: Context) {
+    const strikeCommand = this.commands(context)();
+
+    return {
+      'Mod-s': strikeCommand,
+      'Mod-S': strikeCommand
+    };
+  }
 }

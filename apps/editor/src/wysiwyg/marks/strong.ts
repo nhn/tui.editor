@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, MarkType } from 'prosemirror-model';
+import { DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
 import { Context, EditorCommand } from '@t/spec';
@@ -18,11 +18,20 @@ export class Strong extends Mark {
     };
   }
 
-  private bold(type: MarkType): EditorCommand {
-    return () => toggleMark(type);
+  private bold({ schema }: Context): EditorCommand {
+    return () => toggleMark(schema.marks.strong);
   }
 
-  commands({ schema }: Context) {
-    return { bold: this.bold(schema.marks.strong) };
+  commands(context: Context) {
+    return { bold: this.bold(context) };
+  }
+
+  keymaps(context: Context) {
+    const boldCommand = this.bold(context)();
+
+    return {
+      'Mod-b': boldCommand,
+      'Mod-B': boldCommand
+    };
   }
 }

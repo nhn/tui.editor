@@ -44,4 +44,13 @@ export class OrderedList extends Node {
 
     return () => toList(listType) as any;
   }
+
+  keymaps(context: Context) {
+    const orderedListCommand = this.commands(context)();
+
+    return {
+      'Mod-o': orderedListCommand,
+      'Mod-O': orderedListCommand
+    };
+  }
 }

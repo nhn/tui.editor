@@ -33,4 +33,13 @@ export class ThematicBreak extends Node {
   commands() {
     return { hr: this.hr() };
   }
+
+  keymaps() {
+    const hrCommand = this.hr()();
+
+    return {
+      'Mod-l': hrCommand,
+      'Mod-L': hrCommand
+    };
+  }
 }

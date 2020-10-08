@@ -30,4 +30,13 @@ export class BulletList extends Node {
 
     return payload => toList(listType, payload) as any;
   }
+
+  keymaps(context: Context) {
+    const bulletListCommand = this.commands(context)();
+
+    return {
+      'Mod-u': bulletListCommand,
+      'Mod-U': bulletListCommand
+    };
+  }
 }

@@ -23,4 +23,13 @@ export class BlockQuote extends Node {
   commands({ schema }: Context): EditorCommand {
     return () => wrapIn(schema.nodes.blockQuote);
   }
+
+  keymaps(context: Context) {
+    const blockQutoeCommand = this.commands(context)();
+
+    return {
+      'Alt-q': blockQutoeCommand,
+      'Alt-Q': blockQutoeCommand
+    };
+  }
 }

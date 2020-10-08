@@ -22,4 +22,13 @@ export class Code extends Mark {
   commands({ schema }: Context): EditorCommand {
     return () => toggleMark(schema.marks.code);
   }
+
+  keymaps(context: Context) {
+    const codeCommand = this.commands(context)();
+
+    return {
+      'Shift-Mod-c': codeCommand,
+      'Shift-Mod-C': codeCommand
+    };
+  }
 }

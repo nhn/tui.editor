@@ -47,4 +47,13 @@ export class CodeBlock extends Node {
   commands({ schema }: Context): EditorCommand {
     return () => setBlockType(schema.nodes.codeBlock);
   }
+
+  keymaps(context: Context) {
+    const codeCommand = this.commands(context)();
+
+    return {
+      'Shift-Mod-p': codeCommand,
+      'Shift-Mod-P': codeCommand
+    };
+  }
 }
