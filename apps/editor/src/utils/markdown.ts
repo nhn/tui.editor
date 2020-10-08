@@ -71,6 +71,10 @@ export function isListNode(mdNode: MdNode): mdNode is ListItemMdNode {
   return mdNode && (mdNode.type === 'item' || mdNode.type === 'list');
 }
 
+export function isOrderedList(mdNode: MdNode): mdNode is ListItemMdNode {
+  return isListNode(mdNode) && mdNode.listData.type === 'ordered';
+}
+
 export function isTableCellNode(mdNode: MdNode): mdNode is TableCellMdNode {
   const { type } = mdNode;
 

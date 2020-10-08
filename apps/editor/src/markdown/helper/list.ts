@@ -62,10 +62,11 @@ interface ExtendList {
 }
 
 export const reList = /([*-] |[\d]+\. )/;
+export const reOrderedList = /([\d])+\.( \[[ xX]])? /;
 const reTaskList = /([-*] |[\d]+\. )(\[[ xX]] )/;
 const reBulletTaskList = /([-*])( \[[ xX]]) /;
-const reOrderedList = /([\d])+\.( \[[ xX]])? /;
 const reCanBeTaskList = /([-*]|[\d]+\.)( \[[ xX]])? /;
+const reListWithContent = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
 
 export function getListType(text: string): ListType {
   return reOrderedList.test(text) ? 'ordered' : 'bullet';
@@ -254,10 +255,9 @@ export const otherNodeToList: NodeToList = {
 
 export const extendList: ExtendList = {
   bullet({ line, doc, mdNode }: ExtendListContext) {
-    const text = getTextByMdLine(doc, line);
-    const indent = text.substring(0, text.indexOf('*'));
-    const bullet = textToBullet(mdNode.listData.task ? '[ ] ' : '', mdNode);
-    const listSyntax = indent + bullet;
+    const lineText = getTextByMdLine(doc, line);
+    const indent = lineText.substring(0, lineText.indexOf('*'));
+    const listSyntax = indent + textToBullet(mdNode.listData.task ? '[ ] ' : '', mdNode);
 
     return { listSyntax };
   },
@@ -265,10 +265,10 @@ export const extendList: ExtendList = {
     const depth = getListDepth(mdNode);
     const ordinalNum = mdNode.listData.start + 1;
 
-    const text = getTextByMdLine(doc, line);
-    const indent = text.substring(0, text.search(/[\d]+\./));
-    const ordered = textToOrdered(mdNode.listData.task ? '[ ] ' : '', mdNode, ordinalNum);
-    const listSyntax = indent + ordered;
+    const lineText = getTextByMdLine(doc, line);
+    const indent = lineText.substring(0, lineText.search(/[\d]+\./));
+    const listSyntax =
+      indent + textToOrdered(mdNode.listData.task ? '[ ] ' : '', mdNode, ordinalNum);
 
     const backward = findSameDepthList(toastMark, line, depth, true).filter(
       info => info.mdNode.listData.type === 'ordered' && getTextByMdLine(doc, info.line).trim()

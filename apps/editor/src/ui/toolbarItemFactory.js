@@ -154,7 +154,7 @@ class ToolbarItemFactory {
         toolbarItem = new ToolbarButton({
           name: 'indent',
           className: 'tui-indent',
-          command: 'Indent',
+          command: 'indent',
           tooltip: i18n.get('Indent')
         });
         break;
@@ -162,7 +162,7 @@ class ToolbarItemFactory {
         toolbarItem = new ToolbarButton({
           name: 'outdent',
           className: 'tui-outdent',
-          command: 'Outdent',
+          command: 'outdent',
           tooltip: i18n.get('Outdent')
         });
         break;
