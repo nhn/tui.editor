@@ -1,10 +1,10 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
+import { createParagraph, replaceNodes } from '../helper/manipulation';
 
 export class CodeBlock extends Mark {
   get name() {
@@ -19,8 +19,9 @@ export class CodeBlock extends Mark {
     };
   }
 
-  commands({ schema }: Context): EditorCommand {
+  commands(): EditorCommand {
     return () => (state, dispatch) => {
+      const { schema } = this.context;
       const { selection, doc } = state;
       const [from, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
@@ -35,7 +36,7 @@ export class CodeBlock extends Mark {
       });
       nodes.push(fencedNode);
 
-      const tr = replaceBlockNodes(state.tr, startOffset, endOffset, nodes);
+      const tr = replaceNodes(state.tr, startOffset, endOffset, nodes);
 
       dispatch!(tr.setSelection(TextSelection.create(tr.doc, startOffset + 4)));
 
@@ -43,8 +44,8 @@ export class CodeBlock extends Mark {
     };
   }
 
-  keymaps(context: Context) {
-    const codeBlockCommand = this.commands(context)();
+  keymaps() {
+    const codeBlockCommand = this.commands()();
 
     return { 'Shift-Mod-p': codeBlockCommand, 'Shift-Mod-P': codeBlockCommand };
   }

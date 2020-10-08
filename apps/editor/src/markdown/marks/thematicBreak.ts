@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { resolveSelectionPos } from '../helper/pos';
@@ -21,8 +21,9 @@ export class ThematicBreak extends Mark {
     };
   }
 
-  private line({ schema }: Context): EditorCommand {
+  private line(): EditorCommand {
     return () => (state, dispatch) => {
+      const { schema } = this.context;
       const [from, to] = resolveSelectionPos(state.selection);
       const emptyNode = createParagraph(schema);
       const lineNode = createParagraph(schema, thematicBreakSyntax);
@@ -42,12 +43,12 @@ export class ThematicBreak extends Mark {
     };
   }
 
-  commands(context: Context) {
-    return { hr: this.line(context) };
+  commands() {
+    return { hr: this.line() };
   }
 
-  keymaps(context: Context) {
-    const lineCommand = this.line(context)();
+  keymaps() {
+    const lineCommand = this.line()();
 
     return { 'Mod-l': lineCommand, 'Mod-L': lineCommand };
   }

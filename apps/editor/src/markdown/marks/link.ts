@@ -1,5 +1,5 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { resolveSelectionPos } from '../helper/pos';
@@ -72,8 +72,9 @@ export class Link extends Mark {
     };
   }
 
-  private addLinkOrImage({ schema }: Context, commandType: CommandType): EditorCommand<Payload> {
+  private addLinkOrImage(commandType: CommandType): EditorCommand<Payload> {
     return payload => (state, dispatch) => {
+      const { schema } = this.context;
       const [from, to] = resolveSelectionPos(state.selection);
       const { linkText, altText, linkUrl, imageUrl } = payload!;
       let text = linkText;
@@ -98,10 +99,10 @@ export class Link extends Mark {
     };
   }
 
-  commands(context: Context) {
+  commands() {
     return {
-      addImage: this.addLinkOrImage(context, 'image'),
-      addLink: this.addLinkOrImage(context, 'link')
+      addImage: this.addLinkOrImage('image'),
+      addLink: this.addLinkOrImage('link')
     };
   }
 }

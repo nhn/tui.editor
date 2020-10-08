@@ -1,9 +1,9 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'prosemirror-model';
-import { EditorCommand, Context } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
+import { createParagraph, replaceNodes } from '../helper/manipulation';
 
 const reHeading = /^#+\s/;
 
@@ -46,8 +46,9 @@ export class Heading extends Mark {
     return textContent ? `${newLevel} ${textContent}` : `${newLevel} `;
   }
 
-  commands({ schema }: Context): EditorCommand<Payload> {
+  commands(): EditorCommand<Payload> {
     return payload => (state, dispatch) => {
+      const { schema } = this.context;
       const { level } = payload!;
       const { selection, doc, tr } = state;
       const [from, to] = resolveSelectionPos(selection);
@@ -71,7 +72,7 @@ export class Heading extends Mark {
       });
 
       if (nodes.length) {
-        dispatch!(replaceBlockNodes(tr, startOffset, endOffset, nodes));
+        dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
         return true;
       }
 

@@ -45,6 +45,7 @@ export default class MdEditor extends EditorBase {
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
+    this.specs.setContext(this.context);
     this.keymaps = this.createKeymaps();
     this.view = this.createView();
     this.commands = this.createCommands();
@@ -61,7 +62,7 @@ export default class MdEditor extends EditorBase {
   }
 
   createKeymaps() {
-    return this.specs.keymaps(this.context);
+    return this.specs.keymaps();
   }
 
   createSpecs() {
@@ -127,7 +128,7 @@ export default class MdEditor extends EditorBase {
   }
 
   createCommands() {
-    return this.specs.commands({ ...this.context, view: this.view });
+    return this.specs.commands(this.view);
   }
 
   private updateMarkdown(tr: Transaction) {

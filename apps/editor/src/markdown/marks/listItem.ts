@@ -6,13 +6,13 @@ import {
 import { TextSelection, Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import isNumber from 'tui-code-snippet/type/isNumber';
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import { ListItemMdNode, MdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
 import { getEditorToMdLine, getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import { createParagraph, insertBlockNodes, replaceBlockNodes } from '../helper/manipulation';
+import { createParagraph, insertNodes, replaceNodes } from '../helper/manipulation';
 import {
   ChangedListInfo,
   extendList,
@@ -70,8 +70,9 @@ export class ListItem extends Mark {
     };
   }
 
-  private extendList({ schema, toastMark }: Context): Command {
+  private extendList(): Command {
     return (state, dispatch) => {
+      const { schema, toastMark } = this.context;
       const { selection, tr, doc } = state;
       const [, to] = resolveSelectionPos(selection);
       const { startOffset, endOffset, endLine } = getPosInfo(doc, to, to);
@@ -90,7 +91,7 @@ export class ListItem extends Mark {
       const emptyNode = createParagraph(schema);
 
       if (isEmpty) {
-        dispatch!(replaceBlockNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
+        dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
       } else {
         const slicedText = lineText.slice(to - startOffset);
         const context: ExtendListContext = { toastMark, mdNode, doc, line: endLine };
@@ -101,16 +102,16 @@ export class ListItem extends Mark {
 
         // To change ordinal number of backward ordered list
         if (orderedList?.length) {
-          const offset = doc.resolve(lastListOffset!).end();
+          const extendedEndOffset = doc.resolve(lastListOffset!).end();
           const nodes = orderedList.map(({ text }) => createParagraph(schema, text));
 
           nodes.unshift(node);
 
-          newTr = replaceBlockNodes(tr, to, offset, nodes, { from: 0, to: 1 });
+          newTr = replaceNodes(tr, to, extendedEndOffset, nodes, { from: 0, to: 1 });
         } else {
           newTr = slicedText
-            ? replaceBlockNodes(tr, to, endOffset, node, { from: 0, to: 1 })
-            : insertBlockNodes(tr, endOffset, node);
+            ? replaceNodes(tr, to, endOffset, node, { from: 0, to: 1 })
+            : insertNodes(tr, endOffset, node);
         }
 
         const newSelection = TextSelection.create(newTr.doc, endOffset + listSyntax.length + 2);
@@ -122,10 +123,11 @@ export class ListItem extends Mark {
     };
   }
 
-  private toList({ schema, toastMark }: Context, commandType: CommandType): EditorCommand {
-    return () => (state, dispatch) => {
+  private toList(commandType: CommandType): EditorCommand {
+    return payload => (state, dispatch) => {
+      const { schema, toastMark } = this.context;
       const { doc, tr, selection } = state;
-      const [from, to] = resolveSelectionPos(selection);
+      const [from, to] = payload ? [payload.from, payload.to] : resolveSelectionPos(selection);
       const posInfo = getPosInfo(doc, from, to);
       const { startLine, endLine } = posInfo;
       let { startOffset, endOffset } = posInfo;
@@ -175,7 +177,7 @@ export class ListItem extends Mark {
         changed.sort((a, b) => (a.line < b.line ? -1 : 1));
         const nodes = changed.map(info => createParagraph(schema, info.text));
 
-        dispatch!(replaceBlockNodes(tr, startOffset, endOffset, nodes));
+        dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
         return true;
       }
 
@@ -183,18 +185,18 @@ export class ListItem extends Mark {
     };
   }
 
-  commands(context: Context) {
+  commands() {
     return {
-      bulletList: this.toList(context, 'bullet'),
-      orderedList: this.toList(context, 'ordered'),
-      taskList: this.toList(context, 'task')
+      bulletList: this.toList('bullet'),
+      orderedList: this.toList('ordered'),
+      taskList: this.toList('task')
     };
   }
 
-  keymaps(context: Context) {
-    const bulletCommand = this.toList(context, 'bullet')();
-    const orderedCommand = this.toList(context, 'ordered')();
-    const taskCommand = this.toList(context, 'task')();
+  keymaps() {
+    const bulletCommand = this.toList('bullet')();
+    const orderedCommand = this.toList('ordered')();
+    const taskCommand = this.toList('task')();
 
     return {
       'Mod-u': bulletCommand,
@@ -203,7 +205,7 @@ export class ListItem extends Mark {
       'Mod-O': orderedCommand,
       'alt-t': taskCommand,
       'alt-T': taskCommand,
-      Enter: this.extendList(context)
+      Enter: this.extendList()
     };
   }
 }

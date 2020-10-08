@@ -1,13 +1,13 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import { MdNode, TableMdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import { findClosestNode, isTableCellNode } from '@/utils/markdown';
 import Mark from '@/spec/mark';
 import { getEditorToMdPos, getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import { createParagraph, insertBlockNodes, replaceBlockNodes } from '../helper/manipulation';
+import { createParagraph, insertNodes, replaceNodes } from '../helper/manipulation';
 
 interface Payload {
   colLen: number;
@@ -52,9 +52,9 @@ export class Table extends Mark {
     };
   }
 
-  private extendTable(context: Context): Command {
+  private extendTable(): Command {
     return (state, dispatch) => {
-      const { schema, toastMark } = context;
+      const { schema, toastMark } = this.context;
       const { selection, doc, tr } = state;
       const [, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
@@ -78,9 +78,9 @@ export class Table extends Mark {
         if (isEmpty) {
           const emptyNode = createParagraph(schema);
 
-          dispatch!(replaceBlockNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
+          dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
         } else {
-          const newTr = insertBlockNodes(tr, endOffset, createParagraph(schema, row));
+          const newTr = insertNodes(tr, endOffset, createParagraph(schema, row));
           const caretSelection = TextSelection.create(newTr.doc, endOffset + 4);
 
           dispatch!(newTr.setSelection(caretSelection));
@@ -93,8 +93,9 @@ export class Table extends Mark {
     };
   }
 
-  commands({ schema }: Context): EditorCommand<Payload> {
+  commands(): EditorCommand<Payload> {
     return payload => ({ selection, doc, tr }, dispatch) => {
+      const { schema } = this.context;
       const { colLen, rowLen } = payload!;
       const [, to] = resolveSelectionPos(selection);
       const endOffset = doc.resolve(to).end();
@@ -104,7 +105,7 @@ export class Table extends Mark {
 
       const nodes = [...headerRows, ...bodyRows].map(row => createParagraph(schema, row));
 
-      const newTr = insertBlockNodes(tr, endOffset, nodes);
+      const newTr = insertNodes(tr, endOffset, nodes);
       const newSelection = TextSelection.create(newTr.doc, endOffset + 4);
 
       dispatch!(tr.setSelection(newSelection));
@@ -113,9 +114,9 @@ export class Table extends Mark {
     };
   }
 
-  keymaps(context: Context) {
+  keymaps() {
     return {
-      Enter: this.extendTable(context)
+      Enter: this.extendTable()
     };
   }
 }

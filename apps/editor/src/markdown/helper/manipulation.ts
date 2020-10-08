@@ -1,7 +1,7 @@
 import { Transaction } from 'prosemirror-state';
 import { ProsemirrorNode, Schema } from 'prosemirror-model';
 
-export function replaceBlockNodes(
+export function replaceNodes(
   tr: Transaction,
   from: number,
   to: number,
@@ -16,7 +16,7 @@ export function replaceBlockNodes(
   );
 }
 
-export function insertBlockNodes(
+export function insertNodes(
   tr: Transaction,
   pos: number,
   nodes: ProsemirrorNode | ProsemirrorNode[]

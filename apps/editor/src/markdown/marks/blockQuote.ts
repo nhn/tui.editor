@@ -1,18 +1,13 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
 import { TextSelection } from 'prosemirror-state';
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import {
-  createParagraph,
-  insertBlockNodes,
-  nbspToSpace,
-  replaceBlockNodes
-} from '../helper/manipulation';
+import { createParagraph, insertNodes, nbspToSpace, replaceNodes } from '../helper/manipulation';
 
-const reBlockQuoteSyntax = /^> ?/;
+export const reBlockQuote = /^\s*> ?/;
 
 export class BlockQuote extends Mark {
   get name() {
@@ -30,34 +25,34 @@ export class BlockQuote extends Mark {
   private getChangedText(text: string, isBlockQuote?: boolean) {
     text = nbspToSpace(text);
     if (isBlockQuote) {
-      return text.replace(reBlockQuoteSyntax, '').trim();
+      return text.replace(reBlockQuote, '').trim();
     }
     return text.trim() ? `> ${text.trim()}` : `> `;
   }
 
-  private extendBlockQuote(context: Context): Command {
+  private extendBlockQuote(): Command {
     return ({ selection, doc, tr }, dispatch) => {
-      const { schema } = context;
+      const { schema } = this.context;
       const [, to] = resolveSelectionPos(selection);
       const startResolvedPos = doc.resolve(to);
 
       const lineText = nbspToSpace(startResolvedPos.node().textContent);
-      const isBlockQuote = reBlockQuoteSyntax.test(lineText);
+      const isBlockQuote = reBlockQuote.test(lineText);
 
       const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
-      const isEmpty = !lineText.replace(reBlockQuoteSyntax, '').trim();
+      const isEmpty = !lineText.replace(reBlockQuote, '').trim();
 
       if (isBlockQuote) {
         if (isEmpty) {
           const emptyNode = createParagraph(schema);
 
-          dispatch!(replaceBlockNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
+          dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
         } else {
           const slicedText = lineText.slice(to - startOffset).trim();
           const node = createParagraph(schema, this.getChangedText(slicedText));
           const newTr = slicedText
-            ? replaceBlockNodes(tr, to, endOffset, node, { from: 0, to: 1 })
-            : insertBlockNodes(tr, endOffset, node);
+            ? replaceNodes(tr, to, endOffset, node, { from: 0, to: 1 })
+            : insertNodes(tr, endOffset, node);
           const newSelection = TextSelection.create(newTr.doc, to + slicedText.length + 4);
 
           dispatch!(newTr.setSelection(newSelection));
@@ -70,7 +65,9 @@ export class BlockQuote extends Mark {
     };
   }
 
-  commands({ schema }: Context): EditorCommand {
+  commands(): EditorCommand {
+    const { schema } = this.context;
+
     return () => (state, dispatch) => {
       const { selection, doc, tr } = state;
       const [from, to] = resolveSelectionPos(selection);
@@ -78,7 +75,7 @@ export class BlockQuote extends Mark {
       const startResolvedPos = doc.resolve(from);
 
       const lineText = nbspToSpace(startResolvedPos.node().textContent);
-      const isBlockQuote = reBlockQuoteSyntax.test(lineText);
+      const isBlockQuote = reBlockQuote.test(lineText);
 
       const nodes: ProsemirrorNode[] = [];
 
@@ -93,7 +90,7 @@ export class BlockQuote extends Mark {
       });
 
       if (nodes.length) {
-        dispatch!(replaceBlockNodes(tr, startOffset, endOffset, nodes));
+        dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
         return true;
       }
 
@@ -101,13 +98,13 @@ export class BlockQuote extends Mark {
     };
   }
 
-  keymaps(context: Context) {
-    const blockQuoteCommand = this.commands(context)();
+  keymaps() {
+    const blockQuoteCommand = this.commands()();
 
     return {
       'alt-q': blockQuoteCommand,
       'alt-Q': blockQuoteCommand,
-      Enter: this.extendBlockQuote(context)
+      Enter: this.extendBlockQuote()
     };
   }
 }

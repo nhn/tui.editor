@@ -3,15 +3,21 @@ import { NodeSpec } from 'prosemirror-model';
 import { Context, EditorCommand, EditorCommandMap } from '@t/spec';
 
 export default abstract class Node {
+  context!: Context;
+
   get type() {
     return 'node';
+  }
+
+  setContext(context: Context) {
+    this.context = context;
   }
 
   abstract get name(): string;
 
   abstract get schema(): NodeSpec;
 
-  commands?(context: Context): EditorCommand | EditorCommandMap;
+  commands?(): EditorCommand | EditorCommandMap;
 
-  keymaps?(context: Context): Keymap<any>;
+  keymaps?(): Keymap<any>;
 }
