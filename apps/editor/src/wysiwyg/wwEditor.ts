@@ -70,6 +70,10 @@ export default class WysiwygEditor extends EditorBase {
 
   blur() {}
 
+  focus() {
+    this.view.focus();
+  }
+
   getHTML() {
     return this.view.dom.innerHTML;
   }

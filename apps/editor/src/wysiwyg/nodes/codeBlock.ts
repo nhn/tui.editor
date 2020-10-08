@@ -1,5 +1,7 @@
 import { DOMOutputSpec, Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { setBlockType } from 'prosemirror-commands';
 
+import { Context, EditorCommand } from '@t/spec';
 import Node from '@/spec/node';
 
 export class CodeBlock extends Node {
@@ -40,5 +42,9 @@ export class CodeBlock extends Node {
         ];
       }
     };
+  }
+
+  commands({ schema }: Context): EditorCommand {
+    return () => setBlockType(schema.nodes.codeBlock);
   }
 }

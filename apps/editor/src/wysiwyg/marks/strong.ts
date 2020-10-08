@@ -1,5 +1,7 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpecArray, MarkType } from 'prosemirror-model';
+import { toggleMark } from 'prosemirror-commands';
 
+import { Context, EditorCommand } from '@t/spec';
 import Mark from '@/spec/mark';
 
 export class Strong extends Mark {
@@ -14,5 +16,13 @@ export class Strong extends Mark {
         return ['strong'];
       }
     };
+  }
+
+  private bold(type: MarkType): EditorCommand {
+    return () => toggleMark(type);
+  }
+
+  commands({ schema }: Context) {
+    return { bold: this.bold(schema.marks.strong) };
   }
 }
