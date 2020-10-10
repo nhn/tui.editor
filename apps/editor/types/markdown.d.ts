@@ -67,6 +67,7 @@ export interface MdNode {
 }
 
 export interface CodeBlockMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   fenceOffset: number;
   fenceLength: number;
   fenceChar: string;
@@ -75,6 +76,7 @@ export interface CodeBlockMdNode extends MdNode {
 }
 
 export interface ListItemMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   listData: {
     padding: number;
     task: boolean;
@@ -85,17 +87,20 @@ export interface ListItemMdNode extends MdNode {
 }
 
 export interface HeadingMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   level: number;
   headingType: 'atx' | 'setext';
 }
 
 export interface ImageMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   lastChild: MdNode;
   destination: string;
   title: string;
 }
 
 export interface LinkMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   lastChild: MdNode;
   extendedAutolink: boolean;
   destination: string;
@@ -103,6 +108,7 @@ export interface LinkMdNode extends MdNode {
 }
 
 export interface CodeMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   tickCount: number;
 }
 
@@ -111,6 +117,7 @@ export interface TableColumn {
 }
 
 export interface TableCellMdNode extends MdNode {
+  parent: TableRowMdNode;
   startIdx: number;
   endIdx: number;
   paddingLeft: number;
@@ -118,7 +125,25 @@ export interface TableCellMdNode extends MdNode {
   ignored: boolean;
 }
 
+export interface TableRowMdNode extends MdNode {
+  parent: TableBodyMdNode | TableHeadMdNode;
+  startIdx: number;
+  endIdx: number;
+  paddingLeft: number;
+  paddingRight: number;
+  ignored: boolean;
+}
+
+export interface TableBodyMdNode extends MdNode {
+  parent: TableMdNode;
+}
+
+export interface TableHeadMdNode extends MdNode {
+  parent: TableMdNode;
+}
+
 export interface TableMdNode extends MdNode {
+  parent: MdNode;
   columns: TableColumn[];
 }
 

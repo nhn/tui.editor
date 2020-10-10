@@ -2,7 +2,7 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { EditorCommand } from '@t/spec';
-import { MdNode, TableMdNode } from '@t/markdown';
+import { MdNode, TableCellMdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import { findClosestNode, isTableCellNode } from '@/utils/markdown';
 import Mark from '@/spec/mark';
@@ -58,7 +58,7 @@ export class Table extends Mark {
       const { selection, doc, tr } = state;
       const [, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
-      const [startPos] = getEditorToMdPos(to, to, doc);
+      const [startPos] = getEditorToMdPos(doc, to, to);
       const lineText = toastMark.getLineTexts()[startPos[0] - 1];
       const isEmpty = !lineText.replace(reEmptyTable, '').trim();
 
@@ -67,12 +67,12 @@ export class Table extends Mark {
         mdNode,
         node =>
           isTableCellNode(node) &&
-          (node.parent!.type === 'tableDelimRow' || node.parent!.parent!.type === 'tableBody')
-      );
+          (node.parent.type === 'tableDelimRow' || node.parent.parent.type === 'tableBody')
+      ) as TableCellMdNode;
 
       if (cellNode) {
         const { parent } = cellNode;
-        const colLen = (parent!.parent!.parent as TableMdNode).columns.length;
+        const colLen = parent.parent.parent.columns.length;
         const row = createTableRow(colLen);
 
         if (isEmpty) {
