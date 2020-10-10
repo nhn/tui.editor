@@ -1,30 +1,17 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
-import { Selection, TextSelection } from 'prosemirror-state';
+import { TextSelection } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
+import { MdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import Node from '@/spec/node';
+import { isOrderedListNode } from '@/utils/markdown';
 import { reBlockQuote } from '../marks/blockQuote';
-import {
-  resolveSelectionPos,
-  getExtendedRangeOffset,
-  getEditorToMdLine,
-  getMdToEditorPos
-} from '../helper/pos';
+import { getMdToEditorPos } from '../helper/pos';
 import { getTextByMdLine } from '../helper/query';
 import { createParagraph, createText, insertNodes, replaceNodes } from '../helper/manipulation';
-import { reList, reOrderedList } from '../helper/list';
-import { ListItemMdNode, MdNode } from '@t/markdown';
-import { findClosestNode, isOrderedList } from '@/utils/markdown';
+import { getPosInfo, getReorderedListInfo, reList, reOrderedListGroup } from '../helper/list';
 
-function getPosInfo(doc: ProsemirrorNode, selection: Selection) {
-  const [from, to] = resolveSelectionPos(selection);
-  const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
-  const [startLine, endLine] = getEditorToMdLine(from, to, doc);
-
-  return { from, to, startOffset, endOffset, startLine, endLine };
-}
-
-function isBlock(from: number, to: number, text: string) {
+function isBlockUnit(from: number, to: number, text: string) {
   return from < to || reList.test(text) || reBlockQuote.test(text);
 }
 
@@ -51,33 +38,36 @@ export class Paragraph extends Node {
   }
 
   private orderedList(doc: ProsemirrorNode, startLine: number, endLine: number) {
-    const { toastMark, eventEmitter } = this.context;
-    const startMdNode: MdNode = toastMark.findFirstNodeAtLine(startLine);
-    let listItemNode = findClosestNode(startMdNode, targetNode => isOrderedList(targetNode));
+    const { toastMark, schema } = this.context;
+    let mdNode: MdNode = toastMark.findFirstNodeAtLine(startLine);
+    let topListNode: MdNode | null = mdNode;
 
-    if (listItemNode) {
-      let firstListItemNode: ListItemMdNode | null = null;
+    while (mdNode && mdNode.parent!.type !== 'document') {
+      mdNode = mdNode.parent!;
 
-      while (listItemNode && listItemNode.parent!.type !== 'document') {
-        listItemNode = listItemNode.parent!;
-
-        if (isOrderedList(listItemNode)) {
-          firstListItemNode = listItemNode;
-        }
+      if (isOrderedListNode(mdNode!)) {
+        topListNode = mdNode;
       }
-      if (firstListItemNode) {
-        startLine = firstListItemNode.sourcepos![0][0];
-      }
-
-      const [from, to] = getMdToEditorPos(
-        [startLine, 1],
-        [endLine, 1],
-        toastMark.getLineTexts(),
-        doc.content.size
-      );
-
-      eventEmitter.emit('command', { type: 'markdown', command: 'orderedList' }, { from, to });
     }
+
+    if (topListNode) {
+      startLine = topListNode.sourcepos![0][0];
+    }
+
+    const [, indent, , start] = reOrderedListGroup.exec(getTextByMdLine(doc, startLine))!;
+    const result = getReorderedListInfo(doc, schema, startLine, Number(start), indent.length);
+
+    return { nodes: result.nodes, startLine, endLine: Math.max(endLine, result.line - 1) };
+  }
+
+  private odrderList(selectionRange: [number, number]) {
+    const { view } = this.context;
+    const { tr } = view.state;
+    const { nodes, startLine, endLine } = this.orderedList(tr.doc, ...selectionRange);
+    const range = getMdToEditorPos(tr.doc, [startLine, 1], [endLine, 1]);
+    const [from, to] = [range[0], tr.doc.resolve(range[1]).end()];
+
+    view.dispatch!(replaceNodes(tr, from, to, nodes));
   }
 
   private indent(): EditorCommand {
@@ -88,28 +78,22 @@ export class Paragraph extends Node {
       const { from, to, startOffset, endOffset, startLine, endLine } = getPosInfo(doc, selection);
       const startLineText = getTextByMdLine(doc, startLine);
 
-      if (isBlock(from, to, startLineText)) {
+      if (isBlockUnit(from, to, startLineText)) {
         for (let line = startLine; line <= endLine; line += 1) {
-          let lineText = getTextByMdLine(doc, line);
+          const lineText = getTextByMdLine(doc, line);
 
-          if (reOrderedList.test(lineText)) {
-            lineText = lineText.replace(/(\s*)[\d]+\./, '$11.');
-          }
-          lineText = `    ${lineText}`;
-
-          nodes.push(createParagraph(schema, lineText));
+          nodes.push(createParagraph(schema, `    ${lineText}`));
         }
         const newTr = replaceNodes(tr, startOffset, endOffset, nodes);
         // const newSelection = TextSelection.create(newTr.doc, from + 4, to + 4);
 
         // selection
         dispatch!(newTr);
+        this.odrderList([startLine, endLine]);
       } else {
         nodes.push(createText(schema, '    '));
         dispatch!(insertNodes(tr, to, nodes));
       }
-
-      this.orderedList(doc, startLine, endLine);
 
       return true;
     };
@@ -122,7 +106,7 @@ export class Paragraph extends Node {
       const { from, to, startOffset, endOffset, startLine, endLine } = getPosInfo(doc, selection);
       const startLineText = getTextByMdLine(doc, startLine);
 
-      if (isBlock(from, to, startLineText)) {
+      if (isBlockUnit(from, to, startLineText)) {
         for (let line = startLine; line <= endLine; line += 1) {
           const lineText = getTextByMdLine(doc, line).replace(/^\s{1,4}(.*)/, '$1');
 
@@ -130,15 +114,14 @@ export class Paragraph extends Node {
         }
         // selection
         dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
+        this.odrderList([startLine, endLine]);
       } else {
         const startText = startLineText.slice(0, to - startOffset);
-        const startTextWthoutSpace = startText.replace(/ {1,4}$/, '');
-        const deletStart = to - (startText.length - startTextWthoutSpace.length);
+        const startTextWithoutSpace = startText.replace(/\s{1,4}$/, '');
+        const deletStart = to - (startText.length - startTextWithoutSpace.length);
 
         dispatch!(tr.delete(deletStart, to));
       }
-
-      this.orderedList(doc, startLine, endLine);
 
       return true;
     };

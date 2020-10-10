@@ -1,9 +1,12 @@
-import { ProsemirrorNode } from 'prosemirror-model';
+import { ProsemirrorNode, Schema } from 'prosemirror-model';
+import { Selection } from 'prosemirror-state';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
-import { isListNode } from '@/utils/markdown';
+import { findClosestNode, isListNode, isOrderedListNode } from '@/utils/markdown';
 import { ListItemMdNode, MdNode } from '@t/markdown';
 import { getTextByMdLine } from './query';
+import { createParagraph } from './manipulation';
+import { getEditorToMdLine, getExtendedRangeOffset, resolveSelectionPos } from './pos';
 
 export interface ToListContext<T = ListItemMdNode> {
   mdNode: T;
@@ -28,12 +31,11 @@ interface ToListResult {
 
 type ExtendedResult = {
   listSyntax: string;
-  orderedList?: ChangedListInfo[];
+  changedResults?: ChangedListInfo[];
   lastListOffset?: number;
 };
 
 type ListType = 'bullet' | 'ordered';
-
 type ListToListFn = (context: ToListContext) => ToListResult;
 type NodeToListFn = (context: ToListContext<MdNode>) => ToListResult;
 type ExtendListFn = (context: ExtendListContext) => ExtendedResult;
@@ -63,13 +65,23 @@ interface ExtendList {
 
 export const reList = /([*-] |[\d]+\. )/;
 export const reOrderedList = /([\d])+\.( \[[ xX]])? /;
+export const reOrderedListGroup = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
+const reBulletListGroup = /^(\s*)([-*]+(\s(?:\[(?:x|\s)\]\s)?))(.*)/;
 const reTaskList = /([-*] |[\d]+\. )(\[[ xX]] )/;
 const reBulletTaskList = /([-*])( \[[ xX]]) /;
 const reCanBeTaskList = /([-*]|[\d]+\.)( \[[ xX]])? /;
-const reListWithContent = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
 
 export function getListType(text: string): ListType {
   return reOrderedList.test(text) ? 'ordered' : 'bullet';
+}
+
+export function getPosInfo(doc: ProsemirrorNode, selection: Selection, endCursor = false) {
+  const [from, to] = resolveSelectionPos(selection);
+  const resolvedFrom = endCursor ? to : from;
+  const [startOffset, endOffset] = getExtendedRangeOffset(resolvedFrom, to, doc);
+  const [startLine, endLine] = getEditorToMdLine(resolvedFrom, to, doc);
+
+  return { from: resolvedFrom, to, startOffset, endOffset, startLine, endLine };
 }
 
 function getListDepth(mdNode: MdNode) {
@@ -118,14 +130,13 @@ function getSameDepthItems({ toastMark, mdNode, line }: ToListContext) {
   return forwardList.concat([{ line, depth, mdNode }]).concat(backwardList);
 }
 
-function textToBullet(text: string, mdNode: ListItemMdNode) {
+function textToBullet(text: string) {
   if (!reList.test(text)) {
     return `* ${text}`;
   }
+  const type = getListType(text);
 
-  const { type, task } = mdNode.listData;
-
-  if (type === 'bullet' && task) {
+  if (type === 'bullet' && reCanBeTaskList.test(text)) {
     text = text.replace(reBulletTaskList, '$1 ');
   } else if (type === 'ordered') {
     text = text.replace(reOrderedList, '* ');
@@ -134,14 +145,13 @@ function textToBullet(text: string, mdNode: ListItemMdNode) {
   return text;
 }
 
-function textToOrdered(text: string, mdNode: ListItemMdNode, ordinalNum: number) {
+function textToOrdered(text: string, ordinalNum: number) {
   if (!reList.test(text)) {
     return `${ordinalNum}. ${text}`;
   }
+  const type = getListType(text);
 
-  const { type, task } = mdNode.listData;
-
-  if (type === 'bullet' || (type === 'ordered' && task)) {
+  if (type === 'bullet' || (type === 'ordered' && reCanBeTaskList.test(text))) {
     text = text.replace(reCanBeTaskList, `${ordinalNum}. `);
   } else if (type === 'ordered' && parseInt(RegExp.$1, 10) !== ordinalNum) {
     text = text.replace(reOrderedList, `${ordinalNum}. `);
@@ -159,7 +169,7 @@ function getChangedInfo(
   let firstListOffset = Number.MAX_VALUE;
   let lastListOffset = 0;
 
-  const changedResults = sameDepthItems.map(({ line, mdNode }, index) => {
+  const changedResults = sameDepthItems.map(({ line }, index) => {
     doc.descendants((node, pos, _, nodeIndex) => {
       if (node.isBlock && line === nodeIndex! + 1) {
         firstListOffset = Math.min(pos + 1, firstListOffset);
@@ -170,10 +180,7 @@ function getChangedInfo(
 
     let text = getTextByMdLine(doc, line);
 
-    text =
-      type === 'bullet'
-        ? textToBullet(text, mdNode)
-        : textToOrdered(text, mdNode, index + 1 + start);
+    text = type === 'bullet' ? textToBullet(text) : textToOrdered(text, index + 1 + start);
 
     return { text, line };
   });
@@ -195,7 +202,6 @@ export const otherListToList: ListToList = {
     return toBulletOrOrdered('ordered', context);
   },
   task({ mdNode, doc, line }) {
-    const changedResults = [];
     let text = getTextByMdLine(doc, line);
 
     if (mdNode.listData.task) {
@@ -203,79 +209,117 @@ export const otherListToList: ListToList = {
     } else if (isListNode(mdNode)) {
       text = text.replace(reList, '$1[ ] ');
     }
-    changedResults.push({ text, line });
 
-    return { changedResults };
+    return { changedResults: [{ text, line }] };
   }
 };
 
 export const otherNodeToList: NodeToList = {
   bullet({ doc, line }) {
-    const text = getTextByMdLine(doc, line);
-    const changedResults = [{ text: `* ${text}`, line }];
+    const lineText = getTextByMdLine(doc, line);
+    const changedResults = [{ text: `* ${lineText}`, line }];
 
     return { changedResults };
   },
   ordered({ toastMark, doc, line, startLine }) {
-    const text = getTextByMdLine(doc, line);
-    let ordinalNum = 1;
-    let ordinalStartNum = 1;
-    let ordinalStartLine = startLine;
+    const lineText = getTextByMdLine(doc, line);
+    let firstOrderedListNum = 1;
+    let firstOrderedListLine = startLine;
+    let skipped = 0;
 
     for (let i = startLine - 1; i > 0; i -= 1) {
-      const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(i);
+      const mdNode = toastMark.findFirstNodeAtLine(i);
+      const canBeListNode = !!findClosestNode(mdNode, targetNode => isListNode(targetNode));
+      const searchResult = reOrderedListGroup.exec(getTextByMdLine(doc, i));
 
-      if (mdNode) {
-        const { listData } = mdNode;
-        const depth = getListDepth(mdNode);
+      if (!searchResult && !canBeListNode) {
+        break;
+      }
+      if (!searchResult && canBeListNode) {
+        skipped += 1;
+        continue;
+      }
+      const [, indent, , start] = searchResult!;
 
-        if (depth === 0) {
-          break;
-        }
-        if (depth === 1 && listData && listData.type === 'ordered') {
-          ordinalStartNum = listData.start;
-          ordinalStartLine = i;
-          break;
-        }
+      // basis on one depth list
+      if (!indent) {
+        firstOrderedListNum = Number(start);
+        firstOrderedListLine = i;
+        break;
       }
     }
-    ordinalNum = ordinalStartNum + line - ordinalStartLine;
-
-    const changedResults = [{ text: `${ordinalNum}. ${text}`, line }];
+    const ordinalNum = firstOrderedListNum + line - firstOrderedListLine - skipped;
+    const changedResults = [{ text: `${ordinalNum}. ${lineText}`, line }];
 
     return { changedResults };
   },
   task({ doc, line }) {
-    const text = getTextByMdLine(doc, line);
-    const changedResults = [{ text: `* [ ] ${text}`, line }];
+    const lineText = getTextByMdLine(doc, line);
+    const changedResults = [{ text: `* [ ] ${lineText}`, line }];
 
     return { changedResults };
   }
 };
 
 export const extendList: ExtendList = {
-  bullet({ line, doc, mdNode }: ExtendListContext) {
+  bullet({ line, doc }: ExtendListContext) {
     const lineText = getTextByMdLine(doc, line);
-    const indent = lineText.substring(0, lineText.indexOf('*'));
-    const listSyntax = indent + textToBullet(mdNode.listData.task ? '[ ] ' : '', mdNode);
+    const [, indent, delimiter] = reBulletListGroup.exec(lineText)!;
 
-    return { listSyntax };
+    return { listSyntax: `${indent}${delimiter}` };
   },
   ordered({ toastMark, line, mdNode, doc }: ExtendListContext) {
     const depth = getListDepth(mdNode);
-    const ordinalNum = mdNode.listData.start + 1;
-
     const lineText = getTextByMdLine(doc, line);
-    const indent = lineText.substring(0, lineText.search(/[\d]+\./));
-    const listSyntax =
-      indent + textToOrdered(mdNode.listData.task ? '[ ] ' : '', mdNode, ordinalNum);
 
-    const backward = findSameDepthList(toastMark, line, depth, true).filter(
-      info => info.mdNode.listData.type === 'ordered' && getTextByMdLine(doc, info.line).trim()
+    const [, indent, , start, delimiter] = reOrderedListGroup.exec(lineText)!;
+    const ordinalNum = Number(start) + 1;
+    const listSyntax = `${indent}${ordinalNum}${delimiter}`;
+
+    const backwardList = findSameDepthList(toastMark, line, depth, true);
+    const filteredList = backwardList.filter(
+      info =>
+        getTextByMdLine(doc, info.line).trim() &&
+        !!findClosestNode(info.mdNode, targetNode => isOrderedListNode(targetNode))
     );
 
-    const { changedResults, lastListOffset } = getChangedInfo(doc, backward, 'ordered', ordinalNum);
-
-    return { listSyntax, lastListOffset, orderedList: changedResults };
+    return { listSyntax, ...getChangedInfo(doc, filteredList, 'ordered', ordinalNum) };
   }
 };
+
+export function getReorderedListInfo(
+  doc: ProsemirrorNode,
+  schema: Schema,
+  line: number,
+  ordinalNum: number,
+  prevIndentLength: number
+) {
+  let nodes: ProsemirrorNode[] = [];
+  let lineText = getTextByMdLine(doc, line);
+  let searchResult = reOrderedListGroup.exec(lineText);
+
+  while (searchResult) {
+    const [, indent, , , delimiter, text] = searchResult;
+    const indentLength = indent.length;
+
+    if (indentLength === prevIndentLength) {
+      nodes.push(createParagraph(schema, `${indent}${ordinalNum}${delimiter}${text}`));
+      ordinalNum += 1;
+      line += 1;
+    } else if (indentLength > prevIndentLength) {
+      const nestedListInfo = getReorderedListInfo(doc, schema, line, 1, indentLength);
+
+      line = nestedListInfo.line;
+      nodes = nodes.concat(nestedListInfo.nodes);
+    }
+
+    if (indentLength < prevIndentLength || line > doc.childCount) {
+      break;
+    }
+
+    lineText = getTextByMdLine(doc, line);
+    searchResult = reOrderedListGroup.exec(lineText);
+  }
+
+  return { nodes, line };
+}

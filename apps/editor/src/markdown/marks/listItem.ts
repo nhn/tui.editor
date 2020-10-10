@@ -1,8 +1,4 @@
-import {
-  DOMOutputSpecArray,
-  Mark as ProsemirrorMark,
-  Node as ProsemirrorNode
-} from 'prosemirror-model';
+import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { TextSelection, Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import isNumber from 'tui-code-snippet/type/isNumber';
@@ -11,13 +7,13 @@ import { ListItemMdNode, MdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
-import { getEditorToMdLine, getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
 import { createParagraph, insertNodes, replaceNodes } from '../helper/manipulation';
 import {
   ChangedListInfo,
   extendList,
   ExtendListContext,
   getListType,
+  getPosInfo,
   otherListToList,
   otherNodeToList,
   reList,
@@ -27,17 +23,8 @@ import { getTextByMdLine } from '../helper/query';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
 
-function canNotBeListNode(mdNode: MdNode) {
-  const { type } = mdNode;
-
+function canNotBeListNode({ type }: MdNode) {
   return type === 'codeBlock' || type === 'heading' || type.indexOf('table') !== -1;
-}
-
-function getPosInfo(doc: ProsemirrorNode, from: number, to: number) {
-  const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
-  const [startLine, endLine] = getEditorToMdLine(from, to, doc);
-
-  return { startOffset, endOffset, startLine, endLine };
 }
 
 export class ListItem extends Mark {
@@ -74,8 +61,7 @@ export class ListItem extends Mark {
     return (state, dispatch) => {
       const { schema, toastMark } = this.context;
       const { selection, tr, doc } = state;
-      const [, to] = resolveSelectionPos(selection);
-      const { startOffset, endOffset, endLine } = getPosInfo(doc, to, to);
+      const { to, startOffset, endOffset, endLine } = getPosInfo(doc, selection);
 
       const lineText = getTextByMdLine(doc, endLine);
       const isList = reList.test(lineText);
@@ -87,23 +73,23 @@ export class ListItem extends Mark {
       const isEmpty = !lineText.replace(reList, '').trim();
       const commandType: CommandType = getListType(lineText);
 
-      const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(endLine);
       const emptyNode = createParagraph(schema);
 
       if (isEmpty) {
         dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
       } else {
+        const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(endLine);
         const slicedText = lineText.slice(to - startOffset);
         const context: ExtendListContext = { toastMark, mdNode, doc, line: endLine };
-        const { listSyntax, orderedList, lastListOffset } = extendList[commandType](context);
+        const { listSyntax, changedResults, lastListOffset } = extendList[commandType](context);
 
         const node = createParagraph(schema, listSyntax + slicedText);
         let newTr: Transaction | null = null;
 
         // To change ordinal number of backward ordered list
-        if (orderedList?.length) {
+        if (changedResults?.length) {
           const extendedEndOffset = doc.resolve(lastListOffset!).end();
-          const nodes = orderedList.map(({ text }) => createParagraph(schema, text));
+          const nodes = changedResults.map(({ text }) => createParagraph(schema, text));
 
           nodes.unshift(node);
 
@@ -124,11 +110,10 @@ export class ListItem extends Mark {
   }
 
   private toList(commandType: CommandType): EditorCommand {
-    return payload => (state, dispatch) => {
+    return () => (state, dispatch) => {
       const { schema, toastMark } = this.context;
       const { doc, tr, selection } = state;
-      const [from, to] = payload ? [payload.from, payload.to] : resolveSelectionPos(selection);
-      const posInfo = getPosInfo(doc, from, to);
+      const posInfo = getPosInfo(doc, selection);
       const { startLine, endLine } = posInfo;
       let { startOffset, endOffset } = posInfo;
 
@@ -163,10 +148,10 @@ export class ListItem extends Mark {
 
         // resolve end offset to change backward same depth list
         if (isNumber(lastListOffset)) {
-          const offset = doc.resolve(lastListOffset).end();
+          const lastEndOffset = doc.resolve(lastListOffset).end();
 
-          if (offset > endOffset) {
-            endOffset = offset;
+          if (lastEndOffset > endOffset) {
+            endOffset = lastEndOffset;
           }
         }
 
