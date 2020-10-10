@@ -45,10 +45,10 @@ export default class MdEditor extends EditorBase {
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
-    this.specs.setContext(this.context);
     this.keymaps = this.createKeymaps();
     this.view = this.createView();
     this.commands = this.createCommands();
+    this.specs.setContext({ ...this.context, view: this.view });
     this.keyCode = null;
   }
 
@@ -138,7 +138,7 @@ export default class MdEditor extends EditorBase {
       tr.steps.forEach(step => {
         const [from, to] = this.getResolvedRange(tr, step);
         const changed = this.getChanged(step.slice);
-        const [startPos, endPos] = getEditorToMdPos(from, to, state.doc);
+        const [startPos, endPos] = getEditorToMdPos(state.doc, from, to);
 
         const editResult = this.toastMark.editMarkdown(startPos, endPos, changed);
 
@@ -178,12 +178,7 @@ export default class MdEditor extends EditorBase {
 
   setSelection(start: MdPos, end: MdPos) {
     const { tr } = this.view.state;
-    const [from, to] = getMdToEditorPos(
-      start,
-      end,
-      this.toastMark.getLineTexts(),
-      tr.doc.content.size
-    );
+    const [from, to] = getMdToEditorPos(tr.doc, start, end);
 
     this.view.dispatch(tr.setSelection(TextSelection.create(tr.doc, from, to)));
   }

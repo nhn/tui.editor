@@ -66,9 +66,8 @@ export class BlockQuote extends Mark {
   }
 
   commands(): EditorCommand {
-    const { schema } = this.context;
-
     return () => (state, dispatch) => {
+      const { schema } = this.context;
       const { selection, doc, tr } = state;
       const [from, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);

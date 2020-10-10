@@ -10,7 +10,7 @@ export interface Context {
   toastMark?: ToastMark;
   schema: Schema;
   eventEmitter: Emitter;
-  view?: EditorView;
+  view: EditorView;
 }
 
 type DefaultPayload = Record<string, any>;
