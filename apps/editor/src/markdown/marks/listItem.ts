@@ -13,13 +13,13 @@ import {
   extendList,
   ExtendListContext,
   getListType,
-  getPosInfo,
   otherListToList,
   otherNodeToList,
   reList,
   ToListContext
 } from '../helper/list';
 import { getTextByMdLine } from '../helper/query';
+import { getPosInfo } from '../helper/pos';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
 
@@ -61,7 +61,7 @@ export class ListItem extends Mark {
     return (state, dispatch) => {
       const { schema, toastMark } = this.context;
       const { selection, tr, doc } = state;
-      const { to, startOffset, endOffset, endLine } = getPosInfo(doc, selection);
+      const { to, startOffset, endOffset, endLine } = getPosInfo(doc, selection, true);
 
       const lineText = getTextByMdLine(doc, endLine);
       const isList = reList.test(lineText);
@@ -71,7 +71,7 @@ export class ListItem extends Mark {
       }
 
       const isEmpty = !lineText.replace(reList, '').trim();
-      const commandType: CommandType = getListType(lineText);
+      const commandType = getListType(lineText);
 
       const emptyNode = createParagraph(schema);
 

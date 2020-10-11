@@ -29,7 +29,7 @@ export function getEditorToMdLine(
   return [startLine, endLine];
 }
 
-export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to: number): MdSourcepos {
+export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from): MdSourcepos {
   const collapsed = from === to;
   const startResolvedPos = doc.resolve(from);
 
@@ -68,4 +68,13 @@ export function getExtendedRangeOffset(from: number, to: number, doc: Prosemirro
   const endOffset = from === to ? startResolvedPos.end() : doc.resolve(to).end();
 
   return [startOffset, endOffset];
+}
+
+export function getPosInfo(doc: ProsemirrorNode, selection: Selection, endCursor = false) {
+  const [from, to] = resolveSelectionPos(selection);
+  const resolvedFrom = endCursor ? to : from;
+  const [startOffset, endOffset] = getExtendedRangeOffset(resolvedFrom, to, doc);
+  const [startLine, endLine] = getEditorToMdLine(resolvedFrom, to, doc);
+
+  return { from: resolvedFrom, to, startOffset, endOffset, startLine, endLine };
 }

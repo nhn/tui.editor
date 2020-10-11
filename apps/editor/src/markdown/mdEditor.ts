@@ -56,8 +56,7 @@ export default class MdEditor extends EditorBase {
     return {
       toastMark: this.toastMark,
       schema: this.schema,
-      eventEmitter: this.eventEmitter,
-      view: this.view
+      eventEmitter: this.eventEmitter
     };
   }
 
@@ -149,7 +148,7 @@ export default class MdEditor extends EditorBase {
     }
   }
 
-  private getResolvedRange(tr: Transaction, step: Step) {
+  private getResolvedRange(tr: Transaction, step: Step): [number, number] {
     const resolvedPos = tr.getMeta('resolvedPos');
 
     return resolvedPos || [step.from, step.to];

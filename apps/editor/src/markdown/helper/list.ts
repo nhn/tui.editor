@@ -1,12 +1,10 @@
 import { ProsemirrorNode, Schema } from 'prosemirror-model';
-import { Selection } from 'prosemirror-state';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { findClosestNode, isListNode, isOrderedListNode } from '@/utils/markdown';
 import { ListItemMdNode, MdNode } from '@t/markdown';
 import { getTextByMdLine } from './query';
 import { createParagraph } from './manipulation';
-import { getEditorToMdLine, getExtendedRangeOffset, resolveSelectionPos } from './pos';
 
 export interface ToListContext<T = ListItemMdNode> {
   mdNode: T;
@@ -73,15 +71,6 @@ const reCanBeTaskList = /([-*]|[\d]+\.)( \[[ xX]])? /;
 
 export function getListType(text: string): ListType {
   return reOrderedList.test(text) ? 'ordered' : 'bullet';
-}
-
-export function getPosInfo(doc: ProsemirrorNode, selection: Selection, endCursor = false) {
-  const [from, to] = resolveSelectionPos(selection);
-  const resolvedFrom = endCursor ? to : from;
-  const [startOffset, endOffset] = getExtendedRangeOffset(resolvedFrom, to, doc);
-  const [startLine, endLine] = getEditorToMdLine(resolvedFrom, to, doc);
-
-  return { from: resolvedFrom, to, startOffset, endOffset, startLine, endLine };
 }
 
 function getListDepth(mdNode: MdNode) {
