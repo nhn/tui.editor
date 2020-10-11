@@ -1,4 +1,4 @@
-import { source } from 'common-tags';
+import { source, stripIndent } from 'common-tags';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
@@ -603,5 +603,241 @@ describe('table command', () => {
     cmd.exec('markdown', 'table', { colLen: 2, rowLen: 3 });
 
     expect(getTextContent(mde)).toBe(result);
+  });
+});
+
+describe('indent command', () => {
+  it('should add soft-tab indentation to text on caret position', () => {
+    mde.setMarkdown('text');
+    mde.setSelection([1, 3], [1, 3]);
+
+    cmd.exec('markdown', 'indent');
+
+    expect(getTextContent(mde)).toBe('te    xt');
+  });
+
+  it('should add soft-tab indentation to first offset on selection', () => {
+    mde.setMarkdown('text');
+    mde.setSelection([1, 2], [1, 3]);
+
+    cmd.exec('markdown', 'indent');
+
+    expect(getTextContent(mde)).toBe('    text');
+  });
+
+  it('should add soft-tab indentation to first offset on multi line selection', () => {
+    const input = source`
+      * line1
+      * line2
+      * line3
+      * line4
+    `;
+    const result = stripIndent`
+      * line1
+          * line2
+          * line3
+      * line4
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([2, 3], [3, 2]);
+
+    cmd.exec('markdown', 'indent');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  describe('ordered list', () => {
+    it('should reorder ordered list after adding soft-tab indentation based on caret position', () => {
+      const input = source`
+        1. line1
+        2. line2
+        3. line3
+        4. line4
+      `;
+      const result = stripIndent`
+        1. line1
+            1. line2
+        2. line3
+        3. line4
+      `;
+
+      mde.setMarkdown(input);
+      mde.setSelection([2, 1], [2, 1]);
+
+      cmd.exec('markdown', 'indent');
+
+      expect(getTextContent(mde)).toBe(result);
+    });
+
+    it('should reorder ordered list after adding soft-tab indentation based on multi line selection', () => {
+      const input = source`
+        1. line1
+        2. line2
+        3. line3
+        4. line4
+      `;
+      const result = stripIndent`
+        1. line1
+            1. line2
+            2. line3
+        2. line4
+      `;
+
+      mde.setMarkdown(input);
+      mde.setSelection([2, 3], [3, 2]);
+
+      cmd.exec('markdown', 'indent');
+
+      expect(getTextContent(mde)).toBe(result);
+    });
+
+    it('should reorder ordered list with empty list item', () => {
+      const input = source`
+        1. line1
+        2. line2
+        3. 
+        4. line4
+      `;
+      const result = stripIndent`
+        1. line1
+        2. line2
+            1. 
+        3. line4
+      `;
+
+      mde.setMarkdown(input);
+      mde.setSelection([3, 2], [3, 3]);
+
+      cmd.exec('markdown', 'indent');
+
+      expect(getTextContent(mde)).toBe(result);
+    });
+  });
+});
+
+describe('outdent command', () => {
+  it('should remove soft-tab indentation from text on caret position', () => {
+    mde.setMarkdown('te  xt');
+    mde.setSelection([1, 5], [1, 5]);
+
+    cmd.exec('markdown', 'outdent');
+
+    expect(getTextContent(mde)).toBe('text');
+  });
+
+  it('should remove soft-tab indentation from first offset on selection', () => {
+    mde.setMarkdown('    text');
+    mde.setSelection([1, 5], [1, 6]);
+
+    cmd.exec('markdown', 'outdent');
+
+    expect(getTextContent(mde)).toBe('text');
+  });
+
+  it('should remove soft-tab indentation from first offset on multi line selection', () => {
+    const input = stripIndent`
+      * line1
+          * line2
+          * line3
+      * line4
+    `;
+    const result = source`
+      * line1
+      * line2
+      * line3
+      * line4
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([2, 3], [3, 2]);
+
+    cmd.exec('markdown', 'outdent');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  describe('ordered list', () => {
+    it('should reorder ordered list after removing soft-tab indentation based on caret position', () => {
+      const input = stripIndent`
+        1. line1
+          1. line2
+        2. line3
+        3. line4
+      `;
+      const result = source`
+        1. line1
+        2. line2
+        3. line3
+        4. line4
+      `;
+
+      mde.setMarkdown(input);
+      mde.setSelection([2, 1], [2, 1]);
+
+      cmd.exec('markdown', 'outdent');
+
+      expect(getTextContent(mde)).toBe(result);
+    });
+
+    it('should reorder ordered list after removing soft-tab indentation based on multi line selection', () => {
+      const input = stripIndent`
+        1. line1
+            1. line2
+            2. line3
+        2. line4
+      `;
+      const result = source`
+        1. line1
+        2. line2
+        3. line3
+        4. line4
+      `;
+
+      mde.setMarkdown(input);
+      mde.setSelection([2, 3], [3, 2]);
+
+      cmd.exec('markdown', 'outdent');
+
+      expect(getTextContent(mde)).toBe(result);
+    });
+
+    it('should reorder ordered list with empty list item', () => {
+      const input = stripIndent`
+        1. line1
+        2. line2
+          1. 
+        3. line4
+      `;
+      const result = source`
+        1. line1
+        2. line2
+        3. 
+        4. line4
+      `;
+
+      mde.setMarkdown(input);
+      mde.setSelection([3, 2], [3, 3]);
+
+      cmd.exec('markdown', 'outdent');
+
+      expect(getTextContent(mde)).toBe(result);
+    });
+
+    it('should not throw error on line which has no indentation', () => {
+      const result = stripIndent`
+        1. line1
+        2. line2
+        3. line3
+        4. line4
+      `;
+
+      mde.setMarkdown(result);
+      mde.setSelection([1, 2], [3, 3]);
+
+      cmd.exec('markdown', 'outdent');
+
+      expect(getTextContent(mde)).toBe(result);
+    });
   });
 });
