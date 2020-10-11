@@ -1,15 +1,15 @@
 import { Keymap } from 'prosemirror-commands';
 import { NodeSpec } from 'prosemirror-model';
-import { Context, EditorCommand, EditorCommandMap } from '@t/spec';
+import { SpecContext, EditorCommand, EditorCommandMap } from '@t/spec';
 
 export default abstract class Node {
-  context!: Context;
+  context!: SpecContext;
 
   get type() {
     return 'node';
   }
 
-  setContext(context: Context) {
+  setContext(context: SpecContext) {
     this.context = context;
   }
 

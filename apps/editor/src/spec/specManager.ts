@@ -1,6 +1,6 @@
 import { EditorView } from 'prosemirror-view';
 import { keymap } from 'prosemirror-keymap';
-import { EditorAllCommandMap, Context, EditorCommand } from '@t/spec';
+import { EditorAllCommandMap, EditorCommand, SpecContext } from '@t/spec';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import Mark from '@/spec/mark';
@@ -78,7 +78,7 @@ export default class SpecManager {
     return specKeymaps.map(keys => keymap(keys));
   }
 
-  setContext(context: Context) {
+  setContext(context: SpecContext) {
     this.specs.forEach(spec => {
       spec.setContext(context);
     });

@@ -1,15 +1,15 @@
 import { Keymap } from 'prosemirror-commands';
 import { MarkSpec } from 'prosemirror-model';
-import { Context, EditorCommand, EditorCommandMap } from '@t/spec';
+import { SpecContext, EditorCommand, EditorCommandMap } from '@t/spec';
 
 export default abstract class Mark {
-  context!: Context;
+  context!: SpecContext;
 
   get type() {
     return 'mark';
   }
 
-  setContext(context: Context) {
+  setContext(context: SpecContext) {
     this.context = context;
   }
 

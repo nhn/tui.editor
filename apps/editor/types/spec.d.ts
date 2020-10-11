@@ -10,6 +10,9 @@ export interface Context {
   toastMark?: ToastMark;
   schema: Schema;
   eventEmitter: Emitter;
+}
+
+export interface SpecContext extends Context {
   view: EditorView;
 }
 
