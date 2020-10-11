@@ -2,16 +2,24 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { EditorCommand } from '@t/spec';
-import { MdNode, TableCellMdNode } from '@t/markdown';
+import { MdNode, MdPos, TableCellMdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
-import { findClosestNode, isTableCellNode } from '@/utils/markdown';
+import { findClosestNode, getMdEndCh, getMdEndLine, isTableCellNode } from '@/utils/markdown';
 import Mark from '@/spec/mark';
-import { getEditorToMdPos, getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
+import { getEditorToMdPos, getMdToEditorPos, getPosInfo, resolveSelectionPos } from '../helper/pos';
 import { createParagraph, insertNodes, replaceNodes } from '../helper/manipulation';
+import { getTextByMdLine } from '../helper/query';
 
 interface Payload {
   colLen: number;
   rowLen: number;
+}
+
+interface MovingTypeInfo {
+  type: 'next' | 'prev';
+  parentType: 'tableHead' | 'tableBody';
+  childType: 'firstChild' | 'lastChild';
+  diff: 1 | -1;
 }
 
 const reEmptyTable = /\||\s/g;
@@ -39,6 +47,13 @@ function createTableRow(colLen: number, delim?: boolean) {
   return row;
 }
 
+function createTargetTypes(moveNext: boolean): MovingTypeInfo {
+  if (moveNext) {
+    return { type: 'next', parentType: 'tableHead', childType: 'firstChild', diff: 1 };
+  }
+  return { type: 'prev', parentType: 'tableBody', childType: 'lastChild', diff: -1 };
+}
+
 export class Table extends Mark {
   get name() {
     return 'table';
@@ -56,10 +71,10 @@ export class Table extends Mark {
     return (state, dispatch) => {
       const { schema, toastMark } = this.context;
       const { selection, doc, tr } = state;
-      const [, to] = resolveSelectionPos(selection);
-      const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
-      const [startPos] = getEditorToMdPos(doc, to, to);
-      const lineText = toastMark.getLineTexts()[startPos[0] - 1];
+      const { to, startOffset, endOffset } = getPosInfo(doc, selection, true);
+
+      const [startPos] = getEditorToMdPos(doc, to);
+      const lineText = getTextByMdLine(doc, startPos[0]);
       const isEmpty = !lineText.replace(reEmptyTable, '').trim();
 
       const mdNode: MdNode = toastMark.findNodeAtPosition(startPos);
@@ -93,6 +108,49 @@ export class Table extends Mark {
     };
   }
 
+  private moveTableCell(moveNext: boolean): Command {
+    return (state, dispatch) => {
+      const { selection, doc, tr } = state;
+      const [, to] = resolveSelectionPos(selection);
+      const [, endPos] = getEditorToMdPos(doc, to);
+
+      const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(endPos);
+      const cellNode = findClosestNode(mdNode, node => isTableCellNode(node)) as TableCellMdNode;
+
+      if (cellNode) {
+        const { parent } = cellNode;
+        const { type, parentType, childType, diff } = createTargetTypes(moveNext);
+
+        let line = getMdEndLine(cellNode);
+        let ch = moveNext ? getMdEndCh(cellNode) + 2 : 1;
+
+        if (cellNode[type]) {
+          ch = getMdEndCh(cellNode[type]!);
+        } else {
+          const row =
+            !parent[type] && parent.parent.type === parentType
+              ? parent.parent[type]![childType]
+              : parent[type];
+
+          if (row) {
+            line = line + diff;
+            ch = getMdEndCh(row[childType]!);
+          }
+        }
+
+        const mdPos: MdPos = [line, ch];
+        const [pos] = getMdToEditorPos(doc, mdPos, mdPos);
+        const newSelection = TextSelection.create(doc, pos);
+
+        dispatch!(tr.setSelection(newSelection));
+
+        return true;
+      }
+
+      return false;
+    };
+  }
+
   commands(): EditorCommand<Payload> {
     return payload => ({ selection, doc, tr }, dispatch) => {
       const { schema } = this.context;
@@ -116,7 +174,9 @@ export class Table extends Mark {
 
   keymaps() {
     return {
-      Enter: this.extendTable()
+      Enter: this.extendTable(),
+      Tab: this.moveTableCell(true),
+      'Shift-Tab': this.moveTableCell(false)
     };
   }
 }

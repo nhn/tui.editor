@@ -1,15 +1,17 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { TextSelection, Transaction } from 'prosemirror-state';
+// @ts-ignore
+import { ToastMark } from '@toast-ui/toastmark';
 import { EditorCommand } from '@t/spec';
 import { MdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import Node from '@/spec/node';
-import { isOrderedListNode } from '@/utils/markdown';
+import { isOrderedListNode, isTableCellNode } from '@/utils/markdown';
 import { reBlockQuote } from '../marks/blockQuote';
-import { getMdToEditorPos } from '../helper/pos';
+import { getEditorToMdPos, getMdToEditorPos, getPosInfo } from '../helper/pos';
 import { getTextByMdLine } from '../helper/query';
 import { createParagraph, createText, insertNodes, replaceNodes } from '../helper/manipulation';
-import { getPosInfo, getReorderedListInfo, reList, reOrderedListGroup } from '../helper/list';
+import { getReorderedListInfo, reList, reOrderedListGroup } from '../helper/list';
 
 interface SelectionInfo {
   from: number;
@@ -24,6 +26,12 @@ const reStartSpace = /(^\s{1,4})(.*)/;
 
 function isBlockUnit(from: number, to: number, text: string) {
   return from < to || reList.test(text) || reBlockQuote.test(text);
+}
+
+function beInTableCellNode(doc: ProsemirrorNode, toastMark: ToastMark, pos: number) {
+  const mdPos = getEditorToMdPos(doc, pos);
+
+  return isTableCellNode(toastMark.findNodeAtPosition(mdPos[0]));
 }
 
 function createSelection(tr: Transaction, posInfo: SelectionInfo, indent: boolean) {
@@ -115,10 +123,15 @@ export class Paragraph extends Node {
 
   private indent(): EditorCommand {
     return () => (state, dispatch) => {
-      const { schema } = this.context;
+      const { schema, toastMark } = this.context;
       const nodes: ProsemirrorNode[] = [];
       const { selection, tr, doc } = state;
       const { from, to, startOffset, endOffset, startLine, endLine } = getPosInfo(doc, selection);
+
+      if (beInTableCellNode(doc, toastMark, to)) {
+        return false;
+      }
+
       const startLineText = getTextByMdLine(doc, startLine);
 
       if (isBlockUnit(from, to, startLineText)) {
@@ -146,17 +159,22 @@ export class Paragraph extends Node {
 
   private outdent(): EditorCommand {
     return () => (state, dispatch) => {
+      const { schema, toastMark } = this.context;
       const nodes: ProsemirrorNode[] = [];
       const { selection, tr, doc } = state;
       const { from, to, startOffset, endOffset, startLine, endLine } = getPosInfo(doc, selection);
       const startLineText = getTextByMdLine(doc, startLine);
       const endLineText = getTextByMdLine(doc, endLine);
 
+      if (beInTableCellNode(doc, toastMark, to)) {
+        return false;
+      }
+
       if (isBlockUnit(from, to, startLineText)) {
         for (let line = startLine; line <= endLine; line += 1) {
           const lineText = getTextByMdLine(doc, line).replace(reStartSpace, '$2');
 
-          nodes.push(createParagraph(this.context.schema, lineText));
+          nodes.push(createParagraph(schema, lineText));
         }
         const newTr = replaceNodes(tr, startOffset, endOffset, nodes);
         const posInfo = { from, to, startLine, endLine, startLineText, endLineText };

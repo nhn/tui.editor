@@ -76,9 +76,7 @@ export function isOrderedListNode(mdNode: MdNode): mdNode is ListItemMdNode {
 }
 
 export function isTableCellNode(mdNode: MdNode): mdNode is TableCellMdNode {
-  const { type } = mdNode;
-
-  return type === 'tableCell' || type === 'tableDelimCell';
+  return mdNode && (mdNode.type === 'tableCell' || mdNode.type === 'tableDelimCell');
 }
 
 export function isInlineNode(mdNode: MdNode) {

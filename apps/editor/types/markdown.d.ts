@@ -127,6 +127,10 @@ export interface TableCellMdNode extends MdNode {
 
 export interface TableRowMdNode extends MdNode {
   parent: TableBodyMdNode | TableHeadMdNode;
+  firstChild: TableCellMdNode;
+  lastChild: TableCellMdNode;
+  prev: TableRowMdNode | null;
+  next: TableRowMdNode | null;
   startIdx: number;
   endIdx: number;
   paddingLeft: number;
@@ -136,15 +140,24 @@ export interface TableRowMdNode extends MdNode {
 
 export interface TableBodyMdNode extends MdNode {
   parent: TableMdNode;
+  firstChild: TableRowMdNode;
+  lastChild: TableRowMdNode;
+  prev: TableHeadMdNode | TableBodyMdNode | null;
+  next: TableBodyMdNode | null;
 }
 
 export interface TableHeadMdNode extends MdNode {
   parent: TableMdNode;
+  firstChild: TableRowMdNode;
+  lastChild: TableRowMdNode;
+  next: TableBodyMdNode;
 }
 
 export interface TableMdNode extends MdNode {
   parent: MdNode;
   columns: TableColumn[];
+  firstChild: TableHeadMdNode;
+  lastChild: TableBodyMdNode;
 }
 
 /* ToastMark Parser type */
