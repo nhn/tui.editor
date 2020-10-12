@@ -1,6 +1,5 @@
 import { DOMOutputSpec, Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
-
-import { toList } from '@/commands/listCommands';
+import { wrapInList } from 'prosemirror-schema-list';
 
 import { Context, EditorCommand } from '@t/spec';
 import Node from '@/spec/node';
@@ -40,9 +39,7 @@ export class OrderedList extends Node {
   }
 
   commands({ schema }: Context): EditorCommand {
-    const listType = schema.nodes.orderedList;
-
-    return () => toList(listType) as any;
+    return payload => wrapInList(schema.nodes.orderedList, payload);
   }
 
   keymaps(context: Context) {

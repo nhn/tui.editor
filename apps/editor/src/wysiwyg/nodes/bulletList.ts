@@ -1,6 +1,5 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-
-import { toList } from '@/commands/listCommands';
+import { wrapInList } from 'prosemirror-schema-list';
 
 import { Context, EditorCommand } from '@t/spec';
 import Node from '@/spec/node';
@@ -26,9 +25,7 @@ export class BulletList extends Node {
   }
 
   commands({ schema }: Context): EditorCommand {
-    const listType = schema.nodes.bulletList;
-
-    return payload => toList(listType, payload) as any;
+    return payload => wrapInList(schema.nodes.bulletList, payload);
   }
 
   keymaps(context: Context) {
