@@ -1,6 +1,6 @@
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { DOMParser, Schema, Slice } from 'prosemirror-model';
+import { DOMParser, Fragment, Schema, Slice } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
@@ -12,6 +12,7 @@ import { MdPos } from '@t/markdown';
 import EditorBase from '@/base';
 import KeyMapper from '@/keymaps/keyMapper';
 import SpecManager from '@/spec/specManager';
+import { decodeURL } from '@/utils/encoder';
 import { syntaxHighlight } from './plugins/syntaxHighlight';
 import { previewHighlight } from './plugins/previewHighlight';
 import { Doc } from './nodes/doc';
@@ -122,7 +123,15 @@ export default class MdEditor extends EditorBase {
         this.keyCode = event.keyCode;
 
         return false;
-      }
+      },
+      clipboardTextParser: text => {
+        text = decodeURL(text);
+        const lineTexts = text.split('\n');
+        const nodes = lineTexts.map(lineText => createParagraph(this.schema, lineText));
+
+        return new Slice(Fragment.from(nodes), 1, 1);
+      },
+      clipboardTextSerializer: slice => this.getChanged(slice)
     });
   }
 

@@ -209,7 +209,7 @@ describe('addImage command', () => {
       imageUrl: 'myurl ()[]<>'
     });
 
-    expect(getTextContent(mde)).toBe('![image](myurl %28%29%5B%5D%3C%3E)');
+    expect(getTextContent(mde)).toBe('![image](myurl%20%28%29%5B%5D%3C%3E)');
   });
 });
 
@@ -235,7 +235,7 @@ describe('addLink command', () => {
       linkUrl: 'myurl ()[]<>'
     });
 
-    expect(getTextContent(mde)).toBe('[TOAST UI](myurl %28%29%5B%5D%3C%3E)');
+    expect(getTextContent(mde)).toBe('[TOAST UI](myurl%20%28%29%5B%5D%3C%3E)');
   });
 });
 
