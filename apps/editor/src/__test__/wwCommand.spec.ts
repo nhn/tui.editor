@@ -333,7 +333,7 @@ describe('wysiwyg commands', () => {
       expect(wwe.getHTML()).toBe('<p><img src="#" alt="foo"><br></p>');
     });
 
-    it('should not add image element when not having src or wrong attribute', () => {
+    it('should not add image element when not having imageUrl attribute', () => {
       cmd.exec('wysiwyg', 'addImage', {
         altText: 'foo'
       });
