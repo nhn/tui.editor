@@ -9,8 +9,8 @@ import { getTextByMdLine } from '../helper/query';
 
 export function syntaxHighlight({ schema }: Context) {
   return new Plugin({
-    appendTransaction(transations, oldState, newState) {
-      const [tr] = transations;
+    appendTransaction(transactions, oldState, newState) {
+      const [tr] = transactions;
 
       let newTr = newState.tr;
 

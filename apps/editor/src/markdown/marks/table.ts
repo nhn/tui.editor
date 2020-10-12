@@ -68,16 +68,14 @@ export class Table extends Mark {
   }
 
   private extendTable(): Command {
-    return (state, dispatch) => {
-      const { schema, toastMark } = this.context;
-      const { selection, doc, tr } = state;
+    return ({ selection, doc, tr, schema }, dispatch) => {
       const { to, startOffset, endOffset } = getPosInfo(doc, selection, true);
 
       const [startPos] = getEditorToMdPos(doc, to);
       const lineText = getTextByMdLine(doc, startPos[0]);
       const isEmpty = !lineText.replace(reEmptyTable, '').trim();
 
-      const mdNode: MdNode = toastMark.findNodeAtPosition(startPos);
+      const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(startPos);
       const cellNode = findClosestNode(
         mdNode,
         node =>
@@ -109,8 +107,7 @@ export class Table extends Mark {
   }
 
   private moveTableCell(moveNext: boolean): Command {
-    return (state, dispatch) => {
-      const { selection, doc, tr } = state;
+    return ({ selection, doc, tr }, dispatch) => {
       const [, to] = resolveSelectionPos(selection);
       const [, endPos] = getEditorToMdPos(doc, to);
 
@@ -152,8 +149,7 @@ export class Table extends Mark {
   }
 
   commands(): EditorCommand<Payload> {
-    return payload => ({ selection, doc, tr }, dispatch) => {
-      const { schema } = this.context;
+    return payload => ({ selection, doc, tr, schema }, dispatch) => {
       const { colLen, rowLen } = payload!;
       const [, to] = resolveSelectionPos(selection);
       const endOffset = doc.resolve(to).end();

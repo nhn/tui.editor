@@ -23,10 +23,9 @@ export class ThematicBreak extends Mark {
 
   private line(): EditorCommand {
     return () => (state, dispatch) => {
-      const { schema } = this.context;
       const [from, to] = resolveSelectionPos(state.selection);
-      const emptyNode = createParagraph(schema);
-      const lineNode = createParagraph(schema, thematicBreakSyntax);
+      const emptyNode = createParagraph(state.schema);
+      const lineNode = createParagraph(state.schema, thematicBreakSyntax);
       const nodes = [lineNode];
 
       if (to >= state.doc.resolve(to).end()) {

@@ -28,10 +28,10 @@ function isBlockUnit(from: number, to: number, text: string) {
   return from < to || reList.test(text) || reBlockQuote.test(text);
 }
 
-function beInTableCellNode(doc: ProsemirrorNode, toastMark: ToastMark, pos: number) {
-  const mdPos = getEditorToMdPos(doc, pos);
+function isInTableCellNode(doc: ProsemirrorNode, toastMark: ToastMark, pos: number) {
+  const [startPos] = getEditorToMdPos(doc, pos);
 
-  return isTableCellNode(toastMark.findNodeAtPosition(mdPos[0]));
+  return isTableCellNode(toastMark.findNodeAtPosition(startPos));
 }
 
 function createSelection(tr: Transaction, posInfo: SelectionInfo, indent: boolean) {
@@ -82,7 +82,7 @@ export class Paragraph extends Node {
     };
   }
 
-  private reodrderList(startLine: number, endLine: number) {
+  private reorderList(startLine: number, endLine: number) {
     const { view, toastMark, schema } = this.context;
     const { tr, selection } = view.state;
     const { doc } = tr;
@@ -128,7 +128,7 @@ export class Paragraph extends Node {
       const { selection, tr, doc } = state;
       const { from, to, startOffset, endOffset, startLine, endLine } = getPosInfo(doc, selection);
 
-      if (beInTableCellNode(doc, toastMark, to)) {
+      if (isInTableCellNode(doc, toastMark, to)) {
         return false;
       }
 
@@ -146,7 +146,7 @@ export class Paragraph extends Node {
         dispatch!(newTr.setSelection(createSelection(newTr, posInfo, true)));
 
         if (reOrderedListGroup.test(startLineText)) {
-          this.reodrderList(startLine, endLine);
+          this.reorderList(startLine, endLine);
         }
       } else {
         nodes.push(createText(schema, '    '));
@@ -166,7 +166,7 @@ export class Paragraph extends Node {
       const startLineText = getTextByMdLine(doc, startLine);
       const endLineText = getTextByMdLine(doc, endLine);
 
-      if (beInTableCellNode(doc, toastMark, to)) {
+      if (isInTableCellNode(doc, toastMark, to)) {
         return false;
       }
 
@@ -182,7 +182,7 @@ export class Paragraph extends Node {
         dispatch!(newTr.setSelection(createSelection(newTr, posInfo, false)));
 
         if (reOrderedListGroup.test(startLineText)) {
-          this.reodrderList(startLine, endLine);
+          this.reorderList(startLine, endLine);
         }
       } else {
         const startText = startLineText.slice(0, to - startOffset);

@@ -61,13 +61,13 @@ interface ExtendList {
   ordered: ExtendListFn;
 }
 
-export const reList = /([*-] |[\d]+\. )/;
+export const reList = /([-*+] |[\d]+\. )/;
 export const reOrderedList = /([\d])+\.( \[[ xX]])? /;
 export const reOrderedListGroup = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
-const reBulletListGroup = /^(\s*)([-*]+(\s(?:\[(?:x|\s)\]\s)?))(.*)/;
-const reTaskList = /([-*] |[\d]+\. )(\[[ xX]] )/;
-const reBulletTaskList = /([-*])( \[[ xX]]) /;
-const reCanBeTaskList = /([-*]|[\d]+\.)( \[[ xX]])? /;
+const reBulletListGroup = /^(\s*)([-*+]+(\s(?:\[(?:x|\s)\]\s)?))(.*)/;
+const reTaskList = /([-*+] |[\d]+\. )(\[[ xX]] )/;
+const reBulletTaskList = /([-*+])( \[[ xX]]) /;
+const reCanBeTaskList = /([-*+]|[\d]+\.)( \[[ xX]])? /;
 
 export function getListType(text: string): ListType {
   return reOrderedList.test(text) ? 'ordered' : 'bullet';
@@ -142,8 +142,13 @@ function textToOrdered(text: string, ordinalNum: number) {
 
   if (type === 'bullet' || (type === 'ordered' && reCanBeTaskList.test(text))) {
     text = text.replace(reCanBeTaskList, `${ordinalNum}. `);
-  } else if (type === 'ordered' && parseInt(RegExp.$1, 10) !== ordinalNum) {
-    text = text.replace(reOrderedList, `${ordinalNum}. `);
+  } else if (type === 'ordered') {
+    // eslint-disable-next-line prefer-destructuring
+    const start = reOrderedListGroup.exec(text)![3];
+
+    if (Number(start) !== ordinalNum) {
+      text = text.replace(reOrderedList, `${ordinalNum}. `);
+    }
   }
 
   return text;
@@ -177,7 +182,7 @@ function getChangedInfo(
   return { changedResults, firstListOffset, lastListOffset };
 }
 
-function toBulletOrOrdered(type: ListType, context: ToListContext) {
+function getBulletOrOrdered(type: ListType, context: ToListContext) {
   const sameDepthListInfo = getSameDepthItems(context);
 
   return getChangedInfo(context.doc, sameDepthListInfo, type);
@@ -185,10 +190,10 @@ function toBulletOrOrdered(type: ListType, context: ToListContext) {
 
 export const otherListToList: ListToList = {
   bullet(context) {
-    return toBulletOrOrdered('bullet', context);
+    return getBulletOrOrdered('bullet', context);
   },
   ordered(context) {
-    return toBulletOrOrdered('ordered', context);
+    return getBulletOrOrdered('ordered', context);
   },
   task({ mdNode, doc, line }) {
     let text = getTextByMdLine(doc, line);

@@ -73,9 +73,8 @@ export class Link extends Mark {
   }
 
   private addLinkOrImage(commandType: CommandType): EditorCommand<Payload> {
-    return payload => (state, dispatch) => {
-      const { schema } = this.context;
-      const [from, to] = resolveSelectionPos(state.selection);
+    return payload => ({ selection, tr, schema }, dispatch) => {
+      const [from, to] = resolveSelectionPos(selection);
       const { linkText, altText, linkUrl, imageUrl } = payload!;
       let text = linkText;
       let url = linkUrl;
@@ -91,9 +90,9 @@ export class Link extends Mark {
       url = replaceMarkdownText(url, true);
       syntax += `[${text}](${url})`;
 
-      const tr = state.tr.replaceWith(from, to, createText(schema, syntax));
+      const newTr = tr.replaceWith(from, to, createText(schema, syntax));
 
-      dispatch!(tr);
+      dispatch!(newTr);
 
       return true;
     };

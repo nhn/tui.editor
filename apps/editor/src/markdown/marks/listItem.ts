@@ -58,9 +58,8 @@ export class ListItem extends Mark {
   }
 
   private extendList(): Command {
-    return (state, dispatch) => {
-      const { schema, toastMark } = this.context;
-      const { selection, tr, doc } = state;
+    return ({ selection, tr, doc, schema }, dispatch) => {
+      const { toastMark } = this.context;
       const { to, startOffset, endOffset, endLine } = getPosInfo(doc, selection, true);
 
       const lineText = getTextByMdLine(doc, endLine);
@@ -84,7 +83,7 @@ export class ListItem extends Mark {
         const { listSyntax, changedResults, lastListOffset } = extendList[commandType](context);
 
         const node = createParagraph(schema, listSyntax + slicedText);
-        let newTr: Transaction | null = null;
+        let newTr: Transaction | null;
 
         // To change ordinal number of backward ordered list
         if (changedResults?.length) {
@@ -110,9 +109,8 @@ export class ListItem extends Mark {
   }
 
   private toList(commandType: CommandType): EditorCommand {
-    return () => (state, dispatch) => {
-      const { schema, toastMark } = this.context;
-      const { doc, tr, selection } = state;
+    return () => ({ doc, tr, selection, schema }, dispatch) => {
+      const { toastMark } = this.context;
       const posInfo = getPosInfo(doc, selection);
       const { startLine, endLine } = posInfo;
       let { startOffset, endOffset } = posInfo;
@@ -134,7 +132,7 @@ export class ListItem extends Mark {
 
         const context: ToListContext<MdNode> = { toastMark, mdNode, doc, line, startLine };
         const { firstListOffset, lastListOffset, changedResults } = isListNode(mdNode)
-          ? otherListToList[commandType](context as ToListContext<ListItemMdNode>)
+          ? otherListToList[commandType](context as ToListContext)
           : otherNodeToList[commandType](context);
 
         if (changedResults) {

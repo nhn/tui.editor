@@ -31,8 +31,7 @@ export class BlockQuote extends Mark {
   }
 
   private extendBlockQuote(): Command {
-    return ({ selection, doc, tr }, dispatch) => {
-      const { schema } = this.context;
+    return ({ selection, doc, tr, schema }, dispatch) => {
       const [, to] = resolveSelectionPos(selection);
       const startResolvedPos = doc.resolve(to);
 
@@ -40,9 +39,10 @@ export class BlockQuote extends Mark {
       const isBlockQuote = reBlockQuote.test(lineText);
 
       const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
-      const isEmpty = !lineText.replace(reBlockQuote, '').trim();
 
       if (isBlockQuote) {
+        const isEmpty = !lineText.replace(reBlockQuote, '').trim();
+
         if (isEmpty) {
           const emptyNode = createParagraph(schema);
 
@@ -66,9 +66,7 @@ export class BlockQuote extends Mark {
   }
 
   commands(): EditorCommand {
-    return () => (state, dispatch) => {
-      const { schema } = this.context;
-      const { selection, doc, tr } = state;
+    return () => ({ selection, doc, tr, schema }, dispatch) => {
       const [from, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
       const startResolvedPos = doc.resolve(from);
@@ -78,7 +76,7 @@ export class BlockQuote extends Mark {
 
       const nodes: ProsemirrorNode[] = [];
 
-      state.doc.nodesBetween(startOffset, endOffset, node => {
+      doc.nodesBetween(startOffset, endOffset, node => {
         const { isBlock, textContent } = node;
 
         if (isBlock) {

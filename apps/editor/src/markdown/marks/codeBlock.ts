@@ -21,15 +21,14 @@ export class CodeBlock extends Mark {
 
   commands(): EditorCommand {
     return () => (state, dispatch) => {
-      const { schema } = this.context;
-      const { selection, doc } = state;
+      const { selection, doc, schema } = state;
       const [from, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
 
       const fencedNode = createParagraph(schema, '```');
       const nodes: ProsemirrorNode[] = [fencedNode];
 
-      state.doc.nodesBetween(startOffset, endOffset, ({ isBlock, textContent }) => {
+      doc.nodesBetween(startOffset, endOffset, ({ isBlock, textContent }) => {
         if (isBlock) {
           nodes.push(createParagraph(schema, textContent));
         }
