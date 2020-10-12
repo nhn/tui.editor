@@ -29,7 +29,7 @@ import { Strike } from './marks/strike';
 import { Emph } from './marks/emph';
 import { Code } from './marks/code';
 import { Link } from './marks/link';
-import { Delimiter, TaskDelimiter, MarkedText, Meta } from './marks/simpleMark';
+import { Delimiter, TaskDelimiter, MarkedText, Meta, TableCell } from './marks/simpleMark';
 import { Html } from './marks/html';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { createParagraph, createTextSelection, nbspToSpace } from './helper/manipulation';
@@ -74,6 +74,7 @@ export default class MdEditor extends EditorBase {
       new BlockQuote(),
       new CodeBlock(),
       new Table(),
+      new TableCell(),
       new ThematicBreak(),
       new ListItem(),
       new Strong(),

@@ -23,6 +23,7 @@ const HEADING = 'heading';
 const BLOCK_QUOTE = 'blockQuote';
 const LIST_ITEM = 'listItem';
 const TABLE = 'table';
+const TABLE_CELL = 'tableCell';
 const CODE_BLOCK = 'codeBlock';
 const THEMATIC_BREAK = 'thematicBreak';
 const LINK = 'link';
@@ -192,7 +193,7 @@ function markListItemChildren(node: MdNode, markType: MarkType) {
       marks.push(
         markInfo(
           [getMdStartLine(node), getMdStartCh(node) - 1],
-          [getMdEndLine(node), getMdEndCh(node)],
+          [getMdEndLine(node), getMdEndCh(node) + 1],
           markType
         )
       );
@@ -269,7 +270,7 @@ function item(node: ListItemMdNode, start: MdPos) {
     marks.push(markInfo(addOffsetPos(start, padding + 1), addOffsetPos(start, padding + 2), META));
   }
 
-  return { marks };
+  return { marks: marks.concat(markListItemChildren(node.firstChild!, TEXT)) };
 }
 
 const markNodeFuncMap = {
@@ -288,7 +289,7 @@ const markNodeFuncMap = {
 const simpleMarkClassNameMap = {
   thematicBreak: THEMATIC_BREAK,
   table: TABLE,
-  tableCell: TEXT,
+  tableCell: TABLE_CELL,
   htmlInline: HTML
 } as const;
 

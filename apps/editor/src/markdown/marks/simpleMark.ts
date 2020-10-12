@@ -57,3 +57,17 @@ export class MarkedText extends Mark {
     };
   }
 }
+
+export class TableCell extends Mark {
+  get name() {
+    return 'tableCell';
+  }
+
+  get schema() {
+    return {
+      toDOM(): DOMOutputSpecArray {
+        return ['span', { class: cls('table-cell') }, 0];
+      }
+    };
+  }
+}
