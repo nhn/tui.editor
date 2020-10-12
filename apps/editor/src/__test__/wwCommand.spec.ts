@@ -391,4 +391,30 @@ describe('wysiwyg commands', () => {
       expect(wwe.getHTML()).toBe('<p>foo</p>');
     });
   });
+
+  describe('history command', () => {
+    beforeEach(() => {
+      setTextToEditor('foo');
+
+      cmd.exec('wysiwyg', 'selectAll');
+      cmd.exec('wysiwyg', 'bold');
+      cmd.exec('wysiwyg', 'italic');
+    });
+
+    it('undo go back to before previous action', () => {
+      cmd.exec('wysiwyg', 'undo');
+      expect(wwe.getHTML()).toBe('<p><strong>foo</strong></p>');
+
+      cmd.exec('wysiwyg', 'undo');
+      expect(wwe.getHTML()).toBe('<p>foo</p>');
+    });
+
+    it('redo cancel undo action', () => {
+      cmd.exec('wysiwyg', 'undo');
+      cmd.exec('wysiwyg', 'undo');
+      cmd.exec('wysiwyg', 'redo');
+
+      expect(wwe.getHTML()).toBe('<p><strong>foo</strong></p>');
+    });
+  });
 });

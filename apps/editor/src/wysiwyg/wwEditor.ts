@@ -3,9 +3,11 @@ import { EditorView } from 'prosemirror-view';
 import { Schema, Node } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
+import { history } from 'prosemirror-history';
 
 import EditorBase, { StateOptions } from '@/base';
 import { Emitter } from '@t/event';
+import { getDefaultCommands } from '@/commands/defaultCommands';
 
 import { createSpecs } from './specCreator';
 
@@ -48,9 +50,18 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createState(addedStates?: StateOptions) {
+    const { undo, redo } = getDefaultCommands();
+
     return EditorState.create({
       schema: this.schema,
-      plugins: [...this.keymaps, keymap(baseKeymap)],
+      plugins: [
+        ...this.keymaps,
+        keymap({
+          ...baseKeymap,
+          ...{ 'Mod-z': undo(), 'Shift-Mod-z': redo() }
+        }),
+        history()
+      ],
       ...addedStates
     });
   }
