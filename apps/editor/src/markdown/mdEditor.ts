@@ -126,8 +126,7 @@ export default class MdEditor extends EditorBase {
         return false;
       },
       clipboardTextParser: text => {
-        text = decodeURL(text);
-        const lineTexts = text.split('\n');
+        const lineTexts = decodeURL(text).split('\n');
         const nodes = lineTexts.map(lineText => createParagraph(this.schema, lineText));
 
         return new Slice(Fragment.from(nodes), 1, 1);
