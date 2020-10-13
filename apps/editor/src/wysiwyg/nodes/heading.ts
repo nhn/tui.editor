@@ -1,6 +1,9 @@
 import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { setBlockType } from 'prosemirror-commands';
 
 import Node from '@/spec/node';
+
+import { EditorCommand } from '@t/spec';
 
 export class Heading extends Node {
   get name() {
@@ -26,5 +29,10 @@ export class Heading extends Node {
         return [`h${attrs.level}`, 0];
       }
     };
+  }
+
+  commands(): EditorCommand {
+    return payload => (state, dispatch) =>
+      setBlockType(state.schema.nodes.heading, payload)(state, dispatch);
   }
 }

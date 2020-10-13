@@ -241,8 +241,11 @@ class ToastUIEditor {
 
     this.eventEmitter.emit('load', this);
 
-    // @TODO: add wwe command
-    this.commandManager = new CommandManager(this.eventEmitter, this.mdEditor.commands, {});
+    this.commandManager = new CommandManager(
+      this.eventEmitter,
+      this.mdEditor.commands,
+      this.wwEditor.commands
+    );
 
     if (this.options.usageStatistics) {
       sendHostName();

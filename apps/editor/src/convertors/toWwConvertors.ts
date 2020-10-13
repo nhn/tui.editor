@@ -89,16 +89,15 @@ export const toWwConvertors: ToWwConvertorMap = {
 
   image(state, node, { entering, skipChildren }) {
     const { image } = state.schema.nodes;
-    const { destination, title, firstChild } = node as ImageMdNode;
+    const { destination, firstChild } = node as ImageMdNode;
 
     if (entering && skipChildren) {
       skipChildren();
     }
 
     state.addNode(image, {
-      src: destination,
-      title,
-      ...(firstChild && { alt: firstChild.literal })
+      imageUrl: destination,
+      ...(firstChild && { altText: firstChild.literal })
     });
   },
 
@@ -132,8 +131,8 @@ export const toWwConvertors: ToWwConvertorMap = {
 
     if (entering) {
       const attrs = {
-        href: destination,
-        ...(title && { title })
+        linkUrl: destination,
+        ...(title && { linkText: title })
       };
 
       state.openMark(link.create(attrs));

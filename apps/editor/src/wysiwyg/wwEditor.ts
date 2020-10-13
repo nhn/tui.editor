@@ -3,9 +3,11 @@ import { EditorView } from 'prosemirror-view';
 import { Schema, Node } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
+import { history } from 'prosemirror-history';
 
 import EditorBase, { StateOptions } from '@/base';
 import { Emitter } from '@t/event';
+import { getDefaultCommands } from '@/commands/defaultCommands';
 
 import { createSpecs } from './specCreator';
 
@@ -22,7 +24,6 @@ export default class WysiwygEditor extends EditorBase {
     this.keymaps = this.createKeymaps();
     this.view = this.createView();
     this.commands = this.createCommands();
-    this.specs.setContext({ ...this.context, view: this.view });
   }
 
   createSpecs() {
@@ -48,9 +49,19 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createState(addedStates?: StateOptions) {
+    const { undo, redo } = getDefaultCommands();
+
     return EditorState.create({
       schema: this.schema,
-      plugins: [...this.keymaps, keymap(baseKeymap)],
+      plugins: [
+        ...this.keymaps,
+        keymap({
+          'Mod-z': undo(),
+          'Shift-Mod-z': redo(),
+          ...baseKeymap
+        }),
+        history()
+      ],
       ...addedStates
     });
   }
@@ -69,6 +80,10 @@ export default class WysiwygEditor extends EditorBase {
   /* eslint-disable @typescript-eslint/no-empty-function */
 
   blur() {}
+
+  focus() {
+    this.view.focus();
+  }
 
   getHTML() {
     return this.view.dom.innerHTML;

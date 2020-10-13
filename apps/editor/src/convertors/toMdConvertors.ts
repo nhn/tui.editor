@@ -111,11 +111,10 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   image(state, node) {
-    const alt = state.escape(node.attrs.alt || '');
-    const src = state.escape(node.attrs.src);
-    const title = node.attrs.title ? ` ${state.quote(node.attrs.title)}` : '';
+    const altText = state.escape(node.attrs.altText || '');
+    const imageUrl = state.escape(node.attrs.imageUrl);
 
-    state.write(`![${alt}](${src}${title})`);
+    state.write(`![${altText}](${imageUrl})`);
   },
 
   thematicBreak(state, node) {
@@ -190,10 +189,10 @@ const marks: ToMdMarkConvertorMap = {
       return isPlainURL(mark, parent, index, 1) ? '<' : '[';
     },
     close(state: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      const href = state.escape(mark.attrs.href);
-      const title = mark.attrs.title ? ` ${state.quote(mark.attrs.title)}` : '';
+      const linkUrl = state.escape(mark.attrs.linkUrl);
+      const linkText = mark.attrs.title ? ` ${state.quote(mark.attrs.linkText)}` : '';
 
-      return isPlainURL(mark, parent, index, -1) ? '>' : `](${href}${title})`;
+      return isPlainURL(mark, parent, index, -1) ? '>' : `](${linkText}${linkUrl})`;
     }
   },
 

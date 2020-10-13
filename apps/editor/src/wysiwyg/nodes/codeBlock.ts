@@ -1,8 +1,11 @@
-import { DOMOutputSpec, Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { setBlockType } from 'prosemirror-commands';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 
-export class CodeBlock extends Node {
+import { EditorCommand } from '@t/spec';
+
+export class CodeBlock extends NodeSchema {
   get name() {
     return 'codeBlock';
   }
@@ -22,7 +25,7 @@ export class CodeBlock extends Node {
         {
           tag: 'pre',
           // preserveWhitespace: 'full',
-          getAttrs(dom: DOMOutputSpec) {
+          getAttrs(dom: Node | string) {
             const className = (dom as HTMLElement).getAttribute('class');
 
             return {
@@ -39,6 +42,19 @@ export class CodeBlock extends Node {
           ['code', { 'data-language': attrs.language || null }, 0]
         ];
       }
+    };
+  }
+
+  commands(): EditorCommand {
+    return () => (state, dispatch) => setBlockType(state.schema.nodes.codeBlock)(state, dispatch);
+  }
+
+  keymaps() {
+    const codeCommand = this.commands()();
+
+    return {
+      'Shift-Mod-p': codeCommand,
+      'Shift-Mod-P': codeCommand
     };
   }
 }
