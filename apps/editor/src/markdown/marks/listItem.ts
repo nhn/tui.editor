@@ -1,5 +1,5 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
-import { TextSelection, Transaction } from 'prosemirror-state';
+import { Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import { EditorCommand } from '@t/spec';
@@ -7,7 +7,12 @@ import { ListItemMdNode, MdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
-import { createParagraph, insertNodes, replaceNodes } from '../helper/manipulation';
+import {
+  createParagraph,
+  createTextSelection,
+  insertNodes,
+  replaceNodes
+} from '../helper/manipulation';
 import {
   ChangedListInfo,
   extendList,
@@ -72,9 +77,9 @@ export class ListItem extends Mark {
       const isEmpty = !lineText.replace(reList, '').trim();
       const commandType = getListType(lineText);
 
-      const emptyNode = createParagraph(schema);
-
       if (isEmpty) {
+        const emptyNode = createParagraph(schema);
+
         dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
       } else {
         const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(endLine);
@@ -99,7 +104,7 @@ export class ListItem extends Mark {
             : insertNodes(tr, endOffset, node);
         }
 
-        const newSelection = TextSelection.create(newTr.doc, endOffset + listSyntax.length + 2);
+        const newSelection = createTextSelection(newTr, endOffset + listSyntax.length + 2);
 
         dispatch!(newTr.setSelection(newSelection));
       }

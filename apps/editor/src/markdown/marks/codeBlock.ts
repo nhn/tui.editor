@@ -1,10 +1,9 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
-import { TextSelection } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import { createParagraph, replaceNodes } from '../helper/manipulation';
+import { createParagraph, createTextSelection, replaceNodes } from '../helper/manipulation';
 
 export class CodeBlock extends Mark {
   get name() {
@@ -37,7 +36,7 @@ export class CodeBlock extends Mark {
 
       const tr = replaceNodes(state.tr, startOffset, endOffset, nodes);
 
-      dispatch!(tr.setSelection(TextSelection.create(tr.doc, startOffset + 4)));
+      dispatch!(tr.setSelection(createTextSelection(tr, startOffset + 4)));
 
       return true;
     };

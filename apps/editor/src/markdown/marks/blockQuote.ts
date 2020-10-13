@@ -1,11 +1,16 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
-import { TextSelection } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import { createParagraph, insertNodes, nbspToSpace, replaceNodes } from '../helper/manipulation';
+import {
+  createParagraph,
+  createTextSelection,
+  insertNodes,
+  nbspToSpace,
+  replaceNodes
+} from '../helper/manipulation';
 
 export const reBlockQuote = /^\s*> ?/;
 
@@ -53,7 +58,7 @@ export class BlockQuote extends Mark {
           const newTr = slicedText
             ? replaceNodes(tr, to, endOffset, node, { from: 0, to: 1 })
             : insertNodes(tr, endOffset, node);
-          const newSelection = TextSelection.create(newTr.doc, to + slicedText.length + 4);
+          const newSelection = createTextSelection(newTr, to + slicedText.length + 4);
 
           dispatch!(newTr.setSelection(newSelection));
         }

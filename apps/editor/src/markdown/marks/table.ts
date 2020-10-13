@@ -1,5 +1,4 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { TextSelection } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { EditorCommand } from '@t/spec';
 import { MdNode, MdPos, TableCellMdNode } from '@t/markdown';
@@ -7,7 +6,12 @@ import { cls } from '@/utils/dom';
 import { findClosestNode, getMdEndCh, getMdEndLine, isTableCellNode } from '@/utils/markdown';
 import Mark from '@/spec/mark';
 import { getEditorToMdPos, getMdToEditorPos, getPosInfo, resolveSelectionPos } from '../helper/pos';
-import { createParagraph, insertNodes, replaceNodes } from '../helper/manipulation';
+import {
+  createParagraph,
+  createTextSelection,
+  insertNodes,
+  replaceNodes
+} from '../helper/manipulation';
 import { getTextByMdLine } from '../helper/query';
 
 interface Payload {
@@ -48,10 +52,9 @@ function createTableRow(colLen: number, delim?: boolean) {
 }
 
 function createTargetTypes(moveNext: boolean): MovingTypeInfo {
-  if (moveNext) {
-    return { type: 'next', parentType: 'tableHead', childType: 'firstChild', diff: 1 };
-  }
-  return { type: 'prev', parentType: 'tableBody', childType: 'lastChild', diff: -1 };
+  return moveNext
+    ? { type: 'next', parentType: 'tableHead', childType: 'firstChild', diff: 1 }
+    : { type: 'prev', parentType: 'tableBody', childType: 'lastChild', diff: -1 };
 }
 
 export class Table extends Mark {
@@ -94,9 +97,8 @@ export class Table extends Mark {
           dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
         } else {
           const newTr = insertNodes(tr, endOffset, createParagraph(schema, row));
-          const caretSelection = TextSelection.create(newTr.doc, endOffset + 4);
 
-          dispatch!(newTr.setSelection(caretSelection));
+          dispatch!(newTr.setSelection(createTextSelection(newTr, endOffset + 4)));
         }
 
         return true;
@@ -137,9 +139,8 @@ export class Table extends Mark {
 
         const mdPos: MdPos = [line, ch];
         const [pos] = getMdToEditorPos(doc, mdPos, mdPos);
-        const newSelection = TextSelection.create(doc, pos);
 
-        dispatch!(tr.setSelection(newSelection));
+        dispatch!(tr.setSelection(createTextSelection(tr, pos)));
 
         return true;
       }
@@ -158,11 +159,9 @@ export class Table extends Mark {
       const bodyRows = createTableBody(colLen, rowLen - 1);
 
       const nodes = [...headerRows, ...bodyRows].map(row => createParagraph(schema, row));
-
       const newTr = insertNodes(tr, endOffset, nodes);
-      const newSelection = TextSelection.create(newTr.doc, endOffset + 4);
 
-      dispatch!(tr.setSelection(newSelection));
+      dispatch!(tr.setSelection(createTextSelection(newTr, endOffset + 4)));
 
       return true;
     };

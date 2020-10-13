@@ -1,9 +1,9 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { TextSelection } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { resolveSelectionPos } from '../helper/pos';
+import { createTextSelection } from '../helper/manipulation';
 
 const reStrike = /^(~{2}).*([\s\S]*)\1$/m;
 const strikeSyntax = '~~';
@@ -34,8 +34,8 @@ export class Strike extends Mark {
       } else {
         tr = tr.insertText(strikeSyntax, to).insertText(strikeSyntax, from);
         const selection = empty
-          ? TextSelection.create(tr.doc, from + 2, from + 2)
-          : TextSelection.create(tr.doc, from, to + 4);
+          ? createTextSelection(tr, from + 2)
+          : createTextSelection(tr, from, to + 4);
 
         tr = tr.setSelection(selection);
       }

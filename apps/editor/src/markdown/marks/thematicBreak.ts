@@ -1,10 +1,9 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { TextSelection } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { resolveSelectionPos } from '../helper/pos';
-import { createParagraph } from '../helper/manipulation';
+import { createParagraph, createTextSelection } from '../helper/manipulation';
 
 const thematicBreakSyntax = '***';
 
@@ -33,10 +32,9 @@ export class ThematicBreak extends Mark {
       }
 
       const tr = state.tr.replaceWith(from, to, nodes);
-      // add 3(`***` length) and 3(start, end block tag position)
-      const selection = TextSelection.create(tr.doc, Math.min(from + 6, tr.doc.content.size));
 
-      dispatch!(tr.setSelection(selection));
+      // add 3(`***` length) and 3(start, end block tag position)
+      dispatch!(tr.setSelection(createTextSelection(tr, from + 6)));
 
       return true;
     };

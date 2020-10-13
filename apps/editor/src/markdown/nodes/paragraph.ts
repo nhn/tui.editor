@@ -1,5 +1,5 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
-import { TextSelection, Transaction } from 'prosemirror-state';
+import { Transaction } from 'prosemirror-state';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { EditorCommand } from '@t/spec';
@@ -10,7 +10,13 @@ import { isOrderedListNode, isTableCellNode } from '@/utils/markdown';
 import { reBlockQuote } from '../marks/blockQuote';
 import { getEditorToMdPos, getMdToEditorPos, getPosInfo } from '../helper/pos';
 import { getTextByMdLine } from '../helper/query';
-import { createParagraph, createText, insertNodes, replaceNodes } from '../helper/manipulation';
+import {
+  createParagraph,
+  createText,
+  createTextSelection,
+  insertNodes,
+  replaceNodes
+} from '../helper/manipulation';
 import { getReorderedListInfo, reList, reOrderedListGroup } from '../helper/list';
 
 interface SelectionInfo {
@@ -35,7 +41,6 @@ function isInTableCellNode(doc: ProsemirrorNode, toastMark: ToastMark, pos: numb
 }
 
 function createSelection(tr: Transaction, posInfo: SelectionInfo, indent: boolean) {
-  const { doc } = tr;
   const { startLine, endLine, startLineText, endLineText } = posInfo;
   const lineBreakLen = (endLine - startLine) * 4;
   let { from, to } = posInfo;
@@ -57,7 +62,7 @@ function createSelection(tr: Transaction, posInfo: SelectionInfo, indent: boolea
     }
   }
 
-  return TextSelection.create(doc, from, to);
+  return createTextSelection(tr, from, to);
 }
 
 export class Paragraph extends Node {
@@ -116,7 +121,7 @@ export class Paragraph extends Node {
     const range = getMdToEditorPos(doc, [startLine, 1], [endLine, 1]);
     const [from, to] = [range[0], doc.resolve(range[1]).end()];
     const newTr = replaceNodes(tr, from, to, nodes);
-    const newSelection = TextSelection.create(newTr.doc, selection.from, selection.to);
+    const newSelection = createTextSelection(newTr, selection.from, selection.to);
 
     view.dispatch!(newTr.setSelection(newSelection));
   }

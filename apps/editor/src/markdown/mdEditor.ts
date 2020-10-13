@@ -1,4 +1,4 @@
-import { EditorState, Transaction, TextSelection } from 'prosemirror-state';
+import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { DOMParser, Schema, Slice } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
@@ -31,7 +31,7 @@ import { Link } from './marks/link';
 import { Delimiter, TaskDelimiter, MarkedText, Meta } from './marks/simpleMark';
 import { Html } from './marks/html';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
-import { createParagraph, nbspToSpace } from './helper/manipulation';
+import { createParagraph, createTextSelection, nbspToSpace } from './helper/manipulation';
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
@@ -179,7 +179,7 @@ export default class MdEditor extends EditorBase {
     const { tr } = this.view.state;
     const [from, to] = getMdToEditorPos(tr.doc, start, end);
 
-    this.view.dispatch(tr.setSelection(TextSelection.create(tr.doc, from, to)));
+    this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)));
   }
 
   // @TODO: should implement markdown editor API
