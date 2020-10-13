@@ -56,8 +56,9 @@ export default class WysiwygEditor extends EditorBase {
       plugins: [
         ...this.keymaps,
         keymap({
-          ...baseKeymap,
-          ...{ 'Mod-z': undo(), 'Shift-Mod-z': redo() }
+          'Mod-z': undo(),
+          'Shift-Mod-z': redo(),
+          ...baseKeymap
         }),
         history()
       ],

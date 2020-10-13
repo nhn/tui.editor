@@ -1,8 +1,8 @@
-import { DOMOutputSpec, DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpecArray } from 'prosemirror-model';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 
-export class TableRow extends Node {
+export class TableRow extends NodeSchema {
   get name() {
     return 'tableRow';
   }
@@ -14,7 +14,7 @@ export class TableRow extends Node {
       parseDOM: [
         {
           tag: 'tr',
-          getAttrs: (dom: DOMOutputSpec) => {
+          getAttrs: (dom: Node | string) => {
             const columns = (dom as HTMLElement).children.length;
 
             if (!columns) {

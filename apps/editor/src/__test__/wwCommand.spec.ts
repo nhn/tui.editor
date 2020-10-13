@@ -340,6 +340,17 @@ describe('wysiwyg commands', () => {
 
       expect(wwe.getHTML()).toBe('<p><br></p>');
     });
+
+    it('should decode attribute and encode wrong markdown charactors', () => {
+      cmd.exec('wysiwyg', 'addImage', {
+        imageUrl: 'foo %D1%88%D0%B5%D0%BB%D0%BB%D1%8B ()[]<>',
+        altText: 'foo ()[]<>'
+      });
+
+      expect(wwe.getHTML()).toBe(
+        '<p><img src="foo%20шеллы%20%28%29%5B%5D%3C%3E" alt="foo \\(\\)\\[\\]\\<\\>"><br></p>'
+      );
+    });
   });
 
   describe('addLink command', () => {
@@ -364,6 +375,17 @@ describe('wysiwyg commands', () => {
       });
 
       expect(wwe.getHTML()).toBe('<p><br></p>');
+    });
+
+    it('should decode attribute and encode wrong markdown charactors', () => {
+      cmd.exec('wysiwyg', 'addLink', {
+        linkUrl: 'foo %D1%88%D0%B5%D0%BB%D0%BB%D1%8B ()[]<>',
+        linkText: 'foo ()[]<>'
+      });
+
+      expect(wwe.getHTML()).toBe(
+        '<p><a href="foo%20шеллы%20%28%29%5B%5D%3C%3E">foo ()[]&lt;&gt;</a></p>'
+      );
     });
   });
 

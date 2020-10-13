@@ -1,10 +1,11 @@
-import { DOMOutputSpec, Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 import { wrapInList } from 'prosemirror-schema-list';
 
-import { EditorCommand } from '@t/spec';
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 
-export class OrderedList extends Node {
+import { EditorCommand } from '@t/spec';
+
+export class OrderedList extends NodeSchema {
   get name() {
     return 'orderedList';
   }
@@ -17,7 +18,7 @@ export class OrderedList extends Node {
       parseDOM: [
         {
           tag: 'ol',
-          getAttrs(dom: DOMOutputSpec) {
+          getAttrs(dom: Node | string) {
             const start = (dom as HTMLElement).getAttribute('start');
 
             return {

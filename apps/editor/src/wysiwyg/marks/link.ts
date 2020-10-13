@@ -1,8 +1,10 @@
-import { DOMOutputSpec, Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
+import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
-import { EditorCommand } from '@t/spec';
 import Mark from '@/spec/mark';
+import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
+
+import { EditorCommand } from '@t/spec';
 
 export class Link extends Mark {
   get name() {
@@ -19,7 +21,7 @@ export class Link extends Mark {
       parseDOM: [
         {
           tag: 'a[href]',
-          getAttrs(dom: DOMOutputSpec) {
+          getAttrs(dom: Node | string) {
             return {
               linkUrl: (dom as HTMLElement).getAttribute('href'),
               linkText: (dom as HTMLElement).textContent
@@ -49,14 +51,22 @@ export class Link extends Mark {
       }
 
       if (empty) {
-        const textNode = schema.text(linkText, [schema.mark('link', payload)]);
+        const attrs = {
+          linkUrl: replaceMarkdownText(decodeURIGraceful(linkUrl), true),
+          linkText: replaceMarkdownText(linkText, false)
+        };
+
+        // @TODO seperate createText() on manipulation.ts and replace this function
+        const textNode = schema.text(linkText, [schema.mark('link', attrs)]);
 
         tr.replaceRangeWith(from, to, textNode);
 
         dispatch!(tr.scrollIntoView());
+
+        return true;
       }
 
-      return true;
+      return false;
     };
   }
 

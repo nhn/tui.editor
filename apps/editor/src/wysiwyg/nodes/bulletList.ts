@@ -1,8 +1,9 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { wrapInList } from 'prosemirror-schema-list';
 
-import { EditorCommand } from '@t/spec';
 import Node from '@/spec/node';
+
+import { EditorCommand } from '@t/spec';
 
 export class BulletList extends Node {
   get name() {

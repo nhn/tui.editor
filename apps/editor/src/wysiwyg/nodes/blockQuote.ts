@@ -1,8 +1,9 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { wrapIn } from 'prosemirror-commands';
 
-import { EditorCommand } from '@t/spec';
 import Node from '@/spec/node';
+
+import { EditorCommand } from '@t/spec';
 
 export class BlockQuote extends Node {
   get name() {

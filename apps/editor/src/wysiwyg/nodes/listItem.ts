@@ -1,9 +1,9 @@
-import { DOMOutputSpec, Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 
-export class ListItem extends Node {
+export class ListItem extends NodeSchema {
   get name() {
     return 'listItem';
   }
@@ -20,7 +20,7 @@ export class ListItem extends Node {
       parseDOM: [
         {
           tag: 'li',
-          getAttrs(dom: DOMOutputSpec) {
+          getAttrs(dom: Node | string) {
             return {
               task: (dom as HTMLElement).hasAttribute('data-task'),
               checked: !!(dom as HTMLElement).getAttribute('data-task-checked')

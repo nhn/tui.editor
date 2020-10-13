@@ -1,9 +1,11 @@
-import { DOMOutputSpec, Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+
+import NodeSchema from '@/spec/node';
+import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
 
 import { EditorCommand } from '@t/spec';
-import Node from '@/spec/node';
 
-export class Image extends Node {
+export class Image extends NodeSchema {
   get name() {
     return 'image';
   }
@@ -19,7 +21,7 @@ export class Image extends Node {
       parseDOM: [
         {
           tag: 'img[src]',
-          getAttrs(dom: DOMOutputSpec) {
+          getAttrs(dom: Node | string) {
             return {
               imageUrl: (dom as HTMLElement).getAttribute('src'),
               altText: (dom as HTMLElement).getAttribute('alt')
@@ -42,17 +44,19 @@ export class Image extends Node {
   }
 
   private addImage(): EditorCommand {
-    return payload => (state, dispatch) => {
-      const { imageUrl } = payload!;
+    return payload => ({ schema, tr }, dispatch) => {
+      const { imageUrl, altText } = payload!;
 
       if (!imageUrl) {
         return false;
       }
 
-      const node = state.schema.nodes.image.createAndFill(payload);
-      const tr = state.tr.replaceSelectionWith(node!);
+      const node = schema.nodes.image.createAndFill({
+        imageUrl: replaceMarkdownText(decodeURIGraceful(imageUrl), true),
+        ...(altText && { altText: replaceMarkdownText(altText, false) })
+      });
 
-      dispatch!(tr.scrollIntoView());
+      dispatch!(tr.replaceSelectionWith(node!).scrollIntoView());
 
       return true;
     };
