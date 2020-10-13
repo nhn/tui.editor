@@ -49,11 +49,11 @@ export default abstract class EditorBase {
   }
 
   createKeymaps() {
-    return this.specs.keymaps(this.context);
+    return this.specs.keymaps();
   }
 
   createCommands() {
-    return this.specs.commands({ ...this.context, view: this.view });
+    return this.specs.commands(this.view);
   }
 
   focus() {

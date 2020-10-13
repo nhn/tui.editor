@@ -1,9 +1,9 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { TextSelection } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { resolveSelectionPos } from '../helper/pos';
+import { createTextSelection } from '../helper/manipulation';
 
 const reEmph = /^(\*|_).*([\s\S]*)\1$/m;
 const emphSyntax = '*';
@@ -34,8 +34,8 @@ export class Emph extends Mark {
       } else {
         tr = tr.insertText(emphSyntax, to).insertText(emphSyntax, from);
         const selection = empty
-          ? TextSelection.create(tr.doc, from + 1, from + 1)
-          : TextSelection.create(tr.doc, from, to + 2);
+          ? createTextSelection(tr, from + 1)
+          : createTextSelection(tr, from, to + 2);
 
         tr = tr.setSelection(selection);
       }

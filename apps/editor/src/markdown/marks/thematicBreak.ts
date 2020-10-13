@@ -1,10 +1,9 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { TextSelection } from 'prosemirror-state';
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { resolveSelectionPos } from '../helper/pos';
-import { createParagraph } from '../helper/manipulation';
+import { createParagraph, createTextSelection } from '../helper/manipulation';
 
 const thematicBreakSyntax = '***';
 
@@ -21,11 +20,11 @@ export class ThematicBreak extends Mark {
     };
   }
 
-  private line({ schema }: Context): EditorCommand {
+  private line(): EditorCommand {
     return () => (state, dispatch) => {
       const [from, to] = resolveSelectionPos(state.selection);
-      const emptyNode = createParagraph(schema);
-      const lineNode = createParagraph(schema, thematicBreakSyntax);
+      const emptyNode = createParagraph(state.schema);
+      const lineNode = createParagraph(state.schema, thematicBreakSyntax);
       const nodes = [lineNode];
 
       if (to >= state.doc.resolve(to).end()) {
@@ -33,21 +32,20 @@ export class ThematicBreak extends Mark {
       }
 
       const tr = state.tr.replaceWith(from, to, nodes);
-      // add 3(`***` length) and 3(start, end block tag position)
-      const selection = TextSelection.create(tr.doc, Math.min(from + 6, tr.doc.content.size));
 
-      dispatch!(tr.setSelection(selection));
+      // add 3(`***` length) and 3(start, end block tag position)
+      dispatch!(tr.setSelection(createTextSelection(tr, from + 6)));
 
       return true;
     };
   }
 
-  commands(context: Context) {
-    return { hr: this.line(context) };
+  commands() {
+    return { hr: this.line() };
   }
 
-  keymaps(context: Context) {
-    const lineCommand = this.line(context)();
+  keymaps() {
+    const lineCommand = this.line()();
 
     return { 'Mod-l': lineCommand, 'Mod-L': lineCommand };
   }

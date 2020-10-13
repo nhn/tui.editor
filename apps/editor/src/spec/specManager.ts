@@ -1,6 +1,6 @@
 import { EditorView } from 'prosemirror-view';
 import { keymap } from 'prosemirror-keymap';
-import { EditorAllCommandMap, Context, EditorCommand } from '@t/spec';
+import { EditorAllCommandMap, EditorCommand, SpecContext } from '@t/spec';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import Mark from '@/spec/mark';
@@ -42,18 +42,18 @@ export default class SpecManager {
       }, {});
   }
 
-  commands(context: Context) {
+  commands(view: EditorView) {
     const specCommands: EditorAllCommandMap = this.specs
       .filter(({ commands }) => commands)
       .reduce((allCommands, spec) => {
         const commands: EditorAllCommandMap = {};
-        const specCommand = spec.commands!(context);
+        const specCommand = spec.commands!();
 
         if (isFunction(specCommand)) {
-          commands[spec.name] = payload => execCommand(context.view!, specCommand, payload);
+          commands[spec.name] = payload => execCommand(view, specCommand, payload);
         } else {
           Object.keys(specCommand).forEach(name => {
-            commands[name] = payload => execCommand(context.view!, specCommand[name], payload);
+            commands[name] = payload => execCommand(view, specCommand[name], payload);
           });
         }
 
@@ -66,15 +66,21 @@ export default class SpecManager {
     const defaultCommands = getDefaultCommands();
 
     Object.keys(defaultCommands).forEach(name => {
-      specCommands[name] = payload => execCommand(context.view!, defaultCommands[name], payload);
+      specCommands[name] = payload => execCommand(view, defaultCommands[name], payload);
     });
 
     return specCommands;
   }
 
-  keymaps(context: Context) {
-    const specKeymaps = this.specs.filter(spec => spec.keymaps).map(spec => spec.keymaps!(context));
+  keymaps() {
+    const specKeymaps = this.specs.filter(spec => spec.keymaps).map(spec => spec.keymaps!());
 
     return specKeymaps.map(keys => keymap(keys));
+  }
+
+  setContext(context: SpecContext) {
+    this.specs.forEach(spec => {
+      spec.setContext(context);
+    });
   }
 }

@@ -67,6 +67,7 @@ export interface MdNode {
 }
 
 export interface CodeBlockMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   fenceOffset: number;
   fenceLength: number;
   fenceChar: string;
@@ -75,6 +76,7 @@ export interface CodeBlockMdNode extends MdNode {
 }
 
 export interface ListItemMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   listData: {
     padding: number;
     task: boolean;
@@ -85,17 +87,20 @@ export interface ListItemMdNode extends MdNode {
 }
 
 export interface HeadingMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   level: number;
   headingType: 'atx' | 'setext';
 }
 
 export interface ImageMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   lastChild: MdNode;
   destination: string;
   title: string;
 }
 
 export interface LinkMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   lastChild: MdNode;
   extendedAutolink: boolean;
   destination: string;
@@ -103,6 +108,7 @@ export interface LinkMdNode extends MdNode {
 }
 
 export interface CodeMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   tickCount: number;
 }
 
@@ -110,7 +116,8 @@ export interface TableColumn {
   align: 'left' | 'center' | 'right';
 }
 
-export interface TableCellNode extends MdNode {
+export interface TableCellMdNode extends MdNode {
+  parent: TableRowMdNode;
   startIdx: number;
   endIdx: number;
   paddingLeft: number;
@@ -118,8 +125,39 @@ export interface TableCellNode extends MdNode {
   ignored: boolean;
 }
 
+export interface TableRowMdNode extends MdNode {
+  parent: TableBodyMdNode | TableHeadMdNode;
+  firstChild: TableCellMdNode;
+  lastChild: TableCellMdNode;
+  prev: TableRowMdNode | null;
+  next: TableRowMdNode | null;
+  startIdx: number;
+  endIdx: number;
+  paddingLeft: number;
+  paddingRight: number;
+  ignored: boolean;
+}
+
+export interface TableBodyMdNode extends MdNode {
+  parent: TableMdNode;
+  firstChild: TableRowMdNode;
+  lastChild: TableRowMdNode;
+  prev: TableHeadMdNode | TableBodyMdNode | null;
+  next: TableBodyMdNode | null;
+}
+
+export interface TableHeadMdNode extends MdNode {
+  parent: TableMdNode;
+  firstChild: TableRowMdNode;
+  lastChild: TableRowMdNode;
+  next: TableBodyMdNode;
+}
+
 export interface TableMdNode extends MdNode {
+  parent: MdNode;
   columns: TableColumn[];
+  firstChild: TableHeadMdNode;
+  lastChild: TableBodyMdNode;
 }
 
 /* ToastMark Parser type */

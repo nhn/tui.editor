@@ -1,4 +1,4 @@
-import { EditorState, Transaction, TextSelection } from 'prosemirror-state';
+import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { DOMParser, Schema, Slice } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
@@ -31,7 +31,7 @@ import { Link } from './marks/link';
 import { Delimiter, TaskDelimiter, MarkedText, Meta } from './marks/simpleMark';
 import { Html } from './marks/html';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
-import { createParagraph, nbspToSpace } from './helper/manipulation';
+import { createParagraph, createTextSelection, nbspToSpace } from './helper/manipulation';
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
@@ -45,25 +45,23 @@ export default class MdEditor extends EditorBase {
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
-    this.view = this.createView();
     this.keymaps = this.createKeymaps();
+    this.view = this.createView();
     this.commands = this.createCommands();
+    this.specs.setContext({ ...this.context, view: this.view });
     this.keyCode = null;
-
-    this.view.updateState(this.createState());
   }
 
   createContext() {
     return {
       toastMark: this.toastMark,
       schema: this.schema,
-      eventEmitter: this.eventEmitter,
-      view: this.view
+      eventEmitter: this.eventEmitter
     };
   }
 
   createKeymaps() {
-    return this.specs.keymaps({ ...this.context, view: this.view });
+    return this.specs.keymaps();
   }
 
   createSpecs() {
@@ -111,7 +109,7 @@ export default class MdEditor extends EditorBase {
 
   createView() {
     return new EditorView(this.el, {
-      state: EditorState.create({ doc: DOMParser.fromSchema(this.schema).parse(this.el) }),
+      state: this.createState(),
       dispatchTransaction: tr => {
         this.updateMarkdown(tr);
 
@@ -129,7 +127,7 @@ export default class MdEditor extends EditorBase {
   }
 
   createCommands() {
-    return this.specs.commands({ ...this.context, view: this.view });
+    return this.specs.commands(this.view);
   }
 
   private updateMarkdown(tr: Transaction) {
@@ -139,7 +137,7 @@ export default class MdEditor extends EditorBase {
       tr.steps.forEach(step => {
         const [from, to] = this.getResolvedRange(tr, step);
         const changed = this.getChanged(step.slice);
-        const [startPos, endPos] = getEditorToMdPos(from, to, state.doc);
+        const [startPos, endPos] = getEditorToMdPos(state.doc, from, to);
 
         const editResult = this.toastMark.editMarkdown(startPos, endPos, changed);
 
@@ -150,7 +148,7 @@ export default class MdEditor extends EditorBase {
     }
   }
 
-  private getResolvedRange(tr: Transaction, step: Step) {
+  private getResolvedRange(tr: Transaction, step: Step): [number, number] {
     const resolvedPos = tr.getMeta('resolvedPos');
 
     return resolvedPos || [step.from, step.to];
@@ -179,14 +177,9 @@ export default class MdEditor extends EditorBase {
 
   setSelection(start: MdPos, end: MdPos) {
     const { tr } = this.view.state;
-    const [from, to] = getMdToEditorPos(
-      start,
-      end,
-      this.toastMark.getLineTexts(),
-      tr.doc.content.size
-    );
+    const [from, to] = getMdToEditorPos(tr.doc, start, end);
 
-    this.view.dispatch(tr.setSelection(TextSelection.create(tr.doc, from, to)));
+    this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)));
   }
 
   // @TODO: should implement markdown editor API

@@ -1,8 +1,9 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { resolveSelectionPos } from '../helper/pos';
+import { createText } from '../helper/manipulation';
 
 const encodingRegExps = [/\(/g, /\)/g, /\[/g, /\]/g, /</g, />/g];
 const encodedList = ['%28', '%29', '%5B', '%5D', '%3C', '%3E'];
@@ -71,9 +72,9 @@ export class Link extends Mark {
     };
   }
 
-  private addLinkOrImage({ schema }: Context, commandType: CommandType): EditorCommand<Payload> {
-    return payload => (state, dispatch) => {
-      const [from, to] = resolveSelectionPos(state.selection);
+  private addLinkOrImage(commandType: CommandType): EditorCommand<Payload> {
+    return payload => ({ selection, tr, schema }, dispatch) => {
+      const [from, to] = resolveSelectionPos(selection);
       const { linkText, altText, linkUrl, imageUrl } = payload!;
       let text = linkText;
       let url = linkUrl;
@@ -89,18 +90,18 @@ export class Link extends Mark {
       url = replaceMarkdownText(url, true);
       syntax += `[${text}](${url})`;
 
-      const tr = state.tr.replaceWith(from, to, schema.text(syntax));
+      const newTr = tr.replaceWith(from, to, createText(schema, syntax));
 
-      dispatch!(tr);
+      dispatch!(newTr);
 
       return true;
     };
   }
 
-  commands(context: Context) {
+  commands() {
     return {
-      addImage: this.addLinkOrImage(context, 'image'),
-      addLink: this.addLinkOrImage(context, 'link')
+      addImage: this.addLinkOrImage('image'),
+      addLink: this.addLinkOrImage('link')
     };
   }
 }

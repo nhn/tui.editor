@@ -1,42 +1,77 @@
-import { ProsemirrorNode } from 'prosemirror-model';
+import { ProsemirrorNode, Schema } from 'prosemirror-model';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
-import { isListNode } from '@/utils/markdown';
+import { findClosestNode, isListNode, isOrderedListNode } from '@/utils/markdown';
 import { ListItemMdNode, MdNode } from '@t/markdown';
-import { nbspToSpace } from './manipulation';
+import { getTextByMdLine } from './query';
+import { createParagraph } from './manipulation';
 
-export interface CurNodeInfo {
-  toastMark: ToastMark;
-  mdNode: MdNode;
+export interface ToListContext<T = ListItemMdNode> {
+  mdNode: T;
   line: number;
+  toastMark: ToastMark;
   doc: ProsemirrorNode;
-  range: [number, number];
+  startLine: number;
 }
 
-export interface ChangedInfo {
+export type ExtendListContext = Omit<ToListContext, 'startLine'>;
+
+export interface ChangedListInfo {
   line: number;
   text: string;
 }
 
-type ListType = 'bullet' | 'ordered';
-type ToListFn = (
-  curNodeInfo: CurNodeInfo
-) => {
-  changedInfo: ChangedInfo[];
+interface ToListResult {
+  changedResults: ChangedListInfo[];
   firstListOffset?: number;
   lastListOffset?: number;
-};
-interface ToList {
-  bullet: ToListFn;
-  ordered: ToListFn;
-  task: ToListFn;
 }
 
-const reList = /([*-] |[\d]+\. )/;
-const reBulletTaskList = /([-*])( \[[ xX]]) /;
-const reOrderedList = /([\d])+\.( \[[ xX]])? /;
-const reTaskList = /([-*] |[\d]+\. )(\[[ xX]] )/;
-const reCanBeTaskList = /([-*]|[\d]+\.)( \[[ xX]])? /;
+type ExtendedResult = {
+  listSyntax: string;
+  changedResults?: ChangedListInfo[];
+  lastListOffset?: number;
+};
+
+type ListType = 'bullet' | 'ordered';
+type ListToListFn = (context: ToListContext) => ToListResult;
+type NodeToListFn = (context: ToListContext<MdNode>) => ToListResult;
+type ExtendListFn = (context: ExtendListContext) => ExtendedResult;
+
+interface ItemInfo {
+  line: number;
+  depth: number;
+  mdNode: ListItemMdNode;
+}
+
+interface ListToList {
+  bullet: ListToListFn;
+  ordered: ListToListFn;
+  task: ListToListFn;
+}
+
+interface NodeToList {
+  bullet: NodeToListFn;
+  ordered: NodeToListFn;
+  task: NodeToListFn;
+}
+
+interface ExtendList {
+  bullet: ExtendListFn;
+  ordered: ExtendListFn;
+}
+
+export const reList = /([-*+] |[\d]+\. )/;
+export const reOrderedList = /([\d])+\.( \[[ xX]])? /;
+export const reOrderedListGroup = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
+const reBulletListGroup = /^(\s*)([-*+]+(\s(?:\[(?:x|\s)\]\s)?))(.*)/;
+const reTaskList = /([-*+] |[\d]+\. )(\[[ xX]] )/;
+const reBulletTaskList = /([-*+])( \[[ xX]]) /;
+const reCanBeTaskList = /([-*+]|[\d]+\.)( \[[ xX]])? /;
+
+export function getListType(text: string): ListType {
+  return reOrderedList.test(text) ? 'ordered' : 'bullet';
+}
 
 function getListDepth(mdNode: MdNode) {
   let depth = 0;
@@ -55,7 +90,7 @@ function findSameDepthList(
   currentLine: number,
   depth: number,
   backward: boolean
-) {
+): ItemInfo[] {
   const lineTexts = toastMark.getLineTexts();
   const lineLen = lineTexts.length;
   const result = [];
@@ -63,7 +98,7 @@ function findSameDepthList(
 
   while (backward ? line < lineLen : line > 1) {
     line = backward ? line + 1 : line - 1;
-    const mdNode = toastMark.findFirstNodeAtLine(line);
+    const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(line);
     const currentListDepth = getListDepth(mdNode);
 
     if (currentListDepth === depth) {
@@ -76,7 +111,7 @@ function findSameDepthList(
   return result;
 }
 
-function getSameDepthListInfo({ toastMark, mdNode, line }: CurNodeInfo) {
+function getSameDepthItems({ toastMark, mdNode, line }: ToListContext) {
   const depth = getListDepth(mdNode);
   const forwardList = findSameDepthList(toastMark, line, depth, false).reverse();
   const backwardList = findSameDepthList(toastMark, line, depth, true);
@@ -84,14 +119,13 @@ function getSameDepthListInfo({ toastMark, mdNode, line }: CurNodeInfo) {
   return forwardList.concat([{ line, depth, mdNode }]).concat(backwardList);
 }
 
-function textToBullet(text: string, mdNode: ListItemMdNode) {
+function textToBullet(text: string) {
   if (!reList.test(text)) {
-    return `* ${text.trim()}`;
+    return `* ${text}`;
   }
+  const type = getListType(text);
 
-  const { type, task } = mdNode.listData;
-
-  if (type === 'bullet' && task) {
+  if (type === 'bullet' && reCanBeTaskList.test(text)) {
     text = text.replace(reBulletTaskList, '$1 ');
   } else if (type === 'ordered') {
     text = text.replace(reOrderedList, '* ');
@@ -100,117 +134,190 @@ function textToBullet(text: string, mdNode: ListItemMdNode) {
   return text;
 }
 
-function textToOrdered(text: string, mdNode: ListItemMdNode, ordinalNum: number) {
+function textToOrdered(text: string, ordinalNum: number) {
   if (!reList.test(text)) {
-    return `${ordinalNum}. ${text.trim()}`;
+    return `${ordinalNum}. ${text}`;
   }
+  const type = getListType(text);
 
-  const { type, task } = mdNode.listData;
-
-  if (type === 'bullet' || (type === 'ordered' && task)) {
+  if (type === 'bullet' || (type === 'ordered' && reCanBeTaskList.test(text))) {
     text = text.replace(reCanBeTaskList, `${ordinalNum}. `);
-  } else if (type === 'ordered' && parseInt(RegExp.$1, 10) !== ordinalNum) {
-    text = text.replace(reOrderedList, `${ordinalNum}. `);
+  } else if (type === 'ordered') {
+    // eslint-disable-next-line prefer-destructuring
+    const start = reOrderedListGroup.exec(text)![3];
+
+    if (Number(start) !== ordinalNum) {
+      text = text.replace(reOrderedList, `${ordinalNum}. `);
+    }
   }
 
   return text;
 }
 
-function getTextByMdLine(doc: ProsemirrorNode, mdLine: number) {
-  return nbspToSpace(doc.content.child(mdLine - 1).textContent);
-}
-
-function toBulletOrOrdered(type: ListType, curNodeInfo: CurNodeInfo) {
-  const { doc } = curNodeInfo;
-  const changedInfo: ChangedInfo[] = [];
+function getChangedInfo(
+  doc: ProsemirrorNode,
+  sameDepthItems: ItemInfo[],
+  type: ListType,
+  start = 0
+): ToListResult {
   let firstListOffset = Number.MAX_VALUE;
   let lastListOffset = 0;
 
-  const sameDepthListInfo = getSameDepthListInfo(curNodeInfo);
-
-  sameDepthListInfo.forEach(({ line: targetLine, mdNode: targetNode }, index) => {
-    doc.descendants((node, pos, _, lineOffset) => {
-      if (node.isBlock && targetLine === lineOffset! + 1) {
+  const changedResults = sameDepthItems.map(({ line }, index) => {
+    doc.descendants((node, pos, _, nodeIndex) => {
+      if (node.isBlock && line === nodeIndex! + 1) {
         firstListOffset = Math.min(pos + 1, firstListOffset);
         lastListOffset = Math.max(pos + 1, lastListOffset);
       }
-      return lineOffset! + 1 <= targetLine;
+      return nodeIndex! + 1 <= line;
     });
-    let text = getTextByMdLine(doc, targetLine);
 
-    text =
-      type === 'bullet'
-        ? textToBullet(text, targetNode)
-        : textToOrdered(text, targetNode, index + 1);
-    changedInfo.push({ text, line: targetLine });
-  });
-
-  return { changedInfo, firstListOffset, lastListOffset };
-}
-
-export const otherListToList: ToList = {
-  bullet(currentLineInfo) {
-    return toBulletOrOrdered('bullet', currentLineInfo);
-  },
-  ordered(currentLineInfo) {
-    return toBulletOrOrdered('ordered', currentLineInfo);
-  },
-  task({ mdNode, doc, line }) {
-    const changedInfo = [];
     let text = getTextByMdLine(doc, line);
 
-    if ((mdNode as ListItemMdNode).listData.task) {
+    text = type === 'bullet' ? textToBullet(text) : textToOrdered(text, index + 1 + start);
+
+    return { text, line };
+  });
+
+  return { changedResults, firstListOffset, lastListOffset };
+}
+
+function getBulletOrOrdered(type: ListType, context: ToListContext) {
+  const sameDepthListInfo = getSameDepthItems(context);
+
+  return getChangedInfo(context.doc, sameDepthListInfo, type);
+}
+
+export const otherListToList: ListToList = {
+  bullet(context) {
+    return getBulletOrOrdered('bullet', context);
+  },
+  ordered(context) {
+    return getBulletOrOrdered('ordered', context);
+  },
+  task({ mdNode, doc, line }) {
+    let text = getTextByMdLine(doc, line);
+
+    if (mdNode.listData.task) {
       text = text.replace(reTaskList, '$1');
     } else if (isListNode(mdNode)) {
       text = text.replace(reList, '$1[ ] ');
     }
-    changedInfo.push({ text, line });
 
-    return { changedInfo };
+    return { changedResults: [{ text, line }] };
   }
 };
 
-export const otherNodeToList: ToList = {
+export const otherNodeToList: NodeToList = {
   bullet({ doc, line }) {
-    const text = getTextByMdLine(doc, line);
-    const changedInfo = [{ text: `* ${text}`, line }];
+    const lineText = getTextByMdLine(doc, line);
+    const changedResults = [{ text: `* ${lineText}`, line }];
 
-    return { changedInfo };
+    return { changedResults };
   },
-  ordered({ toastMark, doc, line, range }) {
-    let ordinalNum = 1;
-    const [startLine] = range;
-    const text = getTextByMdLine(doc, line);
-    let ordinalStartNum = 1;
-    let ordinalStartLine = startLine;
+  ordered({ toastMark, doc, line, startLine }) {
+    const lineText = getTextByMdLine(doc, line);
+    let firstOrderedListNum = 1;
+    let firstOrderedListLine = startLine;
+    let skipped = 0;
 
     for (let i = startLine - 1; i > 0; i -= 1) {
-      const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(i);
+      const mdNode = toastMark.findFirstNodeAtLine(i);
+      const canBeListNode = !!findClosestNode(mdNode, targetNode => isListNode(targetNode));
+      const searchResult = reOrderedListGroup.exec(getTextByMdLine(doc, i));
 
-      if (mdNode) {
-        const { listData } = mdNode;
-        const depth = getListDepth(mdNode);
+      if (!searchResult && !canBeListNode) {
+        break;
+      }
+      if (!searchResult && canBeListNode) {
+        skipped += 1;
+        continue;
+      }
+      const [, indent, , start] = searchResult!;
 
-        if (depth === 0) {
-          break;
-        }
-        if (depth === 1 && listData && listData.type === 'ordered') {
-          ordinalStartNum = listData.start;
-          ordinalStartLine = i;
-          break;
-        }
+      // basis on one depth list
+      if (!indent) {
+        firstOrderedListNum = Number(start);
+        firstOrderedListLine = i;
+        break;
       }
     }
-    ordinalNum = ordinalStartNum + line - ordinalStartLine;
+    const ordinalNum = firstOrderedListNum + line - firstOrderedListLine - skipped;
+    const changedResults = [{ text: `${ordinalNum}. ${lineText}`, line }];
 
-    const changedInfo = [{ text: `${ordinalNum}. ${text}`, line }];
-
-    return { changedInfo };
+    return { changedResults };
   },
   task({ doc, line }) {
-    const text = getTextByMdLine(doc, line);
-    const changedInfo = [{ text: `* [ ] ${text}`, line }];
+    const lineText = getTextByMdLine(doc, line);
+    const changedResults = [{ text: `* [ ] ${lineText}`, line }];
 
-    return { changedInfo };
+    return { changedResults };
   }
 };
+
+export const extendList: ExtendList = {
+  bullet({ line, doc }: ExtendListContext) {
+    const lineText = getTextByMdLine(doc, line);
+    const [, indent, delimiter] = reBulletListGroup.exec(lineText)!;
+
+    return { listSyntax: `${indent}${delimiter}` };
+  },
+  ordered({ toastMark, line, mdNode, doc }: ExtendListContext) {
+    const depth = getListDepth(mdNode);
+    const lineText = getTextByMdLine(doc, line);
+
+    const [, indent, , start, delimiter] = reOrderedListGroup.exec(lineText)!;
+    const ordinalNum = Number(start) + 1;
+    const listSyntax = `${indent}${ordinalNum}${delimiter}`;
+
+    const backwardList = findSameDepthList(toastMark, line, depth, true);
+    const filteredList = backwardList.filter(info => {
+      const searchResult = reOrderedListGroup.exec(getTextByMdLine(doc, info.line));
+
+      return (
+        searchResult &&
+        searchResult[1].length === indent.length &&
+        !!findClosestNode(info.mdNode, targetNode => isOrderedListNode(targetNode))
+      );
+    });
+
+    return { listSyntax, ...getChangedInfo(doc, filteredList, 'ordered', ordinalNum) };
+  }
+};
+
+export function getReorderedListInfo(
+  doc: ProsemirrorNode,
+  schema: Schema,
+  line: number,
+  ordinalNum: number,
+  prevIndentLength: number
+) {
+  let nodes: ProsemirrorNode[] = [];
+  let lineText = getTextByMdLine(doc, line);
+  let searchResult = reOrderedListGroup.exec(lineText);
+
+  while (searchResult) {
+    const [, indent, , , delimiter, text] = searchResult;
+    const indentLength = indent.length;
+
+    if (indentLength === prevIndentLength) {
+      nodes.push(createParagraph(schema, `${indent}${ordinalNum}${delimiter}${text}`));
+      ordinalNum += 1;
+      line += 1;
+    } else if (indentLength > prevIndentLength) {
+      const nestedListInfo = getReorderedListInfo(doc, schema, line, 1, indentLength);
+
+      line = nestedListInfo.line;
+      nodes = nodes.concat(nestedListInfo.nodes);
+    }
+
+    if (indentLength < prevIndentLength || line > doc.childCount) {
+      break;
+    }
+
+    lineText = getTextByMdLine(doc, line);
+    searchResult = reOrderedListGroup.exec(lineText);
+  }
+
+  return { nodes, line };
+}

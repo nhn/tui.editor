@@ -178,7 +178,7 @@ function codeBlock(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
 
   return {
     marks,
-    lineBackground: { ...lineBackground }
+    lineBackground
   };
 }
 

@@ -1,11 +1,11 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'prosemirror-model';
-import { EditorCommand, Context } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
+import { createParagraph, replaceNodes } from '../helper/manipulation';
 
-const reHeading = /^#+\s/;
+const reHeading = /^#{1,6}\s/;
 
 interface Payload {
   level: number;
@@ -46,16 +46,15 @@ export class Heading extends Mark {
     return textContent ? `${newLevel} ${textContent}` : `${newLevel} `;
   }
 
-  commands({ schema }: Context): EditorCommand<Payload> {
-    return payload => (state, dispatch) => {
+  commands(): EditorCommand<Payload> {
+    return payload => ({ selection, doc, tr, schema }, dispatch) => {
       const { level } = payload!;
-      const { selection, doc, tr } = state;
       const [from, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
 
       const nodes: ProsemirrorNode[] = [];
 
-      state.doc.nodesBetween(startOffset, endOffset, ({ isBlock, textContent }) => {
+      doc.nodesBetween(startOffset, endOffset, ({ isBlock, textContent }) => {
         if (isBlock) {
           const matchedHeading = textContent.match(reHeading);
 
@@ -71,7 +70,7 @@ export class Heading extends Mark {
       });
 
       if (nodes.length) {
-        dispatch!(replaceBlockNodes(tr, startOffset, endOffset, nodes));
+        dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
         return true;
       }
 

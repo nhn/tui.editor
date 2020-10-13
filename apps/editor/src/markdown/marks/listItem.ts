@@ -1,30 +1,35 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
-import { EditorState } from 'prosemirror-state';
+import { Transaction } from 'prosemirror-state';
+import { Command } from 'prosemirror-commands';
 import isNumber from 'tui-code-snippet/type/isNumber';
-import { Context, EditorCommand } from '@t/spec';
-import { MdNode } from '@t/markdown';
+import { EditorCommand } from '@t/spec';
+import { ListItemMdNode, MdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
-import { getEditorToMdLine, getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import { createParagraph, replaceBlockNodes } from '../helper/manipulation';
-import { ChangedInfo, CurNodeInfo, otherListToList, otherNodeToList } from '../helper/list';
+import {
+  createParagraph,
+  createTextSelection,
+  insertNodes,
+  replaceNodes
+} from '../helper/manipulation';
+import {
+  ChangedListInfo,
+  extendList,
+  ExtendListContext,
+  getListType,
+  otherListToList,
+  otherNodeToList,
+  reList,
+  ToListContext
+} from '../helper/list';
+import { getTextByMdLine } from '../helper/query';
+import { getPosInfo } from '../helper/pos';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
 
-function canNotBeListNode(mdNode: MdNode) {
-  const { type } = mdNode;
-
+function canNotBeListNode({ type }: MdNode) {
   return type === 'codeBlock' || type === 'heading' || type.indexOf('table') !== -1;
-}
-
-function getPosInfo(state: EditorState) {
-  const { selection, doc } = state;
-  const [from, to] = resolveSelectionPos(selection);
-  const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
-  const [startLine, endLine] = getEditorToMdLine(from, to, doc);
-
-  return { startOffset, endOffset, startLine, endLine };
 }
 
 export class ListItem extends Mark {
@@ -57,40 +62,86 @@ export class ListItem extends Mark {
     };
   }
 
-  private toList({ schema, toastMark }: Context, commandType: CommandType): EditorCommand {
-    return () => (state, dispatch) => {
-      const { doc, tr } = state;
-      const posInfo = getPosInfo(state);
+  private extendList(): Command {
+    return ({ selection, tr, doc, schema }, dispatch) => {
+      const { toastMark } = this.context;
+      const { to, startOffset, endOffset, endLine } = getPosInfo(doc, selection, true);
+
+      const lineText = getTextByMdLine(doc, endLine);
+      const isList = reList.test(lineText);
+
+      if (!isList || selection.from === startOffset) {
+        return false;
+      }
+
+      const isEmpty = !lineText.replace(reList, '').trim();
+      const commandType = getListType(lineText);
+
+      if (isEmpty) {
+        const emptyNode = createParagraph(schema);
+
+        dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
+      } else {
+        const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(endLine);
+        const slicedText = lineText.slice(to - startOffset);
+        const context: ExtendListContext = { toastMark, mdNode, doc, line: endLine };
+        const { listSyntax, changedResults, lastListOffset } = extendList[commandType](context);
+
+        const node = createParagraph(schema, listSyntax + slicedText);
+        let newTr: Transaction | null;
+
+        // To change ordinal number of backward ordered list
+        if (changedResults?.length) {
+          const extendedEndOffset = doc.resolve(lastListOffset!).end();
+          const nodes = changedResults.map(({ text }) => createParagraph(schema, text));
+
+          nodes.unshift(node);
+
+          newTr = replaceNodes(tr, to, extendedEndOffset, nodes, { from: 0, to: 1 });
+        } else {
+          newTr = slicedText
+            ? replaceNodes(tr, to, endOffset, node, { from: 0, to: 1 })
+            : insertNodes(tr, endOffset, node);
+        }
+
+        const newSelection = createTextSelection(newTr, endOffset + listSyntax.length + 2);
+
+        dispatch!(newTr.setSelection(newSelection));
+      }
+
+      return true;
+    };
+  }
+
+  private toList(commandType: CommandType): EditorCommand {
+    return () => ({ doc, tr, selection, schema }, dispatch) => {
+      const { toastMark } = this.context;
+      const posInfo = getPosInfo(doc, selection);
       const { startLine, endLine } = posInfo;
       let { startOffset, endOffset } = posInfo;
 
       let skipLines: number[] = [];
-      let changed: ChangedInfo[] = [];
+      let changed: ChangedListInfo[] = [];
 
       for (let line = startLine; line <= endLine; line += 1) {
         const mdNode: MdNode = toastMark.findFirstNodeAtLine(line);
+
+        if (mdNode && canNotBeListNode(mdNode)) {
+          break;
+        }
 
         // To skip unnecessary processing
         if (skipLines.indexOf(line) !== -1) {
           continue;
         }
-        if (mdNode && canNotBeListNode(mdNode)) {
-          break;
-        }
 
-        const curNodeInfo: CurNodeInfo = {
-          toastMark,
-          mdNode,
-          doc,
-          line,
-          range: [startLine, endLine]
-        };
-        const { firstListOffset, lastListOffset, changedInfo } = isListNode(mdNode)
-          ? otherListToList[commandType](curNodeInfo)
-          : otherNodeToList[commandType](curNodeInfo);
+        const context: ToListContext<MdNode> = { toastMark, mdNode, doc, line, startLine };
+        const { firstListOffset, lastListOffset, changedResults } = isListNode(mdNode)
+          ? otherListToList[commandType](context as ToListContext)
+          : otherNodeToList[commandType](context);
 
-        if (changedInfo) {
-          skipLines = skipLines.concat(changedInfo.map(info => info.line));
+        if (changedResults) {
+          skipLines = skipLines.concat(changedResults.map(info => info.line));
         }
 
         // resolve start offset to change forward same depth list
@@ -100,21 +151,21 @@ export class ListItem extends Mark {
 
         // resolve end offset to change backward same depth list
         if (isNumber(lastListOffset)) {
-          const offset = doc.resolve(lastListOffset).end();
+          const lastEndOffset = doc.resolve(lastListOffset).end();
 
-          if (offset > endOffset) {
-            endOffset = offset;
+          if (lastEndOffset > endOffset) {
+            endOffset = lastEndOffset;
           }
         }
 
-        changed = changed.concat(changedInfo);
+        changed = changed.concat(changedResults);
       }
 
       if (changed.length) {
         changed.sort((a, b) => (a.line < b.line ? -1 : 1));
         const nodes = changed.map(info => createParagraph(schema, info.text));
 
-        dispatch!(replaceBlockNodes(tr, startOffset, endOffset, nodes));
+        dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
         return true;
       }
 
@@ -122,26 +173,27 @@ export class ListItem extends Mark {
     };
   }
 
-  commands(context: Context) {
+  commands() {
     return {
-      bulletList: this.toList(context, 'bullet'),
-      orderedList: this.toList(context, 'ordered'),
-      taskList: this.toList(context, 'task')
+      bulletList: this.toList('bullet'),
+      orderedList: this.toList('ordered'),
+      taskList: this.toList('task')
     };
   }
 
-  keymaps(context: Context) {
-    const ulCommand = this.toList(context, 'bullet')();
-    const olCommand = this.toList(context, 'ordered')();
-    const taskCommand = this.toList(context, 'task')();
+  keymaps() {
+    const bulletCommand = this.toList('bullet')();
+    const orderedCommand = this.toList('ordered')();
+    const taskCommand = this.toList('task')();
 
     return {
-      'Mod-u': ulCommand,
-      'Mod-U': ulCommand,
-      'Mod-o': olCommand,
-      'Mod-O': olCommand,
+      'Mod-u': bulletCommand,
+      'Mod-U': bulletCommand,
+      'Mod-o': orderedCommand,
+      'Mod-O': orderedCommand,
       'alt-t': taskCommand,
-      'alt-T': taskCommand
+      'alt-T': taskCommand,
+      Enter: this.extendList()
     };
   }
 }

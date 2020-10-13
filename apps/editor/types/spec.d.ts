@@ -10,17 +10,17 @@ export interface Context {
   toastMark?: ToastMark;
   schema: Schema;
   eventEmitter: Emitter;
-  view?: EditorView;
 }
 
+export interface SpecContext extends Context {
+  view: EditorView;
+}
+
+type DefaultPayload = Record<string, any>;
+type Payload<T> = T extends infer P ? P : any;
+
 export type Dispatch = (tr: Transaction) => void;
-export type EditorCommand<T extends Record<string, any> = any> = (payload?: T) => Command;
-export type EditorCommandMap<T extends Record<string, any> = any> = Record<
-  string,
-  EditorCommand<T>
->;
-export type EditorCommandFn<T extends Record<string, any> = any> = (payload?: T) => boolean;
-export type EditorAllCommandMap<T extends Record<string, any> = any> = Record<
-  string,
-  EditorCommandFn<T>
->;
+export type EditorCommand<T = DefaultPayload> = (payload?: Payload<T>) => Command;
+export type EditorCommandMap<T = DefaultPayload> = Record<string, EditorCommand<T>>;
+export type EditorCommandFn<T = DefaultPayload> = (payload?: Payload<T>) => boolean;
+export type EditorAllCommandMap<T = DefaultPayload> = Record<string, EditorCommandFn<T>>;

@@ -1,7 +1,7 @@
-import { Transaction } from 'prosemirror-state';
+import { TextSelection, Transaction } from 'prosemirror-state';
 import { ProsemirrorNode, Schema } from 'prosemirror-model';
 
-export function replaceBlockNodes(
+export function replaceNodes(
   tr: Transaction,
   from: number,
   to: number,
@@ -16,7 +16,7 @@ export function replaceBlockNodes(
   );
 }
 
-export function insertBlockNodes(
+export function insertNodes(
   tr: Transaction,
   pos: number,
   nodes: ProsemirrorNode | ProsemirrorNode[]
@@ -39,4 +39,14 @@ export function spaceToNbsp(text: string) {
 
 export function createParagraph(schema: Schema, text?: string) {
   return schema.nodes.paragraph.create(null, text ? schema.text(spaceToNbsp(text)) : []);
+}
+
+export function createText(schema: Schema, text: string) {
+  return schema.text(spaceToNbsp(text));
+}
+
+export function createTextSelection(tr: Transaction, from: number, to = from) {
+  const { size } = tr.doc.content;
+
+  return TextSelection.create(tr.doc, Math.min(from, size), Math.min(to, size));
 }

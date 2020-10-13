@@ -22,6 +22,7 @@ export default class WysiwygEditor extends EditorBase {
     this.keymaps = this.createKeymaps();
     this.view = this.createView();
     this.commands = this.createCommands();
+    this.specs.setContext({ ...this.context, view: this.view });
   }
 
   createSpecs() {
@@ -29,7 +30,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createKeymaps() {
-    return this.specs.keymaps(this.context);
+    return this.specs.keymaps();
   }
 
   createSchema() {
@@ -62,10 +63,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createCommands() {
-    return this.specs.commands({
-      ...this.context,
-      view: this.view
-    });
+    return this.specs.commands(this.view);
   }
 
   /* eslint-disable @typescript-eslint/no-empty-function */
