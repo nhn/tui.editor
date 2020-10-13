@@ -1,7 +1,7 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 
 import Mark from '@/spec/mark';
 
@@ -19,12 +19,12 @@ export class Code extends Mark {
     };
   }
 
-  commands({ schema }: Context): EditorCommand {
-    return () => toggleMark(schema.marks.code);
+  commands(): EditorCommand {
+    return () => (state, dispatch) => toggleMark(state.schema.marks.code)(state, dispatch);
   }
 
-  keymaps(context: Context) {
-    const codeCommand = this.commands(context)();
+  keymaps() {
+    const codeCommand = this.commands()();
 
     return {
       'Shift-Mod-c': codeCommand,

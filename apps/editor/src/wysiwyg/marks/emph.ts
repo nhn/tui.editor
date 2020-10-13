@@ -1,7 +1,7 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import Mark from '@/spec/mark';
 
 export class Emph extends Mark {
@@ -18,16 +18,16 @@ export class Emph extends Mark {
     };
   }
 
-  private italic({ schema }: Context): EditorCommand {
-    return () => toggleMark(schema.marks.emph);
+  private italic(): EditorCommand {
+    return () => (state, dispatch) => toggleMark(state.schema.marks.emph)(state, dispatch);
   }
 
-  commands(context: Context) {
-    return { italic: this.italic(context) };
+  commands() {
+    return { italic: this.italic() };
   }
 
-  keymaps(context: Context) {
-    const italicCommand = this.italic(context)();
+  keymaps() {
+    const italicCommand = this.italic()();
 
     return {
       'Mod-i': italicCommand,

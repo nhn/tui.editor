@@ -1,7 +1,7 @@
 import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 import { setBlockType } from 'prosemirror-commands';
 
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import Node from '@/spec/node';
 
 export class Heading extends Node {
@@ -30,7 +30,8 @@ export class Heading extends Node {
     };
   }
 
-  commands({ schema }: Context): EditorCommand {
-    return payload => setBlockType(schema.nodes.heading, payload);
+  commands(): EditorCommand {
+    return payload => (state, dispatch) =>
+      setBlockType(state.schema.nodes.heading, payload)(state, dispatch);
   }
 }

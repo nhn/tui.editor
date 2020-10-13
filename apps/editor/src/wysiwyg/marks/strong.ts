@@ -1,7 +1,7 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import Mark from '@/spec/mark';
 
 export class Strong extends Mark {
@@ -18,16 +18,16 @@ export class Strong extends Mark {
     };
   }
 
-  private bold({ schema }: Context): EditorCommand {
-    return () => toggleMark(schema.marks.strong);
+  private bold(): EditorCommand {
+    return () => (state, dispatch) => toggleMark(state.schema.marks.strong)(state, dispatch);
   }
 
-  commands(context: Context) {
-    return { bold: this.bold(context) };
+  commands() {
+    return { bold: this.bold() };
   }
 
-  keymaps(context: Context) {
-    const boldCommand = this.bold(context)();
+  keymaps() {
+    const boldCommand = this.bold()();
 
     return {
       'Mod-b': boldCommand,

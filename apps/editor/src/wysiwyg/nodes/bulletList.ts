@@ -1,7 +1,7 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { wrapInList } from 'prosemirror-schema-list';
 
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import Node from '@/spec/node';
 
 export class BulletList extends Node {
@@ -24,12 +24,13 @@ export class BulletList extends Node {
     };
   }
 
-  commands({ schema }: Context): EditorCommand {
-    return payload => wrapInList(schema.nodes.bulletList, payload);
+  commands(): EditorCommand {
+    return payload => (state, dispatch) =>
+      wrapInList(state.schema.nodes.bulletList, payload)(state, dispatch);
   }
 
-  keymaps(context: Context) {
-    const bulletListCommand = this.commands(context)();
+  keymaps() {
+    const bulletListCommand = this.commands()();
 
     return {
       'Mod-u': bulletListCommand,

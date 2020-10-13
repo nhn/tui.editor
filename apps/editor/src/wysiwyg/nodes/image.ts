@@ -43,7 +43,7 @@ export class Image extends Node {
 
   private addImage(): EditorCommand {
     return payload => (state, dispatch) => {
-      const { imageUrl } = payload;
+      const { imageUrl } = payload!;
 
       if (!imageUrl) {
         return false;

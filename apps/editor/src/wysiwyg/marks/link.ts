@@ -1,12 +1,7 @@
-import {
-  DOMOutputSpec,
-  Mark as ProsemirrorMark,
-  MarkType,
-  DOMOutputSpecArray
-} from 'prosemirror-model';
+import { DOMOutputSpec, Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import Mark from '@/spec/mark';
 
 export class Link extends Mark {
@@ -45,7 +40,7 @@ export class Link extends Mark {
 
   private addLink(): EditorCommand {
     return payload => (state, dispatch) => {
-      const { linkUrl, linkText } = payload;
+      const { linkUrl, linkText } = payload!;
       const { schema, tr, selection } = state;
       const { empty, from, to } = selection;
 
@@ -65,14 +60,15 @@ export class Link extends Mark {
     };
   }
 
-  private toggleLink(type: MarkType): EditorCommand {
-    return payload => toggleMark(type, payload);
+  private toggleLink(): EditorCommand {
+    return payload => (state, dispatch) =>
+      toggleMark(state.schema.marks.link, payload)(state, dispatch);
   }
 
-  commands({ schema }: Context) {
+  commands() {
     return {
       addLink: this.addLink(),
-      toggleLink: this.toggleLink(schema.marks.link)
+      toggleLink: this.toggleLink()
     };
   }
 }

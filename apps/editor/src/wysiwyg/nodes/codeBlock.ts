@@ -1,7 +1,7 @@
 import { DOMOutputSpec, Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 import { setBlockType } from 'prosemirror-commands';
 
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import Node from '@/spec/node';
 
 export class CodeBlock extends Node {
@@ -44,12 +44,12 @@ export class CodeBlock extends Node {
     };
   }
 
-  commands({ schema }: Context): EditorCommand {
-    return () => setBlockType(schema.nodes.codeBlock);
+  commands(): EditorCommand {
+    return () => (state, dispatch) => setBlockType(state.schema.nodes.codeBlock)(state, dispatch);
   }
 
-  keymaps(context: Context) {
-    const codeCommand = this.commands(context)();
+  keymaps() {
+    const codeCommand = this.commands()();
 
     return {
       'Shift-Mod-p': codeCommand,

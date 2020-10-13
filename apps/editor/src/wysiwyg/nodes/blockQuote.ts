@@ -1,7 +1,7 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { wrapIn } from 'prosemirror-commands';
 
-import { Context, EditorCommand } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import Node from '@/spec/node';
 
 export class BlockQuote extends Node {
@@ -20,12 +20,12 @@ export class BlockQuote extends Node {
     };
   }
 
-  commands({ schema }: Context): EditorCommand {
-    return () => wrapIn(schema.nodes.blockQuote);
+  commands(): EditorCommand {
+    return () => (state, dispatch) => wrapIn(state.schema.nodes.blockQuote)(state, dispatch);
   }
 
-  keymaps(context: Context) {
-    const blockQutoeCommand = this.commands(context)();
+  keymaps() {
+    const blockQutoeCommand = this.commands()();
 
     return {
       'Alt-q': blockQutoeCommand,
