@@ -2,39 +2,9 @@ import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
+import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
 import { resolveSelectionPos } from '../helper/pos';
 import { createText } from '../helper/manipulation';
-
-const encodingRegExps = [/\(/g, /\)/g, /\[/g, /\]/g, /</g, />/g];
-const encodedList = ['%28', '%29', '%5B', '%5D', '%3C', '%3E'];
-const escapedList = ['\\(', '\\)', '\\[', '\\]', '\\<', '\\>'];
-
-function decodeURIGraceful(uri: string) {
-  const uriList = uri.split(' ');
-
-  return uriList
-    .reduce<string[]>((decodedURIList, targetUri) => {
-      let decodedURI = '';
-
-      try {
-        decodedURI = decodeURIComponent(targetUri).replace(/ /g, '%20');
-      } catch (e) {
-        decodedURI = targetUri;
-      }
-
-      return decodedURIList.concat(decodedURI);
-    }, [])
-    .join(' ');
-}
-
-function replaceMarkdownText(text: string, encode: boolean) {
-  const expectedValues = encode ? encodedList : escapedList;
-
-  return encodingRegExps.reduce(
-    (result, regExp, index) => result.replace(regExp, expectedValues[index]),
-    text
-  );
-}
 
 type CommandType = 'image' | 'link';
 
@@ -86,8 +56,8 @@ export class Link extends Mark {
         syntax = '!';
       }
 
-      text = replaceMarkdownText(decodeURIGraceful(text), false);
-      url = replaceMarkdownText(url, true);
+      text = replaceMarkdownText(text, false);
+      url = replaceMarkdownText(decodeURIGraceful(url), true);
       syntax += `[${text}](${url})`;
 
       const newTr = tr.replaceWith(from, to, createText(schema, syntax));
