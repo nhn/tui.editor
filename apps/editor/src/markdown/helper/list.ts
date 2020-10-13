@@ -271,11 +271,15 @@ export const extendList: ExtendList = {
     const listSyntax = `${indent}${ordinalNum}${delimiter}`;
 
     const backwardList = findSameDepthList(toastMark, line, depth, true);
-    const filteredList = backwardList.filter(
-      info =>
-        getTextByMdLine(doc, info.line).trim() &&
+    const filteredList = backwardList.filter(info => {
+      const searchResult = reOrderedListGroup.exec(getTextByMdLine(doc, info.line));
+
+      return (
+        searchResult &&
+        searchResult[1].length === indent.length &&
         !!findClosestNode(info.mdNode, targetNode => isOrderedListNode(targetNode))
-    );
+      );
+    });
 
     return { listSyntax, ...getChangedInfo(doc, filteredList, 'ordered', ordinalNum) };
   }
