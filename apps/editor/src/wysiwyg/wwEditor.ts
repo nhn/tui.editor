@@ -1,15 +1,17 @@
-import { EditorState } from 'prosemirror-state';
+import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { Schema, Node } from 'prosemirror-model';
+import { Schema, Node, DOMParser } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { history } from 'prosemirror-history';
 
 import EditorBase, { StateOptions } from '@/base';
-import { Emitter } from '@t/event';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 
 import { createSpecs } from './specCreator';
+import { resolvePosition } from './helper/node';
+
+import { Emitter } from '@t/event';
 
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
@@ -69,7 +71,12 @@ export default class WysiwygEditor extends EditorBase {
   createView() {
     return new EditorView(this.el, {
       state: this.createState(),
-      attributes: { class: CONTENTS_CLASS_NAME }
+      attributes: { class: CONTENTS_CLASS_NAME },
+      dispatchTransaction: tr => {
+        const { state } = this.view.state.applyTransaction(tr);
+
+        this.view.updateState(state);
+      }
     });
   }
 
@@ -117,13 +124,23 @@ export default class WysiwygEditor extends EditorBase {
 
   setHeight(height: number) {}
 
-  setModel(doc: Node, cursorToEnd = false) {
-    const newState = this.createState({ doc });
+  setModel(newDoc: Node, cursorToEnd = false) {
+    const { state, dispatch } = this.view;
+    const { doc, tr } = state;
 
-    this.view.updateState(newState);
+    dispatch(tr.replaceWith(0, doc.content.size, newDoc));
   }
 
   setPlaceholder(placeholder: string) {}
+
+  setSelection(start = 0, end = 0) {
+    const { dispatch, state } = this.view;
+    const { doc, tr } = state;
+    const { from, to } = resolvePosition(doc.content.size, start, end);
+    const selection = TextSelection.create(doc, from, to);
+
+    dispatch(tr.setSelection(selection));
+  }
 
   destroy() {}
 }

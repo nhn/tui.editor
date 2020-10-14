@@ -1,5 +1,7 @@
 import { oneLineTrim } from 'common-tags';
 
+import { DOMParser } from 'prosemirror-model';
+
 import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
@@ -16,6 +18,16 @@ describe('wysiwyg commands', () => {
     );
 
     dispatch(tr.replaceWith(0, doc.content.size, node));
+  }
+
+  function setContent(content: string) {
+    const wrapper = document.createElement('div');
+
+    wrapper.innerHTML = content;
+
+    const nodes = DOMParser.fromSchema(wwe.schema).parse(wrapper);
+
+    wwe.setModel(nodes);
   }
 
   beforeEach(() => {
@@ -437,6 +449,78 @@ describe('wysiwyg commands', () => {
       cmd.exec('wysiwyg', 'redo');
 
       expect(wwe.getHTML()).toBe('<p><strong>foo</strong></p>');
+    });
+  });
+
+  describe('indent command', () => {
+    fit('should add spaces for tab when it is not in list', () => {
+      setContent('<p>foo</p>');
+
+      wwe.setSelection(1, 1);
+      cmd.exec('wysiwyg', 'indent');
+
+      expect(wwe.getHTML()).toBe('<p>    foo</p>');
+
+      wwe.setSelection(1, 8);
+      cmd.exec('wysiwyg', 'indent');
+
+      expect(wwe.getHTML()).toBe('<p>    </p>');
+    });
+
+    fit('should indent to list items that can be child', () => {
+      const html = oneLineTrim`
+        <ul>
+          <li><p>foo</p></li>
+          <li><p>bar</p></li>
+        </ul>
+      `;
+
+      setContent(html);
+
+      wwe.setSelection(11, 12);
+      cmd.exec('wysiwyg', 'indent');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li>
+            <p>foo</p>
+            <ul>
+              <li><p>bar</p></li>
+            </ul>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe('outdent command', () => {
+    xit('should indent to list items that can be child', () => {
+      const html = oneLineTrim`
+        <ul>
+          <li>
+            <p>foo</p>
+            <ul>
+              <li><p>bar</p></li>
+            </ul>
+          </li>
+        </ul>
+      `;
+
+      setContent(html);
+
+      wwe.setSelection(11, 12);
+      cmd.exec('wysiwyg', 'outdent');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li><p>foo</p></li>
+          <li><p>bar</p></li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
     });
   });
 });
