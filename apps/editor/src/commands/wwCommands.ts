@@ -10,9 +10,9 @@ function isListNode(node: Node, schema: Schema) {
   return type === listItem || type === bulletList || type === orderedList;
 }
 
-function isInListNode(schema: Schema, $from: ResolvedPos): boolean {
-  for (let index = $from.depth; index > 0; index -= 1) {
-    const node = $from.node(index);
+function isInListNode(schema: Schema, pos: ResolvedPos): boolean {
+  for (let index = pos.depth; index > 0; index -= 1) {
+    const node = pos.node(index);
 
     if (isListNode(node, schema)) {
       return true;

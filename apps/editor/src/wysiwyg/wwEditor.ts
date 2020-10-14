@@ -136,7 +136,7 @@ export default class WysiwygEditor extends EditorBase {
 
   setModel(newDoc: Node, cursorToEnd = false) {
     const { state, dispatch } = this.view;
-    const { doc, tr } = state;
+    const { tr, doc } = state;
 
     dispatch(tr.replaceWith(0, doc.content.size, newDoc));
   }
@@ -144,7 +144,7 @@ export default class WysiwygEditor extends EditorBase {
   setPlaceholder(placeholder: string) {}
 
   setSelection(from = 0, to = 0) {
-    const { dispatch, state } = this.view;
+    const { state, dispatch } = this.view;
     const { tr } = state;
     const selection = createTextSelection(tr, from, to);
 
