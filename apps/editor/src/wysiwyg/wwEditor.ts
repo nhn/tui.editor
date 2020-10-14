@@ -1,4 +1,4 @@
-import { EditorState, TextSelection } from 'prosemirror-state';
+import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Schema, Node } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
@@ -7,6 +7,10 @@ import { history } from 'prosemirror-history';
 
 import EditorBase, { StateOptions } from '@/base';
 import { getDefaultCommands } from '@/commands/defaultCommands';
+import { getWwCommands } from '@/commands/wwCommands';
+import { execCommand } from '@/commands/helper';
+
+// @TODO move to common file and change path on markdown
 import { createTextSelection } from '@/markdown/helper/manipulation';
 
 import { createSpecs } from './specCreator';
@@ -52,6 +56,7 @@ export default class WysiwygEditor extends EditorBase {
 
   createState(addedStates?: StateOptions) {
     const { undo, redo } = getDefaultCommands();
+    const { indent, outdent } = getWwCommands();
 
     return EditorState.create({
       schema: this.schema,
@@ -60,6 +65,8 @@ export default class WysiwygEditor extends EditorBase {
         keymap({
           'Mod-z': undo(),
           'Shift-Mod-z': redo(),
+          Tab: indent(),
+          'Shift-Tab': outdent(),
           ...baseKeymap
         }),
         history()
@@ -76,7 +83,15 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createCommands() {
-    return this.specs.commands(this.view);
+    const { view } = this;
+    const specCommands = this.specs.commands(view);
+    const wwCommands = getWwCommands();
+
+    Object.keys(wwCommands).forEach(name => {
+      specCommands[name] = payload => execCommand(view, wwCommands[name], payload);
+    });
+
+    return specCommands;
   }
 
   /* eslint-disable @typescript-eslint/no-empty-function */

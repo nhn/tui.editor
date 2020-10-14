@@ -1,6 +1,7 @@
 import { Node, Schema, ResolvedPos } from 'prosemirror-model';
-import { Command } from 'prosemirror-commands';
 import { sinkListItem, liftListItem } from 'prosemirror-schema-list';
+
+import { EditorCommand } from '@t/spec';
 
 function isListNode(node: Node, schema: Schema) {
   const { listItem, bulletList, orderedList } = schema.nodes;
@@ -21,8 +22,8 @@ function isInListNode(schema: Schema, $from: ResolvedPos): boolean {
   return false;
 }
 
-export function indent(): Command {
-  return (state, dispatch) => {
+function indent(): EditorCommand {
+  return () => (state, dispatch) => {
     const { selection, tr } = state;
     const { $from, $to } = selection;
     const range = $from.blockRange($to);
@@ -45,8 +46,8 @@ export function indent(): Command {
   };
 }
 
-export function outdent(): Command {
-  return (state, dispatch) => {
+function outdent(): EditorCommand {
+  return () => (state, dispatch) => {
     const { $from, $to } = state.selection;
     const range = $from.blockRange($to);
 
@@ -59,5 +60,12 @@ export function outdent(): Command {
     }
 
     return false;
+  };
+}
+
+export function getWwCommands(): Record<string, EditorCommand> {
+  return {
+    indent: indent(),
+    outdent: outdent()
   };
 }

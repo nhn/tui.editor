@@ -1,17 +1,14 @@
 import { EditorView } from 'prosemirror-view';
 import { keymap } from 'prosemirror-keymap';
-import { EditorAllCommandMap, EditorCommand, SpecContext } from '@t/spec';
+import { EditorAllCommandMap, SpecContext } from '@t/spec';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import { getDefaultCommands } from '@/commands/defaultCommands';
+import { execCommand } from '@/commands/helper';
+
 import Mark from '@/spec/mark';
 import Node from '@/spec/node';
 
 type Spec = Node | Mark;
-
-function execCommand(view: EditorView, command: EditorCommand, payload?: Record<string, any>) {
-  view.focus();
-  return command(payload)(view.state, view.dispatch, view);
-}
 
 export default class SpecManager {
   private specs: Spec[];
