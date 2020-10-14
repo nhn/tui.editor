@@ -453,7 +453,7 @@ describe('wysiwyg commands', () => {
   });
 
   describe('indent command', () => {
-    fit('should add spaces for tab when it is not in list', () => {
+    it('should add spaces for tab when it is not in list', () => {
       setContent('<p>foo</p>');
 
       wwe.setSelection(1, 1);
@@ -467,7 +467,7 @@ describe('wysiwyg commands', () => {
       expect(wwe.getHTML()).toBe('<p>    </p>');
     });
 
-    fit('should indent to list items that can be child', () => {
+    it('should indent to list items that can be child', () => {
       const html = oneLineTrim`
         <ul>
           <li><p>foo</p></li>
@@ -477,7 +477,9 @@ describe('wysiwyg commands', () => {
 
       setContent(html);
 
-      wwe.setSelection(11, 12);
+      wwe.setSelection(8, 20);
+
+      cmd.exec('wysiwyg', 'strike');
       cmd.exec('wysiwyg', 'indent');
 
       const expected = oneLineTrim`
@@ -485,7 +487,7 @@ describe('wysiwyg commands', () => {
           <li>
             <p>foo</p>
             <ul>
-              <li><p>bar</p></li>
+              <li><p><del>bar</del></p></li>
             </ul>
           </li>
         </ul>
@@ -496,7 +498,7 @@ describe('wysiwyg commands', () => {
   });
 
   describe('outdent command', () => {
-    xit('should indent to list items that can be child', () => {
+    it('should indent to list items that can be child', () => {
       const html = oneLineTrim`
         <ul>
           <li>
@@ -510,13 +512,14 @@ describe('wysiwyg commands', () => {
 
       setContent(html);
 
-      wwe.setSelection(11, 12);
+      wwe.setSelection(10, 15);
+      cmd.exec('wysiwyg', 'strike');
       cmd.exec('wysiwyg', 'outdent');
 
       const expected = oneLineTrim`
         <ul>
           <li><p>foo</p></li>
-          <li><p>bar</p></li>
+          <li><p><del>bar</del></p></li>
         </ul>
       `;
 

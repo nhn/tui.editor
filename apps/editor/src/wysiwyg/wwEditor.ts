@@ -1,15 +1,15 @@
 import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { Schema, Node, DOMParser } from 'prosemirror-model';
+import { Schema, Node } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { history } from 'prosemirror-history';
 
 import EditorBase, { StateOptions } from '@/base';
 import { getDefaultCommands } from '@/commands/defaultCommands';
+import { createTextSelection } from '@/markdown/helper/manipulation';
 
 import { createSpecs } from './specCreator';
-import { resolvePosition } from './helper/node';
 
 import { Emitter } from '@t/event';
 
@@ -71,12 +71,7 @@ export default class WysiwygEditor extends EditorBase {
   createView() {
     return new EditorView(this.el, {
       state: this.createState(),
-      attributes: { class: CONTENTS_CLASS_NAME },
-      dispatchTransaction: tr => {
-        const { state } = this.view.state.applyTransaction(tr);
-
-        this.view.updateState(state);
-      }
+      attributes: { class: CONTENTS_CLASS_NAME }
     });
   }
 
@@ -133,11 +128,10 @@ export default class WysiwygEditor extends EditorBase {
 
   setPlaceholder(placeholder: string) {}
 
-  setSelection(start = 0, end = 0) {
+  setSelection(from = 0, to = 0) {
     const { dispatch, state } = this.view;
-    const { doc, tr } = state;
-    const { from, to } = resolvePosition(doc.content.size, start, end);
-    const selection = TextSelection.create(doc, from, to);
+    const { tr } = state;
+    const selection = createTextSelection(tr, from, to);
 
     dispatch(tr.setSelection(selection));
   }
