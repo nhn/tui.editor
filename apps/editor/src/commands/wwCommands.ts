@@ -3,9 +3,8 @@ import { sinkListItem, liftListItem } from 'prosemirror-schema-list';
 
 import { EditorCommand } from '@t/spec';
 
-function isListNode(node: Node, schema: Schema) {
+function isListNode({ type }: Node, schema: Schema) {
   const { listItem, bulletList, orderedList } = schema.nodes;
-  const { type } = node;
 
   return type === listItem || type === bulletList || type === orderedList;
 }
