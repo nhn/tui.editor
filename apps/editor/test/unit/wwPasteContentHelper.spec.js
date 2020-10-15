@@ -390,7 +390,7 @@ describe('WwPasteContentHelper', () => {
 
         expect(element.childNodes.length).toEqual(1);
         expect(element.childNodes[0].tagName).toEqual('UL');
-        expect(element.childNodes[0].childNodes.length).toEqual(2);
+        expect(element.childNodes[0].childNodes[0].childNodes.length).toEqual(2);
       });
 
       it('if content have complete list and has format li then make depth based on current selection', () => {
@@ -420,7 +420,7 @@ describe('WwPasteContentHelper', () => {
 
         expect(element.childNodes.length).toEqual(1);
         expect(element.childNodes[0].tagName).toEqual('UL');
-        expect($(element.childNodes[0]).find('li > ul > li > ul > li').length).toEqual(2);
+        expect($(element.childNodes[0]).find('li > div').length).toEqual(2);
       });
 
       it('if content have orphan list and hasnt format li then wrap list parent based on rangeInfo', () => {
