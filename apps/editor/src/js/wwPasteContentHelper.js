@@ -278,7 +278,7 @@ class WwPasteContentHelper {
   _prepareToPasteList(nodes, rangeInfo, firstBlockIsTaken) {
     let nodeName = domUtils.getNodeName(nodes[0]);
     let node = nodes.shift();
-    const newFragment = this.wwe
+    let newFragment = this.wwe
       .getEditor()
       .getDocument()
       .createDocumentFragment();
@@ -346,6 +346,12 @@ class WwPasteContentHelper {
         );
       }
     }
+
+    newFragment = this._getResolvePastedListDepthToCurrentDepth(
+      rangeInfo.startContainer,
+      node,
+      newFragment
+    );
 
     return newFragment;
   }
@@ -494,6 +500,110 @@ class WwPasteContentHelper {
     tables.forEach(table => {
       addClass(table, tableManager.getTableIDClassName());
     });
+  }
+
+  /**
+   * get the list resolved the depth to current list depth
+   * @param {HTMLElement} currentEl - current list element
+   * @param {HTMLElement} orgPastedNode - original pasted data
+   * @param {DocumentFragment} fragment - preprocessed data
+   * @returns {HTMLElement} resolved element
+   * @private
+   */
+  _getResolvePastedListDepthToCurrentDepth(currentEl, orgPastedNode, fragment) {
+    const currentListDepth = this._getListDepth(currentEl);
+    let continuousDepth = this._getContinuousDepth(orgPastedNode);
+
+    fragment = this._getRemovedUnnecessayListWrapper(fragment, orgPastedNode);
+
+    // If the depth of the pasted data is greater than current depth, get child element for resolving the depth.
+    // For example, If 2-depth list is pasted to 1-depth list element, 2-depth list should be changed to 1-depth.
+    while (currentListDepth < continuousDepth) {
+      if (fragment.firstChild.tagName !== 'UL' && fragment.firstChild.tagName !== 'OL') {
+        break;
+      }
+      fragment = fragment.firstChild;
+      continuousDepth -= 1;
+    }
+
+    // If the depth of the pasted data is less than current depth, wrap the list element for resolving the depth.
+    // For example, If 1-depth list is pasted to 2-depth list element, 1-depth list should be changed to 2-depth.
+    while (currentListDepth && currentListDepth > continuousDepth) {
+      const rootList = fragment.firstChild.parentElement;
+      const list = document.createElement(rootList.tagName);
+
+      list.appendChild(rootList);
+      fragment = list;
+      continuousDepth += 1;
+    }
+
+    if (currentListDepth && !currentEl.textContent) {
+      domUtils.remove(currentEl);
+    }
+    return fragment;
+  }
+
+  /**
+   * get the depth of the list item element
+   * @param {HTMLElement} el - target element
+   * @returns {number} depth
+   * @private
+   */
+  _getListDepth(el) {
+    let depth = 0;
+
+    while (el) {
+      if (el.tagName === 'UL' || el.tagName === 'OL') {
+        depth += 1;
+      }
+      el = el.parentNode;
+    }
+    return depth;
+  }
+
+  /**
+   * get the continuous depth of the list.
+   * the continuous depth of below example is 2
+   *  <ul>
+   *    <li>
+   *      <ul>
+   *        <li>...</li>
+   *        <ul>...</ul>
+   *      </ul>
+   *    </li>
+   *  </ul>
+   *
+   * @param {HTMLElement} el - target element
+   * @returns {number} depth
+   * @private
+   */
+  _getContinuousDepth(el) {
+    let depth = 0;
+
+    while (el && (el.tagName === 'UL' || el.tagName === 'OL')) {
+      depth += 1;
+
+      if (el.childNodes.length > 1) {
+        break;
+      }
+
+      el = el.firstChild;
+    }
+    return depth;
+  }
+
+  /**
+   * get the element which is removed unnecessay list wrapper element
+   * @param {HTMLElement} el - target element
+   * @param {HTMLElement} orgEl - target element
+   * @returns {HTMLElement} el
+   * @private
+   */
+  _getRemovedUnnecessayListWrapper(el, orgEl) {
+    while (el.querySelectorAll('ul,ol').length > orgEl.querySelectorAll('ul,ol').length) {
+      el = el.firstChild;
+    }
+    return el;
   }
 }
 
