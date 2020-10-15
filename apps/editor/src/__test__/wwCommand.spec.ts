@@ -498,6 +498,27 @@ describe('wysiwyg commands', () => {
   });
 
   describe('outdent command', () => {
+    it('should remove spaces for tab when it is not in list', () => {
+      setContent('<p> &nbsp; &nbsp;foo</p>');
+
+      wwe.setSelection(4, 4);
+      cmd.exec('wysiwyg', 'outdent');
+
+      expect(wwe.getHTML()).toBe('<p>foo</p>');
+
+      setContent('<p>foo &nbsp; &nbsp;bar</p>');
+
+      wwe.setSelection(6, 6);
+      cmd.exec('wysiwyg', 'outdent');
+
+      expect(wwe.getHTML()).toBe('<p>foo &nbsp;bar</p>');
+
+      wwe.setSelection(6, 8);
+      cmd.exec('wysiwyg', 'outdent');
+
+      expect(wwe.getHTML()).toBe('<p>foobar</p>');
+    });
+
     it('should indent to list items that can be child', () => {
       const html = oneLineTrim`
         <ul>

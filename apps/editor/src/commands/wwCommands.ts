@@ -3,6 +3,8 @@ import { sinkListItem, liftListItem } from 'prosemirror-schema-list';
 
 import { EditorCommand } from '@t/spec';
 
+const reSoftTabLen = /\s{1,4}$/;
+
 function isListNode({ type }: Node, schema: Schema) {
   const { listItem, bulletList, orderedList } = schema.nodes;
 
@@ -47,7 +49,8 @@ function indent(): EditorCommand {
 
 function outdent(): EditorCommand {
   return () => (state, dispatch) => {
-    const { $from, $to } = state.selection;
+    const { tr, selection } = state;
+    const { $from, $to, from } = selection;
     const range = $from.blockRange($to);
 
     if (!range) {
@@ -56,6 +59,18 @@ function outdent(): EditorCommand {
 
     if (isInListNode(state.schema, $from)) {
       return liftListItem(state.schema.nodes.listItem)(state, dispatch);
+    }
+
+    const { nodeBefore } = $from;
+
+    if (nodeBefore && nodeBefore.isText && nodeBefore.text) {
+      const { text } = nodeBefore;
+      const removedSpaceText = text.replace(reSoftTabLen, '');
+      const spaces = text.length - removedSpaceText.length;
+
+      dispatch!(tr.delete(from - spaces, from));
+
+      return true;
     }
 
     return false;
