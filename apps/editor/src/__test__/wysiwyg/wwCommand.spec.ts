@@ -6,6 +6,11 @@ import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
 
+global.Range.prototype.getClientRects = jest.fn().mockReturnValue({
+  length: 1,
+  0: { bottom: 0, height: 0, left: 0, right: 0, top: 0, width: 0, x: 0, y: 0 }
+});
+
 describe('wysiwyg commands', () => {
   let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter, cmd: CommandManager;
 
@@ -477,9 +482,7 @@ describe('wysiwyg commands', () => {
 
       setContent(html);
 
-      wwe.setSelection(8, 20);
-
-      cmd.exec('wysiwyg', 'strike');
+      wwe.setSelection(9, 9);
       cmd.exec('wysiwyg', 'indent');
 
       const expected = oneLineTrim`
@@ -487,7 +490,7 @@ describe('wysiwyg commands', () => {
           <li>
             <p>foo</p>
             <ul>
-              <li><p><del>bar</del></p></li>
+              <li><p>bar</p></li>
             </ul>
           </li>
         </ul>
@@ -534,13 +537,12 @@ describe('wysiwyg commands', () => {
       setContent(html);
 
       wwe.setSelection(10, 15);
-      cmd.exec('wysiwyg', 'strike');
       cmd.exec('wysiwyg', 'outdent');
 
       const expected = oneLineTrim`
         <ul>
           <li><p>foo</p></li>
-          <li><p><del>bar</del></p></li>
+          <li><p>bar</p></li>
         </ul>
       `;
 

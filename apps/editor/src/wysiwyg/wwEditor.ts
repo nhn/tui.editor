@@ -8,7 +8,6 @@ import { history } from 'prosemirror-history';
 import EditorBase, { StateOptions } from '@/base';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import { getWwCommands } from '@/commands/wwCommands';
-import { execCommand } from '@/commands/helper';
 
 // @TODO move to common file and change path on markdown
 import { createTextSelection } from '@/markdown/helper/manipulation';
@@ -83,15 +82,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createCommands() {
-    const { view } = this;
-    const specCommands = this.specs.commands(view);
-    const wwCommands = getWwCommands();
-
-    Object.keys(wwCommands).forEach(name => {
-      specCommands[name] = payload => execCommand(view, wwCommands[name], payload);
-    });
-
-    return specCommands;
+    return this.specs.commands(this.view, getWwCommands());
   }
 
   /* eslint-disable @typescript-eslint/no-empty-function */

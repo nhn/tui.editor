@@ -37,13 +37,9 @@ function indent(): EditorCommand {
       return sinkListItem(state.schema.nodes.listItem)(state, dispatch);
     }
 
-    if (dispatch) {
-      dispatch(tr.insertText('    ', $from.pos, $to.pos));
+    dispatch!(tr.insertText('    ', $from.pos, $to.pos));
 
-      return true;
-    }
-
-    return false;
+    return true;
   };
 }
 
@@ -63,8 +59,8 @@ function outdent(): EditorCommand {
 
     const { nodeBefore } = $from;
 
-    if (nodeBefore && nodeBefore.isText && nodeBefore.text) {
-      const { text } = nodeBefore;
+    if (nodeBefore && nodeBefore.isText) {
+      const text = nodeBefore.text!;
       const removedSpaceText = text.replace(reSoftTabLen, '');
       const spaces = text.length - removedSpaceText.length;
 
