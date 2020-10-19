@@ -278,7 +278,7 @@ class WwPasteContentHelper {
   _prepareToPasteList(nodes, rangeInfo, firstBlockIsTaken) {
     let nodeName = domUtils.getNodeName(nodes[0]);
     let node = nodes.shift();
-    let newFragment = this.wwe
+    const newFragment = this.wwe
       .getEditor()
       .getDocument()
       .createDocumentFragment();
@@ -347,13 +347,11 @@ class WwPasteContentHelper {
       }
     }
 
-    newFragment = this._getResolvePastedListDepthToCurrentDepth(
+    return this._getResolvePastedListDepthToCurrentDepth(
       rangeInfo.startContainer,
       node,
       newFragment
     );
-
-    return newFragment;
   }
 
   /**
@@ -514,7 +512,7 @@ class WwPasteContentHelper {
     const currentListDepth = this._getListDepth(currentEl);
     let continuousDepth = this._getContinuousDepth(orgPastedNode);
 
-    fragment = this._getRemovedUnnecessayListWrapper(fragment, orgPastedNode);
+    fragment = this._getRemovedUnnecessaryListWrapper(fragment, orgPastedNode);
 
     // If the depth of the pasted data is greater than current depth, get child element for resolving the depth.
     // For example, If 2-depth list is pasted to 1-depth list element, 2-depth list should be changed to 1-depth.
@@ -522,7 +520,17 @@ class WwPasteContentHelper {
       if (fragment.firstChild.tagName !== 'UL' && fragment.firstChild.tagName !== 'OL') {
         break;
       }
+
+      const childNodes = toArray(fragment.childNodes);
+
       fragment = fragment.firstChild;
+      /* eslint-disable no-loop-func */
+      childNodes
+        .filter(node => node !== fragment)
+        .forEach(node => {
+          fragment.insertAdjacentElement('beforeend', node);
+        });
+      /* eslint-enable no-loop-func */
       continuousDepth -= 1;
     }
 
@@ -599,7 +607,7 @@ class WwPasteContentHelper {
    * @returns {HTMLElement} el
    * @private
    */
-  _getRemovedUnnecessayListWrapper(el, orgEl) {
+  _getRemovedUnnecessaryListWrapper(el, orgEl) {
     while (el.querySelectorAll('ul,ol').length > orgEl.querySelectorAll('ul,ol').length) {
       el = el.firstChild;
     }

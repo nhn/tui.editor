@@ -323,7 +323,7 @@ describe('Clipboard', () => {
         se.setSelection(range);
         se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
 
-        expect(se.getHTML()).toEqual(outputHtml);
+        expect(se.getHTML()).toBe(outputHtml);
       });
     });
 
@@ -375,7 +375,7 @@ describe('Clipboard', () => {
       se.setSelection(range);
       se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
 
-      expect(se.getHTML()).toEqual(outputHtml);
+      expect(se.getHTML()).toBe(outputHtml);
     });
   });
 });
