@@ -59,7 +59,7 @@ function pasteClipboardEvent(text, html, fileType) {
 }
 
 describe('Clipboard', () => {
-  let editor, se;
+  let editor, se, wwe;
 
   // We can't simulate browser paste. skip IE & Edge browsers
   if (browser.msie || browser.edge) {
@@ -75,6 +75,7 @@ describe('Clipboard', () => {
       height: '300px',
       initialEditType: 'wysiwyg'
     });
+    wwe = editor.wwEditor;
     se = editor.wwEditor.editor;
     setTimeout(done, 0);
   });
@@ -284,6 +285,97 @@ describe('Clipboard', () => {
 
         expect(spy).toHaveBeenCalled();
       });
+    });
+
+    describe('list', () => {
+      it('should decrease the pasted list depth to match current list depth', () => {
+        const html = source`
+          <ul>
+            <li>list1</li>
+            <li>list2</li>
+          </ul>
+        `;
+
+        const inputHtml = source`
+          <ul>
+            <ul>
+              <li>text</li>
+            </ul>
+          </ul>
+        `;
+        const outputHtml = oneLineTrim`
+          <ul>
+            <li>l<br></li>
+            <li>text<br></li>
+            <li>ist1<br></li>
+            <li>list2<br></li>
+          </ul>
+          <div><br></div>
+        `;
+
+        se.setHTML(html);
+
+        const range = se.getSelection().cloneRange();
+
+        range.setStart(wwe.getBody().querySelectorAll('li')[0].childNodes[0], 1);
+        range.collapse(true);
+
+        se.setSelection(range);
+        se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
+
+        expect(se.getHTML()).toBe(outputHtml);
+      });
+    });
+
+    it('should increase the pasted list depth to match current list depth', () => {
+      const html = source`
+        <ul>
+          <li>text1</li>
+          <li>
+            <ul>
+              <li>text2</li>
+            </ul>
+          </li>
+        </ul>
+      `;
+      const inputHtml = source`
+        <ul>
+          <li>list1</li>
+        </ul>
+      `;
+
+      const outputHtml = oneLineTrim`
+        <ul>
+          <li>text1<br></li>
+          <li>
+            <ul>
+              <li>t<br></li>
+            </ul>
+          </li>
+          <ul>
+            <li>list1<br></li>
+          </ul>
+          <li>
+            <div><br></div>
+            <ul>
+              <li>ext2<br></li>
+            </ul>
+          </li>
+        </ul>
+        <div><br></div>
+      `;
+
+      se.setHTML(html);
+
+      const range = se.getSelection().cloneRange();
+
+      range.setStart(wwe.getBody().querySelectorAll('ul > li > ul > li')[0].childNodes[0], 1);
+      range.collapse(true);
+
+      se.setSelection(range);
+      se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
+
+      expect(se.getHTML()).toBe(outputHtml);
     });
   });
 });
