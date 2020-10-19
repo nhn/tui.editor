@@ -18,6 +18,7 @@ export class Image extends NodeSchema {
         altText: { default: null }
       },
       group: 'inline',
+      selectable: false,
       parseDOM: [
         {
           tag: 'img[src]',

@@ -2,6 +2,7 @@ import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 import { wrapInList } from 'prosemirror-schema-list';
 
 import NodeSchema from '@/spec/node';
+import { getWwCommands } from '@/commands/wwCommands';
 
 import { EditorCommand } from '@t/spec';
 
@@ -46,10 +47,13 @@ export class OrderedList extends NodeSchema {
 
   keymaps() {
     const orderedListCommand = this.commands()();
+    const { indent, outdent } = getWwCommands();
 
     return {
       'Mod-o': orderedListCommand,
-      'Mod-O': orderedListCommand
+      'Mod-O': orderedListCommand,
+      Tab: indent(),
+      'Shift-Tab': outdent()
     };
   }
 }

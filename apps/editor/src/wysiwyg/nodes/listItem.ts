@@ -16,7 +16,6 @@ export class ListItem extends NodeSchema {
         task: { default: false },
         checked: { default: false }
       },
-      defining: true,
       parseDOM: [
         {
           tag: 'li',

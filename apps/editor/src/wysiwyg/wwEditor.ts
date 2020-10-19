@@ -6,10 +6,15 @@ import { baseKeymap } from 'prosemirror-commands';
 import { history } from 'prosemirror-history';
 
 import EditorBase, { StateOptions } from '@/base';
-import { Emitter } from '@t/event';
 import { getDefaultCommands } from '@/commands/defaultCommands';
+import { getWwCommands } from '@/commands/wwCommands';
+
+// @TODO move to common file and change path on markdown
+import { createTextSelection } from '@/markdown/helper/manipulation';
 
 import { createSpecs } from './specCreator';
+
+import { Emitter } from '@t/event';
 
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
@@ -74,7 +79,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createCommands() {
-    return this.specs.commands(this.view);
+    return this.specs.commands(this.view, getWwCommands());
   }
 
   /* eslint-disable @typescript-eslint/no-empty-function */
@@ -117,13 +122,22 @@ export default class WysiwygEditor extends EditorBase {
 
   setHeight(height: number) {}
 
-  setModel(doc: Node, cursorToEnd = false) {
-    const newState = this.createState({ doc });
+  setModel(newDoc: Node, cursorToEnd = false) {
+    const { state, dispatch } = this.view;
+    const { tr, doc } = state;
 
-    this.view.updateState(newState);
+    dispatch(tr.replaceWith(0, doc.content.size, newDoc));
   }
 
   setPlaceholder(placeholder: string) {}
+
+  setSelection(from = 0, to = 0) {
+    const { state, dispatch } = this.view;
+    const { tr } = state;
+    const selection = createTextSelection(tr, from, to);
+
+    dispatch(tr.setSelection(selection));
+  }
 
   destroy() {}
 }

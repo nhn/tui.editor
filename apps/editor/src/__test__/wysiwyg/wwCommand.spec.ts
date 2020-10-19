@@ -1,5 +1,7 @@
 import { oneLineTrim } from 'common-tags';
 
+import { DOMParser } from 'prosemirror-model';
+
 import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
@@ -16,6 +18,16 @@ describe('wysiwyg commands', () => {
     );
 
     dispatch(tr.replaceWith(0, doc.content.size, node));
+  }
+
+  function setContent(content: string) {
+    const wrapper = document.createElement('div');
+
+    wrapper.innerHTML = content;
+
+    const nodes = DOMParser.fromSchema(wwe.schema).parse(wrapper);
+
+    wwe.setModel(nodes);
   }
 
   beforeEach(() => {
@@ -105,9 +117,6 @@ describe('wysiwyg commands', () => {
       expect(wwe.getHTML()).toBe('<blockquote><p>foo</p></blockquote>');
     });
 
-    // @TODO In the current specification, when a command is
-    // executed in a block quote element, the element disappears.
-    // Discuss specification maintaining.
     it('should wrap with blockquote element', () => {
       setTextToEditor('foo');
 
@@ -437,6 +446,193 @@ describe('wysiwyg commands', () => {
       cmd.exec('wysiwyg', 'redo');
 
       expect(wwe.getHTML()).toBe('<p><strong>foo</strong></p>');
+    });
+  });
+
+  describe('indent command', () => {
+    let html;
+
+    beforeEach(() => {
+      html = oneLineTrim`
+        <ul>
+          <li>
+            <p>foo</p>
+            <ol>
+              <li><p>bar</p></li>
+              <li><p>baz</p></li>
+              <li><p>qux</p></li>
+            </ol>
+          </li>
+        </ul>
+      `;
+
+      setContent(html);
+    });
+
+    // @TODO move to 'tab' key event test
+    // it('should add spaces for tab when it is not in list', () => {
+    //   setContent('<p>foo</p>');
+
+    //   wwe.setSelection(1, 1);
+    //   cmd.exec('wysiwyg', 'indent');
+
+    //   expect(wwe.getHTML()).toBe('<p>    foo</p>');
+
+    //   wwe.setSelection(1, 8);
+    //   cmd.exec('wysiwyg', 'indent');
+
+    //   expect(wwe.getHTML()).toBe('<p>    </p>');
+    // });
+
+    it('should indent to list items at cursor position', () => {
+      wwe.setSelection(18, 18);
+      cmd.exec('wysiwyg', 'indent');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li>
+            <p>foo</p>
+            <ol>
+              <li>
+                <p>bar</p>
+                <ol>
+                  <li><p>baz</p></li>
+                </ol>
+              </li>
+              <li><p>qux</p></li>
+            </ol>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should indent to list items as selection', () => {
+      wwe.setSelection(18, 26);
+      cmd.exec('wysiwyg', 'indent');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li>
+            <p>foo</p>
+            <ol>
+              <li>
+                <p>bar</p>
+                <ol>
+                  <li><p>baz</p></li>
+                  <li><p>qux</p></li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe('outdent command', () => {
+    let html;
+
+    beforeEach(() => {
+      html = oneLineTrim`
+        <ul>
+          <li>
+            <p>foo</p>
+            <ol>
+              <li>
+                <p>bar</p>
+                <ul>
+                  <li><p>baz</p></li>
+                </ul>
+              </li>
+            </ol>
+          </li>
+        </ul>
+      `;
+
+      setContent(html);
+    });
+
+    // @TODO move to 'shift + tab' key event test
+    // it('should remove spaces for tab when it is not in list', () => {
+    //   setContent('<p> &nbsp; &nbsp;foo</p>');
+
+    //   wwe.setSelection(4, 4);
+    //   cmd.exec('wysiwyg', 'outdent');
+
+    //   expect(wwe.getHTML()).toBe('<p>foo</p>');
+
+    //   setContent('<p>foo &nbsp; &nbsp;bar</p>');
+
+    //   wwe.setSelection(6, 6);
+    //   cmd.exec('wysiwyg', 'outdent');
+
+    //   expect(wwe.getHTML()).toBe('<p>foo &nbsp;bar</p>');
+
+    //   wwe.setSelection(6, 8);
+    //   cmd.exec('wysiwyg', 'outdent');
+
+    //   expect(wwe.getHTML()).toBe('<p>foobar</p>');
+    // });
+
+    it('should outdent to list items at cursor position', () => {
+      wwe.setSelection(19, 19);
+      cmd.exec('wysiwyg', 'outdent');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li>
+            <p>foo</p>
+            <ol>
+              <li><p>bar</p></li>
+              <li><p>baz</p></li>
+            </ol>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should outdent to list items as selection', () => {
+      wwe.setSelection(10, 20);
+      cmd.exec('wysiwyg', 'outdent');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li><p>foo</p></li>
+          <li>
+            <p>bar</p>
+            <ul>
+              <li><p>baz</p></li>
+            </ul>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should change list item of 1 depth into paragraph ', () => {
+      wwe.setSelection(3, 5);
+      cmd.exec('wysiwyg', 'outdent');
+
+      const expected = oneLineTrim`
+        <p>foo</p>
+        <ol>
+          <li>
+            <p>bar</p>
+            <ul>
+              <li><p>baz</p></li>
+            </ul>
+          </li>
+        </ol>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
     });
   });
 });
