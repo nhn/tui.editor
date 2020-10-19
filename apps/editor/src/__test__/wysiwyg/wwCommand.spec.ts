@@ -117,9 +117,6 @@ describe('wysiwyg commands', () => {
       expect(wwe.getHTML()).toBe('<blockquote><p>foo</p></blockquote>');
     });
 
-    // @TODO In the current specification, when a command is
-    // executed in a block quote element, the element disappears.
-    // Discuss specification maintaining.
     it('should wrap with blockquote element', () => {
       setTextToEditor('foo');
 
