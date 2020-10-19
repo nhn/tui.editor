@@ -55,7 +55,6 @@ export default class WysiwygEditor extends EditorBase {
 
   createState(addedStates?: StateOptions) {
     const { undo, redo } = getDefaultCommands();
-    const { indent, outdent } = getWwCommands();
 
     return EditorState.create({
       schema: this.schema,
@@ -64,8 +63,6 @@ export default class WysiwygEditor extends EditorBase {
         keymap({
           'Mod-z': undo(),
           'Shift-Mod-z': redo(),
-          Tab: indent(),
-          'Shift-Tab': outdent(),
           ...baseKeymap
         }),
         history()

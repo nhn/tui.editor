@@ -2,6 +2,7 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { wrapInList } from 'prosemirror-schema-list';
 
 import Node from '@/spec/node';
+import { getWwCommands } from '@/commands/wwCommands';
 
 import { EditorCommand } from '@t/spec';
 
@@ -32,10 +33,13 @@ export class BulletList extends Node {
 
   keymaps() {
     const bulletListCommand = this.commands()();
+    const { indent, outdent } = getWwCommands();
 
     return {
       'Mod-u': bulletListCommand,
-      'Mod-U': bulletListCommand
+      'Mod-U': bulletListCommand,
+      Tab: indent(),
+      'Shift-Tab': outdent()
     };
   }
 }

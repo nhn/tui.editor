@@ -1,72 +1,30 @@
-import { Node, Schema, ResolvedPos } from 'prosemirror-model';
 import { sinkListItem, liftListItem } from 'prosemirror-schema-list';
 
 import { EditorCommand } from '@t/spec';
-
-const reSoftTabLen = /\s{1,4}$/;
-
-function isListNode({ type }: Node, schema: Schema) {
-  const { listItem, bulletList, orderedList } = schema.nodes;
-
-  return type === listItem || type === bulletList || type === orderedList;
-}
-
-function isInListNode(schema: Schema, pos: ResolvedPos): boolean {
-  for (let index = pos.depth; index > 0; index -= 1) {
-    const node = pos.node(index);
-
-    if (isListNode(node, schema)) {
-      return true;
-    }
-  }
-
-  return false;
-}
+import { isInListNode } from '@/wysiwyg/helper/node';
 
 function indent(): EditorCommand {
   return () => (state, dispatch) => {
-    const { selection, tr } = state;
+    const { selection, schema } = state;
     const { $from, $to } = selection;
     const range = $from.blockRange($to);
 
-    if (!range) {
-      return false;
+    if (range && isInListNode(schema, $from)) {
+      return sinkListItem(schema.nodes.listItem)(state, dispatch);
     }
 
-    if (isInListNode(state.schema, $from)) {
-      return sinkListItem(state.schema.nodes.listItem)(state, dispatch);
-    }
-
-    dispatch!(tr.insertText('    ', $from.pos, $to.pos));
-
-    return true;
+    return false;
   };
 }
 
 function outdent(): EditorCommand {
   return () => (state, dispatch) => {
-    const { tr, selection } = state;
-    const { $from, $to, from } = selection;
+    const { selection, schema } = state;
+    const { $from, $to } = selection;
     const range = $from.blockRange($to);
 
-    if (!range) {
-      return false;
-    }
-
-    if (isInListNode(state.schema, $from)) {
-      return liftListItem(state.schema.nodes.listItem)(state, dispatch);
-    }
-
-    const { nodeBefore } = $from;
-
-    if (nodeBefore && nodeBefore.isText) {
-      const text = nodeBefore.text!;
-      const removedSpaceText = text.replace(reSoftTabLen, '');
-      const spaces = text.length - removedSpaceText.length;
-
-      dispatch!(tr.delete(from - spaces, from));
-
-      return true;
+    if (range && isInListNode(schema, $from)) {
+      return liftListItem(schema.nodes.listItem)(state, dispatch);
     }
 
     return false;
