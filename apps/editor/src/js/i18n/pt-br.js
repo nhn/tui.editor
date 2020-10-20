@@ -4,7 +4,7 @@
  */
 import Editor from '../editor';
 
-Editor.setLanguage('pt', 'pt-BR', {
+Editor.setLanguage(['pt', 'pt-BR'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Escrever',
