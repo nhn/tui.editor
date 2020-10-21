@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 2.4.0 | Thu Sep 10 2020
+ * @version 2.5.0 | Wed Oct 21 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -266,6 +266,23 @@
 
 .tui-editor-contents a:hover {
   color: #1f70de;
+}
+
+.tui-editor-contents a.image-link {
+  position: relative;
+}
+
+.tui-editor-contents a.image-link::before {
+  content: '';
+  position: absolute;
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  top: 2px;
+  right: 2px;
+  background-repeat: no-repeat;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAFKADAAQAAAABAAAAFAAAAACy3fD9AAAA/0lEQVQ4Ee2UIY6FQAyG/91wAQQJDg8SSwI3QIFAcQHuwFHQoOAEEFAELB6H4wIku+9vQgIP9zLyVbTTTufLtJ3MzzRNf1AoGlmu6ypBzvOMXyWkC+QLvDTjw6VM+Xr2OA6UZYmu67Dvu2zleX6zuq7D933EcQxNuyPu3usYYXVdw/M8mKYpIMMwxEZRJHbbNsmhkySJxE71APJmhGVZhnVdURQFlmU585GmKSzLEp+570Dlz+ZxQ/aGJVNYsm3bCIJA/LZtMY4jmqbBMAwIw1DiV/UAstEUltP3vawdxxFbVZVYDoWwM1eCp+LnoErIUt7DL/Ac1edWng1/WlXyD380myY5A34sAAAAAElFTkSuQmCC');
+  cursor: pointer;
 }
 
 .tui-editor-contents .task-list-item {

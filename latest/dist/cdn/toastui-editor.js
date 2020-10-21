@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 2.4.0 | Thu Sep 10 2020
+ * @version 2.5.0 | Wed Oct 21 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -113,9 +113,9 @@ return /******/ (function(modules) { // webpackBootstrap
 /* harmony import */ var tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var tui_code_snippet_domUtil_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4);
 /* harmony import */ var tui_code_snippet_domUtil_css__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_css__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6);
+/* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5);
 /* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5);
+/* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6);
 /* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var tui_code_snippet_domUtil_hasClass__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(16);
 /* harmony import */ var tui_code_snippet_domUtil_hasClass__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_hasClass__WEBPACK_IMPORTED_MODULE_6__);
@@ -708,7 +708,7 @@ var getLeafNode = function getLeafNode(node) {
   return result;
 };
 /**
- * check if a coordinates is inside a task box
+ * check if a coordinates is inside a button box
  * @param {object} style - computed style of task box
  * @param {number} offsetX - event x offset
  * @param {number} offsetY - event y offset
@@ -717,7 +717,7 @@ var getLeafNode = function getLeafNode(node) {
  */
 
 
-var isInsideTaskBox = function isInsideTaskBox(style, offsetX, offsetY) {
+var isInsideButtonBox = function isInsideButtonBox(style, offsetX, offsetY) {
   var rect = {
     left: parseInt(style.left, 10),
     top: parseInt(style.top, 10),
@@ -1560,7 +1560,7 @@ function getFragmentReplacedByNewlineToBr(text) {
   removeChildFromStartToEndNode: removeChildFromStartToEndNode,
   removeNodesByDirection: removeNodesByDirection,
   getLeafNode: getLeafNode,
-  isInsideTaskBox: isInsideTaskBox,
+  isInsideButtonBox: isInsideButtonBox,
   isListNode: isListNode,
   isFirstListItem: isFirstListItem,
   isFirstLevelListItem: isFirstLevelListItem,
@@ -2167,56 +2167,6 @@ module.exports = css;
 
 "use strict";
 /**
- * @fileoverview Remove css class from element
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-
-
-
-var forEachArray = __webpack_require__(21);
-var inArray = __webpack_require__(14);
-var getClass = __webpack_require__(33);
-var setClassName = __webpack_require__(39);
-
-/**
- * Remove css class from element
- * @param {(HTMLElement|SVGElement)} element - target element
- * @param {...string} cssClass - css classes to remove
- * @memberof module:domUtil
- */
-function removeClass(element) {
-  var cssClass = Array.prototype.slice.call(arguments, 1);
-  var classList = element.classList;
-  var origin, newClass;
-
-  if (classList) {
-    forEachArray(cssClass, function(name) {
-      classList.remove(name);
-    });
-
-    return;
-  }
-
-  origin = getClass(element).split(/\s+/);
-  newClass = [];
-  forEachArray(origin, function(name) {
-    if (inArray(name, cssClass) < 0) {
-      newClass.push(name);
-    }
-  });
-
-  setClassName(element, newClass);
-}
-
-module.exports = removeClass;
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
  * @fileoverview Add css class to element
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
@@ -2269,6 +2219,56 @@ function addClass(element) {
 }
 
 module.exports = addClass;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Remove css class from element
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var forEachArray = __webpack_require__(21);
+var inArray = __webpack_require__(14);
+var getClass = __webpack_require__(33);
+var setClassName = __webpack_require__(39);
+
+/**
+ * Remove css class from element
+ * @param {(HTMLElement|SVGElement)} element - target element
+ * @param {...string} cssClass - css classes to remove
+ * @memberof module:domUtil
+ */
+function removeClass(element) {
+  var cssClass = Array.prototype.slice.call(arguments, 1);
+  var classList = element.classList;
+  var origin, newClass;
+
+  if (classList) {
+    forEachArray(cssClass, function(name) {
+      classList.remove(name);
+    });
+
+    return;
+  }
+
+  origin = getClass(element).split(/\s+/);
+  newClass = [];
+  forEachArray(origin, function(name) {
+    if (inArray(name, cssClass) < 0) {
+      newClass.push(name);
+    }
+  });
+
+  setClassName(element, newClass);
+}
+
+module.exports = removeClass;
 
 
 /***/ }),
@@ -3875,7 +3875,7 @@ function getPluginInfo(plugins) {
 
 /*!
  * to-mark
- * @version 1.0.1 | Wed Sep 09 2020
+ * @version 1.0.1 | Wed Oct 21 2020
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
@@ -5217,9 +5217,9 @@ module.exports = isNumber;
 /* harmony import */ var tui_code_snippet_domEvent_on__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domEvent_on__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var tui_code_snippet_domEvent_off__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(20);
 /* harmony import */ var tui_code_snippet_domEvent_off__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domEvent_off__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
+/* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
 /* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5);
+/* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6);
 /* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _toast_ui_toastmark__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(22);
 /* harmony import */ var _toast_ui_toastmark__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_toast_ui_toastmark__WEBPACK_IMPORTED_MODULE_4__);
@@ -6724,7 +6724,7 @@ var ToastUIEditorViewer = /*#__PURE__*/function () {
   _proto._toggleTask = function _toggleTask(ev) {
     var style = getComputedStyle(ev.target, ':before');
 
-    if (!ev.target.hasAttribute(DISABLED_TASK_ATTR_NAME) && ev.target.hasAttribute(TASK_ATTR_NAME) && _utils_dom__WEBPACK_IMPORTED_MODULE_8__[/* default */ "a"].isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
+    if (!ev.target.hasAttribute(DISABLED_TASK_ATTR_NAME) && ev.target.hasAttribute(TASK_ATTR_NAME) && _utils_dom__WEBPACK_IMPORTED_MODULE_8__[/* default */ "a"].isInsideButtonBox(style, ev.offsetX, ev.offsetY)) {
       _utils_dom__WEBPACK_IMPORTED_MODULE_8__[/* default */ "a"].toggleClass(ev.target, TASK_CHECKED_CLASS_NAME);
       this.eventManager.emit('change', {
         source: 'viewer',
@@ -8675,11 +8675,11 @@ var css = __webpack_require__(4);
 var css_default = /*#__PURE__*/__webpack_require__.n(css);
 
 // EXTERNAL MODULE: ./node_modules/tui-code-snippet/domUtil/addClass.js
-var addClass = __webpack_require__(6);
+var addClass = __webpack_require__(5);
 var addClass_default = /*#__PURE__*/__webpack_require__.n(addClass);
 
 // EXTERNAL MODULE: ./node_modules/tui-code-snippet/domUtil/removeClass.js
-var removeClass = __webpack_require__(5);
+var removeClass = __webpack_require__(6);
 var removeClass_default = /*#__PURE__*/__webpack_require__.n(removeClass);
 
 // EXTERNAL MODULE: /Users/tigger/Desktop/project/tui.editor/libs/toastmark/dist/toastmark.js
@@ -11856,7 +11856,7 @@ var wwPasteContentHelper_WwPasteContentHelper = /*#__PURE__*/function () {
       }
     }
 
-    return newFragment;
+    return this._getResolvePastedListDepthToCurrentDepth(rangeInfo.startContainer, node, newFragment);
   }
   /**
    * Unwrap fragment first child for pasting node inline
@@ -12007,6 +12007,129 @@ var wwPasteContentHelper_WwPasteContentHelper = /*#__PURE__*/function () {
     tables.forEach(function (table) {
       addClass_default()(table, tableManager.getTableIDClassName());
     });
+  }
+  /**
+   * get the list resolved the depth to current list depth
+   * @param {HTMLElement} currentEl - current list element
+   * @param {HTMLElement} orgPastedNode - original pasted data
+   * @param {DocumentFragment} fragment - preprocessed data
+   * @returns {HTMLElement} resolved element
+   * @private
+   */
+  ;
+
+  _proto._getResolvePastedListDepthToCurrentDepth = function _getResolvePastedListDepthToCurrentDepth(currentEl, orgPastedNode, fragment) {
+    var currentListDepth = this._getListDepth(currentEl);
+
+    var continuousDepth = this._getContinuousDepth(orgPastedNode);
+
+    fragment = this._getRemovedUnnecessaryListWrapper(fragment, orgPastedNode); // If the depth of the pasted data is greater than current depth, get child element for resolving the depth.
+    // For example, If 2-depth list is pasted to 1-depth list element, 2-depth list should be changed to 1-depth.
+
+    while (currentListDepth < continuousDepth) {
+      if (fragment.firstChild.tagName !== 'UL' && fragment.firstChild.tagName !== 'OL') {
+        break;
+      }
+
+      var childNodes = toArray_default()(fragment.childNodes);
+      fragment = fragment.firstChild;
+      /* eslint-disable no-loop-func */
+
+      childNodes.filter(function (node) {
+        return node !== fragment;
+      }).forEach(function (node) {
+        fragment.insertAdjacentElement('beforeend', node);
+      });
+      /* eslint-enable no-loop-func */
+
+      continuousDepth -= 1;
+    } // If the depth of the pasted data is less than current depth, wrap the list element for resolving the depth.
+    // For example, If 1-depth list is pasted to 2-depth list element, 1-depth list should be changed to 2-depth.
+
+
+    while (currentListDepth && currentListDepth > continuousDepth) {
+      var rootList = fragment.firstChild.parentElement;
+      var list = document.createElement(rootList.tagName);
+      list.appendChild(rootList);
+      fragment = list;
+      continuousDepth += 1;
+    }
+
+    if (currentListDepth && !currentEl.textContent) {
+      dom["a" /* default */].remove(currentEl);
+    }
+
+    return fragment;
+  }
+  /**
+   * get the depth of the list item element
+   * @param {HTMLElement} el - target element
+   * @returns {number} depth
+   * @private
+   */
+  ;
+
+  _proto._getListDepth = function _getListDepth(el) {
+    var depth = 0;
+
+    while (el) {
+      if (el.tagName === 'UL' || el.tagName === 'OL') {
+        depth += 1;
+      }
+
+      el = el.parentNode;
+    }
+
+    return depth;
+  }
+  /**
+   * get the continuous depth of the list.
+   * the continuous depth of below example is 2
+   *  <ul>
+   *    <li>
+   *      <ul>
+   *        <li>...</li>
+   *        <ul>...</ul>
+   *      </ul>
+   *    </li>
+   *  </ul>
+   *
+   * @param {HTMLElement} el - target element
+   * @returns {number} depth
+   * @private
+   */
+  ;
+
+  _proto._getContinuousDepth = function _getContinuousDepth(el) {
+    var depth = 0;
+
+    while (el && (el.tagName === 'UL' || el.tagName === 'OL')) {
+      depth += 1;
+
+      if (el.childNodes.length > 1) {
+        break;
+      }
+
+      el = el.firstChild;
+    }
+
+    return depth;
+  }
+  /**
+   * get the element which is removed unnecessay list wrapper element
+   * @param {HTMLElement} el - target element
+   * @param {HTMLElement} orgEl - target element
+   * @returns {HTMLElement} el
+   * @private
+   */
+  ;
+
+  _proto._getRemovedUnnecessaryListWrapper = function _getRemovedUnnecessaryListWrapper(el, orgEl) {
+    while (el.querySelectorAll('ul,ol').length > orgEl.querySelectorAll('ul,ol').length) {
+      el = el.firstChild;
+    }
+
+    return el;
   };
 
   return WwPasteContentHelper;
@@ -12933,6 +13056,110 @@ var wwClipboardManager_WwClipboardManager = /*#__PURE__*/function () {
 }();
 
 /* harmony default export */ var wwClipboardManager = (wwClipboardManager_WwClipboardManager);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/domUtil/hasClass.js
+var hasClass = __webpack_require__(16);
+var hasClass_default = /*#__PURE__*/__webpack_require__.n(hasClass);
+
+// CONCATENATED MODULE: ./src/js/wwLinkManager.js
+/**
+ * @fileoverview Implements wysiwyg link manager
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var CLASS_NAME_IMAGE_LINK = 'image-link';
+/**
+ * Class WwLinkManager
+ * @param {WysiwygEditor} wwe - WysiwygEditor instance
+ * @ignore
+ */
+
+var wwLinkManager_WwLinkManager = /*#__PURE__*/function () {
+  function WwLinkManager(wwe) {
+    this.wwe = wwe;
+    this.eventManager = wwe.eventManager;
+    /**
+     * Name property
+     * @type {string}
+     */
+
+    this.name = 'link';
+
+    this._init();
+  }
+
+  var _proto = WwLinkManager.prototype;
+
+  _proto._init = function _init() {
+    var _this = this;
+
+    this.eventManager.listen('wysiwygSetValueAfter', function () {
+      _this._addClassNameToAllImageLinks();
+    });
+    this.wwe.getEditor().addEventListener('click', function (ev) {
+      var target = ev.target,
+          offsetX = ev.offsetX,
+          offsetY = ev.offsetY;
+      var popupButton = getComputedStyle(target, ':before');
+
+      if (hasClass_default()(target, CLASS_NAME_IMAGE_LINK) && dom["a" /* default */].isInsideButtonBox(popupButton, offsetX, offsetY)) {
+        _this._selectImageLink(target.parentNode);
+
+        _this.eventManager.emit('openPopupAddLink', {
+          url: target.getAttribute('href')
+        });
+      }
+    });
+  };
+
+  _proto._selectImageLink = function _selectImageLink(imageLink) {
+    var range = this.wwe.getEditor().getSelection().cloneRange();
+    range.selectNode(imageLink);
+    this.wwe.getEditor().setSelection(range);
+  };
+
+  _proto._addClassNameToImageLinks = function _addClassNameToImageLinks(links) {
+    links.forEach(function (link) {
+      if (link.firstChild && link.firstChild.nodeName === 'IMG') {
+        addClass_default()(link, CLASS_NAME_IMAGE_LINK);
+      }
+    });
+  };
+
+  _proto._addClassNameToAllImageLinks = function _addClassNameToAllImageLinks() {
+    var links = dom["a" /* default */].findAll(this.wwe.getBody(), 'a');
+
+    this._addClassNameToImageLinks(links);
+  }
+  /**
+   * Add class name on all link including image in selection
+   */
+  ;
+
+  _proto.addClassNameToImageLinksInSelection = function addClassNameToImageLinksInSelection() {
+    var sq = this.wwe.getEditor();
+
+    var _sq$getSelection = sq.getSelection(),
+        container = _sq$getSelection.commonAncestorContainer;
+
+    if (dom["a" /* default */].isElemNode(container)) {
+      var links;
+
+      if (container.nodeName === 'A') {
+        links = [container];
+      } else {
+        links = dom["a" /* default */].findAll(container, 'a');
+      }
+
+      this._addClassNameToImageLinks(links);
+    }
+  };
+
+  return WwLinkManager;
+}();
+
+
 // CONCATENATED MODULE: ./src/js/wwListManager.js
 /**
  * @fileoverview Implements wysiwyg list manager
@@ -13654,10 +13881,6 @@ var wwListManager_WwListManager = /*#__PURE__*/function () {
 }();
 
 /* harmony default export */ var wwListManager = (wwListManager_WwListManager);
-// EXTERNAL MODULE: ./node_modules/tui-code-snippet/domUtil/hasClass.js
-var hasClass = __webpack_require__(16);
-var hasClass_default = /*#__PURE__*/__webpack_require__.n(hasClass);
-
 // CONCATENATED MODULE: ./src/js/wwTaskManager.js
 /**
  * @fileoverview Implements wysiwyg task manager
@@ -13705,7 +13928,7 @@ var wwTaskManager_WwTaskManager = /*#__PURE__*/function () {
     this.wwe.getEditor().addEventListener('mousedown', function (ev) {
       var style = getComputedStyle(ev.target, ':before');
 
-      if (ev.target.hasAttribute(TASK_ATTR_NAME) && dom["a" /* default */].isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
+      if (ev.target.hasAttribute(TASK_ATTR_NAME) && dom["a" /* default */].isInsideButtonBox(style, ev.offsetX, ev.offsetY)) {
         // Prevent cursor focusing
         ev.preventDefault();
         dom["a" /* default */].toggleClass(ev.target, TASK_CHECKED_CLASS_NAME);
@@ -17536,6 +17759,7 @@ var codeBlockGadget_CodeBlockGadget = /*#__PURE__*/function (_BlockOverlay) {
 
 
 
+
 var wysiwygEditor_keyMapper = keyMapper.getSharedInstance();
 var FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi;
 var FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi;
@@ -18741,6 +18965,7 @@ var wysiwygEditor_WysiwygEditor = /*#__PURE__*/function () {
   WysiwygEditor.factory = function factory(el, eventManager, options) {
     var wwe = new WysiwygEditor(el, eventManager, options);
     wwe.init();
+    wwe.componentManager.addManager(wwLinkManager_WwLinkManager);
     wwe.componentManager.addManager(wwListManager);
     wwe.componentManager.addManager(wwTaskManager);
     wwe.componentManager.addManager(wwTableSelectionManager);
@@ -21420,6 +21645,8 @@ var popupAddLink_PopupAddLink = /*#__PURE__*/function (_LayerPopup) {
   popupAddLink_inheritsLoose(PopupAddLink, _LayerPopup);
 
   function PopupAddLink(options) {
+    var _this;
+
     var POPUP_CONTENT = "\n            <label for=\"url\">" + i18n.get('URL') + "</label>\n            <input type=\"text\" class=\"te-url-input\" />\n            <label for=\"linkText\">" + i18n.get('Link text') + "</label>\n            <input type=\"text\" class=\"te-link-text-input\" />\n            <div class=\"te-button-section\">\n                <button type=\"button\" class=\"te-ok-button\">" + i18n.get('OK') + "</button>\n                <button type=\"button\" class=\"te-close-button\">" + i18n.get('Cancel') + "</button>\n            </div>\n        ";
     options = extend_default()({
       header: true,
@@ -21427,7 +21654,9 @@ var popupAddLink_PopupAddLink = /*#__PURE__*/function (_LayerPopup) {
       className: 'te-popup-add-link tui-editor-popup',
       content: POPUP_CONTENT
     }, options);
-    return _LayerPopup.call(this, options) || this;
+    _this = _LayerPopup.call(this, options) || this;
+    _this._disabledLinkText = false;
+    return _this;
   }
   /**
    * init instance.
@@ -21468,21 +21697,25 @@ var popupAddLink_PopupAddLink = /*#__PURE__*/function (_LayerPopup) {
   ;
 
   _proto._initDOMEvent = function _initDOMEvent() {
-    var _this = this;
+    var _this2 = this;
 
     _LayerPopup.prototype._initDOMEvent.call(this);
 
     this.on('click .te-close-button', function () {
-      return _this.hide();
+      return _this2.hide();
     });
     this.on('click .te-ok-button', function () {
-      return _this._addLink();
+      return _this2._addLink();
     });
     this.on('shown', function () {
-      var inputText = _this._inputText;
-      var inputURL = _this._inputURL;
+      _this2._disabledLinkText = _this2._editor.isWysiwygMode() && !_this2._editor.getRange().collapsed;
 
-      var selectedText = _this._editor.getSelectedText().trim();
+      _this2._disableLinkTextInput();
+
+      var inputText = _this2._inputText;
+      var inputURL = _this2._inputURL;
+
+      var selectedText = _this2._editor.getSelectedText().trim();
 
       inputText.value = selectedText;
 
@@ -21493,7 +21726,7 @@ var popupAddLink_PopupAddLink = /*#__PURE__*/function (_LayerPopup) {
       inputURL.focus();
     });
     this.on('hidden', function () {
-      _this._resetInputs();
+      _this2._resetInputs();
     });
   }
   /**
@@ -21504,22 +21737,38 @@ var popupAddLink_PopupAddLink = /*#__PURE__*/function (_LayerPopup) {
   ;
 
   _proto._initEditorEvent = function _initEditorEvent() {
-    var _this2 = this;
+    var _this3 = this;
 
     _LayerPopup.prototype._initEditorEvent.call(this);
 
     var eventManager = this._eventManager;
     eventManager.listen('focus', function () {
-      return _this2.hide();
+      return _this3.hide();
     });
     eventManager.listen('closeAllPopup', function () {
-      return _this2.hide();
+      return _this3.hide();
     });
-    eventManager.listen('openPopupAddLink', function () {
+    eventManager.listen('openPopupAddLink', function (linkData) {
       eventManager.emit('closeAllPopup');
 
-      _this2.show();
+      if (linkData) {
+        _this3._inputURL.value = linkData.url;
+      }
+
+      _this3.show();
     });
+  };
+
+  _proto._disableLinkTextInput = function _disableLinkTextInput() {
+    var input = this._inputText;
+
+    if (this._disabledLinkText) {
+      input.setAttribute('disabled', 'disabled');
+      addClass_default()(input, 'disabled');
+    } else {
+      input.removeAttribute('disabled');
+      removeClass_default()(input, 'disabled');
+    }
   };
 
   _proto._addLink = function _addLink() {
@@ -21529,7 +21778,7 @@ var popupAddLink_PopupAddLink = /*#__PURE__*/function (_LayerPopup) {
 
     this._clearValidationStyle();
 
-    if (linkText.length < 1) {
+    if (!this._disabledLinkText && linkText.length < 1) {
       addClass_default()(this._inputText, 'wrong');
       return;
     }
@@ -21557,11 +21806,13 @@ var popupAddLink_PopupAddLink = /*#__PURE__*/function (_LayerPopup) {
   };
 
   _proto._clearValidationStyle = function _clearValidationStyle() {
-    removeClass_default()(this._inputURL, 'wrong');
+    removeClass_default()(this._inputURL, 'wrong', 'disabled');
     removeClass_default()(this._inputText, 'wrong');
   };
 
   _proto._resetInputs = function _resetInputs() {
+    this._inputText.removeAttribute('disabled');
+
     this._inputText.value = '';
     this._inputURL.value = '';
 
@@ -24921,8 +25172,28 @@ var HR = commandManager["a" /* default */].command('markdown',
 
 
 var addLink_decodeURIGraceful = importManager.decodeURIGraceful,
-    encodeMarkdownCharacters = importManager.encodeMarkdownCharacters,
-    escapeMarkdownCharacters = importManager.escapeMarkdownCharacters;
+    encodeMarkdownCharacters = importManager.encodeMarkdownCharacters;
+var FIND_MARKDOWN_IMAGE_SYNTAX_RX = /!\[.*\]\(.*\)/g;
+var FIND_ESCAPED_CHARS_RX = /\(|\)|\[|\]|<|>/g;
+
+function escapeLinkTextExceptImageSyntax(linkText) {
+  var imageSyntaxRanges = [];
+  var result = FIND_MARKDOWN_IMAGE_SYNTAX_RX.exec(linkText);
+
+  while (result) {
+    var _result = result,
+        index = _result.index;
+    imageSyntaxRanges.push([index, index + result[0].length]);
+    result = FIND_MARKDOWN_IMAGE_SYNTAX_RX.exec(linkText);
+  }
+
+  return linkText.replace(FIND_ESCAPED_CHARS_RX, function (matched, offset) {
+    var isDelimiter = imageSyntaxRanges.some(function (range) {
+      return offset > range[0] && offset < range[1];
+    });
+    return isDelimiter ? matched : "\\" + matched;
+  });
+}
 /**
  * AddLink
  * Add link markdown syntax to markdown editor
@@ -24930,6 +25201,7 @@ var addLink_decodeURIGraceful = importManager.decodeURIGraceful,
  * @module markdownCommands/AddLink
  * @ignore
  */
+
 
 var AddLink = commandManager["a" /* default */].command('markdown',
 /** @lends AddLink */
@@ -24956,7 +25228,7 @@ var AddLink = commandManager["a" /* default */].command('markdown',
     var linkText = data.linkText,
         url = data.url;
     linkText = addLink_decodeURIGraceful(linkText);
-    linkText = escapeMarkdownCharacters(linkText);
+    linkText = escapeLinkTextExceptImageSyntax(linkText);
     url = encodeMarkdownCharacters(url);
     var replaceText = "[" + linkText + "](" + url + ")";
     doc.replaceRange(replaceText, from, to);
@@ -24973,7 +25245,7 @@ var AddLink = commandManager["a" /* default */].command('markdown',
 
 var addImage_decodeURIGraceful = importManager.decodeURIGraceful,
     addImage_encodeMarkdownCharacters = importManager.encodeMarkdownCharacters,
-    addImage_escapeMarkdownCharacters = importManager.escapeMarkdownCharacters;
+    escapeMarkdownCharacters = importManager.escapeMarkdownCharacters;
 /**
  * AddImage
  * Add Image markdown syntax to markdown Editor
@@ -25007,7 +25279,7 @@ var AddImage = commandManager["a" /* default */].command('markdown',
     var altText = data.altText,
         imageUrl = data.imageUrl;
     altText = addImage_decodeURIGraceful(altText);
-    altText = addImage_escapeMarkdownCharacters(altText);
+    altText = escapeMarkdownCharacters(altText);
     imageUrl = addImage_encodeMarkdownCharacters(imageUrl);
     var replaceText = "![" + altText + "](" + imageUrl + ")";
     doc.replaceRange(replaceText, from, to, '+addImage');
@@ -26005,10 +26277,10 @@ var addImage_AddImage = commandManager["a" /* default */].command('wysiwyg',
 
 
 
+
 var wysiwygCommands_addLink_decodeURIGraceful = importManager.decodeURIGraceful,
     addLink_encodeMarkdownCharacters = importManager.encodeMarkdownCharacters;
 /**
- * AddLink
  * Add link markdown syntax to wysiwyg Editor
  * @extends Command
  * @module wysiwygCommands/AddLink
@@ -26023,30 +26295,48 @@ var addLink_AddLink = commandManager["a" /* default */].command('wysiwyg',
   /**
    * command handler
    * @param {WysiwygEditor} wwe - wysiwygEditor instance
-   * @param {object} data - data for image
+   * @param {object} data - data for link
    */
   exec: function exec(wwe, data) {
     var sq = wwe.getEditor();
-    var linkAttibute = wwe.getLinkAttribute();
+    var linkAttribute = wwe.getLinkAttribute();
     var url = data.url,
         linkText = data.linkText;
+    var linkManager = wwe.componentManager.getManager('link');
     linkText = wysiwygCommands_addLink_decodeURIGraceful(linkText);
     url = addLink_encodeMarkdownCharacters(url);
     wwe.focus();
 
     if (!sq.hasFormat('PRE')) {
       sq.removeAllFormatting();
+      var selectedText = sq.getSelectedText();
 
-      if (sq.getSelectedText()) {
-        sq.makeLink(url, linkAttibute);
+      var selectedImageOnly = this._isSelectedImageOnly(sq.getSelection());
+
+      if (selectedText || selectedImageOnly) {
+        sq.makeLink(url, linkAttribute);
       } else {
         var link = sq.createElement('A', extend_default()({
           href: url
-        }, linkAttibute));
+        }, linkAttribute));
         link.textContent = linkText;
         sq.insertElement(link);
       }
+
+      linkManager.addClassNameToImageLinksInSelection();
     }
+  },
+  _isSelectedImageOnly: function _isSelectedImageOnly(range) {
+    if (!range.collapsed) {
+      var startContainer = range.startContainer,
+          endContainer = range.endContainer;
+
+      if (startContainer && startContainer === endContainer) {
+        return dom["a" /* default */].isElemNode(startContainer) && startContainer.firstChild.nodeName === 'IMG';
+      }
+    }
+
+    return false;
   }
 });
 /* harmony default export */ var wysiwygCommands_addLink = (addLink_AddLink);

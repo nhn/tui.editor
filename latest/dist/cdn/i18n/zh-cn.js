@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Editor : i18n
- * @version 2.4.0
+ * @version 2.5.0
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -97,7 +97,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 20);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -109,7 +109,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__0__;
 
 /***/ }),
 
-/***/ 19:
+/***/ 20:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

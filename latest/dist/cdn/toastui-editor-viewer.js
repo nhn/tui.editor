@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 2.4.0 | Thu Sep 10 2020
+ * @version 2.5.0 | Wed Oct 21 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -113,9 +113,9 @@ return /******/ (function(modules) { // webpackBootstrap
 /* harmony import */ var tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var tui_code_snippet_domUtil_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4);
 /* harmony import */ var tui_code_snippet_domUtil_css__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_css__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6);
+/* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5);
 /* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5);
+/* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6);
 /* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var tui_code_snippet_domUtil_hasClass__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(16);
 /* harmony import */ var tui_code_snippet_domUtil_hasClass__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_hasClass__WEBPACK_IMPORTED_MODULE_6__);
@@ -708,7 +708,7 @@ var getLeafNode = function getLeafNode(node) {
   return result;
 };
 /**
- * check if a coordinates is inside a task box
+ * check if a coordinates is inside a button box
  * @param {object} style - computed style of task box
  * @param {number} offsetX - event x offset
  * @param {number} offsetY - event y offset
@@ -717,7 +717,7 @@ var getLeafNode = function getLeafNode(node) {
  */
 
 
-var isInsideTaskBox = function isInsideTaskBox(style, offsetX, offsetY) {
+var isInsideButtonBox = function isInsideButtonBox(style, offsetX, offsetY) {
   var rect = {
     left: parseInt(style.left, 10),
     top: parseInt(style.top, 10),
@@ -1560,7 +1560,7 @@ function getFragmentReplacedByNewlineToBr(text) {
   removeChildFromStartToEndNode: removeChildFromStartToEndNode,
   removeNodesByDirection: removeNodesByDirection,
   getLeafNode: getLeafNode,
-  isInsideTaskBox: isInsideTaskBox,
+  isInsideButtonBox: isInsideButtonBox,
   isListNode: isListNode,
   isFirstListItem: isFirstListItem,
   isFirstLevelListItem: isFirstLevelListItem,
@@ -2167,56 +2167,6 @@ module.exports = css;
 
 "use strict";
 /**
- * @fileoverview Remove css class from element
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-
-
-
-var forEachArray = __webpack_require__(21);
-var inArray = __webpack_require__(14);
-var getClass = __webpack_require__(33);
-var setClassName = __webpack_require__(39);
-
-/**
- * Remove css class from element
- * @param {(HTMLElement|SVGElement)} element - target element
- * @param {...string} cssClass - css classes to remove
- * @memberof module:domUtil
- */
-function removeClass(element) {
-  var cssClass = Array.prototype.slice.call(arguments, 1);
-  var classList = element.classList;
-  var origin, newClass;
-
-  if (classList) {
-    forEachArray(cssClass, function(name) {
-      classList.remove(name);
-    });
-
-    return;
-  }
-
-  origin = getClass(element).split(/\s+/);
-  newClass = [];
-  forEachArray(origin, function(name) {
-    if (inArray(name, cssClass) < 0) {
-      newClass.push(name);
-    }
-  });
-
-  setClassName(element, newClass);
-}
-
-module.exports = removeClass;
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
  * @fileoverview Add css class to element
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
@@ -2269,6 +2219,56 @@ function addClass(element) {
 }
 
 module.exports = addClass;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Remove css class from element
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var forEachArray = __webpack_require__(21);
+var inArray = __webpack_require__(14);
+var getClass = __webpack_require__(33);
+var setClassName = __webpack_require__(39);
+
+/**
+ * Remove css class from element
+ * @param {(HTMLElement|SVGElement)} element - target element
+ * @param {...string} cssClass - css classes to remove
+ * @memberof module:domUtil
+ */
+function removeClass(element) {
+  var cssClass = Array.prototype.slice.call(arguments, 1);
+  var classList = element.classList;
+  var origin, newClass;
+
+  if (classList) {
+    forEachArray(cssClass, function(name) {
+      classList.remove(name);
+    });
+
+    return;
+  }
+
+  origin = getClass(element).split(/\s+/);
+  newClass = [];
+  forEachArray(origin, function(name) {
+    if (inArray(name, cssClass) < 0) {
+      newClass.push(name);
+    }
+  });
+
+  setClassName(element, newClass);
+}
+
+module.exports = removeClass;
 
 
 /***/ }),
@@ -3756,7 +3756,7 @@ function getPluginInfo(plugins) {
 
 /*!
  * to-mark
- * @version 1.0.1 | Wed Sep 09 2020
+ * @version 1.0.1 | Wed Oct 21 2020
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
@@ -5098,9 +5098,9 @@ module.exports = isNumber;
 /* harmony import */ var tui_code_snippet_domEvent_on__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domEvent_on__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var tui_code_snippet_domEvent_off__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(20);
 /* harmony import */ var tui_code_snippet_domEvent_off__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domEvent_off__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
+/* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
 /* harmony import */ var tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_addClass__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5);
+/* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6);
 /* harmony import */ var tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_domUtil_removeClass__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _toast_ui_toastmark__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(22);
 /* harmony import */ var _toast_ui_toastmark__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_toast_ui_toastmark__WEBPACK_IMPORTED_MODULE_4__);
@@ -6600,7 +6600,7 @@ var ToastUIEditorViewer = /*#__PURE__*/function () {
   _proto._toggleTask = function _toggleTask(ev) {
     var style = getComputedStyle(ev.target, ':before');
 
-    if (!ev.target.hasAttribute(DISABLED_TASK_ATTR_NAME) && ev.target.hasAttribute(TASK_ATTR_NAME) && _utils_dom__WEBPACK_IMPORTED_MODULE_8__[/* default */ "a"].isInsideTaskBox(style, ev.offsetX, ev.offsetY)) {
+    if (!ev.target.hasAttribute(DISABLED_TASK_ATTR_NAME) && ev.target.hasAttribute(TASK_ATTR_NAME) && _utils_dom__WEBPACK_IMPORTED_MODULE_8__[/* default */ "a"].isInsideButtonBox(style, ev.offsetX, ev.offsetY)) {
       _utils_dom__WEBPACK_IMPORTED_MODULE_8__[/* default */ "a"].toggleClass(ev.target, TASK_CHECKED_CLASS_NAME);
       this.eventManager.emit('change', {
         source: 'viewer',
