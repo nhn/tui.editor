@@ -10,7 +10,6 @@ import css from 'tui-code-snippet/domUtil/css';
 import { Emitter } from '@t/event';
 import { MdPos } from '@t/markdown';
 import EditorBase from '@/base';
-import KeyMapper from '@/keymaps/keyMapper';
 import SpecManager from '@/spec/specManager';
 import { decodeURL } from '@/utils/encoder';
 import { syntaxHighlight } from './plugins/syntaxHighlight';
@@ -33,15 +32,17 @@ import { Delimiter, TaskDelimiter, MarkedText, Meta, TableCell } from './marks/s
 import { Html } from './marks/html';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { createParagraph, createTextSelection, nbspToSpace } from './helper/manipulation';
+import { placeholder } from '@/plugins/placeholder';
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
 
-  private keyCode: number | null;
+  private placeholder: { text: string };
 
   constructor(el: HTMLElement, toastMark: ToastMark, eventEmitter: Emitter) {
     super(el, eventEmitter);
 
+    this.placeholder = { text: '' };
     this.toastMark = toastMark;
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
@@ -50,7 +51,6 @@ export default class MdEditor extends EditorBase {
     this.view = this.createView();
     this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
-    this.keyCode = null;
   }
 
   createContext() {
@@ -104,7 +104,8 @@ export default class MdEditor extends EditorBase {
         ...this.keymaps,
         keymap(baseKeymap),
         syntaxHighlight(this.context),
-        previewHighlight(this.context)
+        previewHighlight(this.context),
+        placeholder(this.placeholder)
       ]
     });
   }
@@ -118,12 +119,6 @@ export default class MdEditor extends EditorBase {
         const { state } = this.view.state.applyTransaction(tr);
 
         this.view.updateState(state);
-      },
-      handleKeyPress: (_, event) => {
-        // @TODO: change the keyCode
-        this.keyCode = event.keyCode;
-
-        return false;
       },
       clipboardTextParser: text => {
         const lineTexts = decodeURL(text).split('\n');
@@ -164,11 +159,6 @@ export default class MdEditor extends EditorBase {
   }
 
   private getChanged(slice: Slice) {
-    if (KeyMapper.keyCode('ENTER') === this.keyCode) {
-      this.keyCode = null;
-      return '\n';
-    }
-
     let changed = '';
     const from = 0;
     const to = slice.content.size;
@@ -189,26 +179,48 @@ export default class MdEditor extends EditorBase {
     const [from, to] = getMdToEditorPos(tr.doc, start, end);
 
     this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)));
+    this.focus();
   }
 
-  // @TODO: should implement markdown editor API
-  /* eslint-disable @typescript-eslint/no-empty-function */
-  blur() {}
+  getSelection() {
+    const { from, to } = this.view.state.selection;
 
-  getRange() {}
+    return getEditorToMdPos(this.view.state.tr.doc, from, to);
+  }
 
-  insertText(text: string) {}
+  replaceSelection(text: string) {
+    const { tr, schema } = this.view.state;
+    const lineTexts = text.split('\n');
+    const nodes = lineTexts.map(lineText => createParagraph(schema, lineText));
 
-  moveCursorToEnd() {}
+    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)));
+    this.focus();
+  }
 
-  moveCursorToStart() {}
+  // 필요할까?
+  replaceRelativeOffset(text: string, offset: number, overwriteLength: number) {
+    const { tr, schema, selection } = this.view.state;
 
-  replaceRelativeOffset(content: string, offset: number, overwriteLength: number) {}
+    const lineTexts = text.split('\n');
+    const nodes = lineTexts.map(lineText => createParagraph(schema, lineText));
 
-  replaceSelection(content: string, range?: Range) {}
+    this.view.dispatch(
+      tr.replaceWith(selection.from + offset, selection.to + offset + overwriteLength, nodes)
+    );
+    this.focus();
+  }
 
-  scrollTop(value: number) {
-    return true;
+  getRange() {
+    const { tr, selection } = this.view.state;
+
+    return getEditorToMdPos(tr.doc, selection.from, selection.to);
+  }
+
+  insertText(text: string) {
+    const lineTexts = text.split('\n');
+    const { tr, selection } = this.view.state;
+
+    this.view.dispatch(tr.insertText(lineTexts.join(''), selection.to));
   }
 
   setHeight(height: number) {
@@ -219,19 +231,21 @@ export default class MdEditor extends EditorBase {
     css(this.el, { minHeight: `${minHeight}px` });
   }
 
-  setPlaceholder(placeholder: string) {}
+  setPlaceholder(text: string) {
+    this.placeholder.text = text;
+  }
 
-  destroy() {}
-  /* eslint-enable @typescript-eslint/no-empty-function */
-
-  setMarkdown(markdown: string, cursorToEnd?: boolean) {
+  setMarkdown(markdown: string, cursorToEnd = true) {
     if (markdown) {
       const contents = markdown.split('\n');
-      const { state, dispatch } = this.view;
-      const { tr, doc } = state;
+      const { tr, doc } = this.view.state;
       const newNodes = contents.map(content => createParagraph(this.schema, content));
 
-      dispatch(tr.replaceWith(0, doc.content.size, newNodes));
+      this.view.dispatch(tr.replaceWith(0, doc.content.size, newNodes));
+
+      if (cursorToEnd) {
+        this.moveCursorToEnd();
+      }
     }
   }
 
