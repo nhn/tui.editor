@@ -4,6 +4,7 @@ import { EditorView } from 'prosemirror-view';
 import { Emitter } from '@t/event';
 import { Context, EditorAllCommandMap } from '@t/spec';
 import SpecManager from './spec/specManager';
+import { createTextSelection } from './markdown/helper/manipulation';
 
 export interface StateOptions {
   doc: Node | null;
@@ -60,27 +61,48 @@ export default abstract class EditorBase {
     this.view.focus();
   }
 
-  abstract blur(): void;
+  blur() {
+    (this.view.dom as HTMLElement).blur();
+  }
+
+  destroy() {
+    this.view.destroy();
+    Object.keys(this).forEach(prop => {
+      delete this[prop as keyof this];
+    });
+  }
+
+  moveCursorToStart() {
+    const { tr } = this.view.state;
+
+    this.view.dispatch(tr.setSelection(createTextSelection(tr, 0)).scrollIntoView());
+    this.focus();
+  }
+
+  moveCursorToEnd() {
+    const { tr } = this.view.state;
+
+    this.view.dispatch(
+      tr.setSelection(createTextSelection(tr, tr.doc.content.size)).scrollIntoView()
+    );
+    this.focus();
+  }
+
+  scrollTo(top: number) {
+    this.view.dom.scrollTo({ top });
+  }
 
   abstract getRange(): any;
 
   abstract insertText(text: string): void;
 
-  abstract moveCursorToEnd(): void;
-
-  abstract moveCursorToStart(): void;
-
   abstract replaceRelativeOffset(content: string, offset: number, overwriteLength: number): void;
 
   abstract replaceSelection(content: string, range: Range): void;
-
-  abstract scrollTop(value: number): boolean;
 
   abstract setHeight(height: number): void;
 
   abstract setMinHeight(minHeight: number): void;
 
   abstract setPlaceholder(placeholder: string): void;
-
-  abstract destroy(): void;
 }
