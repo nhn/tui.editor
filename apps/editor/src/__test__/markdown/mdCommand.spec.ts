@@ -4,23 +4,7 @@ import { ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
 import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
-import { nbspToSpace } from '@/markdown/helper/manipulation';
-
-function getTextContent(editor: MarkdownEditor) {
-  const { doc } = editor.view.state;
-  const docSize = doc.content.size;
-  let text = '';
-
-  doc.nodesBetween(0, docSize, (node, pos) => {
-    if (node.isText) {
-      text += node.text!.slice(Math.max(0, pos) - pos, docSize - pos);
-    } else if (node.isBlock && pos > 0) {
-      text += '\n';
-    }
-  });
-
-  return nbspToSpace(text);
-}
+import { getTextContent } from './util';
 
 let mde: MarkdownEditor, em: EventEmitter, cmd: CommandManager, container: HTMLElement;
 
