@@ -126,20 +126,20 @@ export class Paragraph extends Node {
     view.dispatch!(newTr.setSelection(newSelection));
   }
 
-  private indent(): EditorCommand {
+  private indent(tabKey = false): EditorCommand {
     return () => (state, dispatch) => {
       const { schema, toastMark } = this.context;
       const nodes: ProsemirrorNode[] = [];
       const { selection, tr, doc } = state;
       const { from, to, startOffset, endOffset, startLine, endLine } = getPosInfo(doc, selection);
 
-      if (isInTableCellNode(doc, toastMark, to)) {
+      if (tabKey && isInTableCellNode(doc, toastMark, to)) {
         return false;
       }
 
       const startLineText = getTextByMdLine(doc, startLine);
 
-      if (isBlockUnit(from, to, startLineText)) {
+      if (!tabKey || isBlockUnit(from, to, startLineText)) {
         for (let line = startLine; line <= endLine; line += 1) {
           const lineText = getTextByMdLine(doc, line);
 
@@ -162,7 +162,7 @@ export class Paragraph extends Node {
     };
   }
 
-  private outdent(): EditorCommand {
+  private outdent(tabKey = false): EditorCommand {
     return () => (state, dispatch) => {
       const { schema, toastMark } = this.context;
       const nodes: ProsemirrorNode[] = [];
@@ -171,11 +171,11 @@ export class Paragraph extends Node {
       const startLineText = getTextByMdLine(doc, startLine);
       const endLineText = getTextByMdLine(doc, endLine);
 
-      if (isInTableCellNode(doc, toastMark, to)) {
+      if (tabKey && isInTableCellNode(doc, toastMark, to)) {
         return false;
       }
 
-      if (isBlockUnit(from, to, startLineText)) {
+      if (!tabKey || isBlockUnit(from, to, startLineText)) {
         for (let line = startLine; line <= endLine; line += 1) {
           const lineText = getTextByMdLine(doc, line).replace(reStartSpace, '$2');
 
@@ -210,8 +210,8 @@ export class Paragraph extends Node {
 
   keymaps() {
     return {
-      Tab: this.indent()(),
-      'Shift-Tab': this.outdent()()
+      Tab: this.indent(true)(),
+      'Shift-Tab': this.outdent(true)()
     };
   }
 }
