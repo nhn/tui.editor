@@ -39,6 +39,15 @@ describe('bold command', () => {
 
     expect(getTextContent(mde)).toBe('bold');
   });
+
+  it('should remove bold syntax with empty text', () => {
+    mde.setMarkdown('****');
+    mde.setSelection([1, 3], [1, 3]);
+
+    cmd.exec('markdown', 'bold');
+
+    expect(getTextContent(mde)).toBe('');
+  });
 });
 
 describe('italic command', () => {
@@ -58,6 +67,15 @@ describe('italic command', () => {
     cmd.exec('markdown', 'italic');
 
     expect(getTextContent(mde)).toBe('italic');
+  });
+
+  it('should remove italic syntax with empty text', () => {
+    mde.setMarkdown('**');
+    mde.setSelection([1, 2], [1, 2]);
+
+    cmd.exec('markdown', 'italic');
+
+    expect(getTextContent(mde)).toBe('');
   });
 });
 
@@ -79,6 +97,15 @@ describe('strike command', () => {
 
     expect(getTextContent(mde)).toBe('strike');
   });
+
+  it('should remove strike syntax with empty text', () => {
+    mde.setMarkdown('~~~~');
+    mde.setSelection([1, 3], [1, 3]);
+
+    cmd.exec('markdown', 'strike');
+
+    expect(getTextContent(mde)).toBe('');
+  });
 });
 
 describe('code command', () => {
@@ -98,6 +125,15 @@ describe('code command', () => {
     cmd.exec('markdown', 'code');
 
     expect(getTextContent(mde)).toBe('code');
+  });
+
+  it('should remove code syntax with empty text', () => {
+    mde.setMarkdown('``');
+    mde.setSelection([1, 2], [1, 2]);
+
+    cmd.exec('markdown', 'code');
+
+    expect(getTextContent(mde)).toBe('');
   });
 });
 
@@ -597,7 +633,7 @@ describe('indent command', () => {
 
     cmd.exec('markdown', 'indent');
 
-    expect(getTextContent(mde)).toBe('te    xt');
+    expect(getTextContent(mde)).toBe('    text');
   });
 
   it('should add soft-tab indentation to first offset on selection', () => {
@@ -702,7 +738,7 @@ describe('indent command', () => {
 
 describe('outdent command', () => {
   it('should remove soft-tab indentation from text on caret position', () => {
-    mde.setMarkdown('te  xt');
+    mde.setMarkdown('    text');
     mde.setSelection([1, 5], [1, 5]);
 
     cmd.exec('markdown', 'outdent');
