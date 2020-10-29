@@ -27,9 +27,12 @@ export default abstract class EditorBase {
 
   specs!: SpecManager;
 
+  placeholder: { text: string };
+
   constructor(el: HTMLElement, eventEmitter: Emitter) {
     this.el = el;
     this.eventEmitter = eventEmitter;
+    this.placeholder = { text: '' };
   }
 
   // abstract addWidget(range: Range, node: Node, style: string, offset?: number): void;
@@ -92,17 +95,18 @@ export default abstract class EditorBase {
     this.view.dom.scrollTo({ top });
   }
 
+  setPlaceholder(text: string) {
+    this.placeholder.text = text;
+    this.view.dispatch(this.view.state.tr.scrollIntoView());
+  }
+
   abstract getRange(): any;
 
   abstract insertText(text: string): void;
-
-  abstract replaceRelativeOffset(content: string, offset: number, overwriteLength: number): void;
 
   abstract replaceSelection(content: string, range: Range): void;
 
   abstract setHeight(height: number): void;
 
   abstract setMinHeight(minHeight: number): void;
-
-  abstract setPlaceholder(placeholder: string): void;
 }

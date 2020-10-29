@@ -37,12 +37,9 @@ import { placeholder } from '@/plugins/placeholder';
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
 
-  private placeholder: { text: string };
-
   constructor(el: HTMLElement, toastMark: ToastMark, eventEmitter: Emitter) {
     super(el, eventEmitter);
 
-    this.placeholder = { text: '' };
     this.toastMark = toastMark;
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
@@ -182,12 +179,6 @@ export default class MdEditor extends EditorBase {
     this.focus();
   }
 
-  getSelection() {
-    const { from, to } = this.view.state.selection;
-
-    return getEditorToMdPos(this.view.state.tr.doc, from, to);
-  }
-
   replaceSelection(text: string) {
     const { tr, schema } = this.view.state;
     const lineTexts = text.split('\n');
@@ -197,23 +188,10 @@ export default class MdEditor extends EditorBase {
     this.focus();
   }
 
-  // 필요할까?
-  replaceRelativeOffset(text: string, offset: number, overwriteLength: number) {
-    const { tr, schema, selection } = this.view.state;
-
-    const lineTexts = text.split('\n');
-    const nodes = lineTexts.map(lineText => createParagraph(schema, lineText));
-
-    this.view.dispatch(
-      tr.replaceWith(selection.from + offset, selection.to + offset + overwriteLength, nodes)
-    );
-    this.focus();
-  }
-
   getRange() {
-    const { tr, selection } = this.view.state;
+    const { from, to } = this.view.state.selection;
 
-    return getEditorToMdPos(tr.doc, selection.from, selection.to);
+    return getEditorToMdPos(this.view.state.tr.doc, from, to);
   }
 
   insertText(text: string) {
@@ -231,21 +209,15 @@ export default class MdEditor extends EditorBase {
     css(this.el, { minHeight: `${minHeight}px` });
   }
 
-  setPlaceholder(text: string) {
-    this.placeholder.text = text;
-  }
-
   setMarkdown(markdown: string, cursorToEnd = true) {
-    if (markdown) {
-      const contents = markdown.split('\n');
-      const { tr, doc } = this.view.state;
-      const newNodes = contents.map(content => createParagraph(this.schema, content));
+    const contents = markdown.split('\n');
+    const { tr, doc } = this.view.state;
+    const newNodes = contents.map(content => createParagraph(this.schema, content));
 
-      this.view.dispatch(tr.replaceWith(0, doc.content.size, newNodes));
+    this.view.dispatch(tr.replaceWith(0, doc.content.size, newNodes));
 
-      if (cursorToEnd) {
-        this.moveCursorToEnd();
-      }
+    if (cursorToEnd) {
+      this.moveCursorToEnd();
     }
   }
 
