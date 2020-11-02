@@ -178,7 +178,10 @@ export function getWwMergedTableManager(editor) {
       if (selectedCells.length === 1) {
         startCell = selectedCells[0];
       } else {
-        startCell = this.wwe.getEditor().getSelection().startContainer;
+        const { startContainer } = this.wwe.getEditor().getSelection();
+
+        startCell =
+          startContainer.nodeType === Node.TEXT_NODE ? startContainer.parentNode : startContainer;
       }
 
       return startCell;
@@ -352,18 +355,21 @@ export function getWwMergedTableManager(editor) {
     _bookmarkLastTd({ rowIndex: endRowIndex, colIndex: endColIndex }) {
       const sq = this.wwe.getEditor();
       const bookmarkedTable = sq.getBody().querySelector(`.${PASTE_TABLE_BOOKMARK}`);
-      const tableData = tableDataHandler.createTableData(bookmarkedTable);
-      const lastCellData = tableData[endRowIndex][endColIndex];
 
-      endRowIndex = isExisty(lastCellData.rowMergeWith) ? lastCellData.rowMergeWith : endRowIndex;
-      endColIndex = isExisty(lastCellData.colMergeWith) ? lastCellData.colMergeWith : endColIndex;
+      if (bookmarkedTable) {
+        const tableData = tableDataHandler.createTableData(bookmarkedTable);
+        const lastCellData = tableData[endRowIndex][endColIndex];
 
-      const lastCellIndex = tableData[endRowIndex][endColIndex].elementIndex;
-      const foundTr = bookmarkedTable.querySelectorAll('tr')[lastCellIndex.rowIndex];
-      const lastTd = foundTr.children[lastCellIndex.colIndex];
+        endRowIndex = isExisty(lastCellData.rowMergeWith) ? lastCellData.rowMergeWith : endRowIndex;
+        endColIndex = isExisty(lastCellData.colMergeWith) ? lastCellData.colMergeWith : endColIndex;
 
-      removeClass(bookmarkedTable, PASTE_TABLE_BOOKMARK);
-      addClass(lastTd, PASTE_TABLE_CELL_BOOKMARK);
+        const lastCellIndex = tableData[endRowIndex][endColIndex].elementIndex;
+        const foundTr = bookmarkedTable.querySelectorAll('tr')[lastCellIndex.rowIndex];
+        const lastTd = foundTr.children[lastCellIndex.colIndex];
+
+        removeClass(bookmarkedTable, PASTE_TABLE_BOOKMARK);
+        addClass(lastTd, PASTE_TABLE_CELL_BOOKMARK);
+      }
     }
 
     /**
