@@ -6,7 +6,7 @@ import { EditorCommand } from '@t/spec';
 import { MdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import Node from '@/spec/node';
-import { isOrderedListNode, isTableCellNode } from '@/utils/markdown';
+import { hasSpecificTypeAncestor, isOrderedListNode, isTableCellNode } from '@/utils/markdown';
 import { reBlockQuote } from '../marks/blockQuote';
 import { getEditorToMdPos, getMdToEditorPos, getPosInfo } from '../helper/pos';
 import { getTextByMdLine } from '../helper/query';
@@ -36,8 +36,9 @@ function isBlockUnit(from: number, to: number, text: string) {
 
 function isInTableCellNode(doc: ProsemirrorNode, toastMark: ToastMark, pos: number) {
   const [startPos] = getEditorToMdPos(doc, pos);
+  const mdNode = toastMark.findNodeAtPosition(startPos);
 
-  return isTableCellNode(toastMark.findNodeAtPosition(startPos));
+  return hasSpecificTypeAncestor(mdNode, 'tableCell', 'tableDelimCell') || isTableCellNode(mdNode);
 }
 
 function createSelection(tr: Transaction, posInfo: SelectionInfo, indent: boolean) {

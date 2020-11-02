@@ -20,7 +20,7 @@ export function hasSameLineParent(mdNode: MdNode) {
 }
 
 export function hasSpecificTypeAncestor(mdNode: MdNode, ...types: MdNodeType[]) {
-  while (mdNode.parent && mdNode.parent.type !== 'document') {
+  while (mdNode && mdNode.parent && mdNode.parent.type !== 'document') {
     if (includes(types, mdNode.parent.type)) {
       return true;
     }
