@@ -20,6 +20,7 @@ import {
   getListType,
   otherListToList,
   otherNodeToList,
+  reCanBeTaskList,
   reList,
   ToListContext
 } from '../helper/list';
@@ -74,7 +75,7 @@ export class ListItem extends Mark {
         return false;
       }
 
-      const isEmpty = !lineText.replace(reList, '').trim();
+      const isEmpty = !lineText.replace(reCanBeTaskList, '').trim();
       const commandType = getListType(lineText);
 
       if (isEmpty) {

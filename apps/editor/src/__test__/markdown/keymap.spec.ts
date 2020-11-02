@@ -289,6 +289,23 @@ describe('extend list keymap', () => {
 
       expect(getTextContent(mde)).toBe(result);
     });
+
+    it('should delete the row in case of empty bullet task list content', () => {
+      const input = `${stripIndent`
+        * [ ] bullet1
+        * [ ]
+      `} `;
+      const result = `${source`
+        * [ ] bullet1
+      `}\n\n`;
+
+      mde.setMarkdown(input);
+      mde.setSelection([2, 5], [2, 5]);
+
+      forceKeymapFn('listItem', 'extendList');
+
+      expect(getTextContent(mde)).toBe(result);
+    });
   });
 
   describe('ordered list', () => {
@@ -463,6 +480,23 @@ describe('extend list keymap', () => {
 
       mde.setMarkdown(input);
       mde.setSelection([2, 2], [2, 2]);
+
+      forceKeymapFn('listItem', 'extendList');
+
+      expect(getTextContent(mde)).toBe(result);
+    });
+
+    it('should delete the row in case of empty ordered task list content', () => {
+      const input = `${stripIndent`
+        1. [ ] ordered1
+        2. [ ]
+      `} `;
+      const result = `${source`
+        1. [ ] ordered1
+      `}\n\n`;
+
+      mde.setMarkdown(input);
+      mde.setSelection([2, 6], [2, 6]);
 
       forceKeymapFn('listItem', 'extendList');
 

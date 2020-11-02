@@ -64,10 +64,10 @@ interface ExtendList {
 export const reList = /([-*+] |[\d]+\. )/;
 export const reOrderedList = /([\d])+\.( \[[ xX]])? /;
 export const reOrderedListGroup = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
+export const reCanBeTaskList = /([-*+]|[\d]+\.)( \[[ xX]])? /;
 const reBulletListGroup = /^(\s*)([-*+]+(\s(?:\[(?:x|\s)\]\s)?))(.*)/;
 const reTaskList = /([-*+] |[\d]+\. )(\[[ xX]] )/;
 const reBulletTaskList = /([-*+])( \[[ xX]]) /;
-const reCanBeTaskList = /([-*+]|[\d]+\.)( \[[ xX]])? /;
 
 export function getListType(text: string): ListType {
   return reOrderedList.test(text) ? 'ordered' : 'bullet';
