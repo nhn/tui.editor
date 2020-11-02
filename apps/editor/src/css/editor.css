@@ -69,11 +69,11 @@
   height: 100%;
 }
 
-.te-md-container .ProseMirror .placeholder {
+.ProseMirror .placeholder {
   color: #999;
 }
 
-.te-md-container .ProseMirror:focus {
+.ProseMirror:focus {
   outline: none;
 }
 

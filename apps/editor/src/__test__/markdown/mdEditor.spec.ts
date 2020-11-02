@@ -70,12 +70,6 @@ describe('MarkdownEditor', () => {
     ]);
   });
 
-  it('insertText API', () => {
-    mde.insertText('text1\ntext2');
-
-    expect(getTextContent(mde)).toBe('text1text2');
-  });
-
   it('setPlaceholder API', () => {
     mde.setPlaceholder('Write something');
 
@@ -114,7 +108,7 @@ describe('MarkdownEditor', () => {
     expect(height).toBe('100px');
   });
 
-  it('setHeight API', () => {
+  it('setMinHeight API', () => {
     mde.setMinHeight(100);
 
     const { minHeight } = mde.el.style;

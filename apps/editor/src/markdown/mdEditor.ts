@@ -6,7 +6,6 @@ import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
-import css from 'tui-code-snippet/domUtil/css';
 import { Emitter } from '@t/event';
 import { MdPos } from '@t/markdown';
 import EditorBase from '@/base';
@@ -192,21 +191,6 @@ export default class MdEditor extends EditorBase {
     const { from, to } = this.view.state.selection;
 
     return getEditorToMdPos(this.view.state.tr.doc, from, to);
-  }
-
-  insertText(text: string) {
-    const lineTexts = text.split('\n');
-    const { tr, selection } = this.view.state;
-
-    this.view.dispatch(tr.insertText(lineTexts.join(''), selection.to));
-  }
-
-  setHeight(height: number) {
-    css(this.el, { height: `${height}px` });
-  }
-
-  setMinHeight(minHeight: number) {
-    css(this.el, { minHeight: `${minHeight}px` });
   }
 
   setMarkdown(markdown: string, cursorToEnd = true) {

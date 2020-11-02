@@ -1,6 +1,7 @@
 import { Node, Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
+import css from 'tui-code-snippet/domUtil/css';
 import { Emitter } from '@t/event';
 import { Context, EditorAllCommandMap } from '@t/spec';
 import SpecManager from './spec/specManager';
@@ -100,13 +101,15 @@ export default abstract class EditorBase {
     this.view.dispatch(this.view.state.tr.scrollIntoView());
   }
 
+  setHeight(height: number) {
+    css(this.el, { height: `${height}px` });
+  }
+
+  setMinHeight(minHeight: number) {
+    css(this.el, { minHeight: `${minHeight}px` });
+  }
+
   abstract getRange(): any;
 
-  abstract insertText(text: string): void;
-
   abstract replaceSelection(content: string, range: Range): void;
-
-  abstract setHeight(height: number): void;
-
-  abstract setMinHeight(minHeight: number): void;
 }

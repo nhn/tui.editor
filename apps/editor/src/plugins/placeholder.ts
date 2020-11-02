@@ -1,5 +1,6 @@
 import { Plugin } from 'prosemirror-state';
 import { DecorationSet, Decoration } from 'prosemirror-view';
+import addClass from 'tui-code-snippet/domUtil/addClass';
 
 interface Options {
   text?: string;
@@ -20,10 +21,10 @@ export function placeholder(options: Options) {
         ) {
           const placeHolder = document.createElement('span');
 
-          placeHolder.classList.add('placeholder');
+          addClass(placeHolder, 'placeholder');
 
           if (options.className) {
-            placeHolder.classList.add(options.className);
+            addClass(placeHolder, options.className);
           }
           placeHolder.textContent = options.text;
 
