@@ -6,11 +6,9 @@ import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
-import css from 'tui-code-snippet/domUtil/css';
 import { Emitter } from '@t/event';
 import { MdPos } from '@t/markdown';
 import EditorBase from '@/base';
-import KeyMapper from '@/keymaps/keyMapper';
 import SpecManager from '@/spec/specManager';
 import { decodeURL } from '@/utils/encoder';
 import { syntaxHighlight } from './plugins/syntaxHighlight';
@@ -33,11 +31,10 @@ import { Delimiter, TaskDelimiter, MarkedText, Meta, TableCell } from './marks/s
 import { Html } from './marks/html';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { createParagraph, createTextSelection, nbspToSpace } from './helper/manipulation';
+import { placeholder } from '@/plugins/placeholder';
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
-
-  private keyCode: number | null;
 
   constructor(el: HTMLElement, toastMark: ToastMark, eventEmitter: Emitter) {
     super(el, eventEmitter);
@@ -50,7 +47,6 @@ export default class MdEditor extends EditorBase {
     this.view = this.createView();
     this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
-    this.keyCode = null;
   }
 
   createContext() {
@@ -104,7 +100,8 @@ export default class MdEditor extends EditorBase {
         ...this.keymaps,
         keymap(baseKeymap),
         syntaxHighlight(this.context),
-        previewHighlight(this.context)
+        previewHighlight(this.context),
+        placeholder(this.placeholder)
       ]
     });
   }
@@ -118,12 +115,6 @@ export default class MdEditor extends EditorBase {
         const { state } = this.view.state.applyTransaction(tr);
 
         this.view.updateState(state);
-      },
-      handleKeyPress: (_, event) => {
-        // @TODO: change the keyCode
-        this.keyCode = event.keyCode;
-
-        return false;
       },
       clipboardTextParser: text => {
         const lineTexts = decodeURL(text).split('\n');
@@ -164,11 +155,6 @@ export default class MdEditor extends EditorBase {
   }
 
   private getChanged(slice: Slice) {
-    if (KeyMapper.keyCode('ENTER') === this.keyCode) {
-      this.keyCode = null;
-      return '\n';
-    }
-
     let changed = '';
     const from = 0;
     const to = slice.content.size;
@@ -189,49 +175,33 @@ export default class MdEditor extends EditorBase {
     const [from, to] = getMdToEditorPos(tr.doc, start, end);
 
     this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)));
+    this.focus();
   }
 
-  // @TODO: should implement markdown editor API
-  /* eslint-disable @typescript-eslint/no-empty-function */
-  blur() {}
+  replaceSelection(text: string) {
+    const { tr, schema } = this.view.state;
+    const lineTexts = text.split('\n');
+    const nodes = lineTexts.map(lineText => createParagraph(schema, lineText));
 
-  getRange() {}
-
-  insertText(text: string) {}
-
-  moveCursorToEnd() {}
-
-  moveCursorToStart() {}
-
-  replaceRelativeOffset(content: string, offset: number, overwriteLength: number) {}
-
-  replaceSelection(content: string, range?: Range) {}
-
-  scrollTop(value: number) {
-    return true;
+    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)));
+    this.focus();
   }
 
-  setHeight(height: number) {
-    css(this.el, { height: `${height}px` });
+  getRange() {
+    const { from, to } = this.view.state.selection;
+
+    return getEditorToMdPos(this.view.state.tr.doc, from, to);
   }
 
-  setMinHeight(minHeight: number) {
-    css(this.el, { minHeight: `${minHeight}px` });
-  }
+  setMarkdown(markdown: string, cursorToEnd = true) {
+    const contents = markdown.split('\n');
+    const { tr, doc } = this.view.state;
+    const newNodes = contents.map(content => createParagraph(this.schema, content));
 
-  setPlaceholder(placeholder: string) {}
+    this.view.dispatch(tr.replaceWith(0, doc.content.size, newNodes));
 
-  destroy() {}
-  /* eslint-enable @typescript-eslint/no-empty-function */
-
-  setMarkdown(markdown: string, cursorToEnd?: boolean) {
-    if (markdown) {
-      const contents = markdown.split('\n');
-      const { state, dispatch } = this.view;
-      const { tr, doc } = state;
-      const newNodes = contents.map(content => createParagraph(this.schema, content));
-
-      dispatch(tr.replaceWith(0, doc.content.size, newNodes));
+    if (cursorToEnd) {
+      this.moveCursorToEnd();
     }
   }
 

@@ -65,14 +65,15 @@
 .te-md-container .ProseMirror {
   font-size: 13px;
   height: inherit;
-}
-
-.te-md-container .ProseMirror {
   overflow: auto;
   height: 100%;
 }
 
-.te-md-container .ProseMirror:focus {
+.ProseMirror .placeholder {
+  color: #999;
+}
+
+.ProseMirror:focus {
   outline: none;
 }
 

@@ -84,8 +84,6 @@ export default class WysiwygEditor extends EditorBase {
 
   /* eslint-disable @typescript-eslint/no-empty-function */
 
-  blur() {}
-
   focus() {
     this.view.focus();
   }

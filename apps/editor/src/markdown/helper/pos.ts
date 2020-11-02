@@ -32,8 +32,20 @@ export function getEditorToMdLine(
 export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from): MdSourcepos {
   const collapsed = from === to;
   const startResolvedPos = doc.resolve(from);
-
   const [startLine, endLine] = getEditorToMdLine(from, to, doc);
+
+  // To resolve the end offset for blank line
+  if (!collapsed) {
+    let blankLineTagOffset = 0;
+
+    for (let line = startLine; line < endLine; line += 1) {
+      if (!getTextByMdLine(doc, line)) {
+        blankLineTagOffset += 1;
+      }
+    }
+    to = Math.min(doc.content.size, to + blankLineTagOffset);
+  }
+
   const startOffset = startResolvedPos.start();
   const endOffset = collapsed ? startOffset : doc.resolve(to).start();
 
