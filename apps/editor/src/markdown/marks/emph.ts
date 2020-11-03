@@ -2,10 +2,11 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { resolveSelectionPos } from '../helper/pos';
-import { createTextSelection } from '../helper/manipulation';
+import { toggleMark } from '../helper/mdCommand';
+import { reStrong } from './strong';
 
 const reEmph = /^(\*|_).*([\s\S]*)\1$/m;
+const reStrongEmph = /^(\*{3}|_{3}).*([\s\S]*)\1$/m;
 const emphSyntax = '*';
 
 export class Emph extends Mark {
@@ -22,27 +23,10 @@ export class Emph extends Mark {
   }
 
   private italic(): EditorCommand {
-    return () => (state, dispatch) => {
-      const [from, to] = resolveSelectionPos(state.selection);
-      const { empty } = state.selection;
-      const slice = state.selection.content();
-      const textContent = slice.content.textBetween(0, slice.content.size, '\n');
-      let { tr } = state;
+    const conditionFn = (text: string) =>
+      (reEmph.test(text) && !reStrong.test(text)) || reStrongEmph.test(text);
 
-      if (reEmph.test(textContent)) {
-        tr = tr.delete(to - 1, to).delete(from, from + 1);
-      } else {
-        tr = tr.insertText(emphSyntax, to).insertText(emphSyntax, from);
-        const selection = empty
-          ? createTextSelection(tr, from + 1)
-          : createTextSelection(tr, from, to + 2);
-
-        tr = tr.setSelection(selection);
-      }
-      dispatch!(tr);
-
-      return true;
-    };
+    return toggleMark(conditionFn, emphSyntax, 3);
   }
 
   commands() {

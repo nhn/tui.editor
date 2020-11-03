@@ -33,11 +33,20 @@ describe('bold command', () => {
 
   it('should remove bold syntax', () => {
     mde.setMarkdown('**bold**');
+    mde.setSelection([1, 3], [1, 7]);
 
-    cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'bold');
 
     expect(getTextContent(mde)).toBe('bold');
+  });
+
+  it('should remove bold syntax with empty text', () => {
+    mde.setMarkdown('****');
+    mde.setSelection([1, 3], [1, 3]);
+
+    cmd.exec('markdown', 'bold');
+
+    expect(getTextContent(mde)).toBe('');
   });
 });
 
@@ -53,11 +62,20 @@ describe('italic command', () => {
 
   it('should remove italic syntax', () => {
     mde.setMarkdown('*italic*');
+    mde.setSelection([1, 2], [1, 8]);
 
-    cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'italic');
 
     expect(getTextContent(mde)).toBe('italic');
+  });
+
+  it('should remove italic syntax with empty text', () => {
+    mde.setMarkdown('**');
+    mde.setSelection([1, 2], [1, 2]);
+
+    cmd.exec('markdown', 'italic');
+
+    expect(getTextContent(mde)).toBe('');
   });
 });
 
@@ -73,11 +91,20 @@ describe('strike command', () => {
 
   it('should remove strike syntax', () => {
     mde.setMarkdown('~~strike~~');
+    mde.setSelection([1, 3], [1, 9]);
 
-    cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'strike');
 
     expect(getTextContent(mde)).toBe('strike');
+  });
+
+  it('should remove strike syntax with empty text', () => {
+    mde.setMarkdown('~~~~');
+    mde.setSelection([1, 3], [1, 3]);
+
+    cmd.exec('markdown', 'strike');
+
+    expect(getTextContent(mde)).toBe('');
   });
 });
 
@@ -93,11 +120,20 @@ describe('code command', () => {
 
   it('should remove code syntax', () => {
     mde.setMarkdown('`code`');
+    mde.setSelection([1, 2], [1, 6]);
 
-    cmd.exec('markdown', 'selectAll');
     cmd.exec('markdown', 'code');
 
     expect(getTextContent(mde)).toBe('code');
+  });
+
+  it('should remove code syntax with empty text', () => {
+    mde.setMarkdown('``');
+    mde.setSelection([1, 2], [1, 2]);
+
+    cmd.exec('markdown', 'code');
+
+    expect(getTextContent(mde)).toBe('');
   });
 });
 
@@ -591,22 +627,13 @@ describe('table command', () => {
 });
 
 describe('indent command', () => {
-  it('should add soft-tab indentation to text on caret position', () => {
+  it('should not operate if not a list', () => {
     mde.setMarkdown('text');
     mde.setSelection([1, 3], [1, 3]);
 
     cmd.exec('markdown', 'indent');
 
-    expect(getTextContent(mde)).toBe('te    xt');
-  });
-
-  it('should add soft-tab indentation to first offset on selection', () => {
-    mde.setMarkdown('text');
-    mde.setSelection([1, 2], [1, 3]);
-
-    cmd.exec('markdown', 'indent');
-
-    expect(getTextContent(mde)).toBe('    text');
+    expect(getTextContent(mde)).toBe('text');
   });
 
   it('should add soft-tab indentation to first offset on multi line selection', () => {
@@ -701,22 +728,13 @@ describe('indent command', () => {
 });
 
 describe('outdent command', () => {
-  it('should remove soft-tab indentation from text on caret position', () => {
-    mde.setMarkdown('te  xt');
+  it('should not operate if not a list', () => {
+    mde.setMarkdown('    text');
     mde.setSelection([1, 5], [1, 5]);
 
     cmd.exec('markdown', 'outdent');
 
-    expect(getTextContent(mde)).toBe('text');
-  });
-
-  it('should remove soft-tab indentation from first offset on selection', () => {
-    mde.setMarkdown('    text');
-    mde.setSelection([1, 5], [1, 6]);
-
-    cmd.exec('markdown', 'outdent');
-
-    expect(getTextContent(mde)).toBe('text');
+    expect(getTextContent(mde)).toBe('    text');
   });
 
   it('should remove soft-tab indentation from first offset on multi line selection', () => {
@@ -823,5 +841,28 @@ describe('outdent command', () => {
 
       expect(getTextContent(mde)).toBe(result);
     });
+  });
+});
+
+describe('history command', () => {
+  beforeEach(() => {
+    mde.setMarkdown('italicBold');
+
+    cmd.exec('markdown', 'selectAll');
+    cmd.exec('markdown', 'bold');
+    cmd.exec('markdown', 'italic');
+  });
+
+  it('undo go back to before previous action', () => {
+    cmd.exec('markdown', 'undo');
+
+    expect(getTextContent(mde)).toBe('**italicBold**');
+  });
+
+  it('redo cancel undo action', () => {
+    cmd.exec('markdown', 'undo');
+    cmd.exec('markdown', 'redo');
+
+    expect(getTextContent(mde)).toBe('***italicBold***');
   });
 });
