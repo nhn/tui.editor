@@ -2,7 +2,7 @@ import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { createMarkCommand } from '../helper/mdCommand';
+import { toggleMark } from '../helper/mdCommand';
 
 const reCode = /^(`).*([\s\S]*)\1$/m;
 const codeSyntax = '`';
@@ -39,7 +39,7 @@ export class Code extends Mark {
   }
 
   commands(): EditorCommand {
-    return createMarkCommand(reCode, codeSyntax);
+    return toggleMark(reCode, codeSyntax);
   }
 
   keymaps() {

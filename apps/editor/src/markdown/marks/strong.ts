@@ -2,7 +2,7 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { createMarkCommand } from '../helper/mdCommand';
+import { toggleMark } from '../helper/mdCommand';
 
 export const reStrong = /^(\*{2}|_{2}).*([\s\S]*)\1$/m;
 const strongSyntax = '**';
@@ -21,7 +21,7 @@ export class Strong extends Mark {
   }
 
   private bold(): EditorCommand {
-    return createMarkCommand(reStrong, strongSyntax);
+    return toggleMark(reStrong, strongSyntax);
   }
 
   commands() {

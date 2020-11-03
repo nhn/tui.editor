@@ -2,7 +2,7 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { createMarkCommand } from '../helper/mdCommand';
+import { toggleMark } from '../helper/mdCommand';
 
 const reStrike = /^(~{2}).*([\s\S]*)\1$/m;
 const strikeSyntax = '~~';
@@ -21,7 +21,7 @@ export class Strike extends Mark {
   }
 
   commands(): EditorCommand {
-    return createMarkCommand(reStrike, strikeSyntax);
+    return toggleMark(reStrike, strikeSyntax);
   }
 
   keymaps() {

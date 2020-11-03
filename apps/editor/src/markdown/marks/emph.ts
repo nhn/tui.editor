@@ -2,7 +2,7 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { createMarkCommand } from '../helper/mdCommand';
+import { toggleMark } from '../helper/mdCommand';
 import { reStrong } from './strong';
 
 const reEmph = /^(\*|_).*([\s\S]*)\1$/m;
@@ -26,7 +26,7 @@ export class Emph extends Mark {
     const conditionFn = (text: string) =>
       (reEmph.test(text) && !reStrong.test(text)) || reStrongEmph.test(text);
 
-    return createMarkCommand(conditionFn, emphSyntax);
+    return toggleMark(conditionFn, emphSyntax);
   }
 
   commands() {

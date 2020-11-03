@@ -140,7 +140,10 @@ export class Paragraph extends Node {
 
       const startLineText = getTextByMdLine(doc, startLine);
 
-      if (!tabKey || isBlockUnit(from, to, startLineText)) {
+      if (
+        (tabKey && isBlockUnit(from, to, startLineText)) ||
+        (!tabKey && reList.test(startLineText))
+      ) {
         for (let line = startLine; line <= endLine; line += 1) {
           const lineText = getTextByMdLine(doc, line);
 
@@ -154,7 +157,7 @@ export class Paragraph extends Node {
         if (reOrderedListGroup.test(startLineText)) {
           this.reorderList(startLine, endLine);
         }
-      } else {
+      } else if (tabKey) {
         nodes.push(createText(schema, '    '));
         dispatch!(insertNodes(tr, to, nodes));
       }
@@ -176,7 +179,10 @@ export class Paragraph extends Node {
         return false;
       }
 
-      if (!tabKey || isBlockUnit(from, to, startLineText)) {
+      if (
+        (tabKey && isBlockUnit(from, to, startLineText)) ||
+        (!tabKey && reList.test(startLineText))
+      ) {
         for (let line = startLine; line <= endLine; line += 1) {
           const lineText = getTextByMdLine(doc, line).replace(reStartSpace, '$2');
 
@@ -190,7 +196,7 @@ export class Paragraph extends Node {
         if (reOrderedListGroup.test(startLineText)) {
           this.reorderList(startLine, endLine);
         }
-      } else {
+      } else if (tabKey) {
         const startText = startLineText.slice(0, to - startOffset);
         const startTextWithoutSpace = startText.replace(/\s{1,4}$/, '');
         const deletStart = to - (startText.length - startTextWithoutSpace.length);
