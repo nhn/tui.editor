@@ -1,9 +1,15 @@
 import { EditorCommand } from '@t/spec';
+import isFunction from 'tui-code-snippet/type/isFunction';
 import { createTextSelection } from './manipulation';
 import { resolveSelectionPos } from './pos';
 
-export function createMarkCommand(regExp: RegExp, syntax: string): EditorCommand {
+type ConditionFn = (text: string) => boolean;
+
+export function createMarkCommand(condition: RegExp | ConditionFn, syntax: string): EditorCommand {
   return () => (state, dispatch) => {
+    const conditionFn: ConditionFn = !isFunction(condition)
+      ? (text: string) => condition.test(text)
+      : condition;
     const syntaxLen = syntax.length;
     const [from, to] = resolveSelectionPos(state.selection);
     let [prevPos, nextPos] = [from, to];
@@ -24,7 +30,7 @@ export function createMarkCommand(regExp: RegExp, syntax: string): EditorCommand
       textContent = `${prevText}${textContent}${nextText}`;
     }
 
-    if (regExp.test(textContent)) {
+    if (conditionFn(textContent)) {
       tr = tr.delete(nextPos - syntaxLen, nextPos).delete(prevPos, prevPos + syntaxLen);
     } else {
       tr = tr.insertText(syntax, to).insertText(syntax, from);

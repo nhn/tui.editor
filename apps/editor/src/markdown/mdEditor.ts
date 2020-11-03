@@ -4,6 +4,7 @@ import { DOMParser, Fragment, Schema, Slice } from 'prosemirror-model';
 import { Step } from 'prosemirror-transform';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
+import { history } from 'prosemirror-history';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
@@ -32,6 +33,7 @@ import { Html } from './marks/html';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { createParagraph, createTextSelection, nbspToSpace } from './helper/manipulation';
 import { placeholder } from '@/plugins/placeholder';
+import { getDefaultCommands } from '@/commands/defaultCommands';
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
@@ -94,11 +96,18 @@ export default class MdEditor extends EditorBase {
   }
 
   createState() {
+    const { undo, redo } = getDefaultCommands();
+
     return EditorState.create({
       doc: DOMParser.fromSchema(this.schema).parse(this.el),
       plugins: [
         ...this.keymaps,
-        keymap(baseKeymap),
+        keymap({
+          'Mod-z': undo(),
+          'Shift-Mod-z': redo(),
+          ...baseKeymap
+        }),
+        history(),
         syntaxHighlight(this.context),
         previewHighlight(this.context),
         placeholder(this.placeholder)
@@ -131,19 +140,19 @@ export default class MdEditor extends EditorBase {
   }
 
   private updateMarkdown(tr: Transaction) {
-    const { state } = this.view;
-
     if (tr.docChanged) {
-      tr.steps.forEach(step => {
-        const [from, to] = this.getResolvedRange(tr, step);
-        const changed = this.getChanged(step.slice);
-        const [startPos, endPos] = getEditorToMdPos(state.doc, from, to);
+      tr.steps.forEach((step, index) => {
+        if (step.slice) {
+          const doc = tr.docs[index];
+          const [from, to] = this.getResolvedRange(tr, step);
+          const changed = this.getChanged(step.slice);
+          const [startPos, endPos] = getEditorToMdPos(doc, from, to);
+          const editResult = this.toastMark.editMarkdown(startPos, endPos, changed);
 
-        const editResult = this.toastMark.editMarkdown(startPos, endPos, changed);
+          this.eventEmitter.emit('contentChangedFromMarkdown', editResult);
 
-        this.eventEmitter.emit('contentChangedFromMarkdown', editResult);
-
-        tr.setMeta('editResult', editResult);
+          tr.setMeta('editResult', editResult);
+        }
       });
     }
   }

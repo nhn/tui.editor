@@ -861,3 +861,26 @@ describe('outdent command', () => {
     });
   });
 });
+
+describe('history command', () => {
+  beforeEach(() => {
+    mde.setMarkdown('italicBold');
+
+    cmd.exec('markdown', 'selectAll');
+    cmd.exec('markdown', 'bold');
+    cmd.exec('markdown', 'italic');
+  });
+
+  it('undo go back to before previous action', () => {
+    cmd.exec('markdown', 'undo');
+
+    expect(getTextContent(mde)).toBe('**italicBold**');
+  });
+
+  it('redo cancel undo action', () => {
+    cmd.exec('markdown', 'undo');
+    cmd.exec('markdown', 'redo');
+
+    expect(getTextContent(mde)).toBe('***italicBold***');
+  });
+});

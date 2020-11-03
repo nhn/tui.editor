@@ -3,8 +3,10 @@ import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { createMarkCommand } from '../helper/mdCommand';
+import { reStrong } from './strong';
 
 const reEmph = /^(\*|_).*([\s\S]*)\1$/m;
+const reStrongEmph = /^(\*{3}|_{3}).*([\s\S]*)\1$/m;
 const emphSyntax = '*';
 
 export class Emph extends Mark {
@@ -21,7 +23,10 @@ export class Emph extends Mark {
   }
 
   private italic(): EditorCommand {
-    return createMarkCommand(reEmph, emphSyntax);
+    const conditionFn = (text: string) =>
+      (reEmph.test(text) && !reStrong.test(text)) || reStrongEmph.test(text);
+
+    return createMarkCommand(conditionFn, emphSyntax);
   }
 
   commands() {
