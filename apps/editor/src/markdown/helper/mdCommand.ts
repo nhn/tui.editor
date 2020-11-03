@@ -4,17 +4,25 @@ import { createTextSelection } from './manipulation';
 import { resolveSelectionPos } from './pos';
 
 type ConditionFn = (text: string) => boolean;
+type Condition = RegExp | ConditionFn;
 
-export function toggleMark(condition: RegExp | ConditionFn, syntax: string): EditorCommand {
+export function toggleMark(
+  condition: Condition,
+  syntax: string,
+  extendedRange?: number
+): EditorCommand {
   return () => ({ tr, selection }, dispatch) => {
     const conditionFn: ConditionFn = !isFunction(condition)
       ? (text: string) => condition.test(text)
       : condition;
     const syntaxLen = syntax.length;
+
+    extendedRange = extendedRange ?? syntax.length;
+
     const [from, to] = resolveSelectionPos(selection);
     const [prevPos, nextPos] = [
-      Math.max(from - syntaxLen, 1),
-      Math.min(to + syntaxLen, tr.doc.content.size - 1)
+      Math.max(from - extendedRange, 1),
+      Math.min(to + extendedRange, tr.doc.content.size - 1)
     ];
     const slice = selection.content();
 
@@ -23,8 +31,6 @@ export function toggleMark(condition: RegExp | ConditionFn, syntax: string): Edi
     const nextText = tr.doc.textBetween(to, nextPos, '\n');
 
     textContent = `${prevText}${textContent}${nextText}`;
-
-    console.log(textContent);
 
     if (prevText && nextText && conditionFn(textContent)) {
       tr = tr.delete(nextPos - syntaxLen, nextPos).delete(prevPos, prevPos + syntaxLen);

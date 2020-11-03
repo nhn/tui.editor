@@ -26,7 +26,7 @@ export class Emph extends Mark {
     const conditionFn = (text: string) =>
       (reEmph.test(text) && !reStrong.test(text)) || reStrongEmph.test(text);
 
-    return toggleMark(conditionFn, emphSyntax);
+    return toggleMark(conditionFn, emphSyntax, 3);
   }
 
   commands() {
