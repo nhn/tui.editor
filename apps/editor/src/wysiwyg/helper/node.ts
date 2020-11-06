@@ -19,3 +19,11 @@ export function isInListNode({ nodes }: Schema, pos: ResolvedPos): boolean {
     return type === listItem || type === bulletList || type === orderedList;
   });
 }
+
+export function isInTableNode({ nodes }: Schema, pos: ResolvedPos): boolean {
+  return !!findNodeBy(pos, ({ type }: Node) => {
+    const { tableHeadCell, tableBodyCell } = nodes;
+
+    return type === tableHeadCell || type === tableBodyCell;
+  });
+}

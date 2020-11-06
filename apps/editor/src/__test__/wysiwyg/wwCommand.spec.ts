@@ -635,4 +635,61 @@ describe('wysiwyg commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
   });
+
+  fdescribe('addTable command', () => {
+    it('should create 1 by 1 table', () => {
+      cmd.exec('wysiwyg', 'addTable');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr><th><br></th></tr>
+          </thead>
+          <tbody>
+            <tr><td><br></td></tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should create table with the number of columns and rows', () => {
+      cmd.exec('wysiwyg', 'addTable', { columns: 2, rows: 3 });
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr><th><br></th><th><br></th></tr>
+          </thead>
+          <tbody>
+            <tr><td><br></td><td><br></td></tr>
+            <tr><td><br></td><td><br></td></tr>
+            <tr><td><br></td><td><br></td></tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should create table with the number of columns and rows', () => {
+      cmd.exec('wysiwyg', 'addTable', { columns: 2, rows: 1, data: ['foo', 'bar', 'baz', 'qux'] });
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr><th>foo</th><th>bar</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>baz</td><td>qux</td></tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  it('addTable command', () => {});
 });
