@@ -75,7 +75,9 @@ export class Paragraph extends Node {
     return {
       content: 'inline*',
       attrs: {
-        className: { default: null }
+        className: { default: null },
+        codeStart: { default: null },
+        codeEnd: { default: null }
       },
       group: 'block',
       parseDOM: [{ tag: 'div' }],
