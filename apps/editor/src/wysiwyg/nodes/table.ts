@@ -1,45 +1,11 @@
-import { DOMOutputSpecArray, Schema } from 'prosemirror-model';
-
-import { isInTableNode } from '@/wysiwyg/helper/node';
+import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
+import { ReplaceStep } from 'prosemirror-transform';
 
 import Node from '@/spec/node';
+import { isInTableNode, findNodeBy } from '@/wysiwyg/helper/node';
+import { createTableHead, createTableBody, createTableRows } from '@/wysiwyg/helper/table';
 
 import { EditorCommand } from '@t/spec';
-
-function createTableHead(schema: Schema, columns: number, data: string[]) {
-  const { tableHead, tableRow, tableHeadCell } = schema.nodes;
-  const tableHeads = [];
-
-  for (let i = 0; i < columns; i += 1) {
-    tableHeads.push(tableHeadCell.create(null, data[i] ? schema.text(data[i]) : []));
-  }
-
-  return tableHead.create(null, [tableRow.create(null, tableHeads)]);
-}
-
-function createTableBody(schema: Schema, columns: number, rows: number, data: string[]) {
-  const { tableBody, tableRow, tableBodyCell } = schema.nodes;
-  const tableRows = [];
-  let cellIndex = columns;
-
-  for (let i = 0; i < rows; i += 1) {
-    const cells = [];
-
-    for (let j = 0; j < columns; j += 1) {
-      const text = data[cellIndex];
-
-      if (text) {
-        cellIndex += 1;
-      }
-
-      cells.push(tableBodyCell.create(null, text ? schema.text(text) : []));
-    }
-
-    tableRows.push(tableRow.create(null, cells));
-  }
-
-  return tableBody.create(null, tableRows);
-}
 
 export class Table extends Node {
   get name() {
@@ -78,17 +44,87 @@ export class Table extends Node {
     };
   }
 
-  private addColumn(): EditorCommand {
-    return payload => (state, dispatch) => {
-      // let { $from } = state.selection;
-      return true;
+  private removeTable(): EditorCommand {
+    return () => (state, dispatch) => {
+      const { selection, schema, tr } = state;
+      const { $anchor } = selection;
+      const foundTable = findNodeBy(
+        $anchor,
+        ({ type }: ProsemirrorNode) => type === schema.nodes.table
+      );
+
+      if (foundTable) {
+        const { depth } = foundTable;
+        const from = $anchor.before(depth);
+        const to = $anchor.after(depth);
+
+        dispatch!(tr.delete(from, to).scrollIntoView());
+
+        return true;
+      }
+
+      return false;
+    };
+  }
+
+  private addRow(): EditorCommand {
+    return () => (state, dispatch) => {
+      const { selection, schema, tr } = state;
+      const { $from } = selection;
+      const { tableRow, tableBody } = schema.nodes;
+      const foundRow = findNodeBy(
+        $from,
+        ({ type }: ProsemirrorNode, depth: number) =>
+          type === tableRow && $from.node(depth - 1).type === tableBody
+      );
+
+      if (foundRow) {
+        const { node, depth } = foundRow;
+        const [row] = createTableRows(schema, node.childCount, 1, true);
+        const from = $from.after(depth);
+
+        dispatch!(tr.step(new ReplaceStep(from, from, new Slice(Fragment.from(row), 0, 0))));
+
+        return true;
+      }
+
+      return false;
+    };
+  }
+
+  private removeRow(): EditorCommand {
+    return () => (state, dispatch) => {
+      const { selection, schema, tr } = state;
+      const { $from } = selection;
+      const { tableBody, tableRow } = schema.nodes;
+      const foundRow = findNodeBy(
+        $from,
+        ({ type }: ProsemirrorNode, depth: number) =>
+          type === tableRow &&
+          $from.node(depth - 1).type === tableBody &&
+          $from.node(depth - 1).childCount > 1
+      );
+
+      if (foundRow) {
+        const { depth } = foundRow;
+        const from = $from.before(depth);
+        const to = $from.after(depth);
+
+        dispatch!(tr.step(new ReplaceStep(from, to, Slice.empty)));
+
+        return true;
+      }
+
+      return false;
     };
   }
 
   commands() {
     return {
       addTable: this.addTable(),
-      addColumn: this.addColumn()
+      removeTable: this.removeTable(),
+      addRow: this.addRow(),
+      removeRow: this.removeRow()
     };
   }
 }

@@ -1,12 +1,19 @@
 import { Node, Schema, ResolvedPos } from 'prosemirror-model';
 
-function findNodeBy(pos: ResolvedPos, condition: (node: Node) => boolean): Node | null {
-  for (let index = pos.depth; index > 0; index -= 1) {
-    const node = pos.node(index);
+export function findNodeBy(
+  pos: ResolvedPos,
+  condition: (node: Node, depth: number) => boolean
+): { node: Node; depth: number } | null {
+  let { depth } = pos;
 
-    if (condition(node)) {
-      return node;
+  while (depth) {
+    const node = pos.node(depth);
+
+    if (condition(node, depth)) {
+      return { node, depth };
     }
+
+    depth -= 1;
   }
 
   return null;

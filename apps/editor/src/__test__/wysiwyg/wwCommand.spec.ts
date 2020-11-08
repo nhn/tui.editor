@@ -636,7 +636,7 @@ describe('wysiwyg commands', () => {
     });
   });
 
-  fdescribe('addTable command', () => {
+  describe('addTable command', () => {
     it('should create 1 by 1 table', () => {
       cmd.exec('wysiwyg', 'addTable');
 
@@ -691,5 +691,135 @@ describe('wysiwyg commands', () => {
     });
   });
 
-  it('addTable command', () => {});
+  describe('removeTable command', () => {
+    beforeEach(() => {
+      cmd.exec('wysiwyg', 'addTable');
+    });
+
+    it('should remove table when cursor is in table head', () => {
+      wwe.setSelection(4, 4);
+
+      cmd.exec('wysiwyg', 'removeTable');
+
+      expect(wwe.getHTML()).toBe('<p><br></p>');
+    });
+
+    it('should remove table when cursor is in table body', () => {
+      wwe.setSelection(11, 11);
+
+      cmd.exec('wysiwyg', 'removeTable');
+
+      expect(wwe.getHTML()).toBe('<p><br></p>');
+    });
+  });
+
+  describe('addRow command', () => {
+    beforeEach(() => {
+      cmd.exec('wysiwyg', 'addTable', { columns: 2, rows: 1 });
+    });
+
+    it('should add row when cursor is in table body', () => {
+      wwe.setSelection(12, 12);
+
+      cmd.exec('wysiwyg', 'addRow');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr><th><br></th><th><br></th></tr>
+          </thead>
+          <tbody>
+            <tr><td><br></td><td><br></td></tr>
+            <tr><td><br></td><td><br></td></tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should not add row when cursor is in table header', () => {
+      wwe.setSelection(4, 4);
+
+      cmd.exec('wysiwyg', 'addRow');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr><th><br></th><th><br></th></tr>
+          </thead>
+          <tbody>
+            <tr><td><br></td><td><br></td></tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe('removeRow command', () => {
+    beforeEach(() => {
+      cmd.exec('wysiwyg', 'addTable', { columns: 1, rows: 2, data: ['foo', 'bar', 'baz'] });
+    });
+
+    it('should remove row when cursor is in table body', () => {
+      wwe.setSelection(15, 15);
+
+      cmd.exec('wysiwyg', 'removeRow');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr><th>foo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>baz</td></tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should not remove row when cursor is in table head', () => {
+      wwe.setSelection(4, 4);
+
+      cmd.exec('wysiwyg', 'removeRow');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr><th>foo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>bar</td></tr>
+            <tr><td>baz</td></tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should not remove row when there is 1 row in table body', () => {
+      wwe.setSelection(22, 22);
+
+      cmd.exec('wysiwyg', 'removeRow');
+      cmd.exec('wysiwyg', 'removeRow');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr><th>foo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>bar</td></tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
 });
