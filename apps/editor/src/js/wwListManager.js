@@ -402,20 +402,24 @@ class WwListManager {
   }
 
   /**
-   * Find LI node inside TD
+   * Find LI node inside cell (TH, TD)
    * If target node is not li and parents of taget node is not li, return null.
    * @param {Node} targetNode - startContainer or endContainer of range
    * @param {Number} offset - offset
    * @returns {Node} - LI node or null
    * @private
    */
-  _findLINodeInsideTD(targetNode, offset) {
+  _findLINodeInsideCell(targetNode, offset) {
     let liNode = null;
+
+    if (targetNode && domUtils.isCellNode(targetNode)) {
+      targetNode = targetNode.firstChild;
+    }
 
     const liParent = domUtils.getParentUntilBy(
       targetNode,
-      node => node && domUtils.isListNode(node),
-      node => node && node.nodeName === 'TD'
+      parentNode => parentNode && domUtils.isListNode(parentNode),
+      parentNode => parentNode && domUtils.isCellNode(parentNode)
     );
 
     if (liParent) {
@@ -439,7 +443,7 @@ class WwListManager {
    * @private
    */
   _getFirstNodeInLineOfTable(targetNode, offset) {
-    let startNode = this._findLINodeInsideTD(targetNode, offset);
+    let startNode = this._findLINodeInsideCell(targetNode, offset);
 
     if (!startNode) {
       startNode = this._getParentNodeBeforeTD(targetNode, offset);
@@ -467,7 +471,7 @@ class WwListManager {
    * @private
    */
   _getLastNodeInLineOfTable(targetNode, offset) {
-    let endNode = this._findLINodeInsideTD(targetNode, offset);
+    let endNode = this._findLINodeInsideCell(targetNode, offset);
 
     if (!endNode) {
       endNode = this._getParentNodeBeforeTD(targetNode, offset);
@@ -511,7 +515,7 @@ class WwListManager {
     if (node.nodeName === 'LI' && !nextSibling) {
       let { parentNode } = node;
 
-      while (parentNode.nodeName !== 'TD') {
+      while (!domUtils.isCellNode(parentNode)) {
         if (parentNode.nextSibling) {
           nextSibling = parentNode.nextSibling;
           break;

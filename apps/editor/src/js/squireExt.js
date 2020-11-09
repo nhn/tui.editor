@@ -296,7 +296,7 @@ class SquireExt extends Squire {
   }
 
   replaceParent(node, from, to) {
-    const target = domUtils.closest(node, from);
+    const target = domUtils.closest(node, from, this.getBody());
 
     if (target) {
       domUtils.wrapInner(target, to);

@@ -2,6 +2,8 @@
  * @fileoverview test domUtils
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import { oneLineTrim } from 'common-tags';
+
 import $ from 'jquery';
 
 import domUtils from '@/utils/dom';
@@ -692,6 +694,24 @@ describe('domUtils', () => {
 
       expect(foundNode).toEqual(selector);
     });
+
+    it('until root node', () => {
+      container.innerHTML = oneLineTrim`
+        <ul>
+          <li class="root">
+            <ol>
+              <li>fo<strong>bar</strong>o</li>
+            </ul>
+          </li>
+        </ul>
+      `;
+
+      const target = container.querySelector('strong');
+      const root = container.querySelector('.root');
+      const foundNode = domUtils.closest(target, 'ul', root);
+
+      expect(foundNode).toBeNull();
+    });
   });
 
   it('parent() returns parent node matching by selector', () => {
@@ -959,5 +979,24 @@ describe('domUtils', () => {
     div.appendChild(result.cloneNode(true));
 
     expect(div.innerHTML).toBe('foo<br>bar<br>baz');
+  });
+
+  it('getParentUntilBy() should be searched before a match condition when there is a stop condtion', () => {
+    container.innerHTML = oneLineTrim`
+      <div>
+        <ul>
+          <li>fo<strong>bar</strong>o</li>
+        </ul>
+      </div>
+    `;
+
+    const target = container.querySelector('strong');
+    const result = domUtils.getParentUntilBy(
+      target,
+      parentNode => parentNode && parentNode.nodeName === 'DIV',
+      parentNode => parentNode && parentNode.nodeName === 'UL'
+    );
+
+    expect(result.nodeName).toBe('UL');
   });
 });

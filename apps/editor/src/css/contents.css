@@ -248,6 +248,11 @@
   content: '';
 }
 
+.tui-editor-contents th ol,
+.tui-editor-contents th ul {
+  color: #fff;
+}
+
 .tui-editor-contents hr {
   border-top: 1px solid #eee;
   margin: 16px 0;
