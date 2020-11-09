@@ -1,5 +1,5 @@
 import { AllSelection, Selection } from 'prosemirror-state';
-import { ProsemirrorNode, ResolvedPos } from 'prosemirror-model';
+import { ProsemirrorNode } from 'prosemirror-model';
 import { MdPos, MdSourcepos } from '@t/markdown';
 import { getTextByMdLine } from './query';
 
@@ -60,7 +60,7 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
     endOffset = endResolvedPos.start();
 
     // To resolve the end offset excluding document tag size
-    if (endResolvedPos.parent === doc) {
+    if (endResolvedPos.pos === doc.content.size) {
       to = doc.content.size - 2;
     }
   }

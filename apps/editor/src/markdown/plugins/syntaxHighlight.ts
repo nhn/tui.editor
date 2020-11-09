@@ -1,5 +1,6 @@
 import { Plugin, Transaction } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
+import inArray from 'tui-code-snippet/array/inArray';
 import { Context } from '@t/spec';
 import { EditResult, MdNode, MdPos } from '@t/markdown';
 import { getMdStartLine, getMdEndLine, getMdStartCh, getMdEndCh } from '@/utils/markdown';
@@ -9,7 +10,7 @@ import { getTextByMdLine } from '../helper/query';
 
 export function syntaxHighlight({ schema }: Context) {
   return new Plugin({
-    appendTransaction(transactions, oldState, newState) {
+    appendTransaction(transactions, _, newState) {
       const [tr] = transactions;
 
       let newTr = newState.tr;
@@ -53,7 +54,7 @@ function removeCodeBlockBackground(newTr: Transaction, start: MdPos, end: MdPos,
     const node = newTr.doc.content.child(i);
     const { codeStart, codeEnd } = node.attrs;
 
-    if (codeStart && codeEnd && skipLines.indexOf(codeStart[0]) === -1) {
+    if (codeStart && codeEnd && inArray(skipLines, codeStart[0])) {
       skipLines.push(codeStart[0]);
       const pos = getMdToEditorPos(newTr.doc, codeStart, codeEnd);
 
