@@ -1,4 +1,4 @@
-import { Schema } from 'prosemirror-model';
+import { Node, Schema, ResolvedPos } from 'prosemirror-model';
 
 export function createTableHead(schema: Schema, columns: number, data: string[]) {
   const { tableHead } = schema.nodes;
@@ -44,4 +44,21 @@ export function createTableRows(
   }
 
   return tableRows;
+}
+
+export function getTableBodyCellPositions(pos: ResolvedPos, depth: number) {
+  const cellPositions: number[] = [];
+  const tbody = pos.node(depth);
+  const tbodyPos = pos.before(depth);
+
+  tbody.forEach((row: Node, offset: number) => {
+    let cellPos = tbodyPos + offset - 1;
+
+    for (let index = 0, len = row.childCount; index < len; index += 1) {
+      cellPos += row.child(index).nodeSize;
+      cellPositions.push(cellPos);
+    }
+  });
+
+  return cellPositions;
 }

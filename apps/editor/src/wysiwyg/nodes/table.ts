@@ -3,7 +3,12 @@ import { ReplaceStep } from 'prosemirror-transform';
 
 import Node from '@/spec/node';
 import { isInTableNode, findNodeBy } from '@/wysiwyg/helper/node';
-import { createTableHead, createTableBody, createTableRows } from '@/wysiwyg/helper/table';
+import {
+  createTableHead,
+  createTableBody,
+  createTableRows,
+  getTableBodyCellPositions
+} from '@/wysiwyg/helper/table';
 
 import { EditorCommand } from '@t/spec';
 
@@ -25,8 +30,8 @@ export class Table extends Node {
 
   private addTable(): EditorCommand {
     return (payload = {}) => (state, dispatch) => {
-      const { schema, tr, selection } = state;
       const { columns = 1, rows = 1, data = [] } = payload;
+      const { schema, tr, selection } = state;
       const { from, to, $from } = selection;
       const collapsed = from === to;
 
@@ -119,12 +124,40 @@ export class Table extends Node {
     };
   }
 
+  private alignColumn(): EditorCommand {
+    return (payload = {}) => (state, dispatch) => {
+      const { align = 'center' } = payload;
+      const { selection, schema, tr } = state;
+      const { $from } = selection;
+      const { tableBodyCell } = schema.nodes;
+      const foundCell = findNodeBy($from, ({ type }: ProsemirrorNode) => type === tableBodyCell);
+
+      if (foundCell) {
+        const { depth } = foundCell;
+        const tbodyCells = getTableBodyCellPositions($from, depth - 2);
+
+        tbodyCells.forEach(tbodyCell => {
+          const { pos } = $from.node(0).resolve(tbodyCell);
+
+          tr.setNodeMarkup(pos, null!, { align });
+        });
+
+        dispatch!(tr);
+
+        return true;
+      }
+
+      return false;
+    };
+  }
+
   commands() {
     return {
       addTable: this.addTable(),
       removeTable: this.removeTable(),
       addRow: this.addRow(),
-      removeRow: this.removeRow()
+      removeRow: this.removeRow(),
+      alignColumn: this.alignColumn()
     };
   }
 }

@@ -1,9 +1,6 @@
 import { Node, Schema, ResolvedPos } from 'prosemirror-model';
 
-export function findNodeBy(
-  pos: ResolvedPos,
-  condition: (node: Node, depth: number) => boolean
-): { node: Node; depth: number } | null {
+export function findNodeBy(pos: ResolvedPos, condition: (node: Node, depth: number) => boolean) {
   let { depth } = pos;
 
   while (depth) {
@@ -19,18 +16,17 @@ export function findNodeBy(
   return null;
 }
 
-export function isInListNode({ nodes }: Schema, pos: ResolvedPos): boolean {
-  return !!findNodeBy(pos, ({ type }: Node) => {
-    const { listItem, bulletList, orderedList } = nodes;
+export function isInListNode({ nodes }: Schema, pos: ResolvedPos) {
+  const { listItem, bulletList, orderedList } = nodes;
 
-    return type === listItem || type === bulletList || type === orderedList;
-  });
+  return !!findNodeBy(
+    pos,
+    ({ type }: Node) => type === listItem || type === bulletList || type === orderedList
+  );
 }
 
-export function isInTableNode({ nodes }: Schema, pos: ResolvedPos): boolean {
-  return !!findNodeBy(pos, ({ type }: Node) => {
-    const { tableHeadCell, tableBodyCell } = nodes;
+export function isInTableNode({ nodes }: Schema, pos: ResolvedPos) {
+  const { tableHeadCell, tableBodyCell } = nodes;
 
-    return type === tableHeadCell || type === tableBodyCell;
-  });
+  return !!findNodeBy(pos, ({ type }: Node) => type === tableHeadCell || type === tableBodyCell);
 }

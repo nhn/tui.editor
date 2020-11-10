@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
 
 import Node from '@/spec/node';
 
@@ -10,9 +10,20 @@ export class TableBodyCell extends Node {
   get schema() {
     return {
       content: 'text*',
+      attrs: {
+        align: { default: null }
+      },
       parseDOM: [{ tag: 'td' }],
-      toDOM(): DOMOutputSpecArray {
-        return ['td', 0];
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+        const { align } = attrs;
+
+        return [
+          'td',
+          {
+            ...(align && { align })
+          },
+          0
+        ];
       }
     };
   }
