@@ -185,21 +185,19 @@ const getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
 };
 
 const getParentUntilBy = function(node, matchCondition, stopCondition) {
-  let foundedNode;
-
   while (node.parentNode && !matchCondition(node.parentNode)) {
     node = node.parentNode;
 
-    if (stopCondition && stopCondition(node.parentNode)) {
+    if (stopCondition && stopCondition(node)) {
       break;
     }
   }
 
   if (matchCondition(node.parentNode)) {
-    foundedNode = node;
+    return node;
   }
 
-  return foundedNode;
+  return null;
 };
 
 /**
@@ -951,11 +949,14 @@ function isContain(element, contained) {
  * Gets closest node matching by selector
  * @param {Node} node - target node
  * @param {string|Node} found - selector or element to find node
+ * @param {Node} [root] - root node
  * @returns {?Node} - found node
  * @ignore
  */
-function closest(node, found) {
+function closest(node, found, root) {
   let condition;
+
+  root = root || document;
 
   if (isString(found)) {
     condition = target => matches(target, found);
@@ -963,7 +964,7 @@ function closest(node, found) {
     condition = target => target === found;
   }
 
-  while (node && node !== document) {
+  while (node && node !== root) {
     if (isElemNode(node) && condition(node)) {
       return node;
     }
