@@ -726,11 +726,20 @@ describe('wysiwyg commands', () => {
       const expected = oneLineTrim`
         <table>
           <thead>
-            <tr><th><br></th><th><br></th></tr>
+            <tr>
+              <th><br></th>
+              <th><br></th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td><br></td><td><br></td></tr>
-            <tr><td><br></td><td><br></td></tr>
+            <tr>
+              <td><br></td>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td><br></td>
+              <td><br></td>
+            </tr>
           </tbody>
         </table>
       `;
@@ -746,10 +755,16 @@ describe('wysiwyg commands', () => {
       const expected = oneLineTrim`
         <table>
           <thead>
-            <tr><th><br></th><th><br></th></tr>
+            <tr>
+              <th><br></th>
+              <th><br></th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td><br></td><td><br></td></tr>
+            <tr>
+              <td><br></td>
+              <td><br></td>
+            </tr>
           </tbody>
         </table>
       `;
@@ -815,6 +830,290 @@ describe('wysiwyg commands', () => {
           </thead>
           <tbody>
             <tr><td>bar</td></tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe('alignColumn command', () => {
+    beforeEach(() => {
+      cmd.exec('wysiwyg', 'addTable', {
+        columns: 2,
+        rows: 2,
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', '']
+      });
+    });
+
+    it('should add center align attribute to columns by no option', () => {
+      wwe.setSelection(20, 20);
+
+      cmd.exec('wysiwyg', 'alignColumn');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th align="center">foo</th>
+              <th>bar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center">baz</td>
+              <td>qux</td>
+            </tr>
+            <tr>
+              <td align="center">quux</td>
+              <td><br></td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should change align attribute to columns by option', () => {
+      wwe.setSelection(36, 36);
+
+      cmd.exec('wysiwyg', 'alignColumn', { align: 'left' });
+
+      let expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th>foo</th>
+              <th align="left">bar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>baz</td>
+              <td align="left">qux</td>
+            </tr>
+            <tr>
+              <td>quux</td>
+              <td align="left"><br></td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+
+      cmd.exec('wysiwyg', 'alignColumn', { align: 'right' });
+
+      expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th>foo</th>
+              <th align="right">bar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>baz</td>
+              <td align="right">qux</td>
+            </tr>
+            <tr>
+              <td>quux</td>
+              <td align="right"><br></td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should add align attribute to columns with cursor in table head', () => {
+      wwe.setSelection(4, 4);
+
+      cmd.exec('wysiwyg', 'alignColumn', { align: 'left' });
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th align="left">foo</th>
+              <th>bar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="left">baz</td>
+              <td>qux</td>
+            </tr>
+            <tr>
+              <td align="left">quux</td>
+              <td><br></td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe('addColumn command', () => {
+    beforeEach(() => {
+      cmd.exec('wysiwyg', 'addTable', {
+        columns: 2,
+        rows: 2,
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', '']
+      });
+    });
+
+    it('should add column after cell with cursor', () => {
+      wwe.setSelection(6, 6);
+
+      cmd.exec('wysiwyg', 'addColumn');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th>foo</th>
+              <th><br></th>
+              <th>bar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>baz</td>
+              <td><br></td>
+              <td>qux</td>
+            </tr>
+            <tr>
+              <td>quux</td>
+              <td><br></td>
+              <td><br></td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should add column after cell with cursor in emtpy cell', () => {
+      wwe.setSelection(36, 36);
+
+      cmd.exec('wysiwyg', 'addColumn');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th>foo</th>
+              <th>bar</th>
+              <th><br></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>baz</td>
+              <td>qux</td>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>quux</td>
+              <td><br></td>
+              <td><br></td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe('removeColumn command', () => {
+    beforeEach(() => {
+      cmd.exec('wysiwyg', 'addTable', {
+        columns: 2,
+        rows: 2,
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', '']
+      });
+    });
+
+    it('should remove column when cursor is in table head', () => {
+      wwe.setSelection(10, 10);
+
+      cmd.exec('wysiwyg', 'removeColumn');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th>foo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>baz</td>
+            </tr>
+            <tr>
+              <td>quux</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should remove column when cursor is in table body', () => {
+      wwe.setSelection(20, 20);
+
+      cmd.exec('wysiwyg', 'removeColumn');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th>bar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>qux</td>
+            </tr>
+            <tr>
+              <td><br></td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should not remove row when there is 1 column in table', () => {
+      wwe.setSelection(6, 6);
+
+      cmd.exec('wysiwyg', 'removeColumn');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th>bar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>qux</td>
+            </tr>
+            <tr>
+              <td><br></td>
+            </tr>
           </tbody>
         </table>
       `;

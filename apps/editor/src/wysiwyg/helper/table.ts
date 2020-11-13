@@ -1,5 +1,7 @@
 import { Node, Schema, ResolvedPos } from 'prosemirror-model';
 
+import { findNodeBy } from '@/wysiwyg/helper/node';
+
 export function createTableHead(schema: Schema, columns: number, data: string[]) {
   const { tableHead } = schema.nodes;
   const tableRows = createTableRows(schema, columns, 1, false, data);
@@ -46,19 +48,47 @@ export function createTableRows(
   return tableRows;
 }
 
-export function getTableBodyCellPositions(pos: ResolvedPos, depth: number) {
-  const cellPositions: number[] = [];
-  const tbody = pos.node(depth);
-  const tbodyPos = pos.before(depth);
+export function findTableCellNode({ nodes }: Schema, pos: ResolvedPos) {
+  const { tableHeadCell, tableBodyCell } = nodes;
 
-  tbody.forEach((row: Node, offset: number) => {
-    let cellPos = tbodyPos + offset - 1;
+  return findNodeBy(pos, ({ type }: Node) => type === tableHeadCell || type === tableBodyCell);
+}
 
-    for (let index = 0, len = row.childCount; index < len; index += 1) {
-      cellPos += row.child(index).nodeSize;
-      cellPositions.push(cellPos);
-    }
+function getHeadOrBodyCellPositions(headOrBody: Node, startPos: number) {
+  const positions: {
+    nodeStart: number;
+    nodeSize: number;
+  }[] = [];
+
+  headOrBody.forEach((row: Node, rowOffset: number) => {
+    row.forEach(({ nodeSize }: Node, cellOffset: number) => {
+      positions.push({
+        nodeStart: startPos + rowOffset + cellOffset + 2,
+        nodeSize
+      });
+    });
   });
 
-  return cellPositions;
+  return positions;
+}
+
+export function getCellPositions(table: Node, tablePos: number) {
+  const thead = table.child(0);
+  const theadCellPositions = getHeadOrBodyCellPositions(thead, tablePos);
+  const tbodyCellPositions = getHeadOrBodyCellPositions(table.child(1), tablePos + thead.nodeSize);
+
+  return theadCellPositions.concat(tbodyCellPositions);
+}
+
+export function getCellIndexesByCursorIndex(table: Node, cursorIndex: number) {
+  const tableBody = table.child(1);
+  const columnCount = tableBody.child(0).childCount;
+  const rowCount = tableBody.childCount + 1;
+  const indexes = [];
+
+  for (let i = 0; i < rowCount; i += 1) {
+    indexes.push(i * columnCount + cursorIndex);
+  }
+
+  return indexes;
 }
