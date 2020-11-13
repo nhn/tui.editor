@@ -48,7 +48,38 @@ export function createTableRows(
   return tableRows;
 }
 
-export function findTableCellNode({ nodes }: Schema, pos: ResolvedPos) {
+export function getRowDepthToRemove({ nodes }: Schema, pos: ResolvedPos) {
+  const { tableBody, tableRow } = nodes;
+  const foundRow = findNodeBy(pos, ({ type }: Node) => type === tableRow);
+
+  if (foundRow) {
+    const { depth } = foundRow;
+    const parent = pos.node(depth - 1);
+
+    if (parent.type === tableBody && parent.childCount > 1) {
+      return depth;
+    }
+  }
+
+  return null;
+}
+
+export function getCellDepthToRemove(schema: Schema, pos: ResolvedPos) {
+  const foundCell = findCell(schema, pos);
+
+  if (foundCell) {
+    const { depth } = foundCell;
+    const columnCount = pos.node(depth - 1).childCount;
+
+    if (columnCount > 1) {
+      return depth;
+    }
+  }
+
+  return null;
+}
+
+export function findCell({ nodes }: Schema, pos: ResolvedPos) {
   const { tableHeadCell, tableBodyCell } = nodes;
 
   return findNodeBy(pos, ({ type }: Node) => type === tableHeadCell || type === tableBodyCell);

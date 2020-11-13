@@ -7,7 +7,9 @@ import {
   createTableHead,
   createTableBody,
   createTableRows,
-  findTableCellNode,
+  findCell,
+  getRowDepthToRemove,
+  getCellDepthToRemove,
   getCellIndexesByCursorIndex,
   getCellPositions
 } from '@/wysiwyg/helper/table';
@@ -55,17 +57,15 @@ export class Table extends Node {
     return () => (state, dispatch) => {
       const { selection, schema, tr } = state;
       const { $anchor } = selection;
-      const foundTable = findNodeBy(
-        $anchor,
-        ({ type }: ProsemirrorNode) => type === schema.nodes.table
-      );
+      const { table } = schema.nodes;
+      const foundTable = findNodeBy($anchor, ({ type }: ProsemirrorNode) => type === table);
 
       if (foundTable) {
         const { depth } = foundTable;
-        const from = $anchor.before(depth);
-        const to = $anchor.after(depth);
+        const start = $anchor.before(depth);
+        const end = $anchor.after(depth);
 
-        dispatch!(tr.delete(from, to).scrollIntoView());
+        dispatch!(tr.delete(start, end).scrollIntoView());
 
         return true;
       }
@@ -79,7 +79,7 @@ export class Table extends Node {
       const { selection, schema, tr } = state;
       const { $from } = selection;
       const { tableHeadCell, tableBodyCell } = schema.nodes;
-      const foundCell = findTableCellNode(schema, $from);
+      const foundCell = findCell(schema, $from);
 
       if (foundCell) {
         const { depth } = foundCell;
@@ -109,16 +109,9 @@ export class Table extends Node {
     return () => (state, dispatch) => {
       const { selection, schema, tr } = state;
       const { $from } = selection;
-      const foundCell = findTableCellNode(schema, $from);
+      const depth = getCellDepthToRemove(schema, $from);
 
-      if (foundCell) {
-        const { depth } = foundCell;
-        const columnCount = $from.node(depth - 1).childCount;
-
-        if (columnCount === 1) {
-          return false;
-        }
-
+      if (depth) {
         const table = $from.node(depth - 3);
         const cellIndexes = getCellIndexesByCursorIndex(table, $from.index(depth - 1));
         const cells = getCellPositions(table, $from.before(depth - 3));
@@ -154,9 +147,10 @@ export class Table extends Node {
       if (foundRow) {
         const { node, depth } = foundRow;
         const [row] = createTableRows(schema, node.childCount, 1, true);
-        const from = $from.after(depth);
+        const start = $from.after(depth);
+        const end = start;
 
-        dispatch!(tr.step(new ReplaceStep(from, from, new Slice(Fragment.from(row), 0, 0))));
+        dispatch!(tr.step(new ReplaceStep(start, end, new Slice(Fragment.from(row), 0, 0))));
 
         return true;
       }
@@ -169,21 +163,13 @@ export class Table extends Node {
     return () => (state, dispatch) => {
       const { selection, schema, tr } = state;
       const { $from } = selection;
-      const { tableBody, tableRow } = schema.nodes;
-      const foundRow = findNodeBy(
-        $from,
-        ({ type }: ProsemirrorNode, depth: number) =>
-          type === tableRow &&
-          $from.node(depth - 1).type === tableBody &&
-          $from.node(depth - 1).childCount > 1
-      );
+      const depth = getRowDepthToRemove(schema, $from);
 
-      if (foundRow) {
-        const { depth } = foundRow;
-        const from = $from.before(depth);
-        const to = $from.after(depth);
+      if (depth) {
+        const start = $from.before(depth);
+        const end = $from.after(depth);
 
-        dispatch!(tr.step(new ReplaceStep(from, to, Slice.empty)));
+        dispatch!(tr.step(new ReplaceStep(start, end, Slice.empty)));
 
         return true;
       }
@@ -197,7 +183,7 @@ export class Table extends Node {
       const { align = 'center' } = payload ?? {};
       const { schema, tr } = state;
       const { $from } = state.selection;
-      const foundCell = findTableCellNode(schema, $from);
+      const foundCell = findCell(schema, $from);
 
       if (foundCell) {
         const { depth } = foundCell;
