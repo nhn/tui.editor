@@ -1,5 +1,6 @@
 import { Plugin, Transaction } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
+import inArray from 'tui-code-snippet/array/inArray';
 import { Context } from '@t/spec';
 import { EditResult, MdNode, MdPos } from '@t/markdown';
 import { getMdStartLine, getMdEndLine, getMdStartCh, getMdEndCh } from '@/utils/markdown';
@@ -9,7 +10,7 @@ import { getTextByMdLine } from '../helper/query';
 
 export function syntaxHighlight({ schema }: Context) {
   return new Plugin({
-    appendTransaction(transactions, oldState, newState) {
+    appendTransaction(transactions, _, newState) {
       const [tr] = transactions;
 
       let newTr = newState.tr;
@@ -21,7 +22,7 @@ export function syntaxHighlight({ schema }: Context) {
           const { nodes } = result;
 
           if (nodes.length) {
-            newTr = removeMark(nodes, newTr);
+            newTr = removeMark(nodes, newTr, schema);
 
             for (const parent of nodes) {
               const walker = parent.walker();
@@ -46,12 +47,32 @@ export function syntaxHighlight({ schema }: Context) {
   });
 }
 
-function removeMark(nodes: MdNode[], newTr: Transaction) {
+function removeCodeBlockBackground(newTr: Transaction, start: MdPos, end: MdPos, schema: Schema) {
+  const skipLines: number[] = [];
+
+  for (let i = start[0] - 1; i < end[0]; i += 1) {
+    const node = newTr.doc.content.child(i);
+    const { codeStart, codeEnd } = node.attrs;
+
+    if (codeStart && codeEnd && inArray(skipLines, codeStart[0])) {
+      skipLines.push(codeStart[0]);
+      const pos = getMdToEditorPos(newTr.doc, codeStart, codeEnd);
+
+      newTr = newTr.setBlockType(pos[0], pos[1], schema.nodes.paragraph);
+    }
+  }
+
+  return newTr;
+}
+
+function removeMark(nodes: MdNode[], newTr: Transaction, schema: Schema) {
   const [start] = nodes[0].sourcepos!;
   const [, end] = nodes[nodes.length - 1].sourcepos!;
   const startPos: MdPos = [start[0], start[1]];
   const endPos: MdPos = [end[0], end[1] + 1];
   const pos = getMdToEditorPos(newTr.doc, startPos, endPos);
+
+  newTr = removeCodeBlockBackground(newTr, start, end, schema);
 
   return newTr.removeMark(pos[0], pos[1]);
 }
@@ -68,7 +89,11 @@ function addMark(node: MdNode, newTr: Transaction, schema: Schema) {
       const { start, end, spec } = lineBackground;
       const pos = getMdToEditorPos(newTr.doc, start, end);
 
-      newTr = newTr.setBlockType(pos[0], pos[1], schema.nodes.paragraph, spec.attrs);
+      newTr = newTr.setBlockType(pos[0], pos[1], schema.nodes.paragraph, {
+        codeStart: start,
+        codeEnd: end,
+        ...spec.attrs
+      });
     }
 
     marks.forEach(({ start, end, spec }) => {

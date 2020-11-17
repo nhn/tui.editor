@@ -22,36 +22,52 @@ export function getEditorToMdLine(
   doc: ProsemirrorNode
 ): [number, number] {
   const fragment = doc.content;
-  const startLine = fragment.findIndex(from).index + 1;
-  const endLine =
-    from === to ? startLine : Math.min(fragment.findIndex(to).index + 1, fragment.childCount);
+  const { childCount } = fragment;
+
+  const startLine = Math.min(fragment.findIndex(from).index + 1, childCount);
+  const endLine = from === to ? startLine : Math.min(fragment.findIndex(to).index + 1, childCount);
 
   return [startLine, endLine];
+}
+
+function getEndOffsetWithBlankLine(doc: ProsemirrorNode, to: number, lineRange: [number, number]) {
+  let blankLineTagOffset = 0;
+  const [start, end] = lineRange;
+
+  for (let line = start; line < end; line += 1) {
+    if (!getTextByMdLine(doc, line)) {
+      blankLineTagOffset += 1;
+    }
+  }
+
+  return Math.min(doc.content.size, to + blankLineTagOffset);
 }
 
 export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from): MdSourcepos {
   const collapsed = from === to;
   const startResolvedPos = doc.resolve(from);
-  const [startLine, endLine] = getEditorToMdLine(from, to, doc);
-
-  // To resolve the end offset for blank line
-  if (!collapsed) {
-    let blankLineTagOffset = 0;
-
-    for (let line = startLine; line < endLine; line += 1) {
-      if (!getTextByMdLine(doc, line)) {
-        blankLineTagOffset += 1;
-      }
-    }
-    to = Math.min(doc.content.size, to + blankLineTagOffset);
-  }
+  const lineRange = getEditorToMdLine(from, to, doc);
 
   const startOffset = startResolvedPos.start();
-  const endOffset = collapsed ? startOffset : doc.resolve(to).start();
+  let endOffset = startOffset;
+
+  if (!collapsed) {
+    // To resolve the end offset for blank line
+    to = getEndOffsetWithBlankLine(doc, to, lineRange);
+
+    const endResolvedPos = doc.resolve(to);
+
+    endOffset = endResolvedPos.start();
+
+    // To resolve the end offset excluding document tag size
+    if (endResolvedPos.pos === doc.content.size) {
+      to = doc.content.size - 2;
+    }
+  }
 
   return [
-    [startLine, from - startOffset + 1],
-    [endLine, to - endOffset + 1]
+    [lineRange[0], from - startOffset + 1],
+    [lineRange[1], to - endOffset + 1]
   ];
 }
 

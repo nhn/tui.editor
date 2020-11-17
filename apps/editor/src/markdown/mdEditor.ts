@@ -105,7 +105,14 @@ export default class MdEditor extends EditorBase {
         keymap({
           'Mod-z': undo(),
           'Shift-Mod-z': redo(),
-          ...baseKeymap
+          ...baseKeymap,
+          Enter: (state, dispatch) => {
+            const emptyNode = createParagraph(this.schema, '');
+            const nodes = [emptyNode, emptyNode];
+
+            dispatch!(state.tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)));
+            return true;
+          }
         }),
         history(),
         syntaxHighlight(this.context),
