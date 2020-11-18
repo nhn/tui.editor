@@ -125,14 +125,14 @@ function makeList(listData) {
   return list;
 }
 
-export function makeListFromParagraphs(paras) {
+function makeListFromParagraphs(paras) {
   const listData = createListData(paras);
   const rootChildren = listData.filter(({ parent }) => !parent);
 
   return makeList(rootChildren);
 }
 
-function isMsoParagraphEnd(node) {
+function isMsoListParagraphEnd(node) {
   let nextSibling = node;
 
   while (nextSibling) {
@@ -157,11 +157,11 @@ export function convertMsoParagraphsToList(container) {
   let paras = [];
 
   domUtils.findAll(container, MSO_CLASS_NAME_LIST_PARA).forEach(para => {
-    const msoParaEnd = isMsoParagraphEnd(para.nextSibling);
+    const msoListParaEnd = isMsoListParagraphEnd(para.nextSibling);
 
     paras.push(para);
 
-    if (msoParaEnd) {
+    if (msoListParaEnd) {
       const list = makeListFromParagraphs(paras);
       const { nextSibling } = para;
 
