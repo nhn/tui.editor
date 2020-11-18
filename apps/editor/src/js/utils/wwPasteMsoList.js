@@ -140,11 +140,7 @@ function isMsoListParagraphEnd(node) {
     node = node.nextSibling;
   }
 
-  if (node) {
-    return !MSO_CLASS_NAME_LIST_RX.test(node.className);
-  }
-
-  return true;
+  return node ? !MSO_CLASS_NAME_LIST_RX.test(node.className) : true;
 }
 
 /**
