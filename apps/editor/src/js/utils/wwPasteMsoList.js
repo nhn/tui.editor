@@ -133,17 +133,15 @@ function makeListFromParagraphs(paras) {
 }
 
 function isMsoListParagraphEnd(node) {
-  let nextSibling = node;
-
-  while (nextSibling) {
-    if (domUtils.isElemNode(nextSibling)) {
+  while (node) {
+    if (domUtils.isElemNode(node)) {
       break;
     }
-    nextSibling = nextSibling.nextSibling;
+    node = node.nextSibling;
   }
 
-  if (nextSibling) {
-    return !MSO_CLASS_NAME_LIST_RX.test(nextSibling.className);
+  if (node) {
+    return !MSO_CLASS_NAME_LIST_RX.test(node.className);
   }
 
   return true;
