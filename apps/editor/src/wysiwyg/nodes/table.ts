@@ -11,8 +11,12 @@ import {
   getRowDepthToRemove,
   getCellDepthToRemove,
   getCellIndexesByCursorIndex,
-  getCellPositions
+  getCellPositions,
+  findCellIndexByCursor
 } from '@/wysiwyg/helper/table';
+
+// @TODO move to common file and change path on markdown
+import { createTextSelection } from '@/markdown/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
 
@@ -207,6 +211,58 @@ export class Table extends Node {
     };
   }
 
+  private moveToNextCell(): EditorCommand {
+    return () => (state, dispatch) => {
+      const { schema, tr } = state;
+      const { $from } = state.selection;
+      const foundCell = findCell(schema, $from);
+
+      if (foundCell) {
+        const { depth } = foundCell;
+        const table = $from.node(depth - 3);
+        const cellIndex = findCellIndexByCursor(schema, $from, depth);
+        const cells = getCellPositions(table, $from.start(depth - 3));
+
+        const nextIndex = cells.length - 1 === cellIndex ? cellIndex : cellIndex + 1;
+        const { nodeStart, nodeSize } = cells[nextIndex];
+        const from = nodeStart + nodeSize - 1;
+        const selection = createTextSelection(tr, from, from);
+
+        dispatch!(tr.setSelection(selection).scrollIntoView());
+
+        return true;
+      }
+
+      return false;
+    };
+  }
+
+  private moveToPrevCell(): EditorCommand {
+    return () => (state, dispatch) => {
+      const { schema, tr } = state;
+      const { $from } = state.selection;
+      const foundCell = findCell(schema, $from);
+
+      if (foundCell) {
+        const { depth } = foundCell;
+        const table = $from.node(depth - 3);
+        const cellIndex = findCellIndexByCursor(schema, $from, depth);
+        const cells = getCellPositions(table, $from.start(depth - 3));
+
+        const prevIndex = cells.length - 1 === 0 ? cellIndex : cellIndex - 1;
+        const { nodeStart } = cells[prevIndex];
+        const from = nodeStart + 1;
+        const selection = createTextSelection(tr, from, from);
+
+        dispatch!(tr.setSelection(selection).scrollIntoView());
+
+        return true;
+      }
+
+      return false;
+    };
+  }
+
   commands() {
     return {
       addTable: this.addTable(),
@@ -215,7 +271,9 @@ export class Table extends Node {
       removeColumn: this.removeColumn(),
       addRow: this.addRow(),
       removeRow: this.removeRow(),
-      alignColumn: this.alignColumn()
+      alignColumn: this.alignColumn(),
+      moveToNextCell: this.moveToNextCell(),
+      moveToPrevCell: this.moveToPrevCell()
     };
   }
 }

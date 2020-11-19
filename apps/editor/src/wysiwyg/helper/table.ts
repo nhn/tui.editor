@@ -117,9 +117,30 @@ export function getCellIndexesByCursorIndex(table: Node, cursorIndex: number) {
   const rowCount = tableBody.childCount + 1;
   const indexes = [];
 
-  for (let i = 0; i < rowCount; i += 1) {
-    indexes.push(i * columnCount + cursorIndex);
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+    indexes.push(rowIndex * columnCount + cursorIndex);
   }
 
   return indexes;
+}
+
+export function findCellIndexByCursor({ nodes }: Schema, pos: ResolvedPos, depth: number) {
+  const { tableBody } = nodes;
+  const theadOrTbody = pos.node(depth - 2);
+  const tableRow = pos.node(depth - 1);
+  const columnCount = tableRow.childCount;
+  const columnIndex = pos.index(depth - 1);
+  let rowIndex = 0;
+
+  theadOrTbody.forEach((node: Node, rowOffset: number, index: number) => {
+    if (node === tableRow) {
+      rowIndex = index;
+    }
+  });
+
+  if (theadOrTbody.type === tableBody) {
+    rowIndex += 1;
+  }
+
+  return rowIndex * columnCount + columnIndex;
 }
