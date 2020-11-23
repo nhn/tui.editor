@@ -129,15 +129,9 @@ class WwTablePasteHelper {
 
     container.innerHTML = html;
 
-    const pTagsContainer = document.createElement('div');
+    convertMsoParagraphsToList(container);
 
-    domUtils.findAll(container, 'p').forEach(pTag => {
-      pTagsContainer.appendChild(pTag);
-    });
-
-    convertMsoParagraphsToList(pTagsContainer);
-
-    return pTagsContainer.innerHTML;
+    return container.innerHTML;
   }
 
   /**
@@ -156,10 +150,6 @@ class WwTablePasteHelper {
       html = html.slice(startFragmentIndex + startFramgmentStr.length, endFragmentIndex);
     }
 
-    if (isFromMso(html)) {
-      html = this._convertToMsoList(html);
-    }
-
     // Wrap with <tr> if html contains dangling <td> tags
     // Dangling <td> tag is that tag does not have <tr> as parent node.
     if (/<\/td>((?!<\/tr>)[\s\S])*$/i.test(html)) {
@@ -169,6 +159,10 @@ class WwTablePasteHelper {
     // Dangling <tr> tag is that tag does not have <table> as parent node.
     if (/<\/tr>((?!<\/table>)[\s\S])*$/i.test(html)) {
       html = `<TABLE>${html}</TABLE>`;
+    }
+
+    if (isFromMso(html)) {
+      html = this._convertToMsoList(html);
     }
 
     container.appendChild(this._getSanitizedHtml(html));
