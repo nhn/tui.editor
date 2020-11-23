@@ -1,4 +1,4 @@
-import { EditorState } from 'prosemirror-state';
+import { EditorState, Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Schema, Node } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
@@ -9,6 +9,7 @@ import EditorBase, { StateOptions } from '@/base';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import { getWwCommands } from '@/commands/wwCommands';
 
+import { handleMouseDown } from '@/wysiwyg/helper/tableSelection';
 // @TODO move to common file and change path on markdown
 import { createTextSelection } from '@/markdown/helper/manipulation';
 
@@ -65,7 +66,14 @@ export default class WysiwygEditor extends EditorBase {
           'Shift-Mod-z': redo(),
           ...baseKeymap
         }),
-        history()
+        history(),
+        new Plugin({
+          props: {
+            handleDOMEvents: {
+              mousedown: handleMouseDown
+            }
+          }
+        })
       ],
       ...addedStates
     });
