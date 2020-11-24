@@ -11,16 +11,18 @@ export class TableBodyCell extends Node {
     return {
       content: 'text*',
       attrs: {
-        align: { default: null }
+        align: { default: null },
+        className: { default: null }
       },
       parseDOM: [{ tag: 'td' }],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        const { align } = attrs;
+        const { align, className } = attrs;
 
         return [
           'td',
           {
-            ...(align && { align })
+            ...(align && { align }),
+            ...(className && { class: className })
           },
           0
         ];

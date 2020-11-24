@@ -2,7 +2,9 @@ import { ResolvedPos, Node } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 
 import { findNodeBy } from '@/wysiwyg/helper/node';
-import { findCell, findRowIndex } from '@/wysiwyg/helper/table';
+import { CellPos, findCell, findRowIndex, getCellPositions } from '@/wysiwyg/helper/table';
+
+const SELECTED_CELL_CLASS_NAME = 'te-cell-selected';
 
 interface EventHandlers {
   drag: (ev: Event) => void;
@@ -33,7 +35,7 @@ function getCellPositionByMousePosition(view: EditorView, { clientX, clientY }: 
 
     if (foundRow) {
       const { depth } = foundRow;
-      const cellPos = resolvedPos.start(depth + 1);
+      const cellPos = resolvedPos.before(depth + 1);
 
       return resolvedPos.node(0).resolve(cellPos);
     }
@@ -45,21 +47,29 @@ function getCellPositionByMousePosition(view: EditorView, { clientX, clientY }: 
 class TableSelection {
   private view: EditorView;
 
+  private cellPositions: CellPos[];
+
   private handlers: EventHandlers;
 
-  constructor(view: EditorView) {
+  constructor(view: EditorView, ev: Event) {
     this.view = view;
+
+    this.cellPositions = [];
 
     this.handlers = {
       drag: this.drag.bind(this),
       dragStop: this.dragStop.bind(this)
     };
 
-    this.dragStart();
+    this.dragStart(ev);
   }
 
-  dragStart() {
+  removeSelection(ev: Event) {}
+
+  dragStart(ev: Event) {
     const { root } = this.view;
+
+    this.removeSelection(ev);
 
     root.addEventListener('mousemove', this.handlers.drag);
     root.addEventListener('mouseup', this.handlers.dragStop);
@@ -89,7 +99,7 @@ class TableSelection {
   }
 
   selectCells(start: ResolvedPos, ev: MouseEvent) {
-    const { schema } = this.view.state;
+    const { schema, tr } = this.view.state;
     const end = getCellPositionByMousePosition(this.view, ev);
 
     if (start && end) {
@@ -97,9 +107,13 @@ class TableSelection {
 
       if (startCell) {
         const { depth } = startCell;
+        const table = start.node(depth - 3);
+        const cells = getCellPositions(table, start.start(depth - 3));
+
         const tableBody = start.node(depth - 2);
         const startRow = start.node(depth - 1);
         const endRow = end.node(depth - 1);
+        const columnCount = startRow.childCount;
 
         const startRowIndex = findRowIndex(tableBody, startRow);
         const startColumnIndex = start.index(depth - 1);
@@ -107,14 +121,38 @@ class TableSelection {
         const endRowIndex = findRowIndex(tableBody, endRow);
         const endColumnIndex = end.index(depth - 1);
 
-        console.log([startRowIndex, startColumnIndex], [endRowIndex, endColumnIndex]);
+        const [startIndex, endIndex] = [
+          (startRowIndex + 1) * columnCount + startColumnIndex,
+          (endRowIndex + 1) * columnCount + endColumnIndex
+        ];
+
+        const sIndex = Math.min(startIndex, endIndex);
+        const eIndex = Math.max(startIndex, endIndex);
+
+        const positions = cells.slice(sIndex, eIndex + 1);
+
+        this.cellPositions.forEach(({ nodeStart }: CellPos) => {
+          tr.setNodeMarkup(nodeStart, null!, { className: null });
+        });
+
+        positions.forEach(({ nodeStart }: CellPos) => {
+          tr.setNodeMarkup(nodeStart, null!, { className: SELECTED_CELL_CLASS_NAME });
+        });
+
+        this.cellPositions = positions;
+
+        this.view.dispatch!(tr);
+
+        return true;
       }
     } else {
       this.dragStop();
     }
+
+    return false;
   }
 }
 
-export function handleMouseDown(view: EditorView) {
-  return !!new TableSelection(view);
+export function handleMouseDown(view: EditorView, ev: Event) {
+  return !!new TableSelection(view, ev);
 }

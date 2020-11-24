@@ -2,6 +2,11 @@ import { Node, Schema, ResolvedPos } from 'prosemirror-model';
 
 import { findNodeBy } from '@/wysiwyg/helper/node';
 
+export interface CellPos {
+  nodeStart: number;
+  nodeSize: number;
+}
+
 export function createTableHead(schema: Schema, columns: number, data: string[]) {
   const { tableHead } = schema.nodes;
   const tableRows = createTableRows(schema, columns, 1, false, data);
@@ -86,10 +91,7 @@ export function findCell({ nodes }: Schema, pos: ResolvedPos) {
 }
 
 function getHeadOrBodyCellPositions(headOrBody: Node, startPos: number) {
-  const positions: {
-    nodeStart: number;
-    nodeSize: number;
-  }[] = [];
+  const positions: CellPos[] = [];
 
   headOrBody.forEach((row: Node, rowOffset: number) => {
     row.forEach(({ nodeSize }: Node, cellOffset: number) => {
