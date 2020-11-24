@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/react-editor",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "TOAST UI Editor for React",
   "main": "dist/toastui-react-editor.js",
   "files": [
@@ -59,6 +59,6 @@
     "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {
-    "@toast-ui/editor": "^2.5.0"
+    "@toast-ui/editor": "^2.5.1"
   }
 }
