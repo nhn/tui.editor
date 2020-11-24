@@ -4,7 +4,8 @@ import {
   CodeBlockNode,
   ListNode,
   LinkNode,
-  BlockNode
+  BlockNode,
+  CustomBlockNode
 } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
 import { HTMLConvertorMap } from './render';
@@ -194,5 +195,22 @@ export const baseConvertors: HTMLConvertorMap = {
         ...(title && { title: escapeXml(title) })
       }
     };
+  },
+
+  customBlock(node) {
+    const infoStr = (node as CustomBlockNode).info;
+    const infoWords = infoStr ? infoStr.split(/\s+/) : [];
+    const classNames = [];
+    if (infoWords.length > 0 && infoWords[0].length > 0) {
+      classNames.push(`language-${escapeXml(infoWords[0])}`);
+    }
+
+    return [
+      { type: 'openTag', tagName: 'div', outerNewLine: true },
+      { type: 'openTag', tagName: 'div', classNames },
+      { type: 'text', content: node.literal! },
+      { type: 'closeTag', tagName: 'div' },
+      { type: 'closeTag', tagName: 'div', outerNewLine: true }
+    ];
   }
 };

@@ -9,7 +9,7 @@ import {
   tableDelimRow,
   tableDelimCell
 } from './gfm/tableBlockHandler';
-import { ListNode, BlockNode, CodeBlockNode, HtmlBlockNode } from './node';
+import { ListNode, BlockNode, CodeBlockNode, HtmlBlockNode, CustomBlockNode } from './node';
 import {
   peek,
   isBlank,
@@ -18,7 +18,8 @@ import {
   reClosingCodeFence,
   CODE_INDENT,
   C_OPEN_BRACKET,
-  C_GREATERTHAN
+  C_GREATERTHAN,
+  reClosingCustomBlock
 } from './blockHelper';
 import { unescapeString } from './common';
 
@@ -267,6 +268,40 @@ const refDef: BlockHandler = {
   acceptsLines: true
 };
 
+const customBlock: BlockHandler = {
+  continue(parser, container: CustomBlockNode) {
+    const ln = parser.currentLine;
+    const match = ln.slice(parser.nextNonspace).match(reClosingCustomBlock);
+    if (match) {
+      // closing custom block - we're at end of line, so we can return
+      parser.lastLineLength = match[0].length;
+      parser.finalize(container as BlockNode, parser.lineNumber);
+      return Process.Finished;
+    }
+    return Process.Go;
+  },
+  finalize(_, block: CustomBlockNode) {
+    if (block.stringContent === null) {
+      return;
+    }
+    if (block.isCustomBlock) {
+      // first line becomes info string
+      const content = block.stringContent;
+      const newlinePos = content.indexOf('\n');
+      const firstLine = content.slice(0, newlinePos);
+      const rest = content.slice(newlinePos + 1);
+      const infoString = firstLine.match(/^(\s*)(.*)/);
+      block.info = unescapeString(infoString![2].trim());
+      block.literal = rest;
+    }
+    block.stringContent = null; // allow GC
+  },
+  canContain() {
+    return false;
+  },
+  acceptsLines: true
+};
+
 export const blockHandlers = {
   document,
   list,
@@ -284,5 +319,6 @@ export const blockHandlers = {
   tableCell,
   tableDelimRow,
   tableDelimCell,
-  refDef
+  refDef,
+  customBlock
 };

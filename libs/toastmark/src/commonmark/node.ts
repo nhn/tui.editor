@@ -17,7 +17,8 @@ export type BlockNodeType =
   | 'tableCell'
   | 'tableDelimRow'
   | 'tableDelimCell'
-  | 'refDef';
+  | 'refDef'
+  | 'customBlock';
 
 export type InlineNodeType =
   | 'code'
@@ -271,6 +272,12 @@ export class RefDefNode extends BlockNode {
   public label = '';
 }
 
+export class CustomBlockNode extends BlockNode {
+  public isCustomBlock = true;
+  public syntaxLength = 0;
+  public offset = -1;
+  public info: string | null = null;
+}
 export function createNode(type: 'heading', sourcepos?: SourcePos): HeadingNode;
 export function createNode(type: 'list' | 'item', sourcepos?: SourcePos): ListNode;
 export function createNode(type: 'codeBlock', sourcepos?: SourcePos): CodeBlockNode;
@@ -280,6 +287,7 @@ export function createNode(type: 'code', sourcepos?: SourcePos): CodeNode;
 export function createNode(type: 'table', sourcepos?: SourcePos): TableNode;
 export function createNode(type: 'tableCell', sourcepos?: SourcePos): TableNode;
 export function createNode(type: 'refDef', sourcepos?: SourcePos): RefDefNode;
+export function createNode(type: 'customBlock', sourcepos?: SourcePos): CustomBlockNode;
 export function createNode(type: BlockNodeType, sourcepos?: SourcePos): BlockNode;
 export function createNode(type: NodeType, sourcepos?: SourcePos): Node;
 export function createNode(type: NodeType, sourcepos?: SourcePos) {
@@ -312,6 +320,8 @@ export function createNode(type: NodeType, sourcepos?: SourcePos) {
       return new CodeNode(type, sourcepos);
     case 'refDef':
       return new RefDefNode(type, sourcepos);
+    case 'customBlock':
+      return new CustomBlockNode(type, sourcepos);
     default:
       return new Node(type, sourcepos) as Node;
   }
