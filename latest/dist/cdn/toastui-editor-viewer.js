@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 2.5.0 | Wed Oct 21 2020
+ * @version 2.5.1 | Tue Nov 24 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -315,21 +315,19 @@ var getPrevOffsetNodeUntil = function getPrevOffsetNodeUntil(node, index, untilN
 };
 
 var getParentUntilBy = function getParentUntilBy(node, matchCondition, stopCondition) {
-  var foundedNode;
-
   while (node.parentNode && !matchCondition(node.parentNode)) {
     node = node.parentNode;
 
-    if (stopCondition && stopCondition(node.parentNode)) {
+    if (stopCondition && stopCondition(node)) {
       break;
     }
   }
 
   if (matchCondition(node.parentNode)) {
-    foundedNode = node;
+    return node;
   }
 
-  return foundedNode;
+  return null;
 };
 /**
  * get parent node until paseed node name
@@ -1100,13 +1098,15 @@ function isContain(element, contained) {
  * Gets closest node matching by selector
  * @param {Node} node - target node
  * @param {string|Node} found - selector or element to find node
+ * @param {Node} [root] - root node
  * @returns {?Node} - found node
  * @ignore
  */
 
 
-function closest(node, found) {
+function closest(node, found, root) {
   var condition;
+  root = root || document;
 
   if (tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_2___default()(found)) {
     condition = function condition(target) {
@@ -1118,7 +1118,7 @@ function closest(node, found) {
     };
   }
 
-  while (node && node !== document) {
+  while (node && node !== root) {
     if (isElemNode(node) && condition(node)) {
       return node;
     }
@@ -3756,7 +3756,7 @@ function getPluginInfo(plugins) {
 
 /*!
  * to-mark
- * @version 1.0.1 | Wed Oct 21 2020
+ * @version 1.0.1 | Tue Nov 24 2020
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)

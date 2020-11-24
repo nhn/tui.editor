@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Editor : i18n
- * @version 2.5.0
+ * @version 2.5.1
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */

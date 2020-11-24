@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 2.5.0 | Wed Oct 21 2020
+ * @version 2.5.1 | Tue Nov 24 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -315,21 +315,19 @@ var getPrevOffsetNodeUntil = function getPrevOffsetNodeUntil(node, index, untilN
 };
 
 var getParentUntilBy = function getParentUntilBy(node, matchCondition, stopCondition) {
-  var foundedNode;
-
   while (node.parentNode && !matchCondition(node.parentNode)) {
     node = node.parentNode;
 
-    if (stopCondition && stopCondition(node.parentNode)) {
+    if (stopCondition && stopCondition(node)) {
       break;
     }
   }
 
   if (matchCondition(node.parentNode)) {
-    foundedNode = node;
+    return node;
   }
 
-  return foundedNode;
+  return null;
 };
 /**
  * get parent node until paseed node name
@@ -1100,13 +1098,15 @@ function isContain(element, contained) {
  * Gets closest node matching by selector
  * @param {Node} node - target node
  * @param {string|Node} found - selector or element to find node
+ * @param {Node} [root] - root node
  * @returns {?Node} - found node
  * @ignore
  */
 
 
-function closest(node, found) {
+function closest(node, found, root) {
   var condition;
+  root = root || document;
 
   if (tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_2___default()(found)) {
     condition = function condition(target) {
@@ -1118,7 +1118,7 @@ function closest(node, found) {
     };
   }
 
-  while (node && node !== document) {
+  while (node && node !== root) {
     if (isElemNode(node) && condition(node)) {
       return node;
     }
@@ -3875,7 +3875,7 @@ function getPluginInfo(plugins) {
 
 /*!
  * to-mark
- * @version 1.0.1 | Wed Oct 21 2020
+ * @version 1.0.1 | Tue Nov 24 2020
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
@@ -8682,7 +8682,7 @@ var addClass_default = /*#__PURE__*/__webpack_require__.n(addClass);
 var removeClass = __webpack_require__(6);
 var removeClass_default = /*#__PURE__*/__webpack_require__.n(removeClass);
 
-// EXTERNAL MODULE: /Users/tigger/Desktop/project/tui.editor/libs/toastmark/dist/toastmark.js
+// EXTERNAL MODULE: /Users/nhn/project/tui.editor/libs/toastmark/dist/toastmark.js
 var toastmark = __webpack_require__(22);
 
 // EXTERNAL MODULE: ./src/js/htmlRenderConvertors.js
@@ -11376,9 +11376,9 @@ var dom = __webpack_require__(0);
 
 // CONCATENATED MODULE: ./src/js/utils/wwPasteMsoList.js
 
+var MSO_CLASS_NAME_LIST_PARA = 'p.MsoListParagraph';
 var MSO_CLASS_NAME_LIST_RX = /MsoListParagraph/;
-var MSO_CLASS_NAME_NORMAL_RX = /MsoNormal/;
-var MSO_STYLE_PREFIX_RX = /style=.*mso-/;
+var MSO_STYLE_PREFIX_RX = /style=(.|\n)*mso-/;
 var MSO_STYLE_LIST_RX = /mso-list:(.*)/;
 var MSO_TAG_NAME_RX = /O:P/;
 var UNORDERED_LIST_BULLET_RX = /^(n|u|l)/;
@@ -11400,12 +11400,30 @@ function getListItemContents(para) {
   while (walker.nextNode()) {
     var node = walker.currentNode;
 
-    if (dom["a" /* default */].isElemNode(node) && (isFromMso(node.outerHTML) || MSO_TAG_NAME_RX.test(node.nodeName))) {
-      removedNodes.push(node);
+    if (dom["a" /* default */].isElemNode(node)) {
+      var outerHTML = node.outerHTML,
+          textContent = node.textContent;
+      var msoSpan = MSO_STYLE_PREFIX_RX.test(outerHTML);
+      var bulletSpan = MSO_STYLE_LIST_RX.test(outerHTML);
+
+      if (msoSpan && !bulletSpan && textContent) {
+        removedNodes.push([node, true]);
+      } else if (MSO_TAG_NAME_RX.test(node.nodeName) || msoSpan && !textContent || bulletSpan) {
+        removedNodes.push([node, false]);
+      }
     }
   }
 
-  removedNodes.forEach(dom["a" /* default */].remove);
+  removedNodes.forEach(function (_ref) {
+    var node = _ref[0],
+        isUnwrap = _ref[1];
+
+    if (isUnwrap) {
+      dom["a" /* default */].unwrap(node);
+    } else {
+      dom["a" /* default */].remove(node);
+    }
+  });
   return para.innerHTML.trim();
 }
 
@@ -11489,11 +11507,23 @@ function makeList(listData) {
 
 function makeListFromParagraphs(paras) {
   var listData = createListData(paras);
-  var rootChildren = listData.filter(function (_ref) {
-    var parent = _ref.parent;
+  var rootChildren = listData.filter(function (_ref2) {
+    var parent = _ref2.parent;
     return !parent;
   });
   return makeList(rootChildren);
+}
+
+function isMsoListParagraphEnd(node) {
+  while (node) {
+    if (dom["a" /* default */].isElemNode(node)) {
+      break;
+    }
+
+    node = node.nextSibling;
+  }
+
+  return node ? !MSO_CLASS_NAME_LIST_RX.test(node.className) : true;
 }
 /**
  * Convert pargraphs of ms office to standard list element
@@ -11503,28 +11533,26 @@ function makeListFromParagraphs(paras) {
 
 function convertMsoParagraphsToList(container) {
   var paras = [];
-  dom["a" /* default */].findAll(container, 'p').forEach(function (para) {
-    var className = para.className,
-        nextSibling = para.nextSibling;
+  dom["a" /* default */].findAll(container, MSO_CLASS_NAME_LIST_PARA).forEach(function (para) {
+    var msoListParaEnd = isMsoListParagraphEnd(para.nextSibling);
+    paras.push(para);
 
-    if (MSO_CLASS_NAME_LIST_RX.test(className)) {
-      paras.push(para);
+    if (msoListParaEnd) {
+      var list = makeListFromParagraphs(paras);
+      var nextSibling = para.nextSibling;
 
-      if (!nextSibling || nextSibling && MSO_CLASS_NAME_NORMAL_RX.test(nextSibling.className)) {
-        var list = makeListFromParagraphs(paras);
-        var target = nextSibling || container;
-
-        if (nextSibling) {
-          dom["a" /* default */].prepend(target, list);
-        } else {
-          dom["a" /* default */].append(target, list);
-        }
-
-        paras.forEach(dom["a" /* default */].remove);
-        paras = [];
+      if (nextSibling) {
+        dom["a" /* default */].insertBefore(list, nextSibling);
+      } else {
+        dom["a" /* default */].append(container, list);
       }
+
+      paras = [];
     }
+
+    dom["a" /* default */].remove(para);
   });
+  return container;
 }
 // EXTERNAL MODULE: ./node_modules/tui-code-snippet/domUtil/matches.js
 var matches = __webpack_require__(13);
@@ -12070,9 +12098,12 @@ var wwPasteContentHelper_WwPasteContentHelper = /*#__PURE__*/function () {
   ;
 
   _proto._getListDepth = function _getListDepth(el) {
-    var depth = 0;
+    var depth = 0; // Since the list outside the editor can be found,
+    // so make sure to traverse only the editor's container.
 
-    while (el) {
+    var root = this.wwe.getBody();
+
+    while (el && el !== root) {
       if (el.tagName === 'UL' || el.tagName === 'OL') {
         depth += 1;
       }
@@ -12269,12 +12300,8 @@ var wwTablePasteHelper_WwTablePasteHelper = /*#__PURE__*/function () {
   _proto._convertToMsoList = function _convertToMsoList(html) {
     var container = document.createElement('div');
     container.innerHTML = html;
-    var pTagsContainer = document.createElement('div');
-    dom["a" /* default */].findAll(container, 'p').forEach(function (pTag) {
-      pTagsContainer.appendChild(pTag);
-    });
-    convertMsoParagraphsToList(pTagsContainer);
-    return pTagsContainer.innerHTML;
+    convertMsoParagraphsToList(container);
+    return container.innerHTML;
   }
   /**
    * Paste html of clipboard
@@ -12292,10 +12319,6 @@ var wwTablePasteHelper_WwTablePasteHelper = /*#__PURE__*/function () {
 
     if (startFragmentIndex > -1 && endFragmentIndex > -1) {
       html = html.slice(startFragmentIndex + startFramgmentStr.length, endFragmentIndex);
-    }
-
-    if (isFromMso(html)) {
-      html = this._convertToMsoList(html);
     } // Wrap with <tr> if html contains dangling <td> tags
     // Dangling <td> tag is that tag does not have <tr> as parent node.
 
@@ -12308,6 +12331,10 @@ var wwTablePasteHelper_WwTablePasteHelper = /*#__PURE__*/function () {
 
     if (/<\/tr>((?!<\/table>)[\s\S])*$/i.test(html)) {
       html = "<TABLE>" + html + "</TABLE>";
+    }
+
+    if (isFromMso(html)) {
+      html = this._convertToMsoList(html);
     }
 
     container.appendChild(this._getSanitizedHtml(html));
@@ -13579,7 +13606,7 @@ var wwListManager_WwListManager = /*#__PURE__*/function () {
     return parentNode;
   }
   /**
-   * Find LI node inside TD
+   * Find LI node inside cell (TH, TD)
    * If target node is not li and parents of taget node is not li, return null.
    * @param {Node} targetNode - startContainer or endContainer of range
    * @param {Number} offset - offset
@@ -13588,12 +13615,17 @@ var wwListManager_WwListManager = /*#__PURE__*/function () {
    */
   ;
 
-  _proto._findLINodeInsideTD = function _findLINodeInsideTD(targetNode, offset) {
+  _proto._findLINodeInsideCell = function _findLINodeInsideCell(targetNode, offset) {
     var liNode = null;
-    var liParent = dom["a" /* default */].getParentUntilBy(targetNode, function (node) {
-      return node && dom["a" /* default */].isListNode(node);
-    }, function (node) {
-      return node && node.nodeName === 'TD';
+
+    if (targetNode && dom["a" /* default */].isCellNode(targetNode)) {
+      targetNode = targetNode.firstChild;
+    }
+
+    var liParent = dom["a" /* default */].getParentUntilBy(targetNode, function (parentNode) {
+      return parentNode && dom["a" /* default */].isListNode(parentNode);
+    }, function (parentNode) {
+      return parentNode && dom["a" /* default */].isCellNode(parentNode);
     });
 
     if (liParent) {
@@ -13617,7 +13649,7 @@ var wwListManager_WwListManager = /*#__PURE__*/function () {
   ;
 
   _proto._getFirstNodeInLineOfTable = function _getFirstNodeInLineOfTable(targetNode, offset) {
-    var startNode = this._findLINodeInsideTD(targetNode, offset);
+    var startNode = this._findLINodeInsideCell(targetNode, offset);
 
     if (!startNode) {
       startNode = this._getParentNodeBeforeTD(targetNode, offset);
@@ -13642,7 +13674,7 @@ var wwListManager_WwListManager = /*#__PURE__*/function () {
   ;
 
   _proto._getLastNodeInLineOfTable = function _getLastNodeInLineOfTable(targetNode, offset) {
-    var endNode = this._findLINodeInsideTD(targetNode, offset);
+    var endNode = this._findLINodeInsideCell(targetNode, offset);
 
     if (!endNode) {
       endNode = this._getParentNodeBeforeTD(targetNode, offset);
@@ -13687,7 +13719,7 @@ var wwListManager_WwListManager = /*#__PURE__*/function () {
     if (node.nodeName === 'LI' && !nextSibling) {
       var parentNode = node.parentNode;
 
-      while (parentNode.nodeName !== 'TD') {
+      while (!dom["a" /* default */].isCellNode(parentNode)) {
         if (parentNode.nextSibling) {
           nextSibling = parentNode.nextSibling;
           break;
@@ -16905,7 +16937,7 @@ function sanitizeHtmlCode(code) {
 }
 
 /* harmony default export */ var wwCodeBlockManager = (wwCodeBlockManager_WwCodeBlockManager);
-// EXTERNAL MODULE: /Users/tigger/Desktop/project/tui.editor/libs/squire/build/squire.js
+// EXTERNAL MODULE: /Users/nhn/project/tui.editor/libs/squire/build/squire.js
 var build_squire = __webpack_require__(55);
 var squire_default = /*#__PURE__*/__webpack_require__.n(build_squire);
 
@@ -17201,7 +17233,7 @@ var squireExt_SquireExt = /*#__PURE__*/function (_Squire) {
   };
 
   _proto.replaceParent = function replaceParent(node, from, to) {
-    var target = dom["a" /* default */].closest(node, from);
+    var target = dom["a" /* default */].closest(node, from, this.getBody());
 
     if (target) {
       dom["a" /* default */].wrapInner(target, to);
@@ -24426,7 +24458,7 @@ var defaultUI_DefaultUI = /*#__PURE__*/function () {
 // EXTERNAL MODULE: ./src/js/codeBlockManager.js
 var codeBlockManager = __webpack_require__(30);
 
-// EXTERNAL MODULE: /Users/tigger/Desktop/project/tui.editor/libs/to-mark/dist/to-mark.js
+// EXTERNAL MODULE: /Users/nhn/project/tui.editor/libs/to-mark/dist/to-mark.js
 var to_mark = __webpack_require__(32);
 var to_mark_default = /*#__PURE__*/__webpack_require__.n(to_mark);
 
