@@ -9,7 +9,8 @@ import EditorBase, { StateOptions } from '@/base';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import { getWwCommands } from '@/commands/wwCommands';
 
-import { handleMouseDown } from '@/wysiwyg/helper/tableSelection';
+import { tableSelectionPlugin } from '@/wysiwyg/plugins/tableSelection';
+
 // @TODO move to common file and change path on markdown
 import { createTextSelection } from '@/markdown/helper/manipulation';
 
@@ -67,13 +68,7 @@ export default class WysiwygEditor extends EditorBase {
           ...baseKeymap
         }),
         history(),
-        new Plugin({
-          props: {
-            handleDOMEvents: {
-              mousedown: handleMouseDown
-            }
-          }
-        })
+        tableSelectionPlugin()
       ],
       ...addedStates
     });

@@ -130,17 +130,24 @@ export function findCellIndexByCursor({ nodes }: Schema, pos: ResolvedPos, depth
   const tableRow = pos.node(depth - 1);
   const columnCount = tableRow.childCount;
   const columnIndex = pos.index(depth - 1);
-  let rowIndex = 0;
 
-  theadOrTbody.forEach((node: Node, rowOffset: number, index: number) => {
-    if (node === tableRow) {
-      rowIndex = index;
-    }
-  });
+  let rowIndex = findRowIndex(theadOrTbody, tableRow);
 
   if (theadOrTbody.type === tableBody) {
     rowIndex += 1;
   }
 
   return rowIndex * columnCount + columnIndex;
+}
+
+export function findRowIndex(tbodyOrThead: Node, foundRow: Node) {
+  let rowIndex = -1;
+
+  tbodyOrThead.forEach((node: Node, _: number, index: number) => {
+    if (node === foundRow) {
+      rowIndex = index;
+    }
+  });
+
+  return rowIndex;
 }
