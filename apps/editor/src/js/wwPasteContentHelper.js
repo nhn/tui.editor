@@ -558,11 +558,12 @@ class WwPasteContentHelper {
    * @private
    */
   _getListDepth(el) {
-    const root = this.wwe.getBody();
     let depth = 0;
 
-    // Since the parent of the editor's container is searched until the list,
-    // a condition for comparing root has been added.
+    // Since the list outside the editor can be found,
+    // so make sure to traverse only the editor's container.
+    const root = this.wwe.getBody();
+
     while (el && el !== root) {
       if (el.tagName === 'UL' || el.tagName === 'OL') {
         depth += 1;
