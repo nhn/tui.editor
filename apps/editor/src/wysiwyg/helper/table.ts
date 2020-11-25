@@ -1,7 +1,6 @@
 import { Node, Schema, ResolvedPos } from 'prosemirror-model';
 
 import { findNodeBy } from '@/wysiwyg/helper/node';
-import { resolve } from 'path';
 
 export interface CellPos {
   nodeStart: number;
@@ -106,7 +105,7 @@ function getHeadOrBodyCellPositions(headOrBody: Node, startPos: number) {
   return positions;
 }
 
-export function getCellPositionsByResolvedPos(cellResolvedPos: ResolvedPos) {
+export function getAllCellPositions(cellResolvedPos: ResolvedPos) {
   const depth = cellResolvedPos.depth - 2;
   const table = cellResolvedPos.node(depth);
   const tablePos = cellResolvedPos.start(depth);
@@ -161,4 +160,11 @@ export function findRowIndex(tbodyOrThead: Node, foundRow: Node) {
   });
 
   return rowIndex;
+}
+
+export function getRowIndex(node: Node, cellPos: ResolvedPos) {
+  const { pos, parentOffset } = cellPos;
+  const rowPos = node.resolve(pos - parentOffset - 1);
+
+  return rowPos.index();
 }

@@ -11,16 +11,18 @@ export class TableHeadCell extends Node {
     return {
       content: 'text*',
       attrs: {
-        align: { default: null }
+        align: { default: null },
+        className: { default: null }
       },
       parseDOM: [{ tag: 'th' }],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        const { align } = attrs;
+        const { align, className } = attrs;
 
         return [
           'th',
           {
-            ...(align && { align })
+            ...(align && { align }),
+            ...(className && { class: className })
           },
           0
         ];
