@@ -162,9 +162,15 @@ export function findRowIndex(tbodyOrThead: Node, foundRow: Node) {
   return rowIndex;
 }
 
-export function getRowIndex(node: Node, cellPos: ResolvedPos) {
+export function getRowIndex(cellPos: ResolvedPos, node: Node, { nodes }: Schema) {
+  const { tableHeadCell } = nodes;
   const { pos, parentOffset } = cellPos;
-  const rowPos = node.resolve(pos - parentOffset - 1);
 
-  return rowPos.index();
+  let rowIndex = node.resolve(pos - parentOffset - 1).index();
+
+  if (cellPos.nodeAfter!.type !== tableHeadCell) {
+    rowIndex += 1;
+  }
+
+  return rowIndex;
 }
