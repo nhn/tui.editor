@@ -56,7 +56,7 @@
       "example21-placeholder": "21. Placeholder",
       "example22-using-custom-sanitizer": "22. Using Custom HTML Sanitizer"
     },
-    "globalErrorLogVariable": true
+    "globalErrorLogVariable": "errorLogs"
   },
   "pathPrefix": "tui.editor"
 }
