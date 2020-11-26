@@ -162,7 +162,7 @@ export function findRowIndex(tbodyOrThead: Node, foundRow: Node) {
   return rowIndex;
 }
 
-export function getRowIndex(cellPos: ResolvedPos, node: Node, { nodes }: Schema) {
+export function getCellPosition(cellPos: ResolvedPos, node: Node, { nodes }: Schema) {
   const { tableHeadCell } = nodes;
   const { pos, parentOffset } = cellPos;
 
@@ -172,5 +172,19 @@ export function getRowIndex(cellPos: ResolvedPos, node: Node, { nodes }: Schema)
     rowIndex += 1;
   }
 
-  return rowIndex;
+  const columnIndex = cellPos.index();
+
+  return [rowIndex, columnIndex];
+}
+
+export function isInCellElement(node: HTMLElement, root: Element) {
+  while (node && node !== root) {
+    if (node.nodeName === 'TD' || node.nodeName === 'TH') {
+      return true;
+    }
+
+    node = node.parentNode as HTMLElement;
+  }
+
+  return false;
 }

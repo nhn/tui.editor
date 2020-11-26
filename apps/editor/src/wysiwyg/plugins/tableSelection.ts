@@ -2,7 +2,13 @@ import { ResolvedPos } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { CellPos, findCell, getAllCellPositions, getRowIndex } from '@/wysiwyg/helper/table';
+import {
+  CellPos,
+  findCell,
+  isInCellElement,
+  getAllCellPositions,
+  getCellPosition
+} from '@/wysiwyg/helper/table';
 // @TODO move to common file and change path on markdown
 import { createTextSelection } from '@/markdown/helper/manipulation';
 
@@ -11,18 +17,6 @@ const SELECTED_CELL_CLASS_NAME = 'te-cell-selected';
 interface EventHandlers {
   drag: (ev: Event) => void;
   dragStop: () => void;
-}
-
-function isInCellElement(node: HTMLElement, root: Element) {
-  while (node && node !== root) {
-    if (node.nodeName === 'TD' || node.nodeName === 'TH') {
-      return true;
-    }
-
-    node = node.parentNode as HTMLElement;
-  }
-
-  return false;
 }
 
 class TableSelection {
@@ -73,24 +67,15 @@ class TableSelection {
 
     root.removeEventListener('mousemove', this.handlers.drag);
     root.removeEventListener('mouseup', this.handlers.dragStop);
-
-    // prototyping
-    const { nodeStart, nodeSize } = this.selectedCellsPos.pop()!;
-    const from = nodeStart + nodeSize - 1;
-
-    const { tr } = this.view.state;
-    const selection = createTextSelection(tr, from, from);
-
-    this.view.dispatch!(tr.setSelection(selection).scrollIntoView());
   }
 
   getRange(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
     const { doc, schema } = this.view.state;
-    const startRowIndex = getRowIndex(startCellPos, doc, schema);
-    const startColumnIndex = startCellPos.index();
-    const endRowIndex = getRowIndex(endCellPos, doc, schema);
-    const endColumnIndex = endCellPos.index();
+
+    const [startRowIndex, startColumnIndex] = getCellPosition(startCellPos, doc, schema);
+    const [endRowIndex, endColumnIndex] = getCellPosition(endCellPos, doc, schema);
     const columnCount = startCellPos.parent.childCount;
+
     const [startIndex, endIndex] = [
       startRowIndex * columnCount + startColumnIndex,
       endRowIndex * columnCount + endColumnIndex
@@ -99,25 +84,20 @@ class TableSelection {
     return [Math.min(startIndex, endIndex), Math.max(startIndex, endIndex)];
   }
 
-  drag(ev: Event) {
-    ev.preventDefault();
+  changeCursor(pos: number) {
+    const { tr } = this.view.state;
+    const selection = createTextSelection(tr, pos);
 
-    if (!this.startCellPos) {
-      return;
-    }
+    this.view.dispatch!(tr.setSelection(selection));
+  }
 
-    const endCellPos = this.getCellPositionByMousePosition(ev as MouseEvent);
+  selectCells(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
+    const [startIndex, endIndex] = this.getRange(startCellPos, endCellPos);
+    const positions = this.cellsPos.slice(startIndex, endIndex + 1);
 
-    if (endCellPos) {
-      this.toggleSelectedState(this.selectedCellsPos, false);
+    this.toggleSelectedState(positions, true);
 
-      const [startIndex, endIndex] = this.getRange(this.startCellPos, endCellPos);
-      const positions = this.cellsPos.slice(startIndex, endIndex + 1);
-
-      this.toggleSelectedState(positions, true);
-
-      this.selectedCellsPos = positions;
-    }
+    this.selectedCellsPos = positions;
   }
 
   getCellPositionByMousePosition({ clientX, clientY }: MouseEvent) {
@@ -148,6 +128,24 @@ class TableSelection {
     });
 
     this.view.dispatch!(tr);
+  }
+
+  drag(ev: Event) {
+    const { startCellPos } = this;
+    const endCellPos = this.getCellPositionByMousePosition(ev as MouseEvent);
+
+    if (startCellPos && endCellPos) {
+      this.toggleSelectedState(this.selectedCellsPos, false);
+
+      if (startCellPos.pos === endCellPos.pos) {
+        return;
+      }
+
+      ev.preventDefault();
+
+      this.changeCursor(endCellPos.pos);
+      this.selectCells(startCellPos, endCellPos);
+    }
   }
 }
 
