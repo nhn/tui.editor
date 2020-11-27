@@ -9,18 +9,22 @@ import {
   getAllCellPositions,
   getCellPosition
 } from '@/wysiwyg/helper/table';
+
 // @TODO move to common file and change path on markdown
 import { createTextSelection } from '@/markdown/helper/manipulation';
 
-const SELECTED_CELL_CLASS_NAME = 'te-cell-selected';
-
 interface EventHandlers {
-  drag: (ev: Event) => void;
-  dragStop: () => void;
+  mousedown: (ev: Event) => void;
+  mousemove: (ev: Event) => void;
+  mouseup: () => void;
 }
+
+const SELECTED_CELL_CLASS_NAME = 'te-cell-selected';
 
 class TableSelection {
   private view: EditorView;
+
+  private handlers: EventHandlers;
 
   private startCellPos: ResolvedPos | null;
 
@@ -28,60 +32,91 @@ class TableSelection {
 
   private selectedCellsPos: CellPos[];
 
-  private handlers: EventHandlers;
-
-  constructor(view: EditorView, ev: Event) {
+  constructor(view: EditorView) {
     this.view = view;
+
+    this.handlers = {
+      mousedown: this.handleMousedown.bind(this),
+      mousemove: this.handleMousemove.bind(this),
+      mouseup: this.handleMouseup.bind(this)
+    };
+
     this.startCellPos = null;
     this.cellsPos = [];
     this.selectedCellsPos = [];
-    this.handlers = {
-      drag: this.drag.bind(this),
-      dragStop: this.unbindEvent.bind(this)
-    };
 
-    this.init(ev);
+    this.init();
   }
 
-  init(ev: Event) {
-    const startCellPos = this.getCellPositionByMousePosition(ev as MouseEvent);
+  init() {
+    this.view.root.addEventListener('mousedown', this.handlers.mousedown);
+  }
 
-    if (startCellPos) {
-      this.startCellPos = startCellPos;
-      this.cellsPos = getAllCellPositions(startCellPos);
+  handleMousedown(ev: Event) {
+    const inCell = isInCellElement(ev.target as HTMLElement, this.view.dom);
+
+    if (inCell) {
+      const startCellPos = this.getCellPositionByMousePosition(ev as MouseEvent);
+
+      if (startCellPos) {
+        this.startCellPos = startCellPos;
+        this.cellsPos = getAllCellPositions(startCellPos);
+      }
+
+      this.toggleSelectedState(this.cellsPos, false);
+      this.bindEvent();
     }
+  }
 
-    this.toggleSelectedState(this.cellsPos, false);
-    this.bindEvent();
+  handleMousemove(ev: Event) {
+    const { startCellPos } = this;
+    const endCellPos = this.getCellPositionByMousePosition(ev as MouseEvent);
+
+    if (startCellPos && endCellPos) {
+      this.toggleSelectedState(this.selectedCellsPos, false);
+
+      if (startCellPos.pos === endCellPos.pos) {
+        return;
+      }
+
+      ev.preventDefault();
+
+      this.changeCursor(endCellPos.pos);
+      this.selectCells(startCellPos, endCellPos);
+    }
+  }
+
+  handleMouseup() {
+    this.startCellPos = null;
+    this.cellsPos = [];
+    this.selectedCellsPos = [];
+
+    this.unbindEvent();
   }
 
   bindEvent() {
     const { root } = this.view;
 
-    root.addEventListener('mousemove', this.handlers.drag);
-    root.addEventListener('mouseup', this.handlers.dragStop);
+    root.addEventListener('mousemove', this.handlers.mousemove);
+    root.addEventListener('mouseup', this.handlers.mouseup);
   }
 
   unbindEvent() {
     const { root } = this.view;
 
-    root.removeEventListener('mousemove', this.handlers.drag);
-    root.removeEventListener('mouseup', this.handlers.dragStop);
+    root.removeEventListener('mousemove', this.handlers.mousemove);
+    root.removeEventListener('mouseup', this.handlers.mouseup);
   }
 
-  getRange(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
-    const { doc, schema } = this.view.state;
+  toggleSelectedState(cellsPos: CellPos[], selecting: boolean) {
+    const { tr } = this.view.state;
+    const className = selecting ? SELECTED_CELL_CLASS_NAME : null;
 
-    const [startRowIndex, startColumnIndex] = getCellPosition(startCellPos, doc, schema);
-    const [endRowIndex, endColumnIndex] = getCellPosition(endCellPos, doc, schema);
-    const columnCount = startCellPos.parent.childCount;
+    cellsPos.forEach(({ nodeStart }: CellPos) => {
+      tr.setNodeMarkup(nodeStart, null!, { className });
+    });
 
-    const [startIndex, endIndex] = [
-      startRowIndex * columnCount + startColumnIndex,
-      endRowIndex * columnCount + endColumnIndex
-    ];
-
-    return [Math.min(startIndex, endIndex), Math.max(startIndex, endIndex)];
+    this.view.dispatch!(tr);
   }
 
   changeCursor(pos: number) {
@@ -89,15 +124,6 @@ class TableSelection {
     const selection = createTextSelection(tr, pos);
 
     this.view.dispatch!(tr.setSelection(selection));
-  }
-
-  selectCells(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
-    const [startIndex, endIndex] = this.getRange(startCellPos, endCellPos);
-    const positions = this.cellsPos.slice(startIndex, endIndex + 1);
-
-    this.toggleSelectedState(positions, true);
-
-    this.selectedCellsPos = positions;
   }
 
   getCellPositionByMousePosition({ clientX, clientY }: MouseEvent) {
@@ -119,50 +145,39 @@ class TableSelection {
     return null;
   }
 
-  toggleSelectedState(cellsPos: CellPos[], selecting: boolean) {
-    const { tr } = this.view.state;
-    const className = selecting ? SELECTED_CELL_CLASS_NAME : null;
+  getRange(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
+    const { doc, schema } = this.view.state;
 
-    cellsPos.forEach(({ nodeStart }: CellPos) => {
-      tr.setNodeMarkup(nodeStart, null!, { className });
-    });
+    const [startRowIndex, startColumnIndex] = getCellPosition(startCellPos, doc, schema);
+    const [endRowIndex, endColumnIndex] = getCellPosition(endCellPos, doc, schema);
+    const columnCount = startCellPos.parent.childCount;
 
-    this.view.dispatch!(tr);
+    const [startIndex, endIndex] = [
+      startRowIndex * columnCount + startColumnIndex,
+      endRowIndex * columnCount + endColumnIndex
+    ];
+
+    return [Math.min(startIndex, endIndex), Math.max(startIndex, endIndex)];
   }
 
-  drag(ev: Event) {
-    const { startCellPos } = this;
-    const endCellPos = this.getCellPositionByMousePosition(ev as MouseEvent);
+  selectCells(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
+    const [startIndex, endIndex] = this.getRange(startCellPos, endCellPos);
+    const positions = this.cellsPos.slice(startIndex, endIndex + 1);
 
-    if (startCellPos && endCellPos) {
-      this.toggleSelectedState(this.selectedCellsPos, false);
+    this.toggleSelectedState(positions, true);
 
-      if (startCellPos.pos === endCellPos.pos) {
-        return;
-      }
+    this.selectedCellsPos = positions;
+  }
 
-      ev.preventDefault();
-
-      this.changeCursor(endCellPos.pos);
-      this.selectCells(startCellPos, endCellPos);
-    }
+  destroy() {
+    this.view.root.removeEventListener('mousedown', this.handlers.mousedown);
   }
 }
 
 export function tableSelectionPlugin() {
   return new Plugin({
-    props: {
-      handleDOMEvents: {
-        mousedown: (view: EditorView, ev: Event) => {
-          const inCell = isInCellElement(ev.target as HTMLElement, view.dom);
-
-          if (inCell) {
-            return !!new TableSelection(view, ev);
-          }
-
-          return false;
-        }
-      }
+    view(editorView: EditorView) {
+      return new TableSelection(editorView);
     }
   });
 }
