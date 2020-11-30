@@ -5,8 +5,7 @@ import {
   HeadingNode,
   CodeBlockNode,
   createNode,
-  BlockNode,
-  CustomBlockNode
+  BlockNode
 } from './node';
 import { OPENTAG, CLOSETAG } from './rawHtml';
 import {
@@ -22,6 +21,7 @@ import {
 } from './blockHelper';
 import { Parser } from './blocks';
 import { tableHead, tableBody } from './gfm/tableBlockStart';
+import { customBlock } from './custom/customBlockStart';
 
 export const enum Matched {
   None = 0, // No Match
@@ -48,7 +48,6 @@ const reATXHeadingMarker = /^#{1,6}(?:[ \t]+|$)/;
 const reThematicBreak = /^(?:(?:\*[ \t]*){3,}|(?:_[ \t]*){3,}|(?:-[ \t]*){3,})[ \t]*$/;
 export const reBulletListMarker = /^[*+-]/;
 export const reOrderedListMarker = /^(\d{1,9})([.)])/;
-export const reCustomBlock = /^({{)([a-z])+/;
 
 // Parse a list marker and return data on the marker (type,
 // start, delimiter, bullet character, padding) or null.
@@ -310,24 +309,6 @@ const indentedCodeBlock: BlockStart = parser => {
     parser.advanceOffset(CODE_INDENT, true);
     parser.closeUnmatchedBlocks();
     parser.addChild('codeBlock', parser.offset);
-    return Matched.Leaf;
-  }
-  return Matched.None;
-};
-
-const customBlock: BlockStart = parser => {
-  let match;
-  if (
-    !parser.indented &&
-    (match = parser.currentLine.slice(parser.nextNonspace).match(reCustomBlock))
-  ) {
-    const syntaxLength = match[1].length;
-    parser.closeUnmatchedBlocks();
-    const container = parser.addChild('customBlock', parser.nextNonspace) as CustomBlockNode;
-    container.syntaxLength = syntaxLength;
-    container.offset = parser.indent;
-    parser.advanceNextNonspace();
-    parser.advanceOffset(syntaxLength, false);
     return Matched.Leaf;
   }
   return Matched.None;

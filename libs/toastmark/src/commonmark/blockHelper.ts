@@ -11,7 +11,6 @@ export const C_OPEN_BRACKET = 91;
 export const reNonSpace = /[^ \t\f\v\r\n]/;
 
 export const reClosingCodeFence = /^(?:`{3,}|~{3,})(?= *$)/;
-export const reClosingCustomBlock = /^}}$/;
 
 // Returns true if block ends with a blank line, descending if needed
 // into lists and sublists.

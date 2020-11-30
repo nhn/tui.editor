@@ -273,10 +273,9 @@ export class RefDefNode extends BlockNode {
 }
 
 export class CustomBlockNode extends BlockNode {
-  public isCustomBlock = true;
   public syntaxLength = 0;
   public offset = -1;
-  public info: string | null = null;
+  public info = '';
 }
 export function createNode(type: 'heading', sourcepos?: SourcePos): HeadingNode;
 export function createNode(type: 'list' | 'item', sourcepos?: SourcePos): ListNode;
@@ -349,6 +348,10 @@ export function isTable(node: Node): node is TableNode {
 
 export function isRefDef(node: Node): node is RefDefNode {
   return node.type === 'refDef';
+}
+
+export function isCustomBlock(node: Node): node is CustomBlockNode {
+  return node.type === 'customBlock';
 }
 
 export function text(s: string, sourcepos?: SourcePos) {
