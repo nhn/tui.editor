@@ -24,6 +24,8 @@ import { createTextSelection } from '@/markdown/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
 
+type CursorMoveDirection = 'next' | 'prev';
+
 export class Table extends Node {
   get name() {
     return 'table';
@@ -41,8 +43,8 @@ export class Table extends Node {
   }
 
   private addTable(): EditorCommand {
-    return payload => (state, dispatch) => {
-      const { columns = 1, rows = 1, data = [] } = payload ?? {};
+    return (payload = { columns: 1, rows: 1, data: [] }) => (state, dispatch) => {
+      const { columns, rows, data } = payload;
       const { schema, selection } = state;
       const { from, to, $from } = selection;
       const collapsed = from === to;
@@ -249,8 +251,6 @@ export class Table extends Node {
         const cellIndexes = getCellIndexesByCursorRange(table, start, end);
         const cells = getAllCellPositions(head);
 
-        console.log(cellIndexes);
-
         cellIndexes.forEach(index => {
           const { nodeStart } = cells[index];
           const { pos } = head.node(0).resolve(nodeStart);
@@ -267,7 +267,7 @@ export class Table extends Node {
     };
   }
 
-  private moveToNextCell(): EditorCommand {
+  private moveToCell(direction: CursorMoveDirection): EditorCommand {
     return () => (state, dispatch) => {
       const { schema, tr } = state;
       const { $from } = state.selection;
@@ -278,34 +278,20 @@ export class Table extends Node {
         const cellIndex = findCellIndexByCursor(schema, $from, depth);
         const cells = getAllCellPositions($from);
 
-        const nextIndex = cells.length - 1 === cellIndex ? cellIndex : cellIndex + 1;
-        const { nodeStart, nodeSize } = cells[nextIndex];
-        const from = nodeStart + nodeSize - 1;
-        const selection = createTextSelection(tr, from, from);
+        let from;
 
-        dispatch!(tr.setSelection(selection).scrollIntoView());
+        if (direction === 'next') {
+          const nextIndex = cells.length - 1 === cellIndex ? cellIndex : cellIndex + 1;
+          const { nodeStart, nodeSize } = cells[nextIndex];
 
-        return true;
-      }
+          from = nodeStart + nodeSize - 1;
+        } else {
+          const prevIndex = cells.length - 1 === 0 ? cellIndex : cellIndex - 1;
+          const { nodeStart } = cells[prevIndex];
 
-      return false;
-    };
-  }
+          from = nodeStart + 1;
+        }
 
-  private moveToPrevCell(): EditorCommand {
-    return () => (state, dispatch) => {
-      const { schema, tr } = state;
-      const { $from } = state.selection;
-      const foundCell = findCell(schema, $from);
-
-      if (foundCell) {
-        const { depth } = foundCell;
-        const cellIndex = findCellIndexByCursor(schema, $from, depth);
-        const cells = getAllCellPositions($from);
-
-        const prevIndex = cells.length - 1 === 0 ? cellIndex : cellIndex - 1;
-        const { nodeStart } = cells[prevIndex];
-        const from = nodeStart + 1;
         const selection = createTextSelection(tr, from, from);
 
         dispatch!(tr.setSelection(selection).scrollIntoView());
@@ -326,8 +312,8 @@ export class Table extends Node {
       addRow: this.addRow(),
       removeRow: this.removeRow(),
       alignColumn: this.alignColumn(),
-      moveToNextCell: this.moveToNextCell(),
-      moveToPrevCell: this.moveToPrevCell()
+      moveToNextCell: this.moveToCell('next'),
+      moveToPrevCell: this.moveToCell('prev')
     };
   }
 }
