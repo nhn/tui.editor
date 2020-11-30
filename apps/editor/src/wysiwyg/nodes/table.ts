@@ -1,18 +1,22 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
+import { TextSelection } from 'prosemirror-state';
 
 import Node from '@/spec/node';
 import { isInTableNode, findNodeBy } from '@/wysiwyg/helper/node';
 import {
-  createTableHead,
-  createTableBody,
   createTableRows,
   findCell,
-  getRowDepthToRemove,
-  getCellDepthToRemove,
-  getCellIndexesByCursorIndex,
-  getCellPositions,
-  findCellIndexByCursor
+  findCellIndexByCursor,
+  getCellPosition,
+  getAllCellPositions,
+  getColumnCount,
+  getCellIndexesByCursorRange,
+  getResolvedSelection,
+  getTableByCellPos,
+  getPositionsToAddRow,
+  getPositionsToRemoveRow,
+  getRowCountByRange
 } from '@/wysiwyg/helper/table';
 
 // @TODO move to common file and change path on markdown
@@ -39,16 +43,26 @@ export class Table extends Node {
   private addTable(): EditorCommand {
     return payload => (state, dispatch) => {
       const { columns = 1, rows = 1, data = [] } = payload ?? {};
-      const { schema, tr, selection } = state;
+      const { schema, selection } = state;
       const { from, to, $from } = selection;
       const collapsed = from === to;
 
       if (collapsed && !isInTableNode(schema, $from)) {
-        const thead = createTableHead(schema, columns, data);
-        const tbody = createTableBody(schema, columns, rows, data);
-        const table = schema.nodes.table.create(null, [thead, tbody]);
+        const { tableHead, tableBody } = schema.nodes;
+        const tableHeadRows = createTableRows(schema, columns, 1, false, data);
+        const tableBodyRows = createTableRows(schema, columns, rows, true, data);
+        const table = schema.nodes.table.create(null, [
+          tableHead.create(null, tableHeadRows),
+          tableBody.create(null, tableBodyRows)
+        ]);
 
-        dispatch!(tr.replaceSelectionWith(table).scrollIntoView());
+        let { tr } = state;
+
+        tr = tr.replaceSelectionWith(table).scrollIntoView();
+
+        const cursorPos = TextSelection.near(tr.doc.resolve(from + 1));
+
+        dispatch!(tr.setSelection(cursorPos));
 
         return true;
       }
@@ -60,16 +74,17 @@ export class Table extends Node {
   private removeTable(): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, schema, tr } = state;
-      const { $anchor } = selection;
+      const { head } = getResolvedSelection(schema, selection);
       const { table } = schema.nodes;
-      const foundTable = findNodeBy($anchor, ({ type }: ProsemirrorNode) => type === table);
+      const foundTable = findNodeBy(head, ({ type }: ProsemirrorNode) => type === table);
 
       if (foundTable) {
         const { depth } = foundTable;
-        const start = $anchor.before(depth);
-        const end = $anchor.after(depth);
+        const start = head.before(depth);
+        const end = head.after(depth);
+        const cursorPos = createTextSelection(tr.delete(start, end), start);
 
-        dispatch!(tr.delete(start, end).scrollIntoView());
+        dispatch!(tr.setSelection(cursorPos).scrollIntoView());
 
         return true;
       }
@@ -81,23 +96,41 @@ export class Table extends Node {
   private addColumn(): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, schema, tr } = state;
-      const { $from } = selection;
       const { tableHeadCell, tableBodyCell } = schema.nodes;
-      const foundCell = findCell(schema, $from);
+      const { anchor, head } = getResolvedSelection(schema, selection);
 
-      if (foundCell) {
-        const { depth } = foundCell;
-        const table = $from.node(depth - 3);
-        const cellIndexes = getCellIndexesByCursorIndex(table, $from.index(depth - 1));
-        const cells = getCellPositions(table, $from.before(depth - 3));
-        const columnCount = table.child(0).child(0).childCount;
+      if (anchor && head) {
+        const { depth } = head;
+        const table = head.node(depth - 2);
+
+        const [startRowIndex, startColumnIndex] = getCellPosition(anchor);
+        const [endRowIndex, endColumnIndex] = getCellPosition(head);
+
+        const cellIndexes = getCellIndexesByCursorRange(
+          table,
+          [startRowIndex, startColumnIndex],
+          [endRowIndex, endColumnIndex]
+        );
+        const columnCount = getColumnCount(table);
+
+        const cells = getAllCellPositions(head);
+
+        const addedCellCount =
+          startRowIndex !== endRowIndex
+            ? anchor.index() + 1
+            : endColumnIndex - startColumnIndex + 1;
 
         cellIndexes.forEach(index => {
           const cellType = index < columnCount ? tableHeadCell : tableBodyCell;
           const { nodeStart, nodeSize } = cells[index];
           const start = tr.mapping.map(nodeStart + nodeSize);
+          const addedCells = [];
 
-          tr.insert(start, cellType.createAndFill());
+          for (let i = 0, len = addedCellCount; i < len; i += 1) {
+            addedCells.push(cellType.createAndFill());
+          }
+
+          tr.insert(start, addedCells);
         });
 
         dispatch!(tr);
@@ -112,18 +145,34 @@ export class Table extends Node {
   private removeColumn(): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, schema, tr } = state;
-      const { $from } = selection;
-      const depth = getCellDepthToRemove(schema, $from);
+      const { anchor, head } = getResolvedSelection(schema, selection);
 
-      if (depth) {
-        const table = $from.node(depth - 3);
-        const cellIndexes = getCellIndexesByCursorIndex(table, $from.index(depth - 1));
-        const cells = getCellPositions(table, $from.before(depth - 3));
+      if (anchor && head) {
+        const { depth } = head;
+        const table = head.node(depth - 2);
+
+        const [startRowIndex, startColumnIndex] = getCellPosition(anchor);
+        const [endRowIndex, endColumnIndex] = getCellPosition(head);
+
+        const cellIndexes = getCellIndexesByCursorRange(
+          table,
+          [startRowIndex, startColumnIndex],
+          [endRowIndex, endColumnIndex]
+        );
+        const cells = getAllCellPositions(head);
+
+        const removedCellCount =
+          startRowIndex !== endRowIndex ? 0 : endColumnIndex - startColumnIndex + 1;
+
+        if (!removedCellCount) {
+          return false;
+        }
+
         const trStart = tr.mapping.maps.length;
 
         cellIndexes.forEach(index => {
           const { nodeStart, nodeSize } = cells[index];
-          const start = tr.mapping.slice(trStart).map(nodeStart + 1);
+          const start = tr.mapping.slice(trStart).map(nodeStart);
 
           tr.delete(start, start + nodeSize);
         });
@@ -140,21 +189,20 @@ export class Table extends Node {
   private addRow(): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, schema, tr } = state;
-      const { $from } = selection;
-      const { tableRow, tableBody } = schema.nodes;
-      const foundRow = findNodeBy(
-        $from,
-        ({ type }: ProsemirrorNode, depth: number) =>
-          type === tableRow && $from.node(depth - 1).type === tableBody
-      );
+      const { anchor, head } = getResolvedSelection(schema, selection);
 
-      if (foundRow) {
-        const { node, depth } = foundRow;
-        const [row] = createTableRows(schema, node.childCount, 1, true);
-        const start = $from.after(depth);
-        const end = start;
+      if (anchor && head) {
+        const table = getTableByCellPos(head);
 
-        dispatch!(tr.step(new ReplaceStep(start, end, new Slice(Fragment.from(row), 0, 0))));
+        const [startRowIndex] = getCellPosition(anchor);
+        const [endRowIndex] = getCellPosition(head);
+
+        const [start, end] = getPositionsToAddRow(head, startRowIndex, endRowIndex);
+        const columnCount = getColumnCount(table);
+        const rowCount = getRowCountByRange(startRowIndex, endRowIndex);
+        const rows = createTableRows(schema, columnCount, rowCount, true);
+
+        dispatch!(tr.step(new ReplaceStep(start, end, new Slice(Fragment.from(rows), 0, 0))));
 
         return true;
       }
@@ -166,16 +214,19 @@ export class Table extends Node {
   private removeRow(): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, schema, tr } = state;
-      const { $from } = selection;
-      const depth = getRowDepthToRemove(schema, $from);
+      const { anchor, head } = getResolvedSelection(schema, selection);
 
-      if (depth) {
-        const start = $from.before(depth);
-        const end = $from.after(depth);
+      if (anchor && head) {
+        const [startRowIndex] = getCellPosition(anchor);
+        const [endRowIndex] = getCellPosition(head);
 
-        dispatch!(tr.step(new ReplaceStep(start, end, Slice.empty)));
+        const [start, end] = getPositionsToRemoveRow(anchor, head, startRowIndex, endRowIndex);
 
-        return true;
+        if (start && end) {
+          dispatch!(tr.step(new ReplaceStep(start, end, Slice.empty)));
+
+          return true;
+        }
       }
 
       return false;
@@ -183,21 +234,26 @@ export class Table extends Node {
   }
 
   private alignColumn(): EditorCommand {
-    return payload => (state, dispatch) => {
-      const { align = 'center' } = payload ?? {};
-      const { schema, tr } = state;
-      const { $from } = state.selection;
-      const foundCell = findCell(schema, $from);
+    return (payload = { align: 'center' }) => (state, dispatch) => {
+      const { align } = payload;
+      const { selection, schema, tr } = state;
+      const { anchor, head } = getResolvedSelection(schema, selection);
 
-      if (foundCell) {
-        const { depth } = foundCell;
-        const table = $from.node(depth - 3);
-        const cellIndexes = getCellIndexesByCursorIndex(table, $from.index(depth - 1));
-        const cells = getCellPositions(table, $from.start(depth - 3));
+      if (anchor && head) {
+        const { depth } = head;
+        const table = head.node(depth - 2);
+
+        const start = getCellPosition(anchor);
+        const end = getCellPosition(head);
+
+        const cellIndexes = getCellIndexesByCursorRange(table, start, end);
+        const cells = getAllCellPositions(head);
+
+        console.log(cellIndexes);
 
         cellIndexes.forEach(index => {
           const { nodeStart } = cells[index];
-          const { pos } = $from.node(0).resolve(nodeStart);
+          const { pos } = head.node(0).resolve(nodeStart);
 
           tr.setNodeMarkup(pos, null!, { align });
         });
@@ -219,9 +275,8 @@ export class Table extends Node {
 
       if (foundCell) {
         const { depth } = foundCell;
-        const table = $from.node(depth - 3);
         const cellIndex = findCellIndexByCursor(schema, $from, depth);
-        const cells = getCellPositions(table, $from.start(depth - 3));
+        const cells = getAllCellPositions($from);
 
         const nextIndex = cells.length - 1 === cellIndex ? cellIndex : cellIndex + 1;
         const { nodeStart, nodeSize } = cells[nextIndex];
@@ -245,9 +300,8 @@ export class Table extends Node {
 
       if (foundCell) {
         const { depth } = foundCell;
-        const table = $from.node(depth - 3);
         const cellIndex = findCellIndexByCursor(schema, $from, depth);
-        const cells = getCellPositions(table, $from.start(depth - 3));
+        const cells = getAllCellPositions($from);
 
         const prevIndex = cells.length - 1 === 0 ? cellIndex : cellIndex - 1;
         const { nodeStart } = cells[prevIndex];

@@ -1,17 +1,14 @@
-import { ResolvedPos } from 'prosemirror-model';
-import { Plugin } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import { Node, ResolvedPos } from 'prosemirror-model';
+import { EditorState, Plugin, Selection, SelectionRange } from 'prosemirror-state';
+import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 
 import {
-  CellPos,
+  CellInfo,
   findCell,
   isInCellElement,
   getAllCellPositions,
-  getCellPosition
+  getSelectedCellRanges
 } from '@/wysiwyg/helper/table';
-
-// @TODO move to common file and change path on markdown
-import { createTextSelection } from '@/markdown/helper/manipulation';
 
 interface EventHandlers {
   mousedown: (ev: Event) => void;
@@ -21,16 +18,51 @@ interface EventHandlers {
 
 const SELECTED_CELL_CLASS_NAME = 'te-cell-selected';
 
+export class CellSelection extends Selection {
+  public positions: CellInfo[];
+
+  constructor(startCellPos: ResolvedPos, endCellPos = startCellPos) {
+    const doc = startCellPos.node(0);
+
+    const [startIndex, endIndex] = getSelectedCellRanges(startCellPos, endCellPos);
+    const allCellPos = getAllCellPositions(startCellPos);
+    const positions = allCellPos.slice(startIndex, endIndex + 1);
+
+    const ranges = positions!.map(
+      ({ nodeStart, nodeSize }: CellInfo) =>
+        new SelectionRange(doc.resolve(nodeStart), doc.resolve(nodeStart + nodeSize))
+    );
+
+    super(ranges![0].$from, ranges![0].$to, ranges);
+
+    this.$anchor = startCellPos;
+    this.$head = endCellPos;
+
+    this.positions = positions || [];
+  }
+
+  map(doc: Node, mapping: any) {
+    const $anchorCell = doc.resolve(mapping.map(this.$anchor.pos));
+    const $headCell = doc.resolve(mapping.map(this.$head.pos));
+
+    return new CellSelection($anchorCell, $headCell);
+  }
+
+  eq(cell: CellSelection) {
+    return (
+      cell instanceof CellSelection &&
+      cell.$anchor.pos === this.$anchor.pos &&
+      cell.$head.pos === this.$head.pos
+    );
+  }
+}
+
 class TableSelection {
   private view: EditorView;
 
   private handlers: EventHandlers;
 
   private startCellPos: ResolvedPos | null;
-
-  private cellsPos: CellPos[];
-
-  private selectedCellsPos: CellPos[];
 
   constructor(view: EditorView) {
     this.view = view;
@@ -42,8 +74,6 @@ class TableSelection {
     };
 
     this.startCellPos = null;
-    this.cellsPos = [];
-    this.selectedCellsPos = [];
 
     this.init();
   }
@@ -56,40 +86,33 @@ class TableSelection {
     const inCell = isInCellElement(ev.target as HTMLElement, this.view.dom);
 
     if (inCell) {
-      const startCellPos = this.getCellPositionByMousePosition(ev as MouseEvent);
+      const startCellPos = this.getCellPosition(ev as MouseEvent);
 
       if (startCellPos) {
         this.startCellPos = startCellPos;
-        this.cellsPos = getAllCellPositions(startCellPos);
       }
 
-      this.toggleSelectedState(this.cellsPos, false);
       this.bindEvent();
     }
   }
 
   handleMousemove(ev: Event) {
     const { startCellPos } = this;
-    const endCellPos = this.getCellPositionByMousePosition(ev as MouseEvent);
+    const endCellPos = this.getCellPosition(ev as MouseEvent);
 
     if (startCellPos && endCellPos) {
-      this.toggleSelectedState(this.selectedCellsPos, false);
-
       if (startCellPos.pos === endCellPos.pos) {
         return;
       }
 
       ev.preventDefault();
 
-      this.changeCursor(endCellPos.pos);
       this.selectCells(startCellPos, endCellPos);
     }
   }
 
   handleMouseup() {
     this.startCellPos = null;
-    this.cellsPos = [];
-    this.selectedCellsPos = [];
 
     this.unbindEvent();
   }
@@ -108,25 +131,7 @@ class TableSelection {
     root.removeEventListener('mouseup', this.handlers.mouseup);
   }
 
-  toggleSelectedState(cellsPos: CellPos[], selecting: boolean) {
-    const { tr } = this.view.state;
-    const className = selecting ? SELECTED_CELL_CLASS_NAME : null;
-
-    cellsPos.forEach(({ nodeStart }: CellPos) => {
-      tr.setNodeMarkup(nodeStart, null!, { className });
-    });
-
-    this.view.dispatch!(tr);
-  }
-
-  changeCursor(pos: number) {
-    const { tr } = this.view.state;
-    const selection = createTextSelection(tr, pos);
-
-    this.view.dispatch!(tr.setSelection(selection));
-  }
-
-  getCellPositionByMousePosition({ clientX, clientY }: MouseEvent) {
+  getCellPosition({ clientX, clientY }: MouseEvent) {
     const mousePos = this.view.posAtCoords({ left: clientX, top: clientY });
 
     if (mousePos) {
@@ -135,38 +140,19 @@ class TableSelection {
       const foundCell = findCell(schema, currentPos);
 
       if (foundCell) {
-        const { depth } = foundCell;
-        const cellPos = currentPos.before(depth);
+        const cellPos = currentPos.before(foundCell.depth);
 
-        return currentPos.node(0).resolve(cellPos);
+        return doc.resolve(cellPos);
       }
     }
 
     return null;
   }
 
-  getRange(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
-    const { doc, schema } = this.view.state;
-
-    const [startRowIndex, startColumnIndex] = getCellPosition(startCellPos, doc, schema);
-    const [endRowIndex, endColumnIndex] = getCellPosition(endCellPos, doc, schema);
-    const columnCount = startCellPos.parent.childCount;
-
-    const [startIndex, endIndex] = [
-      startRowIndex * columnCount + startColumnIndex,
-      endRowIndex * columnCount + endColumnIndex
-    ];
-
-    return [Math.min(startIndex, endIndex), Math.max(startIndex, endIndex)];
-  }
-
   selectCells(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
-    const [startIndex, endIndex] = this.getRange(startCellPos, endCellPos);
-    const positions = this.cellsPos.slice(startIndex, endIndex + 1);
+    const selection = new CellSelection(startCellPos, endCellPos);
 
-    this.toggleSelectedState(positions, true);
-
-    this.selectedCellsPos = positions;
+    this.view.dispatch!(this.view.state.tr.setSelection(selection));
   }
 
   destroy() {
@@ -174,8 +160,26 @@ class TableSelection {
   }
 }
 
+function drawCellSelection({ selection, doc }: EditorState) {
+  if (selection instanceof CellSelection) {
+    const cells: Decoration[] = [];
+    const { ranges } = selection;
+
+    ranges.forEach(({ $from, $to }: SelectionRange) => {
+      cells.push(Decoration.node($from.pos, $to.pos, { class: SELECTED_CELL_CLASS_NAME }));
+    });
+
+    return DecorationSet.create(doc, cells);
+  }
+
+  return null;
+}
+
 export function tableSelectionPlugin() {
   return new Plugin({
+    props: {
+      decorations: drawCellSelection
+    },
     view(editorView: EditorView) {
       return new TableSelection(editorView);
     }

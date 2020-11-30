@@ -1,24 +1,11 @@
 import { Node, Schema, ResolvedPos } from 'prosemirror-model';
+import { Selection, TextSelection } from 'prosemirror-state';
 
 import { findNodeBy } from '@/wysiwyg/helper/node';
 
-export interface CellPos {
+export interface CellInfo {
   nodeStart: number;
   nodeSize: number;
-}
-
-export function createTableHead(schema: Schema, columns: number, data: string[]) {
-  const { tableHead } = schema.nodes;
-  const tableRows = createTableRows(schema, columns, 1, false, data);
-
-  return tableHead.create(null, tableRows);
-}
-
-export function createTableBody(schema: Schema, columns: number, rows: number, data: string[]) {
-  const { tableBody } = schema.nodes;
-  const tableRows = createTableRows(schema, columns, rows, true, data);
-
-  return tableBody.create(null, tableRows);
 }
 
 export function createTableRows(
@@ -53,45 +40,34 @@ export function createTableRows(
   return tableRows;
 }
 
-export function getRowDepthToRemove({ nodes }: Schema, pos: ResolvedPos) {
-  const { tableBody, tableRow } = nodes;
-  const foundRow = findNodeBy(pos, ({ type }: Node) => type === tableRow);
-
-  if (foundRow) {
-    const { depth } = foundRow;
-    const parent = pos.node(depth - 1);
-
-    if (parent.type === tableBody && parent.childCount > 1) {
-      return depth;
-    }
-  }
-
-  return null;
-}
-
-export function getCellDepthToRemove(schema: Schema, pos: ResolvedPos) {
-  const foundCell = findCell(schema, pos);
-
-  if (foundCell) {
-    const { depth } = foundCell;
-    const columnCount = pos.node(depth - 1).childCount;
-
-    if (columnCount > 1) {
-      return depth;
-    }
-  }
-
-  return null;
-}
-
 export function findCell({ nodes }: Schema, pos: ResolvedPos) {
   const { tableHeadCell, tableBodyCell } = nodes;
 
   return findNodeBy(pos, ({ type }: Node) => type === tableHeadCell || type === tableBodyCell);
 }
 
+export function getResolvedSelection(schema: Schema, selection: Selection) {
+  const { $anchor, $head } = selection;
+  let anchor = $anchor;
+  let head = $head;
+
+  if (selection instanceof TextSelection) {
+    const foundCell = findCell(schema, $anchor);
+
+    if (foundCell) {
+      anchor = $anchor.node(0).resolve($anchor.before(foundCell.depth));
+      head = anchor;
+    }
+  }
+
+  return { anchor, head };
+}
+
+/**
+ * @TODO refactoring
+ */
 function getHeadOrBodyCellPositions(headOrBody: Node, startPos: number) {
-  const positions: CellPos[] = [];
+  const positions: CellInfo[] = [];
 
   headOrBody.forEach((row: Node, rowOffset: number) => {
     row.forEach(({ nodeSize }: Node, cellOffset: number) => {
@@ -105,15 +81,19 @@ function getHeadOrBodyCellPositions(headOrBody: Node, startPos: number) {
   return positions;
 }
 
+/**
+ * @TODO refactoring
+ */
 export function getAllCellPositions(cellResolvedPos: ResolvedPos) {
-  const depth = cellResolvedPos.depth - 2;
+  let index = 2;
+
+  if (cellResolvedPos.parent.type.name === 'tableBody') {
+    index = 1;
+  }
+  const depth = cellResolvedPos.depth - index;
   const table = cellResolvedPos.node(depth);
   const tablePos = cellResolvedPos.start(depth);
 
-  return getCellPositions(table, tablePos);
-}
-
-export function getCellPositions(table: Node, tablePos: number) {
   const thead = table.child(0);
   const theadCellPositions = getHeadOrBodyCellPositions(thead, tablePos);
   const tbodyCellPositions = getHeadOrBodyCellPositions(table.child(1), tablePos + thead.nodeSize);
@@ -121,14 +101,24 @@ export function getCellPositions(table: Node, tablePos: number) {
   return theadCellPositions.concat(tbodyCellPositions);
 }
 
-export function getCellIndexesByCursorIndex(table: Node, cursorIndex: number) {
+export function getCellIndexesByCursorRange(table: Node, start: number[], end: number[]) {
   const tableBody = table.child(1);
   const columnCount = tableBody.child(0).childCount;
   const rowCount = tableBody.childCount + 1;
+
+  const [startRowIndex, startColumnIndex] = start;
+  const [endRowIndex, endColumnIndex] = end;
+
+  const columnStart =
+    startRowIndex !== endRowIndex ? 0 : Math.min(startColumnIndex, endColumnIndex);
+  const columnEnd = Math.max(startColumnIndex, endColumnIndex);
+
   const indexes = [];
 
   for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
-    indexes.push(rowIndex * columnCount + cursorIndex);
+    for (let columnIndex = columnStart, len = columnEnd; columnIndex <= len; columnIndex += 1) {
+      indexes.push(rowIndex * columnCount + columnIndex);
+    }
   }
 
   return indexes;
@@ -150,7 +140,7 @@ export function findCellIndexByCursor({ nodes }: Schema, pos: ResolvedPos, depth
   return rowIndex * columnCount + columnIndex;
 }
 
-export function findRowIndex(tbodyOrThead: Node, foundRow: Node) {
+function findRowIndex(tbodyOrThead: Node, foundRow: Node) {
   let rowIndex = -1;
 
   tbodyOrThead.forEach((node: Node, _: number, index: number) => {
@@ -162,13 +152,18 @@ export function findRowIndex(tbodyOrThead: Node, foundRow: Node) {
   return rowIndex;
 }
 
-export function getCellPosition(cellPos: ResolvedPos, node: Node, { nodes }: Schema) {
-  const { tableHeadCell } = nodes;
+/**
+ * @TODO refactoring
+ */
+export function getCellPosition(cellPos: ResolvedPos) {
   const { pos, parentOffset } = cellPos;
 
-  let rowIndex = node.resolve(pos - parentOffset - 1).index();
+  let rowIndex = cellPos
+    .node(0)
+    .resolve(pos - parentOffset - 1)
+    .index();
 
-  if (cellPos.nodeAfter!.type !== tableHeadCell) {
+  if (cellPos.nodeAfter && cellPos.nodeAfter.type.name !== 'tableHeadCell') {
     rowIndex += 1;
   }
 
@@ -187,4 +182,70 @@ export function isInCellElement(node: HTMLElement, root: Element) {
   }
 
   return false;
+}
+
+export function getSelectedCellRanges(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
+  const [startRowIndex, startColumnIndex] = getCellPosition(startCellPos);
+  const [endRowIndex, endColumnIndex] = getCellPosition(endCellPos);
+  const columnCount = startCellPos.parent.childCount;
+
+  const [startIndex, endIndex] = [
+    startRowIndex * columnCount + startColumnIndex,
+    endRowIndex * columnCount + endColumnIndex
+  ];
+
+  return [Math.min(startIndex, endIndex), Math.max(startIndex, endIndex)];
+}
+
+export function getColumnCount(table: Node) {
+  return table.child(0).child(0).childCount;
+}
+
+export function getRowCountByRange(startRowIndex: number, endRowIndex: number) {
+  return Math.max(startRowIndex, endRowIndex) - Math.min(startRowIndex, endRowIndex) + 1;
+}
+
+export function getTableByCellPos(cellPos: ResolvedPos) {
+  return cellPos.node(cellPos.depth - 2);
+}
+
+export function getPositionsToAddRow(
+  cellPos: ResolvedPos,
+  startRowIndex: number,
+  endRowIndex: number
+) {
+  const onlyTheadSelected = startRowIndex === endRowIndex && startRowIndex === 0;
+  const endCellInThead = startRowIndex !== endRowIndex && endRowIndex === 0;
+
+  let start = cellPos.after(cellPos.depth);
+
+  if (onlyTheadSelected || endCellInThead) {
+    start += 2;
+  }
+
+  return [start, start];
+}
+
+export function getPositionsToRemoveRow(
+  startCellPos: ResolvedPos,
+  endCellPos: ResolvedPos,
+  startRowIndex: number,
+  endRowIndex: number
+) {
+  const onlyTheadSelected = startRowIndex === endRowIndex && startRowIndex === 0;
+  const endCellInThead = startRowIndex !== endRowIndex && endRowIndex === 0;
+
+  if (onlyTheadSelected || endCellInThead) {
+    return [];
+  }
+
+  let start = startCellPos.before(startCellPos.depth);
+
+  if (startRowIndex === 0) {
+    start = startCellPos.after(startCellPos.depth) + 2;
+  }
+
+  const end = endCellPos.after(endCellPos.depth);
+
+  return [start, end];
 }
