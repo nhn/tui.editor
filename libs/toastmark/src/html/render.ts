@@ -1,4 +1,4 @@
-import { Node, NodeType, isContainer } from '../commonmark/node';
+import { Node, NodeType, isContainer, isCustomBlock } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
 import { last } from '../helper';
 import { baseConvertors } from './baseConvertors';
@@ -22,9 +22,13 @@ interface Context {
   origin?: () => ReturnType<HTMLConvertor>;
 }
 
-export type HTMLConvertor = (node: Node, context: Context) => HTMLToken | HTMLToken[] | null;
+export type HTMLConvertor = (
+  node: Node,
+  context: Context,
+  convertors?: HTMLConvertorMap
+) => HTMLToken | HTMLToken[] | null;
 
-export type HTMLConvertorMap = Partial<Record<NodeType, HTMLConvertor>>;
+export type HTMLConvertorMap = Partial<Record<NodeType | string, HTMLConvertor>>;
 
 interface TagToken {
   tagName: string;
@@ -78,14 +82,14 @@ export function createRenderHTML(customOptions?: Partial<Options>) {
     const nodeTypes = Object.keys(customConvertors) as NodeType[];
     nodeTypes.forEach(nodeType => {
       const orgConvertor = convertors[nodeType];
-      const extConvertor = customConvertors[nodeType]!;
+      const convertor = customConvertors[nodeType]!;
       if (orgConvertor) {
         convertors[nodeType] = (node, context) => {
           context.origin = () => orgConvertor(node, context);
-          return extConvertor(node, context);
+          return convertor(node, context);
         };
       } else {
-        convertors[nodeType] = extConvertor;
+        convertors[nodeType] = convertor;
       }
     });
     delete options.convertors;
@@ -182,7 +186,9 @@ function render(rootNode: Node, convertors: HTMLConvertorMap, options: Options):
       }
     };
 
-    const converted = convertor(node, context);
+    const converted = isCustomBlock(node)
+      ? convertor(node, context, convertors)
+      : convertor(node, context);
     if (converted) {
       const htmlNodes = Array.isArray(converted) ? converted : [converted];
       htmlNodes.forEach((htmlNode, index) => {

@@ -197,19 +197,21 @@ export const baseConvertors: HTMLConvertorMap = {
     };
   },
 
-  customBlock(node) {
-    const infoStr = (node as CustomBlockNode).info;
-    const infoWords = infoStr ? infoStr.split(/\s+/) : [];
-    const classNames = [];
-    if (infoWords.length > 0 && infoWords[0].length > 0) {
-      classNames.push(`language-${escapeXml(infoWords[0])}`);
+  customBlock(node, context, convertors) {
+    const info = (node as CustomBlockNode).info!;
+    const customConvertor = convertors![info];
+
+    if (customConvertor) {
+      try {
+        return customConvertor!(node, context);
+      } catch (e) {
+        console.warn(e);
+      }
     }
 
     return [
       { type: 'openTag', tagName: 'div', outerNewLine: true },
-      { type: 'openTag', tagName: 'div', classNames },
       { type: 'text', content: node.literal! },
-      { type: 'closeTag', tagName: 'div' },
       { type: 'closeTag', tagName: 'div', outerNewLine: true }
     ];
   }
