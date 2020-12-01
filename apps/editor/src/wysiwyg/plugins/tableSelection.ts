@@ -6,8 +6,8 @@ import {
   CellInfo,
   findCell,
   isInCellElement,
-  getAllCellPositions,
-  getSelectedCellRanges
+  getAllCellPositionInfos,
+  getSelectedCellRange
 } from '@/wysiwyg/helper/table';
 
 interface EventHandlers {
@@ -24,16 +24,15 @@ export class CellSelection extends Selection {
   constructor(startCellPos: ResolvedPos, endCellPos = startCellPos) {
     const doc = startCellPos.node(0);
 
-    const [startIndex, endIndex] = getSelectedCellRanges(startCellPos, endCellPos);
-    const allCellPos = getAllCellPositions(startCellPos);
-    const positions = allCellPos.slice(startIndex, endIndex + 1);
+    const [startIndex, endIndex] = getSelectedCellRange(startCellPos, endCellPos);
+    const positions = getAllCellPositionInfos(startCellPos).slice(startIndex, endIndex + 1);
 
-    const ranges = positions!.map(
+    const ranges = positions.map(
       ({ nodeStart, nodeSize }: CellInfo) =>
         new SelectionRange(doc.resolve(nodeStart), doc.resolve(nodeStart + nodeSize))
     );
 
-    super(ranges![0].$from, ranges![0].$to, ranges);
+    super(ranges[0].$from, ranges[0].$to, ranges);
 
     this.$anchor = startCellPos;
     this.$head = endCellPos;

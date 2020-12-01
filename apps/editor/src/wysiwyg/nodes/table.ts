@@ -9,14 +9,16 @@ import {
   findCell,
   findCellIndexByCursor,
   getCellPosition,
-  getAllCellPositions,
+  getAllCellPositionInfos,
   getColumnCount,
-  getCellIndexesByCursorRange,
+  getIndexesBySelectionRange,
   getResolvedSelection,
   getTableByCellPos,
   getPositionsToAddRow,
   getPositionsToRemoveRow,
-  getRowCountByRange
+  getRowCountByRange,
+  createCellsToAdd,
+  isToRemoveCells
 } from '@/wysiwyg/helper/table';
 
 // @TODO move to common file and change path on markdown
@@ -102,37 +104,24 @@ export class Table extends Node {
       const { anchor, head } = getResolvedSelection(schema, selection);
 
       if (anchor && head) {
-        const { depth } = head;
-        const table = head.node(depth - 2);
+        const table = getTableByCellPos(head);
 
-        const [startRowIndex, startColumnIndex] = getCellPosition(anchor);
-        const [endRowIndex, endColumnIndex] = getCellPosition(head);
+        const start = getCellPosition(anchor);
+        const end = getCellPosition(head);
 
-        const cellIndexes = getCellIndexesByCursorRange(
-          table,
-          [startRowIndex, startColumnIndex],
-          [endRowIndex, endColumnIndex]
-        );
+        const cellIndexes = getIndexesBySelectionRange(table, end, end);
+        const cells = getAllCellPositionInfos(head);
+
         const columnCount = getColumnCount(table);
 
-        const cells = getAllCellPositions(head);
-
-        const addedCellCount =
-          startRowIndex !== endRowIndex
-            ? anchor.index() + 1
-            : endColumnIndex - startColumnIndex + 1;
-
         cellIndexes.forEach(index => {
-          const cellType = index < columnCount ? tableHeadCell : tableBodyCell;
           const { nodeStart, nodeSize } = cells[index];
-          const start = tr.mapping.map(nodeStart + nodeSize);
-          const addedCells = [];
 
-          for (let i = 0, len = addedCellCount; i < len; i += 1) {
-            addedCells.push(cellType.createAndFill());
-          }
+          const startPos = tr.mapping.map(nodeStart + nodeSize);
+          const cellType = index < columnCount ? tableHeadCell : tableBodyCell;
+          const addedCells = createCellsToAdd(start, end, cellType);
 
-          tr.insert(start, addedCells);
+          tr.insert(startPos, addedCells);
         });
 
         dispatch!(tr);
@@ -150,33 +139,26 @@ export class Table extends Node {
       const { anchor, head } = getResolvedSelection(schema, selection);
 
       if (anchor && head) {
-        const { depth } = head;
-        const table = head.node(depth - 2);
+        const table = getTableByCellPos(head);
 
-        const [startRowIndex, startColumnIndex] = getCellPosition(anchor);
-        const [endRowIndex, endColumnIndex] = getCellPosition(head);
+        const start = getCellPosition(anchor);
+        const end = getCellPosition(head);
 
-        const cellIndexes = getCellIndexesByCursorRange(
-          table,
-          [startRowIndex, startColumnIndex],
-          [endRowIndex, endColumnIndex]
-        );
-        const cells = getAllCellPositions(head);
-
-        const removedCellCount =
-          startRowIndex !== endRowIndex ? 0 : endColumnIndex - startColumnIndex + 1;
-
-        if (!removedCellCount) {
+        if (!isToRemoveCells(start, end)) {
           return false;
         }
+
+        const cellIndexes = getIndexesBySelectionRange(table, start, end);
+        const cells = getAllCellPositionInfos(head);
 
         const trStart = tr.mapping.maps.length;
 
         cellIndexes.forEach(index => {
           const { nodeStart, nodeSize } = cells[index];
-          const start = tr.mapping.slice(trStart).map(nodeStart);
+          const startPos = tr.mapping.slice(trStart).map(nodeStart);
+          const endPos = startPos + nodeSize;
 
-          tr.delete(start, start + nodeSize);
+          tr.delete(startPos, endPos);
         });
 
         dispatch!(tr);
@@ -248,8 +230,8 @@ export class Table extends Node {
         const start = getCellPosition(anchor);
         const end = getCellPosition(head);
 
-        const cellIndexes = getCellIndexesByCursorRange(table, start, end);
-        const cells = getAllCellPositions(head);
+        const cellIndexes = getIndexesBySelectionRange(table, start, end);
+        const cells = getAllCellPositionInfos(head);
 
         cellIndexes.forEach(index => {
           const { nodeStart } = cells[index];
@@ -276,7 +258,7 @@ export class Table extends Node {
       if (foundCell) {
         const { depth } = foundCell;
         const cellIndex = findCellIndexByCursor(schema, $from, depth);
-        const cells = getAllCellPositions($from);
+        const cells = getAllCellPositionInfos($from);
 
         let from;
 

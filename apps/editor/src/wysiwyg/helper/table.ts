@@ -40,10 +40,76 @@ export function createTableRows(
   return tableRows;
 }
 
+export function createCellsToAdd(start: number[], end: number[], cellType: any) {
+  const [startRowIndex, startColumnIndex] = start;
+  const [endRowIndex, endColumnIndex] = end;
+
+  const addedCellCount =
+    startRowIndex !== endRowIndex
+      ? startColumnIndex + 1
+      : Math.max(startColumnIndex, endColumnIndex) - Math.min(startColumnIndex, endColumnIndex) + 1;
+
+  const cells = [];
+
+  for (let i = 0, len = addedCellCount; i < len; i += 1) {
+    cells.push(cellType.createAndFill());
+  }
+
+  return cells;
+}
+
 export function findCell({ nodes }: Schema, pos: ResolvedPos) {
   const { tableHeadCell, tableBodyCell } = nodes;
 
   return findNodeBy(pos, ({ type }: Node) => type === tableHeadCell || type === tableBodyCell);
+}
+
+function findRowIndex(tbodyOrThead: Node, foundRow: Node) {
+  let rowIndex = -1;
+
+  tbodyOrThead.forEach((node: Node, _: number, index: number) => {
+    if (node === foundRow) {
+      rowIndex = index;
+    }
+  });
+
+  return rowIndex;
+}
+
+export function findCellIndexByCursor({ nodes }: Schema, pos: ResolvedPos, depth: number) {
+  const { tableBody } = nodes;
+  const theadOrTbody = pos.node(depth - 2);
+  const tableRow = pos.node(depth - 1);
+  const columnCount = tableRow.childCount;
+  const columnIndex = pos.index(depth - 1);
+
+  let rowIndex = findRowIndex(theadOrTbody, tableRow);
+
+  if (theadOrTbody.type === tableBody) {
+    rowIndex += 1;
+  }
+
+  return rowIndex * columnCount + columnIndex;
+}
+
+export function isInCellElement(node: HTMLElement, root: Element) {
+  while (node && node !== root) {
+    if (node.nodeName === 'TD' || node.nodeName === 'TH') {
+      return true;
+    }
+
+    node = node.parentNode as HTMLElement;
+  }
+
+  return false;
+}
+
+export function isToRemoveCells([startRowIndex]: number[], [endRowIndex]: number[]) {
+  if (startRowIndex !== endRowIndex) {
+    return false;
+  }
+
+  return true;
 }
 
 export function getResolvedSelection(schema: Schema, selection: Selection) {
@@ -63,45 +129,42 @@ export function getResolvedSelection(schema: Schema, selection: Selection) {
   return { anchor, head };
 }
 
-/**
- * @TODO refactoring
- */
-function getHeadOrBodyCellPositions(headOrBody: Node, startPos: number) {
-  const positions: CellInfo[] = [];
+function getCellPositionInfos(headOrBody: Node, startOffset: number) {
+  const cellInfos: CellInfo[] = [];
 
   headOrBody.forEach((row: Node, rowOffset: number) => {
     row.forEach(({ nodeSize }: Node, cellOffset: number) => {
-      positions.push({
-        nodeStart: startPos + rowOffset + cellOffset + 2,
+      cellInfos.push({
+        nodeStart: startOffset + rowOffset + cellOffset + 2,
         nodeSize
       });
     });
   });
 
-  return positions;
+  return cellInfos;
 }
 
-/**
- * @TODO refactoring
- */
-export function getAllCellPositions(cellResolvedPos: ResolvedPos) {
-  let index = 2;
+export function getAllCellPositionInfos(cellPos: ResolvedPos) {
+  const foundTable = findNodeBy(cellPos, ({ type }: Node) => type.name === 'table');
 
-  if (cellResolvedPos.parent.type.name === 'tableBody') {
-    index = 1;
+  if (foundTable) {
+    const { depth } = foundTable;
+    const table = cellPos.node(depth);
+    const tablePos = cellPos.start(depth);
+
+    const thead = table.child(0);
+    const tbody = table.child(1);
+
+    const theadCellPositions = getCellPositionInfos(thead, tablePos);
+    const tbodyCellPositions = getCellPositionInfos(tbody, tablePos + thead.nodeSize);
+
+    return theadCellPositions.concat(tbodyCellPositions);
   }
-  const depth = cellResolvedPos.depth - index;
-  const table = cellResolvedPos.node(depth);
-  const tablePos = cellResolvedPos.start(depth);
 
-  const thead = table.child(0);
-  const theadCellPositions = getHeadOrBodyCellPositions(thead, tablePos);
-  const tbodyCellPositions = getHeadOrBodyCellPositions(table.child(1), tablePos + thead.nodeSize);
-
-  return theadCellPositions.concat(tbodyCellPositions);
+  return [];
 }
 
-export function getCellIndexesByCursorRange(table: Node, start: number[], end: number[]) {
+export function getIndexesBySelectionRange(table: Node, start: number[], end: number[]) {
   const tableBody = table.child(1);
   const columnCount = tableBody.child(0).childCount;
   const rowCount = tableBody.childCount + 1;
@@ -124,37 +187,6 @@ export function getCellIndexesByCursorRange(table: Node, start: number[], end: n
   return indexes;
 }
 
-export function findCellIndexByCursor({ nodes }: Schema, pos: ResolvedPos, depth: number) {
-  const { tableBody } = nodes;
-  const theadOrTbody = pos.node(depth - 2);
-  const tableRow = pos.node(depth - 1);
-  const columnCount = tableRow.childCount;
-  const columnIndex = pos.index(depth - 1);
-
-  let rowIndex = findRowIndex(theadOrTbody, tableRow);
-
-  if (theadOrTbody.type === tableBody) {
-    rowIndex += 1;
-  }
-
-  return rowIndex * columnCount + columnIndex;
-}
-
-function findRowIndex(tbodyOrThead: Node, foundRow: Node) {
-  let rowIndex = -1;
-
-  tbodyOrThead.forEach((node: Node, _: number, index: number) => {
-    if (node === foundRow) {
-      rowIndex = index;
-    }
-  });
-
-  return rowIndex;
-}
-
-/**
- * @TODO refactoring
- */
 export function getCellPosition(cellPos: ResolvedPos) {
   const { pos, parentOffset } = cellPos;
 
@@ -172,19 +204,7 @@ export function getCellPosition(cellPos: ResolvedPos) {
   return [rowIndex, columnIndex];
 }
 
-export function isInCellElement(node: HTMLElement, root: Element) {
-  while (node && node !== root) {
-    if (node.nodeName === 'TD' || node.nodeName === 'TH') {
-      return true;
-    }
-
-    node = node.parentNode as HTMLElement;
-  }
-
-  return false;
-}
-
-export function getSelectedCellRanges(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
+export function getSelectedCellRange(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
   const [startRowIndex, startColumnIndex] = getCellPosition(startCellPos);
   const [endRowIndex, endColumnIndex] = getCellPosition(endCellPos);
   const columnCount = startCellPos.parent.childCount;
@@ -197,16 +217,16 @@ export function getSelectedCellRanges(startCellPos: ResolvedPos, endCellPos: Res
   return [Math.min(startIndex, endIndex), Math.max(startIndex, endIndex)];
 }
 
+export function getTableByCellPos(cellPos: ResolvedPos) {
+  return cellPos.node(cellPos.depth - 2);
+}
+
 export function getColumnCount(table: Node) {
   return table.child(0).child(0).childCount;
 }
 
 export function getRowCountByRange(startRowIndex: number, endRowIndex: number) {
   return Math.max(startRowIndex, endRowIndex) - Math.min(startRowIndex, endRowIndex) + 1;
-}
-
-export function getTableByCellPos(cellPos: ResolvedPos) {
-  return cellPos.node(cellPos.depth - 2);
 }
 
 export function getPositionsToAddRow(
