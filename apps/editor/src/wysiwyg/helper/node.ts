@@ -1,4 +1,4 @@
-import { Node, Schema, ResolvedPos } from 'prosemirror-model';
+import { Node, ResolvedPos } from 'prosemirror-model';
 
 export function findNodeBy(pos: ResolvedPos, condition: (node: Node, depth: number) => boolean) {
   let { depth } = pos;
@@ -16,17 +16,17 @@ export function findNodeBy(pos: ResolvedPos, condition: (node: Node, depth: numb
   return null;
 }
 
-export function isInListNode({ nodes }: Schema, pos: ResolvedPos) {
-  const { listItem, bulletList, orderedList } = nodes;
-
+export function isInListNode(pos: ResolvedPos) {
   return !!findNodeBy(
     pos,
-    ({ type }: Node) => type === listItem || type === bulletList || type === orderedList
+    ({ type }: Node) =>
+      type.name === 'listItem' || type.name === 'bulletList' || type.name === 'orderedList'
   );
 }
 
-export function isInTableNode({ nodes }: Schema, pos: ResolvedPos) {
-  const { tableHeadCell, tableBodyCell } = nodes;
-
-  return !!findNodeBy(pos, ({ type }: Node) => type === tableHeadCell || type === tableBodyCell);
+export function isInTableNode(pos: ResolvedPos) {
+  return !!findNodeBy(
+    pos,
+    ({ type }: Node) => type.name === 'tableHeadCell' || type.name === 'tableBodyCell'
+  );
 }

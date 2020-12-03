@@ -17,7 +17,7 @@ export function createTableRows(
 ) {
   const { tableRow, tableHeadCell, tableBodyCell } = schema.nodes;
   const tableRows = [];
-  const cellType = isTableBody ? tableBodyCell : tableHeadCell;
+  const cell = isTableBody ? tableBodyCell : tableHeadCell;
 
   let index = isTableBody ? columnCount : 0;
 
@@ -31,7 +31,7 @@ export function createTableRows(
         index += 1;
       }
 
-      cells.push(cellType.create(null, text ? schema.text(text) : []));
+      cells.push(cell.create(null, text ? schema.text(text) : []));
     }
 
     tableRows.push(tableRow.create(null, cells));
@@ -44,24 +44,26 @@ export function createCellsToAdd(
   [startRowIndex, startColumnIndex]: number[],
   [endRowIndex, endColumnIndex]: number[],
   columnCount: number,
-  cellType: any
+  cell: Node
 ) {
   const cellCount =
     startRowIndex !== endRowIndex ? columnCount : getCountByRange(startColumnIndex, endColumnIndex);
 
   const cells = [];
+  const { type } = cell;
 
   for (let i = 0, len = cellCount; i < len; i += 1) {
-    cells.push(cellType.createAndFill());
+    cells.push(type.create());
   }
 
   return cells;
 }
 
-export function findCell({ nodes }: Schema, pos: ResolvedPos) {
-  const { tableHeadCell, tableBodyCell } = nodes;
-
-  return findNodeBy(pos, ({ type }: Node) => type === tableHeadCell || type === tableBodyCell);
+export function findCell(pos: ResolvedPos) {
+  return findNodeBy(
+    pos,
+    ({ type }: Node) => type.name === 'tableHeadCell' || type.name === 'tableBodyCell'
+  );
 }
 
 export function isInCellElement(node: HTMLElement, root: Element) {
@@ -76,29 +78,25 @@ export function isInCellElement(node: HTMLElement, root: Element) {
   return false;
 }
 
-export function isToRemoveCells(
-  [startRowIndex, stratColumnIndex]: number[],
+export function judgeToRemoveCells(
+  [startRowIndex, startColumnIndex]: number[],
   [endRowIndex, endColumnIndex]: number[],
   columnCount: number
 ) {
-  const selectedColumnCount = getCountByRange(stratColumnIndex, endColumnIndex);
+  const selectedColumnCount = getCountByRange(startColumnIndex, endColumnIndex);
   const selectedRows = startRowIndex !== endRowIndex;
   const selectedAllColumns = startRowIndex === endRowIndex && selectedColumnCount === columnCount;
 
-  if (selectedRows || selectedAllColumns) {
-    return false;
-  }
-
-  return true;
+  return !selectedRows && !selectedAllColumns;
 }
 
-export function getResolvedSelection(schema: Schema, selection: Selection) {
+export function getResolvedSelection(selection: Selection) {
   const { $anchor, $head } = selection;
   let anchor = $anchor;
   let head = $head;
 
   if (selection instanceof TextSelection) {
-    const foundCell = findCell(schema, $anchor);
+    const foundCell = findCell($anchor);
 
     if (foundCell) {
       anchor = $anchor.node(0).resolve($anchor.before(foundCell.depth));
@@ -109,12 +107,13 @@ export function getResolvedSelection(schema: Schema, selection: Selection) {
   return { anchor, head };
 }
 
-function getCellPositionInfos(headOrBody: Node, startOffset: number) {
+function getCellPosInfoList(headOrBody: Node, startOffset: number) {
   const cellInfos: CellInfo[] = [];
 
   headOrBody.forEach((row: Node, rowOffset: number) => {
     row.forEach(({ nodeSize }: Node, cellOffset: number) => {
       cellInfos.push({
+        // 2 is the sum of the front and back positions of the closing tag
         offset: startOffset + rowOffset + cellOffset + 2,
         nodeSize
       });
@@ -124,21 +123,20 @@ function getCellPositionInfos(headOrBody: Node, startOffset: number) {
   return cellInfos;
 }
 
-export function getAllCellPositionInfos(cellPos: ResolvedPos) {
+export function getAllCellPosInfoList(cellPos: ResolvedPos) {
   const foundTable = findNodeBy(cellPos, ({ type }: Node) => type.name === 'table');
 
   if (foundTable) {
-    const { depth } = foundTable;
-    const table = cellPos.node(depth);
+    const { node, depth } = foundTable;
     const tablePos = cellPos.start(depth);
 
-    const thead = table.child(0);
-    const tbody = table.child(1);
+    const thead = node.child(0);
+    const tbody = node.child(1);
 
-    const theadCellPositions = getCellPositionInfos(thead, tablePos);
-    const tbodyCellPositions = getCellPositionInfos(tbody, tablePos + thead.nodeSize);
+    const theadCellsPos = getCellPosInfoList(thead, tablePos);
+    const tbodyCellsPos = getCellPosInfoList(tbody, tablePos + thead.nodeSize);
 
-    return theadCellPositions.concat(tbodyCellPositions);
+    return theadCellsPos.concat(tbodyCellsPos);
   }
 
   return [];
@@ -157,7 +155,7 @@ export function getColumnCount(table: Node) {
 }
 
 export function getCountByRange(startIndex: number, endIndex: number) {
-  return Math.max(startIndex, endIndex) - Math.min(startIndex, endIndex) + 1;
+  return Math.abs(startIndex - endIndex) + 1;
 }
 
 export function getCellIndexesByRange(
@@ -183,7 +181,7 @@ export function getCellIndexesByRange(
   return indexes;
 }
 
-export function getCellPosition(cellPos: ResolvedPos) {
+export function getCellIndexInfo(cellPos: ResolvedPos) {
   const { pos, parentOffset } = cellPos;
 
   let rowIndex = cellPos
@@ -201,8 +199,8 @@ export function getCellPosition(cellPos: ResolvedPos) {
 }
 
 export function getSelectedCellRange(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
-  const [startRowIndex, startColumnIndex] = getCellPosition(startCellPos);
-  const [endRowIndex, endColumnIndex] = getCellPosition(endCellPos);
+  const [startRowIndex, startColumnIndex] = getCellIndexInfo(startCellPos);
+  const [endRowIndex, endColumnIndex] = getCellIndexInfo(endCellPos);
   const columnCount = startCellPos.parent.childCount;
 
   const [startIndex, endIndex] = [
@@ -235,8 +233,8 @@ export function getPositionsToRemoveRow(
   endCellPos: ResolvedPos,
   rowCount: number
 ) {
-  const [startRowIndex] = getCellPosition(startCellPos);
-  const [endRowIndex] = getCellPosition(endCellPos);
+  const [startRowIndex] = getCellIndexInfo(startCellPos);
+  const [endRowIndex] = getCellIndexInfo(endCellPos);
 
   const onlyTheadSelected = startRowIndex === endRowIndex && startRowIndex === 0;
   const endCellInThead = startRowIndex !== endRowIndex && endRowIndex === 0;
@@ -253,13 +251,10 @@ export function getPositionsToRemoveRow(
     selectedRowCount -= 1;
   }
 
-  let end;
-
-  if (selectedRowCount === rowCount) {
-    end = endCellPos.before(endCellPos.depth);
-  } else {
-    end = endCellPos.after(endCellPos.depth);
-  }
+  const end =
+    selectedRowCount === rowCount
+      ? endCellPos.before(endCellPos.depth)
+      : endCellPos.after(endCellPos.depth);
 
   return [start, end];
 }

@@ -2,14 +2,14 @@ import { Node, ResolvedPos } from 'prosemirror-model';
 import { Selection, SelectionRange, TextSelection } from 'prosemirror-state';
 import { Mappable } from 'prosemirror-transform';
 
-import { CellInfo, getAllCellPositionInfos, getSelectedCellRange } from '@/wysiwyg/helper/table';
+import { CellInfo, getAllCellPosInfoList, getSelectedCellRange } from '@/wysiwyg/helper/table';
 
 export default class CellSelection extends Selection {
   constructor(startCellPos: ResolvedPos, endCellPos = startCellPos) {
     const doc = startCellPos.node(0);
 
     const [startIndex, endIndex] = getSelectedCellRange(startCellPos, endCellPos);
-    const positions = getAllCellPositionInfos(startCellPos).slice(startIndex, endIndex + 1);
+    const positions = getAllCellPosInfoList(startCellPos).slice(startIndex, endIndex + 1);
 
     const ranges = positions.map(
       ({ offset, nodeSize }: CellInfo) =>

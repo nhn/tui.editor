@@ -40,7 +40,7 @@ export default class TableSelection {
     const inCell = isInCellElement(ev.target as HTMLElement, this.view.dom);
 
     if (inCell) {
-      const startCellPos = this.getCellPosition(ev as MouseEvent);
+      const startCellPos = this.getCellIndexInfo(ev as MouseEvent);
 
       if (startCellPos) {
         this.startCellPos = startCellPos;
@@ -52,7 +52,7 @@ export default class TableSelection {
 
   handleMousemove(ev: Event) {
     const { startCellPos } = this;
-    const endCellPos = this.getCellPosition(ev as MouseEvent);
+    const endCellPos = this.getCellIndexInfo(ev as MouseEvent);
 
     if (startCellPos && endCellPos) {
       if (startCellPos.pos === endCellPos.pos) {
@@ -85,13 +85,13 @@ export default class TableSelection {
     root.removeEventListener('mouseup', this.handlers.mouseup);
   }
 
-  getCellPosition({ clientX, clientY }: MouseEvent) {
+  getCellIndexInfo({ clientX, clientY }: MouseEvent) {
     const mousePos = this.view.posAtCoords({ left: clientX, top: clientY });
 
     if (mousePos) {
-      const { doc, schema } = this.view.state;
+      const { doc } = this.view.state;
       const currentPos = doc.resolve(mousePos.pos);
-      const foundCell = findCell(schema, currentPos);
+      const foundCell = findCell(currentPos);
 
       if (foundCell) {
         const cellOffset = currentPos.before(foundCell.depth);
