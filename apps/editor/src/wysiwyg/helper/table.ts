@@ -4,31 +4,31 @@ import { Selection, TextSelection } from 'prosemirror-state';
 import { findNodeBy } from '@/wysiwyg/helper/node';
 
 export interface CellInfo {
-  nodeStart: number;
+  offset: number;
   nodeSize: number;
 }
 
 export function createTableRows(
+  columnCount: number,
+  rowCount: number,
   schema: Schema,
-  columns: number,
-  rows: number,
-  isTbody: boolean,
+  isTableBody: boolean,
   data?: string[] | null
 ) {
   const { tableRow, tableHeadCell, tableBodyCell } = schema.nodes;
   const tableRows = [];
-  const cellType = isTbody ? tableBodyCell : tableHeadCell;
+  const cellType = isTableBody ? tableBodyCell : tableHeadCell;
 
-  let cellDataIndex = isTbody ? columns : 0;
+  let index = isTableBody ? columnCount : 0;
 
-  for (let i = 0; i < rows; i += 1) {
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
     const cells = [];
 
-    for (let j = 0; j < columns; j += 1) {
-      const text = data && data[cellDataIndex];
+    for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
+      const text = data && data[index];
 
       if (text) {
-        cellDataIndex += 1;
+        index += 1;
       }
 
       cells.push(cellType.create(null, text ? schema.text(text) : []));
@@ -40,18 +40,18 @@ export function createTableRows(
   return tableRows;
 }
 
-export function createCellsToAdd(start: number[], end: number[], cellType: any) {
-  const [startRowIndex, startColumnIndex] = start;
-  const [endRowIndex, endColumnIndex] = end;
-
-  const addedCellCount =
-    startRowIndex !== endRowIndex
-      ? startColumnIndex + 1
-      : Math.max(startColumnIndex, endColumnIndex) - Math.min(startColumnIndex, endColumnIndex) + 1;
+export function createCellsToAdd(
+  [startRowIndex, startColumnIndex]: number[],
+  [endRowIndex, endColumnIndex]: number[],
+  columnCount: number,
+  cellType: any
+) {
+  const cellCount =
+    startRowIndex !== endRowIndex ? columnCount : getCountByRange(startColumnIndex, endColumnIndex);
 
   const cells = [];
 
-  for (let i = 0, len = addedCellCount; i < len; i += 1) {
+  for (let i = 0, len = cellCount; i < len; i += 1) {
     cells.push(cellType.createAndFill());
   }
 
@@ -62,34 +62,6 @@ export function findCell({ nodes }: Schema, pos: ResolvedPos) {
   const { tableHeadCell, tableBodyCell } = nodes;
 
   return findNodeBy(pos, ({ type }: Node) => type === tableHeadCell || type === tableBodyCell);
-}
-
-function findRowIndex(tbodyOrThead: Node, foundRow: Node) {
-  let rowIndex = -1;
-
-  tbodyOrThead.forEach((node: Node, _: number, index: number) => {
-    if (node === foundRow) {
-      rowIndex = index;
-    }
-  });
-
-  return rowIndex;
-}
-
-export function findCellIndexByCursor({ nodes }: Schema, pos: ResolvedPos, depth: number) {
-  const { tableBody } = nodes;
-  const theadOrTbody = pos.node(depth - 2);
-  const tableRow = pos.node(depth - 1);
-  const columnCount = tableRow.childCount;
-  const columnIndex = pos.index(depth - 1);
-
-  let rowIndex = findRowIndex(theadOrTbody, tableRow);
-
-  if (theadOrTbody.type === tableBody) {
-    rowIndex += 1;
-  }
-
-  return rowIndex * columnCount + columnIndex;
 }
 
 export function isInCellElement(node: HTMLElement, root: Element) {
@@ -104,8 +76,16 @@ export function isInCellElement(node: HTMLElement, root: Element) {
   return false;
 }
 
-export function isToRemoveCells([startRowIndex]: number[], [endRowIndex]: number[]) {
-  if (startRowIndex !== endRowIndex) {
+export function isToRemoveCells(
+  [startRowIndex, stratColumnIndex]: number[],
+  [endRowIndex, endColumnIndex]: number[],
+  columnCount: number
+) {
+  const selectedColumnCount = getCountByRange(stratColumnIndex, endColumnIndex);
+  const selectedRows = startRowIndex !== endRowIndex;
+  const selectedAllColumns = startRowIndex === endRowIndex && selectedColumnCount === columnCount;
+
+  if (selectedRows || selectedAllColumns) {
     return false;
   }
 
@@ -135,7 +115,7 @@ function getCellPositionInfos(headOrBody: Node, startOffset: number) {
   headOrBody.forEach((row: Node, rowOffset: number) => {
     row.forEach(({ nodeSize }: Node, cellOffset: number) => {
       cellInfos.push({
-        nodeStart: startOffset + rowOffset + cellOffset + 2,
+        offset: startOffset + rowOffset + cellOffset + 2,
         nodeSize
       });
     });
@@ -164,13 +144,29 @@ export function getAllCellPositionInfos(cellPos: ResolvedPos) {
   return [];
 }
 
-export function getIndexesBySelectionRange(table: Node, start: number[], end: number[]) {
-  const tableBody = table.child(1);
-  const columnCount = tableBody.child(0).childCount;
-  const rowCount = tableBody.childCount + 1;
+export function getTableByCellPos(cellPos: ResolvedPos) {
+  return cellPos.node(cellPos.depth - 2);
+}
 
-  const [startRowIndex, startColumnIndex] = start;
-  const [endRowIndex, endColumnIndex] = end;
+export function getRowCount(table: Node) {
+  return table.child(1).childCount;
+}
+
+export function getColumnCount(table: Node) {
+  return table.child(0).child(0).childCount;
+}
+
+export function getCountByRange(startIndex: number, endIndex: number) {
+  return Math.max(startIndex, endIndex) - Math.min(startIndex, endIndex) + 1;
+}
+
+export function getCellIndexesByRange(
+  table: Node,
+  [startRowIndex, startColumnIndex]: number[],
+  [endRowIndex, endColumnIndex]: number[]
+) {
+  const columnCount = getColumnCount(table);
+  const rowCount = getRowCount(table) + 1;
 
   const columnStart =
     startRowIndex !== endRowIndex ? 0 : Math.min(startColumnIndex, endColumnIndex);
@@ -217,18 +213,6 @@ export function getSelectedCellRange(startCellPos: ResolvedPos, endCellPos: Reso
   return [Math.min(startIndex, endIndex), Math.max(startIndex, endIndex)];
 }
 
-export function getTableByCellPos(cellPos: ResolvedPos) {
-  return cellPos.node(cellPos.depth - 2);
-}
-
-export function getColumnCount(table: Node) {
-  return table.child(0).child(0).childCount;
-}
-
-export function getRowCountByRange(startRowIndex: number, endRowIndex: number) {
-  return Math.max(startRowIndex, endRowIndex) - Math.min(startRowIndex, endRowIndex) + 1;
-}
-
 export function getPositionsToAddRow(
   cellPos: ResolvedPos,
   startRowIndex: number,
@@ -249,9 +233,11 @@ export function getPositionsToAddRow(
 export function getPositionsToRemoveRow(
   startCellPos: ResolvedPos,
   endCellPos: ResolvedPos,
-  startRowIndex: number,
-  endRowIndex: number
+  rowCount: number
 ) {
+  const [startRowIndex] = getCellPosition(startCellPos);
+  const [endRowIndex] = getCellPosition(endCellPos);
+
   const onlyTheadSelected = startRowIndex === endRowIndex && startRowIndex === 0;
   const endCellInThead = startRowIndex !== endRowIndex && endRowIndex === 0;
 
@@ -260,12 +246,20 @@ export function getPositionsToRemoveRow(
   }
 
   let start = startCellPos.before(startCellPos.depth);
+  let selectedRowCount = getCountByRange(startRowIndex, endRowIndex);
 
   if (startRowIndex === 0) {
     start = startCellPos.after(startCellPos.depth) + 2;
+    selectedRowCount -= 1;
   }
 
-  const end = endCellPos.after(endCellPos.depth);
+  let end;
+
+  if (selectedRowCount === rowCount) {
+    end = endCellPos.before(endCellPos.depth);
+  } else {
+    end = endCellPos.after(endCellPos.depth);
+  }
 
   return [start, end];
 }

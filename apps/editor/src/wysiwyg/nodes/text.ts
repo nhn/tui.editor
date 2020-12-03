@@ -1,7 +1,7 @@
 import { Command } from 'prosemirror-commands';
 
 import Node from '@/spec/node';
-import { isInListNode } from '../helper/node';
+import { isInListNode, isInTableNode } from '../helper/node';
 
 const reSoftTabLen = /\s{1,4}$/;
 
@@ -21,7 +21,7 @@ export class Text extends Node {
       const { $from, $to } = selection;
       const range = $from.blockRange($to);
 
-      if (range && !isInListNode(schema, $from)) {
+      if (range && !isInListNode(schema, $from) && !isInTableNode(schema, $from)) {
         dispatch!(tr.insertText('    ', $from.pos, $to.pos));
         return true;
       }
@@ -35,7 +35,7 @@ export class Text extends Node {
       const { $from, $to, from } = selection;
       const range = $from.blockRange($to);
 
-      if (range && !isInListNode(schema, $from)) {
+      if (range && !isInListNode(schema, $from) && !isInTableNode(schema, $from)) {
         const { nodeBefore } = $from;
 
         if (nodeBefore && nodeBefore.isText) {
