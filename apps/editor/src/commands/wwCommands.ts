@@ -9,7 +9,7 @@ function indent(): EditorCommand {
     const { $from, $to } = selection;
     const range = $from.blockRange($to);
 
-    if (range && isInListNode(schema, $from)) {
+    if (range && isInListNode($from)) {
       return sinkListItem(schema.nodes.listItem)(state, dispatch);
     }
 
@@ -23,7 +23,7 @@ function outdent(): EditorCommand {
     const { $from, $to } = selection;
     const range = $from.blockRange($to);
 
-    if (range && isInListNode(schema, $from)) {
+    if (range && isInListNode($from)) {
       return liftListItem(schema.nodes.listItem)(state, dispatch);
     }
 

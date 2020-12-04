@@ -1,4 +1,4 @@
-import { Slice } from 'prosemirror-model';
+import { Slice, Node, Mark } from 'prosemirror-model';
 import 'prosemirror-transform';
 
 declare module 'prosemirror-transform' {
@@ -6,5 +6,14 @@ declare module 'prosemirror-transform' {
     slice: Slice;
     from: number;
     to: number;
+  }
+
+  export interface Transform {
+    setNodeMarkup(
+      pos: number,
+      type: Node | null,
+      attrs?: { [key: string]: any },
+      marks?: Mark[]
+    ): Transform;
   }
 }

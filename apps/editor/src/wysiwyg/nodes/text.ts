@@ -1,7 +1,7 @@
 import { Command } from 'prosemirror-commands';
 
 import Node from '@/spec/node';
-import { isInListNode } from '../helper/node';
+import { isInListNode, isInTableNode } from '../helper/node';
 
 const reSoftTabLen = /\s{1,4}$/;
 
@@ -17,11 +17,11 @@ export class Text extends Node {
   }
 
   private addSpaces(): Command {
-    return ({ selection, tr, schema }, dispatch) => {
+    return ({ selection, tr }, dispatch) => {
       const { $from, $to } = selection;
       const range = $from.blockRange($to);
 
-      if (range && !isInListNode(schema, $from)) {
+      if (range && !isInListNode($from) && !isInTableNode($from)) {
         dispatch!(tr.insertText('    ', $from.pos, $to.pos));
         return true;
       }
@@ -31,11 +31,11 @@ export class Text extends Node {
   }
 
   private removeSpaces(): Command {
-    return ({ selection, tr, schema }, dispatch) => {
+    return ({ selection, tr }, dispatch) => {
       const { $from, $to, from } = selection;
       const range = $from.blockRange($to);
 
-      if (range && !isInListNode(schema, $from)) {
+      if (range && !isInListNode($from) && !isInTableNode($from)) {
         const { nodeBefore } = $from;
 
         if (nodeBefore && nodeBefore.isText) {

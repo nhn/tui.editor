@@ -9,6 +9,8 @@ import EditorBase, { StateOptions } from '@/base';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import { getWwCommands } from '@/commands/wwCommands';
 
+import { tableSelectionPlugin } from '@/wysiwyg/plugins/tableSelection';
+
 // @TODO move to common file and change path on markdown
 import { createTextSelection } from '@/markdown/helper/manipulation';
 
@@ -65,7 +67,8 @@ export default class WysiwygEditor extends EditorBase {
           'Shift-Mod-z': redo(),
           ...baseKeymap
         }),
-        history()
+        history(),
+        tableSelectionPlugin()
       ],
       ...addedStates
     });
