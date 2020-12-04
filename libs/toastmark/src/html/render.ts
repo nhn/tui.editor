@@ -10,7 +10,6 @@ interface Options {
   nodeId: boolean;
   tagFilter: boolean;
   convertors?: HTMLConvertorMap;
-  customProp: Record<string, any>;
 }
 
 interface Context {
@@ -41,7 +40,6 @@ export interface OpenTagToken extends TagToken {
   classNames?: string[];
   attributes?: Record<string, string>;
   selfClose?: boolean;
-  finalize?: boolean;
 }
 
 export interface CloseTagToken extends TagToken {
@@ -65,8 +63,7 @@ const defaultOptions: Options = {
   softbreak: '\n',
   gfm: false,
   tagFilter: false,
-  nodeId: false,
-  customProp: {}
+  nodeId: false
 };
 
 export function createRenderHTML(customOptions?: Partial<Options>) {
@@ -119,10 +116,6 @@ function generateOpenTagString(node: OpenTagToken): string {
     buffer.push(' /');
   }
   buffer.push('>');
-
-  if (node.finalize) {
-    buffer.push(`</${tagName}>`);
-  }
 
   return buffer.join('');
 }

@@ -41,6 +41,17 @@ export interface BlockHandler {
   acceptsLines: boolean;
 }
 
+const noop: BlockHandler = {
+  continue() {
+    return Process.Stop;
+  },
+  finalize() {},
+  canContain() {
+    return false;
+  },
+  acceptsLines: true
+};
+
 const document: BlockHandler = {
   continue() {
     return Process.Go;
@@ -257,16 +268,8 @@ const paragraph: BlockHandler = {
   acceptsLines: true
 };
 
-const refDef: BlockHandler = {
-  continue() {
-    return Process.Stop;
-  },
-  finalize() {},
-  canContain() {
-    return false;
-  },
-  acceptsLines: true
-};
+const refDef = noop;
+const frontMatter = noop;
 
 export const blockHandlers = {
   document,
@@ -286,5 +289,6 @@ export const blockHandlers = {
   tableDelimRow,
   tableDelimCell,
   refDef,
-  customBlock
+  customBlock,
+  frontMatter
 };

@@ -18,7 +18,8 @@ export type BlockNodeType =
   | 'tableDelimRow'
   | 'tableDelimCell'
   | 'refDef'
-  | 'customBlock';
+  | 'customBlock'
+  | 'frontMatter';
 
 export type InlineNodeType =
   | 'code'
@@ -277,6 +278,7 @@ export class CustomBlockNode extends BlockNode {
   public offset = -1;
   public info = '';
 }
+
 export function createNode(type: 'heading', sourcepos?: SourcePos): HeadingNode;
 export function createNode(type: 'list' | 'item', sourcepos?: SourcePos): ListNode;
 export function createNode(type: 'codeBlock', sourcepos?: SourcePos): CodeBlockNode;
@@ -314,6 +316,7 @@ export function createNode(type: NodeType, sourcepos?: SourcePos) {
     case 'tableRow':
     case 'tableBody':
     case 'tableHead':
+    case 'frontMatter':
       return new BlockNode(type, sourcepos);
     case 'code':
       return new CodeNode(type, sourcepos);

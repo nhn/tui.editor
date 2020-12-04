@@ -4,7 +4,6 @@ import {
   CodeBlockNode,
   ListNode,
   LinkNode,
-  BlockNode,
   CustomBlockNode
 } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
@@ -55,25 +54,18 @@ export const baseConvertors: HTMLConvertorMap = {
     };
   },
 
-  paragraph(node, { entering, skipChildren }) {
+  paragraph(node, { entering }) {
     const grandparent = node.parent?.parent;
-    let finalize = false;
     if (grandparent && grandparent.type === 'list') {
       if ((grandparent as ListNode).listData!.tight) {
         return null;
       }
     }
 
-    if ((node as BlockNode).customType) {
-      finalize = true;
-      skipChildren();
-    }
-
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: 'p',
-      outerNewLine: true,
-      finalize
+      outerNewLine: true
     };
   },
 
@@ -211,6 +203,19 @@ export const baseConvertors: HTMLConvertorMap = {
 
     return [
       { type: 'openTag', tagName: 'div', outerNewLine: true },
+      { type: 'text', content: node.literal! },
+      { type: 'closeTag', tagName: 'div', outerNewLine: true }
+    ];
+  },
+
+  frontMatter(node) {
+    return [
+      {
+        type: 'openTag',
+        tagName: 'div',
+        outerNewLine: true,
+        attributes: { style: 'white-space: pre' }
+      },
       { type: 'text', content: node.literal! },
       { type: 'closeTag', tagName: 'div', outerNewLine: true }
     ];
