@@ -6,8 +6,8 @@ const reClosingCustomBlock = /^}}$/;
 
 export const customBlock: BlockHandler = {
   continue(parser, container: CustomBlockNode) {
-    const ln = parser.currentLine;
-    const match = ln.slice(parser.nextNonspace).match(reClosingCustomBlock);
+    const line = parser.currentLine;
+    const match = line.match(reClosingCustomBlock);
     if (match) {
       // closing custom block
       parser.lastLineLength = match[0].length;
