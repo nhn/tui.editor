@@ -173,8 +173,7 @@ class ToastUIEditor {
       extendedAutolinks,
       referenceDefinition,
       customParser: parser,
-      frontMatter,
-      customProp: { showFrontMatter: frontMatter }
+      frontMatter
     };
 
     if (this.options.hooks) {
