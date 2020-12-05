@@ -3,7 +3,7 @@ import { Selection, TextSelection } from 'prosemirror-state';
 
 import { findNodeBy } from '@/wysiwyg/helper/node';
 
-export interface CellInfo {
+export interface CellPosInfo {
   offset: number;
   nodeSize: number;
 }
