@@ -33,7 +33,7 @@ export default class TableSelection {
   }
 
   init() {
-    this.view.root.addEventListener('mousedown', this.handlers.mousedown);
+    this.view.dom.addEventListener('mousedown', this.handlers.mousedown);
   }
 
   handleMousedown(ev: Event) {
@@ -72,17 +72,17 @@ export default class TableSelection {
   }
 
   bindEvent() {
-    const { root } = this.view;
+    const { dom } = this.view;
 
-    root.addEventListener('mousemove', this.handlers.mousemove);
-    root.addEventListener('mouseup', this.handlers.mouseup);
+    dom.addEventListener('mousemove', this.handlers.mousemove);
+    dom.addEventListener('mouseup', this.handlers.mouseup);
   }
 
   unbindEvent() {
-    const { root } = this.view;
+    const { dom } = this.view;
 
-    root.removeEventListener('mousemove', this.handlers.mousemove);
-    root.removeEventListener('mouseup', this.handlers.mouseup);
+    dom.removeEventListener('mousemove', this.handlers.mousemove);
+    dom.removeEventListener('mouseup', this.handlers.mouseup);
   }
 
   getCellIndexInfo({ clientX, clientY }: MouseEvent) {
@@ -113,6 +113,6 @@ export default class TableSelection {
   }
 
   destroy() {
-    this.view.root.removeEventListener('mousedown', this.handlers.mousedown);
+    this.view.dom.removeEventListener('mousedown', this.handlers.mousedown);
   }
 }
