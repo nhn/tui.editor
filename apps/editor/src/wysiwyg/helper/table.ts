@@ -3,7 +3,7 @@ import { Selection, TextSelection } from 'prosemirror-state';
 
 import { findNodeBy } from '@/wysiwyg/helper/node';
 
-export interface CellPosInfo {
+export interface CellInfo {
   offset: number;
   nodeSize: number;
 }
@@ -91,7 +91,7 @@ export function findCell(pos: ResolvedPos) {
   );
 }
 
-export function findNextCell([rowIndex, columnIndex]: number[], cellsInfo: CellPosInfo[][]) {
+export function findNextCell([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
   const allRowCount = cellsInfo.length;
   const allColumnCount = cellsInfo[0].length;
 
@@ -112,7 +112,7 @@ export function findNextCell([rowIndex, columnIndex]: number[], cellsInfo: CellP
   return null;
 }
 
-export function findPrevCell([rowIndex, columnIndex]: number[], cellsInfo: CellPosInfo[][]) {
+export function findPrevCell([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
   const allColumnCount = cellsInfo[0].length;
 
   const firstCellInRow = columnIndex === 0;
@@ -140,10 +140,7 @@ function getCountByRange(startIndex: number, endIndex: number) {
   return Math.abs(startIndex - endIndex) + 1;
 }
 
-export function getNextRowOffset(
-  { rowIndex, rowCount }: SelectionInfo,
-  cellsInfo: CellPosInfo[][]
-) {
+export function getNextRowOffset({ rowIndex, rowCount }: SelectionInfo, cellsInfo: CellInfo[][]) {
   const allColumnCount = cellsInfo[0].length;
   const selectedOnlyThead = rowIndex === 0 && rowCount === 1;
 
@@ -158,7 +155,7 @@ export function getNextRowOffset(
   return -1;
 }
 
-export function getPrevRowOffset({ rowIndex }: SelectionInfo, cellsInfo: CellPosInfo[][]) {
+export function getPrevRowOffset({ rowIndex }: SelectionInfo, cellsInfo: CellInfo[][]) {
   const selectedThead = rowIndex === 0;
 
   if (!selectedThead) {
@@ -173,7 +170,7 @@ export function getPrevRowOffset({ rowIndex }: SelectionInfo, cellsInfo: CellPos
 export function getNextColumnOffsets(
   rowIndex: number,
   { columnIndex, columnCount }: SelectionInfo,
-  cellsInfo: CellPosInfo[][]
+  cellsInfo: CellInfo[][]
 ) {
   const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex + columnCount - 1];
   const mapOffset = offset + nodeSize;
@@ -184,7 +181,7 @@ export function getNextColumnOffsets(
 export function getPrevColumnOffsets(
   rowIndex: number,
   { columnIndex }: SelectionInfo,
-  cellsInfo: CellPosInfo[][]
+  cellsInfo: CellInfo[][]
 ) {
   const { offset } = cellsInfo[rowIndex][columnIndex];
   const mapOffset = offset;
@@ -210,10 +207,10 @@ export function getResolvedSelection(selection: Selection) {
 }
 
 function getCellInfoMatrix(headOrBody: Node, startOffset: number) {
-  const cellInfoMatrix: CellPosInfo[][] = [];
+  const cellInfoMatrix: CellInfo[][] = [];
 
   headOrBody.forEach((row: Node, rowOffset: number) => {
-    const cellInfoList: CellPosInfo[] = [];
+    const cellInfoList: CellInfo[] = [];
 
     row.forEach(({ nodeSize }: Node, cellOffset: number) => {
       cellInfoList.push({

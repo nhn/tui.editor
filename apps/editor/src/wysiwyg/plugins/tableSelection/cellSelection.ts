@@ -5,13 +5,13 @@ import { Mappable } from 'prosemirror-transform';
 import {
   getSelectionInfo,
   getTableCellsInfo,
-  CellPosInfo,
+  CellInfo,
   SelectionInfo
 } from '@/wysiwyg/helper/table';
 
 function getSelectionRanges(
   doc: Node,
-  cellsPos: CellPosInfo[][],
+  cellsPos: CellInfo[][],
   { rowIndex, rowCount, columnIndex, columnCount }: SelectionInfo
 ) {
   const ranges = [];
