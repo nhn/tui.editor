@@ -222,7 +222,7 @@ function getCellInfoMatrix(headOrBody: Node, startOffset: number) {
   return cellInfoMatrix;
 }
 
-export function getCellsPosInfo(cellPos: ResolvedPos) {
+export function getTableCellsInfo(cellPos: ResolvedPos) {
   const foundTable = findNodeBy(cellPos, ({ type }: Node) => type.name === 'table');
 
   if (foundTable) {
