@@ -24,7 +24,7 @@ import EventEmitter from './event/eventEmitter';
 import CommandManager from './commands/commandManager';
 import Convertor from './convertors/convertor';
 import Viewer from './viewer';
-import i18n, { I18n } from './i18n';
+import i18n, { I18n } from './i18n/i18n';
 import DefaultUI from './ui/defaultUI';
 import { invokePlugins, getPluginInfo } from './pluginHelper';
 

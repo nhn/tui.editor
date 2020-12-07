@@ -8,7 +8,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import UIController from './uicontroller';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 import domUtils from '../utils/dom';
 
 const MARKDOWN = 'markdown';

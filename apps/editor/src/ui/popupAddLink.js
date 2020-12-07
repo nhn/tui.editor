@@ -7,7 +7,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import LayerPopup from './layerpopup';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 
 const URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/;
 

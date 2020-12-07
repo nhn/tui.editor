@@ -7,7 +7,7 @@ import css from 'tui-code-snippet/domUtil/css';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 
 import LayerPopup from './layerpopup';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 import domUtils from '../utils/dom';
 
 export const REMOVE_ROW_MENU_CLASS_NAME = 'te-table-remove-row';
