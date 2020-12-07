@@ -4,7 +4,7 @@ import { Mappable } from 'prosemirror-transform';
 
 import {
   getSelectionInfo,
-  getCellsPosInfo,
+  getTableCellsInfo,
   CellPosInfo,
   SelectionInfo
 } from '@/wysiwyg/helper/table';
@@ -31,7 +31,7 @@ export default class CellSelection extends Selection {
   constructor(startCellPos: ResolvedPos, endCellPos = startCellPos) {
     const doc = startCellPos.node(0);
 
-    const cellsPos = getCellsPosInfo(startCellPos);
+    const cellsPos = getTableCellsInfo(startCellPos);
     const selectionInfo = getSelectionInfo(startCellPos, endCellPos);
     const ranges = getSelectionRanges(doc, cellsPos, selectionInfo);
 

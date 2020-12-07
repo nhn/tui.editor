@@ -91,9 +91,9 @@ export function findCell(pos: ResolvedPos) {
   );
 }
 
-export function findNextCell([rowIndex, columnIndex]: number[], cellsPosInfo: CellPosInfo[][]) {
-  const allRowCount = cellsPosInfo.length;
-  const allColumnCount = cellsPosInfo[0].length;
+export function findNextCell([rowIndex, columnIndex]: number[], cellsInfo: CellPosInfo[][]) {
+  const allRowCount = cellsInfo.length;
+  const allColumnCount = cellsInfo[0].length;
 
   const lastCellInRow = columnIndex === allColumnCount - 1;
   const lastCellInTable = rowIndex === allRowCount - 1 && lastCellInRow;
@@ -106,14 +106,14 @@ export function findNextCell([rowIndex, columnIndex]: number[], cellsPosInfo: Ce
       columnIndex = 0;
     }
 
-    return cellsPosInfo[rowIndex][columnIndex];
+    return cellsInfo[rowIndex][columnIndex];
   }
 
   return null;
 }
 
-export function findPrevCell([rowIndex, columnIndex]: number[], cellsPosInfo: CellPosInfo[][]) {
-  const allColumnCount = cellsPosInfo[0].length;
+export function findPrevCell([rowIndex, columnIndex]: number[], cellsInfo: CellPosInfo[][]) {
+  const allColumnCount = cellsInfo[0].length;
 
   const firstCellInRow = columnIndex === 0;
   const firstCellInTable = rowIndex === 0 && firstCellInRow;
@@ -126,13 +126,13 @@ export function findPrevCell([rowIndex, columnIndex]: number[], cellsPosInfo: Ce
       columnIndex = allColumnCount - 1;
     }
 
-    return cellsPosInfo[rowIndex][columnIndex];
+    return cellsInfo[rowIndex][columnIndex];
   }
 
   return null;
 }
 
-function getIndexByRange(startIndex: number, endIndex: number) {
+function getMinimumIndex(startIndex: number, endIndex: number) {
   return Math.min(startIndex, endIndex);
 }
 
@@ -142,15 +142,15 @@ function getCountByRange(startIndex: number, endIndex: number) {
 
 export function getNextRowOffset(
   { rowIndex, rowCount }: SelectionInfo,
-  cellsPosInfo: CellPosInfo[][]
+  cellsInfo: CellPosInfo[][]
 ) {
-  const allColumnCount = cellsPosInfo[0].length;
+  const allColumnCount = cellsInfo[0].length;
   const selectedOnlyThead = rowIndex === 0 && rowCount === 1;
 
   if (!selectedOnlyThead) {
     const rowIdx = rowIndex + rowCount - 1;
     const colIdx = allColumnCount - 1;
-    const { offset, nodeSize } = cellsPosInfo[rowIdx][colIdx];
+    const { offset, nodeSize } = cellsInfo[rowIdx][colIdx];
 
     return offset + nodeSize + 1;
   }
@@ -158,11 +158,11 @@ export function getNextRowOffset(
   return -1;
 }
 
-export function getPrevRowOffset({ rowIndex }: SelectionInfo, cellsPosInfo: CellPosInfo[][]) {
+export function getPrevRowOffset({ rowIndex }: SelectionInfo, cellsInfo: CellPosInfo[][]) {
   const selectedThead = rowIndex === 0;
 
   if (!selectedThead) {
-    const [{ offset }] = cellsPosInfo[rowIndex];
+    const [{ offset }] = cellsInfo[rowIndex];
 
     return offset - 1;
   }
@@ -173,9 +173,9 @@ export function getPrevRowOffset({ rowIndex }: SelectionInfo, cellsPosInfo: Cell
 export function getNextColumnOffsets(
   rowIndex: number,
   { columnIndex, columnCount }: SelectionInfo,
-  cellsPosInfo: CellPosInfo[][]
+  cellsInfo: CellPosInfo[][]
 ) {
-  const { offset, nodeSize } = cellsPosInfo[rowIndex][columnIndex + columnCount - 1];
+  const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex + columnCount - 1];
   const mapOffset = offset + nodeSize;
 
   return { offset, mapOffset };
@@ -183,10 +183,10 @@ export function getNextColumnOffsets(
 
 export function getPrevColumnOffsets(
   rowIndex: number,
-  { columnIndex, columnCount }: SelectionInfo,
-  cellsPosInfo: CellPosInfo[][]
+  { columnIndex }: SelectionInfo,
+  cellsInfo: CellPosInfo[][]
 ) {
-  const { offset } = cellsPosInfo[rowIndex][columnIndex];
+  const { offset } = cellsInfo[rowIndex][columnIndex];
   const mapOffset = offset;
 
   return { offset, mapOffset };
@@ -209,8 +209,8 @@ export function getResolvedSelection(selection: Selection) {
   return { anchor, head };
 }
 
-function getCellPosMatrix(headOrBody: Node, startOffset: number) {
-  const infoList: CellPosInfo[][] = [];
+function getCellInfoMatrix(headOrBody: Node, startOffset: number) {
+  const cellInfoMatrix: CellPosInfo[][] = [];
 
   headOrBody.forEach((row: Node, rowOffset: number) => {
     const cellInfoList: CellPosInfo[] = [];
@@ -223,13 +223,13 @@ function getCellPosMatrix(headOrBody: Node, startOffset: number) {
       });
     });
 
-    infoList.push(cellInfoList);
+    cellInfoMatrix.push(cellInfoList);
   });
 
-  return infoList;
+  return cellInfoMatrix;
 }
 
-export function getCellsPosInfo(cellPos: ResolvedPos) {
+export function getTableCellsInfo(cellPos: ResolvedPos) {
   const foundTable = findNodeBy(cellPos, ({ type }: Node) => type.name === 'table');
 
   if (foundTable) {
@@ -239,8 +239,8 @@ export function getCellsPosInfo(cellPos: ResolvedPos) {
     const thead = node.child(0);
     const tbody = node.child(1);
 
-    const theadCellsPos = getCellPosMatrix(thead, tablePos);
-    const tbodyCellsPos = getCellPosMatrix(tbody, tablePos + thead.nodeSize);
+    const theadCellsPos = getCellInfoMatrix(thead, tablePos);
+    const tbodyCellsPos = getCellInfoMatrix(tbody, tablePos + thead.nodeSize);
 
     return theadCellsPos.concat(tbodyCellsPos);
   }
@@ -269,10 +269,10 @@ export function getSelectionInfo(startCellPos: ResolvedPos, endCellPos = startCe
   const [startRowIndex, startColumnIndex] = getCellIndexInfo(startCellPos);
   const [endRowIndex, endColumnIndex] = getCellIndexInfo(endCellPos);
 
-  const rowIndex = getIndexByRange(startRowIndex, endRowIndex);
+  const rowIndex = getMinimumIndex(startRowIndex, endRowIndex);
   const rowCount = getCountByRange(startRowIndex, endRowIndex);
 
-  const columnIndex = getIndexByRange(startColumnIndex, endColumnIndex);
+  const columnIndex = getMinimumIndex(startColumnIndex, endColumnIndex);
   const columnCount = getCountByRange(startColumnIndex, endColumnIndex);
 
   return { rowIndex, rowCount, columnIndex, columnCount };

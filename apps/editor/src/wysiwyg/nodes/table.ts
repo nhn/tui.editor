@@ -9,7 +9,7 @@ import {
   createCellsToAdd,
   getResolvedSelection,
   getSelectionInfo,
-  getCellsPosInfo,
+  getTableCellsInfo,
   getCellIndexInfo,
   getNextRowOffset,
   getPrevRowOffset,
@@ -97,15 +97,15 @@ export class Table extends Node {
 
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsPosInfo = getCellsPosInfo(anchor);
+        const cellsInfo = getTableCellsInfo(anchor);
         const { columnCount } = selectionInfo;
-        const allRowCount = cellsPosInfo.length;
+        const allRowCount = cellsInfo.length;
 
         for (let rowIndex = 0; rowIndex < allRowCount; rowIndex += 1) {
           const { offset, mapOffset } =
             direction === 1
-              ? getNextColumnOffsets(rowIndex, selectionInfo, cellsPosInfo)
-              : getPrevColumnOffsets(rowIndex, selectionInfo, cellsPosInfo);
+              ? getNextColumnOffsets(rowIndex, selectionInfo, cellsInfo)
+              : getPrevColumnOffsets(rowIndex, selectionInfo, cellsInfo);
 
           const from = tr.mapping.map(mapOffset);
           const cells = createCellsToAdd(columnCount, offset, doc);
@@ -129,9 +129,9 @@ export class Table extends Node {
 
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsPosInfo = getCellsPosInfo(anchor);
+        const cellsInfo = getTableCellsInfo(anchor);
         const { columnIndex, columnCount } = selectionInfo;
-        const allColumnCount = cellsPosInfo[0].length;
+        const allColumnCount = cellsInfo[0].length;
 
         const selectedAllColumn = columnCount === allColumnCount;
 
@@ -139,12 +139,12 @@ export class Table extends Node {
           return false;
         }
 
-        const allRowCount = cellsPosInfo.length;
+        const allRowCount = cellsInfo.length;
         const mapOffset = tr.mapping.maps.length;
 
         for (let i = 0; i < allRowCount; i += 1) {
           for (let j = 0; j < columnCount; j += 1) {
-            const { offset, nodeSize } = cellsPosInfo[i][j + columnIndex];
+            const { offset, nodeSize } = cellsInfo[i][j + columnIndex];
 
             const from = tr.mapping.slice(mapOffset).map(offset);
             const to = from + nodeSize;
@@ -169,13 +169,13 @@ export class Table extends Node {
 
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsPosInfo = getCellsPosInfo(anchor);
+        const cellsInfo = getTableCellsInfo(anchor);
         const { rowCount } = selectionInfo;
-        const allColumnCount = cellsPosInfo[0].length;
+        const allColumnCount = cellsInfo[0].length;
         const from =
           direction === 1
-            ? getNextRowOffset(selectionInfo, cellsPosInfo)
-            : getPrevRowOffset(selectionInfo, cellsPosInfo);
+            ? getNextRowOffset(selectionInfo, cellsInfo)
+            : getPrevRowOffset(selectionInfo, cellsInfo);
 
         if (from > -1) {
           const rows = createTableBodyRows(rowCount, allColumnCount, schema);
@@ -197,9 +197,9 @@ export class Table extends Node {
 
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsPosInfo = getCellsPosInfo(anchor);
+        const cellsInfo = getTableCellsInfo(anchor);
         const { rowIndex, rowCount } = selectionInfo;
-        const allRowCount = cellsPosInfo.length;
+        const allRowCount = cellsInfo.length;
 
         const selectedThead = rowIndex === 0;
         const selectedAllTbodyRow = rowCount === allRowCount - 1;
@@ -208,11 +208,11 @@ export class Table extends Node {
           return false;
         }
 
-        const from = cellsPosInfo[rowIndex][0].offset - 1;
+        const from = cellsInfo[rowIndex][0].offset - 1;
 
         const rowIdx = rowIndex + rowCount - 1;
-        const colIdx = cellsPosInfo[0].length - 1;
-        const { offset, nodeSize } = cellsPosInfo[rowIdx][colIdx];
+        const colIdx = cellsInfo[0].length - 1;
+        const { offset, nodeSize } = cellsInfo[rowIdx][colIdx];
         const to = offset + nodeSize + 1;
 
         dispatch!(tr.step(new ReplaceStep(from, to, Slice.empty)));
@@ -232,13 +232,13 @@ export class Table extends Node {
 
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsPosInfo = getCellsPosInfo(anchor);
+        const cellsInfo = getTableCellsInfo(anchor);
         const { columnIndex, columnCount } = selectionInfo;
-        const allRowCount = cellsPosInfo.length;
+        const allRowCount = cellsInfo.length;
 
         for (let i = 0; i < allRowCount; i += 1) {
           for (let j = 0; j < columnCount; j += 1) {
-            const { offset } = cellsPosInfo[i][j + columnIndex];
+            const { offset } = cellsInfo[i][j + columnIndex];
 
             tr.setNodeMarkup(offset, null, { align });
           }
@@ -259,12 +259,10 @@ export class Table extends Node {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const cellsPosInfo = getCellsPosInfo(anchor);
+        const cellsInfo = getTableCellsInfo(anchor);
         const cellIndex = getCellIndexInfo(anchor);
         const foundCell =
-          direction === 1
-            ? findNextCell(cellIndex, cellsPosInfo)
-            : findPrevCell(cellIndex, cellsPosInfo);
+          direction === 1 ? findNextCell(cellIndex, cellsInfo) : findPrevCell(cellIndex, cellsInfo);
 
         if (foundCell) {
           const { offset, nodeSize } = foundCell;

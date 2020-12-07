@@ -5,7 +5,7 @@ import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
 import CellSelection from '@/wysiwyg/plugins/tableSelection/cellSelection';
 
-import { getCellsPosInfo } from '@/wysiwyg/helper/table';
+import { getTableCellsInfo } from '@/wysiwyg/helper/table';
 
 describe('wysiwyg table commands', () => {
   let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter, cmd: CommandManager;
@@ -27,10 +27,10 @@ describe('wysiwyg table commands', () => {
     cellSelection = true
   ) {
     const doc = wwe.getModel();
-    const cellsPosInfo = getCellsPosInfo(doc.resolve(1));
+    const cellsInfo = getTableCellsInfo(doc.resolve(1));
 
-    const startCellOffset = cellsPosInfo[startRowIndex][startColumnIndex].offset;
-    const endCellOffset = cellsPosInfo[endRowIndex][endColumnIndex].offset;
+    const startCellOffset = cellsInfo[startRowIndex][startColumnIndex].offset;
+    const endCellOffset = cellsInfo[endRowIndex][endColumnIndex].offset;
 
     if (startCellOffset === endCellOffset && !cellSelection) {
       const from = startCellOffset + 1;
