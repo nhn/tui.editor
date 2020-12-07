@@ -37,17 +37,11 @@ export function createTableBodyRows(
   const { tableRow, tableBodyCell } = schema.nodes;
   const tableRows = [];
 
-  let dataIndex = 0;
-
-  for (let i = 0; i < rowCount; i += 1) {
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
     const cells = [];
 
-    for (let j = 0; j < columnCount; j += 1) {
-      const text = data && data[dataIndex];
-
-      if (text) {
-        dataIndex += 1;
-      }
+    for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
+      const text = data && data[rowIndex * columnCount + columnIndex];
 
       cells.push(tableBodyCell.create(null, text ? schema.text(text) : []));
     }
