@@ -1,9 +1,9 @@
 import { source } from 'common-tags';
 import { Parser } from '../../blocks';
-import { createRenderHTML } from '../../../html/render';
+import { Renderer } from '../../../html/render';
 
 const reader = new Parser({ frontMatter: true });
-const render = createRenderHTML();
+const renderer = new Renderer();
 
 describe('front matter parsing', () => {
   it('basic', () => {
@@ -169,7 +169,7 @@ describe('Exmaple', () => {
   examples.forEach(({ no, input, output }) => {
     it(String(no), () => {
       const root = reader.parse(input);
-      const html = render(root);
+      const html = renderer.render(root);
       expect(html).toBe(`${output}\n`);
     });
   });

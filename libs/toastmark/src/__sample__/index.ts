@@ -1,6 +1,6 @@
 import codemirror from 'codemirror';
 import { ToastMark } from '../toastmark';
-import { createRenderHTML } from '../html/render';
+import { Renderer } from '../html/render';
 import { last } from '../helper';
 import 'codemirror/lib/codemirror.css';
 import './index.css';
@@ -19,7 +19,7 @@ const previewEl = document.querySelector('.preview') as HTMLElement;
 
 const cm = codemirror(editorEl, { lineNumbers: true });
 const doc = new ToastMark();
-const render = createRenderHTML({ gfm: true, nodeId: true });
+const renderer = new Renderer({ gfm: true, nodeId: true });
 
 const tokenTypes = {
   heading: 'header',
@@ -43,7 +43,7 @@ cm.on('change', (editor, changeObj) => {
 
   changed.forEach(result => {
     const { nodes, removedNodeRange } = result;
-    const html = render(doc.getRootNode());
+    const html = renderer.render(doc.getRootNode());
     htmlEl.innerText = html;
 
     if (!removedNodeRange) {
@@ -52,7 +52,7 @@ cm.on('change', (editor, changeObj) => {
       const [startNodeId, endNodeId] = removedNodeRange.id;
       const startEl = previewEl.querySelector(`[data-nodeid="${startNodeId}"]`);
       const endEl = previewEl.querySelector(`[data-nodeid="${endNodeId}"]`);
-      const newHtml = nodes.map(node => render(node)).join('');
+      const newHtml = nodes.map(node => renderer.render(node)).join('');
 
       if (startEl) {
         startEl.insertAdjacentHTML('beforebegin', newHtml);

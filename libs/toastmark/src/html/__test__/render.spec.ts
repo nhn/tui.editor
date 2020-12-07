@@ -1,21 +1,21 @@
 import { Parser } from '../../commonmark/blocks';
-import { createRenderHTML, OpenTagToken } from '../render';
+import { Renderer, OpenTagToken } from '../render';
 
 const parser = new Parser();
 
 describe('softbreak options', () => {
   it('softbreak option value should be used as a raw HTML string', () => {
-    const render = createRenderHTML({
+    const renderer = new Renderer({
       softbreak: '\n<br />\n'
     });
-    const html = render(parser.parse('Hello\nWorld'));
+    const html = renderer.render(parser.parse('Hello\nWorld'));
 
     expect(html).toBe('<p>Hello\n<br />\nWorld</p>\n');
   });
 });
 
 describe('nodeId options', () => {
-  const render = createRenderHTML({ nodeId: true });
+  const renderer = new Renderer({ nodeId: true });
 
   it('every html tag corresponds to container node should contain data-nodeid', () => {
     const root = parser.parse('*Hello* **World**');
@@ -23,7 +23,7 @@ describe('nodeId options', () => {
     const emph = para.firstChild!;
     const strong = emph.next!.next!;
 
-    expect(render(root)).toBe(
+    expect(renderer.render(root)).toBe(
       [
         `<p data-nodeid="${para.id}">`,
         `<em data-nodeid="${emph.id}">Hello</em> `,
@@ -37,14 +37,16 @@ describe('nodeId options', () => {
     const root = parser.parse('<li>Hi</li>');
     const htmlBlock = root.firstChild!;
 
-    expect(render(root)).toBe(`<div data-nodeid="${htmlBlock.id}"><li>Hi</li></div>\n`);
+    expect(renderer.render(root)).toBe(`<div data-nodeid="${htmlBlock.id}"><li>Hi</li></div>\n`);
   });
 
   it('only top-level tag for each node should contain data-nodeid', () => {
     const root = parser.parse('```\nHello\n```');
     const codeBlock = root.firstChild!;
 
-    expect(render(root)).toBe(`<pre data-nodeid="${codeBlock.id}"><code>Hello\n</code></pre>\n`);
+    expect(renderer.render(root)).toBe(
+      `<pre data-nodeid="${codeBlock.id}"><code>Hello\n</code></pre>\n`
+    );
   });
 });
 
@@ -56,14 +58,14 @@ describe('convertors options', () => {
       softbreak: '<br />\n',
       nodeId: true
     };
-    const render = createRenderHTML({
+    const renderer = new Renderer({
       ...options,
       convertors: {
         paragraph: spy
       }
     });
     const root = parser.parse('Hello World');
-    render(root);
+    renderer.render(root);
 
     expect(spy).toHaveBeenCalledTimes(2);
 
@@ -85,7 +87,7 @@ describe('convertors options', () => {
   });
 
   it('context object has origin convertor', () => {
-    const render = createRenderHTML({
+    const renderer = new Renderer({
       convertors: {
         paragraph(_, { entering, origin }) {
           const result = origin!();
@@ -97,7 +99,7 @@ describe('convertors options', () => {
         }
       }
     });
-    const html = render(parser.parse('Hello World'));
+    const html = renderer.render(parser.parse('Hello World'));
 
     expect(html).toBe('<p class="my-class">Hello World</p>\n');
   });

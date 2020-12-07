@@ -1,5 +1,5 @@
 import { Parser } from '../../blocks';
-import { createRenderHTML, HTMLConvertorMap } from '../../../html/render';
+import { Renderer, HTMLConvertorMap } from '../../../html/render';
 import { source } from 'common-tags';
 
 const convertors: HTMLConvertorMap = {
@@ -12,7 +12,7 @@ const convertors: HTMLConvertorMap = {
   }
 };
 const reader = new Parser();
-const render = createRenderHTML({ gfm: true, convertors });
+const renderer = new Renderer({ gfm: true, convertors });
 
 describe('customBlock', () => {
   it('basic', () => {
@@ -31,7 +31,7 @@ describe('customBlock', () => {
     `;
 
     const root = reader.parse(input);
-    const html = render(root);
+    const html = renderer.render(root);
     expect(html).toBe(`${output}\n`);
   });
 
@@ -47,7 +47,7 @@ describe('customBlock', () => {
     `;
 
     const root = reader.parse(input);
-    const html = render(root);
+    const html = renderer.render(root);
     expect(html).toBe(`${output}\n`);
   });
 
@@ -64,7 +64,7 @@ describe('customBlock', () => {
     `;
 
     const root = reader.parse(input);
-    const html = render(root);
+    const html = renderer.render(root);
     expect(html).toBe(`${output}\n`);
   });
 });
