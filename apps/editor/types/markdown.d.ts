@@ -17,7 +17,8 @@ type BlockNodeType =
   | 'tableCell'
   | 'tableDelimRow'
   | 'tableDelimCell'
-  | 'refDef';
+  | 'refDef'
+  | 'customBlock';
 
 type InlineNodeType =
   | 'code'
@@ -160,6 +161,10 @@ export interface TableMdNode extends MdNode {
   lastChild: TableBodyMdNode;
 }
 
+export interface CustomBlockMdNode extends MdNode {
+  info: string;
+}
+
 /* ToastMark Parser type */
 export type CustomParser = (node: MdNode, context: { entering: boolean }) => void;
 export type CustomParserMap = Partial<Record<MdNodeType, CustomParser>>;
@@ -205,7 +210,11 @@ export interface RawHTMLToken {
 
 export type HTMLToken = OpenTagToken | CloseTagToken | TextToken | RawHTMLToken;
 
-export type CustomHTMLRenderer = (node: MdNode, context: Context) => HTMLToken | HTMLToken[] | null;
+export type CustomHTMLRenderer = (
+  node: MdNode,
+  context: Context,
+  convertors?: CustomHTMLRendererMap
+) => HTMLToken | HTMLToken[] | null;
 
 export type CustomHTMLRendererMap = Partial<Record<MdNodeType, CustomHTMLRenderer>>;
 
@@ -215,7 +224,6 @@ export interface ContextOptions {
   nodeId: boolean;
   tagFilter: boolean;
   convertors?: CustomHTMLRendererMap;
-  customProp: Record<string, any>;
 }
 
 export interface Context {
@@ -224,5 +232,23 @@ export interface Context {
   options: Omit<ContextOptions, 'gfm' | 'convertors'>;
   getChildrenText: (node: MdNode) => string;
   skipChildren: () => void;
-  origin: () => ReturnType<CustomHTMLRenderer>;
+  origin?: () => ReturnType<CustomHTMLRenderer>;
+}
+
+export interface MdLikeNode {
+  type: MdNodeType;
+  firstChild: MdLikeNode | null;
+  lastChild: MdLikeNode | null;
+  literal: string | null;
+  isWysiwyg?: boolean;
+  level?: number;
+  destination?: string;
+  title?: string;
+  info?: string;
+  listData?: {
+    type?: 'bullet' | 'ordered';
+    start?: number;
+    task?: boolean;
+    checked?: boolean;
+  };
 }
