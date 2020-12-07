@@ -7,7 +7,7 @@ import off from 'tui-code-snippet/domEvent/off';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 // @ts-ignore
-import { createRenderHTML } from '@toast-ui/toastmark';
+import { Renderer } from '@toast-ui/toastmark';
 
 import { Emitter } from '@t/event';
 import { CustomHTMLRendererMap, EditResult, MdNode, MdPos } from '@t/markdown';
@@ -55,7 +55,7 @@ interface Options {
 class MarkdownPreview extends Preview {
   private cursorNodeId!: number | null;
 
-  private renderHTML: (node: MdNode) => string;
+  private renderer: Renderer;
 
   constructor(el: HTMLElement, eventEmitter: Emitter, options: Options) {
     super(el, eventEmitter, options.isViewer);
@@ -68,7 +68,7 @@ class MarkdownPreview extends Preview {
 
     const { linkAttribute, customHTMLRenderer, highlight = false } = options;
 
-    this.renderHTML = createRenderHTML({
+    this.renderer = new Renderer({
       gfm: true,
       nodeId: true,
       convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer)
@@ -163,7 +163,7 @@ class MarkdownPreview extends Preview {
     const contentEl = this.previewContent;
     const newHtml = this.eventEmitter.emitReduce(
       'convertorAfterMarkdownToHtmlConverted',
-      nodes.map(node => this.renderHTML(node)).join('')
+      nodes.map(node => this.renderer.render(node)).join('')
     );
 
     if (!removedNodeRange) {
