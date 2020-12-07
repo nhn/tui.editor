@@ -722,15 +722,15 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="te-cell-selected">baz</th>
+              <th>foo</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected">quuz</td>
+              <td>qux</td>
             </tr>
             <tr>
-              <td class="te-cell-selected"><br></td>
+              <td>corge</td>
             </tr>
           </tbody>
         </table>
