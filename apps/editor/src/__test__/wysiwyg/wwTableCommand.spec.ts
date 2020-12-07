@@ -713,8 +713,8 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    xit('should remove columns as selected row count in selection', () => {
-      setCellSelection([1, 1], [2, 2]);
+    it('should remove columns as selected column count in selection', () => {
+      setCellSelection([0, 0], [2, 1]);
 
       cmd.exec('wysiwyg', 'removeColumn');
 
@@ -722,14 +722,15 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th>bar</th>
+              <th class="te-cell-selected">baz</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>baz</td>
-              <td>qux</td>
+              <td class="te-cell-selected">quuz</td>
+            </tr>
+            <tr>
+              <td class="te-cell-selected"><br></td>
             </tr>
           </tbody>
         </table>
