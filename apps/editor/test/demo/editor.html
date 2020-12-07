@@ -3,15 +3,14 @@
   <head lang="en">
     <meta charset="UTF-8" />
     <title>Demo</title>
-    <!-- Editor -->
-    <link rel="stylesheet" href="../../dist/toastui-editor.css" />
   </head>
   <body>
     <div id="editor"></div>
     <!-- Editor -->
-    <script src="../../dist/toastui-editor.js"></script>
-    <script class="code-js">
-      var editor = new toastui.Editor({
+    <script type="module">
+      import Editor from "/dist/index.js";
+
+      var editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '400px',

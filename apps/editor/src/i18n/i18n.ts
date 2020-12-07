@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import extend from 'tui-code-snippet/object/extend';
-import Map from './utils/map';
+import Map from '../utils/map';
 
 const DEFAULT_CODE = 'en-US';
 

@@ -6,7 +6,7 @@ import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
 
 import LayerPopup from './layerpopup';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 import domUtils from '../utils/dom';
 
 /**

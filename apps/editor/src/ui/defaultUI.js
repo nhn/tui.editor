@@ -15,7 +15,7 @@ import PopupAddImage from './popupAddImage';
 import PopupTableUtils from './popupTableUtils';
 import PopupAddTable from './popupAddTable';
 import PopupAddHeading from './popupAddHeading';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 import tooltip from './tooltip';
 import domUtils from '../utils/dom';
 

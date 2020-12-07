@@ -10,7 +10,7 @@ import ScrollSyncSplit from './scrollSyncSplit';
 import CodeBlockEditor from '../codeBlockEditor';
 import CodeBlockPreview from '../codeBlockPreview';
 import CodeBlockLanguagesCombo from './codeBlockLanguagesCombo';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 import domUtils from '../utils/dom';
 
 const CLASS_PREFIX = 'popup-editor-';

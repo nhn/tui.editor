@@ -4,7 +4,7 @@
  */
 import ResizeObserver from 'resize-observer-polyfill';
 
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 import Toolbar from './toolbar';
 import PopupDropdownToolbar from './popupDropdownToolbar';
 import ToolbarItemFactory from './toolbarItemFactory';
