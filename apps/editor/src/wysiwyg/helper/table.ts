@@ -15,30 +15,41 @@ export interface SelectionInfo {
   columnCount: number;
 }
 
-export function createTableRows(
-  columnCount: number,
+export function createTableHeadRow(columnCount: number, schema: Schema, data?: string[]) {
+  const { tableRow, tableHeadCell } = schema.nodes;
+  const cells = [];
+
+  for (let index = 0; index < columnCount; index += 1) {
+    const text = data && data[index];
+
+    cells.push(tableHeadCell.create(null, text ? schema.text(text) : []));
+  }
+
+  return [tableRow.create(null, cells)];
+}
+
+export function createTableBodyRows(
   rowCount: number,
+  columnCount: number,
   schema: Schema,
-  isTableBody: boolean,
-  data?: string[] | null
+  data?: string[]
 ) {
-  const { tableRow, tableHeadCell, tableBodyCell } = schema.nodes;
+  const { tableRow, tableBodyCell } = schema.nodes;
   const tableRows = [];
-  const cell = isTableBody ? tableBodyCell : tableHeadCell;
 
-  let index = isTableBody ? columnCount : 0;
+  let dataIndex = 0;
 
-  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+  for (let i = 0; i < rowCount; i += 1) {
     const cells = [];
 
-    for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
-      const text = data && data[index];
+    for (let j = 0; j < columnCount; j += 1) {
+      const text = data && data[dataIndex];
 
       if (text) {
-        index += 1;
+        dataIndex += 1;
       }
 
-      cells.push(cell.create(null, text ? schema.text(text) : []));
+      cells.push(tableBodyCell.create(null, text ? schema.text(text) : []));
     }
 
     tableRows.push(tableRow.create(null, cells));
@@ -61,31 +72,23 @@ export function createCellsToAdd(count: number, offset: number, doc: Node) {
   return cells;
 }
 
+export function isInCellElement(node: HTMLElement, root: Element) {
+  while (node && node !== root) {
+    if (node.nodeName === 'TD' || node.nodeName === 'TH') {
+      return true;
+    }
+
+    node = node.parentNode as HTMLElement;
+  }
+
+  return false;
+}
+
 export function findCell(pos: ResolvedPos) {
   return findNodeBy(
     pos,
     ({ type }: Node) => type.name === 'tableHeadCell' || type.name === 'tableBodyCell'
   );
-}
-
-export function findPrevCell([rowIndex, columnIndex]: number[], cellsPosInfo: CellPosInfo[][]) {
-  const allColumnCount = cellsPosInfo[0].length;
-
-  const firstCellInRow = columnIndex === 0;
-  const firstCellInTable = rowIndex === 0 && firstCellInRow;
-
-  if (!firstCellInTable) {
-    columnIndex -= 1;
-
-    if (firstCellInRow) {
-      rowIndex -= 1;
-      columnIndex = allColumnCount - 1;
-    }
-
-    return cellsPosInfo[rowIndex][columnIndex];
-  }
-
-  return null;
 }
 
 export function findNextCell([rowIndex, columnIndex]: number[], cellsPosInfo: CellPosInfo[][]) {
@@ -109,16 +112,62 @@ export function findNextCell([rowIndex, columnIndex]: number[], cellsPosInfo: Ce
   return null;
 }
 
-export function isInCellElement(node: HTMLElement, root: Element) {
-  while (node && node !== root) {
-    if (node.nodeName === 'TD' || node.nodeName === 'TH') {
-      return true;
+export function findPrevCell([rowIndex, columnIndex]: number[], cellsPosInfo: CellPosInfo[][]) {
+  const allColumnCount = cellsPosInfo[0].length;
+
+  const firstCellInRow = columnIndex === 0;
+  const firstCellInTable = rowIndex === 0 && firstCellInRow;
+
+  if (!firstCellInTable) {
+    columnIndex -= 1;
+
+    if (firstCellInRow) {
+      rowIndex -= 1;
+      columnIndex = allColumnCount - 1;
     }
 
-    node = node.parentNode as HTMLElement;
+    return cellsPosInfo[rowIndex][columnIndex];
   }
 
-  return false;
+  return null;
+}
+
+function getIndexByRange(startIndex: number, endIndex: number) {
+  return Math.min(startIndex, endIndex);
+}
+
+function getCountByRange(startIndex: number, endIndex: number) {
+  return Math.abs(startIndex - endIndex) + 1;
+}
+
+export function getNextRowOffset(
+  { rowIndex, rowCount }: SelectionInfo,
+  cellsPosInfo: CellPosInfo[][]
+) {
+  const allColumnCount = cellsPosInfo[0].length;
+  const selectedOnlyThead = rowIndex === 0 && rowCount === 1;
+
+  if (!selectedOnlyThead) {
+    const rowIdx = rowIndex + rowCount - 1;
+    const columnIdx = allColumnCount - 1;
+    const { offset, nodeSize } = cellsPosInfo[rowIdx][columnIdx];
+
+    return offset + nodeSize + 1;
+  }
+
+  return -1;
+}
+
+export function getPrevRowOffset({ rowIndex }: SelectionInfo, cellsPosInfo: CellPosInfo[][]) {
+  const selectedThead = rowIndex === 0;
+
+  if (!selectedThead) {
+    const [{ offset }] = cellsPosInfo[rowIndex];
+
+    return offset - 1;
+  }
+
+  return -1;
 }
 
 export function getResolvedSelection(selection: Selection) {
@@ -138,7 +187,7 @@ export function getResolvedSelection(selection: Selection) {
   return { anchor, head };
 }
 
-function getCellsPosInfo(headOrBody: Node, startOffset: number) {
+function getCellPosMatrix(headOrBody: Node, startOffset: number) {
   const infoList: CellPosInfo[][] = [];
 
   headOrBody.forEach((row: Node, rowOffset: number) => {
@@ -158,7 +207,7 @@ function getCellsPosInfo(headOrBody: Node, startOffset: number) {
   return infoList;
 }
 
-export function getTableCellsInfo(cellPos: ResolvedPos) {
+export function getCellsPosInfo(cellPos: ResolvedPos) {
   const foundTable = findNodeBy(cellPos, ({ type }: Node) => type.name === 'table');
 
   if (foundTable) {
@@ -168,21 +217,13 @@ export function getTableCellsInfo(cellPos: ResolvedPos) {
     const thead = node.child(0);
     const tbody = node.child(1);
 
-    const theadCellsPos = getCellsPosInfo(thead, tablePos);
-    const tbodyCellsPos = getCellsPosInfo(tbody, tablePos + thead.nodeSize);
+    const theadCellsPos = getCellPosMatrix(thead, tablePos);
+    const tbodyCellsPos = getCellPosMatrix(tbody, tablePos + thead.nodeSize);
 
     return theadCellsPos.concat(tbodyCellsPos);
   }
 
   return [];
-}
-
-function getIndexByRange(startIndex: number, endIndex: number) {
-  return Math.min(startIndex, endIndex);
-}
-
-function getCountByRange(startIndex: number, endIndex: number) {
-  return Math.abs(startIndex - endIndex) + 1;
 }
 
 export function getCellIndexInfo(cellPos: ResolvedPos) {

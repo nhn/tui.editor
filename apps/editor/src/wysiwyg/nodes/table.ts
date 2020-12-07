@@ -4,12 +4,15 @@ import { ReplaceStep } from 'prosemirror-transform';
 import Node from '@/spec/node';
 import { isInTableNode, findNodeBy } from '@/wysiwyg/helper/node';
 import {
-  createTableRows,
+  createTableHeadRow,
+  createTableBodyRows,
   createCellsToAdd,
   getResolvedSelection,
   getSelectionInfo,
-  getTableCellsInfo,
+  getCellsPosInfo,
   getCellIndexInfo,
+  getNextRowOffset,
+  getPrevRowOffset,
   findNextCell,
   findPrevCell
 } from '@/wysiwyg/helper/table';
@@ -44,10 +47,13 @@ export class Table extends Node {
 
       if (collapsed && !isInTableNode($from)) {
         const { tableHead, tableBody } = schema.nodes;
-        const tableHeadRows = createTableRows(columns, 1, schema, false, data);
-        const tableBodyRows = createTableRows(columns, rows, schema, true, data);
+
+        const theadData = data && data.slice(0, columns);
+        const tbodyData = data && data.slice(columns, data.length);
+        const tableHeadRow = createTableHeadRow(columns, schema, theadData);
+        const tableBodyRows = createTableBodyRows(rows, columns, schema, tbodyData);
         const table = schema.nodes.table.create(null, [
-          tableHead.create(null, tableHeadRows),
+          tableHead.create(null, tableHeadRow),
           tableBody.create(null, tableBodyRows)
         ]);
 
@@ -89,7 +95,7 @@ export class Table extends Node {
 
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsPosInfo = getTableCellsInfo(anchor);
+        const cellsPosInfo = getCellsPosInfo(anchor);
         const { columnIndex, columnCount } = selectionInfo;
         const allRowCount = cellsPosInfo.length;
 
@@ -120,7 +126,7 @@ export class Table extends Node {
 
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsPosInfo = getTableCellsInfo(anchor);
+        const cellsPosInfo = getCellsPosInfo(anchor);
         const { columnIndex, columnCount } = selectionInfo;
         const allColumnCount = cellsPosInfo[0].length;
 
@@ -136,6 +142,7 @@ export class Table extends Node {
         for (let i = 0; i < allRowCount; i += 1) {
           for (let j = 0; j < columnCount; j += 1) {
             const { offset, nodeSize } = cellsPosInfo[i][j + columnIndex];
+
             const from = tr.mapping.slice(mapOffset).map(offset);
             const to = from + nodeSize;
 
@@ -159,26 +166,21 @@ export class Table extends Node {
 
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsPosInfo = getTableCellsInfo(anchor);
-        const { rowIndex, rowCount } = selectionInfo;
+        const cellsPosInfo = getCellsPosInfo(anchor);
+        const { rowCount } = selectionInfo;
         const allColumnCount = cellsPosInfo[0].length;
+        const from =
+          direction === 1
+            ? getNextRowOffset(selectionInfo, cellsPosInfo)
+            : getPrevRowOffset(selectionInfo, cellsPosInfo);
 
-        const selecteOnlyThead = rowIndex === 0 && rowCount === 1;
+        if (from > -1) {
+          const rows = createTableBodyRows(rowCount, allColumnCount, schema);
 
-        if (selecteOnlyThead) {
-          return false;
+          dispatch!(tr.step(new ReplaceStep(from, from, new Slice(Fragment.from(rows), 0, 0))));
+
+          return true;
         }
-
-        const rowIdx = direction === 1 ? rowIndex + rowCount - 1 : rowIndex;
-        const columnIdx = direction === 1 ? allColumnCount - 1 : 0;
-        const { offset, nodeSize } = cellsPosInfo[rowIdx][columnIdx];
-
-        const from = direction === 1 ? offset + nodeSize + 1 : offset - 1;
-        const rows = createTableRows(allColumnCount, rowCount, schema, true);
-
-        dispatch!(tr.step(new ReplaceStep(from, from, new Slice(Fragment.from(rows), 0, 0))));
-
-        return true;
       }
 
       return false;
@@ -192,14 +194,14 @@ export class Table extends Node {
 
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsPosInfo = getTableCellsInfo(anchor);
+        const cellsPosInfo = getCellsPosInfo(anchor);
         const { rowIndex, rowCount } = selectionInfo;
         const allRowCount = cellsPosInfo.length;
 
-        const selectedAllTbodyRow = rowCount === allRowCount - 1;
         const selectedThead = rowIndex === 0;
+        const selectedAllTbodyRow = rowCount === allRowCount - 1;
 
-        if (selectedAllTbodyRow || selectedThead) {
+        if (selectedThead || selectedAllTbodyRow) {
           return false;
         }
 
@@ -227,7 +229,7 @@ export class Table extends Node {
 
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsPosInfo = getTableCellsInfo(anchor);
+        const cellsPosInfo = getCellsPosInfo(anchor);
         const { columnIndex, columnCount } = selectionInfo;
         const allRowCount = cellsPosInfo.length;
 
@@ -254,7 +256,7 @@ export class Table extends Node {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const cellsPosInfo = getTableCellsInfo(anchor);
+        const cellsPosInfo = getCellsPosInfo(anchor);
         const cellIndex = getCellIndexInfo(anchor);
         const foundCell =
           direction === 1
