@@ -723,14 +723,13 @@ describe('wysiwyg table commands', () => {
           <thead>
             <tr>
               <th>foo</th>
+              <th>bar</th>
             </tr>
           </thead>
           <tbody>
             <tr>
+              <td>baz</td>
               <td>qux</td>
-            </tr>
-            <tr>
-              <td>corge</td>
             </tr>
           </tbody>
         </table>

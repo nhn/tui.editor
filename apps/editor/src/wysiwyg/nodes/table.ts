@@ -9,7 +9,7 @@ import {
   createCellsToAdd,
   getResolvedSelection,
   getSelectionInfo,
-  getTableCellsInfo,
+  getCellsPosInfo,
   getCellIndexInfo,
   getNextRowOffset,
   getPrevRowOffset,

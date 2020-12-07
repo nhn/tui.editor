@@ -37,7 +37,7 @@ export function createTableBodyRows(
   const { tableRow, tableBodyCell } = schema.nodes;
   const tableRows = [];
 
-  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+  for (let i = 0; i < rowCount; i += 1) {
     const cells = [];
 
     for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
@@ -222,7 +222,7 @@ function getCellInfoMatrix(headOrBody: Node, startOffset: number) {
   return cellInfoMatrix;
 }
 
-export function getTableCellsInfo(cellPos: ResolvedPos) {
+export function getCellsPosInfo(cellPos: ResolvedPos) {
   const foundTable = findNodeBy(cellPos, ({ type }: Node) => type.name === 'table');
 
   if (foundTable) {
