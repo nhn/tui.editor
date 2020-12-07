@@ -171,7 +171,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should add a row to next row of current cursor cell', () => {
-      setCellSelection([1, 1], [1, 1], false);
+      setCellSelection([1, 1], [1, 1], false); // select 'baz' cell
 
       cmd.exec('wysiwyg', 'addRowToNext');
 
@@ -204,7 +204,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should add rows as selected row count after selection', () => {
-      setCellSelection([0, 0], [1, 1]);
+      setCellSelection([0, 0], [1, 1]); // select from 'foo' to 'qux' cells
 
       cmd.exec('wysiwyg', 'addRowToNext');
 
@@ -241,7 +241,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should not add a row when selection is only at table head', () => {
-      setCellSelection([0, 0], [0, 1]);
+      setCellSelection([0, 0], [0, 1]); // select from 'foo' to 'bar' cells
 
       cmd.exec('wysiwyg', 'addRowToNext');
 
@@ -280,7 +280,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should add a row to previous row of current cursor cell', () => {
-      setCellSelection([1, 1], [1, 1], false);
+      setCellSelection([1, 1], [1, 1], false); // select 'baz' cell
 
       cmd.exec('wysiwyg', 'addRowToPrev');
 
@@ -313,7 +313,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should add rows as selected row count before selection', () => {
-      setCellSelection([1, 1], [2, 1]);
+      setCellSelection([1, 1], [2, 1]); // select from 'qux' to 'quuz' cells
 
       cmd.exec('wysiwyg', 'addRowToPrev');
 
@@ -350,7 +350,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should not add a row when selection include table head', () => {
-      setCellSelection([0, 0], [1, 0]);
+      setCellSelection([0, 0], [1, 0]); // select from 'foo' to 'baz' cells
 
       cmd.exec('wysiwyg', 'addRowToPrev');
 
@@ -389,7 +389,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should remove a row where current cursor cell is located', () => {
-      setCellSelection([1, 1], [1, 1], false);
+      setCellSelection([1, 1], [1, 1], false); // select from 'qux' cell
 
       cmd.exec('wysiwyg', 'removeRow');
 
@@ -418,7 +418,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should remove columns as selected column count in selection', () => {
-      setCellSelection([3, 1], [2, 1]);
+      setCellSelection([3, 1], [2, 1]); // select from last to 'quuz' cells
 
       cmd.exec('wysiwyg', 'removeRow');
 
@@ -443,7 +443,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should not remove rows when selection include table head', () => {
-      setCellSelection([0, 1], [2, 1]);
+      setCellSelection([0, 1], [2, 1]); // select from 'bar' to 'qux' cells
 
       cmd.exec('wysiwyg', 'removeRow');
 
@@ -476,7 +476,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should not remove rows when all rows of table body are selected', () => {
-      setCellSelection([1, 0], [3, 0]);
+      setCellSelection([1, 0], [3, 0]); // select from 'baz' to 'corge' cells
 
       cmd.exec('wysiwyg', 'removeRow');
 
@@ -519,7 +519,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should add a column to next column of current cursor cell', () => {
-      setCellSelection([1, 1], [1, 1], false);
+      setCellSelection([1, 1], [1, 1], false); // select 'quux' cell
 
       cmd.exec('wysiwyg', 'addColumnToNext');
 
@@ -554,7 +554,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should add columns as selected column count to right of selection', () => {
-      setCellSelection([0, 0], [1, 1]);
+      setCellSelection([0, 0], [1, 1]); // select from 'foo' to 'quux' cells
 
       cmd.exec('wysiwyg', 'addColumnToNext');
 
@@ -602,7 +602,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should add a column to previous column of current cursor cell', () => {
-      setCellSelection([1, 1], [1, 1], false);
+      setCellSelection([1, 1], [1, 1], false); // select 'quux' cell
 
       cmd.exec('wysiwyg', 'addColumnToPrev');
 
@@ -637,7 +637,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should add columns as selected column count to right of selection', () => {
-      setCellSelection([0, 1], [2, 2]);
+      setCellSelection([0, 1], [2, 2]); // select from 'bar' to last cells
 
       cmd.exec('wysiwyg', 'addColumnToPrev');
 
@@ -685,7 +685,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should remove a column where current cursor cell is located', () => {
-      setCellSelection([1, 1], [1, 1], false);
+      setCellSelection([1, 1], [1, 1], false); // select 'quux' cell
 
       cmd.exec('wysiwyg', 'removeColumn');
 
@@ -714,7 +714,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should remove columns as selected column count in selection', () => {
-      setCellSelection([0, 0], [2, 1]);
+      setCellSelection([0, 1], [2, 2]); // select from 'bar' to last cells
 
       cmd.exec('wysiwyg', 'removeColumn');
 
@@ -722,15 +722,15 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="te-cell-selected">baz</th>
+              <th>foo</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected">quuz</td>
+              <td>qux</td>
             </tr>
             <tr>
-              <td class="te-cell-selected"><br></td>
+              <td>corge</td>
             </tr>
           </tbody>
         </table>
@@ -740,7 +740,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should not remove columns when all columns are selected', () => {
-      setCellSelection([0, 0], [1, 2]);
+      setCellSelection([0, 0], [1, 2]); // select from 'foo' to 'quuz' cells
 
       cmd.exec('wysiwyg', 'removeRow');
 
@@ -811,7 +811,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should change align attribute to columns by option', () => {
-      setCellSelection([2, 1], [2, 1]); // select last cell
+      setCellSelection([2, 1], [2, 1], false); // select last cell
 
       cmd.exec('wysiwyg', 'alignColumn', { align: 'left' });
 
@@ -865,7 +865,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should add align attribute to columns with cursor in table hedaer', () => {
-      setCellSelection([0, 0], [0, 0]); // select 'foo' cell
+      setCellSelection([0, 0], [0, 0], false); // select 'foo' cell
 
       cmd.exec('wysiwyg', 'alignColumn', { align: 'left' });
 

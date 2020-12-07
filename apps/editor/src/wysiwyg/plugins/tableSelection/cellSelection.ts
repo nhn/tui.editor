@@ -44,7 +44,7 @@ export default class CellSelection extends Selection {
   map(doc: Node, mapping: Mappable) {
     const startCell = doc.resolve(mapping.map(this.$anchor.pos));
     const endCell = doc.resolve(mapping.map(this.$head.pos));
-    const removed = startCell === endCell;
+    const removed = startCell.parent.childCount < this.$anchor.parent.childCount;
 
     if (removed) {
       const from = doc.resolve(startCell.pos + 1);
