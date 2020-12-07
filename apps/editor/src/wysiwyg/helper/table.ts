@@ -149,8 +149,8 @@ export function getNextRowOffset(
 
   if (!selectedOnlyThead) {
     const rowIdx = rowIndex + rowCount - 1;
-    const columnIdx = allColumnCount - 1;
-    const { offset, nodeSize } = cellsPosInfo[rowIdx][columnIdx];
+    const colIdx = allColumnCount - 1;
+    const { offset, nodeSize } = cellsPosInfo[rowIdx][colIdx];
 
     return offset + nodeSize + 1;
   }
@@ -168,6 +168,28 @@ export function getPrevRowOffset({ rowIndex }: SelectionInfo, cellsPosInfo: Cell
   }
 
   return -1;
+}
+
+export function getNextColumnOffsets(
+  rowIndex: number,
+  { columnIndex, columnCount }: SelectionInfo,
+  cellsPosInfo: CellPosInfo[][]
+) {
+  const { offset, nodeSize } = cellsPosInfo[rowIndex][columnIndex + columnCount - 1];
+  const mapOffset = offset + nodeSize;
+
+  return { offset, mapOffset };
+}
+
+export function getPrevColumnOffsets(
+  rowIndex: number,
+  { columnIndex, columnCount }: SelectionInfo,
+  cellsPosInfo: CellPosInfo[][]
+) {
+  const { offset } = cellsPosInfo[rowIndex][columnIndex];
+  const mapOffset = offset;
+
+  return { offset, mapOffset };
 }
 
 export function getResolvedSelection(selection: Selection) {

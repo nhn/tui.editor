@@ -13,6 +13,8 @@ import {
   getCellIndexInfo,
   getNextRowOffset,
   getPrevRowOffset,
+  getNextColumnOffsets,
+  getPrevColumnOffsets,
   findNextCell,
   findPrevCell
 } from '@/wysiwyg/helper/table';
@@ -96,14 +98,15 @@ export class Table extends Node {
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
         const cellsPosInfo = getCellsPosInfo(anchor);
-        const { columnIndex, columnCount } = selectionInfo;
+        const { columnCount } = selectionInfo;
         const allRowCount = cellsPosInfo.length;
 
-        for (let i = 0; i < allRowCount; i += 1) {
-          const columnIdx = direction === 1 ? columnIndex + columnCount - 1 : columnIndex;
-          const { offset, nodeSize } = cellsPosInfo[i][columnIdx];
+        for (let rowIndex = 0; rowIndex < allRowCount; rowIndex += 1) {
+          const { offset, mapOffset } =
+            direction === 1
+              ? getNextColumnOffsets(rowIndex, selectionInfo, cellsPosInfo)
+              : getPrevColumnOffsets(rowIndex, selectionInfo, cellsPosInfo);
 
-          const mapOffset = direction === 1 ? offset + nodeSize : offset;
           const from = tr.mapping.map(mapOffset);
           const cells = createCellsToAdd(columnCount, offset, doc);
 
@@ -208,8 +211,8 @@ export class Table extends Node {
         const from = cellsPosInfo[rowIndex][0].offset - 1;
 
         const rowIdx = rowIndex + rowCount - 1;
-        const columnIdx = cellsPosInfo[0].length - 1;
-        const { offset, nodeSize } = cellsPosInfo[rowIdx][columnIdx];
+        const colIdx = cellsPosInfo[0].length - 1;
+        const { offset, nodeSize } = cellsPosInfo[rowIdx][colIdx];
         const to = offset + nodeSize + 1;
 
         dispatch!(tr.step(new ReplaceStep(from, to, Slice.empty)));
