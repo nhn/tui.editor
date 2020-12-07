@@ -103,7 +103,7 @@ export class Table extends Node {
           const columnIdx = direction === 1 ? columnIndex + columnCount - 1 : columnIndex;
           const { offset, nodeSize } = cellsPosInfo[i][columnIdx];
 
-          const mapOffset = direction === 1 ? offset + nodeSize : offset - 1;
+          const mapOffset = direction === 1 ? offset + nodeSize : offset;
           const from = tr.mapping.map(mapOffset);
           const cells = createCellsToAdd(columnCount, offset, doc);
 
