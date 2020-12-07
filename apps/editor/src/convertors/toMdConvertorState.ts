@@ -299,6 +299,18 @@ export default class ToMdConvertorState {
     this.tightList = prevTight;
   }
 
+  convertTableCell(node: Node) {
+    const { childCount } = node;
+
+    node.forEach((child, _, index) => {
+      this.convertInline(child);
+
+      if (index < childCount - 1) {
+        this.write('<br>');
+      }
+    });
+  }
+
   convertNode(parent: Node) {
     parent.forEach((node, _, index) => this.convertBlock(node, parent, index));
 

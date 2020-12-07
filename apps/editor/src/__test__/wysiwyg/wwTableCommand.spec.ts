@@ -7,7 +7,7 @@ import CellSelection from '@/wysiwyg/plugins/tableSelection/cellSelection';
 
 import { getTableCellsInfo } from '@/wysiwyg/helper/table';
 
-describe('wysiwyg table commands', () => {
+xdescribe('wysiwyg table commands', () => {
   let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter, cmd: CommandManager;
 
   function selectCells(from: number, to: number) {

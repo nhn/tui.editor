@@ -9,7 +9,7 @@ export class TableHeadCell extends Node {
 
   get schema() {
     return {
-      content: 'text*',
+      content: 'paragraph+',
       attrs: {
         align: { default: null },
         className: { default: null }

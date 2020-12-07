@@ -166,13 +166,13 @@ const nodes: ToMdNodeConvertorMap = {
 
   tableHeadCell(state, node) {
     state.write('| ');
-    state.convertInline(node);
+    state.convertTableCell(node);
     state.write(' ');
   },
 
   tableBodyCell(state, node) {
     state.write('| ');
-    state.convertInline(node);
+    state.convertTableCell(node);
     state.write(' ');
   }
 };

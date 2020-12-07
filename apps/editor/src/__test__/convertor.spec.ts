@@ -263,6 +263,24 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
+    // @TODO <br> changed to html
+    xit('table with newlines', () => {
+      const markdown = source`
+        | thead<br>thead | thead |
+        | ----- | ----- |
+        | tbody<br>tbody | tbody |
+        | tbody | tbody<br>tbody<br>tbody |
+      `;
+      const expected = source`
+        | thead<br>thead | thead |
+        | ---------- | ----- |
+        | tbody<br>tbody | tbody |
+        | tbody | tbody<br>tbody<br>tbody |
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
     // @TODO test hardBreak
   });
 });
