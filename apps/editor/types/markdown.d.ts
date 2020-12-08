@@ -229,7 +229,7 @@ export interface ContextOptions {
 export interface Context {
   entering: boolean;
   leaf: boolean;
-  options: Omit<ContextOptions, 'gfm' | 'convertors'>;
+  options: Omit<ContextOptions, 'convertors'>;
   getChildrenText: (node: MdNode) => string;
   skipChildren: () => void;
   origin?: () => ReturnType<CustomHTMLRenderer>;
