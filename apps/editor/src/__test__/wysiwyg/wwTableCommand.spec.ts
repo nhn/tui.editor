@@ -5,10 +5,12 @@ import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
 import CellSelection from '@/wysiwyg/plugins/tableSelection/cellSelection';
 
+import { getTableCellsInfo } from '@/wysiwyg/helper/table';
+
 describe('wysiwyg table commands', () => {
   let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter, cmd: CommandManager;
 
-  function setCellSelection(from: number, to: number) {
+  function selectCells(from: number, to: number) {
     const { state, dispatch } = wwe.view;
     const { doc, tr } = state;
 
@@ -17,6 +19,26 @@ describe('wysiwyg table commands', () => {
     const selection = new CellSelection(startCellPos, endCellPos);
 
     dispatch!(tr.setSelection(selection));
+  }
+
+  function setCellSelection(
+    [startRowIndex, startColumnIndex]: number[],
+    [endRowIndex, endColumnIndex]: number[],
+    cellSelection = true
+  ) {
+    const doc = wwe.getModel();
+    const cellsInfo = getTableCellsInfo(doc.resolve(1));
+
+    const startCellOffset = cellsInfo[startRowIndex][startColumnIndex].offset;
+    const endCellOffset = cellsInfo[endRowIndex][endColumnIndex].offset;
+
+    if (startCellOffset === endCellOffset && !cellSelection) {
+      const from = startCellOffset + 1;
+
+      wwe.setSelection(from, from);
+    } else {
+      selectCells(startCellOffset, endCellOffset);
+    }
   }
 
   beforeEach(() => {
@@ -91,10 +113,16 @@ describe('wysiwyg table commands', () => {
       const expected = oneLineTrim`
         <table>
           <thead>
-            <tr><th>foo</th><th>bar</th></tr>
+            <tr>
+              <th>foo</th>
+              <th>bar</th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td>baz</td><td>qux</td></tr>
+            <tr>
+              <td>baz</td>
+              <td>qux</td>
+            </tr>
           </tbody>
         </table>
       `;
@@ -109,7 +137,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should remove table when cursor is in table hedaer', () => {
-      wwe.setSelection(4, 4);
+      setCellSelection([0, 0], [0, 0], false);
 
       cmd.exec('wysiwyg', 'removeTable');
 
@@ -117,7 +145,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should remove table when cursor is in table body', () => {
-      wwe.setSelection(11, 11);
+      setCellSelection([1, 0], [1, 0], false);
 
       cmd.exec('wysiwyg', 'removeTable');
 
@@ -125,7 +153,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should remove table when selected cells', () => {
-      setCellSelection(4, 11);
+      setCellSelection([0, 0], [1, 0]);
 
       cmd.exec('wysiwyg', 'removeTable');
 
@@ -133,44 +161,19 @@ describe('wysiwyg table commands', () => {
     });
   });
 
-  describe('addRow command', () => {
+  describe('addRowToBottom command', () => {
     beforeEach(() => {
-      cmd.exec('wysiwyg', 'addTable', { columns: 2, rows: 1, data: ['foo', 'bar', 'baz', 'qux'] });
+      cmd.exec('wysiwyg', 'addTable', {
+        columns: 2,
+        rows: 2,
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz']
+      });
     });
 
-    it('should add row to table body when cursor is in table head', () => {
-      wwe.setSelection(5, 5); // select 'foo' cell
+    it('should add a row to next row of current cursor cell', () => {
+      setCellSelection([1, 1], [1, 1], false); // select 'baz' cell
 
-      cmd.exec('wysiwyg', 'addRow');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>foo</th>
-              <th>bar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><br></td>
-              <td><br></td>
-            </tr>
-            <tr>
-              <td>baz</td>
-              <td>qux</td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should add row when cursor is in table body', () => {
-      wwe.setSelection(19, 19); // select 'baz' cell
-
-      cmd.exec('wysiwyg', 'addRow');
+      cmd.exec('wysiwyg', 'addRowToBottom');
 
       const expected = oneLineTrim`
         <table>
@@ -189,6 +192,10 @@ describe('wysiwyg table commands', () => {
               <td><br></td>
               <td><br></td>
             </tr>
+            <tr>
+              <td>quux</td>
+              <td>quuz</td>
+            </tr>
           </tbody>
         </table>
       `;
@@ -196,10 +203,10 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should add row when cells of same row are selected in table hedaer', () => {
-      setCellSelection(3, 8); // select from 'foo' to 'bar' cell
+    it('should add rows as selected row count after selection', () => {
+      setCellSelection([0, 0], [1, 1]); // select from 'foo' to 'qux' cells
 
-      cmd.exec('wysiwyg', 'addRow');
+      cmd.exec('wysiwyg', 'addRowToBottom');
 
       const expected = oneLineTrim`
         <table>
@@ -211,12 +218,20 @@ describe('wysiwyg table commands', () => {
           </thead>
           <tbody>
             <tr>
+              <td class="te-cell-selected">baz</td>
+              <td class="te-cell-selected">qux</td>
+            </tr>
+            <tr>
               <td><br></td>
               <td><br></td>
             </tr>
             <tr>
-              <td>baz</td>
-              <td>qux</td>
+              <td><br></td>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>quux</td>
+              <td>quuz</td>
             </tr>
           </tbody>
         </table>
@@ -225,10 +240,49 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should add row when cells of same row are selected in table body', () => {
-      setCellSelection(17, 22); // select from 'baz' to 'qux' cell
+    it('should not add a row when selection is only at table head', () => {
+      setCellSelection([0, 0], [0, 1]); // select from 'foo' to 'bar' cells
 
-      cmd.exec('wysiwyg', 'addRow');
+      cmd.exec('wysiwyg', 'addRowToBottom');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th class="te-cell-selected">foo</th>
+              <th class="te-cell-selected">bar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>baz</td>
+              <td>qux</td>
+            </tr>
+            <tr>
+              <td>quux</td>
+              <td>quuz</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe('addRowToUp command', () => {
+    beforeEach(() => {
+      cmd.exec('wysiwyg', 'addTable', {
+        columns: 2,
+        rows: 2,
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz']
+      });
+    });
+
+    it('should add a row to previous row of current cursor cell', () => {
+      setCellSelection([1, 1], [1, 1], false); // select 'baz' cell
+
+      cmd.exec('wysiwyg', 'addRowToUp');
 
       const expected = oneLineTrim`
         <table>
@@ -240,12 +294,16 @@ describe('wysiwyg table commands', () => {
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected">baz</td>
-              <td class="te-cell-selected">qux</td>
+              <td><br></td>
+              <td><br></td>
             </tr>
             <tr>
-              <td><br></td>
-              <td><br></td>
+              <td>baz</td>
+              <td>qux</td>
+            </tr>
+            <tr>
+              <td>quux</td>
+              <td>quuz</td>
             </tr>
           </tbody>
         </table>
@@ -254,31 +312,35 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should add rows by selected row count when cells of multiple rows are selected from table head to table body', () => {
-      setCellSelection(8, 22); // select from 'bar' to 'qux' cell
+    it('should add rows as selected row count before selection', () => {
+      setCellSelection([1, 1], [2, 1]); // select from 'qux' to 'quuz' cells
 
-      cmd.exec('wysiwyg', 'addRow');
+      cmd.exec('wysiwyg', 'addRowToUp');
 
       const expected = oneLineTrim`
         <table>
           <thead>
             <tr>
               <th>foo</th>
-              <th class="te-cell-selected">bar</th>
+              <th>bar</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected">baz</td>
+              <td><br></td>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td><br></td>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>baz</td>
               <td class="te-cell-selected">qux</td>
             </tr>
             <tr>
-              <td><br></td>
-              <td><br></td>
-            </tr>
-            <tr>
-              <td><br></td>
-              <td><br></td>
+              <td>quux</td>
+              <td class="te-cell-selected">quuz</td>
             </tr>
           </tbody>
         </table>
@@ -287,31 +349,27 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should add rows by selected row count when cells of multiple rows are selected from table body to table heaer', () => {
-      setCellSelection(22, 8); // select from 'qux' to 'bar' cell
+    it('should not add a row when selection include table head', () => {
+      setCellSelection([0, 0], [1, 0]); // select from 'foo' to 'baz' cells
 
-      cmd.exec('wysiwyg', 'addRow');
+      cmd.exec('wysiwyg', 'addRowToUp');
 
       const expected = oneLineTrim`
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th class="te-cell-selected">bar</th>
+              <th class="te-cell-selected">foo</th>
+              <th>bar</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected"><br></td>
-              <td class="te-cell-selected"><br></td>
-            </tr>
-            <tr>
-              <td class="te-cell-selected"><br></td>
-              <td class="te-cell-selected"><br></td>
-            </tr>
-            <tr>
               <td class="te-cell-selected">baz</td>
-              <td class="te-cell-selected">qux</td>
+              <td>qux</td>
+            </tr>
+            <tr>
+              <td>quux</td>
+              <td>quuz</td>
             </tr>
           </tbody>
         </table>
@@ -330,41 +388,8 @@ describe('wysiwyg table commands', () => {
       });
     });
 
-    it('should not remove row when cursor is in table head', () => {
-      wwe.setSelection(5, 5); // select 'foo' cell
-
-      cmd.exec('wysiwyg', 'removeRow');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>foo</th>
-              <th>bar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>baz</td>
-              <td>qux</td>
-            </tr>
-            <tr>
-              <td>quux</td>
-              <td>quuz</td>
-            </tr>
-            <tr>
-              <td>corge</td>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should remove row when cursor is in table body', () => {
-      wwe.setSelection(19, 19); // select 'baz' cell
+    it('should remove a row where current cursor cell is located', () => {
+      setCellSelection([1, 1], [1, 1], false); // select from 'qux' cell
 
       cmd.exec('wysiwyg', 'removeRow');
 
@@ -392,101 +417,8 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should not remove row when cells of same row are selected in table head', () => {
-      setCellSelection(3, 8); // select from 'foo' to 'bar' cell
-
-      cmd.exec('wysiwyg', 'removeRow');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th class="te-cell-selected">foo</th>
-              <th class="te-cell-selected">bar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>baz</td>
-              <td>qux</td>
-            </tr>
-            <tr>
-              <td>quux</td>
-              <td>quuz</td>
-            </tr>
-            <tr>
-              <td>corge</td>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-
-      setCellSelection(3, 8); // select from 'bar' to 'foo' cell
-    });
-
-    it('should remove row when cells of same row are selected in table body from left to right selection', () => {
-      setCellSelection(29, 35); // select from 'quux' to 'quuz' cell
-
-      cmd.exec('wysiwyg', 'removeRow');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>foo</th>
-              <th>bar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>baz</td>
-              <td>qux</td>
-            </tr>
-            <tr>
-              <td>corge</td>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should remove row when cells of same row are selected in table body  from right to left selection', () => {
-      setCellSelection(50, 43); // select from last to 'corge' cell
-
-      cmd.exec('wysiwyg', 'removeRow');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>foo</th>
-              <th>bar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>baz</td>
-              <td>qux</td>
-            </tr>
-            <tr>
-              <td>quux</td>
-              <td>quuz</td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should remove rows by selected row count when cells of multiple rows are selected in table body', () => {
-      setCellSelection(29, 43); // select from 'quux' to 'corge' cell
+    it('should remove columns as selected column count in selection', () => {
+      setCellSelection([3, 1], [2, 1]); // select from last to 'quuz' cells
 
       cmd.exec('wysiwyg', 'removeRow');
 
@@ -510,34 +442,8 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should not remove row when there is one row in table body', () => {
-      wwe.setSelection(22, 22);
-
-      cmd.exec('wysiwyg', 'removeRow');
-      cmd.exec('wysiwyg', 'removeRow');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>foo</th>
-              <th>bar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>corge</td>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should remove rows except last row when all cells are selected in table body', () => {
-      setCellSelection(8, 43); // select from 'bar' to 'corge' cell
+    it('should not remove rows when selection include table head', () => {
+      setCellSelection([0, 1], [2, 1]); // select from 'bar' to 'qux' cells
 
       cmd.exec('wysiwyg', 'removeRow');
 
@@ -551,7 +457,15 @@ describe('wysiwyg table commands', () => {
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected">corge</td>
+              <td>baz</td>
+              <td class="te-cell-selected">qux</td>
+            </tr>
+            <tr>
+              <td>quux</td>
+              <td class="te-cell-selected">quuz</td>
+            </tr>
+            <tr>
+              <td>corge</td>
               <td><br></td>
             </tr>
           </tbody>
@@ -561,8 +475,8 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should not remove rows when cells are selected from table body to table hedaer', () => {
-      setCellSelection(43, 8); // select from 'corge' to 'bar' cell
+    it('should not remove rows when all rows of table body are selected', () => {
+      setCellSelection([1, 0], [3, 0]); // select from 'baz' to 'corge' cells
 
       cmd.exec('wysiwyg', 'removeRow');
 
@@ -571,17 +485,17 @@ describe('wysiwyg table commands', () => {
           <thead>
             <tr>
               <th>foo</th>
-              <th class="te-cell-selected">bar</th>
+              <th>bar</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td class="te-cell-selected">baz</td>
-              <td class="te-cell-selected">qux</td>
+              <td>qux</td>
             </tr>
             <tr>
               <td class="te-cell-selected">quux</td>
-              <td class="te-cell-selected">quuz</td>
+              <td>quuz</td>
             </tr>
             <tr>
               <td class="te-cell-selected">corge</td>
@@ -595,37 +509,40 @@ describe('wysiwyg table commands', () => {
     });
   });
 
-  describe('addColumn command', () => {
+  describe('addColumnToRight command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
-        columns: 2,
+        columns: 3,
         rows: 2,
-        data: ['foo', 'bar', 'baz', 'qux', 'quux', '']
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', '']
       });
     });
 
-    it('should add column after cell with cursor in table head', () => {
-      wwe.setSelection(5, 5); // select 'foo' cell
+    it('should add a column to next column of current cursor cell', () => {
+      setCellSelection([1, 1], [1, 1], false); // select 'quux' cell
 
-      cmd.exec('wysiwyg', 'addColumn');
+      cmd.exec('wysiwyg', 'addColumnToRight');
 
       const expected = oneLineTrim`
         <table>
           <thead>
             <tr>
               <th>foo</th>
-              <th><br></th>
               <th>bar</th>
+              <th><br></th>
+              <th>baz</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>baz</td>
-              <td><br></td>
               <td>qux</td>
+              <td>quux</td>
+              <td><br></td>
+              <td>quuz</td>
             </tr>
             <tr>
-              <td>quux</td>
+              <td>corge</td>
+              <td>grault</td>
               <td><br></td>
               <td><br></td>
             </tr>
@@ -636,42 +553,10 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should add column after cell with cursor in table body', () => {
-      wwe.setSelection(23, 23); // select 'bar' cell
+    it('should add columns as selected column count to right of selection', () => {
+      setCellSelection([0, 0], [1, 1]); // select from 'foo' to 'quux' cells
 
-      cmd.exec('wysiwyg', 'addColumn');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>foo</th>
-              <th>bar</th>
-              <th><br></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>baz</td>
-              <td>qux</td>
-              <td><br></td>
-            </tr>
-            <tr>
-              <td>quux</td>
-              <td><br></td>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should add columns when cells of same row are selected in table head from left to right selection', () => {
-      setCellSelection(3, 8); // select from 'foo' to 'bar' cell
-
-      cmd.exec('wysiwyg', 'addColumn');
+      cmd.exec('wysiwyg', 'addColumnToRight');
 
       const expected = oneLineTrim`
         <table>
@@ -681,160 +566,106 @@ describe('wysiwyg table commands', () => {
               <th class="te-cell-selected">bar</th>
               <th><br></th>
               <th><br></th>
+              <th>baz</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>baz</td>
+              <td class="te-cell-selected">qux</td>
+              <td class="te-cell-selected">quux</td>
+              <td><br></td>
+              <td><br></td>
+              <td>quuz</td>
+            </tr>
+            <tr>
+              <td>corge</td>
+              <td>grault</td>
+              <td><br></td>
+              <td><br></td>
+              <td><br></td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe('addColumnToLeft command', () => {
+    beforeEach(() => {
+      cmd.exec('wysiwyg', 'addTable', {
+        columns: 3,
+        rows: 2,
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', '']
+      });
+    });
+
+    it('should add a column to previous column of current cursor cell', () => {
+      setCellSelection([1, 1], [1, 1], false); // select 'quux' cell
+
+      cmd.exec('wysiwyg', 'addColumnToLeft');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th>foo</th>
+              <th><br></th>
+              <th>bar</th>
+              <th>baz</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>qux</td>
+              <td><br></td>
+              <td>quux</td>
+              <td>quuz</td>
+            </tr>
+            <tr>
+              <td>corge</td>
+              <td><br></td>
+              <td>grault</td>
+              <td><br></td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should add columns as selected column count to right of selection', () => {
+      setCellSelection([0, 1], [2, 2]); // select from 'bar' to last cells
+
+      cmd.exec('wysiwyg', 'addColumnToLeft');
+
+      const expected = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th>foo</th>
+              <th><br></th>
+              <th><br></th>
+              <th class="te-cell-selected">bar</th>
+              <th class="te-cell-selected">baz</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
               <td>qux</td>
               <td><br></td>
               <td><br></td>
+              <td class="te-cell-selected">quux</td>
+              <td class="te-cell-selected">quuz</td>
             </tr>
             <tr>
-              <td>quux</td>
+              <td>corge</td>
               <td><br></td>
               <td><br></td>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should add columns when cells of same row are selected in table head from right to left selection', () => {
-      setCellSelection(8, 3); // select from 'bar' to 'foo' cell
-
-      cmd.exec('wysiwyg', 'addColumn');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th class="te-cell-selected">foo</th>
-              <th class="te-cell-selected"><br></th>
-              <th class="te-cell-selected"><br></th>
-              <th class="te-cell-selected">bar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>baz</td>
-              <td><br></td>
-              <td><br></td>
-              <td>qux</td>
-            </tr>
-            <tr>
-              <td>quux</td>
-              <td><br></td>
-              <td><br></td>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should add columns by selected column count when cells of same row are selected in table body from left to right selection', () => {
-      setCellSelection(17, 22); // select from 'baz' to 'qux' cell
-
-      cmd.exec('wysiwyg', 'addColumn');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>foo</th>
-              <th>bar</th>
-              <th><br></th>
-              <th><br></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="te-cell-selected">baz</td>
-              <td class="te-cell-selected">qux</td>
-              <td><br></td>
-              <td><br></td>
-            </tr>
-            <tr>
-              <td>quux</td>
-              <td><br></td>
-              <td><br></td>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should add columns by selected column count when cells of same row are selected in table body  from right to left selection', () => {
-      setCellSelection(22, 17); // select from 'qux' to 'baz' cell
-
-      cmd.exec('wysiwyg', 'addColumn');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>foo</th>
-              <th><br></th>
-              <th><br></th>
-              <th>bar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="te-cell-selected">baz</td>
+              <td class="te-cell-selected">grault</td>
               <td class="te-cell-selected"><br></td>
-              <td class="te-cell-selected"><br></td>
-              <td class="te-cell-selected">qux</td>
-            </tr>
-            <tr>
-              <td>quux</td>
-              <td><br></td>
-              <td><br></td>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should add columns by all column count when cells of multiple rows are selected', () => {
-      setCellSelection(8, 22); // select from 'bar' to 'qux' cell
-
-      cmd.exec('wysiwyg', 'addColumn');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>foo</th>
-              <th class="te-cell-selected">bar</th>
-              <th class="te-cell-selected"><br></th>
-              <th class="te-cell-selected"><br></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="te-cell-selected">baz</td>
-              <td class="te-cell-selected">qux</td>
-              <td><br></td>
-              <td><br></td>
-            </tr>
-            <tr>
-              <td>quux</td>
-              <td><br></td>
-              <td><br></td>
-              <td><br></td>
             </tr>
           </tbody>
         </table>
@@ -853,8 +684,8 @@ describe('wysiwyg table commands', () => {
       });
     });
 
-    it('should remove column when cursor is in table hedaer', () => {
-      wwe.setSelection(10, 10); // select 'bar' cell
+    it('should remove a column where current cursor cell is located', () => {
+      setCellSelection([1, 1], [1, 1], false); // select 'quux' cell
 
       cmd.exec('wysiwyg', 'removeColumn');
 
@@ -882,37 +713,8 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should remove column when cursor is in table body', () => {
-      wwe.setSelection(25, 25); // select 'qux' cell
-
-      cmd.exec('wysiwyg', 'removeColumn');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>bar</th>
-              <th>baz</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>quux</td>
-              <td>quuz</td>
-            </tr>
-            <tr>
-              <td>grault</td>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should remove columns when cells are selected in table head', () => {
-      setCellSelection(8, 13); // select from 'bar' to 'baz' cell
+    it('should remove columns as selected column count in selection', () => {
+      setCellSelection([0, 1], [2, 2]); // select from 'bar' to last cells
 
       cmd.exec('wysiwyg', 'removeColumn');
 
@@ -937,10 +739,10 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should not remove columns when all cells are selected in table head', () => {
-      setCellSelection(13, 3); // select from 'baz' to 'foo' cell
+    it('should not remove columns when all columns are selected', () => {
+      setCellSelection([0, 0], [1, 2]); // select from 'foo' to 'quuz' cells
 
-      cmd.exec('wysiwyg', 'removeColumn');
+      cmd.exec('wysiwyg', 'removeRow');
 
       const expected = oneLineTrim`
         <table>
@@ -953,9 +755,9 @@ describe('wysiwyg table commands', () => {
           </thead>
           <tbody>
             <tr>
-              <td>qux</td>
-              <td>quux</td>
-              <td>quuz</td>
+              <td class="te-cell-selected">qux</td>
+              <td class="te-cell-selected">quux</td>
+              <td class="te-cell-selected">quuz</td>
             </tr>
             <tr>
               <td>corge</td>
@@ -966,67 +768,6 @@ describe('wysiwyg table commands', () => {
         </table>
       `;
 
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should remove columns when cells are selected in table body', () => {
-      setCellSelection(48, 41); // select from 'grault' to 'corge' cell
-
-      cmd.exec('wysiwyg', 'removeColumn');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>baz</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>quuz</td>
-            </tr>
-            <tr>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-
-    it('should not remove columns when all cells are selected in table', () => {
-      setCellSelection(13, 48); // select from 'baz' to 'grault' cell
-
-      cmd.exec('wysiwyg', 'removeColumn');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th>foo</th>
-              <th>bar</th>
-              <th class="te-cell-selected">baz</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="te-cell-selected">qux</td>
-              <td class="te-cell-selected">quux</td>
-              <td class="te-cell-selected">quuz</td>
-            </tr>
-            <tr>
-              <td class="te-cell-selected">corge</td>
-              <td class="te-cell-selected">grault</td>
-              <td><br></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-
-      setCellSelection(48, 13); // select from 'grault' to 'baz' cell
       expect(wwe.getHTML()).toBe(expected);
     });
   });
@@ -1041,7 +782,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should add center align attribute to columns by no option', () => {
-      wwe.setSelection(20, 20); // select 'baz' cell
+      setCellSelection([1, 0], [1, 0], false); // select 'baz' cell
 
       cmd.exec('wysiwyg', 'alignColumn');
 
@@ -1070,7 +811,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should change align attribute to columns by option', () => {
-      wwe.setSelection(36, 36); // select last cell
+      setCellSelection([2, 1], [2, 1], false); // select last cell
 
       cmd.exec('wysiwyg', 'alignColumn', { align: 'left' });
 
@@ -1124,7 +865,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should add align attribute to columns with cursor in table hedaer', () => {
-      wwe.setSelection(4, 4); // select 'foo' cell
+      setCellSelection([0, 0], [0, 0], false); // select 'foo' cell
 
       cmd.exec('wysiwyg', 'alignColumn', { align: 'left' });
 
@@ -1152,8 +893,8 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should add align attribute to selected cells', () => {
-      setCellSelection(17, 22); // select from 'baz' to 'qux' cell
+    it('should add align attribute to selected columns in selection', () => {
+      setCellSelection([1, 0], [1, 1]); // select from 'baz' to 'qux' cell
 
       cmd.exec('wysiwyg', 'alignColumn', { align: 'left' });
 
@@ -1180,7 +921,7 @@ describe('wysiwyg table commands', () => {
 
       expect(wwe.getHTML()).toBe(expected);
 
-      setCellSelection(8, 3); // select from 'bar' to 'foo' cell
+      setCellSelection([0, 1], [0, 0]); // select from 'bar' to 'foo' cell
 
       cmd.exec('wysiwyg', 'alignColumn', { align: 'right' });
 
