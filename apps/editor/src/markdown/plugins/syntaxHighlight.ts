@@ -93,7 +93,7 @@ function addMark(node: MdNode, toastMark: any, newTr: Transaction, schema: Schem
 
     if (lineBackground) {
       const { start, end, spec } = lineBackground;
-      const pos = getMdToEditorPos(newTr.doc, start, end, toastMark.getLineTexts());
+      const pos = getMdToEditorPos(newTr.doc, toastMark, start, end);
 
       newTr = newTr.setBlockType(pos[0], pos[1], schema.nodes.paragraph, {
         codeStart: start,
@@ -103,7 +103,7 @@ function addMark(node: MdNode, toastMark: any, newTr: Transaction, schema: Schem
     }
 
     marks.forEach(({ start, end, spec }) => {
-      const pos = getMdToEditorPos(newTr.doc, start, end, toastMark.getLineTexts());
+      const pos = getMdToEditorPos(newTr.doc, toastMark, start, end);
       const { type, attrs } = spec;
 
       newTr = newTr.addMark(pos[0], pos[1], schema.mark(type!, attrs));

@@ -222,9 +222,7 @@ export default class MdEditor extends EditorBase {
   }
 
   getMarkdown() {
-    return this.getToastMark()
-      .getLineTexts()
-      .join('\n');
+    return this.toastMark.getLineTexts().join('\n');
   }
 
   getToastMark() {
