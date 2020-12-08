@@ -188,7 +188,7 @@ export default class MdEditor extends EditorBase {
 
   setSelection(start: MdPos, end: MdPos) {
     const { tr } = this.view.state;
-    const [from, to] = getMdToEditorPos(tr.doc, start, end);
+    const [from, to] = getMdToEditorPos(tr.doc, this.toastMark, start, end);
 
     this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)));
     this.focus();

@@ -112,8 +112,9 @@ export class Table extends Mark {
     return ({ selection, doc, tr }, dispatch) => {
       const [, to] = resolveSelectionPos(selection);
       const [, endPos] = getEditorToMdPos(doc, to);
+      const { toastMark } = this.context;
 
-      const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(endPos);
+      const mdNode: MdNode = toastMark.findNodeAtPosition(endPos);
       const cellNode = findClosestNode(mdNode, node => isTableCellNode(node)) as TableCellMdNode;
 
       if (cellNode) {
@@ -138,7 +139,7 @@ export class Table extends Mark {
         }
 
         const mdPos: MdPos = [line, ch];
-        const [pos] = getMdToEditorPos(doc, mdPos, mdPos);
+        const [pos] = getMdToEditorPos(doc, toastMark, mdPos, mdPos);
 
         dispatch!(tr.setSelection(createTextSelection(tr, pos)));
 

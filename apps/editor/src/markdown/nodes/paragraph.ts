@@ -121,7 +121,7 @@ export class Paragraph extends Node {
 
     endLine = Math.max(endLine, line - 1);
 
-    const range = getMdToEditorPos(doc, [startLine, 1], [endLine, 1]);
+    const range = getMdToEditorPos(doc, toastMark, [startLine, 1], [endLine, 1]);
     const [from, to] = [range[0], doc.resolve(range[1]).end()];
     const newTr = replaceNodes(tr, from, to, nodes);
     const newSelection = createTextSelection(newTr, selection.from, selection.to);
