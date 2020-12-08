@@ -199,7 +199,6 @@ export class BlockNode extends Node {
   public stringContent: string | null = null;
   public lastLineBlank = false;
   public lastLineChecked = false;
-  public customType: string | null = null;
 
   constructor(nodeType: BlockNodeType, sourcepos?: SourcePos) {
     super(nodeType, sourcepos);

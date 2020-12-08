@@ -243,30 +243,3 @@ export function isUnlinked(id: number) {
   }
   return false;
 }
-
-export function getRangeForCustomType(startNode: Node | null, endNode: Node | null) {
-  type NodeInfo = { node: Node | null; type: 'prev' | 'next' };
-
-  const range = [startNode, endNode];
-  const start: NodeInfo = { node: startNode, type: 'prev' };
-  const end: NodeInfo = { node: endNode, type: 'next' };
-
-  [start, end].forEach(({ node, type }, index) => {
-    while (node && (node as BlockNode).customType && node[type]) {
-      const targetNode = node[type] as BlockNode;
-      const { sourcepos, customType } = targetNode;
-      const extendable =
-        type === 'prev'
-          ? compareRangeAndLine(sourcepos!, node.sourcepos![0][0]) === Compare.LT
-          : compareRangeAndLine(sourcepos!, node.sourcepos![1][0]) === Compare.GT;
-
-      if (customType && extendable) {
-        node = targetNode;
-        range[index] = node;
-      } else {
-        break;
-      }
-    }
-  });
-  return range as [BlockNode, BlockNode];
-}

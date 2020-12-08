@@ -22,8 +22,7 @@ import {
   findNodeAtPosition,
   findNodeById,
   invokeNextUntil,
-  isUnlinked,
-  getRangeForCustomType
+  isUnlinked
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
 import { iterateObject, omit, isEmptyObj } from './helper';
@@ -109,14 +108,12 @@ export class ToastMark {
   private refLinkCandidateMap: RefLinkCandidateMap;
   private refDefCandidateMap: RefDefCandidateMap;
   private referenceDefinition: boolean;
-  private frontMatter: boolean;
 
   constructor(contents?: string, options?: Partial<Options>) {
     this.refMap = {};
     this.refLinkCandidateMap = {};
     this.refDefCandidateMap = {};
     this.referenceDefinition = !!options?.referenceDefinition;
-    this.frontMatter = !!options?.frontMatter;
     this.parser = new Parser(options);
     this.parser.setRefMaps(this.refMap, this.refLinkCandidateMap, this.refDefCandidateMap);
     this.eventHandlerMap = { change: [] };
@@ -195,8 +192,7 @@ export class ToastMark {
       endNode = endNode.next;
     }
 
-    // extend node range to include the custom node
-    return getRangeForCustomType(startNode, endNode);
+    return [startNode, endNode] as [BlockNode, BlockNode];
   }
 
   private trigger(eventName: EventName, param: any) {
