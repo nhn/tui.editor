@@ -1,7 +1,8 @@
 import { Node, Schema, ResolvedPos } from 'prosemirror-model';
-import { Selection, TextSelection } from 'prosemirror-state';
 
 import { findNodeBy } from '@/wysiwyg/helper/node';
+
+import { CellSelection } from '@t/wysiwyg';
 
 export interface CellInfo {
   offset: number;
@@ -187,21 +188,22 @@ export function getPrevColumnOffsets(
   return { offset, mapOffset };
 }
 
-export function getResolvedSelection(selection: Selection) {
-  const { $anchor, $head } = selection;
-  let anchor = $anchor;
-  let head = $head;
+export function getResolvedSelection(selection: CellSelection) {
+  const { $anchor, startCell, endCell } = selection;
 
-  if (selection instanceof TextSelection) {
-    const foundCell = findCell($anchor);
-
-    if (foundCell) {
-      anchor = $anchor.node(0).resolve($anchor.before(foundCell.depth));
-      head = anchor;
-    }
+  if (startCell && endCell) {
+    return { anchor: startCell, head: endCell };
   }
 
-  return { anchor, head };
+  const foundCell = findCell($anchor);
+
+  if (foundCell) {
+    const anchor = $anchor.node(0).resolve($anchor.before(foundCell.depth));
+
+    return { anchor, head: anchor };
+  }
+
+  return null;
 }
 
 function getCellInfoMatrix(headOrBody: Node, startOffset: number) {

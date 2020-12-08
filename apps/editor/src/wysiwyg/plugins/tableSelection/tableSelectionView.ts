@@ -51,6 +51,9 @@ export default class TableSelection {
   }
 
   handleMousemove(ev: Event) {
+    // @TODO this should be processed to block the event only when another cell comes out
+    ev.preventDefault();
+
     const { startCellPos } = this;
     const endCellPos = this.getCellIndexInfo(ev as MouseEvent);
 
@@ -58,8 +61,6 @@ export default class TableSelection {
       if (startCellPos.pos === endCellPos.pos) {
         return;
       }
-
-      ev.preventDefault();
 
       this.selectCells(startCellPos, endCellPos);
     }
