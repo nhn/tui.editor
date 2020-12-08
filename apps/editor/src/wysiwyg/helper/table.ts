@@ -55,7 +55,7 @@ export function createTableBodyRows(
 }
 
 export function createCellsToAdd(columnCount: number, rowIndex: number, schema: Schema) {
-  const { paragraph, tableHeadCell, tableBodyCell } = schema.nodes;
+  const { tableHeadCell, tableBodyCell, paragraph } = schema.nodes;
   const cells = [];
 
   for (let index = 0; index < columnCount; index += 1) {
