@@ -243,6 +243,8 @@ export interface MdLikeNode {
   destination?: string;
   title?: string;
   info?: string;
+  cellType?: 'head' | 'body';
+  align?: 'left' | 'center' | 'right';
   listData?: {
     type?: 'bullet' | 'ordered';
     start?: number;

@@ -30,7 +30,7 @@ export function isContainer(type: string) {
   }
 }
 
-export function createMdLikeNode(node: ProsemirrorNode | Mark) {
+export function createMdLikeNode(node: ProsemirrorNode | Mark): MdLikeNode {
   const { attrs, type } = node;
   const nodeType = type.name;
   const mdLikeNode: MdLikeNode = {
@@ -41,48 +41,29 @@ export function createMdLikeNode(node: ProsemirrorNode | Mark) {
 
   switch (nodeType) {
     case 'heading':
-      mdLikeNode.level = attrs.level;
-      break;
+      return { ...mdLikeNode, level: attrs.level };
     case 'link':
-      mdLikeNode.destination = attrs.linkUrl;
-      mdLikeNode.title = attrs.linkText;
-      break;
+      return { ...mdLikeNode, destination: attrs.linkUrl, title: attrs.linkText };
     case 'image':
-      mdLikeNode.destination = attrs.linkUrl;
-      break;
+      return { ...mdLikeNode, destination: attrs.linkUrl };
     case 'codeBlock':
-      mdLikeNode.info = attrs.language;
-      break;
+      return { ...mdLikeNode, info: attrs.language };
     case 'bulletList':
-      mdLikeNode.type = 'list';
-      mdLikeNode.listData = {
-        type: 'bullet'
-      };
-      break;
+      return { ...mdLikeNode, type: 'list', listData: { type: 'bullet' } };
     case 'orderedList':
-      mdLikeNode.type = 'list';
-      mdLikeNode.listData = {
-        type: 'ordered',
-        start: attrs.order
-      };
-      break;
+      return { ...mdLikeNode, type: 'list', listData: { type: 'ordered', start: attrs.order } };
     case 'listItem':
-      mdLikeNode.type = 'item';
-      mdLikeNode.listData = {
-        task: attrs.task,
-        checked: attrs.checked
+      return {
+        ...mdLikeNode,
+        type: 'item',
+        listData: { task: attrs.task, checked: attrs.checked }
       };
-      break;
     case 'customBlock':
-      mdLikeNode.info = attrs.info;
-      break;
-    // @TODO: table
-    // case 'table':
-    // case 'tableHead':
-    // case 'tableBody':
-    // case 'tableRow':
-    // case 'tableCell':
-    // case 'tableDelimRow':
+      return { ...mdLikeNode, info: attrs.info };
+    case 'tableHeadCell':
+      return { ...mdLikeNode, type: 'tableCell', cellType: 'head', align: attrs.align };
+    case 'tableBodyCell':
+      return { ...mdLikeNode, type: 'tableCell', cellType: 'body', align: attrs.align };
     default:
   }
   return mdLikeNode;
