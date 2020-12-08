@@ -1,5 +1,9 @@
-import { MdLikeNode } from '@t/markdown';
-import { ProsemirrorNode } from 'prosemirror-model';
+import { Mark, Node as ProsemirrorNode } from 'prosemirror-model';
+import { MdLikeNode, MdNodeType } from '@t/markdown';
+
+export function isNode(node: ProsemirrorNode | Mark): node is ProsemirrorNode {
+  return node instanceof ProsemirrorNode;
+}
 
 export function isContainer(type: string) {
   switch (type) {
@@ -26,20 +30,13 @@ export function isContainer(type: string) {
   }
 }
 
-export function createMdLikeNode(node: ProsemirrorNode) {
+export function createMdLikeNode(node: ProsemirrorNode | Mark) {
   const { attrs, type } = node;
   const nodeType = type.name;
   const mdLikeNode: MdLikeNode = {
-    // @ts-ignore
-    type,
+    type: nodeType as MdNodeType,
     isWysiwyg: true,
-    get firstChild() {
-      return node.firstChild ? createMdLikeNode(node.firstChild) : null;
-    },
-    get lastChild() {
-      return node.lastChild ? createMdLikeNode(node.lastChild) : null;
-    },
-    literal: !isContainer(nodeType) ? node.textContent : null
+    literal: !isContainer(nodeType) && isNode(node) ? node.textContent : null
   };
 
   switch (nodeType) {

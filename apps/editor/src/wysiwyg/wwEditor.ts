@@ -19,30 +19,29 @@ import { createTextSelection } from '@/markdown/helper/manipulation';
 import { createSpecs } from './specCreator';
 
 import { Emitter } from '@t/event';
-import { ToDOM } from '@t/convertor';
+import { ToDOMAdaptor } from '@t/convertor';
 import { CustomBlockView } from './nodeview/customBlockView';
 
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
 export default class WysiwygEditor extends EditorBase {
-  private toDOM: ToDOM;
+  private toDOMAdaptor: ToDOMAdaptor;
 
-  constructor(el: HTMLElement, eventEmitter: Emitter, toDOM: ToDOM) {
+  constructor(el: HTMLElement, eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor) {
     super(el, eventEmitter);
 
     this.el = el;
-    this.toDOM = toDOM;
+    this.toDOMAdaptor = toDOMAdaptor;
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
     this.keymaps = this.createKeymaps();
     this.view = this.createView();
     this.commands = this.createCommands();
-    // @TODO: define toDOM in EditorBase to extend the adapter for markdown editor
   }
 
   createSpecs() {
-    return createSpecs();
+    return createSpecs(this.toDOMAdaptor);
   }
 
   createKeymaps() {
@@ -85,14 +84,14 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createView() {
-    const { toDOM } = this;
+    const { toDOMAdaptor } = this;
 
     return new EditorView(this.el, {
       state: this.createState(),
       attributes: { class: CONTENTS_CLASS_NAME },
       nodeViews: {
         customBlock(node, view, getPos) {
-          return new CustomBlockView(node, view, getPos, toDOM);
+          return new CustomBlockView(node, view, getPos, toDOMAdaptor);
         }
       }
     });

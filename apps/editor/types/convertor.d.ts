@@ -4,7 +4,7 @@ import {
   Mark,
   Schema,
   ProsemirrorNode,
-  DOMOutputSpec
+  DOMOutputSpecArray
 } from 'prosemirror-model';
 
 import { MdNode, MdNodeType } from './markdown';
@@ -98,7 +98,7 @@ export interface ToMdConvertorMap {
   marks: ToMdMarkConvertorMap;
 }
 
-export interface ToDOM {
-  toDOM(node: ProsemirrorNode): DOMOutputSpec[] | null;
-  toDOMNode(node: ProsemirrorNode): Node | null;
+export interface ToDOMAdaptor {
+  getToDOM(type: string): ((node: ProsemirrorNode | Mark) => DOMOutputSpecArray) | null;
+  getToDOMNode(type: string): ((node: ProsemirrorNode | Mark) => Node) | null;
 }

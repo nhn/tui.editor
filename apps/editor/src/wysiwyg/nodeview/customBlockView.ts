@@ -1,4 +1,4 @@
-import { EditorView } from 'prosemirror-view';
+import { EditorView, NodeView } from 'prosemirror-view';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { StepMap } from 'prosemirror-transform';
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
@@ -6,16 +6,16 @@ import { newlineInCode } from 'prosemirror-commands';
 import { redo, undo } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import isFunction from 'tui-code-snippet/type/isFunction';
-import { ToDOM } from '@t/convertor';
+import { ToDOMAdaptor } from '@t/convertor';
 
 type GetPos = (() => number) | boolean;
 
-export class CustomBlockView {
+export class CustomBlockView implements NodeView {
   dom: HTMLElement;
 
   private node: ProsemirrorNode;
 
-  private toDOM: ToDOM;
+  private toDOMAdaptor: ToDOMAdaptor;
 
   private outerView: EditorView;
 
@@ -27,11 +27,11 @@ export class CustomBlockView {
 
   private getPos: GetPos;
 
-  constructor(node: ProsemirrorNode, view: EditorView, getPos: GetPos, toDOM: ToDOM) {
+  constructor(node: ProsemirrorNode, view: EditorView, getPos: GetPos, toDOMAdaptor: ToDOMAdaptor) {
     this.node = node;
     this.outerView = view;
     this.getPos = getPos;
-    this.toDOM = toDOM;
+    this.toDOMAdaptor = toDOMAdaptor;
     this.innerView = null;
 
     this.dom = document.createElement('div');
@@ -42,19 +42,22 @@ export class CustomBlockView {
 
     this.dom.appendChild(this.innerViewContainer);
     this.dom.appendChild(this.wrapper);
-
-    this.addEventListener();
+    this.dom.addEventListener('dblclick', this.openEditor);
   }
 
   private renderCustomBlock() {
-    const node = this.toDOM.toDOMNode(this.node);
+    const toDOMNode = this.toDOMAdaptor.getToDOMNode(this.node.attrs.info);
 
-    while (this.wrapper.hasChildNodes()) {
-      this.wrapper.removeChild(this.wrapper.lastChild!);
-    }
+    if (toDOMNode) {
+      const node = toDOMNode(this.node);
 
-    if (node) {
-      this.wrapper.appendChild(node);
+      while (this.wrapper.hasChildNodes()) {
+        this.wrapper.removeChild(this.wrapper.lastChild!);
+      }
+
+      if (node) {
+        this.wrapper.appendChild(node);
+      }
     }
   }
 
@@ -65,16 +68,12 @@ export class CustomBlockView {
     this.innerViewContainer.style.background = '#f5f7f8';
   }
 
-  private addEventListener() {
-    this.dom.addEventListener('dblclick', () => {
-      this.openEditor();
-    });
-  }
-
-  private openEditor() {
+  private openEditor = () => {
     if (this.innerView) {
       throw new Error('The editor is already opened.');
     }
+    const origin = this.node.copy(this.node.content);
+
     this.wrapper.style.display = 'none';
     this.innerViewContainer.style.display = 'block';
 
@@ -90,6 +89,10 @@ export class CustomBlockView {
               return true;
             },
             Enter: newlineInCode,
+            Escape: () => {
+              this.cancelEditing(origin);
+              return true;
+            },
             'Ctrl-Enter': () => {
               this.saveAndFinishEditing();
               return true;
@@ -105,14 +108,10 @@ export class CustomBlockView {
           }
           return true;
         }
-        // blur: () => {
-        //   this.save();
-        //   return true;
-        // }
       }
     });
     this.innerView!.focus();
-  }
+  };
 
   private closeEditor() {
     if (this.innerView) {
@@ -131,6 +130,20 @@ export class CustomBlockView {
     this.outerView.focus();
 
     this.renderCustomBlock();
+    this.closeEditor();
+  }
+
+  private cancelEditing(origin: ProsemirrorNode) {
+    const { to } = this.outerView.state.selection;
+    const outerState: EditorState = this.outerView.state;
+
+    this.outerView.dispatch(outerState.tr.setSelection(TextSelection.create(outerState.doc, to)));
+    this.outerView.focus();
+
+    this.innerView!.dispatch(
+      this.innerView!.state.tr.replaceWith(0, this.node.content.size, origin.content)
+    );
+
     this.closeEditor();
   }
 
@@ -156,8 +169,6 @@ export class CustomBlockView {
     }
   }
 
-  setSelection() {}
-
   update(node: ProsemirrorNode) {
     if (!node.sameMarkup(this.node)) {
       return false;
@@ -165,26 +176,10 @@ export class CustomBlockView {
 
     this.node = node;
 
-    if (this.innerView) {
-      const { state } = this.innerView;
-      const start = node.content.findDiffStart(state.doc.content);
-
-      // eslint-disable-next-line no-eq-null,eqeqeq
-      if (start != null) {
-        let { a: endA, b: endB } = node.content.findDiffEnd(state.doc.content)!;
-        const overlap = start - Math.min(endA, endB);
-
-        if (overlap > 0) {
-          endA += overlap;
-          endB += overlap;
-        }
-        this.innerView.dispatch(
-          state.tr.replace(start, endB, node.slice(start, endA)).setMeta('fromOutside', true)
-        );
-      }
-    } else {
+    if (!this.innerView) {
       this.renderCustomBlock();
     }
+
     return true;
   }
 
@@ -197,6 +192,7 @@ export class CustomBlockView {
   }
 
   destroy() {
+    this.dom.removeEventListener('dblclick', this.openEditor);
     this.closeEditor();
   }
 }

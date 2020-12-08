@@ -12,6 +12,10 @@ interface TokenToDOM<T> {
   text: (token: HTMLToken, stack: T[]) => void;
 }
 
+function getTop<T>(stack: T[]) {
+  return stack[stack.length - 1];
+}
+
 export const tokenToPmDOM: TokenToDOM<SpecArray> = {
   openTag(token, stack) {
     const { tagName, classNames, attributes } = token as OpenTagToken;
@@ -33,21 +37,16 @@ export const tokenToPmDOM: TokenToDOM<SpecArray> = {
   closeTag(_, stack) {
     if (stack.length > 1) {
       const specArray = stack.pop();
-      const top = stack[stack.length - 1];
+      const top = getTop(stack);
 
       top.push(specArray);
     }
   },
-  html(token, stack) {
-    const top = stack[stack.length - 1];
-    const container = document.createElement('div');
-
-    container.innerHTML = (token as RawHTMLToken).content;
-
-    top.push(container.firstChild);
+  html() {
+    // do nothing
   },
   text(_, stack) {
-    const top = stack[stack.length - 1];
+    const top = getTop(stack);
 
     top.push(0);
   }
@@ -74,19 +73,19 @@ export const tokenToDOMNode: TokenToDOM<HTMLElement> = {
   closeTag(_, stack) {
     if (stack.length > 1) {
       const el = stack.pop();
-      const parent = stack[stack.length - 1];
+      const parent = getTop(stack);
 
       parent.appendChild(el!);
     }
   },
   html(token, stack) {
-    const parent = stack[stack.length - 1];
+    const parent = getTop(stack);
 
     parent.insertAdjacentHTML('beforeend', (token as RawHTMLToken).content);
   },
   text(token, stack) {
     const textNode = document.createTextNode((token as TextToken).content);
-    const parent = stack[stack.length - 1];
+    const parent = getTop(stack);
 
     parent.appendChild(textNode);
   }
