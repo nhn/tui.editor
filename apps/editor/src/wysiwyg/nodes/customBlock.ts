@@ -6,13 +6,14 @@ export class CustomBlock extends NodeSchema {
     return 'customBlock';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: 'text*',
       group: 'block',
       attrs: {
         info: { default: null }
       },
+      atom: true,
       code: true,
       defining: true,
       parseDOM: [
