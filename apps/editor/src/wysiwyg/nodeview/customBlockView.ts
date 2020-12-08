@@ -5,9 +5,8 @@ import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { newlineInCode } from 'prosemirror-commands';
 import { redo, undo } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
-import isString from 'tui-code-snippet/type/isString';
 import isFunction from 'tui-code-snippet/type/isFunction';
-import { Adapter } from './adapter';
+import { ToDOM } from '@t/convertor';
 
 type GetPos = (() => number) | boolean;
 
@@ -16,87 +15,54 @@ export class CustomBlockView {
 
   private node: ProsemirrorNode;
 
-  private adapter: Adapter;
-
-  private info: string;
+  private toDOM: ToDOM;
 
   private outerView: EditorView;
 
-  private innerView: null | EditorView;
+  private innerView: EditorView | null;
 
   private wrapper: HTMLElement;
 
-  private editorContainer: HTMLElement;
+  private innerViewContainer!: HTMLElement;
 
   private getPos: GetPos;
 
-  constructor(node: ProsemirrorNode, view: EditorView, getPos: GetPos, adapter: Adapter) {
+  constructor(node: ProsemirrorNode, view: EditorView, getPos: GetPos, toDOM: ToDOM) {
     this.node = node;
-    this.info = node.attrs.info;
     this.outerView = view;
     this.getPos = getPos;
-    this.adapter = adapter;
+    this.toDOM = toDOM;
     this.innerView = null;
 
     this.dom = document.createElement('div');
-    this.editorContainer = document.createElement('div');
     this.wrapper = document.createElement('div');
 
-    this.createEditorContainer();
+    this.createInnerViewContainer();
+    this.renderCustomBlock();
 
-    this.dom.appendChild(this.editorContainer);
+    this.dom.appendChild(this.innerViewContainer);
     this.dom.appendChild(this.wrapper);
-    this.appendCustomElement();
 
     this.addEventListener();
   }
 
-  private appendCustomElement() {
-    const element = this.getElement(this.node);
+  private renderCustomBlock() {
+    const node = this.toDOM.toDOMNode(this.node);
 
-    if (isString(element)) {
-      this.wrapper.innerHTML = element;
-    } else {
-      this.wrapper.innerHTML = element.innerHTML;
+    while (this.wrapper.hasChildNodes()) {
+      this.wrapper.removeChild(this.wrapper.lastChild!);
+    }
+
+    if (node) {
+      this.wrapper.appendChild(node);
     }
   }
 
-  private createEditorContainer() {
-    this.editorContainer.style.display = 'none';
-    this.editorContainer.style.background = '#f5f7f8';
-  }
-
-  getElement(node: ProsemirrorNode): string | Node {
-    const fragment = document.createElement('div');
-    const tokens = this.adapter.renderHTML(node);
-    let currentEl: HTMLElement = fragment;
-
-    tokens
-      .filter(token => token.type !== 'closeTag')
-      .forEach(token => {
-        if (token.type === 'openTag') {
-          const el: HTMLElement = document.createElement(token.tagName);
-
-          if (token.classNames) {
-            el.className = token.classNames.join(' ');
-          }
-          if (token.attributes) {
-            Object.keys(token.attributes).forEach(attrName => {
-              const attrValue = token.attributes[attrName];
-
-              el.setAttribute(attrName, attrValue);
-            });
-          }
-          currentEl.appendChild(el);
-          currentEl = el;
-        } else if (token.type === 'text') {
-          currentEl.appendChild(document.createTextNode(token.content));
-        } else {
-          currentEl.innerHTML = token.content;
-        }
-      });
-
-    return fragment;
+  private createInnerViewContainer() {
+    this.innerViewContainer = document.createElement('div');
+    // @TODO: apply design
+    this.innerViewContainer.style.display = 'none';
+    this.innerViewContainer.style.background = '#f5f7f8';
   }
 
   private addEventListener() {
@@ -107,11 +73,12 @@ export class CustomBlockView {
 
   private openEditor() {
     if (this.innerView) {
-      throw new Error('editor');
+      throw new Error('The editor is already opened.');
     }
     this.wrapper.style.display = 'none';
-    this.editorContainer.style.display = 'block';
-    this.innerView = new EditorView(this.editorContainer, {
+    this.innerViewContainer.style.display = 'block';
+
+    this.innerView = new EditorView(this.innerViewContainer, {
       state: EditorState.create({
         doc: this.node,
         plugins: [
@@ -124,7 +91,7 @@ export class CustomBlockView {
             },
             Enter: newlineInCode,
             'Ctrl-Enter': () => {
-              this.save();
+              this.saveAndFinishEditing();
               return true;
             }
           })
@@ -147,25 +114,24 @@ export class CustomBlockView {
     this.innerView!.focus();
   }
 
-  private save() {
-    const { to } = this.outerView.state.selection;
-    const outerState: EditorState = this.outerView.state;
-
-    this.outerView.dispatch(outerState.tr.setSelection(TextSelection.create(outerState.doc, to)));
-
-    this.outerView.focus();
-
-    this.closeEditor();
-    this.appendCustomElement();
-  }
-
   private closeEditor() {
     if (this.innerView) {
       this.innerView.destroy();
       this.innerView = null;
-      this.editorContainer.style.display = 'none';
+      this.innerViewContainer.style.display = 'none';
     }
     this.wrapper.style.display = 'block';
+  }
+
+  private saveAndFinishEditing() {
+    const { to } = this.outerView.state.selection;
+    const outerState: EditorState = this.outerView.state;
+
+    this.outerView.dispatch(outerState.tr.setSelection(TextSelection.create(outerState.doc, to)));
+    this.outerView.focus();
+
+    this.renderCustomBlock();
+    this.closeEditor();
   }
 
   private dispatchInner(tr: Transaction) {
@@ -190,22 +156,22 @@ export class CustomBlockView {
     }
   }
 
+  setSelection() {}
+
   update(node: ProsemirrorNode) {
     if (!node.sameMarkup(this.node)) {
       return false;
     }
 
     this.node = node;
-    this.appendCustomElement();
 
     if (this.innerView) {
       const { state } = this.innerView;
       const start = node.content.findDiffStart(state.doc.content);
 
-      // eslint-disable-next-line
+      // eslint-disable-next-line no-eq-null,eqeqeq
       if (start != null) {
-        // @ts-ignore
-        let { a: endA, b: endB } = node.content.findDiffEnd(state.doc.content);
+        let { a: endA, b: endB } = node.content.findDiffEnd(state.doc.content)!;
         const overlap = start - Math.min(endA, endB);
 
         if (overlap > 0) {
@@ -216,6 +182,8 @@ export class CustomBlockView {
           state.tr.replace(start, endB, node.slice(start, endA)).setMeta('fromOutside', true)
         );
       }
+    } else {
+      this.renderCustomBlock();
     }
     return true;
   }

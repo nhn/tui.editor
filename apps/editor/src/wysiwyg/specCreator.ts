@@ -24,6 +24,7 @@ import { Emph } from './marks/emph';
 import { Strike } from './marks/strike';
 import { Link } from './marks/link';
 import { Code } from './marks/code';
+import { CustomBlock } from './nodes/customBlock';
 
 export function createSpecs() {
   return new SpecManager([
@@ -49,6 +50,7 @@ export function createSpecs() {
     new Emph(),
     new Strike(),
     new Link(),
-    new Code()
+    new Code(),
+    new CustomBlock()
   ]);
 }

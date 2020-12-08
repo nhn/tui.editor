@@ -21,7 +21,7 @@ const baseConvertors: CustomHTMLRendererMap = {
       };
     }
 
-    return origin();
+    return origin!();
   },
 
   softbreak(node: MdNode) {
@@ -105,7 +105,7 @@ export function getHTMLRenderConvertors(
 
   if (linkAttribute) {
     convertors.link = (_, { entering, origin }: Context) => {
-      const result = origin();
+      const result = origin!();
 
       if (entering) {
         (result as OpenTagToken).attributes = {
