@@ -1,9 +1,9 @@
 import { Plugin, Transaction } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
-import inArray from 'tui-code-snippet/array/inArray';
 import { Context } from '@t/spec';
 import { EditResult, MdNode, MdPos } from '@t/markdown';
 import { getMdStartLine, getMdEndLine, getMdStartCh, getMdEndCh } from '@/utils/markdown';
+import { includes } from '@/utils/common';
 import { getMarkInfo } from './helper/markInfo';
 import { getMdToEditorPos } from '../helper/pos';
 
@@ -59,7 +59,7 @@ function removeCodeBlockBackground(
     const node = newTr.doc.content.child(i);
     const { codeStart, codeEnd } = node.attrs;
 
-    if (codeStart && codeEnd && inArray(skipLines, codeStart[0])) {
+    if (codeStart && codeEnd && !includes(skipLines, codeStart[0])) {
       skipLines.push(codeStart[0]);
       const pos = getMdToEditorPos(newTr.doc, toastMark, codeStart, codeEnd);
 
@@ -86,7 +86,7 @@ function addMark(node: MdNode, toastMark: any, newTr: Transaction, schema: Schem
   const lineTexts = toastMark.getLineTexts();
   const startPos: MdPos = [getMdStartLine(node), getMdStartCh(node)];
   const endPos: MdPos = [getMdEndLine(node), getMdEndCh(node) + 1];
-  const markInfo = getMarkInfo(node, startPos, endPos, lineTexts[endPos[0]]);
+  const markInfo = getMarkInfo(node, startPos, endPos, lineTexts[endPos[0] - 1]);
 
   if (markInfo) {
     const { marks = [], lineBackground } = markInfo;

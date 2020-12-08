@@ -1,10 +1,10 @@
 // @ts-ignore
 import { Renderer } from '@toast-ui/toastmark';
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Mark } from 'prosemirror-model';
-import inArray from 'tui-code-snippet/array/inArray';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { Context, CustomHTMLRendererMap, HTMLToken, MdNode, MdNodeType } from '@t/markdown';
 import { ToDOMAdaptor } from '@t/convertor';
+import { includes } from '@/utils/common';
 import { createMdLikeNode, isContainer, isNode } from './mdLikeNode';
 import { SpecArray, tokenToDOMNode, tokenToPmDOM } from './tokenToDOM';
 
@@ -71,14 +71,14 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
   }
 
   getToDOM(name: string) {
-    if (inArray(name, this.customConvertorKeys) !== -1) {
+    if (includes(this.customConvertorKeys, name)) {
       return this.toDOM.bind(this);
     }
     return null;
   }
 
   getToDOMNode(name: string) {
-    if (inArray(name, this.customConvertorKeys) !== -1) {
+    if (includes(this.customConvertorKeys, name)) {
       return this.toDOMNode.bind(this);
     }
     return null;
