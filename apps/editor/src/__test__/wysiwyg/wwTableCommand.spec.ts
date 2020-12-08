@@ -54,7 +54,7 @@ describe('wysiwyg table commands', () => {
     document.body.removeChild(container);
   });
 
-  fdescribe('addTable command', () => {
+  describe('addTable command', () => {
     it('should create one by one table', () => {
       cmd.exec('wysiwyg', 'addTable');
 
@@ -131,7 +131,7 @@ describe('wysiwyg table commands', () => {
     });
   });
 
-  fdescribe('removeTable command', () => {
+  describe('removeTable command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable');
     });
@@ -379,7 +379,7 @@ describe('wysiwyg table commands', () => {
     });
   });
 
-  fdescribe('removeRow command', () => {
+  describe('removeRow command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 2,
@@ -675,7 +675,7 @@ describe('wysiwyg table commands', () => {
     });
   });
 
-  fdescribe('removeColumn command', () => {
+  describe('removeColumn command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 3,
@@ -772,7 +772,7 @@ describe('wysiwyg table commands', () => {
     });
   });
 
-  fdescribe('alignColumn command', () => {
+  describe('alignColumn command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 2,
