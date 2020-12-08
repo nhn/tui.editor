@@ -10,6 +10,7 @@ import { getDefaultCommands } from '@/commands/defaultCommands';
 import { getWwCommands } from '@/commands/wwCommands';
 
 import { tableSelectionPlugin } from '@/wysiwyg/plugins/tableSelection';
+import { tableContextMenuPlugin } from '@/wysiwyg/plugins/tableContextMenu';
 
 // @TODO move to common file and change path on markdown
 import { createTextSelection } from '@/markdown/helper/manipulation';
@@ -68,7 +69,8 @@ export default class WysiwygEditor extends EditorBase {
           ...baseKeymap
         }),
         history(),
-        tableSelectionPlugin()
+        tableSelectionPlugin(),
+        tableContextMenuPlugin(this.eventEmitter)
       ],
       ...addedStates
     });
