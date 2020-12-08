@@ -161,7 +161,7 @@ describe('wysiwyg table commands', () => {
     });
   });
 
-  describe('addRowToBottom command', () => {
+  describe('addRowToDown command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 2,
@@ -173,7 +173,7 @@ describe('wysiwyg table commands', () => {
     it('should add a row to next row of current cursor cell', () => {
       setCellSelection([1, 1], [1, 1], false); // select 'baz' cell
 
-      cmd.exec('wysiwyg', 'addRowToBottom');
+      cmd.exec('wysiwyg', 'addRowToDown');
 
       const expected = oneLineTrim`
         <table>
@@ -206,7 +206,7 @@ describe('wysiwyg table commands', () => {
     it('should add rows as selected row count after selection', () => {
       setCellSelection([0, 0], [1, 1]); // select from 'foo' to 'qux' cells
 
-      cmd.exec('wysiwyg', 'addRowToBottom');
+      cmd.exec('wysiwyg', 'addRowToDown');
 
       const expected = oneLineTrim`
         <table>
@@ -243,7 +243,7 @@ describe('wysiwyg table commands', () => {
     it('should not add a row when selection is only at table head', () => {
       setCellSelection([0, 0], [0, 1]); // select from 'foo' to 'bar' cells
 
-      cmd.exec('wysiwyg', 'addRowToBottom');
+      cmd.exec('wysiwyg', 'addRowToDown');
 
       const expected = oneLineTrim`
         <table>

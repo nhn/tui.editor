@@ -295,7 +295,7 @@ export class Table extends Node {
       addColumnToRight: this.addColumn(1),
       addColumnToLeft: this.addColumn(-1),
       removeColumn: this.removeColumn(),
-      addRowToBottom: this.addRow(1),
+      addRowToDown: this.addRow(1),
       addRowToUp: this.addRow(-1),
       removeRow: this.removeRow(),
       alignColumn: this.alignColumn()
