@@ -161,7 +161,7 @@ describe('wysiwyg table commands', () => {
     });
   });
 
-  describe('addRowToNext command', () => {
+  describe('addRowToBottom command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 2,
@@ -173,7 +173,7 @@ describe('wysiwyg table commands', () => {
     it('should add a row to next row of current cursor cell', () => {
       setCellSelection([1, 1], [1, 1], false); // select 'baz' cell
 
-      cmd.exec('wysiwyg', 'addRowToNext');
+      cmd.exec('wysiwyg', 'addRowToBottom');
 
       const expected = oneLineTrim`
         <table>
@@ -206,7 +206,7 @@ describe('wysiwyg table commands', () => {
     it('should add rows as selected row count after selection', () => {
       setCellSelection([0, 0], [1, 1]); // select from 'foo' to 'qux' cells
 
-      cmd.exec('wysiwyg', 'addRowToNext');
+      cmd.exec('wysiwyg', 'addRowToBottom');
 
       const expected = oneLineTrim`
         <table>
@@ -243,7 +243,7 @@ describe('wysiwyg table commands', () => {
     it('should not add a row when selection is only at table head', () => {
       setCellSelection([0, 0], [0, 1]); // select from 'foo' to 'bar' cells
 
-      cmd.exec('wysiwyg', 'addRowToNext');
+      cmd.exec('wysiwyg', 'addRowToBottom');
 
       const expected = oneLineTrim`
         <table>
@@ -270,7 +270,7 @@ describe('wysiwyg table commands', () => {
     });
   });
 
-  describe('addRowToPrev command', () => {
+  describe('addRowToUp command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 2,
@@ -282,7 +282,7 @@ describe('wysiwyg table commands', () => {
     it('should add a row to previous row of current cursor cell', () => {
       setCellSelection([1, 1], [1, 1], false); // select 'baz' cell
 
-      cmd.exec('wysiwyg', 'addRowToPrev');
+      cmd.exec('wysiwyg', 'addRowToUp');
 
       const expected = oneLineTrim`
         <table>
@@ -315,7 +315,7 @@ describe('wysiwyg table commands', () => {
     it('should add rows as selected row count before selection', () => {
       setCellSelection([1, 1], [2, 1]); // select from 'qux' to 'quuz' cells
 
-      cmd.exec('wysiwyg', 'addRowToPrev');
+      cmd.exec('wysiwyg', 'addRowToUp');
 
       const expected = oneLineTrim`
         <table>
@@ -352,7 +352,7 @@ describe('wysiwyg table commands', () => {
     it('should not add a row when selection include table head', () => {
       setCellSelection([0, 0], [1, 0]); // select from 'foo' to 'baz' cells
 
-      cmd.exec('wysiwyg', 'addRowToPrev');
+      cmd.exec('wysiwyg', 'addRowToUp');
 
       const expected = oneLineTrim`
         <table>
@@ -509,7 +509,7 @@ describe('wysiwyg table commands', () => {
     });
   });
 
-  describe('addColumnToNext command', () => {
+  describe('addColumnToRight command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 3,
@@ -521,7 +521,7 @@ describe('wysiwyg table commands', () => {
     it('should add a column to next column of current cursor cell', () => {
       setCellSelection([1, 1], [1, 1], false); // select 'quux' cell
 
-      cmd.exec('wysiwyg', 'addColumnToNext');
+      cmd.exec('wysiwyg', 'addColumnToRight');
 
       const expected = oneLineTrim`
         <table>
@@ -556,7 +556,7 @@ describe('wysiwyg table commands', () => {
     it('should add columns as selected column count to right of selection', () => {
       setCellSelection([0, 0], [1, 1]); // select from 'foo' to 'quux' cells
 
-      cmd.exec('wysiwyg', 'addColumnToNext');
+      cmd.exec('wysiwyg', 'addColumnToRight');
 
       const expected = oneLineTrim`
         <table>
@@ -592,7 +592,7 @@ describe('wysiwyg table commands', () => {
     });
   });
 
-  describe('addColumnToPrev command', () => {
+  describe('addColumnToLeft command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 3,
@@ -604,7 +604,7 @@ describe('wysiwyg table commands', () => {
     it('should add a column to previous column of current cursor cell', () => {
       setCellSelection([1, 1], [1, 1], false); // select 'quux' cell
 
-      cmd.exec('wysiwyg', 'addColumnToPrev');
+      cmd.exec('wysiwyg', 'addColumnToLeft');
 
       const expected = oneLineTrim`
         <table>
@@ -639,7 +639,7 @@ describe('wysiwyg table commands', () => {
     it('should add columns as selected column count to right of selection', () => {
       setCellSelection([0, 1], [2, 2]); // select from 'bar' to last cells
 
-      cmd.exec('wysiwyg', 'addColumnToPrev');
+      cmd.exec('wysiwyg', 'addColumnToLeft');
 
       const expected = oneLineTrim`
         <table>

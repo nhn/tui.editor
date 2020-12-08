@@ -9,9 +9,9 @@ export interface CellInfo {
 }
 
 export interface SelectionInfo {
-  rowIndex: number;
+  startRowIndex: number;
+  startColumnIndex: number;
   rowCount: number;
-  columnIndex: number;
   columnCount: number;
 }
 
@@ -52,15 +52,14 @@ export function createTableBodyRows(
   return tableRows;
 }
 
-export function createCellsToAdd(count: number, offset: number, doc: Node) {
-  const { type } = doc
-    .resolve(offset + 1)
-    .node()
-    .copy();
+export function createCellsToAdd(columnCount: number, rowIndex: number, schema: Schema) {
+  const { tableHeadCell, tableBodyCell } = schema.nodes;
   const cells = [];
 
-  for (let index = 0; index < count; index += 1) {
-    cells.push(type.create());
+  for (let index = 0; index < columnCount; index += 1) {
+    const cell = rowIndex === 0 ? tableHeadCell : tableBodyCell;
+
+    cells.push(cell.create());
   }
 
   return cells;
@@ -134,12 +133,15 @@ function getCountByRange(startIndex: number, endIndex: number) {
   return Math.abs(startIndex - endIndex) + 1;
 }
 
-export function getNextRowOffset({ rowIndex, rowCount }: SelectionInfo, cellsInfo: CellInfo[][]) {
+export function getNextRowOffset(
+  { startRowIndex, rowCount }: SelectionInfo,
+  cellsInfo: CellInfo[][]
+) {
   const allColumnCount = cellsInfo[0].length;
-  const selectedOnlyThead = rowIndex === 0 && rowCount === 1;
+  const selectedOnlyThead = startRowIndex === 0 && rowCount === 1;
 
   if (!selectedOnlyThead) {
-    const rowIdx = rowIndex + rowCount - 1;
+    const rowIdx = startRowIndex + rowCount - 1;
     const colIdx = allColumnCount - 1;
     const { offset, nodeSize } = cellsInfo[rowIdx][colIdx];
 
@@ -149,11 +151,11 @@ export function getNextRowOffset({ rowIndex, rowCount }: SelectionInfo, cellsInf
   return -1;
 }
 
-export function getPrevRowOffset({ rowIndex }: SelectionInfo, cellsInfo: CellInfo[][]) {
-  const selectedThead = rowIndex === 0;
+export function getPrevRowOffset({ startRowIndex }: SelectionInfo, cellsInfo: CellInfo[][]) {
+  const selectedThead = startRowIndex === 0;
 
   if (!selectedThead) {
-    const [{ offset }] = cellsInfo[rowIndex];
+    const [{ offset }] = cellsInfo[startRowIndex];
 
     return offset - 1;
   }
@@ -163,10 +165,10 @@ export function getPrevRowOffset({ rowIndex }: SelectionInfo, cellsInfo: CellInf
 
 export function getNextColumnOffsets(
   rowIndex: number,
-  { columnIndex, columnCount }: SelectionInfo,
+  { startColumnIndex, columnCount }: SelectionInfo,
   cellsInfo: CellInfo[][]
 ) {
-  const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex + columnCount - 1];
+  const { offset, nodeSize } = cellsInfo[rowIndex][startColumnIndex + columnCount - 1];
   const mapOffset = offset + nodeSize;
 
   return { offset, mapOffset };
@@ -174,10 +176,10 @@ export function getNextColumnOffsets(
 
 export function getPrevColumnOffsets(
   rowIndex: number,
-  { columnIndex }: SelectionInfo,
+  { startColumnIndex }: SelectionInfo,
   cellsInfo: CellInfo[][]
 ) {
-  const { offset } = cellsInfo[rowIndex][columnIndex];
+  const { offset } = cellsInfo[rowIndex][startColumnIndex];
   const mapOffset = offset;
 
   return { offset, mapOffset };
@@ -261,10 +263,15 @@ export function getSelectionInfo(startCellPos: ResolvedPos, endCellPos = startCe
   const [endRowIndex, endColumnIndex] = getCellIndexInfo(endCellPos);
 
   const rowIndex = getMinimumIndex(startRowIndex, endRowIndex);
+  const columnIndex = getMinimumIndex(startColumnIndex, endColumnIndex);
+
+  const columnCount = getCountByRange(startColumnIndex, endColumnIndex);
   const rowCount = getCountByRange(startRowIndex, endRowIndex);
 
-  const columnIndex = getMinimumIndex(startColumnIndex, endColumnIndex);
-  const columnCount = getCountByRange(startColumnIndex, endColumnIndex);
-
-  return { rowIndex, rowCount, columnIndex, columnCount };
+  return {
+    startRowIndex: rowIndex,
+    startColumnIndex: columnIndex,
+    rowCount,
+    columnCount
+  };
 }

@@ -24,6 +24,16 @@ import { createTextSelection } from '@/markdown/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
 
+interface AddTablePayload {
+  columns: number;
+  rows: number;
+  data: string[];
+}
+
+interface AlignColumnPayload {
+  align: 'left' | 'center' | 'right';
+}
+
 export class Table extends Node {
   get name() {
     return 'table';
@@ -40,7 +50,7 @@ export class Table extends Node {
     };
   }
 
-  private addTable(): EditorCommand {
+  private addTable(): EditorCommand<AddTablePayload> {
     return (payload = { columns: 1, rows: 1, data: [] }) => (state, dispatch) => {
       const { columns, rows, data } = payload;
       const { schema, selection, tr } = state;
@@ -92,7 +102,7 @@ export class Table extends Node {
 
   private addColumn(direction = 1): EditorCommand {
     return () => (state, dispatch) => {
-      const { selection, tr, doc } = state;
+      const { selection, tr, schema } = state;
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
@@ -102,13 +112,13 @@ export class Table extends Node {
         const allRowCount = cellsInfo.length;
 
         for (let rowIndex = 0; rowIndex < allRowCount; rowIndex += 1) {
-          const { offset, mapOffset } =
+          const { mapOffset } =
             direction === 1
               ? getNextColumnOffsets(rowIndex, selectionInfo, cellsInfo)
               : getPrevColumnOffsets(rowIndex, selectionInfo, cellsInfo);
 
           const from = tr.mapping.map(mapOffset);
-          const cells = createCellsToAdd(columnCount, offset, doc);
+          const cells = createCellsToAdd(columnCount, rowIndex, schema);
 
           tr.insert(from, cells);
         }
@@ -130,7 +140,7 @@ export class Table extends Node {
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { columnIndex, columnCount } = selectionInfo;
+        const { startColumnIndex, columnCount } = selectionInfo;
         const allColumnCount = cellsInfo[0].length;
 
         const selectedAllColumn = columnCount === allColumnCount;
@@ -144,7 +154,7 @@ export class Table extends Node {
 
         for (let i = 0; i < allRowCount; i += 1) {
           for (let j = 0; j < columnCount; j += 1) {
-            const { offset, nodeSize } = cellsInfo[i][j + columnIndex];
+            const { offset, nodeSize } = cellsInfo[i][j + startColumnIndex];
 
             const from = tr.mapping.slice(mapOffset).map(offset);
             const to = from + nodeSize;
@@ -198,19 +208,19 @@ export class Table extends Node {
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { rowIndex, rowCount } = selectionInfo;
+        const { startRowIndex, rowCount } = selectionInfo;
         const allRowCount = cellsInfo.length;
 
-        const selectedThead = rowIndex === 0;
+        const selectedThead = startRowIndex === 0;
         const selectedAllTbodyRow = rowCount === allRowCount - 1;
 
         if (selectedThead || selectedAllTbodyRow) {
           return false;
         }
 
-        const from = cellsInfo[rowIndex][0].offset - 1;
+        const from = cellsInfo[startRowIndex][0].offset - 1;
 
-        const rowIdx = rowIndex + rowCount - 1;
+        const rowIdx = startRowIndex + rowCount - 1;
         const colIdx = cellsInfo[0].length - 1;
         const { offset, nodeSize } = cellsInfo[rowIdx][colIdx];
         const to = offset + nodeSize + 1;
@@ -224,7 +234,7 @@ export class Table extends Node {
     };
   }
 
-  private alignColumn(): EditorCommand {
+  private alignColumn(): EditorCommand<AlignColumnPayload> {
     return (payload = { align: 'center' }) => (state, dispatch) => {
       const { align } = payload;
       const { selection, tr } = state;
@@ -233,12 +243,12 @@ export class Table extends Node {
       if (anchor && head) {
         const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { columnIndex, columnCount } = selectionInfo;
+        const { startColumnIndex, columnCount } = selectionInfo;
         const allRowCount = cellsInfo.length;
 
         for (let i = 0; i < allRowCount; i += 1) {
           for (let j = 0; j < columnCount; j += 1) {
-            const { offset } = cellsInfo[i][j + columnIndex];
+            const { offset } = cellsInfo[i][j + startColumnIndex];
 
             tr.setNodeMarkup(offset, null, { align });
           }
@@ -282,11 +292,11 @@ export class Table extends Node {
     return {
       addTable: this.addTable(),
       removeTable: this.removeTable(),
-      addColumnToNext: this.addColumn(1),
-      addColumnToPrev: this.addColumn(-1),
+      addColumnToRight: this.addColumn(1),
+      addColumnToLeft: this.addColumn(-1),
       removeColumn: this.removeColumn(),
-      addRowToNext: this.addRow(1),
-      addRowToPrev: this.addRow(-1),
+      addRowToBottom: this.addRow(1),
+      addRowToUp: this.addRow(-1),
       removeRow: this.removeRow(),
       alignColumn: this.alignColumn()
     };

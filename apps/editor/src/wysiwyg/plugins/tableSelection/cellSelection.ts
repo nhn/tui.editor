@@ -12,13 +12,13 @@ import {
 function getSelectionRanges(
   doc: Node,
   cellsPos: CellInfo[][],
-  { rowIndex, rowCount, columnIndex, columnCount }: SelectionInfo
+  { startRowIndex, rowCount, startColumnIndex, columnCount }: SelectionInfo
 ) {
   const ranges = [];
 
   for (let i = 0; i < rowCount; i += 1) {
     for (let j = 0; j < columnCount; j += 1) {
-      const { offset, nodeSize } = cellsPos[i + rowIndex][j + columnIndex];
+      const { offset, nodeSize } = cellsPos[i + startRowIndex][j + startColumnIndex];
 
       ranges.push(new SelectionRange(doc.resolve(offset), doc.resolve(offset + nodeSize)));
     }
