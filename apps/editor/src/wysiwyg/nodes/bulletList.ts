@@ -11,7 +11,7 @@ export class BulletList extends Node {
     return 'bulletList';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: 'listItem+',
       group: 'block',

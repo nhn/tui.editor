@@ -10,7 +10,7 @@ export class CodeBlock extends Mark {
     return 'codeBlock';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('code-block') }, 0];

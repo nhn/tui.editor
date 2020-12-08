@@ -16,7 +16,7 @@ export class Heading extends Mark {
     return 'heading';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       attrs: {
         level: { default: 1 },

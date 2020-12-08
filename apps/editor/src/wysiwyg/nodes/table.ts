@@ -39,7 +39,7 @@ export class Table extends Node {
     return 'table';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: 'tableHead{1} tableBody+',
       group: 'block',

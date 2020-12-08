@@ -14,7 +14,7 @@ export class Emph extends Mark {
     return 'emph';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('emph') }, 0];

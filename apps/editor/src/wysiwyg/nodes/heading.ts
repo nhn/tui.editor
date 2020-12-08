@@ -14,7 +14,7 @@ export class Heading extends Node {
     return [1, 2, 3, 4, 5, 6];
   }
 
-  get schema() {
+  get defaultSchema() {
     const parseDOM = this.levels.map(level => {
       return { tag: `h${level}`, attrs: { level } };
     });

@@ -12,7 +12,7 @@ export class Code extends Mark {
     return 'code';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       attrs: {
         start: { default: false },

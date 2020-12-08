@@ -12,7 +12,7 @@ export class Strong extends Mark {
     return 'strong';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('strong') }, 0];

@@ -10,7 +10,7 @@ export class Emph extends Mark {
     return 'emph';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       parseDOM: [{ tag: 'i' }, { tag: 'em' }],
       toDOM(): DOMOutputSpecArray {

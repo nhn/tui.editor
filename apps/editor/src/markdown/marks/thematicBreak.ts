@@ -12,7 +12,7 @@ export class ThematicBreak extends Mark {
     return 'thematicBreak';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('thematic-break') }, 0];

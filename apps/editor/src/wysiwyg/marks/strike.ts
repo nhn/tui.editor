@@ -10,7 +10,7 @@ export class Strike extends Mark {
     return 'strike';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       parseDOM: [{ tag: 's' }, { tag: 'del' }],
       toDOM(): DOMOutputSpecArray {

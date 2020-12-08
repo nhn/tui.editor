@@ -10,7 +10,7 @@ export class BlockQuote extends Node {
     return 'blockQuote';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: 'block+',
       group: 'block',

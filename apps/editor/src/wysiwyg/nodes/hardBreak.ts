@@ -7,7 +7,7 @@ export class HardBreak extends Node {
     return 'hardBreak';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       inline: true,
       group: 'inline',

@@ -9,7 +9,7 @@ export class ThematicBreak extends Node {
     return 'thematicBreak';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       group: 'block',
       parseDOM: [{ tag: 'hr' }],

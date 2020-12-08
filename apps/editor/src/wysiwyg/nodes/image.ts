@@ -10,7 +10,7 @@ export class Image extends NodeSchema {
     return 'image';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       inline: true,
       attrs: {

@@ -38,7 +38,7 @@ export class ListItem extends Mark {
     return 'listItem';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       attrs: {
         odd: { default: false },

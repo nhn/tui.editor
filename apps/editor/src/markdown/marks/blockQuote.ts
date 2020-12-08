@@ -19,7 +19,7 @@ export class BlockQuote extends Mark {
     return 'blockQuote';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('block-quote') }, 0];

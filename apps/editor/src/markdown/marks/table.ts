@@ -62,7 +62,7 @@ export class Table extends Mark {
     return 'table';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('table') }, 0];

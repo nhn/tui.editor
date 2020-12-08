@@ -10,7 +10,7 @@ export class Code extends Mark {
     return 'code';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       parseDOM: [{ tag: 'code' }],
       toDOM(): DOMOutputSpecArray {
