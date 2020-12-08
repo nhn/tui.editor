@@ -8,18 +8,17 @@ import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import isString from 'tui-code-snippet/type/isString';
 
 import LayerPopup from './layerpopup';
-import i18n from '../i18n';
+import i18n from '../i18n/i18n';
 import domUtils from '../utils/dom';
 
 export const REMOVE_ROW_MENU_CLASS_NAME = 'te-table-remove-row';
 export const DISABLED_MENU_CLASS_NAME = 'te-context-menu-disabled';
 
-const TABLE_CONTEXT_MENU_CLASS_NAME = '/^te-table-/';
 const tableCommandMap = {
-  'add-row-prev': 'addRowToPrev',
-  'add-row-next': 'addRowToNext',
-  'add-col-prev': 'addColumnToPrev',
-  'add-col-next': 'addColumnToNext',
+  'add-row-up': 'addRowToUp',
+  'add-row-down': 'addRowToDown',
+  'add-col-left': 'addColumnToLeft',
+  'add-col-right': 'addColumnToRight',
   'remove-col': 'removeColumn',
   'col-align-left': ['alignColumn', { align: 'left' }],
   'col-align-center': ['alignColumn', { align: 'center' }],
@@ -35,14 +34,15 @@ const tableCommandMap = {
 class PopupTableUtils extends LayerPopup {
   constructor(options) {
     const POPUP_CONTENT = `
-      <button type="button" class="te-table-add-row-prev">${i18n.get('Add row to up')}</button>
-      <button type="button" class="te-table-add-row-next">${i18n.get('Add row to down')}</button>
+      <button type="button" class="te-table-add-row-up">${i18n.get('Add row to up')}</button>
+      <button type="button" class="te-table-add-row-down">${i18n.get('Add row to down')}</button>
       <button type="button" class="te-table-remove-row">${i18n.get('Remove row')}</button>
       <hr/>
-      <button type="button" class="te-table-add-col-prev">${i18n.get('Add column to left')}</button>
-      <button type="button" class="te-table-add-col-next">${i18n.get(
+      <button type="button" class="te-table-add-col-left">${i18n.get('Add column to left')}</button>
+      <button type="button" class="te-table-add-col-right">${i18n.get(
         'Add column to right'
       )}</button>
+      <button type="button" class="te-table-remove-col">${i18n.get('Remove column')}</button>
       <hr/>
       <button type="button" class="te-table-col-align-left">${i18n.get(
         'Align column to left'
@@ -90,7 +90,7 @@ class PopupTableUtils extends LayerPopup {
 
     this.on('click', ({ target }) => {
       const { className } = target;
-      const matched = className.match(TABLE_CONTEXT_MENU_CLASS_NAME);
+      const matched = className.match(/^te-table-/);
 
       if (matched) {
         const type = className.replace(matched[0], '');
@@ -103,7 +103,7 @@ class PopupTableUtils extends LayerPopup {
         let command = commandInfo;
         let payload = null;
 
-        if (isString(commandInfo)) {
+        if (!isString(commandInfo)) {
           command = commandInfo[0];
           payload = commandInfo[1];
         }
