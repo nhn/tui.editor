@@ -3,7 +3,7 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { StepMap } from 'prosemirror-transform';
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { newlineInCode } from 'prosemirror-commands';
-import { redo, undo } from 'prosemirror-history';
+import { redo, undo, undoDepth, history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import { ToDOMAdaptor } from '@t/convertor';
@@ -27,12 +27,15 @@ export class CustomBlockView implements NodeView {
 
   private getPos: GetPos;
 
+  private isCanceled: boolean;
+
   constructor(node: ProsemirrorNode, view: EditorView, getPos: GetPos, toDOMAdaptor: ToDOMAdaptor) {
     this.node = node;
     this.outerView = view;
     this.getPos = getPos;
     this.toDOMAdaptor = toDOMAdaptor;
     this.innerView = null;
+    this.isCanceled = false;
 
     this.dom = document.createElement('div');
     this.wrapper = document.createElement('div');
@@ -72,7 +75,6 @@ export class CustomBlockView implements NodeView {
     if (this.innerView) {
       throw new Error('The editor is already opened.');
     }
-    const origin = this.node.copy(this.node.content);
 
     this.wrapper.style.display = 'none';
     this.innerViewContainer.style.display = 'block';
@@ -90,14 +92,15 @@ export class CustomBlockView implements NodeView {
             },
             Enter: newlineInCode,
             Escape: () => {
-              this.cancelEditing(origin);
+              this.cancelEditing();
               return true;
             },
             'Ctrl-Enter': () => {
               this.saveAndFinishEditing();
               return true;
             }
-          })
+          }),
+          history()
         ]
       }),
       dispatchTransaction: (tr: Transaction) => this.dispatchInner(tr),
@@ -133,16 +136,24 @@ export class CustomBlockView implements NodeView {
     this.closeEditor();
   }
 
-  private cancelEditing(origin: ProsemirrorNode) {
+  private cancelEditing() {
+    let undoableCount = undoDepth(this.innerView!.state);
+
+    this.isCanceled = true;
+
+    // should undo editing result
+    // eslint-disable-next-line no-plusplus
+    while (undoableCount--) {
+      undo(this.innerView!.state, this.innerView!.dispatch);
+      undo(this.outerView!.state, this.outerView!.dispatch);
+    }
+    this.isCanceled = false;
+
     const { to } = this.outerView.state.selection;
     const outerState: EditorState = this.outerView.state;
 
     this.outerView.dispatch(outerState.tr.setSelection(TextSelection.create(outerState.doc, to)));
     this.outerView.focus();
-
-    this.innerView!.dispatch(
-      this.innerView!.state.tr.replaceWith(0, this.node.content.size, origin.content)
-    );
 
     this.closeEditor();
   }
@@ -152,7 +163,7 @@ export class CustomBlockView implements NodeView {
 
     this.innerView!.updateState(state);
 
-    if (!tr.getMeta('fromOutside') && isFunction(this.getPos)) {
+    if (!tr.getMeta('fromOutside') && !this.isCanceled && isFunction(this.getPos)) {
       const outerTr = this.outerView.state.tr;
       const offsetMap = StepMap.offset(this.getPos() + 1);
 
