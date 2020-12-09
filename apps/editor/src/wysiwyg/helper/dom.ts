@@ -1,4 +1,5 @@
-export function isInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
+// @TODO move to utils/dom.ts
+export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
   const rect = {
     left: parseInt(style.left, 10),
     top: parseInt(style.top, 10),

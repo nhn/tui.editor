@@ -1,7 +1,7 @@
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { isInBox } from '@/wysiwyg/helper/dom';
+import { isPositionInBox } from '@/wysiwyg/helper/dom';
 import { findListItem } from '@/wysiwyg/helper/node';
 
 export function taskPlugin() {
@@ -21,7 +21,7 @@ export function taskPlugin() {
             const style = getComputedStyle(target, ':before');
             const { offsetX, offsetY } = ev as MouseEvent;
 
-            if (!listItem || !isInBox(style, offsetX, offsetY)) {
+            if (!listItem || !isPositionInBox(style, offsetX, offsetY)) {
               return true;
             }
 

@@ -1,4 +1,4 @@
-import { isInBox } from '@/wysiwyg/helper/dom';
+import { isPositionInBox } from '@/wysiwyg/helper/dom';
 
 describe('dom utils', () => {
   let container: HTMLElement;
@@ -12,7 +12,7 @@ describe('dom utils', () => {
     container.parentNode!.removeChild(container);
   });
 
-  it('isInBox() returns state whether position is contained within box size', () => {
+  it('isPositionInBox() returns state whether position is contained within box size', () => {
     container.innerHTML = '<div class="test">foo</div>';
 
     const div = document.querySelector('.test') as HTMLElement;
@@ -23,7 +23,7 @@ describe('dom utils', () => {
     style.width = '10px';
     style.height = '10px';
 
-    expect(isInBox(style, 5, 5)).toBe(true);
-    expect(isInBox(style, 15, 15)).toBe(false);
+    expect(isPositionInBox(style, 5, 5)).toBe(true);
+    expect(isPositionInBox(style, 15, 15)).toBe(false);
   });
 });
