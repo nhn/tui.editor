@@ -23,7 +23,7 @@ const tableCommandMap = {
   'col-align-left': ['alignColumn', { align: 'left' }],
   'col-align-center': ['alignColumn', { align: 'center' }],
   'col-align-right': ['alignColumn', { align: 'right' }],
-  remove: 'removeTable'
+  'remove-table': 'removeTable'
 };
 
 /**
@@ -33,28 +33,41 @@ const tableCommandMap = {
  */
 class PopupTableUtils extends LayerPopup {
   constructor(options) {
+    // @TODO change class name of template
     const POPUP_CONTENT = `
-      <button type="button" class="te-table-add-row-up">${i18n.get('Add row to up')}</button>
-      <button type="button" class="te-table-add-row-down">${i18n.get('Add row to down')}</button>
-      <button type="button" class="te-table-remove-row">${i18n.get('Remove row')}</button>
+      <button type="button" data-table-command-type="add-row-up">${i18n.get(
+        'Add row to up'
+      )}</button>
+      <button type="button" data-table-command-type="add-row-down">${i18n.get(
+        'Add row to down'
+      )}</button>
+      <button type="button" class="te-table-remove-row" data-table-command-type="remove-row">${i18n.get(
+        'Remove row'
+      )}</button>
       <hr/>
-      <button type="button" class="te-table-add-col-left">${i18n.get('Add column to left')}</button>
-      <button type="button" class="te-table-add-col-right">${i18n.get(
+      <button type="button" data-table-command-type="add-col-left">${i18n.get(
+        'Add column to left'
+      )}</button>
+      <button type="button" data-table-command-type="add-col-right">${i18n.get(
         'Add column to right'
       )}</button>
-      <button type="button" class="te-table-remove-col">${i18n.get('Remove column')}</button>
+      <button type="button" data-table-command-type="remove-col">${i18n.get(
+        'Remove column'
+      )}</button>
       <hr/>
-      <button type="button" class="te-table-col-align-left">${i18n.get(
+      <button type="button" data-table-command-type="col-align-left">${i18n.get(
         'Align column to left'
       )}</button>
-      <button type="button" class="te-table-col-align-center">${i18n.get(
+      <button type="button" data-table-command-type="col-align-center">${i18n.get(
         'Align column to center'
       )}</button>
-      <button type="button" class="te-table-col-align-right">${i18n.get(
+      <button type="button" data-table-command-type="col-align-right">${i18n.get(
         'Align column to right'
       )}</button>
       <hr/>
-      <button type="button" class="te-table-remove">${i18n.get('Remove table')}</button>
+      <button type="button" data-table-command-type="remove-table">${i18n.get(
+        'Remove table'
+      )}</button>
     `;
 
     options = extend(
@@ -89,12 +102,12 @@ class PopupTableUtils extends LayerPopup {
     super._initDOMEvent();
 
     this.on('click', ({ target }) => {
-      const { className } = target;
-      const matched = className.match(/^te-table-/);
+      const commandType = target.dataset.tableCommandType;
 
-      if (matched) {
-        const type = className.replace(matched[0], '');
-        const commandInfo = tableCommandMap[type];
+      console.log(target.dataset);
+
+      if (commandType) {
+        const commandInfo = tableCommandMap[commandType];
 
         if (!commandInfo) {
           return;
