@@ -216,7 +216,7 @@ export type CustomHTMLRenderer = (
   convertors?: CustomHTMLRendererMap
 ) => HTMLToken | HTMLToken[] | null;
 
-export type CustomHTMLRendererMap = Partial<Record<MdNodeType, CustomHTMLRenderer>>;
+export type CustomHTMLRendererMap = Partial<Record<string, CustomHTMLRenderer>>;
 
 export interface ContextOptions {
   gfm: boolean;

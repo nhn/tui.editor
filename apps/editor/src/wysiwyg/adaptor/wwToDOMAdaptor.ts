@@ -2,7 +2,14 @@
 import { Renderer } from '@toast-ui/toastmark';
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Mark } from 'prosemirror-model';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
-import { Context, CustomHTMLRendererMap, HTMLToken, MdNode, MdNodeType } from '@t/markdown';
+import {
+  Context,
+  CustomHTMLRendererMap,
+  HTMLToken,
+  MdNode,
+  MdNodeType,
+  TextToken
+} from '@t/markdown';
 import { ToDOMAdaptor } from '@t/convertor';
 import { includes } from '@/utils/common';
 import { createMdLikeNode, isContainer, isNode } from './mdLikeNode';
@@ -43,7 +50,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     if (isContainer(node.type.name)) {
       context.entering = false;
 
-      tokens.push({ type: 'text' } as HTMLToken);
+      tokens.push({ type: 'text', content: isNode(node) ? node.textContent : '' } as TextToken);
       tokens.push(convertor(mdLikeNnode as MdNode, context, this.convertors) as HTMLToken);
     }
 

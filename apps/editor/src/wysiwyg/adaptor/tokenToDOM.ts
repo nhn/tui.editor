@@ -42,8 +42,9 @@ export const tokenToPmDOM: TokenToDOM<SpecArray> = {
       top.push(specArray);
     }
   },
-  html() {
-    // do nothing
+  html(token, stack) {
+    // html node should be ignored in prosemirror schema to control the wysiwyg node properly
+    this.text(token, stack);
   },
   text(_, stack) {
     const top = getTop(stack);

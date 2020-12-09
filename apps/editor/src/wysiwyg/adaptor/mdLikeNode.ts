@@ -9,8 +9,9 @@ export function isContainer(type: string) {
   switch (type) {
     case 'document':
     case 'blockQuote':
-    case 'list':
-    case 'item':
+    case 'bulletList':
+    case 'orderedList':
+    case 'listItem':
     case 'paragraph':
     case 'heading':
     case 'emph':
@@ -22,8 +23,8 @@ export function isContainer(type: string) {
     case 'tableHead':
     case 'tableBody':
     case 'tableRow':
-    case 'tableCell':
-    case 'tableDelimRow':
+    case 'tableHeadCell':
+    case 'tableBodyCell':
       return true;
     default:
       return false;
@@ -45,7 +46,7 @@ export function createMdLikeNode(node: ProsemirrorNode | Mark): MdLikeNode {
     case 'link':
       return { ...mdLikeNode, destination: attrs.linkUrl, title: attrs.linkText };
     case 'image':
-      return { ...mdLikeNode, destination: attrs.linkUrl };
+      return { ...mdLikeNode, destination: attrs.imageUrl };
     case 'codeBlock':
       return { ...mdLikeNode, info: attrs.language };
     case 'bulletList':
