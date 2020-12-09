@@ -5,6 +5,7 @@ import { DOMParser } from 'prosemirror-model';
 import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
+import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 
 describe('wysiwyg commands', () => {
   let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter, cmd: CommandManager;
@@ -31,11 +32,13 @@ describe('wysiwyg commands', () => {
   }
 
   beforeEach(() => {
+    const adaptor = new WwToDOMAdaptor({}, {});
+
     container = document.createElement('div');
     document.body.appendChild(container);
 
     em = new EventEmitter();
-    wwe = new WysiwygEditor(container, em);
+    wwe = new WysiwygEditor(container, em, adaptor);
     cmd = new CommandManager(em, {}, wwe.commands);
   });
 
