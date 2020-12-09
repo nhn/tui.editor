@@ -33,9 +33,11 @@ export function taskPlugin() {
 
             tr.setNodeMarkup(offset, null, { ...attrs, ...{ checked: !checked } });
             view.dispatch!(tr);
+
+            return true;
           }
 
-          return true;
+          return false;
         }
       }
     }
