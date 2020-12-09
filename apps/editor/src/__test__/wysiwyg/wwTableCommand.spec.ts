@@ -62,12 +62,12 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th><br></th>
+              <th><p><br></p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><br></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -83,22 +83,22 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th><br></th>
-              <th><br></th>
+              <th><p><br></p></th>
+              <th><p><br></p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><br></td>
-              <td><br></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
             </tr>
             <tr>
-              <td><br></td>
-              <td><br></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
             </tr>
             <tr>
-              <td><br></td>
-              <td><br></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -114,14 +114,14 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th>bar</th>
+              <th><p>foo</p></th>
+              <th><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>baz</td>
-              <td>qux</td>
+              <td><p>baz</p></td>
+              <td><p>qux</p></td>
             </tr>
           </tbody>
         </table>
@@ -179,22 +179,22 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th>bar</th>
+              <th><p>foo</p></th>
+              <th><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>baz</td>
-              <td>qux</td>
+              <td><p>baz</p></td>
+              <td><p>qux</p></td>
             </tr>
             <tr>
-              <td><br></td>
-              <td><br></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
             </tr>
             <tr>
-              <td>quux</td>
-              <td>quuz</td>
+              <td><p>quux</p></td>
+              <td><p>quuz</p></td>
             </tr>
           </tbody>
         </table>
@@ -212,26 +212,26 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="te-cell-selected">foo</th>
-              <th class="te-cell-selected">bar</th>
+              <th class="te-cell-selected"><p>foo</p></th>
+              <th class="te-cell-selected"><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected">baz</td>
-              <td class="te-cell-selected">qux</td>
+              <td class="te-cell-selected"><p>baz</p></td>
+              <td class="te-cell-selected"><p>qux</p></td>
             </tr>
             <tr>
-              <td><br></td>
-              <td><br></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
             </tr>
             <tr>
-              <td><br></td>
-              <td><br></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
             </tr>
             <tr>
-              <td>quux</td>
-              <td>quuz</td>
+              <td><p>quux</p></td>
+              <td><p>quuz</p></td>
             </tr>
           </tbody>
         </table>
@@ -249,18 +249,18 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="te-cell-selected">foo</th>
-              <th class="te-cell-selected">bar</th>
+              <th class="te-cell-selected"><p>foo</p></th>
+              <th class="te-cell-selected"><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>baz</td>
-              <td>qux</td>
+              <td><p>baz</p></td>
+              <td><p>qux</p></td>
             </tr>
             <tr>
-              <td>quux</td>
-              <td>quuz</td>
+              <td><p>quux</p></td>
+              <td><p>quuz</p></td>
             </tr>
           </tbody>
         </table>
@@ -288,22 +288,22 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th>bar</th>
+              <th><p>foo</p></th>
+              <th><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><br></td>
-              <td><br></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
             </tr>
             <tr>
-              <td>baz</td>
-              <td>qux</td>
+              <td><p>baz</p></td>
+              <td><p>qux</p></td>
             </tr>
             <tr>
-              <td>quux</td>
-              <td>quuz</td>
+              <td><p>quux</p></td>
+              <td><p>quuz</p></td>
             </tr>
           </tbody>
         </table>
@@ -321,26 +321,26 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th>bar</th>
+              <th><p>foo</p></th>
+              <th><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><br></td>
-              <td><br></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
             </tr>
             <tr>
-              <td><br></td>
-              <td><br></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
             </tr>
             <tr>
-              <td>baz</td>
-              <td class="te-cell-selected">qux</td>
+              <td><p>baz</p></td>
+              <td class="te-cell-selected"><p>qux</p></td>
             </tr>
             <tr>
-              <td>quux</td>
-              <td class="te-cell-selected">quuz</td>
+              <td><p>quux</p></td>
+              <td class="te-cell-selected"><p>quuz</p></td>
             </tr>
           </tbody>
         </table>
@@ -358,18 +358,18 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="te-cell-selected">foo</th>
-              <th>bar</th>
+              <th class="te-cell-selected"><p>foo</p></th>
+              <th><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected">baz</td>
-              <td>qux</td>
+              <td class="te-cell-selected"><p>baz</p></td>
+              <td><p>qux</p></td>
             </tr>
             <tr>
-              <td>quux</td>
-              <td>quuz</td>
+              <td><p>quux</p></td>
+              <td><p>quuz</p></td>
             </tr>
           </tbody>
         </table>
@@ -397,18 +397,18 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th>bar</th>
+              <th><p>foo</p></th>
+              <th><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>quux</td>
-              <td>quuz</td>
+              <td><p>quux</p></td>
+              <td><p>quuz</p></td>
             </tr>
             <tr>
-              <td>corge</td>
-              <td><br></td>
+              <td><p>corge</p></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -426,14 +426,14 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th>bar</th>
+              <th><p>foo</p></th>
+              <th><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>baz</td>
-              <td>qux</td>
+              <td><p>baz</p></td>
+              <td><p>qux</p></td>
             </tr>
           </tbody>
         </table>
@@ -451,22 +451,22 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th class="te-cell-selected">bar</th>
+              <th><p>foo</p></th>
+              <th class="te-cell-selected"><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>baz</td>
-              <td class="te-cell-selected">qux</td>
+              <td><p>baz</p></td>
+              <td class="te-cell-selected"><p>qux</p></td>
             </tr>
             <tr>
-              <td>quux</td>
-              <td class="te-cell-selected">quuz</td>
+              <td><p>quux</p></td>
+              <td class="te-cell-selected"><p>quuz</p></td>
             </tr>
             <tr>
-              <td>corge</td>
-              <td><br></td>
+              <td><p>corge</p></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -484,22 +484,22 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th>bar</th>
+              <th><p>foo</p></th>
+              <th><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected">baz</td>
-              <td>qux</td>
+              <td class="te-cell-selected"><p>baz</p></td>
+              <td><p>qux</p></td>
             </tr>
             <tr>
-              <td class="te-cell-selected">quux</td>
-              <td>quuz</td>
+              <td class="te-cell-selected"><p>quux</p></td>
+              <td><p>quuz</p></td>
             </tr>
             <tr>
-              <td class="te-cell-selected">corge</td>
-              <td><br></td>
+              <td class="te-cell-selected"><p>corge</p></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -527,24 +527,24 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th>bar</th>
-              <th><br></th>
-              <th>baz</th>
+              <th><p>foo</p></th>
+              <th><p>bar</p></th>
+              <th><p><br></p></th>
+              <th><p>baz</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>qux</td>
-              <td>quux</td>
-              <td><br></td>
-              <td>quuz</td>
+              <td><p>qux</p></td>
+              <td><p>quux</p></td>
+              <td><p><br></p></td>
+              <td><p>quuz</p></td>
             </tr>
             <tr>
-              <td>corge</td>
-              <td>grault</td>
-              <td><br></td>
-              <td><br></td>
+              <td><p>corge</p></td>
+              <td><p>grault</p></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -562,27 +562,27 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="te-cell-selected">foo</th>
-              <th class="te-cell-selected">bar</th>
-              <th><br></th>
-              <th><br></th>
-              <th>baz</th>
+              <th class="te-cell-selected"><p>foo</p></th>
+              <th class="te-cell-selected"><p>bar</p></th>
+              <th><p><br></p></th>
+              <th><p><br></p></th>
+              <th><p>baz</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected">qux</td>
-              <td class="te-cell-selected">quux</td>
-              <td><br></td>
-              <td><br></td>
-              <td>quuz</td>
+              <td class="te-cell-selected"><p>qux</p></td>
+              <td class="te-cell-selected"><p>quux</p></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
+              <td><p>quuz</p></td>
             </tr>
             <tr>
-              <td>corge</td>
-              <td>grault</td>
-              <td><br></td>
-              <td><br></td>
-              <td><br></td>
+              <td><p>corge</p></td>
+              <td><p>grault</p></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -610,24 +610,24 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th><br></th>
-              <th>bar</th>
-              <th>baz</th>
+              <th><p>foo</p></th>
+              <th><p><br></p></th>
+              <th><p>bar</p></th>
+              <th><p>baz</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>qux</td>
-              <td><br></td>
-              <td>quux</td>
-              <td>quuz</td>
+              <td><p>qux</p></td>
+              <td><p><br></p></td>
+              <td><p>quux</p></td>
+              <td><p>quuz</p></td>
             </tr>
             <tr>
-              <td>corge</td>
-              <td><br></td>
-              <td>grault</td>
-              <td><br></td>
+              <td><p>corge</p></td>
+              <td><p><br></p></td>
+              <td><p>grault</p></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -645,27 +645,27 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th><br></th>
-              <th><br></th>
-              <th class="te-cell-selected">bar</th>
-              <th class="te-cell-selected">baz</th>
+              <th><p>foo</p></th>
+              <th><p><br></p></th>
+              <th><p><br></p></th>
+              <th class="te-cell-selected"><p>bar</p></th>
+              <th class="te-cell-selected"><p>baz</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>qux</td>
-              <td><br></td>
-              <td><br></td>
-              <td class="te-cell-selected">quux</td>
-              <td class="te-cell-selected">quuz</td>
+              <td><p>qux</p></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
+              <td class="te-cell-selected"><p>quux</p></td>
+              <td class="te-cell-selected"><p>quuz</p></td>
             </tr>
             <tr>
-              <td>corge</td>
-              <td><br></td>
-              <td><br></td>
-              <td class="te-cell-selected">grault</td>
-              <td class="te-cell-selected"><br></td>
+              <td><p>corge</p></td>
+              <td><p><br></p></td>
+              <td><p><br></p></td>
+              <td class="te-cell-selected"><p>grault</p></td>
+              <td class="te-cell-selected"><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -693,18 +693,18 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th>baz</th>
+              <th><p>foo</p></th>
+              <th><p>baz</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>qux</td>
-              <td>quuz</td>
+              <td><p>qux</p></td>
+              <td><p>quuz</p></td>
             </tr>
             <tr>
-              <td>corge</td>
-              <td><br></td>
+              <td><p>corge</p></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -722,15 +722,15 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
+              <th><p>foo</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>qux</td>
+              <td><p>qux</p></td>
             </tr>
             <tr>
-              <td>corge</td>
+              <td><p>corge</p></td>
             </tr>
           </tbody>
         </table>
@@ -748,21 +748,21 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="te-cell-selected">foo</th>
-              <th class="te-cell-selected">bar</th>
-              <th class="te-cell-selected">baz</th>
+              <th class="te-cell-selected"><p>foo</p></th>
+              <th class="te-cell-selected"><p>bar</p></th>
+              <th class="te-cell-selected"><p>baz</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected">qux</td>
-              <td class="te-cell-selected">quux</td>
-              <td class="te-cell-selected">quuz</td>
+              <td class="te-cell-selected"><p>qux</p></td>
+              <td class="te-cell-selected"><p>quux</p></td>
+              <td class="te-cell-selected"><p>quuz</p></td>
             </tr>
             <tr>
-              <td>corge</td>
-              <td>grault</td>
-              <td><br></td>
+              <td><p>corge</p></td>
+              <td><p>grault</p></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -790,18 +790,18 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th align="center">foo</th>
-              <th>bar</th>
+              <th align="center"><p>foo</p></th>
+              <th><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td align="center">baz</td>
-              <td>qux</td>
+              <td align="center"><p>baz</p></td>
+              <td><p>qux</p></td>
             </tr>
             <tr>
-              <td align="center">quux</td>
-              <td><br></td>
+              <td align="center"><p>quux</p></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -819,18 +819,18 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th align="left">bar</th>
+              <th><p>foo</p></th>
+              <th align="left"><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>baz</td>
-              <td align="left">qux</td>
+              <td><p>baz</p></td>
+              <td align="left"><p>qux</p></td>
             </tr>
             <tr>
-              <td>quux</td>
-              <td align="left"><br></td>
+              <td><p>quux</p></td>
+              <td align="left"><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -844,18 +844,18 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th>foo</th>
-              <th align="right">bar</th>
+              <th><p>foo</p></th>
+              <th align="right"><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>baz</td>
-              <td align="right">qux</td>
+              <td><p>baz</p></td>
+              <td align="right"><p>qux</p></td>
             </tr>
             <tr>
-              <td>quux</td>
-              <td align="right"><br></td>
+              <td><p>quux</p></td>
+              <td align="right"><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -873,18 +873,18 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th align="left">foo</th>
-              <th>bar</th>
+              <th align="left"><p>foo</p></th>
+              <th><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td align="left">baz</td>
-              <td>qux</td>
+              <td align="left"><p>baz</p></td>
+              <td><p>qux</p></td>
             </tr>
             <tr>
-              <td align="left">quux</td>
-              <td><br></td>
+              <td align="left"><p>quux</p></td>
+              <td><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -902,18 +902,18 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th align="left">foo</th>
-              <th align="left">bar</th>
+              <th align="left"><p>foo</p></th>
+              <th align="left"><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td align="left" class="te-cell-selected">baz</td>
-              <td align="left" class="te-cell-selected">qux</td>
+              <td align="left" class="te-cell-selected"><p>baz</p></td>
+              <td align="left" class="te-cell-selected"><p>qux</p></td>
             </tr>
             <tr>
-              <td align="left">quux</td>
-              <td align="left"><br></td>
+              <td align="left"><p>quux</p></td>
+              <td align="left"><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -929,18 +929,18 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th align="right" class="te-cell-selected">foo</th>
-              <th align="right" class="te-cell-selected">bar</th>
+              <th align="right" class="te-cell-selected"><p>foo</p></th>
+              <th align="right" class="te-cell-selected"><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td align="right">baz</td>
-              <td align="right">qux</td>
+              <td align="right"><p>baz</p></td>
+              <td align="right"><p>qux</p></td>
             </tr>
             <tr>
-              <td align="right">quux</td>
-              <td align="right"><br></td>
+              <td align="right"><p>quux</p></td>
+              <td align="right"><p><br></p></td>
             </tr>
           </tbody>
         </table>

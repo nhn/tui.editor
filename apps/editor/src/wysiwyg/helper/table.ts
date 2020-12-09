@@ -16,13 +16,14 @@ export interface SelectionInfo {
 }
 
 export function createTableHeadRow(columnCount: number, schema: Schema, data?: string[]) {
-  const { tableRow, tableHeadCell } = schema.nodes;
+  const { tableRow, tableHeadCell, paragraph } = schema.nodes;
   const cells = [];
 
   for (let index = 0; index < columnCount; index += 1) {
     const text = data && data[index];
+    const para = paragraph.create(null, text ? schema.text(text) : []);
 
-    cells.push(tableHeadCell.create(null, text ? schema.text(text) : []));
+    cells.push(tableHeadCell.create(null, para));
   }
 
   return [tableRow.create(null, cells)];
@@ -34,7 +35,7 @@ export function createTableBodyRows(
   schema: Schema,
   data?: string[]
 ) {
-  const { tableRow, tableBodyCell } = schema.nodes;
+  const { tableRow, tableBodyCell, paragraph } = schema.nodes;
   const tableRows = [];
 
   for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
@@ -42,8 +43,9 @@ export function createTableBodyRows(
 
     for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
       const text = data && data[rowIndex * columnCount + columnIndex];
+      const para = paragraph.create(null, text ? schema.text(text) : []);
 
-      cells.push(tableBodyCell.create(null, text ? schema.text(text) : []));
+      cells.push(tableBodyCell.create(null, para));
     }
 
     tableRows.push(tableRow.create(null, cells));
@@ -53,13 +55,13 @@ export function createTableBodyRows(
 }
 
 export function createCellsToAdd(columnCount: number, rowIndex: number, schema: Schema) {
-  const { tableHeadCell, tableBodyCell } = schema.nodes;
+  const { tableHeadCell, tableBodyCell, paragraph } = schema.nodes;
   const cells = [];
 
   for (let index = 0; index < columnCount; index += 1) {
     const cell = rowIndex === 0 ? tableHeadCell : tableBodyCell;
 
-    cells.push(cell.create());
+    cells.push(cell.create(null, paragraph.create()));
   }
 
   return cells;

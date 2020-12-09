@@ -47,6 +47,7 @@ export interface ToMdConvertorStateType {
   convertBlock(node: Node, parent: Node, index: number): void;
   convertInline(parent: Node): void;
   convertList(node: Node, delim: string, firstDelimFn: FirstDelimFn): void;
+  convertTableCell(node: Node): void;
   convertNode(parent: Node): string;
   escape(str: string, startOfLine?: boolean): string;
   quote(str: string): string;

@@ -179,6 +179,15 @@
   padding-top: 6px;
 }
 
+.tui-editor-contents th p {
+  margin: 0;
+  color: #fff;
+}
+
+.tui-editor-contents td p {
+  margin: 0;
+}
+
 .tui-editor-contents ul,
 .tui-editor-contents menu,
 .tui-editor-contents ol,

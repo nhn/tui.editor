@@ -203,13 +203,15 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   tableCell(state, node, { entering }) {
-    const { tableHeadCell, tableBodyCell } = state.schema.nodes;
+    const { paragraph, tableHeadCell, tableBodyCell } = state.schema.nodes;
     const tablePart = node.parent!.parent!;
     const cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
 
     if (entering) {
       state.openNode(cell);
+      state.openNode(paragraph);
     } else {
+      state.closeNode();
       state.closeNode();
     }
   },
