@@ -1,3 +1,5 @@
+import { NodeType, MarkType, Schema } from 'prosemirror-model';
+
 import { ToWwConvertorMap } from '@t/convertor';
 import {
   HeadingMdNode,
@@ -8,9 +10,27 @@ import {
   CustomBlockMdNode
 } from '@t/markdown';
 
+import { getTagMap } from './htmlNodeMap';
+
 function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
 }
+
+function findNodeType(schema: Schema, tag: string, isMark = false) {
+  const matched = tag.match(/<(.*?)>/);
+  const nodes = isMark ? schema.marks : schema.nodes;
+
+  if (matched) {
+    const tagName = matched[1].replace('/', '');
+    const markName = tagMap[tagName];
+
+    return nodes[markName];
+  }
+
+  return null;
+}
+
+const tagMap = getTagMap();
 
 export const toWwConvertors: ToWwConvertorMap = {
   text(state, node) {
@@ -153,14 +173,34 @@ export const toWwConvertors: ToWwConvertorMap = {
   /**
    * @TODO add node
    */
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  htmlInline() {},
+  htmlInline(state, node, { entering }) {
+    const tag = node.literal!;
+    const type = findNodeType(state.schema, tag, true) as MarkType;
+
+    if (type) {
+      if (entering) {
+        state.openMark(type.create({ htmlString: true }));
+      } else {
+        state.closeMark(type);
+      }
+    }
+  },
 
   /**
    * @TODO add node
    */
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  htmlBlock() {},
+  htmlBlock(state, node, { entering }) {
+    const tag = node.literal!;
+    const type = findNodeType(state.schema, tag) as NodeType;
+
+    if (type) {
+      if (entering) {
+        state.openNode(type, { htmlString: true });
+      } else {
+        state.closeNode();
+      }
+    }
+  },
 
   // GFM specifications node
   table(state, _, { entering }) {

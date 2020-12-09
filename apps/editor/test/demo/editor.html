@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/latex.js/dist/latex.js"></script>
     <!-- Editor -->
     <script type="module">
-      import Editor from "/dist/index.js";
+      import Editor from '/dist/index.js';
 
       const convertors = {
         latex(node) {
@@ -44,6 +44,8 @@
         useCommandShortcut: true,
         extendedAutolinks: true
       });
+
+      window.editor = editor;
     </script>
   </body>
 </html>
