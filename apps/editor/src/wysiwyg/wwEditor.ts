@@ -11,6 +11,7 @@ import { getWwCommands } from '@/commands/wwCommands';
 
 import { tableSelectionPlugin } from '@/wysiwyg/plugins/tableSelection';
 import { tableContextMenuPlugin } from '@/wysiwyg/plugins/tableContextMenu';
+import { taskPlugin } from '@/wysiwyg/plugins/taskPlugin';
 
 // @TODO move to common file and change path on markdown
 import { createTextSelection } from '@/markdown/helper/manipulation';
@@ -70,7 +71,8 @@ export default class WysiwygEditor extends EditorBase {
         }),
         history(),
         tableSelectionPlugin(),
-        tableContextMenuPlugin(this.eventEmitter)
+        tableContextMenuPlugin(this.eventEmitter),
+        taskPlugin()
       ],
       ...addedStates
     });
