@@ -102,12 +102,10 @@ class PopupTableUtils extends LayerPopup {
     super._initDOMEvent();
 
     this.on('click', ({ target }) => {
-      const commandType = target.dataset.tableCommandType;
+      const { tableCommandType } = target.dataset;
 
-      console.log(target.dataset);
-
-      if (commandType) {
-        const commandInfo = tableCommandMap[commandType];
+      if (tableCommandType) {
+        const commandInfo = tableCommandMap[tableCommandType];
 
         if (!commandInfo) {
           return;
