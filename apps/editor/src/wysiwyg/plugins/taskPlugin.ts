@@ -29,9 +29,8 @@ export function taskPlugin() {
 
             const offset = currentPos.before(listItem.depth);
             const { attrs } = listItem.node;
-            const { checked } = attrs;
 
-            tr.setNodeMarkup(offset, null, { ...attrs, ...{ checked: !checked } });
+            tr.setNodeMarkup(offset, null, { ...attrs, ...{ checked: !attrs.checked } });
             view.dispatch!(tr);
 
             return true;
