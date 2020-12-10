@@ -15,9 +15,11 @@ export function tableContextMenuPlugin(eventEmitter: Emitter) {
 
           if (inTable) {
             eventEmitter.emit('closeAllPopup', ev);
+
+            return true;
           }
 
-          return true;
+          return false;
         },
         contextmenu: (view: EditorView, ev: Event) => {
           const inTable = isInCellElement(ev.target as HTMLElement, view.dom);
@@ -25,9 +27,11 @@ export function tableContextMenuPlugin(eventEmitter: Emitter) {
           if (inTable) {
             ev.preventDefault();
             eventEmitter.emit('openPopupTableUtils', ev);
+
+            return true;
           }
 
-          return true;
+          return false;
         }
       }
     }

@@ -30,3 +30,7 @@ export function isInTableNode(pos: ResolvedPos) {
     ({ type }: Node) => type.name === 'tableHeadCell' || type.name === 'tableBodyCell'
   );
 }
+
+export function findListItem(pos: ResolvedPos) {
+  return findNodeBy(pos, ({ type }: Node) => type.name === 'listItem');
+}
