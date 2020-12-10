@@ -19,7 +19,6 @@ import {
   findPrevCell
 } from '@/wysiwyg/helper/table';
 
-// @TODO move to common file and change path on markdown
 import { createTextSelection } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';

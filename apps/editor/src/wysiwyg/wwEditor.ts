@@ -13,7 +13,6 @@ import { tableSelectionPlugin } from '@/wysiwyg/plugins/tableSelection';
 import { tableContextMenuPlugin } from '@/wysiwyg/plugins/tableContextMenu';
 import { taskPlugin } from '@/wysiwyg/plugins/taskPlugin';
 
-// @TODO move to common file and change path on markdown
 import { createTextSelection } from '@/helper/manipulation';
 
 import { createSpecs } from './specCreator';
