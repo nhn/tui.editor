@@ -9,6 +9,13 @@ const convertors: HTMLConvertorMap = {
       { type: 'html', content: node.literal! },
       { type: 'closeTag', tagName: 'div', outerNewLine: true }
     ];
+  },
+  MYCUSTOM(node) {
+    return [
+      { type: 'openTag', tagName: 'div', outerNewLine: true, classNames: ['myCustom-block'] },
+      { type: 'html', content: node.literal! },
+      { type: 'closeTag', tagName: 'div', outerNewLine: true }
+    ];
   }
 };
 const reader = new Parser();
@@ -18,15 +25,15 @@ describe('customBlock', () => {
   it('basic', () => {
     const input = source`
       {{myCustom
-        my custom block
+      my custom block
 
-        should be parsed
+      should be parsed
       }}
     `;
     const output = source`
-      <div class="myCustom-block">  my custom block
+      <div class="myCustom-block">my custom block
 
-        should be parsed
+      should be parsed
       </div>
     `;
 
@@ -35,14 +42,34 @@ describe('customBlock', () => {
     expect(html).toBe(`${output}\n`);
   });
 
-  it('fallback', () => {
+  it('if cannot find the proper custom type renderer, the content would be rendered as text', () => {
     const input = source`
       {{custom
-        custom block
+      custom block
       }}
     `;
     const output = source`
-      <div>  custom block
+      <div>custom block
+      </div>
+    `;
+
+    const root = reader.parse(input);
+    const html = renderer.render(root);
+    expect(html).toBe(`${output}\n`);
+  });
+
+  it('should be rendered regardless of the case insensitive', () => {
+    const input = source`
+      {{MYCUSTOM
+      my custom block
+
+      should be parsed
+      }}
+    `;
+    const output = source`
+      <div class="myCustom-block">my custom block
+
+      should be parsed
       </div>
     `;
 

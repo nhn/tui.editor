@@ -3,17 +3,43 @@
   <head lang="en">
     <meta charset="UTF-8" />
     <title>Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
   </head>
   <body>
     <div id="editor"></div>
+    <script src="https://cdn.jsdelivr.net/npm/latex.js/dist/latex.js"></script>
     <!-- Editor -->
     <script type="module">
       import Editor from "/dist/index.js";
 
-      var editor = new Editor({
+      const convertors = {
+        latex(node) {
+          const generator = new latexjs.HtmlGenerator({ hyphenate: false });
+          const { body } = latexjs.parse(node.literal, { generator }).htmlDocument();
+
+          return [
+            { type: 'openTag', tagName: 'div', outerNewLine: true },
+            { type: 'html', content: body.innerHTML },
+            { type: 'closeTag', tagName: 'div', outerNewLine: true }
+          ];
+        },
+        heading(node, { entering }) {
+          return {
+            type: entering ? 'openTag' : 'closeTag',
+            hasText: entering,
+            tagName: `h${node.level}`,
+            attributes: { custom: 'js87zz' },
+            classNames: ['js87zz'],
+            outerNewLine: true
+          };
+        },
+      };
+
+      const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '400px',
+        customHTMLRenderer: convertors,
         initialEditType: 'markdown',
         useCommandShortcut: true,
         extendedAutolinks: true
@@ -21,3 +47,4 @@
     </script>
   </body>
 </html>
+

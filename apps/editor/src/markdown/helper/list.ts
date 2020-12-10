@@ -3,8 +3,8 @@ import { ProsemirrorNode, Schema } from 'prosemirror-model';
 import { ToastMark } from '@toast-ui/toastmark';
 import { findClosestNode, isListNode, isOrderedListNode } from '@/utils/markdown';
 import { ListItemMdNode, MdNode } from '@t/markdown';
+import { createParagraph } from '@/helper/manipulation';
 import { getTextByMdLine } from './query';
-import { createParagraph } from './manipulation';
 
 export interface ToListContext<T = ListItemMdNode> {
   mdNode: T;

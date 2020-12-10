@@ -1,7 +1,7 @@
 import { BlockStart, Matched } from '../blockStarts';
 import { CustomBlockNode } from '../node';
 
-const reCustomBlock = /^({{)([a-z])+/;
+const reCustomBlock = /^({{)([a-zA-Z])+/;
 
 export const customBlock: BlockStart = parser => {
   let match;

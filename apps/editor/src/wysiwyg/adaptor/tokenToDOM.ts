@@ -25,9 +25,7 @@ export const tokenToPmDOM: TokenToDOM<SpecArray> = {
     if (classNames) {
       attrs.class = classNames.join(' ');
     }
-    if (attributes) {
-      attrs = { ...attrs, ...attributes };
-    }
+    attrs = { ...attrs, ...attributes };
     if (Object.keys(attrs).length) {
       specArray.push(attrs);
     }
@@ -37,9 +35,8 @@ export const tokenToPmDOM: TokenToDOM<SpecArray> = {
   closeTag(_, stack) {
     if (stack.length > 1) {
       const specArray = stack.pop();
-      const top = getTop(stack);
 
-      top.push(specArray);
+      getTop(stack).push(specArray);
     }
   },
   html(token, stack) {
@@ -47,9 +44,7 @@ export const tokenToPmDOM: TokenToDOM<SpecArray> = {
     this.text(token, stack);
   },
   text(_, stack) {
-    const top = getTop(stack);
-
-    top.push(0);
+    getTop(stack).push(0);
   }
 };
 
@@ -74,20 +69,16 @@ export const tokenToDOMNode: TokenToDOM<HTMLElement> = {
   closeTag(_, stack) {
     if (stack.length > 1) {
       const el = stack.pop();
-      const parent = getTop(stack);
 
-      parent.appendChild(el!);
+      getTop(stack).appendChild(el!);
     }
   },
   html(token, stack) {
-    const parent = getTop(stack);
-
-    parent.insertAdjacentHTML('beforeend', (token as RawHTMLToken).content);
+    getTop(stack).insertAdjacentHTML('beforeend', (token as RawHTMLToken).content);
   },
   text(token, stack) {
     const textNode = document.createTextNode((token as TextToken).content);
-    const parent = getTop(stack);
 
-    parent.appendChild(textNode);
+    getTop(stack).appendChild(textNode);
   }
 };

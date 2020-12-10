@@ -1,6 +1,7 @@
 // @ts-ignore
 import { Renderer } from '@toast-ui/toastmark';
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Mark } from 'prosemirror-model';
+import isArray from 'tui-code-snippet/type/isArray';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import {
   Context,
@@ -12,7 +13,7 @@ import {
 } from '@t/markdown';
 import { ToDOMAdaptor } from '@t/convertor';
 import { includes } from '@/utils/common';
-import { createMdLikeNode, isContainer, isNode } from './mdLikeNode';
+import { createMdLikeNode, isContainer, isPmNode } from './mdLikeNode';
 import { SpecArray, tokenToDOMNode, tokenToPmDOM } from './tokenToDOM';
 
 export class WwToDOMAdaptor implements ToDOMAdaptor {
@@ -34,24 +35,24 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
   }
 
   private generateTokens(node: ProsemirrorNode | Mark) {
-    const mdLikeNnode = createMdLikeNode(node);
+    const mdLikeNode = createMdLikeNode(node);
     const context: Context = {
       entering: true,
-      leaf: isNode(node) ? node.isLeaf : false,
+      leaf: isPmNode(node) ? node.isLeaf : false,
       options: this.renderer.getOptions(),
-      getChildrenText: () => (isNode(node) ? node.textContent : ''),
+      getChildrenText: () => (isPmNode(node) ? node.textContent : ''),
       skipChildren: () => false
     };
 
     const convertor = this.convertors[node.type.name as MdNodeType]!;
-    const converted = convertor(mdLikeNnode as MdNode, context, this.convertors)!;
-    const tokens: HTMLToken[] = Array.isArray(converted) ? converted : [converted];
+    const converted = convertor(mdLikeNode as MdNode, context, this.convertors)!;
+    const tokens: HTMLToken[] = isArray(converted) ? converted : [converted];
 
     if (isContainer(node.type.name)) {
       context.entering = false;
 
-      tokens.push({ type: 'text', content: isNode(node) ? node.textContent : '' } as TextToken);
-      tokens.push(convertor(mdLikeNnode as MdNode, context, this.convertors) as HTMLToken);
+      tokens.push({ type: 'text', content: isPmNode(node) ? node.textContent : '' } as TextToken);
+      tokens.push(convertor(mdLikeNode as MdNode, context, this.convertors) as HTMLToken);
     }
 
     return tokens;
@@ -70,9 +71,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     const tokens = this.generateTokens(node);
     const stack: HTMLElement[] = [];
 
-    tokens.forEach(token => {
-      tokenToDOMNode[token.type](token, stack);
-    });
+    tokens.forEach(token => tokenToDOMNode[token.type](token, stack));
 
     return stack[0];
   }

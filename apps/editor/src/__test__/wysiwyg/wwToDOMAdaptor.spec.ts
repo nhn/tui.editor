@@ -1,3 +1,4 @@
+import { Fragment, ProsemirrorNode } from 'prosemirror-model';
 import { oneLineTrim } from 'common-tags';
 import { ToDOMAdaptor } from '@t/convertor';
 import { CodeBlockMdNode, CustomHTMLRendererMap, HeadingMdNode } from '@t/markdown';
@@ -7,6 +8,24 @@ import WysiwygEditor from '@/wysiwyg/wwEditor';
 import { createMdLikeNode } from '@/wysiwyg/adaptor/mdLikeNode';
 
 let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter, toDOMAdaptor: ToDOMAdaptor;
+
+function createText(text: string) {
+  return wwe.schema.text(text);
+}
+
+function createNode(
+  type: string,
+  attrs?: { [key: string]: any } | null,
+  content?: Fragment | ProsemirrorNode | Array<ProsemirrorNode>
+) {
+  // @ts-ignore
+  return wwe.schema.nodes[type].create(attrs, content);
+}
+
+function createMark(type: string, attrs?: { [key: string]: any } | null) {
+  // @ts-ignore
+  return wwe.schema.marks[type].create(attrs);
+}
 
 beforeEach(() => {
   const convertors: CustomHTMLRendererMap = {
@@ -60,119 +79,115 @@ beforeEach(() => {
 describe('mdLikeNode', () => {
   it('heading node should be changed to markdown-like-node', () => {
     const headingNode = createMdLikeNode(
-      wwe.schema.nodes.heading.create({ level: 2 }, wwe.schema.text('myHeading'))
+      createNode('heading', { level: 2 }, createText('myHeading'))
     );
 
-    expect(headingNode).toEqual({ type: 'heading', literal: null, isWysiwyg: true, level: 2 });
+    expect(headingNode).toEqual({ type: 'heading', literal: null, wysiwygNode: true, level: 2 });
   });
 
   it('image node should be changed to markdown-like-node', () => {
-    const headingNode = createMdLikeNode(wwe.schema.nodes.image.create({ imageUrl: 'myImageUrl' }));
+    const imageNode = createMdLikeNode(createNode('image', { imageUrl: 'myImageUrl' }));
 
-    expect(headingNode).toEqual({
+    expect(imageNode).toEqual({
       type: 'image',
       literal: null,
-      isWysiwyg: true,
+      wysiwygNode: true,
       destination: 'myImageUrl'
     });
   });
 
   it('codeBlock node should be changed to markdown-like-node', () => {
     const codeBlockNode = createMdLikeNode(
-      wwe.schema.nodes.codeBlock.create({ language: 'myLang' }, wwe.schema.text('myCode'))
+      createNode('codeBlock', { language: 'myLang' }, createText('myCode'))
     );
 
     expect(codeBlockNode).toEqual({
       type: 'codeBlock',
       literal: 'myCode',
-      isWysiwyg: true,
+      wysiwygNode: true,
       info: 'myLang'
     });
   });
 
   it('bulletList node should be changed to markdown-like-node', () => {
-    const bulletListNode = createMdLikeNode(wwe.schema.nodes.bulletList.create());
+    const bulletListNode = createMdLikeNode(createNode('bulletList'));
 
     expect(bulletListNode).toEqual({
       type: 'list',
       literal: null,
-      isWysiwyg: true,
+      wysiwygNode: true,
       listData: { type: 'bullet' }
     });
   });
 
   it('orderedList node should be changed to markdown-like-node', () => {
-    const orderedListNode = createMdLikeNode(wwe.schema.nodes.orderedList.create());
+    const orderedListNode = createMdLikeNode(createNode('orderedList'));
 
     expect(orderedListNode).toEqual({
       type: 'list',
       literal: null,
-      isWysiwyg: true,
+      wysiwygNode: true,
       listData: { start: 1, type: 'ordered' }
     });
   });
 
   it('listItem node should be changed to markdown-like-node', () => {
-    const listItemNode = createMdLikeNode(wwe.schema.nodes.listItem.create({ task: true }));
+    const listItemNode = createMdLikeNode(createNode('listItem', { task: true }));
 
     expect(listItemNode).toEqual({
       type: 'item',
       literal: null,
-      isWysiwyg: true,
+      wysiwygNode: true,
       listData: { task: true, checked: false }
     });
   });
 
   it('tableHeadCell node should be changed to markdown-like-node', () => {
-    const tableHeadCellNode = createMdLikeNode(
-      wwe.schema.nodes.tableHeadCell.create({ align: 'left' })
-    );
+    const tableHeadCellNode = createMdLikeNode(createNode('tableHeadCell', { align: 'left' }));
 
     expect(tableHeadCellNode).toEqual({
       type: 'tableCell',
       cellType: 'head',
       align: 'left',
       literal: null,
-      isWysiwyg: true
+      wysiwygNode: true
     });
   });
 
   it('tableBodyCell node should be changed to markdown-like-node', () => {
-    const tableBodyCellNode = createMdLikeNode(
-      wwe.schema.nodes.tableBodyCell.create({ align: 'left' })
-    );
+    const tableBodyCellNode = createMdLikeNode(createNode('tableBodyCell', { align: 'left' }));
 
     expect(tableBodyCellNode).toEqual({
       type: 'tableCell',
       cellType: 'body',
       align: 'left',
       literal: null,
-      isWysiwyg: true
+      wysiwygNode: true
     });
   });
 
   it('customBlock node should be changed to markdown-like-node', () => {
     const customBlockNode = createMdLikeNode(
-      wwe.schema.nodes.customBlock.create({ info: 'myCustom' }, wwe.schema.text('myCustom'))
+      createNode('customBlock', { info: 'myCustom' }, createText('myCustom'))
     );
 
     expect(customBlockNode).toEqual({
       type: 'customBlock',
       info: 'myCustom',
       literal: 'myCustom',
-      isWysiwyg: true
+      wysiwygNode: true
     });
   });
 
   it('link mark should be changed to markdown-like-node', () => {
     const linkNode = createMdLikeNode(
-      wwe.schema.marks.link.create({ linkText: 'myLinkText', linkUrl: 'myLinkUrl' })
+      createMark('link', { linkText: 'myLinkText', linkUrl: 'myLinkUrl' })
     );
 
     expect(linkNode).toEqual({
       type: 'link',
       literal: null,
-      isWysiwyg: true,
+      wysiwygNode: true,
       title: 'myLinkText',
       destination: 'myLinkUrl'
     });
@@ -182,7 +197,7 @@ describe('mdLikeNode', () => {
 describe('wysiwyg adaptor toDOM using custom renderer', () => {
   it('toDOM should be parsed with renderer tokens for wysiwyg node schema', () => {
     const toDOM = toDOMAdaptor.getToDOM('heading')!;
-    const headingNode = wwe.schema.nodes.heading.create({ level: 2 });
+    const headingNode = createNode('heading', { level: 2 });
 
     expect(toDOM(headingNode)).toEqual([
       'h2',
@@ -193,7 +208,7 @@ describe('wysiwyg adaptor toDOM using custom renderer', () => {
 
   it('toDOM should be parsed with renderer tokens for wysiwyg mark schema', () => {
     const toDOM = toDOMAdaptor.getToDOM('emph')!;
-    const emphNode = wwe.schema.marks.emph.create();
+    const emphNode = createMark('emph');
 
     expect(toDOM(emphNode)).toEqual([
       'em',
@@ -204,7 +219,7 @@ describe('wysiwyg adaptor toDOM using custom renderer', () => {
 
   it('toDOM should be parsed with the nested renderer tokens', () => {
     const toDOM = toDOMAdaptor.getToDOM('codeBlock')!;
-    const codeBlockNode = wwe.schema.nodes.codeBlock.create({ language: 'myLan' });
+    const codeBlockNode = createNode('codeBlock', { language: 'myLan' });
 
     expect(toDOM(codeBlockNode)).toEqual([
       'pre',
@@ -215,7 +230,7 @@ describe('wysiwyg adaptor toDOM using custom renderer', () => {
 
   it('html token should be ignored', () => {
     const toDOM = toDOMAdaptor.getToDOM('code')!;
-    const codeNode = wwe.schema.marks.code.create();
+    const codeNode = createMark('code');
 
     expect(toDOM(codeNode)).toEqual(['code', 0]);
   });
@@ -234,7 +249,7 @@ describe('wysiwyg adaptor toDOMNode using custom renderer', () => {
 
   it('toDOMNode should be parsed with renderer tokens for wysiwyg node schema', () => {
     const toDOMNode = toDOMAdaptor.getToDOMNode('heading')!;
-    const headingNode = wwe.schema.nodes.heading.create({ level: 2 }, wwe.schema.text('myHeading'));
+    const headingNode = createNode('heading', { level: 2 }, createText('myHeading'));
     const expected = oneLineTrim`
         <h2 class="custom-heading" data-custom="customAttr">
           myHeading
@@ -246,10 +261,7 @@ describe('wysiwyg adaptor toDOMNode using custom renderer', () => {
 
   it('toDOMNode should be parsed with the nested renderer tokens', () => {
     const toDOMNode = toDOMAdaptor.getToDOMNode('codeBlock')!;
-    const codeBlockNode = wwe.schema.nodes.codeBlock.create(
-      { language: 'myLan' },
-      wwe.schema.text('codeBlock')
-    );
+    const codeBlockNode = createNode('codeBlock', { language: 'myLan' }, createText('codeBlock'));
 
     const expected = oneLineTrim`
         <pre class="custom-pre" data-custom="myLan">
@@ -264,7 +276,7 @@ describe('wysiwyg adaptor toDOMNode using custom renderer', () => {
 
   it('html token should be parsed in DOMNode', () => {
     const toDOMNode = toDOMAdaptor.getToDOMNode('code')!;
-    const codeNode = wwe.schema.marks.code.create();
+    const codeNode = createMark('code');
 
     const expected = oneLineTrim`
         <code>

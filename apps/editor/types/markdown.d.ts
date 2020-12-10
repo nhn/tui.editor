@@ -238,7 +238,7 @@ export interface Context {
 export interface MdLikeNode {
   type: MdNodeType;
   literal: string | null;
-  isWysiwyg?: boolean;
+  wysiwygNode?: boolean;
   level?: number;
   destination?: string;
   title?: string;

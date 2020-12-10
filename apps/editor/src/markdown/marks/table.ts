@@ -11,7 +11,7 @@ import {
   createTextSelection,
   insertNodes,
   replaceNodes
-} from '../helper/manipulation';
+} from '@/helper/manipulation';
 import { getTextByMdLine } from '../helper/query';
 
 interface Payload {

@@ -1,34 +1,34 @@
 import { Mark, Node as ProsemirrorNode } from 'prosemirror-model';
 import { MdLikeNode, MdNodeType } from '@t/markdown';
+import { includes } from '@/utils/common';
 
-export function isNode(node: ProsemirrorNode | Mark): node is ProsemirrorNode {
+export function isPmNode(node: ProsemirrorNode | Mark): node is ProsemirrorNode {
   return node instanceof ProsemirrorNode;
 }
 
 export function isContainer(type: string) {
-  switch (type) {
-    case 'document':
-    case 'blockQuote':
-    case 'bulletList':
-    case 'orderedList':
-    case 'listItem':
-    case 'paragraph':
-    case 'heading':
-    case 'emph':
-    case 'strong':
-    case 'strike':
-    case 'link':
-    case 'image':
-    case 'table':
-    case 'tableHead':
-    case 'tableBody':
-    case 'tableRow':
-    case 'tableHeadCell':
-    case 'tableBodyCell':
-      return true;
-    default:
-      return false;
-  }
+  const containerTypes = [
+    'document',
+    'blockQuote',
+    'bulletList',
+    'orderedList',
+    'listItem',
+    'paragraph',
+    'heading',
+    'emph',
+    'strong',
+    'strike',
+    'link',
+    'image',
+    'table',
+    'tableHead',
+    'tableBody',
+    'tableRow',
+    'tableHeadCell',
+    'tableBodyCell'
+  ];
+
+  return includes(containerTypes, type);
 }
 
 export function createMdLikeNode(node: ProsemirrorNode | Mark): MdLikeNode {
@@ -36,36 +36,23 @@ export function createMdLikeNode(node: ProsemirrorNode | Mark): MdLikeNode {
   const nodeType = type.name;
   const mdLikeNode: MdLikeNode = {
     type: nodeType as MdNodeType,
-    isWysiwyg: true,
-    literal: !isContainer(nodeType) && isNode(node) ? node.textContent : null
+    wysiwygNode: true,
+    literal: !isContainer(nodeType) && isPmNode(node) ? node.textContent : null
   };
 
-  switch (nodeType) {
-    case 'heading':
-      return { ...mdLikeNode, level: attrs.level };
-    case 'link':
-      return { ...mdLikeNode, destination: attrs.linkUrl, title: attrs.linkText };
-    case 'image':
-      return { ...mdLikeNode, destination: attrs.imageUrl };
-    case 'codeBlock':
-      return { ...mdLikeNode, info: attrs.language };
-    case 'bulletList':
-      return { ...mdLikeNode, type: 'list', listData: { type: 'bullet' } };
-    case 'orderedList':
-      return { ...mdLikeNode, type: 'list', listData: { type: 'ordered', start: attrs.order } };
-    case 'listItem':
-      return {
-        ...mdLikeNode,
-        type: 'item',
-        listData: { task: attrs.task, checked: attrs.checked }
-      };
-    case 'customBlock':
-      return { ...mdLikeNode, info: attrs.info };
-    case 'tableHeadCell':
-      return { ...mdLikeNode, type: 'tableCell', cellType: 'head', align: attrs.align };
-    case 'tableBodyCell':
-      return { ...mdLikeNode, type: 'tableCell', cellType: 'body', align: attrs.align };
-    default:
-  }
-  return mdLikeNode;
+  const nodeTypeMap = {
+    heading: { level: attrs.level },
+    link: { destination: attrs.linkUrl, title: attrs.linkText },
+    image: { destination: attrs.imageUrl },
+    codeBlock: { info: attrs.language },
+    bulletList: { type: 'list', listData: { type: 'bullet' } },
+    orderedList: { type: 'list', listData: { type: 'ordered', start: attrs.order } },
+    listItem: { type: 'item', listData: { task: attrs.task, checked: attrs.checked } },
+    tableHeadCell: { type: 'tableCell', cellType: 'head', align: attrs.align },
+    tableBodyCell: { type: 'tableCell', cellType: 'body', align: attrs.align },
+    customBlock: { info: attrs.info }
+  } as const;
+  const nodeInfo = nodeTypeMap[nodeType as keyof typeof nodeTypeMap];
+
+  return { ...mdLikeNode, ...nodeInfo };
 }

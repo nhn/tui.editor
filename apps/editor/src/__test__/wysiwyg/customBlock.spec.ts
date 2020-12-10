@@ -7,6 +7,16 @@ import EventEmitter from '@/event/eventEmitter';
 
 let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter, toDOMAdaptor: ToDOMAdaptor;
 
+function createCustomBlockNode() {
+  const customBlock = wwe.schema.nodes.customBlock.create(
+    { info: 'myCustom' },
+    wwe.schema.text('myCustom Node!!')
+  );
+  const doc = wwe.schema.nodes.doc.create(null, customBlock);
+
+  return doc;
+}
+
 beforeEach(() => {
   const convertors: CustomHTMLRendererMap = {
     myCustom(node) {
@@ -27,13 +37,7 @@ beforeEach(() => {
   em = new EventEmitter();
   wwe = new WysiwygEditor(container, em, toDOMAdaptor);
 
-  const customBlock = wwe.schema.nodes.customBlock.create(
-    { info: 'myCustom' },
-    wwe.schema.text('myCustom Node!!')
-  );
-  const doc = wwe.schema.nodes.doc.create(null, customBlock);
-
-  wwe.setModel(doc);
+  wwe.setModel(createCustomBlockNode());
 });
 
 it('custom block node should be rendered in wysiwyg editor properly', () => {

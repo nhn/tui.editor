@@ -191,7 +191,7 @@ export class Renderer {
         this.renderRawHtmlNode(node);
         break;
       default:
-      // no-defualt-case
+      // no-default-case
     }
   }
 

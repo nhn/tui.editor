@@ -18,16 +18,9 @@ export default abstract class Node {
 
   get schema(): NodeSpec {
     const nodeSpec = this.defaultSchema;
+    const toDOM = this.toDOMAdaptor?.getToDOM(this.name);
 
-    if (this.toDOMAdaptor) {
-      const toDOM = this.toDOMAdaptor.getToDOM(this.name);
-
-      if (toDOM) {
-        return { ...nodeSpec, toDOM };
-      }
-    }
-
-    return nodeSpec;
+    return toDOM ? { ...nodeSpec, toDOM } : nodeSpec;
   }
 
   setContext(context: SpecContext) {

@@ -18,16 +18,9 @@ export default abstract class Mark {
 
   get schema(): MarkSpec {
     const markSpec = this.defaultSchema;
+    const toDOM = this.toDOMAdaptor?.getToDOM(this.name);
 
-    if (this.toDOMAdaptor) {
-      const toDOM = this.toDOMAdaptor.getToDOM(this.name);
-
-      if (toDOM) {
-        return { ...markSpec, toDOM };
-      }
-    }
-
-    return markSpec;
+    return toDOM ? { ...markSpec, toDOM } : markSpec;
   }
 
   setContext(context: SpecContext) {

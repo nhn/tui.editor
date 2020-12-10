@@ -7,6 +7,7 @@ import { redo, undo, undoDepth, history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import { ToDOMAdaptor } from '@t/convertor';
+import { createTextSelection } from '@/helper/manipulation';
 
 type GetPos = (() => number) | boolean;
 
@@ -17,9 +18,9 @@ export class CustomBlockView implements NodeView {
 
   private toDOMAdaptor: ToDOMAdaptor;
 
-  private outerView: EditorView;
+  private editorView: EditorView;
 
-  private innerView: EditorView | null;
+  private innerEditorView: EditorView | null;
 
   private wrapper: HTMLElement;
 
@@ -27,15 +28,15 @@ export class CustomBlockView implements NodeView {
 
   private getPos: GetPos;
 
-  private isCanceled: boolean;
+  private canceled: boolean;
 
   constructor(node: ProsemirrorNode, view: EditorView, getPos: GetPos, toDOMAdaptor: ToDOMAdaptor) {
     this.node = node;
-    this.outerView = view;
+    this.editorView = view;
     this.getPos = getPos;
     this.toDOMAdaptor = toDOMAdaptor;
-    this.innerView = null;
-    this.isCanceled = false;
+    this.innerEditorView = null;
+    this.canceled = false;
 
     this.dom = document.createElement('div');
     this.wrapper = document.createElement('div');
@@ -72,20 +73,20 @@ export class CustomBlockView implements NodeView {
   }
 
   private openEditor = () => {
-    if (this.innerView) {
+    if (this.innerEditorView) {
       throw new Error('The editor is already opened.');
     }
 
     this.wrapper.style.display = 'none';
     this.innerViewContainer.style.display = 'block';
 
-    this.innerView = new EditorView(this.innerViewContainer, {
+    this.innerEditorView = new EditorView(this.innerViewContainer, {
       state: EditorState.create({
         doc: this.node,
         plugins: [
           keymap({
-            'Mod-z': () => undo(this.outerView.state, this.outerView.dispatch),
-            'Shift-Mod-z': () => redo(this.outerView.state, this.outerView.dispatch),
+            'Mod-z': () => undo(this.editorView.state, this.editorView.dispatch),
+            'Shift-Mod-z': () => redo(this.editorView.state, this.editorView.dispatch),
             Tab: (state, dispatch) => {
               dispatch!(state.tr.insertText('\t'));
               return true;
@@ -106,65 +107,69 @@ export class CustomBlockView implements NodeView {
       dispatchTransaction: (tr: Transaction) => this.dispatchInner(tr),
       handleDOMEvents: {
         mousedown: () => {
-          if (this.outerView.hasFocus()) {
-            this.innerView!.focus();
+          if (this.editorView.hasFocus()) {
+            this.innerEditorView!.focus();
           }
+          return true;
+        },
+        blur: () => {
+          this.saveAndFinishEditing();
           return true;
         }
       }
     });
-    this.innerView!.focus();
+    this.innerEditorView!.focus();
   };
 
   private closeEditor() {
-    if (this.innerView) {
-      this.innerView.destroy();
-      this.innerView = null;
+    if (this.innerEditorView) {
+      this.innerEditorView.destroy();
+      this.innerEditorView = null;
       this.innerViewContainer.style.display = 'none';
     }
     this.wrapper.style.display = 'block';
   }
 
   private saveAndFinishEditing() {
-    const { to } = this.outerView.state.selection;
-    const outerState: EditorState = this.outerView.state;
+    const { to } = this.editorView.state.selection;
+    const outerState: EditorState = this.editorView.state;
 
-    this.outerView.dispatch(outerState.tr.setSelection(TextSelection.create(outerState.doc, to)));
-    this.outerView.focus();
+    this.editorView.dispatch(outerState.tr.setSelection(createTextSelection(outerState.tr, to)));
+    this.editorView.focus();
 
     this.renderCustomBlock();
     this.closeEditor();
   }
 
   private cancelEditing() {
-    let undoableCount = undoDepth(this.innerView!.state);
+    let undoableCount = undoDepth(this.innerEditorView!.state);
 
-    this.isCanceled = true;
+    this.canceled = true;
 
     // should undo editing result
     // eslint-disable-next-line no-plusplus
     while (undoableCount--) {
-      undo(this.innerView!.state, this.innerView!.dispatch);
-      undo(this.outerView!.state, this.outerView!.dispatch);
+      undo(this.innerEditorView!.state, this.innerEditorView!.dispatch);
+      undo(this.editorView.state, this.editorView.dispatch);
     }
-    this.isCanceled = false;
+    this.canceled = false;
 
-    const { to } = this.outerView.state.selection;
-    const outerState: EditorState = this.outerView.state;
+    const { to } = this.editorView.state.selection;
+    const outerState: EditorState = this.editorView.state;
 
-    this.outerView.dispatch(outerState.tr.setSelection(TextSelection.create(outerState.doc, to)));
-    this.outerView.focus();
+    this.editorView.dispatch(outerState.tr.setSelection(TextSelection.create(outerState.doc, to)));
+    this.editorView.focus();
 
     this.closeEditor();
   }
 
   private dispatchInner(tr: Transaction) {
-    const { state, transactions } = this.innerView!.state.applyTransaction(tr);
+    const { state, transactions } = this.innerEditorView!.state.applyTransaction(tr);
 
-    this.innerView!.updateState(state);
+    this.innerEditorView!.updateState(state);
 
-    if (!tr.getMeta('fromOutside') && !this.isCanceled && isFunction(this.getPos)) {
-      const outerTr = this.outerView.state.tr;
+    if (!this.canceled && isFunction(this.getPos)) {
+      const outerTr = this.editorView.state.tr;
       const offsetMap = StepMap.offset(this.getPos() + 1);
 
       for (let i = 0; i < transactions.length; i += 1) {
@@ -175,7 +180,7 @@ export class CustomBlockView implements NodeView {
         }
       }
       if (outerTr.docChanged) {
-        this.outerView.dispatch(outerTr);
+        this.editorView.dispatch(outerTr);
       }
     }
   }
@@ -187,7 +192,7 @@ export class CustomBlockView implements NodeView {
 
     this.node = node;
 
-    if (!this.innerView) {
+    if (!this.innerEditorView) {
       this.renderCustomBlock();
     }
 
@@ -195,7 +200,11 @@ export class CustomBlockView implements NodeView {
   }
 
   stopEvent(event: Event): boolean {
-    return !!this.innerView && !!event.target && this.innerView.dom.contains(event.target as Node);
+    return (
+      !!this.innerEditorView &&
+      !!event.target &&
+      this.innerEditorView.dom.contains(event.target as Node)
+    );
   }
 
   ignoreMutation() {

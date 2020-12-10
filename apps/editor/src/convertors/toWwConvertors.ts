@@ -243,7 +243,9 @@ export const toWwConvertors: ToWwConvertorMap = {
     state.addText(getTextWithoutTrailingNewline(literal || ''));
     state.closeNode();
     // add empty line to edit the content in next line
-    state.openNode(paragraph);
-    state.closeNode();
+    if (!node.next) {
+      state.openNode(paragraph);
+      state.closeNode();
+    }
   }
 };

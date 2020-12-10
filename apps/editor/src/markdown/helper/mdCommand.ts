@@ -1,6 +1,6 @@
 import isFunction from 'tui-code-snippet/type/isFunction';
 import { EditorCommand } from '@t/spec';
-import { createTextSelection } from './manipulation';
+import { createTextSelection } from '@/helper/manipulation';
 import { resolveSelectionPos } from './pos';
 
 type ConditionFn = (text: string) => boolean;
