@@ -1,10 +1,10 @@
 import { source } from 'common-tags';
 import { Parser } from '../../blocks';
-import { createRenderHTML } from '../../../html/render';
+import { Renderer } from '../../../html/render';
 import { pos } from '../../__test__/helper.spec';
 
 const reader = new Parser();
-const render = createRenderHTML({ gfm: true });
+const renderer = new Renderer({ gfm: true });
 
 describe('Task list item', () => {
   it('Parse', () => {
@@ -67,7 +67,7 @@ describe('Task list item', () => {
     `;
 
     const root = reader.parse(input);
-    const html = render(root);
+    const html = renderer.render(root);
 
     expect(html).toEqual(`${output}\n`);
   });
@@ -93,7 +93,7 @@ describe('Task list item', () => {
     `;
 
     const root = reader.parse(input);
-    const html = render(root);
+    const html = renderer.render(root);
 
     expect(html).toEqual(`${output}\n`);
   });

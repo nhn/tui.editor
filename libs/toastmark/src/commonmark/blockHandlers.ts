@@ -9,6 +9,7 @@ import {
   tableDelimRow,
   tableDelimCell
 } from './gfm/tableBlockHandler';
+import { customBlock } from './custom/customBlockHandler';
 import { ListNode, BlockNode, CodeBlockNode, HtmlBlockNode } from './node';
 import {
   peek,
@@ -39,6 +40,17 @@ export interface BlockHandler {
   canContain(type: string): boolean;
   acceptsLines: boolean;
 }
+
+const noop: BlockHandler = {
+  continue() {
+    return Process.Stop;
+  },
+  finalize() {},
+  canContain() {
+    return false;
+  },
+  acceptsLines: true
+};
 
 const document: BlockHandler = {
   continue() {
@@ -256,16 +268,8 @@ const paragraph: BlockHandler = {
   acceptsLines: true
 };
 
-const refDef: BlockHandler = {
-  continue() {
-    return Process.Stop;
-  },
-  finalize() {},
-  canContain() {
-    return false;
-  },
-  acceptsLines: true
-};
+const refDef = noop;
+const frontMatter = noop;
 
 export const blockHandlers = {
   document,
@@ -284,5 +288,7 @@ export const blockHandlers = {
   tableCell,
   tableDelimRow,
   tableDelimCell,
-  refDef
+  refDef,
+  customBlock,
+  frontMatter
 };

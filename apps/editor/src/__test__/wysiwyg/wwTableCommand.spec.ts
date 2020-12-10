@@ -6,6 +6,7 @@ import CommandManager from '@/commands/commandManager';
 import CellSelection from '@/wysiwyg/plugins/tableSelection/cellSelection';
 
 import { getTableCellsInfo } from '@/wysiwyg/helper/table';
+import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 
 describe('wysiwyg table commands', () => {
   let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter, cmd: CommandManager;
@@ -42,11 +43,13 @@ describe('wysiwyg table commands', () => {
   }
 
   beforeEach(() => {
+    const adaptor = new WwToDOMAdaptor({}, {});
+
     container = document.createElement('div');
     document.body.appendChild(container);
 
     em = new EventEmitter();
-    wwe = new WysiwygEditor(container, em);
+    wwe = new WysiwygEditor(container, em, adaptor);
     cmd = new CommandManager(em, {}, wwe.commands);
   });
 

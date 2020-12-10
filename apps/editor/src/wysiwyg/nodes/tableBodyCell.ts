@@ -7,7 +7,7 @@ export class TableBodyCell extends Node {
     return 'tableBodyCell';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: '(paragraph | bulletList | orderedList)+',
       attrs: {

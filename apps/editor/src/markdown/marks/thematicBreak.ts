@@ -2,8 +2,8 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
+import { createParagraph, createTextSelection } from '@/helper/manipulation';
 import { resolveSelectionPos } from '../helper/pos';
-import { createParagraph, createTextSelection } from '../helper/manipulation';
 
 const thematicBreakSyntax = '***';
 
@@ -12,7 +12,7 @@ export class ThematicBreak extends Mark {
     return 'thematicBreak';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('thematic-break') }, 0];

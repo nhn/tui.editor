@@ -24,31 +24,34 @@ import { Emph } from './marks/emph';
 import { Strike } from './marks/strike';
 import { Link } from './marks/link';
 import { Code } from './marks/code';
+import { CustomBlock } from './nodes/customBlock';
+import { ToDOMAdaptor } from '@t/convertor';
 
-export function createSpecs() {
+export function createSpecs(toDOMAdaptor: ToDOMAdaptor) {
   return new SpecManager([
     new Doc(),
-    new Paragraph(),
+    new Paragraph(toDOMAdaptor),
     new Text(),
-    new Heading(),
-    new CodeBlock(),
-    new BulletList(),
-    new OrderedList(),
-    new ListItem(),
-    new BlockQuote(),
-    new Table(),
-    new TableHead(),
-    new TableBody(),
-    new TableRow(),
-    new TableHeadCell(),
-    new TableBodyCell(),
-    new Image(),
+    new Heading(toDOMAdaptor),
+    new CodeBlock(toDOMAdaptor),
+    new BulletList(toDOMAdaptor),
+    new OrderedList(toDOMAdaptor),
+    new ListItem(toDOMAdaptor),
+    new BlockQuote(toDOMAdaptor),
+    new Table(toDOMAdaptor),
+    new TableHead(toDOMAdaptor),
+    new TableBody(toDOMAdaptor),
+    new TableRow(toDOMAdaptor),
+    new TableHeadCell(toDOMAdaptor),
+    new TableBodyCell(toDOMAdaptor),
+    new Image(toDOMAdaptor),
     new ThematicBreak(),
     new HardBreak(),
-    new Strong(),
-    new Emph(),
-    new Strike(),
-    new Link(),
-    new Code()
+    new Strong(toDOMAdaptor),
+    new Emph(toDOMAdaptor),
+    new Strike(toDOMAdaptor),
+    new Link(toDOMAdaptor),
+    new Code(toDOMAdaptor),
+    new CustomBlock()
   ]);
 }

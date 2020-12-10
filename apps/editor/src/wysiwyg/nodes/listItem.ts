@@ -8,7 +8,7 @@ export class ListItem extends NodeSchema {
     return 'listItem';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: '(paragraph | codeBlock | bulletList | orderedList)*',
       group: 'block',

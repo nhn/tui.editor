@@ -7,16 +7,16 @@ import { MdNode } from '@t/markdown';
 import { cls } from '@/utils/dom';
 import Node from '@/spec/node';
 import { hasSpecificTypeAncestor, isOrderedListNode, isTableCellNode } from '@/utils/markdown';
-import { reBlockQuote } from '../marks/blockQuote';
-import { getEditorToMdPos, getMdToEditorPos, getPosInfo } from '../helper/pos';
-import { getTextByMdLine } from '../helper/query';
 import {
   createParagraph,
   createText,
   createTextSelection,
   insertNodes,
   replaceNodes
-} from '../helper/manipulation';
+} from '@/helper/manipulation';
+import { reBlockQuote } from '../marks/blockQuote';
+import { getEditorToMdPos, getMdToEditorPos, getPosInfo } from '../helper/pos';
+import { getTextByMdLine } from '../helper/query';
 import { getReorderedListInfo, reList, reOrderedListGroup } from '../helper/list';
 
 interface SelectionInfo {
@@ -71,7 +71,7 @@ export class Paragraph extends Node {
     return 'paragraph';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: 'inline*',
       attrs: {
@@ -121,7 +121,7 @@ export class Paragraph extends Node {
 
     endLine = Math.max(endLine, line - 1);
 
-    const range = getMdToEditorPos(doc, [startLine, 1], [endLine, 1]);
+    const range = getMdToEditorPos(doc, toastMark, [startLine, 1], [endLine, 1]);
     const [from, to] = [range[0], doc.resolve(range[1]).end()];
     const newTr = replaceNodes(tr, from, to, nodes);
     const newSelection = createTextSelection(newTr, selection.from, selection.to);

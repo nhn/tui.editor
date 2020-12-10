@@ -21,6 +21,7 @@ import {
 } from './blockHelper';
 import { Parser } from './blocks';
 import { tableHead, tableBody } from './gfm/tableBlockStart';
+import { customBlock } from './custom/customBlockStart';
 
 export const enum Matched {
   None = 0, // No Match
@@ -323,5 +324,6 @@ export const blockStarts = [
   listItem,
   indentedCodeBlock,
   tableHead,
-  tableBody
+  tableBody,
+  customBlock
 ];

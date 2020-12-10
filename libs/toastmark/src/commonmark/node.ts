@@ -17,7 +17,9 @@ export type BlockNodeType =
   | 'tableCell'
   | 'tableDelimRow'
   | 'tableDelimCell'
-  | 'refDef';
+  | 'refDef'
+  | 'customBlock'
+  | 'frontMatter';
 
 export type InlineNodeType =
   | 'code'
@@ -197,7 +199,6 @@ export class BlockNode extends Node {
   public stringContent: string | null = null;
   public lastLineBlank = false;
   public lastLineChecked = false;
-  public customType: string | null = null;
 
   constructor(nodeType: BlockNodeType, sourcepos?: SourcePos) {
     super(nodeType, sourcepos);
@@ -271,6 +272,12 @@ export class RefDefNode extends BlockNode {
   public label = '';
 }
 
+export class CustomBlockNode extends BlockNode {
+  public syntaxLength = 0;
+  public offset = -1;
+  public info = '';
+}
+
 export function createNode(type: 'heading', sourcepos?: SourcePos): HeadingNode;
 export function createNode(type: 'list' | 'item', sourcepos?: SourcePos): ListNode;
 export function createNode(type: 'codeBlock', sourcepos?: SourcePos): CodeBlockNode;
@@ -280,6 +287,7 @@ export function createNode(type: 'code', sourcepos?: SourcePos): CodeNode;
 export function createNode(type: 'table', sourcepos?: SourcePos): TableNode;
 export function createNode(type: 'tableCell', sourcepos?: SourcePos): TableNode;
 export function createNode(type: 'refDef', sourcepos?: SourcePos): RefDefNode;
+export function createNode(type: 'customBlock', sourcepos?: SourcePos): CustomBlockNode;
 export function createNode(type: BlockNodeType, sourcepos?: SourcePos): BlockNode;
 export function createNode(type: NodeType, sourcepos?: SourcePos): Node;
 export function createNode(type: NodeType, sourcepos?: SourcePos) {
@@ -307,11 +315,14 @@ export function createNode(type: NodeType, sourcepos?: SourcePos) {
     case 'tableRow':
     case 'tableBody':
     case 'tableHead':
+    case 'frontMatter':
       return new BlockNode(type, sourcepos);
     case 'code':
       return new CodeNode(type, sourcepos);
     case 'refDef':
       return new RefDefNode(type, sourcepos);
+    case 'customBlock':
+      return new CustomBlockNode(type, sourcepos);
     default:
       return new Node(type, sourcepos) as Node;
   }
@@ -339,6 +350,10 @@ export function isTable(node: Node): node is TableNode {
 
 export function isRefDef(node: Node): node is RefDefNode {
   return node.type === 'refDef';
+}
+
+export function isCustomBlock(node: Node): node is CustomBlockNode {
+  return node.type === 'customBlock';
 }
 
 export function text(s: string, sourcepos?: SourcePos) {

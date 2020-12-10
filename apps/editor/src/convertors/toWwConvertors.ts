@@ -4,7 +4,8 @@ import {
   CodeBlockMdNode,
   ListItemMdNode,
   ImageMdNode,
-  LinkMdNode
+  LinkMdNode,
+  CustomBlockMdNode
 } from '@t/markdown';
 
 function getTextWithoutTrailingNewline(text: string) {
@@ -232,5 +233,19 @@ export const toWwConvertors: ToWwConvertorMap = {
     state.openMark(code.create());
     state.addText(getTextWithoutTrailingNewline(node.literal || ''));
     state.closeMark(code);
+  },
+
+  customBlock(state, node) {
+    const { customBlock, paragraph } = state.schema.nodes;
+    const { info, literal } = node as CustomBlockMdNode;
+
+    state.openNode(customBlock, { info });
+    state.addText(getTextWithoutTrailingNewline(literal || ''));
+    state.closeNode();
+    // add empty line to edit the content in next line
+    if (!node.next) {
+      state.openNode(paragraph);
+      state.closeNode();
+    }
   }
 };

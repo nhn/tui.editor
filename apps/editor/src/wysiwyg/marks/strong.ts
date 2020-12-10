@@ -10,7 +10,7 @@ export class Strong extends Mark {
     return 'strong';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       parseDOM: [{ tag: 'b' }, { tag: 'strong' }],
       toDOM(): DOMOutputSpecArray {

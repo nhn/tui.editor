@@ -7,7 +7,7 @@ export class TableHeadCell extends Node {
     return 'tableHeadCell';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: 'paragraph+',
       attrs: {

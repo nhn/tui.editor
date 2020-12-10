@@ -1,5 +1,5 @@
 import { Parser } from '../../blocks';
-import { createRenderHTML } from '../../../html/render';
+import { Renderer } from '../../../html/render';
 import { LinkNode } from '../../node';
 import { pos } from '../../__test__/helper.spec';
 import { parseUrlLink, parseEmailLink } from '../autoLinks';
@@ -189,7 +189,7 @@ describe('parseEmailLink', () => {
 });
 
 describe('custom autolink parser', () => {
-  const render = createRenderHTML();
+  const renderer = new Renderer();
   const reader = new Parser({
     extendedAutolinks: content => {
       const regex = /\d{3}/g;
@@ -232,14 +232,16 @@ describe('custom autolink parser', () => {
       }
     });
 
-    expect(render(root)).toBe('<p>A <a href="num:111">111</a> B <a href="num:222">222</a></p>\n');
+    expect(renderer.render(root)).toBe(
+      '<p>A <a href="num:111">111</a> B <a href="num:222">222</a></p>\n'
+    );
   });
 });
 
 // https://github.github.com/gfm/#example-621
 describe('GFM Examples', () => {
   const reader = new Parser({ extendedAutolinks: true });
-  const render = createRenderHTML();
+  const renderer = new Renderer();
 
   it('621', () => {
     const root = reader.parse('www.commonmark.org');
@@ -258,7 +260,7 @@ describe('GFM Examples', () => {
       sourcepos: pos(1, 1, 1, 18)
     });
 
-    const html = render(root);
+    const html = renderer.render(root);
     expect(html).toBe('<p><a href="http://www.commonmark.org">www.commonmark.org</a></p>\n');
   });
 
@@ -283,7 +285,7 @@ describe('GFM Examples', () => {
     expect(text2.literal).toBe(' for more information.');
     expect(text2.sourcepos).toEqual(pos(1, 30, 1, 51));
 
-    const html = render(root);
+    const html = renderer.render(root);
     expect(html).toBe(
       '<p>Visit <a href="http://www.commonmark.org/help">www.commonmark.org/help</a> for more information.</p>\n'
     );
@@ -383,7 +385,7 @@ describe('GFM Examples', () => {
   examples.forEach(({ no, input, output }) => {
     it(String(no), () => {
       const root = reader.parse(input);
-      const html = render(root);
+      const html = renderer.render(root);
       expect(html).toBe(output);
     });
   });

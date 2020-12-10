@@ -1,5 +1,5 @@
 import MarkdownEditor from '@/markdown/mdEditor';
-import { nbspToSpace } from '@/markdown/helper/manipulation';
+import { nbspToSpace } from '@/helper/manipulation';
 
 export function getTextContent(editor: MarkdownEditor) {
   const { doc } = editor.view.state;

@@ -10,7 +10,7 @@ export class CodeBlock extends NodeSchema {
     return 'codeBlock';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: 'text*',
       group: 'block',

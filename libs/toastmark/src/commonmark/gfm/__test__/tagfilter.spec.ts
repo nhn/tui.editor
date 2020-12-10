@@ -1,9 +1,9 @@
 import { Parser } from '../../blocks';
-import { createRenderHTML } from '../../../html/render';
+import { Renderer } from '../../../html/render';
 import { source } from 'common-tags';
 
 const reader = new Parser();
-const render = createRenderHTML({ gfm: true, tagFilter: true });
+const renderer = new Renderer({ gfm: true, tagFilter: true });
 
 // https://github.github.com/gfm/#example-653
 it('GFM Example 653', () => {
@@ -22,7 +22,7 @@ it('GFM Example 653', () => {
   `;
 
   const root = reader.parse(input);
-  const html = render(root);
+  const html = renderer.render(root);
 
   expect(html).toEqual(`${output}\n`);
 });
@@ -43,7 +43,7 @@ it('Disallowed tags with attributes and closing tags', () => {
   `;
 
   const root = reader.parse(input);
-  const html = render(root);
+  const html = renderer.render(root);
 
   expect(html).toEqual(`${output}\n`);
 });
@@ -62,7 +62,7 @@ it('Keep BlockHTML as is, and only escape during rendering phase', () => {
   `;
 
   const root = reader.parse(input);
-  const html = render(root);
+  const html = renderer.render(root);
 
   expect(html).toEqual(`${output}\n`);
 });

@@ -3,14 +3,14 @@ import { Command } from 'prosemirror-commands';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
 import {
   createParagraph,
   createTextSelection,
   insertNodes,
   nbspToSpace,
   replaceNodes
-} from '../helper/manipulation';
+} from '@/helper/manipulation';
+import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
 
 export const reBlockQuote = /^\s*> ?/;
 
@@ -19,7 +19,7 @@ export class BlockQuote extends Mark {
     return 'blockQuote';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('block-quote') }, 0];

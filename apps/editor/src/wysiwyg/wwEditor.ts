@@ -14,19 +14,24 @@ import { tableContextMenuPlugin } from '@/wysiwyg/plugins/tableContextMenu';
 import { taskPlugin } from '@/wysiwyg/plugins/taskPlugin';
 
 // @TODO move to common file and change path on markdown
-import { createTextSelection } from '@/markdown/helper/manipulation';
+import { createTextSelection } from '@/helper/manipulation';
 
 import { createSpecs } from './specCreator';
 
 import { Emitter } from '@t/event';
+import { ToDOMAdaptor } from '@t/convertor';
+import { CustomBlockView } from './nodeview/customBlockView';
 
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
 export default class WysiwygEditor extends EditorBase {
-  constructor(el: HTMLElement, eventEmitter: Emitter) {
+  private toDOMAdaptor: ToDOMAdaptor;
+
+  constructor(el: HTMLElement, eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor) {
     super(el, eventEmitter);
 
     this.el = el;
+    this.toDOMAdaptor = toDOMAdaptor;
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
@@ -36,7 +41,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createSpecs() {
-    return createSpecs();
+    return createSpecs(this.toDOMAdaptor);
   }
 
   createKeymaps() {
@@ -79,9 +84,16 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createView() {
+    const { toDOMAdaptor } = this;
+
     return new EditorView(this.el, {
       state: this.createState(),
-      attributes: { class: CONTENTS_CLASS_NAME }
+      attributes: { class: CONTENTS_CLASS_NAME },
+      nodeViews: {
+        customBlock(node, view, getPos) {
+          return new CustomBlockView(node, view, getPos, toDOMAdaptor);
+        }
+      }
     });
   }
 

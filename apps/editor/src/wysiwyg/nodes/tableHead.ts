@@ -7,7 +7,7 @@ export class TableHead extends Node {
     return 'tableHead';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: 'tableRow{1}',
       parseDOM: [{ tag: 'thead' }],

@@ -7,11 +7,13 @@ import { Schema } from 'prosemirror-model';
 import { createSpecs } from '@/wysiwyg/specCreator';
 
 import Convertor from '@/convertors/convertor';
+import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 
 const parser = new Parser();
 
 function createSchema() {
-  const specs = createSpecs();
+  const adaptor = new WwToDOMAdaptor({}, {});
+  const specs = createSpecs(adaptor);
 
   return new Schema({
     nodes: specs.nodes,

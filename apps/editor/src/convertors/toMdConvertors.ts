@@ -174,6 +174,14 @@ const nodes: ToMdNodeConvertorMap = {
     state.write('| ');
     state.convertTableCell(node);
     state.write(' ');
+  },
+
+  customBlock(state, node) {
+    state.write(`{{${node.attrs.info}\n`);
+    state.text(node.textContent, false);
+    state.ensureNewLine();
+    state.write('}}');
+    state.closeBlock(node);
   }
 };
 

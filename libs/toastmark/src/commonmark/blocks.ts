@@ -16,8 +16,8 @@ import { blockStarts, Matched } from './blockStarts';
 import { RefMap, RefLinkCandidateMap, RefDefCandidateMap } from '../toastmark';
 import { AutolinkParser } from './gfm/autoLinks';
 import { clearObj } from '../helper';
-import { replaceFrontMatter } from './frontMatter/helper';
-import { frontMatterParser } from './frontMatter/parser';
+import { frontMatter as frontMatterHandler } from './frontMatter/frontMatterHandler';
+import { frontMatter as frontMatterStart } from './frontMatter/frontMatterStart';
 
 const reHtmlBlockClose = [
   /./, // dummy for 0
@@ -28,7 +28,7 @@ const reHtmlBlockClose = [
   /\]\]>/
 ];
 
-const reMaybeSpecial = /^[#`~*+_=<>0-9-]/;
+const reMaybeSpecial = /^[#`~*+_=<>0-9-{}]/;
 const reLineEnding = /\r\n|\n|\r/;
 
 function document() {
@@ -85,6 +85,7 @@ export class Parser {
   public lastLineLength: number;
   public inlineParser: InlineParser;
   public options: Options;
+  public lines: string[];
 
   constructor(options?: Partial<Options>) {
     this.options = { ...defaultOptions, ...options };
@@ -107,9 +108,11 @@ export class Parser {
     this.refLinkCandidateMap = {};
     this.refDefCandidateMap = {};
     this.lastLineLength = 0;
+    this.lines = [];
 
     if (this.options.frontMatter) {
-      this.options.customParser = { ...frontMatterParser, ...this.options.customParser };
+      blockHandlers.frontMatter = frontMatterHandler;
+      blockStarts.unshift(frontMatterStart);
     }
 
     this.inlineParser = new InlineParser(this.options);
@@ -416,10 +419,7 @@ export class Parser {
   }
 
   // The main parsing function.  Returns a parsed document AST.
-  parse(input: string) {
-    if (this.options.frontMatter) {
-      input = replaceFrontMatter(input);
-    }
+  parse(input: string, lineTexts?: string[]) {
     this.doc = document();
     this.tip = this.doc;
     this.lineNumber = 0;
@@ -430,6 +430,7 @@ export class Parser {
     this.currentLine = '';
     const lines = input.split(reLineEnding);
     let len = lines.length;
+    this.lines = lineTexts ? lineTexts : lines;
     if (this.options.referenceDefinition) {
       this.clearRefMaps();
     }

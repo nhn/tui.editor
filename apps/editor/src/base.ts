@@ -5,7 +5,7 @@ import css from 'tui-code-snippet/domUtil/css';
 import { Emitter } from '@t/event';
 import { Context, EditorAllCommandMap } from '@t/spec';
 import SpecManager from './spec/specManager';
-import { createTextSelection } from './markdown/helper/manipulation';
+import { createTextSelection } from './helper/manipulation';
 
 export interface StateOptions {
   doc: Node | null;

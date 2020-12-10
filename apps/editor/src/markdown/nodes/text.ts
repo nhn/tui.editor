@@ -5,7 +5,7 @@ export class Text extends Node {
     return 'text';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       group: 'inline'
     };

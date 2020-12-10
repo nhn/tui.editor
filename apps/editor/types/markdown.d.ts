@@ -17,7 +17,8 @@ type BlockNodeType =
   | 'tableCell'
   | 'tableDelimRow'
   | 'tableDelimCell'
-  | 'refDef';
+  | 'refDef'
+  | 'customBlock';
 
 type InlineNodeType =
   | 'code'
@@ -160,6 +161,10 @@ export interface TableMdNode extends MdNode {
   lastChild: TableBodyMdNode;
 }
 
+export interface CustomBlockMdNode extends MdNode {
+  info: string;
+}
+
 /* ToastMark Parser type */
 export type CustomParser = (node: MdNode, context: { entering: boolean }) => void;
 export type CustomParserMap = Partial<Record<MdNodeType, CustomParser>>;
@@ -205,9 +210,13 @@ export interface RawHTMLToken {
 
 export type HTMLToken = OpenTagToken | CloseTagToken | TextToken | RawHTMLToken;
 
-export type CustomHTMLRenderer = (node: MdNode, context: Context) => HTMLToken | HTMLToken[] | null;
+export type CustomHTMLRenderer = (
+  node: MdNode,
+  context: Context,
+  convertors?: CustomHTMLRendererMap
+) => HTMLToken | HTMLToken[] | null;
 
-export type CustomHTMLRendererMap = Partial<Record<MdNodeType, CustomHTMLRenderer>>;
+export type CustomHTMLRendererMap = Partial<Record<string, CustomHTMLRenderer>>;
 
 export interface ContextOptions {
   gfm: boolean;
@@ -215,14 +224,31 @@ export interface ContextOptions {
   nodeId: boolean;
   tagFilter: boolean;
   convertors?: CustomHTMLRendererMap;
-  customProp: Record<string, any>;
 }
 
 export interface Context {
   entering: boolean;
   leaf: boolean;
-  options: Omit<ContextOptions, 'gfm' | 'convertors'>;
+  options: Omit<ContextOptions, 'convertors'>;
   getChildrenText: (node: MdNode) => string;
   skipChildren: () => void;
-  origin: () => ReturnType<CustomHTMLRenderer>;
+  origin?: () => ReturnType<CustomHTMLRenderer>;
+}
+
+export interface MdLikeNode {
+  type: MdNodeType;
+  literal: string | null;
+  wysiwygNode?: boolean;
+  level?: number;
+  destination?: string;
+  title?: string;
+  info?: string;
+  cellType?: 'head' | 'body';
+  align?: 'left' | 'center' | 'right';
+  listData?: {
+    type?: 'bullet' | 'ordered';
+    start?: number;
+    task?: boolean;
+    checked?: boolean;
+  };
 }

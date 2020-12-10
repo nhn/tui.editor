@@ -2,8 +2,8 @@ import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'pr
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
+import { createParagraph, replaceNodes } from '@/helper/manipulation';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import { createParagraph, replaceNodes } from '../helper/manipulation';
 
 const reHeading = /^#{1,6}\s/;
 
@@ -16,7 +16,7 @@ export class Heading extends Mark {
     return 'heading';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       attrs: {
         level: { default: 1 },

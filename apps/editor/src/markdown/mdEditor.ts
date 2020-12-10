@@ -31,7 +31,7 @@ import { Link } from './marks/link';
 import { Delimiter, TaskDelimiter, MarkedText, Meta, TableCell } from './marks/simpleMark';
 import { Html } from './marks/html';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
-import { createParagraph, createTextSelection, nbspToSpace } from './helper/manipulation';
+import { createParagraph, createTextSelection, nbspToSpace } from '@/helper/manipulation';
 import { placeholder } from '@/plugins/placeholder';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 
@@ -105,14 +105,7 @@ export default class MdEditor extends EditorBase {
         keymap({
           'Mod-z': undo(),
           'Shift-Mod-z': redo(),
-          ...baseKeymap,
-          Enter: (state, dispatch) => {
-            const emptyNode = createParagraph(this.schema, '');
-            const nodes = [emptyNode, emptyNode];
-
-            dispatch!(state.tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)));
-            return true;
-          }
+          ...baseKeymap
         }),
         history(),
         syntaxHighlight(this.context),
@@ -188,7 +181,7 @@ export default class MdEditor extends EditorBase {
 
   setSelection(start: MdPos, end: MdPos) {
     const { tr } = this.view.state;
-    const [from, to] = getMdToEditorPos(tr.doc, start, end);
+    const [from, to] = getMdToEditorPos(tr.doc, this.toastMark, start, end);
 
     this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)));
     this.focus();
@@ -222,9 +215,7 @@ export default class MdEditor extends EditorBase {
   }
 
   getMarkdown() {
-    return this.getToastMark()
-      .getLineTexts()
-      .join('\n');
+    return this.toastMark.getLineTexts().join('\n');
   }
 
   getToastMark() {

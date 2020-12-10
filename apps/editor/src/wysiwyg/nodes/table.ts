@@ -20,7 +20,7 @@ import {
 } from '@/wysiwyg/helper/table';
 
 // @TODO move to common file and change path on markdown
-import { createTextSelection } from '@/markdown/helper/manipulation';
+import { createTextSelection } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
 
@@ -39,7 +39,7 @@ export class Table extends Node {
     return 'table';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: 'tableHead{1} tableBody+',
       group: 'block',

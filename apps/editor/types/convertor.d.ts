@@ -1,4 +1,11 @@
-import { NodeType, Node, MarkType, Mark, Schema } from 'prosemirror-model';
+import {
+  NodeType,
+  MarkType,
+  Mark,
+  Schema,
+  ProsemirrorNode,
+  DOMOutputSpecArray
+} from 'prosemirror-model';
 
 import { MdNode, MdNodeType } from './markdown';
 import { WwNodeType, WwMarkType } from './wysiwyg';
@@ -8,20 +15,20 @@ export type Attrs = { [name: string]: any } | null;
 export interface StackItem {
   type: NodeType;
   attrs: Attrs | null;
-  content: Node[];
+  content: ProsemirrorNode[];
 }
 
 export interface ToWwConvertorStateType {
   schema: Schema;
   top(): StackItem;
-  push(node: Node): void;
+  push(node: ProsemirrorNode): void;
   addText(text: string): void;
   openMark(mark: Mark): void;
   closeMark(mark: MarkType): void;
-  addNode(type: NodeType, attrs?: Attrs, content?: Node[]): Node | null;
+  addNode(type: NodeType, attrs?: Attrs, content?: ProsemirrorNode[]): ProsemirrorNode | null;
   openNode(type: NodeType, attrs?: Attrs): void;
-  closeNode(): Node | null;
-  convertNode(mdNode: MdNode): Node | null;
+  closeNode(): ProsemirrorNode | null;
+  convertNode(mdNode: MdNode): ProsemirrorNode | null;
 }
 
 type ToWwConvertor = (
@@ -39,16 +46,16 @@ export type FirstDelimFn = (index: number) => string;
 
 export interface ToMdConvertorStateType {
   flushClose(size?: number): void;
-  wrapBlock(delim: string, firstDelim: string | null, node: Node, fn: () => void): void;
+  wrapBlock(delim: string, firstDelim: string | null, node: ProsemirrorNode, fn: () => void): void;
   ensureNewLine(): void;
   write(content?: string): void;
-  closeBlock(node: Node): void;
+  closeBlock(node: ProsemirrorNode): void;
   text(text: string, escape?: boolean): void;
-  convertBlock(node: Node, parent: Node, index: number): void;
-  convertInline(parent: Node): void;
-  convertList(node: Node, delim: string, firstDelimFn: FirstDelimFn): void;
-  convertTableCell(node: Node): void;
-  convertNode(parent: Node): string;
+  convertBlock(node: ProsemirrorNode, parent: ProsemirrorNode, index: number): void;
+  convertInline(parent: ProsemirrorNode): void;
+  convertList(node: ProsemirrorNode, delim: string, firstDelimFn: FirstDelimFn): void;
+  convertTableCell(node: ProsemirrorNode): void;
+  convertNode(parent: ProsemirrorNode): string;
   escape(str: string, startOfLine?: boolean): string;
   quote(str: string): string;
   repeat(str: string, count: number): string;
@@ -62,15 +69,15 @@ export interface ToMdConvertorStateType {
 
 type ToMdConvertorForNodes = (
   state: ToMdConvertorStateType,
-  node: Node,
-  parent?: Node,
+  node: ProsemirrorNode,
+  parent?: ProsemirrorNode,
   index?: number
 ) => void;
 
 type MarkConvertor = (
   state: ToMdConvertorStateType,
   mark: Mark,
-  parent: Node,
+  parent: ProsemirrorNode,
   index: number
 ) => string;
 
@@ -89,4 +96,9 @@ export type ToMdMarkConvertorMap = Partial<Record<WwMarkType, ToMdConvertorForMa
 export interface ToMdConvertorMap {
   nodes: ToMdNodeConvertorMap;
   marks: ToMdMarkConvertorMap;
+}
+
+export interface ToDOMAdaptor {
+  getToDOM(type: string): ((node: ProsemirrorNode | Mark) => DOMOutputSpecArray) | null;
+  getToDOMNode(type: string): ((node: ProsemirrorNode | Mark) => Node) | null;
 }

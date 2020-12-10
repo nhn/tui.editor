@@ -12,7 +12,7 @@ import {
   createTextSelection,
   insertNodes,
   replaceNodes
-} from '../helper/manipulation';
+} from '@/helper/manipulation';
 import {
   ChangedListInfo,
   extendList,
@@ -38,7 +38,7 @@ export class ListItem extends Mark {
     return 'listItem';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       attrs: {
         odd: { default: false },

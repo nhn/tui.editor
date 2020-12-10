@@ -7,7 +7,7 @@ export class TableRow extends NodeSchema {
     return 'tableRow';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       content: '(tableHeadCell | tableBodyCell)+',
       attrs: { columns: { default: 1 } },

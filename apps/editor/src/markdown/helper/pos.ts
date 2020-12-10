@@ -53,7 +53,7 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
 
   if (!collapsed) {
     // To resolve the end offset for blank line
-    to = getEndOffsetWithBlankLine(doc, to, lineRange);
+    // to = getEndOffsetWithBlankLine(doc, to, lineRange);
 
     const endResolvedPos = doc.resolve(to);
 
@@ -71,12 +71,18 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
   ];
 }
 
-export function getMdToEditorPos(doc: ProsemirrorNode, startPos: MdPos, endPos: MdPos) {
+export function getMdToEditorPos(
+  doc: ProsemirrorNode,
+  toastMark: any,
+  startPos: MdPos,
+  endPos: MdPos
+) {
+  const lineTexts = toastMark.getLineTexts();
   let from = 0;
   let to = 0;
 
   for (let i = 0; i < endPos[0] - 1; i += 1) {
-    const len = getTextByMdLine(doc, i + 1).length;
+    const len = lineTexts[i].length;
 
     // should plus 2(end tag, start tag) to consider line breaking
     if (i < startPos[0] - 1) {

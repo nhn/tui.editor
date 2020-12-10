@@ -15,6 +15,7 @@ export type WwNodeType =
   | 'blockQuote'
   | 'thematicBreak'
   | 'image'
-  | 'hardBreak';
+  | 'hardBreak'
+  | 'customBlock';
 
 export type WwMarkType = 'strong' | 'emph' | 'strike' | 'link' | 'code';

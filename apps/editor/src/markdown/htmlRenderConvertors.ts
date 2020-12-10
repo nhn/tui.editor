@@ -12,15 +12,8 @@ import {
 type TokenAttrs = Record<string, any>;
 
 const baseConvertors: CustomHTMLRendererMap = {
-  paragraph(node: MdNode, { entering, origin, options }: Context) {
-    const { nodeId, customProp = {} } = options;
-    // @ts-ignore
-    const showFrontMatter = customProp.showFrontMatter && node.customType;
-
-    // prevent paragraph from being removed when it's child of tight list item
-    // to show highlight style in live-preview mode
-    // @ts-ignore
-    if ((nodeId && !node.customType) || showFrontMatter) {
+  paragraph(_, { entering, origin, options }: Context) {
+    if (options.nodeId) {
       return {
         type: entering ? 'openTag' : 'closeTag',
         outerNewLine: true,
@@ -28,7 +21,7 @@ const baseConvertors: CustomHTMLRendererMap = {
       };
     }
 
-    return origin();
+    return origin!();
   },
 
   softbreak(node: MdNode) {
@@ -112,7 +105,7 @@ export function getHTMLRenderConvertors(
 
   if (linkAttribute) {
     convertors.link = (_, { entering, origin }: Context) => {
-      const result = origin();
+      const result = origin!();
 
       if (entering) {
         (result as OpenTagToken).attributes = {

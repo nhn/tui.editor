@@ -3,8 +3,8 @@ import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
+import { createText } from '@/helper/manipulation';
 import { resolveSelectionPos } from '../helper/pos';
-import { createText } from '../helper/manipulation';
 
 type CommandType = 'image' | 'link';
 
@@ -20,7 +20,7 @@ export class Link extends Mark {
     return 'link';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       attrs: {
         url: { default: false },

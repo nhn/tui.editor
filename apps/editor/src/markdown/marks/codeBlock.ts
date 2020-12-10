@@ -2,15 +2,15 @@ import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
+import { createParagraph, createTextSelection, replaceNodes } from '@/helper/manipulation';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
-import { createParagraph, createTextSelection, replaceNodes } from '../helper/manipulation';
 
 export class CodeBlock extends Mark {
   get name() {
     return 'codeBlock';
   }
 
-  get schema() {
+  get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('code-block') }, 0];

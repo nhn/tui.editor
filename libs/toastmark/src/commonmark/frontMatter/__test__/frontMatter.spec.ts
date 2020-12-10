@@ -1,9 +1,9 @@
 import { source } from 'common-tags';
 import { Parser } from '../../blocks';
-import { createRenderHTML } from '../../../html/render';
+import { Renderer } from '../../../html/render';
 
 const reader = new Parser({ frontMatter: true });
-const render = createRenderHTML();
+const renderer = new Renderer();
 
 describe('front matter parsing', () => {
   it('basic', () => {
@@ -12,42 +12,12 @@ describe('front matter parsing', () => {
     expect(root).toMatchObject({
       type: 'document',
       firstChild: {
-        type: 'paragraph',
-        customType: 'frontMatter',
+        type: 'frontMatter',
+        literal: '---\ntitle: front matter\n---',
         sourcepos: [
           [1, 1],
           [3, 3]
-        ],
-        firstChild: {
-          type: 'text',
-          literal: '---',
-          sourcepos: [
-            [1, 1],
-            [1, 3]
-          ],
-          next: {
-            type: 'softbreak',
-            next: {
-              type: 'text',
-              literal: 'title: front matter',
-              sourcepos: [
-                [2, 1],
-                [2, 19]
-              ],
-              next: {
-                type: 'softbreak',
-                next: {
-                  literal: '---',
-                  next: null,
-                  sourcepos: [
-                    [3, 1],
-                    [3, 3]
-                  ]
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     });
   });
@@ -58,73 +28,12 @@ describe('front matter parsing', () => {
     expect(root).toMatchObject({
       type: 'document',
       firstChild: {
-        type: 'paragraph',
-        customType: 'frontMatter',
-        stringContent: null,
-        lastLineBlank: true,
+        type: 'frontMatter',
+        literal: '---\n\ntitle: front matter\n\ndescription: with empty line\n\n---',
         sourcepos: [
           [1, 1],
-          [1, 3]
-        ],
-        firstChild: {
-          type: 'text',
-          literal: '---',
-          sourcepos: [
-            [1, 1],
-            [1, 3]
-          ]
-        },
-        next: {
-          type: 'paragraph',
-          customType: 'frontMatter',
-          firstChild: {
-            type: 'text',
-            literal: 'title: front matter',
-            sourcepos: [
-              [3, 1],
-              [3, 19]
-            ]
-          },
-          lastLineBlank: true,
-          sourcepos: [
-            [3, 1],
-            [3, 19]
-          ],
-          next: {
-            type: 'paragraph',
-            customType: 'frontMatter',
-            firstChild: {
-              type: 'text',
-              literal: 'description: with empty line',
-              sourcepos: [
-                [5, 1],
-                [5, 28]
-              ]
-            },
-            lastLineBlank: true,
-            sourcepos: [
-              [5, 1],
-              [5, 28]
-            ],
-            next: {
-              type: 'paragraph',
-              customType: 'frontMatter',
-              firstChild: {
-                type: 'text',
-                literal: '---',
-                sourcepos: [
-                  [7, 1],
-                  [7, 3]
-                ]
-              },
-              lastLineBlank: false,
-              sourcepos: [
-                [7, 1],
-                [7, 3]
-              ]
-            }
-          }
-        }
+          [7, 3]
+        ]
       }
     });
   });
@@ -135,42 +44,12 @@ describe('front matter parsing', () => {
     expect(root).toMatchObject({
       type: 'document',
       firstChild: {
-        type: 'paragraph',
-        customType: 'frontMatter',
+        type: 'frontMatter',
+        literal: '---\ntitle: front matter\n---',
         sourcepos: [
           [2, 1],
           [4, 3]
-        ],
-        firstChild: {
-          type: 'text',
-          literal: '---',
-          sourcepos: [
-            [2, 1],
-            [2, 3]
-          ],
-          next: {
-            type: 'softbreak',
-            next: {
-              type: 'text',
-              literal: 'title: front matter',
-              sourcepos: [
-                [3, 1],
-                [3, 19]
-              ],
-              next: {
-                type: 'softbreak',
-                next: {
-                  literal: '---',
-                  next: null,
-                  sourcepos: [
-                    [4, 1],
-                    [4, 3]
-                  ]
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     });
   });
@@ -181,57 +60,26 @@ describe('front matter parsing', () => {
     expect(root).toMatchObject({
       type: 'document',
       firstChild: {
-        type: 'paragraph',
-        customType: 'frontMatter',
+        type: 'frontMatter',
+        literal: '---\ntitle: front matter\n---',
         sourcepos: [
           [1, 1],
           [3, 3]
+        ]
+      },
+      lastChild: {
+        type: 'paragraph',
+        literal: null,
+        sourcepos: [
+          [4, 1],
+          [4, 4]
         ],
         firstChild: {
-          type: 'text',
-          literal: '---',
-          sourcepos: [
-            [1, 1],
-            [1, 3]
-          ],
-          next: {
-            type: 'softbreak',
-            next: {
-              type: 'text',
-              literal: 'title: front matter',
-              sourcepos: [
-                [2, 1],
-                [2, 19]
-              ],
-              next: {
-                type: 'softbreak',
-                next: {
-                  literal: '---',
-                  next: null,
-                  sourcepos: [
-                    [3, 1],
-                    [3, 3]
-                  ]
-                }
-              }
-            }
-          }
-        },
-        next: {
-          type: 'paragraph',
-          customType: null,
-          stringContent: null,
+          literal: 'para',
           sourcepos: [
             [4, 1],
             [4, 4]
-          ],
-          firstChild: {
-            literal: 'para',
-            sourcepos: [
-              [4, 1],
-              [4, 4]
-            ]
-          }
+          ]
         }
       }
     });
@@ -248,7 +96,9 @@ describe('Exmaple', () => {
       ---
       `,
       output: source`
-        <p></p>
+        <div style="white-space: pre">---
+        title: front matter
+        ---</div>
       `
     },
     {
@@ -263,10 +113,13 @@ describe('Exmaple', () => {
       ---
       `,
       output: source`
-        <p></p>
-        <p></p>
-        <p></p>
-        <p></p>
+        <div style="white-space: pre">---
+
+        title: front matter
+
+        description: with empty line
+
+        ---</div>
       `
     },
     {
@@ -278,7 +131,9 @@ describe('Exmaple', () => {
       ---
       `,
       output: source`
-        <p></p>
+        <div style="white-space: pre">---
+        title: front matter
+        ---</div>
       `
     },
     {
@@ -290,7 +145,9 @@ describe('Exmaple', () => {
       para
       `,
       output: source`
-        <p></p>
+        <div style="white-space: pre">---
+        title: front matter
+        ---</div>
         <p>para</p>
       `
     },
@@ -312,7 +169,7 @@ describe('Exmaple', () => {
   examples.forEach(({ no, input, output }) => {
     it(String(no), () => {
       const root = reader.parse(input);
-      const html = render(root);
+      const html = renderer.render(root);
       expect(html).toBe(`${output}\n`);
     });
   });

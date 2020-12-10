@@ -31,6 +31,7 @@ import { invokePlugins, getPluginInfo } from './pluginHelper';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import isString from 'tui-code-snippet/type/isString';
+import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 
 /**
  * ToastUI Editor
@@ -173,9 +174,9 @@ class ToastUIEditor {
       extendedAutolinks,
       referenceDefinition,
       customParser: parser,
-      frontMatter,
-      customProp: { showFrontMatter: frontMatter }
+      frontMatter
     };
+    const wwToDOMAdaptor = new WwToDOMAdaptor(linkAttribute, rendererOptions.customHTMLRenderer);
 
     if (this.options.hooks) {
       forEachOwnProperties(this.options.hooks, (fn, key) => this.addHook(key, fn));
@@ -213,7 +214,11 @@ class ToastUIEditor {
       highlight: this.options.previewHighlight
     });
 
-    this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.eventEmitter);
+    this.wwEditor = new WysiwygEditor(
+      this.layout.getWwEditorContainerEl(),
+      this.eventEmitter,
+      wwToDOMAdaptor
+    );
 
     this.convertor = new Convertor(this.wwEditor.getSchema());
 
