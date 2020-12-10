@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import css from 'tui-code-snippet/domUtil/css';
-import domUtils from '../utils/dom';
+import domUtils from '../utils/dom-legacy';
 
 const TOOLTIP_CONTENT = '<div class="arrow"></div><span class="text"></span></span>';
 const TOOLTIP_TOP_INDENT = 7;

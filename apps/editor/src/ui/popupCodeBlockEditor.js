@@ -11,7 +11,7 @@ import CodeBlockEditor from '../codeBlockEditor';
 import CodeBlockPreview from '../codeBlockPreview';
 import CodeBlockLanguagesCombo from './codeBlockLanguagesCombo';
 import i18n from '../i18n/i18n';
-import domUtils from '../utils/dom';
+import domUtils from '../utils/dom-legacy';
 
 const CLASS_PREFIX = 'popup-editor-';
 const CLASS_OK_BUTTON = 'te-ok-button';

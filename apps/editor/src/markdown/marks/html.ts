@@ -1,5 +1,5 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { cls } from '@/utils/dom';
+import { cls } from '@/utils/dom-legacy';
 import Mark from '@/spec/mark';
 
 export class Html extends Mark {

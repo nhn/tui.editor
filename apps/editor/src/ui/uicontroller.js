@@ -10,7 +10,7 @@ import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
 import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 
-import domUtils from '../utils/dom';
+import domUtils from '../utils/dom-legacy';
 
 const DOM_EVENTS = [
   'click',

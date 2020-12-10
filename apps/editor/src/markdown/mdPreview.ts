@@ -12,7 +12,7 @@ import { Renderer } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
 import { CustomHTMLRendererMap, EditResult, MdNode, MdPos } from '@t/markdown';
 import Preview from '@/preview';
-import domUtils from '@/utils/dom';
+import domUtils from '@/utils/dom-legacy';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
 // import { findAdjacentElementToScrollTop } from './scroll/helper';

@@ -8,7 +8,7 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import { EditorType } from '@t/editor';
 import { Emitter } from '@t/event';
-import domUtils from '@/utils/dom';
+import domUtils from '@/utils/dom-legacy';
 
 /**
  * Editor container template

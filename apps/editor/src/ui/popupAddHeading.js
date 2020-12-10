@@ -7,7 +7,7 @@ import css from 'tui-code-snippet/domUtil/css';
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n/i18n';
-import domUtils from '../utils/dom';
+import domUtils from '../utils/dom-legacy';
 
 /**
  * Class PopupAddHeading

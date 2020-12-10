@@ -6,7 +6,7 @@ import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
 
 import LayerPopup from './layerpopup';
-import domUtils from '../utils/dom';
+import domUtils from '../utils/dom-legacy';
 
 const CLASS_TABLE_SELECTION = 'te-table-selection';
 const CLASS_TABLE_HEADER = 'te-table-header';

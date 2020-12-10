@@ -2,7 +2,7 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
 import { EditorCommand } from '@t/spec';
 import { MdNode, MdPos, TableCellMdNode } from '@t/markdown';
-import { cls } from '@/utils/dom';
+import { cls } from '@/utils/dom-legacy';
 import { findClosestNode, getMdEndCh, getMdEndLine, isTableCellNode } from '@/utils/markdown';
 import Mark from '@/spec/mark';
 import { getEditorToMdPos, getMdToEditorPos, getPosInfo, resolveSelectionPos } from '../helper/pos';

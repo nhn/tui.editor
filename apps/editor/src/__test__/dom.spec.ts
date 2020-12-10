@@ -1,4 +1,4 @@
-// @TODO move to utils/dom.ts
+// @TODO move to utils/dom-legacy.ts
 import { isPositionInBox } from '@/wysiwyg/helper/dom';
 
 describe('dom utils', () => {

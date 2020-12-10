@@ -10,7 +10,7 @@ import off from 'tui-code-snippet/domEvent/off';
 import { ViewerOptions } from '@t/editor';
 import { Emitter, EventTypes, Handler } from '@t/event';
 import MarkdownPreview from './markdown/mdPreview';
-import domUtils from './utils/dom';
+import domUtils from './utils/dom-legacy';
 import { invokePlugins, getPluginInfo } from './pluginHelper';
 import { sanitizeLinkAttribute } from './utils/common';
 import EventEmitter from './event/eventEmitter';

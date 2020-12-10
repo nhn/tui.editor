@@ -5,7 +5,7 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 import isString from 'tui-code-snippet/type/isString';
 
-import domUtils from '@/utils/dom';
+import domUtils from '@/utils/dom-legacy';
 
 type GlobalEventTypes = keyof Omit<
   Omit<GlobalEventHandlers, 'addEventListener'>,
