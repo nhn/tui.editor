@@ -1,7 +1,7 @@
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { isPositionInBox } from '@/wysiwyg/helper/dom';
+import { isPositionInBox } from '@/utils/dom';
 import { findListItem } from '@/wysiwyg/helper/node';
 
 export function taskPlugin() {

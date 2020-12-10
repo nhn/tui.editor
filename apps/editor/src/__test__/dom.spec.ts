@@ -1,5 +1,4 @@
-// @TODO move to utils/dom-legacy.ts
-import { isPositionInBox } from '@/wysiwyg/helper/dom';
+import { isPositionInBox } from '@/utils/dom';
 
 describe('dom utils', () => {
   let container: HTMLElement;

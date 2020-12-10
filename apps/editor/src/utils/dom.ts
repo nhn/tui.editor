@@ -1,4 +1,3 @@
-// @TODO move to utils/dom-legacy.ts
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
   const rect = {
     left: parseInt(style.left, 10),
