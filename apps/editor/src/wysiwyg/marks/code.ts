@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
 import Mark from '@/spec/mark';
@@ -12,9 +12,19 @@ export class Code extends Mark {
 
   get defaultSchema() {
     return {
+      attrs: {
+        htmlString: { default: null }
+      },
       parseDOM: [{ tag: 'code' }],
-      toDOM(): DOMOutputSpecArray {
-        return ['code'];
+      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
+        const { htmlString } = attrs;
+
+        return [
+          htmlString || 'code',
+          {
+            ...(htmlString && { 'data-pass': 'true' })
+          }
+        ];
       }
     };
   }

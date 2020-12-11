@@ -1,7 +1,8 @@
 export const tagMap: { [k: string]: string } = {
   'b, strong': 'strong',
   'i, em': 'emph',
-  's, del': 'strike'
+  's, del': 'strike',
+  code: 'code'
 };
 
 export function getTagMap() {

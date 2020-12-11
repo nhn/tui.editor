@@ -13,14 +13,14 @@ export class Strike extends Mark {
   get defaultSchema() {
     return {
       attrs: {
-        htmlString: { default: false }
+        htmlString: { default: null }
       },
       parseDOM: [{ tag: 's' }, { tag: 'del' }],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         const { htmlString } = attrs;
 
         return [
-          'del',
+          htmlString || 'del',
           {
             ...(htmlString && { 'data-pass': 'true' })
           }

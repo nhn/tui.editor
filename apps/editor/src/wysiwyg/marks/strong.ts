@@ -13,14 +13,14 @@ export class Strong extends Mark {
   get defaultSchema() {
     return {
       attrs: {
-        htmlString: { default: false }
+        htmlString: { default: null }
       },
       parseDOM: [{ tag: 'b' }, { tag: 'strong' }],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         const { htmlString } = attrs;
 
         return [
-          'strong',
+          htmlString || 'strong',
           {
             ...(htmlString && { 'data-pass': 'true' })
           }

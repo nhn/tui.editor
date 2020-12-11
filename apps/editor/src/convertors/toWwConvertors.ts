@@ -16,15 +16,15 @@ function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
 }
 
-function findNodeType(schema: Schema, tag: string, isMark = false) {
+function findNodeType(schema: Schema, tag: string, mark = false) {
   const matched = tag.match(/<(.*?)>/);
-  const nodes = isMark ? schema.marks : schema.nodes;
+  const nodes = mark ? schema.marks : schema.nodes;
 
   if (matched) {
     const tagName = matched[1].replace('/', '');
     const markName = tagMap[tagName];
 
-    return nodes[markName];
+    return { nodeType: nodes[markName], tagName };
   }
 
   return null;
@@ -170,18 +170,17 @@ export const toWwConvertors: ToWwConvertorMap = {
     state.addNode(state.schema.nodes.hardBreak);
   },
 
-  /**
-   * @TODO add node
-   */
   htmlInline(state, node, { entering }) {
     const tag = node.literal!;
-    const type = findNodeType(state.schema, tag, true) as MarkType;
+    const tagInfo = findNodeType(state.schema, tag, true);
 
-    if (type) {
+    if (tagInfo) {
+      const nodeType = tagInfo.nodeType as MarkType;
+
       if (entering) {
-        state.openMark(type.create({ htmlString: true }));
+        state.openMark(nodeType.create({ htmlString: tagInfo.tagName }));
       } else {
-        state.closeMark(type);
+        state.closeMark(nodeType);
       }
     }
   },
@@ -191,11 +190,13 @@ export const toWwConvertors: ToWwConvertorMap = {
    */
   htmlBlock(state, node, { entering }) {
     const tag = node.literal!;
-    const type = findNodeType(state.schema, tag) as NodeType;
+    const tagInfo = findNodeType(state.schema, tag);
 
-    if (type) {
+    if (tagInfo) {
+      const nodeType = tagInfo.nodeType as NodeType;
+
       if (entering) {
-        state.openNode(type, { htmlString: true });
+        state.openNode(nodeType, { htmlString: true });
       } else {
         state.closeNode();
       }

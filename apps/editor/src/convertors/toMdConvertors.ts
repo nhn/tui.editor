@@ -190,11 +190,50 @@ const nodes: ToMdNodeConvertorMap = {
 };
 
 const marks: ToMdMarkConvertorMap = {
-  strong: { open: '**', close: '**', mixable: true, removedEnclosingWhitespace: true },
+  strong: {
+    open(_: ToMdConvertorStateType, mark: Mark) {
+      const { htmlString } = mark.attrs;
 
-  emph: { open: '*', close: '*', mixable: true, removedEnclosingWhitespace: true },
+      return htmlString ? `<${htmlString}>` : '**';
+    },
+    close(_: ToMdConvertorStateType, mark: Mark) {
+      const { htmlString } = mark.attrs;
 
-  strike: { open: '~~', close: '~~', mixable: true, removedEnclosingWhitespace: true },
+      return htmlString ? `</${htmlString}>` : '**';
+    },
+    mixable: true,
+    removedEnclosingWhitespace: true
+  },
+
+  emph: {
+    open(_: ToMdConvertorStateType, mark: Mark) {
+      const { htmlString } = mark.attrs;
+
+      return htmlString ? `<${htmlString}>` : '*';
+    },
+    close(_: ToMdConvertorStateType, mark: Mark) {
+      const { htmlString } = mark.attrs;
+
+      return htmlString ? `</${htmlString}>` : '*';
+    },
+    mixable: true,
+    removedEnclosingWhitespace: true
+  },
+
+  strike: {
+    open(_: ToMdConvertorStateType, mark: Mark) {
+      const { htmlString } = mark.attrs;
+
+      return htmlString ? `<${htmlString}>` : '~~';
+    },
+    close(_: ToMdConvertorStateType, mark: Mark) {
+      const { htmlString } = mark.attrs;
+
+      return htmlString ? `</${htmlString}>` : '~~';
+    },
+    mixable: true,
+    removedEnclosingWhitespace: true
+  },
 
   link: {
     open(_: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
@@ -210,10 +249,14 @@ const marks: ToMdMarkConvertorMap = {
 
   code: {
     open(state: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      return addBackticks(parent.child(index), -1);
+      const { htmlString } = mark.attrs;
+
+      return htmlString ? `<${htmlString}>` : addBackticks(parent.child(index), -1);
     },
     close(state: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      return addBackticks(parent.child(index - 1), 1);
+      const { htmlString } = mark.attrs;
+
+      return htmlString ? `</${htmlString}>` : addBackticks(parent.child(index - 1), 1);
     },
     escape: false
   }

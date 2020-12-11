@@ -39,6 +39,10 @@ describe('Convertor', () => {
       expect(result).toBe(expected);
     }
 
+    it('empty content', () => {
+      assertConverting('', '');
+    });
+
     it('paragraph', () => {
       const markdown = 'foo';
 
@@ -283,6 +287,21 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    // @TODO test hardBreak
+    fit('inlinHtml', () => {
+      const markdown = source`
+        <b>foo</b>
+        <strong>foo</strong>
+
+        <i>foo</i>
+        <em>foo</em>
+        
+        <s>foo</s>
+        <del>foo</del>
+
+        <code>foo</code>
+      `;
+
+      assertConverting(markdown, markdown);
+    });
   });
 });
