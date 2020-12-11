@@ -57,9 +57,13 @@ const nodes: ToMdNodeConvertorMap = {
     state.text(node.text ?? '');
   },
 
-  paragraph(state, node) {
-    state.convertInline(node);
-    state.closeBlock(node);
+  paragraph(state, node, parent) {
+    if (node.childCount) {
+      state.convertInline(node);
+      state.closeBlock(node);
+    } else if (parent && parent.childCount > 1) {
+      state.write('<br>\n');
+    }
   },
 
   heading(state, node) {
