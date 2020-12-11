@@ -1,7 +1,6 @@
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-// @TODO move path to helper/node
 import { isInCellElement } from '@/wysiwyg/helper/table';
 
 import { Emitter } from '@t/event';

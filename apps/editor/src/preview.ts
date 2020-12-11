@@ -5,7 +5,7 @@
 import css from 'tui-code-snippet/domUtil/css';
 import { Emitter } from '@t/event';
 import LazyRunner from './lazyRunner';
-import domUtils from './utils/dom';
+import domUtils from './utils/dom-legacy';
 import codeBlockManager from './codeBlockManager';
 
 /**

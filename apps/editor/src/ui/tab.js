@@ -6,7 +6,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 import UIController from './uicontroller';
-import domUtils from '../utils/dom';
+import domUtils from '../utils/dom-legacy';
 
 const CLASS_TAB_ACTIVE = 'te-tab-active';
 

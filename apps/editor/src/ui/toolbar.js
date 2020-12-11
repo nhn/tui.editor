@@ -8,7 +8,7 @@ import UIController from './uicontroller';
 import ToolbarButton from './toolbarButton';
 import ToolbarItem from './toolbarItem';
 import ToolbarItemFactory from './toolbarItemFactory';
-import domUtils from '../utils/dom';
+import domUtils from '../utils/dom-legacy';
 
 /**
  * Class Toolbar

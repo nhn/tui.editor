@@ -9,7 +9,7 @@ import isString from 'tui-code-snippet/type/isString';
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n/i18n';
-import domUtils from '../utils/dom';
+import domUtils from '../utils/dom-legacy';
 
 export const REMOVE_ROW_MENU_CLASS_NAME = 'te-table-remove-row';
 export const DISABLED_MENU_CLASS_NAME = 'te-context-menu-disabled';

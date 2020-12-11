@@ -1,4 +1,3 @@
-// @TODO move to utils/dom.ts
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
   const rect = {
     left: parseInt(style.left, 10),
@@ -13,4 +12,10 @@ export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, off
     offsetY >= rect.top &&
     offsetY <= rect.top + rect.height
   );
+}
+
+const CLS_PREFIX = 'tui-md-';
+
+export function cls(...names: string[]) {
+  return names.map(className => `${CLS_PREFIX}${className}`).join(' ');
 }
