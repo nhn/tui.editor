@@ -4,7 +4,7 @@ import { Command } from 'prosemirror-commands';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import { EditorCommand } from '@t/spec';
 import { ListItemMdNode, MdNode } from '@t/markdown';
-import { cls } from '@/utils/dom-legacy';
+import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
 import {

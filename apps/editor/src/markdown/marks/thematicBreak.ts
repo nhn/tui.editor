@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
-import { cls } from '@/utils/dom-legacy';
+import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { createParagraph, createTextSelection } from '@/helper/manipulation';
 import { resolveSelectionPos } from '../helper/pos';

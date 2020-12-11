@@ -13,3 +13,9 @@ export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, off
     offsetY <= rect.top + rect.height
   );
 }
+
+const CLS_PREFIX = 'tui-md-';
+
+export function cls(...names: string[]) {
+  return names.map(className => `${CLS_PREFIX}${className}`).join(' ');
+}

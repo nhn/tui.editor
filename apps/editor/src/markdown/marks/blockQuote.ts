@@ -1,7 +1,7 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
 import { EditorCommand } from '@t/spec';
-import { cls } from '@/utils/dom-legacy';
+import { cls } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import {
   createParagraph,

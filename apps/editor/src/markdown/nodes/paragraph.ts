@@ -4,7 +4,7 @@ import { Transaction } from 'prosemirror-state';
 import { ToastMark } from '@toast-ui/toastmark';
 import { EditorCommand } from '@t/spec';
 import { MdNode } from '@t/markdown';
-import { cls } from '@/utils/dom-legacy';
+import { cls } from '@/utils/dom';
 import Node from '@/spec/node';
 import { hasSpecificTypeAncestor, isOrderedListNode, isTableCellNode } from '@/utils/markdown';
 import {
