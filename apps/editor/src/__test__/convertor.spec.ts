@@ -287,7 +287,7 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    fit('inlinHtml', () => {
+    it('inlinHtml', () => {
       const markdown = source`
         <b>foo</b>
         <strong>foo</strong>

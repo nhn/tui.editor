@@ -16,15 +16,18 @@ function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
 }
 
-function findNodeType(schema: Schema, tag: string, mark = false) {
+function getTagInfo(schema: Schema, tag: string, mark = false) {
   const matched = tag.match(/<(.*?)>/);
   const nodes = mark ? schema.marks : schema.nodes;
 
   if (matched) {
     const tagName = matched[1].replace('/', '');
-    const markName = tagMap[tagName];
+    const nodeName = tagMap[tagName];
+    const nodeType = nodes[nodeName];
 
-    return { nodeType: nodes[markName], tagName };
+    if (nodeType) {
+      return { nodeType, tagName };
+    }
   }
 
   return null;
@@ -172,7 +175,7 @@ export const toWwConvertors: ToWwConvertorMap = {
 
   htmlInline(state, node, { entering }) {
     const tag = node.literal!;
-    const tagInfo = findNodeType(state.schema, tag, true);
+    const tagInfo = getTagInfo(state.schema, tag, true);
 
     if (tagInfo) {
       const nodeType = tagInfo.nodeType as MarkType;
@@ -185,12 +188,9 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  /**
-   * @TODO add node
-   */
   htmlBlock(state, node, { entering }) {
     const tag = node.literal!;
-    const tagInfo = findNodeType(state.schema, tag);
+    const tagInfo = getTagInfo(state.schema, tag);
 
     if (tagInfo) {
       const nodeType = tagInfo.nodeType as NodeType;
