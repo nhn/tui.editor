@@ -12,7 +12,7 @@ import {
 function getSelectionRanges(
   doc: Node,
   cellsPos: CellInfo[][],
-  { startRowIndex, rowCount, startColumnIndex, columnCount }: SelectionInfo
+  { startRowIndex, startColumnIndex, rowCount, columnCount }: SelectionInfo
 ) {
   const ranges = [];
 
@@ -28,6 +28,10 @@ function getSelectionRanges(
 }
 
 export default class CellSelection extends Selection {
+  public startCell: ResolvedPos;
+
+  public endCell: ResolvedPos;
+
   constructor(startCellPos: ResolvedPos, endCellPos = startCellPos) {
     const doc = startCellPos.node(0);
 
@@ -37,14 +41,14 @@ export default class CellSelection extends Selection {
 
     super(ranges[0].$from, ranges[0].$to, ranges);
 
-    this.$anchor = startCellPos;
-    this.$head = endCellPos;
+    this.startCell = startCellPos;
+    this.endCell = endCellPos;
   }
 
   map(doc: Node, mapping: Mappable) {
-    const startCell = doc.resolve(mapping.map(this.$anchor.pos));
-    const endCell = doc.resolve(mapping.map(this.$head.pos));
-    const removed = startCell.parent.childCount < this.$anchor.parent.childCount;
+    const startCell = doc.resolve(mapping.map(this.startCell.pos));
+    const endCell = doc.resolve(mapping.map(this.endCell.pos));
+    const removed = startCell.parent.childCount < this.startCell.parent.childCount;
 
     if (removed) {
       const from = doc.resolve(startCell.pos + 1);
@@ -58,8 +62,8 @@ export default class CellSelection extends Selection {
   eq(cell: CellSelection) {
     return (
       cell instanceof CellSelection &&
-      cell.$anchor.pos === this.$anchor.pos &&
-      cell.$head.pos === this.$head.pos
+      cell.startCell.pos === this.startCell.pos &&
+      cell.endCell.pos === this.endCell.pos
     );
   }
 }

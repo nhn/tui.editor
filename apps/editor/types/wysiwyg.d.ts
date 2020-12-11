@@ -1,3 +1,6 @@
+import { ResolvedPos } from 'prosemirror-model';
+import { Selection } from 'prosemirror-state';
+
 export type WwNodeType =
   | 'text'
   | 'paragraph'
@@ -19,3 +22,8 @@ export type WwNodeType =
   | 'customBlock';
 
 export type WwMarkType = 'strong' | 'emph' | 'strike' | 'link' | 'code';
+
+export interface CellSelection extends Selection {
+  startCell: ResolvedPos;
+  endCell: ResolvedPos;
+}
