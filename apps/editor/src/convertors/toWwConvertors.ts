@@ -7,7 +7,8 @@ import {
   ListItemMdNode,
   ImageMdNode,
   LinkMdNode,
-  CustomBlockMdNode
+  CustomBlockMdNode,
+  MdNode
 } from '@t/markdown';
 
 import { getTagMap } from './htmlNodeMap';
@@ -17,11 +18,11 @@ function getTextWithoutTrailingNewline(text: string) {
 }
 
 function getTagInfo(schema: Schema, tag: string, mark = false) {
-  const matched = tag.match(/<(.*?)>/);
+  const matched = tag.match(/<?\/(.*?)>/);
   const nodes = mark ? schema.marks : schema.nodes;
 
   if (matched) {
-    const tagName = matched[1].replace('/', '');
+    const [, tagName] = matched;
     const nodeName = tagMap[tagName];
     const nodeType = nodes[nodeName];
 
@@ -35,12 +36,25 @@ function getTagInfo(schema: Schema, tag: string, mark = false) {
 
 const tagMap = getTagMap();
 
+function hasSoftbreak(node: MdNode) {
+  let foundNode = node.firstChild;
+
+  while (foundNode) {
+    if (foundNode.type === 'softbreak') {
+      return true;
+    }
+    foundNode = foundNode.next;
+  }
+
+  return false;
+}
+
 export const toWwConvertors: ToWwConvertorMap = {
   text(state, node) {
     state.addText(node.literal || '');
   },
 
-  paragraph(state, _, { entering }) {
+  paragraph(state, node, { entering }) {
     const { paragraph } = state.schema.nodes;
 
     if (entering) {
@@ -165,8 +179,15 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  softbreak(state) {
-    state.addText('\n');
+  softbreak(state, node) {
+    const prevBr =
+      node.prev && node.prev.type === 'htmlInline' && /<br ?\/?>/.test(node.prev.literal!);
+
+    if (prevBr) {
+      state.addNode(state.schema.nodes.softBreak, { htmlString: true });
+    } else {
+      state.addText('\n');
+    }
   },
 
   linebreak(state) {
