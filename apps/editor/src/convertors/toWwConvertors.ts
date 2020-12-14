@@ -10,7 +10,7 @@ import {
   CustomBlockMdNode
 } from '@t/markdown';
 
-import { getTagInfo } from './htmlNodeMap';
+import { getHTMLNodeInfo } from './htmlNodeHepler';
 
 function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
@@ -166,7 +166,7 @@ export const toWwConvertors: ToWwConvertorMap = {
 
   htmlInline(state, node, { entering }) {
     const { schema } = state;
-    const tagInfo = getTagInfo(node.literal!);
+    const tagInfo = getHTMLNodeInfo(node.literal!);
 
     if (tagInfo) {
       const { tagName, nodeType, mark } = tagInfo;
@@ -188,7 +188,7 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   htmlBlock(state, node, { entering }) {
-    const tagInfo = getTagInfo(node.literal!);
+    const tagInfo = getHTMLNodeInfo(node.literal!);
 
     if (tagInfo) {
       const { nodeType } = tagInfo;

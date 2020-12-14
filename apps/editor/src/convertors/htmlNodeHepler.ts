@@ -5,7 +5,7 @@ interface HTMLNodeMap {
   };
 }
 
-function getTagMap(htmlNodeMap: HTMLNodeMap) {
+function getHTMLNodeMap(htmlNodeMap: HTMLNodeMap) {
   const flattenTagMap: HTMLNodeMap = {};
 
   Object.keys(htmlNodeMap).forEach(tags => {
@@ -27,9 +27,9 @@ const htmlNodeMap: HTMLNodeMap = {
   br: { nodeType: 'softBreak' }
 };
 
-const nodeMap = getTagMap(htmlNodeMap);
+const nodeMap = getHTMLNodeMap(htmlNodeMap);
 
-export function getTagInfo(tag: string) {
+export function getHTMLNodeInfo(tag: string) {
   const matched = tag.match(/<?\/?(.*?)>/);
 
   if (matched) {
