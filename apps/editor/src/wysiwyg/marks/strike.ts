@@ -17,14 +17,7 @@ export class Strike extends Mark {
       },
       parseDOM: [{ tag: 's' }, { tag: 'del' }],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
-        const { htmlString } = attrs;
-
-        return [
-          htmlString || 'del',
-          {
-            ...(htmlString && { 'data-pass': 'true' })
-          }
-        ];
+        return [attrs.htmlString || 'del'];
       }
     };
   }

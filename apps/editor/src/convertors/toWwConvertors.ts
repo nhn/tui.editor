@@ -1,4 +1,4 @@
-import { NodeType, MarkType, Schema } from 'prosemirror-model';
+import { NodeType, MarkType } from 'prosemirror-model';
 
 import { ToWwConvertorMap } from '@t/convertor';
 import {
@@ -7,46 +7,17 @@ import {
   ListItemMdNode,
   ImageMdNode,
   LinkMdNode,
-  CustomBlockMdNode,
-  MdNode
+  CustomBlockMdNode
 } from '@t/markdown';
 
-import { getTagMap } from './htmlNodeMap';
+import { getTagInfo } from './htmlNodeMap';
 
 function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
 }
 
-function getTagInfo(schema: Schema, tag: string, mark = false) {
-  const matched = tag.match(/<?\/(.*?)>/);
-  const nodes = mark ? schema.marks : schema.nodes;
-
-  if (matched) {
-    const [, tagName] = matched;
-    const nodeName = tagMap[tagName];
-    const nodeType = nodes[nodeName];
-
-    if (nodeType) {
-      return { nodeType, tagName };
-    }
-  }
-
-  return null;
-}
-
-const tagMap = getTagMap();
-
-function hasSoftbreak(node: MdNode) {
-  let foundNode = node.firstChild;
-
-  while (foundNode) {
-    if (foundNode.type === 'softbreak') {
-      return true;
-    }
-    foundNode = foundNode.next;
-  }
-
-  return false;
+function isBrHtml(html: string) {
+  return /<br ?\/?>/.test(html);
 }
 
 export const toWwConvertors: ToWwConvertorMap = {
@@ -180,12 +151,11 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   softbreak(state, node) {
-    const prevBr =
-      node.prev && node.prev.type === 'htmlInline' && /<br ?\/?>/.test(node.prev.literal!);
+    const { next, prev } = node;
+    const prevBr = prev && prev.type === 'htmlInline' && isBrHtml(prev.literal!);
+    const nextBr = next && next.type === 'htmlInline' && isBrHtml(next.literal!);
 
-    if (prevBr) {
-      state.addNode(state.schema.nodes.softBreak, { htmlString: true });
-    } else {
+    if (!prevBr && !nextBr) {
       state.addText('\n');
     }
   },
@@ -195,29 +165,37 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   htmlInline(state, node, { entering }) {
-    const tag = node.literal!;
-    const tagInfo = getTagInfo(state.schema, tag, true);
+    const { schema } = state;
+    const tagInfo = getTagInfo(node.literal!);
 
     if (tagInfo) {
-      const nodeType = tagInfo.nodeType as MarkType;
+      const { tagName, nodeType, mark } = tagInfo;
+      const nodes = mark ? schema.marks : schema.nodes;
+      const type = nodes[nodeType];
 
       if (entering) {
-        state.openMark(nodeType.create({ htmlString: tagInfo.tagName }));
+        if (tagName === 'br') {
+          const inCell = node.parent!.type === 'tableCell';
+
+          state.addNode(type as NodeType, { htmlString: true, inCell });
+        } else {
+          state.openMark((type as MarkType).create({ htmlString: tagName }));
+        }
       } else {
-        state.closeMark(nodeType);
+        state.closeMark(type as MarkType);
       }
     }
   },
 
   htmlBlock(state, node, { entering }) {
-    const tag = node.literal!;
-    const tagInfo = getTagInfo(state.schema, tag);
+    const tagInfo = getTagInfo(node.literal!);
 
     if (tagInfo) {
-      const nodeType = tagInfo.nodeType as NodeType;
+      const { nodeType } = tagInfo;
+      const type = state.schema.nodes[nodeType];
 
       if (entering) {
-        state.openNode(nodeType, { htmlString: true });
+        state.openNode(type, { htmlString: true });
       } else {
         state.closeNode();
       }

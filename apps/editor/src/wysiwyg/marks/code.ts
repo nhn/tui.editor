@@ -17,14 +17,7 @@ export class Code extends Mark {
       },
       parseDOM: [{ tag: 'code' }],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
-        const { htmlString } = attrs;
-
-        return [
-          htmlString || 'code',
-          {
-            ...(htmlString && { 'data-pass': 'true' })
-          }
-        ];
+        return [attrs.htmlString || 'code'];
       }
     };
   }

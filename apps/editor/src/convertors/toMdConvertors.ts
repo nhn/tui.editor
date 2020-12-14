@@ -126,8 +126,19 @@ const nodes: ToMdNodeConvertorMap = {
     state.closeBlock(node);
   },
 
-  softBreak(state) {
-    state.write('<br>\n');
+  softBreak(state, node, parent, index) {
+    if (node.attrs.inCell) {
+      state.write('<br>');
+    } else {
+      const prevIndex = index && index !== 0 ? index - 1 : 0;
+      const prevNode = parent && parent.child(prevIndex);
+
+      if (prevNode && prevNode.type.name !== 'softBreak') {
+        state.write('\n');
+      }
+
+      state.write('<br>\n');
+    }
   },
 
   hardBreak(state, node, parent, index = 0) {

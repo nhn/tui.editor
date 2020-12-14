@@ -1,20 +1,42 @@
-export const tagMap: { [k: string]: string } = {
-  'b, strong': 'strong',
-  'i, em': 'emph',
-  's, del': 'strike',
-  code: 'code'
-};
+interface HTMLNodeMap {
+  [k: string]: {
+    nodeType: string;
+    mark?: boolean;
+  };
+}
 
-export function getTagMap() {
-  const flattenTagMap: { [k: string]: string } = {};
+function getTagMap(htmlNodeMap: HTMLNodeMap) {
+  const flattenTagMap: HTMLNodeMap = {};
 
-  Object.keys(tagMap).forEach(tags => {
+  Object.keys(htmlNodeMap).forEach(tags => {
     const tagNames = tags.split(', ');
 
     tagNames.forEach(tagName => {
-      flattenTagMap[tagName] = tagMap[tags];
+      flattenTagMap[tagName] = htmlNodeMap[tags];
     });
   });
 
   return flattenTagMap;
+}
+
+const htmlNodeMap: HTMLNodeMap = {
+  'b, strong': { nodeType: 'strong', mark: true },
+  'i, em': { nodeType: 'emph', mark: true },
+  's, del': { nodeType: 'strike', mark: true },
+  code: { nodeType: 'code', mark: true },
+  br: { nodeType: 'softBreak' }
+};
+
+const nodeMap = getTagMap(htmlNodeMap);
+
+export function getTagInfo(tag: string) {
+  const matched = tag.match(/<?\/?(.*?)>/);
+
+  if (matched) {
+    const [, tagName] = matched;
+
+    return { tagName, ...nodeMap[tagName] };
+  }
+
+  return null;
 }

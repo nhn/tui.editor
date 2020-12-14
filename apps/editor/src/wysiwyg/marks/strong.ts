@@ -17,14 +17,7 @@ export class Strong extends Mark {
       },
       parseDOM: [{ tag: 'b' }, { tag: 'strong' }],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
-        const { htmlString } = attrs;
-
-        return [
-          htmlString || 'strong',
-          {
-            ...(htmlString && { 'data-pass': 'true' })
-          }
-        ];
+        return [attrs.htmlString || 'strong'];
       }
     };
   }

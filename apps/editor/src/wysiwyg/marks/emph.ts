@@ -17,14 +17,7 @@ export class Emph extends Mark {
       },
       parseDOM: [{ tag: 'i' }, { tag: 'em' }],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
-        const { htmlString } = attrs;
-
-        return [
-          htmlString || 'em',
-          {
-            ...(htmlString && { 'data-pass': 'true' })
-          }
-        ];
+        return [attrs.htmlString || 'em'];
       }
     };
   }

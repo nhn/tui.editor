@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpecArray } from 'prosemirror-model';
 
 import Node from '@/spec/node';
 
@@ -10,21 +10,15 @@ export class SoftBreak extends Node {
   get defaultSchema() {
     return {
       attrs: {
-        htmlString: { default: null }
+        htmlString: { default: null },
+        inCell: { default: false }
       },
       inline: true,
       group: 'inline',
       selectable: false,
       parseDOM: [{ tag: 'br' }],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        const { htmlString } = attrs;
-
-        return [
-          'br',
-          {
-            ...(htmlString && { 'data-pass': 'true' })
-          }
-        ];
+      toDOM(): DOMOutputSpecArray {
+        return ['br'];
       }
     };
   }

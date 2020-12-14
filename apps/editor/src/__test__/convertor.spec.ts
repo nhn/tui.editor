@@ -269,24 +269,6 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    // @TODO <br> changed to html
-    xit('table with newlines', () => {
-      const markdown = source`
-        | thead<br>thead | thead |
-        | ----- | ----- |
-        | tbody<br>tbody | tbody |
-        | tbody | tbody<br>tbody<br>tbody |
-      `;
-      const expected = source`
-        | thead<br>thead | thead |
-        | ---------- | ----- |
-        | tbody<br>tbody | tbody |
-        | tbody | tbody<br>tbody<br>tbody |
-      `;
-
-      assertConverting(markdown, expected);
-    });
-
     it('inlinHtml', () => {
       const markdown = source`
         <b>foo</b>
@@ -302,6 +284,36 @@ describe('Convertor', () => {
       `;
 
       assertConverting(markdown, markdown);
+    });
+
+    it('br html string (newline)', () => {
+      const markdown = source`
+        foo
+        <br>
+        bar
+        <br>
+        <br>
+        baz
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('table with newlines', () => {
+      const markdown = source`
+        | thead<br>thead | thead |
+        | ----- | ----- |
+        | tbody<br>tbody | tbody |
+        | tbody | tbody<br>tbody<br>tbody |
+      `;
+      const expected = source`
+        | thead<br>thead | thead |
+        | ---------- | ----- |
+        | tbody<br>tbody | tbody |
+        | tbody | tbody<br>tbody<br>tbody |
+      `;
+
+      assertConverting(markdown, `${expected}\n`);
     });
   });
 });
