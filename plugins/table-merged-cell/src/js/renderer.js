@@ -48,9 +48,6 @@ export const renderer = {
     if (entering) {
       const { attributes = {} } = result;
 
-      if (node.orgStringContent) {
-        attributes['data-org-content'] = encodeHTMLEntity(node.orgStringContent);
-      }
       if (node.colspan) {
         attributes.colspan = node.colspan;
       }

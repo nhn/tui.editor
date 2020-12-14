@@ -2,8 +2,6 @@
  * @fileoverview Implements tableRenderer
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import encodeHTMLEntity from 'tui-code-snippet/string/encodeHTMLEntity';
-
 import tableDataHandler from './tableDataHandler';
 
 /**
@@ -14,23 +12,15 @@ import tableDataHandler from './tableDataHandler';
  */
 function _createCellHtml(cell) {
   const { colspan, rowspan, align, nodeName, content } = cell;
-  let orgContent = '';
   let attrs = '';
 
   if (colspan > 1) {
     attrs = ` colspan="${colspan}"`;
-    orgContent = `@cols=${colspan}:`;
   }
   if (rowspan > 1) {
     attrs += ` rowspan="${rowspan}"`;
-    orgContent += `@rows=${rowspan}:`;
   }
   attrs += align ? ` align="${align}"` : '';
-
-  if (orgContent) {
-    orgContent += content;
-    attrs += ` data-org-content="${encodeHTMLEntity(orgContent)}"`;
-  }
 
   return `<${nodeName}${attrs}>${content}</${nodeName}>`;
 }
