@@ -1,5 +1,3 @@
-import encodeHTMLEntity from 'tui-code-snippet/string/encodeHTMLEntity';
-
 export const renderer = {
   tableRow(node, { entering, origin }) {
     if (entering) {
