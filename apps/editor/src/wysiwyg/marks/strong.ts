@@ -13,11 +13,11 @@ export class Strong extends Mark {
   get defaultSchema() {
     return {
       attrs: {
-        htmlString: { default: null }
+        htmlToken: { default: null }
       },
       parseDOM: [{ tag: 'b' }, { tag: 'strong' }],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
-        return [attrs.htmlString || 'strong'];
+        return [attrs.htmlToken || 'strong'];
       }
     };
   }

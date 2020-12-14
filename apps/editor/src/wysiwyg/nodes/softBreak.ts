@@ -10,7 +10,7 @@ export class SoftBreak extends Node {
   get defaultSchema() {
     return {
       attrs: {
-        htmlString: { default: null },
+        htmlToken: { default: null },
         inCell: { default: false }
       },
       inline: true,

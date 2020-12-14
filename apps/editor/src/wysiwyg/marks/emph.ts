@@ -13,11 +13,11 @@ export class Emph extends Mark {
   get defaultSchema() {
     return {
       attrs: {
-        htmlString: { default: null }
+        htmlToken: { default: null }
       },
       parseDOM: [{ tag: 'i' }, { tag: 'em' }],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
-        return [attrs.htmlString || 'em'];
+        return [attrs.htmlToken || 'em'];
       }
     };
   }

@@ -177,9 +177,9 @@ export const toWwConvertors: ToWwConvertorMap = {
         if (tagName === 'br') {
           const inCell = node.parent!.type === 'tableCell';
 
-          state.addNode(type as NodeType, { htmlString: true, inCell });
+          state.addNode(type as NodeType, { htmlToken: true, inCell });
         } else {
-          state.openMark((type as MarkType).create({ htmlString: tagName }));
+          state.openMark((type as MarkType).create({ htmlToken: tagName }));
         }
       } else {
         state.closeMark(type as MarkType);
@@ -195,7 +195,7 @@ export const toWwConvertors: ToWwConvertorMap = {
       const type = state.schema.nodes[nodeType];
 
       if (entering) {
-        state.openNode(type, { htmlString: true });
+        state.openNode(type, { htmlToken: true });
       } else {
         state.closeNode();
       }

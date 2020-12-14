@@ -207,14 +207,14 @@ const nodes: ToMdNodeConvertorMap = {
 const marks: ToMdMarkConvertorMap = {
   strong: {
     open(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlString } = mark.attrs;
+      const { htmlToken } = mark.attrs;
 
-      return htmlString ? `<${htmlString}>` : '**';
+      return htmlToken ? `<${htmlToken}>` : '**';
     },
     close(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlString } = mark.attrs;
+      const { htmlToken } = mark.attrs;
 
-      return htmlString ? `</${htmlString}>` : '**';
+      return htmlToken ? `</${htmlToken}>` : '**';
     },
     mixable: true,
     removedEnclosingWhitespace: true
@@ -222,14 +222,14 @@ const marks: ToMdMarkConvertorMap = {
 
   emph: {
     open(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlString } = mark.attrs;
+      const { htmlToken } = mark.attrs;
 
-      return htmlString ? `<${htmlString}>` : '*';
+      return htmlToken ? `<${htmlToken}>` : '*';
     },
     close(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlString } = mark.attrs;
+      const { htmlToken } = mark.attrs;
 
-      return htmlString ? `</${htmlString}>` : '*';
+      return htmlToken ? `</${htmlToken}>` : '*';
     },
     mixable: true,
     removedEnclosingWhitespace: true
@@ -237,14 +237,14 @@ const marks: ToMdMarkConvertorMap = {
 
   strike: {
     open(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlString } = mark.attrs;
+      const { htmlToken } = mark.attrs;
 
-      return htmlString ? `<${htmlString}>` : '~~';
+      return htmlToken ? `<${htmlToken}>` : '~~';
     },
     close(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlString } = mark.attrs;
+      const { htmlToken } = mark.attrs;
 
-      return htmlString ? `</${htmlString}>` : '~~';
+      return htmlToken ? `</${htmlToken}>` : '~~';
     },
     mixable: true,
     removedEnclosingWhitespace: true
@@ -264,14 +264,14 @@ const marks: ToMdMarkConvertorMap = {
 
   code: {
     open(state: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      const { htmlString } = mark.attrs;
+      const { htmlToken } = mark.attrs;
 
-      return htmlString ? `<${htmlString}>` : addBackticks(parent.child(index), -1);
+      return htmlToken ? `<${htmlToken}>` : addBackticks(parent.child(index), -1);
     },
     close(state: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      const { htmlString } = mark.attrs;
+      const { htmlToken } = mark.attrs;
 
-      return htmlString ? `</${htmlString}>` : addBackticks(parent.child(index - 1), 1);
+      return htmlToken ? `</${htmlToken}>` : addBackticks(parent.child(index - 1), 1);
     },
     escape: false
   }

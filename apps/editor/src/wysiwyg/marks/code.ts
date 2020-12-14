@@ -13,11 +13,11 @@ export class Code extends Mark {
   get defaultSchema() {
     return {
       attrs: {
-        htmlString: { default: null }
+        htmlToken: { default: null }
       },
       parseDOM: [{ tag: 'code' }],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
-        return [attrs.htmlString || 'code'];
+        return [attrs.htmlToken || 'code'];
       }
     };
   }
