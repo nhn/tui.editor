@@ -16,7 +16,7 @@ import Preview from '@/preview';
 import domUtils from '@/utils/dom-legacy';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
-import { findAdjacentElementToScrollTop } from './scroll/helper';
+import { findAdjacentElementToScrollTop } from './scroll/dom';
 import { removeOffsetInfoByNode } from './scroll/offset';
 
 export const CLASS_HIGHLIGHT = 'te-preview-highlight';

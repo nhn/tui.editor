@@ -50,7 +50,14 @@ export function isHtmlNode(mdNode: MdNode) {
 export function isStyledInlineNode(mdNode: MdNode) {
   const { type } = mdNode;
 
-  return type === 'strike' || type === 'strong' || type === 'emph' || type === 'code';
+  return (
+    type === 'strike' ||
+    type === 'strong' ||
+    type === 'emph' ||
+    type === 'code' ||
+    type === 'link' ||
+    type === 'image'
+  );
 }
 
 export function isCodeBlockNode(mdNode: MdNode): mdNode is CodeBlockMdNode {

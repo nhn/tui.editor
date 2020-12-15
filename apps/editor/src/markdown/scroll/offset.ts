@@ -1,5 +1,5 @@
 import toArray from 'tui-code-snippet/collection/toArray';
-import { getTotalOffsetTop } from './helper';
+import { getTotalOffsetTop } from './dom';
 
 const offsetInfoMap: { [key: number]: { height: number; offsetTop: number } } = {};
 
