@@ -411,7 +411,7 @@ class ToastUIEditor {
    */
   getHTML() {
     if (this.isWysiwygMode()) {
-      this.mdEditor.setMarkdown(this.convertor.toMarkdownText(this.wwEditor.getModel()));
+      return this.wwEditor.getHTML();
     }
 
     const mdNode = this.toastMark.getRootNode();
