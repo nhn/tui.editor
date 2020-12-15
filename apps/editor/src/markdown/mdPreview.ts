@@ -35,7 +35,7 @@ function findTableCell(tableRow: MdNode, chOffset: number) {
 }
 
 interface Options {
-  linkAttribute: Record<string, any>;
+  linkAttribute: Record<string, any> | null;
   customHTMLRenderer: CustomHTMLRendererMap;
   isViewer: boolean;
   highlight?: boolean;

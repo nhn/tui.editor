@@ -7,7 +7,7 @@ export function sendHostName() {
   sendHostname('editor', 'UA-129966929-1');
 }
 
-export function includes(arr, targetItem) {
+export function includes<T>(arr: T[], targetItem: T) {
   return arr.indexOf(targetItem) !== -1;
 }
 
@@ -18,12 +18,12 @@ const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang',
  * @param {?object} attribute - attribute for link
  * @returns {object} sanitized attribute
  */
-export function sanitizeLinkAttribute(attribute) {
+export function sanitizeLinkAttribute(attribute: Record<string, any>) {
   if (!attribute) {
     return null;
   }
 
-  const linkAttribute = {};
+  const linkAttribute: Record<string, any> = {};
 
   availableLinkAttributes.forEach(key => {
     if (!isUndefined(attribute[key])) {

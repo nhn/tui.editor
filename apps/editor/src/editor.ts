@@ -161,8 +161,6 @@ class ToastUIEditor {
 
     this.eventEmitter = new EventEmitter();
 
-    // @TODO: should add sanitizeLinkAttribute method type
-    // @ts-ignore
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
     const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
     const {

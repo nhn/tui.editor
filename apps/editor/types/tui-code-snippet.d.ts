@@ -77,3 +77,7 @@ declare module 'tui-code-snippet/domEvent/off' {
     handler?: (...args: any[]) => any
   ): void;
 }
+
+declare module 'tui-code-snippet/request/sendHostname' {
+  export default function sendHostname(appName: string, trackingId: string): void;
+}

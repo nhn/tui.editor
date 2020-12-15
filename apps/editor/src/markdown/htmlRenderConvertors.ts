@@ -98,7 +98,7 @@ const baseConvertors: CustomHTMLRendererMap = {
 };
 
 export function getHTMLRenderConvertors(
-  linkAttribute: Record<string, any>,
+  linkAttribute: Record<string, any> | null,
   customConvertors: CustomHTMLRendererMap
 ) {
   const convertors = { ...baseConvertors };
