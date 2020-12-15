@@ -103,6 +103,8 @@ class ToastUIEditor {
 
   private i18n: I18n;
 
+  private scrollSync: ScrollSync;
+
   // @TODO: deprecated
   private ui: any;
 
@@ -257,7 +259,7 @@ class ToastUIEditor {
       sendHostName();
     }
 
-    new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
+    this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
   }
 
   /**
@@ -592,6 +594,7 @@ class ToastUIEditor {
     this.mdEditor.destroy();
     this.layout.destroy();
     this.preview.destroy();
+    this.scrollSync.destroy();
 
     if (this.getUI()) {
       this.getUI().remove();
