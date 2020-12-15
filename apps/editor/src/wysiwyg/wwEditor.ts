@@ -1,6 +1,6 @@
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { Schema, Node } from 'prosemirror-model';
+import { Schema, Node, Slice, Fragment } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { history } from 'prosemirror-history';
@@ -9,6 +9,7 @@ import EditorBase, { StateOptions } from '@/base';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import { getWwCommands } from '@/commands/wwCommands';
 
+import { placeholder } from '@/plugins/placeholder';
 import { tableSelectionPlugin } from '@/wysiwyg/plugins/tableSelection';
 import { tableContextMenuPlugin } from '@/wysiwyg/plugins/tableContextMenu';
 import { taskPlugin } from '@/wysiwyg/plugins/taskPlugin';
@@ -74,6 +75,7 @@ export default class WysiwygEditor extends EditorBase {
           ...baseKeymap
         }),
         history(),
+        placeholder(this.placeholder),
         tableSelectionPlugin(),
         tableContextMenuPlugin(this.eventEmitter),
         taskPlugin()
@@ -100,12 +102,6 @@ export default class WysiwygEditor extends EditorBase {
     return this.specs.commands(this.view, getWwCommands());
   }
 
-  /* eslint-disable @typescript-eslint/no-empty-function */
-
-  focus() {
-    this.view.focus();
-  }
-
   getHTML() {
     return this.view.dom.innerHTML;
   }
@@ -114,46 +110,40 @@ export default class WysiwygEditor extends EditorBase {
     return this.view.state.doc;
   }
 
-  getRange() {}
+  getRange() {
+    const { from, to } = this.view.state.selection;
+
+    return [from, to];
+  }
 
   getSchema() {
     return this.view.state.schema;
   }
 
-  insertText(text: string) {}
+  replaceSelection(content: string) {
+    const { schema, tr } = this.view.state;
+    const { paragraph } = schema.nodes;
+    const texts = content.split('\n');
+    const paras = texts.map(text => paragraph.create(null, schema.text(text)));
 
-  moveCursorToEnd() {}
-
-  moveCursorToStart() {}
-
-  replaceRelativeOffset(content: string, offset: number, overwriteLength: number) {}
-
-  replaceSelection(content: string, range: Range) {}
-
-  scrollTop(value: number) {
-    return true;
+    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(paras), 1, 1)));
+    this.focus();
   }
-
-  setMinHeight(minHeight: number) {}
-
-  setHeight(height: number) {}
 
   setModel(newDoc: Node, cursorToEnd = false) {
-    const { state, dispatch } = this.view;
-    const { tr, doc } = state;
+    const { tr, doc } = this.view.state;
 
-    dispatch(tr.replaceWith(0, doc.content.size, newDoc));
+    this.view.dispatch(tr.replaceWith(0, doc.content.size, newDoc));
+
+    if (cursorToEnd) {
+      this.moveCursorToEnd();
+    }
   }
 
-  setPlaceholder(placeholder: string) {}
+  setSelection(start = 0, end = 0) {
+    const { tr } = this.view.state;
+    const selection = createTextSelection(tr, start, end);
 
-  setSelection(from = 0, to = 0) {
-    const { state, dispatch } = this.view;
-    const { tr } = state;
-    const selection = createTextSelection(tr, from, to);
-
-    dispatch(tr.setSelection(selection));
+    this.view.dispatch(tr.setSelection(selection));
   }
-
-  destroy() {}
 }

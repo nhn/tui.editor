@@ -93,7 +93,7 @@ export default abstract class EditorBase {
   }
 
   scrollTo(top: number) {
-    this.view.dom.scrollTo({ top });
+    this.el.scrollTop = top;
   }
 
   setPlaceholder(text: string) {
