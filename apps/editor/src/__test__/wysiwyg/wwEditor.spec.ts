@@ -88,9 +88,9 @@ describe('WysiwygEditor', () => {
       setContent(content);
 
       wwe.setHeight(50);
-      wwe.scrollTo(30);
+      wwe.setScrollTop(30);
 
-      expect(wwe.el.scrollTop).toBe(30);
+      expect(wwe.getScrollTop()).toBe(30);
     });
 
     it('getRange() return selection range as array', () => {
