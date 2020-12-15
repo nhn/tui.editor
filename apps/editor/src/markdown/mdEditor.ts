@@ -35,8 +35,14 @@ import { createParagraph, createTextSelection, nbspToSpace } from '@/helper/mani
 import { placeholder } from '@/plugins/placeholder';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 
+interface WindowWithClipboard extends Window {
+  clipboardData?: DataTransfer | null;
+}
+
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
+
+  private clipboard: HTMLElement;
 
   constructor(el: HTMLElement, toastMark: ToastMark, eventEmitter: Emitter) {
     super(el, eventEmitter);
@@ -48,6 +54,7 @@ export default class MdEditor extends EditorBase {
     this.keymaps = this.createKeymaps();
     this.view = this.createView();
     this.commands = this.createCommands();
+    this.clipboard = document.createElement('div');
     this.specs.setContext({ ...this.context, view: this.view });
   }
 
@@ -125,13 +132,46 @@ export default class MdEditor extends EditorBase {
 
         this.view.updateState(state);
       },
+      // transformPastedHTML: () => {
+      //   let html = '';
+
+      //   this.clipboard.childNodes.forEach(node => {
+      //     if (
+      //       node.nodeName !== 'STYLE' &&
+      //       node.nodeName !== 'META' &&
+      //       node.nodeName !== 'TITLE' &&
+      //       node.nodeType !== Node.TEXT_NODE
+      //     ) {
+      //       html += `<div>${node.textContent!}</div>`;
+      //     }
+      //   });
+      //   this.clipboard.innerHTML = '';
+
+      //   return html;
+      // },
       clipboardTextParser: text => {
         const lineTexts = decodeURL(text).split('\n');
         const nodes = lineTexts.map(lineText => createParagraph(this.schema, lineText));
 
         return new Slice(Fragment.from(nodes), 1, 1);
       },
-      clipboardTextSerializer: slice => this.getChanged(slice)
+      clipboardTextSerializer: slice => this.getChanged(slice),
+      handleDOMEvents: {
+        scroll: () => {
+          this.eventEmitter.emit('scroll', { source: 'editor' });
+          return true;
+        },
+        paste: (_, ev: Event) => {
+          const clipboardData =
+            (ev as ClipboardEvent).clipboardData || (window as WindowWithClipboard).clipboardData!;
+          const html = clipboardData.getData('text/html');
+
+          if (clipboardData && html) {
+            this.clipboard.innerHTML = html;
+          }
+          return false;
+        }
+      }
     });
   }
 

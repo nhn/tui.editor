@@ -64,9 +64,8 @@
 
 .te-md-container .ProseMirror {
   font-size: 13px;
-  height: inherit;
   overflow: auto;
-  height: 100%;
+  height: calc(100% - 36px);
 }
 
 .ProseMirror .placeholder {
@@ -185,15 +184,6 @@
   padding: 18px 25px;
 }
 
-.tui-editor-defaultUI .CodeMirror pre.CodeMirror-placeholder {
-  margin: 0;
-  padding-left: 25px;
-  color: grey;
-}
-
-.tui-editor-defaultUI .CodeMirror-scroll {
-  cursor: text;
-}
 
 /* Essential element style */
 .tui-editor-contents td.te-cell-selected {

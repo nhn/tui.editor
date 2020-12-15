@@ -32,6 +32,7 @@ import { invokePlugins, getPluginInfo } from './pluginHelper';
 import { ToastMark } from '@toast-ui/toastmark';
 import isString from 'tui-code-snippet/type/isString';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
+import { ScrollSync } from './markdown/scroll/scrollSync';
 
 /**
  * ToastUI Editor
@@ -256,8 +257,7 @@ class ToastUIEditor {
       sendHostName();
     }
 
-    // @TODO: should change for prosemirror
-    // register(this);
+    new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
   }
 
   /**
