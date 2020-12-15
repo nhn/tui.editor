@@ -74,9 +74,19 @@ describe('WysiwygEditor', () => {
     });
 
     it('scrollTo() move scroll position', () => {
-      setContent(
-        '<p>foo</p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p>'
-      );
+      const content = oneLineTrim`
+        <p>foo</p>
+        <p><br></p>
+        <p><br></p>
+        <p><br></p>
+        <p><br></p>
+        <p><br></p>
+        <p><br></p>
+        <p><br></p>
+      `;
+
+      setContent(content);
+
       wwe.setHeight(50);
       wwe.scrollTo(30);
 
@@ -84,14 +94,27 @@ describe('WysiwygEditor', () => {
     });
 
     it('getRange() return selection range as array', () => {
-      setContent('<p>foo</p><p>bar</p><p>baz</p>');
+      const content = oneLineTrim`
+        <p>foo</p>
+        <p>bar</p>
+        <p>baz</p>
+      `;
+
+      setContent(content);
+
       wwe.setSelection(13, 2);
 
       expect(wwe.getRange()).toEqual([2, 13]);
     });
 
     it('replaceSelection() change text of selection range', () => {
-      setContent('<p>foo</p><p>bar</p>');
+      const content = oneLineTrim`
+        <p>foo</p>
+        <p>bar</p>
+      `;
+
+      setContent(content);
+
       wwe.setSelection(3, 7);
       wwe.replaceSelection('new foo\nnew bar');
 
