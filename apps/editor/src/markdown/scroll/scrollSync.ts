@@ -1,19 +1,18 @@
 import { ProsemirrorNode } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import { Emitter } from '@t/event';
-import { getMdStartLine, isCodeBlockNode, isCustomBlockNode, isHtmlNode } from '@/utils/markdown';
+import { isHtmlNode, getMdStartLine } from '@/utils/markdown';
 import MarkdownPreview from '../mdPreview';
-import { animate } from './animation';
-import {
-  getParentNodeObj,
-  getTotalOffsetTop,
-  getAncestorHavingId,
-  getParentNodeObj2,
-  getAdditionalPos
-} from './helper';
-import { getAndSaveOffsetInfo } from './offset';
 import MdEditor from '../mdEditor';
-import { getEditorRangeHeightInfo, getNextNonBlankElement, isBlankLine } from './pos';
+import { animate } from './animation';
+import { getAndSaveOffsetInfo } from './offset';
+import {
+  getAdditionalPos,
+  getAncestorHavingId,
+  getEditorRangeHeightInfo,
+  getParentNodeObj,
+  getTotalOffsetTop
+} from './dom';
 
 const EDITOR_BOTTOM_PADDING = 18;
 
@@ -75,11 +74,11 @@ export class ScrollSync {
     });
   }
 
-  private getMdNodeInfo(doc: ProsemirrorNode, posInfo: PosInfo) {
+  private getMdNodeAtPos(doc: ProsemirrorNode, posInfo: PosInfo) {
     const indexInfo = doc.content.findIndex(posInfo.pos);
     const line = indexInfo.index;
 
-    return { line, firstMdNode: this.toastMark.findFirstNodeAtLine(line + 1) };
+    return this.toastMark.findFirstNodeAtLine(line + 1);
   }
 
   private syncPreviewScrollTop() {
@@ -87,7 +86,7 @@ export class ScrollSync {
     const { left, top } = editorView.dom.getBoundingClientRect();
     const posInfo = editorView.posAtCoords({ left, top })!;
     const { doc } = editorView.state;
-    const { line, firstMdNode } = this.getMdNodeInfo(doc, posInfo);
+    const firstMdNode = this.getMdNodeAtPos(doc, posInfo);
 
     if (!firstMdNode || isHtmlNode(firstMdNode)) {
       return;
@@ -100,29 +99,19 @@ export class ScrollSync {
     let targetScrollTop = isBottomPos ? previewEl.scrollHeight : 0;
 
     if (scrollTop && !isBottomPos) {
-      const { node, mdNode } = getParentNodeObj(firstMdNode);
+      const { el, mdNode } = getParentNodeObj(firstMdNode);
       const { height, rect } = getEditorRangeHeightInfo(doc, mdNode, children);
-      const totalOffsetTop = getTotalOffsetTop(node, previewRoot) || node.offset;
-      const nodeHeight = node.clientHeight;
+      const totalOffsetTop = getTotalOffsetTop(el, previewRoot) || el.offsetTop;
+      const nodeHeight = el.clientHeight;
       const ratio = top > rect.top ? Math.min((top - rect.top) / height, 1) : 0;
 
-      if (isBlankLine(doc, line) && !isCodeBlockNode(mdNode) && !isCustomBlockNode(mdNode)) {
-        const totalOffsetHeight = totalOffsetTop + nodeHeight;
-        const nextElement = getNextNonBlankElement(mdNode)!;
-
-        targetScrollTop = totalOffsetHeight;
-
-        if (nextElement) {
-          const nextTotalOffsetTop =
-            getTotalOffsetTop(nextElement, this.previewRoot) || nextElement.offsetTop;
-
-          targetScrollTop += (nextTotalOffsetTop - totalOffsetHeight) * ratio;
-        }
-      } else {
-        targetScrollTop = totalOffsetTop + nodeHeight * ratio;
-      }
-
-      targetScrollTop = this.getScrollTop('editor', scrollTop, targetScrollTop, curScrollTop);
+      targetScrollTop = totalOffsetTop + nodeHeight * ratio;
+      targetScrollTop = this.getResolvedScrollTop(
+        'editor',
+        scrollTop,
+        targetScrollTop,
+        curScrollTop
+      );
       this.latestEditorScrollTop = scrollTop;
     }
     if (targetScrollTop === curScrollTop) {
@@ -150,16 +139,21 @@ export class ScrollSync {
 
       const { children } = dom;
       const mdNodeId = Number(targetNode.getAttribute('data-nodeid'));
-      const { mdNode, node } = getParentNodeObj2(toastMark.findNodeById(mdNodeId));
+      const { mdNode, el } = getParentNodeObj(toastMark.findNodeById(mdNodeId));
       const mdNodeStartLine = getMdStartLine(mdNode);
 
       targetScrollTop = (children[mdNodeStartLine - 1] as HTMLElement).offsetTop;
 
       const { height } = getEditorRangeHeightInfo(state.doc, mdNode, children);
-      const { nodeHeight, offsetTop } = getAndSaveOffsetInfo(node, previewRoot, mdNodeId);
+      const { nodeHeight, offsetTop } = getAndSaveOffsetInfo(el, previewRoot, mdNodeId);
 
       targetScrollTop += getAdditionalPos(scrollTop, offsetTop, nodeHeight, height);
-      targetScrollTop = this.getScrollTop('preview', scrollTop, targetScrollTop, curScrollTop);
+      targetScrollTop = this.getResolvedScrollTop(
+        'preview',
+        scrollTop,
+        targetScrollTop,
+        curScrollTop
+      );
       this.latestPreviewScrollTop = scrollTop;
 
       if (targetScrollTop === curScrollTop) {
@@ -170,7 +164,7 @@ export class ScrollSync {
     this.run('preview', targetScrollTop, curScrollTop);
   }
 
-  private getScrollTop(
+  private getResolvedScrollTop(
     from: ScrollFrom,
     scrollTop: number,
     targetScrollTop: number,
@@ -206,5 +200,10 @@ export class ScrollSync {
     };
 
     animate(curScrollTop, targetScrollTop, syncCallbackObj);
+  }
+
+  destroy() {
+    this.eventEmitter.removeEventHandler('scroll');
+    this.eventEmitter.removeEventHandler('previewRenderAfter');
   }
 }
