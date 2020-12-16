@@ -1,5 +1,6 @@
 import { SyncCallbackObj } from './scrollSync';
 
+// @TODO: apply bezier and raq
 type WinSetTimeout = typeof window.setTimeout;
 
 const ANIMATION_TIME = 100;
