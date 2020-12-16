@@ -84,9 +84,8 @@ export class ScrollSync {
     return this.toastMark.findFirstNodeAtLine(line + 1);
   }
 
-  private getScrollTopByCaretPos(curScrollTop: number) {
+  private getScrollTopByCaretPos() {
     const pos = this.mdEditor.getRange();
-
     const firstMdNode = this.toastMark.findFirstNodeAtLine(pos[0][0]);
     const previewHeight = this.previewEl.clientHeight;
     const { el } = getParentNodeObj(firstMdNode);
@@ -96,7 +95,9 @@ export class ScrollSync {
 
     this.latestEditorScrollTop = null;
 
-    if (targetScrollTop - curScrollTop < previewHeight) {
+    const diff = el.getBoundingClientRect().top - this.previewEl.getBoundingClientRect().top;
+
+    if (diff < previewHeight) {
       return null;
     }
 
@@ -122,7 +123,7 @@ export class ScrollSync {
 
     if (scrollTop && !isBottomPos) {
       if (editing) {
-        const scrollTopByEditing = this.getScrollTopByCaretPos(curScrollTop);
+        const scrollTopByEditing = this.getScrollTopByCaretPos();
 
         if (!scrollTopByEditing) {
           return;
