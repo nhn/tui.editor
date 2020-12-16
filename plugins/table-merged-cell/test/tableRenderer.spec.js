@@ -60,11 +60,9 @@ describe('tableRenderer', () => {
       const result = tableRenderer.createTableHtml(renderData);
       const tableElement = createElement(result);
 
-      expect(tableElement.querySelector('th').getAttribute('data-org-content')).toBe(
-        '@cols=2:foo"bar"'
-      );
-      expect(tableElement.querySelector('td').getAttribute('data-org-content')).toBe(
-        '@cols=2:<span style="color: red;">baz</span>'
+      expect(tableElement.querySelector('th').outerHTML).toBe('<th colspan="2">foo"bar"</th>');
+      expect(tableElement.querySelector('td').outerHTML).toBe(
+        '<td colspan="2"><span style="color: red;">baz</span></td>'
       );
     });
   });

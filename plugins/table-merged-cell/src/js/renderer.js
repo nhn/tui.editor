@@ -1,5 +1,3 @@
-import encodeHTMLEntity from 'tui-code-snippet/string/encodeHTMLEntity';
-
 export const renderer = {
   tableRow(node, { entering, origin }) {
     if (entering) {
@@ -48,9 +46,6 @@ export const renderer = {
     if (entering) {
       const { attributes = {} } = result;
 
-      if (node.orgStringContent) {
-        attributes['data-org-content'] = encodeHTMLEntity(node.orgStringContent);
-      }
       if (node.colspan) {
         attributes.colspan = node.colspan;
       }

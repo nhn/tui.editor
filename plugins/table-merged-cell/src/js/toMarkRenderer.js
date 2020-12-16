@@ -86,19 +86,20 @@ export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
  * @private
  */
 export function _createTableCellMarkdown(cellElement, cellContentMarkdown) {
-  const orgContent = cellElement.getAttribute('data-org-content');
+  let markdown = '';
 
-  if (orgContent) {
-    const matched = orgContent.match(/(@(cols|rows)=[0-9]+:)/g);
-
-    if (matched) {
-      cellContentMarkdown = matched.join('') + cellContentMarkdown;
-    }
+  if (cellElement.hasAttribute('colspan')) {
+    markdown += `@cols=${cellElement.getAttribute('colspan')}:`;
   }
 
-  cellContentMarkdown = cellContentMarkdown.replace(/(\r\n)|(\r)|(\n)/g, '');
+  if (cellElement.hasAttribute('rowspan')) {
+    markdown += `@rows=${cellElement.getAttribute('rowspan')}:`;
+  }
 
-  return ` ${cellContentMarkdown} |`;
+  markdown += cellContentMarkdown;
+  markdown = markdown.replace(/(\r\n)|(\r)|(\n)/g, '');
+
+  return ` ${markdown} |`;
 }
 
 export function createToMarkRenderer(baseRenderer) {
