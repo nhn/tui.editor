@@ -45,11 +45,14 @@ export class ScrollSync {
 
   private blockedScroll: ScrollFrom | null = null;
 
+  private mdEditor: MdEditor;
+
   constructor(mdEditor: MdEditor, preview: MarkdownPreview, eventEmitter: Emitter) {
     const { previewContent: previewRoot, el: previewEl } = preview;
 
     this.previewRoot = previewRoot;
     this.previewEl = previewEl!;
+    this.mdEditor = mdEditor;
     this.editorView = mdEditor.view;
     this.toastMark = mdEditor.getToastMark();
     this.eventEmitter = eventEmitter;
@@ -62,7 +65,7 @@ export class ScrollSync {
       // browser rendering is not yet complete.
       // So the size of elements can not be accurately measured.
       setTimeout(() => {
-        this.syncPreviewScrollTop();
+        this.syncPreviewScrollTop(true);
       }, 200);
     });
     this.eventEmitter.listen('scroll', ({ source, data }) => {
@@ -81,7 +84,26 @@ export class ScrollSync {
     return this.toastMark.findFirstNodeAtLine(line + 1);
   }
 
-  private syncPreviewScrollTop() {
+  private getScrollTopByCaretPos(curScrollTop: number) {
+    const pos = this.mdEditor.getRange();
+
+    const firstMdNode = this.toastMark.findFirstNodeAtLine(pos[0][0]);
+    const previewHeight = this.previewEl.clientHeight;
+    const { el } = getParentNodeObj(firstMdNode);
+    const totalOffsetTop = getTotalOffsetTop(el, this.previewRoot) || el.offsetTop;
+    const nodeHeight = el.clientHeight;
+    const targetScrollTop = totalOffsetTop + nodeHeight - previewHeight * 0.5;
+
+    this.latestEditorScrollTop = null;
+
+    if (targetScrollTop - curScrollTop < previewHeight) {
+      return null;
+    }
+
+    return targetScrollTop;
+  }
+
+  private syncPreviewScrollTop(editing = false) {
     const { editorView, previewEl, previewRoot } = this;
     const { left, top } = editorView.dom.getBoundingClientRect();
     const posInfo = editorView.posAtCoords({ left, top })!;
@@ -99,13 +121,22 @@ export class ScrollSync {
     let targetScrollTop = isBottomPos ? previewEl.scrollHeight : 0;
 
     if (scrollTop && !isBottomPos) {
-      const { el, mdNode } = getParentNodeObj(firstMdNode);
-      const { height, rect } = getEditorRangeHeightInfo(doc, mdNode, children);
-      const totalOffsetTop = getTotalOffsetTop(el, previewRoot) || el.offsetTop;
-      const nodeHeight = el.clientHeight;
-      const ratio = top > rect.top ? Math.min((top - rect.top) / height, 1) : 0;
+      if (editing) {
+        const scrollTopByEditing = this.getScrollTopByCaretPos(curScrollTop);
 
-      targetScrollTop = totalOffsetTop + nodeHeight * ratio;
+        if (!scrollTopByEditing) {
+          return;
+        }
+        targetScrollTop = scrollTopByEditing;
+      } else {
+        const { el, mdNode } = getParentNodeObj(firstMdNode);
+        const { height, rect } = getEditorRangeHeightInfo(doc, mdNode, children);
+        const totalOffsetTop = getTotalOffsetTop(el, previewRoot) || el.offsetTop;
+        const nodeHeight = el.clientHeight;
+        const ratio = top > rect.top ? Math.min((top - rect.top) / height, 1) : 0;
+
+        targetScrollTop = totalOffsetTop + nodeHeight * ratio;
+      }
       targetScrollTop = this.getResolvedScrollTop(
         'editor',
         scrollTop,
