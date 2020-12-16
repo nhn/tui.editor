@@ -92,8 +92,12 @@ export default abstract class EditorBase {
     this.focus();
   }
 
-  scrollTo(top: number) {
-    this.view.dom.scrollTo({ top });
+  setScrollTop(top: number) {
+    this.el.scrollTop = top;
+  }
+
+  getScrollTop() {
+    return this.el.scrollTop;
   }
 
   setPlaceholder(text: string) {

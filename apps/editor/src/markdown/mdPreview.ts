@@ -199,6 +199,10 @@ class MarkdownPreview extends Preview {
     }
   }
 
+  getRenderer() {
+    return this.renderer;
+  }
+
   /**
    * render
    * @param {string} html - html string to render

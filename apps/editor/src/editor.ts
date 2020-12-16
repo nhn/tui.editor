@@ -394,31 +394,30 @@ class ToastUIEditor {
   setHTML(html: string, cursorToEnd = true) {}
 
   /**
-   * Get markdown syntax text.
-   * @returns {string}
+   * Get content to markdown
+   * @returns {string} markdown text
    */
   getMarkdown() {
-    let markdown;
-
     if (this.isMarkdownMode()) {
-      markdown = this.mdEditor.getMarkdown();
-    } else {
-      markdown = this.convertor.toMarkdownText(this.wwEditor.getModel());
+      return this.mdEditor.getMarkdown();
     }
 
-    return markdown;
+    return this.convertor.toMarkdownText(this.wwEditor.getModel());
   }
 
   /**
-   * Get html syntax text.
-   * @returns {string}
+   * Get content to html
+   * @returns {string} html string
    */
-  getHtml() {
+  getHTML() {
     if (this.isWysiwygMode()) {
       this.mdEditor.setMarkdown(this.convertor.toMarkdownText(this.wwEditor.getModel()));
     }
 
-    return '';
+    const mdNode = this.toastMark.getRootNode();
+    const mdRenderer = this.preview.getRenderer();
+
+    return mdRenderer.render(mdNode);
   }
 
   /**
@@ -426,11 +425,7 @@ class ToastUIEditor {
    * @param {string} text - text string to insert
    */
   insertText(text: string) {
-    if (this.isMarkdownMode()) {
-      this.mdEditor.replaceSelection(text);
-    } else {
-      this.wwEditor.insertText(text);
-    }
+    this.getCurrentModeEditor().replaceSelection(text);
   }
 
   /**
@@ -448,8 +443,7 @@ class ToastUIEditor {
 
   /**
    * Set editor height
-   * @param {string} height - editor height
-   * @returns {string} editor height
+   * @param {string} height - editor height in pixel
    */
   setHeight(height: string) {
     const { el } = this.options;
@@ -468,14 +462,17 @@ class ToastUIEditor {
     this.height = height;
   }
 
+  /**
+   * Get editor height
+   * @returns {string} editor height in pixel
+   */
   getHeight() {
     return this.height;
   }
 
   /**
-   * Set / Get min content height
+   * Set minimum height to editor content
    * @param {string} minHeight - min content height in pixel
-   * @returns {string} - min height in pixel
    */
   setMinHeight(minHeight: string) {
     this.minHeight = minHeight;
@@ -488,11 +485,15 @@ class ToastUIEditor {
 
     minHeightNum = Math.max(minHeightNum - diffHeight, 0);
 
-    // this.wwEditor.setMinHeight(minHeightNum);
+    this.wwEditor.setMinHeight(minHeightNum);
     this.mdEditor.setMinHeight(minHeightNum);
     this.preview.setMinHeight(minHeightNum);
   }
 
+  /**
+   * Get minimum height of editor content
+   * @returns {string} min height in pixel
+   */
   getMinHeight() {
     return this.minHeight;
   }
@@ -618,12 +619,19 @@ class ToastUIEditor {
   }
 
   /**
-   * Scroll Editor content to Top
-   * @param {number} value Scroll amount
-   * @returns {number}
+   * Move on scroll position of the editor container
+   * @param {number} value scrollTop value of editor container
    */
-  scrollTop(value: number) {
-    return this.getCurrentModeEditor().scrollTop(value);
+  setScrollTop(value: number) {
+    this.getCurrentModeEditor().setScrollTop(value);
+  }
+
+  /**
+   * Get scroll position value of editor container
+   * @returns {number} scrollTop value of editor container
+   */
+  getScrollTop() {
+    return this.getCurrentModeEditor().getScrollTop();
   }
 
   // @TODO: deprecated
@@ -640,15 +648,24 @@ class ToastUIEditor {
    * Reset TUIEditor
    */
   reset() {
-    this.wwEditor.reset();
+    this.wwEditor.setModel([]);
     this.mdEditor.setMarkdown('');
   }
 
   /**
    * Get current range
-   * @returns {{start, end}|Range}
+   * @returns {Array.<string[]>|Array.<string>} Returns the range of the selection depending on the editor mode
+   * @example
+   * // Markdown mode
+   * const mdRange = editor.getRange();
+   *
+   * console.log(mdRange); // [[startLineOffset, startCurorOffset], [endLineOffset, endCurorOffset]]
+   *
+   * // WYSIWYG mode
+   * const wwRange = editor.getRange();
+   *
+   * console.log(mdRange); // [startCursorOffset, endCursorOffset]]
    */
-  // @TODO: implement the API
   getRange() {
     return this.getCurrentModeEditor().getRange();
   }
