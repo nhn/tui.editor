@@ -1,3 +1,5 @@
+import { includes } from './common';
+
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
   const rect = {
     left: parseInt(style.left, 10),
@@ -18,4 +20,12 @@ const CLS_PREFIX = 'tui-md-';
 
 export function cls(...names: string[]) {
   return names.map(className => `${CLS_PREFIX}${className}`).join(' ');
+}
+
+export function isTextNode(node: Node) {
+  return node?.nodeType === Node.TEXT_NODE;
+}
+
+export function isSpecificNode(node: Node, ...names: string[]) {
+  return includes(names, node.nodeName);
 }

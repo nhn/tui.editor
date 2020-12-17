@@ -5,13 +5,18 @@ import { Step } from 'prosemirror-transform';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { history } from 'prosemirror-history';
+import toArray from 'tui-code-snippet/collection/toArray';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
 import { MdPos } from '@t/markdown';
 import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
+import { createParagraph, createTextSelection, nbspToSpace } from '@/helper/manipulation';
+import { placeholder } from '@/plugins/placeholder';
+import { getDefaultCommands } from '@/commands/defaultCommands';
 import { decodeURL } from '@/utils/encoder';
+import { isSpecificNode, isTextNode } from '@/utils/dom';
 import { syntaxHighlight } from './plugins/syntaxHighlight';
 import { previewHighlight } from './plugins/previewHighlight';
 import { Doc } from './nodes/doc';
@@ -31,12 +36,15 @@ import { Link } from './marks/link';
 import { Delimiter, TaskDelimiter, MarkedText, Meta, TableCell } from './marks/simpleMark';
 import { Html } from './marks/html';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
-import { createParagraph, createTextSelection, nbspToSpace } from '@/helper/manipulation';
-import { placeholder } from '@/plugins/placeholder';
-import { getDefaultCommands } from '@/commands/defaultCommands';
+
+interface WindowWithClipboard extends Window {
+  clipboardData?: DataTransfer | null;
+}
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
+
+  private clipboard: HTMLElement;
 
   constructor(el: HTMLElement, toastMark: ToastMark, eventEmitter: Emitter) {
     super(el, eventEmitter);
@@ -48,6 +56,7 @@ export default class MdEditor extends EditorBase {
     this.keymaps = this.createKeymaps();
     this.view = this.createView();
     this.commands = this.createCommands();
+    this.clipboard = document.createElement('div');
     this.specs.setContext({ ...this.context, view: this.view });
   }
 
@@ -125,13 +134,41 @@ export default class MdEditor extends EditorBase {
 
         this.view.updateState(state);
       },
+      transformPastedHTML: () => {
+        let html = '';
+
+        toArray(this.clipboard.children).forEach(node => {
+          if (!isSpecificNode(node, 'STYLE', 'META', 'TITLE') && !isTextNode(node)) {
+            html += `<div>${node.textContent!}</div>`;
+          }
+        });
+        this.clipboard.innerHTML = '';
+
+        return html;
+      },
       clipboardTextParser: text => {
         const lineTexts = decodeURL(text).split('\n');
         const nodes = lineTexts.map(lineText => createParagraph(this.schema, lineText));
 
         return new Slice(Fragment.from(nodes), 1, 1);
       },
-      clipboardTextSerializer: slice => this.getChanged(slice)
+      clipboardTextSerializer: slice => this.getChanged(slice),
+      handleDOMEvents: {
+        scroll: () => {
+          this.eventEmitter.emit('scroll', { source: 'editor' });
+          return true;
+        },
+        paste: (_, ev: Event) => {
+          const clipboardData =
+            (ev as ClipboardEvent).clipboardData || (window as WindowWithClipboard).clipboardData;
+          const html = clipboardData?.getData('text/html');
+
+          if (html) {
+            this.clipboard.innerHTML = html;
+          }
+          return false;
+        }
+      }
     });
   }
 

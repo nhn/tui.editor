@@ -32,6 +32,7 @@ import { invokePlugins, getPluginInfo } from './pluginHelper';
 import { ToastMark } from '@toast-ui/toastmark';
 import isString from 'tui-code-snippet/type/isString';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
+import { ScrollSync } from './markdown/scroll/scrollSync';
 
 /**
  * ToastUI Editor
@@ -102,6 +103,8 @@ class ToastUIEditor {
 
   private i18n: I18n;
 
+  private scrollSync: ScrollSync;
+
   // @TODO: deprecated
   private ui: any;
 
@@ -158,8 +161,6 @@ class ToastUIEditor {
 
     this.eventEmitter = new EventEmitter();
 
-    // @TODO: should add sanitizeLinkAttribute method type
-    // @ts-ignore
     const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
     const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
     const {
@@ -256,8 +257,7 @@ class ToastUIEditor {
       sendHostName();
     }
 
-    // @TODO: should change for prosemirror
-    // register(this);
+    this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
   }
 
   /**
@@ -593,6 +593,7 @@ class ToastUIEditor {
     this.mdEditor.destroy();
     this.layout.destroy();
     this.preview.destroy();
+    this.scrollSync.destroy();
 
     if (this.getUI()) {
       this.getUI().remove();

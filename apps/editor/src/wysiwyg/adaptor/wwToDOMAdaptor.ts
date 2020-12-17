@@ -23,7 +23,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
 
   public convertors: CustomHTMLRendererMap;
 
-  constructor(linkAttribute: Record<string, any>, customRenderer: CustomHTMLRendererMap) {
+  constructor(linkAttribute: Record<string, any> | null, customRenderer: CustomHTMLRendererMap) {
     const convertors = getHTMLRenderConvertors(linkAttribute, customRenderer);
 
     this.customConvertorKeys = Object.keys(customRenderer);

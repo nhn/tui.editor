@@ -6,6 +6,7 @@
 import off from 'tui-code-snippet/domEvent/off';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import on from 'tui-code-snippet/domEvent/on';
 // @ts-ignore
 import { Renderer } from '@toast-ui/toastmark';
 
@@ -15,8 +16,8 @@ import Preview from '@/preview';
 import domUtils from '@/utils/dom-legacy';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
-// import { findAdjacentElementToScrollTop } from './scroll/helper';
-// import { removeOffsetInfoByNode } from './scroll/cache/offsetInfo';
+import { findAdjacentElementToScrollTop } from './scroll/dom';
+import { removeOffsetInfoByNode } from './scroll/offset';
 
 export const CLASS_HIGHLIGHT = 'te-preview-highlight';
 
@@ -34,7 +35,7 @@ function findTableCell(tableRow: MdNode, chOffset: number) {
 }
 
 interface Options {
-  linkAttribute: Record<string, any>;
+  linkAttribute: Record<string, any> | null;
   customHTMLRenderer: CustomHTMLRendererMap;
   isViewer: boolean;
   highlight?: boolean;
@@ -94,13 +95,12 @@ class MarkdownPreview extends Preview {
       });
     }
 
-    // @TODO: change scroll sync
-    // on(this.el!, 'scroll', event => {
-    //   this.eventEmitter.emit('scroll', {
-    //     source: 'preview',
-    //     data: findAdjacentElementToScrollTop(event.target.scrollTop, this.previewContent)
-    //   });
-    // });
+    on(this.el!, 'scroll', event => {
+      this.eventEmitter.emit('scroll', {
+        source: 'preview',
+        data: findAdjacentElementToScrollTop(event.target.scrollTop, this.previewContent)
+      });
+    });
   }
 
   private removeHighlight() {
@@ -181,12 +181,12 @@ class MarkdownPreview extends Preview {
           const nextEl = el.nextElementSibling as HTMLElement;
 
           el.parentNode!.removeChild(el);
-          // removeOffsetInfoByNode(el);
+          removeOffsetInfoByNode(el);
           el = nextEl;
         }
         if (el.parentNode) {
           domUtils.remove(el);
-          // removeOffsetInfoByNode(el);
+          removeOffsetInfoByNode(el);
         }
       }
     }

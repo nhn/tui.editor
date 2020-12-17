@@ -1,23 +1,13 @@
-import { ListItemMdNode, MdNode, MdNodeType, MdPos, TableCellMdNode } from '@t/markdown';
+import {
+  CodeBlockMdNode,
+  CustomBlockMdNode,
+  ListItemMdNode,
+  MdNode,
+  MdNodeType,
+  MdPos,
+  TableCellMdNode
+} from '@t/markdown';
 import { includes } from './common';
-
-export function hasImageOrCodeBlockNode(mdNode: MdNode) {
-  while (mdNode) {
-    if (includes(['image', 'codeBlock'], mdNode.type)) {
-      return true;
-    }
-    mdNode = mdNode.firstChild!;
-  }
-  return false;
-}
-
-export function hasSameLineParent(mdNode: MdNode) {
-  return (
-    mdNode.parent &&
-    mdNode.parent.type !== 'document' &&
-    mdNode.parent.sourcepos![0][0] === mdNode.sourcepos![0][0]
-  );
-}
 
 export function hasSpecificTypeAncestor(mdNode: MdNode, ...types: MdNodeType[]) {
   while (mdNode && mdNode.parent && mdNode.parent.type !== 'document') {
@@ -27,10 +17,6 @@ export function hasSpecificTypeAncestor(mdNode: MdNode, ...types: MdNodeType[]) 
     mdNode = mdNode.parent;
   }
   return false;
-}
-
-export function isEmptyLineNode(text: string, mdNode: MdNode) {
-  return !text.trim() && !hasImageOrCodeBlockNode(mdNode);
 }
 
 export function getMdStartLine(mdNode: MdNode) {
@@ -61,10 +47,25 @@ export function isHtmlNode(mdNode: MdNode) {
   return type === 'htmlBlock' || type === 'htmlInline';
 }
 
-export function isStyledTextNode(mdNode: MdNode) {
+export function isStyledInlineNode(mdNode: MdNode) {
   const { type } = mdNode;
 
-  return type === 'strike' || type === 'strong' || type === 'emph';
+  return (
+    type === 'strike' ||
+    type === 'strong' ||
+    type === 'emph' ||
+    type === 'code' ||
+    type === 'link' ||
+    type === 'image'
+  );
+}
+
+export function isCodeBlockNode(mdNode: MdNode): mdNode is CodeBlockMdNode {
+  return mdNode && mdNode.type === 'codeBlock';
+}
+
+export function isCustomBlockNode(mdNode: MdNode): mdNode is CustomBlockMdNode {
+  return mdNode && mdNode.type === 'customBlock';
 }
 
 export function isListNode(mdNode: MdNode): mdNode is ListItemMdNode {
@@ -97,13 +98,6 @@ export function isInlineNode(mdNode: MdNode) {
   }
 }
 
-export function getLastLeafNode(mdNode: MdNode) {
-  while (mdNode.lastChild) {
-    mdNode = mdNode.lastChild;
-  }
-  return mdNode;
-}
-
 export function findClosestNode(
   mdNode: MdNode,
   condition: (targetMdNode: MdNode) => boolean,
@@ -133,38 +127,10 @@ export function traverseParentNodes(
   }
 }
 
-// @TODO: deprecated
-// @ts-ignore
-export function addChPos(originPos, addedCh) {
-  return {
-    line: originPos.line,
-    ch: originPos.ch + addedCh
-  };
-}
-
-// @TODO: deprecated
-// @ts-ignore
-export function setChPos(originPos, newCh) {
-  return {
-    line: originPos.line,
-    ch: newCh
-  };
-}
-
 export function addOffsetPos(originPos: MdPos, offset: number): MdPos {
   return [originPos[0], originPos[1] + offset];
 }
 
 export function setOffsetPos(originPos: MdPos, newOffset: number): MdPos {
   return [originPos[0], newOffset];
-}
-
-export function getListText(mdNode: MdNode) {
-  while (mdNode) {
-    if (mdNode.type === 'text') {
-      return mdNode.literal;
-    }
-    mdNode = mdNode.firstChild!;
-  }
-  return '';
 }
