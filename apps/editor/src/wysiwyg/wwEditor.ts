@@ -22,6 +22,8 @@ import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
 import { CustomBlockView } from './nodeview/customBlockView';
 
+import { preprocessPasteData } from '@/wysiwyg/helper/clipboard';
+
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
 export default class WysiwygEditor extends EditorBase {
@@ -89,12 +91,15 @@ export default class WysiwygEditor extends EditorBase {
 
     return new EditorView(this.el, {
       state: this.createState(),
-      attributes: { class: CONTENTS_CLASS_NAME },
+      attributes: {
+        class: CONTENTS_CLASS_NAME
+      },
       nodeViews: {
         customBlock(node, view, getPos) {
           return new CustomBlockView(node, view, getPos, toDOMAdaptor);
         }
-      }
+      },
+      transformPastedHTML: html => preprocessPasteData(html)
     });
   }
 
