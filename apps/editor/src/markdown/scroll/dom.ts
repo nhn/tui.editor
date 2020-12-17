@@ -47,12 +47,8 @@ export function getEditorRangeHeightInfo(
   };
 }
 
-function getBlankLinesHeight(
-  doc: ProsemirrorNode,
-  children: HTMLCollection,
-  start: number,
-  end = doc.childCount - 1
-) {
+function getBlankLinesHeight(doc: ProsemirrorNode, children: HTMLCollection, start: number) {
+  const end = doc.childCount - 1;
   let height = 0;
 
   while (start <= end && isBlankLine(doc, start)) {
@@ -62,7 +58,7 @@ function getBlankLinesHeight(
   return height;
 }
 
-export function getAncestorHavingId(el: HTMLElement, root: HTMLElement) {
+export function findAncestorHavingId(el: HTMLElement, root: HTMLElement) {
   while (!el.getAttribute('data-nodeid') && el.parentElement !== root) {
     el = el.parentElement!;
   }
@@ -137,9 +133,7 @@ export function getParentNodeObj(mdNode: MdNode) {
     mdNode = mdNode.parent!;
     el = document.querySelector<HTMLElement>(`[data-nodeid="${mdNode.id}"]`);
   }
-  const nodeObj = { mdNode, el };
-
-  return getNonNestableNodeObj(nodeObj);
+  return getNonNestableNodeObj({ mdNode, el });
 }
 
 function getNonNestableNodeObj({ mdNode, el }: { mdNode: MdNode; el: HTMLElement }) {

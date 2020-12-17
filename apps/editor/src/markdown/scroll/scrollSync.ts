@@ -8,7 +8,7 @@ import { animate } from './animation';
 import { getAndSaveOffsetInfo } from './offset';
 import {
   getAdditionalPos,
-  getAncestorHavingId,
+  findAncestorHavingId,
   getEditorRangeHeightInfo,
   getParentNodeObj,
   getTotalOffsetTop
@@ -16,7 +16,7 @@ import {
 
 const EDITOR_BOTTOM_PADDING = 18;
 
-export interface SyncCallbackObj {
+export interface SyncCallbacks {
   syncScrollTop: (scrollTop: number) => void;
   releaseEventBlock: () => void;
 }
@@ -91,17 +91,14 @@ export class ScrollSync {
     const { el } = getParentNodeObj(firstMdNode);
     const totalOffsetTop = getTotalOffsetTop(el, this.previewRoot) || el.offsetTop;
     const nodeHeight = el.clientHeight;
+    // multiply 0.5 for calculating the position in the middle of preview area
     const targetScrollTop = totalOffsetTop + nodeHeight - previewHeight * 0.5;
 
     this.latestEditorScrollTop = null;
 
     const diff = el.getBoundingClientRect().top - this.previewEl.getBoundingClientRect().top;
 
-    if (diff < previewHeight) {
-      return null;
-    }
-
-    return targetScrollTop;
+    return diff < previewHeight ? null : targetScrollTop;
   }
 
   private syncPreviewScrollTop(editing = false) {
@@ -146,11 +143,10 @@ export class ScrollSync {
       );
       this.latestEditorScrollTop = scrollTop;
     }
-    if (targetScrollTop === curScrollTop) {
-      return;
-    }
 
-    this.run('editor', targetScrollTop, curScrollTop);
+    if (targetScrollTop !== curScrollTop) {
+      this.run('editor', targetScrollTop, curScrollTop);
+    }
   }
 
   syncEditorScrollTop(targetNode: HTMLElement) {
@@ -163,7 +159,7 @@ export class ScrollSync {
     let targetScrollTop = isBottomPos ? dom.scrollHeight : 0;
 
     if (scrollTop && targetNode && !isBottomPos) {
-      targetNode = getAncestorHavingId(targetNode, previewRoot);
+      targetNode = findAncestorHavingId(targetNode, previewRoot);
 
       if (!targetNode.getAttribute('data-nodeid')) {
         return;
@@ -187,13 +183,11 @@ export class ScrollSync {
         curScrollTop
       );
       this.latestPreviewScrollTop = scrollTop;
-
-      if (targetScrollTop === curScrollTop) {
-        return;
-      }
     }
 
-    this.run('preview', targetScrollTop, curScrollTop);
+    if (targetScrollTop !== curScrollTop) {
+      this.run('preview', targetScrollTop, curScrollTop);
+    }
   }
 
   private getResolvedScrollTop(
@@ -226,12 +220,12 @@ export class ScrollSync {
     }
 
     /* eslint-disable no-return-assign */
-    const syncCallbackObj: SyncCallbackObj = {
+    const syncCallbacks: SyncCallbacks = {
       syncScrollTop: scrollTop => (scrollTarget.scrollTop = scrollTop),
       releaseEventBlock: () => (this.blockedScroll = null)
     };
 
-    animate(curScrollTop, targetScrollTop, syncCallbackObj);
+    animate(curScrollTop, targetScrollTop, syncCallbacks);
   }
 
   destroy() {

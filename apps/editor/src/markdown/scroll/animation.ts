@@ -1,14 +1,14 @@
-import { SyncCallbackObj } from './scrollSync';
+import { SyncCallbacks } from './scrollSync';
 
 // @TODO: apply bezier and raq
 type WinSetTimeout = typeof window.setTimeout;
 
 const ANIMATION_TIME = 100;
-const SCROLL_BOCKING_RESET_DELAY = 15;
+const SCROLL_BLOCKING_RESET_DELAY = 15;
 let currentTimeoutId: number | null = null;
 let releaseTimer: number | null = null;
 
-function run(deltaScrollTop: number, { syncScrollTop, releaseEventBlock }: SyncCallbackObj) {
+function run(deltaScrollTop: number, { syncScrollTop, releaseEventBlock }: SyncCallbacks) {
   if (releaseTimer) {
     clearTimeout(releaseTimer);
   }
@@ -17,13 +17,13 @@ function run(deltaScrollTop: number, { syncScrollTop, releaseEventBlock }: SyncC
 
   releaseTimer = (setTimeout as WinSetTimeout)(() => {
     releaseEventBlock();
-  }, SCROLL_BOCKING_RESET_DELAY);
+  }, SCROLL_BLOCKING_RESET_DELAY);
 }
 
 export function animate(
   curScrollTop: number,
   targetScrollTop: number,
-  syncCallbackObj: SyncCallbackObj
+  syncCallbacks: SyncCallbacks
 ) {
   const diff = targetScrollTop - curScrollTop;
   const startTime = Date.now();
@@ -39,10 +39,10 @@ export function animate(
 
     if (progress < 1) {
       deltaValue = curScrollTop + diff * Math.cos(((1 - progress) * Math.PI) / 2);
-      run(Math.ceil(deltaValue), syncCallbackObj);
+      run(Math.ceil(deltaValue), syncCallbacks);
       currentTimeoutId = (setTimeout as WinSetTimeout)(step, 1);
     } else {
-      run(targetScrollTop, syncCallbackObj);
+      run(targetScrollTop, syncCallbacks);
       currentTimeoutId = null;
     }
   };
