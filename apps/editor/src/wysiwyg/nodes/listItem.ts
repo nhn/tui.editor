@@ -1,7 +1,12 @@
 import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
 
+import hasClass from 'tui-code-snippet/domUtil/hasClass';
+
 import NodeSchema from '@/spec/node';
+
+const TASK_CLASS_NAME = 'task-list-item';
+const CHECKED_CLASS_NAME = 'checked';
 
 export class ListItem extends NodeSchema {
   get name() {
@@ -20,10 +25,10 @@ export class ListItem extends NodeSchema {
         {
           tag: 'li',
           getAttrs(dom: Node | string) {
-            return {
-              task: (dom as HTMLElement).hasAttribute('data-task'),
-              checked: !!(dom as HTMLElement).getAttribute('data-task-checked')
-            };
+            const task = hasClass(dom as HTMLElement, TASK_CLASS_NAME);
+            const checked = task && hasClass(dom as HTMLElement, CHECKED_CLASS_NAME);
+
+            return { task, checked };
           }
         }
       ],
@@ -34,10 +39,10 @@ export class ListItem extends NodeSchema {
           return ['li', 0];
         }
 
-        const classNames = ['task-list-item'];
+        const classNames = [TASK_CLASS_NAME];
 
         if (checked) {
-          classNames.push('checked');
+          classNames.push(CHECKED_CLASS_NAME);
         }
 
         return [
