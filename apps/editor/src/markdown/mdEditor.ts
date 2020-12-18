@@ -218,8 +218,8 @@ export default class MdEditor extends EditorBase {
     const lineTexts = text.split('\n');
     const nodes = lineTexts.map(lineText => createParagraph(schema, lineText));
 
-    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)));
     this.focus();
+    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)).scrollIntoView());
   }
 
   getRange() {
