@@ -170,7 +170,9 @@ export function convertMsoParagraphsToList(html: string) {
 
   let paras: HTMLElement[] = [];
 
-  findNodes(container, MSO_CLASS_NAME_LIST_PARA).forEach(para => {
+  const foundParas = findNodes(container, MSO_CLASS_NAME_LIST_PARA);
+
+  foundParas.forEach(para => {
     const msoListParaEnd = isMsoListParagraphEnd(para.nextSibling as HTMLElement);
 
     paras.push(para as HTMLElement);
