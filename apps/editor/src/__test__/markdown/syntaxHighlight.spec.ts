@@ -174,4 +174,12 @@ describe('markdown editor syntax highlight', () => {
 
     expect(html).toMatchSnapshot();
   });
+
+  it('code block within list', () => {
+    mde.setMarkdown('* list\n  ```js\n  console.log("editor")\n  ```');
+
+    const html = getEditorHTML(mde);
+
+    expect(html).toMatchSnapshot();
+  });
 });
