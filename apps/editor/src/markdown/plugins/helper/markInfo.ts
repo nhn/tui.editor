@@ -224,12 +224,7 @@ function blockQuote(node: MdNode, start: MdPos, end: MdPos) {
     let childMarks: MarkInfo[] = [];
 
     if (node.firstChild.type === 'paragraph') {
-      let childNode = node.firstChild;
-
-      while (childNode) {
-        childMarks = childMarks.concat(markParagraphInBlockQuote(childNode.firstChild!));
-        childNode = childNode.next!;
-      }
+      childMarks = markParagraphInBlockQuote(node.firstChild.firstChild!);
     } else if (node.firstChild.type === 'list') {
       childMarks = markListItemChildren(node.firstChild, TEXT);
     }
