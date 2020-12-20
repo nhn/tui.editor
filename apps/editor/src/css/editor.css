@@ -53,6 +53,7 @@
 
 .te-md-container .te-editor {
   line-height: 1.5;
+  position: relative;
 }
 
 .te-md-container .te-editor,
@@ -74,6 +75,16 @@
 
 .ProseMirror:focus {
   outline: none;
+}
+
+.te-md-container .te-editor .te-clipboard {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
 
 .te-md-container .te-preview {

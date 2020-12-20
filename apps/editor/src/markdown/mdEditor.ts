@@ -59,7 +59,7 @@ export default class MdEditor extends EditorBase {
 
   private createClipboard() {
     this.clipboard = document.createElement('textarea');
-    this.clipboard.style.opacity = '0';
+    this.clipboard.className = 'te-clipboard';
     this.clipboard.addEventListener('paste', (ev: ClipboardEvent) => {
       ev.preventDefault();
       const clipboardData =
@@ -68,7 +68,7 @@ export default class MdEditor extends EditorBase {
 
       this.replaceSelection(text);
     });
-    document.body.appendChild(this.clipboard);
+    this.el.insertBefore(this.clipboard, this.view.dom);
   }
 
   createContext() {
