@@ -5,7 +5,6 @@ import { Step } from 'prosemirror-transform';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { history } from 'prosemirror-history';
-import toArray from 'tui-code-snippet/collection/toArray';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
@@ -15,8 +14,6 @@ import SpecManager from '@/spec/specManager';
 import { createParagraph, createTextSelection, nbspToSpace } from '@/helper/manipulation';
 import { placeholder } from '@/plugins/placeholder';
 import { getDefaultCommands } from '@/commands/defaultCommands';
-import { decodeURL } from '@/utils/encoder';
-import { isSpecificNode, isTextNode } from '@/utils/dom';
 import { syntaxHighlight } from './plugins/syntaxHighlight';
 import { previewHighlight } from './plugins/previewHighlight';
 import { Doc } from './nodes/doc';
@@ -44,7 +41,7 @@ interface WindowWithClipboard extends Window {
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
 
-  private clipboard: HTMLElement;
+  private clipboard!: HTMLTextAreaElement;
 
   constructor(el: HTMLElement, toastMark: ToastMark, eventEmitter: Emitter) {
     super(el, eventEmitter);
@@ -56,8 +53,22 @@ export default class MdEditor extends EditorBase {
     this.keymaps = this.createKeymaps();
     this.view = this.createView();
     this.commands = this.createCommands();
-    this.clipboard = document.createElement('div');
     this.specs.setContext({ ...this.context, view: this.view });
+    this.createClipboard();
+  }
+
+  private createClipboard() {
+    this.clipboard = document.createElement('textarea');
+    this.clipboard.className = 'te-clipboard';
+    this.clipboard.addEventListener('paste', (ev: ClipboardEvent) => {
+      ev.preventDefault();
+      const clipboardData =
+        (ev as ClipboardEvent).clipboardData || (window as WindowWithClipboard).clipboardData;
+      const text = clipboardData!.getData('text');
+
+      this.replaceSelection(text);
+    });
+    this.el.insertBefore(this.clipboard, this.view.dom);
   }
 
   createContext() {
@@ -134,39 +145,17 @@ export default class MdEditor extends EditorBase {
 
         this.view.updateState(state);
       },
-      transformPastedHTML: () => {
-        let html = '';
-
-        toArray(this.clipboard.children).forEach(node => {
-          if (!isSpecificNode(node, 'STYLE', 'META', 'TITLE') && !isTextNode(node)) {
-            html += `<div>${node.textContent!}</div>`;
-          }
-        });
-        this.clipboard.innerHTML = '';
-
-        return html;
-      },
-      clipboardTextParser: text => {
-        const lineTexts = decodeURL(text).split('\n');
-        const nodes = lineTexts.map(lineText => createParagraph(this.schema, lineText));
-
-        return new Slice(Fragment.from(nodes), 1, 1);
-      },
       clipboardTextSerializer: slice => this.getChanged(slice),
+      handleKeyDown: (_, ev) => {
+        if ((ev.metaKey || ev.ctrlKey) && ev.key.toUpperCase() === 'V') {
+          this.clipboard.focus();
+        }
+        return false;
+      },
       handleDOMEvents: {
         scroll: () => {
           this.eventEmitter.emit('scroll', { source: 'editor' });
           return true;
-        },
-        paste: (_, ev: Event) => {
-          const clipboardData =
-            (ev as ClipboardEvent).clipboardData || (window as WindowWithClipboard).clipboardData;
-          const html = clipboardData?.getData('text/html');
-
-          if (html) {
-            this.clipboard.innerHTML = html;
-          }
-          return false;
         }
       }
     });
@@ -229,8 +218,8 @@ export default class MdEditor extends EditorBase {
     const lineTexts = text.split('\n');
     const nodes = lineTexts.map(lineText => createParagraph(schema, lineText));
 
-    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)));
     this.focus();
+    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)).scrollIntoView());
   }
 
   getRange() {

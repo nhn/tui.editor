@@ -131,15 +131,13 @@ class MarkdownPreview extends Preview {
       return;
     }
 
-    // @ts-ignore
-    const inFrontMatter = cursorNode && cursorNode.customType === 'frontMatter';
     const oldEL = this.getElementByNodeId(this.cursorNodeId);
     const newEL = this.getElementByNodeId(cursorNodeId);
 
     if (oldEL) {
       removeClass(oldEL, CLASS_HIGHLIGHT);
     }
-    if (newEL && !inFrontMatter) {
+    if (newEL) {
       addClass(newEL, CLASS_HIGHLIGHT);
     }
 
@@ -147,10 +145,9 @@ class MarkdownPreview extends Preview {
   }
 
   private getElementByNodeId(nodeId: number | null) {
-    if (!nodeId) {
-      return null;
-    }
-    return this.previewContent.querySelector(`[data-nodeid="${nodeId}"]`) as HTMLElement;
+    return nodeId
+      ? this.previewContent.querySelector<HTMLElement>(`[data-nodeid="${nodeId}"]`)
+      : null;
   }
 
   update(changed: EditResult[]) {
