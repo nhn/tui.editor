@@ -1,4 +1,4 @@
-import { Node, Schema, ResolvedPos } from 'prosemirror-model';
+import { Node, Schema, ResolvedPos, Slice } from 'prosemirror-model';
 import { Selection, TextSelection } from 'prosemirror-state';
 
 import { findNodeBy } from '@/wysiwyg/helper/node';
@@ -278,4 +278,24 @@ export function getSelectionInfo(startCellPos: ResolvedPos, endCellPos = startCe
     rowCount,
     columnCount
   };
+}
+
+export function getTableContentFromSlice(slice: Slice) {
+  if (slice.size) {
+    let { content, openStart, openEnd } = slice;
+
+    while (
+      content.childCount === 1 &&
+      ((openStart > 0 && openEnd > 0) ||
+        (content.firstChild && content.firstChild.type.name === 'table'))
+    ) {
+      openStart -= 1;
+      openEnd -= 1;
+      content = content.firstChild!.content;
+    }
+
+    return content;
+  }
+
+  return null;
 }

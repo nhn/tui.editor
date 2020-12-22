@@ -193,5 +193,7 @@ export function convertMsoParagraphsToList(html: string) {
     removeNode(para);
   });
 
-  return container.innerHTML;
+  const extraHTML = foundParas.length ? '<p></p>' : '';
+
+  return `${extraHTML}${container.innerHTML}`;
 }

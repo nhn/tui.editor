@@ -48,10 +48,11 @@ export default class CellSelection extends Selection {
   map(doc: Node, mapping: Mappable) {
     const startCell = doc.resolve(mapping.map(this.startCell.pos));
     const endCell = doc.resolve(mapping.map(this.endCell.pos));
-    const removed = startCell.parent.childCount < this.startCell.parent.childCount;
+    const originChildCount = this.startCell.parent.childCount;
+    const changedChildCount = startCell.parent.childCount;
 
-    if (removed) {
-      const from = doc.resolve(startCell.pos + 1);
+    if (originChildCount <= changedChildCount) {
+      const from = doc.resolve(startCell.pos - 1);
 
       return TextSelection.between(from, from);
     }

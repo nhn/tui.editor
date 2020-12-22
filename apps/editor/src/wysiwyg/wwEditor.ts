@@ -22,7 +22,8 @@ import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
 import { CustomBlockView } from './nodeview/customBlockView';
 
-import { preprocessPasteData } from '@/wysiwyg/helper/clipboard';
+import { changePastedHTML, changePastedSlice } from '@/wysiwyg/helper/clipboard';
+import { pasteToTable } from '@/wysiwyg/helper/clipboardToTable';
 
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
@@ -99,7 +100,9 @@ export default class WysiwygEditor extends EditorBase {
           return new CustomBlockView(node, view, getPos, toDOMAdaptor);
         }
       },
-      transformPastedHTML: html => preprocessPasteData(html)
+      transformPastedHTML: changePastedHTML,
+      transformPasted: (slice: Slice) => changePastedSlice(slice, this.schema),
+      handlePaste: (view: EditorView, _: ClipboardEvent, slice: Slice) => pasteToTable(view, slice)
     });
   }
 
