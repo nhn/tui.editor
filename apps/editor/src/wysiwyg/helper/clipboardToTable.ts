@@ -205,7 +205,7 @@ function expandRows(
 
     replacedCellsOffsets.push({ startCellOffset, endCellOffset, nextCellOffset });
 
-    start = nextCellOffset + 1;
+    start = nextCellOffset;
   }
 }
 
