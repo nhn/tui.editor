@@ -10,19 +10,12 @@ export class TableRow extends NodeSchema {
   get defaultSchema() {
     return {
       content: '(tableHeadCell | tableBodyCell)+',
-      attrs: { columns: { default: 1 } },
+      attrs: {
+        dummyRowForPasting: { default: false }
+      },
       parseDOM: [
         {
-          tag: 'tr',
-          getAttrs: (dom: Node | string) => {
-            const columns = (dom as HTMLElement).children.length;
-
-            if (!columns) {
-              return false;
-            }
-
-            return { columns };
-          }
+          tag: 'tr'
         }
       ],
       toDOM(): DOMOutputSpecArray {

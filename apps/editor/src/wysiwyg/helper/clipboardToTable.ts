@@ -41,11 +41,11 @@ interface ReplacedCellsOffsets {
   nextCellOffset: number;
 }
 
-const EMPTY_CELL_SIZE = 4;
+const DUMMY_CELL_SIZE = 4;
 const TR_NODES_SIZE = 2;
 
-function getCellOffsetInculdingEmptyCells(startCellOffset: number, emptyCellCount: number) {
-  return startCellOffset + emptyCellCount * EMPTY_CELL_SIZE;
+function getCellOffsetInculdingDummyCells(startCellOffset: number, dummyCellCount: number) {
+  return startCellOffset + dummyCellCount * DUMMY_CELL_SIZE;
 }
 
 function createPastingCells(
@@ -80,13 +80,15 @@ function createPastingCells(
     }
   }
 
-  const tableBodyRows = slicedRows.map(tableBodyRow => {
-    const { content } = copyTableBodyRow(tableBodyRow, pastingColumnCount, schema);
+  slicedRows.forEach(tableBodyRow => {
+    if (!tableBodyRow.attrs.dummyRowForPasting) {
+      const { content } = copyTableBodyRow(tableBodyRow, pastingColumnCount, schema);
 
-    return content;
+      pastingRows.push(content);
+    }
   });
 
-  return [...pastingRows, ...tableBodyRows];
+  return [...pastingRows];
 }
 
 function getTargetTableInfo(anchor: ResolvedPos) {
@@ -146,7 +148,7 @@ function expandColumns(
 
     if (rowIndex >= startRowIndex && rowIndex <= endRowIndex - addedRowCount) {
       const startCellOffset = tr.mapping.map(cellsInfo[rowIndex][startColumnIndex].offset);
-      const endCellOffset = getCellOffsetInculdingEmptyCells(insertOffset, addedColumnCount);
+      const endCellOffset = getCellOffsetInculdingDummyCells(insertOffset, addedColumnCount);
       const nextCellOffset = endCellOffset + TR_NODES_SIZE;
 
       replacedCellsOffsets.push({ startCellOffset, endCellOffset, nextCellOffset });
@@ -196,10 +198,10 @@ function expandRows(
   let start = from;
 
   for (let rowIndex = 0; rowIndex < addedRowCount; rowIndex += 1) {
-    const startCellOffset = getCellOffsetInculdingEmptyCells(start, startColumnIndex);
-    const endCellOffset = getCellOffsetInculdingEmptyCells(start, endColumnIndex + 1);
+    const startCellOffset = getCellOffsetInculdingDummyCells(start, startColumnIndex);
+    const endCellOffset = getCellOffsetInculdingDummyCells(start, endColumnIndex + 1);
     const nextCellOffset =
-      getCellOffsetInculdingEmptyCells(start, tableColumnCount + addedColumnCount) + TR_NODES_SIZE;
+      getCellOffsetInculdingDummyCells(start, tableColumnCount + addedColumnCount) + TR_NODES_SIZE;
 
     replacedCellsOffsets.push({ startCellOffset, endCellOffset, nextCellOffset });
 

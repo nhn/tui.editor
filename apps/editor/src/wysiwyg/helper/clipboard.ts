@@ -63,7 +63,7 @@ function copyCells(originRow: Node, maxColumnCount: number, cell: NodeType) {
     const copiedCell =
       columnIndex < originCellCount
         ? fitSlice(cell, new Slice(originRow.child(columnIndex).content, 0, 0))
-        : cell.createAndFill()!;
+        : cell.create();
 
     cells.push(copiedCell);
   }
@@ -83,6 +83,19 @@ export function copyTableBodyRow(originRow: Node, maxColumnCount: number, schema
   const cells = copyCells(originRow, maxColumnCount, tableBodyCell);
 
   return tableRow.create(null, cells);
+}
+
+function creatTableBodyDummyRow(columnCount: number, schema: Schema) {
+  const { tableRow, tableBodyCell } = schema.nodes;
+  const cells = [];
+
+  for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
+    const dummyCell = tableBodyCell.create();
+
+    cells.push(dummyCell);
+  }
+
+  return tableRow.create({ dummyRowForPasting: true }, cells);
 }
 
 export function createRowsFromPastingTable(tableContent: Fragment) {
@@ -114,6 +127,12 @@ function createTableBody(tableBodyRows: Node[], maxColumnCount: number, schema: 
   const copiedRows = tableBodyRows.map(tableBodyRow =>
     copyTableBodyRow(tableBodyRow, maxColumnCount, schema)
   );
+
+  if (!tableBodyRows.length) {
+    const dummyTableRow = creatTableBodyDummyRow(maxColumnCount, schema);
+
+    copiedRows.push(dummyTableRow);
+  }
 
   return tableBody.create(null, copiedRows);
 }
