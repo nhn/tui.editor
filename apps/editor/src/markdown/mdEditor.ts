@@ -147,7 +147,7 @@ export default class MdEditor extends EditorBase {
       },
       clipboardTextSerializer: slice => this.getChanged(slice),
       handleKeyDown: (_, ev) => {
-        if ((ev.metaKey || ev.ctrlKey) && ev.key === 'v') {
+        if ((ev.metaKey || ev.ctrlKey) && ev.key.toUpperCase() === 'V') {
           this.clipboard.focus();
         }
         return false;
