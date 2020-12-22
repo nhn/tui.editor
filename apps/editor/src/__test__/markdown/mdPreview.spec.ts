@@ -43,9 +43,7 @@ describe('Preview', () => {
 
     eventEmitter.emit('contentChangedFromMarkdown', editResult);
 
-    expect(preview.getHTML()).toEqual(
-      `<p data-nodeid="${editResult[0].nodes[0].id}">changed</p>\n`
-    );
+    expect(preview.getHTML()).toBe(`<p data-nodeid="${editResult[0].nodes[0].id}">changed</p>\n`);
   });
 });
 

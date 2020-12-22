@@ -151,23 +151,23 @@ class EventEmitter implements Emitter {
   /**
    * Emit given event and return result
    * @param {string} eventName Event name to emit
-   * @param {any} sourceText Source text to change
+   * @param {any} source Source to change
    * @returns {string}
    */
-  emitReduce(type: string, sourceText: any, ...args: any[]) {
+  emitReduce(type: string, source: any, ...args: any[]) {
     const eventHandlers = this.events.get(type);
 
     if (eventHandlers) {
       eventHandlers.forEach(handler => {
-        const result = handler(sourceText, ...args);
+        const result = handler(source, ...args);
 
         if (!isFalsy(result)) {
-          sourceText = result;
+          source = result;
         }
       });
     }
 
-    return sourceText;
+    return source;
   }
 
   /**

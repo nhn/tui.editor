@@ -111,7 +111,7 @@ describe('eventEmitter', () => {
 
         return data;
       });
-      expect(emitter.emitReduce('reduceTest', 1, 2)).toEqual(6);
+      expect(emitter.emitReduce('reduceTest', 1, 2)).toBe(6);
     });
 
     it('skip the return value if the value is falsy', () => {
@@ -123,7 +123,7 @@ describe('eventEmitter', () => {
         return data;
       });
 
-      expect(emitter.emitReduce('reduceTest', 1, 2)).toEqual(4);
+      expect(emitter.emitReduce('reduceTest', 1, 2)).toBe(4);
     });
   });
 
