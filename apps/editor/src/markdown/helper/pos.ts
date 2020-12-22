@@ -48,12 +48,12 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
   const startResolvedPos = doc.resolve(from);
   const lineRange = getEditorToMdLine(from, to, doc);
 
-  const startOffset = startResolvedPos.start();
+  const startOffset = startResolvedPos.start(1);
   let endOffset = startOffset;
 
   if (!collapsed) {
     // To resolve the end offset for blank line
-    // to = getEndOffsetWithBlankLine(doc, to, lineRange);
+    to = getEndOffsetWithBlankLine(doc, to, lineRange);
 
     const endResolvedPos = doc.resolve(to);
 
@@ -66,8 +66,8 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
   }
 
   return [
-    [lineRange[0], from - startOffset + 1],
-    [lineRange[1], to - endOffset + 1]
+    [lineRange[0], Math.max(from - startOffset + 1, 1)],
+    [lineRange[1], Math.max(to - endOffset + 1, 1)]
   ];
 }
 

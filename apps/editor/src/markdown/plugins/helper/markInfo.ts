@@ -55,12 +55,7 @@ interface MarkInfo {
   spec: { type?: MarkType; attrs?: Record<string, any> };
 }
 
-function markInfo(
-  start: MdPos,
-  end: MdPos,
-  type?: MarkType,
-  attrs?: Record<string, any>
-): MarkInfo {
+function markInfo(start: MdPos, end: MdPos, type: MarkType, attrs?: Record<string, any>): MarkInfo {
   return { start, end, spec: { type, attrs } };
 }
 
@@ -154,14 +149,14 @@ function codeBlock(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
   if (info) {
     marks.push(
       markInfo(
-        setOffsetPos(start, fenceEnd + 1),
-        setOffsetPos(start, fenceEnd + infoPadding + info.length + 1),
+        addOffsetPos(start, fenceLength),
+        addOffsetPos(start, fenceLength + infoPadding + info.length),
         META
       )
     );
   }
 
-  const codeBlockEnd = `^(\\s{0,3})(${fenceChar}{${fenceLength},})`;
+  const codeBlockEnd = `^(\\s{0,4})(${fenceChar}{${fenceLength},})`;
   const reCodeBlockEnd = new RegExp(codeBlockEnd);
 
   if (reCodeBlockEnd.test(endLine)) {
@@ -229,12 +224,7 @@ function blockQuote(node: MdNode, start: MdPos, end: MdPos) {
     let childMarks: MarkInfo[] = [];
 
     if (node.firstChild.type === 'paragraph') {
-      let childNode = node.firstChild;
-
-      while (childNode) {
-        childMarks = childMarks.concat(markParagraphInBlockQuote(childNode.firstChild!));
-        childNode = childNode.next!;
-      }
+      childMarks = markParagraphInBlockQuote(node.firstChild.firstChild!);
     } else if (node.firstChild.type === 'list') {
       childMarks = markListItemChildren(node.firstChild, TEXT);
     }
