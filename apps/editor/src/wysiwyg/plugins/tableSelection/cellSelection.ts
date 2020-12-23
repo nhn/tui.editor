@@ -1,4 +1,4 @@
-import { Node, ResolvedPos } from 'prosemirror-model';
+import { Node, ResolvedPos, Slice, Fragment } from 'prosemirror-model';
 import { Selection, SelectionRange, TextSelection } from 'prosemirror-state';
 import { Mappable } from 'prosemirror-transform';
 
@@ -8,6 +8,7 @@ import {
   CellInfo,
   SelectionInfo
 } from '@/wysiwyg/helper/table';
+import { Console } from 'console';
 
 function getSelectionRanges(
   doc: Node,
@@ -51,6 +52,7 @@ export default class CellSelection extends Selection {
     const originChildCount = this.startCell.parent.childCount;
     const changedChildCount = startCell.parent.childCount;
 
+    // @TODO change condition
     if (originChildCount <= changedChildCount) {
       const from = doc.resolve(startCell.pos - 1);
 
@@ -66,5 +68,34 @@ export default class CellSelection extends Selection {
       cell.startCell.pos === this.startCell.pos &&
       cell.endCell.pos === this.endCell.pos
     );
+  }
+
+  content() {
+    const table = this.startCell.node(-2);
+    const tableOffset = this.startCell.start(-2);
+    const row = table.child(1).child(0);
+
+    const cellsPos = getTableCellsInfo(this.startCell);
+    const selectionInfo = getSelectionInfo(this.startCell, this.endCell);
+    const { startRowIndex, startColumnIndex, rowCount, columnCount } = selectionInfo;
+
+    const rows = [];
+
+    for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+      const cells = [];
+
+      for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
+        const { offset } = cellsPos[rowIndex + startRowIndex][columnIndex + startColumnIndex];
+        const cell = table.nodeAt(offset - tableOffset);
+
+        if (cell) {
+          cells.push(cell.type.create(cell.attrs, cell.content));
+        }
+      }
+
+      rows.push(row.copy(Fragment.from(cells)));
+    }
+
+    return new Slice(Fragment.from(rows), 1, 1);
   }
 }
