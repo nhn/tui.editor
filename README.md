@@ -137,7 +137,7 @@ $ git clone https://github.com/{your-personal-repo}/tui.editor.git
 $ cd [project-name]
 $ npm install
 $ npm run setup:libs
-$ cd [project-name]/apps/editor
+$ cd ./apps/editor
 $ npm install
 $ npm run test
 ```
