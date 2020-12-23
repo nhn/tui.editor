@@ -6,12 +6,12 @@ export interface Handler {
 }
 
 export interface Emitter {
-  listen(type: EventTypes, handler: Handler): void;
-  emit(type: EventTypes, ...args: any[]): any[];
-  emitReduce(type: EventTypes, sourceText: string, ...args: any[]): any;
-  addEventType(type: EventTypes): void;
-  removeEventHandler(type: EventTypes, handler?: Handler): void;
-  getEvents(): Mapable<EventTypes, Handler[] | undefined>;
+  listen(type: string, handler: Handler): void;
+  emit(type: string, ...args: any[]): any[];
+  emitReduce(type: string, source: any, ...args: any[]): any;
+  addEventType(type: string): void;
+  removeEventHandler(type: string, handler?: Handler): void;
+  getEvents(): Mapable<string, Handler[] | undefined>;
 }
 
 export interface EmitterConstructor {

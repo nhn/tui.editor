@@ -57,6 +57,7 @@ module.exports = {
     'arrow-body-style': ['error', 'as-needed', { requireReturnForObjectLiteral: true }],
     'object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }],
     'no-sync': 0,
-    complexity: 0
+    complexity: 0,
+    'max-nested-callbacks': ["error", 4]
   }
 };

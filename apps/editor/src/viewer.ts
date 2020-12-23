@@ -8,7 +8,7 @@ import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
 
 import { ViewerOptions } from '@t/editor';
-import { Emitter, EventTypes, Handler } from '@t/event';
+import { Emitter, Handler } from '@t/event';
 import MarkdownPreview from './markdown/mdPreview';
 import domUtils from './utils/dom-legacy';
 import { invokePlugins, getPluginInfo } from './pluginHelper';
@@ -172,7 +172,7 @@ class ToastUIEditorViewer {
    * @param {string} type Event type
    * @param {function} handler Event handler
    */
-  on(type: EventTypes, handler: Handler) {
+  on(type: string, handler: Handler) {
     this.eventEmitter.listen(type, handler);
   }
 
@@ -180,7 +180,7 @@ class ToastUIEditorViewer {
    * Unbind eventHandler from event type
    * @param {string} type Event type
    */
-  off(type: EventTypes) {
+  off(type: string) {
     this.eventEmitter.removeEventHandler(type);
   }
 
@@ -198,7 +198,7 @@ class ToastUIEditorViewer {
    * @param {string} type Event type
    * @param {function} handler Event handler
    */
-  addHook(type: EventTypes, handler: Handler) {
+  addHook(type: string, handler: Handler) {
     this.eventEmitter.removeEventHandler(type);
     this.eventEmitter.listen(type, handler);
   }

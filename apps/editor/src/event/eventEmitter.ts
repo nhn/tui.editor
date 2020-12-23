@@ -88,7 +88,7 @@ const eventTypeList: EventTypes[] = [
  * @ignore
  */
 class EventEmitter implements Emitter {
-  private events: Map<EventTypes, Handler[] | undefined>;
+  private events: Map<string, Handler[] | undefined>;
 
   private eventTypes: Record<string, string>;
 
@@ -108,7 +108,7 @@ class EventEmitter implements Emitter {
    * @param {string} type Event type string
    * @param {function} handler Event handler
    */
-  listen(type: EventTypes, handler: Handler) {
+  listen(type: string, handler: Handler) {
     const typeInfo = this.getTypeInfo(type);
     const eventHandlers = this.events.get(typeInfo.type) || [];
 
@@ -130,7 +130,7 @@ class EventEmitter implements Emitter {
    * @param {string} eventName Event name to emit
    * @returns {Array}
    */
-  emit(type: EventTypes, ...args: any[]) {
+  emit(type: string, ...args: any[]) {
     const typeInfo = this.getTypeInfo(type);
     const eventHandlers = this.events.get(typeInfo.type);
     const results: any[] = [];
@@ -151,23 +151,23 @@ class EventEmitter implements Emitter {
   /**
    * Emit given event and return result
    * @param {string} eventName Event name to emit
-   * @param {string} sourceText Source text to change
+   * @param {any} source Source to change
    * @returns {string}
    */
-  emitReduce(type: EventTypes, sourceText: string, ...args: any[]) {
+  emitReduce(type: string, source: any, ...args: any[]) {
     const eventHandlers = this.events.get(type);
 
     if (eventHandlers) {
       eventHandlers.forEach(handler => {
-        const result = handler(sourceText, ...args);
+        const result = handler(source, ...args);
 
         if (!isFalsy(result)) {
-          sourceText = result;
+          source = result;
         }
       });
     }
 
-    return sourceText;
+    return source;
   }
 
   /**
@@ -176,11 +176,11 @@ class EventEmitter implements Emitter {
    * @returns {{type: string, namespace: string}}
    * @private
    */
-  private getTypeInfo(type: EventTypes) {
+  private getTypeInfo(type: string) {
     const splited = type.split('.');
 
     return {
-      type: splited[0] as EventTypes,
+      type: splited[0],
       namespace: splited[1]
     };
   }
@@ -191,7 +191,7 @@ class EventEmitter implements Emitter {
    * @returns {boolean}
    * @private
    */
-  private hasEventType(type: EventTypes) {
+  private hasEventType(type: string) {
     return !isUndefined(this.eventTypes[this.getTypeInfo(type).type]);
   }
 
@@ -199,7 +199,7 @@ class EventEmitter implements Emitter {
    * Add event type when given event not exists
    * @param {string} type Event type name
    */
-  addEventType(type: EventTypes) {
+  addEventType(type: string) {
     if (this.hasEventType(type)) {
       throw new Error(`There is already have event type ${type}`);
     }
@@ -212,7 +212,7 @@ class EventEmitter implements Emitter {
    * @param {string} eventType Event type name
    * @param {function} [handler] - registered event handler
    */
-  removeEventHandler(eventType: EventTypes, handler?: Handler) {
+  removeEventHandler(eventType: string, handler?: Handler) {
     const { type, namespace } = this.getTypeInfo(eventType);
 
     if (type && handler) {
@@ -234,7 +234,7 @@ class EventEmitter implements Emitter {
    * @param {function} handler - event handler
    * @private
    */
-  private removeEventHandlerWithHandler(type: EventTypes, handler: Handler) {
+  private removeEventHandlerWithHandler(type: string, handler: Handler) {
     const eventHandlers = this.events.get(type);
 
     if (eventHandlers) {
@@ -252,7 +252,7 @@ class EventEmitter implements Emitter {
    * @param {string} namespace Event namespace
    * @private
    */
-  private removeEventHandlerWithTypeInfo(type: EventTypes, namespace: string) {
+  private removeEventHandlerWithTypeInfo(type: string, namespace: string) {
     const handlersToSurvive: Handler[] = [];
     const eventHandlers = this.events.get(type);
 

@@ -1,5 +1,5 @@
 import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap } from './markdown';
-import { EventTypes, Handler } from './event';
+import { Handler } from './event';
 import { EditorCommandFn } from './spec';
 
 export type PreviewStyle = 'tab' | 'vertical';
@@ -79,7 +79,7 @@ export class Viewer {
 
   constructor(options: ViewerOptions);
 
-  addHook(type: EventTypes, handler: Handler): void;
+  addHook(type: string, handler: Handler): void;
 
   isMarkdownMode(): boolean;
 
@@ -87,9 +87,9 @@ export class Viewer {
 
   isWysiwygMode(): boolean;
 
-  off(type: EventTypes): void;
+  off(type: string): void;
 
-  on(type: EventTypes, handler: Handler): void;
+  on(type: string, handler: Handler): void;
 
   destroy(): void;
 
@@ -150,13 +150,13 @@ export class Editor {
 
   addCommand(type: EditorType, name: string, command: EditorCommandFn): void;
 
-  on(type: EventTypes, handler: Handler): void;
+  on(type: string, handler: Handler): void;
 
-  off(type: EventTypes): void;
+  off(type: string): void;
 
-  addHook(type: EventTypes, handler: Handler): void;
+  addHook(type: string, handler: Handler): void;
 
-  removeHook(type: EventTypes): void;
+  removeHook(type: string): void;
 
   focus(): void;
 

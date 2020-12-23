@@ -67,6 +67,7 @@ export default abstract class EditorBase {
 
   blur() {
     (this.view.dom as HTMLElement).blur();
+    this.eventEmitter.emit('blur');
   }
 
   destroy() {

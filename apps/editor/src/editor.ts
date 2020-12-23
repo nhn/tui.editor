@@ -8,7 +8,7 @@ import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
-import { Emitter, EventTypes, Handler } from '@t/event';
+import { Emitter, Handler } from '@t/event';
 import { EditorOptions, EditorType, PreviewStyle, ViewerOptions } from '@t/editor';
 import { EditorCommandFn } from '@t/spec';
 
@@ -306,7 +306,7 @@ class ToastUIEditor {
    * @param {string} type Event type
    * @param {function} handler Event handler
    */
-  on(type: EventTypes, handler: Handler) {
+  on(type: string, handler: Handler) {
     this.eventEmitter.listen(type, handler);
   }
 
@@ -314,7 +314,7 @@ class ToastUIEditor {
    * Unbind eventHandler from event type
    * @param {string} type Event type
    */
-  off(type: EventTypes) {
+  off(type: string) {
     this.eventEmitter.removeEventHandler(type);
   }
 
@@ -323,7 +323,7 @@ class ToastUIEditor {
    * @param {string} type Event type
    * @param {function} handler Event handler
    */
-  addHook(type: EventTypes, handler: Handler) {
+  addHook(type: string, handler: Handler) {
     this.eventEmitter.removeEventHandler(type);
     this.eventEmitter.listen(type, handler);
   }
@@ -332,7 +332,7 @@ class ToastUIEditor {
    * Remove hook from TUIEditor event
    * @param {string} type Event type
    */
-  removeHook(type: EventTypes) {
+  removeHook(type: string) {
     this.eventEmitter.removeEventHandler(type);
   }
 
@@ -600,7 +600,7 @@ class ToastUIEditor {
     }
 
     this.eventEmitter.emit('removeEditor');
-    this.eventEmitter.getEvents().forEach((_, type: EventTypes) => {
+    this.eventEmitter.getEvents().forEach((_, type: string) => {
       this.off(type);
     });
   }
