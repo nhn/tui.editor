@@ -8,7 +8,6 @@ import {
   CellInfo,
   SelectionInfo
 } from '@/wysiwyg/helper/table';
-import { Console } from 'console';
 
 function getSelectionRanges(
   doc: Node,
@@ -48,15 +47,26 @@ export default class CellSelection extends Selection {
 
   map(doc: Node, mapping: Mappable) {
     const startCell = doc.resolve(mapping.map(this.startCell.pos));
-    const endCell = doc.resolve(mapping.map(this.endCell.pos));
-    const originChildCount = this.startCell.parent.childCount;
-    const changedChildCount = startCell.parent.childCount;
+    let endCell = doc.resolve(mapping.map(this.endCell.pos));
 
-    // @TODO change condition
-    if (originChildCount <= changedChildCount) {
-      const from = doc.resolve(startCell.pos - 1);
+    const originCellCount = this.startCell.parent.childCount;
+    const changedCellCount = startCell.parent.childCount;
+
+    const removed = changedCellCount < originCellCount;
+
+    if (removed) {
+      const from = doc.resolve(startCell.pos + 1);
 
       return TextSelection.between(from, from);
+    }
+
+    const changed =
+      changedCellCount === originCellCount &&
+      startCell.pos === this.startCell.pos &&
+      endCell.pos !== this.endCell.pos;
+
+    if (changed) {
+      endCell = doc.resolve(endCell.pos - endCell.nodeBefore!.nodeSize);
     }
 
     return new CellSelection(startCell, endCell);
