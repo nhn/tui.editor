@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 2.5.1 | Tue Nov 24 2020
+ * @version 2.5.1 | Wed Dec 23 2020
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -3875,7 +3875,7 @@ function getPluginInfo(plugins) {
 
 /*!
  * to-mark
- * @version 1.0.1 | Tue Nov 24 2020
+ * @version 1.0.1 | Wed Dec 23 2020
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
@@ -8682,7 +8682,7 @@ var addClass_default = /*#__PURE__*/__webpack_require__.n(addClass);
 var removeClass = __webpack_require__(6);
 var removeClass_default = /*#__PURE__*/__webpack_require__.n(removeClass);
 
-// EXTERNAL MODULE: /Users/nhn/project/tui.editor/libs/toastmark/dist/toastmark.js
+// EXTERNAL MODULE: /Users/tigger/Desktop/project/tui.editor/libs/toastmark/dist/toastmark.js
 var toastmark = __webpack_require__(22);
 
 // EXTERNAL MODULE: ./src/js/htmlRenderConvertors.js
@@ -16937,7 +16937,7 @@ function sanitizeHtmlCode(code) {
 }
 
 /* harmony default export */ var wwCodeBlockManager = (wwCodeBlockManager_WwCodeBlockManager);
-// EXTERNAL MODULE: /Users/nhn/project/tui.editor/libs/squire/build/squire.js
+// EXTERNAL MODULE: /Users/tigger/Desktop/project/tui.editor/libs/squire/build/squire.js
 var build_squire = __webpack_require__(55);
 var squire_default = /*#__PURE__*/__webpack_require__.n(build_squire);
 
@@ -24458,7 +24458,7 @@ var defaultUI_DefaultUI = /*#__PURE__*/function () {
 // EXTERNAL MODULE: ./src/js/codeBlockManager.js
 var codeBlockManager = __webpack_require__(30);
 
-// EXTERNAL MODULE: /Users/nhn/project/tui.editor/libs/to-mark/dist/to-mark.js
+// EXTERNAL MODULE: /Users/tigger/Desktop/project/tui.editor/libs/to-mark/dist/to-mark.js
 var to_mark = __webpack_require__(32);
 var to_mark_default = /*#__PURE__*/__webpack_require__.n(to_mark);
 
