@@ -134,7 +134,7 @@ const nodes: ToMdNodeConvertorMap = {
     state.closeBlock(node);
   },
 
-  softBreak(state, node) {
+  lineBreak(state, node) {
     if (node.attrs.inCell) {
       state.write('<br>');
     } else {

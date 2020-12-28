@@ -26,7 +26,7 @@ const htmlNodeMap: HTMLNodeMap = {
   'i, em': { nodeType: 'emph', mark: true },
   's, del': { nodeType: 'strike', mark: true },
   code: { nodeType: 'code', mark: true },
-  br: { nodeType: 'softBreak' }
+  br: { nodeType: 'lineBreak' }
 };
 
 const nodeMap = getHTMLNodeMap(htmlNodeMap);

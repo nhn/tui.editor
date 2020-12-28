@@ -43,7 +43,7 @@ export default class Convertor {
     for (let i = 0; i < node.childCount; i += 1) {
       const inlineNode = node.child(i);
 
-      if (inlineNode.type.name === 'softBreak') {
+      if (inlineNode.type.name === 'lineBreak') {
         if (buffer.length) {
           const newPara = createParagraph(this.schema, buffer);
 

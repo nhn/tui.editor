@@ -2,9 +2,9 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 
 import Node from '@/spec/node';
 
-export class SoftBreak extends Node {
+export class LineBreak extends Node {
   get name() {
-    return 'softBreak';
+    return 'lineBreak';
   }
 
   get defaultSchema() {

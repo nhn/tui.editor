@@ -19,7 +19,7 @@ export type WwNodeType =
   | 'thematicBreak'
   | 'image'
   | 'hardBreak'
-  | 'softBreak'
+  | 'lineBreak'
   | 'customBlock';
 
 export type WwMarkType = 'strong' | 'emph' | 'strike' | 'link' | 'code';
