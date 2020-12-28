@@ -20,7 +20,7 @@ function getSelectionRanges(
     for (let j = 0; j < columnCount; j += 1) {
       const { offset, nodeSize } = cellsPos[i + startRowIndex][j + startColumnIndex];
 
-      ranges.push(new SelectionRange(doc.resolve(offset), doc.resolve(offset + nodeSize)));
+      ranges.push(new SelectionRange(doc.resolve(offset + 1), doc.resolve(offset + nodeSize - 1)));
     }
   }
 
@@ -43,6 +43,7 @@ export default class CellSelection extends Selection {
 
     this.startCell = startCellPos;
     this.endCell = endCellPos;
+    this.visible = false;
   }
 
   map(doc: Node, mapping: Mappable) {
