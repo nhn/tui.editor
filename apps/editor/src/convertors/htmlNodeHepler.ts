@@ -1,6 +1,8 @@
+import { WwNodeType, WwMarkType } from '@t/wysiwyg';
+
 interface HTMLNodeMap {
   [k: string]: {
-    nodeType: string;
+    nodeType: WwNodeType | WwMarkType;
     mark?: boolean;
   };
 }
