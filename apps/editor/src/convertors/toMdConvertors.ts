@@ -57,12 +57,20 @@ const nodes: ToMdNodeConvertorMap = {
     state.text(node.text ?? '');
   },
 
-  paragraph(state, node, parent) {
+  paragraph(state, node, parent, index = 0) {
     if (node.childCount) {
       state.convertInline(node);
       state.closeBlock(node);
-    } else if (parent && parent.childCount > 1) {
-      state.write('<br>\n');
+    } else if (parent && index > 0) {
+      const prevNode = parent.child(index - 1);
+
+      if (
+        node.childCount === 0 &&
+        prevNode.type.name === 'paragraph' &&
+        prevNode.childCount === 0
+      ) {
+        state.write('<br>\n');
+      }
     }
   },
 
@@ -126,18 +134,11 @@ const nodes: ToMdNodeConvertorMap = {
     state.closeBlock(node);
   },
 
-  softBreak(state, node, parent, index) {
+  softBreak(state, node) {
     if (node.attrs.inCell) {
       state.write('<br>');
     } else {
-      const prevIndex = index && index !== 0 ? index - 1 : 0;
-      const prevNode = parent && parent.child(prevIndex);
-
-      if (prevNode && prevNode.type.name !== 'softBreak') {
-        state.write('\n');
-      }
-
-      state.write('<br>\n');
+      state.write('\n');
     }
   },
 

@@ -120,12 +120,10 @@ export default class ToWwConvertorState {
   convertNode(mdNode: MdNode) {
     this.convert(mdNode);
 
-    let doc;
+    if (this.stack.length) {
+      return this.closeNode();
+    }
 
-    do {
-      doc = this.closeNode();
-    } while (this.stack.length);
-
-    return doc;
+    return null;
   }
 }

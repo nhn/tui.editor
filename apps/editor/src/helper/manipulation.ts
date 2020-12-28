@@ -1,6 +1,8 @@
 import { TextSelection, Transaction } from 'prosemirror-state';
 import { ProsemirrorNode, Schema } from 'prosemirror-model';
 
+import isString from 'tui-code-snippet/type/isString';
+
 export function replaceNodes(
   tr: Transaction,
   from: number,
@@ -40,8 +42,18 @@ export function spaceToNbsp(text: string) {
   return text.replace(/ /g, '\u00a0');
 }
 
-export function createParagraph(schema: Schema, text?: string) {
-  return schema.nodes.paragraph.create(null, text ? schema.text(spaceToNbsp(text)) : []);
+export function createParagraph(schema: Schema, content?: string | ProsemirrorNode[]) {
+  const { paragraph } = schema.nodes;
+
+  if (!content) {
+    return paragraph.createAndFill();
+  }
+
+  if (isString(content)) {
+    return paragraph.create(null, schema.text(spaceToNbsp(content)));
+  }
+
+  return paragraph.create(null, content);
 }
 
 export function createText(schema: Schema, text: string) {

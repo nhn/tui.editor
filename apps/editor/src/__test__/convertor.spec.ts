@@ -9,7 +9,9 @@ import { createSpecs } from '@/wysiwyg/specCreator';
 import Convertor from '@/convertors/convertor';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 
-const parser = new Parser();
+const parser = new Parser({
+  disallowedHtmlBlockTags: ['br']
+});
 
 function createSchema() {
   const adaptor = new WwToDOMAdaptor({}, {});
@@ -269,6 +271,108 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
+    it('softbreak', () => {
+      const markdown = source`
+        foo
+        bar
+
+        baz
+
+
+
+        qux
+      `;
+
+      const expected = source`
+        foo
+        bar
+
+        baz
+
+        qux
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('<br> html string', () => {
+      const markdown = source`
+        foo
+        <br>
+        bar
+        <br>
+        <br>
+        baz
+        <br>
+        <br>
+        <br>
+        qux
+      `;
+      const expected = source`
+        foo
+        
+        bar
+
+        <br>
+        baz
+
+        <br>
+        <br>
+        qux
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('<br> html string with softbreak', () => {
+      const markdown = source`
+        foo
+
+        <br>
+        bar
+        
+        <br>
+        <br>
+        baz
+        
+
+        <br>
+        qux
+      `;
+      const expected = source`
+        foo
+        
+        <br>
+        bar
+
+        <br>
+        <br>
+        baz
+
+        <br>
+        qux
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('table with <br> html string', () => {
+      const markdown = source`
+        | thead<br>thead | thead |
+        | ----- | ----- |
+        | tbody<br>tbody | tbody |
+        | tbody | tbody<br>tbody<br>tbody |
+      `;
+      const expected = source`
+        | thead<br>thead | thead |
+        | ---------- | ----- |
+        | tbody<br>tbody | tbody |
+        | tbody | tbody<br>tbody<br>tbody |
+      `;
+
+      assertConverting(markdown, `${expected}\n`);
+    });
+
     it('inlinHtml', () => {
       const markdown = source`
         <b>foo</b>
@@ -284,36 +388,6 @@ describe('Convertor', () => {
       `;
 
       assertConverting(markdown, markdown);
-    });
-
-    it('br html string (newline)', () => {
-      const markdown = source`
-        foo
-        <br>
-        bar
-        <br>
-        <br>
-        baz
-      `;
-
-      assertConverting(markdown, markdown);
-    });
-
-    it('table with newlines', () => {
-      const markdown = source`
-        | thead<br>thead | thead |
-        | ----- | ----- |
-        | tbody<br>tbody | tbody |
-        | tbody | tbody<br>tbody<br>tbody |
-      `;
-      const expected = source`
-        | thead<br>thead | thead |
-        | ---------- | ----- |
-        | tbody<br>tbody | tbody |
-        | tbody | tbody<br>tbody<br>tbody |
-      `;
-
-      assertConverting(markdown, `${expected}\n`);
     });
   });
 });
