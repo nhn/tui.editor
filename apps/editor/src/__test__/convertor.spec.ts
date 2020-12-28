@@ -271,7 +271,7 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    it('softbreak', () => {
+    it('soft break', () => {
       const markdown = source`
         foo
         bar
@@ -324,7 +324,7 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    it('<br> html string with softbreak', () => {
+    it('<br> html string with soft break', () => {
       const markdown = source`
         foo
 

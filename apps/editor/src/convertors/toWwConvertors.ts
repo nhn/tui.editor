@@ -25,7 +25,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     state.addText(node.literal || '');
   },
 
-  paragraph(state, node, { entering }) {
+  paragraph(state, _, { entering }) {
     const { paragraph } = state.schema.nodes;
 
     if (entering) {
