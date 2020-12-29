@@ -13,6 +13,8 @@ interface EventHandlers {
   mouseup: () => void;
 }
 
+const MOUSE_RIGHT_BUTTON = 2;
+
 export default class TableSelection {
   private view: EditorView;
 
@@ -40,6 +42,11 @@ export default class TableSelection {
 
   handleMousedown(ev: Event) {
     const inCell = isInCellElement(ev.target as HTMLElement, this.view.dom);
+
+    if ((ev as MouseEvent).button === MOUSE_RIGHT_BUTTON) {
+      ev.preventDefault();
+      return;
+    }
 
     if (inCell) {
       const startCellPos = this.getCellPos(ev as MouseEvent);
