@@ -1,5 +1,3 @@
-import { NodeType, MarkType } from 'prosemirror-model';
-
 import { ToWwConvertorMap } from '@t/convertor';
 import {
   HeadingMdNode,
@@ -9,8 +7,6 @@ import {
   LinkMdNode,
   CustomBlockMdNode
 } from '@t/markdown';
-
-import { getHTMLNodeInfo } from './htmlNodeHepler';
 
 function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
@@ -162,44 +158,6 @@ export const toWwConvertors: ToWwConvertorMap = {
 
   linebreak(state) {
     state.addNode(state.schema.nodes.hardBreak);
-  },
-
-  htmlInline(state, node, { entering }) {
-    const { schema } = state;
-    const tagInfo = getHTMLNodeInfo(node.literal!);
-
-    if (tagInfo) {
-      const { tagName, nodeType, mark } = tagInfo;
-      const nodes = mark ? schema.marks : schema.nodes;
-      const type = nodes[nodeType];
-
-      if (entering) {
-        if (tagName === 'br') {
-          const inCell = node.parent!.type === 'tableCell';
-
-          state.addNode(type as NodeType, { htmlToken: true, inCell });
-        } else {
-          state.openMark((type as MarkType).create({ htmlToken: tagName }));
-        }
-      } else {
-        state.closeMark(type as MarkType);
-      }
-    }
-  },
-
-  htmlBlock(state, node, { entering }) {
-    const tagInfo = getHTMLNodeInfo(node.literal!);
-
-    if (tagInfo) {
-      const { nodeType } = tagInfo;
-      const type = state.schema.nodes[nodeType];
-
-      if (entering) {
-        state.openNode(type, { htmlToken: true });
-      } else {
-        state.closeNode();
-      }
-    }
   },
 
   // GFM specifications node

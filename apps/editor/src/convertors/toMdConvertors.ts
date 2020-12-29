@@ -28,30 +28,6 @@ function addBackticks(node: Node, side: number) {
   return result;
 }
 
-function isPlainURL(link: Mark, parent: Node, index: number, side: number) {
-  if (link.attrs.title || !/^\w+:/.test(link.attrs.href)) {
-    return false;
-  }
-
-  const content = parent.child(index + (side < 0 ? -1 : 0));
-
-  if (
-    !content.isText ||
-    content.text !== link.attrs.href ||
-    content.marks[content.marks.length - 1] !== link
-  ) {
-    return false;
-  }
-
-  if (index === (side < 0 ? 1 : parent.childCount - 1)) {
-    return true;
-  }
-
-  const next = parent.child(index + (side < 0 ? -2 : 1));
-
-  return !link.isInSet(next.marks);
-}
-
 const nodes: ToMdNodeConvertorMap = {
   text(state, node) {
     state.text(node.text ?? '');
@@ -125,8 +101,15 @@ const nodes: ToMdNodeConvertorMap = {
   image(state, node) {
     const altText = state.escape(node.attrs.altText || '');
     const imageUrl = state.escape(node.attrs.imageUrl);
+    const { htmlToken } = node.attrs;
 
-    state.write(`![${altText}](${imageUrl})`);
+    if (htmlToken) {
+      const altAttr = altText ? ` alt="${altText}"` : '';
+
+      state.write(`<img src="${imageUrl}"${altAttr}>`);
+    } else {
+      state.write(`![${altText}](${imageUrl})`);
+    }
   },
 
   thematicBreak(state, node) {
@@ -252,14 +235,18 @@ const marks: ToMdMarkConvertorMap = {
   },
 
   link: {
-    open(_: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      return isPlainURL(mark, parent, index, 1) ? '<' : '[';
+    open(state: ToMdConvertorStateType, mark: Mark) {
+      const { htmlToken } = mark.attrs;
+      const linkUrl = state.escape(mark.attrs.linkUrl);
+
+      return htmlToken ? `<a href="${linkUrl}">` : '[';
     },
-    close(state: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
+    close(state: ToMdConvertorStateType, mark: Mark) {
+      const { htmlToken } = mark.attrs;
       const linkUrl = state.escape(mark.attrs.linkUrl);
       const linkText = mark.attrs.title ? ` ${state.quote(mark.attrs.linkText)}` : '';
 
-      return isPlainURL(mark, parent, index, -1) ? '>' : `](${linkText}${linkUrl})`;
+      return htmlToken ? '</a>' : `](${linkText}${linkUrl})`;
     }
   },
 

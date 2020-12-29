@@ -1,6 +1,8 @@
 import { Schema, Node, NodeType, Mark, MarkType } from 'prosemirror-model';
+
 import { ToWwConvertorMap, StackItem, Attrs } from '@t/convertor';
 import { MdNode } from '@t/markdown';
+import { getHTMLToWwConvertor } from './htmlToWwConvertors';
 
 function mergeMarkText(a: Node, b: Node) {
   if (a.isText && b.isText && Mark.sameSet(a.marks, b.marks)) {
@@ -93,18 +95,25 @@ export default class ToWwConvertorState {
 
     while (event) {
       const { node, entering } = event;
-      const convertor = this.convertors[node.type];
+      const { type } = node;
+      const convertor = this.convertors[type];
 
       let skipped = false;
 
-      if (convertor) {
-        const context = {
-          entering,
-          skipChildren: () => {
-            skipped = true;
-          }
-        };
+      const context = {
+        entering,
+        skipChildren: () => {
+          skipped = true;
+        }
+      };
 
+      if (type === 'htmlInline' || type === 'htmlBlock') {
+        const htmlToWwConvertor = getHTMLToWwConvertor(node.literal!);
+
+        if (htmlToWwConvertor) {
+          htmlToWwConvertor(this, node, context);
+        }
+      } else if (convertor) {
         convertor(this, node, context);
       }
 

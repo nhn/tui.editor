@@ -10,7 +10,7 @@ import Convertor from '@/convertors/convertor';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 
 const parser = new Parser({
-  disallowedHtmlBlockTags: ['br']
+  disallowedHtmlBlockTags: ['br', 'img']
 });
 
 function createSchema() {
@@ -373,7 +373,7 @@ describe('Convertor', () => {
       assertConverting(markdown, `${expected}\n`);
     });
 
-    it('inlinHtml', () => {
+    it('inlinHtml (emphasis type)', () => {
       const markdown = source`
         <b>foo</b>
         <strong>foo</strong>
@@ -385,6 +385,18 @@ describe('Convertor', () => {
         <del>foo</del>
 
         <code>foo</code>
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('inlineHtml (link type)', () => {
+      const markdown = source`
+        <a href="#">foo</a>
+
+        <img src="#">
+
+        <img src="#" alt="test">
       `;
 
       assertConverting(markdown, markdown);

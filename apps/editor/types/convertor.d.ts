@@ -102,3 +102,9 @@ export interface ToDOMAdaptor {
   getToDOM(type: string): ((node: ProsemirrorNode | Mark) => DOMOutputSpecArray) | null;
   getToDOMNode(type: string): ((node: ProsemirrorNode | Mark) => Node) | null;
 }
+
+export type HTMLToWwConvertorMap = Partial<Record<string, ToWwConvertor>>;
+
+export interface FlattenHTMLToWwConvertorMap {
+  [k: string]: ToWwConvertor;
+}

@@ -15,7 +15,8 @@ export class Link extends Mark {
     return {
       attrs: {
         linkUrl: { default: '' },
-        linkText: { default: false }
+        linkText: { default: false },
+        htmlToken: { default: false }
       },
       inclusive: false,
       parseDOM: [

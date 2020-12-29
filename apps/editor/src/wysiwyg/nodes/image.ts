@@ -15,7 +15,8 @@ export class Image extends NodeSchema {
       inline: true,
       attrs: {
         imageUrl: { default: '' },
-        altText: { default: null }
+        altText: { default: null },
+        htmlToken: { default: false }
       },
       group: 'inline',
       selectable: false,
