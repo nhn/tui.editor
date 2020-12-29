@@ -16,9 +16,11 @@ function getSelectionRanges(
 ) {
   const ranges = [];
 
-  for (let i = 0; i < rowCount; i += 1) {
-    for (let j = 0; j < columnCount; j += 1) {
-      const { offset, nodeSize } = cellsPos[i + startRowIndex][j + startColumnIndex];
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+    for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
+      const rowIdx = rowIndex + startRowIndex;
+      const columnIdx = columnIndex + startColumnIndex;
+      const { offset, nodeSize } = cellsPos[rowIdx][columnIdx];
 
       ranges.push(new SelectionRange(doc.resolve(offset), doc.resolve(offset + nodeSize)));
     }
@@ -47,13 +49,26 @@ export default class CellSelection extends Selection {
 
   map(doc: Node, mapping: Mappable) {
     const startCell = doc.resolve(mapping.map(this.startCell.pos));
-    const endCell = doc.resolve(mapping.map(this.endCell.pos));
-    const removed = startCell.parent.childCount < this.startCell.parent.childCount;
+    let endCell = doc.resolve(mapping.map(this.endCell.pos));
+
+    const originCellCount = this.startCell.parent.childCount;
+    const changedCellCount = startCell.parent.childCount;
+
+    const removed = changedCellCount < originCellCount;
 
     if (removed) {
       const from = doc.resolve(startCell.pos + 1);
 
       return TextSelection.between(from, from);
+    }
+
+    const changed =
+      changedCellCount === originCellCount &&
+      startCell.pos === this.startCell.pos &&
+      endCell.pos !== this.endCell.pos;
+
+    if (changed) {
+      endCell = doc.resolve(endCell.pos - endCell.nodeBefore!.nodeSize);
     }
 
     return new CellSelection(startCell, endCell);

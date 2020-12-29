@@ -56,13 +56,12 @@ export function createTableBodyRows(
   return tableRows;
 }
 
-export function createCellsToAdd(columnCount: number, rowIndex: number, schema: Schema) {
+export function createDummyCells(columnCount: number, rowIndex: number, schema: Schema) {
   const { tableHeadCell, tableBodyCell, paragraph } = schema.nodes;
+  const cell = rowIndex === 0 ? tableHeadCell : tableBodyCell;
   const cells = [];
 
   for (let index = 0; index < columnCount; index += 1) {
-    const cell = rowIndex === 0 ? tableHeadCell : tableBodyCell;
-
     cells.push(cell.create(null, paragraph.create()));
   }
 

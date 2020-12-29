@@ -1,12 +1,13 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
+import { TextSelection } from 'prosemirror-state';
 
 import Node from '@/spec/node';
 import { isInTableNode, findNodeBy } from '@/wysiwyg/helper/node';
 import {
   createTableHeadRow,
   createTableBodyRows,
-  createCellsToAdd,
+  createDummyCells,
   getResolvedSelection,
   getSelectionInfo,
   getTableCellsInfo,
@@ -117,7 +118,7 @@ export class Table extends Node {
               : getPrevColumnOffsets(rowIndex, selectionInfo, cellsInfo);
 
           const from = tr.mapping.map(mapOffset);
-          const cells = createCellsToAdd(columnCount, rowIndex, schema);
+          const cells = createDummyCells(columnCount, rowIndex, schema);
 
           tr.insert(from, cells);
         }
@@ -277,10 +278,44 @@ export class Table extends Node {
           const { offset, nodeSize } = foundCell;
           const from = offset + nodeSize - 1;
 
-          dispatch!(tr.setSelection(createTextSelection(tr, from, from)).scrollIntoView());
+          dispatch!(tr.setSelection(createTextSelection(tr, from, from)));
 
           return true;
         }
+      }
+
+      return false;
+    };
+  }
+
+  private deleteCells(): EditorCommand {
+    return () => (state, dispatch) => {
+      const { schema, selection, tr } = state;
+      const { anchor, head } = getResolvedSelection(selection);
+      const textSelection = selection instanceof TextSelection;
+
+      if (anchor && head && !textSelection) {
+        const selectionInfo = getSelectionInfo(anchor, head);
+        const cellsInfo = getTableCellsInfo(anchor);
+        const { startColumnIndex, columnCount } = selectionInfo;
+
+        const tableRowCount = cellsInfo.length;
+
+        for (let rowIndex = 0; rowIndex < tableRowCount; rowIndex += 1) {
+          const startCellOffset = cellsInfo[rowIndex][startColumnIndex];
+          const endCellOffset = cellsInfo[rowIndex][startColumnIndex + columnCount - 1];
+          const cells = createDummyCells(columnCount, rowIndex, schema);
+
+          tr.replace(
+            tr.mapping.map(startCellOffset.offset),
+            tr.mapping.map(endCellOffset.offset + endCellOffset.nodeSize),
+            new Slice(Fragment.from(cells), 0, 0)
+          );
+        }
+
+        dispatch!(tr);
+
+        return true;
       }
 
       return false;
@@ -297,14 +332,21 @@ export class Table extends Node {
       addRowToDown: this.addRow(1),
       addRowToUp: this.addRow(-1),
       removeRow: this.removeRow(),
-      alignColumn: this.alignColumn()
+      alignColumn: this.alignColumn(),
+      deleteCells: this.deleteCells()
     };
   }
 
   keymaps() {
+    const deleteCellsCommand = this.deleteCells()();
+
     return {
       Tab: this.moveToCell(1)(),
-      'Shift-Tab': this.moveToCell(-1)()
+      'Shift-Tab': this.moveToCell(-1)(),
+      Backspace: deleteCellsCommand,
+      'Mod-Backspace': deleteCellsCommand,
+      Delete: deleteCellsCommand,
+      'Mod-Delete': deleteCellsCommand
     };
   }
 }
