@@ -5,6 +5,7 @@ import { TextSelection } from 'prosemirror-state';
 import Node from '@/spec/node';
 import { isInTableNode, findNodeBy } from '@/wysiwyg/helper/node';
 import {
+  CellInfo,
   createTableHeadRow,
   createTableBodyRows,
   createDummyCells,
@@ -16,8 +17,10 @@ import {
   getPrevRowOffset,
   getNextColumnOffsets,
   getPrevColumnOffsets,
-  findNextCell,
-  findPrevCell
+  getRightCellOffset,
+  getLeftCellOffset,
+  getUpCellOffset,
+  getDownCellOffset
 } from '@/wysiwyg/helper/table';
 
 import { createTextSelection } from '@/helper/manipulation';
@@ -33,6 +36,19 @@ interface AddTablePayload {
 interface AlignColumnPayload {
   align: 'left' | 'center' | 'right';
 }
+
+type CellOffsetFunc = ([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) => number | null;
+
+interface CellOffsetFuncMap {
+  [k: string]: CellOffsetFunc;
+}
+
+const cellOffsetFuncMap: CellOffsetFuncMap = {
+  left: getRightCellOffset,
+  right: getLeftCellOffset,
+  up: getUpCellOffset,
+  down: getDownCellOffset
+};
 
 export class Table extends Node {
   get name() {
@@ -263,7 +279,7 @@ export class Table extends Node {
     };
   }
 
-  private moveToCell(direction: number): EditorCommand {
+  private moveToCell(direction: string): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, tr } = state;
       const { anchor, head } = getResolvedSelection(selection);
@@ -271,14 +287,12 @@ export class Table extends Node {
       if (anchor && head) {
         const cellsInfo = getTableCellsInfo(anchor);
         const cellIndex = getCellIndexInfo(anchor);
-        const foundCell =
-          direction === 1 ? findNextCell(cellIndex, cellsInfo) : findPrevCell(cellIndex, cellsInfo);
 
-        if (foundCell) {
-          const { offset, nodeSize } = foundCell;
-          const from = offset + nodeSize - 1;
+        const fn = cellOffsetFuncMap[direction];
+        const offset = fn ? fn(cellIndex, cellsInfo) : null;
 
-          dispatch!(tr.setSelection(createTextSelection(tr, from, from)));
+        if (offset) {
+          dispatch!(tr.setSelection(createTextSelection(tr, offset, offset)));
 
           return true;
         }
@@ -338,11 +352,19 @@ export class Table extends Node {
   }
 
   keymaps() {
+    const moveToUpCellCommand = this.moveToCell('up')();
+    const moveToDownCellCommand = this.moveToCell('down')();
     const deleteCellsCommand = this.deleteCells()();
 
     return {
-      Tab: this.moveToCell(1)(),
-      'Shift-Tab': this.moveToCell(-1)(),
+      Tab: this.moveToCell('left')(),
+      'Shift-Tab': this.moveToCell('right')(),
+
+      ArrowUp: moveToUpCellCommand,
+      ArrowDown: moveToDownCellCommand,
+      'Shift-ArrowUp': moveToUpCellCommand,
+      'Shift-ArrowDown': moveToDownCellCommand,
+
       Backspace: deleteCellsCommand,
       'Mod-Backspace': deleteCellsCommand,
       Delete: deleteCellsCommand,
