@@ -1,5 +1,5 @@
 import { TextSelection, Transaction } from 'prosemirror-state';
-import { ProsemirrorNode, Schema } from 'prosemirror-model';
+import { ProsemirrorNode, Schema, Mark } from 'prosemirror-model';
 
 import isString from 'tui-code-snippet/type/isString';
 
@@ -42,7 +42,11 @@ export function spaceToNbsp(text: string) {
   return text.replace(/ /g, '\u00a0');
 }
 
-export function createParagraph(schema: Schema, content?: string | ProsemirrorNode[]) {
+export function createParagraph(
+  schema: Schema,
+  content?: string | ProsemirrorNode[],
+  spaceChange = true
+) {
   const { paragraph } = schema.nodes;
 
   if (!content) {
@@ -50,14 +54,14 @@ export function createParagraph(schema: Schema, content?: string | ProsemirrorNo
   }
 
   if (isString(content)) {
-    return paragraph.create(null, schema.text(spaceToNbsp(content)));
+    return paragraph.create(null, schema.text(spaceChange ? spaceToNbsp(content) : content));
   }
 
   return paragraph.create(null, content);
 }
 
-export function createText(schema: Schema, text: string) {
-  return schema.text(spaceToNbsp(text));
+export function createText(schema: Schema, text: string, marks?: Mark[], spaceChange = true) {
+  return schema.text(spaceChange ? spaceToNbsp(text) : text, marks);
 }
 
 export function createTextSelection(tr: Transaction, from: number, to = from) {

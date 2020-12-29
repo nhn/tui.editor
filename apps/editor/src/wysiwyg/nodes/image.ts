@@ -2,6 +2,7 @@ import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
+import { sanitizeXssAttributeValue } from '@/sanitizer/htmlSanitizer';
 
 import { EditorCommand } from '@t/spec';
 
@@ -37,7 +38,7 @@ export class Image extends NodeSchema {
         return [
           'img',
           {
-            src: imageUrl,
+            src: sanitizeXssAttributeValue(imageUrl),
             ...(altText && { alt: altText })
           }
         ];

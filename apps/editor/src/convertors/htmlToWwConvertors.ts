@@ -1,3 +1,5 @@
+import { sanitizeXssAttributeValue } from '@/sanitizer/htmlSanitizer';
+
 import { HTMLToWwConvertorMap, FlattenHTMLToWwConvertorMap } from '@t/convertor';
 
 const TAG_NAME = '[A-Za-z][A-Za-z0-9-]*';
@@ -14,12 +16,22 @@ const ATTRIBUTE = `${'(?:\\s+'}${ATTRIBUTE_NAME}${ATTRIBUTE_VALUE_SPEC}?)`;
 const OPEN_TAG = `<(${TAG_NAME})(${ATTRIBUTE})*\\s*/?>`;
 const CLOSE_TAG = `</(${TAG_NAME})\\s*[>]`;
 
-const HTMLTAG = `(?:${OPEN_TAG}|${CLOSE_TAG})`;
-const reHtmlTag = new RegExp(`^${HTMLTAG}`, 'i');
+const HTML_TAG = `(?:${OPEN_TAG}|${CLOSE_TAG})`;
 
-const HREF_ATTRIBUTE_VALUE = `href=['"](${UNQUOTED_VALUE})['"]`;
-const SRC_ATTRIBUTE_VALUE = `src=['"](${UNQUOTED_VALUE})['"]`;
-const ALT_ATTRIBUTE_VALUE = `alt=['"](${UNQUOTED_VALUE})['"]`;
+const reHTMLTag = new RegExp(`^${HTML_TAG}`, 'i');
+
+const FOUND_ATTRIBUTE_VALUE = `\\s*=\\s*(?:[""']([^""']*)[""']|(\\S+))`;
+
+function getMatchedAttributeValue(tag: string, attrName: string) {
+  const reAttrValue = new RegExp(`${attrName}${FOUND_ATTRIBUTE_VALUE}`, 'i');
+  const matched = tag.match(reAttrValue);
+
+  if (matched) {
+    return matched[1];
+  }
+
+  return null;
+}
 
 function createConvertors(convertors: HTMLToWwConvertorMap) {
   const convertorMap: FlattenHTMLToWwConvertorMap = {};
@@ -38,7 +50,7 @@ function createConvertors(convertors: HTMLToWwConvertorMap) {
 const htmlConvertors: HTMLToWwConvertorMap = {
   'b, strong': (state, node, { entering }) => {
     const tag = node.literal!;
-    const matched = tag.match(reHtmlTag);
+    const matched = tag.match(reHTMLTag);
 
     if (matched) {
       const [, tagName] = matched;
@@ -54,7 +66,7 @@ const htmlConvertors: HTMLToWwConvertorMap = {
 
   'i, em': (state, node, { entering }) => {
     const tag = node.literal!;
-    const matched = tag.match(reHtmlTag);
+    const matched = tag.match(reHTMLTag);
 
     if (matched) {
       const [, tagName] = matched;
@@ -70,7 +82,7 @@ const htmlConvertors: HTMLToWwConvertorMap = {
 
   's, del': (state, node, { entering }) => {
     const tag = node.literal!;
-    const matched = tag.match(reHtmlTag);
+    const matched = tag.match(reHTMLTag);
 
     if (matched) {
       const [, tagName] = matched;
@@ -86,7 +98,7 @@ const htmlConvertors: HTMLToWwConvertorMap = {
 
   code: (state, node, { entering }) => {
     const tag = node.literal!;
-    const matched = tag.match(reHtmlTag);
+    const matched = tag.match(reHTMLTag);
 
     if (matched) {
       const [, tagName] = matched;
@@ -102,14 +114,18 @@ const htmlConvertors: HTMLToWwConvertorMap = {
 
   a: (state, node, { entering }) => {
     const tag = node.literal!;
-    const matched = tag.match(HREF_ATTRIBUTE_VALUE);
+    const linkUrl = getMatchedAttributeValue(tag, 'href');
 
-    if (matched) {
-      const [, linkUrl] = matched;
+    if (linkUrl) {
       const { link } = state.schema.marks;
 
       if (entering) {
-        state.openMark(link.create({ linkUrl, htmlToken: true }));
+        state.openMark(
+          link.create({
+            linkUrl: sanitizeXssAttributeValue(linkUrl),
+            htmlToken: true
+          })
+        );
       } else {
         state.closeMark(link);
       }
@@ -118,17 +134,15 @@ const htmlConvertors: HTMLToWwConvertorMap = {
 
   img: (state, node) => {
     const tag = node.literal!;
-    const matchedLinkUrl = tag.match(SRC_ATTRIBUTE_VALUE);
+    const imageUrl = getMatchedAttributeValue(tag, 'src');
 
-    if (matchedLinkUrl) {
-      const [, imageUrl] = matchedLinkUrl;
-      const matchedAltText = tag.match(ALT_ATTRIBUTE_VALUE);
-      const altText = matchedAltText ? matchedAltText[1] : '';
+    if (imageUrl) {
+      const altText = getMatchedAttributeValue(tag, 'alt');
       const { image } = state.schema.nodes;
 
       state.addNode(image, {
         htmlToken: true,
-        imageUrl,
+        imageUrl: sanitizeXssAttributeValue(imageUrl),
         ...(altText && { altText })
       });
     }
@@ -151,7 +165,7 @@ const htmlConvertors: HTMLToWwConvertorMap = {
 const htmlToWwConvertors = createConvertors(htmlConvertors);
 
 export function getHTMLToWwConvertor(tag: string) {
-  const matched = tag.match(reHtmlTag);
+  const matched = tag.match(reHTMLTag);
 
   if (matched) {
     const [, tagName] = matched;

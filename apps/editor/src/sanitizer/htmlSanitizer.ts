@@ -12,7 +12,7 @@ type GlobalEventTypes = keyof Omit<
   'removeEventListener'
 >;
 
-const HTML_ATTR_LIST_RX = new RegExp(
+const reXssHtmlAttr = new RegExp(
   '^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
     'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' +
     'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' +
@@ -22,7 +22,7 @@ const HTML_ATTR_LIST_RX = new RegExp(
   'g'
 );
 
-const SVG_ATTR_LIST_RX = new RegExp(
+const reXssSvgAttr = new RegExp(
   '^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' +
     'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' +
     'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' +
@@ -41,15 +41,16 @@ const SVG_ATTR_LIST_RX = new RegExp(
   'g'
 );
 
-const XSS_ATTR_RX = /href|src|background/gi;
-const XSS_VALUE_RX = /((java|vb|live)script|x):/gi;
-const ON_EVENT_RX = /^on\S+/;
+const reXssAttr = /href|src|background/gi;
+const reXssAttrValue = /((java|vb|live)script|x):/gi;
+const reOnEvent = /^on\S+/;
+const reComment = /<!--[\s\S]*?-->/g;
 
-function htmlSanitizer(html: string | Node, needHtmlText: boolean) {
+export function sanitizeHTML(html: string | Node, needHtmlText: boolean) {
   const root = document.createElement('div');
 
   if (isString(html)) {
-    html = html.replace(/<!--[\s\S]*?-->/g, '');
+    html = html.replace(reComment, '');
     root.innerHTML = html;
   } else {
     root.appendChild(html);
@@ -73,12 +74,12 @@ function removeUnnecessaryTags(html: HTMLElement) {
 }
 
 function isXSSAttribute(attrName: string, attrValue: string) {
-  return attrName.match(XSS_ATTR_RX) && attrValue.match(XSS_VALUE_RX);
+  return attrName.match(reXssAttr) && attrValue.match(reXssAttrValue);
 }
 
 function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: Attr[]) {
   blacklistAttrs.forEach(({ name }: Attr) => {
-    if (ON_EVENT_RX.test(name)) {
+    if (reOnEvent.test(name)) {
       node[name as GlobalEventTypes] = null;
     }
 
@@ -93,8 +94,8 @@ function leaveOnlyWhitelistAttribute(html: HTMLElement) {
     const { attributes } = node as HTMLElement;
     const blacklist = toArray(attributes).filter(attr => {
       const { name, value } = attr;
-      const htmlAttr = name.match(HTML_ATTR_LIST_RX);
-      const svgAttr = name.match(SVG_ATTR_LIST_RX);
+      const htmlAttr = name.match(reXssHtmlAttr);
+      const svgAttr = name.match(reXssSvgAttr);
       const xssAttr = htmlAttr && isXSSAttribute(name, value);
 
       return (!htmlAttr && !svgAttr) || xssAttr;
@@ -104,4 +105,8 @@ function leaveOnlyWhitelistAttribute(html: HTMLElement) {
   });
 }
 
-export default htmlSanitizer;
+export function sanitizeXssAttributeValue(attrValue: string) {
+  attrValue = attrValue.replace(reComment, '');
+
+  return reXssAttrValue.test(attrValue) ? '' : attrValue;
+}

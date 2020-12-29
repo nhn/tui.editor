@@ -27,20 +27,21 @@ describe('Convertor', () => {
   let convertor: Convertor;
   let schema: Schema;
 
+  function assertConverting(markdown: string, expected: string) {
+    const mdNode = parser.parse(markdown);
+
+    const wwNode = convertor.toWysiwygModel(mdNode);
+    const result = convertor.toMarkdownText(wwNode!);
+
+    expect(result).toBe(expected);
+  }
+
   beforeEach(() => {
     schema = createSchema();
     convertor = new Convertor(schema);
   });
 
   describe('convert between markdown and wysiwyg node to', () => {
-    function assertConverting(markdown: string, expected: string) {
-      const mdNode = parser.parse(markdown);
-      const wwNode = convertor.toWysiwygModel(mdNode);
-      const result = convertor.toMarkdownText(wwNode!);
-
-      expect(result).toBe(expected);
-    }
-
     it('empty content', () => {
       assertConverting('', '');
     });
@@ -400,6 +401,16 @@ describe('Convertor', () => {
       `;
 
       assertConverting(markdown, markdown);
+    });
+  });
+
+  describe('sanitize when using html', () => {
+    it('href attribute with <a>', () => {
+      assertConverting('<a href="javascript:alert();">xss</a>', '<a href="">xss</a>');
+    });
+
+    it('src attribute with <img>', () => {
+      assertConverting('<img src="javascript:alert();">', '<img src="">');
     });
   });
 });
