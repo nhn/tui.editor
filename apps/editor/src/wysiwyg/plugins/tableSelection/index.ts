@@ -14,7 +14,7 @@ function drawCellSelection({ selection, doc }: EditorState) {
     const { ranges } = selection;
 
     ranges.forEach(({ $from, $to }: SelectionRange) => {
-      cells.push(Decoration.node($from.pos - 1, $to.pos + 1, { class: SELECTED_CELL_CLASS_NAME }));
+      cells.push(Decoration.node($from.pos, $to.pos, { class: SELECTED_CELL_CLASS_NAME }));
     });
 
     return DecorationSet.create(doc, cells);
@@ -26,16 +26,15 @@ function drawCellSelection({ selection, doc }: EditorState) {
 export function tableSelectionPlugin() {
   return new Plugin({
     key: pluginKey,
-
     state: {
       init() {
         return null;
       },
       apply(tr, value) {
-        const set = tr.getMeta(pluginKey);
+        const cellOffset = tr.getMeta(pluginKey);
 
-        if (set) {
-          return set === -1 ? null : set;
+        if (cellOffset) {
+          return cellOffset === -1 ? null : cellOffset;
         }
 
         if (value === null || !tr.docChanged) {
@@ -47,7 +46,6 @@ export function tableSelectionPlugin() {
         return deleted ? null : pos;
       }
     },
-
     props: {
       decorations: drawCellSelection,
       createSelectionBetween(view) {

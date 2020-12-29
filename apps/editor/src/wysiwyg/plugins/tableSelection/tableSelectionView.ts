@@ -76,23 +76,6 @@ export default class TableSelection {
     }
   }
 
-  setCellSelection(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
-    const cellSelection = new CellSelection(startCellPos, endCellPos);
-    const { selection, tr } = this.view.state;
-
-    const starting = pluginKey.getState(this.view.state) === null;
-
-    if (starting || !selection.eq(cellSelection)) {
-      const newTr = tr.setSelection(cellSelection);
-
-      if (starting) {
-        newTr.setMeta(pluginKey, endCellPos.pos);
-      }
-
-      this.view.dispatch!(newTr);
-    }
-  }
-
   handleMouseup() {
     this.startCellPos = null;
 
@@ -133,6 +116,22 @@ export default class TableSelection {
     }
 
     return null;
+  }
+
+  setCellSelection(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
+    const { selection, tr } = this.view.state;
+    const starting = pluginKey.getState(this.view.state) === null;
+    const cellSelection = new CellSelection(startCellPos, endCellPos);
+
+    if (starting || !selection.eq(cellSelection)) {
+      const newTr = tr.setSelection(cellSelection);
+
+      if (starting) {
+        newTr.setMeta(pluginKey, endCellPos.pos);
+      }
+
+      this.view.dispatch!(newTr);
+    }
   }
 
   destroy() {

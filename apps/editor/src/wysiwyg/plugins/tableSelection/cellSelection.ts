@@ -20,7 +20,7 @@ function getSelectionRanges(
     for (let j = 0; j < columnCount; j += 1) {
       const { offset, nodeSize } = cellsPos[i + startRowIndex][j + startColumnIndex];
 
-      ranges.push(new SelectionRange(doc.resolve(offset + 1), doc.resolve(offset + nodeSize - 1)));
+      ranges.push(new SelectionRange(doc.resolve(offset), doc.resolve(offset + nodeSize)));
     }
   }
 
