@@ -239,6 +239,8 @@ const marks: ToMdMarkConvertorMap = {
       const { htmlToken } = mark.attrs;
       const linkUrl = state.escape(mark.attrs.linkUrl);
 
+      console.log(linkUrl);
+
       return htmlToken ? `<a href="${linkUrl}">` : '[';
     },
     close(state: ToMdConvertorStateType, mark: Mark) {

@@ -405,8 +405,19 @@ describe('Convertor', () => {
   });
 
   describe('sanitize when using html', () => {
-    it('href attribute with <a>', () => {
-      assertConverting('<a href="javascript:alert();">xss</a>', '<a href="">xss</a>');
+    fit('href attribute with <a>', () => {
+      const markdown = source`
+        <a href="#">xss</a>
+
+        <a href="#">xss</a>
+      `;
+      const expected = source`
+        <a href="#">xss</a>
+
+        <a href="#">xss</a>
+      `;
+
+      assertConverting(markdown, expected);
     });
 
     it('src attribute with <img>', () => {

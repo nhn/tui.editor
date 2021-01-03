@@ -30,7 +30,7 @@ function getMatchedAttributeValue(tag: string, attrName: string) {
     return matched[1];
   }
 
-  return null;
+  return '';
 }
 
 function createConvertors(convertors: HTMLToWwConvertorMap) {
@@ -48,85 +48,88 @@ function createConvertors(convertors: HTMLToWwConvertorMap) {
 }
 
 const htmlConvertors: HTMLToWwConvertorMap = {
-  'b, strong': (state, node, { entering }) => {
+  'b, strong': (state, node) => {
     const tag = node.literal!;
     const matched = tag.match(reHTMLTag);
 
     if (matched) {
-      const [, tagName] = matched;
+      const [, openTagName, , closeTagName] = matched;
       const { strong } = state.schema.marks;
 
-      if (entering) {
-        state.openMark(strong.create({ htmlToken: tagName }));
-      } else {
+      if (openTagName) {
+        state.openMark(strong.create({ htmlToken: openTagName }));
+      } else if (closeTagName) {
         state.closeMark(strong);
       }
     }
   },
 
-  'i, em': (state, node, { entering }) => {
+  'i, em': (state, node) => {
     const tag = node.literal!;
     const matched = tag.match(reHTMLTag);
 
     if (matched) {
-      const [, tagName] = matched;
+      const [, openTagName, , closeTagName] = matched;
       const { emph } = state.schema.marks;
 
-      if (entering) {
-        state.openMark(emph.create({ htmlToken: tagName }));
-      } else {
+      if (openTagName) {
+        state.openMark(emph.create({ htmlToken: openTagName }));
+      } else if (closeTagName) {
         state.closeMark(emph);
       }
     }
   },
 
-  's, del': (state, node, { entering }) => {
+  's, del': (state, node) => {
     const tag = node.literal!;
     const matched = tag.match(reHTMLTag);
 
     if (matched) {
-      const [, tagName] = matched;
+      const [, openTagName, , closeTagName] = matched;
       const { strike } = state.schema.marks;
 
-      if (entering) {
-        state.openMark(strike.create({ htmlToken: tagName }));
-      } else {
+      if (openTagName) {
+        state.openMark(strike.create({ htmlToken: openTagName }));
+      } else if (closeTagName) {
         state.closeMark(strike);
       }
     }
   },
 
-  code: (state, node, { entering }) => {
+  code: (state, node) => {
     const tag = node.literal!;
     const matched = tag.match(reHTMLTag);
 
     if (matched) {
-      const [, tagName] = matched;
+      const [, openTagName, , closeTagName] = matched;
       const { code } = state.schema.marks;
 
-      if (entering) {
-        state.openMark(code.create({ htmlToken: tagName }));
-      } else {
+      if (openTagName) {
+        state.openMark(code.create({ htmlToken: openTagName }));
+      } else if (closeTagName) {
         state.closeMark(code);
       }
     }
   },
 
-  a: (state, node, { entering }) => {
+  a: (state, node) => {
     const tag = node.literal!;
-    const linkUrl = getMatchedAttributeValue(tag, 'href');
+    const matched = tag.match(reHTMLTag);
 
-    if (linkUrl) {
+    if (matched) {
+      const [, openTagName, , closeTagName] = matched;
       const { link } = state.schema.marks;
 
-      if (entering) {
+      if (openTagName) {
+        const linkUrl = getMatchedAttributeValue(tag, 'href');
+
         state.openMark(
           link.create({
             linkUrl: sanitizeXssAttributeValue(linkUrl),
             htmlToken: true
           })
         );
-      } else {
+      } else if (closeTagName) {
         state.closeMark(link);
       }
     }
@@ -159,6 +162,40 @@ const htmlConvertors: HTMLToWwConvertorMap = {
 
       state.addNode(lineBreak, { htmlToken: true, inCell });
     }
+  },
+
+  'ul, ol': (state, node) => {
+    const tag = node.literal!;
+    const matched = tag.match(reHTMLTag);
+    const { bulletList } = state.schema.nodes;
+
+    if (matched) {
+      const [, openTagName, , closeTagName] = matched;
+
+      if (openTagName) {
+        state.openNode(bulletList);
+      } else if (closeTagName) {
+        state.closeNode();
+      }
+    }
+  },
+
+  li: (state, node) => {
+    const tag = node.literal!;
+    const matched = tag.match(reHTMLTag);
+    const { listItem, paragraph } = state.schema.nodes;
+
+    if (matched) {
+      const [, openTagName, , closeTagName] = matched;
+
+      if (openTagName) {
+        state.openNode(listItem);
+        state.openNode(paragraph);
+      } else if (closeTagName) {
+        state.closeNode();
+        state.closeNode();
+      }
+    }
   }
 };
 
@@ -168,9 +205,9 @@ export function getHTMLToWwConvertor(tag: string) {
   const matched = tag.match(reHTMLTag);
 
   if (matched) {
-    const [, tagName] = matched;
+    const [, openTagName, , closeTagName] = matched;
 
-    return htmlToWwConvertors[tagName];
+    return htmlToWwConvertors[openTagName] || htmlToWwConvertors[closeTagName];
   }
 
   return null;
