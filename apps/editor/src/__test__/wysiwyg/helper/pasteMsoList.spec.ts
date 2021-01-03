@@ -41,6 +41,7 @@ describe('pasteMsoList helper', () => {
 
       const result = convertMsoParagraphsToList(inputHTML);
       const expected = oneLineTrim`
+        <p></p>
         <ul>
           <li><span lang="KO">foo</span></li>
           <li><span lang="KO">bar</span></li>
@@ -78,6 +79,7 @@ describe('pasteMsoList helper', () => {
 
       const result = convertMsoParagraphsToList(inputHTML);
       const expected = oneLineTrim`
+        <p></p>
         <ol>
           <li><span lang="KO">가</span></li>
           <li><span lang="KO">나</span></li>
@@ -116,6 +118,7 @@ mso-bidi-font-family:&quot;맑은 고딕&quot;;mso-bidi-theme-font:minor-latin">
 
       const result = convertMsoParagraphsToList(inputHTML);
       const expected = oneLineTrim`
+        <p></p>
         <ul>
           <li><span lang="KO">foo</span></li>
           <ol>

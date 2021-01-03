@@ -193,6 +193,7 @@ export function convertMsoParagraphsToList(html: string) {
     removeNode(para);
   });
 
+  // without `<p></p>`, the list string was parsed as a paragraph node and added
   const extraHTML = foundParas.length ? '<p></p>' : '';
 
   return `${extraHTML}${container.innerHTML}`;
