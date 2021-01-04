@@ -23,7 +23,7 @@ import { ToDOMAdaptor } from '@t/convertor';
 import { CustomBlockView } from './nodeview/customBlockView';
 
 import { changePastedHTML, changePastedSlice } from '@/wysiwyg/helper/clipboard';
-import { pasteToTable } from '@/wysiwyg/helper/clipboardToTable';
+import { pasteToTable } from '@/wysiwyg/helper/pasteToTable';
 
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
