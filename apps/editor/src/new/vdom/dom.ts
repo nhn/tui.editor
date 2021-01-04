@@ -1,3 +1,5 @@
+import isObject from 'tui-code-snippet/type/isObject';
+import { shallowEqual } from '@/utils/common';
 import { VNode } from './vnode';
 
 type ConditionFn = (propName: string) => boolean;
@@ -32,12 +34,12 @@ export function innerDiff(node: Node, prevProps: Props, nextProps: Props) {
 
         node.removeEventListener(eventName, prevProps[propName]);
       }
-    } else if (!nextProps[propName]) {
+    } else if (!nextProps[propName] && node.nodeType !== 3) {
       (node as Element).removeAttribute(propName);
     }
   });
 
-  setProps(node, nextProps, propName => prevProps[propName] !== nextProps[propName]);
+  setProps(node, nextProps, propName => !shallowEqual(prevProps[propName], nextProps[propName]));
 }
 
 function setProps(node: Node, props: Props, contition?: ConditionFn) {
@@ -47,8 +49,17 @@ function setProps(node: Node, props: Props, contition?: ConditionFn) {
         const eventName = propName.slice(2).toLowerCase();
 
         node.addEventListener(eventName, props[propName]);
+      } else if (propName === 'nodeValue') {
+        node[propName] = props[propName];
+      } else if (propName === 'style' && isObject(props[propName])) {
+        const stylePropObj = props[propName];
+
+        Object.keys(stylePropObj).forEach(styleProp => {
+          // @ts-ignore
+          (node as HTMLElement).style[styleProp] = stylePropObj[styleProp];
+        });
       } else {
-        (node as Element).setAttribute(propName, props[propName]);
+        (node as HTMLElement).setAttribute(propName, props[propName]);
       }
     }
   });

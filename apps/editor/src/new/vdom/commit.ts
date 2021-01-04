@@ -3,7 +3,7 @@ import { innerDiff, removeNode } from './dom';
 import { createComponent } from './render';
 import { VNode } from './vnode';
 
-export function commit(vnode: VNode | null) {
+export function commit(vnode: VNode) {
   VNode.removalNodes.forEach(removalNode => diff(removalNode, true));
   vnode = vnode!.firstChild!;
 
