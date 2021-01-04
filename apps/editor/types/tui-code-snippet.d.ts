@@ -27,7 +27,11 @@ declare module 'tui-code-snippet/type/isNumber' {
 }
 
 declare module 'tui-code-snippet/type/isNull' {
-  export default function isNumber(value: unknown): value is null;
+  export default function isNull(value: unknown): value is null;
+}
+
+declare module 'tui-code-snippet/type/isObject' {
+  export default function isObject(value: unknown): value is object;
 }
 
 declare module 'tui-code-snippet/collection/forEachOwnProperties' {
