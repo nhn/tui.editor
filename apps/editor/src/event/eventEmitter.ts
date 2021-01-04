@@ -22,6 +22,7 @@ const eventTypeList: EventTypes[] = [
   'changeModeToMarkdown',
   'changeModeBefore',
   'changeMode',
+  'changeModeByEvent',
   'changePreviewStyle',
   'changePreviewTabPreview',
   'changePreviewTabWrite',
@@ -80,7 +81,8 @@ const eventTypeList: EventTypes[] = [
   'cursorActivity',
   'requireScrollSync',
   'requireScrollIntoView',
-  'setCodeBlockLanguages'
+  'setCodeBlockLanguages',
+  'minHeight'
 ];
 
 /**
