@@ -33,6 +33,7 @@ export type EventTypes =
   | 'changeModeToMarkdown'
   | 'changeModeBefore'
   | 'changeMode'
+  | 'changeModeByEvent'
   | 'changePreviewStyle'
   | 'changePreviewTabPreview'
   | 'changePreviewTabWrite'
