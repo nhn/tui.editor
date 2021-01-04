@@ -33,3 +33,18 @@ export function sanitizeLinkAttribute(attribute: Record<string, any>) {
 
   return linkAttribute;
 }
+
+export function shallowEqual(o1: Record<string, any>, o2: Record<string, any>) {
+  for (const key in o1) {
+    if (o1[key] !== o2[key]) {
+      return false;
+    }
+  }
+  for (const key in o2) {
+    if (!(key in o1)) {
+      return false;
+    }
+  }
+
+  return true;
+}

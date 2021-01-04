@@ -19,13 +19,12 @@ import MarkdownPreview from './markdown/mdPreview';
 
 import WysiwygEditor from './wysiwyg/wwEditor';
 
-import Layout from './ui/layout';
 import EventEmitter from './event/eventEmitter';
 import CommandManager from './commands/commandManager';
 import Convertor from './convertors/convertor';
 import Viewer from './viewer';
 import i18n, { I18n } from './i18n/i18n';
-import DefaultUI from './ui/defaultUI';
+import { Layout } from './new/components/layout';
 import { invokePlugins, getPluginInfo } from './pluginHelper';
 
 // @ts-ignore
@@ -33,6 +32,8 @@ import { ToastMark } from '@toast-ui/toastmark';
 import isString from 'tui-code-snippet/type/isString';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
+import { render } from './new/renderer';
+import htm from './new/template';
 
 /**
  * ToastUI Editor
@@ -78,14 +79,11 @@ class ToastUIEditor {
 
   private eventEmitter: Emitter;
 
-  private layout: Layout;
-
   private toastMark: ToastMark;
 
   private mdEditor: MarkdownEditor;
 
-  // @TODO: change wwe editor type
-  private wwEditor: any;
+  private wwEditor: WysiwygEditor;
 
   private preview: MarkdownPreview;
 
@@ -187,12 +185,8 @@ class ToastUIEditor {
       forEachOwnProperties(this.options.events, (fn, key) => this.on(key, fn));
     }
 
-    this.layout = new Layout(this.options, this.eventEmitter);
-
     this.i18n = i18n;
     this.i18n.setCode(this.options.language);
-
-    this.setUI(this.options.UI || new DefaultUI(this));
 
     this.toastMark = new ToastMark('', {
       disallowedHtmlBlockTags: ['br'],
@@ -203,25 +197,28 @@ class ToastUIEditor {
       frontMatter
     });
 
-    this.mdEditor = new MarkdownEditor(
-      this.layout.getMdEditorContainerEl(),
-      this.toastMark,
-      this.eventEmitter
-    );
+    this.mdEditor = new MarkdownEditor(this.toastMark, this.eventEmitter);
 
-    this.preview = new MarkdownPreview(this.layout.getPreviewEl(), this.eventEmitter, {
+    this.preview = new MarkdownPreview(this.eventEmitter, {
       ...rendererOptions,
       isViewer: false,
       highlight: this.options.previewHighlight
     });
 
-    this.wwEditor = new WysiwygEditor(
-      this.layout.getWwEditorContainerEl(),
-      this.eventEmitter,
-      wwToDOMAdaptor
-    );
+    this.wwEditor = new WysiwygEditor(this.eventEmitter, wwToDOMAdaptor);
 
     this.convertor = new Convertor(this.wwEditor.getSchema());
+
+    const slots = {
+      mdEditor: this.mdEditor.getElement(),
+      mdPreview: this.preview.getElement(),
+      wwEditor: this.wwEditor.getElement()
+    };
+
+    render(
+      this.options.el,
+      htm`<${Layout} eventEmitter=${this.eventEmitter} slots=${slots} hideModeSwitch=${this.options.hideModeSwitch} />`
+    );
 
     if (plugins) {
       invokePlugins(plugins, this);
@@ -258,6 +255,7 @@ class ToastUIEditor {
     }
 
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
+    this.on('changeModeByEvent', this.changeMode.bind(this));
   }
 
   /**
@@ -283,7 +281,6 @@ class ToastUIEditor {
    * @param {string} style - 'tab'|'vertical'
    */
   changePreviewStyle(style: PreviewStyle) {
-    this.layout.changePreviewStyle(style);
     this.mdPreviewStyle = style;
     this.eventEmitter.emit('changePreviewStyle', style);
     this.eventEmitter.emit('previewNeedsRefresh', this.getMarkdown());
@@ -437,9 +434,9 @@ class ToastUIEditor {
    */
   // @TODO: should reimplment the API
   // @ts-ignore
-  addWidget(selection, node, style, offset) {
-    this.getCurrentModeEditor().addWidget(selection, node, style, offset);
-  }
+  // addWidget(selection, node, style, offset) {
+  //   this.getCurrentModeEditor().addWidget(selection, node, style, offset);
+  // }
 
   /**
    * Set editor height
@@ -477,8 +474,8 @@ class ToastUIEditor {
   setMinHeight(minHeight: string) {
     this.minHeight = minHeight;
 
-    const editorHeight = this.ui.getEditorHeight();
-    const editorSectionHeight = this.ui.getEditorSectionHeight();
+    const editorHeight = this.options.el.clientHeight;
+    const editorSectionHeight = document.querySelector('.te-editor-section')?.clientHeight || 0;
     const diffHeight = editorHeight - editorSectionHeight;
 
     let minHeightNum = parseInt(minHeight, 10);
@@ -561,8 +558,6 @@ class ToastUIEditor {
     this.currentMode = mode;
 
     if (this.isWysiwygMode()) {
-      this.layout.switchToWYSIWYG();
-
       const mdNode = this.toastMark.getRootNode();
       const wwNode = this.convertor.toWysiwygModel(mdNode);
 
@@ -570,8 +565,6 @@ class ToastUIEditor {
 
       this.eventEmitter.emit('changeModeToWysiwyg');
     } else {
-      this.layout.switchToMarkdown();
-
       const wwNode = this.wwEditor.getModel();
 
       this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), !isWithoutFocus);
@@ -591,14 +584,8 @@ class ToastUIEditor {
   destroy() {
     this.wwEditor.destroy();
     this.mdEditor.destroy();
-    this.layout.destroy();
     this.preview.destroy();
     this.scrollSync.destroy();
-
-    if (this.getUI()) {
-      this.getUI().remove();
-    }
-
     this.eventEmitter.emit('removeEditor');
     this.eventEmitter.getEvents().forEach((_, type: string) => {
       this.off(type);
@@ -633,16 +620,6 @@ class ToastUIEditor {
    */
   getScrollTop() {
     return this.getCurrentModeEditor().getScrollTop();
-  }
-
-  // @TODO: deprecated
-  setUI(UI: any) {
-    this.ui = UI;
-  }
-
-  // @TODO: deprecated
-  getUI() {
-    return this.ui;
   }
 
   /**
