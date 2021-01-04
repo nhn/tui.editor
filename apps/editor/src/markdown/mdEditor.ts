@@ -44,8 +44,8 @@ export default class MdEditor extends EditorBase {
 
   private clipboard!: HTMLTextAreaElement;
 
-  constructor(el: HTMLElement, toastMark: ToastMark, eventEmitter: Emitter) {
-    super(el, eventEmitter);
+  constructor(toastMark: ToastMark, eventEmitter: Emitter) {
+    super(eventEmitter);
 
     this.toastMark = toastMark;
     this.specs = this.createSpecs();

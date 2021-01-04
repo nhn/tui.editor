@@ -58,8 +58,12 @@ class MarkdownPreview extends Preview {
 
   private renderer: Renderer;
 
-  constructor(el: HTMLElement, eventEmitter: Emitter, options: Options) {
+  constructor(eventEmitter: Emitter, options: Options) {
+    const el = document.createElement('div');
+
     super(el, eventEmitter, options.isViewer);
+    this.el = el;
+    this.el.className = 'te-preview';
     this.lazyRunner.registerLazyRunFunction(
       'invokeCodeBlock',
       this.invokeCodeBlockPlugins,
@@ -214,6 +218,10 @@ class MarkdownPreview extends Preview {
   destroy() {
     off(this.el!, 'scroll');
     this.el = null;
+  }
+
+  getElement() {
+    return this.el;
   }
 }
 
