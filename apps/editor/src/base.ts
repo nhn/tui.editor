@@ -12,7 +12,7 @@ export interface StateOptions {
 }
 
 export default abstract class EditorBase {
-  el: HTMLElement;
+  el!: HTMLElement;
 
   eventEmitter: Emitter;
 
@@ -30,8 +30,10 @@ export default abstract class EditorBase {
 
   placeholder: { text: string };
 
-  constructor(el: HTMLElement, eventEmitter: Emitter) {
-    this.el = el;
+  constructor(eventEmitter: Emitter) {
+    this.el = document.createElement('div');
+    this.el.className = 'te-editor';
+
     this.eventEmitter = eventEmitter;
     this.placeholder = { text: '' };
   }
@@ -112,6 +114,10 @@ export default abstract class EditorBase {
 
   setMinHeight(minHeight: number) {
     css(this.el, { minHeight: `${minHeight}px` });
+  }
+
+  getElement() {
+    return this.el;
   }
 
   abstract getRange(): any;

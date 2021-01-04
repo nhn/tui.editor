@@ -30,10 +30,9 @@ const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 export default class WysiwygEditor extends EditorBase {
   private toDOMAdaptor: ToDOMAdaptor;
 
-  constructor(el: HTMLElement, eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor) {
-    super(el, eventEmitter);
+  constructor(eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor) {
+    super(eventEmitter);
 
-    this.el = el;
     this.toDOMAdaptor = toDOMAdaptor;
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
