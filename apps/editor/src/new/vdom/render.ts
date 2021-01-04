@@ -1,9 +1,11 @@
 import isFunction from 'tui-code-snippet/type/isFunction';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 import { Component, ComponentClass } from '@t/ui';
 import { VNode } from './vnode';
 import { createNode } from './dom';
 
 const componentMap: Record<string, Component> = {};
+let sequence = 0;
 
 export function createComponent(Comp: ComponentClass, props: Record<string, any>) {
   let cached = componentMap[Comp.componentName];
@@ -13,6 +15,10 @@ export function createComponent(Comp: ComponentClass, props: Record<string, any>
     return cached;
   }
 
+  if (isUndefined(Comp.componentName)) {
+    Comp.componentName = `Comp-${sequence}`;
+    sequence += 1;
+  }
   cached = componentMap[Comp.componentName] = new Comp(props);
   cached.mounting = true;
 
