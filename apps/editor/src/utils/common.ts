@@ -34,14 +34,13 @@ export function sanitizeLinkAttribute(attribute: Record<string, any>) {
   return linkAttribute;
 }
 
-export function shallowEqual(o1: any, o2: any) {
+export function shallowEqual(o1: Record<string, any>, o2: Record<string, any>) {
   if (o1 === null && o1 === o2) {
     return true;
   }
   if (typeof o1 !== 'object' || typeof o2 !== 'object') {
     return o1 === o2;
   }
-
   for (const key in o1) {
     if (o1[key] !== o2[key]) {
       return false;
