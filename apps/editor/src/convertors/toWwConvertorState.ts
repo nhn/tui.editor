@@ -1,8 +1,13 @@
-import { Schema, Node, NodeType, Mark, MarkType } from 'prosemirror-model';
+import { Schema, Node, NodeType, Mark, MarkType, DOMParser } from 'prosemirror-model';
 
 import { ToWwConvertorMap, StackItem, Attrs } from '@t/convertor';
 import { MdNode } from '@t/markdown';
 import { getHTMLToWwConvertor } from './htmlToWwConvertors';
+
+// @ts-ignore
+import { Renderer } from '@toast-ui/toastmark';
+
+import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 
 function mergeMarkText(a: Node, b: Node) {
   if (a.isText && b.isText && Mark.sameSet(a.marks, b.marks)) {
@@ -23,11 +28,19 @@ export default class ToWwConvertorState {
 
   private marks: Mark[];
 
+  private renderer: Renderer;
+
   constructor(schema: Schema, convertors: ToWwConvertorMap) {
     this.schema = schema;
     this.convertors = convertors;
     this.stack = [{ type: this.schema.topNodeType, attrs: null, content: [] }];
     this.marks = Mark.none;
+
+    this.renderer = new Renderer({
+      gfm: true,
+      nodeId: true,
+      convertors: getHTMLRenderConvertors({}, {})
+    });
   }
 
   top() {
@@ -89,6 +102,17 @@ export default class ToWwConvertorState {
     return this.addNode(type, attrs, content);
   }
 
+  convertByDOMParser(mdNode: MdNode) {
+    const html = this.renderer.render(mdNode);
+    const el = document.createElement('div');
+
+    el.innerHTML = html;
+
+    const doc = DOMParser.fromSchema(this.schema).parse(el);
+
+    doc.content.forEach(node => this.push(node));
+  }
+
   private convert(mdNode: MdNode) {
     const walker = mdNode.walker();
     let event = walker.next();
@@ -107,7 +131,7 @@ export default class ToWwConvertorState {
         }
       };
 
-      if (type === 'htmlInline' || type === 'htmlBlock') {
+      if (type === 'htmlInline') {
         const htmlToWwConvertor = getHTMLToWwConvertor(node.literal!);
 
         if (htmlToWwConvertor) {

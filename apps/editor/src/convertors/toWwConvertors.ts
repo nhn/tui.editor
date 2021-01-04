@@ -201,18 +201,18 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  tableCell(state, node, { entering }) {
-    const { paragraph, tableHeadCell, tableBodyCell } = state.schema.nodes;
+  tableCell(state, node, { skipChildren }) {
+    const { tableHeadCell, tableBodyCell } = state.schema.nodes;
     const tablePart = node.parent!.parent!;
     const cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
 
-    if (entering) {
-      state.openNode(cell);
-      state.openNode(paragraph);
-    } else {
-      state.closeNode();
-      state.closeNode();
+    if (skipChildren) {
+      skipChildren();
     }
+
+    state.openNode(cell);
+    state.convertByDOMParser(node);
+    state.closeNode();
   },
 
   strike(state, _, { entering }) {

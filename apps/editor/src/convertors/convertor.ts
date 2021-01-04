@@ -88,6 +88,8 @@ export default class Convertor {
     const state = new ToWwConvertorState(this.schema, this.toWwConvertors);
     const doc = state.convertNode(mdNode);
 
+    console.log(doc);
+
     if (doc) {
       return this.postProcessParagraphs(doc);
     }

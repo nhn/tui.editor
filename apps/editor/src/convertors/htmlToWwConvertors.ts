@@ -164,6 +164,7 @@ const htmlConvertors: HTMLToWwConvertorMap = {
     }
   },
 
+  // @TODO remove
   'ul, ol': (state, node) => {
     const tag = node.literal!;
     const matched = tag.match(reHTMLTag);
@@ -180,6 +181,7 @@ const htmlConvertors: HTMLToWwConvertorMap = {
     }
   },
 
+  // @TODO remove
   li: (state, node) => {
     const tag = node.literal!;
     const matched = tag.match(reHTMLTag);
