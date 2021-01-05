@@ -16,18 +16,11 @@ function forceKeymapFn(type: string, methodName: string, args: any[] = []) {
   keymapFn[methodName](...args)(view.state, view.dispatch);
 }
 
-let mde: MarkdownEditor, em: EventEmitter, container: HTMLElement;
+let mde: MarkdownEditor, em: EventEmitter;
 
 beforeEach(() => {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-
   em = new EventEmitter();
-  mde = new MarkdownEditor(container, new ToastMark(), em);
-});
-
-afterEach(() => {
-  document.body.removeChild(container);
+  mde = new MarkdownEditor(new ToastMark(), em);
 });
 
 // @TODO: should add test case after developing the markdown editor API

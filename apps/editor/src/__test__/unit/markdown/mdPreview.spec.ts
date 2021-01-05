@@ -6,7 +6,7 @@ import MarkdownEditor from '@/markdown/mdEditor';
 import EventEmitter from '@/event/eventEmitter';
 
 describe('Preview', () => {
-  let eventEmitter: EventEmitter, wrapper: HTMLElement, preview: MarkdownPreview;
+  let eventEmitter: EventEmitter, preview: MarkdownPreview;
 
   beforeEach(() => {
     const options = {
@@ -16,16 +16,13 @@ describe('Preview', () => {
       highlight: true
     };
 
-    wrapper = document.createElement('div');
-    document.body.appendChild(wrapper);
-
     eventEmitter = new EventEmitter();
 
-    preview = new MarkdownPreview(wrapper, eventEmitter, options);
+    preview = new MarkdownPreview(eventEmitter, options);
   });
 
   afterEach(() => {
-    wrapper.parentNode!.removeChild(wrapper);
+    preview.destroy();
   });
 
   it('render() emits previewRenderAfter', () => {
@@ -66,8 +63,8 @@ describe('preview highlight', () => {
     document.body.appendChild(previewEl);
 
     eventEmitter = new EventEmitter();
-    editor = new MarkdownEditor(editorEl, new ToastMark(), eventEmitter);
-    preview = new MarkdownPreview(previewEl, eventEmitter, options);
+    editor = new MarkdownEditor(new ToastMark(), eventEmitter);
+    preview = new MarkdownPreview(eventEmitter, options);
   }
 
   function setMarkdown(markdown: string) {

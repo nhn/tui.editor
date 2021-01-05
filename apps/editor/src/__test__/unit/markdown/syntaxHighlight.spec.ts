@@ -8,18 +8,15 @@ function getEditorHTML(editor: MarkdownEditor) {
   return editor.view.dom.innerHTML;
 }
 
-let mde: MarkdownEditor, em: EventEmitter, container: HTMLElement;
+let mde: MarkdownEditor, em: EventEmitter;
 
 beforeEach(() => {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-
   em = new EventEmitter();
-  mde = new MarkdownEditor(container, new ToastMark(), em);
+  mde = new MarkdownEditor(new ToastMark(), em);
 });
 
 afterEach(() => {
-  document.body.removeChild(container);
+  mde.destroy();
 });
 
 describe('markdown editor syntax highlight', () => {

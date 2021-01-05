@@ -13,18 +13,18 @@ function getEditorHTML(editor: MarkdownEditor) {
 }
 
 describe('MarkdownEditor', () => {
-  let mde: MarkdownEditor, em: EventEmitter, container: HTMLElement;
+  let mde: MarkdownEditor, em: EventEmitter, el: HTMLElement;
 
   beforeEach(() => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
-
     em = new EventEmitter();
-    mde = new MarkdownEditor(container, new ToastMark(), em);
+    mde = new MarkdownEditor(new ToastMark(), em);
+    el = mde.el;
+    document.body.appendChild(el);
   });
 
   afterEach(() => {
-    document.body.removeChild(container);
+    mde.destroy();
+    document.body.removeChild(el);
   });
 
   it('should emit contentChangedFromMarkdown event when editing the content', () => {

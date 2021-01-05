@@ -7,7 +7,7 @@ import EventEmitter from '@/event/eventEmitter';
 import WysiwygEditor from '@/wysiwyg/wwEditor';
 import { createMdLikeNode } from '@/wysiwyg/adaptor/mdLikeNode';
 
-let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter, toDOMAdaptor: ToDOMAdaptor;
+let wwe: WysiwygEditor, em: EventEmitter, toDOMAdaptor: ToDOMAdaptor;
 
 function createText(text: string) {
   return wwe.schema.text(text);
@@ -70,10 +70,13 @@ beforeEach(() => {
     }
   };
 
-  container = document.createElement('div');
   toDOMAdaptor = new WwToDOMAdaptor({}, convertors);
   em = new EventEmitter();
-  wwe = new WysiwygEditor(container, em, toDOMAdaptor);
+  wwe = new WysiwygEditor(em, toDOMAdaptor);
+});
+
+afterEach(() => {
+  wwe.destroy();
 });
 
 describe('mdLikeNode', () => {
