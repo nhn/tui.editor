@@ -33,7 +33,8 @@ import isString from 'tui-code-snippet/type/isString';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
 import { render } from './new/renderer';
-import htm from './new/vdom/template';
+import html from './new/vdom/template';
+import { VNode } from './new/vdom/vnode';
 
 /**
  * ToastUI Editor
@@ -102,9 +103,6 @@ class ToastUIEditor {
   private i18n: I18n;
 
   private scrollSync: ScrollSync;
-
-  // @TODO: deprecated
-  private ui: any;
 
   constructor(options: EditorOptions) {
     this.initialHtml = options.el.innerHTML;
@@ -215,15 +213,21 @@ class ToastUIEditor {
       linkAttribute!
     );
 
-    const slots = {
-      mdEditor: this.mdEditor.getElement(),
-      mdPreview: this.preview.getElement(),
-      wwEditor: this.wwEditor.getElement()
-    };
-
+    // @TODO: render default ui when defining the 'useDefaultTemplate=true' option or giving the container element option
+    // if (this.options.useDefaultTemplate) {
+    // or
+    // if (!this.options.el) {
+    //   render(...)
+    // }
     render(
       this.options.el,
-      htm`<${Layout} eventEmitter=${this.eventEmitter} slots=${slots} hideModeSwitch=${this.options.hideModeSwitch} />`
+      html`
+        <${Layout}
+          eventEmitter=${this.eventEmitter}
+          slots=${this.getElements()}
+          hideModeSwitch=${this.options.hideModeSwitch}
+        />
+      ` as VNode
     );
 
     if (plugins) {
@@ -381,7 +385,7 @@ class ToastUIEditor {
       const mdNode = this.toastMark.getRootNode();
       const wwNode = this.convertor.toWysiwygModel(mdNode);
 
-      this.wwEditor.setModel(wwNode, cursorToEnd);
+      this.wwEditor.setModel(wwNode!, cursorToEnd);
     }
 
     this.eventEmitter.emit('setMarkdownAfter', markdown);
@@ -567,7 +571,7 @@ class ToastUIEditor {
       const mdNode = this.toastMark.getRootNode();
       const wwNode = this.convertor.toWysiwygModel(mdNode);
 
-      this.wwEditor.setModel(wwNode);
+      this.wwEditor.setModel(wwNode!);
 
       this.eventEmitter.emit('changeModeToWysiwyg');
     } else {
@@ -632,6 +636,7 @@ class ToastUIEditor {
    * Reset TUIEditor
    */
   reset() {
+    // @ts-ignore
     this.wwEditor.setModel([]);
     this.mdEditor.setMarkdown('');
   }
@@ -695,6 +700,17 @@ class ToastUIEditor {
       }
     });
     this.eventEmitter.emit('setCodeBlockLanguages', this.codeBlockLanguages);
+  }
+
+  /**
+   * get markdown editor, preview, wysiwyg editor DOM elements
+   */
+  getElements() {
+    return {
+      mdEditor: this.mdEditor.getElement(),
+      mdPreview: this.preview.getElement(),
+      wwEditor: this.wwEditor.getElement()
+    };
   }
 }
 
