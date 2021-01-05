@@ -1,9 +1,7 @@
 import { Schema, Node, Slice, Fragment, NodeType } from 'prosemirror-model';
 
-import { isFromMso, convertMsoParagraphsToList } from '@/wysiwyg/helper/pasteMsoList';
+import { isFromMso, convertMsoParagraphsToList } from '@/wysiwyg/clipboard/pasteMsoList';
 import { getTableContentFromSlice } from '@/wysiwyg/helper/table';
-
-import { fitSlice } from '@/wysiwyg/helper/node';
 
 const START_FRAGMENT_COMMENT = '<!--StartFragment-->';
 const END_FRAGMENT_COMMENT = '<!--EndFragment-->';
@@ -46,24 +44,22 @@ export function changePastedHTML(html: string) {
 }
 
 function getMaxColumnCount(rows: Node[]) {
-  let maxColumnCount = rows[0].childCount;
+  const row = rows.reduce((prevRow, currentRow) =>
+    prevRow.childCount > currentRow.childCount ? prevRow : currentRow
+  );
 
-  rows.forEach(row => {
-    maxColumnCount = Math.max(maxColumnCount, row.childCount);
-  });
-
-  return maxColumnCount;
+  return row.childCount;
 }
 
-function copyCells(originRow: Node, maxColumnCount: number, cell: NodeType) {
+function createCells(originRow: Node, maxColumnCount: number, cell: NodeType) {
   const originCellCount = originRow.childCount;
   const cells = [];
 
   for (let columnIndex = 0; columnIndex < maxColumnCount; columnIndex += 1) {
     const copiedCell =
       columnIndex < originCellCount
-        ? fitSlice(cell, new Slice(originRow.child(columnIndex).content, 0, 0))
-        : cell.create();
+        ? cell.create(null, originRow.child(columnIndex).content)
+        : cell.createAndFill()!;
 
     cells.push(copiedCell);
   }
@@ -73,14 +69,14 @@ function copyCells(originRow: Node, maxColumnCount: number, cell: NodeType) {
 
 export function copyTableHeadRow(originRow: Node, maxColumnCount: number, schema: Schema) {
   const { tableRow, tableHeadCell } = schema.nodes;
-  const cells = copyCells(originRow, maxColumnCount, tableHeadCell);
+  const cells = createCells(originRow, maxColumnCount, tableHeadCell);
 
   return tableRow.create(null, cells);
 }
 
 export function copyTableBodyRow(originRow: Node, maxColumnCount: number, schema: Schema) {
   const { tableRow, tableBodyCell } = schema.nodes;
-  const cells = copyCells(originRow, maxColumnCount, tableBodyCell);
+  const cells = createCells(originRow, maxColumnCount, tableBodyCell);
 
   return tableRow.create(null, cells);
 }
@@ -90,7 +86,7 @@ function creatTableBodyDummyRow(columnCount: number, schema: Schema) {
   const cells = [];
 
   for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
-    const dummyCell = tableBodyCell.create();
+    const dummyCell = tableBodyCell.createAndFill()!;
 
     cells.push(dummyCell);
   }
@@ -99,31 +95,32 @@ function creatTableBodyDummyRow(columnCount: number, schema: Schema) {
 }
 
 export function createRowsFromPastingTable(tableContent: Fragment) {
-  const tableBodyRow = tableContent.lastChild!.content;
-  const tableBodyRows: Node[] = [];
-
-  tableBodyRow.forEach(row => tableBodyRows.push(row));
+  let tableBody = tableContent.firstChild!.content;
 
   const tableHeadRows: Node[] = [];
 
-  if (tableContent.firstChild!.type !== tableContent.lastChild!.type) {
-    const tableHeadRow = tableContent.firstChild!.content;
+  if (tableContent.firstChild!.type.name === 'tableHead') {
+    const tableHead = tableContent.firstChild!.content;
 
-    tableHeadRow.forEach(row => tableHeadRows.push(row));
+    tableHead.forEach(row => tableHeadRows.push(row));
+
+    tableBody = tableContent.lastChild!.content;
   }
+
+  const tableBodyRows: Node[] = [];
+
+  tableBody.forEach(row => tableBodyRows.push(row));
 
   return [...tableHeadRows, ...tableBodyRows];
 }
 
 function createTableHead(tableHeadRow: Node, maxColumnCount: number, schema: Schema) {
-  const { tableHead } = schema.nodes;
   const copiedRow = copyTableHeadRow(tableHeadRow, maxColumnCount, schema);
 
-  return tableHead.create(null, copiedRow);
+  return schema.nodes.tableHead.create(null, copiedRow);
 }
 
 function createTableBody(tableBodyRows: Node[], maxColumnCount: number, schema: Schema) {
-  const { tableBody } = schema.nodes;
   const copiedRows = tableBodyRows.map(tableBodyRow =>
     copyTableBodyRow(tableBodyRow, maxColumnCount, schema)
   );
@@ -134,7 +131,7 @@ function createTableBody(tableBodyRows: Node[], maxColumnCount: number, schema: 
     copiedRows.push(dummyTableRow);
   }
 
-  return tableBody.create(null, copiedRows);
+  return schema.nodes.tableBody.create(null, copiedRows);
 }
 
 function createTableFromPastingTable(rows: Node[], schema: Schema) {

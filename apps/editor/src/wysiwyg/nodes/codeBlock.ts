@@ -30,7 +30,7 @@ export class CodeBlock extends NodeSchema {
 
             return {
               class: className,
-              language: className && className.split('lang-')
+              language: className?.split('lang-')
             };
           }
         }

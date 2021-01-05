@@ -18,7 +18,7 @@ import {
   createRowsFromPastingTable,
   copyTableHeadRow,
   copyTableBodyRow
-} from '@/wysiwyg/helper/clipboard';
+} from '@/wysiwyg/clipboard/paste';
 
 interface TargetTableInfo {
   cellsInfo: CellInfo[][];
@@ -44,8 +44,8 @@ interface ReplacedCellsOffsets {
 const DUMMY_CELL_SIZE = 4;
 const TR_NODES_SIZE = 2;
 
-function getCellOffsetInculdingDummyCells(startCellOffset: number, dummyCellCount: number) {
-  return startCellOffset + dummyCellCount * DUMMY_CELL_SIZE;
+function getDummyCellSize(dummyCellCount: number) {
+  return dummyCellCount * DUMMY_CELL_SIZE;
 }
 
 function createPastingCells(
@@ -148,7 +148,7 @@ function expandColumns(
 
     if (rowIndex >= startRowIndex && rowIndex <= endRowIndex - addedRowCount) {
       const startCellOffset = tr.mapping.map(cellsInfo[rowIndex][startColumnIndex].offset);
-      const endCellOffset = getCellOffsetInculdingDummyCells(insertOffset, addedColumnCount);
+      const endCellOffset = insertOffset + getDummyCellSize(addedColumnCount);
       const nextCellOffset = endCellOffset + TR_NODES_SIZE;
 
       replacedCellsOffsets.push({ startCellOffset, endCellOffset, nextCellOffset });
@@ -190,22 +190,22 @@ function expandRows(
   { addedRowCount, addedColumnCount, startColumnIndex, endColumnIndex }: PastingRangeInfo,
   replacedCellsOffsets: ReplacedCellsOffsets[]
 ) {
+  const endCell = replacedCellsOffsets[replacedCellsOffsets.length - 1];
   const rows = createTableBodyRows(addedRowCount, tableColumnCount + addedColumnCount, schema);
-  const from = replacedCellsOffsets[replacedCellsOffsets.length - 1].nextCellOffset;
 
-  tr.insert(tr.mapping.slice(tr.mapping.maps.length).map(from), rows);
+  let startOffset = endCell.nextCellOffset - 1;
 
-  let start = from;
+  tr.insert(tr.mapping.slice(tr.mapping.maps.length).map(startOffset), rows);
 
   for (let rowIndex = 0; rowIndex < addedRowCount; rowIndex += 1) {
-    const startCellOffset = getCellOffsetInculdingDummyCells(start, startColumnIndex);
-    const endCellOffset = getCellOffsetInculdingDummyCells(start, endColumnIndex + 1);
+    const startCellOffset = startOffset + getDummyCellSize(startColumnIndex);
+    const endCellOffset = startOffset + getDummyCellSize(endColumnIndex + 1);
     const nextCellOffset =
-      getCellOffsetInculdingDummyCells(start, tableColumnCount + addedColumnCount) + TR_NODES_SIZE;
+      startOffset + getDummyCellSize(tableColumnCount + addedColumnCount) + TR_NODES_SIZE;
 
     replacedCellsOffsets.push({ startCellOffset, endCellOffset, nextCellOffset });
 
-    start = nextCellOffset;
+    startOffset = nextCellOffset;
   }
 }
 
@@ -227,7 +227,7 @@ function replaceCells(
 }
 
 export function pasteToTable(view: EditorView, slice: Slice) {
-  const { selection } = view.state;
+  const { selection, schema, tr } = view.state;
   const { anchor, head } = getResolvedSelection(selection);
 
   if (anchor && head) {
@@ -236,8 +236,6 @@ export function pasteToTable(view: EditorView, slice: Slice) {
     if (!tableContent) {
       return false;
     }
-
-    const { schema, tr } = view.state;
 
     const selectionInfo = getSelectionInfo(anchor, head);
     const textSelection = selection instanceof TextSelection;

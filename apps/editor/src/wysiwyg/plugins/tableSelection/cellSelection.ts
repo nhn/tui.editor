@@ -83,7 +83,7 @@ export default class CellSelection extends Selection {
   content() {
     const table = this.startCell.node(-2);
     const tableOffset = this.startCell.start(-2);
-    const row = table.child(1).child(0);
+    const row = table.child(1).firstChild!;
 
     const cellsPos = getTableCellsInfo(this.startCell);
     const selectionInfo = getSelectionInfo(this.startCell, this.endCell);
@@ -99,7 +99,7 @@ export default class CellSelection extends Selection {
         const cell = table.nodeAt(offset - tableOffset);
 
         if (cell) {
-          cells.push(cell.type.create(cell.attrs, cell.content));
+          cells.push(cell.copy(cell.content));
         }
       }
 

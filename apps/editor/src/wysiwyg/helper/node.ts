@@ -1,5 +1,4 @@
-import { Node, ResolvedPos, Slice } from 'prosemirror-model';
-import { Transform } from 'prosemirror-transform';
+import { Node, ResolvedPos } from 'prosemirror-model';
 
 export function findNodeBy(pos: ResolvedPos, condition: (node: Node, depth: number) => boolean) {
   let { depth } = pos;
@@ -34,11 +33,4 @@ export function isInTableNode(pos: ResolvedPos) {
 
 export function findListItem(pos: ResolvedPos) {
   return findNodeBy(pos, ({ type }: Node) => type.name === 'listItem');
-}
-
-export function fitSlice(nodeType: any, slice: Slice) {
-  const node = nodeType.createAndFill();
-  const tr = new Transform(node).replace(0, node.content.size, slice);
-
-  return tr.doc;
 }

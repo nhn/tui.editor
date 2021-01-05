@@ -22,8 +22,8 @@ import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
 import { CustomBlockView } from './nodeview/customBlockView';
 
-import { changePastedHTML, changePastedSlice } from '@/wysiwyg/helper/clipboard';
-import { pasteToTable } from '@/wysiwyg/helper/pasteToTable';
+import { changePastedHTML, changePastedSlice } from '@/wysiwyg/clipboard/paste';
+import { pasteToTable } from '@/wysiwyg/clipboard/pasteToTable';
 
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 

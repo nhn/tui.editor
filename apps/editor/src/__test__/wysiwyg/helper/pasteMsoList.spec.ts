@@ -1,6 +1,6 @@
 import { oneLineTrim } from 'common-tags';
 
-import { convertMsoParagraphsToList } from '@/wysiwyg/helper/pasteMsoList';
+import { convertMsoParagraphsToList } from '@/wysiwyg/clipboard/pasteMsoList';
 
 describe('pasteMsoList helper', () => {
   let container: HTMLElement;

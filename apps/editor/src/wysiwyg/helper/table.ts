@@ -284,17 +284,25 @@ export function getTableContentFromSlice(slice: Slice) {
   if (slice.size) {
     let { content, openStart, openEnd } = slice;
 
+    if (content.childCount !== 1) {
+      return null;
+    }
+
     while (
       content.childCount === 1 &&
-      ((openStart > 0 && openEnd > 0) ||
-        (content.firstChild && content.firstChild.type.name === 'table'))
+      ((openStart > 0 && openEnd > 0) || content.firstChild?.type.name === 'table')
     ) {
       openStart -= 1;
       openEnd -= 1;
       content = content.firstChild!.content;
     }
 
-    return content;
+    if (
+      content.firstChild!.type.name === 'tableHead' ||
+      content.firstChild!.type.name === 'tableBody'
+    ) {
+      return content;
+    }
   }
 
   return null;

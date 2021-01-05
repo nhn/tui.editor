@@ -7,12 +7,13 @@ import {
   appendNodes
 } from '@/utils/dom';
 
+const reMSOListClassName = /MsoListParagraph/;
+const reMSOStylePrefix = /style=(.|\n)*mso-/;
+const reMSOListStyle = /mso-list:(.*)/;
+const reMSOTagName = /O:P/;
+const reMSOListBullet = /^(n|u|l)/;
+
 const MSO_CLASS_NAME_LIST_PARA = 'p.MsoListParagraph';
-const MSO_CLASS_NAME_LIST_RX = /MsoListParagraph/;
-const MSO_STYLE_PREFIX_RX = /style=(.|\n)*mso-/;
-const MSO_STYLE_LIST_RX = /mso-list:(.*)/;
-const MSO_TAG_NAME_RX = /O:P/;
-const UNORDERED_LIST_BULLET_RX = /^(n|u|l)/;
 
 interface ListItemData {
   id: number;
@@ -20,12 +21,12 @@ interface ListItemData {
   prev: ListItemData | null;
   parent: ListItemData | null;
   children: ListItemData[];
-  unorderedListItem: boolean;
+  unordered: boolean;
   contents: string;
 }
 
 export function isFromMso(html: string) {
-  return MSO_STYLE_PREFIX_RX.test(html);
+  return reMSOStylePrefix.test(html);
 }
 
 function getListItemContents(para: HTMLElement) {
@@ -37,12 +38,12 @@ function getListItemContents(para: HTMLElement) {
 
     if (isElemNode(node)) {
       const { outerHTML, textContent } = node as HTMLElement;
-      const msoSpan = MSO_STYLE_PREFIX_RX.test(outerHTML);
-      const bulletSpan = MSO_STYLE_LIST_RX.test(outerHTML);
+      const msoSpan = reMSOStylePrefix.test(outerHTML);
+      const bulletSpan = reMSOListStyle.test(outerHTML);
 
       if (msoSpan && !bulletSpan && textContent) {
         removedNodes.push([node, true]);
-      } else if (MSO_TAG_NAME_RX.test(node.nodeName) || (msoSpan && !textContent) || bulletSpan) {
+      } else if (reMSOTagName.test(node.nodeName) || (msoSpan && !textContent) || bulletSpan) {
         removedNodes.push([node, false]);
       }
     }
@@ -63,10 +64,10 @@ function createListItemDataFromParagraph(para: HTMLElement, index: number) {
   const styleAttr = para.getAttribute('style');
 
   if (styleAttr) {
-    const [, listItemInfo] = styleAttr.match(MSO_STYLE_LIST_RX)!;
+    const [, listItemInfo] = styleAttr.match(reMSOListStyle)!;
     const [, levelStr] = listItemInfo.trim().split(' ');
     const level = parseInt(levelStr.replace('level', ''), 10);
-    const unorderedListItem = UNORDERED_LIST_BULLET_RX.test(para.textContent || '');
+    const unordered = reMSOListBullet.test(para.textContent || '');
 
     return {
       id: index,
@@ -74,7 +75,7 @@ function createListItemDataFromParagraph(para: HTMLElement, index: number) {
       prev: null,
       parent: null,
       children: [],
-      unorderedListItem,
+      unordered,
       contents: getListItemContents(para)
     };
   }
@@ -112,22 +113,20 @@ function createListData(paras: HTMLElement[]) {
     const prevListItemData = listData[index - 1];
     const listItemData = createListItemDataFromParagraph(para, index);
 
-    if (!listItemData) {
-      return;
-    }
+    if (listItemData) {
+      if (prevListItemData) {
+        addListItemDetailData(listItemData, prevListItemData);
+      }
 
-    if (prevListItemData) {
-      addListItemDetailData(listItemData, prevListItemData);
+      listData.push(listItemData);
     }
-
-    listData.push(listItemData);
   });
 
   return listData;
 }
 
 function makeList(listData: ListItemData[]) {
-  const listTagName = listData[0].unorderedListItem ? 'ul' : 'ol';
+  const listTagName = listData[0].unordered ? 'ul' : 'ol';
   const list = document.createElement(listTagName);
 
   listData.forEach(data => {
@@ -160,7 +159,7 @@ function isMsoListParagraphEnd(node: HTMLElement) {
     node = node.nextSibling as HTMLElement;
   }
 
-  return node ? !MSO_CLASS_NAME_LIST_RX.test(node.className) : true;
+  return node ? !reMSOListClassName.test(node.className) : true;
 }
 
 export function convertMsoParagraphsToList(html: string) {
