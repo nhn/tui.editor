@@ -6,19 +6,16 @@ import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
 import { getTextContent } from './util';
 
-let mde: MarkdownEditor, em: EventEmitter, cmd: CommandManager, container: HTMLElement;
+let mde: MarkdownEditor, em: EventEmitter, cmd: CommandManager;
 
 beforeEach(() => {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-
   em = new EventEmitter();
-  mde = new MarkdownEditor(container, new ToastMark(), em);
+  mde = new MarkdownEditor(new ToastMark(), em);
   cmd = new CommandManager(em, mde.commands, {});
 });
 
 afterEach(() => {
-  document.body.removeChild(container);
+  mde.destroy();
 });
 
 describe('bold command', () => {

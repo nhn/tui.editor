@@ -8,7 +8,7 @@ import CommandManager from '@/commands/commandManager';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 
 describe('wysiwyg commands', () => {
-  let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter, cmd: CommandManager;
+  let wwe: WysiwygEditor, em: EventEmitter, cmd: CommandManager;
 
   function setTextToEditor(text: string) {
     const { state, dispatch } = wwe.view;
@@ -34,16 +34,13 @@ describe('wysiwyg commands', () => {
   beforeEach(() => {
     const adaptor = new WwToDOMAdaptor({}, {});
 
-    container = document.createElement('div');
-    document.body.appendChild(container);
-
     em = new EventEmitter();
-    wwe = new WysiwygEditor(container, em, adaptor);
+    wwe = new WysiwygEditor(em, adaptor);
     cmd = new CommandManager(em, {}, wwe.commands);
   });
 
   afterEach(() => {
-    document.body.removeChild(container);
+    wwe.destroy();
   });
 
   describe('heading command', () => {

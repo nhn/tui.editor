@@ -5,7 +5,7 @@ import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
 
-let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter, toDOMAdaptor: ToDOMAdaptor;
+let wwe: WysiwygEditor, em: EventEmitter, toDOMAdaptor: ToDOMAdaptor;
 
 function createCustomBlockNode() {
   const customBlock = wwe.schema.nodes.customBlock.create(
@@ -32,12 +32,15 @@ beforeEach(() => {
     }
   };
 
-  container = document.createElement('div');
   toDOMAdaptor = new WwToDOMAdaptor({}, convertors);
   em = new EventEmitter();
-  wwe = new WysiwygEditor(container, em, toDOMAdaptor);
+  wwe = new WysiwygEditor(em, toDOMAdaptor);
 
   wwe.setModel(createCustomBlockNode());
+});
+
+afterEach(() => {
+  wwe.destroy();
 });
 
 it('custom block node should be rendered in wysiwyg editor properly', () => {

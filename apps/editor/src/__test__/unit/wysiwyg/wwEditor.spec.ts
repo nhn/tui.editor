@@ -7,7 +7,7 @@ import EventEmitter from '@/event/eventEmitter';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 
 describe('WysiwygEditor', () => {
-  let container: HTMLElement, wwe: WysiwygEditor, em: EventEmitter;
+  let wwe: WysiwygEditor, em: EventEmitter, el: HTMLElement;
 
   function setContent(content: string) {
     const wrapper = document.createElement('div');
@@ -22,15 +22,17 @@ describe('WysiwygEditor', () => {
   beforeEach(() => {
     const adaptor = new WwToDOMAdaptor({}, {});
 
-    container = document.createElement('div');
-    document.body.appendChild(container);
-
     em = new EventEmitter();
-    wwe = new WysiwygEditor(container, em, adaptor);
+    wwe = new WysiwygEditor(em, adaptor);
+    el = wwe.el;
+    document.body.appendChild(el);
   });
 
   afterEach(() => {
-    document.body.removeChild(container);
+    if (Object.keys(wwe).length) {
+      wwe.destroy();
+    }
+    document.body.removeChild(el);
   });
 
   describe('API', () => {
