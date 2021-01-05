@@ -1,4 +1,5 @@
-import { ComponentClass } from '@t/ui';
+import isFunction from 'tui-code-snippet/type/isFunction';
+import { Component, ComponentClass } from '@t/ui';
 
 class VNodeWalker {
   current: VNode | null;
@@ -58,14 +59,21 @@ export class VNode {
 
   next: VNode | null = null;
 
-  ref!: (node: Node) => void | null;
+  ref?: (node: Node) => void;
 
   node!: Node | null;
+
+  component?: Component;
 
   constructor(type: string | ComponentClass, props: Record<string, any>, children: VNode[]) {
     this.type = type;
     this.props = props;
     this.children = children;
+
+    if (!isFunction(type)) {
+      this.ref = props.ref;
+      delete props.ref;
+    }
   }
 
   walker() {
