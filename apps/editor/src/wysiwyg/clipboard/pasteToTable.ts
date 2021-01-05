@@ -139,6 +139,8 @@ function expandColumns(
   }: PastingRangeInfo,
   replacedCellsOffsets: ReplacedCellsOffsets[]
 ) {
+  let index = 0;
+
   for (let rowIndex = 0; rowIndex < tableRowCount; rowIndex += 1) {
     const { offset, nodeSize } = cellsInfo[rowIndex][endColumnIndex - addedColumnCount];
     const insertOffset = tr.mapping.map(offset + nodeSize);
@@ -151,7 +153,8 @@ function expandColumns(
       const endCellOffset = insertOffset + getDummyCellSize(addedColumnCount);
       const nextCellOffset = endCellOffset + TR_NODES_SIZE;
 
-      replacedCellsOffsets.push({ startCellOffset, endCellOffset, nextCellOffset });
+      replacedCellsOffsets[index] = { startCellOffset, endCellOffset, nextCellOffset };
+      index += 1;
     }
   }
 }
@@ -168,18 +171,16 @@ function addReplacedOffsets(
   }: PastingRangeInfo,
   replacedCellsOffsets: ReplacedCellsOffsets[]
 ) {
-  if (!replacedCellsOffsets.length) {
-    for (let rowIndex = startRowIndex; rowIndex <= endRowIndex - addedRowCount; rowIndex += 1) {
-      const start = cellsInfo[rowIndex][startColumnIndex];
-      const end = cellsInfo[rowIndex][endColumnIndex - addedColumnCount];
-      const rowEnd = cellsInfo[rowIndex][tableColumnCount - 1];
+  for (let rowIndex = startRowIndex; rowIndex <= endRowIndex - addedRowCount; rowIndex += 1) {
+    const start = cellsInfo[rowIndex][startColumnIndex];
+    const end = cellsInfo[rowIndex][endColumnIndex - addedColumnCount];
+    const rowEnd = cellsInfo[rowIndex][tableColumnCount - 1];
 
-      replacedCellsOffsets.push({
-        startCellOffset: start.offset,
-        endCellOffset: end.offset + end.nodeSize,
-        nextCellOffset: rowEnd.offset + rowEnd.nodeSize + TR_NODES_SIZE
-      });
-    }
+    replacedCellsOffsets.push({
+      startCellOffset: start.offset,
+      endCellOffset: end.offset + end.nodeSize,
+      nextCellOffset: rowEnd.offset + rowEnd.nodeSize + TR_NODES_SIZE
+    });
   }
 }
 
@@ -246,11 +247,11 @@ export function pasteToTable(view: EditorView, slice: Slice) {
 
     const replacedCellsOffsets: ReplacedCellsOffsets[] = [];
 
+    addReplacedOffsets(targetTableInfo, pastingInfo, replacedCellsOffsets);
+
     if (pastingInfo.addedColumnCount) {
       expandColumns(tr, schema, targetTableInfo, pastingInfo, replacedCellsOffsets);
     }
-
-    addReplacedOffsets(targetTableInfo, pastingInfo, replacedCellsOffsets);
 
     if (pastingInfo.addedRowCount) {
       expandRows(tr, schema, targetTableInfo, pastingInfo, replacedCellsOffsets);
