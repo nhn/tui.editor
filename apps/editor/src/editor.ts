@@ -33,7 +33,7 @@ import isString from 'tui-code-snippet/type/isString';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
 import { render } from './new/renderer';
-import htm from './new/template';
+import htm from './new/vdom/template';
 
 /**
  * ToastUI Editor

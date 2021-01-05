@@ -3,7 +3,7 @@ import { EditorType } from '@t/editor';
 import { Component } from '@t/ui';
 import i18n from '@/i18n/i18n';
 import { shallowEqual } from '@/utils/common';
-import html from '../template';
+import html from '../vdom/template';
 import { rerender } from '../renderer';
 
 interface Props {
@@ -16,8 +16,6 @@ interface State {
 }
 
 export class Switch implements Component<Props, State> {
-  static componentName = 'switch';
-
   props: Props;
 
   state: State;

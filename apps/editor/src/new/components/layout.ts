@@ -3,7 +3,7 @@ import { Emitter } from '@t/event';
 import { Component } from '@t/ui';
 import { shallowEqual } from '@/utils/common';
 import domUtils from '@/utils/dom-legacy';
-import html from '../template';
+import html from '../vdom/template';
 import { Switch } from './switch';
 import { rerender } from '../renderer';
 
@@ -24,8 +24,6 @@ interface State {
 }
 
 export class Layout implements Component<Props, State> {
-  static componentName = 'layout';
-
   private refs: Record<string, HTMLElement> = {};
 
   props: Props;
