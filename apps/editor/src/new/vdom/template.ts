@@ -1,5 +1,5 @@
 import html from 'htm/mini';
-import isString from 'tui-code-snippet/type/isString';
+import isObject from 'tui-code-snippet/type/isObject';
 import { ComponentClass } from '@t/ui';
 import { VNode } from './vnode';
 
@@ -7,7 +7,7 @@ function createTextNode(text: string) {
   return new VNode('TEXT_NODE', { nodeValue: text }, []);
 }
 
-function h(type: string | ComponentClass, props: Record<string, any> = {}, ...children: VNode[]) {
+function h(type: string | ComponentClass, props: Record<string, any>, ...children: VNode[]) {
   const flatted: VNode[] = [];
 
   children.forEach(child => {
@@ -16,11 +16,11 @@ function h(type: string | ComponentClass, props: Record<string, any> = {}, ...ch
         flatted.push(vnode);
       });
     } else {
-      flatted.push(isString(child) ? createTextNode(child) : child);
+      flatted.push(isObject(child) ? child : createTextNode(String(child)));
     }
   });
 
-  const vnode = new VNode(type, props, flatted);
+  const vnode = new VNode(type, props || {}, flatted);
 
   return vnode;
 }

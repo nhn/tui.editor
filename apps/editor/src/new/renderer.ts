@@ -18,7 +18,7 @@ export function rerender() {
 export function render(container: HTMLElement, vnode: VNode) {
   const root = new VNode(container.tagName.toLowerCase(), {}, [vnode]);
 
-  root.old = lastVNode;
+  root.old = null;
   root.firstChild = vnode;
   root.node = container;
   VNode.removalNodes = [];
