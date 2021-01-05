@@ -15,7 +15,7 @@ function h(type: string | ComponentClass, props: Record<string, any>, ...childre
       child.forEach(vnode => {
         flatted.push(vnode);
       });
-    } else {
+    } else if (typeof child !== 'boolean') {
       flatted.push(isObject(child) ? child : createTextNode(String(child)));
     }
   });
