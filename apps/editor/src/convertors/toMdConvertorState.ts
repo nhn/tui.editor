@@ -92,10 +92,8 @@ export default class ToMdConvertorState {
     }
   }
 
-  write(content = '', flushing = true) {
-    if (flushing) {
-      this.flushClose();
-    }
+  write(content = '') {
+    this.flushClose();
 
     if (this.delim && this.isInBlank()) {
       this.result += this.delim;
@@ -126,10 +124,10 @@ export default class ToMdConvertorState {
   }
 
   convertBlock(node: Node, parent: Node, index: number) {
-    const nodeType = this.nodes[node.type.name as WwNodeType];
+    const convertor = this.nodes[node.type.name as WwNodeType];
 
-    if (nodeType) {
-      nodeType(this, node, parent, index);
+    if (convertor) {
+      convertor(this, node, parent, index);
     }
   }
 
@@ -311,6 +309,7 @@ export default class ToMdConvertorState {
 
   convertTableCell(node: Node) {
     this.inCell = true;
+
     node.forEach((child, _, index) => {
       if (child.type.name === 'bulletList' || child.type.name === 'orderedList') {
         this.convertBlock(child, node, index);
@@ -319,10 +318,11 @@ export default class ToMdConvertorState {
         this.convertInline(child);
 
         if (index < node.childCount - 1) {
-          this.write('<br>', false);
+          this.write('<br>');
         }
       }
     });
+
     this.inCell = false;
   }
 
