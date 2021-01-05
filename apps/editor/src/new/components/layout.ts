@@ -5,6 +5,7 @@ import { shallowEqual } from '@/utils/common';
 import domUtils from '@/utils/dom-legacy';
 import html from '../vdom/template';
 import { Switch } from './switch';
+import { Toolbar } from './toolbar';
 import { rerender } from '../renderer';
 
 interface Props {
@@ -15,11 +16,12 @@ interface Props {
     mdPreview: HTMLElement;
     wwEditor: HTMLElement;
   };
+  toolbarItems: Array<string[] | string>;
 }
 
 interface State {
   type: EditorType;
-  style: PreviewStyle;
+  previewStyle: PreviewStyle;
   hide: boolean;
 }
 // @TODO: arrange class prefix
@@ -34,7 +36,7 @@ export class Layout implements Component<Props, State> {
     this.props = props;
     this.state = {
       type: 'markdown',
-      style: 'vertical',
+      previewStyle: 'vertical',
       hide: false
     };
 
@@ -67,10 +69,15 @@ export class Layout implements Component<Props, State> {
         class="tui-editor-defaultUI${displayClassName}"
         ref=${(el: HTMLElement) => (this.refs.el = el)}
       >
+        <${Toolbar}
+          eventEmitter=${this.props.eventEmitter}
+          previewStyle=${this.state.previewStyle}
+          toolbarItems=${this.props.toolbarItems}
+        />
         <div class="te-editor-section" ref=${(el: HTMLElement) => (this.refs.editorSection = el)}>
           <div class="tui-editor ${editorTypeClassName}">
             <div
-              class="te-md-container ${this.state.style === 'vertical'
+              class="te-md-container ${this.state.previewStyle === 'vertical'
                 ? 'te-preview-style-vertical'
                 : 'te-preview-style-tab'}"
               ref=${(el: HTMLElement) => (this.refs.mdContainer = el)}
@@ -97,8 +104,8 @@ export class Layout implements Component<Props, State> {
     eventEmitter.listen('changePreviewStyle', this.changePreviewStyle.bind(this));
   }
 
-  changePreviewStyle(style: PreviewStyle) {
-    this.setState({ style });
+  changePreviewStyle(previewStyle: PreviewStyle) {
+    this.setState({ previewStyle });
   }
 
   hide() {

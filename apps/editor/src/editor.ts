@@ -120,26 +120,11 @@ class ToastUIEditor {
         useCommandShortcut: true,
         usageStatistics: true,
         toolbarItems: [
-          'heading',
-          'bold',
-          'italic',
-          'strike',
-          'divider',
-          'hr',
-          'quote',
-          'divider',
-          'ul',
-          'ol',
-          'task',
-          'indent',
-          'outdent',
-          'divider',
-          'table',
-          'image',
-          'link',
-          'divider',
-          'code',
-          'codeblock'
+          ['heading', 'bold', 'italic', 'strike'],
+          ['hr', 'quote'],
+          ['ul', 'ol', 'task', 'indent', 'outdent'],
+          ['table', 'image', 'link'],
+          ['code', 'codeblock']
         ],
         hideModeSwitch: false,
         linkAttribute: null,
@@ -220,6 +205,7 @@ class ToastUIEditor {
           eventEmitter=${this.eventEmitter}
           slots=${this.getEditorElements()}
           hideModeSwitch=${this.options.hideModeSwitch}
+          toolbarItems=${this.options.toolbarItems}
         />
       ` as VNode
     );
