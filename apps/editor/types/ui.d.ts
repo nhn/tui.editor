@@ -1,7 +1,6 @@
 export interface Component<T = {}, R = {}> {
   props?: T;
   state?: R;
-  mounting?: boolean;
   addEvent?(): void;
   mounted?(): void;
   render(): any;

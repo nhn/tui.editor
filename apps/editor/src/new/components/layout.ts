@@ -3,9 +3,8 @@ import { Emitter } from '@t/event';
 import { Component } from '@t/ui';
 import { shallowEqual } from '@/utils/common';
 import domUtils from '@/utils/dom-legacy';
-import { Switch } from './switch';
-import { Toolbar } from './toolbar';
 import html from '../template';
+import { Switch } from './switch';
 import { rerender } from '../renderer';
 
 interface Props {
@@ -65,7 +64,6 @@ export class Layout implements Component<Props, State> {
     /* eslint-disable no-return-assign */
     return html`
       <div class="tui-editor-defaultUI" ref=${(el: HTMLElement) => (this.refs.el = el)}>
-        <${Toolbar} eventEmitter=${this.props.eventEmitter} showTab=${this.state.style === 'tab'} />
         <div
           class="te-editor-section"
           ref=${(el: HTMLElement) => (this.refs.editorSection = el)}
