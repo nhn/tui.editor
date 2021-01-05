@@ -48,9 +48,9 @@ export function tableSelectionPlugin() {
     },
     props: {
       decorations: drawCellSelection,
-      createSelectionBetween(view) {
-        if (pluginKey.getState(view.state) !== null) {
-          return view.state.selection;
+      createSelectionBetween({ state }) {
+        if (pluginKey.getState(state) !== null) {
+          return state.selection;
         }
 
         return null;
