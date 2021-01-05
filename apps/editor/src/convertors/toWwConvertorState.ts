@@ -116,19 +116,18 @@ export default class ToWwConvertorState {
 
     while (event) {
       const { node, entering } = event;
-      const { type } = node;
-      const convertor = this.convertors[type];
+      const convertor = this.convertors[node.type];
 
       let skipped = false;
 
-      const context = {
-        entering,
-        skipChildren: () => {
-          skipped = true;
-        }
-      };
-
       if (convertor) {
+        const context = {
+          entering,
+          skipChildren: () => {
+            skipped = true;
+          }
+        };
+
         convertor(this, node, context);
       }
 

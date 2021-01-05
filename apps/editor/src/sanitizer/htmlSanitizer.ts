@@ -12,7 +12,7 @@ type GlobalEventTypes = keyof Omit<
   'removeEventListener'
 >;
 
-const reXssHtmlAttr = new RegExp(
+const reXSSHtmlAttr = new RegExp(
   '^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
     'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' +
     'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' +
@@ -22,7 +22,7 @@ const reXssHtmlAttr = new RegExp(
   'g'
 );
 
-const reXssSvgAttr = new RegExp(
+const reXSSSvgAttr = new RegExp(
   '^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' +
     'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' +
     'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' +
@@ -41,8 +41,8 @@ const reXssSvgAttr = new RegExp(
   'g'
 );
 
-const reXssAttr = /href|src|background/gi;
-const reXssAttrValue = /((java|vb|live)script|x):/gi;
+const reXSSAttr = /href|src|background/gi;
+const reXSSAttrValue = /((java|vb|live)script|x):/gi;
 const reOnEvent = /^on\S+/;
 const reComment = /<!--[\s\S]*?-->/g;
 
@@ -74,7 +74,7 @@ function removeUnnecessaryTags(html: HTMLElement) {
 }
 
 function isXSSAttribute(attrName: string, attrValue: string) {
-  return attrName.match(reXssAttr) && attrValue.match(reXssAttrValue);
+  return attrName.match(reXSSAttr) && attrValue.match(reXSSAttrValue);
 }
 
 function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: Attr[]) {
@@ -94,8 +94,8 @@ function leaveOnlyWhitelistAttribute(html: HTMLElement) {
     const { attributes } = node as HTMLElement;
     const blacklist = toArray(attributes).filter(attr => {
       const { name, value } = attr;
-      const htmlAttr = name.match(reXssHtmlAttr);
-      const svgAttr = name.match(reXssSvgAttr);
+      const htmlAttr = name.match(reXSSHtmlAttr);
+      const svgAttr = name.match(reXSSSvgAttr);
       const xssAttr = htmlAttr && isXSSAttribute(name, value);
 
       return (!htmlAttr && !svgAttr) || xssAttr;
@@ -108,5 +108,5 @@ function leaveOnlyWhitelistAttribute(html: HTMLElement) {
 export function sanitizeXSSAttributeValue(attrValue: string) {
   attrValue = attrValue.replace(reComment, '');
 
-  return reXssAttrValue.test(attrValue) ? '' : attrValue;
+  return reXSSAttrValue.test(attrValue) ? '' : attrValue;
 }
