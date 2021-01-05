@@ -12,7 +12,7 @@ interface Props {
 }
 
 interface State {
-  show: boolean;
+  hide: boolean;
 }
 
 export class Switch implements Component<Props, State> {
@@ -23,7 +23,7 @@ export class Switch implements Component<Props, State> {
   constructor(props: Props) {
     this.props = props;
     this.state = {
-      show: true
+      hide: false
     };
   }
 
@@ -37,18 +37,18 @@ export class Switch implements Component<Props, State> {
   }
 
   show() {
-    this.setState({ show: true });
+    this.setState({ hide: false });
   }
 
   hide() {
-    this.setState({ show: false });
+    this.setState({ hide: true });
   }
 
   render() {
     const { type, eventEmitter } = this.props;
 
     return html`
-      <div class="te-mode-switch-section" style="display: ${this.state.show ? 'block' : 'none'}">
+      <div class="te-mode-switch-section" style="display: ${this.state.hide ? 'none' : 'block'}">
         <div class="te-mode-switch">
           <button
             class="te-switch-button markdown${type === 'markdown' ? ' active' : ''}"
@@ -60,7 +60,7 @@ export class Switch implements Component<Props, State> {
             ${i18n.get('Markdown')}
           </button>
           <button
-            class="te-switch-button wywiwyg${type === 'wysiwyg' ? ' active' : ''}"
+            class="te-switch-button wysiwyg${type === 'wysiwyg' ? ' active' : ''}"
             type="button"
             onClick=${() => {
               eventEmitter.emit('changeModeByEvent', 'wysiwyg');
