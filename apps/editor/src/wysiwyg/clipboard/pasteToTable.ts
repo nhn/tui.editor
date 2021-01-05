@@ -125,6 +125,31 @@ function getPastingRangeInfo(
   };
 }
 
+function addReplacedOffsets(
+  { cellsInfo, tableColumnCount }: TargetTableInfo,
+  {
+    startRowIndex,
+    startColumnIndex,
+    endRowIndex,
+    endColumnIndex,
+    addedRowCount,
+    addedColumnCount
+  }: PastingRangeInfo,
+  replacedCellsOffsets: ReplacedCellsOffsets[]
+) {
+  for (let rowIndex = startRowIndex; rowIndex <= endRowIndex - addedRowCount; rowIndex += 1) {
+    const start = cellsInfo[rowIndex][startColumnIndex];
+    const end = cellsInfo[rowIndex][endColumnIndex - addedColumnCount];
+    const rowEnd = cellsInfo[rowIndex][tableColumnCount - 1];
+
+    replacedCellsOffsets.push({
+      startCellOffset: start.offset,
+      endCellOffset: end.offset + end.nodeSize,
+      nextCellOffset: rowEnd.offset + rowEnd.nodeSize + TR_NODES_SIZE
+    });
+  }
+}
+
 function expandColumns(
   tr: Transform,
   schema: Schema,
@@ -156,31 +181,6 @@ function expandColumns(
       replacedCellsOffsets[index] = { startCellOffset, endCellOffset, nextCellOffset };
       index += 1;
     }
-  }
-}
-
-function addReplacedOffsets(
-  { cellsInfo, tableColumnCount }: TargetTableInfo,
-  {
-    startRowIndex,
-    startColumnIndex,
-    endRowIndex,
-    endColumnIndex,
-    addedRowCount,
-    addedColumnCount
-  }: PastingRangeInfo,
-  replacedCellsOffsets: ReplacedCellsOffsets[]
-) {
-  for (let rowIndex = startRowIndex; rowIndex <= endRowIndex - addedRowCount; rowIndex += 1) {
-    const start = cellsInfo[rowIndex][startColumnIndex];
-    const end = cellsInfo[rowIndex][endColumnIndex - addedColumnCount];
-    const rowEnd = cellsInfo[rowIndex][tableColumnCount - 1];
-
-    replacedCellsOffsets.push({
-      startCellOffset: start.offset,
-      endCellOffset: end.offset + end.nodeSize,
-      nextCellOffset: rowEnd.offset + rowEnd.nodeSize + TR_NODES_SIZE
-    });
   }
 }
 
