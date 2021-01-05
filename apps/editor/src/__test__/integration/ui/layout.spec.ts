@@ -5,6 +5,22 @@ import html from '@/new/vdom/template';
 import EventEmitter from '@/event/eventEmitter';
 import '@/i18n/en-us';
 
+function getMdSwitch() {
+  return document.querySelector<HTMLElement>('.te-mode-switch-section .markdown')!;
+}
+
+function getWwSwitch() {
+  return document.querySelector<HTMLElement>('.te-mode-switch-section .wysiwyg')!;
+}
+
+function clickMdSwitch() {
+  return getMdSwitch().click();
+}
+
+function clickWwSwitch() {
+  return getWwSwitch().click();
+}
+
 describe('layout component', () => {
   let em: EventEmitter, container: HTMLElement;
 
@@ -67,22 +83,19 @@ describe('layout component', () => {
 
     em.listen('changeModeByEvent', spy);
 
-    const mdSwitch = document.querySelector<HTMLElement>('.te-mode-switch-section .markdown')!;
-    const wwSwitch = document.querySelector<HTMLElement>('.te-mode-switch-section .wysiwyg')!;
-
-    wwSwitch.click();
+    clickWwSwitch();
 
     expect(spy).toHaveBeenCalledWith('wysiwyg');
 
-    mdSwitch.click();
+    clickMdSwitch();
 
     expect(spy).toHaveBeenCalledWith('markdown');
   });
 
   it('switch the editor in layout when changeMode is triggered', () => {
     const editorArea = document.querySelector<HTMLElement>('.tui-editor')!;
-    const mdSwitch = document.querySelector<HTMLElement>('.te-mode-switch-section .markdown')!;
-    const wwSwitch = document.querySelector<HTMLElement>('.te-mode-switch-section .wysiwyg')!;
+    const mdSwitch = getMdSwitch();
+    const wwSwitch = getWwSwitch();
 
     em.emit('changeMode', 'wysiwyg');
 
