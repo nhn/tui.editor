@@ -15,7 +15,7 @@ export function commit(vnode: VNode) {
     if (next.entering) {
       diff(vnode);
     } else if (isFunction(vnode.type)) {
-      const comp = createComponent(vnode.type, vnode.props);
+      const comp = createComponent(vnode.type, vnode);
 
       // lifecycle method
       if (!vnode.old && comp.mounted) {

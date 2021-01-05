@@ -8,5 +8,4 @@ export interface Component<T = {}, R = {}> {
 
 export interface ComponentClass {
   new (props?: Record<string, any>): Component;
-  componentName: string;
 }

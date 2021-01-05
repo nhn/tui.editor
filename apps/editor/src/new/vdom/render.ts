@@ -1,36 +1,20 @@
 import isFunction from 'tui-code-snippet/type/isFunction';
-import isUndefined from 'tui-code-snippet/type/isUndefined';
-import { Component, ComponentClass } from '@t/ui';
+import { ComponentClass } from '@t/ui';
 import { VNode } from './vnode';
 import { createNode } from './dom';
 
-const componentMap: Record<string, Component> = {};
-let sequence = 0;
+export function createComponent(Comp: ComponentClass, vnode: VNode) {
+  const { props, component } = vnode;
 
-export function createComponent(Comp: ComponentClass, props: Record<string, any>) {
-  let compName = props.key || Comp.componentName;
-  let cached = componentMap[compName];
-
-  if (isUndefined(compName)) {
-    compName = Comp.componentName = `Comp-${sequence}`;
-    sequence += 1;
-  }
-
-  if (cached) {
-    cached.props = props;
-    return cached;
-  }
-
-  cached = componentMap[compName] = new Comp(props);
-
-  return cached;
+  return component ? component : new Comp(props);
 }
 
 export function buildVNode(vnode: VNode | null) {
   while (vnode) {
     if (isFunction(vnode.type)) {
-      const instance = createComponent(vnode.type, vnode.props);
+      const instance = createComponent(vnode.type, vnode);
 
+      vnode.component = instance;
       vnode.children = [instance.render()];
       buildChildrenVNode(vnode);
     } else {
@@ -55,6 +39,7 @@ function isSameType(old: VNode | null, vnode: VNode) {
   return old && vnode && vnode.type === old.type;
 }
 
+// @TODO: add key diff algorithm
 function buildChildrenVNode(parent: VNode) {
   const { children } = parent;
   let old = parent.old ? parent.old.firstChild : null;
