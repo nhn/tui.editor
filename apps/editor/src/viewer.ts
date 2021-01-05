@@ -105,7 +105,7 @@ class ToastUIEditorViewer {
 
     el.innerHTML = '';
 
-    this.preview = new MarkdownPreview(el, this.eventEmitter, {
+    this.preview = new MarkdownPreview(this.eventEmitter, {
       ...rendererOptions,
       isViewer: true
     });
