@@ -8,6 +8,9 @@ import {
   CustomBlockMdNode
 } from '@t/markdown';
 
+import { reHTMLTag } from './utils';
+import { htmlToWwConvertors } from './htmlToWwConvertors';
+
 function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
 }
@@ -244,6 +247,32 @@ export const toWwConvertors: ToWwConvertorMap = {
     if (!node.next) {
       state.openNode(paragraph);
       state.closeNode();
+    }
+  },
+
+  htmlInline(state, node) {
+    const matched = node.literal!.match(reHTMLTag);
+
+    if (matched) {
+      const [, openTagName, , closeTagName] = matched;
+      const htmlToWwConvertor = htmlToWwConvertors[openTagName || closeTagName];
+
+      if (htmlToWwConvertor) {
+        htmlToWwConvertor(state, node, openTagName);
+      }
+    }
+  },
+
+  htmlBlock(state, node) {
+    const matched = node.literal!.match(reHTMLTag);
+
+    if (matched) {
+      const [, openTagName, , closeTagName] = matched;
+      const htmlToWwConvertor = htmlToWwConvertors[openTagName || closeTagName];
+
+      if (htmlToWwConvertor) {
+        htmlToWwConvertor(state, node, openTagName);
+      }
     }
   }
 };

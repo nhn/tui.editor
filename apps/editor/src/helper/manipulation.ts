@@ -50,7 +50,7 @@ export function createParagraph(
   const { paragraph } = schema.nodes;
 
   if (!content) {
-    return paragraph.createAndFill();
+    return paragraph.createAndFill()!;
   }
 
   if (isString(content)) {

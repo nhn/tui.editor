@@ -3,7 +3,7 @@ import { toggleMark } from 'prosemirror-commands';
 
 import Mark from '@/spec/mark';
 import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
-import { sanitizeXssAttributeValue } from '@/sanitizer/htmlSanitizer';
+import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 import { createText } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
@@ -36,7 +36,7 @@ export class Link extends Mark {
         return [
           'a',
           {
-            href: sanitizeXssAttributeValue(attrs.linkUrl)
+            href: sanitizeXSSAttributeValue(attrs.linkUrl)
           }
         ];
       }

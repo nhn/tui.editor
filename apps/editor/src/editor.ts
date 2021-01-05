@@ -220,7 +220,7 @@ class ToastUIEditor {
       wwToDOMAdaptor
     );
 
-    this.convertor = new Convertor(this.wwEditor.getSchema());
+    this.convertor = new Convertor(this.wwEditor.getSchema(), linkAttribute);
 
     if (plugins) {
       invokePlugins(plugins, this);

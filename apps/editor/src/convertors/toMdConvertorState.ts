@@ -3,6 +3,11 @@ import { Node, Mark } from 'prosemirror-model';
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import { ToMdNodeConvertorMap, ToMdMarkConvertorMap, FirstDelimFn } from '@t/convertor';
 
+interface ToMdMarkConvertors {
+  nodes: ToMdNodeConvertorMap;
+  marks: ToMdMarkConvertorMap;
+}
+
 export default class ToMdConvertorState {
   private readonly nodes: ToMdNodeConvertorMap;
 
@@ -16,13 +21,16 @@ export default class ToMdConvertorState {
 
   private tightList: boolean;
 
-  constructor(nodes: ToMdNodeConvertorMap, marks: ToMdMarkConvertorMap) {
+  public inCell: boolean;
+
+  constructor({ nodes, marks }: ToMdMarkConvertors) {
     this.nodes = nodes;
     this.marks = marks;
     this.delim = '';
     this.result = '';
     this.closed = false;
     this.tightList = false;
+    this.inCell = false;
   }
 
   private isInBlank() {
@@ -42,7 +50,7 @@ export default class ToMdConvertorState {
   }
 
   flushClose(size?: number) {
-    if (this.closed) {
+    if (!this.inCell && this.closed) {
       if (!this.isInBlank()) {
         this.result += '\n';
       }
@@ -84,8 +92,10 @@ export default class ToMdConvertorState {
     }
   }
 
-  write(content = '') {
-    this.flushClose();
+  write(content = '', flushing = true) {
+    if (flushing) {
+      this.flushClose();
+    }
 
     if (this.delim && this.isInBlank()) {
       this.result += this.delim;
@@ -300,15 +310,20 @@ export default class ToMdConvertorState {
   }
 
   convertTableCell(node: Node) {
-    const { childCount } = node;
-
+    this.inCell = true;
     node.forEach((child, _, index) => {
-      this.convertInline(child);
+      if (child.type.name === 'bulletList' || child.type.name === 'orderedList') {
+        this.convertBlock(child, node, index);
+        this.closed = false;
+      } else {
+        this.convertInline(child);
 
-      if (index < childCount - 1) {
-        this.write('<br>');
+        if (index < node.childCount - 1) {
+          this.write('<br>', false);
+        }
       }
     });
+    this.inCell = false;
   }
 
   convertNode(parent: Node) {

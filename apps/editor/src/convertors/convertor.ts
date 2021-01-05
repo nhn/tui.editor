@@ -18,7 +18,9 @@ export default class Convertor {
 
   private readonly toMdConvertors: ToMdConvertorMap;
 
-  constructor(schema: Schema) {
+  private readonly linkAttribute: Record<string, any>;
+
+  constructor(schema: Schema, linkAttribute: Record<string, any>) {
     this.schema = schema;
 
     // @TODO to be extended with public option
@@ -26,6 +28,8 @@ export default class Convertor {
 
     // @TODO to be extended with public option
     this.toMdConvertors = toMdConvertors;
+
+    this.linkAttribute = linkAttribute;
   }
 
   private addBlankLineBetweenParagraphs(prevNode: ProsemirrorNode, blockNodes: ProsemirrorNode[]) {
@@ -45,7 +49,7 @@ export default class Convertor {
 
       if (inlineNode.type.name === 'lineBreak') {
         if (buffer.length) {
-          const newPara = createParagraph(this.schema, buffer);
+          const newPara = createParagraph(this.schema, buffer as ProsemirrorNode[]);
 
           blockNodes.push(newPara!);
         }
@@ -85,10 +89,8 @@ export default class Convertor {
   }
 
   public toWysiwygModel(mdNode: MdNode) {
-    const state = new ToWwConvertorState(this.schema, this.toWwConvertors);
+    const state = new ToWwConvertorState(this.schema, this.toWwConvertors, this.linkAttribute);
     const doc = state.convertNode(mdNode);
-
-    console.log(doc);
 
     if (doc) {
       return this.postProcessParagraphs(doc);
@@ -98,8 +100,7 @@ export default class Convertor {
   }
 
   public toMarkdownText(wwNode: ProsemirrorNode) {
-    const { nodes, marks } = this.toMdConvertors;
-    const state = new ToMdConvertorState(nodes, marks);
+    const state = new ToMdConvertorState(this.toMdConvertors);
 
     return state.convertNode(wwNode);
   }

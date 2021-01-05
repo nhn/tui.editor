@@ -11,6 +11,9 @@ export class ThematicBreak extends Node {
 
   get defaultSchema() {
     return {
+      attrs: {
+        htmlToken: { default: false }
+      },
       group: 'block',
       parseDOM: [{ tag: 'hr' }],
       selectable: false,

@@ -105,7 +105,7 @@ function leaveOnlyWhitelistAttribute(html: HTMLElement) {
   });
 }
 
-export function sanitizeXssAttributeValue(attrValue: string) {
+export function sanitizeXSSAttributeValue(attrValue: string) {
   attrValue = attrValue.replace(reComment, '');
 
   return reXssAttrValue.test(attrValue) ? '' : attrValue;

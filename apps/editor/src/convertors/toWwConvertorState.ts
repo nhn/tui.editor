@@ -1,11 +1,10 @@
 import { Schema, Node, NodeType, Mark, MarkType, DOMParser } from 'prosemirror-model';
 
-import { ToWwConvertorMap, StackItem, Attrs } from '@t/convertor';
-import { MdNode } from '@t/markdown';
-import { getHTMLToWwConvertor } from './htmlToWwConvertors';
-
 // @ts-ignore
 import { Renderer } from '@toast-ui/toastmark';
+
+import { ToWwConvertorMap, StackItem, Attrs } from '@t/convertor';
+import { MdNode } from '@t/markdown';
 
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 
@@ -30,16 +29,14 @@ export default class ToWwConvertorState {
 
   private renderer: Renderer;
 
-  constructor(schema: Schema, convertors: ToWwConvertorMap) {
+  constructor(schema: Schema, convertors: ToWwConvertorMap, linkAttribute: Record<string, any>) {
     this.schema = schema;
     this.convertors = convertors;
     this.stack = [{ type: this.schema.topNodeType, attrs: null, content: [] }];
     this.marks = Mark.none;
-
     this.renderer = new Renderer({
       gfm: true,
-      nodeId: true,
-      convertors: getHTMLRenderConvertors({}, {})
+      convertors: getHTMLRenderConvertors(linkAttribute, {})
     });
   }
 
@@ -131,13 +128,7 @@ export default class ToWwConvertorState {
         }
       };
 
-      if (type === 'htmlInline') {
-        const htmlToWwConvertor = getHTMLToWwConvertor(node.literal!);
-
-        if (htmlToWwConvertor) {
-          htmlToWwConvertor(this, node, context);
-        }
-      } else if (convertor) {
+      if (convertor) {
         convertor(this, node, context);
       }
 

@@ -65,29 +65,47 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   bulletList(state, node) {
-    state.convertList(node, '  ', () => `${node.attrs.bullet || '*'} `);
+    if (state.inCell) {
+      state.write('<ul>', false);
+      state.convertNode(node);
+      state.write('</ul>', false);
+    } else {
+      state.convertList(node, '  ', () => `${node.attrs.bullet || '*'} `);
+    }
   },
 
   orderedList(state, node) {
-    const start = node.attrs.order || 1;
-    const maxWidth = String(start + node.childCount - 1).length;
-    const space = state.repeat('  ', maxWidth + 2);
+    if (state.inCell) {
+      state.write('<ol>', false);
+      state.convertNode(node);
+      state.write('</ol>', false);
+    } else {
+      const start = node.attrs.order || 1;
+      const maxWidth = String(start + node.childCount - 1).length;
+      const space = state.repeat('  ', maxWidth + 2);
 
-    state.convertList(node, space, (index: number) => {
-      const numStr = String(start + index);
+      state.convertList(node, space, (index: number) => {
+        const numStr = String(start + index);
 
-      return `${state.repeat(' ', maxWidth - numStr.length)}${numStr}. `;
-    });
+        return `${state.repeat(' ', maxWidth - numStr.length)}${numStr}. `;
+      });
+    }
   },
 
   listItem(state, node) {
-    const { task, checked } = node.attrs;
+    if (state.inCell) {
+      state.write('<li>', false);
+      state.convertNode(node);
+      state.write('</li>', false);
+    } else {
+      const { task, checked } = node.attrs;
 
-    if (task) {
-      state.write(`[${checked ? 'x' : ' '}] `);
+      if (task) {
+        state.write(`[${checked ? 'x' : ' '}] `);
+      }
+
+      state.convertNode(node);
     }
-
-    state.convertNode(node);
   },
 
   blockQuote(state, node, parent) {
@@ -101,9 +119,8 @@ const nodes: ToMdNodeConvertorMap = {
   image(state, node) {
     const altText = state.escape(node.attrs.altText || '');
     const imageUrl = state.escape(node.attrs.imageUrl);
-    const { htmlToken } = node.attrs;
 
-    if (htmlToken) {
+    if (node.attrs.htmlToken) {
       const altAttr = altText ? ` alt="${altText}"` : '';
 
       state.write(`<img src="${imageUrl}"${altAttr}>`);
@@ -113,26 +130,19 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   thematicBreak(state, node) {
-    state.write('***');
+    if (node.attrs.htmlToken) {
+      state.write('<hr>');
+    } else {
+      state.write('***');
+    }
     state.closeBlock(node);
   },
 
-  lineBreak(state, node) {
-    if (node.attrs.inCell) {
+  hardBreak(state) {
+    if (state.inCell) {
       state.write('<br>');
     } else {
       state.write('\n');
-    }
-  },
-
-  hardBreak(state, node, parent, index = 0) {
-    if (parent) {
-      for (let i = index + 1; i < parent.childCount; i += 1) {
-        if (parent.child(i).type !== node.type) {
-          state.write('\\\n');
-          return;
-        }
-      }
     }
   },
 
@@ -238,8 +248,6 @@ const marks: ToMdMarkConvertorMap = {
     open(state: ToMdConvertorStateType, mark: Mark) {
       const { htmlToken } = mark.attrs;
       const linkUrl = state.escape(mark.attrs.linkUrl);
-
-      console.log(linkUrl);
 
       return htmlToken ? `<a href="${linkUrl}">` : '[';
     },
