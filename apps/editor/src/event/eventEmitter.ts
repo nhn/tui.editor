@@ -81,8 +81,7 @@ const eventTypeList: EventTypes[] = [
   'cursorActivity',
   'requireScrollSync',
   'requireScrollIntoView',
-  'setCodeBlockLanguages',
-  'minHeight'
+  'setCodeBlockLanguages'
 ];
 
 /**
