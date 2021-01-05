@@ -8,19 +8,20 @@ const componentMap: Record<string, Component> = {};
 let sequence = 0;
 
 export function createComponent(Comp: ComponentClass, props: Record<string, any>) {
-  let cached = componentMap[Comp.componentName];
+  let compName = props.key || Comp.componentName;
+  let cached = componentMap[compName];
+
+  if (isUndefined(compName)) {
+    compName = Comp.componentName = `Comp-${sequence}`;
+    sequence += 1;
+  }
 
   if (cached) {
     cached.props = props;
     return cached;
   }
 
-  if (isUndefined(Comp.componentName)) {
-    Comp.componentName = `Comp-${sequence}`;
-    sequence += 1;
-  }
-  cached = componentMap[Comp.componentName] = new Comp(props);
-  cached.mounting = true;
+  cached = componentMap[compName] = new Comp(props);
 
   return cached;
 }
@@ -69,7 +70,9 @@ function buildChildrenVNode(parent: VNode) {
     }
 
     if (vnode && !sameType) {
+      vnode.old = null;
       vnode.parent = parent;
+      vnode.node = null;
     }
 
     if (old && !sameType) {

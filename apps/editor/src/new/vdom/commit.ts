@@ -18,12 +18,8 @@ export function commit(vnode: VNode) {
       const comp = createComponent(vnode.type, vnode.props);
 
       // lifecycle method
-      if (comp.mounting) {
-        comp.mounting = false;
-
-        if (comp.mounted) {
-          comp.mounted();
-        }
+      if (!vnode.old && comp.mounted) {
+        comp.mounted();
       }
     }
   }
