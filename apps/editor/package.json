@@ -46,6 +46,7 @@
     "doc": "tuidoc"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.8",
     "@toast-ui/release-notes": "^2.0.1",
     "@toast-ui/to-mark": "file:../../libs/to-mark",
     "@toast-ui/toastmark": "file:../../libs/toastmark",
