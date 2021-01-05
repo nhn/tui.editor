@@ -57,6 +57,7 @@ function buildChildrenVNode(parent: VNode) {
       vnode.old = old!;
       vnode.parent = parent;
       vnode.node = old!.node;
+      vnode.component = old!.component;
     }
 
     if (vnode && !sameType) {
