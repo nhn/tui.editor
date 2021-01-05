@@ -6,7 +6,12 @@ import { createNode } from './dom';
 export function createComponent(Comp: ComponentClass, vnode: VNode) {
   const { props, component } = vnode;
 
-  return component ? component : new Comp(props);
+  if (component) {
+    component.props = vnode.props;
+    return component;
+  }
+
+  return new Comp(props);
 }
 
 export function buildVNode(vnode: VNode | null) {
