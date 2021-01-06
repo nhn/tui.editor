@@ -25,21 +25,21 @@ export class Image extends NodeSchema {
         {
           tag: 'img[src]',
           getAttrs(dom: Node | string) {
+            const imageUrl = (dom as HTMLElement).getAttribute('src') || '';
+
             return {
-              imageUrl: (dom as HTMLElement).getAttribute('src'),
+              imageUrl: sanitizeXSSAttributeValue(imageUrl),
               altText: (dom as HTMLElement).getAttribute('alt')
             };
           }
         }
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        const { imageUrl, altText } = attrs;
-
         return [
           attrs.rawHTML || 'img',
           {
-            src: sanitizeXSSAttributeValue(imageUrl),
-            ...(altText && { alt: altText })
+            src: attrs.imageUrl,
+            ...(attrs.altText && { alt: attrs.altText })
           }
         ];
       }

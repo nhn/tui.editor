@@ -25,8 +25,10 @@ export class Link extends Mark {
         {
           tag: 'a[href]',
           getAttrs(dom: Node | string) {
+            const href = (dom as HTMLElement).getAttribute('href') || '';
+
             return {
-              linkUrl: (dom as HTMLElement).getAttribute('href'),
+              linkUrl: sanitizeXSSAttributeValue(href),
               linkText: (dom as HTMLElement).textContent
             };
           }
@@ -36,7 +38,7 @@ export class Link extends Mark {
         return [
           attrs.rawHTML || 'a',
           {
-            href: sanitizeXSSAttributeValue(attrs.linkUrl)
+            href: attrs.linkUrl
           }
         ];
       }
