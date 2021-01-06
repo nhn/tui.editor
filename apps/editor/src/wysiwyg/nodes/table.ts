@@ -1,12 +1,14 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
+import { TextSelection } from 'prosemirror-state';
 
 import Node from '@/spec/node';
 import { isInTableNode, findNodeBy } from '@/wysiwyg/helper/node';
 import {
+  CellInfo,
   createTableHeadRow,
   createTableBodyRows,
-  createCellsToAdd,
+  createDummyCells,
   getResolvedSelection,
   getSelectionInfo,
   getTableCellsInfo,
@@ -15,8 +17,10 @@ import {
   getPrevRowOffset,
   getNextColumnOffsets,
   getPrevColumnOffsets,
-  findNextCell,
-  findPrevCell
+  getRightCellOffset,
+  getLeftCellOffset,
+  getUpCellOffset,
+  getDownCellOffset
 } from '@/wysiwyg/helper/table';
 
 import { createTextSelection } from '@/helper/manipulation';
@@ -32,6 +36,21 @@ interface AddTablePayload {
 interface AlignColumnPayload {
   align: 'left' | 'center' | 'right';
 }
+
+type CellOffsetFn = ([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) => number | null;
+
+type Direction = 'left' | 'right' | 'up' | 'down';
+
+type CellOffsetFnMap = {
+  [key in Direction]: CellOffsetFn;
+};
+
+const cellOffsetFnMap: CellOffsetFnMap = {
+  left: getRightCellOffset,
+  right: getLeftCellOffset,
+  up: getUpCellOffset,
+  down: getDownCellOffset
+};
 
 export class Table extends Node {
   get name() {
@@ -117,7 +136,7 @@ export class Table extends Node {
               : getPrevColumnOffsets(rowIndex, selectionInfo, cellsInfo);
 
           const from = tr.mapping.map(mapOffset);
-          const cells = createCellsToAdd(columnCount, rowIndex, schema);
+          const cells = createDummyCells(columnCount, rowIndex, schema);
 
           tr.insert(from, cells);
         }
@@ -262,7 +281,7 @@ export class Table extends Node {
     };
   }
 
-  private moveToCell(direction: number): EditorCommand {
+  private moveToCell(direction: Direction): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, tr } = state;
       const { anchor, head } = getResolvedSelection(selection);
@@ -270,17 +289,49 @@ export class Table extends Node {
       if (anchor && head) {
         const cellsInfo = getTableCellsInfo(anchor);
         const cellIndex = getCellIndexInfo(anchor);
-        const foundCell =
-          direction === 1 ? findNextCell(cellIndex, cellsInfo) : findPrevCell(cellIndex, cellsInfo);
 
-        if (foundCell) {
-          const { offset, nodeSize } = foundCell;
-          const from = offset + nodeSize - 1;
+        const cellOffsetFn = cellOffsetFnMap[direction];
+        const offset = cellOffsetFn(cellIndex, cellsInfo);
 
-          dispatch!(tr.setSelection(createTextSelection(tr, from, from)).scrollIntoView());
+        if (offset) {
+          dispatch!(tr.setSelection(createTextSelection(tr, offset, offset)));
 
           return true;
         }
+      }
+
+      return false;
+    };
+  }
+
+  private deleteCells(): EditorCommand {
+    return () => (state, dispatch) => {
+      const { schema, selection, tr } = state;
+      const { anchor, head } = getResolvedSelection(selection);
+      const textSelection = selection instanceof TextSelection;
+
+      if (anchor && head && !textSelection) {
+        const selectionInfo = getSelectionInfo(anchor, head);
+        const cellsInfo = getTableCellsInfo(anchor);
+        const { startColumnIndex, columnCount } = selectionInfo;
+
+        const tableRowCount = cellsInfo.length;
+
+        for (let rowIndex = 0; rowIndex < tableRowCount; rowIndex += 1) {
+          const startCellOffset = cellsInfo[rowIndex][startColumnIndex];
+          const endCellOffset = cellsInfo[rowIndex][startColumnIndex + columnCount - 1];
+          const cells = createDummyCells(columnCount, rowIndex, schema);
+
+          tr.replace(
+            tr.mapping.map(startCellOffset.offset),
+            tr.mapping.map(endCellOffset.offset + endCellOffset.nodeSize),
+            new Slice(Fragment.from(cells), 0, 0)
+          );
+        }
+
+        dispatch!(tr);
+
+        return true;
       }
 
       return false;
@@ -297,14 +348,29 @@ export class Table extends Node {
       addRowToDown: this.addRow(1),
       addRowToUp: this.addRow(-1),
       removeRow: this.removeRow(),
-      alignColumn: this.alignColumn()
+      alignColumn: this.alignColumn(),
+      deleteCells: this.deleteCells()
     };
   }
 
   keymaps() {
+    const moveToUpCellCommand = this.moveToCell('up')();
+    const moveToDownCellCommand = this.moveToCell('down')();
+    const deleteCellsCommand = this.deleteCells()();
+
     return {
-      Tab: this.moveToCell(1)(),
-      'Shift-Tab': this.moveToCell(-1)()
+      Tab: this.moveToCell('left')(),
+      'Shift-Tab': this.moveToCell('right')(),
+
+      ArrowUp: moveToUpCellCommand,
+      ArrowDown: moveToDownCellCommand,
+      'Shift-ArrowUp': moveToUpCellCommand,
+      'Shift-ArrowDown': moveToDownCellCommand,
+
+      Backspace: deleteCellsCommand,
+      'Mod-Backspace': deleteCellsCommand,
+      Delete: deleteCellsCommand,
+      'Mod-Delete': deleteCellsCommand
     };
   }
 }

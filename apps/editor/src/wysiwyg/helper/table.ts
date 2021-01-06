@@ -56,13 +56,12 @@ export function createTableBodyRows(
   return tableRows;
 }
 
-export function createCellsToAdd(columnCount: number, rowIndex: number, schema: Schema) {
+export function createDummyCells(columnCount: number, rowIndex: number, schema: Schema) {
   const { tableHeadCell, tableBodyCell, paragraph } = schema.nodes;
+  const cell = rowIndex === 0 ? tableHeadCell : tableBodyCell;
   const cells = [];
 
   for (let index = 0; index < columnCount; index += 1) {
-    const cell = rowIndex === 0 ? tableHeadCell : tableBodyCell;
-
     cells.push(cell.create(null, paragraph.create()));
   }
 
@@ -88,7 +87,7 @@ export function findCell(pos: ResolvedPos) {
   );
 }
 
-export function findNextCell([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
+export function getRightCellOffset([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
   const allRowCount = cellsInfo.length;
   const allColumnCount = cellsInfo[0].length;
 
@@ -103,13 +102,15 @@ export function findNextCell([rowIndex, columnIndex]: number[], cellsInfo: CellI
       columnIndex = 0;
     }
 
-    return cellsInfo[rowIndex][columnIndex];
+    const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex];
+
+    return offset + nodeSize - 1;
   }
 
   return null;
 }
 
-export function findPrevCell([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
+export function getLeftCellOffset([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
   const allColumnCount = cellsInfo[0].length;
 
   const firstCellInRow = columnIndex === 0;
@@ -123,7 +124,31 @@ export function findPrevCell([rowIndex, columnIndex]: number[], cellsInfo: CellI
       columnIndex = allColumnCount - 1;
     }
 
-    return cellsInfo[rowIndex][columnIndex];
+    const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex];
+
+    return offset + nodeSize - 1;
+  }
+
+  return null;
+}
+
+export function getUpCellOffset([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
+  if (rowIndex > 0) {
+    const { offset, nodeSize } = cellsInfo[rowIndex - 1][columnIndex];
+
+    return offset + nodeSize - 1;
+  }
+
+  return null;
+}
+
+export function getDownCellOffset([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
+  const allRowCount = cellsInfo.length;
+
+  if (rowIndex < allRowCount - 1) {
+    const { offset } = cellsInfo[rowIndex + 1][columnIndex];
+
+    return offset + 1;
   }
 
   return null;

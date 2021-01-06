@@ -16,9 +16,11 @@ function getSelectionRanges(
 ) {
   const ranges = [];
 
-  for (let i = 0; i < rowCount; i += 1) {
-    for (let j = 0; j < columnCount; j += 1) {
-      const { offset, nodeSize } = cellsPos[i + startRowIndex][j + startColumnIndex];
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+    for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
+      const rowIdx = rowIndex + startRowIndex;
+      const columnIdx = columnIndex + startColumnIndex;
+      const { offset, nodeSize } = cellsPos[rowIdx][columnIdx];
 
       ranges.push(new SelectionRange(doc.resolve(offset), doc.resolve(offset + nodeSize)));
     }
