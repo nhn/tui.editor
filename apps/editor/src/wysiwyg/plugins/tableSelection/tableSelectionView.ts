@@ -60,19 +60,20 @@ export default class TableSelection {
   }
 
   handleMousemove(ev: Event) {
-    const anchor = pluginKey.getState(this.view.state);
+    const prevEndCellOffset = pluginKey.getState(this.view.state);
     const endCellPos = this.getCellPos(ev as MouseEvent);
+    const { startCellPos } = this;
 
-    let startPos;
+    let prevEndCellPos;
 
-    if (anchor) {
-      startPos = this.view.state.doc.resolve(anchor);
-    } else if (this.startCellPos !== endCellPos) {
-      startPos = this.startCellPos;
+    if (prevEndCellOffset) {
+      prevEndCellPos = this.view.state.doc.resolve(prevEndCellOffset);
+    } else if (startCellPos !== endCellPos) {
+      prevEndCellPos = startCellPos;
     }
 
-    if (startPos && this.startCellPos && endCellPos) {
-      this.setCellSelection(this.startCellPos, endCellPos);
+    if (prevEndCellPos && startCellPos && endCellPos) {
+      this.setCellSelection(startCellPos, endCellPos);
     }
   }
 
