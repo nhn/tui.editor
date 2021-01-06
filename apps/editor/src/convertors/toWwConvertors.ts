@@ -8,16 +8,8 @@ import {
   CustomBlockMdNode
 } from '@t/markdown';
 
-import { reHTMLTag } from './utils';
+import { reHTMLTag, getTextWithoutTrailingNewline, isBRTag } from '@/helper/convertor';
 import { htmlToWwConvertors } from './htmlToWwConvertors';
-
-function getTextWithoutTrailingNewline(text: string) {
-  return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
-}
-
-function isBrHtml(html: string) {
-  return /<br ?\/?>/.test(html);
-}
 
 export const toWwConvertors: ToWwConvertorMap = {
   text(state, node) {
@@ -151,8 +143,8 @@ export const toWwConvertors: ToWwConvertorMap = {
 
   softbreak(state, node) {
     const { next, prev } = node;
-    const prevBr = prev && prev.type === 'htmlInline' && isBrHtml(prev.literal!);
-    const nextBr = next && next.type === 'htmlInline' && isBrHtml(next.literal!);
+    const prevBr = prev && prev.type === 'htmlInline' && isBRTag(prev.literal!);
+    const nextBr = next && next.type === 'htmlInline' && isBRTag(next.literal!);
 
     if (!prevBr && !nextBr) {
       state.addText('\n');

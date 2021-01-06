@@ -17,7 +17,7 @@ export class Image extends NodeSchema {
       attrs: {
         imageUrl: { default: '' },
         altText: { default: null },
-        htmlToken: { default: false }
+        rawHTML: { default: null }
       },
       group: 'inline',
       selectable: false,
@@ -36,7 +36,7 @@ export class Image extends NodeSchema {
         const { imageUrl, altText } = attrs;
 
         return [
-          'img',
+          attrs.rawHTML || 'img',
           {
             src: sanitizeXSSAttributeValue(imageUrl),
             ...(altText && { alt: altText })

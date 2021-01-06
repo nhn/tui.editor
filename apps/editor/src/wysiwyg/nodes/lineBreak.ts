@@ -10,7 +10,7 @@ export class LineBreak extends Node {
   get defaultSchema() {
     return {
       attrs: {
-        htmlToken: { default: null },
+        rawHTML: { default: null },
         inCell: { default: false }
       },
       inline: true,

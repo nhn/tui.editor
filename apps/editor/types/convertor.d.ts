@@ -112,3 +112,8 @@ export type HTMLToWwConvertorMap = Partial<Record<string, HTMLToWwConvertor>>;
 export interface FlattenHTMLToWwConvertorMap {
   [k: string]: HTMLToWwConvertor;
 }
+
+export interface ToMdMarkConvertors {
+  nodes: ToMdNodeConvertorMap;
+  marks: ToMdMarkConvertorMap;
+}

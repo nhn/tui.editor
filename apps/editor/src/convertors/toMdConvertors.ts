@@ -1,32 +1,8 @@
 import { Node, Mark } from 'prosemirror-model';
 
+import { addBackticks } from '@/helper/convertor';
+
 import { ToMdConvertorStateType, ToMdNodeConvertorMap, ToMdMarkConvertorMap } from '@t/convertor';
-
-function addBackticks(node: Node, side: number) {
-  const ticks = /`+/g;
-  let len = 0;
-
-  if (node.isText && node.text) {
-    let matched = ticks.exec(node.text);
-
-    while (matched) {
-      len = Math.max(len, matched[0].length);
-      matched = ticks.exec(node.text);
-    }
-  }
-
-  let result = len > 0 && side > 0 ? ' `' : '`';
-
-  for (let i = 0; i < len; i += 1) {
-    result += '`';
-  }
-
-  if (len > 0 && side < 0) {
-    result += ' ';
-  }
-
-  return result;
-}
 
 const nodes: ToMdNodeConvertorMap = {
   text(state, node) {
@@ -39,12 +15,10 @@ const nodes: ToMdNodeConvertorMap = {
       state.closeBlock(node);
     } else if (parent && index > 0) {
       const prevNode = parent.child(index - 1);
+      const blankLine =
+        node.childCount === 0 && prevNode.type.name === 'paragraph' && prevNode.childCount === 0;
 
-      if (
-        node.childCount === 0 &&
-        prevNode.type.name === 'paragraph' &&
-        prevNode.childCount === 0
-      ) {
+      if (blankLine) {
         state.write('<br>\n');
       }
     }
@@ -120,7 +94,7 @@ const nodes: ToMdNodeConvertorMap = {
     const altText = state.escape(node.attrs.altText || '');
     const imageUrl = state.escape(node.attrs.imageUrl);
 
-    if (node.attrs.htmlToken) {
+    if (node.attrs.rawHTML) {
       const altAttr = altText ? ` alt="${altText}"` : '';
 
       state.write(`<img src="${imageUrl}"${altAttr}>`);
@@ -130,20 +104,12 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   thematicBreak(state, node) {
-    if (node.attrs.htmlToken) {
-      state.write('<hr>');
-    } else {
-      state.write('***');
-    }
+    state.write(node.attrs.rawHTML ? `<${node.attrs.rawHTML}>` : '***');
     state.closeBlock(node);
   },
 
   hardBreak(state) {
-    if (state.inCell) {
-      state.write('<br>');
-    } else {
-      state.write('\n');
-    }
+    state.write(state.inCell ? '<br>' : '\n');
   },
 
   table(state, node) {
@@ -201,14 +167,10 @@ const nodes: ToMdNodeConvertorMap = {
 const marks: ToMdMarkConvertorMap = {
   strong: {
     open(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlToken } = mark.attrs;
-
-      return htmlToken ? `<${htmlToken}>` : '**';
+      return mark.attrs.rawHTML ? `<${mark.attrs.rawHTML}>` : '**';
     },
     close(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlToken } = mark.attrs;
-
-      return htmlToken ? `</${htmlToken}>` : '**';
+      return mark.attrs.rawHTML ? `</${mark.attrs.rawHTML}>` : '**';
     },
     mixable: true,
     removedEnclosingWhitespace: true
@@ -216,14 +178,10 @@ const marks: ToMdMarkConvertorMap = {
 
   emph: {
     open(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlToken } = mark.attrs;
-
-      return htmlToken ? `<${htmlToken}>` : '*';
+      return mark.attrs.rawHTML ? `<${mark.attrs.rawHTML}>` : '*';
     },
     close(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlToken } = mark.attrs;
-
-      return htmlToken ? `</${htmlToken}>` : '*';
+      return mark.attrs.rawHTML ? `</${mark.attrs.rawHTML}>` : '*';
     },
     mixable: true,
     removedEnclosingWhitespace: true
@@ -231,14 +189,10 @@ const marks: ToMdMarkConvertorMap = {
 
   strike: {
     open(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlToken } = mark.attrs;
-
-      return htmlToken ? `<${htmlToken}>` : '~~';
+      return mark.attrs.rawHTML ? `<${mark.attrs.rawHTML}>` : '~~';
     },
     close(_: ToMdConvertorStateType, mark: Mark) {
-      const { htmlToken } = mark.attrs;
-
-      return htmlToken ? `</${htmlToken}>` : '~~';
+      return mark.attrs.rawHTML ? `</${mark.attrs.rawHTML}>` : '~~';
     },
     mixable: true,
     removedEnclosingWhitespace: true
@@ -246,30 +200,26 @@ const marks: ToMdMarkConvertorMap = {
 
   link: {
     open(state: ToMdConvertorStateType, mark: Mark) {
-      const { htmlToken } = mark.attrs;
       const linkUrl = state.escape(mark.attrs.linkUrl);
 
-      return htmlToken ? `<a href="${linkUrl}">` : '[';
+      return mark.attrs.rawHTML ? `<a href="${linkUrl}">` : '[';
     },
     close(state: ToMdConvertorStateType, mark: Mark) {
-      const { htmlToken } = mark.attrs;
       const linkUrl = state.escape(mark.attrs.linkUrl);
       const linkText = mark.attrs.title ? ` ${state.quote(mark.attrs.linkText)}` : '';
 
-      return htmlToken ? '</a>' : `](${linkText}${linkUrl})`;
+      return mark.attrs.rawHTML ? '</a>' : `](${linkText}${linkUrl})`;
     }
   },
 
   code: {
-    open(state: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      const { htmlToken } = mark.attrs;
-
-      return htmlToken ? `<${htmlToken}>` : addBackticks(parent.child(index), -1);
+    open(_: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
+      return mark.attrs.rawHTML ? `<${mark.attrs.rawHTML}>` : addBackticks(parent.child(index), -1);
     },
-    close(state: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      const { htmlToken } = mark.attrs;
-
-      return htmlToken ? `</${htmlToken}>` : addBackticks(parent.child(index - 1), 1);
+    close(_: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
+      return mark.attrs.rawHTML
+        ? `</${mark.attrs.rawHTML}>`
+        : addBackticks(parent.child(index - 1), 1);
     },
     escape: false
   }

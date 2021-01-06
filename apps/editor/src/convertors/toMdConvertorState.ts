@@ -1,12 +1,12 @@
 import { Node, Mark } from 'prosemirror-model';
 
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
-import { ToMdNodeConvertorMap, ToMdMarkConvertorMap, FirstDelimFn } from '@t/convertor';
-
-interface ToMdMarkConvertors {
-  nodes: ToMdNodeConvertorMap;
-  marks: ToMdMarkConvertorMap;
-}
+import {
+  ToMdMarkConvertors,
+  ToMdNodeConvertorMap,
+  ToMdMarkConvertorMap,
+  FirstDelimFn
+} from '@t/convertor';
 
 export default class ToMdConvertorState {
   private readonly nodes: ToMdNodeConvertorMap;

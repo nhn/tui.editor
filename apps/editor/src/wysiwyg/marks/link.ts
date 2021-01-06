@@ -17,8 +17,8 @@ export class Link extends Mark {
     return {
       attrs: {
         linkUrl: { default: '' },
-        linkText: { default: false },
-        htmlToken: { default: false }
+        linkText: { default: null },
+        rawHTML: { default: null }
       },
       inclusive: false,
       parseDOM: [
@@ -34,7 +34,7 @@ export class Link extends Mark {
       ],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         return [
-          'a',
+          attrs.rawHTML || 'a',
           {
             href: sanitizeXSSAttributeValue(attrs.linkUrl)
           }

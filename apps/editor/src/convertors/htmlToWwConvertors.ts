@@ -1,4 +1,4 @@
-import { getMatchedAttributeValue } from './utils';
+import { getMatchedAttributeValue } from '@/helper/convertor';
 import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 
 import { HTMLToWwConvertorMap, FlattenHTMLToWwConvertorMap } from '@t/convertor';
@@ -22,7 +22,7 @@ const convertors: HTMLToWwConvertorMap = {
     const { strong } = state.schema.marks;
 
     if (openTagName) {
-      state.openMark(strong.create({ htmlToken: openTagName }));
+      state.openMark(strong.create({ rawHTML: openTagName }));
     } else {
       state.closeMark(strong);
     }
@@ -32,7 +32,7 @@ const convertors: HTMLToWwConvertorMap = {
     const { emph } = state.schema.marks;
 
     if (openTagName) {
-      state.openMark(emph.create({ htmlToken: openTagName }));
+      state.openMark(emph.create({ rawHTML: openTagName }));
     } else {
       state.closeMark(emph);
     }
@@ -42,7 +42,7 @@ const convertors: HTMLToWwConvertorMap = {
     const { strike } = state.schema.marks;
 
     if (openTagName) {
-      state.openMark(strike.create({ htmlToken: openTagName }));
+      state.openMark(strike.create({ rawHTML: openTagName }));
     } else {
       state.closeMark(strike);
     }
@@ -52,7 +52,7 @@ const convertors: HTMLToWwConvertorMap = {
     const { code } = state.schema.marks;
 
     if (openTagName) {
-      state.openMark(code.create({ htmlToken: openTagName }));
+      state.openMark(code.create({ rawHTML: openTagName }));
     } else {
       state.closeMark(code);
     }
@@ -68,7 +68,7 @@ const convertors: HTMLToWwConvertorMap = {
       state.openMark(
         link.create({
           linkUrl: sanitizeXSSAttributeValue(linkUrl),
-          htmlToken: true
+          rawHTML: true
         })
       );
     } else {
@@ -76,7 +76,7 @@ const convertors: HTMLToWwConvertorMap = {
     }
   },
 
-  img: (state, node) => {
+  img: (state, node, openTagName) => {
     const tag = node.literal!;
     const imageUrl = getMatchedAttributeValue(tag, 'src');
 
@@ -85,19 +85,19 @@ const convertors: HTMLToWwConvertorMap = {
       const { image } = state.schema.nodes;
 
       state.addNode(image, {
-        htmlToken: true,
+        rawHTML: openTagName,
         imageUrl: sanitizeXSSAttributeValue(imageUrl),
         ...(altText && { altText })
       });
     }
   },
 
-  hr: state => {
-    state.addNode(state.schema.nodes.thematicBreak, { htmlToken: true });
+  hr: (state, _, openTagName) => {
+    state.addNode(state.schema.nodes.thematicBreak, { rawHTML: openTagName });
   },
 
-  br: state => {
-    state.addNode(state.schema.nodes.lineBreak, { htmlToken: true });
+  br: (state, _, openTagName) => {
+    state.addNode(state.schema.nodes.lineBreak, { rawHTML: openTagName });
   }
 };
 

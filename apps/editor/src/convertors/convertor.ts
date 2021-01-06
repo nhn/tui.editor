@@ -88,7 +88,7 @@ export default class Convertor {
     return this.schema.nodes.doc.create(null, blockNodes);
   }
 
-  public toWysiwygModel(mdNode: MdNode) {
+  toWysiwygModel(mdNode: MdNode) {
     const state = new ToWwConvertorState(this.schema, this.toWwConvertors, this.linkAttribute);
     const doc = state.convertNode(mdNode);
 
@@ -99,7 +99,7 @@ export default class Convertor {
     return null;
   }
 
-  public toMarkdownText(wwNode: ProsemirrorNode) {
+  toMarkdownText(wwNode: ProsemirrorNode) {
     const state = new ToMdConvertorState(this.toMdConvertors);
 
     return state.convertNode(wwNode);
