@@ -22,7 +22,7 @@ export function taskPlugin() {
             const { offsetX, offsetY } = ev as MouseEvent;
 
             if (!listItem || !isPositionInBox(style, offsetX, offsetY)) {
-              return true;
+              return false;
             }
 
             ev.preventDefault();

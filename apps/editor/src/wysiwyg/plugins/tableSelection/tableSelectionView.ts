@@ -1,5 +1,6 @@
 import { ResolvedPos } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
+import { PluginKey } from 'prosemirror-state';
 
 import { findCell, isInCellElement } from '@/wysiwyg/helper/table';
 
@@ -10,6 +11,10 @@ interface EventHandlers {
   mousemove: (ev: Event) => void;
   mouseup: () => void;
 }
+
+export const pluginKey = new PluginKey('cellSelection');
+
+const MOUSE_RIGHT_BUTTON = 2;
 
 export default class TableSelection {
   private view: EditorView;
@@ -39,8 +44,13 @@ export default class TableSelection {
   handleMousedown(ev: Event) {
     const inCell = isInCellElement(ev.target as HTMLElement, this.view.dom);
 
+    if ((ev as MouseEvent).button === MOUSE_RIGHT_BUTTON) {
+      ev.preventDefault();
+      return;
+    }
+
     if (inCell) {
-      const startCellPos = this.getCellIndexInfo(ev as MouseEvent);
+      const startCellPos = this.getCellPos(ev as MouseEvent);
 
       if (startCellPos) {
         this.startCellPos = startCellPos;
@@ -51,18 +61,20 @@ export default class TableSelection {
   }
 
   handleMousemove(ev: Event) {
-    // @TODO this should be processed to block the event only when another cell comes out
-    ev.preventDefault();
-
+    const prevEndCellOffset = pluginKey.getState(this.view.state);
+    const endCellPos = this.getCellPos(ev as MouseEvent);
     const { startCellPos } = this;
-    const endCellPos = this.getCellIndexInfo(ev as MouseEvent);
 
-    if (startCellPos && endCellPos) {
-      if (startCellPos.pos === endCellPos.pos) {
-        return;
-      }
+    let prevEndCellPos;
 
-      this.selectCells(startCellPos, endCellPos);
+    if (prevEndCellOffset) {
+      prevEndCellPos = this.view.state.doc.resolve(prevEndCellOffset);
+    } else if (startCellPos !== endCellPos) {
+      prevEndCellPos = startCellPos;
+    }
+
+    if (prevEndCellPos && startCellPos && endCellPos) {
+      this.setCellSelection(startCellPos, endCellPos);
     }
   }
 
@@ -70,6 +82,10 @@ export default class TableSelection {
     this.startCellPos = null;
 
     this.unbindEvent();
+
+    if (pluginKey.getState(this.view.state) !== null) {
+      this.view.dispatch(this.view.state.tr.setMeta(pluginKey, -1));
+    }
   }
 
   bindEvent() {
@@ -86,7 +102,7 @@ export default class TableSelection {
     dom.removeEventListener('mouseup', this.handlers.mouseup);
   }
 
-  getCellIndexInfo({ clientX, clientY }: MouseEvent) {
+  getCellPos({ clientX, clientY }: MouseEvent) {
     const mousePos = this.view.posAtCoords({ left: clientX, top: clientY });
 
     if (mousePos) {
@@ -104,12 +120,19 @@ export default class TableSelection {
     return null;
   }
 
-  selectCells(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
-    const cellSelection = new CellSelection(startCellPos, endCellPos);
+  setCellSelection(startCellPos: ResolvedPos, endCellPos: ResolvedPos) {
     const { selection, tr } = this.view.state;
+    const starting = pluginKey.getState(this.view.state) === null;
+    const cellSelection = new CellSelection(startCellPos, endCellPos);
 
-    if (startCellPos && !selection.eq(cellSelection)) {
-      this.view.dispatch!(tr.setSelection(cellSelection));
+    if (starting || !selection.eq(cellSelection)) {
+      const newTr = tr.setSelection(cellSelection);
+
+      if (starting) {
+        newTr.setMeta(pluginKey, endCellPos.pos);
+      }
+
+      this.view.dispatch!(newTr);
     }
   }
 

@@ -45,6 +45,10 @@ export default class CellSelection extends Selection {
 
     this.startCell = startCellPos;
     this.endCell = endCellPos;
+
+    // this property is the api of the 'Selection' in prosemirror,
+    // and is used to disable the text selection
+    this.visible = false;
   }
 
   map(doc: Node, mapping: Mappable) {

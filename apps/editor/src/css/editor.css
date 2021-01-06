@@ -196,17 +196,11 @@
 }
 
 
-/* Essential element style */
 .tui-editor-contents td.te-cell-selected {
   background-color: #d8dfec;
 }
-.tui-editor-contents td.te-cell-selected::selection {
-  background-color: #d8dfec;
-}
+
 .tui-editor-contents th.te-cell-selected {
-  background-color: #908f8f;
-}
-.tui-editor-contents th.te-cell-selected::selection {
   background-color: #908f8f;
 }
 
