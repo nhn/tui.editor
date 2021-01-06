@@ -37,13 +37,15 @@ interface AlignColumnPayload {
   align: 'left' | 'center' | 'right';
 }
 
-type CellOffsetFunc = ([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) => number | null;
+type CellOffsetFn = ([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) => number | null;
 
-interface CellOffsetFuncMap {
-  [k: string]: CellOffsetFunc;
-}
+type Direction = 'left' | 'right' | 'up' | 'down';
 
-const cellOffsetFuncMap: CellOffsetFuncMap = {
+type CellOffsetFnMap = {
+  [key in Direction]: CellOffsetFn;
+};
+
+const cellOffsetFnMap: CellOffsetFnMap = {
   left: getRightCellOffset,
   right: getLeftCellOffset,
   up: getUpCellOffset,
@@ -279,7 +281,7 @@ export class Table extends Node {
     };
   }
 
-  private moveToCell(direction: string): EditorCommand {
+  private moveToCell(direction: Direction): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, tr } = state;
       const { anchor, head } = getResolvedSelection(selection);
@@ -288,8 +290,8 @@ export class Table extends Node {
         const cellsInfo = getTableCellsInfo(anchor);
         const cellIndex = getCellIndexInfo(anchor);
 
-        const fn = cellOffsetFuncMap[direction];
-        const offset = fn ? fn(cellIndex, cellsInfo) : null;
+        const cellOffsetFn = cellOffsetFnMap[direction];
+        const offset = cellOffsetFn(cellIndex, cellsInfo);
 
         if (offset) {
           dispatch!(tr.setSelection(createTextSelection(tr, offset, offset)));
