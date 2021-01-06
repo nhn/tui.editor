@@ -1,17 +1,18 @@
 import { ResolvedPos } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
+import { PluginKey } from 'prosemirror-state';
 
 import { findCell, isInCellElement } from '@/wysiwyg/helper/table';
 
 import CellSelection from './cellSelection';
-
-import { pluginKey } from './util';
 
 interface EventHandlers {
   mousedown: (ev: Event) => void;
   mousemove: (ev: Event) => void;
   mouseup: () => void;
 }
+
+export const pluginKey = new PluginKey('cellSelection');
 
 const MOUSE_RIGHT_BUTTON = 2;
 

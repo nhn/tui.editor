@@ -4,9 +4,7 @@ import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 import isNull from 'tui-code-snippet/type/isNull';
 
 import CellSelection from './cellSelection';
-import TableSelection from './tableSelectionView';
-
-import { pluginKey } from './util';
+import TableSelection, { pluginKey } from './tableSelectionView';
 
 const SELECTED_CELL_CLASS_NAME = 'te-cell-selected';
 
