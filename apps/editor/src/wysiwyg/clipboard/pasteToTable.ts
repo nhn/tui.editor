@@ -9,7 +9,7 @@ import {
   getResolvedSelection,
   getSelectionInfo,
   getTableCellsInfo,
-  createCellsToAdd,
+  createDummyCells,
   createTableBodyRows,
   getTableContentFromSlice
 } from '@/wysiwyg/helper/table';
@@ -169,7 +169,7 @@ function expandColumns(
   for (let rowIndex = 0; rowIndex < tableRowCount; rowIndex += 1) {
     const { offset, nodeSize } = cellsInfo[rowIndex][endColumnIndex - addedColumnCount];
     const insertOffset = tr.mapping.map(offset + nodeSize);
-    const cells = createCellsToAdd(addedColumnCount, rowIndex, schema);
+    const cells = createDummyCells(addedColumnCount, rowIndex, schema);
 
     tr.insert(insertOffset, cells);
 
