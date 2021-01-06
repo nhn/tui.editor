@@ -41,9 +41,9 @@ const reXSSSvgAttr = new RegExp(
   'g'
 );
 
-const reXSSAttr = /href|src|background/gi;
-const reXSSAttrValue = /((java|vb|live)script|x):/gi;
-const reOnEvent = /^on\S+/;
+const reXSSAttr = /href|src|background/i;
+const reXSSAttrValue = /((java|vb|live)script|x):/i;
+const reOnEvent = /^on\S+/i;
 const reComment = /<!--[\s\S]*?-->/g;
 
 export function sanitizeHTML(html: string | Node, needHtmlText: boolean) {

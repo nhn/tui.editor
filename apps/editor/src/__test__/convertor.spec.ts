@@ -431,12 +431,73 @@ describe('Convertor', () => {
 
   describe('sanitize when using html', () => {
     it('href attribute with <a>', () => {
-      assertConverting('<a href="javascript:alert();">xss</a>', '<a href="">xss</a>');
+      const markdown = source`
+        <a href="javascript:alert();">xss</a>
+
+        <a href="  JaVaScRiPt: alert();">xss</a>
+
+        <a href="vbscript:alert();">xss</a>
+
+        <a href="  VBscript: alert(); ">xss</a>
+
+        <a href="livescript:alert();">xss</a>
+
+        <a href="  LIVEScript: alert() ;">xss</a>
+
+        123<a href=' javascript:alert();'>xss</a>
+
+        <a href='javas<!-- -->cript:alert()'>xss</a>
+      `;
+      const expected = source`
+        <a href="">xss</a>
+
+        <a href="">xss</a>
+
+        <a href="">xss</a>
+
+        <a href="">xss</a>
+
+        <a href="">xss</a>
+
+        <a href="">xss</a>
+
+        123<a href="">xss</a>
+
+        <a href="">xss</a>
+      `;
+
+      assertConverting(markdown, expected);
     });
 
-    xit('src attribute with <img>', () => {
-      // @TODO fix test that breaks when sanitizing inline html of the same type
-      assertConverting('<img src="javascript:alert();">', '<img src="">');
+    it('src attribute with <img>', () => {
+      const markdown = source`
+        <img src="javascript:alert();">
+
+        <img src="  JaVaScRiPt: alert();">
+
+        <img src="vbscript:alert();">
+
+        <img src="  VBscript: alert(); ">
+
+        <img src="  LIVEScript: alert() ;">
+
+        <img src="java<!-- -->script:alert();">
+      `;
+      const expected = source`
+        <img src="">
+
+        <img src="">
+
+        <img src="">
+
+        <img src="">
+
+        <img src="">
+
+        <img src="">
+      `;
+
+      assertConverting(markdown, expected);
     });
   });
 });

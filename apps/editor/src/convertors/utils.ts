@@ -16,15 +16,12 @@ const HTML_TAG = `(?:${OPEN_TAG}|${CLOSE_TAG})`;
 
 export const reHTMLTag = new RegExp(`^${HTML_TAG}`, 'i');
 
-const FOUND_ATTRIBUTE_VALUE = `\\s*=\\s*(?:[""']([^""']*)[""']|(\\S+))`;
+export function getMatchedAttributeValue(rawHTML: string, attrName: string) {
+  const wrapper = document.createElement('div');
 
-export function getMatchedAttributeValue(tag: string, attrName: string) {
-  const reAttrValue = new RegExp(`${attrName}${FOUND_ATTRIBUTE_VALUE}`, 'i');
-  const matched = tag.match(reAttrValue);
+  wrapper.innerHTML = rawHTML;
 
-  if (matched) {
-    return matched[1];
-  }
+  const el = wrapper.firstChild as HTMLElement;
 
-  return '';
+  return el.getAttribute(attrName) || '';
 }
