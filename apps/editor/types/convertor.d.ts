@@ -50,7 +50,7 @@ export interface ToMdConvertorStateType {
   flushClose(size?: number): void;
   wrapBlock(delim: string, firstDelim: string | null, node: ProsemirrorNode, fn: () => void): void;
   ensureNewLine(): void;
-  write(content?: string, flushing?: boolean): void;
+  write(content?: string): void;
   closeBlock(node: ProsemirrorNode): void;
   text(text: string, escape?: boolean): void;
   convertBlock(node: ProsemirrorNode, parent: ProsemirrorNode, index: number): void;
@@ -58,6 +58,7 @@ export interface ToMdConvertorStateType {
   convertList(node: ProsemirrorNode, delim: string, firstDelimFn: FirstDelimFn): void;
   convertTableCell(node: ProsemirrorNode): void;
   convertNode(parent: ProsemirrorNode): string;
+  convertRawHTMLBlockNode(node: ProsemirrorNode, rawHTML: string): void;
   escape(str: string, startOfLine?: boolean): string;
   quote(str: string): string;
   repeat(str: string, count: number): string;

@@ -398,6 +398,8 @@ describe('Convertor', () => {
     it('inlineHtml (emphasis type)', () => {
       const markdown = source`
         <b>foo</b>
+        <B>foo</B>
+
         <strong>foo</strong>
 
         <i>foo</i>
@@ -425,7 +427,13 @@ describe('Convertor', () => {
     });
 
     it('htmlBlock', () => {
-      assertConverting('<hr>', '<hr>');
+      const markdown = source`
+        <hr>
+
+        <HR>
+      `;
+
+      assertConverting(markdown, markdown);
     });
   });
 

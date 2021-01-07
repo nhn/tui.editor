@@ -1,5 +1,6 @@
 import { ToWwConvertorMap } from '@t/convertor';
 import {
+  MdNode,
   HeadingMdNode,
   CodeBlockMdNode,
   ListItemMdNode,
@@ -8,8 +9,15 @@ import {
   CustomBlockMdNode
 } from '@t/markdown';
 
-import { reHTMLTag, getTextWithoutTrailingNewline, isBRTag } from '@/helper/convertor';
-import { htmlToWwConvertors } from './htmlToWwConvertors';
+import { reHTMLTag, htmlToWwConvertors } from './htmlToWwConvertors';
+
+export function getTextWithoutTrailingNewline(text: string) {
+  return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
+}
+
+export function isBRTag(node: MdNode) {
+  return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);
+}
 
 export const toWwConvertors: ToWwConvertorMap = {
   text(state, node) {
@@ -143,8 +151,8 @@ export const toWwConvertors: ToWwConvertorMap = {
 
   softbreak(state, node) {
     const { next, prev } = node;
-    const prevBr = prev && prev.type === 'htmlInline' && isBRTag(prev.literal!);
-    const nextBr = next && next.type === 'htmlInline' && isBRTag(next.literal!);
+    const prevBr = prev && isBRTag(prev);
+    const nextBr = next && isBRTag(next);
 
     if (!prevBr && !nextBr) {
       state.addText('\n');
@@ -247,10 +255,14 @@ export const toWwConvertors: ToWwConvertorMap = {
 
     if (matched) {
       const [, openTagName, , closeTagName] = matched;
-      const htmlToWwConvertor = htmlToWwConvertors[openTagName || closeTagName];
+      const type = openTagName || closeTagName;
 
-      if (htmlToWwConvertor) {
-        htmlToWwConvertor(state, node, openTagName);
+      if (type) {
+        const htmlToWwConvertor = htmlToWwConvertors[type.toLowerCase()];
+
+        if (htmlToWwConvertor) {
+          htmlToWwConvertor(state, node, openTagName);
+        }
       }
     }
   },
@@ -260,10 +272,14 @@ export const toWwConvertors: ToWwConvertorMap = {
 
     if (matched) {
       const [, openTagName, , closeTagName] = matched;
-      const htmlToWwConvertor = htmlToWwConvertors[openTagName || closeTagName];
+      const type = openTagName || closeTagName;
 
-      if (htmlToWwConvertor) {
-        htmlToWwConvertor(state, node, openTagName);
+      if (type) {
+        const htmlToWwConvertor = htmlToWwConvertors[type.toLowerCase()];
+
+        if (htmlToWwConvertor) {
+          htmlToWwConvertor(state, node, openTagName);
+        }
       }
     }
   }

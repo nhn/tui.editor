@@ -1,7 +1,34 @@
-import { getMatchedAttributeValue } from '@/helper/convertor';
 import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 
 import { HTMLToWwConvertorMap, FlattenHTMLToWwConvertorMap } from '@t/convertor';
+
+const TAG_NAME = '[A-Za-z][A-Za-z0-9-]*';
+const ATTRIBUTE_NAME = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
+const UNQUOTED_VALUE = '[^"\'=<>`\\x00-\\x20]+';
+
+const SINGLE_QUOTED_VALUE = "'[^']*'";
+const DOUBLE_QUOTED_VALUE = '"[^"]*"';
+
+const ATTRIBUTE_VALUE = `(?:${UNQUOTED_VALUE}|${SINGLE_QUOTED_VALUE}|${DOUBLE_QUOTED_VALUE})`;
+const ATTRIBUTE_VALUE_SPEC = `${'(?:\\s*=\\s*'}${ATTRIBUTE_VALUE})`;
+const ATTRIBUTE = `${'(?:\\s+'}${ATTRIBUTE_NAME}${ATTRIBUTE_VALUE_SPEC}?)`;
+
+const OPEN_TAG = `<(${TAG_NAME})(${ATTRIBUTE})*\\s*/?>`;
+const CLOSE_TAG = `</(${TAG_NAME})\\s*[>]`;
+
+const HTML_TAG = `(?:${OPEN_TAG}|${CLOSE_TAG})`;
+
+export const reHTMLTag = new RegExp(`^${HTML_TAG}`, 'i');
+
+function getMatchedAttributeValue(rawHTML: string, attrName: string) {
+  const wrapper = document.createElement('div');
+
+  wrapper.innerHTML = rawHTML;
+
+  const el = wrapper.firstChild as HTMLElement;
+
+  return el.getAttribute(attrName) || '';
+}
 
 function createConvertors(convertors: HTMLToWwConvertorMap) {
   const convertorMap: FlattenHTMLToWwConvertorMap = {};
@@ -10,7 +37,9 @@ function createConvertors(convertors: HTMLToWwConvertorMap) {
     const tagNames = key.split(', ');
 
     tagNames.forEach(tagName => {
-      convertorMap[tagName] = convertors[key]!;
+      const name = tagName.toLowerCase();
+
+      convertorMap[name] = convertors[key]!;
     });
   });
 
@@ -68,7 +97,7 @@ const convertors: HTMLToWwConvertorMap = {
       state.openMark(
         link.create({
           linkUrl: sanitizeXSSAttributeValue(linkUrl),
-          rawHTML: true
+          rawHTML: openTagName
         })
       );
     } else {

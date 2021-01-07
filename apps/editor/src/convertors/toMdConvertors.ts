@@ -1,8 +1,41 @@
 import { Node, Mark } from 'prosemirror-model';
 
-import { addBackticks } from '@/helper/convertor';
-
 import { ToMdConvertorStateType, ToMdNodeConvertorMap, ToMdMarkConvertorMap } from '@t/convertor';
+
+function getOpenStringForMark(rawHTML: string, mdSyntax: string) {
+  return rawHTML ? `<${rawHTML}>` : mdSyntax;
+}
+
+function getCloseStringForMark(rawHTML: string, mdSyntax: string) {
+  return rawHTML ? `</${rawHTML}>` : mdSyntax;
+}
+
+export function addBackticks(node: Node, side: number) {
+  const { text } = node;
+  const ticks = /`+/g;
+  let len = 0;
+
+  if (node.isText && text) {
+    let matched = ticks.exec(text);
+
+    while (matched) {
+      len = Math.max(len, matched[0].length);
+      matched = ticks.exec(text);
+    }
+  }
+
+  let result = len > 0 && side > 0 ? ' `' : '`';
+
+  for (let i = 0; i < len; i += 1) {
+    result += '`';
+  }
+
+  if (len > 0 && side < 0) {
+    result += ' ';
+  }
+
+  return result;
+}
 
 const nodes: ToMdNodeConvertorMap = {
   text(state, node) {
@@ -14,6 +47,8 @@ const nodes: ToMdNodeConvertorMap = {
       state.convertInline(node);
       state.closeBlock(node);
     } else if (parent && index > 0) {
+      // this condition is for adding <br> from the case
+      // where there are two or more blank lines in the editor
       const prevNode = parent.child(index - 1);
       const blankLine =
         node.childCount === 0 && prevNode.type.name === 'paragraph' && prevNode.childCount === 0;
@@ -40,9 +75,7 @@ const nodes: ToMdNodeConvertorMap = {
 
   bulletList(state, node) {
     if (state.inCell) {
-      state.write('<ul>', false);
-      state.convertNode(node);
-      state.write('</ul>', false);
+      state.convertRawHTMLBlockNode(node, 'ul');
     } else {
       state.convertList(node, '  ', () => `${node.attrs.bullet || '*'} `);
     }
@@ -50,9 +83,7 @@ const nodes: ToMdNodeConvertorMap = {
 
   orderedList(state, node) {
     if (state.inCell) {
-      state.write('<ol>', false);
-      state.convertNode(node);
-      state.write('</ol>', false);
+      state.convertRawHTMLBlockNode(node, 'ol');
     } else {
       const start = node.attrs.order || 1;
       const maxWidth = String(start + node.childCount - 1).length;
@@ -67,13 +98,16 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   listItem(state, node) {
-    if (state.inCell) {
-      state.write('<li>', false);
-      state.convertNode(node);
-      state.write('</li>', false);
-    } else {
-      const { task, checked } = node.attrs;
+    const { task, checked } = node.attrs;
 
+    if (state.inCell) {
+      const className = task ? ` class="task-list-item${checked ? ' checked' : ''}"` : '';
+      const dataset = task ? ` data-te-task` : '';
+
+      state.write(`<li${className}${dataset}>`);
+      state.convertNode(node);
+      state.write('</li>');
+    } else {
       if (task) {
         state.write(`[${checked ? 'x' : ' '}] `);
       }
@@ -167,10 +201,10 @@ const nodes: ToMdNodeConvertorMap = {
 const marks: ToMdMarkConvertorMap = {
   strong: {
     open(_: ToMdConvertorStateType, mark: Mark) {
-      return mark.attrs.rawHTML ? `<${mark.attrs.rawHTML}>` : '**';
+      return getOpenStringForMark(mark.attrs.rawHTML, '**');
     },
     close(_: ToMdConvertorStateType, mark: Mark) {
-      return mark.attrs.rawHTML ? `</${mark.attrs.rawHTML}>` : '**';
+      return getCloseStringForMark(mark.attrs.rawHTML, '**');
     },
     mixable: true,
     removedEnclosingWhitespace: true
@@ -178,10 +212,10 @@ const marks: ToMdMarkConvertorMap = {
 
   emph: {
     open(_: ToMdConvertorStateType, mark: Mark) {
-      return mark.attrs.rawHTML ? `<${mark.attrs.rawHTML}>` : '*';
+      return getOpenStringForMark(mark.attrs.rawHTML, '*');
     },
     close(_: ToMdConvertorStateType, mark: Mark) {
-      return mark.attrs.rawHTML ? `</${mark.attrs.rawHTML}>` : '*';
+      return getCloseStringForMark(mark.attrs.rawHTML, '*');
     },
     mixable: true,
     removedEnclosingWhitespace: true
@@ -189,10 +223,10 @@ const marks: ToMdMarkConvertorMap = {
 
   strike: {
     open(_: ToMdConvertorStateType, mark: Mark) {
-      return mark.attrs.rawHTML ? `<${mark.attrs.rawHTML}>` : '~~';
+      return getOpenStringForMark(mark.attrs.rawHTML, '~~');
     },
     close(_: ToMdConvertorStateType, mark: Mark) {
-      return mark.attrs.rawHTML ? `</${mark.attrs.rawHTML}>` : '~~';
+      return getCloseStringForMark(mark.attrs.rawHTML, '~~');
     },
     mixable: true,
     removedEnclosingWhitespace: true
@@ -208,18 +242,20 @@ const marks: ToMdMarkConvertorMap = {
       const linkUrl = state.escape(mark.attrs.linkUrl);
       const linkText = mark.attrs.title ? ` ${state.quote(mark.attrs.linkText)}` : '';
 
-      return mark.attrs.rawHTML ? '</a>' : `](${linkText}${linkUrl})`;
+      return getCloseStringForMark(mark.attrs.rawHTML, `](${linkText}${linkUrl})`);
     }
   },
 
   code: {
     open(_: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      return mark.attrs.rawHTML ? `<${mark.attrs.rawHTML}>` : addBackticks(parent.child(index), -1);
+      const markdown = addBackticks(parent.child(index), -1);
+
+      return getOpenStringForMark(mark.attrs.rawHTML, markdown);
     },
     close(_: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      return mark.attrs.rawHTML
-        ? `</${mark.attrs.rawHTML}>`
-        : addBackticks(parent.child(index - 1), 1);
+      const markdown = addBackticks(parent.child(index - 1), 1);
+
+      return getCloseStringForMark(mark.attrs.rawHTML, markdown);
     },
     escape: false
   }

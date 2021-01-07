@@ -1,5 +1,7 @@
 import { Node, Mark } from 'prosemirror-model';
 
+import { includes } from '@/utils/common';
+
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {
   ToMdMarkConvertors,
@@ -311,7 +313,7 @@ export default class ToMdConvertorState {
     this.inCell = true;
 
     node.forEach((child, _, index) => {
-      if (child.type.name === 'bulletList' || child.type.name === 'orderedList') {
+      if (includes(['bulletList', 'orderedList'], child.type.name)) {
         this.convertBlock(child, node, index);
         this.closed = false;
       } else {
@@ -330,6 +332,12 @@ export default class ToMdConvertorState {
     parent.forEach((node, _, index) => this.convertBlock(node, parent, index));
 
     return this.result;
+  }
+
+  convertRawHTMLBlockNode(node: Node, rawHTML: string) {
+    this.write(`<${rawHTML}>`);
+    this.convertNode(node);
+    this.write(`</${rawHTML}>`);
   }
 
   escape(text: string, startOfLine?: boolean) {

@@ -7,7 +7,16 @@ import { ToWwConvertorMap, StackItem, Attrs } from '@t/convertor';
 import { MdNode } from '@t/markdown';
 
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
-import { mergeMarkText } from '@/helper/convertor';
+
+export function mergeMarkText(a: Node, b: Node) {
+  if (a.isText && b.isText && Mark.sameSet(a.marks, b.marks)) {
+    // @ts-ignore
+    // type is not defined for "withText" in prosemirror-model
+    return a.withText(a.text! + b.text);
+  }
+
+  return false;
+}
 
 export default class ToWwConvertorState {
   public readonly schema: Schema;
