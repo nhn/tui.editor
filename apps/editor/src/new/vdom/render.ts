@@ -58,16 +58,19 @@ function buildChildrenVNode(parent: VNode) {
       vnode.parent = parent;
       vnode.node = old!.node;
       vnode.component = old!.component;
+      vnode.effect = 'U';
     }
 
     if (vnode && !sameType) {
       vnode.old = null;
       vnode.parent = parent;
       vnode.node = null;
+      vnode.effect = 'A';
     }
 
     if (old && !sameType) {
       VNode.removalNodes.push(old);
+      old.effect = 'D';
     }
 
     if (old) {

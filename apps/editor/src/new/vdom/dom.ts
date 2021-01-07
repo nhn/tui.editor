@@ -35,7 +35,7 @@ export function innerDiff(node: Node, prevProps: Props, nextProps: Props) {
 
         node.removeEventListener(eventName, prevProps[propName]);
       }
-    } else if (!nextProps[propName] && !isTextNode(node)) {
+    } else if (propName !== 'children' && !nextProps[propName] && !isTextNode(node)) {
       (node as Element).removeAttribute(propName);
     }
   });
@@ -59,7 +59,7 @@ function setProps(node: Node, props: Props, condition?: ConditionFn) {
           // @ts-ignore
           (node as HTMLElement).style[styleProp] = stylePropObj[styleProp];
         });
-      } else {
+      } else if (propName !== 'children') {
         (node as HTMLElement).setAttribute(propName, props[propName]);
       }
     }

@@ -10,9 +10,10 @@ interface Props {
   showTooltip: (tooltipText: string, tooltipPos: Pos) => void;
   hideTooltip: () => void;
   lastOrder: boolean;
+  execCommand: Function;
 }
 
-export class ToolbarGroup implements Component {
+export class ToolbarGroup implements Component<Props> {
   props: Props;
 
   constructor(props: Props) {
@@ -20,7 +21,15 @@ export class ToolbarGroup implements Component {
   }
 
   render() {
-    const { eventEmitter, items, showTooltip, hideTooltip, lastOrder } = this.props;
+    const {
+      eventEmitter,
+      items,
+      showTooltip,
+      hideTooltip,
+      lastOrder,
+      execCommand,
+      setLayerInfo
+    } = this.props;
 
     return html`
       <div class="te-toolbar-group">
@@ -31,10 +40,11 @@ export class ToolbarGroup implements Component {
               html`
                 <${ToolbarButton}
                   eventEmitter=${eventEmitter}
-                  className=${item.className}
-                  tooltipText=${item.tooltip}
+                  item=${item}
+                  execCommand=${execCommand}
                   showTooltip=${showTooltip}
                   hideTooltip=${hideTooltip}
+                  setLayerInfo=${setLayerInfo}
                 />
               `
           )}

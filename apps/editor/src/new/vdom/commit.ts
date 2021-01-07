@@ -4,7 +4,7 @@ import { createComponent } from './render';
 import { VNode } from './vnode';
 
 export function commit(vnode: VNode) {
-  VNode.removalNodes.forEach(removalNode => diff(removalNode, true));
+  VNode.removalNodes.forEach(removalNode => diff(removalNode));
   vnode = vnode!.firstChild!;
 
   let next;
@@ -25,7 +25,7 @@ export function commit(vnode: VNode) {
   }
 }
 
-function diff(vnode: VNode | null, removal = false) {
+function diff(vnode: VNode | null) {
   if (!vnode || !vnode.parent) {
     return;
   }
@@ -36,14 +36,16 @@ function diff(vnode: VNode | null, removal = false) {
   }
   const parentNode = parent.node;
 
-  if (vnode.node && vnode.node.parentNode !== parentNode) {
-    parentNode.appendChild(vnode.node);
-  } else if (vnode.node?.parentNode === parentNode) {
-    if (removal) {
-      removeNode(vnode, parentNode);
-    } else {
-      innerDiff(vnode.node, vnode.old!.props, vnode.props);
+  if (vnode.node) {
+    if (vnode.effect === 'A') {
+      parentNode.appendChild(vnode.node);
+    } else if (vnode.effect === 'U') {
+      innerDiff(vnode.node!, vnode.old!.props, vnode.props);
     }
+  }
+
+  if (vnode.effect === 'D') {
+    removeNode(vnode, parentNode);
   }
 
   // apply ref

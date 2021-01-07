@@ -257,6 +257,7 @@
   height: 32px;
   box-sizing: border-box;
   border-bottom: 1px solid #e5e5e5;
+  position: relative;
 }
 
 .tui-editor-defaultUI-toolbar button {
@@ -403,6 +404,7 @@
   border: 1px solid #cacaca;
   background: white;
   z-index: 9999;
+  position: absolute;
 }
 
 .tui-popup-modal-background .tui-popup-wrapper {
@@ -454,9 +456,9 @@
 
 .tui-editor-popup {
   position: absolute;
-  top: 30px;
-  left: 50%;
-  margin-left: -250px;
+  /* top: 30px; */
+  /* left: 50%; */
+  /* margin-left: -250px; */
 }
 
 .tui-editor-popup.tui-popup-modal-background {

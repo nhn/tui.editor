@@ -7,7 +7,7 @@ import html from '../vdom/template';
 import { rerender } from '../renderer';
 
 interface Props {
-  type: EditorType;
+  editorType: EditorType;
   eventEmitter: Emitter;
 }
 
@@ -45,13 +45,13 @@ export class Switch implements Component<Props, State> {
   }
 
   render() {
-    const { type, eventEmitter } = this.props;
+    const { editorType, eventEmitter } = this.props;
 
     return html`
       <div class="te-mode-switch-section" style="display: ${this.state.hide ? 'none' : 'block'}">
         <div class="te-mode-switch">
           <button
-            class="te-switch-button markdown${type === 'markdown' ? ' active' : ''}"
+            class="te-switch-button markdown${editorType === 'markdown' ? ' active' : ''}"
             type="button"
             onClick=${() => {
               eventEmitter.emit('changeModeByEvent', 'markdown');
@@ -60,7 +60,7 @@ export class Switch implements Component<Props, State> {
             ${i18n.get('Markdown')}
           </button>
           <button
-            class="te-switch-button wysiwyg${type === 'wysiwyg' ? ' active' : ''}"
+            class="te-switch-button wysiwyg${editorType === 'wysiwyg' ? ' active' : ''}"
             type="button"
             onClick=${() => {
               eventEmitter.emit('changeModeByEvent', 'wysiwyg');

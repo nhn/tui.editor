@@ -1,5 +1,5 @@
 import isString from 'tui-code-snippet/type/isString';
-import { PreviewStyle } from '@t/editor';
+import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
 import { Component } from '@t/ui';
 import i18n from '@/i18n/i18n';
@@ -8,6 +8,7 @@ import html from '../vdom/template';
 import { rerender } from '../renderer';
 import { ToolbarItemFactory } from '../toolbarItemFactory';
 import { ToolbarGroup } from './toolbarGroup';
+import { Layer } from './layer';
 
 type Tab = 'write' | 'preview';
 
@@ -20,19 +21,29 @@ type TooltipStyle = {
   display: 'none' | 'block';
 } & Partial<Pos>;
 
+interface LayerInfo {
+  show: boolean;
+  headerText?: string | null;
+  fromEl: HTMLElement | null;
+  pos: Pos;
+  className: string;
+}
+
 interface Props {
   eventEmitter: Emitter;
   previewStyle: PreviewStyle;
   toolbarItems: Array<string[] | string>;
+  editorType: EditorType;
 }
 
 interface State {
   tab: Tab;
   tooltipText: string;
   tooltipPos: Pos | null;
+  layerInfo: LayerInfo;
 }
 
-export class Toolbar implements Component {
+export class Toolbar implements Component<Props, State> {
   props: Props;
 
   state: State;
@@ -41,8 +52,9 @@ export class Toolbar implements Component {
     this.props = props;
     this.state = {
       tab: 'write',
+      tooltipText: '',
       tooltipPos: null,
-      tooltipText: ''
+      layerInfo: {} as LayerInfo
     };
   }
 
@@ -68,9 +80,25 @@ export class Toolbar implements Component {
     }
   }
 
+  private setLayerInfo(layerInfo: LayerInfo) {
+    this.setState({ layerInfo });
+  }
+
+  private hideLayer() {
+    const layerInfo = { ...this.state.layerInfo, show: false };
+
+    this.setState({ layerInfo });
+  }
+
+  private execCommand(command: string) {
+    const { eventEmitter, editorType } = this.props;
+
+    eventEmitter.emit('command', { type: editorType, command });
+  }
+
   render() {
     const { previewStyle, eventEmitter, toolbarItems } = this.props;
-    const { tab, tooltipPos, tooltipText } = this.state;
+    const { tab, tooltipPos, tooltipText, layerInfo } = this.state;
     const items = toolbarItems
       .map(item => {
         if (isString(item)) {
@@ -124,11 +152,13 @@ export class Toolbar implements Component {
               <${ToolbarGroup}
                 eventEmitter=${eventEmitter}
                 items=${item}
+                execCommand=${(command: string) => this.execCommand(command)}
                 showTooltip=${(text: string, pos: Pos) => {
                   this.setState({ tooltipText: text, tooltipPos: pos });
                 }}
                 hideTooltip=${() => this.setState({ tooltipPos: null })}
                 lastOrder=${index === items.length - 1}
+                setLayerInfo=${(info: LayerInfo) => this.setLayerInfo(info)}
               />
             `
           )}
@@ -137,6 +167,7 @@ export class Toolbar implements Component {
             <span class="text">${tooltipText}</span>
           </div>
         </div>
+        <${Layer} info=${layerInfo} hideLayer=${() => this.hideLayer()} />
       </div>
     `;
   }

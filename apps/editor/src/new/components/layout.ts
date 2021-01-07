@@ -20,7 +20,7 @@ interface Props {
 }
 
 interface State {
-  type: EditorType;
+  editorType: EditorType;
   previewStyle: PreviewStyle;
   hide: boolean;
 }
@@ -35,7 +35,7 @@ export class Layout implements Component<Props, State> {
   constructor(props: Props) {
     this.props = props;
     this.state = {
-      type: 'markdown',
+      editorType: 'markdown',
       previewStyle: 'vertical',
       hide: false
     };
@@ -61,8 +61,10 @@ export class Layout implements Component<Props, State> {
   }
 
   render() {
-    const displayClassName = this.state.hide ? ' te-hide' : '';
-    const editorTypeClassName = this.state.type === 'markdown' ? 'te-md-mode' : 'te-ww-mode';
+    const { eventEmitter, toolbarItems, hideModeSwitch } = this.props;
+    const { hide, previewStyle, editorType } = this.state;
+    const displayClassName = hide ? ' te-hide' : '';
+    const editorTypeClassName = editorType === 'markdown' ? 'te-md-mode' : 'te-ww-mode';
 
     return html`
       <div
@@ -70,14 +72,15 @@ export class Layout implements Component<Props, State> {
         ref=${(el: HTMLElement) => (this.refs.el = el)}
       >
         <${Toolbar}
-          eventEmitter=${this.props.eventEmitter}
-          previewStyle=${this.state.previewStyle}
-          toolbarItems=${this.props.toolbarItems}
+          eventEmitter=${eventEmitter}
+          previewStyle=${previewStyle}
+          toolbarItems=${toolbarItems}
+          editorType=${editorType}
         />
         <div class="te-editor-section" ref=${(el: HTMLElement) => (this.refs.editorSection = el)}>
           <div class="tui-editor ${editorTypeClassName}">
             <div
-              class="te-md-container ${this.state.previewStyle === 'vertical'
+              class="te-md-container ${previewStyle === 'vertical'
                 ? 'te-preview-style-vertical'
                 : 'te-preview-style-tab'}"
               ref=${(el: HTMLElement) => (this.refs.mdContainer = el)}
@@ -87,9 +90,9 @@ export class Layout implements Component<Props, State> {
             <div class="te-ww-container" ref=${(el: HTMLElement) => (this.refs.wwContainer = el)} />
           </div>
         </div>
-        ${!this.props.hideModeSwitch &&
+        ${!hideModeSwitch &&
           html`
-            <${Switch} eventEmitter=${this.props.eventEmitter} type=${this.state.type} />
+            <${Switch} eventEmitter=${eventEmitter} editorType=${editorType} />
           `}
       </div>
     `;
@@ -100,7 +103,7 @@ export class Layout implements Component<Props, State> {
 
     eventEmitter.listen('hide', this.hide.bind(this));
     eventEmitter.listen('show', this.show.bind(this));
-    eventEmitter.listen('changeMode', (type: EditorType) => this.setState({ type }));
+    eventEmitter.listen('changeMode', (editorType: EditorType) => this.setState({ editorType }));
     eventEmitter.listen('changePreviewStyle', this.changePreviewStyle.bind(this));
   }
 
