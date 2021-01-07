@@ -40,8 +40,8 @@ export default class Convertor {
     }
   }
 
-  private convertSoftBreaksToParagraphs(node: ProsemirrorNode, blockNodes: ProsemirrorNode[]) {
-    // except for soft breaks, inline nodes are temporarily stored
+  private convertLineBreaksToParagraphs(node: ProsemirrorNode, blockNodes: ProsemirrorNode[]) {
+    // except for line breaks, inline nodes are temporarily stored
     let buffer = [];
 
     for (let i = 0; i < node.childCount; i += 1) {
@@ -77,7 +77,7 @@ export default class Convertor {
     doc.forEach(node => {
       if (node.type.name === 'paragraph') {
         this.addBlankLineBetweenParagraphs(prevNode, blockNodes);
-        this.convertSoftBreaksToParagraphs(node, blockNodes);
+        this.convertLineBreaksToParagraphs(node, blockNodes);
       } else {
         blockNodes.push(node);
       }
