@@ -219,7 +219,6 @@ export class ScrollSync {
       this.blockedScroll = 'editor';
     }
 
-    /* eslint-disable no-return-assign */
     const syncCallbacks: SyncCallbacks = {
       syncScrollTop: scrollTop => (scrollTarget.scrollTop = scrollTop),
       releaseEventBlock: () => (this.blockedScroll = null)

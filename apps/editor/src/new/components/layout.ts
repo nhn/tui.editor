@@ -22,7 +22,7 @@ interface State {
   style: PreviewStyle;
   hide: boolean;
 }
-
+// @TODO: arrange class prefix
 export class Layout implements Component<Props, State> {
   private refs: Record<string, HTMLElement> = {};
 
@@ -62,17 +62,12 @@ export class Layout implements Component<Props, State> {
     const displayClassName = this.state.hide ? ' te-hide' : '';
     const editorTypeClassName = this.state.type === 'markdown' ? 'te-md-mode' : 'te-ww-mode';
 
-    /* eslint-disable no-return-assign */
     return html`
       <div
         class="tui-editor-defaultUI${displayClassName}"
         ref=${(el: HTMLElement) => (this.refs.el = el)}
       >
-        <div
-          class="te-editor-section"
-          ref=${(el: HTMLElement) => (this.refs.editorSection = el)}
-          style="box-sizing: border-box;"
-        >
+        <div class="te-editor-section" ref=${(el: HTMLElement) => (this.refs.editorSection = el)}>
           <div class="tui-editor ${editorTypeClassName}">
             <div
               class="te-md-container ${this.state.style === 'vertical'
@@ -91,7 +86,6 @@ export class Layout implements Component<Props, State> {
           `}
       </div>
     `;
-    /* eslint-enable no-return-assign */
   }
 
   addEvent() {
@@ -103,12 +97,8 @@ export class Layout implements Component<Props, State> {
     eventEmitter.listen('changePreviewStyle', this.changePreviewStyle.bind(this));
   }
 
-  changePreviewStyle(style: string) {
-    if (style === 'tab') {
-      this.setState({ style: 'tab' });
-    } else if (style === 'vertical') {
-      this.setState({ style: 'vertical' });
-    }
+  changePreviewStyle(style: PreviewStyle) {
+    this.setState({ style });
   }
 
   hide() {

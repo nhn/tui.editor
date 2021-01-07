@@ -60,6 +60,7 @@ module.exports = {
     complexity: 0,
     'max-nested-callbacks': ["error", 4],
     'no-cond-assign': 0,
-    'max-depth': ['error', 4]
+    'max-depth': ['error', 4],
+    'no-return-assign': 0
   }
 };

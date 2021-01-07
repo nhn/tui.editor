@@ -34,6 +34,10 @@ declare module 'tui-code-snippet/type/isObject' {
   export default function isObject(value: unknown): value is object;
 }
 
+declare module 'tui-code-snippet/type/isBoolean' {
+  export default function isBoolean(value: unknown): value is boolean;
+}
+
 declare module 'tui-code-snippet/collection/forEachOwnProperties' {
   export default function forEachOwnProperties<T extends object>(
     obj: T,

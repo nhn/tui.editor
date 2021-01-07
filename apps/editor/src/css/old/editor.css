@@ -42,6 +42,7 @@
   min-height: 0px;
   position: relative;
   height: inherit;
+  box-sizing: border-box;
 }
 
 .te-md-container {
