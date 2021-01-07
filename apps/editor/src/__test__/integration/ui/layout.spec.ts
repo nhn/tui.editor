@@ -21,6 +21,10 @@ function clickWwSwitch() {
   return getWwSwitch().click();
 }
 
+function assertToContainElement(el: HTMLElement) {
+  expect(document.body).toContainElement(el);
+}
+
 describe('layout component', () => {
   let em: EventEmitter, container: HTMLElement;
 
@@ -57,13 +61,13 @@ describe('layout component', () => {
   });
 
   it('render default ui properly', () => {
-    expect(document.body).toContainElement(document.querySelector('.tui-editor'));
-    expect(document.body).toContainElement(document.querySelector('.te-md-container'));
-    expect(document.body).toContainElement(document.querySelector('.te-md-container .te-editor'));
-    expect(document.body).toContainElement(document.querySelector('.te-md-container .te-preview'));
-    expect(document.body).toContainElement(document.querySelector('.te-ww-container'));
-    expect(document.body).toContainElement(document.querySelector('.te-ww-container .te-editor'));
-    expect(document.body).toContainElement(document.querySelector('.te-mode-switch-section'));
+    assertToContainElement(document.querySelector<HTMLElement>('.tui-editor')!);
+    assertToContainElement(document.querySelector<HTMLElement>('.te-md-container')!);
+    assertToContainElement(document.querySelector<HTMLElement>('.te-md-container .te-editor')!);
+    assertToContainElement(document.querySelector<HTMLElement>('.te-md-container .te-preview')!);
+    assertToContainElement(document.querySelector<HTMLElement>('.te-ww-container')!);
+    assertToContainElement(document.querySelector<HTMLElement>('.te-ww-container .te-editor')!);
+    assertToContainElement(document.querySelector<HTMLElement>('.te-mode-switch-section')!);
   });
 
   it('show/hide editor', () => {
@@ -78,7 +82,7 @@ describe('layout component', () => {
     expect(layout).not.toHaveClass('te-hide');
   });
 
-  it('changeModeByEvent is triggered when clicking the switch button', () => {
+  it('should trigger changeModeByEvent when clicking the switch button', () => {
     const spy = jest.fn();
 
     em.listen('changeModeByEvent', spy);
@@ -92,7 +96,7 @@ describe('layout component', () => {
     expect(spy).toHaveBeenCalledWith('markdown');
   });
 
-  it('switch the editor in layout when changeMode is triggered', () => {
+  it('should switch the editor in layout when changeMode is triggered', () => {
     const editorArea = document.querySelector<HTMLElement>('.tui-editor')!;
     const mdSwitch = getMdSwitch();
     const wwSwitch = getWwSwitch();

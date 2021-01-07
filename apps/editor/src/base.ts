@@ -12,7 +12,7 @@ export interface StateOptions {
 }
 
 export default abstract class EditorBase {
-  el!: HTMLElement;
+  el: HTMLElement;
 
   eventEmitter: Emitter;
 

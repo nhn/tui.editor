@@ -1,5 +1,6 @@
 import html from 'htm/mini';
 import isObject from 'tui-code-snippet/type/isObject';
+import isBoolean from 'tui-code-snippet/type/isBoolean';
 import { ComponentClass } from '@t/ui';
 import { VNode } from './vnode';
 
@@ -15,14 +16,12 @@ function h(type: string | ComponentClass, props: Record<string, any>, ...childre
       child.forEach(vnode => {
         flatted.push(vnode);
       });
-    } else if (typeof child !== 'boolean') {
+    } else if (!isBoolean(child)) {
       flatted.push(isObject(child) ? child : createTextNode(String(child)));
     }
   });
 
-  const vnode = new VNode(type, props || {}, flatted);
-
-  return vnode;
+  return new VNode(type, props || {}, flatted);
 }
 
 export default html.bind(h);

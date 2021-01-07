@@ -1,5 +1,6 @@
 import isObject from 'tui-code-snippet/type/isObject';
 import { shallowEqual } from '@/utils/common';
+import { isTextNode } from '@/utils/dom';
 import { VNode } from './vnode';
 
 type ConditionFn = (propName: string) => boolean;
@@ -34,7 +35,7 @@ export function innerDiff(node: Node, prevProps: Props, nextProps: Props) {
 
         node.removeEventListener(eventName, prevProps[propName]);
       }
-    } else if (!nextProps[propName] && node.nodeType !== 3) {
+    } else if (!nextProps[propName] && !isTextNode(node)) {
       (node as Element).removeAttribute(propName);
     }
   });
@@ -42,9 +43,9 @@ export function innerDiff(node: Node, prevProps: Props, nextProps: Props) {
   setProps(node, nextProps, propName => !shallowEqual(prevProps[propName], nextProps[propName]));
 }
 
-function setProps(node: Node, props: Props, contition?: ConditionFn) {
+function setProps(node: Node, props: Props, condition?: ConditionFn) {
   Object.keys(props).forEach(propName => {
-    if (!contition || contition(propName)) {
+    if (!condition || condition(propName)) {
       if (/^on/.test(propName)) {
         const eventName = propName.slice(2).toLowerCase();
 

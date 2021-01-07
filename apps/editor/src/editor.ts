@@ -224,7 +224,7 @@ class ToastUIEditor {
       html`
         <${Layout}
           eventEmitter=${this.eventEmitter}
-          slots=${this.getElements()}
+          slots=${this.getEditorElements()}
           hideModeSwitch=${this.options.hideModeSwitch}
         />
       ` as VNode
@@ -705,7 +705,7 @@ class ToastUIEditor {
   /**
    * get markdown editor, preview, wysiwyg editor DOM elements
    */
-  getElements() {
+  getEditorElements() {
     return {
       mdEditor: this.mdEditor.getElement(),
       mdPreview: this.preview.getElement(),

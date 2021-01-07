@@ -62,6 +62,9 @@ export function quote(text: string) {
 }
 
 export function shallowEqual(o1: Record<string, any>, o2: Record<string, any>) {
+  if (o1 === null && o1 === o2) {
+    return true;
+  }
   if (typeof o1 !== 'object' || typeof o2 !== 'object') {
     return o1 === o2;
   }

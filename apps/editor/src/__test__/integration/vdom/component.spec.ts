@@ -53,7 +53,6 @@ class Component {
       display: this.state.hide ? 'none' : 'block'
     };
 
-    /* eslint-disable no-return-assign */
     return html`
       <div
         class="my-comp"
@@ -70,7 +69,6 @@ class Component {
         <button onClick=${() => this.hide()}>hide</button>
       </div>
     `;
-    /* eslint-enable no-return-assign */
   }
 }
 
