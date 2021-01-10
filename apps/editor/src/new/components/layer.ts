@@ -1,140 +1,68 @@
-import hasClass from 'tui-code-snippet/domUtil/hasClass';
-
-import domUtils from '@/utils/dom-legacy';
-import { Component } from '@t/ui';
-import html from '../vdom/template';
+import { ExecCommand, HideLayer, LayerInfo, Pos } from '@t/ui';
 import { closest } from '@/utils/dom';
+import { Emitter } from '@t/event';
+import html from '../vdom/template';
+import { Component } from '../vdom/component';
 
-const CLASS_PREFIX = 'tui-popup-';
-const CLASS_FIT_WINDOW = 'fit-window';
-
-interface Pos {
-  left: string;
-  top: string;
-}
-
-interface LayerInfo {
-  show: boolean;
-  headerText?: string | null;
-  fromEl: HTMLElement | null;
-  pos: Pos;
-  className: string;
-}
+type LayerStyle = {
+  display: 'none' | 'block';
+} & Partial<Pos>;
 
 interface Props {
+  show: boolean;
   info: LayerInfo;
-  hideLayer: () => void;
+  eventEmitter: Emitter;
+  hideLayer: HideLayer;
+  execCommand: ExecCommand;
 }
 
-export class Layer implements Component<Props> {
-  props: Props;
-
+export class Layer extends Component<Props> {
   constructor(props: Props) {
-    this.props = props;
+    super(props);
+    this.handleClickDocument = this.handleClickDocument.bind(this);
+  }
+
+  private handleClickDocument(ev: MouseEvent) {
+    if (
+      !closest<HTMLElement>(ev.target as HTMLElement, '.tui-popup-wrapper') &&
+      ev.target !== this.props.info.fromEl
+    ) {
+      this.props.hideLayer();
+    }
   }
 
   mounted() {
-    document.addEventListener('click', (ev: MouseEvent) => {
-      if (
-        !closest<HTMLElement>(ev.target as HTMLElement, `.${CLASS_PREFIX}wrapper`) &&
-        ev.target !== this.props.info.fromEl
-      ) {
-        this.props.hideLayer();
-      }
-    });
+    document.addEventListener('click', this.handleClickDocument);
+  }
+
+  beforeDestroy() {
+    document.removeEventListener('click', this.handleClickDocument);
   }
 
   render() {
-    const { className, headerText, body, show, pos } = this.props.info || {};
-    let style = {
+    const { info, show, hideLayer, eventEmitter, execCommand } = this.props;
+    const { className, headerText, render, pos } = info || {};
+    const layerStyle: LayerStyle = {
       display: show ? 'block' : 'none'
     };
 
     if (pos) {
-      style = {
-        display: show ? 'block' : 'none',
-        left: pos.left,
-        top: pos.top
-      };
+      layerStyle.left = pos.left;
+      layerStyle.top = pos.top;
     }
 
     return html`
-      <div class="${CLASS_PREFIX}wrapper ${className}" style=${style}>
-        <div class="${CLASS_PREFIX}header" style="display: ${!headerText ? 'none' : 'block'}">
-          <span class="${CLASS_PREFIX}title">${headerText}</span>
-          <div class="${CLASS_PREFIX}header-buttons">
-            <button
-              type="button"
-              class="${CLASS_PREFIX}close-button"
-              onClick=${this.props.hideLayer}
-            ></button>
+      <div class="tui-popup-wrapper ${className}" style=${layerStyle}>
+        <div class="tui-popup-header" style="display: ${!headerText ? 'none' : 'block'}">
+          <span class="tui-popup-title">${headerText}</span>
+          <div class="tui-popup-header-buttons">
+            <button type="button" class="tui-popup-close-button" onClick=${hideLayer}></button>
           </div>
         </div>
-        <div class="${CLASS_PREFIX}body">
-          ${body}
+        <div class="tui-popup-body">
+          ${render && render({ eventEmitter, show, hideLayer, execCommand })}
         </div>
       </div>
     `;
   }
-
-  // /**
-  //  * remove popup content
-  //  */
-  // remove() {
-  //   const { openerCssQuery, closerCssQuery } = this.options;
-  //   const { body } = document;
-
-  //   // this.trigger('remove', this);
-  //   // this.off(`click .${CLASS_PREFIX}close-button`, this._onClickCloseButton);
-
-  //   if (openerCssQuery) {
-  //     domUtils.findAll(body, openerCssQuery).forEach(opener => {
-  //       // off(opener, 'click', this._clickEventMap[`click.${this._id}`]);
-  //       delete this._clickEventMap[`click.${this._id}`];
-  //     });
-  //   }
-  //   if (closerCssQuery) {
-  //     domUtils.findAll(body, closerCssQuery).forEach(closer => {
-  //       // off(closer, 'click', this._clickEventMap[`click.${this._id}`]);
-  //       delete this._clickEventMap[`click.${this._id}`];
-  //     });
-  //   }
-
-  //   domUtils.remove(this.el);
-  //   this.el = null;
-  // }
-
-  // /**
-  //  * make popup size fit to window
-  //  * @param {boolean} fit - true to make popup fit to window
-  //  * @protected
-  //  * @ignore
-  //  */
-  // setFitToWindow(fit) {
-  //   domUtils.toggleClass(this.el, CLASS_FIT_WINDOW, fit);
-  // }
-
-  // /**
-  //  * make popup size fit to window
-  //  * @returns {boolean} - true for fit to window
-  //  * @protected
-  //  * @ignore
-  //  */
-  // isFitToWindow() {
-  //   return hasClass(this.el, CLASS_FIT_WINDOW);
-  // }
-
-  // /**
-  //  * toggle size fit to window
-  //  * @returns {boolean} - true for fit to window
-  //  * @protected
-  //  * @ignore
-  //  */
-  // toggleFitToWindow() {
-  //   const fitToWindow = !this.isFitToWindow();
-
-  //   this.setFitToWindow(fitToWindow);
-
-  //   return fitToWindow;
-  // }
 }

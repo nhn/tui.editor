@@ -1,10 +1,8 @@
 import { Emitter } from '@t/event';
 import { EditorType } from '@t/editor';
-import { Component } from '@t/ui';
 import i18n from '@/i18n/i18n';
-import { shallowEqual } from '@/utils/common';
 import html from '../vdom/template';
-import { rerender } from '../renderer';
+import { Component } from '../vdom/component';
 
 interface Props {
   editorType: EditorType;
@@ -15,25 +13,12 @@ interface State {
   hide: boolean;
 }
 
-export class Switch implements Component<Props, State> {
-  props: Props;
-
-  state: State;
-
+export class Switch extends Component<Props, State> {
   constructor(props: Props) {
-    this.props = props;
+    super(props);
     this.state = {
       hide: false
     };
-  }
-
-  setState(state: Partial<State>) {
-    const newState = { ...this.state, ...state };
-
-    if (!shallowEqual(this.state, newState)) {
-      this.state = newState;
-      rerender();
-    }
   }
 
   show() {

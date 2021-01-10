@@ -1,12 +1,10 @@
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
-import { Component } from '@t/ui';
-import { shallowEqual } from '@/utils/common';
-import domUtils from '@/utils/dom-legacy';
+import { ToolbarItem } from '@t/ui';
 import html from '../vdom/template';
+import { Component } from '../vdom/component';
 import { Switch } from './switch';
-import { Toolbar } from './toolbar';
-import { rerender } from '../renderer';
+import { Toolbar } from './toolbar/toolbar';
 
 interface Props {
   eventEmitter: Emitter;
@@ -16,7 +14,7 @@ interface Props {
     mdPreview: HTMLElement;
     wwEditor: HTMLElement;
   };
-  toolbarItems: Array<string[] | string>;
+  toolbarItems: ToolbarItem[];
 }
 
 interface State {
@@ -25,15 +23,9 @@ interface State {
   hide: boolean;
 }
 // @TODO: arrange class prefix
-export class Layout implements Component<Props, State> {
-  private refs: Record<string, HTMLElement> = {};
-
-  props: Props;
-
-  state: State;
-
+export class Layout extends Component<Props, State> {
   constructor(props: Props) {
-    this.props = props;
+    super(props);
     this.state = {
       editorType: 'markdown',
       previewStyle: 'vertical',
@@ -41,15 +33,6 @@ export class Layout implements Component<Props, State> {
     };
 
     this.addEvent();
-  }
-
-  setState(state: Partial<State>) {
-    const newState = { ...this.state, ...state };
-
-    if (!shallowEqual(this.state, newState)) {
-      this.state = newState;
-      rerender();
-    }
   }
 
   mounted() {
@@ -117,9 +100,5 @@ export class Layout implements Component<Props, State> {
 
   show() {
     this.setState({ hide: false });
-  }
-
-  destroy() {
-    domUtils.remove(this.refs.el);
   }
 }
