@@ -1,6 +1,7 @@
 import html from 'htm/mini';
 import isBoolean from 'tui-code-snippet/type/isBoolean';
 import isString from 'tui-code-snippet/type/isString';
+import isNumber from 'tui-code-snippet/type/isNumber';
 import { ComponentClass } from '@t/ui';
 import { VNode } from './vnode';
 
@@ -22,7 +23,7 @@ function h(type: string | ComponentClass, props: Record<string, any>, ...childre
       // eslint-disable-next-line no-eq-null,eqeqeq
       if (isBoolean(child) || child == null) {
         vnode = createTextNode(String(''));
-      } else if (isString(child)) {
+      } else if (isString(child) || isNumber(child)) {
         vnode = createTextNode(String(child));
       }
       flatted.push(vnode);

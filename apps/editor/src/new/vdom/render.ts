@@ -15,10 +15,13 @@ export function createComponent(Comp: ComponentClass, vnode: VNode) {
 }
 
 export function buildVNode(vnode: VNode | null) {
-  while (vnode) {
+  const root = vnode;
+
+  while (vnode && !vnode.skip) {
     if (isFunction(vnode.type)) {
       const instance = createComponent(vnode.type, vnode);
 
+      instance.vnode = vnode;
       vnode.component = instance;
       vnode.children = [instance.render()];
       buildChildrenVNode(vnode);
@@ -34,6 +37,9 @@ export function buildVNode(vnode: VNode | null) {
     } else {
       while (vnode && vnode.parent && !vnode.next) {
         vnode = vnode.parent!;
+        if (vnode === root) {
+          break;
+        }
       }
       vnode = vnode.next;
     }

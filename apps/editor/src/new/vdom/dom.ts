@@ -1,4 +1,5 @@
 import isObject from 'tui-code-snippet/type/isObject';
+import isNumber from 'tui-code-snippet/type/isNumber';
 import { shallowEqual } from '@/utils/common';
 import { isTextNode } from '@/utils/dom';
 import { VNode } from './vnode';
@@ -43,6 +44,8 @@ export function innerDiff(node: Node, prevProps: Props, nextProps: Props) {
   setProps(node, nextProps, propName => !shallowEqual(prevProps[propName], nextProps[propName]));
 }
 
+const reNonDimensional = /acit|ex(?:s|g|n|p|$)|rph|ows|mnc|ntw|ine[ch]|zoo|^ord/i;
+
 function setProps(node: Node, props: Props, condition?: ConditionFn) {
   Object.keys(props).forEach(propName => {
     if (!condition || condition(propName)) {
@@ -56,8 +59,11 @@ function setProps(node: Node, props: Props, condition?: ConditionFn) {
         const stylePropObj = props[propName];
 
         Object.keys(stylePropObj).forEach(styleProp => {
+          const value = stylePropObj[styleProp];
+
           // @ts-ignore
-          (node as HTMLElement).style[styleProp] = stylePropObj[styleProp];
+          (node as HTMLElement).style[styleProp] =
+            isNumber(value) && !reNonDimensional.test(styleProp) ? `${value}px` : value;
         });
       } else if (propName !== 'children') {
         (node as HTMLElement).setAttribute(propName, props[propName]);
