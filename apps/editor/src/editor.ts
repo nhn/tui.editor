@@ -104,6 +104,8 @@ class ToastUIEditor {
 
   private scrollSync: ScrollSync;
 
+  private destroyDefaultLayout?: () => void;
+
   constructor(options: EditorOptions) {
     this.initialHtml = options.el.innerHTML;
     options.el.innerHTML = '';
@@ -124,7 +126,8 @@ class ToastUIEditor {
           ['hr', 'quote'],
           ['ul', 'ol', 'task', 'indent', 'outdent'],
           ['table', 'image', 'link'],
-          ['code', 'codeblock']
+          ['code', 'codeblock'],
+          'scrollSync'
         ],
         hideModeSwitch: false,
         linkAttribute: null,
@@ -139,6 +142,7 @@ class ToastUIEditor {
     );
 
     this.codeBlockLanguages = [];
+    this.currentMode = this.options.initialEditType || 'markdown';
 
     this.eventEmitter = new EventEmitter();
 
@@ -198,7 +202,7 @@ class ToastUIEditor {
     // if (!this.options.el) {
     //   render(...)
     // }
-    render(
+    this.destroyDefaultLayout = render(
       this.options.el,
       html`
         <${Layout}
@@ -244,8 +248,13 @@ class ToastUIEditor {
       sendHostName();
     }
 
+    this.getCurrentModeEditor().focus();
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
+
     this.on('changeModeByEvent', this.changeMode.bind(this));
+    this.addCommand('markdown', 'toggleScrollSync', () => {
+      this.eventEmitter.emit('toggleScrollSync');
+    });
   }
 
   /**
@@ -580,6 +589,9 @@ class ToastUIEditor {
     this.eventEmitter.getEvents().forEach((_, type: string) => {
       this.off(type);
     });
+    if (this.destroyDefaultLayout) {
+      this.destroyDefaultLayout();
+    }
   }
 
   /**
