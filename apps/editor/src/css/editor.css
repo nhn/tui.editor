@@ -532,6 +532,10 @@
   background: #fff;
 }
 
+.te-popup-add-table  {
+  width: auto;
+}
+
 .te-popup-add-table .te-table-selection {
   position: relative;
 }
