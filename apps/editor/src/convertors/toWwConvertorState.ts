@@ -1,12 +1,7 @@
 import { Schema, Node, NodeType, Mark, MarkType, DOMParser } from 'prosemirror-model';
 
-// @ts-ignore
-import { Renderer } from '@toast-ui/toastmark';
-
 import { ToWwConvertorMap, StackItem, Attrs } from '@t/convertor';
 import { MdNode } from '@t/markdown';
-
-import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 
 export function mergeMarkText(a: Node, b: Node) {
   if (a.isText && b.isText && Mark.sameSet(a.marks, b.marks)) {
@@ -27,17 +22,11 @@ export default class ToWwConvertorState {
 
   private marks: Mark[];
 
-  private renderer: Renderer;
-
   constructor(schema: Schema, convertors: ToWwConvertorMap, linkAttribute: Record<string, any>) {
     this.schema = schema;
     this.convertors = convertors;
     this.stack = [{ type: this.schema.topNodeType, attrs: null, content: [] }];
     this.marks = Mark.none;
-    this.renderer = new Renderer({
-      gfm: true,
-      convertors: getHTMLRenderConvertors(linkAttribute, {})
-    });
   }
 
   top() {
@@ -99,12 +88,12 @@ export default class ToWwConvertorState {
     return this.addNode(type, attrs, content);
   }
 
-  convertByDOMParser(mdNode: MdNode) {
-    const html = this.renderer.render(mdNode);
-    const el = document.createElement('div');
+  convertByDOMParser(html: string, hasContainer = false) {
+    const container = document.createElement('div');
 
-    el.innerHTML = html;
+    container.innerHTML = html;
 
+    const el = hasContainer ? container : container.firstChild!;
     const doc = DOMParser.fromSchema(this.schema).parse(el);
 
     doc.content.forEach(node => this.push(node));

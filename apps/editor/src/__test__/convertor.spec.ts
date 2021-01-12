@@ -364,6 +364,7 @@ describe('Convertor', () => {
         | tbody<br>tbody | tbody |
         | tbody | tbody<br>tbody<br>tbody |
       `;
+
       const expected = source`
         | thead<br>thead | thead |
         | ---------- | ----- |
@@ -374,25 +375,39 @@ describe('Convertor', () => {
       assertConverting(markdown, `${expected}\n`);
     });
 
-    it('table with list html string', () => {
+    it('table with inline node syntax', () => {
       const markdown = source`
-        | thead | thead |
-        | ----- | ----- |
-        | <ul><li>bullet</li></ul> | <ol><li>ordered</li></ol> |
-        | <ul><li>nested<ul><li>nested</li></ul></li></ul> |  |
-        | <ul><li>nested<ul><li>nested</li><li>nested</li></ul></li></ul> |  |
-        | <ol><li>mixed<ul><li>**mix**ed</li></ul></li></ol> |  |
+        | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
+        | ---- | ---- |
+        | [linkText](linkUrl) | foo [linkText](linkUrl) baz |
+        | **foo** _bar_ ~~baz~~ | **foo** *bar* ~~baz~~ [linkText](linkUrl) |
       `;
+
       const expected = source`
-        | thead | thead |
-        | ----- | ----- |
-        | <ul><li>bullet</li></ul> | <ol><li>ordered</li></ol> |
-        | <ul><li>nested<ul><li>nested</li></ul></li></ul> |  |
-        | <ul><li>nested<ul><li>nested</li><li>nested</li></ul></li></ul> |  |
-        | <ol><li>mixed<ul><li>**mix**ed</li></ul></li></ol> |  |
+        | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
+        | --- | -------- |
+        | [linkText](linkUrl) | foo [linkText](linkUrl) baz |
+        | **foo** *bar* ~~baz~~ | **foo** *bar* ~~baz~~ [linkText](linkUrl) |
       `;
 
       assertConverting(markdown, `${expected}\n`);
+    });
+
+    it('table with list html string', () => {
+      const markdown = source`
+        | thead |
+        | ----- |
+        | <ul><li>bullet</li></ul> |
+        | <ol><li>ordered</li></ol> |
+        | <ul><li>nested<ul><li>nested</li></ul></li></ul> |
+        | <ul><li>nested<ul><li>nested</li><li>nested</li></ul></li></ul> |
+        | <ol><li>mix**ed**<ul><li>**mix**ed</li></ul></li></ol> |
+        | <ol><li>mix<i>ed</i><ul><li><strong>mix</strong>ed</li></ul></li></ol> |
+        | foo<ul><li>bar</li></ul>baz |
+        | ![altText](imgUrl) **mixed**<ul><li>[linkText](linkUrl) mixed</li></ul> |
+      `;
+
+      assertConverting(markdown, `${markdown}\n`);
     });
 
     it('inlineHtml (emphasis type)', () => {
@@ -431,6 +446,8 @@ describe('Convertor', () => {
         <hr>
 
         <HR>
+
+        <pre>code</pre>
       `;
 
       assertConverting(markdown, markdown);

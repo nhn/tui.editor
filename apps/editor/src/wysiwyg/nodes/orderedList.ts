@@ -15,7 +15,10 @@ export class OrderedList extends NodeSchema {
     return {
       content: 'listItem+',
       group: 'block',
-      attrs: { order: { default: 1 } },
+      attrs: {
+        order: { default: 1 },
+        rawHTML: { default: null }
+      },
       parseDOM: [
         {
           tag: 'ol',
@@ -30,7 +33,7 @@ export class OrderedList extends NodeSchema {
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         return [
-          'ol',
+          attrs.rawHTML || 'ol',
           {
             start: attrs.order === 1 ? null : attrs.order
           },

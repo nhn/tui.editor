@@ -320,7 +320,11 @@ export default class ToMdConvertorState {
         this.convertInline(child);
 
         if (index < node.childCount - 1) {
-          this.write('<br>');
+          const nextChild = node.child(index + 1);
+
+          if (nextChild.type.name === 'paragraph') {
+            this.write('<br>');
+          }
         }
       }
     });

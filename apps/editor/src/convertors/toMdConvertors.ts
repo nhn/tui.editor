@@ -43,18 +43,35 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   paragraph(state, node, parent, index = 0) {
-    if (node.childCount) {
+    if (state.inCell) {
       state.convertInline(node);
-      state.closeBlock(node);
-    } else if (parent && index > 0) {
-      // this condition is for adding <br> from the case
-      // where there are two or more blank lines in the editor
-      const prevNode = parent.child(index - 1);
-      const blankLine =
-        node.childCount === 0 && prevNode.type.name === 'paragraph' && prevNode.childCount === 0;
+    } else {
+      const firstNode = index === 0;
+      const lastNode = index === parent!.childCount - 1;
+      const prevNode = index > 0 && parent!.child(index - 1);
+      const prevEmptyNode = prevNode && prevNode.childCount === 0;
+      const emptyNode = node.childCount === 0;
 
-      if (blankLine) {
-        state.write('<br>\n');
+      if (!firstNode && !lastNode) {
+        if (emptyNode && prevEmptyNode) {
+          state.write('<br>\n');
+        } else if (emptyNode && !prevEmptyNode) {
+          state.write('\n');
+        } else {
+          state.convertInline(node);
+          state.write('\n');
+        }
+      } else if (firstNode) {
+        state.convertInline(node);
+
+        if (parent?.childCount === 1) {
+          state.closeBlock(node);
+        } else {
+          state.write('\n');
+        }
+      } else if (lastNode) {
+        state.convertInline(node);
+        state.closeBlock(node);
       }
     }
   },
@@ -66,24 +83,29 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   codeBlock(state, node) {
-    state.write(`\`\`\`${node.attrs.params || ''}\n`);
-    state.text(node.textContent, false);
-    state.ensureNewLine();
-    state.write('```');
-    state.closeBlock(node);
+    if (node.attrs.rawHTML) {
+      state.convertRawHTMLBlockNode(node, node.attrs.rawHTML);
+      state.closeBlock(node);
+    } else {
+      state.write(`\`\`\`${node.attrs.params || ''}\n`);
+      state.text(node.textContent, false);
+      state.ensureNewLine();
+      state.write('```');
+      state.closeBlock(node);
+    }
   },
 
   bulletList(state, node) {
-    if (state.inCell) {
-      state.convertRawHTMLBlockNode(node, 'ul');
+    if (node.attrs.rawHTML) {
+      state.convertRawHTMLBlockNode(node, node.attrs.rawHTML);
     } else {
       state.convertList(node, '  ', () => `${node.attrs.bullet || '*'} `);
     }
   },
 
   orderedList(state, node) {
-    if (state.inCell) {
-      state.convertRawHTMLBlockNode(node, 'ol');
+    if (node.attrs.rawHTML) {
+      state.convertRawHTMLBlockNode(node, node.attrs.rawHTML);
     } else {
       const start = node.attrs.order || 1;
       const maxWidth = String(start + node.childCount - 1).length;
@@ -98,15 +120,15 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   listItem(state, node) {
-    const { task, checked } = node.attrs;
+    const { task, checked, rawHTML } = node.attrs;
 
-    if (state.inCell) {
+    if (rawHTML) {
       const className = task ? ` class="task-list-item${checked ? ' checked' : ''}"` : '';
-      const dataset = task ? ` data-te-task` : '';
+      const dataset = task ? ` data-task${checked ? ` data-task-checked` : ''}` : '';
 
-      state.write(`<li${className}${dataset}>`);
+      state.write(`<${rawHTML}${className}${dataset}>`);
       state.convertNode(node);
-      state.write('</li>');
+      state.write(`</${rawHTML}>`);
     } else {
       if (task) {
         state.write(`[${checked ? 'x' : ' '}] `);
@@ -140,10 +162,6 @@ const nodes: ToMdNodeConvertorMap = {
   thematicBreak(state, node) {
     state.write(node.attrs.rawHTML ? `<${node.attrs.rawHTML}>` : '***');
     state.closeBlock(node);
-  },
-
-  hardBreak(state) {
-    state.write(state.inCell ? '<br>' : '\n');
   },
 
   table(state, node) {
