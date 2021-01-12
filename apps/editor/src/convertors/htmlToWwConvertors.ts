@@ -46,7 +46,7 @@ function getListItemAttrs({ literal }: MdNode) {
 
   container.innerHTML = literal!;
 
-  const listItem = container.firstElementChild as HTMLElement;
+  const listItem = container.firstChild as HTMLElement;
   const task = listItem.hasAttribute('data-task');
   const checked = listItem.hasAttribute('data-task-checked');
 
