@@ -42,10 +42,10 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   heading(state, node, { entering }) {
-    const { heading } = state.schema.nodes;
-
     if (entering) {
-      state.openNode(heading, { level: (node as HeadingMdNode).level });
+      const { level, headingType } = node as HeadingMdNode;
+
+      state.openNode(state.schema.nodes.heading, { level, headingType });
     } else {
       state.closeNode();
     }

@@ -20,7 +20,10 @@ export class Heading extends Node {
     });
 
     return {
-      attrs: { level: { default: 1 } },
+      attrs: {
+        level: { default: 1 },
+        headingType: { default: 'atx' }
+      },
       content: 'inline*',
       group: 'block',
       defining: true,

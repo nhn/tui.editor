@@ -77,9 +77,18 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   heading(state, node) {
-    state.write(`${state.repeat('#', node.attrs.level)} `);
-    state.convertInline(node);
-    state.closeBlock(node);
+    const { level, headingType } = node.attrs;
+
+    if (headingType === 'atx') {
+      state.write(`${state.repeat('#', node.attrs.level)} `);
+      state.convertInline(node);
+      state.closeBlock(node);
+    } else {
+      state.convertInline(node);
+      state.ensureNewLine();
+      state.write(level === 1 ? '---' : '===');
+      state.closeBlock(node);
+    }
   },
 
   codeBlock(state, node) {
@@ -87,7 +96,8 @@ const nodes: ToMdNodeConvertorMap = {
       state.convertRawHTMLBlockNode(node, node.attrs.rawHTML);
       state.closeBlock(node);
     } else {
-      state.write(`\`\`\`${node.attrs.params || ''}\n`);
+      state.write(`\`\`\`${node.attrs.params || ''}`);
+      state.ensureNewLine();
       state.text(node.textContent, false);
       state.ensureNewLine();
       state.write('```');
