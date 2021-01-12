@@ -62,10 +62,6 @@ declare module 'tui-code-snippet/domUtil/removeClass' {
   export default function removeClass(element: Element, ...classNames: string[]): void;
 }
 
-declare module 'tui-code-snippet/domUtil/hasClass' {
-  export default function hasClass(element: Element, ...classNames: string[]): boolean;
-}
-
 declare module 'tui-code-snippet/domEvent/on' {
   export default function on(
     element: Element,
