@@ -187,7 +187,7 @@ const convertors: HTMLToWwConvertorMap = {
 
     container.innerHTML = content;
 
-    const literal = container.firstChild!.firstChild?.textContent;
+    const literal = container.firstChild?.firstChild?.textContent;
 
     state.openNode(state.schema.nodes.codeBlock, { rawHTML: openTagName });
     state.addText(getTextWithoutTrailingNewline(literal!));
@@ -220,7 +220,7 @@ const convertors: HTMLToWwConvertorMap = {
 
   li: (state, node, openTagName) => {
     // in the table cell, '<li>' is parsed as 'htmlInline' node
-    if (node.parent!.type === 'tableCell') {
+    if (node.parent?.type === 'tableCell') {
       const { listItem, paragraph } = state.schema.nodes;
 
       if (openTagName) {

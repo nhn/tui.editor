@@ -364,7 +364,6 @@ describe('Convertor', () => {
         | tbody<br>tbody | tbody |
         | tbody | tbody<br>tbody<br>tbody |
       `;
-
       const expected = source`
         | thead<br>thead | thead |
         | ---------- | ----- |
@@ -382,7 +381,6 @@ describe('Convertor', () => {
         | [linkText](linkUrl) | foo [linkText](linkUrl) baz |
         | **foo** _bar_ ~~baz~~ | **foo** *bar* ~~baz~~ [linkText](linkUrl) |
       `;
-
       const expected = source`
         | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
         | --- | -------- |
