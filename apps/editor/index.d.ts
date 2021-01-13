@@ -229,7 +229,7 @@ declare namespace toastui {
   }
 
   export interface ConvertorClass {
-    new (em: EventManager, options: ConvertorOptions): Convertor;
+    new(em: EventManager, options: ConvertorOptions): Convertor;
   }
 
   export interface ConvertorOptions {
@@ -853,6 +853,9 @@ declare namespace toastui {
 }
 
 declare module '@toast-ui/editor' {
+  export type SourceType = toastui.SourceType;
+  export type MarkdownToolbarState = toastui.MarkdownToolbarState;
+  export type WysiwygToolbarState = toastui.WysiwygToolbarState;
   export type EditorOptions = toastui.EditorOptions;
   export type CustomConvertor = toastui.ConvertorClass;
   export type EventMap = toastui.EventMap;
