@@ -52,29 +52,54 @@ export interface ToMdConvertorStateType {
   ensureNewLine(): void;
   write(content?: string): void;
   closeBlock(node: ProsemirrorNode): void;
-  text(text: string, escape?: boolean): void;
+  text(text: string, escaped?: boolean): void;
   convertBlock(node: ProsemirrorNode, parent: ProsemirrorNode, index: number): void;
   convertInline(parent: ProsemirrorNode): void;
   convertList(node: ProsemirrorNode, delim: string, firstDelimFn: FirstDelimFn): void;
   convertTableCell(node: ProsemirrorNode): void;
   convertNode(parent: ProsemirrorNode): string;
-  convertRawHTMLBlockNode(node: ProsemirrorNode, rawHTML: string): void;
-  escape(str: string, startOfLine?: boolean): string;
-  quote(str: string): string;
-  repeat(str: string, count: number): string;
-  getEnclosingWhitespace(
-    text: string
-  ): {
-    leading?: string;
-    trailing?: string;
+}
+
+// @TODO
+export interface ToMdConvertorContext {
+  delim?: string | string[];
+  rawHTML?: boolean | string | string[];
+  text?: string;
+  attrs?: {
+    [key: string]: any;
   };
+}
+
+type ToMdOriginConvertorContext = (node: ProsemirrorNode) => ToMdConvertorContext;
+
+export type ToMdOriginConvertorContextMap = Partial<Record<WwNodeType, ToMdOriginConvertorContext>>;
+
+export type OriginContext = (() => ToMdOriginConvertorContext) | (() => () => {});
+
+interface ToMdCustomConvertorContext {
+  node: ProsemirrorNode;
+  parent?: ProsemirrorNode;
+  index?: number;
+  origin: OriginContext;
+}
+
+type ToMdCustomConvertor = (
+  state: ToMdConvertorStateType,
+  context: ToMdCustomConvertorContext
+) => ToMdConvertorContext | ToMdOriginConvertorContext | void;
+
+export type ToMdCustomConvertorMap = Partial<Record<WwNodeType, ToMdCustomConvertor>>;
+
+export interface NodeInfo {
+  node: ProsemirrorNode;
+  parent?: ProsemirrorNode;
+  index?: number;
 }
 
 type ToMdConvertorForNodes = (
   state: ToMdConvertorStateType,
-  node: ProsemirrorNode,
-  parent?: ProsemirrorNode,
-  index?: number
+  nodeInfo: NodeInfo,
+  context: ToMdConvertorContext
 ) => void;
 
 type MarkConvertor = (

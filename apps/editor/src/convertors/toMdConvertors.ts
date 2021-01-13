@@ -1,6 +1,7 @@
 import { Node, Mark } from 'prosemirror-model';
 
 import { ToMdConvertorStateType, ToMdNodeConvertorMap, ToMdMarkConvertorMap } from '@t/convertor';
+import { escape, repeat, quote } from './toMdConvertorHelper';
 
 function getOpenStringForMark(rawHTML: string, mdSyntax: string) {
   return rawHTML ? `<${rawHTML}>` : mdSyntax;
@@ -38,11 +39,11 @@ export function addBackticks(node: Node, side: number) {
 }
 
 const nodes: ToMdNodeConvertorMap = {
-  text(state, node) {
+  text(state, { node }) {
     state.text(node.text ?? '');
   },
 
-  paragraph(state, node, parent, index = 0) {
+  paragraph(state, { node, parent, index = 0 }) {
     if (state.inCell) {
       state.convertInline(node);
     } else {
@@ -69,69 +70,85 @@ const nodes: ToMdNodeConvertorMap = {
     }
   },
 
-  heading(state, node) {
-    const { level, headingType } = node.attrs;
+  heading(state, { node }, { delim }) {
+    const { headingType } = node.attrs;
 
     if (headingType === 'atx') {
-      state.write(`${state.repeat('#', node.attrs.level)} `);
+      state.write(`${delim} `);
       state.convertInline(node);
       state.closeBlock(node);
     } else {
       state.convertInline(node);
       state.ensureNewLine();
-      state.write(level === 1 ? '===' : '---');
+      state.write(delim as string);
       state.closeBlock(node);
     }
   },
 
-  codeBlock(state, node) {
-    if (node.attrs.rawHTML) {
-      state.convertRawHTMLBlockNode(node, node.attrs.rawHTML);
+  codeBlock(state, { node }, { delim, text, rawHTML }) {
+    const [openDelim, closeDelim] = delim as string[];
+
+    if (rawHTML) {
+      const [openTag, closeTag] = rawHTML as string[];
+
+      state.write(openTag);
+      state.convertNode(node);
+      state.write(closeTag);
       state.closeBlock(node);
     } else {
-      state.write(`\`\`\`${node.attrs.params || ''}`);
+      state.write(openDelim);
       state.ensureNewLine();
-      state.text(node.textContent, false);
+      state.text(text!, false);
       state.ensureNewLine();
-      state.write('```');
+      state.write(closeDelim);
       state.closeBlock(node);
     }
   },
 
-  bulletList(state, node) {
-    if (node.attrs.rawHTML) {
-      state.convertRawHTMLBlockNode(node, node.attrs.rawHTML);
+  bulletList(state, { node }, { delim, rawHTML }) {
+    if (rawHTML) {
+      const [openTag, closeTag] = rawHTML as string[];
+
+      state.write(openTag);
+      state.convertNode(node);
+      state.write(closeTag);
+      state.closeBlock(node);
     } else {
-      state.convertList(node, '  ', () => `${node.attrs.bullet || '*'} `);
+      state.convertList(node, '  ', () => `${delim} `);
     }
   },
 
-  orderedList(state, node) {
-    if (node.attrs.rawHTML) {
-      state.convertRawHTMLBlockNode(node, node.attrs.rawHTML);
+  orderedList(state, { node }, { rawHTML }) {
+    if (rawHTML) {
+      const [openTag, closeTag] = rawHTML as string[];
+
+      state.write(openTag);
+      state.convertNode(node);
+      state.write(closeTag);
+      state.closeBlock(node);
     } else {
       const start = node.attrs.order || 1;
       const maxWidth = String(start + node.childCount - 1).length;
-      const space = state.repeat('  ', maxWidth + 2);
+      const space = repeat('  ', maxWidth + 2);
 
       state.convertList(node, space, (index: number) => {
         const numStr = String(start + index);
 
-        return `${state.repeat(' ', maxWidth - numStr.length)}${numStr}. `;
+        return `${repeat(' ', maxWidth - numStr.length)}${numStr}. `;
       });
     }
   },
 
-  listItem(state, node) {
-    const { task, checked, rawHTML } = node.attrs;
+  listItem(state, { node }, { rawHTML }) {
+    const { task, checked } = node.attrs;
 
     if (rawHTML) {
-      const className = task ? ` class="task-list-item${checked ? ' checked' : ''}"` : '';
-      const dataset = task ? ` data-task${checked ? ` data-task-checked` : ''}` : '';
+      const [openTag, closeTag] = rawHTML as string[];
 
-      state.write(`<${rawHTML}${className}${dataset}>`);
+      state.write(openTag);
       state.convertNode(node);
-      state.write(`</${rawHTML}>`);
+      state.write(closeTag);
+      state.closeBlock(node);
     } else {
       if (task) {
         state.write(`[${checked ? 'x' : ' '}] `);
@@ -141,7 +158,7 @@ const nodes: ToMdNodeConvertorMap = {
     }
   },
 
-  blockQuote(state, node, parent) {
+  blockQuote(state, { node, parent }) {
     if (parent && parent.type.name === node.type.name) {
       state.flushClose(1);
     }
@@ -149,30 +166,21 @@ const nodes: ToMdNodeConvertorMap = {
     state.wrapBlock('> ', null, node, () => state.convertNode(node));
   },
 
-  image(state, node) {
-    const altText = state.escape(node.attrs.altText || '');
-    const imageUrl = state.escape(node.attrs.imageUrl);
-
-    if (node.attrs.rawHTML) {
-      const altAttr = altText ? ` alt="${altText}"` : '';
-
-      state.write(`<img src="${imageUrl}"${altAttr}>`);
-    } else {
-      state.write(`![${altText}](${imageUrl})`);
-    }
+  image(state, _, { rawHTML, attrs }) {
+    state.write((rawHTML as string) || `![${attrs?.altText}](${attrs?.imageUrl})`);
   },
 
-  thematicBreak(state, node) {
-    state.write(node.attrs.rawHTML ? `<${node.attrs.rawHTML}>` : '***');
+  thematicBreak(state, { node }, { delim, rawHTML }) {
+    state.write((rawHTML as string) || (delim as string));
     state.closeBlock(node);
   },
 
-  table(state, node) {
+  table(state, { node }) {
     state.convertNode(node);
     state.closeBlock(node);
   },
 
-  tableHead(state, node) {
+  tableHead(state, { node }) {
     const row = node.firstChild;
     let result = '';
 
@@ -182,39 +190,44 @@ const nodes: ToMdNodeConvertorMap = {
       row.forEach(column => {
         const { textContent } = column;
 
-        result += `| ${state.repeat('-', textContent.length || 3)} `;
+        result += `| ${repeat('-', textContent.length || 3)} `;
       });
     }
 
-    state.write(`${result}|\n`);
-  },
-
-  tableBody(state, node) {
-    state.convertNode(node);
-  },
-
-  tableRow(state, node) {
-    state.convertNode(node);
-    state.write('|\n');
-  },
-
-  tableHeadCell(state, node) {
-    state.write('| ');
-    state.convertTableCell(node);
-    state.write(' ');
-  },
-
-  tableBodyCell(state, node) {
-    state.write('| ');
-    state.convertTableCell(node);
-    state.write(' ');
-  },
-
-  customBlock(state, node) {
-    state.write(`{{${node.attrs.info}\n`);
-    state.text(node.textContent, false);
+    state.write(`${result}|`);
     state.ensureNewLine();
-    state.write('}}');
+  },
+
+  tableBody(state, { node }) {
+    state.convertNode(node);
+  },
+
+  tableRow(state, { node }) {
+    state.convertNode(node);
+    state.write('|');
+    state.ensureNewLine();
+  },
+
+  tableHeadCell(state, { node }) {
+    state.write('| ');
+    state.convertTableCell(node);
+    state.write(' ');
+  },
+
+  tableBodyCell(state, { node }) {
+    state.write('| ');
+    state.convertTableCell(node);
+    state.write(' ');
+  },
+
+  customBlock(state, { node }, { delim, text }) {
+    const [openDelim, closeDelim] = delim as string[];
+
+    state.write(openDelim);
+    state.ensureNewLine();
+    state.text(text!, false);
+    state.ensureNewLine();
+    state.write(closeDelim);
     state.closeBlock(node);
   }
 };
@@ -255,13 +268,13 @@ const marks: ToMdMarkConvertorMap = {
 
   link: {
     open(state: ToMdConvertorStateType, mark: Mark) {
-      const linkUrl = state.escape(mark.attrs.linkUrl);
+      const linkUrl = escape(mark.attrs.linkUrl);
 
       return mark.attrs.rawHTML ? `<a href="${linkUrl}">` : '[';
     },
     close(state: ToMdConvertorStateType, mark: Mark) {
-      const linkUrl = state.escape(mark.attrs.linkUrl);
-      const linkText = mark.attrs.title ? ` ${state.quote(mark.attrs.linkText)}` : '';
+      const linkUrl = escape(mark.attrs.linkUrl);
+      const linkText = mark.attrs.title ? ` ${quote(mark.attrs.linkText)}` : '';
 
       return getCloseStringForMark(mark.attrs.rawHTML, `](${linkText}${linkUrl})`);
     }
