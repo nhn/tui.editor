@@ -17,7 +17,9 @@ import {
   ToMdOriginConvertorContext,
   ToMdCustomConvertor,
   OriginContext,
-  NodeInfo
+  NodeInfo,
+  MarkInfo,
+  ToMdConvertorContext
 } from '@t/convertor';
 
 export default class ToMdConvertorState {
@@ -45,7 +47,6 @@ export default class ToMdConvertorState {
     this.closed = false;
     this.tightList = false;
     this.inCell = false;
-
     this.customConvertors = customConvertors;
   }
 
@@ -53,13 +54,51 @@ export default class ToMdConvertorState {
     return /(^|\n)$/.test(this.result);
   }
 
-  private markText(mark: Mark, open: boolean, parent: Node, index: number) {
-    const info = this.marks[mark.type.name as WwMarkType];
+  private getCustomConvertorContext(
+    customConvertor: ToMdCustomConvertor,
+    originContext: OriginContext,
+    nodeInfo: NodeInfo | MarkInfo
+  ) {
+    const context = customConvertor(this, {
+      origin: originContext,
+      ...nodeInfo
+    });
 
-    if (info) {
-      const value = open ? info.open : info.close;
+    if (context) {
+      const { node } = nodeInfo;
 
-      return typeof value === 'string' ? value : value(this, mark, parent, index);
+      if (isFunction(context)) {
+        return context(node) as ToMdOriginConvertorContext;
+      }
+
+      const orgContext = originContext()(node);
+
+      return { ...orgContext, ...context };
+    }
+
+    return null;
+  }
+
+  private markText(mark: Mark, entering: boolean, parent: Node, index: number) {
+    const markType = mark.type.name as WwMarkType;
+    const customConvertor = this.customConvertors[markType];
+    const originContext = getOriginContext(markType);
+    const nodeInfo = {
+      node: mark,
+      parent,
+      index,
+      entering
+    };
+
+    const context = customConvertor
+      ? this.getCustomConvertorContext(customConvertor, originContext, nodeInfo)
+      : originContext()(mark, entering, parent, index);
+    const info = this.marks[markType];
+
+    if (info && context) {
+      const { delim, rawHTML } = context as ToMdConvertorContext;
+
+      return (rawHTML as string) || (delim as string);
     }
 
     return '';
@@ -139,41 +178,16 @@ export default class ToMdConvertorState {
     }
   }
 
-  private getCustomConvertorContext(
-    customConvertor: ToMdCustomConvertor,
-    originContext: OriginContext,
-    nodeInfo: NodeInfo
-  ) {
-    const context = customConvertor(this, {
-      origin: originContext,
-      ...nodeInfo
-    });
-
-    if (context) {
-      const { node } = nodeInfo;
-
-      if (isFunction(context)) {
-        return context(node) as ToMdOriginConvertorContext;
-      }
-
-      const orgContext = originContext()(node);
-
-      return { ...orgContext, ...context };
-    }
-
-    return null;
-  }
-
   convertBlock(node: Node, parent: Node, index: number) {
     const nodeType = node.type.name as WwNodeType;
     const customConvertor = this.customConvertors[nodeType];
-    const innerConvertor = this.nodes[nodeType];
     const originContext = getOriginContext(nodeType);
     const nodeInfo = { node, parent, index };
 
     const context = customConvertor
       ? this.getCustomConvertorContext(customConvertor, originContext, nodeInfo)
       : originContext()(node);
+    const innerConvertor = this.nodes[nodeType];
 
     if (innerConvertor && context) {
       innerConvertor(this, nodeInfo, context);

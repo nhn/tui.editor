@@ -70,17 +70,25 @@ export interface ToMdConvertorContext {
   };
 }
 
-type ToMdOriginConvertorContext = (node: ProsemirrorNode) => ToMdConvertorContext;
+type ToMdOriginConvertorContext = (
+  node: ProsemirrorNode | Mark,
+  entering?: boolean,
+  parent?: ProsemirrorNode,
+  index?: number
+) => ToMdConvertorContext;
 
-export type ToMdOriginConvertorContextMap = Partial<Record<WwNodeType, ToMdOriginConvertorContext>>;
+export type ToMdOriginConvertorContextMap = Partial<
+  Record<WwNodeType | MdNodeType, ToMdOriginConvertorContext>
+>;
 
 export type OriginContext = (() => ToMdOriginConvertorContext) | (() => () => {});
 
 interface ToMdCustomConvertorContext {
-  node: ProsemirrorNode;
+  node: ProsemirrorNode | Mark;
   parent?: ProsemirrorNode;
   index?: number;
   origin: OriginContext;
+  entering?: boolean;
 }
 
 type ToMdCustomConvertor = (
@@ -88,12 +96,19 @@ type ToMdCustomConvertor = (
   context: ToMdCustomConvertorContext
 ) => ToMdConvertorContext | ToMdOriginConvertorContext | void;
 
-export type ToMdCustomConvertorMap = Partial<Record<WwNodeType, ToMdCustomConvertor>>;
+export type ToMdCustomConvertorMap = Partial<Record<WwNodeType | MdNodeType, ToMdCustomConvertor>>;
 
 export interface NodeInfo {
   node: ProsemirrorNode;
   parent?: ProsemirrorNode;
   index?: number;
+}
+
+export interface MarkInfo {
+  node: Mark;
+  parent?: ProsemirrorNode;
+  index?: number;
+  entering?: boolean;
 }
 
 type ToMdConvertorForNodes = (
@@ -110,8 +125,6 @@ type MarkConvertor = (
 ) => string;
 
 interface ToMdConvertorForMarks {
-  open: string | MarkConvertor;
-  close: string | MarkConvertor;
   mixable?: boolean;
   removedEnclosingWhitespace?: boolean;
   escape?: boolean;

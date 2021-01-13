@@ -1,12 +1,40 @@
 import { ProsemirrorNode } from 'prosemirror-model';
 
-import { repeat, escape } from './toMdConvertorHelper';
+import { repeat, escape, quote } from './toMdConvertorHelper';
 
 import { ToMdOriginConvertorContextMap } from '@t/convertor';
 import { WwNodeType } from '@t/wysiwyg';
+import { MdNodeType } from '@t/markdown';
+
+function addBackticks(node: ProsemirrorNode, side: number) {
+  const { text } = node;
+  const ticks = /`+/g;
+  let len = 0;
+
+  if (node.isText && text) {
+    let matched = ticks.exec(text);
+
+    while (matched) {
+      len = Math.max(len, matched[0].length);
+      matched = ticks.exec(text);
+    }
+  }
+
+  let result = len > 0 && side > 0 ? ' `' : '`';
+
+  for (let i = 0; i < len; i += 1) {
+    result += '`';
+  }
+
+  if (len > 0 && side < 0) {
+    result += ' ';
+  }
+
+  return result;
+}
 
 const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
-  heading: ({ attrs }: ProsemirrorNode) => {
+  heading({ attrs }) {
     const { level } = attrs;
     let delim = repeat('#', level);
 
@@ -19,7 +47,8 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     };
   },
 
-  codeBlock: ({ attrs, textContent }: ProsemirrorNode) => {
+  codeBlock(node) {
+    const { attrs, textContent } = node as ProsemirrorNode;
     const { rawHTML } = attrs;
 
     return {
@@ -29,7 +58,7 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     };
   },
 
-  bulletList: ({ attrs }: ProsemirrorNode) => {
+  bulletList({ attrs }) {
     const { rawHTML } = attrs;
 
     return {
@@ -38,7 +67,7 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     };
   },
 
-  orderedList: ({ attrs }: ProsemirrorNode) => {
+  orderedList({ attrs }) {
     const { rawHTML } = attrs;
 
     return {
@@ -46,7 +75,7 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     };
   },
 
-  listItem: ({ attrs }: ProsemirrorNode) => {
+  listItem({ attrs }) {
     const { task, checked, rawHTML } = attrs;
 
     const className = task ? ` class="task-list-item${checked ? ' checked' : ''}"` : '';
@@ -57,7 +86,7 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     };
   },
 
-  image: ({ attrs }: ProsemirrorNode) => {
+  image({ attrs }) {
     const altText = escape(attrs.altText || '');
     const imageUrl = escape(attrs.imageUrl);
     const altAttr = altText ? ` alt="${altText}"` : '';
@@ -71,22 +100,111 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     };
   },
 
-  thematicBreak: ({ attrs }: ProsemirrorNode) => {
+  thematicBreak({ attrs }) {
     return {
       delim: '***',
       rawHTML: attrs.rawHTML ? `<${attrs.rawHTML}>` : false
     };
   },
 
-  customBlock: ({ attrs, textContent }: ProsemirrorNode) => {
+  customBlock(node) {
+    const { attrs, textContent } = node as ProsemirrorNode;
+
     return {
       delim: [`{{${attrs.info}`, '}}'],
       text: textContent
     };
+  },
+
+  strong({ attrs }, entering) {
+    const { rawHTML } = attrs;
+
+    if (entering) {
+      return {
+        delim: '**',
+        rawHTML: rawHTML ? `<${rawHTML}>` : false
+      };
+    }
+
+    return {
+      delim: '**',
+      rawHTML: rawHTML ? `</${rawHTML}>` : false
+    };
+  },
+
+  emph({ attrs }, entering) {
+    const { rawHTML } = attrs;
+
+    if (entering) {
+      return {
+        delim: '*',
+        rawHTML: rawHTML ? `<${rawHTML}>` : false
+      };
+    }
+
+    return {
+      delim: '*',
+      rawHTML: rawHTML ? `</${rawHTML}>` : false
+    };
+  },
+
+  strike({ attrs }, entering) {
+    const { rawHTML } = attrs;
+
+    if (entering) {
+      return {
+        delim: '~~',
+        rawHTML: rawHTML ? `<${rawHTML}>` : false
+      };
+    }
+
+    return {
+      delim: '~~',
+      rawHTML: rawHTML ? `</${rawHTML}>` : false
+    };
+  },
+
+  link({ attrs }, entering) {
+    const { rawHTML } = attrs;
+    const linkUrl = escape(attrs.linkUrl);
+
+    if (entering) {
+      return {
+        delim: '[',
+        rawHTML: rawHTML ? `<${rawHTML} href="${linkUrl}">` : false
+      };
+    }
+
+    const linkText = attrs.title ? ` ${quote(attrs.linkText)}` : '';
+
+    return {
+      delim: `](${linkText}${linkUrl})`,
+      rawHTML: rawHTML ? `</${rawHTML}>` : false
+    };
+  },
+
+  code({ attrs }, entering, parent, index = 0) {
+    const { rawHTML } = attrs;
+
+    if (entering) {
+      const delim = addBackticks(parent!.child(index), -1);
+
+      return {
+        delim,
+        rawHTML: rawHTML ? `<${rawHTML}>` : false
+      };
+    }
+
+    const delim = addBackticks(parent!.child(index - 1), 1);
+
+    return {
+      delim,
+      rawHTML: rawHTML ? `</${rawHTML}>` : false
+    };
   }
 };
 
-export function getOriginContext(type: WwNodeType) {
+export function getOriginContext(type: WwNodeType | MdNodeType) {
   const originContext = toMdConvertorContextMap[type];
 
   if (originContext) {

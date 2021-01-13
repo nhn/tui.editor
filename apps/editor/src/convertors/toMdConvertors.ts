@@ -1,42 +1,5 @@
-import { Node, Mark } from 'prosemirror-model';
-
-import { ToMdConvertorStateType, ToMdNodeConvertorMap, ToMdMarkConvertorMap } from '@t/convertor';
-import { escape, repeat, quote } from './toMdConvertorHelper';
-
-function getOpenStringForMark(rawHTML: string, mdSyntax: string) {
-  return rawHTML ? `<${rawHTML}>` : mdSyntax;
-}
-
-function getCloseStringForMark(rawHTML: string, mdSyntax: string) {
-  return rawHTML ? `</${rawHTML}>` : mdSyntax;
-}
-
-export function addBackticks(node: Node, side: number) {
-  const { text } = node;
-  const ticks = /`+/g;
-  let len = 0;
-
-  if (node.isText && text) {
-    let matched = ticks.exec(text);
-
-    while (matched) {
-      len = Math.max(len, matched[0].length);
-      matched = ticks.exec(text);
-    }
-  }
-
-  let result = len > 0 && side > 0 ? ' `' : '`';
-
-  for (let i = 0; i < len; i += 1) {
-    result += '`';
-  }
-
-  if (len > 0 && side < 0) {
-    result += ' ';
-  }
-
-  return result;
-}
+import { ToMdNodeConvertorMap, ToMdMarkConvertorMap } from '@t/convertor';
+import { repeat } from './toMdConvertorHelper';
 
 const nodes: ToMdNodeConvertorMap = {
   text(state, { node }) {
@@ -234,63 +197,23 @@ const nodes: ToMdNodeConvertorMap = {
 
 const marks: ToMdMarkConvertorMap = {
   strong: {
-    open(_: ToMdConvertorStateType, mark: Mark) {
-      return getOpenStringForMark(mark.attrs.rawHTML, '**');
-    },
-    close(_: ToMdConvertorStateType, mark: Mark) {
-      return getCloseStringForMark(mark.attrs.rawHTML, '**');
-    },
     mixable: true,
     removedEnclosingWhitespace: true
   },
 
   emph: {
-    open(_: ToMdConvertorStateType, mark: Mark) {
-      return getOpenStringForMark(mark.attrs.rawHTML, '*');
-    },
-    close(_: ToMdConvertorStateType, mark: Mark) {
-      return getCloseStringForMark(mark.attrs.rawHTML, '*');
-    },
     mixable: true,
     removedEnclosingWhitespace: true
   },
 
   strike: {
-    open(_: ToMdConvertorStateType, mark: Mark) {
-      return getOpenStringForMark(mark.attrs.rawHTML, '~~');
-    },
-    close(_: ToMdConvertorStateType, mark: Mark) {
-      return getCloseStringForMark(mark.attrs.rawHTML, '~~');
-    },
     mixable: true,
     removedEnclosingWhitespace: true
   },
 
-  link: {
-    open(state: ToMdConvertorStateType, mark: Mark) {
-      const linkUrl = escape(mark.attrs.linkUrl);
-
-      return mark.attrs.rawHTML ? `<a href="${linkUrl}">` : '[';
-    },
-    close(state: ToMdConvertorStateType, mark: Mark) {
-      const linkUrl = escape(mark.attrs.linkUrl);
-      const linkText = mark.attrs.title ? ` ${quote(mark.attrs.linkText)}` : '';
-
-      return getCloseStringForMark(mark.attrs.rawHTML, `](${linkText}${linkUrl})`);
-    }
-  },
+  link: {},
 
   code: {
-    open(_: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      const markdown = addBackticks(parent.child(index), -1);
-
-      return getOpenStringForMark(mark.attrs.rawHTML, markdown);
-    },
-    close(_: ToMdConvertorStateType, mark: Mark, parent: Node, index: number) {
-      const markdown = addBackticks(parent.child(index - 1), 1);
-
-      return getCloseStringForMark(mark.attrs.rawHTML, markdown);
-    },
     escape: false
   }
 };

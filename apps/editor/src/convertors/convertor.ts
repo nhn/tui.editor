@@ -104,6 +104,16 @@ export default class Convertor {
       customBlock(state: any, { origin }: any) {
         return origin();
       }
+
+      // strong(state: any, { origin, entering }: any) {
+      //   // if (entering) {
+      //   //   return {
+      //   //     delim: '__'
+      //   //   };
+      //   // }
+
+      //   // return { delim: '__' };
+      // }
     };
 
     const state = new ToMdConvertorState(this.toMdConvertors, customConvertors);
