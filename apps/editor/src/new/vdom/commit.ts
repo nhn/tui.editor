@@ -1,14 +1,11 @@
 import isFunction from 'tui-code-snippet/type/isFunction';
 import { innerDiff, removeNode } from './dom';
-import { createComponent } from './render';
 import { VNode } from './vnode';
 
 export function commit(vnode?: VNode) {
   VNode.removalNodes.forEach(removalNode => diff(removalNode));
 
   if (vnode) {
-    vnode = vnode!.firstChild!;
-
     let next;
     const walker = vnode.walker();
 
@@ -17,7 +14,7 @@ export function commit(vnode?: VNode) {
       if (next.entering) {
         diff(vnode);
       } else if (isFunction(vnode.type)) {
-        const comp = createComponent(vnode.type, vnode);
+        const comp = vnode.component!;
 
         // lifecycle method
         if (!vnode.old && comp.mounted) {
@@ -64,7 +61,7 @@ function diff(vnode: VNode | null) {
       vnode = next.vnode!;
       if (!next.entering) {
         if (isFunction(vnode.type)) {
-          const comp = createComponent(vnode.type, vnode);
+          const comp = vnode.component!;
 
           // lifecycle method
           if (comp.beforeDestroy) {
