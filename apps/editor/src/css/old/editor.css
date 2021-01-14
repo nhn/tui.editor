@@ -238,7 +238,6 @@
 }
 
 .tui-toolbar-divider {
-  float: left;
   display: inline-block;
   width: 1px;
   height: 14px;
@@ -246,16 +245,11 @@
   margin: 9px 6px;
 }
 
-.tui-toolbar-button-group {
-  height: 28px;
-  border-right: 1px solid #d9d9d9;
-  float: left;
-}
-
 .te-toolbar-section {
   height: 32px;
   box-sizing: border-box;
   border-bottom: 1px solid #e5e5e5;
+  position: relative;
 }
 
 .tui-editor-defaultUI-toolbar button {
@@ -277,14 +271,6 @@
 .tui-editor-defaultUI-toolbar button.active {
   border: 1px solid #aaa;
   background-color: #fff;
-}
-
-.tui-editor-defaultUI-toolbar button:first-child {
-  margin-left: 0;
-}
-
-.tui-editor-defaultUI-toolbar button:last-child {
-  margin-right: 0;
 }
 
 .tui-editor-defaultUI-toolbar button.tui-scrollsync {
