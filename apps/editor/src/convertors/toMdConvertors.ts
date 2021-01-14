@@ -86,7 +86,7 @@ const nodes: ToMdNodeConvertorMap = {
     } else {
       state.convertInline(node);
       state.ensureNewLine();
-      state.write(level === 1 ? '---' : '===');
+      state.write(level === 1 ? '===' : '---');
       state.closeBlock(node);
     }
   },
