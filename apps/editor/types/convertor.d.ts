@@ -60,7 +60,6 @@ export interface ToMdConvertorStateType {
   convertNode(parent: ProsemirrorNode): string;
 }
 
-// @TODO
 export interface ToMdConvertorContext {
   delim?: string | string[];
   rawHTML?: boolean | string | string[];

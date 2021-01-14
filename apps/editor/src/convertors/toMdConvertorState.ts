@@ -39,7 +39,7 @@ export default class ToMdConvertorState {
 
   private customConvertors: ToMdCustomConvertorMap;
 
-  constructor({ nodes, marks }: ToMdMarkConvertors, customConvertors: any) {
+  constructor({ nodes, marks }: ToMdMarkConvertors, customConvertors: ToMdCustomConvertorMap) {
     this.nodes = nodes;
     this.marks = marks;
     this.delim = '';
@@ -47,7 +47,7 @@ export default class ToMdConvertorState {
     this.closed = false;
     this.tightList = false;
     this.inCell = false;
-    this.customConvertors = customConvertors;
+    this.customConvertors = customConvertors ?? {};
   }
 
   private isInBlank() {
