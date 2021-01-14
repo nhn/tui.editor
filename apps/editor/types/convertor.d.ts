@@ -29,7 +29,7 @@ export interface ToWwConvertorStateType {
   openNode(type: NodeType, attrs?: Attrs): void;
   closeNode(): ProsemirrorNode | null;
   convertNode(mdNode: MdNode): ProsemirrorNode | null;
-  convertByDOMParser(html: string, hasContainer?: boolean): void;
+  convertByDOMParser(root: HTMLElement): void;
 }
 
 type ToWwConvertor = (
@@ -46,7 +46,7 @@ export type ToWwConvertorMap = Partial<Record<MdNodeType, ToWwConvertor>>;
 export type FirstDelimFn = (index: number) => string;
 
 export interface ToMdConvertorStateType {
-  flushing: boolean;
+  stopNewline: boolean;
   flushClose(size?: number): void;
   wrapBlock(delim: string, firstDelim: string | null, node: ProsemirrorNode, fn: () => void): void;
   ensureNewLine(): void;

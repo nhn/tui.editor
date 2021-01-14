@@ -19,14 +19,14 @@ function convertBlockRawHTML(
   parent: ProsemirrorNode,
   [openTag, closeTag]: string[]
 ) {
-  state.flushing = true;
+  state.stopNewline = true;
   state.write(openTag);
   state.convertNode(node);
   state.write(closeTag);
 
   if (parent?.type.name === 'doc') {
     state.closeBlock(node);
-    state.flushing = false;
+    state.stopNewline = false;
   }
 }
 
@@ -36,7 +36,7 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   paragraph(state, { node, parent, index = 0 }) {
-    if (state.flushing) {
+    if (state.stopNewline) {
       state.convertInline(node);
     } else {
       const firstChildNode = index === 0;

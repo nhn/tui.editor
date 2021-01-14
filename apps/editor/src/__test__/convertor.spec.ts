@@ -455,22 +455,14 @@ describe('Convertor', () => {
   });
 
   describe('convert block html', () => {
-    it('paragraph', () => {
+    it('paragraph and division are not converted to html block', () => {
       const markdown = source`
         <p>paragraph</p>
-      `;
-      const expected = source`
-        paragraph
-      `;
 
-      assertConverting(markdown, expected);
-    });
-
-    it('division', () => {
-      const markdown = source`
         <div>division</div>
       `;
       const expected = source`
+        paragraph
         division
       `;
 
@@ -568,15 +560,22 @@ describe('Convertor', () => {
 
     it('with html inline', () => {
       const markdown = source`
-        <ul><li>foo <strong>bar</strong></li></ul>
+        <h1><b>foo</b></h1>
+        <ul><li>foo <i>bar</i></li></ul>
+        <blockquote><s>foo</s> bar</blockquote>
+      `;
+      const expected = oneLineTrim`
+        <h1><b>foo</b></h1>
+        <ul><li>foo <i>bar</i></li></ul>
+        <blockquote><s>foo</s> bar</blockquote>
       `;
 
-      assertConverting(markdown, markdown);
+      assertConverting(markdown, expected);
     });
   });
 
   describe('sanitize when using html', () => {
-    it('href attribute with <a>', () => {
+    it('href attribute with link', () => {
       const markdown = source`
         <a href="javascript:alert();">xss</a>
 
@@ -615,7 +614,7 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    it('src attribute with <img>', () => {
+    it('src attribute with image', () => {
       const markdown = source`
         <img src="javascript:alert();">
 

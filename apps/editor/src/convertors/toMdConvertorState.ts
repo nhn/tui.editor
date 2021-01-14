@@ -35,7 +35,7 @@ export default class ToMdConvertorState {
 
   private tightList: boolean;
 
-  public flushing: boolean;
+  public stopNewline: boolean;
 
   private customConvertors: ToMdCustomConvertorMap;
 
@@ -46,7 +46,7 @@ export default class ToMdConvertorState {
     this.result = '';
     this.closed = false;
     this.tightList = false;
-    this.flushing = false;
+    this.stopNewline = false;
     this.customConvertors = customConvertors ?? {};
   }
 
@@ -105,7 +105,7 @@ export default class ToMdConvertorState {
   }
 
   flushClose(size?: number) {
-    if (!this.flushing && this.closed) {
+    if (!this.stopNewline && this.closed) {
       if (!this.isInBlank()) {
         this.result += '\n';
       }
@@ -354,7 +354,7 @@ export default class ToMdConvertorState {
   }
 
   convertTableCell(node: Node) {
-    this.flushing = true;
+    this.stopNewline = true;
 
     node.forEach((child, _, index) => {
       if (includes(['bulletList', 'orderedList'], child.type.name)) {
@@ -373,7 +373,7 @@ export default class ToMdConvertorState {
       }
     });
 
-    this.flushing = false;
+    this.stopNewline = false;
   }
 
   convertNode(parent: Node) {

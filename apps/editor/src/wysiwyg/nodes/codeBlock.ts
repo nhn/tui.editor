@@ -31,7 +31,7 @@ export class CodeBlock extends NodeSchema {
 
             return {
               class: className,
-              language: className!.split('lang-'),
+              language: className?.split('lang-'),
               ...(rawHTML && { rawHTML })
             };
           }
