@@ -10,18 +10,22 @@ export class TableRow extends NodeSchema {
   get defaultSchema() {
     return {
       content: '(tableHeadCell | tableBodyCell)+',
-      attrs: { columns: { default: 1 } },
+      attrs: {
+        columns: { default: 1 },
+        rawHTML: { default: null }
+      },
       parseDOM: [
         {
           tag: 'tr',
           getAttrs: (dom: Node | string) => {
             const columns = (dom as HTMLElement).children.length;
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
             if (!columns) {
               return false;
             }
 
-            return { columns };
+            return { columns, ...(rawHTML && { rawHTML }) };
           }
         }
       ],

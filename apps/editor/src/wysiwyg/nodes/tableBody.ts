@@ -12,7 +12,8 @@ export class TableBody extends NodeSchema {
       content: 'tableRow+',
       attrs: {
         rows: { default: 1 },
-        columns: { default: 1 }
+        columns: { default: 1 },
+        rawHTML: { default: null }
       },
       parseDOM: [
         {
@@ -20,6 +21,7 @@ export class TableBody extends NodeSchema {
           getAttrs(dom: Node | string) {
             const rows = (dom as HTMLElement).querySelectorAll('tr');
             const columns = rows[0].children.length;
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
             if (!columns) {
               return false;
@@ -27,7 +29,8 @@ export class TableBody extends NodeSchema {
 
             return {
               rows: rows.length,
-              columns
+              columns,
+              ...(rawHTML && { rawHTML })
             };
           }
         }

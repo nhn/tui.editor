@@ -1,5 +1,34 @@
-import { ToMdNodeConvertorMap, ToMdMarkConvertorMap } from '@t/convertor';
+import { ProsemirrorNode } from 'prosemirror-model';
+
+import { ToMdNodeConvertorMap, ToMdMarkConvertorMap, ToMdConvertorStateType } from '@t/convertor';
 import { repeat } from './toMdConvertorHelper';
+
+function convertInlineRawHTML(
+  state: ToMdConvertorStateType,
+  node: ProsemirrorNode,
+  [openTag, closeTag]: string[]
+) {
+  state.write(openTag);
+  state.convertInline(node);
+  state.write(closeTag);
+}
+
+function convertBlockRawHTML(
+  state: ToMdConvertorStateType,
+  node: ProsemirrorNode,
+  parent: ProsemirrorNode,
+  [openTag, closeTag]: string[]
+) {
+  state.flushing = true;
+  state.write(openTag);
+  state.convertNode(node);
+  state.write(closeTag);
+
+  if (parent?.type.name === 'doc') {
+    state.closeBlock(node);
+    state.flushing = false;
+  }
+}
 
 const nodes: ToMdNodeConvertorMap = {
   text(state, { node }) {
@@ -7,7 +36,7 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   paragraph(state, { node, parent, index = 0 }) {
-    if (state.inCell) {
+    if (state.flushing) {
       state.convertInline(node);
     } else {
       const firstChildNode = index === 0;
@@ -33,10 +62,12 @@ const nodes: ToMdNodeConvertorMap = {
     }
   },
 
-  heading(state, { node }, { delim }) {
+  heading(state, { node }, { delim, rawHTML }) {
     const { headingType } = node.attrs;
 
-    if (headingType === 'atx') {
+    if (rawHTML) {
+      convertInlineRawHTML(state, node, rawHTML as string[]);
+    } else if (headingType === 'atx') {
       state.write(`${delim} `);
       state.convertInline(node);
       state.closeBlock(node);
@@ -52,12 +83,7 @@ const nodes: ToMdNodeConvertorMap = {
     const [openDelim, closeDelim] = delim as string[];
 
     if (rawHTML) {
-      const [openTag, closeTag] = rawHTML as string[];
-
-      state.write(openTag);
-      state.convertNode(node);
-      state.write(closeTag);
-      state.closeBlock(node);
+      convertInlineRawHTML(state, node, rawHTML as string[]);
     } else {
       state.write(openDelim);
       state.ensureNewLine();
@@ -68,27 +94,29 @@ const nodes: ToMdNodeConvertorMap = {
     }
   },
 
-  bulletList(state, { node }, { delim, rawHTML }) {
+  blockQuote(state, { node, parent }, { delim, rawHTML }) {
     if (rawHTML) {
-      const [openTag, closeTag] = rawHTML as string[];
+      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
+    } else {
+      if (parent?.type.name === node.type.name) {
+        state.flushClose(1);
+      }
 
-      state.write(openTag);
-      state.convertNode(node);
-      state.write(closeTag);
-      state.closeBlock(node);
+      state.wrapBlock(delim as string, null, node, () => state.convertNode(node));
+    }
+  },
+
+  bulletList(state, { node, parent }, { delim, rawHTML }) {
+    if (rawHTML) {
+      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
     } else {
       state.convertList(node, '  ', () => `${delim} `);
     }
   },
 
-  orderedList(state, { node }, { rawHTML }) {
+  orderedList(state, { node, parent }, { rawHTML }) {
     if (rawHTML) {
-      const [openTag, closeTag] = rawHTML as string[];
-
-      state.write(openTag);
-      state.convertNode(node);
-      state.write(closeTag);
-      state.closeBlock(node);
+      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
     } else {
       const start = node.attrs.order || 1;
       const maxWidth = String(start + node.childCount - 1).length;
@@ -102,16 +130,11 @@ const nodes: ToMdNodeConvertorMap = {
     }
   },
 
-  listItem(state, { node }, { rawHTML }) {
+  listItem(state, { node, parent }, { rawHTML }) {
     const { task, checked } = node.attrs;
 
     if (rawHTML) {
-      const [openTag, closeTag] = rawHTML as string[];
-
-      state.write(openTag);
-      state.convertNode(node);
-      state.write(closeTag);
-      state.closeBlock(node);
+      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
     } else {
       if (task) {
         state.write(`[${checked ? 'x' : ' '}] `);
@@ -121,66 +144,86 @@ const nodes: ToMdNodeConvertorMap = {
     }
   },
 
-  blockQuote(state, { node, parent }) {
-    if (parent && parent.type.name === node.type.name) {
-      state.flushClose(1);
-    }
-
-    state.wrapBlock('> ', null, node, () => state.convertNode(node));
-  },
-
   image(state, _, { rawHTML, attrs }) {
     state.write((rawHTML as string) || `![${attrs?.altText}](${attrs?.imageUrl})`);
   },
 
   thematicBreak(state, { node }, { delim, rawHTML }) {
-    state.write((rawHTML as string) || (delim as string));
-    state.closeBlock(node);
-  },
-
-  table(state, { node }) {
-    state.convertNode(node);
-    state.closeBlock(node);
-  },
-
-  tableHead(state, { node }) {
-    const row = node.firstChild;
-    let result = '';
-
-    state.convertNode(node);
-
-    if (row) {
-      row.forEach(column => {
-        const { textContent } = column;
-
-        result += `| ${repeat('-', textContent.length || 3)} `;
-      });
+    if (rawHTML) {
+      state.write(rawHTML as string);
+    } else {
+      state.write(delim as string);
+      state.closeBlock(node);
     }
-
-    state.write(`${result}|`);
-    state.ensureNewLine();
   },
 
-  tableBody(state, { node }) {
-    state.convertNode(node);
+  table(state, { node, parent }, { rawHTML }) {
+    if (rawHTML) {
+      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
+    } else {
+      state.convertNode(node);
+      state.closeBlock(node);
+    }
   },
 
-  tableRow(state, { node }) {
-    state.convertNode(node);
-    state.write('|');
-    state.ensureNewLine();
+  tableHead(state, { node, parent }, { rawHTML }) {
+    if (rawHTML) {
+      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
+    } else {
+      const row = node.firstChild;
+      let result = '';
+
+      state.convertNode(node);
+
+      if (row) {
+        row.forEach(column => {
+          const { textContent } = column;
+
+          result += `| ${repeat('-', textContent.length || 3)} `;
+        });
+      }
+
+      state.write(`${result}|`);
+      state.ensureNewLine();
+    }
   },
 
-  tableHeadCell(state, { node }) {
-    state.write('| ');
-    state.convertTableCell(node);
-    state.write(' ');
+  tableBody(state, { node, parent }, { rawHTML }) {
+    if (rawHTML) {
+      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
+    } else {
+      state.convertNode(node);
+    }
   },
 
-  tableBodyCell(state, { node }) {
-    state.write('| ');
-    state.convertTableCell(node);
-    state.write(' ');
+  tableRow(state, { node, parent }, { rawHTML }) {
+    if (rawHTML) {
+      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
+    } else {
+      state.convertNode(node);
+      state.write('|');
+      state.ensureNewLine();
+    }
+  },
+
+  tableHeadCell(state, { node, parent }, { rawHTML }) {
+    if (rawHTML) {
+      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
+    } else {
+      state.write('| ');
+      state.convertTableCell(node);
+      state.write(' ');
+    }
+  },
+
+  tableBodyCell(state, { node, parent }, { rawHTML }) {
+    if (rawHTML) {
+      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
+    } else {
+      state.write('| ');
+      state.convertTableCell(node);
+      state.write(' ');
+    }
   },
 
   customBlock(state, { node }, { delim, text }) {

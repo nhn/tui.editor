@@ -1,7 +1,7 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 import { isInTableNode, findNodeBy } from '@/wysiwyg/helper/node';
 import {
   createTableHeadRow,
@@ -33,16 +33,30 @@ interface AlignColumnPayload {
   align: 'left' | 'center' | 'right';
 }
 
-export class Table extends Node {
+export class Table extends NodeSchema {
   get name() {
     return 'table';
   }
 
   get defaultSchema() {
     return {
-      content: 'tableHead{1} tableBody+',
+      content: 'tableHead{1} tableBody{1}',
       group: 'block',
-      parseDOM: [{ tag: 'table' }],
+      attrs: {
+        rawHTML: { default: null }
+      },
+      parseDOM: [
+        {
+          tag: 'table',
+          getAttrs(dom: Node | string) {
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+
+            return {
+              ...(rawHTML && { rawHTML })
+            };
+          }
+        }
+      ],
       toDOM(): DOMOutputSpecArray {
         return ['table', 0];
       }

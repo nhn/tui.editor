@@ -1,4 +1,4 @@
-import { source } from 'common-tags';
+import { source, oneLineTrim } from 'common-tags';
 
 // @ts-ignore
 import { Parser } from '@toast-ui/toastmark';
@@ -38,7 +38,7 @@ describe('Convertor', () => {
 
   beforeEach(() => {
     schema = createSchema();
-    convertor = new Convertor(schema, {});
+    convertor = new Convertor(schema, {}, {});
   });
 
   describe('convert between markdown and wysiwyg node to', () => {
@@ -240,6 +240,23 @@ describe('Convertor', () => {
       assertConverting(markdown, `${expected}\n`);
     });
 
+    it('table with inline syntax', () => {
+      const markdown = source`
+        | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
+        | ---- | ---- |
+        | [linkText](linkUrl) | foo [linkText](linkUrl) baz |
+        | **foo** _bar_ ~~baz~~ | **foo** *bar* ~~baz~~ [linkText](linkUrl) |
+      `;
+      const expected = source`
+        | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
+        | --- | -------- |
+        | [linkText](linkUrl) | foo [linkText](linkUrl) baz |
+        | **foo** *bar* ~~baz~~ | **foo** *bar* ~~baz~~ [linkText](linkUrl) |
+      `;
+
+      assertConverting(markdown, `${expected}\n`);
+    });
+
     it('task', () => {
       const markdown = source`
         * [ ] foo
@@ -370,8 +387,39 @@ describe('Convertor', () => {
 
       assertConverting(markdown, expected);
     });
+  });
 
-    it('table with <br> html string', () => {
+  describe('convert inline html', () => {
+    it('emphasis type', () => {
+      const markdown = source`
+        <b>foo</b>
+        <strong>foo</strong>
+
+        <i>foo</i>
+        <em>foo</em>
+        
+        <s>foo</s>
+        <del>foo</del>
+
+        <code>foo</code>
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('link type', () => {
+      const markdown = source`
+        <a href="#">foo</a>
+
+        <img src="#">
+
+        <img src="#" alt="test">
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('table with <br>', () => {
       const markdown = source`
         | thead<br>thead | thead |
         | ----- | ----- |
@@ -388,24 +436,7 @@ describe('Convertor', () => {
       assertConverting(markdown, `${expected}\n`);
     });
 
-    it('table with inline node syntax', () => {
-      const markdown = source`
-        | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
-        | ---- | ---- |
-        | [linkText](linkUrl) | foo [linkText](linkUrl) baz |
-        | **foo** _bar_ ~~baz~~ | **foo** *bar* ~~baz~~ [linkText](linkUrl) |
-      `;
-      const expected = source`
-        | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
-        | --- | -------- |
-        | [linkText](linkUrl) | foo [linkText](linkUrl) baz |
-        | **foo** *bar* ~~baz~~ | **foo** *bar* ~~baz~~ [linkText](linkUrl) |
-      `;
-
-      assertConverting(markdown, `${expected}\n`);
-    });
-
-    it('table with list html string', () => {
+    it('table with list', () => {
       const markdown = source`
         | thead |
         | ----- |
@@ -421,45 +452,123 @@ describe('Convertor', () => {
 
       assertConverting(markdown, `${markdown}\n`);
     });
+  });
 
-    it('inlineHtml (emphasis type)', () => {
+  describe('convert block html', () => {
+    it('paragraph', () => {
       const markdown = source`
-        <b>foo</b>
-        <B>foo</B>
-
-        <strong>foo</strong>
-
-        <i>foo</i>
-        <em>foo</em>
-        
-        <s>foo</s>
-        <del>foo</del>
-
-        <code>foo</code>
+        <p>paragraph</p>
+      `;
+      const expected = source`
+        paragraph
       `;
 
-      assertConverting(markdown, markdown);
+      assertConverting(markdown, expected);
     });
 
-    it('inlineHtml (link type)', () => {
+    it('division', () => {
       const markdown = source`
-        <a href="#">foo</a>
-
-        <img src="#">
-
-        <img src="#" alt="test">
+        <div>division</div>
+      `;
+      const expected = source`
+        division
       `;
 
-      assertConverting(markdown, markdown);
+      assertConverting(markdown, expected);
     });
 
-    it('htmlBlock', () => {
+    it('heading', () => {
       const markdown = source`
-        <hr>
+        <h1>heading1</h1>
+        <h2>heading2</h2>
+        <h3>heading3</h3>
+        <h4>heading4</h4>
+        <h5>heading4</h5>
+        <h6>heading4</h6>
+      `;
+      const expected = oneLineTrim`
+        <h1>heading1</h1>
+        <h2>heading2</h2>
+        <h3>heading3</h3>
+        <h4>heading4</h4>
+        <h5>heading4</h5>
+        <h6>heading4</h6>
+      `;
 
-        <HR>
+      assertConverting(markdown, expected);
+    });
 
+    it('pre', () => {
+      const markdown = source`
         <pre>code</pre>
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('blockquote', () => {
+      const markdown = source`
+        <blockquote>foo</blockquote>
+        <blockquote>foo<blockquote>foo</blockquote></blockquote>
+      `;
+      const expected = oneLineTrim`
+        <blockquote>foo</blockquote>
+        <blockquote>foo<blockquote>foo</blockquote></blockquote>
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('bullet list', () => {
+      const markdown = source`
+        <ul><li>foo</li></ul>
+        <ul><li>foo<ul><li>foo</li></ul></li></ul>
+      `;
+      const expected = oneLineTrim`
+        <ul><li>foo</li></ul>
+        <ul><li>foo<ul><li>foo</li></ul></li></ul>
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('ordered list', () => {
+      const markdown = source`
+        <ol><li>foo</li></ol>
+        <ol><li>foo<ol><li>foo</li></ol></li></ol>
+      `;
+      const expected = oneLineTrim`
+        <ol><li>foo</li></ol>
+        <ol><li>foo<ol><li>foo</li></ol></li></ol>
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('task', () => {
+      const markdown = source`
+        <ul><li class="task-list-item" data-task>bullet task</li></ul>
+        <ul><li class="task-list-item checked" data-task data-task-checked>ordered task</li></ul>
+      `;
+      const expected = oneLineTrim`
+        <ul><li class="task-list-item" data-task>bullet task</li></ul>
+        <ul><li class="task-list-item checked" data-task data-task-checked>ordered task</li></ul>
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('table', () => {
+      const markdown = source`
+        <table><thead><tr><th>foo</th></tr></thead><tbody><tr><td>bar</td></tr></tbody></table>
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('with html inline', () => {
+      const markdown = source`
+        <ul><li>foo <strong>bar</strong></li></ul>
       `;
 
       assertConverting(markdown, markdown);

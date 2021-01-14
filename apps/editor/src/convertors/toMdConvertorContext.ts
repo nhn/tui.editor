@@ -33,6 +33,18 @@ function addBackticks(node: ProsemirrorNode, side: number) {
   return result;
 }
 
+function getPairRawHTML(rawHTML?: string[]) {
+  return rawHTML ? [`<${rawHTML}>`, `</${rawHTML}>`] : false;
+}
+
+function getOpenRawHTML(rawHTML?: string) {
+  return rawHTML ? `<${rawHTML}>` : false;
+}
+
+function getCloseRawHTML(rawHTML?: string) {
+  return rawHTML ? `</${rawHTML}>` : false;
+}
+
 const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
   heading({ attrs }) {
     const { level } = attrs;
@@ -43,35 +55,38 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     }
 
     return {
-      delim
+      delim,
+      rawHTML: getPairRawHTML(attrs.rawHTML)
     };
   },
 
   codeBlock(node) {
     const { attrs, textContent } = node as ProsemirrorNode;
-    const { rawHTML } = attrs;
 
     return {
       delim: [`\`\`\`${attrs.language || ''}`, '```'],
-      text: textContent,
-      rawHTML: rawHTML ? [`<${rawHTML}>`, `</${rawHTML}>`] : false
+      rawHTML: getPairRawHTML(attrs.rawHTML),
+      text: textContent
+    };
+  },
+
+  blockQuote({ attrs }) {
+    return {
+      delim: '> ',
+      rawHTML: getPairRawHTML(attrs.rawHTML)
     };
   },
 
   bulletList({ attrs }) {
-    const { rawHTML } = attrs;
-
     return {
       delim: '*',
-      rawHTML: rawHTML ? [`<${rawHTML}>`, `</${rawHTML}>`] : false
+      rawHTML: getPairRawHTML(attrs.rawHTML)
     };
   },
 
   orderedList({ attrs }) {
-    const { rawHTML } = attrs;
-
     return {
-      rawHTML: rawHTML ? [`<${rawHTML}>`, `</${rawHTML}>`] : false
+      rawHTML: getPairRawHTML(attrs.rawHTML)
     };
   },
 
@@ -83,6 +98,42 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
 
     return {
       rawHTML: rawHTML ? [`<${rawHTML}${className}${dataset}>`, `</${rawHTML}>`] : false
+    };
+  },
+
+  table({ attrs }) {
+    return {
+      rawHTML: getPairRawHTML(attrs.rawHTML)
+    };
+  },
+
+  tableHead({ attrs }) {
+    return {
+      rawHTML: getPairRawHTML(attrs.rawHTML)
+    };
+  },
+
+  tableBody({ attrs }) {
+    return {
+      rawHTML: getPairRawHTML(attrs.rawHTML)
+    };
+  },
+
+  tableRow({ attrs }) {
+    return {
+      rawHTML: getPairRawHTML(attrs.rawHTML)
+    };
+  },
+
+  tableHeadCell({ attrs }) {
+    return {
+      rawHTML: getPairRawHTML(attrs.rawHTML)
+    };
+  },
+
+  tableBodyCell({ attrs }) {
+    return {
+      rawHTML: getPairRawHTML(attrs.rawHTML)
     };
   },
 
@@ -103,7 +154,7 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
   thematicBreak({ attrs }) {
     return {
       delim: '***',
-      rawHTML: attrs.rawHTML ? `<${attrs.rawHTML}>` : false
+      rawHTML: getOpenRawHTML(attrs.rawHTML)
     };
   },
 
@@ -117,50 +168,44 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
   },
 
   strong({ attrs }, entering) {
-    const { rawHTML } = attrs;
-
     if (entering) {
       return {
         delim: '**',
-        rawHTML: rawHTML ? `<${rawHTML}>` : false
+        rawHTML: getOpenRawHTML(attrs.rawHTML)
       };
     }
 
     return {
       delim: '**',
-      rawHTML: rawHTML ? `</${rawHTML}>` : false
+      rawHTML: getCloseRawHTML(attrs.rawHTML)
     };
   },
 
   emph({ attrs }, entering) {
-    const { rawHTML } = attrs;
-
     if (entering) {
       return {
         delim: '*',
-        rawHTML: rawHTML ? `<${rawHTML}>` : false
+        rawHTML: getOpenRawHTML(attrs.rawHTML)
       };
     }
 
     return {
       delim: '*',
-      rawHTML: rawHTML ? `</${rawHTML}>` : false
+      rawHTML: getCloseRawHTML(attrs.rawHTML)
     };
   },
 
   strike({ attrs }, entering) {
-    const { rawHTML } = attrs;
-
     if (entering) {
       return {
         delim: '~~',
-        rawHTML: rawHTML ? `<${rawHTML}>` : false
+        rawHTML: getOpenRawHTML(attrs.rawHTML)
       };
     }
 
     return {
       delim: '~~',
-      rawHTML: rawHTML ? `</${rawHTML}>` : false
+      rawHTML: getCloseRawHTML(attrs.rawHTML)
     };
   },
 
@@ -179,19 +224,17 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
 
     return {
       delim: `](${linkText}${linkUrl})`,
-      rawHTML: rawHTML ? `</${rawHTML}>` : false
+      rawHTML: getCloseRawHTML(attrs.rawHTML)
     };
   },
 
   code({ attrs }, entering, parent, index = 0) {
-    const { rawHTML } = attrs;
-
     if (entering) {
       const delim = addBackticks(parent!.child(index), -1);
 
       return {
         delim,
-        rawHTML: rawHTML ? `<${rawHTML}>` : false
+        rawHTML: getOpenRawHTML(attrs.rawHTML)
       };
     }
 
@@ -199,7 +242,7 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
 
     return {
       delim,
-      rawHTML: rawHTML ? `</${rawHTML}>` : false
+      rawHTML: getCloseRawHTML(attrs.rawHTML)
     };
   }
 };

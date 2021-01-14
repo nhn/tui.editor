@@ -4,6 +4,8 @@ import { includes } from '@/utils/common';
 import { HTMLToWwConvertorMap, FlattenHTMLToWwConvertorMap } from '@t/convertor';
 import { MdNode } from '@t/markdown';
 
+import toArray from 'tui-code-snippet/collection/toArray';
+
 const TAG_NAME = '[A-Za-z][A-Za-z0-9-]*';
 const ATTRIBUTE_NAME = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
 const UNQUOTED_VALUE = '[^"\'=<>`\\x00-\\x20]+';
@@ -56,6 +58,20 @@ function getMatchedAttributeValue(rawHTML: string, attrName: string) {
   const el = wrapper.firstChild as HTMLElement;
 
   return el.getAttribute(attrName) || '';
+}
+
+function addRawHTMLAttributeToDOM(parent: Node) {
+  toArray(parent.childNodes).forEach(child => {
+    if (child.nodeType === 1) {
+      const rawHTML = child.nodeName.toLowerCase();
+
+      (child as HTMLElement).setAttribute('data-raw-html', rawHTML);
+
+      if (child.childNodes) {
+        addRawHTMLAttributeToDOM(child);
+      }
+    }
+  });
 }
 
 function createConvertors(convertors: HTMLToWwConvertorMap) {
@@ -175,15 +191,23 @@ const convertors: HTMLToWwConvertorMap = {
     }
   },
 
-  'h1, h2, h3, h4, h5, h6': (state, node) => {
-    state.convertByDOMParser(node.literal!, true);
+  'h1, h2, h3, h4, h5, h6, blockquote, table, tableHead, tableBody, tableRow, tableBodyCell, tableHeadCell': (
+    state,
+    node
+  ) => {
+    const container = document.createElement('div');
+
+    container.innerHTML = node.literal!;
+
+    addRawHTMLAttributeToDOM(container);
+
+    state.convertByDOMParser(container.innerHTML, true);
   },
 
   pre: (state, node, openTagName) => {
     const container = document.createElement('div');
-    const content = node.literal!;
 
-    container.innerHTML = content;
+    container.innerHTML = node.literal!;
 
     const literal = container.firstChild?.firstChild?.textContent;
 
@@ -212,7 +236,13 @@ const convertors: HTMLToWwConvertorMap = {
         }
       }
     } else {
-      state.convertByDOMParser(node.literal!, true);
+      const container = document.createElement('div');
+
+      container.innerHTML = node.literal!;
+
+      addRawHTMLAttributeToDOM(container);
+
+      state.convertByDOMParser(container.innerHTML, true);
     }
   },
 
@@ -241,7 +271,13 @@ const convertors: HTMLToWwConvertorMap = {
         state.closeNode();
       }
     } else {
-      state.convertByDOMParser(node.literal!, true);
+      const container = document.createElement('div');
+
+      container.innerHTML = node.literal!;
+
+      addRawHTMLAttributeToDOM(container);
+
+      state.convertByDOMParser(container.innerHTML, true);
     }
   }
 };

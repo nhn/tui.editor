@@ -46,7 +46,7 @@ export type ToWwConvertorMap = Partial<Record<MdNodeType, ToWwConvertor>>;
 export type FirstDelimFn = (index: number) => string;
 
 export interface ToMdConvertorStateType {
-  inCell: boolean;
+  flushing: boolean;
   flushClose(size?: number): void;
   wrapBlock(delim: string, firstDelim: string | null, node: ProsemirrorNode, fn: () => void): void;
   ensureNewLine(): void;

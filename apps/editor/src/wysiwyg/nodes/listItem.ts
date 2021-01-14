@@ -21,9 +21,12 @@ export class ListItem extends NodeSchema {
         {
           tag: 'li',
           getAttrs(dom: Node | string) {
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+
             return {
               task: (dom as HTMLElement).hasAttribute('data-task'),
-              checked: !!(dom as HTMLElement).getAttribute('data-task-checked')
+              checked: (dom as HTMLElement).hasAttribute('data-task-checked'),
+              ...(rawHTML && { rawHTML })
             };
           }
         }

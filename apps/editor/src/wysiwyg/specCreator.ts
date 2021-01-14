@@ -17,7 +17,6 @@ import { TableHeadCell } from './nodes/tableHeadCell';
 import { TableBodyCell } from './nodes/tableBodyCell';
 import { Image } from './nodes/image';
 import { ThematicBreak } from './nodes/thematicBreak';
-import { LineBreak } from './nodes/lineBreak';
 
 import { Strong } from './marks/strong';
 import { Emph } from './marks/emph';
@@ -51,7 +50,6 @@ export function createSpecs(toDOMAdaptor: ToDOMAdaptor) {
     new Strike(toDOMAdaptor),
     new Link(toDOMAdaptor),
     new Code(toDOMAdaptor),
-    new CustomBlock(),
-    new LineBreak()
+    new CustomBlock()
   ]);
 }
