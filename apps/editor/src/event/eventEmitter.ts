@@ -82,7 +82,8 @@ const eventTypeList: EventTypes[] = [
   'requireScrollSync',
   'requireScrollIntoView',
   'setCodeBlockLanguages',
-  'toggleScrollSync'
+  'toggleScrollSync',
+  'openContextMenu'
 ];
 
 /**

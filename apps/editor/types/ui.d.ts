@@ -55,8 +55,8 @@ export interface ComponentClass {
 }
 
 export interface Pos {
-  left: string;
-  top: string;
+  left: string | number;
+  top: string | number;
 }
 
 export type TooltipStyle = {
@@ -96,3 +96,9 @@ export type ToolbarItem = (string | ToolbarButton) | (string | ToolbarButton)[];
 export type ExecCommand = (command: string, payload?: Record<string, any>) => void;
 export type HideLayer = () => void;
 export type SetLayerInfo = (info: LayerInfo) => void;
+
+export interface ContextMenuItem {
+  label: string;
+  className?: string;
+  onClick?: () => void;
+}

@@ -547,16 +547,15 @@
   text-align: center;
 }
 
-.te-popup-table-utils {
+.te-context-menu {
+  position: absolute;
   width: auto;
   min-width: 120px;
+  font-size: 12px;
+  border: 1px solid #cacaca;
 }
 
-.te-popup-table-utils .tui-popup-body {
-  padding: 0px;
-}
-
-.te-popup-table-utils button {
+.te-context-menu button {
   display: block;
   width: 100%;
   background-color: #fff;
@@ -569,22 +568,22 @@
   color: #777;
 }
 
-.te-popup-table-utils button:hover {
+.te-context-menu button:hover {
   background-color: #f4f4f4;
 }
 
-.te-popup-table-utils hr {
+.te-context-menu hr {
   margin: 0;
   background-color: #cacaca;
   border-style: none;
   height: 1px;
 }
 
-.te-popup-table-utils .te-context-menu-disabled {
+.te-context-menu .te-context-menu-disabled {
   color: #ccc;
 }
 
-.te-popup-table-utils .te-context-menu-disabled:hover {
+.te-context-menu .te-context-menu-disabled:hover {
   background-color: #fff;
 }
 

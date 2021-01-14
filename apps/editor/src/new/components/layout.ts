@@ -3,9 +3,10 @@ import { Emitter } from '@t/event';
 import { ToolbarItem, ToolbarGroupInfo } from '@t/ui';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
+import { groupingToolbarItems } from '../toolbarItemFactory';
 import { Switch } from './switch';
 import { Toolbar } from './toolbar/toolbar';
-import { groupingToolbarItems } from '../toolbarItemFactory';
+import { ContextMenu } from './contextMenu';
 
 interface Props {
   eventEmitter: Emitter;
@@ -83,6 +84,7 @@ export class Layout extends Component<Props, State> {
           html`
             <${Switch} eventEmitter=${eventEmitter} editorType=${editorType} />
           `}
+        <${ContextMenu} eventEmitter=${eventEmitter} />
       </div>
     `;
   }
