@@ -55,6 +55,16 @@ export default class MdEditor extends EditorBase {
     this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
     this.createClipboard();
+    this.eventEmitter.listen('changePreviewTabWrite', () => this.toggleActive(true));
+    this.eventEmitter.listen('changePreviewTabPreview', () => this.toggleActive(false));
+  }
+
+  private toggleActive(active: boolean) {
+    if (active) {
+      this.el!.classList.add('te-tab-active');
+    } else {
+      this.el!.classList.remove('te-tab-active');
+    }
   }
 
   private createClipboard() {

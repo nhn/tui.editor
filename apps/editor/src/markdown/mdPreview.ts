@@ -84,6 +84,14 @@ class MarkdownPreview extends Preview {
     this.initEvent(highlight);
   }
 
+  private toggleActive(active: boolean) {
+    if (active) {
+      this.el!.classList.add('te-tab-active');
+    } else {
+      this.el!.classList.remove('te-tab-active');
+    }
+  }
+
   private initEvent(highlight: boolean) {
     this.eventEmitter.listen('contentChangedFromMarkdown', this.update.bind(this));
     // need to implement a listener function for 'previewNeedsRefresh' event
@@ -105,6 +113,8 @@ class MarkdownPreview extends Preview {
         data: findAdjacentElementToScrollTop(event.target.scrollTop, this.previewContent)
       });
     });
+    this.eventEmitter.listen('changePreviewTabPreview', () => this.toggleActive(true));
+    this.eventEmitter.listen('changePreviewTabWrite', () => this.toggleActive(false));
   }
 
   private removeHighlight() {

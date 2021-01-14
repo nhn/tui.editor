@@ -122,6 +122,9 @@ export class Layout extends Component<Props, State> {
 
   changePreviewStyle(previewStyle: PreviewStyle) {
     this.setState({ previewStyle, toolbarItems: this.getToolbarItems(previewStyle === 'tab') });
+    if (previewStyle === 'tab') {
+      this.props.eventEmitter.emit('changePreviewTabWrite');
+    }
   }
 
   hide() {

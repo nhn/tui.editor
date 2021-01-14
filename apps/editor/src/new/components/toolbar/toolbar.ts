@@ -72,6 +72,12 @@ export class Toolbar extends Component<Props, State> {
     this.hideLayer();
   }
 
+  updated() {
+    if (this.props.previewStyle === 'vertical' && this.state.activeTab !== 'write') {
+      this.setState({ activeTab: 'write' });
+    }
+  }
+
   render() {
     const { previewStyle, eventEmitter, toolbarItems } = this.props;
     const { layerInfo, showLayer, activeTab } = this.state;
