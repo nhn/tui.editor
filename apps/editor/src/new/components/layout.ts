@@ -1,10 +1,11 @@
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
-import { ToolbarItem } from '@t/ui';
+import { ToolbarItem, ToolbarGroupInfo } from '@t/ui';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
 import { Switch } from './switch';
 import { Toolbar } from './toolbar/toolbar';
+import { groupingToolbarItems } from '../toolbarItemFactory';
 
 interface Props {
   eventEmitter: Emitter;
@@ -20,6 +21,7 @@ interface Props {
 interface State {
   editorType: EditorType;
   previewStyle: PreviewStyle;
+  toolbarItems: ToolbarGroupInfo[];
   hide: boolean;
 }
 // @TODO: arrange class prefix
@@ -29,9 +31,14 @@ export class Layout extends Component<Props, State> {
     this.state = {
       editorType: 'markdown',
       previewStyle: 'vertical',
+      toolbarItems: groupingToolbarItems(props.toolbarItems),
       hide: false
     };
 
+    this.show = this.show.bind(this);
+    this.hide = this.hide.bind(this);
+    this.changeMode = this.changeMode.bind(this);
+    this.changePreviewStyle = this.changePreviewStyle.bind(this);
     this.addEvent();
   }
 
@@ -44,10 +51,11 @@ export class Layout extends Component<Props, State> {
   }
 
   render() {
-    const { eventEmitter, toolbarItems, hideModeSwitch } = this.props;
-    const { hide, previewStyle, editorType } = this.state;
+    const { eventEmitter, hideModeSwitch } = this.props;
+    const { hide, previewStyle, editorType, toolbarItems } = this.state;
     const displayClassName = hide ? ' te-hide' : '';
     const editorTypeClassName = editorType === 'markdown' ? 'te-md-mode' : 'te-ww-mode';
+    const previewClassName = `te-preview-style-${previewStyle === 'vertical' ? 'vertical' : 'tab'}`;
 
     return html`
       <div
@@ -63,9 +71,7 @@ export class Layout extends Component<Props, State> {
         <div class="te-editor-section" ref=${(el: HTMLElement) => (this.refs.editorSection = el)}>
           <div class="tui-editor ${editorTypeClassName}">
             <div
-              class="te-md-container ${previewStyle === 'vertical'
-                ? 'te-preview-style-vertical'
-                : 'te-preview-style-tab'}"
+              class="te-md-container ${previewClassName}"
               ref=${(el: HTMLElement) => (this.refs.mdContainer = el)}
             >
               <div class="te-md-splitter"></div>
@@ -84,14 +90,36 @@ export class Layout extends Component<Props, State> {
   addEvent() {
     const { eventEmitter } = this.props;
 
-    eventEmitter.listen('hide', this.hide.bind(this));
-    eventEmitter.listen('show', this.show.bind(this));
-    eventEmitter.listen('changeMode', (editorType: EditorType) => this.setState({ editorType }));
-    eventEmitter.listen('changePreviewStyle', this.changePreviewStyle.bind(this));
+    eventEmitter.listen('hide', this.hide);
+    eventEmitter.listen('show', this.show);
+    eventEmitter.listen('changeMode', this.changeMode);
+    eventEmitter.listen('changePreviewStyle', this.changePreviewStyle);
+  }
+
+  private getToolbarItems(hideScrollSync: boolean) {
+    const { toolbarItems } = this.state;
+
+    return toolbarItems.map(group => {
+      const [scrollSync] = group.filter(item => item.name === 'scrollSync');
+
+      group.hidden = false;
+
+      if (scrollSync) {
+        scrollSync.hidden = hideScrollSync;
+        if (group.length === 1) {
+          group.hidden = hideScrollSync;
+        }
+      }
+      return group;
+    });
+  }
+
+  changeMode(editorType: EditorType) {
+    this.setState({ editorType, toolbarItems: this.getToolbarItems(editorType === 'wysiwyg') });
   }
 
   changePreviewStyle(previewStyle: PreviewStyle) {
-    this.setState({ previewStyle });
+    this.setState({ previewStyle, toolbarItems: this.getToolbarItems(previewStyle === 'tab') });
   }
 
   hide() {

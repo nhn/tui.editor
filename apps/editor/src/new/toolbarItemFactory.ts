@@ -1,6 +1,6 @@
 import isString from 'tui-code-snippet/type/isString';
 import { ToolbarButton } from '@t/editor';
-import { LayerInfo, Pos, ToolbarItemInfo } from '@t/ui';
+import { LayerInfo, Pos, ToolbarItem, ToolbarItemInfo } from '@t/ui';
 import i18n from '@/i18n/i18n';
 import html from './vdom/template';
 import { HeadingLayerBody } from './components/toolbar/headingLayerBody';
@@ -10,13 +10,14 @@ import { TableLayerBody } from './components/toolbar/tableLayerBody';
 
 let toolbarItemInfoMap: Record<string, ToolbarItemInfo> | null = null;
 
-export function createToolbarItemInfo(type: string | ToolbarButton) {
+function createToolbarItemInfo(type: string | ToolbarButton) {
   toolbarItemInfoMap = toolbarItemInfoMap || createDefaultToolbarItemInfo();
 
   if (isString(type)) {
     return toolbarItemInfoMap[type];
   }
-  // @TODO
+  // @TODO: add custom toolbar option
+  // @ts-ignore
   return type as ToolbarItemInfo;
 }
 
@@ -130,7 +131,8 @@ function createDefaultToolbarItemInfo() {
     scrollSync: {
       name: 'scrollSync',
       className: 'tui-scrollsync',
-      tooltip: i18n.get('Auto scroll enabled'),
+      tooltip: i18n.get('Auto scroll disabled'),
+      activeTooltip: i18n.get('Auto scroll enabled'),
       noIcon: true,
       active: true,
       toggle: true,
@@ -183,4 +185,21 @@ export function createLayerInfo(type: string, el: HTMLElement, pos: Pos): LayerI
     default:
     // do nothing
   }
+}
+
+export function groupingToolbarItems(toolbarItems: ToolbarItem[]) {
+  let needNested = false;
+
+  return toolbarItems.reduce((acc: ToolbarItemInfo[][], item) => {
+    if (Array.isArray(item)) {
+      needNested = false;
+      acc.push(item.map(type => createToolbarItemInfo(type)));
+    } else if (needNested) {
+      acc[(acc.length || 1) - 1].push(createToolbarItemInfo(item));
+    } else {
+      needNested = true;
+      acc.push([createToolbarItemInfo(item)]);
+    }
+    return acc;
+  }, []);
 }

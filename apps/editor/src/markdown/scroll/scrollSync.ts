@@ -45,7 +45,7 @@ export class ScrollSync {
 
   private blockedScroll: ScrollFrom | null = null;
 
-  private disabled = false;
+  private active = true;
 
   private mdEditor: MdEditor;
 
@@ -71,7 +71,7 @@ export class ScrollSync {
       }, 200);
     });
     this.eventEmitter.listen('scroll', ({ source, data }) => {
-      if (!this.disabled) {
+      if (this.active) {
         if (source === 'editor' && this.blockedScroll !== 'editor') {
           this.syncPreviewScrollTop();
         } else if (source === 'preview' && this.blockedScroll !== 'preview') {
@@ -79,8 +79,8 @@ export class ScrollSync {
         }
       }
     });
-    this.eventEmitter.listen('toggleScrollSync', () => {
-      this.disabled = !this.disabled;
+    this.eventEmitter.listen('toggleScrollSync', (active: boolean) => {
+      this.active = active;
     });
   }
 

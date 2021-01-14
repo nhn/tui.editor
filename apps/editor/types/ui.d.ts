@@ -1,5 +1,4 @@
 import { ToolbarButton } from './editor';
-import { Emitter } from './event';
 
 export interface Component<T = {}, R = {}> {
   props: T;
@@ -81,18 +80,19 @@ export type ToolbarItemInfo = {
   name: string;
   className: string;
   tooltip: string;
+  activeTooltip?: string;
   command?: string;
   state?: string;
+  hidden?: boolean;
   noIcon?: boolean;
   active?: boolean;
   toggle?: boolean;
 };
 
-// @TODO
+export type ToolbarGroupInfo = ToolbarItemInfo[] & { hidden?: boolean };
+// @TODO: add custom toolbar option type
 export type ToolbarItem = (string | ToolbarButton) | (string | ToolbarButton)[];
 
 export type ExecCommand = (command: string, payload?: Record<string, any>) => void;
-export type ShowTooltip = (tooltipText: string, tooltipPos: Pos) => void;
-export type HideTooltip = () => void;
 export type HideLayer = () => void;
 export type SetLayerInfo = (info: LayerInfo) => void;

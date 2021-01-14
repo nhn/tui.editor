@@ -1,25 +1,22 @@
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
-import { LayerInfo, Pos, TabInfo, ToolbarItem, ToolbarItemInfo, TooltipStyle } from '@t/ui';
+import { LayerInfo, TabInfo, ToolbarGroupInfo } from '@t/ui';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
-import { createToolbarItemInfo } from '../../toolbarItemFactory';
+import { ToolbarGroup } from './toolbarGroup';
 import { Layer } from '../layer';
 import { Tabs } from '../tabs';
-import { ToolbarGroup } from './toolbarGroup';
 
 type TabType = 'write' | 'preview';
 
 interface Props {
   eventEmitter: Emitter;
   previewStyle: PreviewStyle;
-  toolbarItems: ToolbarItem[];
+  toolbarItems: ToolbarGroupInfo[];
   editorType: EditorType;
 }
 
 interface State {
-  tooltipText: string | null;
-  tooltipPos: Pos | null;
   showLayer: boolean;
   layerInfo: LayerInfo;
   activeTab: TabType;
@@ -31,8 +28,6 @@ export class Toolbar extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      tooltipText: null,
-      tooltipPos: null,
       showLayer: false,
       layerInfo: {} as LayerInfo,
       activeTab: 'write'
@@ -45,8 +40,6 @@ export class Toolbar extends Component<Props, State> {
     this.toggleTab = this.toggleTab.bind(this);
     this.setLayerInfo = this.setLayerInfo.bind(this);
     this.hideLayer = this.hideLayer.bind(this);
-    this.showTooltip = this.showTooltip.bind(this);
-    this.hideTooltip = this.hideTooltip.bind(this);
   }
 
   private toggleTab(_: MouseEvent, activeTab: TabType) {
@@ -64,14 +57,6 @@ export class Toolbar extends Component<Props, State> {
     }
   }
 
-  private showTooltip(text: string, pos: Pos) {
-    this.setState({ tooltipText: text, tooltipPos: pos });
-  }
-
-  private hideTooltip() {
-    this.setState({ tooltipText: '', tooltipPos: null });
-  }
-
   private setLayerInfo(layerInfo: LayerInfo) {
     this.setState({ showLayer: true, layerInfo });
   }
@@ -87,34 +72,9 @@ export class Toolbar extends Component<Props, State> {
     this.hideLayer();
   }
 
-  private getToolbarItemInfoList() {
-    let needNested = false;
-
-    return this.props.toolbarItems.reduce((acc: ToolbarItemInfo[][], item) => {
-      if (Array.isArray(item)) {
-        needNested = false;
-        acc.push(item.map(type => createToolbarItemInfo(type)));
-      } else if (needNested) {
-        acc[(acc.length || 1) - 1].push(createToolbarItemInfo(item));
-      } else {
-        needNested = true;
-        acc.push([createToolbarItemInfo(item)]);
-      }
-      return acc;
-    }, []);
-  }
-
   render() {
-    const { previewStyle, eventEmitter } = this.props;
-    const { tooltipPos, tooltipText, layerInfo, showLayer, activeTab } = this.state;
-    const items = this.getToolbarItemInfoList();
-    const tooltipStyle: TooltipStyle = { display: 'none' };
-
-    if (tooltipPos) {
-      tooltipStyle.display = 'block';
-      tooltipStyle.left = tooltipPos.left;
-      tooltipStyle.top = tooltipPos.top;
-    }
+    const { previewStyle, eventEmitter, toolbarItems } = this.props;
+    const { layerInfo, showLayer, activeTab } = this.state;
 
     return html`
       <div class="te-toolbar-section">
@@ -125,22 +85,17 @@ export class Toolbar extends Component<Props, State> {
           <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
         </div>
         <div class="tui-editor-defaultUI-toolbar">
-          ${items.map(
-            (item, index) => html`
+          ${toolbarItems.map(
+            (group, index) => html`
               <${ToolbarGroup}
-                items=${item}
-                lastOrder=${index === items.length - 1}
+                group=${group}
+                hiddenDivider=${index === toolbarItems.length - 1 ||
+                  toolbarItems[index + 1]?.hidden}
                 execCommand=${this.execCommand}
-                showTooltip=${this.showTooltip}
-                hideTooltip=${this.hideTooltip}
                 setLayerInfo=${this.setLayerInfo}
               />
             `
           )}
-          <div class="tui-tooltip" style=${tooltipStyle}>
-            <div class="arrow"></div>
-            <span class="text">${tooltipText}</span>
-          </div>
         </div>
         <${Layer}
           info=${layerInfo}
