@@ -252,8 +252,8 @@ class ToastUIEditor {
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
 
     this.on('changeModeByEvent', this.changeMode.bind(this));
-    this.addCommand('markdown', 'toggleScrollSync', () => {
-      this.eventEmitter.emit('toggleScrollSync');
+    this.addCommand('markdown', 'toggleScrollSync', payload => {
+      this.eventEmitter.emit('toggleScrollSync', payload!.active);
     });
   }
 
