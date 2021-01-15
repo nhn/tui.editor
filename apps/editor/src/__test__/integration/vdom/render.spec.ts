@@ -276,7 +276,6 @@ describe('Class Component', () => {
     const spy = jest.fn();
 
     renderComponent({ updated: spy });
-    spy.mockRestore();
 
     clickHideBtn();
 
@@ -287,7 +286,6 @@ describe('Class Component', () => {
     const spy = jest.fn();
 
     renderComponent({ beforeDestroy: spy });
-    spy.mockRestore();
 
     destroy();
 
