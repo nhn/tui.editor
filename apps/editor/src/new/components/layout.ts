@@ -3,7 +3,7 @@ import { Emitter } from '@t/event';
 import { ToolbarItem, ToolbarGroupInfo } from '@t/ui';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
-import { groupingToolbarItems } from '../toolbarItemFactory';
+import { getToolbarItems, groupingToolbarItems } from '../toolbarItemFactory';
 import { Switch } from './switch';
 import { Toolbar } from './toolbar/toolbar';
 import { ContextMenu } from './contextMenu';
@@ -16,6 +16,8 @@ interface Props {
     mdPreview: HTMLElement;
     wwEditor: HTMLElement;
   };
+  previewStyle: PreviewStyle;
+  editorType: EditorType;
   toolbarItems: ToolbarItem[];
 }
 
@@ -29,10 +31,13 @@ interface State {
 export class Layout extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const { editorType, previewStyle, toolbarItems } = props;
+    const hideScrollSync = editorType === 'wysiwyg' || previewStyle === 'tab';
+
     this.state = {
-      editorType: 'markdown',
-      previewStyle: 'vertical',
-      toolbarItems: groupingToolbarItems(props.toolbarItems),
+      editorType,
+      previewStyle,
+      toolbarItems: getToolbarItems(groupingToolbarItems(toolbarItems || []), hideScrollSync),
       hide: false
     };
 
@@ -98,40 +103,29 @@ export class Layout extends Component<Props, State> {
     eventEmitter.listen('changePreviewStyle', this.changePreviewStyle);
   }
 
-  private getToolbarItems(hideScrollSync: boolean) {
-    const { toolbarItems } = this.state;
-
-    return toolbarItems.map(group => {
-      const [scrollSync] = group.filter(item => item.name === 'scrollSync');
-
-      group.hidden = false;
-
-      if (scrollSync) {
-        scrollSync.hidden = hideScrollSync;
-        if (group.length === 1) {
-          group.hidden = hideScrollSync;
-        }
-      }
-      return group;
-    });
-  }
-
-  changeMode(editorType: EditorType) {
-    this.setState({ editorType, toolbarItems: this.getToolbarItems(editorType === 'wysiwyg') });
-  }
-
-  changePreviewStyle(previewStyle: PreviewStyle) {
-    this.setState({ previewStyle, toolbarItems: this.getToolbarItems(previewStyle === 'tab') });
-    if (previewStyle === 'tab') {
-      this.props.eventEmitter.emit('changePreviewTabWrite');
+  private changeMode(editorType: EditorType) {
+    if (editorType !== this.state.editorType) {
+      this.setState({
+        editorType,
+        toolbarItems: getToolbarItems(this.state.toolbarItems, editorType === 'wysiwyg')
+      });
     }
   }
 
-  hide() {
+  private changePreviewStyle(previewStyle: PreviewStyle) {
+    if (previewStyle !== this.state.previewStyle) {
+      this.setState({
+        previewStyle,
+        toolbarItems: getToolbarItems(this.state.toolbarItems, previewStyle === 'tab')
+      });
+    }
+  }
+
+  private hide() {
     this.setState({ hide: true });
   }
 
-  show() {
+  private show() {
     this.setState({ hide: false });
   }
 }

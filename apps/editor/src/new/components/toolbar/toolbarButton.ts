@@ -60,9 +60,11 @@ export class ToolbarButton extends Component<Props, State> {
     const rect = this.getBound();
     const left = rect.left + LAYER_INDENT;
     const top = rect.top + LAYER_INDENT;
-    const newState = { active: !this.state.active };
+    let newState;
 
     if (toggle) {
+      newState = { active: !this.state.active };
+
       this.setState(newState);
     }
     if (command) {

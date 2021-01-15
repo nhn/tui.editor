@@ -210,6 +210,8 @@ class ToastUIEditor {
           slots=${this.getEditorElements()}
           hideModeSwitch=${this.options.hideModeSwitch}
           toolbarItems=${this.options.toolbarItems}
+          previewStyle=${this.options.previewStyle}
+          editorType=${this.options.initialEditType}
         />
       ` as VNode
     );
@@ -217,10 +219,6 @@ class ToastUIEditor {
     if (plugins) {
       invokePlugins(plugins, this);
     }
-
-    this.changePreviewStyle(this.options.previewStyle);
-
-    this.changeMode(this.options.initialEditType, true);
 
     this.setMinHeight(this.options.minHeight);
 
@@ -280,9 +278,10 @@ class ToastUIEditor {
    * @param {string} style - 'tab'|'vertical'
    */
   changePreviewStyle(style: PreviewStyle) {
-    this.mdPreviewStyle = style;
-    this.eventEmitter.emit('changePreviewStyle', style);
-    this.eventEmitter.emit('previewNeedsRefresh', this.getMarkdown());
+    if (this.mdPreviewStyle !== style) {
+      this.mdPreviewStyle = style;
+      this.eventEmitter.emit('changePreviewStyle', style);
+    }
   }
 
   /**

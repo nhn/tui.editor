@@ -62,8 +62,10 @@ export default class MdEditor extends EditorBase {
   private toggleActive(active: boolean) {
     if (active) {
       this.el!.classList.add('te-tab-active');
+      this.focus();
     } else {
       this.el!.classList.remove('te-tab-active');
+      this.blur();
     }
   }
 

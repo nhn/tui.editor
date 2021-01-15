@@ -1,6 +1,6 @@
 import isString from 'tui-code-snippet/type/isString';
 import { ToolbarButton } from '@t/editor';
-import { LayerInfo, Pos, ToolbarItem, ToolbarItemInfo } from '@t/ui';
+import { LayerInfo, Pos, ToolbarGroupInfo, ToolbarItem, ToolbarItemInfo } from '@t/ui';
 import i18n from '@/i18n/i18n';
 import html from './vdom/template';
 import { HeadingLayerBody } from './components/toolbar/headingLayerBody';
@@ -202,4 +202,20 @@ export function groupingToolbarItems(toolbarItems: ToolbarItem[]) {
     }
     return acc;
   }, []);
+}
+
+export function getToolbarItems(toolbarItems: ToolbarGroupInfo[], hideScrollSync: boolean) {
+  return toolbarItems.map(group => {
+    const [scrollSync] = group.filter(item => item.name === 'scrollSync');
+
+    group.hidden = false;
+
+    if (scrollSync) {
+      scrollSync.hidden = hideScrollSync;
+      if (group.length === 1) {
+        group.hidden = hideScrollSync;
+      }
+    }
+    return group;
+  });
 }

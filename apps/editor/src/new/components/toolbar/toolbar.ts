@@ -42,7 +42,7 @@ export class Toolbar extends Component<Props, State> {
     this.hideLayer = this.hideLayer.bind(this);
   }
 
-  private toggleTab(_: MouseEvent, activeTab: TabType) {
+  private toggleTab(_: MouseEvent | null, activeTab: TabType) {
     const { eventEmitter } = this.props;
 
     if (this.state.activeTab !== activeTab) {
@@ -62,7 +62,9 @@ export class Toolbar extends Component<Props, State> {
   }
 
   private hideLayer() {
-    this.setState({ showLayer: false });
+    if (this.state.showLayer) {
+      this.setState({ showLayer: false });
+    }
   }
 
   private execCommand(command: string, payload?: Record<string, any>) {
@@ -72,21 +74,33 @@ export class Toolbar extends Component<Props, State> {
     this.hideLayer();
   }
 
-  updated() {
-    if (this.props.previewStyle === 'vertical' && this.state.activeTab !== 'write') {
-      this.setState({ activeTab: 'write' });
+  mounted() {
+    if (this.props.previewStyle === 'tab') {
+      this.props.eventEmitter.emit('changePreviewTabWrite');
+    }
+  }
+
+  updated(prevProps: Props) {
+    if (
+      (this.props.previewStyle === 'vertical' ||
+        (prevProps.editorType !== this.props.editorType && this.props.editorType === 'markdown')) &&
+      this.state.activeTab !== 'write'
+    ) {
+      this.toggleTab(null, 'write');
     }
   }
 
   render() {
-    const { previewStyle, eventEmitter, toolbarItems } = this.props;
+    const { previewStyle, eventEmitter, toolbarItems, editorType } = this.props;
     const { layerInfo, showLayer, activeTab } = this.state;
 
     return html`
       <div class="te-toolbar-section">
         <div
           class="te-markdown-tab-section"
-          style="display: ${previewStyle === 'tab' ? 'block' : 'none'}"
+          style="display: ${editorType === 'wysiwyg' || previewStyle === 'vertical'
+            ? 'none'
+            : 'block'}"
         >
           <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
         </div>
