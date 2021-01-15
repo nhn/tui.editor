@@ -8,7 +8,7 @@ export interface Component<T = {}, R = {}> {
   render(): any;
   addEvent?(): void;
   mounted?(): void;
-  updated?(): void;
+  updated?(prevProps: T): void;
   beforeDestroy?(): void;
 }
 

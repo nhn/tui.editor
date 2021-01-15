@@ -150,7 +150,7 @@ export class Table extends Mark {
     };
   }
 
-  commands(): EditorCommand<Payload> {
+  private addTable(): EditorCommand<Payload> {
     return payload => ({ selection, doc, tr, schema }, dispatch) => {
       const { colLen, rowLen } = payload!;
       const [, to] = resolveSelectionPos(selection);
@@ -166,6 +166,10 @@ export class Table extends Mark {
 
       return true;
     };
+  }
+
+  commands() {
+    return { addTable: this.addTable() };
   }
 
   keymaps() {

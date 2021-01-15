@@ -93,5 +93,4 @@ export type EventTypes =
   | 'requireScrollSync'
   | 'requireScrollIntoView'
   | 'setCodeBlockLanguages'
-  | 'toggleScrollSync'
-  | 'openContextMenu';
+  | 'toggleScrollSync';

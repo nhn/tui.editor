@@ -22,11 +22,12 @@ export class ContextMenu extends Component<Props, State> {
       pos: null,
       menuGroups: []
     };
+    this.addEvent();
     this.handleClickDocument = this.handleClickDocument.bind(this);
   }
 
   addEvent() {
-    this.props.eventEmitter.listen('openContextMenu', ({ pos, menuGroups }) => {
+    this.props.eventEmitter.listen('contextmenu', ({ pos, menuGroups }) => {
       this.setState({ pos, menuGroups });
     });
   }

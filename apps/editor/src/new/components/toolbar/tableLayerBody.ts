@@ -42,7 +42,7 @@ export class TableLayerBody extends Component<Props, State> {
   }
 
   private execCommand() {
-    this.props.execCommand('table', {
+    this.props.execCommand('addTable', {
       rowLen: this.state.rowIdx + 1,
       colLen: this.state.colIdx + 1
     });
