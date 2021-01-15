@@ -30,6 +30,8 @@ export const toWwConvertors: ToWwConvertorMap = {
     if (entering) {
       const { paragraph } = state.schema.nodes;
 
+      // The `\n\n` entered in markdown separates the paragraph.
+      // When changing to wysiwyg, a newline is added between the two paragraphs.
       if (node.prev?.type === 'paragraph') {
         state.openNode(paragraph);
         state.closeNode();

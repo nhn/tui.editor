@@ -42,13 +42,8 @@ function isListNode({ type, literal }: MdNode) {
 }
 
 function getListItemAttrs({ literal }: MdNode) {
-  const container = document.createElement('div');
-
-  container.innerHTML = literal!;
-
-  const listItem = container.firstChild as HTMLElement;
-  const task = listItem.hasAttribute('data-task');
-  const checked = listItem.hasAttribute('data-task-checked');
+  const task = /data-task/.test(literal!);
+  const checked = /data-task-checked/.test(literal!);
 
   return { task, checked };
 }
@@ -165,7 +160,10 @@ const convertors: HTMLToWwConvertorMap = {
       if (node.prev) {
         state.openNode(paragraph);
       }
-      state.closeNode();
+
+      if (node.next) {
+        state.closeNode();
+      }
     } else if (node.parent?.type === 'tableCell') {
       if (node.prev?.type === 'text') {
         state.closeNode();

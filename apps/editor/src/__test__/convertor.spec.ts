@@ -339,6 +339,13 @@ describe('Convertor', () => {
 
         <br>
         qux
+        <br>
+
+        quux
+
+        <br>
+
+        quuz
       `;
       const expected = source`
         foo
@@ -352,6 +359,13 @@ describe('Convertor', () => {
 
         <br>
         qux
+
+        <br>
+        quux
+
+        <br>
+        <br>
+        quuz
       `;
 
       assertConverting(markdown, expected);
