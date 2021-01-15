@@ -29,7 +29,7 @@ export interface ToWwConvertorStateType {
   openNode(type: NodeType, attrs?: Attrs): void;
   closeNode(): ProsemirrorNode | null;
   convertNode(mdNode: MdNode): ProsemirrorNode | null;
-  convertByDOMParser(mdNode: MdNode): void;
+  convertByDOMParser(html: string, hasContainer?: boolean): void;
 }
 
 type ToWwConvertor = (

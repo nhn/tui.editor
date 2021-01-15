@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 import { wrapInList } from 'prosemirror-schema-list';
 
 import Node from '@/spec/node';
@@ -15,13 +15,16 @@ export class BulletList extends Node {
     return {
       content: 'listItem+',
       group: 'block',
+      attrs: {
+        rawHTML: { default: null }
+      },
       parseDOM: [
         {
           tag: 'ul'
         }
       ],
-      toDOM(): DOMOutputSpecArray {
-        return ['ul', 0];
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+        return [attrs.rawHTML || 'ul', 0];
       }
     };
   }

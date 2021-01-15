@@ -43,47 +43,72 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   paragraph(state, node, parent, index = 0) {
-    if (node.childCount) {
+    if (state.inCell) {
       state.convertInline(node);
-      state.closeBlock(node);
-    } else if (parent && index > 0) {
-      // this condition is for adding <br> from the case
-      // where there are two or more blank lines in the editor
-      const prevNode = parent.child(index - 1);
-      const blankLine =
-        node.childCount === 0 && prevNode.type.name === 'paragraph' && prevNode.childCount === 0;
+    } else {
+      const firstChildNode = index === 0;
+      const prevNode = !firstChildNode && parent!.child(index - 1);
+      const prevEmptyNode = prevNode && prevNode.childCount === 0;
+      const nextNode = index < parent!.childCount - 1 && parent!.child(index + 1);
+      const nextParaNode = nextNode && nextNode.type.name === 'paragraph';
+      const emptyNode = node.childCount === 0;
 
-      if (blankLine) {
+      if (emptyNode && prevEmptyNode) {
         state.write('<br>\n');
+      } else if (emptyNode && !prevEmptyNode && !firstChildNode) {
+        state.write('\n');
+      } else {
+        state.convertInline(node);
+
+        if (nextParaNode) {
+          state.write('\n');
+        } else {
+          state.closeBlock(node);
+        }
       }
     }
   },
 
   heading(state, node) {
-    state.write(`${state.repeat('#', node.attrs.level)} `);
-    state.convertInline(node);
-    state.closeBlock(node);
+    const { level, headingType } = node.attrs;
+
+    if (headingType === 'atx') {
+      state.write(`${state.repeat('#', node.attrs.level)} `);
+      state.convertInline(node);
+      state.closeBlock(node);
+    } else {
+      state.convertInline(node);
+      state.ensureNewLine();
+      state.write(level === 1 ? '===' : '---');
+      state.closeBlock(node);
+    }
   },
 
   codeBlock(state, node) {
-    state.write(`\`\`\`${node.attrs.params || ''}\n`);
-    state.text(node.textContent, false);
-    state.ensureNewLine();
-    state.write('```');
-    state.closeBlock(node);
+    if (node.attrs.rawHTML) {
+      state.convertRawHTMLBlockNode(node, node.attrs.rawHTML);
+      state.closeBlock(node);
+    } else {
+      state.write(`\`\`\`${node.attrs.params || ''}`);
+      state.ensureNewLine();
+      state.text(node.textContent, false);
+      state.ensureNewLine();
+      state.write('```');
+      state.closeBlock(node);
+    }
   },
 
   bulletList(state, node) {
-    if (state.inCell) {
-      state.convertRawHTMLBlockNode(node, 'ul');
+    if (node.attrs.rawHTML) {
+      state.convertRawHTMLBlockNode(node, node.attrs.rawHTML);
     } else {
       state.convertList(node, '  ', () => `${node.attrs.bullet || '*'} `);
     }
   },
 
   orderedList(state, node) {
-    if (state.inCell) {
-      state.convertRawHTMLBlockNode(node, 'ol');
+    if (node.attrs.rawHTML) {
+      state.convertRawHTMLBlockNode(node, node.attrs.rawHTML);
     } else {
       const start = node.attrs.order || 1;
       const maxWidth = String(start + node.childCount - 1).length;
@@ -98,15 +123,15 @@ const nodes: ToMdNodeConvertorMap = {
   },
 
   listItem(state, node) {
-    const { task, checked } = node.attrs;
+    const { task, checked, rawHTML } = node.attrs;
 
-    if (state.inCell) {
+    if (rawHTML) {
       const className = task ? ` class="task-list-item${checked ? ' checked' : ''}"` : '';
-      const dataset = task ? ` data-te-task` : '';
+      const dataset = task ? ` data-task${checked ? ` data-task-checked` : ''}` : '';
 
-      state.write(`<li${className}${dataset}>`);
+      state.write(`<${rawHTML}${className}${dataset}>`);
       state.convertNode(node);
-      state.write('</li>');
+      state.write(`</${rawHTML}>`);
     } else {
       if (task) {
         state.write(`[${checked ? 'x' : ' '}] `);
@@ -140,10 +165,6 @@ const nodes: ToMdNodeConvertorMap = {
   thematicBreak(state, node) {
     state.write(node.attrs.rawHTML ? `<${node.attrs.rawHTML}>` : '***');
     state.closeBlock(node);
-  },
-
-  hardBreak(state) {
-    state.write(state.inCell ? '<br>' : '\n');
   },
 
   table(state, node) {

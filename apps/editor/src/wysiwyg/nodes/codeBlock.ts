@@ -16,7 +16,8 @@ export class CodeBlock extends NodeSchema {
       group: 'block',
       attrs: {
         class: { default: null },
-        language: { default: null }
+        language: { default: null },
+        rawHTML: { default: null }
       },
       code: true,
       defining: true,
@@ -37,7 +38,7 @@ export class CodeBlock extends NodeSchema {
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         return [
-          'pre',
+          attrs.rawHTML || 'pre',
           { class: attrs.class || null },
           ['code', { 'data-language': attrs.language || null }, 0]
         ];
