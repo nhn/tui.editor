@@ -3,6 +3,8 @@ import { toggleMark } from 'prosemirror-commands';
 
 import Mark from '@/spec/mark';
 import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
+import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
+import { createText } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
 
@@ -15,15 +17,18 @@ export class Link extends Mark {
     return {
       attrs: {
         linkUrl: { default: '' },
-        linkText: { default: false }
+        linkText: { default: null },
+        rawHTML: { default: null }
       },
       inclusive: false,
       parseDOM: [
         {
           tag: 'a[href]',
           getAttrs(dom: Node | string) {
+            const href = (dom as HTMLElement).getAttribute('href') || '';
+
             return {
-              linkUrl: (dom as HTMLElement).getAttribute('href'),
+              linkUrl: sanitizeXSSAttributeValue(href),
               linkText: (dom as HTMLElement).textContent
             };
           }
@@ -31,7 +36,7 @@ export class Link extends Mark {
       ],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         return [
-          'a',
+          attrs.rawHTML || 'a',
           {
             href: attrs.linkUrl
           }
@@ -55,11 +60,10 @@ export class Link extends Mark {
           linkUrl: replaceMarkdownText(decodeURIGraceful(linkUrl), true),
           linkText: replaceMarkdownText(linkText, false)
         };
+        const marks = [schema.mark('link', attrs)];
+        const node = createText(schema, linkText, marks, false);
 
-        // @TODO seperate createText() on manipulation.ts and replace this function
-        const textNode = schema.text(linkText, [schema.mark('link', attrs)]);
-
-        tr.replaceRangeWith(from, to, textNode);
+        tr.replaceRangeWith(from, to, node);
 
         dispatch!(tr.scrollIntoView());
 

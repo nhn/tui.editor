@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
 import Mark from '@/spec/mark';
@@ -12,9 +12,12 @@ export class Strike extends Mark {
 
   get defaultSchema() {
     return {
+      attrs: {
+        rawHTML: { default: null }
+      },
       parseDOM: [{ tag: 's' }, { tag: 'del' }],
-      toDOM(): DOMOutputSpecArray {
-        return ['del'];
+      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
+        return [attrs.rawHTML || 'del'];
       }
     };
   }

@@ -19,7 +19,8 @@ export class ListItem extends NodeSchema {
       group: 'block',
       attrs: {
         task: { default: false },
-        checked: { default: false }
+        checked: { default: false },
+        rawHTML: { default: null }
       },
       parseDOM: [
         {
@@ -46,7 +47,7 @@ export class ListItem extends NodeSchema {
         }
 
         return [
-          'li',
+          attrs.rawHTML || 'li',
           {
             class: classNames.join(' '),
             'data-task': task,

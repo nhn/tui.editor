@@ -29,6 +29,7 @@ export interface ToWwConvertorStateType {
   openNode(type: NodeType, attrs?: Attrs): void;
   closeNode(): ProsemirrorNode | null;
   convertNode(mdNode: MdNode): ProsemirrorNode | null;
+  convertByDOMParser(html: string, hasContainer?: boolean): void;
 }
 
 type ToWwConvertor = (
@@ -45,6 +46,7 @@ export type ToWwConvertorMap = Partial<Record<MdNodeType, ToWwConvertor>>;
 export type FirstDelimFn = (index: number) => string;
 
 export interface ToMdConvertorStateType {
+  inCell: boolean;
   flushClose(size?: number): void;
   wrapBlock(delim: string, firstDelim: string | null, node: ProsemirrorNode, fn: () => void): void;
   ensureNewLine(): void;
@@ -56,6 +58,7 @@ export interface ToMdConvertorStateType {
   convertList(node: ProsemirrorNode, delim: string, firstDelimFn: FirstDelimFn): void;
   convertTableCell(node: ProsemirrorNode): void;
   convertNode(parent: ProsemirrorNode): string;
+  convertRawHTMLBlockNode(node: ProsemirrorNode, rawHTML: string): void;
   escape(str: string, startOfLine?: boolean): string;
   quote(str: string): string;
   repeat(str: string, count: number): string;
@@ -101,4 +104,17 @@ export interface ToMdConvertorMap {
 export interface ToDOMAdaptor {
   getToDOM(type: string): ((node: ProsemirrorNode | Mark) => DOMOutputSpecArray) | null;
   getToDOMNode(type: string): ((node: ProsemirrorNode | Mark) => Node) | null;
+}
+
+type HTMLToWwConvertor = (state: ToWwConvertorStateType, node: MdNode, openTagName: string) => void;
+
+export type HTMLToWwConvertorMap = Partial<Record<string, HTMLToWwConvertor>>;
+
+export interface FlattenHTMLToWwConvertorMap {
+  [k: string]: HTMLToWwConvertor;
+}
+
+export interface ToMdMarkConvertors {
+  nodes: ToMdNodeConvertorMap;
+  marks: ToMdMarkConvertorMap;
 }

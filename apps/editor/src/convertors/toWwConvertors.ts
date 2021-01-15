@@ -1,5 +1,6 @@
 import { ToWwConvertorMap } from '@t/convertor';
 import {
+  MdNode,
   HeadingMdNode,
   CodeBlockMdNode,
   ListItemMdNode,
@@ -8,8 +9,16 @@ import {
   CustomBlockMdNode
 } from '@t/markdown';
 
-function getTextWithoutTrailingNewline(text: string) {
-  return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
+import { includes } from '@/utils/common';
+
+import { reHTMLTag, htmlToWwConvertors, getTextWithoutTrailingNewline } from './htmlToWwConvertors';
+
+function isBRTag(node: MdNode) {
+  return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);
+}
+
+function isInlineNode({ type }: MdNode) {
+  return includes(['text', 'strong', 'emph', 'strike', 'image', 'link', 'code'], type);
 }
 
 export const toWwConvertors: ToWwConvertorMap = {
@@ -17,10 +26,17 @@ export const toWwConvertors: ToWwConvertorMap = {
     state.addText(node.literal || '');
   },
 
-  paragraph(state, _, { entering }) {
-    const { paragraph } = state.schema.nodes;
-
+  paragraph(state, node, { entering }) {
     if (entering) {
+      const { paragraph } = state.schema.nodes;
+
+      // The `\n\n` entered in markdown separates the paragraph.
+      // When changing to wysiwyg, a newline is added between the two paragraphs.
+      if (node.prev?.type === 'paragraph') {
+        state.openNode(paragraph);
+        state.closeNode();
+      }
+
       state.openNode(paragraph);
     } else {
       state.closeNode();
@@ -28,10 +44,10 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   heading(state, node, { entering }) {
-    const { heading } = state.schema.nodes;
-
     if (entering) {
-      state.openNode(heading, { level: (node as HeadingMdNode).level });
+      const { level, headingType } = node as HeadingMdNode;
+
+      state.openNode(state.schema.nodes.heading, { level, headingType });
     } else {
       state.closeNode();
     }
@@ -47,9 +63,8 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   list(state, node, { entering }) {
-    const { bulletList, orderedList } = state.schema.nodes;
-
     if (entering) {
+      const { bulletList, orderedList } = state.schema.nodes;
       const { type, start } = (node as ListItemMdNode).listData;
 
       if (type === 'bullet') {
@@ -79,10 +94,8 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   blockQuote(state, _, { entering }) {
-    const { blockQuote } = state.schema.nodes;
-
     if (entering) {
-      state.openNode(blockQuote);
+      state.openNode(state.schema.nodes.blockQuote);
     } else {
       state.closeNode();
     }
@@ -142,77 +155,69 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  softbreak(state) {
-    state.addText('\n');
+  softbreak(state, node) {
+    if (node.parent!.type === 'paragraph') {
+      const { prev, next } = node;
+
+      if (prev && !isBRTag(prev)) {
+        state.closeNode();
+      }
+
+      if (next && !isBRTag(next)) {
+        state.openNode(state.schema.nodes.paragraph);
+      }
+    }
   },
-
-  linebreak(state) {
-    state.addNode(state.schema.nodes.hardBreak);
-  },
-
-  /**
-   * @TODO add node
-   */
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  htmlInline() {},
-
-  /**
-   * @TODO add node
-   */
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  htmlBlock() {},
 
   // GFM specifications node
   table(state, _, { entering }) {
-    const { table } = state.schema.nodes;
-
     if (entering) {
-      state.openNode(table);
+      state.openNode(state.schema.nodes.table);
     } else {
       state.closeNode();
     }
   },
 
   tableHead(state, _, { entering }) {
-    const { tableHead } = state.schema.nodes;
-
     if (entering) {
-      state.openNode(tableHead);
+      state.openNode(state.schema.nodes.tableHead);
     } else {
       state.closeNode();
     }
   },
 
   tableBody(state, _, { entering }) {
-    const { tableBody } = state.schema.nodes;
-
     if (entering) {
-      state.openNode(tableBody);
+      state.openNode(state.schema.nodes.tableBody);
     } else {
       state.closeNode();
     }
   },
 
   tableRow(state, _, { entering }) {
-    const { tableRow } = state.schema.nodes;
-
     if (entering) {
-      state.openNode(tableRow);
+      state.openNode(state.schema.nodes.tableRow);
     } else {
       state.closeNode();
     }
   },
 
   tableCell(state, node, { entering }) {
-    const { paragraph, tableHeadCell, tableBodyCell } = state.schema.nodes;
+    const { tableHeadCell, tableBodyCell, paragraph } = state.schema.nodes;
     const tablePart = node.parent!.parent!;
     const cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
 
     if (entering) {
       state.openNode(cell);
-      state.openNode(paragraph);
+
+      if (node.firstChild && isInlineNode(node.firstChild)) {
+        state.openNode(paragraph);
+      }
     } else {
-      state.closeNode();
+      if (node.lastChild && isInlineNode(node.lastChild)) {
+        state.closeNode();
+      }
+
       state.closeNode();
     }
   },
@@ -246,6 +251,43 @@ export const toWwConvertors: ToWwConvertorMap = {
     if (!node.next) {
       state.openNode(paragraph);
       state.closeNode();
+    }
+  },
+
+  htmlInline(state, node) {
+    const matched = node.literal!.match(reHTMLTag);
+
+    if (matched) {
+      const [, openTagName, , closeTagName] = matched;
+      const type = openTagName || closeTagName;
+
+      if (type) {
+        const htmlToWwConvertor = htmlToWwConvertors[type.toLowerCase()];
+
+        if (htmlToWwConvertor) {
+          htmlToWwConvertor(state, node, openTagName);
+        }
+      }
+    }
+  },
+
+  htmlBlock(state, node) {
+    const html = node.literal!;
+    const matched = html.match(reHTMLTag);
+
+    if (matched) {
+      const [, openTagName] = matched;
+      const type = openTagName.toLowerCase();
+
+      if (type) {
+        const htmlToWwConvertor = htmlToWwConvertors[type];
+
+        if (htmlToWwConvertor) {
+          htmlToWwConvertor(state, node, openTagName);
+        } else {
+          state.convertByDOMParser(html);
+        }
+      }
     }
   }
 };

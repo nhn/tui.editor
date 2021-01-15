@@ -1,4 +1,4 @@
-import { Node as WwNode, Schema } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { MdNode } from '@t/markdown';
 import { ToWwConvertorMap, ToMdConvertorMap } from '@t/convertor';
@@ -16,7 +16,9 @@ export default class Convertor {
 
   private readonly toMdConvertors: ToMdConvertorMap;
 
-  constructor(schema: Schema) {
+  private readonly linkAttribute: Record<string, any>;
+
+  constructor(schema: Schema, linkAttribute: Record<string, any>) {
     this.schema = schema;
 
     // @TODO to be extended with public option
@@ -24,17 +26,18 @@ export default class Convertor {
 
     // @TODO to be extended with public option
     this.toMdConvertors = toMdConvertors;
+
+    this.linkAttribute = linkAttribute;
   }
 
   toWysiwygModel(mdNode: MdNode) {
-    const state = new ToWwConvertorState(this.schema, this.toWwConvertors);
+    const state = new ToWwConvertorState(this.schema, this.toWwConvertors, this.linkAttribute);
 
     return state.convertNode(mdNode);
   }
 
-  toMarkdownText(wwNode: WwNode) {
-    const { nodes, marks } = this.toMdConvertors;
-    const state = new ToMdConvertorState(nodes, marks);
+  toMarkdownText(wwNode: ProsemirrorNode) {
+    const state = new ToMdConvertorState(this.toMdConvertors);
 
     return state.convertNode(wwNode);
   }

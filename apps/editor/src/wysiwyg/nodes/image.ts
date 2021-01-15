@@ -2,6 +2,7 @@ import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
+import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 
 import { EditorCommand } from '@t/spec';
 
@@ -15,7 +16,8 @@ export class Image extends NodeSchema {
       inline: true,
       attrs: {
         imageUrl: { default: '' },
-        altText: { default: null }
+        altText: { default: null },
+        rawHTML: { default: null }
       },
       group: 'inline',
       selectable: false,
@@ -23,21 +25,21 @@ export class Image extends NodeSchema {
         {
           tag: 'img[src]',
           getAttrs(dom: Node | string) {
+            const imageUrl = (dom as HTMLElement).getAttribute('src') || '';
+
             return {
-              imageUrl: (dom as HTMLElement).getAttribute('src'),
+              imageUrl: sanitizeXSSAttributeValue(imageUrl),
               altText: (dom as HTMLElement).getAttribute('alt')
             };
           }
         }
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        const { imageUrl, altText } = attrs;
-
         return [
-          'img',
+          attrs.rawHTML || 'img',
           {
-            src: imageUrl,
-            ...(altText && { alt: altText })
+            src: attrs.imageUrl,
+            ...(attrs.altText && { alt: attrs.altText })
           }
         ];
       }

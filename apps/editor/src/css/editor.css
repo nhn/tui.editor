@@ -176,6 +176,10 @@
   margin-bottom: 16px;
 }
 
+.te-ww-container .tui-editor-contents p {
+  margin: 0;
+}
+
 .te-md-mode .te-md-container {
   display: block;
   z-index: 100;

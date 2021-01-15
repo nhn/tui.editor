@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 
 import Node from '@/spec/node';
 
@@ -11,11 +11,14 @@ export class ThematicBreak extends Node {
 
   get defaultSchema() {
     return {
+      attrs: {
+        rawHTML: { default: null }
+      },
       group: 'block',
       parseDOM: [{ tag: 'hr' }],
       selectable: false,
-      toDOM(): DOMOutputSpecArray {
-        return ['div', ['hr']];
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+        return ['div', [attrs.rawHTML || 'hr']];
       }
     };
   }

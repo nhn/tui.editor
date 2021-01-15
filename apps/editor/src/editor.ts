@@ -195,7 +195,7 @@ class ToastUIEditor {
     this.setUI(this.options.UI || new DefaultUI(this));
 
     this.toastMark = new ToastMark('', {
-      disallowedHtmlBlockTags: ['br'],
+      disallowedHtmlBlockTags: ['br', 'img'],
       extendedAutolinks,
       referenceDefinition,
       disallowDeepHeading: true,
@@ -221,7 +221,7 @@ class ToastUIEditor {
       wwToDOMAdaptor
     );
 
-    this.convertor = new Convertor(this.wwEditor.getSchema());
+    this.convertor = new Convertor(this.wwEditor.getSchema(), linkAttribute);
 
     if (plugins) {
       invokePlugins(plugins, this);

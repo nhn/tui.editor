@@ -1,8 +1,9 @@
-import { Schema, Node, NodeType, Mark, MarkType } from 'prosemirror-model';
+import { Schema, Node, NodeType, Mark, MarkType, DOMParser } from 'prosemirror-model';
+
 import { ToWwConvertorMap, StackItem, Attrs } from '@t/convertor';
 import { MdNode } from '@t/markdown';
 
-function mergeMarkText(a: Node, b: Node) {
+export function mergeMarkText(a: Node, b: Node) {
   if (a.isText && b.isText && Mark.sameSet(a.marks, b.marks)) {
     // @ts-ignore
     // type is not defined for "withText" in prosemirror-model
@@ -21,7 +22,7 @@ export default class ToWwConvertorState {
 
   private marks: Mark[];
 
-  constructor(schema: Schema, convertors: ToWwConvertorMap) {
+  constructor(schema: Schema, convertors: ToWwConvertorMap, linkAttribute: Record<string, any>) {
     this.schema = schema;
     this.convertors = convertors;
     this.stack = [{ type: this.schema.topNodeType, attrs: null, content: [] }];
@@ -87,6 +88,17 @@ export default class ToWwConvertorState {
     return this.addNode(type, attrs, content);
   }
 
+  convertByDOMParser(html: string, hasContainer = false) {
+    const container = document.createElement('div');
+
+    container.innerHTML = html;
+
+    const el = hasContainer ? container : container.firstChild!;
+    const doc = DOMParser.fromSchema(this.schema).parse(el);
+
+    doc.content.forEach(node => this.push(node));
+  }
+
   private convert(mdNode: MdNode) {
     const walker = mdNode.walker();
     let event = walker.next();
@@ -120,12 +132,10 @@ export default class ToWwConvertorState {
   convertNode(mdNode: MdNode) {
     this.convert(mdNode);
 
-    let doc;
+    if (this.stack.length) {
+      return this.closeNode();
+    }
 
-    do {
-      doc = this.closeNode();
-    } while (this.stack.length);
-
-    return doc;
+    return null;
   }
 }

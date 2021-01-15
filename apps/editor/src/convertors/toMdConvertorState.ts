@@ -1,7 +1,14 @@
 import { Node, Mark } from 'prosemirror-model';
 
+import { includes } from '@/utils/common';
+
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
-import { ToMdNodeConvertorMap, ToMdMarkConvertorMap, FirstDelimFn } from '@t/convertor';
+import {
+  ToMdMarkConvertors,
+  ToMdNodeConvertorMap,
+  ToMdMarkConvertorMap,
+  FirstDelimFn
+} from '@t/convertor';
 
 export default class ToMdConvertorState {
   private readonly nodes: ToMdNodeConvertorMap;
@@ -16,13 +23,16 @@ export default class ToMdConvertorState {
 
   private tightList: boolean;
 
-  constructor(nodes: ToMdNodeConvertorMap, marks: ToMdMarkConvertorMap) {
+  public inCell: boolean;
+
+  constructor({ nodes, marks }: ToMdMarkConvertors) {
     this.nodes = nodes;
     this.marks = marks;
     this.delim = '';
     this.result = '';
     this.closed = false;
     this.tightList = false;
+    this.inCell = false;
   }
 
   private isInBlank() {
@@ -42,7 +52,7 @@ export default class ToMdConvertorState {
   }
 
   flushClose(size?: number) {
-    if (this.closed) {
+    if (!this.inCell && this.closed) {
       if (!this.isInBlank()) {
         this.result += '\n';
       }
@@ -116,10 +126,10 @@ export default class ToMdConvertorState {
   }
 
   convertBlock(node: Node, parent: Node, index: number) {
-    const nodeType = this.nodes[node.type.name as WwNodeType];
+    const convertor = this.nodes[node.type.name as WwNodeType];
 
-    if (nodeType) {
-      nodeType(this, node, parent, index);
+    if (convertor) {
+      convertor(this, node, parent, index);
     }
   }
 
@@ -300,21 +310,38 @@ export default class ToMdConvertorState {
   }
 
   convertTableCell(node: Node) {
-    const { childCount } = node;
+    this.inCell = true;
 
     node.forEach((child, _, index) => {
-      this.convertInline(child);
+      if (includes(['bulletList', 'orderedList'], child.type.name)) {
+        this.convertBlock(child, node, index);
+        this.closed = false;
+      } else {
+        this.convertInline(child);
 
-      if (index < childCount - 1) {
-        this.write('<br>');
+        if (index < node.childCount - 1) {
+          const nextChild = node.child(index + 1);
+
+          if (nextChild.type.name === 'paragraph') {
+            this.write('<br>');
+          }
+        }
       }
     });
+
+    this.inCell = false;
   }
 
   convertNode(parent: Node) {
     parent.forEach((node, _, index) => this.convertBlock(node, parent, index));
 
     return this.result;
+  }
+
+  convertRawHTMLBlockNode(node: Node, rawHTML: string) {
+    this.write(`<${rawHTML}>`);
+    this.convertNode(node);
+    this.write(`</${rawHTML}>`);
   }
 
   escape(text: string, startOfLine?: boolean) {
