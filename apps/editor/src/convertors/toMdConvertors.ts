@@ -46,32 +46,25 @@ const nodes: ToMdNodeConvertorMap = {
     if (state.inCell) {
       state.convertInline(node);
     } else {
-      const firstNode = index === 0;
-      const lastNode = index === parent!.childCount - 1;
-      const prevNode = index > 0 && parent!.child(index - 1);
+      const firstChildNode = index === 0;
+      const prevNode = !firstChildNode && parent!.child(index - 1);
       const prevEmptyNode = prevNode && prevNode.childCount === 0;
+      const nextNode = index < parent!.childCount - 1 && parent!.child(index + 1);
+      const nextParaNode = nextNode && nextNode.type.name === 'paragraph';
       const emptyNode = node.childCount === 0;
 
-      if (!firstNode && !lastNode) {
-        if (emptyNode && prevEmptyNode) {
-          state.write('<br>\n');
-        } else if (emptyNode && !prevEmptyNode) {
-          state.write('\n');
-        } else {
-          state.convertInline(node);
-          state.write('\n');
-        }
-      } else if (firstNode) {
+      if (emptyNode && prevEmptyNode) {
+        state.write('<br>\n');
+      } else if (emptyNode && !prevEmptyNode && !firstChildNode) {
+        state.write('\n');
+      } else {
         state.convertInline(node);
 
-        if (parent?.childCount === 1) {
-          state.closeBlock(node);
-        } else {
+        if (nextParaNode) {
           state.write('\n');
+        } else {
+          state.closeBlock(node);
         }
-      } else if (lastNode) {
-        state.convertInline(node);
-        state.closeBlock(node);
       }
     }
   },
