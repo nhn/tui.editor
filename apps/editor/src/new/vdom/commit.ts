@@ -21,7 +21,10 @@ export function commit(vnode?: VNode) {
           comp.mounted();
         }
         if (vnode.old && comp.updated) {
-          comp.updated();
+          // @ts-ignore
+          const prevProps = comp.prevProps || {};
+
+          comp.updated(prevProps);
         }
       }
     }
