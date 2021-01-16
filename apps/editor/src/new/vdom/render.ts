@@ -93,4 +93,14 @@ function buildChildrenVNode(parent: VNode) {
 
     prev = vnode;
   });
+
+  const lastChild = children[children.length - 1];
+
+  while (old && lastChild) {
+    if (old && lastChild.old !== old) {
+      VNode.removalNodes.push(old);
+      old.effect = 'D';
+      old = old.next;
+    }
+  }
 }

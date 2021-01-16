@@ -9,24 +9,30 @@ function createTextNode(text: string) {
   return new VNode('TEXT_NODE', { nodeValue: text }, []);
 }
 
+function excludeUnnecessaryChild(child: VNode, flatted: VNode[]) {
+  let vnode: VNode | null = child;
+
+  // eslint-disable-next-line no-eq-null,eqeqeq
+  if (isBoolean(child) || child == null) {
+    vnode = null;
+  } else if (isString(child) || isNumber(child)) {
+    vnode = createTextNode(String(child));
+  }
+  if (vnode) {
+    flatted.push(vnode);
+  }
+}
+
 function h(type: string | ComponentClass, props: Record<string, any>, ...children: VNode[]) {
   const flatted: VNode[] = [];
 
   children.forEach(child => {
     if (Array.isArray(child)) {
       child.forEach(vnode => {
-        flatted.push(vnode);
+        excludeUnnecessaryChild(vnode, flatted);
       });
     } else {
-      let vnode = child;
-
-      // eslint-disable-next-line no-eq-null,eqeqeq
-      if (isBoolean(child) || child == null) {
-        vnode = createTextNode(String(''));
-      } else if (isString(child) || isNumber(child)) {
-        vnode = createTextNode(String(child));
-      }
-      flatted.push(vnode);
+      excludeUnnecessaryChild(child, flatted);
     }
   });
 
