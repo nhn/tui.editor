@@ -8,6 +8,7 @@ import { Tabs } from '../tabs';
 const TYPE_UI = 'ui';
 
 type TabType = 'url' | 'file';
+type HookCallback = (url: string, text?: string) => void;
 
 interface Props {
   show: boolean;
@@ -35,6 +36,19 @@ export class ImageLayerBody extends Component<Props, State> {
     this.toggleTab = this.toggleTab.bind(this);
     this.initialize = this.initialize.bind(this);
     this.execCommand = this.execCommand.bind(this);
+    this.addEvent();
+  }
+
+  addEvent() {
+    this.props.eventEmitter.listen('addImageBlobHook', (blob: File, callback: HookCallback) => {
+      const reader = new FileReader();
+
+      reader.onload = event => {
+        callback(event.target!.result as string);
+      };
+
+      reader.readAsDataURL(blob);
+    });
   }
 
   private initialize(activeTab: TabType = 'file') {
@@ -54,21 +68,14 @@ export class ImageLayerBody extends Component<Props, State> {
         altText
       });
     } else {
-      const { files } = this.refs.file;
+      const { files } = this.refs.file as HTMLInputElement;
 
       if (files?.length) {
         const imageFile = files.item(0)!;
-        const reader = new FileReader();
+        const hookCallback: HookCallback = (url, text) =>
+          this.props.execCommand('addImage', { imageUrl: url, altText: text || altText });
 
-        reader.onload = event => {
-          this.props.execCommand('addImage', {
-            imageUrl: event.target!.result,
-            altText: 'image'
-          });
-        };
-        reader.readAsDataURL(imageFile);
-
-        // this.props.eventEmitter.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
+        this.props.eventEmitter.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
       }
     }
   }

@@ -212,7 +212,7 @@ describe('toolbar', () => {
       expect(linkLayer).toHaveStyle({ display: 'none' });
     });
 
-    it('should trigger commmand event when clicking OK button', () => {
+    it('should trigger command event when clicking OK button', () => {
       const spy = jest.fn();
 
       em.listen('command', spy);
@@ -285,7 +285,7 @@ describe('toolbar', () => {
       expect(urlTabBtn).not.toHaveClass('te-tab-active');
     });
 
-    it('should trigger commmand event when clicking OK button', () => {
+    it('should trigger command event when clicking OK button', () => {
       const spy = jest.fn();
 
       em.listen('command', spy);
@@ -322,7 +322,7 @@ describe('toolbar', () => {
       expect(tableLayer).toHaveStyle({ display: 'block' });
     });
 
-    it('should trigger commmand event when selecting the area and clicking it', () => {
+    it('should trigger command event when selecting the area and clicking it', () => {
       const spy = jest.fn();
 
       em.listen('command', spy);
