@@ -2,6 +2,7 @@ import { ToolbarButton } from './editor';
 
 export interface Component<T = {}, R = {}> {
   props: T;
+  prevProps?: T;
   state: R;
   vnode: VNode;
   refs: Record<string, HTMLElement>;
@@ -76,13 +77,29 @@ export interface TabInfo {
   text: string;
 }
 
+interface ToolbarState {
+  taskList: boolean;
+  orderedList: boolean;
+  bulletList: boolean;
+  table: boolean;
+  strong: boolean;
+  emph: boolean;
+  strike: boolean;
+  heading: boolean;
+  thematicBreak: boolean;
+  blockQuote: boolean;
+  code: boolean;
+  codeBlock: boolean;
+}
+export type ToolbarStateKeys = keyof ToolbarState;
+
 export type ToolbarItemInfo = {
   name: string;
   className: string;
   tooltip: string;
   activeTooltip?: string;
   command?: string;
-  state?: string;
+  state?: ToolbarStateKeys;
   hidden?: boolean;
   noIcon?: boolean;
   active?: boolean;

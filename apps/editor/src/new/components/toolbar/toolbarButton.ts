@@ -1,9 +1,15 @@
-import { ExecCommand, Pos, SetLayerInfo, ToolbarItemInfo } from '@t/ui';
+import { ExecCommand, Pos, SetLayerInfo, ToolbarItemInfo, ToolbarState } from '@t/ui';
+import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
 import { createLayerInfo } from '@/new/toolbarItemFactory';
 
+interface Payload {
+  toolbarState: ToolbarState;
+}
+
 interface Props {
+  eventEmitter: Emitter;
   item: ToolbarItemInfo;
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
@@ -30,6 +36,15 @@ export class ToolbarButton extends Component<Props, State> {
     this.showTooltip = this.showTooltip.bind(this);
     this.hideTooltip = this.hideTooltip.bind(this);
     this.execCommand = this.execCommand.bind(this);
+    this.addEvent();
+  }
+
+  addEvent() {
+    this.props.eventEmitter.listen('cursorActivity', ({ toolbarState }: Payload) => {
+      const active = !!toolbarState[this.props.item.state!];
+
+      this.setState({ active });
+    });
   }
 
   private getBound() {

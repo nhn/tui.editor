@@ -83,7 +83,7 @@ export class Toolbar extends Component<Props, State> {
   updated(prevProps: Props) {
     if (
       (this.props.previewStyle === 'vertical' ||
-        (prevProps.editorType !== this.props.editorType && this.props.editorType === 'markdown')) &&
+        (this.props.editorType === 'markdown' && prevProps.editorType !== this.props.editorType)) &&
       this.state.activeTab !== 'write'
     ) {
       this.toggleTab(null, 'write');
@@ -111,6 +111,7 @@ export class Toolbar extends Component<Props, State> {
                 group=${group}
                 hiddenDivider=${index === toolbarItems.length - 1 ||
                   toolbarItems[index + 1]?.hidden}
+                eventEmitter=${eventEmitter}
                 execCommand=${this.execCommand}
                 setLayerInfo=${this.setLayerInfo}
               />

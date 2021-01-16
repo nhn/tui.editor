@@ -21,8 +21,9 @@ export function commit(vnode?: VNode) {
           comp.mounted();
         }
         if (vnode.old && comp.updated) {
-          // @ts-ignore
           const prevProps = comp.prevProps || {};
+
+          delete comp.prevProps;
 
           comp.updated(prevProps);
         }

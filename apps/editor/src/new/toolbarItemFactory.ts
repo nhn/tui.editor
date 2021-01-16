@@ -21,7 +21,7 @@ function createToolbarItemInfo(type: string | ToolbarButton) {
   return type as ToolbarItemInfo;
 }
 
-function createDefaultToolbarItemInfo() {
+function createDefaultToolbarItemInfo(): Record<string, ToolbarItemInfo> {
   return {
     heading: {
       name: 'heading',
@@ -69,7 +69,7 @@ function createDefaultToolbarItemInfo() {
       className: 'tui-ul',
       command: 'bulletList',
       tooltip: i18n.get('Unordered list'),
-      state: 'list'
+      state: 'bulletList'
     },
     ol: {
       name: 'ol',
@@ -94,8 +94,7 @@ function createDefaultToolbarItemInfo() {
     image: {
       name: 'image',
       className: 'tui-image',
-      tooltip: i18n.get('Insert image'),
-      state: ''
+      tooltip: i18n.get('Insert image')
     },
     link: {
       name: 'link',

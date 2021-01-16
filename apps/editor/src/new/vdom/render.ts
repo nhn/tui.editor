@@ -25,7 +25,7 @@ export function buildVNode(vnode: VNode | null) {
 
       instance.vnode = vnode;
       vnode.component = instance;
-      vnode.children = [instance.render()];
+      vnode.props.children = vnode.children = [instance.render()];
       buildChildrenVNode(vnode);
     } else {
       if (!vnode.node) {
