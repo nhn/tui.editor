@@ -1,13 +1,19 @@
-import { source } from 'common-tags';
+import { source, oneLineTrim } from 'common-tags';
 
 // @ts-ignore
 import { Parser } from '@toast-ui/toastmark';
 
-import { Schema } from 'prosemirror-model';
+import { Schema, ProsemirrorNode } from 'prosemirror-model';
 import { createSpecs } from '@/wysiwyg/specCreator';
 
 import Convertor from '@/convertors/convertor';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
+
+import {
+  ToMdCustomConvertorMap,
+  ToMdConvertorStateType,
+  ToMdCustomConvertorContext
+} from '@t/convertor';
 
 const parser = new Parser({
   disallowedHtmlBlockTags: ['br', 'img']
@@ -38,7 +44,7 @@ describe('Convertor', () => {
 
   beforeEach(() => {
     schema = createSchema();
-    convertor = new Convertor(schema, {});
+    convertor = new Convertor(schema, {}, {});
   });
 
   describe('convert between markdown and wysiwyg node to', () => {
@@ -240,6 +246,23 @@ describe('Convertor', () => {
       assertConverting(markdown, `${expected}\n`);
     });
 
+    it('table with inline syntax', () => {
+      const markdown = source`
+        | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
+        | ---- | ---- |
+        | [linkText](linkUrl) | foo [linkText](linkUrl) baz |
+        | **foo** _bar_ ~~baz~~ | **foo** *bar* ~~baz~~ [linkText](linkUrl) |
+      `;
+      const expected = source`
+        | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
+        | --- | -------- |
+        | [linkText](linkUrl) | foo [linkText](linkUrl) baz |
+        | **foo** *bar* ~~baz~~ | **foo** *bar* ~~baz~~ [linkText](linkUrl) |
+      `;
+
+      assertConverting(markdown, `${expected}\n`);
+    });
+
     it('task', () => {
       const markdown = source`
         * [ ] foo
@@ -370,8 +393,39 @@ describe('Convertor', () => {
 
       assertConverting(markdown, expected);
     });
+  });
 
-    it('table with <br> html string', () => {
+  describe('convert inline html', () => {
+    it('emphasis type', () => {
+      const markdown = source`
+        <b>foo</b>
+        <strong>foo</strong>
+
+        <i>foo</i>
+        <em>foo</em>
+        
+        <s>foo</s>
+        <del>foo</del>
+
+        <code>foo</code>
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('link type', () => {
+      const markdown = source`
+        <a href="#">foo</a>
+
+        <img src="#">
+
+        <img src="#" alt="test">
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('table with <br>', () => {
       const markdown = source`
         | thead<br>thead | thead |
         | ----- | ----- |
@@ -388,24 +442,7 @@ describe('Convertor', () => {
       assertConverting(markdown, `${expected}\n`);
     });
 
-    it('table with inline node syntax', () => {
-      const markdown = source`
-        | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
-        | ---- | ---- |
-        | [linkText](linkUrl) | foo [linkText](linkUrl) baz |
-        | **foo** _bar_ ~~baz~~ | **foo** *bar* ~~baz~~ [linkText](linkUrl) |
-      `;
-      const expected = source`
-        | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
-        | --- | -------- |
-        | [linkText](linkUrl) | foo [linkText](linkUrl) baz |
-        | **foo** *bar* ~~baz~~ | **foo** *bar* ~~baz~~ [linkText](linkUrl) |
-      `;
-
-      assertConverting(markdown, `${expected}\n`);
-    });
-
-    it('table with list html string', () => {
+    it('table with list', () => {
       const markdown = source`
         | thead |
         | ----- |
@@ -421,53 +458,130 @@ describe('Convertor', () => {
 
       assertConverting(markdown, `${markdown}\n`);
     });
+  });
 
-    it('inlineHtml (emphasis type)', () => {
+  describe('convert block html', () => {
+    it('paragraph and division are not converted to html block', () => {
       const markdown = source`
-        <b>foo</b>
-        <B>foo</B>
+        <p>paragraph</p>
 
-        <strong>foo</strong>
-
-        <i>foo</i>
-        <em>foo</em>
-        
-        <s>foo</s>
-        <del>foo</del>
-
-        <code>foo</code>
+        <div>division</div>
+      `;
+      const expected = source`
+        paragraph
+        division
       `;
 
-      assertConverting(markdown, markdown);
+      assertConverting(markdown, expected);
     });
 
-    it('inlineHtml (link type)', () => {
+    it('heading', () => {
       const markdown = source`
-        <a href="#">foo</a>
-
-        <img src="#">
-
-        <img src="#" alt="test">
+        <h1>heading1</h1>
+        <h2>heading2</h2>
+        <h3>heading3</h3>
+        <h4>heading4</h4>
+        <h5>heading4</h5>
+        <h6>heading4</h6>
+      `;
+      const expected = oneLineTrim`
+        <h1>heading1</h1>
+        <h2>heading2</h2>
+        <h3>heading3</h3>
+        <h4>heading4</h4>
+        <h5>heading4</h5>
+        <h6>heading4</h6>
       `;
 
-      assertConverting(markdown, markdown);
+      assertConverting(markdown, expected);
     });
 
-    it('htmlBlock', () => {
+    it('pre', () => {
       const markdown = source`
-        <hr>
-
-        <HR>
-
         <pre>code</pre>
       `;
 
       assertConverting(markdown, markdown);
     });
+
+    it('blockquote', () => {
+      const markdown = source`
+        <blockquote>foo</blockquote>
+        <blockquote>foo<blockquote>foo</blockquote></blockquote>
+      `;
+      const expected = oneLineTrim`
+        <blockquote>foo</blockquote>
+        <blockquote>foo<blockquote>foo</blockquote></blockquote>
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('bullet list', () => {
+      const markdown = source`
+        <ul><li>foo</li></ul>
+        <ul><li>foo<ul><li>foo</li></ul></li></ul>
+      `;
+      const expected = oneLineTrim`
+        <ul><li>foo</li></ul>
+        <ul><li>foo<ul><li>foo</li></ul></li></ul>
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('ordered list', () => {
+      const markdown = source`
+        <ol><li>foo</li></ol>
+        <ol><li>foo<ol><li>foo</li></ol></li></ol>
+      `;
+      const expected = oneLineTrim`
+        <ol><li>foo</li></ol>
+        <ol><li>foo<ol><li>foo</li></ol></li></ol>
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('task', () => {
+      const markdown = source`
+        <ul><li class="task-list-item" data-task>bullet task</li></ul>
+        <ul><li class="task-list-item checked" data-task data-task-checked>ordered task</li></ul>
+      `;
+      const expected = oneLineTrim`
+        <ul><li class="task-list-item" data-task>bullet task</li></ul>
+        <ul><li class="task-list-item checked" data-task data-task-checked>ordered task</li></ul>
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('table', () => {
+      const markdown = source`
+        <table><thead><tr><th>foo</th></tr></thead><tbody><tr><td>bar</td></tr></tbody></table>
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('with html inline', () => {
+      const markdown = source`
+        <h1><b>foo</b></h1>
+        <ul><li>foo <i>bar</i></li></ul>
+        <blockquote><s>foo</s> bar</blockquote>
+      `;
+      const expected = oneLineTrim`
+        <h1><b>foo</b></h1>
+        <ul><li>foo <i>bar</i></li></ul>
+        <blockquote><s>foo</s> bar</blockquote>
+      `;
+
+      assertConverting(markdown, expected);
+    });
   });
 
   describe('sanitize when using html', () => {
-    it('href attribute with <a>', () => {
+    it('href attribute with link', () => {
       const markdown = source`
         <a href="javascript:alert();">xss</a>
 
@@ -506,7 +620,7 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    it('src attribute with <img>', () => {
+    it('src attribute with image', () => {
       const markdown = source`
         <img src="javascript:alert();">
 
@@ -532,6 +646,162 @@ describe('Convertor', () => {
         <img src="">
 
         <img src="">
+      `;
+
+      assertConverting(markdown, expected);
+    });
+  });
+
+  describe('custom convertor when converting from wysiwyg to markdown', () => {
+    function createCustomConvertor(customConvertor: ToMdCustomConvertorMap) {
+      schema = createSchema();
+      convertor = new Convertor(schema, customConvertor, {});
+    }
+
+    it('should change delimeter with return value', () => {
+      const toMdCustomConvertor = {
+        thematicBreak() {
+          return {
+            delim: '- - -'
+          };
+        }
+      };
+
+      createCustomConvertor(toMdCustomConvertor);
+
+      const markdown = source`
+        ***
+      `;
+      const expected = source`
+        - - -
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('should change raw html with return value', () => {
+      const toMdCustomConvertor = {
+        heading() {
+          return {
+            rawHTML: false
+          };
+        }
+      };
+
+      createCustomConvertor(toMdCustomConvertor);
+
+      const markdown = source`
+        <h1>heading1</h1>
+
+        <h2>heading2</h2>
+      `;
+      const expected = source`
+        # heading1
+
+        ## heading2
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('should convert to original value', () => {
+      const toMdCustomConvertor = {
+        paragraph(_: ToMdConvertorStateType, { origin }: ToMdCustomConvertorContext) {
+          return origin();
+        }
+      };
+
+      createCustomConvertor(toMdCustomConvertor);
+
+      const markdown = source`
+        foo
+        
+        <br>
+        bar
+        
+        <br>
+        <br>
+        baz
+      `;
+      const expected = source`
+        foo
+
+        <br>
+        bar
+
+        <br>
+        <br>
+        baz
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('should convert by mixing return values', () => {
+      const toMdCustomConvertor = {
+        heading(_: ToMdConvertorStateType, { node, origin }: ToMdCustomConvertorContext) {
+          const { level, headingType } = node.attrs;
+
+          if (headingType === 'setext') {
+            const delim = level === 1 ? '========' : '------';
+
+            return { delim };
+          }
+
+          return origin();
+        }
+      };
+
+      createCustomConvertor(toMdCustomConvertor);
+
+      const markdown = source`
+        heading1
+        ===
+
+        heading2
+        ---
+
+        # heading1
+      `;
+      const expected = source`
+        heading1
+        ========
+
+        heading2
+        ------
+
+        # heading1
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('should directly access state value ​​and convert', () => {
+      const toMdCustomConvertor = {
+        paragraph(state: ToMdConvertorStateType, { node }: ToMdCustomConvertorContext) {
+          state.convertInline(node as ProsemirrorNode);
+          state.closeBlock(node as ProsemirrorNode);
+        }
+      };
+
+      createCustomConvertor(toMdCustomConvertor);
+
+      const markdown = source`
+        foo
+        
+        <br>
+        bar
+        
+        <br>
+        <br>
+        baz
+      `;
+      const expected = source`
+        foo
+
+        bar
+
+        baz
       `;
 
       assertConverting(markdown, expected);

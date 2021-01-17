@@ -1,13 +1,25 @@
 import { Node, Mark } from 'prosemirror-model';
 
+import isFunction from 'tui-code-snippet/type/isFunction';
+
 import { includes } from '@/utils/common';
+
+import { getOriginContext } from './toMdConvertorContext';
+import { escape } from './toMdConvertorHelper';
 
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {
   ToMdMarkConvertors,
   ToMdNodeConvertorMap,
   ToMdMarkConvertorMap,
-  FirstDelimFn
+  FirstDelimFn,
+  ToMdCustomConvertorMap,
+  ToMdOriginConvertorContext,
+  ToMdCustomConvertor,
+  OriginContext,
+  NodeInfo,
+  MarkInfo,
+  ToMdConvertorContext
 } from '@t/convertor';
 
 export default class ToMdConvertorState {
@@ -23,36 +35,77 @@ export default class ToMdConvertorState {
 
   private tightList: boolean;
 
-  public inCell: boolean;
+  public stopNewline: boolean;
 
-  constructor({ nodes, marks }: ToMdMarkConvertors) {
+  private customConvertors: ToMdCustomConvertorMap;
+
+  constructor({ nodes, marks }: ToMdMarkConvertors, customConvertors: ToMdCustomConvertorMap) {
     this.nodes = nodes;
     this.marks = marks;
     this.delim = '';
     this.result = '';
     this.closed = false;
     this.tightList = false;
-    this.inCell = false;
+    this.stopNewline = false;
+    this.customConvertors = customConvertors ?? {};
   }
 
   private isInBlank() {
     return /(^|\n)$/.test(this.result);
   }
 
-  private markText(mark: Mark, open: boolean, parent: Node, index: number) {
-    const info = this.marks[mark.type.name as WwMarkType];
+  private getCustomConvertorContext(
+    customConvertor: ToMdCustomConvertor,
+    originContext: OriginContext,
+    nodeInfo: NodeInfo | MarkInfo
+  ) {
+    const context = customConvertor(this, {
+      origin: originContext,
+      ...nodeInfo
+    });
 
-    if (info) {
-      const value = open ? info.open : info.close;
+    if (context) {
+      const { node } = nodeInfo;
 
-      return typeof value === 'string' ? value : value(this, mark, parent, index);
+      if (isFunction(context)) {
+        return context(node) as ToMdOriginConvertorContext;
+      }
+
+      const orgContext = originContext()(node);
+
+      return { ...orgContext, ...context };
+    }
+
+    return null;
+  }
+
+  private markText(mark: Mark, entering: boolean, parent: Node, index: number) {
+    const markType = mark.type.name as WwMarkType;
+    const customConvertor = this.customConvertors[markType];
+    const originContext = getOriginContext(markType);
+    const nodeInfo = {
+      node: mark,
+      parent,
+      index,
+      entering
+    };
+
+    const context = customConvertor
+      ? this.getCustomConvertorContext(customConvertor, originContext, nodeInfo)
+      : originContext()(mark, entering, parent, index);
+    const info = this.marks[markType];
+
+    if (info && context) {
+      const { delim, rawHTML } = context as ToMdConvertorContext;
+
+      return (rawHTML as string) || (delim as string);
     }
 
     return '';
   }
 
   flushClose(size?: number) {
-    if (!this.inCell && this.closed) {
+    if (!this.stopNewline && this.closed) {
       if (!this.isInBlank()) {
         this.result += '\n';
       }
@@ -110,14 +163,14 @@ export default class ToMdConvertorState {
     this.closed = node;
   }
 
-  text(text: string, escape?: boolean) {
+  text(text: string, escaped?: boolean) {
     const lines = text.split('\n');
 
     for (let i = 0; i < lines.length; i += 1) {
       const startOfLine = this.isInBlank() || !!this.closed;
 
       this.write();
-      this.result += escape !== false ? this.escape(lines[i], startOfLine) : lines[i];
+      this.result += escaped !== false ? escape(lines[i], startOfLine) : lines[i];
 
       if (i !== lines.length - 1) {
         this.result += '\n';
@@ -126,10 +179,18 @@ export default class ToMdConvertorState {
   }
 
   convertBlock(node: Node, parent: Node, index: number) {
-    const convertor = this.nodes[node.type.name as WwNodeType];
+    const nodeType = node.type.name as WwNodeType;
+    const customConvertor = this.customConvertors[nodeType];
+    const originContext = getOriginContext(nodeType);
+    const nodeInfo = { node, parent, index };
 
-    if (convertor) {
-      convertor(this, node, parent, index);
+    const context = customConvertor
+      ? this.getCustomConvertorContext(customConvertor, originContext, nodeInfo)
+      : originContext()(node);
+    const innerConvertor = this.nodes[nodeType];
+
+    if (innerConvertor && context) {
+      innerConvertor(this, nodeInfo, context);
     }
   }
 
@@ -139,23 +200,6 @@ export default class ToMdConvertorState {
 
     const progress = (node: Node | null, _: number | null, index: number) => {
       let marks = node ? node.marks : [];
-
-      // Remove marks from `hard_break` that are the last node inside
-      // that mark to prevent parser edge cases with new lines just
-      // before closing marks.
-      // (FIXME it'd be nice if we had a schema-agnostic way to
-      // identify nodes that serialize as hard breaks)
-      if (node && node.type.name === 'hardBreak')
-        marks = marks.filter((mark: Mark) => {
-          if (index + 1 === parent.childCount) {
-            return false;
-          }
-
-          const next = parent.child(index + 1);
-
-          return mark.isInSet(next.marks) && (!next.isText || /\S/.test(next.text || ''));
-        });
-
       let leading = trailing;
 
       trailing = '';
@@ -310,7 +354,7 @@ export default class ToMdConvertorState {
   }
 
   convertTableCell(node: Node) {
-    this.inCell = true;
+    this.stopNewline = true;
 
     node.forEach((child, _, index) => {
       if (includes(['bulletList', 'orderedList'], child.type.name)) {
@@ -329,57 +373,12 @@ export default class ToMdConvertorState {
       }
     });
 
-    this.inCell = false;
+    this.stopNewline = false;
   }
 
   convertNode(parent: Node) {
     parent.forEach((node, _, index) => this.convertBlock(node, parent, index));
 
     return this.result;
-  }
-
-  convertRawHTMLBlockNode(node: Node, rawHTML: string) {
-    this.write(`<${rawHTML}>`);
-    this.convertNode(node);
-    this.write(`</${rawHTML}>`);
-  }
-
-  escape(text: string, startOfLine?: boolean) {
-    text = text.replace(/[`*\\~[\]]/g, '\\$&');
-
-    if (startOfLine) {
-      return text.replace(/^[:#\-*+]/, '\\$&').replace(/^(\d+)\./, '$1\\.');
-    }
-
-    return text;
-  }
-
-  quote(text: string) {
-    let wrap;
-
-    if (text.indexOf('"') === -1) {
-      wrap = '""';
-    } else {
-      wrap = text.indexOf("'") === -1 ? "''" : '()';
-    }
-
-    return wrap[0] + text + wrap[1];
-  }
-
-  repeat(text: string, count: number) {
-    let result = '';
-
-    for (let i = 0; i < count; i += 1) {
-      result += text;
-    }
-
-    return result;
-  }
-
-  getEnclosingWhitespace(text: string) {
-    return {
-      leading: (text.match(/^(\s+)/) || [])[0],
-      trailing: (text.match(/(\s+)$/) || [])[0]
-    };
   }
 }
