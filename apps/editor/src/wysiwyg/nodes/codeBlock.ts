@@ -25,13 +25,14 @@ export class CodeBlock extends NodeSchema {
       parseDOM: [
         {
           tag: 'pre',
-          // preserveWhitespace: 'full',
           getAttrs(dom: Node | string) {
             const className = (dom as HTMLElement).getAttribute('class');
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
             return {
               class: className,
-              language: className?.split('lang-')
+              language: className?.split('lang-'),
+              ...(rawHTML && { rawHTML })
             };
           }
         }

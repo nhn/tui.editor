@@ -26,10 +26,12 @@ export class Link extends Mark {
           tag: 'a[href]',
           getAttrs(dom: Node | string) {
             const href = (dom as HTMLElement).getAttribute('href') || '';
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
             return {
               linkUrl: sanitizeXSSAttributeValue(href),
-              linkText: (dom as HTMLElement).textContent
+              linkText: (dom as HTMLElement).textContent,
+              ...(rawHTML && { rawHTML })
             };
           }
         }

@@ -1,8 +1,8 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 
-export class TableHeadCell extends Node {
+export class TableHeadCell extends NodeSchema {
   get name() {
     return 'tableHeadCell';
   }
@@ -12,9 +12,21 @@ export class TableHeadCell extends Node {
       content: 'paragraph+',
       attrs: {
         align: { default: null },
-        className: { default: null }
+        className: { default: null },
+        rawHTML: { default: null }
       },
-      parseDOM: [{ tag: 'th' }],
+      parseDOM: [
+        {
+          tag: 'th',
+          getAttrs(dom: Node | string) {
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+
+            return {
+              ...(rawHTML && { rawHTML })
+            };
+          }
+        }
+      ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         const { align, className } = attrs;
 

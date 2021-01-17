@@ -1,8 +1,8 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 
-export class TableBodyCell extends Node {
+export class TableBodyCell extends NodeSchema {
   get name() {
     return 'tableBodyCell';
   }
@@ -12,9 +12,21 @@ export class TableBodyCell extends Node {
       content: '(paragraph | bulletList | orderedList)+',
       attrs: {
         align: { default: null },
-        className: { default: null }
+        className: { default: null },
+        rawHTML: { default: null }
       },
-      parseDOM: [{ tag: 'td' }],
+      parseDOM: [
+        {
+          tag: 'td',
+          getAttrs(dom: Node | string) {
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+
+            return {
+              ...(rawHTML && { rawHTML })
+            };
+          }
+        }
+      ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         const { align, className } = attrs;
 

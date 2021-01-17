@@ -1,20 +1,34 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { wrapIn } from 'prosemirror-commands';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 
 import { EditorCommand } from '@t/spec';
 
-export class BlockQuote extends Node {
+export class BlockQuote extends NodeSchema {
   get name() {
     return 'blockQuote';
   }
 
   get defaultSchema() {
     return {
+      attrs: {
+        rawHTML: { default: null }
+      },
       content: 'block+',
       group: 'block',
-      parseDOM: [{ tag: 'blockquote' }],
+      parseDOM: [
+        {
+          tag: 'blockquote',
+          getAttrs(dom: Node | string) {
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+
+            return {
+              ...(rawHTML && { rawHTML })
+            };
+          }
+        }
+      ],
       toDOM(): DOMOutputSpecArray {
         return ['blockquote', 0];
       }
