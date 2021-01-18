@@ -441,9 +441,6 @@
 
 .tui-editor-popup {
   position: absolute;
-  /* top: 30px; */
-  /* left: 50%; */
-  /* margin-left: -250px; */
 }
 
 .tui-editor-popup.tui-popup-modal-background {
