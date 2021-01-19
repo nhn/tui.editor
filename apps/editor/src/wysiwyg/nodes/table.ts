@@ -24,6 +24,7 @@ import {
 } from '@/wysiwyg/helper/table';
 
 import { createTextSelection } from '@/helper/manipulation';
+import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
 
 import { EditorCommand } from '@t/spec';
 
@@ -64,18 +65,7 @@ export class Table extends NodeSchema {
       attrs: {
         rawHTML: { default: null }
       },
-      parseDOM: [
-        {
-          tag: 'table',
-          getAttrs(dom: Node | string) {
-            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
-
-            return {
-              ...(rawHTML && { rawHTML })
-            };
-          }
-        }
-      ],
+      parseDOM: [createDOMInfoParsedRawHTML('table')],
       toDOM(): DOMOutputSpecArray {
         return ['table', 0];
       }

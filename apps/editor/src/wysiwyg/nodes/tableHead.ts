@@ -1,6 +1,7 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
+import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
 
 export class TableHead extends NodeSchema {
   get name() {
@@ -13,18 +14,7 @@ export class TableHead extends NodeSchema {
       attrs: {
         rawHTML: { default: null }
       },
-      parseDOM: [
-        {
-          tag: 'thead',
-          getAttrs(dom: Node | string) {
-            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
-
-            return {
-              ...(rawHTML && { rawHTML })
-            };
-          }
-        }
-      ],
+      parseDOM: [createDOMInfoParsedRawHTML('thead')],
       toDOM(): DOMOutputSpecArray {
         return ['thead', 0];
       }

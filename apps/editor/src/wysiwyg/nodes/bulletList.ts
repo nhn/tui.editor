@@ -3,6 +3,7 @@ import { wrapInList } from 'prosemirror-schema-list';
 
 import NodeSchema from '@/spec/node';
 import { getWwCommands } from '@/commands/wwCommands';
+import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
 
 import { EditorCommand } from '@t/spec';
 
@@ -18,18 +19,7 @@ export class BulletList extends NodeSchema {
       attrs: {
         rawHTML: { default: null }
       },
-      parseDOM: [
-        {
-          tag: 'ul',
-          getAttrs(dom: Node | string) {
-            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
-
-            return {
-              ...(rawHTML && { rawHTML })
-            };
-          }
-        }
-      ],
+      parseDOM: [createDOMInfoParsedRawHTML('ul')],
       toDOM(): DOMOutputSpecArray {
         return ['ul', 0];
       }

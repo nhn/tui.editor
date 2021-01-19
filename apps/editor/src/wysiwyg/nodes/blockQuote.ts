@@ -2,6 +2,7 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { wrapIn } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
+import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
 
 import { EditorCommand } from '@t/spec';
 
@@ -17,18 +18,7 @@ export class BlockQuote extends NodeSchema {
       },
       content: 'block+',
       group: 'block',
-      parseDOM: [
-        {
-          tag: 'blockquote',
-          getAttrs(dom: Node | string) {
-            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
-
-            return {
-              ...(rawHTML && { rawHTML })
-            };
-          }
-        }
-      ],
+      parseDOM: [createDOMInfoParsedRawHTML('blockquote')],
       toDOM(): DOMOutputSpecArray {
         return ['blockquote', 0];
       }
