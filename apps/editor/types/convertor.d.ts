@@ -62,7 +62,7 @@ export interface ToMdConvertorStateType {
 
 export interface ToMdConvertorContext {
   delim?: string | string[];
-  rawHTML?: boolean | string | string[];
+  rawHTML?: string | string[];
   text?: string;
   attrs?: {
     [key: string]: any;

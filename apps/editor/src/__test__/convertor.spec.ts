@@ -683,7 +683,7 @@ describe('Convertor', () => {
       const toMdCustomConvertor = {
         heading() {
           return {
-            rawHTML: false
+            rawHTML: ''
           };
         }
       };

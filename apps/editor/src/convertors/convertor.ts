@@ -3,11 +3,11 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { MdNode } from '@t/markdown';
 import { ToWwConvertorMap, ToMdConvertorMap, ToMdCustomConvertorMap } from '@t/convertor';
 
-import { toWwConvertors } from './toWwConvertors';
-import ToWwConvertorState from './toWwConvertorState';
+import { toWwConvertors } from './toWysiwyg/toWwConvertors';
+import ToWwConvertorState from './toWysiwyg/toWwConvertorState';
 
-import { toMdConvertors } from './toMdConvertors';
-import ToMdConvertorState from './toMdConvertorState';
+import { toMdConvertors } from './toMarkdown/toMdConvertors';
+import ToMdConvertorState from './toMarkdown/toMdConvertorState';
 
 export default class Convertor {
   private readonly schema: Schema;
