@@ -1,12 +1,17 @@
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { MdNode } from '@t/markdown';
-import { ToWwConvertorMap, ToMdConvertorMap, ToMdCustomConvertorMap } from '@t/convertor';
+import {
+  ToWwConvertorMap,
+  ToMdConvertorMap,
+  ToMdCustomConvertorMap,
+  ToMdParamConvertorMap
+} from '@t/convertor';
 
 import { toWwConvertors } from './toWysiwyg/toWwConvertors';
 import ToWwConvertorState from './toWysiwyg/toWwConvertorState';
 
-import { toMdConvertors } from './toMarkdown/toMdConvertors';
+import { createConvertors } from './toMarkdown/toMdConvertors';
 import ToMdConvertorState from './toMarkdown/toMdConvertorState';
 
 export default class Convertor {
@@ -25,9 +30,18 @@ export default class Convertor {
     toMdCustomConvertors: ToMdCustomConvertorMap,
     linkAttribute: Record<string, any>
   ) {
+    const customConvertor: ToMdParamConvertorMap = {
+      heading() {
+        // return origin();
+        return {
+          delim: '#'
+        };
+      }
+    };
+
     this.schema = schema;
     this.toWwConvertors = toWwConvertors;
-    this.toMdConvertors = toMdConvertors;
+    this.toMdConvertors = createConvertors(customConvertor);
     this.toMdCustomConvertors = toMdCustomConvertors;
     this.linkAttribute = linkAttribute;
   }
@@ -39,7 +53,7 @@ export default class Convertor {
   }
 
   toMarkdownText(wwNode: ProsemirrorNode) {
-    const state = new ToMdConvertorState(this.toMdConvertors, this.toMdCustomConvertors);
+    const state = new ToMdConvertorState(this.toMdConvertors);
 
     return state.convertNode(wwNode);
   }

@@ -2,9 +2,7 @@ import { ProsemirrorNode } from 'prosemirror-model';
 
 import { repeat, escape, quote } from '@/utils/common';
 
-import { ToMdOriginConvertorContextMap } from '@t/convertor';
-import { WwNodeType } from '@t/wysiwyg';
-import { MdNodeType } from '@t/markdown';
+import { ToMdParamConvertorMap } from '@t/convertor';
 
 function addBackticks(node: ProsemirrorNode, side: number) {
   const { text } = node;
@@ -45,8 +43,9 @@ function getCloseRawHTML(rawHTML?: string) {
   return rawHTML ? `</${rawHTML}>` : '';
 }
 
-const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
-  heading({ attrs }) {
+export const toMdConvertorContextMap: ToMdParamConvertorMap = {
+  heading({ node }) {
+    const { attrs } = node;
     const { level } = attrs;
     let delim = repeat('#', level);
 
@@ -60,7 +59,7 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     };
   },
 
-  codeBlock(node) {
+  codeBlock({ node }) {
     const { attrs, textContent } = node as ProsemirrorNode;
 
     return {
@@ -70,28 +69,28 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     };
   },
 
-  blockQuote({ attrs }) {
+  blockQuote({ node }) {
     return {
       delim: '> ',
-      rawHTML: getPairRawHTML(attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
     };
   },
 
-  bulletList({ attrs }) {
+  bulletList({ node }) {
     return {
       delim: '*',
-      rawHTML: getPairRawHTML(attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
     };
   },
 
-  orderedList({ attrs }) {
+  orderedList({ node }) {
     return {
-      rawHTML: getPairRawHTML(attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
     };
   },
 
-  listItem({ attrs }) {
-    const { task, checked, rawHTML } = attrs;
+  listItem({ node }) {
+    const { task, checked, rawHTML } = node.attrs;
 
     const className = task ? ` class="task-list-item${checked ? ' checked' : ''}"` : '';
     const dataset = task ? ` data-task${checked ? ` data-task-checked` : ''}` : '';
@@ -101,43 +100,44 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     };
   },
 
-  table({ attrs }) {
+  table({ node }) {
     return {
-      rawHTML: getPairRawHTML(attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
     };
   },
 
-  tableHead({ attrs }) {
+  tableHead({ node }) {
     return {
-      rawHTML: getPairRawHTML(attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
     };
   },
 
-  tableBody({ attrs }) {
+  tableBody({ node }) {
     return {
-      rawHTML: getPairRawHTML(attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
     };
   },
 
-  tableRow({ attrs }) {
+  tableRow({ node }) {
     return {
-      rawHTML: getPairRawHTML(attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
     };
   },
 
-  tableHeadCell({ attrs }) {
+  tableHeadCell({ node }) {
     return {
-      rawHTML: getPairRawHTML(attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
     };
   },
 
-  tableBodyCell({ attrs }) {
+  tableBodyCell({ node }) {
     return {
-      rawHTML: getPairRawHTML(attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
     };
   },
 
-  image({ attrs }) {
+  image({ node }) {
+    const { attrs } = node;
     const altText = escape(attrs.altText || '');
     const imageUrl = escape(attrs.imageUrl);
     const altAttr = altText ? ` alt="${altText}"` : '';
@@ -151,14 +151,14 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     };
   },
 
-  thematicBreak({ attrs }) {
+  thematicBreak({ node }) {
     return {
       delim: '***',
-      rawHTML: getOpenRawHTML(attrs.rawHTML)
+      rawHTML: getOpenRawHTML(node.attrs.rawHTML)
     };
   },
 
-  customBlock(node) {
+  customBlock({ node }) {
     const { attrs, textContent } = node as ProsemirrorNode;
 
     return {
@@ -167,30 +167,37 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
     };
   },
 
-  strong({ attrs }, entering) {
+  strong({ node }, { entering }) {
+    const { rawHTML } = node.attrs;
+
     return {
       delim: '**',
-      rawHTML: entering ? getOpenRawHTML(attrs.rawHTML) : getCloseRawHTML(attrs.rawHTML)
+      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML)
     };
   },
 
-  emph({ attrs }, entering) {
+  emph({ node }, { entering }) {
+    const { rawHTML } = node.attrs;
+
     return {
       delim: '*',
-      rawHTML: entering ? getOpenRawHTML(attrs.rawHTML) : getCloseRawHTML(attrs.rawHTML)
+      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML)
     };
   },
 
-  strike({ attrs }, entering) {
+  strike({ node }, { entering }) {
+    const { rawHTML } = node.attrs;
+
     return {
       delim: '~~',
-      rawHTML: entering ? getOpenRawHTML(attrs.rawHTML) : getCloseRawHTML(attrs.rawHTML)
+      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML)
     };
   },
 
-  link({ attrs }, entering) {
-    const { rawHTML } = attrs;
+  link({ node }, { entering }) {
+    const { attrs } = node;
     const linkUrl = escape(attrs.linkUrl);
+    const { rawHTML } = attrs;
 
     if (entering) {
       return {
@@ -203,17 +210,17 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
 
     return {
       delim: `](${linkText}${linkUrl})`,
-      rawHTML: getCloseRawHTML(attrs.rawHTML)
+      rawHTML: getCloseRawHTML(rawHTML)
     };
   },
 
-  code({ attrs }, entering, parent, index = 0) {
+  code({ node, parent, index = 0 }, { entering }) {
     if (entering) {
       const delim = addBackticks(parent!.child(index), -1);
 
       return {
         delim,
-        rawHTML: getOpenRawHTML(attrs.rawHTML)
+        rawHTML: getOpenRawHTML(node.attrs.rawHTML)
       };
     }
 
@@ -221,19 +228,7 @@ const toMdConvertorContextMap: ToMdOriginConvertorContextMap = {
 
     return {
       delim,
-      rawHTML: getCloseRawHTML(attrs.rawHTML)
+      rawHTML: getCloseRawHTML(node.attrs.rawHTML)
     };
   }
 };
-
-export function getOriginContext(type: WwNodeType | MdNodeType) {
-  const originContext = toMdConvertorContextMap[type];
-
-  if (originContext) {
-    return () => originContext;
-  }
-
-  return () => () => {
-    return {};
-  };
-}

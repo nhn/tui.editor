@@ -1,29 +1,16 @@
 import { Node, Mark } from 'prosemirror-model';
 
-import isFunction from 'tui-code-snippet/type/isFunction';
-
 import { includes, escape } from '@/utils/common';
-
-import { getOriginContext } from './toMdConvertorContext';
 
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {
-  ToMdMarkConvertors,
-  ToMdNodeConvertorMap,
+  ToMdConvertorMap,
   ToMdMarkConvertorMap,
-  FirstDelimFn,
-  ToMdCustomConvertorMap,
-  ToMdOriginConvertorContext,
-  ToMdCustomConvertor,
-  OriginContext,
-  NodeInfo,
-  MarkInfo,
-  ToMdConvertorContext
+  ToMdNodeTypeConvertorMap,
+  FirstDelimFn
 } from '@t/convertor';
 
 export default class ToMdConvertorState {
-  private readonly nodes: ToMdNodeConvertorMap;
-
   private readonly marks: ToMdMarkConvertorMap;
 
   private delim: string;
@@ -36,69 +23,44 @@ export default class ToMdConvertorState {
 
   public stopNewline: boolean;
 
-  private customConvertors: ToMdCustomConvertorMap;
+  private nodeTypeConvertors: ToMdNodeTypeConvertorMap;
 
-  constructor({ nodes, marks }: ToMdMarkConvertors, customConvertors: ToMdCustomConvertorMap) {
-    this.nodes = nodes;
+  constructor({ marks, nodeTypeConvertors }: ToMdConvertorMap) {
     this.marks = marks;
     this.delim = '';
     this.result = '';
     this.closed = false;
     this.tightList = false;
     this.stopNewline = false;
-    this.customConvertors = customConvertors ?? {};
+
+    this.nodeTypeConvertors = nodeTypeConvertors;
   }
 
   private isInBlank() {
     return /(^|\n)$/.test(this.result);
   }
 
-  private getCustomConvertorContext(
-    customConvertor: ToMdCustomConvertor,
-    originContext: OriginContext,
-    nodeInfo: NodeInfo | MarkInfo
-  ) {
-    const context = customConvertor(this, {
-      origin: originContext,
-      ...nodeInfo
-    });
-
-    if (context) {
-      const { node } = nodeInfo;
-
-      if (isFunction(context)) {
-        return context(node) as ToMdOriginConvertorContext;
-      }
-
-      const orgContext = originContext()(node);
-
-      return { ...orgContext, ...context };
-    }
-
-    return null;
-  }
-
   private markText(mark: Mark, entering: boolean, parent: Node, index: number) {
-    const markType = mark.type.name as WwMarkType;
-    const customConvertor = this.customConvertors[markType];
-    const originContext = getOriginContext(markType);
-    const nodeInfo = {
-      node: mark,
-      parent,
-      index,
-      entering
-    };
+    // const markType = mark.type.name as WwMarkType;
+    // const customConvertor = this.customConvertors[markType];
+    // const originContext = getOriginContext(markType);
+    // const nodeInfo = {
+    //   node: mark,
+    //   parent,
+    //   index,
+    //   entering
+    // };
 
-    const context = customConvertor
-      ? this.getCustomConvertorContext(customConvertor, originContext, nodeInfo)
-      : originContext()(mark, entering, parent, index);
-    const info = this.marks[markType];
+    // const context = customConvertor
+    //   ? this.getCustomConvertorContext(customConvertor, originContext, nodeInfo)
+    //   : originContext()(mark, entering, parent, index);
+    // const info = this.marks[markType];
 
-    if (info && context) {
-      const { delim, rawHTML } = context as ToMdConvertorContext;
+    // if (info && context) {
+    //   const { delim, rawHTML } = context as ToMdConvertorContext;
 
-      return (rawHTML as string) || (delim as string);
-    }
+    //   return (rawHTML as string) || (delim as string);
+    // }
 
     return '';
   }
@@ -178,18 +140,13 @@ export default class ToMdConvertorState {
   }
 
   convertBlock(node: Node, parent: Node, index: number) {
-    const nodeType = node.type.name as WwNodeType;
-    const customConvertor = this.customConvertors[nodeType];
-    const originContext = getOriginContext(nodeType);
-    const nodeInfo = { node, parent, index };
+    const type = node.type.name as WwNodeType;
+    const convertor = this.nodeTypeConvertors[type];
 
-    const context = customConvertor
-      ? this.getCustomConvertorContext(customConvertor, originContext, nodeInfo)
-      : originContext()(node);
-    const innerConvertor = this.nodes[nodeType];
+    if (convertor) {
+      const nodeInfo = { node, parent, index };
 
-    if (innerConvertor && context) {
-      innerConvertor(this, nodeInfo, context);
+      convertor(this, nodeInfo);
     }
   }
 

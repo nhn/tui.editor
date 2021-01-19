@@ -1,7 +1,18 @@
 import { ProsemirrorNode } from 'prosemirror-model';
 
-import { ToMdNodeConvertorMap, ToMdMarkConvertorMap, ToMdConvertorStateType } from '@t/convertor';
 import { repeat } from '@/utils/common';
+
+import { toMdConvertorContextMap as convertors } from './toMdConvertorContext';
+
+import {
+  ToMdNodeConvertorMap,
+  ToMdMarkConvertorMap,
+  ToMdConvertorStateType,
+  ToMdNodeTypeConvertorMap,
+  NodeInfo,
+  ToMdParamConvertorMap
+} from '@t/convertor';
+import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 
 function convertInlineRawHTML(
   state: ToMdConvertorStateType,
@@ -30,7 +41,7 @@ function convertBlockRawHTML(
   }
 }
 
-const nodes: ToMdNodeConvertorMap = {
+const nodeTypeRenderers: ToMdNodeConvertorMap = {
   text(state, { node }) {
     state.text(node.text ?? '');
   },
@@ -261,4 +272,49 @@ const marks: ToMdMarkConvertorMap = {
   }
 };
 
-export const toMdConvertors = { nodes, marks };
+function createNodeTypeConvertors(paramConvertors: ToMdParamConvertorMap) {
+  const nodeTypeConvertors: ToMdNodeTypeConvertorMap = {};
+  const nodeTypes = Object.keys(nodeTypeRenderers) as WwNodeType[];
+
+  nodeTypes.forEach(type => {
+    nodeTypeConvertors[type] = (state, nodeInfo, entering) => {
+      const renderers = nodeTypeRenderers[type];
+
+      if (renderers) {
+        const context = { entering };
+        const paramConvertor = paramConvertors[type];
+        const params = paramConvertor ? paramConvertor(nodeInfo as NodeInfo, context) : {};
+
+        renderers(state, nodeInfo, params);
+      }
+    };
+  });
+
+  return nodeTypeConvertors;
+}
+
+export function createConvertors(customConvertors: ToMdParamConvertorMap) {
+  const customConvertorTypes = Object.keys(customConvertors) as (WwNodeType | WwMarkType)[];
+
+  customConvertorTypes.forEach(type => {
+    const orgConvertor = convertors[type];
+    const extConvertor = customConvertors[type]!;
+
+    if (orgConvertor) {
+      convertors[type] = (nodeInfo, context) => {
+        context.origin = () => orgConvertor(nodeInfo, context);
+
+        return extConvertor(nodeInfo, context);
+      };
+    } else {
+      convertors[type] = extConvertor;
+    }
+  });
+
+  const nodeTypeConvertors = createNodeTypeConvertors(convertors);
+
+  return {
+    marks,
+    nodeTypeConvertors
+  };
+}

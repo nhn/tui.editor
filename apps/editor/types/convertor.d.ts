@@ -133,11 +133,6 @@ export type ToMdNodeConvertorMap = Partial<Record<WwNodeType, ToMdConvertorForNo
 
 export type ToMdMarkConvertorMap = Partial<Record<WwMarkType, ToMdConvertorForMarks>>;
 
-export interface ToMdConvertorMap {
-  nodes: ToMdNodeConvertorMap;
-  marks: ToMdMarkConvertorMap;
-}
-
 export interface ToDOMAdaptor {
   getToDOM(type: string): ((node: ProsemirrorNode | Mark) => DOMOutputSpecArray) | null;
   getToDOMNode(type: string): ((node: ProsemirrorNode | Mark) => Node) | null;
@@ -151,7 +146,36 @@ export interface FlattenHTMLToWwConvertorMap {
   [k: string]: HTMLToWwConvertor;
 }
 
-export interface ToMdMarkConvertors {
-  nodes: ToMdNodeConvertorMap;
+type ToMdNodeTypeConvertor = (
+  state: ToMdConvertorStateType,
+  nodeInfo: NodeInfo,
+  entering?: boolean
+) => void;
+
+export type ToMdNodeTypeConvertorMap = Partial<Record<WwNodeType, ToMdNodeTypeConvertor>>;
+
+interface ToMdConvertorParams {
+  delim?: string | string[];
+  rawHTML?: string | string[];
+  text?: string;
+  attrs?: {
+    [key: string]: any;
+  };
+}
+
+interface ToMdParamConvertorContext {
+  origin?: () => ReturnType<ToMdParamConvertor>;
+  entering?: boolean;
+}
+
+type ToMdParamConvertor = (
+  nodeInfo: NodeInfo | MarkInfo,
+  context: ToMdParamConvertorContext
+) => ToMdConvertorParams;
+
+export type ToMdParamConvertorMap = Partial<Record<WwNodeType | MdNodeType, ToMdParamConvertor>>;
+
+export interface ToMdConvertorMap {
   marks: ToMdMarkConvertorMap;
+  nodeTypeConvertors: ToMdNodeTypeConvertorMap;
 }
