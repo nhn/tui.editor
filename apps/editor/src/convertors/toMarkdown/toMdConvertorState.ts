@@ -2,10 +2,9 @@ import { Node, Mark } from 'prosemirror-model';
 
 import isFunction from 'tui-code-snippet/type/isFunction';
 
-import { includes } from '@/utils/common';
+import { includes, escape } from '@/utils/common';
 
 import { getOriginContext } from './toMdConvertorContext';
-import { escape } from './toMdConvertorHelper';
 
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {

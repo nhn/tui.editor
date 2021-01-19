@@ -1,7 +1,7 @@
 import { ProsemirrorNode } from 'prosemirror-model';
 
 import { ToMdNodeConvertorMap, ToMdMarkConvertorMap, ToMdConvertorStateType } from '@t/convertor';
-import { repeat } from './toMdConvertorHelper';
+import { repeat } from '@/utils/common';
 
 function convertInlineRawHTML(
   state: ToMdConvertorStateType,

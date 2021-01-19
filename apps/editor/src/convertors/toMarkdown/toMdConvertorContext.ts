@@ -1,6 +1,6 @@
 import { ProsemirrorNode } from 'prosemirror-model';
 
-import { repeat, escape, quote } from './toMdConvertorHelper';
+import { repeat, escape, quote } from '@/utils/common';
 
 import { ToMdOriginConvertorContextMap } from '@t/convertor';
 import { WwNodeType } from '@t/wysiwyg';
