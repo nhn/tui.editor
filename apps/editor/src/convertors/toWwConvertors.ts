@@ -297,18 +297,6 @@ export const toWwConvertors: ToWwConvertorMap = {
 
     addRawHTMLAttributeToDOM(container);
 
-    toArray(container.childNodes).forEach(child => {
-      if (isElemNode(child)) {
-        if (child.nodeName === 'DIV') {
-          state.convertByDOMParser(child as HTMLElement);
-        } else {
-          const wrapper = document.createElement('div');
-
-          wrapper.appendChild(child);
-
-          state.convertByDOMParser(wrapper);
-        }
-      }
-    });
+    state.convertByDOMParser(container as HTMLElement);
   }
 };

@@ -18,7 +18,7 @@ export class CustomBlock extends NodeSchema {
       defining: true,
       parseDOM: [
         {
-          tag: 'div',
+          tag: 'div[data-custom-info]',
           getAttrs(dom: Node | string) {
             const info = (dom as HTMLElement).getAttribute('data-custom-info');
 
