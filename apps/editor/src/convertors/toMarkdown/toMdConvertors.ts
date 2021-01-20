@@ -1,19 +1,20 @@
 import { ProsemirrorNode } from 'prosemirror-model';
 
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+
 import { nodeTypeWriters } from './toMdNodeTypeWriters';
 
 import { repeat, escape, quote } from '@/utils/common';
 
 import {
-  ToMdParamConvertorMap,
-  ToMdMarkConvertorMap,
+  ToMdConvertorMap,
   ToMdNodeTypeConvertorMap,
   ToMdMarkTypeConvertorMap,
+  ToMdMarkTypeOptions,
   NodeInfo,
   MarkInfo
 } from '@t/convertor';
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
-import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 function addBackticks(node: ProsemirrorNode, side: number) {
   const { text } = node;
@@ -54,7 +55,7 @@ function getCloseRawHTML(rawHTML?: string) {
   return rawHTML ? `</${rawHTML}>` : '';
 }
 
-export const toMdConvertors: ToMdParamConvertorMap = {
+export const toMdConvertors: ToMdConvertorMap = {
   heading({ node }) {
     const { attrs } = node;
     const { level } = attrs;
@@ -240,7 +241,7 @@ export const toMdConvertors: ToMdParamConvertorMap = {
   }
 };
 
-const markTypeOptions: ToMdMarkConvertorMap = {
+const markTypeOptions: ToMdMarkTypeOptions = {
   strong: {
     mixable: true,
     removedEnclosingWhitespace: true
@@ -263,17 +264,17 @@ const markTypeOptions: ToMdMarkConvertorMap = {
   link: null
 };
 
-function createNodeTypeConvertors(convertors: ToMdParamConvertorMap) {
+function createNodeTypeConvertors(convertors: ToMdConvertorMap) {
   const nodeTypeConvertors: ToMdNodeTypeConvertorMap = {};
   const nodeTypes = Object.keys(nodeTypeWriters) as WwNodeType[];
 
   nodeTypes.forEach(type => {
-    nodeTypeConvertors[type] = (state, nodeInfo, entering) => {
+    nodeTypeConvertors[type] = (state, nodeInfo) => {
       const writer = nodeTypeWriters[type];
 
       if (writer) {
         const convertor = convertors[type];
-        const params = convertor ? convertor(nodeInfo as NodeInfo, { entering }) : {};
+        const params = convertor ? convertor(nodeInfo as NodeInfo, {}) : {};
 
         writer(state, nodeInfo, params);
       }
@@ -283,7 +284,7 @@ function createNodeTypeConvertors(convertors: ToMdParamConvertorMap) {
   return nodeTypeConvertors;
 }
 
-function createMarkTypeConvertors(convertors: ToMdParamConvertorMap) {
+function createMarkTypeConvertors(convertors: ToMdConvertorMap) {
   const markTypeConvertors: ToMdMarkTypeConvertorMap = {};
   const markTypes = Object.keys(markTypeOptions) as WwMarkType[];
 
@@ -301,7 +302,7 @@ function createMarkTypeConvertors(convertors: ToMdParamConvertorMap) {
   return markTypeConvertors;
 }
 
-export function createConvertors(customConvertors: ToMdParamConvertorMap) {
+export function createConvertors(customConvertors: ToMdConvertorMap) {
   const customConvertorTypes = Object.keys(customConvertors) as (WwNodeType | WwMarkType)[];
 
   customConvertorTypes.forEach(type => {

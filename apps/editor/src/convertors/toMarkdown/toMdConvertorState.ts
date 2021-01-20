@@ -4,7 +4,7 @@ import { includes, escape } from '@/utils/common';
 
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {
-  ToMdConvertorMap,
+  ToMdConvertors,
   ToMdNodeTypeConvertorMap,
   ToMdMarkTypeConvertorMap,
   FirstDelimFn
@@ -25,7 +25,7 @@ export default class ToMdConvertorState {
 
   public stopNewline: boolean;
 
-  constructor({ nodeTypeConvertors, markTypeConvertors }: ToMdConvertorMap) {
+  constructor({ nodeTypeConvertors, markTypeConvertors }: ToMdConvertors) {
     this.nodeTypeConvertors = nodeTypeConvertors;
     this.markTypeConvertors = markTypeConvertors;
     this.delim = '';

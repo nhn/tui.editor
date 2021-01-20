@@ -9,7 +9,7 @@ import { createSpecs } from '@/wysiwyg/specCreator';
 import Convertor from '@/convertors/convertor';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 
-import { ToMdParamConvertorMap, ToMdParamConvertorContext, NodeInfo, MarkInfo } from '@t/convertor';
+import { ToMdConvertorMap, ToMdConvertorContext, NodeInfo, MarkInfo } from '@t/convertor';
 
 const parser = new Parser({
   disallowedHtmlBlockTags: ['br', 'img']
@@ -649,7 +649,7 @@ describe('Convertor', () => {
   });
 
   describe('custom convertor when converting from wysiwyg to markdown', () => {
-    function createCustomConvertor(customConvertor: ToMdParamConvertorMap) {
+    function createCustomConvertor(customConvertor: ToMdConvertorMap) {
       schema = createSchema();
       convertor = new Convertor(schema, customConvertor, {});
     }
@@ -698,7 +698,7 @@ describe('Convertor', () => {
 
     it('should convert to original value', () => {
       const toMdCustomConvertor = {
-        thematicBreak(_: NodeInfo | MarkInfo, { origin }: ToMdParamConvertorContext) {
+        thematicBreak(_: NodeInfo | MarkInfo, { origin }: ToMdConvertorContext) {
           return origin!();
         }
       };
@@ -710,7 +710,7 @@ describe('Convertor', () => {
 
     it('should convert by mixing return values', () => {
       const toMdCustomConvertor = {
-        heading({ node }: NodeInfo | MarkInfo, { origin }: ToMdParamConvertorContext) {
+        heading({ node }: NodeInfo | MarkInfo, { origin }: ToMdConvertorContext) {
           const { level, headingType } = node.attrs;
 
           if (headingType === 'setext') {

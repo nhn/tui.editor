@@ -2,10 +2,10 @@ import { ProsemirrorNode } from 'prosemirror-model';
 
 import { repeat } from '@/utils/common';
 
-import { ToMdNodeTypeWriterMap, ToMdConvertorStateType } from '@t/convertor';
+import { ToMdNodeTypeWriterMap, ToMdConvertorState } from '@t/convertor';
 
 function convertInlineRawHTML(
-  state: ToMdConvertorStateType,
+  state: ToMdConvertorState,
   node: ProsemirrorNode,
   [openTag, closeTag]: string[]
 ) {
@@ -15,7 +15,7 @@ function convertInlineRawHTML(
 }
 
 function convertBlockRawHTML(
-  state: ToMdConvertorStateType,
+  state: ToMdConvertorState,
   node: ProsemirrorNode,
   parent: ProsemirrorNode,
   [openTag, closeTag]: string[]
