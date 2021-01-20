@@ -75,17 +75,6 @@ class TestComponent extends Component<Props, State> {
 
 let container: HTMLElement, destroy: () => void;
 
-function renderComponent(spies?: Record<string, jest.Mock>) {
-  container = document.createElement('div');
-
-  destroy = render(
-    container,
-    html`
-      <${TestComponent} ...${spies} />
-    ` as VNode
-  );
-}
-
 function clickShowBtn() {
   container.querySelector('button')!.click();
 }
@@ -206,6 +195,17 @@ describe('html', () => {
 });
 
 describe('Class Component', () => {
+  function renderComponent(spies?: Record<string, jest.Mock>) {
+    container = document.createElement('div');
+
+    destroy = render(
+      container,
+      html`
+        <${TestComponent} ...${spies} />
+      ` as VNode
+    );
+  }
+
   it('should be rendered properly', () => {
     renderComponent();
 

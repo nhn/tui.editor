@@ -28,9 +28,11 @@ function getToolbarState(targetNode: MdNode) {
       return;
     }
 
-    if ((type === 'bulletList' || type === 'orderedList') && listEnabled) {
-      toolbarState[type] = true;
-      listEnabled = false;
+    if (type === 'bulletList' || type === 'orderedList') {
+      if (listEnabled) {
+        toolbarState[type] = true;
+        listEnabled = false;
+      }
     } else {
       toolbarState[type as ToolbarStateKeys] = true;
     }

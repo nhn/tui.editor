@@ -63,6 +63,7 @@ export class VNode {
 
   node!: Node | null;
 
+  // A: append, U: update, D: delete
   effect!: 'A' | 'U' | 'D';
 
   component?: Component;

@@ -2,6 +2,10 @@ import toArray from 'tui-code-snippet/collection/toArray';
 import isArray from 'tui-code-snippet/type/isArray';
 import isString from 'tui-code-snippet/type/isString';
 import matches from 'tui-code-snippet/domUtil/matches';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import hasClass from 'tui-code-snippet/domUtil/hasClass';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
   const rect = {
@@ -97,4 +101,13 @@ export function closest<T extends Node>(node: Node, found: string | Node) {
   }
 
   return null;
+}
+
+export function toggleClass(element: Element, className: string, state?: boolean) {
+  if (isUndefined(state)) {
+    state = !hasClass(element, className);
+  }
+  const toggleFn = state ? addClass : removeClass;
+
+  toggleFn(element, className);
 }

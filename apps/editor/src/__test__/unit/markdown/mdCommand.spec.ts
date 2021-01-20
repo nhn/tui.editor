@@ -600,7 +600,7 @@ describe('addTable command', () => {
       |  |  |
     `}`;
 
-    cmd.exec('markdown', 'addTable', { colLen: 2, rowLen: 3 });
+    cmd.exec('markdown', 'addTable', { columnCount: 2, rowCount: 3 });
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -617,7 +617,7 @@ describe('addTable command', () => {
     mde.setMarkdown('text');
 
     cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'addTable', { colLen: 2, rowLen: 3 });
+    cmd.exec('markdown', 'addTable', { columnCount: 2, rowCount: 3 });
 
     expect(getTextContent(mde)).toBe(result);
   });

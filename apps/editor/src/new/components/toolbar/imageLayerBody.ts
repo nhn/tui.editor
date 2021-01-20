@@ -101,24 +101,27 @@ export class ImageLayerBody extends Component<Props, State> {
           <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
         </div>
         <div class="te-url-type${activeTab === 'url' ? ' te-tab-active' : ''}">
-          <label for="">${i18n.get('Image URL')}</label>
+          <label for="te-image-url-input">${i18n.get('Image URL')}</label>
           <input
+            id="te-image-url-input"
             type="text"
             class="te-image-url-input"
             ref=${(el: HTMLInputElement) => (this.refs.url = el)}
           />
         </div>
         <div class="te-file-type${activeTab === 'file' ? ' te-tab-active' : ''}">
-          <label for="">${i18n.get('Select image file')}</label>
+          <label for="te-image-file-input">${i18n.get('Select image file')}</label>
           <input
+            id="te-image-file-input"
             type="file"
             class="te-image-file-input"
             accept="image/*"
             ref=${(el: HTMLInputElement) => (this.refs.file = el)}
           />
         </div>
-        <label for="">${i18n.get('Description')}</label>
+        <label for="te-alt-text-input">${i18n.get('Description')}</label>
         <input
+          id="te-alt-text-input"
           type="text"
           class="te-alt-text-input"
           ref=${(el: HTMLInputElement) => (this.refs.altText = el)}

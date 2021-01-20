@@ -23,10 +23,10 @@ export class HeadingLayerBody extends Component<Props> {
     return html`
       <ul onClick=${(ev: MouseEvent) => this.execCommand(ev)}>
         ${[1, 2, 3, 4, 5, 6].map(
-          value =>
+          level =>
             html`
-              <li data-value="${value}" data-type="Heading">
-                <${`h${value}`}>${i18n.get('Heading')} ${value}</$>
+              <li data-value="${level}" data-type="Heading">
+                <${`h${level}`}>${i18n.get('Heading')} ${level}</$>
               </li>
             `
         )}

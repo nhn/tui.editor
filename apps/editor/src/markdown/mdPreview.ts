@@ -13,6 +13,7 @@ import { Renderer } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
 import { CustomHTMLRendererMap, EditResult, MdNode, MdPos } from '@t/markdown';
 import Preview from '@/preview';
+import { toggleClass } from '@/utils/dom';
 import domUtils from '@/utils/dom-legacy';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
@@ -85,11 +86,7 @@ class MarkdownPreview extends Preview {
   }
 
   private toggleActive(active: boolean) {
-    if (active) {
-      this.el!.classList.add('te-tab-active');
-    } else {
-      this.el!.classList.remove('te-tab-active');
-    }
+    toggleClass(this.el!, 'te-tab-active', active);
   }
 
   private initEvent(highlight: boolean) {

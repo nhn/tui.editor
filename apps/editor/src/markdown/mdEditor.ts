@@ -11,6 +11,7 @@ import { Emitter } from '@t/event';
 import { MdPos } from '@t/markdown';
 import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
+import { toggleClass } from '@/utils/dom';
 import { createParagraph, createTextSelection, nbspToSpace } from '@/helper/manipulation';
 import { placeholder } from '@/plugins/placeholder';
 import { getDefaultCommands } from '@/commands/defaultCommands';
@@ -60,11 +61,10 @@ export default class MdEditor extends EditorBase {
   }
 
   private toggleActive(active: boolean) {
+    toggleClass(this.el!, 'te-tab-active', active);
     if (active) {
-      this.el!.classList.add('te-tab-active');
       this.focus();
     } else {
-      this.el!.classList.remove('te-tab-active');
       this.blur();
     }
   }

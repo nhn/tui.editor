@@ -96,7 +96,7 @@ class ToastUIEditor {
 
   private minHeight!: string;
 
-  private currentMode!: EditorType;
+  private mode!: EditorType;
 
   private mdPreviewStyle!: PreviewStyle;
 
@@ -142,7 +142,7 @@ class ToastUIEditor {
     );
 
     this.codeBlockLanguages = [];
-    this.currentMode = this.options.initialEditType || 'markdown';
+    this.mode = this.options.initialEditType || 'markdown';
 
     this.eventEmitter = new EventEmitter();
 
@@ -248,7 +248,10 @@ class ToastUIEditor {
 
     this.getCurrentModeEditor().focus();
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
+    this.addInitEvent();
+  }
 
+  private addInitEvent() {
     this.on('changeModeByEvent', this.changeMode.bind(this));
     this.addCommand('markdown', 'toggleScrollSync', payload => {
       this.eventEmitter.emit('toggleScrollSync', payload!.active);
@@ -514,7 +517,7 @@ class ToastUIEditor {
    * @returns {boolean}
    */
   isMarkdownMode() {
-    return this.currentMode === 'markdown';
+    return this.mode === 'markdown';
   }
 
   /**
@@ -522,7 +525,7 @@ class ToastUIEditor {
    * @returns {boolean}
    */
   isWysiwygMode() {
-    return this.currentMode === 'wysiwyg';
+    return this.mode === 'wysiwyg';
   }
 
   /**
@@ -547,13 +550,13 @@ class ToastUIEditor {
    * @param {boolean} [isWithoutFocus] - Change mode without focus
    */
   changeMode(mode: EditorType, isWithoutFocus?: boolean) {
-    if (this.currentMode === mode) {
+    if (this.mode === mode) {
       return;
     }
 
-    this.eventEmitter.emit('changeModeBefore', this.currentMode);
+    this.eventEmitter.emit('changeModeBefore', this.mode);
 
-    this.currentMode = mode;
+    this.mode = mode;
 
     if (this.isWysiwygMode()) {
       const mdNode = this.toastMark.getRootNode();

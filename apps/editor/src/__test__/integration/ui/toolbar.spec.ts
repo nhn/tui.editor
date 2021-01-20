@@ -334,7 +334,7 @@ describe('toolbar', () => {
 
       expect(spy).toHaveBeenCalledWith(
         { type: 'markdown', command: 'addTable' },
-        { colLen: 5, rowLen: 4 }
+        { columnCount: 5, rowCount: 4 }
       );
     });
   });

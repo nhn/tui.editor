@@ -61,14 +61,16 @@ export class LinkLayerBody extends Component<Props> {
   render() {
     return html`
       <div>
-        <label for="url">${i18n.get('URL')}</label>
+        <label for="te-link-url-input">${i18n.get('URL')}</label>
         <input
+          id="te-link-url-input"
           type="text"
           class="te-url-input"
           ref=${(el: HTMLInputElement) => (this.refs.url = el)}
         />
-        <label for="linkText">${i18n.get('Link text')}</label>
+        <label for="te-link-text-input">${i18n.get('Link text')}</label>
         <input
+          id="te-link-text-input"
           type="text"
           class="te-link-text-input"
           ref=${(el: HTMLInputElement) => (this.refs.text = el)}

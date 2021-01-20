@@ -44,7 +44,7 @@ export function innerDiff(node: Node, prevProps: Props, nextProps: Props) {
   setProps(node, nextProps, propName => !shallowEqual(prevProps[propName], nextProps[propName]));
 }
 
-const reNonDimensional = /acit|ex(?:s|g|n|p|$)|rph|ows|mnc|ntw|ine[ch]|zoo|^ord/i;
+const reNonDimension = /acit|ex(?:s|g|n|p|$)|rph|ows|mnc|ntw|ine[ch]|zoo|^ord/i;
 
 function setProps(node: Node, props: Props, condition?: ConditionFn) {
   Object.keys(props).forEach(propName => {
@@ -63,7 +63,7 @@ function setProps(node: Node, props: Props, condition?: ConditionFn) {
 
           // @ts-ignore
           (node as HTMLElement).style[styleProp] =
-            isNumber(value) && !reNonDimensional.test(styleProp) ? `${value}px` : value;
+            isNumber(value) && !reNonDimension.test(styleProp) ? `${value}px` : value;
         });
       } else if (propName !== 'children') {
         (node as HTMLElement).setAttribute(propName, props[propName]);
