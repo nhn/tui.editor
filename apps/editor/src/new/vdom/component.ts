@@ -7,7 +7,7 @@ export class Component<T = {}, R = {}> implements IComponent<T, R> {
 
   state: R;
 
-  refs: Record<string, any>;
+  refs: Record<string, HTMLElement>;
 
   vnode!: VNode;
 

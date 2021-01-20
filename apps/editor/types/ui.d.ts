@@ -105,7 +105,6 @@ export type ToolbarItemInfo = {
   active?: boolean;
   toggle?: boolean;
   disabled?: boolean;
-  dropdown?: boolean;
 };
 
 export type ToolbarGroupInfo = ToolbarItemInfo[] & { hidden?: boolean };
@@ -115,6 +114,7 @@ export type ToolbarItem = (string | ToolbarButton) | (string | ToolbarButton)[];
 export type ExecCommand = (command: string, payload?: Record<string, any>) => void;
 export type HideLayer = () => void;
 export type SetLayerInfo = (info: LayerInfo) => void;
+export type SetToolbarItemWidth = (name: string, width: number) => void;
 
 export interface ContextMenuItem {
   label: string;

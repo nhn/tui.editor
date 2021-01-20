@@ -12,7 +12,7 @@ export function createNode(vnode: VNode) {
 
   if (vnode.type === 'TEXT_NODE') {
     node = document.createTextNode(vnode.props.nodeValue);
-  } else if (vnode.type) {
+  } else {
     node = document.createElement(vnode.type as string);
     setProps(node, vnode.props);
   }

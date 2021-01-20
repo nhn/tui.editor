@@ -1,4 +1,4 @@
-import { ExecCommand, SetLayerInfo, ToolbarGroupInfo } from '@t/ui';
+import { ExecCommand, SetLayerInfo, SetToolbarItemWidth, ToolbarGroupInfo } from '@t/ui';
 import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
@@ -11,7 +11,7 @@ interface Props {
   eventEmitter: Emitter;
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
-  setToolbarElements: Function;
+  setToolbarItemWidth: SetToolbarItemWidth;
 }
 
 export class ToolbarGroup extends Component<Props> {
@@ -22,13 +22,13 @@ export class ToolbarGroup extends Component<Props> {
       eventEmitter,
       execCommand,
       setLayerInfo,
-      setToolbarElements
+      setToolbarItemWidth
     } = this.props;
     const groupStyle = { display: group.hidden ? 'none' : 'inline-block' };
     const dividerStyle = { display: hiddenDivider ? 'none' : 'inline-block' };
 
     return html`
-      <>
+      <div class="te-toolbar-group" style=${groupStyle}>
         ${group.map(
           item =>
             html`
@@ -37,12 +37,12 @@ export class ToolbarGroup extends Component<Props> {
                 eventEmitter=${eventEmitter}
                 execCommand=${execCommand}
                 setLayerInfo=${setLayerInfo}
-                setToolbarElements=${setToolbarElements}
+                setToolbarItemWidth=${setToolbarItemWidth}
               />
             `
         )}
         <div class="tui-toolbar-divider" style=${dividerStyle}></div>
-      </>
+      </div>
     `;
   }
 }

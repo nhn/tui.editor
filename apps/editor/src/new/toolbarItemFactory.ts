@@ -186,10 +186,10 @@ export function createLayerInfo(type: string, el: HTMLElement, pos: Pos): LayerI
   }
 }
 
-export function groupingToolbarItems(toolbarItems: ToolbarItem[]) {
+export function groupToolbarItems(toolbarItems: ToolbarItem[], hiddenScrollSync: boolean) {
   let needNested = false;
 
-  return toolbarItems.reduce((acc: ToolbarItemInfo[][], item) => {
+  const groups = toolbarItems.reduce((acc: ToolbarItemInfo[][], item) => {
     if (Array.isArray(item)) {
       needNested = false;
       acc.push(item.map(type => createToolbarItemInfo(type)));
@@ -201,23 +201,23 @@ export function groupingToolbarItems(toolbarItems: ToolbarItem[]) {
     }
     return acc;
   }, []);
+
+  return getToolbarItems(groups, false, hiddenScrollSync);
 }
 
-export function getToolbarItems(toolbarItems: ToolbarGroupInfo[], hideScrollSync: boolean) {
+export function getToolbarItems(
+  toolbarItems: ToolbarGroupInfo[],
+  disabled: boolean,
+  hiddenScrollSync: boolean
+) {
   return toolbarItems.map(group => {
-    const [scrollSync] = group.filter(item => item.name === 'scrollSync');
-
     group.hidden = false;
-
-    if (scrollSync) {
-      scrollSync.hidden = hideScrollSync;
-      if (group.length === 1) {
-        group.hidden = hideScrollSync;
+    group.forEach(item => {
+      item.disabled = disabled;
+      if (item.name === 'scrollSync') {
+        item.hidden = hiddenScrollSync;
       }
-    }
-    if (group.filter(item => item.dropdown).length === group.length) {
-      group.hidden = true;
-    }
+    });
     return group;
   });
 }

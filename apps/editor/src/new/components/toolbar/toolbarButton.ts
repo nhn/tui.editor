@@ -1,4 +1,11 @@
-import { ExecCommand, Pos, SetLayerInfo, ToolbarItemInfo, ToolbarState } from '@t/ui';
+import {
+  ExecCommand,
+  Pos,
+  SetLayerInfo,
+  SetToolbarItemWidth,
+  ToolbarItemInfo,
+  ToolbarState
+} from '@t/ui';
 import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
@@ -13,6 +20,7 @@ interface Props {
   item: ToolbarItemInfo;
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
+  setToolbarItemWidth: SetToolbarItemWidth;
 }
 
 interface State {
@@ -27,11 +35,7 @@ const LAYER_INDENT = -7;
 export class ToolbarButton extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      disabled: false,
-      active: !!props.item.active,
-      tooltipPos: null
-    };
+    this.state = { active: !!props.item.active, tooltipPos: null };
     this.showTooltip = this.showTooltip.bind(this);
     this.hideTooltip = this.hideTooltip.bind(this);
     this.execCommand = this.execCommand.bind(this);
@@ -49,8 +53,18 @@ export class ToolbarButton extends Component<Props, State> {
   }
 
   mounted() {
-    if (this.props.setToolbarElements) {
-      this.props.setToolbarElements(this.props.item.name, this.refs.el);
+    const { setToolbarItemWidth, item } = this.props;
+
+    if (setToolbarItemWidth) {
+      const { el } = this.refs;
+      const computed = window.getComputedStyle(el);
+
+      const width = ['margin-left', 'margin-right', 'width'].reduce(
+        (acc, type) => acc + (parseInt(computed.getPropertyValue(type), 10) || 50),
+        0
+      );
+
+      setToolbarItemWidth(item.name, width);
     }
   }
 
@@ -101,18 +115,9 @@ export class ToolbarButton extends Component<Props, State> {
   }
 
   render() {
-    const {
-      noIcon,
-      className,
-      tooltip,
-      activeTooltip,
-      hidden,
-      disabled,
-      dropdown
-    } = this.props.item;
+    const { noIcon, className, tooltip, activeTooltip, hidden, disabled } = this.props.item;
     const { active, tooltipPos } = this.state;
     const style = {
-      // display: hidden || (this.props.setToolbarElements && dropdown) ? 'none' : 'inline-block'
       display: hidden ? 'none' : 'inline-block'
     };
     let classNames = noIcon ? className : `${className} tui-toolbar-icons`;

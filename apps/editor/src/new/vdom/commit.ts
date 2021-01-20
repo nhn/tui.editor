@@ -23,8 +23,6 @@ export function commit(vnode?: VNode) {
         if (vnode.old && comp.updated) {
           const prevProps = comp.prevProps || {};
 
-          delete comp.prevProps;
-
           comp.updated(prevProps);
         }
       }
