@@ -1,251 +1,239 @@
 import { ProsemirrorNode } from 'prosemirror-model';
 
-import { repeat } from '@/utils/common';
+import { nodeTypeWriters } from './toMdNodeTypeWriters';
 
-import { toMdConvertorContextMap as convertors } from './toMdConvertorContext';
+import { repeat, escape, quote } from '@/utils/common';
 
 import {
-  ToMdNodeConvertorMap,
+  ToMdParamConvertorMap,
   ToMdMarkConvertorMap,
-  ToMdConvertorStateType,
   ToMdNodeTypeConvertorMap,
-  NodeInfo,
-  ToMdParamConvertorMap
+  NodeInfo
 } from '@t/convertor';
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 
-function convertInlineRawHTML(
-  state: ToMdConvertorStateType,
-  node: ProsemirrorNode,
-  [openTag, closeTag]: string[]
-) {
-  state.write(openTag);
-  state.convertInline(node);
-  state.write(closeTag);
-}
+function addBackticks(node: ProsemirrorNode, side: number) {
+  const { text } = node;
+  const ticks = /`+/g;
+  let len = 0;
 
-function convertBlockRawHTML(
-  state: ToMdConvertorStateType,
-  node: ProsemirrorNode,
-  parent: ProsemirrorNode,
-  [openTag, closeTag]: string[]
-) {
-  state.stopNewline = true;
-  state.write(openTag);
-  state.convertNode(node);
-  state.write(closeTag);
+  if (node.isText && text) {
+    let matched = ticks.exec(text);
 
-  if (parent?.type.name === 'doc') {
-    state.closeBlock(node);
-    state.stopNewline = false;
+    while (matched) {
+      len = Math.max(len, matched[0].length);
+      matched = ticks.exec(text);
+    }
   }
+
+  let result = len > 0 && side > 0 ? ' `' : '`';
+
+  for (let i = 0; i < len; i += 1) {
+    result += '`';
+  }
+
+  if (len > 0 && side < 0) {
+    result += ' ';
+  }
+
+  return result;
 }
 
-const nodeTypeRenderers: ToMdNodeConvertorMap = {
-  text(state, { node }) {
-    state.text(node.text ?? '');
+function getPairRawHTML(rawHTML?: string[]) {
+  return rawHTML ? [`<${rawHTML}>`, `</${rawHTML}>`] : '';
+}
+
+function getOpenRawHTML(rawHTML?: string) {
+  return rawHTML ? `<${rawHTML}>` : '';
+}
+
+function getCloseRawHTML(rawHTML?: string) {
+  return rawHTML ? `</${rawHTML}>` : '';
+}
+
+export const toMdConvertors: ToMdParamConvertorMap = {
+  heading({ node }) {
+    const { attrs } = node;
+    const { level } = attrs;
+    let delim = repeat('#', level);
+
+    if (attrs.headingType === 'setext') {
+      delim = level === 1 ? '===' : '---';
+    }
+
+    return {
+      delim,
+      rawHTML: getPairRawHTML(attrs.rawHTML)
+    };
   },
 
-  paragraph(state, { node, parent, index = 0 }) {
-    if (state.stopNewline) {
-      state.convertInline(node);
-    } else {
-      const firstChildNode = index === 0;
-      const prevNode = !firstChildNode && parent!.child(index - 1);
-      const prevEmptyNode = prevNode && prevNode.childCount === 0;
-      const nextNode = index < parent!.childCount - 1 && parent!.child(index + 1);
-      const nextParaNode = nextNode && nextNode.type.name === 'paragraph';
-      const emptyNode = node.childCount === 0;
+  codeBlock({ node }) {
+    const { attrs, textContent } = node as ProsemirrorNode;
 
-      if (emptyNode && prevEmptyNode) {
-        state.write('<br>\n');
-      } else if (emptyNode && !prevEmptyNode && !firstChildNode) {
-        state.write('\n');
-      } else {
-        state.convertInline(node);
+    return {
+      delim: [`\`\`\`${attrs.language || ''}`, '```'],
+      rawHTML: getPairRawHTML(attrs.rawHTML),
+      text: textContent
+    };
+  },
 
-        if (nextParaNode) {
-          state.write('\n');
-        } else {
-          state.closeBlock(node);
-        }
+  blockQuote({ node }) {
+    return {
+      delim: '> ',
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+    };
+  },
+
+  bulletList({ node }) {
+    return {
+      delim: '*',
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+    };
+  },
+
+  orderedList({ node }) {
+    return {
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+    };
+  },
+
+  listItem({ node }) {
+    const { task, checked, rawHTML } = node.attrs;
+
+    const className = task ? ` class="task-list-item${checked ? ' checked' : ''}"` : '';
+    const dataset = task ? ` data-task${checked ? ` data-task-checked` : ''}` : '';
+
+    return {
+      rawHTML: rawHTML ? [`<${rawHTML}${className}${dataset}>`, `</${rawHTML}>`] : ''
+    };
+  },
+
+  table({ node }) {
+    return {
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+    };
+  },
+
+  tableHead({ node }) {
+    return {
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+    };
+  },
+
+  tableBody({ node }) {
+    return {
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+    };
+  },
+
+  tableRow({ node }) {
+    return {
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+    };
+  },
+
+  tableHeadCell({ node }) {
+    return {
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+    };
+  },
+
+  tableBodyCell({ node }) {
+    return {
+      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+    };
+  },
+
+  image({ node }) {
+    const { attrs } = node;
+    const altText = escape(attrs.altText || '');
+    const imageUrl = escape(attrs.imageUrl);
+    const altAttr = altText ? ` alt="${altText}"` : '';
+
+    return {
+      rawHTML: attrs.rawHTML ? `<${attrs.rawHTML} src="${imageUrl}"${altAttr}>` : '',
+      attrs: {
+        altText,
+        imageUrl
       }
+    };
+  },
+
+  thematicBreak({ node }) {
+    return {
+      delim: '***',
+      rawHTML: getOpenRawHTML(node.attrs.rawHTML)
+    };
+  },
+
+  customBlock({ node }) {
+    const { attrs, textContent } = node as ProsemirrorNode;
+
+    return {
+      delim: [`{{${attrs.info}`, '}}'],
+      text: textContent
+    };
+  },
+
+  strong({ node }, { entering }) {
+    const { rawHTML } = node.attrs;
+
+    return {
+      delim: '**',
+      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML)
+    };
+  },
+
+  emph({ node }, { entering }) {
+    const { rawHTML } = node.attrs;
+
+    return {
+      delim: '*',
+      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML)
+    };
+  },
+
+  strike({ node }, { entering }) {
+    const { rawHTML } = node.attrs;
+
+    return {
+      delim: '~~',
+      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML)
+    };
+  },
+
+  link({ node }, { entering }) {
+    const { attrs } = node;
+    const linkUrl = escape(attrs.linkUrl);
+    const { rawHTML } = attrs;
+
+    if (entering) {
+      return {
+        delim: '[',
+        rawHTML: rawHTML ? `<${rawHTML} href="${linkUrl}">` : ''
+      };
     }
+
+    const linkText = attrs.title ? ` ${quote(attrs.linkText)}` : '';
+
+    return {
+      delim: `](${linkText}${linkUrl})`,
+      rawHTML: getCloseRawHTML(rawHTML)
+    };
   },
 
-  heading(state, { node }, { delim, rawHTML }) {
-    const { headingType } = node.attrs;
+  code({ node, parent, index = 0 }, { entering }) {
+    const delim = entering
+      ? addBackticks(parent!.child(index), -1)
+      : addBackticks(parent!.child(index - 1), 1);
+    const rawHTML = entering
+      ? getOpenRawHTML(node.attrs.rawHTML)
+      : getCloseRawHTML(node.attrs.rawHTML);
 
-    if (rawHTML) {
-      convertInlineRawHTML(state, node, rawHTML as string[]);
-    } else if (headingType === 'atx') {
-      state.write(`${delim} `);
-      state.convertInline(node);
-      state.closeBlock(node);
-    } else {
-      state.convertInline(node);
-      state.ensureNewLine();
-      state.write(delim as string);
-      state.closeBlock(node);
-    }
-  },
-
-  codeBlock(state, { node }, { delim, text, rawHTML }) {
-    const [openDelim, closeDelim] = delim as string[];
-
-    if (rawHTML) {
-      convertInlineRawHTML(state, node, rawHTML as string[]);
-    } else {
-      state.write(openDelim);
-      state.ensureNewLine();
-      state.text(text!, false);
-      state.ensureNewLine();
-      state.write(closeDelim);
-      state.closeBlock(node);
-    }
-  },
-
-  blockQuote(state, { node, parent }, { delim, rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      if (parent?.type.name === node.type.name) {
-        state.flushClose(1);
-      }
-
-      state.wrapBlock(delim as string, null, node, () => state.convertNode(node));
-    }
-  },
-
-  bulletList(state, { node, parent }, { delim, rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.convertList(node, '  ', () => `${delim} `);
-    }
-  },
-
-  orderedList(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      const start = node.attrs.order || 1;
-      const maxWidth = String(start + node.childCount - 1).length;
-      const space = repeat('  ', maxWidth + 2);
-
-      state.convertList(node, space, (index: number) => {
-        const numStr = String(start + index);
-
-        return `${repeat(' ', maxWidth - numStr.length)}${numStr}. `;
-      });
-    }
-  },
-
-  listItem(state, { node, parent }, { rawHTML }) {
-    const { task, checked } = node.attrs;
-
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      if (task) {
-        state.write(`[${checked ? 'x' : ' '}] `);
-      }
-
-      state.convertNode(node);
-    }
-  },
-
-  image(state, _, { rawHTML, attrs }) {
-    state.write((rawHTML as string) || `![${attrs?.altText}](${attrs?.imageUrl})`);
-  },
-
-  thematicBreak(state, { node }, { delim, rawHTML }) {
-    if (rawHTML) {
-      state.write(rawHTML as string);
-    } else {
-      state.write(delim as string);
-      state.closeBlock(node);
-    }
-  },
-
-  table(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.convertNode(node);
-      state.closeBlock(node);
-    }
-  },
-
-  tableHead(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      const row = node.firstChild;
-      let result = '';
-
-      state.convertNode(node);
-
-      if (row) {
-        row.forEach(column => {
-          const { textContent } = column;
-
-          result += `| ${repeat('-', textContent.length || 3)} `;
-        });
-      }
-
-      state.write(`${result}|`);
-      state.ensureNewLine();
-    }
-  },
-
-  tableBody(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.convertNode(node);
-    }
-  },
-
-  tableRow(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.convertNode(node);
-      state.write('|');
-      state.ensureNewLine();
-    }
-  },
-
-  tableHeadCell(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.write('| ');
-      state.convertTableCell(node);
-      state.write(' ');
-    }
-  },
-
-  tableBodyCell(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.write('| ');
-      state.convertTableCell(node);
-      state.write(' ');
-    }
-  },
-
-  customBlock(state, { node }, { delim, text }) {
-    const [openDelim, closeDelim] = delim as string[];
-
-    state.write(openDelim);
-    state.ensureNewLine();
-    state.text(text!, false);
-    state.ensureNewLine();
-    state.write(closeDelim);
-    state.closeBlock(node);
+    return {
+      delim,
+      rawHTML
+    };
   }
 };
 
@@ -273,12 +261,12 @@ const marks: ToMdMarkConvertorMap = {
 };
 
 function createNodeTypeConvertors(paramConvertors: ToMdParamConvertorMap) {
-  const nodeTypeConvertors: ToMdNodeTypeConvertorMap = {};
-  const nodeTypes = Object.keys(nodeTypeRenderers) as WwNodeType[];
+  const convertors: ToMdNodeTypeConvertorMap = {};
+  const nodeTypes = Object.keys(nodeTypeWriters) as WwNodeType[];
 
   nodeTypes.forEach(type => {
-    nodeTypeConvertors[type] = (state, nodeInfo, entering) => {
-      const renderers = nodeTypeRenderers[type];
+    convertors[type] = (state, nodeInfo, entering) => {
+      const renderers = nodeTypeWriters[type];
 
       if (renderers) {
         const context = { entering };
@@ -290,28 +278,28 @@ function createNodeTypeConvertors(paramConvertors: ToMdParamConvertorMap) {
     };
   });
 
-  return nodeTypeConvertors;
+  return convertors;
 }
 
 export function createConvertors(customConvertors: ToMdParamConvertorMap) {
   const customConvertorTypes = Object.keys(customConvertors) as (WwNodeType | WwMarkType)[];
 
   customConvertorTypes.forEach(type => {
-    const orgConvertor = convertors[type];
+    const orgConvertor = toMdConvertors[type];
     const extConvertor = customConvertors[type]!;
 
     if (orgConvertor) {
-      convertors[type] = (nodeInfo, context) => {
+      toMdConvertors[type] = (nodeInfo, context) => {
         context.origin = () => orgConvertor(nodeInfo, context);
 
         return extConvertor(nodeInfo, context);
       };
     } else {
-      convertors[type] = extConvertor;
+      toMdConvertors[type] = extConvertor;
     }
   });
 
-  const nodeTypeConvertors = createNodeTypeConvertors(convertors);
+  const nodeTypeConvertors = createNodeTypeConvertors(toMdConvertors);
 
   return {
     marks,

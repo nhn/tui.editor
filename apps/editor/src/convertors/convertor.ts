@@ -23,8 +23,6 @@ export default class Convertor {
 
   private readonly linkAttribute: Record<string, any>;
 
-  private readonly toMdCustomConvertors: ToMdCustomConvertorMap;
-
   constructor(
     schema: Schema,
     toMdCustomConvertors: ToMdCustomConvertorMap,
@@ -41,8 +39,8 @@ export default class Convertor {
 
     this.schema = schema;
     this.toWwConvertors = toWwConvertors;
+    // @TODO change toMdCustomConvertors
     this.toMdConvertors = createConvertors(customConvertor);
-    this.toMdCustomConvertors = toMdCustomConvertors;
     this.linkAttribute = linkAttribute;
   }
 

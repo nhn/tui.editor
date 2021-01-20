@@ -129,7 +129,7 @@ interface ToMdConvertorForMarks {
   escape?: boolean;
 }
 
-export type ToMdNodeConvertorMap = Partial<Record<WwNodeType, ToMdConvertorForNodes>>;
+export type ToMdNodeTypeWriterMap = Partial<Record<WwNodeType, ToMdConvertorForNodes>>;
 
 export type ToMdMarkConvertorMap = Partial<Record<WwMarkType, ToMdConvertorForMarks>>;
 
