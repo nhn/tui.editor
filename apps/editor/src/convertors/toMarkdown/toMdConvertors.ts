@@ -8,9 +8,12 @@ import {
   ToMdParamConvertorMap,
   ToMdMarkConvertorMap,
   ToMdNodeTypeConvertorMap,
-  NodeInfo
+  ToMdMarkTypeConvertorMap,
+  NodeInfo,
+  MarkInfo
 } from '@t/convertor';
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 function addBackticks(node: ProsemirrorNode, side: number) {
   const { text } = node;
@@ -237,7 +240,7 @@ export const toMdConvertors: ToMdParamConvertorMap = {
   }
 };
 
-const marks: ToMdMarkConvertorMap = {
+const markTypeOptions: ToMdMarkConvertorMap = {
   strong: {
     mixable: true,
     removedEnclosingWhitespace: true
@@ -253,56 +256,76 @@ const marks: ToMdMarkConvertorMap = {
     removedEnclosingWhitespace: true
   },
 
-  link: {},
-
   code: {
     escape: false
-  }
+  },
+
+  link: null
 };
 
-function createNodeTypeConvertors(paramConvertors: ToMdParamConvertorMap) {
-  const convertors: ToMdNodeTypeConvertorMap = {};
+function createNodeTypeConvertors(convertors: ToMdParamConvertorMap) {
+  const nodeTypeConvertors: ToMdNodeTypeConvertorMap = {};
   const nodeTypes = Object.keys(nodeTypeWriters) as WwNodeType[];
 
   nodeTypes.forEach(type => {
-    convertors[type] = (state, nodeInfo, entering) => {
-      const renderers = nodeTypeWriters[type];
+    nodeTypeConvertors[type] = (state, nodeInfo, entering) => {
+      const writer = nodeTypeWriters[type];
 
-      if (renderers) {
-        const context = { entering };
-        const paramConvertor = paramConvertors[type];
-        const params = paramConvertor ? paramConvertor(nodeInfo as NodeInfo, context) : {};
+      if (writer) {
+        const convertor = convertors[type];
+        const params = convertor ? convertor(nodeInfo as NodeInfo, { entering }) : {};
 
-        renderers(state, nodeInfo, params);
+        writer(state, nodeInfo, params);
       }
     };
   });
 
-  return convertors;
+  return nodeTypeConvertors;
+}
+
+function createMarkTypeConvertors(convertors: ToMdParamConvertorMap) {
+  const markTypeConvertors: ToMdMarkTypeConvertorMap = {};
+  const markTypes = Object.keys(markTypeOptions) as WwMarkType[];
+
+  markTypes.forEach(type => {
+    markTypeConvertors[type] = (nodeInfo, entering) => {
+      const markOption = markTypeOptions[type];
+      const convertor = convertors[type];
+      const runConvertor = convertor && nodeInfo && !isUndefined(entering);
+      const params = runConvertor ? convertor!(nodeInfo as MarkInfo, { entering }) : {};
+
+      return { ...params, ...markOption };
+    };
+  });
+
+  return markTypeConvertors;
 }
 
 export function createConvertors(customConvertors: ToMdParamConvertorMap) {
   const customConvertorTypes = Object.keys(customConvertors) as (WwNodeType | WwMarkType)[];
 
   customConvertorTypes.forEach(type => {
-    const orgConvertor = toMdConvertors[type];
-    const extConvertor = customConvertors[type]!;
+    const baseConvertor = toMdConvertors[type];
+    const customConvertor = customConvertors[type]!;
 
-    if (orgConvertor) {
+    if (baseConvertor) {
       toMdConvertors[type] = (nodeInfo, context) => {
-        context.origin = () => orgConvertor(nodeInfo, context);
+        context.origin = () => baseConvertor(nodeInfo, context);
 
-        return extConvertor(nodeInfo, context);
+        return customConvertor(nodeInfo, context);
       };
     } else {
-      toMdConvertors[type] = extConvertor;
+      toMdConvertors[type] = customConvertor;
     }
+
+    delete customConvertors[type];
   });
 
   const nodeTypeConvertors = createNodeTypeConvertors(toMdConvertors);
+  const markTypeConvertors = createMarkTypeConvertors(toMdConvertors);
 
   return {
-    marks,
-    nodeTypeConvertors
+    nodeTypeConvertors,
+    markTypeConvertors
   };
 }

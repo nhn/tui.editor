@@ -3,17 +3,13 @@ import { source, oneLineTrim } from 'common-tags';
 // @ts-ignore
 import { Parser } from '@toast-ui/toastmark';
 
-import { Schema, ProsemirrorNode } from 'prosemirror-model';
+import { Schema } from 'prosemirror-model';
 import { createSpecs } from '@/wysiwyg/specCreator';
 
 import Convertor from '@/convertors/convertor';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 
-import {
-  ToMdCustomConvertorMap,
-  ToMdConvertorStateType,
-  ToMdCustomConvertorContext
-} from '@t/convertor';
+import { ToMdParamConvertorMap, ToMdParamConvertorContext, NodeInfo, MarkInfo } from '@t/convertor';
 
 const parser = new Parser({
   disallowedHtmlBlockTags: ['br', 'img']
@@ -653,12 +649,12 @@ describe('Convertor', () => {
   });
 
   describe('custom convertor when converting from wysiwyg to markdown', () => {
-    function createCustomConvertor(customConvertor: ToMdCustomConvertorMap) {
+    function createCustomConvertor(customConvertor: ToMdParamConvertorMap) {
       schema = createSchema();
       convertor = new Convertor(schema, customConvertor, {});
     }
 
-    it('should change delimeter with return value', () => {
+    it('should change delimeter', () => {
       const toMdCustomConvertor = {
         thematicBreak() {
           return {
@@ -669,77 +665,52 @@ describe('Convertor', () => {
 
       createCustomConvertor(toMdCustomConvertor);
 
-      const markdown = source`
-        ***
-      `;
-      const expected = source`
-        - - -
-      `;
-
-      assertConverting(markdown, expected);
+      assertConverting('***', '- - -');
     });
 
-    it('should change raw html with return value', () => {
+    it('should change raw html', () => {
       const toMdCustomConvertor = {
-        heading() {
+        thematicBreak() {
           return {
-            rawHTML: ''
+            rawHTML: '<hr class="foo">'
           };
         }
       };
 
       createCustomConvertor(toMdCustomConvertor);
 
-      const markdown = source`
-        <h1>heading1</h1>
-
-        <h2>heading2</h2>
-      `;
-      const expected = source`
-        # heading1
-
-        ## heading2
-      `;
-
-      assertConverting(markdown, expected);
+      assertConverting('***', '<hr class="foo">');
     });
 
-    it('should convert to original value', () => {
+    it('should not convert raw html when returning only delimiter', () => {
       const toMdCustomConvertor = {
-        paragraph(_: ToMdConvertorStateType, { origin }: ToMdCustomConvertorContext) {
-          return origin();
+        thematicBreak() {
+          return {
+            delim: '***'
+          };
         }
       };
 
       createCustomConvertor(toMdCustomConvertor);
 
-      const markdown = source`
-        foo
-        
-        <br>
-        bar
-        
-        <br>
-        <br>
-        baz
-      `;
-      const expected = source`
-        foo
+      assertConverting('<hr>', '***');
+    });
 
-        <br>
-        bar
+    it('should convert to original value', () => {
+      const toMdCustomConvertor = {
+        thematicBreak(_: NodeInfo | MarkInfo, { origin }: ToMdParamConvertorContext) {
+          return origin!();
+        }
+      };
 
-        <br>
-        <br>
-        baz
-      `;
+      createCustomConvertor(toMdCustomConvertor);
 
-      assertConverting(markdown, expected);
+      assertConverting('***', '***');
     });
 
     it('should convert by mixing return values', () => {
       const toMdCustomConvertor = {
-        heading(_: ToMdConvertorStateType, { node, origin }: ToMdCustomConvertorContext) {
+        heading({ node }: NodeInfo | MarkInfo, { origin }: ToMdParamConvertorContext) {
           const { level, headingType } = node.attrs;
 
           if (headingType === 'setext') {
@@ -748,7 +719,7 @@ describe('Convertor', () => {
             return { delim };
           }
 
-          return origin();
+          return origin!();
         }
       };
 
@@ -771,37 +742,6 @@ describe('Convertor', () => {
         ------
 
         # heading1
-      `;
-
-      assertConverting(markdown, expected);
-    });
-
-    it('should directly access state value ​​and convert', () => {
-      const toMdCustomConvertor = {
-        paragraph(state: ToMdConvertorStateType, { node }: ToMdCustomConvertorContext) {
-          state.convertInline(node as ProsemirrorNode);
-          state.closeBlock(node as ProsemirrorNode);
-        }
-      };
-
-      createCustomConvertor(toMdCustomConvertor);
-
-      const markdown = source`
-        foo
-        
-        <br>
-        bar
-        
-        <br>
-        <br>
-        baz
-      `;
-      const expected = source`
-        foo
-
-        bar
-
-        baz
       `;
 
       assertConverting(markdown, expected);

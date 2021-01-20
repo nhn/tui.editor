@@ -1,12 +1,7 @@
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { MdNode } from '@t/markdown';
-import {
-  ToWwConvertorMap,
-  ToMdConvertorMap,
-  ToMdCustomConvertorMap,
-  ToMdParamConvertorMap
-} from '@t/convertor';
+import { ToWwConvertorMap, ToMdConvertorMap, ToMdParamConvertorMap } from '@t/convertor';
 
 import { toWwConvertors } from './toWysiwyg/toWwConvertors';
 import ToWwConvertorState from './toWysiwyg/toWwConvertorState';
@@ -25,22 +20,12 @@ export default class Convertor {
 
   constructor(
     schema: Schema,
-    toMdCustomConvertors: ToMdCustomConvertorMap,
+    toMdCustomConvertors: ToMdParamConvertorMap,
     linkAttribute: Record<string, any>
   ) {
-    const customConvertor: ToMdParamConvertorMap = {
-      heading() {
-        // return origin();
-        return {
-          delim: '#'
-        };
-      }
-    };
-
     this.schema = schema;
     this.toWwConvertors = toWwConvertors;
-    // @TODO change toMdCustomConvertors
-    this.toMdConvertors = createConvertors(customConvertor);
+    this.toMdConvertors = createConvertors(toMdCustomConvertors || {});
     this.linkAttribute = linkAttribute;
   }
 

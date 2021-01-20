@@ -5,13 +5,15 @@ import { includes, escape } from '@/utils/common';
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {
   ToMdConvertorMap,
-  ToMdMarkConvertorMap,
   ToMdNodeTypeConvertorMap,
+  ToMdMarkTypeConvertorMap,
   FirstDelimFn
 } from '@t/convertor';
 
 export default class ToMdConvertorState {
-  private readonly marks: ToMdMarkConvertorMap;
+  private readonly nodeTypeConvertors: ToMdNodeTypeConvertorMap;
+
+  private readonly markTypeConvertors: ToMdMarkTypeConvertorMap;
 
   private delim: string;
 
@@ -23,17 +25,14 @@ export default class ToMdConvertorState {
 
   public stopNewline: boolean;
 
-  private nodeTypeConvertors: ToMdNodeTypeConvertorMap;
-
-  constructor({ marks, nodeTypeConvertors }: ToMdConvertorMap) {
-    this.marks = marks;
+  constructor({ nodeTypeConvertors, markTypeConvertors }: ToMdConvertorMap) {
+    this.nodeTypeConvertors = nodeTypeConvertors;
+    this.markTypeConvertors = markTypeConvertors;
     this.delim = '';
     this.result = '';
     this.closed = false;
     this.tightList = false;
     this.stopNewline = false;
-
-    this.nodeTypeConvertors = nodeTypeConvertors;
   }
 
   private isInBlank() {
@@ -41,26 +40,14 @@ export default class ToMdConvertorState {
   }
 
   private markText(mark: Mark, entering: boolean, parent: Node, index: number) {
-    // const markType = mark.type.name as WwMarkType;
-    // const customConvertor = this.customConvertors[markType];
-    // const originContext = getOriginContext(markType);
-    // const nodeInfo = {
-    //   node: mark,
-    //   parent,
-    //   index,
-    //   entering
-    // };
+    const type = mark.type.name as WwMarkType;
+    const convertor = this.markTypeConvertors[type];
 
-    // const context = customConvertor
-    //   ? this.getCustomConvertorContext(customConvertor, originContext, nodeInfo)
-    //   : originContext()(mark, entering, parent, index);
-    // const info = this.marks[markType];
+    if (convertor) {
+      const { delim, rawHTML } = convertor({ node: mark, parent, index }, entering);
 
-    // if (info && context) {
-    //   const { delim, rawHTML } = context as ToMdConvertorContext;
-
-    //   return (rawHTML as string) || (delim as string);
-    // }
+      return (rawHTML as string) || (delim as string);
+    }
 
     return '';
   }
@@ -166,7 +153,9 @@ export default class ToMdConvertorState {
         node &&
         node.isText &&
         marks.some((mark: Mark) => {
-          const info = this.marks[mark.type.name as WwMarkType];
+          const info =
+            this.markTypeConvertors[mark.type.name as WwMarkType] &&
+            this.markTypeConvertors[mark.type.name as WwMarkType]!();
 
           return info && info.removedEnclosingWhitespace;
         });
@@ -189,9 +178,13 @@ export default class ToMdConvertorState {
       }
 
       const inner = marks.length && marks[marks.length - 1];
-      const markType = inner && this.marks[inner.type.name as WwMarkType];
-      const noEsc = markType && markType.escape === false;
-      const len = marks.length - (noEsc ? 1 : 0);
+      const markType =
+        inner &&
+        this.markTypeConvertors[inner.type.name as WwMarkType] &&
+        this.markTypeConvertors[inner.type.name as WwMarkType]!();
+
+      const noEscape = markType && markType.escape === false;
+      const len = marks.length - (noEscape ? 1 : 0);
 
       // Try to reorder 'mixable' marks, such as em and strong, which
       // in Markdown may be opened and closed in different order, so
@@ -264,7 +257,7 @@ export default class ToMdConvertorState {
 
         // Render the node. Special case code marks, since their content
         // may not be escaped.
-        if (noEsc && node.isText) {
+        if (noEscape && node.isText) {
           this.text(
             this.markText(inner as Mark, true, parent, index) +
               node.text +
