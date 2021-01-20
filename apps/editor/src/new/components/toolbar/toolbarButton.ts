@@ -16,7 +16,6 @@ interface Props {
 }
 
 interface State {
-  disabled: boolean;
   active: boolean;
   tooltipPos: Pos | null;
 }
@@ -40,11 +39,19 @@ export class ToolbarButton extends Component<Props, State> {
   }
 
   addEvent() {
-    this.props.eventEmitter.listen('cursorActivity', ({ toolbarState }: Payload) => {
-      const active = !!toolbarState[this.props.item.state!];
+    if (!this.props.item.toggle) {
+      this.props.eventEmitter.listen('cursorActivity', ({ toolbarState }: Payload) => {
+        const active = !!toolbarState[this.props.item.state!];
 
-      this.setState({ active });
-    });
+        this.setState({ active });
+      });
+    }
+  }
+
+  mounted() {
+    if (this.props.setToolbarElements) {
+      this.props.setToolbarElements(this.props.item.name, this.refs.el);
+    }
   }
 
   private getBound() {
@@ -56,7 +63,7 @@ export class ToolbarButton extends Component<Props, State> {
   }
 
   private showTooltip() {
-    if (!this.state.disabled) {
+    if (!this.props.item.disabled) {
       const rect = this.getBound();
       const left = rect.left + TOOLTIP_LEFT_INDENT;
       const top = rect.top + TOOLTIP_TOP_INDENT;
@@ -94,9 +101,12 @@ export class ToolbarButton extends Component<Props, State> {
   }
 
   render() {
-    const { noIcon, className, tooltip, activeTooltip, hidden } = this.props.item;
+    const { noIcon, className, tooltip, activeTooltip, hidden, disabled, dropdown } = this.props.item;
     const { active, tooltipPos } = this.state;
-    const wrapperStyle = { display: hidden ? 'none' : 'inline-block' };
+    const style = {
+      // display: hidden || (this.props.setToolbarElements && dropdown) ? 'none' : 'inline-block'
+      display: hidden ? 'none' : 'inline-block'
+    };
     let classNames = noIcon ? className : `${className} tui-toolbar-icons`;
     let tooltipText = tooltip;
 
@@ -105,24 +115,25 @@ export class ToolbarButton extends Component<Props, State> {
       tooltipText = activeTooltip || tooltip;
     }
 
+    // ${tooltipPos &&
+    //   html`
+    //     <div class="tui-tooltip" style=${tooltipPos}>
+    //       <div class="arrow"></div>
+    //       <span class="text">${tooltipText}</span>
+    //     </div>
+    //   `}
+
     return html`
-      <div class="te-toolbar-button-wrapper" style=${wrapperStyle}>
-        <button
-          ref=${(el: HTMLElement) => (this.refs.el = el)}
-          type="button"
-          class=${classNames}
-          onClick=${this.execCommand}
-          onMouseover=${this.showTooltip}
-          onMouseout=${this.hideTooltip}
-        ></button>
-        ${tooltipPos &&
-          html`
-            <div class="tui-tooltip" style=${tooltipPos}>
-              <div class="arrow"></div>
-              <span class="text">${tooltipText}</span>
-            </div>
-          `}
-      </div>
+      <button
+        ref=${(el: HTMLElement) => (this.refs.el = el)}
+        type="button"
+        style=${style}
+        class=${classNames}
+        onClick=${this.execCommand}
+        onMouseover=${this.showTooltip}
+        onMouseout=${this.hideTooltip}
+        disabled=${!!disabled}
+      ></button>
     `;
   }
 }

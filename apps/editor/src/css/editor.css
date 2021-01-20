@@ -246,6 +246,7 @@
 }
 
 .tui-toolbar-divider {
+  float: left;
   display: inline-block;
   width: 1px;
   height: 14px;

@@ -1,9 +1,8 @@
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
-import { ToolbarItem, ToolbarGroupInfo } from '@t/ui';
+import { ToolbarItem } from '@t/ui';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
-import { getToolbarItems, groupingToolbarItems } from '../toolbarItemFactory';
 import { Switch } from './switch';
 import { Toolbar } from './toolbar/toolbar';
 import { ContextMenu } from './contextMenu';
@@ -24,20 +23,17 @@ interface Props {
 interface State {
   editorType: EditorType;
   previewStyle: PreviewStyle;
-  toolbarItems: ToolbarGroupInfo[];
   hide: boolean;
 }
 // @TODO: arrange class prefix
 export class Layout extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const { editorType, previewStyle, toolbarItems } = props;
-    const hideScrollSync = editorType === 'wysiwyg' || previewStyle === 'tab';
+    const { editorType, previewStyle } = props;
 
     this.state = {
       editorType,
       previewStyle,
-      toolbarItems: getToolbarItems(groupingToolbarItems(toolbarItems || []), hideScrollSync),
       hide: false
     };
 
@@ -57,8 +53,8 @@ export class Layout extends Component<Props, State> {
   }
 
   render() {
-    const { eventEmitter, hideModeSwitch } = this.props;
-    const { hide, previewStyle, editorType, toolbarItems } = this.state;
+    const { eventEmitter, hideModeSwitch, toolbarItems } = this.props;
+    const { hide, previewStyle, editorType } = this.state;
     const displayClassName = hide ? ' te-hide' : '';
     const editorTypeClassName = editorType === 'markdown' ? 'te-md-mode' : 'te-ww-mode';
     const previewClassName = `te-preview-style-${previewStyle === 'vertical' ? 'vertical' : 'tab'}`;
@@ -105,19 +101,13 @@ export class Layout extends Component<Props, State> {
 
   private changeMode(editorType: EditorType) {
     if (editorType !== this.state.editorType) {
-      this.setState({
-        editorType,
-        toolbarItems: getToolbarItems(this.state.toolbarItems, editorType === 'wysiwyg')
-      });
+      this.setState({ editorType });
     }
   }
 
   private changePreviewStyle(previewStyle: PreviewStyle) {
     if (previewStyle !== this.state.previewStyle) {
-      this.setState({
-        previewStyle,
-        toolbarItems: getToolbarItems(this.state.toolbarItems, previewStyle === 'tab')
-      });
+      this.setState({ previewStyle });
     }
   }
 

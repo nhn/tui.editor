@@ -96,6 +96,14 @@ function buildChildrenVNode(parent: VNode) {
 
   const lastChild = children[children.length - 1];
 
+  if (!children.length) {
+    while (old) {
+      VNode.removalNodes.push(old);
+      old.effect = 'D';
+      old = old.next;
+    }
+  }
+  
   while (old && lastChild) {
     if (old && lastChild.old !== old) {
       VNode.removalNodes.push(old);

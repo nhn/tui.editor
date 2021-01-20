@@ -215,6 +215,9 @@ export function getToolbarItems(toolbarItems: ToolbarGroupInfo[], hideScrollSync
         group.hidden = hideScrollSync;
       }
     }
+    if (group.filter(item => item.dropdown).length === group.length) {
+      group.hidden = true;
+    }
     return group;
   });
 }

@@ -104,6 +104,8 @@ export type ToolbarItemInfo = {
   noIcon?: boolean;
   active?: boolean;
   toggle?: boolean;
+  disabled?: boolean;
+  dropdown?: boolean;
 };
 
 export type ToolbarGroupInfo = ToolbarItemInfo[] & { hidden?: boolean };

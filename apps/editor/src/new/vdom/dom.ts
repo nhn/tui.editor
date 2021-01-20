@@ -12,7 +12,7 @@ export function createNode(vnode: VNode) {
 
   if (vnode.type === 'TEXT_NODE') {
     node = document.createTextNode(vnode.props.nodeValue);
-  } else {
+  } else if (vnode.type) {
     node = document.createElement(vnode.type as string);
     setProps(node, vnode.props);
   }
@@ -66,7 +66,11 @@ function setProps(node: Node, props: Props, condition?: ConditionFn) {
             isNumber(value) && !reNonDimension.test(styleProp) ? `${value}px` : value;
         });
       } else if (propName !== 'children') {
-        (node as HTMLElement).setAttribute(propName, props[propName]);
+        if (props[propName] === false) {
+          (node as HTMLElement).removeAttribute(propName);
+        } else {
+          (node as HTMLElement).setAttribute(propName, props[propName]);
+        }
       }
     }
   });
