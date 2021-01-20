@@ -238,25 +238,19 @@
   overflow: hidden;
 }
 
+.te-toolbar-section {
+  height: 32px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e5e5e5;
+  position: relative;
+}
+
 .tui-toolbar-divider {
-  float: left;
   display: inline-block;
   width: 1px;
   height: 14px;
   background-color: #ddd;
   margin: 9px 6px;
-}
-
-.tui-toolbar-button-group {
-  height: 28px;
-  border-right: 1px solid #d9d9d9;
-  float: left;
-}
-
-.te-toolbar-section {
-  height: 32px;
-  box-sizing: border-box;
-  border-bottom: 1px solid #e5e5e5;
 }
 
 .tui-editor-defaultUI-toolbar button {
@@ -278,14 +272,6 @@
 .tui-editor-defaultUI-toolbar button.active {
   border: 1px solid #aaa;
   background-color: #fff;
-}
-
-.tui-editor-defaultUI-toolbar button:first-child {
-  margin-left: 0;
-}
-
-.tui-editor-defaultUI-toolbar button:last-child {
-  margin-right: 0;
 }
 
 .tui-editor-defaultUI-toolbar button.tui-scrollsync {
@@ -403,6 +389,7 @@
   border: 1px solid #cacaca;
   background: white;
   z-index: 9999;
+  position: absolute;
 }
 
 .tui-popup-modal-background .tui-popup-wrapper {
@@ -454,9 +441,6 @@
 
 .tui-editor-popup {
   position: absolute;
-  top: 30px;
-  left: 50%;
-  margin-left: -250px;
 }
 
 .tui-editor-popup.tui-popup-modal-background {
@@ -530,6 +514,10 @@
   background: #fff;
 }
 
+.te-popup-add-table  {
+  width: auto;
+}
+
 .te-popup-add-table .te-table-selection {
   position: relative;
 }
@@ -556,16 +544,15 @@
   text-align: center;
 }
 
-.te-popup-table-utils {
+.te-context-menu {
+  position: absolute;
   width: auto;
   min-width: 120px;
+  font-size: 12px;
+  border: 1px solid #cacaca;
 }
 
-.te-popup-table-utils .tui-popup-body {
-  padding: 0px;
-}
-
-.te-popup-table-utils button {
+.te-context-menu button {
   display: block;
   width: 100%;
   background-color: #fff;
@@ -578,22 +565,22 @@
   color: #777;
 }
 
-.te-popup-table-utils button:hover {
+.te-context-menu button:hover {
   background-color: #f4f4f4;
 }
 
-.te-popup-table-utils hr {
+.te-context-menu hr {
   margin: 0;
   background-color: #cacaca;
   border-style: none;
   height: 1px;
 }
 
-.te-popup-table-utils .te-context-menu-disabled {
+.te-context-menu .te-context-menu-disabled {
   color: #ccc;
 }
 
-.te-popup-table-utils .te-context-menu-disabled:hover {
+.te-context-menu .te-context-menu-disabled:hover {
   background-color: #fff;
 }
 

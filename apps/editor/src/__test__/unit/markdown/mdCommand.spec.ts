@@ -591,7 +591,7 @@ describe('taskList command', () => {
   });
 });
 
-describe('table command', () => {
+describe('addTable command', () => {
   it('should add table syntax', () => {
     const result = `\n${source`
       |  |  |
@@ -600,7 +600,7 @@ describe('table command', () => {
       |  |  |
     `}`;
 
-    cmd.exec('markdown', 'table', { colLen: 2, rowLen: 3 });
+    cmd.exec('markdown', 'addTable', { columnCount: 2, rowCount: 3 });
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -617,7 +617,7 @@ describe('table command', () => {
     mde.setMarkdown('text');
 
     cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'table', { colLen: 2, rowLen: 3 });
+    cmd.exec('markdown', 'addTable', { columnCount: 2, rowCount: 3 });
 
     expect(getTextContent(mde)).toBe(result);
   });

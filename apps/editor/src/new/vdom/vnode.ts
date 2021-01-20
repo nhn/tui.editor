@@ -63,12 +63,18 @@ export class VNode {
 
   node!: Node | null;
 
+  // A: append, U: update, D: delete
+  effect!: 'A' | 'U' | 'D';
+
   component?: Component;
+
+  skip = false;
 
   constructor(type: string | ComponentClass, props: Record<string, any>, children: VNode[]) {
     this.type = type;
     this.props = props;
     this.children = children;
+    this.props.children = children;
 
     if (!isFunction(type)) {
       this.ref = props.ref;

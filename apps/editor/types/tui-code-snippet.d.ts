@@ -97,3 +97,7 @@ declare module 'tui-code-snippet/domEvent/off' {
 declare module 'tui-code-snippet/request/sendHostname' {
   export default function sendHostname(appName: string, trackingId: string): void;
 }
+
+declare module 'tui-code-snippet/domUtil/matches' {
+  export default function matches(element: Element, selector: string): boolean;
+}

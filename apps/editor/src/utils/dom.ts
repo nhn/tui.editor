@@ -1,6 +1,11 @@
-import { includes } from './common';
 import toArray from 'tui-code-snippet/collection/toArray';
 import isArray from 'tui-code-snippet/type/isArray';
+import isString from 'tui-code-snippet/type/isString';
+import matches from 'tui-code-snippet/domUtil/matches';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import hasClass from 'tui-code-snippet/domUtil/hasClass';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
   const rect = {
@@ -26,10 +31,6 @@ export function cls(...names: string[]) {
 
 export function isTextNode(node: Node) {
   return node?.nodeType === Node.TEXT_NODE;
-}
-
-export function isSpecificNode(node: Node, ...names: string[]) {
-  return includes(names, node.nodeName);
 }
 
 export function isElemNode(node: Node) {
@@ -80,4 +81,33 @@ export function unwrapNode(node: Node) {
   removeNode(node);
 
   return result;
+}
+
+export function closest<T extends Node>(node: Node, found: string | Node) {
+  let condition;
+
+  if (isString(found)) {
+    condition = (target: Node) => matches(target as Element, found);
+  } else {
+    condition = (target: Node) => target === found;
+  }
+
+  while (node && node !== document) {
+    if (isElemNode(node) && condition(node)) {
+      return node as T;
+    }
+
+    node = node.parentNode!;
+  }
+
+  return null;
+}
+
+export function toggleClass(element: Element, className: string, state?: boolean) {
+  if (isUndefined(state)) {
+    state = !hasClass(element, className);
+  }
+  const toggleFn = state ? addClass : removeClass;
+
+  toggleFn(element, className);
 }

@@ -5,12 +5,32 @@ import html from '@/new/vdom/template';
 import EventEmitter from '@/event/eventEmitter';
 import '@/i18n/en-us';
 
+function getElement(selector: string) {
+  return document.querySelector<HTMLElement>(selector)!;
+}
+
+function getEditor() {
+  return getElement('.tui-editor')!;
+}
+
+function getMdEditor() {
+  return getElement('.te-md-container .te-editor')!;
+}
+
+function getMdPreview() {
+  return getElement('.te-md-container .te-preview')!;
+}
+
+function getWwEditor() {
+  return getElement('.te-ww-container .te-editor')!;
+}
+
 function getMdSwitch() {
-  return document.querySelector<HTMLElement>('.te-mode-switch-section .markdown')!;
+  return getElement('.te-mode-switch-section .markdown')!;
 }
 
 function getWwSwitch() {
-  return document.querySelector<HTMLElement>('.te-mode-switch-section .wysiwyg')!;
+  return getElement('.te-mode-switch-section .wysiwyg')!;
 }
 
 function clickMdSwitch() {
@@ -21,12 +41,32 @@ function clickWwSwitch() {
   return getWwSwitch().click();
 }
 
+function getMdWriteTab() {
+  return getElement('.te-markdown-tab-section button')!;
+}
+
+function getMdPreviewTab() {
+  return document.querySelectorAll<HTMLElement>('.te-markdown-tab-section button')[1];
+}
+
+function getScrollSyncBtnWrapper() {
+  return getElement('.te-toolbar-button-wrapper')!;
+}
+
+function clickMdWriteTab() {
+  return getMdWriteTab().click();
+}
+
+function clickMdPreviewTab() {
+  return getMdPreviewTab().click();
+}
+
 function assertToContainElement(el: HTMLElement) {
   expect(document.body).toContainElement(el);
 }
 
 describe('layout component', () => {
-  let em: EventEmitter, container: HTMLElement;
+  let em: EventEmitter, container: HTMLElement, destroy: () => void;
 
   beforeEach(() => {
     const mdEditor = document.createElement('div');
@@ -48,30 +88,34 @@ describe('layout component', () => {
 
     em = new EventEmitter();
 
-    render(
+    destroy = render(
       container,
       html`
-        <${Layout} eventEmitter=${em} slots=${dummySlot} hideModeSwitch=${false} />
+        <${Layout}
+          eventEmitter=${em}
+          slots=${dummySlot}
+          hideModeSwitch=${false}
+          toolbarItems=${['scrollSync']}
+        />
       ` as VNode
     );
   });
 
   afterEach(() => {
-    document.body.removeChild(container);
+    destroy();
   });
 
   it('render default ui properly', () => {
-    assertToContainElement(document.querySelector<HTMLElement>('.tui-editor')!);
-    assertToContainElement(document.querySelector<HTMLElement>('.te-md-container')!);
-    assertToContainElement(document.querySelector<HTMLElement>('.te-md-container .te-editor')!);
-    assertToContainElement(document.querySelector<HTMLElement>('.te-md-container .te-preview')!);
-    assertToContainElement(document.querySelector<HTMLElement>('.te-ww-container')!);
-    assertToContainElement(document.querySelector<HTMLElement>('.te-ww-container .te-editor')!);
-    assertToContainElement(document.querySelector<HTMLElement>('.te-mode-switch-section')!);
+    assertToContainElement(getEditor());
+    assertToContainElement(getMdEditor());
+    assertToContainElement(getMdPreview());
+    assertToContainElement(getWwEditor());
+    assertToContainElement(getMdSwitch());
+    assertToContainElement(getWwSwitch());
   });
 
   it('show/hide editor', () => {
-    const layout = document.querySelector('.tui-editor-defaultUI');
+    const layout = getElement('.tui-editor-defaultUI');
 
     em.emit('hide');
 
@@ -82,36 +126,108 @@ describe('layout component', () => {
     expect(layout).not.toHaveClass('te-hide');
   });
 
-  it('should trigger changeModeByEvent when clicking the switch button', () => {
-    const spy = jest.fn();
+  describe('changing editor mode', () => {
+    it('should trigger changeModeByEvent when clicking the switch button', () => {
+      const spy = jest.fn();
 
-    em.listen('changeModeByEvent', spy);
+      em.listen('changeModeByEvent', spy);
 
-    clickWwSwitch();
+      clickWwSwitch();
 
-    expect(spy).toHaveBeenCalledWith('wysiwyg');
+      expect(spy).toHaveBeenCalledWith('wysiwyg');
 
-    clickMdSwitch();
+      clickMdSwitch();
 
-    expect(spy).toHaveBeenCalledWith('markdown');
+      expect(spy).toHaveBeenCalledWith('markdown');
+    });
+
+    it('should switch the editor in layout when changeMode is triggered', () => {
+      const editorArea = getEditor();
+      const mdSwitch = getMdSwitch();
+      const wwSwitch = getWwSwitch();
+
+      em.emit('changeMode', 'wysiwyg');
+
+      expect(editorArea).toHaveClass('te-ww-mode');
+      expect(wwSwitch).toHaveClass('active');
+      expect(mdSwitch).not.toHaveClass('active');
+
+      em.emit('changeMode', 'markdown');
+
+      expect(editorArea).toHaveClass('te-md-mode');
+      expect(mdSwitch).toHaveClass('active');
+      expect(wwSwitch).not.toHaveClass('active');
+    });
+
+    it('should hide scrollSync toolbar button', () => {
+      em.emit('changePreviewStyle', 'vertical');
+      const scrollSyncBtn = getScrollSyncBtnWrapper();
+
+      expect(scrollSyncBtn).toHaveStyle({ display: 'inline-block' });
+
+      em.emit('changeMode', 'wysiwyg');
+
+      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+    });
   });
 
-  it('should switch the editor in layout when changeMode is triggered', () => {
-    const editorArea = document.querySelector<HTMLElement>('.tui-editor')!;
-    const mdSwitch = getMdSwitch();
-    const wwSwitch = getWwSwitch();
+  describe('changing preview style', () => {
+    it('should hide markdown tab when changePreviewStyle is triggered', () => {
+      const tabSection = getElement('.te-markdown-tab-section')!;
 
-    em.emit('changeMode', 'wysiwyg');
+      expect(tabSection).toHaveStyle({ display: 'block' });
 
-    expect(editorArea).toHaveClass('te-ww-mode');
-    expect(wwSwitch).toHaveClass('active');
-    expect(mdSwitch).not.toHaveClass('active');
+      em.emit('changePreviewStyle', 'vertical');
 
-    em.emit('changeMode', 'markdown');
+      expect(tabSection).toHaveStyle({ display: 'none' });
+    });
 
-    expect(editorArea).toHaveClass('te-md-mode');
-    expect(mdSwitch).toHaveClass('active');
-    expect(wwSwitch).not.toHaveClass('active');
+    it('should hide markdown tab when changeMode is triggered', () => {
+      const tabSection = getElement('.te-markdown-tab-section')!;
+
+      expect(tabSection).toHaveStyle({ display: 'block' });
+
+      em.emit('changeMode', 'wysiwyg');
+
+      expect(tabSection).toHaveStyle({ display: 'none' });
+    });
+
+    it('should display the markdown editor or preview by clicking markdown tab', () => {
+      expect(getMdWriteTab()).toHaveClass('te-tab-active');
+      expect(getMdPreviewTab()).not.toHaveClass('te-tab-active');
+
+      clickMdPreviewTab();
+
+      expect(getMdWriteTab()).not.toHaveClass('te-tab-active');
+      expect(getMdPreviewTab()).toHaveClass('te-tab-active');
+    });
+
+    it('should emit changePreviewTabWrite, changePreviewTabPreview events by clicking markdown tab', () => {
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+
+      em.listen('changePreviewTabWrite', spy1);
+      em.listen('changePreviewTabPreview', spy2);
+
+      clickMdPreviewTab();
+
+      expect(spy2).toHaveBeenCalledTimes(1);
+
+      clickMdWriteTab();
+
+      expect(spy1).toHaveBeenCalledTimes(1);
+    });
   });
-  // @TODO: add toolbar ui test
+
+  describe('context menu', () => {
+    it('should be displayed when contextmenu event is triggered', () => {
+      const contextMenu = getElement('.te-context-menu');
+
+      expect(contextMenu).toHaveStyle({ display: 'none' });
+
+      em.emit('contextmenu', { pos: { left: 10, top: 10 }, menuGroups: [[{ label: 'test' }]] });
+
+      expect(contextMenu).toHaveStyle({ display: 'block' });
+    });
+  });
 });

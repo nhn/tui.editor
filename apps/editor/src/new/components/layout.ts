@@ -1,11 +1,12 @@
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
-import { Component } from '@t/ui';
-import { shallowEqual } from '@/utils/common';
-import domUtils from '@/utils/dom-legacy';
+import { ToolbarItem, ToolbarGroupInfo } from '@t/ui';
 import html from '../vdom/template';
+import { Component } from '../vdom/component';
+import { getToolbarItems, groupingToolbarItems } from '../toolbarItemFactory';
 import { Switch } from './switch';
-import { rerender } from '../renderer';
+import { Toolbar } from './toolbar/toolbar';
+import { ContextMenu } from './contextMenu';
 
 interface Props {
   eventEmitter: Emitter;
@@ -15,39 +16,36 @@ interface Props {
     mdPreview: HTMLElement;
     wwEditor: HTMLElement;
   };
+  previewStyle: PreviewStyle;
+  editorType: EditorType;
+  toolbarItems: ToolbarItem[];
 }
 
 interface State {
-  type: EditorType;
-  style: PreviewStyle;
+  editorType: EditorType;
+  previewStyle: PreviewStyle;
+  toolbarItems: ToolbarGroupInfo[];
   hide: boolean;
 }
 // @TODO: arrange class prefix
-export class Layout implements Component<Props, State> {
-  private refs: Record<string, HTMLElement> = {};
-
-  props: Props;
-
-  state: State;
-
+export class Layout extends Component<Props, State> {
   constructor(props: Props) {
-    this.props = props;
+    super(props);
+    const { editorType, previewStyle, toolbarItems } = props;
+    const hideScrollSync = editorType === 'wysiwyg' || previewStyle === 'tab';
+
     this.state = {
-      type: 'markdown',
-      style: 'vertical',
+      editorType,
+      previewStyle,
+      toolbarItems: getToolbarItems(groupingToolbarItems(toolbarItems || []), hideScrollSync),
       hide: false
     };
 
+    this.show = this.show.bind(this);
+    this.hide = this.hide.bind(this);
+    this.changeMode = this.changeMode.bind(this);
+    this.changePreviewStyle = this.changePreviewStyle.bind(this);
     this.addEvent();
-  }
-
-  setState(state: Partial<State>) {
-    const newState = { ...this.state, ...state };
-
-    if (!shallowEqual(this.state, newState)) {
-      this.state = newState;
-      rerender();
-    }
   }
 
   mounted() {
@@ -59,20 +57,27 @@ export class Layout implements Component<Props, State> {
   }
 
   render() {
-    const displayClassName = this.state.hide ? ' te-hide' : '';
-    const editorTypeClassName = this.state.type === 'markdown' ? 'te-md-mode' : 'te-ww-mode';
+    const { eventEmitter, hideModeSwitch } = this.props;
+    const { hide, previewStyle, editorType, toolbarItems } = this.state;
+    const displayClassName = hide ? ' te-hide' : '';
+    const editorTypeClassName = editorType === 'markdown' ? 'te-md-mode' : 'te-ww-mode';
+    const previewClassName = `te-preview-style-${previewStyle === 'vertical' ? 'vertical' : 'tab'}`;
 
     return html`
       <div
         class="tui-editor-defaultUI${displayClassName}"
         ref=${(el: HTMLElement) => (this.refs.el = el)}
       >
+        <${Toolbar}
+          eventEmitter=${eventEmitter}
+          previewStyle=${previewStyle}
+          toolbarItems=${toolbarItems}
+          editorType=${editorType}
+        />
         <div class="te-editor-section" ref=${(el: HTMLElement) => (this.refs.editorSection = el)}>
           <div class="tui-editor ${editorTypeClassName}">
             <div
-              class="te-md-container ${this.state.style === 'vertical'
-                ? 'te-preview-style-vertical'
-                : 'te-preview-style-tab'}"
+              class="te-md-container ${previewClassName}"
               ref=${(el: HTMLElement) => (this.refs.mdContainer = el)}
             >
               <div class="te-md-splitter"></div>
@@ -80,10 +85,11 @@ export class Layout implements Component<Props, State> {
             <div class="te-ww-container" ref=${(el: HTMLElement) => (this.refs.wwContainer = el)} />
           </div>
         </div>
-        ${!this.props.hideModeSwitch &&
+        ${!hideModeSwitch &&
           html`
-            <${Switch} eventEmitter=${this.props.eventEmitter} type=${this.state.type} />
+            <${Switch} eventEmitter=${eventEmitter} editorType=${editorType} />
           `}
+        <${ContextMenu} eventEmitter=${eventEmitter} />
       </div>
     `;
   }
@@ -91,25 +97,35 @@ export class Layout implements Component<Props, State> {
   addEvent() {
     const { eventEmitter } = this.props;
 
-    eventEmitter.listen('hide', this.hide.bind(this));
-    eventEmitter.listen('show', this.show.bind(this));
-    eventEmitter.listen('changeMode', (type: EditorType) => this.setState({ type }));
-    eventEmitter.listen('changePreviewStyle', this.changePreviewStyle.bind(this));
+    eventEmitter.listen('hide', this.hide);
+    eventEmitter.listen('show', this.show);
+    eventEmitter.listen('changeMode', this.changeMode);
+    eventEmitter.listen('changePreviewStyle', this.changePreviewStyle);
   }
 
-  changePreviewStyle(style: PreviewStyle) {
-    this.setState({ style });
+  private changeMode(editorType: EditorType) {
+    if (editorType !== this.state.editorType) {
+      this.setState({
+        editorType,
+        toolbarItems: getToolbarItems(this.state.toolbarItems, editorType === 'wysiwyg')
+      });
+    }
   }
 
-  hide() {
+  private changePreviewStyle(previewStyle: PreviewStyle) {
+    if (previewStyle !== this.state.previewStyle) {
+      this.setState({
+        previewStyle,
+        toolbarItems: getToolbarItems(this.state.toolbarItems, previewStyle === 'tab')
+      });
+    }
+  }
+
+  private hide() {
     this.setState({ hide: true });
   }
 
-  show() {
+  private show() {
     this.setState({ hide: false });
-  }
-
-  destroy() {
-    domUtils.remove(this.refs.el);
   }
 }

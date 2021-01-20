@@ -92,4 +92,5 @@ export type EventTypes =
   | 'cursorActivity'
   | 'requireScrollSync'
   | 'requireScrollIntoView'
-  | 'setCodeBlockLanguages';
+  | 'setCodeBlockLanguages'
+  | 'toggleScrollSync';
