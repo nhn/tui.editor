@@ -7,6 +7,8 @@ export function createComponent(Comp: ComponentClass, vnode: VNode) {
   const { props, component } = vnode;
 
   if (component) {
+    // @ts-ignore
+    component.prevProps = component.props;
     component.props = vnode.props;
     return component;
   }
@@ -15,12 +17,15 @@ export function createComponent(Comp: ComponentClass, vnode: VNode) {
 }
 
 export function buildVNode(vnode: VNode | null) {
-  while (vnode) {
+  const root = vnode;
+
+  while (vnode && !vnode.skip) {
     if (isFunction(vnode.type)) {
       const instance = createComponent(vnode.type, vnode);
 
+      instance.vnode = vnode;
       vnode.component = instance;
-      vnode.children = [instance.render()];
+      vnode.props.children = vnode.children = [instance.render()];
       buildChildrenVNode(vnode);
     } else {
       if (!vnode.node) {
@@ -34,6 +39,9 @@ export function buildVNode(vnode: VNode | null) {
     } else {
       while (vnode && vnode.parent && !vnode.next) {
         vnode = vnode.parent!;
+        if (vnode === root) {
+          break;
+        }
       }
       vnode = vnode.next;
     }
@@ -57,16 +65,20 @@ function buildChildrenVNode(parent: VNode) {
       vnode.old = old!;
       vnode.parent = parent;
       vnode.node = old!.node;
+      vnode.component = old!.component;
+      vnode.effect = 'U';
     }
 
     if (vnode && !sameType) {
       vnode.old = null;
       vnode.parent = parent;
       vnode.node = null;
+      vnode.effect = 'A';
     }
 
     if (old && !sameType) {
       VNode.removalNodes.push(old);
+      old.effect = 'D';
     }
 
     if (old) {
@@ -81,4 +93,14 @@ function buildChildrenVNode(parent: VNode) {
 
     prev = vnode;
   });
+
+  const lastChild = children[children.length - 1];
+
+  while (old && lastChild) {
+    if (old && lastChild.old !== old) {
+      VNode.removalNodes.push(old);
+      old.effect = 'D';
+      old = old.next;
+    }
+  }
 }

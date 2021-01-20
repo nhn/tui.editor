@@ -96,13 +96,15 @@ class ToastUIEditor {
 
   private minHeight!: string;
 
-  private currentMode!: EditorType;
+  private mode!: EditorType;
 
   private mdPreviewStyle!: PreviewStyle;
 
   private i18n: I18n;
 
   private scrollSync: ScrollSync;
+
+  private destroyDefaultLayout?: () => void;
 
   constructor(options: EditorOptions) {
     this.initialHtml = options.el.innerHTML;
@@ -120,26 +122,12 @@ class ToastUIEditor {
         useCommandShortcut: true,
         usageStatistics: true,
         toolbarItems: [
-          'heading',
-          'bold',
-          'italic',
-          'strike',
-          'divider',
-          'hr',
-          'quote',
-          'divider',
-          'ul',
-          'ol',
-          'task',
-          'indent',
-          'outdent',
-          'divider',
-          'table',
-          'image',
-          'link',
-          'divider',
-          'code',
-          'codeblock'
+          ['heading', 'bold', 'italic', 'strike'],
+          ['hr', 'quote'],
+          ['ul', 'ol', 'task', 'indent', 'outdent'],
+          ['table', 'image', 'link'],
+          ['code', 'codeblock'],
+          'scrollSync'
         ],
         hideModeSwitch: false,
         linkAttribute: null,
@@ -155,6 +143,7 @@ class ToastUIEditor {
     );
 
     this.codeBlockLanguages = [];
+    this.mode = this.options.initialEditType || 'markdown';
 
     this.eventEmitter = new EventEmitter();
 
@@ -219,13 +208,16 @@ class ToastUIEditor {
     // if (!this.options.el) {
     //   render(...)
     // }
-    render(
+    this.destroyDefaultLayout = render(
       this.options.el,
       html`
         <${Layout}
           eventEmitter=${this.eventEmitter}
           slots=${this.getEditorElements()}
           hideModeSwitch=${this.options.hideModeSwitch}
+          toolbarItems=${this.options.toolbarItems}
+          previewStyle=${this.options.previewStyle}
+          editorType=${this.options.initialEditType}
         />
       ` as VNode
     );
@@ -233,10 +225,6 @@ class ToastUIEditor {
     if (plugins) {
       invokePlugins(plugins, this);
     }
-
-    this.changePreviewStyle(this.options.previewStyle);
-
-    this.changeMode(this.options.initialEditType, true);
 
     this.setMinHeight(this.options.minHeight);
 
@@ -264,8 +252,16 @@ class ToastUIEditor {
       sendHostName();
     }
 
+    this.getCurrentModeEditor().focus();
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
+    this.addInitEvent();
+  }
+
+  private addInitEvent() {
     this.on('changeModeByEvent', this.changeMode.bind(this));
+    this.addCommand('markdown', 'toggleScrollSync', payload => {
+      this.eventEmitter.emit('toggleScrollSync', payload!.active);
+    });
   }
 
   /**
@@ -291,9 +287,10 @@ class ToastUIEditor {
    * @param {string} style - 'tab'|'vertical'
    */
   changePreviewStyle(style: PreviewStyle) {
-    this.mdPreviewStyle = style;
-    this.eventEmitter.emit('changePreviewStyle', style);
-    this.eventEmitter.emit('previewNeedsRefresh', this.getMarkdown());
+    if (this.mdPreviewStyle !== style) {
+      this.mdPreviewStyle = style;
+      this.eventEmitter.emit('changePreviewStyle', style);
+    }
   }
 
   /**
@@ -526,7 +523,7 @@ class ToastUIEditor {
    * @returns {boolean}
    */
   isMarkdownMode() {
-    return this.currentMode === 'markdown';
+    return this.mode === 'markdown';
   }
 
   /**
@@ -534,7 +531,7 @@ class ToastUIEditor {
    * @returns {boolean}
    */
   isWysiwygMode() {
-    return this.currentMode === 'wysiwyg';
+    return this.mode === 'wysiwyg';
   }
 
   /**
@@ -559,13 +556,13 @@ class ToastUIEditor {
    * @param {boolean} [isWithoutFocus] - Change mode without focus
    */
   changeMode(mode: EditorType, isWithoutFocus?: boolean) {
-    if (this.currentMode === mode) {
+    if (this.mode === mode) {
       return;
     }
 
-    this.eventEmitter.emit('changeModeBefore', this.currentMode);
+    this.eventEmitter.emit('changeModeBefore', this.mode);
 
-    this.currentMode = mode;
+    this.mode = mode;
 
     if (this.isWysiwygMode()) {
       const mdNode = this.toastMark.getRootNode();
@@ -600,6 +597,9 @@ class ToastUIEditor {
     this.eventEmitter.getEvents().forEach((_, type: string) => {
       this.off(type);
     });
+    if (this.destroyDefaultLayout) {
+      this.destroyDefaultLayout();
+    }
   }
 
   /**

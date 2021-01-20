@@ -13,6 +13,7 @@ import { Renderer } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
 import { CustomHTMLRendererMap, EditResult, MdNode, MdPos } from '@t/markdown';
 import Preview from '@/preview';
+import { toggleClass } from '@/utils/dom';
 import domUtils from '@/utils/dom-legacy';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
@@ -84,6 +85,10 @@ class MarkdownPreview extends Preview {
     this.initEvent(highlight);
   }
 
+  private toggleActive(active: boolean) {
+    toggleClass(this.el!, 'te-tab-active', active);
+  }
+
   private initEvent(highlight: boolean) {
     this.eventEmitter.listen('contentChangedFromMarkdown', this.update.bind(this));
     // need to implement a listener function for 'previewNeedsRefresh' event
@@ -105,6 +110,8 @@ class MarkdownPreview extends Preview {
         data: findAdjacentElementToScrollTop(event.target.scrollTop, this.previewContent)
       });
     });
+    this.eventEmitter.listen('changePreviewTabPreview', () => this.toggleActive(true));
+    this.eventEmitter.listen('changePreviewTabWrite', () => this.toggleActive(false));
   }
 
   private removeHighlight() {

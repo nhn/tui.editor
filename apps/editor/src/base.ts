@@ -82,7 +82,7 @@ export default abstract class EditorBase {
   moveCursorToStart() {
     const { tr } = this.view.state;
 
-    this.view.dispatch(tr.setSelection(createTextSelection(tr, 0)).scrollIntoView());
+    this.view.dispatch(tr.setSelection(createTextSelection(tr, 1)).scrollIntoView());
     this.focus();
   }
 
@@ -90,7 +90,7 @@ export default abstract class EditorBase {
     const { tr } = this.view.state;
 
     this.view.dispatch(
-      tr.setSelection(createTextSelection(tr, tr.doc.content.size)).scrollIntoView()
+      tr.setSelection(createTextSelection(tr, tr.doc.content.size - 1)).scrollIntoView()
     );
     this.focus();
   }
