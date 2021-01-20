@@ -103,7 +103,7 @@ function buildChildrenVNode(parent: VNode) {
       old = old.next;
     }
   }
-  
+
   while (old && lastChild) {
     if (old && lastChild.old !== old) {
       VNode.removalNodes.push(old);

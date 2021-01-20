@@ -8,6 +8,7 @@ import { ToolbarGroup } from './toolbarGroup';
 import { Layer } from '../layer';
 import { Tabs } from '../tabs';
 import { getToolbarItems, groupingToolbarItems } from '@/new/toolbarItemFactory';
+import { DropdownToolbar } from './dropdownToolbar';
 
 type TabType = 'write' | 'preview';
 
@@ -31,6 +32,7 @@ interface ToolbarElements {
 
 export class Toolbar extends Component<Props, State> {
   private tabs: TabInfo[];
+
   private toolbarElements: ToolbarElements;
 
   constructor(props: Props) {
@@ -191,7 +193,6 @@ export class Toolbar extends Component<Props, State> {
         }
       })
     );
-
 
     return html`
       <div class="te-toolbar-section">

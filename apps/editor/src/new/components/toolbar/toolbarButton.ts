@@ -101,7 +101,15 @@ export class ToolbarButton extends Component<Props, State> {
   }
 
   render() {
-    const { noIcon, className, tooltip, activeTooltip, hidden, disabled, dropdown } = this.props.item;
+    const {
+      noIcon,
+      className,
+      tooltip,
+      activeTooltip,
+      hidden,
+      disabled,
+      dropdown
+    } = this.props.item;
     const { active, tooltipPos } = this.state;
     const style = {
       // display: hidden || (this.props.setToolbarElements && dropdown) ? 'none' : 'inline-block'
