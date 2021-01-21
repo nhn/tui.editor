@@ -21,8 +21,8 @@ export function createToolbarItemInfo(type: string | ToolbarButton) {
   return type as ToolbarItemInfo;
 }
 
-function createDefaultToolbarItemInfo(): Record<string, ToolbarItemInfo> {
-  return {
+function createDefaultToolbarItemInfo() {
+  const itemInfoMap: Record<string, ToolbarItemInfo> = {
     heading: {
       name: 'heading',
       className: 'tui-heading',
@@ -132,7 +132,6 @@ function createDefaultToolbarItemInfo(): Record<string, ToolbarItemInfo> {
       className: 'tui-scrollsync',
       tooltip: i18n.get('Auto scroll disabled'),
       activeTooltip: i18n.get('Auto scroll enabled'),
-      noIcon: true,
       active: true,
       toggle: true,
       command: 'toggleScrollSync'
@@ -143,6 +142,13 @@ function createDefaultToolbarItemInfo(): Record<string, ToolbarItemInfo> {
       tooltip: i18n.get('More')
     }
   };
+
+  Object.keys(itemInfoMap).forEach(name => {
+    if (name !== 'scrollSync') {
+      itemInfoMap[name].className += ' tui-toolbar-icons';
+    }
+  });
+  return itemInfoMap;
 }
 
 // eslint-disable-next-line consistent-return

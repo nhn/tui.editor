@@ -97,13 +97,8 @@ export class ToolbarButtonComp extends Component<Props, State> {
 
   render() {
     const { hideTooltip, disabled, item } = this.props;
-    const { noIcon, className, hidden } = item;
-    const style = { display: hidden ? 'none' : 'inline-block' };
-    let classNames = noIcon ? className : `${className} tui-toolbar-icons`;
-
-    if (this.state.active) {
-      classNames += ' active';
-    }
+    const style = { display: item.hidden ? 'none' : 'inline-block' };
+    const classNames = `${item.className}${this.state.active ? ' active' : ''}`;
 
     return html`
       <button

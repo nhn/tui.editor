@@ -101,7 +101,6 @@ export type ToolbarItemInfo = {
   command?: string;
   state?: ToolbarStateKeys;
   hidden?: boolean;
-  noIcon?: boolean;
   active?: boolean;
   toggle?: boolean;
 };

@@ -1,7 +1,6 @@
 import css from 'tui-code-snippet/domUtil/css';
 import {
   ExecCommand,
-  Pos,
   SetLayerInfo,
   ToolbarItemInfo,
   SetItemWidth,

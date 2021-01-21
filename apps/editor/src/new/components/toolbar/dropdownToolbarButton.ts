@@ -10,6 +10,7 @@ import { connectHOC } from './buttonHoc';
 interface Props {
   disabled: boolean;
   eventEmitter: Emitter;
+  item: ToolbarItemInfo;
   items: ToolbarItemInfo[];
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
@@ -69,14 +70,14 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
 
   render() {
     const { showDropdown, dropdownPos } = this.state;
-    const { disabled, items, hideTooltip } = this.props;
+    const { disabled, item, items, hideTooltip } = this.props;
 
     return html`
       <div class="te-toolbar-group" style="display: ${items.length ? 'inline-block' : 'none'}">
         <button
           ref=${(el: HTMLElement) => (this.refs.el = el)}
           type="button"
-          class="tui-toolbar-icons tui-more"
+          class=${item.className}
           onClick=${() => this.setState({ showDropdown: true })}
           onMouseover=${this.showTooltip}
           onMouseout=${hideTooltip}
