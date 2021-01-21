@@ -1,7 +1,6 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 import isArray from 'tui-code-snippet/type/isArray';
 import isString from 'tui-code-snippet/type/isString';
-import matches from 'tui-code-snippet/domUtil/matches';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
@@ -83,26 +82,6 @@ export function unwrapNode(node: Node) {
   return result;
 }
 
-export function closest<T extends Node>(node: Node, found: string | Node) {
-  let condition;
-
-  if (isString(found)) {
-    condition = (target: Node) => matches(target as Element, found);
-  } else {
-    condition = (target: Node) => target === found;
-  }
-
-  while (node && node !== document) {
-    if (isElemNode(node) && condition(node)) {
-      return node as T;
-    }
-
-    node = node.parentNode!;
-  }
-
-  return null;
-}
-
 export function toggleClass(element: Element, className: string, state?: boolean) {
   if (isUndefined(state)) {
     state = !hasClass(element, className);
@@ -110,4 +89,33 @@ export function toggleClass(element: Element, className: string, state?: boolean
   const toggleFn = state ? addClass : removeClass;
 
   toggleFn(element, className);
+}
+
+export function createElementWith(contents: string | HTMLElement, target: HTMLElement) {
+  const container = document.createElement('div');
+
+  if (isString(contents)) {
+    container.innerHTML = contents;
+  } else {
+    container.appendChild(contents);
+  }
+
+  const { firstChild } = container;
+
+  if (target) {
+    target.appendChild(firstChild!);
+  }
+
+  return firstChild;
+}
+
+export function getOuterWidth(el: HTMLElement) {
+  const computed = window.getComputedStyle(el);
+
+  return (
+    ['margin-left', 'margin-right'].reduce(
+      (acc, type) => acc + parseInt(computed.getPropertyValue(type), 10),
+      0
+    ) + el.offsetWidth
+  );
 }

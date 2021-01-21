@@ -1,26 +1,32 @@
+import css from 'tui-code-snippet/domUtil/css';
 import {
   ExecCommand,
   Pos,
   SetLayerInfo,
-  SetToolbarItemWidth,
   ToolbarItemInfo,
-  ToolbarState
+  ToolbarState,
+  SetItemWidth,
+  SetItemActive
 } from '@t/ui';
 import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
 import { createLayerInfo } from '@/new/toolbarItemFactory';
+import { getOuterWidth } from '@/utils/dom';
 
 interface Payload {
   toolbarState: ToolbarState;
 }
 
 interface Props {
+  tooltipEl: HTMLElement;
+  disabled: boolean;
   eventEmitter: Emitter;
   item: ToolbarItemInfo;
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
-  setToolbarItemWidth: SetToolbarItemWidth;
+  setItemActive: SetItemActive;
+  setItemWidth?: SetItemWidth;
 }
 
 interface State {
@@ -28,17 +34,15 @@ interface State {
   tooltipPos: Pos | null;
 }
 
-const TOOLTIP_LEFT_INDENT = -7;
-const TOOLTIP_TOP_INDENT = -2;
+const TOOLTIP_LEFT_INDENT = 0;
+const TOOLTIP_TOP_INDENT = 5;
 const LAYER_INDENT = -7;
+const DEFAULT_WIDTH = 50;
 
 export class ToolbarButton extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { active: !!props.item.active, tooltipPos: null };
-    this.showTooltip = this.showTooltip.bind(this);
-    this.hideTooltip = this.hideTooltip.bind(this);
-    this.execCommand = this.execCommand.bind(this);
     this.addEvent();
   }
 
@@ -53,88 +57,77 @@ export class ToolbarButton extends Component<Props, State> {
   }
 
   mounted() {
-    const { setToolbarItemWidth, item } = this.props;
+    const { setItemWidth, setItemActive, item } = this.props;
 
-    if (setToolbarItemWidth) {
-      const { el } = this.refs;
-      const computed = window.getComputedStyle(el);
-
-      const width = ['margin-left', 'margin-right', 'width'].reduce(
-        (acc, type) => acc + (parseInt(computed.getPropertyValue(type), 10) || 50),
-        0
-      );
-
-      setToolbarItemWidth(item.name, width);
+    // set width and active state only if it is not a dropdown toolbar
+    if (setItemWidth) {
+      setItemWidth(item.name, getOuterWidth(this.refs.el) + (item.hidden ? DEFAULT_WIDTH : 0));
+      setItemActive(item.name, this.state.active);
     }
   }
 
   private getBound() {
     const rect = this.refs.el.getBoundingClientRect();
     const left = rect.left + window.pageXOffset;
-    const top = rect.top + window.pageYOffset + this.refs.el.clientHeight;
+    const top = rect.top + window.pageYOffset + this.refs.el.offsetHeight;
 
     return { left, top };
   }
 
-  private showTooltip() {
-    if (!this.props.item.disabled) {
+  private showTooltip = () => {
+    const { activeTooltip, tooltip } = this.props.item;
+
+    if (!this.props.disabled) {
       const rect = this.getBound();
-      const left = rect.left + TOOLTIP_LEFT_INDENT;
-      const top = rect.top + TOOLTIP_TOP_INDENT;
+      const left = `${rect.left + TOOLTIP_LEFT_INDENT}px`;
+      const top = `${rect.top + TOOLTIP_TOP_INDENT}px`;
+      const tooltipText = this.state.active ? activeTooltip || tooltip : tooltip;
 
-      this.setState({ tooltipPos: { left, top } });
+      css(this.props.tooltipEl, { display: 'block', left, top });
+      this.props.tooltipEl.querySelector<HTMLElement>('.text')!.textContent = tooltipText;
     }
-  }
+  };
 
-  private hideTooltip() {
-    this.setState({ tooltipPos: null });
-  }
+  private hideTooltip = () => {
+    const tooltipEl = document.querySelector<HTMLElement>('.tui-tooltip')!;
 
-  private execCommand() {
-    const { item, execCommand, setLayerInfo } = this.props;
+    css(tooltipEl, 'display', 'none');
+  };
+
+  private execCommand = () => {
+    const { item, execCommand, setLayerInfo, setItemActive } = this.props;
     const { command, name, toggle } = item;
     const rect = this.getBound();
-    const left = rect.left + LAYER_INDENT;
-    const top = rect.top + LAYER_INDENT;
+    const pos = { left: rect.left + LAYER_INDENT, top: rect.top + LAYER_INDENT };
     let newState;
 
     if (toggle) {
-      newState = { active: !this.state.active };
+      const active = !this.state.active;
 
+      newState = { active };
       this.setState(newState);
+      this.showTooltip();
+      setItemActive(item.name, active);
     }
     if (command) {
       execCommand(command, newState);
     } else {
-      const info = createLayerInfo(name, this.refs.el, { left, top });
+      const info = createLayerInfo(name, this.refs.el, pos);
 
       if (info) {
         setLayerInfo(info);
       }
     }
-  }
+  };
 
   render() {
-    const { noIcon, className, tooltip, activeTooltip, hidden, disabled } = this.props.item;
-    const { active, tooltipPos } = this.state;
-    const style = {
-      display: hidden ? 'none' : 'inline-block'
-    };
+    const { noIcon, className, hidden } = this.props.item;
+    const style = { display: hidden ? 'none' : 'inline-block' };
     let classNames = noIcon ? className : `${className} tui-toolbar-icons`;
-    let tooltipText = tooltip;
 
-    if (active) {
+    if (this.state.active) {
       classNames += ' active';
-      tooltipText = activeTooltip || tooltip;
     }
-
-    // ${tooltipPos &&
-    //   html`
-    //     <div class="tui-tooltip" style=${tooltipPos}>
-    //       <div class="arrow"></div>
-    //       <span class="text">${tooltipText}</span>
-    //     </div>
-    //   `}
 
     return html`
       <button
@@ -145,7 +138,7 @@ export class ToolbarButton extends Component<Props, State> {
         onClick=${this.execCommand}
         onMouseover=${this.showTooltip}
         onMouseout=${this.hideTooltip}
-        disabled=${!!disabled}
+        disabled=${!!this.props.disabled}
       ></button>
     `;
   }

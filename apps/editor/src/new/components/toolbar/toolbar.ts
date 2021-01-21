@@ -1,13 +1,14 @@
 import throttle from 'tui-code-snippet/tricks/throttle';
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
-import { LayerInfo, TabInfo, ToolbarGroupInfo, ToolbarItem } from '@t/ui';
+import { ItemState, LayerInfo, TabInfo, ToolbarGroupInfo, ToolbarItem } from '@t/ui';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
-import { ToolbarGroup } from './toolbarGroup';
+import { createElementWith, getOuterWidth } from '@/utils/dom';
+import { getToggledScrollSync, groupToolbarItems, setGroupState } from '@/new/toolbarItemFactory';
 import { Layer } from '../layer';
 import { Tabs } from '../tabs';
-import { getToolbarItems, groupToolbarItems } from '@/new/toolbarItemFactory';
+import { ToolbarGroup } from './toolbarGroup';
 import { DropdownToolbar } from './dropdownToolbar';
 
 type TabType = 'write' | 'preview';
@@ -23,159 +24,191 @@ interface State {
   showLayer: boolean;
   layerInfo: LayerInfo;
   activeTab: TabType;
-  toolbarItems: ToolbarGroupInfo[];
-  dropdownToolbarItems: ToolbarGroupInfo[];
+  items: ToolbarGroupInfo[];
+  dropdownItems: ToolbarGroupInfo[];
 }
 
-interface ToolbarItemWidthMap {
-  [key: string]: number;
+interface ItemStateMap {
+  [key: string]: ItemState;
 }
+
+const DROPDOWN_WIDTH = 100;
 
 export class Toolbar extends Component<Props, State> {
   private tabs: TabInfo[];
 
-  private toolbarItemWidthMap: ToolbarItemWidthMap;
+  private itemStateMap: ItemStateMap;
 
-  private initialToolbarItems: ToolbarGroupInfo[];
+  private initialItems: ToolbarGroupInfo[];
+
+  private handleResize: () => void;
+
+  private tooltipEl!: HTMLElement;
 
   constructor(props: Props) {
     super(props);
-    this.initialToolbarItems = groupToolbarItems(props.toolbarItems || [], this.hiddenScrollSync());
+    this.initialItems = groupToolbarItems(props.toolbarItems || [], this.hiddenScrollSync());
     this.tabs = [
       { name: 'write', text: 'Write' },
       { name: 'preview', text: 'Preview' }
     ];
-    this.toolbarItemWidthMap = {};
+    this.itemStateMap = {};
+    this.handleResize = throttle(() => this.setState(this.classifyToolbarItems()), 200);
 
     this.state = {
-      toolbarItems: this.initialToolbarItems,
-      dropdownToolbarItems: [],
+      items: this.initialItems,
+      dropdownItems: [],
       showLayer: false,
       layerInfo: {} as LayerInfo,
       activeTab: 'write'
     };
-    this.execCommand = this.execCommand.bind(this);
-    this.toggleTab = this.toggleTab.bind(this);
-    this.setLayerInfo = this.setLayerInfo.bind(this);
-    this.hideLayer = this.hideLayer.bind(this);
-    this.setToolbarItemWidth = this.setToolbarItemWidth.bind(this);
+    this.appendTooltipToBody();
   }
 
-  private toggleTab(_: MouseEvent | null, activeTab: TabType) {
-    const { eventEmitter } = this.props;
+  private appendTooltipToBody() {
+    const tooltip = `<div class="tui-tooltip" style="display:none">
+        <div class="arrow"></div>
+        <span class="text"></span>
+      </div>`;
 
-    if (this.state.activeTab !== activeTab) {
-      const event = activeTab === 'write' ? 'changePreviewTabWrite' : 'changePreviewTabPreview';
-
-      eventEmitter.emit(event);
-      this.setState({ activeTab, toolbarItems: this.getDisabledToolbarItems(activeTab) });
-    }
+    this.tooltipEl = createElementWith(tooltip, document.body) as HTMLElement;
   }
 
   private hiddenScrollSync() {
     return this.props.editorType === 'wysiwyg' || this.props.previewStyle === 'tab';
   }
 
-  private setToolbarItemWidth(name: string, width: number) {
-    this.toolbarItemWidthMap[name] = width;
-  }
+  private toggleTab = (_: MouseEvent, activeTab: TabType) => {
+    const { eventEmitter } = this.props;
 
-  private setLayerInfo(layerInfo: LayerInfo) {
+    if (this.state.activeTab !== activeTab) {
+      const event = activeTab === 'write' ? 'changePreviewTabWrite' : 'changePreviewTabPreview';
+
+      eventEmitter.emit(event);
+      this.setState({ activeTab });
+    }
+  };
+
+  private setItemWidth = (name: string, width: number) => {
+    this.itemStateMap[name] = { width };
+  };
+
+  private setItemActive = (name: string, active: boolean) => {
+    this.itemStateMap[name].active = active;
+  };
+
+  private setLayerInfo = (layerInfo: LayerInfo) => {
     this.setState({ showLayer: true, layerInfo });
-  }
+  };
 
-  private hideLayer() {
+  private hideLayer = () => {
     if (this.state.showLayer) {
       this.setState({ showLayer: false });
     }
-  }
+  };
 
-  private execCommand(command: string, payload?: Record<string, any>) {
+  private execCommand = (command: string, payload?: Record<string, any>) => {
     const { eventEmitter, editorType } = this.props;
 
     eventEmitter.emit('command', { type: editorType, command }, payload);
     this.hideLayer();
-  }
+  };
 
   private classifyToolbarItems() {
     let totalWidth = 0;
     const { clientWidth } = this.refs.el;
-    const toolbarItems = [];
-    const dropdownToolbarItems = [];
+    const dividerWidth = getOuterWidth(
+      this.refs.el.querySelector<HTMLElement>('.tui-toolbar-divider')!
+    );
+    const items: ToolbarGroupInfo[] = [];
+    const dropdownItems: ToolbarGroupInfo[] = [];
 
-    this.initialToolbarItems.forEach((group, index) => {
-      const newGroup = [];
-      const newDropdownGroup = [];
+    this.initialItems.forEach((initialGroup, index) => {
+      const group: ToolbarGroupInfo = [];
+      const dropdownGroup: ToolbarGroupInfo = [];
 
-      group.forEach(item => {
-        if (this.toolbarItemWidthMap[item.name]) {
-          const width = this.toolbarItemWidthMap[item.name];
+      initialGroup.forEach(item => {
+        const { width, active } = this.itemStateMap[item.name];
 
+        if (width) {
           totalWidth += width;
+          const target =
+            totalWidth >= clientWidth - DROPDOWN_WIDTH && !item.hidden ? dropdownGroup : group;
 
-          if (totalWidth >= clientWidth - 100 && !item.hidden) {
-            newDropdownGroup.push(item);
-          } else {
-            newGroup.push(item);
-          }
+          target.push(item);
         }
+        item.active = active;
       });
-      if (newGroup.length) {
-        toolbarItems.push(newGroup);
-      }
-      if (newDropdownGroup.length) {
-        dropdownToolbarItems.push(newDropdownGroup);
-      }
-      if (index < this.state.toolbarItems.length - 1) {
-        totalWidth += 13;
-      }
 
-      return group;
+      if (group.length) {
+        setGroupState(group);
+        items.push(group);
+      }
+      if (dropdownGroup.length) {
+        dropdownItems.push(dropdownGroup);
+      }
+      // add divider width
+      if (index < this.state.items.length - 1) {
+        totalWidth += dividerWidth;
+      }
     });
 
-    return { toolbarItems, dropdownToolbarItems };
+    return { items, dropdownItems };
   }
 
   mounted() {
     if (this.props.previewStyle === 'tab') {
       this.props.eventEmitter.emit('changePreviewTabWrite');
     }
-    window.addEventListener(
-      'resize',
-      throttle(() => {
-        this.setState(this.classifyToolbarItems());
-      }, 200)
-    );
-    this.setState(this.classifyToolbarItems());
-  }
+    const items = this.classifyToolbarItems();
 
-  getDisabledToolbarItems(activeTab: TabType = 'preview') {
-    const { editorType, previewStyle } = this.props;
-    const disabled = editorType === 'markdown' && previewStyle === 'tab' && activeTab === 'preview';
+    if (items.dropdownItems.length !== this.state.dropdownItems.length) {
+      this.setState(items);
+    }
 
-    return getToolbarItems(this.state.toolbarItems, disabled, this.hiddenScrollSync());
+    window.addEventListener('resize', this.handleResize);
   }
 
   updated(prevProps: Props) {
     const newState = {} as State;
     const { editorType, previewStyle, eventEmitter } = this.props;
-    const { editorType: prevType, previewStyle: prevStyle } = prevProps;
+    const changedStyle = previewStyle !== prevProps.previewStyle;
+    const changedType = editorType !== prevProps.editorType;
 
-    if (previewStyle !== prevStyle || prevType !== editorType) {
-      if (previewStyle !== prevStyle || (previewStyle === 'tab' && editorType === 'markdown')) {
+    if (changedStyle || changedType) {
+      if (changedStyle || (previewStyle === 'tab' && editorType === 'markdown')) {
         eventEmitter.emit('changePreviewTabWrite');
         newState.activeTab = 'write';
       }
-      newState.toolbarItems = this.getDisabledToolbarItems(newState.activeTab);
-    }
-    if (Object.keys(newState).length) {
+      // show or hide scrollSync button
+      if (changedType) {
+        const { items, dropdownItems } = this.state;
+        const hidden = this.hiddenScrollSync();
+
+        newState.items = getToggledScrollSync(items, hidden);
+        if (dropdownItems.length) {
+          newState.dropdownItems = getToggledScrollSync(dropdownItems, hidden);
+        }
+      }
       this.setState(newState);
     }
   }
 
+  beforeDestroy() {
+    window.removeEventListener('resize', this.handleResize);
+  }
+
   render() {
     const { previewStyle, eventEmitter, editorType } = this.props;
-    const { layerInfo, showLayer, activeTab, toolbarItems, dropdownToolbarItems } = this.state;
+    const { layerInfo, showLayer, activeTab, items, dropdownItems } = this.state;
+    const props = {
+      tooltipEl: this.tooltipEl,
+      disabled: editorType === 'markdown' && previewStyle === 'tab' && activeTab === 'preview',
+      eventEmitter,
+      execCommand: this.execCommand,
+      setLayerInfo: this.setLayerInfo,
+      setItemActive: this.setItemActive
+    };
 
     return html`
       <div class="te-toolbar-section">
@@ -188,25 +221,17 @@ export class Toolbar extends Component<Props, State> {
           <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
         </div>
         <div class="tui-editor-defaultUI-toolbar" ref=${(el: HTMLElement) => (this.refs.el = el)}>
-          ${toolbarItems.map(
+          ${items.map(
             (group, index) => html`
               <${ToolbarGroup}
                 group=${group}
-                hiddenDivider=${index === toolbarItems.length - 1 ||
-                  toolbarItems[index + 1]?.hidden}
-                eventEmitter=${eventEmitter}
-                execCommand=${this.execCommand}
-                setLayerInfo=${this.setLayerInfo}
-                setToolbarItemWidth=${this.setToolbarItemWidth}
+                hiddenDivider=${index === items.length - 1 || items[index + 1]?.hidden}
+                setItemWidth=${this.setItemWidth}
+                ...${props}
               />
             `
           )}
-          <${DropdownToolbar}
-            items=${dropdownToolbarItems}
-            eventEmitter=${eventEmitter}
-            execCommand=${this.execCommand}
-            setLayerInfo=${this.setLayerInfo}
-          />
+          <${DropdownToolbar} items=${dropdownItems} ...${props} />
         </div>
         <${Layer}
           info=${layerInfo}

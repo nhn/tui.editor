@@ -10,7 +10,7 @@ import { TableLayerBody } from './components/toolbar/tableLayerBody';
 
 let toolbarItemInfoMap: Record<string, ToolbarItemInfo> | null = null;
 
-function createToolbarItemInfo(type: string | ToolbarButton) {
+export function createToolbarItemInfo(type: string | ToolbarButton) {
   toolbarItemInfoMap = toolbarItemInfoMap || createDefaultToolbarItemInfo();
 
   if (isString(type)) {
@@ -136,6 +136,11 @@ function createDefaultToolbarItemInfo(): Record<string, ToolbarItemInfo> {
       active: true,
       toggle: true,
       command: 'toggleScrollSync'
+    },
+    more: {
+      name: 'more',
+      className: 'tui-more',
+      tooltip: i18n.get('More')
     }
   };
 }
@@ -186,38 +191,42 @@ export function createLayerInfo(type: string, el: HTMLElement, pos: Pos): LayerI
   }
 }
 
+export function setGroupState(group: ToolbarGroupInfo) {
+  group.hidden = group.length === group.filter(info => info.hidden).length;
+}
+
 export function groupToolbarItems(toolbarItems: ToolbarItem[], hiddenScrollSync: boolean) {
   let needNested = false;
+  const toggleScrollSyncState = (item: ToolbarItemInfo) => {
+    item.hidden = item.name === 'scrollSync' && hiddenScrollSync;
+    return item;
+  };
 
-  const groups = toolbarItems.reduce((acc: ToolbarItemInfo[][], item) => {
+  return toolbarItems.reduce((acc: ToolbarGroupInfo[], item) => {
     if (Array.isArray(item)) {
       needNested = false;
-      acc.push(item.map(type => createToolbarItemInfo(type)));
+      acc.push(item.map(type => toggleScrollSyncState(createToolbarItemInfo(type))));
     } else if (needNested) {
-      acc[(acc.length || 1) - 1].push(createToolbarItemInfo(item));
+      acc[(acc.length || 1) - 1].push(toggleScrollSyncState(createToolbarItemInfo(item)));
     } else {
       needNested = true;
-      acc.push([createToolbarItemInfo(item)]);
+      acc.push([toggleScrollSyncState(createToolbarItemInfo(item))]);
+    }
+    const group = acc[(acc.length || 1) - 1];
+
+    if (group) {
+      setGroupState(group);
     }
     return acc;
   }, []);
-
-  return getToolbarItems(groups, false, hiddenScrollSync);
 }
 
-export function getToolbarItems(
-  toolbarItems: ToolbarGroupInfo[],
-  disabled: boolean,
-  hiddenScrollSync: boolean
-) {
+export function getToggledScrollSync(toolbarItems: ToolbarGroupInfo[], hiddenScrollSync: boolean) {
   return toolbarItems.map(group => {
-    group.hidden = false;
     group.forEach(item => {
-      item.disabled = disabled;
-      if (item.name === 'scrollSync') {
-        item.hidden = hiddenScrollSync;
-      }
+      item.hidden = item.name === 'scrollSync' && hiddenScrollSync;
     });
+    setGroupState(group);
     return group;
   });
 }

@@ -1,29 +1,25 @@
-import { ExecCommand, SetLayerInfo, SetToolbarItemWidth, ToolbarGroupInfo } from '@t/ui';
+import { ExecCommand, SetLayerInfo, ToolbarGroupInfo, SetItemActive, SetItemWidth } from '@t/ui';
 import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
 import { ToolbarButton } from './toolbarButton';
 
 interface Props {
+  tooltipEl: HTMLElement;
+  disabled: boolean;
   group: ToolbarGroupInfo;
   hidden: boolean;
   hiddenDivider: boolean;
   eventEmitter: Emitter;
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
-  setToolbarItemWidth: SetToolbarItemWidth;
+  setItemActive: SetItemActive;
+  setItemWidth?: SetItemWidth;
 }
 
 export class ToolbarGroup extends Component<Props> {
   render() {
-    const {
-      group,
-      hiddenDivider,
-      eventEmitter,
-      execCommand,
-      setLayerInfo,
-      setToolbarItemWidth
-    } = this.props;
+    const { group, hiddenDivider } = this.props;
     const groupStyle = { display: group.hidden ? 'none' : 'inline-block' };
     const dividerStyle = { display: hiddenDivider ? 'none' : 'inline-block' };
 
@@ -32,13 +28,7 @@ export class ToolbarGroup extends Component<Props> {
         ${group.map(
           item =>
             html`
-              <${ToolbarButton}
-                item=${item}
-                eventEmitter=${eventEmitter}
-                execCommand=${execCommand}
-                setLayerInfo=${setLayerInfo}
-                setToolbarItemWidth=${setToolbarItemWidth}
-              />
+              <${ToolbarButton} item=${item} ...${this.props} />
             `
         )}
         <div class="tui-toolbar-divider" style=${dividerStyle}></div>
