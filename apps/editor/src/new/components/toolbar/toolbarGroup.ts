@@ -28,7 +28,7 @@ export class ToolbarGroup extends Component<Props> {
         ${group.map(
           item =>
             html`
-              <${ToolbarButton} item=${item} ...${this.props} />
+              <${ToolbarButton} ...${this.props} item=${item} />
             `
         )}
         <div class="tui-toolbar-divider" style=${dividerStyle}></div>

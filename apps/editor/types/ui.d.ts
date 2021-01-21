@@ -52,12 +52,12 @@ export interface VNode {
 }
 
 export interface ComponentClass {
-  new (props?: Record<string, any>): Component;
+  new (props?: any): Component;
 }
 
 export interface Pos {
-  left: string | number;
-  top: string | number;
+  left: number;
+  top: number;
 }
 
 export type TooltipStyle = {

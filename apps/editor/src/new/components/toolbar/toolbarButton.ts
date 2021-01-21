@@ -1,4 +1,3 @@
-import css from 'tui-code-snippet/domUtil/css';
 import {
   ExecCommand,
   Pos,
@@ -13,13 +12,13 @@ import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
 import { createLayerInfo } from '@/new/toolbarItemFactory';
 import { getOuterWidth } from '@/utils/dom';
+import { connectHOC } from './buttonHoc';
 
 interface Payload {
   toolbarState: ToolbarState;
 }
 
 interface Props {
-  tooltipEl: HTMLElement;
   disabled: boolean;
   eventEmitter: Emitter;
   item: ToolbarItemInfo;
@@ -27,27 +26,27 @@ interface Props {
   setLayerInfo: SetLayerInfo;
   setItemActive: SetItemActive;
   setItemWidth?: SetItemWidth;
+  showTooltip: (el: HTMLElement, active?: boolean) => void;
+  hideTooltip: () => void;
+  getBound: (el: HTMLElement) => Pos;
 }
 
 interface State {
   active: boolean;
-  tooltipPos: Pos | null;
 }
 
-const TOOLTIP_LEFT_INDENT = 0;
-const TOOLTIP_TOP_INDENT = 5;
 const LAYER_INDENT = -7;
 const DEFAULT_WIDTH = 50;
 
-export class ToolbarButton extends Component<Props, State> {
+export class ToolbarButtonComp extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { active: !!props.item.active, tooltipPos: null };
+    this.state = { active: !!props.item.active };
     this.addEvent();
   }
 
   addEvent() {
-    if (!this.props.item.toggle) {
+    if (this.props.item.state) {
       this.props.eventEmitter.listen('cursorActivity', ({ toolbarState }: Payload) => {
         const active = !!toolbarState[this.props.item.state!];
 
@@ -66,38 +65,14 @@ export class ToolbarButton extends Component<Props, State> {
     }
   }
 
-  private getBound() {
-    const rect = this.refs.el.getBoundingClientRect();
-    const left = rect.left + window.pageXOffset;
-    const top = rect.top + window.pageYOffset + this.refs.el.offsetHeight;
-
-    return { left, top };
-  }
-
   private showTooltip = () => {
-    const { activeTooltip, tooltip } = this.props.item;
-
-    if (!this.props.disabled) {
-      const rect = this.getBound();
-      const left = `${rect.left + TOOLTIP_LEFT_INDENT}px`;
-      const top = `${rect.top + TOOLTIP_TOP_INDENT}px`;
-      const tooltipText = this.state.active ? activeTooltip || tooltip : tooltip;
-
-      css(this.props.tooltipEl, { display: 'block', left, top });
-      this.props.tooltipEl.querySelector<HTMLElement>('.text')!.textContent = tooltipText;
-    }
-  };
-
-  private hideTooltip = () => {
-    const tooltipEl = document.querySelector<HTMLElement>('.tui-tooltip')!;
-
-    css(tooltipEl, 'display', 'none');
+    this.props.showTooltip(this.refs.el, this.state.active);
   };
 
   private execCommand = () => {
-    const { item, execCommand, setLayerInfo, setItemActive } = this.props;
+    const { item, execCommand, setLayerInfo, setItemActive, getBound } = this.props;
     const { command, name, toggle } = item;
-    const rect = this.getBound();
+    const rect = getBound(this.refs.el);
     const pos = { left: rect.left + LAYER_INDENT, top: rect.top + LAYER_INDENT };
     let newState;
 
@@ -121,7 +96,8 @@ export class ToolbarButton extends Component<Props, State> {
   };
 
   render() {
-    const { noIcon, className, hidden } = this.props.item;
+    const { hideTooltip, disabled, item } = this.props;
+    const { noIcon, className, hidden } = item;
     const style = { display: hidden ? 'none' : 'inline-block' };
     let classNames = noIcon ? className : `${className} tui-toolbar-icons`;
 
@@ -137,9 +113,10 @@ export class ToolbarButton extends Component<Props, State> {
         class=${classNames}
         onClick=${this.execCommand}
         onMouseover=${this.showTooltip}
-        onMouseout=${this.hideTooltip}
-        disabled=${!!this.props.disabled}
+        onMouseout=${hideTooltip}
+        disabled=${!!disabled}
       ></button>
     `;
   }
 }
+export const ToolbarButton = connectHOC(ToolbarButtonComp);

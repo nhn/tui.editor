@@ -5,11 +5,16 @@ import { ItemState, LayerInfo, TabInfo, ToolbarGroupInfo, ToolbarItem } from '@t
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
 import { createElementWith, getOuterWidth } from '@/utils/dom';
-import { getToggledScrollSync, groupToolbarItems, setGroupState } from '@/new/toolbarItemFactory';
+import {
+  createToolbarItemInfo,
+  getToggledScrollSync,
+  groupToolbarItems,
+  setGroupState
+} from '@/new/toolbarItemFactory';
 import { Layer } from '../layer';
 import { Tabs } from '../tabs';
 import { ToolbarGroup } from './toolbarGroup';
-import { DropdownToolbar } from './dropdownToolbar';
+import { DropdownToolbarButton } from './dropdownToolbarButton';
 
 type TabType = 'write' | 'preview';
 
@@ -231,7 +236,11 @@ export class Toolbar extends Component<Props, State> {
               />
             `
           )}
-          <${DropdownToolbar} items=${dropdownItems} ...${props} />
+          <${DropdownToolbarButton}
+            item=${createToolbarItemInfo('more')}
+            items=${dropdownItems}
+            ...${props}
+          />
         </div>
         <${Layer}
           info=${layerInfo}

@@ -5,44 +5,39 @@ import { findNodes } from '@/utils/dom';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
 import { ToolbarGroup } from './toolbarGroup';
-import { ToolbarButton } from './toolbarButton';
-import { createToolbarItemInfo } from '@/new/toolbarItemFactory';
+import { connectHOC } from './buttonHoc';
 
 interface Props {
-  tooltipEl: HTMLElement;
   disabled: boolean;
   eventEmitter: Emitter;
   items: ToolbarItemInfo[];
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
   setItemActive: SetItemActive;
+  showTooltip: (el: HTMLElement, active?: boolean) => void;
+  hideTooltip: () => void;
+  getBound: (el: HTMLElement) => Pos;
 }
 
 interface State {
-  tooltipPos?: Pos | null;
   dropdownPos: Pos | null;
   showDropdown: boolean;
 }
 
-export class DropdownToolbar extends Component<Props, State> {
-  private item: ToolbarItemInfo;
-
+class DropdownToolbarButtonComp extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { showDropdown: false, dropdownPos: null };
-    this.item = createToolbarItemInfo('more');
   }
 
   private getBound() {
-    const rect = this.refs.el.getBoundingClientRect();
-    const top = rect.top + window.pageYOffset + this.refs.el.clientHeight;
-    let left = rect.left + window.pageXOffset;
+    const rect = this.props.getBound(this.refs.el);
 
     findNodes(this.refs.dropdownEl, '.te-toolbar-group').forEach(el => {
-      left -= (el as HTMLElement).offsetWidth;
+      rect.left -= (el as HTMLElement).offsetWidth;
     });
 
-    return { left, top };
+    return rect;
   }
 
   private handleClickDocument = ({ target }: MouseEvent) => {
@@ -68,18 +63,23 @@ export class DropdownToolbar extends Component<Props, State> {
     document.removeEventListener('click', this.handleClickDocument);
   }
 
+  private showTooltip = () => {
+    this.props.showTooltip(this.refs.el);
+  };
+
   render() {
     const { showDropdown, dropdownPos } = this.state;
-    const { disabled, items } = this.props;
+    const { disabled, items, hideTooltip } = this.props;
 
     return html`
       <div class="te-toolbar-group" style="display: ${items.length ? 'inline-block' : 'none'}">
-        <!-- <${ToolbarButton} item=${this.item} ...${this.props} /> -->
         <button
           ref=${(el: HTMLElement) => (this.refs.el = el)}
           type="button"
           class="tui-toolbar-icons tui-more"
           onClick=${() => this.setState({ showDropdown: true })}
+          onMouseover=${this.showTooltip}
+          onMouseout=${hideTooltip}
           disabled=${disabled}
         ></button>
         <div
@@ -103,3 +103,4 @@ export class DropdownToolbar extends Component<Props, State> {
     `;
   }
 }
+export const DropdownToolbarButton = connectHOC(DropdownToolbarButtonComp);
