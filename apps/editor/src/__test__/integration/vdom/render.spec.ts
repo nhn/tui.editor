@@ -13,13 +13,15 @@ interface Props {
 
 interface State {
   hide: boolean;
+  conditional: boolean;
 }
 
 class TestComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      hide: false
+      hide: false,
+      conditional: true
     };
   }
 
@@ -29,6 +31,10 @@ class TestComponent extends Component<Props, State> {
 
   hide() {
     this.setState({ hide: true });
+  }
+
+  conditionalRender() {
+    this.setState({ conditional: false });
   }
 
   mounted() {
@@ -66,22 +72,33 @@ class TestComponent extends Component<Props, State> {
         <div style=${style}>
           child
         </div>
+        <div>
+          ${this.state.conditional
+            ? [1, 2, 3].map(
+                num =>
+                  html`
+                    <span>${num}</span>
+                  `
+              )
+            : null}
+        </div>
+        ${this.state.conditional
+          ? [1, 2, 3].map(
+              num =>
+                html`
+                  <span>${num}</span>
+                `
+            )
+          : null}
         <button onClick=${() => this.show()}>show</button>
         <button onClick=${() => this.hide()}>hide</button>
+        <button onClick=${() => this.conditionalRender()}>conditional</button>
       </div>
     `;
   }
 }
 
 let container: HTMLElement, destroy: () => void;
-
-function clickShowBtn() {
-  container.querySelector('button')!.click();
-}
-
-function clickHideBtn() {
-  container.querySelectorAll('button')[1].click();
-}
 
 describe('html', () => {
   it('should be rendered properly', () => {
@@ -195,6 +212,18 @@ describe('html', () => {
 });
 
 describe('Class Component', () => {
+  function clickShowBtn() {
+    container.querySelector('button')!.click();
+  }
+
+  function clickHideBtn() {
+    container.querySelectorAll('button')[1].click();
+  }
+
+  function clickConditionalBtn() {
+    container.querySelectorAll('button')[2].click();
+  }
+
   function renderComponent(spies?: Record<string, jest.Mock>) {
     container = document.createElement('div');
 
@@ -212,8 +241,17 @@ describe('Class Component', () => {
     const expected = oneLineTrim`
       <div class="my-comp">
         <div style="display: block;">child</div>
+        <div>
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+        </div>
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
         <button>show</button>
         <button>hide</button>
+        <button>conditional</button>
       </div>
     `;
 
@@ -227,8 +265,17 @@ describe('Class Component', () => {
     let expected = oneLineTrim`
       <div class="my-comp">
         <div style="display: none;">child</div>
+        <div>
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+        </div>
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
         <button>show</button>
         <button>hide</button>
+        <button>conditional</button>
       </div>
     `;
 
@@ -239,8 +286,17 @@ describe('Class Component', () => {
     expected = oneLineTrim`
       <div class="my-comp">
         <div style="display: block;">child</div>
+        <div>
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+        </div>
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
         <button>show</button>
         <button>hide</button>
+        <button>conditional</button>
       </div>
     `;
 
@@ -291,5 +347,42 @@ describe('Class Component', () => {
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(container).toContainHTML('');
+  });
+
+  it('should render conditional children components', () => {
+    renderComponent();
+
+    let expected = oneLineTrim`
+      <div class="my-comp">
+        <div style="display: block;">child</div>
+        <div>
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+        </div>
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <button>show</button>
+        <button>hide</button>
+        <button>conditional</button>
+      </div>
+    `;
+
+    expect(container).toContainHTML(expected);
+
+    clickConditionalBtn();
+
+    expected = oneLineTrim`
+      <div class="my-comp">
+        <div style="display: block;">child</div>
+        <div></div>
+        <button>show</button>
+        <button>hide</button>
+        <button>conditional</button>
+      </div>
+    `;
+
+    expect(container).toContainHTML(expected);
   });
 });
