@@ -122,9 +122,8 @@ export class Toolbar extends Component<Props, State> {
   private classifyToolbarItems() {
     let totalWidth = 0;
     const { clientWidth } = this.refs.el;
-    const dividerWidth = getOuterWidth(
-      this.refs.el.querySelector<HTMLElement>('.tui-toolbar-divider')!
-    );
+    const divider = this.refs.el.querySelector<HTMLElement>('.tui-toolbar-divider');
+    const dividerWidth = divider ? getOuterWidth(divider) : 0;
     const items: ToolbarGroupInfo[] = [];
     const dropdownItems: ToolbarGroupInfo[] = [];
 
@@ -137,8 +136,7 @@ export class Toolbar extends Component<Props, State> {
 
         if (width) {
           totalWidth += width;
-          const target =
-            totalWidth >= clientWidth - DROPDOWN_WIDTH && !item.hidden ? dropdownGroup : group;
+          const target = totalWidth >= clientWidth - DROPDOWN_WIDTH ? dropdownGroup : group;
 
           target.push(item);
         }
@@ -150,6 +148,7 @@ export class Toolbar extends Component<Props, State> {
         items.push(group);
       }
       if (dropdownGroup.length) {
+        setGroupState(dropdownGroup);
         dropdownItems.push(dropdownGroup);
       }
       // add divider width
@@ -181,19 +180,24 @@ export class Toolbar extends Component<Props, State> {
     const changedType = editorType !== prevProps.editorType;
 
     if (changedStyle || changedType) {
+      // reclassify toolbar type when preview style or editor type are changed because the width of toolbar area is changed
+      const classified = this.classifyToolbarItems();
+
+      newState.items = classified.items;
+      newState.dropdownItems = classified.dropdownItems;
+
+      // show or hide scrollSync button
+      const { items, dropdownItems } = newState;
+      const hidden = this.hiddenScrollSync();
+
+      newState.items = getToggledScrollSync(items, hidden);
+      if (dropdownItems.length) {
+        newState.dropdownItems = getToggledScrollSync(dropdownItems, hidden);
+      }
+
       if (changedStyle || (previewStyle === 'tab' && editorType === 'markdown')) {
         eventEmitter.emit('changePreviewTabWrite');
         newState.activeTab = 'write';
-      }
-      // show or hide scrollSync button
-      if (changedType) {
-        const { items, dropdownItems } = this.state;
-        const hidden = this.hiddenScrollSync();
-
-        newState.items = getToggledScrollSync(items, hidden);
-        if (dropdownItems.length) {
-          newState.dropdownItems = getToggledScrollSync(dropdownItems, hidden);
-        }
       }
       this.setState(newState);
     }
@@ -201,15 +205,16 @@ export class Toolbar extends Component<Props, State> {
 
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize);
+    document.body.removeChild(this.tooltipEl);
   }
 
   render() {
     const { previewStyle, eventEmitter, editorType } = this.props;
     const { layerInfo, showLayer, activeTab, items, dropdownItems } = this.state;
     const props = {
+      eventEmitter,
       tooltipEl: this.tooltipEl,
       disabled: editorType === 'markdown' && previewStyle === 'tab' && activeTab === 'preview',
-      eventEmitter,
       execCommand: this.execCommand,
       setLayerInfo: this.setLayerInfo,
       setItemActive: this.setItemActive

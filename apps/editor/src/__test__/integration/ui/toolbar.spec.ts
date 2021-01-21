@@ -4,7 +4,6 @@ import EventEmitter from '@/event/eventEmitter';
 import html from '@/new/vdom/template';
 import { render } from '@/new/renderer';
 import { Toolbar } from '@/new/components/toolbar/toolbar';
-import { groupingToolbarItems } from '@/new/toolbarItemFactory';
 import '@/i18n/en-us';
 
 function getElement(selector: string) {
@@ -54,14 +53,14 @@ describe('toolbar', () => {
   let em: EventEmitter, container: HTMLElement, destroy: () => void;
 
   beforeEach(() => {
-    const toolbarItems = groupingToolbarItems([
+    const toolbarItems = [
       ['heading', 'bold', 'italic', 'strike'],
       ['hr', 'quote'],
       ['ul', 'ol', 'task', 'indent', 'outdent'],
       ['table', 'image', 'link'],
       ['code', 'codeblock'],
       'scrollSync'
-    ]);
+    ];
 
     container = document.createElement('div');
     document.body.appendChild(container);
@@ -188,7 +187,7 @@ describe('toolbar', () => {
       em.listen('command', spy);
 
       dispatchClick('.tui-heading');
-      dispatchClick('.te-heading-add [data-value="2"]');
+      dispatchClick('.te-heading-add [data-level="2"]');
 
       expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'heading' }, { level: 2 });
     });
