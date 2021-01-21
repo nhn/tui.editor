@@ -101,3 +101,11 @@ declare module 'tui-code-snippet/request/sendHostname' {
 declare module 'tui-code-snippet/domUtil/matches' {
   export default function matches(element: Element, selector: string): boolean;
 }
+
+declare module 'tui-code-snippet/tricks/throttle' {
+  export default function throttle(fn: () => void, interval: number): () => void;
+}
+
+declare module 'tui-code-snippet/domUtil/closest' {
+  export default function closest(el: HTMLElement, found: string): HTMLElement | null;
+}

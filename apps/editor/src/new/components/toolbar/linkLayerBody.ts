@@ -14,14 +14,9 @@ interface Props {
 }
 
 export class LinkLayerBody extends Component<Props> {
-  constructor(props: Props) {
-    super(props);
-    this.execCommand = this.execCommand.bind(this);
-  }
-
   private initialize() {
-    const linkUrl = this.refs.url;
-    const linkText = this.refs.text;
+    const linkUrl = this.refs.url as HTMLInputElement;
+    const linkText = this.refs.text as HTMLInputElement;
 
     removeClass(linkUrl, 'wrong');
     removeClass(linkText, 'wrong');
@@ -30,9 +25,9 @@ export class LinkLayerBody extends Component<Props> {
     linkText.value = '';
   }
 
-  private execCommand() {
-    const linkUrl = this.refs.url;
-    const linkText = this.refs.text;
+  private execCommand = () => {
+    const linkUrl = this.refs.url as HTMLInputElement;
+    const linkText = this.refs.text as HTMLInputElement;
 
     removeClass(linkUrl, 'wrong');
     removeClass(linkText, 'wrong');
@@ -50,7 +45,7 @@ export class LinkLayerBody extends Component<Props> {
       linkUrl: linkUrl.value,
       linkText: linkText.value
     });
-  }
+  };
 
   updated() {
     if (!this.props.show) {

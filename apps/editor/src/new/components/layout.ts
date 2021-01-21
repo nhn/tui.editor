@@ -36,11 +36,6 @@ export class Layout extends Component<Props, State> {
       previewStyle,
       hide: false
     };
-
-    this.show = this.show.bind(this);
-    this.hide = this.hide.bind(this);
-    this.changeMode = this.changeMode.bind(this);
-    this.changePreviewStyle = this.changePreviewStyle.bind(this);
     this.addEvent();
   }
 
@@ -99,23 +94,23 @@ export class Layout extends Component<Props, State> {
     eventEmitter.listen('changePreviewStyle', this.changePreviewStyle);
   }
 
-  private changeMode(editorType: EditorType) {
+  private changeMode = (editorType: EditorType) => {
     if (editorType !== this.state.editorType) {
       this.setState({ editorType });
     }
-  }
+  };
 
-  private changePreviewStyle(previewStyle: PreviewStyle) {
+  private changePreviewStyle = (previewStyle: PreviewStyle) => {
     if (previewStyle !== this.state.previewStyle) {
       this.setState({ previewStyle });
     }
-  }
+  };
 
-  private hide() {
+  private hide = () => {
     this.setState({ hide: true });
-  }
+  };
 
-  private show() {
+  private show = () => {
     this.setState({ hide: false });
-  }
+  };
 }

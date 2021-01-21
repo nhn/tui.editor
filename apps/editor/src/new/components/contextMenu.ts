@@ -1,5 +1,5 @@
+import closest from 'tui-code-snippet/domUtil/closest';
 import { ContextMenuItem, ExecCommand, LayerInfo, Pos, VNode } from '@t/ui';
-import { closest } from '@/utils/dom';
 import { Emitter } from '@t/event';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
@@ -23,7 +23,6 @@ export class ContextMenu extends Component<Props, State> {
       menuGroups: []
     };
     this.addEvent();
-    this.handleClickDocument = this.handleClickDocument.bind(this);
   }
 
   addEvent() {
@@ -40,11 +39,11 @@ export class ContextMenu extends Component<Props, State> {
     document.removeEventListener('click', this.handleClickDocument);
   }
 
-  private handleClickDocument(ev: MouseEvent) {
-    if (!closest<HTMLElement>(ev.target as HTMLElement, this.refs.el)) {
+  private handleClickDocument = (ev: MouseEvent) => {
+    if (!closest(ev.target as HTMLElement, '.te-context-menu')) {
       this.setState({ pos: null });
     }
-  }
+  };
 
   private getMenuGroupElements() {
     const { pos, menuGroups } = this.state;
@@ -76,7 +75,7 @@ export class ContextMenu extends Component<Props, State> {
     const style = { display: this.state.pos ? 'block' : 'none', pos: this.state.pos };
 
     return html`
-      <div class="te-context-menu" style=${style} ref=${(el: HTMLElement) => (this.refs.el = el)}>
+      <div class="te-context-menu" style=${style}>
         ${this.getMenuGroupElements()}
       </div>
     `;

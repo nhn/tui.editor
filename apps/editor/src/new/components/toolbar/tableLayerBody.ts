@@ -37,16 +37,23 @@ export class TableLayerBody extends Component<Props, State> {
       colIdx: -1
     };
     this.tableElRect = null;
-    this.execCommand = this.execCommand.bind(this);
-    this.extendSelectionRange = this.extendSelectionRange.bind(this);
   }
 
-  private execCommand() {
+  private extendSelectionRange = ({ pageX, pageY }: MouseEvent) => {
+    const { left, top } = this.tableElRect || this.refs.tableEl.getBoundingClientRect();
+    const x = pageX - left;
+    const y = pageY - top;
+    const range = this.getSelectionRangeByOffset(x, y);
+
+    this.setState({ ...range });
+  };
+
+  private execCommand = () => {
     this.props.execCommand('addTable', {
       rowCount: this.state.rowIdx + 1,
       columnCount: this.state.colIdx + 1
     });
-  }
+  };
 
   private getDescription() {
     return this.state.colIdx === -1 ? '' : `${this.state.colIdx + 1} x ${this.state.rowIdx + 1}`;
@@ -92,15 +99,6 @@ export class TableLayerBody extends Component<Props, State> {
     range.colIdx = Math.min(Math.max(range.colIdx, MIN_COL_SELECTION_INDEX), MAX_COL_INDEX);
 
     return range;
-  }
-
-  private extendSelectionRange({ pageX, pageY }: MouseEvent) {
-    const { left, top } = this.tableElRect || this.refs.tableEl.getBoundingClientRect();
-    const x = pageX - left;
-    const y = pageY - top;
-    const range = this.getSelectionRangeByOffset(x, y);
-
-    this.setState({ ...range });
   }
 
   updated() {

@@ -1,5 +1,5 @@
+import closest from 'tui-code-snippet/domUtil/closest';
 import { ExecCommand, HideLayer, LayerInfo, Pos } from '@t/ui';
-import { closest } from '@/utils/dom';
 import { Emitter } from '@t/event';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
@@ -17,19 +17,14 @@ interface Props {
 }
 
 export class Layer extends Component<Props> {
-  constructor(props: Props) {
-    super(props);
-    this.handleClickDocument = this.handleClickDocument.bind(this);
-  }
-
-  private handleClickDocument(ev: MouseEvent) {
+  private handleClickDocument = (ev: MouseEvent) => {
     if (
-      !closest<HTMLElement>(ev.target as HTMLElement, '.tui-popup-wrapper') &&
+      !closest(ev.target as HTMLElement, '.tui-popup-wrapper') &&
       ev.target !== this.props.info.fromEl
     ) {
       this.props.hideLayer();
     }
-  }
+  };
 
   mounted() {
     document.addEventListener('click', this.handleClickDocument);

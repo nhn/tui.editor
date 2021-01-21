@@ -33,9 +33,6 @@ export class ImageLayerBody extends Component<Props, State> {
       { name: 'file', text: 'File' },
       { name: 'url', text: 'URL' }
     ];
-    this.toggleTab = this.toggleTab.bind(this);
-    this.initialize = this.initialize.bind(this);
-    this.execCommand = this.execCommand.bind(this);
     this.addEvent();
   }
 
@@ -51,16 +48,16 @@ export class ImageLayerBody extends Component<Props, State> {
     });
   }
 
-  private initialize(activeTab: TabType = 'file') {
-    this.refs.url.value = '';
-    this.refs.altText.value = '';
-    this.refs.file.value = '';
+  private initialize = (activeTab: TabType = 'file') => {
+    (this.refs.url as HTMLInputElement).value = '';
+    (this.refs.altText as HTMLInputElement).value = '';
+    (this.refs.file as HTMLInputElement).value = '';
     this.setState({ activeTab });
-  }
+  };
 
-  private execCommand() {
-    const imageUrl = this.refs.url.value;
-    const altText = this.refs.altText.value || 'image';
+  private execCommand = () => {
+    const imageUrl = (this.refs.url as HTMLInputElement).value;
+    const altText = (this.refs.altText as HTMLInputElement).value || 'image';
 
     if (imageUrl) {
       this.props.execCommand('addImage', {
@@ -78,13 +75,13 @@ export class ImageLayerBody extends Component<Props, State> {
         this.props.eventEmitter.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
       }
     }
-  }
+  };
 
-  private toggleTab(_: MouseEvent, activeTab: TabType) {
+  private toggleTab = (_: MouseEvent, activeTab: TabType) => {
     if (activeTab !== this.state.activeTab) {
       this.initialize(activeTab);
     }
-  }
+  };
 
   updated() {
     if (!this.props.show) {
