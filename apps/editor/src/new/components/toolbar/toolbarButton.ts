@@ -1,11 +1,13 @@
 import {
   ExecCommand,
-  Pos,
   SetLayerInfo,
   ToolbarItemInfo,
   ToolbarState,
   SetItemWidth,
-  SetItemActive
+  SetItemActive,
+  GetBound,
+  HideTooltip,
+  ShowTooltip
 } from '@t/ui';
 import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
@@ -25,10 +27,10 @@ interface Props {
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
   setItemActive: SetItemActive;
+  showTooltip: ShowTooltip;
+  hideTooltip: HideTooltip;
+  getBound: GetBound;
   setItemWidth?: SetItemWidth;
-  showTooltip: (el: HTMLElement, active?: boolean) => void;
-  hideTooltip: () => void;
-  getBound: (el: HTMLElement) => Pos;
 }
 
 interface State {
@@ -97,8 +99,8 @@ export class ToolbarButtonComp extends Component<Props, State> {
 
   render() {
     const { hideTooltip, disabled, item } = this.props;
-    const style = { display: item.hidden ? 'none' : 'inline-block' };
-    const classNames = `${item.className}${this.state.active ? ' active' : ''}`;
+    const style = { display: item.hidden ? 'none' : 'inline-block', ...item.style };
+    const classNames = `${item.className || ''}${this.state.active ? ' active' : ''}`;
 
     return html`
       <button
@@ -110,7 +112,9 @@ export class ToolbarButtonComp extends Component<Props, State> {
         onMouseover=${this.showTooltip}
         onMouseout=${hideTooltip}
         disabled=${!!disabled}
-      ></button>
+      >
+        ${item.text || ''}
+      </button>
     `;
   }
 }

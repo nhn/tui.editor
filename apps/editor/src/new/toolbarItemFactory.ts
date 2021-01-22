@@ -1,6 +1,12 @@
 import isString from 'tui-code-snippet/type/isString';
-import { ToolbarButton } from '@t/editor';
-import { LayerInfo, Pos, ToolbarGroupInfo, ToolbarItem, ToolbarItemInfo } from '@t/ui';
+import {
+  LayerInfo,
+  Pos,
+  ToolbarGroupInfo,
+  ToolbarItem,
+  ToolbarItemInfo,
+  ToolbarItemOptions
+} from '@t/ui';
 import i18n from '@/i18n/i18n';
 import html from './vdom/template';
 import { HeadingLayerBody } from './components/toolbar/headingLayerBody';
@@ -10,15 +16,13 @@ import { TableLayerBody } from './components/toolbar/tableLayerBody';
 
 let toolbarItemInfoMap: Record<string, ToolbarItemInfo> | null = null;
 
-export function createToolbarItemInfo(type: string | ToolbarButton) {
+export function createToolbarItemInfo(type: string | ToolbarItemOptions): ToolbarItemInfo {
   toolbarItemInfoMap = toolbarItemInfoMap || createDefaultToolbarItemInfo();
 
   if (isString(type)) {
     return toolbarItemInfoMap[type];
   }
-  // @TODO: add custom toolbar option
-  // @ts-ignore
-  return type as ToolbarItemInfo;
+  return type;
 }
 
 function createDefaultToolbarItemInfo() {

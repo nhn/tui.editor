@@ -1,4 +1,12 @@
-import { ToolbarButton } from './editor';
+export interface ToolbarItemOptions {
+  type?: 'button' | 'custom';
+  name: string;
+  tooltip: string;
+  className?: string;
+  command?: string;
+  text?: string;
+  style?: Record<string, any>;
+}
 
 export interface Component<T = {}, R = {}> {
   props: T;
@@ -94,20 +102,16 @@ interface ToolbarState {
 export type ToolbarStateKeys = keyof ToolbarState;
 
 export type ToolbarItemInfo = {
-  name: string;
-  className: string;
-  tooltip: string;
   activeTooltip?: string;
-  command?: string;
   state?: ToolbarStateKeys;
   hidden?: boolean;
   active?: boolean;
   toggle?: boolean;
-};
+} & ToolbarItemOptions;
 
 export type ToolbarGroupInfo = ToolbarItemInfo[] & { hidden?: boolean };
 // @TODO: add custom toolbar option type
-export type ToolbarItem = (string | ToolbarButton) | (string | ToolbarButton)[];
+export type ToolbarItem = (string | ToolbarItemOptions) | (string | ToolbarItemOptions)[];
 
 export type ExecCommand = (command: string, payload?: Record<string, any>) => void;
 export type HideLayer = () => void;
@@ -118,6 +122,9 @@ export interface ItemState {
 }
 export type SetItemWidth = (name: string, width: number) => void;
 export type SetItemActive = (name: string, active: boolean) => void;
+export type ShowTooltip = (el: HTMLElement, active?: boolean) => void;
+export type HideTooltip = () => void;
+export type GetBound = (el: HTMLElement) => Pos;
 
 export interface ContextMenuItem {
   label: string;

@@ -1,5 +1,14 @@
 import closest from 'tui-code-snippet/domUtil/closest';
-import { ExecCommand, Pos, SetLayerInfo, ToolbarItemInfo, SetItemActive } from '@t/ui';
+import {
+  ExecCommand,
+  Pos,
+  SetLayerInfo,
+  ToolbarItemInfo,
+  SetItemActive,
+  GetBound,
+  HideTooltip,
+  ShowTooltip
+} from '@t/ui';
 import { Emitter } from '@t/event';
 import { findNodes } from '@/utils/dom';
 import html from '@/new/vdom/template';
@@ -15,9 +24,9 @@ interface Props {
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
   setItemActive: SetItemActive;
-  showTooltip: (el: HTMLElement, active?: boolean) => void;
-  hideTooltip: () => void;
-  getBound: (el: HTMLElement) => Pos;
+  showTooltip: ShowTooltip;
+  hideTooltip: HideTooltip;
+  getBound: GetBound;
 }
 
 interface State {

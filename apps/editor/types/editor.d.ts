@@ -1,6 +1,7 @@
 import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap } from './markdown';
 import { Handler } from './event';
 import { EditorCommandFn } from './spec';
+import { ToolbarItemOptions } from './ui';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -21,23 +22,6 @@ export interface ViewerHookMap {
 export type EditorHookMap = ViewerHookMap & {
   addImageBlobHook?: (blob: Blob | File, callback: (url: string, altText: string) => void) => void;
 };
-
-// @TODO: should change the toolbar option
-interface ButtonOptions {
-  el?: HTMLElement;
-  className?: string;
-  command?: string;
-  event?: string;
-  text?: string;
-  tooltip?: string;
-  style?: string;
-  state?: string;
-}
-
-interface ToolbarButton {
-  type: string;
-  options: ButtonOptions;
-}
 
 export type AutolinkParser = (
   content: string
@@ -122,7 +106,7 @@ export interface EditorOptions {
   useCommandShortcut?: boolean;
   useDefaultHTMLSanitizer?: boolean;
   usageStatistics?: boolean;
-  toolbarItems?: (string | ToolbarButton)[];
+  toolbarItems?: (string | ToolbarItemOptions)[];
   hideModeSwitch?: boolean;
   plugins?: (EditorPlugin | EditorPluginInfo)[];
   extendedAutolinks?: ExtendedAutolinks;
