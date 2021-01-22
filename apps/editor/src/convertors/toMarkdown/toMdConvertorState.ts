@@ -153,15 +153,14 @@ export default class ToMdConvertorState {
         node &&
         node.isText &&
         marks.some((mark: Mark) => {
-          const info =
-            this.markTypeConvertors[mark.type.name as WwMarkType] &&
-            this.markTypeConvertors[mark.type.name as WwMarkType]!();
+          const markConvertor = this.markTypeConvertors[mark.type.name as WwMarkType];
+          const info = markConvertor && markConvertor();
 
           return info && info.removedEnclosingWhitespace;
         });
 
       if (removedWhitespace && node && node.text) {
-        const [, lead, inner, trail] = /^(\s*)(.*?)(\s*)$/m.exec(node.text)!;
+        const [, lead, mark, trail] = /^(\s*)(.*?)(\s*)$/m.exec(node.text)!;
 
         leading += lead;
         trailing = trail;
@@ -169,7 +168,7 @@ export default class ToMdConvertorState {
         if (lead || trail) {
           // @ts-ignore
           // type is not defined for "withText" in prosemirror-model
-          node = inner ? node.withText(inner) : null;
+          node = mark ? node.withText(mark) : null;
 
           if (!node) {
             marks = active;
@@ -177,11 +176,9 @@ export default class ToMdConvertorState {
         }
       }
 
-      const inner = marks.length && marks[marks.length - 1];
-      const markType =
-        inner &&
-        this.markTypeConvertors[inner.type.name as WwMarkType] &&
-        this.markTypeConvertors[inner.type.name as WwMarkType]!();
+      const lastMark = marks.length && marks[marks.length - 1];
+      const markConvertor = lastMark && this.markTypeConvertors[lastMark.type.name as WwMarkType];
+      const markType = markConvertor && markConvertor();
 
       const noEscape = markType && markType.escape === false;
       const len = marks.length - (noEscape ? 1 : 0);
@@ -259,9 +256,9 @@ export default class ToMdConvertorState {
         // may not be escaped.
         if (noEscape && node.isText) {
           this.text(
-            this.markText(inner as Mark, true, parent, index) +
+            this.markText(lastMark as Mark, true, parent, index) +
               node.text +
-              this.markText(inner as Mark, false, parent, index + 1),
+              this.markText(lastMark as Mark, false, parent, index + 1),
             false
           );
         } else {

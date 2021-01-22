@@ -87,7 +87,7 @@ export interface MarkInfo {
 
 interface ToMdConvertorReturnValues {
   delim?: string | string[];
-  rawHTML?: string | string[];
+  rawHTML?: string | string[] | null;
   text?: string;
   attrs?: Attrs;
 }

@@ -44,15 +44,15 @@ function addBackticks(node: ProsemirrorNode, side: number) {
 }
 
 function getPairRawHTML(rawHTML?: string[]) {
-  return rawHTML ? [`<${rawHTML}>`, `</${rawHTML}>`] : '';
+  return rawHTML ? [`<${rawHTML}>`, `</${rawHTML}>`] : null;
 }
 
 function getOpenRawHTML(rawHTML?: string) {
-  return rawHTML ? `<${rawHTML}>` : '';
+  return rawHTML ? `<${rawHTML}>` : null;
 }
 
 function getCloseRawHTML(rawHTML?: string) {
-  return rawHTML ? `</${rawHTML}>` : '';
+  return rawHTML ? `</${rawHTML}>` : null;
 }
 
 export const toMdConvertors: ToMdConvertorMap = {
@@ -108,7 +108,7 @@ export const toMdConvertors: ToMdConvertorMap = {
     const dataset = task ? ` data-task${checked ? ` data-task-checked` : ''}` : '';
 
     return {
-      rawHTML: rawHTML ? [`<${rawHTML}${className}${dataset}>`, `</${rawHTML}>`] : ''
+      rawHTML: rawHTML ? [`<${rawHTML}${className}${dataset}>`, `</${rawHTML}>`] : null
     };
   },
 
@@ -155,7 +155,7 @@ export const toMdConvertors: ToMdConvertorMap = {
     const altAttr = altText ? ` alt="${altText}"` : '';
 
     return {
-      rawHTML: attrs.rawHTML ? `<${attrs.rawHTML} src="${imageUrl}"${altAttr}>` : '',
+      rawHTML: attrs.rawHTML ? `<${attrs.rawHTML} src="${imageUrl}"${altAttr}>` : null,
       attrs: {
         altText,
         imageUrl
@@ -214,7 +214,7 @@ export const toMdConvertors: ToMdConvertorMap = {
     if (entering) {
       return {
         delim: '[',
-        rawHTML: rawHTML ? `<${rawHTML} href="${linkUrl}">` : ''
+        rawHTML: rawHTML ? `<${rawHTML} href="${linkUrl}">` : null
       };
     }
 
@@ -292,6 +292,11 @@ function createMarkTypeConvertors(convertors: ToMdConvertorMap) {
     markTypeConvertors[type] = (nodeInfo, entering) => {
       const markOption = markTypeOptions[type];
       const convertor = convertors[type];
+
+      // There are two ways to call the mark type converter
+      // in the `toMdConvertorState` module.
+      // When calling the converter without using `delim` and `rawHTML` values,
+      // the converter is called without parameters.
       const runConvertor = convertor && nodeInfo && !isUndefined(entering);
       const params = runConvertor ? convertor!(nodeInfo as MarkInfo, { entering }) : {};
 
@@ -302,6 +307,18 @@ function createMarkTypeConvertors(convertors: ToMdConvertorMap) {
   return markTypeConvertors;
 }
 
+// Step 1: Create the converter by overriding the custom converter
+//         to the original converter defined in the `toMdConvertors` module.
+//         If the node type is defined in the original converter,
+//         the `origin()` function is exported to the paramter of the converter.
+// Step 2: Create a converter for the node type of ProseMirror by combining the converter
+//         created in Step 1 with the writers defined in the`toMdNodeTypeWriters` module.
+//         Each writer converts the ProseMirror's node to a string with the value returned
+//         by the converter, and then stores the state in the`toMdConverterState` class.
+// Step 3: Create a converter for the mark type of ProseMirror by combining the converter
+//         created in Step 1 with `markTypeOptions`.
+// Step 4: The created node type converter and mark type converter are injected
+//         when creating an instance of the`toMdConverterState` class.
 export function createConvertors(customConvertors: ToMdConvertorMap) {
   const customConvertorTypes = Object.keys(customConvertors) as (WwNodeType | WwMarkType)[];
 
