@@ -1,10 +1,18 @@
 import { ProsemirrorNode } from 'prosemirror-model';
 
+import inArray from 'tui-code-snippet/array/inArray';
+
 import { repeat } from '@/utils/common';
 
-import { ToMdNodeTypeWriterMap, ToMdConvertorState } from '@t/convertor';
+import {
+  ToMdNodeTypeWriterMap,
+  ToMdConvertorState,
+  NodeInfo,
+  ToMdConvertorReturnValues
+} from '@t/convertor';
+import { WwNodeType } from '@t/wysiwyg';
 
-function convertInlineRawHTML(
+function convertToRawHTMLHavingInlines(
   state: ToMdConvertorState,
   node: ProsemirrorNode,
   [openTag, closeTag]: string[]
@@ -14,10 +22,9 @@ function convertInlineRawHTML(
   state.write(closeTag);
 }
 
-function convertBlockRawHTML(
+function convertToRawHTMLHavingBlocks(
   state: ToMdConvertorState,
-  node: ProsemirrorNode,
-  parent: ProsemirrorNode,
+  { node, parent }: NodeInfo,
   [openTag, closeTag]: string[]
 ) {
   state.stopNewline = true;
@@ -63,12 +70,10 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
     }
   },
 
-  heading(state, { node }, { delim, rawHTML }) {
+  heading(state, { node }, { delim }) {
     const { headingType } = node.attrs;
 
-    if (rawHTML) {
-      convertInlineRawHTML(state, node, rawHTML as string[]);
-    } else if (headingType === 'atx') {
+    if (headingType === 'atx') {
       state.write(`${delim} `);
       state.convertInline(node);
       state.closeBlock(node);
@@ -80,151 +85,103 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
     }
   },
 
-  codeBlock(state, { node }, { delim, text, rawHTML }) {
+  codeBlock(state, { node }, { delim, text }) {
     const [openDelim, closeDelim] = delim as string[];
 
-    if (rawHTML) {
-      convertInlineRawHTML(state, node, rawHTML as string[]);
-    } else {
-      state.write(openDelim);
-      state.ensureNewLine();
-      state.text(text!, false);
-      state.ensureNewLine();
-      state.write(closeDelim);
-      state.closeBlock(node);
-    }
+    state.write(openDelim);
+    state.ensureNewLine();
+    state.text(text!, false);
+    state.ensureNewLine();
+    state.write(closeDelim);
+    state.closeBlock(node);
   },
 
-  blockQuote(state, { node, parent }, { delim, rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      if (parent?.type.name === node.type.name) {
-        state.flushClose(1);
-      }
-
-      state.wrapBlock(delim as string, null, node, () => state.convertNode(node));
+  blockQuote(state, { node, parent }, { delim }) {
+    if (parent?.type.name === node.type.name) {
+      state.flushClose(1);
     }
+
+    state.wrapBlock(delim as string, null, node, () => state.convertNode(node));
   },
 
-  bulletList(state, { node, parent }, { delim, rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.convertList(node, '  ', () => `${delim} `);
-    }
+  bulletList(state, { node }, { delim }) {
+    state.convertList(node, '  ', () => `${delim} `);
   },
 
-  orderedList(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      const start = node.attrs.order || 1;
-      const maxWidth = String(start + node.childCount - 1).length;
-      const space = repeat('  ', maxWidth + 2);
+  orderedList(state, { node }) {
+    const start = node.attrs.order || 1;
+    const maxWidth = String(start + node.childCount - 1).length;
+    const space = repeat('  ', maxWidth + 2);
 
-      state.convertList(node, space, (index: number) => {
-        const numStr = String(start + index);
+    state.convertList(node, space, (index: number) => {
+      const numStr = String(start + index);
 
-        return `${repeat(' ', maxWidth - numStr.length)}${numStr}. `;
-      });
-    }
+      return `${repeat(' ', maxWidth - numStr.length)}${numStr}. `;
+    });
   },
 
-  listItem(state, { node, parent }, { rawHTML }) {
+  listItem(state, { node }) {
     const { task, checked } = node.attrs;
 
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      if (task) {
-        state.write(`[${checked ? 'x' : ' '}] `);
-      }
-
-      state.convertNode(node);
+    if (task) {
+      state.write(`[${checked ? 'x' : ' '}] `);
     }
+
+    state.convertNode(node);
   },
 
-  image(state, _, { rawHTML, attrs }) {
-    state.write((rawHTML as string) || `![${attrs?.altText}](${attrs?.imageUrl})`);
+  image(state, _, { attrs }) {
+    state.write(`![${attrs?.altText}](${attrs?.imageUrl})`);
   },
 
-  thematicBreak(state, { node }, { delim, rawHTML }) {
-    if (rawHTML) {
-      state.write(rawHTML as string);
-    } else {
-      state.write(delim as string);
-      state.closeBlock(node);
-    }
+  thematicBreak(state, { node }, { delim }) {
+    state.write(delim as string);
+    state.closeBlock(node);
   },
 
-  table(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.convertNode(node);
-      state.closeBlock(node);
-    }
+  table(state, { node }) {
+    state.convertNode(node);
+    state.closeBlock(node);
   },
 
-  tableHead(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      const row = node.firstChild;
-      let result = '';
+  tableHead(state, { node }) {
+    const row = node.firstChild;
+    let result = '';
 
-      state.convertNode(node);
+    state.convertNode(node);
 
-      if (row) {
-        row.forEach(column => {
-          const { textContent } = column;
+    if (row) {
+      row.forEach(column => {
+        const { textContent } = column;
 
-          result += `| ${repeat('-', textContent.length || 3)} `;
-        });
-      }
-
-      state.write(`${result}|`);
-      state.ensureNewLine();
+        result += `| ${repeat('-', textContent.length || 3)} `;
+      });
     }
+
+    state.write(`${result}|`);
+    state.ensureNewLine();
   },
 
-  tableBody(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.convertNode(node);
-    }
+  tableBody(state, { node }) {
+    state.convertNode(node);
   },
 
-  tableRow(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.convertNode(node);
-      state.write('|');
-      state.ensureNewLine();
-    }
+  tableRow(state, { node }) {
+    state.convertNode(node);
+    state.write('|');
+    state.ensureNewLine();
   },
 
-  tableHeadCell(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.write('| ');
-      state.convertTableCell(node);
-      state.write(' ');
-    }
+  tableHeadCell(state, { node }) {
+    state.write('| ');
+    state.convertTableCell(node);
+    state.write(' ');
   },
 
-  tableBodyCell(state, { node, parent }, { rawHTML }) {
-    if (rawHTML) {
-      convertBlockRawHTML(state, node, parent!, rawHTML as string[]);
-    } else {
-      state.write('| ');
-      state.convertTableCell(node);
-      state.write(' ');
-    }
+  tableBodyCell(state, { node }) {
+    state.write('| ');
+    state.convertTableCell(node);
+    state.write(' ');
   },
 
   customBlock(state, { node }, { delim, text }) {
@@ -238,3 +195,30 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
     state.closeBlock(node);
   }
 };
+
+export function write(
+  type: WwNodeType,
+  {
+    state,
+    nodeInfo,
+    params
+  }: {
+    state: ToMdConvertorState;
+    nodeInfo: NodeInfo;
+    params: ToMdConvertorReturnValues;
+  }
+) {
+  const { rawHTML } = params;
+
+  if (rawHTML) {
+    if (inArray(type, ['heading', 'codeBlock']) > -1) {
+      convertToRawHTMLHavingInlines(state, nodeInfo.node, rawHTML as string[]);
+    } else if (inArray(type, ['image', 'thematicBreak']) > -1) {
+      state.write(rawHTML as string);
+    } else {
+      convertToRawHTMLHavingBlocks(state, nodeInfo, rawHTML as string[]);
+    }
+  } else {
+    nodeTypeWriters[type]!(state, nodeInfo, params);
+  }
+}

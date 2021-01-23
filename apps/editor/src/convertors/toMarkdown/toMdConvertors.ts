@@ -2,7 +2,7 @@ import { ProsemirrorNode } from 'prosemirror-model';
 
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 
-import { nodeTypeWriters } from './toMdNodeTypeWriters';
+import { nodeTypeWriters, write } from './toMdNodeTypeWriters';
 
 import { repeat, escape, quote } from '@/utils/common';
 
@@ -276,7 +276,7 @@ function createNodeTypeConvertors(convertors: ToMdConvertorMap) {
         const convertor = convertors[type];
         const params = convertor ? convertor(nodeInfo as NodeInfo, {}) : {};
 
-        writer(state, nodeInfo, params);
+        write(type, { state, nodeInfo, params });
       }
     };
   });
