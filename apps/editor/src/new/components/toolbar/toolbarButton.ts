@@ -4,10 +4,9 @@ import {
   ToolbarItemInfo,
   ToolbarState,
   SetItemWidth,
-  SetItemActive,
   GetBound,
   HideTooltip,
-  ShowTooltip
+  ShowTooltip,
 } from '@t/ui';
 import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
@@ -26,7 +25,6 @@ interface Props {
   item: ToolbarItemInfo;
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
-  setItemActive: SetItemActive;
   showTooltip: ShowTooltip;
   hideTooltip: HideTooltip;
   getBound: GetBound;
@@ -37,7 +35,6 @@ interface State {
   active: boolean;
 }
 
-const LAYER_INDENT = -7;
 const DEFAULT_WIDTH = 50;
 
 export class ToolbarButtonComp extends Component<Props, State> {
@@ -58,12 +55,22 @@ export class ToolbarButtonComp extends Component<Props, State> {
   }
 
   mounted() {
-    const { setItemWidth, setItemActive, item } = this.props;
+    this.setItemWidth();
+  }
+
+  updated(prevProps: Props) {
+    if (prevProps.item.name !== this.props.item.name) {
+      this.setState({ active: !!this.props.item.active });
+      this.setItemWidth();
+    }
+  }
+
+  private setItemWidth() {
+    const { setItemWidth, item } = this.props;
 
     // set width and active state only if it is not a dropdown toolbar
     if (setItemWidth) {
       setItemWidth(item.name, getOuterWidth(this.refs.el) + (item.hidden ? DEFAULT_WIDTH : 0));
-      setItemActive(item.name, this.state.active);
     }
   }
 
@@ -72,24 +79,23 @@ export class ToolbarButtonComp extends Component<Props, State> {
   };
 
   private execCommand = () => {
-    const { item, execCommand, setLayerInfo, setItemActive, getBound } = this.props;
+    const { item, execCommand, setLayerInfo, getBound } = this.props;
     const { command, name, toggle } = item;
-    const rect = getBound(this.refs.el);
-    const pos = { left: rect.left + LAYER_INDENT, top: rect.top + LAYER_INDENT };
     let newState;
 
     if (toggle) {
       const active = !this.state.active;
 
+      // modifying props is anti-pattern, but it is more efficent for the performance and code readability
+      item.active = active;
       newState = { active };
       this.setState(newState);
       this.showTooltip();
-      setItemActive(item.name, active);
     }
     if (command) {
       execCommand(command, newState);
     } else {
-      const info = createLayerInfo(name, this.refs.el, pos);
+      const info = createLayerInfo(name, this.refs.el, getBound(this.refs.el));
 
       if (info) {
         setLayerInfo(info);

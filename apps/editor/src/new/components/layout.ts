@@ -1,6 +1,6 @@
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
-import { ToolbarItem } from '@t/ui';
+import { TargetIndexes, ToolbarItem, ToolbarItemOptions } from '@t/ui';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
 import { Switch } from './switch';
@@ -27,6 +27,8 @@ interface State {
 }
 // @TODO: arrange class prefix
 export class Layout extends Component<Props, State> {
+  private toolbar!: Toolbar;
+
   constructor(props: Props) {
     super(props);
     const { editorType, previewStyle } = props;
@@ -34,7 +36,7 @@ export class Layout extends Component<Props, State> {
     this.state = {
       editorType,
       previewStyle,
-      hide: false
+      hide: false,
     };
     this.addEvent();
   }
@@ -45,6 +47,14 @@ export class Layout extends Component<Props, State> {
     this.refs.wwContainer.appendChild(wwEditor);
     this.refs.mdContainer.insertAdjacentElement('afterbegin', mdEditor);
     this.refs.mdContainer.appendChild(mdPreview);
+  }
+
+  insertToolbarItem(indexes: TargetIndexes, item: ToolbarItemOptions) {
+    this.toolbar.insertToolbarItem(indexes, item);
+  }
+
+  removeToolbarItem(indexes: TargetIndexes) {
+    this.toolbar.removeToolbarItem(indexes);
   }
 
   render() {
@@ -60,6 +70,7 @@ export class Layout extends Component<Props, State> {
         ref=${(el: HTMLElement) => (this.refs.el = el)}
       >
         <${Toolbar}
+          ref=${(toolbar: Toolbar) => (this.toolbar = toolbar)}
           eventEmitter=${eventEmitter}
           previewStyle=${previewStyle}
           toolbarItems=${toolbarItems}
@@ -77,9 +88,7 @@ export class Layout extends Component<Props, State> {
           </div>
         </div>
         ${!hideModeSwitch &&
-          html`
-            <${Switch} eventEmitter=${eventEmitter} editorType=${editorType} />
-          `}
+        html`<${Switch} eventEmitter=${eventEmitter} editorType=${editorType} />`}
         <${ContextMenu} eventEmitter=${eventEmitter} />
       </div>
     `;

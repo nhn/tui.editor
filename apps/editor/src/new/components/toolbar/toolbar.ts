@@ -1,15 +1,22 @@
 import throttle from 'tui-code-snippet/tricks/throttle';
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
-import { ItemState, LayerInfo, TabInfo, ToolbarGroupInfo, ToolbarItem } from '@t/ui';
+import {
+  LayerInfo,
+  TabInfo,
+  TargetIndexes,
+  ToolbarGroupInfo,
+  ToolbarItem,
+  ToolbarItemOptions,
+} from '@t/ui';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
 import { createElementWith, getOuterWidth } from '@/utils/dom';
 import {
   createToolbarItemInfo,
-  getToggledScrollSync,
+  toggleScrollSync,
   groupToolbarItems,
-  setGroupState
+  setGroupState,
 } from '@/new/toolbarItemFactory';
 import { Layer } from '../layer';
 import { Tabs } from '../tabs';
@@ -33,41 +40,69 @@ interface State {
   dropdownItems: ToolbarGroupInfo[];
 }
 
-interface ItemStateMap {
-  [key: string]: ItemState;
+interface ItemWidthMap {
+  [key: string]: number;
 }
 
 const DROPDOWN_WIDTH = 100;
+const DEFAULT_WIDTH = 50;
 
 export class Toolbar extends Component<Props, State> {
   private tabs: TabInfo[];
 
-  private itemStateMap: ItemStateMap;
-
-  private initialItems: ToolbarGroupInfo[];
-
-  private handleResize: () => void;
+  private itemWidthMap: ItemWidthMap;
 
   private tooltipEl!: HTMLElement;
 
+  private initialItems: ToolbarGroupInfo[];
+
+  private handleResize!: () => void;
+
   constructor(props: Props) {
     super(props);
-    this.initialItems = groupToolbarItems(props.toolbarItems || [], this.hiddenScrollSync());
     this.tabs = [
       { name: 'write', text: 'Write' },
-      { name: 'preview', text: 'Preview' }
+      { name: 'preview', text: 'Preview' },
     ];
-    this.itemStateMap = {};
-    this.handleResize = throttle(() => this.setState(this.classifyToolbarItems()), 200);
+    this.itemWidthMap = {};
+    this.initialItems = groupToolbarItems(props.toolbarItems || [], this.hiddenScrollSync());
 
     this.state = {
       items: this.initialItems,
       dropdownItems: [],
       showLayer: false,
       layerInfo: {} as LayerInfo,
-      activeTab: 'write'
+      activeTab: 'write',
     };
+    this.addEvent();
     this.appendTooltipToBody();
+  }
+
+  insertToolbarItem(indexes: TargetIndexes, item: ToolbarItemOptions) {
+    const [groupIndex, itemIndex] = indexes;
+    const group = this.initialItems[groupIndex];
+
+    if (group) {
+      group.splice(itemIndex, 0, item);
+    } else {
+      this.initialItems.push([item]);
+    }
+    this.setState(this.classifyToolbarItems());
+  }
+
+  removeToolbarItem(indexes: TargetIndexes) {
+    const [groupIndex, itemIndex] = indexes;
+    const group = this.initialItems[groupIndex];
+
+    if (group) {
+      group.splice(itemIndex, 1);
+      this.setState(this.classifyToolbarItems());
+    }
+  }
+
+  addEvent() {
+    this.handleResize = throttle(() => this.setState(this.classifyToolbarItems()), 200);
+    window.addEventListener('resize', this.handleResize);
   }
 
   private appendTooltipToBody() {
@@ -95,11 +130,7 @@ export class Toolbar extends Component<Props, State> {
   };
 
   private setItemWidth = (name: string, width: number) => {
-    this.itemStateMap[name] = { width };
-  };
-
-  private setItemActive = (name: string, active: boolean) => {
-    this.itemStateMap[name].active = active;
+    this.itemWidthMap[name] = width;
   };
 
   private setLayerInfo = (layerInfo: LayerInfo) => {
@@ -131,16 +162,11 @@ export class Toolbar extends Component<Props, State> {
       const group: ToolbarGroupInfo = [];
       const dropdownGroup: ToolbarGroupInfo = [];
 
-      initialGroup.forEach(item => {
-        const { width, active } = this.itemStateMap[item.name];
+      initialGroup.forEach((item) => {
+        totalWidth += this.itemWidthMap[item.name] || DEFAULT_WIDTH;
+        const target = totalWidth >= clientWidth - DROPDOWN_WIDTH ? dropdownGroup : group;
 
-        if (width) {
-          totalWidth += width;
-          const target = totalWidth >= clientWidth - DROPDOWN_WIDTH ? dropdownGroup : group;
-
-          target.push(item);
-        }
-        item.active = active;
+        target.push(item);
       });
 
       if (group.length) {
@@ -156,7 +182,6 @@ export class Toolbar extends Component<Props, State> {
         totalWidth += dividerWidth;
       }
     });
-
     return { items, dropdownItems };
   }
 
@@ -164,36 +189,19 @@ export class Toolbar extends Component<Props, State> {
     if (this.props.previewStyle === 'tab') {
       this.props.eventEmitter.emit('changePreviewTabWrite');
     }
-    const items = this.classifyToolbarItems();
-
-    if (items.dropdownItems.length !== this.state.dropdownItems.length) {
-      this.setState(items);
-    }
-
-    window.addEventListener('resize', this.handleResize);
+    // classify toolbar and dropdown toolbar after DOM has been rendered
+    this.setState(this.classifyToolbarItems());
   }
 
   updated(prevProps: Props) {
-    const newState = {} as State;
     const { editorType, previewStyle, eventEmitter } = this.props;
     const changedStyle = previewStyle !== prevProps.previewStyle;
     const changedType = editorType !== prevProps.editorType;
 
     if (changedStyle || changedType) {
-      // reclassify toolbar type when preview style or editor type are changed because the width of toolbar area is changed
-      const classified = this.classifyToolbarItems();
-
-      newState.items = classified.items;
-      newState.dropdownItems = classified.dropdownItems;
-
       // show or hide scrollSync button
-      const { items, dropdownItems } = newState;
-      const hidden = this.hiddenScrollSync();
-
-      newState.items = getToggledScrollSync(items, hidden);
-      if (dropdownItems.length) {
-        newState.dropdownItems = getToggledScrollSync(dropdownItems, hidden);
-      }
+      toggleScrollSync(this.initialItems, this.hiddenScrollSync());
+      const newState = this.classifyToolbarItems() as State;
 
       if (changedStyle || (previewStyle === 'tab' && editorType === 'markdown')) {
         eventEmitter.emit('changePreviewTabWrite');
@@ -217,7 +225,6 @@ export class Toolbar extends Component<Props, State> {
       disabled: editorType === 'markdown' && previewStyle === 'tab' && activeTab === 'preview',
       execCommand: this.execCommand,
       setLayerInfo: this.setLayerInfo,
-      setItemActive: this.setItemActive
     };
 
     return html`
@@ -246,14 +253,14 @@ export class Toolbar extends Component<Props, State> {
             items=${dropdownItems}
             ...${props}
           />
+          <${Layer}
+            info=${layerInfo}
+            show=${showLayer}
+            eventEmitter=${eventEmitter}
+            hideLayer=${this.hideLayer}
+            execCommand=${this.execCommand}
+          />
         </div>
-        <${Layer}
-          info=${layerInfo}
-          show=${showLayer}
-          eventEmitter=${eventEmitter}
-          hideLayer=${this.hideLayer}
-          execCommand=${this.execCommand}
-        />
       </div>
     `;
   }

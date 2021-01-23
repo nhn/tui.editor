@@ -5,7 +5,7 @@ import {
   ToolbarGroupInfo,
   ToolbarItem,
   ToolbarItemInfo,
-  ToolbarItemOptions
+  ToolbarItemOptions,
 } from '@t/ui';
 import i18n from '@/i18n/i18n';
 import html from './vdom/template';
@@ -31,105 +31,105 @@ function createDefaultToolbarItemInfo() {
       name: 'heading',
       className: 'tui-heading',
       tooltip: i18n.get('Headings'),
-      state: 'heading'
+      state: 'heading',
     },
     bold: {
       name: 'bold',
       className: 'tui-bold',
       command: 'bold',
       tooltip: i18n.get('Bold'),
-      state: 'strong'
+      state: 'strong',
     },
     italic: {
       name: 'italic',
       className: 'tui-italic',
       command: 'italic',
       tooltip: i18n.get('Italic'),
-      state: 'emph'
+      state: 'emph',
     },
     strike: {
       name: 'strike',
       className: 'tui-strike',
       command: 'strike',
       tooltip: i18n.get('Strike'),
-      state: 'strike'
+      state: 'strike',
     },
     hr: {
       name: 'hr',
       className: 'tui-hrline',
       command: 'hr',
       tooltip: i18n.get('Line'),
-      state: 'thematicBreak'
+      state: 'thematicBreak',
     },
     quote: {
       name: 'quote',
       className: 'tui-quote',
       command: 'blockQuote',
       tooltip: i18n.get('Blockquote'),
-      state: 'blockQuote'
+      state: 'blockQuote',
     },
     ul: {
       name: 'ul',
       className: 'tui-ul',
       command: 'bulletList',
       tooltip: i18n.get('Unordered list'),
-      state: 'bulletList'
+      state: 'bulletList',
     },
     ol: {
       name: 'ol',
       className: 'tui-ol',
       command: 'orderedList',
       tooltip: i18n.get('Ordered list'),
-      state: 'orderedList'
+      state: 'orderedList',
     },
     task: {
       name: 'task',
       className: 'tui-task',
       command: 'taskList',
       tooltip: i18n.get('Task'),
-      state: 'taskList'
+      state: 'taskList',
     },
     table: {
       name: 'table',
       className: 'tui-table',
       tooltip: i18n.get('Insert table'),
-      state: 'table'
+      state: 'table',
     },
     image: {
       name: 'image',
       className: 'tui-image',
-      tooltip: i18n.get('Insert image')
+      tooltip: i18n.get('Insert image'),
     },
     link: {
       name: 'link',
       className: 'tui-link',
-      tooltip: i18n.get('Insert link')
+      tooltip: i18n.get('Insert link'),
     },
     code: {
       name: 'code',
       className: 'tui-code',
       command: 'code',
       tooltip: i18n.get('Code'),
-      state: 'code'
+      state: 'code',
     },
     codeblock: {
       name: 'codeblock',
       className: 'tui-codeblock',
       command: 'codeBlock',
       tooltip: i18n.get('Insert CodeBlock'),
-      state: 'codeBlock'
+      state: 'codeBlock',
     },
     indent: {
       name: 'indent',
       className: 'tui-indent',
       command: 'indent',
-      tooltip: i18n.get('Indent')
+      tooltip: i18n.get('Indent'),
     },
     outdent: {
       name: 'outdent',
       className: 'tui-outdent',
       command: 'outdent',
-      tooltip: i18n.get('Outdent')
+      tooltip: i18n.get('Outdent'),
     },
     scrollSync: {
       name: 'scrollSync',
@@ -138,16 +138,16 @@ function createDefaultToolbarItemInfo() {
       activeTooltip: i18n.get('Auto scroll enabled'),
       active: true,
       toggle: true,
-      command: 'toggleScrollSync'
+      command: 'toggleScrollSync',
     },
     more: {
       name: 'more',
       className: 'tui-more',
-      tooltip: i18n.get('More')
-    }
+      tooltip: i18n.get('More'),
+    },
   };
 
-  Object.keys(itemInfoMap).forEach(name => {
+  Object.keys(itemInfoMap).forEach((name) => {
     if (name !== 'scrollSync') {
       itemInfoMap[name].className += ' tui-toolbar-icons';
     }
@@ -160,41 +160,33 @@ export function createLayerInfo(type: string, el: HTMLElement, pos: Pos): LayerI
   switch (type) {
     case 'heading':
       return {
-        render: props => html`
-          <${HeadingLayerBody} ...${props} />
-        `,
+        render: (props) => html`<${HeadingLayerBody} ...${props} />`,
         className: 'te-heading-add',
         fromEl: el,
-        pos
+        pos,
       };
     case 'link':
       return {
-        render: props => html`
-          <${LinkLayerBody} ...${props} />
-        `,
+        render: (props) => html`<${LinkLayerBody} ...${props} />`,
         className: 'te-popup-add-link tui-editor-popup',
         headerText: i18n.get('Insert link'),
         fromEl: el,
-        pos
+        pos,
       };
     case 'image':
       return {
-        render: props => html`
-          <${ImageLayerBody} ...${props} />
-        `,
+        render: (props) => html`<${ImageLayerBody} ...${props} />`,
         className: 'te-popup-add-image tui-editor-popup',
         headerText: i18n.get('Insert image'),
         fromEl: el,
-        pos
+        pos,
       };
     case 'table':
       return {
-        render: props => html`
-          <${TableLayerBody} ...${props} />
-        `,
+        render: (props) => html`<${TableLayerBody} ...${props} />`,
         className: 'te-popup-add-table',
         fromEl: el,
-        pos
+        pos,
       };
     default:
     // do nothing
@@ -202,7 +194,7 @@ export function createLayerInfo(type: string, el: HTMLElement, pos: Pos): LayerI
 }
 
 export function setGroupState(group: ToolbarGroupInfo) {
-  group.hidden = group.length === group.filter(info => info.hidden).length;
+  group.hidden = group.length === group.filter((info) => info.hidden).length;
 }
 
 export function groupToolbarItems(toolbarItems: ToolbarItem[], hiddenScrollSync: boolean) {
@@ -215,7 +207,7 @@ export function groupToolbarItems(toolbarItems: ToolbarItem[], hiddenScrollSync:
   return toolbarItems.reduce((acc: ToolbarGroupInfo[], item) => {
     if (Array.isArray(item)) {
       needNested = false;
-      acc.push(item.map(type => toggleScrollSyncState(createToolbarItemInfo(type))));
+      acc.push(item.map((type) => toggleScrollSyncState(createToolbarItemInfo(type))));
     } else if (needNested) {
       acc[(acc.length || 1) - 1].push(toggleScrollSyncState(createToolbarItemInfo(item)));
     } else {
@@ -231,12 +223,9 @@ export function groupToolbarItems(toolbarItems: ToolbarItem[], hiddenScrollSync:
   }, []);
 }
 
-export function getToggledScrollSync(toolbarItems: ToolbarGroupInfo[], hiddenScrollSync: boolean) {
-  return toolbarItems.map(group => {
-    group.forEach(item => {
-      item.hidden = item.name === 'scrollSync' && hiddenScrollSync;
-    });
+export function toggleScrollSync(toolbarItems: ToolbarGroupInfo[], hiddenScrollSync: boolean) {
+  toolbarItems.forEach((group) => {
+    group.forEach((item) => (item.hidden = item.name === 'scrollSync' && hiddenScrollSync));
     setGroupState(group);
-    return group;
   });
 }
