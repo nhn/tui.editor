@@ -4,7 +4,7 @@ import {
   Mark,
   Schema,
   ProsemirrorNode,
-  DOMOutputSpecArray
+  DOMOutputSpecArray,
 } from 'prosemirror-model';
 
 import { MdNode, MdNodeType } from './markdown';

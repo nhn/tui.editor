@@ -26,9 +26,9 @@ function excludeUnnecessaryChild(child: VNode, flatted: VNode[]) {
 function h(type: string | ComponentClass, props: Record<string, any>, ...children: VNode[]) {
   const flatted: VNode[] = [];
 
-  children.forEach(child => {
+  children.forEach((child) => {
     if (Array.isArray(child)) {
-      child.forEach(vnode => {
+      child.forEach((vnode) => {
         excludeUnnecessaryChild(vnode, flatted);
       });
     } else {
