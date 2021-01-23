@@ -1,5 +1,5 @@
 import { Emitter } from '@t/event';
-import { ExecCommand } from '@t/ui';
+import { ExecCommand, Pos } from '@t/ui';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
 
@@ -28,21 +28,19 @@ const HEADER_ROW_COUNT = 1;
 const BORDER_WIDTH = 1;
 
 export class TableLayerBody extends Component<Props, State> {
-  private tableElRect: DOMRect | null;
+  private offsetRect!: Pos;
 
   constructor(props: Props) {
     super(props);
     this.state = {
       rowIdx: -1,
-      colIdx: -1
+      colIdx: -1,
     };
-    this.tableElRect = null;
   }
 
   private extendSelectionRange = ({ pageX, pageY }: MouseEvent) => {
-    const { left, top } = this.tableElRect || this.refs.tableEl.getBoundingClientRect();
-    const x = pageX - left;
-    const y = pageY - top;
+    const x = pageX - this.offsetRect.left;
+    const y = pageY - this.offsetRect.top;
     const range = this.getSelectionRangeByOffset(x, y);
 
     this.setState({ ...range });
@@ -51,7 +49,7 @@ export class TableLayerBody extends Component<Props, State> {
   private execCommand = () => {
     this.props.execCommand('addTable', {
       rowCount: this.state.rowIdx + 1,
-      columnCount: this.state.colIdx + 1
+      columnCount: this.state.colIdx + 1,
     });
   };
 
@@ -62,14 +60,14 @@ export class TableLayerBody extends Component<Props, State> {
   private getBoundByRange(colIdx: number, rowIdx: number) {
     return {
       width: (colIdx + 1) * CELL_WIDTH + BORDER_WIDTH,
-      height: (rowIdx + 1) * CELL_HEIGHT + BORDER_WIDTH
+      height: (rowIdx + 1) * CELL_HEIGHT + BORDER_WIDTH,
     };
   }
 
   private getRangeByOffset(x: number, y: number) {
     return {
       colIdx: Math.trunc(x / CELL_WIDTH),
-      rowIdx: Math.trunc(y / CELL_HEIGHT)
+      rowIdx: Math.trunc(y / CELL_HEIGHT),
     };
   }
 
@@ -101,6 +99,15 @@ export class TableLayerBody extends Component<Props, State> {
     return range;
   }
 
+  mounted() {
+    const { left, top } = this.refs.tableEl.getBoundingClientRect();
+
+    this.offsetRect = {
+      left: window.pageXOffset + left,
+      top: window.pageYOffset + top,
+    };
+  }
+
   updated() {
     if (!this.props.show) {
       this.setState({ colIdx: -1, rowIdx: -1 });
@@ -111,7 +118,7 @@ export class TableLayerBody extends Component<Props, State> {
     const tableBodyAreaBound = this.getTableBodyAreaBound();
     const headerAreaBound = {
       width: tableBodyAreaBound.width,
-      height: CELL_HEIGHT
+      height: CELL_HEIGHT,
     };
     const selectionAreaBound = this.getSelectionAreaBound();
 

@@ -4,10 +4,9 @@ import {
   Pos,
   SetLayerInfo,
   ToolbarItemInfo,
-  SetItemActive,
   GetBound,
   HideTooltip,
-  ShowTooltip
+  ShowTooltip,
 } from '@t/ui';
 import { Emitter } from '@t/event';
 import { findNodes } from '@/utils/dom';
@@ -23,7 +22,6 @@ interface Props {
   items: ToolbarItemInfo[];
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
-  setItemActive: SetItemActive;
   showTooltip: ShowTooltip;
   hideTooltip: HideTooltip;
   getBound: GetBound;
@@ -34,6 +32,8 @@ interface State {
   showDropdown: boolean;
 }
 
+const LAYER_INDENT = 4;
+
 class DropdownToolbarButtonComp extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -43,9 +43,10 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
   private getBound() {
     const rect = this.props.getBound(this.refs.el);
 
-    findNodes(this.refs.dropdownEl, '.te-toolbar-group').forEach(el => {
+    findNodes(this.refs.dropdownEl, '.te-toolbar-group').forEach((el) => {
       rect.left -= (el as HTMLElement).offsetWidth;
     });
+    rect.top += LAYER_INDENT;
 
     return rect;
   }
