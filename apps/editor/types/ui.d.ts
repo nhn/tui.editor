@@ -46,7 +46,7 @@ export interface VNode {
 
   next: VNode | null;
 
-  ref?: (node: Node) => void;
+  ref?: (node: Node | Component) => void | Node | Component;
 
   node: Node | null;
 
@@ -116,12 +116,7 @@ export type ToolbarItem = (string | ToolbarItemOptions) | (string | ToolbarItemO
 export type ExecCommand = (command: string, payload?: Record<string, any>) => void;
 export type HideLayer = () => void;
 export type SetLayerInfo = (info: LayerInfo) => void;
-export interface ItemState {
-  width?: number;
-  active?: boolean;
-}
 export type SetItemWidth = (name: string, width: number) => void;
-export type SetItemActive = (name: string, active: boolean) => void;
 export type ShowTooltip = (el: HTMLElement, active?: boolean) => void;
 export type HideTooltip = () => void;
 export type GetBound = (el: HTMLElement) => Pos;
@@ -130,4 +125,11 @@ export interface ContextMenuItem {
   label: string;
   className?: string;
   onClick?: () => void;
+}
+
+export type TargetIndexes = [groupIndex: number, itemIndex: number];
+export interface DefaultUI {
+  destroy: () => void;
+  insertToolbarItem: (indexes: TargetIndexes, item: ToolbarItemOptions) => void;
+  removeToolbarItem: (indexes: TargetIndexes) => void;
 }

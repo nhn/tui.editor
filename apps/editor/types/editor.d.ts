@@ -1,7 +1,7 @@
 import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap } from './markdown';
-import { Handler } from './event';
+import { Emitter, Handler } from './event';
 import { EditorCommandFn } from './spec';
-import { ToolbarItemOptions } from './ui';
+import { DefaultUI, ToolbarItemOptions } from './ui';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -121,12 +121,22 @@ export interface EditorOptions {
   UI: any;
 }
 
+interface Slots {
+  mdEditor: HTMLElement;
+  mdPreview: HTMLElement;
+  wwEditor: HTMLElement;
+}
+
 export class Editor {
   constructor(options: EditorOptions);
 
   public static factory(options: EditorOptions): Editor | Viewer;
 
   public static setLanguage(code: string, data: Record<string, string>): void;
+
+  options: EditorOptions;
+
+  eventEmitter: Emitter;
 
   changePreviewStyle(style: PreviewStyle): void;
 
@@ -199,4 +209,10 @@ export class Editor {
   setPlaceholder(placeholder: string): void;
 
   setCodeBlockLanguages(languages: string[]): void;
+
+  getEditorElements(): Slots;
+
+  setDefaultUI(UI: DefaultUI): void;
+
+  getDefaultUI(): DefaultUI;
 }

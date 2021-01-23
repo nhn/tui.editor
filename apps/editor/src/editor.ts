@@ -11,6 +11,7 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import { Emitter, Handler } from '@t/event';
 import { EditorOptions, EditorType, PreviewStyle, ViewerOptions } from '@t/editor';
 import { EditorCommandFn } from '@t/spec';
+import { DefaultUI } from '@t/ui';
 
 import { sendHostName, sanitizeLinkAttribute } from './utils/common';
 
@@ -24,7 +25,6 @@ import CommandManager from './commands/commandManager';
 import Convertor from './convertors/convertor';
 import Viewer from './viewer';
 import i18n, { I18n } from './i18n/i18n';
-import { Layout } from './new/components/layout';
 import { invokePlugins, getPluginInfo } from './pluginHelper';
 
 // @ts-ignore
@@ -32,9 +32,6 @@ import { ToastMark } from '@toast-ui/toastmark';
 import isString from 'tui-code-snippet/type/isString';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
-import { render } from './new/renderer';
-import html from './new/vdom/template';
-import { VNode } from './new/vdom/vnode';
 
 /**
  * ToastUI Editor
@@ -74,11 +71,7 @@ import { VNode } from './new/vdom/vnode';
 class ToastUIEditor {
   private initialHtml: string;
 
-  private options: Required<EditorOptions>;
-
   private codeBlockLanguages: string[];
-
-  private eventEmitter: Emitter;
 
   private toastMark: ToastMark;
 
@@ -104,7 +97,11 @@ class ToastUIEditor {
 
   private scrollSync: ScrollSync;
 
-  private destroyDefaultLayout?: () => void;
+  private defaultUI?: DefaultUI;
+
+  eventEmitter: Emitter;
+
+  options: Required<EditorOptions>;
 
   constructor(options: EditorOptions) {
     this.initialHtml = options.el.innerHTML;
@@ -127,7 +124,7 @@ class ToastUIEditor {
           ['ul', 'ol', 'task', 'indent', 'outdent'],
           ['table', 'image', 'link'],
           ['code', 'codeblock'],
-          'scrollSync'
+          'scrollSync',
         ],
         hideModeSwitch: false,
         linkAttribute: null,
@@ -136,7 +133,7 @@ class ToastUIEditor {
         customHTMLRenderer: null,
         referenceDefinition: false,
         customHTMLSanitizer: null,
-        frontMatter: false
+        frontMatter: false,
       },
       options
     );
@@ -152,7 +149,7 @@ class ToastUIEditor {
       customHTMLRenderer,
       extendedAutolinks,
       referenceDefinition,
-      frontMatter
+      frontMatter,
     } = this.options;
     const rendererOptions = {
       linkAttribute,
@@ -160,7 +157,7 @@ class ToastUIEditor {
       extendedAutolinks,
       referenceDefinition,
       customParser: parser,
-      frontMatter
+      frontMatter,
     };
     const wwToDOMAdaptor = new WwToDOMAdaptor(linkAttribute, rendererOptions.customHTMLRenderer);
 
@@ -181,7 +178,7 @@ class ToastUIEditor {
       referenceDefinition,
       disallowDeepHeading: true,
       customParser: parser,
-      frontMatter
+      frontMatter,
     });
 
     this.mdEditor = new MarkdownEditor(this.toastMark, this.eventEmitter);
@@ -189,32 +186,12 @@ class ToastUIEditor {
     this.preview = new MarkdownPreview(this.eventEmitter, {
       ...rendererOptions,
       isViewer: false,
-      highlight: this.options.previewHighlight
+      highlight: this.options.previewHighlight,
     });
 
     this.wwEditor = new WysiwygEditor(this.eventEmitter, wwToDOMAdaptor);
 
     this.convertor = new Convertor(this.wwEditor.getSchema());
-
-    // @TODO: render default ui when defining the 'useDefaultTemplate=true' option or giving the container element option
-    // if (this.options.useDefaultTemplate) {
-    // or
-    // if (!this.options.el) {
-    //   render(...)
-    // }
-    this.destroyDefaultLayout = render(
-      this.options.el,
-      html`
-        <${Layout}
-          eventEmitter=${this.eventEmitter}
-          slots=${this.getEditorElements()}
-          hideModeSwitch=${this.options.hideModeSwitch}
-          toolbarItems=${this.options.toolbarItems}
-          previewStyle=${this.options.previewStyle}
-          editorType=${this.options.initialEditType}
-        />
-      ` as VNode
-    );
 
     if (plugins) {
       invokePlugins(plugins, this);
@@ -253,7 +230,7 @@ class ToastUIEditor {
 
   private addInitEvent() {
     this.on('changeModeByEvent', this.changeMode.bind(this));
-    this.addCommand('markdown', 'toggleScrollSync', payload => {
+    this.addCommand('markdown', 'toggleScrollSync', (payload) => {
       this.eventEmitter.emit('toggleScrollSync', payload!.active);
     });
   }
@@ -591,8 +568,8 @@ class ToastUIEditor {
     this.eventEmitter.getEvents().forEach((_, type: string) => {
       this.off(type);
     });
-    if (this.destroyDefaultLayout) {
-      this.destroyDefaultLayout();
+    if (this.defaultUI) {
+      this.defaultUI.destroy();
     }
   }
 
@@ -688,7 +665,7 @@ class ToastUIEditor {
    * @param {Array} languages - code language list
    */
   setCodeBlockLanguages(languages: string[] = []) {
-    languages.forEach(lang => {
+    languages.forEach((lang) => {
       if (this.codeBlockLanguages.indexOf(lang) < 0) {
         this.codeBlockLanguages.push(lang);
       }
@@ -703,8 +680,16 @@ class ToastUIEditor {
     return {
       mdEditor: this.mdEditor.getElement(),
       mdPreview: this.preview.getElement(),
-      wwEditor: this.wwEditor.getElement()
+      wwEditor: this.wwEditor.getElement(),
     };
+  }
+
+  setDefaultUI(defaultUI: DefaultUI) {
+    this.defaultUI = defaultUI;
+  }
+
+  getDefaultUI() {
+    return this.defaultUI;
   }
 }
 
