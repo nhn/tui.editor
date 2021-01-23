@@ -1,7 +1,7 @@
 import { Component } from '@t/ui';
-import { commit } from './vdom/commit';
-import { buildVNode } from './vdom/render';
-import { VNode } from './vdom/vnode';
+import { commit } from './commit';
+import { buildVNode } from './render';
+import { VNode } from './vnode';
 
 function destroy(vnode: VNode) {
   vnode.effect = 'D';

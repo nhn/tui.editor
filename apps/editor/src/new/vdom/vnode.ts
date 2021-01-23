@@ -1,4 +1,3 @@
-import isFunction from 'tui-code-snippet/type/isFunction';
 import { Component, ComponentClass } from '@t/ui';
 
 class VNodeWalker {
@@ -59,7 +58,7 @@ export class VNode {
 
   next: VNode | null = null;
 
-  ref?: (node: Node) => void;
+  ref?: (node: Node | Component) => void | Node | Component;
 
   node!: Node | null;
 
@@ -75,11 +74,9 @@ export class VNode {
     this.props = props;
     this.children = children;
     this.props.children = children;
+    this.ref = props.ref;
 
-    if (!isFunction(type)) {
-      this.ref = props.ref;
-      delete props.ref;
-    }
+    delete props.ref;
   }
 
   walker() {

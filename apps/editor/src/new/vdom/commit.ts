@@ -3,7 +3,7 @@ import { innerDiff, removeNode } from './dom';
 import { VNode } from './vnode';
 
 export function commit(vnode?: VNode) {
-  VNode.removalNodes.forEach(removalNode => diff(removalNode));
+  VNode.removalNodes.forEach((removalNode) => diff(removalNode));
 
   if (vnode) {
     let next;
@@ -79,7 +79,11 @@ function diff(vnode: VNode | null) {
   }
 
   // apply ref
-  if (vnode.ref && vnode.node) {
-    vnode.ref(vnode.node);
+  if (vnode.ref) {
+    if (vnode.component) {
+      vnode.ref(vnode.component);
+    } else if (vnode.node) {
+      vnode.ref(vnode.node);
+    }
   }
 }
