@@ -14,7 +14,7 @@ export function createNode(vnode: VNode) {
     node = document.createTextNode(vnode.props.nodeValue);
   } else {
     node = document.createElement(vnode.type as string);
-    setProps(node, vnode.props);
+    setProps(node, {}, vnode.props);
   }
 
   return node;
@@ -29,7 +29,7 @@ export function removeNode(vnode: VNode, parentNode: Node) {
 }
 
 export function innerDiff(node: Node, prevProps: Props, nextProps: Props) {
-  Object.keys(prevProps).forEach(propName => {
+  Object.keys(prevProps).forEach((propName) => {
     if (/^on/.test(propName)) {
       if (!nextProps[propName] || prevProps[propName] !== nextProps[propName]) {
         const eventName = propName.slice(2).toLowerCase();
@@ -41,13 +41,18 @@ export function innerDiff(node: Node, prevProps: Props, nextProps: Props) {
     }
   });
 
-  setProps(node, nextProps, propName => !shallowEqual(prevProps[propName], nextProps[propName]));
+  setProps(
+    node,
+    prevProps,
+    nextProps,
+    (propName) => !shallowEqual(prevProps[propName], nextProps[propName])
+  );
 }
 
 const reNonDimension = /acit|ex(?:s|g|n|p|$)|rph|ows|mnc|ntw|ine[ch]|zoo|^ord/i;
 
-function setProps(node: Node, props: Props, condition?: ConditionFn) {
-  Object.keys(props).forEach(propName => {
+function setProps(node: Node, prevProps: Props, props: Props, condition?: ConditionFn) {
+  Object.keys(props).forEach((propName) => {
     if (!condition || condition(propName)) {
       if (/^on/.test(propName)) {
         const eventName = propName.slice(2).toLowerCase();
@@ -56,15 +61,7 @@ function setProps(node: Node, props: Props, condition?: ConditionFn) {
       } else if (propName === 'nodeValue') {
         node[propName] = props[propName];
       } else if (propName === 'style' && isObject(props[propName])) {
-        const stylePropObj = props[propName];
-
-        Object.keys(stylePropObj).forEach(styleProp => {
-          const value = stylePropObj[styleProp];
-
-          // @ts-ignore
-          (node as HTMLElement).style[styleProp] =
-            isNumber(value) && !reNonDimension.test(styleProp) ? `${value}px` : value;
-        });
+        setStyleProps(node as HTMLElement, prevProps[propName], props[propName]);
       } else if (propName !== 'children') {
         if (props[propName] === false) {
           (node as HTMLElement).removeAttribute(propName);
@@ -73,5 +70,21 @@ function setProps(node: Node, props: Props, condition?: ConditionFn) {
         }
       }
     }
+  });
+}
+function setStyleProps(node: HTMLElement, prevStyleProps: Props | null, styleProps: Props) {
+  if (prevStyleProps) {
+    Object.keys(prevStyleProps).forEach((styleProp) => {
+      // @ts-ignore
+      node.style[styleProp] = null;
+    });
+  }
+
+  Object.keys(styleProps).forEach((styleProp) => {
+    const value = styleProps[styleProp];
+
+    // @ts-ignore
+    node.style[styleProp] =
+      isNumber(value) && !reNonDimension.test(styleProp) ? `${value}px` : value;
   });
 }
