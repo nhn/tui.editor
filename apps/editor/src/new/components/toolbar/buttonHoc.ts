@@ -1,5 +1,12 @@
 import css from 'tui-code-snippet/domUtil/css';
-import { ExecCommand, SetLayerInfo, ToolbarItemInfo, SetItemWidth, ComponentClass } from '@t/ui';
+import {
+  ExecCommand,
+  SetLayerInfo,
+  ToolbarItemInfo,
+  SetItemWidth,
+  ComponentClass,
+  ToolbarButtonInfo,
+} from '@t/ui';
 import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
@@ -23,7 +30,7 @@ export function connectHOC(WrappedComponent: ComponentClass) {
     }
 
     private showTooltip = (el: HTMLElement, active = false) => {
-      const { activeTooltip, tooltip } = this.props.item;
+      const { activeTooltip, tooltip } = this.props.item as ToolbarButtonInfo;
 
       if (!this.props.disabled) {
         const rect = el.getBoundingClientRect();

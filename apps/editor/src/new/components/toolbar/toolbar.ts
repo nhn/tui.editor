@@ -253,14 +253,14 @@ export class Toolbar extends Component<Props, State> {
             items=${dropdownItems}
             ...${props}
           />
-          <${Layer}
-            info=${layerInfo}
-            show=${showLayer}
-            eventEmitter=${eventEmitter}
-            hideLayer=${this.hideLayer}
-            execCommand=${this.execCommand}
-          />
         </div>
+        <${Layer}
+          info=${layerInfo}
+          show=${showLayer}
+          eventEmitter=${eventEmitter}
+          hideLayer=${this.hideLayer}
+          execCommand=${this.execCommand}
+        />
       </div>
     `;
   }

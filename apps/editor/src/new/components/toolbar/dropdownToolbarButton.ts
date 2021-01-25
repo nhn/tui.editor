@@ -1,4 +1,3 @@
-import closest from 'tui-code-snippet/domUtil/closest';
 import {
   ExecCommand,
   Pos,
@@ -7,9 +6,10 @@ import {
   GetBound,
   HideTooltip,
   ShowTooltip,
+  ToolbarButtonInfo,
 } from '@t/ui';
 import { Emitter } from '@t/event';
-import { findNodes } from '@/utils/dom';
+import { findNodes, closest } from '@/utils/dom';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
 import { ToolbarGroup } from './toolbarGroup';
@@ -18,7 +18,7 @@ import { connectHOC } from './buttonHoc';
 interface Props {
   disabled: boolean;
   eventEmitter: Emitter;
-  item: ToolbarItemInfo;
+  item: ToolbarButtonInfo;
   items: ToolbarItemInfo[];
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
@@ -103,7 +103,8 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
                 (group, index) => html`
                   <${ToolbarGroup}
                     group=${group}
-                    hiddenDivider=${index === items.length - 1 || items[index + 1]?.hidden}
+                    hiddenDivider=${index === items.length - 1 ||
+                    (items as ToolbarButtonInfo[])[index + 1]?.hidden}
                     ...${this.props}
                   />
                 `

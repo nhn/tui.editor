@@ -1,6 +1,6 @@
-import closest from 'tui-code-snippet/domUtil/closest';
 import { ContextMenuItem, ExecCommand, LayerInfo, Pos, VNode } from '@t/ui';
 import { Emitter } from '@t/event';
+import { closest } from '@/utils/dom';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
 
@@ -20,7 +20,7 @@ export class ContextMenu extends Component<Props, State> {
     super(props);
     this.state = {
       pos: null,
-      menuGroups: []
+      menuGroups: [],
     };
     this.addEvent();
   }
@@ -53,18 +53,12 @@ export class ContextMenu extends Component<Props, State> {
           group.forEach(({ label, className, onClick }) => {
             acc.push(
               html`
-                <button type="button" class=${className} onClick=${onClick}>
-                  ${label}
-                </button>
+                <button type="button" class=${className} onClick=${onClick}>${label}</button>
               ` as VNode
             );
           });
           if (index < menuGroups.length - 1) {
-            acc.push(
-              html`
-                <hr />
-              ` as VNode
-            );
+            acc.push(html`<hr />` as VNode);
           }
           return acc;
         }, [] as VNode[])
@@ -74,10 +68,6 @@ export class ContextMenu extends Component<Props, State> {
   render() {
     const style = { display: this.state.pos ? 'block' : 'none', pos: this.state.pos };
 
-    return html`
-      <div class="te-context-menu" style=${style}>
-        ${this.getMenuGroupElements()}
-      </div>
-    `;
+    return html`<div class="te-context-menu" style=${style}>${this.getMenuGroupElements()}</div>`;
   }
 }

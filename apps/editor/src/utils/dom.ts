@@ -5,13 +5,14 @@ import isUndefined from 'tui-code-snippet/type/isUndefined';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import matches from 'tui-code-snippet/domUtil/matches';
 
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
   const rect = {
     left: parseInt(style.left, 10),
     top: parseInt(style.top, 10),
     width: parseInt(style.width, 10),
-    height: parseInt(style.height, 10)
+    height: parseInt(style.height, 10),
   };
 
   return (
@@ -25,7 +26,7 @@ export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, off
 const CLS_PREFIX = 'tui-md-';
 
 export function cls(...names: string[]) {
-  return names.map(className => `${CLS_PREFIX}${className}`).join(' ');
+  return names.map((className) => `${CLS_PREFIX}${className}`).join(' ');
 }
 
 export function isTextNode(node: Node) {
@@ -49,7 +50,7 @@ export function findNodes(element: Element, selector: string) {
 export function appendNodes(node: Node, nodesToAppend: Node | Node[]) {
   nodesToAppend = isArray(nodesToAppend) ? toArray(nodesToAppend) : [nodesToAppend];
 
-  nodesToAppend.forEach(nodeToAppend => {
+  nodesToAppend.forEach((nodeToAppend) => {
     node.appendChild(nodeToAppend);
   });
 }
@@ -118,4 +119,24 @@ export function getOuterWidth(el: HTMLElement) {
       0
     ) + el.offsetWidth
   );
+}
+
+export function closest(node: Node, found: string | Node) {
+  let condition;
+
+  if (isString(found)) {
+    condition = (target: Node) => matches(target as Element, found);
+  } else {
+    condition = (target: Node) => target === found;
+  }
+
+  while (node && node !== document) {
+    if (isElemNode(node) && condition(node)) {
+      return node;
+    }
+
+    node = node.parentNode!;
+  }
+
+  return null;
 }

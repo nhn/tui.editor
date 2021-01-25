@@ -1,7 +1,9 @@
 import isString from 'tui-code-snippet/type/isString';
 import {
   LayerInfo,
+  LayerOptions,
   Pos,
+  ToolbarButtonInfo,
   ToolbarGroupInfo,
   ToolbarItem,
   ToolbarItemInfo,
@@ -13,6 +15,7 @@ import { HeadingLayerBody } from './components/toolbar/headingLayerBody';
 import { ImageLayerBody } from './components/toolbar/imageLayerBody';
 import { LinkLayerBody } from './components/toolbar/linkLayerBody';
 import { TableLayerBody } from './components/toolbar/tableLayerBody';
+import { CustomLayer } from './components/toolbar/customLayerBody';
 
 let toolbarItemInfoMap: Record<string, ToolbarItemInfo> | null = null;
 
@@ -26,7 +29,7 @@ export function createToolbarItemInfo(type: string | ToolbarItemOptions): Toolba
 }
 
 function createDefaultToolbarItemInfo() {
-  const itemInfoMap: Record<string, ToolbarItemInfo> = {
+  const itemInfoMap: Record<string, ToolbarButtonInfo> = {
     heading: {
       name: 'heading',
       className: 'tui-heading',
@@ -155,8 +158,16 @@ function createDefaultToolbarItemInfo() {
   return itemInfoMap;
 }
 
+interface Payload {
+  el: HTMLElement;
+  pos: Pos;
+  layer?: LayerOptions;
+}
+
 // eslint-disable-next-line consistent-return
-export function createLayerInfo(type: string, el: HTMLElement, pos: Pos): LayerInfo | undefined {
+export function createLayerInfo(type: string, payload: Payload): LayerInfo | undefined {
+  const { el, pos, layer } = payload;
+
   switch (type) {
     case 'heading':
       return {
@@ -188,18 +199,25 @@ export function createLayerInfo(type: string, el: HTMLElement, pos: Pos): LayerI
         fromEl: el,
         pos,
       };
+    case 'customLayer':
+      return {
+        render: (props) => html`<${CustomLayer} ...${props} layerBody=${layer!.layerBody} />`,
+        fromEl: el,
+        pos,
+        ...layer!,
+      };
     default:
     // do nothing
   }
 }
 
 export function setGroupState(group: ToolbarGroupInfo) {
-  group.hidden = group.length === group.filter((info) => info.hidden).length;
+  group.hidden = group.length === group.filter((info: ToolbarButtonInfo) => info.hidden).length;
 }
 
 export function groupToolbarItems(toolbarItems: ToolbarItem[], hiddenScrollSync: boolean) {
   let needNested = false;
-  const toggleScrollSyncState = (item: ToolbarItemInfo) => {
+  const toggleScrollSyncState = (item: ToolbarButtonInfo) => {
     item.hidden = item.name === 'scrollSync' && hiddenScrollSync;
     return item;
   };
@@ -225,7 +243,9 @@ export function groupToolbarItems(toolbarItems: ToolbarItem[], hiddenScrollSync:
 
 export function toggleScrollSync(toolbarItems: ToolbarGroupInfo[], hiddenScrollSync: boolean) {
   toolbarItems.forEach((group) => {
-    group.forEach((item) => (item.hidden = item.name === 'scrollSync' && hiddenScrollSync));
+    group.forEach(
+      (item: ToolbarButtonInfo) => (item.hidden = item.name === 'scrollSync' && hiddenScrollSync)
+    );
     setGroupState(group);
   });
 }

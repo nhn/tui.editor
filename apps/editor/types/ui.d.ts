@@ -1,12 +1,34 @@
-export interface ToolbarItemOptions {
-  type?: 'button' | 'custom';
+export interface LayerOptions {
+  layerBody: HTMLElement;
+  headerText?: string;
+  className?: string;
+  style?: Record<string, any>;
+}
+
+export interface ToolbarButtonOptions {
   name: string;
   tooltip: string;
   className?: string;
   command?: string;
   text?: string;
   style?: Record<string, any>;
+  layer?: LayerOptions;
 }
+
+export interface ToolbarCustomOptions {
+  name: string;
+  tooltip: string;
+  el?: HTMLElement;
+  layer?: LayerOptions;
+}
+
+export type ToolbarButtonInfo = {
+  activeTooltip?: string;
+  state?: ToolbarStateKeys;
+  hidden?: boolean;
+  active?: boolean;
+  toggle?: boolean;
+} & ToolbarButtonOptions;
 
 export interface Component<T = {}, R = {}> {
   props: T;
@@ -74,9 +96,10 @@ export type TooltipStyle = {
 
 export interface LayerInfo {
   headerText?: string;
+  className?: string;
+  style?: Record<string, any>;
   fromEl: HTMLElement;
   pos: Pos;
-  className: string;
   render: (props: Record<string, any>) => VNode | VNode[];
 }
 
@@ -101,16 +124,9 @@ interface ToolbarState {
 }
 export type ToolbarStateKeys = keyof ToolbarState;
 
-export type ToolbarItemInfo = {
-  activeTooltip?: string;
-  state?: ToolbarStateKeys;
-  hidden?: boolean;
-  active?: boolean;
-  toggle?: boolean;
-} & ToolbarItemOptions;
-
+export type ToolbarItemInfo = ToolbarCustomOptions | ToolbarButtonInfo;
 export type ToolbarGroupInfo = ToolbarItemInfo[] & { hidden?: boolean };
-// @TODO: add custom toolbar option type
+export type ToolbarItemOptions = ToolbarCustomOptions | ToolbarButtonOptions;
 export type ToolbarItem = (string | ToolbarItemOptions) | (string | ToolbarItemOptions)[];
 
 export type ExecCommand = (command: string, payload?: Record<string, any>) => void;
@@ -119,7 +135,7 @@ export type SetLayerInfo = (info: LayerInfo) => void;
 export type SetItemWidth = (name: string, width: number) => void;
 export type ShowTooltip = (el: HTMLElement, active?: boolean) => void;
 export type HideTooltip = () => void;
-export type GetBound = (el: HTMLElement) => Pos;
+export type GetBound = (el: HTMLElement, active?: boolean) => Pos;
 
 export interface ContextMenuItem {
   label: string;

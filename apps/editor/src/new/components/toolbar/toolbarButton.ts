@@ -1,12 +1,12 @@
 import {
   ExecCommand,
   SetLayerInfo,
-  ToolbarItemInfo,
   ToolbarState,
   SetItemWidth,
   GetBound,
   HideTooltip,
   ShowTooltip,
+  ToolbarButtonInfo,
 } from '@t/ui';
 import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
@@ -22,7 +22,7 @@ interface Payload {
 interface Props {
   disabled: boolean;
   eventEmitter: Emitter;
-  item: ToolbarItemInfo;
+  item: ToolbarButtonInfo;
   execCommand: ExecCommand;
   setLayerInfo: SetLayerInfo;
   showTooltip: ShowTooltip;
@@ -68,7 +68,7 @@ export class ToolbarButtonComp extends Component<Props, State> {
   private setItemWidth() {
     const { setItemWidth, item } = this.props;
 
-    // set width and active state only if it is not a dropdown toolbar
+    // set width only if it is not a dropdown toolbar
     if (setItemWidth) {
       setItemWidth(item.name, getOuterWidth(this.refs.el) + (item.hidden ? DEFAULT_WIDTH : 0));
     }
@@ -95,7 +95,7 @@ export class ToolbarButtonComp extends Component<Props, State> {
     if (command) {
       execCommand(command, newState);
     } else {
-      const info = createLayerInfo(name, this.refs.el, getBound(this.refs.el));
+      const info = createLayerInfo(name, { el: this.refs.el, pos: getBound(this.refs.el) });
 
       if (info) {
         setLayerInfo(info);
@@ -105,7 +105,7 @@ export class ToolbarButtonComp extends Component<Props, State> {
 
   render() {
     const { hideTooltip, disabled, item } = this.props;
-    const style = { display: item.hidden ? 'none' : 'inline-block', ...item.style };
+    const style = { display: item.hidden ? 'none' : null, ...item.style };
     const classNames = `${item.className || ''}${this.state.active ? ' active' : ''}`;
 
     return html`

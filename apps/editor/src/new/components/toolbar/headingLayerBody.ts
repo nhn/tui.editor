@@ -1,6 +1,6 @@
-import closest from 'tui-code-snippet/domUtil/closest';
 import { Emitter } from '@t/event';
 import { ExecCommand } from '@t/ui';
+import { closest } from '@/utils/dom';
 import i18n from '@/i18n/i18n';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
@@ -12,10 +12,10 @@ interface Props {
 
 export class HeadingLayerBody extends Component<Props> {
   execCommand(ev: MouseEvent) {
-    const el = closest(ev.target as HTMLElement, 'li')!;
+    const el = closest(ev.target as HTMLElement, 'li')! as HTMLElement;
 
     this.props.execCommand('heading', {
-      level: Number(el.getAttribute('data-level'))
+      level: Number(el.getAttribute('data-level')),
     });
   }
 
@@ -23,7 +23,7 @@ export class HeadingLayerBody extends Component<Props> {
     return html`
       <ul onClick=${(ev: MouseEvent) => this.execCommand(ev)}>
         ${[1, 2, 3, 4, 5, 6].map(
-          level =>
+          (level) =>
             html`
               <li data-level="${level}" data-type="Heading">
                 <${`h${level}`}>${i18n.get('Heading')} ${level}</$>
