@@ -161,16 +161,38 @@ describe('layout component', () => {
       expect(wwSwitch).not.toHaveClass('active');
     });
 
-    // it('should hide scrollSync toolbar button', () => {
-    //   em.emit('changePreviewStyle', 'vertical');
-    //   const scrollSyncBtn = getScrollSyncBtn();
+    it('should hide scrollSync when previewStyle is tab regardless of changing editor mode', () => {
+      const scrollSyncBtn = getScrollSyncBtn();
 
-    //   expect(scrollSyncBtn).toHaveStyle({ display: 'inline-block' });
+      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
 
-    //   em.emit('changeMode', 'wysiwyg');
+      em.emit('changeMode', 'wysiwyg');
 
-    //   expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
-    // });
+      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+    });
+
+    it('should show scrollSync when previewStyle is vertical on only markdown mode', () => {
+      em.emit('changePreviewStyle', 'vertical');
+      const scrollSyncBtn = getScrollSyncBtn();
+
+      expect(scrollSyncBtn).toHaveStyle({ display: 'inline-block' });
+
+      em.emit('changeMode', 'wysiwyg');
+
+      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+    });
+
+    it('should show scrollSync when previewStyle is changed on only markdown mode', () => {
+      em.emit('changeMode', 'wysiwyg');
+      em.emit('changePreviewStyle', 'vertical');
+      const scrollSyncBtn = getScrollSyncBtn();
+
+      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+
+      em.emit('changeMode', 'markdown');
+
+      expect(scrollSyncBtn).toHaveStyle({ display: 'inline-block' });
+    });
   });
 
   describe('changing preview style', () => {
