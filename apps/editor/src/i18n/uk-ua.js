@@ -2,7 +2,7 @@
  * @fileoverview I18N for Ukrainian
  * @author Nikolya <k_m_i@i.ua>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['uk', 'uk-UA'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['uk', 'uk-UA'], {
   'Text color': 'Колір тексту',
   'Auto scroll enabled': 'Автоматична прокрутка включена',
   'Auto scroll disabled': 'Автоматична прокрутка відключена',
-  'Choose language': 'Вибрати мову'
+  'Choose language': 'Вибрати мову',
 });

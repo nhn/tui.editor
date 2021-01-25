@@ -2,7 +2,7 @@
  * @fileoverview I18N for Japanese
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['ja', 'ja-JP'], {
   Markdown: 'マークダウン',
@@ -48,5 +48,5 @@ Editor.setLanguage(['ja', 'ja-JP'], {
   'Text color': '文字色相',
   'Auto scroll enabled': '自動スクロールが有効',
   'Auto scroll disabled': '自動スクロールを無効に',
-  'Choose language': '言語選択'
+  'Choose language': '言語選択',
 });

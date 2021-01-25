@@ -2,7 +2,7 @@
  * @fileoverview I18N for Turkish
  * @author Mesut Gölcük <mesutgolcuk@gmail.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['tr', 'tr-TR'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['tr', 'tr-TR'], {
   'Text color': 'Metin rengi',
   'Auto scroll enabled': 'Otomatik kaydırma açık',
   'Auto scroll disabled': 'Otomatik kaydırma kapalı',
-  'Choose language': 'Dil seçiniz'
+  'Choose language': 'Dil seçiniz',
 });

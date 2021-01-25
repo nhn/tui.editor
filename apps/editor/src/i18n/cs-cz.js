@@ -2,7 +2,7 @@
  * @fileoverview I18N for Czech
  * @author Dmitrij Tkačenko <dmitrij.tkacenko@scalesoft.cz>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['cs', 'cs-CZ'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['cs', 'cs-CZ'], {
   'Text color': 'Barva textu',
   'Auto scroll enabled': 'Automatické rolování zapnuto',
   'Auto scroll disabled': 'Automatické rolování vypnuto',
-  'Choose language': 'Vybrat jazyk'
+  'Choose language': 'Vybrat jazyk',
 });

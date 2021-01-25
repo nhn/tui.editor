@@ -3,7 +3,7 @@
  * @author Aida Vidal <avidal@emapic.es>
  */
 
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['gl', 'gl-ES'], {
   Markdown: 'Markdown',
@@ -49,5 +49,5 @@ Editor.setLanguage(['gl', 'gl-ES'], {
   'Text color': 'Cor do texto',
   'Auto scroll enabled': 'Desprazamento automático habilitado',
   'Auto scroll disabled': 'Desprazamento automático deshabilitado',
-  'Choose language': 'Elixir idioma'
+  'Choose language': 'Elixir idioma',
 });

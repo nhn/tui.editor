@@ -127,10 +127,10 @@ interface Slots {
   wwEditor: HTMLElement;
 }
 
-export class Editor {
+export class EditorCore {
   constructor(options: EditorOptions);
 
-  public static factory(options: EditorOptions): Editor | Viewer;
+  public static factory(options: EditorOptions): EditorCore | Viewer;
 
   public static setLanguage(code: string, data: Record<string, string>): void;
 
@@ -211,8 +211,8 @@ export class Editor {
   setCodeBlockLanguages(languages: string[]): void;
 
   getEditorElements(): Slots;
+}
 
-  setDefaultUI(UI: DefaultUI): void;
-
+export class Editor extends EditorCore {
   getDefaultUI(): DefaultUI;
 }

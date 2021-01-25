@@ -2,7 +2,7 @@
  * @fileoverview I18N for Dutch
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['nl', 'nl-NL'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['nl', 'nl-NL'], {
   'Text color': 'Tekstkleur',
   'Auto scroll enabled': 'Autoscroll ingeschakeld',
   'Auto scroll disabled': 'Autoscroll uitgeschakeld',
-  'Choose language': 'Kies een taal'
+  'Choose language': 'Kies een taal',
 });

@@ -2,7 +2,7 @@
  * @fileoverview I18N for Swedish
  * @author Magnus Aspling <magnus@yug.se>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['sv', 'sv-SE'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['sv', 'sv-SE'], {
   'Text color': 'Textfärg',
   'Auto scroll enabled': 'Automatisk scroll aktiverad',
   'Auto scroll disabled': 'Automatisk scroll inaktiverad',
-  'Choose language': 'Välj språk'
+  'Choose language': 'Välj språk',
 });

@@ -2,7 +2,7 @@
  * @fileoverview I18N for German
  * @author Jann-Niklas Kiepert <jannkiepert@vivaldi.net>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['de', 'de-DE'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['de', 'de-DE'], {
   'Text color': 'Textfarbe',
   'Auto scroll enabled': 'Autoscrollen aktiviert',
   'Auto scroll disabled': 'Autoscrollen deaktiviert',
-  'Choose language': 'Sprache auswählen'
+  'Choose language': 'Sprache auswählen',
 });
