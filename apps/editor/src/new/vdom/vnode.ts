@@ -67,6 +67,8 @@ export class VNode {
 
   component?: Component;
 
+  key?: string;
+
   skip = false;
 
   constructor(type: string | ComponentClass, props: Record<string, any>, children: VNode[]) {
@@ -77,6 +79,10 @@ export class VNode {
     if (props.ref) {
       this.ref = props.ref;
       delete props.ref;
+    }
+    if (props.key) {
+      this.key = props.key;
+      delete props.key;
     }
   }
 

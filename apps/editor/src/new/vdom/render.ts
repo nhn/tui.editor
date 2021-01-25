@@ -49,7 +49,7 @@ export function buildVNode(vnode: VNode | null) {
 }
 
 function isSameType(old: VNode | null, vnode: VNode) {
-  return old && vnode && vnode.type === old.type;
+  return old && vnode && vnode.type === old.type && (!vnode.key || vnode.key === old.key);
 }
 
 // @TODO: add key diff algorithm

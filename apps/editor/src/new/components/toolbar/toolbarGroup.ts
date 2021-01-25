@@ -40,7 +40,7 @@ export class ToolbarGroup extends Component<Props> {
         ${group.map((item: ToolbarCustomOptions) => {
           const Comp = item.el ? CustomToolbarItem : ToolbarButton;
 
-          return html`<${Comp} ...${this.props} item=${item} />`;
+          return html`<${Comp} key=${item.name} ...${this.props} item=${item} />`;
         })}
         <div class="tui-toolbar-divider" style=${dividerStyle}></div>
       </div>
