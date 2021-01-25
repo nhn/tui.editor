@@ -124,7 +124,7 @@ class ToastUIEditor {
           ['ul', 'ol', 'task', 'indent', 'outdent'],
           ['table', 'image', 'link'],
           ['code', 'codeblock'],
-          'scrollSync',
+          ['scrollSync'],
         ],
         hideModeSwitch: false,
         linkAttribute: null,

@@ -127,7 +127,7 @@ export type ToolbarStateKeys = keyof ToolbarState;
 export type ToolbarItemInfo = ToolbarCustomOptions | ToolbarButtonInfo;
 export type ToolbarGroupInfo = ToolbarItemInfo[] & { hidden?: boolean };
 export type ToolbarItemOptions = ToolbarCustomOptions | ToolbarButtonOptions;
-export type ToolbarItem = (string | ToolbarItemOptions) | (string | ToolbarItemOptions)[];
+export type ToolbarItem = (string | ToolbarItemOptions)[];
 
 export type ExecCommand = (command: string, payload?: Record<string, any>) => void;
 export type HidePopup = () => void;
@@ -143,9 +143,12 @@ export interface ContextMenuItem {
   onClick?: () => void;
 }
 
-export type TargetIndexes = [groupIndex: number, itemIndex: number];
+export interface Indexes {
+  groupIndex: number;
+  itemIndex: number;
+}
 export interface DefaultUI {
   destroy: () => void;
-  insertToolbarItem: (indexes: TargetIndexes, item: ToolbarItemOptions) => void;
-  removeToolbarItem: (indexes: TargetIndexes) => void;
+  insertToolbarItem: (indexes: Indexes, item: ToolbarItemOptions) => void;
+  removeToolbarItem: (name: string) => void;
 }

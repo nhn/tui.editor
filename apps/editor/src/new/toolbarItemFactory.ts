@@ -216,22 +216,13 @@ export function setGroupState(group: ToolbarGroupInfo) {
 }
 
 export function groupToolbarItems(toolbarItems: ToolbarItem[], hiddenScrollSync: boolean) {
-  let needNested = false;
   const toggleScrollSyncState = (item: ToolbarButtonInfo) => {
     item.hidden = item.name === 'scrollSync' && hiddenScrollSync;
     return item;
   };
 
   return toolbarItems.reduce((acc: ToolbarGroupInfo[], item) => {
-    if (Array.isArray(item)) {
-      needNested = false;
-      acc.push(item.map((type) => toggleScrollSyncState(createToolbarItemInfo(type))));
-    } else if (needNested) {
-      acc[(acc.length || 1) - 1].push(toggleScrollSyncState(createToolbarItemInfo(item)));
-    } else {
-      needNested = true;
-      acc.push([toggleScrollSyncState(createToolbarItemInfo(item))]);
-    }
+    acc.push(item.map((type) => toggleScrollSyncState(createToolbarItemInfo(type))));
     const group = acc[(acc.length || 1) - 1];
 
     if (group) {
