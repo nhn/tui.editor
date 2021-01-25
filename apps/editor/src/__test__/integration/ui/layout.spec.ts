@@ -95,7 +95,7 @@ describe('layout component', () => {
           eventEmitter=${em}
           slots=${dummySlot}
           hideModeSwitch=${false}
-          toolbarItems=${[['bold', 'italic', 'strike'], 'scrollSync']}
+          toolbarItems=${[['bold', 'italic', 'strike'], ['scrollSync']]}
           previewStyle="tab"
           editorType="markdown"
         />

@@ -8,7 +8,7 @@ interface Props {
   mounted?: jest.Mock;
   updated?: jest.Mock;
   beforeDestroy?: jest.Mock;
-  ref?: jest.Mock<any, [HTMLElement]>;
+  refDOM?: jest.Mock<any, [HTMLElement]>;
 }
 
 interface State {
@@ -64,16 +64,16 @@ class TestComponent extends Component<Props, State> {
       <div
         class="my-comp"
         ref=${(el: HTMLElement) => {
-          if (this.props.ref) {
-            this.props.ref(el);
+          if (this.props.refDOM) {
+            this.props.refDOM(el);
           }
         }}
       >
         <div style=${style}>child</div>
         <div>
-          ${this.state.conditional ? [1, 2, 3].map((num) => html` <span>${num}</span> `) : null}
+          ${this.state.conditional ? [1, 2, 3].map((num) => html`<span>${num}</span>`) : null}
         </div>
-        ${this.state.conditional ? [1, 2, 3].map((num) => html` <span>${num}</span> `) : null}
+        ${this.state.conditional ? [1, 2, 3].map((num) => html`<span>${num}</span>`) : null}
         <button onClick=${() => this.show()}>show</button>
         <button onClick=${() => this.hide()}>hide</button>
         <button onClick=${() => this.conditionalRender()}>conditional</button>
@@ -88,7 +88,7 @@ describe('html', () => {
   it('should be rendered properly', () => {
     const wrapper = document.createElement('div');
 
-    render(wrapper, html` <div class="my-comp" data-id="my-comp">test</div> ` as VNode);
+    render(wrapper, html`<div class="my-comp" data-id="my-comp">test</div>` as VNode);
 
     expect(wrapper).toContainHTML('<div class="my-comp" data-id="my-comp">test</div>');
   });
@@ -105,7 +105,7 @@ describe('html', () => {
 
     render(
       wrapper,
-      html` <div>${[1, 2, 3].map((text) => html` <span>${text}</span> `)}</div> ` as VNode
+      html`<div>${[1, 2, 3].map((text) => html`<span>${text}</span>`)}</div>` as VNode
     );
 
     expect(wrapper).toContainHTML(expected);
@@ -131,7 +131,7 @@ describe('html', () => {
         <div class="my-comp" data-id="my-comp">
           <nav>
             <ul>
-              ${['1', '2', '3'].map((text) => html` <li>${text}</li> `)}
+              ${['1', '2', '3'].map((text) => html`<li>${text}</li>`)}
             </ul>
           </nav>
         </div>
@@ -148,7 +148,7 @@ describe('html', () => {
       <div class="my-comp" style="display: inline-block; background-color: rgb(204, 204, 204);">test</div>
     `;
 
-    render(wrapper, html` <div class="my-comp" style=${style}>test</div> ` as VNode);
+    render(wrapper, html`<div class="my-comp" style=${style}>test</div>` as VNode);
 
     expect(wrapper).toContainHTML(expected);
   });
@@ -160,7 +160,7 @@ describe('html', () => {
       <div class="my-comp" style="position: absolute; top: 10px; left: 10px;">test</div>
     `;
 
-    render(wrapper, html` <div class="my-comp" style=${style}>test</div> ` as VNode);
+    render(wrapper, html`<div class="my-comp" style=${style}>test</div>` as VNode);
 
     expect(wrapper).toContainHTML(expected);
   });
@@ -182,7 +182,7 @@ describe('Class Component', () => {
   function renderComponent(spies?: Record<string, jest.Mock>) {
     container = document.createElement('div');
 
-    destroy = render(container, html` <${TestComponent} ...${spies} /> ` as VNode);
+    destroy = render(container, html`<${TestComponent} ...${spies} />` as VNode);
   }
 
   it('should be rendered properly', () => {
@@ -253,12 +253,20 @@ describe('Class Component', () => {
     expect(container).toContainHTML(expected);
   });
 
-  it('should call ref function property after rendering the component', () => {
+  it('should call ref function with DOM after rendering the component', () => {
+    const spy = jest.fn();
+
+    renderComponent({ refDOM: spy });
+
+    expect(spy).toHaveBeenCalledWith(container.querySelector('.my-comp'));
+  });
+
+  it('should call ref function with component after rendering the component', () => {
     const spy = jest.fn();
 
     renderComponent({ ref: spy });
 
-    expect(spy).toHaveBeenCalledWith(container.querySelector('.my-comp'));
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('should call mounted life cycle method ', () => {

@@ -59,7 +59,7 @@ describe('toolbar', () => {
       ['ul', 'ol', 'task', 'indent', 'outdent'],
       ['table', 'image', 'link'],
       ['code', 'codeblock'],
-      'scrollSync',
+      ['scrollSync'],
     ];
 
     container = document.createElement('div');

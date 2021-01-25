@@ -74,9 +74,10 @@ export class VNode {
     this.props = props;
     this.children = children;
     this.props.children = children;
-    this.ref = props.ref;
-
-    delete props.ref;
+    if (props.ref) {
+      this.ref = props.ref;
+      delete props.ref;
+    }
   }
 
   walker() {
