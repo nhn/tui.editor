@@ -1,9 +1,9 @@
 import {
   NodeType,
   MarkType,
-  Mark,
   Schema,
   ProsemirrorNode,
+  Mark,
   DOMOutputSpecArray
 } from 'prosemirror-model';
 
@@ -18,7 +18,7 @@ export interface StackItem {
   content: ProsemirrorNode[];
 }
 
-export interface ToWwConvertorStateType {
+export interface ToWwConvertorState {
   schema: Schema;
   top(): StackItem;
   push(node: ProsemirrorNode): void;
@@ -33,7 +33,7 @@ export interface ToWwConvertorStateType {
 }
 
 type ToWwConvertor = (
-  state: ToWwConvertorStateType,
+  state: ToWwConvertorState,
   node: MdNode,
   context: {
     entering: boolean;
@@ -45,7 +45,7 @@ export type ToWwConvertorMap = Partial<Record<MdNodeType, ToWwConvertor>>;
 
 export type FirstDelimFn = (index: number) => string;
 
-export interface ToMdConvertorStateType {
+export interface ToMdConvertorState {
   stopNewline: boolean;
   flushClose(size?: number): void;
   wrapBlock(delim: string, firstDelim: string | null, node: ProsemirrorNode, fn: () => void): void;
@@ -60,42 +60,18 @@ export interface ToMdConvertorStateType {
   convertNode(parent: ProsemirrorNode): string;
 }
 
-export interface ToMdConvertorContext {
-  delim?: string | string[];
-  rawHTML?: string | string[];
-  text?: string;
-  attrs?: {
-    [key: string]: any;
-  };
+export interface ToDOMAdaptor {
+  getToDOM(type: string): ((node: ProsemirrorNode | Mark) => DOMOutputSpecArray) | null;
+  getToDOMNode(type: string): ((node: ProsemirrorNode | Mark) => Node) | null;
 }
 
-type ToMdOriginConvertorContext = (
-  node: ProsemirrorNode | Mark,
-  entering?: boolean,
-  parent?: ProsemirrorNode,
-  index?: number
-) => ToMdConvertorContext;
+type HTMLToWwConvertor = (state: ToWwConvertorState, node: MdNode, openTagName: string) => void;
 
-export type ToMdOriginConvertorContextMap = Partial<
-  Record<WwNodeType | MdNodeType, ToMdOriginConvertorContext>
->;
+export type HTMLToWwConvertorMap = Partial<Record<string, HTMLToWwConvertor>>;
 
-export type OriginContext = (() => ToMdOriginConvertorContext) | (() => () => {});
-
-interface ToMdCustomConvertorContext {
-  node: ProsemirrorNode | Mark;
-  parent?: ProsemirrorNode;
-  index?: number;
-  origin: OriginContext;
-  entering?: boolean;
+export interface FlattenHTMLToWwConvertorMap {
+  [k: string]: HTMLToWwConvertor;
 }
-
-type ToMdCustomConvertor = (
-  state: ToMdConvertorStateType,
-  context: ToMdCustomConvertorContext
-) => ToMdConvertorContext | ToMdOriginConvertorContext | void;
-
-export type ToMdCustomConvertorMap = Partial<Record<WwNodeType | MdNodeType, ToMdCustomConvertor>>;
 
 export interface NodeInfo {
   node: ProsemirrorNode;
@@ -107,51 +83,55 @@ export interface MarkInfo {
   node: Mark;
   parent?: ProsemirrorNode;
   index?: number;
-  entering?: boolean;
 }
 
-type ToMdConvertorForNodes = (
-  state: ToMdConvertorStateType,
+interface ToMdConvertorReturnValues {
+  delim?: string | string[];
+  rawHTML?: string | string[] | null;
+  text?: string;
+  attrs?: Attrs;
+}
+
+type ToMdNodeTypeWriter = (
+  state: ToMdConvertorState,
   nodeInfo: NodeInfo,
-  context: ToMdConvertorContext
+  params: ToMdConvertorReturnValues
 ) => void;
 
-type MarkConvertor = (
-  state: ToMdConvertorStateType,
-  mark: Mark,
-  parent: ProsemirrorNode,
-  index: number
-) => string;
+export type ToMdNodeTypeWriterMap = Partial<Record<WwNodeType, ToMdNodeTypeWriter>>;
 
-interface ToMdConvertorForMarks {
+interface ToMdMarkTypeOption {
   mixable?: boolean;
   removedEnclosingWhitespace?: boolean;
   escape?: boolean;
 }
 
-export type ToMdNodeConvertorMap = Partial<Record<WwNodeType, ToMdConvertorForNodes>>;
+export type ToMdMarkTypeOptions = Partial<Record<WwMarkType, ToMdMarkTypeOption | null>>;
 
-export type ToMdMarkConvertorMap = Partial<Record<WwMarkType, ToMdConvertorForMarks>>;
+type ToMdNodeTypeConvertor = (state: ToMdConvertorState, nodeInfo: NodeInfo) => void;
 
-export interface ToMdConvertorMap {
-  nodes: ToMdNodeConvertorMap;
-  marks: ToMdMarkConvertorMap;
+export type ToMdNodeTypeConvertorMap = Partial<Record<WwNodeType, ToMdNodeTypeConvertor>>;
+
+type ToMdMarkTypeConvertor = (
+  nodeInfo?: MarkInfo,
+  entering?: boolean
+) => ToMdConvertorReturnValues & ToMdMarkTypeOption;
+
+export type ToMdMarkTypeConvertorMap = Partial<Record<WwMarkType, ToMdMarkTypeConvertor>>;
+
+interface ToMdConvertorContext {
+  origin?: () => ReturnType<ToMdConvertor>;
+  entering?: boolean;
 }
 
-export interface ToDOMAdaptor {
-  getToDOM(type: string): ((node: ProsemirrorNode | Mark) => DOMOutputSpecArray) | null;
-  getToDOMNode(type: string): ((node: ProsemirrorNode | Mark) => Node) | null;
-}
+type ToMdConvertor = (
+  nodeInfo: NodeInfo | MarkInfo,
+  context: ToMdConvertorContext
+) => ToMdConvertorReturnValues;
 
-type HTMLToWwConvertor = (state: ToWwConvertorStateType, node: MdNode, openTagName: string) => void;
+export type ToMdConvertorMap = Partial<Record<WwNodeType | MdNodeType, ToMdConvertor>>;
 
-export type HTMLToWwConvertorMap = Partial<Record<string, HTMLToWwConvertor>>;
-
-export interface FlattenHTMLToWwConvertorMap {
-  [k: string]: HTMLToWwConvertor;
-}
-
-export interface ToMdMarkConvertors {
-  nodes: ToMdNodeConvertorMap;
-  marks: ToMdMarkConvertorMap;
+export interface ToMdConvertors {
+  nodeTypeConvertors: ToMdNodeTypeConvertorMap;
+  markTypeConvertors: ToMdMarkTypeConvertorMap;
 }

@@ -1,30 +1,19 @@
 import { Node, Mark } from 'prosemirror-model';
 
-import isFunction from 'tui-code-snippet/type/isFunction';
-
 import { includes, escape } from '@/utils/common';
-
-import { getOriginContext } from './toMdConvertorContext';
 
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {
-  ToMdMarkConvertors,
-  ToMdNodeConvertorMap,
-  ToMdMarkConvertorMap,
-  FirstDelimFn,
-  ToMdCustomConvertorMap,
-  ToMdOriginConvertorContext,
-  ToMdCustomConvertor,
-  OriginContext,
-  NodeInfo,
-  MarkInfo,
-  ToMdConvertorContext
+  ToMdConvertors,
+  ToMdNodeTypeConvertorMap,
+  ToMdMarkTypeConvertorMap,
+  FirstDelimFn
 } from '@t/convertor';
 
 export default class ToMdConvertorState {
-  private readonly nodes: ToMdNodeConvertorMap;
+  private readonly nodeTypeConvertors: ToMdNodeTypeConvertorMap;
 
-  private readonly marks: ToMdMarkConvertorMap;
+  private readonly markTypeConvertors: ToMdMarkTypeConvertorMap;
 
   private delim: string;
 
@@ -36,66 +25,26 @@ export default class ToMdConvertorState {
 
   public stopNewline: boolean;
 
-  private customConvertors: ToMdCustomConvertorMap;
-
-  constructor({ nodes, marks }: ToMdMarkConvertors, customConvertors: ToMdCustomConvertorMap) {
-    this.nodes = nodes;
-    this.marks = marks;
+  constructor({ nodeTypeConvertors, markTypeConvertors }: ToMdConvertors) {
+    this.nodeTypeConvertors = nodeTypeConvertors;
+    this.markTypeConvertors = markTypeConvertors;
     this.delim = '';
     this.result = '';
     this.closed = false;
     this.tightList = false;
     this.stopNewline = false;
-    this.customConvertors = customConvertors ?? {};
   }
 
   private isInBlank() {
     return /(^|\n)$/.test(this.result);
   }
 
-  private getCustomConvertorContext(
-    customConvertor: ToMdCustomConvertor,
-    originContext: OriginContext,
-    nodeInfo: NodeInfo | MarkInfo
-  ) {
-    const context = customConvertor(this, {
-      origin: originContext,
-      ...nodeInfo
-    });
-
-    if (context) {
-      const { node } = nodeInfo;
-
-      if (isFunction(context)) {
-        return context(node) as ToMdOriginConvertorContext;
-      }
-
-      const orgContext = originContext()(node);
-
-      return { ...orgContext, ...context };
-    }
-
-    return null;
-  }
-
   private markText(mark: Mark, entering: boolean, parent: Node, index: number) {
-    const markType = mark.type.name as WwMarkType;
-    const customConvertor = this.customConvertors[markType];
-    const originContext = getOriginContext(markType);
-    const nodeInfo = {
-      node: mark,
-      parent,
-      index,
-      entering
-    };
+    const type = mark.type.name as WwMarkType;
+    const convertor = this.markTypeConvertors[type];
 
-    const context = customConvertor
-      ? this.getCustomConvertorContext(customConvertor, originContext, nodeInfo)
-      : originContext()(mark, entering, parent, index);
-    const info = this.marks[markType];
-
-    if (info && context) {
-      const { delim, rawHTML } = context as ToMdConvertorContext;
+    if (convertor) {
+      const { delim, rawHTML } = convertor({ node: mark, parent, index }, entering);
 
       return (rawHTML as string) || (delim as string);
     }
@@ -178,18 +127,13 @@ export default class ToMdConvertorState {
   }
 
   convertBlock(node: Node, parent: Node, index: number) {
-    const nodeType = node.type.name as WwNodeType;
-    const customConvertor = this.customConvertors[nodeType];
-    const originContext = getOriginContext(nodeType);
-    const nodeInfo = { node, parent, index };
+    const type = node.type.name as WwNodeType;
+    const convertor = this.nodeTypeConvertors[type];
 
-    const context = customConvertor
-      ? this.getCustomConvertorContext(customConvertor, originContext, nodeInfo)
-      : originContext()(node);
-    const innerConvertor = this.nodes[nodeType];
+    if (convertor) {
+      const nodeInfo = { node, parent, index };
 
-    if (innerConvertor && context) {
-      innerConvertor(this, nodeInfo, context);
+      convertor(this, nodeInfo);
     }
   }
 
@@ -209,13 +153,14 @@ export default class ToMdConvertorState {
         node &&
         node.isText &&
         marks.some((mark: Mark) => {
-          const info = this.marks[mark.type.name as WwMarkType];
+          const markConvertor = this.markTypeConvertors[mark.type.name as WwMarkType];
+          const info = markConvertor && markConvertor();
 
           return info && info.removedEnclosingWhitespace;
         });
 
       if (removedWhitespace && node && node.text) {
-        const [, lead, inner, trail] = /^(\s*)(.*?)(\s*)$/m.exec(node.text)!;
+        const [, lead, mark, trail] = /^(\s*)(.*?)(\s*)$/m.exec(node.text)!;
 
         leading += lead;
         trailing = trail;
@@ -223,7 +168,7 @@ export default class ToMdConvertorState {
         if (lead || trail) {
           // @ts-ignore
           // type is not defined for "withText" in prosemirror-model
-          node = inner ? node.withText(inner) : null;
+          node = mark ? node.withText(mark) : null;
 
           if (!node) {
             marks = active;
@@ -231,10 +176,12 @@ export default class ToMdConvertorState {
         }
       }
 
-      const inner = marks.length && marks[marks.length - 1];
-      const markType = inner && this.marks[inner.type.name as WwMarkType];
-      const noEsc = markType && markType.escape === false;
-      const len = marks.length - (noEsc ? 1 : 0);
+      const lastMark = marks.length && marks[marks.length - 1];
+      const markConvertor = lastMark && this.markTypeConvertors[lastMark.type.name as WwMarkType];
+      const markType = markConvertor && markConvertor();
+
+      const noEscape = markType && markType.escape === false;
+      const len = marks.length - (noEscape ? 1 : 0);
 
       // Try to reorder 'mixable' marks, such as em and strong, which
       // in Markdown may be opened and closed in different order, so
@@ -307,11 +254,11 @@ export default class ToMdConvertorState {
 
         // Render the node. Special case code marks, since their content
         // may not be escaped.
-        if (noEsc && node.isText) {
+        if (noEscape && node.isText) {
           this.text(
-            this.markText(inner as Mark, true, parent, index) +
+            this.markText(lastMark as Mark, true, parent, index) +
               node.text +
-              this.markText(inner as Mark, false, parent, index + 1),
+              this.markText(lastMark as Mark, false, parent, index + 1),
             false
           );
         } else {

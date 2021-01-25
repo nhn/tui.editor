@@ -1,7 +1,7 @@
 import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap } from './markdown';
 import { Handler } from './event';
 import { EditorCommandFn } from './spec';
-import { ToMdCustomConvertorMap } from './convertor';
+import { ToMdConvertorMap } from './convertor';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -130,7 +130,7 @@ export interface EditorOptions {
   placeholder?: string;
   linkAttribute?: LinkAttribute;
   customHTMLRenderer?: CustomHTMLRenderer;
-  customMarkdownRenderer?: ToMdCustomConvertorMap;
+  customMarkdownRenderer?: ToMdConvertorMap;
   referenceDefinition?: boolean;
   customHTMLSanitizer?: CustomHTMLSanitizer;
   previewHighlight?: boolean;
