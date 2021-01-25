@@ -1,5 +1,5 @@
 import { oneLineTrim } from 'common-tags';
-import { render } from '@/new/renderer';
+import { render } from '@/new/vdom/renderer';
 import { Component } from '@/new/vdom/component';
 import { VNode } from '@/new/vdom/vnode';
 import html from '@/new/vdom/template';
@@ -21,7 +21,7 @@ class TestComponent extends Component<Props, State> {
     super(props);
     this.state = {
       hide: false,
-      conditional: true
+      conditional: true,
     };
   }
 
@@ -57,7 +57,7 @@ class TestComponent extends Component<Props, State> {
 
   render() {
     const style = {
-      display: this.state.hide ? 'none' : 'block'
+      display: this.state.hide ? 'none' : 'block',
     };
 
     return html`
@@ -69,27 +69,11 @@ class TestComponent extends Component<Props, State> {
           }
         }}
       >
-        <div style=${style}>
-          child
-        </div>
+        <div style=${style}>child</div>
         <div>
-          ${this.state.conditional
-            ? [1, 2, 3].map(
-                num =>
-                  html`
-                    <span>${num}</span>
-                  `
-              )
-            : null}
+          ${this.state.conditional ? [1, 2, 3].map((num) => html` <span>${num}</span> `) : null}
         </div>
-        ${this.state.conditional
-          ? [1, 2, 3].map(
-              num =>
-                html`
-                  <span>${num}</span>
-                `
-            )
-          : null}
+        ${this.state.conditional ? [1, 2, 3].map((num) => html` <span>${num}</span> `) : null}
         <button onClick=${() => this.show()}>show</button>
         <button onClick=${() => this.hide()}>hide</button>
         <button onClick=${() => this.conditionalRender()}>conditional</button>
@@ -104,12 +88,7 @@ describe('html', () => {
   it('should be rendered properly', () => {
     const wrapper = document.createElement('div');
 
-    render(
-      wrapper,
-      html`
-        <div class="my-comp" data-id="my-comp">test</div>
-      ` as VNode
-    );
+    render(wrapper, html` <div class="my-comp" data-id="my-comp">test</div> ` as VNode);
 
     expect(wrapper).toContainHTML('<div class="my-comp" data-id="my-comp">test</div>');
   });
@@ -126,16 +105,7 @@ describe('html', () => {
 
     render(
       wrapper,
-      html`
-        <div>
-          ${[1, 2, 3].map(
-            text =>
-              html`
-                <span>${text}</span>
-              `
-          )}
-        </div>
-      ` as VNode
+      html` <div>${[1, 2, 3].map((text) => html` <span>${text}</span> `)}</div> ` as VNode
     );
 
     expect(wrapper).toContainHTML(expected);
@@ -161,12 +131,7 @@ describe('html', () => {
         <div class="my-comp" data-id="my-comp">
           <nav>
             <ul>
-              ${['1', '2', '3'].map(
-                text =>
-                  html`
-                    <li>${text}</li>
-                  `
-              )}
+              ${['1', '2', '3'].map((text) => html` <li>${text}</li> `)}
             </ul>
           </nav>
         </div>
@@ -183,12 +148,7 @@ describe('html', () => {
       <div class="my-comp" style="display: inline-block; background-color: rgb(204, 204, 204);">test</div>
     `;
 
-    render(
-      wrapper,
-      html`
-        <div class="my-comp" style=${style}>test</div>
-      ` as VNode
-    );
+    render(wrapper, html` <div class="my-comp" style=${style}>test</div> ` as VNode);
 
     expect(wrapper).toContainHTML(expected);
   });
@@ -200,12 +160,7 @@ describe('html', () => {
       <div class="my-comp" style="position: absolute; top: 10px; left: 10px;">test</div>
     `;
 
-    render(
-      wrapper,
-      html`
-        <div class="my-comp" style=${style}>test</div>
-      ` as VNode
-    );
+    render(wrapper, html` <div class="my-comp" style=${style}>test</div> ` as VNode);
 
     expect(wrapper).toContainHTML(expected);
   });
@@ -227,12 +182,7 @@ describe('Class Component', () => {
   function renderComponent(spies?: Record<string, jest.Mock>) {
     container = document.createElement('div');
 
-    destroy = render(
-      container,
-      html`
-        <${TestComponent} ...${spies} />
-      ` as VNode
-    );
+    destroy = render(container, html` <${TestComponent} ...${spies} /> ` as VNode);
   }
 
   it('should be rendered properly', () => {

@@ -1,5 +1,5 @@
 import { Layout } from '@/new/components/layout';
-import { render } from '@/new/renderer';
+import { render } from '@/new/vdom/renderer';
 import { VNode } from '@/new/vdom/vnode';
 import html from '@/new/vdom/template';
 import EventEmitter from '@/event/eventEmitter';
@@ -80,7 +80,7 @@ describe('layout component', () => {
     const dummySlot = {
       mdEditor,
       mdPreview,
-      wwEditor
+      wwEditor,
     };
 
     container = document.createElement('div');

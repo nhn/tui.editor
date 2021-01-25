@@ -2,7 +2,7 @@ import isString from 'tui-code-snippet/type/isString';
 import { VNode } from '@t/ui';
 import EventEmitter from '@/event/eventEmitter';
 import html from '@/new/vdom/template';
-import { render } from '@/new/renderer';
+import { render } from '@/new/vdom/renderer';
 import { Toolbar } from '@/new/components/toolbar/toolbar';
 import '@/i18n/en-us';
 
@@ -26,7 +26,7 @@ function dispatchClick(selector: string) {
 function dispatchMouseover(selector: string) {
   const event = new MouseEvent('mouseover', {
     bubbles: true,
-    cancelable: true
+    cancelable: true,
   });
   const el = getElement(selector)!;
 
@@ -36,7 +36,7 @@ function dispatchMouseover(selector: string) {
 function dispatchMousemove(selector: string, x: number, y: number) {
   const event = new MouseEvent('mousemove', {
     bubbles: true,
-    cancelable: true
+    cancelable: true,
   });
 
   // @ts-ignore
@@ -59,7 +59,7 @@ describe('toolbar', () => {
       ['ul', 'ol', 'task', 'indent', 'outdent'],
       ['table', 'image', 'link'],
       ['code', 'codeblock'],
-      'scrollSync'
+      'scrollSync',
     ];
 
     container = document.createElement('div');
@@ -102,10 +102,10 @@ describe('toolbar', () => {
       '.tui-link',
       '.tui-code',
       '.tui-codeblock',
-      '.tui-scrollsync'
+      '.tui-scrollsync',
     ];
 
-    toolbarButtonSelectors.forEach(selector => {
+    toolbarButtonSelectors.forEach((selector) => {
       assertToContainElement(selector);
     });
   });
