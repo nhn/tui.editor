@@ -79,9 +79,11 @@ export class Toolbar extends Component<Props, State> {
     this.appendTooltipToBody();
   }
 
-  insertToolbarItem(indexes: Indexes, item: ToolbarItemOptions) {
+  insertToolbarItem(indexes: Indexes, item: string | ToolbarItemOptions) {
     const { groupIndex, itemIndex } = indexes;
     const group = this.initialItems[groupIndex];
+
+    item = createToolbarItemInfo(item);
 
     if (group) {
       group.splice(itemIndex, 0, item);

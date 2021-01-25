@@ -149,6 +149,6 @@ export interface Indexes {
 }
 export interface DefaultUI {
   destroy: () => void;
-  insertToolbarItem: (indexes: Indexes, item: ToolbarItemOptions) => void;
+  insertToolbarItem: (indexes: Indexes, item: string | ToolbarItemOptions) => void;
   removeToolbarItem: (name: string) => void;
 }

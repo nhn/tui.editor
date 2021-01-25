@@ -17,10 +17,29 @@ function assertToContainElement(el: HTMLElement | string) {
   expect(document.body).toContainElement(el);
 }
 
+function assertToNotContainElement(el: HTMLElement | string) {
+  if (isString(el)) {
+    el = getElement(el)!;
+  }
+  expect(document.body).not.toContainElement(el);
+}
+
 function dispatchClick(selector: string) {
   const el = getElement(selector)!;
 
   el.click();
+}
+
+function dispatchSelectChange(selector: string, value: string) {
+  const event = new Event('change', {
+    bubbles: true,
+    cancelable: true,
+  });
+  const el = getElement(selector)! as HTMLSelectElement;
+
+  el.value = value;
+
+  el.dispatchEvent(event);
 }
 
 function dispatchMouseover(selector: string) {
@@ -48,10 +67,9 @@ function dispatchMousemove(selector: string, x: number, y: number) {
 
   el.dispatchEvent(event);
 }
+let em: EventEmitter, container: HTMLElement, destroy: () => void;
 
-describe('toolbar', () => {
-  let em: EventEmitter, container: HTMLElement, destroy: () => void;
-
+describe('default toolbar', () => {
   beforeEach(() => {
     const toolbarItems = [
       ['heading', 'bold', 'italic', 'strike'],
@@ -336,5 +354,308 @@ describe('toolbar', () => {
         { columnCount: 5, rowCount: 4 }
       );
     });
+  });
+});
+
+describe('custom button toolbar', () => {
+  function createCustomButtonWithPopup() {
+    const body = document.createElement('select');
+
+    body.innerHTML = `
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    `;
+    body.addEventListener('change', (ev) => {
+      em.emit(
+        'command',
+        { type: 'markdown', command: 'heading' },
+        { level: Number((ev.target as HTMLSelectElement).value) }
+      );
+      em.emit('closePopup');
+      (ev.target as HTMLSelectElement).value = '1';
+    });
+
+    return {
+      name: 'myToolbarWithPopup',
+      tooltip: 'L!',
+      className: 'my-toolbar-with-popup',
+      text: 'L!',
+      style: { color: '#fff', width: 30 },
+      popup: {
+        body,
+        className: 'my-popup',
+        style: { width: 'auto' },
+      },
+    };
+  }
+
+  const customButton = {
+    name: 'myToolbar',
+    tooltip: 'B!',
+    className: 'my-toolbar',
+    command: 'bold',
+    text: 'B!',
+    style: { color: '#222', width: 40 },
+  };
+  const customButtonWithPopup = createCustomButtonWithPopup();
+
+  beforeEach(() => {
+    const toolbarItems = [[customButton, customButtonWithPopup]];
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    em = new EventEmitter();
+
+    destroy = render(
+      container,
+      html`
+        <${Toolbar}
+          eventEmitter=${em}
+          previewStyle="vertical"
+          toolbarItems=${toolbarItems}
+          editorType="markdown"
+        />
+      ` as VNode
+    );
+  });
+
+  afterEach(() => {
+    destroy();
+  });
+
+  it('should be rendered properly', () => {
+    const customToolbar1 = getElement('.my-toolbar');
+    const customToolbar2 = getElement('.my-toolbar-with-popup');
+
+    expect(customToolbar1).toHaveTextContent('B!');
+    expect(customToolbar1).toHaveStyle({ color: '#222', width: '40px' });
+
+    expect(customToolbar2).toHaveTextContent('L!');
+    expect(customToolbar2).toHaveStyle({ color: '#fff', width: '30px' });
+  });
+
+  it('should show tooltip when mouseover on toolbar button', () => {
+    dispatchMouseover('.my-toolbar');
+
+    const tooltip = getElement('.tui-tooltip');
+
+    expect(tooltip).toHaveStyle({ display: 'block' });
+  });
+
+  it('should trigger command event when clicking button', () => {
+    const spy = jest.fn();
+
+    em.listen('command', spy);
+
+    dispatchClick('.my-toolbar');
+
+    // eslint-disable-next-line no-undefined
+    expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'bold' }, undefined);
+  });
+
+  it('should show the popup when clicking button with popup option', () => {
+    dispatchClick('.my-toolbar-with-popup');
+
+    const customPopup = getElement('.my-popup');
+
+    expect(customPopup).toHaveStyle({ display: 'block', width: 'auto' });
+    expect(customPopup).toHaveClass('my-popup');
+  });
+
+  it('should operate properly when event is triggered in popup', () => {
+    const spy = jest.fn();
+
+    em.listen('command', spy);
+
+    dispatchClick('.my-toolbar-with-popup');
+    dispatchClick('select');
+    dispatchSelectChange('select', '3');
+
+    expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'heading' }, { level: 3 });
+  });
+});
+
+describe('custom toolbar element', () => {
+  function createCustomItem() {
+    const el = document.createElement('div');
+
+    el.className = 'my-toolbar';
+    el.textContent = 'custom1';
+
+    return {
+      el,
+      name: 'myToolbar',
+      tooltip: 'custom1!',
+    };
+  }
+
+  function createCustomItemWithPopup() {
+    const el = document.createElement('div');
+
+    el.textContent = 'custom2';
+
+    const body = document.createElement('select');
+
+    body.innerHTML = `
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    `;
+    body.addEventListener('change', (ev) => {
+      em.emit(
+        'command',
+        { type: 'markdown', command: 'heading' },
+        { level: Number((ev.target as HTMLSelectElement).value) }
+      );
+      em.emit('closePopup');
+      (ev.target as HTMLSelectElement).value = '1';
+    });
+
+    el.className = 'my-toolbar-with-popup';
+
+    return {
+      el,
+      name: 'myToolbarWithPopup',
+      tooltip: 'custom2!',
+      popup: {
+        body,
+        className: 'my-popup',
+        style: { width: 'auto' },
+      },
+    };
+  }
+
+  const customItem = createCustomItem();
+  const customItemWithPopup = createCustomItemWithPopup();
+
+  beforeEach(() => {
+    const toolbarItems = [[customItem, customItemWithPopup]];
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    em = new EventEmitter();
+
+    destroy = render(
+      container,
+      html`
+        <${Toolbar}
+          eventEmitter=${em}
+          previewStyle="vertical"
+          toolbarItems=${toolbarItems}
+          editorType="markdown"
+        />
+      ` as VNode
+    );
+  });
+
+  afterEach(() => {
+    destroy();
+  });
+
+  it('should be rendered properly', () => {
+    const customToolbar1 = getElement('.my-toolbar');
+    const customToolbar2 = getElement('.my-toolbar-with-popup');
+
+    expect(customToolbar1).toHaveTextContent('custom1');
+    expect(customToolbar2).toHaveTextContent('custom2');
+  });
+
+  it('should show tooltip when mouseover on toolbar button', () => {
+    dispatchMouseover('.my-toolbar');
+
+    const tooltip = getElement('.tui-tooltip');
+
+    expect(tooltip).toHaveStyle({ display: 'block' });
+  });
+
+  it('should show the popup when clicking custom toolbar item with popup option', () => {
+    dispatchClick('.my-toolbar-with-popup');
+
+    const customPopup = getElement('.my-popup');
+
+    expect(customPopup).toHaveStyle({ display: 'block', width: 'auto' });
+    expect(customPopup).toHaveClass('my-popup');
+  });
+
+  it('should operate properly when event is triggered in popup', () => {
+    const spy = jest.fn();
+
+    em.listen('command', spy);
+
+    dispatchClick('.my-toolbar-with-popup');
+    dispatchClick('select');
+    dispatchSelectChange('select', '3');
+
+    expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'heading' }, { level: 3 });
+  });
+});
+
+describe('API', () => {
+  let ref: Toolbar | null;
+
+  beforeEach(() => {
+    const toolbarItems = [['bold', 'italic']];
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    em = new EventEmitter();
+
+    destroy = render(
+      container,
+      html`
+        <${Toolbar}
+          ref=${(toolbar: Toolbar) => (ref = toolbar)}
+          eventEmitter=${em}
+          previewStyle="vertical"
+          toolbarItems=${toolbarItems}
+          editorType="markdown"
+        />
+      ` as VNode
+    );
+  });
+
+  afterEach(() => {
+    ref = null;
+    destroy();
+  });
+
+  it('should insert item on calling insertToolbarItem', () => {
+    ref!.insertToolbarItem({ groupIndex: 0, itemIndex: 1 }, 'strike');
+
+    const toolbarItems = document.querySelectorAll('button.tui-toolbar-icons:not(.tui-more)');
+
+    expect(toolbarItems[0]).toHaveClass('tui-bold');
+    expect(toolbarItems[1]).toHaveClass('tui-strike');
+    expect(toolbarItems[2]).toHaveClass('tui-italic');
+    // should have same parent because the toolbar is added to same group
+    expect(toolbarItems[1].parentElement).toEqual(toolbarItems[2].parentElement);
+  });
+
+  it('should add item on calling insertToolbarItem', () => {
+    ref!.insertToolbarItem({ groupIndex: 1, itemIndex: 1 }, 'strike');
+
+    const toolbarItems = document.querySelectorAll('button.tui-toolbar-icons:not(.tui-more)');
+
+    expect(toolbarItems[0]).toHaveClass('tui-bold');
+    expect(toolbarItems[1]).toHaveClass('tui-italic');
+    expect(toolbarItems[2]).toHaveClass('tui-strike');
+    // should have different parent because the toolbar is added to another group
+    expect(toolbarItems[1].parentElement).not.toEqual(toolbarItems[2].parentElement);
+  });
+
+  it('should remove item on calling removeToolbarItem', () => {
+    ref!.removeToolbarItem('bold');
+
+    assertToNotContainElement('.tui-bold');
   });
 });

@@ -49,7 +49,7 @@ export class Layout extends Component<Props, State> {
     this.refs.mdContainer.appendChild(mdPreview);
   }
 
-  insertToolbarItem(indexes: Indexes, item: ToolbarItemOptions) {
+  insertToolbarItem(indexes: Indexes, item: string | ToolbarItemOptions) {
     this.toolbar.insertToolbarItem(indexes, item);
   }
 
