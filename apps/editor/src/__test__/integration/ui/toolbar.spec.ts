@@ -602,8 +602,12 @@ describe('custom toolbar element', () => {
 describe('API', () => {
   let ref: Toolbar | null;
 
+  function getToolbarItems() {
+    return getElement('.tui-editor-defaultUI-toolbar').querySelectorAll('button:not(.tui-more)');
+  }
+
   beforeEach(() => {
-    const toolbarItems = [['bold', 'italic']];
+    const toolbarItems = [['heading', 'bold', 'italic', 'strike']];
 
     container = document.createElement('div');
     document.body.appendChild(container);
@@ -622,6 +626,9 @@ describe('API', () => {
         />
       ` as VNode
     );
+    jest
+      .spyOn(getElement('.tui-editor-defaultUI-toolbar'), 'clientWidth', 'get')
+      .mockImplementation(() => 500);
   });
 
   afterEach(() => {
@@ -630,27 +637,56 @@ describe('API', () => {
   });
 
   it('should insert item on calling insertToolbarItem', () => {
-    ref!.insertToolbarItem({ groupIndex: 0, itemIndex: 1 }, 'strike');
+    ref!.insertToolbarItem({ groupIndex: 0, itemIndex: 1 }, 'ol');
 
-    const toolbarItems = document.querySelectorAll('button.tui-toolbar-icons:not(.tui-more)');
+    const toolbarItems = getToolbarItems();
 
-    expect(toolbarItems[0]).toHaveClass('tui-bold');
-    expect(toolbarItems[1]).toHaveClass('tui-strike');
-    expect(toolbarItems[2]).toHaveClass('tui-italic');
+    expect(toolbarItems[0]).toHaveClass('tui-heading');
+    expect(toolbarItems[1]).toHaveClass('tui-ol');
+    expect(toolbarItems[2]).toHaveClass('tui-bold');
+    expect(toolbarItems[3]).toHaveClass('tui-italic');
+    expect(toolbarItems[4]).toHaveClass('tui-strike');
     // should have same parent because the toolbar is added to same group
     expect(toolbarItems[1].parentElement).toEqual(toolbarItems[2].parentElement);
   });
 
   it('should add item on calling insertToolbarItem', () => {
-    ref!.insertToolbarItem({ groupIndex: 1, itemIndex: 1 }, 'strike');
+    ref!.insertToolbarItem({ groupIndex: 1, itemIndex: 1 }, 'ol');
 
-    const toolbarItems = document.querySelectorAll('button.tui-toolbar-icons:not(.tui-more)');
+    const toolbarItems = getToolbarItems();
 
-    expect(toolbarItems[0]).toHaveClass('tui-bold');
-    expect(toolbarItems[1]).toHaveClass('tui-italic');
-    expect(toolbarItems[2]).toHaveClass('tui-strike');
+    expect(toolbarItems[0]).toHaveClass('tui-heading');
+    expect(toolbarItems[1]).toHaveClass('tui-bold');
+    expect(toolbarItems[2]).toHaveClass('tui-italic');
+    expect(toolbarItems[3]).toHaveClass('tui-strike');
+    expect(toolbarItems[4]).toHaveClass('tui-ol');
     // should have different parent because the toolbar is added to another group
-    expect(toolbarItems[1].parentElement).not.toEqual(toolbarItems[2].parentElement);
+    expect(toolbarItems[3].parentElement).not.toEqual(toolbarItems[4].parentElement);
+  });
+
+  it('should insert custom toolbar item on calling insertToolbarItem', () => {
+    const customButton = {
+      name: 'myToolbar',
+      tooltip: 'B!',
+      className: 'my-toolbar',
+      command: 'bold',
+      text: 'B!',
+      style: { color: '#222', width: 40 },
+    };
+
+    ref!.insertToolbarItem({ groupIndex: 0, itemIndex: 1 }, customButton);
+
+    const toolbarItems = getToolbarItems();
+
+    expect(toolbarItems[0]).toHaveClass('tui-heading');
+
+    expect(toolbarItems[1]).toHaveClass('my-toolbar');
+    expect(toolbarItems[1]).toHaveTextContent('B!');
+    expect(toolbarItems[1]).toHaveStyle({ color: '#222', width: '40px' });
+
+    expect(toolbarItems[2]).toHaveClass('tui-bold');
+    expect(toolbarItems[3]).toHaveClass('tui-italic');
+    expect(toolbarItems[4]).toHaveClass('tui-strike');
   });
 
   it('should remove item on calling removeToolbarItem', () => {
