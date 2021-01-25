@@ -291,6 +291,12 @@
   background: #fff;
 }
 
+.tui-toolbar-item-wrapper {
+  float: left;
+  margin: 5px 3px;
+  height: 22px;
+}
+
 .tui-editor-defaultUI button.tui-scrollsync:after {
   content: 'Scroll off';
 }

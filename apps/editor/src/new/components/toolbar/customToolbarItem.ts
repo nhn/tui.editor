@@ -32,7 +32,6 @@ class CustomToolbarItemComp extends Component<Props> {
 
     // append the custom html element
     this.refs.el.appendChild(item.el!);
-
     // set width only if it is not a dropdown toolbar
     if (setItemWidth) {
       setItemWidth(item.name, getOuterWidth(this.refs.el));
@@ -59,7 +58,7 @@ class CustomToolbarItemComp extends Component<Props> {
     return html`
       <div
         ref=${(el: HTMLElement) => (this.refs.el = el)}
-        style="float: left;"
+        class="tui-toolbar-item-wrapper"
         onClick=${this.showPopup}
         onMouseover=${this.showTooltip}
         onMouseout=${this.props.hideTooltip}
