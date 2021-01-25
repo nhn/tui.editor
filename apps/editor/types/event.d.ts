@@ -94,4 +94,4 @@ export type EventTypes =
   | 'requireScrollIntoView'
   | 'setCodeBlockLanguages'
   | 'toggleScrollSync'
-  | 'closeLayer';
+  | 'closePopup';

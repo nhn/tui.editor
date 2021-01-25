@@ -1,4 +1,4 @@
-import { ContextMenuItem, ExecCommand, LayerInfo, Pos, VNode } from '@t/ui';
+import { ContextMenuItem, ExecCommand, Pos, VNode } from '@t/ui';
 import { Emitter } from '@t/event';
 import { closest } from '@/utils/dom';
 import html from '../vdom/template';
@@ -10,7 +10,6 @@ interface State {
 }
 
 interface Props {
-  info: LayerInfo;
   eventEmitter: Emitter;
   execCommand: ExecCommand;
 }

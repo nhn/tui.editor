@@ -129,15 +129,15 @@ describe('toolbar', () => {
     expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'bold' }, undefined);
   });
 
-  it('should hide the layer when clicking X button on layer', () => {
+  it('should hide the popup when clicking X button on popup', () => {
     dispatchClick('.tui-link');
 
-    const linkLayer = getElement('.te-popup-add-link');
+    const linkPopup = getElement('.te-popup-add-link');
     const closeBtn = getElement('.te-popup-add-link .tui-popup-close-button');
 
     closeBtn.click();
 
-    expect(linkLayer).toHaveStyle({ display: 'none' });
+    expect(linkPopup).toHaveStyle({ display: 'none' });
   });
 
   describe('scroll sync button', () => {
@@ -173,15 +173,15 @@ describe('toolbar', () => {
   });
 
   describe('heading button', () => {
-    it('should show the layer when clicking heading button', () => {
+    it('should show the popup when clicking heading button', () => {
       dispatchClick('.tui-heading');
 
-      const headingLayer = getElement('.te-heading-add');
+      const headingPopup = getElement('.te-heading-add');
 
-      expect(headingLayer).toHaveStyle({ display: 'block' });
+      expect(headingPopup).toHaveStyle({ display: 'block' });
     });
 
-    it('should trigger command event when clicking heading layer button', () => {
+    it('should trigger command event when clicking heading popup button', () => {
       const spy = jest.fn();
 
       em.listen('command', spy);
@@ -194,21 +194,21 @@ describe('toolbar', () => {
   });
 
   describe('link button', () => {
-    it('should show the layer when clicking link button', () => {
+    it('should show the popup when clicking link button', () => {
       dispatchClick('.tui-link');
 
-      const linkLayer = getElement('.te-popup-add-link');
+      const linkPopup = getElement('.te-popup-add-link');
 
-      expect(linkLayer).toHaveStyle({ display: 'block' });
+      expect(linkPopup).toHaveStyle({ display: 'block' });
     });
 
-    it('should hide layer when clicking Cancel button', () => {
+    it('should hide popup when clicking Cancel button', () => {
       dispatchClick('.tui-link');
       dispatchClick('.te-popup-add-link .te-close-button');
 
-      const linkLayer = getElement('.te-popup-add-link');
+      const linkPopup = getElement('.te-popup-add-link');
 
-      expect(linkLayer).toHaveStyle({ display: 'none' });
+      expect(linkPopup).toHaveStyle({ display: 'none' });
     });
 
     it('should trigger command event when clicking OK button', () => {
@@ -250,21 +250,21 @@ describe('toolbar', () => {
   });
 
   describe('image button', () => {
-    it('should show the layer when clicking image button', () => {
+    it('should show the popup when clicking image button', () => {
       dispatchClick('.tui-image');
 
-      const imageLayer = getElement('.te-popup-add-image');
+      const imagePopup = getElement('.te-popup-add-image');
 
-      expect(imageLayer).toHaveStyle({ display: 'block' });
+      expect(imagePopup).toHaveStyle({ display: 'block' });
     });
 
-    it('should hide layer when clicking Cancel button', () => {
+    it('should hide popup when clicking Cancel button', () => {
       dispatchClick('.tui-image');
       dispatchClick('.te-popup-add-image .te-close-button');
 
-      const imageLayer = getElement('.te-popup-add-image');
+      const imagePopup = getElement('.te-popup-add-image');
 
-      expect(imageLayer).toHaveStyle({ display: 'none' });
+      expect(imagePopup).toHaveStyle({ display: 'none' });
     });
 
     it('should toggle tab when clicking the file or url tab', () => {
@@ -313,12 +313,12 @@ describe('toolbar', () => {
   });
 
   describe('table button', () => {
-    it('should show the layer when clicking table button', () => {
+    it('should show the popup when clicking table button', () => {
       dispatchClick('.tui-table');
 
-      const tableLayer = getElement('.te-popup-add-table');
+      const tablePopup = getElement('.te-popup-add-table');
 
-      expect(tableLayer).toHaveStyle({ display: 'block' });
+      expect(tablePopup).toHaveStyle({ display: 'block' });
     });
 
     it('should trigger command event when selecting the area and clicking it', () => {

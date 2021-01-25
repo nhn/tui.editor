@@ -10,7 +10,7 @@ interface Props {
   execCommand: ExecCommand;
 }
 
-export class HeadingLayerBody extends Component<Props> {
+export class HeadingPopupBody extends Component<Props> {
   execCommand(ev: MouseEvent) {
     const el = closest(ev.target as HTMLElement, 'li')! as HTMLElement;
 

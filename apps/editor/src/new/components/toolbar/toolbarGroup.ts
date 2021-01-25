@@ -1,6 +1,6 @@
 import {
   ExecCommand,
-  SetLayerInfo,
+  SetPopupInfo,
   ToolbarGroupInfo,
   SetItemWidth,
   GetBound,
@@ -22,7 +22,7 @@ interface Props {
   hiddenDivider: boolean;
   eventEmitter: Emitter;
   execCommand: ExecCommand;
-  setLayerInfo: SetLayerInfo;
+  setPopupInfo: SetPopupInfo;
   showTooltip: ShowTooltip;
   hideTooltip: HideTooltip;
   getBound: GetBound;

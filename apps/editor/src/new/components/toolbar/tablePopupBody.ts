@@ -27,7 +27,7 @@ const MIN_COL_SELECTION_INDEX = 1;
 const HEADER_ROW_COUNT = 1;
 const BORDER_WIDTH = 1;
 
-export class TableLayerBody extends Component<Props, State> {
+export class TablePopupBody extends Component<Props, State> {
   private offsetRect!: Pos;
 
   constructor(props: Props) {

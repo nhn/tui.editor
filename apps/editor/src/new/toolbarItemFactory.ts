@@ -1,7 +1,7 @@
 import isString from 'tui-code-snippet/type/isString';
 import {
-  LayerInfo,
-  LayerOptions,
+  PopupInfo,
+  PopupOptions,
   Pos,
   ToolbarButtonInfo,
   ToolbarGroupInfo,
@@ -11,11 +11,11 @@ import {
 } from '@t/ui';
 import i18n from '@/i18n/i18n';
 import html from './vdom/template';
-import { HeadingLayerBody } from './components/toolbar/headingLayerBody';
-import { ImageLayerBody } from './components/toolbar/imageLayerBody';
-import { LinkLayerBody } from './components/toolbar/linkLayerBody';
-import { TableLayerBody } from './components/toolbar/tableLayerBody';
-import { CustomLayer } from './components/toolbar/customLayerBody';
+import { HeadingPopupBody } from './components/toolbar/headingPopupBody';
+import { ImagePopupBody } from './components/toolbar/imagePopupBody';
+import { LinkPopupBody } from './components/toolbar/linkPopupBody';
+import { TablePopupBody } from './components/toolbar/tablePopupBody';
+import { CustomPopupBody } from './components/toolbar/customPopupBody';
 
 let toolbarItemInfoMap: Record<string, ToolbarItemInfo> | null = null;
 
@@ -161,24 +161,24 @@ function createDefaultToolbarItemInfo() {
 interface Payload {
   el: HTMLElement;
   pos: Pos;
-  layer?: LayerOptions;
+  popup?: PopupOptions;
 }
 
 // eslint-disable-next-line consistent-return
-export function createLayerInfo(type: string, payload: Payload): LayerInfo | undefined {
-  const { el, pos, layer } = payload;
+export function createPopupInfo(type: string, payload: Payload): PopupInfo | undefined {
+  const { el, pos, popup } = payload;
 
   switch (type) {
     case 'heading':
       return {
-        render: (props) => html`<${HeadingLayerBody} ...${props} />`,
+        render: (props) => html`<${HeadingPopupBody} ...${props} />`,
         className: 'te-heading-add',
         fromEl: el,
         pos,
       };
     case 'link':
       return {
-        render: (props) => html`<${LinkLayerBody} ...${props} />`,
+        render: (props) => html`<${LinkPopupBody} ...${props} />`,
         className: 'te-popup-add-link tui-editor-popup',
         headerText: i18n.get('Insert link'),
         fromEl: el,
@@ -186,7 +186,7 @@ export function createLayerInfo(type: string, payload: Payload): LayerInfo | und
       };
     case 'image':
       return {
-        render: (props) => html`<${ImageLayerBody} ...${props} />`,
+        render: (props) => html`<${ImagePopupBody} ...${props} />`,
         className: 'te-popup-add-image tui-editor-popup',
         headerText: i18n.get('Insert image'),
         fromEl: el,
@@ -194,17 +194,17 @@ export function createLayerInfo(type: string, payload: Payload): LayerInfo | und
       };
     case 'table':
       return {
-        render: (props) => html`<${TableLayerBody} ...${props} />`,
+        render: (props) => html`<${TablePopupBody} ...${props} />`,
         className: 'te-popup-add-table',
         fromEl: el,
         pos,
       };
-    case 'customLayer':
+    case 'customPopupBody':
       return {
-        render: (props) => html`<${CustomLayer} ...${props} layerBody=${layer!.layerBody} />`,
+        render: (props) => html`<${CustomPopupBody} ...${props} body=${popup!.body} />`,
         fromEl: el,
         pos,
-        ...layer!,
+        ...popup!,
       };
     default:
     // do nothing

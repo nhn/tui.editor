@@ -1,6 +1,6 @@
 import {
   ExecCommand,
-  SetLayerInfo,
+  SetPopupInfo,
   ToolbarState,
   SetItemWidth,
   GetBound,
@@ -11,7 +11,7 @@ import {
 import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
-import { createLayerInfo } from '@/new/toolbarItemFactory';
+import { createPopupInfo } from '@/new/toolbarItemFactory';
 import { getOuterWidth } from '@/utils/dom';
 import { connectHOC } from './buttonHoc';
 
@@ -24,7 +24,7 @@ interface Props {
   eventEmitter: Emitter;
   item: ToolbarButtonInfo;
   execCommand: ExecCommand;
-  setLayerInfo: SetLayerInfo;
+  setPopupInfo: SetPopupInfo;
   showTooltip: ShowTooltip;
   hideTooltip: HideTooltip;
   getBound: GetBound;
@@ -79,8 +79,8 @@ export class ToolbarButtonComp extends Component<Props, State> {
   };
 
   private execCommand = () => {
-    const { item, execCommand, setLayerInfo, getBound } = this.props;
-    const { command, name, toggle } = item;
+    const { item, execCommand, setPopupInfo, getBound } = this.props;
+    const { command, name, toggle, popup } = item;
     let newState;
 
     if (toggle) {
@@ -95,10 +95,15 @@ export class ToolbarButtonComp extends Component<Props, State> {
     if (command) {
       execCommand(command, newState);
     } else {
-      const info = createLayerInfo(name, { el: this.refs.el, pos: getBound(this.refs.el) });
+      const popupName = popup ? 'customPopupBody' : name;
+      const info = createPopupInfo(popupName, {
+        el: this.refs.el,
+        pos: getBound(this.refs.el),
+        popup,
+      });
 
       if (info) {
-        setLayerInfo(info);
+        setPopupInfo(info);
       }
     }
   };

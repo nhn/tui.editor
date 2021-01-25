@@ -1,25 +1,25 @@
-import { ExecCommand, HideLayer } from '@t/ui';
+import { ExecCommand, HidePopup } from '@t/ui';
 import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
 
 interface Props {
-  layerBody: HTMLElement;
+  body: HTMLElement;
   show: boolean;
   eventEmitter: Emitter;
   execCommand: ExecCommand;
-  hideLayer: HideLayer;
+  hidePopup: HidePopup;
 }
 
-export class CustomLayer extends Component<Props> {
+export class CustomPopupBody extends Component<Props> {
   constructor(props: Props) {
     super(props);
-    props.eventEmitter.listen('closeLayer', this.props.hideLayer);
+    props.eventEmitter.listen('closePopup', this.props.hidePopup);
   }
 
   mounted() {
-    // append the custom layer body element
-    this.refs.el.appendChild(this.props.layerBody);
+    // append the custom popup body element
+    this.refs.el.appendChild(this.props.body);
   }
 
   render() {

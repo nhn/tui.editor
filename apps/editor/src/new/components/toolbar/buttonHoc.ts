@@ -1,7 +1,7 @@
 import css from 'tui-code-snippet/domUtil/css';
 import {
   ExecCommand,
-  SetLayerInfo,
+  SetPopupInfo,
   ToolbarItemInfo,
   SetItemWidth,
   ComponentClass,
@@ -17,7 +17,7 @@ interface Props {
   eventEmitter: Emitter;
   item: ToolbarItemInfo;
   execCommand: ExecCommand;
-  setLayerInfo: SetLayerInfo;
+  setPopupInfo: SetPopupInfo;
   setItemWidth?: SetItemWidth;
 }
 

@@ -1,7 +1,7 @@
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import { Emitter } from '@t/event';
-import { ExecCommand, HideLayer } from '@t/ui';
+import { ExecCommand, HidePopup } from '@t/ui';
 import i18n from '@/i18n/i18n';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
@@ -9,11 +9,11 @@ import { Component } from '@/new/vdom/component';
 interface Props {
   eventEmitter: Emitter;
   execCommand: ExecCommand;
-  hideLayer: HideLayer;
+  hidePopup: HidePopup;
   show: boolean;
 }
 
-export class LinkLayerBody extends Component<Props> {
+export class LinkPopupBody extends Component<Props> {
   private initialize() {
     const linkUrl = this.refs.url as HTMLInputElement;
     const linkText = this.refs.text as HTMLInputElement;
@@ -43,7 +43,7 @@ export class LinkLayerBody extends Component<Props> {
 
     this.props.execCommand('addLink', {
       linkUrl: linkUrl.value,
-      linkText: linkText.value
+      linkText: linkText.value,
     });
   };
 
@@ -74,7 +74,7 @@ export class LinkLayerBody extends Component<Props> {
           <button type="button" class="te-ok-button" onClick=${this.execCommand}>
             ${i18n.get('OK')}
           </button>
-          <button type="button" class="te-close-button" onClick=${this.props.hideLayer}>
+          <button type="button" class="te-close-button" onClick=${this.props.hidePopup}>
             ${i18n.get('Cancel')}
           </button>
         </div>

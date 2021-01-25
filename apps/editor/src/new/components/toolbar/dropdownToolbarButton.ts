@@ -1,7 +1,7 @@
 import {
   ExecCommand,
   Pos,
-  SetLayerInfo,
+  SetPopupInfo,
   ToolbarItemInfo,
   GetBound,
   HideTooltip,
@@ -21,7 +21,7 @@ interface Props {
   item: ToolbarButtonInfo;
   items: ToolbarItemInfo[];
   execCommand: ExecCommand;
-  setLayerInfo: SetLayerInfo;
+  setPopupInfo: SetPopupInfo;
   showTooltip: ShowTooltip;
   hideTooltip: HideTooltip;
   getBound: GetBound;
@@ -32,7 +32,7 @@ interface State {
   showDropdown: boolean;
 }
 
-const LAYER_INDENT = 4;
+const POPUP_INDENT = 4;
 
 class DropdownToolbarButtonComp extends Component<Props, State> {
   constructor(props: Props) {
@@ -46,7 +46,7 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
     findNodes(this.refs.dropdownEl, '.te-toolbar-group').forEach((el) => {
       rect.left -= (el as HTMLElement).offsetWidth;
     });
-    rect.top += LAYER_INDENT;
+    rect.top += POPUP_INDENT;
 
     return rect;
   }

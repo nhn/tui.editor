@@ -1,5 +1,5 @@
 import { Emitter } from '@t/event';
-import { ExecCommand, HideLayer, TabInfo } from '@t/ui';
+import { ExecCommand, HidePopup, TabInfo } from '@t/ui';
 import i18n from '@/i18n/i18n';
 import { Component } from '@/new/vdom/component';
 import html from '@/new/vdom/template';
@@ -14,24 +14,24 @@ interface Props {
   show: boolean;
   eventEmitter: Emitter;
   execCommand: ExecCommand;
-  hideLayer: HideLayer;
+  hidePopup: HidePopup;
 }
 
 interface State {
   activeTab: TabType;
 }
 
-export class ImageLayerBody extends Component<Props, State> {
+export class ImagePopupBody extends Component<Props, State> {
   private tabs: TabInfo[];
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      activeTab: 'file'
+      activeTab: 'file',
     };
     this.tabs = [
       { name: 'file', text: 'File' },
-      { name: 'url', text: 'URL' }
+      { name: 'url', text: 'URL' },
     ];
     this.addEvent();
   }
@@ -40,7 +40,7 @@ export class ImageLayerBody extends Component<Props, State> {
     this.props.eventEmitter.listen('addImageBlobHook', (blob: File, callback: HookCallback) => {
       const reader = new FileReader();
 
-      reader.onload = event => {
+      reader.onload = (event) => {
         callback(event.target!.result as string);
       };
 
@@ -62,7 +62,7 @@ export class ImageLayerBody extends Component<Props, State> {
     if (imageUrl) {
       this.props.execCommand('addImage', {
         imageUrl,
-        altText
+        altText,
       });
     } else {
       const { files } = this.refs.file as HTMLInputElement;
@@ -127,7 +127,7 @@ export class ImageLayerBody extends Component<Props, State> {
           <button type="button" class="te-ok-button" onClick=${this.execCommand}>
             ${i18n.get('OK')}
           </button>
-          <button type="button" class="te-close-button" onClick=${this.props.hideLayer}>
+          <button type="button" class="te-close-button" onClick=${this.props.hidePopup}>
             ${i18n.get('Cancel')}
           </button>
         </div>

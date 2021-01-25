@@ -2,7 +2,7 @@ import throttle from 'tui-code-snippet/tricks/throttle';
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
 import {
-  LayerInfo,
+  PopupInfo,
   TabInfo,
   TargetIndexes,
   ToolbarGroupInfo,
@@ -18,7 +18,7 @@ import {
   groupToolbarItems,
   setGroupState,
 } from '@/new/toolbarItemFactory';
-import { Layer } from '../layer';
+import { Popup } from '../popup';
 import { Tabs } from '../tabs';
 import { ToolbarGroup } from './toolbarGroup';
 import { DropdownToolbarButton } from './dropdownToolbarButton';
@@ -33,8 +33,8 @@ interface Props {
 }
 
 interface State {
-  showLayer: boolean;
-  layerInfo: LayerInfo;
+  showPopup: boolean;
+  popupInfo: PopupInfo;
   activeTab: TabType;
   items: ToolbarGroupInfo[];
   dropdownItems: ToolbarGroupInfo[];
@@ -70,8 +70,8 @@ export class Toolbar extends Component<Props, State> {
     this.state = {
       items: this.initialItems,
       dropdownItems: [],
-      showLayer: false,
-      layerInfo: {} as LayerInfo,
+      showPopup: false,
+      popupInfo: {} as PopupInfo,
       activeTab: 'write',
     };
     this.addEvent();
@@ -133,13 +133,13 @@ export class Toolbar extends Component<Props, State> {
     this.itemWidthMap[name] = width;
   };
 
-  private setLayerInfo = (layerInfo: LayerInfo) => {
-    this.setState({ showLayer: true, layerInfo });
+  private setPopupInfo = (popupInfo: PopupInfo) => {
+    this.setState({ showPopup: true, popupInfo });
   };
 
-  private hideLayer = () => {
-    if (this.state.showLayer) {
-      this.setState({ showLayer: false });
+  private hidePopup = () => {
+    if (this.state.showPopup) {
+      this.setState({ showPopup: false });
     }
   };
 
@@ -147,7 +147,7 @@ export class Toolbar extends Component<Props, State> {
     const { eventEmitter, editorType } = this.props;
 
     eventEmitter.emit('command', { type: editorType, command }, payload);
-    this.hideLayer();
+    this.hidePopup();
   };
 
   private classifyToolbarItems() {
@@ -218,13 +218,13 @@ export class Toolbar extends Component<Props, State> {
 
   render() {
     const { previewStyle, eventEmitter, editorType } = this.props;
-    const { layerInfo, showLayer, activeTab, items, dropdownItems } = this.state;
+    const { popupInfo, showPopup, activeTab, items, dropdownItems } = this.state;
     const props = {
       eventEmitter,
       tooltipEl: this.tooltipEl,
       disabled: editorType === 'markdown' && previewStyle === 'tab' && activeTab === 'preview',
       execCommand: this.execCommand,
-      setLayerInfo: this.setLayerInfo,
+      setPopupInfo: this.setPopupInfo,
     };
 
     return html`
@@ -254,11 +254,11 @@ export class Toolbar extends Component<Props, State> {
             ...${props}
           />
         </div>
-        <${Layer}
-          info=${layerInfo}
-          show=${showLayer}
+        <${Popup}
+          info=${popupInfo}
+          show=${showPopup}
           eventEmitter=${eventEmitter}
-          hideLayer=${this.hideLayer}
+          hidePopup=${this.hidePopup}
           execCommand=${this.execCommand}
         />
       </div>

@@ -1,6 +1,6 @@
 import {
   ExecCommand,
-  SetLayerInfo,
+  SetPopupInfo,
   SetItemWidth,
   GetBound,
   HideTooltip,
@@ -11,7 +11,7 @@ import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
 import { getOuterWidth } from '@/utils/dom';
-import { createLayerInfo } from '@/new/toolbarItemFactory';
+import { createPopupInfo } from '@/new/toolbarItemFactory';
 import { connectHOC } from './buttonHoc';
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
   eventEmitter: Emitter;
   item: ToolbarCustomOptions;
   execCommand: ExecCommand;
-  setLayerInfo: SetLayerInfo;
+  setPopupInfo: SetPopupInfo;
   showTooltip: ShowTooltip;
   hideTooltip: HideTooltip;
   getBound: GetBound;
@@ -43,15 +43,15 @@ class CustomToolbarItemComp extends Component<Props> {
     this.props.showTooltip(this.refs.el);
   };
 
-  private showLayer = () => {
-    const info = createLayerInfo('customLayer', {
+  private showPopup = () => {
+    const info = createPopupInfo('customPopupBody', {
       el: this.refs.el,
       pos: this.props.getBound(this.refs.el),
-      layer: this.props.item.layer!,
+      popup: this.props.item.popup!,
     });
 
     if (info) {
-      this.props.setLayerInfo(info);
+      this.props.setPopupInfo(info);
     }
   };
 
@@ -60,7 +60,7 @@ class CustomToolbarItemComp extends Component<Props> {
       <div
         ref=${(el: HTMLElement) => (this.refs.el = el)}
         style="float: left;"
-        onClick=${this.showLayer}
+        onClick=${this.showPopup}
         onMouseover=${this.showTooltip}
         onMouseout=${this.props.hideTooltip}
       ></div>

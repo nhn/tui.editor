@@ -1,5 +1,5 @@
-export interface LayerOptions {
-  layerBody: HTMLElement;
+export interface PopupOptions {
+  body: HTMLElement;
   headerText?: string;
   className?: string;
   style?: Record<string, any>;
@@ -12,14 +12,14 @@ export interface ToolbarButtonOptions {
   command?: string;
   text?: string;
   style?: Record<string, any>;
-  layer?: LayerOptions;
+  popup?: PopupOptions;
 }
 
 export interface ToolbarCustomOptions {
   name: string;
   tooltip: string;
   el?: HTMLElement;
-  layer?: LayerOptions;
+  popup?: PopupOptions;
 }
 
 export type ToolbarButtonInfo = {
@@ -94,7 +94,7 @@ export type TooltipStyle = {
   display: 'none' | 'block';
 } & Partial<Pos>;
 
-export interface LayerInfo {
+export interface PopupInfo {
   headerText?: string;
   className?: string;
   style?: Record<string, any>;
@@ -130,8 +130,8 @@ export type ToolbarItemOptions = ToolbarCustomOptions | ToolbarButtonOptions;
 export type ToolbarItem = (string | ToolbarItemOptions) | (string | ToolbarItemOptions)[];
 
 export type ExecCommand = (command: string, payload?: Record<string, any>) => void;
-export type HideLayer = () => void;
-export type SetLayerInfo = (info: LayerInfo) => void;
+export type HidePopup = () => void;
+export type SetPopupInfo = (info: PopupInfo) => void;
 export type SetItemWidth = (name: string, width: number) => void;
 export type ShowTooltip = (el: HTMLElement, active?: boolean) => void;
 export type HideTooltip = () => void;
