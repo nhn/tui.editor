@@ -1,9 +1,9 @@
 import {
   NodeType,
   MarkType,
-  Mark,
   Schema,
   ProsemirrorNode,
+  Mark,
   DOMOutputSpecArray
 } from 'prosemirror-model';
 
@@ -18,7 +18,7 @@ export interface StackItem {
   content: ProsemirrorNode[];
 }
 
-export interface ToWwConvertorStateType {
+export interface ToWwConvertorState {
   schema: Schema;
   top(): StackItem;
   push(node: ProsemirrorNode): void;
@@ -29,11 +29,11 @@ export interface ToWwConvertorStateType {
   openNode(type: NodeType, attrs?: Attrs): void;
   closeNode(): ProsemirrorNode | null;
   convertNode(mdNode: MdNode): ProsemirrorNode | null;
-  convertByDOMParser(html: string, hasContainer?: boolean): void;
+  convertByDOMParser(root: HTMLElement): void;
 }
 
 type ToWwConvertor = (
-  state: ToWwConvertorStateType,
+  state: ToWwConvertorState,
   node: MdNode,
   context: {
     entering: boolean;
@@ -45,60 +45,19 @@ export type ToWwConvertorMap = Partial<Record<MdNodeType, ToWwConvertor>>;
 
 export type FirstDelimFn = (index: number) => string;
 
-export interface ToMdConvertorStateType {
-  inCell: boolean;
+export interface ToMdConvertorState {
+  stopNewline: boolean;
   flushClose(size?: number): void;
   wrapBlock(delim: string, firstDelim: string | null, node: ProsemirrorNode, fn: () => void): void;
   ensureNewLine(): void;
   write(content?: string): void;
   closeBlock(node: ProsemirrorNode): void;
-  text(text: string, escape?: boolean): void;
+  text(text: string, escaped?: boolean): void;
   convertBlock(node: ProsemirrorNode, parent: ProsemirrorNode, index: number): void;
   convertInline(parent: ProsemirrorNode): void;
   convertList(node: ProsemirrorNode, delim: string, firstDelimFn: FirstDelimFn): void;
   convertTableCell(node: ProsemirrorNode): void;
   convertNode(parent: ProsemirrorNode): string;
-  convertRawHTMLBlockNode(node: ProsemirrorNode, rawHTML: string): void;
-  escape(str: string, startOfLine?: boolean): string;
-  quote(str: string): string;
-  repeat(str: string, count: number): string;
-  getEnclosingWhitespace(
-    text: string
-  ): {
-    leading?: string;
-    trailing?: string;
-  };
-}
-
-type ToMdConvertorForNodes = (
-  state: ToMdConvertorStateType,
-  node: ProsemirrorNode,
-  parent?: ProsemirrorNode,
-  index?: number
-) => void;
-
-type MarkConvertor = (
-  state: ToMdConvertorStateType,
-  mark: Mark,
-  parent: ProsemirrorNode,
-  index: number
-) => string;
-
-interface ToMdConvertorForMarks {
-  open: string | MarkConvertor;
-  close: string | MarkConvertor;
-  mixable?: boolean;
-  removedEnclosingWhitespace?: boolean;
-  escape?: boolean;
-}
-
-export type ToMdNodeConvertorMap = Partial<Record<WwNodeType, ToMdConvertorForNodes>>;
-
-export type ToMdMarkConvertorMap = Partial<Record<WwMarkType, ToMdConvertorForMarks>>;
-
-export interface ToMdConvertorMap {
-  nodes: ToMdNodeConvertorMap;
-  marks: ToMdMarkConvertorMap;
 }
 
 export interface ToDOMAdaptor {
@@ -106,7 +65,7 @@ export interface ToDOMAdaptor {
   getToDOMNode(type: string): ((node: ProsemirrorNode | Mark) => Node) | null;
 }
 
-type HTMLToWwConvertor = (state: ToWwConvertorStateType, node: MdNode, openTagName: string) => void;
+type HTMLToWwConvertor = (state: ToWwConvertorState, node: MdNode, openTagName: string) => void;
 
 export type HTMLToWwConvertorMap = Partial<Record<string, HTMLToWwConvertor>>;
 
@@ -114,7 +73,65 @@ export interface FlattenHTMLToWwConvertorMap {
   [k: string]: HTMLToWwConvertor;
 }
 
-export interface ToMdMarkConvertors {
-  nodes: ToMdNodeConvertorMap;
-  marks: ToMdMarkConvertorMap;
+export interface NodeInfo {
+  node: ProsemirrorNode;
+  parent?: ProsemirrorNode;
+  index?: number;
+}
+
+export interface MarkInfo {
+  node: Mark;
+  parent?: ProsemirrorNode;
+  index?: number;
+}
+
+interface ToMdConvertorReturnValues {
+  delim?: string | string[];
+  rawHTML?: string | string[] | null;
+  text?: string;
+  attrs?: Attrs;
+}
+
+type ToMdNodeTypeWriter = (
+  state: ToMdConvertorState,
+  nodeInfo: NodeInfo,
+  params: ToMdConvertorReturnValues
+) => void;
+
+export type ToMdNodeTypeWriterMap = Partial<Record<WwNodeType, ToMdNodeTypeWriter>>;
+
+interface ToMdMarkTypeOption {
+  mixable?: boolean;
+  removedEnclosingWhitespace?: boolean;
+  escape?: boolean;
+}
+
+export type ToMdMarkTypeOptions = Partial<Record<WwMarkType, ToMdMarkTypeOption | null>>;
+
+type ToMdNodeTypeConvertor = (state: ToMdConvertorState, nodeInfo: NodeInfo) => void;
+
+export type ToMdNodeTypeConvertorMap = Partial<Record<WwNodeType, ToMdNodeTypeConvertor>>;
+
+type ToMdMarkTypeConvertor = (
+  nodeInfo?: MarkInfo,
+  entering?: boolean
+) => ToMdConvertorReturnValues & ToMdMarkTypeOption;
+
+export type ToMdMarkTypeConvertorMap = Partial<Record<WwMarkType, ToMdMarkTypeConvertor>>;
+
+interface ToMdConvertorContext {
+  origin?: () => ReturnType<ToMdConvertor>;
+  entering?: boolean;
+}
+
+type ToMdConvertor = (
+  nodeInfo: NodeInfo | MarkInfo,
+  context: ToMdConvertorContext
+) => ToMdConvertorReturnValues;
+
+export type ToMdConvertorMap = Partial<Record<WwNodeType | MdNodeType, ToMdConvertor>>;
+
+export interface ToMdConvertors {
+  nodeTypeConvertors: ToMdNodeTypeConvertorMap;
+  markTypeConvertors: ToMdMarkTypeConvertorMap;
 }

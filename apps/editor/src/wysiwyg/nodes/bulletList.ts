@@ -1,12 +1,13 @@
-import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpecArray } from 'prosemirror-model';
 import { wrapInList } from 'prosemirror-schema-list';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 import { getWwCommands } from '@/commands/wwCommands';
+import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
 
 import { EditorCommand } from '@t/spec';
 
-export class BulletList extends Node {
+export class BulletList extends NodeSchema {
   get name() {
     return 'bulletList';
   }
@@ -18,13 +19,9 @@ export class BulletList extends Node {
       attrs: {
         rawHTML: { default: null }
       },
-      parseDOM: [
-        {
-          tag: 'ul'
-        }
-      ],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        return [attrs.rawHTML || 'ul', 0];
+      parseDOM: [createDOMInfoParsedRawHTML('ul')],
+      toDOM(): DOMOutputSpecArray {
+        return ['ul', 0];
       }
     };
   }

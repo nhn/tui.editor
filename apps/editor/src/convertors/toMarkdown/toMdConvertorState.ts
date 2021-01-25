@@ -1,19 +1,19 @@
 import { Node, Mark } from 'prosemirror-model';
 
-import { includes } from '@/utils/common';
+import { includes, escape } from '@/utils/common';
 
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {
-  ToMdMarkConvertors,
-  ToMdNodeConvertorMap,
-  ToMdMarkConvertorMap,
+  ToMdConvertors,
+  ToMdNodeTypeConvertorMap,
+  ToMdMarkTypeConvertorMap,
   FirstDelimFn
 } from '@t/convertor';
 
 export default class ToMdConvertorState {
-  private readonly nodes: ToMdNodeConvertorMap;
+  private readonly nodeTypeConvertors: ToMdNodeTypeConvertorMap;
 
-  private readonly marks: ToMdMarkConvertorMap;
+  private readonly markTypeConvertors: ToMdMarkTypeConvertorMap;
 
   private delim: string;
 
@@ -23,36 +23,37 @@ export default class ToMdConvertorState {
 
   private tightList: boolean;
 
-  public inCell: boolean;
+  public stopNewline: boolean;
 
-  constructor({ nodes, marks }: ToMdMarkConvertors) {
-    this.nodes = nodes;
-    this.marks = marks;
+  constructor({ nodeTypeConvertors, markTypeConvertors }: ToMdConvertors) {
+    this.nodeTypeConvertors = nodeTypeConvertors;
+    this.markTypeConvertors = markTypeConvertors;
     this.delim = '';
     this.result = '';
     this.closed = false;
     this.tightList = false;
-    this.inCell = false;
+    this.stopNewline = false;
   }
 
   private isInBlank() {
     return /(^|\n)$/.test(this.result);
   }
 
-  private markText(mark: Mark, open: boolean, parent: Node, index: number) {
-    const info = this.marks[mark.type.name as WwMarkType];
+  private markText(mark: Mark, entering: boolean, parent: Node, index: number) {
+    const type = mark.type.name as WwMarkType;
+    const convertor = this.markTypeConvertors[type];
 
-    if (info) {
-      const value = open ? info.open : info.close;
+    if (convertor) {
+      const { delim, rawHTML } = convertor({ node: mark, parent, index }, entering);
 
-      return typeof value === 'string' ? value : value(this, mark, parent, index);
+      return (rawHTML as string) || (delim as string);
     }
 
     return '';
   }
 
   flushClose(size?: number) {
-    if (!this.inCell && this.closed) {
+    if (!this.stopNewline && this.closed) {
       if (!this.isInBlank()) {
         this.result += '\n';
       }
@@ -110,14 +111,14 @@ export default class ToMdConvertorState {
     this.closed = node;
   }
 
-  text(text: string, escape?: boolean) {
+  text(text: string, escaped?: boolean) {
     const lines = text.split('\n');
 
     for (let i = 0; i < lines.length; i += 1) {
       const startOfLine = this.isInBlank() || !!this.closed;
 
       this.write();
-      this.result += escape !== false ? this.escape(lines[i], startOfLine) : lines[i];
+      this.result += escaped !== false ? escape(lines[i], startOfLine) : lines[i];
 
       if (i !== lines.length - 1) {
         this.result += '\n';
@@ -126,10 +127,13 @@ export default class ToMdConvertorState {
   }
 
   convertBlock(node: Node, parent: Node, index: number) {
-    const convertor = this.nodes[node.type.name as WwNodeType];
+    const type = node.type.name as WwNodeType;
+    const convertor = this.nodeTypeConvertors[type];
 
     if (convertor) {
-      convertor(this, node, parent, index);
+      const nodeInfo = { node, parent, index };
+
+      convertor(this, nodeInfo);
     }
   }
 
@@ -139,23 +143,6 @@ export default class ToMdConvertorState {
 
     const progress = (node: Node | null, _: number | null, index: number) => {
       let marks = node ? node.marks : [];
-
-      // Remove marks from `hard_break` that are the last node inside
-      // that mark to prevent parser edge cases with new lines just
-      // before closing marks.
-      // (FIXME it'd be nice if we had a schema-agnostic way to
-      // identify nodes that serialize as hard breaks)
-      if (node && node.type.name === 'hardBreak')
-        marks = marks.filter((mark: Mark) => {
-          if (index + 1 === parent.childCount) {
-            return false;
-          }
-
-          const next = parent.child(index + 1);
-
-          return mark.isInSet(next.marks) && (!next.isText || /\S/.test(next.text || ''));
-        });
-
       let leading = trailing;
 
       trailing = '';
@@ -166,13 +153,14 @@ export default class ToMdConvertorState {
         node &&
         node.isText &&
         marks.some((mark: Mark) => {
-          const info = this.marks[mark.type.name as WwMarkType];
+          const markConvertor = this.markTypeConvertors[mark.type.name as WwMarkType];
+          const info = markConvertor && markConvertor();
 
           return info && info.removedEnclosingWhitespace;
         });
 
       if (removedWhitespace && node && node.text) {
-        const [, lead, inner, trail] = /^(\s*)(.*?)(\s*)$/m.exec(node.text)!;
+        const [, lead, mark, trail] = /^(\s*)(.*?)(\s*)$/m.exec(node.text)!;
 
         leading += lead;
         trailing = trail;
@@ -180,7 +168,7 @@ export default class ToMdConvertorState {
         if (lead || trail) {
           // @ts-ignore
           // type is not defined for "withText" in prosemirror-model
-          node = inner ? node.withText(inner) : null;
+          node = mark ? node.withText(mark) : null;
 
           if (!node) {
             marks = active;
@@ -188,10 +176,12 @@ export default class ToMdConvertorState {
         }
       }
 
-      const inner = marks.length && marks[marks.length - 1];
-      const markType = inner && this.marks[inner.type.name as WwMarkType];
-      const noEsc = markType && markType.escape === false;
-      const len = marks.length - (noEsc ? 1 : 0);
+      const lastMark = marks.length && marks[marks.length - 1];
+      const markConvertor = lastMark && this.markTypeConvertors[lastMark.type.name as WwMarkType];
+      const markType = markConvertor && markConvertor();
+
+      const noEscape = markType && markType.escape === false;
+      const len = marks.length - (noEscape ? 1 : 0);
 
       // Try to reorder 'mixable' marks, such as em and strong, which
       // in Markdown may be opened and closed in different order, so
@@ -264,11 +254,11 @@ export default class ToMdConvertorState {
 
         // Render the node. Special case code marks, since their content
         // may not be escaped.
-        if (noEsc && node.isText) {
+        if (noEscape && node.isText) {
           this.text(
-            this.markText(inner as Mark, true, parent, index) +
+            this.markText(lastMark as Mark, true, parent, index) +
               node.text +
-              this.markText(inner as Mark, false, parent, index + 1),
+              this.markText(lastMark as Mark, false, parent, index + 1),
             false
           );
         } else {
@@ -310,7 +300,7 @@ export default class ToMdConvertorState {
   }
 
   convertTableCell(node: Node) {
-    this.inCell = true;
+    this.stopNewline = true;
 
     node.forEach((child, _, index) => {
       if (includes(['bulletList', 'orderedList'], child.type.name)) {
@@ -329,57 +319,12 @@ export default class ToMdConvertorState {
       }
     });
 
-    this.inCell = false;
+    this.stopNewline = false;
   }
 
   convertNode(parent: Node) {
     parent.forEach((node, _, index) => this.convertBlock(node, parent, index));
 
     return this.result;
-  }
-
-  convertRawHTMLBlockNode(node: Node, rawHTML: string) {
-    this.write(`<${rawHTML}>`);
-    this.convertNode(node);
-    this.write(`</${rawHTML}>`);
-  }
-
-  escape(text: string, startOfLine?: boolean) {
-    text = text.replace(/[`*\\~[\]]/g, '\\$&');
-
-    if (startOfLine) {
-      return text.replace(/^[:#\-*+]/, '\\$&').replace(/^(\d+)\./, '$1\\.');
-    }
-
-    return text;
-  }
-
-  quote(text: string) {
-    let wrap;
-
-    if (text.indexOf('"') === -1) {
-      wrap = '""';
-    } else {
-      wrap = text.indexOf("'") === -1 ? "''" : '()';
-    }
-
-    return wrap[0] + text + wrap[1];
-  }
-
-  repeat(text: string, count: number) {
-    let result = '';
-
-    for (let i = 0; i < count; i += 1) {
-      result += text;
-    }
-
-    return result;
-  }
-
-  getEnclosingWhitespace(text: string) {
-    return {
-      leading: (text.match(/^(\s+)/) || [])[0],
-      trailing: (text.match(/(\s+)$/) || [])[0]
-    };
   }
 }

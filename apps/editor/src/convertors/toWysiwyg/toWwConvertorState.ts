@@ -88,13 +88,8 @@ export default class ToWwConvertorState {
     return this.addNode(type, attrs, content);
   }
 
-  convertByDOMParser(html: string, hasContainer = false) {
-    const container = document.createElement('div');
-
-    container.innerHTML = html;
-
-    const el = hasContainer ? container : container.firstChild!;
-    const doc = DOMParser.fromSchema(this.schema).parse(el);
+  convertByDOMParser(root: HTMLElement) {
+    const doc = DOMParser.fromSchema(this.schema).parse(root);
 
     doc.content.forEach(node => this.push(node));
   }

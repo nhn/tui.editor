@@ -24,9 +24,11 @@ export class OrderedList extends NodeSchema {
           tag: 'ol',
           getAttrs(dom: Node | string) {
             const start = (dom as HTMLElement).getAttribute('start');
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
             return {
-              order: (dom as HTMLElement).hasAttribute('start') ? Number(start) : 1
+              order: (dom as HTMLElement).hasAttribute('start') ? Number(start) : 1,
+              ...(rawHTML && { rawHTML })
             };
           }
         }

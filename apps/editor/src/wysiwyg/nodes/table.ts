@@ -2,8 +2,8 @@ import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'pr
 import { ReplaceStep } from 'prosemirror-transform';
 import { TextSelection } from 'prosemirror-state';
 
-import Node from '@/spec/node';
-import { isInTableNode, findNodeBy } from '@/wysiwyg/helper/node';
+import NodeSchema from '@/spec/node';
+import { isInTableNode, findNodeBy, createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
 import {
   CellInfo,
   createTableHeadRow,
@@ -52,16 +52,19 @@ const cellOffsetFnMap: CellOffsetFnMap = {
   down: getDownCellOffset
 };
 
-export class Table extends Node {
+export class Table extends NodeSchema {
   get name() {
     return 'table';
   }
 
   get defaultSchema() {
     return {
-      content: 'tableHead{1} tableBody+',
+      content: 'tableHead{1} tableBody{1}',
       group: 'block',
-      parseDOM: [{ tag: 'table' }],
+      attrs: {
+        rawHTML: { default: null }
+      },
+      parseDOM: [createDOMInfoParsedRawHTML('table')],
       toDOM(): DOMOutputSpecArray {
         return ['table', 0];
       }

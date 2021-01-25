@@ -15,7 +15,18 @@ export class Code extends Mark {
       attrs: {
         rawHTML: { default: null }
       },
-      parseDOM: [{ tag: 'code' }],
+      parseDOM: [
+        {
+          tag: 'code',
+          getAttrs(dom: Node | string) {
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+
+            return {
+              ...(rawHTML && { rawHTML })
+            };
+          }
+        }
+      ],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         return [attrs.rawHTML || 'code'];
       }

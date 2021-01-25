@@ -1,11 +1,11 @@
 import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 import { setBlockType } from 'prosemirror-commands';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 
 import { EditorCommand } from '@t/spec';
 
-export class Heading extends Node {
+export class Heading extends NodeSchema {
   get name() {
     return 'heading';
   }
@@ -16,13 +16,24 @@ export class Heading extends Node {
 
   get defaultSchema() {
     const parseDOM = this.levels.map(level => {
-      return { tag: `h${level}`, attrs: { level } };
+      return {
+        tag: `h${level}`,
+        getAttrs(dom: Node | string) {
+          const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+
+          return {
+            level,
+            ...(rawHTML && { rawHTML })
+          };
+        }
+      };
     });
 
     return {
       attrs: {
         level: { default: 1 },
-        headingType: { default: 'atx' }
+        headingType: { default: 'atx' },
+        rawHTML: { default: null }
       },
       content: 'inline*',
       group: 'block',

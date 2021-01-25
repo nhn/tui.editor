@@ -175,15 +175,10 @@ const convertors: HTMLToWwConvertorMap = {
     }
   },
 
-  'h1, h2, h3, h4, h5, h6': (state, node) => {
-    state.convertByDOMParser(node.literal!, true);
-  },
-
   pre: (state, node, openTagName) => {
     const container = document.createElement('div');
-    const content = node.literal!;
 
-    container.innerHTML = content;
+    container.innerHTML = node.literal!;
 
     const literal = container.firstChild?.firstChild?.textContent;
 
@@ -211,8 +206,6 @@ const convertors: HTMLToWwConvertorMap = {
           state.openNode(paragraph);
         }
       }
-    } else {
-      state.convertByDOMParser(node.literal!, true);
     }
   },
 
@@ -240,8 +233,6 @@ const convertors: HTMLToWwConvertorMap = {
 
         state.closeNode();
       }
-    } else {
-      state.convertByDOMParser(node.literal!, true);
     }
   }
 };

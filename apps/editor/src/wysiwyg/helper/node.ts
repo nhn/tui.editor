@@ -1,6 +1,9 @@
-import { Node, ResolvedPos } from 'prosemirror-model';
+import { Node as ProsemirrorNode, ResolvedPos } from 'prosemirror-model';
 
-export function findNodeBy(pos: ResolvedPos, condition: (node: Node, depth: number) => boolean) {
+export function findNodeBy(
+  pos: ResolvedPos,
+  condition: (node: ProsemirrorNode, depth: number) => boolean
+) {
   let { depth } = pos;
 
   while (depth) {
@@ -19,7 +22,7 @@ export function findNodeBy(pos: ResolvedPos, condition: (node: Node, depth: numb
 export function isInListNode(pos: ResolvedPos) {
   return !!findNodeBy(
     pos,
-    ({ type }: Node) =>
+    ({ type }: ProsemirrorNode) =>
       type.name === 'listItem' || type.name === 'bulletList' || type.name === 'orderedList'
   );
 }
@@ -27,10 +30,23 @@ export function isInListNode(pos: ResolvedPos) {
 export function isInTableNode(pos: ResolvedPos) {
   return !!findNodeBy(
     pos,
-    ({ type }: Node) => type.name === 'tableHeadCell' || type.name === 'tableBodyCell'
+    ({ type }: ProsemirrorNode) => type.name === 'tableHeadCell' || type.name === 'tableBodyCell'
   );
 }
 
 export function findListItem(pos: ResolvedPos) {
-  return findNodeBy(pos, ({ type }: Node) => type.name === 'listItem');
+  return findNodeBy(pos, ({ type }: ProsemirrorNode) => type.name === 'listItem');
+}
+
+export function createDOMInfoParsedRawHTML(tag: string) {
+  return {
+    tag,
+    getAttrs(dom: Node | string) {
+      const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+
+      return {
+        ...(rawHTML && { rawHTML })
+      };
+    }
+  };
 }

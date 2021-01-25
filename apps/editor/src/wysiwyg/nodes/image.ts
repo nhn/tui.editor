@@ -26,10 +26,12 @@ export class Image extends NodeSchema {
           tag: 'img[src]',
           getAttrs(dom: Node | string) {
             const imageUrl = (dom as HTMLElement).getAttribute('src') || '';
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
             return {
               imageUrl: sanitizeXSSAttributeValue(imageUrl),
-              altText: (dom as HTMLElement).getAttribute('alt')
+              altText: (dom as HTMLElement).getAttribute('alt'),
+              ...(rawHTML && { rawHTML })
             };
           }
         }

@@ -1,32 +1,31 @@
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { MdNode } from '@t/markdown';
-import { ToWwConvertorMap, ToMdConvertorMap } from '@t/convertor';
+import { ToWwConvertorMap, ToMdConvertors, ToMdConvertorMap } from '@t/convertor';
 
-import { toWwConvertors } from './toWwConvertors';
-import ToWwConvertorState from './toWwConvertorState';
+import { toWwConvertors } from './toWysiwyg/toWwConvertors';
+import ToWwConvertorState from './toWysiwyg/toWwConvertorState';
 
-import { toMdConvertors } from './toMdConvertors';
-import ToMdConvertorState from './toMdConvertorState';
+import { createConvertors } from './toMarkdown/toMdConvertors';
+import ToMdConvertorState from './toMarkdown/toMdConvertorState';
 
 export default class Convertor {
   private readonly schema: Schema;
 
   private readonly toWwConvertors: ToWwConvertorMap;
 
-  private readonly toMdConvertors: ToMdConvertorMap;
+  private readonly toMdConvertors: ToMdConvertors;
 
   private readonly linkAttribute: Record<string, any>;
 
-  constructor(schema: Schema, linkAttribute: Record<string, any>) {
+  constructor(
+    schema: Schema,
+    toMdCustomConvertors: ToMdConvertorMap,
+    linkAttribute: Record<string, any>
+  ) {
     this.schema = schema;
-
-    // @TODO to be extended with public option
     this.toWwConvertors = toWwConvertors;
-
-    // @TODO to be extended with public option
-    this.toMdConvertors = toMdConvertors;
-
+    this.toMdConvertors = createConvertors(toMdCustomConvertors || {});
     this.linkAttribute = linkAttribute;
   }
 

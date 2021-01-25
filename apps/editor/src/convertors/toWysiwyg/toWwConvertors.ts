@@ -1,3 +1,10 @@
+import toArray from 'tui-code-snippet/collection/toArray';
+
+import { includes } from '@/utils/common';
+import { isElemNode } from '@/utils/dom';
+
+import { reHTMLTag, htmlToWwConvertors, getTextWithoutTrailingNewline } from './htmlToWwConvertors';
+
 import { ToWwConvertorMap } from '@t/convertor';
 import {
   MdNode,
@@ -9,16 +16,26 @@ import {
   CustomBlockMdNode
 } from '@t/markdown';
 
-import { includes } from '@/utils/common';
-
-import { reHTMLTag, htmlToWwConvertors, getTextWithoutTrailingNewline } from './htmlToWwConvertors';
-
 function isBRTag(node: MdNode) {
   return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);
 }
 
 function isInlineNode({ type }: MdNode) {
   return includes(['text', 'strong', 'emph', 'strike', 'image', 'link', 'code'], type);
+}
+
+function addRawHTMLAttributeToDOM(parent: Node) {
+  toArray(parent.childNodes).forEach(child => {
+    if (isElemNode(child)) {
+      const openTagName = child.nodeName.toLowerCase();
+
+      (child as HTMLElement).setAttribute('data-raw-html', openTagName);
+
+      if (child.childNodes) {
+        addRawHTMLAttributeToDOM(child);
+      }
+    }
+  });
 }
 
 export const toWwConvertors: ToWwConvertorMap = {
@@ -259,10 +276,11 @@ export const toWwConvertors: ToWwConvertorMap = {
 
     if (matched) {
       const [, openTagName, , closeTagName] = matched;
-      const type = openTagName || closeTagName;
+      const tagName = openTagName || closeTagName;
 
-      if (type) {
-        const htmlToWwConvertor = htmlToWwConvertors[type.toLowerCase()];
+      if (tagName) {
+        const type = tagName.toLowerCase();
+        const htmlToWwConvertor = htmlToWwConvertors[type];
 
         if (htmlToWwConvertor) {
           htmlToWwConvertor(state, node, openTagName);
@@ -273,21 +291,12 @@ export const toWwConvertors: ToWwConvertorMap = {
 
   htmlBlock(state, node) {
     const html = node.literal!;
-    const matched = html.match(reHTMLTag);
+    const container = document.createElement('div');
 
-    if (matched) {
-      const [, openTagName] = matched;
-      const type = openTagName.toLowerCase();
+    container.innerHTML = html;
 
-      if (type) {
-        const htmlToWwConvertor = htmlToWwConvertors[type];
+    addRawHTMLAttributeToDOM(container);
 
-        if (htmlToWwConvertor) {
-          htmlToWwConvertor(state, node, openTagName);
-        } else {
-          state.convertByDOMParser(html);
-        }
-      }
-    }
+    state.convertByDOMParser(container as HTMLElement);
   }
 };

@@ -150,6 +150,7 @@ class ToastUIEditor {
         extendedAutolinks: false,
         customConvertor: null,
         customHTMLRenderer: null,
+        customMarkdownRenderer: null,
         referenceDefinition: false,
         customHTMLSanitizer: null,
         frontMatter: false
@@ -167,7 +168,8 @@ class ToastUIEditor {
       customHTMLRenderer,
       extendedAutolinks,
       referenceDefinition,
-      frontMatter
+      frontMatter,
+      customMarkdownRenderer
     } = this.options;
     const rendererOptions = {
       linkAttribute,
@@ -221,7 +223,11 @@ class ToastUIEditor {
       wwToDOMAdaptor
     );
 
-    this.convertor = new Convertor(this.wwEditor.getSchema(), linkAttribute);
+    this.convertor = new Convertor(
+      this.wwEditor.getSchema(),
+      customMarkdownRenderer,
+      linkAttribute!
+    );
 
     if (plugins) {
       invokePlugins(plugins, this);

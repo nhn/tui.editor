@@ -1,8 +1,9 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
+import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
 
-export class TableHeadCell extends Node {
+export class TableHeadCell extends NodeSchema {
   get name() {
     return 'tableHeadCell';
   }
@@ -12,9 +13,10 @@ export class TableHeadCell extends Node {
       content: 'paragraph+',
       attrs: {
         align: { default: null },
-        className: { default: null }
+        className: { default: null },
+        rawHTML: { default: null }
       },
-      parseDOM: [{ tag: 'th' }],
+      parseDOM: [createDOMInfoParsedRawHTML('th')],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         const { align, className } = attrs;
 

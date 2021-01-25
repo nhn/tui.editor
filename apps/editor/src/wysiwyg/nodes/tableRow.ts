@@ -11,11 +11,22 @@ export class TableRow extends NodeSchema {
     return {
       content: '(tableHeadCell | tableBodyCell)+',
       attrs: {
-        dummyRowForPasting: { default: false }
+        columns: { default: 1 },
+        rawHTML: { default: null }
       },
       parseDOM: [
         {
-          tag: 'tr'
+          tag: 'tr',
+          getAttrs: (dom: Node | string) => {
+            const columns = (dom as HTMLElement).children.length;
+            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+
+            if (!columns) {
+              return false;
+            }
+
+            return { columns, ...(rawHTML && { rawHTML }) };
+          }
         }
       ],
       toDOM(): DOMOutputSpecArray {
