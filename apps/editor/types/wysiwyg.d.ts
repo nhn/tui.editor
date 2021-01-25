@@ -28,3 +28,5 @@ export interface CellSelection extends Selection {
   startCell: ResolvedPos;
   endCell: ResolvedPos;
 }
+
+export type ColumnAlign = 'left' | 'right' | 'center';

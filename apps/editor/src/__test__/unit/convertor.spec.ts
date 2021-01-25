@@ -242,6 +242,29 @@ describe('Convertor', () => {
       assertConverting(markdown, `${expected}\n`);
     });
 
+    it('table with column align syntax', () => {
+      const markdown = source`
+        | default | left | right | center |
+        | --- | :--- | ---: | :---: |
+        | tbody | tbody | tbody | tbody |
+
+        |  |  |  |  |
+        | --- | :--- | ---: | :---: |
+        | default | left | right | center |
+      `;
+      const expected = source`
+        | default | left | right | center |
+        | ------- | ---- | ----: | :----: |
+        | tbody | tbody | tbody | tbody |
+
+        |  |  |  |  |
+        | --- | --- | ---: | :---: |
+        | default | left | right | center |
+      `;
+
+      assertConverting(markdown, `${expected}\n`);
+    });
+
     it('table with inline syntax', () => {
       const markdown = source`
         | ![altText](imgUrl) | foo ![altText](imgUrl) baz |
