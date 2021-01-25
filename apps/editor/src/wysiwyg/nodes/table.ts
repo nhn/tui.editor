@@ -3,7 +3,7 @@ import { ReplaceStep } from 'prosemirror-transform';
 import { TextSelection } from 'prosemirror-state';
 
 import NodeSchema from '@/spec/node';
-import { isInTableNode, findNodeBy } from '@/wysiwyg/helper/node';
+import { isInTableNode, findNodeBy, createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
 import {
   CellInfo,
   createTableHeadRow,
@@ -24,7 +24,6 @@ import {
 } from '@/wysiwyg/helper/table';
 
 import { createTextSelection } from '@/helper/manipulation';
-import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
 
 import { EditorCommand } from '@t/spec';
 
