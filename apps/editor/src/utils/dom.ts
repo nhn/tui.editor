@@ -140,3 +140,20 @@ export function closest(node: Node, found: string | Node) {
 
   return null;
 }
+
+export function getTotalOffset(el: HTMLElement, root: HTMLElement) {
+  let offsetTop = 0;
+  let offsetLeft = 0;
+
+  while (el && el !== root) {
+    const { offsetTop: top, offsetLeft: left } = el;
+
+    offsetTop += top;
+    offsetLeft += left;
+    if (el.offsetParent === root.offsetParent) {
+      break;
+    }
+    el = el.offsetParent as HTMLElement;
+  }
+  return { offsetTop, offsetLeft };
+}

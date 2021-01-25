@@ -10,6 +10,7 @@ import {
 import { Emitter } from '@t/event';
 import html from '@/new/vdom/template';
 import { Component } from '@/new/vdom/component';
+import { closest, getTotalOffset } from '@/utils/dom';
 
 interface Props {
   tooltipEl: HTMLElement;
@@ -26,7 +27,12 @@ const TOOLTIP_TOP_INDENT = 5;
 export function connectHOC(WrappedComponent: ComponentClass) {
   return class ButtonHOC extends Component<Props> {
     private getBound(el: HTMLElement) {
-      return { left: el.offsetLeft, top: el.offsetHeight + el.offsetTop };
+      const { offsetLeft, offsetTop } = getTotalOffset(
+        el,
+        closest(el, '.te-toolbar-section') as HTMLElement
+      );
+
+      return { left: offsetLeft, top: el.offsetHeight + offsetTop };
     }
 
     private showTooltip = (el: HTMLElement, active = false) => {
