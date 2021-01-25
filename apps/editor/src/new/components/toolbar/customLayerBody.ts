@@ -12,6 +12,11 @@ interface Props {
 }
 
 export class CustomLayer extends Component<Props> {
+  constructor(props: Props) {
+    super(props);
+    props.eventEmitter.listen('closeLayer', this.props.hideLayer);
+  }
+
   mounted() {
     // append the custom layer body element
     this.refs.el.appendChild(this.props.layerBody);
