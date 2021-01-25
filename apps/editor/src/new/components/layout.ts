@@ -1,6 +1,6 @@
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
-import { TargetIndexes, ToolbarItem, ToolbarItemOptions } from '@t/ui';
+import { Indexes, ToolbarItem, ToolbarItemOptions } from '@t/ui';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
 import { Switch } from './switch';
@@ -49,12 +49,12 @@ export class Layout extends Component<Props, State> {
     this.refs.mdContainer.appendChild(mdPreview);
   }
 
-  insertToolbarItem(indexes: TargetIndexes, item: ToolbarItemOptions) {
+  insertToolbarItem(indexes: Indexes, item: ToolbarItemOptions) {
     this.toolbar.insertToolbarItem(indexes, item);
   }
 
-  removeToolbarItem(indexes: TargetIndexes) {
-    this.toolbar.removeToolbarItem(indexes);
+  removeToolbarItem(name: string) {
+    this.toolbar.removeToolbarItem(name);
   }
 
   render() {

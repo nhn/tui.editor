@@ -1,10 +1,11 @@
 import throttle from 'tui-code-snippet/tricks/throttle';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
 import {
+  Indexes,
   PopupInfo,
   TabInfo,
-  TargetIndexes,
   ToolbarGroupInfo,
   ToolbarItem,
   ToolbarItemOptions,
@@ -78,8 +79,8 @@ export class Toolbar extends Component<Props, State> {
     this.appendTooltipToBody();
   }
 
-  insertToolbarItem(indexes: TargetIndexes, item: ToolbarItemOptions) {
-    const [groupIndex, itemIndex] = indexes;
+  insertToolbarItem(indexes: Indexes, item: ToolbarItemOptions) {
+    const { groupIndex, itemIndex } = indexes;
     const group = this.initialItems[groupIndex];
 
     if (group) {
@@ -90,14 +91,21 @@ export class Toolbar extends Component<Props, State> {
     this.setState(this.classifyToolbarItems());
   }
 
-  removeToolbarItem(indexes: TargetIndexes) {
-    const [groupIndex, itemIndex] = indexes;
-    const group = this.initialItems[groupIndex];
+  removeToolbarItem(name: string) {
+    forEachArray(this.initialItems, (group) => {
+      let found = false;
 
-    if (group) {
-      group.splice(itemIndex, 1);
-      this.setState(this.classifyToolbarItems());
-    }
+      forEachArray(group, (item, index) => {
+        if (item.name === name) {
+          found = true;
+          group.splice(index, 1);
+          this.setState(this.classifyToolbarItems());
+          return false;
+        }
+        return true;
+      });
+      return !found;
+    });
   }
 
   addEvent() {

@@ -42,7 +42,15 @@ declare module 'tui-code-snippet/collection/forEachOwnProperties' {
   export default function forEachOwnProperties<T extends object>(
     obj: T,
     iteratee: (value: NonNullable<T[keyof T]>, key: keyof T, targetObj: T) => boolean | void,
-    context?: any
+    context?: object
+  ): void;
+}
+
+declare module 'tui-code-snippet/collection/forEachArray' {
+  export default function forEachArray<T>(
+    arr: Array<T>,
+    iteratee: (value: T, index: number, targetArr: Array<T>) => boolean | void,
+    context?: object
   ): void;
 }
 
