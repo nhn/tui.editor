@@ -1,8 +1,9 @@
 import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
-import { wrapInList } from 'prosemirror-schema-list';
 
 import NodeSchema from '@/spec/node';
 import { getWwCommands } from '@/commands/wwCommands';
+import { isInListNode } from '@/wysiwyg/helper/node';
+import { wrapInList, changeListType } from '@/wysiwyg/helper/list';
 
 import { EditorCommand } from '@t/spec';
 
@@ -46,8 +47,27 @@ export class OrderedList extends NodeSchema {
   }
 
   commands(): EditorCommand {
-    return payload => (state, dispatch) =>
-      wrapInList(state.schema.nodes.orderedList, payload)(state, dispatch);
+    return () => (state, dispatch) => {
+      const { selection, tr, doc } = state;
+      const { $from, $to } = selection;
+      const range = $from.blockRange($to);
+
+      if (!range) {
+        return false;
+      }
+
+      const { orderedList } = state.schema.nodes;
+
+      if (isInListNode($from)) {
+        const newTr = changeListType(tr, doc, $from, $to, orderedList);
+
+        dispatch!(newTr);
+
+        return true;
+      }
+
+      return wrapInList('orderedList')(state, dispatch);
+    };
   }
 
   keymaps() {

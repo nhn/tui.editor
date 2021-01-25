@@ -1,9 +1,9 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { wrapInList } from 'prosemirror-schema-list';
 
 import NodeSchema from '@/spec/node';
 import { getWwCommands } from '@/commands/wwCommands';
-import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
+import { createDOMInfoParsedRawHTML, isInListNode } from '@/wysiwyg/helper/node';
+import { wrapInList, changeListType, changeTaskListItems } from '@/wysiwyg/helper/list';
 
 import { EditorCommand } from '@t/spec';
 
@@ -26,13 +26,61 @@ export class BulletList extends NodeSchema {
     };
   }
 
-  commands(): EditorCommand {
-    return payload => (state, dispatch) =>
-      wrapInList(state.schema.nodes.bulletList, payload)(state, dispatch);
+  private toggleList(): EditorCommand {
+    return () => (state, dispatch) => {
+      const { selection, tr, doc } = state;
+      const { $from, $to } = selection;
+      const range = $from.blockRange($to);
+
+      if (!range) {
+        return false;
+      }
+
+      const { bulletList } = state.schema.nodes;
+
+      if (isInListNode($from)) {
+        const newTr = changeListType(tr, doc, $from, $to, bulletList);
+
+        dispatch!(newTr);
+
+        return true;
+      }
+
+      return wrapInList('bulletList')(state, dispatch);
+    };
+  }
+
+  private toggleTask(): EditorCommand {
+    return () => (state, dispatch) => {
+      const { selection, tr, doc } = state;
+      const { $from, $to } = selection;
+      const range = $from.blockRange($to);
+
+      if (!range) {
+        return false;
+      }
+
+      if (isInListNode($from)) {
+        const newTr = changeTaskListItems(tr, doc, $from, $to);
+
+        dispatch!(newTr);
+
+        return true;
+      }
+
+      return wrapInList('task')(state, dispatch);
+    };
+  }
+
+  commands() {
+    return {
+      bulletList: this.toggleList(),
+      task: this.toggleTask()
+    };
   }
 
   keymaps() {
-    const bulletListCommand = this.commands()();
+    const bulletListCommand = this.toggleList()();
     const { indent, outdent } = getWwCommands();
 
     return {

@@ -193,6 +193,48 @@ describe('wysiwyg commands', () => {
 
       expect(wwe.getHTML()).toBe(expected);
     });
+
+    it('should change parent list to bullet list when in list item', () => {
+      setTextToEditor('foo\nbar\nbaz');
+
+      cmd.exec('wysiwyg', 'selectAll');
+      cmd.exec('wysiwyg', 'orderedList');
+
+      wwe.setSelection(3, 3); // in 'foo'
+      cmd.exec('wysiwyg', 'bulletList');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li><p>foo</p></li>
+          <li><p>bar</p></li>
+          <li><p>baz</p></li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should change task list item to bullet list item', () => {
+      setTextToEditor('foo\nbar\nbaz');
+
+      cmd.exec('wysiwyg', 'selectAll');
+      cmd.exec('wysiwyg', 'task');
+
+      wwe.setSelection(11, 20); // from 'bar' to 'baz'
+      cmd.exec('wysiwyg', 'bulletList');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>foo</p>
+          </li>
+          <li><p>bar</p></li>
+          <li><p>baz</p></li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
   });
 
   describe('orderedList command', () => {
@@ -233,6 +275,147 @@ describe('wysiwyg commands', () => {
           <li><p>bar</p></li>
           <li><p>baz</p></li>
         </ol>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should change parent list to ordered list when in list item', () => {
+      setTextToEditor('foo\nbar\nbaz');
+
+      cmd.exec('wysiwyg', 'selectAll');
+      cmd.exec('wysiwyg', 'bulletList');
+
+      wwe.setSelection(3, 3); // in 'foo'
+      cmd.exec('wysiwyg', 'orderedList');
+
+      const expected = oneLineTrim`
+        <ol>
+          <li><p>foo</p></li>
+          <li><p>bar</p></li>
+          <li><p>baz</p></li>
+        </ol>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should change task list item to ordered list item', () => {
+      setTextToEditor('foo\nbar\nbaz');
+
+      cmd.exec('wysiwyg', 'selectAll');
+      cmd.exec('wysiwyg', 'task');
+
+      wwe.setSelection(11, 20); // from 'bar' to 'baz'
+      cmd.exec('wysiwyg', 'orderedList');
+
+      const expected = oneLineTrim`
+        <ol>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>foo</p>
+          </li>
+          <li><p>bar</p></li>
+          <li><p>baz</p></li>
+        </ol>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe('task command', () => {
+    it('should add task to ul element ', () => {
+      cmd.exec('wysiwyg', 'task');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p><br></p>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should change to task item in selection', () => {
+      setTextToEditor('foo');
+
+      cmd.exec('wysiwyg', 'selectAll');
+      cmd.exec('wysiwyg', 'task');
+
+      let expected = oneLineTrim`
+        <ul>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>foo</p>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+
+      setTextToEditor('foo\nbar\nbaz');
+
+      cmd.exec('wysiwyg', 'selectAll');
+      cmd.exec('wysiwyg', 'task');
+
+      expected = oneLineTrim`
+        <ul>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>foo</p>
+          </li>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>bar</p>
+          </li>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>baz</p>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    fit('should toggle task list item', () => {
+      setTextToEditor('foo\nbar\nbaz');
+
+      cmd.exec('wysiwyg', 'selectAll');
+      cmd.exec('wysiwyg', 'task');
+
+      wwe.setSelection(3, 3); // from 'foo'
+      cmd.exec('wysiwyg', 'bulletList');
+
+      let expected = oneLineTrim`
+        <ul>
+          <li>
+            <p>foo</p>
+          </li>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>bar</p>
+          </li>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>baz</p>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+
+      wwe.setSelection(3, 12); // from 'foo' to 'bar'
+      cmd.exec('wysiwyg', 'task');
+
+      expected = oneLineTrim`
+        <ul>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>foo</p>
+          </li>
+          <li>
+            <p>bar</p>
+          </li>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>baz</p>
+          </li>
+        </ul>
       `;
 
       expect(wwe.getHTML()).toBe(expected);
