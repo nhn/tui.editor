@@ -1,5 +1,5 @@
 import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap } from './markdown';
-import { Emitter, Handler } from './event';
+import { Handler } from './event';
 import { EditorCommandFn } from './spec';
 import { DefaultUI, ToolbarItemOptions } from './ui';
 
@@ -133,10 +133,6 @@ export class EditorCore {
   public static factory(options: EditorOptions): EditorCore | Viewer;
 
   public static setLanguage(code: string, data: Record<string, string>): void;
-
-  options: EditorOptions;
-
-  eventEmitter: Emitter;
 
   changePreviewStyle(style: PreviewStyle): void;
 
