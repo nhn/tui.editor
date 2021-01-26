@@ -131,10 +131,10 @@ export class CustomBlockView implements NodeView {
           }
           return true;
         },
-        // blur: () => {
-        //   this.saveAndFinishEditing();
-        //   return true;
-        // },
+        blur: () => {
+          this.saveAndFinishEditing();
+          return true;
+        },
       },
     });
     this.innerEditorView!.focus();
