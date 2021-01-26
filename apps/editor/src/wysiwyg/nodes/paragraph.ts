@@ -10,7 +10,7 @@ export class Paragraph extends Node {
   get defaultSchema() {
     return {
       content: 'inline*',
-      group: 'block',
+      group: 'block listGroup',
       parseDOM: [{ tag: 'p' }],
       toDOM(): DOMOutputSpecArray {
         return ['p', 0];

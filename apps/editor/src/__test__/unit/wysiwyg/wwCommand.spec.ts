@@ -376,7 +376,7 @@ describe('wysiwyg commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    fit('should toggle task list item', () => {
+    it('should toggle task list item', () => {
       setTextToEditor('foo\nbar\nbaz');
 
       cmd.exec('wysiwyg', 'selectAll');
