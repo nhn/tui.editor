@@ -69,14 +69,6 @@
   height: calc(100% - 36px);
 }
 
-.ProseMirror .placeholder {
-  color: #999;
-}
-
-.ProseMirror:focus {
-  outline: none;
-}
-
 .te-md-container .te-editor .te-clipboard {
   position: absolute;
   opacity: 0;

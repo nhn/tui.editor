@@ -306,6 +306,62 @@
   margin-top: 3px;
 }
 
+.custom-block .custom-block-editor {
+  background: #f9f7fd;
+  color: #452d6b;
+  border: solid 1px #dbd4ea;
+}
+
+.custom-block .custom-block-view {
+  position: relative;
+  padding: 9px 13px 8px 12px;
+}
+
+.custom-block.ProseMirror-selectednode .custom-block-view {
+  border: solid 1px #dbd4ea;
+}
+
+.custom-block .custom-block-view .tool {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: none;
+}
+
+.custom-block.ProseMirror-selectednode .custom-block-view .tool {
+  display: block;
+}
+
+.custom-block-view button {
+  vertical-align: middle;
+  width: 15px;
+  height: 15px;
+  margin-left: 8px;
+  padding: 3px;
+  border: solid 1px #cccccc;
+  background: url(../img/edit-icon.svg) no-repeat;
+  background-position: 5px 5px;
+}
+
+.custom-block-view .info {
+  font-size: 13px;
+  font-weight: bold;
+  color: #5200d0;
+  vertical-align: middle;
+}
+
+.ProseMirror .placeholder {
+  color: #999;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+.ProseMirror-selectednode {
+  outline: none;
+}
+
 .tui-editor-contents-placeholder::before {
   content: attr(data-placeholder);
   color: grey;
