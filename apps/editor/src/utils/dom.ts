@@ -1,18 +1,18 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 import isArray from 'tui-code-snippet/type/isArray';
 import isString from 'tui-code-snippet/type/isString';
-import matches from 'tui-code-snippet/domUtil/matches';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import matches from 'tui-code-snippet/domUtil/matches';
 
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
   const rect = {
     left: parseInt(style.left, 10),
     top: parseInt(style.top, 10),
     width: parseInt(style.width, 10),
-    height: parseInt(style.height, 10)
+    height: parseInt(style.height, 10),
   };
 
   return (
@@ -26,7 +26,7 @@ export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, off
 const CLS_PREFIX = 'tui-md-';
 
 export function cls(...names: string[]) {
-  return names.map(className => `${CLS_PREFIX}${className}`).join(' ');
+  return names.map((className) => `${CLS_PREFIX}${className}`).join(' ');
 }
 
 export function isTextNode(node: Node) {
@@ -50,7 +50,7 @@ export function findNodes(element: Element, selector: string) {
 export function appendNodes(node: Node, nodesToAppend: Node | Node[]) {
   nodesToAppend = isArray(nodesToAppend) ? toArray(nodesToAppend) : [nodesToAppend];
 
-  nodesToAppend.forEach(nodeToAppend => {
+  nodesToAppend.forEach((nodeToAppend) => {
     node.appendChild(nodeToAppend);
   });
 }
@@ -83,7 +83,45 @@ export function unwrapNode(node: Node) {
   return result;
 }
 
-export function closest<T extends Node>(node: Node, found: string | Node) {
+export function toggleClass(element: Element, className: string, state?: boolean) {
+  if (isUndefined(state)) {
+    state = !hasClass(element, className);
+  }
+  const toggleFn = state ? addClass : removeClass;
+
+  toggleFn(element, className);
+}
+
+export function createElementWith(contents: string | HTMLElement, target: HTMLElement) {
+  const container = document.createElement('div');
+
+  if (isString(contents)) {
+    container.innerHTML = contents;
+  } else {
+    container.appendChild(contents);
+  }
+
+  const { firstChild } = container;
+
+  if (target) {
+    target.appendChild(firstChild!);
+  }
+
+  return firstChild;
+}
+
+export function getOuterWidth(el: HTMLElement) {
+  const computed = window.getComputedStyle(el);
+
+  return (
+    ['margin-left', 'margin-right'].reduce(
+      (acc, type) => acc + parseInt(computed.getPropertyValue(type), 10),
+      0
+    ) + el.offsetWidth
+  );
+}
+
+export function closest(node: Node, found: string | Node) {
   let condition;
 
   if (isString(found)) {
@@ -94,7 +132,7 @@ export function closest<T extends Node>(node: Node, found: string | Node) {
 
   while (node && node !== document) {
     if (isElemNode(node) && condition(node)) {
-      return node as T;
+      return node;
     }
 
     node = node.parentNode!;
@@ -103,11 +141,19 @@ export function closest<T extends Node>(node: Node, found: string | Node) {
   return null;
 }
 
-export function toggleClass(element: Element, className: string, state?: boolean) {
-  if (isUndefined(state)) {
-    state = !hasClass(element, className);
-  }
-  const toggleFn = state ? addClass : removeClass;
+export function getTotalOffset(el: HTMLElement, root: HTMLElement) {
+  let offsetTop = 0;
+  let offsetLeft = 0;
 
-  toggleFn(element, className);
+  while (el && el !== root) {
+    const { offsetTop: top, offsetLeft: left, offsetParent } = el;
+
+    offsetTop += top;
+    offsetLeft += left;
+    if (offsetParent === root.offsetParent) {
+      break;
+    }
+    el = el.offsetParent as HTMLElement;
+  }
+  return { offsetTop, offsetLeft };
 }

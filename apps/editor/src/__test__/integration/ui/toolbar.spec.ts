@@ -1,10 +1,9 @@
 import isString from 'tui-code-snippet/type/isString';
 import { VNode } from '@t/ui';
 import EventEmitter from '@/event/eventEmitter';
-import html from '@/new/vdom/template';
-import { render } from '@/new/renderer';
-import { Toolbar } from '@/new/components/toolbar/toolbar';
-import { groupingToolbarItems } from '@/new/toolbarItemFactory';
+import html from '@/ui/vdom/template';
+import { render } from '@/ui/vdom/renderer';
+import { Toolbar } from '@/ui/components/toolbar/toolbar';
 import '@/i18n/en-us';
 
 function getElement(selector: string) {
@@ -18,16 +17,35 @@ function assertToContainElement(el: HTMLElement | string) {
   expect(document.body).toContainElement(el);
 }
 
+function assertToNotContainElement(el: HTMLElement | string) {
+  if (isString(el)) {
+    el = getElement(el)!;
+  }
+  expect(document.body).not.toContainElement(el);
+}
+
 function dispatchClick(selector: string) {
   const el = getElement(selector)!;
 
   el.click();
 }
 
+function dispatchSelectChange(selector: string, value: string) {
+  const event = new Event('change', {
+    bubbles: true,
+    cancelable: true,
+  });
+  const el = getElement(selector)! as HTMLSelectElement;
+
+  el.value = value;
+
+  el.dispatchEvent(event);
+}
+
 function dispatchMouseover(selector: string) {
   const event = new MouseEvent('mouseover', {
     bubbles: true,
-    cancelable: true
+    cancelable: true,
   });
   const el = getElement(selector)!;
 
@@ -37,7 +55,7 @@ function dispatchMouseover(selector: string) {
 function dispatchMousemove(selector: string, x: number, y: number) {
   const event = new MouseEvent('mousemove', {
     bubbles: true,
-    cancelable: true
+    cancelable: true,
   });
 
   // @ts-ignore
@@ -49,19 +67,18 @@ function dispatchMousemove(selector: string, x: number, y: number) {
 
   el.dispatchEvent(event);
 }
+let em: EventEmitter, container: HTMLElement, destroy: () => void;
 
-describe('toolbar', () => {
-  let em: EventEmitter, container: HTMLElement, destroy: () => void;
-
+describe('default toolbar', () => {
   beforeEach(() => {
-    const toolbarItems = groupingToolbarItems([
+    const toolbarItems = [
       ['heading', 'bold', 'italic', 'strike'],
       ['hr', 'quote'],
       ['ul', 'ol', 'task', 'indent', 'outdent'],
       ['table', 'image', 'link'],
       ['code', 'codeblock'],
-      'scrollSync'
-    ]);
+      ['scrollSync'],
+    ];
 
     container = document.createElement('div');
     document.body.appendChild(container);
@@ -103,10 +120,10 @@ describe('toolbar', () => {
       '.tui-link',
       '.tui-code',
       '.tui-codeblock',
-      '.tui-scrollsync'
+      '.tui-scroll-sync',
     ];
 
-    toolbarButtonSelectors.forEach(selector => {
+    toolbarButtonSelectors.forEach((selector) => {
       assertToContainElement(selector);
     });
   });
@@ -130,24 +147,24 @@ describe('toolbar', () => {
     expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'bold' }, undefined);
   });
 
-  it('should hide the layer when clicking X button on layer', () => {
+  it('should hide the popup when clicking X button on popup', () => {
     dispatchClick('.tui-link');
 
-    const linkLayer = getElement('.te-popup-add-link');
+    const linkPopup = getElement('.te-popup-add-link');
     const closeBtn = getElement('.te-popup-add-link .tui-popup-close-button');
 
     closeBtn.click();
 
-    expect(linkLayer).toHaveStyle({ display: 'none' });
+    expect(linkPopup).toHaveStyle({ display: 'none' });
   });
 
   describe('scroll sync button', () => {
     it('should toggle state when clicking scroll sync button', () => {
-      const scrollSyncBtn = getElement('.tui-scrollsync');
+      const scrollSyncBtn = getElement('.tui-scroll-sync');
 
       expect(scrollSyncBtn).toHaveClass('active');
 
-      dispatchClick('.tui-scrollsync');
+      dispatchClick('.tui-scroll-sync');
 
       expect(scrollSyncBtn).not.toHaveClass('active');
     });
@@ -157,14 +174,14 @@ describe('toolbar', () => {
 
       em.listen('command', spy);
 
-      dispatchClick('.tui-scrollsync');
+      dispatchClick('.tui-scroll-sync');
 
       expect(spy).toHaveBeenCalledWith(
         { type: 'markdown', command: 'toggleScrollSync' },
         { active: false }
       );
 
-      dispatchClick('.tui-scrollsync');
+      dispatchClick('.tui-scroll-sync');
 
       expect(spy).toHaveBeenCalledWith(
         { type: 'markdown', command: 'toggleScrollSync' },
@@ -174,42 +191,42 @@ describe('toolbar', () => {
   });
 
   describe('heading button', () => {
-    it('should show the layer when clicking heading button', () => {
+    it('should show the popup when clicking heading button', () => {
       dispatchClick('.tui-heading');
 
-      const headingLayer = getElement('.te-heading-add');
+      const headingPopup = getElement('.te-heading-add');
 
-      expect(headingLayer).toHaveStyle({ display: 'block' });
+      expect(headingPopup).toHaveStyle({ display: 'block' });
     });
 
-    it('should trigger command event when clicking heading layer button', () => {
+    it('should trigger command event when clicking heading popup button', () => {
       const spy = jest.fn();
 
       em.listen('command', spy);
 
       dispatchClick('.tui-heading');
-      dispatchClick('.te-heading-add [data-value="2"]');
+      dispatchClick('.te-heading-add [data-level="2"]');
 
       expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'heading' }, { level: 2 });
     });
   });
 
   describe('link button', () => {
-    it('should show the layer when clicking link button', () => {
+    it('should show the popup when clicking link button', () => {
       dispatchClick('.tui-link');
 
-      const linkLayer = getElement('.te-popup-add-link');
+      const linkPopup = getElement('.te-popup-add-link');
 
-      expect(linkLayer).toHaveStyle({ display: 'block' });
+      expect(linkPopup).toHaveStyle({ display: 'block' });
     });
 
-    it('should hide layer when clicking Cancel button', () => {
+    it('should hide popup when clicking Cancel button', () => {
       dispatchClick('.tui-link');
       dispatchClick('.te-popup-add-link .te-close-button');
 
-      const linkLayer = getElement('.te-popup-add-link');
+      const linkPopup = getElement('.te-popup-add-link');
 
-      expect(linkLayer).toHaveStyle({ display: 'none' });
+      expect(linkPopup).toHaveStyle({ display: 'none' });
     });
 
     it('should trigger command event when clicking OK button', () => {
@@ -251,21 +268,21 @@ describe('toolbar', () => {
   });
 
   describe('image button', () => {
-    it('should show the layer when clicking image button', () => {
+    it('should show the popup when clicking image button', () => {
       dispatchClick('.tui-image');
 
-      const imageLayer = getElement('.te-popup-add-image');
+      const imagePopup = getElement('.te-popup-add-image');
 
-      expect(imageLayer).toHaveStyle({ display: 'block' });
+      expect(imagePopup).toHaveStyle({ display: 'block' });
     });
 
-    it('should hide layer when clicking Cancel button', () => {
+    it('should hide popup when clicking Cancel button', () => {
       dispatchClick('.tui-image');
       dispatchClick('.te-popup-add-image .te-close-button');
 
-      const imageLayer = getElement('.te-popup-add-image');
+      const imagePopup = getElement('.te-popup-add-image');
 
-      expect(imageLayer).toHaveStyle({ display: 'none' });
+      expect(imagePopup).toHaveStyle({ display: 'none' });
     });
 
     it('should toggle tab when clicking the file or url tab', () => {
@@ -314,12 +331,12 @@ describe('toolbar', () => {
   });
 
   describe('table button', () => {
-    it('should show the layer when clicking table button', () => {
+    it('should show the popup when clicking table button', () => {
       dispatchClick('.tui-table');
 
-      const tableLayer = getElement('.te-popup-add-table');
+      const tablePopup = getElement('.te-popup-add-table');
 
-      expect(tableLayer).toHaveStyle({ display: 'block' });
+      expect(tablePopup).toHaveStyle({ display: 'block' });
     });
 
     it('should trigger command event when selecting the area and clicking it', () => {
@@ -337,5 +354,344 @@ describe('toolbar', () => {
         { columnCount: 5, rowCount: 4 }
       );
     });
+  });
+});
+
+describe('custom button toolbar', () => {
+  function createCustomButtonWithPopup() {
+    const body = document.createElement('select');
+
+    body.innerHTML = `
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    `;
+    body.addEventListener('change', (ev) => {
+      em.emit(
+        'command',
+        { type: 'markdown', command: 'heading' },
+        { level: Number((ev.target as HTMLSelectElement).value) }
+      );
+      em.emit('closePopup');
+      (ev.target as HTMLSelectElement).value = '1';
+    });
+
+    return {
+      name: 'myToolbarWithPopup',
+      tooltip: 'L!',
+      className: 'my-toolbar-with-popup',
+      text: 'L!',
+      style: { color: '#fff', width: 30 },
+      popup: {
+        body,
+        className: 'my-popup',
+        style: { width: 'auto' },
+      },
+    };
+  }
+
+  const customButton = {
+    name: 'myToolbar',
+    tooltip: 'B!',
+    className: 'my-toolbar',
+    command: 'bold',
+    text: 'B!',
+    style: { color: '#222', width: 40 },
+  };
+  const customButtonWithPopup = createCustomButtonWithPopup();
+
+  beforeEach(() => {
+    const toolbarItems = [[customButton, customButtonWithPopup]];
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    em = new EventEmitter();
+
+    destroy = render(
+      container,
+      html`
+        <${Toolbar}
+          eventEmitter=${em}
+          previewStyle="vertical"
+          toolbarItems=${toolbarItems}
+          editorType="markdown"
+        />
+      ` as VNode
+    );
+  });
+
+  afterEach(() => {
+    destroy();
+  });
+
+  it('should be rendered properly', () => {
+    const customToolbar1 = getElement('.my-toolbar');
+    const customToolbar2 = getElement('.my-toolbar-with-popup');
+
+    expect(customToolbar1).toHaveTextContent('B!');
+    expect(customToolbar1).toHaveStyle({ color: '#222', width: '40px' });
+
+    expect(customToolbar2).toHaveTextContent('L!');
+    expect(customToolbar2).toHaveStyle({ color: '#fff', width: '30px' });
+  });
+
+  it('should show tooltip when mouseover on toolbar button', () => {
+    dispatchMouseover('.my-toolbar');
+
+    const tooltip = getElement('.tui-tooltip');
+
+    expect(tooltip).toHaveStyle({ display: 'block' });
+  });
+
+  it('should trigger command event when clicking button', () => {
+    const spy = jest.fn();
+
+    em.listen('command', spy);
+
+    dispatchClick('.my-toolbar');
+
+    // eslint-disable-next-line no-undefined
+    expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'bold' }, undefined);
+  });
+
+  it('should show the popup when clicking button with popup option', () => {
+    dispatchClick('.my-toolbar-with-popup');
+
+    const customPopup = getElement('.my-popup');
+
+    expect(customPopup).toHaveStyle({ display: 'block', width: 'auto' });
+    expect(customPopup).toHaveClass('my-popup');
+  });
+
+  it('should operate properly when event is triggered in popup', () => {
+    const spy = jest.fn();
+
+    em.listen('command', spy);
+
+    dispatchClick('.my-toolbar-with-popup');
+    dispatchClick('select');
+    dispatchSelectChange('select', '3');
+
+    expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'heading' }, { level: 3 });
+  });
+});
+
+describe('custom toolbar element', () => {
+  function createCustomItem() {
+    const el = document.createElement('div');
+
+    el.className = 'my-toolbar';
+    el.textContent = 'custom1';
+
+    return {
+      el,
+      name: 'myToolbar',
+      tooltip: 'custom1!',
+    };
+  }
+
+  function createCustomItemWithPopup() {
+    const el = document.createElement('div');
+
+    el.textContent = 'custom2';
+
+    const body = document.createElement('select');
+
+    body.innerHTML = `
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    `;
+    body.addEventListener('change', (ev) => {
+      em.emit(
+        'command',
+        { type: 'markdown', command: 'heading' },
+        { level: Number((ev.target as HTMLSelectElement).value) }
+      );
+      em.emit('closePopup');
+      (ev.target as HTMLSelectElement).value = '1';
+    });
+
+    el.className = 'my-toolbar-with-popup';
+
+    return {
+      el,
+      name: 'myToolbarWithPopup',
+      tooltip: 'custom2!',
+      popup: {
+        body,
+        className: 'my-popup',
+        style: { width: 'auto' },
+      },
+    };
+  }
+
+  const customItem = createCustomItem();
+  const customItemWithPopup = createCustomItemWithPopup();
+
+  beforeEach(() => {
+    const toolbarItems = [[customItem, customItemWithPopup]];
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    em = new EventEmitter();
+
+    destroy = render(
+      container,
+      html`
+        <${Toolbar}
+          eventEmitter=${em}
+          previewStyle="vertical"
+          toolbarItems=${toolbarItems}
+          editorType="markdown"
+        />
+      ` as VNode
+    );
+  });
+
+  afterEach(() => {
+    destroy();
+  });
+
+  it('should be rendered properly', () => {
+    const customToolbar1 = getElement('.my-toolbar');
+    const customToolbar2 = getElement('.my-toolbar-with-popup');
+
+    expect(customToolbar1).toHaveTextContent('custom1');
+    expect(customToolbar2).toHaveTextContent('custom2');
+  });
+
+  it('should show tooltip when mouseover on toolbar button', () => {
+    dispatchMouseover('.my-toolbar');
+
+    const tooltip = getElement('.tui-tooltip');
+
+    expect(tooltip).toHaveStyle({ display: 'block' });
+  });
+
+  it('should show the popup when clicking custom toolbar item with popup option', () => {
+    dispatchClick('.my-toolbar-with-popup');
+
+    const customPopup = getElement('.my-popup');
+
+    expect(customPopup).toHaveStyle({ display: 'block', width: 'auto' });
+    expect(customPopup).toHaveClass('my-popup');
+  });
+
+  it('should operate properly when event is triggered in popup', () => {
+    const spy = jest.fn();
+
+    em.listen('command', spy);
+
+    dispatchClick('.my-toolbar-with-popup');
+    dispatchClick('select');
+    dispatchSelectChange('select', '3');
+
+    expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'heading' }, { level: 3 });
+  });
+});
+
+describe('API', () => {
+  let ref: Toolbar | null;
+
+  function getToolbarItems() {
+    return getElement('.tui-editor-defaultUI-toolbar').querySelectorAll('button:not(.tui-more)');
+  }
+
+  beforeEach(() => {
+    const toolbarItems = [['heading', 'bold', 'italic', 'strike']];
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    em = new EventEmitter();
+
+    destroy = render(
+      container,
+      html`
+        <${Toolbar}
+          ref=${(toolbar: Toolbar) => (ref = toolbar)}
+          eventEmitter=${em}
+          previewStyle="vertical"
+          toolbarItems=${toolbarItems}
+          editorType="markdown"
+        />
+      ` as VNode
+    );
+    jest
+      .spyOn(getElement('.tui-editor-defaultUI-toolbar'), 'clientWidth', 'get')
+      .mockImplementation(() => 500);
+  });
+
+  afterEach(() => {
+    ref = null;
+    destroy();
+  });
+
+  it('should insert item on calling insertToolbarItem', () => {
+    ref!.insertToolbarItem({ groupIndex: 0, itemIndex: 1 }, 'ol');
+
+    const toolbarItems = getToolbarItems();
+
+    expect(toolbarItems[0]).toHaveClass('tui-heading');
+    expect(toolbarItems[1]).toHaveClass('tui-ol');
+    expect(toolbarItems[2]).toHaveClass('tui-bold');
+    expect(toolbarItems[3]).toHaveClass('tui-italic');
+    expect(toolbarItems[4]).toHaveClass('tui-strike');
+    // should have same parent because the toolbar is added to same group
+    expect(toolbarItems[1].parentElement).toEqual(toolbarItems[2].parentElement);
+  });
+
+  it('should add item on calling insertToolbarItem', () => {
+    ref!.insertToolbarItem({ groupIndex: 1, itemIndex: 1 }, 'ol');
+
+    const toolbarItems = getToolbarItems();
+
+    expect(toolbarItems[0]).toHaveClass('tui-heading');
+    expect(toolbarItems[1]).toHaveClass('tui-bold');
+    expect(toolbarItems[2]).toHaveClass('tui-italic');
+    expect(toolbarItems[3]).toHaveClass('tui-strike');
+    expect(toolbarItems[4]).toHaveClass('tui-ol');
+    // should have different parent because the toolbar is added to another group
+    expect(toolbarItems[3].parentElement).not.toEqual(toolbarItems[4].parentElement);
+  });
+
+  it('should insert custom toolbar item on calling insertToolbarItem', () => {
+    const customButton = {
+      name: 'myToolbar',
+      tooltip: 'B!',
+      className: 'my-toolbar',
+      command: 'bold',
+      text: 'B!',
+      style: { color: '#222', width: 40 },
+    };
+
+    ref!.insertToolbarItem({ groupIndex: 0, itemIndex: 1 }, customButton);
+
+    const toolbarItems = getToolbarItems();
+
+    expect(toolbarItems[0]).toHaveClass('tui-heading');
+
+    expect(toolbarItems[1]).toHaveClass('my-toolbar');
+    expect(toolbarItems[1]).toHaveTextContent('B!');
+    expect(toolbarItems[1]).toHaveStyle({ color: '#222', width: '40px' });
+
+    expect(toolbarItems[2]).toHaveClass('tui-bold');
+    expect(toolbarItems[3]).toHaveClass('tui-italic');
+    expect(toolbarItems[4]).toHaveClass('tui-strike');
+  });
+
+  it('should remove item on calling removeToolbarItem', () => {
+    ref!.removeToolbarItem('bold');
+
+    assertToNotContainElement('.tui-bold');
   });
 });

@@ -2,7 +2,7 @@
  * @fileoverview I18N for Chinese
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage('zh-CN', {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage('zh-CN', {
   'Text color': '文字颜色',
   'Auto scroll enabled': '自动滚动已启用',
   'Auto scroll disabled': '自动滚动已禁用',
-  'Choose language': '选择语言'
+  'Choose language': '选择语言',
 });

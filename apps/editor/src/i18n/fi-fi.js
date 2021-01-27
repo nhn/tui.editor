@@ -2,7 +2,7 @@
  * @fileoverview I18N for Finnish
  * @author Tomi Mynttinen <pikseli@iki.fi>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['fi', 'fi-FI'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['fi', 'fi-FI'], {
   'Text color': 'Tekstin väri',
   'Auto scroll enabled': 'Automaattinen skrollaus käytössä',
   'Auto scroll disabled': 'Automaattinen skrollaus pois käytöstä',
-  'Choose language': 'Valitse kieli'
+  'Choose language': 'Valitse kieli',
 });

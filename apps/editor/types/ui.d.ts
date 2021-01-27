@@ -1,4 +1,34 @@
-import { ToolbarButton } from './editor';
+export interface PopupOptions {
+  body: HTMLElement;
+  headerText?: string;
+  className?: string;
+  style?: Record<string, any>;
+}
+
+export interface ToolbarButtonOptions {
+  name: string;
+  tooltip: string;
+  className?: string;
+  command?: string;
+  text?: string;
+  style?: Record<string, any>;
+  popup?: PopupOptions;
+}
+
+export interface ToolbarCustomOptions {
+  name: string;
+  tooltip: string;
+  el?: HTMLElement;
+  popup?: PopupOptions;
+}
+
+export type ToolbarButtonInfo = {
+  activeTooltip?: string;
+  state?: ToolbarStateKeys;
+  hidden?: boolean;
+  active?: boolean;
+  toggle?: boolean;
+} & ToolbarButtonOptions;
 
 export interface Component<T = {}, R = {}> {
   props: T;
@@ -38,7 +68,7 @@ export interface VNode {
 
   next: VNode | null;
 
-  ref?: (node: Node) => void;
+  ref?: (node: Node | Component) => void | Node | Component;
 
   node: Node | null;
 
@@ -52,23 +82,24 @@ export interface VNode {
 }
 
 export interface ComponentClass {
-  new (props?: Record<string, any>): Component;
+  new (props?: any): Component;
 }
 
 export interface Pos {
-  left: string | number;
-  top: string | number;
+  left: number;
+  top: number;
 }
 
 export type TooltipStyle = {
   display: 'none' | 'block';
 } & Partial<Pos>;
 
-export interface LayerInfo {
+export interface PopupInfo {
   headerText?: string;
+  className?: string;
+  style?: Record<string, any>;
   fromEl: HTMLElement;
   pos: Pos;
-  className: string;
   render: (props: Record<string, any>) => VNode | VNode[];
 }
 
@@ -93,29 +124,31 @@ interface ToolbarState {
 }
 export type ToolbarStateKeys = keyof ToolbarState;
 
-export type ToolbarItemInfo = {
-  name: string;
-  className: string;
-  tooltip: string;
-  activeTooltip?: string;
-  command?: string;
-  state?: ToolbarStateKeys;
-  hidden?: boolean;
-  noIcon?: boolean;
-  active?: boolean;
-  toggle?: boolean;
-};
-
+export type ToolbarItemInfo = ToolbarCustomOptions | ToolbarButtonInfo;
 export type ToolbarGroupInfo = ToolbarItemInfo[] & { hidden?: boolean };
-// @TODO: add custom toolbar option type
-export type ToolbarItem = (string | ToolbarButton) | (string | ToolbarButton)[];
+export type ToolbarItemOptions = ToolbarCustomOptions | ToolbarButtonOptions;
+export type ToolbarItem = (string | ToolbarItemOptions)[];
 
 export type ExecCommand = (command: string, payload?: Record<string, any>) => void;
-export type HideLayer = () => void;
-export type SetLayerInfo = (info: LayerInfo) => void;
+export type HidePopup = () => void;
+export type SetPopupInfo = (info: PopupInfo) => void;
+export type SetItemWidth = (name: string, width: number) => void;
+export type ShowTooltip = (el: HTMLElement, active?: boolean) => void;
+export type HideTooltip = () => void;
+export type GetBound = (el: HTMLElement, active?: boolean) => Pos;
 
 export interface ContextMenuItem {
   label: string;
   className?: string;
   onClick?: () => void;
+}
+
+export interface IndexList {
+  groupIndex: number;
+  itemIndex: number;
+}
+export interface DefaultUI {
+  destroy: () => void;
+  insertToolbarItem: (indexList: IndexList, item: string | ToolbarItemOptions) => void;
+  removeToolbarItem: (name: string) => void;
 }

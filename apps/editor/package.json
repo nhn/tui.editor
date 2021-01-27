@@ -76,7 +76,6 @@
     "jest-serializer-html": "^7.0.0",
     "mini-css-extract-plugin": "^0.9.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "prettier": "^1.19.1",
     "resize-observer-polyfill": "^1.5.1",
     "snowpack": "^2.18.1",
     "terser-webpack-plugin": "^2.2.1",

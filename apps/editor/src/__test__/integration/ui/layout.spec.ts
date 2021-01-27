@@ -1,7 +1,7 @@
-import { Layout } from '@/new/components/layout';
-import { render } from '@/new/renderer';
-import { VNode } from '@/new/vdom/vnode';
-import html from '@/new/vdom/template';
+import { Layout } from '@/ui/components/layout';
+import { render } from '@/ui/vdom/renderer';
+import { VNode } from '@/ui/vdom/vnode';
+import html from '@/ui/vdom/template';
 import EventEmitter from '@/event/eventEmitter';
 import '@/i18n/en-us';
 
@@ -49,8 +49,8 @@ function getMdPreviewTab() {
   return document.querySelectorAll<HTMLElement>('.te-markdown-tab-section button')[1];
 }
 
-function getScrollSyncBtnWrapper() {
-  return getElement('.te-toolbar-button-wrapper')!;
+function getScrollSyncBtn() {
+  return getElement('.tui-scroll-sync')!;
 }
 
 function clickMdWriteTab() {
@@ -80,7 +80,7 @@ describe('layout component', () => {
     const dummySlot = {
       mdEditor,
       mdPreview,
-      wwEditor
+      wwEditor,
     };
 
     container = document.createElement('div');
@@ -95,7 +95,9 @@ describe('layout component', () => {
           eventEmitter=${em}
           slots=${dummySlot}
           hideModeSwitch=${false}
-          toolbarItems=${['scrollSync']}
+          toolbarItems=${[['bold', 'italic', 'strike'], ['scrollSync']]}
+          previewStyle="tab"
+          editorType="markdown"
         />
       ` as VNode
     );
@@ -159,15 +161,37 @@ describe('layout component', () => {
       expect(wwSwitch).not.toHaveClass('active');
     });
 
-    it('should hide scrollSync toolbar button', () => {
+    it('should hide scrollSync when previewStyle is tab regardless of changing editor mode', () => {
+      const scrollSyncBtn = getScrollSyncBtn();
+
+      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+
+      em.emit('changeMode', 'wysiwyg');
+
+      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+    });
+
+    it('should show scrollSync when previewStyle is vertical on only markdown mode', () => {
       em.emit('changePreviewStyle', 'vertical');
-      const scrollSyncBtn = getScrollSyncBtnWrapper();
+      const scrollSyncBtn = getScrollSyncBtn();
 
       expect(scrollSyncBtn).toHaveStyle({ display: 'inline-block' });
 
       em.emit('changeMode', 'wysiwyg');
 
       expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+    });
+
+    it('should show scrollSync when previewStyle is changed on only markdown mode', () => {
+      em.emit('changeMode', 'wysiwyg');
+      em.emit('changePreviewStyle', 'vertical');
+      const scrollSyncBtn = getScrollSyncBtn();
+
+      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+
+      em.emit('changeMode', 'markdown');
+
+      expect(scrollSyncBtn).toHaveStyle({ display: 'inline-block' });
     });
   });
 
@@ -216,6 +240,39 @@ describe('layout component', () => {
       clickMdWriteTab();
 
       expect(spy1).toHaveBeenCalledTimes(1);
+    });
+
+    it('should enable/disable the toolbar items by clicking markdown tab', () => {
+      clickMdPreviewTab();
+
+      expect(getScrollSyncBtn()).toBeDisabled();
+      expect(getElement('.tui-toolbar-icons')).toBeDisabled();
+
+      clickMdWriteTab();
+
+      expect(getScrollSyncBtn()).not.toBeDisabled();
+      expect(getElement('.tui-toolbar-icons')).not.toBeDisabled();
+    });
+
+    it('should enable the toolbar items when changeMode is triggered', () => {
+      clickMdPreviewTab();
+
+      em.emit('changeMode', 'wysiwyg');
+
+      expect(getElement('.tui-toolbar-icons')).not.toBeDisabled();
+
+      em.emit('changeMode', 'markdown');
+
+      expect(getElement('.tui-toolbar-icons')).not.toBeDisabled();
+      expect(getMdWriteTab()).toHaveClass('te-tab-active');
+    });
+
+    it('should enable the toolbar items when changePreviewStyle is triggered', () => {
+      clickMdPreviewTab();
+
+      em.emit('changePreviewStyle', 'vertical');
+
+      expect(getElement('.tui-toolbar-icons')).not.toBeDisabled();
     });
   });
 

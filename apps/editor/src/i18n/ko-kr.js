@@ -2,7 +2,7 @@
  * @fileoverview I18N for Korean
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['ko', 'ko-KR'], {
   Markdown: '마크다운',
@@ -50,5 +50,5 @@ Editor.setLanguage(['ko', 'ko-KR'], {
   'Text color': '글자 색상',
   'Auto scroll enabled': '자동 스크롤 켜짐',
   'Auto scroll disabled': '자동 스크롤 꺼짐',
-  'Choose language': '언어 선택'
+  'Choose language': '언어 선택',
 });

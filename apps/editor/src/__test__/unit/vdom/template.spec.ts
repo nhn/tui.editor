@@ -1,6 +1,6 @@
 import { VNode } from '@t/ui';
-import html from '@/new/vdom/template';
-import { Component } from '@/new/vdom/component';
+import html from '@/ui/vdom/template';
+import { Component } from '@/ui/vdom/component';
 
 class TestComponent extends Component {
   render() {

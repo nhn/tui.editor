@@ -93,4 +93,5 @@ export type EventTypes =
   | 'requireScrollSync'
   | 'requireScrollIntoView'
   | 'setCodeBlockLanguages'
-  | 'toggleScrollSync';
+  | 'toggleScrollSync'
+  | 'closePopup';

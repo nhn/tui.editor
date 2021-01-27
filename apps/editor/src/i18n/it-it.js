@@ -2,7 +2,7 @@
  * @fileoverview I18N for Italian
  * @author Massimo Redaelli <massimo@typish.io>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['it', 'it-IT'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['it', 'it-IT'], {
   'Text color': 'Colore del testo',
   'Auto scroll enabled': 'Scrolling automatico abilitato',
   'Auto scroll disabled': 'Scrolling automatico disabilitato',
-  'Choose language': 'Scegli la lingua'
+  'Choose language': 'Scegli la lingua',
 });

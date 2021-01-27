@@ -2,7 +2,7 @@
  * @fileoverview I18N for Traditional Chinese
  * @author Tzu-Ray Su <raysu3329@gmail.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage('zh-TW', {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage('zh-TW', {
   'Text color': '文字顏色',
   'Auto scroll enabled': '已啟用自動滾動',
   'Auto scroll disabled': '已停用自動滾動',
-  'Choose language': '選擇語言'
+  'Choose language': '選擇語言',
 });

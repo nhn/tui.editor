@@ -42,7 +42,15 @@ declare module 'tui-code-snippet/collection/forEachOwnProperties' {
   export default function forEachOwnProperties<T extends object>(
     obj: T,
     iteratee: (value: NonNullable<T[keyof T]>, key: keyof T, targetObj: T) => boolean | void,
-    context?: any
+    context?: object
+  ): void;
+}
+
+declare module 'tui-code-snippet/collection/forEachArray' {
+  export default function forEachArray<T>(
+    arr: Array<T>,
+    iteratee: (value: T, index: number, targetArr: Array<T>) => boolean | void,
+    context?: object
   ): void;
 }
 
@@ -100,4 +108,12 @@ declare module 'tui-code-snippet/request/sendHostname' {
 
 declare module 'tui-code-snippet/domUtil/matches' {
   export default function matches(element: Element, selector: string): boolean;
+}
+
+declare module 'tui-code-snippet/tricks/throttle' {
+  export default function throttle(fn: () => void, interval: number): () => void;
+}
+
+declare module 'tui-code-snippet/domUtil/closest' {
+  export default function closest(el: HTMLElement, found: string): HTMLElement | null;
 }

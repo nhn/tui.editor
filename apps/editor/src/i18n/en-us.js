@@ -2,7 +2,7 @@
  * @fileoverview I18N for English
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['en', 'en-US'], {
   Markdown: 'Markdown',
@@ -50,5 +50,5 @@ Editor.setLanguage(['en', 'en-US'], {
   'Text color': 'Text color',
   'Auto scroll enabled': 'Auto scroll enabled',
   'Auto scroll disabled': 'Auto scroll disabled',
-  'Choose language': 'Choose language'
+  'Choose language': 'Choose language',
 });
