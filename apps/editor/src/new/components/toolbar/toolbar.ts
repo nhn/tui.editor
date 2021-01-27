@@ -3,7 +3,7 @@ import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
 import {
-  Indexes,
+  IndexList,
   PopupInfo,
   TabInfo,
   ToolbarGroupInfo,
@@ -79,8 +79,8 @@ export class Toolbar extends Component<Props, State> {
     this.appendTooltipToBody();
   }
 
-  insertToolbarItem(indexes: Indexes, item: string | ToolbarItemOptions) {
-    const { groupIndex, itemIndex } = indexes;
+  insertToolbarItem(indexList: IndexList, item: string | ToolbarItemOptions) {
+    const { groupIndex, itemIndex } = indexList;
     const group = this.initialItems[groupIndex];
 
     item = createToolbarItemInfo(item);

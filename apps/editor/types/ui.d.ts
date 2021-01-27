@@ -143,12 +143,12 @@ export interface ContextMenuItem {
   onClick?: () => void;
 }
 
-export interface Indexes {
+export interface IndexList {
   groupIndex: number;
   itemIndex: number;
 }
 export interface DefaultUI {
   destroy: () => void;
-  insertToolbarItem: (indexes: Indexes, item: string | ToolbarItemOptions) => void;
+  insertToolbarItem: (indexList: IndexList, item: string | ToolbarItemOptions) => void;
   removeToolbarItem: (name: string) => void;
 }

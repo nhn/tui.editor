@@ -7,6 +7,8 @@ import { VNode } from './vnode';
 type ConditionFn = (propName: string) => boolean;
 type Props = Record<string, any>;
 
+// @TODO: clearfy the type definition for CSSDeclaration
+
 export function createNode(vnode: VNode) {
   let node: Node;
 

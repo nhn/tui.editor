@@ -86,7 +86,7 @@ export class ToolbarButtonComp extends Component<Props, State> {
     if (toggle) {
       const active = !this.state.active;
 
-      // modifying props is anti-pattern, but it is more efficent for the performance and code readability
+      // modifying props is anti-pattern, but it is more efficient for the performance and code readability
       item.active = active;
       newState = { active };
       this.setState(newState);

@@ -146,11 +146,11 @@ export function getTotalOffset(el: HTMLElement, root: HTMLElement) {
   let offsetLeft = 0;
 
   while (el && el !== root) {
-    const { offsetTop: top, offsetLeft: left } = el;
+    const { offsetTop: top, offsetLeft: left, offsetParent } = el;
 
     offsetTop += top;
     offsetLeft += left;
-    if (el.offsetParent === root.offsetParent) {
+    if (offsetParent === root.offsetParent) {
       break;
     }
     el = el.offsetParent as HTMLElement;

@@ -1,6 +1,7 @@
-import { EditorOptions } from '@t/editor';
+import { EditorOptions, ViewerOptions } from '@t/editor';
 import { DefaultUI, VNode } from '@t/ui';
 import EditorCore from './editorCore';
+import Viewer from './viewer';
 import html from './new/vdom/template';
 import { Layout } from './new/components/layout';
 import { render } from './new/vdom/renderer';
@@ -34,6 +35,10 @@ class Editor extends EditorCore {
       removeToolbarItem: layoutComp.removeToolbarItem.bind(layoutComp),
       destroy,
     };
+  }
+
+  static factory(options: (EditorOptions | ViewerOptions) & { viewer?: boolean }) {
+    return options.viewer ? new Viewer(options) : new Editor(options as EditorOptions);
   }
 
   getDefaultUI() {

@@ -40,7 +40,7 @@ import { ScrollSync } from './markdown/scroll/scrollSync';
  *     @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
  *     @param {string} [options.initialValue] - Editor's initial value
  *     @param {string} [options.previewStyle] - Markdown editor's preview style (tab, vertical)
- *     @param {boolean} [options.previewHighlight = true] - Highlight a preview element corresponds to the cursor position in the markdwon editor
+ *     @param {boolean} [options.previewHighlight = true] - Highlight a preview element corresponds to the cursor position in the markdown editor
  *     @param {string} [options.initialEditType] - Initial editor type (markdown, wysiwyg)
  *     @param {Object} [options.events] - Events
  *         @param {function} [options.events.load] - It would be emitted when editor fully load
@@ -59,7 +59,7 @@ import { ScrollSync } from './markdown/scroll/scrollSync';
  *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  *     @param {Object} [options.extendedAutolinks] - Using extended Autolinks specified in GFM spec
- *     @param {Object} [options.customConvertor] - convertor extention
+ *     @param {Object} [options.customConvertor] - convertor extension
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
