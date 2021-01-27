@@ -39,8 +39,8 @@ export class CustomBlockView implements NodeView {
     this.canceled = false;
 
     this.dom = document.createElement('div');
-    this.wrapper = document.createElement('div');
     this.dom.className = 'custom-block';
+    this.wrapper = document.createElement('div');
     this.wrapper.className = 'custom-block-view';
 
     this.createInnerViewContainer();
@@ -59,9 +59,7 @@ export class CustomBlockView implements NodeView {
     span.textContent = this.node.attrs.info;
     span.className = 'info';
     button.type = 'button';
-    button.addEventListener('click', () => {
-      this.openEditor();
-    });
+    button.addEventListener('click', () => this.openEditor());
 
     tool.appendChild(span);
     tool.appendChild(button);

@@ -1,4 +1,17 @@
 @charset "utf-8";
+
+.ProseMirror .placeholder {
+  color: #999;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+.ProseMirror-selectednode {
+  outline: none;
+}
+
 .tui-editor-contents {
   margin: 0;
   padding: 0;
@@ -324,7 +337,7 @@
 .custom-block .custom-block-view .tool {
   position: absolute;
   right: 10px;
-  top: 10px;
+  top: 7px;
   display: none;
 }
 
@@ -348,18 +361,6 @@
   font-weight: bold;
   color: #5200d0;
   vertical-align: middle;
-}
-
-.ProseMirror .placeholder {
-  color: #999;
-}
-
-.ProseMirror:focus {
-  outline: none;
-}
-
-.ProseMirror-selectednode {
-  outline: none;
 }
 
 .tui-editor-contents-placeholder::before {
