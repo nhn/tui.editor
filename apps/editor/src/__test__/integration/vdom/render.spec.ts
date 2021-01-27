@@ -1,8 +1,8 @@
 import { oneLineTrim } from 'common-tags';
-import { render } from '@/new/vdom/renderer';
-import { Component } from '@/new/vdom/component';
-import { VNode } from '@/new/vdom/vnode';
-import html from '@/new/vdom/template';
+import { render } from '@/ui/vdom/renderer';
+import { Component } from '@/ui/vdom/component';
+import { VNode } from '@/ui/vdom/vnode';
+import html from '@/ui/vdom/template';
 
 interface Props {
   mounted?: jest.Mock;

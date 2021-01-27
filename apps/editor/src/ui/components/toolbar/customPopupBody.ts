@@ -1,7 +1,7 @@
 import { ExecCommand, HidePopup } from '@t/ui';
 import { Emitter } from '@t/event';
-import html from '@/new/vdom/template';
-import { Component } from '@/new/vdom/component';
+import html from '@/ui/vdom/template';
+import { Component } from '@/ui/vdom/component';
 
 interface Props {
   body: HTMLElement;

@@ -2,8 +2,8 @@ import { Emitter } from '@t/event';
 import { ExecCommand } from '@t/ui';
 import { closest } from '@/utils/dom';
 import i18n from '@/i18n/i18n';
-import html from '@/new/vdom/template';
-import { Component } from '@/new/vdom/component';
+import html from '@/ui/vdom/template';
+import { Component } from '@/ui/vdom/component';
 
 interface Props {
   eventEmitter: Emitter;

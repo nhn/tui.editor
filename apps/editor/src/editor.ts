@@ -2,9 +2,9 @@ import { EditorOptions, ViewerOptions } from '@t/editor';
 import { DefaultUI, VNode } from '@t/ui';
 import EditorCore from './editorCore';
 import Viewer from './viewer';
-import html from './new/vdom/template';
-import { Layout } from './new/components/layout';
-import { render } from './new/vdom/renderer';
+import html from './ui/vdom/template';
+import { Layout } from './ui/components/layout';
+import { render } from './ui/vdom/renderer';
 
 import '@/css/editor.css';
 

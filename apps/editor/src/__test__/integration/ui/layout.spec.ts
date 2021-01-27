@@ -1,7 +1,7 @@
-import { Layout } from '@/new/components/layout';
-import { render } from '@/new/vdom/renderer';
-import { VNode } from '@/new/vdom/vnode';
-import html from '@/new/vdom/template';
+import { Layout } from '@/ui/components/layout';
+import { render } from '@/ui/vdom/renderer';
+import { VNode } from '@/ui/vdom/vnode';
+import html from '@/ui/vdom/template';
 import EventEmitter from '@/event/eventEmitter';
 import '@/i18n/en-us';
 

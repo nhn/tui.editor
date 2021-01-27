@@ -8,10 +8,10 @@ import {
   ToolbarCustomOptions,
 } from '@t/ui';
 import { Emitter } from '@t/event';
-import html from '@/new/vdom/template';
-import { Component } from '@/new/vdom/component';
+import html from '@/ui/vdom/template';
+import { Component } from '@/ui/vdom/component';
 import { getOuterWidth } from '@/utils/dom';
-import { createPopupInfo } from '@/new/toolbarItemFactory';
+import { createPopupInfo } from '@/ui/toolbarItemFactory';
 import { connectHOC } from './buttonHoc';
 
 interface Props {

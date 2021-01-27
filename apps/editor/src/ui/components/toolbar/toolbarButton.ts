@@ -9,9 +9,9 @@ import {
   ToolbarButtonInfo,
 } from '@t/ui';
 import { Emitter } from '@t/event';
-import html from '@/new/vdom/template';
-import { Component } from '@/new/vdom/component';
-import { createPopupInfo } from '@/new/toolbarItemFactory';
+import html from '@/ui/vdom/template';
+import { Component } from '@/ui/vdom/component';
+import { createPopupInfo } from '@/ui/toolbarItemFactory';
 import { getOuterWidth } from '@/utils/dom';
 import { connectHOC } from './buttonHoc';
 

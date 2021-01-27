@@ -1,9 +1,9 @@
 import isString from 'tui-code-snippet/type/isString';
 import { VNode } from '@t/ui';
 import EventEmitter from '@/event/eventEmitter';
-import html from '@/new/vdom/template';
-import { render } from '@/new/vdom/renderer';
-import { Toolbar } from '@/new/components/toolbar/toolbar';
+import html from '@/ui/vdom/template';
+import { render } from '@/ui/vdom/renderer';
+import { Toolbar } from '@/ui/components/toolbar/toolbar';
 import '@/i18n/en-us';
 
 function getElement(selector: string) {

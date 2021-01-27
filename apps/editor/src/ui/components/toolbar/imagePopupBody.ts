@@ -1,8 +1,8 @@
 import { Emitter } from '@t/event';
 import { ExecCommand, HidePopup, TabInfo } from '@t/ui';
 import i18n from '@/i18n/i18n';
-import { Component } from '@/new/vdom/component';
-import html from '@/new/vdom/template';
+import { Component } from '@/ui/vdom/component';
+import html from '@/ui/vdom/template';
 import { Tabs } from '../tabs';
 
 const TYPE_UI = 'ui';

@@ -10,8 +10,8 @@ import {
 } from '@t/ui';
 import { Emitter } from '@t/event';
 import { findNodes, closest } from '@/utils/dom';
-import html from '@/new/vdom/template';
-import { Component } from '@/new/vdom/component';
+import html from '@/ui/vdom/template';
+import { Component } from '@/ui/vdom/component';
 import { ToolbarGroup } from './toolbarGroup';
 import { connectHOC } from './buttonHoc';
 

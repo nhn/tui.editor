@@ -1,7 +1,7 @@
 import { Emitter } from '@t/event';
 import { ExecCommand, Pos } from '@t/ui';
-import html from '@/new/vdom/template';
-import { Component } from '@/new/vdom/component';
+import html from '@/ui/vdom/template';
+import { Component } from '@/ui/vdom/component';
 
 interface Range {
   rowIdx: number;
