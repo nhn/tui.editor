@@ -44,7 +44,7 @@ class I18n {
     });
   }
 
-  get(key: string, code: string) {
+  get(key: string, code?: string) {
     if (!code) {
       code = this.code;
     }

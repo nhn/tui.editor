@@ -2,7 +2,7 @@
  * @fileoverview I18N for Arabic
  * @author Amira Salah <amira.salah@itworx.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage('ar', {
   Markdown: 'لغة ترميز',
@@ -48,5 +48,5 @@ Editor.setLanguage('ar', {
   'Text color': 'لون النص',
   'Auto scroll enabled': 'التحريك التلقائي ممكّن',
   'Auto scroll disabled': 'التحريك التلقائي معطّل',
-  'Choose language': 'اختر اللغة'
+  'Choose language': 'اختر اللغة',
 });

@@ -2,6 +2,7 @@ import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap } from './ma
 import { Handler } from './event';
 import { EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
+import { DefaultUI, ToolbarItemOptions } from './ui';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -22,23 +23,6 @@ export interface ViewerHookMap {
 export type EditorHookMap = ViewerHookMap & {
   addImageBlobHook?: (blob: Blob | File, callback: (url: string, altText: string) => void) => void;
 };
-
-// @TODO: should change the toolbar option
-interface ButtonOptions {
-  el?: HTMLElement;
-  className?: string;
-  command?: string;
-  event?: string;
-  text?: string;
-  tooltip?: string;
-  style?: string;
-  state?: string;
-}
-
-interface ToolbarButton {
-  type: string;
-  options: ButtonOptions;
-}
 
 export type AutolinkParser = (
   content: string
@@ -123,7 +107,7 @@ export interface EditorOptions {
   useCommandShortcut?: boolean;
   useDefaultHTMLSanitizer?: boolean;
   usageStatistics?: boolean;
-  toolbarItems?: (string | ToolbarButton)[];
+  toolbarItems?: (string | ToolbarItemOptions)[];
   hideModeSwitch?: boolean;
   plugins?: (EditorPlugin | EditorPluginInfo)[];
   extendedAutolinks?: ExtendedAutolinks;
@@ -139,10 +123,16 @@ export interface EditorOptions {
   UI: any;
 }
 
-export class Editor {
+interface Slots {
+  mdEditor: HTMLElement;
+  mdPreview: HTMLElement;
+  wwEditor: HTMLElement;
+}
+
+export class EditorCore {
   constructor(options: EditorOptions);
 
-  public static factory(options: EditorOptions): Editor | Viewer;
+  public static factory(options: EditorOptions): EditorCore | Viewer;
 
   public static setLanguage(code: string, data: Record<string, string>): void;
 
@@ -217,4 +207,10 @@ export class Editor {
   setPlaceholder(placeholder: string): void;
 
   setCodeBlockLanguages(languages: string[]): void;
+
+  getEditorElements(): Slots;
+}
+
+export class Editor extends EditorCore {
+  getDefaultUI(): DefaultUI;
 }

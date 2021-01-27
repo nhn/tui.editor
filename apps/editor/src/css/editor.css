@@ -43,6 +43,7 @@
   min-height: 0px;
   position: relative;
   height: inherit;
+  box-sizing: border-box;
 }
 
 .te-md-container {
@@ -233,6 +234,13 @@
   overflow: hidden;
 }
 
+.te-toolbar-section {
+  height: 32px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e5e5e5;
+  position: relative;
+}
+
 .tui-toolbar-divider {
   float: left;
   display: inline-block;
@@ -240,18 +248,6 @@
   height: 14px;
   background-color: #ddd;
   margin: 9px 6px;
-}
-
-.tui-toolbar-button-group {
-  height: 28px;
-  border-right: 1px solid #d9d9d9;
-  float: left;
-}
-
-.te-toolbar-section {
-  height: 32px;
-  box-sizing: border-box;
-  border-bottom: 1px solid #e5e5e5;
 }
 
 .tui-editor-defaultUI-toolbar button {
@@ -275,30 +271,38 @@
   background-color: #fff;
 }
 
-.tui-editor-defaultUI-toolbar button:first-child {
-  margin-left: 0;
-}
-
-.tui-editor-defaultUI-toolbar button:last-child {
-  margin-right: 0;
-}
-
-.tui-editor-defaultUI-toolbar button.tui-scrollsync {
+.tui-editor-defaultUI-toolbar button.tui-scroll-sync {
   width: auto;
   color: #777777;
   border: 0;
 }
 
-.tui-editor-defaultUI button.tui-scrollsync:after {
+.tui-dropdown-toolbar {
+  position: absolute;
+  width: auto;
+  height: 31px;
+  z-index: 10;
+  margin-right: auto;
+  border: 1px solid #cacaca;
+  background: #fff;
+}
+
+.tui-toolbar-item-wrapper {
+  float: left;
+  margin: 5px 3px;
+  height: 22px;
+}
+
+.tui-editor-defaultUI button.tui-scroll-sync:after {
   content: 'Scroll off';
 }
 
-.tui-editor-defaultUI button.tui-scrollsync.active {
+.tui-editor-defaultUI button.tui-scroll-sync.active {
   color: #4b96e6;
   font-weight: bold;
 }
 
-.tui-editor-defaultUI button.tui-scrollsync.active:after {
+.tui-editor-defaultUI button.tui-scroll-sync.active:after {
   content: 'Scroll on';
 }
 
@@ -398,6 +402,7 @@
   border: 1px solid #cacaca;
   background: white;
   z-index: 9999;
+  position: absolute;
 }
 
 .tui-popup-modal-background .tui-popup-wrapper {
@@ -449,9 +454,6 @@
 
 .tui-editor-popup {
   position: absolute;
-  top: 30px;
-  left: 50%;
-  margin-left: -250px;
 }
 
 .tui-editor-popup.tui-popup-modal-background {
@@ -525,6 +527,10 @@
   background: #fff;
 }
 
+.te-popup-add-table  {
+  width: auto;
+}
+
 .te-popup-add-table .te-table-selection {
   position: relative;
 }
@@ -551,16 +557,15 @@
   text-align: center;
 }
 
-.te-popup-table-utils {
+.te-context-menu {
+  position: absolute;
   width: auto;
   min-width: 120px;
+  font-size: 12px;
+  border: 1px solid #cacaca;
 }
 
-.te-popup-table-utils .tui-popup-body {
-  padding: 0px;
-}
-
-.te-popup-table-utils button {
+.te-context-menu button {
   display: block;
   width: 100%;
   background-color: #fff;
@@ -573,22 +578,22 @@
   color: #777;
 }
 
-.te-popup-table-utils button:hover {
+.te-context-menu button:hover {
   background-color: #f4f4f4;
 }
 
-.te-popup-table-utils hr {
+.te-context-menu hr {
   margin: 0;
   background-color: #cacaca;
   border-style: none;
   height: 1px;
 }
 
-.te-popup-table-utils .te-context-menu-disabled {
+.te-context-menu .te-context-menu-disabled {
   color: #ccc;
 }
 
-.te-popup-table-utils .te-context-menu-disabled:hover {
+.te-context-menu .te-context-menu-disabled:hover {
   background-color: #fff;
 }
 
@@ -647,15 +652,6 @@
 
 .te-heading-add h6 {
   font-size: 14px;
-}
-
-.te-dropdown-toolbar {
-  position: absolute;
-  width: auto;
-}
-
-.te-dropdown-toolbar .tui-popup-body {
-  padding: 0px;
 }
 
 .tui-popup-color {
@@ -1175,16 +1171,16 @@
   overflow-y: auto;
 }
 
-.tui-split-scroll button.tui-scrollsync {
+.tui-split-scroll button.tui-scroll-sync {
   top: 10px;
   opacity: 0.2;
 }
 
-.tui-split-scroll button.tui-scrollsync::after {
+.tui-split-scroll button.tui-scroll-sync::after {
   content: 'scroll off';
 }
 
-.tui-split-scroll.scroll-sync button.tui-scrollsync {
+.tui-split-scroll.scroll-sync button.tui-scroll-sync {
   opacity: 0.5;
 }
 
@@ -1194,7 +1190,7 @@
   overflow: initial;
 }
 
-.tui-split-scroll.scroll-sync button.tui-scrollsync::after {
+.tui-split-scroll.scroll-sync button.tui-scroll-sync::after {
   content: 'scroll on';
 }
 
@@ -1214,7 +1210,7 @@
   display: none;
 }
 
-.tui-split-scroll.single-content button.tui-scrollsync {
+.tui-split-scroll.single-content button.tui-scroll-sync {
   display: none;
 }
 
@@ -1241,7 +1237,7 @@
     margin-left: -150px;
   }
 
-  .te-dropdown-toolbar {
+  .tui-dropdown-toolbar {
     max-width: none;
   }
 }

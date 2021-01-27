@@ -2,7 +2,7 @@
  * @fileoverview I18N for Polish
  * @author Marcin Mikołajczak <me@m4sk.in>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['pl', 'pl-PL'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['pl', 'pl-PL'], {
   'Text color': 'Kolor tekstu',
   'Auto scroll enabled': 'Włączono automatyczne przewijanie',
   'Auto scroll disabled': 'Wyłączono automatyczne przewijanie',
-  'Choose language': 'Wybierz język'
+  'Choose language': 'Wybierz język',
 });

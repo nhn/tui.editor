@@ -2,7 +2,7 @@
  * @fileoverview I18N for Spanish
  * @author Enrico Lamperti <oss@elamperti.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['es', 'es-ES'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['es', 'es-ES'], {
   'Text color': 'Color del texto',
   'Auto scroll enabled': 'Desplazamiento automático habilitado',
   'Auto scroll disabled': 'Desplazamiento automático deshabilitado',
-  'Choose language': 'Elegir idioma'
+  'Choose language': 'Elegir idioma',
 });

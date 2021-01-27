@@ -45,6 +45,8 @@ export class ScrollSync {
 
   private blockedScroll: ScrollFrom | null = null;
 
+  private active = true;
+
   private mdEditor: MdEditor;
 
   constructor(mdEditor: MdEditor, preview: MarkdownPreview, eventEmitter: Emitter) {
@@ -69,11 +71,16 @@ export class ScrollSync {
       }, 200);
     });
     this.eventEmitter.listen('scroll', ({ source, data }) => {
-      if (source === 'editor' && this.blockedScroll !== 'editor') {
-        this.syncPreviewScrollTop();
-      } else if (source === 'preview' && this.blockedScroll !== 'preview') {
-        this.syncEditorScrollTop(data);
+      if (this.active) {
+        if (source === 'editor' && this.blockedScroll !== 'editor') {
+          this.syncPreviewScrollTop();
+        } else if (source === 'preview' && this.blockedScroll !== 'preview') {
+          this.syncEditorScrollTop(data);
+        }
       }
+    });
+    this.eventEmitter.listen('toggleScrollSync', (active: boolean) => {
+      this.active = active;
     });
   }
 
@@ -219,7 +226,6 @@ export class ScrollSync {
       this.blockedScroll = 'editor';
     }
 
-    /* eslint-disable no-return-assign */
     const syncCallbacks: SyncCallbacks = {
       syncScrollTop: scrollTop => (scrollTarget.scrollTop = scrollTop),
       releaseEventBlock: () => (this.blockedScroll = null)

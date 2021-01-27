@@ -33,6 +33,7 @@ export type EventTypes =
   | 'changeModeToMarkdown'
   | 'changeModeBefore'
   | 'changeMode'
+  | 'changeModeByEvent'
   | 'changePreviewStyle'
   | 'changePreviewTabPreview'
   | 'changePreviewTabWrite'
@@ -91,4 +92,6 @@ export type EventTypes =
   | 'cursorActivity'
   | 'requireScrollSync'
   | 'requireScrollIntoView'
-  | 'setCodeBlockLanguages';
+  | 'setCodeBlockLanguages'
+  | 'toggleScrollSync'
+  | 'closePopup';

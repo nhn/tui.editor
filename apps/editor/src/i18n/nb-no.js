@@ -2,7 +2,7 @@
  * @fileoverview I18N for Norwegian
  * @author Anton Reytarovskiy <reitarovskii.toh@gmail.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['nb', 'nb-NO'], {
   Markdown: 'Funksjonaliteter',
@@ -48,5 +48,5 @@ Editor.setLanguage(['nb', 'nb-NO'], {
   'Text color': 'Tekstfarge',
   'Auto scroll enabled': 'Auto-scroll aktivert',
   'Auto scroll disabled': 'Auto-scroll deaktivert',
-  'Choose language': 'Velg språl'
+  'Choose language': 'Velg språl',
 });

@@ -13,6 +13,7 @@ import { Renderer } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
 import { CustomHTMLRendererMap, EditResult, MdNode, MdPos } from '@t/markdown';
 import Preview from '@/preview';
+import { toggleClass } from '@/utils/dom';
 import domUtils from '@/utils/dom-legacy';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
@@ -58,8 +59,12 @@ class MarkdownPreview extends Preview {
 
   private renderer: Renderer;
 
-  constructor(el: HTMLElement, eventEmitter: Emitter, options: Options) {
+  constructor(eventEmitter: Emitter, options: Options) {
+    const el = document.createElement('div');
+
     super(el, eventEmitter, options.isViewer);
+    this.el = el;
+    this.el.className = 'te-preview';
     this.lazyRunner.registerLazyRunFunction(
       'invokeCodeBlock',
       this.invokeCodeBlockPlugins,
@@ -78,6 +83,10 @@ class MarkdownPreview extends Preview {
     this.cursorNodeId = null;
 
     this.initEvent(highlight);
+  }
+
+  private toggleActive(active: boolean) {
+    toggleClass(this.el!, 'te-tab-active', active);
   }
 
   private initEvent(highlight: boolean) {
@@ -101,6 +110,8 @@ class MarkdownPreview extends Preview {
         data: findAdjacentElementToScrollTop(event.target.scrollTop, this.previewContent)
       });
     });
+    this.eventEmitter.listen('changePreviewTabPreview', () => this.toggleActive(true));
+    this.eventEmitter.listen('changePreviewTabWrite', () => this.toggleActive(false));
   }
 
   private removeHighlight() {
@@ -214,6 +225,10 @@ class MarkdownPreview extends Preview {
   destroy() {
     off(this.el!, 'scroll');
     this.el = null;
+  }
+
+  getElement() {
+    return this.el;
   }
 }
 

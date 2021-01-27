@@ -2,7 +2,7 @@
  * @fileoverview I18N for French
  * @author Stanislas Michalak <stanislas.michalak@gmail.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['fr', 'fr-FR'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['fr', 'fr-FR'], {
   'Text color': 'Couleur du texte',
   'Auto scroll enabled': 'Défilement automatique activé',
   'Auto scroll disabled': 'Défilement automatique désactivé',
-  'Choose language': 'Choix de la langue'
+  'Choose language': 'Choix de la langue',
 });

@@ -2,7 +2,7 @@
  * @fileoverview I18N for Russian
  * @author Stepan Samko <stpnsamko@gmail.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['ru', 'ru-RU'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['ru', 'ru-RU'], {
   'Text color': 'Цвет текста',
   'Auto scroll enabled': 'Автоматическая прокрутка включена',
   'Auto scroll disabled': 'Автоматическая прокрутка отключена',
-  'Choose language': 'Выбрать язык'
+  'Choose language': 'Выбрать язык',
 });

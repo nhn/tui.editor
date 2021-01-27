@@ -11,6 +11,7 @@ import { Emitter } from '@t/event';
 import { MdPos } from '@t/markdown';
 import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
+import { toggleClass } from '@/utils/dom';
 import { createParagraph, createTextSelection, nbspToSpace } from '@/helper/manipulation';
 import { placeholder } from '@/plugins/placeholder';
 import { getDefaultCommands } from '@/commands/defaultCommands';
@@ -44,8 +45,8 @@ export default class MdEditor extends EditorBase {
 
   private clipboard!: HTMLTextAreaElement;
 
-  constructor(el: HTMLElement, toastMark: ToastMark, eventEmitter: Emitter) {
-    super(el, eventEmitter);
+  constructor(toastMark: ToastMark, eventEmitter: Emitter) {
+    super(eventEmitter);
 
     this.toastMark = toastMark;
     this.specs = this.createSpecs();
@@ -56,6 +57,17 @@ export default class MdEditor extends EditorBase {
     this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
     this.createClipboard();
+    this.eventEmitter.listen('changePreviewTabWrite', () => this.toggleActive(true));
+    this.eventEmitter.listen('changePreviewTabPreview', () => this.toggleActive(false));
+  }
+
+  private toggleActive(active: boolean) {
+    toggleClass(this.el!, 'te-tab-active', active);
+    if (active) {
+      this.focus();
+    } else {
+      this.blur();
+    }
   }
 
   private createClipboard() {

@@ -2,7 +2,7 @@
  * @fileoverview I18N for Croatian
  * @author Hrvoje A. <hrvoj3e@gmail.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['hr', 'hr-HR'], {
   Markdown: 'Markdown',
@@ -48,5 +48,5 @@ Editor.setLanguage(['hr', 'hr-HR'], {
   'Text color': 'Boja teksta',
   'Auto scroll enabled': 'Omogući auto klizanje',
   'Auto scroll disabled': 'Onemogući auto klizanje',
-  'Choose language': 'Odabir jezika'
+  'Choose language': 'Odabir jezika',
 });

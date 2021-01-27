@@ -22,5 +22,5 @@ type Payload<T> = T extends infer P ? P : any;
 export type Dispatch = (tr: Transaction) => void;
 export type EditorCommand<T = DefaultPayload> = (payload?: Payload<T>) => Command;
 export type EditorCommandMap<T = DefaultPayload> = Record<string, EditorCommand<T>>;
-export type EditorCommandFn<T = DefaultPayload> = (payload?: Payload<T>) => boolean;
+export type EditorCommandFn<T = DefaultPayload> = (payload?: Payload<T>) => boolean | void;
 export type EditorAllCommandMap<T = DefaultPayload> = Record<string, EditorCommandFn<T>>;

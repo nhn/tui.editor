@@ -30,8 +30,10 @@ export default abstract class EditorBase {
 
   placeholder: { text: string };
 
-  constructor(el: HTMLElement, eventEmitter: Emitter) {
-    this.el = el;
+  constructor(eventEmitter: Emitter) {
+    this.el = document.createElement('div');
+    this.el.className = 'te-editor';
+
     this.eventEmitter = eventEmitter;
     this.placeholder = { text: '' };
   }
@@ -80,7 +82,7 @@ export default abstract class EditorBase {
   moveCursorToStart() {
     const { tr } = this.view.state;
 
-    this.view.dispatch(tr.setSelection(createTextSelection(tr, 0)).scrollIntoView());
+    this.view.dispatch(tr.setSelection(createTextSelection(tr, 1)).scrollIntoView());
     this.focus();
   }
 
@@ -88,7 +90,7 @@ export default abstract class EditorBase {
     const { tr } = this.view.state;
 
     this.view.dispatch(
-      tr.setSelection(createTextSelection(tr, tr.doc.content.size)).scrollIntoView()
+      tr.setSelection(createTextSelection(tr, tr.doc.content.size - 1)).scrollIntoView()
     );
     this.focus();
   }
@@ -112,6 +114,10 @@ export default abstract class EditorBase {
 
   setMinHeight(minHeight: number) {
     css(this.el, { minHeight: `${minHeight}px` });
+  }
+
+  getElement() {
+    return this.el;
   }
 
   abstract getRange(): any;

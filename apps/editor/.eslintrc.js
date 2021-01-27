@@ -58,6 +58,9 @@ module.exports = {
     'object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }],
     'no-sync': 0,
     complexity: 0,
-    'max-nested-callbacks': ["error", 4]
+    'max-nested-callbacks': ["error", 4],
+    'no-cond-assign': 0,
+    'max-depth': ['error', 4],
+    'no-return-assign': 0
   }
 };

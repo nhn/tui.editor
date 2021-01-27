@@ -10,7 +10,7 @@ import {
   LinkAttribute,
   CustomHTMLSanitizer,
   EditorType,
-  PreviewStyle
+  PreviewStyle,
 } from './editor';
 
 declare namespace toastui {
@@ -33,7 +33,7 @@ export {
   LinkAttribute,
   CustomHTMLSanitizer,
   EditorType,
-  PreviewStyle
+  PreviewStyle,
 };
 export * from './markdown';
 export * from './event';

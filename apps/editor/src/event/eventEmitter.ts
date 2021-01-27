@@ -22,6 +22,7 @@ const eventTypeList: EventTypes[] = [
   'changeModeToMarkdown',
   'changeModeBefore',
   'changeMode',
+  'changeModeByEvent',
   'changePreviewStyle',
   'changePreviewTabPreview',
   'changePreviewTabWrite',
@@ -80,7 +81,9 @@ const eventTypeList: EventTypes[] = [
   'cursorActivity',
   'requireScrollSync',
   'requireScrollIntoView',
-  'setCodeBlockLanguages'
+  'setCodeBlockLanguages',
+  'toggleScrollSync',
+  'closePopup',
 ];
 
 /**
@@ -98,7 +101,7 @@ class EventEmitter implements Emitter {
       return { ...types, type };
     }, {});
 
-    eventTypeList.forEach(eventType => {
+    eventTypeList.forEach((eventType) => {
       this.addEventType(eventType);
     });
   }
@@ -136,7 +139,7 @@ class EventEmitter implements Emitter {
     const results: any[] = [];
 
     if (eventHandlers) {
-      eventHandlers.forEach(handler => {
+      eventHandlers.forEach((handler) => {
         const result = handler(...args);
 
         if (!isUndefined(result)) {
@@ -158,7 +161,7 @@ class EventEmitter implements Emitter {
     const eventHandlers = this.events.get(type);
 
     if (eventHandlers) {
-      eventHandlers.forEach(handler => {
+      eventHandlers.forEach((handler) => {
         const result = handler(source, ...args);
 
         if (!isFalsy(result)) {
@@ -181,7 +184,7 @@ class EventEmitter implements Emitter {
 
     return {
       type: splited[0],
-      namespace: splited[1]
+      namespace: splited[1],
     };
   }
 

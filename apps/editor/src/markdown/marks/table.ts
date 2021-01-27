@@ -15,8 +15,8 @@ import {
 import { getTextByMdLine } from '../helper/query';
 
 interface Payload {
-  colLen: number;
-  rowLen: number;
+  columnCount: number;
+  rowCount: number;
 }
 
 interface MovingTypeInfo {
@@ -28,24 +28,24 @@ interface MovingTypeInfo {
 
 const reEmptyTable = /\||\s/g;
 
-function createTableHeader(colLen: number) {
-  return [createTableRow(colLen), createTableRow(colLen, true)];
+function createTableHeader(columnCount: number) {
+  return [createTableRow(columnCount), createTableRow(columnCount, true)];
 }
 
-function createTableBody(colLen: number, rowLen: number) {
+function createTableBody(columnCount: number, rowCount: number) {
   const bodyRows = [];
 
-  for (let i = 0; i < rowLen; i += 1) {
-    bodyRows.push(createTableRow(colLen));
+  for (let i = 0; i < rowCount; i += 1) {
+    bodyRows.push(createTableRow(columnCount));
   }
 
   return bodyRows;
 }
 
-function createTableRow(colLen: number, delim?: boolean) {
+function createTableRow(columnCount: number, delim?: boolean) {
   let row = '|';
 
-  for (let i = 0; i < colLen; i += 1) {
+  for (let i = 0; i < columnCount; i += 1) {
     row += delim ? ' --- |' : '  |';
   }
   return row;
@@ -88,8 +88,8 @@ export class Table extends Mark {
 
       if (cellNode) {
         const { parent } = cellNode;
-        const colLen = parent.parent.parent.columns.length;
-        const row = createTableRow(colLen);
+        const columnCount = parent.parent.parent.columns.length;
+        const row = createTableRow(columnCount);
 
         if (isEmpty) {
           const emptyNode = createParagraph(schema);
@@ -150,14 +150,14 @@ export class Table extends Mark {
     };
   }
 
-  commands(): EditorCommand<Payload> {
+  private addTable(): EditorCommand<Payload> {
     return payload => ({ selection, doc, tr, schema }, dispatch) => {
-      const { colLen, rowLen } = payload!;
+      const { columnCount, rowCount } = payload!;
       const [, to] = resolveSelectionPos(selection);
       const endOffset = doc.resolve(to).end();
 
-      const headerRows = createTableHeader(colLen);
-      const bodyRows = createTableBody(colLen, rowLen - 1);
+      const headerRows = createTableHeader(columnCount);
+      const bodyRows = createTableBody(columnCount, rowCount - 1);
 
       const nodes = [...headerRows, ...bodyRows].map(row => createParagraph(schema, row));
       const newTr = insertNodes(tr, endOffset, nodes);
@@ -166,6 +166,10 @@ export class Table extends Mark {
 
       return true;
     };
+  }
+
+  commands() {
+    return { addTable: this.addTable() };
   }
 
   keymaps() {
