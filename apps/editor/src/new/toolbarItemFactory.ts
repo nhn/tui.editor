@@ -165,7 +165,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'scrollSync':
       info = {
         name: 'scrollSync',
-        className: 'tui-scrollsync',
+        className: 'tui-scroll-sync',
         tooltip: i18n.get('Auto scroll disabled'),
         activeTooltip: i18n.get('Auto scroll enabled'),
         active: true,

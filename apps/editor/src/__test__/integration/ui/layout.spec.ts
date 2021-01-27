@@ -50,7 +50,7 @@ function getMdPreviewTab() {
 }
 
 function getScrollSyncBtn() {
-  return getElement('.tui-scrollsync')!;
+  return getElement('.tui-scroll-sync')!;
 }
 
 function clickMdWriteTab() {

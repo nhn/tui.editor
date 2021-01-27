@@ -120,7 +120,7 @@ describe('default toolbar', () => {
       '.tui-link',
       '.tui-code',
       '.tui-codeblock',
-      '.tui-scrollsync',
+      '.tui-scroll-sync',
     ];
 
     toolbarButtonSelectors.forEach((selector) => {
@@ -160,11 +160,11 @@ describe('default toolbar', () => {
 
   describe('scroll sync button', () => {
     it('should toggle state when clicking scroll sync button', () => {
-      const scrollSyncBtn = getElement('.tui-scrollsync');
+      const scrollSyncBtn = getElement('.tui-scroll-sync');
 
       expect(scrollSyncBtn).toHaveClass('active');
 
-      dispatchClick('.tui-scrollsync');
+      dispatchClick('.tui-scroll-sync');
 
       expect(scrollSyncBtn).not.toHaveClass('active');
     });
@@ -174,14 +174,14 @@ describe('default toolbar', () => {
 
       em.listen('command', spy);
 
-      dispatchClick('.tui-scrollsync');
+      dispatchClick('.tui-scroll-sync');
 
       expect(spy).toHaveBeenCalledWith(
         { type: 'markdown', command: 'toggleScrollSync' },
         { active: false }
       );
 
-      dispatchClick('.tui-scrollsync');
+      dispatchClick('.tui-scroll-sync');
 
       expect(spy).toHaveBeenCalledWith(
         { type: 'markdown', command: 'toggleScrollSync' },
