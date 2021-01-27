@@ -162,7 +162,10 @@ export interface TableMdNode extends MdNode {
 }
 
 export interface CustomBlockMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
   info: string;
+  offset: number;
+  syntaxLength: number;
 }
 
 /* ToastMark Parser type */

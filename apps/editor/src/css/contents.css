@@ -1,4 +1,17 @@
 @charset "utf-8";
+
+.ProseMirror .placeholder {
+  color: #999;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+.ProseMirror-selectednode {
+  outline: none;
+}
+
 .tui-editor-contents {
   margin: 0;
   padding: 0;
@@ -304,6 +317,50 @@
   margin-left: -17px;
   margin-right: 3.8px;
   margin-top: 3px;
+}
+
+.custom-block .custom-block-editor {
+  background: #f9f7fd;
+  color: #452d6b;
+  border: solid 1px #dbd4ea;
+}
+
+.custom-block .custom-block-view {
+  position: relative;
+  padding: 9px 13px 8px 12px;
+}
+
+.custom-block.ProseMirror-selectednode .custom-block-view {
+  border: solid 1px #dbd4ea;
+}
+
+.custom-block .custom-block-view .tool {
+  position: absolute;
+  right: 10px;
+  top: 7px;
+  display: none;
+}
+
+.custom-block.ProseMirror-selectednode .custom-block-view .tool {
+  display: block;
+}
+
+.custom-block-view button {
+  vertical-align: middle;
+  width: 15px;
+  height: 15px;
+  margin-left: 8px;
+  padding: 3px;
+  border: solid 1px #cccccc;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23555'%3E%3Cg%3E%3Cg%3E%3Cg%3E%3Cpath d='M5.5 2.5l2 2L2 10H0V8l5.5-5.5zM8 0l2 2-1.5 1.5-2-2L8 0z' transform='translate(-940 -712) translate(60 647) translate(875 60) translate(5 5)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E") no-repeat;
+  background-position: 5px 5px;
+}
+
+.custom-block-view .info {
+  font-size: 13px;
+  font-weight: bold;
+  color: #5200d0;
+  vertical-align: middle;
 }
 
 .tui-editor-contents-placeholder::before {

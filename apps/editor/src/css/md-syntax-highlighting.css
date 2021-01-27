@@ -59,7 +59,6 @@
   color: #ccc;
 }
 
-.tui-md-code-block.tui-md-meta,
 .tui-md-code.tui-md-delimiter {
   color: #aaa;
 }
@@ -126,4 +125,17 @@
 .tui-md-code-block {
   font-family: Consolas, Courier, 'Lucida Grande', '나눔바른고딕', 'Nanum Barun Gothic', '맑은고딕',
     'Malgun Gothic', sans-serif;
+}
+
+.tui-md-custom-block {
+  color: #452d6b;
+}
+.tui-md-custom-block-line-background {
+  background-color: #f9f7fd;
+}
+.tui-md-custom-block .tui-md-delimiter {
+  color: #b8b3c0;
+}
+.tui-md-custom-block .tui-md-meta {
+  color: #5200d0;
 }

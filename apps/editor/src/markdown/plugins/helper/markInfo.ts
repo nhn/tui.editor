@@ -8,7 +8,8 @@ import {
   HeadingMdNode,
   LinkMdNode,
   ImageMdNode,
-  CodeMdNode
+  CodeMdNode,
+  CustomBlockMdNode,
 } from '@t/markdown';
 import {
   getMdStartLine,
@@ -16,7 +17,7 @@ import {
   getMdEndLine,
   getMdEndCh,
   addOffsetPos,
-  setOffsetPos
+  setOffsetPos,
 } from '@/utils/markdown';
 
 const HEADING = 'heading';
@@ -33,11 +34,12 @@ const DELIM = 'delimiter';
 const TASK_DELIM = 'taskDelimiter';
 const TEXT = 'markedText';
 const HTML = 'html';
+const CUSTOM_BLOCK = 'customBlock';
 
 const delimSize = {
   strong: 2,
   emph: 1,
-  strike: 2
+  strike: 2,
 };
 
 type MarkType =
@@ -83,8 +85,8 @@ function emphasisAndStrikethrough(
     marks: [
       markInfo(startDelimPos, endDelimPos, type),
       markInfo(start, startDelimPos, DELIM),
-      markInfo(endDelimPos, end, DELIM)
-    ]
+      markInfo(endDelimPos, end, DELIM),
+    ],
   };
 }
 
@@ -92,9 +94,9 @@ function markLink(start: MdPos, end: MdPos, linkTextStart: MdPos, lastChildCh: n
   return [
     markInfo(start, end, LINK),
     markInfo(setOffsetPos(start, linkTextStart[1] + 1), setOffsetPos(end, lastChildCh), LINK, {
-      desc: true
+      desc: true,
     }),
-    markInfo(setOffsetPos(end, lastChildCh + 2), addOffsetPos(end, -1), LINK, { url: true })
+    markInfo(setOffsetPos(end, lastChildCh + 2), addOffsetPos(end, -1), LINK, { url: true }),
   ];
 }
 
@@ -103,7 +105,7 @@ function image({ lastChild }: ImageMdNode, start: MdPos, end: MdPos) {
   const linkTextEnd = addOffsetPos(start, 1);
 
   return {
-    marks: [markInfo(start, linkTextEnd, META), ...markLink(start, end, linkTextEnd, lastChildCh)]
+    marks: [markInfo(start, linkTextEnd, META), ...markLink(start, end, linkTextEnd, lastChildCh)],
   };
 }
 
@@ -125,9 +127,19 @@ function code({ tickCount }: CodeMdNode, start: MdPos, end: MdPos) {
       markInfo(start, end, CODE),
       markInfo(start, openDelimEnd, CODE, { start: true }),
       markInfo(openDelimEnd, closeDelimStart, CODE, { marked: true }),
-      markInfo(closeDelimStart, end, CODE, { end: true })
-    ]
+      markInfo(closeDelimStart, end, CODE, { end: true }),
+    ],
   };
+}
+
+function lineBackground(parent: MdNode, start: MdPos, end: MdPos, prefix: string) {
+  return parent!.type !== 'item' && parent!.type !== 'blockQuote'
+    ? {
+        start,
+        end,
+        spec: { attrs: { className: `${prefix}-line-background` } },
+      }
+    : null;
 }
 
 function codeBlock(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
@@ -137,10 +149,10 @@ function codeBlock(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
     fenceChar,
     info,
     infoPadding,
-    parent
+    parent,
   } = node as CodeBlockMdNode;
   const fenceEnd = fenceOffset + fenceLength;
-  const marks = [markInfo(setOffsetPos(start, 0), end, CODE_BLOCK)];
+  const marks = [markInfo(setOffsetPos(start, 1), end, CODE_BLOCK)];
 
   if (fenceChar) {
     marks.push(markInfo(start, addOffsetPos(start, fenceEnd), DELIM));
@@ -160,21 +172,33 @@ function codeBlock(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
   const reCodeBlockEnd = new RegExp(codeBlockEnd);
 
   if (reCodeBlockEnd.test(endLine)) {
-    marks.push(markInfo(setOffsetPos(end, 0), end, DELIM));
+    marks.push(markInfo(setOffsetPos(end, 1), end, DELIM));
   }
-
-  const lineBackground =
-    parent!.type !== 'item' && parent!.type !== 'blockQuote'
-      ? {
-          start,
-          end,
-          spec: { attrs: { className: 'code-block-line-background' } }
-        }
-      : null;
 
   return {
     marks,
-    lineBackground
+    lineBackground: lineBackground(parent, start, end, 'code-block'),
+  };
+}
+
+function customBlock(node: MdNode, start: MdPos, end: MdPos) {
+  const { offset, syntaxLength, info, parent } = node as CustomBlockMdNode;
+  const syntaxEnd = offset + syntaxLength;
+  const marks = [markInfo(setOffsetPos(start, 1), end, CUSTOM_BLOCK)];
+
+  marks.push(markInfo(start, addOffsetPos(start, syntaxEnd), DELIM));
+
+  if (info) {
+    marks.push(
+      markInfo(addOffsetPos(start, 2), addOffsetPos(start, syntaxLength + info.length), META)
+    );
+  }
+
+  marks.push(markInfo(setOffsetPos(end, 1), end, DELIM));
+
+  return {
+    marks,
+    lineBackground: lineBackground(parent, start, end, 'custom-block'),
   };
 }
 
@@ -273,14 +297,15 @@ const markNodeFuncMap = {
   code,
   codeBlock,
   blockQuote,
-  item
+  item,
+  customBlock,
 };
 
 const simpleMarkClassNameMap = {
   thematicBreak: THEMATIC_BREAK,
   table: TABLE,
   tableCell: TABLE_CELL,
-  htmlInline: HTML
+  htmlInline: HTML,
 } as const;
 
 type MarkNodeFuncMapKey = keyof typeof markNodeFuncMap;
@@ -315,7 +340,7 @@ export function getMarkInfo(node: MdNode, start: MdPos, end: MdPos, endLine: str
 
   if (simpleMarkClassNameMap[type as SimpleNodeFuncMapKey]) {
     return {
-      marks: [markInfo(start, end, simpleMarkClassNameMap[type as SimpleNodeFuncMapKey])]
+      marks: [markInfo(start, end, simpleMarkClassNameMap[type as SimpleNodeFuncMapKey])],
     };
   }
 

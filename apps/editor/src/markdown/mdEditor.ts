@@ -32,6 +32,7 @@ import { Code } from './marks/code';
 import { Link } from './marks/link';
 import { Delimiter, TaskDelimiter, MarkedText, Meta, TableCell } from './marks/simpleMark';
 import { Html } from './marks/html';
+import { CustomBlock } from './marks/customBlock';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 
 interface WindowWithClipboard extends Window {
@@ -75,7 +76,7 @@ export default class MdEditor extends EditorBase {
     return {
       toastMark: this.toastMark,
       schema: this.schema,
-      eventEmitter: this.eventEmitter
+      eventEmitter: this.eventEmitter,
     };
   }
 
@@ -91,6 +92,7 @@ export default class MdEditor extends EditorBase {
       new Heading(),
       new BlockQuote(),
       new CodeBlock(),
+      new CustomBlock(),
       new Table(),
       new TableCell(),
       new ThematicBreak(),
@@ -104,14 +106,14 @@ export default class MdEditor extends EditorBase {
       new TaskDelimiter(),
       new MarkedText(),
       new Meta(),
-      new Html()
+      new Html(),
     ]);
   }
 
   createSchema() {
     return new Schema({
       nodes: this.specs.nodes,
-      marks: this.specs.marks
+      marks: this.specs.marks,
     });
   }
 
@@ -125,27 +127,27 @@ export default class MdEditor extends EditorBase {
         keymap({
           'Mod-z': undo(),
           'Shift-Mod-z': redo(),
-          ...baseKeymap
+          ...baseKeymap,
         }),
         history(),
         syntaxHighlight(this.context),
         previewHighlight(this.context),
-        placeholder(this.placeholder)
-      ]
+        placeholder(this.placeholder),
+      ],
     });
   }
 
   createView() {
     return new EditorView(this.el, {
       state: this.createState(),
-      dispatchTransaction: tr => {
+      dispatchTransaction: (tr) => {
         this.updateMarkdown(tr);
 
         const { state } = this.view.state.applyTransaction(tr);
 
         this.view.updateState(state);
       },
-      clipboardTextSerializer: slice => this.getChanged(slice),
+      clipboardTextSerializer: (slice) => this.getChanged(slice),
       handleKeyDown: (_, ev) => {
         if ((ev.metaKey || ev.ctrlKey) && ev.key.toUpperCase() === 'V') {
           this.clipboard.focus();
@@ -156,8 +158,8 @@ export default class MdEditor extends EditorBase {
         scroll: () => {
           this.eventEmitter.emit('scroll', { source: 'editor' });
           return true;
-        }
-      }
+        },
+      },
     });
   }
 
@@ -216,7 +218,7 @@ export default class MdEditor extends EditorBase {
   replaceSelection(text: string) {
     const { tr, schema } = this.view.state;
     const lineTexts = text.split('\n');
-    const nodes = lineTexts.map(lineText => createParagraph(schema, lineText));
+    const nodes = lineTexts.map((lineText) => createParagraph(schema, lineText));
 
     this.focus();
     this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)).scrollIntoView());
@@ -231,7 +233,7 @@ export default class MdEditor extends EditorBase {
   setMarkdown(markdown: string, cursorToEnd = true) {
     const contents = markdown.split('\n');
     const { tr, doc } = this.view.state;
-    const newNodes = contents.map(content => createParagraph(this.schema, content));
+    const newNodes = contents.map((content) => createParagraph(this.schema, content));
 
     this.view.dispatch(tr.replaceWith(0, doc.content.size, newNodes));
 

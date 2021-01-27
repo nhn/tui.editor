@@ -39,14 +39,31 @@ export class CustomBlockView implements NodeView {
     this.canceled = false;
 
     this.dom = document.createElement('div');
+    this.dom.className = 'custom-block';
     this.wrapper = document.createElement('div');
+    this.wrapper.className = 'custom-block-view';
 
     this.createInnerViewContainer();
     this.renderCustomBlock();
 
     this.dom.appendChild(this.innerViewContainer);
     this.dom.appendChild(this.wrapper);
-    this.dom.addEventListener('dblclick', this.openEditor);
+  }
+
+  private renderToolArea() {
+    const tool = document.createElement('div');
+    const span = document.createElement('span');
+    const button = document.createElement('button');
+
+    tool.className = 'tool';
+    span.textContent = this.node.attrs.info;
+    span.className = 'info';
+    button.type = 'button';
+    button.addEventListener('click', () => this.openEditor());
+
+    tool.appendChild(span);
+    tool.appendChild(button);
+    this.wrapper.appendChild(tool);
   }
 
   private renderCustomBlock() {
@@ -62,14 +79,14 @@ export class CustomBlockView implements NodeView {
       if (node) {
         this.wrapper.appendChild(node);
       }
+      this.renderToolArea();
     }
   }
 
   private createInnerViewContainer() {
     this.innerViewContainer = document.createElement('div');
-    // @TODO: apply design
+    this.innerViewContainer.className = 'custom-block-editor';
     this.innerViewContainer.style.display = 'none';
-    this.innerViewContainer.style.background = '#f5f7f8';
   }
 
   private openEditor = () => {
@@ -99,10 +116,10 @@ export class CustomBlockView implements NodeView {
             'Ctrl-Enter': () => {
               this.saveAndFinishEditing();
               return true;
-            }
+            },
           }),
-          history()
-        ]
+          history(),
+        ],
       }),
       dispatchTransaction: (tr: Transaction) => this.dispatchInner(tr),
       handleDOMEvents: {
@@ -115,8 +132,8 @@ export class CustomBlockView implements NodeView {
         blur: () => {
           this.saveAndFinishEditing();
           return true;
-        }
-      }
+        },
+      },
     });
     this.innerEditorView!.focus();
   };
