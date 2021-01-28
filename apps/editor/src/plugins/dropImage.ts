@@ -16,10 +16,7 @@ export function dropImage({ eventEmitter }: Context, editorType: EditorType) {
               if (item.type.indexOf('image') !== -1) {
                 ev.preventDefault();
                 ev.stopPropagation();
-
-                const blob = item.name ? item : item.getAsFile(); // Blob or File
-
-                emitImageBlobHook(eventEmitter, editorType, blob, ev.type);
+                emitImageBlobHook(eventEmitter, editorType, item, ev.type);
 
                 return false;
               }
