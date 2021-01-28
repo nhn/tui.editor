@@ -26,6 +26,7 @@ import {
 import { createTextSelection } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
+import { ColumnAlign } from '@t/wysiwyg';
 
 interface AddTablePayload {
   columns: number;
@@ -34,7 +35,7 @@ interface AddTablePayload {
 }
 
 interface AlignColumnPayload {
-  align: 'left' | 'center' | 'right';
+  align: ColumnAlign;
 }
 
 type CellOffsetFn = ([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) => number | null;

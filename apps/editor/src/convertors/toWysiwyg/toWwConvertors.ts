@@ -13,6 +13,7 @@ import {
   ListItemMdNode,
   ImageMdNode,
   LinkMdNode,
+  TableCellMdNode,
   CustomBlockMdNode
 } from '@t/markdown';
 
@@ -220,12 +221,17 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   tableCell(state, node, { entering }) {
-    const { tableHeadCell, tableBodyCell, paragraph } = state.schema.nodes;
-    const tablePart = node.parent!.parent!;
-    const cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
-
     if (entering) {
-      state.openNode(cell);
+      const { tableHeadCell, tableBodyCell, paragraph } = state.schema.nodes;
+      const tablePart = (node as TableCellMdNode).parent!.parent!;
+      const cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
+
+      const table = tablePart.parent!;
+      const columnInfo = table.columns[(node as TableCellMdNode).startIdx];
+      const align = columnInfo?.align !== 'left' ? columnInfo.align : null;
+      const attrs = align ? { align } : null;
+
+      state.openNode(cell, attrs);
 
       if (node.firstChild && isInlineNode(node.firstChild)) {
         state.openNode(paragraph);

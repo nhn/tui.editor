@@ -10,7 +10,7 @@ import {
   NodeInfo,
   ToMdConvertorReturnValues
 } from '@t/convertor';
-import { WwNodeType } from '@t/wysiwyg';
+import { WwNodeType, ColumnAlign } from '@t/wysiwyg';
 
 function convertToRawHTMLHavingInlines(
   state: ToMdConvertorState,
@@ -36,6 +36,26 @@ function convertToRawHTMLHavingBlocks(
     state.closeBlock(node);
     state.stopNewline = false;
   }
+}
+
+function createTableHeadDelim(textContent: string, columnAlign: ColumnAlign) {
+  let textLen = textContent.length;
+  let leftDelim = '';
+  let rightDelim = '';
+
+  if (columnAlign === 'left') {
+    leftDelim = ':';
+    textLen -= 1;
+  } else if (columnAlign === 'right') {
+    rightDelim = ':';
+    textLen -= 1;
+  } else if (columnAlign === 'center') {
+    leftDelim = ':';
+    rightDelim = ':';
+    textLen -= 2;
+  }
+
+  return `${leftDelim}${repeat('-', Math.max(textLen, 3))}${rightDelim}`;
 }
 
 export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
@@ -146,15 +166,16 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
 
   tableHead(state, { node }) {
     const row = node.firstChild;
-    let result = '';
 
     state.convertNode(node);
 
-    if (row) {
-      row.forEach(column => {
-        const { textContent } = column;
+    let result = '';
 
-        result += `| ${repeat('-', textContent.length || 3)} `;
+    if (row) {
+      row.forEach(({ textContent, attrs }) => {
+        const delim = createTableHeadDelim(textContent, attrs.align);
+
+        result += `| ${delim} `;
       });
     }
 
