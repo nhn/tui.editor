@@ -1,8 +1,8 @@
 import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
-import { wrapInList } from 'prosemirror-schema-list';
 
 import NodeSchema from '@/spec/node';
 import { getWwCommands } from '@/commands/wwCommands';
+import { changeList } from '@/wysiwyg/command/list';
 
 import { EditorCommand } from '@t/spec';
 
@@ -14,10 +14,10 @@ export class OrderedList extends NodeSchema {
   get defaultSchema() {
     return {
       content: 'listItem+',
-      group: 'block',
+      group: 'block listGroup',
       attrs: {
         order: { default: 1 },
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       parseDOM: [
         {
@@ -28,26 +28,25 @@ export class OrderedList extends NodeSchema {
 
             return {
               order: (dom as HTMLElement).hasAttribute('start') ? Number(start) : 1,
-              ...(rawHTML && { rawHTML })
+              ...(rawHTML && { rawHTML }),
             };
-          }
-        }
+          },
+        },
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         return [
           attrs.rawHTML || 'ol',
           {
-            start: attrs.order === 1 ? null : attrs.order
+            start: attrs.order === 1 ? null : attrs.order,
           },
-          0
+          0,
         ];
-      }
+      },
     };
   }
 
   commands(): EditorCommand {
-    return payload => (state, dispatch) =>
-      wrapInList(state.schema.nodes.orderedList, payload)(state, dispatch);
+    return () => (state, dispatch) => changeList(state.schema.nodes.orderedList)(state, dispatch);
   }
 
   keymaps() {
@@ -58,7 +57,7 @@ export class OrderedList extends NodeSchema {
       'Mod-o': orderedListCommand,
       'Mod-O': orderedListCommand,
       Tab: indent(),
-      'Shift-Tab': outdent()
+      'Shift-Tab': outdent(),
     };
   }
 }

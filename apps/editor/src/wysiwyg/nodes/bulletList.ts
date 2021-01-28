@@ -1,9 +1,9 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { wrapInList } from 'prosemirror-schema-list';
 
 import NodeSchema from '@/spec/node';
 import { getWwCommands } from '@/commands/wwCommands';
 import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
+import { changeList, toggleTask } from '@/wysiwyg/command/list';
 
 import { EditorCommand } from '@t/spec';
 
@@ -15,31 +15,37 @@ export class BulletList extends NodeSchema {
   get defaultSchema() {
     return {
       content: 'listItem+',
-      group: 'block',
+      group: 'block listGroup',
       attrs: {
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       parseDOM: [createDOMInfoParsedRawHTML('ul')],
       toDOM(): DOMOutputSpecArray {
         return ['ul', 0];
-      }
+      },
     };
   }
 
-  commands(): EditorCommand {
-    return payload => (state, dispatch) =>
-      wrapInList(state.schema.nodes.bulletList, payload)(state, dispatch);
+  private changeList(): EditorCommand {
+    return () => (state, dispatch) => changeList(state.schema.nodes.bulletList)(state, dispatch);
+  }
+
+  commands() {
+    return {
+      bulletList: this.changeList(),
+      task: toggleTask,
+    };
   }
 
   keymaps() {
-    const bulletListCommand = this.commands()();
+    const bulletListCommand = this.changeList()();
     const { indent, outdent } = getWwCommands();
 
     return {
       'Mod-u': bulletListCommand,
       'Mod-U': bulletListCommand,
       Tab: indent(),
-      'Shift-Tab': outdent()
+      'Shift-Tab': outdent(),
     };
   }
 }

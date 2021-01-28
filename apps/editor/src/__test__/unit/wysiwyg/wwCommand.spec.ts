@@ -14,7 +14,7 @@ describe('wysiwyg commands', () => {
     const { state, dispatch } = wwe.view;
     const { tr, doc } = state;
     const lines = text.split('\n');
-    const node = lines.map(lineText =>
+    const node = lines.map((lineText) =>
       wwe.schema.nodes.paragraph.create(null, wwe.schema.text(lineText))
     );
 
@@ -165,25 +165,12 @@ describe('wysiwyg commands', () => {
     });
 
     it('should change to bullet list item in selection', () => {
-      setTextToEditor('foo');
-
-      cmd.exec('wysiwyg', 'selectAll');
-      cmd.exec('wysiwyg', 'bulletList');
-
-      let expected = oneLineTrim`
-        <ul>
-          <li><p>foo</p></li>
-        </ul>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-
       setTextToEditor('foo\nbar\nbaz');
 
       cmd.exec('wysiwyg', 'selectAll');
       cmd.exec('wysiwyg', 'bulletList');
 
-      expected = oneLineTrim`
+      const expected = oneLineTrim`
         <ul>
           <li><p>foo</p></li>
           <li><p>bar</p></li>
@@ -209,30 +196,134 @@ describe('wysiwyg commands', () => {
     });
 
     it('should change to ordered list item in selection', () => {
-      setTextToEditor('foo');
-
-      cmd.exec('wysiwyg', 'selectAll');
-      cmd.exec('wysiwyg', 'orderedList');
-
-      let expected = oneLineTrim`
-        <ol>
-          <li><p>foo</p></li>
-        </ol>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-
       setTextToEditor('foo\nbar\nbaz');
 
       cmd.exec('wysiwyg', 'selectAll');
       cmd.exec('wysiwyg', 'orderedList');
 
-      expected = oneLineTrim`
+      const expected = oneLineTrim`
         <ol>
           <li><p>foo</p></li>
           <li><p>bar</p></li>
           <li><p>baz</p></li>
         </ol>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  it('bulletList and orderedList command should change parent list to other list when in list item', () => {
+    setTextToEditor('foo\nbar\nbaz');
+
+    cmd.exec('wysiwyg', 'selectAll');
+    cmd.exec('wysiwyg', 'bulletList');
+
+    wwe.setSelection(3, 3); // in 'foo'
+    cmd.exec('wysiwyg', 'orderedList');
+
+    let expected = oneLineTrim`
+      <ol>
+        <li><p>foo</p></li>
+        <li><p>bar</p></li>
+        <li><p>baz</p></li>
+      </ol>
+    `;
+
+    expect(wwe.getHTML()).toBe(expected);
+
+    wwe.setSelection(11, 11); // in 'bar'
+    cmd.exec('wysiwyg', 'bulletList');
+
+    expected = oneLineTrim`
+      <ul>
+        <li><p>foo</p></li>
+        <li><p>bar</p></li>
+        <li><p>baz</p></li>
+      </ul>
+    `;
+
+    expect(wwe.getHTML()).toBe(expected);
+  });
+
+  describe('task command', () => {
+    it('should add task to ul element ', () => {
+      cmd.exec('wysiwyg', 'task');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p><br></p>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should change to task item in selection', () => {
+      setTextToEditor('foo\nbar\nbaz');
+
+      cmd.exec('wysiwyg', 'selectAll');
+      cmd.exec('wysiwyg', 'task');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>foo</p>
+          </li>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>bar</p>
+          </li>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>baz</p>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should toggle task list item', () => {
+      setTextToEditor('foo\nbar\nbaz');
+
+      cmd.exec('wysiwyg', 'selectAll');
+      cmd.exec('wysiwyg', 'task');
+
+      wwe.setSelection(3, 3); // from 'foo'
+      cmd.exec('wysiwyg', 'bulletList');
+
+      let expected = oneLineTrim`
+        <ul>
+          <li>
+            <p>foo</p>
+          </li>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>bar</p>
+          </li>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>baz</p>
+          </li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+
+      wwe.setSelection(3, 12); // from 'foo' to 'bar'
+      cmd.exec('wysiwyg', 'task');
+
+      expected = oneLineTrim`
+        <ul>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>foo</p>
+          </li>
+          <li>
+            <p>bar</p>
+          </li>
+          <li class="task-list-item" data-task="true" data-task-checked="false">
+            <p>baz</p>
+          </li>
+        </ul>
       `;
 
       expect(wwe.getHTML()).toBe(expected);
@@ -326,7 +417,7 @@ describe('wysiwyg commands', () => {
   describe('addImage command', () => {
     it('should add image element', () => {
       cmd.exec('wysiwyg', 'addImage', {
-        imageUrl: '#'
+        imageUrl: '#',
       });
 
       expect(wwe.getHTML()).toBe('<p><img src="#"><br></p>');
@@ -336,7 +427,7 @@ describe('wysiwyg commands', () => {
       cmd.exec('wysiwyg', 'addImage', {
         imageUrl: '#',
         altText: 'foo',
-        foo: 'test'
+        foo: 'test',
       });
 
       expect(wwe.getHTML()).toBe('<p><img src="#" alt="foo"><br></p>');
@@ -344,7 +435,7 @@ describe('wysiwyg commands', () => {
 
     it('should not add image element when not having imageUrl attribute', () => {
       cmd.exec('wysiwyg', 'addImage', {
-        altText: 'foo'
+        altText: 'foo',
       });
 
       expect(wwe.getHTML()).toBe('<p><br></p>');
@@ -353,7 +444,7 @@ describe('wysiwyg commands', () => {
     it('should decode attribute and encode wrong markdown charactors', () => {
       cmd.exec('wysiwyg', 'addImage', {
         imageUrl: 'foo %D1%88%D0%B5%D0%BB%D0%BB%D1%8B ()[]<>',
-        altText: 'foo ()[]<>'
+        altText: 'foo ()[]<>',
       });
 
       expect(wwe.getHTML()).toBe(
@@ -366,7 +457,7 @@ describe('wysiwyg commands', () => {
     it('should add link element', () => {
       cmd.exec('wysiwyg', 'addLink', {
         linkUrl: '#',
-        linkText: 'foo'
+        linkText: 'foo',
       });
 
       expect(wwe.getHTML()).toBe('<p><a href="#">foo</a></p>');
@@ -374,13 +465,13 @@ describe('wysiwyg commands', () => {
 
     it('should not add link element when no selection and attributes are missing', () => {
       cmd.exec('wysiwyg', 'addLink', {
-        linkText: 'foo'
+        linkText: 'foo',
       });
 
       expect(wwe.getHTML()).toBe('<p><br></p>');
 
       cmd.exec('wysiwyg', 'addLink', {
-        linkUrl: '#'
+        linkUrl: '#',
       });
 
       expect(wwe.getHTML()).toBe('<p><br></p>');
@@ -389,7 +480,7 @@ describe('wysiwyg commands', () => {
     it('should decode attribute and encode wrong markdown charactors', () => {
       cmd.exec('wysiwyg', 'addLink', {
         linkUrl: 'foo %D1%88%D0%B5%D0%BB%D0%BB%D1%8B ()[]<>',
-        linkText: 'foo ()[]<>'
+        linkText: 'foo ()[]<>',
       });
 
       expect(wwe.getHTML()).toBe(
@@ -404,7 +495,7 @@ describe('wysiwyg commands', () => {
     it('should add link element to selection', () => {
       cmd.exec('wysiwyg', 'selectAll');
       cmd.exec('wysiwyg', 'toggleLink', {
-        linkUrl: 'linkUrl'
+        linkUrl: 'linkUrl',
       });
 
       expect(wwe.getHTML()).toBe('<p><a href="linkUrl">foo</a></p>');
@@ -413,7 +504,7 @@ describe('wysiwyg commands', () => {
     it('should toggle link element to selection', () => {
       cmd.exec('wysiwyg', 'selectAll');
       cmd.exec('wysiwyg', 'toggleLink', {
-        linkUrl: 'linkUrl'
+        linkUrl: 'linkUrl',
       });
 
       cmd.exec('wysiwyg', 'selectAll');

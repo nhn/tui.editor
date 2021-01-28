@@ -10,13 +10,21 @@ export function findNodeBy(
     const node = pos.node(depth);
 
     if (condition(node, depth)) {
-      return { node, depth };
+      return {
+        node,
+        depth,
+        offset: depth > 0 ? pos.before(depth) : 0,
+      };
     }
 
     depth -= 1;
   }
 
   return null;
+}
+
+export function isListNode({ type }: ProsemirrorNode) {
+  return type.name === 'bulletList' || type.name === 'orderedList';
 }
 
 export function isInListNode(pos: ResolvedPos) {
@@ -45,8 +53,8 @@ export function createDOMInfoParsedRawHTML(tag: string) {
       const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
       return {
-        ...(rawHTML && { rawHTML })
+        ...(rawHTML && { rawHTML }),
       };
-    }
+    },
   };
 }

@@ -17,4 +17,8 @@ declare module 'prosemirror-model' {
       ) => boolean | void | null | undefined
     ): void;
   }
+
+  export interface NodeType {
+    compatibleContent(node: NodeType): boolean;
+  }
 }

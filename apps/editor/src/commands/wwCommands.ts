@@ -1,7 +1,7 @@
-import { sinkListItem, liftListItem } from 'prosemirror-schema-list';
+import { isInListNode } from '@/wysiwyg/helper/node';
+import { sinkListItem, liftListItem } from '@/wysiwyg/command/list';
 
 import { EditorCommand } from '@t/spec';
-import { isInListNode } from '@/wysiwyg/helper/node';
 
 function indent(): EditorCommand {
   return () => (state, dispatch) => {
@@ -34,6 +34,6 @@ function outdent(): EditorCommand {
 export function getWwCommands(): Record<string, EditorCommand> {
   return {
     indent: indent(),
-    outdent: outdent()
+    outdent: outdent(),
   };
 }
