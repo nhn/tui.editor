@@ -560,7 +560,7 @@ describe('delete lines keymap', () => {
   });
 });
 
-describe.only('move lines keymap', () => {
+describe('move lines keymap', () => {
   it('should move down the single line', () => {
     const input = stripIndent`
       aaaa

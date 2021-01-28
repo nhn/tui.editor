@@ -214,7 +214,7 @@ export class Paragraph extends Node {
       const { selection, tr } = state;
 
       dispatch!(tr.deleteRange(selection.$from.start(), selection.$to.end()));
-      joinForward(view.state, view.dispatch, view);
+      joinForward(view.state, dispatch, view);
 
       return true;
     };
