@@ -4,11 +4,11 @@ module.exports = {
   testEnvironment: 'jsdom',
   transformIgnorePatterns: ['<rootDir>/node_modules/'],
   transform: {
-    '^.+\\.js$': 'ts-jest'
+    '^.+\\.js$': 'ts-jest',
   },
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1'
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
   snapshotSerializers: ['jest-serializer-html'],
-  setupFilesAfterEnv: ['<rootDir>/src/__test__/jest-setup.ts']
+  setupFilesAfterEnv: ['<rootDir>/src/__test__/jest-setup.ts'],
 };

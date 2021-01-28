@@ -14,7 +14,7 @@ export class Paragraph extends Node {
       parseDOM: [{ tag: 'p' }],
       toDOM(): DOMOutputSpecArray {
         return ['p', 0];
-      }
+      },
     };
   }
 }

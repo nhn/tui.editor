@@ -7,7 +7,7 @@ export class Text extends Node {
 
   get defaultSchema() {
     return {
-      group: 'inline'
+      group: 'inline',
     };
   }
 }

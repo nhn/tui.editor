@@ -27,9 +27,9 @@ beforeEach(() => {
       return [
         { type: 'openTag', tagName: 'div', attributes: { 'data-custom': 'myCustom' } },
         { type: 'html', content: span.outerHTML },
-        { type: 'closeTag', tagName: 'div' }
+        { type: 'closeTag', tagName: 'div' },
       ];
-    }
+    },
   };
 
   toDOMAdaptor = new WwToDOMAdaptor({}, convertors);

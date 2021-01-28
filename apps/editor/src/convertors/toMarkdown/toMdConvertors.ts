@@ -12,7 +12,7 @@ import {
   ToMdMarkTypeConvertorMap,
   ToMdMarkTypeOptions,
   NodeInfo,
-  MarkInfo
+  MarkInfo,
 } from '@t/convertor';
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 
@@ -67,7 +67,7 @@ export const toMdConvertors: ToMdConvertorMap = {
 
     return {
       delim,
-      rawHTML: getPairRawHTML(attrs.rawHTML)
+      rawHTML: getPairRawHTML(attrs.rawHTML),
     };
   },
 
@@ -77,27 +77,27 @@ export const toMdConvertors: ToMdConvertorMap = {
     return {
       delim: [`\`\`\`${attrs.language || ''}`, '```'],
       rawHTML: getPairRawHTML(attrs.rawHTML),
-      text: textContent
+      text: textContent,
     };
   },
 
   blockQuote({ node }) {
     return {
       delim: '> ',
-      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML),
     };
   },
 
   bulletList({ node }) {
     return {
       delim: '*',
-      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML),
     };
   },
 
   orderedList({ node }) {
     return {
-      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML),
     };
   },
 
@@ -108,43 +108,43 @@ export const toMdConvertors: ToMdConvertorMap = {
     const dataset = task ? ` data-task${checked ? ` data-task-checked` : ''}` : '';
 
     return {
-      rawHTML: rawHTML ? [`<${rawHTML}${className}${dataset}>`, `</${rawHTML}>`] : null
+      rawHTML: rawHTML ? [`<${rawHTML}${className}${dataset}>`, `</${rawHTML}>`] : null,
     };
   },
 
   table({ node }) {
     return {
-      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML),
     };
   },
 
   tableHead({ node }) {
     return {
-      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML),
     };
   },
 
   tableBody({ node }) {
     return {
-      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML),
     };
   },
 
   tableRow({ node }) {
     return {
-      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML),
     };
   },
 
   tableHeadCell({ node }) {
     return {
-      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML),
     };
   },
 
   tableBodyCell({ node }) {
     return {
-      rawHTML: getPairRawHTML(node.attrs.rawHTML)
+      rawHTML: getPairRawHTML(node.attrs.rawHTML),
     };
   },
 
@@ -158,15 +158,15 @@ export const toMdConvertors: ToMdConvertorMap = {
       rawHTML: attrs.rawHTML ? `<${attrs.rawHTML} src="${imageUrl}"${altAttr}>` : null,
       attrs: {
         altText,
-        imageUrl
-      }
+        imageUrl,
+      },
     };
   },
 
   thematicBreak({ node }) {
     return {
       delim: '***',
-      rawHTML: getOpenRawHTML(node.attrs.rawHTML)
+      rawHTML: getOpenRawHTML(node.attrs.rawHTML),
     };
   },
 
@@ -175,7 +175,7 @@ export const toMdConvertors: ToMdConvertorMap = {
 
     return {
       delim: [`{{${attrs.info}`, '}}'],
-      text: textContent
+      text: textContent,
     };
   },
 
@@ -184,7 +184,7 @@ export const toMdConvertors: ToMdConvertorMap = {
 
     return {
       delim: '**',
-      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML)
+      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML),
     };
   },
 
@@ -193,7 +193,7 @@ export const toMdConvertors: ToMdConvertorMap = {
 
     return {
       delim: '*',
-      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML)
+      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML),
     };
   },
 
@@ -202,7 +202,7 @@ export const toMdConvertors: ToMdConvertorMap = {
 
     return {
       delim: '~~',
-      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML)
+      rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML),
     };
   },
 
@@ -214,7 +214,7 @@ export const toMdConvertors: ToMdConvertorMap = {
     if (entering) {
       return {
         delim: '[',
-        rawHTML: rawHTML ? `<${rawHTML} href="${linkUrl}">` : null
+        rawHTML: rawHTML ? `<${rawHTML} href="${linkUrl}">` : null,
       };
     }
 
@@ -222,7 +222,7 @@ export const toMdConvertors: ToMdConvertorMap = {
 
     return {
       delim: `](${linkText}${linkUrl})`,
-      rawHTML: getCloseRawHTML(rawHTML)
+      rawHTML: getCloseRawHTML(rawHTML),
     };
   },
 
@@ -236,39 +236,39 @@ export const toMdConvertors: ToMdConvertorMap = {
 
     return {
       delim,
-      rawHTML
+      rawHTML,
     };
-  }
+  },
 };
 
 const markTypeOptions: ToMdMarkTypeOptions = {
   strong: {
     mixable: true,
-    removedEnclosingWhitespace: true
+    removedEnclosingWhitespace: true,
   },
 
   emph: {
     mixable: true,
-    removedEnclosingWhitespace: true
+    removedEnclosingWhitespace: true,
   },
 
   strike: {
     mixable: true,
-    removedEnclosingWhitespace: true
+    removedEnclosingWhitespace: true,
   },
 
   code: {
-    escape: false
+    escape: false,
   },
 
-  link: null
+  link: null,
 };
 
 function createNodeTypeConvertors(convertors: ToMdConvertorMap) {
   const nodeTypeConvertors: ToMdNodeTypeConvertorMap = {};
   const nodeTypes = Object.keys(nodeTypeWriters) as WwNodeType[];
 
-  nodeTypes.forEach(type => {
+  nodeTypes.forEach((type) => {
     nodeTypeConvertors[type] = (state, nodeInfo) => {
       const writer = nodeTypeWriters[type];
 
@@ -288,7 +288,7 @@ function createMarkTypeConvertors(convertors: ToMdConvertorMap) {
   const markTypeConvertors: ToMdMarkTypeConvertorMap = {};
   const markTypes = Object.keys(markTypeOptions) as WwMarkType[];
 
-  markTypes.forEach(type => {
+  markTypes.forEach((type) => {
     markTypeConvertors[type] = (nodeInfo, entering) => {
       const markOption = markTypeOptions[type];
       const convertor = convertors[type];
@@ -322,7 +322,7 @@ function createMarkTypeConvertors(convertors: ToMdConvertorMap) {
 export function createConvertors(customConvertors: ToMdConvertorMap) {
   const customConvertorTypes = Object.keys(customConvertors) as (WwNodeType | WwMarkType)[];
 
-  customConvertorTypes.forEach(type => {
+  customConvertorTypes.forEach((type) => {
     const baseConvertor = toMdConvertors[type];
     const customConvertor = customConvertors[type]!;
 
@@ -344,6 +344,6 @@ export function createConvertors(customConvertors: ToMdConvertorMap) {
 
   return {
     nodeTypeConvertors,
-    markTypeConvertors
+    markTypeConvertors,
   };
 }

@@ -241,7 +241,7 @@ function getCellInfoMatrix(headOrBody: Node, startOffset: number) {
       cellInfoList.push({
         // 2 is the sum of the front and back positions of the closing tag
         offset: startOffset + rowOffset + cellOffset + 2,
-        nodeSize
+        nodeSize,
       });
     });
 
@@ -301,7 +301,7 @@ export function getSelectionInfo(startCellPos: ResolvedPos, endCellPos = startCe
     startRowIndex: rowIndex,
     startColumnIndex: columnIndex,
     rowCount,
-    columnCount
+    columnCount,
   };
 }
 

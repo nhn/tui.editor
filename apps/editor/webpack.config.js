@@ -32,7 +32,7 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
         libraryTarget: 'umd',
         libraryExport: 'default',
         path: path.resolve(__dirname, minify ? 'dist/cdn' : 'dist'),
-        filename: `toastui-[name]${minify ? '.min' : ''}.js`
+        filename: `toastui-[name]${minify ? '.min' : ''}.js`,
       },
       module: {
         rules: [
@@ -44,8 +44,8 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
             options: {
               configFile: './.eslintrc.js',
               failOnWarning: false,
-              failOnError: false
-            }
+              failOnError: false,
+            },
           },
           {
             test: /\.ts$|\.js$/,
@@ -53,52 +53,52 @@ const defaultConfigs = Array(isProduction ? 2 : 1)
               {
                 loader: 'ts-loader',
                 options: {
-                  transpileOnly: true
-                }
-              }
+                  transpileOnly: true,
+                },
+              },
             ],
-            exclude: /node_modules/
+            exclude: /node_modules/,
           },
 
           {
             test: /\.css$/,
-            use: [MiniCssExtractPlugin.loader, 'css-loader']
+            use: [MiniCssExtractPlugin.loader, 'css-loader'],
           },
           {
             test: /\.png$/i,
-            use: 'url-loader'
-          }
-        ]
+            use: 'url-loader',
+          },
+        ],
       },
       resolve: {
         extensions: ['.ts', '.js'],
         alias: {
           '@': path.resolve('src'),
-          '@t': path.resolve('types')
-        }
+          '@t': path.resolve('types'),
+        },
       },
       plugins: [
         new MiniCssExtractPlugin({
           moduleFilename: ({ name }) =>
-            `toastui-${name.replace('-all', '')}${minify ? '.min' : ''}.css`
+            `toastui-${name.replace('-all', '')}${minify ? '.min' : ''}.css`,
         }),
         new webpack.BannerPlugin({
           banner: [
             pkg.name,
             `@version ${pkg.version} | ${new Date().toDateString()}`,
             `@author ${pkg.author}`,
-            `@license ${pkg.license}`
+            `@license ${pkg.license}`,
           ].join('\n'),
           raw: false,
-          entryOnly: true
-        })
+          entryOnly: true,
+        }),
       ],
       optimization: {
-        minimize: false
+        minimize: false,
       },
       performance: {
-        hints: false
-      }
+        hints: false,
+      },
     };
   });
 
@@ -112,19 +112,19 @@ function addFileManagerPlugin(config) {
           delete: [
             './dist/cdn/toastui-editor-only.min.js',
             './dist/cdn/toastui-editor-old.min.js',
-            './dist/cdn/toastui-editor-viewer-old.min.js'
-          ]
-        }
+            './dist/cdn/toastui-editor-viewer-old.min.js',
+          ],
+        },
       ]
     : [
         {
           delete: [
             './dist/toastui-editor-only.js',
             './dist/toastui-editor-old.js',
-            './dist/toastui-editor-viewer-old.js'
-          ]
+            './dist/toastui-editor-viewer-old.js',
+          ],
         },
-        { copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }] }
+        { copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }] },
       ];
 
   config.plugins.push(new FileManagerPlugin({ onEnd: options }));
@@ -137,10 +137,10 @@ function addMinifyPlugin(config) {
         cache: true,
         parallel: true,
         sourceMap: false,
-        extractComments: false
+        extractComments: false,
       }),
-      new OptimizeCSSAssetsPlugin()
-    ]
+      new OptimizeCSSAssetsPlugin(),
+    ],
   };
 }
 
@@ -148,7 +148,7 @@ function addAnalyzerPlugin(config, type) {
   config.plugins.push(
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
-      reportFilename: `../../report/webpack/stats-${pkg.version}-${type}.html`
+      reportFilename: `../../report/webpack/stats-${pkg.version}-${type}.html`,
     })
   );
 }
@@ -175,7 +175,7 @@ function setDevelopConfig(config) {
     inline: true,
     host: '0.0.0.0',
     port: 8080,
-    disableHostCheck: true
+    disableHostCheck: true,
   };
 }
 
@@ -186,7 +186,7 @@ function setProductionConfig(config) {
     'editor-only': './src/js/indexEditorOnlyStyle.ts',
     // legacy styles
     'editor-old': './src/js/indexOldStyle.ts',
-    'editor-viewer-old': './src/css/old/contents.css'
+    'editor-viewer-old': './src/css/old/contents.css',
   };
 
   addFileManagerPlugin(config);

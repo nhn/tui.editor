@@ -10,7 +10,7 @@ import {
   createParagraph,
   createTextSelection,
   insertNodes,
-  replaceNodes
+  replaceNodes,
 } from '@/helper/manipulation';
 import { getTextByMdLine } from '../helper/query';
 
@@ -66,7 +66,7 @@ export class Table extends Mark {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('table') }, 0];
-      }
+      },
     };
   }
 
@@ -81,7 +81,7 @@ export class Table extends Mark {
       const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(startPos);
       const cellNode = findClosestNode(
         mdNode,
-        node =>
+        (node) =>
           isTableCellNode(node) &&
           (node.parent.type === 'tableDelimRow' || node.parent.parent.type === 'tableBody')
       ) as TableCellMdNode;
@@ -115,7 +115,7 @@ export class Table extends Mark {
       const { toastMark } = this.context;
 
       const mdNode: MdNode = toastMark.findNodeAtPosition(endPos);
-      const cellNode = findClosestNode(mdNode, node => isTableCellNode(node)) as TableCellMdNode;
+      const cellNode = findClosestNode(mdNode, (node) => isTableCellNode(node)) as TableCellMdNode;
 
       if (cellNode) {
         const { parent } = cellNode;
@@ -151,7 +151,7 @@ export class Table extends Mark {
   }
 
   private addTable(): EditorCommand<Payload> {
-    return payload => ({ selection, doc, tr, schema }, dispatch) => {
+    return (payload) => ({ selection, doc, tr, schema }, dispatch) => {
       const { columnCount, rowCount } = payload!;
       const [, to] = resolveSelectionPos(selection);
       const endOffset = doc.resolve(to).end();
@@ -159,7 +159,7 @@ export class Table extends Mark {
       const headerRows = createTableHeader(columnCount);
       const bodyRows = createTableBody(columnCount, rowCount - 1);
 
-      const nodes = [...headerRows, ...bodyRows].map(row => createParagraph(schema, row));
+      const nodes = [...headerRows, ...bodyRows].map((row) => createParagraph(schema, row));
       const newTr = insertNodes(tr, endOffset, nodes);
 
       dispatch!(tr.setSelection(createTextSelection(newTr, endOffset + 4)));
@@ -176,7 +176,7 @@ export class Table extends Mark {
     return {
       Enter: this.extendTable(),
       Tab: this.moveTableCell(true),
-      'Shift-Tab': this.moveTableCell(false)
+      'Shift-Tab': this.moveTableCell(false),
     };
   }
 }

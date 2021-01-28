@@ -31,5 +31,5 @@ export function replaceMarkdownText(text: string, encode: boolean) {
 }
 
 export function decodeURL(text: string) {
-  return text.replace(reURL, matched => replaceMarkdownText(decodeURIGraceful(matched), true));
+  return text.replace(reURL, (matched) => replaceMarkdownText(decodeURIGraceful(matched), true));
 }

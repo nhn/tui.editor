@@ -11,7 +11,7 @@ export class CustomBlock extends NodeSchema {
       content: 'text*',
       group: 'block',
       attrs: {
-        info: { default: null }
+        info: { default: null },
       },
       atom: true,
       code: true,
@@ -23,12 +23,12 @@ export class CustomBlock extends NodeSchema {
             const info = (dom as HTMLElement).getAttribute('data-custom-info');
 
             return { info };
-          }
-        }
+          },
+        },
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         return ['div', { 'data-custom-info': attrs.info || null }, 0];
-      }
+      },
     };
   }
 }

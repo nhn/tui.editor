@@ -12,7 +12,7 @@ import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 import { ToMdConvertorMap, ToMdConvertorContext, NodeInfo, MarkInfo } from '@t/convertor';
 
 const parser = new Parser({
-  disallowedHtmlBlockTags: ['br', 'img']
+  disallowedHtmlBlockTags: ['br', 'img'],
 });
 
 function createSchema() {
@@ -21,7 +21,7 @@ function createSchema() {
 
   return new Schema({
     nodes: specs.nodes,
-    marks: specs.marks
+    marks: specs.marks,
   });
 }
 
@@ -681,9 +681,9 @@ describe('Convertor', () => {
       const toMdCustomConvertor = {
         thematicBreak() {
           return {
-            delim: '- - -'
+            delim: '- - -',
           };
-        }
+        },
       };
 
       createCustomConvertor(toMdCustomConvertor);
@@ -695,9 +695,9 @@ describe('Convertor', () => {
       const toMdCustomConvertor = {
         thematicBreak() {
           return {
-            rawHTML: '<hr class="foo">'
+            rawHTML: '<hr class="foo">',
           };
-        }
+        },
       };
 
       createCustomConvertor(toMdCustomConvertor);
@@ -709,9 +709,9 @@ describe('Convertor', () => {
       const toMdCustomConvertor = {
         thematicBreak() {
           return {
-            delim: '***'
+            delim: '***',
           };
-        }
+        },
       };
 
       createCustomConvertor(toMdCustomConvertor);
@@ -723,7 +723,7 @@ describe('Convertor', () => {
       const toMdCustomConvertor = {
         thematicBreak(_: NodeInfo | MarkInfo, { origin }: ToMdConvertorContext) {
           return origin!();
-        }
+        },
       };
 
       createCustomConvertor(toMdCustomConvertor);
@@ -743,7 +743,7 @@ describe('Convertor', () => {
           }
 
           return origin!();
-        }
+        },
       };
 
       createCustomConvertor(toMdCustomConvertor);

@@ -14,7 +14,7 @@ import {
   ImageMdNode,
   LinkMdNode,
   TableCellMdNode,
-  CustomBlockMdNode
+  CustomBlockMdNode,
 } from '@t/markdown';
 
 function isBRTag(node: MdNode) {
@@ -26,7 +26,7 @@ function isInlineNode({ type }: MdNode) {
 }
 
 function addRawHTMLAttributeToDOM(parent: Node) {
-  toArray(parent.childNodes).forEach(child => {
+  toArray(parent.childNodes).forEach((child) => {
     if (isElemNode(child)) {
       const openTagName = child.nodeName.toLowerCase();
 
@@ -102,7 +102,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     if (entering) {
       const attrs = {
         ...(task && { task }),
-        ...(checked && { checked })
+        ...(checked && { checked }),
       };
 
       state.openNode(listItem, attrs);
@@ -129,7 +129,7 @@ export const toWwConvertors: ToWwConvertorMap = {
 
     state.addNode(image, {
       imageUrl: destination,
-      ...(firstChild && { altText: firstChild.literal })
+      ...(firstChild && { altText: firstChild.literal }),
     });
   },
 
@@ -164,7 +164,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     if (entering) {
       const attrs = {
         linkUrl: destination,
-        ...(title && { linkText: title })
+        ...(title && { linkText: title }),
       };
 
       state.openMark(link.create(attrs));
@@ -304,5 +304,5 @@ export const toWwConvertors: ToWwConvertorMap = {
     addRawHTMLAttributeToDOM(container);
 
     state.convertByDOMParser(container as HTMLElement);
-  }
+  },
 };

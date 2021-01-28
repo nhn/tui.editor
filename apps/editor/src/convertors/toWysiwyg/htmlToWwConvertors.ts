@@ -61,10 +61,10 @@ function getMatchedAttributeValue(rawHTML: string, attrName: string) {
 function createConvertors(convertors: HTMLToWwConvertorMap) {
   const convertorMap: FlattenHTMLToWwConvertorMap = {};
 
-  Object.keys(convertors).forEach(key => {
+  Object.keys(convertors).forEach((key) => {
     const tagNames = key.split(', ');
 
-    tagNames.forEach(tagName => {
+    tagNames.forEach((tagName) => {
       const name = tagName.toLowerCase();
 
       convertorMap[name] = convertors[key]!;
@@ -125,7 +125,7 @@ const convertors: HTMLToWwConvertorMap = {
       state.openMark(
         link.create({
           linkUrl: sanitizeXSSAttributeValue(linkUrl),
-          rawHTML: openTagName
+          rawHTML: openTagName,
         })
       );
     } else {
@@ -144,7 +144,7 @@ const convertors: HTMLToWwConvertorMap = {
       state.addNode(image, {
         rawHTML: openTagName,
         imageUrl: sanitizeXSSAttributeValue(imageUrl),
-        ...(altText && { altText })
+        ...(altText && { altText }),
       });
     }
   },
@@ -234,7 +234,7 @@ const convertors: HTMLToWwConvertorMap = {
         state.closeNode();
       }
     }
-  }
+  },
 };
 
 export const htmlToWwConvertors = createConvertors(convertors);

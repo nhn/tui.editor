@@ -205,7 +205,7 @@ export const otherListToList: ListToList = {
     }
 
     return { changedResults: [{ text, line }] };
-  }
+  },
 };
 
 export const otherNodeToList: NodeToList = {
@@ -223,7 +223,7 @@ export const otherNodeToList: NodeToList = {
 
     for (let i = startLine - 1; i > 0; i -= 1) {
       const mdNode = toastMark.findFirstNodeAtLine(i);
-      const canBeListNode = !!findClosestNode(mdNode, targetNode => isListNode(targetNode));
+      const canBeListNode = !!findClosestNode(mdNode, (targetNode) => isListNode(targetNode));
       const searchResult = reOrderedListGroup.exec(getTextByMdLine(doc, i));
 
       if (!searchResult && !canBeListNode) {
@@ -252,7 +252,7 @@ export const otherNodeToList: NodeToList = {
     const changedResults = [{ text: `* [ ] ${lineText}`, line }];
 
     return { changedResults };
-  }
+  },
 };
 
 export const extendList: ExtendList = {
@@ -271,18 +271,18 @@ export const extendList: ExtendList = {
     const listSyntax = `${indent}${ordinalNum}${delimiter}`;
 
     const backwardList = findSameDepthList(toastMark, line, depth, true);
-    const filteredList = backwardList.filter(info => {
+    const filteredList = backwardList.filter((info) => {
       const searchResult = reOrderedListGroup.exec(getTextByMdLine(doc, info.line));
 
       return (
         searchResult &&
         searchResult[1].length === indent.length &&
-        !!findClosestNode(info.mdNode, targetNode => isOrderedListNode(targetNode))
+        !!findClosestNode(info.mdNode, (targetNode) => isOrderedListNode(targetNode))
       );
     });
 
     return { listSyntax, ...getChangedInfo(doc, filteredList, 'ordered', ordinalNum) };
-  }
+  },
 };
 
 export function getReorderedListInfo(

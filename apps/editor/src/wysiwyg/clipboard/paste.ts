@@ -102,14 +102,14 @@ export function createRowsFromPastingTable(tableContent: Fragment) {
   if (tableContent.firstChild!.type.name === 'tableHead') {
     const tableHead = tableContent.firstChild!.content;
 
-    tableHead.forEach(row => tableHeadRows.push(row));
+    tableHead.forEach((row) => tableHeadRows.push(row));
 
     tableBody = tableContent.lastChild!.content;
   }
 
   const tableBodyRows: Node[] = [];
 
-  tableBody.forEach(row => tableBodyRows.push(row));
+  tableBody.forEach((row) => tableBodyRows.push(row));
 
   return [...tableHeadRows, ...tableBodyRows];
 }
@@ -121,7 +121,7 @@ function createTableHead(tableHeadRow: Node, maxColumnCount: number, schema: Sch
 }
 
 function createTableBody(tableBodyRows: Node[], maxColumnCount: number, schema: Schema) {
-  const copiedRows = tableBodyRows.map(tableBodyRow =>
+  const copiedRows = tableBodyRows.map((tableBodyRow) =>
     copyTableBodyRow(tableBodyRow, maxColumnCount, schema)
   );
 
@@ -141,7 +141,7 @@ function createTableFromPastingTable(rows: Node[], schema: Schema) {
 
   const table = schema.nodes.table.create(null, [
     createTableHead(tableHeadRow, columnCount, schema),
-    createTableBody(tableBodyRows, columnCount, schema)
+    createTableBody(tableBodyRows, columnCount, schema),
   ]);
 
   return table;
@@ -150,7 +150,7 @@ function createTableFromPastingTable(rows: Node[], schema: Schema) {
 export function changePastedSlice(slice: Slice, schema: Schema) {
   const nodes: Node[] = [];
 
-  slice.content.forEach(node => {
+  slice.content.forEach((node) => {
     if (node.type.name === 'table') {
       const tableContent = getTableContentFromSlice(new Slice(Fragment.from(node), 0, 0));
 

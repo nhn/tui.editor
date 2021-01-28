@@ -51,7 +51,7 @@ function createListItemDataFromParagraph(para, index) {
     parent: null,
     children: [],
     unorderedListItem,
-    contents: getListItemContents(para)
+    contents: getListItemContents(para),
   };
 }
 
@@ -99,7 +99,7 @@ function makeList(listData) {
   const listTagName = listData[0].unorderedListItem ? 'ul' : 'ol';
   const list = document.createElement(listTagName);
 
-  listData.forEach(data => {
+  listData.forEach((data) => {
     const { children, contents } = data;
     const listItem = document.createElement('li');
 
@@ -128,7 +128,7 @@ function makeListFromParagraphs(paras) {
 export function convertMsoParagraphsToList(container) {
   let paras = [];
 
-  domUtils.findAll(container, 'p').forEach(para => {
+  domUtils.findAll(container, 'p').forEach((para) => {
     const { className, nextSibling } = para;
 
     if (MSO_CLASS_NAME_LIST_RX.test(className)) {

@@ -166,7 +166,7 @@ describe('wysiwyg table commands', () => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 2,
         rows: 2,
-        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz']
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz'],
       });
     });
 
@@ -275,7 +275,7 @@ describe('wysiwyg table commands', () => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 2,
         rows: 2,
-        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz']
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz'],
       });
     });
 
@@ -384,7 +384,7 @@ describe('wysiwyg table commands', () => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 2,
         rows: 3,
-        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', '']
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', ''],
       });
     });
 
@@ -514,7 +514,7 @@ describe('wysiwyg table commands', () => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 3,
         rows: 2,
-        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', '']
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', ''],
       });
     });
 
@@ -597,7 +597,7 @@ describe('wysiwyg table commands', () => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 3,
         rows: 2,
-        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', '']
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', ''],
       });
     });
 
@@ -680,7 +680,7 @@ describe('wysiwyg table commands', () => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 3,
         rows: 2,
-        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', '']
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', ''],
       });
     });
 
@@ -777,7 +777,7 @@ describe('wysiwyg table commands', () => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 2,
         rows: 2,
-        data: ['foo', 'bar', 'baz', 'qux', 'quux', '']
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', ''],
       });
     });
 
@@ -955,7 +955,7 @@ describe('wysiwyg table commands', () => {
       cmd.exec('wysiwyg', 'addTable', {
         columns: 3,
         rows: 2,
-        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', '']
+        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', ''],
       });
     });
 

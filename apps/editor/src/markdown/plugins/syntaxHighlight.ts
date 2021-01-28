@@ -17,7 +17,7 @@ export function syntaxHighlight({ schema, toastMark }: Context) {
       if (tr.docChanged) {
         const editResult: EditResult[] = tr.getMeta('editResult');
 
-        editResult.forEach(result => {
+        editResult.forEach((result) => {
           const { nodes } = result;
 
           if (nodes.length) {
@@ -42,7 +42,7 @@ export function syntaxHighlight({ schema, toastMark }: Context) {
       }
 
       return newTr;
-    }
+    },
   });
 }
 
@@ -98,7 +98,7 @@ function addMark(node: MdNode, toastMark: any, newTr: Transaction, schema: Schem
       newTr = newTr.setBlockType(pos[0], pos[1], schema.nodes.paragraph, {
         codeStart: start,
         codeEnd: end,
-        ...spec.attrs
+        ...spec.attrs,
       });
     }
 

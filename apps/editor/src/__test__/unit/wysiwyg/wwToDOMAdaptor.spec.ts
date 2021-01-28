@@ -33,7 +33,7 @@ beforeEach(() => {
       return [
         { type: 'openTag', tagName: 'code' },
         { type: 'html', content: '<span>123</span>' },
-        { type: 'closeTag', tagName: 'code' }
+        { type: 'closeTag', tagName: 'code' },
       ];
     },
     heading(node, { entering }) {
@@ -41,7 +41,7 @@ beforeEach(() => {
         type: entering ? 'openTag' : 'closeTag',
         tagName: `h${(node as HeadingMdNode).level}`,
         attributes: { 'data-custom': 'customAttr' },
-        classNames: ['custom-heading']
+        classNames: ['custom-heading'],
       };
     },
     codeBlock(node) {
@@ -50,14 +50,14 @@ beforeEach(() => {
           type: 'openTag',
           tagName: 'pre',
           attributes: { 'data-custom': (node as CodeBlockMdNode).info },
-          classNames: ['custom-pre']
+          classNames: ['custom-pre'],
         },
         { type: 'openTag', tagName: 'code', classNames: ['custom-code'] },
         { type: 'openTag', tagName: 'span' },
         { type: 'text', content: node.literal! },
         { type: 'closeTag', tagName: 'span' },
         { type: 'closeTag', tagName: 'code' },
-        { type: 'closeTag', tagName: 'pre' }
+        { type: 'closeTag', tagName: 'pre' },
       ];
     },
     emph(_, { entering }) {
@@ -65,9 +65,9 @@ beforeEach(() => {
         type: entering ? 'openTag' : 'closeTag',
         tagName: `em`,
         attributes: { 'data-custom': 'customAttr' },
-        classNames: ['custom-emph']
+        classNames: ['custom-emph'],
       };
-    }
+    },
   };
 
   toDOMAdaptor = new WwToDOMAdaptor({}, convertors);
@@ -95,7 +95,7 @@ describe('mdLikeNode', () => {
       type: 'image',
       literal: null,
       wysiwygNode: true,
-      destination: 'myImageUrl'
+      destination: 'myImageUrl',
     });
   });
 
@@ -108,7 +108,7 @@ describe('mdLikeNode', () => {
       type: 'codeBlock',
       literal: 'myCode',
       wysiwygNode: true,
-      info: 'myLang'
+      info: 'myLang',
     });
   });
 
@@ -119,7 +119,7 @@ describe('mdLikeNode', () => {
       type: 'list',
       literal: null,
       wysiwygNode: true,
-      listData: { type: 'bullet' }
+      listData: { type: 'bullet' },
     });
   });
 
@@ -130,7 +130,7 @@ describe('mdLikeNode', () => {
       type: 'list',
       literal: null,
       wysiwygNode: true,
-      listData: { start: 1, type: 'ordered' }
+      listData: { start: 1, type: 'ordered' },
     });
   });
 
@@ -141,7 +141,7 @@ describe('mdLikeNode', () => {
       type: 'item',
       literal: null,
       wysiwygNode: true,
-      listData: { task: true, checked: false }
+      listData: { task: true, checked: false },
     });
   });
 
@@ -153,7 +153,7 @@ describe('mdLikeNode', () => {
       cellType: 'head',
       align: 'left',
       literal: null,
-      wysiwygNode: true
+      wysiwygNode: true,
     });
   });
 
@@ -165,7 +165,7 @@ describe('mdLikeNode', () => {
       cellType: 'body',
       align: 'left',
       literal: null,
-      wysiwygNode: true
+      wysiwygNode: true,
     });
   });
 
@@ -178,7 +178,7 @@ describe('mdLikeNode', () => {
       type: 'customBlock',
       info: 'myCustom',
       literal: 'myCustom',
-      wysiwygNode: true
+      wysiwygNode: true,
     });
   });
 
@@ -192,7 +192,7 @@ describe('mdLikeNode', () => {
       literal: null,
       wysiwygNode: true,
       title: 'myLinkText',
-      destination: 'myLinkUrl'
+      destination: 'myLinkUrl',
     });
   });
 });
@@ -205,7 +205,7 @@ describe('wysiwyg adaptor toDOM using custom renderer', () => {
     expect(toDOM(headingNode)).toEqual([
       'h2',
       { class: 'custom-heading', 'data-custom': 'customAttr' },
-      0
+      0,
     ]);
   });
 
@@ -216,7 +216,7 @@ describe('wysiwyg adaptor toDOM using custom renderer', () => {
     expect(toDOM(emphNode)).toEqual([
       'em',
       { class: 'custom-emph', 'data-custom': 'customAttr' },
-      0
+      0,
     ]);
   });
 
@@ -227,7 +227,7 @@ describe('wysiwyg adaptor toDOM using custom renderer', () => {
     expect(toDOM(codeBlockNode)).toEqual([
       'pre',
       { class: 'custom-pre', 'data-custom': 'myLan' },
-      ['code', { class: 'custom-code' }, ['span', 0]]
+      ['code', { class: 'custom-code' }, ['span', 0]],
     ]);
   });
 

@@ -17,7 +17,7 @@ export class Code extends Mark {
       attrs: {
         start: { default: false },
         end: { default: false },
-        marked: { default: false }
+        marked: { default: false },
       },
       toDOM(mark: ProsemirrorMark): DOMOutputSpecArray {
         const { start, end, marked } = mark.attrs;
@@ -34,7 +34,7 @@ export class Code extends Mark {
         }
 
         return ['span', { class: cls(...classNames.split('|')) }, 0];
-      }
+      },
     };
   }
 

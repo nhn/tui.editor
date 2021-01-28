@@ -13,7 +13,7 @@ var chartContent = [
   'y.min: 1',
   'y.max: 40',
   'y.suffix: $',
-  '```'
+  '```',
 ].join('\n');
 
 var codeContent = [
@@ -31,7 +31,7 @@ var codeContent = [
   '```',
   '```clojure',
   '[1 2 3]',
-  '```'
+  '```',
 ].join('\n');
 
 var tableContent = ['| @cols=2:merged |', '| --- | --- |', '| table | table2 |'].join('\n');
@@ -58,7 +58,7 @@ var umlContent = [
   '  WavesArmes --> Introduction',
   '  --> "Play music"',
   '}',
-  '```'
+  '```',
 ].join('\n');
 
 var allPluginsContent = [chartContent, codeContent, tableContent, umlContent].join('\n');

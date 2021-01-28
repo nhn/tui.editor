@@ -13,7 +13,7 @@ export class TableBody extends NodeSchema {
       attrs: {
         rows: { default: 1 },
         columns: { default: 1 },
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       parseDOM: [
         {
@@ -30,14 +30,14 @@ export class TableBody extends NodeSchema {
             return {
               rows: rows.length,
               columns,
-              ...(rawHTML && { rawHTML })
+              ...(rawHTML && { rawHTML }),
             };
-          }
-        }
+          },
+        },
       ],
       toDOM(): DOMOutputSpecArray {
         return ['tbody', 0];
-      }
+      },
     };
   }
 }

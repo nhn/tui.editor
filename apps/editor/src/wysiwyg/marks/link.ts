@@ -18,7 +18,7 @@ export class Link extends Mark {
       attrs: {
         linkUrl: { default: '' },
         linkText: { default: null },
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       inclusive: false,
       parseDOM: [
@@ -31,24 +31,24 @@ export class Link extends Mark {
             return {
               linkUrl: sanitizeXSSAttributeValue(href),
               linkText: (dom as HTMLElement).textContent,
-              ...(rawHTML && { rawHTML })
+              ...(rawHTML && { rawHTML }),
             };
-          }
-        }
+          },
+        },
       ],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         return [
           attrs.rawHTML || 'a',
           {
-            href: attrs.linkUrl
-          }
+            href: attrs.linkUrl,
+          },
         ];
-      }
+      },
     };
   }
 
   private addLink(): EditorCommand {
-    return payload => (state, dispatch) => {
+    return (payload) => (state, dispatch) => {
       const { linkUrl, linkText } = payload!;
       const { schema, tr, selection } = state;
       const { empty, from, to } = selection;
@@ -60,7 +60,7 @@ export class Link extends Mark {
       if (empty) {
         const attrs = {
           linkUrl: replaceMarkdownText(decodeURIGraceful(linkUrl), true),
-          linkText: replaceMarkdownText(linkText, false)
+          linkText: replaceMarkdownText(linkText, false),
         };
         const marks = [schema.mark('link', attrs)];
         const node = createText(schema, linkText, marks, false);
@@ -77,14 +77,14 @@ export class Link extends Mark {
   }
 
   private toggleLink(): EditorCommand {
-    return payload => (state, dispatch) =>
+    return (payload) => (state, dispatch) =>
       toggleMark(state.schema.marks.link, payload)(state, dispatch);
   }
 
   commands() {
     return {
       addLink: this.addLink(),
-      toggleLink: this.toggleLink()
+      toggleLink: this.toggleLink(),
     };
   }
 }

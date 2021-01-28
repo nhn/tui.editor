@@ -17,7 +17,7 @@ export class Image extends NodeSchema {
       attrs: {
         imageUrl: { default: '' },
         altText: { default: null },
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       group: 'inline',
       selectable: false,
@@ -31,25 +31,25 @@ export class Image extends NodeSchema {
             return {
               imageUrl: sanitizeXSSAttributeValue(imageUrl),
               altText: (dom as HTMLElement).getAttribute('alt'),
-              ...(rawHTML && { rawHTML })
+              ...(rawHTML && { rawHTML }),
             };
-          }
-        }
+          },
+        },
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         return [
           attrs.rawHTML || 'img',
           {
             src: attrs.imageUrl,
-            ...(attrs.altText && { alt: attrs.altText })
-          }
+            ...(attrs.altText && { alt: attrs.altText }),
+          },
         ];
-      }
+      },
     };
   }
 
   private addImage(): EditorCommand {
-    return payload => ({ schema, tr }, dispatch) => {
+    return (payload) => ({ schema, tr }, dispatch) => {
       const { imageUrl, altText } = payload!;
 
       if (!imageUrl) {
@@ -58,7 +58,7 @@ export class Image extends NodeSchema {
 
       const node = schema.nodes.image.createAndFill({
         imageUrl: replaceMarkdownText(decodeURIGraceful(imageUrl), true),
-        ...(altText && { altText: replaceMarkdownText(altText, false) })
+        ...(altText && { altText: replaceMarkdownText(altText, false) }),
       });
 
       dispatch!(tr.replaceSelectionWith(node!).scrollIntoView());
@@ -69,7 +69,7 @@ export class Image extends NodeSchema {
 
   commands() {
     return {
-      addImage: this.addImage()
+      addImage: this.addImage(),
     };
   }
 }

@@ -14,7 +14,7 @@ export class CodeBlock extends Mark {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('code-block') }, 0];
-      }
+      },
     };
   }
 

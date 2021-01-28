@@ -67,7 +67,7 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
 
   return [
     [lineRange[0], Math.max(from - startOffset + 1, 1)],
-    [lineRange[1], Math.max(to - endOffset + 1, 1)]
+    [lineRange[1], Math.max(to - endOffset + 1, 1)],
   ];
 }
 

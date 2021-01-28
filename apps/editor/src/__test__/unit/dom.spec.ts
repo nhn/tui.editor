@@ -5,7 +5,7 @@ import {
   appendNodes,
   insertBeforeNode,
   removeNode,
-  unwrapNode
+  unwrapNode,
 } from '@/utils/dom';
 
 describe('dom utils', () => {

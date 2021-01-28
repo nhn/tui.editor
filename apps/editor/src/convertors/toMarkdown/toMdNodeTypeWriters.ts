@@ -8,7 +8,7 @@ import {
   ToMdNodeTypeWriterMap,
   ToMdConvertorState,
   NodeInfo,
-  ToMdConvertorReturnValues
+  ToMdConvertorReturnValues,
 } from '@t/convertor';
 import { WwNodeType, ColumnAlign } from '@t/wysiwyg';
 
@@ -214,7 +214,7 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
     state.ensureNewLine();
     state.write(closeDelim);
     state.closeBlock(node);
-  }
+  },
 };
 
 export function write(
@@ -222,7 +222,7 @@ export function write(
   {
     state,
     nodeInfo,
-    params
+    params,
   }: {
     state: ToMdConvertorState;
     nodeInfo: NodeInfo;

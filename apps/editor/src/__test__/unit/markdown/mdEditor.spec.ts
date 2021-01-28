@@ -66,7 +66,7 @@ describe('MarkdownEditor', () => {
 
     expect(selection).toEqual([
       [1, 1],
-      [1, 2]
+      [1, 2],
     ]);
   });
 

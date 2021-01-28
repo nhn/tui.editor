@@ -264,7 +264,7 @@ const KEYBOARD_MAP = [
   '', // [252]
   'PA1', // [253]
   'WIN_OEM_CLEAR', // [254]
-  '' // [255]
+  '', // [255]
 ];
 
 interface Options {

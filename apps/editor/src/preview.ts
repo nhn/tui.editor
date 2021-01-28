@@ -52,13 +52,13 @@ class Preview {
 
     if (nodeIds) {
       targetEls = nodeIds
-        .map(id => contentEl.querySelector(`[data-nodeid="${id}"]`) as HTMLElement)
+        .map((id) => contentEl.querySelector(`[data-nodeid="${id}"]`) as HTMLElement)
         .filter(Boolean);
     } else {
       targetEls = [contentEl];
     }
 
-    targetEls.forEach(targetEl => {
+    targetEls.forEach((targetEl) => {
       codeEls.push(...(domUtils.findAll(targetEl, 'code[data-language]') as HTMLElement[]));
     });
 
@@ -66,7 +66,7 @@ class Preview {
   }
 
   invokeCodeBlockPlugins(codeBlocks: HTMLElement[]) {
-    codeBlocks.forEach(codeBlock => {
+    codeBlocks.forEach((codeBlock) => {
       const lang = codeBlock.getAttribute('data-language')!;
       const html = codeBlockManager.createCodeBlockHtml(lang, codeBlock.textContent!);
 

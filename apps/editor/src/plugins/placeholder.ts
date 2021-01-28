@@ -31,7 +31,7 @@ export function placeholder(options: Options) {
           return DecorationSet.create(doc, [Decoration.widget(1, placeHolder)]);
         }
         return null;
-      }
-    }
+      },
+    },
   });
 }

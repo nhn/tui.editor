@@ -16,7 +16,7 @@ export class Strike extends Mark {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('strike') }, 0];
-      }
+      },
     };
   }
 

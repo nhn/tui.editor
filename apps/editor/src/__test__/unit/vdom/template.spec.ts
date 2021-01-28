@@ -4,11 +4,7 @@ import { Component } from '@/ui/vdom/component';
 
 class TestComponent extends Component {
   render() {
-    return html`
-      <div class="my-comp">
-        test
-      </div>
-    `;
+    return html`<div class="my-comp">test</div>`;
   }
 }
 
@@ -19,20 +15,18 @@ describe('lit-html syntax', () => {
       type: 'div',
       props: {
         class: 'my-class',
-        style: { position: 'absolute', top: 10, marginLeft: 10 }
+        style: { position: 'absolute', top: 10, marginLeft: 10 },
       },
       children: [
         {
           type: 'TEXT_NODE',
           props: { nodeValue: 'test' },
-          children: []
-        }
-      ]
+          children: [],
+        },
+      ],
     };
 
-    const vnode = html`
-      <div class="my-class" style=${style}>test</div>
-    ` as VNode;
+    const vnode = html`<div class="my-class" style=${style}>test</div>` as VNode;
 
     expect(vnode).toMatchObject(expected);
   });
@@ -41,7 +35,7 @@ describe('lit-html syntax', () => {
     const expected = {
       type: 'div',
       props: {
-        class: 'my-class'
+        class: 'my-class',
       },
       children: [
         {
@@ -51,9 +45,9 @@ describe('lit-html syntax', () => {
             {
               type: 'TEXT_NODE',
               props: { nodeValue: '1' },
-              children: []
-            }
-          ]
+              children: [],
+            },
+          ],
         },
         {
           type: 'span',
@@ -62,9 +56,9 @@ describe('lit-html syntax', () => {
             {
               type: 'TEXT_NODE',
               props: { nodeValue: '2' },
-              children: []
-            }
-          ]
+              children: [],
+            },
+          ],
         },
         {
           type: 'span',
@@ -73,22 +67,15 @@ describe('lit-html syntax', () => {
             {
               type: 'TEXT_NODE',
               props: { nodeValue: '3' },
-              children: []
-            }
-          ]
-        }
-      ]
+              children: [],
+            },
+          ],
+        },
+      ],
     };
 
     const vnode = html`
-      <div class="my-class">
-        ${[1, 2, 3].map(
-          num =>
-            html`
-              <span>${num}</span>
-            `
-        )}
-      </div>
+      <div class="my-class">${[1, 2, 3].map((num) => html`<span>${num}</span>`)}</div>
     `;
 
     expect(vnode).toMatchObject(expected);
@@ -98,33 +85,23 @@ describe('lit-html syntax', () => {
     const expected = {
       type: 'div',
       props: {
-        class: 'my-class'
+        class: 'my-class',
       },
       children: [
         {
           type: 'TEXT_NODE',
           props: { nodeValue: 'test' },
-          children: []
-        }
-      ]
+          children: [],
+        },
+      ],
     };
 
     const vnode = html`
       <div class="my-class">
-        ${null &&
-          html`
-            <span>123</span>
-          `}
+        ${null && html`<span>123</span>`}
         ${// eslint-disable-next-line no-undefined
-        undefined &&
-          html`
-            <span>123</span>
-          `}
-        ${false &&
-          html`
-            <span>123</span>
-          `}
-        test
+        undefined && html`<span>123</span>`}
+        ${false && html`<span>123</span>`}test
       </div>
     ` as VNode;
 
@@ -136,14 +113,12 @@ describe('lit-html syntax', () => {
       type: TestComponent,
       props: {
         class: 'my-comp',
-        'data-id': 'my-comp'
+        'data-id': 'my-comp',
       },
-      children: []
+      children: [],
     };
 
-    const vnode = html`
-      <${TestComponent} class="my-comp" data-id="my-comp" />
-    ` as VNode;
+    const vnode = html`<${TestComponent} class="my-comp" data-id="my-comp" />` as VNode;
 
     expect(vnode).toMatchObject(expected);
   });

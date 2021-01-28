@@ -43,7 +43,7 @@ export function getEditorRangeHeightInfo(
       height <= 0
         ? children[start].clientHeight
         : height + getBlankLinesHeight(doc, children, Math.min(end + 1, doc.childCount - 1)),
-    rect
+    rect,
   };
 }
 

@@ -12,7 +12,7 @@ export class Text extends Node {
 
   get defaultSchema() {
     return {
-      group: 'inline'
+      group: 'inline',
     };
   }
 
@@ -56,7 +56,7 @@ export class Text extends Node {
   keymaps() {
     return {
       Tab: this.addSpaces(),
-      'Shift-Tab': this.removeSpaces()
+      'Shift-Tab': this.removeSpaces(),
     };
   }
 }

@@ -9,7 +9,7 @@ import {
   HTMLToken,
   MdNode,
   MdNodeType,
-  TextToken
+  TextToken,
 } from '@t/markdown';
 import { ToDOMAdaptor } from '@t/convertor';
 import { includes } from '@/utils/common';
@@ -29,7 +29,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     this.customConvertorKeys = Object.keys(customRenderer);
     this.renderer = new Renderer({
       gfm: true,
-      convertors
+      convertors,
     });
     this.convertors = this.renderer.getConvertors();
   }
@@ -41,7 +41,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
       leaf: isPmNode(node) ? node.isLeaf : false,
       options: this.renderer.getOptions(),
       getChildrenText: () => (isPmNode(node) ? node.textContent : ''),
-      skipChildren: () => false
+      skipChildren: () => false,
     };
 
     const convertor = this.convertors[node.type.name as MdNodeType]!;
@@ -62,7 +62,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     const tokens = this.generateTokens(node);
     const stack: SpecArray[] = [];
 
-    tokens.forEach(token => tokenToPmDOM[token.type](token, stack));
+    tokens.forEach((token) => tokenToPmDOM[token.type](token, stack));
 
     return stack[0] as DOMOutputSpecArray;
   }
@@ -71,7 +71,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     const tokens = this.generateTokens(node);
     const stack: HTMLElement[] = [];
 
-    tokens.forEach(token => tokenToDOMNode[token.type](token, stack));
+    tokens.forEach((token) => tokenToDOMNode[token.type](token, stack));
 
     return stack[0];
   }

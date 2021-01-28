@@ -31,8 +31,8 @@ export function tableContextMenuPlugin(eventEmitter: Emitter) {
           }
 
           return false;
-        }
-      }
-    }
+        },
+      },
+    },
   });
 }

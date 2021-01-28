@@ -4,7 +4,7 @@ import {
   removeNode,
   unwrapNode,
   insertBeforeNode,
-  appendNodes
+  appendNodes,
 } from '@/utils/dom';
 
 const reMSOListClassName = /MsoListParagraph/;
@@ -76,7 +76,7 @@ function createListItemDataFromParagraph(para: HTMLElement, index: number) {
       parent: null,
       children: [],
       unordered,
-      contents: getListItemContents(para)
+      contents: getListItemContents(para),
     };
   }
 
@@ -129,7 +129,7 @@ function makeList(listData: ListItemData[]) {
   const listTagName = listData[0].unordered ? 'ul' : 'ol';
   const list = document.createElement(listTagName);
 
-  listData.forEach(data => {
+  listData.forEach((data) => {
     const { children, contents } = data;
     const listItem = document.createElement('li');
 
@@ -171,7 +171,7 @@ export function convertMsoParagraphsToList(html: string) {
 
   const foundParas = findNodes(container, MSO_CLASS_NAME_LIST_PARA);
 
-  foundParas.forEach(para => {
+  foundParas.forEach((para) => {
     const msoListParaEnd = isMsoListParagraphEnd(para.nextSibling as HTMLElement);
 
     paras.push(para as HTMLElement);

@@ -12,12 +12,12 @@ export class TableHead extends NodeSchema {
     return {
       content: 'tableRow{1}',
       attrs: {
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       parseDOM: [createDOMInfoParsedRawHTML('thead')],
       toDOM(): DOMOutputSpecArray {
         return ['thead', 0];
-      }
+      },
     };
   }
 }
