@@ -45,7 +45,7 @@ export const tokenToPmDOM: TokenToDOM<SpecArray> = {
   },
   text(_, stack) {
     getTop(stack).push(0);
-  }
+  },
 };
 
 export const tokenToDOMNode: TokenToDOM<HTMLElement> = {
@@ -60,7 +60,7 @@ export const tokenToDOMNode: TokenToDOM<HTMLElement> = {
     if (attributes) {
       attrs = { ...attrs, ...attributes };
     }
-    Object.keys(attrs).forEach(attr => {
+    Object.keys(attrs).forEach((attr) => {
       el.setAttribute(attr, attrs[attr]);
     });
 
@@ -80,5 +80,5 @@ export const tokenToDOMNode: TokenToDOM<HTMLElement> = {
     const textNode = document.createTextNode((token as TextToken).content);
 
     getTop(stack).appendChild(textNode);
-  }
+  },
 };

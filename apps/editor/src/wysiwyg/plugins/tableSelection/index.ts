@@ -44,7 +44,7 @@ export function tableSelectionPlugin() {
         const { deleted, pos } = tr.mapping.mapResult(value);
 
         return deleted ? null : pos;
-      }
+      },
     },
     props: {
       decorations: drawCellSelection,
@@ -54,10 +54,10 @@ export function tableSelectionPlugin() {
         }
 
         return null;
-      }
+      },
     },
     view(editorView: EditorView) {
       return new TableSelection(editorView);
-    }
+    },
   });
 }

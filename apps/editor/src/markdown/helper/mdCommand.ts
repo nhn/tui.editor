@@ -22,7 +22,7 @@ export function toggleMark(
     const [from, to] = resolveSelectionPos(selection);
     const [prevPos, nextPos] = [
       Math.max(from - extendedRange, 1),
-      Math.min(to + extendedRange, tr.doc.content.size - 1)
+      Math.min(to + extendedRange, tr.doc.content.size - 1),
     ];
     const slice = selection.content();
 

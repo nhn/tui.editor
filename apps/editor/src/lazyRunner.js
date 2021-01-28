@@ -35,7 +35,7 @@ class LazyRunner {
       fn,
       delay,
       context,
-      TOID: null
+      TOID: null,
     };
   }
 

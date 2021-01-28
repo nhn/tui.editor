@@ -8,6 +8,6 @@ export function getDefaultCommands(): Record<string, EditorCommand> {
     deleteSelection: () => deleteSelection,
     selectAll: () => selectAll,
     undo: () => undo,
-    redo: () => redo
+    redo: () => redo,
   };
 }

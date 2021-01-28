@@ -53,14 +53,14 @@ export default class WysiwygEditor extends EditorBase {
   createSchema() {
     return new Schema({
       nodes: this.specs.nodes,
-      marks: this.specs.marks
+      marks: this.specs.marks,
     });
   }
 
   createContext() {
     return {
       schema: this.schema,
-      eventEmitter: this.eventEmitter
+      eventEmitter: this.eventEmitter,
     };
   }
 
@@ -74,15 +74,15 @@ export default class WysiwygEditor extends EditorBase {
         keymap({
           'Mod-z': undo(),
           'Shift-Mod-z': redo(),
-          ...baseKeymap
+          ...baseKeymap,
         }),
         history(),
         placeholder(this.placeholder),
         tableSelectionPlugin(),
         tableContextMenuPlugin(this.eventEmitter),
-        taskPlugin()
+        taskPlugin(),
       ],
-      ...addedStates
+      ...addedStates,
     });
   }
 
@@ -92,16 +92,16 @@ export default class WysiwygEditor extends EditorBase {
     return new EditorView(this.el, {
       state: this.createState(),
       attributes: {
-        class: CONTENTS_CLASS_NAME
+        class: CONTENTS_CLASS_NAME,
       },
       nodeViews: {
         customBlock(node, view, getPos) {
           return new CustomBlockView(node, view, getPos, toDOMAdaptor);
-        }
+        },
       },
       transformPastedHTML: changePastedHTML,
       transformPasted: (slice: Slice) => changePastedSlice(slice, this.schema),
-      handlePaste: (view: EditorView, _: ClipboardEvent, slice: Slice) => pasteToTable(view, slice)
+      handlePaste: (view: EditorView, _: ClipboardEvent, slice: Slice) => pasteToTable(view, slice),
     });
   }
 
@@ -131,7 +131,7 @@ export default class WysiwygEditor extends EditorBase {
     const { schema, tr } = this.view.state;
     const { paragraph } = schema.nodes;
     const texts = content.split('\n');
-    const paras = texts.map(text => paragraph.create(null, schema.text(text)));
+    const paras = texts.map((text) => paragraph.create(null, schema.text(text)));
 
     this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(paras), 1, 1)));
     this.focus();

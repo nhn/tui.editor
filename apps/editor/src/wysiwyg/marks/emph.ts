@@ -11,27 +11,27 @@ export class Emph extends Mark {
   }
 
   get defaultSchema() {
-    const parseDOM = ['i', 'em'].map(tag => {
+    const parseDOM = ['i', 'em'].map((tag) => {
       return {
         tag,
         getAttrs(dom: Node | string) {
           const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
           return {
-            ...(rawHTML && { rawHTML })
+            ...(rawHTML && { rawHTML }),
           };
-        }
+        },
       };
     });
 
     return {
       attrs: {
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       parseDOM,
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         return [attrs.rawHTML || 'em'];
-      }
+      },
     };
   }
 
@@ -48,7 +48,7 @@ export class Emph extends Mark {
 
     return {
       'Mod-i': italicCommand,
-      'Mod-I': italicCommand
+      'Mod-I': italicCommand,
     };
   }
 }

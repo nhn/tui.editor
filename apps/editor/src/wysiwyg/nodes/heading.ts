@@ -15,7 +15,7 @@ export class Heading extends NodeSchema {
   }
 
   get defaultSchema() {
-    const parseDOM = this.levels.map(level => {
+    const parseDOM = this.levels.map((level) => {
       return {
         tag: `h${level}`,
         getAttrs(dom: Node | string) {
@@ -23,9 +23,9 @@ export class Heading extends NodeSchema {
 
           return {
             level,
-            ...(rawHTML && { rawHTML })
+            ...(rawHTML && { rawHTML }),
           };
-        }
+        },
       };
     });
 
@@ -33,7 +33,7 @@ export class Heading extends NodeSchema {
       attrs: {
         level: { default: 1 },
         headingType: { default: 'atx' },
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       content: 'inline*',
       group: 'block',
@@ -41,12 +41,12 @@ export class Heading extends NodeSchema {
       parseDOM,
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         return [`h${attrs.level}`, 0];
-      }
+      },
     };
   }
 
   commands(): EditorCommand {
-    return payload => (state, dispatch) =>
+    return (payload) => (state, dispatch) =>
       setBlockType(state.schema.nodes.heading, payload)(state, dispatch);
   }
 }

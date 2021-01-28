@@ -11,7 +11,7 @@ import {
   findAncestorHavingId,
   getEditorRangeHeightInfo,
   getParentNodeObj,
-  getTotalOffsetTop
+  getTotalOffsetTop,
 } from './dom';
 
 const EDITOR_BOTTOM_PADDING = 18;
@@ -227,8 +227,8 @@ export class ScrollSync {
     }
 
     const syncCallbacks: SyncCallbacks = {
-      syncScrollTop: scrollTop => (scrollTarget.scrollTop = scrollTop),
-      releaseEventBlock: () => (this.blockedScroll = null)
+      syncScrollTop: (scrollTop) => (scrollTarget.scrollTop = scrollTop),
+      releaseEventBlock: () => (this.blockedScroll = null),
     };
 
     animate(curScrollTop, targetScrollTop, syncCallbacks);

@@ -20,7 +20,7 @@ import {
   getRightCellOffset,
   getLeftCellOffset,
   getUpCellOffset,
-  getDownCellOffset
+  getDownCellOffset,
 } from '@/wysiwyg/helper/table';
 
 import { createTextSelection } from '@/helper/manipulation';
@@ -50,7 +50,7 @@ const cellOffsetFnMap: CellOffsetFnMap = {
   left: getRightCellOffset,
   right: getLeftCellOffset,
   up: getUpCellOffset,
-  down: getDownCellOffset
+  down: getDownCellOffset,
 };
 
 export class Table extends NodeSchema {
@@ -63,12 +63,12 @@ export class Table extends NodeSchema {
       content: 'tableHead{1} tableBody{1}',
       group: 'block',
       attrs: {
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       parseDOM: [createDOMInfoParsedRawHTML('table')],
       toDOM(): DOMOutputSpecArray {
         return ['table', 0];
-      }
+      },
     };
   }
 
@@ -88,7 +88,7 @@ export class Table extends NodeSchema {
         const tableBodyRows = createTableBodyRows(rows, columns, schema, tbodyData);
         const table = schema.nodes.table.create(null, [
           tableHead.create(null, tableHeadRow),
-          tableBody.create(null, tableBodyRows)
+          tableBody.create(null, tableBodyRows),
         ]);
 
         dispatch!(tr.replaceSelectionWith(table));
@@ -353,7 +353,7 @@ export class Table extends NodeSchema {
       addRowToUp: this.addRow(-1),
       removeRow: this.removeRow(),
       alignColumn: this.alignColumn(),
-      deleteCells: this.deleteCells()
+      deleteCells: this.deleteCells(),
     };
   }
 
@@ -374,7 +374,7 @@ export class Table extends NodeSchema {
       Backspace: deleteCellsCommand,
       'Mod-Backspace': deleteCellsCommand,
       Delete: deleteCellsCommand,
-      'Mod-Delete': deleteCellsCommand
+      'Mod-Delete': deleteCellsCommand,
     };
   }
 }

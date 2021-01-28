@@ -21,7 +21,7 @@ function getToolbarState(targetNode: MdNode) {
   const toolbarState = {} as ToolbarState;
   let listEnabled = true;
 
-  traverseParentNodes(targetNode, mdNode => {
+  traverseParentNodes(targetNode, (mdNode) => {
     const type = getToolbarStateType(mdNode);
 
     if (type === 'customBlock' || type === 'image' || type === 'link') {
@@ -68,10 +68,10 @@ export function previewHighlight({ toastMark, eventEmitter }: Context) {
             source: 'markdown',
             cursorPos,
             mdNode,
-            toolbarState
+            toolbarState,
           });
-        }
+        },
       };
-    }
+    },
   });
 }

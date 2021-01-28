@@ -77,7 +77,7 @@ class MarkdownPreview extends Preview {
     this.renderer = new Renderer({
       gfm: true,
       nodeId: true,
-      convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer)
+      convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer),
     });
 
     this.cursorNodeId = null;
@@ -104,10 +104,10 @@ class MarkdownPreview extends Preview {
       });
     }
 
-    on(this.el!, 'scroll', event => {
+    on(this.el!, 'scroll', (event) => {
       this.eventEmitter.emit('scroll', {
         source: 'preview',
-        data: findAdjacentElementToScrollTop(event.target.scrollTop, this.previewContent)
+        data: findAdjacentElementToScrollTop(event.target.scrollTop, this.previewContent),
       });
     });
     this.eventEmitter.listen('changePreviewTabPreview', () => this.toggleActive(true));
@@ -126,7 +126,7 @@ class MarkdownPreview extends Preview {
 
   private updateCursorNode(cursorNode: MdNode | null, cursorPos: MdPos) {
     if (cursorNode) {
-      cursorNode = findClosestNode(cursorNode, mdNode => !isInlineNode(mdNode))!;
+      cursorNode = findClosestNode(cursorNode, (mdNode) => !isInlineNode(mdNode))!;
 
       if (cursorNode.type === 'tableRow') {
         cursorNode = findTableCell(cursorNode, cursorPos[1])!;
@@ -162,7 +162,7 @@ class MarkdownPreview extends Preview {
   }
 
   update(changed: EditResult[]) {
-    changed.forEach(editResult => this.replaceRangeNodes(editResult));
+    changed.forEach((editResult) => this.replaceRangeNodes(editResult));
     this.eventEmitter.emit('previewRenderAfter', this);
   }
 
@@ -171,7 +171,7 @@ class MarkdownPreview extends Preview {
     const contentEl = this.previewContent;
     const newHtml = this.eventEmitter.emitReduce(
       'convertorAfterMarkdownToHtmlConverted',
-      nodes.map(node => this.renderer.render(node)).join('')
+      nodes.map((node) => this.renderer.render(node)).join('')
     );
 
     if (!removedNodeRange) {
@@ -199,7 +199,7 @@ class MarkdownPreview extends Preview {
       }
     }
 
-    const codeBlockEls = this.getCodeBlockElements(nodes.map(node => node.id));
+    const codeBlockEls = this.getCodeBlockElements(nodes.map((node) => node.id));
 
     if (codeBlockEls.length) {
       // @ts-ignore

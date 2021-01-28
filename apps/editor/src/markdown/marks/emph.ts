@@ -18,7 +18,7 @@ export class Emph extends Mark {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('emph') }, 0];
-      }
+      },
     };
   }
 

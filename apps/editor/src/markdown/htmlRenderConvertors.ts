@@ -6,7 +6,7 @@ import {
   MdNodeType,
   CustomHTMLRendererMap,
   Context,
-  OpenTagToken
+  OpenTagToken,
 } from '@t/markdown';
 
 type TokenAttrs = Record<string, any>;
@@ -17,7 +17,7 @@ const baseConvertors: CustomHTMLRendererMap = {
       return {
         type: entering ? 'openTag' : 'closeTag',
         outerNewLine: true,
-        tagName: 'p'
+        tagName: 'p',
       };
     }
 
@@ -50,14 +50,14 @@ const baseConvertors: CustomHTMLRendererMap = {
         tagName: 'li',
         classNames,
         attributes,
-        outerNewLine: true
+        outerNewLine: true,
       };
     }
 
     return {
       type: 'closeTag',
       tagName: 'li',
-      outerNewLine: true
+      outerNewLine: true,
     };
   },
 
@@ -67,7 +67,7 @@ const baseConvertors: CustomHTMLRendererMap = {
     return [
       { type: 'openTag', tagName: 'code', attributes },
       { type: 'text', content: node.literal! },
-      { type: 'closeTag', tagName: 'code' }
+      { type: 'closeTag', tagName: 'code' },
     ];
   },
 
@@ -92,9 +92,9 @@ const baseConvertors: CustomHTMLRendererMap = {
       { type: 'openTag', tagName: 'code', attributes: codeAttrs },
       { type: 'text', content: node.literal! },
       { type: 'closeTag', tagName: 'code' },
-      { type: 'closeTag', tagName: 'pre' }
+      { type: 'closeTag', tagName: 'pre' },
     ];
-  }
+  },
 };
 
 export function getHTMLRenderConvertors(
@@ -110,7 +110,7 @@ export function getHTMLRenderConvertors(
       if (entering) {
         (result as OpenTagToken).attributes = {
           ...(result as OpenTagToken).attributes,
-          ...linkAttribute
+          ...linkAttribute,
         };
       }
       return result;

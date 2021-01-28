@@ -16,7 +16,7 @@ export class Strong extends Mark {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('strong') }, 0];
-      }
+      },
     };
   }
 

@@ -13,7 +13,7 @@ export class Code extends Mark {
   get defaultSchema() {
     return {
       attrs: {
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       parseDOM: [
         {
@@ -22,14 +22,14 @@ export class Code extends Mark {
             const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
             return {
-              ...(rawHTML && { rawHTML })
+              ...(rawHTML && { rawHTML }),
             };
-          }
-        }
+          },
+        },
       ],
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         return [attrs.rawHTML || 'code'];
-      }
+      },
     };
   }
 
@@ -42,7 +42,7 @@ export class Code extends Mark {
 
     return {
       'Shift-Mod-c': codeCommand,
-      'Shift-Mod-C': codeCommand
+      'Shift-Mod-C': codeCommand,
     };
   }
 }

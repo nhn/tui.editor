@@ -12,7 +12,7 @@ export class TableRow extends NodeSchema {
       content: '(tableHeadCell | tableBodyCell)+',
       attrs: {
         columns: { default: 1 },
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       parseDOM: [
         {
@@ -26,12 +26,12 @@ export class TableRow extends NodeSchema {
             }
 
             return { columns, ...(rawHTML && { rawHTML }) };
-          }
-        }
+          },
+        },
       ],
       toDOM(): DOMOutputSpecArray {
         return ['tr', 0];
-      }
+      },
     };
   }
 }

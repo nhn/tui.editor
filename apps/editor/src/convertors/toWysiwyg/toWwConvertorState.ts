@@ -91,7 +91,7 @@ export default class ToWwConvertorState {
   convertByDOMParser(root: HTMLElement) {
     const doc = DOMParser.fromSchema(this.schema).parse(root);
 
-    doc.content.forEach(node => this.push(node));
+    doc.content.forEach((node) => this.push(node));
   }
 
   private convert(mdNode: MdNode) {
@@ -109,7 +109,7 @@ export default class ToWwConvertorState {
           entering,
           skipChildren: () => {
             skipped = true;
-          }
+          },
         };
 
         convertor(this, node, context);

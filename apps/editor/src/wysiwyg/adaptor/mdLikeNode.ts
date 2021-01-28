@@ -25,7 +25,7 @@ export function isContainer(type: string) {
     'tableBody',
     'tableRow',
     'tableHeadCell',
-    'tableBodyCell'
+    'tableBodyCell',
   ];
 
   return includes(containerTypes, type);
@@ -37,7 +37,7 @@ export function createMdLikeNode(node: ProsemirrorNode | Mark): MdLikeNode {
   const mdLikeNode: MdLikeNode = {
     type: nodeType as MdNodeType,
     wysiwygNode: true,
-    literal: !isContainer(nodeType) && isPmNode(node) ? node.textContent : null
+    literal: !isContainer(nodeType) && isPmNode(node) ? node.textContent : null,
   };
 
   const nodeTypeMap = {
@@ -50,7 +50,7 @@ export function createMdLikeNode(node: ProsemirrorNode | Mark): MdLikeNode {
     listItem: { type: 'item', listData: { task: attrs.task, checked: attrs.checked } },
     tableHeadCell: { type: 'tableCell', cellType: 'head', align: attrs.align },
     tableBodyCell: { type: 'tableCell', cellType: 'body', align: attrs.align },
-    customBlock: { info: attrs.info }
+    customBlock: { info: attrs.info },
   } as const;
   const nodeInfo = nodeTypeMap[nodeType as keyof typeof nodeTypeMap];
 

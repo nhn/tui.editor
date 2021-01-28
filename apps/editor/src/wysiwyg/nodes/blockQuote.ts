@@ -14,14 +14,14 @@ export class BlockQuote extends NodeSchema {
   get defaultSchema() {
     return {
       attrs: {
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       content: 'block+',
       group: 'block',
       parseDOM: [createDOMInfoParsedRawHTML('blockquote')],
       toDOM(): DOMOutputSpecArray {
         return ['blockquote', 0];
-      }
+      },
     };
   }
 
@@ -34,7 +34,7 @@ export class BlockQuote extends NodeSchema {
 
     return {
       'Alt-q': blockQutoeCommand,
-      'Alt-Q': blockQutoeCommand
+      'Alt-Q': blockQutoeCommand,
     };
   }
 }

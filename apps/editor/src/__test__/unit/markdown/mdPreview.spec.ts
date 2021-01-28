@@ -13,7 +13,7 @@ describe('Preview', () => {
       linkAttribute: null,
       customHTMLRenderer: {},
       isViewer: false,
-      highlight: true
+      highlight: true,
     };
 
     eventEmitter = new EventEmitter();
@@ -52,7 +52,7 @@ describe('preview highlight', () => {
       linkAttribute: null,
       customHTMLRenderer: {},
       isViewer: false,
-      highlight
+      highlight,
     };
 
     const editorEl = document.createElement('div');

@@ -8,7 +8,7 @@ import {
   createTextSelection,
   insertNodes,
   nbspToSpace,
-  replaceNodes
+  replaceNodes,
 } from '@/helper/manipulation';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
 
@@ -23,7 +23,7 @@ export class BlockQuote extends Mark {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('block-quote') }, 0];
-      }
+      },
     };
   }
 
@@ -81,7 +81,7 @@ export class BlockQuote extends Mark {
 
       const nodes: ProsemirrorNode[] = [];
 
-      doc.nodesBetween(startOffset, endOffset, node => {
+      doc.nodesBetween(startOffset, endOffset, (node) => {
         const { isBlock, textContent } = node;
 
         if (isBlock) {
@@ -106,7 +106,7 @@ export class BlockQuote extends Mark {
     return {
       'alt-q': blockQuoteCommand,
       'alt-Q': blockQuoteCommand,
-      Enter: this.extendBlockQuote()
+      Enter: this.extendBlockQuote(),
     };
   }
 }

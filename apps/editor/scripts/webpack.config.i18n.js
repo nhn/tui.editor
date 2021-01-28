@@ -20,7 +20,7 @@ function getOptimizationConfig(minify) {
         cache: true,
         parallel: true,
         sourceMap: false,
-        extractComments: false
+        extractComments: false,
       })
     );
   }
@@ -45,7 +45,7 @@ module.exports = (env, argv) => {
     output: {
       libraryTarget: 'umd',
       path: path.resolve(__dirname, minify ? '../dist/cdn/i18n' : '../dist/i18n'),
-      filename: `[name]${minify ? '.min' : ''}.js`
+      filename: `[name]${minify ? '.min' : ''}.js`,
     },
     externals: [
       {
@@ -53,9 +53,9 @@ module.exports = (env, argv) => {
           commonjs: '@toast-ui/editor',
           commonjs2: '@toast-ui/editor',
           amd: '@toast-ui/editor',
-          root: ['toastui', 'Editor']
-        }
-      }
+          root: ['toastui', 'Editor'],
+        },
+      },
     ],
     module: {
       rules: [
@@ -65,18 +65,18 @@ module.exports = (env, argv) => {
           loader: 'eslint-loader',
           enforce: 'pre',
           options: {
-            failOnError: true
-          }
+            failOnError: true,
+          },
         },
         {
           test: /\.js$/,
           exclude: /node_modules|dist/,
           loader: 'babel-loader?cacheDirectory',
           options: {
-            rootMode: 'upward'
-          }
-        }
-      ]
+            rootMode: 'upward',
+          },
+        },
+      ],
     },
     plugins: [
       new webpack.BannerPlugin(
@@ -84,15 +84,15 @@ module.exports = (env, argv) => {
           'TOAST UI Editor : i18n',
           `@version ${pkg.version}`,
           `@author ${pkg.author}`,
-          `@license ${pkg.license}`
+          `@license ${pkg.license}`,
         ].join('\n')
       ),
       new FileManagerPlugin({
         onEnd: {
-          copy: [{ source: './dist/i18n/*.js', destination: './dist/cdn/i18n' }]
-        }
-      })
+          copy: [{ source: './dist/i18n/*.js', destination: './dist/cdn/i18n' }],
+        },
+      }),
     ],
-    optimization: getOptimizationConfig(minify)
+    optimization: getOptimizationConfig(minify),
   };
 };

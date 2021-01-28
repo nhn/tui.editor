@@ -20,7 +20,7 @@ const { getComputedStyle } = window;
  * @returns {boolean} result
  * @ignore
  */
-const isTextNode = function(node) {
+const isTextNode = function (node) {
   return node && node.nodeType === Node.TEXT_NODE;
 };
 
@@ -30,7 +30,7 @@ const isTextNode = function(node) {
  * @returns {boolean} result
  * @ignore
  */
-const isElemNode = function(node) {
+const isElemNode = function (node) {
   return node && node.nodeType === Node.ELEMENT_NODE;
 };
 
@@ -40,7 +40,7 @@ const isElemNode = function(node) {
  * @returns {boolean}
  * @ignore
  */
-const isBlockNode = function(node) {
+const isBlockNode = function (node) {
   return /^(ADDRESS|ARTICLE|ASIDE|BLOCKQUOTE|DETAILS|DIALOG|DD|DIV|DL|DT|FIELDSET|FIGCAPTION|FIGURE|FOOTER|FORM|H[\d]|HEADER|HGROUP|HR|LI|MAIN|NAV|OL|P|PRE|SECTION|UL)$/gi.test(
     this.getNodeName(node)
   );
@@ -52,7 +52,7 @@ const isBlockNode = function(node) {
  * @returns {string} node name
  * @ignore
  */
-const getNodeName = function(node) {
+const getNodeName = function (node) {
   if (isElemNode(node)) {
     return node.tagName;
   }
@@ -66,7 +66,7 @@ const getNodeName = function(node) {
  * @returns {number} length
  * @ignore
  */
-const getTextLength = function(node) {
+const getTextLength = function (node) {
   let len;
 
   if (isElemNode(node)) {
@@ -84,7 +84,7 @@ const getTextLength = function(node) {
  * @returns {number} length
  * @ignore
  */
-const getOffsetLength = function(node) {
+const getOffsetLength = function (node) {
   let len;
 
   if (isElemNode(node)) {
@@ -102,7 +102,7 @@ const getOffsetLength = function(node) {
  * @returns {number} offset(index)
  * @ignore
  */
-const getNodeOffsetOfParent = function(node) {
+const getNodeOffsetOfParent = function (node) {
   const childNodesOfParent = node.parentNode.childNodes;
   let i, t, found;
 
@@ -123,7 +123,7 @@ const getNodeOffsetOfParent = function(node) {
  * @returns {Node} foudned node
  * @ignore
  */
-const getChildNodeByOffset = function(node, index) {
+const getChildNodeByOffset = function (node, index) {
   let currentNode;
 
   if (isTextNode(node)) {
@@ -143,7 +143,7 @@ const getChildNodeByOffset = function(node, index) {
  * @returns {Node} founded node
  * @ignore
  */
-const getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
+const getNodeWithDirectionUntil = function (direction, node, untilNodeName) {
   const directionKey = `${direction}Sibling`;
   let nodeName, foundedNode;
 
@@ -172,7 +172,7 @@ const getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
  * @returns {Node} founded node
  * @ignore
  */
-const getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
+const getPrevOffsetNodeUntil = function (node, index, untilNodeName) {
   let prevNode;
 
   if (index > 0) {
@@ -184,7 +184,7 @@ const getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
   return prevNode;
 };
 
-const getParentUntilBy = function(node, matchCondition, stopCondition) {
+const getParentUntilBy = function (node, matchCondition, stopCondition) {
   let foundedNode;
 
   while (node.parentNode && !matchCondition(node.parentNode)) {
@@ -209,13 +209,13 @@ const getParentUntilBy = function(node, matchCondition, stopCondition) {
  * @returns {Node} founded node
  * @ignore
  */
-const getParentUntil = function(node, untilNode) {
+const getParentUntil = function (node, untilNode) {
   let foundedNode;
 
   if (isString(untilNode)) {
-    foundedNode = getParentUntilBy(node, targetNode => untilNode === getNodeName(targetNode));
+    foundedNode = getParentUntilBy(node, (targetNode) => untilNode === getNodeName(targetNode));
   } else {
-    foundedNode = getParentUntilBy(node, targetNode => untilNode === targetNode);
+    foundedNode = getParentUntilBy(node, (targetNode) => untilNode === targetNode);
   }
 
   return foundedNode;
@@ -229,7 +229,7 @@ const getParentUntil = function(node, untilNode) {
  * @returns {Node} founded node
  * @ignore
  */
-const getNodeWithDirectionUnderParent = function(direction, node, underNode) {
+const getNodeWithDirectionUnderParent = function (direction, node, underNode) {
   const directionKey = `${direction}Sibling`;
   let foundedNode;
 
@@ -249,7 +249,7 @@ const getNodeWithDirectionUnderParent = function(direction, node, underNode) {
  * @returns {Node} founded node
  * @ignore
  */
-const getTopPrevNodeUnder = function(node, underNode) {
+const getTopPrevNodeUnder = function (node, underNode) {
   return getNodeWithDirectionUnderParent('previous', node, underNode);
 };
 
@@ -260,7 +260,7 @@ const getTopPrevNodeUnder = function(node, underNode) {
  * @returns {Node} founded node
  * @ignore
  */
-const getTopNextNodeUnder = function(node, underNode) {
+const getTopNextNodeUnder = function (node, underNode) {
   return getNodeWithDirectionUnderParent('next', node, underNode);
 };
 
@@ -270,7 +270,7 @@ const getTopNextNodeUnder = function(node, underNode) {
  * @returns {Node}
  * @ignore
  */
-const getTopBlockNode = function(node) {
+const getTopBlockNode = function (node) {
   return getParentUntil(node, 'BODY');
 };
 
@@ -280,7 +280,7 @@ const getTopBlockNode = function(node) {
  * @returns {Node}
  * @ignore
  */
-const getPrevTextNode = function(node) {
+const getPrevTextNode = function (node) {
   node = node.previousSibling || node.parentNode;
 
   while (!isTextNode(node) && getNodeName(node) !== 'BODY') {
@@ -309,7 +309,7 @@ const getPrevTextNode = function(node) {
  * @returns {Boolean} true if root contains node
  * @ignore
  */
-const containsNode = function(root, node) {
+const containsNode = function (root, node) {
   const walker = document.createTreeWalker(root, 4, null, false);
   let found = root === node;
 
@@ -328,7 +328,7 @@ const containsNode = function(root, node) {
  * @returns {Array}
  * @ignore
  */
-const findOffsetNode = function(root, offsetList, textNodeFilter) {
+const findOffsetNode = function (root, offsetList, textNodeFilter) {
   const result = [];
   let text = '';
   let walkerOffset = 0;
@@ -354,7 +354,7 @@ const findOffsetNode = function(root, offsetList, textNodeFilter) {
       result.push({
         container: walker.currentNode,
         offsetInContainer: offset - walkerOffset,
-        offset
+        offset,
       });
 
       if (!offsetList.length) {
@@ -370,7 +370,7 @@ const findOffsetNode = function(root, offsetList, textNodeFilter) {
     result.push({
       container: walker.currentNode,
       offsetInContainer: text.length,
-      offset
+      offset,
     });
     offset = offsetList.shift();
   } while (!isUndefined(offset));
@@ -378,7 +378,7 @@ const findOffsetNode = function(root, offsetList, textNodeFilter) {
   return result;
 };
 
-const getNodeInfo = function(node) {
+const getNodeInfo = function (node) {
   const path = {};
 
   path.tagName = node.nodeName;
@@ -396,7 +396,7 @@ const getNodeInfo = function(node) {
   return path;
 };
 
-const getPath = function(node, root) {
+const getPath = function (node, root) {
   const paths = [];
 
   while (node && node !== root) {
@@ -417,7 +417,7 @@ const getPath = function(node, root) {
  * @returns {HTMLElement|null}
  * @ignore
  */
-const getTableCellByDirection = function(node, direction) {
+const getTableCellByDirection = function (node, direction) {
   let targetElement = null;
 
   if (!isUndefined(direction) && (direction === 'next' || direction === 'previous')) {
@@ -439,7 +439,7 @@ const getTableCellByDirection = function(node, direction) {
  * @returns {HTMLElement|null}
  * @ignore
  */
-const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
+const getSiblingRowCellByDirection = function (node, direction, needEdgeCell) {
   let tableCellElement = null;
   let index, targetRowElement, currentContainer, siblingContainer, isSiblingContainerExists;
 
@@ -482,7 +482,7 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
  * @returns {boolean}
  * @ignore
  */
-const isMDSupportInlineNode = function(node) {
+const isMDSupportInlineNode = function (node) {
   return /^(A|B|BR|CODE|DEL|EM|I|IMG|S|SPAN|STRONG)$/gi.test(node.nodeName);
 };
 
@@ -493,7 +493,7 @@ const isMDSupportInlineNode = function(node) {
  * @returns {boolean}
  * @ignore
  */
-const isStyledNode = function(node) {
+const isStyledNode = function (node) {
   return /^(A|ABBR|ACRONYM|B|BDI|BDO|BIG|CITE|CODE|DEL|DFN|EM|I|INS|KBD|MARK|Q|S|SAMP|SMALL|SPAN|STRONG|SUB|SUP|U|VAR)$/gi.test(
     node.nodeName
   );
@@ -507,7 +507,7 @@ const isStyledNode = function(node) {
  * @param {Node} end - end node to remove
  * @ignore
  */
-const removeChildFromStartToEndNode = function(parentNode, start, end) {
+const removeChildFromStartToEndNode = function (parentNode, start, end) {
   let child = start;
 
   if (!child || parentNode !== child.parentNode) {
@@ -529,7 +529,7 @@ const removeChildFromStartToEndNode = function(parentNode, start, end) {
  * @param {boolean} isForward - direction
  * @ignore
  */
-const removeNodesByDirection = function(targetParent, node, isForward) {
+const removeNodesByDirection = function (targetParent, node, isForward) {
   let parentNode = node;
 
   while (parentNode !== targetParent) {
@@ -546,7 +546,7 @@ const removeNodesByDirection = function(targetParent, node, isForward) {
   }
 };
 
-const getLeafNode = function(node) {
+const getLeafNode = function (node) {
   let result = node;
 
   while (result.childNodes && result.childNodes.length) {
@@ -570,12 +570,12 @@ const getLeafNode = function(node) {
  * @returns {boolean}
  * @ignore
  */
-const isInsideTaskBox = function(style, offsetX, offsetY) {
+const isInsideTaskBox = function (style, offsetX, offsetY) {
   const rect = {
     left: parseInt(style.left, 10),
     top: parseInt(style.top, 10),
     width: parseInt(style.width, 10),
-    height: parseInt(style.height, 10)
+    height: parseInt(style.height, 10),
   };
 
   return (
@@ -592,7 +592,7 @@ const isInsideTaskBox = function(style, offsetX, offsetY) {
  * @returns {boolean} - whether node is OL or UL
  * @ignore
  */
-const isListNode = function(node) {
+const isListNode = function (node) {
   if (!node) {
     return false;
   }
@@ -606,7 +606,7 @@ const isListNode = function(node) {
  * @returns {boolean} whether node is first list item
  * @ignore
  */
-const isFirstListItem = function(node) {
+const isFirstListItem = function (node) {
   const { nodeName, parentNode } = node;
 
   return nodeName === 'LI' && node === parentNode.firstChild;
@@ -618,7 +618,7 @@ const isFirstListItem = function(node) {
  * @returns {boolean} whether node is first level list item
  * @ignore
  */
-const isFirstLevelListItem = function(node) {
+const isFirstLevelListItem = function (node) {
   const { nodeName, parentNode: listNode } = node;
   const { parentNode: listParentNode } = listNode;
 
@@ -631,7 +631,7 @@ const isFirstLevelListItem = function(node) {
  * @param {node} targetNode - target node
  * @ignore
  */
-const mergeNode = function(node, targetNode) {
+const mergeNode = function (node, targetNode) {
   if (node.hasChildNodes()) {
     toArray(node.childNodes).forEach(() => {
       targetNode.appendChild(node.firstChild);
@@ -650,7 +650,7 @@ const mergeNode = function(node, targetNode) {
  * @returns {node} hr is wraped div
  * @ignore
  */
-const createHorizontalRule = function() {
+const createHorizontalRule = function () {
   const div = document.createElement('div');
   const hr = document.createElement('hr');
 
@@ -667,7 +667,7 @@ const createHorizontalRule = function() {
  * @returns {node} <div><br></div>
  * @private
  */
-const createEmptyLine = function() {
+const createEmptyLine = function () {
   const div = document.createElement('div');
 
   div.appendChild(document.createElement('br'));
@@ -686,7 +686,7 @@ const createEmptyLine = function() {
  * @returns {node}
  * @private
  */
-const changeTagOrder = function(node, tagName) {
+const changeTagOrder = function (node, tagName) {
   if (node.nodeName !== 'SPAN') {
     const { parentNode } = node;
     let tempNode = node;
@@ -725,7 +725,7 @@ const changeTagOrder = function(node, tagName) {
  * @returns {node}
  * @private
  */
-const mergeSameNodes = function(startNode, endNode, tagName) {
+const mergeSameNodes = function (startNode, endNode, tagName) {
   const startBlockNode = changeTagOrder(startNode, tagName);
 
   if (startBlockNode.nodeName === tagName) {
@@ -768,7 +768,7 @@ const mergeSameNodes = function(startNode, endNode, tagName) {
  * @param {string} tagName
  * @private
  */
-const optimizeRange = function(range, tagName) {
+const optimizeRange = function (range, tagName) {
   const { collapsed, commonAncestorContainer, startContainer, endContainer } = range;
 
   if (!collapsed) {
@@ -818,7 +818,7 @@ const optimizeRange = function(range, tagName) {
  * @returns {Array} list of text nodes
  * @ignore
  */
-const getAllTextNode = function(root) {
+const getAllTextNode = function (root) {
   const walker = document.createTreeWalker(root, 4, null, false);
   const result = [];
 
@@ -839,7 +839,7 @@ const getAllTextNode = function(root) {
  * @returns {boolean} - whether the node is 'TD' or 'TH'
  * @ignore
  */
-const isCellNode = function(node) {
+const isCellNode = function (node) {
   if (!node) {
     return false;
   }
@@ -853,7 +853,7 @@ const isCellNode = function(node) {
  * @returns {function} - the condition to find the node
  * @ignore
  */
-const getLastNodeBy = function(node, condition) {
+const getLastNodeBy = function (node, condition) {
   let lastNode = node && node.lastChild;
 
   while (lastNode && condition(lastNode)) {
@@ -869,7 +869,7 @@ const getLastNodeBy = function(node, condition) {
  * @returns {function} - the condition to find the node
  * @ignore
  */
-const getParentNodeBy = function(node, condition) {
+const getParentNodeBy = function (node, condition) {
   while (node && condition(node.parentNode, node)) {
     node = node.parentNode;
   }
@@ -884,7 +884,7 @@ const getParentNodeBy = function(node, condition) {
  * @returns {function} - the condition to find the node
  * @ignore
  */
-const getSiblingNodeBy = function(node, direction, condition) {
+const getSiblingNodeBy = function (node, direction, condition) {
   const directionKey = `${direction}Sibling`;
 
   while (node && condition(node[directionKey], node)) {
@@ -958,9 +958,9 @@ function closest(node, found) {
   let condition;
 
   if (isString(found)) {
-    condition = target => matches(target, found);
+    condition = (target) => matches(target, found);
   } else {
-    condition = target => target === found;
+    condition = (target) => target === found;
   }
 
   while (node && node !== document) {
@@ -1049,7 +1049,7 @@ function children(node, selector) {
     foundChildren = node.children;
   }
 
-  return toArray(foundChildren).filter(child => matches(child, selector));
+  return toArray(foundChildren).filter((child) => matches(child, selector));
 }
 
 /**
@@ -1125,7 +1125,7 @@ function insertAfter(insertedNode, node) {
 function replaceWith(nodeList, html) {
   nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
 
-  nodeList.forEach(node => {
+  nodeList.forEach((node) => {
     node.insertAdjacentHTML('afterEnd', html);
     node.parentNode.removeChild(node);
   });
@@ -1140,7 +1140,7 @@ function replaceWith(nodeList, html) {
 function wrap(nodeList, nodeName) {
   nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
 
-  nodeList.forEach(node => {
+  nodeList.forEach((node) => {
     const wrapper = document.createElement(nodeName);
 
     node.parentNode.insertBefore(wrapper, node);
@@ -1157,7 +1157,7 @@ function wrap(nodeList, nodeName) {
 function wrapInner(nodeList, nodeName) {
   nodeList = nodeList.length ? toArray(nodeList) : [nodeList];
 
-  nodeList.forEach(node => {
+  nodeList.forEach((node) => {
     const wrapper = document.createElement(nodeName);
 
     node.appendChild(wrapper);
@@ -1348,7 +1348,7 @@ function getFragmentReplacedByNewlineToBr(text) {
 const CLS_PREFIX = 'tui-md-';
 
 export function cls(...names) {
-  return names.map(className => `${CLS_PREFIX}${className}`).join(' ');
+  return names.map((className) => `${CLS_PREFIX}${className}`).join(' ');
 }
 
 // @TODO: change named export
@@ -1419,5 +1419,5 @@ export default {
   getOuterHeight,
   toggleClass,
   finalizeHtml,
-  getFragmentReplacedByNewlineToBr
+  getFragmentReplacedByNewlineToBr,
 };

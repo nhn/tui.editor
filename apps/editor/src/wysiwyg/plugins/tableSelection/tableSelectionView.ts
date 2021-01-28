@@ -29,7 +29,7 @@ export default class TableSelection {
     this.handlers = {
       mousedown: this.handleMousedown.bind(this),
       mousemove: this.handleMousemove.bind(this),
-      mouseup: this.handleMouseup.bind(this)
+      mouseup: this.handleMouseup.bind(this),
     };
 
     this.startCellPos = null;

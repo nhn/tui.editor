@@ -11,13 +11,13 @@ import {
   getTableCellsInfo,
   createDummyCells,
   createTableBodyRows,
-  getTableContentFromSlice
+  getTableContentFromSlice,
 } from '@/wysiwyg/helper/table';
 
 import {
   createRowsFromPastingTable,
   copyTableHeadRow,
-  copyTableBodyRow
+  copyTableBodyRow,
 } from '@/wysiwyg/clipboard/paste';
 
 interface TargetTableInfo {
@@ -80,7 +80,7 @@ function createPastingCells(
     }
   }
 
-  slicedRows.forEach(tableBodyRow => {
+  slicedRows.forEach((tableBodyRow) => {
     if (!tableBodyRow.attrs.dummyRowForPasting) {
       const { content } = copyTableBodyRow(tableBodyRow, pastingColumnCount, schema);
 
@@ -97,7 +97,7 @@ function getTargetTableInfo(anchor: ResolvedPos) {
   return {
     cellsInfo,
     tableRowCount: cellsInfo.length,
-    tableColumnCount: cellsInfo[0].length
+    tableColumnCount: cellsInfo[0].length,
   };
 }
 
@@ -121,7 +121,7 @@ function getPastingRangeInfo(
     endRowIndex,
     endColumnIndex,
     addedRowCount,
-    addedColumnCount
+    addedColumnCount,
   };
 }
 
@@ -133,7 +133,7 @@ function addReplacedOffsets(
     endRowIndex,
     endColumnIndex,
     addedRowCount,
-    addedColumnCount
+    addedColumnCount,
   }: PastingRangeInfo,
   replacedCellsOffsets: ReplacedCellsOffsets[]
 ) {
@@ -145,7 +145,7 @@ function addReplacedOffsets(
     replacedCellsOffsets.push({
       startCellOffset: start.offset,
       endCellOffset: end.offset + end.nodeSize,
-      nextCellOffset: rowEnd.offset + rowEnd.nodeSize + TR_NODES_SIZE
+      nextCellOffset: rowEnd.offset + rowEnd.nodeSize + TR_NODES_SIZE,
     });
   }
 }
@@ -160,7 +160,7 @@ function expandColumns(
     endRowIndex,
     endColumnIndex,
     addedRowCount,
-    addedColumnCount
+    addedColumnCount,
   }: PastingRangeInfo,
   replacedCellsOffsets: ReplacedCellsOffsets[]
 ) {

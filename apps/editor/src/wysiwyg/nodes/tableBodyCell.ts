@@ -14,7 +14,7 @@ export class TableBodyCell extends NodeSchema {
       attrs: {
         align: { default: null },
         className: { default: null },
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       isolating: true,
       parseDOM: [createDOMInfoParsedRawHTML('td')],
@@ -25,11 +25,11 @@ export class TableBodyCell extends NodeSchema {
           'td',
           {
             ...(align && { align }),
-            ...(className && { class: className })
+            ...(className && { class: className }),
           },
-          0
+          0,
         ];
-      }
+      },
     };
   }
 }

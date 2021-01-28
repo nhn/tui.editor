@@ -20,7 +20,7 @@ export class Heading extends Mark {
     return {
       attrs: {
         level: { default: 1 },
-        seText: { default: false }
+        seText: { default: false },
       },
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         const { level, seText } = attrs;
@@ -30,7 +30,7 @@ export class Heading extends Mark {
           classNames += '|delimiter|setext';
         }
         return ['span', { class: cls(...classNames.split('|')) }, 0];
-      }
+      },
     };
   }
 
@@ -47,7 +47,7 @@ export class Heading extends Mark {
   }
 
   commands(): EditorCommand<Payload> {
-    return payload => ({ selection, doc, tr, schema }, dispatch) => {
+    return (payload) => ({ selection, doc, tr, schema }, dispatch) => {
       const { level } = payload!;
       const [from, to] = resolveSelectionPos(selection);
       const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);

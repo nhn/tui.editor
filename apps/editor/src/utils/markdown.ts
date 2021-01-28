@@ -5,7 +5,7 @@ import {
   MdNode,
   MdNodeType,
   MdPos,
-  TableCellMdNode
+  TableCellMdNode,
 } from '@t/markdown';
 import { includes } from './common';
 

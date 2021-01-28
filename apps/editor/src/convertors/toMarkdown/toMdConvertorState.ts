@@ -7,7 +7,7 @@ import {
   ToMdConvertors,
   ToMdNodeTypeConvertorMap,
   ToMdMarkTypeConvertorMap,
-  FirstDelimFn
+  FirstDelimFn,
 } from '@t/convertor';
 
 export default class ToMdConvertorState {

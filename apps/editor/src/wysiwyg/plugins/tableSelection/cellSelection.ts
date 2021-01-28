@@ -6,7 +6,7 @@ import {
   getSelectionInfo,
   getTableCellsInfo,
   CellInfo,
-  SelectionInfo
+  SelectionInfo,
 } from '@/wysiwyg/helper/table';
 
 function getSelectionRanges(

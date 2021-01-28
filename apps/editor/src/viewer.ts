@@ -61,7 +61,7 @@ class ToastUIEditorViewer {
         customHTMLRenderer: null,
         referenceDefinition: false,
         customHTMLSanitizer: null,
-        frontMatter: false
+        frontMatter: false,
       },
       options
     );
@@ -76,7 +76,7 @@ class ToastUIEditorViewer {
       customHTMLRenderer,
       extendedAutolinks,
       referenceDefinition,
-      frontMatter
+      frontMatter,
     } = this.options;
 
     const rendererOptions = {
@@ -85,7 +85,7 @@ class ToastUIEditorViewer {
       extendedAutolinks,
       referenceDefinition,
       customParser: parser,
-      frontMatter
+      frontMatter,
     };
 
     if (this.options.hooks) {
@@ -107,7 +107,7 @@ class ToastUIEditorViewer {
 
     this.preview = new MarkdownPreview(this.eventEmitter, {
       ...rendererOptions,
-      isViewer: true
+      isViewer: true,
     });
 
     on(this.preview.el!, 'mousedown', this.toggleTask.bind(this));
@@ -142,7 +142,7 @@ class ToastUIEditorViewer {
       domUtils.toggleClass(element, TASK_CHECKED_CLASS_NAME);
       this.eventEmitter.emit('change', {
         source: 'viewer',
-        data: ev
+        data: ev,
       });
     }
   }
@@ -232,7 +232,7 @@ class ToastUIEditorViewer {
    * @param {Array} languages - code lauguage list
    */
   setCodeBlockLanguages(languages = []) {
-    languages.forEach(lang => {
+    languages.forEach((lang) => {
       if (this.codeBlockLanguages.indexOf(lang) < 0) {
         this.codeBlockLanguages.push(lang);
       }

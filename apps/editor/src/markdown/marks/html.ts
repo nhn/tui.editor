@@ -11,7 +11,7 @@ export class Html extends Mark {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('html') }, 0];
-      }
+      },
     };
   }
 }

@@ -214,7 +214,7 @@ describe('addImage command', () => {
   it('should escape image altText', () => {
     cmd.exec('markdown', 'addImage', {
       altText: 'mytext ()[]<>',
-      imageUrl: 'https://picsum.photos/200'
+      imageUrl: 'https://picsum.photos/200',
     });
 
     expect(getTextContent(mde)).toBe('![mytext \\(\\)\\[\\]\\<\\>](https://picsum.photos/200)');
@@ -223,7 +223,7 @@ describe('addImage command', () => {
   it('should encode image url', () => {
     cmd.exec('markdown', 'addImage', {
       altText: 'image',
-      imageUrl: 'myurl ()[]<>'
+      imageUrl: 'myurl ()[]<>',
     });
 
     expect(getTextContent(mde)).toBe('![image](myurl%20%28%29%5B%5D%3C%3E)');
@@ -240,7 +240,7 @@ describe('addLink command', () => {
   it('should escape link Text', () => {
     cmd.exec('markdown', 'addLink', {
       linkText: 'mytext ()[]<>',
-      linkUrl: 'https://ui.toast.com'
+      linkUrl: 'https://ui.toast.com',
     });
 
     expect(getTextContent(mde)).toBe('[mytext \\(\\)\\[\\]\\<\\>](https://ui.toast.com)');
@@ -249,7 +249,7 @@ describe('addLink command', () => {
   it('should encode link url', () => {
     cmd.exec('markdown', 'addLink', {
       linkText: 'TOAST UI',
-      linkUrl: 'myurl ()[]<>'
+      linkUrl: 'myurl ()[]<>',
     });
 
     expect(getTextContent(mde)).toBe('[TOAST UI](myurl%20%28%29%5B%5D%3C%3E)');

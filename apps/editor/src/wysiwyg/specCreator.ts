@@ -50,6 +50,6 @@ export function createSpecs(toDOMAdaptor: ToDOMAdaptor) {
     new Strike(toDOMAdaptor),
     new Link(toDOMAdaptor),
     new Code(toDOMAdaptor),
-    new CustomBlock()
+    new CustomBlock(),
   ]);
 }

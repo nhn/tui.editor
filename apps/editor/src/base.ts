@@ -51,7 +51,7 @@ export default abstract class EditorBase {
   createSchema() {
     return new Schema({
       nodes: this.specs.nodes,
-      marks: this.specs.marks
+      marks: this.specs.marks,
     });
   }
 
@@ -74,7 +74,7 @@ export default abstract class EditorBase {
 
   destroy() {
     this.view.destroy();
-    Object.keys(this).forEach(prop => {
+    Object.keys(this).forEach((prop) => {
       delete this[prop as keyof this];
     });
   }

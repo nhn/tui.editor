@@ -24,7 +24,7 @@ export class Link extends Mark {
     return {
       attrs: {
         url: { default: false },
-        desc: { default: false }
+        desc: { default: false },
       },
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         const { url, desc } = attrs;
@@ -38,12 +38,12 @@ export class Link extends Mark {
         }
 
         return ['span', { class: cls(...classNames.split('|')) }, 0];
-      }
+      },
     };
   }
 
   private addLinkOrImage(commandType: CommandType): EditorCommand<Payload> {
-    return payload => ({ selection, tr, schema }, dispatch) => {
+    return (payload) => ({ selection, tr, schema }, dispatch) => {
       const [from, to] = resolveSelectionPos(selection);
       const { linkText, altText, linkUrl, imageUrl } = payload!;
       let text = linkText;
@@ -71,7 +71,7 @@ export class Link extends Mark {
   commands() {
     return {
       addImage: this.addLinkOrImage('image'),
-      addLink: this.addLinkOrImage('link')
+      addLink: this.addLinkOrImage('link'),
     };
   }
 }

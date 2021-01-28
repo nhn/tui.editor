@@ -11,7 +11,7 @@ import {
   createParagraph,
   createTextSelection,
   insertNodes,
-  replaceNodes
+  replaceNodes,
 } from '@/helper/manipulation';
 import {
   ChangedListInfo,
@@ -22,7 +22,7 @@ import {
   otherNodeToList,
   reCanBeTaskList,
   reList,
-  ToListContext
+  ToListContext,
 } from '../helper/list';
 import { getTextByMdLine } from '../helper/query';
 import { getPosInfo } from '../helper/pos';
@@ -43,7 +43,7 @@ export class ListItem extends Mark {
       attrs: {
         odd: { default: false },
         even: { default: false },
-        listStyle: { default: false }
+        listStyle: { default: false },
       },
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         const { odd, even, listStyle } = attrs;
@@ -59,7 +59,7 @@ export class ListItem extends Mark {
           classNames += '|list-item-even';
         }
         return ['span', { class: cls(...classNames.split('|')) }, 0];
-      }
+      },
     };
   }
 
@@ -142,7 +142,7 @@ export class ListItem extends Mark {
           : otherNodeToList[commandType](context);
 
         if (changedResults) {
-          skipLines = skipLines.concat(changedResults.map(info => info.line));
+          skipLines = skipLines.concat(changedResults.map((info) => info.line));
         }
 
         // resolve start offset to change forward same depth list
@@ -164,7 +164,7 @@ export class ListItem extends Mark {
 
       if (changed.length) {
         changed.sort((a, b) => (a.line < b.line ? -1 : 1));
-        const nodes = changed.map(info => createParagraph(schema, info.text));
+        const nodes = changed.map((info) => createParagraph(schema, info.text));
 
         dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
         return true;
@@ -178,7 +178,7 @@ export class ListItem extends Mark {
     return {
       bulletList: this.toList('bullet'),
       orderedList: this.toList('ordered'),
-      taskList: this.toList('task')
+      taskList: this.toList('task'),
     };
   }
 
@@ -194,7 +194,7 @@ export class ListItem extends Mark {
       'Mod-O': orderedCommand,
       'alt-t': taskCommand,
       'alt-T': taskCommand,
-      Enter: this.extendList()
+      Enter: this.extendList(),
     };
   }
 }

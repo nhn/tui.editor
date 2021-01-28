@@ -17,7 +17,7 @@ export class Switch extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      hide: false
+      hide: false,
     };
   }
 

@@ -27,22 +27,22 @@ export default class SpecManager {
 
   get nodes() {
     return this.specs
-      .filter(spec => spec.type === 'node')
+      .filter((spec) => spec.type === 'node')
       .reduce((nodes, { name, schema }) => {
         return {
           ...nodes,
-          [name]: schema
+          [name]: schema,
         };
       }, {});
   }
 
   get marks() {
     return this.specs
-      .filter(spec => spec.type === 'mark')
+      .filter((spec) => spec.type === 'mark')
       .reduce((marks, { name, schema }) => {
         return {
           ...marks,
-          [name]: schema
+          [name]: schema,
         };
       }, {});
   }
@@ -55,28 +55,28 @@ export default class SpecManager {
         const specCommand = spec.commands!();
 
         if (isFunction(specCommand)) {
-          commands[spec.name] = payload => execCommand(view, specCommand, payload);
+          commands[spec.name] = (payload) => execCommand(view, specCommand, payload);
         } else {
-          Object.keys(specCommand).forEach(name => {
-            commands[name] = payload => execCommand(view, specCommand[name], payload);
+          Object.keys(specCommand).forEach((name) => {
+            commands[name] = (payload) => execCommand(view, specCommand[name], payload);
           });
         }
 
         return {
           ...allCommands,
-          ...commands
+          ...commands,
         };
       }, {});
 
     const defaultCommands = getDefaultCommands();
 
-    Object.keys(defaultCommands).forEach(name => {
-      specCommands[name] = payload => execCommand(view, defaultCommands[name], payload);
+    Object.keys(defaultCommands).forEach((name) => {
+      specCommands[name] = (payload) => execCommand(view, defaultCommands[name], payload);
     });
 
     if (addedCommands) {
-      Object.keys(addedCommands).forEach(name => {
-        specCommands[name] = payload => execCommand(view, addedCommands[name], payload);
+      Object.keys(addedCommands).forEach((name) => {
+        specCommands[name] = (payload) => execCommand(view, addedCommands[name], payload);
       });
     }
 
@@ -84,13 +84,13 @@ export default class SpecManager {
   }
 
   keymaps() {
-    const specKeymaps = this.specs.filter(spec => spec.keymaps).map(spec => spec.keymaps!());
+    const specKeymaps = this.specs.filter((spec) => spec.keymaps).map((spec) => spec.keymaps!());
 
-    return specKeymaps.map(keys => keymap(keys));
+    return specKeymaps.map((keys) => keymap(keys));
   }
 
   setContext(context: SpecContext) {
-    this.specs.forEach(spec => {
+    this.specs.forEach((spec) => {
       spec.setContext(context);
     });
   }

@@ -12,14 +12,14 @@ export class ThematicBreak extends Node {
   get defaultSchema() {
     return {
       attrs: {
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       group: 'block',
       parseDOM: [{ tag: 'hr' }],
       selectable: false,
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         return ['div', [attrs.rawHTML || 'hr']];
-      }
+      },
     };
   }
 
@@ -43,7 +43,7 @@ export class ThematicBreak extends Node {
 
     return {
       'Mod-l': hrCommand,
-      'Mod-L': hrCommand
+      'Mod-L': hrCommand,
     };
   }
 }

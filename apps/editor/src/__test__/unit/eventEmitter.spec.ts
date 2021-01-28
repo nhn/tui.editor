@@ -84,13 +84,13 @@ describe('eventEmitter', () => {
     });
 
     it('reduce the return value', () => {
-      emitter.listen('reduceTest', data => {
+      emitter.listen('reduceTest', (data) => {
         data += 1;
 
         return data;
       });
 
-      emitter.listen('reduceTest', data => {
+      emitter.listen('reduceTest', (data) => {
         data += 2;
 
         return data;

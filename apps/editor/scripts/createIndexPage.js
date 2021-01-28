@@ -45,7 +45,7 @@ function writeData(dir) {
   data += '<ul>';
   const files = fs.readdirSync(dir);
 
-  files.forEach(item => {
+  files.forEach((item) => {
     const p = `${directory}/${item}`;
 
     if (fs.statSync(p).isFile()) {
@@ -60,7 +60,7 @@ function writeData(dir) {
 
 const data = writeData(directory);
 
-fs.writeFile(`snowpack/examples/${fileName}`, data, 'utf8', err => {
+fs.writeFile(`snowpack/examples/${fileName}`, data, 'utf8', (err) => {
   if (err) {
     console.error(err);
   } else {

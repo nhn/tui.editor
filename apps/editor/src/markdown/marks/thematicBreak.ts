@@ -16,7 +16,7 @@ export class ThematicBreak extends Mark {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: cls('thematic-break') }, 0];
-      }
+      },
     };
   }
 

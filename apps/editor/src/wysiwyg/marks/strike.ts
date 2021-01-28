@@ -11,27 +11,27 @@ export class Strike extends Mark {
   }
 
   get defaultSchema() {
-    const parseDOM = ['s', 'del'].map(tag => {
+    const parseDOM = ['s', 'del'].map((tag) => {
       return {
         tag,
         getAttrs(dom: Node | string) {
           const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
           return {
-            ...(rawHTML && { rawHTML })
+            ...(rawHTML && { rawHTML }),
           };
-        }
+        },
       };
     });
 
     return {
       attrs: {
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       parseDOM,
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
         return [attrs.rawHTML || 'del'];
-      }
+      },
     };
   }
 
@@ -44,7 +44,7 @@ export class Strike extends Mark {
 
     return {
       'Mod-s': strikeCommand,
-      'Mod-S': strikeCommand
+      'Mod-S': strikeCommand,
     };
   }
 }

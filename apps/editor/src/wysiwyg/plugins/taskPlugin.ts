@@ -37,8 +37,8 @@ export function taskPlugin() {
           }
 
           return false;
-        }
-      }
-    }
+        },
+      },
+    },
   });
 }

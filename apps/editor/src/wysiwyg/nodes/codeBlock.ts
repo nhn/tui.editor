@@ -17,7 +17,7 @@ export class CodeBlock extends NodeSchema {
       attrs: {
         class: { default: null },
         language: { default: null },
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       code: true,
       defining: true,
@@ -32,18 +32,18 @@ export class CodeBlock extends NodeSchema {
             return {
               class: className,
               language: className?.split('lang-'),
-              ...(rawHTML && { rawHTML })
+              ...(rawHTML && { rawHTML }),
             };
-          }
-        }
+          },
+        },
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         return [
           attrs.rawHTML || 'pre',
           { class: attrs.class || null },
-          ['code', { 'data-language': attrs.language || null }, 0]
+          ['code', { 'data-language': attrs.language || null }, 0],
         ];
-      }
+      },
     };
   }
 
@@ -56,7 +56,7 @@ export class CodeBlock extends NodeSchema {
 
     return {
       'Shift-Mod-p': codeCommand,
-      'Shift-Mod-P': codeCommand
+      'Shift-Mod-P': codeCommand,
     };
   }
 }
