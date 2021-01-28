@@ -3,7 +3,7 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import NodeSchema from '@/spec/node';
 import { getWwCommands } from '@/commands/wwCommands';
 import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
-import { changeList, toggleTask } from '@/wysiwyg/helper/list';
+import { changeList, toggleTask } from '@/wysiwyg/command/list';
 
 import { EditorCommand } from '@t/spec';
 
@@ -17,12 +17,12 @@ export class BulletList extends NodeSchema {
       content: 'listItem+',
       group: 'block listGroup',
       attrs: {
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       parseDOM: [createDOMInfoParsedRawHTML('ul')],
       toDOM(): DOMOutputSpecArray {
         return ['ul', 0];
-      }
+      },
     };
   }
 
@@ -33,7 +33,7 @@ export class BulletList extends NodeSchema {
   commands() {
     return {
       bulletList: this.changeList(),
-      task: toggleTask
+      task: toggleTask,
     };
   }
 
@@ -45,7 +45,7 @@ export class BulletList extends NodeSchema {
       'Mod-u': bulletListCommand,
       'Mod-U': bulletListCommand,
       Tab: indent(),
-      'Shift-Tab': outdent()
+      'Shift-Tab': outdent(),
     };
   }
 }

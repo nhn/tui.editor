@@ -1,7 +1,7 @@
 import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
-import { splitListItem } from '@/wysiwyg/helper/list';
+import { splitListItem } from '@/wysiwyg/command/list';
 
 import { EditorCommand } from '@t/spec';
 
@@ -16,7 +16,7 @@ export class ListItem extends NodeSchema {
       attrs: {
         task: { default: false },
         checked: { default: false },
-        rawHTML: { default: null }
+        rawHTML: { default: null },
       },
       defining: true,
       parseDOM: [
@@ -28,10 +28,10 @@ export class ListItem extends NodeSchema {
             return {
               task: (dom as HTMLElement).hasAttribute('data-task'),
               checked: (dom as HTMLElement).hasAttribute('data-task-checked'),
-              ...(rawHTML && { rawHTML })
+              ...(rawHTML && { rawHTML }),
             };
-          }
-        }
+          },
+        },
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         const { task, checked } = attrs;
@@ -51,11 +51,11 @@ export class ListItem extends NodeSchema {
           {
             class: classNames.join(' '),
             'data-task': task,
-            'data-task-checked': checked
+            'data-task-checked': checked,
           },
-          0
+          0,
         ];
-      }
+      },
     };
   }
 
@@ -65,7 +65,7 @@ export class ListItem extends NodeSchema {
 
   keymaps() {
     return {
-      Enter: this.commands()()
+      Enter: this.commands()(),
     };
   }
 }

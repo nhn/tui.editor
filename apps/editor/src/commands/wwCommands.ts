@@ -1,5 +1,5 @@
 import { isInListNode } from '@/wysiwyg/helper/node';
-import { sinkListItem, liftListItem } from '@/wysiwyg/helper/list';
+import { sinkListItem, liftListItem } from '@/wysiwyg/command/list';
 
 import { EditorCommand } from '@t/spec';
 
@@ -34,6 +34,6 @@ function outdent(): EditorCommand {
 export function getWwCommands(): Record<string, EditorCommand> {
   return {
     indent: indent(),
-    outdent: outdent()
+    outdent: outdent(),
   };
 }

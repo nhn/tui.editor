@@ -13,7 +13,7 @@ export function findNodeBy(
       return {
         node,
         depth,
-        pos: depth > 0 ? pos.before(depth) : 0
+        offset: depth > 0 ? pos.before(depth) : 0,
       };
     }
 
@@ -53,8 +53,8 @@ export function createDOMInfoParsedRawHTML(tag: string) {
       const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
       return {
-        ...(rawHTML && { rawHTML })
+        ...(rawHTML && { rawHTML }),
       };
-    }
+    },
   };
 }

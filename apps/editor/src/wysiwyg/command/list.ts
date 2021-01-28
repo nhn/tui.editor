@@ -53,11 +53,11 @@ function findWrappers(range: NodeRange, innerRange: NodeRange, nodeType: NodeTyp
   const inner = findWrappingInside(innerRange, nodeType);
 
   if (around && inner) {
-    const aroundNodes = around.map(type => {
+    const aroundNodes = around.map((type) => {
       return { type };
     });
 
-    const innerNodes = inner.map(type => {
+    const innerNodes = inner.map((type) => {
       return { type, attrs };
     });
 
@@ -69,7 +69,7 @@ function findWrappers(range: NodeRange, innerRange: NodeRange, nodeType: NodeTyp
 
 function wrapInList(
   tr: Transaction,
-  range: NodeRange,
+  { start, end, startIndex, endIndex, parent }: NodeRange,
   wrappers: WrapperInfo[],
   joinBefore: boolean,
   list: NodeType
@@ -82,10 +82,10 @@ function wrapInList(
 
   tr.step(
     new ReplaceAroundStep(
-      range.start - (joinBefore ? 2 : 0),
-      range.end,
-      range.start,
-      range.end,
+      start - (joinBefore ? 2 : 0),
+      end,
+      start,
+      end,
       new Slice(content, 0, 0),
       wrappers.length,
       true
@@ -97,16 +97,16 @@ function wrapInList(
   for (let i = 0; i < wrappers.length; i += 1) {
     if (wrappers[i].type === list) {
       foundListIndex = i + 1;
+      break;
     }
   }
 
   const splitDepth = wrappers.length - foundListIndex;
-  const { parent } = range;
 
-  let splitPos = range.start + wrappers.length - (joinBefore ? 2 : 0);
+  let splitPos = start + wrappers.length - (joinBefore ? 2 : 0);
 
-  for (let i = range.startIndex, len = range.endIndex; i < len; i += 1) {
-    const first = i === range.startIndex;
+  for (let i = startIndex, len = endIndex; i < len; i += 1) {
+    const first = i === startIndex;
 
     if (!first && canSplit(tr.doc, splitPos, splitDepth)) {
       tr.split(splitPos, splitDepth);
@@ -151,15 +151,15 @@ function changeToList(tr: Transaction, range: NodeRange, list: NodeType, attrs?:
   return tr;
 }
 
-function getBeforeLineListItem(doc: ProsemirrorNode, pos: number) {
-  let endListItemPos = doc.resolve(pos);
+function getBeforeLineListItem(doc: ProsemirrorNode, offset: number) {
+  let endListItemPos = doc.resolve(offset);
 
   while (endListItemPos.node().type.name !== 'paragraph') {
-    pos -= 2; // The position value of </li></ul>
-    endListItemPos = doc.resolve(pos);
+    offset -= 2; // The position value of </li></ul>
+    endListItemPos = doc.resolve(offset);
   }
 
-  return findListItem(doc.resolve(pos));
+  return findListItem(endListItemPos);
 }
 
 function toggleTaskListItems(tr: Transaction, { $from, $to }: NodeRange) {
@@ -168,16 +168,17 @@ function toggleTaskListItems(tr: Transaction, { $from, $to }: NodeRange) {
 
   if (startListItem && endListItem) {
     while (endListItem) {
-      const { pos, node } = endListItem;
+      const { offset, node } = endListItem;
+
       const attrs = { task: !node.attrs.task, checked: false };
 
-      tr.setNodeMarkup(pos, null, attrs);
+      tr.setNodeMarkup(offset, null, attrs);
 
-      if (pos === startListItem.pos) {
+      if (offset === startListItem.offset) {
         break;
       }
 
-      endListItem = getBeforeLineListItem(tr.doc, pos);
+      endListItem = getBeforeLineListItem(tr.doc, offset);
     }
   }
 
@@ -190,13 +191,13 @@ function changeListType(tr: Transaction, { $from, $to }: NodeRange, list: NodeTy
 
   if (startListItem && endListItem) {
     while (endListItem) {
-      const { pos, node, depth } = endListItem;
+      const { offset, node, depth } = endListItem;
 
       if (node.attrs.task) {
-        tr.setNodeMarkup(pos, null, { task: false, checked: false });
+        tr.setNodeMarkup(offset, null, { task: false, checked: false });
       }
 
-      const resolvedPos = tr.doc.resolve(pos);
+      const resolvedPos = tr.doc.resolve(offset);
 
       if (resolvedPos.parent!.type !== list) {
         const parentOffset = resolvedPos.before(depth - 1);
@@ -204,11 +205,11 @@ function changeListType(tr: Transaction, { $from, $to }: NodeRange, list: NodeTy
         tr.setNodeMarkup(parentOffset, list);
       }
 
-      if (pos === startListItem.pos) {
+      if (offset === startListItem.offset) {
         break;
       }
 
-      endListItem = getBeforeLineListItem(tr.doc, pos);
+      endListItem = getBeforeLineListItem(tr.doc, offset);
     }
   }
 
@@ -339,13 +340,13 @@ function liftOutOfList(tr: Transaction, range: NodeRange) {
 
   const parent = startPos.node(-1);
   const indexBefore = startPos.index(-1);
-  const canReplacParent = parent.canReplace(
+  const canReplaceParent = parent.canReplace(
     indexBefore + (atStart ? 0 : 1),
     indexBefore + 1,
     listItem?.content.append(atEnd ? Fragment.empty : Fragment.from(list))
   );
 
-  if (listItem && canReplacParent) {
+  if (listItem && canReplaceParent) {
     const start = startPos.pos;
     const end = start + listItem.nodeSize;
 
