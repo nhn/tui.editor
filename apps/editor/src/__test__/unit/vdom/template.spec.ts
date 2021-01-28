@@ -4,7 +4,7 @@ import { Component } from '@/ui/vdom/component';
 
 class TestComponent extends Component {
   render() {
-    return html` <div class="my-comp">test</div> `;
+    return html`<div class="my-comp">test</div>`;
   }
 }
 
@@ -26,7 +26,7 @@ describe('lit-html syntax', () => {
       ],
     };
 
-    const vnode = html` <div class="my-class" style=${style}>test</div> ` as VNode;
+    const vnode = html`<div class="my-class" style=${style}>test</div>` as VNode;
 
     expect(vnode).toMatchObject(expected);
   });
@@ -75,7 +75,7 @@ describe('lit-html syntax', () => {
     };
 
     const vnode = html`
-      <div class="my-class">${[1, 2, 3].map((num) => html` <span>${num}</span> `)}</div>
+      <div class="my-class">${[1, 2, 3].map((num) => html`<span>${num}</span>`)}</div>
     `;
 
     expect(vnode).toMatchObject(expected);
@@ -98,10 +98,10 @@ describe('lit-html syntax', () => {
 
     const vnode = html`
       <div class="my-class">
-        ${null && html` <span>123</span> `}
+        ${null && html`<span>123</span>`}
         ${// eslint-disable-next-line no-undefined
-        undefined && html` <span>123</span> `}
-        ${false && html` <span>123</span> `} test
+        undefined && html`<span>123</span>`}
+        ${false && html`<span>123</span>`}test
       </div>
     ` as VNode;
 
@@ -118,7 +118,7 @@ describe('lit-html syntax', () => {
       children: [],
     };
 
-    const vnode = html` <${TestComponent} class="my-comp" data-id="my-comp" /> ` as VNode;
+    const vnode = html`<${TestComponent} class="my-comp" data-id="my-comp" />` as VNode;
 
     expect(vnode).toMatchObject(expected);
   });
