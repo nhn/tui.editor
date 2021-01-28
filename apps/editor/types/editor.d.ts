@@ -20,8 +20,10 @@ export interface ViewerHookMap {
   previewBeforeHook?: (html: string) => void | string;
 }
 
+type HookCallback = (url: string, text?: string) => void;
+
 export type EditorHookMap = ViewerHookMap & {
-  addImageBlobHook?: (blob: Blob | File, callback: (url: string, altText: string) => void) => void;
+  addImageBlobHook?: (blob: Blob | File, callback: HookCallback) => void;
 };
 
 export type AutolinkParser = (

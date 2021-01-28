@@ -24,6 +24,7 @@ import { CustomBlockView } from './nodeview/customBlockView';
 
 import { changePastedHTML, changePastedSlice } from '@/wysiwyg/clipboard/paste';
 import { pasteToTable } from '@/wysiwyg/clipboard/pasteToTable';
+import { dropImage } from '@/plugins/dropImage';
 
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
@@ -81,6 +82,7 @@ export default class WysiwygEditor extends EditorBase {
         tableSelectionPlugin(),
         tableContextMenuPlugin(this.eventEmitter),
         taskPlugin(),
+        dropImage(this.context, 'wysiwyg'),
       ],
       ...addedStates,
     });
