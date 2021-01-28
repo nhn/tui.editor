@@ -523,6 +523,116 @@ describe('extend list keymap', () => {
   });
 });
 
+describe('toggle task list keymap', () => {
+  it('should toggle single bullet task list state', () => {
+    const input = source`
+      * [ ] task1
+    `;
+    const result = source`
+      * [x] task1
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 6], [1, 6]);
+
+    forceKeymapFn('listItem', 'toggleTask');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should toggle multi bullet task list state', () => {
+    const input = source`
+      * [ ] task1
+      * [x] task2
+    `;
+    const result = source`
+      * [x] task1
+      * [ ] task2
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 6], [2, 2]);
+
+    forceKeymapFn('listItem', 'toggleTask');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should toggle single ordered task list state', () => {
+    const input = source`
+      1. [ ] task1
+    `;
+    const result = source`
+      1. [x] task1
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 6], [1, 6]);
+
+    forceKeymapFn('listItem', 'toggleTask');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should toggle multi ordered task list state', () => {
+    const input = source`
+      1. [ ] task1
+      2. [x] task2
+    `;
+    const result = source`
+      1. [x] task1
+      2. [ ] task2
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 6], [2, 2]);
+
+    forceKeymapFn('listItem', 'toggleTask');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should toggle nested task list state', () => {
+    const input = stripIndent`
+      1. [x] task1
+      2. [ ] task2
+        * [x] sub-task1
+        * [x] sub-task2
+          1. [ ] sub-task3
+
+    `;
+    const result = stripIndent`
+      1. [ ] task1
+      2. [x] task2
+        * [ ] sub-task1
+        * [ ] sub-task2
+          1. [x] sub-task3
+
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 6], [5, 6]);
+
+    forceKeymapFn('listItem', 'toggleTask');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should remain unchanged on non task list', () => {
+    const input = source`
+      1. task1
+        * sub-task1
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 6], [2, 2]);
+
+    forceKeymapFn('listItem', 'toggleTask');
+
+    expect(getTextContent(mde)).toBe(input);
+  });
+});
+
 describe('delete lines keymap', () => {
   it('should delete the single line', () => {
     const input = stripIndent`
