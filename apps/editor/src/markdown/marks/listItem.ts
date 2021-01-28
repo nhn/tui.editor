@@ -25,7 +25,7 @@ import {
   ToListContext,
 } from '../helper/list';
 import { getTextByMdLine } from '../helper/query';
-import { getPosInfo } from '../helper/pos';
+import { getMdToEditorPos, getPosInfo } from '../helper/pos';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
 
@@ -174,6 +174,34 @@ export class ListItem extends Mark {
     };
   }
 
+  private toggleTask(): Command {
+    return ({ selection, tr, doc, schema }, dispatch) => {
+      const { toastMark } = this.context;
+      const { from, to } = selection;
+      const startIndex = doc.content.findIndex(from).index;
+      const endIndex = from === to ? startIndex : doc.content.findIndex(to).index;
+      let newTr;
+
+      for (let i = startIndex; i <= endIndex; i += 1) {
+        const mdNode = toastMark.findFirstNodeAtLine(i + 1);
+
+        if (isListNode(mdNode) && mdNode.listData.task) {
+          const { checked, padding } = mdNode.listData;
+          const stateChar = checked ? ' ' : 'x';
+          const [mdPos] = mdNode.sourcepos!;
+          const startPos = getMdToEditorPos(doc, toastMark, mdPos, mdPos)[0] + padding + 1;
+
+          newTr = tr.replaceRangeWith(startPos, startPos + 1, schema.text(stateChar));
+        }
+      }
+      if (newTr) {
+        dispatch!(newTr);
+        return true;
+      }
+      return false;
+    };
+  }
+
   commands() {
     return {
       bulletList: this.toList('bullet'),
@@ -186,6 +214,7 @@ export class ListItem extends Mark {
     const bulletCommand = this.toList('bullet')();
     const orderedCommand = this.toList('ordered')();
     const taskCommand = this.toList('task')();
+    const togleTaskCommand = this.toggleTask();
 
     return {
       'Mod-u': bulletCommand,
@@ -194,6 +223,8 @@ export class ListItem extends Mark {
       'Mod-O': orderedCommand,
       'alt-t': taskCommand,
       'alt-T': taskCommand,
+      'Shift-Ctrl-x': togleTaskCommand,
+      'Shift-Ctrl-X': togleTaskCommand,
       Enter: this.extendList(),
     };
   }
