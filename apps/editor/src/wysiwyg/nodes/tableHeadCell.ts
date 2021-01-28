@@ -16,6 +16,7 @@ export class TableHeadCell extends NodeSchema {
         className: { default: null },
         rawHTML: { default: null }
       },
+      isolating: true,
       parseDOM: [createDOMInfoParsedRawHTML('th')],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         const { align, className } = attrs;

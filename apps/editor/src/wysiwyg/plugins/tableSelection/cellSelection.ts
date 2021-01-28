@@ -22,7 +22,7 @@ function getSelectionRanges(
       const columnIdx = columnIndex + startColumnIndex;
       const { offset, nodeSize } = cellsPos[rowIdx][columnIdx];
 
-      ranges.push(new SelectionRange(doc.resolve(offset), doc.resolve(offset + nodeSize)));
+      ranges.push(new SelectionRange(doc.resolve(offset + 1), doc.resolve(offset + nodeSize - 1)));
     }
   }
 
@@ -46,8 +46,8 @@ export default class CellSelection extends Selection {
     this.startCell = startCellPos;
     this.endCell = endCellPos;
 
-    // this property is the api of the 'Selection' in prosemirror,
-    // and is used to disable the text selection
+    // This property is the api of the 'Selection' in prosemirror,
+    // and is used to disable the text selection.
     this.visible = false;
   }
 

@@ -14,7 +14,7 @@ function drawCellSelection({ selection, doc }: EditorState) {
     const { ranges } = selection;
 
     ranges.forEach(({ $from, $to }: SelectionRange) => {
-      cells.push(Decoration.node($from.pos, $to.pos, { class: SELECTED_CELL_CLASS_NAME }));
+      cells.push(Decoration.node($from.pos - 1, $to.pos + 1, { class: SELECTED_CELL_CLASS_NAME }));
     });
 
     return DecorationSet.create(doc, cells);
