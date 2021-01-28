@@ -10,7 +10,7 @@ import { getTextContent } from './util';
 function forceKeymapFn(type: string, methodName: string, args: any[] = []) {
   const { specs, view } = mde;
   // @ts-ignore
-  const [keymapFn] = specs.specs.filter(spec => spec.name === type);
+  const [keymapFn] = specs.specs.filter((spec) => spec.name === type);
 
   // @ts-ignore
   keymapFn[methodName](...args)(view.state, view.dispatch);
@@ -520,5 +520,164 @@ describe('extend list keymap', () => {
 
       expect(getTextContent(mde)).toBe(result);
     });
+  });
+});
+
+describe('delete lines keymap', () => {
+  it('should delete the single line', () => {
+    const input = stripIndent`
+      aaaa
+      bbbb
+    `;
+    const result = stripIndent`
+      bbbb
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 1], [1, 1]);
+
+    forceKeymapFn('paragraph', 'deleteLines');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should delete the multi lines', () => {
+    const input = stripIndent`
+      aaaa
+      bbbb
+      cccc
+    `;
+    const result = stripIndent`
+      cccc
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 1], [2, 1]);
+
+    forceKeymapFn('paragraph', 'deleteLines');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+});
+
+describe('move lines keymap', () => {
+  it('should move down the single line', () => {
+    const input = stripIndent`
+      aaaa
+      bbbb
+      cccc
+    `;
+    const result = stripIndent`
+      bbbb
+      aaaa
+      cccc
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 1], [1, 1]);
+
+    forceKeymapFn('paragraph', 'moveDown');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should move down the multi lines', () => {
+    const input = stripIndent`
+      aaaa
+      bbbb
+      cccc
+    `;
+    const result = stripIndent`
+      cccc
+      aaaa
+      bbbb
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 1], [2, 1]);
+
+    forceKeymapFn('paragraph', 'moveDown');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should not move lines when the selection includes last line', () => {
+    const input = stripIndent`
+      aaaa
+      bbbb
+      cccc
+    `;
+    const result = stripIndent`
+      aaaa
+      bbbb
+      cccc
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([2, 1], [3, 1]);
+
+    forceKeymapFn('paragraph', 'moveDown');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should move up the single line', () => {
+    const input = stripIndent`
+      aaaa
+      bbbb
+      cccc
+    `;
+    const result = stripIndent`
+      bbbb
+      aaaa
+      cccc
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([2, 1], [2, 1]);
+
+    forceKeymapFn('paragraph', 'moveUp');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should move up the multi lines', () => {
+    const input = stripIndent`
+      aaaa
+      bbbb
+      cccc
+    `;
+    const result = stripIndent`
+      bbbb
+      cccc
+      aaaa
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([2, 1], [3, 1]);
+
+    forceKeymapFn('paragraph', 'moveUp');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should not move lines when the selection includes first line', () => {
+    const input = stripIndent`
+      aaaa
+      bbbb
+      cccc
+    `;
+    const result = stripIndent`
+      aaaa
+      bbbb
+      cccc
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 1], [2, 1]);
+
+    forceKeymapFn('paragraph', 'moveUp');
+
+    expect(getTextContent(mde)).toBe(result);
   });
 });

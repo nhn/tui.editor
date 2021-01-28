@@ -1,5 +1,6 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
-import { Transaction } from 'prosemirror-state';
+import { EditorState, Transaction } from 'prosemirror-state';
+import { Command, joinForward } from 'prosemirror-commands';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { EditorCommand } from '@t/spec';
@@ -12,7 +13,7 @@ import {
   createText,
   createTextSelection,
   insertNodes,
-  replaceNodes
+  replaceNodes,
 } from '@/helper/manipulation';
 import { reBlockQuote } from '../marks/blockQuote';
 import { getEditorToMdPos, getMdToEditorPos, getPosInfo } from '../helper/pos';
@@ -77,16 +78,13 @@ export class Paragraph extends Node {
       attrs: {
         className: { default: null },
         codeStart: { default: null },
-        codeEnd: { default: null }
+        codeEnd: { default: null },
       },
       group: 'block',
       parseDOM: [{ tag: 'div' }],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        if (attrs.className) {
-          return ['div', { class: cls(attrs.className) }, 0];
-        }
-        return ['div', 0];
-      }
+        return attrs.className ? ['div', { class: cls(attrs.className) }, 0] : ['div', 0];
+      },
     };
   }
 
@@ -210,17 +208,99 @@ export class Paragraph extends Node {
     };
   }
 
+  private deleteLines(): Command {
+    return (state, dispatch) => {
+      const { view } = this.context;
+      const { selection, tr } = state;
+
+      dispatch!(tr.deleteRange(selection.$from.start(), selection.$to.end()));
+      joinForward(view.state, dispatch, view);
+
+      return true;
+    };
+  }
+
+  private getRangeInfo(state: EditorState) {
+    const { $from, $to, from, to } = state.selection;
+
+    return {
+      start: $from.start(),
+      end: $to.end(),
+      from,
+      to,
+      startIndex: state.doc.content.findIndex(from).index,
+      endIndex: state.doc.content.findIndex(to).index,
+    };
+  }
+
+  private moveDown(): Command {
+    return (state, dispatch) => {
+      const { doc, tr } = state;
+      const { start, end, from, to, startIndex, endIndex } = this.getRangeInfo(state);
+
+      if (endIndex >= doc.content.childCount - 1) {
+        return false;
+      }
+
+      const bottomNode = doc.content.child(endIndex + 1);
+      const size = bottomNode.nodeSize;
+      const nodes = [bottomNode];
+
+      for (let i = startIndex; i <= endIndex; i += 1) {
+        nodes.push(doc.content.child(i));
+      }
+
+      const newTr = replaceNodes(tr, start - 1, end + size, nodes, { from: 0, to: 0 });
+
+      newTr.setSelection(createTextSelection(newTr, from + size, to + size));
+      dispatch!(newTr);
+
+      return true;
+    };
+  }
+
+  private moveUp(): Command {
+    return (state, dispatch) => {
+      const { tr, doc } = state;
+      const { start, end, from, to, startIndex, endIndex } = this.getRangeInfo(state);
+
+      if (startIndex === 0) {
+        return false;
+      }
+
+      const topNode = doc.content.child(startIndex - 1);
+      const size = topNode.nodeSize;
+      const nodes = [];
+
+      for (let i = startIndex; i <= endIndex; i += 1) {
+        nodes.push(doc.content.child(i));
+      }
+      nodes.push(topNode);
+
+      const newTr = replaceNodes(tr, start - size - 1, end, nodes, { from: 0, to: 0 });
+
+      newTr.setSelection(createTextSelection(newTr, from - size, to - size));
+      dispatch!(newTr);
+
+      return true;
+    };
+  }
+
   commands() {
     return {
       indent: this.indent(),
-      outdent: this.outdent()
+      outdent: this.outdent(),
     };
   }
 
   keymaps() {
     return {
       Tab: this.indent(true)(),
-      'Shift-Tab': this.outdent(true)()
+      'Shift-Tab': this.outdent(true)(),
+      'Mod-d': this.deleteLines(),
+      'Mod-D': this.deleteLines(),
+      'Alt-ArrowUp': this.moveUp(),
+      'Alt-ArrowDown': this.moveDown(),
     };
   }
 }

@@ -172,7 +172,7 @@ class ToastUIEditor {
     this.i18n.setCode(this.options.language);
 
     this.toastMark = new ToastMark('', {
-      disallowedHtmlBlockTags: ['br'],
+      disallowedHtmlBlockTags: ['br', 'img'],
       extendedAutolinks,
       referenceDefinition,
       disallowDeepHeading: true,
