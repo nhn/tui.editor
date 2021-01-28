@@ -35,6 +35,7 @@ import { Delimiter, TaskDelimiter, MarkedText, Meta, TableCell } from './marks/s
 import { Html } from './marks/html';
 import { CustomBlock } from './marks/customBlock';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
+import { smartTask } from './plugins/smartTask';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -144,6 +145,7 @@ export default class MdEditor extends EditorBase {
         history(),
         syntaxHighlight(this.context),
         previewHighlight(this.context),
+        smartTask(this.context),
         placeholder(this.placeholder),
       ],
     });
