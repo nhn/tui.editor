@@ -251,7 +251,7 @@ export class CodeNode extends Node {
 }
 
 export interface TableColumn {
-  align: 'left' | 'center' | 'right';
+  align: 'left' | 'center' | 'right' | null;
 }
 
 export class TableNode extends BlockNode {

@@ -122,8 +122,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     const tagName = tablePart.type === 'tableHead' ? 'th' : 'td';
     const table = tablePart.parent as TableNode;
     const columnInfo = table.columns[(node as TableCellNode).startIdx];
-    const align = columnInfo && columnInfo.align !== 'left' ? columnInfo.align : null;
-    const attributes = align ? { align } : null;
+    const attributes = columnInfo?.align ? { align: columnInfo.align } : null;
 
     if (entering) {
       return {
