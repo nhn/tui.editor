@@ -65,7 +65,7 @@ export class ContextMenu extends Component<Props, State> {
   }
 
   render() {
-    const style = { display: this.state.pos ? 'block' : 'none', pos: this.state.pos };
+    const style = { display: this.state.pos ? 'block' : 'none', ...this.state.pos };
 
     return html`<div class="te-context-menu" style=${style}>${this.getMenuGroupElements()}</div>`;
   }
