@@ -81,7 +81,7 @@ export function tableContextMenuPlugin(eventEmitter: Emitter) {
             ev.preventDefault();
 
             const { clientX, clientY } = ev as MouseEvent;
-            const { left, top } = (view.dom.parentNode as HTMLElement).getBoundingClientRect();
+            const { left, top } = (view.dom as HTMLElement).getBoundingClientRect();
 
             const inTableHead = (ev.target as HTMLElement).nodeName === 'TH';
 
