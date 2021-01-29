@@ -791,3 +791,69 @@ describe('move lines keymap', () => {
     expect(getTextContent(mde)).toBe(result);
   });
 });
+
+/* eslint-disable no-irregular-whitespace */
+describe('keep indentation in code block', () => {
+  it('should keep indentation in next new line', () => {
+    const input = stripIndent`
+      \`\`\`js
+      console.log('line1');
+          console.log('line2');
+      \`\`\`
+    `;
+    const result = stripIndent`
+      \`\`\`js
+      console.log('line1');
+          console.log('line2');
+          
+      \`\`\`
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([3, 26], [3, 26]);
+
+    forceKeymapFn('codeBlock', 'keepIndentation');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should keep indentation with sliced text', () => {
+    const input = stripIndent`
+      \`\`\`js
+      console.log('line1');
+          console.log('line2');
+      \`\`\`
+    `;
+    const result = stripIndent`
+      \`\`\`js
+      console.log('line1');
+          console.log('li
+          ne2');
+      \`\`\`
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([3, 20], [3, 20]);
+
+    forceKeymapFn('codeBlock', 'keepIndentation');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should remain unchanged on multi selection', () => {
+    const input = stripIndent`
+      \`\`\`js
+      console.log('line1');
+          console.log('line2');
+      \`\`\`
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([2, 3], [3, 10]);
+
+    forceKeymapFn('codeBlock', 'keepIndentation');
+
+    expect(getTextContent(mde)).toBe(input);
+  });
+});
+/* eslint-enable no-irregular-whitespace */
