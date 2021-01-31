@@ -1,6 +1,8 @@
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import sendHostname from 'tui-code-snippet/request/sendHostname';
 
+import { LinkAttributeNames, LinkAttribute } from '@t/editor';
+
 export const isMac = /Mac/.test(navigator.platform);
 
 export function sendHostName() {
@@ -11,14 +13,14 @@ export function includes<T>(arr: T[], targetItem: T) {
   return arr.indexOf(targetItem) !== -1;
 }
 
-const availableLinkAttributes = ['rel', 'target', 'contenteditable', 'hreflang', 'type'];
+const availableLinkAttributes: LinkAttributeNames[] = ['rel', 'target', 'hreflang', 'type'];
 
-export function sanitizeLinkAttribute(attribute: Record<string, any>) {
+export function sanitizeLinkAttribute(attribute?: LinkAttribute) {
   if (!attribute) {
     return null;
   }
 
-  const linkAttribute: Record<string, any> = {};
+  const linkAttribute: LinkAttribute = {};
 
   availableLinkAttributes.forEach((key) => {
     if (!isUndefined(attribute[key])) {

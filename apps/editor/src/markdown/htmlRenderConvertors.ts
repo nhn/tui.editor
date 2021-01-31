@@ -8,6 +8,7 @@ import {
   Context,
   OpenTagToken,
 } from '@t/markdown';
+import { LinkAttribute } from '@t/editor';
 
 type TokenAttrs = Record<string, any>;
 
@@ -98,7 +99,7 @@ const baseConvertors: CustomHTMLRendererMap = {
 };
 
 export function getHTMLRenderConvertors(
-  linkAttribute: Record<string, any> | null,
+  linkAttribute: LinkAttribute | null,
   customConvertors: CustomHTMLRendererMap
 ) {
   const convertors = { ...baseConvertors };
@@ -110,7 +111,7 @@ export function getHTMLRenderConvertors(
       if (entering) {
         (result as OpenTagToken).attributes = {
           ...(result as OpenTagToken).attributes,
-          ...linkAttribute,
+          ...(linkAttribute as TokenAttrs),
         };
       }
       return result;

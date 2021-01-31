@@ -19,6 +19,7 @@ import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
 import { findAdjacentElementToScrollTop } from './scroll/dom';
 import { removeOffsetInfoByNode } from './scroll/offset';
+import { LinkAttribute } from '@t/editor';
 
 export const CLASS_HIGHLIGHT = 'te-preview-highlight';
 
@@ -36,7 +37,7 @@ function findTableCell(tableRow: MdNode, chOffset: number) {
 }
 
 interface Options {
-  linkAttribute: Record<string, any> | null;
+  linkAttribute: LinkAttribute | null;
   customHTMLRenderer: CustomHTMLRendererMap;
   isViewer: boolean;
   highlight?: boolean;

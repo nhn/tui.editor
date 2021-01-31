@@ -1,4 +1,4 @@
-import { Mark as ProsemirrorMark, DOMOutputSpecArray, AttributeSpec } from 'prosemirror-model';
+import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 import { ToDOMAdaptor } from '@t/convertor';
 
@@ -9,24 +9,6 @@ import { createText } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
 import { LinkAttribute } from '@t/editor';
-
-type ExtendedAttrs = { [name: string]: AttributeSpec } | null;
-
-function createLinkAttrs(linkAttribute: LinkAttribute) {
-  const defaultAttrs = {
-    linkUrl: { default: '' },
-    linkText: { default: null },
-    rawHTML: { default: null },
-  };
-
-  const extendedAttrs: ExtendedAttrs = {};
-
-  Object.keys(linkAttribute).forEach((attrName) => {
-    extendedAttrs[attrName] = { default: null };
-  });
-
-  return { ...defaultAttrs, ...extendedAttrs };
-}
 
 export class Link extends Mark {
   private linkAttribute: LinkAttribute;
@@ -43,7 +25,11 @@ export class Link extends Mark {
 
   get defaultSchema() {
     return {
-      attrs: createLinkAttrs(this.linkAttribute),
+      attrs: {
+        linkUrl: { default: '' },
+        linkText: { default: null },
+        rawHTML: { default: null },
+      },
       inclusive: false,
       parseDOM: [
         {

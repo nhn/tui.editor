@@ -13,6 +13,7 @@ import {
 } from '@t/markdown';
 import { ToDOMAdaptor } from '@t/convertor';
 import { includes } from '@/utils/common';
+import { LinkAttribute } from '@t/editor';
 import { createMdLikeNode, isContainer, isPmNode } from './mdLikeNode';
 import { SpecArray, tokenToDOMNode, tokenToPmDOM } from './tokenToDOM';
 
@@ -23,7 +24,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
 
   public convertors: CustomHTMLRendererMap;
 
-  constructor(linkAttribute: Record<string, any> | null, customRenderer: CustomHTMLRendererMap) {
+  constructor(linkAttribute: LinkAttribute | null, customRenderer: CustomHTMLRendererMap) {
     const convertors = getHTMLRenderConvertors(linkAttribute, customRenderer);
 
     this.customConvertorKeys = Object.keys(customRenderer);

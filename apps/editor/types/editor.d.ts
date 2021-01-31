@@ -34,13 +34,10 @@ export type AutolinkParser = (
 
 export type ExtendedAutolinks = boolean | AutolinkParser;
 
-export type LinkAttribute = Partial<{
-  rel: string;
-  target: string;
-  contenteditable: boolean | 'true' | 'false';
-  hreflang: string;
-  type: string;
-}>;
+export type LinkAttributeNames = 'rel' | 'target' | 'hreflang' | 'type';
+
+// @TODO change option and type name from singular to plural
+export type LinkAttribute = Partial<Record<LinkAttributeNames, string>>;
 
 export type CustomHTMLSanitizer = (content: string) => string | DocumentFragment;
 
