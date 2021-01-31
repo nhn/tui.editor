@@ -17,7 +17,7 @@ const parser = new Parser({
 
 function createSchema() {
   const adaptor = new WwToDOMAdaptor({}, {});
-  const specs = createSpecs(adaptor);
+  const specs = createSpecs(adaptor, {});
 
   return new Schema({
     nodes: specs.nodes,
@@ -40,7 +40,7 @@ describe('Convertor', () => {
 
   beforeEach(() => {
     schema = createSchema();
-    convertor = new Convertor(schema, {}, {});
+    convertor = new Convertor(schema, {});
   });
 
   describe('convert between markdown and wysiwyg node to', () => {
@@ -674,7 +674,7 @@ describe('Convertor', () => {
   describe('custom convertor when converting from wysiwyg to markdown', () => {
     function createCustomConvertor(customConvertor: ToMdConvertorMap) {
       schema = createSchema();
-      convertor = new Convertor(schema, customConvertor, {});
+      convertor = new Convertor(schema, customConvertor);
     }
 
     it('should change delimeter', () => {

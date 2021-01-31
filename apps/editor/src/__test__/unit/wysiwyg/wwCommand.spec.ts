@@ -35,7 +35,7 @@ describe('wysiwyg commands', () => {
     const adaptor = new WwToDOMAdaptor({}, {});
 
     em = new EventEmitter();
-    wwe = new WysiwygEditor(em, adaptor);
+    wwe = new WysiwygEditor(em, adaptor, {});
     cmd = new CommandManager(em, {}, wwe.commands);
   });
 
@@ -486,6 +486,31 @@ describe('wysiwyg commands', () => {
       expect(wwe.getHTML()).toBe(
         '<p><a href="foo%20шеллы%20%28%29%5B%5D%3C%3E">foo ()[]&lt;&gt;</a></p>'
       );
+    });
+
+    describe('', () => {
+      beforeEach(() => {
+        const linkAttributes = {
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        };
+        const adaptor = new WwToDOMAdaptor({}, {});
+
+        em = new EventEmitter();
+        wwe = new WysiwygEditor(em, adaptor, linkAttributes);
+        cmd = new CommandManager(em, {}, wwe.commands);
+      });
+
+      it('should add link element with link attributes', () => {
+        cmd.exec('wysiwyg', 'addLink', {
+          linkUrl: '#',
+          linkText: 'foo',
+        });
+
+        expect(wwe.getHTML()).toBe(
+          '<p><a href="#" target="_blank" rel="noopener noreferrer">foo</a></p>'
+        );
+      });
     });
   });
 

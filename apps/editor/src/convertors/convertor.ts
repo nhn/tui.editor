@@ -16,21 +16,14 @@ export default class Convertor {
 
   private readonly toMdConvertors: ToMdConvertors;
 
-  private readonly linkAttribute: Record<string, any>;
-
-  constructor(
-    schema: Schema,
-    toMdCustomConvertors: ToMdConvertorMap,
-    linkAttribute: Record<string, any>
-  ) {
+  constructor(schema: Schema, toMdCustomConvertors: ToMdConvertorMap) {
     this.schema = schema;
     this.toWwConvertors = toWwConvertors;
     this.toMdConvertors = createConvertors(toMdCustomConvertors || {});
-    this.linkAttribute = linkAttribute;
   }
 
   toWysiwygModel(mdNode: MdNode) {
-    const state = new ToWwConvertorState(this.schema, this.toWwConvertors, this.linkAttribute);
+    const state = new ToWwConvertorState(this.schema, this.toWwConvertors);
 
     return state.convertNode(mdNode);
   }

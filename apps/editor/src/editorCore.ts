@@ -7,6 +7,7 @@ import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import isString from 'tui-code-snippet/type/isString';
 
 import { Emitter, Handler } from '@t/event';
 import { EditorOptions, EditorType, PreviewStyle, ViewerOptions } from '@t/editor';
@@ -28,7 +29,6 @@ import { invokePlugins, getPluginInfo } from './pluginHelper';
 
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
-import isString from 'tui-code-snippet/type/isString';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
 
@@ -188,13 +188,9 @@ class ToastUIEditor {
       highlight: this.options.previewHighlight,
     });
 
-    this.wwEditor = new WysiwygEditor(this.eventEmitter, wwToDOMAdaptor);
+    this.wwEditor = new WysiwygEditor(this.eventEmitter, wwToDOMAdaptor, linkAttribute!);
 
-    this.convertor = new Convertor(
-      this.wwEditor.getSchema(),
-      customMarkdownRenderer,
-      linkAttribute!
-    );
+    this.convertor = new Convertor(this.wwEditor.getSchema(), customMarkdownRenderer);
 
     if (plugins) {
       invokePlugins(plugins, this);

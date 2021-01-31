@@ -1,5 +1,6 @@
-import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
+import { Mark as ProsemirrorMark, DOMOutputSpecArray, AttributeSpec } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
+import { ToDOMAdaptor } from '@t/convertor';
 
 import Mark from '@/spec/mark';
 import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
@@ -7,19 +8,42 @@ import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 import { createText } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
+import { LinkAttribute } from '@t/editor';
+
+type ExtendedAttrs = { [name: string]: AttributeSpec } | null;
+
+function createLinkAttrs(linkAttribute: LinkAttribute) {
+  const defaultAttrs = {
+    linkUrl: { default: '' },
+    linkText: { default: null },
+    rawHTML: { default: null },
+  };
+
+  const extendedAttrs: ExtendedAttrs = {};
+
+  Object.keys(linkAttribute).forEach((attrName) => {
+    extendedAttrs[attrName] = { default: null };
+  });
+
+  return { ...defaultAttrs, ...extendedAttrs };
+}
 
 export class Link extends Mark {
+  private linkAttribute: LinkAttribute;
+
+  constructor(toDOMAdaptor?: ToDOMAdaptor, linkAttribute?: LinkAttribute) {
+    super(toDOMAdaptor);
+
+    this.linkAttribute = linkAttribute || {};
+  }
+
   get name() {
     return 'link';
   }
 
   get defaultSchema() {
     return {
-      attrs: {
-        linkUrl: { default: '' },
-        linkText: { default: null },
-        rawHTML: { default: null },
-      },
+      attrs: createLinkAttrs(this.linkAttribute),
       inclusive: false,
       parseDOM: [
         {
@@ -36,14 +60,13 @@ export class Link extends Mark {
           },
         },
       ],
-      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
-        return [
-          attrs.rawHTML || 'a',
-          {
-            href: attrs.linkUrl,
-          },
-        ];
-      },
+      toDOM: ({ attrs }: ProsemirrorMark): DOMOutputSpecArray => [
+        attrs.rawHTML || 'a',
+        {
+          href: attrs.linkUrl,
+          ...(this.linkAttribute as DOMOutputSpecArray),
+        },
+      ],
     };
   }
 
