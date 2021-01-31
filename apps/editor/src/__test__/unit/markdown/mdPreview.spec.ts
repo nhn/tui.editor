@@ -1,3 +1,4 @@
+import { source } from 'common-tags';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { MdPos } from '@t/markdown';
@@ -189,5 +190,61 @@ describe('preview highlight', () => {
     blur();
 
     expect(getHighlightedCount()).toBe(0);
+  });
+});
+
+describe('Sanitize preview', () => {
+  let eventEmitter: EventEmitter, preview: MarkdownPreview, editor: MarkdownEditor;
+
+  beforeEach(() => {
+    const options = {
+      linkAttribute: null,
+      customHTMLRenderer: {},
+      isViewer: false,
+    };
+
+    const editorEl = document.createElement('div');
+    const previewEl = document.createElement('div');
+
+    document.body.innerHTML = '';
+    document.body.appendChild(editorEl);
+    document.body.appendChild(previewEl);
+
+    eventEmitter = new EventEmitter();
+    editor = new MarkdownEditor(new ToastMark(), eventEmitter);
+    preview = new MarkdownPreview(eventEmitter, options);
+  });
+
+  afterEach(() => {
+    editor.destroy();
+    preview.destroy();
+  });
+
+  function assertPreviewContent(html: string) {
+    const htmlWrapper = preview.el!.querySelector('[data-nodeid]')!;
+
+    expect(source`${htmlWrapper.innerHTML}`).toBe(html);
+  }
+
+  function setMarkdown(markdown: string) {
+    editor.setMarkdown(markdown);
+  }
+
+  it('table', () => {
+    setMarkdown(`<TABLE BACKGROUND="javascript:alert('XSS')">`);
+
+    assertPreviewContent('<table> </table>');
+  });
+
+  it('anchor', () => {
+    setMarkdown('<a href="javascript:alert();">xss</a>');
+
+    assertPreviewContent('<a>xss</a>');
+  });
+
+  it('img', () => {
+    setMarkdown('<img src="javascript:alert();">');
+
+    assertPreviewContent('<img>');
   });
 });
