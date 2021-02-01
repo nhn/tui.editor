@@ -36,7 +36,7 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
  *     @param {Object} [options.extendedAutolinks] - Using extended Autolinks specified in GFM spec
  *     @param {Object} [options.customConvertor] - convertor extention
- *     @param {Object} [options.linkAttributes] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
+ *     @param {Object} [options.linkAttributes] - Attributes of anchor element that should be rel, target, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
  *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
