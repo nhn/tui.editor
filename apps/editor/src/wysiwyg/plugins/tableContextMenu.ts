@@ -25,7 +25,7 @@ const contextMenuGroups: ContextMenuInfo[][] = [
   ],
   [
     { action: 'Add column to left', command: 'addColumnToLeft' },
-    { action: 'Add column to right', command: 'addColumnToLeft' },
+    { action: 'Add column to right', command: 'addColumnToRight' },
     { action: 'Remove column', command: 'removeColumn' },
   ],
   [
@@ -63,17 +63,6 @@ export function tableContextMenuPlugin(eventEmitter: Emitter) {
   return new Plugin({
     props: {
       handleDOMEvents: {
-        mousedown: (view: EditorView, ev: Event) => {
-          const inTable = isInCellElement(ev.target as HTMLElement, view.dom);
-
-          if (inTable) {
-            eventEmitter.emit('closePopup', ev);
-
-            return true;
-          }
-
-          return false;
-        },
         contextmenu: (view: EditorView, ev: Event) => {
           const inTable = isInCellElement(ev.target as HTMLElement, view.dom);
 

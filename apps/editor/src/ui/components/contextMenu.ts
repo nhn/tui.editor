@@ -52,7 +52,16 @@ export class ContextMenu extends Component<Props, State> {
           group.forEach(({ label, className, onClick }) => {
             acc.push(
               html`
-                <button type="button" class=${className} onClick=${onClick}>${label}</button>
+                <button
+                  type="button"
+                  class=${className}
+                  onClick=${() => {
+                    onClick!();
+                    this.setState({ pos: null });
+                  }}
+                >
+                  ${label}
+                </button>
               ` as VNode
             );
           });
