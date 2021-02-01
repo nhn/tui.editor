@@ -1,7 +1,7 @@
 import EventEmitter from '@/event/eventEmitter';
 import { addDefaultImageBlobHook, emitImageBlobHook } from '@/helper/image';
 
-describe('ImportManager', () => {
+describe('image processor', () => {
   let em: EventEmitter;
 
   beforeEach(() => {
@@ -17,31 +17,29 @@ describe('ImportManager', () => {
     });
   }
 
-  describe('image', () => {
-    it('should call addImageBlobHook hook on calling emitImageBlobHook function', () => {
-      const spy = jest.fn();
-      const file = new File([new ArrayBuffer(1)], 'file.jpg');
+  it('should call addImageBlobHook hook on calling emitImageBlobHook function', () => {
+    const spy = jest.fn();
+    const file = new File([new ArrayBuffer(1)], 'file.jpg');
 
-      em.listen('addImageBlobHook', spy);
-      emitImageBlobHook(em, 'markdown', file, 'drop');
+    em.listen('addImageBlobHook', spy);
+    emitImageBlobHook(em, 'markdown', file, 'drop');
 
-      expect(spy).toHaveBeenCalledWith(file, expect.any(Function), 'drop');
-    });
+    expect(spy).toHaveBeenCalledWith(file, expect.any(Function), 'drop');
+  });
 
-    it('should execute addImage command through hook callback function in default addImageBlobHook hook', () => {
-      addDefaultImageBlobHook(em);
-      mockReadAsDataURL();
+  it('should execute addImage command through hook callback function in default addImageBlobHook hook', () => {
+    addDefaultImageBlobHook(em);
+    mockReadAsDataURL();
 
-      const spy = jest.fn();
-      const file = new File([new ArrayBuffer(1)], 'file.jpg');
+    const spy = jest.fn();
+    const file = new File([new ArrayBuffer(1)], 'file.jpg');
 
-      em.listen('command', spy);
-      emitImageBlobHook(em, 'markdown', file, 'drop');
+    em.listen('command', spy);
+    emitImageBlobHook(em, 'markdown', file, 'drop');
 
-      expect(spy).toHaveBeenCalledWith(
-        { type: 'markdown', command: 'addImage' },
-        { altText: 'file.jpg', imageUrl: '/file.jpg' }
-      );
-    });
+    expect(spy).toHaveBeenCalledWith(
+      { type: 'markdown', command: 'addImage' },
+      { altText: 'file.jpg', imageUrl: '/file.jpg' }
+    );
   });
 });
