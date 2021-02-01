@@ -228,8 +228,7 @@ export const toWwConvertors: ToWwConvertorMap = {
 
       const table = tablePart.parent!;
       const columnInfo = table.columns[(node as TableCellMdNode).startIdx];
-      const align = columnInfo?.align !== 'left' ? columnInfo.align : null;
-      const attrs = align ? { align } : null;
+      const attrs = columnInfo.align ? { align: columnInfo.align } : null;
 
       state.openNode(cell, attrs);
 

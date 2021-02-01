@@ -254,11 +254,11 @@ describe('Convertor', () => {
       `;
       const expected = source`
         | default | left | right | center |
-        | ------- | ---- | ----: | :----: |
+        | ------- | :--- | ----: | :----: |
         | tbody | tbody | tbody | tbody |
 
         |  |  |  |  |
-        | --- | --- | ---: | :---: |
+        | --- | :--- | ---: | :---: |
         | default | left | right | center |
       `;
 

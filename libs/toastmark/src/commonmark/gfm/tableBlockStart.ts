@@ -72,13 +72,15 @@ function generateTableCells(
 }
 
 function getColumnFromDelimCell(cellNode: TableCellNode) {
-  let align = 'left';
+  let align = null;
   const content = cellNode.stringContent!;
   const firstCh = content[0];
   const lastCh = content[content.length - 1];
 
   if (lastCh === ':') {
     align = firstCh === ':' ? 'center' : 'right';
+  } else if (firstCh === ':') {
+    align = 'left';
   }
 
   return { align } as TableColumn;
@@ -114,7 +116,7 @@ export const tableHead: BlockStart = (parser, container) => {
       [firstLineNum, firstLineStart],
       [parser.lineNumber, parser.offset]
     ]);
-    table.columns = delimCells.map(() => ({ align: 'left' }));
+    table.columns = delimCells.map(() => ({ align: null }));
 
     container.insertAfter(table);
     if (lineOffsets.length === 1) {
