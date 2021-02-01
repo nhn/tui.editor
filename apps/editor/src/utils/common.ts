@@ -15,7 +15,7 @@ export function includes<T>(arr: T[], targetItem: T) {
 
 const availableLinkAttributes: LinkAttributeNames[] = ['rel', 'target', 'hreflang', 'type'];
 
-export function sanitizeLinkAttribute(attribute?: LinkAttributes) {
+export function sanitizeLinkAttribute(attribute: LinkAttributes) {
   if (!attribute) {
     return null;
   }

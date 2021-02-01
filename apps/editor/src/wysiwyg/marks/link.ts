@@ -13,10 +13,10 @@ import { LinkAttributes } from '@t/editor';
 export class Link extends Mark {
   private linkAttributes: LinkAttributes;
 
-  constructor(toDOMAdaptor?: ToDOMAdaptor, linkAttributes?: LinkAttributes) {
+  constructor(toDOMAdaptor: ToDOMAdaptor, linkAttributes: LinkAttributes) {
     super(toDOMAdaptor);
 
-    this.linkAttributes = linkAttributes || {};
+    this.linkAttributes = linkAttributes;
   }
 
   get name() {

@@ -33,11 +33,15 @@ export default class WysiwygEditor extends EditorBase {
 
   private linkAttributes: LinkAttributes;
 
-  constructor(eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor, linkAttributes: LinkAttributes) {
+  constructor(
+    eventEmitter: Emitter,
+    toDOMAdaptor: ToDOMAdaptor,
+    linkAttributes: LinkAttributes | null
+  ) {
     super(eventEmitter);
 
     this.toDOMAdaptor = toDOMAdaptor;
-    this.linkAttributes = linkAttributes;
+    this.linkAttributes = linkAttributes || {};
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
