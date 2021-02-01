@@ -61,7 +61,7 @@ import { ScrollSync } from './markdown/scroll/scrollSync';
  *     @param {Object} [options.extendedAutolinks] - Using extended Autolinks specified in GFM spec
  *     @param {Object} [options.customConvertor] - convertor extension
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
- *     @param {Object} [options.linkAttribute] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
+ *     @param {Object} [options.linkAttributes] - Attributes of anchor element that should be rel, target, contenteditable, hreflang, type
  *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
  *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
@@ -124,7 +124,7 @@ class ToastUIEditor {
           ['scrollSync'],
         ],
         hideModeSwitch: false,
-        linkAttribute: null,
+        linkAttributes: null,
         extendedAutolinks: false,
         customConvertor: null,
         customHTMLRenderer: null,
@@ -141,7 +141,7 @@ class ToastUIEditor {
 
     this.eventEmitter = new EventEmitter();
 
-    const linkAttribute = sanitizeLinkAttribute(this.options.linkAttribute);
+    const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
     const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
     const {
       customHTMLRenderer,
@@ -151,14 +151,14 @@ class ToastUIEditor {
       customMarkdownRenderer,
     } = this.options;
     const rendererOptions = {
-      linkAttribute,
+      linkAttributes,
       customHTMLRenderer: { ...renderer, ...customHTMLRenderer },
       extendedAutolinks,
       referenceDefinition,
       customParser: parser,
       frontMatter,
     };
-    const wwToDOMAdaptor = new WwToDOMAdaptor(linkAttribute, rendererOptions.customHTMLRenderer);
+    const wwToDOMAdaptor = new WwToDOMAdaptor(linkAttributes, rendererOptions.customHTMLRenderer);
 
     if (this.options.hooks) {
       forEachOwnProperties(this.options.hooks, (fn, key) => this.addHook(key, fn));
@@ -188,7 +188,7 @@ class ToastUIEditor {
       highlight: this.options.previewHighlight,
     });
 
-    this.wwEditor = new WysiwygEditor(this.eventEmitter, wwToDOMAdaptor, linkAttribute!);
+    this.wwEditor = new WysiwygEditor(this.eventEmitter, wwToDOMAdaptor, linkAttributes!);
 
     this.convertor = new Convertor(this.wwEditor.getSchema(), customMarkdownRenderer);
 

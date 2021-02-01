@@ -10,7 +10,7 @@ describe('Preview', () => {
 
   beforeEach(() => {
     const options = {
-      linkAttribute: null,
+      linkAttributes: null,
       customHTMLRenderer: {},
       isViewer: false,
       highlight: true,
@@ -49,7 +49,7 @@ describe('preview highlight', () => {
 
   function init(highlight: boolean) {
     const options = {
-      linkAttribute: null,
+      linkAttributes: null,
       customHTMLRenderer: {},
       isViewer: false,
       highlight,

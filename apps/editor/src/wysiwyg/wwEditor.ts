@@ -21,7 +21,7 @@ import { CustomBlockView } from './nodeview/customBlockView';
 
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
-import { LinkAttribute } from '@t/editor';
+import { LinkAttributes } from '@t/editor';
 
 import { changePastedHTML, changePastedSlice } from '@/wysiwyg/clipboard/paste';
 import { pasteToTable } from '@/wysiwyg/clipboard/pasteToTable';
@@ -31,13 +31,13 @@ const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 export default class WysiwygEditor extends EditorBase {
   private toDOMAdaptor: ToDOMAdaptor;
 
-  private linkAttribute: LinkAttribute;
+  private linkAttributes: LinkAttributes;
 
-  constructor(eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor, linkAttribute: LinkAttribute) {
+  constructor(eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor, linkAttributes: LinkAttributes) {
     super(eventEmitter);
 
     this.toDOMAdaptor = toDOMAdaptor;
-    this.linkAttribute = linkAttribute;
+    this.linkAttributes = linkAttributes;
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
@@ -47,7 +47,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createSpecs() {
-    return createSpecs(this.toDOMAdaptor, this.linkAttribute);
+    return createSpecs(this.toDOMAdaptor, this.linkAttributes);
   }
 
   createKeymaps() {

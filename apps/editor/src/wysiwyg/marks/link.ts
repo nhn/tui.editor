@@ -8,15 +8,15 @@ import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 import { createText } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
-import { LinkAttribute } from '@t/editor';
+import { LinkAttributes } from '@t/editor';
 
 export class Link extends Mark {
-  private linkAttribute: LinkAttribute;
+  private linkAttributes: LinkAttributes;
 
-  constructor(toDOMAdaptor?: ToDOMAdaptor, linkAttribute?: LinkAttribute) {
+  constructor(toDOMAdaptor?: ToDOMAdaptor, linkAttributes?: LinkAttributes) {
     super(toDOMAdaptor);
 
-    this.linkAttribute = linkAttribute || {};
+    this.linkAttributes = linkAttributes || {};
   }
 
   get name() {
@@ -50,7 +50,7 @@ export class Link extends Mark {
         attrs.rawHTML || 'a',
         {
           href: attrs.linkUrl,
-          ...(this.linkAttribute as DOMOutputSpecArray),
+          ...(this.linkAttributes as DOMOutputSpecArray),
         },
       ],
     };
