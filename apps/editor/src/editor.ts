@@ -30,6 +30,8 @@ class Editor extends EditorCore {
       ` as VNode
     );
 
+    this.setMinHeight(this.options.minHeight);
+    this.setHeight(this.options.height);
     this.defaultUI = {
       insertToolbarItem: layoutComp.insertToolbarItem.bind(layoutComp),
       removeToolbarItem: layoutComp.removeToolbarItem.bind(layoutComp),
