@@ -5,7 +5,7 @@ export function addDefaultImageBlobHook(eventEmitter: Emitter) {
   eventEmitter.listen('addImageBlobHook', (blob: File, callback: HookCallback) => {
     const reader = new FileReader();
 
-    reader.onload = (event) => callback(event.target!.result as string);
+    reader.onload = ({ target }) => callback(target!.result as string);
     reader.readAsDataURL(blob);
   });
 }
