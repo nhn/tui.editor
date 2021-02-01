@@ -39,8 +39,7 @@ const contextMenuGroups: ContextMenuInfo[][] = [
 function getContextMenuGroups(eventEmitter: Emitter, inTableHead: boolean) {
   return contextMenuGroups
     .map((contextMenuGroup) =>
-      contextMenuGroup.map((contextMenu) => {
-        const { action, command, payload, disableInThead } = contextMenu;
+      contextMenuGroup.map(({ action, command, payload, disableInThead }) => {
         let className;
 
         if (inTableHead && disableInThead) {
@@ -70,7 +69,7 @@ export function tableContextMenuPlugin(eventEmitter: Emitter) {
             ev.preventDefault();
 
             const { clientX, clientY } = ev as MouseEvent;
-            const { left, top } = (view.dom as HTMLElement).getBoundingClientRect();
+            const { left, top } = (view.dom.parentNode as HTMLElement).getBoundingClientRect();
 
             const inTableHead = (ev.target as HTMLElement).nodeName === 'TH';
 
