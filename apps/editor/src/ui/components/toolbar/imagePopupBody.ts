@@ -1,3 +1,4 @@
+import { HookCallback } from '@t/editor';
 import { Emitter } from '@t/event';
 import { ExecCommand, HidePopup, TabInfo } from '@t/ui';
 import i18n from '@/i18n/i18n';
@@ -8,7 +9,6 @@ import { Tabs } from '../tabs';
 const TYPE_UI = 'ui';
 
 type TabType = 'url' | 'file';
-type HookCallback = (url: string, text?: string) => void;
 
 interface Props {
   show: boolean;
@@ -33,19 +33,6 @@ export class ImagePopupBody extends Component<Props, State> {
       { name: 'file', text: 'File' },
       { name: 'url', text: 'URL' },
     ];
-    this.addEvent();
-  }
-
-  addEvent() {
-    this.props.eventEmitter.listen('addImageBlobHook', (blob: File, callback: HookCallback) => {
-      const reader = new FileReader();
-
-      reader.onload = (event) => {
-        callback(event.target!.result as string);
-      };
-
-      reader.readAsDataURL(blob);
-    });
   }
 
   private initialize = (activeTab: TabType = 'file') => {

@@ -48,8 +48,8 @@ declare module 'tui-code-snippet/collection/forEachOwnProperties' {
 
 declare module 'tui-code-snippet/collection/forEachArray' {
   export default function forEachArray<T>(
-    arr: Array<T>,
-    iteratee: (value: T, index: number, targetArr: Array<T>) => boolean | void,
+    arr: Array<T> | ArrayLike<T>,
+    iteratee: (value: T, index: number, targetArr: Array<T> | ArrayLike<T>) => boolean | void,
     context?: object
   ): void;
 }

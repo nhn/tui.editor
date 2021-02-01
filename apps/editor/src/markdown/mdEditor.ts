@@ -15,6 +15,7 @@ import { toggleClass } from '@/utils/dom';
 import { createParagraph, createTextSelection, nbspToSpace } from '@/helper/manipulation';
 import { placeholder } from '@/plugins/placeholder';
 import { getDefaultCommands } from '@/commands/defaultCommands';
+import { dropImage } from '@/plugins/dropImage';
 import { syntaxHighlight } from './plugins/syntaxHighlight';
 import { previewHighlight } from './plugins/previewHighlight';
 import { Doc } from './nodes/doc';
@@ -146,6 +147,7 @@ export default class MdEditor extends EditorBase {
         syntaxHighlight(this.context),
         previewHighlight(this.context),
         smartTask(this.context),
+        dropImage(this.context, 'markdown'),
         placeholder(this.placeholder),
       ],
     });

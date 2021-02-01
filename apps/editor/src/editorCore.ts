@@ -31,6 +31,7 @@ import { ToastMark } from '@toast-ui/toastmark';
 import isString from 'tui-code-snippet/type/isString';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
+import { addDefaultImageBlobHook } from './helper/image';
 
 /**
  * ToastUI Editor
@@ -236,6 +237,7 @@ class ToastUIEditor {
     this.addCommand('markdown', 'toggleScrollSync', (payload) => {
       this.eventEmitter.emit('toggleScrollSync', payload!.active);
     });
+    addDefaultImageBlobHook(this.eventEmitter);
   }
 
   /**
