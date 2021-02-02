@@ -18,7 +18,8 @@ type BlockNodeType =
   | 'tableDelimRow'
   | 'tableDelimCell'
   | 'refDef'
-  | 'customBlock';
+  | 'customBlock'
+  | 'frontMatter';
 
 type InlineNodeType =
   | 'code'

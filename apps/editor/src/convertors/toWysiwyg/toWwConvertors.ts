@@ -276,6 +276,12 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
+  frontMatter(state, node) {
+    state.openNode(state.schema.nodes.frontMatter);
+    state.addText(node.literal!);
+    state.closeNode();
+  },
+
   htmlInline(state, node) {
     const matched = node.literal!.match(reHTMLTag);
 
