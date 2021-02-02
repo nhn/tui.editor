@@ -12,6 +12,11 @@
   outline: none;
 }
 
+/* @TODO change color */
+table.ProseMirror-selectednode {
+  outline: 1px solid lime;
+}
+
 .tui-editor-contents {
   margin: 0;
   padding: 0;
@@ -352,7 +357,8 @@
   margin-left: 8px;
   padding: 3px;
   border: solid 1px #cccccc;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23555'%3E%3Cg%3E%3Cg%3E%3Cg%3E%3Cpath d='M5.5 2.5l2 2L2 10H0V8l5.5-5.5zM8 0l2 2-1.5 1.5-2-2L8 0z' transform='translate(-940 -712) translate(60 647) translate(875 60) translate(5 5)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E") no-repeat;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23555'%3E%3Cg%3E%3Cg%3E%3Cg%3E%3Cpath d='M5.5 2.5l2 2L2 10H0V8l5.5-5.5zM8 0l2 2-1.5 1.5-2-2L8 0z' transform='translate(-940 -712) translate(60 647) translate(875 60) translate(5 5)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+    no-repeat;
   background-position: 5px 5px;
 }
 

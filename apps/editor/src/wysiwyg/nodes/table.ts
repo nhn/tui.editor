@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
-import { TextSelection } from 'prosemirror-state';
+import { TextSelection, Selection, NodeSelection, Transaction } from 'prosemirror-state';
 
 import NodeSchema from '@/spec/node';
 import { isInTableNode, findNodeBy, createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
@@ -23,7 +23,7 @@ import {
   getDownCellOffset,
 } from '@/wysiwyg/helper/table';
 
-import { createTextSelection } from '@/helper/manipulation';
+import { createParagraph, createTextSelection } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
 import { ColumnAlign } from '@t/wysiwyg';
@@ -40,18 +40,60 @@ interface AlignColumnPayload {
 
 type CellOffsetFn = ([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) => number | null;
 
-type Direction = 'left' | 'right' | 'up' | 'down';
+type Direction = 'tab' | 'shiftTab' | 'up' | 'down';
+
+type CursorDirection = 'left' | 'right';
 
 type CellOffsetFnMap = {
   [key in Direction]: CellOffsetFn;
 };
 
 const cellOffsetFnMap: CellOffsetFnMap = {
-  left: getRightCellOffset,
-  right: getLeftCellOffset,
+  tab: getRightCellOffset,
+  shiftTab: getLeftCellOffset,
   up: getUpCellOffset,
   down: getDownCellOffset,
 };
+
+function selectNodeFromFirstCell(tr: Transaction, selection: Selection) {
+  const { head } = getResolvedSelection(selection);
+
+  if (head) {
+    const cellsInfo = getTableCellsInfo(head);
+    const firstCellOffset = cellsInfo[0][0].offset;
+
+    if (head.pos === firstCellOffset) {
+      const tablePos = tr.doc.resolve(head.before(head.depth - 2));
+
+      tr.setSelection(new NodeSelection(tablePos));
+
+      return tr;
+    }
+  }
+
+  return false;
+}
+
+function selectNodeFromLastCell(tr: Transaction, selection: Selection) {
+  const { head } = getResolvedSelection(selection);
+
+  if (head) {
+    const cellsInfo = getTableCellsInfo(head);
+    const rowCount = cellsInfo.length;
+    const columnCount = cellsInfo[0].length;
+    const lastCellOffset = cellsInfo[rowCount - 1][columnCount - 1].offset;
+
+    if (head.pos === lastCellOffset) {
+      const tablePos = tr.doc.resolve(head.before(head.depth - 2));
+
+      tr.setSelection(new NodeSelection(tablePos));
+
+      return tr;
+    }
+  }
+
+  return false;
+}
 
 export class Table extends NodeSchema {
   get name() {
@@ -287,18 +329,87 @@ export class Table extends NodeSchema {
 
   private moveToCell(direction: Direction): EditorCommand {
     return () => (state, dispatch) => {
-      const { selection, tr } = state;
+      const { selection, tr, schema, doc } = state;
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
         const cellsInfo = getTableCellsInfo(anchor);
         const cellIndex = getCellIndexInfo(anchor);
 
+        const rowCount = cellsInfo.length;
+        const columnCount = cellsInfo[0].length;
+
+        if (
+          (direction === 'down' && cellIndex[0] === cellsInfo.length - 1) ||
+          (direction === 'tab' && cellIndex[0] === rowCount - 1 && cellIndex[1] === columnCount - 1)
+        ) {
+          const lastCell = cellsInfo[rowCount - 1][columnCount - 1];
+
+          // 3 is position value of </tr></tbody></table>
+          const tablePos = doc.resolve(lastCell.offset + lastCell.nodeSize + 3);
+
+          if (!tablePos.nodeAfter) {
+            const tableEndOffset = tablePos.pos;
+
+            tr.replaceWith(tableEndOffset, tableEndOffset, createParagraph(schema));
+
+            dispatch!(tr.setSelection(createTextSelection(tr, tableEndOffset + 1)));
+
+            return true;
+          }
+
+          dispatch!(tr.setSelection(Selection.near(tablePos, 1)));
+
+          return true;
+        }
+
+        if (
+          (direction === 'up' && cellIndex[0] === 0) ||
+          (direction === 'shiftTab' && cellIndex[0] === 0 && cellIndex[1] === 0)
+        ) {
+          // 3 is position value of <table><thead><tr>
+          const tablePos = doc.resolve(cellsInfo[0][0].offset - 3);
+
+          if (!tablePos.nodeBefore) {
+            const tableStartOffset = tablePos.pos;
+
+            tr.replaceWith(tableStartOffset, tableStartOffset, createParagraph(schema));
+
+            dispatch!(tr.setSelection(createTextSelection(tr, tableStartOffset + 1)));
+            return true;
+          }
+
+          dispatch!(tr.setSelection(Selection.near(tablePos, -1)));
+
+          return true;
+        }
+
         const cellOffsetFn = cellOffsetFnMap[direction];
         const offset = cellOffsetFn(cellIndex, cellsInfo);
 
         if (offset) {
-          dispatch!(tr.setSelection(createTextSelection(tr, offset, offset)));
+          dispatch!(tr.setSelection(createTextSelection(tr, offset)));
+
+          return true;
+        }
+      }
+
+      return false;
+    };
+  }
+
+  private moveInCell(direction: CursorDirection): EditorCommand {
+    return () => (state, dispatch, view) => {
+      const { selection, tr } = state;
+
+      if (view?.endOfTextblock(direction)) {
+        const newTr =
+          direction === 'left'
+            ? selectNodeFromFirstCell(tr, selection)
+            : selectNodeFromLastCell(tr, selection);
+
+        if (newTr) {
+          dispatch!(tr);
 
           return true;
         }
@@ -358,13 +469,20 @@ export class Table extends NodeSchema {
   }
 
   keymaps() {
+    const moveLeftInCellCommand = this.moveInCell('left')();
+    const moveRightInCellCommand = this.moveInCell('right')();
     const moveToUpCellCommand = this.moveToCell('up')();
     const moveToDownCellCommand = this.moveToCell('down')();
     const deleteCellsCommand = this.deleteCells()();
 
     return {
-      Tab: this.moveToCell('left')(),
-      'Shift-Tab': this.moveToCell('right')(),
+      Tab: this.moveToCell('tab')(),
+      'Shift-Tab': this.moveToCell('shiftTab')(),
+
+      ArrowLeft: moveLeftInCellCommand,
+      ArrowRight: moveRightInCellCommand,
+      'Shift-ArrowLeft': moveLeftInCellCommand,
+      'Shift-ArrowRight': moveRightInCellCommand,
 
       ArrowUp: moveToUpCellCommand,
       ArrowDown: moveToDownCellCommand,
