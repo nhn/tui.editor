@@ -10,7 +10,7 @@ describe('sanitizeHTML', () => {
   });
 
   describe('attributes', () => {
-    it('removes all attritube but white list', () => {
+    it('removes all attribute but white list', () => {
       const html =
         '<img style="display:inline" class="V" title="V" data-custom="V" src="http://www.nhn.com/renewal/img/ci_nhn.png" onload="dd=1" onerror="javascript:alert();"/>';
 

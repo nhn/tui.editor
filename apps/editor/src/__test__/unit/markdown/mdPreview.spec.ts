@@ -56,7 +56,7 @@ describe('Preview', () => {
 
     eventEmitter.emit('contentChangedFromMarkdown', editResult);
 
-    expect(sanitizer.sanitizeHTML).toBeCalledTimes(1);
+    expect(sanitizer.sanitizeHTML).toHaveBeenCalledTimes(1);
   });
 });
 
