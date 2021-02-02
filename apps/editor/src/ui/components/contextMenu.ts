@@ -49,10 +49,22 @@ export class ContextMenu extends Component<Props, State> {
 
     return pos
       ? menuGroups.reduce((acc, group, index) => {
-          group.forEach(({ label, className, onClick }) => {
+          group.forEach(({ label, className, disabled, onClick }) => {
+            const handleClick = () => {
+              onClick!();
+              this.setState({ pos: null });
+            };
+
             acc.push(
               html`
-                <button type="button" class=${className} onClick=${onClick}>${label}</button>
+                <button
+                  type="button"
+                  class=${className}
+                  disabled=${disabled}
+                  onClick=${handleClick}
+                >
+                  ${label}
+                </button>
               ` as VNode
             );
           });
@@ -65,7 +77,7 @@ export class ContextMenu extends Component<Props, State> {
   }
 
   render() {
-    const style = { display: this.state.pos ? 'block' : 'none', pos: this.state.pos };
+    const style = { display: this.state.pos ? 'block' : 'none', ...this.state.pos };
 
     return html`<div class="te-context-menu" style=${style}>${this.getMenuGroupElements()}</div>`;
   }
