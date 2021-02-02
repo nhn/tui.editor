@@ -4,6 +4,7 @@ import { MdPos } from '@t/markdown';
 import MarkdownPreview, { CLASS_HIGHLIGHT } from '@/markdown/mdPreview';
 import MarkdownEditor from '@/markdown/mdEditor';
 import EventEmitter from '@/event/eventEmitter';
+import * as sanitizer from '@/sanitizer/htmlSanitizer';
 
 describe('Preview', () => {
   let eventEmitter: EventEmitter, preview: MarkdownPreview;
@@ -41,6 +42,21 @@ describe('Preview', () => {
     eventEmitter.emit('contentChangedFromMarkdown', editResult);
 
     expect(preview.getHTML()).toBe(`<p data-nodeid="${editResult[0].nodes[0].id}">changed</p>\n`);
+  });
+
+  it('should call sanitizeHTML', () => {
+    jest.spyOn(sanitizer, 'sanitizeHTML');
+
+    const doc = new ToastMark();
+    const editResult = doc.editMarkdown(
+      [1, 1],
+      [1, 1],
+      `<TABLE BACKGROUND="javascript:alert('XSS')">`
+    );
+
+    eventEmitter.emit('contentChangedFromMarkdown', editResult);
+
+    expect(sanitizer.sanitizeHTML).toHaveBeenCalledTimes(1);
   });
 });
 

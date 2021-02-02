@@ -46,7 +46,7 @@ const reXSSAttrValue = /((java|vb|live)script|x):/i;
 const reOnEvent = /^on\S+/i;
 const reComment = /<!--[\s\S]*?-->/g;
 
-export function sanitizeHTML(html: string | Node, needHtmlText: boolean) {
+export function sanitizeHTML(html: string | Node, needHtmlText = false) {
   const root = document.createElement('div');
 
   if (isString(html)) {
