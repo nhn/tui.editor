@@ -111,8 +111,8 @@ export function getHTMLRenderConvertors(
       if (entering) {
         (result as OpenTagToken).attributes = {
           ...(result as OpenTagToken).attributes,
-          ...(linkAttributes as TokenAttrs),
-        };
+          ...linkAttributes,
+        } as TokenAttrs;
       }
       return result;
     };

@@ -188,7 +188,7 @@ class ToastUIEditor {
       highlight: this.options.previewHighlight,
     });
 
-    this.wwEditor = new WysiwygEditor(this.eventEmitter, wwToDOMAdaptor, linkAttributes);
+    this.wwEditor = new WysiwygEditor(this.eventEmitter, wwToDOMAdaptor, linkAttributes!);
 
     this.convertor = new Convertor(this.wwEditor.getSchema(), customMarkdownRenderer);
 

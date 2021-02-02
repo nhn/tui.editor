@@ -35,7 +35,7 @@ describe('wysiwyg commands', () => {
     const adaptor = new WwToDOMAdaptor({}, {});
 
     em = new EventEmitter();
-    wwe = new WysiwygEditor(em, adaptor, {});
+    wwe = new WysiwygEditor(em, adaptor);
     cmd = new CommandManager(em, {}, wwe.commands);
   });
 
