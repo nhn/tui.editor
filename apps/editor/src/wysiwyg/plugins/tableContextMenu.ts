@@ -51,7 +51,8 @@ function getContextMenuGroups(eventEmitter: Emitter, inTableHead: boolean) {
           onClick: () => {
             eventEmitter.emit('command', { type: 'wysiwyg', command }, payload);
           },
-          ...(className && { className }),
+          className: className || false,
+          disabled: className ? 'disabled' : false,
         };
       })
     )

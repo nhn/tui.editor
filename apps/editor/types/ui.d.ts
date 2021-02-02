@@ -140,6 +140,7 @@ export type GetBound = (el: HTMLElement, active?: boolean) => Pos;
 export interface ContextMenuItem {
   label: string;
   className?: string;
+  disabled?: boolean;
   onClick?: () => void;
 }
 

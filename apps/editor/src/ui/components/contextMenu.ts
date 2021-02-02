@@ -49,7 +49,7 @@ export class ContextMenu extends Component<Props, State> {
 
     return pos
       ? menuGroups.reduce((acc, group, index) => {
-          group.forEach(({ label, className, onClick }) => {
+          group.forEach(({ label, className, disabled, onClick }) => {
             const handleClick = () => {
               onClick!();
               this.setState({ pos: null });
@@ -57,7 +57,14 @@ export class ContextMenu extends Component<Props, State> {
 
             acc.push(
               html`
-                <button type="button" class=${className} onClick=${handleClick}>${label}</button>
+                <button
+                  type="button"
+                  class=${className}
+                  disabled=${disabled}
+                  onClick=${handleClick}
+                >
+                  ${label}
+                </button>
               ` as VNode
             );
           });
