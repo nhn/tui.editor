@@ -13,6 +13,7 @@ import { placeholder } from '@/plugins/placeholder';
 import { tableSelectionPlugin } from '@/wysiwyg/plugins/tableSelection';
 import { tableContextMenuPlugin } from '@/wysiwyg/plugins/tableContextMenu';
 import { taskPlugin } from '@/wysiwyg/plugins/taskPlugin';
+import { imageLink } from '@/wysiwyg/plugins/imageLink';
 
 import { createTextSelection } from '@/helper/manipulation';
 
@@ -88,6 +89,7 @@ export default class WysiwygEditor extends EditorBase {
         tableContextMenuPlugin(this.eventEmitter),
         taskPlugin(),
         dropImage(this.context, 'wysiwyg'),
+        imageLink(),
       ],
       ...addedStates,
     });
