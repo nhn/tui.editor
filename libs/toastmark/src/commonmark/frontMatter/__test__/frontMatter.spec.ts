@@ -96,7 +96,7 @@ describe('Exmaple', () => {
       ---
       `,
       output: source`
-        <div style="white-space: pre">---
+        <div style="white-space: pre; display: none;">---
         title: front matter
         ---</div>
       `
@@ -113,7 +113,7 @@ describe('Exmaple', () => {
       ---
       `,
       output: source`
-        <div style="white-space: pre">---
+        <div style="white-space: pre; display: none;">---
 
         title: front matter
 
@@ -131,7 +131,7 @@ describe('Exmaple', () => {
       ---
       `,
       output: source`
-        <div style="white-space: pre">---
+        <div style="white-space: pre; display: none;">---
         title: front matter
         ---</div>
       `
@@ -145,7 +145,7 @@ describe('Exmaple', () => {
       para
       `,
       output: source`
-        <div style="white-space: pre">---
+        <div style="white-space: pre; display: none;">---
         title: front matter
         ---</div>
         <p>para</p>
