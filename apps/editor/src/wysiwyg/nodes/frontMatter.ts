@@ -30,7 +30,7 @@ export class FrontMatter extends NodeSchema {
     return () => (state, dispatch, view) => {
       const { $from } = state.selection;
 
-      if (view?.endOfTextblock('down') && $from.node().type.name === 'frontMatter') {
+      if (view!.endOfTextblock('down') && $from.node().type.name === 'frontMatter') {
         return exitCode(state, dispatch);
       }
 
