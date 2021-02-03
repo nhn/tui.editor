@@ -214,7 +214,8 @@ export const baseConvertors: HTMLConvertorMap = {
         type: 'openTag',
         tagName: 'div',
         outerNewLine: true,
-        attributes: { style: 'white-space: pre' }
+        // Because front matter is metadata, it should not be render.
+        attributes: { style: 'white-space: pre; display: none;' }
       },
       { type: 'text', content: node.literal! },
       { type: 'closeTag', tagName: 'div', outerNewLine: true }

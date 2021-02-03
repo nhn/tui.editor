@@ -179,6 +179,12 @@ export const toMdConvertors: ToMdConvertorMap = {
     };
   },
 
+  frontMatter({ node }) {
+    return {
+      text: (node as ProsemirrorNode).textContent,
+    };
+  },
+
   strong({ node }, { entering }) {
     const { rawHTML } = node.attrs;
 

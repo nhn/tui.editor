@@ -24,7 +24,7 @@ import { Strike } from './marks/strike';
 import { Link } from './marks/link';
 import { Code } from './marks/code';
 import { CustomBlock } from './nodes/customBlock';
-
+import { FrontMatter } from './nodes/frontMatter';
 import { ToDOMAdaptor } from '@t/convertor';
 import { LinkAttributes } from '@t/editor';
 
@@ -53,5 +53,6 @@ export function createSpecs(toDOMAdaptor: ToDOMAdaptor, linkAttributes: LinkAttr
     new Link(toDOMAdaptor, linkAttributes),
     new Code(toDOMAdaptor),
     new CustomBlock(),
+    new FrontMatter(),
   ]);
 }

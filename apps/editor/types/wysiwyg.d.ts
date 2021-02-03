@@ -20,7 +20,8 @@ export type WwNodeType =
   | 'image'
   | 'hardBreak'
   | 'lineBreak'
-  | 'customBlock';
+  | 'customBlock'
+  | 'frontMatter';
 
 export type WwMarkType = 'strong' | 'emph' | 'strike' | 'link' | 'code';
 

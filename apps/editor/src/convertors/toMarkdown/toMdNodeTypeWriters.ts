@@ -215,6 +215,11 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
     state.write(closeDelim);
     state.closeBlock(node);
   },
+
+  frontMatter(state, { node }, { text }) {
+    state.text(text!, false);
+    state.closeBlock(node);
+  },
 };
 
 export function write(
