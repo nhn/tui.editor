@@ -11,10 +11,6 @@ import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 
 import { ToMdConvertorMap, ToMdConvertorContext, NodeInfo, MarkInfo } from '@t/convertor';
 
-const parser = new Parser({
-  disallowedHtmlBlockTags: ['br', 'img'],
-});
-
 function createSchema() {
   const adaptor = new WwToDOMAdaptor({}, {});
   const specs = createSpecs(adaptor, {});
@@ -28,6 +24,10 @@ function createSchema() {
 describe('Convertor', () => {
   let convertor: Convertor;
   let schema: Schema;
+
+  const parser = new Parser({
+    disallowedHtmlBlockTags: ['br', 'img'],
+  });
 
   function assertConverting(markdown: string, expected: string) {
     const mdNode = parser.parse(markdown);
@@ -43,7 +43,7 @@ describe('Convertor', () => {
     convertor = new Convertor(schema, {});
   });
 
-  describe('convert between markdown and wysiwyg node to', () => {
+  describe('should convert between markdown and wysiwyg node to', () => {
     it('empty content', () => {
       assertConverting('', '');
     });
@@ -671,7 +671,7 @@ describe('Convertor', () => {
     });
   });
 
-  describe('custom convertor when converting from wysiwyg to markdown', () => {
+  describe('should custom convertor when converting from wysiwyg to markdown', () => {
     function createCustomConvertor(customConvertor: ToMdConvertorMap) {
       schema = createSchema();
       convertor = new Convertor(schema, customConvertor);
@@ -768,6 +768,32 @@ describe('Convertor', () => {
       `;
 
       assertConverting(markdown, expected);
+    });
+  });
+
+  describe('with front matter parser option', () => {
+    function assertFrontMatterConverting(markdown: string, expected: string) {
+      const useFrontMatterParser = new Parser({
+        disallowedHtmlBlockTags: ['br', 'img'],
+        frontMatter: true,
+      });
+      const mdNode = useFrontMatterParser.parse(markdown);
+
+      const wwNode = convertor.toWysiwygModel(mdNode);
+      const result = convertor.toMarkdownText(wwNode!);
+
+      expect(result).toBe(expected);
+    }
+
+    it('should convert front matter', () => {
+      const markdown = source`
+        ---
+        title: foo
+        desc: bar
+        ---
+      `;
+
+      assertFrontMatterConverting(markdown, markdown);
     });
   });
 });
