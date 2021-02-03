@@ -27,8 +27,8 @@ import {
 import {
   CursorDirection,
   CellDirection,
-  isCursorInTableStart,
-  isCursorInTableEnd,
+  canBeOutOfTableStart,
+  canBeOutOfTableEnd,
   addParagraphBeforeTable,
   addParagraphAfterTable,
 } from '@/wysiwyg/command/table';
@@ -302,11 +302,13 @@ export class Table extends NodeSchema {
         const cellsInfo = getTableCellsInfo(anchor);
         const cellIndex = getCellIndexInfo(anchor);
 
-        const cursorInTableStart = isCursorInTableStart(direction, cellIndex);
-        const cursorInTableEnd = isCursorInTableEnd(direction, cellsInfo, cellIndex);
+        const cursorInTableStart = canBeOutOfTableStart(direction, cellIndex);
+        const cursorInTableEnd = canBeOutOfTableEnd(direction, cellsInfo, cellIndex);
 
         let newTr;
 
+        // When there is no content before or after the table,
+        // an empty line('paragraph') is created by pressing the arrow keys.
         if (cursorInTableStart) {
           newTr = addParagraphBeforeTable(tr, cellsInfo, schema);
         } else if (cursorInTableEnd) {
@@ -337,7 +339,7 @@ export class Table extends NodeSchema {
     return () => (state, dispatch, view) => {
       const { selection, tr } = state;
 
-      if (view?.endOfTextblock(direction)) {
+      if (view!.endOfTextblock(direction)) {
         const { head } = getResolvedSelection(selection);
 
         if (!head) {
@@ -426,13 +428,9 @@ export class Table extends NodeSchema {
 
       ArrowLeft: moveLeftInCellCommand,
       ArrowRight: moveRightInCellCommand,
-      'Shift-ArrowLeft': moveLeftInCellCommand,
-      'Shift-ArrowRight': moveRightInCellCommand,
 
       ArrowUp: moveToUpCellCommand,
       ArrowDown: moveToDownCellCommand,
-      'Shift-ArrowUp': moveToUpCellCommand,
-      'Shift-ArrowDown': moveToDownCellCommand,
 
       Backspace: deleteCellsCommand,
       'Mod-Backspace': deleteCellsCommand,
