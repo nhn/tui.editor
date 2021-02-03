@@ -24,9 +24,11 @@ import { Strike } from './marks/strike';
 import { Link } from './marks/link';
 import { Code } from './marks/code';
 import { CustomBlock } from './nodes/customBlock';
-import { ToDOMAdaptor } from '@t/convertor';
 
-export function createSpecs(toDOMAdaptor: ToDOMAdaptor) {
+import { ToDOMAdaptor } from '@t/convertor';
+import { LinkAttributes } from '@t/editor';
+
+export function createSpecs(toDOMAdaptor: ToDOMAdaptor, linkAttributes: LinkAttributes) {
   return new SpecManager([
     new Doc(),
     new Paragraph(toDOMAdaptor),
@@ -48,7 +50,7 @@ export function createSpecs(toDOMAdaptor: ToDOMAdaptor) {
     new Strong(toDOMAdaptor),
     new Emph(toDOMAdaptor),
     new Strike(toDOMAdaptor),
-    new Link(toDOMAdaptor),
+    new Link(toDOMAdaptor, linkAttributes),
     new Code(toDOMAdaptor),
     new CustomBlock(),
   ]);

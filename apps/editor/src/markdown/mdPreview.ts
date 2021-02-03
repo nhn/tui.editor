@@ -20,6 +20,7 @@ import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
 import { findAdjacentElementToScrollTop } from './scroll/dom';
 import { removeOffsetInfoByNode } from './scroll/offset';
+import { LinkAttributes } from '@t/editor';
 
 export const CLASS_HIGHLIGHT = 'te-preview-highlight';
 
@@ -37,7 +38,7 @@ function findTableCell(tableRow: MdNode, chOffset: number) {
 }
 
 interface Options {
-  linkAttribute: Record<string, any> | null;
+  linkAttributes: LinkAttributes | null;
   customHTMLRenderer: CustomHTMLRendererMap;
   isViewer: boolean;
   highlight?: boolean;
@@ -50,7 +51,7 @@ interface Options {
  * @param {object} options
  * @param {boolean} options.isViewer - true for view-only mode
  * @param {boolean} options.highlight - true for using live-highlight feature
- * @param {object} opitons.linkAttribute - attributes for link element
+ * @param {object} opitons.linkAttributes - attributes for link element
  * @param {object} opitons.customHTMLRenderer - map of custom HTML render functions
  *
  * @ignore
@@ -73,12 +74,12 @@ class MarkdownPreview extends Preview {
       this
     );
 
-    const { linkAttribute, customHTMLRenderer, highlight = false } = options;
+    const { linkAttributes, customHTMLRenderer, highlight = false } = options;
 
     this.renderer = new Renderer({
       gfm: true,
       nodeId: true,
-      convertors: getHTMLRenderConvertors(linkAttribute, customHTMLRenderer),
+      convertors: getHTMLRenderConvertors(linkAttributes, customHTMLRenderer),
     });
 
     this.cursorNodeId = null;

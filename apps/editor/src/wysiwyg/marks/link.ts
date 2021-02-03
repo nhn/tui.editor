@@ -1,5 +1,6 @@
 import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
+import { ToDOMAdaptor } from '@t/convertor';
 
 import Mark from '@/spec/mark';
 import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
@@ -7,8 +8,17 @@ import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 import { createText } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
+import { LinkAttributes } from '@t/editor';
 
 export class Link extends Mark {
+  private linkAttributes: LinkAttributes;
+
+  constructor(toDOMAdaptor: ToDOMAdaptor, linkAttributes: LinkAttributes) {
+    super(toDOMAdaptor);
+
+    this.linkAttributes = linkAttributes;
+  }
+
   get name() {
     return 'link';
   }
@@ -36,14 +46,13 @@ export class Link extends Mark {
           },
         },
       ],
-      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
-        return [
-          attrs.rawHTML || 'a',
-          {
-            href: attrs.linkUrl,
-          },
-        ];
-      },
+      toDOM: ({ attrs }: ProsemirrorMark): DOMOutputSpecArray => [
+        attrs.rawHTML || 'a',
+        {
+          href: attrs.linkUrl,
+          ...(this.linkAttributes as DOMOutputSpecArray),
+        },
+      ],
     };
   }
 

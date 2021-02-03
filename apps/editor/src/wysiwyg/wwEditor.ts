@@ -17,10 +17,11 @@ import { taskPlugin } from '@/wysiwyg/plugins/taskPlugin';
 import { createTextSelection } from '@/helper/manipulation';
 
 import { createSpecs } from './specCreator';
+import { CustomBlockView } from './nodeview/customBlockView';
 
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
-import { CustomBlockView } from './nodeview/customBlockView';
+import { LinkAttributes } from '@t/editor';
 
 import { changePastedHTML, changePastedSlice } from '@/wysiwyg/clipboard/paste';
 import { pasteToTable } from '@/wysiwyg/clipboard/pasteToTable';
@@ -31,10 +32,13 @@ const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 export default class WysiwygEditor extends EditorBase {
   private toDOMAdaptor: ToDOMAdaptor;
 
-  constructor(eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor) {
+  private linkAttributes: LinkAttributes;
+
+  constructor(eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor, linkAttributes = {}) {
     super(eventEmitter);
 
     this.toDOMAdaptor = toDOMAdaptor;
+    this.linkAttributes = linkAttributes;
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
@@ -44,7 +48,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createSpecs() {
-    return createSpecs(this.toDOMAdaptor);
+    return createSpecs(this.toDOMAdaptor, this.linkAttributes);
   }
 
   createKeymaps() {

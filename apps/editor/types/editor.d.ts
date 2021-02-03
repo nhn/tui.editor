@@ -36,13 +36,10 @@ export type AutolinkParser = (
 
 export type ExtendedAutolinks = boolean | AutolinkParser;
 
-export type LinkAttribute = Partial<{
-  rel: string;
-  target: string;
-  contenteditable: boolean | 'true' | 'false';
-  hreflang: string;
-  type: string;
-}>;
+export type LinkAttributeNames = 'rel' | 'target' | 'hreflang' | 'type';
+
+// @TODO change option and type name from singular to plural
+export type LinkAttributes = Partial<Record<LinkAttributeNames, string>>;
 
 export type CustomHTMLSanitizer = (content: string) => string | DocumentFragment;
 
@@ -54,7 +51,7 @@ export interface ViewerOptions {
   plugins?: (EditorPlugin | EditorPluginInfo)[];
   useDefaultHTMLSanitizer?: boolean;
   extendedAutolinks?: ExtendedAutolinks;
-  linkAttribute?: LinkAttribute;
+  linkAttributes?: LinkAttributes;
   customHTMLRenderer?: CustomHTMLRenderer;
   referenceDefinition?: boolean;
   customHTMLSanitizer?: CustomHTMLSanitizer;
@@ -114,7 +111,7 @@ export interface EditorOptions {
   plugins?: (EditorPlugin | EditorPluginInfo)[];
   extendedAutolinks?: ExtendedAutolinks;
   placeholder?: string;
-  linkAttribute?: LinkAttribute;
+  linkAttributes?: LinkAttributes;
   customHTMLRenderer?: CustomHTMLRenderer;
   customMarkdownRenderer?: ToMdConvertorMap;
   referenceDefinition?: boolean;

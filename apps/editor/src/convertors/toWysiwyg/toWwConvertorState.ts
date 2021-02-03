@@ -22,7 +22,7 @@ export default class ToWwConvertorState {
 
   private marks: Mark[];
 
-  constructor(schema: Schema, convertors: ToWwConvertorMap, linkAttribute: Record<string, any>) {
+  constructor(schema: Schema, convertors: ToWwConvertorMap) {
     this.schema = schema;
     this.convertors = convertors;
     this.stack = [{ type: this.schema.topNodeType, attrs: null, content: [] }];
