@@ -949,46 +949,4 @@ describe('wysiwyg table commands', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
   });
-
-  describe('deleteCells command', () => {
-    beforeEach(() => {
-      cmd.exec('wysiwyg', 'addTable', {
-        columns: 3,
-        rows: 2,
-        data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', ''],
-      });
-    });
-
-    it('should delete cells in selection', () => {
-      setCellSelection([0, 1], [2, 2]); // select from 'bar' to last cell
-
-      cmd.exec('wysiwyg', 'deleteCells');
-
-      const expected = oneLineTrim`
-        <table>
-          <thead>
-            <tr>
-              <th><p>foo</p></th>
-              <th class="te-cell-selected"><p><br></p></th>
-              <th class="te-cell-selected"><p><br></p></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><p>qux</p></td>
-              <td class="te-cell-selected"><p><br></p></td>
-              <td class="te-cell-selected"><p><br></p></td>
-            </tr>
-            <tr>
-              <td><p>corge</p></td>
-              <td class="te-cell-selected"><p><br></p></td>
-              <td class="te-cell-selected"><p><br></p></td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-
-      expect(wwe.getHTML()).toBe(expected);
-    });
-  });
 });

@@ -1,6 +1,7 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
 import { TextSelection, NodeSelection } from 'prosemirror-state';
+import { Command } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
 import { isInTableNode, findNodeBy, createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
@@ -293,8 +294,8 @@ export class Table extends NodeSchema {
     };
   }
 
-  private moveToCell(direction: CellDirection): EditorCommand {
-    return () => (state, dispatch) => {
+  private moveToCell(direction: CellDirection): Command {
+    return (state, dispatch) => {
       const { selection, tr, schema } = state;
       const { anchor, head } = getResolvedSelection(selection);
 
@@ -335,11 +336,12 @@ export class Table extends NodeSchema {
     };
   }
 
-  private moveInCell(direction: CursorDirection): EditorCommand {
-    return () => (state, dispatch, view) => {
+  private moveInCell(direction: CursorDirection): Command {
+    return (state, dispatch) => {
       const { selection, tr } = state;
+      const { view } = this.context;
 
-      if (view!.endOfTextblock(direction)) {
+      if (view.endOfTextblock(direction)) {
         const { head } = getResolvedSelection(selection);
 
         if (!head) {
@@ -366,8 +368,8 @@ export class Table extends NodeSchema {
     };
   }
 
-  private deleteCells(): EditorCommand {
-    return () => (state, dispatch) => {
+  private deleteCells(): Command {
+    return (state, dispatch) => {
       const { schema, selection, tr } = state;
       const { anchor, head } = getResolvedSelection(selection);
       const textSelection = selection instanceof TextSelection;
@@ -411,26 +413,21 @@ export class Table extends NodeSchema {
       addRowToUp: this.addRow(-1),
       removeRow: this.removeRow(),
       alignColumn: this.alignColumn(),
-      deleteCells: this.deleteCells(),
     };
   }
 
   keymaps() {
-    const moveLeftInCellCommand = this.moveInCell('left')();
-    const moveRightInCellCommand = this.moveInCell('right')();
-    const moveToUpCellCommand = this.moveToCell('up')();
-    const moveToDownCellCommand = this.moveToCell('down')();
-    const deleteCellsCommand = this.deleteCells()();
+    const deleteCellsCommand = this.deleteCells();
 
     return {
-      Tab: this.moveToCell('right')(),
-      'Shift-Tab': this.moveToCell('left')(),
+      Tab: this.moveToCell('right'),
+      'Shift-Tab': this.moveToCell('left'),
 
-      ArrowLeft: moveLeftInCellCommand,
-      ArrowRight: moveRightInCellCommand,
+      ArrowUp: this.moveToCell('up'),
+      ArrowDown: this.moveToCell('down'),
 
-      ArrowUp: moveToUpCellCommand,
-      ArrowDown: moveToDownCellCommand,
+      ArrowLeft: this.moveInCell('left'),
+      ArrowRight: this.moveInCell('right'),
 
       Backspace: deleteCellsCommand,
       'Mod-Backspace': deleteCellsCommand,
