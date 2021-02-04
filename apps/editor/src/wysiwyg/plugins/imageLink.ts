@@ -63,7 +63,7 @@ export function imageLink() {
           const style = getComputedStyle(target as HTMLElement, ':before');
 
           if (isPositionInBox(style, offsetX, offsetY)) {
-            console.log('click');
+            // @TODO add logic to open link popup layer
             return true;
           }
 

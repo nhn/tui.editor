@@ -85,6 +85,7 @@ export default class WysiwygEditor extends EditorBase {
         }),
         history(),
         placeholder(this.placeholder),
+        // @TODO remove `Plugin` on plugin name
         tableSelectionPlugin(),
         tableContextMenuPlugin(this.eventEmitter),
         taskPlugin(),
