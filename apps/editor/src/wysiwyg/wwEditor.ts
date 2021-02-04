@@ -45,6 +45,7 @@ export default class WysiwygEditor extends EditorBase {
     this.keymaps = this.createKeymaps();
     this.view = this.createView();
     this.commands = this.createCommands();
+    this.specs.setContext({ ...this.context, view: this.view });
   }
 
   createSpecs() {

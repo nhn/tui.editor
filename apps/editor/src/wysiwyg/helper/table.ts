@@ -104,7 +104,7 @@ export function getRightCellOffset([rowIndex, columnIndex]: number[], cellsInfo:
 
     const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex];
 
-    return offset + nodeSize - 1;
+    return offset + nodeSize - 2;
   }
 
   return null;
@@ -126,7 +126,7 @@ export function getLeftCellOffset([rowIndex, columnIndex]: number[], cellsInfo: 
 
     const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex];
 
-    return offset + nodeSize - 1;
+    return offset + nodeSize - 2;
   }
 
   return null;
@@ -136,7 +136,7 @@ export function getUpCellOffset([rowIndex, columnIndex]: number[], cellsInfo: Ce
   if (rowIndex > 0) {
     const { offset, nodeSize } = cellsInfo[rowIndex - 1][columnIndex];
 
-    return offset + nodeSize - 1;
+    return offset + nodeSize - 2;
   }
 
   return null;
@@ -148,7 +148,7 @@ export function getDownCellOffset([rowIndex, columnIndex]: number[], cellsInfo: 
   if (rowIndex < allRowCount - 1) {
     const { offset } = cellsInfo[rowIndex + 1][columnIndex];
 
-    return offset + 1;
+    return offset + 2;
   }
 
   return null;

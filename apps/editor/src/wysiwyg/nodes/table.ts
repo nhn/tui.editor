@@ -1,9 +1,12 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
-import { TextSelection } from 'prosemirror-state';
+import { TextSelection, NodeSelection } from 'prosemirror-state';
+import { Command } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
 import { isInTableNode, findNodeBy, createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
+
+// @TODO Separate the clipboard and command file, leaving only those commonly used in `helper/table`.
 import {
   CellInfo,
   createTableHeadRow,
@@ -22,6 +25,14 @@ import {
   getUpCellOffset,
   getDownCellOffset,
 } from '@/wysiwyg/helper/table';
+import {
+  CursorDirection,
+  CellDirection,
+  canBeOutOfTableStart,
+  canBeOutOfTableEnd,
+  addParagraphBeforeTable,
+  addParagraphAfterTable,
+} from '@/wysiwyg/command/table';
 
 import { createTextSelection } from '@/helper/manipulation';
 
@@ -40,15 +51,13 @@ interface AlignColumnPayload {
 
 type CellOffsetFn = ([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) => number | null;
 
-type Direction = 'left' | 'right' | 'up' | 'down';
-
 type CellOffsetFnMap = {
-  [key in Direction]: CellOffsetFn;
+  [key in CellDirection]: CellOffsetFn;
 };
 
 const cellOffsetFnMap: CellOffsetFnMap = {
-  left: getRightCellOffset,
-  right: getLeftCellOffset,
+  left: getLeftCellOffset,
+  right: getRightCellOffset,
   up: getUpCellOffset,
   down: getDownCellOffset,
 };
@@ -285,20 +294,39 @@ export class Table extends NodeSchema {
     };
   }
 
-  private moveToCell(direction: Direction): EditorCommand {
-    return () => (state, dispatch) => {
-      const { selection, tr } = state;
+  private moveToCell(direction: CellDirection): Command {
+    return (state, dispatch) => {
+      const { selection, tr, schema } = state;
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
         const cellsInfo = getTableCellsInfo(anchor);
         const cellIndex = getCellIndexInfo(anchor);
 
+        const cursorInTableStart = canBeOutOfTableStart(direction, cellIndex);
+        const cursorInTableEnd = canBeOutOfTableEnd(direction, cellsInfo, cellIndex);
+
+        let newTr;
+
+        // When there is no content before or after the table,
+        // an empty line('paragraph') is created by pressing the arrow keys.
+        if (cursorInTableStart) {
+          newTr = addParagraphBeforeTable(tr, cellsInfo, schema);
+        } else if (cursorInTableEnd) {
+          newTr = addParagraphAfterTable(tr, cellsInfo, schema);
+        }
+
+        if (newTr) {
+          dispatch!(newTr);
+
+          return true;
+        }
+
         const cellOffsetFn = cellOffsetFnMap[direction];
         const offset = cellOffsetFn(cellIndex, cellsInfo);
 
         if (offset) {
-          dispatch!(tr.setSelection(createTextSelection(tr, offset, offset)));
+          dispatch!(tr.setSelection(createTextSelection(tr, offset)));
 
           return true;
         }
@@ -308,8 +336,40 @@ export class Table extends NodeSchema {
     };
   }
 
-  private deleteCells(): EditorCommand {
-    return () => (state, dispatch) => {
+  private moveInCell(direction: CursorDirection): Command {
+    return (state, dispatch) => {
+      const { selection, tr } = state;
+      const { view } = this.context;
+
+      if (view.endOfTextblock(direction)) {
+        const { head } = getResolvedSelection(selection);
+
+        if (!head) {
+          return false;
+        }
+
+        const cellsInfo = getTableCellsInfo(head);
+        const rowCount = cellsInfo.length;
+        const columnCount = cellsInfo[0].length;
+
+        const { offset } =
+          direction === 'left' ? cellsInfo[0][0] : cellsInfo[rowCount - 1][columnCount - 1];
+
+        if (head.pos === offset) {
+          const tablePos = tr.doc.resolve(head.before(head.depth - 2));
+
+          dispatch!(tr.setSelection(new NodeSelection(tablePos)));
+
+          return true;
+        }
+      }
+
+      return false;
+    };
+  }
+
+  private deleteCells(): Command {
+    return (state, dispatch) => {
       const { schema, selection, tr } = state;
       const { anchor, head } = getResolvedSelection(selection);
       const textSelection = selection instanceof TextSelection;
@@ -353,23 +413,21 @@ export class Table extends NodeSchema {
       addRowToUp: this.addRow(-1),
       removeRow: this.removeRow(),
       alignColumn: this.alignColumn(),
-      deleteCells: this.deleteCells(),
     };
   }
 
   keymaps() {
-    const moveToUpCellCommand = this.moveToCell('up')();
-    const moveToDownCellCommand = this.moveToCell('down')();
-    const deleteCellsCommand = this.deleteCells()();
+    const deleteCellsCommand = this.deleteCells();
 
     return {
-      Tab: this.moveToCell('left')(),
-      'Shift-Tab': this.moveToCell('right')(),
+      Tab: this.moveToCell('right'),
+      'Shift-Tab': this.moveToCell('left'),
 
-      ArrowUp: moveToUpCellCommand,
-      ArrowDown: moveToDownCellCommand,
-      'Shift-ArrowUp': moveToUpCellCommand,
-      'Shift-ArrowDown': moveToDownCellCommand,
+      ArrowUp: this.moveToCell('up'),
+      ArrowDown: this.moveToCell('down'),
+
+      ArrowLeft: this.moveInCell('left'),
+      ArrowRight: this.moveInCell('right'),
 
       Backspace: deleteCellsCommand,
       'Mod-Backspace': deleteCellsCommand,
