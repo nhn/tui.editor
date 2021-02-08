@@ -1,19 +1,20 @@
 import { EditorView } from 'prosemirror-view';
 import { Plugin, PluginKey } from 'prosemirror-state';
+import { WidgetStyle } from '@t/editor';
 
 interface Widget {
   node: HTMLElement;
+  style: WidgetStyle;
   pos: number;
 }
 
-const pluginKey = new PluginKey('suggestions');
+const pluginKey = new PluginKey('widget');
 
 class WidgetView {
   private widgetNode: HTMLElement | null = null;
 
   update(view: EditorView) {
-    const { state } = view;
-    const widget: Widget | null = pluginKey.getState(state);
+    const widget: Widget | null = pluginKey.getState(view.state);
 
     if (this.widgetNode) {
       document.body.removeChild(this.widgetNode);
@@ -22,23 +23,18 @@ class WidgetView {
 
     if (widget) {
       const { node, style } = widget;
-      const rect = view.coordsAtPos(widget.pos);
-      const a = view.domAtPos(widget.pos);
+      const { top, left, bottom } = view.coordsAtPos(widget.pos);
+      const height = bottom - top;
 
-      const { clientHeight } = a.node;
-
-      this.widgetNode = node;
       node.style.position = 'absolute';
-      node.style.left = `${rect.left}px`;
-
-      if (style === 'bottom') {
-        node.style.top = `${rect.top + clientHeight / 2}px`;
-      }
+      node.style.left = `${left}px`;
+      node.style.opacity = '0';
 
       document.body.appendChild(node);
-      if (style === 'top') {
-        node.style.top = `${rect.top - node.clientHeight - clientHeight}px`;
-      }
+
+      node.style.top = `${style === 'bottom' ? top + height : top - node.clientHeight - height}px`;
+      node.style.opacity = '1';
+      this.widgetNode = node;
     }
     view.focus();
   }
@@ -52,9 +48,7 @@ export function widgetPlugin() {
         return null;
       },
       apply(tr) {
-        const widget = tr.getMeta('widget');
-
-        return widget ? widget : null;
+        return tr.getMeta('widget');
       },
     },
     view() {

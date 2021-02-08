@@ -176,11 +176,9 @@ class MarkdownPreview extends Preview {
       nodes.map((node) => this.renderer.render(node)).join('')
     );
 
-    if (widgetMap) {
-      Object.keys(widgetMap).forEach((id) => {
-        newHtml = newHtml.replace(new RegExp(id, 'g'), widgetMap[id].outerHTML);
-      });
-    }
+    Object.keys(widgetMap).forEach((id) => {
+      newHtml = newHtml.replace(new RegExp(id, 'g'), widgetMap[id].outerHTML);
+    });
 
     newHtml = sanitizeHTML(newHtml, true);
 

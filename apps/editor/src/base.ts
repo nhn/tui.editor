@@ -2,6 +2,7 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import css from 'tui-code-snippet/domUtil/css';
+import { WidgetStyle } from '@t/editor';
 import { Emitter } from '@t/event';
 import { Context, EditorAllCommandMap } from '@t/spec';
 import SpecManager from './spec/specManager';
@@ -122,7 +123,7 @@ export default abstract class EditorBase {
     return this.el;
   }
 
-  addWidget(node: Node, style: 'top' | 'bottom', offset: number) {
+  addWidget(node: Node, style: WidgetStyle, offset: number) {
     const { dispatch, state } = this.view;
 
     dispatch(state.tr.setMeta('widget', { pos: state.selection.to, node, style, offset }));

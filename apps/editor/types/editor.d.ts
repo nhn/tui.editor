@@ -6,6 +6,7 @@ import { DefaultUI, ToolbarItemOptions } from './ui';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
+export type WidgetStyle = 'top' | 'bottom';
 
 export interface EventMap {
   load?: (param: Editor) => void;

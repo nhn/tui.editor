@@ -10,7 +10,7 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import isString from 'tui-code-snippet/type/isString';
 
 import { Emitter, Handler } from '@t/event';
-import { EditorOptions, EditorType, PreviewStyle, ViewerOptions } from '@t/editor';
+import { EditorOptions, EditorType, PreviewStyle, ViewerOptions, WidgetStyle } from '@t/editor';
 import { EditorCommandFn } from '@t/spec';
 
 import { sendHostName, sanitizeLinkAttribute } from './utils/common';
@@ -406,12 +406,11 @@ class ToastUIEditor {
 
   /**
    * Add widget to selection
-   * @param {Range} selection Current selection
    * @param {Node} node widget node
-   * @param {string} style Adding style "over" or "bottom"
+   * @param {string} style Adding style "top" or "bottom"
    * @param {number} [offset] Offset for adjust position
    */
-  addWidget(node: Node, style: 'top' | 'bottom', offset: number) {
+  addWidget(node: Node, style: WidgetStyle, offset: number) {
     this.getCurrentModeEditor().addWidget(node, style, offset);
   }
 
